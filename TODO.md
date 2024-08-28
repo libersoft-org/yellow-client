@@ -9,3 +9,4 @@
 - Add the last message preview to conversation list
 - Add a "new conversation" button
 - Add a login page (server / user / password)
+- Add mobile responsivity (show left panel only by default)
