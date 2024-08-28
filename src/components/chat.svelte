@@ -14,7 +14,7 @@
 <style>
  #chat {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   padding: 20px;
   flex-grow: 1;
   overflow-y: auto;

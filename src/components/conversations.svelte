@@ -18,6 +18,7 @@
   cursor: pointer;
   background-color: #fffcf0;
  }
+
  .item:hover {
   background-color: #fde990;
  }

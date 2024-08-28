@@ -21,6 +21,7 @@ body {
  border-radius: 10px;
  background-color: #FD1;
  font-weight: bold;
+ cursor: pointer;
 }
 
 .bold {

@@ -9,6 +9,13 @@
    message = '';
   }
  }
+
+ function keyDown(event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+   event.preventDefault();
+   sendMessage();
+  }
+ }
 </script>
 
 <style>
@@ -30,6 +37,6 @@
 </style>
 
 <div id="message-bar">
- <input bind:value={message} type="text" placeholder="Enter your message ..." />
- <div class="button" on:click={sendMessage({message})}>Send</div>
+ <input type="text" placeholder="Enter your message ..." bind:value={message} on:keydown={keyDown} />
+ <div class="button" on:click={sendMessage}>Send</div>
 </div>
