@@ -1,0 +1,28 @@
+:root {
+ --shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+}
+
+* {
+ scrollbar-width: thin;
+ scrollbar-color: #999 #bbb;
+}
+
+body {
+ font-family: Verdana, Geneva, Tahoma, sans-serif;
+ margin: 0px;
+}
+
+.button {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ text-align: center;
+ padding: 10px;
+ border-radius: 10px;
+ background-color: #FD1;
+ font-weight: bold;
+}
+
+.bold {
+ font-weight: bold;
+}
