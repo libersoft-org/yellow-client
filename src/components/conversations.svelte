@@ -4,14 +4,12 @@
  export let onSelectConversation;
  
  function handleClick(conversation) {
-  console.log(conversation);
   onSelectConversation(conversation);
  }
 </script>
 
 <style>
  #conversations {
-  height: calc(100vh - 50px);
   overflow-y: auto;
  }
 

@@ -44,6 +44,10 @@
     offset: 0
    }
   }));
+  requestAnimationFrame(() => {
+   const input = document.querySelector('#message-bar input');
+   if (input) input.focus();
+  });
  }
 
  function sendMessage(text) {

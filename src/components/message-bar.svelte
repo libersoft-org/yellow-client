@@ -1,12 +1,14 @@
 <script>
  export let onSendMessage;
+ let messageInput;
  let message = '';
-
+ 
  function sendMessage() {
   message = message.trim();
   if (message) {
    onSendMessage(message);
    message = '';
+   messageInput.focus();
   }
  }
 
@@ -48,6 +50,6 @@
 </style>
 
 <div id="message-bar">
- <input class="message" type="text" placeholder="Enter your message ..." bind:value={message} on:keydown={keyDown} />
+ <input class="message" type="text" placeholder="Enter your message ..." bind:this={messageInput} bind:value={message} on:keydown={keyDown} />
  <div class="icon" on:click={sendMessage}><img src="img/send.svg" alt="Send" /></div>
 </div>
