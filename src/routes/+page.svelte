@@ -18,6 +18,13 @@
   socket = new WebSocket('wss://amtp.mediasun.cz');
   socket.onopen = () => {
    socket.send(JSON.stringify({
+    command: 'user_subscribe',
+    sessionID: sessionID,
+    params: {
+     event: 'new_message'
+    }
+   }));
+   socket.send(JSON.stringify({
     command: 'user_list_conversations',
     sessionID: sessionID
    }));
