@@ -1,4 +1,5 @@
 <script>
+ import Photo from '../components/photo.svelte';
  export let selectedConversation;
 </script>
 
@@ -9,13 +10,20 @@
   align-items: center;
   gap: 10px;
   padding: 10px;
-  min-height: 30px;
   background-color: #222;
   color: #fff;
   box-shadow: var(--shadow);
  }
+
+ .description .address {
+  font-size: 12px;
+ }
 </style>
 
 <div id="profile-bar">
- <div class="bold">{selectedConversation.address}</div>
+ <Photo />
+ <div class="description">
+  <div class="bold">{selectedConversation.visible_name}</div>
+  <div class="address">{selectedConversation.address}</div>
+ </div>
 </div>

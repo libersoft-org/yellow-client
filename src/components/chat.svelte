@@ -51,11 +51,11 @@
 </style>
 
 <div bind:this={chat} id="chat">
- {#each messages as message}
-  <div class="message {message.from === userAddress ? 'outgoing' : 'incoming'}">
-   <div class="bold">{message.from}</div>
-   <div class="text">{message.text}</div>
-   <div class="time">{message.time}</div>
+ {#each messages as m}
+  <div class="message {m.address_from === userAddress ? 'outgoing' : 'incoming'}">
+   <div class="bold">{m.address_from}</div>
+   <div class="text">{m.message}</div>
+   <div class="time">{new Date(m.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
   </div>
  {/each}
 </div>

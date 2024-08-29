@@ -27,20 +27,8 @@
    const data = JSON.parse(event.data);
    console.log('onMessage', data);
    if (data.error === 0 && data.data) {
-    if(data.data.conversations) {
-    conversations = data.data.conversations.map(c => ({
-     address: c.address,
-     lastMessageDate: new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()
-    }));
-   };
-   if (data.data.messages) {
-    messages = data.data.messages.map(msg => ({
-     from: msg.address_from,
-     to: msg.address_to,
-     text: msg.message,
-     time: new Date(msg.created.replace(' ', 'T') + 'Z').toLocaleString()
-    }));
-   }
+    if (data.data.conversations) conversations = data.data.conversations;
+    if (data.data.messages) messages = data.data.messages;
    }
   }
  });
