@@ -15,3 +15,4 @@
 - On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
 - Add menu with Logout button
 - Add a possibility to save login credentials (autologin on page refresh)
+- Add registration
