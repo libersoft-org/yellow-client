@@ -5,12 +5,13 @@
 
 # Features
 
+- Add server connection error in login screen to error <div>, not to alert
 - Add notifications
 - Add new message sound
 - Links in text
 - Possibility to save login credentials (autologin on page refresh)
 - Add a "new conversation" button (modal, that creates a new conversation)
-- Add lazy loader to older messages and conversations list
+- Add lazy loader to login, older messages and conversations list
 - Add mobile responsivity (show left panel only by default)
 - Add number of new messages in conversations list
 - Add the last message preview to conversations list
