@@ -4,7 +4,6 @@
 
 # Features
 
-- Add "Select the conversation" label and Yellow logo in content when no conversation is selected
 - Add a login page (server / user / password)
 - Add a "new conversation" button
 - Add lazy loader to older messages and conversations list

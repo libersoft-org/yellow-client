@@ -1,6 +1,18 @@
 <script>
  import Photo from '../components/photo.svelte';
  export let selectedConversation;
+ export let onClose;
+
+ function clickClose() {
+  if (selectedConversation) onClose();
+ }
+
+ function keyClose() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickClose();
+  }
+ }
 </script>
 
 <style>
@@ -15,8 +27,21 @@
   box-shadow: var(--shadow);
  }
 
+ .description {
+  flex-grow: 1;
+ }
+
  .description .address {
   font-size: 12px;
+ }
+
+ .close {
+  padding: 10px;
+  cursor: pointer;
+ }
+ .close img {
+  width: 24px;
+  height: 24px;
  }
 </style>
 
@@ -26,4 +51,5 @@
   <div class="bold">{selectedConversation.visible_name}</div>
   <div class="address">{selectedConversation.address}</div>
  </div>
+ <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close.svg" alt="Close" /></div>
 </div>

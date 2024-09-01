@@ -2,6 +2,7 @@
  import { onMount, onDestroy } from 'svelte';
  import MenuBar from '../components/menu-bar.svelte';
  import ConversationList from '../components/conversations.svelte';
+ import Welcome from '../components/welcome.svelte';
  import ProfileBar from '../components/profile-bar.svelte';
  import Messages from '../components/messages.svelte';
  import MessageBar from '../components/message-bar.svelte';
@@ -166,9 +167,11 @@
  </div>
  <div class="content">
   {#if selectedConversation}
-   <ProfileBar {selectedConversation} />
+   <ProfileBar {selectedConversation} onClose={() => selectedConversation = null} />
    <Messages {messagesArray} {userAddress} />
    <MessageBar onSendMessage={sendMessage} />
+  {:else}
+   <Welcome />
   {/if}
  </div>
 </div>
