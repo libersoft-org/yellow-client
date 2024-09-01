@@ -1,5 +1,5 @@
 :root {
- --shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+ --shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -19,7 +19,7 @@ body {
  text-align: center;
  padding: 10px;
  border-radius: 10px;
- background-color: #FD1;
+ background-color: #fd1;
  font-weight: bold;
  cursor: pointer;
 }
