@@ -1,9 +1,12 @@
 # Bugs
 
+- New messages are not arriving (test in 2 browsers)
 - When waiting few seconds on login screen, it throws a websocket error for some reason
 
 # Features
 
+- Add notifications
+- Add new message sound
 - Add a "new conversation" button (modal, that creates a new conversation)
 - Add lazy loader to older messages and conversations list
 - Add mobile responsivity (show left panel only by default)
