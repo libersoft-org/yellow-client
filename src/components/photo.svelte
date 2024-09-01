@@ -18,5 +18,5 @@
 </style>
 
 <div class="photo">
- <img src="img/photo.svg" alt="Photo" />
+ <img src="img/photo.svg" alt="" />
 </div>

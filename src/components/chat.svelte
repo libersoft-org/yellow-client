@@ -18,8 +18,6 @@
   padding: 20px;
   flex-grow: 1;
   overflow-y: auto;
-  background: url('img/background.png') repeat;
-  background-size: 400px;
  }
 
  .message {

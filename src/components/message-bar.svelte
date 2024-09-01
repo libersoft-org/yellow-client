@@ -3,7 +3,7 @@
  let messageInput;
  let message = '';
  
- function sendMessage() {
+ function clickSend() {
   message = message.trim();
   if (message) {
    onSendMessage(message);
@@ -12,10 +12,17 @@
   }
  }
 
- function keyDown(event) {
+ function keySend() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickSend();
+  }
+ }
+
+ function keyEnter(event) {
   if (event.key === 'Enter' && !event.shiftKey) {
    event.preventDefault();
-   sendMessage();
+   clickSend();
   }
  }
 </script>
@@ -50,6 +57,6 @@
 </style>
 
 <div id="message-bar">
- <input class="message" type="text" placeholder="Enter your message ..." bind:this={messageInput} bind:value={message} on:keydown={keyDown} />
- <div class="icon" on:click={sendMessage}><img src="img/send.svg" alt="Send" /></div>
+ <input class="message" type="text" placeholder="Enter your message ..." bind:this={messageInput} bind:value={message} on:keydown={keyEnter} />
+ <div class="icon" role="button" tabindex="0" on:click={clickSend} on:keydown={keySend}><img src="img/send.svg" alt="Send" /></div>
 </div>

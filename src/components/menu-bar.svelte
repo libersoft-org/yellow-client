@@ -1,6 +1,13 @@
 <script>
  function menuClick() {
  }
+
+ function menuKey(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   menuClick();
+  }
+ }
 </script>
 
 <style>
@@ -29,6 +36,6 @@
 </style>
 
 <div id="bar">
- <div class="menu" on:click={menuClick}><img src="img/menu.svg" alt="☰" /></div>
+ <div class="menu" role="button" tabindex="0" on:click={menuClick} on:keydown={menuKey}><img src="img/menu.svg" alt="☰" /></div>
  <div class="logo">Yellow</div>
 </div>

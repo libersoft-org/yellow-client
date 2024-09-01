@@ -3,14 +3,40 @@
  export let conversations = [];
  export let onSelectConversation;
  
- function handleClick(conversation) {
+ function clickNew() {
+  // TODO: add modal window
+ }
+
+ function keyNew() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickItem();
+  }
+ }
+
+ function clickItem(conversation) {
   onSelectConversation(conversation);
+ }
+
+ function keyItem(conversation) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickItem();
+  }
  }
 </script>
 
 <style>
  #conversations {
   overflow-y: auto;
+ }
+
+ .new {
+  padding: 10px;
+  font-weight: bold;
+  background-color: #222;
+  color: #fff;
+  cursor: pointer;
  }
 
  .item {
@@ -26,10 +52,6 @@
   background-color: #fde990;
  }
 
- .item .description {
-
- }
-
  .item .description .name {
   font-weight: bold;
  }
@@ -40,9 +62,9 @@
 </style>
 
 <div id="conversations">
+ <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>+ New conversation</div>
  {#each conversations as c}
- <div class="item" on:click={() => handleClick(c)}>
-  
+ <div class="item" role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
   <Photo />
   <div class="description">
    <div class="name">{c.visible_name}</div>
