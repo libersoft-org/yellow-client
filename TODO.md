@@ -3,7 +3,7 @@
 # Features
 
 - Add "Select the conversation" label in content when no conversation is selected
-- Add lazy loader to older messages
+- Add lazy loader to older messages and conversations list
 - Add a "new conversation" button
 - Add a login page (server / user / password)
 - Add mobile responsivity (show left panel only by default)
