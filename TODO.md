@@ -21,3 +21,4 @@
 - Link previews (YouTube, OG etc.)
 - Voice / video messages
 - Animated stickers (lottie)
+- Reply / forwarded message
