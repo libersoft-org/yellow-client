@@ -1,5 +1,5 @@
 <script>
- import { onMount } from 'svelte';
+ import { onMount, onDestroy } from 'svelte';
  import MenuBar from '../components/menu-bar.svelte';
  import ConversationList from '../components/conversations.svelte';
  import ProfileBar from '../components/profile-bar.svelte';
@@ -21,7 +21,6 @@
    send('user_subscribe', { event: 'new_message' });
    send('user_list_conversations');
   };
-
   socket.onmessage = (event) => {
    const res = JSON.parse(event.data);
    //console.log('RESPONSE', res);
@@ -51,8 +50,19 @@
       break;
     }
    }
-  }
+  };
+  window.addEventListener('keydown', hotKeys);
  });
+
+ onDestroy(() => {
+  if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
+ }); 
+
+ function hotKeys(event) {
+  if (event.key === 'Escape' && selectedConversation) {
+   selectedConversation = null;
+  }
+ }
 
  function resListConversations(res) {
   if (res.error === 0 && res.data?.conversations) conversationsArray = res.data.conversations;
