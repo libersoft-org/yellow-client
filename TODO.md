@@ -1,13 +1,13 @@
 # Bugs
 
+- on message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
+
 # Features
 
-- Add "Select the conversation" label in content when no conversation is selected
-- Add lazy loader to older messages and conversations list
-- Add a "new conversation" button
+- Add "Select the conversation" label and Yellow logo in content when no conversation is selected
 - Add a login page (server / user / password)
+- Add a "new conversation" button
+- Add lazy loader to older messages and conversations list
 - Add mobile responsivity (show left panel only by default)
-- In +page.svelte check which response match with which sent command (so we don't need to use the big socket.onmessage function)
-- React to "new_message" event - add a new message to chat + reload conversations in left panel when event comes
-- Add the last message preview to conversation list
-- Add number of new messages
+- Add the last message preview to conversations list
+- Add number of new messages in conversations list

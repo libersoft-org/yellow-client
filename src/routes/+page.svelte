@@ -3,13 +3,13 @@
  import MenuBar from '../components/menu-bar.svelte';
  import ConversationList from '../components/conversations.svelte';
  import ProfileBar from '../components/profile-bar.svelte';
- import Chat from '../components/chat.svelte';
+ import Messages from '../components/messages.svelte';
  import MessageBar from '../components/message-bar.svelte';
  import "../app.css";
 
  const requests = [];
- let conversations = [];
- let messages = [];
+ let conversationsArray = [];
+ let messagesArray = [];
  let selectedConversation = null;
  let socket;
  const userAddress = 'user@example.com';
@@ -32,36 +32,61 @@
      if (req.command) {
       switch (req.command) {
        case 'user_list_conversations':
-        listConversations(res);
+        resListConversations(res);
         break;
        case 'user_list_messages':
-        listMessages(res);
+        resListMessages(res);
         break;
-      }
-      if (req.event) {
-       switch (req.event) {
-        case 'new_message':
-         addNewMessage(res);
-         break;
-       }
+       case 'user_send_message':
+        resSendMessage(res, req);
       }
      }
      delete requests[res.requestID];
     }
    }
+   if (res.event) {
+    switch (res.event) {
+     case 'new_message':
+      eventNewMessage(res);
+      break;
+    }
+   }
   }
  });
 
- function listConversations(res) {
-  if (res.error === 0 && res.data?.conversations) conversations = res.data.conversations;
+ function resListConversations(res) {
+  if (res.error === 0 && res.data?.conversations) conversationsArray = res.data.conversations;
  }
 
- function listMessages(res) {
-  if (res.error === 0 && res.data?.messages) messages = res.data.messages;
+ function resListMessages(res) {
+  if (res.error === 0 && res.data?.messages) messagesArray = res.data.messages;
  }
 
- function addNewMessage(res) {
-  console.log(res);
+ function resSendMessage(res, req) {
+  if (selectedConversation?.address === userAddress) return;
+  if (res.error !== 0) return;
+  if (req?.params?.address !== selectedConversation.address) return;
+  const msg = {
+   address_from: userAddress,
+   address_to: req.params.address,
+   message: req.params.message,
+   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
+  };
+  messagesArray = [msg, ...messagesArray];
+  send('user_list_conversations');
+ }
+
+ function eventNewMessage(res) {
+  if (!res.data) return;
+  if (res.data.from !== selectedConversation?.address) return;
+  const msg = {
+   address_from: res.data.from,
+   address_to: res.data.to,
+   message: res.data.message,
+   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
+  }
+  messagesArray = [msg, ...messagesArray];
+  send('user_list_conversations');
  }
 
  function selectConversation(conversation) {
@@ -127,12 +152,12 @@
 <div class="app">
  <div class="sidebar">
   <MenuBar />
-  <ConversationList {conversations} onSelectConversation={selectConversation} />
+  <ConversationList {conversationsArray} onSelectConversation={selectConversation} />
  </div>
  <div class="content">
   {#if selectedConversation}
    <ProfileBar {selectedConversation} />
-   <Chat {messages} {userAddress} />
+   <Messages {messagesArray} {userAddress} />
    <MessageBar onSendMessage={sendMessage} />
   {/if}
  </div>

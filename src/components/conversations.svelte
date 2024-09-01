@@ -1,6 +1,6 @@
 <script>
  import Photo from '../components/photo.svelte';
- export let conversations = [];
+ export let conversationsArray = [];
  export let onSelectConversation;
  
  function clickNew() {
@@ -63,7 +63,7 @@
 
 <div id="conversations">
  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>+ New conversation</div>
- {#each conversations as c}
+ {#each conversationsArray as c}
  <div class="item" role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
   <Photo />
   <div class="description">
