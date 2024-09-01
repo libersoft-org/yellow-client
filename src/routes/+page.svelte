@@ -1,5 +1,6 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
+ import Login from '../components/login.svelte';
  import MenuBar from '../components/menu-bar.svelte';
  import ConversationList from '../components/conversations.svelte';
  import Welcome from '../components/welcome.svelte';
@@ -9,19 +10,33 @@
  import "../app.css";
 
  const requests = [];
+ let loginError;
  let conversationsArray = [];
+ let socket;
+ let server;
+ let userAddress;
+ let sessionID;
  let messagesArray = [];
  let selectedConversation = null;
- let socket;
- const userAddress = 'user@example.com';
- const sessionID = '53ba3b0e-a834-421e-aba3-0851e13e7fa4';
+ let isLoggingIn = false;
 
  onMount(() => {
-  socket = new WebSocket('wss://amtp.mediasun.cz');
-  socket.onopen = () => {
-   send('user_subscribe', { event: 'new_message' });
-   send('user_list_conversations');
-  };
+  window.addEventListener('keydown', hotKeys);
+ });
+
+ onDestroy(() => {
+  if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
+ });
+
+ function login(credentials) {
+  isLoggingIn = true;
+  //console.log('LOGGING IN', credentials);
+  socket = new WebSocket(credentials.server);
+  socket.onopen = () => send('user_login', { address: credentials.address, password: credentials.password }, false);
+  socket.onerror = () => {
+   isLoggingIn = false;
+   alert('Error: Unable to connect to server. Please check the server address.');
+  }
   socket.onmessage = (event) => {
    const res = JSON.parse(event.data);
    //console.log('RESPONSE', res);
@@ -31,6 +46,8 @@
     if (req) {
      if (req.command) {
       switch (req.command) {
+       case 'user_login':
+        resLogin(res, req);
        case 'user_list_conversations':
         resListConversations(res);
         break;
@@ -52,17 +69,19 @@
     }
    }
   };
-  window.addEventListener('keydown', hotKeys);
- });
+ }
 
- onDestroy(() => {
-  if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
- }); 
-
- function hotKeys(event) {
-  if (event.key === 'Escape' && selectedConversation) {
-   selectedConversation = null;
+ function resLogin(res, req) {
+  if (res.error !== 0) {
+   loginError = res;
+   isLoggingIn = false;
+   return;
   }
+  userAddress = req.params.address;
+  sessionID = res.data.sessionID;
+  loginError = null;
+  send('user_subscribe', { event: 'new_message' });
+  send('user_list_conversations');
  }
 
  function resListConversations(res) {
@@ -130,6 +149,12 @@
   socket.send(JSON.stringify(req));
  }
 
+ function hotKeys(event) {
+  if (event.key === 'Escape' && selectedConversation) {
+   selectedConversation = null;
+  }
+ }
+
  function getRandomString(length = 40) {
   let result = '';
   while (result.length < length) result += Math.random().toString(36).substr(2);
@@ -161,6 +186,7 @@
 </style>
 
 <div class="app">
+ {#if userAddress}
  <div class="sidebar">
   <MenuBar />
   <ConversationList {conversationsArray} onSelectConversation={selectConversation} />
@@ -174,4 +200,7 @@
    <Welcome />
   {/if}
  </div>
+ {:else}
+  <Login onLogin={login} error={loginError} {isLoggingIn} />
+ {/if}
 </div>

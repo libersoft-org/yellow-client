@@ -24,6 +24,10 @@ body {
  cursor: pointer;
 }
 
+.button.disabled {
+ background-color: #999;
+}
+
 .bold {
  font-weight: bold;
 }
