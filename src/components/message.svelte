@@ -1,6 +1,11 @@
 <script>
  export let message;
  export let isOutgoing;
+
+ function linkify(text) {
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+ }
 </script>
 
 <style>
@@ -26,6 +31,12 @@
   padding-bottom: 10px;
  }
 
+ :global(.message .text a) {
+  font-weight: bold;
+  text-decoration: none;
+  color: #a60;
+}
+
  .message .time {
   font-size: 12px;
   text-align: right;
@@ -34,6 +45,6 @@
 
 <div class="message {isOutgoing ? 'outgoing' : 'incoming'}">
  <div class="bold">{message.address_from}</div>
- <div class="text">{message.message}</div>
+ <div class="text">{@html linkify(message.message)}</div>
  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
 </div>
