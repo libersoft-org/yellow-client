@@ -130,23 +130,17 @@
  }
 
  function showNotification(msg) {
+  if (Notification.permission !== 'granted') return;
   const conversation = conversationsArray.find(c => c.address === msg.address_from);
-  console.log(conversation);
-  if (Notification.permission === 'granted') {
-   const notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
-    body: msg.message,
-    icon: 'img/background.png',
-    silent: true
-   });
-   notification.onclick = () => {
-    window.focus();
-    selectConversation({ address: msg.address_from, visible_name: conversation.visible_name });
-   };
-  } else if (Notification.permission !== 'denied') {
-   Notification.requestPermission().then(permission => {
-    if (permission === 'granted') showNotification(msg);
-   });
-  }
+  const notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
+   body: msg.message,
+   icon: 'img/background.png',
+   silent: true
+  });
+  notification.onclick = () => {
+   window.focus();
+   selectConversation({ address: msg.address_from, visible_name: conversation.visible_name });
+  };
  }
 
  function playNotificationSound() {
