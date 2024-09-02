@@ -146,8 +146,7 @@
  function playNotificationSound() {
   const audio = new Audio('audio/message.mp3');
   audio.play();
-}
-
+ }
 
  function selectConversation(conversation) {
   selectedConversation = conversation;
