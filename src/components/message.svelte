@@ -40,7 +40,11 @@
   font-weight: bold;
   text-decoration: none;
   color: #a60;
-}
+ }
+
+ :global(.message .text img) {
+  max-width: 100%;
+ }
 
  .message .time {
   font-size: 12px;
@@ -49,7 +53,6 @@
 </style>
 
 <div class="message {isOutgoing ? 'outgoing' : 'incoming'}">
- <div class="bold">{message.address_from}</div>
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
 </div>
