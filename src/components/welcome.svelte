@@ -1,10 +1,17 @@
 <script>
  let notificationPermission = Notification.permission;
 
- function requestNotificationPermission() {
+ function clickRequestNotificationPermission() {
   Notification.requestPermission().then(permission => {
    notificationPermission = permission;
   });
+ }
+
+ function keyRequestNotificationPermission() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   requestNotificationPermission();
+  }
  }
 </script>
 
@@ -47,7 +54,7 @@
   <div class="warning">
    <div class="bold">ATTENTION:</div>
    <div>Notifications are not enabled.</div>
-   <div class="button" on:click={requestNotificationPermission}>Enable notifications</div>
+   <div class="button" role="button" tabindex="0" on:click={clickRequestNotificationPermission} on:keydown={keyRequestNotificationPermission}>Enable notifications</div>
   </div>
  {/if}
 </div>
