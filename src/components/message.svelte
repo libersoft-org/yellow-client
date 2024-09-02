@@ -2,6 +2,11 @@
  export let message;
  export let isOutgoing;
 
+ function processMessage(content) {
+  const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
+  return containsHtml ? content : linkify(content);
+ }
+
  function linkify(text) {
   const urlPattern = /(https?:\/\/[^\s]+)/g;
   return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
@@ -45,6 +50,6 @@
 
 <div class="message {isOutgoing ? 'outgoing' : 'incoming'}">
  <div class="bold">{message.address_from}</div>
- <div class="text">{@html linkify(message.message)}</div>
+ <div class="text">{@html processMessage(message.message)}</div>
  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
 </div>
