@@ -1,11 +1,10 @@
 # Bugs
 
-- New messages are not arriving (test in 2 browsers)
+- New messages are not arriving when new_message event arrives (test in 2 browsers)
 - When waiting few seconds on login screen, it throws a websocket error for some reason
 
 # Features
 
-- Add server connection error in login screen to error <div>, not to alert
 - Add notifications
 - Add new message sound
 - Possibility to save login credentials (autologin on page refresh)

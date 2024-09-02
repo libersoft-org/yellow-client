@@ -12,7 +12,6 @@
  });
 
  function clickLogin() {
-console.log(isLoggingIn);
   if (!isLoggingIn) {
    error = null;
    onLogin({ server, address, password });

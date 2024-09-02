@@ -20,10 +20,7 @@
  let selectedConversation = null;
  let isLoggingIn = false;
 
- onMount(() => {
-  window.addEventListener('keydown', hotKeys);
- });
-
+ onMount(() => window.addEventListener('keydown', hotKeys));
  onDestroy(() => {
   if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
  });
@@ -33,10 +30,14 @@
   //console.log('LOGGING IN', credentials);
   socket = new WebSocket(credentials.server);
   socket.onopen = () => send('user_login', { address: credentials.address, password: credentials.password }, false);
-  socket.onerror = () => {
+  socket.onerror = (event) => {
+   console.log(event);
    isLoggingIn = false;
-   alert('Error: Unable to connect to server. Please check the server address.');
+   const error = 'Unable to connect to server. Please check the server address.';
+   if (!userAddress) loginError = { message: error };
+   else alert('Error: ' + error);
   }
+  socket.onclose = () => alert('Lost connection with server.');
   socket.onmessage = (event) => {
    const res = JSON.parse(event.data);
    //console.log('RESPONSE', res);
