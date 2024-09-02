@@ -3,6 +3,8 @@
 node_modules/
 build/
 bun.lockb
+*.crt
+*.key
 .secret_git
 .output
 .vercel

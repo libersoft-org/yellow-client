@@ -19,25 +19,31 @@
  let messagesArray = [];
  let selectedConversation = null;
  let isLoggingIn = false;
+ let isClientFocused = true;
 
- onMount(() => window.addEventListener('keydown', hotKeys));
+ onMount(() => {
+  window.addEventListener('keydown', hotKeys);
+  window.addEventListener('focus', () => isClientFocused = true);
+  window.addEventListener('blur', () => isClientFocused = false);
+ });
+
  onDestroy(() => {
   if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
  });
 
  function login(credentials) {
   isLoggingIn = true;
-  //console.log('LOGGING IN', credentials);
   socket = new WebSocket(credentials.server);
   socket.onopen = () => send('user_login', { address: credentials.address, password: credentials.password }, false);
   socket.onerror = (event) => {
-   console.log(event);
    isLoggingIn = false;
    const error = 'Unable to connect to server. Please check the server address.';
    if (!userAddress) loginError = { message: error };
    else alert('Error: ' + error);
   }
-  socket.onclose = () => alert('Lost connection with server.');
+  socket.onclose = () => {
+   if (userAddress) alert('Lost connection with server.');
+  }
   socket.onmessage = (event) => {
    const res = JSON.parse(event.data);
    //console.log('RESPONSE', res);
@@ -109,16 +115,45 @@
 
  function eventNewMessage(res) {
   if (!res.data) return;
-  if (res.data.from !== selectedConversation?.address) return;
+  send('user_list_conversations');
   const msg = {
    address_from: res.data.from,
    address_to: res.data.to,
    message: res.data.message,
    created: new Date().toISOString().replace('T', ' ').replace('Z', '')
   }
-  messagesArray = [msg, ...messagesArray];
-  send('user_list_conversations');
+  if (msg.address_from === selectedConversation?.address) messagesArray = [msg, ...messagesArray];
+  if (msg.address_from !== selectedConversation?.address || !isClientFocused) {
+   showNotification(msg);
+   playNotificationSound();
+  }
  }
+
+ function showNotification(msg) {
+  const conversation = conversationsArray.find(c => c.address === msg.address_from);
+  console.log(conversation);
+  if (Notification.permission === 'granted') {
+   const notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
+    body: msg.message,
+    icon: 'img/background.png',
+    silent: true
+   });
+   notification.onclick = () => {
+    window.focus();
+    selectConversation({ address: msg.address_from, visible_name: conversation.visible_name });
+   };
+  } else if (Notification.permission !== 'denied') {
+   Notification.requestPermission().then(permission => {
+    if (permission === 'granted') showNotification(msg);
+   });
+  }
+ }
+
+ function playNotificationSound() {
+  const audio = new Audio('audio/message.mp3');
+  audio.play();
+}
+
 
  function selectConversation(conversation) {
   selectedConversation = conversation;

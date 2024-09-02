@@ -104,21 +104,21 @@
 <div class="background">
  <div class="login">
   <div class="logo">
-   <img src="favicon.svg" alt="Yellow" />
+   <img src="img/logo.svg" alt="Yellow" />
    <div class="text">Yellow</div>
   </div>
   <div class="form">
    <div class="group">
     <div class="label">Server:</div>
-    <input type="server" placeholder="wss://your_server/" bind:value={server} />
+    <input type="server" placeholder="wss://your_server/" bind:value={server} on:keydown={keyLogin} />
    </div>
    <div class="group">
     <div class="label">Address:</div>
-    <input type="address" placeholder="user@domain.tld" bind:value={address} />
+    <input type="address" placeholder="user@domain.tld" bind:value={address} on:keydown={keyLogin} />
    </div>
    <div class="group">
     <div class="label">Password:</div>
-    <input type="password" placeholder="Password" bind:value={password} />
+    <input type="password" placeholder="Password" bind:value={password} on:keydown={keyLogin} />
    </div>
    {#if error}
     <div class="error">
