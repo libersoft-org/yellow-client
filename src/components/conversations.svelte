@@ -4,6 +4,7 @@
  import ModalConversationNew from '../components/modal-conversation-new.svelte';
  export let conversationsArray = [];
  export let onSelectConversation;
+ let selectedConversationAddress = null;
  let isModalOpen = false;
  let modalComponent = null;
 
@@ -20,13 +21,15 @@
  }
 
  function clickItem(conversation) {
+  console.log(conversation);
+  selectedConversationAddress = conversation.address;
   onSelectConversation(conversation);
  }
 
  function keyItem(conversation) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   clickItem();
+   clickItem(conversation);
   }
  }
 </script>
@@ -65,6 +68,10 @@
   background-color: #fde990;
  }
 
+ .item.active {
+  background-color: #fd5;
+ }
+
  .item .description .name {
   font-weight: bold;
  }
@@ -80,7 +87,7 @@
   <div>New conversation</div>
  </div>
  {#each conversationsArray as c}
- <div class="item" role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
+ <div class="item" class:active={c.address === selectedConversationAddress} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
   <Photo />
   <div class="description">
    <div class="name">{c.visible_name}</div>
