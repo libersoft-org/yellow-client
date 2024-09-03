@@ -38,7 +38,7 @@
 
  .new {
   display: flex;
-  //align-items: center;
+  align-items: center;
   gap: 10px;
   padding: 10px;
   font-weight: bold;
@@ -76,7 +76,7 @@
 
 <div id="conversations">
  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
-  <div><img src="img/add.svg" alt="New conversation"></div>
+  <img src="img/add.svg" alt="New conversation">
   <div>New conversation</div>
  </div>
  {#each conversationsArray as c}
