@@ -1,4 +1,6 @@
 <script>
+ export let product;
+ export let version;
  let notificationPermission = Notification.permission;
 
  function clickRequestNotificationPermission() {
@@ -30,9 +32,15 @@
   max-width: 80%;
  }
 
- .text {
+ .product {
   font-size: 40px;
   font-weight: bold;
+ }
+
+ .version {
+  display: flex;
+  gap: 5px;
+  font-size: 16px;
  }
 
  .warning {
@@ -49,7 +57,11 @@
 
 <div id="welcome">
  <img src="img/logo.svg" alt="Yellow" />
- <div class="text">Yellow</div>
+ <div class="product">{product}</div>
+ <div class="version">
+  <div>Version:</div>
+  <div class="bold">{version}</div>
+ </div>
  {#if notificationPermission !== 'granted'}
   <div class="warning">
    <div class="bold">ATTENTION:</div>

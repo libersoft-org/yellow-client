@@ -2,6 +2,7 @@
  import { onMount, onDestroy } from 'svelte';
  import Login from '../components/login.svelte';
  import MenuBar from '../components/menu-bar.svelte';
+ import Menu from '../components/menu.svelte';
  import ConversationList from '../components/conversations.svelte';
  import Welcome from '../components/welcome.svelte';
  import ProfileBar from '../components/profile-bar.svelte';
@@ -10,6 +11,8 @@
  import "../app.css";
 
  const requests = [];
+ let product = 'Yellow';
+ let version = '0.01';
  let loginError;
  let conversationsArray = [];
  let socket;
@@ -20,8 +23,10 @@
  let selectedConversation = null;
  let isLoggingIn = false;
  let isClientFocused = true;
+ let isMenuOpen = false;
 
  onMount(() => {
+  server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
   window.addEventListener('keydown', hotKeys);
   window.addEventListener('focus', () => isClientFocused = true);
   window.addEventListener('blur', () => isClientFocused = false);
@@ -30,6 +35,14 @@
  onDestroy(() => {
   if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
  });
+
+ function toggleMenu() {
+  isMenuOpen = !isMenuOpen;
+ }
+
+ function closeMenu() {
+  isMenuOpen = false;
+ }
 
  function login(credentials) {
   isLoggingIn = true;
@@ -217,7 +230,8 @@
 <div class="app">
  {#if userAddress}
  <div class="sidebar">
-  <MenuBar />
+  <MenuBar {toggleMenu} />
+  <Menu {isMenuOpen} {product} {version} onClose={closeMenu} />
   <ConversationList {conversationsArray} onSelectConversation={selectConversation} />
  </div>
  <div class="content">
@@ -226,10 +240,10 @@
    <Messages {messagesArray} {userAddress} />
    <MessageBar onSendMessage={sendMessage} />
   {:else}
-   <Welcome />
+   <Welcome {product} {version} />
   {/if}
  </div>
  {:else}
-  <Login onLogin={login} error={loginError} {isLoggingIn} />
+  <Login onLogin={login} error={loginError} {isLoggingIn} {server} {product} {version} />
  {/if}
 </div>

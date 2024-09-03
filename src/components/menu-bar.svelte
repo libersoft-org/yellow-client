@@ -1,5 +1,8 @@
 <script>
+ export let toggleMenu;
+
  function menuClick() {
+  toggleMenu();
  }
 
  function menuKey(event) {
@@ -11,11 +14,11 @@
 </script>
 
 <style>
- #bar {
+ .bar {
   display: flex;
   align-items: center;
-  height: 72px;
-  background-color: #FD1;
+  height: var(--menu-height);
+  background-color: #fd1;
   color: #222;
  }
 
@@ -28,14 +31,8 @@
   width: 30px;
   height: 30px;
  }
-
- .logo {
-  font-size: 25px;
-  font-weight: bold;
- }
 </style>
 
-<div id="bar">
+<div class="bar">
  <div class="menu" role="button" tabindex="0" on:click={menuClick} on:keydown={menuKey}><img src="img/menu.svg" alt="☰" /></div>
- <div class="logo">Yellow</div>
 </div>

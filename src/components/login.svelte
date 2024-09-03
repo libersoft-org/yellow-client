@@ -1,15 +1,12 @@
 <script>
- import { onMount } from 'svelte';
  export let onLogin;
  export let error;
  export let isLoggingIn;
- let server;
+ export let product;
+ export let version;
+ export let server;
  let address;
  let password;
-
- onMount(() => {
-  server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
- });
 
  function clickLogin() {
   if (!isLoggingIn) {
@@ -19,7 +16,7 @@
  }
 
  function keyLogin() {
-  if (event.key === 'Enter' || event.key === ' ') {
+  if (event.key === 'Enter') {
    event.preventDefault();
    clickLogin();
   }
@@ -58,12 +55,18 @@
   gap: 10px;
  }
 
+ .login .version {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+ }
+
  .login .logo img {
   width: 50px;
   height: 50px;
  }
 
- .login .logo .text {
+ .login .logo .product {
   font-size: 30px;
   font-weight: bold;
  }
@@ -104,8 +107,12 @@
 <div class="background">
  <div class="login">
   <div class="logo">
-   <img src="img/logo.svg" alt="Yellow" />
-   <div class="text">Yellow</div>
+   <img src="img/logo.svg" alt="{product}" />
+   <div class="product">{product}</div>
+  </div>
+  <div class="version">
+   <div>Version:</div>
+   <div class="bold">{version}</div>
   </div>
   <div class="form">
    <div class="group">

@@ -16,11 +16,12 @@
 </script>
 
 <style>
- #profile-bar {
+ .profile-bar {
   z-index: 100;
   display: flex;
   align-items: center;
   gap: 10px;
+  min-height: calc(var(--menu-height) - 20px);
   padding: 10px;
   background-color: #222;
   color: #fff;
@@ -39,13 +40,14 @@
   padding: 10px;
   cursor: pointer;
  }
+
  .close img {
   width: 24px;
   height: 24px;
  }
 </style>
 
-<div id="profile-bar">
+<div class="profile-bar">
  <Photo />
  <div class="description">
   <div class="bold">{selectedConversation.visible_name}</div>

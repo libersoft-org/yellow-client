@@ -2,9 +2,10 @@
 
 # Features
 
-- Add menu with Logout button and version number on bottom
-- Possibility to save login credentials (autologin on page refresh)
+- In app.html set {product} instead of Yellow
+- Add Logout functionality in menu button
 - Add lazy loader to login button, messages and conversations list
+- Possibility to save login credentials (autologin on page refresh)
 - Add a "new conversation" button (modal, that creates a new conversation)
 - Add mobile responsivity (show left panel only by default)
 - Add number of new messages in conversations list
