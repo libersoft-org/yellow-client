@@ -56,7 +56,7 @@
 </style>
 
 <div id="welcome">
- <img src="img/logo.svg" alt="Yellow" />
+ <img src="img/logo.svg" alt="{product}" />
  <div class="product">{product}</div>
  <div class="version">
   <div>Version:</div>
