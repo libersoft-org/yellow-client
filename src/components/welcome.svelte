@@ -35,7 +35,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 30px;
+  gap: 5px;
   height: 100vh;
  }
 
@@ -57,7 +57,7 @@
   font-weight: bold;
  }
 
- .welcome .logo .version {
+ .welcome .version {
   display: flex;
   gap: 5px;
   font-size: 16px;
@@ -69,6 +69,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px;
+  margin: 10px;
   background-color: #fec;
   border-radius: 10px;
   border: 1px solid #da8
@@ -79,10 +80,10 @@
  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
   <img src="img/logo.svg" alt="{product}" />
   <div class="product">{product}</div>
-  <div class="version">
-   <div>Version:</div>
-   <div class="bold">{version}</div>
-  </div>
+ </div>
+ <div class="version">
+  <div>Version:</div>
+  <div class="bold">{version}</div>
  </div>
  {#if notificationPermission !== 'granted'}
   <div class="warning">
