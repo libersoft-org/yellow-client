@@ -2,9 +2,9 @@
 
 # Features
 
-- Add lazy loader to conversations list and messages
 - Possibility to save login credentials (autologin on page refresh)
 - Add a "new conversation" button (modal, that creates a new conversation)
+- Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add mobile responsivity (show left panel only by default)
 - Add number of new messages in conversations list
 - Add the last message preview to conversations list
