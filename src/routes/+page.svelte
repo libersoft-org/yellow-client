@@ -104,6 +104,16 @@
   send('user_list_conversations');
  }
 
+ function logout() {
+  if (socket) socket.close();
+  userAddress = null;
+  sessionID = null;
+  selectedConversation = null;
+  messagesArray = [];
+  isMenuOpen = false;
+  isLoggingIn = false;
+ }
+
  function resListConversations(res) {
   if (res.error === 0 && res.data?.conversations) conversationsArray = res.data.conversations;
  }
@@ -235,7 +245,7 @@
  {#if userAddress}
  <div class="sidebar">
   <MenuBar {toggleMenu} />
-  <Menu {isMenuOpen} {product} {version} onClose={closeMenu} />
+  <Menu {isMenuOpen} {product} {version} onMenuClose={closeMenu} onLogout={logout} />
   <ConversationList {conversationsArray} onSelectConversation={selectConversation} />
  </div>
  <div class="content">

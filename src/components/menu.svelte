@@ -2,13 +2,12 @@
  export let isMenuOpen = false;
  export let product;
  export let version;
- export let onClose;
-
- $: console.log('Menu isMenuOpen status:', isMenuOpen);
+ export let onMenuClose;
+ export let onLogout;
 
  function logoutClick() {
-  alert('Logout');
-  onClose();
+  onLogout();
+  onMenuClose();
  }
 
  function logoutKey(event) {
