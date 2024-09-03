@@ -4,10 +4,22 @@
  export let isLoggingIn;
  export let product;
  export let version;
+ export let link;
  export let server;
  let address;
  let password;
  let stayLoggedIn = false;
+
+ function clickLogo() {
+  window.open(link, '_blank');
+ }
+
+ function keyLogo() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickLogo();
+  }
+ }
 
  function clickLogin() {
   if (!isLoggingIn) {
@@ -54,6 +66,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  cursor: pointer;
  }
 
  .login .version {
@@ -113,7 +126,7 @@
 
 <div class="background">
  <div class="login">
-  <div class="logo">
+  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
    <img src="img/logo.svg" alt="{product}" />
    <div class="product">{product}</div>
   </div>

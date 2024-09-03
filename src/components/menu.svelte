@@ -2,8 +2,20 @@
  export let isMenuOpen = false;
  export let product;
  export let version;
+ export let link;
  export let onMenuClose;
  export let onLogout;
+
+ function clickLogo() {
+  window.open(link, '_blank');
+ }
+
+ function keyLogo() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickLogo();
+  }
+ }
 
  function logoutClick() {
   onLogout();
@@ -68,9 +80,19 @@
   border-top: 1px solid #444;
  }
 
- .footer .product {
+ .footer .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   font-size: 18px;
   font-weight: bold;
+  cursor: pointer;
+ }
+
+ .footer .logo img {
+  width: 20px;
+  height: 20px;
  }
 
  .footer .version {
@@ -89,7 +111,10 @@
   </div>
  </div>
  <div class="footer">
-  <div class="product">{product}</div>
+  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
+   <div><img src="img/logo.svg" alt="{product}"></div>
+   <div>{product}</div>
+  </div>
   <div class="version">
    <div>Version:</div>
    <div class="bold">{version}</div>

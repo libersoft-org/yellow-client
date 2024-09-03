@@ -13,6 +13,7 @@
  const requests = [];
  let product = 'Yellow';
  let version = '0.01';
+ let link = 'https://yellow.libersoft.org';
  let loginError;
  let conversationsArray = [];
  let socket;
@@ -252,7 +253,7 @@
  {#if userAddress}
  <div class="sidebar">
   <MenuBar {toggleMenu} />
-  <Menu {isMenuOpen} {product} {version} onMenuClose={closeMenu} onLogout={logout} />
+  <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} onLogout={logout} />
   <ConversationList {conversationsArray} onSelectConversation={selectConversation} />
  </div>
  <div class="content">
@@ -261,10 +262,10 @@
    <Messages {messagesArray} {userAddress} />
    <MessageBar onSendMessage={sendMessage} />
   {:else}
-   <Welcome {product} {version} />
+   <Welcome {product} {version} {link} />
   {/if}
  </div>
  {:else}
-  <Login onLogin={login} error={loginError} {isLoggingIn} {server} {product} {version} />
+  <Login onLogin={login} error={loginError} {isLoggingIn} {server} {product} {version} {link} />
  {/if}
 </div>

@@ -1,7 +1,19 @@
 <script>
  export let product;
  export let version;
+ export let link;
  let notificationPermission = Notification.permission;
+
+ function clickLogo() {
+  window.open(link, '_blank');
+ }
+
+ function keyLogo() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickLogo();
+  }
+ }
 
  function clickRequestNotificationPermission() {
   Notification.requestPermission().then(permission => {
@@ -18,32 +30,40 @@
 </script>
 
 <style>
- #welcome {
+ .welcome {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 30px;
   height: 100vh;
  }
 
- img {
+ .welcome .logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+ }
+
+ .welcome .logo img {
   width: 200px;
   max-width: 80%;
  }
 
- .product {
+ .welcome .logo .product {
   font-size: 40px;
   font-weight: bold;
  }
 
- .version {
+ .welcome .logo .version {
   display: flex;
   gap: 5px;
   font-size: 16px;
  }
 
- .warning {
+ .welcome .warning {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,12 +75,14 @@
  }
 </style>
 
-<div id="welcome">
- <img src="img/logo.svg" alt="{product}" />
- <div class="product">{product}</div>
- <div class="version">
-  <div>Version:</div>
-  <div class="bold">{version}</div>
+<div class="welcome">
+ <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
+  <img src="img/logo.svg" alt="{product}" />
+  <div class="product">{product}</div>
+  <div class="version">
+   <div>Version:</div>
+   <div class="bold">{version}</div>
+  </div>
  </div>
  {#if notificationPermission !== 'granted'}
   <div class="warning">

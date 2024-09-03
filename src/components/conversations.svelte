@@ -1,16 +1,21 @@
 <script>
  import Photo from '../components/photo.svelte';
+ import Modal from '../components/modal.svelte';
+ import ModalConversationNew from '../components/modal-conversation-new.svelte';
  export let conversationsArray = [];
  export let onSelectConversation;
- 
+ let isModalOpen = false;
+ let modalComponent = null;
+
  function clickNew() {
-  // TODO: add modal window
+  modalComponent = ModalConversationNew;
+  isModalOpen = true;
  }
 
  function keyNew() {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   clickItem();
+   clickNew();
   }
  }
 
@@ -32,11 +37,19 @@
  }
 
  .new {
+  display: flex;
+  //align-items: center;
+  gap: 10px;
   padding: 10px;
   font-weight: bold;
   background-color: #222;
   color: #fff;
   cursor: pointer;
+ }
+
+ .new img {
+  width: 20px;
+  height: 20px;
  }
 
  .item {
@@ -62,7 +75,10 @@
 </style>
 
 <div id="conversations">
- <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>+ New conversation</div>
+ <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
+  <div><img src="img/add.svg" alt="New conversation"></div>
+  <div>New conversation</div>
+ </div>
  {#each conversationsArray as c}
  <div class="item" role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
   <Photo />
@@ -74,3 +90,8 @@
  </div>
  {/each}
 </div>
+{#if isModalOpen}
+<Modal title="New Conversation">
+ <svelte:component this={modalComponent}/>
+</Modal>
+{/if}
