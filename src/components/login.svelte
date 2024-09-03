@@ -133,7 +133,13 @@
      <div>{error.message}</div>
     </div>
    {/if}
-   <div class="button{isLoggingIn ? ' disabled' : ''}" role="button" tabindex="0" on:click={clickLogin} on:keydown={keyLogin}>{isLoggingIn ? 'Logging in ...' : 'Login'}</div>
+   <div class="button{isLoggingIn ? ' disabled' : ''}" role="button" tabindex="0" on:click={clickLogin} on:keydown={keyLogin}>
+    {#if isLoggingIn}
+    <div class="loader"></div>
+   {:else}
+    Login
+   {/if}
+   </div>
   </div>
  </div>
 </div>
