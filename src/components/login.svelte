@@ -7,11 +7,12 @@
  export let server;
  let address;
  let password;
+ let stayLoggedIn = false;
 
  function clickLogin() {
   if (!isLoggingIn) {
    error = null;
-   onLogin({ server, address, password });
+   onLogin({ server, address, password, stayLoggedIn });
   }
  }
 
@@ -95,6 +96,12 @@
   border-radius: 10px;
  }
 
+ .login .form .group-h {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+ }
+
  .login .form .error {
   display: flex;
   gap: 5px;
@@ -126,6 +133,13 @@
    <div class="group">
     <div class="label">Password:</div>
     <input type="password" placeholder="Password" bind:value={password} on:keydown={keyLogin} />
+   </div>
+   <div class="group-h">
+    <label class="switch">
+     <input type="checkbox" bind:checked={stayLoggedIn}>
+     <span class="slider"></span>
+    </label>
+    <div class="bold">Stay logged in</div>
    </div>
    {#if error}
     <div class="error">

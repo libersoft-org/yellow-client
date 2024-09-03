@@ -30,6 +30,11 @@
   window.addEventListener('keydown', hotKeys);
   window.addEventListener('focus', () => isClientFocused = true);
   window.addEventListener('blur', () => isClientFocused = false);
+  let storedLogin = localStorage.getItem('login');
+  if (storedLogin) {
+   storedLogin = JSON.parse(storedLogin);
+   login(storedLogin);
+  }
  });
 
  onDestroy(() => {
@@ -67,7 +72,7 @@
      if (req.command) {
       switch (req.command) {
        case 'user_login':
-        resLogin(res, req);
+        resLogin(res, req, credentials);
        case 'user_list_conversations':
         resListConversations(res);
         break;
@@ -91,7 +96,7 @@
   };
  }
 
- function resLogin(res, req) {
+ function resLogin(res, req, credentials) {
   if (res.error !== 0) {
    loginError = res;
    isLoggingIn = false;
@@ -100,6 +105,7 @@
   userAddress = req.params.address;
   sessionID = res.data.sessionID;
   loginError = null;
+  if (credentials.stayLoggedIn) localStorage.setItem('login', JSON.stringify(credentials));
   send('user_subscribe', { event: 'new_message' });
   send('user_list_conversations');
  }
@@ -112,6 +118,7 @@
   messagesArray = [];
   isMenuOpen = false;
   isLoggingIn = false;
+  localStorage.removeItem('login');
  }
 
  function resListConversations(res) {
