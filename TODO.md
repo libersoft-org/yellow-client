@@ -2,7 +2,6 @@
 
 # Features
 
-- In app.html set {product} instead of Yellow
 - Add Logout functionality in menu button
 - Add lazy loader to login button, messages and conversations list
 - Possibility to save login credentials (autologin on page refresh)

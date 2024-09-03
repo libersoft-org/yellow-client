@@ -227,6 +227,10 @@
  }
 </style>
 
+<svelte:head>
+ <title>{product}</title>
+</svelte:head>
+
 <div class="app">
  {#if userAddress}
  <div class="sidebar">
