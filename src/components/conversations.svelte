@@ -4,6 +4,7 @@
  import ModalConversationNew from '../components/modal-conversation-new.svelte';
  export let conversationsArray = [];
  export let onSelectConversation;
+ export let openNewConversation;
  let selectedConversationAddress = null;
  let isModalOpen = false;
  let modalComponent = null;
@@ -98,7 +99,7 @@
  {/each}
 </div>
 {#if isModalOpen}
-<Modal title="New Conversation">
- <svelte:component this={modalComponent}/>
+<Modal title="New Conversation" onClose={() => isModalOpen = false}>
+ <ModalConversationNew {openNewConversation} onClose={() => isModalOpen = false} />
 </Modal>
 {/if}

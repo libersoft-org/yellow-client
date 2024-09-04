@@ -5,7 +5,6 @@
 
 # Features
 
-- Add a functionality to "New conversation" button (modal, with input box - on submit open new conversation)
 - Close menu on clicking outside of it
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add mobile responsivity (show left panel only by default)
@@ -14,6 +13,7 @@
 - Add multi-line messages
 - On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
 - Auto reconnect in few seconds when connection is lost
+- When starting a new conversation, load visible_name if available
 - File / image send
 - Animated stickers (lottie)
 - GIFs

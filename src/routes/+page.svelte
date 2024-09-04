@@ -179,8 +179,13 @@
   audio.play();
  }
 
+ function openNewConversation(address) {
+  selectConversation({ address });
+ }
+
  function selectConversation(conversation) {
   selectedConversation = conversation;
+  messagesArray = [];
   send('user_list_messages', {
    address: conversation.address,
    count: 100,
@@ -254,7 +259,7 @@
  <div class="sidebar">
   <MenuBar {toggleMenu} />
   <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} onLogout={logout} />
-  <ConversationList {conversationsArray} onSelectConversation={selectConversation} />
+  <ConversationList {openNewConversation} {conversationsArray} onSelectConversation={selectConversation} />
  </div>
  <div class="content">
   {#if selectedConversation}

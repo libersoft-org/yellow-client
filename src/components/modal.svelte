@@ -1,9 +1,10 @@
 <script>
  export let title;
  export let body;
+ export let onClose;
 
  function clickClose() {
-  //TODO
+  if (onClose) onClose();
  }
 
  function keyClose() {
@@ -51,7 +52,7 @@
   height: 20px;
  }
 
- .modal .body {
+.modal .body {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -67,5 +68,7 @@
   <div class="title">{title}</div>
   <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close-black.svg" alt="X" /></div>
  </div>
- <div class="body">{body}</div>
+ <div class="body">
+  <slot></slot>
+ </div>
 </div>
