@@ -1,6 +1,5 @@
 <script>
  export let title;
- export let body;
  export let onClose;
 
  function clickClose() {
