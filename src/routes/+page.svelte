@@ -165,7 +165,7 @@
   const conversation = conversationsArray.find(c => c.address === msg.address_from);
   const notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
    body: msg.message,
-   icon: 'img/background.png',
+   icon: 'img/photo.svg',
    silent: true
   });
   notification.onclick = () => {
@@ -245,7 +245,7 @@
   flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
-  background: url('img/background.png') repeat;
+  background: url('img/background.webp') repeat;
   background-size: 400px;
  }
 </style>

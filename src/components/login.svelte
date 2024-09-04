@@ -44,7 +44,7 @@
   justify-content: center;
   width: 100%;
   height: 100vh;
-  background: url('img/background.png') repeat;
+  background: url('img/background.webp') repeat;
   background-size: 400px;
  }
 
