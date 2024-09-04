@@ -11,6 +11,6 @@ export default defineConfig({
    cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
   },
   host: 'localhost',
-  port: 3000,
+  port: 3000
  }
 });

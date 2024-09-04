@@ -36,8 +36,7 @@ bun i
 If you'd like to **build this software from source codes, use this command:
 
 ```sh
-[ -d "./build/" ] && rm -r build
-bun --bun run build
+./build.sh
 ```
 
 ... and then move the content of your "**build**" folder to your web server.
@@ -51,13 +50,7 @@ openssl req -x509 -newkey rsa:2048 -nodes -days $(expr '(' $(date -d 2999/01/01 
 ... then use this command to start the server in development mode:
 
 ```sh
-bun --bun run dev -- --host
-```
-
-If this command throws an error, then run it using npm:
-
-```sh
-npm run dev -- --host
+./run.dev.sh
 ```
 
 ... and then navigate to: https://YOUR_SERVER_ADDRESS:3000/ in your browser. Browser will show the certificate error, just skip it.
