@@ -17,7 +17,6 @@
 
 <style>
  .profile-bar {
-  z-index: 100;
   display: flex;
   align-items: center;
   gap: 10px;

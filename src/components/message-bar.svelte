@@ -38,7 +38,6 @@
 
 <style>
  .message-bar {
-  z-index: 100;
   display: flex;
   align-items: end;
   gap: 10px;
