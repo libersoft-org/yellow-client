@@ -6,6 +6,13 @@
  export let onMenuClose;
  export let onLogout;
 
+ function keyMenuClose() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   onMenuClose();
+  }
+ }
+
  function clickLogo() {
   window.open(link, '_blank');
  }
@@ -73,10 +80,13 @@
  }
 
  .top .icon {
-  width: 30px;
-  height: 30px;
   padding: 15px;
   cursor: pointer;
+ }
+
+ .top .icon img {
+  width: 30px;
+  height: 30px;
  }
 
  .item {
@@ -136,7 +146,7 @@
 <div class="menu {isMenuOpen ? 'open' : ''}">
  <div>
   <div class="top">
-   <img class="icon" src="img/close.svg" alt="X" on:click={onMenuClose} />
+   <div class="icon" role="button" tabindex="0" on:click={onMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
   </div>
   <div class="item" role="button" tabindex="0" on:click={logoutClick} on:keydown={logoutKey}>
    <img src="img/logout.svg" alt="Logout" />

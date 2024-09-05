@@ -4,8 +4,7 @@ import adapter from '@sveltejs/adapter-static';
 const config = {
  kit: {
   paths: {
-   base: '/client',
-   //assets: '/client/assets-custom',
+   base: '',
    relative: false
   },
   adapter: adapter({

@@ -149,7 +149,7 @@
    </div>
    <div class="group-h">
     <label class="switch">
-     <input type="checkbox" bind:checked={stayLoggedIn}>
+     <input type="checkbox" bind:checked={stayLoggedIn} on:keydown={keyLogin} />
      <span class="slider"></span>
     </label>
     <div class="bold">Stay logged in</div>

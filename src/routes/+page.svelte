@@ -192,7 +192,7 @@
    offset: 0
   });
   requestAnimationFrame(() => {
-   const input = document.querySelector('#message-bar input');
+   const input = document.querySelector('.message-bar .message');
    if (input) input.focus();
   });
  }

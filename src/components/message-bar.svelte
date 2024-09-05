@@ -12,12 +12,11 @@
  }
 
  function clickSend() {
-  elMessage.value = elMessage.value.trim();
   if (elMessage.value) {
    onSendMessage(elMessage.value);
    elMessage.value = '';
-   elMessage.focus();
   }
+  elMessage.focus();
  }
 
  function keySend() {

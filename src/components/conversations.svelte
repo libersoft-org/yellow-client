@@ -22,7 +22,6 @@
  }
 
  function clickItem(conversation) {
-  console.log(conversation);
   selectedConversationAddress = conversation.address;
   onSelectConversation(conversation);
  }
