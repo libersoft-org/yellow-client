@@ -4,7 +4,7 @@
 
  function processMessage(content) {
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
-  return containsHtml ? content : linkify(content);
+  return containsHtml ? content : linkify(content).replaceAll("\n", '<br />');
  }
 
  function linkify(text) {

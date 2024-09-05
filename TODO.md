@@ -6,7 +6,6 @@
 
 # Features
 
-- In chat bubbles replace new line to <br /> if it's not HTML
 - Close menu on clicking outside of it
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add mobile responsivity (show left panel only by default)
