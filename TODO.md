@@ -1,6 +1,5 @@
 # Bugs
 
-- FIXNOUT - NA IKONKU DAT MIN WIDTH MISTO WIDTH !!! When long text is overflowing in messages, then images in conversation list (left panel) are shrinked
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
 - Build replaces CSS background image path (for example from: "img/background.png" to "/_app/immutable/assets/img/background.png") - https://stackoverflow.com/questions/75843825/sveltekit-dev-build-and-path-problems-with-static-assets-referenced-in-css
 

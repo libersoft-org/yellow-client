@@ -36,7 +36,7 @@
 </script>
 
 <style>
- #conversations {
+ .conversations {
   overflow-y: auto;
  }
 
@@ -73,6 +73,10 @@
   background-color: #fd5;
  }
 
+ .item .description {
+  word-break: break-word;
+ }
+
  .item .description .name {
   font-weight: bold;
  }
@@ -82,7 +86,7 @@
  }
 </style>
 
-<div id="conversations">
+<div class="conversations">
  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
   <img src="img/add.svg" alt="New conversation">
   <div>New conversation</div>
