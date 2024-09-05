@@ -4,8 +4,9 @@ import adapter from '@sveltejs/adapter-static';
 const config = {
  kit: {
   paths: {
-   base: '',
-   relative: true
+   base: '/client',
+   //assets: '/client/assets-custom',
+   relative: false
   },
   adapter: adapter({
    pages: 'build',

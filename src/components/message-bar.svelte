@@ -1,14 +1,22 @@
 <script>
  export let onSendMessage;
- let messageInput;
- let message = '';
+ let elMessage;
  
+ function resizeMessage(event) {
+  const maxHeight = 200;
+  const textarea = event.target;
+  textarea.style.height = 'auto';
+  textarea.style.height = (textarea.scrollHeight < maxHeight ? textarea.scrollHeight : maxHeight) + 'px';
+  if (elMessage.scrollHeight > maxHeight) elMessage.style.overflowY = 'scroll';
+  else elMessage.style.overflowY = 'hidden';
+ }
+
  function clickSend() {
-  message = message.trim();
-  if (message) {
-   onSendMessage(message);
-   message = '';
-   messageInput.focus();
+  elMessage.value = elMessage.value.trim();
+  if (elMessage.value) {
+   onSendMessage(elMessage.value);
+   elMessage.value = '';
+   elMessage.focus();
   }
  }
 
@@ -23,15 +31,16 @@
   if (event.key === 'Enter' && !event.shiftKey) {
    event.preventDefault();
    clickSend();
+   resizeMessage(event);
   }
  }
 </script>
 
 <style>
- #message-bar {
+ .message-bar {
   z-index: 100;
   display: flex;
-  align-items: center;
+  align-items: end;
   gap: 10px;
   padding: 10px;
   background-color: #222;
@@ -40,12 +49,20 @@
 
  .message {
   flex-grow: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
+  padding: 5px;
+  border: 0px;
+  border-bottom: 2px solid #ddd;
+  outline: none;
+  font-family: inherit;
   font-size: 16px;
+  background-color: transparent;
+  color: #fff;
+  resize: none;
+  overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
  }
- 
+
  .icon {
   cursor: pointer;
  }
@@ -56,7 +73,7 @@
  }
 </style>
 
-<div id="message-bar">
- <input class="message" type="text" placeholder="Enter your message ..." bind:this={messageInput} bind:value={message} on:keydown={keyEnter} />
+<div class="message-bar">
+ <textarea class="message" bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
  <div class="icon" role="button" tabindex="0" on:click={clickSend} on:keydown={keySend}><img src="img/send.svg" alt="Send" /></div>
 </div>
