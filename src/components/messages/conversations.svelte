@@ -1,7 +1,7 @@
 <script>
- import Photo from '../components/photo.svelte';
- import Modal from '../components/modal.svelte';
- import ModalConversationNew from '../components/modal-conversation-new.svelte';
+ import Photo from './photo.svelte';
+ import Modal from '../modal.svelte';
+ import ModalConversationNew from './modal-conversation-new.svelte';
  export let conversationsArray = [];
  export let onSelectConversation;
  export let openNewConversation;

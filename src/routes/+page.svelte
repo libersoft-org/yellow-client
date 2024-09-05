@@ -3,11 +3,11 @@
  import Login from '../components/login.svelte';
  import MenuBar from '../components/menu-bar.svelte';
  import Menu from '../components/menu.svelte';
- import ConversationList from '../components/conversations.svelte';
  import Welcome from '../components/welcome.svelte';
- import ProfileBar from '../components/profile-bar.svelte';
- import Messages from '../components/messages.svelte';
- import MessageBar from '../components/message-bar.svelte';
+ import ConversationList from '../components/messages/conversations.svelte';
+ import MessageBar from '../components/messages/message-bar.svelte';
+ import Messages from '../components/messages/messages.svelte';
+ import ProfileBar from '../components/messages/profile-bar.svelte';
  import "../app.css";
 
  const requests = [];

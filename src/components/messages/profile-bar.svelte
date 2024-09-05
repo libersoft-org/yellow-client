@@ -1,5 +1,5 @@
 <script>
- import Photo from '../components/photo.svelte';
+ import Photo from './photo.svelte';
  export let selectedConversation;
  export let onClose;
 
