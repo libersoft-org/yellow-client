@@ -31,18 +31,33 @@
 </script>
 
 <style>
+ .overlay {
+  z-index: 999;
+  position: fixed;
+  display: none;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+ }
+
+ .overlay.open {
+  display: block;
+ }
+
  .menu {
+  z-index: 1000;
   position: fixed;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  top: var(--menu-height);
+  top: 0;
   left: 0;
   width: 250px;
-  height: calc(100% - 72px);
+  height: 100%;
   background-color: #222;
   color: #fff;
-  z-index: 100;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   box-shadow: var(--shadow);
@@ -52,7 +67,19 @@
   transform: translateX(0);
  }
 
- .menu-item {
+ .top {
+  display: flex;
+  border-bottom: 1px solid #444;
+ }
+
+ .top .icon {
+  width: 30px;
+  height: 30px;
+  padding: 15px;
+  cursor: pointer;
+ }
+
+ .item {
   padding: 15px 20px;
   display: flex;
   align-items: center;
@@ -61,11 +88,11 @@
   border-bottom: 1px solid #444;
  }
 
- .menu-item:hover {
+ .item:hover {
   background-color: #333;
  }
 
- .menu-item img {
+ .item img {
   width: 24px;
   height: 24px;
  }
@@ -103,9 +130,15 @@
  }
 </style>
 
+{#if isMenuOpen}
+ <div class="overlay open" role="none" on:click={onMenuClose}></div>
+{/if}
 <div class="menu {isMenuOpen ? 'open' : ''}">
  <div>
-  <div class="menu-item" role="button" tabindex="0" on:click={logoutClick} on:keydown={logoutKey}>
+  <div class="top">
+   <img class="icon" src="img/close.svg" alt="X" on:click={onMenuClose} />
+  </div>
+  <div class="item" role="button" tabindex="0" on:click={logoutClick} on:keydown={logoutKey}>
    <img src="img/logout.svg" alt="Logout" />
    <div>Logout</div>
   </div>

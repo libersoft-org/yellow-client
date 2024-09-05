@@ -5,7 +5,6 @@
 
 # Features
 
-- Close menu on clicking outside of it
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add mobile responsivity (show left panel only by default)
 - Add number of new messages in conversations list
