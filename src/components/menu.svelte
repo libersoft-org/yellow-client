@@ -65,13 +65,16 @@
   height: 100%;
   background-color: #222;
   color: #fff;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
   box-shadow: var(--shadow);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease, visibility 0s 0.3s;
+  visibility: hidden;
  }
 
  .menu.open {
   transform: translateX(0);
+  transition: transform 0.3s ease, visibility 0s;
+  visibility: visible;
  }
 
  .top {
