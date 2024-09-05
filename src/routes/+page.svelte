@@ -235,6 +235,7 @@
 
  .sidebar {
   z-index: 100;
+  min-width: 300px;
   width: 300px;
   border-right: 1px solid #ccc;
   box-shadow: var(--shadow);
