@@ -25,6 +25,8 @@
  let isLoggingIn = false;
  let isClientFocused = true;
  let isMenuOpen = false;
+ let sideBar;
+ let isResizingSideBar = false;
 
  onMount(() => {
   server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
@@ -41,6 +43,30 @@
  onDestroy(() => {
   if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
  });
+
+ function startResizeSideBar() {
+  isResizingSideBar = true;
+  document.body.style.userSelect = 'none';
+  window.addEventListener('mousemove', resizeSideBar);
+  window.addEventListener('mouseup', stopResizeSideBar);
+ }
+
+ function stopResizeSideBar() {
+  isResizingSideBar = false;
+  document.body.style.userSelect = '';
+  window.removeEventListener('mousemove', resizeSideBar);
+  window.removeEventListener('mouseup', stopResizeSideBar);
+ }
+ 
+ function resizeSideBar(e) {
+  const min = 200;
+  const max = 500;
+  if (isResizingSideBar) {
+   let sideBarWidth = e.clientX < max ? e.clientX : max;
+   sideBarWidth = e.clientX > min ? sideBarWidth : min;
+   sideBar.style.width = sideBarWidth + 'px';
+  }
+ }
 
  function toggleMenu() {
   isMenuOpen = !isMenuOpen;
@@ -234,10 +260,16 @@
  }
 
  .sidebar {
-  min-width: 300px;
   width: 300px;
   border-right: 1px solid #ccc;
   box-shadow: var(--shadow);
+ }
+
+ .resizer {
+  width: 10px;
+  margin-left: -5px;
+  cursor: ew-resize;
+  position: relative;
  }
 
  .content {
@@ -256,11 +288,12 @@
 
 <div class="app">
  {#if userAddress}
- <div class="sidebar">
+ <div class="sidebar" bind:this={sideBar}>
   <MenuBar {toggleMenu} />
   <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} onLogout={logout} />
   <ConversationList {openNewConversation} {conversationsArray} onSelectConversation={selectConversation} />
  </div>
+ <div class="resizer" role="none" on:mousedown={startResizeSideBar}></div>
  <div class="content">
   {#if selectedConversation}
    <ProfileBar {selectedConversation} onClose={() => selectedConversation = null} />

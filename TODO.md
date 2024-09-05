@@ -5,8 +5,8 @@
 
 # Features
 
-- Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add mobile responsivity (show left panel only by default)
+- Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add number of new messages in conversations list
 - Add the last message preview to conversations list
 - On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
