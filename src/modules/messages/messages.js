@@ -15,31 +15,11 @@ export function init() {
 
 export function resListConversations(res) {
  console.log('LISTING CONVERSATIONS', res);
- if (res.error === 0 && res.data?.conversations) {
-  conversationsArray.update(() => res.data.conversations);
-  console.log('OOOO', conversationsArray);
- }
- /*
-  const sidebarDiv = document.createElement('div');
-  new ConversationsList({
-   target: sidebarDiv,
-   props: {
-    conversationsArray: conversationsArray,
-    onSelectConversation: (conversation) => {
-     console.log('CLICK');
-     selectedConversation = conversation;
-     setContentHTML('Loading messages ...');
-     console.log('klik na konverzaci');
-     
-    }
-   }
-      setSidebarHTML(sidebarDiv.innerHTML);
-  });
-  */
+ if (res.error === 0 && res.data?.conversations) conversationsArray.update(() => res.data.conversations);
 }
 
 conversationsArray.subscribe(value => {
- console.log(value);
+ console.log('SUBSCRIBE', value);
 });
 
 export function listMessages() {

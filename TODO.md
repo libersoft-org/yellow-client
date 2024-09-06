@@ -1,11 +1,13 @@
 # Bugs
 
+- Fix login
+- Fix messages
+- Fix resizer
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
 - Build replaces CSS background image path (for example from: "img/background.png" to "/_app/immutable/assets/img/background.png") - https://stackoverflow.com/questions/75843825/sveltekit-dev-build-and-path-problems-with-static-assets-referenced-in-css
 
 # Features
 
-- Add modularity (messages by default) - render components to sidebar and content
 - Add mobile responsivity (show left panel only by default)
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add the last message preview to conversations list

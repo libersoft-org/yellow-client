@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+ import { onMount } from 'svelte';
  import { conversationsArray, init } from '../messages.js';
  import Photo from './photo.svelte';
  import Modal from '../../../components/modal.svelte';

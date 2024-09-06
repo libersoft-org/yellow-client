@@ -1,5 +1,6 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
+ import "../app.css";
  import Socket from '../scripts/socket';
  import Auth from '../scripts/auth';
  import Login from '../components/login.svelte';
@@ -8,9 +9,7 @@
  import ModuleBar from '../components/module-bar.svelte';
  import WelcomeSidebar from '../components/welcome-sidebar.svelte';
  import WelcomeContent from '../components/welcome-content.svelte';
- //import Messages from '../components/messages/messages.svelte';
- //import Contacts from '../components/contacts/contacts.svelte';
- 
+
  //Messages:
  import ConversationsList from '../modules/messages/components/conversations-list.svelte';
  import ConversationsMain from '../modules/messages/components/conversations-main.svelte';
@@ -19,12 +18,6 @@
  import ContactsList from '../modules/contacts/components/contacts-list.svelte';
  import Contact from '../modules/contacts/components/contact.svelte';
 
- import "../app.css";
-
- /*const modules = {
-  messages: Messages,
-  contacts: Contacts
- };*/
  const modules = {
   messages: {
    sidebar: ConversationsList,
@@ -50,9 +43,6 @@
  let selectedModuleName;
  let sidebarHTML = '';
  let contentHTML = '';
-
- $: selectedModule = modules[selectedModuleName] || { sidebar: WelcomeSidebar, content: WelcomeContent };
- //$: if (selectedModule) initModule(selectedModule);
 
  onMount(async () => {
   server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
@@ -233,17 +223,15 @@
   <MenuBar {toggleMenu} />
   <ModuleBar bind:selectedModule="{selectedModuleName}" />
   {#if selectedModule}
-  <svelte:component this={selectedModule.sidebar} />
-  <!--{@html sidebarHTML}-->
+   <svelte:component this={selectedModule.sidebar} />
   {:else}
-   <WelcomeSidebar {product} {version} {link} />
+   <WelcomeSidebar {product} />
   {/if}
  </div>
  <div class="resizer" role="none" on:mousedown={startResizeSideBar}></div>
  <div class="content">
   {#if selectedModule}
-  <svelte:component this={selectedModule.content} />
-   <!--{@html contentHTML}-->
+   <svelte:component this={selectedModule.content} />
   {:else}
    <WelcomeContent {product} {version} {link} />
   {/if}
