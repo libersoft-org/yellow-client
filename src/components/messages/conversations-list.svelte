@@ -110,18 +110,6 @@
    </div>
   </div>
   {/each}
-
-  {#each conversationsArray as c}
-  <div class="item" class:active={c.address === selectedConversationAddress} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
-   <Photo />
-   <div class="description">
-    <div class="name">{c.visible_name}</div>
-    <div class="address">{c.address}</div>
-    <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>  
-   </div>
-  </div>
-  {/each}
-
  </div>
 </div>
 {#if isModalOpen}

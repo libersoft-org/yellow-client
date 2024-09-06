@@ -12,8 +12,6 @@
  //let isClientFocused = true;
 
  onMount(() => {
-  setSidebarHTML('[sidebar]');
-  setContentHTML('[content]');
   window.addEventListener('keydown', hotKeys);
   //window.addEventListener('focus', () => isClientFocused = true);
   //window.addEventListener('blur', () => isClientFocused = false);
@@ -40,14 +38,39 @@
 */
  export function resListConversations(res) {
   console.log('LISTING CONVERSATIONS', res);
-  setSidebarHTML('NASTAVUJU');
-  if (res.error === 0 && res.data?.conversations) conversationsArray = res.data.conversations;
-  //TODO: let sidebarHTML fill with items from conversationsArray
+  if (res.error === 0 && res.data?.conversations) {
+   conversationsArray = res.data.conversations;
+   const sidebarDiv = document.createElement('div');
+   new ConversationsList({
+    target: sidebarDiv,
+    props: {
+     conversationsArray: conversationsArray,
+     onSelectConversation: (conversation) => {
+      selectedConversation = conversation;
+      setContentHTML('Loading messages');
+      console.log('klik na konverzaci');
+      Socket.send('user_list_messages', { address: conversation.address }, true, resListMessages);
+     }
+    }
+   });
+   setSidebarHTML(sidebarDiv.innerHTML);
+  }
  }
 
  export function resListMessages(res) {
-  if (res.error === 0 && res.data?.messages) messagesArray = res.data.messages;
-  //TODO: let contentHTML fill with items from messagesArray
+  console.log('LISTING MESSAGES', res);
+  if (res.error === 0 && res.data?.messages) {
+   messagesArray = res.data.messages;
+   const contentDiv = document.createElement('div');
+   new MessagesList({
+    target: contentDiv,
+    props: {
+     messagesArray: messagesArray,
+     
+    }
+   });
+   setContentHTML(contentDiv.innerHTML);
+  }
  }
 
  function resSendMessage(req, res) {

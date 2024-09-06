@@ -5,8 +5,10 @@
  import Login from '../components/login.svelte';
  import Menu from '../components/menu.svelte';
  import MenuBar from '../components/menu-bar.svelte';
+ import ModuleBar from '../components/module-bar.svelte';
  import Welcome from '../components/welcome.svelte';
  import Messages from '../components/messages/messages.svelte';
+ import Contacts from '../components/contacts/contacts.svelte';
  import "../app.css";
 
  const requests = [];
@@ -198,8 +200,9 @@
 <div class="app">
  {#if Auth.userAddress}
  <div class="sidebar" bind:this={sideBar}>
-  <MenuBar {toggleMenu} />
   <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} onLogout={logout} />
+  <MenuBar {toggleMenu} />
+  <ModuleBar />
   {#if selectedModule}
    {@html sidebarHTML}
   {:else}
