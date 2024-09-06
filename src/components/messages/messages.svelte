@@ -27,15 +27,7 @@
    Socket.send('user_list_conversations', null, true, (req, res) => resListConversations(res));
   }
  }
-/*
- export function setSidebarHTML(html) {
-  dispatch('updateSidebar', { html });
- }
 
- export function setContentHTML(html) {
-  dispatch('updateContent', { html });
- }
-*/
  export function resListConversations(res) {
   console.log('LISTING CONVERSATIONS', res);
   if (res.error === 0 && res.data?.conversations) {
@@ -46,8 +38,9 @@
     props: {
      conversationsArray: conversationsArray,
      onSelectConversation: (conversation) => {
+      console.log('CLICK');
       selectedConversation = conversation;
-      setContentHTML('Loading messages');
+      setContentHTML('Loading messages ...');
       console.log('klik na konverzaci');
       Socket.send('user_list_messages', { address: conversation.address }, true, resListMessages);
      }

@@ -1,8 +1,8 @@
 <script>
- export let onSelectedModule;
+ export let selectedModule;
 
  function clickSetModule(name) {
-  onSelectedModule(name);
+  selectedModule = name;
  }
 
  function keySetModule(name) {
@@ -16,12 +16,13 @@
 <style>
  .items {
   display: flex;
-  padding: 0px 5px;
+  padding: 5px;
   border-bottom: 1px solid #555;
   background-color: #222;
  }
 
  .items .item {
+  display: flex;
   padding: 10px;
   cursor: pointer;
  }

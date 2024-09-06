@@ -1,1 +1,1 @@
-<div>Sidebar</div>
+<div>Not yet implemented - sidebar</div>

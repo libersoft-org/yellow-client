@@ -11,6 +11,10 @@
  import Contacts from '../components/contacts/contacts.svelte';
  import "../app.css";
 
+ const modules = {
+  messages: Messages,
+  contacts: Contacts
+ };
  const requests = [];
  let product = 'Yellow';
  let version = '0.01';
@@ -21,9 +25,13 @@
  let isMenuOpen = false;
  let sideBar;
  let isResizingSideBar = false;
- let selectedModule = Messages;
+ let selectedModule;
+ let selectedModuleName;
  let sidebarHTML = '';
  let contentHTML = '';
+
+ $: selectedModule = modules[selectedModuleName] || null;
+ $: if (selectedModule) initModule(selectedModule);
 
  onMount(async () => {
   server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
@@ -113,7 +121,7 @@
      setContentHTML: (html) => contentHTML = html
     }
    });
-   selectedModule.init();
+   if (typeof selectedModule.init === 'function') selectedModule.init();
   }
  }
 
@@ -202,7 +210,7 @@
  <div class="sidebar" bind:this={sideBar}>
   <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} onLogout={logout} />
   <MenuBar {toggleMenu} />
-  <ModuleBar />
+  <ModuleBar bind:selectedModule="{selectedModuleName}" />
   {#if selectedModule}
    {@html sidebarHTML}
   {:else}
