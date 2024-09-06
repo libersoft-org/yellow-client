@@ -145,7 +145,10 @@
      loginError = null;
      Auth.userAddress = credentials.address;
      Auth.sessionID = res.data.sessionID;
-     if (credentials.stayLoggedIn) localStorage.setItem('login', JSON.stringify(credentials));
+     if (credentials.stayLoggedIn) {
+      //delete credentials.stayLoggedIn;
+      localStorage.setItem('login', JSON.stringify(credentials));
+     }
     }
    });
   }
