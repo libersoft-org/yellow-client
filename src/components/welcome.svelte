@@ -37,6 +37,8 @@
   justify-content: center;
   gap: 5px;
   height: 100vh;
+  background: url('img/background.webp') repeat;
+  background-size: 400px;
  }
 
  .welcome .logo {

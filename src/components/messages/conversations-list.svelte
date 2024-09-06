@@ -36,7 +36,9 @@
 
 <style>
  .conversations {
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
  }
 
  .new {
@@ -55,7 +57,14 @@
   height: 20px;
  }
 
- .item {
+ .items {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 100%;
+ }
+
+ .items .item {
   display: flex;
   gap: 10px;
   padding: 10px;
@@ -64,23 +73,23 @@
   align-items: center;
  }
 
- .item:hover {
+ .items .item:hover {
   background-color: #fde990;
  }
 
- .item.active {
+ .items .item.active {
   background-color: #fd5;
  }
 
- .item .description {
+ .items .item .description {
   word-break: break-word;
  }
 
- .item .description .name {
+ .items .item .description .name {
   font-weight: bold;
  }
 
- .item .description .address, .item .description .time {
+ .items .item .description .address, .items .item .description .time {
   font-size: 12px;
  }
 </style>
@@ -90,16 +99,30 @@
   <img src="img/add.svg" alt="New conversation">
   <div>New conversation</div>
  </div>
- {#each conversationsArray as c}
- <div class="item" class:active={c.address === selectedConversationAddress} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
-  <Photo />
-  <div class="description">
-   <div class="name">{c.visible_name}</div>
-   <div class="address">{c.address}</div>
-   <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>  
+ <div class="items">
+  {#each conversationsArray as c}
+  <div class="item" class:active={c.address === selectedConversationAddress} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
+   <Photo />
+   <div class="description">
+    <div class="name">{c.visible_name}</div>
+    <div class="address">{c.address}</div>
+    <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>  
+   </div>
   </div>
+  {/each}
+
+  {#each conversationsArray as c}
+  <div class="item" class:active={c.address === selectedConversationAddress} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
+   <Photo />
+   <div class="description">
+    <div class="name">{c.visible_name}</div>
+    <div class="address">{c.address}</div>
+    <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>  
+   </div>
+  </div>
+  {/each}
+
  </div>
- {/each}
 </div>
 {#if isModalOpen}
 <Modal title="New Conversation" onClose={() => isModalOpen = false}>

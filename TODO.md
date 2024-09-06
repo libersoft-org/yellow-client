@@ -5,13 +5,15 @@
 
 # Features
 
+- Add modularity (messages by default) - render components to sidebar and content
 - Add mobile responsivity (show left panel only by default)
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
-- Add number of new messages in conversations list
 - Add the last message preview to conversations list
 - On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
-- Auto reconnect in few seconds when connection is lost
 - When starting a new conversation, load visible_name if available
+- Add number of new messages in conversations list
+- Move things related to Messages module from +page.svelte to somewhere else
+- Auto reconnect in few seconds when connection is lost
 - File / image send
 - Animated stickers (lottie)
 - GIFs
