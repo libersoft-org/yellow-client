@@ -1,6 +1,5 @@
 # Bugs
 
-- Fix login
 - Fix messages
 - Fix resizer
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)

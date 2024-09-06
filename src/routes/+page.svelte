@@ -49,11 +49,7 @@
   let storedLogin = localStorage.getItem('login');
   if (storedLogin) {
    storedLogin = JSON.parse(storedLogin);
-   if (await Socket.connect(storedLogin.server, () => {
-    if (Auth.userAddress) alert('Lost connection with server');
-   })) {
-    login(storedLogin);
-   }
+   login(storedLogin);
   } else {
    isLoggingIn = false;
    const errorMessage = 'Unable to connect to server. Please check the server address.';
@@ -136,20 +132,23 @@
   }
  }
 
- function login(credentials) {
-  isLoggingIn = true;
-  Socket.send('user_login', { address: credentials.address, password: credentials.password }, false, (req, res) => {
-   isLoggingIn = false;
-   if (res.error !== 0) {
-    loginError = res;
-   } else {
-    loginError = null;
-    Auth.userAddress = credentials.address;
-    Auth.sessionID = res.data.sessionID;
-    if (credentials.stayLoggedIn) localStorage.setItem('login', JSON.stringify(credentials));
-    //initModule(Messages);
-   }
-  });
+ async function login(credentials) {
+  if (await Socket.connect(credentials.server, () => {
+   if (Auth.userAddress) alert('Lost connection with server');
+  })) {
+   isLoggingIn = true;
+   Socket.send('user_login', { address: credentials.address, password: credentials.password }, false, (req, res) => {
+    isLoggingIn = false;
+    if (res.error !== 0) {
+     loginError = res;
+    } else {
+     loginError = null;
+     Auth.userAddress = credentials.address;
+     Auth.sessionID = res.data.sessionID;
+     if (credentials.stayLoggedIn) localStorage.setItem('login', JSON.stringify(credentials));
+    }
+   });
+  }
  }
 
  function logout() {
