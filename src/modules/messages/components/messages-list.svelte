@@ -1,5 +1,5 @@
 <script>
- import { afterUpdate } from 'svelte';
+ import { onMount, afterUpdate } from 'svelte';
  import Message from './message.svelte';
  export let messagesArray = [];
  export let userAddress;

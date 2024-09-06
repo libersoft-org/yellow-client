@@ -1,11 +1,28 @@
 <script>
+ import { userAddress } from '../../../scripts/auth.js';
+ import { onMount, onDestroy } from 'svelte';
  import ProfileBar from './profile-bar.svelte';
  import MessagesList from './messages-list.svelte';
  import MessageBar from './message-bar.svelte';
  export let selectedConversation;
  export let messagesArray;
- export let userAddress;
  export let sendMessage;
+ //let isClientFocused = true;
+
+ onMount(() => {
+  console.log('MOJE ADRESA', userAddress);
+  window.addEventListener('keydown', hotKeys);
+  //window.addEventListener('focus', () => isClientFocused = true);
+  //window.addEventListener('blur', () => isClientFocused = false);
+ });
+
+ onDestroy(() => {
+  if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
+ });
+
+ function hotKeys(event) {
+  if (event.key === 'Escape' && selectedConversation) selectedConversation = null;
+ }
 </script>
 
 <style>

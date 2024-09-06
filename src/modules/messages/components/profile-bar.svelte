@@ -1,10 +1,12 @@
 <script>
+ import { onMount } from 'svelte';
+ import { selectedConversation } from '../messages.js';
  import Photo from './photo.svelte';
- export let selectedConversation;
  export let onClose;
 
  function clickClose() {
   if (selectedConversation) onClose();
+  //if (selectedConversation) onClose();
  }
 
  function keyClose() {
@@ -56,3 +58,5 @@
  </div>
  <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close.svg" alt="Close" /></div>
 </div>
+
+

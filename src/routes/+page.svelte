@@ -6,15 +6,36 @@
  import Menu from '../components/menu.svelte';
  import MenuBar from '../components/menu-bar.svelte';
  import ModuleBar from '../components/module-bar.svelte';
- import Welcome from '../components/welcome.svelte';
- import Messages from '../components/messages/messages.svelte';
- import Contacts from '../components/contacts/contacts.svelte';
+ import WelcomeSidebar from '../components/welcome-sidebar.svelte';
+ import WelcomeContent from '../components/welcome-content.svelte';
+ //import Messages from '../components/messages/messages.svelte';
+ //import Contacts from '../components/contacts/contacts.svelte';
+ 
+ //Messages:
+ import ConversationsList from '../modules/messages/components/conversations-list.svelte';
+ import ConversationsMain from '../modules/messages/components/conversations-main.svelte';
+
+ //Contacts:
+ import ContactsList from '../modules/contacts/components/contacts-list.svelte';
+ import Contact from '../modules/contacts/components/contact.svelte';
+
  import "../app.css";
 
- const modules = {
+ /*const modules = {
   messages: Messages,
   contacts: Contacts
+ };*/
+ const modules = {
+  messages: {
+   sidebar: ConversationsList,
+   content: ConversationsMain
+  },
+  contacts: {
+   sidebar: ContactsList,
+   content: Contact
+  }
  };
+
  const requests = [];
  let product = 'Yellow';
  let version = '0.01';
@@ -30,8 +51,8 @@
  let sidebarHTML = '';
  let contentHTML = '';
 
- $: selectedModule = modules[selectedModuleName] || null;
- $: if (selectedModule) initModule(selectedModule);
+ $: selectedModule = modules[selectedModuleName] || { sidebar: WelcomeSidebar, content: WelcomeContent };
+ //$: if (selectedModule) initModule(selectedModule);
 
  onMount(async () => {
   server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
@@ -136,7 +157,7 @@
     Auth.userAddress = credentials.address;
     Auth.sessionID = res.data.sessionID;
     if (credentials.stayLoggedIn) localStorage.setItem('login', JSON.stringify(credentials));
-    initModule(Messages);
+    //initModule(Messages);
    }
   });
  }
@@ -212,17 +233,19 @@
   <MenuBar {toggleMenu} />
   <ModuleBar bind:selectedModule="{selectedModuleName}" />
   {#if selectedModule}
-   {@html sidebarHTML}
+  <svelte:component this={selectedModule.sidebar} />
+  <!--{@html sidebarHTML}-->
   {:else}
-   <div>Nothing here</div>
+   <WelcomeSidebar {product} {version} {link} />
   {/if}
  </div>
  <div class="resizer" role="none" on:mousedown={startResizeSideBar}></div>
  <div class="content">
   {#if selectedModule}
-   {@html contentHTML}
+  <svelte:component this={selectedModule.content} />
+   <!--{@html contentHTML}-->
   {:else}
-   <Welcome {product} {version} {link} />
+   <WelcomeContent {product} {version} {link} />
   {/if}
  </div>
  {:else}

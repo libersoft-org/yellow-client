@@ -1,13 +1,20 @@
 <script>
+  import { onMount } from 'svelte';
+ import { conversationsArray, init } from '../messages.js';
  import Photo from './photo.svelte';
- import Modal from '../modal.svelte';
+ import Modal from '../../../components/modal.svelte';
  import ModalConversationNew from './modal-conversation-new.svelte';
- export let conversationsArray = [];
+ 
+ //export let conversationsArray = [];
  export let onSelectConversation;
  export let openNewConversation;
  let selectedConversationAddress = null;
  let isModalOpen = false;
  let modalComponent = null;
+
+ onMount(() => {
+  init();
+ });
 
  function clickNew() {
   modalComponent = ModalConversationNew;
@@ -100,7 +107,7 @@
   <div>New conversation</div>
  </div>
  <div class="items">
-  {#each conversationsArray as c}
+  {#each $conversationsArray as c}
   <div class="item" class:active={c.address === selectedConversationAddress} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
    <Photo />
    <div class="description">
