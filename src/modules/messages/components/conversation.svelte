@@ -1,5 +1,5 @@
 <script>
- import { userAddress } from '../../../core/auth.js';
+ import { userAddress } from '../../../core/core.js';
  import { onMount, onDestroy } from 'svelte';
  import ProfileBar from './profile-bar.svelte';
  import MessagesList from './messages-list.svelte';

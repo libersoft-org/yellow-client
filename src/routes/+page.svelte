@@ -151,26 +151,26 @@
 </svelte:head>
 
 <div class="app">
- {#if isLoggedIn}
- <div class="sidebar" bind:this={sideBar}>
-  <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} onLogout={logout} />
-  <MenuBar {toggleMenu} />
-  <ModuleBar bind:selectedModule="{selectedModuleName}" />
-  {#if selectedModule}
-   <svelte:component this={selectedModule.sidebar} />
-  {:else}
-   <WelcomeSidebar {product} />
-  {/if}
- </div>
- <div class="resizer" role="none" on:mousedown={startResizeSideBar}></div>
- <div class="content">
-  {#if selectedModule}
-   <svelte:component this={selectedModule.content} />
-  {:else}
-   <WelcomeContent {product} {version} {link} />
-  {/if}
- </div>
+ {#if !isLoggedIn}
+  <Login error={loginError} bind:isLoggedIn={isLoggedIn} {server} {product} {version} {link} />
  {:else}
-  <Login error={loginError} {isLoggedIn} {server} {product} {version} {link} />
+  <div class="sidebar" bind:this={sideBar}>
+   <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} />
+   <MenuBar {toggleMenu} />
+   <ModuleBar bind:selectedModule="{selectedModuleName}" />
+   {#if selectedModule}
+    <svelte:component this={selectedModule.sidebar} />
+   {:else}
+    <WelcomeSidebar {product} />
+   {/if}
+  </div>
+  <div class="resizer" role="none" on:mousedown={startResizeSideBar}></div>
+  <div class="content">
+   {#if selectedModule}
+    <svelte:component this={selectedModule.content} />
+   {:else}
+    <WelcomeContent {product} {version} {link} />
+   {/if}
+  </div>
  {/if}
 </div>

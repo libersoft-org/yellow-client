@@ -1,13 +1,13 @@
 import { writable } from 'svelte/store';
 import Socket from '../../core/socket.js';
-import Auth from '../../core/auth.js';
+import Core from '../../core/core.js';
 export const selectedConversation = writable(null);
 export const conversationsArray = writable([]);
 export const messagesArray = writable([]);
 
 export function init() {
- console.log(Auth);
- if (Auth.userAddress) {
+ console.log(Core);
+ if (Core.userAddress) {
   Socket.send('user_subscribe', { event: 'new_message' });
   Socket.send('user_list_conversations', null, true, (req, res) => resListConversations(res));
  }
@@ -42,11 +42,11 @@ export function resListMessages(res) {
 }
 
 function resSendMessage(req, res) {
- if (selectedConversation?.address === Auth.userAddress) return;
+ if (selectedConversation?.address === Core.userAddress) return;
  if (res.error !== 0) return;
  if (req?.params?.address !== selectedConversation.address) return;
  const msg = {
-  address_from: Auth.userAddress,
+  address_from: Core.userAddress,
   address_to: req.params.address,
   message: req.params.message,
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')

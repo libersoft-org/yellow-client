@@ -1,4 +1,3 @@
-import Auth from './auth';
 const events = new EventTarget();
 const requests = {};
 let socket;
@@ -9,31 +8,18 @@ export function connect(url) {
   return;
  }
  socket = new WebSocket(url);
- socket.onopen = event => {
-  console.log('Connected to WebSocket');
-  console.log(event);
-  events.dispatchEvent(new CustomEvent('open', { event }));
- };
- socket.onerror = error => {
-  console.error('WebSocket error:', error);
-  events.dispatchEvent(new CustomEvent('error', { error }));
- };
- socket.onclose = event => {
-  console.log('WebSocket closed. Code: ' + event.code);
-  console.log(event);
-  events.dispatchEvent(new CustomEvent('close', { event }));
- };
+ socket.onopen = event => events.dispatchEvent(new CustomEvent('open', { event }));
+ socket.onerror = event => events.dispatchEvent(new CustomEvent('error', { event }));
+ socket.onclose = event => events.dispatchEvent(new CustomEvent('close', { event }));
  socket.onmessage = event => handleResponse(JSON.parse(event.data));
 }
 
 export function disconnect() {
- if (!socket) return false;
- try {
-  socket.close();
-  return true;
- } catch {
-  return false;
+ if (!socket || socket.readyState === WebSocket.CLOSED) {
+  console.error('Socket is not yet connected or already disconnected');
+  return;
  }
+ socket.close();
 }
 
 export function send(command, params = {}, sendSessionID = true, callback = null) {

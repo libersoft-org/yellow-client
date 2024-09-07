@@ -1,31 +1,65 @@
 <script>
  import { onMount } from 'svelte';
  import Core from '../core.js';
+ import Socket from '../socket.js';
  export let error;
- export let isLoggingIn;
+ export let isLoggedIn;
  export let product;
  export let version;
  export let link;
+ let socketOpen = false;
  let credentials = { server: '', address: '', password: '' };
  let stayLoggedIn = false;
- let isLoggedIn;
+ let loggingIn = false;
 
  onMount(async () => {
   let storedLogin = localStorage.getItem('login');
   if (storedLogin) {
    storedLogin = JSON.parse(storedLogin);
-   credentials = storedLogin.login;
-   Core.login(credentials);
+   credentials = storedLogin;
+   stayLoggedIn = true;
+   clickLogin();
   } else credentials.server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
-  /*
-   else {
-   isLoggingIn = false;
-   const errorMessage = 'Unable to connect to server. Please check the server address.';
-   if (userAddress) loginError = { message: errorMessage };
-   else alert('Error: ' + errorMessage);
-  }
-  */
  });
+
+ export function login(credentials) {
+  if (socketOpen) {
+   sendLoginCommand(credentials);
+   return;
+  }
+  Socket.events.addEventListener('open', event => {
+   socketOpen = true;
+   console.log('Connected to WebSocket:', event);
+   sendLoginCommand(credentials);
+  });
+  Socket.events.addEventListener('error', event => {
+   console.error('WebSocket error:', event);
+   socketOpen = false;
+   error = 'Cannot connect to server';
+   loggingIn = false;
+  });
+  Socket.events.addEventListener('close', event => {
+   console.log('WebSocket closed:', event);
+   socketOpen = false;
+   loggingIn = false;
+  });
+  Socket.connect(credentials.server);
+ }
+
+ function sendLoginCommand(credentials) {
+  Socket.send('user_login', { address: credentials.address, password: credentials.password }, false, (req, res) => {
+   loggingIn = false;
+   if (res.error !== 0) {
+    error = res.message;
+    return;
+   }
+   error = null;
+   Core.userAddress = credentials.address;
+   Core.sessionID = res.data.sessionID;
+   isLoggedIn = true;
+   if (stayLoggedIn) localStorage.setItem('login', JSON.stringify(credentials));
+  });
+ }
 
  function clickLogo() {
   window.open(link, '_blank');
@@ -39,10 +73,10 @@
  }
 
  function clickLogin() {
-  if (!isLoggingIn) {
-   error = null;
-   Core.login(credentials);
-  }
+  if (loggingIn) return;
+  loggingIn = true;
+  error = null;
+  login(credentials);
  }
 
  function keyLogin() {
@@ -174,15 +208,15 @@
    {#if error}
     <div class="error">
      <div class="bold">Error:</div>
-     <div>{error.message}</div>
+     <div>{error}</div>
     </div>
    {/if}
-   <div class="button{isLoggingIn ? ' disabled' : ''}" role="button" tabindex="0" on:click={clickLogin} on:keydown={keyLogin}>
-    {#if isLoggingIn}
-    <div class="loader"></div>
-   {:else}
-    Login
-   {/if}
+   <div class="button{loggingIn ? ' disabled' : ''}" role="button" tabindex="0" on:click={clickLogin} on:keydown={keyLogin}>
+    {#if loggingIn}
+     <div class="loader"></div>
+    {:else}
+     Login
+    {/if}
    </div>
   </div>
  </div>
