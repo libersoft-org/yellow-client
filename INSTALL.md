@@ -50,7 +50,7 @@ openssl req -x509 -newkey rsa:2048 -nodes -days $(expr '(' $(date -d 2999/01/01 
 ... then use this command to start the server in development mode:
 
 ```sh
-./run.dev.sh
+./run-dev.sh
 ```
 
 ... and then navigate to: https://YOUR_SERVER_ADDRESS:3000/ in your browser. Browser will show the certificate error, just skip it.

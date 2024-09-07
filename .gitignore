@@ -1,5 +1,6 @@
 .git/
 .svelte-kit/
+.vscode/
 node_modules/
 build/
 bun.lockb

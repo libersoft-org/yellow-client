@@ -29,7 +29,7 @@ export function listMessages() {
 export function resListMessages(res) {
  console.log('LISTING MESSAGES', res);
  if (res.error === 0 && res.data?.messages) {
-  messagesArray = res.data.messages;
+  messagesArray.update(() => res.data.messages);
   const contentDiv = document.createElement('div');
   new MessagesList({
    target: contentDiv,
@@ -51,7 +51,7 @@ function resSendMessage(req, res) {
   message: req.params.message,
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
  };
- messagesArray = [msg, ...messagesArray];
+ messagesArray.update(() => [msg, ...messagesArray]);
  Socket.send('user_list_conversations', null, true, (req, res) => resListConversations(res));
 }
 
