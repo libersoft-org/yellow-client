@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: url('img/background.webp') repeat;
+  background: url('/img/background.webp') repeat;
   background-size: 400px;
  }
 
