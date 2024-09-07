@@ -8,7 +8,7 @@
 
 # Features
 
-- If server is connected, hide green (info) status after 5 seconds
+- If server is connected, hide green (info) status after 5 seconds + add close button to status window
 - Hide server status after some time
 - Move whole non-login component from +page.svelte to separate component
 - Modules -> JSON file - load dynamically to +page.svelte
