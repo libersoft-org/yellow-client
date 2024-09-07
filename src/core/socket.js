@@ -1,3 +1,4 @@
+import Core from './core.js';
 const events = new EventTarget();
 const requests = {};
 let socket;
@@ -36,7 +37,7 @@ export function send(command, params = {}, sendSessionID = true, callback = null
  }
  const requestID = getRandomString();
  const req = { requestID };
- if (sendSessionID) req.sessionID = Auth.sessionID;
+ if (sendSessionID) req.sessionID = Core.sessionID;
  req.command = command;
  req.params = params;
  requests[requestID] = { req, callback };

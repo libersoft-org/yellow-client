@@ -10,7 +10,6 @@
 # Features
 
 - Modules -> JSON file - load dynamically to +page.svelte
-- Move things related to Messages module from +page.svelte to somewhere else
 - Add mobile responsivity (show left panel only by default)
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add the last message preview to conversations list
@@ -25,3 +24,7 @@
 - Link previews (YouTube, OG etc.)
 - Voice / video messages
 - Reply / forwarded message
+
+# Questions
+
+- How to nicely reload conversations list when message is sent (without loading the whole conversation list from server)?
