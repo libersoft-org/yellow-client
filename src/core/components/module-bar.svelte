@@ -1,8 +1,8 @@
 <script>
- export let selectedModule;
+ export let onSelectModule;
 
  function clickSetModule(name) {
-  selectedModule = name;
+  onSelectModule(name);
  }
 
  function keySetModule(name) {

@@ -35,6 +35,10 @@
  let selectedModule;
  let selectedModuleName;
 
+ function onSelectModule(name) {
+  selectedModule = modules[name];
+ }
+
  function startResizeSideBar() {
   isResizingSideBar = true;
   document.body.style.userSelect = 'none';
@@ -58,22 +62,6 @@
    sideBar.style.width = sideBarWidth + 'px';
   }
  }
-
- /* TODO: previous command switching
- switch (req.command) {
-    case 'user_list_conversations':
-     //TODO: send to messages module
-     //if (objMessages) objMessages.resListConversations(res);
-     break;
-    case 'user_list_messages':
-     //TODO: send to messages module
-     //if (objMessages) objMessages.resListMessages(res);
-     break;
-    case 'user_send_message':
-     //TODO: send to messages module
-     //resSendMessage(res, req);
-   }
- */
 </script>
 
 <style>
@@ -128,12 +116,12 @@
 
 <div class="app">
  {#if !isLoggedIn}
-  <Login bind:isLoggedIn={isLoggedIn} {product} {version} {link} />
+  <Login bind:isLoggedIn {product} {version} {link} />
  {:else}
   <div class="sidebar" bind:this={sideBar}>
-   <Menu bind:isMenuOpen={isMenuOpen} bind:isLoggedIn={isLoggedIn} {product} {version} {link} />
-   <MenuBar bind:isMenuOpen={isMenuOpen} />
-   <ModuleBar bind:selectedModule="{selectedModuleName}" />
+   <Menu bind:isMenuOpen bind:isLoggedIn {product} {version} {link} />
+   <MenuBar bind:isMenuOpen />
+   <ModuleBar {onSelectModule} />
    {#if selectedModule}
     <svelte:component this={selectedModule.sidebar} />
    {:else}

@@ -55,6 +55,22 @@ function resSendMessage(req, res) {
  Socket.send('user_list_conversations', null, true, (req, res) => resListConversations(res));
 }
 
+/* TODO: previous command switching
+switch (req.command) {
+ case 'user_list_conversations':
+  //TODO: send to messages module
+  //if (objMessages) objMessages.resListConversations(res);
+  break;
+ case 'user_list_messages':
+  //TODO: send to messages module
+  //if (objMessages) objMessages.resListMessages(res);
+  break;
+ case 'user_send_message':
+  //TODO: send to messages module
+  //resSendMessage(res, req);
+ }
+*/
+
 /*
  function eventNewMessage(res) {
   if (!res.data) return;
