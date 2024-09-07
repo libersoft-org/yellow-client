@@ -1,6 +1,7 @@
 # Bugs
 
 - Logout should reset all components' variables (core/components/menu.svelte - logout())
+- When hot reload page, it's throwing an error that Socket is already connected
 - Fix module switching
 - Fix messages
 - Fix resizer

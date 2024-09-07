@@ -26,7 +26,7 @@
   }
  };
  const product = 'Yellow';
- const version = '0.01-dev';
+ const version = '0.01';
  const link = 'https://yellow.libersoft.org';
  let isLoggedIn = false;
  let isMenuOpen = false;
