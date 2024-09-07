@@ -1,14 +1,11 @@
 <script>
- import { onMount, onDestroy } from 'svelte';
  import "../app.css";
- import Socket from '../scripts/socket';
- import Auth from '../scripts/auth';
- import Login from '../components/login.svelte';
- import Menu from '../components/menu.svelte';
- import MenuBar from '../components/menu-bar.svelte';
- import ModuleBar from '../components/module-bar.svelte';
- import WelcomeSidebar from '../components/welcome-sidebar.svelte';
- import WelcomeContent from '../components/welcome-content.svelte';
+ import Login from '../core/components/login.svelte';
+ import Menu from '../core/components/menu.svelte';
+ import MenuBar from '../core/components/menu-bar.svelte';
+ import ModuleBar from '../core/components/module-bar.svelte';
+ import WelcomeSidebar from '../core/components/welcome-sidebar.svelte';
+ import WelcomeContent from '../core/components/welcome-content.svelte';
 
  //Messages:
  import ConversationsList from '../modules/messages/components/conversations-list.svelte';
@@ -28,35 +25,18 @@
    content: Contact
   }
  };
-
  const requests = [];
- let product = 'Yellow';
- let version = '0.01';
- let link = 'https://yellow.libersoft.org';
- let isLoggingIn = false;
- let loginError;
+ const product = 'Yellow';
+ const version = '0.01';
+ const link = 'https://yellow.libersoft.org';
  let server;
+ let isLoggedIn = false;
+ let loginError;
  let isMenuOpen = false;
  let sideBar;
  let isResizingSideBar = false;
  let selectedModule;
  let selectedModuleName;
- let sidebarHTML = '';
- let contentHTML = '';
-
- onMount(async () => {
-  server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
-  let storedLogin = localStorage.getItem('login');
-  if (storedLogin) {
-   storedLogin = JSON.parse(storedLogin);
-   login(storedLogin);
-  } else {
-   isLoggingIn = false;
-   const errorMessage = 'Unable to connect to server. Please check the server address.';
-   if (Auth.userAddress) loginError = { message: errorMessage };
-   else alert('Error: ' + errorMessage);
-  }
- });
 
  function startResizeSideBar() {
   isResizingSideBar = true;
@@ -118,54 +98,6 @@
      //resSendMessage(res, req);
    }
  */
-
- function initModule(Module) {
-  if (selectedModule) {
-   selectedModule = new Module({
-    target: document.createElement('div'),
-    props: {
-     setSidebarHTML: (html) => sidebarHTML = html,
-     setContentHTML: (html) => contentHTML = html
-    }
-   });
-   if (typeof selectedModule.init === 'function') selectedModule.init();
-  }
- }
-
- async function login(credentials) {
-  if (await Socket.connect(credentials.server, () => {
-   if (Auth.userAddress) alert('Lost connection with server');
-  })) {
-   isLoggingIn = true;
-   Socket.send('user_login', { address: credentials.address, password: credentials.password }, false, (req, res) => {
-    isLoggingIn = false;
-    if (res.error !== 0) {
-     loginError = res;
-    } else {
-     loginError = null;
-     Auth.userAddress = credentials.address;
-     Auth.sessionID = res.data.sessionID;
-     if (credentials.stayLoggedIn) {
-      //delete credentials.stayLoggedIn;
-      localStorage.setItem('login', JSON.stringify(credentials));
-     }
-    }
-   });
-  }
- }
-
- function logout() {
-  if (Socket.disconnect()){
-   Auth.userAddress = null;
-   Auth.sessionID = null;
-   //TODO: set this in Messages module
-   //selectedConversation = null;
-   //messagesArray = [];
-   isMenuOpen = false;
-   isLoggingIn = false;
-   localStorage.removeItem('login');
-  }
- }
 </script>
 
 <style>
@@ -185,7 +117,7 @@
  .resizer {
   display: hidden;
   width: 100px;
-  margin-left: -5px;
+  margin-left: -50px;
   cursor: ew-resize;
  }
 
@@ -219,7 +151,7 @@
 </svelte:head>
 
 <div class="app">
- {#if Auth.userAddress}
+ {#if isLoggedIn}
  <div class="sidebar" bind:this={sideBar}>
   <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} onLogout={logout} />
   <MenuBar {toggleMenu} />
@@ -239,6 +171,6 @@
   {/if}
  </div>
  {:else}
-  <Login onLogin={login} error={loginError} {isLoggingIn} {server} {product} {version} {link} />
+  <Login error={loginError} {isLoggedIn} {server} {product} {version} {link} />
  {/if}
 </div>

@@ -1,25 +1,29 @@
 import Auth from './auth';
-let socket;
+const events = new EventTarget();
 const requests = {};
+let socket;
 
-export function connect(url, callback = null) {
- return new Promise(resolve => {
-  if (socket && socket.readyState !== WebSocket.CLOSED) return resolve(true);
-  socket = new WebSocket(url);
-  socket.onopen = () => {
-   console.log('Connected to WebSocket');
-   resolve(true);
-  };
-  socket.onmessage = event => handleResponse(JSON.parse(event.data));
-  socket.onerror = error => {
-   console.error('WebSocket error:', error);
-   resolve(false);
-  };
-  socket.onclose = () => {
-   console.log('WebSocket closed');
-   if (callback) callback();
-  };
- });
+export function connect(url) {
+ if (socket && socket.readyState !== WebSocket.CLOSED) {
+  console.error('Socket is already connected');
+  return;
+ }
+ socket = new WebSocket(url);
+ socket.onopen = event => {
+  console.log('Connected to WebSocket');
+  console.log(event);
+  events.dispatchEvent(new CustomEvent('open', { event }));
+ };
+ socket.onerror = error => {
+  console.error('WebSocket error:', error);
+  events.dispatchEvent(new CustomEvent('error', { error }));
+ };
+ socket.onclose = event => {
+  console.log('WebSocket closed. Code: ' + event.code);
+  console.log(event);
+  events.dispatchEvent(new CustomEvent('close', { event }));
+ };
+ socket.onmessage = event => handleResponse(JSON.parse(event.data));
 }
 
 export function disconnect() {
@@ -73,9 +77,7 @@ function handleResponse(res) {
     //eventNewMessage(res);
     break;
   }
- } else {
-  console.log('Unknown command from server');
- }
+ } else console.log('Unknown command from server');
 }
 
 function getRandomString(length = 40) {
@@ -87,5 +89,6 @@ function getRandomString(length = 40) {
 export default {
  connect,
  disconnect,
- send
+ send,
+ events
 };

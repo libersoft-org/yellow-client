@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import { conversationsArray, init } from '../messages.js';
  import Photo from './photo.svelte';
- import Modal from '../../../components/modal.svelte';
+ import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from './modal-conversation-new.svelte';
  
  //export let conversationsArray = [];

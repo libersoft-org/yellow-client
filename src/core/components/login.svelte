@@ -1,14 +1,31 @@
 <script>
- export let onLogin;
+ import { onMount } from 'svelte';
+ import Core from '../core.js';
  export let error;
  export let isLoggingIn;
  export let product;
  export let version;
  export let link;
- export let server;
- let address;
- let password;
+ let credentials = { server: '', address: '', password: '' };
  let stayLoggedIn = false;
+ let isLoggedIn;
+
+ onMount(async () => {
+  let storedLogin = localStorage.getItem('login');
+  if (storedLogin) {
+   storedLogin = JSON.parse(storedLogin);
+   credentials = storedLogin.login;
+   Core.login(credentials);
+  } else credentials.server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
+  /*
+   else {
+   isLoggingIn = false;
+   const errorMessage = 'Unable to connect to server. Please check the server address.';
+   if (userAddress) loginError = { message: errorMessage };
+   else alert('Error: ' + errorMessage);
+  }
+  */
+ });
 
  function clickLogo() {
   window.open(link, '_blank');
@@ -24,7 +41,7 @@
  function clickLogin() {
   if (!isLoggingIn) {
    error = null;
-   onLogin({ server, address, password, stayLoggedIn });
+   Core.login(credentials);
   }
  }
 
@@ -137,15 +154,15 @@
   <div class="form">
    <div class="group">
     <div class="label">Server:</div>
-    <input type="server" placeholder="wss://your_server/" bind:value={server} on:keydown={keyLogin} />
+    <input type="text" placeholder="wss://your_server/" bind:value={credentials.server} on:keydown={keyLogin} />
    </div>
    <div class="group">
     <div class="label">Address:</div>
-    <input type="address" placeholder="user@domain.tld" bind:value={address} on:keydown={keyLogin} />
+    <input type="text" placeholder="user@domain.tld" bind:value={credentials.address} on:keydown={keyLogin} />
    </div>
    <div class="group">
     <div class="label">Password:</div>
-    <input type="password" placeholder="Password" bind:value={password} on:keydown={keyLogin} />
+    <input type="password" placeholder="Password" bind:value={credentials.password} on:keydown={keyLogin} />
    </div>
    <div class="group-h">
     <label class="switch">

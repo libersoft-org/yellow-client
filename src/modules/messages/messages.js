@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import Socket from '../../scripts/socket';
-import Auth from '../../scripts/auth';
+import Socket from '../../core/socket.js';
+import Auth from '../../core/auth.js';
 export const selectedConversation = writable(null);
 export const conversationsArray = writable([]);
 export const messagesArray = writable([]);

@@ -1,10 +1,11 @@
 <script>
+ import Core from '../core.js';
  export let isMenuOpen = false;
  export let product;
  export let version;
  export let link;
  export let onMenuClose;
- export let onLogout;
+ //export let onLogout;
 
  function keyMenuClose() {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -25,7 +26,7 @@
  }
 
  function logoutClick() {
-  onLogout();
+  Core.logout();
   onMenuClose();
  }
 
