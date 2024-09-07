@@ -1,16 +1,33 @@
 <script>
  import Core from '../core.js';
+ import Socket from '../socket.js';
  export let isMenuOpen = false;
+ export let isLoggedIn = false;
  export let product;
  export let version;
  export let link;
- export let onMenuClose;
  //export let onLogout;
+
+ function logout() {
+  Socket.disconnect();
+  Core.userAddress = null;
+  Core.sessionID = null;
+  //TODO: set this in Messages module
+  //selectedConversation = null;
+  //messagesArray = [];
+  isMenuOpen = false;
+  isLoggedIn = false;
+  localStorage.removeItem('login');
+ }
+
+ function clickMenuClose() {
+  isMenuOpen = false;
+ }
 
  function keyMenuClose() {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   onMenuClose();
+   clickMenuClose()
   }
  }
 
@@ -25,15 +42,15 @@
   }
  }
 
- function logoutClick() {
-  Core.logout();
-  onMenuClose();
+ function clickLogout() {
+  logout();
+  clickMenuClose();
  }
 
- function logoutKey(event) {
+ function keyLogout(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   logoutClick();
+   clickLogout();
   }
  }
 </script>
@@ -145,14 +162,14 @@
 </style>
 
 {#if isMenuOpen}
- <div class="overlay open" role="none" on:click={onMenuClose}></div>
+ <div class="overlay open" role="none" on:click={clickMenuClose}></div>
 {/if}
 <div class="menu {isMenuOpen ? 'open' : ''}">
  <div>
   <div class="top">
-   <div class="icon" role="button" tabindex="0" on:click={onMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
+   <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
   </div>
-  <div class="item" role="button" tabindex="0" on:click={logoutClick} on:keydown={logoutKey}>
+  <div class="item" role="button" tabindex="0" on:click={clickLogout} on:keydown={keyLogout}>
    <img src="img/logout.svg" alt="Logout" />
    <div>Logout</div>
   </div>

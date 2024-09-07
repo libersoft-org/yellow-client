@@ -1,6 +1,7 @@
 # Bugs
 
-- Fix logout
+- Logout should reset all components' variables (core/components/menu.svelte - logout())
+- Fix module switching
 - Fix messages
 - Fix resizer
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
@@ -8,6 +9,7 @@
 
 # Features
 
+- Modules -> JSON file - load dynamically to +page.svelte
 - Move things related to Messages module from +page.svelte to somewhere else
 - Add mobile responsivity (show left panel only by default)
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
@@ -16,6 +18,7 @@
 - When starting a new conversation, load visible_name if available
 - Add number of new messages in conversations list
 - Auto reconnect in few seconds when connection is lost
+- Session expired -> logout (consider to get rid of sessions completely)
 - File / image send
 - Animated stickers (lottie)
 - GIFs

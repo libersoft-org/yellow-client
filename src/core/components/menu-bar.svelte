@@ -1,8 +1,8 @@
 <script>
- export let toggleMenu;
+ export let isMenuOpen;
 
  function menuClick() {
-  toggleMenu();
+  isMenuOpen = true;
  }
 
  function menuKey(event) {

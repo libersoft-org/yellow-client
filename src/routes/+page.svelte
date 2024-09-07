@@ -25,13 +25,10 @@
    content: Contact
   }
  };
- const requests = [];
  const product = 'Yellow';
  const version = '0.01';
  const link = 'https://yellow.libersoft.org';
- let server;
  let isLoggedIn = false;
- let loginError;
  let isMenuOpen = false;
  let sideBar;
  let isResizingSideBar = false;
@@ -62,29 +59,8 @@
   }
  }
 
- function toggleMenu() {
-  isMenuOpen = !isMenuOpen;
- }
-
- function closeMenu() {
-  isMenuOpen = false;
- }
-
  /* TODO: previous command switching
  switch (req.command) {
-    case 'user_login':
-     Auth.userAddress = req.params.address;
-     Auth.sessionID = res.data.sessionID; 
-     if (res.error === 0) {
-      //TODO: this has to be executed in +page.svelte core:
-      //loginError = null;
-     } else {
-      isLoggingIn = false;
-      //TODO: this has to be executed in +page.svelte core:
-      //loginError = res;
-     }
-     //resLogin(res, req, credentials);
-     break;
     case 'user_list_conversations':
      //TODO: send to messages module
      //if (objMessages) objMessages.resListConversations(res);
@@ -152,11 +128,11 @@
 
 <div class="app">
  {#if !isLoggedIn}
-  <Login error={loginError} bind:isLoggedIn={isLoggedIn} {server} {product} {version} {link} />
+  <Login bind:isLoggedIn={isLoggedIn} {product} {version} {link} />
  {:else}
   <div class="sidebar" bind:this={sideBar}>
-   <Menu {isMenuOpen} {product} {version} {link} onMenuClose={closeMenu} />
-   <MenuBar {toggleMenu} />
+   <Menu bind:isMenuOpen={isMenuOpen} bind:isLoggedIn={isLoggedIn} {product} {version} {link} />
+   <MenuBar bind:isMenuOpen={isMenuOpen} />
    <ModuleBar bind:selectedModule="{selectedModuleName}" />
    {#if selectedModule}
     <svelte:component this={selectedModule.sidebar} />
