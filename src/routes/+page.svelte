@@ -31,6 +31,7 @@
  let isLoggedIn = false;
  let isMenuOpen = false;
  let sideBar;
+ let resizer;
  let isResizingSideBar = false;
  let selectedModule;
  let selectedModuleName;
@@ -60,6 +61,7 @@
    let sideBarWidth = e.clientX < max ? e.clientX : max;
    sideBarWidth = e.clientX > min ? sideBarWidth : min;
    sideBar.style.width = sideBarWidth + 'px';
+   resizer.style.left = sideBarWidth + 'px';
   }
  }
 </script>
@@ -79,10 +81,14 @@
  }
 
  .resizer {
-  display: hidden;
-  width: 100px;
-  margin-left: -50px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 300px;
+  width: 10px;
+  margin-left: -5px;
   cursor: ew-resize;
+  background-color: transparent;
  }
 
  .content {
@@ -128,7 +134,7 @@
     <WelcomeSidebar {product} />
    {/if}
   </div>
-  <div class="resizer" role="none" on:mousedown={startResizeSideBar}></div>
+  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
   <div class="content">
    {#if selectedModule}
     <svelte:component this={selectedModule.content} />
