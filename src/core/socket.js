@@ -2,8 +2,10 @@ import Core from './core.js';
 const events = new EventTarget();
 const requests = {};
 let socket;
+export let url;
 
-export function connect(url) {
+export function connect(server) {
+ if (server) url = server;
  if (socket && socket.readyState !== WebSocket.CLOSED) {
   console.error('Socket is already connected');
   return;
@@ -44,6 +46,10 @@ export function send(command, params = {}, sendSessionID = true, callback = null
  socket.send(JSON.stringify(req));
 }
 
+export function status() {
+ return socket?.readyState;
+}
+
 function handleResponse(res) {
  console.log('RESPONSE', res);
  if (res.requestID) {
@@ -77,5 +83,7 @@ export default {
  connect,
  disconnect,
  send,
- events
+ status,
+ events,
+ url
 };

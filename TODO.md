@@ -8,6 +8,9 @@
 
 # Features
 
+- If server is connected, hide green (info) status after 5 seconds
+- Hide server status after some time
+- Move whole non-login component from +page.svelte to separate component
 - Modules -> JSON file - load dynamically to +page.svelte
 - Add mobile responsivity (show left panel only by default)
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
@@ -15,7 +18,6 @@
 - On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
 - When starting a new conversation, load visible_name if available
 - Add number of new messages in conversations list
-- Auto reconnect in few seconds when connection is lost
 - Session expired -> logout (consider to get rid of sessions completely)
 - File / image send
 - Animated stickers (lottie)

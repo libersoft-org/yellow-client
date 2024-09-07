@@ -1,5 +1,7 @@
 <script>
  import "../app.css";
+ import { onMount } from 'svelte';
+ import Socket from '../core/socket.js';
  import Login from '../core/components/login.svelte';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -28,6 +30,7 @@
  const product = 'Yellow';
  const version = '0.01';
  const link = 'https://yellow.libersoft.org';
+ let status;
  let isLoggedIn = false;
  let isMenuOpen = false;
  let sideBar;
@@ -35,6 +38,34 @@
  let isResizingSideBar = false;
  let selectedModule;
  let selectedModuleName;
+
+ onMount(() => {
+  //TODO - get real status:
+  status = { class: 'info', message: 'CONNECTED' };
+
+  Socket.events.addEventListener('open', event => {
+   console.log('Connected to WebSocket:', event);
+   status = { class: 'info', message: 'CONNECTED' };
+  });
+  Socket.events.addEventListener('error', event => {
+   console.error('WebSocket error:', event);
+   status = { class: 'error', message: 'ERROR' };
+  });
+  Socket.events.addEventListener('close', event => {
+   console.log('WebSocket closed:', event);
+   status = { class: 'error', message: 'DISCONNECTED' };
+   let time = 5;
+   const intervalID = setInterval(() => {
+    time--;
+    status = { class: 'error', message: 'DISCONNECTED, reconnecting in ' + time + ' ...' };
+    if (time <= 0) {
+     status = { class: 'error', message: 'RECONNECTING ...' };
+     Socket.connect();
+     clearInterval(intervalID);
+    }
+   }, 1000);
+  });
+ });
 
  function onSelectModule(name) {
   selectedModule = modules[name];
@@ -95,25 +126,46 @@
   flex-grow: 1;
  }
 
- @media (max-width: 768px) {
- .sidebar {
+ .status {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  padding: 10px;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 10px;
+  font-weight: bold;
  }
 
- .sidebar.hidden {
-  display: none;
+ .status.info {
+  color: #080;
+  background-color: #dfd;
+  border: 1px solid #080;
  }
 
- .content.hidden {
-  display: none;
+ .status.error {
+  color: #800;
+  background-color: #fdd;
+  border: 1px solid #800;
  }
 
- .resizer {
-  display: none;
+ @media (max-width: 768px) {
+  .sidebar {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+  }
+
+  .sidebar.hidden {
+   display: none;
+  }
+
+  .content.hidden {
+   display: none;
+  }
+
+  .resizer {
+   display: none;
+  }
  }
-}
 </style>
 
 <svelte:head>
@@ -124,6 +176,7 @@
  {#if !isLoggedIn}
   <Login bind:isLoggedIn {product} {version} {link} />
  {:else}
+  <div class="status {status.class}">{status.message}</div>
   <div class="sidebar" bind:this={sideBar}>
    <Menu bind:isMenuOpen bind:isLoggedIn {product} {version} {link} />
    <MenuBar bind:isMenuOpen />

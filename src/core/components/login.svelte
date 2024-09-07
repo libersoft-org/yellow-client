@@ -7,12 +7,11 @@
  export let product;
  export let version;
  export let link;
- let socketOpen = false;
  let credentials = { server: '', address: '', password: '' };
  let stayLoggedIn = false;
  let loggingIn = false;
 
- onMount(async () => {
+ onMount(() => {
   let storedLogin = localStorage.getItem('login');
   if (storedLogin) {
    storedLogin = JSON.parse(storedLogin);
@@ -23,24 +22,21 @@
  });
 
  export function login(credentials) {
-  if (socketOpen) {
+  if (Socket.status() === WebSocket.OPEN) {
    sendLoginCommand(credentials);
    return;
   }
   Socket.events.addEventListener('open', event => {
-   socketOpen = true;
    console.log('Connected to WebSocket:', event);
    sendLoginCommand(credentials);
   });
   Socket.events.addEventListener('error', event => {
    console.error('WebSocket error:', event);
-   socketOpen = false;
    error = 'Cannot connect to server';
    loggingIn = false;
   });
   Socket.events.addEventListener('close', event => {
    console.log('WebSocket closed:', event);
-   socketOpen = false;
    loggingIn = false;
   });
   Socket.connect(credentials.server);
