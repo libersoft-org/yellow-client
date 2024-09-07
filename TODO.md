@@ -2,7 +2,6 @@
 
 - Fix messages
 - Logout should reset all module components' variables (core/components/menu.svelte - logout())
-- When hot reload page, it's throwing an error that Socket is already connected
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
 - Build replaces CSS background image path (for example from: "img/background.png" to "/_app/immutable/assets/img/background.png") - https://stackoverflow.com/questions/75843825/sveltekit-dev-build-and-path-problems-with-static-assets-referenced-in-css
 
@@ -11,7 +10,6 @@
 - If server is connected, hide green (info) status after 5 seconds + add close button to status window
 - Hide server status after some time
 - Move whole non-login component from +page.svelte to separate component
-- Modules -> JSON file - load dynamically to +page.svelte
 - Add mobile responsivity (show left panel only by default)
 - Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 - Add the last message preview to conversations list
