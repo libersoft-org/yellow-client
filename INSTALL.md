@@ -15,7 +15,7 @@ apt -y install git openssl
 curl -fsSL https://bun.sh/install | bash
 source /root/.bashrc
 git clone https://github.com/libersoft-org/yellow-client.git
-cd yellow-server/
+cd yellow-client/
 bun i
 ```
 
