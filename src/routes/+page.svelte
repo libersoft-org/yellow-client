@@ -40,6 +40,7 @@
  let selectedModuleName;
 
  onMount(() => {
+  window?.chrome?.webview?.postMessage('Hello from JavaScript!');
   //TODO - get real status:
   status = { class: 'info', message: 'CONNECTED' };
 
