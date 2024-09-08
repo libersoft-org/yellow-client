@@ -26,3 +26,4 @@
 - Link previews (YouTube, OG etc.)
 - Voice / video messages
 - Reply / forwarded message
+- Contacts (second module)
