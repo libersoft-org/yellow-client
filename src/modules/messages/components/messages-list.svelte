@@ -1,7 +1,8 @@
 <script>
+ import { afterUpdate } from 'svelte';
+ import Core from '../../../core/core.js';
+ import { messagesArray } from '../messages.js';
  import Message from './message.svelte';
- export let messagesArray = [];
- export let userAddress;
  let messages;
 
  afterUpdate(() => scrollToBottom());
@@ -22,7 +23,7 @@
 </style>
 
 <div class="messages" bind:this={messages}>
- {#each messagesArray as m}
-  <Message {m} message={m} isOutgoing={m.address_from === userAddress} />
+ {#each $messagesArray as m}
+  <Message {m} message={m} isOutgoing={m.address_from === Core.userAddress} />
  {/each}
 </div>

@@ -1,14 +1,10 @@
 <script>
  import { onMount } from 'svelte';
- import { conversationsArray, init } from '../messages.js';
+ import { init, listMessages, selectedConversation, conversationsArray } from '../messages.js';
  import Photo from './photo.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from './modal-conversation-new.svelte';
- 
- //export let conversationsArray = [];
- export let onSelectConversation;
  export let openNewConversation;
- let selectedConversationAddress = null;
  let isModalOpen = false;
  let modalComponent = null;
 
@@ -29,8 +25,13 @@
  }
 
  function clickItem(conversation) {
-  selectedConversationAddress = conversation.address;
-  onSelectConversation(conversation);
+  selectedConversation.update(() => conversation);
+  listMessages(conversation.address);
+  requestAnimationFrame(() => {
+   // TODO: don't do it this way, use Svelte reactivity instead:
+   const input = document.querySelector('.message-bar .message');
+   if (input) input.focus();
+  });
  }
 
  function keyItem(conversation) {
@@ -108,7 +109,7 @@
  </div>
  <div class="items">
   {#each $conversationsArray as c}
-  <div class="item" class:active={c.address === selectedConversationAddress} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
+  <div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
    <Photo />
    <div class="description">
     <div class="name">{c.visible_name}</div>

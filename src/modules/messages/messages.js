@@ -1,43 +1,52 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import Socket from '../../core/socket.js';
 import Core from '../../core/core.js';
 export const selectedConversation = writable(null);
 export const conversationsArray = writable([]);
 export const messagesArray = writable([]);
 
+// TODO: What is this?
+//conversationsArray.subscribe(value => {
+// console.log('SUBSCRIBE', value);
+//});
+
 export function init() {
- console.log(Core);
  if (Core.userAddress) {
   Socket.send('user_subscribe', { event: 'new_message' });
   Socket.send('user_list_conversations', null, true, (req, res) => resListConversations(res));
  }
 }
 
-export function resListConversations(res) {
+function resListConversations(res) {
  console.log('LISTING CONVERSATIONS', res);
  if (res.error === 0 && res.data?.conversations) conversationsArray.update(() => res.data.conversations);
 }
 
-conversationsArray.subscribe(value => {
- console.log('SUBSCRIBE', value);
-});
+// TODO: something old, delete when not needed:
+//export function listMessages() {
+// Socket.send('user_list_messages', { address: conversation.address }, true, resListMessages);
+//}
 
-export function listMessages() {
- Socket.send('user_list_messages', { address: conversation.address }, true, resListMessages);
+export function listMessages(address) {
+ messagesArray.update(() => []);
+ Socket.send(
+  'user_list_messages',
+  {
+   address: address,
+   count: 100,
+   offset: 0
+  },
+  true,
+  resListMessages
+ );
 }
 
-export function resListMessages(res) {
+function resListMessages(req, res) {
  console.log('LISTING MESSAGES', res);
+ console.log(req);
+ console.log(res);
  if (res.error === 0 && res.data?.messages) {
   messagesArray.update(() => res.data.messages);
-  const contentDiv = document.createElement('div');
-  new MessagesList({
-   target: contentDiv,
-   props: {
-    messagesArray: messagesArray
-   }
-  });
-  setContentHTML(contentDiv.innerHTML);
  }
 }
 
@@ -111,21 +120,7 @@ switch (req.command) {
   selectConversation({ address });
  }
 
- function selectConversation(conversation) {
-  selectedConversation = conversation;
-  messagesArray = [];
-  send('user_list_messages', {
-   address: conversation.address,
-   count: 100,
-   offset: 0
-  });
-  requestAnimationFrame(() => {
-   const input = document.querySelector('.message-bar .message');
-   if (input) input.focus();
-  });
- }
-
- function sendMessage(text) {
+  function sendMessage(text) {
   send('user_send_message', {
    address: selectedConversation.address,
    message: text
@@ -133,4 +128,4 @@ switch (req.command) {
  }
  */
 
-//export default { selectedConversation, conversationsArray, messagesArray, init };
+export default { selectedConversation, listMessages, conversationsArray, messagesArray, init };
