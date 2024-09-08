@@ -8,8 +8,9 @@
 
 # Features
 
-- If server is connected, hide green (info) status after 5 seconds + add close button to status window
-- Hide server status after some time
+- add a close button to status notification
+- If server is connected, hide green (info) status notification after 5 seconds
+- Move server status notification somewhere else
 - Move whole non-login component from +page.svelte to separate component
 - Move items in conversations list on message sent / received instead of reloading from server
 - Add mobile responsivity (show left panel only by default)
