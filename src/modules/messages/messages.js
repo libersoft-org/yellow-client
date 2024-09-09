@@ -17,7 +17,6 @@ function listConversations() {
 }
 
 function resListConversations(res) {
- console.log('LISTING CONVERSATIONS', res);
  if (res.error === 0 && res.data?.conversations) conversationsArray.update(() => res.data.conversations);
 }
 
@@ -32,7 +31,6 @@ export function listMessages(address) {
 }
 
 function resListMessages(req, res) {
- console.log('LISTING MESSAGES', res);
  if (res.error === 0 && res.data?.messages) messagesArray.update(() => res.data.messages);
 }
 

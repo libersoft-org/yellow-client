@@ -26,13 +26,13 @@ export function disconnect() {
 }
 
 export function send(command, params = {}, sendSessionID = true, callback = null) {
- console.log('------------------');
- console.log('SENDING COMMAND:');
- console.log('COMMAND:', command);
- console.log('PARAMS:', params);
- console.log('SEND SESSION ID:', sendSessionID);
- console.log('CALLBACK:', callback);
- console.log('------------------');
+ //console.log('------------------');
+ //console.log('SENDING COMMAND:');
+ //console.log('COMMAND:', command);
+ //console.log('PARAMS:', params);
+ //console.log('SEND SESSION ID:', sendSessionID);
+ //console.log('CALLBACK:', callback);
+ //console.log('------------------');
  if (!socket || socket.readyState !== WebSocket.OPEN) {
   console.error('Error while sending command: WebSocket is not open');
   return;
@@ -51,17 +51,17 @@ export function status() {
 }
 
 function handleResponse(res) {
- console.log('RESPONSE', res);
+ //console.log('RESPONSE', res);
  if (res.requestID) {
-  // it is response to command
+  // it is response to command:
   const reqData = requests[res.requestID];
   if (reqData?.req?.command) {
-   console.log('REQUEST', reqData.req);
+   //console.log('REQUEST', reqData.req);
    if (reqData.callback) reqData.callback(reqData.req, res);
    delete requests[res.requestID];
   } else console.log('Request command not found');
  } else if (res.event) {
-  // it is event
+  // it is event:
   //TODO: different types of events should also be tied with command and callback that requested them, use the same thing as with commands - to have a request ID
   switch (res.event) {
    case 'new_message':

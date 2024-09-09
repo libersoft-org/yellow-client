@@ -19,6 +19,7 @@
 - MESSAGES: When starting a new conversation, load visible_name if available
 - MESSAGES: Add number of new messages in conversations list
 - CORE: Session expired -> logout (consider to get rid of sessions completely)
+- MESSAGES: Seen function - when new message is visible on screen, send "seen" command
 - MESSAGES: File / image send
 - MESSAGES: Animated stickers (lottie)
 - MESSAGES: GIFs
