@@ -1,5 +1,5 @@
 <script>
- export let onSendMessage;
+ import { sendMessage } from '../messages.js';
  let elMessage;
  
  function resizeMessage(event) {
@@ -13,7 +13,7 @@
 
  function clickSend() {
   if (elMessage.value) {
-   onSendMessage(elMessage.value);
+   sendMessage(elMessage.value);
    elMessage.value = '';
   }
   elMessage.focus();

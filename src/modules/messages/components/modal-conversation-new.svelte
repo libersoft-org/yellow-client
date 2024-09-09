@@ -1,6 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- export let openNewConversation;
+ import { openNewConversation } from '../messages.js';
  export let onClose;
  let address;
 

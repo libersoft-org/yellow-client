@@ -4,7 +4,6 @@
  import Photo from './photo.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from './modal-conversation-new.svelte';
- export let openNewConversation;
  let isModalOpen = false;
  let modalComponent = null;
 
@@ -122,6 +121,6 @@
 </div>
 {#if isModalOpen}
 <Modal title="New Conversation" onClose={() => isModalOpen = false}>
- <ModalConversationNew {openNewConversation} onClose={() => isModalOpen = false} />
+ <ModalConversationNew onClose={() => isModalOpen = false} />
 </Modal>
 {/if}

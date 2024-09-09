@@ -40,8 +40,8 @@ export function send(command, params = {}, sendSessionID = true, callback = null
  const requestID = getRandomString();
  const req = { requestID };
  if (sendSessionID) req.sessionID = Core.sessionID;
- req.command = command;
- req.params = params;
+ if (command) req.command = command;
+ if (params) req.params = params;
  requests[requestID] = { req, callback };
  socket.send(JSON.stringify(req));
 }

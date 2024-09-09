@@ -5,16 +5,15 @@ export const selectedConversation = writable(null);
 export const conversationsArray = writable([]);
 export const messagesArray = writable([]);
 
-// TODO: What is this?
-//conversationsArray.subscribe(value => {
-// console.log('SUBSCRIBE', value);
-//});
-
 export function init() {
  if (Core.userAddress) {
   Socket.send('user_subscribe', { event: 'new_message' });
-  Socket.send('user_list_conversations', null, true, (req, res) => resListConversations(res));
+  listConversations();
  }
+}
+
+function listConversations() {
+ Socket.send('user_list_conversations', null, true, (req, res) => resListConversations(res));
 }
 
 function resListConversations(res) {
@@ -29,25 +28,16 @@ function resListConversations(res) {
 
 export function listMessages(address) {
  messagesArray.update(() => []);
- Socket.send(
-  'user_list_messages',
-  {
-   address: address,
-   count: 100,
-   offset: 0
-  },
-  true,
-  resListMessages
- );
+ Socket.send('user_list_messages', { address: address, count: 100, offset: 0 }, true, resListMessages);
 }
 
 function resListMessages(req, res) {
  console.log('LISTING MESSAGES', res);
- console.log(req);
- console.log(res);
- if (res.error === 0 && res.data?.messages) {
-  messagesArray.update(() => res.data.messages);
- }
+ if (res.error === 0 && res.data?.messages) messagesArray.update(() => res.data.messages);
+}
+
+export function sendMessage(text) {
+ Socket.send('user_send_message', { address: selectedConversation.address, message: text }, true, resSendMessage);
 }
 
 function resSendMessage(req, res) {
@@ -61,24 +51,15 @@ function resSendMessage(req, res) {
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
  };
  messagesArray.update(() => [msg, ...messagesArray]);
- Socket.send('user_list_conversations', null, true, (req, res) => resListConversations(res));
+ //TODO: replace with sorting just on client:
+ listConversations();
 }
 
-/* TODO: previous command switching
-switch (req.command) {
- case 'user_list_conversations':
-  //TODO: send to messages module
-  //if (objMessages) objMessages.resListConversations(res);
-  break;
- case 'user_list_messages':
-  //TODO: send to messages module
-  //if (objMessages) objMessages.resListMessages(res);
-  break;
- case 'user_send_message':
-  //TODO: send to messages module
-  //resSendMessage(res, req);
- }
-*/
+export function openNewConversation(address) {
+ // TODO: load visible name if it's already an existing conversation:
+ selectedConversation.update(() => ({ address, visible_name: null }));
+ listMessages(address);
+}
 
 /*
  function eventNewMessage(res) {
@@ -116,16 +97,7 @@ switch (req.command) {
   audio.play();
  }
 
- function openNewConversation(address) {
-  selectConversation({ address });
- }
 
-  function sendMessage(text) {
-  send('user_send_message', {
-   address: selectedConversation.address,
-   message: text
-  });
- }
  */
 
-export default { selectedConversation, listMessages, conversationsArray, messagesArray, init };
+export default { openNewConversation, listMessages, sendMessage, conversationsArray, messagesArray, selectedConversation, init };
