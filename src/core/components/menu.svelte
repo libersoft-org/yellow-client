@@ -12,7 +12,8 @@
   Socket.disconnect();
   Core.userAddress = null;
   Core.sessionID = null;
-  //TODO: set this in Messages module
+  Core.hideSidebarMobile.update(() => false);
+  //TODO: reset all variables in modules, for example set this in Messages module:
   //selectedConversation = null;
   //messagesArray = [];
   isMenuOpen = false;
