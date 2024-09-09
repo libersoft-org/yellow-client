@@ -65,7 +65,7 @@ export function openNewConversation(address) {
 /*
  function eventNewMessage(res) {
   if (!res.data) return;
-  send('user_list_conversations');
+  listConversations();
   const msg = {
    address_from: res.data.from,
    address_to: res.data.to,
@@ -80,6 +80,7 @@ export function openNewConversation(address) {
  }
 
  function showNotification(msg) {
+  // TODO: distinguish if it's a web or native version
   if (Notification.permission !== 'granted') return;
   const conversation = conversationsArray.find(c => c.address === msg.address_from);
   const notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
@@ -97,8 +98,14 @@ export function openNewConversation(address) {
   const audio = new Audio('audio/message.mp3');
   audio.play();
  }
+*/
 
-
- */
-
-export default { openNewConversation, listMessages, sendMessage, conversationsArray, messagesArray, selectedConversation, init };
+export default {
+ openNewConversation,
+ listMessages,
+ sendMessage,
+ conversationsArray,
+ messagesArray,
+ selectedConversation,
+ init
+};
