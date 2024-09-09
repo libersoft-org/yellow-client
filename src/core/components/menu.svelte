@@ -101,6 +101,7 @@
  }
 
  .top .icon {
+  display: flex;
   padding: 15px;
   cursor: pointer;
  }
