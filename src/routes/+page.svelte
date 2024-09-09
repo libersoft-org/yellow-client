@@ -185,7 +185,7 @@
    {#if selectedModule}
     <svelte:component this={selectedModule.sidebar} />
    {:else}
-    <WelcomeSidebar {product} />
+    <WelcomeSidebar />
    {/if}
   </div>
   <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
