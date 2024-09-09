@@ -1,5 +1,6 @@
 # Bugs
 
+- MESSAGES: Sometimes people receive 1 message more messages times at once (new_message event) - multiple websocket connections??
 - MESSAGES: New message notification works only if Messages module is previously opened
 - CORE: Logout should reset all module components' variables (core/components/menu.svelte - logout()) - consider doing it, because we'll get rid of login (use account switching instead)
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
