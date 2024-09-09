@@ -1,29 +1,31 @@
 # Bugs
 
-- Fix messages
-- When a conversation with large messages is opened, sidebar shrinks - can be fixed by switching "width" to "min-width" (mind resizer!!!)
-- conversation.svelte - fix events for isClientFocused (for notifications) - move somewhere else?
-- Logout should reset all module components' variables (core/components/menu.svelte - logout())
+- MESSAGES: Fix send / event receive
+- CORE: CSS: When a conversation with large messages is opened, sidebar shrinks - can be fixed by switching "width" to "min-width" (mind resizer!!!)
+- MESSAGES: conversation.svelte - fix events for isClientFocused (for notifications) - move somewhere else - to core?
+- CORE: Logout should reset all module components' variables (core/components/menu.svelte - logout()) - consider doing it because we'll get rid of login (use account switching instead)
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
 
 # Features
 
-- Add a close button to status notification
-- Move server status notification somewhere else
-- If server is connected, hide green (info) status notification after 5 seconds
-- Move whole non-login component from +page.svelte to separate component
-- Move items in conversations list on message sent / received instead of reloading from server
-- Add mobile responsivity (show left panel only by default)
-- Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
-- Add the last message preview to conversations list
-- On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
-- When starting a new conversation, load visible_name if available
-- Add number of new messages in conversations list
-- Session expired -> logout (consider to get rid of sessions completely)
-- File / image send
-- Animated stickers (lottie)
-- GIFs
-- Link previews (YouTube, OG etc.)
-- Voice / video messages
-- Reply / forwarded message
-- Contacts (second module)
+- CORE: Add a close button to status notification
+- CORE: Move server status notification somewhere else
+- CORE: If server is connected, hide green (info) status notification after 5 seconds
+- CORE: Add mobile responsivity (show left panel only by default)
+- MESSAGES: Move items in conversations list on message sent / received instead of reloading from server + if it's a new conversation, add it to converastion list
+- MESSAGES: Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
+- MESSAGES: Add the last message preview to conversations list
+- MESSAGES: On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
+- MESSAGES: When starting a new conversation, load visible_name if available
+- MESSAGES: Add number of new messages in conversations list
+- CORE: Session expired -> logout (consider to get rid of sessions completely)
+- MESSAGES: File / image send
+- MESSAGES: Animated stickers (lottie)
+- MESSAGES: GIFs
+- MESSAGES: Link previews (YouTube, OG etc.)
+- MESSAGES: Voice / video messages
+- MESSAGES: Reply / forwarded message
+- CONTACTS: Make whole module
+- CORE: Instead of login / logout add account switching
+- CORE: Add wizard (create keys, add accounts)
+
