@@ -1,6 +1,6 @@
 # Bugs
 
-- MESSAGES: Fix send / event receive
+- MESSAGES: Fix event receive message
 - CORE: CSS: When a conversation with large messages is opened, sidebar shrinks - can be fixed by switching "width" to "min-width" (mind resizer!!!)
 - MESSAGES: conversation.svelte - fix events for isClientFocused (for notifications) - move somewhere else - to core?
 - CORE: Logout should reset all module components' variables (core/components/menu.svelte - logout()) - consider doing it because we'll get rid of login (use account switching instead)
@@ -28,4 +28,3 @@
 - CONTACTS: Make whole module
 - CORE: Instead of login / logout add account switching
 - CORE: Add wizard (create keys, add accounts)
-

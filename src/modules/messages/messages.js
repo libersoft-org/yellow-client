@@ -37,20 +37,21 @@ function resListMessages(req, res) {
 }
 
 export function sendMessage(text) {
- Socket.send('user_send_message', { address: selectedConversation.address, message: text }, true, resSendMessage);
+ Socket.send('user_send_message', { address: get(selectedConversation).address, message: text }, true, resSendMessage);
 }
 
 function resSendMessage(req, res) {
- if (selectedConversation?.address === Core.userAddress) return;
+ if (!get(selectedConversation)?.address) return;
+ //if (get(selectedConversation).address === Core.userAddress) return;
  if (res.error !== 0) return;
- if (req?.params?.address !== selectedConversation.address) return;
+ if (req?.params?.address !== get(selectedConversation).address) return;
  const msg = {
   address_from: Core.userAddress,
   address_to: req.params.address,
   message: req.params.message,
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
  };
- messagesArray.update(() => [msg, ...messagesArray]);
+ messagesArray.update(() => [msg, ...get(messagesArray)]);
  //TODO: replace with sorting just on client:
  listConversations();
 }
