@@ -1,7 +1,6 @@
 # Bugs
 
 - MESSAGES: New message notification works only if Messages module is previously opened
-- CORE: CSS: When a conversation with large messages is opened, sidebar shrinks - can be fixed by switching "width" to "min-width" (mind resizer!!!)
 - CORE: Logout should reset all module components' variables (core/components/menu.svelte - logout()) - consider doing it because we'll get rid of login (use account switching instead)
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
 

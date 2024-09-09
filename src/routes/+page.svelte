@@ -95,7 +95,7 @@
   if (isResizingSideBar) {
    let sideBarWidth = e.clientX < max ? e.clientX : max;
    sideBarWidth = e.clientX > min ? sideBarWidth : min;
-   sideBar.style.width = sideBarWidth + 'px';
+   sideBar.style.minWidth = sideBarWidth + 'px';
    resizer.style.left = sideBarWidth + 'px';
   }
  }
@@ -110,7 +110,7 @@
  .sidebar {
   display: flex;
   flex-direction: column;
-  width: 300px;
+  min-width: 300px;
   height: 100%;
   box-shadow: var(--shadow);
  }
