@@ -1,5 +1,6 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
+ import Core from '../../../core/core.js';
  import { get } from 'svelte/store';
  import { selectedConversation } from '../messages.js';
  import ProfileBar from './profile-bar.svelte';
@@ -16,6 +17,7 @@
 
  function closeConversation() {
   selectedConversation.update(() => null);
+  Core.hideSidebarMobile.update(() => false);
  }
 
  function hotKeys(event) {

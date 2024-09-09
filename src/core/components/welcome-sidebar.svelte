@@ -2,12 +2,9 @@
 </script>
 
 <style>
- .welcome {
-  display: flex;
-  flex-grow: 1;
-  background-color: #fff;
+ .welcome-sidebar {
  }
 </style>
 
-<div class="welcome">
+<div class="welcome-sidebar">
 </div>

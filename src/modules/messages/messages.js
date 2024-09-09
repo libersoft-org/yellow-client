@@ -52,6 +52,7 @@ function resSendMessage(req, res) {
 export function openNewConversation(address) {
  // TODO: load visible name if it's already an existing conversation:
  selectedConversation.update(() => ({ address, visible_name: null }));
+ Core.hideSidebarMobile.update(() => true);
  listMessages(address);
 }
 
@@ -65,7 +66,7 @@ function eventNewMessage(res) {
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
  };
  if (msg.address_from === get(selectedConversation)?.address) messagesArray.update(() => [msg, ...get(messagesArray)]);
- if (msg.address_from !== get(selectedConversation)?.address || !Core.isClientFocused) showNotification(msg);
+ if (msg.address_from !== get(selectedConversation)?.address || !get(Core.isClientFocused)) showNotification(msg);
  //TODO: replace with sorting just on client:
  listConversations();
 }
@@ -92,6 +93,7 @@ function showNotification(msg) {
  notification.onclick = () => {
   window.focus();
   selectedConversation.update(() => ({ address: msg.address_from, visible_name: conversation?.visible_name }));
+  Core.hideSidebarMobile.update(() => true);
   listMessages(msg.address_from);
  };
 }

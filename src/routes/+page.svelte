@@ -2,7 +2,7 @@
  import "../app.css";
  import { onMount } from 'svelte';
  import Socket from '../core/socket.js';
- import Core from '../core/core.js';
+ import { isClientFocused, hideSidebarMobile } from '../core/core.js';
  import Login from '../core/components/login.svelte';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -42,14 +42,14 @@
  let selectedModuleName;
 
  onMount(() => {
-  window.addEventListener('focus', () => Core.isClientFocused = true);
-  window.addEventListener('blur', () => Core.isClientFocused = false);
+  window.addEventListener('focus', () => isClientFocused.update(() => true));
+  window.addEventListener('blur', () => isClientFocused.update(() => false));
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
   Socket.events.addEventListener('open', event => {
    console.log('Connected to WebSocket:', event);
    status = { class: 'info', message: 'Connected to server' };
    statusVisible = true;
-   setTimeout(() => { if (status.class === 'info') statusVisible = false; }, 3000);
+   setTimeout(() => { if (status.class === 'info') statusVisible = false; }, 5000);
   });
   Socket.events.addEventListener('error', event => {
    console.error('WebSocket error:', event);
@@ -124,8 +124,8 @@
   display: flex;
   flex-direction: column;
   min-width: 300px;
-  height: 100%;
   box-shadow: var(--shadow);
+  background-color: #fff;
  }
 
  .resizer {
@@ -144,6 +144,7 @@
  }
 
  .status {
+  z-index: 1000;
   position: absolute;
   right: 10px;
   bottom: 10px;
@@ -204,10 +205,6 @@
    display: none;
   }
 
-  .content.hidden {
-   display: none;
-  }
-
   .resizer {
    display: none;
   }
@@ -223,14 +220,14 @@
   <Login bind:isLoggedIn {product} {version} {link} />
  {:else}
   {#if statusVisible}
-   <div class="status {status.class}">
-    <div class="panel {status.class}">
+   <div class="status {status?.class ? status.class : ''}">
+    <div class="panel {status?.class ? status.class : ''}">
      <div class="close" role="button" tabindex="0" on:click={clickStatusClose} on:keydown={keyStatusClose}><img src="img/close.svg" alt="X"></div>
     </div>
-    <div class="text">{status.message}</div>
+    <div class="text">{status?.message ? status.message : ''}</div>
    </div>
   {/if}
-  <div class="sidebar" bind:this={sideBar}>
+  <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
    <Menu bind:isMenuOpen bind:isLoggedIn {product} {version} {link} />
    <MenuBar bind:isMenuOpen />
    <ModuleBar {onSelectModule} />

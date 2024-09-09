@@ -1,5 +1,6 @@
 <script>
  import { onMount } from 'svelte';
+ import Core from '../../../core/core.js';
  import { init, listMessages, selectedConversation, conversationsArray } from '../messages.js';
  import Photo from './photo.svelte';
  import Modal from '../../../core/components/modal.svelte';
@@ -25,6 +26,7 @@
 
  function clickItem(conversation) {
   selectedConversation.update(() => conversation);
+  Core.hideSidebarMobile.update(() => true);
   listMessages(conversation.address);
   requestAnimationFrame(() => {
    // TODO: don't do it this way, use Svelte reactivity instead:
