@@ -5,12 +5,9 @@
  import ProfileBar from './profile-bar.svelte';
  import MessagesList from './messages-list.svelte';
  import MessageBar from './message-bar.svelte';
- //let isClientFocused = true;
 
  onMount(() => {
   window.addEventListener('keydown', hotKeys);
-  //window.addEventListener('focus', () => isClientFocused = true);
-  //window.addEventListener('blur', () => isClientFocused = false);
  });
 
  onDestroy(() => {

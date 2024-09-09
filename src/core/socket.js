@@ -66,8 +66,8 @@ function handleResponse(res) {
   switch (res.event) {
    case 'new_message':
     console.log('GOT EVENT', res);
-    //TODO: send to messages module
-    //eventNewMessage(res);
+    //TODO: send event to messages module:
+    events.dispatchEvent(new CustomEvent('new_message', { detail: res }));
     break;
   }
  } else console.log('Unknown command from server');

@@ -2,6 +2,7 @@
  import "../app.css";
  import { onMount } from 'svelte';
  import Socket from '../core/socket.js';
+ import Core from '../core/core.js';
  import Login from '../core/components/login.svelte';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -40,8 +41,10 @@
  let selectedModuleName;
 
  onMount(() => {
-  window?.chrome?.webview?.postMessage('Hello from JavaScript!');
-  //TODO - get real status:
+  window.addEventListener('focus', () => Core.isClientFocused = true);
+  window.addEventListener('blur', () => Core.isClientFocused = false);
+  window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
+  //TODO: get real status:
   status = { class: 'info', message: 'CONNECTED' };
 
   Socket.events.addEventListener('open', event => {
