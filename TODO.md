@@ -1,14 +1,11 @@
 # Bugs
 
 - MESSAGES: New message notification works only if Messages module is previously opened
-- CORE: Logout should reset all module components' variables (core/components/menu.svelte - logout()) - consider doing it because we'll get rid of login (use account switching instead)
+- CORE: Logout should reset all module components' variables (core/components/menu.svelte - logout()) - consider doing it, because we'll get rid of login (use account switching instead)
 - When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
 
 # Features
 
-- CORE: Add a close button to status notification
-- CORE: Move server status notification somewhere else
-- CORE: If server is connected, hide green (info) status notification after 5 seconds
 - CORE: Add mobile responsivity (show left panel only by default)
 - MESSAGES: messages.js - showNotification - switch between native and web notifications
 - MESSAGES: Move items in conversations list on message sent / received instead of reloading from server + if it's a new conversation, add it to converastion list

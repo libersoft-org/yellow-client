@@ -32,6 +32,7 @@
  const version = '0.01';
  const link = 'https://yellow.libersoft.org';
  let status;
+ let statusVisible = true;
  let isLoggedIn = false;
  let isMenuOpen = false;
  let sideBar;
@@ -44,32 +45,44 @@
   window.addEventListener('focus', () => Core.isClientFocused = true);
   window.addEventListener('blur', () => Core.isClientFocused = false);
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-  //TODO: get real status:
-  status = { class: 'info', message: 'CONNECTED' };
-
   Socket.events.addEventListener('open', event => {
    console.log('Connected to WebSocket:', event);
-   status = { class: 'info', message: 'CONNECTED' };
+   status = { class: 'info', message: 'Connected to server' };
+   statusVisible = true;
+   setTimeout(() => { if (status.class === 'info') statusVisible = false; }, 3000);
   });
   Socket.events.addEventListener('error', event => {
    console.error('WebSocket error:', event);
    status = { class: 'error', message: 'ERROR' };
+   statusVisible = true;
   });
   Socket.events.addEventListener('close', event => {
    console.log('WebSocket closed:', event);
-   status = { class: 'error', message: 'DISCONNECTED' };
+   status = { class: 'error', message: 'Disconnected from server' };
+   statusVisible = true;
    let time = 5;
    const intervalID = setInterval(() => {
     time--;
-    status = { class: 'error', message: 'DISCONNECTED, reconnecting in ' + time + ' ...' };
+    status = { class: 'error', message: 'Reconnecting in ' + time + ' ...' };
     if (time <= 0) {
-     status = { class: 'error', message: 'RECONNECTING ...' };
+     status = { class: 'error', message: 'Reconnecting to server ...' };
      Socket.connect();
      clearInterval(intervalID);
     }
    }, 1000);
   });
  });
+
+ function clickStatusClose() {
+  statusVisible = false;
+ }
+
+ function keyStatusClose() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickStatusClose();
+  }
+ }
 
  function onSelectModule(name) {
   selectedModule = modules[name];
@@ -132,10 +145,10 @@
 
  .status {
   position: absolute;
-  padding: 10px;
   right: 10px;
   bottom: 10px;
-  border-radius: 10px;
+  border-radius: 5px;
+  overflow: hidden;
   font-weight: bold;
  }
 
@@ -149,6 +162,35 @@
   color: #800;
   background-color: #fdd;
   border: 1px solid #800;
+ }
+
+ .status .panel {
+  display: flex;
+  justify-content: right;
+  height: 20px;
+ }
+
+ .status .panel.info {
+  background-color: #080;
+ }
+
+ .status .panel.error {
+  background-color: #800;
+ }
+
+ .status .panel .close {
+  display: flex;
+  padding: 5px;
+  cursor: pointer;
+ }
+
+ .status .panel .close img {
+  width: 10px;
+  height: 10px;
+ }
+
+ .status .text {
+  padding: 10px;
  }
 
  @media (max-width: 768px) {
@@ -180,7 +222,14 @@
  {#if !isLoggedIn}
   <Login bind:isLoggedIn {product} {version} {link} />
  {:else}
-  <div class="status {status.class}">{status.message}</div>
+  {#if statusVisible}
+   <div class="status {status.class}">
+    <div class="panel {status.class}">
+     <div class="close" role="button" tabindex="0" on:click={clickStatusClose} on:keydown={keyStatusClose}><img src="img/close.svg" alt="X"></div>
+    </div>
+    <div class="text">{status.message}</div>
+   </div>
+  {/if}
   <div class="sidebar" bind:this={sideBar}>
    <Menu bind:isMenuOpen bind:isLoggedIn {product} {version} {link} />
    <MenuBar bind:isMenuOpen />
