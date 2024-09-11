@@ -3,6 +3,7 @@
 .vscode/
 node_modules/
 build/
+package-lock.json
 bun.lockb
 *.crt
 *.key
