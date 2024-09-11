@@ -133,8 +133,7 @@
   top: 0;
   bottom: 0;
   left: 300px;
-  width: 10px;
-  margin-left: -5px;
+  width: 5px;
   cursor: ew-resize;
   background-color: transparent;
  }
