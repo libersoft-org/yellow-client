@@ -39,7 +39,6 @@
  let resizer;
  let isResizingSideBar = false;
  let selectedModule;
- let selectedModuleName;
 
  onMount(() => {
   window.addEventListener('focus', () => isClientFocused.update(() => true));
