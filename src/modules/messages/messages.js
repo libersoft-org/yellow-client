@@ -23,7 +23,7 @@ function resListConversations(res) {
 
 export function listMessages(address) {
  messagesArray.update(() => []);
- Socket.send('user_list_messages', { address: address, count: 100, offset: 0 }, true, resListMessages);
+ Socket.send('user_list_messages', { address: address, count: 100, lastID: 0 }, true, resListMessages);
 }
 
 function resListMessages(req, res) {
