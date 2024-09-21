@@ -6,10 +6,11 @@ import path from 'path';
 export default defineConfig({
  plugins: [sveltekit()],
  server: {
-  https: {
-   key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
-   cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
-  },
+  https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?
+   {
+    key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
+    cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
+   } : null),
   host: true,
   port: 3000
  }
