@@ -7,6 +7,7 @@ export const messagesArray = writable([]);
 
 export function init() {
  Socket.events.addEventListener('new_message', event => eventNewMessage(event.detail));
+ Socket.events.addEventListener('seen_message', event => eventSeenMessage(event.detail));
  if (Core.userAddress) {
   Socket.send('user_subscribe', { event: 'new_message' });
   listConversations();
@@ -22,31 +23,78 @@ function resListConversations(res) {
 }
 
 export function listMessages(address) {
- messagesArray.update(() => []);
+ messagesArray.update(() => []);//?
  Socket.send('user_list_messages', { address: address, count: 100, lastID: 0 }, true, resListMessages);
 }
 
 function resListMessages(req, res) {
- if (res.error === 0 && res.data?.messages) messagesArray.update(() => res.data.messages);
+ if (res.error === 0 && res.data?.messages)
+ {
+  messagesArray.set(
+   res.data.messages.map(m => {
+    // set some client-side attributes:
+    m.received_by_my_homeserver = true
+    return m;
+   }));
+  console.log(get(messagesArray))
+ }
+}
+
+export function setMessageSeen(message) {
+ console.log('setMessageSeen', message);
+ Socket.send('user_message_seen', { messageID: message.id }, true, (req, res) =>
+ {
+  console.log('user_message_seen', res);
+  if (res.error !== 0)
+  {
+   console.error(res)
+   return;
+  }
+  message.seen = true;
+ });
 }
 
 export function sendMessage(text) {
- Socket.send('user_send_message', { address: get(selectedConversation).address, message: text }, true, resSendMessage);
-}
 
-function resSendMessage(req, res) {
- if (!get(selectedConversation)?.address) return;
- if (res.error !== 0) return;
- if (req?.params?.address !== get(selectedConversation).address) return;
+ let params = { address: get(selectedConversation).address, message: text };
+
  const msg = {
   address_from: Core.userAddress,
-  address_to: req.params.address,
-  message: req.params.message,
+  address_to: params.address,
+  message: params.message,
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
  };
- messagesArray.update(() => [msg, ...get(messagesArray)]);
- //TODO: replace with sorting just on client:
- listConversations();
+
+ Socket.send('user_send_message', params, true, (req, res) =>
+ {
+
+  console.log('user_send_message', res);
+  if (res.error !== 0) return;
+
+  // update the message status and trigger the update of the messagesArray:
+  msg.received_by_my_homeserver = true;
+  messagesArray.update((v) => v);
+ });
+
+ messagesArray.update((v) => [msg, ...v]);
+ updateConversationsArray(params.address, msg.created);
+}
+
+function updateConversationsArray(address_to, msg_created) {
+ let ca = get(conversationsArray);
+ const conversation = ca.find(c => c.address === address_to);
+ console.log('updateConversationsArray', conversation, address_to, msg_created);
+
+ if (conversation) {
+  conversation.last_message_date = msg_created;
+  const index = ca.indexOf(conversation);
+
+  // shift the affected conversation to the top:
+  ca.splice(index, 1);
+  ca.unshift(conversation);
+
+  conversationsArray.set(ca);
+ }
 }
 
 export function openNewConversation(address) {
@@ -69,6 +117,17 @@ function eventNewMessage(res) {
  if (msg.address_from !== get(selectedConversation)?.address || !get(Core.isClientFocused)) showNotification(msg);
  //TODO: replace with sorting just on client:
  listConversations();
+}
+
+function eventSeenMessage(res) {
+ console.log('eventSeenMessage', res);
+ if (!res.data) return;
+ const message_id = res.data.messageID;
+ const message = get(messagesArray).find(m => m.id === message_id);
+ if (message) {
+  message.seen = true;
+  messagesArray.update((v) => v);
+ }
 }
 
 function showNotification(msg) {

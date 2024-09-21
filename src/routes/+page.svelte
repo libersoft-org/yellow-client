@@ -60,7 +60,7 @@
    status = { class: 'error', message: 'Disconnected from server' };
    statusVisible = true;
    let time = 5;
-   const intervalID = setInterval(() => {
+   /*const intervalID = setInterval(() => {
     time--;
     status = { class: 'error', message: 'Reconnecting in ' + time + ' ...' };
     if (time <= 0) {
@@ -68,7 +68,7 @@
      Socket.connect();
      clearInterval(intervalID);
     }
-   }, 1000);
+   }, 1000);*/
   });
  });
 
