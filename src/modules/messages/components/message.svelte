@@ -2,6 +2,12 @@
  export let message;
  export let isOutgoing;
 
+ let seen_txt;
+ let checkmarks;
+
+ $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
+ $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
+
  function processMessage(content) {
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
   return containsHtml ? content : linkify(content).replaceAll(' ', '&nbsp;').replaceAll("\n", '<br />');
@@ -56,4 +62,7 @@
 <div class="message {isOutgoing ? 'outgoing' : 'incoming'}">
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+ {#if isOutgoing}
+  <img src="img/seen{checkmarks}.svg" alt="{seen_txt}" />
+ {/if}
 </div>
