@@ -101,6 +101,12 @@
  .items .item .description .address, .items .item .description .time {
   font-size: 12px;
  }
+
+ .text {
+  whitespace: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+ }
 </style>
 
 <div class="conversations">
@@ -115,7 +121,9 @@
    <div class="description">
     <div class="name">{c.visible_name}</div>
     <div class="address">{c.address}</div>
-    <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>  
+    <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+    <div class="text">{c.last_message_text}</div>
+    <div class="text">({c.unread_count})</div>
    </div>
   </div>
   {/each}

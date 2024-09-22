@@ -20,11 +20,11 @@ function listConversations() {
 }
 
 function resListConversations(res) {
- if (res.error === 0 && res.data?.conversations) conversationsArray.update(() => res.data.conversations);
+ if (res.error === 0 && res.data?.conversations) conversationsArray.set(res.data.conversations);
 }
 
 export function listMessages(address) {
- messagesArray.update(() => []);//?
+ messagesArray.set([]);//?
  Socket.send('user_list_messages', { address: address, count: 100, lastID: 0 }, true, resListMessages);
 }
 
@@ -82,16 +82,21 @@ export function sendMessage(text) {
  });
 
  messagesArray.update((v) => [msg, ...v]);
- updateConversationsArray(params.address, msg.created);
+ updateConversationsArray(msg);
 }
 
-function updateConversationsArray(address_to, msg_created) {
+function updateConversationsArray(msg) {
+ const address_to = msg.address_to;
+ const address_from = msg.address_from;
+ const msg_created = msg.created;
+ const msg_text = msg.message;
  let ca = get(conversationsArray);
- const conversation = ca.find(c => c.address === address_to);
+ const conversation = ca.find(c => (c.address === address_to || c.address === address_from));
  console.log('updateConversationsArray', conversation, address_to, msg_created);
 
  if (conversation) {
   conversation.last_message_date = msg_created;
+  conversation.last_message = msg_text;
   const index = ca.indexOf(conversation);
 
   // shift the affected conversation to the top:
@@ -114,8 +119,11 @@ function eventNewMessage(res) {
  if (Core.userAddress === res.data.from) return;
  const msg = res.data;
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
- if (msg.address_from === get(selectedConversation)?.address) messagesArray.update(() => [msg, ...get(messagesArray)]);
- if (msg.address_from !== get(selectedConversation)?.address || !get(Core.isClientFocused)) showNotification(msg);
+ if (msg.address_from === get(selectedConversation)?.address)
+  messagesArray.update(() => [msg, ...get(messagesArray)]);
+ if (msg.address_from !== get(selectedConversation)?.address || !get(Core.isClientFocused))
+  showNotification(msg);
+ updateConversationsArray(msg);
 }
 
 function eventSeenMessage(res) {
