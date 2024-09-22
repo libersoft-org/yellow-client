@@ -1,5 +1,7 @@
 # Bugs
 
+- MESSAGES: conversation list does not update on new message
+- MESSAGES: scrolling down on new message sometimes doesn't work
 - CORE: The server is automatically reconnected and logged in again after logout
 - MESSAGES: Sometimes people receive 1 message multiple times (new_message event) - multiple websocket connections??
 - MESSAGES: New message notification works only if Messages module is previously opened
@@ -9,6 +11,7 @@
 
 # Features
 
+- MESSAGES: pretify number of new messages, shorten the last message in conversation list, set size of the seen icon
 - MESSAGES: strip HTML from notifications (show text only)
 - MESSAGES: messages.js - showNotification - switch between native and web notifications
 - MESSAGES: Move items in conversations list on message sent / received instead of reloading from server + if it's a new conversation, add it to converastion list

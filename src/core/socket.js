@@ -64,10 +64,9 @@ function handleResponse(res) {
  } else if (res.event) {
   // it is event:
   //TODO: different types of events should also be tied with command and callback that requested them, use the same thing as with commands - to have a request ID
-    console.log('GOT EVENT', res);
-    //TODO: send event to messages module:
-    events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
-
+  console.log('GOT EVENT', res);
+  //TODO: send event to messages module:
+  events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server');
 }
 
