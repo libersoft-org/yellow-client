@@ -1,5 +1,5 @@
 <script>
- import { afterUpdate, beforeUpdate } from 'svelte';
+    import {afterUpdate, beforeUpdate, onMount} from 'svelte';
  import Core from '../../../core/core.js';
  import { messagesArray } from '../messages.js';
  import Message from './message.svelte';
@@ -9,17 +9,38 @@
  let isScrolledToBottom;
  let wasScrolledToBottom = true;
 
- beforeUpdate(() => {
+ function updateWasScrolledToBottom()
+ {
      if (messages_elem)
-        wasScrolledToBottom = messages_elem.scrollTop + messages_elem.clientHeight >= messages_elem.scrollHeight - 1;
+     {
+         wasScrolledToBottom = messages_elem.scrollTop > -1;
+     /*console.log('beforeUpdate: wasScrolledToBottom:', wasScrolledToBottom);
+     console.log('beforeUpdate: -messages_elem.scrollTop + messages_elem.clientHeight:', -messages_elem.scrollTop + messages_elem.clientHeight);
+     console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop);
+     console.log('beforeUpdate: messages_elem.clientHeight:', messages_elem.clientHeight);
+     console.log('beforeUpdate: messages_elem.scrollHeight:', messages_elem.scrollHeight);*/
+    }
+
+ }
+
+ beforeUpdate(() => {
+        updateWasScrolledToBottom();
  });
 
  afterUpdate(() => {
+     console.log('afterUpdate: wasScrolledToBottom:', wasScrolledToBottom);
      if (wasScrolledToBottom)
        scrollToBottom()
  });
 
+ onMount(() => {
+   /*setInterval(() => {
+     updateWasScrolledToBottom();
+   }, 1000);*/
+ });
+
  function scrollToBottom() {
+     /*todo: fixme: sometimes does not scroll to bottom properly when two messages appear at once*/
    if (messages_elem)
      messages_elem.scrollTop = messages_elem.scrollHeight;
  }

@@ -24,7 +24,7 @@ function resListConversations(res) {
 }
 
 export function listMessages(address) {
- messagesArray.set([]);//?
+ messagesArray.set([]);
  Socket.send('user_list_messages', { address: address, count: 100, lastID: 0 }, true, resListMessages);
 }
 
@@ -74,7 +74,10 @@ export function sendMessage(text) {
  {
 
   console.log('user_send_message', res);
-  if (res.error !== 0) return;
+  if (res.error !== 0)
+  {
+   alert('Error while sending message: ' + res.message);
+  }
 
   // update the message status and trigger the update of the messagesArray:
   msg.received_by_my_homeserver = true;
@@ -83,6 +86,13 @@ export function sendMessage(text) {
 
  messagesArray.update((v) => [msg, ...v]);
  updateConversationsArray(msg);
+}
+
+function remoteAddress(msg) {
+ const address_to = msg.address_to;
+ const address_from = msg.address_from;
+ if (address_to === Core.userAddress) return address_from;
+ else return address_to;
 }
 
 function updateConversationsArray(msg) {
@@ -102,9 +112,18 @@ function updateConversationsArray(msg) {
   // shift the affected conversation to the top:
   ca.splice(index, 1);
   ca.unshift(conversation);
-
-  conversationsArray.set(ca);
  }
+ else
+ {
+  let conversation = {
+   address: remoteAddress(msg),
+   last_message_date: msg_created,
+   last_message: msg_text,
+   visible_name: null
+  };
+    ca.unshift(conversation);
+ }
+ conversationsArray.set(ca);
 }
 
 export function openNewConversation(address) {
@@ -129,6 +148,7 @@ function eventNewMessage(res) {
 function eventSeenMessage(res) {
  console.log('eventSeenMessage', res);
  if (!res.data) return;
+ console.log(get(messagesArray));
  const message = get(messagesArray).find(m => m.uid === res.data.uid);
  if (message) {
   message.seen = res.data.seen;
