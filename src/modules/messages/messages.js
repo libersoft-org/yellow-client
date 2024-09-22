@@ -116,8 +116,6 @@ function eventNewMessage(res) {
  };
  if (msg.address_from === get(selectedConversation)?.address) messagesArray.update(() => [msg, ...get(messagesArray)]);
  if (msg.address_from !== get(selectedConversation)?.address || !get(Core.isClientFocused)) showNotification(msg);
- //TODO: replace with sorting just on client:
- listConversations();
 }
 
 function eventSeenMessage(res) {
