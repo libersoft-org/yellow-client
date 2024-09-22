@@ -37,6 +37,7 @@ function resListMessages(req, res) {
     m.received_by_my_homeserver = true
     return m;
    }));
+  console.log('resListMessages: messagesArray:')
   console.log(get(messagesArray))
  }
 }
