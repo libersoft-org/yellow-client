@@ -3,12 +3,12 @@
  import Core from '../../../core/core.js';
  import { messagesArray } from '../messages.js';
  import Message from './message.svelte';
- let messages;
+ let messages_elem;
 
  afterUpdate(() => scrollToBottom());
 
  function scrollToBottom() {
-  if (messages) messages.scrollTop = messages.scrollHeight;
+  if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 </script>
 
@@ -22,7 +22,7 @@
  }
 </style>
 
-<div class="messages" bind:this={messages}>
+<div class="messages" bind:this={messages_elem}>
  {#each $messagesArray as m}
   <Message {m} message={m} isOutgoing={m.address_from === Core.userAddress} />
  {/each}

@@ -7,6 +7,7 @@ export const messagesArray = writable([]);
 
 export function init() {
  Socket.events.addEventListener('new_message', event => eventNewMessage(event.detail));
+ Socket.events.addEventListener('seen_message', event => eventSeenMessage(event.detail));
  if (Core.userAddress) {
   Socket.send('user_subscribe', { event: 'new_message' });
   listConversations();
@@ -37,6 +38,20 @@ function resListMessages(req, res) {
    }));
   console.log(get(messagesArray))
  }
+}
+
+export function setMessageSeen(message) {
+ console.log('setMessageSeen', message);
+ Socket.send('user_message_seen', { messageID: message.id }, true, (req, res) =>
+ {
+  console.log('user_message_seen', res);
+  if (res.error !== 0)
+  {
+   console.error(res)
+   return;
+  }
+  message.seen = true;
+ });
 }
 
 export function sendMessage(text) {
@@ -102,6 +117,17 @@ function eventNewMessage(res) {
  if (msg.address_from !== get(selectedConversation)?.address || !get(Core.isClientFocused)) showNotification(msg);
  //TODO: replace with sorting just on client:
  listConversations();
+}
+
+function eventSeenMessage(res) {
+ console.log('eventSeenMessage', res);
+ if (!res.data) return;
+ const message_id = res.data.messageID;
+ const message = get(messagesArray).find(m => m.id === message_id);
+ if (message) {
+  message.seen = true;
+  messagesArray.update((v) => v);
+ }
 }
 
 function showNotification(msg) {
