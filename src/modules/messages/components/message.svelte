@@ -45,7 +45,10 @@
      observer.disconnect();
      return;
     }
-    setMessageSeen(message)
+    setMessageSeen(message, () => {
+     console.log('seen set succesfully, disconnecting observer.')
+     observer.disconnect();
+    })
     }, { threshold: 0.8, root: container_element }
    );
    observer.observe(element);

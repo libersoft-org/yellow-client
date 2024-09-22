@@ -41,7 +41,7 @@ function resListMessages(req, res) {
  }
 }
 
-export function setMessageSeen(message) {
+export function setMessageSeen(message, cb) {
  console.log('setMessageSeen', message);
  Socket.send('user_message_seen', { messageID: message.id }, true, (req, res) =>
  {
@@ -52,6 +52,8 @@ export function setMessageSeen(message) {
    return;
   }
   message.seen = true;
+  if (cb)
+   cb();
  });
 }
 
