@@ -30,8 +30,10 @@
  }
 
  onMount(() => {
+  console.log('onMount message:', message);
   if (!message.seen && !isOutgoing)
   {
+   console.log('create observer');
    observer = new IntersectionObserver((entries) => {
     console.log(entries)
     const IsVisible = entries[0].isIntersecting;

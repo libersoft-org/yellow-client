@@ -44,6 +44,7 @@ export function send(command, params = {}, sendSessionID = true, callback = null
  if (params) req.params = params;
  requests[requestID] = { req, callback };
  socket.send(JSON.stringify(req));
+ return requestID;
 }
 
 export function status() {
@@ -63,13 +64,10 @@ function handleResponse(res) {
  } else if (res.event) {
   // it is event:
   //TODO: different types of events should also be tied with command and callback that requested them, use the same thing as with commands - to have a request ID
-  switch (res.event) {
-   case 'new_message':
     console.log('GOT EVENT', res);
     //TODO: send event to messages module:
-    events.dispatchEvent(new CustomEvent('new_message', { detail: res }));
-    break;
-  }
+    events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
+
  } else console.log('Unknown command from server');
 }
 
@@ -80,6 +78,7 @@ function getRandomString(length = 40) {
 }
 
 export default {
+ getRandomString,
  connect,
  disconnect,
  send,

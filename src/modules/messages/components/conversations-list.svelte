@@ -109,7 +109,7 @@
   <div>New conversation</div>
  </div>
  <div class="items">
-  {#each $conversationsArray as c}
+  {#each $conversationsArray as c (c.address)}
   <div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
    <Photo />
    <div class="description">

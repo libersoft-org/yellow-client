@@ -44,7 +44,7 @@ function resListMessages(req, res) {
 
 export function setMessageSeen(message, cb) {
  console.log('setMessageSeen', message);
- Socket.send('user_message_seen', { messageID: message.id }, true, (req, res) =>
+ Socket.send('user_message_seen', { uid: message.uid }, true, (req, res) =>
  {
   console.log('user_message_seen', res);
   if (res.error !== 0)
@@ -60,14 +60,15 @@ export function setMessageSeen(message, cb) {
 
 export function sendMessage(text) {
 
- let params = { address: get(selectedConversation).address, message: text };
-
  const msg = {
+  uid: Socket.getRandomString(),
   address_from: Core.userAddress,
-  address_to: params.address,
-  message: params.message,
+  address_to: get(selectedConversation).address,
+  message: text,
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
  };
+
+ let params = { address: msg.address_to, message: msg.message, uid: msg.uid };
 
  Socket.send('user_send_message', params, true, (req, res) =>
  {
@@ -120,12 +121,13 @@ function eventNewMessage(res) {
 function eventSeenMessage(res) {
  console.log('eventSeenMessage', res);
  if (!res.data) return;
- const message_id = res.data.messageID;
- const message = get(messagesArray).find(m => m.id === message_id);
+ const message = get(messagesArray).find(m => m.uid === res.data.uid);
  if (message) {
   message.seen = res.data.seen;
   messagesArray.update((v) => v);
  }
+ else
+  console.error('eventSeenMessage: message not found by uid:', res);
 }
 
 function showNotification(msg) {

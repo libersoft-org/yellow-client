@@ -24,7 +24,10 @@
 </style>
 
 <div class="messages" bind:this={messages_elem}>
- {#each $messagesArray as m}
-  <Message {m} message={m} isOutgoing={m.address_from === Core.userAddress} container_element="{messages_elem}" />
+ {#each $messagesArray as m (m.uid)}
+
+ <pre>{JSON.stringify(m, null, 2)}</pre>
+
+  <Message message={m} isOutgoing={m.address_from === Core.userAddress} container_element="{messages_elem}" />
  {/each}
 </div>
