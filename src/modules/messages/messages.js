@@ -10,6 +10,7 @@ export function init() {
  Socket.events.addEventListener('seen_message', event => eventSeenMessage(event.detail));
  if (Core.userAddress) {
   Socket.send('user_subscribe', { event: 'new_message' });
+  Socket.send('user_subscribe', { event: 'seen_message' });
   listConversations();
  }
 }
@@ -125,7 +126,7 @@ function eventSeenMessage(res) {
  const message_id = res.data.messageID;
  const message = get(messagesArray).find(m => m.id === message_id);
  if (message) {
-  message.seen = true;
+  message.seen = res.data.seen;
   messagesArray.update((v) => v);
  }
 }
