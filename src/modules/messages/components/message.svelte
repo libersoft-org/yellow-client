@@ -3,8 +3,10 @@
 
  import {onDestroy, onMount} from "svelte";
 
+
  export let message;
  export let isOutgoing;
+ export let container_element;
 
 
  let seen_txt;
@@ -31,14 +33,20 @@
   if (!message.seen && !isOutgoing)
   {
    observer = new IntersectionObserver((entries) => {
+    console.log(entries)
     const IsVisible = entries[0].isIntersecting;
-    if (!IsVisible) return;
+    if (!IsVisible)
+    {
+     console.log('not setting seen');
+     return;
+    }
     if (message.seen) {
+     console.log('not setting seen')
      observer.disconnect();
      return;
     }
     setMessageSeen(message)
-    }, { threshold: 1 }
+    }, { threshold: 0.8, root: container_element }
    );
    observer.observe(element);
   }

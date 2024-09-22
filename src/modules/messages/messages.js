@@ -108,12 +108,8 @@ export function openNewConversation(address) {
 function eventNewMessage(res) {
  if (!res.data) return;
  if (Core.userAddress === res.data.from) return;
- const msg = {
-  address_from: res.data.from,
-  address_to: res.data.to,
-  message: res.data.message,
-  created: new Date().toISOString().replace('T', ' ').replace('Z', '')
- };
+ const msg = res.data;
+ msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  if (msg.address_from === get(selectedConversation)?.address) messagesArray.update(() => [msg, ...get(messagesArray)]);
  if (msg.address_from !== get(selectedConversation)?.address || !get(Core.isClientFocused)) showNotification(msg);
 }
