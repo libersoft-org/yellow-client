@@ -37,11 +37,11 @@
     const IsVisible = entries[0].isIntersecting;
     if (!IsVisible)
     {
-     console.log('not setting seen');
+     console.log('not setting seen because !IsVisible');
      return;
     }
     if (message.seen) {
-     console.log('not setting seen')
+     console.log('not setting seen because already set');
      observer.disconnect();
      return;
     }
