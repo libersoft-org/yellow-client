@@ -2,7 +2,6 @@
 
 - MESSAGES: If browser's window is not focused, it should not set messages as seen
 - MESSAGES: If the message in message list is longer than screen height then it is not set as seen
-- MESSAGES: When new conversation is opened, the message input is not focused
 
 - MESSAGES: Scrolling down on new message sometimes doesn't work
 - CORE: The server is automatically reconnected and logged in again after logout
