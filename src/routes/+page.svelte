@@ -110,6 +110,7 @@
    let sideBarWidth = e.clientX < max ? e.clientX : max;
    sideBarWidth = e.clientX > min ? sideBarWidth : min;
    sideBar.style.minWidth = sideBarWidth + 'px';
+   sideBar.style.maxWidth = sideBarWidth + 'px';
    resizer.style.left = sideBarWidth + 'px';
   }
  }
@@ -125,6 +126,7 @@
   display: flex;
   flex-direction: column;
   min-width: 300px;
+  max-width: 300px;
   box-shadow: var(--shadow);
   background-color: #fff;
  }
@@ -197,7 +199,8 @@
  @media (max-width: 768px) {
   .sidebar {
    position: absolute;
-   width: 100%;
+   min-width: 100%;
+   max-width: 100%;
    height: 100%;
   }
 
