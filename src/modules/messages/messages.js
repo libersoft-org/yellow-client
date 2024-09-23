@@ -52,6 +52,12 @@ export function setMessageSeen(message, cb) {
   }
   message.seen = true;
   if (cb) cb();
+  // update conversationsArray:
+  const conversation = get(conversationsArray).find(c => c.address === message.address_from);
+  if (conversation) {
+   conversation.unread_count--;
+   conversationsArray.update(v => v);
+  }
  });
 }
 
@@ -88,6 +94,10 @@ function remoteAddress(msg) {
  else return address_to;
 }
 
+function isOutgoing(msg) {
+ return msg.address_from === Core.userAddress;
+}
+
 function updateConversationsArray(msg) {
  const address_to = msg.address_to;
  const address_from = msg.address_from;
@@ -100,6 +110,8 @@ function updateConversationsArray(msg) {
  if (conversation) {
   conversation.last_message_date = msg_created;
   conversation.last_message = msg_text;
+  const new_unread_count = isOutgoing(msg) ? 0 : 1;
+  conversation.unread_count = conversation.unread_count ? conversation.unread_count + new_unread_count : new_unread_count;
   const index = ca.indexOf(conversation);
 
   // shift the affected conversation to the top:
@@ -110,7 +122,8 @@ function updateConversationsArray(msg) {
    address: remoteAddress(msg),
    last_message_date: msg_created,
    last_message: msg_text,
-   visible_name: null
+   visible_name: null,
+   unread_count: isOutgoing(msg) ? 1 : 0
   };
   ca.unshift(conversation);
  }
