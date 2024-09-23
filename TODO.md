@@ -1,5 +1,6 @@
 # Bugs
 
+- MESSAGES: If the message in message list is longer than screen height then it is not set as seen
 - MESSAGES: When new conversation is opened, the message input is not focused
 - MESSAGES: Conversation list does not update on new message
 
