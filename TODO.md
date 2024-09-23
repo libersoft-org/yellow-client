@@ -11,7 +11,6 @@
 # Features
 
 - MESSAGES: Add lazy loader messages (already in app.css: <div class="loader"></div>)
-
 - CORE: Instead of login / logout add account switching
 - CORE: Add wizard (create keys, add accounts)
 - CORE: Session expired -> login again
@@ -23,6 +22,7 @@
 - MESSAGES: Link previews (YouTube, OG etc.)
 - MESSAGES: Voice / video messages
 - MESSAGES: Reply / forwarded message
+- MESSAGES: Delete message
 - CONTACTS: Make whole module
 - MESSAGES: Add messages concepts (keep unsent messages for each conversation)
 - MESSAGES: messages.js - showNotification - switch between native and web notifications
