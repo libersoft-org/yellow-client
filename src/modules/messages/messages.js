@@ -141,10 +141,16 @@ function updateConversationsArray(msg) {
 }
 
 export function openNewConversation(address) {
+ console.log('openNewConversation', address);
  // TODO: load visible name if it's already an existing conversation:
  selectedConversation.update(() => ({ address, visible_name: null }));
  Core.hideSidebarMobile.update(() => true);
  listMessages(address);
+ requestAnimationFrame(() => {
+  // TODO: don't do it this way, use Svelte reactivity instead:
+  const input = document.querySelector('.message-bar .message');
+  if (input) input.focus();
+ });
 }
 
 function eventNewMessage(event) {
