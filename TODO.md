@@ -1,9 +1,11 @@
 # Bugs
 
+- MESSAGES: If browser's window is not focused, it should not set messages as seen
+- MESSAGES: If the message in message list is longer than screen height then it is not set as seen
 - MESSAGES: When new conversation is opened, the message input is not focused
 - MESSAGES: Conversation list does not update on new message
 
-
+- CORE: When clicking on messages module, then click on contacts module, someone sends the message, then go back to messages module, it crashes (in browser's console)
 - MESSAGES: Scrolling down on new message sometimes doesn't work
 - CORE: The server is automatically reconnected and logged in again after logout
 - MESSAGES: Sometimes people receive 1 message multiple times (new_message event) - multiple websocket connections??
@@ -24,7 +26,6 @@
 - CORE: Session expired -> login again
 - MESSAGES: When starting a new conversation, load visible_name if available
 - MESSAGES: On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, seen, created } (from database)
-- MESSAGES: messages.js - showNotification - switch between native and web notifications
 - MESSAGES: File / image send
 - MESSAGES: Animated stickers (lottie)
 - MESSAGES: GIFs
@@ -32,6 +33,7 @@
 - MESSAGES: Voice / video messages
 - MESSAGES: Reply / forwarded message
 - CONTACTS: Make whole module
+- MESSAGES: messages.js - showNotification - switch between native and web notifications
 
 # Testing
 
