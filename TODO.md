@@ -2,7 +2,6 @@
 
 - MESSAGES: When new conversation is opened, the message input is not focused
 - MESSAGES: Conversation list does not update on new message
-- MESSAGES: add lazy loader on messages
 
 
 - MESSAGES: Scrolling down on new message sometimes doesn't work
@@ -17,12 +16,11 @@
 
 - MESSAGES: Strip HTML from notifications (show text only)
 - MESSAGES: Strip HTML from conversations list - last message
+- MESSAGES: Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 
 
 - MESSAGES: messages.js - showNotification - switch between native and web notifications
 - MESSAGES: Move items in conversations list on message sent / received instead of reloading from server + if it's a new conversation, add it to converastion list
-- MESSAGES: Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
-- MESSAGES: Add the last message preview to conversations list
 - MESSAGES: On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
 - MESSAGES: When starting a new conversation, load visible_name if available
 - MESSAGES: Add number of new messages in conversations list
