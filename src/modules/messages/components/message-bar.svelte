@@ -1,7 +1,14 @@
 <script>
  import { sendMessage } from '../messages.js';
  let elMessage;
- 
+
+
+ export function setBarFocus(_selectedConversation)
+ {
+   console.log('setBarFocus:', _selectedConversation);
+   if (elMessage) elMessage.focus();
+ }
+
  function resizeMessage(event) {
   const maxHeight = 200;
   const textarea = event.target;

@@ -1,16 +1,35 @@
 <script>
  import { setMessageSeen } from '../messages.js';
  import {onDestroy, onMount} from "svelte";
+ import {get} from "svelte/store";
+ import { isClientFocused }  from "../../../core/core.js";
  export let message;
  export let isOutgoing;
  export let container_element;
  let seen_txt;
  let checkmarks;
  let observer;
- let element;
+ let intersection_observer_element;
+ let is_visible;
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
+
+ $: console.log('Core.isClientFocused:', $isClientFocused);
+
+ $: if (is_visible && $isClientFocused) {
+  if (message.seen) {
+   console.log('not setting seen because already set');
+   observer.disconnect();
+   is_visible = false;
+  }
+  else
+   setMessageSeen(message, () => {
+    console.log('seen set succesfully, disconnecting observer.');
+    observer.disconnect();
+    is_visible = false;
+   })
+ }
 
  function processMessage(content) {
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
@@ -27,24 +46,11 @@
   if (!message.seen && !isOutgoing) {
    console.log('create observer');
    observer = new IntersectionObserver((entries) => {
-    console.log(entries)
-    const IsVisible = entries[0].isIntersecting;
-    if (!IsVisible) {
-     console.log('not setting seen because !IsVisible');
-     return;
-    }
-    if (message.seen) {
-     console.log('not setting seen because already set');
-     observer.disconnect();
-     return;
-    }
-    setMessageSeen(message, () => {
-     console.log('seen set succesfully, disconnecting observer.')
-     observer.disconnect();
-    })
+    console.log(entries);
+    is_visible = entries[0].isIntersecting;
     }, { threshold: 0.8, root: container_element }
    );
-   observer.observe(element);
+   observer.observe(intersection_observer_element);
   }
  });
 
@@ -104,10 +110,10 @@
  }
 </style>
 
-<div bind:this={element} class="message {isOutgoing ? 'outgoing' : 'incoming'}">
+<div class="message {isOutgoing ? 'outgoing' : 'incoming'}">
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="bottomline">
-  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+  <div bind:this={intersection_observer_element} class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
   {#if isOutgoing}
    <div class="checkmark"><img src="img/seen{checkmarks}.svg" alt="{seen_txt}" /></div>
   {/if}

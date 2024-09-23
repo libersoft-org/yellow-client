@@ -32,11 +32,6 @@
   selectedConversation.update(() => conversation);
   Core.hideSidebarMobile.update(() => true);
   listMessages(conversation.address);
-  requestAnimationFrame(() => {
-   // TODO: don't do it this way, use Svelte reactivity instead:
-   const input = document.querySelector('.message-bar .message');
-   if (input) input.focus();
-  });
  }
 
  function keyItem(conversation) {

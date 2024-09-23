@@ -7,7 +7,11 @@
  import MessagesList from './messages-list.svelte';
  import MessageBar from './message-bar.svelte';
 
+ let message_bar;
+ $: message_bar?.setBarFocus($selectedConversation)
+
  onMount(() => {
+  console.log('conversation mounted for:', get(selectedConversation));
   window.addEventListener('keydown', hotKeys);
  });
 
@@ -38,6 +42,6 @@
 
 <div class="conversation">
  <ProfileBar {closeConversation} />
- <MessagesList />
- <MessageBar />
+ <MessagesList on:mousedown={() => {message_bar?.setBarFocus()}} />
+ <MessageBar bind:this={message_bar}/>
 </div>
