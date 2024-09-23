@@ -84,12 +84,11 @@ export function sendMessage(text) {
 
  Socket.send('user_send_message', params, true, (req, res) => {
   console.log('user_send_message', res);
-  if (res.error !== 0) {
+  if (res.error !== 0)
    alert('Error while sending message: ' + res.message);
-  }
-
+  else
+   msg.received_by_my_homeserver = true;
   // update the message status and trigger the update of the messagesArray:
-  msg.received_by_my_homeserver = true;
   messagesArray.update(v => v);
  });
 
@@ -133,7 +132,7 @@ function updateConversationsArray(msg) {
    last_message_date: msg_created,
    last_message_text: msg_text,
    visible_name: null,
-   unread_count: isOutgoing(msg) ? 1 : 0
+   unread_count: isOutgoing(msg) ? 0 : 1
   };
   ca.unshift(conversation);
  }
