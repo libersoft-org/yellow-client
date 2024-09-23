@@ -1,1 +1,1 @@
-<div>Not yet implemented - sidebar</div>
+<div>Contact list - side bar - not yet implemented</div>

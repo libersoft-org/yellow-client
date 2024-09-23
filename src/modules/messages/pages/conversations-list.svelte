@@ -53,7 +53,6 @@
  .new {
   display: flex;
   align-items: center;
-  gap: 10px;
   padding: 10px;
   font-weight: bold;
   background-color: #222;
@@ -75,11 +74,9 @@
 
  .items .item {
   display: flex;
-  gap: 10px;
   padding: 10px;
   cursor: pointer;
   background-color: #fffcf0;
-  align-items: center;
  }
 
  .items .item:hover {
@@ -92,6 +89,9 @@
 
  .items .item .description {
   word-break: break-word;
+  flex-grow: 1;
+  padding: 0 10px;
+  overflow: hidden;
  }
 
  .items .item .description .name {
@@ -102,10 +102,25 @@
   font-size: 12px;
  }
 
- .text {
-  whitespace: nowrap;
+ .items .item .description .text {
+  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  margin-top: 10px;
+  color: #555;
+ }
+
+ .items .item .count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: bold;
+  background-color: #c00;
+  color: #fff;
  }
 </style>
 
@@ -119,12 +134,16 @@
   <div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
    <Photo />
    <div class="description">
-    <div class="name">{c.visible_name}</div>
-    <div class="address">{c.address}</div>
-    <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>
-    <div class="text">{c.last_message_text}</div>
-    <div class="text">({c.unread_count})</div>
+    <div class="contact">
+     <div class="name">{c.visible_name}</div>
+     <div class="address">{c.address}</div>
+     <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+     <div class="text">{c.last_message_text ? c.last_message_text : ''}</div>
+    </div>
    </div>
+   {#if c.unread_count !== 0}
+     <div class="count">{c.unread_count}</div>
+    {/if}
   </div>
   {/each}
  </div>

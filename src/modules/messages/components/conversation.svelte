@@ -7,7 +7,6 @@
  import MessagesList from './messages-list.svelte';
  import MessageBar from './message-bar.svelte';
 
-
  onMount(() => {
   window.addEventListener('keydown', hotKeys);
  });
