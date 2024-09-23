@@ -12,7 +12,6 @@
 
 # Features
 
-- MESSAGES: Prettify number of new messages, shorten the last message in conversation list
 - MESSAGES: Strip HTML from notifications (show text only)
 - MESSAGES: messages.js - showNotification - switch between native and web notifications
 - MESSAGES: Move items in conversations list on message sent / received instead of reloading from server + if it's a new conversation, add it to converastion list
