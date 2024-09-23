@@ -53,6 +53,7 @@
  .new {
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 10px;
   font-weight: bold;
   background-color: #222;
