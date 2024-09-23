@@ -99,6 +99,7 @@ export function sendMessage(text) {
   address_from: Core.userAddress,
   address_to: get(selectedConversation).address,
   message: text,
+  stripped_text: stripHtml(text),
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
  };
 
