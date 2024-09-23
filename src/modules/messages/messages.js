@@ -109,7 +109,7 @@ function updateConversationsArray(msg) {
 
  if (conversation) {
   conversation.last_message_date = msg_created;
-  conversation.last_message = msg_text;
+  conversation.last_message_text = msg_text;
   const new_unread_count = isOutgoing(msg) ? 0 : 1;
   conversation.unread_count = conversation.unread_count ? conversation.unread_count + new_unread_count : new_unread_count;
   const index = ca.indexOf(conversation);
@@ -121,7 +121,7 @@ function updateConversationsArray(msg) {
   let conversation = {
    address: remoteAddress(msg),
    last_message_date: msg_created,
-   last_message: msg_text,
+   last_message_text: msg_text,
    visible_name: null,
    unread_count: isOutgoing(msg) ? 1 : 0
   };
