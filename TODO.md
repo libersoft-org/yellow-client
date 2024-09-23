@@ -2,6 +2,9 @@
 
 - MESSAGES: When new conversation is opened, the message input is not focused
 - MESSAGES: Conversation list does not update on new message
+- MESSAGES: add lazy loader on messages
+
+
 - MESSAGES: Scrolling down on new message sometimes doesn't work
 - CORE: The server is automatically reconnected and logged in again after logout
 - MESSAGES: Sometimes people receive 1 message multiple times (new_message event) - multiple websocket connections??
@@ -13,6 +16,9 @@
 # Features
 
 - MESSAGES: Strip HTML from notifications (show text only)
+- MESSAGES: Strip HTML from conversations list - last message
+
+
 - MESSAGES: messages.js - showNotification - switch between native and web notifications
 - MESSAGES: Move items in conversations list on message sent / received instead of reloading from server + if it's a new conversation, add it to converastion list
 - MESSAGES: Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
