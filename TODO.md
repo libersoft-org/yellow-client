@@ -10,7 +10,7 @@
 
 # Features
 
-- MESSAGES: Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
+- MESSAGES: Add lazy loader messages (already in app.css: <div class="loader"></div>)
 
 - CORE: Instead of login / logout add account switching
 - CORE: Add wizard (create keys, add accounts)
