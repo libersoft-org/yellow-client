@@ -7,22 +7,19 @@ export const selectedConversation = writable(null);
 export const conversationsArray = writable([]);
 export const messagesArray = writable([]);
 
-
-
 // only on client:
 //if (typeof window !== 'undefined')
- DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-    if (node.tagName === 'A') {
-      // Nastavení target na '_blank'
-      node.setAttribute('target', '_blank');
+DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+ if (node.tagName === 'A') {
+  // Nastavení target na '_blank'
+  node.setAttribute('target', '_blank');
 
-      // Přidání rel atributu pro bezpečnost
-      node.setAttribute('rel', 'noopener noreferrer');
-    }
-  });
+  // Přidání rel atributu pro bezpečnost
+  node.setAttribute('rel', 'noopener noreferrer');
+ }
+});
 
-export function saneHtml(content)
-{
+export function saneHtml(content) {
  return DOMPurify.sanitize(content);
 }
 
@@ -109,10 +106,8 @@ export function sendMessage(text) {
 
  Socket.send('user_send_message', params, true, (req, res) => {
   console.log('user_send_message', res);
-  if (res.error !== 0)
-   alert('Error while sending message: ' + res.message);
-  else
-   msg.received_by_my_homeserver = true;
+  if (res.error !== 0) alert('Error while sending message: ' + res.message);
+  else msg.received_by_my_homeserver = true;
   // update the message status and trigger the update of the messagesArray:
   messagesArray.update(v => v);
  });
