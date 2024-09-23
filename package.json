@@ -10,13 +10,14 @@
 		"@sveltejs/adapter-auto": "*",
 		"@sveltejs/kit": "*",
 		"@sveltejs/vite-plugin-svelte": "*",
-  "prettier": "*",
-  "prettier-plugin-svelte": "*",
+		"prettier": "*",
+		"prettier-plugin-svelte": "*",
 		"svelte": "*",
 		"vite": "*"
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/adapter-static": "*"
+		"@sveltejs/adapter-static": "*",
+		"dompurify": "^3.1.6"
 	}
 }

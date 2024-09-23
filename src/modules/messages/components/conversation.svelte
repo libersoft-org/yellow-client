@@ -42,6 +42,6 @@
 
 <div class="conversation">
  <ProfileBar {closeConversation} />
- <MessagesList on:mousedown={() => {message_bar?.setBarFocus()}} />
+ <MessagesList on:mousedown={() => {console.log('MessagesList on:mousedown'); message_bar?.setBarFocus()}} />
  <MessageBar bind:this={message_bar}/>
 </div>

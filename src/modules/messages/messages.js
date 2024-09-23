@@ -1,9 +1,27 @@
 import { get, writable } from 'svelte/store';
 import Socket from '../../core/socket.js';
 import Core from '../../core/core.js';
+import DOMPurify from 'dompurify';
+
 export const selectedConversation = writable(null);
 export const conversationsArray = writable([]);
 export const messagesArray = writable([]);
+
+
+DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+    if (node.tagName === 'A') {
+      // Nastavení target na '_blank'
+      node.setAttribute('target', '_blank');
+
+      // Přidání rel atributu pro bezpečnost
+      node.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+export function saneHtml(content)
+{
+ return DOMPurify.sanitize(content);
+}
 
 export function init() {
  Socket.events.addEventListener('new_message', eventNewMessage);
@@ -30,7 +48,12 @@ function listConversations() {
 }
 
 function resListConversations(res) {
- if (res.error === 0 && res.data?.conversations) conversationsArray.set(res.data.conversations);
+ if (res.error === 0 && res.data?.conversations) conversationsArray.set(res.data.conversations.map(sanitizeConversation));
+}
+
+function sanitizeConversation(c) {
+ c.last_message_text = stripHtml(c.last_message_text);
+ return c;
 }
 
 export function listMessages(address) {
@@ -41,10 +64,9 @@ export function listMessages(address) {
 function resListMessages(req, res) {
  if (res.error === 0 && res.data?.messages) {
   messagesArray.set(
-   res.data.messages.map(m => {
-    // set some client-side attributes:
-    m.received_by_my_homeserver = true;
-    return m;
+   res.data.messages.map(msg => {
+    preprocessMessage(msg);
+    return msg;
    })
   );
   console.log('resListMessages: messagesArray:');
@@ -118,7 +140,7 @@ function updateConversationsArray(msg) {
 
  if (conversation) {
   conversation.last_message_date = msg_created;
-  conversation.last_message_text = msg_text;
+  conversation.last_message_text = msg.stripped_text;
   const new_unread_count = isOutgoing(msg) ? 0 : 1;
   conversation.unread_count = conversation.unread_count ? conversation.unread_count + new_unread_count : new_unread_count;
   const index = ca.indexOf(conversation);
@@ -130,7 +152,7 @@ function updateConversationsArray(msg) {
   let conversation = {
    address: remoteAddress(msg),
    last_message_date: msg_created,
-   last_message_text: msg_text,
+   last_message_text: msg.stripped_text,
    visible_name: null,
    unread_count: isOutgoing(msg) ? 0 : 1
   };
@@ -153,9 +175,19 @@ function eventNewMessage(event) {
  if (Core.userAddress === res.data.from) return;
  const msg = res.data;
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
+ preprocessMessage(msg);
  if (msg.address_from === get(selectedConversation)?.address) messagesArray.update(() => [msg, ...get(messagesArray)]);
  if (msg.address_from !== get(selectedConversation)?.address || !get(Core.isClientFocused)) showNotification(msg);
  updateConversationsArray(msg);
+}
+
+function stripHtml(html) {
+ return html.replace(/<[^>]*>?/gm, '');
+}
+
+function preprocessMessage(msg) {
+ msg.stripped_text = stripHtml(msg.message);
+ msg.received_by_my_homeserver = true;
 }
 
 function eventSeenMessage(event) {
@@ -178,13 +210,13 @@ function showNotification(msg) {
  let notification;
  if (conversation) {
   notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
-   body: msg.message,
+   body: msg.stripped_text,
    icon: 'img/photo.svg',
    silent: true
   });
  } else {
   notification = new Notification('New message from: ' + msg.address_from, {
-   body: msg.message,
+   body: msg.stripped_text,
    icon: 'img/photo.svg',
    silent: true
   });

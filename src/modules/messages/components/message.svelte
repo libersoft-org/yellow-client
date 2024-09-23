@@ -1,5 +1,5 @@
 <script>
- import { setMessageSeen } from '../messages.js';
+ import { setMessageSeen, saneHtml } from '../messages.js';
  import {onDestroy, onMount} from "svelte";
  import {get} from "svelte/store";
  import { isClientFocused }  from "../../../core/core.js";
@@ -33,7 +33,7 @@
 
  function processMessage(content) {
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
-  return containsHtml ? content : linkify(content).replaceAll(' ', '&nbsp;').replaceAll("\n", '<br />');
+  return containsHtml ? saneHtml(content) : linkify(content).replaceAll(' ', '&nbsp;').replaceAll("\n", '<br />');
  }
 
  function linkify(text) {
