@@ -1,5 +1,4 @@
 <script>
- import { onMount } from 'svelte';
  import { selectedConversation } from '../messages.js';
  import Photo from './photo.svelte';
  export let closeConversation;

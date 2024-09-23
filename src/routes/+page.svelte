@@ -3,20 +3,20 @@
  import { onMount } from 'svelte';
  import Socket from '../core/socket.js';
  import { isClientFocused, hideSidebarMobile } from '../core/core.js';
- import Login from '../core/components/login.svelte';
+ import Login from '../core/pages/login.svelte';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
  import ModuleBar from '../core/components/module-bar.svelte';
- import WelcomeSidebar from '../core/components/welcome-sidebar.svelte';
- import WelcomeContent from '../core/components/welcome-content.svelte';
+ import WelcomeSidebar from '../core/pages/welcome-sidebar.svelte';
+ import WelcomeContent from '../core/pages/welcome-content.svelte';
 
  //Messages:
- import ConversationsList from '../modules/messages/components/conversations-list.svelte';
- import ConversationsMain from '../modules/messages/components/conversations-main.svelte';
+ import ConversationsList from '../modules/messages/pages/conversations-list.svelte';
+ import ConversationsMain from '../modules/messages/pages/conversations-main.svelte';
 
  //Contacts:
- import ContactsList from '../modules/contacts/components/contacts-list.svelte';
- import Contact from '../modules/contacts/components/contact.svelte';
+ import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
+ import Contact from '../modules/contacts/pages/contact-detail.svelte';
 
  const modules = {
   messages: {
@@ -59,8 +59,9 @@
    console.log('WebSocket closed:', event);
    status = { class: 'error', message: 'Disconnected from server' };
    statusVisible = true;
+   /*
    let time = 5;
-   /*const intervalID = setInterval(() => {
+   const intervalID = setInterval(() => {
     time--;
     status = { class: 'error', message: 'Reconnecting in ' + time + ' ...' };
     if (time <= 0) {
@@ -68,7 +69,8 @@
      Socket.connect();
      clearInterval(intervalID);
     }
-   }, 1000);*/
+   }, 1000);
+   */
   });
  });
 

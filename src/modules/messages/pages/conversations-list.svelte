@@ -2,9 +2,9 @@
  import { onMount } from 'svelte';
  import Core from '../../../core/core.js';
  import { init, listMessages, selectedConversation, conversationsArray } from '../messages.js';
- import Photo from './photo.svelte';
+ import Photo from '../components/photo.svelte';
  import Modal from '../../../core/components/modal.svelte';
- import ModalConversationNew from './modal-conversation-new.svelte';
+ import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  let isModalOpen = false;
  let modalComponent = null;
 

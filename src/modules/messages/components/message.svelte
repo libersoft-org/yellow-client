@@ -1,20 +1,13 @@
 <script>
  import { setMessageSeen } from '../messages.js';
-
  import {onDestroy, onMount} from "svelte";
-
-
  export let message;
  export let isOutgoing;
  export let container_element;
-
-
  let seen_txt;
  let checkmarks;
-
  let observer;
  let element;
-
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
@@ -31,14 +24,12 @@
 
  onMount(() => {
   console.log('onMount message:', message);
-  if (!message.seen && !isOutgoing)
-  {
+  if (!message.seen && !isOutgoing) {
    console.log('create observer');
    observer = new IntersectionObserver((entries) => {
     console.log(entries)
     const IsVisible = entries[0].isIntersecting;
-    if (!IsVisible)
-    {
+    if (!IsVisible) {
      console.log('not setting seen because !IsVisible');
      return;
     }
