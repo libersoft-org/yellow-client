@@ -6,13 +6,24 @@ export const conversationsArray = writable([]);
 export const messagesArray = writable([]);
 
 export function init() {
- Socket.events.addEventListener('new_message', event => eventNewMessage(event.detail));
- Socket.events.addEventListener('seen_message', event => eventSeenMessage(event.detail));
+ Socket.events.addEventListener('new_message', eventNewMessage);
+ Socket.events.addEventListener('seen_message', eventSeenMessage);
  if (Core.userAddress) {
   Socket.send('user_subscribe', { event: 'new_message' });
   Socket.send('user_subscribe', { event: 'seen_message' });
   listConversations();
  }
+}
+
+export function uninit()
+{
+ Socket.send('user_unsubscribe', { event: 'new_message' });
+ Socket.send('user_unsubscribe', { event: 'seen_message' });
+ Socket.events.removeEventListener('new_message', eventNewMessage);
+ Socket.events.removeEventListener('seen_message', eventSeenMessage);
+ messagesArray.set([]);
+ conversationsArray.set([]);
+ selectedConversation.set(null);
 }
 
 function listConversations() {
@@ -137,7 +148,8 @@ export function openNewConversation(address) {
  listMessages(address);
 }
 
-function eventNewMessage(res) {
+function eventNewMessage(event) {
+ const res = event.detail;
  if (!res.data) return;
  if (Core.userAddress === res.data.from) return;
  const msg = res.data;
@@ -147,7 +159,8 @@ function eventNewMessage(res) {
  updateConversationsArray(msg);
 }
 
-function eventSeenMessage(res) {
+function eventSeenMessage(event) {
+ const res = event.detail;
  console.log('eventSeenMessage', res);
  if (!res.data) return;
  console.log(get(messagesArray));

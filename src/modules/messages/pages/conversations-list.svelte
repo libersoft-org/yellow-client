@@ -1,7 +1,7 @@
 <script>
- import { onMount } from 'svelte';
+ import { onMount, onDestroy } from 'svelte';
  import Core from '../../../core/core.js';
- import { init, listMessages, selectedConversation, conversationsArray } from '../messages.js';
+ import { init, uninit, listMessages, selectedConversation, conversationsArray } from '../messages.js';
  import Photo from '../components/photo.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
@@ -10,6 +10,10 @@
 
  onMount(() => {
   init();
+ });
+
+ onDestroy(() => {
+  uninit();
  });
 
  function clickNew() {

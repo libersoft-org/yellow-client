@@ -3,20 +3,13 @@
  import Core from '../../../core/core.js';
  import { messagesArray } from '../messages.js';
  import Message from './message.svelte';
+
  let messages_elem;
- //let isScrolledToBottom;
  let wasScrolledToBottom = true;
 
  function updateWasScrolledToBottom() {
   if (messages_elem) {
    wasScrolledToBottom = messages_elem.scrollTop > -1;
-   /*
-   console.log('beforeUpdate: wasScrolledToBottom:', wasScrolledToBottom);
-   console.log('beforeUpdate: -messages_elem.scrollTop + messages_elem.clientHeight:', -messages_elem.scrollTop + messages_elem.clientHeight);
-   console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop);
-   console.log('beforeUpdate: messages_elem.clientHeight:', messages_elem.clientHeight);
-   console.log('beforeUpdate: messages_elem.scrollHeight:', messages_elem.scrollHeight);
-   */
   }
  }
 
