@@ -8,7 +8,10 @@ export const conversationsArray = writable([]);
 export const messagesArray = writable([]);
 
 
-DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+
+// only on client:
+//if (typeof window !== 'undefined')
+ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
     if (node.tagName === 'A') {
       // Nastavení target na '_blank'
       node.setAttribute('target', '_blank');
