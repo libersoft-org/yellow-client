@@ -111,9 +111,10 @@
 </style>
 
 <div class="message {isOutgoing ? 'outgoing' : 'incoming'}">
+ <div bind:this={intersection_observer_element}></div>
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="bottomline">
-  <div bind:this={intersection_observer_element} class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
   {#if isOutgoing}
    <div class="checkmark"><img src="img/seen{checkmarks}.svg" alt="{seen_txt}" /></div>
   {/if}
