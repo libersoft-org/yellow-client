@@ -28,10 +28,7 @@ if [ ! -d "./.git/" ]; then
 else
  git remote set-url origin https://$USER:$PASS@github.com/$USER/$REPO
 fi
-if ! [ -x "$(command -v prettier)" ]; then
- echo "Prettier not found, installing..."
- bun i -g prettier
-fi
+bun i -g prettier prettier-plugin-svelte
 prettier --config prettier-libersoft.json --write "src/**/*.{js,ts,css,html}"
 git config user.name "$NAME"
 git config user.email "$EMAIL"

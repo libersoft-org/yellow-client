@@ -142,7 +142,7 @@
      <div class="text">{c.last_message_text ? c.last_message_text : ''}</div>
     </div>
    </div>
-    {#if c.unread_count !== 0}
+    {#if (c.unread_count !== 0 && c.unread_count !== undefined)}
      <div class="count">{c.unread_count}</div>
     {/if}
   </div>

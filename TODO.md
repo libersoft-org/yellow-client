@@ -19,12 +19,12 @@
 - MESSAGES: Add lazy loader to conversations list and messages (already in app.css: <div class="loader"></div>)
 
 
-- MESSAGES: messages.js - showNotification - switch between native and web notifications
-- MESSAGES: Move items in conversations list on message sent / received instead of reloading from server + if it's a new conversation, add it to converastion list
-- MESSAGES: On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, created } (from database)
+- CORE: Instead of login / logout add account switching
+- CORE: Add wizard (create keys, add accounts)
+- CORE: Session expired -> login again
 - MESSAGES: When starting a new conversation, load visible_name if available
-- MESSAGES: Add number of new messages in conversations list
-- MESSAGES: Seen function - when new message is visible on screen, send "seen" command to specific message
+- MESSAGES: On message sent, load message data from server (now it just throws error = 0, message = "Message sent"), server should throw data: { id, address_from, address_to, message, seen, created } (from database)
+- MESSAGES: messages.js - showNotification - switch between native and web notifications
 - MESSAGES: File / image send
 - MESSAGES: Animated stickers (lottie)
 - MESSAGES: GIFs
@@ -32,6 +32,7 @@
 - MESSAGES: Voice / video messages
 - MESSAGES: Reply / forwarded message
 - CONTACTS: Make whole module
-- CORE: Session expired -> logout (consider to get rid of sessions completely)
-- CORE: Instead of login / logout add account switching
-- CORE: Add wizard (create keys, add accounts)
+
+# Testing
+
+- Try to send a long conversation list (1 000 000 messages) and meanwhile send a new message notification and see if new message is not lost
