@@ -11,7 +11,7 @@
 
 # Features
 
-- MESSAGES: pretify number of new messages, shorten the last message in conversation list, set size of the seen icon
+- MESSAGES: pretify number of new messages, shorten the last message in conversation list
 - MESSAGES: strip HTML from notifications (show text only)
 - MESSAGES: messages.js - showNotification - switch between native and web notifications
 - MESSAGES: Move items in conversations list on message sent / received instead of reloading from server + if it's a new conversation, add it to converastion list

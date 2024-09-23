@@ -88,16 +88,28 @@
   max-width: 100%;
  }
 
- .message .time {
+ .message .bottomline {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  gap: 5px;
+ }
+
+ .message .bottomline .time {
   font-size: 12px;
-  text-align: right;
+ }
+ .message .bottomline .checkmark img {
+  width: 24px;
+  height: 24px;
  }
 </style>
 
 <div bind:this={element} class="message {isOutgoing ? 'outgoing' : 'incoming'}">
  <div class="text">{@html processMessage(message.message)}</div>
- <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
- {#if isOutgoing}
-  <img src="img/seen{checkmarks}.svg" alt="{seen_txt}" />
- {/if}
+ <div class="bottomline">
+  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+  {#if isOutgoing}
+   <div class="checkmark"><img src="img/seen{checkmarks}.svg" alt="{seen_txt}" /></div>
+  {/if}
+ </div>
 </div>
