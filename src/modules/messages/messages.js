@@ -15,8 +15,7 @@ export function init() {
  }
 }
 
-export function uninit()
-{
+export function uninit() {
  Socket.send('user_unsubscribe', { event: 'new_message' });
  Socket.send('user_unsubscribe', { event: 'seen_message' });
  Socket.events.removeEventListener('new_message', eventNewMessage);
