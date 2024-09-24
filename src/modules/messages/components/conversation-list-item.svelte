@@ -2,19 +2,13 @@
 
  import { onMount, onDestroy } from 'svelte';
  import Photo from '../components/photo.svelte';
- import { selectedConversation, fetchConversationDetails } from '../messages.js';
+ import {selectedConversation, ensureConversationDetails} from '../messages.js';
 
 
  export let c;
  export let clickItem;
 
- onMount(() => {
-  if (!c.visible_name) fetchConversationDetails(c, (_req, res) => {
-   console.log(res);
-   c = {...c, ...res.data};
-  });
- });
-
+ $: ensureConversationDetails(c);
 
  function keyDown(conversation) {
   if (event.key === 'Enter' || event.key === ' ') {
