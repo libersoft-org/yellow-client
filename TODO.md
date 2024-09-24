@@ -8,6 +8,7 @@
 - MESSAGES: On click somewhere in messages, refocus message bar
 - CORE: Logout should reset all module components' variables (core/components/menu.svelte - logout()) - consider doing it, because we'll get rid of login (use account switching instead)
 - BUILD: When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
+- CORE: fix accounts dropdown keydown (event propagates to clickToggleAccounts and re-opens dropdown)
 
 # Features
 

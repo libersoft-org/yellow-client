@@ -1,9 +1,8 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
+ import Core from "../core.js";
  let accountsArray = [
-  { id: 1, title: 'user@user.com (AMTP)' },
-  { id: 2, title: 'jinejuser@jinejuser.com (AMTP)' },
-  { id: 3, title: '1a2b3c4d5e6f7a8b9c0d1f2a3b4c5d6e7f8a9b0c1d2e3f (DMTP)' },
+  { id: 1, title: Core.userAddress },
  ];
  let accountsVisible = false;
  let selectedAccount = accountsArray[0];
@@ -13,16 +12,40 @@
   selectAccount(1);
  });
 
- function toggleAccounts() {
+ function clickToggleAccounts() {
    accountsVisible = !accountsVisible;
    if (accountsVisible) document.addEventListener('click', handleClickOutside);
    else document.removeEventListener('click', handleClickOutside);
  }
 
+ function keyToggleAccounts() {
+  console.log('event.key: ' + event.key);
+  if (event.key === 'Enter' || event.key === ' ') {
+   clickToggleAccounts();
+   event.preventDefault();
+  }
+  else if (event.key === 'Escape') {
+   accountsVisible = true;
+   clickToggleAccounts();
+   event.preventDefault();
+  }
+ }
+
+
  function selectAccount(id) {
   selectedAccount = accountsArray.find(a => a.id === id);
+  console.log('accountsVisible: ' + accountsVisible);
   accountsVisible = false;
+  console.log('accountsVisible: ' + accountsVisible);
+  console.log('Selected account: ' + selectedAccount.title);
   document.removeEventListener('click', handleClickOutside);
+ }
+
+ function keySelectAccount(id) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   selectAccount(id);
+  }
  }
 
  function handleClickOutside(event) {
@@ -91,13 +114,13 @@
  }
 </style>
 
-<div class="dropdown" role="button" tabindex="0" on:click={toggleAccounts} bind:this={dropdown}>
+<div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
  <div class="text">{selectedAccount.title}</div>
- <div><img src="img/down.svg" /></div>
+ <div><img src="img/down.svg" alt="▼" /></div>
  {#if accountsVisible}
   <div class="items open">
    {#each accountsArray as a (a.id)}
-    <div class="item" role="button" tabindex="0" on:click={() => selectAccount(a.id)}>{a.title}</div>
+    <div class="item" role="button" tabindex="0" on:click={() => selectAccount(a.id) } on:keydown={() => keySelectAccount(a.id)}>{a.title}</div>
    {/each}
   </div>
  {/if}
