@@ -17,6 +17,9 @@ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
   // Přidání rel atributu pro bezpečnost
   node.setAttribute('rel', 'noopener noreferrer');
  }
+ if (node.tagName === 'VIDEO') {
+  node.removeAttribute('autoplay');
+ }
 });
 
 export function saneHtml(content) {
