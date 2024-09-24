@@ -1,6 +1,6 @@
 # Bugs
 
-- MESSAGES: When new contact sends me a new message, it doesn't show visible name in conversations list
+- MESSAGES: When a new conversation is created to nonsensical address and then send a message to such address, the client start sending messages in infinite loop
 - MESSAGES: Scrolling down on new message sometimes doesn't work
 - CORE: The server is automatically reconnected and logged in again after logout
 - MESSAGES: Sometimes people receive 1 message multiple times (new_message event) - multiple websocket connections??
