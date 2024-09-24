@@ -236,6 +236,11 @@ function playNotificationSound() {
  audio.play();
 }
 
+export function fetchConversationDetails(conversation, cb) {
+ console.log('fetchConversationDetails', conversation);
+
+}
+
 export default {
  openNewConversation,
  listMessages,
