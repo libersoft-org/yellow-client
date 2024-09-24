@@ -1,5 +1,6 @@
 <script>
  import "../app.css";
+ import Core from '../core.js';
  import { onMount } from 'svelte';
  import Socket from '../core/socket.js';
  import { isClientFocused, hideSidebarMobile } from '../core/core.js';
@@ -103,7 +104,7 @@
   window.removeEventListener('mousemove', resizeSideBar);
   window.removeEventListener('mouseup', stopResizeSideBar);
  }
- 
+
  function resizeSideBar(e) {
   const min = 250;
   const max = 500;
@@ -237,7 +238,7 @@
    <ModuleBar {onSelectModule} />
    <AccountBar />
    {#if selectedModule}
-    <svelte:component this={selectedModule.sidebar} />
+    <svelte:component this={selectedModule.sidebar} {Core.account} />
    {:else}
     <WelcomeSidebar />
    {/if}
@@ -245,7 +246,7 @@
   <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
   <div class="content">
    {#if selectedModule}
-    <svelte:component this={selectedModule.content} />
+    <svelte:component this={selectedModule.content} {Core.account} />
    {:else}
     <WelcomeContent {product} {version} {link} />
    {/if}

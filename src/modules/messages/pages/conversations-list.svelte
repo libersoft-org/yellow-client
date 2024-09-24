@@ -8,13 +8,8 @@
  let isModalOpen = false;
  let modalComponent = null;
 
- onMount(() => {
-  init();
- });
+ export let account;
 
- onDestroy(() => {
-  uninit();
- });
 
  function clickNew() {
   modalComponent = ModalConversationNew;
@@ -29,9 +24,7 @@
  }
 
  function clickItem(conversation) {
-  selectedConversation.update(() => conversation);
-  Core.hideSidebarMobile.update(() => true);
-  listMessages(conversation.address);
+  selectConversation(get(account), conversation);
  }
 
 </script>

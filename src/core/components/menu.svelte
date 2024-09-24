@@ -10,8 +10,8 @@
 
  function logout() {
   Socket.disconnect();
-  Core.userAddress = null;
-  Core.sessionID = null;
+  Core.account.update(() => null);
+
   Core.hideSidebarMobile.update(() => false);
   //TODO: reset all variables in modules, for example set this in Messages module:
   //selectedConversation = null;
