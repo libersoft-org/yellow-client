@@ -74,9 +74,11 @@
 
  .items .item {
   display: flex;
+  flex-direction: column;
   padding: 10px;
   cursor: pointer;
   background-color: #fffcf0;
+  border-bottom: 1px solid #dd9
  }
 
  .items .item:hover {
@@ -87,30 +89,41 @@
   background-color: #fd5;
  }
 
- .items .item .description {
+ .items .item .item-row {
+  display: flex;
+  flex-direction: row;
+ }
+
+ .items .item .item-row .description {
   word-break: break-word;
   flex-grow: 1;
   padding: 0 10px;
   overflow: hidden;
  }
 
- .items .item .description .name {
-  font-weight: bold;
- }
-
- .items .item .description .address, .items .item .description .time {
-  font-size: 12px;
- }
-
- .items .item .description .text {
+ .items .item .item-row .description .name {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  margin-top: 10px;
+  font-weight: bold;
+ }
+
+ .items .item .item-row .description .address, .items .item .description .time {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 12px;
+ }
+
+ .items .item .text {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-top: 8px;
   color: #555;
  }
 
- .items .item .count {
+ .items .item .item-row .count {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -122,6 +135,7 @@
   background-color: #c00;
   color: #fff;
  }
+
 </style>
 
 <div class="conversations">
@@ -132,20 +146,26 @@
  <div class="items">
   {#each $conversationsArray as c (c.address)}
   <div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyItem(c)}>
-   <Photo />
-   <div class="description">
-    <div class="contact">
-     {#if (c.visible_name)}
-      <div class="name">{c.visible_name}</div>
-     {/if}
-     <div class="address">{c.address}</div>
-     <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>
-     <div class="text">{c.last_message_text ? c.last_message_text : ''}</div>
+   <div class="item-row">
+    <Photo />
+    <div class="description">
+     <div class="contact">
+      {#if (c.visible_name)}
+       <div class="name">{c.visible_name}</div>
+      {/if}
+      <div class="address">{c.address}</div>
+      <div class="time">{new Date(c.last_message_date.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+     </div>
     </div>
-   </div>
     {#if (c.unread_count !== 0 && c.unread_count !== undefined)}
      <div class="count">{c.unread_count}</div>
     {/if}
+   </div>
+   {#if c.last_message_text.trim()}
+    <div class="text">{c.last_message_text.trim()}</div>
+   {:else}
+    <div class="text">&nbsp;</div>
+   {/if}
   </div>
   {/each}
  </div>

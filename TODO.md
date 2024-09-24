@@ -12,6 +12,7 @@
 
 # Features
 
+- MESSAGES: Add a red dot in top right corner of module icon (indicator of a new activity)
 - MESSAGES: Add lazy loader messages (already in app.css: <div class="loader"></div>)
 - CORE: Instead of login / logout add account switching
 - CORE: Add wizard (create keys, add accounts)
