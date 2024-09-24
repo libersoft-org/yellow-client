@@ -238,7 +238,7 @@ function playNotificationSound() {
 
 export function fetchConversationDetails(conversation, cb) {
  console.log('fetchConversationDetails', conversation);
-
+ Socket.send('user_get_userinfo', { address: conversation.address }, true, cb);
 }
 
 export default {

@@ -9,8 +9,9 @@
  export let clickItem;
 
  onMount(() => {
-  if (!c.visible_name) fetchConversationDetails(c, (res) => {
-   c = {...c, ...res};
+  if (!c.visible_name) fetchConversationDetails(c, (_req, res) => {
+   console.log(res);
+   c = {...c, ...res.data};
   });
  });
 
