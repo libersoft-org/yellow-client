@@ -7,6 +7,7 @@
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
  import ModuleBar from '../core/components/module-bar.svelte';
+ import AccountBar from '../core/components/account-bar.svelte';
  import WelcomeSidebar from '../core/pages/welcome-sidebar.svelte';
  import WelcomeContent from '../core/pages/welcome-content.svelte';
 
@@ -234,6 +235,7 @@
    <Menu bind:isMenuOpen bind:isLoggedIn {product} {version} {link} />
    <MenuBar bind:isMenuOpen />
    <ModuleBar {onSelectModule} />
+   <AccountBar />
    {#if selectedModule}
     <svelte:component this={selectedModule.sidebar} />
    {:else}

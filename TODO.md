@@ -1,6 +1,5 @@
 # Bugs
 
-- MESSAGES: When HTML video is sent with "autoplay" property, it should not be allowed (otherwise it plays it when opening the new conversation automatically) - fix it in DOMPurify
 - MESSAGES: When new contact sends me a new message, it doesn't show visible name in conversations list
 - MESSAGES: Scrolling down on new message sometimes doesn't work
 - CORE: The server is automatically reconnected and logged in again after logout

@@ -238,8 +238,7 @@ function playNotificationSound() {
 
 export function ensureConversationDetails(conversation, cb) {
  console.log('ensureConversationDetails', conversation);
- if (conversation.visible_name)
-  return;
+ if (conversation.visible_name) return;
  Socket.send('user_get_userinfo', { address: conversation.address }, true, (_req, res) => {
   Object.assign(conversation, res.data);
   conversationsArray.update(v => v);

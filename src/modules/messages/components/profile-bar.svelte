@@ -28,7 +28,16 @@
  }
 
  .description {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   flex-grow: 1;
+ }
+
+ .description .visible_name {
+  font-weight: bold;
  }
 
  .description .address {
@@ -50,7 +59,7 @@
  <Photo />
  <div class="description">
   {#if $selectedConversation.visible_name}
-   <div class="bold">{$selectedConversation.visible_name}</div>
+   <div class="visible_name">{$selectedConversation.visible_name}</div>
   {/if}
   <div class="address">{$selectedConversation.address}</div>
  </div>
