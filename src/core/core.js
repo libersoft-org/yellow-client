@@ -1,5 +1,4 @@
 import {get, writable} from 'svelte/store';
-import Socket from "./socket.js";
 import {localStorageSharedStore} from '../lib/svelte-shared-store.js';
 
 const accounts_config = localStorageSharedStore('accounts_config', []);
@@ -93,7 +92,7 @@ function disableAccount(account) {
  account.enabled = false;
  account.update(v => v);
 
- disconnectAccount(account);
+ disconnectAccount(get(account));
 }
 
 /*export function status() {
@@ -157,14 +156,14 @@ export function deinitModuleData(acc) {
  deinitMessagesModuleData(acc);
 }
 
-function disconnectAccount(account) {
- if (account.socket) {
-  Socket.send('user_unsubscribe', {event: 'new_message'});
-  Socket.send('user_unsubscribe', {event: 'seen_message'});
+function disconnectAccount(acc) {
+ if (acc.socket) {
+  acc.send('user_unsubscribe', {event: 'new_message'});
+  acc.send('user_unsubscribe', {event: 'seen_message'});
 
-  account.socket.close();
-  account.socket = null;
-  account.requests = {};
+  acc.socket.close();
+  acc.socket = null;
+  acc.requests = {};
 
   console.log('Account disconnected');
  }

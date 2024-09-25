@@ -4,9 +4,14 @@
  import Photo from '../components/photo.svelte';
  import {selectedConversation, ensureConversationDetails} from '../messages.js';
 
-
  export let c;
  export let clickItem;
+
+
+
+ $: selectedConversation = $selectedConversation;
+
+
 
  $: ensureConversationDetails(c);
 

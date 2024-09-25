@@ -1,24 +1,19 @@
 <script>
  import Core from '../core.js';
- import Socket from '../socket.js';
+
  export let isMenuOpen = false;
  export let isLoggedIn = false;
  export let product;
  export let version;
  export let link;
- //export let onLogout;
+
 
  function logout() {
-  Socket.disconnect();
-  Core.account.update(() => null);
+
+  //TIDI
 
   Core.hideSidebarMobile.update(() => false);
-  //TODO: reset all variables in modules, for example set this in Messages module:
-  //selectedConversation = null;
-  //messagesArray = [];
   isMenuOpen = false;
-  isLoggedIn = false;
-  localStorage.removeItem('login');
  }
 
  function clickMenuClose() {

@@ -108,6 +108,8 @@ export function setMessageSeen(message, cb) {
  });
 }
 
+export let conversationsArray = writable([]);
+
 export function sendMessage(text) {
  const msg = {
   uid: Socket.getRandomString(),

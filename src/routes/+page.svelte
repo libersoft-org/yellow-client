@@ -1,9 +1,8 @@
 <script>
+ import {onMount, setContext} from 'svelte';
  import "../app.css";
  import Core from '../core/core.js';
- import { onMount } from 'svelte';
- import Socket from '../core/socket.js';
- import { isClientFocused, hideSidebarMobile } from '../core/core.js';
+ import { account, isClientFocused, hideSidebarMobile} from '../core/core.js';
  import Login from '../core/pages/login.svelte';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -22,14 +21,20 @@
 
  const modules = {
   messages: {
+   id: 'messages',
    sidebar: ConversationsList,
    content: ConversationsMain
   },
   contacts: {
+   id: 'contacts',
    sidebar: ContactsList,
    content: Contact
   }
  };
+
+ //$: module_data = $account?.module_data[selectedModule?.id];
+ //$: setContext('module_data', $module_data);
+
  const product = 'Yellow';
  const version = '0.01';
  const link = 'https://yellow.libersoft.org';
@@ -46,34 +51,6 @@
   window.addEventListener('focus', () => isClientFocused.update(() => true));
   window.addEventListener('blur', () => isClientFocused.update(() => false));
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-  Socket.events.addEventListener('open', event => {
-   console.log('Connected to WebSocket:', event);
-   status = { class: 'info', message: 'Connected to server' };
-   statusVisible = true;
-   setTimeout(() => { if (status.class === 'info') statusVisible = false; }, 5000);
-  });
-  Socket.events.addEventListener('error', event => {
-   console.error('WebSocket error:', event);
-   status = { class: 'error', message: 'ERROR' };
-   statusVisible = true;
-  });
-  Socket.events.addEventListener('close', event => {
-   console.log('WebSocket closed:', event);
-   status = { class: 'error', message: 'Disconnected from server' };
-   statusVisible = true;
-   /*
-   let time = 5;
-   const intervalID = setInterval(() => {
-    time--;
-    status = { class: 'error', message: 'Reconnecting in ' + time + ' ...' };
-    if (time <= 0) {
-     status = { class: 'error', message: 'Reconnecting to server ...' };
-     Socket.connect();
-     clearInterval(intervalID);
-    }
-   }, 1000);
-   */
-  });
  });
 
  function clickStatusClose() {
@@ -221,35 +198,31 @@
 </svelte:head>
 
 <div class="app">
- {#if !isLoggedIn}
-  <Login bind:isLoggedIn {product} {version} {link} />
- {:else}
-  {#if statusVisible}
-   <div class="status {status?.class ? status.class : ''}">
-    <div class="panel {status?.class ? status.class : ''}">
-     <div class="close" role="button" tabindex="0" on:click={clickStatusClose} on:keydown={keyStatusClose}><img src="img/close.svg" alt="X"></div>
-    </div>
-    <div class="text">{status?.message ? status.message : ''}</div>
+ {#if statusVisible}
+  <div class="status {status?.class ? status.class : ''}">
+   <div class="panel {status?.class ? status.class : ''}">
+    <div class="close" role="button" tabindex="0" on:click={clickStatusClose} on:keydown={keyStatusClose}><img src="img/close.svg" alt="X"></div>
    </div>
-  {/if}
-  <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
-   <Menu bind:isMenuOpen bind:isLoggedIn {product} {version} {link} />
-   <MenuBar bind:isMenuOpen />
-   <ModuleBar {onSelectModule} />
-   <AccountBar />
-   {#if selectedModule}
-    <svelte:component this={selectedModule.sidebar} />
-   {:else}
-    <WelcomeSidebar />
-   {/if}
-  </div>
-  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
-  <div class="content">
-   {#if selectedModule}
-    <svelte:component this={selectedModule.content} />
-   {:else}
-    <WelcomeContent {product} {version} {link} />
-   {/if}
+   <div class="text">{status?.message ? status.message : ''}</div>
   </div>
  {/if}
+ <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
+  <Menu bind:isMenuOpen bind:isLoggedIn {product} {version} {link}/>
+  <MenuBar bind:isMenuOpen/>
+  <ModuleBar {onSelectModule}/>
+  <AccountBar/>
+  {#if selectedModule}
+   <svelte:component this={selectedModule.sidebar}/>
+  {:else}
+   <WelcomeSidebar/>
+  {/if}
+ </div>
+ <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
+ <div class="content">
+  {#if selectedModule}
+   <svelte:component this={selectedModule.content}/>
+  {:else}
+   <WelcomeContent {product} {version} {link}/>
+  {/if}
+ </div>
 </div>
