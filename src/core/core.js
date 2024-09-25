@@ -2,22 +2,21 @@ import {get, writable} from 'svelte/store';
 import Socket from "./socket.js";
 import {localStorageSharedStore} from '../lib/svelte-shared-store.js';
 
-
 const accounts_config = localStorageSharedStore('accounts_config', []);
 
 let accs = get(accounts);
-
 
 accounts_config.subscribe(value => {
  //TODO: implement configuration of order of accounts
  for (let config of value) {
   let acc = accs.find(acc => acc.id === config.id);
   if (acc) {
-
-   if (acc.enabled != config.enabled)
-    if (config.enabled) enableAccount(acc);
+   if (acc.enabled != config.enabled) {
+    if (config.enabled)
+     enableAccount(acc);
     else
      disableAccount(acc);
+   }
 
    if (acc.title != config.title) {
     acc.title = config.title;
@@ -44,7 +43,6 @@ accounts_config.subscribe(value => {
  }
 });
 
-
 export function addAccount(credentials) {
  accounts_config.update(v => [...v, {
   id: getRandomString(),
@@ -54,13 +52,10 @@ export function addAccount(credentials) {
  }]);
 }
 
-
 const events = new EventTarget();
-
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
-
 
 export let accounts = writable([
  constructAccount(1, 'Account 1', {server: '', address: '', password: ''}),
@@ -68,20 +63,16 @@ export let accounts = writable([
 
 export let account = writable(get(accounts)[0]);
 
-
 export function selectAccount(id) {
  account.set(get(accounts).find(acc => acc.id === id));
 }
 
-
 function constructAccount(id, title, credentials) {
  let account = {
   id,
-
   title,
   credentials,
   enabled: false,
-
   events: new EventTarget(),
   requests: {},
   module_data: writable({}),
@@ -89,7 +80,6 @@ function constructAccount(id, title, credentials) {
 
  return writable(account);
 }
-
 
 function enableAccount(account) {
  account.enabled = true;
@@ -107,9 +97,8 @@ function disableAccount(account) {
 }
 
 /*export function status() {
- return socket?.readyState;
+  return socket?.readyState;
 }*/
-
 
 function reconnectAccount(account) {
  let acc = get(account);
@@ -140,9 +129,7 @@ function reconnectAccount(account) {
  });
 
  account.loggingIn = true;
-
 }
-
 
 function sendLoginCommand(acc) {
  acc.socket.send('user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
@@ -154,102 +141,90 @@ function sendLoginCommand(acc) {
    account.sessionID = res.sessionID;
    initModuleData(acc);
   }
- )
-  ;
+ });
+}
+
+function initModuleData(acc) {
+ acc.module_data.set({
+  contacts: {},
+  messages: initMessagesModuleData(acc),
+ });
+
+ initMessagesModuleComms(acc);
+}
+
+export function deinitModuleData(acc) {
+ deinitMessagesModuleData(acc);
+}
+
+function disconnectAccount(account) {
+ if (account.socket) {
+  Socket.send('user_unsubscribe', {event: 'new_message'});
+  Socket.send('user_unsubscribe', {event: 'seen_message'});
+
+  account.socket.close();
+  account.socket = null;
+  account.requests = {};
+
+  console.log('Account disconnected');
  }
+}
 
+function handleSocketResponse(account, res) {
+ //console.log('RESPONSE', res);
+ if (res.requestID) {
+  // it is response to command:
+  const reqData = account.requests[res.requestID];
+  if (reqData?.req?.command) {
+   //console.log('REQUEST', reqData.req);
+   if (reqData.callback) reqData.callback(reqData.req, res);
+   delete account.requests[res.requestID];
+  } else console.log('Request command not found');
+ } else if (res.event) {
+  // it is event:
+  console.log('GOT EVENT', res);
+  //TODO: send event to messages module:
+  account.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
+ } else console.log('Unknown command from server');
+}
 
- function initModuleData(acc) {
+function getRandomString(length = 40) {
+ let result = '';
+ while (result.length < length) result += Math.random().toString(36).substring(2);
+ return result.substring(0, length);
+}
 
-  acc.module_data.set({
-   contacts: {},
-   messages: initMessagesModuleData(acc),
-  });
+export function send(account, command, params = {}, sendSessionID = true, callback = null) {
+ //console.log('------------------');
+ //console.log('SENDING COMMAND:');
+ //console.log('COMMAND:', command);
+ //console.log('PARAMS:', params);
+ //console.log('SEND SESSION ID:', sendSessionID);
+ //console.log('CALLBACK:', callback);
+ //console.log('------------------');
 
-  initMessagesModuleComms(acc);
-
+ if (!account) {
+  console.error('Error while sending command: account is not defined');
+  return;
  }
-
- export function deinitModuleData(acc) {
-  deinitMessagesModuleData(acc);
+ if (!account.socket || account.socket.readyState !== WebSocket.OPEN) {
+  console.error('Error while sending command: WebSocket is not open');
+  return;
  }
+ const requestID = generateRequestID();
+ const req = {requestID};
+ if (sendSessionID) req.sessionID = account.sessionID;
+ if (command) req.command = command;
+ if (params) req.params = params;
+ account.requests[requestID] = {req, callback};
+ account.socket.send(JSON.stringify(req));
+ return requestID;
+}
 
+let lastRequestId = 0;
 
- function disconnectAccount(account) {
-  if (account.socket) {
-   Socket.send('user_unsubscribe', {event: 'new_message'});
-   Socket.send('user_unsubscribe', {event: 'seen_message'});
+function generateRequestID() {
+ return lastRequestId++;
+}
 
-   account.socket.close();
-   account.socket = null;
-   account.requests = {};
-
-   console.log('Account disconnected');
-  }
- }
-
-
- function handleSocketResponse(account, res) {
-  //console.log('RESPONSE', res);
-  if (res.requestID) {
-   // it is response to command:
-   const reqData = account.requests[res.requestID];
-   if (reqData?.req?.command) {
-    //console.log('REQUEST', reqData.req);
-    if (reqData.callback) reqData.callback(reqData.req, res);
-    delete account.requests[res.requestID];
-   } else console.log('Request command not found');
-  } else if (res.event) {
-   // it is event:
-   console.log('GOT EVENT', res);
-   //TODO: send event to messages module:
-   account.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
-  } else console.log('Unknown command from server');
- }
-
-
- function getRandomString(length = 40) {
-  let result = '';
-  while (result.length < length) result += Math.random().toString(36).substring(2);
-  return result.substring(0, length);
- }
-
-
- export function send(account, command, params = {}, sendSessionID = true, callback = null) {
-
-  //console.log('------------------');
-  //console.log('SENDING COMMAND:');
-  //console.log('COMMAND:', command);
-  //console.log('PARAMS:', params);
-  //console.log('SEND SESSION ID:', sendSessionID);
-  //console.log('CALLBACK:', callback);
-  //console.log('------------------');
-
-  if (!account) {
-   console.error('Error while sending command: account is not defined');
-   return;
-  }
-  if (!account.socket || account.socket.readyState !== WebSocket.OPEN) {
-   console.error('Error while sending command: WebSocket is not open');
-   return;
-  }
-  const requestID = generateRequestID();
-  const req = {requestID};
-  if (sendSessionID) req.sessionID = account.sessionID;
-  if (command) req.command = command;
-  if (params) req.params = params;
-  account.requests[requestID] = {req, callback};
-  account.socket.send(JSON.stringify(req));
-  return requestID;
- }
-
-
- let lastRequestId = 0;
-
- function generateRequestID() {
-  return lastRequestId++;
- }
-
-
- export default {hideSidebarMobile, isClientFocused, accounts, account};
-
+export default {hideSidebarMobile, isClientFocused, accounts, account};
