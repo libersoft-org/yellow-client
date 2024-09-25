@@ -10,7 +10,6 @@
 
 
 
- let selectedConversation = derived(module_data, ($module_data) => $module_data?.selected_conversation);
 
 
 

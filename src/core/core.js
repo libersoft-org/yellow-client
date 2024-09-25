@@ -1,12 +1,34 @@
-import {get, writable} from 'svelte/store';
+import {get, writable, derived} from 'svelte/store';
 import {localStorageSharedStore} from '../lib/svelte-shared-store.js';
+import {initMessagesModuleData, initMessagesModuleComms, deinitMessagesModuleData} from '../modules/messages/messages.js';
+
+
+export const hideSidebarMobile = writable(false);
+export let isClientFocused = writable(true);
 
 const accounts_config = localStorageSharedStore('accounts_config', []);
 
-let accs = get(accounts);
+export let accounts = writable([
+ constructAccount(1, 'Account 1', {server: '', address: '', password: ''}),
+]);
+
+export let account = writable(get(accounts)[0]);
+
+export function selectAccount(id) {
+ account.set(get(accounts).find(acc => acc.id === id));
+}
+
+export function md(module_id) {
+ return derived(account, $account => {
+  if ($account.module_data)
+   return $account.module_data[module_id];
+ });
+}
+
 
 accounts_config.subscribe(value => {
  //TODO: implement configuration of order of accounts
+ let accs = get(accounts);
  for (let config of value) {
   let acc = accs.find(acc => acc.id === config.id);
   if (acc) {
@@ -51,20 +73,6 @@ export function addAccount(credentials) {
  }]);
 }
 
-const events = new EventTarget();
-
-export const hideSidebarMobile = writable(false);
-export let isClientFocused = writable(true);
-
-export let accounts = writable([
- constructAccount(1, 'Account 1', {server: '', address: '', password: ''}),
-]);
-
-export let account = writable(get(accounts)[0]);
-
-export function selectAccount(id) {
- account.set(get(accounts).find(acc => acc.id === id));
-}
 
 function constructAccount(id, title, credentials) {
  let account = {
@@ -145,7 +153,7 @@ function sendLoginCommand(acc) {
 
 function initModuleData(acc) {
  acc.module_data.set({
-  contacts: {},
+  contacts: {id: 'contacts'},
   messages: initMessagesModuleData(acc),
  });
 
@@ -226,4 +234,4 @@ function generateRequestID() {
  return lastRequestId++;
 }
 
-export default {hideSidebarMobile, isClientFocused, accounts, account};
+export default {hideSidebarMobile, isClientFocused, accounts, account, md};

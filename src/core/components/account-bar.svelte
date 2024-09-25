@@ -6,6 +6,10 @@
 
  let dropdown;
 
+ $: console.log('account-bar.svelte: accounts: ', $accounts);
+ $: console.log('accountsVisible: ', accountsVisible);
+
+
  function clickToggleAccounts() {
    accountsVisible = !accountsVisible;
    if (accountsVisible) document.addEventListener('click', handleClickOutside);
@@ -108,12 +112,15 @@
  }
 </style>
 
+{ JSON.stringify($accounts) }
+
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
- <div class="text">{account.title}</div>
+ <div class="text">{$account.title}</div>
  <div><img src="img/down.svg" alt="▼" /></div>
  {#if accountsVisible}
   <div class="items open">
-   {#each accounts as a (a.id)}
+
+   {#each $accounts as a (a.id)}
     <div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount(a.id) } on:keydown={(event) => keySelectAccount(a.id, event)}>{a.title}</div>
    {/each}
   </div>

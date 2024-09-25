@@ -1,7 +1,7 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
  import Core from '../../../core/core.js';
- import { init, uninit, listMessages, selectedConversation, conversationsArray } from '../messages.js';
+ import { conversationsArray } from '../messages.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
@@ -58,6 +58,8 @@
  }
 
 </style>
+
+{ JSON.stringify($conversationsArray) }
 
 <div class="conversations">
  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>

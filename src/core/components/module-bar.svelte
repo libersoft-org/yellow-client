@@ -1,4 +1,9 @@
 <script>
+
+ import Core from '../../core/core.js';
+
+ let module_data = Core.md('messages');
+
  export let onSelectModule;
 
  function clickSetModule(name) {
@@ -34,6 +39,11 @@
 </style>
 
 <div class="items">
- <div class="item" role="button" tabindex="0" on:click={() => clickSetModule('messages')} on:keydown={() => keySetModule('messages')}><img src="img/modules/messages.svg" alt="Messages" /></div>
- <div class="item" role="button" tabindex="0" on:click={() => clickSetModule('contacts')} on:keydown={() => keySetModule('contacts')}><img src="img/modules/contacts.svg" alt="Contacts" /></div>
+
+ {#each $module_data as m (m.id)}
+
+ <div class="item" role="button" tabindex="0" on:click={() => clickSetModule(m.id)} on:keydown={() => keySetModule(m.id)}><img src="img/modules/messages.svg" alt="Messages" /></div>
+
+ {/each}
+
 </div>

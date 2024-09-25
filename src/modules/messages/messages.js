@@ -1,6 +1,16 @@
-import { get, writable } from 'svelte/store';
-import Core from '../../core/core.js';
+import {derived, get, writable} from 'svelte/store';
+import { md } from '../../core/core.js';
 import DOMPurify from 'dompurify';
+
+
+
+let module_data = md('messages');
+
+export let selectedConversation = derived(module_data, ($module_data) => $module_data?.selected_conversation);
+export let conversationsArray = derived(module_data, ($module_data) => $module_data?.conversations_array);
+export let messagesArray = derived(module_data, ($module_data) => $module_data?.messages_array);
+
+
 
 
 DOMPurify.addHook('afterSanitizeAttributes', function (node) {
@@ -18,15 +28,16 @@ export function saneHtml(content) {
 }
 
 
-function initMessagesModuleData(acc) {
+export function initMessagesModuleData(acc) {
  return {
+  id: 'messages',
   selectedConversation: writable(null),
   conversationsArray: writable([]),
   messagesArray: writable([]),
  };
 }
 
-function initMessagesModuleComms(acc) {
+export function initMessagesModuleComms(acc) {
 
  acc.socket.send('user_subscribe', { event: 'new_message' });
  acc.socket.send('user_subscribe', { event: 'seen_message' });
@@ -43,7 +54,7 @@ function initMessagesModuleComms(acc) {
 
 }
 
-function deinitMessagesModule(acc)
+export function deinitMessagesModuleData(acc)
 {
  acc.socket.send('user_unsubscribe', { event: 'new_message' });
  acc.socket.send('user_unsubscribe', { event: 'seen_message' });
@@ -65,7 +76,7 @@ function deinitMessagesModule(acc)
 function listConversations(acc) {
  send(acc, 'user_list_conversations', null, true, (_req, res) => {
   if (res.error === 0 && res.data?.conversations)
-   acc.module_data.messages?.conversationsArray.set(res.data.conversations.map(sanitizeConversation))
+   conversationsArray.set(res.data.conversations.map(sanitizeConversation))
  });
 }
 
@@ -75,10 +86,10 @@ function sanitizeConversation(c) {
 }
 
 export function listMessages(acc, address) {
- acc.module_data.messages?.messagesArray.set([]);
+ messagesArray.set([]);
  send(acc, 'user_list_messages', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
   if (res.error === 0 && res.data?.messages) {
-   acc.module_data.messages?.messagesArray.set(
+   messagesArray.set(
     res.data.messages.map(msg => {
      preprocessMessage(msg);
      return msg;
@@ -107,8 +118,6 @@ export function setMessageSeen(message, cb) {
   }
  });
 }
-
-export let conversationsArray = writable([]);
 
 export function sendMessage(text) {
  const msg = {
@@ -190,9 +199,11 @@ function eventNewMessage(acc, event) {
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  preprocessMessage(msg);
  let module_data = get(acc.module_data).messages
- let selectedConversation = get(module_data.selectedConversation);
- if (msg.address_from === selectedConversation?.address) module_data.messagesArray.update(() => [msg, ...get(messagesArray)]);
- if (msg.address_from !== selectedConversation?.address || !get(Core.isClientFocused)) showNotification(acc, msg);
+ let sc = get(selectedConversation);
+ if (msg.address_from === sc?.address)
+  messagesArray.update((v) => [msg, ...v]);
+ if (msg.address_from !== sc?.address || !get(Core.isClientFocused))
+  showNotification(acc, msg);
  updateConversationsArray(msg);
 }
 
@@ -257,7 +268,7 @@ export function ensureConversationDetails(conversation, cb) {
    return;
   }
   Object.assign(conversation, res.data);
-  conversationsArray.update(v => v); // fixme: this infiloops
+  conversationsArray.update(v => v); // fixme: this infiloops?
  });
 }
 
@@ -269,5 +280,4 @@ export default {
  conversationsArray,
  messagesArray,
  selectedConversation,
- init
 };
