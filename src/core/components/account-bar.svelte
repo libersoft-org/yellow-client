@@ -1,11 +1,15 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
  import { account, accounts, selectAccount }  from '../core.js';
+ import AccountBarItem from './account-bar-item.svelte';
+ import {get} from "svelte/store";
+
 
  let accountsVisible = false;
-
  let dropdown;
 
+
+ $: console.log('account-bar.svelte: account: ', $account);
  $: console.log('account-bar.svelte: accounts: ', $accounts);
  $: console.log('accountsVisible: ', accountsVisible);
 
@@ -38,13 +42,6 @@
   document.removeEventListener('click', handleClickOutside);
  }
 
- function keySelectAccount(id, event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   event.stopPropagation();
-   clickSelectAccount(id);
-  }
- }
 
  function handleClickOutside(event) {
   if (dropdown && !dropdown.contains(event.target)) {
@@ -112,7 +109,7 @@
  }
 </style>
 
-{ JSON.stringify($accounts) }
+$accounts:{ JSON.stringify($accounts) }
 
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
  <div class="text">{$account.title}</div>
@@ -120,8 +117,9 @@
  {#if accountsVisible}
   <div class="items open">
 
-   {#each $accounts as a (a.id)}
-    <div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount(a.id) } on:keydown={(event) => keySelectAccount(a.id, event)}>{a.title}</div>
+   {#each $accounts as a (get(a).id)}
+    <AccountBarItem {a} {clickSelectAccount} />
+
    {/each}
   </div>
  {/if}

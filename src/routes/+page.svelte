@@ -207,7 +207,7 @@
   </div>
  {/if}
  <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
-  <Menu bind:isMenuOpen bind:isLoggedIn {product} {version} {link}/>
+  <Menu bind:isMenuOpen {product} {version} {link}/>
   <MenuBar bind:isMenuOpen/>
   <ModuleBar {onSelectModule}/>
   <AccountBar/>

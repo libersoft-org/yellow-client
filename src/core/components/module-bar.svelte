@@ -1,8 +1,9 @@
 <script>
 
- import Core from '../../core/core.js';
+ import { account } from '../../core/core.js';
 
- let module_data = Core.md('messages');
+ let module_data;
+ $: module_data = $account.module_data;
 
  export let onSelectModule;
 
@@ -40,10 +41,13 @@
 
 <div class="items">
 
- {#each $module_data as m (m.id)}
+ $module_data:{ JSON.stringify($module_data) }
+ {#if $module_data}
+  {#each $module_data as m (m.id)}
+   <div class="item" role="button" tabindex="0" on:click={() => clickSetModule(m.id)} on:keydown={() => keySetModule(m.id)}><img src="img/modules/messages.svg" alt="Messages" /></div>
+  {/each}
+ {/if}
 
- <div class="item" role="button" tabindex="0" on:click={() => clickSetModule(m.id)} on:keydown={() => keySetModule(m.id)}><img src="img/modules/messages.svg" alt="Messages" /></div>
 
- {/each}
 
 </div>

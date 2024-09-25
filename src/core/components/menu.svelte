@@ -2,7 +2,6 @@
  import Core from '../core.js';
 
  export let isMenuOpen = false;
- export let isLoggedIn = false;
  export let product;
  export let version;
  export let link;

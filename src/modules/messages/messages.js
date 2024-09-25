@@ -1,5 +1,5 @@
 import {derived, get, writable} from 'svelte/store';
-import { md } from '../../core/core.js';
+import { md, registerModule } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 
 
@@ -28,7 +28,7 @@ export function saneHtml(content) {
 }
 
 
-export function initMessagesModuleData(acc) {
+export function initData(acc) {
  return {
   id: 'messages',
   selectedConversation: writable(null),
@@ -37,7 +37,7 @@ export function initMessagesModuleData(acc) {
  };
 }
 
-export function initMessagesModuleComms(acc) {
+export function initComms(acc) {
 
  acc.socket.send('user_subscribe', { event: 'new_message' });
  acc.socket.send('user_subscribe', { event: 'seen_message' });
@@ -54,7 +54,7 @@ export function initMessagesModuleComms(acc) {
 
 }
 
-export function deinitMessagesModuleData(acc)
+export function deinitData(acc)
 {
  acc.socket.send('user_unsubscribe', { event: 'new_message' });
  acc.socket.send('user_unsubscribe', { event: 'seen_message' });
@@ -72,6 +72,9 @@ export function deinitMessagesModuleData(acc)
 
  acc.module_data.messages = null;
 }
+
+registerModule('messages', {initData, initComms, deinitData});
+
 
 function listConversations(acc) {
  send(acc, 'user_list_conversations', null, true, (_req, res) => {

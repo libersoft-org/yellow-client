@@ -1,22 +1,27 @@
 import {get, writable, derived} from 'svelte/store';
 import {localStorageSharedStore} from '../lib/svelte-shared-store.js';
-import {initMessagesModuleData, initMessagesModuleComms, deinitMessagesModuleData} from '../modules/messages/messages.js';
 
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 
-const accounts_config = localStorageSharedStore('accounts_config', []);
 
-export let accounts = writable([
- constructAccount(1, 'Account 1', {server: '', address: '', password: ''}),
+let modules = [];
+export function registerModule(id, callbacks) {
+ modules.push(callbacks);
+}
+
+
+const accounts_config = localStorageSharedStore('accounts_config', [
+ {id: 1, title: 'Account 1', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL||'', address: 'user@example.com', password: '123456789'}},
+
 ]);
 
-export let account = writable(get(accounts)[0]);
+export let accounts = writable([
+ //constructAccount(1, 'Account 1', {server: '', address: '', password: ''}),
+]);
 
-export function selectAccount(id) {
- account.set(get(accounts).find(acc => acc.id === id));
-}
+export let account = writable(null);
 
 export function md(module_id) {
  return derived(account, $account => {
@@ -25,14 +30,17 @@ export function md(module_id) {
  });
 }
 
-
 accounts_config.subscribe(value => {
+ console.log('ACCOUNTS CONFIG:', value);
  //TODO: implement configuration of order of accounts
  let accs = get(accounts);
  for (let config of value) {
+  console.log('CONFIG', config);
   let acc = accs.find(acc => acc.id === config.id);
+  console.log('ACC', acc);
   if (acc) {
    if (acc.enabled != config.enabled) {
+
     if (config.enabled)
      enableAccount(acc);
     else
@@ -52,10 +60,17 @@ accounts_config.subscribe(value => {
     enableAccount(acc);
    }
   } else {
+   // add new account
    let acc = constructAccount(config.id, config.title, config.credentials);
+   console.log('NEW ACC', get(acc));
    accounts.update(v => [...v, acc]);
+   if (!get(account)) {
+    console.log('SELECT ACCOUNT');
+    account.set(acc);
+   }
   }
  }
+ // remove accounts that are not in config
  for (let acc of accs) {
   if (!value.find(conf => conf.id === acc.id)) {
    disableAccount(acc);
@@ -63,6 +78,10 @@ accounts_config.subscribe(value => {
   }
  }
 });
+
+export function selectAccount(id) {
+ account.set(get(accounts).find(acc => acc.id === id));
+}
 
 export function addAccount(credentials) {
  accounts_config.update(v => [...v, {
@@ -72,7 +91,6 @@ export function addAccount(credentials) {
   credentials,
  }]);
 }
-
 
 function constructAccount(id, title, credentials) {
  let account = {
@@ -102,10 +120,6 @@ function disableAccount(account) {
 
  disconnectAccount(get(account));
 }
-
-/*export function status() {
-  return socket?.readyState;
-}*/
 
 function reconnectAccount(account) {
  let acc = get(account);
@@ -154,14 +168,14 @@ function sendLoginCommand(acc) {
 function initModuleData(acc) {
  acc.module_data.set({
   contacts: {id: 'contacts'},
-  messages: initMessagesModuleData(acc),
+  messages: modules[0].initData(acc),
  });
 
- initMessagesModuleComms(acc);
+ modules[0].initComms(acc);
 }
 
 export function deinitModuleData(acc) {
- deinitMessagesModuleData(acc);
+ modules[0].deinitData(acc);
 }
 
 function disconnectAccount(acc) {
