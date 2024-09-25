@@ -1,9 +1,9 @@
 <script>
 
- import { account } from '../../core/core.js';
+ import { active_account } from '../../core/core.js';
 
  let module_data;
- $: module_data = $account.module_data;
+ $: module_data = $active_account.module_data;
 
  export let onSelectModule;
 
@@ -41,13 +41,7 @@
 
 <div class="items">
 
- $module_data:{ JSON.stringify($module_data) }
- {#if $module_data}
-  {#each $module_data as m (m.id)}
-   <div class="item" role="button" tabindex="0" on:click={() => clickSetModule(m.id)} on:keydown={() => keySetModule(m.id)}><img src="img/modules/messages.svg" alt="Messages" /></div>
-  {/each}
- {/if}
-
+ $module_data:{ JSON.stringify(module_data) }
 
 
 </div>

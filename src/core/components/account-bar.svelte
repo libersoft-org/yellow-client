@@ -1,6 +1,6 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
- import { account, accounts, selectAccount }  from '../core.js';
+ import { active_account, accounts, selectAccount }  from '../core.js';
  import AccountBarItem from './account-bar-item.svelte';
  import {get} from "svelte/store";
 
@@ -9,7 +9,7 @@
  let dropdown;
 
 
- $: console.log('account-bar.svelte: account: ', $account);
+ $: console.log('account-bar.svelte: account: ', $active_account);
  $: console.log('account-bar.svelte: accounts: ', $accounts);
  $: console.log('accountsVisible: ', accountsVisible);
 
@@ -34,11 +34,12 @@
  }
 
  function clickSelectAccount(id) {
+  console.log('clickSelectAccount: ' + id);
   selectAccount(id);
   console.log('accountsVisible: ' + accountsVisible);
   accountsVisible = false;
   console.log('accountsVisible: ' + accountsVisible);
-  console.log('Selected account: ' + $account.title);
+
   document.removeEventListener('click', handleClickOutside);
  }
 
@@ -109,10 +110,9 @@
  }
 </style>
 
-$accounts:{ JSON.stringify($accounts) }
 
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
- <div class="text">{$account.title}</div>
+ <div class="text">{$active_account.title}</div>
  <div><img src="img/down.svg" alt="▼" /></div>
  {#if accountsVisible}
   <div class="items open">

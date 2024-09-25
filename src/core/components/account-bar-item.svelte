@@ -15,7 +15,7 @@ function keySelectAccount(id, event) {
 </script>
 
 
-<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id) } on:keydown={(event) => keySelectAccount($a.id, event)}>{$a.title}</div>
+<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id) } on:keydown={(event) => keySelectAccount($a.id, event)}>{$a.title}
 
  <small>
 
@@ -28,3 +28,5 @@ function keySelectAccount(id, event) {
    {/each}
   </ul>
 </small>
+
+</div>

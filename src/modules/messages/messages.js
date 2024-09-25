@@ -1,5 +1,5 @@
 import {derived, get, writable} from 'svelte/store';
-import { md, registerModule } from '../../core/core.js';
+import {active_account, md, registerModule} from '../../core/core.js';
 import DOMPurify from 'dompurify';
 
 
@@ -39,8 +39,9 @@ export function initData(acc) {
 
 export function initComms(acc) {
 
- acc.socket.send('user_subscribe', { event: 'new_message' });
- acc.socket.send('user_subscribe', { event: 'seen_message' });
+
+ send(acc, 'user_subscribe', { event: 'new_message' });
+ send(acc, 'user_subscribe', { event: 'seen_message' });
 
  let data = acc.module_data['messages'];
 
@@ -56,8 +57,8 @@ export function initComms(acc) {
 
 export function deinitData(acc)
 {
- acc.socket.send('user_unsubscribe', { event: 'new_message' });
- acc.socket.send('user_unsubscribe', { event: 'seen_message' });
+ send(acc, 'user_unsubscribe', { event: 'new_message' });
+ send(acc, 'user_unsubscribe', { event: 'seen_message' });
 
  let data = acc.module_data['messages'];
 
@@ -104,8 +105,9 @@ export function listMessages(acc, address) {
 }
 
 export function setMessageSeen(message, cb) {
+ let acc = get(active_account);
  console.log('setMessageSeen', message);
- Socket.send('user_message_seen', { uid: message.uid }, true, (req, res) => {
+ send(acc, 'user_message_seen', { uid: message.uid }, true, (req, res) => {
   console.log('user_message_seen', res);
   if (res.error !== 0) {
    console.error(res);
@@ -123,9 +125,12 @@ export function setMessageSeen(message, cb) {
 }
 
 export function sendMessage(text) {
+
+ let acc = get(active_account);
+
  const msg = {
   uid: Socket.getRandomString(),
-  address_from: Core.userAddress,
+  address_from: acc.credentials.address,
   address_to: get(selectedConversation).address,
   message: text,
   stripped_text: stripHtml(text),
@@ -134,7 +139,7 @@ export function sendMessage(text) {
 
  let params = { address: msg.address_to, message: msg.message, uid: msg.uid };
 
- Socket.send('user_send_message', params, true, (req, res) => {
+ send(acc, 'user_send_message', params, true, (req, res) => {
   console.log('user_send_message', res);
   if (res.error !== 0) alert('Error while sending message: ' + res.message);
   else msg.received_by_my_homeserver = true;
@@ -265,7 +270,8 @@ function playNotificationSound() {
 export function ensureConversationDetails(conversation, cb) {
  console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
- Socket.send('user_get_userinfo', { address: conversation.address }, true, (_req, res) => {
+ let acc = get(active_account);
+ send(acc, 'user_get_userinfo', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) {
    console.error(res);
    return;

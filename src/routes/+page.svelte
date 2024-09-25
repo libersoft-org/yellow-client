@@ -2,7 +2,7 @@
  import {onMount, setContext} from 'svelte';
  import "../app.css";
  import Core from '../core/core.js';
- import { account, isClientFocused, hideSidebarMobile} from '../core/core.js';
+ import {  isClientFocused, hideSidebarMobile} from '../core/core.js';
  import Login from '../core/pages/login.svelte';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
