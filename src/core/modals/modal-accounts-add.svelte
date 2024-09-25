@@ -1,10 +1,10 @@
 <script>
  import { onMount } from 'svelte';
- //import { addAccount } from '../core.js';
+ import { addAccount } from '../core.js';
  export let onClose;
  let credentials;
  let error;
- 
+
  onMount(() => address.focus());
 
  function clickAdd() {
@@ -17,7 +17,7 @@
  function keyAdd() {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   clickOAdd();
+   clickAdd();
   }
  }
 

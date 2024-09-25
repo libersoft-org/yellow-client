@@ -3,7 +3,6 @@
  import Welcome from './welcome.svelte';
  import Conversation from '../components/conversation.svelte';
 
- export let account;
 
 </script>
 

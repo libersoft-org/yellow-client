@@ -26,7 +26,8 @@
     account.error = res.message;
     return;
    }
-   error = null;
+   else
+    error = null;
 
    Core.account.update(() => account);
 
@@ -150,48 +151,5 @@
 </style>
 
 <div class="background">
- <div class="login">
-  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
-   <img src="img/logo.svg" alt="{product}" />
-   <div class="product">{product}</div>
-  </div>
-  <div class="version">
-   <div>Version:</div>
-   <div class="bold">{version}</div>
-  </div>
-  <div class="form">
-   <div class="group">
-    <div class="label">Server:</div>
-    <input type="text" placeholder="wss://your_server/" bind:value={credentials.server} on:keydown={keyLogin} />
-   </div>
-   <div class="group">
-    <div class="label">Address:</div>
-    <input type="text" placeholder="user@domain.tld" bind:value={credentials.address} on:keydown={keyLogin} />
-   </div>
-   <div class="group">
-    <div class="label">Password:</div>
-    <input type="password" placeholder="Password" bind:value={credentials.password} on:keydown={keyLogin} />
-   </div>
-   <div class="group-h">
-    <label class="switch">
-     <input type="checkbox" bind:checked={stayLoggedIn} on:keydown={keyLogin} />
-     <span class="slider"></span>
-    </label>
-    <div class="bold">Stay logged in</div>
-   </div>
-   {#if error}
-    <div class="error">
-     <div class="bold">Error:</div>
-     <div>{error}</div>
-    </div>
-   {/if}
-   <div class="button{loggingIn ? ' disabled' : ''}" role="button" tabindex="0" on:click={clickLogin} on:keydown={keyLogin}>
-    {#if loggingIn}
-     <div class="loader"></div>
-    {:else}
-     Login
-    {/if}
-   </div>
-  </div>
- </div>
+
 </div>

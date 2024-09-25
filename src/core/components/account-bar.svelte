@@ -1,6 +1,6 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
- import { account, accounts, selectAccount }  from "../core.js";
+ import { account, accounts, selectAccount }  from '../core.js';
 
  let accountsVisible = false;
 
@@ -25,8 +25,7 @@
   }
  }
 
-
- function selectAccount(id) {
+ function clickSelectAccount(id) {
   selectAccount(id);
   console.log('accountsVisible: ' + accountsVisible);
   accountsVisible = false;
@@ -39,7 +38,7 @@
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    event.stopPropagation();
-   selectAccount(id);
+   clickSelectAccount(id);
   }
  }
 
@@ -115,7 +114,7 @@
  {#if accountsVisible}
   <div class="items open">
    {#each accounts as a (a.id)}
-    <div class="item" role="button" tabindex="0" on:click={() => selectAccount(a.id) } on:keydown={(event) => keySelectAccount(a.id, event)}>{a.title}</div>
+    <div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount(a.id) } on:keydown={(event) => keySelectAccount(a.id, event)}>{a.title}</div>
    {/each}
   </div>
  {/if}

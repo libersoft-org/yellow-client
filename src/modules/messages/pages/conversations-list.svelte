@@ -8,8 +8,6 @@
  let isModalOpen = false;
  let modalComponent = null;
 
- export let account;
-
 
  function clickNew() {
   modalComponent = ModalConversationNew;
@@ -24,7 +22,7 @@
  }
 
  function clickItem(conversation) {
-  selectConversation(get(account), conversation);
+  selectConversation(conversation);
  }
 
 </script>

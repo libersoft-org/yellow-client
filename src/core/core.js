@@ -1,5 +1,58 @@
-import {get, writable} from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import Socket from "./socket.js";
+import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
+
+
+
+const accounts_config = localStorageSharedStore('accounts_config', []);
+
+let accs = get(accounts);
+
+
+accounts_config.subscribe(value => {
+ //TODO: implement configuration of order of accounts
+ for (let config of value) {
+  let acc = accs.find(acc => acc.id === config.id);
+  if (acc) {
+
+   if (acc.enabled != config.enabled)
+    if (config.enabled) enableAccount(acc);
+    else
+     disableAccount(acc);
+
+   if (acc.title != config.title) {
+    acc.title = config.title;
+    acc.update(v => v);
+   }
+
+   if (acc.credentials.server != config.credentials.server ||
+    acc.credentials.address != config.credentials.address ||
+    acc.credentials.password != config.credentials.password) {
+    acc.credentials = config.credentials;
+    disableAccount(acc);
+    enableAccount(acc);
+   }
+  } else {
+   let acc = constructAccount(config.id, config.title, config.credentials);
+   accounts.update(v => [...v, acc]);
+  }
+ }
+ for (let acc of accs) {
+  if (!value.find(conf => conf.id === acc.id)) {
+   disableAccount(acc);
+   accounts.update(v => v.filter(a => a.id !== acc.id));
+});
+
+
+export function addAccount(credentials) {
+ accounts_config.update(v => [...v, {
+  id: getRandomString(),
+  title: 'New Account',
+  enabled: false,
+  credentials,
+ }]);
+}
+
 
 const events = new EventTarget();
 
@@ -21,17 +74,14 @@ export function selectAccount(id) {
 
 
 
-
-
 function constructAccount(id, title, credentials) {
  let account = {
   id,
+
   title,
   credentials,
-
-  address: credentials.address,
-
   enabled: false,
+
   events: new EventTarget(),
   requests: {},
   module_data: writable({}),
@@ -67,14 +117,15 @@ function reconnectAccount(account) {
  if (!acc.enabled) return;
 
  acc.socket = new WebSocket(account.credentials.server);
- acc.socket.onopen = event => events.dispatchEvent(new CustomEvent('open', { event }));
- acc.socket.onerror = event => events.dispatchEvent(new CustomEvent('error', { event }));
- acc.socket.onclose = event => events.dispatchEvent(new CustomEvent('close', { event }));
+ acc.socket.onopen = event => events.dispatchEvent(new CustomEvent('open', {event}));
+ acc.socket.onerror = event => events.dispatchEvent(new CustomEvent('error', {event}));
+ acc.socket.onclose = event => events.dispatchEvent(new CustomEvent('close', {event}));
  acc.socket.onmessage = event => handleSocketResponse(account, JSON.parse(event.data));
 
  acc.socket.events.addEventListener('open', event => {
   console.log('Connected to WebSocket:', event);
-  sendLoginCommand(account.credentials);
+  if (acc.loggingIn)
+   sendLoginCommand(acc);
  });
 
  acc.socket.events.addEventListener('error', event => {
@@ -88,8 +139,22 @@ function reconnectAccount(account) {
   account.loggingIn = false;
  });
 
+ account.loggingIn = true;
 
- initModuleData(acc);
+}
+
+
+function sendLoginCommand(acc) {
+ acc.socket.send('user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
+  account.loggingIn = false;
+  if (res.error !== 0) {
+   account.error = res.message;
+   return;
+  }
+  else {
+   account.sessionID = res.sessionID;
+   initModuleData(acc);
+  });
 }
 
 
@@ -186,7 +251,6 @@ function generateRequestID() {
 }
 
 
-//userAddress, sessionID
 
 export default { hideSidebarMobile, isClientFocused, accounts, account };
 

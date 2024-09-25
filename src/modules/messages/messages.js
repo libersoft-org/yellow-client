@@ -175,16 +175,15 @@ function updateConversationsArray(msg) {
  conversationsArray.set(ca);
 }
 
-export function openNewConversation(acc, address) {
- if (!acc) console.error('openNewConversation: no account');
+export function openNewConversation(address) {
  console.log('openNewConversation', address);
- selectConversation(acc, { address }));
+ selectConversation({ address });
 }
 
 function eventNewMessage(acc, event) {
  const res = event.detail;
  if (!res.data) return;
- if (acc.address === res.data.from) return;
+ if (acc.credentials.address === res.data.from) return;
  const msg = res.data;
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  preprocessMessage(msg);
@@ -238,7 +237,7 @@ function showNotification(acc, msg) {
  }
  notification.onclick = () => {
   window.focus();
-  selectConversation(acc, { address: msg.address_from, visible_name: conversation?.visible_name });
+  selectConversation({ address: msg.address_from, visible_name: conversation?.visible_name });
  };
 }
 

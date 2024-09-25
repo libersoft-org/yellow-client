@@ -2,7 +2,7 @@
  import { setMessageSeen, saneHtml } from '../messages.js';
  import {onDestroy, onMount} from "svelte";
  import {get} from "svelte/store";
- import { isClientFocused }  from "../../../core/core.js";
+ import { isClientFocused }  from '../../../core/core.js';
  export let message;
  export let isOutgoing;
  export let container_element;

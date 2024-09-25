@@ -1,6 +1,6 @@
 <script>
  import "../app.css";
- import Core from '../core.js';
+ import Core from '../core/core.js';
  import { onMount } from 'svelte';
  import Socket from '../core/socket.js';
  import { isClientFocused, hideSidebarMobile } from '../core/core.js';
@@ -238,7 +238,7 @@
    <ModuleBar {onSelectModule} />
    <AccountBar />
    {#if selectedModule}
-    <svelte:component this={selectedModule.sidebar} {Core.account} />
+    <svelte:component this={selectedModule.sidebar} />
    {:else}
     <WelcomeSidebar />
    {/if}
@@ -246,7 +246,7 @@
   <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
   <div class="content">
    {#if selectedModule}
-    <svelte:component this={selectedModule.content} {Core.account} />
+    <svelte:component this={selectedModule.content} />
    {:else}
     <WelcomeContent {product} {version} {link} />
    {/if}
