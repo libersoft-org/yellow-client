@@ -7,14 +7,15 @@ export let isClientFocused = writable(true);
 
 
 let modules = [];
+
 export function registerModule(id, callbacks) {
  modules.push(callbacks);
 }
 
 
 const accounts_config = localStorageSharedStore('accounts_config', [
- {id: 1, title: 'Account 1', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL||'', address: 'user@example.com', password: '123456789'}},
- {id: 2, title: 'Account 2', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL||'', address: 'user2@example.com', password: '123456789'}},
+ {id: 1, title: 'Account 1', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '', address: 'user@example.com', password: '123456789'}},
+ {id: 2, title: 'Account 2', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '', address: 'user2@example.com', password: '123456789'}},
 ]);
 
 export let accounts = writable([]);
@@ -84,8 +85,8 @@ accounts_config.subscribe(value => {
    console.log('NEW ACC', get(account));
    accounts.update(v => [...v, account]);
 
-    console.log('SELECT ACCOUNT');
-    selectAccount(get(account).id);
+   console.log('SELECT ACCOUNT');
+   selectAccount(get(account).id);
 
    if (config.enabled)
     _enableAccount(account);
@@ -296,4 +297,4 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
-export default {hideSidebarMobile, isClientFocused, accounts,  module_data};
+export default {hideSidebarMobile, isClientFocused, accounts, module_data};

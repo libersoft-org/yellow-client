@@ -5,11 +5,8 @@ import {send} from '../../core/core.js';
 
 
 // md is a store that updates subscribers with { selectedConversation, .. }
-export let md = module_data('messages');
+//export let md = module_data('messages');
 
-// each of selectedConversation is in turn a store.
-
-// now we need a store that updates whenever md changes, as well as when md.selectedConversation changes.
 
 
 
