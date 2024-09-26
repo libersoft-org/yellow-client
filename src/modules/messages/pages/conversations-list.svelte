@@ -1,7 +1,6 @@
 <script>
- import { onMount, onDestroy } from 'svelte';
- import Core from '../../../core/core.js';
- import { selectedConversation } from '../messages.js';
+
+ import { conversationsArray } from '../messages.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';

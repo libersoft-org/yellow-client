@@ -1,10 +1,10 @@
 <script>
 
- import { active_account } from '../../core/core.js';
- import {get} from "svelte/store";
+ import { active_account, order } from '../../core/core.js';
 
  let module_data;
  $: module_data = $active_account.module_data;
+ $: module_data_ordered = order(module_data);
 
  export let onSelectModule;
 
@@ -42,10 +42,15 @@
 
 <div class="items">
 
- $module_data:{ JSON.stringify(module_data.messages) }
+ module_data_ordered:{ JSON.stringify(module_data_ordered) }
 
- {#if module_data}
+ {#if module_data_ordered}
 
+  {#each module_data_ordered as module (module.id)}
+   <div class="item" on:click={() => clickSetModule(module.name)} on:keydown={() => keySetModule(module.name)} tabindex="0">
+    <img src="img/modules/{module.decl.id}.svg" alt={module.decl.name} />
+   </div>
+  {/each}
 
  {:else}
   <div class="item">No modules</div>

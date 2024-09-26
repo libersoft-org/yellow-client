@@ -1,7 +1,8 @@
 <script>
  import {afterUpdate, beforeUpdate, onMount} from 'svelte';
- import { } from '../../../core/core.js';
  import Message from './message.svelte';
+ import { messagesArray } from '../messages.js';
+ import { active_account } from '../../../core/core.js';
 
 /*
  import { md } from '../messages.js';
@@ -52,6 +53,6 @@
 <div class="messages" bind:this={messages_elem}>
  {#each $messagesArray as m (m.uid)}
   <!-- <pre>{JSON.stringify(m, null, 2)}</pre> -->
-  <Message message={m} isOutgoing={m.address_from === Core.userAddress} container_element="{messages_elem}" />
+  <Message message={m} isOutgoing={m.address_from === $active_account.credentials.address } container_element="{messages_elem}" />
  {/each}
 </div>

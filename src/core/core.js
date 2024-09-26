@@ -62,9 +62,11 @@ export function module_data(module_id) {
    console.log('no active account');
    return null;
   }
-  let result = get($active_account_store).module_data[module_id];
   console.log('$active_account_store:', get($active_account_store));
-  console.log('MODULE DATA:', result);
+  console.log('MODULE ID:', module_id);
+  console.log('MODULE DATA:', get($active_account_store).module_data);
+  let result = get($active_account_store).module_data[module_id];
+  console.log('MODULE DATA for ',module_id, " : ", result);
   return result;
  });
 }
@@ -97,6 +99,7 @@ accounts_config.subscribe(value => {
  console.log('ACCOUNTS CONFIG:', value);
  //TODO: implement configuration of order of accounts
  let accs = get(accounts);
+ console.log('EXISTING ACCOUNTS:', accs);
  for (let config of value) {
   console.log('CONFIG', config);
   let acc = accs.find(acc => acc.id === config.id);
@@ -252,6 +255,11 @@ function sendLoginCommand(account) {
   }
   account.update(v => v);
  });
+}
+
+export function order(dict)
+{
+ return Object.entries(dict).sort((a, b) => {return string.localeCompare(a.id + a.order) < string.localeCompare(b.id + b.order)});
 }
 
 function initModuleData(account) {
