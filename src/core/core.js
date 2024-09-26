@@ -14,8 +14,26 @@ export function registerModule(id, callbacks) {
 
 
 const accounts_config = localStorageSharedStore('accounts_config', [
- {id: 1, title: 'Account 1', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '', address: 'user@example.com', password: '123456789'}},
- {id: 2, title: 'Account 2', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '', address: 'user2@example.com', password: '123456789'}},
+ {
+  id: 1,
+  title: 'Account 1',
+  enabled: false,
+  credentials: {
+   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+   address: 'user@example.com',
+   password: '123456789'
+  }
+ },
+ {
+  id: 2,
+  title: 'Account 2',
+  enabled: false,
+  credentials: {
+   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+   address: 'user2@example.com',
+   password: '123456789'
+  }
+ },
 ]);
 
 export let accounts = writable([]);
@@ -25,7 +43,7 @@ export let active_account = derived(active_account_store, $active_account_store 
  if ($active_account_store)
   return get($active_account_store);
  else
-  return {};
+  return {note: 'no account is active'};
 })
 
 active_account_store.subscribe(value => {
@@ -40,13 +58,39 @@ function maybeGet(store) {
 
 export function module_data(module_id) {
  return derived(active_account_store, $active_account_store => {
-  if (!$active_account_store)
+  if (!$active_account_store) {
+   console.log('no active account');
    return null;
+  }
   let result = get($active_account_store).module_data[module_id];
   console.log('$active_account_store:', get($active_account_store));
   console.log('MODULE DATA:', result);
+  return result;
  });
 }
+
+export function relay(md, data_name) {
+    let result = writable();
+    let setter = result.set;
+
+    md.subscribe(value => {
+        console.log('MD: ', value);
+        if (value) {
+            setter(get(value[data_name]));
+        } else {
+            setter(null);
+        }
+    });
+
+    result.set = (v) => {
+        get(active_account)?.module_data[data_name].set(v);
+    };
+    result.subscribe(v => {
+        console.log(data_name, ':', v);
+    });
+    return result;
+}
+
 
 
 accounts_config.subscribe(value => {
@@ -213,7 +257,7 @@ function sendLoginCommand(account) {
 function initModuleData(account) {
  let acc = get(account);
  acc.module_data = {
-  contacts: {id: 'contacts'},
+  contacts: {id: 'contacts', decl:{id:"contacts", name:"Contacts" } },
   messages: modules[0].initData(acc),
  };
  account.update(v => v);
@@ -296,5 +340,6 @@ let lastRequestId = 0;
 function generateRequestID() {
  return ++lastRequestId;
 }
+
 
 export default {hideSidebarMobile, isClientFocused, accounts, module_data};

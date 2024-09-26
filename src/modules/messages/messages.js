@@ -1,64 +1,35 @@
 import {derived, get, writable} from 'svelte/store';
-import {active_account, module_data, registerModule} from '../../core/core.js';
+import {active_account, module_data, registerModule, relay} from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import {send} from '../../core/core.js';
 
 
-// md is a store that updates subscribers with { selectedConversation, .. }
-//export let md = module_data('messages');
+export let md = module_data('messages');
 
-
-
-
-
-
-
-
-
-
-
-export let selectedConversation = derived(md, ($md) => $md?.selected_conversation);
-selectedConversation.set = (v) => {module_data.selected_conversation
-
-function mdd(key) {
- let result = derived(md, ($module_data) => ($module_data || {})[key]);
- result.set =
-}
-
-
-
-DOMPurify.addHook('afterSanitizeAttributes', function (node) {
- if (node.tagName === 'A') {
-  node.setAttribute('target', '_blank');
-  node.setAttribute('rel', 'noopener noreferrer');
- }
- if (node.tagName === 'VIDEO') {
-  node.removeAttribute('autoplay');
- }
+md.subscribe(v => {
+    console.log('MD: ', v);
 });
 
-export function saneHtml(content) {
- return DOMPurify.sanitize(content);
-}
 
+export let conversationsArray = relay(md, 'conversationsArray');
+export let messagesArray = relay(md, 'messagesArray');
+export let selectedConversation = relay(md, 'selectedConversation');
 
 export function initData(acc) {
  let result = {
   id: 'messages',
+  decl:{id:'messages', name:'Messages'},
   selectedConversation: writable(null),
   conversationsArray: writable([]),
   messagesArray: writable([]),
  };
-
  result.conversationsArray.subscribe(v => {
     console.log('acc conversationsArray:', acc, v);
  });
-
  return result;
 }
 
 export function initComms(acc) {
-
 
  send(acc, 'user_subscribe', { event: 'new_message' });
  send(acc, 'user_subscribe', { event: 'seen_message' });
@@ -73,7 +44,6 @@ export function initComms(acc) {
  acc.events.addEventListener('seen_message', data.seen_message_listener);
 
  listConversations(acc);
-
 }
 
 export function deinitData(acc)
@@ -103,8 +73,7 @@ registerModule('messages', {initData, initComms, deinitData});
 function listConversations(acc) {
  send(acc, 'user_list_conversations', null, true, (_req, res) => {
   if (res.error === 0 && res.data?.conversations) {
-   let conversationsArray = acc.module_data.messages.conversationsArray;
-   console.log('listConversations conversationsArray:', conversationsArray);
+   console.log('listConversations conversationsArray:', get(conversationsArray));
    conversationsArray.set(res.data.conversations.map(sanitizeConversation))
   }
  });
@@ -232,7 +201,7 @@ function eventNewMessage(acc, event) {
  const msg = res.data;
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  preprocessMessage(msg);
- let sc = get(get(md).selectedConversation);
+ let sc = get(selectedConversation);
  if (msg.address_from === sc?.address)
   messagesArray.update((v) => [msg, ...v]);
  if (msg.address_from !== sc?.address || !get(Core.isClientFocused))
@@ -304,6 +273,21 @@ export function ensureConversationDetails(conversation, cb) {
   Object.assign(conversation, res.data);
   conversationsArray.update(v => v); // fixme: this infiloops?
  });
+}
+
+
+DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+ if (node.tagName === 'A') {
+  node.setAttribute('target', '_blank');
+  node.setAttribute('rel', 'noopener noreferrer');
+ }
+ if (node.tagName === 'VIDEO') {
+  node.removeAttribute('autoplay');
+ }
+});
+
+export function saneHtml(content) {
+ return DOMPurify.sanitize(content);
 }
 
 export default {

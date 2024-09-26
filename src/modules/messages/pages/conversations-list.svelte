@@ -1,16 +1,13 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
  import Core from '../../../core/core.js';
- import { md } from '../messages.js';
+ import { selectedConversation } from '../messages.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
  let isModalOpen = false;
  let modalComponent = null;
 
-
- let selectedConversation;
- $: selectedConversation = $md.selectedConversation;
 
 
  function clickNew() {

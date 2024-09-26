@@ -1,14 +1,11 @@
 <script>
 
  import Photo from '../components/photo.svelte';
- import {md, ensureConversationDetails} from '../messages.js';
+ import {selectedConversation, ensureConversationDetails} from '../messages.js';
 
  export let c;
  export let clickItem;
 
-
- let selectedConversation;
- $: selectedConversation = $md.selectedConversation;
 
 
 

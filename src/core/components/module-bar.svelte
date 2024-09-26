@@ -1,6 +1,7 @@
 <script>
 
  import { active_account } from '../../core/core.js';
+ import {get} from "svelte/store";
 
  let module_data;
  $: module_data = $active_account.module_data;
@@ -41,7 +42,14 @@
 
 <div class="items">
 
- $module_data:{ JSON.stringify(module_data) }
+ $module_data:{ JSON.stringify(module_data.messages) }
+
+ {#if module_data}
+
+
+ {:else}
+  <div class="item">No modules</div>
+ {/if}
 
 
 </div>

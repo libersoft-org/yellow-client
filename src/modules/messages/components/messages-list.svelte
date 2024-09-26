@@ -1,12 +1,14 @@
 <script>
  import {afterUpdate, beforeUpdate, onMount} from 'svelte';
- import Core from '../../../core/core.js';
- import { md } from '../messages.js';
+ import { } from '../../../core/core.js';
  import Message from './message.svelte';
 
-
+/*
+ import { md } from '../messages.js';
  let messagesArray;
  $: messagesArray = $md.messagesArray;
+*/
+
 
 
  let messages_elem;
