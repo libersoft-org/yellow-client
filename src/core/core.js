@@ -1,27 +1,18 @@
-import {get, writable} from 'svelte/store';
-import Socket from "./socket.js";
+import { get, writable } from 'svelte/store';
+import Socket from './socket.js';
 
 const events = new EventTarget();
-
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 
-
-export let accounts = writable([
- constructAccount(1, 'Account 1', { server: '', address: '', password: '' }),
-]);
+export let accounts = writable([constructAccount(1, 'Account 1', { server: '', address: '', password: '' })]);
 
 export let account = writable(get(accounts)[0]);
-
 
 export function selectAccount(id) {
  account.set(get(accounts).find(acc => acc.id === id));
 }
-
-
-
-
 
 function constructAccount(id, title, credentials) {
  let account = {
@@ -34,12 +25,11 @@ function constructAccount(id, title, credentials) {
   enabled: false,
   events: new EventTarget(),
   requests: {},
-  module_data: writable({}),
- }
+  module_data: writable({})
+ };
 
  return writable(account);
 }
-
 
 function enableAccount(account) {
  account.enabled = true;
@@ -59,7 +49,6 @@ function disableAccount(account) {
 /*export function status() {
  return socket?.readyState;
 }*/
-
 
 function reconnectAccount(account) {
  let acc = get(account);
@@ -88,32 +77,26 @@ function reconnectAccount(account) {
   account.loggingIn = false;
  });
 
-
  initModuleData(acc);
 }
 
-
 function initModuleData(acc) {
-
-  acc.module_data.set({
-   contacts: {},
-   messages: initMessagesModuleData(acc),
-  });
+ acc.module_data.set({
+  contacts: {},
+  messages: initMessagesModuleData(acc)
+ });
 
  initMessagesModuleComms(acc);
-
 }
 
 export function deinitModuleData(acc) {
  deinitMessagesModuleData(acc);
 }
 
-
-
 function disconnectAccount(account) {
  if (account.socket) {
-  Socket.send('user_unsubscribe', {event: 'new_message'});
-  Socket.send('user_unsubscribe', {event: 'seen_message'});
+  Socket.send('user_unsubscribe', { event: 'new_message' });
+  Socket.send('user_unsubscribe', { event: 'seen_message' });
 
   account.socket.close();
   account.socket = null;
@@ -122,8 +105,6 @@ function disconnectAccount(account) {
   console.log('Account disconnected');
  }
 }
-
-
 
 function handleSocketResponse(account, res) {
  //console.log('RESPONSE', res);
@@ -143,16 +124,13 @@ function handleSocketResponse(account, res) {
  } else console.log('Unknown command from server');
 }
 
-
 function getRandomString(length = 40) {
  let result = '';
  while (result.length < length) result += Math.random().toString(36).substring(2);
  return result.substring(0, length);
 }
 
-
 export function send(account, command, params = {}, sendSessionID = true, callback = null) {
-
  //console.log('------------------');
  //console.log('SENDING COMMAND:');
  //console.log('COMMAND:', command);
@@ -179,14 +157,11 @@ export function send(account, command, params = {}, sendSessionID = true, callba
  return requestID;
 }
 
-
 let lastRequestId = 0;
 function generateRequestID() {
  return lastRequestId++;
 }
 
-
 //userAddress, sessionID
 
 export default { hideSidebarMobile, isClientFocused, accounts, account };
-
