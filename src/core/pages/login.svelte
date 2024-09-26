@@ -2,8 +2,6 @@
  import { onMount } from 'svelte';
  import Core from '../core.js';
  import Socket from '../socket.js';
- export let error;
- export let isLoggedIn;
  export let product;
  export let version;
  export let link;
@@ -21,37 +19,17 @@
   } else credentials.server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
  });
 
- export function login(credentials) {
-  if (Socket.status() === WebSocket.OPEN) {
-   sendLoginCommand(credentials);
-   return;
-  }
-  Socket.events.addEventListener('open', event => {
-   console.log('Connected to WebSocket:', event);
-   sendLoginCommand(credentials);
-  });
-  Socket.events.addEventListener('error', event => {
-   console.error('WebSocket error:', event);
-   error = 'Cannot connect to server';
-   loggingIn = false;
-  });
-  Socket.events.addEventListener('close', event => {
-   console.log('WebSocket closed:', event);
-   loggingIn = false;
-  });
-  Socket.connect(credentials.server);
- }
-
- function sendLoginCommand(credentials) {
-  Socket.send('user_login', { address: credentials.address, password: credentials.password }, false, (req, res) => {
-   loggingIn = false;
+ function sendLoginCommand(account) {
+  Socket.send('user_login', { address: account.credentials.address, password: account.credentials.password }, false, (req, res) => {
+   account.loggingIn = false;
    if (res.error !== 0) {
-    error = res.message;
+    account.error = res.message;
     return;
    }
    error = null;
-   Core.userAddress = credentials.address;
-   Core.sessionID = res.data.sessionID;
+
+   Core.account.update(() => account);
+
    isLoggedIn = true;
    if (stayLoggedIn) localStorage.setItem('login', JSON.stringify(credentials));
   });

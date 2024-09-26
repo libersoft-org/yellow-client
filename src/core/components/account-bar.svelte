@@ -1,16 +1,10 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
- import Core from "../core.js";
- let accountsArray = [
-  { id: 1, title: Core.userAddress },
- ];
- let accountsVisible = false;
- let selectedAccount = accountsArray[0];
- let dropdown;
+ import { account, accounts, selectAccount }  from "../core.js";
 
- onMount(() => {
-  selectAccount(1);
- });
+ let accountsVisible = false;
+
+ let dropdown;
 
  function clickToggleAccounts() {
    accountsVisible = !accountsVisible;
@@ -33,17 +27,18 @@
 
 
  function selectAccount(id) {
-  selectedAccount = accountsArray.find(a => a.id === id);
+  selectAccount(id);
   console.log('accountsVisible: ' + accountsVisible);
   accountsVisible = false;
   console.log('accountsVisible: ' + accountsVisible);
-  console.log('Selected account: ' + selectedAccount.title);
+  console.log('Selected account: ' + $account.title);
   document.removeEventListener('click', handleClickOutside);
  }
 
- function keySelectAccount(id) {
+ function keySelectAccount(id, event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
+   event.stopPropagation();
    selectAccount(id);
   }
  }
@@ -115,12 +110,12 @@
 </style>
 
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
- <div class="text">{selectedAccount.title}</div>
+ <div class="text">{account.title}</div>
  <div><img src="img/down.svg" alt="▼" /></div>
  {#if accountsVisible}
   <div class="items open">
-   {#each accountsArray as a (a.id)}
-    <div class="item" role="button" tabindex="0" on:click={() => selectAccount(a.id) } on:keydown={() => keySelectAccount(a.id)}>{a.title}</div>
+   {#each accounts as a (a.id)}
+    <div class="item" role="button" tabindex="0" on:click={() => selectAccount(a.id) } on:keydown={(event) => keySelectAccount(a.id, event)}>{a.title}</div>
    {/each}
   </div>
  {/if}
