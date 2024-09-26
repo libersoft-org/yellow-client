@@ -1,8 +1,10 @@
 <script>
- import { selectedConversation } from '../messages.js';
+ import { md } from '../messages.js';
  import Welcome from './welcome.svelte';
  import Conversation from '../components/conversation.svelte';
 
+ let selectedConversation;
+ $: selectedConversation = $md.selectedConversation;
 
 </script>
 

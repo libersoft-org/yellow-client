@@ -2,10 +2,15 @@
  import { onMount, onDestroy } from 'svelte';
  import Core from '../../../core/core.js';
  import { get } from 'svelte/store';
- import { selectedConversation } from '../messages.js';
+ import { md } from '../messages.js';
  import ProfileBar from './profile-bar.svelte';
  import MessagesList from './messages-list.svelte';
  import MessageBar from './message-bar.svelte';
+
+
+ let selectedConversation;
+ $: selectedConversation = $md.selectedConversation;
+
 
  let message_bar;
  $: message_bar?.setBarFocus($selectedConversation)

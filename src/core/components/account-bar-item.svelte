@@ -1,5 +1,8 @@
 <script>
-export let a;
+
+ import { toggleAccountEnabled } from '../../core/core.js';
+
+ export let a;
 export let clickSelectAccount;
 
 
@@ -11,14 +14,21 @@ function keySelectAccount(id, event) {
  }
 }
 
+function toggleAccountEnabledClick(id, event) {
+ console.log('toggleAccountEnabledClick: ' + id);
+ event.preventDefault();
+ event.stopPropagation();
+ toggleAccountEnabled(id);
+}
 
 </script>
 
 
 <div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id) } on:keydown={(event) => keySelectAccount($a.id, event)}>{$a.title}
 
- <small>
+ <div on:click={(event) => toggleAccountEnabledClick($a.id, event)}>{ $a.enabled ? 'enabled' : 'disabled' }</div>
 
+ <small>
   <ul>
    {#each Object.entries($a) as [key, value]}
     <li>{key}: {value}</li>

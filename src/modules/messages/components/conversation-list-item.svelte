@@ -1,15 +1,14 @@
 <script>
 
- import { onMount, onDestroy } from 'svelte';
  import Photo from '../components/photo.svelte';
- import {selectedConversation, ensureConversationDetails} from '../messages.js';
- import {derived} from "svelte/store";
+ import {md, ensureConversationDetails} from '../messages.js';
 
  export let c;
  export let clickItem;
 
 
-
+ let selectedConversation;
+ $: selectedConversation = $md.selectedConversation;
 
 
 

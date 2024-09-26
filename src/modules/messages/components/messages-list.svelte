@@ -1,8 +1,13 @@
 <script>
  import {afterUpdate, beforeUpdate, onMount} from 'svelte';
  import Core from '../../../core/core.js';
- import { messagesArray } from '../messages.js';
+ import { md } from '../messages.js';
  import Message from './message.svelte';
+
+
+ let messagesArray;
+ $: messagesArray = $md.messagesArray;
+
 
  let messages_elem;
  let wasScrolledToBottom = true;

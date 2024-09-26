@@ -9,9 +9,9 @@
  let dropdown;
 
 
- $: console.log('account-bar.svelte: account: ', $active_account);
- $: console.log('account-bar.svelte: accounts: ', $accounts);
- $: console.log('accountsVisible: ', accountsVisible);
+ // $: console.log('account-bar.svelte: account: ', $active_account);
+ // $: console.log('account-bar.svelte: accounts: ', $accounts);
+ // $: console.log('accountsVisible: ', accountsVisible);
 
 
  function clickToggleAccounts() {

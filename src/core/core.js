@@ -13,15 +13,11 @@ export function registerModule(id, callbacks) {
 
 
 const accounts_config = localStorageSharedStore('accounts_config', [
-
  {id: 1, title: 'Account 1', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL||'', address: 'user@example.com', password: '123456789'}},
  {id: 2, title: 'Account 2', enabled: false, credentials: {server: import.meta.env.VITE_AMTP_SERVER_WS_URL||'', address: 'user2@example.com', password: '123456789'}},
-
 ]);
 
-export let accounts = writable([
- //constructAccount(1, 'Account 1', {server: '', address: '', password: ''}),
-]);
+export let accounts = writable([]);
 
 export let active_account_store = writable(null);
 export let active_account = derived(active_account_store, $active_account_store => {
@@ -32,7 +28,7 @@ export let active_account = derived(active_account_store, $active_account_store 
 })
 
 active_account_store.subscribe(value => {
- console.log('ACTIVE ACCOUNT:', value);
+ // console.log('ACTIVE ACCOUNT:', value);
  console.log('ACTIVE ACCOUNT:', maybeGet(value));
 });
 
@@ -41,13 +37,16 @@ function maybeGet(store) {
   return get(store);
 }
 
-export function md(module_id) {
+export function module_data(module_id) {
  return derived(active_account_store, $active_account_store => {
   if (!$active_account_store)
    return null;
-  return get($active_account_store).module_data[module_id];
+  let result = get($active_account_store).module_data[module_id];
+  console.log('$active_account_store:', get($active_account_store));
+  console.log('MODULE DATA:', result);
  });
 }
+
 
 accounts_config.subscribe(value => {
  console.log('ACCOUNTS CONFIG:', value);
@@ -58,13 +57,6 @@ accounts_config.subscribe(value => {
   let acc = accs.find(acc => acc.id === config.id);
   console.log('ACC', acc);
   if (acc) {
-   if (acc.enabled != config.enabled) {
-
-    if (config.enabled)
-     enableAccount(acc);
-    else
-     disableAccount(acc);
-   }
 
    if (acc.title != config.title) {
     acc.title = config.title;
@@ -75,28 +67,52 @@ accounts_config.subscribe(value => {
     acc.credentials.address != config.credentials.address ||
     acc.credentials.password != config.credentials.password) {
     acc.credentials = config.credentials;
-    disableAccount(acc);
-    enableAccount(acc);
+    _disableAccount(acc);
+    _enableAccount(acc);
    }
+
+   if (acc.enabled != config.enabled) {
+    if (config.enabled)
+     _enableAccount(acc);
+    else
+     _disableAccount(acc);
+   }
+
   } else {
    // add new account
-   let acc = constructAccount(config.id, config.title, config.credentials);
-   console.log('NEW ACC', get(acc));
-   accounts.update(v => [...v, acc]);
+   let account = constructAccount(config.id, config.title, config.credentials, config.enabled);
+   console.log('NEW ACC', get(account));
+   accounts.update(v => [...v, account]);
 
     console.log('SELECT ACCOUNT');
-    selectAccount(get(acc).id);
+    selectAccount(get(account).id);
+
+   if (config.enabled)
+    _enableAccount(account);
+   else
+    _disableAccount(account);
 
   }
  }
  // remove accounts that are not in config
  for (let acc of accs) {
   if (!value.find(conf => conf.id === acc.id)) {
-   disableAccount(acc);
+   _disableAccount(acc);
    accounts.update(v => v.filter(a => a.id !== acc.id));
   }
  }
 });
+
+
+export function toggleAccountEnabled(id) {
+ console.log('TOGGLE ACCOUNT ENABLED', id);
+ console.log('TOGGLE ACCOUNT ENABLED', accounts_config);
+ accounts_config.update(v => v.map(a => {
+  if (a.id === id) a.enabled = !a.enabled;
+  return a;
+ }));
+}
+
 
 export function selectAccount(id) {
  console.log('SELECT ACCOUNT', id);
@@ -114,12 +130,12 @@ export function addAccount(credentials) {
  }]);
 }
 
-function constructAccount(id, title, credentials) {
+function constructAccount(id, title, credentials, enabled) {
  let account = {
   id,
   title,
   credentials,
-  enabled: false,
+  enabled,
   events: new EventTarget(),
   requests: {},
   module_data: {},
@@ -128,7 +144,7 @@ function constructAccount(id, title, credentials) {
  return writable(account);
 }
 
-function enableAccount(account) {
+function _enableAccount(account) {
  get(account).enabled = true;
  account.update(v => v);
 
@@ -136,7 +152,7 @@ function enableAccount(account) {
  reconnectAccount(account);
 }
 
-function disableAccount(account) {
+function _disableAccount(account) {
  let acc = get(account);
  acc.enabled = false;
  account.update(v => v);
@@ -146,27 +162,29 @@ function disableAccount(account) {
 function reconnectAccount(account) {
  let acc = get(account);
 
+ console.log('Reconnecting account:', acc);
+
  if (!acc.enabled) return;
 
  acc.socket = new WebSocket(acc.credentials.server);
- acc.socket.onopen = event => events.dispatchEvent(new CustomEvent('open', {event}));
- acc.socket.onerror = event => events.dispatchEvent(new CustomEvent('error', {event}));
- acc.socket.onclose = event => events.dispatchEvent(new CustomEvent('close', {event}));
+ acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', {event}));
+ acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', {event}));
+ acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', {event}));
  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
 
- acc.socket.events.addEventListener('open', event => {
+ acc.events.addEventListener('open', event => {
   console.log('Connected to WebSocket:', event);
   if (acc.loggingIn)
    sendLoginCommand(account);
  });
 
- acc.socket.events.addEventListener('error', event => {
+ acc.events.addEventListener('error', event => {
   console.error('WebSocket error:', event);
   acc.error = 'Cannot connect to server';
   acc.loggingIn = false;
  });
 
- acc.socket.events.addEventListener('close', event => {
+ acc.events.addEventListener('close', event => {
   console.log('WebSocket closed:', event);
   acc.loggingIn = false;
  });
@@ -175,25 +193,31 @@ function reconnectAccount(account) {
 }
 
 function sendLoginCommand(account) {
+ console.log('Sending login command');
  let acc = get(account);
  send(acc, 'user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
+  console.log('Login response:', res);
   acc.loggingIn = false;
   if (res.error !== 0) {
    acc.error = res.message;
+   console.error('Login error:', res);
   } else {
-   acc.sessionID = res.sessionID;
-   initModuleData(acc);
+   acc.sessionID = res.data.sessionID;
+   initModuleData(account);
   }
   account.update(v => v);
  });
 }
 
-function initModuleData(acc) {
+function initModuleData(account) {
+ let acc = get(account);
  acc.module_data = {
   contacts: {id: 'contacts'},
   messages: modules[0].initData(acc),
  };
-
+ account.update(v => v);
+ console.log('initModuleData:', acc);
+ console.log('initModuleData:', acc.module_data);
  modules[0].initComms(acc);
 }
 
@@ -229,7 +253,7 @@ function handleSocketResponse(acc, res) {
   console.log('GOT EVENT', res);
   //TODO: send event to messages module:
   acc.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
- } else console.log('Unknown command from server');
+ } else console.log('Unknown command from server:', res);
 }
 
 function getRandomString(length = 40) {
@@ -239,13 +263,6 @@ function getRandomString(length = 40) {
 }
 
 export function send(acc, command, params = {}, sendSessionID = true, callback = null) {
- //console.log('------------------');
- //console.log('SENDING COMMAND:');
- //console.log('COMMAND:', command);
- //console.log('PARAMS:', params);
- //console.log('SEND SESSION ID:', sendSessionID);
- //console.log('CALLBACK:', callback);
- //console.log('------------------');
 
  if (!acc) {
   console.error('Error while sending command: account is not defined');
@@ -256,11 +273,19 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
   return;
  }
  const requestID = generateRequestID();
+
+
  const req = {requestID};
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command) req.command = command;
  if (params) req.params = params;
  acc.requests[requestID] = {req, callback};
+
+ console.log('------------------');
+ console.log('SENDING COMMAND:');
+ console.log(req);
+ console.log('------------------');
+
  acc.socket.send(JSON.stringify(req));
  return requestID;
 }
@@ -268,7 +293,7 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
 let lastRequestId = 0;
 
 function generateRequestID() {
- return lastRequestId++;
+ return ++lastRequestId;
 }
 
-export default {hideSidebarMobile, isClientFocused, accounts,  md};
+export default {hideSidebarMobile, isClientFocused, accounts,  module_data};

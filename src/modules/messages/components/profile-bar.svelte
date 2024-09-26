@@ -1,7 +1,10 @@
 <script>
- import { selectedConversation } from '../messages.js';
+ import { md } from '../messages.js';
  import Photo from './photo.svelte';
  export let closeConversation;
+
+ let selectedConversation;
+ $: selectedConversation = $md.selectedConversation;
 
  function clickClose() {
   closeConversation();

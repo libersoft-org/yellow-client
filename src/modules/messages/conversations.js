@@ -1,8 +1,9 @@
+import { active_account, module_data, hideSidebarMobile } from '../core/core.js';
 
-import { account } from '../core/core.js';
+
 
 export function selectConversation(conversation) {
- selectedConversation.update(() => conversation);
- Core.hideSidebarMobile.update(() => true);
- listMessages(get(account), conversation.address);
+ get(module_data('messages')).selectedConversation.update(() => conversation);
+ hideSidebarMobile.update(() => true);
+ listMessages(get(active_account), conversation.address);
 }

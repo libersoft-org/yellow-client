@@ -1,14 +1,12 @@
 import {derived, get, writable} from 'svelte/store';
-import {active_account, md, registerModule} from '../../core/core.js';
+import {active_account, module_data, registerModule} from '../../core/core.js';
 import DOMPurify from 'dompurify';
+import {send} from '../../core/core.js';
 
 
 
-let module_data = md('messages');
+export let md = module_data('messages');
 
-export let selectedConversation = derived(module_data, ($module_data) => $module_data?.selected_conversation);
-export let conversationsArray = derived(module_data, ($module_data) => $module_data?.conversations_array);
-export let messagesArray = derived(module_data, ($module_data) => $module_data?.messages_array);
 
 
 
@@ -29,12 +27,18 @@ export function saneHtml(content) {
 
 
 export function initData(acc) {
- return {
+ let result = {
   id: 'messages',
   selectedConversation: writable(null),
   conversationsArray: writable([]),
   messagesArray: writable([]),
  };
+
+ result.conversationsArray.subscribe(v => {
+    console.log('acc conversationsArray:', acc, v);
+ });
+
+ return result;
 }
 
 export function initComms(acc) {
@@ -44,6 +48,7 @@ export function initComms(acc) {
  send(acc, 'user_subscribe', { event: 'seen_message' });
 
  let data = acc.module_data['messages'];
+ console.log('initComms:', data);
 
  data.new_message_listener = (event) => eventNewMessage(acc, event);
  data.seen_message_listener = (event) => eventSeenMessage(acc, event);
@@ -57,6 +62,8 @@ export function initComms(acc) {
 
 export function deinitData(acc)
 {
+ console.log('DEINIT DATA');
+
  send(acc, 'user_unsubscribe', { event: 'new_message' });
  send(acc, 'user_unsubscribe', { event: 'seen_message' });
 
@@ -79,8 +86,11 @@ registerModule('messages', {initData, initComms, deinitData});
 
 function listConversations(acc) {
  send(acc, 'user_list_conversations', null, true, (_req, res) => {
-  if (res.error === 0 && res.data?.conversations)
+  if (res.error === 0 && res.data?.conversations) {
+   let conversationsArray = acc.module_data.messages.conversationsArray;
+   console.log('listConversations conversationsArray:', conversationsArray);
    conversationsArray.set(res.data.conversations.map(sanitizeConversation))
+  }
  });
 }
 
@@ -206,8 +216,7 @@ function eventNewMessage(acc, event) {
  const msg = res.data;
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  preprocessMessage(msg);
- let module_data = get(acc.module_data).messages
- let sc = get(selectedConversation);
+ let sc = get(get(md).selectedConversation);
  if (msg.address_from === sc?.address)
   messagesArray.update((v) => [msg, ...v]);
  if (msg.address_from !== sc?.address || !get(Core.isClientFocused))
@@ -286,7 +295,5 @@ export default {
  openNewConversation,
  listMessages,
  sendMessage,
- conversationsArray,
- messagesArray,
- selectedConversation,
+
 };

@@ -5,8 +5,7 @@ no license!
 
 import { writable, get } from 'svelte/store';
 
-export function localStorageSharedStore(name_postfix, default_) {
-	const name = `svelte-shared-store:${name_postfix}`;
+export function localStorageSharedStore(name, default_) {
 
 	function setStorage(value) {
 		let str = JSON.stringify(value);
