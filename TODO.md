@@ -1,5 +1,6 @@
 # Bugs
 
+- MESSAGES: Linkify of plain text message does not work
 - MESSAGES: When a new conversation is created to nonsensical address and then send a message to such address, the client start sending messages in infinite loop
 - MESSAGES: Scrolling down on new message sometimes doesn't work
 - CORE: The server is automatically reconnected and logged in again after logout
