@@ -1,9 +1,8 @@
 <script>
  import { setMessageSeen, saneHtml } from '../messages.js';
  import {onDestroy, onMount} from "svelte";
-  import { isClientFocused }  from '../../../core/core.js';
+ import { isClientFocused }  from '../../../core/core.js';
  export let message;
- export let isOutgoing;
  export let container_element;
  let seen_txt;
  let checkmarks;
@@ -42,7 +41,7 @@
 
  onMount(() => {
   console.log('onMount message:', message);
-  if (!message.seen && !isOutgoing) {
+  if (!message.seen && !message.is_outgoing) {
    console.log('create observer');
    observer = new IntersectionObserver((entries) => {
     console.log(entries);
@@ -109,12 +108,12 @@
  }
 </style>
 
-<div class="message {isOutgoing ? 'outgoing' : 'incoming'}">
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
  <div bind:this={intersection_observer_element}></div>
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="bottomline">
   <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
-  {#if isOutgoing}
+  {#if message.is_outgoing}
    <div class="checkmark"><img src="img/seen{checkmarks}.svg" alt="{seen_txt}" /></div>
   {/if}
  </div>

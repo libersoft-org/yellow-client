@@ -47,6 +47,6 @@
 <div class="messages" bind:this={messages_elem}>
  {#each $messagesArray as m (m.uid)}
   <!-- <pre>{JSON.stringify(m, null, 2)}</pre> -->
-  <Message message={m} isOutgoing={m.address_from === $active_account.credentials.address } container_element="{messages_elem}" />
+  <Message message={m} container_element="{messages_elem}" />
  {/each}
 </div>

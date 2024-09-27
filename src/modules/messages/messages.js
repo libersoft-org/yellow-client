@@ -2,6 +2,21 @@ import {derived, get, writable} from 'svelte/store';
 import {active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import {send, getRandomString } from '../../core/core.js';
+import { listConversations } from './conversations.js';
+
+
+class Message {
+ constructor(acc, data) {
+  Object.assign(this, data);
+  this.acc = new WeakRef(acc);
+  this.stripped_text = stripHtml(this.message)
+  this.is_outgoing = this.address_from === acc.credentials.address;
+  if (this.address_to === acc.credentials.address)
+   this.remote_address = this.address_from;
+  else
+   this.remote_address = this.address_to;
+ }
+}
 
 
 export let md = module_data_derived('messages');
@@ -69,29 +84,15 @@ export function deinitData(acc)
 registerModule('messages', {initData, initComms, deinitData});
 
 
-function listConversations(acc) {
- send(acc, 'user_list_conversations', null, true, (_req, res) => {
-  if (res.error === 0 && res.data?.conversations) {
-   let conversationsArray = acc.module_data.messages.conversationsArray;
-   console.log('listConversations into:', conversationsArray);
-   conversationsArray.set(res.data.conversations.map(sanitizeConversation))
-  }
- });
-}
-
-function sanitizeConversation(c) {
- c.last_message_text = stripHtml(c.last_message_text);
- return c;
-}
-
 export function listMessages(acc, address) {
  messagesArray.set([]);
  send(acc, 'user_list_messages', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
   if (res.error === 0 && res.data?.messages) {
    messagesArray.set(
     res.data.messages.map(msg => {
-     preprocessMessage(msg);
-     return msg;
+     let message = new Message(acc, msg);
+     message.received_by_my_homeserver = true;
+     return message;
     })
    );
    console.log('resListMessages: messagesArray:');
@@ -123,38 +124,26 @@ export function sendMessage(text) {
 
  let acc = get(active_account);
 
- const msg = {
+ let message = new Message(acc,{
   uid: getRandomString(),
   address_from: acc.credentials.address,
   address_to: get(selectedConversation).address,
   message: text,
-  stripped_text: stripHtml(text),
   created: new Date().toISOString().replace('T', ' ').replace('Z', '')
- };
+ });
 
- let params = { address: msg.address_to, message: msg.message, uid: msg.uid };
+ let params = { address: message.address_to, message: message.message, uid: message.uid };
 
  send(acc, 'user_send_message', params, true, (req, res) => {
   console.log('user_send_message', res);
   if (res.error !== 0) alert('Error while sending message: ' + res.message);
-  else msg.received_by_my_homeserver = true;
+  else message.received_by_my_homeserver = true;
   // update the message status and trigger the update of the messagesArray:
   messagesArray.update(v => v);
  });
 
- messagesArray.update(v => [msg, ...v]);
- updateConversationsArray(msg);
-}
-
-function remoteAddress(msg) {
- const address_to = msg.address_to;
- const address_from = msg.address_from;
- if (address_to === Core.userAddress) return address_from;
- else return address_to;
-}
-
-function isOutgoing(msg) {
- return msg.address_from === Core.userAddress;
+ messagesArray.update(v => [message, ...v]);
+ updateConversationsArray(message);
 }
 
 function updateConversationsArray(msg) {
@@ -169,7 +158,7 @@ function updateConversationsArray(msg) {
  if (conversation) {
   conversation.last_message_date = msg_created;
   conversation.last_message_text = msg.stripped_text;
-  const new_unread_count = isOutgoing(msg) ? 0 : 1;
+  const new_unread_count = msg.is_outgoing ? 0 : 1;
   conversation.unread_count = conversation.unread_count ? conversation.unread_count + new_unread_count : new_unread_count;
   const index = ca.indexOf(conversation);
 
@@ -178,11 +167,11 @@ function updateConversationsArray(msg) {
   ca.unshift(conversation);
  } else {
   let conversation = {
-   address: remoteAddress(msg),
+   address: msg.remote_address,
    last_message_date: msg_created,
    last_message_text: msg.stripped_text,
    visible_name: null,
-   unread_count: isOutgoing(msg) ? 0 : 1
+   unread_count: msg.is_outgoing ? 0 : 1
   };
   ca.unshift(conversation);
  }
@@ -198,24 +187,15 @@ function eventNewMessage(acc, event) {
  const res = event.detail;
  if (!res.data) return;
  if (acc.credentials.address === res.data.from) return;
- const msg = res.data;
+ const msg = new Message(acc, res.data);
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
- preprocessMessage(msg);
+ msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
  if (msg.address_from === sc?.address)
   messagesArray.update((v) => [msg, ...v]);
  if (msg.address_from !== sc?.address || !get(isClientFocused))
   showNotification(acc, msg);
  updateConversationsArray(msg);
-}
-
-function stripHtml(html) {
- return html.replace(/<[^>]*>?/gm, '');
-}
-
-function preprocessMessage(msg) {
- msg.stripped_text = stripHtml(msg.message);
- msg.received_by_my_homeserver = true;
 }
 
 function eventSeenMessage(event) {
@@ -288,6 +268,10 @@ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
 
 export function saneHtml(content) {
  return DOMPurify.sanitize(content);
+}
+
+export function stripHtml(html) {
+ return html.replace(/<[^>]*>?/gm, '');
 }
 
 export default {
