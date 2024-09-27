@@ -1,18 +1,19 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
- import { active_account, accounts, selectAccount }  from '../core.js';
+ import { get } from "svelte/store";
+ import { active_account, accounts, selectAccount, selected_corepage_id }  from '../core.js';
  import AccountBarItem from './account-bar-item.svelte';
- import {get} from "svelte/store";
-
-
+ import AccountBarButton from './account-bar-button.svelte';
  let accountsVisible = false;
  let dropdown;
 
+ onDestroy(() => {
+  document.removeEventListener('click', handleClickOutside);
+ });
 
  // $: console.log('account-bar.svelte: account: ', $active_account);
  // $: console.log('account-bar.svelte: accounts: ', $accounts);
  // $: console.log('accountsVisible: ', accountsVisible);
-
 
  function clickToggleAccounts() {
    accountsVisible = !accountsVisible;
@@ -39,10 +40,8 @@
   console.log('accountsVisible: ' + accountsVisible);
   accountsVisible = false;
   console.log('accountsVisible: ' + accountsVisible);
-
   document.removeEventListener('click', handleClickOutside);
  }
-
 
  function handleClickOutside(event) {
   if (dropdown && !dropdown.contains(event.target)) {
@@ -51,9 +50,10 @@
   }
  }
 
- onDestroy(() => {
-  document.removeEventListener('click', handleClickOutside);
- });
+ function clickAccountManagement() {
+  selected_corepage_id.set('accounts');
+  console.log('SELECTED COREPAGE:', get(selected_corepage_id));
+ }
 </script>
 
 <style>
@@ -95,32 +95,17 @@
  .items.open {
   display: flex;
  }
-
- .items .item {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  padding: 10px;
-  color: #fff;
-  cursor: pointer;
-}
-
- .items .item:hover {
-  background-color: #222;
- }
 </style>
-
 
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
  <div class="text">{$active_account?.title || "CREATE ACCOUNT FIRST"}</div>
  <div><img src="img/down.svg" alt="▼" /></div>
  {#if accountsVisible}
   <div class="items open">
-
    {#each $accounts as a (get(a).id)}
     <AccountBarItem {a} {clickSelectAccount} />
-
    {/each}
+   <AccountBarButton img="img/accounts.svg" title="Account management" click={clickAccountManagement} />
   </div>
  {/if}
 </div>

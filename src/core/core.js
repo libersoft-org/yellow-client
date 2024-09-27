@@ -1,10 +1,10 @@
-import {get, writable, derived} from 'svelte/store';
-import {localStorageSharedStore} from '../lib/svelte-shared-store.js';
-
+import { get, writable, derived } from 'svelte/store';
+import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 
+export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 
 let modules = [];
@@ -35,7 +35,7 @@ const accounts_config = localStorageSharedStore('accounts_config', [
    address: 'user2@example.com',
    password: '123456789'
   }
- },
+ }
 ]);
 
 export let accounts = writable([]);
@@ -48,21 +48,17 @@ export let active_account_store = derived([accounts, active_account_id], ([$acco
 });
 
 // Create a derived store that depends on active_account_store and its nested account store
-export let active_account = derived(
-  active_account_store,
-  ($active_account_store, set) => {
-   if (!$active_account_store) {
-    return set(null);
-   }
+export let active_account = derived(active_account_store, ($active_account_store, set) => {
+ if (!$active_account_store) {
+  return set(null);
+ }
 
-   const unsubscribe = $active_account_store.subscribe(account => {
-    console.log('DERIVED NESTED STORE:', account);
-    set(account);
-   });
-   return () => unsubscribe();
-  }
- );
-
+ const unsubscribe = $active_account_store.subscribe(account => {
+  console.log('DERIVED NESTED STORE:', account);
+  set(account);
+ });
+ return () => unsubscribe();
+});
 
 active_account.subscribe(value => {
  console.log('ACTIVE ACCOUNT:', value);
@@ -82,7 +78,6 @@ export function module_data_derived(module_id) {
  });
 }
 
-
 /*
 this store merges the streams of module_data changes (these happen when active account changes) and the data_name changes (these happen when something like messagesArray is updated)
 to do: it should actually not depend on module_data_derived, but on a store that derives from module_data_derived and from selected_module_id.
@@ -91,26 +86,26 @@ module components would unmount before they'd see their messagesArray change to 
 As it is now, every module content and sideba component has to check for nulls.
  */
 export function relay(md, data_name) {
-  let r = derived(md, ($md, set) => {
-    if (!$md) {
-      set(null);
-      return;
-    }
-    const unsubscribe = $md[data_name].subscribe(value => {
-        set(value);
-      });
-
-    return () => {
-      unsubscribe();
-    };
+ let r = derived(md, ($md, set) => {
+  if (!$md) {
+   set(null);
+   return;
+  }
+  const unsubscribe = $md[data_name].subscribe(value => {
+   set(value);
   });
-  r.set = (v) => {
-    get(md)[data_name].set(v);
-  }
-  r.update = (fn) => {
-   get(md)[data_name].update(fn);
-  }
-  return r;
+
+  return () => {
+   unsubscribe();
+  };
+ });
+ r.set = v => {
+  get(md)[data_name].set(v);
+ };
+ r.update = fn => {
+  get(md)[data_name].update(fn);
+ };
+ return r;
 }
 
 accounts_config.subscribe(value => {
@@ -130,21 +125,16 @@ accounts_config.subscribe(value => {
     account.update(v => v);
    }
 
-   if (acc.credentials.server != config.credentials.server ||
-    acc.credentials.address != config.credentials.address ||
-    acc.credentials.password != config.credentials.password) {
+   if (acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
     acc.credentials = config.credentials;
     _disableAccount(account);
     _enableAccount(account);
    }
 
    if (acc.enabled != config.enabled) {
-    if (config.enabled)
-     _enableAccount(account);
-    else
-     _disableAccount(account);
+    if (config.enabled) _enableAccount(account);
+    else _disableAccount(account);
    }
-
   } else {
    // add new account
    let account = constructAccount(config.id, config.title, config.credentials, config.enabled);
@@ -153,11 +143,8 @@ accounts_config.subscribe(value => {
 
    selectAccount(get(account).id);
 
-   if (config.enabled)
-    _enableAccount(account);
-   else
-    _disableAccount(account);
-
+   if (config.enabled) _enableAccount(account);
+   else _disableAccount(account);
   }
  }
  // remove accounts that are not in config
@@ -170,14 +157,15 @@ accounts_config.subscribe(value => {
  }
 });
 
-
 export function toggleAccountEnabled(id) {
  console.log('TOGGLE ACCOUNT ENABLED', id);
  console.log('TOGGLE ACCOUNT ENABLED', accounts_config);
- accounts_config.update(v => v.map(a => {
-  if (a.id === id) a.enabled = !a.enabled;
-  return a;
- }));
+ accounts_config.update(v =>
+  v.map(a => {
+   if (a.id === id) a.enabled = !a.enabled;
+   return a;
+  })
+ );
 }
 
 export function selectAccount(id) {
@@ -191,12 +179,15 @@ export function selectAccount(id) {
 }
 
 export function addAccount(credentials) {
- accounts_config.update(v => [...v, {
-  id: getRandomString(),
-  title: 'New Account',
-  enabled: false,
-  credentials,
- }]);
+ accounts_config.update(v => [
+  ...v,
+  {
+   id: getRandomString(),
+   title: 'New Account',
+   enabled: false,
+   credentials
+  }
+ ]);
 }
 
 function constructAccount(id, title, credentials, enabled) {
@@ -207,8 +198,8 @@ function constructAccount(id, title, credentials, enabled) {
   enabled,
   events: new EventTarget(),
   requests: {},
-  module_data: {},
- }
+  module_data: {}
+ };
 
  return writable(account);
 }
@@ -236,15 +227,14 @@ function reconnectAccount(account) {
  if (!acc.enabled) return;
 
  acc.socket = new WebSocket(acc.credentials.server);
- acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', {event}));
- acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', {event}));
- acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', {event}));
+ acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', { event }));
+ acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', { event }));
+ acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', { event }));
  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
 
  acc.events.addEventListener('open', event => {
   console.log('Connected to WebSocket:', event);
-  if (acc.loggingIn)
-   sendLoginCommand(account);
+  if (acc.loggingIn) sendLoginCommand(account);
  });
 
  acc.events.addEventListener('error', event => {
@@ -264,7 +254,7 @@ function reconnectAccount(account) {
 function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
- send(acc, 'user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
+ send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
   console.log('Login response:', res);
   acc.loggingIn = false;
   if (res.error !== 0) {
@@ -278,24 +268,24 @@ function sendLoginCommand(account) {
  });
 }
 
-export function order(dict)
-{
- return Object.values(dict).sort((a, b) => {return String.prototype.localeCompare(a.id + a.order) < String.prototype.localeCompare(b.id + b.order)});
+export function order(dict) {
+ return Object.values(dict).sort((a, b) => {
+  return String.prototype.localeCompare(a.id + a.order) < String.prototype.localeCompare(b.id + b.order);
+ });
 }
 
 function initModuleData(account) {
  let acc = get(account);
  acc.module_data = {
-  contacts: {id: 'contacts', decl:{id:"contacts", name:"Contacts" } },
-  messages: modules[0].initData(acc),
+  contacts: { id: 'contacts', decl: { id: 'contacts', name: 'Contacts' } },
+  messages: modules[0].initData(acc)
  };
  account.update(v => v);
  console.log('initModuleData:', acc);
  console.log('initModuleData:', acc.module_data);
 
  if (!get(selected_module_id)) {
-  if (acc.module_data.messages)
-   selected_module_id.set('messages');
+  if (acc.module_data.messages) selected_module_id.set('messages');
  }
 
  modules[0].initComms(acc);
@@ -307,8 +297,8 @@ export function deinitModuleData(acc) {
 
 function disconnectAccount(acc) {
  if (acc.socket) {
-  acc.send('user_unsubscribe', {event: 'new_message'});
-  acc.send('user_unsubscribe', {event: 'seen_message'});
+  acc.send('user_unsubscribe', { event: 'new_message' });
+  acc.send('user_unsubscribe', { event: 'seen_message' });
 
   acc.socket.close();
   acc.socket = null;
@@ -332,7 +322,7 @@ function handleSocketResponse(acc, res) {
   // it is event:
   console.log('GOT EVENT', res);
   //TODO: send event to messages module:
-  acc.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
+  acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server:', res);
 }
 
@@ -343,7 +333,6 @@ export function getRandomString(length = 40) {
 }
 
 export function send(acc, command, params = {}, sendSessionID = true, callback = null) {
-
  if (!acc) {
   console.error('Error while sending command: account is not defined');
   return;
@@ -354,12 +343,11 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  }
  const requestID = generateRequestID();
 
-
- const req = {requestID};
+ const req = { requestID };
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command) req.command = command;
  if (params) req.params = params;
- acc.requests[requestID] = {req, callback};
+ acc.requests[requestID] = { req, callback };
 
  console.log('------------------');
  console.log('SENDING COMMAND:');
@@ -376,5 +364,4 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
-
-export default {hideSidebarMobile, isClientFocused, accounts };
+export default { hideSidebarMobile, isClientFocused, accounts };

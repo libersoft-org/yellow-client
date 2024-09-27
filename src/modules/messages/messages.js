@@ -1,28 +1,24 @@
-import {derived, get, writable} from 'svelte/store';
-import {active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
+import { derived, get, writable } from 'svelte/store';
+import { active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
 import DOMPurify from 'dompurify';
-import {send, getRandomString } from '../../core/core.js';
+import { send, getRandomString } from '../../core/core.js';
 import { listConversations } from './conversations.js';
-
 
 class Message {
  constructor(acc, data) {
   Object.assign(this, data);
   this.acc = new WeakRef(acc);
-  this.stripped_text = stripHtml(this.message)
+  this.stripped_text = stripHtml(this.message);
   this.is_outgoing = this.address_from === acc.credentials.address;
-  if (this.address_to === acc.credentials.address)
-   this.remote_address = this.address_from;
-  else
-   this.remote_address = this.address_to;
+  if (this.address_to === acc.credentials.address) this.remote_address = this.address_from;
+  else this.remote_address = this.address_to;
  }
 }
-
 
 export let md = module_data_derived('messages');
 
 md.subscribe(v => {
-    console.log('MD: ', v);
+ console.log('MD: ', v);
 });
 
 export let conversationsArray = relay(md, 'conversationsArray');
@@ -32,27 +28,26 @@ export let selectedConversation = relay(md, 'selectedConversation');
 export function initData(acc) {
  let result = {
   id: 'messages',
-  decl:{id:'messages', name:'Messages'},
+  decl: { id: 'messages', name: 'Messages' },
   selectedConversation: writable(null),
   conversationsArray: writable([]),
-  messagesArray: writable([]),
+  messagesArray: writable([])
  };
  result.conversationsArray.subscribe(v => {
-    console.log('acc conversationsArray:', acc, v);
+  console.log('acc conversationsArray:', acc, v);
  });
  return result;
 }
 
 export function initComms(acc) {
-
  send(acc, 'user_subscribe', { event: 'new_message' });
  send(acc, 'user_subscribe', { event: 'seen_message' });
 
  let data = acc.module_data['messages'];
  console.log('initComms:', data);
 
- data.new_message_listener = (event) => eventNewMessage(acc, event);
- data.seen_message_listener = (event) => eventSeenMessage(acc, event);
+ data.new_message_listener = event => eventNewMessage(acc, event);
+ data.seen_message_listener = event => eventSeenMessage(acc, event);
 
  acc.events.addEventListener('new_message', data.new_message_listener);
  acc.events.addEventListener('seen_message', data.seen_message_listener);
@@ -60,8 +55,7 @@ export function initComms(acc) {
  listConversations(acc);
 }
 
-export function deinitData(acc)
-{
+export function deinitData(acc) {
  console.log('DEINIT DATA');
 
  send(acc, 'user_unsubscribe', { event: 'new_message' });
@@ -81,8 +75,7 @@ export function deinitData(acc)
  acc.module_data.messages = null;
 }
 
-registerModule('messages', {initData, initComms, deinitData});
-
+registerModule('messages', { initData, initComms, deinitData });
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
@@ -97,7 +90,8 @@ export function listMessages(acc, address) {
    );
    console.log('resListMessages: messagesArray:');
    console.log(get(messagesArray));
-  }});
+  }
+ });
 }
 
 export function setMessageSeen(message, cb) {
@@ -121,10 +115,9 @@ export function setMessageSeen(message, cb) {
 }
 
 export function sendMessage(text) {
-
  let acc = get(active_account);
 
- let message = new Message(acc,{
+ let message = new Message(acc, {
   uid: getRandomString(),
   address_from: acc.credentials.address,
   address_to: get(selectedConversation).address,
@@ -191,10 +184,8 @@ function eventNewMessage(acc, event) {
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
- if (msg.address_from === sc?.address)
-  messagesArray.update((v) => [msg, ...v]);
- if (msg.address_from !== sc?.address || !get(isClientFocused))
-  showNotification(acc, msg);
+ if (msg.address_from === sc?.address) messagesArray.update(v => [msg, ...v]);
+ if (msg.address_from !== sc?.address || !get(isClientFocused)) showNotification(acc, msg);
  updateConversationsArray(msg);
 }
 
@@ -255,7 +246,6 @@ export function ensureConversationDetails(conversation, cb) {
  });
 }
 
-
 DOMPurify.addHook('afterSanitizeAttributes', function (node) {
  if (node.tagName === 'A') {
   node.setAttribute('target', '_blank');
@@ -278,6 +268,5 @@ export default {
  ensureConversationDetails,
  openNewConversation,
  listMessages,
- sendMessage,
-
+ sendMessage
 };

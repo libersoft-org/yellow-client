@@ -1,15 +1,14 @@
 <script>
- import {onMount, setContext} from 'svelte';
+ import { onMount } from 'svelte';
  import "../app.css";
- import { selected_module_id } from '../core/core.js';
- import {  isClientFocused, hideSidebarMobile} from '../core/core.js';
- import Login from '../core/pages/login.svelte';
+ import { selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
  import ModuleBar from '../core/components/module-bar.svelte';
  import AccountBar from '../core/components/account-bar.svelte';
  import WelcomeSidebar from '../core/pages/welcome-sidebar.svelte';
  import WelcomeContent from '../core/pages/welcome-content.svelte';
+ import Accounts from '../core/pages/accounts.svelte';
 
  //Messages:
  import ConversationsList from '../modules/messages/pages/conversations-list.svelte';
@@ -19,9 +18,16 @@
  import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
  import Contact from '../modules/contacts/pages/contact-detail.svelte';
 
- /*
-  this should probably be a part of module decl
-   */
+ const corePages = {
+  accounts: {
+   id: 'accounts',
+   sidebar: WelcomeSidebar,
+   content: Accounts
+  }
+ }
+
+ //this should probably be a part of module decl
+
  const modules = {
   messages: {
    id: 'messages',
@@ -40,15 +46,17 @@
  const link = 'https://yellow.libersoft.org';
  let status;
  let statusVisible = true;
- let isLoggedIn = false;
  let isMenuOpen = false;
  let sideBar;
  let resizer;
  let isResizingSideBar = false;
+ let selectedCorePage;
  let selectedModule;
-
+ 
+ $: selectedCorePage = corePages[$selected_corepage_id];
+ $: console.log('selectedCorePage: ', selectedCorePage);
  $: selectedModule = modules[$selected_module_id];
-  $: console.log('selectedModule: ', selectedModule);
+ $: console.log('selectedModule: ', selectedModule);
 
  onMount(() => {
   window.addEventListener('focus', () => isClientFocused.update(() => true));
@@ -68,6 +76,7 @@
  }
 
  function onSelectModule(id) {
+  selected_corepage_id.set(null);
   selected_module_id.set(id);
  }
 
@@ -214,15 +223,19 @@
   <MenuBar bind:isMenuOpen/>
   <AccountBar/>
   <ModuleBar {onSelectModule}/>
-  {#if selectedModule}
+  {#if selectedCorePage}
+   <svelte:component this={selectedCorePage.sidebar}/>
+  {:else if selectedModule}
    <svelte:component this={selectedModule.sidebar}/>
   {:else}
    <WelcomeSidebar/>
-  {/if}
+  {/if} 
  </div>
  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
  <div class="content">
-  {#if selectedModule}
+  {#if selectedCorePage}
+   <svelte:component this={selectedCorePage.content}/>
+  {:else if selectedModule}
    <svelte:component this={selectedModule.content}/>
   {:else}
    <WelcomeContent {product} {version} {link}/>
