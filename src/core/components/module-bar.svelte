@@ -3,7 +3,8 @@
  import { active_account, order } from '../../core/core.js';
 
  let module_data;
- $: module_data = $active_account?.module_data || [];
+ $: module_data = $active_account?.module_data || {"nope": "nope"};
+ $: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
 
  export let onSelectModule;
@@ -42,12 +43,11 @@
 
 <div class="items">
 
- module_data_ordered:{ JSON.stringify(module_data_ordered) }
-
  {#if module_data_ordered}
 
   {#each module_data_ordered as module (module.id)}
-   <div class="item" on:click={() => clickSetModule(module.name)} on:keydown={() => keySetModule(module.name)} tabindex="0">
+
+   <div class="item" on:click={() => clickSetModule(module.id)} on:keydown={() => keySetModule(module.id)} tabindex="0">
     <img src="img/modules/{module.decl.id}.svg" alt={module.decl.name} />
    </div>
   {/each}

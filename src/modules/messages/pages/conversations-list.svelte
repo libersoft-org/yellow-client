@@ -1,13 +1,14 @@
 <script>
 
  import { conversationsArray } from '../messages.js';
+ import { selectConversation } from '../conversations.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
  let isModalOpen = false;
  let modalComponent = null;
 
-
+$: console.log('conversations-list.svelte: conversationsArray: ', $conversationsArray);
 
  function clickNew() {
   modalComponent = ModalConversationNew;
@@ -59,7 +60,6 @@
 
 </style>
 
-{ JSON.stringify($conversationsArray) }
 
 <div class="conversations">
  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>

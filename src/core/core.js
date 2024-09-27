@@ -82,30 +82,27 @@ export function module_data_derived(module_id) {
 }
 
 export function relay(md, data_name) {
-    let result = writable();
-    let setter = result.set;
+  let r = derived(md, ($md, set) => {
+    if (!$md) {
+      set(null);
+      return;
+    }
+    const unsubscribe = $md[data_name].subscribe(value => {
+        set(value);
+      });
 
-    md.subscribe(value => {
-        console.log('MD: ', value);
-        if (value) {
-            setter(get(value[data_name]));
-        } else {
-            setter(null);
-        }
-    });
-
-    result.set = (v) => {
-     let acc = get(active_account);
-     console.log('SETTER:', acc, 'DATA_NAME', data_name, 'V', v);
-        acc?.module_data[data_name].set(v);
+    return () => {
+      unsubscribe();
     };
-    result.subscribe(v => {
-        console.log(data_name, ':', v);
-    });
-    return result;
+  });
+  r.set = (v) => {
+    get(md)[data_name].set(v);
+  }
+  r.update = (fn) => {
+   get(md)[data_name].update(fn);
+  }
+  return r;
 }
-
-
 
 accounts_config.subscribe(value => {
  console.log('ACCOUNTS CONFIG:', value);
@@ -269,7 +266,7 @@ function sendLoginCommand(account) {
 
 export function order(dict)
 {
- return Object.entries(dict).sort((a, b) => {return string.localeCompare(a.id + a.order) < string.localeCompare(b.id + b.order)});
+ return Object.values(dict).sort((a, b) => {return String.prototype.localeCompare(a.id + a.order) < String.prototype.localeCompare(b.id + b.order)});
 }
 
 function initModuleData(account) {
