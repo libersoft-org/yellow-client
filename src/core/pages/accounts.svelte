@@ -1,7 +1,7 @@
 <script>
  import { accounts_config, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
- import ActionButton from '../components/accounts-action-button.svelte';
+ import ActionItem from '../components/accounts-action-item.svelte';
  import Modal from '../components/modal.svelte';
  import ModalAccountsAdd from '../modals/modal-accounts-add.svelte';
  let isAddAccountModalOpen = false;
@@ -99,8 +99,8 @@
      <td>{a.enabled ? 'Yes' : 'No'}</td>
      <td>
       <div class="action-items">
-       <ActionButton img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
-       <ActionButton img="img/del.svg" title="Delete" on:click={() => clickDel(a.id)} />
+       <ActionItem img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
+       <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id)} />
       </div>
      </td>
     </tr>
