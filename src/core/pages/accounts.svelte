@@ -22,7 +22,7 @@
 
  function clickEdit(id) {
   idItem = id;
-  isEditAccountModalOpen = true;
+  isAddEditAccountModalOpen = true;
  }
 
  function clickDel(id, title) {

@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import { addAccount } from '../core.js';
- import Loader from '../components/loader.svelte';
+ import Button from '../components/button.svelte';
  export let onClose;
  let credentials;
  let error;
@@ -12,13 +12,6 @@
   if (address.value) {
    addAccount(credentials);
    onClose();
-  }
- }
-
- function keyAdd() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickAdd();
   }
  }
 
@@ -83,11 +76,5 @@
    <div>{error}</div>
   </div>
  {/if}
- <div class="button{loggingIn ? ' disabled' : ''}" role="button" tabindex="0" on:click={clickAdd} on:keydown={keyAdd}>
-  {#if loggingIn}
-   <Loader />
-  {:else}
-   Add the account
-  {/if}
- </div>
+ <Button on:click={clickAdd} text="Add the account" />
 </div>
