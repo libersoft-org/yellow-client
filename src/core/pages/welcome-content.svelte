@@ -1,4 +1,5 @@
 <script>
+ import Button from '../components/button.svelte';
  export let product;
  export let version;
  export let link;
@@ -19,13 +20,6 @@
   Notification.requestPermission().then(permission => {
    notificationPermission = permission;
   });
- }
-
- function keyRequestNotificationPermission() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   requestNotificationPermission();
-  }
  }
 </script>
 
@@ -91,7 +85,7 @@
   <div class="warning">
    <div class="bold">ATTENTION:</div>
    <div>Notifications are not enabled.</div>
-   <div class="button" role="button" tabindex="0" on:click={clickRequestNotificationPermission} on:keydown={keyRequestNotificationPermission}>Enable notifications</div>
+   <Button on:click={clickRequestNotificationPermission}>Enable notifications</Button>
   </div>
  {/if}
 </div>

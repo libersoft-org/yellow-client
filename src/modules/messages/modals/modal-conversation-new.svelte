@@ -1,6 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import { openNewConversation } from '../messages.js';
+ import Button from '../../../core/components/button.svelte';
  export let onClose;
  let address;
 
@@ -10,13 +11,6 @@
   if (address.value) {
    openNewConversation(address.value);
    onClose();
-  }
- }
-
- function keyOpen() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickOpen();
   }
  }
 
@@ -45,5 +39,5 @@
 <div class="group">
  <div class="label">Address:</div>
  <div><input type="text" placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} /></div>
- <div class="button" role="button" tabindex="0" on:click={clickOpen} on:keydown={keyOpen}>Open</div>
+ <Button on:click={clickOpen}>Open</Button>
 </div>

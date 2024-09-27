@@ -14,22 +14,6 @@ body {
  margin: 0px;
 }
 
-.button {
- display: flex;
- align-items: center;
- justify-content: center;
- text-align: center;
- padding: 10px;
- border-radius: 10px;
- background-color: #fd1;
- font-weight: bold;
- cursor: pointer;
-}
-
-.button.disabled {
- background-color: #bbb;
-}
-
 .bold {
  font-weight: bold;
 }

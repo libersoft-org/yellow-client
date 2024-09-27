@@ -1,5 +1,6 @@
 <script>
  import { accounts_config } from '../core.js';
+ import Button from '../components/button.svelte';
  import ActionButton from '../components/accounts-action-button.svelte';
 
  function clickEdit(id) {
@@ -66,8 +67,8 @@
 
 <div class="accounts">
  <div class="buttons">
-  <div class="button">Back</div>
-  <div class="button">Add new account</div>
+  <Button img="img/back.svg">Back</Button>
+  <Button img="img/accounts.svg">Add a new account</Button>
  </div>
  <table>
   <thead>
