@@ -51,7 +51,7 @@
   height: 20px;
  }
 
-.modal .body {
+ .modal .body {
   display: flex;
   flex-direction: column;
   gap: 10px;

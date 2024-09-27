@@ -9,6 +9,10 @@
  import WelcomeSidebar from '../core/pages/welcome-sidebar.svelte';
  import WelcomeContent from '../core/pages/welcome-content.svelte';
  import Accounts from '../core/pages/accounts.svelte';
+ import Wizard from '../core/components/wizard.svelte';
+ import WelcomeWizardStep1 from '../core/wizards/welcome-step1.svelte';
+ import WelcomeWizardStep2 from '../core/wizards/welcome-step2.svelte';
+ import WelcomeWizardStep3 from '../core/wizards/welcome-step3.svelte';
 
  //Messages:
  import ConversationsList from '../modules/messages/pages/conversations-list.svelte';
@@ -17,6 +21,14 @@
  //Contacts:
  import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
  import Contact from '../modules/contacts/pages/contact-detail.svelte';
+
+ let isWelcomeWizardOpen = true;
+
+ const welcomeWizardSteps = [
+  { title: 'Step 1', component: WelcomeWizardStep1 },
+  { title: 'Step 2', component: WelcomeWizardStep2 },
+  { title: 'Step 3', component: WelcomeWizardStep3 }
+ ];
 
  const corePages = {
   accounts: {
@@ -242,3 +254,6 @@
   {/if}
  </div>
 </div>
+{#if isWelcomeWizardOpen}
+ <Wizard steps={welcomeWizardSteps} onClose={() => isWelcomeWizardOpen = false} />
+{/if}
