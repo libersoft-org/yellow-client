@@ -89,8 +89,9 @@
  }
 
  .progress-bar .step .circle.active {
-  background-color: #007bff;
-  color: #fff;
+  border: 1px solid #d80;
+  background-color: #fd3;
+  color: #000;
  }
 
  .progress-bar .step .line {

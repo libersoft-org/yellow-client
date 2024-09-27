@@ -1,5 +1,5 @@
-import {accounts_config, getRandomString} from "./core.js";
-import {get} from "svelte/store";
+import { accounts_config, getRandomString } from './core.js';
+import { get } from 'svelte/store';
 
 export function addAccount(config) {
  accounts_config.update(v => [
@@ -15,7 +15,7 @@ export function addAccount(config) {
 export function saveAccount(id, config) {
  console.log('saveAccount', id, config);
  accounts_config.update(v => {
-  let r = v.map(a => a.id === id ? {...a, ...config} : a);
+  let r = v.map(a => (a.id === id ? { ...a, ...config } : a));
   console.log('saveAccount accs config:', r);
   return r;
  });

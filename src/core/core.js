@@ -175,7 +175,6 @@ export function selectAccount(id) {
  }
 }
 
-
 function constructAccount(id, title, credentials, enabled) {
  let account = {
   id,

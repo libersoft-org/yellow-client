@@ -6,35 +6,42 @@
   margin-bottom: 5px;
  }
 
- .description {
+ .motto {
   font-size: 13px;
-  margin-bottom: 20px;
+  text-align: center;
  }
 
  @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-   transform: translateY(0);
+  0% {
+    transform: scale(0.5);
   }
-  40% {
-   transform: translateY(-30px);
+  70% {
+    transform: scale(1.2);
   }
-  60% {
-   transform: translateY(-15px);
+  100% {
+    transform: scale(1);
   }
  }
 
  .logo {
   display: flex;
+  margin: 20px 0;
   justify-content: center;
-  animation: bounce 2s infinite;
+  animation: bounce 1.5s ease;
+  animation-fill-mode: forwards;
  }
 
  .logo img {
   width: 100px;
   height: 100px;
  }
+
+ .description {
+  text-align: center;
+ }
 </style>
 
 <div class="title">Welcome to Yellow</div>
-<div class="description">The best decentralized communication app</div>
+<div class="motto">The best decentralized communication app</div>
 <div class="logo"><img src="img/logo.svg" alt="logo" /></div>
+<div class="description">This wizard will help you to set up your own Yellow account.</div>
