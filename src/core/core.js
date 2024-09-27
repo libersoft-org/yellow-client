@@ -12,6 +12,7 @@ export function registerModule(id, callbacks) {
  modules.push(callbacks);
 }
 
+const active_account_id = localStorageSharedStore('active_account_id', null);
 
 const accounts_config = localStorageSharedStore('accounts_config', [
  {
@@ -38,35 +39,44 @@ const accounts_config = localStorageSharedStore('accounts_config', [
 
 export let accounts = writable([]);
 
-export let active_account_store = writable(null);
-export let active_account = derived(active_account_store, $active_account_store => {
- if ($active_account_store)
-  return get($active_account_store);
- else
-  return {note: 'no account is active'};
-})
-
-active_account_store.subscribe(value => {
- // console.log('ACTIVE ACCOUNT:', value);
- console.log('ACTIVE ACCOUNT:', maybeGet(value));
+export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
+ console.log('active_account_store:', $accounts, $active_account_id);
+ let r = $accounts.find(acc => get(acc).id === $active_account_id);
+ console.log('active_account_store:', r);
+ return r;
 });
 
-function maybeGet(store) {
- if (store)
-  return get(store);
-}
+// Create a derived store that depends on active_account_store and its nested account store
+export let active_account = derived(
+  active_account_store,
+  ($active_account_store, set) => {
+   if (!$active_account_store) {
+    return set(null);
+   }
 
-export function module_data(module_id) {
- return derived(active_account_store, $active_account_store => {
-  if (!$active_account_store) {
-   console.log('no active account');
+   const unsubscribe = $active_account_store.subscribe(account => {
+    console.log('DERIVED NESTED STORE:', account);
+    set(account);
+   });
+   return () => unsubscribe();
+  }
+ );
+
+
+active_account.subscribe(value => {
+ console.log('ACTIVE ACCOUNT:', value);
+});
+
+export function module_data_derived(module_id) {
+ return derived(active_account, $active_account => {
+  if (!$active_account) {
+   console.log('no active account => no module data.');
    return null;
   }
-  console.log('$active_account_store:', get($active_account_store));
-  console.log('MODULE ID:', module_id);
-  console.log('MODULE DATA:', get($active_account_store).module_data);
-  let result = get($active_account_store).module_data[module_id];
-  console.log('MODULE DATA for ',module_id, " : ", result);
+  let acc = $active_account;
+  console.log('$active_account:', acc, 'MODULE ID:', module_id);
+  let result = acc.module_data[module_id];
+  console.log('MODULE DATA:', result);
   return result;
  });
 }
@@ -85,7 +95,9 @@ export function relay(md, data_name) {
     });
 
     result.set = (v) => {
-        get(active_account)?.module_data[data_name].set(v);
+     let acc = get(active_account);
+     console.log('SETTER:', acc, 'DATA_NAME', data_name, 'V', v);
+        acc?.module_data[data_name].set(v);
     };
     result.subscribe(v => {
         console.log(data_name, ':', v);
@@ -98,41 +110,41 @@ export function relay(md, data_name) {
 accounts_config.subscribe(value => {
  console.log('ACCOUNTS CONFIG:', value);
  //TODO: implement configuration of order of accounts
- let accs = get(accounts);
- console.log('EXISTING ACCOUNTS:', accs);
+ let accounts_list = get(accounts);
+ console.log('EXISTING ACCOUNTS (stores):', accounts_list);
  for (let config of value) {
   console.log('CONFIG', config);
-  let acc = accs.find(acc => acc.id === config.id);
-  console.log('ACC', acc);
-  if (acc) {
+  let account = accounts_list.find(acc => get(acc).id === config.id);
+  console.log('account', account);
+  if (account) {
+   let acc = get(account);
 
    if (acc.title != config.title) {
     acc.title = config.title;
-    acc.update(v => v);
+    account.update(v => v);
    }
 
    if (acc.credentials.server != config.credentials.server ||
     acc.credentials.address != config.credentials.address ||
     acc.credentials.password != config.credentials.password) {
     acc.credentials = config.credentials;
-    _disableAccount(acc);
-    _enableAccount(acc);
+    _disableAccount(account);
+    _enableAccount(account);
    }
 
    if (acc.enabled != config.enabled) {
     if (config.enabled)
-     _enableAccount(acc);
+     _enableAccount(account);
     else
-     _disableAccount(acc);
+     _disableAccount(account);
    }
 
   } else {
    // add new account
    let account = constructAccount(config.id, config.title, config.credentials, config.enabled);
-   console.log('NEW ACC', get(account));
+   console.log('NEW account', get(account));
    accounts.update(v => [...v, account]);
 
-   console.log('SELECT ACCOUNT');
    selectAccount(get(account).id);
 
    if (config.enabled)
@@ -143,10 +155,11 @@ accounts_config.subscribe(value => {
   }
  }
  // remove accounts that are not in config
- for (let acc of accs) {
-  if (!value.find(conf => conf.id === acc.id)) {
-   _disableAccount(acc);
-   accounts.update(v => v.filter(a => a.id !== acc.id));
+ for (let account of accounts_list) {
+  if (!value.find(conf => conf.id === get(account).id)) {
+   console.log('REMOVE ACCOUNT', get(account));
+   _disableAccount(account);
+   accounts.update(v => v.filter(a => get(a).id !== get(account).id));
   }
  }
 });
@@ -161,12 +174,9 @@ export function toggleAccountEnabled(id) {
  }));
 }
 
-
 export function selectAccount(id) {
  console.log('SELECT ACCOUNT', id);
- let account = get(accounts).find(acc => get(acc).id === id);
- console.log('SELECTED ACCOUNT', account);
- active_account_store.set(account);
+ active_account_id.set(id);
 }
 
 export function addAccount(credentials) {
@@ -350,4 +360,4 @@ function generateRequestID() {
 }
 
 
-export default {hideSidebarMobile, isClientFocused, accounts, module_data};
+export default {hideSidebarMobile, isClientFocused, accounts };

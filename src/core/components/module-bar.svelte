@@ -3,7 +3,7 @@
  import { active_account, order } from '../../core/core.js';
 
  let module_data;
- $: module_data = $active_account.module_data;
+ $: module_data = $active_account?.module_data || [];
  $: module_data_ordered = order(module_data);
 
  export let onSelectModule;

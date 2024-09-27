@@ -1,15 +1,14 @@
 import {derived, get, writable} from 'svelte/store';
-import {active_account, module_data, registerModule, relay} from '../../core/core.js';
+import {active_account, module_data_derived, registerModule, relay} from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import {send} from '../../core/core.js';
 
 
-export let md = module_data('messages');
+export let md = module_data_derived('messages');
 
 md.subscribe(v => {
     console.log('MD: ', v);
 });
-
 
 export let conversationsArray = relay(md, 'conversationsArray');
 export let messagesArray = relay(md, 'messagesArray');
@@ -73,7 +72,8 @@ registerModule('messages', {initData, initComms, deinitData});
 function listConversations(acc) {
  send(acc, 'user_list_conversations', null, true, (_req, res) => {
   if (res.error === 0 && res.data?.conversations) {
-   console.log('listConversations conversationsArray:', get(conversationsArray));
+   let conversationsArray = acc.module_data.messages.conversationsArray;
+   console.log('listConversations into:', conversationsArray);
    conversationsArray.set(res.data.conversations.map(sanitizeConversation))
   }
  });
