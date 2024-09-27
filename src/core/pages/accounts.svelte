@@ -1,7 +1,19 @@
 <script>
- import { accounts_config } from '../core.js';
+ import { accounts_config, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
  import ActionButton from '../components/accounts-action-button.svelte';
+ import Modal from '../components/modal.svelte';
+ import ModalAccountsAdd from '../modals/modal-accounts-add.svelte';
+ let isAddAccountModalOpen = false;
+
+ function back() {
+  hideSidebarMobile.set(false);
+  // TODO: switch back to welcome screen
+ }
+
+ function addAccountModal() {
+  isAddAccountModalOpen = true;
+ }
 
  function clickEdit(id) {
   console.log('EDIT', id);
@@ -59,16 +71,15 @@
 </style>
 
 // TODO: copy table header style from admin<br />
-// TODO: add border to buttons (the same as in admin)<br />
 // TODO: fix table align (the same as in admin)<br />
-// TODO: add back button (mobile size only) and add new button functionality<br />
+// TODO: back() should switch content back to welcome screen
 // TODO: back button should be visible only on mobile platform<br />
 // TODO: fix icon align-items
 
 <div class="accounts">
  <div class="buttons">
-  <Button img="img/back.svg">Back</Button>
-  <Button img="img/accounts.svg">Add a new account</Button>
+  <Button img="img/back.svg" text="Back" on:click={back} />
+  <Button img="img/accounts-black.svg" text="Add a new account" on:click={addAccountModal} />
  </div>
  <table>
   <thead>
@@ -97,3 +108,8 @@
   </tbody>
  </table>
 </div>
+{#if isAddAccountModalOpen}
+<Modal title="Add a new account" onClose={() => isAddAccountModalOpen = false}>
+ <ModalAccountsAdd onClose={() => isAddAccountModalOpen = false} />
+</Modal>
+{/if}
