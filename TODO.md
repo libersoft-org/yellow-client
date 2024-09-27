@@ -1,5 +1,6 @@
 # Bugs
 
+- MESSAGES: Linkify of plain text message does not work
 - MESSAGES: When a new conversation is created to nonsensical address and then send a message to such address, the client start sending messages in infinite loop
 - MESSAGES: Scrolling down on new message sometimes doesn't work
 - CORE: The server is automatically reconnected and logged in again after logout
@@ -14,6 +15,8 @@
 -
 # Features
 
+- MESSAGES: When a user gets a lot of new messages, it should scroll to the oldest unread one + add an element bar with text "Unread messages"
+- MESSAGES: When scrolling up, add a "scroll to end" button with caret down in bottom right corner
 - MESSAGES: Add a red dot in top right corner of module icon (indicator of a new activity)
 - MESSAGES: Add lazy loader messages (already in app.css: <div class="loader"></div>)
 - CORE: Instead of login / logout add account switching
