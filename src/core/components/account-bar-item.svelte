@@ -34,8 +34,8 @@
  }
 </style>
 
-<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id) } on:keydown={(event) => keySelectAccount($a.id, event)}>{$a.title}
- <div on:click={(event) => toggleAccountEnabledClick($a.id, event)}>{ $a.enabled ? 'enabled' : 'disabled' }</div>
+<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={(event) => keySelectAccount($a.id, event)}>{$a.title}
+ <div on:click={(event) => toggleAccountEnabledClick($a.id, event)}>{$a.enabled ? 'enabled' : 'disabled'}</div>
   <small>
    <ul>
     {#each Object.entries($a) as [key, value]}
