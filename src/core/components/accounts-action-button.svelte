@@ -17,6 +17,8 @@
   padding: 10px;
   background-color: red;
   cursor: pointer;
+  width: 20px;
+  height: 20px;
  }
 
  .item img {

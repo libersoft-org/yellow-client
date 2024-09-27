@@ -1,12 +1,9 @@
 import { get, writable, derived } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
-
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
-
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
-
 let modules = [];
 
 export function registerModule(id, callbacks) {
@@ -15,7 +12,7 @@ export function registerModule(id, callbacks) {
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
-const accounts_config = localStorageSharedStore('accounts_config', [
+export const accounts_config = localStorageSharedStore('accounts_config', [
  {
   id: 1,
   title: 'Account 1',
