@@ -14,11 +14,10 @@
 
 <style>
  .item {
-  padding: 10px;
-  background-color: red;
-  cursor: pointer;
+  padding: 5px;
   width: 20px;
   height: 20px;
+  cursor: pointer;
  }
 
  .item img {

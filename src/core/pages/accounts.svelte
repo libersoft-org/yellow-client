@@ -60,7 +60,11 @@
   background-color: #fd1;
  }
 
- .account table tbody tr td .action-items {
+ .accounts table tbody td {
+  padding: 10px;
+ }
+
+ .action-items {
   display: flex;
  }
 
@@ -74,7 +78,6 @@
 // TODO: fix table align (the same as in admin)<br />
 // TODO: back() should switch content back to welcome screen
 // TODO: back button should be visible only on mobile platform<br />
-// TODO: fix icon align-items
 
 <div class="accounts">
  <div class="buttons">
@@ -83,10 +86,11 @@
  </div>
  <table>
   <thead>
-   <th>Account</th>
+   <th>Account ID</th>
    <th>Title</th>
    <th>Server</th>
    <th>Address</th>
+   <th>Enabled</th>
    <th>Action</th>
   </thead>
   <tbody>
