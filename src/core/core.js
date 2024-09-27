@@ -82,6 +82,14 @@ export function module_data_derived(module_id) {
  });
 }
 
+
+/*
+this store merges the streams of module_data changes (these happen when active account changes) and the data_name changes (these happen when something like messagesArray is updated)
+to do: it should actually not depend on module_data_derived, but on a store that derives from module_data_derived and from selected_module_id.
+this way, we should be able to ensure that the store updates *after* selectedModule changes.
+module components would unmount before they'd see their messagesArray change to null.
+As it is now, every module content and sideba component has to check for nulls.
+ */
 export function relay(md, data_name) {
   let r = derived(md, ($md, set) => {
     if (!$md) {
@@ -328,7 +336,7 @@ function handleSocketResponse(acc, res) {
  } else console.log('Unknown command from server:', res);
 }
 
-function getRandomString(length = 40) {
+export function getRandomString(length = 40) {
  let result = '';
  while (result.length < length) result += Math.random().toString(36).substring(2);
  return result.substring(0, length);

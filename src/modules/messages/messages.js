@@ -1,7 +1,7 @@
 import {derived, get, writable} from 'svelte/store';
-import {active_account, module_data_derived, registerModule, relay} from '../../core/core.js';
+import {active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
 import DOMPurify from 'dompurify';
-import {send} from '../../core/core.js';
+import {send, getRandomString } from '../../core/core.js';
 
 
 export let md = module_data_derived('messages');
@@ -124,7 +124,7 @@ export function sendMessage(text) {
  let acc = get(active_account);
 
  const msg = {
-  uid: Socket.getRandomString(),
+  uid: getRandomString(),
   address_from: acc.credentials.address,
   address_to: get(selectedConversation).address,
   message: text,
@@ -204,7 +204,7 @@ function eventNewMessage(acc, event) {
  let sc = get(selectedConversation);
  if (msg.address_from === sc?.address)
   messagesArray.update((v) => [msg, ...v]);
- if (msg.address_from !== sc?.address || !get(Core.isClientFocused))
+ if (msg.address_from !== sc?.address || !get(isClientFocused))
   showNotification(acc, msg);
  updateConversationsArray(msg);
 }
