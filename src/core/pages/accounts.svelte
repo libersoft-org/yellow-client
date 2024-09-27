@@ -5,6 +5,7 @@
  import Modal from '../components/modal.svelte';
  import ModalAccountsAddEdit from '../modals/modal-accounts-add-edit.svelte';
  import ModalAccountsDel from '../modals/modal-accounts-del.svelte';
+ import { get } from "svelte/store";
  let isAddEditAccountModalOpen = false;
  let isDelAccountModalOpen = false;
  let idItem = null;
@@ -30,6 +31,17 @@
   accountTitle = title;
   isDelAccountModalOpen = true;
  }
+
+ function accountsConfigExport()
+ {
+  window.alert(JSON.stringify(get(accounts_config), null, 2));
+ }
+
+ function accountsConfigImport()
+ {
+
+ }
+
 </script>
 
 <style>
@@ -100,6 +112,8 @@
  <div class="buttons">
   <Button img="img/back.svg" text="Back" on:click={back} hiddenOnDesktop={true} />
   <Button img="img/accounts-black.svg" text="Add a new account" on:click={addAccountModal} />
+  <Button text="Export" on:click={accountsConfigExport} />
+  <Button text="Import" on:click={accountsConfigImport} />
  </div>
  <div class="table">
   <table>

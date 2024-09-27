@@ -1,3 +1,4 @@
+import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
 
@@ -177,9 +178,11 @@ export function selectAccount(id) {
  let old_selected_module = get(selected_module_id);
  selected_module_id.set(null);
  active_account_id.set(id);
- if (get(active_account).module_data[old_selected_module]) {
-  selected_module_id.set(old_selected_module);
- }
+ tick().then(() => {
+  if (get(active_account).module_data[old_selected_module]) {
+   selected_module_id.set(old_selected_module);
+  }
+ });
 }
 
 function constructAccount(id, title, credentials, enabled) {

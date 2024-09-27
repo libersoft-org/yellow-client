@@ -34,9 +34,6 @@
     {#each Object.entries($a) as [key, value]}
      <li>{key}: {value}</li>
     {/each}
-    {#each Object.entries($a.credentials) as [key, value]}
-     <li>{key}: {value}</li>
-    {/each}
    </ul>
  </small>
 </div>

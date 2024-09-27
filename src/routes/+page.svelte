@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import '../app.css';
- import { selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile } from '../core/core.js';
+ import { accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
  import ModuleBar from '../core/components/module-bar.svelte';
@@ -21,10 +21,11 @@
  //Contacts:
  import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
  import Contact from '../modules/contacts/pages/contact-detail.svelte';
+ import { get } from "svelte/store";
 
- let isWelcomeWizardOpen = true;
+ let isWelcomeWizardOpen = false;
 
- const welcomeWizardSteps = [
+  const welcomeWizardSteps = [
   { title: 'Welcome to Yellow', component: WelcomeWizardStep1 },
   { title: 'Connect your account', component: WelcomeWizardStep2 },
   { title: 'All set!', component: WelcomeWizardStep3 }
@@ -64,7 +65,7 @@
  let isResizingSideBar = false;
  let selectedCorePage;
  let selectedModule;
- 
+
  $: selectedCorePage = corePages[$selected_corepage_id];
  $: console.log('selectedCorePage: ', selectedCorePage);
  $: selectedModule = modules[$selected_module_id];
@@ -74,6 +75,9 @@
   window.addEventListener('focus', () => isClientFocused.update(() => true));
   window.addEventListener('blur', () => isClientFocused.update(() => false));
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
+  if (get(accounts_config).length === 0) {
+   isWelcomeWizardOpen = true;
+  }
  });
 
  function clickStatusClose() {
@@ -241,7 +245,7 @@
    <svelte:component this={selectedModule.sidebar}/>
   {:else}
    <WelcomeSidebar/>
-  {/if} 
+  {/if}
  </div>
  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
  <div class="content">
