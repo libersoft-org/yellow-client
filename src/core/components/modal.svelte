@@ -60,6 +60,7 @@
   background-color: #fff;
   color: #000;
  }
+
 </style>
 
 <div class="modal">

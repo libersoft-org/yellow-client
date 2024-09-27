@@ -8,5 +8,5 @@
 {#if $selectedConversation === null}
  <Welcome />
 {:else}
- <Conversation {selectedConversation} />
+ <Conversation  />
 {/if}
