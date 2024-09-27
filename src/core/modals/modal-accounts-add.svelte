@@ -1,6 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import { addAccount } from '../core.js';
+ import Loader from '../components/loader.svelte';
  export let onClose;
  let credentials;
  let error;
@@ -84,7 +85,7 @@
  {/if}
  <div class="button{loggingIn ? ' disabled' : ''}" role="button" tabindex="0" on:click={clickAdd} on:keydown={keyAdd}>
   {#if loggingIn}
-   <div class="loader"></div>
+   <Loader />
   {:else}
    Add the account
   {/if}
