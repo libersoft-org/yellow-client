@@ -1,12 +1,8 @@
-<<<<<<< HEAD
 import { active_account, hideSidebarMobile, send } from '../../core/core.js';
 import { selectedConversation, listMessages, stripHtml } from './messages.js';
 import { get } from 'svelte/store';
 
 export function selectConversation(conversation) {
-=======
-export function selectConversation(acc, conversation) {
->>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
  selectedConversation.update(() => conversation);
  hideSidebarMobile.update(() => true);
  listMessages(get(active_account), conversation.address);
