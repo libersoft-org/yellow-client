@@ -187,6 +187,10 @@ export function addAccount(credentials) {
  ]);
 }
 
+export function delAccount(id) {
+ // TODO
+}
+
 function constructAccount(id, title, credentials, enabled) {
  let account = {
   id,

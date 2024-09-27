@@ -3,8 +3,12 @@
  import Button from '../components/button.svelte';
  import ActionItem from '../components/accounts-action-item.svelte';
  import Modal from '../components/modal.svelte';
- import ModalAccountsAdd from '../modals/modal-accounts-add.svelte';
- let isAddAccountModalOpen = false;
+ import ModalAccountsAddEdit from '../modals/modal-accounts-add-edit.svelte';
+ import ModalAccountsDel from '../modals/modal-accounts-del.svelte';
+ let isAddEditAccountModalOpen = false;
+ let isDelAccountModalOpen = false;
+ let idItem = null;
+ let accountTitle = '';
 
  function back() {
   hideSidebarMobile.set(false);
@@ -12,15 +16,19 @@
  }
 
  function addAccountModal() {
-  isAddAccountModalOpen = true;
+  idItem = null;
+  isAddEditAccountModalOpen = true;
  }
 
  function clickEdit(id) {
-  console.log('EDIT', id);
+  idItem = id;
+  isEditAccountModalOpen = true;
  }
 
- function clickDel(id) {
-  console.log('DEL', id);
+ function clickDel(id, title) {
+  idItem = id;
+  accountTitle = title;
+  isDelAccountModalOpen = true;
  }
 </script>
 
@@ -28,40 +36,54 @@
  .accounts {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   padding: 10px;
-  height: calc(100% - 20px);
+  gap: 10px;
+  height: calc(100vh - 20px);
   background: url('/img/background.webp') repeat;
   background-size: 400px;
  }
+ 
+ .table {
+  display: inline-block;
+ }
 
- .accounts table {
+ table {
   border-spacing: 0;
   border: 1px solid #000;
   border-radius: 10px;
   overflow: hidden;
  }
 
- .accounts table thead tr {
+ thead tr {
   background-color: #222;
   color: #fff;
   text-align: left;
  }
 
- .accounts table tbody tr:nth-child(even) {
+ tbody tr:nth-child(even) {
   background-color: #ffdd1130;
  }
 
- .accounts table tbody tr:nth-child(odd) {
+ tbody tr:nth-child(odd) {
   background-color: #ffdd1150;
  }
 
- .accounts table tbody tr:hover {
+ tbody tr:hover {
   background-color: #fd1;
  }
 
- .accounts table tbody td {
+ thead th, tbody td {
   padding: 10px;
+ }
+
+ thead th {
+  background-color: #222;
+  color: #fff;
+  text-align: left;
+ }
+
+ thead th.center, tbody td.center {
+  text-align: center;
  }
 
  .action-items {
@@ -74,46 +96,49 @@
  }
 </style>
 
-// TODO: copy table header style from admin<br />
-// TODO: fix table align (the same as in admin)<br />
-// TODO: back() should switch content back to welcome screen
-// TODO: back button should be visible only on mobile platform<br />
-
 <div class="accounts">
+ // TODO: back() should switch content back to welcome screen<br />
  <div class="buttons">
-  <Button img="img/back.svg" text="Back" on:click={back} />
+  <Button img="img/back.svg" text="Back" on:click={back} hiddenOnDesktop={true} />
   <Button img="img/accounts-black.svg" text="Add a new account" on:click={addAccountModal} />
  </div>
- <table>
-  <thead>
-   <th>Account ID</th>
-   <th>Title</th>
-   <th>Server</th>
-   <th>Address</th>
-   <th>Enabled</th>
-   <th>Action</th>
-  </thead>
-  <tbody>
-   {#each $accounts_config as a (a.id)}
-    <tr>
-     <td>{a.id}</td>
-     <td>{a.title}</td>
-     <td>{a.credentials.server}</td>
-     <td>{a.credentials.address}</td>
-     <td>{a.enabled ? 'Yes' : 'No'}</td>
-     <td>
-      <div class="action-items">
-       <ActionItem img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
-       <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id)} />
-      </div>
-     </td>
-    </tr>
-   {/each}
-  </tbody>
- </table>
+ <div class="table">
+  <table>
+   <thead>
+    <th class="center">Account ID</th>
+    <th class="center">Title</th>
+    <th class="center">Server</th>
+    <th class="center">Address</th>
+    <th class="center">Enabled</th>
+    <th>Action</th>
+   </thead>
+   <tbody>
+    {#each $accounts_config as a (a.id)}
+     <tr>
+      <td class="center">{a.id}</td>
+      <td class="center">{a.title}</td>
+      <td class="center">{a.credentials.server}</td>
+      <td class="center">{a.credentials.address}</td>
+      <td class="center">{a.enabled ? 'Yes' : 'No'}</td>
+      <td>
+       <div class="action-items">
+        <ActionItem img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
+        <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id, a.title)} />
+       </div>
+      </td>
+     </tr>
+    {/each}
+   </tbody>
+  </table>
+ </div>
 </div>
-{#if isAddAccountModalOpen}
-<Modal title="Add a new account" onClose={() => isAddAccountModalOpen = false}>
- <ModalAccountsAdd onClose={() => isAddAccountModalOpen = false} />
-</Modal>
+{#if isAddEditAccountModalOpen}
+ <Modal title="Add a new account" onClose={() => isAddEditAccountModalOpen = false}>
+  <ModalAccountsAddEdit onClose={() => isAddEditAccountModalOpen = false} />
+ </Modal>
+{/if}
+{#if isDelAccountModalOpen}
+ <Modal title="Delete the account" onClose={() => isDelAccountModalOpen = false}>
+  <ModalAccountsDel id={idItem} title={accountTitle} onClose={() => isDelAccountModalOpen = false} />
+ </Modal>
 {/if}
