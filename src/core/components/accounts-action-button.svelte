@@ -1,13 +1,13 @@
 <script>
+ import { createEventDispatcher } from 'svelte';
  export let img;
  export let title;
- export let id;
- export let click;
+ const dispatch = createEventDispatcher();
  
- function keyAction(id) {
+ function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   click(id);
+   dispatch('click');
   }
  }
 </script>
@@ -27,6 +27,6 @@
  }
 </style>
 
-<div class="item" role="button" tabindex="0" on:click={() => click({id})} on:keydown={() => keyAction({id})}>
+<div class="item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
  <img src={img} alt="{title}" />
 </div>
