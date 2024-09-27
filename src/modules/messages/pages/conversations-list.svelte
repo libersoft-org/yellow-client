@@ -5,10 +5,11 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
+
  let isModalOpen = false;
  let modalComponent = null;
 
-$: console.log('conversations-list.svelte: conversationsArray: ', $conversationsArray);
+ $: console.log('conversations-list.svelte: conversationsArray: ', $conversationsArray);
 
  function clickNew() {
   modalComponent = ModalConversationNew;
@@ -74,9 +75,9 @@ $: console.log('conversations-list.svelte: conversationsArray: ', $conversations
   </div>
  </div>
  {#if isModalOpen}
- <Modal title="New Conversation" onClose={() => isModalOpen = false}>
-  <ModalConversationNew onClose={() => isModalOpen = false} />
- </Modal>
+  <Modal title="New Conversation" onClose={() => isModalOpen = false}>
+   <ModalConversationNew onClose={() => isModalOpen = false} />
+  </Modal>
  {/if}
 
 {/if}

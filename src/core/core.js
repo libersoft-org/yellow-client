@@ -1,5 +1,5 @@
-import {get, writable, derived} from 'svelte/store';
-import {localStorageSharedStore} from '../lib/svelte-shared-store.js';
+import { get, writable, derived } from 'svelte/store';
+import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
@@ -130,10 +130,11 @@ accounts_config.subscribe(value => {
    }
 
    if (acc.enabled != config.enabled) {
-    if (config.enabled)
+    if (config.enabled) {
      _enableAccount(account);
-    else
+    } else {
      _disableAccount(account);
+    }
    }
   } else {
    // add new account
@@ -143,8 +144,11 @@ accounts_config.subscribe(value => {
 
    selectAccount(get(account).id);
 
-   if (config.enabled) _enableAccount(account);
-   else _disableAccount(account);
+   if (config.enabled) {
+    _enableAccount(account);
+   } else {
+    _disableAccount(account);
+   }
   }
  }
  // remove accounts that are not in config
@@ -211,9 +215,9 @@ function reconnectAccount(account) {
  console.log('Reconnecting account:', acc);
  if (!acc.enabled) return;
  acc.socket = new WebSocket(acc.credentials.server);
- acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', {event}));
- acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', {event}));
- acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', {event}));
+ acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', { event }));
+ acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', { event }));
+ acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', { event }));
  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
  acc.events.addEventListener('open', event => {
   console.log('Connected to WebSocket:', event);
@@ -237,7 +241,7 @@ function reconnectAccount(account) {
 function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
- send(acc, 'user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
+ send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
   console.log('Login response:', res);
   acc.loggingIn = false;
   if (res.error !== 0) {
@@ -260,7 +264,7 @@ export function order(dict) {
 function initModuleData(account) {
  let acc = get(account);
  acc.module_data = {
-  contacts: {id: 'contacts', decl: {id: 'contacts', name: 'Contacts'}},
+  contacts: { id: 'contacts', decl: { id: 'contacts', name: 'Contacts' } },
   messages: modules[0].initData(acc)
  };
  account.update(v => v);
@@ -281,8 +285,8 @@ export function deinitModuleData(acc) {
 function disconnectAccount(account) {
  let acc = get(account);
  if (acc.socket) {
-  send(acc, 'user_unsubscribe', {event: 'new_message'});
-  send(acc, 'user_unsubscribe', {event: 'seen_message'});
+  send(acc, 'user_unsubscribe', { event: 'new_message' });
+  send(acc, 'user_unsubscribe', { event: 'seen_message' });
   acc.socket.close();
   acc.socket = null;
   acc.requests = {};
@@ -306,7 +310,7 @@ function handleSocketResponse(acc, res) {
   // it is event:
   console.log('GOT EVENT', res);
   //TODO: send event to messages module:
-  acc.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
+  acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server:', res);
 }
 
@@ -327,11 +331,11 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  }
  const requestID = generateRequestID();
 
- const req = {requestID};
+ const req = { requestID };
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command) req.command = command;
  if (params) req.params = params;
- acc.requests[requestID] = {req, callback};
+ acc.requests[requestID] = { req, callback };
  console.log('------------------');
  console.log('SENDING COMMAND:');
  console.log(req);
@@ -346,4 +350,4 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
-export default {hideSidebarMobile, isClientFocused, accounts};
+export default { hideSidebarMobile, isClientFocused, accounts };
