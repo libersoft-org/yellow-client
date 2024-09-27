@@ -81,7 +81,7 @@ to do: it should actually not depend on module_data_derived, but on a store that
 this way, we should be able to ensure that the store updates *after* selectedModule changes.
 module components would unmount before they'd see their messagesArray change to null.
 As it is now, every module content and sideba component has to check for nulls.
- */
+*/
 export function relay(md, data_name) {
  let r = derived(md, ($md, set) => {
   if (!$md) {
@@ -107,7 +107,7 @@ export function relay(md, data_name) {
 
 accounts_config.subscribe(value => {
  console.log('ACCOUNTS CONFIG:', value);
- //TODO: implement configuration of order of accounts
+ //TODO: implement configuration of accounts order
  let accounts_list = get(accounts);
  console.log('EXISTING ACCOUNTS (stores):', accounts_list);
  for (let config of value) {
@@ -204,8 +204,7 @@ function constructAccount(id, title, credentials, enabled) {
 function _enableAccount(account) {
  get(account).enabled = true;
  account.update(v => v);
-
- // todo use admin logic
+ // TODO: use admin logic
  reconnectAccount(account);
 }
 
@@ -218,17 +217,13 @@ function _disableAccount(account) {
 
 function reconnectAccount(account) {
  let acc = get(account);
-
  console.log('Reconnecting account:', acc);
-
  if (!acc.enabled) return;
-
  acc.socket = new WebSocket(acc.credentials.server);
  acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', { event }));
  acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', { event }));
  acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', { event }));
  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
-
  acc.events.addEventListener('open', event => {
   console.log('Connected to WebSocket:', event);
   if (acc.loggingIn) sendLoginCommand(account);
@@ -296,11 +291,9 @@ function disconnectAccount(acc) {
  if (acc.socket) {
   acc.send('user_unsubscribe', { event: 'new_message' });
   acc.send('user_unsubscribe', { event: 'seen_message' });
-
   acc.socket.close();
   acc.socket = null;
   acc.requests = {};
-
   console.log('Account disconnected');
  }
 }
@@ -345,12 +338,10 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  if (command) req.command = command;
  if (params) req.params = params;
  acc.requests[requestID] = { req, callback };
-
  console.log('------------------');
  console.log('SENDING COMMAND:');
  console.log(req);
  console.log('------------------');
-
  acc.socket.send(JSON.stringify(req));
  return requestID;
 }

@@ -1,6 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- import "../app.css";
+ import '../app.css';
  import { selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -26,7 +26,7 @@
   }
  }
 
- //this should probably be a part of module decl
+ //this should probably be a part of module decl:
 
  const modules = {
   messages: {
