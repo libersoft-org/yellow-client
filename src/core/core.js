@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 import { get, writable, derived } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
+=======
+import { get, writable } from 'svelte/store';
+import Socket from './socket.js';
+
+const events = new EventTarget();
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 
+<<<<<<< HEAD
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 
@@ -191,6 +199,17 @@ export function addAccount(credentials) {
 }
 
 function constructAccount(id, title, credentials, enabled) {
+=======
+export let accounts = writable([constructAccount(1, 'Account 1', { server: '', address: '', password: '' })]);
+
+export let account = writable(get(accounts)[0]);
+
+export function selectAccount(id) {
+ account.set(get(accounts).find(acc => acc.id === id));
+}
+
+function constructAccount(id, title, credentials) {
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
  let account = {
   id,
   title,
@@ -198,14 +217,23 @@ function constructAccount(id, title, credentials, enabled) {
   enabled,
   events: new EventTarget(),
   requests: {},
+<<<<<<< HEAD
   module_data: {}
+=======
+  module_data: writable({})
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
  };
 
  return writable(account);
 }
 
+<<<<<<< HEAD
 function _enableAccount(account) {
  get(account).enabled = true;
+=======
+function enableAccount(account) {
+ account.enabled = true;
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
  account.update(v => v);
 
  // todo use admin logic
@@ -219,6 +247,13 @@ function _disableAccount(account) {
  disconnectAccount(account);
 }
 
+<<<<<<< HEAD
+=======
+/*export function status() {
+ return socket?.readyState;
+}*/
+
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
 function reconnectAccount(account) {
  let acc = get(account);
 
@@ -248,6 +283,7 @@ function reconnectAccount(account) {
   acc.loggingIn = false;
  });
 
+<<<<<<< HEAD
  acc.loggingIn = true;
 }
 
@@ -289,12 +325,25 @@ function initModuleData(account) {
  }
 
  modules[0].initComms(acc);
+=======
+ initModuleData(acc);
+}
+
+function initModuleData(acc) {
+ acc.module_data.set({
+  contacts: {},
+  messages: initMessagesModuleData(acc)
+ });
+
+ initMessagesModuleComms(acc);
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
 }
 
 export function deinitModuleData(acc) {
  modules[0].deinitData(acc);
 }
 
+<<<<<<< HEAD
 function disconnectAccount(acc) {
  if (acc.socket) {
   acc.send('user_unsubscribe', { event: 'new_message' });
@@ -303,12 +352,26 @@ function disconnectAccount(acc) {
   acc.socket.close();
   acc.socket = null;
   acc.requests = {};
+=======
+function disconnectAccount(account) {
+ if (account.socket) {
+  Socket.send('user_unsubscribe', { event: 'new_message' });
+  Socket.send('user_unsubscribe', { event: 'seen_message' });
+
+  account.socket.close();
+  account.socket = null;
+  account.requests = {};
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
 
   console.log('Account disconnected');
  }
 }
 
+<<<<<<< HEAD
 function handleSocketResponse(acc, res) {
+=======
+function handleSocketResponse(account, res) {
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
  //console.log('RESPONSE', res);
  if (res.requestID) {
   // it is response to command:
@@ -326,14 +389,31 @@ function handleSocketResponse(acc, res) {
  } else console.log('Unknown command from server:', res);
 }
 
+<<<<<<< HEAD
 export function getRandomString(length = 40) {
+=======
+function getRandomString(length = 40) {
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
  let result = '';
  while (result.length < length) result += Math.random().toString(36).substring(2);
  return result.substring(0, length);
 }
 
+<<<<<<< HEAD
 export function send(acc, command, params = {}, sendSessionID = true, callback = null) {
  if (!acc) {
+=======
+export function send(account, command, params = {}, sendSessionID = true, callback = null) {
+ //console.log('------------------');
+ //console.log('SENDING COMMAND:');
+ //console.log('COMMAND:', command);
+ //console.log('PARAMS:', params);
+ //console.log('SEND SESSION ID:', sendSessionID);
+ //console.log('CALLBACK:', callback);
+ //console.log('------------------');
+
+ if (!account) {
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
   console.error('Error while sending command: account is not defined');
   return;
  }
@@ -364,4 +444,10 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
+<<<<<<< HEAD
 export default { hideSidebarMobile, isClientFocused, accounts };
+=======
+//userAddress, sessionID
+
+export default { hideSidebarMobile, isClientFocused, accounts, account };
+>>>>>>> 43cd54923b8f25b6f7a82fed6ccfe4c40d34e375
