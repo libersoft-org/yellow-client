@@ -175,21 +175,6 @@ export function selectAccount(id) {
  }
 }
 
-export function addAccount(credentials) {
- accounts_config.update(v => [
-  ...v,
-  {
-   id: getRandomString(),
-   title: 'New Account',
-   enabled: false,
-   credentials
-  }
- ]);
-}
-
-export function delAccount(id) {
- // TODO
-}
 
 function constructAccount(id, title, credentials, enabled) {
  let account = {
@@ -234,7 +219,7 @@ function reconnectAccount(account) {
  });
 
  acc.events.addEventListener('error', event => {
-  console.error('WebSocket error:', event);
+  console.log('WebSocket error:', event);
   acc.error = 'Cannot connect to server';
   acc.loggingIn = false;
  });

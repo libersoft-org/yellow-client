@@ -3,7 +3,7 @@
  import { active_account, order } from '../../core/core.js';
 
  let module_data;
- $: module_data = $active_account?.module_data || {"nope": "nope"};
+ $: module_data = $active_account?.module_data || [];
  $: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
 
@@ -49,7 +49,7 @@
 
 <div class="items">
 
- {#if module_data_ordered?.length > 0}
+ {#if module_data_ordered?.length && module_data_ordered.length > 0}
 
   {#each module_data_ordered as module (module.id)}
 

@@ -1,18 +1,51 @@
 <script>
- import { onMount } from 'svelte';
- import { addAccount } from '../core.js';
+ import {onMount} from 'svelte';
+ import {addAccount, findAccount, saveAccount} from '../accounts_config.js';
  import Button from '../components/button.svelte';
+ import {get} from "svelte/store";
+ import {accounts_config} from "../core.js";
+
  export let onClose;
- let credentials;
+ export let id;
+
+ let serverElem;
+
  let error;
 
- onMount(() => address.focus());
+ let credentials_address;
+ let credentials_server;
+ let credentials_password;
+ let config_enabled;
+
+ onMount(() => {
+  serverElem.focus();
+  if (id !== null) {
+   let acc = findAccount(id);
+   console.log('acc', acc);
+   let credentials = acc.credentials;
+
+   credentials_address = credentials.address;
+   credentials_server = credentials.server;
+   credentials_password = credentials.password;
+   config_enabled = acc.enabled;
+  } else {
+   credentials_address = '';
+   credentials_server = '';
+   credentials_password = '';
+   config_enabled = true;
+  }
+ });
 
  function clickAdd() {
-  if (address.value) {
-   addAccount(credentials);
-   onClose();
-  }
+  addAccount({enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}});
+  onClose();
+
+ }
+
+ function clickSave() {
+  saveAccount(id, {enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}, id});
+  onClose();
+
  }
 
  function keyEnter() {
@@ -60,15 +93,19 @@
 <div class="form">
  <div class="group">
   <div class="label">Server:</div>
-  <input type="text" placeholder="wss://your_server/" bind:value={credentials.server} on:keydown={keyEnter} />
+  <input type="text" placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} bind:this={serverElem}/>
  </div>
  <div class="group">
   <div class="label">Address:</div>
-  <input type="text" placeholder="user@domain.tld" bind:value={credentials.address} on:keydown={keyEnter} />
+  <input type="text" placeholder="user@domain.tld" bind:value={credentials_address} on:keydown={keyEnter}/>
  </div>
  <div class="group">
   <div class="label">Password:</div>
-  <input type="password" placeholder="Your password" bind:value={credentials.password} on:keydown={keyEnter} />
+  <input type="password" placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter}/>
+ </div>
+ <div class="group">
+  <div class="label">Enabled:
+   <input type="checkbox" bind:checked={config_enabled}/></div>
  </div>
  {#if error}
   <div class="error">
@@ -76,5 +113,9 @@
    <div>{error}</div>
   </div>
  {/if}
- <Button on:click={clickAdd} text="Add the account" />
+ {#if id === null}
+  <Button on:click={clickAdd} text="Add the account"/>
+ {:else}
+  <Button on:click={clickSave} text="Save"/>
+ {/if}
 </div>

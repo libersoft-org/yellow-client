@@ -1,5 +1,5 @@
 <script>
- import { accounts_config, hideSidebarMobile } from '../core.js';
+ import { selected_corepage_id, accounts_config, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
  import ActionItem from '../components/accounts-action-item.svelte';
  import Modal from '../components/modal.svelte';
@@ -12,7 +12,7 @@
 
  function back() {
   hideSidebarMobile.set(false);
-  // TODO: switch back to welcome screen
+  selected_corepage_id.set(null);
  }
 
  function addAccountModal() {
@@ -42,7 +42,7 @@
   background: url('/img/background.webp') repeat;
   background-size: 400px;
  }
- 
+
  .table {
   display: inline-block;
  }
@@ -97,7 +97,6 @@
 </style>
 
 <div class="accounts">
- // TODO: back() should switch content back to welcome screen<br />
  <div class="buttons">
   <Button img="img/back.svg" text="Back" on:click={back} hiddenOnDesktop={true} />
   <Button img="img/accounts-black.svg" text="Add a new account" on:click={addAccountModal} />
@@ -134,7 +133,7 @@
 </div>
 {#if isAddEditAccountModalOpen}
  <Modal title="Add a new account" onClose={() => isAddEditAccountModalOpen = false}>
-  <ModalAccountsAddEdit onClose={() => isAddEditAccountModalOpen = false} />
+  <ModalAccountsAddEdit id={idItem} onClose={() => isAddEditAccountModalOpen = false} />
  </Modal>
 {/if}
 {#if isDelAccountModalOpen}
