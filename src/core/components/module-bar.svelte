@@ -9,8 +9,9 @@
 
  export let onSelectModule;
 
- function clickSetModule(name) {
-  onSelectModule(name);
+ function clickSetModule(id) {
+  console.log('clickSetModule: ' + id);
+  onSelectModule(id);
  }
 
  function keySetModule(name) {
@@ -39,11 +40,16 @@
   width: 30px;
   height: 30px;
  }
+
+ .message {
+  color: #fff;
+
+ }
 </style>
 
 <div class="items">
 
- {#if module_data_ordered}
+ {#if module_data_ordered?.length > 0}
 
   {#each module_data_ordered as module (module.id)}
 
@@ -53,7 +59,7 @@
   {/each}
 
  {:else}
-  <div class="item">No modules</div>
+  <div class="message" >(No modules...)</div>
  {/if}
 
 

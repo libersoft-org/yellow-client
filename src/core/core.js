@@ -5,6 +5,7 @@ import {localStorageSharedStore} from '../lib/svelte-shared-store.js';
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 
+export let selected_module_id = writable(null);
 
 let modules = [];
 
@@ -173,7 +174,12 @@ export function toggleAccountEnabled(id) {
 
 export function selectAccount(id) {
  console.log('SELECT ACCOUNT', id);
+ let old_selected_module = get(selected_module_id);
+ selected_module_id.set(null);
  active_account_id.set(id);
+ if (get(active_account).module_data[old_selected_module]) {
+  selected_module_id.set(old_selected_module);
+ }
 }
 
 export function addAccount(credentials) {
@@ -278,6 +284,12 @@ function initModuleData(account) {
  account.update(v => v);
  console.log('initModuleData:', acc);
  console.log('initModuleData:', acc.module_data);
+
+ if (!get(selected_module_id)) {
+  if (acc.module_data.messages)
+   selected_module_id.set('messages');
+ }
+
  modules[0].initComms(acc);
 }
 

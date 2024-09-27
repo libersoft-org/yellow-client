@@ -1,7 +1,7 @@
 <script>
  import {onMount, setContext} from 'svelte';
  import "../app.css";
- import Core from '../core/core.js';
+ import { selected_module_id } from '../core/core.js';
  import {  isClientFocused, hideSidebarMobile} from '../core/core.js';
  import Login from '../core/pages/login.svelte';
  import Menu from '../core/components/menu.svelte';
@@ -19,6 +19,9 @@
  import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
  import Contact from '../modules/contacts/pages/contact-detail.svelte';
 
+ /*
+  this should probably be a part of module decl
+   */
  const modules = {
   messages: {
    id: 'messages',
@@ -32,9 +35,6 @@
   }
  };
 
- //$: module_data = $account?.module_data[selectedModule?.id];
- //$: setContext('module_data', $module_data);
-
  const product = 'Yellow';
  const version = '0.01';
  const link = 'https://yellow.libersoft.org';
@@ -46,6 +46,9 @@
  let resizer;
  let isResizingSideBar = false;
  let selectedModule;
+
+ $: selectedModule = modules[$selected_module_id];
+  $: console.log('selectedModule: ', selectedModule);
 
  onMount(() => {
   window.addEventListener('focus', () => isClientFocused.update(() => true));
@@ -64,8 +67,8 @@
   }
  }
 
- function onSelectModule(name) {
-  selectedModule = modules[name];
+ function onSelectModule(id) {
+  selected_module_id.set(id);
  }
 
  function startResizeSideBar() {
@@ -209,8 +212,8 @@
  <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
   <Menu bind:isMenuOpen {product} {version} {link}/>
   <MenuBar bind:isMenuOpen/>
-  <ModuleBar {onSelectModule}/>
   <AccountBar/>
+  <ModuleBar {onSelectModule}/>
   {#if selectedModule}
    <svelte:component this={selectedModule.sidebar}/>
   {:else}

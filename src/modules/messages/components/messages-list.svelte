@@ -4,13 +4,7 @@
  import { messagesArray } from '../messages.js';
  import { active_account } from '../../../core/core.js';
 
-/*
- import { md } from '../messages.js';
- let messagesArray;
- $: messagesArray = $md.messagesArray;
-*/
-
-
+ $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
 
  let messages_elem;
  let wasScrolledToBottom = true;

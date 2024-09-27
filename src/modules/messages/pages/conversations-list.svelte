@@ -60,6 +60,8 @@ $: console.log('conversations-list.svelte: conversationsArray: ', $conversations
 
 </style>
 
+{#if $conversationsArray != null}
+ {/if}
 
 <div class="conversations">
  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
