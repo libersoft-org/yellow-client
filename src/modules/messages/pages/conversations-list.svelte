@@ -61,21 +61,22 @@ $: console.log('conversations-list.svelte: conversationsArray: ', $conversations
 </style>
 
 {#if $conversationsArray != null}
+
+ <div class="conversations">
+  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
+   <img src="img/add.svg" alt="New conversation">
+   <div>New conversation</div>
+  </div>
+  <div class="items">
+   {#each $conversationsArray as c (c.address)}
+    <ConversationListItem {c} {clickItem} />
+   {/each}
+  </div>
+ </div>
+ {#if isModalOpen}
+ <Modal title="New Conversation" onClose={() => isModalOpen = false}>
+  <ModalConversationNew onClose={() => isModalOpen = false} />
+ </Modal>
  {/if}
 
-<div class="conversations">
- <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
-  <img src="img/add.svg" alt="New conversation">
-  <div>New conversation</div>
- </div>
- <div class="items">
-  {#each $conversationsArray as c (c.address)}
-   <ConversationListItem {c} {clickItem} />
-  {/each}
- </div>
-</div>
-{#if isModalOpen}
-<Modal title="New Conversation" onClose={() => isModalOpen = false}>
- <ModalConversationNew onClose={() => isModalOpen = false} />
-</Modal>
 {/if}
