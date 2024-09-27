@@ -37,5 +37,5 @@ git add .
 git status
 git commit -m "$1"
 #git branch -M $BRANCH
-git push# -u origin $BRANCH
+git push # -u origin $BRANCH
 git status
