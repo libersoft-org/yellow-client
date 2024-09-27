@@ -110,7 +110,7 @@
     <th class="center">Server</th>
     <th class="center">Address</th>
     <th class="center">Enabled</th>
-    <th>Action</th>
+    <th class="center">Action</th>
    </thead>
    <tbody>
     {#each $accounts_config as a (a.id)}
@@ -120,7 +120,7 @@
       <td class="center">{a.credentials.server}</td>
       <td class="center">{a.credentials.address}</td>
       <td class="center">{a.enabled ? 'Yes' : 'No'}</td>
-      <td>
+      <td class="center">
        <div class="action-items">
         <ActionItem img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
         <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id, a.title)} />
