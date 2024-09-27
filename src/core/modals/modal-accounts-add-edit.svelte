@@ -16,6 +16,7 @@
  let credentials_server;
  let credentials_password;
  let config_enabled;
+ let config_title;
 
  onMount(() => {
   serverElem.focus();
@@ -28,22 +29,24 @@
    credentials_server = credentials.server;
    credentials_password = credentials.password;
    config_enabled = acc.enabled;
+   config_title = acc.title;
   } else {
    credentials_address = '';
    credentials_server = '';
    credentials_password = '';
    config_enabled = true;
+   config_title = 'My account';
   }
  });
 
  function clickAdd() {
-  addAccount({enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}});
+  addAccount({enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}, title: config_title});
   onClose();
 
  }
 
  function clickSave() {
-  saveAccount(id, {enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}, id});
+  saveAccount(id, {enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}, title: config_title});
   onClose();
 
  }
@@ -91,6 +94,10 @@
 </style>
 
 <div class="form">
+ <div class="group">
+  <div class="label">Title:</div>
+  <input type="text" bind:value={config_title} on:keydown={keyEnter}/>
+ </div>
  <div class="group">
   <div class="label">Server:</div>
   <input type="text" placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} bind:this={serverElem}/>
