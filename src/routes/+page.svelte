@@ -25,9 +25,9 @@
  let isWelcomeWizardOpen = true;
 
  const welcomeWizardSteps = [
-  { title: 'Step 1', component: WelcomeWizardStep1 },
-  { title: 'Step 2', component: WelcomeWizardStep2 },
-  { title: 'Step 3', component: WelcomeWizardStep3 }
+  { title: 'Welcome to Yellow', component: WelcomeWizardStep1 },
+  { title: 'Connect your account', component: WelcomeWizardStep2 },
+  { title: 'All set!', component: WelcomeWizardStep3 }
  ];
 
  const corePages = {
