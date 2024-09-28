@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import { get } from "svelte/store";
  import '../app.css';
- import { accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile } from '../core/core.js';
+ import { accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
  import ModuleBar from '../core/components/module-bar.svelte';
@@ -15,17 +15,18 @@
  import WelcomeWizardStep2 from '../core/wizards/welcome-step2.svelte';
  import WelcomeWizardStep3 from '../core/wizards/welcome-step3.svelte';
 
- //Messages:
- import ConversationsList from '../modules/messages/pages/conversations-list.svelte';
- import ConversationsMain from '../modules/messages/pages/conversations-main.svelte';
-
- //Contacts:
- import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
- import Contact from '../modules/contacts/pages/contact-detail.svelte';
- 
- //Wallet:
- import WalletSidebar from '../modules/wallet/pages/wallet-sidebar.svelte';
- import WalletContent from '../modules/wallet/pages/wallet-content.svelte';
+ //
+ // //Messages:
+ // import ConversationsList from '../modules/messages/pages/conversations-list.svelte';
+ // import ConversationsMain from '../modules/messages/pages/conversations-main.svelte';
+ //
+ // //Contacts:
+ // import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
+ // import Contact from '../modules/contacts/pages/contact-detail.svelte';
+ //
+ // //Wallet:
+ // import WalletSidebar from '../modules/wallet/pages/wallet-sidebar.svelte';
+ // import WalletContent from '../modules/wallet/pages/wallet-content.svelte';
 
  let isWelcomeWizardOpen = false;
 
@@ -44,7 +45,7 @@
  }
 
  //this should probably be a part of module decl:
-
+/*
  const modules = {
   messages: {
    id: 'messages',
@@ -62,7 +63,7 @@
    content: WalletContent
   }
  };
-
+*/
  const product = 'Yellow';
  const version = '0.01';
  const link = 'https://yellow.libersoft.org';
@@ -77,10 +78,12 @@
 
  $: selectedCorePage = corePages[$selected_corepage_id];
  $: console.log('selectedCorePage: ', selectedCorePage);
- $: selectedModule = modules[$selected_module_id];
+ $: selectedModule = getModuleDecls()[$selected_module_id];
  $: console.log('selectedModule: ', selectedModule);
 
  onMount(() => {
+  console.log('+page onMount');
+  getModuleDecls();
   window.addEventListener('focus', () => isClientFocused.update(() => true));
   window.addEventListener('blur', () => isClientFocused.update(() => false));
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');

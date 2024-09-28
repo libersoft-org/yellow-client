@@ -4,6 +4,12 @@ import DOMPurify from 'dompurify';
 import { send, getRandomString } from '../../core/core.js';
 import { listConversations } from './conversations.js';
 
+
+//Messages:
+import ConversationsList from '../modules/messages/pages/conversations-list.svelte';
+import ConversationsMain from '../modules/messages/pages/conversations-main.svelte';
+
+
 class Message {
  constructor(acc, data) {
   Object.assign(this, data);
@@ -75,7 +81,9 @@ export function deinitData(acc) {
  acc.module_data.messages = null;
 }
 
-registerModule('messages', { initData, initComms, deinitData });
+console.log('registerModule messages');
+registerModule('messages', { initData, initComms, deinitData, panels: { ConversationsList, ConversationsMain } });
+console.log('registerModule messages done');
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
