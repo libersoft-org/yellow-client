@@ -1,6 +1,11 @@
 <script>
  import { onMount } from 'svelte';
  import Wallet from '../wallet.js';
+ import Send from './send.svelte';
+ import Receive from './receive.svelte';
+ import Balance from './balance.svelte';
+ import History from './history.svelte';
+ import Settings from './settings.svelte';
  import Dropdown from "../components/dropdown.svelte";
  import Button from '../../../core/components/button.svelte';
  let section = 'balance';
@@ -28,7 +33,7 @@
  }
 
  .wallet .content {
-  min-width: 768px;
+  width: 768px;
   max-width: calc(100% - 10px);
   overflow: auto;
   border: 1px solid #000;
@@ -40,7 +45,6 @@
  .wallet .content .header {
   display: flex;
   padding: 10px;
-  font-weight: bold;
   background-color: #fd1;
  }
 
@@ -116,16 +120,19 @@
     <Button text="Receive" on:click={() => setSection('receive')} />
     <Button text="Balance" on:click={() => setSection('balance')} />
     <Button text="History" on:click={() => setSection('history')}  />
+    <Button text="Settings" on:click={() => setSection('settings')}  />
    </div>
    <div class="section">
     {#if section == 'send'}
-     send
+     <Send />
     {:else if section == 'receive'}
-     receive
+     <Receive />
     {:else if section == 'balance'}
-     balance
+     <Balance />
     {:else if section == 'history'}
-     history
+     <History />
+    {:else if section == 'settings'}
+     <Settings />
     {/if}
    </div>
   </div>
