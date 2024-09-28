@@ -1,5 +1,6 @@
 <script>
  import { onMount } from 'svelte';
+ import { get } from "svelte/store";
  import '../app.css';
  import { accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
@@ -21,7 +22,10 @@
  //Contacts:
  import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
  import Contact from '../modules/contacts/pages/contact-detail.svelte';
- import { get } from "svelte/store";
+ 
+ //Wallet:
+ import WalletSidebar from '../modules/wallet/pages/wallet-sidebar.svelte';
+ import WalletContent from '../modules/wallet/pages/wallet-content.svelte';
 
  let isWelcomeWizardOpen = false;
 
@@ -51,6 +55,11 @@
    id: 'contacts',
    sidebar: ContactsList,
    content: Contact
+  },
+  wallet: {
+   id: 'wallet',
+   sidebar: WalletSidebar,
+   content: WalletContent
   }
  };
 

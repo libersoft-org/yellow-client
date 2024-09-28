@@ -267,8 +267,9 @@ export function order(dict) {
 function initModuleData(account) {
  let acc = get(account);
  acc.module_data = {
+  messages: modules[0].initData(acc),
   contacts: { id: 'contacts', decl: { id: 'contacts', name: 'Contacts' } },
-  messages: modules[0].initData(acc)
+  wallet: { id: 'wallet', decl: { id: 'wallet', name: 'wallet' } }
  };
  account.update(v => v);
  console.log('initModuleData:', acc);
