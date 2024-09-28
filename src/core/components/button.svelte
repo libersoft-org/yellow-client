@@ -4,6 +4,7 @@
  export let text = '';
  export let disabled = false;
  export let hiddenOnDesktop = false;
+ export let width;
  const dispatch = createEventDispatcher();
 
  function handleKeydown(event) {
@@ -46,7 +47,7 @@
  }
 </style>
 
-<div class="button {disabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+<div class="button {disabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click on:keydown={handleKeydown}>
  <slot>
   {#if img}
    <img src={img} alt={text} />

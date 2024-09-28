@@ -116,11 +116,11 @@
     <div class="fiat">({Wallet.balance.fiat.amount} {Wallet.balance.fiat.currency})</div>
    </div>
    <div class="buttons">
-    <Button text="Send" on:click={() => setSection('send')} />
-    <Button text="Receive" on:click={() => setSection('receive')} />
-    <Button text="Balance" on:click={() => setSection('balance')} />
-    <Button text="History" on:click={() => setSection('history')}  />
-    <Button text="Settings" on:click={() => setSection('settings')}  />
+    <Button width="80px" text="Send" on:click={() => setSection('send')} />
+    <Button width="80px" text="Receive" on:click={() => setSection('receive')} />
+    <Button width="80px" text="Balance" on:click={() => setSection('balance')} />
+    <Button width="80px" text="History" on:click={() => setSection('history')}  />
+    <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
    </div>
    <div class="section">
     {#if section == 'send'}
