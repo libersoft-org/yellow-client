@@ -112,8 +112,8 @@
   </div>
   <div class="body">
    <div class="balance">
-    <div class="crypto">{Wallet.balance.crypto}</div>
-    <div class="fiat">({Wallet.balance.fiat})</div>
+    <div class="crypto">{Wallet.balance.crypto.amount} {Wallet.balance.crypto.currency}</div>
+    <div class="fiat">({Wallet.balance.fiat.amount} {Wallet.balance.fiat.currency})</div>
    </div>
    <div class="buttons">
     <Button text="Send" on:click={() => setSection('send')} />

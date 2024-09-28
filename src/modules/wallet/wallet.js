@@ -1,7 +1,13 @@
 let address = '0x123abc...456def';
 let balance = {
- crypto: '8.33 MATIC',
- fiat: '5.20 USD'
+ crypto: {
+  amount: 8.33,
+  currency: 'MATIC'
+ },
+ fiat: {
+  amount: 5.2,
+  currency: 'USD'
+ }
 };
 let wallets = [
  {
