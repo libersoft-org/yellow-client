@@ -1301,6 +1301,72 @@ const networks = [
    iconURL: 'https://cryptologos.cc/logos/taiko-taiko-logo.png'
   },
   explorerURL: 'https://testnet.explorer.taiko.xyz'
+ },
+ {
+  id: 122,
+  name: 'Constellation (Hypergraph) - Mainnet',
+  chainID: 421620,
+  rpcURLs: ['https://api.constellation.network/rpc', 'https://rpc.constellation.network'],
+  currency: {
+   symbol: 'DAG',
+   iconURL: 'https://cryptologos.cc/logos/constellation-dag-logo.png'
+  },
+  explorerURL: 'https://explorer.constellation.network'
+ },
+ {
+  id: 123,
+  name: 'Constellation (Hypergraph) - Testnet',
+  chainID: 421620, // Ověřte u oficiálních zdrojů
+  rpcURLs: ['https://rpc.testnet.constellation.network', 'https://constellation-testnet.public.blastapi.io'],
+  currency: {
+   symbol: 'DAG',
+   iconURL: 'https://cryptologos.cc/logos/constellation-dag-logo.png'
+  },
+  explorerURL: 'https://explorer.testnet.constellation.network'
+ },
+ {
+  id: 124,
+  name: 'Clover Finance - Arbitrum - Mainnet',
+  chainID: 42162,
+  rpcURLs: ['https://clover-arbitrum.rpc.com', 'https://clover-arbitrum.public.blastapi.io'],
+  currency: {
+   symbol: 'CLV',
+   iconURL: 'https://cryptologos.cc/logos/clover-finance-clv-logo.png'
+  },
+  explorerURL: 'https://explorer.clover.finance/arbitrum'
+ },
+ {
+  id: 125,
+  name: 'Clover Finance - Arbitrum - Testnet',
+  chainID: 421611,
+  rpcURLs: ['https://clover-arbitrum-testnet.rpc.com', 'https://clover-arbitrum-testnet.public.blastapi.io'],
+  currency: {
+   symbol: 'tCLV',
+   iconURL: 'https://cryptologos.cc/logos/clover-finance-clv-logo.png'
+  },
+  explorerURL: 'https://explorer.clover.finance/arbitrum/testnet'
+ },
+ {
+  id: 126,
+  name: 'Zora - Mainnet',
+  chainID: 1337,
+  rpcURLs: ['https://rpc.zora.network', 'https://zora-mainnet.public.blastapi.io'],
+  currency: {
+   symbol: 'ZORA',
+   iconURL: 'https://cryptologos.cc/logos/zora-zora-logo.png'
+  },
+  explorerURL: 'https://explorer.zora.network'
+ },
+ {
+  id: 127,
+  name: 'Zora - Testnet',
+  chainID: 1338,
+  rpcURLs: ['https://rpc.testnet.zora.network', 'https://zora-testnet.public.blastapi.io'],
+  currency: {
+   symbol: 'tZORA',
+   iconURL: 'https://cryptologos.cc/logos/zora-zora-logo.png'
+  },
+  explorerURL: 'https://explorer.testnet.zora.network'
  }
 ];
 
