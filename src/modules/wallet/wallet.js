@@ -3,7 +3,17 @@ let balance = {
  crypto: '8.33 MATIC',
  fiat: '5.20 USD'
 };
-const networks = [
+let wallets = [
+ {
+  id: 1,
+  name: 'My Yellow Wallet 1'
+ },
+ {
+  id: 2,
+  name: 'My Yellow Wallet 2'
+ }
+];
+let networks = [
  {
   id: 1,
   name: 'Ethereum - Mainnet',

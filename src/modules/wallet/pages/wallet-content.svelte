@@ -1,9 +1,16 @@
 <script>
+ import { onMount } from 'svelte';
  import Wallet from '../wallet.js';
  import Dropdown from "../components/dropdown.svelte";
  import Button from '../../../core/components/button.svelte';
- import wallet from '../wallet.js';
  let section = 'balance';
+ let walletsData = [];
+ let networksData = [];
+
+ onMount(() => {
+  walletsData = Wallet.wallets.map(item => ({ id: item.id, text: item.name }));
+  networksData = Wallet.networks.map(item => ({ id: item.id, text: item.name }));
+ });
 
  function setSection(name) {
   section = name;
@@ -89,10 +96,10 @@
  <div class="content">
   <div class="header">
    <div class="left">
-    <Dropdown items={Wallet.networks} />
+    <Dropdown items={networksData} />
    </div>
    <div class="center">
-    <div><Dropdown items={Wallet.wallets} /></div>
+    <div><Dropdown items={walletsData} /></div>
     <div>{Wallet.address}</div>
    </div>
    <div class="right">
