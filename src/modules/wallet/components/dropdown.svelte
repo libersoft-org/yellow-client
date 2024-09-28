@@ -1,29 +1,26 @@
 <script>
- export let text = '';
+ export let items = null;
+ export let noOptionID = 0;
+ export let noOptionText = '---';
 </script>
 
 <style>
  .dropdown {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 5px;
+  border: 1px solid #000;
   border-radius: 10px;
-  background-color: #650;
+  font-family: inherit;
+  background-color: #fff;
   cursor: pointer;
- }
-
- .dropdown .text {
-  flex-grow: 1;
- }
-
- .dropdown img {
-  width: 20px;
-  height: 20px;
  }
 </style>
 
-<div class="dropdown">
- <div class="text">{text}</div>
- <div><img src="img/down-black.svg" alt="▼" /></div>
-</div>
+<select class="dropdown">
+ {#if items}
+  {#each items as i (i.id)}
+   <option id="{i.id}">{i.text}</option>
+  {/each}
+ {:else}
+  <option id="{noOptionID}">{noOptionText}</option>
+ {/if}
+</select>

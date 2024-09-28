@@ -1,8 +1,8 @@
 <script>
+ import Wallet from '../wallet.js';
  import Dropdown from "../components/dropdown.svelte";
  import Button from '../../../core/components/button.svelte';
- let balance = '8.33 MATIC';
- let balance_fiat = '5.20 USD';
+ import wallet from '../wallet.js';
  let section = 'balance';
 
  function setSection(name) {
@@ -38,17 +38,19 @@
  }
 
  .wallet .content .header .left {
-  flex-grow: 1;
+  flex: 1;
   background-color: red;
  }
 
  .wallet .content .header .center {
-  flex-grow: 1;
+  flex: 1;
+  text-align: center;
   background-color: orange;
  }
 
  .wallet .content .header .right {
-  flex-grow: 1;
+  flex: 1;
+  text-align: right;
   background-color: green;
  }
 
@@ -87,11 +89,11 @@
  <div class="content">
   <div class="header">
    <div class="left">
-    <Dropdown text="Polygon - mainnet" />
+    <Dropdown items={Wallet.networks} />
    </div>
    <div class="center">
-    <div><Dropdown text="My Yellow Wallet" /></div>
-    <div>0x123abc...456def</div>
+    <div><Dropdown items={Wallet.wallets} /></div>
+    <div>{Wallet.address}</div>
    </div>
    <div class="right">
     Right
@@ -99,8 +101,8 @@
   </div>
   <div class="body">
    <div class="balance">
-    <div class="crypto">{balance}</div>
-    <div class="fiat">({balance_fiat})</div>
+    <div class="crypto">{Wallet.balance.crypto}</div>
+    <div class="fiat">({Wallet.balance.fiat})</div>
    </div>
    <div class="buttons">
     <Button text="Send" on:click={() => setSection('send')} />
