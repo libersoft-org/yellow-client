@@ -14,28 +14,7 @@ export function registerModule(id, callbacks) {
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
-export const accounts_config = localStorageSharedStore('accounts_config', [
- {
-  id: 1,
-  title: 'Account 1',
-  enabled: false,
-  credentials: {
-   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-   address: 'user@example.com',
-   password: '123456789'
-  }
- },
- {
-  id: 2,
-  title: 'Account 2',
-  enabled: false,
-  credentials: {
-   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-   address: 'user2@example.com',
-   password: '123456789'
-  }
- }
-]);
+export const accounts_config = localStorageSharedStore('accounts_config', []);
 
 export let accounts = writable([]);
 
