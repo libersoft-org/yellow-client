@@ -1,1 +1,124 @@
-<div>Wallet - content page - not yet implemented</div>
+<script>
+ import Dropdown from "../components/dropdown.svelte";
+ import Button from '../../../core/components/button.svelte';
+ let balance = '8.33 MATIC';
+ let balance_fiat = '5.20 USD';
+ let section = 'balance';
+
+ function setSection(name) {
+  section = name;
+ }
+</script>
+
+<style>
+ .wallet {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  height: calc(100vh - 20px);
+  background: url('/img/background.webp') repeat;
+  background-size: 400px;
+ }
+
+ .wallet .content {
+  min-width: 768px;
+  max-width: calc(100% - 10px);
+  overflow: auto;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: var(--shadow);
+ }
+
+ .wallet .content .header {
+  display: flex;
+  padding: 10px;
+  font-weight: bold;
+  background-color: #fd1;
+ }
+
+ .wallet .content .header .left {
+  flex-grow: 1;
+  background-color: red;
+ }
+
+ .wallet .content .header .center {
+  flex-grow: 1;
+  background-color: orange;
+ }
+
+ .wallet .content .header .right {
+  flex-grow: 1;
+  background-color: green;
+ }
+
+ .wallet .content .body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+ }
+
+ .wallet .content .body .balance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+ }
+
+ .wallet .content .body .balance .crypto {
+  font-size: 25px;
+  font-weight: bold;
+ }
+
+ .wallet .content .body .balance .fiat {
+  font-size: 18px;
+  color: #555;
+ }
+
+ .wallet .content .body .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+ }
+</style>
+
+<div class="wallet">
+ <div class="content">
+  <div class="header">
+   <div class="left">
+    <Dropdown text="Polygon - mainnet" />
+   </div>
+   <div class="center">
+    <div><Dropdown text="My Yellow Wallet" /></div>
+    <div>0x123abc...456def</div>
+   </div>
+   <div class="right">
+    Right
+   </div>
+  </div>
+  <div class="body">
+   <div class="balance">
+    <div class="crypto">{balance}</div>
+    <div class="fiat">({balance_fiat})</div>
+   </div>
+   <div class="buttons">
+    <Button text="Send" on:click={() => setSection('send')} />
+    <Button text="Receive" on:click={() => setSection('receive')} />
+    <Button text="Balance" on:click={() => setSection('balance')} />
+    <Button text="History" on:click={() => setSection('history')}  />
+   </div>
+   <div class="section">
+    {#if section == 'send'}
+     send
+    {:else if section == 'receive'}
+     receive
+    {:else if section == 'balance'}
+     balance
+    {:else if section == 'history'}
+     history
+    {/if}
+   </div>
+  </div>
+ </div>
+</div>

@@ -2,11 +2,10 @@
  import { sendMessage } from '../messages.js';
  let elMessage;
 
-
  export function setBarFocus(_selectedConversation)
  {
-   console.log('setBarFocus:', _selectedConversation);
-   if (elMessage) elMessage.focus();
+  console.log('setBarFocus:', _selectedConversation);
+  if (elMessage) elMessage.focus();
  }
 
  function resizeMessage(event) {
