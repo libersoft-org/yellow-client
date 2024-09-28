@@ -81,9 +81,14 @@ export function deinitData(acc) {
  acc.module_data.messages = null;
 }
 
+
+console.log('module_decls:', JSON.stringify(getModuleDecls()));
+
 console.log('registerModule messages');
 registerModule('messages', { initData, initComms, deinitData, panels: { ConversationsList, ConversationsMain } });
 console.log('registerModule messages done');
+console.log('module_decls:', JSON.stringify(getModuleDecls()));
+
 
 export function listMessages(acc, address) {
  messagesArray.set([]);

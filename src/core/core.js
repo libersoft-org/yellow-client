@@ -10,6 +10,7 @@ export let selected_module_id = writable(null);
 
 // declarations of modules that this client supports
 let module_decls = [];
+console.log('module_decls:', JSON.stringify(module_decls));
 
 export function getModuleDecls() {
  console.log('GET MODULE DECLS:', module_decls);
@@ -276,6 +277,9 @@ export function order(dict) {
 
 function initModuleData(account) {
  let acc = get(account);
+
+ console.log('module_decls:', JSON.stringify(module_decls));
+
  acc.module_data = {
   messages: module_decls[0].initData(acc),
   contacts: { id: 'contacts', decl: { id: 'contacts', name: 'Contacts' } },
