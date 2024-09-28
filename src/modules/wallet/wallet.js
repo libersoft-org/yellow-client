@@ -1316,7 +1316,7 @@ const networks = [
  {
   id: 123,
   name: 'Constellation (Hypergraph) - Testnet',
-  chainID: 421620, // Ověřte u oficiálních zdrojů
+  chainID: 421620,
   rpcURLs: ['https://rpc.testnet.constellation.network', 'https://constellation-testnet.public.blastapi.io'],
   currency: {
    symbol: 'DAG',
