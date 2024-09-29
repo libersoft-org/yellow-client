@@ -280,9 +280,13 @@ function initModuleData(account) {
 
  for (const [module_id, decl] of Object.entries(module_decls)) {
   console.log('initModuleData module_id:', module_id, 'decl:', decl);
-  acc.module_data[module_id] = decl.callbacks.initData(acc);
+  if (decl.callbacks.initData)
+   acc.module_data[module_id] = decl.callbacks?.initData(acc);
+  else
+   acc.module_data[module_id] = {};
   acc.module_data[module_id].decl = decl;
-  decl.callbacks.initComms(acc);
+  if (decl.callbacks.initComms)
+   decl.callbacks.initComms(acc);
  }
 
  account.update(v => v);
@@ -291,7 +295,9 @@ function initModuleData(account) {
 }
 
 export function deinitModuleData(acc) {
- module_decls.messages.deinitData(acc);
+ for (const [module_id, decl] of Object.entries(module_decls)) {
+  decl?.deinitData(acc);
+ }
 }
 
 function disconnectAccount(account) {

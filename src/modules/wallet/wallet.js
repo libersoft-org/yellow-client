@@ -1,3 +1,16 @@
+import { registerModule } from "../../core/core.js";
+import WalletSidebar from './pages/wallet-sidebar.svelte';
+import WalletContent from './pages/wallet-content.svelte';
+
+registerModule('contacts', {
+ callbacks: {},
+ panels: {
+  sidebar: WalletSidebar,
+  content: WalletContent
+ }
+});
+
+
 let address = '0x123abc...456def';
 let balance = {
  crypto: {

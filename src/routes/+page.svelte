@@ -17,15 +17,9 @@
  import WelcomeWizardStep3 from '../core/wizards/welcome-step3.svelte';
 
 
- import _Messages from '../modules/messages/messages.js';
-
- // //Contacts:
- // import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
- // import Contact from '../modules/contacts/pages/contact-detail.svelte';
- //
- // //Wallet:
- // import WalletSidebar from '../modules/wallet/pages/wallet-sidebar.svelte';
- // import WalletContent from '../modules/wallet/pages/wallet-content.svelte';
+ import {} from '../modules/messages/messages.js';
+ import {} from '../modules/contacts/contacts.js';
+ import {} from '../modules/wallet/wallet.js';
 
  let isWelcomeWizardOpen = false;
 
