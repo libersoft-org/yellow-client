@@ -24,7 +24,7 @@ export function registerModule(id, decl) {
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
 export const accounts_config = localStorageSharedStore('accounts_config', [
- /* {
+/*  {
   id: 1,
   title: 'Account 1',
   enabled: true,
@@ -285,6 +285,7 @@ function initModuleData(account) {
   } else {
    acc.module_data[module_id] = {};
   }
+  acc.module_data[module_id].id = decl.id;
   acc.module_data[module_id].decl = decl;
   if (decl.callbacks.initComms) {
    decl.callbacks.initComms(acc);

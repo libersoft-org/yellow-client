@@ -5,7 +5,6 @@ import Contact from './pages/contact-detail.svelte';
 
 function initData(acc) {
  let result = {
-  id: 'contacts',
  };
  return result;
 }
