@@ -5,7 +5,7 @@
  "singleQuote": true,
  "printWidth": 10000,
  "endOfLine": "lf",
- "trailingComma": "none",
+ "trailingComma": "es5",
  "bracketSpacing": true,
  "arrowParens": "avoid",
  "quoteProps": "as-needed",

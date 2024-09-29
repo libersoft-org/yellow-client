@@ -6,6 +6,7 @@
  $: module_data = $active_account?.module_data || [];
  $: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
+ $: console.log('module-bar module_data_ordered:', module_data_ordered);
 
  export let onSelectModule;
 
@@ -52,7 +53,6 @@
  {#if module_data_ordered?.length && module_data_ordered.length > 0}
 
   {#each module_data_ordered as module (module.id)}
-
    <div class="item" on:click={() => clickSetModule(module.id)} on:keydown={() => keySetModule(module.id)} tabindex="0">
     <img src="img/modules/{module.decl.id}.svg" alt={module.decl.name} />
    </div>

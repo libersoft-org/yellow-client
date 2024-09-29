@@ -7,8 +7,8 @@ export function addAccount(config) {
   {
    id: getRandomString(),
    title: 'New Account',
-   ...config
-  }
+   ...config,
+  },
  ]);
 }
 

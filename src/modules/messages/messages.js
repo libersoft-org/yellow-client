@@ -1,8 +1,12 @@
 import { derived, get, writable } from 'svelte/store';
-import { active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
+import { active_account, module_data_derived, registerModule, relay, isClientFocused, getModuleDecls } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { send, getRandomString } from '../../core/core.js';
 import { listConversations } from './conversations.js';
+
+//Messages:
+import ConversationsList from './pages/conversations-list.svelte';
+import ConversationsMain from './pages/conversations-main.svelte';
 
 class Message {
  constructor(acc, data) {
@@ -27,11 +31,9 @@ export let selectedConversation = relay(md, 'selectedConversation');
 
 export function initData(acc) {
  let result = {
-  id: 'messages',
-  decl: { id: 'messages', name: 'Messages' },
   selectedConversation: writable(null),
   conversationsArray: writable([]),
-  messagesArray: writable([])
+  messagesArray: writable([]),
  };
  result.conversationsArray.subscribe(v => {
   console.log('acc conversationsArray:', acc, v);
@@ -75,7 +77,19 @@ export function deinitData(acc) {
  acc.module_data.messages = null;
 }
 
-registerModule('messages', { initData, initComms, deinitData });
+// console.log('module_decls:', JSON.stringify(getModuleDecls()));
+// console.log('registerModule messages');
+
+registerModule('messages', {
+ callbacks: { initData, initComms, deinitData },
+ panels: {
+  sidebar: ConversationsList,
+  content: ConversationsMain,
+ },
+});
+
+// console.log('registerModule messages done');
+// console.log('module_decls:', JSON.stringify(getModuleDecls()));
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
@@ -122,7 +136,7 @@ export function sendMessage(text) {
   address_from: acc.credentials.address,
   address_to: get(selectedConversation).address,
   message: text,
-  created: new Date().toISOString().replace('T', ' ').replace('Z', '')
+  created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
  });
 
  let params = { address: message.address_to, message: message.message, uid: message.uid };
@@ -164,7 +178,7 @@ function updateConversationsArray(msg) {
    last_message_date: msg_created,
    last_message_text: msg.stripped_text,
    visible_name: null,
-   unread_count: msg.is_outgoing ? 0 : 1
+   unread_count: msg.is_outgoing ? 0 : 1,
   };
   ca.unshift(conversation);
  }
@@ -212,13 +226,13 @@ function showNotification(acc, msg) {
   notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
    body: msg.stripped_text,
    icon: 'img/photo.svg',
-   silent: true
+   silent: true,
   });
  } else {
   notification = new Notification('New message from: ' + msg.address_from, {
    body: msg.stripped_text,
    icon: 'img/photo.svg',
-   silent: true
+   silent: true,
   });
  }
  notification.onclick = () => {
@@ -268,5 +282,5 @@ export default {
  ensureConversationDetails,
  openNewConversation,
  listMessages,
- sendMessage
+ sendMessage,
 };

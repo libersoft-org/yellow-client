@@ -6,15 +6,45 @@ export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
-let modules = [];
 
-export function registerModule(id, callbacks) {
- modules.push(callbacks);
+// declarations of modules that this client supports
+let module_decls = {};
+
+export function getModuleDecls() {
+ console.log('GET MODULE DECLS:', module_decls);
+ return module_decls;
+}
+
+export function registerModule(id, decl) {
+ console.log('REGISTER MODULE:', id, decl);
+ module_decls[id] = decl;
+ decl.id = id;
 }
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
-export const accounts_config = localStorageSharedStore('accounts_config', []);
+export const accounts_config = localStorageSharedStore('accounts_config', [
+/*  {
+  id: 1,
+  title: 'Account 1',
+  enabled: true,
+  credentials: {
+   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+   address: 'user@example.com',
+   password: '123456789'
+  }
+ },
+ {
+  id: 2,
+  title: 'Account 2',
+  enabled: false,
+  credentials: {
+   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+   address: 'user2@example.com',
+   password: '123456789'
+  }
+ }*/
+]);
 
 export let accounts = writable([]);
 
@@ -172,7 +202,7 @@ function constructAccount(id, title, credentials, enabled) {
   enabled,
   events: new EventTarget(),
   requests: {},
-  module_data: {}
+  module_data: {},
  };
 
  return writable(account);
@@ -245,24 +275,32 @@ export function order(dict) {
 
 function initModuleData(account) {
  let acc = get(account);
- acc.module_data = {
-  messages: modules[0].initData(acc),
-  contacts: { id: 'contacts', decl: { id: 'contacts', name: 'Contacts' } },
-  wallet: { id: 'wallet', decl: { id: 'wallet', name: 'wallet' } }
- };
+
+ console.log('module_decls:', JSON.stringify(module_decls));
+
+ for (const [module_id, decl] of Object.entries(module_decls)) {
+  console.log('initModuleData module_id:', module_id, 'decl:', decl);
+  if (decl.callbacks.initData) {
+   acc.module_data[module_id] = decl.callbacks?.initData(acc);
+  } else {
+   acc.module_data[module_id] = {};
+  }
+  acc.module_data[module_id].id = decl.id;
+  acc.module_data[module_id].decl = decl;
+  if (decl.callbacks.initComms) {
+   decl.callbacks.initComms(acc);
+  }
+ }
+
  account.update(v => v);
  console.log('initModuleData:', acc);
  console.log('initModuleData:', acc.module_data);
-
- if (!get(selected_module_id)) {
-  if (acc.module_data.messages) selected_module_id.set('messages');
- }
-
- modules[0].initComms(acc);
 }
 
 export function deinitModuleData(acc) {
- modules[0].deinitData(acc);
+ for (const [module_id, decl] of Object.entries(module_decls)) {
+  decl?.deinitData(acc);
+ }
 }
 
 function disconnectAccount(account) {
