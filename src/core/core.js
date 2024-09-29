@@ -8,6 +8,9 @@ export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 let modules = [];
 
+export function registerModule(id, callbacks) {
+ modules.push(callbacks);
+}
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
@@ -200,7 +203,7 @@ function reconnectAccount(account) {
  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
  acc.events.addEventListener('open', event => {
   console.log('Connected to WebSocket:', event);
-  if (acc.loggingIn) login(account);
+  if (acc.loggingIn) sendLoginCommand(account);
  });
 
  acc.events.addEventListener('error', event => {
@@ -217,7 +220,7 @@ function reconnectAccount(account) {
  acc.loggingIn = true;
 }
 
-function login(account) {
+function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
  send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
@@ -238,6 +241,28 @@ export function order(dict) {
  return Object.values(dict).sort((a, b) => {
   return String.prototype.localeCompare(a.id + a.order) < String.prototype.localeCompare(b.id + b.order);
  });
+}
+
+function initModuleData(account) {
+ let acc = get(account);
+ acc.module_data = {
+  messages: modules[0].initData(acc),
+  contacts: { id: 'contacts', decl: { id: 'contacts', name: 'Contacts' } },
+  wallet: { id: 'wallet', decl: { id: 'wallet', name: 'wallet' } }
+ };
+ account.update(v => v);
+ console.log('initModuleData:', acc);
+ console.log('initModuleData:', acc.module_data);
+
+ if (!get(selected_module_id)) {
+  if (acc.module_data.messages) selected_module_id.set('messages');
+ }
+
+ modules[0].initComms(acc);
+}
+
+export function deinitModuleData(acc) {
+ modules[0].deinitData(acc);
 }
 
 function disconnectAccount(account) {

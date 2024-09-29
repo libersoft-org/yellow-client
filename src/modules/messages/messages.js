@@ -75,14 +75,7 @@ export function deinitData(acc) {
  acc.module_data.messages = null;
 }
 
-<<<<<<< Updated upstream
 registerModule('messages', { initData, initComms, deinitData });
-=======
-console.log('registerModule messages');
-registerModule('messages', { initData, initComms, deinitData, panels: { ConversationsList, ConversationsMain } });
-console.log('registerModule messages done');
-
->>>>>>> Stashed changes
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
