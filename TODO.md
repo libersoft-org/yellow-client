@@ -15,7 +15,12 @@
 
 # Features
 
-- WALLET: move network list to JSON and load it somehow from module, network selection (+ change crypto symbol when selected), wallet selection, send, receive, token balances, history, settings, wizard for seed phrase, HW wallet (Trezor, Ledger) connection
+- WALLET: move network list to separated JS file and load it somehow from module
+- WALLET: network and wallet dropdown should show modal window with the list with icons etc (as in MetaMask)
+- WALLET: network selection (+ change crypto symbol when selected)
+- WALLET: wallet selection
+- WALLET: send, receive, token balances, history, settings, wizard for seed phrase
+- WALLET: HW wallet (Trezor, Ledger) connection
 - CORE: Add protocol selection to Core.accounts_config (AMTP, DMTP (not yet implemented), SMTP (not yet implemented))
 - MESSAGES: When a user gets a lot of new messages, it should scroll to the oldest unread one + add an element bar with text "Unread messages"
 - MESSAGES: When scrolling up, add a "scroll to end" button with caret down in bottom right corner
