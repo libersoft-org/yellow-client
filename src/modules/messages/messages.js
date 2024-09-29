@@ -1,13 +1,13 @@
 import { derived, get, writable } from 'svelte/store';
-import { active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
+import { active_account, module_data_derived, registerModule, relay, isClientFocused, getModuleDecls } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { send, getRandomString } from '../../core/core.js';
 import { listConversations } from './conversations.js';
 
 
 //Messages:
-import ConversationsList from '../modules/messages/pages/conversations-list.svelte';
-import ConversationsMain from '../modules/messages/pages/conversations-main.svelte';
+import ConversationsList from './pages/conversations-list.svelte';
+import ConversationsMain from './pages/conversations-main.svelte';
 
 
 class Message {

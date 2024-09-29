@@ -2,6 +2,7 @@ import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
 
+
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
