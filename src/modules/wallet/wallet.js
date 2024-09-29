@@ -1382,15 +1382,14 @@ export const networks = writable([
 let wallet;
 let selectedNetwork = get(networks)[0];
 let provider = new JsonRpcProvider(selectedNetwork.rpcURLs[0], selectedNetwork.chainID);
-let privateKey = '';
 export const address = writable(null);
 export const balance = writable({
  crypto: {
-  amount: 0,
+  amount: '?',
   currency: 'N/A',
  },
  fiat: {
-  amount: 0,
+  amount: '?',
   currency: 'USD',
  },
 });
