@@ -4,11 +4,9 @@ import DOMPurify from 'dompurify';
 import { send, getRandomString } from '../../core/core.js';
 import { listConversations } from './conversations.js';
 
-
 //Messages:
 import ConversationsList from './pages/conversations-list.svelte';
 import ConversationsMain from './pages/conversations-main.svelte';
-
 
 class Message {
  constructor(acc, data) {
@@ -81,14 +79,12 @@ export function deinitData(acc) {
  acc.module_data.messages = null;
 }
 
-
 console.log('module_decls:', JSON.stringify(getModuleDecls()));
 
 console.log('registerModule messages');
 registerModule('messages', { initData, initComms, deinitData, panels: { ConversationsList, ConversationsMain } });
 console.log('registerModule messages done');
 console.log('module_decls:', JSON.stringify(getModuleDecls()));
-
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
