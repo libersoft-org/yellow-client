@@ -220,6 +220,8 @@ function _enableAccount(account) {
 function _disableAccount(account) {
  let acc = get(account);
  disconnectAccount(acc);
+ clearHeartbeatTimer(acc);
+ clearReconnectTimer(account);
  acc.enabled = false;
  acc.suspended = false;
  acc.status = 'Disabled.';
@@ -231,6 +233,9 @@ function reconnectAccount(account) {
  if (!acc.enabled) return;
  if (acc.suspended) return;
 
+ clearHeartbeatTimer(acc);
+ clearReconnectTimer(account);
+
  console.log('Reconnecting account:', acc);
  acc.sessionID = null;
  acc.status = 'Connecting...';
@@ -238,6 +243,10 @@ function reconnectAccount(account) {
 
  if (acc.socket) {
   acc.socket.close();
+  acc.socket.onopen = (event) => {console.log('old socket onopen', event);};
+  acc.socket.onerror = (event) => {console.log('old socket onerror', event);};
+  acc.socket.onclose = (event) => {console.log('old socket onclose', event);};
+  acc.socket.onmessage = (event) => {console.log('old socket onmessage', event);};
  }
  acc.socket = new WebSocket(acc.credentials.server);
  acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', {event}));
@@ -283,6 +292,15 @@ function setReconnectTimer(account) {
  acc.reconnectTimer = setTimeout(() => {
   reconnectAccount(account);
  }, 1000);
+}
+
+function clearReconnectTimer(account) {
+ let acc = get(account);
+
+ if (acc.reconnectTimer) {
+  clearTimeout(acc.reconnectTimer);
+  acc.reconnectTimer = null;
+ }
 }
 
 function clearHeartbeatTimer(acc) {
