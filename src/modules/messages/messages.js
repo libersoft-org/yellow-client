@@ -1,12 +1,25 @@
 import { derived, get, writable } from 'svelte/store';
-import { active_account, module_data_derived, registerModule, relay, isClientFocused, getModuleDecls } from '../../core/core.js';
+import {
+ active_account,
+ module_data_derived,
+ registerModule,
+ relay,
+ isClientFocused,
+ getModuleDecls
+} from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { send, getRandomString } from '../../core/core.js';
 import { listConversations } from './conversations.js';
+import ConversationsList from "./pages/conversations-list.svelte";
+import ConversationsMain from "./pages/conversations-main.svelte";
 
-//Messages:
-import ConversationsList from './pages/conversations-list.svelte';
-import ConversationsMain from './pages/conversations-main.svelte';
+registerModule('messages', {
+ callbacks: {initData, initComms, deinitComms, deinitData},
+ panels: {
+  sidebar: ConversationsList,
+  content: ConversationsMain,
+ },
+});
 
 class Message {
  constructor(acc, data) {
@@ -42,8 +55,8 @@ export function initData(acc) {
 }
 
 export function initComms(acc) {
- send(acc, 'user_subscribe', { event: 'new_message' });
- send(acc, 'user_subscribe', { event: 'seen_message' });
+ send(acc, 'user_subscribe', {event: 'new_message'});
+ send(acc, 'user_subscribe', {event: 'seen_message'});
 
  let data = acc.module_data['messages'];
  console.log('initComms:', data);
@@ -57,43 +70,31 @@ export function initComms(acc) {
  listConversations(acc);
 }
 
+export function deinitComms(acc) {
+ send(acc, 'user_unsubscribe', {event: 'new_message'});
+ send(acc, 'user_unsubscribe', {event: 'seen_message'});
+}
+
 export function deinitData(acc) {
  console.log('DEINIT DATA');
 
- send(acc, 'user_unsubscribe', { event: 'new_message' });
- send(acc, 'user_unsubscribe', { event: 'seen_message' });
-
  let data = acc.module_data['messages'];
+ if (!data)
+  return;
 
  acc.events.removeEventListener('new_message', data.new_message_listener);
  acc.events.removeEventListener('seen_message', data.seen_message_listener);
 
- if (data) {
-  data.messagesArray.set([]);
-  data.conversationsArray.set([]);
-  data.selectedConversation.set(null);
- }
+ data.messagesArray.set([]);
+ data.conversationsArray.set([]);
+ data.selectedConversation.set(null);
 
  acc.module_data.messages = null;
 }
 
-// console.log('module_decls:', JSON.stringify(getModuleDecls()));
-// console.log('registerModule messages');
-
-registerModule('messages', {
- callbacks: { initData, initComms, deinitData },
- panels: {
-  sidebar: ConversationsList,
-  content: ConversationsMain,
- },
-});
-
-// console.log('registerModule messages done');
-// console.log('module_decls:', JSON.stringify(getModuleDecls()));
-
 export function listMessages(acc, address) {
  messagesArray.set([]);
- send(acc, 'user_list_messages', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
+ send(acc, 'user_list_messages', {address: address, count: 100, lastID: 0}, true, (_req, res) => {
   if (res.error === 0 && res.data?.messages) {
    messagesArray.set(
     res.data.messages.map(msg => {
@@ -111,7 +112,7 @@ export function listMessages(acc, address) {
 export function setMessageSeen(message, cb) {
  let acc = get(active_account);
  console.log('setMessageSeen', message);
- send(acc, 'user_message_seen', { uid: message.uid }, true, (req, res) => {
+ send(acc, 'user_message_seen', {uid: message.uid}, true, (req, res) => {
   console.log('user_message_seen', res);
   if (res.error !== 0) {
    console.error(res);
@@ -139,7 +140,7 @@ export function sendMessage(text) {
   created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
  });
 
- let params = { address: message.address_to, message: message.message, uid: message.uid };
+ let params = {address: message.address_to, message: message.message, uid: message.uid};
 
  send(acc, 'user_send_message', params, true, (req, res) => {
   console.log('user_send_message', res);
@@ -187,7 +188,7 @@ function updateConversationsArray(msg) {
 
 export function openNewConversation(address) {
  console.log('openNewConversation', address);
- selectConversation({ address });
+ selectConversation({address});
 }
 
 function eventNewMessage(acc, event) {
@@ -237,7 +238,7 @@ function showNotification(acc, msg) {
  }
  notification.onclick = () => {
   window.focus();
-  selectConversation({ address: msg.address_from, visible_name: conversation?.visible_name });
+  selectConversation({address: msg.address_from, visible_name: conversation?.visible_name});
  };
 }
 
@@ -250,7 +251,7 @@ export function ensureConversationDetails(conversation, cb) {
  console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
  let acc = get(active_account);
- send(acc, 'user_get_userinfo', { address: conversation.address }, true, (_req, res) => {
+ send(acc, 'user_get_userinfo', {address: conversation.address}, true, (_req, res) => {
   if (res.error !== 0) {
    console.error(res);
    return;

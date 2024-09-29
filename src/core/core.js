@@ -209,7 +209,9 @@ function constructAccount(id, title, credentials, enabled) {
 }
 
 function _enableAccount(account) {
- get(account).enabled = true;
+ let acc = get(account);
+ acc.enabled = true;
+ acc.suspended = false;
  account.update(v => v);
  // TODO: use admin logic
  reconnectAccount(account);
@@ -217,51 +219,111 @@ function _enableAccount(account) {
 
 function _disableAccount(account) {
  let acc = get(account);
+ disconnectAccount(acc);
  acc.enabled = false;
+ acc.suspended = false;
+ acc.status = 'Disabled.';
  account.update(v => v);
- disconnectAccount(account);
 }
 
 function reconnectAccount(account) {
  let acc = get(account);
- console.log('Reconnecting account:', acc);
  if (!acc.enabled) return;
+ if (acc.suspended) return;
+
+ console.log('Reconnecting account:', acc);
+ acc.sessionID = null;
+ acc.status = 'Connecting...';
+ account.update(v => v);
+
+ if (acc.socket) {
+  acc.socket.close();
+ }
  acc.socket = new WebSocket(acc.credentials.server);
- acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', { event }));
- acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', { event }));
- acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', { event }));
+ acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', {event}));
+ acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', {event}));
+ acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', {event}));
  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
+
  acc.events.addEventListener('open', event => {
   console.log('Connected to WebSocket:', event);
-  if (acc.loggingIn) sendLoginCommand(account);
+  acc.status = 'Connected, logging in...';
+  account.update(v => v);
+
+  sendLoginCommand(account);
  });
 
  acc.events.addEventListener('error', event => {
   console.log('WebSocket error:', event);
-  acc.error = 'Cannot connect to server';
-  acc.loggingIn = false;
+  retry(account, 'Connection error.');
  });
 
  acc.events.addEventListener('close', event => {
   console.log('WebSocket closed:', event);
-  acc.loggingIn = false;
+  retry(account, 'Connection closed.');
  });
+}
 
- acc.loggingIn = true;
+function retry(account, msg) {
+ let acc = get(account);
+ acc.status = 'Retrying...';
+ acc.error = msg;
+ clearHeartbeatTimer(acc);
+ acc.sessionID = null;
+ account.update(v => v);
+ setReconnectTimer(account);
+}
+
+function setReconnectTimer(account) {
+ let acc = get(account);
+
+ if (acc.reconnectTimer != null) {
+  clearInterval(acc.reconnectTimer);
+ }
+ acc.reconnectTimer = setTimeout(() => {
+  reconnectAccount(account);
+ }, 1000);
+}
+
+function clearHeartbeatTimer(acc) {
+ if (acc.heartbeatTimer) {
+  clearInterval(acc.heartbeatTimer);
+  acc.heartbeatTimer = null;
+ }
 }
 
 function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
- send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
+ send(acc, 'user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
   console.log('Login response:', res);
   acc.loggingIn = false;
   if (res.error !== 0) {
    acc.error = res.message;
-   console.error('Login error:', res);
+   acc.status = 'Login failed.';
+   acc.suspended = true;
+   console.error('Login failed:', res);
   } else {
+   acc.status = 'Logged in.';
    acc.sessionID = res.data.sessionID;
    initModuleData(account);
+   acc.heartbeatTimer = setInterval(() => {
+    send(acc, 'user_heartbeat', {}, true, (req, res) => {
+     console.log('Heartbeat response:', res);
+     acc.lastCommsTs = Date.now();
+    });
+    if (Date.now() - acc.lastCommsTs > 10000) {
+     const msg = 'No comms for 10 seconds, reconnecting...';
+     console.log(msg);
+     // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
+     acc.status = 'Retrying...';
+     acc.error = msg;
+     clearHeartbeatTimer(acc);
+     acc.sessionID = null;
+     account.update(v => v);
+     reconnectAccount(account);
+    }
+   }, 1000);
   }
   account.update(v => v);
  });
@@ -297,22 +359,24 @@ function initModuleData(account) {
  console.log('initModuleData:', acc.module_data);
 }
 
-export function deinitModuleData(acc) {
- for (const [module_id, decl] of Object.entries(module_decls)) {
-  decl?.deinitData(acc);
- }
-}
 
-function disconnectAccount(account) {
- let acc = get(account);
- if (acc.socket) {
-  send(acc, 'user_unsubscribe', { event: 'new_message' });
-  send(acc, 'user_unsubscribe', { event: 'seen_message' });
-  acc.socket.close();
-  acc.socket = null;
+function disconnectAccount(acc) {
+
+ for (const [module_id, decl] of Object.entries(module_decls)) {
+  if (decl.callbacks.deinitComms) {
+   decl.callbacks.deinitComms(acc);
+  }
+  if (decl.callbacks.deinitData) {
+   decl.callbacks.deinitData(acc);
+  }
+
+  if (acc.socket) {
+   acc.socket.close();
+   acc.socket = null;
+  }
   acc.requests = {};
   acc.module_data = {};
-  account.update(v => v);
+
   console.log('Account disconnected');
  }
 }
@@ -331,7 +395,7 @@ function handleSocketResponse(acc, res) {
   // it is event:
   console.log('GOT EVENT', res);
   //TODO: send event to messages module:
-  acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
+  acc.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
  } else console.log('Unknown command from server:', res);
 }
 
@@ -352,11 +416,11 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  }
  const requestID = generateRequestID();
 
- const req = { requestID };
+ const req = {requestID};
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command) req.command = command;
  if (params) req.params = params;
- acc.requests[requestID] = { req, callback };
+ acc.requests[requestID] = {req, callback};
  console.log('------------------');
  console.log('SENDING COMMAND:');
  console.log(req);
@@ -371,4 +435,4 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
-export default { hideSidebarMobile, isClientFocused, accounts };
+export default {hideSidebarMobile, isClientFocused, accounts};
