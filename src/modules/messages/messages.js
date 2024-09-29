@@ -32,7 +32,6 @@ export let selectedConversation = relay(md, 'selectedConversation');
 export function initData(acc) {
  let result = {
   id: 'messages',
-  decl: { id: 'messages', name: 'Messages' },
   selectedConversation: writable(null),
   conversationsArray: writable([]),
   messagesArray: writable([])

@@ -8,8 +8,7 @@ export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 
 // declarations of modules that this client supports
-let module_decls = [];
-console.log('module_decls:', JSON.stringify(module_decls));
+let module_decls = {};
 
 export function getModuleDecls() {
  console.log('GET MODULE DECLS:', module_decls);
@@ -17,8 +16,8 @@ export function getModuleDecls() {
 }
 
 export function registerModule(id, decl) {
- module_decls.push(decl);
  console.log('REGISTER MODULE:', id, decl);
+ module_decls[id] = decl;
 }
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
@@ -278,24 +277,24 @@ function initModuleData(account) {
 
  console.log('module_decls:', JSON.stringify(module_decls));
 
- acc.module_data = {
-  messages: module_decls[0].initData(acc),
-  contacts: { id: 'contacts', decl: { id: 'contacts', name: 'Contacts' } },
-  wallet: { id: 'wallet', decl: { id: 'wallet', name: 'wallet' } }
- };
+ Object.entries(module_decls).forEach((module_id, decl) => {
+  acc.module_data[module_id] = decl.initData(acc);
+  acc.module_data[module_id].decl = decl;
+ });
+
  account.update(v => v);
  console.log('initModuleData:', acc);
  console.log('initModuleData:', acc.module_data);
 
- if (!get(selected_module_id)) {
+ /*if (!get(selected_module_id)) {
   if (acc.module_data.messages) selected_module_id.set('messages');
- }
+ }*/
 
- module_decls[0].initComms(acc);
+ module_decls.messages.initComms(acc);
 }
 
 export function deinitModuleData(acc) {
- module_decls[0].deinitData(acc);
+ module_decls.messages.deinitData(acc);
 }
 
 function disconnectAccount(account) {

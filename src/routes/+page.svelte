@@ -107,7 +107,9 @@
 
  function onSelectModule(id) {
   selected_corepage_id.set(null);
+  console.log('onSelectModule: ' + id);
   selected_module_id.set(id);
+  console.log('selected_module_id: ' + get(selected_module_id));
  }
 
  function startResizeSideBar() {
