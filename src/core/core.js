@@ -24,7 +24,7 @@ export function registerModule(id, decl) {
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
 export const accounts_config = localStorageSharedStore('accounts_config', [
- {
+/* {
   id: 1,
   title: 'Account 1',
   enabled: true,
@@ -43,7 +43,7 @@ export const accounts_config = localStorageSharedStore('accounts_config', [
    address: 'user2@example.com',
    password: '123456789'
   }
- }
+ }*/
 ]);
 
 export let accounts = writable([]);
