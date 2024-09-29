@@ -1,3 +1,5 @@
+import { get, writable } from 'svelte/store';
+import { Wallet, JsonRpcProvider, formatEther, parseEther } from 'ethers';
 import { registerModule } from '../../core/core.js';
 import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
@@ -10,33 +12,12 @@ registerModule('wallet', {
  },
 });
 
-let address = '0x123abc...456def';
-let balance = {
- crypto: {
-  amount: 8.33,
-  currency: 'MATIC',
- },
- fiat: {
-  amount: 5.2,
-  currency: 'USD',
- },
-};
-let wallets = [
- {
-  id: 1,
-  name: 'My Yellow Wallet 1',
- },
- {
-  id: 2,
-  name: 'My Yellow Wallet 2',
- },
-];
-let networks = [
+export const networks = writable([
  {
   id: 1,
   name: 'Ethereum - Mainnet',
   chainID: 1,
-  rpcURLs: ['https://mainnet.infura.io/v3/YOUR-PROJECT-ID', 'https://eth-mainnet.alchemyapi.io/v2/YOUR-API-KEY', 'https://cloudflare-eth.com', 'https://rpc.ankr.com/eth', 'https://main-rpc.linkpool.io', 'https://eth-rpc.gateway.pokt.network', 'https://mainnet-nethermind.blockscout.com', 'https://api.mycryptoapi.com/eth'],
+  rpcURLs: ['https://cloudflare-eth.com', 'https://rpc.ankr.com/eth', 'https://main-rpc.linkpool.io', 'https://eth-rpc.gateway.pokt.network', 'https://mainnet-nethermind.blockscout.com', 'https://api.mycryptoapi.com/eth'],
   currency: {
    symbol: 'ETH',
    iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
@@ -1396,9 +1377,116 @@ let networks = [
   },
   explorerURL: 'https://explorer.testnet.zora.network',
  },
-];
+]);
+
+let wallet;
+let selectedNetwork = get(networks)[0];
+let provider = new JsonRpcProvider(selectedNetwork.rpcURLs[0], selectedNetwork.chainID);
+let privateKey = '';
+export const address = writable(null);
+export const balance = writable({
+ crypto: {
+  amount: 0,
+  currency: 'N/A',
+ },
+ fiat: {
+  amount: 0,
+  currency: 'USD',
+ },
+});
+export const wallets = writable([
+ {
+  id: 1,
+  name: 'My Yellow Wallet 1',
+ },
+ {
+  id: 2,
+  name: 'My Yellow Wallet 2',
+ },
+]);
+
+export function createWallet() {
+ wallet = Wallet.createRandom().connect(provider);
+ address.set(wallet.address);
+ getBalance();
+}
+
+async function saveWallet(password = null) {
+ if (wallet && password) {
+  try {
+   const encryptedJson = await wallet.encrypt(password);
+   localStorage.setItem('encryptedWallet', encryptedJson);
+   console.log('Wallet saved');
+  } catch (error) {
+   console.error('Error while wallet encryption:', error);
+  }
+ } else alert('Wallet or password is missing');
+}
+
+async function loadWallet(password = null) {
+ const encryptedJson = localStorage.getItem('encryptedWallet');
+ if (encryptedJson && password) {
+  try {
+   wallet = await ethers.Wallet.fromEncryptedJson(encryptedJson, password);
+   wallet = wallet.connect(provider);
+   address.set(wallet.address);
+   getBalance();
+  } catch (error) {
+   console.error('Error while wallet decription:', error);
+  }
+ } else console.error('No wallet found or password is missing');
+}
+
+async function getBalance() {
+ if (wallet) {
+  try {
+   const balanceBigNumber = await provider.getBalance(get(address));
+   const balanceFormated = formatEther(balanceBigNumber);
+   balance.update(currentBalance => {
+    return {
+     ...currentBalance,
+     crypto: {
+      ...currentBalance.crypto,
+      amount: balanceFormated,
+     },
+    };
+   });
+  } catch (error) {
+   console.error('Error while getting balance:', error);
+   balance.update(currentBalance => {
+    return {
+     ...currentBalance,
+     crypto: {
+      ...currentBalance.crypto,
+      amount: 'N/A',
+     },
+    };
+   });
+  }
+ }
+}
+
+async function sendTransaction(recipient, amount) {
+ if (wallet) {
+  try {
+   const tx = await wallet.sendTransaction({
+    to: recipient,
+    value: parseEther(amount),
+   });
+   await tx.wait();
+   getBalance();
+   console.log('Transaction sent OK');
+  } catch (error) {
+   console.error('Error while sending a transaction:', error);
+  }
+ } else console.error('Wallet not found');
+}
 
 export default {
+ createWallet,
+ saveWallet,
+ loadWallet,
+ sendTransaction,
  address,
  balance,
  networks,

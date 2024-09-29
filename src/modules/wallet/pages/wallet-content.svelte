@@ -1,6 +1,7 @@
 <script>
  import { onMount } from 'svelte';
- import Wallet from '../wallet.js';
+ import { get } from 'svelte/store';
+ import { wallets, networks, address, balance, createWallet } from '../wallet.js';
  import Send from './send.svelte';
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
@@ -13,8 +14,8 @@
  let networksData = [];
 
  onMount(() => {
-  walletsData = Wallet.wallets.map(item => ({ id: item.id, text: item.name }));
-  networksData = Wallet.networks.map(item => ({ id: item.id, text: item.name }));
+  walletsData = get(wallets).map(item => ({ id: item.id, text: item.name }));
+  networksData = get(networks).map(item => ({ id: item.id, text: item.name }));
  });
 
  function setSection(name) {
@@ -104,7 +105,7 @@
    </div>
    <div class="center">
     <div><Dropdown items={walletsData} /></div>
-    <div>{Wallet.address}</div>
+    <div>{$address}</div>
    </div>
    <div class="right">
     Right
@@ -112,8 +113,8 @@
   </div>
   <div class="body">
    <div class="balance">
-    <div class="crypto">{Wallet.balance.crypto.amount} {Wallet.balance.crypto.currency}</div>
-    <div class="fiat">({Wallet.balance.fiat.amount} {Wallet.balance.fiat.currency})</div>
+    <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
+    <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
    </div>
    <div class="buttons">
     <Button width="80px" text="Send" on:click={() => setSection('send')} />
@@ -121,6 +122,7 @@
     <Button width="80px" text="Balance" on:click={() => setSection('balance')} />
     <Button width="80px" text="History" on:click={() => setSection('history')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
+    <Button width="80px" text="Create wallet" on:click={() => createWallet()}  />
    </div>
    <div class="section">
     {#if section == 'send'}

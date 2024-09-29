@@ -18,6 +18,7 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/adapter-static": "*",
-		"dompurify": "*"
+		"dompurify": "*",
+		"ethers": "*"
 	}
 }

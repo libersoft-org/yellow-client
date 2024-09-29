@@ -4,8 +4,7 @@ import ContactsList from './pages/contacts-list.svelte';
 import Contact from './pages/contact-detail.svelte';
 
 function initData(acc) {
- let result = {
- };
+ let result = {};
  return result;
 }
 
