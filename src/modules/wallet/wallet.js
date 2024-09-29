@@ -2,7 +2,7 @@ import { registerModule } from '../../core/core.js';
 import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
 
-registerModule('contacts', {
+registerModule('wallet', {
  callbacks: {},
  panels: {
   sidebar: WalletSidebar,
