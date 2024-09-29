@@ -26,10 +26,29 @@
   section = name;
  }
 
+ function shortenAddress(addr) {
+  if (!addr) return '';
+  if (addr.lenght <= 8) return addr;
+  return addr.slice(0, 5) + '...' + addr.slice(-3);
+ }
+
  function showNewWalletModal() {
   newPhrase = createWallet();
   isModalPhraseOpen = true;
   console.log('PHRASE:', newPhrase);
+ }
+
+ function clickCopyAddress() {
+  navigator.clipboard.writeText($address)
+  .then(() => console.log('Address coppied to clipboard'))
+  .catch(err => console.error('Error while copying to clipboard', err));
+ }
+
+ function keyCopyAddress() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickCopyAddress();
+  }
  }
 </script>
 
@@ -53,54 +72,60 @@
   box-shadow: var(--shadow);
  }
 
- .wallet .content .header {
+ .header {
   display: flex;
   padding: 10px;
   background-color: #fd1;
  }
 
- .wallet .content .header .left {
+ .header .left {
   flex: 1;
-  background-color: red;
  }
 
- .wallet .content .header .center {
+ .header .right {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  text-align: center;
-  background-color: orange;
+  align-items: end;
  }
 
- .wallet .content .header .right {
-  flex: 1;
-  text-align: right;
-  background-color: green;
+ .header .right .address {
+  display: flex;
+  align-items: center;
+  gap: 5px;
  }
 
- .wallet .content .body {
+ .header .right .address .copy {
+  width: 20px;
+  height: 20px;
+  padding: 5px;
+  cursor: pointer;
+ }
+
+ .body {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 10px;
  }
 
- .wallet .content .body .balance {
+ .body .balance {
   display: flex;
   flex-direction: column;
   align-items: center;
-
  }
 
- .wallet .content .body .balance .crypto {
+ .body .balance .crypto {
   font-size: 25px;
   font-weight: bold;
  }
 
- .wallet .content .body .balance .fiat {
+ .body .balance .fiat {
   font-size: 18px;
   color: #555;
  }
 
- .wallet .content .body .buttons {
+ .body .buttons {
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -113,12 +138,14 @@
    <div class="left">
     <Dropdown items={networksData} />
    </div>
-   <div class="center">
-    <div><Dropdown items={walletsData} /></div>
-    <div>{$address}</div>
-   </div>
    <div class="right">
-    Right
+    <div><Dropdown items={walletsData} /></div>
+    {#if $address}
+     <div class="address">
+      <div>{shortenAddress($address)}</div>
+      <div class="copy" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}><img src="img/copy.svg" alt="Copy" /></div>
+     </div>
+    {/if}
    </div>
   </div>
   <div class="body">

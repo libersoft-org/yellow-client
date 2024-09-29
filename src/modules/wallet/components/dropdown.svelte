@@ -7,10 +7,10 @@
 <style>
  .dropdown {
   padding: 5px;
-  border: 1px solid #000;
+  border: 0;
   border-radius: 10px;
   font-family: inherit;
-  background-color: #fff;
+  background-color: #ffa;
   cursor: pointer;
  }
 </style>

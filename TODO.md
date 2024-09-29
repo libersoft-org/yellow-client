@@ -12,7 +12,7 @@
 - CORE: fix accounts dropdown keydown (event propagates to clickToggleAccounts and re-opens dropdown)
 - MESSAGES: GET javascript:alert('XSS') net::ERR_UNKNOWN_URL_SCHEME
 - MESSAGES: GET http://localhost:3000/x 404 (Not Found)
--
+
 # Features
 
 - WALLET: move network list to JSON a load it somehow from module, network selection, wallet selection, send, receive, history, token balances, settings, wizard for seed phrase, HW wallet connection
