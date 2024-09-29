@@ -63,6 +63,6 @@ export function localStorageSharedStore(name, default_) {
    //console.log(value2);
    setStorage(value2);
    set(value2);
-  }
+  },
  };
 }

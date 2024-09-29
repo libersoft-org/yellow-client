@@ -24,7 +24,7 @@ export function registerModule(id, decl) {
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
 export const accounts_config = localStorageSharedStore('accounts_config', [
-/* {
+ /* {
   id: 1,
   title: 'Account 1',
   enabled: true,
@@ -202,7 +202,7 @@ function constructAccount(id, title, credentials, enabled) {
   enabled,
   events: new EventTarget(),
   requests: {},
-  module_data: {}
+  module_data: {},
  };
 
  return writable(account);
@@ -280,13 +280,15 @@ function initModuleData(account) {
 
  for (const [module_id, decl] of Object.entries(module_decls)) {
   console.log('initModuleData module_id:', module_id, 'decl:', decl);
-  if (decl.callbacks.initData)
+  if (decl.callbacks.initData) {
    acc.module_data[module_id] = decl.callbacks?.initData(acc);
-  else
+  } else {
    acc.module_data[module_id] = {};
+  }
   acc.module_data[module_id].decl = decl;
-  if (decl.callbacks.initComms)
+  if (decl.callbacks.initComms) {
    decl.callbacks.initComms(acc);
+  }
  }
 
  account.update(v => v);

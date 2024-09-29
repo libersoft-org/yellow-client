@@ -34,7 +34,7 @@ export function initData(acc) {
   id: 'messages',
   selectedConversation: writable(null),
   conversationsArray: writable([]),
-  messagesArray: writable([])
+  messagesArray: writable([]),
  };
  result.conversationsArray.subscribe(v => {
   console.log('acc conversationsArray:', acc, v);
@@ -43,8 +43,8 @@ export function initData(acc) {
 }
 
 export function initComms(acc) {
- send(acc, 'user_subscribe', {event: 'new_message'});
- send(acc, 'user_subscribe', {event: 'seen_message'});
+ send(acc, 'user_subscribe', { event: 'new_message' });
+ send(acc, 'user_subscribe', { event: 'seen_message' });
 
  let data = acc.module_data['messages'];
  console.log('initComms:', data);
@@ -61,8 +61,8 @@ export function initComms(acc) {
 export function deinitData(acc) {
  console.log('DEINIT DATA');
 
- send(acc, 'user_unsubscribe', {event: 'new_message'});
- send(acc, 'user_unsubscribe', {event: 'seen_message'});
+ send(acc, 'user_unsubscribe', { event: 'new_message' });
+ send(acc, 'user_unsubscribe', { event: 'seen_message' });
 
  let data = acc.module_data['messages'];
 
@@ -82,11 +82,11 @@ export function deinitData(acc) {
 // console.log('registerModule messages');
 
 registerModule('messages', {
- callbacks: {initData, initComms, deinitData},
+ callbacks: { initData, initComms, deinitData },
  panels: {
   sidebar: ConversationsList,
-  content: ConversationsMain
- }
+  content: ConversationsMain,
+ },
 });
 
 // console.log('registerModule messages done');
@@ -94,7 +94,7 @@ registerModule('messages', {
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
- send(acc, 'user_list_messages', {address: address, count: 100, lastID: 0}, true, (_req, res) => {
+ send(acc, 'user_list_messages', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
   if (res.error === 0 && res.data?.messages) {
    messagesArray.set(
     res.data.messages.map(msg => {
@@ -112,7 +112,7 @@ export function listMessages(acc, address) {
 export function setMessageSeen(message, cb) {
  let acc = get(active_account);
  console.log('setMessageSeen', message);
- send(acc, 'user_message_seen', {uid: message.uid}, true, (req, res) => {
+ send(acc, 'user_message_seen', { uid: message.uid }, true, (req, res) => {
   console.log('user_message_seen', res);
   if (res.error !== 0) {
    console.error(res);
@@ -137,10 +137,10 @@ export function sendMessage(text) {
   address_from: acc.credentials.address,
   address_to: get(selectedConversation).address,
   message: text,
-  created: new Date().toISOString().replace('T', ' ').replace('Z', '')
+  created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
  });
 
- let params = {address: message.address_to, message: message.message, uid: message.uid};
+ let params = { address: message.address_to, message: message.message, uid: message.uid };
 
  send(acc, 'user_send_message', params, true, (req, res) => {
   console.log('user_send_message', res);
@@ -179,7 +179,7 @@ function updateConversationsArray(msg) {
    last_message_date: msg_created,
    last_message_text: msg.stripped_text,
    visible_name: null,
-   unread_count: msg.is_outgoing ? 0 : 1
+   unread_count: msg.is_outgoing ? 0 : 1,
   };
   ca.unshift(conversation);
  }
@@ -188,7 +188,7 @@ function updateConversationsArray(msg) {
 
 export function openNewConversation(address) {
  console.log('openNewConversation', address);
- selectConversation({address});
+ selectConversation({ address });
 }
 
 function eventNewMessage(acc, event) {
@@ -227,18 +227,18 @@ function showNotification(acc, msg) {
   notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
    body: msg.stripped_text,
    icon: 'img/photo.svg',
-   silent: true
+   silent: true,
   });
  } else {
   notification = new Notification('New message from: ' + msg.address_from, {
    body: msg.stripped_text,
    icon: 'img/photo.svg',
-   silent: true
+   silent: true,
   });
  }
  notification.onclick = () => {
   window.focus();
-  selectConversation({address: msg.address_from, visible_name: conversation?.visible_name});
+  selectConversation({ address: msg.address_from, visible_name: conversation?.visible_name });
  };
 }
 
@@ -251,7 +251,7 @@ export function ensureConversationDetails(conversation, cb) {
  console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
  let acc = get(active_account);
- send(acc, 'user_get_userinfo', {address: conversation.address}, true, (_req, res) => {
+ send(acc, 'user_get_userinfo', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) {
    console.error(res);
    return;
@@ -283,5 +283,5 @@ export default {
  ensureConversationDetails,
  openNewConversation,
  listMessages,
- sendMessage
+ sendMessage,
 };

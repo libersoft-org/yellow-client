@@ -1,8 +1,7 @@
-import { registerModule } from "../../core/core.js";
+import { registerModule } from '../../core/core.js';
 
 import ContactsList from './pages/contacts-list.svelte';
 import Contact from './pages/contact-detail.svelte';
-
 
 function initData(acc) {
  let result = {
@@ -11,13 +10,10 @@ function initData(acc) {
  return result;
 }
 
-
 registerModule('contacts', {
- callbacks: {initData},
+ callbacks: { initData },
  panels: {
-  sidebar:
-  ContactsList, content:
-  Contact
- }
+  sidebar: ContactsList,
+  content: Contact,
+ },
 });
-
