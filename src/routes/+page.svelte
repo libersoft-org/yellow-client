@@ -3,7 +3,6 @@
  import { get } from "svelte/store";
  import '../app.css';
  import { accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls } from '../core/core.js';
- import _Messages from '../modules/messages/messages.js';
 
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -17,11 +16,9 @@
  import WelcomeWizardStep2 from '../core/wizards/welcome-step2.svelte';
  import WelcomeWizardStep3 from '../core/wizards/welcome-step3.svelte';
 
- //
- // //Messages:
- // import ConversationsList from '../modules/messages/pages/conversations-list.svelte';
- // import ConversationsMain from '../modules/messages/pages/conversations-main.svelte';
- //
+
+ import _Messages from '../modules/messages/messages.js';
+
  // //Contacts:
  // import ContactsList from '../modules/contacts/pages/contacts-list.svelte';
  // import Contact from '../modules/contacts/pages/contact-detail.svelte';
@@ -258,17 +255,18 @@
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.sidebar}/>
   {:else if selectedModule}
-   <svelte:component this={selectedModule.sidebar}/>
+   <svelte:component this={selectedModule.panels.sidebar}/>
   {:else}
    <WelcomeSidebar/>
   {/if}
  </div>
  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
+
  <div class="content">
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.content}/>
   {:else if selectedModule}
-   <svelte:component this={selectedModule.content}/>
+   <svelte:component this={selectedModule.panels.content}/>
   {:else}
    <WelcomeContent {product} {version} {link}/>
   {/if}

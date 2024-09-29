@@ -18,6 +18,7 @@ export function getModuleDecls() {
 export function registerModule(id, decl) {
  console.log('REGISTER MODULE:', id, decl);
  module_decls[id] = decl;
+ decl.id = id;
 }
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
@@ -277,21 +278,18 @@ function initModuleData(account) {
 
  console.log('module_decls:', JSON.stringify(module_decls));
 
- Object.entries(module_decls).forEach((module_id, decl) => {
-  acc.module_data[module_id] = decl.initData(acc);
+ for (const [module_id, decl] of Object.entries(module_decls)) {
+  console.log('initModuleData module_id:', module_id, 'decl:',  decl);
+  acc.module_data[module_id] = decl.callbacks.initData(acc);
   acc.module_data[module_id].decl = decl;
- });
+  decl.callbacks.initComms(acc);
+ };
 
  account.update(v => v);
  console.log('initModuleData:', acc);
  console.log('initModuleData:', acc.module_data);
-
- /*if (!get(selected_module_id)) {
-  if (acc.module_data.messages) selected_module_id.set('messages');
- }*/
-
- module_decls.messages.initComms(acc);
 }
+
 
 export function deinitModuleData(acc) {
  module_decls.messages.deinitData(acc);
