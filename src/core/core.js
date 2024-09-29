@@ -279,17 +279,16 @@ function initModuleData(account) {
  console.log('module_decls:', JSON.stringify(module_decls));
 
  for (const [module_id, decl] of Object.entries(module_decls)) {
-  console.log('initModuleData module_id:', module_id, 'decl:',  decl);
+  console.log('initModuleData module_id:', module_id, 'decl:', decl);
   acc.module_data[module_id] = decl.callbacks.initData(acc);
   acc.module_data[module_id].decl = decl;
   decl.callbacks.initComms(acc);
- };
+ }
 
  account.update(v => v);
  console.log('initModuleData:', acc);
  console.log('initModuleData:', acc.module_data);
 }
-
 
 export function deinitModuleData(acc) {
  module_decls.messages.deinitData(acc);

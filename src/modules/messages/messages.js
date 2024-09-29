@@ -81,7 +81,7 @@ export function deinitData(acc) {
 console.log('module_decls:', JSON.stringify(getModuleDecls()));
 
 console.log('registerModule messages');
-registerModule('messages', { callbacks: {initData, initComms, deinitData}, panels: { sidebar: ConversationsList, content: ConversationsMain } });
+registerModule('messages', { callbacks: { initData, initComms, deinitData }, panels: { sidebar: ConversationsList, content: ConversationsMain } });
 console.log('registerModule messages done');
 console.log('module_decls:', JSON.stringify(getModuleDecls()));
 
