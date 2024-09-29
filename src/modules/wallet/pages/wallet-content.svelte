@@ -2,6 +2,8 @@
  import { onMount } from 'svelte';
  import { get } from 'svelte/store';
  import { wallets, networks, address, balance, createWallet } from '../wallet.js';
+ import Modal from '../../../core/components/modal.svelte';
+ import ModalPhrase from '../modals/phrase.svelte';
  import Send from './send.svelte';
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
@@ -12,6 +14,8 @@
  let section = 'balance';
  let walletsData = [];
  let networksData = [];
+ let isModalPhraseOpen = false;
+ let newPhrase = '';
 
  onMount(() => {
   walletsData = get(wallets).map(item => ({ id: item.id, text: item.name }));
@@ -20,6 +24,12 @@
 
  function setSection(name) {
   section = name;
+ }
+
+ function showNewWalletModal() {
+  newPhrase = createWallet();
+  isModalPhraseOpen = true;
+  console.log('PHRASE:', newPhrase);
  }
 </script>
 
@@ -122,7 +132,7 @@
     <Button width="80px" text="Balance" on:click={() => setSection('balance')} />
     <Button width="80px" text="History" on:click={() => setSection('history')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
-    <Button width="80px" text="Create wallet" on:click={() => createWallet()}  />
+    <Button width="80px" text="Create wallet" on:click={showNewWalletModal}  />
    </div>
    <div class="section">
     {#if section == 'send'}
@@ -140,3 +150,8 @@
   </div>
  </div>
 </div>
+{#if isModalPhraseOpen}
+ <Modal title="New wallet" onClose={() => isModalPhraseOpen = false}>
+  <ModalPhrase phrase={newPhrase} onClose={() => isModalPhraseOpen = false} />
+ </Modal>
+{/if}

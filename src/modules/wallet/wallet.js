@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import { Wallet, JsonRpcProvider, formatEther, parseEther } from 'ethers';
+import { Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic } from 'ethers';
 import { registerModule } from '../../core/core.js';
 import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
@@ -1406,9 +1406,11 @@ export const wallets = writable([
 ]);
 
 export function createWallet() {
- wallet = Wallet.createRandom().connect(provider);
+ const mnemonic = Mnemonic.fromEntropy(randomBytes(32));
+ wallet = Wallet.fromPhrase(mnemonic.phrase).connect(provider);
  address.set(wallet.address);
  getBalance();
+ return mnemonic.phrase;
 }
 
 async function saveWallet(password = null) {

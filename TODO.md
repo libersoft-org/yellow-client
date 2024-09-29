@@ -15,6 +15,7 @@
 -
 # Features
 
+- WALLET: move network list to JSON a load it somehow from module, network selection, wallet selection, send, receive, history, token balances, settings, wizard for seed phrase, HW wallet connection
 - CORE: Add protocol selection to Core.accounts_config (AMTP, DMTP (not yet implemented), SMTP (not yet implemented))
 - MESSAGES: When a user gets a lot of new messages, it should scroll to the oldest unread one + add an element bar with text "Unread messages"
 - MESSAGES: When scrolling up, add a "scroll to end" button with caret down in bottom right corner
