@@ -1,8 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- import { get } from 'svelte/store';
- import { wallets, address, balance, createWallet, selectedNetwork, selectedWallet } from '../wallet.js';
- import { networks } from '../networks.js';
+ import { balance, getBalance, setNetwork, createWallet, selectedNetwork, selectedWallet } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalPhrase from '../modals/phrase.svelte';
  import ModalNetworks from '../modals/networks.svelte';
@@ -15,20 +13,26 @@
  import Dropdown from "../components/dropdown.svelte";
  import Button from '../../../core/components/button.svelte';
  let section = 'balance';
- let walletsData = [];
- let networksData = [];
  let isModalPhraseOpen = false;
  let isModalNetworksOpen = false;
  let isModalWalletsOpen = false;
  let newPhrase = '';
 
  onMount(() => {
-  walletsData = get(wallets).map(item => ({ id: item.id, text: item.name }));
-  networksData = get(networks).map(item => ({ id: item.id, text: item.name }));
+  // TODO: set the last used network and wallet or the first one in these lists (if exist)
  });
 
  function setSection(name) {
   section = name;
+ }
+
+ function onSetNetwork() {
+  setNetwork();
+  getBalance();
+ }
+
+ function onSetWallet() {
+  getBalance();
  }
 
  function shortenAddress(addr) {
@@ -37,14 +41,14 @@
   return addr.slice(0, 5) + '...' + addr.slice(-3);
  }
 
- function showNewWalletModal() {
-  newPhrase = createWallet();
+ async function showNewWalletModal() {
+  newPhrase = await createWallet();
   isModalPhraseOpen = true;
   console.log('PHRASE:', newPhrase);
  }
 
  function clickCopyAddress() {
-  navigator.clipboard.writeText($address)
+  navigator.clipboard.writeText($selectedNetwork.address)
   .then(() => console.log('Address coppied to clipboard'))
   .catch(err => console.error('Error while copying to clipboard', err));
  }
@@ -145,9 +149,9 @@
    </div>
    <div class="right">
     <Dropdown text={$selectedWallet ? $selectedWallet.name : '--- Select your wallet ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
-    {#if $address}
+    {#if $selectedWallet && $selectedWallet.address}
      <div class="address">
-      <div>{shortenAddress($address)}</div>
+      <div>{shortenAddress($selectedWallet.address)}</div>
       <div class="copy" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}><img src="img/copy.svg" alt="Copy" /></div>
      </div>
     {/if}
@@ -189,11 +193,11 @@
 {/if}
 {#if isModalNetworksOpen}
  <Modal title="Select your network" onClose={() => isModalNetworksOpen = false}>
-  <ModalNetworks phrase={newPhrase} onClose={() => isModalNetworksOpen = false} />
+  <ModalNetworks phrase={newPhrase} onClose={() => isModalNetworksOpen = false} {onSetNetwork} />
  </Modal>
 {/if}
 {#if isModalWalletsOpen}
  <Modal title="Select your wallet" onClose={() => isModalWalletsOpen = false}>
-  <ModalWallets phrase={newPhrase} onClose={() => isModalWalletsOpen = false} />
+  <ModalWallets phrase={newPhrase} onClose={() => isModalWalletsOpen = false} {onSetWallet} />
  </Modal>
 {/if}

@@ -1,28 +1,11 @@
 import { get, writable } from 'svelte/store';
 import { Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic } from 'ethers';
 import { registerModule } from '../../core/core.js';
-import { networks } from './networks.js';
 import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
-
-registerModule('wallet', {
- callbacks: {},
- panels: {
-  sidebar: WalletSidebar,
-  content: WalletContent,
- },
-});
-
-export const wallets = writable([
- {
-  id: 1,
-  name: 'My Yellow Wallet 1',
- },
- {
-  id: 2,
-  name: 'My Yellow Wallet 2',
- },
-]);
+export const wallets = writable([]);
+export const selectedNetwork = writable(null);
+export const selectedWallet = writable(null);
 export const balance = writable({
  crypto: {
   amount: '?',
@@ -33,22 +16,32 @@ export const balance = writable({
   currency: 'USD',
  },
 });
-
 let wallet;
-export const selectedNetwork = writable(null);
-export const selectedWallet = writable(null);
 let provider;
-export const address = writable(null);
 
-function setNetwork(id) {
+registerModule('wallet', {
+ callbacks: {},
+ panels: {
+  sidebar: WalletSidebar,
+  content: WalletContent,
+ },
+});
+
+export function setNetwork() {
  if (get(selectedNetwork)) provider = new JsonRpcProvider(get(selectedNetwork).rpcURLs[0], get(selectedNetwork).chainID);
 }
 
-export function createWallet() {
+export async function createWallet() {
  const mnemonic = Mnemonic.fromEntropy(randomBytes(32));
  wallet = Wallet.fromPhrase(mnemonic.phrase).connect(provider);
- address.set(wallet.address);
- getBalance();
+ wallets.update(curr => [
+  ...curr,
+  {
+   name: 'My Yellow Wallet ' + (curr.length + 1),
+   address: wallet.address,
+  },
+ ]);
+ await getBalance();
  return mnemonic.phrase;
 }
 
@@ -71,38 +64,30 @@ async function loadWallet(password = null) {
    wallet = await ethers.Wallet.fromEncryptedJson(encryptedJson, password);
    wallet = wallet.connect(provider);
    address.set(wallet.address);
-   getBalance();
+   await getBalance();
   } catch (error) {
    console.error('Error while wallet decription:', error);
   }
  } else console.error('No wallet found or password is missing');
 }
 
-async function getBalance() {
- if (wallet) {
+export async function getBalance() {
+ if (get(selectedNetwork) && get(selectedWallet) && provider) {
   try {
-   const balanceBigNumber = await provider.getBalance(get(address));
+   const balanceBigNumber = await provider.getBalance(get(selectedWallet).address);
    const balanceFormated = formatEther(balanceBigNumber);
-   balance.update(currentBalance => {
-    return {
-     ...currentBalance,
-     crypto: {
-      ...currentBalance.crypto,
-      amount: balanceFormated,
-     },
-    };
+   balance.set({
+    crypto: {
+     amount: balanceFormated,
+     currency: get(selectedNetwork).currency.symbol,
+    },
+    fiat: {
+     amount: '?',
+     currency: 'USD',
+    },
    });
   } catch (error) {
    console.error('Error while getting balance:', error);
-   balance.update(currentBalance => {
-    return {
-     ...currentBalance,
-     crypto: {
-      ...currentBalance.crypto,
-      amount: 'N/A',
-     },
-    };
-   });
   }
  }
 }
@@ -115,20 +100,10 @@ async function sendTransaction(recipient, amount) {
     value: parseEther(amount),
    });
    await tx.wait();
-   getBalance();
+   await getBalance();
    console.log('Transaction sent OK');
   } catch (error) {
    console.error('Error while sending a transaction:', error);
   }
  } else console.error('Wallet not found');
 }
-
-export default {
- createWallet,
- saveWallet,
- loadWallet,
- sendTransaction,
- address,
- balance,
- wallets,
-};
