@@ -2,16 +2,15 @@
 
 - MESSAGES: Linkify of plain text message does not work
 - MESSAGES: When a new conversation is created to nonsensical address and then send a message to such address, the client start sending messages in infinite loop
-- MESSAGES: Scrolling down on new message sometimes doesn't work
-- CORE: The server is automatically reconnected and logged in again after logout
-- MESSAGES: Sometimes people receive 1 message multiple times (new_message event) - multiple websocket connections??
 - MESSAGES: New message notification works only if Messages module is previously opened
+- MESSAGES: Sometimes people receive 1 message multiple times (new_message event) - multiple websocket connections??
 - MESSAGES: On click somewhere in messages, refocus message bar
 - CORE: Logout should reset all module components' variables (core/components/menu.svelte - logout()) - consider doing it, because we'll get rid of login (use account switching instead)
 - BUILD: When moving the build of the app to web server's subdirectory (for example to /client/), it does not support relative paths (it's loading JS files /_app/... instead of /client/_app/...)
 - CORE: fix accounts dropdown keydown (event propagates to clickToggleAccounts and re-opens dropdown)
 - MESSAGES: GET javascript:alert('XSS') net::ERR_UNKNOWN_URL_SCHEME
 - MESSAGES: GET http://localhost:3000/x 404 (Not Found)
+- MESSAGES: Scrolling down on new message sometimes doesn't work
 
 # Features
 

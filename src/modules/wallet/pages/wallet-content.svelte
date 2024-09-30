@@ -1,7 +1,8 @@
 <script>
  import { onMount } from 'svelte';
  import { get } from 'svelte/store';
- import { wallets, networks, address, balance, createWallet } from '../wallet.js';
+ import { wallets, address, balance, createWallet } from '../wallet.js';
+ import { networks } from '../networks.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalPhrase from '../modals/phrase.svelte';
  import Send from './send.svelte';
