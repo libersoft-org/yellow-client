@@ -17,7 +17,7 @@
 - WALLET: network and wallet lists should contain search (filter) box
 - WALLET: network selection - show symbols in list and change crypto symbol when selected
 - WALLET: create wallet - add QR code + save button + print
-- WALLET: add "My wallets" section and move "Create wallet" into it + remove wallets
+- WALLET: add "My wallets" section and move "Create wallet" into it + remove wallets + import wallet etc.
 - WALLET: save wallets with private keys to localStorage
 - WALLET: convert crypto to fiat
 - WALLET: send, receive, token balances, history, settings, wizard for new wallet with seed phrase
