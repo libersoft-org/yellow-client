@@ -153,7 +153,6 @@ accounts_config.subscribe(value => {
      acc.settings = config.settings;
      account.update(v => v);
     }
-
    }
   } else {
    // add new account
@@ -254,13 +253,7 @@ function reconnectAccount(account) {
  let socket_id;
 
  console.log('acc.socket.readyState:', acc.socket?.readyState);
- if (
-  !acc.socket
-  || acc.socket.readyState === WebSocket.CLOSED
-  || acc.socket.readyState === WebSocket.CONNECTING
-  || acc.socket.readyState === WebSocket.CLOSING
-  || acc.socket.url !== acc.credentials.server) {
-
+ if (!acc.socket || acc.socket.readyState === WebSocket.CLOSED || acc.socket.readyState === WebSocket.CONNECTING || acc.socket.readyState === WebSocket.CLOSING || acc.socket.url !== acc.credentials.server) {
   if (acc.socket) {
    if (acc.socket.readyState !== WebSocket.CLOSED) {
     acc.socket.close();
@@ -303,17 +296,19 @@ function reconnectAccount(account) {
    sendLoginCommand(account);
   };
 
-  acc.socket.onerror = 'error', event => {
-   console.log('WebSocket ' + socket_id + ' error:', event);
-   retry(account, 'Connection error.');
-   acc.error = 'Error.';
-   account.update(v => v);
-  };
+  (acc.socket.onerror = 'error'),
+   event => {
+    console.log('WebSocket ' + socket_id + ' error:', event);
+    retry(account, 'Connection error.');
+    acc.error = 'Error.';
+    account.update(v => v);
+   };
 
-  acc.socket.onclose = 'close', event => {
-   console.log('WebSocket ' + socket_id + '  closed:', event);
-   retry(account, 'Connection closed.');
-  };
+  (acc.socket.onclose = 'close'),
+   event => {
+    console.log('WebSocket ' + socket_id + '  closed:', event);
+    retry(account, 'Connection closed.');
+   };
 
   clearHeartbeatTimer(acc);
   setupHeartbeat(account);
@@ -360,7 +355,7 @@ function clearHeartbeatTimer(acc) {
 function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
- send(acc, 'user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
+ send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
   console.log('Login response:', res);
   if (res.error !== 0) {
    acc.error = res.message;
@@ -472,7 +467,7 @@ function handleSocketResponse(acc, res) {
   // it is event:
   console.log('GOT EVENT', res);
   //TODO: send event to messages module:
-  acc.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
+  acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server:', res);
 }
 
@@ -493,11 +488,11 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  }
  const requestID = generateRequestID();
 
- const req = {requestID};
+ const req = { requestID };
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command) req.command = command;
  if (params) req.params = params;
- acc.requests[requestID] = {req, callback};
+ acc.requests[requestID] = { req, callback };
  console.log('------------------');
  console.log('SENDING COMMAND:');
  console.log(req);
@@ -512,4 +507,4 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
-export default {hideSidebarMobile, isClientFocused, accounts};
+export default { hideSidebarMobile, isClientFocused, accounts };
