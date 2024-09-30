@@ -1,8 +1,6 @@
 <script>
  import Photo from '../components/photo.svelte';
  import {selectedConversation, ensureConversationDetails} from '../messages.js';
- import { slide } from 'svelte/transition';
- import { quintOut } from 'svelte/easing';
 
  export let c;
  export let clickItem;
@@ -83,7 +81,8 @@
  }
 </style>
 
-<div transition:slide={{ delay: 250, duration: 300, easing: quintOut, axis: 'x' }}  class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyDown(c)}>
+
+<div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyDown(c)}>
  <div class="item-row">
   <Photo />
   <div class="description">
@@ -105,3 +104,4 @@
   <div class="text">&nbsp;</div>
  {/if}
 </div>
+

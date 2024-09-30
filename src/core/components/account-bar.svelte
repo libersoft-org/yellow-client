@@ -103,7 +103,12 @@
  {#if $active_account}
   <div class="text">{$active_account?.settings?.title}</div>
  {:else}
-  CREATE ACCOUNT FIRST
+  {#if $accounts.length > 0}
+   <div class="text">SELECT ACCOUNT</div>
+  {/if}
+  {#if $accounts.length == 0}
+   <div class="text">CREATE ACCOUNT FIRST</div>
+  {/if}
  {/if}
 
  <div><img src="img/down.svg" alt="▼" /></div>

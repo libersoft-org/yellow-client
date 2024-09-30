@@ -6,6 +6,7 @@
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
 
+
  let isModalOpen = false;
  let modalComponent = null;
 
@@ -70,7 +71,9 @@
   </div>
   <div class="items">
    {#each $conversationsArray as c (c.address)}
-    <ConversationListItem {c} {clickItem} />
+    {#key c.address}
+     <ConversationListItem {c} {clickItem} />
+    {/key}
    {/each}
   </div>
  </div>

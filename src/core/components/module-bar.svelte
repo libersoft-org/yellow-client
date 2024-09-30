@@ -78,8 +78,9 @@
   {/each}
 
  {:else}
+  {#if $active_account}
   <div class="message" >({$active_account.status})</div>
+  {/if}
  {/if}
-
 
 </div>

@@ -476,7 +476,6 @@ function handleSocketResponse(acc, res) {
  } else if (res.event) {
   // it is event:
   console.log('GOT EVENT', res);
-  //TODO: send event to messages module:
   acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server:', res);
 }

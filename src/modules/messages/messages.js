@@ -196,7 +196,8 @@ function eventNewMessage(acc, event) {
  updateConversationsArray(msg);
 }
 
-function eventSeenMessage(event) {
+function eventSeenMessage(acc, event) {
+ console.log(event);
  const res = event.detail;
  console.log('eventSeenMessage', res);
  if (!res.data) return;
