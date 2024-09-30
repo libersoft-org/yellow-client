@@ -4,7 +4,7 @@
  import { active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile }  from '../core.js';
  import AccountBarItem from './account-bar-item.svelte';
  import AccountBarButton from './account-bar-button.svelte';
- let accountsVisible = true;
+ let accountsVisible = false;
  let dropdown;
 
  onDestroy(() => {
