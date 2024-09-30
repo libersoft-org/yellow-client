@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import { get } from 'svelte/store';
- import { wallets, address, balance, createWallet } from '../wallet.js';
+ import { wallets, address, balance, createWallet, selectedNetwork, selectedWallet } from '../wallet.js';
  import { networks } from '../networks.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalPhrase from '../modals/phrase.svelte';
@@ -141,10 +141,10 @@
  <div class="content">
   <div class="header">
    <div class="left">
-    <Dropdown items={networksData} />
+    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => isModalNetworksOpen = true} onClose={() => isModalNetworksOpen = true} />
    </div>
    <div class="right">
-    <div><Dropdown items={walletsData} /></div>
+    <Dropdown text={$selectedWallet ? $selectedWallet.name : '--- Select your wallet ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
     {#if $address}
      <div class="address">
       <div>{shortenAddress($address)}</div>

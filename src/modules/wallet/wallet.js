@@ -13,20 +13,6 @@ registerModule('wallet', {
  },
 });
 
-let wallet;
-let selectedNetwork = get(networks)[0];
-let provider = new JsonRpcProvider(selectedNetwork.rpcURLs[0], selectedNetwork.chainID);
-export const address = writable(null);
-export const balance = writable({
- crypto: {
-  amount: '?',
-  currency: 'N/A',
- },
- fiat: {
-  amount: '?',
-  currency: 'USD',
- },
-});
 export const wallets = writable([
  {
   id: 1,
@@ -37,6 +23,26 @@ export const wallets = writable([
   name: 'My Yellow Wallet 2',
  },
 ]);
+export const balance = writable({
+ crypto: {
+  amount: '?',
+  currency: 'N/A',
+ },
+ fiat: {
+  amount: '?',
+  currency: 'USD',
+ },
+});
+
+let wallet;
+export const selectedNetwork = writable(null);
+export const selectedWallet = writable(null);
+let provider;
+export const address = writable(null);
+
+function setNetwork(id) {
+ if (get(selectedNetwork)) provider = new JsonRpcProvider(get(selectedNetwork).rpcURLs[0], get(selectedNetwork).chainID);
+}
 
 export function createWallet() {
  const mnemonic = Mnemonic.fromEntropy(randomBytes(32));

@@ -1,14 +1,22 @@
 <script>
- export let wallets;
- export let selectedWalletID = 0;
+ import { wallets, selectedWallet } from '../wallet.js';
+ import List from '../components/list.svelte';
+ import ListItem from '../components/list-item.svelte';
+ export let onClose;
+
+ function selectWallet(id) {
+  console.log('SETTING WALLET', id);
+  selectedWallet.set($wallets.find(w => w.id === id));
+  onClose();
+ }
 </script>
 
 <style>
- 
+
 </style>
 
-<div class="items">
- {#each wallets as w (w.id)}
-  <div class="item">{w.id} - {w.name}</div>
+<List>
+ {#each $wallets as w, index (w.id)}
+  <ListItem className={index % 2 === 0 ? 'even' : 'odd'} item={w.name} on:click={() => selectWallet(w.id)} />
  {/each}
-</div>
+</List>
