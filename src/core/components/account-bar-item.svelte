@@ -45,7 +45,10 @@
    background-color: orange;
  }
  .status-connecting {
-   background-color: yellow;
+  background-color: yellow;
+ }
+ .status-enabled {
+  background-color: yellow;
  }
  .status-default {
    background-color: blue;
@@ -63,6 +66,7 @@
                            $a.status === 'Retrying...'  ? 'status-retrying' :
                            $a.status === 'Login failed.' ? 'status-login-failed' :
                            $a.status === 'Disabled.'  ? 'status-disabled' :
+                           $a.status === 'Enabled.'  ? 'status-enabled' :
                           'status-default'}"></div>
 
   <small>

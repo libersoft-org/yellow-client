@@ -9,22 +9,27 @@ export let selected_module_id = writable(null);
 
 // declarations of modules that this client supports
 let module_decls = {};
+let global_socket_id = 0;
+
 
 export function getModuleDecls() {
- console.log('GET MODULE DECLS:', module_decls);
+ //console.log('GET MODULE DECLS:', module_decls);
  return module_decls;
 }
 
 export function registerModule(id, decl) {
- console.log('REGISTER MODULE:', id, decl);
+ //console.log('REGISTER MODULE:', id, decl);
  module_decls[id] = decl;
  decl.id = id;
 }
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
-export const accounts_config = localStorageSharedStore('accounts_config', [
- /*  {
+
+let default_accounts = [];
+if (import.meta.env.VITE_AMTP_SERVER_WS_URL)
+{
+ default_accounts = [   {
   id: 1,
   title: 'Account 1',
   enabled: true,
@@ -34,24 +39,27 @@ export const accounts_config = localStorageSharedStore('accounts_config', [
    password: '123456789'
   }
  },
- {
-  id: 2,
-  title: 'Account 2',
-  enabled: false,
-  credentials: {
-   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-   address: 'user2@example.com',
-   password: '123456789'
+  {
+   id: 2,
+   title: 'Account 2',
+   enabled: false,
+   credentials: {
+    server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+    address: 'user2@example.com',
+    password: '123456789'
+   }
   }
- }*/
-]);
+ ];
+}
+
+export const accounts_config = localStorageSharedStore('accounts_config', default_accounts);
 
 export let accounts = writable([]);
 
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
- console.log('active_account_store:', $accounts, $active_account_id);
+ //console.log('active_account_store:', $accounts, $active_account_id);
  let r = $accounts.find(acc => get(acc).id === $active_account_id);
- console.log('active_account_store:', r);
+ //console.log('active_account_store:', r);
  return r;
 });
 
@@ -62,14 +70,14 @@ export let active_account = derived(active_account_store, ($active_account_store
  }
 
  const unsubscribe = $active_account_store.subscribe(account => {
-  console.log('DERIVED NESTED STORE:', account);
+  //console.log('DERIVED NESTED STORE:', account);
   set(account);
  });
  return () => unsubscribe();
 });
 
 active_account.subscribe(value => {
- console.log('ACTIVE ACCOUNT:', value);
+ //console.log('ACTIVE ACCOUNT:', value);
 });
 
 export function module_data_derived(module_id) {
@@ -79,9 +87,9 @@ export function module_data_derived(module_id) {
    return null;
   }
   let acc = $active_account;
-  console.log('$active_account:', acc, 'MODULE ID:', module_id);
+  //console.log('$active_account:', acc, 'MODULE ID:', module_id);
   let result = acc.module_data[module_id];
-  console.log('MODULE DATA:', result);
+  //console.log('MODULE DATA:', result);
   return result;
  });
 }
@@ -120,11 +128,11 @@ accounts_config.subscribe(value => {
  console.log('ACCOUNTS CONFIG:', value);
  //TODO: implement configuration of accounts order
  let accounts_list = get(accounts);
- console.log('EXISTING ACCOUNTS (stores):', accounts_list);
+ //console.log('EXISTING ACCOUNTS (stores):', accounts_list);
  for (let config of value) {
-  console.log('CONFIG', config);
+  //console.log('CONFIG', config);
   let account = accounts_list.find(acc => get(acc).id === config.id);
-  console.log('account', account);
+  //console.log('account', account);
   if (account) {
    let acc = get(account);
 
@@ -149,7 +157,7 @@ accounts_config.subscribe(value => {
   } else {
    // add new account
    let account = constructAccount(config.id, config.title, config.credentials, config.enabled);
-   console.log('NEW account', get(account));
+   //console.log('NEW account', get(account));
    accounts.update(v => [...v, account]);
 
    selectAccount(get(account).id);
@@ -212,6 +220,7 @@ function _enableAccount(account) {
  let acc = get(account);
  acc.enabled = true;
  acc.suspended = false;
+ acc.status = 'Enabled.';
  account.update(v => v);
  // TODO: use admin logic
  reconnectAccount(account);
@@ -228,10 +237,15 @@ function _disableAccount(account) {
  account.update(v => v);
 }
 
+
 function reconnectAccount(account) {
  let acc = get(account);
  if (!acc.enabled) return;
  if (acc.suspended) return;
+ if (acc.status != 'Enabled.' && acc.status != 'Retrying...') {
+  console.log('Account status not "Enabled." or "Retrying...", not reconnecting:', acc.status);
+  return;
+ }
 
  clearHeartbeatTimer(acc);
  clearReconnectTimer(account);
@@ -248,6 +262,7 @@ function reconnectAccount(account) {
   acc.socket.onclose = (event) => {console.log('old socket onclose', event);};
   acc.socket.onmessage = (event) => {console.log('old socket onmessage', event);};
  }
+ let socket_id = global_socket_id++;
  acc.socket = new WebSocket(acc.credentials.server);
  acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', {event}));
  acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', {event}));
@@ -255,7 +270,7 @@ function reconnectAccount(account) {
  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
 
  acc.events.addEventListener('open', event => {
-  console.log('Connected to WebSocket:', event);
+  console.log('Connected to WebSocket ' + socket_id +':', event);
   acc.status = 'Connected, logging in...';
   account.update(v => v);
 
@@ -263,12 +278,12 @@ function reconnectAccount(account) {
  });
 
  acc.events.addEventListener('error', event => {
-  console.log('WebSocket error:', event);
+  console.log('WebSocket ' + socket_id + ' error:', event);
   retry(account, 'Connection error.');
  });
 
  acc.events.addEventListener('close', event => {
-  console.log('WebSocket closed:', event);
+  console.log('WebSocket ' + socket_id + '  closed:', event);
   retry(account, 'Connection closed.');
  });
 }
