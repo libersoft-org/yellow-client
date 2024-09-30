@@ -48,7 +48,7 @@
  }
 
  function clickCopyAddress() {
-  navigator.clipboard.writeText($selectedNetwork.address)
+  navigator.clipboard.writeText($selectedWallet.address)
   .then(() => console.log('Address coppied to clipboard'))
   .catch(err => console.error('Error while copying to clipboard', err));
  }
