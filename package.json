@@ -19,6 +19,7 @@
 	"dependencies": {
 		"@sveltejs/adapter-static": "*",
 		"dompurify": "*",
-		"ethers": "*"
+		"ethers": "*",
+		"qrcode": "*"
 	}
 }

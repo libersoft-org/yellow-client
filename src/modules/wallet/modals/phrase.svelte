@@ -1,6 +1,16 @@
 <script>
+ import QRCode from 'qrcode';
+ import { onMount } from 'svelte';
  export let phrase = '';
- let count = 0;
+ let qrCodeData = '';
+
+ onMount(() => {
+  generateQRCode();
+ });
+
+ function generateQRCode() {
+  QRCode.toDataURL(phrase).then(url => qrCodeData = url).catch(err => console.error(err));
+ };
 </script>
 
 <style>
@@ -10,6 +20,10 @@
  }
 </style>
 
+
+{#if qrCodeData}
+ <img src={qrCodeData} alt="Seed phrase" />
+{/if}
 <table>
  <tr>
   <td>
