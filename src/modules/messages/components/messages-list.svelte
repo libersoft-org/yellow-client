@@ -37,7 +37,7 @@
  $: updateItems($messagesArray)
 
  function updateItems(messagesArray) {
-  let items = [];
+  items.length = 0;
   let unseen_marker_placed = false;
   for (let message of messagesArray) {
    if (!unseen_marker_placed && !message.is_outgoing && !message.seen) {
