@@ -7,6 +7,7 @@
  let accountsVisible = false;
  let dropdown;
 
+
  onDestroy(() => {
   document.removeEventListener('click', handleClickOutside);
  });
@@ -35,11 +36,11 @@
  }
 
  function clickSelectAccount(id) {
-  console.log('clickSelectAccount: ' + id);
+  //console.log('clickSelectAccount: ' + id);
   selectAccount(id);
-  console.log('accountsVisible: ' + accountsVisible);
+  //console.log('accountsVisible: ' + accountsVisible);
   accountsVisible = false;
-  console.log('accountsVisible: ' + accountsVisible);
+  //console.log('accountsVisible: ' + accountsVisible);
   document.removeEventListener('click', handleClickOutside);
  }
 

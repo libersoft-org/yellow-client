@@ -1,14 +1,30 @@
 <script>
 
- import { active_account, order } from '../../core/core.js';
+ import { active_account, order, selected_module_id } from '../../core/core.js';
+ import { get } from "svelte/store";
 
  let module_data;
- $: module_data = $active_account?.module_data || [];
+ $: module_data = $active_account?.module_data || {}
  $: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
  $: console.log('module-bar module_data_ordered:', module_data_ordered);
 
  export let onSelectModule;
+
+ let lastModuleSelected = false;
+ $: selectLastModule(module_data);
+
+ function selectLastModule(module_data) {
+  console.log('selectLastModule: ', module_data);
+  if (!lastModuleSelected && module_data_ordered && module_data_ordered.length > 0) {
+   console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
+   lastModuleSelected = true;
+   let id = active_account.last_module_id;
+   if (module_data[id]) {
+    onSelectModule(id);
+   }
+  }
+ }
 
  function clickSetModule(id) {
   console.log('clickSetModule: ' + id);

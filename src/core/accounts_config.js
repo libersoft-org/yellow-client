@@ -1,15 +1,17 @@
-import { accounts_config, getRandomString } from './core.js';
+import { accounts_config, getRandomString, selectAccount } from './core.js';
 import { get } from 'svelte/store';
 
 export function addAccount(config) {
+ let id = getRandomString();
  accounts_config.update(v => [
   ...v,
   {
-   id: getRandomString(),
+   id,
    title: 'New Account',
    ...config,
   },
  ]);
+ selectAccount(id);
 }
 
 export function saveAccount(id, config) {

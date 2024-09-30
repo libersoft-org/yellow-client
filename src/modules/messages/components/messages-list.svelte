@@ -1,5 +1,5 @@
 <script>
- import {afterUpdate, beforeUpdate, onMount} from 'svelte';
+ import { afterUpdate, beforeUpdate, onMount } from 'svelte';
  import Message from './message.svelte';
  import { messagesArray } from '../messages.js';
  import { active_account } from '../../../core/core.js';
@@ -32,6 +32,21 @@
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
   if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
  }
+
+ let items;
+ $: updateItems($messagesArray)
+
+ function updateItems(messagesArray) {
+  let items = [];
+  let unseen_marker_placed = false;
+  for (message of messagesArray) {
+   if (!unseen_marker_placed && !message.is_outgoing && !message.seen) {
+    unseen_marker_placed = true;
+    items.push({uid: 'unseen_marker', type: 'unseen_marker'});
+   }
+   items.push(message);
+  }
+ }
 </script>
 
 <style>
@@ -45,8 +60,11 @@
 </style>
 
 <div class="messages" bind:this={messages_elem}>
- {#each $messagesArray as m (m.uid)}
-  <!-- <pre>{JSON.stringify(m, null, 2)}</pre> -->
-  <Message message={m} container_element="{messages_elem}" />
+ {#each items as m (m.uid)}
+  {#if m.type === 'unseen_marker'}
+   <div class="unseen-marker">=v=v=v=v=v=Unseen messages=v=v=v=v=v=</div>
+  {:else}
+   <Message message={m} container_element="{messages_elem}" />
+  {/if}
  {/each}
 </div>

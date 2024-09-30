@@ -42,7 +42,6 @@
  function clickAdd() {
   addAccount({enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}, title: config_title});
   onClose();
-
  }
 
  function clickSave() {
