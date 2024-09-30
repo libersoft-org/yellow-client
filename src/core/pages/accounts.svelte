@@ -39,7 +39,11 @@
 
  function accountsConfigImport()
  {
-
+  let text = window.prompt('Paste the exported JSON here:', '');
+  if (text) {
+   let data = JSON.parse(text);
+   accounts_config.set(data);
+  }
  }
 
 </script>

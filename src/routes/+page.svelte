@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import { get } from "svelte/store";
  import '../app.css';
- import { accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls } from '../core/core.js';
+ import { active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls } from '../core/core.js';
 
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -101,6 +101,15 @@
   console.log('onSelectModule: ' + id);
   selected_module_id.set(id);
   console.log('selected_module_id: ' + get(selected_module_id));
+
+  accounts_config.update((accounts) => {
+   accounts.forEach((account) => {
+    if (account.id === get(active_account).id) {
+     account.last_module_id = id;
+    }
+   });
+   return accounts;
+  });
  }
 
  function startResizeSideBar() {

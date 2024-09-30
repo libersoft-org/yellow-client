@@ -158,8 +158,6 @@ accounts_config.subscribe(value => {
    //console.log('NEW account', get(account));
    accounts.update(v => [...v, account]);
 
-   selectAccount(get(account).id);
-
    if (config.enabled) {
     _enableAccount(account);
    } else {
