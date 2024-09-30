@@ -4,6 +4,7 @@
  import { active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile }  from '../core.js';
  import AccountBarItem from './account-bar-item.svelte';
  import AccountBarButton from './account-bar-button.svelte';
+ import AccountStatusIcon from "./account-status-icon.svelte";
  let accountsVisible = false;
  let dropdown;
 
@@ -102,6 +103,7 @@
 
  {#if $active_account}
   <div class="text">{$active_account?.settings?.title}</div>
+  <AccountStatusIcon a={active_account} />
  {:else}
   {#if $accounts.length > 0}
    <div class="text">SELECT ACCOUNT</div>
