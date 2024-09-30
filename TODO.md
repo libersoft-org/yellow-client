@@ -14,7 +14,6 @@
 
 # Features
 
-- WALLET: move network list to separated JS file and load it somehow from module
 - WALLET: network and wallet dropdown should show modal window with the list with icons etc (as in MetaMask)
 - WALLET: network selection (+ change crypto symbol when selected)
 - WALLET: wallet selection

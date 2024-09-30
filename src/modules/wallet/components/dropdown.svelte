@@ -1,7 +1,13 @@
 <script>
- export let items = null;
- export let noOptionID = 0;
- export let noOptionText = '---';
+ export let text;
+ export let onClick;
+
+  function keyDropdown() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   onClick();
+  }
+ }
 </script>
 
 <style>
@@ -15,12 +21,4 @@
  }
 </style>
 
-<select class="dropdown">
- {#if items}
-  {#each items as i (i.id)}
-   <option id="{i.id}">{i.text}</option>
-  {/each}
- {:else}
-  <option id="{noOptionID}">{noOptionText}</option>
- {/if}
-</select>
+<div class="dropdown" role="button" tabindex="0" on:click={onClick} on:keydown={keyDropdown}>{text}</div>

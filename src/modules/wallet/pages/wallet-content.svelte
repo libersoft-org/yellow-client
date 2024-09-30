@@ -5,6 +5,8 @@
  import { networks } from '../networks.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalPhrase from '../modals/phrase.svelte';
+ import ModalNetworks from '../modals/networks.svelte';
+ import ModalWallets from '../modals/wallets.svelte';
  import Send from './send.svelte';
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
@@ -16,6 +18,8 @@
  let walletsData = [];
  let networksData = [];
  let isModalPhraseOpen = false;
+ let isModalNetworksOpen = false;
+ let isModalWalletsOpen = false;
  let newPhrase = '';
 
  onMount(() => {
@@ -181,5 +185,15 @@
 {#if isModalPhraseOpen}
  <Modal title="New wallet" onClose={() => isModalPhraseOpen = false}>
   <ModalPhrase phrase={newPhrase} onClose={() => isModalPhraseOpen = false} />
+ </Modal>
+{/if}
+{#if isModalNetworksOpen}
+ <Modal title="Select your network" onClose={() => isModalNetworksOpen = false}>
+  <ModalNetworks phrase={newPhrase} onClose={() => isModalNetworksOpen = false} />
+ </Modal>
+{/if}
+{#if isModalWalletsOpen}
+ <Modal title="Select your wallet" onClose={() => isModalWalletsOpen = false}>
+  <ModalWallets phrase={newPhrase} onClose={() => isModalWalletsOpen = false} />
  </Modal>
 {/if}
