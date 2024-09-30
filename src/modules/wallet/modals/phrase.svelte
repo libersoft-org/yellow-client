@@ -9,11 +9,18 @@
  });
 
  function generateQRCode() {
-  QRCode.toDataURL(phrase).then(url => qrCodeData = url).catch(err => console.error(err));
+  QRCode.toDataURL(phrase, { width: 150 })
+  .then(url => qrCodeData = url)
+  .catch(err => console.error(err));
  };
 </script>
 
 <style>
+ .qr {
+  display: flex;
+  justify-content: center;
+ }
+
  .cell {
   padding: 5px;
   border: 1px solid #000;
@@ -22,7 +29,7 @@
 
 
 {#if qrCodeData}
- <img src={qrCodeData} alt="Seed phrase" />
+<div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
 {/if}
 <table>
  <tr>
