@@ -37,15 +37,17 @@
  $: updateItems($messagesArray)
 
  function updateItems(messagesArray) {
+  console.log('updateItems');
   items.length = 0;
   let unseen_marker_placed = false;
-  for (let message of messagesArray) {
-   items.push(message);
+  for (let message of messagesArray.toReversed()) {
    if (!unseen_marker_placed && !message.is_outgoing && !message.seen) {
     unseen_marker_placed = true;
     items.push({uid: 'unseen_marker', type: 'unseen_marker'});
    }
+   items.push(message);
   }
+  items.reverse();
  }
 </script>
 

@@ -112,6 +112,7 @@ export function setMessageSeen(message, cb) {
   }
   message.seen = true;
   if (cb) cb();
+  messagesArray.update(v => v);
   // update conversationsArray:
   const conversation = get(conversationsArray).find(c => c.address === message.address_from);
   if (conversation) {
