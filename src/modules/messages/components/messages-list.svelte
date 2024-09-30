@@ -33,13 +33,13 @@
   if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
- let items;
+ let items = [];
  $: updateItems($messagesArray)
 
  function updateItems(messagesArray) {
   let items = [];
   let unseen_marker_placed = false;
-  for (message of messagesArray) {
+  for (let message of messagesArray) {
    if (!unseen_marker_placed && !message.is_outgoing && !message.seen) {
     unseen_marker_placed = true;
     items.push({uid: 'unseen_marker', type: 'unseen_marker'});

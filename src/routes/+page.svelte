@@ -105,7 +105,8 @@
   accounts_config.update((accounts) => {
    accounts.forEach((account) => {
     if (account.id === get(active_account).id) {
-     account.last_module_id = id;
+     account.settings = account.settings ? account.settings : {};
+     account.settings.last_module_id = id;
     }
    });
    return accounts;

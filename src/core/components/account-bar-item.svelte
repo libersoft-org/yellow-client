@@ -62,7 +62,7 @@
  }
 </style>
 
-<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={(event) => keySelectAccount($a.id, event)}>{$a.title}
+<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={(event) => keySelectAccount($a.id, event)}>{$a.settings?.title}
 
   <div class="status-icon {$a.status === 'Logged in.'    ? 'status-logged-in' :
                            $a.status === 'Connecting...'   ? 'status-connecting' :

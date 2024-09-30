@@ -134,15 +134,12 @@ accounts_config.subscribe(value => {
   if (account) {
    let acc = get(account);
 
-   if (acc.title != config.title) {
-    acc.title = config.title;
-    account.update(v => v);
-   }
-
    if (acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
     acc.credentials = config.credentials;
-    _disableAccount(account);
-    _enableAccount(account);
+    if (acc.enabled) {
+     _disableAccount(account);
+     _enableAccount(account);
+    }
    }
 
    if (acc.enabled != config.enabled) {
@@ -151,10 +148,16 @@ accounts_config.subscribe(value => {
     } else {
      _disableAccount(account);
     }
+
+    if (acc.settings != config.settings) {
+     acc.settings = config.settings;
+     account.update(v => v);
+    }
+
    }
   } else {
    // add new account
-   let account = constructAccount(config.id, config.title, config.credentials, config.enabled);
+   let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
    //console.log('NEW account', get(account));
    accounts.update(v => [...v, account]);
 
@@ -198,10 +201,10 @@ export function selectAccount(id) {
  });
 }
 
-function constructAccount(id, title, credentials, enabled) {
+function constructAccount(id, credentials, enabled, settings) {
  let account = {
   id,
-  title,
+  settings,
   credentials,
   enabled,
   events: new EventTarget(),

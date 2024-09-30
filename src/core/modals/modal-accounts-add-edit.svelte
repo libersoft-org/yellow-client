@@ -29,7 +29,7 @@
    credentials_server = credentials.server;
    credentials_password = credentials.password;
    config_enabled = acc.enabled;
-   config_title = acc.title;
+   config_title = acc.settings?.title;
   } else {
    credentials_address = '';
    credentials_server = '';
@@ -40,14 +40,13 @@
  });
 
  function clickAdd() {
-  addAccount({enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}, title: config_title});
+  addAccount({enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}}, {title: config_title});
   onClose();
  }
 
  function clickSave() {
-  saveAccount(id, {enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}, title: config_title});
+  saveAccount(id, {enabled: config_enabled, credentials: {address: credentials_address, server: credentials_server, password: credentials_password}}, {title: config_title});
   onClose();
-
  }
 
  function keyEnter() {

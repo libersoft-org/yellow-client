@@ -15,11 +15,14 @@
  $: selectLastModule(module_data);
 
  function selectLastModule(module_data) {
-  console.log('selectLastModule: ', module_data);
   if (!lastModuleSelected && module_data_ordered && module_data_ordered.length > 0) {
    console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
    lastModuleSelected = true;
-   let id = active_account.last_module_id;
+   let acc = get(active_account);
+   console.log('selectLastModule: acc: ', acc);
+   let id = acc.settings?.last_module_id;
+   console.log('selectLastModule: ', module_data);
+   console.log('selectLastModule: id: ', id);
    if (module_data[id]) {
     onSelectModule(id);
    }
@@ -75,7 +78,7 @@
   {/each}
 
  {:else}
-  <div class="message" >(No modules...)</div>
+  <div class="message" >({$active_account.status})</div>
  {/if}
 
 
