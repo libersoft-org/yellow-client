@@ -9,49 +9,55 @@ export let selected_module_id = writable(null);
 
 // declarations of modules that this client supports
 let module_decls = {};
+let global_socket_id = 0;
 
 export function getModuleDecls() {
- console.log('GET MODULE DECLS:', module_decls);
+ //console.log('GET MODULE DECLS:', module_decls);
  return module_decls;
 }
 
 export function registerModule(id, decl) {
- console.log('REGISTER MODULE:', id, decl);
+ //console.log('REGISTER MODULE:', id, decl);
  module_decls[id] = decl;
  decl.id = id;
 }
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
-export const accounts_config = localStorageSharedStore('accounts_config', [
- /*  {
-  id: 1,
-  title: 'Account 1',
-  enabled: true,
-  credentials: {
-   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-   address: 'user@example.com',
-   password: '123456789'
-  }
- },
- {
-  id: 2,
-  title: 'Account 2',
-  enabled: false,
-  credentials: {
-   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-   address: 'user2@example.com',
-   password: '123456789'
-  }
- }*/
-]);
+let default_accounts = [];
+if (import.meta.env.VITE_AMTP_SERVER_WS_URL) {
+ default_accounts = [
+  {
+   id: 1,
+   title: 'Account 1',
+   enabled: true,
+   credentials: {
+    server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+    address: 'user@example.com',
+    password: '123456789',
+   },
+  },
+  {
+   id: 2,
+   title: 'Account 2',
+   enabled: false,
+   credentials: {
+    server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+    address: 'user2@example.com',
+    password: '123456789',
+   },
+  },
+ ];
+}
+
+export const accounts_config = localStorageSharedStore('accounts_config', default_accounts);
 
 export let accounts = writable([]);
 
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
- console.log('active_account_store:', $accounts, $active_account_id);
+ //console.log('active_account_store:', $accounts, $active_account_id);
  let r = $accounts.find(acc => get(acc).id === $active_account_id);
- console.log('active_account_store:', r);
+ //console.log('active_account_store:', r);
  return r;
 });
 
@@ -62,14 +68,14 @@ export let active_account = derived(active_account_store, ($active_account_store
  }
 
  const unsubscribe = $active_account_store.subscribe(account => {
-  console.log('DERIVED NESTED STORE:', account);
+  //console.log('DERIVED NESTED STORE:', account);
   set(account);
  });
  return () => unsubscribe();
 });
 
 active_account.subscribe(value => {
- console.log('ACTIVE ACCOUNT:', value);
+ //console.log('ACTIVE ACCOUNT:', value);
 });
 
 export function module_data_derived(module_id) {
@@ -79,9 +85,9 @@ export function module_data_derived(module_id) {
    return null;
   }
   let acc = $active_account;
-  console.log('$active_account:', acc, 'MODULE ID:', module_id);
+  //console.log('$active_account:', acc, 'MODULE ID:', module_id);
   let result = acc.module_data[module_id];
-  console.log('MODULE DATA:', result);
+  //console.log('MODULE DATA:', result);
   return result;
  });
 }
@@ -120,11 +126,11 @@ accounts_config.subscribe(value => {
  console.log('ACCOUNTS CONFIG:', value);
  //TODO: implement configuration of accounts order
  let accounts_list = get(accounts);
- console.log('EXISTING ACCOUNTS (stores):', accounts_list);
+ //console.log('EXISTING ACCOUNTS (stores):', accounts_list);
  for (let config of value) {
-  console.log('CONFIG', config);
+  //console.log('CONFIG', config);
   let account = accounts_list.find(acc => get(acc).id === config.id);
-  console.log('account', account);
+  //console.log('account', account);
   if (account) {
    let acc = get(account);
 
@@ -149,7 +155,7 @@ accounts_config.subscribe(value => {
   } else {
    // add new account
    let account = constructAccount(config.id, config.title, config.credentials, config.enabled);
-   console.log('NEW account', get(account));
+   //console.log('NEW account', get(account));
    accounts.update(v => [...v, account]);
 
    selectAccount(get(account).id);
@@ -209,7 +215,10 @@ function constructAccount(id, title, credentials, enabled) {
 }
 
 function _enableAccount(account) {
- get(account).enabled = true;
+ let acc = get(account);
+ acc.enabled = true;
+ acc.suspended = false;
+ acc.status = 'Enabled.';
  account.update(v => v);
  // TODO: use admin logic
  reconnectAccount(account);
@@ -217,54 +226,185 @@ function _enableAccount(account) {
 
 function _disableAccount(account) {
  let acc = get(account);
+ disconnectAccount(acc);
+ clearHeartbeatTimer(acc);
+ clearReconnectTimer(account);
  acc.enabled = false;
+ acc.suspended = false;
+ acc.status = 'Disabled.';
  account.update(v => v);
- disconnectAccount(account);
 }
 
 function reconnectAccount(account) {
  let acc = get(account);
- console.log('Reconnecting account:', acc);
  if (!acc.enabled) return;
- acc.socket = new WebSocket(acc.credentials.server);
- acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', { event }));
- acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', { event }));
- acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', { event }));
- acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
- acc.events.addEventListener('open', event => {
-  console.log('Connected to WebSocket:', event);
-  if (acc.loggingIn) sendLoginCommand(account);
- });
+ if (acc.suspended) {
+  console.log('account suspended. not reconnecting.');
+  return;
+ }
+ if (acc.status != 'Enabled.' && acc.status != 'Retrying...') {
+  console.log('Account status not "Enabled." or "Retrying...", not reconnecting:', acc.status);
+  return;
+ }
 
- acc.events.addEventListener('error', event => {
-  console.log('WebSocket error:', event);
-  acc.error = 'Cannot connect to server';
-  acc.loggingIn = false;
- });
+ //clearHeartbeatTimer(acc);
+ clearReconnectTimer(account);
 
- acc.events.addEventListener('close', event => {
-  console.log('WebSocket closed:', event);
-  acc.loggingIn = false;
- });
+ let socket_id;
 
- acc.loggingIn = true;
+ console.log('acc.socket.readyState:', acc.socket?.readyState);
+ if (
+  !acc.socket
+  || acc.socket.readyState === WebSocket.CLOSED
+  || acc.socket.readyState === WebSocket.CONNECTING
+  || acc.socket.readyState === WebSocket.CLOSING
+  || acc.socket.url !== acc.credentials.server) {
+
+  if (acc.socket) {
+   if (acc.socket.readyState !== WebSocket.CLOSED) {
+    acc.socket.close();
+    acc.socket.onopen = event => {
+     console.log('old socket onopen', event);
+    };
+    acc.socket.onerror = event => {
+     console.log('old socket onerror', event);
+    };
+    acc.socket.onclose = event => {
+     console.log('old socket onclose', event);
+    };
+    acc.socket.onmessage = event => {
+     console.log('old socket onmessage', event);
+    };
+   }
+  }
+  socket_id = global_socket_id++;
+  console.log('Creating new WebSocket:', acc.credentials.server);
+  acc.status = 'Connecting...';
+  account.update(v => v);
+
+  try {
+   acc.socket = new WebSocket(acc.credentials.server);
+  } catch (e) {
+   const msg = e.message;
+   acc.error = msg;
+   acc.suspended = true;
+   acc.status = 'Error.';
+   account.update(v => v);
+   return;
+  }
+
+  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
+
+  acc.socket.onopen = event => {
+   console.log('Connected to WebSocket ' + socket_id + ':', event);
+   acc.status = 'Connected, logging in...';
+   account.update(v => v);
+   sendLoginCommand(account);
+  };
+
+  acc.socket.onerror = 'error', event => {
+   console.log('WebSocket ' + socket_id + ' error:', event);
+   retry(account, 'Connection error.');
+   acc.error = 'Error.';
+   account.update(v => v);
+  };
+
+  acc.socket.onclose = 'close', event => {
+   console.log('WebSocket ' + socket_id + '  closed:', event);
+   retry(account, 'Connection closed.');
+  };
+
+  clearHeartbeatTimer(acc);
+  setupHeartbeat(account);
+ }
+}
+
+function retry(account, msg) {
+ let acc = get(account);
+ acc.status = 'Retrying...';
+ acc.error = msg;
+ //clearHeartbeatTimer(acc);
+ //acc.sessionID = null;
+ account.update(v => v);
+ setReconnectTimer(account);
+}
+
+function setReconnectTimer(account) {
+ let acc = get(account);
+
+ if (acc.reconnectTimer != null) {
+  clearInterval(acc.reconnectTimer);
+ }
+ acc.reconnectTimer = setTimeout(() => {
+  reconnectAccount(account);
+ }, 1000);
+}
+
+function clearReconnectTimer(account) {
+ let acc = get(account);
+
+ if (acc.reconnectTimer) {
+  clearTimeout(acc.reconnectTimer);
+  acc.reconnectTimer = null;
+ }
+}
+
+function clearHeartbeatTimer(acc) {
+ if (acc.heartbeatTimer) {
+  clearInterval(acc.heartbeatTimer);
+  acc.heartbeatTimer = null;
+ }
 }
 
 function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
- send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
+ send(acc, 'user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
   console.log('Login response:', res);
-  acc.loggingIn = false;
   if (res.error !== 0) {
    acc.error = res.message;
-   console.error('Login error:', res);
+   acc.status = 'Login failed.';
+   acc.suspended = true;
+   console.error('Login failed:', res);
   } else {
+   acc.status = 'Logged in.';
+   acc.error = null;
    acc.sessionID = res.data.sessionID;
    initModuleData(account);
   }
   account.update(v => v);
  });
+}
+
+function setupHeartbeat(account) {
+ let acc = get(account);
+ acc.heartbeatTimer = setInterval(() => {
+  if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
+   acc.status = 'Retrying...';
+   acc.error = 'Not connected.';
+   account.update(v => v);
+   reconnectAccount(account);
+   return;
+  }
+  send(acc, 'user_heartbeat', {}, true, (req, res) => {
+   console.log('Heartbeat response:', res);
+   acc.lastCommsTs = Date.now();
+   acc.status = 'Connected.';
+   acc.error = null;
+   account.update(v => v);
+  });
+  if (Date.now() - acc.lastCommsTs > 15000) {
+   const msg = 'No comms for 15 seconds, reconnecting...';
+   console.log(msg);
+   // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
+   acc.status = 'Retrying...';
+   acc.error = msg;
+   //clearHeartbeatTimer(acc);
+   //acc.sessionID = null;
+   account.update(v => v);
+   reconnectAccount(account);
+  }
+ }, 5000);
 }
 
 export function order(dict) {
@@ -297,22 +437,22 @@ function initModuleData(account) {
  console.log('initModuleData:', acc.module_data);
 }
 
-export function deinitModuleData(acc) {
+function disconnectAccount(acc) {
  for (const [module_id, decl] of Object.entries(module_decls)) {
-  decl?.deinitData(acc);
- }
-}
+  if (decl.callbacks.deinitComms) {
+   decl.callbacks.deinitComms(acc);
+  }
+  if (decl.callbacks.deinitData) {
+   decl.callbacks.deinitData(acc);
+  }
 
-function disconnectAccount(account) {
- let acc = get(account);
- if (acc.socket) {
-  send(acc, 'user_unsubscribe', { event: 'new_message' });
-  send(acc, 'user_unsubscribe', { event: 'seen_message' });
-  acc.socket.close();
-  acc.socket = null;
+  if (acc.socket) {
+   acc.socket.close();
+   acc.socket = null;
+  }
   acc.requests = {};
   acc.module_data = {};
-  account.update(v => v);
+
   console.log('Account disconnected');
  }
 }
@@ -331,7 +471,7 @@ function handleSocketResponse(acc, res) {
   // it is event:
   console.log('GOT EVENT', res);
   //TODO: send event to messages module:
-  acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
+  acc.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
  } else console.log('Unknown command from server:', res);
 }
 
@@ -352,11 +492,11 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  }
  const requestID = generateRequestID();
 
- const req = { requestID };
+ const req = {requestID};
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command) req.command = command;
  if (params) req.params = params;
- acc.requests[requestID] = { req, callback };
+ acc.requests[requestID] = {req, callback};
  console.log('------------------');
  console.log('SENDING COMMAND:');
  console.log(req);
@@ -371,4 +511,4 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
-export default { hideSidebarMobile, isClientFocused, accounts };
+export default {hideSidebarMobile, isClientFocused, accounts};

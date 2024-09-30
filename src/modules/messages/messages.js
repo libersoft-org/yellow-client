@@ -3,10 +3,16 @@ import { active_account, module_data_derived, registerModule, relay, isClientFoc
 import DOMPurify from 'dompurify';
 import { send, getRandomString } from '../../core/core.js';
 import { listConversations } from './conversations.js';
-
-//Messages:
 import ConversationsList from './pages/conversations-list.svelte';
 import ConversationsMain from './pages/conversations-main.svelte';
+
+registerModule('messages', {
+ callbacks: { initData, initComms, deinitComms, deinitData },
+ panels: {
+  sidebar: ConversationsList,
+  content: ConversationsMain,
+ },
+});
 
 class Message {
  constructor(acc, data) {
@@ -57,39 +63,26 @@ export function initComms(acc) {
  listConversations(acc);
 }
 
+export function deinitComms(acc) {
+ send(acc, 'user_unsubscribe', { event: 'new_message' });
+ send(acc, 'user_unsubscribe', { event: 'seen_message' });
+}
+
 export function deinitData(acc) {
  console.log('DEINIT DATA');
 
- send(acc, 'user_unsubscribe', { event: 'new_message' });
- send(acc, 'user_unsubscribe', { event: 'seen_message' });
-
  let data = acc.module_data['messages'];
+ if (!data) return;
 
  acc.events.removeEventListener('new_message', data.new_message_listener);
  acc.events.removeEventListener('seen_message', data.seen_message_listener);
 
- if (data) {
-  data.messagesArray.set([]);
-  data.conversationsArray.set([]);
-  data.selectedConversation.set(null);
- }
+ data.messagesArray.set([]);
+ data.conversationsArray.set([]);
+ data.selectedConversation.set(null);
 
  acc.module_data.messages = null;
 }
-
-// console.log('module_decls:', JSON.stringify(getModuleDecls()));
-// console.log('registerModule messages');
-
-registerModule('messages', {
- callbacks: { initData, initComms, deinitData },
- panels: {
-  sidebar: ConversationsList,
-  content: ConversationsMain,
- },
-});
-
-// console.log('registerModule messages done');
-// console.log('module_decls:', JSON.stringify(getModuleDecls()));
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
