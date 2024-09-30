@@ -99,7 +99,13 @@
 </style>
 
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
- <div class="text">{$active_account?.settings?.title || 'CREATE ACCOUNT FIRST'}</div>
+
+ {#if $active_account}
+  <div class="text">{$active_account?.settings?.title}</div>
+ {:else}
+  CREATE ACCOUNT FIRST
+ {/if}
+
  <div><img src="img/down.svg" alt="▼" /></div>
  {#if accountsVisible}
   <div class="items open">

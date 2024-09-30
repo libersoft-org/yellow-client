@@ -29,7 +29,9 @@ if (import.meta.env.VITE_AMTP_SERVER_WS_URL) {
  default_accounts = [
   {
    id: 1,
-   title: 'Account 1',
+   settings: {
+    title: 'Account 1',
+   },
    enabled: true,
    credentials: {
     server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
@@ -39,7 +41,9 @@ if (import.meta.env.VITE_AMTP_SERVER_WS_URL) {
   },
   {
    id: 2,
-   title: 'Account 2',
+   settings: {
+    title: 'Account 2',
+   },
    enabled: false,
    credentials: {
     server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
@@ -149,8 +153,14 @@ accounts_config.subscribe(value => {
      _disableAccount(account);
     }
 
-    if (acc.settings != config.settings) {
-     acc.settings = config.settings;
+    let settings_updated = false;
+    for (const [key, value] of Object.entries(config.settings)) {
+     if (acc.settings[key] != value) {
+      acc.settings[key] = value;
+      settings_updated = true;
+     }
+    }
+    if (settings_updated) {
      account.update(v => v);
     }
    }
@@ -389,7 +399,7 @@ function setupHeartbeat(account) {
    acc.error = null;
    account.update(v => v);
   });
-  if (Date.now() - acc.lastCommsTs > 15000) {
+  if (Date.now() - acc.lastCommsTs > 25000) {
    const msg = 'No comms for 15 seconds, reconnecting...';
    console.log(msg);
    // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
@@ -400,7 +410,7 @@ function setupHeartbeat(account) {
    account.update(v => v);
    reconnectAccount(account);
   }
- }, 5000);
+ }, 15000);
 }
 
 export function order(dict) {

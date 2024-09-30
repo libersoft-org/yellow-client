@@ -133,14 +133,14 @@
     {#each $accounts_config as a (a.id)}
      <tr>
       <td class="center">{a.id}</td>
-      <td class="center">{a.title}</td>
+      <td class="center">{a.settings?.title}</td>
       <td class="center">{a.credentials.server}</td>
       <td class="center">{a.credentials.address}</td>
       <td class="center">{a.enabled ? 'Yes' : 'No'}</td>
       <td class="center">
        <div class="action-items">
         <ActionItem img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
-        <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id, a.title)} />
+        <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id, a.settings?.title)} />
        </div>
       </td>
      </tr>

@@ -15,12 +15,21 @@ export function addAccount(config, settings) {
 }
 
 export function saveAccount(id, config, settings) {
- console.log('saveAccount', id, config);
+ console.log('saveAccount', id, config, settings);
  accounts_config.update(v => {
-  let r = v.map(a => (a.id === id ? { ...a, ...config } : a));
-  r.settings = { ...r.settings, ...settings };
-  console.log('saveAccount accs config:', r);
-  return r;
+  for (let acc of v) {
+   if (acc.id === id) {
+    for (const [key, value] of Object.entries(config)) {
+     acc[key] = value;
+    }
+    for (const [key, value] of Object.entries(settings)) {
+     if (acc.settings === undefined) acc.settings = {};
+     acc.settings[key] = value;
+    }
+   }
+   console.log('saveAccount acc config:', acc);
+  }
+  return v;
  });
 }
 
