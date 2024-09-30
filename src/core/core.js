@@ -11,7 +11,6 @@ export let selected_module_id = writable(null);
 let module_decls = {};
 let global_socket_id = 0;
 
-
 export function getModuleDecls() {
  //console.log('GET MODULE DECLS:', module_decls);
  return module_decls;
@@ -25,20 +24,19 @@ export function registerModule(id, decl) {
 
 const active_account_id = localStorageSharedStore('active_account_id', null);
 
-
 let default_accounts = [];
-if (import.meta.env.VITE_AMTP_SERVER_WS_URL)
-{
- default_accounts = [   {
-  id: 1,
-  title: 'Account 1',
-  enabled: true,
-  credentials: {
-   server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-   address: 'user@example.com',
-   password: '123456789'
-  }
- },
+if (import.meta.env.VITE_AMTP_SERVER_WS_URL) {
+ default_accounts = [
+  {
+   id: 1,
+   title: 'Account 1',
+   enabled: true,
+   credentials: {
+    server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+    address: 'user@example.com',
+    password: '123456789',
+   },
+  },
   {
    id: 2,
    title: 'Account 2',
@@ -46,9 +44,9 @@ if (import.meta.env.VITE_AMTP_SERVER_WS_URL)
    credentials: {
     server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
     address: 'user2@example.com',
-    password: '123456789'
-   }
-  }
+    password: '123456789',
+   },
+  },
  ];
 }
 
@@ -237,7 +235,6 @@ function _disableAccount(account) {
  account.update(v => v);
 }
 
-
 function reconnectAccount(account) {
  let acc = get(account);
  if (!acc.enabled) return;
@@ -257,20 +254,28 @@ function reconnectAccount(account) {
 
  if (acc.socket) {
   acc.socket.close();
-  acc.socket.onopen = (event) => {console.log('old socket onopen', event);};
-  acc.socket.onerror = (event) => {console.log('old socket onerror', event);};
-  acc.socket.onclose = (event) => {console.log('old socket onclose', event);};
-  acc.socket.onmessage = (event) => {console.log('old socket onmessage', event);};
+  acc.socket.onopen = event => {
+   console.log('old socket onopen', event);
+  };
+  acc.socket.onerror = event => {
+   console.log('old socket onerror', event);
+  };
+  acc.socket.onclose = event => {
+   console.log('old socket onclose', event);
+  };
+  acc.socket.onmessage = event => {
+   console.log('old socket onmessage', event);
+  };
  }
  let socket_id = global_socket_id++;
  acc.socket = new WebSocket(acc.credentials.server);
- acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', {event}));
- acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', {event}));
- acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', {event}));
+ acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', { event }));
+ acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', { event }));
+ acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', { event }));
  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
 
  acc.events.addEventListener('open', event => {
-  console.log('Connected to WebSocket ' + socket_id +':', event);
+  console.log('Connected to WebSocket ' + socket_id + ':', event);
   acc.status = 'Connected, logging in...';
   account.update(v => v);
 
@@ -328,7 +333,7 @@ function clearHeartbeatTimer(acc) {
 function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
- send(acc, 'user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
+ send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
   console.log('Login response:', res);
   acc.loggingIn = false;
   if (res.error !== 0) {
@@ -392,9 +397,7 @@ function initModuleData(account) {
  console.log('initModuleData:', acc.module_data);
 }
 
-
 function disconnectAccount(acc) {
-
  for (const [module_id, decl] of Object.entries(module_decls)) {
   if (decl.callbacks.deinitComms) {
    decl.callbacks.deinitComms(acc);
@@ -428,7 +431,7 @@ function handleSocketResponse(acc, res) {
   // it is event:
   console.log('GOT EVENT', res);
   //TODO: send event to messages module:
-  acc.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
+  acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server:', res);
 }
 
@@ -449,11 +452,11 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  }
  const requestID = generateRequestID();
 
- const req = {requestID};
+ const req = { requestID };
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command) req.command = command;
  if (params) req.params = params;
- acc.requests[requestID] = {req, callback};
+ acc.requests[requestID] = { req, callback };
  console.log('------------------');
  console.log('SENDING COMMAND:');
  console.log(req);
@@ -468,4 +471,4 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
-export default {hideSidebarMobile, isClientFocused, accounts};
+export default { hideSidebarMobile, isClientFocused, accounts };
