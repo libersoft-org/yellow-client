@@ -238,67 +238,93 @@ function _disableAccount(account) {
 function reconnectAccount(account) {
  let acc = get(account);
  if (!acc.enabled) return;
- if (acc.suspended) return;
+ if (acc.suspended) {
+  console.log('account suspended. not reconnecting.');
+  return;
+ }
  if (acc.status != 'Enabled.' && acc.status != 'Retrying...') {
   console.log('Account status not "Enabled." or "Retrying...", not reconnecting:', acc.status);
   return;
  }
 
- clearHeartbeatTimer(acc);
+ //clearHeartbeatTimer(acc);
  clearReconnectTimer(account);
 
- console.log('Reconnecting account:', acc);
- acc.sessionID = null;
- acc.status = 'Connecting...';
- account.update(v => v);
+ let socket_id;
 
- if (acc.socket) {
-  acc.socket.close();
-  acc.socket.onopen = event => {
-   console.log('old socket onopen', event);
-  };
-  acc.socket.onerror = event => {
-   console.log('old socket onerror', event);
-  };
-  acc.socket.onclose = event => {
-   console.log('old socket onclose', event);
-  };
-  acc.socket.onmessage = event => {
-   console.log('old socket onmessage', event);
-  };
- }
- let socket_id = global_socket_id++;
- acc.socket = new WebSocket(acc.credentials.server);
- acc.socket.onopen = event => acc.events.dispatchEvent(new CustomEvent('open', { event }));
- acc.socket.onerror = event => acc.events.dispatchEvent(new CustomEvent('error', { event }));
- acc.socket.onclose = event => acc.events.dispatchEvent(new CustomEvent('close', { event }));
- acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
+ console.log('acc.socket.readyState:', acc.socket?.readyState);
+ if (
+  !acc.socket
+  || acc.socket.readyState === WebSocket.CLOSED
+  || acc.socket.readyState === WebSocket.CONNECTING
+  || acc.socket.readyState === WebSocket.CLOSING
+  || acc.socket.url !== acc.credentials.server) {
 
- acc.events.addEventListener('open', event => {
-  console.log('Connected to WebSocket ' + socket_id + ':', event);
-  acc.status = 'Connected, logging in...';
+  if (acc.socket) {
+   if (acc.socket.readyState !== WebSocket.CLOSED) {
+    acc.socket.close();
+    acc.socket.onopen = event => {
+     console.log('old socket onopen', event);
+    };
+    acc.socket.onerror = event => {
+     console.log('old socket onerror', event);
+    };
+    acc.socket.onclose = event => {
+     console.log('old socket onclose', event);
+    };
+    acc.socket.onmessage = event => {
+     console.log('old socket onmessage', event);
+    };
+   }
+  }
+  socket_id = global_socket_id++;
+  console.log('Creating new WebSocket:', acc.credentials.server);
+  acc.status = 'Connecting...';
   account.update(v => v);
 
-  sendLoginCommand(account);
- });
+  try {
+   acc.socket = new WebSocket(acc.credentials.server);
+  } catch (e) {
+   const msg = e.message;
+   acc.error = msg;
+   acc.suspended = true;
+   acc.status = 'Error.';
+   account.update(v => v);
+   return;
+  }
 
- acc.events.addEventListener('error', event => {
-  console.log('WebSocket ' + socket_id + ' error:', event);
-  retry(account, 'Connection error.');
- });
+  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
 
- acc.events.addEventListener('close', event => {
-  console.log('WebSocket ' + socket_id + '  closed:', event);
-  retry(account, 'Connection closed.');
- });
+  acc.socket.onopen = event => {
+   console.log('Connected to WebSocket ' + socket_id + ':', event);
+   acc.status = 'Connected, logging in...';
+   account.update(v => v);
+   sendLoginCommand(account);
+  };
+
+  acc.socket.onerror = 'error', event => {
+   console.log('WebSocket ' + socket_id + ' error:', event);
+   retry(account, 'Connection error.');
+   acc.error = 'Error.';
+   account.update(v => v);
+  };
+
+  acc.socket.onclose = 'close', event => {
+   console.log('WebSocket ' + socket_id + '  closed:', event);
+   retry(account, 'Connection closed.');
+  };
+
+  clearHeartbeatTimer(acc);
+  setupHeartbeat(account);
+ }
 }
 
 function retry(account, msg) {
  let acc = get(account);
  acc.status = 'Retrying...';
  acc.error = msg;
- clearHeartbeatTimer(acc);
- acc.sessionID = null;
+ //clearHeartbeatTimer(acc);
+ //acc.sessionID = null;
  account.update(v => v);
  setReconnectTimer(account);
 }
@@ -333,9 +359,8 @@ function clearHeartbeatTimer(acc) {
 function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
- send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
+ send(acc, 'user_login', {address: acc.credentials.address, password: acc.credentials.password}, false, (req, res) => {
   console.log('Login response:', res);
-  acc.loggingIn = false;
   if (res.error !== 0) {
    acc.error = res.message;
    acc.status = 'Login failed.';
@@ -343,28 +368,43 @@ function sendLoginCommand(account) {
    console.error('Login failed:', res);
   } else {
    acc.status = 'Logged in.';
+   acc.error = null;
    acc.sessionID = res.data.sessionID;
    initModuleData(account);
-   acc.heartbeatTimer = setInterval(() => {
-    send(acc, 'user_heartbeat', {}, true, (req, res) => {
-     console.log('Heartbeat response:', res);
-     acc.lastCommsTs = Date.now();
-    });
-    if (Date.now() - acc.lastCommsTs > 10000) {
-     const msg = 'No comms for 10 seconds, reconnecting...';
-     console.log(msg);
-     // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
-     acc.status = 'Retrying...';
-     acc.error = msg;
-     clearHeartbeatTimer(acc);
-     acc.sessionID = null;
-     account.update(v => v);
-     reconnectAccount(account);
-    }
-   }, 1000);
   }
   account.update(v => v);
  });
+}
+
+function setupHeartbeat(account) {
+ let acc = get(account);
+ acc.heartbeatTimer = setInterval(() => {
+  if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
+   acc.status = 'Retrying...';
+   acc.error = 'Not connected.';
+   account.update(v => v);
+   reconnectAccount(account);
+   return;
+  }
+  send(acc, 'user_heartbeat', {}, true, (req, res) => {
+   console.log('Heartbeat response:', res);
+   acc.lastCommsTs = Date.now();
+   acc.status = 'Connected.';
+   acc.error = null;
+   account.update(v => v);
+  });
+  if (Date.now() - acc.lastCommsTs > 15000) {
+   const msg = 'No comms for 15 seconds, reconnecting...';
+   console.log(msg);
+   // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
+   acc.status = 'Retrying...';
+   acc.error = msg;
+   //clearHeartbeatTimer(acc);
+   //acc.sessionID = null;
+   account.update(v => v);
+   reconnectAccount(account);
+  }
+ }, 5000);
 }
 
 export function order(dict) {
@@ -431,7 +471,7 @@ function handleSocketResponse(acc, res) {
   // it is event:
   console.log('GOT EVENT', res);
   //TODO: send event to messages module:
-  acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
+  acc.events.dispatchEvent(new CustomEvent(res.event, {detail: res}));
  } else console.log('Unknown command from server:', res);
 }
 
@@ -452,11 +492,11 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  }
  const requestID = generateRequestID();
 
- const req = { requestID };
+ const req = {requestID};
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command) req.command = command;
  if (params) req.params = params;
- acc.requests[requestID] = { req, callback };
+ acc.requests[requestID] = {req, callback};
  console.log('------------------');
  console.log('SENDING COMMAND:');
  console.log(req);
@@ -471,4 +511,4 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
-export default { hideSidebarMobile, isClientFocused, accounts };
+export default {hideSidebarMobile, isClientFocused, accounts};

@@ -53,6 +53,10 @@
  .status-default {
    background-color: blue;
  }
+
+ .status-connected {
+   background-color: green;
+ }
  .status-disabled {
    background-color: gray;
  }
@@ -63,6 +67,7 @@
   <div class="status-icon {$a.status === 'Logged in.'    ? 'status-logged-in' :
                            $a.status === 'Connecting...'   ? 'status-connecting' :
                            $a.status === 'Connected, logging in...'   ? 'status-logging-in' :
+                           $a.status === 'Connected.'   ? 'status-connected' :
                            $a.status === 'Retrying...'  ? 'status-retrying' :
                            $a.status === 'Login failed.' ? 'status-login-failed' :
                            $a.status === 'Disabled.'  ? 'status-disabled' :
