@@ -21,6 +21,7 @@
 - WALLET: save wallets with private keys to localStorage
 - WALLET: convert crypto to fiat
 - WALLET: send, receive, token balances, history, settings, wizard for new wallet with seed phrase
+- WALLET: when wrong RPC selected (e.g. Ethereum - Goerli Testnet) - it loops the error in console, rather try the next RPC in row and if it won't work, just throw an error and don't connect
 - WALLET: HW wallet (Trezor, Ledger) connection
 - CORE: Add protocol selection to Core.accounts_config (AMTP, DMTP (not yet implemented), SMTP (not yet implemented))
 - MESSAGES: When a user gets a lot of new messages, it should scroll to the oldest unread one + add an element bar with text "Unread messages"
