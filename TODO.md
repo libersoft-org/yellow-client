@@ -14,10 +14,13 @@
 
 # Features
 
-- WALLET: network and wallet dropdown should show modal window with the list with icons etc (as in MetaMask)
-- WALLET: network selection (+ change crypto symbol when selected)
-- WALLET: wallet selection
-- WALLET: send, receive, token balances, history, settings, wizard for seed phrase
+- WALLET: network and wallet lists should contain search (filter) box
+- WALLET: network selection - show symbols in list and change crypto symbol when selected
+- WALLET: create wallet - add QR code + save button + print
+- WALLET: add "My wallets" section and move "Create wallet" into it + remove wallets
+- WALLET: save wallets with private keys to localStorage
+- WALLET: convert crypto to fiat
+- WALLET: send, receive, token balances, history, settings, wizard for new wallet with seed phrase
 - WALLET: HW wallet (Trezor, Ledger) connection
 - CORE: Add protocol selection to Core.accounts_config (AMTP, DMTP (not yet implemented), SMTP (not yet implemented))
 - MESSAGES: When a user gets a lot of new messages, it should scroll to the oldest unread one + add an element bar with text "Unread messages"
