@@ -1,5 +1,6 @@
 # Bugs
 
+- WALLET: when second or later wallet is created, it doesn't change the QR code
 - MESSAGES: Linkify of plain text message does not work
 - MESSAGES: When a new conversation is created to nonsensical address and then send a message to such address, the client start sending messages in infinite loop
 - MESSAGES: New message notification works only if Messages module is previously opened
