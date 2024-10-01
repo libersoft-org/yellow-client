@@ -5,6 +5,7 @@ import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
 import { networks } from '../networks.js';
 
+export const status = writable('Started.');
 export const wallets = writable([]);
 export const selectedNetwork = writable(null);
 export const selectedWallet = writable(null);
@@ -23,6 +24,7 @@ let wallet;
 let provider;
 let reconnectionTimer;
 let rpcURL;
+
 
 registerModule('wallet', {
  callbacks: {},
@@ -44,33 +46,32 @@ function reconnect() {
  if (!rpcURL) {
   rpcURL = net.rpcURLs[0];
   if (!rpcURL) {
-   console.error('No RPC URL found for the selected network');
+   status.set('No RPC URL found for the selected network');
    return;
   }
- }
- else
- {
+ } else {
   const nextRPCURLIndex = net.rpcURLs.indexOf(rpcURL) + 1;
-  if (nextRPCURLIndex >= net.rpcURLs.length)
-  {
-   rpcURL = net.rpcURLs[0];
+  if (nextRPCURLIndex >= net.rpcURLs.length) {
+   rpcURL = null;
    reconnectionTimer = setTimeout(reconnect, 15000);
-
+   status.set('Waiting to reconnect...');
+   return;
+  } else {
+   rpcURL = net.rpcURLs[nextRPCURLIndex];
+   connectToURL(rpcURL);
   }
-  else
-  {
-  rpcURL = net.rpcURLs[nextRPCURLIndex
-  }
-
-
-  provider = new JsonRpcProvider(net.rpcURLs[0], get(selectedNetwork).chainID);
-  provider.on('error', error => {
-   console.error('Provider error:', error);
-   provider.destroy();
-  });
  }
-
 }
+
+function connectToURL(url) {
+ provider = new JsonRpcProvider(url, get(selectedNetwork).chainID);
+ provider.on('error', error => {
+  console.log('Provider error:', error);
+  provider.destroy();
+  reconnectionTimer = setTimeout(reconnect, 1000);
+ });
+}
+
 
 export async function createWallet() {
  const mnemonic = Mnemonic.fromEntropy(randomBytes(32));
