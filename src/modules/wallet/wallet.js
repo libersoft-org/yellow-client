@@ -3,6 +3,8 @@ import { Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic
 import { registerModule } from '../../core/core.js';
 import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
+import { networks } from '../networks.js';
+
 export const wallets = writable([]);
 export const selectedNetwork = writable(null);
 export const selectedWallet = writable(null);
@@ -19,6 +21,8 @@ export const balance = writable({
 
 let wallet;
 let provider;
+let reconnectionTimer;
+let rpcURL;
 
 registerModule('wallet', {
  callbacks: {},
@@ -30,11 +34,35 @@ registerModule('wallet', {
 
 selectedNetwork.subscribe((value) => {
  reconnect();
-}
+});
 
 function reconnect() {
  let net = get(selectedNetwork);
- if (net) {
+ if (!net)
+  return;
+ clearTimeout(reconnectionTimer);
+ if (!rpcURL) {
+  rpcURL = net.rpcURLs[0];
+  if (!rpcURL) {
+   console.error('No RPC URL found for the selected network');
+   return;
+  }
+ }
+ else
+ {
+  const nextRPCURLIndex = net.rpcURLs.indexOf(rpcURL) + 1;
+  if (nextRPCURLIndex >= net.rpcURLs.length)
+  {
+   rpcURL = net.rpcURLs[0];
+   reconnectionTimer = setTimeout(reconnect, 15000);
+
+  }
+  else
+  {
+  rpcURL = net.rpcURLs[nextRPCURLIndex
+  }
+
+
   provider = new JsonRpcProvider(net.rpcURLs[0], get(selectedNetwork).chainID);
   provider.on('error', error => {
    console.error('Provider error:', error);
