@@ -162,13 +162,13 @@
   align-items: center;
   justify-content: right;
   gap: 5px;
+  cursor: pointer;
  }
 
  .body .top .right .address .copy {
   width: 15px;
   height: 15px;
   padding: 5px;
-  cursor: pointer;
  }
 
  .body .buttons {
