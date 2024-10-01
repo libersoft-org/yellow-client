@@ -98,19 +98,6 @@
   align-items: end;
  }
 
- .header .right .address {
-  display: flex;
-  align-items: center;
-  gap: 5px;
- }
-
- .header .right .address .copy {
-  width: 20px;
-  height: 20px;
-  padding: 5px;
-  cursor: pointer;
- }
-
  .body {
   display: flex;
   flex-direction: column;
@@ -118,20 +105,70 @@
   padding: 10px;
  }
 
- .body .balance {
+ .body .top {
+  display: flex;
+  width: 100%;
+ }
+
+ .body .top .left, .body .top .center, .body .top .right {
+  flex: 1;
+ }
+
+ .body .top .left .status {
+  vertical-align: bottom;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 20px;
+ }
+
+ .body .top .left .status .indicator {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #000;
+ }
+
+ .body .top .left .status .indicator.red {
+  background-color: #a00;
+ }
+
+ .body .top .left .status .indicator.orange {
+  background-color: #f80;
+ }
+
+ .body .top .left .status .indicator.green {
+  background-color: #0a0;
+ }
+
+ .body .top .center .balance {
   display: flex;
   flex-direction: column;
   align-items: center;
  }
 
- .body .balance .crypto {
+ .body .top .center .balance .crypto {
   font-size: 25px;
   font-weight: bold;
  }
 
- .body .balance .fiat {
+ .body .top .center .balance .fiat {
   font-size: 18px;
   color: #555;
+ }
+
+ .body .top .right .address {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  gap: 5px;
+ }
+
+ .body .top .right .address .copy {
+  width: 15px;
+  height: 15px;
+  padding: 5px;
+  cursor: pointer;
  }
 
  .body .buttons {
@@ -149,18 +186,32 @@
    </div>
    <div class="right">
     <Dropdown text={$selectedWallet ? $selectedWallet.name : '--- Select your wallet ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
-    {#if $selectedWallet && $selectedWallet.address}
-     <div class="address">
-      <div>{shortenAddress($selectedWallet.address)}</div>
-      <div class="copy" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}><img src="img/copy.svg" alt="Copy" /></div>
-     </div>
-    {/if}
    </div>
   </div>
   <div class="body">
-   <div class="balance">
-    <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
-    <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
+   <div class="top">
+    <div class="left">
+     <div class="status">
+      <div class="indicator orange"></div>
+      <div>Connecting to https://.../ ...</div>
+     </div>
+    </div>
+    <div class="center">
+     <div class="balance">
+      <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
+      <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
+     </div>  
+    </div>
+    <div class="right">
+     {#if $selectedWallet && $selectedWallet.address}
+      <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
+       <div>{shortenAddress($selectedWallet.address)}</div>
+       <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
+      </div>
+     {:else}
+      <div class="address">No wallet selected</div>
+     {/if}
+    </div>
    </div>
    <div class="buttons">
     <Button width="80px" text="Send" on:click={() => setSection('send')} />
