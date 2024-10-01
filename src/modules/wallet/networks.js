@@ -81,14 +81,14 @@ export const networks = writable([
   explorerURL: 'https://polygonscan.com',
  },
  {
-  name: 'Polygon - Mumbai Testnet',
-  chainID: 80001,
-  rpcURLs: ['https://rpc-mumbai.maticvigil.com/', 'https://rpc-mumbai.matic.today', 'https://matic-testnet-archive-rpc.bwarelabs.com', 'https://rpc.ankr.com/polygon_mumbai'],
+  name: 'Polygon - Amoy Testnet',
+  chainID: 80002,
+  rpcURLs: ['https://rpc-amoy.polygon.technology', 'https://polygon-amoy.blockpi.network/v1/rpc/public', 'https://rpc.ankr.com/polygon_amoy', 'https://polygon-amoy.drpc.org', 'https://polygon-amoy.gateway.tenderly.co', 'https://polygon-amoy-bor-rpc.publicnode.com', 'wss://polygon-amoy-bor-rpc.publicnode.com'],
   currency: {
    symbol: 'MATIC',
    iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
   },
-  explorerURL: 'https://mumbai.polygonscan.com',
+  explorerURL: 'https://amoy.polygonscan.com/',
  },
  {
   name: 'Avalanche - C-Chain Mainnet',
