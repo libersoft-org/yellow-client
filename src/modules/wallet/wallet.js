@@ -3,7 +3,7 @@ import { Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic
 import { registerModule } from '../../core/core.js';
 import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
-import { networks } from '../networks.js';
+import { networks } from './networks.js';
 
 export const status = writable('Started.');
 export const wallets = writable([]);
@@ -37,6 +37,10 @@ registerModule('wallet', {
 selectedNetwork.subscribe((value) => {
  reconnect();
 });
+
+export function setNetwork(network) {
+ selectedNetwork.set(network);
+}
 
 function reconnect() {
  let net = get(selectedNetwork);
