@@ -16,6 +16,7 @@ export const balance = writable({
   currency: 'USD',
  },
 });
+
 let wallet;
 let provider;
 
@@ -27,8 +28,20 @@ registerModule('wallet', {
  },
 });
 
-export function setNetwork() {
- if (get(selectedNetwork)) provider = new JsonRpcProvider(get(selectedNetwork).rpcURLs[0], get(selectedNetwork).chainID);
+selectedNetwork.subscribe((value) => {
+ reconnect();
+}
+
+function reconnect() {
+ let net = get(selectedNetwork);
+ if (net) {
+  provider = new JsonRpcProvider(net.rpcURLs[0], get(selectedNetwork).chainID);
+  provider.on('error', error => {
+   console.error('Provider error:', error);
+   provider.destroy();
+  });
+ }
+
 }
 
 export async function createWallet() {
