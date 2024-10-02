@@ -1,6 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- import { status, rpcURL, balance, selectedNetwork, selectedWallet, balanceTimestamp } from '../wallet.js';
+ import { saveWallet, status, rpcURL, balance, selectedNetwork, selectedWallet, balanceTimestamp } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalNewWallet from '../modals/new-wallet.svelte';
  import ModalNetworks from '../modals/networks.svelte';
@@ -48,6 +48,14 @@
    clickCopyAddress();
   }
  }
+
+ function recover() {
+  let phrase = window.prompt('Enter your recovery phrase');
+  if (!phrase) return;
+  saveWallet(phrase);
+ }
+
+
 </script>
 
 <style>
@@ -211,6 +219,7 @@
     <Button width="80px" text="History" on:click={() => setSection('history')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
     <Button width="80px" text="Create wallet" on:click={showNewWalletModal}  />
+    <Button width="80px" text="Recover" on:click={recover}  />
    </div>
    <div class="section">
     {#if section == 'send'}
