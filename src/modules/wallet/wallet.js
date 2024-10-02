@@ -25,7 +25,6 @@ let provider;
 let reconnectionTimer;
 let rpcURL;
 
-
 registerModule('wallet', {
  callbacks: {},
  panels: {
@@ -34,7 +33,7 @@ registerModule('wallet', {
  },
 });
 
-selectedNetwork.subscribe((value) => {
+selectedNetwork.subscribe(value => {
  reconnect();
 });
 
@@ -44,8 +43,7 @@ export function setNetwork(network) {
 
 function reconnect() {
  let net = get(selectedNetwork);
- if (!net)
-  return;
+ if (!net) return;
  clearTimeout(reconnectionTimer);
  if (!rpcURL) {
   rpcURL = net.rpcURLs[0];
@@ -79,7 +77,6 @@ function connectToURL(url) {
   console.log('Network changed:', newNetwork, oldNetwork);
  });
 }
-
 
 export async function createWallet() {
  const mnemonic = Mnemonic.fromEntropy(randomBytes(32));
