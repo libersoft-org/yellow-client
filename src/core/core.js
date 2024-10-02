@@ -307,16 +307,16 @@ function reconnectAccount(account) {
   };
 
   acc.socket.onerror = event => {
-    console.log('WebSocket ' + socket_id + ' error:', event);
-    retry(account, 'Connection error.');
-    acc.error = 'Error.';
-    account.update(v => v);
-   };
+   console.log('WebSocket ' + socket_id + ' error:', event);
+   retry(account, 'Connection error.');
+   acc.error = 'Error.';
+   account.update(v => v);
+  };
 
   acc.socket.onclose = event => {
-    console.log('WebSocket ' + socket_id + '  closed:', event);
-    retry(account, 'Connection closed.');
-   };
+   console.log('WebSocket ' + socket_id + '  closed:', event);
+   retry(account, 'Connection closed.');
+  };
 
   clearHeartbeatTimer(acc);
   setupHeartbeat(account);

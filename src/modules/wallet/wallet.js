@@ -1,14 +1,18 @@
-import { get, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import { Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic } from 'ethers';
+import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { registerModule } from '../../core/core.js';
 import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
 import { networks } from './networks.js';
 
 export const status = writable('Started.');
-export const wallets = writable([]);
+export const wallets = localStorageSharedStore('wallets', []);
 export const selectedNetwork = writable(null);
-export const selectedWallet = writable(null);
+export const selectedWalletID = localStorageSharedStore('selectedWalletID', null);
+export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
+ return $wallets.find(w => w.address === $selectedWalletID);
+});
 export const balance = writable({
  crypto: {
   amount: '?',
@@ -84,6 +88,14 @@ export function generateMnemonic() {
 
 export async function saveWallet(mnemonic) {
  wallet = Wallet.fromPhrase(mnemonic.phrase);
+ wallets.update(w => {
+  w.push({
+    name: 'My Yellow Wallet ' + (w.length + 1),
+    address: wallet.address,
+    privateKey: wallet.privateKey,
+  });
+  return w;
+ });
 }
 
 export async function getBalance() {
