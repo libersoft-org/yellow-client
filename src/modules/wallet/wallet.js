@@ -37,7 +37,6 @@ let wallet;
 let provider;
 let reconnectionTimer;
 
-
 registerModule('wallet', {
  callbacks: {},
  panels: {
@@ -94,9 +93,7 @@ function setNextUrl() {
  let url;
  if (i >= net.rpcURLs.length) {
   url = net.rpcURLs[0];
- }
- else
- {
+ } else {
   url = net.rpcURLs[i];
  }
  rpcURL.set(url);
