@@ -7,6 +7,7 @@ import WalletContent from './pages/wallet-content.svelte';
 import { networks } from './networks.js';
 
 export const status = writable('Started.');
+export const rpcURL = writable(null);
 export const wallets = localStorageSharedStore('wallets', []);
 export const selectedNetworkID = localStorageSharedStore('selectedNetworkID', null);
 export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
@@ -30,11 +31,12 @@ export const balance = writable({
   currency: 'USD',
  },
 });
+export const balanceTimestamp = writable(null);
 
 let wallet;
 let provider;
 let reconnectionTimer;
-let rpcURL;
+
 
 registerModule('wallet', {
  callbacks: {},
@@ -53,48 +55,51 @@ selectedWallet.subscribe(value => {
 
 let balanceTimer = setInterval(getBalance, 10000);
 
-function reconnect(after_failure = false) {
+function reconnect() {
  console.log('RECONNECT');
  let net = get(selectedNetwork);
  if (!net) return;
  if (!get(selectedWallet)) return;
  clearTimeout(reconnectionTimer);
- if (!rpcURL) {
-  rpcURL = net.rpcURLs[0];
-  if (!rpcURL) {
+ if (!get(rpcURL)) {
+  rpcURL.set(net.rpcURLs[0]);
+  if (!get(rpcURL)) {
    status.set('No RPC URL found for the selected network');
    return;
   }
- } else {
-  const nextRPCURLIndex = net.rpcURLs.indexOf(rpcURL);
-  if (after_failure) {
-   nextRPCURLIndex += 1;
-  }
-  if (nextRPCURLIndex >= net.rpcURLs.length) {
-   rpcURL = null;
-   reconnectionTimer = setTimeout(reconnect, 15000);
-   status.set('Waiting to reconnect...');
-   return;
-  } else {
-   rpcURL = net.rpcURLs[nextRPCURLIndex];
-   connectToURL(rpcURL);
-  }
  }
+ connectToURL();
 }
 
-function connectToURL(url) {
- provider = new JsonRpcProvider(url, get(selectedNetwork).chainID);
+function connectToURL() {
+ provider = new JsonRpcProvider(get(rpcURL), get(selectedNetwork).chainID);
  wallet = Wallet.fromPhrase(get(selectedWallet).phrase, provider);
  provider.on('error', error => {
   console.log('Provider error:', error);
   provider.destroy();
   wallet = null;
-  reconnectionTimer = setTimeout(reconnect, 1000);
+  setNextUrl();
+  reconnectionTimer = setTimeout(reconnect, 10000);
  });
- provider.on('network', (newNetwork) => {
+ provider.on('network', newNetwork => {
   console.log('Network changed:', newNetwork.toJSON());
   getBalance();
  });
+}
+
+function setNextUrl() {
+ let net = get(selectedNetwork);
+ let i = net.rpcURLs.indexOf(get(rpcURL));
+ i += 1;
+ let url;
+ if (i >= net.rpcURLs.length) {
+  url = net.rpcURLs[0];
+ }
+ else
+ {
+  url = net.rpcURLs[i];
+ }
+ rpcURL.set(url);
 }
 
 export function generateMnemonic() {
@@ -117,6 +122,7 @@ export async function getBalance() {
  if (get(selectedNetwork) && get(selectedWallet) && provider && wallet) {
   try {
    const balanceBigNumber = await provider.getBalance(get(selectedWallet).address);
+   balanceTimestamp.set(new Date());
    const balanceFormated = formatEther(balanceBigNumber);
    balance.set({
     crypto: {
@@ -129,7 +135,7 @@ export async function getBalance() {
     },
    });
   } catch (error) {
-   console.error('Error while getting balance:', error);
+   console.log('Error while getting balance:', error);
   }
  }
 }

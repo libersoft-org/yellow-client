@@ -1,6 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- import { status, balance, getBalance, selectedNetwork, selectedWallet } from '../wallet.js';
+ import { status, rpcURL, balance, selectedNetwork, selectedWallet, balanceTimestamp } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalNewWallet from '../modals/new-wallet.svelte';
  import ModalNetworks from '../modals/networks.svelte';
@@ -182,13 +182,15 @@
     <div class="left">
      <div class="status">
       <div class="indicator orange"></div>
-      <div>{$status} ///  {1}  </div>
+      <div>{$status} </div>
+      <div><pre>{$rpcURL}</pre> </div>
      </div>
     </div>
     <div class="center">
      <div class="balance">
       <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
       <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
+      <div>retrieved {$balanceTimestamp}</div>
      </div>
     </div>
     <div class="right">
