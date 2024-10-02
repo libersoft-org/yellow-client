@@ -1,8 +1,8 @@
 <script>
  import { onMount } from 'svelte';
- import { status, balance, getBalance, setNetwork, createWallet, selectedNetwork, selectedWallet } from '../wallet.js';
+ import { status, balance, getBalance, setNetwork, selectedNetwork, selectedWallet } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
- import ModalPhrase from '../modals/phrase.svelte';
+ import ModalNewWallet from '../modals/new-wallet.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
  import Send from './send.svelte';
@@ -42,9 +42,7 @@
  }
 
  async function showNewWalletModal() {
-  newPhrase = await createWallet();
   isModalPhraseOpen = true;
-  console.log('PHRASE:', newPhrase);
  }
 
  function clickCopyAddress() {
@@ -239,16 +237,16 @@
 </div>
 {#if isModalPhraseOpen}
  <Modal title="New wallet" onClose={() => isModalPhraseOpen = false}>
-  <ModalPhrase phrase={newPhrase} onClose={() => isModalPhraseOpen = false} />
+  <ModalNewWallet onClose={() => isModalPhraseOpen = false} />
  </Modal>
 {/if}
 {#if isModalNetworksOpen}
  <Modal title="Select your network" onClose={() => isModalNetworksOpen = false}>
-  <ModalNetworks phrase={newPhrase} onClose={() => isModalNetworksOpen = false} {onSetNetwork} />
+  <ModalNetworks onClose={() => isModalNetworksOpen = false} />
  </Modal>
 {/if}
 {#if isModalWalletsOpen}
  <Modal title="Select your wallet" onClose={() => isModalWalletsOpen = false}>
-  <ModalWallets phrase={newPhrase} onClose={() => isModalWalletsOpen = false} {onSetWallet} />
+  <ModalWallets onClose={() => isModalWalletsOpen = false} {onSetWallet} />
  </Modal>
 {/if}

@@ -3,13 +3,11 @@
  import { selectedNetwork } from '../wallet.js';
  import List from '../components/list.svelte';
  import ListItem from '../components/list-item.svelte';
- export let onSetNetwork;
  export let onClose;
 
  function selectNetwork(id) {
   console.log('SETTING NETWORK', id);
   selectedNetwork.set($networks[id]);
-  onSetNetwork();
   onClose();
  }
 </script>

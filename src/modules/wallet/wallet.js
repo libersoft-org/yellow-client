@@ -78,45 +78,18 @@ function connectToURL(url) {
  });
 }
 
-export async function createWallet() {
- const mnemonic = Mnemonic.fromEntropy(randomBytes(32));
- wallet = Wallet.fromPhrase(mnemonic.phrase).connect(provider);
- wallets.update(curr => [
-  ...curr,
-  {
-   name: 'My Yellow Wallet ' + (curr.length + 1),
-   address: wallet.address,
-  },
- ]);
- await getBalance();
- return mnemonic.phrase;
+export function generateMnemonic() {
+ return Mnemonic.fromEntropy(randomBytes(32));
 }
 
-async function saveWallet(password = null) {
- if (wallet && password) {
-  try {
-   const encryptedJson = await wallet.encrypt(password);
-   localStorage.setItem('encryptedWallet', encryptedJson);
-   console.log('Wallet saved');
-  } catch (error) {
-   console.error('Error while wallet encryption:', error);
-  }
- } else alert('Wallet or password is missing');
+
+export async function saveWallet(mnemonic) {
+ wallet = Wallet.fromPhrase(mnemonic.phrase);
+
+
 }
 
-async function loadWallet(password = null) {
- const encryptedJson = localStorage.getItem('encryptedWallet');
- if (encryptedJson && password) {
-  try {
-   wallet = await ethers.Wallet.fromEncryptedJson(encryptedJson, password);
-   wallet = wallet.connect(provider);
-   address.set(wallet.address);
-   await getBalance();
-  } catch (error) {
-   console.error('Error while wallet decription:', error);
-  }
- } else console.error('No wallet found or password is missing');
-}
+
 
 export async function getBalance() {
  if (get(selectedNetwork) && get(selectedWallet) && provider) {
