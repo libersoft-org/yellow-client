@@ -306,16 +306,14 @@ function reconnectAccount(account) {
    sendLoginCommand(account);
   };
 
-  (acc.socket.onerror = 'error'),
-   event => {
+  acc.socket.onerror = event => {
     console.log('WebSocket ' + socket_id + ' error:', event);
     retry(account, 'Connection error.');
     acc.error = 'Error.';
     account.update(v => v);
    };
 
-  (acc.socket.onclose = 'close'),
-   event => {
+  acc.socket.onclose = event => {
     console.log('WebSocket ' + socket_id + '  closed:', event);
     retry(account, 'Connection closed.');
    };
@@ -392,13 +390,20 @@ function setupHeartbeat(account) {
    reconnectAccount(account);
    return;
   }
-  send(acc, 'user_heartbeat', {}, true, (req, res) => {
-   //console.log('Heartbeat response:', res);
-   acc.lastCommsTs = Date.now();
-   acc.status = 'Connected.';
-   acc.error = null;
-   account.update(v => v);
-  }, true);
+  send(
+   acc,
+   'user_heartbeat',
+   {},
+   true,
+   (req, res) => {
+    //console.log('Heartbeat response:', res);
+    acc.lastCommsTs = Date.now();
+    acc.status = 'Connected.';
+    acc.error = null;
+    account.update(v => v);
+   },
+   true
+  );
   if (Date.now() - acc.lastCommsTs > 25000) {
    const msg = 'No comms for 15 seconds, reconnecting...';
    console.log(msg);
@@ -486,7 +491,7 @@ export function getRandomString(length = 40) {
  return result.substring(0, length);
 }
 
-export function send(acc, command, params = {}, sendSessionID = true, callback = null, quiet=false) {
+export function send(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  if (!acc) {
   console.error('Error while sending command: account is not defined');
   return;

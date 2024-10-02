@@ -1,6 +1,6 @@
 <script>
 
- import { active_account, order, selected_module_id } from '../../core/core.js';
+ import { active_account, order } from '../core.js';
  import { get } from "svelte/store";
 
  let module_data;
