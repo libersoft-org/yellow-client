@@ -10,11 +10,15 @@ export const status = writable('Started.');
 export const wallets = localStorageSharedStore('wallets', []);
 export const selectedNetworkID = localStorageSharedStore('selectedNetworkID', null);
 export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
- return $networks.find(n => n.name === $selectedNetworkID);
+ const r = $networks.find(n => n.name === $selectedNetworkID);
+ console.log('selectedNetwork', r);
+ return r;
 });
 export const selectedWalletID = localStorageSharedStore('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
- return $wallets.find(w => w.address === $selectedWalletID);
+ const r = $wallets.find(w => w.address === $selectedWalletID);
+ console.log('selectedWallet', r);
+ return r;
 });
 export const balance = writable({
  crypto: {
@@ -43,10 +47,17 @@ registerModule('wallet', {
 selectedNetwork.subscribe(value => {
  reconnect();
 });
+selectedWallet.subscribe(value => {
+ reconnect();
+});
 
-function reconnect() {
+let balanceTimer = setInterval(getBalance, 10000);
+
+function reconnect(after_failure = false) {
+ console.log('RECONNECT');
  let net = get(selectedNetwork);
  if (!net) return;
+ if (!get(selectedWallet)) return;
  clearTimeout(reconnectionTimer);
  if (!rpcURL) {
   rpcURL = net.rpcURLs[0];
@@ -55,7 +66,10 @@ function reconnect() {
    return;
   }
  } else {
-  const nextRPCURLIndex = net.rpcURLs.indexOf(rpcURL) + 1;
+  const nextRPCURLIndex = net.rpcURLs.indexOf(rpcURL);
+  if (after_failure) {
+   nextRPCURLIndex += 1;
+  }
   if (nextRPCURLIndex >= net.rpcURLs.length) {
    rpcURL = null;
    reconnectionTimer = setTimeout(reconnect, 15000);
@@ -70,14 +84,16 @@ function reconnect() {
 
 function connectToURL(url) {
  provider = new JsonRpcProvider(url, get(selectedNetwork).chainID);
- wallet = wallet.connect(provider);
+ wallet = Wallet.fromPhrase(get(selectedWallet).phrase, provider);
  provider.on('error', error => {
   console.log('Provider error:', error);
   provider.destroy();
+  wallet = null;
   reconnectionTimer = setTimeout(reconnect, 1000);
  });
- provider.on('network', (newNetwork, oldNetwork) => {
-  console.log('Network changed:', newNetwork, oldNetwork);
+ provider.on('network', (newNetwork) => {
+  console.log('Network changed:', newNetwork.toJSON());
+  getBalance();
  });
 }
 
@@ -90,15 +106,15 @@ export async function saveWallet(mnemonic) {
  wallets.update(w => {
   w.push({
    name: 'My Yellow Wallet ' + (w.length + 1),
+   phrase: mnemonic.phrase,
    address: newWallet.address,
-   privateKey: newWallet.privateKey,
   });
   return w;
  });
 }
 
 export async function getBalance() {
- if (get(selectedNetwork) && get(selectedWallet) && provider) {
+ if (get(selectedNetwork) && get(selectedWallet) && provider && wallet) {
   try {
    const balanceBigNumber = await provider.getBalance(get(selectedWallet).address);
    const balanceFormated = formatEther(balanceBigNumber);

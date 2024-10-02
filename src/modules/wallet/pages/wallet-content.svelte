@@ -182,7 +182,7 @@
     <div class="left">
      <div class="status">
       <div class="indicator orange"></div>
-      <div>{$status}</div>
+      <div>{$status} ///  {1}  </div>
      </div>
     </div>
     <div class="center">
