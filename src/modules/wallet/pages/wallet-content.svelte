@@ -1,6 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- import { status, balance, getBalance, setNetwork, selectedNetwork, selectedWallet } from '../wallet.js';
+ import { status, balance, getBalance, selectedNetwork, selectedWallet } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalNewWallet from '../modals/new-wallet.svelte';
  import ModalNetworks from '../modals/networks.svelte';
@@ -24,15 +24,6 @@
 
  function setSection(name) {
   section = name;
- }
-
- function onSetNetwork() {
-  setNetwork();
-  getBalance();
- }
-
- function onSetWallet() {
-  getBalance();
  }
 
  function shortenAddress(addr) {
@@ -247,6 +238,6 @@
 {/if}
 {#if isModalWalletsOpen}
  <Modal title="Select your wallet" onClose={() => isModalWalletsOpen = false}>
-  <ModalWallets onClose={() => isModalWalletsOpen = false} {onSetWallet} />
+  <ModalWallets onClose={() => isModalWalletsOpen = false} />
  </Modal>
 {/if}

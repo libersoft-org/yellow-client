@@ -8,7 +8,10 @@ import { networks } from './networks.js';
 
 export const status = writable('Started.');
 export const wallets = localStorageSharedStore('wallets', []);
-export const selectedNetwork = writable(null);
+export const selectedNetworkID = localStorageSharedStore('selectedNetworkID', null);
+export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
+ return $networks.find(n => n.name === $selectedNetworkID);
+});
 export const selectedWalletID = localStorageSharedStore('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
  return $wallets.find(w => w.address === $selectedWalletID);
@@ -40,10 +43,6 @@ registerModule('wallet', {
 selectedNetwork.subscribe(value => {
  reconnect();
 });
-
-export function setNetwork(network) {
- selectedNetwork.set(network);
-}
 
 function reconnect() {
  let net = get(selectedNetwork);
@@ -87,12 +86,12 @@ export function generateMnemonic() {
 }
 
 export async function saveWallet(mnemonic) {
- wallet = Wallet.fromPhrase(mnemonic.phrase);
+ let newWallet = Wallet.fromPhrase(mnemonic.phrase);
  wallets.update(w => {
   w.push({
-    name: 'My Yellow Wallet ' + (w.length + 1),
-    address: wallet.address,
-    privateKey: wallet.privateKey,
+   name: 'My Yellow Wallet ' + (w.length + 1),
+   address: newWallet.address,
+   privateKey: newWallet.privateKey,
   });
   return w;
  });

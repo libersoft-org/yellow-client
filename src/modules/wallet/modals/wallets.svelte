@@ -2,13 +2,11 @@
  import { wallets, selectedWalletID } from '../wallet.js';
  import List from '../components/list.svelte';
  import ListItem from '../components/list-item.svelte';
- export let onSetWallet;
  export let onClose;
 
  function selectWallet(id) {
   console.log('SETTING WALLET', id);
   selectedWalletID.set(id);
-  onSetWallet();
   onClose();
  }
 </script>
