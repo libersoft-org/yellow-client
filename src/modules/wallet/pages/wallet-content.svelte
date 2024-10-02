@@ -1,6 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- import { balance, getBalance, setNetwork, createWallet, selectedNetwork, selectedWallet } from '../wallet.js';
+ import { status, balance, getBalance, setNetwork, createWallet, selectedNetwork, selectedWallet } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalPhrase from '../modals/phrase.svelte';
  import ModalNetworks from '../modals/networks.svelte';
@@ -193,14 +193,14 @@
     <div class="left">
      <div class="status">
       <div class="indicator orange"></div>
-      <div>Connecting to https://.../ ...</div>
+      <div>{$status}</div>
      </div>
     </div>
     <div class="center">
      <div class="balance">
       <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
       <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
-     </div>  
+     </div>
     </div>
     <div class="right">
      {#if $selectedWallet && $selectedWallet.address}

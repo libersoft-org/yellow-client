@@ -69,10 +69,14 @@ function reconnect() {
 
 function connectToURL(url) {
  provider = new JsonRpcProvider(url, get(selectedNetwork).chainID);
+ wallet = wallet.connect(provider);
  provider.on('error', error => {
   console.log('Provider error:', error);
   provider.destroy();
   reconnectionTimer = setTimeout(reconnect, 1000);
+ });
+ provider.on('network', (newNetwork, oldNetwork) => {
+  console.log('Network changed:', newNetwork, oldNetwork);
  });
 }
 
