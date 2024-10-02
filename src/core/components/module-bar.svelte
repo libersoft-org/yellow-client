@@ -5,7 +5,7 @@
 
  let module_data;
  $: module_data = $active_account?.module_data || {}
- $: console.log('module-bar module_data:', module_data);
+ //$: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
  $: console.log('module-bar module_data_ordered:', module_data_ordered);
 

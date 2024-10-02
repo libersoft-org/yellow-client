@@ -27,9 +27,11 @@ class Message {
 
 export let md = module_data_derived('messages');
 
+/*
 md.subscribe(v => {
  console.log('MD: ', v);
 });
+*/
 
 export let conversationsArray = relay(md, 'conversationsArray');
 export let messagesArray = relay(md, 'messagesArray');

@@ -4,14 +4,16 @@
  import Button from '../../../core/components/button.svelte';
  import { generateMnemonic, saveWallet } from '../wallet.js';
 
+ export let onClose;
 
+ let mnemonic = {};
  let phrase = '';
+
 
  let qrCodeData = '';
 
  onMount(() => {
   regenerate();
-  generateQRCode();
  });
 
  function generateQRCode() {
@@ -22,7 +24,7 @@
 
  function regenerate() {
   console.log('REGENERATE');
-  let mnemonic = generateMnemonic();
+  mnemonic = generateMnemonic();
   phrase = mnemonic.phrase;
   generateQRCode();
  }
@@ -30,7 +32,8 @@
  function save() {
   // TODO: password protect the key
   console.log('SAVE');
-
+  saveWallet(mnemonic);
+  onClose();
  }
 
  function print() {

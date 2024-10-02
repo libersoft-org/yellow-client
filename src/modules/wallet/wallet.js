@@ -82,14 +82,9 @@ export function generateMnemonic() {
  return Mnemonic.fromEntropy(randomBytes(32));
 }
 
-
 export async function saveWallet(mnemonic) {
  wallet = Wallet.fromPhrase(mnemonic.phrase);
-
-
 }
-
-
 
 export async function getBalance() {
  if (get(selectedNetwork) && get(selectedWallet) && provider) {

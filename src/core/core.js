@@ -65,12 +65,13 @@ export let active_account_store = derived([accounts, active_account_id], ([$acco
  return r;
 });
 
-// Create a derived store that depends on active_account_store and its nested account store
+// Create a derived store that depends on active_account_store and its nested account store. The contents is the account object.
 export let active_account = derived(active_account_store, ($active_account_store, set) => {
  if (!$active_account_store) {
   return set(null);
  }
 
+ // subscribe to the store that contains the account object
  const unsubscribe = $active_account_store.subscribe(account => {
   //console.log('DERIVED NESTED STORE:', account);
   set(account);
@@ -88,9 +89,8 @@ export function module_data_derived(module_id) {
    console.log('no active account => no module data.');
    return null;
   }
-  let acc = $active_account;
-  //console.log('$active_account:', acc, 'MODULE ID:', module_id);
-  let result = acc.module_data[module_id];
+  //console.log('$active_account:', $active_account, 'MODULE ID:', module_id);
+  let result = $active_account.module_data[module_id];
   //console.log('MODULE DATA:', result);
   return result;
  });
@@ -393,12 +393,12 @@ function setupHeartbeat(account) {
    return;
   }
   send(acc, 'user_heartbeat', {}, true, (req, res) => {
-   console.log('Heartbeat response:', res);
+   //console.log('Heartbeat response:', res);
    acc.lastCommsTs = Date.now();
    acc.status = 'Connected.';
    acc.error = null;
    account.update(v => v);
-  });
+  }, true);
   if (Date.now() - acc.lastCommsTs > 25000) {
    const msg = 'No comms for 15 seconds, reconnecting...';
    console.log(msg);
@@ -486,7 +486,7 @@ export function getRandomString(length = 40) {
  return result.substring(0, length);
 }
 
-export function send(acc, command, params = {}, sendSessionID = true, callback = null) {
+export function send(acc, command, params = {}, sendSessionID = true, callback = null, quiet=false) {
  if (!acc) {
   console.error('Error while sending command: account is not defined');
   return;
@@ -502,10 +502,12 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  if (command) req.command = command;
  if (params) req.params = params;
  acc.requests[requestID] = { req, callback };
- console.log('------------------');
- console.log('SENDING COMMAND:');
- console.log(req);
- console.log('------------------');
+ if (!quiet) {
+  console.log('------------------');
+  console.log('SENDING COMMAND:');
+  console.log(req);
+  console.log('------------------');
+ }
  acc.socket.send(JSON.stringify(req));
  return requestID;
 }
