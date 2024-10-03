@@ -46,7 +46,7 @@ registerModule('wallet', {
 });
 
 function resetBalance() {
- balance.set({crypto: {amount: '?', currency: get(selectedNetwork).currency.symbol}, fiat: {amount: '?', currency: 'USD'}});
+ balance.set({ crypto: { amount: '?', currency: get(selectedNetwork).currency.symbol }, fiat: { amount: '?', currency: 'USD' } });
 }
 
 selectedNetwork.subscribe(value => {
@@ -111,7 +111,7 @@ export function generateMnemonic() {
  return Mnemonic.fromEntropy(randomBytes(32));
 }
 
-export async function saveWallet(mnemonic, suffix='') {
+export async function saveWallet(mnemonic, suffix = '') {
  let newWallet = Wallet.fromPhrase(mnemonic.phrase);
  wallets.update(w => {
   w.push({
