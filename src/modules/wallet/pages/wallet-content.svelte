@@ -61,38 +61,45 @@
 <style>
  .wallet {
   display: flex;
-  justify-content: center;
-  padding: 10px;
-  height: calc(100vh - 20px);
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
   background: url('/img/background.webp') repeat;
   background-size: 400px;
+ }
+
+ .wallet .top-bar {
+  display: flex;
+  align-items: center;
+  width: calc(100% - 20px);
+  height: 52px;
+  padding: 10px;
+  background-color: #222;
+ }
+
+ .wallet .top-bar .left {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  flex: 1;
+ }
+
+ .wallet .top-bar .right {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: end;
  }
 
  .wallet .content {
   width: 768px;
   max-width: calc(100% - 10px);
   overflow: auto;
+  margin: 10px;
   border: 1px solid #000;
   border-radius: 10px;
   background-color: #fff;
   box-shadow: var(--shadow);
- }
-
- .header {
-  display: flex;
-  padding: 10px;
-  background-color: #fd1;
- }
-
- .header .left {
-  flex: 1;
- }
-
- .header .right {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: end;
  }
 
  .body {
@@ -176,15 +183,15 @@
 </style>
 
 <div class="wallet">
- <div class="content">
-  <div class="header">
-   <div class="left">
-    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => isModalNetworksOpen = true} onClose={() => isModalNetworksOpen = true} />
-   </div>
-   <div class="right">
-    <Dropdown text={$selectedWallet ? $selectedWallet.name : '--- Select your wallet ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
-   </div>
+ <div class="top-bar">
+  <div class="left">
+   <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => isModalNetworksOpen = true} onClose={() => isModalNetworksOpen = true} />
   </div>
+  <div class="right">
+   <Dropdown text={$selectedWallet ? $selectedWallet.name : '--- Select your wallet ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
+  </div>
+ </div>
+ <div class="content">
   <div class="body">
    <div class="top">
     <div class="left">
