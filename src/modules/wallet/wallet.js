@@ -81,7 +81,7 @@ function connectToURL() {
  });
  provider.on('network', newNetwork => {
   console.log('Network changed:', newNetwork.toJSON());
-  getBalance();
+  //getBalance();
  });
 }
 
