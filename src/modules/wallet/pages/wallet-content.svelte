@@ -42,9 +42,7 @@
   .then(() => console.log('Address coppied to clipboard'))
   .catch(err => console.error('Error while copying to clipboard', err));
   addressElement.innerHTML = ('Copied!');
-  setTimeout(() => {
-   addressElement.innerHTML = shortenAddress($selectedWallet.address);
-  }, 1000);
+  setTimeout(() => addressElement.innerHTML = shortenAddress($selectedWallet.address), 1000);
  }
 
  function keyCopyAddress() {
