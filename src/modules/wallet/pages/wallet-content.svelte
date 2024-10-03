@@ -52,7 +52,7 @@
  function recover() {
   let phrase = window.prompt('Enter your recovery phrase');
   if (!phrase) return;
-  saveWallet(phrase);
+  saveWallet(phrase, ' - recovered');
  }
 
 

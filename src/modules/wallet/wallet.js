@@ -45,10 +45,16 @@ registerModule('wallet', {
  },
 });
 
+function resetBalance() {
+ balance.set({crypto: {amount: '?', currency: get(selectedNetwork).currency.symbol}, fiat: {amount: '?', currency: 'USD'}});
+}
+
 selectedNetwork.subscribe(value => {
+ resetBalance();
  reconnect();
 });
 selectedWallet.subscribe(value => {
+ resetBalance();
  reconnect();
 });
 
@@ -60,12 +66,13 @@ function reconnect() {
  if (!net) return;
  if (!get(selectedWallet)) return;
  clearTimeout(reconnectionTimer);
- if (!get(rpcURL)) {
-  rpcURL.set(net.rpcURLs[0]);
-  if (!get(rpcURL)) {
+ const rrr = get(rpcURL);
+ if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
+  if (!net.rpcURLs[0]) {
    status.set('No RPC URL found for the selected network');
    return;
   }
+  rpcURL.set(net.rpcURLs[0]);
  }
  connectToURL();
 }
@@ -76,6 +83,7 @@ function connectToURL() {
  provider.on('error', error => {
   console.log('Provider error:', error);
   provider.destroy();
+  provider = null;
   wallet = null;
   setNextUrl();
   reconnectionTimer = setTimeout(reconnect, 10000);
@@ -103,11 +111,11 @@ export function generateMnemonic() {
  return Mnemonic.fromEntropy(randomBytes(32));
 }
 
-export async function saveWallet(mnemonic) {
+export async function saveWallet(mnemonic, suffix='') {
  let newWallet = Wallet.fromPhrase(mnemonic.phrase);
  wallets.update(w => {
   w.push({
-   name: 'My Yellow Wallet ' + (w.length + 1),
+   name: 'My Yellow Wallet ' + (w.length + 1) + suffix,
    phrase: mnemonic.phrase,
    address: newWallet.address,
   });

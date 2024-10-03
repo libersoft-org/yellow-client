@@ -127,7 +127,7 @@ export function relay(md, data_name) {
 }
 
 accounts_config.subscribe(value => {
- console.log('ACCOUNTS CONFIG:', value);
+ //console.log('ACCOUNTS CONFIG:', value);
  //TODO: implement configuration of accounts order
  let accounts_list = get(accounts);
  //console.log('EXISTING ACCOUNTS (stores):', accounts_list);
