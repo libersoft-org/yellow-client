@@ -34,7 +34,6 @@ let wallet;
 let provider;
 let reconnectionTimer;
 
-
 function resetBalance() {
  balance.set({ crypto: { amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?' }, fiat: { amount: '?', currency: 'USD' } });
 }
