@@ -2,7 +2,6 @@
  import { onMount } from 'svelte';
  import { saveWallet, status, rpcURL, balance, selectedNetwork, selectedWallet, balanceTimestamp } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
- import ModalNewWallet from '../modals/new-wallet.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
  import Send from './send.svelte';
@@ -13,7 +12,6 @@
  import Dropdown from "../components/dropdown.svelte";
  import Button from '../../../core/components/button.svelte';
  let section = 'balance';
- let isModalPhraseOpen = false;
  let isModalNetworksOpen = false;
  let isModalWalletsOpen = false;
  let newPhrase = '';
@@ -33,10 +31,6 @@
   return addr.slice(0, 5) + '...' + addr.slice(-3);
  }
 
- async function showNewWalletModal() {
-  isModalPhraseOpen = true;
- }
-
  function clickCopyAddress() {
   navigator.clipboard.writeText($selectedWallet.address)
   .then(() => console.log('Address coppied to clipboard'))
@@ -51,14 +45,6 @@
    clickCopyAddress();
   }
  }
-
- function recover() {
-  let phrase = window.prompt('Enter your recovery phrase');
-  if (!phrase) return;
-  saveWallet(phrase, ' - recovered');
- }
-
-
 </script>
 
 <style>
@@ -227,8 +213,6 @@
     <Button width="80px" text="Balance" on:click={() => setSection('balance')} />
     <Button width="80px" text="History" on:click={() => setSection('history')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
-    <Button width="80px" text="Create wallet" on:click={showNewWalletModal}  />
-    <Button width="80px" text="Recover" on:click={recover}  />
    </div>
    <div class="section">
     {#if section == 'send'}
@@ -246,11 +230,6 @@
   </div>
  </div>
 </div>
-{#if isModalPhraseOpen}
- <Modal title="New wallet" onClose={() => isModalPhraseOpen = false}>
-  <ModalNewWallet onClose={() => isModalPhraseOpen = false} />
- </Modal>
-{/if}
 {#if isModalNetworksOpen}
  <Modal title="Select your network" onClose={() => isModalNetworksOpen = false}>
   <ModalNetworks onClose={() => isModalNetworksOpen = false} />
