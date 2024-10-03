@@ -8,7 +8,7 @@ import { writable, get } from 'svelte/store';
 export function localStorageSharedStore(name, default_) {
  function setStorage(value) {
   let str = JSON.stringify(value);
-  //console.log(str);
+  console.log('SAVE', name, str);
   window.localStorage.setItem(name, str);
  }
 

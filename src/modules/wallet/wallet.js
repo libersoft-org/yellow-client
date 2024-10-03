@@ -1,11 +1,26 @@
-import { get, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import { Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic } from 'ethers';
+import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { registerModule } from '../../core/core.js';
 import WalletSidebar from './pages/wallet-sidebar.svelte';
 import WalletContent from './pages/wallet-content.svelte';
-export const wallets = writable([]);
-export const selectedNetwork = writable(null);
-export const selectedWallet = writable(null);
+import { networks } from './networks.js';
+
+export const status = writable('Started.');
+export const rpcURL = writable(null);
+export const wallets = localStorageSharedStore('wallets', []);
+export const selectedNetworkID = localStorageSharedStore('selectedNetworkID', null);
+export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
+ const r = $networks.find(n => n.name === $selectedNetworkID);
+ console.log('selectedNetwork', r);
+ return r;
+});
+export const selectedWalletID = localStorageSharedStore('selectedWalletID', null);
+export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
+ const r = $wallets.find(w => w.address === $selectedWalletID);
+ console.log('selectedWallet', r);
+ return r;
+});
 export const balance = writable({
  crypto: {
   amount: '?',
@@ -16,8 +31,11 @@ export const balance = writable({
   currency: 'USD',
  },
 });
+export const balanceTimestamp = writable(null);
+
 let wallet;
 let provider;
+let reconnectionTimer;
 
 registerModule('wallet', {
  callbacks: {},
@@ -27,54 +45,89 @@ registerModule('wallet', {
  },
 });
 
-export function setNetwork() {
- if (get(selectedNetwork)) provider = new JsonRpcProvider(get(selectedNetwork).rpcURLs[0], get(selectedNetwork).chainID);
+function resetBalance() {
+ balance.set({ crypto: { amount: '?', currency: get(selectedNetwork).currency.symbol }, fiat: { amount: '?', currency: 'USD' } });
 }
 
-export async function createWallet() {
- const mnemonic = Mnemonic.fromEntropy(randomBytes(32));
- wallet = Wallet.fromPhrase(mnemonic.phrase).connect(provider);
- wallets.update(curr => [
-  ...curr,
-  {
-   name: 'My Yellow Wallet ' + (curr.length + 1),
-   address: wallet.address,
-  },
- ]);
- await getBalance();
- return mnemonic.phrase;
-}
+selectedNetwork.subscribe(value => {
+ resetBalance();
+ reconnect();
+});
+selectedWallet.subscribe(value => {
+ resetBalance();
+ reconnect();
+});
 
-async function saveWallet(password = null) {
- if (wallet && password) {
-  try {
-   const encryptedJson = await wallet.encrypt(password);
-   localStorage.setItem('encryptedWallet', encryptedJson);
-   console.log('Wallet saved');
-  } catch (error) {
-   console.error('Error while wallet encryption:', error);
+let balanceTimer = setInterval(getBalance, 10000);
+
+function reconnect() {
+ console.log('RECONNECT');
+ let net = get(selectedNetwork);
+ if (!net) return;
+ if (!get(selectedWallet)) return;
+ clearTimeout(reconnectionTimer);
+ const rrr = get(rpcURL);
+ if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
+  if (!net.rpcURLs[0]) {
+   status.set('No RPC URL found for the selected network');
+   return;
   }
- } else alert('Wallet or password is missing');
+  rpcURL.set(net.rpcURLs[0]);
+ }
+ connectToURL();
 }
 
-async function loadWallet(password = null) {
- const encryptedJson = localStorage.getItem('encryptedWallet');
- if (encryptedJson && password) {
-  try {
-   wallet = await ethers.Wallet.fromEncryptedJson(encryptedJson, password);
-   wallet = wallet.connect(provider);
-   address.set(wallet.address);
-   await getBalance();
-  } catch (error) {
-   console.error('Error while wallet decription:', error);
-  }
- } else console.error('No wallet found or password is missing');
+function connectToURL() {
+ provider = new JsonRpcProvider(get(rpcURL), get(selectedNetwork).chainID);
+ wallet = Wallet.fromPhrase(get(selectedWallet).phrase, provider);
+ provider.on('error', error => {
+  console.log('Provider error:', error);
+  provider.destroy();
+  provider = null;
+  wallet = null;
+  setNextUrl();
+  reconnectionTimer = setTimeout(reconnect, 10000);
+ });
+ provider.on('network', newNetwork => {
+  console.log('Network changed:', newNetwork.toJSON());
+  getBalance();
+ });
+}
+
+function setNextUrl() {
+ let net = get(selectedNetwork);
+ let i = net.rpcURLs.indexOf(get(rpcURL));
+ i += 1;
+ let url;
+ if (i >= net.rpcURLs.length) {
+  url = net.rpcURLs[0];
+ } else {
+  url = net.rpcURLs[i];
+ }
+ rpcURL.set(url);
+}
+
+export function generateMnemonic() {
+ return Mnemonic.fromEntropy(randomBytes(32));
+}
+
+export async function saveWallet(mnemonic, suffix = '') {
+ let newWallet = Wallet.fromPhrase(mnemonic.phrase);
+ wallets.update(w => {
+  w.push({
+   name: 'My Yellow Wallet ' + (w.length + 1) + suffix,
+   phrase: mnemonic.phrase,
+   address: newWallet.address,
+  });
+  return w;
+ });
 }
 
 export async function getBalance() {
- if (get(selectedNetwork) && get(selectedWallet) && provider) {
+ if (get(selectedNetwork) && get(selectedWallet) && provider && wallet) {
   try {
    const balanceBigNumber = await provider.getBalance(get(selectedWallet).address);
+   balanceTimestamp.set(new Date());
    const balanceFormated = formatEther(balanceBigNumber);
    balance.set({
     crypto: {
@@ -87,7 +140,7 @@ export async function getBalance() {
     },
    });
   } catch (error) {
-   console.error('Error while getting balance:', error);
+   console.log('Error while getting balance:', error);
   }
  }
 }

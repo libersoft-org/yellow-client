@@ -2,32 +2,43 @@
  import { onMount } from 'svelte';
  import QRCode from 'qrcode';
  import Button from '../../../core/components/button.svelte';
- export let phrase = '';
+ import { generateMnemonic, saveWallet } from '../wallet.js';
+
+ export let onClose;
+
+ let mnemonic = {};
+ let phrase = '';
+
+
  let qrCodeData = '';
 
  onMount(() => {
-  generateQRCode();
+  regenerate();
  });
 
  function generateQRCode() {
   QRCode.toDataURL(phrase, { width: 150 })
-  .then(url => qrCodeData = url)
-  .catch(err => console.error(err));
+   .then(url => qrCodeData = url)
+   .catch(err => console.error(err));
  };
 
+ function regenerate() {
+  console.log('REGENERATE');
+  mnemonic = generateMnemonic();
+  phrase = mnemonic.phrase;
+  generateQRCode();
+ }
+
  function save() {
-  // TODO: password protect the key and add it to localStorage
+  // TODO: password protect the key
   console.log('SAVE');
+  saveWallet(mnemonic);
+  onClose();
  }
 
  function print() {
   // TODO: print preview and print
   console.log('PRINT');
- }
-
- function regenerate() {
-  // TODO: create a new seed phrase + QR code
-  console.log('REGENERATE');
  }
 </script>
 

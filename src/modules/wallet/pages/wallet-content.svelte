@@ -1,8 +1,8 @@
 <script>
  import { onMount } from 'svelte';
- import { balance, getBalance, setNetwork, createWallet, selectedNetwork, selectedWallet } from '../wallet.js';
+ import { saveWallet, status, rpcURL, balance, selectedNetwork, selectedWallet, balanceTimestamp } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
- import ModalPhrase from '../modals/phrase.svelte';
+ import ModalNewWallet from '../modals/new-wallet.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
  import Send from './send.svelte';
@@ -26,15 +26,6 @@
   section = name;
  }
 
- function onSetNetwork() {
-  setNetwork();
-  getBalance();
- }
-
- function onSetWallet() {
-  getBalance();
- }
-
  function shortenAddress(addr) {
   if (!addr) return '';
   if (addr.lenght <= 8) return addr;
@@ -42,9 +33,7 @@
  }
 
  async function showNewWalletModal() {
-  newPhrase = await createWallet();
   isModalPhraseOpen = true;
-  console.log('PHRASE:', newPhrase);
  }
 
  function clickCopyAddress() {
@@ -59,6 +48,14 @@
    clickCopyAddress();
   }
  }
+
+ function recover() {
+  let phrase = window.prompt('Enter your recovery phrase');
+  if (!phrase) return;
+  saveWallet(phrase, ' - recovered');
+ }
+
+
 </script>
 
 <style>
@@ -193,14 +190,16 @@
     <div class="left">
      <div class="status">
       <div class="indicator orange"></div>
-      <div>Connecting to https://.../ ...</div>
+      <div>{$status} </div>
+      <div><pre>{$rpcURL}</pre> </div>
      </div>
     </div>
     <div class="center">
      <div class="balance">
       <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
       <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
-     </div>  
+      <div>retrieved {$balanceTimestamp}</div>
+     </div>
     </div>
     <div class="right">
      {#if $selectedWallet && $selectedWallet.address}
@@ -220,6 +219,7 @@
     <Button width="80px" text="History" on:click={() => setSection('history')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
     <Button width="80px" text="Create wallet" on:click={showNewWalletModal}  />
+    <Button width="80px" text="Recover" on:click={recover}  />
    </div>
    <div class="section">
     {#if section == 'send'}
@@ -239,16 +239,16 @@
 </div>
 {#if isModalPhraseOpen}
  <Modal title="New wallet" onClose={() => isModalPhraseOpen = false}>
-  <ModalPhrase phrase={newPhrase} onClose={() => isModalPhraseOpen = false} />
+  <ModalNewWallet onClose={() => isModalPhraseOpen = false} />
  </Modal>
 {/if}
 {#if isModalNetworksOpen}
  <Modal title="Select your network" onClose={() => isModalNetworksOpen = false}>
-  <ModalNetworks phrase={newPhrase} onClose={() => isModalNetworksOpen = false} {onSetNetwork} />
+  <ModalNetworks onClose={() => isModalNetworksOpen = false} />
  </Modal>
 {/if}
 {#if isModalWalletsOpen}
  <Modal title="Select your wallet" onClose={() => isModalWalletsOpen = false}>
-  <ModalWallets phrase={newPhrase} onClose={() => isModalWalletsOpen = false} {onSetWallet} />
+  <ModalWallets onClose={() => isModalWalletsOpen = false} />
  </Modal>
 {/if}

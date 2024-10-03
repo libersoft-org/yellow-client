@@ -1,5 +1,5 @@
-import { derived, get, writable } from 'svelte/store';
-import { active_account, module_data_derived, registerModule, relay, isClientFocused, getModuleDecls } from '../../core/core.js';
+import { get, writable } from 'svelte/store';
+import { active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { send, getRandomString } from '../../core/core.js';
 import { listConversations } from './conversations.js';
@@ -27,9 +27,11 @@ class Message {
 
 export let md = module_data_derived('messages');
 
+/*
 md.subscribe(v => {
  console.log('MD: ', v);
 });
+*/
 
 export let conversationsArray = relay(md, 'conversationsArray');
 export let messagesArray = relay(md, 'messagesArray');
@@ -151,7 +153,6 @@ function updateConversationsArray(msg) {
  const address_to = msg.address_to;
  const address_from = msg.address_from;
  const msg_created = msg.created;
- const msg_text = msg.message;
  let ca = get(conversationsArray);
  const conversation = ca.find(c => c.address === address_to || c.address === address_from);
  console.log('updateConversationsArray', conversation, address_to, msg_created);
@@ -241,7 +242,7 @@ function playNotificationSound() {
  audio.play();
 }
 
-export function ensureConversationDetails(conversation, cb) {
+export function ensureConversationDetails(conversation) {
  console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
  let acc = get(active_account);

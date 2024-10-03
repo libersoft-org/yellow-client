@@ -9,4 +9,5 @@ bun.lockb
 *.key
 .secret_git
 .output
+.idea
 .vercel
