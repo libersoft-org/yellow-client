@@ -1,9 +1,6 @@
 import { derived, get, writable } from 'svelte/store';
 import { Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
-import { registerModule } from '../../core/core.js';
-import WalletSidebar from './pages/wallet-sidebar.svelte';
-import WalletContent from './pages/wallet-content.svelte';
 import { networks } from './networks.js';
 
 export const status = writable('Started.');
@@ -37,23 +34,18 @@ let wallet;
 let provider;
 let reconnectionTimer;
 
-registerModule('wallet', {
- callbacks: {},
- panels: {
-  sidebar: WalletSidebar,
-  content: WalletContent,
- },
-});
 
 function resetBalance() {
- balance.set({ crypto: { amount: '?', currency: get(selectedNetwork).currency.symbol }, fiat: { amount: '?', currency: 'USD' } });
+ balance.set({ crypto: { amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?' }, fiat: { amount: '?', currency: 'USD' } });
 }
 
 selectedNetwork.subscribe(value => {
+ console.log('selectedNetwork', value);
  resetBalance();
  reconnect();
 });
 selectedWallet.subscribe(value => {
+ console.log('selectedWallet', value);
  resetBalance();
  reconnect();
 });

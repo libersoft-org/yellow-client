@@ -2,7 +2,7 @@ import { get, writable } from 'svelte/store';
 import { active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { send, getRandomString } from '../../core/core.js';
-import { listConversations } from './conversations.js';
+import { selectConversation, listConversations } from './conversations.js';
 import ConversationsList from './pages/conversations-list.svelte';
 import ConversationsMain from './pages/conversations-main.svelte';
 
