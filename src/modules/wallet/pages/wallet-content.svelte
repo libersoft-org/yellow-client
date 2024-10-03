@@ -17,6 +17,7 @@
  let isModalNetworksOpen = false;
  let isModalWalletsOpen = false;
  let newPhrase = '';
+ let addressElement;
 
  onMount(() => {
   // TODO: set the last used network and wallet or the first one in these lists (if exist)
@@ -40,6 +41,10 @@
   navigator.clipboard.writeText($selectedWallet.address)
   .then(() => console.log('Address coppied to clipboard'))
   .catch(err => console.error('Error while copying to clipboard', err));
+  addressElement.innerHTML = ('Copied!');
+  setTimeout(() => {
+   addressElement.innerHTML = shortenAddress($selectedWallet.address);
+  }, 1000);
  }
 
  function keyCopyAddress() {
@@ -172,7 +177,6 @@
  .body .top .right .address .copy {
   width: 15px;
   height: 15px;
-  padding: 5px;
  }
 
  .body .buttons {
@@ -211,7 +215,7 @@
     <div class="right">
      {#if $selectedWallet && $selectedWallet.address}
       <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
-       <div>{shortenAddress($selectedWallet.address)}</div>
+       <div bind:this={addressElement}>{shortenAddress($selectedWallet.address)}</div>
        <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
       </div>
      {:else}
