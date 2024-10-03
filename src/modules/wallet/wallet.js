@@ -1,5 +1,14 @@
 import { derived, get, writable } from 'svelte/store';
-import { Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic } from 'ethers';
+import {
+ HDNodeWallet,
+ Wallet,
+ JsonRpcProvider,
+ formatEther,
+ parseEther,
+ randomBytes,
+ Mnemonic,
+ getIndexedAccountPath
+} from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { networks } from './networks.js';
 
@@ -18,6 +27,10 @@ export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $
  console.log('selectedWallet', r);
  return r;
 });
+
+
+export let hd_index = writable(0);
+
 export const balance = writable({
  crypto: {
   amount: '?',
@@ -68,9 +81,57 @@ function reconnect() {
  connectToURL();
 }
 
+
+export function newAddress() {
+ let index = get(addresses).length + 2;
+ let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
+ let path = getIndexedAccountPath(index);
+ let w = HDNodeWallet.fromMnemonic(mn, path );
+ let a = {address: w.address, name: 'Address ' + index, path: path, index: index};
+ let newAddresses = get(addresses);
+ newAddresses.push(a);
+ addresses.set(newAddresses);
+}
+
+export function selectAddress(address) {
+
+ let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
+ let path = getIndexedAccountPath(index);
+ wallet = HDNodeWallet.fromMnemonic(mn, path).connect(provider);
+
+}
+
+
+function loadaddresses() {
+
+ let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
+
+ let result = [];
+
+ for (let i = 2; i < 10; i++) {
+  let path = getIndexedAccountPath(i);
+  let w = HDNodeWallet.fromMnemonic(mn, path ).connect(provider);
+  result.push(w.address);
+ }
+
+ addresses.set(result);
+}
+
+
+addresses.subscribe(value => {
+ console.log('addresses', value);
+});
+
+
+export function generateMnemonic() {
+ return Mnemonic.fromEntropy(randomBytes(32));
+}
+
+
 function connectToURL() {
+
  provider = new JsonRpcProvider(get(rpcURL), get(selectedNetwork).chainID);
- wallet = Wallet.fromPhrase(get(selectedWallet).phrase, provider);
+
  provider.on('error', error => {
   console.log('Provider error:', error);
   provider.destroy();
@@ -81,8 +142,8 @@ function connectToURL() {
  });
  provider.on('network', newNetwork => {
   console.log('Network changed:', newNetwork.toJSON());
-  //getBalance();
  });
+
 }
 
 function setNextUrl() {
@@ -98,9 +159,6 @@ function setNextUrl() {
  rpcURL.set(url);
 }
 
-export function generateMnemonic() {
- return Mnemonic.fromEntropy(randomBytes(32));
-}
 
 export async function saveWallet(mnemonic, suffix = '') {
  let newWallet = Wallet.fromPhrase(mnemonic.phrase);
