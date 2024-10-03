@@ -19,7 +19,8 @@
 
  import {} from '../modules/messages/messages.js';
  import {} from '../modules/contacts/contacts.js';
- import {} from '../modules/wallet/wallet.js';
+ import {} from '../modules/wallet/module.js';
+ import {} from '../modules/iframes/module.js';
 
  let isWelcomeWizardOpen = false;
 
@@ -76,14 +77,20 @@
 
  onMount(() => {
   console.log('+page onMount');
-  getModuleDecls();
   window.addEventListener('focus', () => isClientFocused.update(() => true));
   window.addEventListener('blur', () => isClientFocused.update(() => false));
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
   if (get(accounts_config).length === 0) {
    isWelcomeWizardOpen = true;
   }
+  setupIframeListener();
  });
+
+ function setupIframeListener() {
+  window.addEventListener('message', (event) => {
+   console.log('event.data: ', event.data);
+  });
+ }
 
  function clickStatusClose() {
   statusVisible = false;

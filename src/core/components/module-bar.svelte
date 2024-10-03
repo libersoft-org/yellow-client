@@ -1,6 +1,6 @@
 <script>
 
- import { active_account, order } from '../core.js';
+ import { active_account, order, getModuleDecls } from '../core.js';
  import { get } from "svelte/store";
 
  let module_data;
@@ -69,18 +69,10 @@
 
 <div class="items">
 
- {#if module_data_ordered?.length && module_data_ordered.length > 0}
-
-  {#each module_data_ordered as module (module.id)}
-   <div class="item" on:click={() => clickSetModule(module.id)} on:keydown={() => keySetModule(module.id)} tabindex="0">
-    <img src="img/modules/{module.decl.id}.svg" alt={module.decl.name} />
+  {#each order(getModuleDecls()) as decl (decl.id)}
+   <div class="item" on:click={() => clickSetModule(decl.id)} on:keydown={() => keySetModule(decl.id)} tabindex="0">
+    <img src="img/modules/{decl.id}.svg" alt={decl.name} />
    </div>
   {/each}
-
- {:else}
-  {#if $active_account}
-  <div class="message" >({$active_account.status})</div>
-  {/if}
- {/if}
 
 </div>

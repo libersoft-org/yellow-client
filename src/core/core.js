@@ -216,6 +216,17 @@ function constructAccount(id, credentials, enabled, settings) {
   settings,
   credentials,
   enabled,
+  /*
+    also stuff like (set on heartbeat, for example):
+
+    acc.lastCommsTs = Date.now();
+    acc.status = 'Connected.';
+    acc.error = null;
+
+    We should put all this stuff in a separate object, let's say "meta".
+    And try to stuff credentials into settings maybe.
+    And each of these nested objects of interest can be a store, so we can update them independently, without causing a global update on each heartbeat.
+  */
   events: new EventTarget(),
   requests: {},
   module_data: {},
@@ -325,6 +336,7 @@ function reconnectAccount(account) {
 
 function retry(account, msg) {
  let acc = get(account);
+ if (!acc.enabled || acc.suspended) return;
  acc.status = 'Retrying...';
  acc.error = msg;
  //clearHeartbeatTimer(acc);
