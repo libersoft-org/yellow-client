@@ -41,7 +41,8 @@
   items.length = 0;
   let unseen_marker_placed = false;
   for (let message of messagesArray.toReversed()) {
-   if (!unseen_marker_placed && !message.is_outgoing && !message.seen) {
+   if (!unseen_marker_placed && !message.is_outgoing && (message.is_unseen_marker_anchor || !message.seen)) {
+    message.is_unseen_marker_anchor = true;
     unseen_marker_placed = true;
     items.push({uid: 'unseen_marker', type: 'unseen_marker'});
    }
