@@ -325,6 +325,7 @@ function reconnectAccount(account) {
 
 function retry(account, msg) {
  let acc = get(account);
+ if (!acc.enabled || acc.suspended) return;
  acc.status = 'Retrying...';
  acc.error = msg;
  //clearHeartbeatTimer(acc);
