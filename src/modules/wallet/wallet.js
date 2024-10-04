@@ -5,6 +5,7 @@ import { networks } from './networks.js';
 
 export const status = writable('Started.');
 export const rpcURL = writable(null);
+
 export const wallets = localStorageSharedStore('wallets', []);
 
 export const selectedNetworkID = localStorageSharedStore('selectedNetworkID', null);
@@ -20,7 +21,10 @@ export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $
  return r;
 });
 
-export let hd_index = writable(0);
+export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
+ return $selectedWallet?.addresses[$selectedWallet.selected_address_index];
+});
+
 
 export const balance = writable({
  crypto: {
@@ -34,14 +38,23 @@ export const balance = writable({
 });
 export const balanceTimestamp = writable(null);
 
-let wallet;
 let provider;
 let reconnectionTimer;
+
+let refreshTimer = setInterval(refresh, 10000);
 
 function resetBalance() {
  balance.set({ crypto: { amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?' }, fiat: { amount: '?', currency: 'USD' } });
  balanceTimestamp.set(null);
 }
+
+
+async function refresh() {
+ if (provider) {
+  await getBalance();
+ }
+}
+
 
 selectedNetwork.subscribe(value => {
  console.log('selectedNetwork', value);
@@ -54,15 +67,17 @@ selectedWallet.subscribe(value => {
  reconnect();
 });
 
-let balanceTimer = setInterval(getBalance, 10000);
 
 function reconnect() {
+ provider = null;
+
  let net = get(selectedNetwork);
  if (!net) return;
  let wal = get(selectedWallet);
  if (!wal) return;
  if (!wal.selected_address_index) return;
  console.log('RECONNECT');
+ status.set('Connecting to ' + net.name);
 
  clearTimeout(reconnectionTimer);
  const rrr = get(rpcURL);
@@ -76,9 +91,8 @@ function reconnect() {
  connectToURL();
 }
 
-export function addAddress() {
+export function addAddress(w) {
  console.log('addAddress');
- let w = get(selectedWallet);
  let addresses = w.addresses || [];
  let index = addresses.length;
  w.selected_address_index = index;
@@ -91,9 +105,9 @@ export function addAddress() {
  wallets.update(w => w);
 }
 
-export function selectAddress(address) {
- selectedWallet.selected_address_index = address.index;
- wallets.update(w => w);
+export function selectAddress(wallet, address) {
+ wallet.selected_address_index = address.index;
+ wallets.update(v => v);
 }
 
 export function generateMnemonic() {
@@ -103,14 +117,11 @@ export function generateMnemonic() {
 function connectToURL() {
  let sw = get(selectedWallet);
  provider = new JsonRpcProvider(get(rpcURL), get(selectedNetwork).chainID);
- let mn = Mnemonic.fromPhrase(sw.phrase);
- wallet = HDNodeWallet.fromMnemonic(mn, getIndexedAccountPath(sw.selected_address_index)).connect(provider);
 
  provider.on('error', error => {
   console.log('Provider error:', error);
   provider.destroy();
   provider = null;
-  wallet = null;
   setNextUrl();
   reconnectionTimer = setTimeout(reconnect, 10000);
  });
@@ -130,6 +141,7 @@ function setNextUrl() {
   url = net.rpcURLs[i];
  }
  rpcURL.set(url);
+ status.set('Trying next url: ' + url);
 }
 
 export async function addWallet(mnemonic, suffix = '') {
@@ -146,10 +158,14 @@ export async function addWallet(mnemonic, suffix = '') {
  selectedWalletID.set(get(wallets)[get(wallets).length - 1].address);
 }
 
+
+
+
 export async function getBalance() {
- if (get(selectedNetwork) && get(selectedWallet) && provider && wallet) {
+ if (get(selectedNetwork) && provider) {
+
   try {
-   const balanceBigNumber = await provider.getBalance(get(selectedWallet).address);
+   const balanceBigNumber = await provider.getBalance(get(selectedAddress).address);
    balanceTimestamp.set(new Date());
    const balanceFormated = formatEther(balanceBigNumber);
    balance.set({
@@ -165,21 +181,25 @@ export async function getBalance() {
   } catch (error) {
    console.log('Error while getting balance:', error);
   }
+
+  provider.getLogs({ address: get(selectedWallet).address }).then(logs => {
+   console.log('Logs:', logs);
+  });
+
  }
 }
 
 async function sendTransaction(recipient, amount) {
- if (wallet) {
-  try {
-   const tx = await wallet.sendTransaction({
-    to: recipient,
-    value: parseEther(amount),
-   });
-   await tx.wait();
-   await getBalance();
-   console.log('Transaction sent OK');
-  } catch (error) {
-   console.error('Error while sending a transaction:', error);
-  }
- } else console.error('Wallet not found');
+ let hd_wallet = HDNodeWallet.fromMnemonic(get(selectedWallet).phrase, get(selectedWallet).addresses[get(selectedWallet).selected_address_index].path);
+ try {
+  const tx = await hd_wallet.sendTransaction({
+   to: recipient,
+   value: parseEther(amount),
+  });
+  await tx.wait();
+  await getBalance();
+  console.log('Transaction sent OK');
+ } catch (error) {
+  console.error('Error while sending a transaction:', error);
+ }
 }

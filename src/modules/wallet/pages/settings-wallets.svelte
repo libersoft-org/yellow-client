@@ -11,10 +11,6 @@
   content: 'My address 2'
  }];
 
- selectedWallet.subscribe(value => {
-  console.log('sidebar SELECTED WALLET', value);
- });
-
  function showNewWalletModal() {
   isModalPhraseOpen = true;
  }
@@ -72,7 +68,7 @@
    <tr>
     <td class="address-name">{address.name}</td>
     <td class="address-value">{address.address}</td>
-    <td><Button text="Select" on:click={selectAddress} /></td>
+    <td><Button text="Select" on:click={() => selectAddress($selectedWallet, address.address) } /></td>
    </tr>
   {/each}
  </table>
