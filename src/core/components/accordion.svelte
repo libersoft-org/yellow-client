@@ -60,7 +60,7 @@
     <img src="img/down-black.svg" alt="▼" />
    </div>
    <div class="content {activeIndex === index ? 'active' : ''}">
-    {i.content}
+    <slot prop={i} />
    </div>
   </div>
  {/each}

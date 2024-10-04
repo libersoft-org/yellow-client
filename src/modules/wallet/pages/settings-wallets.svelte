@@ -1,15 +1,9 @@
 <script>
- import { selectAddress, addAddress, selectedWallet } from '../wallet.js';
+ import { wallets } from '../wallet.js';
  import Button from '../../../core/components/button.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
 
- let wallets = [{
-  title: 'My wallet 1',
-  content: 'My address 1'
- }, {
-  title: 'My wallet 2',
-  content: 'My address 2'
- }];
+ export let isModalPhraseOpen = false;
 
  function showNewWalletModal() {
   isModalPhraseOpen = true;
@@ -51,25 +45,30 @@
  }
 </style>
 
+
+
+
 <div class="buttons">
  <Button width="80px" text="Create wallet" on:click={showNewWalletModal}  />
  <Button width="80px" text="Recover" on:click={recover}  />
 </div>
-<Accordion items={wallets} />
-{#if $selectedWallet}
- <Button text="Generate new address" on:click={addAddress} />
- <table>
-  <tr>
-   <th>Alias</th>
-   <th>Address</th>
-   <th class="center">Action</th>
-  </tr>
-  {#each $selectedWallet?.addresses || [] as address (address.index)}
+<Accordion items={$wallets} let:prop={wallet} >
+ <div>
+  <Button text="Generate new address" on:click={addAddress} />
+  <table>
    <tr>
-    <td class="address-name">{address.name}</td>
-    <td class="address-value">{address.address}</td>
-    <td><Button text="Select" on:click={() => selectAddress($selectedWallet, address.address) } /></td>
+    <th>Alias</th>
+    <th>Address</th>
+    <th class="center">Action</th>
    </tr>
-  {/each}
- </table>
-{/if}
+   {#each wallet.addresses || [] as address (address.index)}
+    <tr>
+     <td class="address-name">{address.name}</td>
+     <td class="address-value">{address.address}</td>
+     <td><Button text="Select" on:click={() => selectAddress(wallet, address.address) } /></td>
+    </tr>
+   {/each}
+  </table>
+ </div>
+</Accordion>
+
