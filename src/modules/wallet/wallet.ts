@@ -75,11 +75,11 @@ selectedWallet.subscribe(value => {
 function reconnect() {
  provider = null;
 
+ console.log('Reconnecting to', get(selectedNetwork));
+
  let net = get(selectedNetwork);
  if (!net) return;
- let wal = get(selectedWallet);
- if (!wal) return;
- if (!wal.selected_address_index) return;
+
  console.log('RECONNECT');
  status.set('Connecting to ' + net.name);
 
@@ -120,7 +120,8 @@ export function generateMnemonic() {
 }
 
 function connectToURL() {
- let sw = get(selectedWallet);
+
+ console.log('Connecting to', get(rpcURL));
  provider = new JsonRpcProvider(get(rpcURL), get(selectedNetwork).chainID);
 
  provider.on('error', error => {
@@ -166,8 +167,10 @@ export async function addWallet(mnemonic, suffix = '') {
 }
 
 export async function getBalance() {
+ console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', provider);
  if (get(selectedNetwork) && provider) {
   try {
+   console.log('Getting balance for', get(selectedAddress).address);
    const balanceBigNumber = await provider.getBalance(get(selectedAddress).address);
    balanceTimestamp.set(new Date());
    const balanceFormated = formatEther(balanceBigNumber);
