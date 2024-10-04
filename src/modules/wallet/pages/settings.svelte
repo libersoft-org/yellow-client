@@ -3,8 +3,13 @@
  import Button from '../../../core/components/button.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalNewWallet from '../modals/new-wallet.svelte';
+ import { selectAddress, addAddress, selectedWallet } from '../wallet.js';
  let section = 'general';
  let isModalPhraseOpen = false;
+
+ selectedWallet.subscribe(value => {
+  console.log('sidebar SELECTED WALLET', value);
+ });
 
  function setSection(name) {
   console.log('SET SECTION:', name);
@@ -54,13 +59,30 @@
    GENERAL
   {/if}
   {#if section === 'networks'}
+   NETWORKS
+  {/if}
+  {#if section === 'wallets'}
    <div class="buttons">
     <Button width="80px" text="Create wallet" on:click={showNewWalletModal}  />
     <Button width="80px" text="Recover" on:click={recover}  />
    </div>
-  {/if}
-  {#if section === 'wallets'}
-   WALLETS
+   {#if $selectedWallet}
+    <Button text="Generate new address" on:click={addAddress} />
+    <table>
+     <tr>
+      <th>Alias</th>
+      <th>Address</th>
+      <th>Action</th>
+     </tr>
+     {#each $selectedWallet?.addresses || [] as address (address.index)}
+      <tr>
+       <td class="address-name">{address.name}</td>
+       <td class="address-value">{address.address}</td>
+       <td><Button text="Select" on:click={selectAddress} /></td>
+      </tr>
+     {/each}
+    </table>
+   {/if}
   {/if}
  {/if}
 </div>
