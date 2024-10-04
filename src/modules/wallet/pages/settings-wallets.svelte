@@ -56,7 +56,7 @@
 </div>
 <Accordion items={$wallets} let:prop={wallet} >
  <div>
-  <Button text="Generate new address" on:click={addAddress} />
+  <Button text="Generate new address" on:click={() => addAddress(wallet)} />
   <table>
    <tr>
     <th>Alias</th>

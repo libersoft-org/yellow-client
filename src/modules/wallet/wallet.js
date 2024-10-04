@@ -96,7 +96,7 @@ function reconnect() {
 }
 
 export function addAddress(w) {
- console.log('addAddress');
+ console.log('addAddress to wallet ', w);
  let addresses = w.addresses || [];
  let index = addresses.length;
  w.selected_address_index = index;
@@ -152,12 +152,12 @@ function setNextUrl() {
 export async function addWallet(mnemonic, suffix = '') {
  let newWallet = Wallet.fromPhrase(mnemonic.phrase);
  let wallet = {
-  name: 'My Yellow Wallet ' + (w.length + 1) + suffix,
   phrase: mnemonic.phrase,
   address: newWallet.address,
   selected_address_index: 0,
  };
  wallets.update(w => {
+  wallet.name = 'My Yellow Wallet ' + (w.length + 1) + suffix;
   w.push(wallet);
   return w;
  });
