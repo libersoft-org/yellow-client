@@ -25,7 +25,6 @@ export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => 
  return $selectedWallet?.addresses[$selectedWallet.selected_address_index];
 });
 
-
 export const balance = writable({
  crypto: {
   amount: '?',
@@ -48,13 +47,11 @@ function resetBalance() {
  balanceTimestamp.set(null);
 }
 
-
 async function refresh() {
  if (provider) {
   await getBalance();
  }
 }
-
 
 selectedNetwork.subscribe(value => {
  console.log('selectedNetwork', value);
@@ -66,7 +63,6 @@ selectedWallet.subscribe(value => {
  resetBalance();
  reconnect();
 });
-
 
 function reconnect() {
  provider = null;
@@ -158,12 +154,8 @@ export async function addWallet(mnemonic, suffix = '') {
  selectedWalletID.set(get(wallets)[get(wallets).length - 1].address);
 }
 
-
-
-
 export async function getBalance() {
  if (get(selectedNetwork) && provider) {
-
   try {
    const balanceBigNumber = await provider.getBalance(get(selectedAddress).address);
    balanceTimestamp.set(new Date());
@@ -185,7 +177,6 @@ export async function getBalance() {
   provider.getLogs({ address: get(selectedWallet).address }).then(logs => {
    console.log('Logs:', logs);
   });
-
  }
 }
 
