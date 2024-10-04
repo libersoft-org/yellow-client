@@ -56,7 +56,7 @@
  {#each items as i, index}
   <div class="item">
    <div class="header" role="button" tabindex="0" on:click={() => clickToggle(index)} on:keydown={() => keyToggle(index)}>
-    <div class="title">{i.title}</div>
+    <div class="title">{i.name}</div>
     <img src="img/down-black.svg" alt="▼" />
    </div>
    <div class="content {activeIndex === index ? 'active' : ''}">

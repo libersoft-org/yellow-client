@@ -1,12 +1,9 @@
 <script>
  import Section from '../components/settings-section.svelte';
- import Modal from '../../../core/components/modal.svelte';
- import ModalNewWallet from '../modals/new-wallet.svelte';
  import SectionGeneral from './settings-general.svelte';
  import SectionNetworks from './settings-networks.svelte';
  import SectionWallets from './settings-wallets.svelte';
  let section = 'general';
- let isModalPhraseOpen = false;
 
  function setSection(name) {
   console.log('SET SECTION:', name);
@@ -46,8 +43,3 @@
   {/if}
  {/if}
 </div>
-{#if isModalPhraseOpen}
- <Modal title="New wallet" onClose={() => isModalPhraseOpen = false}>
-  <ModalNewWallet onClose={() => isModalPhraseOpen = false} />
- </Modal>
-{/if}

@@ -26,7 +26,7 @@ export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $
 
 export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
  console.log($selectedWallet);
- let r = $selectedWallet?.addresses[$selectedWallet.selected_address_index];
+ let r = $selectedWallet?.addresses?.[$selectedWallet.selected_address_index];
  console.log('selectedAddress', r);
  return r;
 });
@@ -151,16 +151,18 @@ function setNextUrl() {
 
 export async function addWallet(mnemonic, suffix = '') {
  let newWallet = Wallet.fromPhrase(mnemonic.phrase);
+ let wallet = {
+  name: 'My Yellow Wallet ' + (w.length + 1) + suffix,
+  phrase: mnemonic.phrase,
+  address: newWallet.address,
+  selected_address_index: 0,
+ };
  wallets.update(w => {
-  w.push({
-   name: 'My Yellow Wallet ' + (w.length + 1) + suffix,
-   phrase: mnemonic.phrase,
-   address: newWallet.address,
-   selected_address_index: 0,
-  });
+  w.push(wallet);
   return w;
  });
  selectedWalletID.set(get(wallets)[get(wallets).length - 1].address);
+ addAddress(wallet);
 }
 
 export async function getBalance() {

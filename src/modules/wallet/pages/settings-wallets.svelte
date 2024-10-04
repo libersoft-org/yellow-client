@@ -2,8 +2,10 @@
  import { wallets, addAddress, selectAddress } from '../wallet.js';
  import Button from '../../../core/components/button.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
+ import Modal from '../../../core/components/modal.svelte';
+ import ModalNewWallet from '../modals/new-wallet.svelte';
 
- export let isModalPhraseOpen = false;
+ let isModalPhraseOpen = false;
 
  function showNewWalletModal() {
   isModalPhraseOpen = true;
@@ -71,4 +73,9 @@
   </table>
  </div>
 </Accordion>
+{#if isModalPhraseOpen}
+ <Modal title="New wallet" onClose={() => isModalPhraseOpen = false}>
+  <ModalNewWallet onClose={() => isModalPhraseOpen = false} />
+ </Modal>
+{/if}
 
