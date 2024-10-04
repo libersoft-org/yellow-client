@@ -211,10 +211,10 @@
     </div>
    </div>
    <div class="buttons">
-    <Button width="80px" text="Send" on:click={() => setSection('send')} />
-    <Button width="80px" text="Receive" on:click={() => setSection('receive')} />
-    <Button width="80px" text="Balance" on:click={() => setSection('balance')} />
-    <Button width="80px" text="History" on:click={getTransactionHistory}  />
+    <Button width="80px" text="Send" disabled={$selectedNetwork && $selectedAddress ? false : true } on:click={() => setSection('send')} />
+    <Button width="80px" text="Receive" disabled={$selectedNetwork && $selectedAddress ? false : true } on:click={() => setSection('receive')} />
+    <Button width="80px" text="Balance" disabled={$selectedNetwork && $selectedAddress ? false : true } on:click={() => setSection('balance')} />
+    <Button width="80px" text="History" disabled={$selectedNetwork && $selectedAddress ? false : true } on:click={getTransactionHistory}  />
     <Button width="80px" text="Address book" on:click={() => setSection('addressbook')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
    </div>
@@ -225,8 +225,6 @@
      <Receive />
     {:else if section == 'balance'}
      <Balance />
-    {:else if section == 'history'}
-     <History />
     {:else if section == 'addressbook'}
      <AddressBook />
     {:else if section == 'settings'}

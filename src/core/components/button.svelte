@@ -5,8 +5,11 @@
  export let disabled = false;
  export let hiddenOnDesktop = false;
  export let width;
-
  const dispatch = createEventDispatcher();
+
+ function handleClick() {
+  if (!disabled) dispatch('click');
+ }
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -15,13 +18,6 @@
     dispatch('click');
   }
  }
-
- function handleClick()
- {
-  if (!disabled)
-   dispatch('click');
- }
-
 </script>
 
 <style>
