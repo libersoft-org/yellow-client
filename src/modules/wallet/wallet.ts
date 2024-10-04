@@ -120,7 +120,6 @@ export function generateMnemonic() {
 }
 
 function connectToURL() {
-
  console.log('Connecting to', get(rpcURL));
  provider = new JsonRpcProvider(get(rpcURL), get(selectedNetwork).chainID);
 

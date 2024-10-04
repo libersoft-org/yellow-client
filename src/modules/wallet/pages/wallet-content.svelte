@@ -189,8 +189,8 @@
      <div class="status">
       <div class="indicator orange"></div>
       <div>{$status} </div>
-      <div><pre>{$rpcURL}</pre> </div>
      </div>
+     <div style="font-size: 12px">Server: {$rpcURL}</div>
     </div>
     <div class="center">
      <div class="balance">
