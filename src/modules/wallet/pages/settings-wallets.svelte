@@ -1,20 +1,28 @@
 <script>
- import { wallets, addAddress, selectAddress } from '../wallet.ts';
+ import { wallets, addAddress, selectAddress, addWallet } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalNewWallet from '../modals/new-wallet.svelte';
+ import { Mnemonic, } from 'ethers';
 
  let isModalPhraseOpen = false;
+ let activeIndex = null;
 
  function showNewWalletModal() {
   isModalPhraseOpen = true;
  }
 
+ function afterAddWallet() {
+  activeIndex = wallets.length - 1;
+ }
+
  function recover() {
   let phrase = window.prompt('Enter your recovery phrase');
   if (!phrase) return;
-  addWallet(phrase, ' - recovered');
+  let mn = Mnemonic.fromPhrase(phrase);
+  addWallet(mn, ' - recovered');
+  afterAddWallet();
  }
 </script>
 
@@ -54,7 +62,7 @@
  <Button width="80px" text="Create wallet" on:click={showNewWalletModal}  />
  <Button width="80px" text="Recover" on:click={recover}  />
 </div>
-<Accordion items={$wallets} let:prop={wallet} >
+<Accordion items={$wallets} let:prop={wallet} bind:activeIndex={activeIndex}>
  <div>
   <Button text="Generate new address" on:click={() => addAddress(wallet)} />
   <table>
@@ -75,7 +83,7 @@
 </Accordion>
 {#if isModalPhraseOpen}
  <Modal title="New wallet" onClose={() => isModalPhraseOpen = false}>
-  <ModalNewWallet onClose={() => isModalPhraseOpen = false} />
+  <ModalNewWallet onClose={() => {isModalPhraseOpen = false; afterAddWallet()}} />
  </Modal>
 {/if}
 

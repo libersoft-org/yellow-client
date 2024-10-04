@@ -1,6 +1,6 @@
 <script>
  export let items = [];
- let activeIndex = null;
+ export let activeIndex = null;
 
  function clickToggle(index) {
   activeIndex = activeIndex === index ? null : index;
