@@ -5,6 +5,7 @@
  export let disabled = false;
  export let hiddenOnDesktop = false;
  export let width;
+
  const dispatch = createEventDispatcher();
 
  function handleKeydown(event) {
@@ -39,7 +40,7 @@
   width: 20px;
   height: 20px;
  }
- 
+
  @media (min-width: 769px) {
   .hidden-on-desktop {
    display: none;

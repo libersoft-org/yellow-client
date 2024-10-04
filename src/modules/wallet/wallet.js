@@ -15,6 +15,7 @@ import { networks } from './networks.js';
 export const status = writable('Started.');
 export const rpcURL = writable(null);
 export const wallets = localStorageSharedStore('wallets', []);
+
 export const selectedNetworkID = localStorageSharedStore('selectedNetworkID', null);
 export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
  const r = $networks.find(n => n.name === $selectedNetworkID);
@@ -49,6 +50,7 @@ let reconnectionTimer;
 
 function resetBalance() {
  balance.set({ crypto: { amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?' }, fiat: { amount: '?', currency: 'USD' } });
+ balanceTimestamp.set(null);
 }
 
 selectedNetwork.subscribe(value => {
@@ -65,10 +67,13 @@ selectedWallet.subscribe(value => {
 let balanceTimer = setInterval(getBalance, 10000);
 
 function reconnect() {
- console.log('RECONNECT');
  let net = get(selectedNetwork);
  if (!net) return;
- if (!get(selectedWallet)) return;
+ let wal = get(selectedWallet);
+ if (!wal) return;
+ if (!wal.selected_address_index) return;
+ console.log('RECONNECT');
+
  clearTimeout(reconnectionTimer);
  const rrr = get(rpcURL);
  if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
@@ -82,55 +87,36 @@ function reconnect() {
 }
 
 
-export function newAddress() {
- let index = get(addresses).length + 2;
+export function addAddress() {
+ console.log('addAddress');
+ let w = get(selectedWallet);
+ let addresses = w.addresses || [];
+ let index = addresses.length;
+ w.selected_address_index = index;
  let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
  let path = getIndexedAccountPath(index);
- let w = HDNodeWallet.fromMnemonic(mn, path );
- let a = {address: w.address, name: 'Address ' + index, path: path, index: index};
- let newAddresses = get(addresses);
- newAddresses.push(a);
- addresses.set(newAddresses);
+ let derived_wallet = HDNodeWallet.fromMnemonic(mn, path );
+ let a = {address: derived_wallet.address, name: 'Address ' + index, path: path, index: index};
+ addresses.push(a);
+ w.addresses = addresses;
+ wallets.update(w => w);
 }
 
 export function selectAddress(address) {
-
- let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
- let path = getIndexedAccountPath(index);
- wallet = HDNodeWallet.fromMnemonic(mn, path).connect(provider);
-
+ selectedWallet.selected_address_index = address.index;
+ wallets.update(w => w);
 }
-
-
-function loadaddresses() {
-
- let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
-
- let result = [];
-
- for (let i = 2; i < 10; i++) {
-  let path = getIndexedAccountPath(i);
-  let w = HDNodeWallet.fromMnemonic(mn, path ).connect(provider);
-  result.push(w.address);
- }
-
- addresses.set(result);
-}
-
-
-addresses.subscribe(value => {
- console.log('addresses', value);
-});
-
 
 export function generateMnemonic() {
  return Mnemonic.fromEntropy(randomBytes(32));
 }
 
-
 function connectToURL() {
 
+ let sw = get(selectedWallet);
  provider = new JsonRpcProvider(get(rpcURL), get(selectedNetwork).chainID);
+ let mn = Mnemonic.fromPhrase(sw.phrase);
+ wallet = HDNodeWallet.fromMnemonic(mn, getIndexedAccountPath(sw.selected_address_index)).connect(provider);
 
  provider.on('error', error => {
   console.log('Provider error:', error);
@@ -160,17 +146,20 @@ function setNextUrl() {
 }
 
 
-export async function saveWallet(mnemonic, suffix = '') {
+export async function addWallet(mnemonic, suffix = '') {
  let newWallet = Wallet.fromPhrase(mnemonic.phrase);
  wallets.update(w => {
   w.push({
    name: 'My Yellow Wallet ' + (w.length + 1) + suffix,
    phrase: mnemonic.phrase,
    address: newWallet.address,
+   selected_address_index: 0,
   });
   return w;
  });
+ selectedWalletID.set(get(wallets)[get(wallets).length - 1].address);
 }
+
 
 export async function getBalance() {
  if (get(selectedNetwork) && get(selectedWallet) && provider && wallet) {

@@ -1,20 +1,27 @@
 <script>
 
- import { addresses, newAddress, selectAddress } from '../wallet.js';
+ import { selectAddress, addAddress, selectedWallet } from '../wallet.js';
  import Button from '../../../core/components/button.svelte';
 
- </script>
 
-<ul>
-{#each $addresses as address (address.index)}
+ selectedWallet.subscribe(value => {
+  console.log('sidebar SELECTED WALLET', value);
+ });
 
+
+</script>
+
+{#if $selectedWallet}
+ <Button text="Generate new address" on:click={addAddress} />
+ <ul>
+  {#each $selectedWallet?.addresses || [] as address (address.index)}
    <li>
-   <div class="address-name">{address.index}</div> -
+    <div class="address-name">{address.name}</div>
     <div class="address-value">{address.address}</div>
-    (<div class="address-name">{address.name}</div>)
-    <Button text="Select" onClick={() => selectAddress(address)} />
-  </li>
-{/each}
-</ul>
+    <Button text="Select" on:click={selectAddress} />
+   </li>
+  {/each}
+ </ul>
+{/if}
 
-<Button text="Add new address" onClick={newAddress} />
+

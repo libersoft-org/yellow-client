@@ -1,6 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- import { saveWallet, status, rpcURL, balance, selectedNetwork, selectedWallet, balanceTimestamp } from '../wallet.js';
+ import { addWallet, status, rpcURL, balance, selectedNetwork, selectedWallet, balanceTimestamp } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';

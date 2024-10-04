@@ -18,7 +18,7 @@
  function recover() {
   let phrase = window.prompt('Enter your recovery phrase');
   if (!phrase) return;
-  saveWallet(phrase, ' - recovered');
+  addWallet(phrase, ' - recovered');
  }
 </script>
 
@@ -26,7 +26,7 @@
  .settings {
   display: flex;
   flex-direction: column;
-  gap: 10px;  
+  gap: 10px;
  }
 
  .sections {

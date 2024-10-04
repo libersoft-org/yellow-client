@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import QRCode from 'qrcode';
  import Button from '../../../core/components/button.svelte';
- import { generateMnemonic, saveWallet } from '../wallet.js';
+ import { generateMnemonic, addWallet } from '../wallet.js';
 
  export let onClose;
 
@@ -32,7 +32,7 @@
  function save() {
   // TODO: password protect the key
   console.log('SAVE');
-  saveWallet(mnemonic);
+  addWallet(mnemonic);
   onClose();
  }
 
