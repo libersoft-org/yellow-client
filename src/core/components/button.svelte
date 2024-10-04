@@ -11,9 +11,17 @@
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   dispatch('click');
+   if (!disabled)
+    dispatch('click');
   }
  }
+
+ function handleClick()
+ {
+  if (!disabled)
+   dispatch('click');
+ }
+
 </script>
 
 <style>
@@ -48,7 +56,7 @@
  }
 </style>
 
-<div class="button {disabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+<div class="button {disabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click={handleClick} on:keydown={handleKeydown}>
  <slot>
   {#if img}
    <img src={img} alt={text} />
