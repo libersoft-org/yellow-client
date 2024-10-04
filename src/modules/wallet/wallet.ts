@@ -1,5 +1,5 @@
 import { derived, get, writable } from 'svelte/store';
-import { HDNodeWallet, Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
+import { HDNodeWallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { networks } from './networks.js';
 
@@ -150,7 +150,7 @@ function setNextUrl() {
 }
 
 export async function addWallet(mnemonic, suffix = '') {
- let newWallet = Wallet.fromPhrase(mnemonic.phrase);
+ let newWallet = HDNodeWallet.fromPhrase(mnemonic.phrase);
  let wallet = {
   phrase: mnemonic.phrase,
   address: newWallet.address,
