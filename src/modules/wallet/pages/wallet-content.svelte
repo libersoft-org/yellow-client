@@ -1,13 +1,12 @@
 <script>
  import { onMount } from 'svelte';
- import { addWallet, status, rpcURL, balance, selectedNetwork, selectedWallet, balanceTimestamp } from '../wallet.js';
+ import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
  import Send from './send.svelte';
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
- import History from './history.svelte';
  import AddressBook from './addressbook.svelte';
  import Settings from './settings.svelte';
  import Dropdown from "../components/dropdown.svelte";
@@ -15,7 +14,6 @@
  let section = 'balance';
  let isModalNetworksOpen = false;
  let isModalWalletsOpen = false;
- let newPhrase = '';
  let addressElement;
 
  onMount(() => {
@@ -33,11 +31,11 @@
  }
 
  function clickCopyAddress() {
-  navigator.clipboard.writeText($selectedWallet.address)
+  navigator.clipboard.writeText($selectedAddress.address)
   .then(() => console.log('Address coppied to clipboard'))
   .catch(err => console.error('Error while copying to clipboard', err));
   addressElement.innerHTML = ('Copied!');
-  setTimeout(() => addressElement.innerHTML = shortenAddress($selectedWallet.address), 1000);
+  setTimeout(() => addressElement.innerHTML = shortenAddress($selectedAddress.address), 1000);
  }
 
  function keyCopyAddress() {
@@ -45,6 +43,10 @@
    event.preventDefault();
    clickCopyAddress();
   }
+ }
+
+ function getTransactionHistory() {
+  window.open($selectedNetwork.explorerURL + '/address/' + $selectedAddress.address, '_blank');
  }
 </script>
 
@@ -118,8 +120,8 @@
 
  .body .top .left .status .indicator {
   border-radius: 50%;
-  width: 10px;
-  height: 10px;
+  min-width: 10px;
+  min-height: 10px;
   border: 1px solid #000;
  }
 
@@ -177,7 +179,7 @@
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => isModalNetworksOpen = true} onClose={() => isModalNetworksOpen = true} />
   </div>
   <div class="right">
-   <Dropdown text={$selectedWallet ? $selectedWallet.name : '--- Select your wallet ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
+   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your wallet ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
   </div>
  </div>
  <div class="content">
@@ -198,9 +200,9 @@
      </div>
     </div>
     <div class="right">
-     {#if $selectedWallet && $selectedWallet.address}
+     {#if $selectedAddress && $selectedAddress.address}
       <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
-       <div bind:this={addressElement}>{shortenAddress($selectedWallet.address)}</div>
+       <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
        <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
       </div>
      {:else}
@@ -212,7 +214,7 @@
     <Button width="80px" text="Send" on:click={() => setSection('send')} />
     <Button width="80px" text="Receive" on:click={() => setSection('receive')} />
     <Button width="80px" text="Balance" on:click={() => setSection('balance')} />
-    <Button width="80px" text="History" on:click={() => setSection('history')}  />
+    <Button width="80px" text="History" on:click={getTransactionHistory}  />
     <Button width="80px" text="Address book" on:click={() => setSection('addressbook')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
    </div>
