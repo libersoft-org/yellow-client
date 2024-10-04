@@ -6,7 +6,6 @@ import { networks } from './networks.js';
 export const status = writable('Started.');
 export const rpcURL = writable(null);
 
-
 let provider;
 let reconnectionTimer;
 
@@ -183,7 +182,7 @@ export async function getBalance() {
   } catch (error) {
    console.log('Error while getting balance:', error);
   }
-  
+
   /*
   provider.getLogs({ address: get(selectedWallet).address }).then(logs => {
    console.log('Logs:', logs);
