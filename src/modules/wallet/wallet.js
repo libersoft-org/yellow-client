@@ -1,14 +1,5 @@
 import { derived, get, writable } from 'svelte/store';
-import {
- HDNodeWallet,
- Wallet,
- JsonRpcProvider,
- formatEther,
- parseEther,
- randomBytes,
- Mnemonic,
- getIndexedAccountPath
-} from 'ethers';
+import { HDNodeWallet, Wallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { networks } from './networks.js';
 
@@ -28,7 +19,6 @@ export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $
  console.log('selectedWallet', r);
  return r;
 });
-
 
 export let hd_index = writable(0);
 
@@ -86,7 +76,6 @@ function reconnect() {
  connectToURL();
 }
 
-
 export function addAddress() {
  console.log('addAddress');
  let w = get(selectedWallet);
@@ -95,8 +84,8 @@ export function addAddress() {
  w.selected_address_index = index;
  let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
  let path = getIndexedAccountPath(index);
- let derived_wallet = HDNodeWallet.fromMnemonic(mn, path );
- let a = {address: derived_wallet.address, name: 'Address ' + index, path: path, index: index};
+ let derived_wallet = HDNodeWallet.fromMnemonic(mn, path);
+ let a = { address: derived_wallet.address, name: 'Address ' + index, path: path, index: index };
  addresses.push(a);
  w.addresses = addresses;
  wallets.update(w => w);
@@ -112,7 +101,6 @@ export function generateMnemonic() {
 }
 
 function connectToURL() {
-
  let sw = get(selectedWallet);
  provider = new JsonRpcProvider(get(rpcURL), get(selectedNetwork).chainID);
  let mn = Mnemonic.fromPhrase(sw.phrase);
@@ -129,7 +117,6 @@ function connectToURL() {
  provider.on('network', newNetwork => {
   console.log('Network changed:', newNetwork.toJSON());
  });
-
 }
 
 function setNextUrl() {
@@ -145,7 +132,6 @@ function setNextUrl() {
  rpcURL.set(url);
 }
 
-
 export async function addWallet(mnemonic, suffix = '') {
  let newWallet = Wallet.fromPhrase(mnemonic.phrase);
  wallets.update(w => {
@@ -159,7 +145,6 @@ export async function addWallet(mnemonic, suffix = '') {
  });
  selectedWalletID.set(get(wallets)[get(wallets).length - 1].address);
 }
-
 
 export async function getBalance() {
  if (get(selectedNetwork) && get(selectedWallet) && provider && wallet) {
