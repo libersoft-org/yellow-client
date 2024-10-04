@@ -6,6 +6,10 @@ import { networks } from './networks.js';
 export const status = writable('Started.');
 export const rpcURL = writable(null);
 
+
+let provider;
+let reconnectionTimer;
+
 export const wallets = localStorageSharedStore('wallets', []);
 
 export const selectedNetworkID = localStorageSharedStore('selectedNetworkID', null);
@@ -22,7 +26,15 @@ export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $
 });
 
 export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
- return $selectedWallet?.addresses[$selectedWallet.selected_address_index];
+ console.log($selectedWallet);
+ let r = $selectedWallet?.addresses[$selectedWallet.selected_address_index];
+ console.log('selectedAddress', r);
+ return r;
+});
+
+selectedAddress.subscribe(value => {
+ console.log('selectedAddress', value);
+ getBalance();
 });
 
 export const balance = writable({
@@ -36,9 +48,6 @@ export const balance = writable({
  },
 });
 export const balanceTimestamp = writable(null);
-
-let provider;
-let reconnectionTimer;
 
 let refreshTimer = setInterval(refresh, 10000);
 
@@ -104,6 +113,7 @@ export function addAddress(w) {
 export function selectAddress(wallet, address) {
  wallet.selected_address_index = address.index;
  wallets.update(v => v);
+ selectedWalletID.set(wallet.address);
 }
 
 export function generateMnemonic() {
@@ -173,10 +183,12 @@ export async function getBalance() {
   } catch (error) {
    console.log('Error while getting balance:', error);
   }
-
+  
+  /*
   provider.getLogs({ address: get(selectedWallet).address }).then(logs => {
    console.log('Logs:', logs);
   });
+  */
  }
 }
 

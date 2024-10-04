@@ -1,5 +1,5 @@
 <script>
- import { wallets } from '../wallet.js';
+ import { wallets, addAddress, selectAddress } from '../wallet.js';
  import Button from '../../../core/components/button.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
 
@@ -65,7 +65,7 @@
     <tr>
      <td class="address-name">{address.name}</td>
      <td class="address-value">{address.address}</td>
-     <td><Button text="Select" on:click={() => selectAddress(wallet, address.address) } /></td>
+     <td><Button text="Select" on:click={() => selectAddress(wallet, address) } /></td>
     </tr>
    {/each}
   </table>

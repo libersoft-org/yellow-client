@@ -179,7 +179,7 @@
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => isModalNetworksOpen = true} onClose={() => isModalNetworksOpen = true} />
   </div>
   <div class="right">
-   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your wallet ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
+   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
   </div>
  </div>
  <div class="content">
@@ -206,7 +206,7 @@
        <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
       </div>
      {:else}
-      <div class="address">No wallet selected</div>
+      <div class="address">No address selected</div>
      {/if}
     </div>
    </div>
