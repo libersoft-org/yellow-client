@@ -1,5 +1,5 @@
 <script>
- import { wallets, addAddress, selectAddress } from '../wallet.js';
+ import { wallets, addAddress, selectAddress } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
  import Modal from '../../../core/components/modal.svelte';

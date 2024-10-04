@@ -1,9 +1,9 @@
 <script>
  import { get } from 'svelte/store';
  import QRCode from 'qrcode';
- import { selectedWallet } from '../wallet.js';
+ import { selectedWallet } from '../wallet.ts';
  let qrCodeData = '';
- 
+
  $: if ($selectedWallet) generateQRCode();
 
  function generateQRCode() {

@@ -1,5 +1,5 @@
 <script>
- import { wallets, selectedWalletID } from '../wallet.js';
+ import { wallets, selectedWalletID } from '../wallet.ts';
  import List from '../components/list.svelte';
  import ListItem from '../components/list-item.svelte';
  export let onClose;

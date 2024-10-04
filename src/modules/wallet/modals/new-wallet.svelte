@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import QRCode from 'qrcode';
  import Button from '../../../core/components/button.svelte';
- import { generateMnemonic, addWallet } from '../wallet.js';
+ import { generateMnemonic, addWallet } from '../wallet.ts';
 
  export let onClose;
 
