@@ -8,6 +8,7 @@
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
  import History from './history.svelte';
+ import AddressBook from './addressbook.svelte';
  import Settings from './settings.svelte';
  import Dropdown from "../components/dropdown.svelte";
  import Button from '../../../core/components/button.svelte';
@@ -212,6 +213,7 @@
     <Button width="80px" text="Receive" on:click={() => setSection('receive')} />
     <Button width="80px" text="Balance" on:click={() => setSection('balance')} />
     <Button width="80px" text="History" on:click={() => setSection('history')}  />
+    <Button width="80px" text="Address book" on:click={() => setSection('addressbook')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
    </div>
    <div class="section">
@@ -223,6 +225,8 @@
      <Balance />
     {:else if section == 'history'}
      <History />
+    {:else if section == 'addressbook'}
+     <AddressBook />
     {:else if section == 'settings'}
      <Settings />
     {/if}
