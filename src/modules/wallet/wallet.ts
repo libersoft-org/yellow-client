@@ -1,5 +1,13 @@
 import { derived, get, writable } from 'svelte/store';
-import { HDNodeWallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
+import {
+ HDNodeWallet,
+ JsonRpcProvider,
+ formatEther,
+ parseEther,
+ randomBytes,
+ Mnemonic,
+ getIndexedAccountPath
+} from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { networks } from './networks.js';
 
@@ -26,14 +34,15 @@ export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $
 
 export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
  console.log($selectedWallet);
- let r = $selectedWallet?.addresses?.[$selectedWallet.selected_address_index];
- console.log('selectedAddress', r);
- return r;
+ let addresses = $selectedWallet?.addresses || [];
+ let result = addresses.find(a => a.index === $selectedWallet.selected_address_index);
+ console.log('SELECTEDADDRESS', result);
+ return result;
 });
 
 selectedAddress.subscribe(value => {
  console.log('selectedAddress', value);
- getBalance();
+ //getBalance();
 });
 
 export const balance = writable({
@@ -51,7 +60,10 @@ export const balanceTimestamp = writable(null);
 let refreshTimer = setInterval(refresh, 10000);
 
 function resetBalance() {
- balance.set({ crypto: { amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?' }, fiat: { amount: '?', currency: 'USD' } });
+ balance.set({
+  crypto: {amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?'},
+  fiat: {amount: '?', currency: 'USD'}
+ });
  balanceTimestamp.set(null);
 }
 
@@ -95,24 +107,65 @@ function reconnect() {
  connectToURL();
 }
 
-export function addAddress(w) {
+
+function sortAddresses(addresses) {
+ return addresses.sort((a, b) => {
+  if (a.index < b.index) return -1;
+  if (a.index > b.index) return 1;
+  return 0;
+ });
+}
+
+function addressesMaxIndex(addresses) {
+ return addresses.reduce((max, a) => Math.max(max, a.index), -1);
+}
+
+export function addAddress(w, index) {
+ let indexNum = parseInt(index);
+
  console.log('addAddress to wallet ', w);
  let addresses = w.addresses || [];
- let index = addresses.length;
- w.selected_address_index = index;
+ sortAddresses(addresses);
+ if (index === undefined) {
+  indexNum = addressesMaxIndex(addresses) + 1;
+  doAddAddress(w, addresses, indexNum);
+ } else if (indexNum < 0) {
+  window.alert('Invalid index');
+  return;
+ }
+ else
+ {
+  let existing = addresses.find(a => a.index === indexNum);
+  if (existing) {
+   console.log('Address with index', indexNum, 'already exists');
+   existing.deleted = false;
+  } else {
+   console.log('Adding address with index', indexNum);
+   doAddAddress(w, addresses, indexNum);
+  }
+ }
+ sortAddresses(addresses);
+ w.addresses = addresses;
+ w.selected_address_index = indexNum;
+ wallets.update(w => w);
+}
+
+function doAddAddress(w, addresses, index) {
  let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
  let path = getIndexedAccountPath(index);
  let derived_wallet = HDNodeWallet.fromMnemonic(mn, path);
- let a = { address: derived_wallet.address, name: 'Address ' + index, path: path, index: index };
+ let a = {address: derived_wallet.address, name: 'Address ' + index, path: path, index: index};
  addresses.push(a);
- w.addresses = addresses;
- wallets.update(w => w);
 }
 
 export function selectAddress(wallet, address) {
  wallet.selected_address_index = address.index;
  wallets.update(v => v);
  selectedWalletID.set(wallet.address);
+}
+
+export function walletAddresses(wallet) {
+ return (wallet.addresses || []).filter(a => !a.deleted);
 }
 
 export function generateMnemonic() {
@@ -150,7 +203,7 @@ function setNextUrl() {
 }
 
 export async function addWallet(mnemonic, suffix = '') {
- let newWallet = HDNodeWallet.fromPhrase(mnemonic.phrase);
+ let newWallet = HDNodeWallet.fromMnemonic(mnemonic);
  let wallet = {
   phrase: mnemonic.phrase,
   address: newWallet.address,
@@ -167,7 +220,7 @@ export async function addWallet(mnemonic, suffix = '') {
 
 export async function getBalance() {
  console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', provider);
- if (get(selectedNetwork) && provider) {
+ if (get(selectedNetwork) && provider && get(selectedAddress)) {
   try {
    console.log('Getting balance for', get(selectedAddress).address);
    const balanceBigNumber = await provider.getBalance(get(selectedAddress).address);
@@ -196,14 +249,14 @@ export async function getBalance() {
 }
 
 async function sendTransaction(recipient, amount) {
- let hd_wallet = HDNodeWallet.fromMnemonic(get(selectedWallet).phrase, get(selectedWallet).addresses[get(selectedWallet).selected_address_index].path);
+ let hd_wallet = HDNodeWallet.fromMnemonic(get(selectedWallet).phrase, get(selectedAddress).path);
  try {
   const tx = await hd_wallet.sendTransaction({
    to: recipient,
    value: parseEther(amount),
   });
   await tx.wait();
-  await getBalance();
+  //await getBalance();
   console.log('Transaction sent OK');
  } catch (error) {
   console.error('Error while sending a transaction:', error);

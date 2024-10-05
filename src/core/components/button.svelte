@@ -2,19 +2,19 @@
  import { createEventDispatcher } from 'svelte';
  export let img = '';
  export let text = '';
- export let disabled = false;
+ export let enabled = true;
  export let hiddenOnDesktop = false;
  export let width;
  const dispatch = createEventDispatcher();
 
  function handleClick() {
-  if (!disabled) dispatch('click');
+  if (enabled) dispatch('click');
  }
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   if (!disabled)
+   if (enabled)
     dispatch('click');
   }
  }
@@ -52,7 +52,7 @@
  }
 </style>
 
-<div class="button {disabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click={handleClick} on:keydown={handleKeydown}>
+<div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click={handleClick} on:keydown={handleKeydown}>
  <slot>
   {#if img}
    <img src={img} alt={text} />

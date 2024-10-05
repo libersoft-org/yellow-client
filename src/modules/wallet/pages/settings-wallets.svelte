@@ -1,5 +1,5 @@
 <script>
- import { wallets, addAddress, selectAddress, addWallet } from '../wallet.ts';
+ import { wallets, addAddress, selectAddress, addWallet, walletAddresses } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
  import Modal from '../../../core/components/modal.svelte';
@@ -24,6 +24,24 @@
   addWallet(mn, ' - recovered');
   afterAddWallet();
  }
+ function addAddressWithIndex(wallet) {
+  let index = window.prompt('Enter the index');
+  if (!index) return;
+  addAddress(wallet, index);
+ }
+
+ function renameAddress(wallet, address) {
+  let name = window.prompt('Enter the new name');
+  if (!name) return;
+  address.name = name;
+  wallets.update(v => v);
+ }
+
+ function deleteAddress(wallet, address) {
+  address.deleted = true;
+  wallets.update(v => v);
+ }
+
 </script>
 
 <style>
@@ -65,17 +83,20 @@
 <Accordion items={$wallets} let:prop={wallet} bind:activeIndex={activeIndex}>
  <div>
   <Button text="Generate new address" on:click={() => addAddress(wallet)} />
+  <Button text="Generate new address (with index)" on:click={() => addAddressWithIndex(wallet)} />
   <table>
    <tr>
     <th>Alias</th>
     <th>Address</th>
     <th class="center">Action</th>
    </tr>
-   {#each wallet.addresses || [] as address (address.index)}
+   {#each walletAddresses(wallet) as address (address.index)}
     <tr>
      <td class="address-name">{address.name}</td>
      <td class="address-value">{address.address}</td>
      <td><Button text="Select" on:click={() => selectAddress(wallet, address) } /></td>
+     <td><Button text="Rename" on:click={() => renameAddress(wallet, address) } /></td>
+     <td><Button text="Hide" on:click={() => deleteAddress(wallet, address) } /></td>
     </tr>
    {/each}
   </table>

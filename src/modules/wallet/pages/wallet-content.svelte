@@ -24,6 +24,13 @@
   section = name;
  }
 
+ selectedNetwork.subscribe((v) => {
+  console.log('xxselectedNetwork', v);
+ });
+ selectedAddress.subscribe((v) => {
+  console.log('xxselectedAddress', v);
+ });
+
  function shortenAddress(addr) {
   if (!addr) return '';
   if (addr.lenght <= 8) return addr;
@@ -196,7 +203,7 @@
      <div class="balance">
       <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
       <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
-      <div>retrieved {$balanceTimestamp}</div>
+      <pre>retrieved {$balanceTimestamp}</pre>
      </div>
     </div>
     <div class="right">
@@ -210,11 +217,12 @@
      {/if}
     </div>
    </div>
+
    <div class="buttons">
-    <Button width="80px" text="Send" disabled={$selectedNetwork && $selectedAddress ? false : true } on:click={() => setSection('send')} />
-    <Button width="80px" text="Receive" disabled={$selectedNetwork && $selectedAddress ? false : true } on:click={() => setSection('receive')} />
-    <Button width="80px" text="Balance" disabled={$selectedNetwork && $selectedAddress ? false : true } on:click={() => setSection('balance')} />
-    <Button width="80px" text="History" disabled={$selectedNetwork && $selectedAddress ? false : true } on:click={getTransactionHistory}  />
+    <Button width="80px" text="Send" enabled={ !!($selectedNetwork && $selectedAddress) } on:click={() => setSection('send')} />
+    <Button width="80px" text="Receive" enabled={ !!($selectedNetwork && $selectedAddress) } on:click={() => setSection('receive')} />
+    <Button width="80px" text="Balance" enabled={ !!($selectedNetwork && $selectedAddress) } on:click={() => setSection('balance')} />
+    <Button width="80px" text="History" enabled={ !!($selectedNetwork && $selectedAddress) } on:click={getTransactionHistory}  />
     <Button width="80px" text="Address book" on:click={() => setSection('addressbook')}  />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
    </div>
