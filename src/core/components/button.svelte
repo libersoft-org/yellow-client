@@ -7,7 +7,7 @@
  export let width;
  const dispatch = createEventDispatcher();
 
- function handleClick() {
+function handleClick() {
   if (enabled) dispatch('click');
  }
 

@@ -1,8 +1,27 @@
 <script>
+
+ import Button from '../../../core/components/button.svelte';
+ import ComboBox from '../../../core/components/combo-box.svelte';
+ import { derived } from "svelte/store";
+ import { selectedMainCurrencySymbol, selectedNetwork } from "../wallet.ts";
+
+
+ let currency;
+
+ let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
+  return ['token1', 'token2', 'token3'].map(symbol => ({ symbol }));
+ });
+
+ let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
+  if (!currency) currency = $selectedMainCurrencySymbol;
+  return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)];
+ });
+
  let address;
  let amount;
- let currency;
- import Button from '../../../core/components/button.svelte';
+
+ $: console.log('currencies:', $currencies);
+ $: console.log('currency:', currency);
 
  function send() {
   // TODO
@@ -41,9 +60,9 @@
   <div class="label">Amount:</div>
   <div class="input"><input type="text" bind:value={amount} /></div>
   <div class="input">
-   <select bind:value={currency}>
-    <option value="0">--- Currency ---</option>
-   </select>
+
+   <ComboBox options={$currencies} bind:value={currency} />
+
   </div>
  </div>
  <Button text="Send" on:click={send} />

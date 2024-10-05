@@ -11,13 +11,14 @@
  import Settings from './settings.svelte';
  import Dropdown from "../components/dropdown.svelte";
  import Button from '../../../core/components/button.svelte';
+ import { hideSidebarMobile } from "../../../core/core.js";
  let section = 'balance';
  let isModalNetworksOpen = false;
  let isModalWalletsOpen = false;
  let addressElement;
 
  onMount(() => {
-  // TODO: set the last used network and wallet or the first one in these lists (if exist)
+  hideSidebarMobile.set(true);
  });
 
  function setSection(name) {
@@ -93,7 +94,7 @@
  .wallet .content {
   width: 768px;
   max-width: calc(100% - 10px);
-  overflow: auto;
+  /*overflow: auto;*/
   margin: 10px;
   border: 1px solid #000;
   border-radius: 10px;
@@ -183,6 +184,7 @@
 <div class="wallet">
  <div class="top-bar">
   <div class="left">
+   <img src="img/back.svg" width="40px" on:click={() => {console.log('hideSidebarMobile.set(false)'); hideSidebarMobile.set(false);}} />
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => isModalNetworksOpen = true} onClose={() => isModalNetworksOpen = true} />
   </div>
   <div class="right">

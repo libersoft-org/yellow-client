@@ -67,6 +67,10 @@ export const selectedAddress = derived<[Wallet | undefined], Address | undefined
  return result;
 });
 
+export const selectedMainCurrencySymbol = derived<[Network | undefined], string | undefined>([selectedNetwork], ([$selectedNetwork]) => {
+ return $selectedNetwork?.currency.symbol;
+});
+
 selectedAddress.subscribe((value: Address | undefined) => {
  console.log('selectedAddress', value);
  // getBalance();
