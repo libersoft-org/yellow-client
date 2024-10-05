@@ -184,7 +184,7 @@
 <div class="wallet">
  <div class="top-bar">
   <div class="left">
-   <img src="img/back.svg" width="40px" on:click={() => {console.log('hideSidebarMobile.set(false)'); hideSidebarMobile.set(false);}} />
+   <img src="img/back-white.svg" width="40px" on:click={() => {console.log('hideSidebarMobile.set(false)'); hideSidebarMobile.set(false);}} />
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => isModalNetworksOpen = true} onClose={() => isModalNetworksOpen = true} />
   </div>
   <div class="right">
