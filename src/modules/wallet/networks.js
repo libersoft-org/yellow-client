@@ -1226,7 +1226,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.zora.network', 'https://zora-mainnet.public.blastapi.io'],
   currency: {
    symbol: 'ZORA',
-   iconURL: 'https://www.svgrepo.com/show/35641/dot.svg',
+   iconURL: 'https://svgshare.com/i/1BAL.svg',
   },
   explorerURL: 'https://explorer.zora.network',
  },
@@ -1236,7 +1236,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.testnet.zora.network', 'https://zora-testnet.public.blastapi.io'],
   currency: {
    symbol: 'tZORA',
-   iconURL: 'https://www.svgrepo.com/show/35641/dot.svg',
+   iconURL: 'https://svgshare.com/i/1BAL.svg',
   },
   explorerURL: 'https://explorer.testnet.zora.network',
  },
