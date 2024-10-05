@@ -14,6 +14,6 @@
 
 <List>
  {#each $networks as n, index}
-  <ListItem className={index % 2 === 0 ? 'even' : 'odd'} item={n.name} on:click={() => selectNetwork(n.name)} />
+  <ListItem className={index % 2 === 0 ? 'even' : 'odd'} icon={n.currency.iconURL} item={n.name} on:click={() => selectNetwork(n.name)} />
  {/each}
 </List>

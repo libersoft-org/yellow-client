@@ -6,7 +6,7 @@ export const networks = writable([
   rpcURLs: ['https://cloudflare-eth.com', 'https://rpc.ankr.com/eth', 'https://main-rpc.linkpool.io', 'https://eth-rpc.gateway.pokt.network', 'https://mainnet-nethermind.blockscout.com', 'https://api.mycryptoapi.com/eth'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://etherscan.io',
  },
@@ -16,7 +16,7 @@ export const networks = writable([
   rpcURLs: ['https://goerli.infura.io/v3/YOUR-PROJECT-ID', 'https://eth-goerli.g.alchemy.com/v2/YOUR-API-KEY', 'https://rpc.goerli.mudit.blog/', 'https://rpc.ankr.com/eth_goerli', 'https://goerli.blockpi.network/v1/rpc/public'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://goerli.etherscan.io',
  },
@@ -26,7 +26,7 @@ export const networks = writable([
   rpcURLs: ['https://sepolia.infura.io/v3/YOUR-PROJECT-ID', 'https://rpc.sepolia.org', 'https://sepolia.blockpi.network/v1/rpc/public'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://sepolia.etherscan.io',
  },
@@ -36,7 +36,7 @@ export const networks = writable([
   rpcURLs: ['https://ropsten.infura.io/v3/YOUR-PROJECT-ID', 'https://eth-ropsten.alchemyapi.io/v2/YOUR-API-KEY'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://ropsten.etherscan.io',
  },
@@ -46,7 +46,7 @@ export const networks = writable([
   rpcURLs: ['https://rinkeby.infura.io/v3/YOUR-PROJECT-ID', 'https://eth-rinkeby.alchemyapi.io/v2/YOUR-API-KEY', 'https://rinkeby-light.eth.linkpool.io/'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://rinkeby.etherscan.io',
  },
@@ -56,7 +56,7 @@ export const networks = writable([
   rpcURLs: ['https://bsc-dataseed.binance.org/', 'https://bsc-dataseed1.defibit.io/', 'https://bsc-dataseed1.ninicoin.io/', 'https://rpc.ankr.com/bsc', 'https://bscrpc.com'],
   currency: {
    symbol: 'BNB',
-   iconURL: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
   },
   explorerURL: 'https://bscscan.com',
  },
@@ -66,7 +66,7 @@ export const networks = writable([
   rpcURLs: ['https://data-seed-prebsc-1-s1.binance.org:8545/', 'https://data-seed-prebsc-2-s2.binance.org:8545/', 'https://data-seed-prebsc-1-s3.binance.org:8545/', 'https://rpc.ankr.com/bsc_testnet_chapel'],
   currency: {
    symbol: 'tBNB',
-   iconURL: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
   },
   explorerURL: 'https://testnet.bscscan.com',
  },
@@ -76,7 +76,7 @@ export const networks = writable([
   rpcURLs: ['https://polygon-rpc.com', 'https://rpc-mainnet.maticvigil.com/', 'https://rpc-mainnet.matic.network', 'https://rpc-mainnet.matic.quiknode.pro', 'https://matic-mainnet.chainstacklabs.com'],
   currency: {
    symbol: 'MATIC',
-   iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.svg',
   },
   explorerURL: 'https://polygonscan.com',
  },
@@ -86,7 +86,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc-amoy.polygon.technology', 'https://polygon-amoy.blockpi.network/v1/rpc/public', 'https://rpc.ankr.com/polygon_amoy', 'https://polygon-amoy.drpc.org', 'https://polygon-amoy.gateway.tenderly.co', 'https://polygon-amoy-bor-rpc.publicnode.com', 'wss://polygon-amoy-bor-rpc.publicnode.com'],
   currency: {
    symbol: 'MATIC',
-   iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.svg',
   },
   explorerURL: 'https://amoy.polygonscan.com/',
  },
@@ -96,7 +96,7 @@ export const networks = writable([
   rpcURLs: ['https://api.avax.network/ext/bc/C/rpc', 'https://rpc.ankr.com/avalanche', 'https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc', 'https://avalanche-c-chain.publicnode.com'],
   currency: {
    symbol: 'AVAX',
-   iconURL: 'https://cryptologos.cc/logos/avalanche-avax-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/avalanche-avax-logo.svg',
   },
   explorerURL: 'https://snowtrace.io',
  },
@@ -106,7 +106,7 @@ export const networks = writable([
   rpcURLs: ['https://api.avax-test.network/ext/bc/C/rpc', 'https://rpc.ankr.com/avalanche_fuji', 'https://ava-testnet.public.blastapi.io/ext/bc/C/rpc'],
   currency: {
    symbol: 'AVAX',
-   iconURL: 'https://cryptologos.cc/logos/avalanche-avax-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/avalanche-avax-logo.svg',
   },
   explorerURL: 'https://testnet.snowtrace.io',
  },
@@ -116,7 +116,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.ftm.tools/', 'https://fantom-mainnet.public.blastapi.io', 'https://rpc.ankr.com/fantom', 'https://rpcapi.fantom.network'],
   currency: {
    symbol: 'FTM',
-   iconURL: 'https://cryptologos.cc/logos/fantom-ftm-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/fantom-ftm-logo.svg',
   },
   explorerURL: 'https://ftmscan.com',
  },
@@ -126,7 +126,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.testnet.fantom.network/', 'https://fantom-testnet.public.blastapi.io', 'https://rpc.ankr.com/fantom_testnet'],
   currency: {
    symbol: 'FTM',
-   iconURL: 'https://cryptologos.cc/logos/fantom-ftm-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/fantom-ftm-logo.svg',
   },
   explorerURL: 'https://testnet.ftmscan.com',
  },
@@ -136,7 +136,7 @@ export const networks = writable([
   rpcURLs: ['https://arb1.arbitrum.io/rpc', 'https://arbitrum-mainnet.public.blastapi.io', 'https://rpc.ankr.com/arbitrum', 'https://arb-mainnet.g.alchemy.com/v2/YOUR-API-KEY'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://arbiscan.io',
  },
@@ -146,7 +146,7 @@ export const networks = writable([
   rpcURLs: ['https://goerli-rollup.arbitrum.io/rpc', 'https://arbitrum-goerli.public.blastapi.io', 'https://arb-goerli.g.alchemy.com/v2/YOUR-API-KEY', 'https://rpc.ankr.com/arbitrum_goerli'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://goerli.arbiscan.io',
  },
@@ -156,7 +156,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet.optimism.io', 'https://optimism-mainnet.public.blastapi.io', 'https://rpc.ankr.com/optimism', 'https://opt-mainnet.g.alchemy.com/v2/YOUR-API-KEY'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://optimistic.etherscan.io',
  },
@@ -166,7 +166,7 @@ export const networks = writable([
   rpcURLs: ['https://goerli.optimism.io', 'https://optimism-goerli.public.blastapi.io', 'https://opt-goerli.g.alchemy.com/v2/YOUR-API-KEY', 'https://rpc.ankr.com/optimism_testnet'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://goerli-optimistic.etherscan.io',
  },
@@ -176,7 +176,7 @@ export const networks = writable([
   rpcURLs: ['https://evm.cronos.org', 'https://cronosrpc-1.xstaking.sg', 'https://rpc.ankr.com/cronos', 'https://node.croswap.com/rpc'],
   currency: {
    symbol: 'CRO',
-   iconURL: 'https://cryptologos.cc/logos/cronos-cro-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/cronos-cro-logo.svg',
   },
   explorerURL: 'https://cronoscan.com',
  },
@@ -186,7 +186,7 @@ export const networks = writable([
   rpcURLs: ['https://evm-t3.cronos.org', 'https://cronos-testnet-3.crypto.org:8545', 'https://rpc.ankr.com/cronos_testnet'],
   currency: {
    symbol: 'tCRO',
-   iconURL: 'https://cryptologos.cc/logos/cronos-cro-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/cronos-cro-logo.svg',
   },
   explorerURL: 'https://testnet.cronoscan.com',
  },
@@ -196,7 +196,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet.era.zksync.io', 'https://zksync2-mainnet.zksync.io', 'https://rpc.ankr.com/zksync_era'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://explorer.zksync.io',
  },
@@ -206,7 +206,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet.era.zksync.dev', 'https://zksync2-testnet.zksync.dev', 'https://rpc.ankr.com/zksync_era_testnet'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://goerli.explorer.zksync.io',
  },
@@ -216,7 +216,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.api.moonbeam.network', 'https://moonbeam.public.blastapi.io', 'https://rpc.ankr.com/moonbeam'],
   currency: {
    symbol: 'GLMR',
-   iconURL: 'https://cryptologos.cc/logos/moonbeam-glmr-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/moonbeam-glmr-logo.svg',
   },
   explorerURL: 'https://moonscan.io',
  },
@@ -226,7 +226,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.api.moonbase.moonbeam.network', 'https://moonbase-alpha.public.blastapi.io', 'https://rpc.ankr.com/moonbeam_testnet'],
   currency: {
    symbol: 'DEV',
-   iconURL: 'https://cryptologos.cc/logos/moonbeam-glmr-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/moonbeam-glmr-logo.svg',
   },
   explorerURL: 'https://moonbase.moonscan.io',
  },
@@ -236,7 +236,7 @@ export const networks = writable([
   rpcURLs: ['https://forno.celo.org', 'https://rpc.ankr.com/celo', 'https://celo-mainnet.public.blastapi.io'],
   currency: {
    symbol: 'CELO',
-   iconURL: 'https://cryptologos.cc/logos/celo-celo-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/celo-celo-logo.svg',
   },
   explorerURL: 'https://explorer.celo.org',
  },
@@ -246,7 +246,7 @@ export const networks = writable([
   rpcURLs: ['https://alfajores-forno.celo-testnet.org', 'https://rpc.ankr.com/celo_alfajores', 'https://alfajores.celo-testnet.public.blastapi.io'],
   currency: {
    symbol: 'CELO',
-   iconURL: 'https://cryptologos.cc/logos/celo-celo-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/celo-celo-logo.svg',
   },
   explorerURL: 'https://alfajores-blockscout.celo-testnet.org',
  },
@@ -256,7 +256,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.gnosischain.com', 'https://gnosis-mainnet.public.blastapi.io', 'https://rpc.ankr.com/gnosis'],
   currency: {
    symbol: 'xDAI',
-   iconURL: 'https://cryptologos.cc/logos/xdai-stake-xdai-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/gnosis-gno-gno-logo.svg',
   },
   explorerURL: 'https://blockscout.com/xdai/mainnet',
  },
@@ -266,7 +266,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.chiadochain.net', 'https://gnosis-testnet.public.blastapi.io', 'https://rpc.ankr.com/gnosis_chiado'],
   currency: {
    symbol: 'xDAI',
-   iconURL: 'https://cryptologos.cc/logos/xdai-stake-xdai-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/gnosis-gno-gno-logo.svg',
   },
   explorerURL: 'https://blockscout.com/gnosis/chiado',
  },
@@ -276,7 +276,7 @@ export const networks = writable([
   rpcURLs: ['https://public-node-api.klaytnapi.com/v1/cypress', 'https://klaytn01.fandom.finance', 'https://klaytn.rpc.thirdweb.com'],
   currency: {
    symbol: 'KLAY',
-   iconURL: 'https://cryptologos.cc/logos/klaytn-klay-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/klaytn-klay-logo.svg',
   },
   explorerURL: 'https://scope.klaytn.com',
  },
@@ -286,7 +286,7 @@ export const networks = writable([
   rpcURLs: ['https://api.baobab.klaytn.net:8651', 'https://klaytn-baobab.blockpi.network/v1/rpc/public', 'https://klaytn-testnet.rpc.thirdweb.com'],
   currency: {
    symbol: 'KLAY',
-   iconURL: 'https://cryptologos.cc/logos/klaytn-klay-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/klaytn-klay-logo.svg',
   },
   explorerURL: 'https://baobab.scope.klaytn.com',
  },
@@ -296,7 +296,7 @@ export const networks = writable([
   rpcURLs: ['https://evmexplorer.velas.com/rpc', 'https://velas-mainnet.public.blastapi.io', 'https://rpc.velas.com'],
   currency: {
    symbol: 'VLX',
-   iconURL: 'https://cryptologos.cc/logos/velas-vlx-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/velas-vlx-logo.svg',
   },
   explorerURL: 'https://evmexplorer.velas.com',
  },
@@ -306,7 +306,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet.velas.com/rpc', 'https://velas-testnet.public.blastapi.io', 'https://rpc-testnet.velas.com'],
   currency: {
    symbol: 'VLX',
-   iconURL: 'https://cryptologos.cc/logos/velas-vlx-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/velas-vlx-logo.svg',
   },
   explorerURL: 'https://evmexplorer.testnet.velas.com',
  },
@@ -316,7 +316,7 @@ export const networks = writable([
   rpcURLs: ['https://api.harmony.one', 'https://harmony-0-rpc.gateway.pokt.network', 'https://rpc.ankr.com/harmony'],
   currency: {
    symbol: 'ONE',
-   iconURL: 'https://cryptologos.cc/logos/harmony-one-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/harmony-one-logo.svg',
   },
   explorerURL: 'https://explorer.harmony.one',
  },
@@ -326,7 +326,7 @@ export const networks = writable([
   rpcURLs: ['https://api.s0.b.hmny.io', 'https://rpc.ankr.com/harmony_testnet', 'https://harmony-testnet.public.blastapi.io'],
   currency: {
    symbol: 'ONE',
-   iconURL: 'https://cryptologos.cc/logos/harmony-one-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/harmony-one-logo.svg',
   },
   explorerURL: 'https://explorer.testnet.harmony.one',
  },
@@ -336,7 +336,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet.aurora.dev', 'https://aurora-mainnet.public.blastapi.io', 'https://rpc.ankr.com/aurora'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://aurorascan.dev',
  },
@@ -346,7 +346,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet.aurora.dev', 'https://aurora-testnet.public.blastapi.io', 'https://rpc.ankr.com/aurora_testnet'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://testnet.aurorascan.dev',
  },
@@ -356,7 +356,7 @@ export const networks = writable([
   rpcURLs: ['https://andromeda.metis.io/?owner=1088', 'https://metis-mainnet.public.blastapi.io', 'https://rpc.ankr.com/metis'],
   currency: {
    symbol: 'METIS',
-   iconURL: 'https://cryptologos.cc/logos/metis-metis-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/metisdao-metis-logo.svg',
   },
   explorerURL: 'https://andromeda-explorer.metis.io',
  },
@@ -366,7 +366,7 @@ export const networks = writable([
   rpcURLs: ['https://stardust.metis.io/?owner=588', 'https://metis-testnet.public.blastapi.io', 'https://rpc.ankr.com/metis_testnet'],
   currency: {
    symbol: 'METIS',
-   iconURL: 'https://cryptologos.cc/logos/metis-metis-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/metisdao-metis-logo.svg',
   },
   explorerURL: 'https://stardust-explorer.metis.io',
  },
@@ -376,7 +376,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.fuse.io', 'https://fuse-mainnet.public.blastapi.io', 'https://rpc.ankr.com/fuse'],
   currency: {
    symbol: 'FUSE',
-   iconURL: 'https://cryptologos.cc/logos/fuse-fuse-logo.png',
+   iconURL: 'https://docs.fuse.io/img/logo.svg',
   },
   explorerURL: 'https://explorer.fuse.io',
  },
@@ -386,7 +386,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.fusespark.io', 'https://fuse-testnet.public.blastapi.io', 'https://rpc.ankr.com/fuse_testnet'],
   currency: {
    symbol: 'FUSE',
-   iconURL: 'https://cryptologos.cc/logos/fuse-fuse-logo.png',
+   iconURL: 'https://docs.fuse.io/img/logo.svg',
   },
   explorerURL: 'https://explorer.fusespark.io',
  },
@@ -396,7 +396,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet-rpc.thundercore.com', 'https://thundercore-mainnet.public.blastapi.io', 'https://rpc.ankr.com/thundercore'],
   currency: {
    symbol: 'TT',
-   iconURL: 'https://cryptologos.cc/logos/thundercore-tt-logo.png',
+   iconURL: 'https://logotyp.us/file/thunder-token.svg',
   },
   explorerURL: 'https://viewblock.io/thundercore',
  },
@@ -406,7 +406,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet-rpc.thundercore.com', 'https://thundercore-testnet.public.blastapi.io', 'https://rpc.ankr.com/thundercore_testnet'],
   currency: {
    symbol: 'TST',
-   iconURL: 'https://cryptologos.cc/logos/thundercore-tt-logo.png',
+   iconURL: 'https://logotyp.us/file/thunder-token.svg',
   },
   explorerURL: 'https://explorer-testnet.thundercore.com',
  },
@@ -416,7 +416,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet.telos.net/evm', 'https://telos-evm-mainnet.public.blastapi.io', 'https://rpc.ankr.com/telos'],
   currency: {
    symbol: 'TLOS',
-   iconURL: 'https://cryptologos.cc/logos/telos-tlos-logo.png',
+   iconURL: 'https://logosandtypes.com/wp-content/uploads/2022/03/telos.svg',
   },
   explorerURL: 'https://teloscan.io',
  },
@@ -426,7 +426,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet.telos.net/evm', 'https://telos-evm-testnet.public.blastapi.io', 'https://rpc.ankr.com/telos_testnet'],
   currency: {
    symbol: 'TLOS',
-   iconURL: 'https://cryptologos.cc/logos/telos-tlos-logo.png',
+   iconURL: 'https://logosandtypes.com/wp-content/uploads/2022/03/telos.svg',
   },
   explorerURL: 'https://testnet.teloscan.io',
  },
@@ -436,7 +436,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.public.blastapi.io', 'https://rpc.ankr.com/moonriver'],
   currency: {
    symbol: 'MOVR',
-   iconURL: 'https://cryptologos.cc/logos/moonriver-movr-logo.png',
+   iconURL: 'https://svgshare.com/i/1BAA.svg',
   },
   explorerURL: 'https://moonriver.moonscan.io',
  },
@@ -446,7 +446,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.api.moonbase.moonbeam.network', 'https://moonbase-alpha.public.blastapi.io', 'https://rpc.ankr.com/moonbeam_testnet'],
   currency: {
    symbol: 'DEV',
-   iconURL: 'https://cryptologos.cc/logos/moonbeam-glmr-logo.png',
+   iconURL: 'https://svgshare.com/i/1BAA.svg',
   },
   explorerURL: 'https://moonbase.moonscan.io',
  },
@@ -456,7 +456,7 @@ export const networks = writable([
   rpcURLs: ['https://public-node.rsk.co', 'https://rsk.public.blastapi.io', 'https://rpc.ankr.com/rsk'],
   currency: {
    symbol: 'RBTC',
-   iconURL: 'https://cryptologos.cc/logos/rsk-rbtc-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/rsk-infrastructure-framework-rif-logo.svg',
   },
   explorerURL: 'https://explorer.rsk.co',
  },
@@ -466,7 +466,7 @@ export const networks = writable([
   rpcURLs: ['https://public-node.testnet.rsk.co', 'https://rsk-testnet.public.blastapi.io', 'https://rpc.ankr.com/rsk_testnet'],
   currency: {
    symbol: 'tRBTC',
-   iconURL: 'https://cryptologos.cc/logos/rsk-rbtc-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/rsk-infrastructure-framework-rif-logo.svg',
   },
   explorerURL: 'https://explorer.testnet.rsk.co',
  },
@@ -476,7 +476,7 @@ export const networks = writable([
   rpcURLs: ['https://evm.astar.network', 'https://astar-mainnet.public.blastapi.io', 'https://rpc.ankr.com/astar'],
   currency: {
    symbol: 'ASTR',
-   iconURL: 'https://cryptologos.cc/logos/astar-astr-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/astar-astr-logo.svg',
   },
   explorerURL: 'https://blockscout.com/astar',
  },
@@ -486,7 +486,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.shiden.astar.network', 'https://shiden-testnet.public.blastapi.io', 'https://rpc.ankr.com/astar_shiden'],
   currency: {
    symbol: 'SDN',
-   iconURL: 'https://cryptologos.cc/logos/astar-astr-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/astar-astr-logo.svg',
   },
   explorerURL: 'https://blockscout.com/shiden',
  },
@@ -496,7 +496,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc-mainnet.kcc.network', 'https://kcc-mainnet.public.blastapi.io', 'https://rpc.ankr.com/kcc'],
   currency: {
    symbol: 'KCS',
-   iconURL: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.svg',
   },
   explorerURL: 'https://explorer.kcc.io',
  },
@@ -506,7 +506,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc-testnet.kcc.network', 'https://kcc-testnet.public.blastapi.io', 'https://rpc.ankr.com/kcc_testnet'],
   currency: {
    symbol: 'KCS',
-   iconURL: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.svg',
   },
   explorerURL: 'https://scan-testnet.kcc.network',
  },
@@ -516,7 +516,7 @@ export const networks = writable([
   rpcURLs: ['https://http-mainnet.hoosmartchain.com', 'https://hoo-mainnet.public.blastapi.io', 'https://rpc.ankr.com/hoo'],
   currency: {
    symbol: 'HOO',
-   iconURL: 'https://cryptologos.cc/logos/hoo-token-hoo-logo.png',
+   iconURL: 'https://cdn.brandfetch.io/idCSSGfr4Q/theme/dark/logo.svg',
   },
   explorerURL: 'https://hooscan.com',
  },
@@ -526,7 +526,7 @@ export const networks = writable([
   rpcURLs: ['https://http-testnet.hoosmartchain.com', 'https://hoo-testnet.public.blastapi.io', 'https://rpc.ankr.com/hoo_testnet'],
   currency: {
    symbol: 'HOO',
-   iconURL: 'https://cryptologos.cc/logos/hoo-token-hoo-logo.png',
+   iconURL: 'https://cdn.brandfetch.io/idCSSGfr4Q/theme/dark/logo.svg',
   },
   explorerURL: 'https://testnet.hooscan.com',
  },
@@ -536,7 +536,7 @@ export const networks = writable([
   rpcURLs: ['https://emerald.oasis.dev', 'https://emerald-mainnet.public.blastapi.io', 'https://rpc.ankr.com/oasis_emerald'],
   currency: {
    symbol: 'ROSE',
-   iconURL: 'https://cryptologos.cc/logos/oasis-network-rose-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/oasis-network-rose-logo.svg',
   },
   explorerURL: 'https://explorer.emerald.oasis.dev',
  },
@@ -546,7 +546,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet.emerald.oasis.dev', 'https://emerald-testnet.public.blastapi.io', 'https://rpc.ankr.com/oasis_emerald_testnet'],
   currency: {
    symbol: 'ROSE',
-   iconURL: 'https://cryptologos.cc/logos/oasis-network-rose-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/oasis-network-rose-logo.svg',
   },
   explorerURL: 'https://testnet.explorer.emerald.oasis.dev',
  },
@@ -556,7 +556,7 @@ export const networks = writable([
   rpcURLs: ['https://songbird-api.flare.network/ext/C/rpc', 'https://songbird.public.blastapi.io', 'https://rpc.ankr.com/songbird'],
   currency: {
    symbol: 'SGB',
-   iconURL: 'https://cryptologos.cc/logos/songbird-sgb-logo.png',
+   iconURL: 'https://assets.kraken.com/marketing/web/icons/sym-sgb_colored.svg',
   },
   explorerURL: 'https://songbird-explorer.flare.network',
  },
@@ -566,7 +566,7 @@ export const networks = writable([
   rpcURLs: ['https://songbird-testnet.flare.network/ext/C/rpc', 'https://songbird-testnet.public.blastapi.io', 'https://rpc.ankr.com/songbird_testnet'],
   currency: {
    symbol: 'SGB',
-   iconURL: 'https://cryptologos.cc/logos/songbird-sgb-logo.png',
+   iconURL: 'https://assets.kraken.com/marketing/web/icons/sym-sgb_colored.svg',
   },
   explorerURL: 'https://songbird-testnet-explorer.flare.network',
  },
@@ -576,7 +576,7 @@ export const networks = writable([
   rpcURLs: ['https://exchainrpc.okex.org', 'https://okc-mainnet.public.blastapi.io', 'https://rpc.ankr.com/okxchain'],
   currency: {
    symbol: 'OKT',
-   iconURL: 'https://cryptologos.cc/logos/okb-okb-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/okb-okb-logo.svg',
   },
   explorerURL: 'https://www.oklink.com/en/okc',
  },
@@ -586,7 +586,7 @@ export const networks = writable([
   rpcURLs: ['https://exchaintestrpc.okex.org', 'https://okc-testnet.public.blastapi.io', 'https://rpc.ankr.com/okxchain_testnet'],
   currency: {
    symbol: 'OKT',
-   iconURL: 'https://cryptologos.cc/logos/okb-okb-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/okb-okb-logo.svg',
   },
   explorerURL: 'https://www.oklink.com/en/okc-test',
  },
@@ -596,7 +596,7 @@ export const networks = writable([
   rpcURLs: ['https://smartbch.greyh.at', 'https://rpc.smartbch.org', 'https://smartbch.fountainhead.cash/mainnet'],
   currency: {
    symbol: 'BCH',
-   iconURL: 'https://cryptologos.cc/logos/bitcoin-cash-bch-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/bitcoin-cash-bch-logo.svg',
   },
   explorerURL: 'https://www.smartscan.cash',
  },
@@ -606,7 +606,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc-testnet.smartbch.org', 'https://smartbch-testnet.fountainhead.cash'],
   currency: {
    symbol: 'BCH',
-   iconURL: 'https://cryptologos.cc/logos/bitcoin-cash-bch-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/bitcoin-cash-bch-logo.svg',
   },
   explorerURL: 'https://www.smartscan.cash/testnet',
  },
@@ -616,7 +616,7 @@ export const networks = writable([
   rpcURLs: ['https://gwan-ssl.wandevs.org:56891', 'https://wanchain-mainnet.public.blastapi.io', 'https://rpc.ankr.com/wanchain'],
   currency: {
    symbol: 'WAN',
-   iconURL: 'https://cryptologos.cc/logos/wanchain-wan-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/wanchain-wan-logo.svg',
   },
   explorerURL: 'https://www.wanscan.org',
  },
@@ -626,7 +626,7 @@ export const networks = writable([
   rpcURLs: ['https://gwan-ssl.wandevs.org:46891', 'https://wanchain-testnet.public.blastapi.io', 'https://rpc.ankr.com/wanchain_testnet'],
   currency: {
    symbol: 'WAN',
-   iconURL: 'https://cryptologos.cc/logos/wanchain-wan-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/wanchain-wan-logo.svg',
   },
   explorerURL: 'https://testnet.wanscan.org',
  },
@@ -636,7 +636,7 @@ export const networks = writable([
   rpcURLs: ['https://palm-mainnet.infura.io/v3/YOUR-PROJECT-ID', 'https://palm-mainnet.public.blastapi.io', 'https://rpc.ankr.com/palm'],
   currency: {
    symbol: 'PALM',
-   iconURL: 'https://cryptologos.cc/logos/palm-palm-logo.png',
+   iconURL: 'https://svgur.com/i/1BBJ.svg',
   },
   explorerURL: 'https://explorer.palm.io',
  },
@@ -646,7 +646,7 @@ export const networks = writable([
   rpcURLs: ['https://palm-testnet.infura.io/v3/YOUR-PROJECT-ID', 'https://palm-testnet.public.blastapi.io', 'https://rpc.ankr.com/palm_testnet'],
   currency: {
    symbol: 'PALM',
-   iconURL: 'https://cryptologos.cc/logos/palm-palm-logo.png',
+   iconURL: 'https://svgur.com/i/1BBJ.svg',
   },
   explorerURL: 'https://explorer.palm.io',
  },
@@ -656,7 +656,7 @@ export const networks = writable([
   rpcURLs: ['https://evm.kava.io', 'https://kava-mainnet.public.blastapi.io', 'https://rpc.ankr.com/kava'],
   currency: {
    symbol: 'KAVA',
-   iconURL: 'https://cryptologos.cc/logos/kava-kava-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/kava-kava-logo.svg',
   },
   explorerURL: 'https://explorer.kava.io',
  },
@@ -666,7 +666,7 @@ export const networks = writable([
   rpcURLs: ['https://evm.testnet.kava.io', 'https://kava-testnet.public.blastapi.io', 'https://rpc.ankr.com/kava_testnet'],
   currency: {
    symbol: 'KAVA',
-   iconURL: 'https://cryptologos.cc/logos/kava-kava-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/kava-kava-logo.svg',
   },
   explorerURL: 'https://explorer.testnet.kava.io',
  },
@@ -676,7 +676,7 @@ export const networks = writable([
   rpcURLs: ['https://evmos-rpc.evmos.org', 'https://evmos-mainnet.public.blastapi.io', 'https://rpc.ankr.com/evmos'],
   currency: {
    symbol: 'EVMOS',
-   iconURL: 'https://cryptologos.cc/logos/evmos-evmos-logo.png',
+   iconURL: 'https://docs.evmos.org/img/evmos.svg',
   },
   explorerURL: 'https://evm.evmos.org',
  },
@@ -686,7 +686,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.testnet.evmos.org', 'https://evmos-testnet.public.blastapi.io', 'https://rpc.ankr.com/evmos_testnet'],
   currency: {
    symbol: 'EVMOS',
-   iconURL: 'https://cryptologos.cc/logos/evmos-evmos-logo.png',
+   iconURL: 'https://docs.evmos.org/img/evmos.svg',
   },
   explorerURL: 'https://testnet.evmos.org',
  },
@@ -696,7 +696,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.bittorrentchain.io', 'https://bttc-mainnet.public.blastapi.io', 'https://rpc.ankr.com/bttc'],
   currency: {
    symbol: 'BTT',
-   iconURL: 'https://cryptologos.cc/logos/bittorrent-btt-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/bittorrent-btt-logo.svg',
   },
   explorerURL: 'https://bttcscan.com',
  },
@@ -706,7 +706,7 @@ export const networks = writable([
   rpcURLs: ['https://test-rpc.bittorrentchain.io', 'https://bttc-testnet.public.blastapi.io', 'https://rpc.ankr.com/bttc_testnet'],
   currency: {
    symbol: 'BTT',
-   iconURL: 'https://cryptologos.cc/logos/bittorrent-btt-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/bittorrent-btt-logo.svg',
   },
   explorerURL: 'https://testnet.bttcscan.com',
  },
@@ -716,7 +716,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet1.edgewa.re', 'https://edgeware-mainnet.public.blastapi.io', 'https://rpc.ankr.com/edgeware'],
   currency: {
    symbol: 'EDG',
-   iconURL: 'https://cryptologos.cc/logos/edgeware-edg-logo.png',
+   iconURL: 'https://www.edgeware.io/assets/press/edgeware-main-logomark.svg',
   },
   explorerURL: 'https://edgscan.live',
  },
@@ -726,7 +726,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.sx.technology', 'https://sx-mainnet.public.blastapi.io', 'https://rpc.ankr.com/sxnetwork'],
   currency: {
    symbol: 'SX',
-   iconURL: 'https://cryptologos.cc/logos/sx-network-sx-logo.png',
+   iconURL: 'https://svgshare.com/i/1BBS.svg',
   },
   explorerURL: 'https://explorer.sx.technology',
  },
@@ -736,7 +736,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.clover.finance', 'https://clover-mainnet.public.blastapi.io', 'https://rpc.ankr.com/clover'],
   currency: {
    symbol: 'CLV',
-   iconURL: 'https://cryptologos.cc/logos/clover-finance-clv-logo.png',
+   iconURL: 'https://assets.kraken.com/marketing/web/icons/sym-clv_colored.svg',
   },
   explorerURL: 'https://cloverexplorer.com',
  },
@@ -746,7 +746,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet.clover.finance/rpc', 'https://rpc.ankr.com/clover_testnet'],
   currency: {
    symbol: 'tCLV',
-   iconURL: 'https://cryptologos.cc/logos/clover-finance-clv-logo.png',
+   iconURL: 'https://assets.kraken.com/marketing/web/icons/sym-clv_colored.svg',
   },
   explorerURL: 'https://testnet.cloverexplorer.com',
  },
@@ -756,7 +756,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.meter.io', 'https://meter-mainnet.public.blastapi.io', 'https://rpc.ankr.com/meter'],
   currency: {
    symbol: 'MTR',
-   iconURL: 'https://cryptologos.cc/logos/meter-mtr-logo.png',
+   iconURL: 'https://svgshare.com/i/1BCE.svg',
   },
   explorerURL: 'https://scan.meter.io',
  },
@@ -766,7 +766,7 @@ export const networks = writable([
   rpcURLs: ['https://dappnode1.ont.io:10339', 'https://ont-mainnet.public.blastapi.io', 'https://rpc.ankr.com/ontology'],
   currency: {
    symbol: 'ONT',
-   iconURL: 'https://cryptologos.cc/logos/ontology-ont-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ontology-ont-logo.svg',
   },
   explorerURL: 'https://explorer.ont.io',
  },
@@ -776,7 +776,7 @@ export const networks = writable([
   rpcURLs: ['https://api.elastos.io/evm', 'https://elastos-mainnet.public.blastapi.io', 'https://rpc.ankr.com/elastos'],
   currency: {
    symbol: 'ELA',
-   iconURL: 'https://cryptologos.cc/logos/elastos-ela-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/elastos-ela-logo.svg',
   },
   explorerURL: 'https://explorer.elastos.org',
  },
@@ -786,7 +786,7 @@ export const networks = writable([
   rpcURLs: ['https://api-testnet.elastos.io/evm', 'https://elastos-testnet.public.blastapi.io', 'https://rpc.ankr.com/elastos_testnet'],
   currency: {
    symbol: 'tELA',
-   iconURL: 'https://cryptologos.cc/logos/elastos-ela-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/elastos-ela-logo.svg',
   },
   explorerURL: 'https://testnet.explorer.elastos.org',
  },
@@ -796,7 +796,7 @@ export const networks = writable([
   rpcURLs: ['https://godwoken-mainnet-v1.ckbapp.dev', 'https://godwoken-mainnet.public.blastapi.io', 'https://rpc.ankr.com/godwoken'],
   currency: {
    symbol: 'CKB',
-   iconURL: 'https://cryptologos.cc/logos/nervos-network-ckb-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/nervos-network-ckb-logo.svg',
   },
   explorerURL: 'https://explorer.nervos.org',
  },
@@ -806,27 +806,27 @@ export const networks = writable([
   rpcURLs: ['https://godwoken-testnet-v1.ckbapp.dev', 'https://godwoken-testnet.public.blastapi.io', 'https://rpc.ankr.com/godwoken_testnet'],
   currency: {
    symbol: 'CKB',
-   iconURL: 'https://cryptologos.cc/logos/nervos-network-ckb-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/nervos-network-ckb-logo.svg',
   },
   explorerURL: 'https://explorer.testnet.nervos.org',
  },
  {
-  name: 'REI Network (dříve GXChain) - Mainnet',
+  name: 'REI Network - Mainnet',
   chainID: 47805,
   rpcURLs: ['https://rei-rpc.meter.io', 'https://rei-mainnet.public.blastapi.io', 'https://rpc.ankr.com/rei'],
   currency: {
    symbol: 'REI',
-   iconURL: 'https://cryptologos.cc/logos/rei-network-rei-logo.png',
+   iconURL: 'https://svgshare.com/i/1BAn.svg',
   },
   explorerURL: 'https://scan.rei.network',
  },
  {
-  name: 'REI Network (dříve GXChain) - Testnet',
+  name: 'REI Network - Testnet',
   chainID: 47905,
   rpcURLs: ['https://testnet-rpc.rei.network', 'https://rei-testnet.public.blastapi.io', 'https://rpc.ankr.com/rei_testnet'],
   currency: {
    symbol: 'tREI',
-   iconURL: 'https://cryptologos.cc/logos/rei-network-rei-logo.png',
+   iconURL: 'https://svgshare.com/i/1BAn.svg',
   },
   explorerURL: 'https://scan-testnet.rei.network',
  },
@@ -836,17 +836,17 @@ export const networks = writable([
   rpcURLs: ['https://rpc.shiden.astar.network', 'https://shiden-mainnet.public.blastapi.io', 'https://rpc.ankr.com/shiden'],
   currency: {
    symbol: 'SDN',
-   iconURL: 'https://cryptologos.cc/logos/shiden-sdn-logo.png',
+   iconURL: 'https://revoke.cash/assets/images/vendor/chains/shiden.svg',
   },
   explorerURL: 'https://shiden.subscan.io',
  },
  {
-  name: 'Shibuya Testnet',
+  name: 'Shiden Network - Shibuya Testnet',
   chainID: 81,
   rpcURLs: ['https://rpc.shibuya.astar.network', 'https://shibuya-testnet.public.blastapi.io', 'https://rpc.ankr.com/shibuya_testnet'],
   currency: {
    symbol: 'tSDN',
-   iconURL: 'https://cryptologos.cc/logos/shiden-sdn-logo.png',
+   iconURL: 'https://revoke.cash/assets/images/vendor/chains/shiden.svg',
   },
   explorerURL: 'https://testnet.subscan.io/shibuya',
  },
@@ -856,7 +856,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet.boba.network', 'https://boba-mainnet.public.blastapi.io', 'https://rpc.ankr.com/boba'],
   currency: {
    symbol: 'BOBA',
-   iconURL: 'https://cryptologos.cc/logos/boba-network-boba-logo.png',
+   iconURL: 'https://svgshare.com/i/1BCR.svg',
   },
   explorerURL: 'https://blockexplorer.boba.network',
  },
@@ -866,7 +866,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet.boba.network', 'https://boba-testnet.public.blastapi.io', 'https://rpc.ankr.com/boba_testnet'],
   currency: {
    symbol: 'BOBA',
-   iconURL: 'https://cryptologos.cc/logos/boba-network-boba-logo.png',
+   iconURL: 'https://svgshare.com/i/1BCR.svg',
   },
   explorerURL: 'https://testnet.blockexplorer.boba.network',
  },
@@ -876,7 +876,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.syscoin.org', 'https://syscoin-mainnet.public.blastapi.io', 'https://rpc.ankr.com/syscoin'],
   currency: {
    symbol: 'SYS',
-   iconURL: 'https://cryptologos.cc/logos/syscoin-sys-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/syscoin-sys-logo.svg',
   },
   explorerURL: 'https://explorer.syscoin.org',
  },
@@ -886,7 +886,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.tanenbaum.io', 'https://syscoin-testnet.public.blastapi.io', 'https://rpc.ankr.com/syscoin_testnet'],
   currency: {
    symbol: 'tSYS',
-   iconURL: 'https://cryptologos.cc/logos/syscoin-sys-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/syscoin-sys-logo.svg',
   },
   explorerURL: 'https://explorer.tanenbaum.io',
  },
@@ -896,7 +896,7 @@ export const networks = writable([
   rpcURLs: ['https://http-mainnet.hecochain.com', 'https://heco.rpc.thirdweb.com', 'https://rpc.ankr.com/heco'],
   currency: {
    symbol: 'HT',
-   iconURL: 'https://cryptologos.cc/logos/huobi-token-ht-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
   },
   explorerURL: 'https://hecoinfo.com',
  },
@@ -906,7 +906,7 @@ export const networks = writable([
   rpcURLs: ['https://http-testnet.hecochain.com', 'https://testnet.heco.rpc.thirdweb.com', 'https://rpc.ankr.com/heco_testnet'],
   currency: {
    symbol: 'HT',
-   iconURL: 'https://cryptologos.cc/logos/huobi-token-ht-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
   },
   explorerURL: 'https://testnet.hecoinfo.com',
  },
@@ -916,7 +916,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.tomochain.com', 'https://tomochain-rpc.com'],
   currency: {
    symbol: 'TOMO',
-   iconURL: 'https://cryptologos.cc/logos/tomochain-tomo-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/tomochain-tomo-logo.svg',
   },
   explorerURL: 'https://scan.tomochain.com',
  },
@@ -926,7 +926,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc-testnet.tomochain.com'],
   currency: {
    symbol: 'tTOMO',
-   iconURL: 'https://cryptologos.cc/logos/tomochain-tomo-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/tomochain-tomo-logo.svg',
   },
   explorerURL: 'https://scan-testnet.tomochain.com',
  },
@@ -936,7 +936,7 @@ export const networks = writable([
   rpcURLs: ['https://canto.slingshot.finance/rpc', 'https://rpc.ankr.com/canto'],
   currency: {
    symbol: 'CANTO',
-   iconURL: 'https://cryptologos.cc/logos/canto-canto-logo.png',
+   iconURL: 'https://www.airslate.com/preview/explorebots/content-management/canto.svg',
   },
   explorerURL: 'https://evm.explorer.canto.io',
  },
@@ -946,7 +946,7 @@ export const networks = writable([
   rpcURLs: ['https://canto-testnet-rpc.com', 'https://rpc.ankr.com/canto_testnet'],
   currency: {
    symbol: 'tCANTO',
-   iconURL: 'https://cryptologos.cc/logos/canto-canto-logo.png',
+   iconURL: 'https://www.airslate.com/preview/explorebots/content-management/canto.svg',
   },
   explorerURL: 'https://testnet.evm.explorer.canto.io',
  },
@@ -956,7 +956,7 @@ export const networks = writable([
   rpcURLs: ['https://kovan.canto.io/rpc', 'https://rpc.ankr.com/canto_kovan'],
   currency: {
    symbol: 'kCANTO',
-   iconURL: 'https://cryptologos.cc/logos/canto-canto-logo.png',
+   iconURL: 'https://www.airslate.com/preview/explorebots/content-management/canto.svg',
   },
   explorerURL: 'https://kovan.evm.explorer.canto.io',
  },
@@ -966,7 +966,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.energyweb.org', 'https://mainnet.infura.io/v3/YOUR-PROJECT-ID'],
   currency: {
    symbol: 'EWT',
-   iconURL: 'https://cryptologos.cc/logos/energy-web-token-ewt-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/energy-web-token-ewt-logo.svg',
   },
   explorerURL: 'https://explorer.energyweb.org',
  },
@@ -976,7 +976,7 @@ export const networks = writable([
   rpcURLs: ['https://evm.confluxrpc.com', 'https://rpc.ankr.com/conflux'],
   currency: {
    symbol: 'CFX',
-   iconURL: 'https://cryptologos.cc/logos/conflux-token-cfx-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/conflux-network-cfx-logo.svg',
   },
   explorerURL: 'https://www.confluxscan.io',
  },
@@ -986,7 +986,7 @@ export const networks = writable([
   rpcURLs: ['https://babel-api.mainnet.iotex.io', 'https://rpc.ankr.com/iotex'],
   currency: {
    symbol: 'IOTX',
-   iconURL: 'https://cryptologos.cc/logos/iotex-iotx-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/iotex-iotx-logo.svg',
   },
   explorerURL: 'https://iotexscan.io',
  },
@@ -996,7 +996,7 @@ export const networks = writable([
   rpcURLs: ['https://waxevm-rpc.com', 'https://rpc.ankr.com/wax_evm'],
   currency: {
    symbol: 'WAX',
-   iconURL: 'https://cryptologos.cc/logos/wax-wax-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/wax-wax-logo.svg',
   },
   explorerURL: 'https://evm.explorer.wax.io',
  },
@@ -1006,7 +1006,7 @@ export const networks = writable([
   rpcURLs: ['https://polygon-zkevm.publicnode.com', 'https://rpc.ankr.com/polygon_zkevm'],
   currency: {
    symbol: 'MATIC',
-   iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.svg',
   },
   explorerURL: 'https://zkevm.polygonscan.com',
  },
@@ -1016,7 +1016,7 @@ export const networks = writable([
   rpcURLs: ['https://polygon-zkevm-testnet.publicnode.com', 'https://rpc.ankr.com/polygon_zkevm_testnet'],
   currency: {
    symbol: 'MATIC',
-   iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/polygon-matic-logo.svg',
   },
   explorerURL: 'https://testnet.polygonscan.com',
  },
@@ -1026,7 +1026,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet-rpc.scroll.io/l2', 'https://rpc.ankr.com/scroll_mainnet'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://mainnet.blockscout.scroll.io',
  },
@@ -1036,7 +1036,7 @@ export const networks = writable([
   rpcURLs: ['https://alpha-rpc.scroll.io/l2', 'https://rpc.ankr.com/scroll_testnet'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://blockscout.scroll.io',
  },
@@ -1046,7 +1046,7 @@ export const networks = writable([
   rpcURLs: ['https://base-mainnet.infura.io/v3/YOUR-PROJECT-ID', 'https://rpc.base.org'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://basescan.org',
  },
@@ -1056,7 +1056,7 @@ export const networks = writable([
   rpcURLs: ['https://base-goerli.infura.io/v3/YOUR-PROJECT-ID', 'https://rpc.testnet.base.org'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://goerli.basescan.org',
  },
@@ -1066,7 +1066,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.linea.build', 'https://linea-rpc.ankr.com'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://explorer.linea.build',
  },
@@ -1076,7 +1076,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.testnet.linea.build', 'https://linea-testnet-rpc.ankr.com'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
   },
   explorerURL: 'https://testnet.explorer.linea.build',
  },
@@ -1086,7 +1086,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.shardeum.org'],
   currency: {
    symbol: 'SHM',
-   iconURL: 'https://cryptologos.cc/logos/shardeum-shm-logo.png',
+   iconURL: 'https://svgshare.com/i/1BB2.svg',
   },
   explorerURL: 'https://explorer.shardeum.org',
  },
@@ -1096,7 +1096,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.testnet.shardeum.org'],
   currency: {
    symbol: 'tSHM',
-   iconURL: 'https://cryptologos.cc/logos/shardeum-shm-logo.png',
+   iconURL: 'https://svgshare.com/i/1BB2.svg',
   },
   explorerURL: 'https://testnet.explorer.shardeum.org',
  },
@@ -1106,7 +1106,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet-rpc.theta.network', 'https://theta-rpc.com'],
   currency: {
    symbol: 'THETA',
-   iconURL: 'https://cryptologos.cc/logos/theta-th-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/theta-network-theta-logo.svg',
   },
   explorerURL: 'https://explorer.thetatoken.org',
  },
@@ -1116,7 +1116,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet-rpc.theta.network', 'https://theta-testnet-rpc.com'],
   currency: {
    symbol: 'THETA',
-   iconURL: 'https://cryptologos.cc/logos/theta-th-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/theta-network-theta-logo.svg',
   },
   explorerURL: 'https://testnet.explorer.thetatoken.org',
  },
@@ -1126,7 +1126,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.mantle.xyz', 'https://mantle-mainnet.public.blastapi.io'],
   currency: {
    symbol: 'MNT',
-   iconURL: 'https://cryptologos.cc/logos/mantle-mnt-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/mantle-mnt-logo.svg',
   },
   explorerURL: 'https://explorer.mantle.xyz',
  },
@@ -1136,7 +1136,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.testnet.mantle.xyz', 'https://mantle-testnet.public.blastapi.io'],
   currency: {
    symbol: 'tMNT',
-   iconURL: 'https://cryptologos.cc/logos/mantle-mnt-logo.png',
+   iconURL: 'https://cryptologos.cc/logos/mantle-mnt-logo.svg',
   },
   explorerURL: 'https://testnet.explorer.mantle.xyz',
  },
@@ -1146,7 +1146,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.zkspace.com', 'https://mainnet.zkspace.public.blastapi.io'],
   currency: {
    symbol: 'ZKS',
-   iconURL: 'https://cryptologos.cc/logos/zkspace-zks-logo.png',
+   iconURL: 'https://svgshare.com/i/1BAo.svg',
   },
   explorerURL: 'https://explorer.zkspace.com',
  },
@@ -1156,7 +1156,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet-rpc.zkspace.com', 'https://testnet.zkspace.public.blastapi.io'],
   currency: {
    symbol: 'tZKS',
-   iconURL: 'https://cryptologos.cc/logos/zkspace-zks-logo.png',
+   iconURL: 'https://svgshare.com/i/1BAo.svg',
   },
   explorerURL: 'https://testnet.explorer.zkspace.com',
  },
@@ -1166,7 +1166,7 @@ export const networks = writable([
   rpcURLs: ['https://mainnet.taiko.xyz/rpc', 'https://taiko-mainnet.public.blastapi.io'],
   currency: {
    symbol: 'TAIKO',
-   iconURL: 'https://cryptologos.cc/logos/taiko-taiko-logo.png',
+   iconURL: 'https://user-images.githubusercontent.com/13951458/230506906-474e42f7-00e8-478b-9edc-c127ed97f83e.svg',
   },
   explorerURL: 'https://explorer.taiko.xyz',
  },
@@ -1176,7 +1176,7 @@ export const networks = writable([
   rpcURLs: ['https://testnet.taiko.xyz/rpc', 'https://taiko-testnet.public.blastapi.io'],
   currency: {
    symbol: 'tTAIKO',
-   iconURL: 'https://cryptologos.cc/logos/taiko-taiko-logo.png',
+   iconURL: 'https://user-images.githubusercontent.com/13951458/230506906-474e42f7-00e8-478b-9edc-c127ed97f83e.svg',
   },
   explorerURL: 'https://testnet.explorer.taiko.xyz',
  },
@@ -1186,7 +1186,7 @@ export const networks = writable([
   rpcURLs: ['https://api.constellation.network/rpc', 'https://rpc.constellation.network'],
   currency: {
    symbol: 'DAG',
-   iconURL: 'https://cryptologos.cc/logos/constellation-dag-logo.png',
+   iconURL: 'https://svgshare.com/i/1BB_.svg',
   },
   explorerURL: 'https://explorer.constellation.network',
  },
@@ -1196,7 +1196,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.testnet.constellation.network', 'https://constellation-testnet.public.blastapi.io'],
   currency: {
    symbol: 'DAG',
-   iconURL: 'https://cryptologos.cc/logos/constellation-dag-logo.png',
+   iconURL: 'https://svgshare.com/i/1BB_.svg',
   },
   explorerURL: 'https://explorer.testnet.constellation.network',
  },
@@ -1206,7 +1206,7 @@ export const networks = writable([
   rpcURLs: ['https://clover-arbitrum.rpc.com', 'https://clover-arbitrum.public.blastapi.io'],
   currency: {
    symbol: 'CLV',
-   iconURL: 'https://cryptologos.cc/logos/clover-finance-clv-logo.png',
+   iconURL: 'https://assets.kraken.com/marketing/web/icons/sym-clv_colored.svg',
   },
   explorerURL: 'https://explorer.clover.finance/arbitrum',
  },
@@ -1216,7 +1216,7 @@ export const networks = writable([
   rpcURLs: ['https://clover-arbitrum-testnet.rpc.com', 'https://clover-arbitrum-testnet.public.blastapi.io'],
   currency: {
    symbol: 'tCLV',
-   iconURL: 'https://cryptologos.cc/logos/clover-finance-clv-logo.png',
+   iconURL: 'https://assets.kraken.com/marketing/web/icons/sym-clv_colored.svg',
   },
   explorerURL: 'https://explorer.clover.finance/arbitrum/testnet',
  },
@@ -1226,7 +1226,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.zora.network', 'https://zora-mainnet.public.blastapi.io'],
   currency: {
    symbol: 'ZORA',
-   iconURL: 'https://cryptologos.cc/logos/zora-zora-logo.png',
+   iconURL: 'https://www.svgrepo.com/show/35641/dot.svg',
   },
   explorerURL: 'https://explorer.zora.network',
  },
@@ -1236,7 +1236,7 @@ export const networks = writable([
   rpcURLs: ['https://rpc.testnet.zora.network', 'https://zora-testnet.public.blastapi.io'],
   currency: {
    symbol: 'tZORA',
-   iconURL: 'https://cryptologos.cc/logos/zora-zora-logo.png',
+   iconURL: 'https://www.svgrepo.com/show/35641/dot.svg',
   },
   explorerURL: 'https://explorer.testnet.zora.network',
  },

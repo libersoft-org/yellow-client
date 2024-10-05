@@ -1,13 +1,5 @@
 import { derived, get, writable } from 'svelte/store';
-import {
- HDNodeWallet,
- JsonRpcProvider,
- formatEther,
- parseEther,
- randomBytes,
- Mnemonic,
- getIndexedAccountPath
-} from 'ethers';
+import { HDNodeWallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { networks } from './networks.js';
 
@@ -61,8 +53,8 @@ let refreshTimer = setInterval(refresh, 10000);
 
 function resetBalance() {
  balance.set({
-  crypto: {amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?'},
-  fiat: {amount: '?', currency: 'USD'}
+  crypto: { amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?' },
+  fiat: { amount: '?', currency: 'USD' },
  });
  balanceTimestamp.set(null);
 }
@@ -107,7 +99,6 @@ function reconnect() {
  connectToURL();
 }
 
-
 function sortAddresses(addresses) {
  return addresses.sort((a, b) => {
   if (a.index < b.index) return -1;
@@ -132,9 +123,7 @@ export function addAddress(w, index) {
  } else if (indexNum < 0) {
   window.alert('Invalid index');
   return;
- }
- else
- {
+ } else {
   let existing = addresses.find(a => a.index === indexNum);
   if (existing) {
    console.log('Address with index', indexNum, 'already exists');
@@ -154,7 +143,7 @@ function doAddAddress(w, addresses, index) {
  let mn = Mnemonic.fromPhrase(get(selectedWallet).phrase);
  let path = getIndexedAccountPath(index);
  let derived_wallet = HDNodeWallet.fromMnemonic(mn, path);
- let a = {address: derived_wallet.address, name: 'Address ' + index, path: path, index: index};
+ let a = { address: derived_wallet.address, name: 'Address ' + index, path: path, index: index };
  addresses.push(a);
 }
 
