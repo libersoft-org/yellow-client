@@ -1,13 +1,5 @@
 import { derived, get, writable } from 'svelte/store';
-import {
- HDNodeWallet,
- JsonRpcProvider,
- formatEther,
- parseEther,
- randomBytes,
- Mnemonic,
- getIndexedAccountPath
-} from 'ethers';
+import { HDNodeWallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { networks } from './networks.js';
 
@@ -55,34 +47,25 @@ let reconnectionTimer: number | undefined;
 
 export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
-export const selectedNetwork = derived<[string | null, Network[]], Network | undefined>(
- [selectedNetworkID, networks],
- ([$selectedNetworkID, $networks]) => {
-  const r = $networks.find(n => n.name === $selectedNetworkID);
-  console.log('selectedNetwork', r);
-  return r;
- }
-);
+export const selectedNetwork = derived<[string | null, Network[]], Network | undefined>([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
+ const r = $networks.find(n => n.name === $selectedNetworkID);
+ console.log('selectedNetwork', r);
+ return r;
+});
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
-export const selectedWallet = derived<[Wallet[], string | null], Wallet | undefined>(
- [wallets, selectedWalletID],
- ([$wallets, $selectedWalletID]) => {
-  const r = $wallets.find(w => w.address === $selectedWalletID);
-  console.log('selectedWallet', r);
-  return r;
- }
-);
+export const selectedWallet = derived<[Wallet[], string | null], Wallet | undefined>([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
+ const r = $wallets.find(w => w.address === $selectedWalletID);
+ console.log('selectedWallet', r);
+ return r;
+});
 
-export const selectedAddress = derived<[Wallet | undefined], Address | undefined>(
- [selectedWallet],
- ([$selectedWallet]) => {
-  console.log($selectedWallet);
-  let addresses = $selectedWallet?.addresses || [];
-  let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
-  console.log('SELECTEDADDRESS', result);
-  return result;
- }
-);
+export const selectedAddress = derived<[Wallet | undefined], Address | undefined>([selectedWallet], ([$selectedWallet]) => {
+ console.log($selectedWallet);
+ let addresses = $selectedWallet?.addresses || [];
+ let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
+ console.log('SELECTEDADDRESS', result);
+ return result;
+});
 
 selectedAddress.subscribe((value: Address | undefined) => {
  console.log('selectedAddress', value);
@@ -105,8 +88,8 @@ let refreshTimer: number = setInterval(refresh, 10000);
 
 function resetBalance(): void {
  balance.set({
-  crypto: {amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?'},
-  fiat: {amount: '?', currency: 'USD'},
+  crypto: { amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?' },
+  fiat: { amount: '?', currency: 'USD' },
  });
  balanceTimestamp.set(null);
 }

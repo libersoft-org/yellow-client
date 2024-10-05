@@ -28,11 +28,11 @@
  }
 
  .item.even {
-  background-color: #fec;
+  background-color: #ffa;
  }
 
  .item.odd {
-  background-color: #fea;
+  background-color: #ffd;
  }
 
  .item:hover {
