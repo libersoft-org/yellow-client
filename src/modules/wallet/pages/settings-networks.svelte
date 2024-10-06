@@ -1,15 +1,17 @@
 <script>
  import { default_networks } from '../networks.js';
- import { addNetworkByName, networks } from '../wallet.ts';
+ import { addNetwork, networks } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
  import Modal from "../../../core/components/modal.svelte";
  import ModalEditNetwork from "../modals/edit-network.svelte";
 
  let isModalEditNetworkOpen = false;
+ let modalEditNetworkItem = null;
 
- function editNetwork(name) {
-  ModalEditNetwork.modalEditNetworkSetItem(networks.find(n => n.name === name));
+ export function editNetwork(net) {
+  console.log('editNetwork', net);
   isModalEditNetworkOpen = true;
+  modalEditNetworkItem = net;
  }
 
 </script>
@@ -55,7 +57,7 @@
     {/if}
     <div>{n.name}</div>
    </div>
-   <Button on:click={() => editNetwork(n.name)}>Edit network</Button>
+   <Button on:click={() => editNetwork(n)}>Edit network</Button>
   {/each}
  </div>
 
@@ -67,7 +69,7 @@
      <img src={n.currency.iconURL} alt="" />
     {/if}
     <div>{n.name}</div>
-    <Button on:click={() => addNetworkByName(n.name) }>Add network</Button>
+    <Button on:click={() => addNetwork(n) }>Add network</Button>
 
    </div>
   {/each}
@@ -76,7 +78,7 @@
 
 {#if isModalEditNetworkOpen}
  <Modal title="Edit network" onClose={() => isModalEditNetworkOpen = false}>
-  <ModalEditNetwork onClose={() => isModalEditNetworkOpen = false} />
+  <ModalEditNetwork item={ modalEditNetworkItem } onClose={() => isModalEditNetworkOpen = false} />
  </Modal>
 {/if}
 

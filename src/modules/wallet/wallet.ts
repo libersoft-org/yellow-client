@@ -325,13 +325,24 @@ async function sendTransaction(recipient: string, amount: string): Promise<void>
  }
 }
 
-export function addNetworkByName(name: string): void {
- let net = get(default_networks).find(n => n.name === name);
- if (!net) {
-  window.alert('Network not found');
+export function addNetwork(net): void {
+
+ if (networks.find(n => n.name === net.name)) {
+  window.alert('Network with name ' + net.name + ' already exists');
  }
+
+ let my_net = {
+  name: net.name,
+  chainID: net.chainID,
+  rpcURLs: net.rpcURLs.map(url => url),
+  currency: {
+   symbol: net.currency.symbol,
+   iconURL: net.currency.iconURL,
+  },
+  explorerURL: net.explorerURL
+ }
+
  networks.update(n => {
-  n.push(net!);
-  return n;
+  n.push(my_net);
  });
 }
