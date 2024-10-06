@@ -326,7 +326,7 @@ async function sendTransaction(recipient: string, amount: string): Promise<void>
 }
 
 export function addNetworkByName(name: string): void {
- let net = default_networks.find(n => n.name === name);
+ let net = get(default_networks).find(n => n.name === name);
  if (!net) {
   window.alert('Network not found');
  }

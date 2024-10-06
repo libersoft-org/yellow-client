@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-export const networks = writable([
+export const default_networks = writable([
  {
   name: 'Ethereum - Mainnet',
   chainID: 1,
