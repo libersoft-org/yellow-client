@@ -333,10 +333,6 @@ async function sendTransaction(recipient: string, amount: string): Promise<void>
 }
 
 export function addNetwork(net): void {
- if (networks.find(n => n.name === net.name)) {
-  window.alert('Network with name ' + net.name + ' already exists');
- }
-
  let my_net = {
   name: net.name,
   chainID: net.chainID,
@@ -350,5 +346,12 @@ export function addNetwork(net): void {
 
  networks.update(n => {
   n.push(my_net);
+  return n;
+ });
+}
+
+export function removeNetwork(net): void {
+ networks.update(n => {
+  return n.filter(n => n.name !== net.name);
  });
 }

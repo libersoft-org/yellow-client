@@ -1,6 +1,6 @@
 <script>
  import { default_networks } from '../networks.js';
- import { addNetwork, networks } from '../wallet.ts';
+ import { addNetwork, removeNetwork, networks } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
  import Modal from "../../../core/components/modal.svelte";
  import ModalEditNetwork from "../modals/edit-network.svelte";
@@ -58,6 +58,7 @@
     <div>{n.name}</div>
    </div>
    <Button on:click={() => editNetwork(n)}>Edit network</Button>
+   <Button on:click={() => removeNetwork(n)}>Remove network</Button>
   {/each}
  </div>
 
