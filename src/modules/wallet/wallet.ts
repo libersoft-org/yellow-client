@@ -39,6 +39,11 @@ interface Balance {
  };
 }
 
+interface AddressBookItem {
+ alias: string;
+ address: string;
+}
+
 export const status = writable<string>('Started.');
 export const rpcURL = writable<string | null>(null);
 
@@ -71,6 +76,8 @@ export const selectedAddress = derived<[Wallet | undefined], Address | undefined
 export const selectedMainCurrencySymbol = derived<[Network | undefined], string | undefined>([selectedNetwork], ([$selectedNetwork]) => {
  return $selectedNetwork?.currency.symbol;
 });
+
+export const addressBook = localStorageSharedStore<AddressBookItem[]>('addressbook', []);
 
 selectedAddress.subscribe((value: Address | undefined) => {
  console.log('selectedAddress', value);
@@ -326,7 +333,6 @@ async function sendTransaction(recipient: string, amount: string): Promise<void>
 }
 
 export function addNetwork(net): void {
-
  if (networks.find(n => n.name === net.name)) {
   window.alert('Network with name ' + net.name + ' already exists');
  }
@@ -339,8 +345,8 @@ export function addNetwork(net): void {
    symbol: net.currency.symbol,
    iconURL: net.currency.iconURL,
   },
-  explorerURL: net.explorerURL
- }
+  explorerURL: net.explorerURL,
+ };
 
  networks.update(n => {
   n.push(my_net);
