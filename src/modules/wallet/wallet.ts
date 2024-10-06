@@ -1,7 +1,7 @@
 import { derived, get, writable } from 'svelte/store';
 import { HDNodeWallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
-import { networks } from './networks.js';
+import { default_networks } from './networks.js';
 
 interface Address {
  address: string;
@@ -45,6 +45,7 @@ export const rpcURL = writable<string | null>(null);
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer: number | undefined;
 
+export const networks = localStorageSharedStore<Network[]>('networks', []);
 export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = derived<[string | null, Network[]], Network | undefined>([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
@@ -322,4 +323,15 @@ async function sendTransaction(recipient: string, amount: string): Promise<void>
  } catch (error) {
   console.error('Error while sending a transaction:', error);
  }
+}
+
+export function addNetworkByName(name: string): void {
+ let net = get(default_networks).find(n => n.name === name);
+ if (!net) {
+  window.alert('Network not found');
+ }
+ networks.update(n => {
+  n.push(net!);
+  return n;
+ });
 }

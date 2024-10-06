@@ -1,5 +1,8 @@
 <script>
- import { networks } from '../networks.js';
+ import { default_networks } from '../networks.js';
+ import { addNetworkByName, networks } from '../wallet.ts';
+ import Button from '../../../core/components/button.svelte';
+
 </script>
 
 <style>
@@ -34,6 +37,7 @@
 </style>
 
 <div class="networks">
+ my networks:
  <div class="items">
   {#each $networks as n, index}
    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
@@ -41,6 +45,20 @@
      <img src={n.currency.iconURL} alt="" />
     {/if}
     <div>{n.name}</div>
+   </div>
+  {/each}
+ </div>
+
+ default networks:
+ <div class="items">
+  {#each $default_networks as n, index}
+   <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
+    {#if n.currency?.iconURL}
+     <img src={n.currency.iconURL} alt="" />
+    {/if}
+    <div>{n.name}</div>
+    <Button on:click={() => addNetworkByName(n.name) }>Add network</Button>
+
    </div>
   {/each}
  </div>

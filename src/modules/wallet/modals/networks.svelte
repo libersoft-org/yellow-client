@@ -1,6 +1,5 @@
 <script>
- import { networks } from '../networks.js';
- import { selectedNetworkID } from '../wallet.ts';
+ import { selectedNetworkID, networks } from '../wallet.ts';
  import List from '../components/list.svelte';
  import ListItem from '../components/list-item.svelte';
  export let onClose;
