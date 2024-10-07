@@ -1,12 +1,14 @@
 <script>
  import QRCode from 'qrcode';
  import { selectedAddress, selectedNetwork } from '../wallet.ts';
+ import {  parseUnits } from 'ethers';
  let addressElement;
  let paymentElement;
- let amount;
+ let amount = '0';
  let qrAddress = '';
  let qrPayment = '';
  let paymentText = '';
+ let error = '';
 
  function clickCopyAddress() {
   navigator.clipboard.writeText($selectedAddress.address)
@@ -38,8 +40,23 @@
   }
  }
 
- $: if ($selectedNetwork && $selectedAddress) {
-  paymentText = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount ? '?value=' + ((BigInt(amount) * BigInt(10) ** BigInt(18)).toString()) : '');
+ $: if ($selectedNetwork && $selectedAddress) updateAmount(amount);
+
+
+ function updateAmount(amount) {
+  let etherValue;
+  console.log('amount:', amount);
+  try {
+   etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
+   console.log('etherValue:', etherValue.toString());
+  }
+  catch (e) {
+   error = 'Invalid amount';
+   console.error('Invalid amount:', e);
+   return;
+  }
+  error = '';
+  paymentText = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount ? '?value=' + etherValue.toString() : '');
   generateQRCode($selectedAddress.address, (url) => qrAddress = url);
   generateQRCode(paymentText, (url) => qrPayment = url);
  }
@@ -92,12 +109,17 @@
   width: 15px;
   height: 15px;
  }
+
+ .error {
+  color: red;
+ }
+
 </style>
 
 <div class="receive">
  {#if $selectedNetwork && $selectedAddress}
   <div class="section">
-   <div class="bold">Your wallet address:</div> 
+   <div class="bold">Your wallet address:</div>
    <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
     <div bind:this={addressElement}>{$selectedAddress.address}</div>
     <img src="img/copy.svg" alt="Copy" />
@@ -108,7 +130,8 @@
    <div class="bold">Payment:</div>
    <div>
     <span>Amount:</span>
-    <span><input type="text" bind:value={amount} /></span>
+    <span><input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} /></span>
+    <div class="error">{error}</div>
     <span><select><option value="0">--- Currency ---</option></select></span>
    </div>
    <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
