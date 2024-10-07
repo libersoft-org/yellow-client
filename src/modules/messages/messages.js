@@ -191,7 +191,7 @@ function eventNewMessage(acc, event) {
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
- if (msg.address_from === sc?.address || msg.address_to === sc?.address ) messagesArray.update(v => [msg, ...v]);
+ if (msg.address_from === sc?.address || msg.address_to === sc?.address) messagesArray.update(v => [msg, ...v]);
  if (msg.address_from !== sc?.address || !get(isClientFocused)) showNotification(acc, msg);
  updateConversationsArray(msg);
 }

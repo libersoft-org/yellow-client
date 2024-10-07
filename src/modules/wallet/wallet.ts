@@ -77,7 +77,6 @@ export const selectedMainCurrencySymbol = derived<[Network | undefined], string 
  return $selectedNetwork?.currency.symbol;
 });
 
-
 let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
  return ['token1', 'token2', 'token3'].map(symbol => ({ symbol }));
 });
@@ -317,22 +316,19 @@ export async function getBalance(): Promise<void> {
    if (rates2) {
     console.log('got rates:', rates2);
     balance.update(b => {
-      const amount_str = b?.crypto?.amount;
-      const currency = b?.crypto?.currency;
-      const rate = rates2[currency];
-      if (amount_str && currency)
-        {
-          if (rate) {
-             b.fiat.amount = (parseFloat(amount_str) * rate).toString();
-          }
-          else {
-            b.fiat.amount = 'no rate for ' + currency;
-          }
-        }
+     const amount_str = b?.crypto?.amount;
+     const currency = b?.crypto?.currency;
+     const rate = rates2[currency];
+     if (amount_str && currency) {
+      if (rate) {
+       b.fiat.amount = (parseFloat(amount_str) * rate).toString();
+      } else {
+       b.fiat.amount = 'no rate for ' + currency;
+      }
+     }
      return b;
     });
-   }
-   else {
+   } else {
     console.log('no rates');
    }
   } catch (error) {
@@ -347,14 +343,13 @@ export async function getBalance(): Promise<void> {
 }
 
 async function exchangeRates(): Promise<void> {
-  const url = 'https://api.coinbase.com/v2/exchange-rates?currency=USD';
-  console.log('fetch exchangeRates...', url);
-  const response = await fetch(url);
-  const data = await response.json();
-  console.log('data:', data);
-  return data['data'];
+ const url = 'https://api.coinbase.com/v2/exchange-rates?currency=USD';
+ console.log('fetch exchangeRates...', url);
+ const response = await fetch(url);
+ const data = await response.json();
+ console.log('data:', data);
+ return data['data'];
 }
-
 
 async function sendTransaction(recipient: string, amount: string): Promise<void> {
  const selectedWalletValue = get(selectedWallet);
