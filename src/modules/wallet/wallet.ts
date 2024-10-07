@@ -77,6 +77,15 @@ export const selectedMainCurrencySymbol = derived<[Network | undefined], string 
  return $selectedNetwork?.currency.symbol;
 });
 
+
+let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
+ return ['token1', 'token2', 'token3'].map(symbol => ({ symbol }));
+});
+
+export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
+ return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)];
+});
+
 export const addressBook = localStorageSharedStore<AddressBookItem[]>('addressbook', []);
 
 selectedAddress.subscribe((value: Address | undefined) => {

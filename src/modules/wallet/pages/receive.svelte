@@ -1,7 +1,9 @@
 <script>
  import QRCode from 'qrcode';
- import { selectedAddress, selectedNetwork } from '../wallet.ts';
+ import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
  import {  parseUnits } from 'ethers';
+ import { get } from "svelte/store";
+ import ComboBox from "../../../core/components/combo-box.svelte";
  let addressElement;
  let paymentElement;
  let amount = '0';
@@ -9,6 +11,18 @@
  let qrPayment = '';
  let paymentText = '';
  let error = '';
+ let currency;
+
+
+ $: if (!currency || !get(currencies).find((c) => c == currency ))
+ {
+  currency = $selectedMainCurrencySymbol;
+  console.log('reset currency:', currency, get(currencies));
+ }
+
+ $: console.log('currencies:', $currencies);
+ $: console.log('currency:', currency);
+
 
  function clickCopyAddress() {
   navigator.clipboard.writeText($selectedAddress.address)
@@ -129,10 +143,13 @@
   <div class="section">
    <div class="bold">Payment:</div>
    <div>
+
     <span>Amount:</span>
-    <span><input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} /></span>
+     <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
+     Currency: <ComboBox options={$currencies} bind:value={currency} />
     <div class="error">{error}</div>
-    <span><select><option value="0">--- Currency ---</option></select></span>
+
+
    </div>
    <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
     <div bind:this={paymentElement}>{paymentText}</div>

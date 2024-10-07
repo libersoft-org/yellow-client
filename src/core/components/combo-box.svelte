@@ -1,10 +1,12 @@
 <script>
  export let value = '';
  export let options = ['Možnost 1', 'Možnost 2', 'Možnost 3'];
- let filteredOptions = options;
- let showOptions = false;
 
+ let filteredOptions;
+ $: filteredOptions = options;
  $: console.log('filteredOptions:', filteredOptions);
+
+ let showOptions = false;
 
  function filterOptions() {
   filteredOptions = options.filter(option => option.toLowerCase().includes(value.toLowerCase()));
@@ -26,7 +28,7 @@
  }
 </script>
 
-<div class="combo-box">
+<span class="combo-box">
  <input
   type="text"
   bind:value={value}
@@ -44,7 +46,7 @@
    {/each}
   </div>
  {/if}
-</div>
+</span>
 
 <style>
  .combo-box {

@@ -2,23 +2,18 @@
 
  import Button from '../../../core/components/button.svelte';
  import ComboBox from '../../../core/components/combo-box.svelte';
- import { derived } from "svelte/store";
- import { selectedMainCurrencySymbol, selectedNetwork } from "../wallet.ts";
-
+ import { derived, get } from "svelte/store";
+ import { currencies, selectedMainCurrencySymbol } from "../wallet.ts";
 
  let currency;
-
- let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
-  return ['token1', 'token2', 'token3'].map(symbol => ({ symbol }));
- });
-
- let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
-  if (!currency) currency = $selectedMainCurrencySymbol;
-  return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)];
- });
-
  let address;
  let amount;
+
+ $: if (!currency || !get(currencies).find((c) => c == currency ))
+ {
+  currency = $selectedMainCurrencySymbol;
+  console.log('reset currency:', currency, get(currencies));
+ }
 
  $: console.log('currencies:', $currencies);
  $: console.log('currency:', currency);
