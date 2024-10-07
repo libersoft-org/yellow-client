@@ -297,6 +297,7 @@ export async function getBalance(): Promise<void> {
   try {
    console.log('Getting balance for', addr.address);
    const balanceBigNumber = await provider.getBalance(addr.address);
+   console.log('balanceBigNumber', balanceBigNumber);
    balanceTimestamp.set(new Date());
    const balanceFormated = formatEther(balanceBigNumber);
    balance.set({
@@ -309,6 +310,31 @@ export async function getBalance(): Promise<void> {
      currency: 'USD',
     },
    });
+   const rates = await exchangeRates();
+   console.log('got1 rates:', rates);
+   const rates2 = rates['rates'];
+   console.log('got2 rates:', rates2);
+   if (rates2) {
+    console.log('got rates:', rates2);
+    balance.update(b => {
+      const amount_str = b?.crypto?.amount;
+      const currency = b?.crypto?.currency;
+      const rate = rates2[currency];
+      if (amount_str && currency)
+        {
+          if (rate) {
+             b.fiat.amount = (parseFloat(amount_str) * rate).toString();
+          }
+          else {
+            b.fiat.amount = 'no rate for ' + currency;
+          }
+        }
+     return b;
+    });
+   }
+   else {
+    console.log('no rates');
+   }
   } catch (error) {
    console.log('Error while getting balance:', error);
   }
@@ -319,6 +345,16 @@ export async function getBalance(): Promise<void> {
   */
  }
 }
+
+async function exchangeRates(): Promise<void> {
+  const url = 'https://api.coinbase.com/v2/exchange-rates?currency=USD';
+  console.log('fetch exchangeRates...', url);
+  const response = await fetch(url);
+  const data = await response.json();
+  console.log('data:', data);
+  return data['data'];
+}
+
 
 async function sendTransaction(recipient: string, amount: string): Promise<void> {
  const selectedWalletValue = get(selectedWallet);
