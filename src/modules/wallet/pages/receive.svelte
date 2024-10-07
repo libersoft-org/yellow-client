@@ -66,7 +66,7 @@
   }
   catch (e) {
    error = 'Invalid amount';
-   console.error('Invalid amount:', e);
+   console.log('Invalid amount:', e);
    return;
   }
   error = '';
