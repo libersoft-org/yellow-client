@@ -109,6 +109,10 @@
   selected_module_id.set(id);
   console.log('selected_module_id: ' + get(selected_module_id));
 
+  console.log('active_account: ', get(active_account));
+  console.log('accounts_config: ', get(accounts_config));
+  if (!get(active_account)) return;
+
   accounts_config.update((accounts) => {
    accounts.forEach((account) => {
     if (account.id === get(active_account).id) {

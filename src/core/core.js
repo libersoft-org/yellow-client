@@ -44,10 +44,22 @@ if (import.meta.env.VITE_AMTP_SERVER_WS_URL) {
    settings: {
     title: 'Account 2',
    },
+   enabled: true,
+   credentials: {
+    server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
+    address: 'user2@example2.com',
+    password: '123456789',
+   },
+  },
+  {
+   id: 3,
+   settings: {
+    title: 'Account 3',
+   },
    enabled: false,
    credentials: {
     server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-    address: 'user2@example.com',
+    address: 'user3@example3.com',
     password: '123456789',
    },
   },
