@@ -151,10 +151,9 @@ export function sendMessage(text) {
 
 function updateConversationsArray(msg) {
  const address_to = msg.address_to;
- const address_from = msg.address_from;
  const msg_created = msg.created;
  let ca = get(conversationsArray);
- const conversation = ca.find(c => c.address === address_to || c.address === address_from);
+ const conversation = ca.find(c => c.address === msg.remote_address);
  console.log('updateConversationsArray', conversation, address_to, msg_created);
 
  if (conversation) {
@@ -188,12 +187,11 @@ export function openNewConversation(address) {
 function eventNewMessage(acc, event) {
  const res = event.detail;
  if (!res.data) return;
- if (acc.credentials.address === res.data.from) return;
  const msg = new Message(acc, res.data);
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
- if (msg.address_from === sc?.address) messagesArray.update(v => [msg, ...v]);
+ if (msg.address_from === sc?.address || msg.address_to === sc?.address ) messagesArray.update(v => [msg, ...v]);
  if (msg.address_from !== sc?.address || !get(isClientFocused)) showNotification(acc, msg);
  updateConversationsArray(msg);
 }

@@ -9,9 +9,11 @@
  let observer;
  let intersection_observer_element;
  let is_visible;
+ let checkmark_img;
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
+ $: checkmarks_img = 'img/seen' + checkmarks + '.svg';
 
  $: console.log('Core.isClientFocused:', $isClientFocused);
 
@@ -42,6 +44,8 @@
   console.log('linkify result:', result);
   return result;
  }
+
+
 
  onMount(() => {
   console.log('onMount message:', message);
@@ -118,7 +122,7 @@
  <div class="bottomline">
   <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
   {#if message.is_outgoing}
-   <div class="checkmark"><img src="img/seen{checkmarks}.svg" alt="{seen_txt}" /></div>
+   <div class="checkmark"><img src={checkmarks_img} alt="{seen_txt}" /></div>
   {/if}
  </div>
 </div>
