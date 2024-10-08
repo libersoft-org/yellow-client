@@ -1,7 +1,9 @@
 <script>
  import { wallets, addAddress, selectAddress, addWallet, walletAddresses } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
+ import Icon from '../components/table-icon.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
+ import Address from '../components/settings-wallets-address.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalNewWallet from '../modals/new-wallet.svelte';
  import { Mnemonic } from 'ethers';
@@ -51,6 +53,18 @@
   overflow: hidden;
  }
 
+ tr.even {
+  background-color: #ffa;
+ }
+
+ tr.odd {
+  background-color: #ffd;
+ }
+
+ tr:hover {
+  background-color: #fd1;
+ }
+
  th {
   padding: 5px;
   text-align: left;
@@ -66,8 +80,18 @@
   padding: 5px;
  }
 
+ .icons {
+  display: flex;
+ }
+
  .buttons {
   display: flex;
+  gap: 10px;
+ }
+
+ .wallet {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
  }
 </style>
@@ -77,22 +101,28 @@
  <Button width="80px" text="Recover" on:click={recover} />
 </div>
 <Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
- <div>
-  <Button text="Generate new address" on:click={() => addAddress(wallet)} />
-  <Button text="Generate new address (with index)" on:click={() => addAddressWithIndex(wallet)} />
+ <div class="wallet">
+  <div class="buttons">
+   <Button text="Add a new address" on:click={() => addAddress(wallet)} />
+   <Button text="Add a new address (by index)" on:click={() => addAddressWithIndex(wallet)} />
+  </div>
   <table>
    <tr>
+    <th class="center">Index</th>
     <th>Alias</th>
     <th>Address</th>
     <th class="center">Action</th>
    </tr>
-   {#each walletAddresses(wallet) as address (address.index)}
-    <tr>
-     <td class="address-name">{address.name}</td>
-     <td class="address-value">{address.address}</td>
-     <td><Button text="Select" on:click={() => selectAddress(wallet, address)} /></td>
-     <td><Button text="Rename" on:click={() => renameAddress(wallet, address)} /></td>
-     <td><Button text="Hide" on:click={() => deleteAddress(wallet, address)} /></td>
+   {#each walletAddresses(wallet) as address, index}
+    <tr class={index % 2 === 0 ? 'even' : 'odd'}>
+     <td class="center">{address.index}</td>
+     <td>{address.name}</td>
+     <td><Address address={address.address} /></td>
+     <td class="icons">
+      <Icon title="Select" icon="img/send.svg" on:click={() => selectAddress(wallet, address)} />
+      <Icon title="Rename" icon="img/edit.svg" on:click={() => renameAddress(wallet, address)} />
+      <Icon title="Hide" icon="img/modules/wallet/hide.svg" on:click={() => deleteAddress(wallet, address)} />
+     </td>
     </tr>
    {/each}
   </table>

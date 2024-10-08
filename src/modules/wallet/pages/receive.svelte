@@ -28,7 +28,7 @@
  function clickCopyAddress() {
   navigator.clipboard
    .writeText($selectedAddress.address)
-   .then(() => console.log('Address coppied to clipboard'))
+   .then(() => console.log('Address copied to clipboard'))
    .catch(err => console.error('Error while copying to clipboard', err));
   addressElement.innerHTML = 'Copied!';
   setTimeout(() => (addressElement.innerHTML = $selectedAddress.address), 1000);
@@ -44,7 +44,7 @@
  function clickCopyPayment() {
   navigator.clipboard
    .writeText(paymentText)
-   .then(() => console.log('Payment URI coppied to clipboard'))
+   .then(() => console.log('Payment URI copied to clipboard'))
    .catch(err => console.error('Error while copying to clipboard', err));
   paymentElement.innerHTML = 'Copied!';
   setTimeout(() => (paymentElement.innerHTML = paymentText), 1000);

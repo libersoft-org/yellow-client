@@ -35,6 +35,7 @@
 
  .accordion .item .header .title {
   flex-grow: 1;
+  font-weight: bold;
  }
 
  .accordion .item .header img {
@@ -43,7 +44,7 @@
  }
 
  .accordion .item .content {
-  padding: 1em;
+  padding: 10px;
   display: none;
  }
 

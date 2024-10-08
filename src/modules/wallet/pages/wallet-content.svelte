@@ -41,7 +41,7 @@
  function clickCopyAddress() {
   navigator.clipboard
    .writeText($selectedAddress.address)
-   .then(() => console.log('Address coppied to clipboard'))
+   .then(() => console.log('Address copied to clipboard'))
    .catch(err => console.error('Error while copying to clipboard', err));
   addressElement.innerHTML = 'Copied!';
   setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
