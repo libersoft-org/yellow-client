@@ -11,13 +11,6 @@
  }
 </script>
 
-<div class="accounts-button" role="button" tabindex="0" on:click={click} on:keydown={keyButton}>
- {#if img}
-  <div><img src={img} alt={title} /></div>
- {/if}
- <div>{title}</div>
-</div>
-
 <style>
  .accounts-button {
   display: flex;
@@ -34,3 +27,10 @@
   background-color: #222;
  }
 </style>
+
+<div class="accounts-button" role="button" tabindex="0" on:click={click} on:keydown={keyButton}>
+ {#if img}
+  <div><img src={img} alt={title} /></div>
+ {/if}
+ <div>{title}</div>
+</div>

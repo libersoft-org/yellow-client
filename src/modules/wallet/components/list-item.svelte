@@ -13,13 +13,6 @@
  }
 </script>
 
-<div class="item {className}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- {#if icon}
-  <div><img src={icon} alt={item} /></div>
- {/if}
- <div>{item}</div>
-</div>
-
 <style>
  .item {
   display: flex;
@@ -46,3 +39,10 @@
   background-color: #fd1;
  }
 </style>
+
+<div class="item {className}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+ {#if icon}
+  <div><img src={icon} alt={item} /></div>
+ {/if}
+ <div>{item}</div>
+</div>

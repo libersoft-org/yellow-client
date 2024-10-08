@@ -1,10 +1,6 @@
 <script>
 </script>
 
-<div class="photo">
- <img src="img/photo.svg" alt="" />
-</div>
-
 <style>
  .photo {
   border: 1px solid #000;
@@ -22,3 +18,7 @@
   padding-top: 5px;
  }
 </style>
+
+<div class="photo">
+ <img src="img/photo.svg" alt="" />
+</div>

@@ -14,17 +14,6 @@
  }
 </script>
 
-<div class="item {className}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- {#if icon}
-  <div class="icon"><img src={icon} alt={symbol} /></div>
- {/if}
- <div class="symbol">{symbol}</div>
- <div class="amount">
-  <div class="crypto">{amount.crypto} {symbol}</div>
-  <div class="fiat">({amount.fiat} USD)</div>
- </div>
-</div>
-
 <style>
  .item {
   display: flex;
@@ -71,3 +60,14 @@
   color: #555;
  }
 </style>
+
+<div class="item {className}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+ {#if icon}
+  <div class="icon"><img src={icon} alt={symbol} /></div>
+ {/if}
+ <div class="symbol">{symbol}</div>
+ <div class="amount">
+  <div class="crypto">{amount.crypto} {symbol}</div>
+  <div class="fiat">({amount.fiat} USD)</div>
+ </div>
+</div>

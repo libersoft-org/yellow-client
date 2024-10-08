@@ -40,24 +40,6 @@
  }
 </script>
 
-<div class="send">
- <div class="group">
-  <div class="label">Address to:</div>
-  <div class="input"><input type="text" bind:value={address} /></div>
- </div>
- <div class="group">
-  <div class="label">Amount:</div>
-  <div class="input"><input type="text" bind:value={amount} /></div>
-
-  <div class="error">{error}</div>
-
-  <div class="input">
-   <ComboBox options={$currencies} bind:value={currency} />
-  </div>
- </div>
- <Button text="Send" on:click={send} />
-</div>
-
 <style>
  input,
  select {
@@ -80,3 +62,21 @@
   gap: 10px;
  }
 </style>
+
+<div class="send">
+ <div class="group">
+  <div class="label">Address to:</div>
+  <div class="input"><input type="text" bind:value={address} /></div>
+ </div>
+ <div class="group">
+  <div class="label">Amount:</div>
+  <div class="input"><input type="text" bind:value={amount} /></div>
+
+  <div class="error">{error}</div>
+
+  <div class="input">
+   <ComboBox options={$currencies} bind:value={currency} />
+  </div>
+ </div>
+ <Button text="Send" on:click={send} />
+</div>

@@ -28,19 +28,6 @@
  }
 </script>
 
-<span class="combo-box">
- <input type="text" bind:value on:input={filterOptions} on:focus={toggleOptions} on:blur={hideOptions} placeholder="Zadejte nebo vyberte" />
- {#if showOptions}
-  <div class="options-container">
-   {#each filteredOptions as option}
-    <div class="option" on:click={() => selectOption(option)}>
-     {option}
-    </div>
-   {/each}
-  </div>
- {/if}
-</span>
-
 <style>
  .combo-box {
   position: relative;
@@ -65,3 +52,16 @@
   background-color: #f1f1f1;
  }
 </style>
+
+<span class="combo-box">
+ <input type="text" bind:value on:input={filterOptions} on:focus={toggleOptions} on:blur={hideOptions} placeholder="Zadejte nebo vyberte" />
+ {#if showOptions}
+  <div class="options-container">
+   {#each filteredOptions as option}
+    <div class="option" on:click={() => selectOption(option)}>
+     {option}
+    </div>
+   {/each}
+  </div>
+ {/if}
+</span>

@@ -52,16 +52,6 @@
  }
 </script>
 
-<div class="messages" bind:this={messages_elem}>
- {#each items as m (m.uid)}
-  {#if m.type === 'unseen_marker'}
-   <div class="unseen-marker">=v=v=v=v=v=Unseen messages=v=v=v=v=v=</div>
-  {:else}
-   <Message message={m} container_element={messages_elem} />
-  {/if}
- {/each}
-</div>
-
 <style>
  .messages {
   display: flex;
@@ -71,3 +61,13 @@
   overflow-y: auto;
  }
 </style>
+
+<div class="messages" bind:this={messages_elem}>
+ {#each items as m (m.uid)}
+  {#if m.type === 'unseen_marker'}
+   <div class="unseen-marker">=v=v=v=v=v=Unseen messages=v=v=v=v=v=</div>
+  {:else}
+   <Message message={m} container_element={messages_elem} />
+  {/if}
+ {/each}
+</div>

@@ -106,6 +106,24 @@
  }
 </script>
 
+<style>
+ .qr {
+  display: flex;
+  justify-content: center;
+ }
+
+ .cell {
+  padding: 5px;
+  border: 1px solid #000;
+ }
+
+ .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+ }
+</style>
+
 {#if qrCodeData}
  <div>Use the following QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
  <div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
@@ -140,21 +158,3 @@
  <Button width="96px" text="Print" on:click={print} />
  <Button width="96px" text="Regenerate" on:click={regenerate} />
 </div>
-
-<style>
- .qr {
-  display: flex;
-  justify-content: center;
- }
-
- .cell {
-  padding: 5px;
-  border: 1px solid #000;
- }
-
- .buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
- }
-</style>

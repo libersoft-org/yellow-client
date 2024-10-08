@@ -12,10 +12,6 @@
  }
 </script>
 
-<div class="item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- <img src={img} alt={title} />
-</div>
-
 <style>
  .item {
   padding: 5px;
@@ -29,3 +25,7 @@
   height: 20px;
  }
 </style>
+
+<div class="item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+ <img src={img} alt={title} />
+</div>

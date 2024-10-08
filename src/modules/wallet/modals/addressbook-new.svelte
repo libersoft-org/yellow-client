@@ -16,18 +16,6 @@
  }
 </script>
 
-<div class="addressbook-new">
- <div class="group">
-  <div class="bold">Alias:</div>
-  <input type="text" placeholder="Alias" bind:value={alias} bind:this={aliasElement} />
- </div>
- <div class="group">
-  <div class="bold">Address:</div>
-  <input type="text" placeholder="Address" bind:value={address} />
- </div>
- <Button text="Add" on:click={addToAddressBook} />
-</div>
-
 <style>
  .addressbook-new {
   display: flex;
@@ -40,3 +28,15 @@
   flex-direction: column;
  }
 </style>
+
+<div class="addressbook-new">
+ <div class="group">
+  <div class="bold">Alias:</div>
+  <input type="text" placeholder="Alias" bind:value={alias} bind:this={aliasElement} />
+ </div>
+ <div class="group">
+  <div class="bold">Address:</div>
+  <input type="text" placeholder="Address" bind:value={address} />
+ </div>
+ <Button text="Add" on:click={addToAddressBook} />
+</div>

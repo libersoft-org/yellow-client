@@ -19,15 +19,6 @@
  }
 </script>
 
-<div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click={handleClick} on:keydown={handleKeydown}>
- <slot>
-  {#if img}
-   <img src={img} alt={text} />
-  {/if}
-  <div>{text}</div>
- </slot>
-</div>
-
 <style>
  .button {
   display: flex;
@@ -59,3 +50,12 @@
   }
  }
 </style>
+
+<div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click={handleClick} on:keydown={handleKeydown}>
+ <slot>
+  {#if img}
+   <img src={img} alt={text} />
+  {/if}
+  <div>{text}</div>
+ </slot>
+</div>

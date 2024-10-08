@@ -29,17 +29,6 @@
  }
 </script>
 
-<div class="conversation">
- <ProfileBar {closeConversation} />
- <MessagesList
-  on:mousedown={() => {
-   console.log('MessagesList on:mousedown');
-   message_bar?.setBarFocus();
-  }}
- />
- <MessageBar bind:this={message_bar} />
-</div>
-
 <style>
  .conversation {
   display: flex;
@@ -50,3 +39,14 @@
   background-size: 400px;
  }
 </style>
+
+<div class="conversation">
+ <ProfileBar {closeConversation} />
+ <MessagesList
+  on:mousedown={() => {
+   console.log('MessagesList on:mousedown');
+   message_bar?.setBarFocus();
+  }}
+ />
+ <MessageBar bind:this={message_bar} />
+</div>

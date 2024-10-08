@@ -14,16 +14,6 @@
  }
 </script>
 
-<div class="modal">
- <div class="header">
-  <div class="title">{title}</div>
-  <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close-black.svg" alt="X" /></div>
- </div>
- <div class="body">
-  <slot></slot>
- </div>
-</div>
-
 <style>
  .modal {
   z-index: 100;
@@ -71,3 +61,13 @@
   color: #000;
  }
 </style>
+
+<div class="modal">
+ <div class="header">
+  <div class="title">{title}</div>
+  <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close-black.svg" alt="X" /></div>
+ </div>
+ <div class="body">
+  <slot></slot>
+ </div>
+</div>

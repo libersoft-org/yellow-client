@@ -43,6 +43,35 @@
  }
 </script>
 
+<style>
+ table {
+  border-spacing: 0;
+  border: 1px solid #000;
+  border-radius: 10px;
+  overflow: hidden;
+ }
+
+ th {
+  padding: 5px;
+  text-align: left;
+  background-color: #222;
+  color: #fff;
+ }
+
+ th.center {
+  text-align: center;
+ }
+
+ td {
+  padding: 5px;
+ }
+
+ .buttons {
+  display: flex;
+  gap: 10px;
+ }
+</style>
+
 <div class="buttons">
  <Button width="80px" text="Create wallet" on:click={showNewWalletModal} />
  <Button width="80px" text="Recover" on:click={recover} />
@@ -79,32 +108,3 @@
   />
  </Modal>
 {/if}
-
-<style>
- table {
-  border-spacing: 0;
-  border: 1px solid #000;
-  border-radius: 10px;
-  overflow: hidden;
- }
-
- th {
-  padding: 5px;
-  text-align: left;
-  background-color: #222;
-  color: #fff;
- }
-
- th.center {
-  text-align: center;
- }
-
- td {
-  padding: 5px;
- }
-
- .buttons {
-  display: flex;
-  gap: 10px;
- }
-</style>

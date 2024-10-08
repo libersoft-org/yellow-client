@@ -9,11 +9,6 @@
  }
 </script>
 
-<label class="switch">
- <input type="checkbox" bind:checked on:keydown={keyPress} />
- <span class="slider"></span>
-</label>
-
 <style>
  .switch {
   position: relative;
@@ -68,3 +63,8 @@
   outline: auto;
  }
 </style>
+
+<label class="switch">
+ <input type="checkbox" bind:checked on:keydown={keyPress} />
+ <span class="slider"></span>
+</label>

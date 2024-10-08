@@ -10,25 +10,6 @@
  }
 </script>
 
-<div class="addressbook">
- <Button text="Add to address book" on:click={addToAddressBookModal} />
- {#if $addressBook.length > 0}
-  <div class="items">
-   {#each $addressBook as a, index}
-    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
-     <div>{a.alias}</div>
-     <div>{a.address}</div>
-    </div>
-   {/each}
-  </div>
- {/if}
-</div>
-{#if isModalNewOpen}
- <Modal title="Add a new address to address book" onClose={() => (isModalNewOpen = false)}>
-  <ModalNew onClose={() => (isModalNewOpen = false)} />
- </Modal>
-{/if}
-
 <style>
  .addressbook {
   display: flex;
@@ -60,3 +41,22 @@
   background-color: #fd1;
  }
 </style>
+
+<div class="addressbook">
+ <Button text="Add to address book" on:click={addToAddressBookModal} />
+ {#if $addressBook.length > 0}
+  <div class="items">
+   {#each $addressBook as a, index}
+    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
+     <div>{a.alias}</div>
+     <div>{a.address}</div>
+    </div>
+   {/each}
+  </div>
+ {/if}
+</div>
+{#if isModalNewOpen}
+ <Modal title="Add a new address to address book" onClose={() => (isModalNewOpen = false)}>
+  <ModalNew onClose={() => (isModalNewOpen = false)} />
+ </Modal>
+{/if}

@@ -1,5 +1,3 @@
-<div class="loader"></div>
-
 <style>
  .loader {
   margin: 0 auto;
@@ -19,3 +17,5 @@
   }
  }
 </style>
+
+<div class="loader"></div>

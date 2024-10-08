@@ -56,30 +56,6 @@
  }
 </script>
 
-<div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
- {#if $active_account}
-  <div class="text">{$active_account?.settings?.title}</div>
-  <AccountStatusIcon a={active_account} />
- {:else}
-  {#if $accounts.length > 0}
-   <div class="text">SELECT ACCOUNT</div>
-  {/if}
-  {#if $accounts.length == 0}
-   <div class="text">CREATE ACCOUNT FIRST</div>
-  {/if}
- {/if}
-
- <div><img src="img/down.svg" alt="▼" /></div>
- {#if accountsVisible}
-  <div class="items open">
-   {#each $accounts as a (get(a).id)}
-    <AccountBarItem {a} {clickSelectAccount} />
-   {/each}
-   <AccountBarButton img="img/accounts.svg" title="Account management" click={clickAccountManagement} />
-  </div>
- {/if}
-</div>
-
 <style>
  .dropdown {
   display: flex;
@@ -120,3 +96,27 @@
   display: flex;
  }
 </style>
+
+<div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
+ {#if $active_account}
+  <div class="text">{$active_account?.settings?.title}</div>
+  <AccountStatusIcon a={active_account} />
+ {:else}
+  {#if $accounts.length > 0}
+   <div class="text">SELECT ACCOUNT</div>
+  {/if}
+  {#if $accounts.length == 0}
+   <div class="text">CREATE ACCOUNT FIRST</div>
+  {/if}
+ {/if}
+
+ <div><img src="img/down.svg" alt="▼" /></div>
+ {#if accountsVisible}
+  <div class="items open">
+   {#each $accounts as a (get(a).id)}
+    <AccountBarItem {a} {clickSelectAccount} />
+   {/each}
+   <AccountBarButton img="img/accounts.svg" title="Account management" click={clickAccountManagement} />
+  </div>
+ {/if}
+</div>

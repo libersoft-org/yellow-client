@@ -27,27 +27,6 @@
  }
 </script>
 
-{#if $conversationsArray != null}
- <div class="conversations">
-  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
-   <img src="img/add.svg" alt="New conversation" />
-   <div>New conversation</div>
-  </div>
-  <div class="items">
-   {#each $conversationsArray as c (c.address)}
-    {#key c.address}
-     <ConversationListItem {c} {clickItem} />
-    {/key}
-   {/each}
-  </div>
- </div>
- {#if isModalOpen}
-  <Modal title="New Conversation" onClose={() => (isModalOpen = false)}>
-   <ModalConversationNew onClose={() => (isModalOpen = false)} />
-  </Modal>
- {/if}
-{/if}
-
 <style>
  .conversations {
   display: flex;
@@ -78,3 +57,24 @@
   max-height: 100%;
  }
 </style>
+
+{#if $conversationsArray != null}
+ <div class="conversations">
+  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
+   <img src="img/add.svg" alt="New conversation" />
+   <div>New conversation</div>
+  </div>
+  <div class="items">
+   {#each $conversationsArray as c (c.address)}
+    {#key c.address}
+     <ConversationListItem {c} {clickItem} />
+    {/key}
+   {/each}
+  </div>
+ </div>
+ {#if isModalOpen}
+  <Modal title="New Conversation" onClose={() => (isModalOpen = false)}>
+   <ModalConversationNew onClose={() => (isModalOpen = false)} />
+  </Modal>
+ {/if}
+{/if}

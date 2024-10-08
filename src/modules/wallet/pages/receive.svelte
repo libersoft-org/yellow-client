@@ -80,35 +80,6 @@
  }
 </script>
 
-<div class="receive">
- {#if $selectedNetwork && $selectedAddress}
-  <div class="section">
-   <div class="bold">Your wallet address:</div>
-   <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
-    <div bind:this={addressElement}>{$selectedAddress.address}</div>
-    <img src="img/copy.svg" alt="Copy" />
-   </div>
-   <div class="qr"><img src={qrAddress} alt="Address" /></div>
-  </div>
-  <div class="section">
-   <div class="bold">Payment:</div>
-   <div>
-    <span>Amount:</span>
-    <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
-    Currency: <ComboBox options={$currencies} bind:value={currency} />
-    <div class="error">{error}</div>
-   </div>
-   <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
-    <div bind:this={paymentElement}>{paymentText}</div>
-    <img src="img/copy.svg" alt="Copy" />
-   </div>
-   <div class="qr"><img src={qrPayment} alt="Payment" /></div>
-  </div>
- {:else}
-  <div>No wallet selected</div>
- {/if}
-</div>
-
 <style>
  input,
  select {
@@ -155,3 +126,32 @@
   color: red;
  }
 </style>
+
+<div class="receive">
+ {#if $selectedNetwork && $selectedAddress}
+  <div class="section">
+   <div class="bold">Your wallet address:</div>
+   <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
+    <div bind:this={addressElement}>{$selectedAddress.address}</div>
+    <img src="img/copy.svg" alt="Copy" />
+   </div>
+   <div class="qr"><img src={qrAddress} alt="Address" /></div>
+  </div>
+  <div class="section">
+   <div class="bold">Payment:</div>
+   <div>
+    <span>Amount:</span>
+    <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
+    Currency: <ComboBox options={$currencies} bind:value={currency} />
+    <div class="error">{error}</div>
+   </div>
+   <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
+    <div bind:this={paymentElement}>{paymentText}</div>
+    <img src="img/copy.svg" alt="Copy" />
+   </div>
+   <div class="qr"><img src={qrPayment} alt="Payment" /></div>
+  </div>
+ {:else}
+  <div>No wallet selected</div>
+ {/if}
+</div>

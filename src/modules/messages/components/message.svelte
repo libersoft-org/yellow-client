@@ -64,17 +64,6 @@
  });
 </script>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
- <div bind:this={intersection_observer_element}></div>
- <div class="text">{@html processMessage(message.message)}</div>
- <div class="bottomline">
-  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
-  {#if message.is_outgoing}
-   <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
-  {/if}
- </div>
-</div>
-
 <style>
  .message {
   max-width: 60%;
@@ -124,3 +113,14 @@
   height: 24px;
  }
 </style>
+
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
+ <div bind:this={intersection_observer_element}></div>
+ <div class="text">{@html processMessage(message.message)}</div>
+ <div class="bottomline">
+  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+  {#if message.is_outgoing}
+   <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
+  {/if}
+ </div>
+</div>

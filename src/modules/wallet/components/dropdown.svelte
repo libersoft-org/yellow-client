@@ -10,11 +10,6 @@
  }
 </script>
 
-<div class="dropdown" role="button" tabindex="0" on:click={onClick} on:keydown={keyDropdown}>
- <div class="text">{text}</div>
- <img src="img/down-black.svg" alt="▼" />
-</div>
-
 <style>
  .dropdown {
   display: flex;
@@ -37,3 +32,8 @@
   height: 15px;
  }
 </style>
+
+<div class="dropdown" role="button" tabindex="0" on:click={onClick} on:keydown={keyDropdown}>
+ <div class="text">{text}</div>
+ <img src="img/down-black.svg" alt="▼" />
+</div>

@@ -40,11 +40,6 @@
  }
 </script>
 
-<div class="message-bar">
- <textarea class="message" bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
- <div class="icon" role="button" tabindex="0" on:click={clickSend} on:keydown={keySend}><img src="img/send.svg" alt="Send" /></div>
-</div>
-
 <style>
  .message-bar {
   display: flex;
@@ -80,3 +75,8 @@
   height: 32px;
  }
 </style>
+
+<div class="message-bar">
+ <textarea class="message" bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
+ <div class="icon" role="button" tabindex="0" on:click={clickSend} on:keydown={keySend}><img src="img/send.svg" alt="Send" /></div>
+</div>

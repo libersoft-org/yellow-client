@@ -150,48 +150,6 @@
  }
 </script>
 
-<svelte:head>
- <title>{product}</title>
-</svelte:head>
-
-<div class="app">
- {#if statusVisible}
-  <div class="status {status?.class ? status.class : ''}">
-   <div class="panel {status?.class ? status.class : ''}">
-    <div class="close" role="button" tabindex="0" on:click={clickStatusClose} on:keydown={keyStatusClose}><img src="img/close.svg" alt="X" /></div>
-   </div>
-   <div class="text">{status?.message ? status.message : ''}</div>
-  </div>
- {/if}
- <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
-  <Menu bind:isMenuOpen {product} {version} {link} />
-  <MenuBar bind:isMenuOpen />
-  <AccountBar />
-  <ModuleBar {onSelectModule} />
-  {#if selectedCorePage}
-   <svelte:component this={selectedCorePage.sidebar} />
-  {:else if selectedModule}
-   <svelte:component this={selectedModule.panels.sidebar} />
-  {:else}
-   <WelcomeSidebar />
-  {/if}
- </div>
- <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
-
- <div class="content">
-  {#if selectedCorePage}
-   <svelte:component this={selectedCorePage.content} />
-  {:else if selectedModule}
-   <svelte:component this={selectedModule.panels.content} />
-  {:else}
-   <WelcomeContent {product} {version} {link} />
-  {/if}
- </div>
-</div>
-{#if isWelcomeWizardOpen}
- <Wizard steps={welcomeWizardSteps} onClose={() => (isWelcomeWizardOpen = false)} />
-{/if}
-
 <style>
  .app {
   display: flex;
@@ -289,3 +247,45 @@
   }
  }
 </style>
+
+<svelte:head>
+ <title>{product}</title>
+</svelte:head>
+
+<div class="app">
+ {#if statusVisible}
+  <div class="status {status?.class ? status.class : ''}">
+   <div class="panel {status?.class ? status.class : ''}">
+    <div class="close" role="button" tabindex="0" on:click={clickStatusClose} on:keydown={keyStatusClose}><img src="img/close.svg" alt="X" /></div>
+   </div>
+   <div class="text">{status?.message ? status.message : ''}</div>
+  </div>
+ {/if}
+ <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
+  <Menu bind:isMenuOpen {product} {version} {link} />
+  <MenuBar bind:isMenuOpen />
+  <AccountBar />
+  <ModuleBar {onSelectModule} />
+  {#if selectedCorePage}
+   <svelte:component this={selectedCorePage.sidebar} />
+  {:else if selectedModule}
+   <svelte:component this={selectedModule.panels.sidebar} />
+  {:else}
+   <WelcomeSidebar />
+  {/if}
+ </div>
+ <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
+
+ <div class="content">
+  {#if selectedCorePage}
+   <svelte:component this={selectedCorePage.content} />
+  {:else if selectedModule}
+   <svelte:component this={selectedModule.panels.content} />
+  {:else}
+   <WelcomeContent {product} {version} {link} />
+  {/if}
+ </div>
+</div>
+{#if isWelcomeWizardOpen}
+ <Wizard steps={welcomeWizardSteps} onClose={() => (isWelcomeWizardOpen = false)} />
+{/if}

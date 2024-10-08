@@ -1,8 +1,3 @@
-<div class="title">Welcome to Yellow</div>
-<div class="motto">The best decentralized communication app</div>
-<div class="logo"><img src="img/logo.svg" alt="logo" /></div>
-<div class="description">This wizard will help you to set up your own Yellow account.</div>
-
 <style>
  .title {
   font-size: 25px;
@@ -45,3 +40,8 @@
   text-align: center;
  }
 </style>
+
+<div class="title">Welcome to Yellow</div>
+<div class="motto">The best decentralized communication app</div>
+<div class="logo"><img src="img/logo.svg" alt="logo" /></div>
+<div class="description">This wizard will help you to set up your own Yellow account.</div>

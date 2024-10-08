@@ -38,6 +38,23 @@
  }
 </script>
 
+<style>
+ .modal-edit-network {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+ }
+
+ .modal-edit-network input {
+  padding: 5px;
+ }
+
+ .modal-edit-network .buttons {
+  display: flex;
+  gap: 10px;
+ }
+</style>
+
 <div class="modal-edit-network">
  <div class="group">
   <div class="label">Name:</div>
@@ -80,20 +97,3 @@
   >
  </div>
 </div>
-
-<style>
- .modal-edit-network {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
- }
-
- .modal-edit-network input {
-  padding: 5px;
- }
-
- .modal-edit-network .buttons {
-  display: flex;
-  gap: 10px;
- }
-</style>

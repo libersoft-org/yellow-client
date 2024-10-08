@@ -48,31 +48,6 @@
  }
 </script>
 
-{#if isMenuOpen}
- <div class="overlay open" role="none" on:click={clickMenuClose}></div>
-{/if}
-<div class="menu {isMenuOpen ? 'open' : ''}">
- <div>
-  <div class="top">
-   <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
-  </div>
-  <div class="item" role="button" tabindex="0" on:click={clickLogout} on:keydown={keyLogout}>
-   <img src="img/logout.svg" alt="Logout" />
-   <div>Logout</div>
-  </div>
- </div>
- <div class="footer">
-  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
-   <div><img src="img/logo.svg" alt={product} /></div>
-   <div>{product}</div>
-  </div>
-  <div class="version">
-   <div>Version:</div>
-   <div class="bold">{version}</div>
-  </div>
- </div>
-</div>
-
 <style>
  .overlay {
   z-index: 999;
@@ -183,3 +158,28 @@
   font-size: 14px;
  }
 </style>
+
+{#if isMenuOpen}
+ <div class="overlay open" role="none" on:click={clickMenuClose}></div>
+{/if}
+<div class="menu {isMenuOpen ? 'open' : ''}">
+ <div>
+  <div class="top">
+   <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
+  </div>
+  <div class="item" role="button" tabindex="0" on:click={clickLogout} on:keydown={keyLogout}>
+   <img src="img/logout.svg" alt="Logout" />
+   <div>Logout</div>
+  </div>
+ </div>
+ <div class="footer">
+  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
+   <div><img src="img/logo.svg" alt={product} /></div>
+   <div>{product}</div>
+  </div>
+  <div class="version">
+   <div>Version:</div>
+   <div class="bold">{version}</div>
+  </div>
+ </div>
+</div>

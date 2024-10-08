@@ -57,6 +57,40 @@
  }
 </script>
 
+<style>
+ .form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+ }
+
+ .form .group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+ }
+
+ .form .group .label {
+  font-size: 15px;
+  padding-left: 5px;
+  font-weight: bold;
+ }
+
+ .form .group input {
+  padding: 10px;
+  border: 1px solid #999;
+  border-radius: 10px;
+ }
+
+ .form .error {
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f33;
+ }
+</style>
+
 <div class="form">
  <div class="group">
   <div class="label">Title:</div>
@@ -92,37 +126,3 @@
   <Button on:click={clickSave} text="Save" />
  {/if}
 </div>
-
-<style>
- .form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
- }
-
- .form .group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
- }
-
- .form .group .label {
-  font-size: 15px;
-  padding-left: 5px;
-  font-weight: bold;
- }
-
- .form .group input {
-  padding: 10px;
-  border: 1px solid #999;
-  border-radius: 10px;
- }
-
- .form .error {
-  display: flex;
-  gap: 5px;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #f33;
- }
-</style>

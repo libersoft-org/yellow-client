@@ -13,10 +13,6 @@
  }
 </script>
 
-<div class="bar">
- <div class="menu" role="button" tabindex="0" on:click={menuClick} on:keydown={menuKey}><img src="img/menu.svg" alt="☰" /></div>
-</div>
-
 <style>
  .bar {
   display: flex;
@@ -37,3 +33,7 @@
   height: 30px;
  }
 </style>
+
+<div class="bar">
+ <div class="menu" role="button" tabindex="0" on:click={menuClick} on:keydown={menuKey}><img src="img/menu.svg" alt="☰" /></div>
+</div>

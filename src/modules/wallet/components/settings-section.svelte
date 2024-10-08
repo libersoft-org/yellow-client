@@ -12,8 +12,6 @@
  }
 </script>
 
-<div class="section {active ? 'active' : ''}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>{label}</div>
-
 <style>
  .section {
   padding: 10px;
@@ -30,3 +28,5 @@
   background-color: #fd1;
  }
 </style>
+
+<div class="section {active ? 'active' : ''}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>{label}</div>
