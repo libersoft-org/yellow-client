@@ -7,6 +7,7 @@
  import Send from './send.svelte';
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
+ import History from './history.svelte';
  import AddressBook from './addressbook.svelte';
  import Settings from './settings.svelte';
  import Dropdown from '../components/dropdown.svelte';
@@ -28,6 +29,7 @@
  selectedNetwork.subscribe(v => {
   console.log('xxselectedNetwork', v);
  });
+
  selectedAddress.subscribe(v => {
   console.log('xxselectedAddress', v);
  });
@@ -52,10 +54,6 @@
    event.preventDefault();
    clickCopyAddress();
   }
- }
-
- function getTransactionHistory() {
-  window.open($selectedNetwork.explorerURL + '/address/' + $selectedAddress.address, '_blank');
  }
 </script>
 
@@ -234,7 +232,7 @@
     <Button width="80px" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('send')} />
     <Button width="80px" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('receive')} />
     <Button width="80px" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('balance')} />
-    <Button width="80px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} on:click={getTransactionHistory} />
+    <Button width="80px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('history')} />
     <Button width="80px" text="Address book" on:click={() => setSection('addressbook')} />
     <Button width="80px" text="Settings" on:click={() => setSection('settings')} />
    </div>
@@ -245,6 +243,8 @@
      <Receive />
     {:else if section == 'balance'}
      <Balance />
+    {:else if section == 'history'}
+     <History />
     {:else if section == 'addressbook'}
      <AddressBook />
     {:else if section == 'settings'}
