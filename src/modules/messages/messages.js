@@ -153,12 +153,9 @@ export function sendMessage(text) {
 
 function addMessage(arr, msg) {
  let m = arr.find(m => m.uid === msg.uid);
- if (m)
- {
+ if (m) {
   for (let key in msg) m[key] = msg[key];
- }
- else
- {
+ } else {
   arr.unshift(msg);
  }
 }
@@ -206,8 +203,7 @@ function eventNewMessage(acc, event) {
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
- if (msg.address_from === sc?.address || msg.address_to === sc?.address)
- {
+ if (msg.address_from === sc?.address || msg.address_to === sc?.address) {
   addMessage(get(messagesArray), msg);
   messagesArray.update(v => v);
  }
