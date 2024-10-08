@@ -22,6 +22,18 @@
   hideSidebarMobile.set(true);
  });
 
+ function clickBackButton() {
+  console.log('hideSidebarMobile.set(false)');
+  hideSidebarMobile.set(false);
+ }
+
+ function keyBackButton() {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickBackButton();
+  }
+ }
+
  function setSection(name) {
   section = name;
  }
@@ -78,9 +90,17 @@
 
  .wallet .top-bar .left {
   display: flex;
-  flex-direction: column;
-  align-items: start;
+  flex-direction: row;
+  align-items: center;
   flex: 1;
+  gap: 10px;
+ }
+
+ .wallet .top-bar .left .button {
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
  }
 
  .wallet .top-bar .right {
@@ -180,19 +200,20 @@
   justify-content: center;
   gap: 10px;
  }
+
+ @media (min-width: 769px) {
+  .wallet .top-bar .left .button {
+   display: none;
+  }
+ }
 </style>
 
 <div class="wallet">
  <div class="top-bar">
   <div class="left">
-   <img
-    src="img/back-white.svg"
-    width="40px"
-    on:click={() => {
-     console.log('hideSidebarMobile.set(false)');
-     hideSidebarMobile.set(false);
-    }}
-   />
+   <div class="button" role="button" tabindex="0" on:click={clickBackButton} on:keydown={keyBackButton}>
+    <img src="img/back-white.svg" alt="Back" />
+   </div>
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (isModalNetworksOpen = true)} onClose={() => (isModalNetworksOpen = true)} />
   </div>
   <div class="right">
