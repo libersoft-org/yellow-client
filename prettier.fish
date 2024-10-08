@@ -2,5 +2,5 @@
 
 nvm use
 
-prettier --config prettier-libersoft.json --write "src/**/*.{js,ts,css,html}"
+prettier --config prettier-libersoft.json --write "src/**/*.{js,ts,css,html,svelte}"
 sync
