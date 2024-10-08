@@ -1,5 +1,5 @@
 <script>
- import { wallets, addAddress, selectAddress, addWallet, walletAddresses } from '../wallet.ts';
+ import { wallets, addAddress, addWallet, walletAddresses } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
  import Icon from '../components/table-icon.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
@@ -119,7 +119,6 @@
      <td>{address.name}</td>
      <td><Address address={address.address} /></td>
      <td class="icons">
-      <Icon title="Select" icon="img/send.svg" on:click={() => selectAddress(wallet, address)} />
       <Icon title="Rename" icon="img/edit.svg" on:click={() => renameAddress(wallet, address)} />
       <Icon title="Hide" icon="img/modules/wallet/hide.svg" on:click={() => deleteAddress(wallet, address)} />
      </td>

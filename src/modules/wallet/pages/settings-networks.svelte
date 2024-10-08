@@ -2,6 +2,7 @@
  import { default_networks } from '../networks.js';
  import { addNetwork, removeNetwork, networks } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
+ import Icon from '../components/table-icon.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalEditNetwork from '../modals/edit-network.svelte';
  import ModalTokenList from '../modals/token-list.svelte';
@@ -24,6 +25,12 @@
 </script>
 
 <style>
+ .networks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+ }
+
  .items {
   border: 1px solid #000;
   border-radius: 10px;
@@ -32,6 +39,7 @@
 
  .items .item {
   display: flex;
+  align-items: center;
   gap: 5px;
   padding: 5px;
  }
@@ -52,38 +60,48 @@
   width: 20px;
   height: 20px;
  }
+
+ .items .item .name {
+  flex-grow: 1;
+ }
+
+ .buttons {
+  display: flex;
+  gap: 5px;
+ }
 </style>
 
 <div class="networks">
- my networks:
+ <div class="bold">My networks:</div>
  <div class="items">
   {#each $networks as n, index}
    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
     {#if n.currency?.iconURL}
      <img src={n.currency.iconURL} alt="" />
     {/if}
-    <div>{n.name}</div>
+    <div class="name">{n.name}</div>
+    <div class="buttons">
+     <Icon icon="img/coin.svg" title="Token list" on:click={() => tokenList(n)} />
+     <Icon icon="img/edit.svg" title="Edit network" on:click={() => editNetwork(n)} />
+     <Icon icon="img/del.svg" title="Delete network" on:click={() => removeNetwork(n)} />
+    </div>
    </div>
-   <Button on:click={() => tokenList(n)}>Token list</Button>
-   <Button on:click={() => editNetwork(n)}>Edit network</Button>
-   <Button on:click={() => removeNetwork(n)}>Remove network</Button>
   {/each}
  </div>
 
- default networks:
+ <div class="bold">Default networks:</div>
  <div class="items">
   {#each $default_networks as n, index}
    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
     {#if n.currency?.iconURL}
      <img src={n.currency.iconURL} alt="" />
     {/if}
-    <div>{n.name}</div>
-    <Button on:click={() => addNetwork(n)}>Add network</Button>
+    <div class="name">{n.name}</div>
+    <Icon icon="img/add-black.svg" title="Add to my networks" on:click={() => addNetwork(n)} />
    </div>
   {/each}
  </div>
 </div>
-
 {#if isModalEditNetworkOpen}
  <Modal title="Edit network" onClose={() => (isModalEditNetworkOpen = false)}>
   <ModalEditNetwork item={modalEditNetworkItem} onClose={() => (isModalEditNetworkOpen = false)} />
