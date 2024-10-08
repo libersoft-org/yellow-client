@@ -70,16 +70,7 @@
 </script>
 
 <style>
- .wallet {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  height: 100vh;
-  background: url('/img/background.webp') repeat;
-  background-size: 400px;
- }
-
- .wallet .top-bar {
+ .top-bar {
   display: flex;
   align-items: center;
   width: calc(100% - 20px);
@@ -88,7 +79,7 @@
   background-color: #222;
  }
 
- .wallet .top-bar .left {
+ .top-bar .left {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -96,24 +87,32 @@
   gap: 10px;
  }
 
- .wallet .top-bar .left .button {
+ .top-bar .left .button {
   padding: 5px;
   width: 30px;
   height: 30px;
   cursor: pointer;
  }
 
- .wallet .top-bar .right {
+ .top-bar .right {
   display: flex;
   flex-direction: column;
   flex: 1;
   align-items: end;
  }
 
+ .wallet {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: calc(100vh - 72px);
+  background: url('/img/background.webp') repeat;
+  background-size: 400px;
+  overflow: auto;
+ }
+
  .wallet .content {
-  width: 768px;
   max-width: calc(100% - 10px);
-  /*overflow: auto;*/
   margin: 10px;
   border: 1px solid #000;
   border-radius: 10px;
@@ -198,6 +197,7 @@
  .body .buttons {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
  }
 
@@ -208,18 +208,18 @@
  }
 </style>
 
-<div class="wallet">
- <div class="top-bar">
-  <div class="left">
-   <div class="button" role="button" tabindex="0" on:click={clickBackButton} on:keydown={keyBackButton}>
-    <img src="img/back-white.svg" alt="Back" />
-   </div>
-   <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (isModalNetworksOpen = true)} onClose={() => (isModalNetworksOpen = true)} />
+<div class="top-bar">
+ <div class="left">
+  <div class="button" role="button" tabindex="0" on:click={clickBackButton} on:keydown={keyBackButton}>
+   <img src="img/back-white.svg" alt="Back" />
   </div>
-  <div class="right">
-   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (isModalWalletsOpen = true)} onClose={() => (isModalWalletsOpen = true)} />
-  </div>
+  <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (isModalNetworksOpen = true)} onClose={() => (isModalNetworksOpen = true)} />
  </div>
+ <div class="right">
+  <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (isModalWalletsOpen = true)} onClose={() => (isModalWalletsOpen = true)} />
+ </div>
+</div>
+<div class="wallet">
  <div class="content">
   <div class="body">
    <div class="top">
@@ -248,7 +248,6 @@
      {/if}
     </div>
    </div>
-
    <div class="buttons">
     <Button width="80px" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('send')} />
     <Button width="80px" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('receive')} />
