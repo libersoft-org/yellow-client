@@ -13,9 +13,14 @@
  let error = '';
  let currency;
 
- $: if (!currency || !get(currencies).find(c => c == currency)) {
-  currency = $selectedMainCurrencySymbol;
-  console.log('reset currency:', currency, get(currencies));
+ $: resetCurrency(currencies);
+
+ function resetCurrency(currencies)
+ {
+  if (!currency || !get(currencies).find(c => c == currency)) {
+   console.log('reset currency:', currency, get(currencies));
+   currency = $selectedMainCurrencySymbol;
+  }
  }
 
  $: console.log('currencies:', $currencies);

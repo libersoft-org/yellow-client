@@ -11,7 +11,7 @@
 		"@sveltejs/kit": "*",
 		"@sveltejs/vite-plugin-svelte": "*",
 		"prettier": "*",
-		"prettier-plugin-svelte": "*",
+		"prettier-plugin-svelte": "^3.2.7",
 		"svelte": "*",
 		"vite": "*"
 	},

@@ -13,6 +13,7 @@
  }
 
  function selectOption(v) {
+  console.log('selectOption:', v);
   value = v;
   showOptions = false;
  }
@@ -21,10 +22,16 @@
   showOptions = true;
  }
 
+ function blur() {
+  console.log('blur');
+  hideOptions();
+ }
+
  function hideOptions() {
   setTimeout(() => {
+   console.log('showOptions = false;');
    showOptions = false;
-  }, 100);
+  }, 1);
  }
 </script>
 
@@ -54,7 +61,7 @@
 </style>
 
 <span class="combo-box">
- <input type="text" bind:value on:input={filterOptions} on:focus={toggleOptions} on:blur={hideOptions} placeholder="Zadejte nebo vyberte" />
+ <input type="text" bind:value on:input={filterOptions} on:focus={toggleOptions} on:blur={blur} placeholder="Zadejte nebo vyberte" />
  {#if showOptions}
   <div class="options-container">
    {#each filteredOptions as option}

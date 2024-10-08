@@ -104,7 +104,7 @@ export const balance = writable<Balance>({
 });
 export const balanceTimestamp = writable<Date | null>(null);
 
-let refreshTimer: number = setInterval(refresh, 10000);
+let refreshTimer: number = setInterval(refresh, 30000);
 
 function resetBalance(): void {
  balance.set({
@@ -289,14 +289,14 @@ export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> 
 }
 
 export async function getBalance(): Promise<void> {
- console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', provider);
+ //console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', provider);
  const net = get(selectedNetwork);
  const addr = get(selectedAddress);
  if (net && provider && addr) {
   try {
-   console.log('Getting balance for', addr.address);
+   //console.log('Getting balance for', addr.address);
    const balanceBigNumber = await provider.getBalance(addr.address);
-   console.log('balanceBigNumber', balanceBigNumber);
+   //console.log('balanceBigNumber', balanceBigNumber);
    balanceTimestamp.set(new Date());
    const balanceFormated = formatEther(balanceBigNumber);
    balance.set({
@@ -310,11 +310,10 @@ export async function getBalance(): Promise<void> {
     },
    });
    const rates = await exchangeRates();
-   console.log('got1 rates:', rates);
+   //console.log('got1 rates:', rates);
    const rates2 = rates['rates'];
-   console.log('got2 rates:', rates2);
+   //console.log('got2 rates:', rates2);
    if (rates2) {
-    console.log('got rates:', rates2);
     balance.update(b => {
      const amount_str = b?.crypto?.amount;
      const currency = b?.crypto?.currency;
@@ -344,10 +343,10 @@ export async function getBalance(): Promise<void> {
 
 async function exchangeRates(): Promise<void> {
  const url = 'https://api.coinbase.com/v2/exchange-rates?currency=USD';
- console.log('fetch exchangeRates...', url);
+ //console.log('fetch exchangeRates...', url);
  const response = await fetch(url);
  const data = await response.json();
- console.log('data:', data);
+ //console.log('data:', data);
  return data['data'];
 }
 
