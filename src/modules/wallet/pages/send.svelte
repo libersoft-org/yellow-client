@@ -8,7 +8,9 @@
  let currency;
  let address;
  let amount = 0;
+ let fee = 0;
  let etherValue;
+ let etherValueFee;
  let error;
 
  $: if (!currency || !get(currencies).find(c => c == currency)) {
@@ -20,6 +22,7 @@
  $: console.log('currency:', currency);
 
  $: updateAmount(amount);
+ $: updateFee(fee);
 
  function updateAmount(amount) {
   console.log('amount:', amount);
@@ -34,9 +37,24 @@
   error = '';
  }
 
+ function updateFee(amount) {
+  console.log('fee:', amount);
+  try {
+   etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
+   console.log('etherValue:', etherValue.toString());
+  } catch (e) {
+   error = 'Invalid fee';
+   console.log('Invalid fee:', e);
+   return;
+  }
+  error = '';
+ }
+
  function send() {
-  // TODO
-  console.log('SEND:', address, etherValue, currency);
+  console.log('SEND:', address, etherValue, etherValueFee, currency);
+
+
+
  }
 </script>
 
@@ -65,18 +83,24 @@
 
 <div class="send">
  <div class="group">
-  <div class="label">Address to:</div>
+  <div class="label">Send to:</div>
   <div class="input"><input type="text" bind:value={address} /></div>
+ </div>
+ <div class="input">
+  Currency:
+  <ComboBox options={$currencies} bind:value={currency} />
  </div>
  <div class="group">
   <div class="label">Amount:</div>
   <div class="input"><input type="text" bind:value={amount} /></div>
 
+
+ </div>
+ <div class="group">
+  <div class="label">Transaction fee:</div>
+  <div class="input"><input type="text" bind:value={fee} /></div>
   <div class="error">{error}</div>
 
-  <div class="input">
-   <ComboBox options={$currencies} bind:value={currency} />
-  </div>
  </div>
  <Button text="Send" on:click={send} />
 </div>
