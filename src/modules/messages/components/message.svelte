@@ -33,24 +33,22 @@
 
  function processMessage(content) {
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
-  console.log('containsHtml:', containsHtml);
+  //console.log('containsHtml:', containsHtml);
   return containsHtml ? saneHtml(content) : linkify(content.replaceAll(' ', '&nbsp;')).replaceAll("\n", '<br />');
  }
 
  function linkify(text) {
   const urlPattern = /(https?:\/\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})?(?::\d+)?(?:\/[^\s]*)?)/g;
-  console.log('linkify:', text);
+  //console.log('linkify:', text);
   let result = text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
-  console.log('linkify result:', result);
+  //console.log('linkify result:', result);
   return result;
  }
 
-
-
  onMount(() => {
-  console.log('onMount message:', message);
+  //console.log('onMount message:', message);
   if (!message.seen && !message.is_outgoing) {
-   console.log('create observer');
+   //console.log('create observer');
    observer = new IntersectionObserver((entries) => {
     console.log(entries);
     is_visible = entries[0].isIntersecting;

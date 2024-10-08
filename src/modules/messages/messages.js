@@ -19,6 +19,7 @@ class Message {
   Object.assign(this, data);
   this.acc = new WeakRef(acc);
   this.stripped_text = stripHtml(this.message);
+  console.log('Message address_from: ' + this.address_from + ' acc:' + acc.credentials.address);
   this.is_outgoing = this.address_from === acc.credentials.address;
   if (this.address_to === acc.credentials.address) this.remote_address = this.address_from;
   else this.remote_address = this.address_to;
@@ -145,24 +146,37 @@ export function sendMessage(text) {
   messagesArray.update(v => v);
  });
 
- messagesArray.update(v => [message, ...v]);
+ addMessage(get(messagesArray), message);
+ messagesArray.update(v => v);
  updateConversationsArray(message);
 }
 
+function addMessage(arr, msg) {
+ let m = arr.find(m => m.uid === msg.uid);
+ if (m)
+ {
+  for (let key in msg) m[key] = msg[key];
+ }
+ else
+ {
+  arr.unshift(msg);
+ }
+}
+
 function updateConversationsArray(msg) {
- const address_to = msg.address_to;
  const msg_created = msg.created;
  let ca = get(conversationsArray);
  const conversation = ca.find(c => c.address === msg.remote_address);
- console.log('updateConversationsArray', conversation, address_to, msg_created);
+ console.log('updateConversationsArray', conversation, msg_created);
 
  if (conversation) {
   conversation.last_message_date = msg_created;
   conversation.last_message_text = msg.stripped_text;
-  const new_unread_count = msg.is_outgoing ? 0 : 1;
-  conversation.unread_count = conversation.unread_count ? conversation.unread_count + new_unread_count : new_unread_count;
+  if (!msg.seen && msg.from_address != msg.acc.deref()?.credentials.address) {
+   const new_unread_count = msg.is_outgoing ? 0 : 1;
+   conversation.unread_count = conversation.unread_count ? conversation.unread_count + new_unread_count : new_unread_count;
+  }
   const index = ca.indexOf(conversation);
-
   // shift the affected conversation to the top:
   ca.splice(index, 1);
   ca.unshift(conversation);
@@ -185,14 +199,22 @@ export function openNewConversation(address) {
 }
 
 function eventNewMessage(acc, event) {
+ if (acc !== get(active_account)) return;
  const res = event.detail;
  if (!res.data) return;
  const msg = new Message(acc, res.data);
  msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
- if (msg.address_from === sc?.address || msg.address_to === sc?.address) messagesArray.update(v => [msg, ...v]);
- if (msg.address_from !== sc?.address || !get(isClientFocused)) showNotification(acc, msg);
+ if (msg.address_from === sc?.address || msg.address_to === sc?.address)
+ {
+  addMessage(get(messagesArray), msg);
+  messagesArray.update(v => v);
+ }
+ if (msg.address_from !== acc.credentials.address) {
+  if (msg.address_from !== sc?.address || !get(isClientFocused)) showNotification(acc, msg);
+ }
+ console.log('eventNewMessage updateConversationsArray with msg:', msg);
  updateConversationsArray(msg);
 }
 
