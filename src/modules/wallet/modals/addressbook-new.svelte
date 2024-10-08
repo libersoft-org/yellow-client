@@ -12,6 +12,7 @@
  function addToAddressBook() {
   console.log('NEW ITEM IN ADDRESS BOOK:', alias, address);
   $addressBook.push({ alias, address });
+  addressBook.set($addressBook);
   onClose();
  }
 
