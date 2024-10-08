@@ -21,7 +21,6 @@
   isModalTokenListOpen = true;
   modalEditNetworkItem = net;
  }
-
 </script>
 
 <style>

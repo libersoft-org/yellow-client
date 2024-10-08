@@ -41,11 +41,11 @@
 
 <div class="modal-edit-network">
  <div class="group">
-  <div class="label">Network name: {item.name} </div>
+  <div class="label">Network name: {item.name}</div>
  </div>
  <div class="group">
   <div class="label">Tokens:</div>
-  <hr>
+  <hr />
   {#each item_tokens as token, i}
    <div class="group">
     Name: <input bind:value={token.name} />
@@ -55,8 +55,8 @@
     <Button text="Remove token" on:click={() => (item_tokens = item_tokens.filter((v, j) => j !== i))} />
    </div>
   {/each}
-  <hr>
-  <Button text="Add token" on:click={() => (item_tokens = [...item_tokens, {name: '',icon:'', symbol: '', contract_address: ''}])} />
+  <hr />
+  <Button text="Add token" on:click={() => (item_tokens = [...item_tokens, { name: '', icon: '', symbol: '', contract_address: '' }])} />
  </div>
 
  <div class="buttons">
