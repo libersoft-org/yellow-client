@@ -202,7 +202,7 @@
  }
 
  @media (min-width: 769px) {
-  .wallet .top-bar .left .button {
+  .top-bar .left .button {
    display: none;
   }
  }
