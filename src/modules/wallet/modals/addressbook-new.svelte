@@ -14,6 +14,13 @@
   $addressBook.push({ alias, address });
   onClose();
  }
+
+ function keyEnter() {
+  if (event.key === 'Enter') {
+   event.preventDefault();
+   addToAddressBook();
+  }
+ }
 </script>
 
 <style>
@@ -32,11 +39,11 @@
 <div class="addressbook-new">
  <div class="group">
   <div class="bold">Alias:</div>
-  <input type="text" placeholder="Alias" bind:value={alias} bind:this={aliasElement} />
+  <input type="text" placeholder="Alias" bind:value={alias} bind:this={aliasElement} on:keydown={keyEnter} />
  </div>
  <div class="group">
   <div class="bold">Address:</div>
-  <input type="text" placeholder="Address" bind:value={address} />
+  <input type="text" placeholder="Address" bind:value={address} on:keydown={keyEnter} />
  </div>
  <Button text="Add" on:click={addToAddressBook} />
 </div>

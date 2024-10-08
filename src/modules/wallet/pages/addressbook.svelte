@@ -17,6 +17,10 @@
   gap: 10px;
  }
 
+ .buttons {
+  display: flex;
+ }
+
  .items {
   border: 1px solid #000;
   border-radius: 10px;
@@ -43,7 +47,9 @@
 </style>
 
 <div class="addressbook">
- <Button text="Add to address book" on:click={addToAddressBookModal} />
+ <div class="buttons">
+  <Button text="Add to address book" on:click={addToAddressBookModal} />
+ </div>
  {#if $addressBook.length > 0}
   <div class="items">
    {#each $addressBook as a, index}
