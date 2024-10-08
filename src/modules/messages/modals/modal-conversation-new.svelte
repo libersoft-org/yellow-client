@@ -22,6 +22,12 @@
  }
 </script>
 
+<div class="group">
+ <div class="label">Address:</div>
+ <div><input type="text" placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} /></div>
+ <Button on:click={clickOpen}>Open</Button>
+</div>
+
 <style>
  .group {
   display: flex;
@@ -35,9 +41,3 @@
   font-weight: bold;
  }
 </style>
-
-<div class="group">
- <div class="label">Address:</div>
- <div><input type="text" placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} /></div>
- <Button on:click={clickOpen}>Open</Button>
-</div>

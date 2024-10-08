@@ -1,7 +1,7 @@
 <script>
  import { setMessageSeen, saneHtml } from '../messages.js';
- import {onDestroy, onMount} from "svelte";
- import { isClientFocused }  from '../../../core/core.js';
+ import { onDestroy, onMount } from 'svelte';
+ import { isClientFocused } from '../../../core/core.js';
  export let message;
  export let container_element;
  let seen_txt;
@@ -22,19 +22,18 @@
    console.log('not setting seen because already set');
    observer.disconnect();
    is_visible = false;
-  }
-  else
+  } else
    setMessageSeen(message, () => {
     console.log('seen set succesfully, disconnecting observer.');
     observer.disconnect();
     is_visible = false;
-   })
+   });
  }
 
  function processMessage(content) {
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
   //console.log('containsHtml:', containsHtml);
-  return containsHtml ? saneHtml(content) : linkify(content.replaceAll(' ', '&nbsp;')).replaceAll("\n", '<br />');
+  return containsHtml ? saneHtml(content) : linkify(content.replaceAll(' ', '&nbsp;')).replaceAll('\n', '<br />');
  }
 
  function linkify(text) {
@@ -49,10 +48,12 @@
   //console.log('onMount message:', message);
   if (!message.seen && !message.is_outgoing) {
    //console.log('create observer');
-   observer = new IntersectionObserver((entries) => {
-    console.log(entries);
-    is_visible = entries[0].isIntersecting;
-    }, { threshold: 0.8, root: container_element }
+   observer = new IntersectionObserver(
+    entries => {
+     console.log(entries);
+     is_visible = entries[0].isIntersecting;
+    },
+    { threshold: 0.8, root: container_element }
    );
    observer.observe(intersection_observer_element);
   }
@@ -61,8 +62,18 @@
  onDestroy(() => {
   if (observer) observer.disconnect();
  });
-
 </script>
+
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
+ <div bind:this={intersection_observer_element}></div>
+ <div class="text">{@html processMessage(message.message)}</div>
+ <div class="bottomline">
+  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
+  {#if message.is_outgoing}
+   <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
+  {/if}
+ </div>
+</div>
 
 <style>
  .message {
@@ -113,14 +124,3 @@
   height: 24px;
  }
 </style>
-
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
- <div bind:this={intersection_observer_element}></div>
- <div class="text">{@html processMessage(message.message)}</div>
- <div class="bottomline">
-  <div class="time">{new Date(message.created.replace(' ', 'T') + 'Z').toLocaleString()}</div>
-  {#if message.is_outgoing}
-   <div class="checkmark"><img src={checkmarks_img} alt="{seen_txt}" /></div>
-  {/if}
- </div>
-</div>

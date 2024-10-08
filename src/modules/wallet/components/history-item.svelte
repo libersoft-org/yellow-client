@@ -18,6 +18,16 @@
  }
 </script>
 
+<div class="item {className}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+ <div class="transaction-id">{transactionID}</div>
+ <div class="block-id">{blockID}</div>
+ <div class="from">{from}</div>
+ <div class="to">{to}</div>
+ <div class="amount">{amount}</div>
+ <div class="symbol">{symbol}</div>
+ <div class="timestamp">{timestamp}</div>
+</div>
+
 <style>
  .item {
   display: flex;
@@ -39,13 +49,3 @@
   background-color: #fd1;
  }
 </style>
-
-<div class="item {className}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- <div class="transaction-id">{transactionID}</div>
- <div class="block-id">{blockID}</div>
- <div class="from">{from}</div>
- <div class="to">{to}</div>
- <div class="amount">{amount}</div>
- <div class="symbol">{symbol}</div>
- <div class="timestamp">{timestamp}</div>
-</div>

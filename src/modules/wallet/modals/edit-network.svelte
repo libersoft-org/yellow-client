@@ -2,7 +2,7 @@
  import { networks } from '../wallet.ts';
  import { writable } from 'svelte/store';
  import Button from '../../../core/components/button.svelte';
- import { onMount } from "svelte";
+ import { onMount } from 'svelte';
 
  export let onClose;
  export let item = null;
@@ -22,41 +22,21 @@
    item_currency_iconURL = item.currency.iconURL;
    item_chain_id = item.chainID;
    item_explorer_url = item.explorerURL;
-   item_rpc_urls = item.rpcURLs.map((v) => v);
+   item_rpc_urls = item.rpcURLs.map(v => v);
   }
  });
 
- function save()
- {
+ function save() {
   item.name = item_name;
   item.currency.symbol = item_currency_symbol;
   item.currency.iconURL = item_currency_iconURL;
   item.chainId = item_chain_id;
   item.explorerURL = item_explorer_url;
   item.rpcURL = item_rpc_urls;
-  networks.update((v) => v);
+  networks.update(v => v);
   onClose();
  }
-
 </script>
-
-<style>
- .modal-edit-network {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
- }
-
- .modal-edit-network input {
-  padding: 5px;
- }
-
- .modal-edit-network .buttons {
-  display: flex;
-  gap: 10px;
- }
-
- </style>
 
 <div class="modal-edit-network">
  <div class="group">
@@ -84,16 +64,36 @@
   {#each item_rpc_urls as rpc_url, i}
    <div class="group">
     <input bind:value={item_rpc_urls[i]} />
-    <Button text="Remove RPC URL" on:click={() => item_rpc_urls = item_rpc_urls.filter((v, j) => j !== i)}/>
+    <Button text="Remove RPC URL" on:click={() => (item_rpc_urls = item_rpc_urls.filter((v, j) => j !== i))} />
    </div>
   {/each}
-  <Button text="Add RPC URL" on:click={() => item_rpc_urls = [...item_rpc_urls, '']}/>
+  <Button text="Add RPC URL" on:click={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
  </div>
-
 
  <div class="buttons">
   <Button on:click={() => onClose()}>Cancel</Button>
-  <Button on:click={() => {save(); onClose();}}>Save</Button>
+  <Button
+   on:click={() => {
+    save();
+    onClose();
+   }}>Save</Button
+  >
  </div>
 </div>
 
+<style>
+ .modal-edit-network {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+ }
+
+ .modal-edit-network input {
+  padding: 5px;
+ }
+
+ .modal-edit-network .buttons {
+  display: flex;
+  gap: 10px;
+ }
+</style>

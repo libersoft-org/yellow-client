@@ -1,3 +1,7 @@
+<div class="welcome">
+ <div class="label">Select your conversation<br /> or start a new one</div>
+</div>
+
 <style>
  .welcome {
   display: flex;
@@ -18,7 +22,3 @@
   background-color: rgba(255, 221, 17, 0.3);
  }
 </style>
-
-<div class="welcome">
- <div class="label">Select your conversation<br /> or start a new one</div>
-</div>

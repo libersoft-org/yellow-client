@@ -21,7 +21,7 @@
 
  afterUpdate(() => {
   console.log('afterUpdate: wasScrolledToBottom:', wasScrolledToBottom);
-  if (wasScrolledToBottom) scrollToBottom()
+  if (wasScrolledToBottom) scrollToBottom();
  });
 
  onMount(() => {
@@ -34,7 +34,7 @@
  }
 
  let items = [];
- $: updateItems($messagesArray)
+ $: updateItems($messagesArray);
 
  function updateItems(messagesArray) {
   console.log('updateItems');
@@ -44,13 +44,23 @@
    if (!unseen_marker_placed && !message.is_outgoing && (message.is_unseen_marker_anchor || !message.seen)) {
     message.is_unseen_marker_anchor = true;
     unseen_marker_placed = true;
-    items.push({uid: 'unseen_marker', type: 'unseen_marker'});
+    items.push({ uid: 'unseen_marker', type: 'unseen_marker' });
    }
    items.push(message);
   }
   items.reverse();
  }
 </script>
+
+<div class="messages" bind:this={messages_elem}>
+ {#each items as m (m.uid)}
+  {#if m.type === 'unseen_marker'}
+   <div class="unseen-marker">=v=v=v=v=v=Unseen messages=v=v=v=v=v=</div>
+  {:else}
+   <Message message={m} container_element={messages_elem} />
+  {/if}
+ {/each}
+</div>
 
 <style>
  .messages {
@@ -61,13 +71,3 @@
   overflow-y: auto;
  }
 </style>
-
-<div class="messages" bind:this={messages_elem}>
- {#each items as m (m.uid)}
-  {#if m.type === 'unseen_marker'}
-   <div class="unseen-marker">=v=v=v=v=v=Unseen messages=v=v=v=v=v=</div>
-  {:else}
-   <Message message={m} container_element="{messages_elem}" />
-  {/if}
- {/each}
-</div>

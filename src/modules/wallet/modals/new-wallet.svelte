@@ -9,7 +9,6 @@
  let mnemonic = {};
  let phrase = '';
 
-
  let qrCodeData = '';
 
  onMount(() => {
@@ -18,9 +17,9 @@
 
  function generateQRCode() {
   QRCode.toDataURL(phrase, { width: 150 })
-   .then(url => qrCodeData = url)
+   .then(url => (qrCodeData = url))
    .catch(err => console.error(err));
- };
+ }
 
  function regenerate() {
   console.log('REGENERATE');
@@ -70,16 +69,32 @@
       <table>
         <tr>
           <td>
-            ${phrase.split(' ').slice(0, 6).map((word, index) => `<div class="cell">${index + 1}. ${word}</div>`).join('')}
+            ${phrase
+             .split(' ')
+             .slice(0, 6)
+             .map((word, index) => `<div class="cell">${index + 1}. ${word}</div>`)
+             .join('')}
           </td>
           <td>
-            ${phrase.split(' ').slice(6, 12).map((word, index) => `<div class="cell">${index + 7}. ${word}</div>`).join('')}
+            ${phrase
+             .split(' ')
+             .slice(6, 12)
+             .map((word, index) => `<div class="cell">${index + 7}. ${word}</div>`)
+             .join('')}
           </td>
           <td>
-            ${phrase.split(' ').slice(12, 18).map((word, index) => `<div class="cell">${index + 13}. ${word}</div>`).join('')}
+            ${phrase
+             .split(' ')
+             .slice(12, 18)
+             .map((word, index) => `<div class="cell">${index + 13}. ${word}</div>`)
+             .join('')}
           </td>
           <td>
-            ${phrase.split(' ').slice(18, 24).map((word, index) => `<div class="cell">${index + 19}. ${word}</div>`).join('')}
+            ${phrase
+             .split(' ')
+             .slice(18, 24)
+             .map((word, index) => `<div class="cell">${index + 19}. ${word}</div>`)
+             .join('')}
           </td>
         </tr>
       </table>
@@ -88,27 +103,8 @@
   `);
   newWindow.document.close();
   newWindow.print();
-
  }
 </script>
-
-<style>
- .qr {
-  display: flex;
-  justify-content: center;
- }
-
- .cell {
-  padding: 5px;
-  border: 1px solid #000;
- }
-
- .buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
- }
-</style>
 
 {#if qrCodeData}
  <div>Use the following QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
@@ -144,3 +140,21 @@
  <Button width="96px" text="Print" on:click={print} />
  <Button width="96px" text="Regenerate" on:click={regenerate} />
 </div>
+
+<style>
+ .qr {
+  display: flex;
+  justify-content: center;
+ }
+
+ .cell {
+  padding: 5px;
+  border: 1px solid #000;
+ }
+
+ .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+ }
+</style>

@@ -11,22 +11,6 @@
  }
 </script>
 
-<style>
- .settings {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
- }
-
- .sections {
-  display: flex;
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: #ffa;
-  border: 1px solid rgb(155, 155, 93);
- }
-</style>
-
 <div class="settings">
  <div class="sections">
   <Section label="General" active={section === 'general'} on:click={() => setSection('general')} />
@@ -43,3 +27,19 @@
   {/if}
  {/if}
 </div>
+
+<style>
+ .settings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+ }
+
+ .sections {
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #ffa;
+  border: 1px solid rgb(155, 155, 93);
+ }
+</style>

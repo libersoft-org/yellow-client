@@ -23,6 +23,24 @@
  }
 </script>
 
+<div class="welcome">
+ <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
+  <img src="img/logo.svg" alt={product} />
+  <div class="product">{product}</div>
+ </div>
+ <div class="version">
+  <div>Version:</div>
+  <div class="bold">{version}</div>
+ </div>
+ {#if notificationPermission !== 'granted'}
+  <div class="warning">
+   <div class="bold">ATTENTION:</div>
+   <div>Notifications are not enabled.</div>
+   <Button on:click={clickRequestNotificationPermission}>Enable notifications</Button>
+  </div>
+ {/if}
+</div>
+
 <style>
  .welcome {
   display: flex;
@@ -68,24 +86,6 @@
   margin: 10px;
   background-color: #fec;
   border-radius: 10px;
-  border: 1px solid #da8
+  border: 1px solid #da8;
  }
 </style>
-
-<div class="welcome">
- <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
-  <img src="img/logo.svg" alt="{product}" />
-  <div class="product">{product}</div>
- </div>
- <div class="version">
-  <div>Version:</div>
-  <div class="bold">{version}</div>
- </div>
- {#if notificationPermission !== 'granted'}
-  <div class="warning">
-   <div class="bold">ATTENTION:</div>
-   <div>Notifications are not enabled.</div>
-   <Button on:click={clickRequestNotificationPermission}>Enable notifications</Button>
-  </div>
- {/if}
-</div>

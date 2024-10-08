@@ -5,12 +5,14 @@
  export let active = false;
 
  function handleKeydown(event) {
- if (event.key === 'Enter' || event.key === ' ') {
-  event.preventDefault();
-  dispatch('click');
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   dispatch('click');
+  }
  }
-}
 </script>
+
+<div class="section {active ? 'active' : ''}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>{label}</div>
 
 <style>
  .section {
@@ -28,5 +30,3 @@
   background-color: #fd1;
  }
 </style>
-
-<div class="section {active ? 'active' : ''}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>{label}</div>

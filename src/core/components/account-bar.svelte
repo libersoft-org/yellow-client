@@ -1,13 +1,12 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
- import { get } from "svelte/store";
- import { active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile }  from '../core.js';
+ import { get } from 'svelte/store';
+ import { active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../core.js';
  import AccountBarItem from './account-bar-item.svelte';
  import AccountBarButton from './account-bar-button.svelte';
- import AccountStatusIcon from "./account-status-icon.svelte";
+ import AccountStatusIcon from './account-status-icon.svelte';
  let accountsVisible = false;
  let dropdown;
-
 
  onDestroy(() => {
   document.removeEventListener('click', handleClickOutside);
@@ -18,9 +17,9 @@
  // $: console.log('accountsVisible: ', accountsVisible);
 
  function clickToggleAccounts() {
-   accountsVisible = !accountsVisible;
-   if (accountsVisible) document.addEventListener('click', handleClickOutside);
-   else document.removeEventListener('click', handleClickOutside);
+  accountsVisible = !accountsVisible;
+  if (accountsVisible) document.addEventListener('click', handleClickOutside);
+  else document.removeEventListener('click', handleClickOutside);
  }
 
  function keyToggleAccounts() {
@@ -28,8 +27,7 @@
   if (event.key === 'Enter' || event.key === ' ') {
    clickToggleAccounts();
    event.preventDefault();
-  }
-  else if (event.key === 'Escape') {
+  } else if (event.key === 'Escape') {
    accountsVisible = true;
    clickToggleAccounts();
    event.preventDefault();
@@ -57,6 +55,30 @@
   hideSidebarMobile.set(true);
  }
 </script>
+
+<div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
+ {#if $active_account}
+  <div class="text">{$active_account?.settings?.title}</div>
+  <AccountStatusIcon a={active_account} />
+ {:else}
+  {#if $accounts.length > 0}
+   <div class="text">SELECT ACCOUNT</div>
+  {/if}
+  {#if $accounts.length == 0}
+   <div class="text">CREATE ACCOUNT FIRST</div>
+  {/if}
+ {/if}
+
+ <div><img src="img/down.svg" alt="▼" /></div>
+ {#if accountsVisible}
+  <div class="items open">
+   {#each $accounts as a (get(a).id)}
+    <AccountBarItem {a} {clickSelectAccount} />
+   {/each}
+   <AccountBarButton img="img/accounts.svg" title="Account management" click={clickAccountManagement} />
+  </div>
+ {/if}
+</div>
 
 <style>
  .dropdown {
@@ -98,28 +120,3 @@
   display: flex;
  }
 </style>
-
-<div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
-
- {#if $active_account}
-  <div class="text">{$active_account?.settings?.title}</div>
-  <AccountStatusIcon a={active_account} />
- {:else}
-  {#if $accounts.length > 0}
-   <div class="text">SELECT ACCOUNT</div>
-  {/if}
-  {#if $accounts.length == 0}
-   <div class="text">CREATE ACCOUNT FIRST</div>
-  {/if}
- {/if}
-
- <div><img src="img/down.svg" alt="▼" /></div>
- {#if accountsVisible}
-  <div class="items open">
-   {#each $accounts as a (get(a).id)}
-    <AccountBarItem {a} {clickSelectAccount} />
-   {/each}
-   <AccountBarButton img="img/accounts.svg" title="Account management" click={clickAccountManagement} />
-  </div>
- {/if}
-</div>

@@ -6,9 +6,7 @@
  export let version;
  export let link;
 
-
  function logout() {
-
   //TIDI
 
   Core.hideSidebarMobile.update(() => false);
@@ -22,7 +20,7 @@
  function keyMenuClose() {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   clickMenuClose()
+   clickMenuClose();
   }
  }
 
@@ -49,6 +47,31 @@
   }
  }
 </script>
+
+{#if isMenuOpen}
+ <div class="overlay open" role="none" on:click={clickMenuClose}></div>
+{/if}
+<div class="menu {isMenuOpen ? 'open' : ''}">
+ <div>
+  <div class="top">
+   <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
+  </div>
+  <div class="item" role="button" tabindex="0" on:click={clickLogout} on:keydown={keyLogout}>
+   <img src="img/logout.svg" alt="Logout" />
+   <div>Logout</div>
+  </div>
+ </div>
+ <div class="footer">
+  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
+   <div><img src="img/logo.svg" alt={product} /></div>
+   <div>{product}</div>
+  </div>
+  <div class="version">
+   <div>Version:</div>
+   <div class="bold">{version}</div>
+  </div>
+ </div>
+</div>
 
 <style>
  .overlay {
@@ -80,13 +103,17 @@
   color: #fff;
   box-shadow: var(--shadow);
   transform: translateX(-100%);
-  transition: transform 0.3s ease, visibility 0s 0.3s;
+  transition:
+   transform 0.3s ease,
+   visibility 0s 0.3s;
   visibility: hidden;
  }
 
  .menu.open {
   transform: translateX(0);
-  transition: transform 0.3s ease, visibility 0s;
+  transition:
+   transform 0.3s ease,
+   visibility 0s;
   visibility: visible;
  }
 
@@ -156,28 +183,3 @@
   font-size: 14px;
  }
 </style>
-
-{#if isMenuOpen}
- <div class="overlay open" role="none" on:click={clickMenuClose}></div>
-{/if}
-<div class="menu {isMenuOpen ? 'open' : ''}">
- <div>
-  <div class="top">
-   <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
-  </div>
-  <div class="item" role="button" tabindex="0" on:click={clickLogout} on:keydown={keyLogout}>
-   <img src="img/logout.svg" alt="Logout" />
-   <div>Logout</div>
-  </div>
- </div>
- <div class="footer">
-  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
-   <div><img src="img/logo.svg" alt="{product}"></div>
-   <div>{product}</div>
-  </div>
-  <div class="version">
-   <div>Version:</div>
-   <div class="bold">{version}</div>
-  </div>
- </div>
-</div>

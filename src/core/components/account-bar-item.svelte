@@ -10,8 +10,21 @@
    clickSelectAccount(id);
   }
  }
+</script>
 
- </script>
+<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={event => keySelectAccount($a.id, event)}>
+ {$a.settings?.title} - {$a.credentials?.address}
+ <AccountStatusIcon {a} />
+
+ <small>
+  <ul>
+   <li>enabled: {$a.enabled}</li>
+   <li>status: {$a.status}</li>
+   <li>error: {$a.error}</li>
+   <li>sessionID: {$a.sessionID}</li>
+  </ul>
+ </small>
+</div>
 
 <style>
  .item {
@@ -27,16 +40,3 @@
   background-color: #222;
  }
 </style>
-
-<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={(event) => keySelectAccount($a.id, event)}>{$a.settings?.title} - {$a.credentials?.address}
-<AccountStatusIcon a={a} />
-
-  <small>
-   <ul>
-     <li>enabled: {$a.enabled}</li>
-     <li>status: {$a.status}</li>
-     <li>error: {$a.error}</li>
-     <li>sessionID: {$a.sessionID}</li>
-   </ul>
- </small>
-</div>

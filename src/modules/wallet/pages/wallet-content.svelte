@@ -9,9 +9,9 @@
  import Balance from './balance.svelte';
  import AddressBook from './addressbook.svelte';
  import Settings from './settings.svelte';
- import Dropdown from "../components/dropdown.svelte";
+ import Dropdown from '../components/dropdown.svelte';
  import Button from '../../../core/components/button.svelte';
- import { hideSidebarMobile } from "../../../core/core.js";
+ import { hideSidebarMobile } from '../../../core/core.js';
  let section = 'balance';
  let isModalNetworksOpen = false;
  let isModalWalletsOpen = false;
@@ -25,10 +25,10 @@
   section = name;
  }
 
- selectedNetwork.subscribe((v) => {
+ selectedNetwork.subscribe(v => {
   console.log('xxselectedNetwork', v);
  });
- selectedAddress.subscribe((v) => {
+ selectedAddress.subscribe(v => {
   console.log('xxselectedAddress', v);
  });
 
@@ -39,11 +39,12 @@
  }
 
  function clickCopyAddress() {
-  navigator.clipboard.writeText($selectedAddress.address)
-  .then(() => console.log('Address coppied to clipboard'))
-  .catch(err => console.error('Error while copying to clipboard', err));
-  addressElement.innerHTML = ('Copied!');
-  setTimeout(() => addressElement.innerHTML = shortenAddress($selectedAddress.address), 1000);
+  navigator.clipboard
+   .writeText($selectedAddress.address)
+   .then(() => console.log('Address coppied to clipboard'))
+   .catch(err => console.error('Error while copying to clipboard', err));
+  addressElement.innerHTML = 'Copied!';
+  setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
  }
 
  function keyCopyAddress() {
@@ -57,6 +58,87 @@
   window.open($selectedNetwork.explorerURL + '/address/' + $selectedAddress.address, '_blank');
  }
 </script>
+
+<div class="wallet">
+ <div class="top-bar">
+  <div class="left">
+   <img
+    src="img/back-white.svg"
+    width="40px"
+    on:click={() => {
+     console.log('hideSidebarMobile.set(false)');
+     hideSidebarMobile.set(false);
+    }}
+   />
+   <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (isModalNetworksOpen = true)} onClose={() => (isModalNetworksOpen = true)} />
+  </div>
+  <div class="right">
+   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (isModalWalletsOpen = true)} onClose={() => (isModalWalletsOpen = true)} />
+  </div>
+ </div>
+ <div class="content">
+  <div class="body">
+   <div class="top">
+    <div class="left">
+     <div class="status">
+      <div class="indicator orange"></div>
+      <div>{$status}</div>
+     </div>
+     <div style="font-size: 12px">Server: {$rpcURL}</div>
+    </div>
+    <div class="center">
+     <div class="balance">
+      <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
+      <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
+      <pre>retrieved {$balanceTimestamp}</pre>
+     </div>
+    </div>
+    <div class="right">
+     {#if $selectedAddress && $selectedAddress.address}
+      <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
+       <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
+       <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
+      </div>
+     {:else}
+      <div class="address">No address selected</div>
+     {/if}
+    </div>
+   </div>
+
+   <div class="buttons">
+    <Button width="80px" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('send')} />
+    <Button width="80px" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('receive')} />
+    <Button width="80px" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('balance')} />
+    <Button width="80px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} on:click={getTransactionHistory} />
+    <Button width="80px" text="Address book" on:click={() => setSection('addressbook')} />
+    <Button width="80px" text="Settings" on:click={() => setSection('settings')} />
+   </div>
+   <div class="section">
+    {#if section == 'send'}
+     <Send />
+    {:else if section == 'receive'}
+     <Receive />
+    {:else if section == 'balance'}
+     <Balance />
+    {:else if section == 'addressbook'}
+     <AddressBook />
+    {:else if section == 'settings'}
+     <Settings />
+    {/if}
+   </div>
+  </div>
+ </div>
+</div>
+{#if isModalNetworksOpen}
+ <Modal title="Select your network" onClose={() => (isModalNetworksOpen = false)}>
+  <ModalNetworks onClose={() => (isModalNetworksOpen = false)} />
+ </Modal>
+{/if}
+{#if isModalWalletsOpen}
+ <Modal title="Select your wallet" onClose={() => (isModalWalletsOpen = false)}>
+  <ModalWallets onClose={() => (isModalWalletsOpen = false)} />
+ </Modal>
+{/if}
 
 <style>
  .wallet {
@@ -114,7 +196,9 @@
   width: 100%;
  }
 
- .body .top .left, .body .top .center, .body .top .right {
+ .body .top .left,
+ .body .top .center,
+ .body .top .right {
   flex: 1;
  }
 
@@ -180,77 +264,3 @@
   gap: 10px;
  }
 </style>
-
-<div class="wallet">
- <div class="top-bar">
-  <div class="left">
-   <img src="img/back-white.svg" width="40px" on:click={() => {console.log('hideSidebarMobile.set(false)'); hideSidebarMobile.set(false);}} />
-   <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => isModalNetworksOpen = true} onClose={() => isModalNetworksOpen = true} />
-  </div>
-  <div class="right">
-   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => isModalWalletsOpen = true} onClose={() => isModalWalletsOpen = true} />
-  </div>
- </div>
- <div class="content">
-  <div class="body">
-   <div class="top">
-    <div class="left">
-     <div class="status">
-      <div class="indicator orange"></div>
-      <div>{$status} </div>
-     </div>
-     <div style="font-size: 12px">Server: {$rpcURL}</div>
-    </div>
-    <div class="center">
-     <div class="balance">
-      <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
-      <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
-      <pre>retrieved {$balanceTimestamp}</pre>
-     </div>
-    </div>
-    <div class="right">
-     {#if $selectedAddress && $selectedAddress.address}
-      <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
-       <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
-       <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
-      </div>
-     {:else}
-      <div class="address">No address selected</div>
-     {/if}
-    </div>
-   </div>
-
-   <div class="buttons">
-    <Button width="80px" text="Send" enabled={ !!($selectedNetwork && $selectedAddress) } on:click={() => setSection('send')} />
-    <Button width="80px" text="Receive" enabled={ !!($selectedNetwork && $selectedAddress) } on:click={() => setSection('receive')} />
-    <Button width="80px" text="Balance" enabled={ !!($selectedNetwork && $selectedAddress) } on:click={() => setSection('balance')} />
-    <Button width="80px" text="History" enabled={ !!($selectedNetwork && $selectedAddress) } on:click={getTransactionHistory}  />
-    <Button width="80px" text="Address book" on:click={() => setSection('addressbook')}  />
-    <Button width="80px" text="Settings" on:click={() => setSection('settings')}  />
-   </div>
-   <div class="section">
-    {#if section == 'send'}
-     <Send />
-    {:else if section == 'receive'}
-     <Receive />
-    {:else if section == 'balance'}
-     <Balance />
-    {:else if section == 'addressbook'}
-     <AddressBook />
-    {:else if section == 'settings'}
-     <Settings />
-    {/if}
-   </div>
-  </div>
- </div>
-</div>
-{#if isModalNetworksOpen}
- <Modal title="Select your network" onClose={() => isModalNetworksOpen = false}>
-  <ModalNetworks onClose={() => isModalNetworksOpen = false} />
- </Modal>
-{/if}
-{#if isModalWalletsOpen}
- <Modal title="Select your wallet" onClose={() => isModalWalletsOpen = false}>
-  <ModalWallets onClose={() => isModalWalletsOpen = false} />
- </Modal>
-{/if}

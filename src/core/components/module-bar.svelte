@@ -1,10 +1,9 @@
 <script>
-
  import { active_account, order, getModuleDecls } from '../core.js';
- import { get } from "svelte/store";
+ import { get } from 'svelte/store';
 
  let module_data;
- $: module_data = $active_account?.module_data || {}
+ $: module_data = $active_account?.module_data || {};
  //$: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
  $: console.log('module-bar module_data_ordered:', module_data_ordered);
@@ -42,6 +41,14 @@
  }
 </script>
 
+<div class="items">
+ {#each order(getModuleDecls()) as decl (decl.id)}
+  <div class="item" on:click={() => clickSetModule(decl.id)} on:keydown={() => keySetModule(decl.id)} tabindex="0">
+   <img src="img/modules/{decl.id}.svg" alt={decl.name} />
+  </div>
+ {/each}
+</div>
+
 <style>
  .items {
   display: flex;
@@ -63,16 +70,5 @@
 
  .message {
   color: #fff;
-
  }
 </style>
-
-<div class="items">
-
-  {#each order(getModuleDecls()) as decl (decl.id)}
-   <div class="item" on:click={() => clickSetModule(decl.id)} on:keydown={() => keySetModule(decl.id)} tabindex="0">
-    <img src="img/modules/{decl.id}.svg" alt={decl.name} />
-   </div>
-  {/each}
-
-</div>

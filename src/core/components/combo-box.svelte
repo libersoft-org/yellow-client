@@ -29,14 +29,7 @@
 </script>
 
 <span class="combo-box">
- <input
-  type="text"
-  bind:value={value}
-  on:input={filterOptions}
-  on:focus={toggleOptions}
-  on:blur={hideOptions}
-  placeholder="Zadejte nebo vyberte"
- />
+ <input type="text" bind:value on:input={filterOptions} on:focus={toggleOptions} on:blur={hideOptions} placeholder="Zadejte nebo vyberte" />
  {#if showOptions}
   <div class="options-container">
    {#each filteredOptions as option}

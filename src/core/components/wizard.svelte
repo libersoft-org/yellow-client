@@ -3,7 +3,7 @@
  export let steps = [];
  export let onClose;
  let currentStep = 0;
- 
+
  function clickClose() {
   if (onClose) onClose();
  }
@@ -27,6 +27,41 @@
   clickClose();
  }
 </script>
+
+<div class="wizard">
+ <div class="header">
+  <div class="title">{steps[currentStep].title}</div>
+  <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close-black.svg" alt="X" /></div>
+ </div>
+ <div class="body">
+  <div class="progress-bar">
+   {#each steps as step, index}
+    <div class="step">
+     <div class="circle {index === currentStep ? 'active' : ''}">
+      {index + 1}
+     </div>
+     {#if index < steps.length - 1}
+      <div class="line"></div>
+     {/if}
+    </div>
+   {/each}
+  </div>
+  <div class="content">
+   <svelte:component this={steps[currentStep].component} />
+  </div>
+  <div class="navigation">
+   {#if currentStep > 0}
+    <Button on:click={prevStep} text="Previous" />
+   {/if}
+   <div class="gap"></div>
+   {#if currentStep < steps.length - 1}
+    <Button on:click={nextStep} text="Next" />
+   {:else}
+    <Button on:click={finish} text="Finish" />
+   {/if}
+  </div>
+ </div>
+</div>
 
 <style>
  .wizard {
@@ -114,43 +149,8 @@
   display: flex;
   gap: 10px;
  }
- 
+
  .navigation .gap {
   flex-grow: 1;
  }
 </style>
-
-<div class="wizard">
- <div class="header">
-  <div class="title">{steps[currentStep].title}</div>
-  <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close-black.svg" alt="X" /></div>
- </div>
- <div class="body">
-  <div class="progress-bar">
-   {#each steps as step, index}
-    <div class="step">
-     <div class="circle {index === currentStep ? 'active' : ''}">
-      {index + 1}
-     </div>
-     {#if index < steps.length - 1}
-      <div class="line"></div>
-     {/if}
-    </div>
-   {/each}
-  </div>
-  <div class="content">
-   <svelte:component this={steps[currentStep].component} />
-  </div>
-  <div class="navigation">
-   {#if currentStep > 0}
-    <Button on:click={prevStep} text="Previous" />
-   {/if}
-   <div class="gap"></div>
-   {#if currentStep < steps.length - 1}
-    <Button on:click={nextStep} text="Next" />
-   {:else}
-    <Button on:click={finish} text="Finish" />
-   {/if}
-  </div>
- </div>
-</div>

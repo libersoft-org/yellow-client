@@ -3,7 +3,6 @@
  import Photo from './photo.svelte';
  export let closeConversation;
 
-
  function clickClose() {
   closeConversation();
  }
@@ -15,6 +14,17 @@
   }
  }
 </script>
+
+<div class="profile-bar">
+ <Photo />
+ <div class="description">
+  {#if $selectedConversation.visible_name}
+   <div class="visible_name">{$selectedConversation.visible_name}</div>
+  {/if}
+  <div class="address">{$selectedConversation.address}</div>
+ </div>
+ <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close.svg" alt="Close" /></div>
+</div>
 
 <style>
  .profile-bar {
@@ -55,16 +65,3 @@
   height: 24px;
  }
 </style>
-
-<div class="profile-bar">
- <Photo />
- <div class="description">
-  {#if $selectedConversation.visible_name}
-   <div class="visible_name">{$selectedConversation.visible_name}</div>
-  {/if}
-  <div class="address">{$selectedConversation.address}</div>
- </div>
- <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close.svg" alt="Close" /></div>
-</div>
-
-

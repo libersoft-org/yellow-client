@@ -5,7 +5,7 @@
  import Modal from '../components/modal.svelte';
  import ModalAccountsAddEdit from '../modals/modal-accounts-add-edit.svelte';
  import ModalAccountsDel from '../modals/modal-accounts-del.svelte';
- import { get } from "svelte/store";
+ import { get } from 'svelte/store';
  let isAddEditAccountModalOpen = false;
  let isDelAccountModalOpen = false;
  let idItem = null;
@@ -32,21 +32,66 @@
   isDelAccountModalOpen = true;
  }
 
- function accountsConfigExport()
- {
+ function accountsConfigExport() {
   window.alert(JSON.stringify(get(accounts_config), null, 2));
  }
 
- function accountsConfigImport()
- {
+ function accountsConfigImport() {
   let text = window.prompt('Paste the exported JSON here:', '');
   if (text) {
    let data = JSON.parse(text);
    accounts_config.set(data);
   }
  }
-
 </script>
+
+<div class="accounts">
+ <div class="buttons">
+  <Button img="img/back.svg" text="Back" on:click={back} hiddenOnDesktop={true} />
+  <Button img="img/accounts-black.svg" text="Add a new account" on:click={addAccountModal} />
+  <Button text="Export" on:click={accountsConfigExport} />
+  <Button text="Import" on:click={accountsConfigImport} />
+ </div>
+ <div class="table">
+  <table>
+   <thead>
+    <th class="center">Account ID</th>
+    <th class="center">Title</th>
+    <th class="center">Server</th>
+    <th class="center">Address</th>
+    <th class="center">Enabled</th>
+    <th class="center">Action</th>
+   </thead>
+   <tbody>
+    {#each $accounts_config as a (a.id)}
+     <tr>
+      <td class="center">{a.id}</td>
+      <td class="center">{a.settings?.title}</td>
+      <td class="center">{a.credentials.server}</td>
+      <td class="center">{a.credentials.address}</td>
+      <td class="center">{a.enabled ? 'Yes' : 'No'}</td>
+      <td class="center">
+       <div class="action-items">
+        <ActionItem img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
+        <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id, a.settings?.title)} />
+       </div>
+      </td>
+     </tr>
+    {/each}
+   </tbody>
+  </table>
+ </div>
+</div>
+{#if isAddEditAccountModalOpen}
+ <Modal title="Add a new account" onClose={() => (isAddEditAccountModalOpen = false)}>
+  <ModalAccountsAddEdit id={idItem} onClose={() => (isAddEditAccountModalOpen = false)} />
+ </Modal>
+{/if}
+{#if isDelAccountModalOpen}
+ <Modal title="Delete the account" onClose={() => (isDelAccountModalOpen = false)}>
+  <ModalAccountsDel id={idItem} title={accountTitle} onClose={() => (isDelAccountModalOpen = false)} />
+ </Modal>
+{/if}
 
 <style>
  .accounts {
@@ -88,7 +133,8 @@
   background-color: #fd1;
  }
 
- thead th, tbody td {
+ thead th,
+ tbody td {
   padding: 10px;
  }
 
@@ -98,7 +144,8 @@
   text-align: left;
  }
 
- thead th.center, tbody td.center {
+ thead th.center,
+ tbody td.center {
   text-align: center;
  }
 
@@ -111,51 +158,3 @@
   gap: 10px;
  }
 </style>
-
-<div class="accounts">
- <div class="buttons">
-  <Button img="img/back.svg" text="Back" on:click={back} hiddenOnDesktop={true} />
-  <Button img="img/accounts-black.svg" text="Add a new account" on:click={addAccountModal} />
-  <Button text="Export" on:click={accountsConfigExport} />
-  <Button text="Import" on:click={accountsConfigImport} />
- </div>
- <div class="table">
-  <table>
-   <thead>
-    <th class="center">Account ID</th>
-    <th class="center">Title</th>
-    <th class="center">Server</th>
-    <th class="center">Address</th>
-    <th class="center">Enabled</th>
-    <th class="center">Action</th>
-   </thead>
-   <tbody>
-    {#each $accounts_config as a (a.id)}
-     <tr>
-      <td class="center">{a.id}</td>
-      <td class="center">{a.settings?.title}</td>
-      <td class="center">{a.credentials.server}</td>
-      <td class="center">{a.credentials.address}</td>
-      <td class="center">{a.enabled ? 'Yes' : 'No'}</td>
-      <td class="center">
-       <div class="action-items">
-        <ActionItem img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
-        <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id, a.settings?.title)} />
-       </div>
-      </td>
-     </tr>
-    {/each}
-   </tbody>
-  </table>
- </div>
-</div>
-{#if isAddEditAccountModalOpen}
- <Modal title="Add a new account" onClose={() => isAddEditAccountModalOpen = false}>
-  <ModalAccountsAddEdit id={idItem} onClose={() => isAddEditAccountModalOpen = false} />
- </Modal>
-{/if}
-{#if isDelAccountModalOpen}
- <Modal title="Delete the account" onClose={() => isDelAccountModalOpen = false}>
-  <ModalAccountsDel id={idItem} title={accountTitle} onClose={() => isDelAccountModalOpen = false} />
- </Modal>
-{/if}

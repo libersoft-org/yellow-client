@@ -7,18 +7,26 @@
  export let width;
  const dispatch = createEventDispatcher();
 
-function handleClick() {
+ function handleClick() {
   if (enabled) dispatch('click');
  }
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   if (enabled)
-    dispatch('click');
+   if (enabled) dispatch('click');
   }
  }
 </script>
+
+<div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click={handleClick} on:keydown={handleKeydown}>
+ <slot>
+  {#if img}
+   <img src={img} alt={text} />
+  {/if}
+  <div>{text}</div>
+ </slot>
+</div>
 
 <style>
  .button {
@@ -51,12 +59,3 @@ function handleClick() {
   }
  }
 </style>
-
-<div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click={handleClick} on:keydown={handleKeydown}>
- <slot>
-  {#if img}
-   <img src={img} alt={text} />
-  {/if}
-  <div>{text}</div>
- </slot>
-</div>

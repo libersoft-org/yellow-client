@@ -3,7 +3,7 @@
  export let img;
  export let title;
  const dispatch = createEventDispatcher();
- 
+
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
@@ -11,6 +11,10 @@
   }
  }
 </script>
+
+<div class="item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+ <img src={img} alt={title} />
+</div>
 
 <style>
  .item {
@@ -25,7 +29,3 @@
   height: 20px;
  }
 </style>
-
-<div class="item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- <img src={img} alt="{title}" />
-</div>

@@ -14,6 +14,20 @@
  }
 </script>
 
+<div class="accordion">
+ {#each items as i, index}
+  <div class="item">
+   <div class="header" role="button" tabindex="0" on:click={() => clickToggle(index)} on:keydown={() => keyToggle(index)}>
+    <div class="title">{i.name}</div>
+    <img src="img/down-black.svg" alt="▼" />
+   </div>
+   <div class="content {activeIndex === index ? 'active' : ''}">
+    <slot prop={i} />
+   </div>
+  </div>
+ {/each}
+</div>
+
 <style>
  .accordion {
   border: 1px solid #b90;
@@ -51,17 +65,3 @@
   display: block;
  }
 </style>
-
-<div class="accordion">
- {#each items as i, index}
-  <div class="item">
-   <div class="header" role="button" tabindex="0" on:click={() => clickToggle(index)} on:keydown={() => keyToggle(index)}>
-    <div class="title">{i.name}</div>
-    <img src="img/down-black.svg" alt="▼" />
-   </div>
-   <div class="content {activeIndex === index ? 'active' : ''}">
-    <slot prop={i} />
-   </div>
-  </div>
- {/each}
-</div>

@@ -1,9 +1,9 @@
 <script>
  import QRCode from 'qrcode';
  import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
- import {  parseUnits } from 'ethers';
- import { get } from "svelte/store";
- import ComboBox from "../../../core/components/combo-box.svelte";
+ import { parseUnits } from 'ethers';
+ import { get } from 'svelte/store';
+ import ComboBox from '../../../core/components/combo-box.svelte';
  let addressElement;
  let paymentElement;
  let amount = '0';
@@ -13,9 +13,7 @@
  let error = '';
  let currency;
 
-
- $: if (!currency || !get(currencies).find((c) => c == currency ))
- {
+ $: if (!currency || !get(currencies).find(c => c == currency)) {
   currency = $selectedMainCurrencySymbol;
   console.log('reset currency:', currency, get(currencies));
  }
@@ -23,13 +21,13 @@
  $: console.log('currencies:', $currencies);
  $: console.log('currency:', currency);
 
-
  function clickCopyAddress() {
-  navigator.clipboard.writeText($selectedAddress.address)
-  .then(() => console.log('Address coppied to clipboard'))
-  .catch(err => console.error('Error while copying to clipboard', err));
-  addressElement.innerHTML = ('Copied!');
-  setTimeout(() => addressElement.innerHTML = $selectedAddress.address, 1000);
+  navigator.clipboard
+   .writeText($selectedAddress.address)
+   .then(() => console.log('Address coppied to clipboard'))
+   .catch(err => console.error('Error while copying to clipboard', err));
+  addressElement.innerHTML = 'Copied!';
+  setTimeout(() => (addressElement.innerHTML = $selectedAddress.address), 1000);
  }
 
  function keyCopyAddress() {
@@ -40,11 +38,12 @@
  }
 
  function clickCopyPayment() {
-  navigator.clipboard.writeText(paymentText)
-  .then(() => console.log('Payment URI coppied to clipboard'))
-  .catch(err => console.error('Error while copying to clipboard', err));
-  paymentElement.innerHTML = ('Copied!');
-  setTimeout(() => paymentElement.innerHTML = paymentText, 1000);
+  navigator.clipboard
+   .writeText(paymentText)
+   .then(() => console.log('Payment URI coppied to clipboard'))
+   .catch(err => console.error('Error while copying to clipboard', err));
+  paymentElement.innerHTML = 'Copied!';
+  setTimeout(() => (paymentElement.innerHTML = paymentText), 1000);
  }
 
  function keyCopyPayment() {
@@ -56,23 +55,21 @@
 
  $: if ($selectedNetwork && $selectedAddress) updateAmount(amount);
 
-
  function updateAmount(amount) {
   let etherValue;
   console.log('amount:', amount);
   try {
    etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
    console.log('etherValue:', etherValue.toString());
-  }
-  catch (e) {
+  } catch (e) {
    error = 'Invalid amount';
    console.log('Invalid amount:', e);
    return;
   }
   error = '';
   paymentText = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount ? '?value=' + etherValue.toString() : '');
-  generateQRCode($selectedAddress.address, (url) => qrAddress = url);
-  generateQRCode(paymentText, (url) => qrPayment = url);
+  generateQRCode($selectedAddress.address, url => (qrAddress = url));
+  generateQRCode(paymentText, url => (qrPayment = url));
  }
 
  function generateQRCode(text, callback) {
@@ -80,11 +77,41 @@
    if (err) console.error('QR CODE GENERATION:', err);
    else callback(url);
   });
- };
+ }
 </script>
 
+<div class="receive">
+ {#if $selectedNetwork && $selectedAddress}
+  <div class="section">
+   <div class="bold">Your wallet address:</div>
+   <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
+    <div bind:this={addressElement}>{$selectedAddress.address}</div>
+    <img src="img/copy.svg" alt="Copy" />
+   </div>
+   <div class="qr"><img src={qrAddress} alt="Address" /></div>
+  </div>
+  <div class="section">
+   <div class="bold">Payment:</div>
+   <div>
+    <span>Amount:</span>
+    <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
+    Currency: <ComboBox options={$currencies} bind:value={currency} />
+    <div class="error">{error}</div>
+   </div>
+   <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
+    <div bind:this={paymentElement}>{paymentText}</div>
+    <img src="img/copy.svg" alt="Copy" />
+   </div>
+   <div class="qr"><img src={qrPayment} alt="Payment" /></div>
+  </div>
+ {:else}
+  <div>No wallet selected</div>
+ {/if}
+</div>
+
 <style>
- input, select {
+ input,
+ select {
   padding: 5px;
   border: 1px solid #000;
   border-radius: 10px;
@@ -127,37 +154,4 @@
  .error {
   color: red;
  }
-
 </style>
-
-<div class="receive">
- {#if $selectedNetwork && $selectedAddress}
-  <div class="section">
-   <div class="bold">Your wallet address:</div>
-   <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
-    <div bind:this={addressElement}>{$selectedAddress.address}</div>
-    <img src="img/copy.svg" alt="Copy" />
-   </div>
-   <div class="qr"><img src={qrAddress} alt="Address" /></div>
-  </div>
-  <div class="section">
-   <div class="bold">Payment:</div>
-   <div>
-
-    <span>Amount:</span>
-     <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
-     Currency: <ComboBox options={$currencies} bind:value={currency} />
-    <div class="error">{error}</div>
-
-
-   </div>
-   <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
-    <div bind:this={paymentElement}>{paymentText}</div>
-    <img src="img/copy.svg" alt="Copy" />
-   </div>
-   <div class="qr"><img src={qrPayment} alt="Payment" /></div>
-  </div>
- {:else}
-  <div>No wallet selected</div>
- {/if}
-</div>
