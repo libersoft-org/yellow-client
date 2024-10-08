@@ -48,7 +48,7 @@
 
 <div class="addressbook">
  <div class="buttons">
-  <Button text="Add to address book" on:click={addToAddressBookModal} />
+  <Button text="Add an address" on:click={addToAddressBookModal} />
  </div>
  {#if $addressBook.length > 0}
   <div class="items">
