@@ -364,10 +364,10 @@ async function sendTransaction(address: string, etherValue, etherValueFee, curre
    from: selectedAddressValue.address,
    nonce: await provider.getTransactionCount(selectedAddressValue.address),
    value: etherValue,
-   data: "cus",
+   data: 'cus',
    gasPrice: etherValueFee,
    // chainId
-  }
+  };
   // await hd_wallet.estimateGas(tx);
   await hd_wallet.sendTransaction(tx);
   await tx.wait();
