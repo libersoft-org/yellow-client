@@ -4,6 +4,7 @@
  import { derived, get } from 'svelte/store';
  import { currencies, selectedMainCurrencySymbol } from '../wallet.ts';
  import { parseUnits } from 'ethers';
+ import { sendTransaction } from '../wallet.ts';
 
  let currency;
  let address;
@@ -40,8 +41,8 @@
  function updateFee(amount) {
   console.log('fee:', amount);
   try {
-   etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
-   console.log('etherValue:', etherValue.toString());
+   etherValueFee = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
+   console.log('etherValueFee:', etherValueFee.toString());
   } catch (e) {
    error = 'Invalid fee';
    console.log('Invalid fee:', e);
@@ -50,11 +51,15 @@
   error = '';
  }
 
- function send() {
+ async function send() {
   console.log('SEND:', address, etherValue, etherValueFee, currency);
-
-
-
+  try {
+   await sendTransaction(address, etherValue, etherValueFee, currency);
+   console.log('Transaction sent successfully');
+  } catch (e) {
+   console.error('Error sending transaction:', e);
+   error = 'Error sending transaction';
+  }
  }
 </script>
 
@@ -93,14 +98,11 @@
  <div class="group">
   <div class="label">Amount:</div>
   <div class="input"><input type="text" bind:value={amount} /></div>
-
-
  </div>
  <div class="group">
   <div class="label">Transaction fee:</div>
   <div class="input"><input type="text" bind:value={fee} /></div>
   <div class="error">{error}</div>
-
  </div>
  <Button text="Send" on:click={send} />
 </div>

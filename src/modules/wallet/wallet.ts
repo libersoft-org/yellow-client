@@ -350,7 +350,7 @@ async function exchangeRates(): Promise<void> {
  return data['data'];
 }
 
-async function sendTransaction(recipient: string, amount: string): Promise<void> {
+async function sendTransaction(address: string, etherValue, etherValueFee, currency): Promise<void> {
  const selectedWalletValue = get(selectedWallet);
  const selectedAddressValue = get(selectedAddress);
  if (!selectedWalletValue || !selectedAddressValue) {
@@ -359,10 +359,17 @@ async function sendTransaction(recipient: string, amount: string): Promise<void>
  }
  let hd_wallet = HDNodeWallet.fromMnemonic(selectedWalletValue.phrase, selectedAddressValue.path);
  try {
-  const tx = await hd_wallet.sendTransaction({
-   to: recipient,
-   value: parseEther(amount),
-  });
+  const tx = {
+   to: address,
+   from: selectedAddressValue.address,
+   nonce: await provider.getTransactionCount(selectedAddressValue.address),
+   value: etherValue,
+   data: "cus",
+   gasPrice: etherValueFee,
+   // chainId
+  }
+  // await hd_wallet.estimateGas(tx);
+  await hd_wallet.sendTransaction(tx);
   await tx.wait();
   // await getBalance();
   console.log('Transaction sent OK');
