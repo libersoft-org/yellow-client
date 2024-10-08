@@ -4,15 +4,24 @@
  import Button from '../../../core/components/button.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalEditNetwork from '../modals/edit-network.svelte';
+ import ModalTokenList from '../modals/token-list.svelte';
 
  let isModalEditNetworkOpen = false;
+ let isModalTokenListOpen = false;
  let modalEditNetworkItem = null;
 
- export function editNetwork(net) {
+ function editNetwork(net) {
   console.log('editNetwork', net);
   isModalEditNetworkOpen = true;
   modalEditNetworkItem = net;
  }
+
+ function tokenList(net) {
+  console.log('tokenList', net);
+  isModalTokenListOpen = true;
+  modalEditNetworkItem = net;
+ }
+
 </script>
 
 <style>
@@ -56,6 +65,7 @@
     {/if}
     <div>{n.name}</div>
    </div>
+   <Button on:click={() => tokenList(n)}>Token list</Button>
    <Button on:click={() => editNetwork(n)}>Edit network</Button>
    <Button on:click={() => removeNetwork(n)}>Remove network</Button>
   {/each}
@@ -78,5 +88,10 @@
 {#if isModalEditNetworkOpen}
  <Modal title="Edit network" onClose={() => (isModalEditNetworkOpen = false)}>
   <ModalEditNetwork item={modalEditNetworkItem} onClose={() => (isModalEditNetworkOpen = false)} />
+ </Modal>
+{/if}
+{#if isModalTokenListOpen}
+ <Modal title="Token list" onClose={() => (isModalTokenListOpen = false)}>
+  <ModalTokenList item={modalEditNetworkItem} onClose={() => (isModalTokenListOpen = false)} />
  </Modal>
 {/if}
