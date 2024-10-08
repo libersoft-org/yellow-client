@@ -18,7 +18,7 @@
  .accordion {
   border: 1px solid #b90;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: auto;
  }
 
  .accordion .item {

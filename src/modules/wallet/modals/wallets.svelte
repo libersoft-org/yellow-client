@@ -1,18 +1,58 @@
 <script>
- import { wallets, selectedWalletID } from '../wallet.ts';
- import List from '../components/list.svelte';
- import ListItem from '../components/list-item.svelte';
+ import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
+ import Accordion from '../../../core/components/accordion.svelte';
  export let onClose;
+ let activeIndex = null;
 
- function selectWallet(id) {
-  console.log('SETTING WALLET', id);
-  selectedWalletID.set(id);
+ function clickSelectAddress(wallet, address) {
+  console.log('SETTING ADDRESS', wallet, address);
+  selectAddress(wallet, address);
   onClose();
+ }
+
+ function keySelectAddress(wallet, address) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickSelectAddress(wallet, address);
+  }
  }
 </script>
 
-<List>
- {#each $wallets as w, index}
-  <ListItem className={index % 2 === 0 ? 'even' : 'odd'} item={w.name} on:click={() => selectWallet(w.address)} />
- {/each}
-</List>
+<style>
+ table {
+  border-spacing: 0;
+  overflow: hidden;
+ }
+
+ tr {
+  cursor: pointer;
+ }
+
+ tr.even {
+  background-color: #ffa;
+ }
+
+ tr.odd {
+  background-color: #ffd;
+ }
+
+ tr:hover {
+  background-color: #fd1;
+ }
+
+ td {
+  padding: 5px;
+ }
+</style>
+
+<Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
+ <table>
+  {#each walletAddresses(wallet) as address, index}
+   <tr class={index % 2 === 0 ? 'even' : 'odd'} on:click={() => clickSelectAddress(wallet, address)} on:keydown={() => keySelectAddress(wallet, address)}>
+    <td class="center">{address.index}</td>
+    <td>{address.name}</td>
+    <td>{address.address}</td>
+   </tr>
+  {/each}
+ </table>
+</Accordion>
