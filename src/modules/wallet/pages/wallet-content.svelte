@@ -172,8 +172,18 @@
  }
 
  .body .top .center .balance .crypto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
   font-size: 25px;
   font-weight: bold;
+ }
+
+ .body .top .center .balance .crypto img {
+  display: block;
+  width: 50px;
+  height: 50px;
  }
 
  .body .top .center .balance .fiat {
@@ -232,7 +242,10 @@
     </div>
     <div class="center">
      <div class="balance">
-      <div class="crypto">{$balance.crypto.amount} {$balance.crypto.currency}</div>
+      <div class="crypto">
+       <div><img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} /></div>
+       <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
+      </div>
       <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
       <pre>retrieved {$balanceTimestamp}</pre>
      </div>
