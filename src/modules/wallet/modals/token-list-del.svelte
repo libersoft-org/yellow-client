@@ -2,7 +2,6 @@
  import Button from '../../../core/components/button.svelte';
  export let item;
  export let onDel;
-
 </script>
 
 <style>

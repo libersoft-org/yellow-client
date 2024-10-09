@@ -4,7 +4,7 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
- import { networks } from "../wallet.js";
+ import { networks } from '../wallet.ts';
 
  export let onClose;
  export let item = null;
@@ -20,18 +20,17 @@
  }
 
  function delTokenModal(item) {
-  console.log('DELETE TOKEN MODAL:', id);
+  console.log('DELETE TOKEN MODAL:', item);
   modalItem = item;
   isModalDelOpen = true;
  }
 
- function onDel(item) {
-  console.log('DELETE TOKEN:', item);
-  item.tokens = item.tokens.filter(t => t !== item);
+ function onDel(token) {
+  console.log('DELETE TOKEN:', token);
+  item.tokens = item.tokens.filter(t => t !== token);
   networks.update(v => v);
   isModalDelOpen = false;
  }
-
 </script>
 
 <style>
@@ -77,7 +76,7 @@
      <td>
       <div class="icons">
        <!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
-       <Icon icon="img/del.svg" title="Delete token" on:click={() => delTokenModal(i)} />
+       <Icon icon="img/del.svg" title="Delete token" on:click={() => delTokenModal(t)} />
       </div>
      </td>
     </tr>
@@ -92,6 +91,6 @@
 {/if}
 {#if isModalDelOpen}
  <Modal title="Delete token" onClose={() => (isModalDelOpen = false)}>
-  <ModalDel item={modalItem} onDel={onDel} onClose={() => (isModalDelOpen = false)} />
+  <ModalDel item={modalItem} {onDel} onClose={() => (isModalDelOpen = false)} />
  </Modal>
 {/if}
