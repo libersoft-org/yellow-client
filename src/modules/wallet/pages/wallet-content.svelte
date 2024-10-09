@@ -211,6 +211,11 @@
   gap: 10px;
  }
 
+ .body .separator {
+  width: 100%;
+  border-bottom: 1px solid #888;
+ }
+
  @media (min-width: 769px) {
   .top-bar .left .button {
    display: none;
@@ -271,6 +276,7 @@
     <Button width="70px" text="Address book" on:click={() => setSection('addressbook')} />
     <Button width="70px" text="Settings" on:click={() => setSection('settings')} />
    </div>
+   <div class="separator"></div>
    <div class="section">
     {#if section == 'send'}
      <Send />
