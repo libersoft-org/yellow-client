@@ -61,7 +61,7 @@
  function keyEnter() {
   if (event.key === 'Enter') {
    event.preventDefault();
-   addToAddressBook();
+   add();
   }
  }
 </script>
