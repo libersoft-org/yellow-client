@@ -280,7 +280,7 @@
  </Modal>
 {/if}
 {#if isModalWalletsOpen}
- <Modal title="Select your wallet" onClose={() => (isModalWalletsOpen = false)}>
+ <Modal title="Select your address" onClose={() => (isModalWalletsOpen = false)}>
   <ModalWallets onClose={() => (isModalWalletsOpen = false)} />
  </Modal>
 {/if}

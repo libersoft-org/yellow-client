@@ -92,6 +92,29 @@ selectedAddress.subscribe((value: Address | undefined) => {
  // getBalance();
 });
 
+wallets.subscribe((wallets: Wallet[]) => {
+ while (wallets_cleanup(wallets)) {
+  wallets.update(w => w);
+ }
+});
+
+function wallets_cleanup(ws) {
+ for (let i = 0; i < ws.length; i++) {
+  for (let j = 0; j < ws.length; j++) {
+   if (i !== j && ws[i].address === ws[j].address) {
+    window.alert('Wallet with address ' + ws[i].address + ' already exists');
+    ws.splice(i, 1);
+    return true;
+   }
+   if (i !== j && ws[i].phrase === ws[j].phrase) {
+    window.alert('Wallet with phrase ' + ws[i].phrase + ' already exists');
+    ws.splice(i, 1);
+    return true;
+   }
+  }
+ }
+}
+
 export const balance = writable<Balance>({
  crypto: {
   amount: '?',
