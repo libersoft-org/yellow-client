@@ -78,7 +78,7 @@ export const selectedMainCurrencySymbol = derived<[Network | undefined], string 
 });
 
 let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
- return $selectedNetwork.tokens.map(token => ({ symbol: token.symbol }));
+ return ($selectedNetwork.tokens || []).map(token => ({ symbol: token.symbol }));
 });
 
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
