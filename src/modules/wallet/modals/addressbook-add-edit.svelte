@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import Button from '../../../core/components/button.svelte';
  import { addressBook } from '../wallet';
- import { get } from "svelte/store";
+ import { get } from 'svelte/store';
  export let onClose;
  export let item = null;
  let aliasElement;
@@ -10,13 +10,12 @@
  let address = '';
  let error = '';
 
-
  onMount(() => {
   if (item) {
    alias = item.alias;
    address = item.address;
   }
-  aliasElement.focus()
+  aliasElement.focus();
  });
 
  function findAddressBookItemByAddress(address) {
