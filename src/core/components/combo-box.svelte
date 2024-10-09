@@ -31,7 +31,7 @@
   setTimeout(() => {
    console.log('showOptions = false;');
    showOptions = false;
-  }, 1);
+  }, 300);
  }
 </script>
 

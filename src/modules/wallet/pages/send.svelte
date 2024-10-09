@@ -15,8 +15,8 @@
  let error;
 
  $: if (!currency || !get(currencies).find(c => c == currency)) {
+  console.log('reset currency field:', currency, get(currencies));
   currency = $selectedMainCurrencySymbol;
-  console.log('reset currency:', currency, get(currencies));
  }
 
  $: console.log('currencies:', $currencies);
