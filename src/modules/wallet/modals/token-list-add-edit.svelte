@@ -9,6 +9,13 @@
 
 <style>
  .group {
+  display: flex;
+  flex-direction: column;
+ }
+
+ .group .label {
+  font-weight: bold;
+  margin-left: 5px;
  }
 
  input {
