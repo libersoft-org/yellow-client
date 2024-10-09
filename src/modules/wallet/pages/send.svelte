@@ -1,6 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
- import ComboBox from '../../../core/components/combo-box.svelte';
+ import DropdownFilter from '../../../core/components/dropdown-filter.svelte';
  import { derived, get } from 'svelte/store';
  import { currencies, selectedMainCurrencySymbol } from '../wallet.ts';
  import { parseUnits } from 'ethers';
@@ -93,7 +93,7 @@
  </div>
  <div class="input">
   Currency:
-  <ComboBox options={$currencies} bind:value={currency} />
+  <DropdownFilter options={$currencies} bind:selected={currency} />
  </div>
  <div class="group">
   <div class="label">Amount:</div>

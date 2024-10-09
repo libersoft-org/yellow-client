@@ -3,7 +3,7 @@
  import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
  import { parseUnits } from 'ethers';
  import { get } from 'svelte/store';
- import ComboBox from '../../../core/components/combo-box.svelte';
+ import DropdownFilter from '../../../core/components/dropdown-filter.svelte';
  let addressElement;
  let paymentElement;
  let amount = '0';
@@ -146,7 +146,7 @@
    <div>
     <span>Amount:</span>
     <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
-    Currency: <ComboBox options={$currencies} bind:value={currency} />
+    Currency: <DropdownFilter options={$currencies} bind:selected={currency} />
     <div class="error">{error}</div>
    </div>
    <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
