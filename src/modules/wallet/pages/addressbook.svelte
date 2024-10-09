@@ -8,21 +8,24 @@
  let isModalAddEditOpen = false;
  let isModalDelOpen = false;
  let edit = false;
+ let modalItem = null;
 
  function addToAddressBookModal() {
+  modalItem = null;
   edit = false;
   isModalAddEditOpen = true;
  }
 
- function editItemModal(id) {
-  console.log('EDIT ADDRESSBOOK ITEM:', id);
-  // TODO: fill alias and address into form
+ function editItemModal(item) {
+  console.log('EDIT ADDRESSBOOK ITEM:', item);
+  modalItem = item;
   edit = true;
   isModalAddEditOpen = true;
  }
 
- function deleteItemModal(id) {
-  console.log('DELETE ADDRESSBOOK ITEM:', id);
+ function deleteItemModal(item) {
+  console.log('DELETE ADDRESSBOOK ITEM:', item);
+  modalItem = item;
   isModalDelOpen = true;
  }
 </script>
@@ -95,14 +98,14 @@
     <th>Address</th>
     <th class="center">Action</th>
    </tr>
-   {#each $addressBook as a, index}
+   {#each $addressBook as a, index (index + '/' + a.address)}
     <tr class="item {index % 2 === 0 ? 'even' : 'odd'}">
      <td>{a.alias}</td>
      <td>{a.address}</td>
      <td class="center">
       <div class="icons">
-       <Icon icon="img/edit.svg" title="Edit" on:click={() => editItemModal(a.id)} />
-       <Icon icon="img/del.svg" title="Delete" on:click={() => deleteItemModal(a.id)} />
+       <Icon icon="img/edit.svg" title="Edit" on:click={() => editItemModal(a)} />
+       <Icon icon="img/del.svg" title="Delete" on:click={() => deleteItemModal(a)} />
       </div>
      </td>
     </tr>
@@ -112,11 +115,11 @@
 </div>
 {#if isModalAddEditOpen}
  <Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} onClose={() => (isModalAddEditOpen = false)}>
-  <ModalAddEdit onClose={() => (isModalAddEditOpen = false)} />
+  <ModalAddEdit item={modalItem} onClose={() => (isModalAddEditOpen = false)} />
  </Modal>
 {/if}
 {#if isModalDelOpen}
  <Modal title="Delete the item in address book" onClose={() => (isModalDelOpen = false)}>
-  <ModalDel onClose={() => (isModalDelOpen = false)} />
+  <ModalDel item={modalItem} onClose={() => (isModalDelOpen = false)} />
  </Modal>
 {/if}
