@@ -7,5 +7,5 @@
 <style>
 </style>
 
-<div>Would you like to delete the item: {item}?</div>
+<div>Would you like to delete the item: {item.name}?</div>
 <Button text="Delete" on:click={() => onDel(item)} />

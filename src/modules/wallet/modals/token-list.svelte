@@ -19,6 +19,14 @@
   isModalAddEditOpen = true;
  }
 
+ function onAdd(token) {
+  console.log('ADD TOKEN:', token);
+  if (!item.tokens) item.tokens = [];
+  item.tokens.push(token);
+  networks.update(v => v);
+  isModalAddEditOpen = false;
+ }
+
  function delTokenModal(item) {
   console.log('DELETE TOKEN MODAL:', item);
   modalItem = item;
@@ -86,7 +94,7 @@
 </div>
 {#if isModalAddEditOpen}
  <Modal title="Add token" onClose={() => (isModalAddEditOpen = false)}>
-  <ModalAddEdit item={modalItem} onClose={() => (isModalAddEditOpen = false)} />
+  <ModalAddEdit item={modalItem} {onAdd} onClose={() => (isModalAddEditOpen = false)} />
  </Modal>
 {/if}
 {#if isModalDelOpen}
