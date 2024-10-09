@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import Button from '../../../core/components/button.svelte';
- import { addressBook } from '../wallet.ts';
+ import { addressBook } from '../wallet';
  export let onClose;
  let aliasElement;
  let alias = '';

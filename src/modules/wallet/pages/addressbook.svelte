@@ -1,12 +1,29 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  import Modal from '../../../core/components/modal.svelte';
- import ModalNew from '../modals/addressbook-new.svelte';
+ import ModalAddEdit from '../modals/addressbook-add-edit.svelte';
+ import ModalDel from '../modals/addressbook-del.svelte';
+ import Icon from '../components/table-icon.svelte';
  import { addressBook } from '../wallet.ts';
- let isModalNewOpen = false;
+ let isModalAddEditOpen = false;
+ let isModalDelOpen = false;
+ let edit = false;
 
  function addToAddressBookModal() {
-  isModalNewOpen = true;
+  edit = false;
+  isModalAddEditOpen = true;
+ }
+
+ function editItemModal(id) {
+  console.log('EDIT ADDRESSBOOK ITEM:', id);
+  // TODO: fill alias and address into form
+  edit = true;
+  isModalAddEditOpen = true;
+ }
+
+ function deleteItemModal(id) {
+  console.log('DELETE ADDRESSBOOK ITEM:', id);
+  isModalDelOpen = true;
  }
 </script>
 
@@ -21,28 +38,49 @@
   display: flex;
  }
 
- .items {
+ table {
+  border-spacing: 0;
   border: 1px solid #000;
   border-radius: 10px;
   overflow: hidden;
  }
 
- .items .item {
-  display: flex;
-  gap: 5px;
+ th,
+ td {
   padding: 5px;
  }
 
- .items .item.even {
+ th {
+  text-align: left;
+  background-color: #222;
+  color: #fff;
+ }
+
+ th.center,
+ td.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ }
+
+ .item {
+  padding: 5px;
+ }
+
+ .item.even {
   background-color: #ffa;
  }
 
- .items .item.odd {
+ .item.odd {
   background-color: #ffd;
  }
 
- .items .item:hover {
+ .item:hover {
   background-color: #fd1;
+ }
+
+ .icons {
+  display: flex;
  }
 </style>
 
@@ -51,18 +89,34 @@
   <Button text="Add an address" on:click={addToAddressBookModal} />
  </div>
  {#if $addressBook.length > 0}
-  <div class="items">
+  <table>
+   <tr>
+    <th>Alias</th>
+    <th>Address</th>
+    <th class="center">Action</th>
+   </tr>
    {#each $addressBook as a, index}
-    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
-     <div>{a.alias}</div>
-     <div>{a.address}</div>
-    </div>
+    <tr class="item {index % 2 === 0 ? 'even' : 'odd'}">
+     <td>{a.alias}</td>
+     <td>{a.address}</td>
+     <td class="center">
+      <div class="icons">
+       <Icon icon="img/edit.svg" title="Edit" on:click={() => editItemModal(a.id)} />
+       <Icon icon="img/del.svg" title="Delete" on:click={() => deleteItemModal(a.id)} />
+      </div>
+     </td>
+    </tr>
    {/each}
-  </div>
+  </table>
  {/if}
 </div>
-{#if isModalNewOpen}
- <Modal title="Add a new address to address book" onClose={() => (isModalNewOpen = false)}>
-  <ModalNew onClose={() => (isModalNewOpen = false)} />
+{#if isModalAddEditOpen}
+ <Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} onClose={() => (isModalAddEditOpen = false)}>
+  <ModalAddEdit onClose={() => (isModalAddEditOpen = false)} />
+ </Modal>
+{/if}
+{#if isModalDelOpen}
+ <Modal title="Delete the item in address book" onClose={() => (isModalDelOpen = false)}>
+  <ModalDel onClose={() => (isModalDelOpen = false)} />
  </Modal>
 {/if}
