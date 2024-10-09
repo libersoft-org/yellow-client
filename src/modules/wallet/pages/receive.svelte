@@ -126,6 +126,12 @@
   height: 15px;
  }
 
+ .amount {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+ }
+
  .error {
   color: red;
  }
@@ -143,10 +149,10 @@
   </div>
   <div class="section">
    <div class="bold">Payment:</div>
-   <div>
-    <span>Amount:</span>
+   <div class="amount">
+    <div>Amount:</div>
     <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
-    Currency: <DropdownFilter options={$currencies} bind:selected={currency} />
+    <DropdownFilter options={$currencies} bind:selected={currency} />
     <div class="error">{error}</div>
    </div>
    <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
