@@ -243,7 +243,9 @@
     <div class="center">
      <div class="balance">
       <div class="crypto">
-       <div><img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} /></div>
+       {#if $selectedNetwork.currency.iconURL}
+        <div><img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} /></div>
+       {/if}
        <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
       </div>
       <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
