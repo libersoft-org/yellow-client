@@ -4,37 +4,34 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
- //import { networks } from '../wallet.ts';
- //import { onMount } from 'svelte';
+ import { networks } from "../wallet.js";
+
  export let onClose;
  export let item = null;
+ let modalItem = null;
+
  let isModalAddEditOpen = false;
  let isModalDelOpen = false;
- //let item_tokens = [];
-
- /*
- onMount(() => {
-  if (item) {
-   item_tokens = (item.tokens || []).map(v => v);
-  }
- });
-
- function save() {
-  item.tokens = item_tokens;
-  networks.update(v => v);
-  onClose();
- }
- */
 
  function addTokenModal() {
   console.log('ADD TOKEN MODAL');
+  modalItem = null;
   isModalAddEditOpen = true;
  }
 
- function delTokenModal(id) {
+ function delTokenModal(item) {
   console.log('DELETE TOKEN MODAL:', id);
+  modalItem = item;
   isModalDelOpen = true;
  }
+
+ function onDel(item) {
+  console.log('DELETE TOKEN:', item);
+  item.tokens = item.tokens.filter(t => t !== item);
+  networks.update(v => v);
+  isModalDelOpen = false;
+ }
+
 </script>
 
 <style>
@@ -80,7 +77,7 @@
      <td>
       <div class="icons">
        <!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
-       <Icon icon="img/del.svg" title="Delete token" on:click={delTokenModal(i)} />
+       <Icon icon="img/del.svg" title="Delete token" on:click={() => delTokenModal(i)} />
       </div>
      </td>
     </tr>
@@ -90,11 +87,11 @@
 </div>
 {#if isModalAddEditOpen}
  <Modal title="Add token" onClose={() => (isModalAddEditOpen = false)}>
-  <ModalAddEdit onClose={() => (isModalDelOpen = false)} />
+  <ModalAddEdit item={modalItem} onClose={() => (isModalAddEditOpen = false)} />
  </Modal>
 {/if}
 {#if isModalDelOpen}
  <Modal title="Delete token" onClose={() => (isModalDelOpen = false)}>
-  <ModalDel onClose={() => (isModalDelOpen = false)} />
+  <ModalDel item={modalItem} onDel={onDel} onClose={() => (isModalDelOpen = false)} />
  </Modal>
 {/if}
