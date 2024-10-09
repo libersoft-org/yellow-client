@@ -350,7 +350,7 @@ async function exchangeRates(): Promise<void> {
  return data['data'];
 }
 
-async function sendTransaction(address: string, etherValue, etherValueFee, currency): Promise<void> {
+export async function sendTransaction(address: string, etherValue, etherValueFee, currency): Promise<void> {
  const selectedWalletValue = get(selectedWallet);
  const selectedAddressValue = get(selectedAddress);
  if (!selectedWalletValue || !selectedAddressValue) {
