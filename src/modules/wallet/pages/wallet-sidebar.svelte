@@ -35,7 +35,11 @@
   cursor: pointer;
  }
 
- .item {
+ .addressbook {
+  overflow: auto;
+ }
+
+ .items .item {
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -44,18 +48,18 @@
   cursor: pointer;
  }
 
- .item:hover {
+ .items .item:hover {
   background-color: #fd1;
  }
 
- .item .alias {
+ .items .item .alias {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   font-weight: bold;
  }
 
- .item .address {
+ .items .item .address {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
