@@ -1,6 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
- import { onMount } from "svelte";
+ import { onMount } from 'svelte';
  export let item;
 
  let item_name = '';
@@ -17,13 +17,10 @@
   }
  });
 
- function clickAdd() {
-
- }
+ function clickAdd() {}
 </script>
 
 <style>
-
  .group {
   display: flex;
   flex-direction: column;
