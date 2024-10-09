@@ -35,7 +35,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px;
   cursor: pointer;
   font-weight: bold;
   background-color: #fd3;
@@ -43,12 +42,15 @@
  }
 
  .modal .header .title {
+  padding: 0 10px;
   flex-grow: 1;
  }
 
- .modal .header .close img {
+ .modal .header img {
+  display: block;
   width: 20px;
   height: 20px;
+  padding: 10px;
  }
 
  .modal .body {
