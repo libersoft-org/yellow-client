@@ -5,12 +5,17 @@
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
  import { networks } from '../wallet.ts';
+ import { onMount } from "svelte";
  export let show;
  export let params;
  export let item = null;
  let modalItem = null;
  let showModalAddEdit = false;
  let showModalDel = false;
+
+ onMount(() => {
+  item = params.item;
+ });
 
  function addTokenModal() {
   console.log('ADD TOKEN MODAL');
@@ -63,7 +68,7 @@
   <!-- () => (item_tokens = [...item_tokens, { name: '', icon: '', symbol: '', contract_address: '' }]) -->
   <Button text="Add token" on:click={addTokenModal} />
  </div>
- <div class="label">Network name: {item.name}</div>
+ <div class="label">Network name: {item?.name}</div>
  <div class="label">Tokens:</div>
  {#if item?.tokens}
   <table>

@@ -1,9 +1,9 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  import { onMount } from 'svelte';
+ import { networks } from "../wallet.ts";
  export let show;
  export let params;
- export let item;
 
  let item_name = '';
  let item_icon = '';
@@ -11,6 +11,7 @@
  let item_contract_address = '';
 
  onMount(() => {
+  let item = params.item;
   if (item) {
    item_name = item.name;
    item_icon = item.icon;
@@ -19,7 +20,14 @@
   }
  });
 
- function clickAdd() {}
+ function clickAdd() {
+  params.onAdd({
+   name: item_name,
+   icon: item_icon,
+   symbol: item_symbol,
+   contract_address: item_contract_address
+  });
+ }
 </script>
 
 <style>
