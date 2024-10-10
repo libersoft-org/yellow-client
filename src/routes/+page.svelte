@@ -12,23 +12,19 @@
  import WelcomeContent from '../core/pages/welcome-content.svelte';
  import Accounts from '../core/pages/accounts.svelte';
  import Wizard from '../core/components/wizard.svelte';
- import WelcomeWizardStep1 from '../core/wizards/welcome-step1.svelte';
- import WelcomeWizardStep2 from '../core/wizards/welcome-step2.svelte';
- import WelcomeWizardStep3 from '../core/wizards/welcome-step3.svelte';
-
+ import WizardWelcomeStep1 from '../core/wizards/welcome-step1.svelte';
+ import WizardWelcomeStep2 from '../core/wizards/welcome-step2.svelte';
+ import WizardWelcomeStep3 from '../core/wizards/welcome-step3.svelte';
  import {} from '../modules/messages/messages.js';
  import {} from '../modules/contacts/contacts.js';
  import {} from '../modules/wallet/module.js';
  import {} from '../modules/iframes/module.js';
-
- let isWelcomeWizardOpen = false;
-
+ let showWelcomeWizard = false;
  const welcomeWizardSteps = [
-  { title: 'Welcome to Yellow', component: WelcomeWizardStep1 },
-  { title: 'Connect your account', component: WelcomeWizardStep2 },
-  { title: 'All set!', component: WelcomeWizardStep3 },
+  { title: 'Welcome to Yellow', component: WizardWelcomeStep1 },
+  { title: 'Connect your account', component: WizardWelcomeStep2 },
+  { title: 'All set!', component: WizardWelcomeStep3 },
  ];
-
  const corePages = {
   accounts: {
    id: 'accounts',
@@ -80,7 +76,7 @@
   window.addEventListener('blur', () => isClientFocused.update(() => false));
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
   if (get(accounts_config).length === 0) {
-   isWelcomeWizardOpen = true;
+   showWelcomeWizard = true;
   }
   setupIframeListener();
  });
@@ -262,7 +258,7 @@
   </div>
  {/if}
  <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
-  <Menu bind:isMenuOpen {product} {version} {link} />
+  <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
   <MenuBar bind:isMenuOpen />
   <AccountBar />
   <ModuleBar {onSelectModule} />
@@ -286,6 +282,4 @@
   {/if}
  </div>
 </div>
-{#if isWelcomeWizardOpen}
- <Wizard steps={welcomeWizardSteps} onClose={() => (isWelcomeWizardOpen = false)} />
-{/if}
+<Wizard steps={welcomeWizardSteps} show={showWelcomeWizard} />

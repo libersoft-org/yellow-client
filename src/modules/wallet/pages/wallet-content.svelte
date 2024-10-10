@@ -14,8 +14,8 @@
  import Button from '../../../core/components/button.svelte';
  import { hideSidebarMobile } from '../../../core/core.js';
  let section = 'balance';
- let isModalNetworksOpen = false;
- let isModalWalletsOpen = false;
+ let showModalNetworks = false;
+ let showModalWallets = false;
  let addressElement;
 
  onMount(() => {
@@ -228,10 +228,10 @@
   <div class="button" role="button" tabindex="0" on:click={clickBackButton} on:keydown={keyBackButton}>
    <img src="img/back-white.svg" alt="Back" />
   </div>
-  <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (isModalNetworksOpen = true)} onClose={() => (isModalNetworksOpen = true)} />
+  <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (showModalNetworks = true)} />
  </div>
  <div class="right">
-  <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (isModalWalletsOpen = true)} onClose={() => (isModalWalletsOpen = true)} />
+  <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (showModalWallets = true)} />
  </div>
 </div>
 <div class="wallet">
@@ -295,13 +295,5 @@
   </div>
  </div>
 </div>
-{#if isModalNetworksOpen}
- <Modal title="Select your network" onClose={() => (isModalNetworksOpen = false)}>
-  <ModalNetworks onClose={() => (isModalNetworksOpen = false)} />
- </Modal>
-{/if}
-{#if isModalWalletsOpen}
- <Modal title="Select your address" onClose={() => (isModalWalletsOpen = false)}>
-  <ModalWallets onClose={() => (isModalWalletsOpen = false)} />
- </Modal>
-{/if}
+<Modal title="Select your network" body={ModalNetworks} show={showModalNetworks} />
+<Modal title="Select your address" body={ModalWallets} show={showModalWallets} />

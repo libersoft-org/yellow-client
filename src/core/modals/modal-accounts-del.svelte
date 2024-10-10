@@ -1,15 +1,13 @@
 <script>
  import Button from '../components/button.svelte';
  import { delAccount } from '../accounts_config.js';
-
  export let title = '';
  export let id = '';
- export let onClose;
 
  function clickDel() {
   console.log('clickDel');
   delAccount(id);
-  onClose();
+  show = false;
  }
 </script>
 

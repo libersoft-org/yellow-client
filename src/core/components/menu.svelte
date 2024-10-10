@@ -1,7 +1,7 @@
 <script>
  import Core from '../core.js';
 
- export let isMenuOpen = false;
+ export let showMenu = false;
  export let product;
  export let version;
  export let link;
@@ -10,11 +10,11 @@
   //TIDI
 
   Core.hideSidebarMobile.update(() => false);
-  isMenuOpen = false;
+  showMenu = false;
  }
 
  function clickMenuClose() {
-  isMenuOpen = false;
+  showMenu = false;
  }
 
  function keyMenuClose() {
@@ -159,10 +159,10 @@
  }
 </style>
 
-{#if isMenuOpen}
+{#if showMenu}
  <div class="overlay open" role="none" on:click={clickMenuClose}></div>
 {/if}
-<div class="menu {isMenuOpen ? 'open' : ''}">
+<div class="menu {showMenu ? 'open' : ''}">
  <div>
   <div class="top">
    <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>

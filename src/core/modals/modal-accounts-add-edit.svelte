@@ -2,16 +2,11 @@
  import { onMount } from 'svelte';
  import { addAccount, findAccount, saveAccount } from '../accounts_config.js';
  import Button from '../components/button.svelte';
- import { get } from 'svelte/store';
- import { accounts_config } from '../core.js';
-
- export let onClose;
+ export let show;
+ export let params;
  export let id;
-
  let serverElem;
-
  let error;
-
  let credentials_address;
  let credentials_server;
  let credentials_password;
@@ -41,12 +36,12 @@
 
  function clickAdd() {
   addAccount({ enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
-  onClose();
+  show = false;
  }
 
  function clickSave() {
   saveAccount(id, { enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
-  onClose();
+  show = false;
  }
 
  function keyEnter() {

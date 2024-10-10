@@ -6,8 +6,8 @@
  import ModalAccountsAddEdit from '../modals/modal-accounts-add-edit.svelte';
  import ModalAccountsDel from '../modals/modal-accounts-del.svelte';
  import { get } from 'svelte/store';
- let isAddEditAccountModalOpen = false;
- let isDelAccountModalOpen = false;
+ let showAddEditAccountModal = false;
+ let showDelAccountModal = false;
  let idItem = null;
  let accountTitle = '';
 
@@ -18,18 +18,18 @@
 
  function addAccountModal() {
   idItem = null;
-  isAddEditAccountModalOpen = true;
+  showAddEditAccountModal = true;
  }
 
  function clickEdit(id) {
   idItem = id;
-  isAddEditAccountModalOpen = true;
+  showAddEditAccountModal = true;
  }
 
  function clickDel(id, title) {
   idItem = id;
   accountTitle = title;
-  isDelAccountModalOpen = true;
+  showDelAccountModal = true;
  }
 
  function accountsConfigExport() {
@@ -148,13 +148,5 @@
   </table>
  </div>
 </div>
-{#if isAddEditAccountModalOpen}
- <Modal title="Add a new account" onClose={() => (isAddEditAccountModalOpen = false)}>
-  <ModalAccountsAddEdit id={idItem} onClose={() => (isAddEditAccountModalOpen = false)} />
- </Modal>
-{/if}
-{#if isDelAccountModalOpen}
- <Modal title="Delete the account" onClose={() => (isDelAccountModalOpen = false)}>
-  <ModalAccountsDel id={idItem} title={accountTitle} onClose={() => (isDelAccountModalOpen = false)} />
- </Modal>
-{/if}
+<Modal title="Add a new account" body={ModalAccountsAddEdit} params={{ id: idItem }} show={showAddEditAccountModal} />
+<Modal title="Delete the account" body={ModalAccountsDel} params={{ id: idItem, title: accountTitle }} show={showDelAccountModal} />

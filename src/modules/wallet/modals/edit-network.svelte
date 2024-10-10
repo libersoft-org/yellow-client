@@ -1,12 +1,10 @@
 <script>
  import { networks } from '../wallet.ts';
- import { writable } from 'svelte/store';
  import Button from '../../../core/components/button.svelte';
  import { onMount } from 'svelte';
-
- export let onClose;
+ export let show;
+ export let params;
  export let item = null;
-
  let item_name = '';
  let item_currency_symbol = '';
  let item_currency_iconURL = '';
@@ -34,7 +32,7 @@
   item.explorerURL = item_explorer_url;
   item.rpcURL = item_rpc_urls;
   networks.update(v => v);
-  onClose();
+  show = false;
  }
 </script>
 
@@ -88,11 +86,11 @@
  </div>
 
  <div class="buttons">
-  <Button on:click={() => onClose()}>Cancel</Button>
+  <Button on:click={() => (show = false)}>Cancel</Button>
   <Button
    on:click={() => {
     save();
-    onClose();
+    show = false;
    }}>Save</Button
   >
  </div>

@@ -2,7 +2,8 @@
  import { onMount } from 'svelte';
  import { openNewConversation } from '../messages.js';
  import Button from '../../../core/components/button.svelte';
- export let onClose;
+ export let show;
+ export let params;
  let address;
 
  onMount(() => address.focus());
@@ -10,7 +11,7 @@
  function clickOpen() {
   if (address.value) {
    openNewConversation(address.value);
-   onClose();
+   show = false;
   }
  }
 

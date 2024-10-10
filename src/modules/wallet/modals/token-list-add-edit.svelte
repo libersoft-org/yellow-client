@@ -1,6 +1,8 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  import { onMount } from 'svelte';
+ export let show;
+ export let params;
  export let item;
 
  let item_name = '';

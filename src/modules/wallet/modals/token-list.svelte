@@ -5,18 +5,17 @@
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
  import { networks } from '../wallet.ts';
-
- export let onClose;
+ export let show;
+ export let params;
  export let item = null;
  let modalItem = null;
-
- let isModalAddEditOpen = false;
- let isModalDelOpen = false;
+ let showModalAddEdit = false;
+ let showModalDel = false;
 
  function addTokenModal() {
   console.log('ADD TOKEN MODAL');
   modalItem = null;
-  isModalAddEditOpen = true;
+  showModalAddEdit = true;
  }
 
  function onAdd(token) {
@@ -24,20 +23,20 @@
   if (!item.tokens) item.tokens = [];
   item.tokens.push(token);
   networks.update(v => v);
-  isModalAddEditOpen = false;
+  showModalAddEdit = false;
  }
 
  function delTokenModal(item) {
   console.log('DELETE TOKEN MODAL:', item);
   modalItem = item;
-  isModalDelOpen = true;
+  showModalDel = true;
  }
 
  function onDel(token) {
   console.log('DELETE TOKEN:', token);
   item.tokens = item.tokens.filter(t => t !== token);
   networks.update(v => v);
-  isModalDelOpen = false;
+  showModalDel = false;
  }
 </script>
 
@@ -92,13 +91,5 @@
   </table>
  {/if}
 </div>
-{#if isModalAddEditOpen}
- <Modal title="Add token" onClose={() => (isModalAddEditOpen = false)}>
-  <ModalAddEdit item={modalItem} {onAdd} onClose={() => (isModalAddEditOpen = false)} />
- </Modal>
-{/if}
-{#if isModalDelOpen}
- <Modal title="Delete token" onClose={() => (isModalDelOpen = false)}>
-  <ModalDel item={modalItem} {onDel} onClose={() => (isModalDelOpen = false)} />
- </Modal>
-{/if}
+<Modal title="Add token" body={ModalAddEdit} params={{ item: modalItem, onAdd: onAdd }} show={showModalAddEdit} />
+<Modal title="Delete token" body={ModalDel} params={{ item: modalItem, onDel: onDel }} show={showModalDel} />

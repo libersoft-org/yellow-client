@@ -2,13 +2,14 @@
  import { selectedNetworkID, networks } from '../wallet.ts';
  import List from '../components/list.svelte';
  import ListItem from '../components/list-item.svelte';
- export let onClose;
+ export let show;
+ export let params;
  let filter = '';
 
  function selectNetwork(id) {
   console.log('SETTING NETWORK', id);
   selectedNetworkID.set(id);
-  onClose();
+  show = false;
  }
 </script>
 

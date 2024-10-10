@@ -1,15 +1,17 @@
 <script>
+ export let show = false;
+ export let params;
  export let title;
- export let onClose;
+ export let body;
 
- function clickClose() {
-  if (onClose) onClose();
+ function clickCloseModal() {
+  show = false;
  }
 
- function keyClose() {
+ function keyCloseModal() {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   clickClose();
+   clickCloseModal();
   }
  }
 </script>
@@ -64,12 +66,16 @@
  }
 </style>
 
-<div class="modal">
- <div class="header">
-  <div class="title">{title}</div>
-  <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close-black.svg" alt="X" /></div>
+{#if show && body}
+ <div class="modal">
+  <div class="header">
+   <div class="title">{title}</div>
+   <div class="close" role="button" tabindex="0" on:click={clickCloseModal} on:keydown={keyCloseModal}>
+    <img src="img/close-black.svg" alt="X" />
+   </div>
+  </div>
+  <div class="body">
+   <svelte:component this={body} bind:show bind:params />
+  </div>
  </div>
- <div class="body">
-  <slot></slot>
- </div>
-</div>
+{/if}

@@ -8,11 +8,11 @@
  import ModalNewWallet from '../modals/new-wallet.svelte';
  import { Mnemonic } from 'ethers';
 
- let isModalPhraseOpen = false;
+ let showModalPhrase = false;
  let activeIndex = null;
 
  function showNewWalletModal() {
-  isModalPhraseOpen = true;
+  showModalPhrase = true;
  }
 
  function afterAddWallet() {
@@ -127,13 +127,18 @@
   </table>
  </div>
 </Accordion>
-{#if isModalPhraseOpen}
- <Modal title="New wallet" onClose={() => (isModalPhraseOpen = false)}>
+
+<!-- // TODO - onClose success is different from onClose by close (X) button -->
+
+<!--{#if showModalPhrase}
+ <Modal title="New wallet" on:close={() => (showModalPhrase = false)}>
   <ModalNewWallet
    onClose={() => {
-    isModalPhraseOpen = false;
+    showModalPhrase = false;
     afterAddWallet();
    }}
   />
  </Modal>
-{/if}
+{/if}-->
+
+<Modal title="New wallet" body={ModalNewWallet} show={showModalPhrase} />

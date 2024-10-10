@@ -2,8 +2,8 @@
  import { onMount } from 'svelte';
  import Button from '../../../core/components/button.svelte';
  import { addressBook } from '../wallet';
- import { get } from 'svelte/store';
- export let onClose;
+ export let show;
+ export let params;
  export let item = null;
  let aliasElement;
  let alias = '';
@@ -19,7 +19,7 @@
  });
 
  function findAddressBookItemByAddress(address) {
-  const ab = get(addressBook);
+  const ab = $addressBook;
   return ab.find(item => item.address === address);
  }
 
@@ -43,7 +43,7 @@
   console.log('NEW ITEM IN ADDRESS BOOK:', alias, address);
   $addressBook.push({ alias, address });
   addressBook.set($addressBook);
-  onClose();
+  show = false;
  }
 
  function edit() {
@@ -55,7 +55,7 @@
   item.alias = alias;
   item.address = address;
   addressBook.set($addressBook);
-  onClose();
+  show = false;
  }
 
  function keyEnter() {

@@ -5,28 +5,28 @@
  import ModalDel from '../modals/addressbook-del.svelte';
  import Icon from '../components/table-icon.svelte';
  import { addressBook } from '../wallet.ts';
- let isModalAddEditOpen = false;
- let isModalDelOpen = false;
+ let showModalAddEdit = false;
+ let showModalDel = false;
  let edit = false;
  let modalItem = null;
 
  function addToAddressBookModal() {
   modalItem = null;
   edit = false;
-  isModalAddEditOpen = true;
+  showModalAddEdit = true;
  }
 
  function editItemModal(item) {
   console.log('EDIT ADDRESSBOOK ITEM:', item);
   modalItem = item;
   edit = true;
-  isModalAddEditOpen = true;
+  showModalAddEdit = true;
  }
 
  function deleteItemModal(item) {
   console.log('DELETE ADDRESSBOOK ITEM:', item);
   modalItem = item;
-  isModalDelOpen = true;
+  showModalDel = true;
  }
 </script>
 
@@ -113,13 +113,5 @@
   </table>
  {/if}
 </div>
-{#if isModalAddEditOpen}
- <Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} onClose={() => (isModalAddEditOpen = false)}>
-  <ModalAddEdit item={modalItem} onClose={() => (isModalAddEditOpen = false)} />
- </Modal>
-{/if}
-{#if isModalDelOpen}
- <Modal title="Delete the item in address book" onClose={() => (isModalDelOpen = false)}>
-  <ModalDel item={modalItem} onClose={() => (isModalDelOpen = false)} />
- </Modal>
-{/if}
+<Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} show={showModalAddEdit} />
+<Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} show={showModalDel} />

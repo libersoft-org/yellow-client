@@ -3,12 +3,8 @@
  import QRCode from 'qrcode';
  import Button from '../../../core/components/button.svelte';
  import { generateMnemonic, addWallet } from '../wallet.ts';
-
- export let onClose;
-
  let mnemonic = {};
  let phrase = '';
-
  let qrCodeData = '';
 
  onMount(() => {
@@ -32,7 +28,7 @@
   // TODO: password protect the key
   console.log('SAVE');
   addWallet(mnemonic);
-  onClose();
+  show = false;
  }
 
  function print() {
