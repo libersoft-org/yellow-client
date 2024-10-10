@@ -5,7 +5,7 @@
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
  import { networks } from '../wallet.ts';
- import { onMount } from "svelte";
+ import { onMount } from 'svelte';
  export let show;
  export let params;
  export let item = null;

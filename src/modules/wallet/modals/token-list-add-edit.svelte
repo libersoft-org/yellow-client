@@ -1,7 +1,7 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  import { onMount } from 'svelte';
- import { networks } from "../wallet.ts";
+ import { networks } from '../wallet.ts';
  export let show;
  export let params;
 
@@ -25,7 +25,7 @@
    name: item_name,
    icon: item_icon,
    symbol: item_symbol,
-   contract_address: item_contract_address
+   contract_address: item_contract_address,
   });
  }
 </script>
