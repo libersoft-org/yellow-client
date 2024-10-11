@@ -4,8 +4,7 @@
  export let title;
  export let body;
 
- function close()
- {
+ function close() {
   show = false;
  }
 
