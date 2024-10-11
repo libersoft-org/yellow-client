@@ -16,8 +16,7 @@
  $: update(params);
 
  function update(params) {
-  if (item_guid)
-   return;
+  if (item_guid) return;
   let item = params.item;
   if (item) {
    item_name = item.name;
