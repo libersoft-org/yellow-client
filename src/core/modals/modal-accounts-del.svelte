@@ -1,15 +1,15 @@
 <script>
  import Button from '../components/button.svelte';
  import { delAccount } from '../accounts_config.js';
- export let title = '';
- export let id = '';
+ export let close;
+ export let params;
 
  function clickDel() {
   console.log('clickDel');
-  delAccount(id);
-  show = false;
+  delAccount(params.id);
+  close();
  }
 </script>
 
-<div>Would you like to delete the account "<span class="bold">{title}</span>" (id: <span class="bold">{id}</span>)?</div>
+<div>Would you like to delete the account "<span class="bold">{params.name}</span>" (id: <span class="bold">{params.id}</span>)?</div>
 <Button text="Delete" on:click={clickDel} />

@@ -2,9 +2,8 @@
  import { onMount } from 'svelte';
  import { addAccount, findAccount, saveAccount } from '../accounts_config.js';
  import Button from '../components/button.svelte';
- export let show;
+ export let close;
  export let params;
- export let id;
  let serverElem;
  let error;
  let credentials_address;
@@ -15,8 +14,8 @@
 
  onMount(() => {
   serverElem.focus();
-  if (id !== null) {
-   let acc = findAccount(id);
+  if (params.id !== null) {
+   let acc = findAccount(params.id);
    console.log('acc', acc);
    let credentials = acc.credentials;
 
@@ -36,12 +35,12 @@
 
  function clickAdd() {
   addAccount({ enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
-  show = false;
+  close();
  }
 
  function clickSave() {
-  saveAccount(id, { enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
-  show = false;
+  saveAccount(params.id, { enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
+  close();
  }
 
  function keyEnter() {
@@ -115,7 +114,7 @@
    <div>{error}</div>
   </div>
  {/if}
- {#if id === null}
+ {#if params.id === null}
   <Button on:click={clickAdd} text="Add the account" />
  {:else}
   <Button on:click={clickSave} text="Save" />

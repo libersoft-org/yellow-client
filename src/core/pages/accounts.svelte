@@ -148,5 +148,5 @@
   </table>
  </div>
 </div>
-<Modal title="Add a new account" body={ModalAccountsAddEdit} params={{ id: idItem }} show={showAddEditAccountModal} />
-<Modal title="Delete the account" body={ModalAccountsDel} params={{ id: idItem, title: accountTitle }} show={showDelAccountModal} />
+<Modal title="Add a new account" body={ModalAccountsAddEdit} params={{ id: idItem }} bind:show={showAddEditAccountModal} />
+<Modal title="Delete the account" body={ModalAccountsDel} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
