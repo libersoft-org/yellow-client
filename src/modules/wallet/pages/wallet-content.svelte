@@ -248,7 +248,7 @@
     <div class="center">
      <div class="balance">
       <div class="crypto">
-       {#if $selectedNetwork.currency.iconURL}
+       {#if $selectedNetwork?.currency?.iconURL}
         <div><img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} /></div>
        {/if}
        <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
