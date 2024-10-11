@@ -8,11 +8,12 @@
  let showModalEditNetwork = false;
  let showModalTokenList = false;
  let modalItemID = null;
+ let modalItem = null;
 
  function editNetwork(net) {
   console.log('editNetwork', net);
   showModalEditNetwork = true;
-  modalItemID = net.guid;
+  modalItem = net;
  }
 
  function tokenList(net) {
@@ -100,5 +101,5 @@
   {/each}
  </div>
 </div>
-<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItemID }} bind:show={showModalEditNetwork} />
+<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:show={showModalEditNetwork} />
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:show={showModalTokenList} />

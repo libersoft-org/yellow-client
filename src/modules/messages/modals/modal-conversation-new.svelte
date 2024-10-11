@@ -11,6 +11,7 @@
  function clickOpen() {
   if (address.value) {
    openNewConversation(address.value);
+   console.log('show = false');
    show = false;
   }
  }

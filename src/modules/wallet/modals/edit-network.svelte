@@ -4,7 +4,8 @@
  import { onMount } from 'svelte';
  export let show;
  export let params;
- export let item = null;
+
+ let item_guid = '';
  let item_name = '';
  let item_currency_symbol = '';
  let item_currency_iconURL = '';
@@ -12,8 +13,12 @@
  let item_explorer_url = '';
  let item_rpc_urls = [];
 
- onMount(() => {
-  console.log('edit-network', item);
+ $: update(params);
+
+ function update(params) {
+  if (item_guid)
+   return;
+  let item = params.item;
   if (item) {
    item_name = item.name;
    item_currency_symbol = item.currency.symbol;
@@ -22,15 +27,20 @@
    item_explorer_url = item.explorerURL;
    item_rpc_urls = item.rpcURLs.map(v => v);
   }
- });
+ }
 
  function save() {
+  let item = $networks.find(v => v.guid === params.item.guid);
+  if (!item) {
+   window.alert('Network not found');
+   return;
+  }
   item.name = item_name;
   item.currency.symbol = item_currency_symbol;
   item.currency.iconURL = item_currency_iconURL;
   item.chainId = item_chain_id;
   item.explorerURL = item_explorer_url;
-  item.rpcURL = item_rpc_urls;
+  item.rpcURLs = item_rpc_urls;
   networks.update(v => v);
   show = false;
  }

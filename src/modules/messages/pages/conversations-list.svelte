@@ -5,12 +5,10 @@
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
  let showNewConversationModal = false;
- let modalComponent = null;
 
  $: console.log('conversations-list.svelte: conversationsArray: ', $conversationsArray);
 
  function clickNew() {
-  modalComponent = ModalConversationNew;
   showNewConversationModal = true;
  }
 
@@ -71,5 +69,5 @@
    {/each}
   </div>
  </div>
- <Modal title="New Conversation" body={ModalConversationNew} show={showNewConversationModal} />
+ <Modal title="New Conversation" body={ModalConversationNew} bind:show={showNewConversationModal} />
 {/if}

@@ -141,4 +141,4 @@
  </Modal>
 {/if}-->
 
-<Modal title="New wallet" body={ModalNewWallet} show={showModalPhrase} />
+<Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />

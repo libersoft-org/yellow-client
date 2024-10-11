@@ -79,7 +79,7 @@
    </div>
   </div>
   <div class="body">
-   <svelte:component this={body} {close} bind:params bind:title />
+   <svelte:component this={body} {close} bind:show={show} bind:params bind:title />
   </div>
  </div>
 {/if}
