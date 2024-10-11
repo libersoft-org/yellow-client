@@ -3,6 +3,8 @@
  import { onMount } from 'svelte';
  export let show;
  export let params;
+ export let title="Add/edit token"
+
 
  let item_name = '';
  let item_icon = '';
@@ -12,10 +14,14 @@
  onMount(() => {
   let item = params.item;
   if (item) {
+   title = 'Edit token';
    item_name = item.name;
    item_icon = item.icon;
    item_symbol = item.symbol;
    item_contract_address = item.contract_address;
+  }
+  else {
+   title = 'Add token';
   }
  });
 

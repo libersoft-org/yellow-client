@@ -52,7 +52,7 @@ let reconnectionTimer: number | undefined;
 
 export const networks = localStorageSharedStore<Network[]>('networks', []);
 
-networks.subscribe((nets: Network[]) => {
+/*networks.subscribe((nets: Network[]) => {
  let modified = false;
  for (let net of nets) {
   if (net.guid === undefined) {
@@ -73,7 +73,7 @@ networks.subscribe((nets: Network[]) => {
  if (modified) {
   networks.update(n => n);
  }
-});
+});*/
 
 function toHexStr(uint8) {
  Array.from(uint8)
