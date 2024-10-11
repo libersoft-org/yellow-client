@@ -4,6 +4,11 @@
  export let title;
  export let body;
 
+ function close()
+ {
+  show = false;
+ }
+
  function clickCloseModal() {
   show = false;
  }
@@ -75,7 +80,7 @@
    </div>
   </div>
   <div class="body">
-   <svelte:component this={body} bind:show bind:params bind:title />
+   <svelte:component this={body} {close} bind:params bind:title />
   </div>
  </div>
 {/if}

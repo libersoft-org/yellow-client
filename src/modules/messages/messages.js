@@ -1,7 +1,7 @@
 import { get, writable } from 'svelte/store';
 import { active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
 import DOMPurify from 'dompurify';
-import { send, getRandomString } from '../../core/core.js';
+import { send, getGuid } from '../../core/core.js';
 import { selectConversation, listConversations } from './conversations.js';
 import ConversationsList from './pages/conversations-list.svelte';
 import ConversationsMain from './pages/conversations-main.svelte';
@@ -129,7 +129,7 @@ export function sendMessage(text) {
  let acc = get(active_account);
 
  let message = new Message(acc, {
-  uid: getRandomString(),
+  uid: getGuid(),
   address_from: acc.credentials.address,
   address_to: get(selectedConversation).address,
   message: text,

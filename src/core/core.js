@@ -509,7 +509,7 @@ function handleSocketResponse(acc, res) {
  } else console.log('Unknown command from server:', res);
 }
 
-export function getRandomString(length = 40) {
+export function getGuid(length = 40) {
  let result = '';
  while (result.length < length) result += Math.random().toString(36).substring(2);
  return result.substring(0, length);

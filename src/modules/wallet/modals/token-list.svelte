@@ -37,7 +37,6 @@
   console.log('ADD TOKEN:', net);
   net.tokens.push(token);
   networks.update(v => v);
-  showModalAddEdit = false;
  }
 
  function editTokenModal(item) {
@@ -48,9 +47,8 @@
 
  function onEdit(token) {
   console.log('EDIT TOKEN:', token);
-  net.tokens = item.tokens.map(t => (t.guid === token.guid ? token : t));
+  net.tokens = net.tokens.map(t => (t.guid === token.guid ? token : t));
   networks.update(v => v);
-  showModalAddEdit = false;
  }
 
  function delTokenModal(item) {
@@ -61,10 +59,8 @@
 
  function onDel(token) {
   console.log('DELETE TOKEN:', token);
-  //item.tokens = item.tokens.filter(t => t !== token);
   net.tokens = net.tokens.filter(t => t.guid !== token.guid);
   networks.update(v => v);
-  showModalDel = false;
  }
 </script>
 
@@ -121,5 +117,5 @@
   </table>
  {/if}
 </div>
-<Modal body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} show={showModalAddEdit} />
-<Modal title="Delete token" body={ModalDel} params={{ item: modalItem, onDel: onDel }} show={showModalDel} />
+<Modal body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
+<Modal body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:show={showModalDel} />

@@ -1,10 +1,12 @@
 <script>
  import Button from '../../../core/components/button.svelte';
+ import { getGuid } from '../../../core/core.js';
  import { onMount } from 'svelte';
- export let show;
+ export let close;
  export let params;
  export let title = 'Add/edit token';
 
+ let item_guid = '';
  let item_name = '';
  let item_icon = '';
  let item_symbol = '';
@@ -14,6 +16,7 @@
   let item = params.item;
   if (item) {
    title = 'Edit token';
+   item_guid = item.guid;
    item_name = item.name;
    item_icon = item.icon;
    item_symbol = item.symbol;
@@ -25,6 +28,7 @@
 
  function token() {
   return {
+   guid: item_guid || getGuid(),
    name: item_name,
    icon: item_icon,
    symbol: item_symbol,
@@ -34,10 +38,12 @@
 
  function clickAdd() {
   params.onAdd(token());
+  close();
  }
 
  function clickEdit() {
   params.onEdit(token());
+  close();
  }
 </script>
 

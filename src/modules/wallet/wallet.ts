@@ -2,6 +2,7 @@ import { derived, get, writable } from 'svelte/store';
 import { HDNodeWallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 export { default_networks } from './default_networks.js';
+import { getGuid } from '../../core/core.js';
 
 interface Address {
  address: string;
@@ -56,7 +57,7 @@ networks.subscribe((nets: Network[]) => {
  let modified = false;
  for (let net of nets) {
   if (net.guid === undefined) {
-   net.guid = toHexStr(randomBytes(64));
+   net.guid = getGuid();
    console.log('Adding guid to network', net);
    modified = true;
   }
@@ -68,7 +69,7 @@ networks.subscribe((nets: Network[]) => {
   for (let token of net.tokens) {
    if (token.guid === undefined) {
     console.log('Adding guid to token', token);
-    token.guid = toHexStr(randomBytes(64));
+    token.guid = getGuid();
     modified = true;
    }
   }

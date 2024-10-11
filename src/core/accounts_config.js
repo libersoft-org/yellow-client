@@ -1,8 +1,8 @@
-import { accounts_config, getRandomString, selectAccount } from './core.js';
+import { accounts_config, getGuid, selectAccount } from './core.js';
 import { get } from 'svelte/store';
 
 export function addAccount(config, settings) {
- let id = getRandomString();
+ let id = getGuid();
  accounts_config.update(v => [
   ...v,
   {
