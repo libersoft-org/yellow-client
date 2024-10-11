@@ -75,13 +75,11 @@ networks.subscribe((nets: Network[]) => {
  }
 });
 
-
 function toHexStr(uint8) {
  Array.from(uint8)
-  .map((i) => i.toString(16).padStart(2, '0'))
+  .map(i => i.toString(16).padStart(2, '0'))
   .join('');
 }
-
 
 export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);

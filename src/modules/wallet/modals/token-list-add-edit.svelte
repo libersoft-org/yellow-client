@@ -19,14 +19,13 @@
   }
  });
 
- function token()
- {
+ function token() {
   return {
    name: item_name,
    icon: item_icon,
    symbol: item_symbol,
    contract_address: item_contract_address,
-  }
+  };
  }
 
  function clickAdd() {
@@ -36,9 +35,6 @@
  function clickEdit() {
   params.onEdit(token());
  }
-
-
-
 </script>
 
 <style>

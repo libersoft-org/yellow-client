@@ -8,7 +8,6 @@
  export let show;
  export let params;
 
-
  let net;
  $: update($networks, params);
 
@@ -22,13 +21,10 @@
 
  console.log('NET:', net);
 
-
  let showModalAddEdit = false;
  let showModalDel = false;
 
  let modalItem = null;
-
-
 
  function addTokenModal() {
   console.log('ADD TOKEN MODAL');
@@ -52,7 +48,7 @@
 
  function onEdit(token) {
   console.log('EDIT TOKEN:', token);
-  net.tokens = item.tokens.map(t => t.guid === token.guid ? token : t);
+  net.tokens = item.tokens.map(t => (t.guid === token.guid ? token : t));
   networks.update(v => v);
   showModalAddEdit = false;
  }
@@ -124,8 +120,6 @@
    {/each}
   </table>
  {/if}
-
-
 </div>
 <Modal title="Add/edit token" body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} show={showModalAddEdit} />
 <Modal title="Delete token" body={ModalDel} params={{ item: modalItem, onDel: onDel }} show={showModalDel} />
