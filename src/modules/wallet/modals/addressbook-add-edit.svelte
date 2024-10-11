@@ -2,25 +2,29 @@
  import { onMount } from 'svelte';
  import Button from '../../../core/components/button.svelte';
  import { addressBook } from '../wallet';
- export let show;
+ export let close;
  export let params;
- export let item = null;
  let aliasElement;
  let alias = '';
  let address = '';
  let error = '';
 
  onMount(() => {
-  if (item) {
-   alias = item.alias;
-   address = item.address;
+  if (params.item) {
+   alias = params.item.alias;
+   address = params.item.address;
   }
   aliasElement.focus();
  });
 
  function findAddressBookItemByAddress(address) {
   const ab = $addressBook;
-  return ab.find(item => item.address === address);
+  return ab.find(i => i.address === address);
+ }
+
+ function findAddressBookItemById(id) {
+  const ab = $addressBook;
+  return ab.find(i => i.guid === id);
  }
 
  function add() {
@@ -43,19 +47,19 @@
   console.log('NEW ITEM IN ADDRESS BOOK:', alias, address);
   $addressBook.push({ alias, address });
   addressBook.set($addressBook);
-  show = false;
+  close();
  }
 
  function edit() {
   let dupe = findAddressBookItemByAddress(address);
-  if (dupe && dupe != item) {
+  if (dupe && dupe.guid != params.item.guid) {
    error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
    return;
   }
-  item.alias = alias;
-  item.address = address;
+  params.item.alias = alias;
+  params.item.address = address;
   addressBook.set($addressBook);
-  show = false;
+  close();
  }
 
  function keyEnter() {
@@ -103,7 +107,7 @@
    <div>{error}</div>
   </div>
  {/if}
- {#if item}
+ {#if params.item}
   <Button text="Save" on:click={edit} />
  {:else}
   <Button text="Add" on:click={add} />

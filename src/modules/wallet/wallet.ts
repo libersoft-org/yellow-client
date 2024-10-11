@@ -124,6 +124,19 @@ export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens,
 
 export const addressBook = localStorageSharedStore<AddressBookItem[]>('addressbook', []);
 
+addressBook.subscribe((value: AddressBookItem[]) => {
+ let modifyed = false;
+ for (let i of value) {
+  if (!i.guid) {
+   i.guid = getGuid();
+   modifyed = true;
+  }
+ }
+ if (modifyed) {
+  addressBook.update(v => v);
+ }
+});
+
 selectedAddress.subscribe((value: Address | undefined) => {
  console.log('selectedAddress', value);
  // getBalance();

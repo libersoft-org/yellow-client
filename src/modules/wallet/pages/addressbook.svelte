@@ -113,5 +113,5 @@
   </table>
  {/if}
 </div>
-<Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} show={showModalAddEdit} />
-<Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} show={showModalDel} />
+<Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:show={showModalAddEdit} />
+<Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:show={showModalDel} />

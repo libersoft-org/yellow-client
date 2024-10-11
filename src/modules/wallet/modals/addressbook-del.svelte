@@ -1,14 +1,13 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  import { addressBook } from '../wallet';
- export let show;
+ export let close;
  export let params;
- export let item;
  let error;
 
  function clickDelete() {
-  addressBook.set($addressBook.filter(i => i.address !== item.address));
-  show = false;
+  addressBook.set($addressBook.filter(i => i.guid !== params.item.guid));
+  close();
  }
 </script>
 
@@ -23,7 +22,7 @@
  }
 </style>
 
-<div>Would you like to delete the item "{item.alias}"?</div>
+<div>Would you like to delete the item "{params.item.alias}"?</div>
 {#if error}
  <div class="error">
   <div class="bold">Error:</div>
