@@ -52,31 +52,37 @@ let reconnectionTimer: number | undefined;
 
 export const networks = localStorageSharedStore<Network[]>('networks', []);
 
-/*networks.subscribe((nets: Network[]) => {
+networks.subscribe((nets: Network[]) => {
  let modified = false;
  for (let net of nets) {
   if (net.guid === undefined) {
    net.guid = toHexStr(randomBytes(64));
+   console.log('Adding guid to network', net);
    modified = true;
   }
   if (net.tokens === undefined) {
    net.tokens = [];
+   console.log('Adding tokens to network', net);
    modified = true;
   }
   for (let token of net.tokens) {
    if (token.guid === undefined) {
+    console.log('Adding guid to token', token);
     token.guid = toHexStr(randomBytes(64));
     modified = true;
    }
   }
  }
  if (modified) {
-  networks.update(n => n);
+  setTimeout(() => {
+   console.log('Updating networks');
+   networks.update(n => n);
+  }, 1000);
  }
-});*/
+});
 
 function toHexStr(uint8) {
- Array.from(uint8)
+ return Array.from(uint8)
   .map(i => i.toString(16).padStart(2, '0'))
   .join('');
 }
