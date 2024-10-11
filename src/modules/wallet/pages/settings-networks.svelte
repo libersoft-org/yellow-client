@@ -1,6 +1,5 @@
 <script>
- import { default_networks } from '../networks.js';
- import { addNetwork, removeNetwork, networks } from '../wallet.ts';
+ import { addNetwork, removeNetwork, networks, default_networks } from '../wallet.ts';
  import Icon from '../components/table-icon.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalEditNetwork from '../modals/edit-network.svelte';
@@ -8,18 +7,18 @@
 
  let showModalEditNetwork = false;
  let showModalTokenList = false;
- let modalEditNetworkItem = null;
+ let modalItemID = null;
 
  function editNetwork(net) {
   console.log('editNetwork', net);
   showModalEditNetwork = true;
-  modalEditNetworkItem = net;
+  modalItemID = net.guid;
  }
 
  function tokenList(net) {
   console.log('tokenList', net);
   showModalTokenList = true;
-  modalEditNetworkItem = net;
+  modalItemID = net.guid;
  }
 </script>
 
@@ -73,7 +72,7 @@
 <div class="networks">
  <div class="bold">My networks:</div>
  <div class="items">
-  {#each $networks as n, index}
+  {#each $networks as n, index (n.guid)}
    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
     {#if n.currency?.iconURL}
      <img src={n.currency.iconURL} alt="" />
@@ -101,5 +100,5 @@
   {/each}
  </div>
 </div>
-<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalEditNetworkItem }} show={showModalEditNetwork} />
-<Modal title="Token list" body={ModalTokenList} params={{ item: modalEditNetworkItem }} show={showModalTokenList} />
+<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItemID }} bind:show={showModalEditNetwork} />
+<Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:show={showModalTokenList} />

@@ -1,7 +1,7 @@
 import { derived, get, writable } from 'svelte/store';
 import { HDNodeWallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
-import { default_networks } from './networks.js';
+export { default_networks } from './default_networks.js';
 
 interface Address {
  address: string;
@@ -51,6 +51,38 @@ let provider: JsonRpcProvider | null = null;
 let reconnectionTimer: number | undefined;
 
 export const networks = localStorageSharedStore<Network[]>('networks', []);
+
+networks.subscribe((nets: Network[]) => {
+ let modified = false;
+ for (let net of nets) {
+  if (net.guid === undefined) {
+   net.guid = toHexStr(randomBytes(64));
+   modified = true;
+  }
+  if (net.tokens === undefined) {
+   net.tokens = [];
+   modified = true;
+  }
+  for (let token of net.tokens) {
+   if (token.guid === undefined) {
+    token.guid = toHexStr(randomBytes(64));
+    modified = true;
+   }
+  }
+ }
+ if (modified) {
+  networks.update(n => n);
+ }
+});
+
+
+function toHexStr(uint8) {
+ Array.from(uint8)
+  .map((i) => i.toString(16).padStart(2, '0'))
+  .join('');
+}
+
+
 export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = derived<[string | null, Network[]], Network | undefined>([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {

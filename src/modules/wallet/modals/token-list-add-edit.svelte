@@ -1,7 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  import { onMount } from 'svelte';
- import { networks } from '../wallet.ts';
  export let show;
  export let params;
 
@@ -20,14 +19,26 @@
   }
  });
 
- function clickAdd() {
-  params.onAdd({
+ function token()
+ {
+  return {
    name: item_name,
    icon: item_icon,
    symbol: item_symbol,
    contract_address: item_contract_address,
-  });
+  }
  }
+
+ function clickAdd() {
+  params.onAdd(token());
+ }
+
+ function clickEdit() {
+  params.onEdit(token());
+ }
+
+
+
 </script>
 
 <style>
@@ -62,4 +73,9 @@
  <div class="label">Contract address:</div>
  <input bind:value={item_contract_address} />
 </div>
-<Button text="Add token" on:click={clickAdd} />
+
+{#if params.item}
+ <Button text="Save" on:click={clickEdit} />
+{:else}
+ <Button text="Add token" on:click={clickAdd} />
+{/if}

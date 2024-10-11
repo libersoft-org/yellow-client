@@ -1,7 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  export let params;
- export let item;
 </script>
 
 <style>
