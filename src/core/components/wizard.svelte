@@ -120,7 +120,7 @@
  }
 </style>
 
-{#if show && steps.length > 1}
+{#if show && steps.length >= 1}
  <div class="wizard">
   <div class="header">
    <div class="title">{steps[currentStep].title}</div>
