@@ -117,5 +117,5 @@
   </table>
  {/if}
 </div>
-<Modal title={ modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
+<Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
 <Modal title={'Delete token'} body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:show={showModalDel} />

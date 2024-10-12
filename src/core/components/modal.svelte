@@ -8,7 +8,7 @@
   show = false;
  }
 
- let props = {params, close};
+ let props = { params, close };
 
  function clickCloseModal() {
   close();

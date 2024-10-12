@@ -5,7 +5,6 @@
  export let close;
  export let params;
 
-
  let item_guid = '';
  let item_name = '';
  let item_icon = '';

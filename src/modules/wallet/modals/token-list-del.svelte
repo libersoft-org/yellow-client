@@ -2,7 +2,6 @@
  import Button from '../../../core/components/button.svelte';
  export let close;
  export let params;
-
 </script>
 
 <style>

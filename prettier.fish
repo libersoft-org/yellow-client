@@ -6,7 +6,7 @@ prettier --config prettier-libersoft.json --plugin 'prettier-plugin-svelte' --wr
 date
 while ./is_prettier_running.fish begin; echo ..;  end;
 date
-sleep 2;
+sleep 5;
 date
 
 
