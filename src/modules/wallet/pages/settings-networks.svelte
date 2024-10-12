@@ -12,14 +12,14 @@
 
  function editNetwork(net) {
   console.log('editNetwork', net);
-  showModalEditNetwork = true;
   modalItem = net;
+  showModalEditNetwork = true;
  }
 
  function tokenList(net) {
   console.log('tokenList', net);
-  showModalTokenList = true;
   modalItemID = net.guid;
+  showModalTokenList = true;
  }
 </script>
 

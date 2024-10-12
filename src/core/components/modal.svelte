@@ -11,7 +11,7 @@
  let props = {params, close};
 
  function clickCloseModal() {
-  show = false;
+  close();
  }
 
  function keyCloseModal() {
@@ -81,7 +81,7 @@
    </div>
   </div>
   <div class="body">
-   <svelte:component this={body} bind:show bind:title {...props} />
+   <svelte:component this={body} {params} {close} />
   </div>
  </div>
 {/if}

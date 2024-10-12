@@ -2,7 +2,7 @@
  import Button from '../../../core/components/button.svelte';
  export let close;
  export let params;
- export let title = 'Delete token';
+
 </script>
 
 <style>

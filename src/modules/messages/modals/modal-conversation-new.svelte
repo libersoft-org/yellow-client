@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import { openNewConversation } from '../messages.js';
  import Button from '../../../core/components/button.svelte';
- export let show;
+ export let close;
  export let params;
  let address;
 
@@ -11,8 +11,8 @@
  function clickOpen() {
   if (address.value) {
    openNewConversation(address.value);
-   console.log('show = false');
-   show = false;
+   console.log('close();');
+   close();
   }
  }
 

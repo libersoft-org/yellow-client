@@ -1,7 +1,7 @@
 <script>
  import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
  import Accordion from '../../../core/components/accordion.svelte';
- export let show;
+ export let close;
  export let params;
  let activeIndex = null;
  let filter = '';
@@ -9,7 +9,7 @@
  function clickSelectAddress(wallet, address) {
   console.log('SETTING ADDRESS', wallet, address);
   selectAddress(wallet, address);
-  show = false;
+  close();
  }
 
  function keySelectAddress(wallet, address) {

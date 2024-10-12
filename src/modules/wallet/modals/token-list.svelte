@@ -5,7 +5,7 @@
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
  import { networks } from '../wallet.ts';
- export let show;
+ export let close;
  export let params;
 
  let net;
@@ -117,5 +117,5 @@
   </table>
  {/if}
 </div>
-<Modal body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
-<Modal body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:show={showModalDel} />
+<Modal title={ modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
+<Modal title={'Delete token'} body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:show={showModalDel} />

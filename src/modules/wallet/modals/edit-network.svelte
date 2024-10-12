@@ -2,7 +2,7 @@
  import { networks } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
  import { onMount } from 'svelte';
- export let show;
+ export let close;
  export let params;
 
  let item_guid = '';
@@ -16,6 +16,7 @@
  $: update(params);
 
  function update(params) {
+  console.log('update', params);
   if (item_guid) return;
   let item = params.item;
   if (item) {
@@ -41,7 +42,7 @@
   item.explorerURL = item_explorer_url;
   item.rpcURLs = item_rpc_urls;
   networks.update(v => v);
-  show = false;
+  close();
  }
 </script>
 
@@ -95,11 +96,11 @@
  </div>
 
  <div class="buttons">
-  <Button on:click={() => (show = false)}>Cancel</Button>
+  <Button on:click={close}>Cancel</Button>
   <Button
    on:click={() => {
     save();
-    show = false;
+    close();
    }}>Save</Button
   >
  </div>
