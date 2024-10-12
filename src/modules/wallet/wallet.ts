@@ -91,7 +91,7 @@ function toHexStr(uint8) {
 export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = derived<[string | null, Network[]], Network | undefined>([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
- const r = $networks.find(n => n.name === $selectedNetworkID);
+ const r = $networks.find(n => n.guid === $selectedNetworkID);
  console.log('selectedNetwork', r);
  return r;
 });
@@ -458,6 +458,7 @@ export function addNetwork(net): void {
  }
 
  let my_net = {
+  guid: getGuid(),
   name: net.name,
   chainID: net.chainID,
   rpcURLs: net.rpcURLs.map(url => url),
