@@ -5,6 +5,7 @@
  import ModalDel from '../modals/addressbook-del.svelte';
  import Icon from '../components/table-icon.svelte';
  import { addressBook } from '../wallet.ts';
+ import { get } from "svelte/store";
  let showModalAddEdit = false;
  let showModalDel = false;
  let edit = false;
@@ -28,6 +29,29 @@
   modalItem = item;
   showModalDel = true;
  }
+
+ function exportAddressBook() {
+  console.log('EXPORT ADDRESSBOOK');
+  let data = get(addressBook);
+  let json = JSON.stringify(data, null, 2);
+  console.log('EXPORTED ADDRESSBOOK:', json);
+  window.prompt('Copy the exported address book:', json);
+ }
+
+ function importAddressBook() {
+  console.log('IMPORT ADDRESSBOOK');
+  let json = window.prompt('Paste the exported address book here:');
+  if (json) {
+   try {
+    let data = JSON.parse(json);
+    console.log('IMPORTED ADDRESSBOOK:', data);
+    addressBook.set(data);
+   } catch (e) {
+    console.error('IMPORT ADDRESSBOOK ERROR:', e);
+   }
+  }
+ }
+
 </script>
 
 <style>
@@ -90,6 +114,8 @@
 <div class="addressbook">
  <div class="buttons">
   <Button text="Add an address" on:click={addToAddressBookModal} />
+  <Button text="Export" on:click={exportAddressBook} />
+  <Button text="Import" on:click={importAddressBook} />
  </div>
  {#if $addressBook.length > 0}
   <table>
