@@ -1,9 +1,10 @@
 <script>
  import { sendMessage } from '../messages.js';
- import { tick } from "svelte";
+ import { tick } from 'svelte';
 
  let elMessage;
 
+ /* exported setBarFocus */
  export async function setBarFocus() {
   console.log('elMessage:', elMessage);
   await tick();
@@ -30,7 +31,7 @@
   elMessage.focus();
  }
 
- function keySend() {
+ function keySend(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    clickSend();

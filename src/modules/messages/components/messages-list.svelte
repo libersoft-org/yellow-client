@@ -8,7 +8,6 @@
  let messages_elem;
  let wasScrolledToBottom = true;
 
-
  $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
 
  function updateWasScrolledToBottom() {
@@ -60,7 +59,6 @@
   if (message_bar) await message_bar.setBarFocus();
   console.log('1message_bar:', message_bar);
  }
-
 </script>
 
 <style>
