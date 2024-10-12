@@ -1,12 +1,14 @@
 <script>
  export let show = false;
- export let params;
+ export let params = undefined;
  export let title;
  export let body;
 
  function close() {
   show = false;
  }
+
+ let props = {params, close};
 
  function clickCloseModal() {
   show = false;
@@ -79,7 +81,7 @@
    </div>
   </div>
   <div class="body">
-   <svelte:component this={body} {close} bind:show bind:params bind:title />
+   <svelte:component this={body} bind:show bind:title {...props} />
   </div>
  </div>
 {/if}
