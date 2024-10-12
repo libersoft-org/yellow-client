@@ -5,7 +5,7 @@
  import ModalDel from '../modals/addressbook-del.svelte';
  import Icon from '../components/table-icon.svelte';
  import { addressBook } from '../wallet.ts';
- import { get } from "svelte/store";
+ import { get } from 'svelte/store';
  let showModalAddEdit = false;
  let showModalDel = false;
  let edit = false;
@@ -51,7 +51,6 @@
    }
   }
  }
-
 </script>
 
 <style>

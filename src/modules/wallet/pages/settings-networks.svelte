@@ -2,8 +2,10 @@
  import { addNetwork, removeNetwork, networks, default_networks } from '../wallet.ts';
  import Icon from '../components/table-icon.svelte';
  import Modal from '../../../core/components/modal.svelte';
+ import Button from '../../../core/components/button.svelte';
  import ModalEditNetwork from '../modals/edit-network.svelte';
  import ModalTokenList from '../modals/token-list.svelte';
+ import { get } from "svelte/store";
 
  let showModalEditNetwork = false;
  let showModalTokenList = false;
@@ -21,6 +23,29 @@
   modalItemID = net.guid;
   showModalTokenList = true;
  }
+
+ function doExport() {
+  console.log('EXPORT NETWORKS');
+  let data = get(networks);
+  let json = JSON.stringify(data, null, 2);
+  console.log('EXPORTED NETWORKS:', json);
+  window.prompt('Copy the exported networks:', json);
+ }
+
+ function doImport() {
+  console.log('IMPORT NETWORKS');
+  let json = window.prompt('Paste the exported networks here:');
+  if (json) {
+   try {
+    let data = JSON.parse(json);
+    console.log('IMPORTED NETWORKS:', data);
+    networks.set(data);
+   } catch (e) {
+    console.error('IMPORT NETWORKS ERROR:', e);
+   }
+  }
+ }
+
 </script>
 
 <style>
@@ -72,6 +97,8 @@
 
 <div class="networks">
  <div class="bold">My networks:</div>
+ <Button text="Export" on:click={() => doExport()} />
+ <Button text="Import" on:click={() => doImport()} />
  <div class="items">
   {#each $networks as n, index (n.guid)}
    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
