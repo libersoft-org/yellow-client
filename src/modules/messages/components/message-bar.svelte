@@ -1,10 +1,16 @@
 <script>
  import { sendMessage } from '../messages.js';
+ import { tick } from "svelte";
+
  let elMessage;
 
- export function setBarFocus(_selectedConversation) {
-  console.log('setBarFocus:', _selectedConversation);
-  if (elMessage) elMessage.focus();
+ export async function setBarFocus() {
+  console.log('elMessage:', elMessage);
+  await tick();
+  if (elMessage) {
+   console.log('elMessage.focus()');
+   elMessage.focus();
+  }
  }
 
  function resizeMessage(event) {
@@ -53,7 +59,7 @@
  .message {
   flex-grow: 1;
   padding: 5px;
-  border: 0px;
+  border: 0;
   border-bottom: 2px solid #ddd;
   outline: none;
   font-family: inherit;

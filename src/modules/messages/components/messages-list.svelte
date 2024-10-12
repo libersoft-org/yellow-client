@@ -2,12 +2,14 @@
  import { afterUpdate, beforeUpdate, onMount } from 'svelte';
  import Message from './message.svelte';
  import { messagesArray } from '../messages.js';
- import { active_account } from '../../../core/core.js';
 
- $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
+ export let message_bar;
 
  let messages_elem;
  let wasScrolledToBottom = true;
+
+
+ $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
 
  function updateWasScrolledToBottom() {
   if (messages_elem) {
@@ -50,6 +52,15 @@
   }
   items.reverse();
  }
+
+ async function mouseDown(event) {
+  console.log('event:', event);
+  event.preventDefault();
+  console.log('mouseDown');
+  if (message_bar) await message_bar.setBarFocus();
+  console.log('1message_bar:', message_bar);
+ }
+
 </script>
 
 <style>
@@ -62,7 +73,7 @@
  }
 </style>
 
-<div class="messages" bind:this={messages_elem}>
+<div class="messages" bind:this={messages_elem} on:mousedown={mouseDown}>
  {#each items as m (m.uid)}
   {#if m.type === 'unseen_marker'}
    <div class="unseen-marker">=v=v=v=v=v=Unseen messages=v=v=v=v=v=</div>

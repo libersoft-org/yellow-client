@@ -1,5 +1,5 @@
 <script>
- import { onMount, onDestroy } from 'svelte';
+ import { onDestroy, onMount } from 'svelte';
  import Core from '../../../core/core.js';
  import { get } from 'svelte/store';
  import { selectedConversation } from '../messages.js';
@@ -8,7 +8,7 @@
  import MessageBar from './message-bar.svelte';
 
  let message_bar;
- $: message_bar?.setBarFocus($selectedConversation);
+ $: message_bar?.setBarFocus();
 
  onMount(() => {
   console.log('conversation mounted for:', get(selectedConversation));
@@ -42,11 +42,6 @@
 
 <div class="conversation">
  <ProfileBar {closeConversation} />
- <MessagesList
-  on:mousedown={() => {
-   console.log('MessagesList on:mousedown');
-   message_bar?.setBarFocus();
-  }}
- />
+ <MessagesList {message_bar} />
  <MessageBar bind:this={message_bar} />
 </div>
