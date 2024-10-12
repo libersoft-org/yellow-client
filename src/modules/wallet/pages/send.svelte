@@ -1,18 +1,22 @@
 <script>
  import Button from '../../../core/components/button.svelte';
+ import Modal from '../../../core/components/modal.svelte';
  import DropdownFilter from '../../../core/components/dropdown-filter.svelte';
- import { derived, get } from 'svelte/store';
- import { currencies, selectedMainCurrencySymbol } from '../wallet.ts';
+ import SendModal from '../modals/send.svelte';
+ import { get } from 'svelte/store';
+ import { currencies, selectedMainCurrencySymbol, sendTransaction } from '../wallet.ts';
  import { parseUnits } from 'ethers';
- import { sendTransaction } from '../wallet.ts';
 
- let currency;
- let address;
- let amount = 0;
- let fee = 0;
+ let currency = 'kETH';
+ let address = '0x53383667bC8853477337416403Cb5b0967e01470'; // 'to do: "ENS name"';
+ let amount = 10;
+ let fee = 10;
+
  let etherValue;
  let etherValueFee;
  let error;
+
+ let showSendModal = false;
 
  $: if (!currency || !get(currencies).find(c => c == currency)) {
   console.log('reset currency field:', currency, get(currencies));
@@ -53,13 +57,15 @@
 
  async function send() {
   console.log('SEND:', address, etherValue, etherValueFee, currency);
-  try {
+  //showSendModal = true;
+  //try {
    await sendTransaction(address, etherValue, etherValueFee, currency);
    console.log('Transaction sent successfully');
-  } catch (e) {
+  showSendModal = true;
+  /*} catch (e) {
    console.error('Error sending transaction:', e);
    error = 'Error sending transaction';
-  }
+  }*/
  }
 </script>
 
@@ -106,3 +112,4 @@
  </div>
  <Button text="Send" on:click={send} />
 </div>
+<Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />

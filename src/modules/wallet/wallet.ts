@@ -1,8 +1,9 @@
 import { derived, get, writable } from 'svelte/store';
-import { HDNodeWallet, JsonRpcProvider, formatEther, parseEther, randomBytes, Mnemonic, getIndexedAccountPath } from 'ethers';
+import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
-export { default_networks } from './default_networks.js';
 import { getGuid } from '../../core/core.js';
+
+export { default_networks } from './default_networks.js';
 
 interface Address {
  address: string;
@@ -20,13 +21,23 @@ interface Wallet {
  addresses?: Address[];
 }
 
+interface Token {
+ guid: string;
+ icon: string;
+ symbol: string;
+ name: string;
+ contract_address: string;
+}
+
 interface Network {
+ guid: string;
  name: string;
  chainID: number;
  currency: {
   symbol: string;
  };
  rpcURLs: string[];
+ tokens?: Token[];
 }
 
 interface Balance {
@@ -325,6 +336,7 @@ function connectToURL(): void {
  });
  provider.on('network', (newNetwork: any) => {
   console.log('Network changed:', newNetwork.toJSON());
+  status.set('Connected: ' + newNetwork.name);
  });
 }
 
@@ -430,25 +442,31 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
   console.error('No selected wallet or address');
   return;
  }
- let hd_wallet = HDNodeWallet.fromMnemonic(selectedWalletValue.phrase, selectedAddressValue.path);
- try {
+ const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
+ let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(provider);
+ //try {
   const tx = {
    to: address,
    from: selectedAddressValue.address,
    nonce: await provider.getTransactionCount(selectedAddressValue.address),
    value: etherValue,
-   data: 'cus',
+   data: new Uint8Array(0),
    gasPrice: etherValueFee,
    // chainId
   };
+ console.log('selectedAddressValue.address:', selectedAddressValue.address);
+ console.log('provider:', provider);
+ console.log('mn:', mn);
+ console.log('hd_wallet:', hd_wallet);
+ console.log('Sending transaction:', tx);
   // await hd_wallet.estimateGas(tx);
   await hd_wallet.sendTransaction(tx);
   await tx.wait();
   // await getBalance();
   console.log('Transaction sent OK');
- } catch (error) {
+ /*} catch (error) {
   console.error('Error while sending a transaction:', error);
- }
+ }*/
 }
 
 export function addNetwork(net): void {
