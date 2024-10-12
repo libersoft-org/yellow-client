@@ -5,7 +5,7 @@
  import Button from '../../../core/components/button.svelte';
  import ModalEditNetwork from '../modals/edit-network.svelte';
  import ModalTokenList from '../modals/token-list.svelte';
- import { get } from "svelte/store";
+ import { get } from 'svelte/store';
 
  let showModalEditNetwork = false;
  let showModalTokenList = false;
@@ -45,7 +45,6 @@
    }
   }
  }
-
 </script>
 
 <style>
