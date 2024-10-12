@@ -445,25 +445,25 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
  const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
  let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(provider);
  //try {
-  const tx = {
-   to: address,
-   from: selectedAddressValue.address,
-   nonce: await provider.getTransactionCount(selectedAddressValue.address),
-   value: etherValue,
-   data: new Uint8Array(0),
-   gasPrice: etherValueFee,
-   // chainId
-  };
+ const tx = {
+  to: address,
+  from: selectedAddressValue.address,
+  nonce: await provider.getTransactionCount(selectedAddressValue.address),
+  value: etherValue,
+  data: new Uint8Array(0),
+  gasPrice: etherValueFee,
+  // chainId
+ };
  console.log('selectedAddressValue.address:', selectedAddressValue.address);
  console.log('provider:', provider);
  console.log('mn:', mn);
  console.log('hd_wallet:', hd_wallet);
  console.log('Sending transaction:', tx);
-  // await hd_wallet.estimateGas(tx);
-  await hd_wallet.sendTransaction(tx);
-  await tx.wait();
-  // await getBalance();
-  console.log('Transaction sent OK');
+ // await hd_wallet.estimateGas(tx);
+ await hd_wallet.sendTransaction(tx);
+ await tx.wait();
+ // await getBalance();
+ console.log('Transaction sent OK');
  /*} catch (error) {
   console.error('Error while sending a transaction:', error);
  }*/

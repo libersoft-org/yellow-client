@@ -59,8 +59,8 @@
   console.log('SEND:', address, etherValue, etherValueFee, currency);
   //showSendModal = true;
   //try {
-   await sendTransaction(address, etherValue, etherValueFee, currency);
-   console.log('Transaction sent successfully');
+  await sendTransaction(address, etherValue, etherValueFee, currency);
+  console.log('Transaction sent successfully');
   showSendModal = true;
   /*} catch (e) {
    console.error('Error sending transaction:', e);
