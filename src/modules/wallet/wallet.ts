@@ -454,7 +454,7 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
   gasPrice: etherValueFee,
   // chainId
  };
- console.log('selectedAddressValue.address:', selectedAddressValue.address);
+ console.log('selectedAddressValue.address:', selectedAddressValue);
  console.log('provider:', provider);
  console.log('mn:', mn);
  console.log('hd_wallet:', hd_wallet);
