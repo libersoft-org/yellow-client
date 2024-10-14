@@ -63,7 +63,7 @@
 
 <div class="history">
  {#if $selectedNetwork && $selectedAddress}
-  <div class="bold">Your wallet history:</div>
+  <div class="bold">Address history:</div>
   <div class="url">
    {link}
   </div>

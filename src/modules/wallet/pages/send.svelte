@@ -8,9 +8,9 @@
  import { parseUnits } from 'ethers';
 
  let currency = 'kETH';
- let address = '0x53383667bC8853477337416403Cb5b0967e01470'; // 'to do: "ENS name"';
- let amount = 10;
- let fee = 10;
+ let address = '0xEF017eD170f0Ec1f6C42f7A1bEFf133C261C1573'; // 'to do: "ENS name"';
+ let amount = 0.001;
+ let fee = 0.001;
 
  let etherValue;
  let etherValueFee;

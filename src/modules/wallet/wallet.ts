@@ -445,25 +445,58 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
  const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
  let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(provider);
  //try {
- const tx = {
+
+ let data = "you can put data here";
+
+ const request = {
   to: address,
   from: selectedAddressValue.address,
-  nonce: await provider.getTransactionCount(selectedAddressValue.address),
   value: etherValue,
-  data: new Uint8Array(0),
-  gasPrice: etherValueFee,
-  // chainId
+  data: new Uint8Array(data.split('').map(c => c.charCodeAt(0))),
+  //maxFeePerGas: etherValueFee,
+  //nonce: await provider.getTransactionCount(selectedAddressValue.address),
  };
  console.log('selectedAddressValue.address:', selectedAddressValue);
  console.log('provider:', provider);
  console.log('mn:', mn);
  console.log('hd_wallet:', hd_wallet);
- console.log('Sending transaction:', tx);
- // await hd_wallet.estimateGas(tx);
- await hd_wallet.sendTransaction(tx);
+ console.log('tx request:', request);
+ console.log('hd_wallet.estimateGas:');
+ let eg = await hd_wallet.estimateGas(request);
+ console.log('estimateGas:', eg);
+ console.log('hd_wallet.sendTransaction:');
+ let tx = await hd_wallet.sendTransaction(request);
+ console.log('wait..', tx);
  await tx.wait();
- // await getBalance();
  console.log('Transaction sent OK');
+
+ let log = {
+  dir: 'sent',
+  date: new Date(),
+  from: request.from,
+  to: request.to,
+  currency: currency,
+  hash: tx.hash,
+  chainID: tx.chainId.toString(),
+  nonce: tx.nonce,
+  tx_type: tx.type,
+
+  estimatedGas: formatEther(eg),
+  gasLimit: formatEther(tx.gasLimit),
+  gasPrice: formatEther(tx.gasPrice),
+  value: formatEther(tx.value),
+
+ };
+
+ console.log('log:', log);
+ console.log('log:', JSON.stringify(log));
+
+ if (!selectedWalletValue.log) {
+  selectedWalletValue.log = [];
+ }
+ selectedWalletValue.log.push(log);
+ wallets.update(w => w);
+
  /*} catch (error) {
   console.error('Error while sending a transaction:', error);
  }*/
