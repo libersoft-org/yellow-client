@@ -446,7 +446,7 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
  let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(provider);
  //try {
 
- let data = "you can put data here";
+ let data = 'you can put data here';
 
  const request = {
   to: address,
@@ -485,7 +485,6 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
   gasLimit: formatEther(tx.gasLimit),
   gasPrice: formatEther(tx.gasPrice),
   value: formatEther(tx.value),
-
  };
 
  console.log('log:', log);
