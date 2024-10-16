@@ -89,7 +89,7 @@ export function deinitData(acc) {
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
- send(acc, 'user_list_messages', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
+ send(acc, 'user_messages_list', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
   if (res.error === 0 && res.data?.messages) {
    messagesArray.set(
     res.data.messages.map(msg => {
@@ -138,8 +138,8 @@ export function sendMessage(text) {
 
  let params = { address: message.address_to, message: message.message, uid: message.uid };
 
- send(acc, 'user_send_message', params, true, (req, res) => {
-  console.log('user_send_message', res);
+ send(acc, 'user_message_send', params, true, (req, res) => {
+  console.log('user_message_send', res);
   if (res.error !== 0) alert('Error while sending message: ' + res.message);
   else message.received_by_my_homeserver = true;
   // update the message status and trigger the update of the messagesArray:

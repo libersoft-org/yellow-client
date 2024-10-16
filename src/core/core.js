@@ -159,12 +159,8 @@ accounts_config.subscribe(value => {
    }
 
    if (acc.enabled != config.enabled) {
-    if (config.enabled) {
-     _enableAccount(account);
-    } else {
-     _disableAccount(account);
-    }
-
+    if (config.enabled) _enableAccount(account);
+    else _disableAccount(account);
     let settings_updated = false;
     for (const [key, value] of Object.entries(config.settings)) {
      if (acc.settings[key] != value) {
@@ -172,21 +168,15 @@ accounts_config.subscribe(value => {
       settings_updated = true;
      }
     }
-    if (settings_updated) {
-     account.update(v => v);
-    }
+    if (settings_updated) account.update(v => v);
    }
   } else {
    // add new account
    let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
    //console.log('NEW account', get(account));
    accounts.update(v => [...v, account]);
-
-   if (config.enabled) {
-    _enableAccount(account);
-   } else {
-    _disableAccount(account);
-   }
+   if (config.enabled) _enableAccount(account);
+   else_disableAccount(account);
   }
  }
  // remove accounts that are not in config
@@ -216,9 +206,7 @@ export function selectAccount(id) {
  selected_module_id.set(null);
  active_account_id.set(id);
  tick().then(() => {
-  if (get(active_account).module_data[old_selected_module]) {
-   selected_module_id.set(old_selected_module);
-  }
+  if (get(active_account).module_data[old_selected_module]) selected_module_id.set(old_selected_module);
  });
 }
 
@@ -290,18 +278,10 @@ function reconnectAccount(account) {
   if (acc.socket) {
    if (acc.socket.readyState !== WebSocket.CLOSED) {
     acc.socket.close();
-    acc.socket.onopen = event => {
-     console.log('old socket onopen', event);
-    };
-    acc.socket.onerror = event => {
-     console.log('old socket onerror', event);
-    };
-    acc.socket.onclose = event => {
-     console.log('old socket onclose', event);
-    };
-    acc.socket.onmessage = event => {
-     console.log('old socket onmessage', event);
-    };
+    acc.socket.onopen = event => console.log('old socket onopen', event);
+    acc.socket.onerror = event => console.log('old socket onerror', event);
+    acc.socket.onclose = event => console.log('old socket onclose', event);
+    acc.socket.onmessage = event => console.log('old socket onmessage', event);
    }
   }
   socket_id = global_socket_id++;
