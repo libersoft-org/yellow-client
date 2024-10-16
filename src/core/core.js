@@ -176,7 +176,7 @@ accounts_config.subscribe(value => {
    //console.log('NEW account', get(account));
    accounts.update(v => [...v, account]);
    if (config.enabled) _enableAccount(account);
-   else_disableAccount(account);
+   else disableAccount(account);
   }
  }
  // remove accounts that are not in config
