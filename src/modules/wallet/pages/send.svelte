@@ -106,7 +106,7 @@
   <div class="input"><input type="text" bind:value={amount} /></div>
  </div>
  <div class="group">
-  <div class="label">Transaction fee:</div>
+  <div class="label">Max transaction fee:</div>
   <div class="input"><input type="text" bind:value={fee} /></div>
   <div class="error">{error}</div>
  </div>
