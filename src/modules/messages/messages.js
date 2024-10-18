@@ -262,7 +262,7 @@ export function ensureConversationDetails(conversation) {
  console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
  let acc = get(active_account);
- send(acc, 'user_get_userinfo', { address: conversation.address }, true, (_req, res) => {
+ send(acc, 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) {
    console.error(res);
    return;
