@@ -11,6 +11,8 @@ export let selected_module_id = writable(null);
 let module_decls = {};
 let global_socket_id = 0;
 
+const heartbeat_interval = 150000;
+
 export function getModuleDecls() {
  //console.log('GET MODULE DECLS:', module_decls);
  return module_decls;
@@ -408,7 +410,7 @@ function setupHeartbeat(account) {
    },
    true
   );
-  if (Date.now() - acc.lastCommsTs > 25000) {
+  if (Date.now() - acc.lastCommsTs > heartbeat_interval * 2) {
    const msg = 'No comms for 15 seconds, reconnecting...';
    console.log(msg);
    // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
@@ -419,7 +421,7 @@ function setupHeartbeat(account) {
    account.update(v => v);
    reconnectAccount(account);
   }
- }, 15000);
+ }, heartbeat_interval);
 }
 
 export function order(dict) {
@@ -491,8 +493,8 @@ function handleSocketResponse(acc, res) {
 
 export function getGuid(length = 40) {
  let result = '';
- while (result.length < length) result += Math.random().toString(36).substring(2);
- return result.substring(0, length);
+ while (result.length < length) result += Math.random().toString(36);
+ return result;
 }
 
 export function send(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
