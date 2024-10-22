@@ -9,7 +9,7 @@ export function selectConversation(conversation) {
 }
 
 export function listConversations(acc) {
- send(acc, 'user_conversations_list', null, true, (_req, res) => {
+ send(acc, 'conversations_list', null, true, (_req, res) => {
   if (res.error === 0 && res.data?.conversations) {
    let conversationsArray = acc.module_data.messages.conversationsArray;
    console.log('listConversations into:', conversationsArray);
