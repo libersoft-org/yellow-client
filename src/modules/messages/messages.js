@@ -84,7 +84,7 @@ export function deinitData(acc) {
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
- sendData(acc, 'user_messages_list', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
+ sendData(acc, 'messages_list', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
   if (res.error === 0 && res.data?.messages) {
    messagesArray.set(
     res.data.messages.map(msg => {
@@ -102,8 +102,8 @@ export function listMessages(acc, address) {
 export function setMessageSeen(message, cb) {
  let acc = get(active_account);
  console.log('setMessageSeen', message);
- sendData(acc, 'user_message_seen', { uid: message.uid }, true, (req, res) => {
-  console.log('user_message_seen', res);
+ sendData(acc, 'message_seen', { uid: message.uid }, true, (req, res) => {
+  console.log('message_seen', res);
   if (res.error !== 0) {
    console.error(res);
    return;
@@ -133,8 +133,8 @@ export function sendMessage(text) {
 
  let params = { address: message.address_to, message: message.message, uid: message.uid };
 
- sendData(acc, 'user_message_send', params, true, (req, res) => {
-  console.log('user_message_send', res);
+ sendData(acc, 'message_send', params, true, (req, res) => {
+  console.log('message_send', res);
   if (res.error !== 0) alert('Error while sending message: ' + res.message);
   else message.received_by_my_homeserver = true;
   // update the message status and trigger the update of the messagesArray:
@@ -257,7 +257,7 @@ export function ensureConversationDetails(conversation) {
  console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
  let acc = get(active_account);
- sendData(acc, 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
+ send(acc, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) {
    console.error(res);
    return;
@@ -284,6 +284,8 @@ export function saneHtml(content) {
 export function stripHtml(html) {
  return html.replace(/<[^>]*>?/gm, '');
 }
+
+
 
 export default {
  ensureConversationDetails,

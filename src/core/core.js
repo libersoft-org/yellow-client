@@ -507,13 +507,14 @@ export function send(acc, target, command, params = {}, sendSessionID = true, ca
  const requestID = generateRequestID();
 
  const req = {
-  target: 'core',
+  target: target,
   requestID,
  };
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command || params) req.data = {};
  if (command) req.data.command = command;
  if (params) req.data.params = params;
+
  acc.requests[requestID] = { req, callback };
  if (!quiet) {
   console.log('------------------');

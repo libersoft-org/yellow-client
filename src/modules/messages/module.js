@@ -1,6 +1,8 @@
 import { registerModule } from '../../core/core.js';
-import Sidebar from './pages/conversations-list.svelte';
-import Content from './pages/conversations-main.svelte';
+import Sidebar from './pages/messages-sidebar.svelte';
+import Content from './pages/messages-content.svelte';
+import { initData, initComms, deinitComms, deinitData } from './messages.js';
+
 
 export const module = {
  name: 'Messages',
