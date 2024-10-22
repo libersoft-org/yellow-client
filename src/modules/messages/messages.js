@@ -1,8 +1,6 @@
 import { get, writable } from 'svelte/store';
-import { active_account, module_data_derived, relay, isClientFocused } from '../../core/core.js';
+import { active_account, getGuid, hideSidebarMobile, isClientFocused, module_data_derived, relay, send } from '../../core/core.js';
 import DOMPurify from 'dompurify';
-import { send, getGuid } from '../../core/core.js';
-import { selectConversation, listConversations } from './conversations.js';
 import { module } from './module.js';
 
 class Message {
@@ -43,6 +41,27 @@ export function initData(acc) {
 
 function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  send(acc, module.identifier, command, params, sendSessionID, callback, quiet);
+}
+
+export function selectConversation(conversation) {
+ selectedConversation.update(() => conversation);
+ hideSidebarMobile.update(() => true);
+ listMessages(get(active_account), conversation.address);
+}
+
+export function listConversations(acc) {
+ sendData(acc, 'conversations_list', null, true, (_req, res) => {
+  if (res.error === 0 && res.data?.conversations) {
+   let conversationsArray = acc.module_data.messages.conversationsArray;
+   console.log('listConversations into:', conversationsArray);
+   conversationsArray.set(res.data.conversations.map(sanitizeConversation));
+  }
+ });
+}
+
+function sanitizeConversation(c) {
+ c.last_message_text = stripHtml(c.last_message_text);
+ return c;
 }
 
 export function initComms(acc) {

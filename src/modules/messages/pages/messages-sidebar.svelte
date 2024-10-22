@@ -1,6 +1,5 @@
 <script>
- import { conversationsArray } from '../messages.js';
- import { selectConversation } from '../conversations.js';
+ import { conversationsArray, selectConversation } from '../messages.js';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
