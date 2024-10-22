@@ -285,8 +285,6 @@ export function stripHtml(html) {
  return html.replace(/<[^>]*>?/gm, '');
 }
 
-
-
 export default {
  ensureConversationDetails,
  openNewConversation,
