@@ -42,7 +42,7 @@ export function initData(acc) {
 }
 
 function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
- send(acc, module.identifier, command, params, sendSessionID, data, callback, quiet);
+ send(acc, module.identifier, command, params, sendSessionID, callback, quiet);
 }
 
 export function initComms(acc) {
