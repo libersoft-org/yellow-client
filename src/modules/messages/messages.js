@@ -1,23 +1,8 @@
 import { get, writable } from 'svelte/store';
-import { active_account, module_data_derived, registerModule, relay, isClientFocused } from '../../core/core.js';
+import { active_account, module_data_derived, relay, isClientFocused } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { send, getGuid } from '../../core/core.js';
 import { selectConversation, listConversations } from './conversations.js';
-import ConversationsList from './pages/conversations-list.svelte';
-import ConversationsMain from './pages/conversations-main.svelte';
-
-const module = {
- name: 'Messages',
- identifier: 'org.libersoft.messages',
-};
-
-registerModule(module.identifier, {
- callbacks: { initData, initComms, deinitComms, deinitData },
- panels: {
-  sidebar: ConversationsList,
-  content: ConversationsMain,
- },
-});
 
 class Message {
  constructor(acc, data) {
