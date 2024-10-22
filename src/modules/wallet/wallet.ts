@@ -2,7 +2,6 @@ import { derived, get, writable } from 'svelte/store';
 import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 import { getGuid } from '../../core/core.js';
-
 export { default_networks } from './default_networks.js';
 
 interface Address {

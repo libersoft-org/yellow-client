@@ -3,6 +3,7 @@ import { active_account, module_data_derived, relay, isClientFocused } from '../
 import DOMPurify from 'dompurify';
 import { send, getGuid } from '../../core/core.js';
 import { selectConversation, listConversations } from './conversations.js';
+import { module } from './module.js';
 
 class Message {
  constructor(acc, data) {
