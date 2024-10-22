@@ -480,11 +480,8 @@ function handleSocketResponse(acc, res) {
  if (res.requestID) {
   // it is response to command:
   const reqData = acc.requests[res.requestID];
-  if (reqData?.req?.command) {
-   //console.log('REQUEST', reqData.req);
    if (reqData.callback) reqData.callback(reqData.req, res);
    delete acc.requests[res.requestID];
-  } else console.log('Request command not found');
  } else if (res.event) {
   // it is event:
   console.log('GOT EVENT', res);
