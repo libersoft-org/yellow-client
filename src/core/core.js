@@ -367,7 +367,7 @@ function clearHeartbeatTimer(acc) {
 function sendLoginCommand(account) {
  console.log('Sending login command');
  let acc = get(account);
- send(acc, 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
+ send(acc, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
   console.log('Login response:', res);
   if (res.error !== 0) {
    acc.error = res.message;
@@ -396,6 +396,7 @@ function setupHeartbeat(account) {
   }
   send(
    acc,
+   'core',
    'user_heartbeat',
    {},
    true,
@@ -495,7 +496,7 @@ export function getGuid(length = 40) {
  return result.substring(0, length);
 }
 
-export function send(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
+export function send(acc, target, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  if (!acc) {
   console.error('Error while sending command: account is not defined');
   return;
@@ -506,10 +507,14 @@ export function send(acc, command, params = {}, sendSessionID = true, callback =
  }
  const requestID = generateRequestID();
 
- const req = { requestID };
+ const req = {
+  target: 'core',
+  requestID,
+ };
  if (sendSessionID) req.sessionID = acc.sessionID;
- if (command) req.command = command;
- if (params) req.params = params;
+ if (command || params) req.data = {};
+ if (command) req.data.command = command;
+ if (params) req.data.params = params;
  acc.requests[requestID] = { req, callback };
  if (!quiet) {
   console.log('------------------');

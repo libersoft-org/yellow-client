@@ -6,7 +6,12 @@ import { selectConversation, listConversations } from './conversations.js';
 import ConversationsList from './pages/conversations-list.svelte';
 import ConversationsMain from './pages/conversations-main.svelte';
 
-registerModule('messages', {
+const module = {
+ name: 'Messages',
+ identifier: 'org.libersoft.messages',
+};
+
+registerModule(module.identifier, {
  callbacks: { initData, initComms, deinitComms, deinitData },
  panels: {
   sidebar: ConversationsList,
@@ -26,7 +31,7 @@ class Message {
  }
 }
 
-export let md = module_data_derived('messages');
+export let md = module_data_derived(module.identifier);
 
 /*
 md.subscribe(v => {
@@ -50,11 +55,15 @@ export function initData(acc) {
  return result;
 }
 
-export function initComms(acc) {
- send(acc, 'user_subscribe', { event: 'new_message' });
- send(acc, 'user_subscribe', { event: 'seen_message' });
+function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
+ send(acc, module.identifier, command, params, sendSessionID, data, callback, quiet);
+}
 
- let data = acc.module_data['messages'];
+export function initComms(acc) {
+ sendData(acc, 'user_subscribe', { event: 'new_message' });
+ sendData(acc, 'user_subscribe', { event: 'seen_message' });
+
+ let data = acc.module_data[module.identifier];
  console.log('initComms:', data);
 
  data.new_message_listener = event => eventNewMessage(acc, event);
@@ -67,14 +76,14 @@ export function initComms(acc) {
 }
 
 export function deinitComms(acc) {
- send(acc, 'user_unsubscribe', { event: 'new_message' });
- send(acc, 'user_unsubscribe', { event: 'seen_message' });
+ sendData(acc, 'user_unsubscribe', { event: 'new_message' });
+ sendData(acc, 'user_unsubscribe', { event: 'seen_message' });
 }
 
 export function deinitData(acc) {
  console.log('DEINIT DATA');
 
- let data = acc.module_data['messages'];
+ let data = acc.module_data[module.identifier];
  if (!data) return;
 
  acc.events.removeEventListener('new_message', data.new_message_listener);
@@ -89,7 +98,7 @@ export function deinitData(acc) {
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
- send(acc, 'user_messages_list', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
+ sendData(acc, 'user_messages_list', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
   if (res.error === 0 && res.data?.messages) {
    messagesArray.set(
     res.data.messages.map(msg => {
@@ -107,7 +116,7 @@ export function listMessages(acc, address) {
 export function setMessageSeen(message, cb) {
  let acc = get(active_account);
  console.log('setMessageSeen', message);
- send(acc, 'user_message_seen', { uid: message.uid }, true, (req, res) => {
+ sendData(acc, 'user_message_seen', { uid: message.uid }, true, (req, res) => {
   console.log('user_message_seen', res);
   if (res.error !== 0) {
    console.error(res);
@@ -138,7 +147,7 @@ export function sendMessage(text) {
 
  let params = { address: message.address_to, message: message.message, uid: message.uid };
 
- send(acc, 'user_message_send', params, true, (req, res) => {
+ sendData(acc, 'user_message_send', params, true, (req, res) => {
   console.log('user_message_send', res);
   if (res.error !== 0) alert('Error while sending message: ' + res.message);
   else message.received_by_my_homeserver = true;
@@ -262,7 +271,7 @@ export function ensureConversationDetails(conversation) {
  console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
  let acc = get(active_account);
- send(acc, 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
+ sendData(acc, 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) {
    console.error(res);
    return;
