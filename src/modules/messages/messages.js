@@ -277,10 +277,7 @@ export function ensureConversationDetails(conversation) {
  if (conversation.visible_name) return;
  let acc = get(active_account);
  send(acc, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
-  if (res.error !== 0) {
-   console.error(res);
-   return;
-  }
+  if (res.error !== 0) return;
   Object.assign(conversation, res.data);
   conversationsArray.update(v => v); // fixme: this infiloops?
  });
