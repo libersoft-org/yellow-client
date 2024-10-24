@@ -92,6 +92,7 @@
  <div class="label">Tokens:</div>
  {#if net?.tokens}
   <table>
+   <thead>
    <tr>
     <th>Name</th>
     <th>Icon</th>
@@ -99,6 +100,8 @@
     <th>Token address</th>
     <th>Action</th>
    </tr>
+   </thead>
+   <tbody>
    {#each net.tokens as t, i}
     <tr>
      <td>{t.name}</td>
@@ -114,6 +117,7 @@
      </td>
     </tr>
    {/each}
+   </tbody>
   </table>
  {/if}
 </div>

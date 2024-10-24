@@ -118,11 +118,14 @@
  </div>
  {#if $addressBook.length > 0}
   <table>
+   <thead>
    <tr>
     <th>Alias</th>
     <th>Address</th>
     <th class="center">Action</th>
    </tr>
+   </thead>
+   <tbody>
    {#each $addressBook as a, index (index + '/' + a.address)}
     <tr class="item {index % 2 === 0 ? 'even' : 'odd'}">
      <td>{a.alias}</td>
@@ -135,6 +138,7 @@
      </td>
     </tr>
    {/each}
+   </tbody>
   </table>
  {/if}
 </div>

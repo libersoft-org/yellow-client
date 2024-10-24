@@ -127,6 +127,7 @@
 {/if}
 <div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
 <table>
+ <tbody>
  <tr>
   <td>
    {#each phrase.split(' ').slice(0, 6) as word, index}
@@ -149,6 +150,7 @@
    {/each}
   </td>
  </tr>
+ </tbody>
 </table>
 <div class="buttons">
  <Button width="96px" text="Save" on:click={save} />

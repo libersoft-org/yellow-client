@@ -12,7 +12,7 @@
 		"@sveltejs/vite-plugin-svelte": "*",
 		"prettier": "*",
 		"prettier-plugin-svelte": "^3.2.7",
-		"svelte": "*",
+  "svelte": "^4.0.0",
 		"vite": "*"
 	},
 	"type": "module",

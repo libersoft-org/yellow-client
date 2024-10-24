@@ -121,12 +121,14 @@
  <div class="table">
   <table>
    <thead>
+   <tr>
     <th class="center">Account ID</th>
     <th class="center">Title</th>
     <th class="center">Server</th>
     <th class="center">Address</th>
     <th class="center">Enabled</th>
     <th class="center">Action</th>
+   </tr>
    </thead>
    <tbody>
     {#each $accounts_config as a (a.id)}

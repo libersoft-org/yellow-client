@@ -107,12 +107,15 @@
    <Button text="Add a new address (by index)" on:click={() => addAddressWithIndex(wallet)} />
   </div>
   <table>
+   <thead>
    <tr>
     <th class="center">Index</th>
     <th>Alias</th>
     <th>Address</th>
     <th class="center">Action</th>
    </tr>
+   </thead>
+   <tbody>
    {#each walletAddresses(wallet) as address, index}
     <tr class={index % 2 === 0 ? 'even' : 'odd'}>
      <td class="center">{address.index}</td>
@@ -124,6 +127,7 @@
      </td>
     </tr>
    {/each}
+   </tbody>
   </table>
  </div>
 </Accordion>
