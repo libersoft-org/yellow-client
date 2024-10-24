@@ -479,6 +479,7 @@ function handleSocketResponse(acc, res) {
  console.log('RESPONSE', res);
  if (res.requestID) {
   // it is response to command:
+  console.log('GOT RESPONSE', res);
   const reqData = acc.requests[res.requestID];
   if (reqData.callback) reqData.callback(reqData.req, res);
   delete acc.requests[res.requestID];

@@ -52,7 +52,7 @@ export function selectConversation(conversation) {
 export function listConversations(acc) {
  sendData(acc, 'conversations_list', null, true, (_req, res) => {
   if (res.error === 0 && res.data?.conversations) {
-   let conversationsArray = acc.module_data.messages.conversationsArray;
+   let conversationsArray = acc.module_data[module.identifier].conversationsArray;
    console.log('listConversations into:', conversationsArray);
    conversationsArray.set(res.data.conversations.map(sanitizeConversation));
   }
@@ -98,7 +98,7 @@ export function deinitData(acc) {
  data.conversationsArray.set([]);
  data.selectedConversation.set(null);
 
- acc.module_data.messages = null;
+ acc.module_data[module.identifier] = null;
 }
 
 export function listMessages(acc, address) {
