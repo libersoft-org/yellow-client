@@ -476,7 +476,7 @@ function disconnectAccount(acc) {
 }
 
 function handleSocketResponse(acc, res) {
- //console.log('RESPONSE', res);
+ console.log('RESPONSE', res);
  if (res.requestID) {
   // it is response to command:
   const reqData = acc.requests[res.requestID];
