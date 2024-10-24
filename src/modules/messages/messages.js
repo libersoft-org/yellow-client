@@ -65,8 +65,8 @@ function sanitizeConversation(c) {
 }
 
 export function initComms(acc) {
- sendData(acc, 'user_subscribe', { event: 'new_message' });
- sendData(acc, 'user_subscribe', { event: 'seen_message' });
+ sendData(acc, 'subscribe', { event: 'new_message' });
+ sendData(acc, 'subscribe', { event: 'seen_message' });
 
  let data = acc.module_data[module.identifier];
  console.log('initComms:', data);
