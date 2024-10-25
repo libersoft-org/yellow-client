@@ -519,7 +519,7 @@ export function send(acc, target, command, params = {}, sendSessionID = true, ca
  acc.requests[requestID] = { req, callback: (req, res) =>
  {
    if (res.error) console.error(res);
-   callback(req, res);
+   if (callback) callback(req, res);
   }
  }
 
