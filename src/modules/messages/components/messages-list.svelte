@@ -66,15 +66,22 @@
   display: flex;
   flex-direction: column-reverse;
   flex-grow: 1;
-  padding: 20px;
   overflow-y: auto;
+ }
+
+ .unread {
+  display: flex;
+  justify-content: center;
+  background-color: #fffcf0;
+  border: 1px solid #dd9;
+  padding: 10px 0;
  }
 </style>
 
 <div class="messages" bind:this={messages_elem} on:mousedown={mouseDown}>
  {#each items as m (m.uid)}
   {#if m.type === 'unseen_marker'}
-   <div class="unseen-marker">=v=v=v=v=v=Unseen messages=v=v=v=v=v=</div>
+   <div class="unread">Unread messages</div>
   {:else}
    <Message message={m} container_element={messages_elem} />
   {/if}

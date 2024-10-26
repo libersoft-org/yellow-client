@@ -68,7 +68,7 @@
  .message {
   max-width: 60%;
   padding: 10px;
-  margin: 10px 0;
+  margin: 10px 20px;
   border-radius: 10px;
   box-shadow: var(--shadow);
  }
