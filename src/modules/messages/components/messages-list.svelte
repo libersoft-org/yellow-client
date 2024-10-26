@@ -75,10 +75,11 @@
   background-color: #fffcf0;
   border: 1px solid #dd9;
   padding: 10px 0;
+  box-shadow: var(--shadow);
  }
 </style>
 
-<div class="messages" bind:this={messages_elem} on:mousedown={mouseDown}>
+<div class="messages" role="none" bind:this={messages_elem} on:mousedown={mouseDown}>
  {#each items as m (m.uid)}
   {#if m.type === 'unseen_marker'}
    <div class="unread">Unread messages</div>
