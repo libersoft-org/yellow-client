@@ -51,7 +51,11 @@ export function selectConversation(conversation) {
 
 export function listConversations(acc) {
  sendData(acc, 'conversations_list', null, true, (_req, res) => {
-  if (res.error === 0 && res.data?.conversations) {
+  if (res.error !== 0) {
+   console.error('this is bad.');
+   return;
+  }
+  if (res.data?.conversations) {
    let conversationsArray = acc.module_data[module.identifier].conversationsArray;
    console.log('listConversations into:', conversationsArray);
    conversationsArray.set(res.data.conversations.map(sanitizeConversation));
@@ -64,9 +68,18 @@ function sanitizeConversation(c) {
  return c;
 }
 
+function moduleEventSubscribe(acc, event_name)
+{
+ sendData(acc, 'subscribe', { event: 'new_message' }, true, (req, res) => {
+  if (res.error !== 0) {
+   console.error('this is bad.');
+  }
+ });
+
+}
 export function initComms(acc) {
- sendData(acc, 'subscribe', { event: 'new_message' });
- sendData(acc, 'subscribe', { event: 'seen_message' });
+ moduleEventSubscribe(acc, 'new_message');
+ moduleEventSubscribe(acc, 'seen_message');
 
  let data = acc.module_data[module.identifier];
  console.log('initComms:', data);
@@ -104,6 +117,10 @@ export function deinitData(acc) {
 export function listMessages(acc, address) {
  messagesArray.set([]);
  sendData(acc, 'messages_list', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
+  if (res.error !== 0) {
+   console.error('this is bad.');
+   return;
+  }
   if (res.error === 0 && res.data?.messages) {
    messagesArray.set(
     res.data.messages.map(msg => {
@@ -122,9 +139,8 @@ export function setMessageSeen(message, cb) {
  let acc = get(active_account);
  console.log('setMessageSeen', message);
  sendData(acc, 'message_seen', { uid: message.uid }, true, (req, res) => {
-  console.log('message_seen', res);
   if (res.error !== 0) {
-   console.error(res);
+   console.error('this is bad.');
    return;
   }
   message.seen = true;
@@ -153,9 +169,11 @@ export function sendMessage(text) {
  let params = { address: message.address_to, message: message.message, uid: message.uid };
 
  sendData(acc, 'message_send', params, true, (req, res) => {
-  console.log('message_send', res);
-  if (res.error !== 0) alert('Error while sending message: ' + res.message);
-  else message.received_by_my_homeserver = true;
+  if (res.error !== 0) {
+   alert('Error while sending message: ' + res.message);
+   return;
+  }
+  message.received_by_my_homeserver = true;
   // update the message status and trigger the update of the messagesArray:
   messagesArray.update(v => v);
  });
