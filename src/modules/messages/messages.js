@@ -70,25 +70,29 @@ function sanitizeConversation(c) {
 
 function moduleEventSubscribe(acc, event_name)
 {
- sendData(acc, 'subscribe', { event: 'new_message' }, true, (req, res) => {
+ sendData(acc, 'subscribe', { event: event_name }, true, (req, res) => {
   if (res.error !== 0) {
    console.error('this is bad.');
+   window.alert('Communication with server Error while subscribing to event: ' + res.message);
   }
  });
-
 }
+
 export function initComms(acc) {
  moduleEventSubscribe(acc, 'new_message');
  moduleEventSubscribe(acc, 'seen_message');
+ moduleEventSubscribe(acc, 'seen_inbox_message');
 
  let data = acc.module_data[module.identifier];
  console.log('initComms:', data);
 
  data.new_message_listener = event => eventNewMessage(acc, event);
  data.seen_message_listener = event => eventSeenMessage(acc, event);
+ data.seen_inbox_message_listener = event => eventSeenInboxMessage(acc, event);
 
  acc.events.addEventListener('new_message', data.new_message_listener);
  acc.events.addEventListener('seen_message', data.seen_message_listener);
+ acc.events.addEventListener('seen_inbox_message', data.seen_inbox_message_listener);
 
  listConversations(acc);
 }
@@ -96,6 +100,7 @@ export function initComms(acc) {
 export function deinitComms(acc) {
  sendData(acc, 'user_unsubscribe', { event: 'new_message' });
  sendData(acc, 'user_unsubscribe', { event: 'seen_message' });
+ sendData(acc, 'user_unsubscribe', { event: 'seen_inbox_message' });
 }
 
 export function deinitData(acc) {
@@ -106,6 +111,7 @@ export function deinitData(acc) {
 
  acc.events.removeEventListener('new_message', data.new_message_listener);
  acc.events.removeEventListener('seen_message', data.seen_message_listener);
+ acc.events.removeEventListener('seen_inbox_message', data.seen_message_listener);
 
  data.messagesArray.set([]);
  data.conversationsArray.set([]);
@@ -143,15 +149,15 @@ export function setMessageSeen(message, cb) {
    console.error('this is bad.');
    return;
   }
-  message.seen = true;
+  //message.seen = true;
   if (cb) cb();
-  messagesArray.update(v => v);
+  //messagesArray.update(v => v);
   // update conversationsArray:
-  const conversation = get(conversationsArray).find(c => c.address === message.address_from);
+  /*const conversation = get(conversationsArray).find(c => c.address === message.address_from);
   if (conversation) {
    conversation.unread_count--;
    conversationsArray.update(v => v);
-  }
+  }*/
  });
 }
 
@@ -256,7 +262,20 @@ function eventSeenMessage(acc, event) {
  if (message) {
   message.seen = res.data.seen;
   messagesArray.update(v => v);
- } else console.error('eventSeenMessage: message not found by uid:', res);
+ } else console.log('eventSeenMessage: message not found by uid:', res);
+}
+
+function eventSeenInboxMessage(acc, event) {
+ console.log(event);
+ const res = event.detail;
+ console.log('eventSeenInboxMessage', res);
+ if (!res.data) return;
+ console.log(get(conversationsArray));
+ const conversation = get(conversationsArray).find(c => c.address === res.data.address_from);
+ if (conversation) {
+  conversation.unread_count--;
+  conversationsArray.update(v => v);
+ } else console.log('eventSeenInboxMessage: conversation not found by address:', res);
 }
 
 function showNotification(acc, msg) {

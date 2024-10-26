@@ -482,16 +482,16 @@ function disconnectAccount(acc) {
 }
 
 function handleSocketResponse(acc, res) {
- console.log('RESPONSE', res);
+ console.log('MESSAGE FROM SERVER', res);
  if (res.requestID) {
   // it is response to command:
-  console.log('GOT RESPONSE', res);
+  console.log('GOT RESPONSE');
   const reqData = acc.requests[res.requestID];
   if (reqData.callback) reqData.callback(reqData.req, res);
   delete acc.requests[res.requestID];
  } else if (res.event) {
   // it is event:
-  console.log('GOT EVENT', res);
+  console.log('GOT EVENT');
   acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server:', res);
 }
