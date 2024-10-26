@@ -72,6 +72,12 @@ export const accounts_config = localStorageSharedStore('accounts_config', defaul
 
 export let accounts = writable([]);
 
+import.meta.hot?.dispose(() => {
+ get(accounts).forEach(acc => {
+  reconnectAccount(acc);
+ });
+});
+
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
  //console.log('active_account_store:', $accounts, $active_account_id);
  let r = $accounts.find(acc => get(acc).id === $active_account_id);
