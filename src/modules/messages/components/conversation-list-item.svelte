@@ -91,7 +91,7 @@
      <div class="name">{c.visible_name}</div>
     {/if}
     <div class="address">{c.address}</div>
-    <div class="time">{new Date(c.last_message_date/*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
+    <div class="time">{new Date(c.last_message_date /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
    </div>
   </div>
   {#if c.unread_count !== 0 && c.unread_count !== undefined}

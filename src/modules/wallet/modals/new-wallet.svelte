@@ -128,28 +128,28 @@
 <div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
 <table>
  <tbody>
- <tr>
-  <td>
-   {#each phrase.split(' ').slice(0, 6) as word, index}
-    <div class="cell">{index + 1}. {word}</div>
-   {/each}
-  </td>
-  <td>
-   {#each phrase.split(' ').slice(6, 12) as word, index}
-    <div class="cell">{index + 7}. {word}</div>
-   {/each}
-  </td>
-  <td>
-   {#each phrase.split(' ').slice(12, 18) as word, index}
-    <div class="cell">{index + 13}. {word}</div>
-   {/each}
-  </td>
-  <td>
-   {#each phrase.split(' ').slice(18, 24) as word, index}
-    <div class="cell">{index + 19}. {word}</div>
-   {/each}
-  </td>
- </tr>
+  <tr>
+   <td>
+    {#each phrase.split(' ').slice(0, 6) as word, index}
+     <div class="cell">{index + 1}. {word}</div>
+    {/each}
+   </td>
+   <td>
+    {#each phrase.split(' ').slice(6, 12) as word, index}
+     <div class="cell">{index + 7}. {word}</div>
+    {/each}
+   </td>
+   <td>
+    {#each phrase.split(' ').slice(12, 18) as word, index}
+     <div class="cell">{index + 13}. {word}</div>
+    {/each}
+   </td>
+   <td>
+    {#each phrase.split(' ').slice(18, 24) as word, index}
+     <div class="cell">{index + 19}. {word}</div>
+    {/each}
+   </td>
+  </tr>
  </tbody>
 </table>
 <div class="buttons">

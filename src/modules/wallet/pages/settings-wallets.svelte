@@ -108,25 +108,25 @@
   </div>
   <table>
    <thead>
-   <tr>
-    <th class="center">Index</th>
-    <th>Alias</th>
-    <th>Address</th>
-    <th class="center">Action</th>
-   </tr>
+    <tr>
+     <th class="center">Index</th>
+     <th>Alias</th>
+     <th>Address</th>
+     <th class="center">Action</th>
+    </tr>
    </thead>
    <tbody>
-   {#each walletAddresses(wallet) as address, index}
-    <tr class={index % 2 === 0 ? 'even' : 'odd'}>
-     <td class="center">{address.index}</td>
-     <td>{address.name}</td>
-     <td><Address address={address.address} /></td>
-     <td class="icons">
-      <Icon title="Rename" icon="img/edit.svg" on:click={() => renameAddress(wallet, address)} />
-      <Icon title="Hide" icon="img/modules/wallet/hide.svg" on:click={() => deleteAddress(wallet, address)} />
-     </td>
-    </tr>
-   {/each}
+    {#each walletAddresses(wallet) as address, index}
+     <tr class={index % 2 === 0 ? 'even' : 'odd'}>
+      <td class="center">{address.index}</td>
+      <td>{address.name}</td>
+      <td><Address address={address.address} /></td>
+      <td class="icons">
+       <Icon title="Rename" icon="img/edit.svg" on:click={() => renameAddress(wallet, address)} />
+       <Icon title="Hide" icon="img/modules/wallet/hide.svg" on:click={() => deleteAddress(wallet, address)} />
+      </td>
+     </tr>
+    {/each}
    </tbody>
   </table>
  </div>

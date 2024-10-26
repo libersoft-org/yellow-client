@@ -516,12 +516,13 @@ export function send(acc, target, command, params = {}, sendSessionID = true, ca
  if (command) req.data.command = command;
  if (params) req.data.params = params;
 
- acc.requests[requestID] = { req, callback: (req, res) =>
- {
+ acc.requests[requestID] = {
+  req,
+  callback: (req, res) => {
    if (res.error) console.error(res);
    if (callback) callback(req, res);
-  }
- }
+  },
+ };
 
  if (!quiet) {
   console.log('------------------');

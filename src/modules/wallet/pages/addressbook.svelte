@@ -119,25 +119,25 @@
  {#if $addressBook.length > 0}
   <table>
    <thead>
-   <tr>
-    <th>Alias</th>
-    <th>Address</th>
-    <th class="center">Action</th>
-   </tr>
+    <tr>
+     <th>Alias</th>
+     <th>Address</th>
+     <th class="center">Action</th>
+    </tr>
    </thead>
    <tbody>
-   {#each $addressBook as a, index (index + '/' + a.address)}
-    <tr class="item {index % 2 === 0 ? 'even' : 'odd'}">
-     <td>{a.alias}</td>
-     <td>{a.address}</td>
-     <td class="center">
-      <div class="icons">
-       <Icon icon="img/edit.svg" title="Edit" on:click={() => editItemModal(a)} />
-       <Icon icon="img/del.svg" title="Delete" on:click={() => deleteItemModal(a)} />
-      </div>
-     </td>
-    </tr>
-   {/each}
+    {#each $addressBook as a, index (index + '/' + a.address)}
+     <tr class="item {index % 2 === 0 ? 'even' : 'odd'}">
+      <td>{a.alias}</td>
+      <td>{a.address}</td>
+      <td class="center">
+       <div class="icons">
+        <Icon icon="img/edit.svg" title="Edit" on:click={() => editItemModal(a)} />
+        <Icon icon="img/del.svg" title="Delete" on:click={() => deleteItemModal(a)} />
+       </div>
+      </td>
+     </tr>
+    {/each}
    </tbody>
   </table>
  {/if}

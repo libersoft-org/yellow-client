@@ -93,30 +93,30 @@
  {#if net?.tokens}
   <table>
    <thead>
-   <tr>
-    <th>Name</th>
-    <th>Icon</th>
-    <th>Symbol</th>
-    <th>Token address</th>
-    <th>Action</th>
-   </tr>
+    <tr>
+     <th>Name</th>
+     <th>Icon</th>
+     <th>Symbol</th>
+     <th>Token address</th>
+     <th>Action</th>
+    </tr>
    </thead>
    <tbody>
-   {#each net.tokens as t, i}
-    <tr>
-     <td>{t.name}</td>
-     <td>{t.icon}</td>
-     <td>{t.symbol}</td>
-     <td>{t.contract_address}</td>
-     <td>
-      <div class="icons">
-       <!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
-       <Icon icon="img/edit.svg" title="Edit token" on:click={() => editTokenModal(t)} />
-       <Icon icon="img/del.svg" title="Delete token" on:click={() => delTokenModal(t)} />
-      </div>
-     </td>
-    </tr>
-   {/each}
+    {#each net.tokens as t, i}
+     <tr>
+      <td>{t.name}</td>
+      <td>{t.icon}</td>
+      <td>{t.symbol}</td>
+      <td>{t.contract_address}</td>
+      <td>
+       <div class="icons">
+        <!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
+        <Icon icon="img/edit.svg" title="Edit token" on:click={() => editTokenModal(t)} />
+        <Icon icon="img/del.svg" title="Delete token" on:click={() => delTokenModal(t)} />
+       </div>
+      </td>
+     </tr>
+    {/each}
    </tbody>
   </table>
  {/if}
