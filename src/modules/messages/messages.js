@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import { active_account, getGuid, hideSidebarMobile, isClientFocused, module_data_derived, relay, send } from '../../core/core.js';
+import { active_account, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { module } from './module.js';
 
@@ -15,7 +15,7 @@ class Message {
  }
 }
 
-export let md = module_data_derived(module.identifier);
+export let md = active_account_module_data(module.identifier);
 
 /*
 md.subscribe(v => {

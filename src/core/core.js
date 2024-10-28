@@ -102,7 +102,7 @@ active_account.subscribe(value => {
  //console.log('ACTIVE ACCOUNT:', value);
 });
 
-export function module_data_derived(module_id) {
+export function active_account_module_data(module_id) {
  return derived(active_account, $active_account => {
   if (!$active_account) {
    console.log('no active account => no module data.');
@@ -116,19 +116,19 @@ export function module_data_derived(module_id) {
 }
 
 /*
-this store merges the streams of module_data changes (these happen when active account changes) and the data_name changes (these happen when something like messagesArray is updated)
-to do: it should actually not depend on module_data_derived, but on a store that derives from module_data_derived and from selected_module_id.
+this store merges the streams of module_data changes (these happen when active account changes) and the key changes (these happen when something like messagesArray is updated)
+to do: it should actually not depend on active_account_module_data, but on a store that derives from active_account_module_data and from selected_module_id.
 this way, we should be able to ensure that the store updates *after* selectedModule changes.
 module components would unmount before they'd see their messagesArray change to null.
 As it is now, every module content and sideba component has to check for nulls.
 */
-export function relay(md, data_name) {
+export function relay(md, key) {
  let r = derived(md, ($md, set) => {
   if (!$md) {
    set(null);
    return;
   }
-  const unsubscribe = $md[data_name].subscribe(value => {
+  const unsubscribe = $md[key].subscribe(value => {
    set(value);
   });
 
@@ -137,10 +137,10 @@ export function relay(md, data_name) {
   };
  });
  r.set = v => {
-  get(md)[data_name].set(v);
+  get(md)[key].set(v);
  };
  r.update = fn => {
-  get(md)[data_name].update(fn);
+  get(md)[key].update(fn);
  };
  return r;
 }
