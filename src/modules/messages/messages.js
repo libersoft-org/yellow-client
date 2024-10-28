@@ -68,8 +68,7 @@ function sanitizeConversation(c) {
  return c;
 }
 
-function moduleEventSubscribe(acc, event_name)
-{
+function moduleEventSubscribe(acc, event_name) {
  sendData(acc, 'subscribe', { event: event_name }, true, (req, res) => {
   if (res.error !== 0) {
    console.error('this is bad.');

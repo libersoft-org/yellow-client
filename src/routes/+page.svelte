@@ -56,8 +56,6 @@
  const product = 'Yellow';
  const version = '0.01';
  const link = 'https://yellow.libersoft.org';
- let status;
- let statusVisible = true;
  let isMenuOpen = false;
  let sideBar;
  let resizer;
@@ -85,17 +83,6 @@
   window.addEventListener('message', event => {
    console.log('event.data: ', event.data);
   });
- }
-
- function clickStatusClose() {
-  statusVisible = false;
- }
-
- function keyStatusClose() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickStatusClose();
-  }
  }
 
  function onSelectModule(id) {
@@ -175,57 +162,6 @@
   flex-grow: 1;
  }
 
- .status {
-  z-index: 1000;
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  border-radius: 5px;
-  overflow: hidden;
-  font-weight: bold;
- }
-
- .status.info {
-  color: #080;
-  background-color: #dfd;
-  border: 1px solid #080;
- }
-
- .status.error {
-  color: #800;
-  background-color: #fdd;
-  border: 1px solid #800;
- }
-
- .status .panel {
-  display: flex;
-  justify-content: right;
-  height: 20px;
- }
-
- .status .panel.info {
-  background-color: #080;
- }
-
- .status .panel.error {
-  background-color: #800;
- }
-
- .status .panel .close {
-  display: flex;
-  padding: 5px;
-  cursor: pointer;
- }
-
- .status .panel .close img {
-  width: 10px;
-  height: 10px;
- }
-
- .status .text {
-  padding: 10px;
- }
-
  @media (max-width: 768px) {
   .sidebar {
    position: absolute;
@@ -249,14 +185,6 @@
 </svelte:head>
 
 <div class="app">
- {#if statusVisible}
-  <div class="status {status?.class ? status.class : ''}">
-   <div class="panel {status?.class ? status.class : ''}">
-    <div class="close" role="button" tabindex="0" on:click={clickStatusClose} on:keydown={keyStatusClose}><img src="img/close.svg" alt="X" /></div>
-   </div>
-   <div class="text">{status?.message ? status.message : ''}</div>
-  </div>
- {/if}
  <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
   <MenuBar bind:isMenuOpen />
