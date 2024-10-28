@@ -233,22 +233,24 @@ export function openNewConversation(address) {
 }
 
 function eventNewMessage(acc, event) {
- if (acc !== get(active_account)) return;
  const res = event.detail;
  if (!res.data) return;
+ console.log('eventNewMessage', acc, res);
  const msg = new Message(acc, res.data);
- msg.created = new Date().toISOString().replace('T', ' ').replace('Z', '');
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
- if (msg.address_from === sc?.address || msg.address_to === sc?.address) {
-  addMessage(get(messagesArray), msg);
-  messagesArray.update(v => v);
- }
  if (msg.address_from !== acc.credentials.address) {
+  console.log('showNotification?');
   if (msg.address_from !== sc?.address || !get(isClientFocused)) showNotification(acc, msg);
  }
- console.log('eventNewMessage updateConversationsArray with msg:', msg);
- updateConversationsArray(msg);
+ if (acc === get(active_account)) {
+  console.log('eventNewMessage updateConversationsArray with msg:', msg);
+  updateConversationsArray(msg);
+  if (msg.address_from === sc?.address || msg.address_to === sc?.address) {
+   addMessage(get(messagesArray), msg);
+   messagesArray.update(v => v);
+  }
+ }
 }
 
 function eventSeenMessage(acc, event) {
