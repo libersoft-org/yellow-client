@@ -61,12 +61,13 @@
  let resizer;
  let isResizingSideBar = false;
  let selectedCorePage;
- let selectedModule;
+ let selectedModuleDecl;
+
 
  $: selectedCorePage = corePages[$selected_corepage_id];
  $: console.log('selectedCorePage: ', selectedCorePage);
- $: selectedModule = getModuleDecls()[$selected_module_id];
- $: console.log('selectedModule: ', selectedModule);
+ $: selectedModuleDecl = getModuleDecls()[$selected_module_id];
+ $: console.log('selectedModuleDecl: ', selectedModuleDecl);
 
  onMount(() => {
   console.log('+page onMount');
@@ -192,8 +193,8 @@
   <ModuleBar {onSelectModule} />
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.sidebar} />
-  {:else if selectedModule}
-   <svelte:component this={selectedModule.panels.sidebar} />
+  {:else if selectedModuleDecl}
+   <svelte:component this={selectedModuleDecl.panels.sidebar} />
   {:else}
    <WelcomeSidebar />
   {/if}
@@ -203,8 +204,8 @@
  <div class="content">
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.content} />
-  {:else if selectedModule}
-   <svelte:component this={selectedModule.panels.content} />
+  {:else if selectedModuleDecl}
+   <svelte:component this={selectedModuleDecl.panels.content} />
   {:else}
    <WelcomeContent {product} {version} {link} />
   {/if}

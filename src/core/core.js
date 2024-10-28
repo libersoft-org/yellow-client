@@ -115,13 +115,6 @@ export function active_account_module_data(module_id) {
  });
 }
 
-/*
-this store merges the streams of module_data changes (these happen when active account changes) and the key changes (these happen when something like messagesArray is updated)
-to do: it should actually not depend on active_account_module_data, but on a store that derives from active_account_module_data and from selected_module_id.
-this way, we should be able to ensure that the store updates *after* selectedModule changes.
-module components would unmount before they'd see their messagesArray change to null.
-As it is now, every module content and sideba component has to check for nulls.
-*/
 export function relay(md, key) {
  let r = derived(md, ($md, set) => {
   if (!$md) {
@@ -209,6 +202,8 @@ export function toggleAccountEnabled(id) {
 
 export function selectAccount(id) {
  console.log('SELECT ACCOUNT', id);
+ /* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
+ * This allows for modules to not be perfectly reactive. */
  let old_selected_module = get(selected_module_id);
  selected_module_id.set(null);
  active_account_id.set(id);
