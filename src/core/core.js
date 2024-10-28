@@ -1,6 +1,6 @@
 import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
-import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
+import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.js';
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
@@ -24,7 +24,7 @@ export function registerModule(id, decl) {
  decl.id = id;
 }
 
-const active_account_id = localStorageSharedStore('active_account_id', null);
+const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
 
 let default_accounts = [];
 if (import.meta.env.VITE_AMTP_SERVER_WS_URL) {
@@ -90,7 +90,6 @@ export let active_account = derived(active_account_store, ($active_account_store
  if (!$active_account_store) {
   return set(null);
  }
-
  // subscribe to the store that contains the account object
  const unsubscribe = $active_account_store.subscribe(account => {
   //console.log('DERIVED NESTED STORE:', account);
