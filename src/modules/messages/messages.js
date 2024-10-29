@@ -163,6 +163,8 @@ export function setMessageSeen(message, cb) {
 export function sendMessage(text) {
  let acc = get(active_account);
 
+ console.log('get(selectedConversation):', get(selectedConversation));
+
  let message = new Message(acc, {
   uid: getGuid(),
   address_from: acc.credentials.address,
