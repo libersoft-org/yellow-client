@@ -212,29 +212,38 @@ export function selectAccount(id) {
  });
 }
 
+function updateAvailableModules(acc, available_modules) {
+ for (const [k, v] in available_modules) {
+  console.log('module:', k, 'available:', v);
+  acc.available_modules[k] = v;
+ }
+ updateModulesComms(acc);
+}
+
 function constructAccount(id, credentials, enabled, settings) {
- let account = {
+ let acc = {
   id,
   settings,
   credentials,
   enabled,
   /*
-    also stuff like (set on heartbeat, for example):
+    also stuff like (set on heartbeat, for example) belongs here:
 
     acc.lastCommsTs = Date.now();
     acc.status = 'Connected.';
     acc.error = null;
 
-    We should put all this stuff in a separate object, let's say "meta".
+    We should put all this stuff in a separate object, let's say "info".
     And try to stuff credentials into settings maybe.
     And each of these nested objects of interest can be a store, so we can update them independently, without causing a global update on each heartbeat.
   */
-  events: new EventTarget(),
   requests: {},
   module_data: {},
+  available_modules: {},
  };
 
- return writable(account);
+ let account = writable(acc);
+ return account;
 }
 
 function _enableAccount(account) {
@@ -242,6 +251,14 @@ function _enableAccount(account) {
  acc.enabled = true;
  acc.suspended = false;
  acc.status = 'Enabled.';
+ acc.events = new EventTarget(),
+ /* todo: unsubscribe on disable */
+ acc.events.addEventListener('modules_available', event => {
+  console.log('modules_available event:', event);
+  updateAvailableModules(acc, event.detail?.data?.modules_available);
+  account.update(v => v);
+ })
+
  account.update(v => v);
  // TODO: use admin logic
  reconnectAccount(account);
@@ -302,7 +319,7 @@ function reconnectAccount(account) {
    return;
   }
 
-  acc.socket.onmessage = event => handleSocketResponse(acc, JSON.parse(event.data));
+  acc.socket.onmessage = event => handleSocketMessage(acc, JSON.parse(event.data));
 
   acc.socket.onopen = event => {
    console.log('Connected to WebSocket ' + socket_id + ':', event);
@@ -380,7 +397,8 @@ function sendLoginCommand(account) {
    acc.status = 'Logged in.';
    acc.error = null;
    acc.sessionID = res.data.sessionID;
-   initModuleData(account);
+   acc.available_modules = res.data.modules_available;
+   updateModulesComms(acc);
   }
   account.update(v => v);
  });
@@ -431,51 +449,74 @@ export function order(dict) {
  });
 }
 
-function initModuleData(account) {
- let acc = get(account);
+function initModuleComms(acc, module_id, decl) {
+ console.log('initModuleComms module_id:', module_id, 'decl:', decl);
+ if (decl.callbacks.initData) {
+  acc.module_data[module_id] = decl.callbacks?.initData(acc);
+ } else {
+  acc.module_data[module_id] = {};
+ }
+ acc.module_data[module_id].id = decl.id;
+ acc.module_data[module_id].decl = decl;
+ if (decl.callbacks.initComms) {
+  decl.callbacks.initComms(acc);
+ }
+}
 
- console.log('module_decls:', JSON.stringify(module_decls));
+function deinitModuleComms(decl, acc) {
+ if (decl.callbacks.deinitComms) {
+  decl.callbacks.deinitComms(acc);
+ }
+ if (decl.callbacks.deinitData) {
+  decl.callbacks.deinitData(acc);
+ }
+}
 
- for (const [module_id, decl] of Object.entries(module_decls)) {
-  console.log('initModuleData module_id:', module_id, 'decl:', decl);
-  if (decl.callbacks.initData) {
-   acc.module_data[module_id] = decl.callbacks?.initData(acc);
-  } else {
-   acc.module_data[module_id] = {};
+function updateModulesComms(acc) {
+ let available_modules = acc.available_modules;
+ console.log('updateModulesComms:', acc, available_modules);
+ for (const [module_id, available] of Object.entries(available_modules)) {
+  const initialized = !!acc.module_data[module_id];
+  if (available && initialized) {
+   console.log('Module already initialized:', module_id);
+   continue;
+  } else if (available && !initialized) {
+   const decl = module_decls[module_id];
+   if (!decl) {
+    console.error('Module available on server but not found on client:', module_id);
+    continue;
+   } else {
+    initModuleComms(acc, module_id, decl);
+   }
   }
-  acc.module_data[module_id].id = decl.id;
-  acc.module_data[module_id].decl = decl;
-  if (decl.callbacks.initComms) {
-   decl.callbacks.initComms(acc);
+  else if (!available && initialized) {
+   deinitModuleComms(acc.module_data[module_id].decl, acc);
+  }
+  else if (!available && !initialized) {
+   console.log('Module not available but also not initialized:', module_id);
   }
  }
-
- account.update(v => v);
- console.log('initModuleData:', acc);
- console.log('initModuleData:', acc.module_data);
+ console.log('updateModulesComms:', acc);
+ console.log('updateModulesComms:', acc.module_data);
 }
 
 function disconnectAccount(acc) {
- for (const [module_id, decl] of Object.entries(module_decls)) {
-  if (decl.callbacks.deinitComms) {
-   decl.callbacks.deinitComms(acc);
-  }
-  if (decl.callbacks.deinitData) {
-   decl.callbacks.deinitData(acc);
-  }
 
-  if (acc.socket) {
-   acc.socket.close();
-   acc.socket = null;
-  }
-  acc.requests = {};
-  acc.module_data = {};
+ acc.available_modules = {};
+ updateModulesComms(acc);
 
-  console.log('Account disconnected');
+ if (acc.socket) {
+  acc.socket.close();
+  acc.socket = null;
  }
+ acc.requests = {};
+ acc.module_data = {};
+
+ console.log('Account disconnected');
 }
 
-function handleSocketResponse(acc, res) {
+
+function handleSocketMessage(acc, res) {
  console.log('MESSAGE FROM SERVER', res);
  if (res.requestID) {
   // it is response to command:
