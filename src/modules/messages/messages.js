@@ -245,7 +245,7 @@ function eventNewMessage(acc, event) {
   console.log('showNotification?');
   if (msg.address_from !== sc?.address || !get(isClientFocused)) showNotification(acc, msg);
  }
- if (acc === get(active_account)) {
+ /*if (acc === get(active_account))*/ {
   console.log('eventNewMessage updateConversationsArray with msg:', msg);
   updateConversationsArray(msg);
   if (msg.address_from === sc?.address || msg.address_to === sc?.address) {
