@@ -187,7 +187,7 @@ export function sendMessage(text) {
 
  addMessage(get(messagesArray), message);
  messagesArray.update(v => v);
- updateConversationsArray(message);
+ updateConversationsArray(acc, message);
 }
 
 function addMessage(arr, msg) {
@@ -199,9 +199,10 @@ function addMessage(arr, msg) {
  }
 }
 
-function updateConversationsArray(msg) {
+function updateConversationsArray(acc, msg) {
  const msg_created = msg.created;
- let ca = get(conversationsArray);
+ let acc_ca = acc.module_data[module.identifier].conversationsArray;
+ let ca = get(acc_ca);
  const conversation = ca.find(c => c.address === msg.remote_address);
  console.log('updateConversationsArray', conversation, msg_created);
 
@@ -226,7 +227,7 @@ function updateConversationsArray(msg) {
   };
   ca.unshift(conversation);
  }
- conversationsArray.set(ca);
+ acc_ca.set(ca);
 }
 
 export function openNewConversation(address) {
@@ -243,16 +244,20 @@ function eventNewMessage(acc, event) {
  let sc = get(selectedConversation);
  if (msg.address_from !== acc.credentials.address) {
   console.log('showNotification?');
-  if (msg.address_from !== sc?.address || !get(isClientFocused)) showNotification(acc, msg);
+  if (!get(isClientFocused) || (get(active_account) != acc) ||  (msg.address_from !== sc?.address)) showNotification(acc, msg);
  }
- /*if (acc === get(active_account))*/ {
   console.log('eventNewMessage updateConversationsArray with msg:', msg);
-  updateConversationsArray(msg);
-  if (msg.address_from === sc?.address || msg.address_to === sc?.address) {
+  updateConversationsArray(acc, msg);
+  if (
+   acc === get(active_account) &&
+   (
+    (msg.address_from === sc?.address && msg.address_to ===acc.credentials.address)
+    ||
+    (msg.address_from === acc.credentials.address && msg.address_to === sc?.address)
+)) {
    addMessage(get(messagesArray), msg);
    messagesArray.update(v => v);
   }
- }
 }
 
 function eventSeenMessage(acc, event) {
