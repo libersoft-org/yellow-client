@@ -213,7 +213,7 @@ export function selectAccount(id) {
 }
 
 function updateAvailableModules(acc, available_modules) {
- for (const [k, v] in available_modules) {
+ for (const [k, v] of Object.entries(available_modules)) {
   console.log('module:', k, 'available:', v);
   acc.available_modules[k] = v;
  }
