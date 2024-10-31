@@ -39,6 +39,10 @@ export function initData(acc) {
  return result;
 }
 
+active_account.subscribe(acc => {
+get(md)?.['selectedConversation']?.set(null);
+});
+
 function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  send(acc, module.identifier, command, params, sendSessionID, callback, quiet);
 }
