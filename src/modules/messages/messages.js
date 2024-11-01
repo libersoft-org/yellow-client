@@ -16,13 +16,6 @@ class Message {
 }
 
 export let md = active_account_module_data(module.identifier);
-
-/*
-md.subscribe(v => {
- console.log('MD: ', v);
-});
-*/
-
 export let conversationsArray = relay(md, 'conversationsArray');
 export let messagesArray = relay(md, 'messagesArray');
 export let selectedConversation = relay(md, 'selectedConversation');
@@ -125,22 +118,20 @@ export function deinitData(acc) {
 
 export function listMessages(acc, address) {
  messagesArray.set([]);
- sendData(acc, 'messages_list', { address: address, count: 100, lastID: 0 }, true, (_req, res) => {
-  if (res.error !== 0) {
-   console.error('this is bad.');
+ sendData(acc, 'messages_list', { address: address, lastID: 0 }, true, (_req, res) => {
+  if (res.error !== 0 || !res.data?.messages) {
+   window.alert('Error while listing messages: ' + res.message);
    return;
   }
-  if (res.error === 0 && res.data?.messages) {
-   messagesArray.set(
-    res.data.messages.map(msg => {
-     let message = new Message(acc, msg);
-     message.received_by_my_homeserver = true;
-     return message;
-    })
-   );
-   console.log('resListMessages: messagesArray:');
-   console.log(get(messagesArray));
-  }
+  messagesArray.set(
+   res.data.messages.map(msg => {
+    let message = new Message(acc, msg);
+    message.received_by_my_homeserver = true;
+    return message;
+   })
+  );
+  console.log('resListMessages: messagesArray:');
+  console.log(get(messagesArray));
  });
 }
 
@@ -166,8 +157,6 @@ export function setMessageSeen(message, cb) {
 
 export function sendMessage(text) {
  let acc = get(active_account);
-
- console.log('get(selectedConversation):', get(selectedConversation));
 
  let message = new Message(acc, {
   uid: getGuid(),
@@ -343,10 +332,3 @@ export function saneHtml(content) {
 export function stripHtml(html) {
  return html.replace(/<[^>]*>?/gm, '');
 }
-
-export default {
- ensureConversationDetails,
- openNewConversation,
- listMessages,
- sendMessage,
-};
