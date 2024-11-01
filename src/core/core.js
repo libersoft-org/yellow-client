@@ -203,7 +203,7 @@ export function toggleAccountEnabled(id) {
 export function selectAccount(id) {
  console.log('SELECT ACCOUNT', id);
  /* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
- * This allows for modules to not be perfectly reactive. */
+  * This allows for modules to not be perfectly reactive. */
  let old_selected_module = get(selected_module_id);
  selected_module_id.set(null);
  active_account_id.set(id);
@@ -251,13 +251,13 @@ function _enableAccount(account) {
  acc.enabled = true;
  acc.suspended = false;
  acc.status = 'Enabled.';
- acc.events = new EventTarget(),
- /* todo: unsubscribe on disable */
- acc.events.addEventListener('modules_available', event => {
-  console.log('modules_available event:', event);
-  updateAvailableModules(acc, event.detail?.data?.modules_available);
-  account.update(v => v);
- })
+ (acc.events = new EventTarget()),
+  /* todo: unsubscribe on disable */
+  acc.events.addEventListener('modules_available', event => {
+   console.log('modules_available event:', event);
+   updateAvailableModules(acc, event.detail?.data?.modules_available);
+   account.update(v => v);
+  });
 
  account.update(v => v);
  // TODO: use admin logic
@@ -488,11 +488,9 @@ function updateModulesComms(acc) {
    } else {
     initModuleComms(acc, module_id, decl);
    }
-  }
-  else if (!available && initialized) {
+  } else if (!available && initialized) {
    deinitModuleComms(acc.module_data[module_id].decl, acc);
-  }
-  else if (!available && !initialized) {
+  } else if (!available && !initialized) {
    console.log('Module not available but also not initialized:', module_id);
   }
  }
@@ -501,7 +499,6 @@ function updateModulesComms(acc) {
 }
 
 function disconnectAccount(acc) {
-
  acc.available_modules = {};
  updateModulesComms(acc);
 
@@ -514,7 +511,6 @@ function disconnectAccount(acc) {
 
  console.log('Account disconnected');
 }
-
 
 function handleSocketMessage(acc, res) {
  console.log('MESSAGE FROM SERVER', res);

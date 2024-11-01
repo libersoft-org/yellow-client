@@ -40,7 +40,7 @@ export function initData(acc) {
 }
 
 active_account.subscribe(acc => {
-get(md)?.['selectedConversation']?.set(null);
+ get(md)?.['selectedConversation']?.set(null);
 });
 
 function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
@@ -248,20 +248,14 @@ function eventNewMessage(acc, event) {
  let sc = get(selectedConversation);
  if (msg.address_from !== acc.credentials.address) {
   console.log('showNotification?');
-  if (!get(isClientFocused) || (get(active_account) != acc) ||  (msg.address_from !== sc?.address)) showNotification(acc, msg);
+  if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) showNotification(acc, msg);
  }
-  console.log('eventNewMessage updateConversationsArray with msg:', msg);
-  updateConversationsArray(acc, msg);
-  if (
-   acc === get(active_account) &&
-   (
-    (msg.address_from === sc?.address && msg.address_to ===acc.credentials.address)
-    ||
-    (msg.address_from === acc.credentials.address && msg.address_to === sc?.address)
-)) {
-   addMessage(get(messagesArray), msg);
-   messagesArray.update(v => v);
-  }
+ console.log('eventNewMessage updateConversationsArray with msg:', msg);
+ updateConversationsArray(acc, msg);
+ if (acc === get(active_account) && ((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
+  addMessage(get(messagesArray), msg);
+  messagesArray.update(v => v);
+ }
 }
 
 function eventSeenMessage(acc, event) {

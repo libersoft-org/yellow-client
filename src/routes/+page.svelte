@@ -63,7 +63,6 @@
  let selectedCorePage;
  let selectedModuleDecl;
 
-
  $: selectedCorePage = corePages[$selected_corepage_id];
  $: console.log('selectedCorePage: ', selectedCorePage);
  $: selectedModuleDecl = getModuleDecls()[$selected_module_id];
