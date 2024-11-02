@@ -43,6 +43,7 @@ function sendData(acc, command, params = {}, sendSessionID = true, callback = nu
 export function selectConversation(conversation) {
  selectedConversation.update(() => conversation);
  hideSidebarMobile.update(() => true);
+ messagesArray.set([]);
  listMessages(get(active_account), conversation.address);
 }
 
@@ -117,22 +118,79 @@ export function deinitData(acc) {
 }
 
 export function listMessages(acc, address) {
- messagesArray.set([]);
- sendData(acc, 'messages_list', { address: address, lastID: 0 }, true, (_req, res) => {
+ messagesArray.set([{ type: 'initial_loading_placeholder' }]);
+ sendData(acc, 'messages_list', { address: address, lastID: 'unseen' }, true, (_req, res) => {
   if (res.error !== 0 || !res.data?.messages) {
    window.alert('Error while listing messages: ' + res.message);
    return;
   }
-  messagesArray.set(
-   res.data.messages.map(msg => {
-    let message = new Message(acc, msg);
-    message.received_by_my_homeserver = true;
-    return message;
-   })
-  );
-  console.log('resListMessages: messagesArray:');
-  console.log(get(messagesArray));
+  addMessagesToMessagesArray(res.data.messages);
  });
+}
+
+function addLoadedMessagesToMessagesArray(items) {
+ items = constructLoadedMessages(items);
+ addMessagesToMessagesArray(items);
+}
+
+function addMessagesToMessagesArray(items) {
+ let arr = get(messagesArray);
+ arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
+ for (let m of items) {
+  addMessage(arr, m);
+ }
+ sortMessages(arr);
+ addMissingPrevNext(arr);
+ messagesArray.set(arr);
+}
+
+function addMessage(arr, msg) {
+ let m = arr.find(m => m.uid === msg.uid);
+ if (m) {
+  for (let key in msg) m[key] = msg[key];
+ } else {
+  arr.unshift(msg);
+ }
+}
+
+function constructLoadedMessages(data)
+{
+ let items = data.map(msg => {
+  let message = new Message(acc, msg);
+  message.received_by_my_homeserver = true;
+  return message;
+ });
+ return items;
+}
+
+function sortMessages(messages) {
+ messages.sort((a, b) => {
+  if (a.created < b.created) return -1;
+  if (a.created > b.created) return 1;
+  return 0;
+ });
+}
+
+function addMissingPrevNext(messages) {
+  for (let i = 0; i < messages.length; i++) {
+   let m = messages[i];
+   if (!m.prev)
+    m.prev = findPrev(messages, i);
+   if (!m.next)
+    m.next = findNext(messages, i);
+  }
+}
+
+function findPrev(messages, i) {
+  for (const m of messages) {
+   if (m.next === i.id) return m.id;
+  }
+}
+
+function findNext(messages, i) {
+  for (const m of messages) {
+   if (m.prev === i.id) return m.id;
+  }
 }
 
 export function setMessageSeen(message, cb) {
@@ -173,24 +231,15 @@ export function sendMessage(text) {
    alert('Error while sending message: ' + res.message);
    return;
   }
-  message.received_by_my_homeserver = true;
   // update the message status and trigger the update of the messagesArray:
+  message.received_by_my_homeserver = true;
   messagesArray.update(v => v);
  });
 
- addMessage(get(messagesArray), message);
- messagesArray.update(v => v);
+ addMessagesToMessagesArray([message]);
  updateConversationsArray(acc, message);
 }
 
-function addMessage(arr, msg) {
- let m = arr.find(m => m.uid === msg.uid);
- if (m) {
-  for (let key in msg) m[key] = msg[key];
- } else {
-  arr.unshift(msg);
- }
-}
 
 function updateConversationsArray(acc, msg) {
  const msg_created = msg.created;
@@ -242,8 +291,7 @@ function eventNewMessage(acc, event) {
  console.log('eventNewMessage updateConversationsArray with msg:', msg);
  updateConversationsArray(acc, msg);
  if (acc === get(active_account) && ((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
-  addMessage(get(messagesArray), msg);
-  messagesArray.update(v => v);
+  addMessagesToMessagesArray([msg]);
  }
 }
 
@@ -261,6 +309,9 @@ function eventSeenMessage(acc, event) {
 }
 
 function eventSeenInboxMessage(acc, event) {
+ /*
+mark, as seen, a message sent to us. This can be triggered by another client.
+*/
  console.log(event);
  const res = event.detail;
  console.log('eventSeenInboxMessage', res);

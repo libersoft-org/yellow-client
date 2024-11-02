@@ -35,24 +35,39 @@
  }
 
  let items = [];
- $: updateItems($messagesArray);
+ $: items = getItems($messagesArray);
 
- function updateItems(messagesArray) {
-  console.log('updateItems');
-  items.length = 0;
-  let unseen_marker_placed = false;
-  for (let message of messagesArray.toReversed()) {
-   if (!unseen_marker_placed && !message.is_outgoing && (message.is_unseen_marker_anchor || !message.seen)) {
-    message.is_unseen_marker_anchor = true;
-    unseen_marker_placed = true;
-    items.push({ uid: 'unseen_marker', type: 'unseen_marker' });
-   }
-   items.push(message);
+ function getItems(messagesArray) {
+  let items = [];
+  let lastAuthor = null;
+  for (let i = 0; i < messagesArray.length; i++) {
+    items.push(message);
+    if (message.type === 'message') {
+     if (lastAuthor == message.author) {
+      message.hide_author = true;
+     }
+    }
+    lastAuthor = message.author;
   }
   items.reverse();
+  return items;
  }
 
- async function mouseDown(event) {
+ function removeUnusedHoles(items) {
+  if (items?.[0].type === 'hole') {
+   if (items?.[1].is_first) {
+    items.delete(0);
+   }
+  }
+  if (items?.[items.length - 1].type === 'hole') {
+   if (items?.[items.length - 2].is_last) {
+    items.delete(items.length - 1);
+   }
+  }
+ }
+
+
+   async function mouseDown(event) {
   console.log('event:', event);
   event.preventDefault();
   console.log('mouseDown');
