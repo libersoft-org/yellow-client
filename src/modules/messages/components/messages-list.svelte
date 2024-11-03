@@ -37,18 +37,58 @@
  let items = [];
  $: items = getItems($messagesArray);
 
- function getItems(messagesArray) {
+ function mergeAuthorship(messagesArray) {
   let items = [];
   let lastAuthor = null;
   for (let i = 0; i < messagesArray.length; i++) {
-    items.push(message);
-    if (message.type === 'message') {
-     if (lastAuthor == message.author) {
-      message.hide_author = true;
-     }
+   items.push(message);
+   if (message.type === 'message') {
+    if (lastAuthor == message.author) {
+     message.hide_author = true;
     }
-    lastAuthor = message.author;
+   }
+   lastAuthor = message.author;
   }
+  return items;
+ }
+
+ function getItems(messagesArray) {
+  if (messagesArray.length === 0) return [{type: 'no_messages'];
+  if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') return messagesArray;
+
+  messagesArray = mergeAuthorship(messagesArray);
+  let items = [];
+
+  for (let m of messagesArray)
+   if (typeof m !== Message)
+    throw new Error('Invalid item: ' + m);
+
+  // messages are sorted in correct order at this point.
+  // add lazyloaders where there is discontinuity.
+
+  // add a loader at the top if first message is not the first message in the chat
+  if (messagesArray[0].prev !== 'none') {
+   items.unshift({ type: 'loader', prev: 10, base: messagesArray[0].id });
+  }
+
+  // walk all messages, add loaders where there are discontinuities
+  for (let i = 0; i < messagesArray.length - 2; i++) {
+   let m = messagesArray[i];
+   items.push(m);
+   let next = messagesArray[i + 1];
+   if (m.next !== next.id) {
+    items.push({
+     type: 'hole',
+     top: { type: 'loader', next: 10, base: m.id },
+     bottom: { type: 'loader', prev: 10, base: next.id }
+    });
+   }
+  }
+
+  if (messagesArray[messagesArray.length - 1].next !== 'none') {
+   items.push({ type: 'loader', next: 10, base: messagesArray[messagesArray.length - 1].id });
+  }
+
   items.reverse();
   return items;
  }
