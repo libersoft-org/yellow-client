@@ -53,7 +53,7 @@
  }
 
  function getItems(messagesArray) {
-  if (messagesArray.length === 0) return [{type: 'no_messages'];
+  if (messagesArray.length === 0) return [{ type: 'no_messages'];
   if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') return messagesArray;
 
   messagesArray = mergeAuthorship(messagesArray);
@@ -93,27 +93,14 @@
   return items;
  }
 
- function removeUnusedHoles(items) {
-  if (items?.[0].type === 'hole') {
-   if (items?.[1].is_first) {
-    items.delete(0);
-   }
+  async function mouseDown(event) {
+   console.log('event:', event);
+   event.preventDefault();
+   console.log('mouseDown');
+   if (message_bar) await message_bar.setBarFocus();
+   console.log('1message_bar:', message_bar);
   }
-  if (items?.[items.length - 1].type === 'hole') {
-   if (items?.[items.length - 2].is_last) {
-    items.delete(items.length - 1);
-   }
-  }
- }
 
-
-   async function mouseDown(event) {
-  console.log('event:', event);
-  event.preventDefault();
-  console.log('mouseDown');
-  if (message_bar) await message_bar.setBarFocus();
-  console.log('1message_bar:', message_bar);
- }
 </script>
 
 <style>
