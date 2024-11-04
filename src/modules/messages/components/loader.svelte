@@ -7,7 +7,7 @@ import { loadMessages } from '../messages.js';
  function mouseDown() {
   console.log('mouseDown');
   loader.loading = true;
-  loadMessages(loader.conversation_acc, loader.conversation_address, loader.base, loader.prev, loader.next);
+  loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next);
  }
 
 
@@ -15,6 +15,6 @@ import { loadMessages } from '../messages.js';
 
 
 <pre>
-{JSON.stringify(loader, null, 2)}
+{JSON.stringify({...loader}, null, 2)}
 </pre>
 <button on:click={mouseDown}>Click me</button>

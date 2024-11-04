@@ -40,7 +40,9 @@
 
  let items = [];
  $: items = getItems($messagesArray);
+ $: console.log('messages-list.svelte: items:', items);
  let loaders = [];
+ let holes = [];
 
  function getLoader(l) {
   for (let i of loaders) {
@@ -55,16 +57,41 @@
   return l;
  }
 
+ function getHole(top, bottom) {
+  let uid = top.hole_uid + '_' + bottom.hole_uid;
+  for (let i of holes) {
+   if (i.uid === uid) {
+    return i;
+   }
+  }
+  let hole = {
+   type: 'hole',
+   top: top,
+   bottom: bottom,
+   uid: getGuid()
+  };
+  holes.push(hole);
+  top.hole_uid = hole.uid;
+  bottom.hole_uid = hole.uid;
+  return hole;
+ }
+
  function getItems(messagesArray) {
-  if (messagesArray.length === 0) return [{ type: 'no_messages'];
+
+  console.log('getItems: messagesArray:', messagesArray);
+
+  if (messagesArray.length === 0) return [{ type: 'no_messages'}];
   if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') return messagesArray;
 
   messagesArray = mergeAuthorship(messagesArray);
   let items = [];
 
   for (let m of messagesArray)
-   if (typeof m !== Message)
-    throw new Error('Invalid item: ' + m);
+   if (!m.acc || m.id === undefined || m.uid === undefined)  //(typeof m !== Message)
+   {
+    console.log('getItems: Invalid item: ', typeof m, m);
+    throw new Error('getItems: Invalid item: ' + JSON.stringify(m));
+    }
 
   // messages are sorted in correct order at this point.
   // add lazyloaders where there is discontinuity.
@@ -80,11 +107,10 @@
    items.push(m);
    let next = messagesArray[i + 1];
    if (m.next !== next.id) {
-    items.push({
-     type: 'hole',
-     top: getLoader({ next: 10, base: m.id }),
-     bottom: getLoader({ prev: 10, base: next.id })
-    });
+    items.push(getHole(
+     getLoader({ next: 10, base: m.id }),
+     getLoader({ prev: 10, base: next.id })
+    ));
    }
   }
 
@@ -101,6 +127,7 @@
    let items = [];
    let lastAuthor = null;
    for (let i = 0; i < messagesArray.length; i++) {
+    let message = messagesArray[i];
     items.push(message);
     if (message.type === 'message') {
      if (lastAuthor == message.author) {
