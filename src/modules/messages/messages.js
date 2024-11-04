@@ -117,15 +117,19 @@ export function deinitData(acc) {
  acc.module_data[module.identifier] = null;
 }
 
-export function listMessages(acc, address) {
- messagesArray.set([{ type: 'initial_loading_placeholder' }]);
- sendData(acc, 'messages_list', { address: address, lastID: 'unseen' }, true, (_req, res) => {
+function loadMessages(acc, address, lastID = 'unseen', prev = 3, next = 30) {
+ sendData(acc, 'messages_list', { address: address, lastID: 'unseen', prev, next }, true, (_req, res) => {
   if (res.error !== 0 || !res.data?.messages) {
    window.alert('Error while listing messages: ' + res.message);
    return;
   }
-  addMessagesToMessagesArray(res.data.messages);
+  addLoadedMessagesToMessagesArray(res.data.messages);
  });
+}
+
+export function listMessages(acc, address) {
+ messagesArray.set([{ type: 'initial_loading_placeholder' }]);
+ loadMessages(acc, address);
 }
 
 function addLoadedMessagesToMessagesArray(items) {

@@ -1,7 +1,10 @@
 <script>
  import { afterUpdate, beforeUpdate, onMount } from 'svelte';
+ import { getGuid } from '../../../core/core.js';
  import Message from './message.svelte';
+ import Loader from './loader.svelte';
  import { messagesArray } from '../messages.js';
+
 
  export let message_bar;
 
@@ -36,20 +39,18 @@
 
  let items = [];
  $: items = getItems($messagesArray);
+ let loaders = [];
 
- function mergeAuthorship(messagesArray) {
-  let items = [];
-  let lastAuthor = null;
-  for (let i = 0; i < messagesArray.length; i++) {
-   items.push(message);
-   if (message.type === 'message') {
-    if (lastAuthor == message.author) {
-     message.hide_author = true;
-    }
+ function getLoader(l) {
+  for (let i of loaders) {
+   if (i.base === l.base && i.prev === l.prev && i.next === l.next) {
+    return i;
    }
-   lastAuthor = message.author;
   }
-  return items;
+  l.uid = getGuid();
+  l.type = 'loader';
+  loaders.push(l);
+  return l;
  }
 
  function getItems(messagesArray) {
@@ -68,7 +69,7 @@
 
   // add a loader at the top if first message is not the first message in the chat
   if (messagesArray[0].prev !== 'none') {
-   items.unshift({ type: 'loader', prev: 10, base: messagesArray[0].id });
+   items.unshift(getLoader({ prev: 10, base: messagesArray[0].id }));
   }
 
   // walk all messages, add loaders where there are discontinuities
@@ -79,19 +80,35 @@
    if (m.next !== next.id) {
     items.push({
      type: 'hole',
-     top: { type: 'loader', next: 10, base: m.id },
-     bottom: { type: 'loader', prev: 10, base: next.id }
+     top: getLoader({ next: 10, base: m.id }),
+     bottom: getLoader({ prev: 10, base: next.id })
     });
    }
   }
 
   if (messagesArray[messagesArray.length - 1].next !== 'none') {
-   items.push({ type: 'loader', next: 10, base: messagesArray[messagesArray.length - 1].id });
+   items.push(getLoader({ next: 10, base: messagesArray[messagesArray.length - 1].id }));
   }
 
   items.reverse();
   return items;
  }
+
+
+  function mergeAuthorship(messagesArray) {
+   let items = [];
+   let lastAuthor = null;
+   for (let i = 0; i < messagesArray.length; i++) {
+    items.push(message);
+    if (message.type === 'message') {
+     if (lastAuthor == message.author) {
+      message.hide_author = true;
+     }
+    }
+    lastAuthor = message.author;
+   }
+   return items;
+  }
 
   async function mouseDown(event) {
    console.log('event:', event);
@@ -123,8 +140,26 @@
 
 <div class="messages" role="none" bind:this={messages_elem} on:mousedown={mouseDown}>
  {#each items as m (m.uid)}
-  {#if m.type === 'unseen_marker'}
+
+  {#if m.type === 'no_messages'}
+   <div>No messages</div>
+
+  {:else if m.type === 'initial_loading_placeholder'}
+   <div class="initial_loading_placeholder" style="height: 300px; background-color: #f0f0f0; margin: 10px 0;">
+    Loading..
+   </div>
+
+  {:else if m.type === 'hole'}
+    <Loader loader={m.top} />
+    <div style="height: 300px; background-color: #f0f0f0; margin: 10px 0;"></div>
+    <Loader loader={m.bottom} />
+
+  {:else if m.type === 'loader'}
+   <Loader loader={m} />
+
+  {:else if m.type === 'unseen_marker'}
    <div class="unread">Unread messages</div>
+
   {:else}
    <Message message={m} container_element={messages_elem} />
   {/if}
