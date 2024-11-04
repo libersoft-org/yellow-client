@@ -42,6 +42,6 @@
 
 <div class="conversation">
  <ProfileBar {closeConversation} />
- <MessagesList {message_bar} />
+ <MessagesList {message_bar} conversation:{$selectedConversation} />
  <MessageBar bind:this={message_bar} />
 </div>

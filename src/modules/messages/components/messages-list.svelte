@@ -7,6 +7,7 @@
 
 
  export let message_bar;
+ export let conversation;
 
  let messages_elem;
  let wasScrolledToBottom = true;
@@ -49,6 +50,7 @@
   }
   l.uid = getGuid();
   l.type = 'loader';
+  l.conversation = conversation;
   loaders.push(l);
   return l;
  }

@@ -44,7 +44,7 @@ export function selectConversation(conversation) {
  selectedConversation.update(() => conversation);
  hideSidebarMobile.update(() => true);
  messagesArray.set([]);
- listMessages(get(active_account), conversation.address);
+ listMessages(conversation.acc, conversation.address);
 }
 
 export function listConversations(acc) {
@@ -278,7 +278,7 @@ function updateConversationsArray(acc, msg) {
 
 export function openNewConversation(address) {
  console.log('openNewConversation', address);
- selectConversation({ address });
+ selectConversation({ acc: get(get(active_account)), address });
 }
 
 function eventNewMessage(acc, event) {
@@ -333,9 +333,11 @@ function showNotification(acc, msg) {
  playNotificationSound();
  // TODO: distinguish if it's a web or native version
  if (Notification.permission !== 'granted') return;
+ /*fixme*/
  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
  let notification;
  if (conversation) {
+  /*fixme*/
   notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
    body: msg.stripped_text,
    icon: 'img/photo.svg',
@@ -350,7 +352,7 @@ function showNotification(acc, msg) {
  }
  notification.onclick = () => {
   window.focus();
-  selectConversation({ address: msg.address_from, visible_name: conversation?.visible_name });
+  selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
  };
 }
 
