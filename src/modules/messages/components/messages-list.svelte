@@ -102,11 +102,11 @@
   }
 
   // walk all messages, add loaders where there are discontinuities
-  for (let i = 0; i < messagesArray.length - 2; i++) {
+  for (let i = 0; i < messagesArray.length; i++) {
    let m = messagesArray[i];
    items.push(m);
    let next = messagesArray[i + 1];
-   if (m.next !== next.id) {
+   if (next && (m.next !== next.id)) {
     items.push(getHole(
      getLoader({ next: 10, base: m.id }),
      getLoader({ prev: 10, base: next.id })

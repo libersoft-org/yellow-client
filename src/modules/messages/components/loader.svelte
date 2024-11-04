@@ -14,7 +14,6 @@ import { loadMessages } from '../messages.js';
 </script>
 
 
-<pre>
-{JSON.stringify({...loader}, null, 2)}
-</pre>
+{JSON.stringify({...loader,conversation:undefined}, null, 2)}
+
 <button on:click={mouseDown}>Click me</button>
