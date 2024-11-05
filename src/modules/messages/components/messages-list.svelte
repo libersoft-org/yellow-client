@@ -80,25 +80,26 @@
 
   console.log('getItems: messagesArray:', messagesArray);
 
-  if (messagesArray.length === 0) return [{ type: 'no_messages'}];
   if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') return messagesArray;
+  if (messagesArray.length === 0) return [{type: 'no_messages'}];
+
 
   messagesArray = mergeAuthorship(messagesArray);
   let items = [];
 
-  for (let m of messagesArray)
+  for (let m of messagesArray) {
    if (!m.acc || m.id === undefined || m.uid === undefined)  //(typeof m !== Message)
    {
     console.log('getItems: Invalid item: ', typeof m, m);
     throw new Error('getItems: Invalid item: ' + JSON.stringify(m));
-    }
-
+   }
+  }
   // messages are sorted in correct order at this point.
   // add lazyloaders where there is discontinuity.
 
   // add a loader at the top if first message is not the first message in the chat
   if (messagesArray[0].prev !== 'none') {
-   items.unshift(getLoader({ prev: 10, base: messagesArray[0].id }));
+   items.unshift(getLoader({prev: 10, base: messagesArray[0].id}));
   }
 
   // walk all messages, add loaders where there are discontinuities
@@ -108,14 +109,14 @@
    let next = messagesArray[i + 1];
    if (next && (m.next !== next.id)) {
     items.push(getHole(
-     getLoader({ next: 10, base: m.id }),
-     getLoader({ prev: 10, base: next.id })
+     getLoader({next: 10, base: m.id}),
+     getLoader({prev: 10, base: next.id})
     ));
    }
   }
 
   if (messagesArray[messagesArray.length - 1].next !== 'none') {
-   items.push(getLoader({ next: 10, base: messagesArray[messagesArray.length - 1].id }));
+   items.push(getLoader({next: 10, base: messagesArray[messagesArray.length - 1].id}));
   }
 
   items.reverse();
@@ -123,29 +124,29 @@
  }
 
 
-  function mergeAuthorship(messagesArray) {
-   let items = [];
-   let lastAuthor = null;
-   for (let i = 0; i < messagesArray.length; i++) {
-    let message = messagesArray[i];
-    items.push(message);
-    if (message.type === 'message') {
-     if (lastAuthor == message.author) {
-      message.hide_author = true;
-     }
+ function mergeAuthorship(messagesArray) {
+  let items = [];
+  let lastAuthor = null;
+  for (let i = 0; i < messagesArray.length; i++) {
+   let message = messagesArray[i];
+   items.push(message);
+   if (message.type === 'message') {
+    if (lastAuthor == message.author) {
+     message.hide_author = true;
     }
-    lastAuthor = message.author;
    }
-   return items;
+   lastAuthor = message.author;
   }
+  return items;
+ }
 
-  async function mouseDown(event) {
-   console.log('event:', event);
-   event.preventDefault();
-   console.log('mouseDown');
-   if (message_bar) await message_bar.setBarFocus();
-   console.log('1message_bar:', message_bar);
-  }
+ async function mouseDown(event) {
+  console.log('event:', event);
+  event.preventDefault();
+  console.log('mouseDown');
+  if (message_bar) await message_bar.setBarFocus();
+  console.log('1message_bar:', message_bar);
+ }
 
 </script>
 
@@ -179,9 +180,9 @@
    </div>
 
   {:else if m.type === 'hole'}
-    <Loader loader={m.top} />
-    <div style="height: 300px; background-color: #f0f0f0; margin: 10px 0;"></div>
-    <Loader loader={m.bottom} />
+   <Loader loader={m.top} />
+   <div style="height: 300px; background-color: #f0f0f0; margin: 10px 0;"></div>
+   <Loader loader={m.bottom} />
 
   {:else if m.type === 'loader'}
    <Loader loader={m} />

@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import { active_account, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send } from '../../core/core.js';
+import { active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { module } from './module.js';
 
@@ -32,7 +32,7 @@ export function initData(acc) {
  return result;
 }
 
-active_account.subscribe(acc => {
+active_account_id.subscribe(acc => {
  get(md)?.['selectedConversation']?.set(null);
 });
 
@@ -119,7 +119,13 @@ export function deinitData(acc) {
  acc.module_data[module.identifier] = null;
 }
 
-export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 30) {
+export function listMessages(acc, address) {
+ messagesArray.set([{ type: 'initial_loading_placeholder' }]);
+ console.log('listMessages', acc, address);
+ loadMessages(acc, address);
+}
+
+export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 3) {
  sendData(acc, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (res.error !== 0 || !res.data?.messages) {
    console.error(res);
@@ -128,12 +134,6 @@ export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 30)
   }
   addLoadedMessagesToMessagesArray(acc, res.data.messages);
  });
-}
-
-export function listMessages(acc, address) {
- messagesArray.set([{ type: 'initial_loading_placeholder' }]);
- console.log('listMessages', acc, address);
- loadMessages(acc, address);
 }
 
 function addLoadedMessagesToMessagesArray(acc, items) {
@@ -172,8 +172,8 @@ function constructLoadedMessages(acc, data) {
 
 function sortMessages(messages) {
  messages.sort((a, b) => {
-  if (a.created < b.created) return -1;
-  if (a.created > b.created) return 1;
+  if (a.id < b.id) return -1;
+  if (a.id > b.id) return 1;
   return 0;
  });
 }

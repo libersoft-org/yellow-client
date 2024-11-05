@@ -114,7 +114,6 @@
  }
 </style>
 
-{message.id}
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
  <div bind:this={intersection_observer_element}></div>
  <div class="text">{@html processMessage(message.message)}</div>
@@ -123,5 +122,9 @@
   {#if message.is_outgoing}
    <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
   {/if}
+
  </div>
+
+id {message.id}
+
 </div>

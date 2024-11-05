@@ -24,7 +24,7 @@ export function registerModule(id, decl) {
  decl.id = id;
 }
 
-const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
+export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
 
 let default_accounts = [];
 if (import.meta.env.VITE_AMTP_SERVER_WS_URL) {
