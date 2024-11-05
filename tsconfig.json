@@ -3,6 +3,7 @@
 
  "compilerOptions": {
   "esModuleInterop": true,
+  "noImplicitAny" : false,
 
   // Enable latest features
   "lib": ["ESNext", "DOM"],

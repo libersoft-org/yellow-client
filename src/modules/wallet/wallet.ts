@@ -61,7 +61,7 @@ export const rpcURL = writable<string | null>(null);
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer: number | undefined;
 
-export const networks = localStorageSharedStore<Network[]>('networks', []);
+export const networks = localStorageSharedStore<>('networks', []);
 
 networks.subscribe((nets: Network[]) => {
  let modified = false;
@@ -158,7 +158,7 @@ wallets.subscribe((wallets: Wallet[]) => {
  }
 });
 
-function wallets_cleanup(ws) {
+function wallets_cleanup(ws: any) {
  for (let i = 0; i < ws.length; i++) {
   for (let j = 0; j < ws.length; j++) {
    if (i !== j && ws[i].address === ws[j].address) {
@@ -187,7 +187,7 @@ export const balance = writable<Balance>({
 });
 export const balanceTimestamp = writable<Date | null>(null);
 
-let refreshTimer: number = setInterval(refresh, 30000);
+let refreshTimer: Timeout = setInterval(refresh, 30000);
 
 function resetBalance(): void {
  balance.set({
@@ -501,7 +501,7 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 }
 
 export function addNetwork(net): void {
- if (get(networks).find(n => n.name === net.name)) {
+ if (get(networks)?.find(n => n.name === net.name)) {
   window.alert('Network with this name already exists');
   return;
  }
