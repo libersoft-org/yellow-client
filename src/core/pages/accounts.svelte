@@ -1,5 +1,5 @@
 <script>
- import { selected_corepage_id, accounts_config, hideSidebarMobile } from '../core.js';
+ import { selected_corepage_id, accounts_config, accounts, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
  import ActionItem from '../components/accounts-action-item.svelte';
  import Modal from '../components/modal.svelte';
@@ -34,6 +34,7 @@
 
  function accountsConfigExport() {
   window.alert(JSON.stringify(get(accounts_config), null, 2));
+  console.log(JSON.stringify(get(accounts).map(get), null, 2));
  }
 
  function accountsConfigImport() {

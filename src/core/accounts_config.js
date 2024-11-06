@@ -2,6 +2,7 @@ import { accounts_config, getGuid, selectAccount } from './core.js';
 import { get } from 'svelte/store';
 
 export function addAccount(config, settings) {
+ console.log('addAccount(config, settings)', config, settings);
  let id = getGuid();
  accounts_config.update(v => [
   ...v,

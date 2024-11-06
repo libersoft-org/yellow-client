@@ -138,47 +138,42 @@ export function relay(md, key) {
  return r;
 }
 
-accounts_config.subscribe(value => {
- //console.log('ACCOUNTS CONFIG:', value);
- //TODO: implement configuration of accounts order
- let accounts_list = get(accounts);
- //console.log('EXISTING ACCOUNTS (stores):', accounts_list);
- for (let config of value) {
-  //console.log('CONFIG', config);
-  let account = accounts_list.find(acc => get(acc).id === config.id);
-  //console.log('account', account);
-  if (account) {
-   let acc = get(account);
+function updateLiveAccount(account, config) {
+ let acc = get(account);
 
-   if (acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
-    acc.credentials = config.credentials;
-    if (acc.enabled) {
-     _disableAccount(account);
-     _enableAccount(account);
-    }
-   }
-
-   if (acc.enabled != config.enabled) {
-    if (config.enabled) _enableAccount(account);
-    else _disableAccount(account);
-    let settings_updated = false;
-    for (const [key, value] of Object.entries(config.settings)) {
-     if (acc.settings[key] != value) {
-      acc.settings[key] = value;
-      settings_updated = true;
-     }
-    }
-    if (settings_updated) account.update(v => v);
-   }
-  } else {
-   // add new account
-   let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
-   //console.log('NEW account', get(account));
-   accounts.update(v => [...v, account]);
-   if (config.enabled) _enableAccount(account);
-   else _disableAccount(account);
+ if (acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
+  acc.credentials = config.credentials;
+  if (acc.enabled) {
+   _disableAccount(account);
+   _enableAccount(account);
   }
  }
+
+ if (acc.enabled != config.enabled) {
+  if (config.enabled) _enableAccount(account);
+  else _disableAccount(account);
+ }
+
+ let settings_updated = false;
+ for (const [key, value] of Object.entries(config.settings)) {
+  if (acc.settings[key] != value) {
+   acc.settings[key] = value;
+   settings_updated = true;
+  }
+ }
+ if (settings_updated) account.update(v => v);
+}
+
+function createLiveAccount(config) {
+ // add new account
+ let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
+ //console.log('NEW account', get(account));
+ accounts.update(v => [...v, account]);
+ if (config.enabled) _enableAccount(account);
+ else _disableAccount(account);
+}
+
+function removeLiveAccountsNotInConfig(accounts_list, value) {
  // remove accounts that are not in config
  for (let account of accounts_list) {
   if (!value.find(conf => conf.id === get(account).id)) {
@@ -187,6 +182,24 @@ accounts_config.subscribe(value => {
    accounts.update(v => v.filter(a => get(a).id !== get(account).id));
   }
  }
+}
+
+accounts_config.subscribe(value => {
+ //console.log('ACCOUNTS CONFIG:', value);
+ void "TODO: implement configuration of accounts order";
+ let accounts_list = get(accounts);
+ //console.log('EXISTING ACCOUNTS (stores):', accounts_list);
+ for (let config of value) {
+  //console.log('CONFIG', config);
+  let account = accounts_list.find(acc => get(acc).id === config.id);
+  //console.log('account', account);
+  if (account) {
+   updateLiveAccount(account, config);
+  } else {
+   createLiveAccount(config);
+  }
+ }
+ removeLiveAccountsNotInConfig(accounts_list, value);
 });
 
 export function toggleAccountEnabled(id) {
