@@ -153,6 +153,7 @@ function addMessagesToMessagesArray(items) {
 }
 
 function addMessage(arr, msg) {
+ void "todo: this should only update the message if the data is actually more up-to-date";
  let m = arr.find(m => m.uid === msg.uid);
  if (m) {
   for (let key in msg) m[key] = msg[key];
@@ -172,8 +173,18 @@ function constructLoadedMessages(acc, data) {
 
 function sortMessages(messages) {
  messages.sort((a, b) => {
-  if (a.id < b.id) return -1;
-  if (a.id > b.id) return 1;
+  void "take care of just-sent messages, they don't have id yet";
+  console.log(a.created, b.created);
+  let akey = a.id;
+  let bkey = b.id;
+  if (akey === undefined && bkey === undefined) {
+   akey = a.created;
+   bkey = b.created;
+  }
+  else if (akey === undefined) return 1;
+  else if (bkey === undefined) return -1;
+  if (akey > bkey) return 1;
+  if (akey < bkey) return -1;
   return 0;
  });
 }

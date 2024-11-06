@@ -88,7 +88,7 @@
   let items = [];
 
   for (let m of messagesArray) {
-   if (!m.acc || m.id === undefined || m.uid === undefined)  //(typeof m !== Message)
+   if (!m.acc || m.uid === undefined)  //(typeof m !== Message)
    {
     console.log('getItems: Invalid item: ', typeof m, m);
     throw new Error('getItems: Invalid item: ' + JSON.stringify(m));
@@ -98,7 +98,7 @@
   // add lazyloaders where there is discontinuity.
 
   // add a loader at the top if first message is not the first message in the chat
-  if (messagesArray[0].prev !== 'none') {
+  if (messagesArray[0].prev !== 'none' && messagesArray[0].id !== undefined) {
    items.unshift(getLoader({prev: 10, base: messagesArray[0].id}));
   }
 
@@ -107,7 +107,7 @@
    let m = messagesArray[i];
    items.push(m);
    let next = messagesArray[i + 1];
-   if (next && (m.next !== next.id)) {
+   if (next && ((m.next !== next.id) && (next.id !== undefined))) {
     items.push(getHole(
      getLoader({next: 10, base: m.id}),
      getLoader({prev: 10, base: next.id})
@@ -115,8 +115,9 @@
    }
   }
 
-  if (messagesArray[messagesArray.length - 1].next !== 'none') {
-   items.push(getLoader({next: 10, base: messagesArray[messagesArray.length - 1].id}));
+  let last = messagesArray[messagesArray.length - 1];
+  if (last.next !== 'none' && last.id !== undefined) {
+   items.push(getLoader({next: 10, base: last.id}));
   }
 
   items.reverse();
@@ -180,9 +181,9 @@
    </div>
 
   {:else if m.type === 'hole'}
-   <Loader loader={m.top} />
-   <div style="height: 300px; background-color: #f0f0f0; margin: 10px 0;"></div>
    <Loader loader={m.bottom} />
+   <div style="height: 300px; background-color: #f0f0f0; margin: 10px 0;"></div>
+   <Loader loader={m.top} />
 
   {:else if m.type === 'loader'}
    <Loader loader={m} />
