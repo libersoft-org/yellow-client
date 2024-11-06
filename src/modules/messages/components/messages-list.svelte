@@ -30,7 +30,7 @@
  });
 
  onMount(() => {
-  //setInterval(() => updateWasScrolledToBottom(), 1000);
+  //window.setInterval(() => updateWasScrolledToBottom(), 1000);
  });
 
  function scrollToBottom() {

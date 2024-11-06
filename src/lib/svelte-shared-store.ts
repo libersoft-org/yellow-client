@@ -1,4 +1,4 @@
-import { writable, get, Writable } from 'svelte/store';
+import { writable, get, type Writable } from 'svelte/store';
 
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
   function setStorage(value: T): void {
@@ -76,16 +76,17 @@ export function localStorageReadOnceSharedStore<T>(name: string, default_: T): W
 
   const { subscribe, set, update } = writable<T>(default_, start);
 
-  return {
+  let r = {
     subscribe,
     set(value: T): void {
       setStorage(value);
       set(value);
     },
     update(fn: (value: T) => T): void {
-      const value2 = fn(get(this));
+      const value2 = fn(get(r));
       setStorage(value2);
       set(value2);
     },
   };
+  return r;
 }

@@ -1,5 +1,5 @@
 import { derived, get, writable } from 'svelte/store';
-import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, PreparedTransactionRequest } from 'ethers';
+import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { getGuid } from '../../core/core.js';
 export { default_networks } from './default_networks.js';
@@ -52,6 +52,7 @@ interface Balance {
 }
 
 interface AddressBookItem {
+ guid: string;
  alias: string;
  address: string;
 }
@@ -60,9 +61,9 @@ export const status = writable<string>('Started.');
 export const rpcURL = writable<string | null>(null);
 
 let provider: JsonRpcProvider | null = null;
-let reconnectionTimer: number | undefined;
+let reconnectionTimer;
 
-export const networks = localStorageSharedStore<Networks[]>('networks', []);
+export const networks = localStorageSharedStore<Network []>('networks', []);
 
 networks.subscribe((nets: Network[]) => {
  let modified = false;
@@ -93,27 +94,29 @@ networks.subscribe((nets: Network[]) => {
  }
 });
 
+/*
 function toHexStr(uint8) {
  return Array.from(uint8)
   .map(i => i.toString(16).padStart(2, '0'))
   .join('');
 }
+*/
 
 export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
-export const selectedNetwork = derived<[string | null, Network[]], Network | undefined>([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
+export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
  const r = $networks.find(n => n.guid === $selectedNetworkID);
  console.log('selectedNetwork', r);
  return r;
 });
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
-export const selectedWallet = derived<[Wallet[], string | null], Wallet | undefined>([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
+export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
  const r = $wallets.find(w => w.address === $selectedWalletID);
  console.log('selectedWallet', r);
  return r;
 });
 
-export const selectedAddress = derived<[Wallet | undefined], Address | undefined>([selectedWallet], ([$selectedWallet]) => {
+export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
  console.log($selectedWallet);
  let addresses = $selectedWallet?.addresses || [];
  let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
@@ -121,12 +124,12 @@ export const selectedAddress = derived<[Wallet | undefined], Address | undefined
  return result;
 });
 
-export const selectedMainCurrencySymbol = derived<[Network | undefined], string | undefined>([selectedNetwork], ([$selectedNetwork]) => {
+export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selectedNetwork]) => {
  return $selectedNetwork?.currency.symbol;
 });
 
 let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
- return ($selectedNetwork.tokens || []).map(token => ({ symbol: token.symbol }));
+ return ($selectedNetwork?.tokens || []).map(token => ({ symbol: token.symbol }));
 });
 
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
@@ -153,23 +156,23 @@ selectedAddress.subscribe((value: Address | undefined) => {
  // getBalance();
 });
 
-wallets.subscribe((wallets: Wallet[]) => {
- while (wallets_cleanup(wallets)) {
+wallets.subscribe((wals: Wallet[]) => {
+ while (wallets_cleanup(wals)) {
   wallets.update(w => w);
  }
 });
 
-function wallets_cleanup(ws: any) {
- for (let i = 0; i < ws.length; i++) {
-  for (let j = 0; j < ws.length; j++) {
-   if (i !== j && ws[i].address === ws[j].address) {
-    window.alert('Wallet with address ' + ws[i].address + ' already exists');
-    ws.splice(i, 1);
+function wallets_cleanup(wallets: any) {
+ for (let i = 0; i < wallets.length; i++) {
+  for (let j = 0; j < wallets.length; j++) {
+   if (i !== j && wallets[i].address === wallets[j].address) {
+    window.alert('Wallet with address ' + wallets[i].address + ' already exists');
+    wallets.splice(i, 1);
     return true;
    }
-   if (i !== j && ws[i].phrase === ws[j].phrase) {
-    window.alert('Wallet with phrase ' + ws[i].phrase + ' already exists');
-    ws.splice(i, 1);
+   if (i !== j && wallets[i].phrase === wallets[j].phrase) {
+    window.alert('Wallet with phrase ' + wallets[i].phrase + ' already exists');
+    wallets.splice(i, 1);
     return true;
    }
   }
@@ -188,7 +191,7 @@ export const balance = writable<Balance>({
 });
 export const balanceTimestamp = writable<Date | null>(null);
 
-let refreshTimer: Timeout = setInterval(refresh, 30000);
+let refreshTimer = window.setInterval(refresh, 30000);
 
 function resetBalance(): void {
  balance.set({

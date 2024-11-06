@@ -406,7 +406,7 @@ function sendLoginCommand(account) {
 
 function setupHeartbeat(account) {
  let acc = get(account);
- acc.heartbeatTimer = setInterval(() => {
+ acc.heartbeatTimer = window.setInterval(() => {
   if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
    acc.status = 'Retrying...';
    acc.error = 'Not connected.';
