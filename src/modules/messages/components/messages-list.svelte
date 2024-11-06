@@ -109,8 +109,8 @@
    let next = messagesArray[i + 1];
    if (next && ((m.next !== next.id) && (next.id !== undefined))) {
     items.push(getHole(
-     getLoader({next: 10, base: m.id}),
-     getLoader({prev: 10, base: next.id})
+     getLoader({next: 5, base: m.id}),
+     getLoader({prev: 5, base: next.id})
     ));
    }
   }

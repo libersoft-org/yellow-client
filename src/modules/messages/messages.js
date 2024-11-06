@@ -125,8 +125,9 @@ export function listMessages(acc, address) {
  loadMessages(acc, address);
 }
 
-export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 3) {
+export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 3, cb) {
  sendData(acc, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
+  if (cb) cb(res);
   if (res.error !== 0 || !res.data?.messages) {
    console.error(res);
    window.alert('Error while listing messages: ' + (res.message || JSON.stringify(res)));
@@ -174,7 +175,7 @@ function constructLoadedMessages(acc, data) {
 function sortMessages(messages) {
  messages.sort((a, b) => {
   void "take care of just-sent messages, they don't have id yet";
-  console.log(a.created, b.created);
+  //console.log(a.created, b.created);
   let akey = a.id;
   let bkey = b.id;
   if (akey === undefined && bkey === undefined) {

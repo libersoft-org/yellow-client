@@ -1,5 +1,5 @@
 <script>
- import { onMount } from 'svelte';
+ import { onMount, setContext } from 'svelte';
  import { get } from 'svelte/store';
  import '../app.css';
  import { active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls } from '../core/core.js';
@@ -62,6 +62,8 @@
  let isResizingSideBar = false;
  let selectedCorePage;
  let selectedModuleDecl;
+ let contentElement;
+ setContext('contentElement', contentElement);
 
  $: selectedCorePage = corePages[$selected_corepage_id];
  $: console.log('selectedCorePage: ', selectedCorePage);
@@ -200,7 +202,7 @@
  </div>
  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
 
- <div class="content">
+ <div class="content" bind:this={contentElement} >
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.content} />
   {:else if selectedModuleDecl}
