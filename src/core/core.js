@@ -1,6 +1,6 @@
 import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
-import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.js';
+import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);

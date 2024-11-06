@@ -1,6 +1,6 @@
 import { derived, get, writable } from 'svelte/store';
-import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes } from 'ethers';
-import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
+import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, PreparedTransactionRequest } from 'ethers';
+import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { getGuid } from '../../core/core.js';
 export { default_networks } from './default_networks.js';
 
@@ -18,6 +18,7 @@ interface Wallet {
  selected_address_index: number;
  name: string;
  addresses?: Address[];
+ log: any[];
 }
 
 interface Token {
@@ -61,7 +62,7 @@ export const rpcURL = writable<string | null>(null);
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer: number | undefined;
 
-export const networks = localStorageSharedStore<>('networks', []);
+export const networks = localStorageSharedStore<Networks[]>('networks', []);
 
 networks.subscribe((nets: Network[]) => {
  let modified = false;
@@ -362,6 +363,7 @@ export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> 
   selected_address_index: 0,
   name: '',
   addresses: [],
+  log: [],
  };
  wallets.update(w => {
   wallet.name = 'My Yellow Wallet ' + (w.length + 1) + suffix;
@@ -447,14 +449,15 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 
  let data = 'you can put data here';
 
- const request = {
+ const request: PreparedTransactionRequest = {
   to: address,
   from: selectedAddressValue.address,
   value: etherValue,
-  data: new Uint8Array(data.split('').map(c => c.charCodeAt(0))),
+  //new Uint8Array(data.split('').map(c => c.charCodeAt(0))),
+  data: data,
+ };
   //maxFeePerGas: etherValueFee,
   //nonce: await provider.getTransactionCount(selectedAddressValue.address),
- };
  console.log('selectedAddressValue.address:', selectedAddressValue);
  console.log('provider:', provider);
  console.log('mn:', mn);
