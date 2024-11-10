@@ -41,10 +41,10 @@ function sendData(acc, command, params = {}, sendSessionID = true, callback = nu
 }
 
 export function selectConversation(conversation) {
+ console.log('selectConversation', conversation);
  selectedConversation.update(() => conversation);
  hideSidebarMobile.update(() => true);
  messagesArray.set([]);
- //console.log('selectConversation', conversation);
  listMessages(conversation.acc, conversation.address);
 }
 
@@ -145,13 +145,15 @@ function addLoadedMessagesToMessagesArray(acc, items) {
 function addMessagesToMessagesArray(items) {
  let arr = get(messagesArray);
  arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
+ let result = [];
  for (let m of items) {
-  addMessage(arr, m);
+  result.push(addMessage(arr, m));
  }
  sortMessages(arr);
  addMissingPrevNext(arr);
  console.log('messagesArray.set:', arr);
  messagesArray.set(arr);
+ return result;
 }
 
 function addMessage(arr, msg) {
@@ -159,8 +161,10 @@ function addMessage(arr, msg) {
  let m = arr.find(m => m.uid === msg.uid);
  if (m) {
   for (let key in msg) m[key] = msg[key];
+  return m;
  } else {
   arr.unshift(msg);
+  return msg;
  }
 }
 
@@ -168,6 +172,7 @@ function constructLoadedMessages(acc, data) {
  let items = data.map(msg => {
   let message = new Message(acc, msg);
   message.received_by_my_homeserver = true;
+  message.is_lazyloaded = true;
   return message;
  });
  return items;
@@ -222,6 +227,7 @@ function addMissingPrevNext(messages) {
  export function setMessageSeen(message, cb) {
   let acc = get(active_account);
   console.log('setMessageSeen', message);
+  message.just_marked_as_seen = true;
   sendData(acc, 'message_seen', { uid: message.uid }, true, (req, res) => {
    if (res.error !== 0) {
     console.error('this is bad.');
@@ -273,7 +279,7 @@ function addMissingPrevNext(messages) {
   let acc_ca = acc.module_data[module.identifier].conversationsArray;
   let ca = get(acc_ca);
   const conversation = ca.find(c => c.address === msg.remote_address);
-  console.log('updateConversationsArray', conversation, msg_created);
+  console.log('updateConversationsArray', conversation, msg);
 
   if (conversation) {
    conversation.last_message_date = msg_created;
@@ -307,21 +313,23 @@ function addMissingPrevNext(messages) {
   const res = event.detail;
   if (!res.data) return;
   console.log('eventNewMessage', acc, res);
-  const msg = new Message(acc, res.data);
+  let msg = new Message(acc, res.data);
   msg.received_by_my_homeserver = true;
   let sc = get(selectedConversation);
   if (msg.address_from !== acc.credentials.address) {
    console.log('showNotification?');
    if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) showNotification(acc, msg);
   }
+  if (acc !== get(active_account)) return;
   console.log('eventNewMessage updateConversationsArray with msg:', msg);
-  updateConversationsArray(acc, msg);
-  if (acc === get(active_account) && ((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
-   addMessagesToMessagesArray([msg]);
+  if (((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
+   msg = addMessagesToMessagesArray([msg])[0];
   }
+  updateConversationsArray(acc, msg);
  }
 
  function eventSeenMessage(acc, event) {
+  if (acc !== get(active_account)) return;
   console.log(event);
   const res = event.detail;
   console.log('eventSeenMessage', res);
@@ -338,6 +346,7 @@ function addMissingPrevNext(messages) {
   /*
  mark, as seen, a message sent to us. This can be triggered by another client.
  */
+  if (acc !== get(active_account)) return;
   console.log(event);
   const res = event.detail;
   console.log('eventSeenInboxMessage', res);

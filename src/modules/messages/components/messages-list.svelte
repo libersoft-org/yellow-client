@@ -11,13 +11,20 @@
 
  let messages_elem;
  let wasScrolledToBottom = true;
+ let oldLastID = null;
+ let scroll = false;
 
  $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
 
  function updateWasScrolledToBottom() {
   if (messages_elem) {
-   wasScrolledToBottom = messages_elem.scrollTop > -1;
+   wasScrolledToBottom = isScrolledToBottom();
   }
+ }
+
+ function isScrolledToBottom() {
+  if (messages_elem)
+   return messages_elem.scrollTop > -1;
  }
 
  beforeUpdate(() => {
@@ -26,7 +33,7 @@
 
  afterUpdate(() => {
   console.log('afterUpdate: wasScrolledToBottom:', wasScrolledToBottom);
-  if (wasScrolledToBottom) scrollToBottom();
+  if (scroll) scrollToBottom();
  });
 
  onMount(() => {
@@ -102,12 +109,29 @@
    items.unshift(getLoader({prev: 10, base: messagesArray[0].id}));
   }
 
+  let unseen_marker_put = false;
+  scroll = isScrolledToBottom();
+
   // walk all messages, add loaders where there are discontinuities
   for (let i = 0; i < messagesArray.length; i++) {
    let m = messagesArray[i];
+
+   if (!unseen_marker_put && !m.is_outgoing && (m.seen === false || m.just_marked_as_seen)) {
+    unseen_marker_put = true;
+    items.push({type: 'unseen_marker'});
+   }
+
    items.push(m);
+
+   if (m.id !== undefined && m.id > oldLastID) {
+    oldLastID = m.id;
+    if (m.is_lazyloaded)
+     scroll = false;
+   }
+
+
    let next = messagesArray[i + 1];
-   if (next && ((m.next !== next.id) && (next.id !== undefined))) {
+   if (next && next.id !== undefined && m.next != undefined && m.next !== next.id) {
     items.push(getHole(
      getLoader({next: 5, base: m.id}),
      getLoader({prev: 5, base: next.id})
@@ -182,7 +206,7 @@
 
   {:else if m.type === 'hole'}
    <Loader loader={m.bottom} />
-   <div style="height: 300px; background-color: #f0f0f0; margin: 10px 0;"></div>
+   <div style="height: 300px; background-color: #f0f0f0; margin: 10px 0;">   --HOLE--</div>
    <Loader loader={m.top} />
 
   {:else if m.type === 'loader'}
