@@ -9,18 +9,19 @@
  let observer;
  let timer;
  let observing = false;
- const threshold = 0.1;
+ const threshold = 0.9;
 
 
- onMount(() => {
-  //console.log('contentElement is ' + contentElement);
-  //console.log('loaderElement is ' + loaderElement);
-  observer = new IntersectionObserver(handleIntersect, { threshold, root: contentElement });
-  if (loaderElement) {
+ $: setup(loaderElement);
+
+
+ function setup(loaderElement) {
+  if (loaderElement && !observing) {
+   observer = new IntersectionObserver(handleIntersect, { threshold, root: contentElement });
    observer.observe(loaderElement);
    observing = true;
   }
- });
+ }
 
 
  onDestroy(() => {
@@ -29,30 +30,18 @@
  });
 
 
- $: if (observer && loaderElement) {
-  if (!observing) {
-   observer.observe(loaderElement);
-  }
-  handleIntersect([{ isIntersecting: true }]);
- }
-
-
  function handleIntersect(entries) {
-  //console.log('handleIntersect:')
-  //console.log(entries);
   let _loaderIsVisible = entries[0].isIntersecting;
-  //if (_loaderIsVisible && !loader.loading) loadMore();
- }
-
- function mouseDown() {
-  loadMore();
+  if (_loaderIsVisible && !loader.loading) loadMore();
  }
 
  function loadMore() {
   loader.loading = true;
-  loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, (_res) => {
-   loader.loading = false
-  });
+  timer = setTimeout(() => {
+   loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, (_res) => {
+    loader.loading = false
+   });
+  }, 0);
  }
 
 
@@ -80,36 +69,11 @@
 
 </style>
 
-<div>
- v
- <hr>
- v
- <hr>
- v
- <hr>
- v
- <hr>
- v
- <hr>
 
+ <div bind:this={loaderElement}>
+  Load more messages...
+ {JSON.stringify({ ...loader, conversation: undefined }, null, 2)}
  {#if loader.loading}
   <div class="loader"></div>
  {/if}
-
- <div bind:this={loaderElement}>
- {JSON.stringify({ ...loader, conversation: undefined }, null, 2)}
  </div>
-
- <button on:click={mouseDown}>Click me</button>
-
- <hr>
- ^
- <hr>
- ^
- <hr>
- ^
- <hr>
- ^
- <hr>
- ^
-</div>

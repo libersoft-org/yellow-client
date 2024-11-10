@@ -120,8 +120,8 @@ export function deinitData(acc) {
 }
 
 export function listMessages(acc, address) {
- messagesArray.set([{ type: 'initial_loading_placeholder' }]);
  console.log('listMessages', acc, address);
+ messagesArray.set([{ type: 'initial_loading_placeholder' }]);
  loadMessages(acc, address);
 }
 
@@ -150,6 +150,7 @@ function addMessagesToMessagesArray(items) {
  }
  sortMessages(arr);
  addMissingPrevNext(arr);
+ console.log('messagesArray.set:', arr);
  messagesArray.set(arr);
 }
 
