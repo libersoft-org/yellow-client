@@ -8,7 +8,7 @@ class Message {
   Object.assign(this, data);
   this.acc = new WeakRef(acc);
   this.stripped_text = stripHtml(this.message);
-  console.log('Message address_from: ' + this.address_from + ' acc:' + acc.credentials.address);
+  //console.log('Message address_from: ' + this.address_from + ' acc:' + acc.credentials.address);
   this.is_outgoing = this.address_from === acc.credentials.address;
   if (this.address_to === acc.credentials.address) this.remote_address = this.address_from;
   else this.remote_address = this.address_to;
@@ -27,7 +27,7 @@ export function initData(acc) {
   messagesArray: writable([]),
  };
  result.conversationsArray.subscribe(v => {
-  console.log('acc conversationsArray:', acc, v);
+  //console.log('acc conversationsArray:', acc, v);
  });
  return result;
 }
@@ -44,7 +44,7 @@ export function selectConversation(conversation) {
  selectedConversation.update(() => conversation);
  hideSidebarMobile.update(() => true);
  messagesArray.set([]);
- console.log('selectConversation', conversation);
+ //console.log('selectConversation', conversation);
  listMessages(conversation.acc, conversation.address);
 }
 
@@ -56,7 +56,7 @@ export function listConversations(acc) {
   }
   if (res.data?.conversations) {
    let conversationsArray = acc.module_data[module.identifier].conversationsArray;
-   console.log('listConversations into:', conversationsArray);
+   //console.log('listConversations into:', conversationsArray);
    conversationsArray.set(res.data.conversations.map(c => sanitizeConversation(acc, c)));
   }
  });
@@ -248,6 +248,7 @@ function addMissingPrevNext(messages) {
    address_to: get(selectedConversation).address,
    message: text,
    created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
+   just_sent: true,
   });
 
   let params = { address: message.address_to, message: message.message, uid: message.uid };
@@ -277,9 +278,8 @@ function addMissingPrevNext(messages) {
   if (conversation) {
    conversation.last_message_date = msg_created;
    conversation.last_message_text = msg.stripped_text;
-   if (!msg.seen && msg.from_address != msg.acc.deref()?.credentials.address) {
-    const new_unread_count = msg.is_outgoing ? 0 : 1;
-    conversation.unread_count = conversation.unread_count ? conversation.unread_count + new_unread_count : new_unread_count;
+   if (!msg.seen && !msg.just_sent) {
+    conversation.unread_count = (conversation.unread_count || 0) + 1;
    }
    const index = ca.indexOf(conversation);
    // shift the affected conversation to the top:
@@ -291,7 +291,7 @@ function addMissingPrevNext(messages) {
     last_message_date: msg_created,
     last_message_text: msg.stripped_text,
     visible_name: null,
-    unread_count: msg.is_outgoing ? 0 : 1,
+    unread_count: msg.just_sent ? 0 : 1,
    };
    ca.unshift(conversation);
   }

@@ -15,19 +15,22 @@
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
  $: checkmarks_img = 'img/seen' + checkmarks + '.svg';
 
- $: console.log('Core.isClientFocused:', $isClientFocused);
+ //$: console.log('Core.isClientFocused:', $isClientFocused);
 
  $: if (is_visible && $isClientFocused) {
+  //console.log('is_visible:', is_visible, 'isClientFocused:', $isClientFocused);
   if (message.seen) {
    console.log('not setting seen because already set');
    observer.disconnect();
    is_visible = false;
-  } else
+  } else {
+   //console.log('setMessageSeen..');
    setMessageSeen(message, () => {
     console.log('seen set succesfully, disconnecting observer.');
     observer.disconnect();
     is_visible = false;
    });
+  }
  }
 
  function processMessage(content) {
@@ -46,8 +49,8 @@
 
  onMount(() => {
   //console.log('onMount message:', message);
-  if (!message.seen && !message.is_outgoing) {
-   //console.log('create observer');
+  if (!message.seen && !message.just_sent) {
+   console.log('create observer');
    observer = new IntersectionObserver(
     entries => {
      console.log(entries);
