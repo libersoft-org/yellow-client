@@ -42,7 +42,7 @@
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
+  //if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
  let items = [];
