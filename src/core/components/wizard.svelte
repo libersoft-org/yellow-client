@@ -5,7 +5,7 @@
  let currentStep = 0;
 
  function clickClose() {
-  close();
+  show = false;
  }
 
  function keyClose() {
