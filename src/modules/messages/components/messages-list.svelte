@@ -131,7 +131,10 @@
 
 
    let next = messagesArray[i + 1];
-   if (next && next.id !== undefined && m.next != undefined && m.next !== next.id) {
+   if (next && next.id !== undefined && m.next != "none" && m.next != undefined && m.next !== next.id) {
+    console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
+    console.log(JSON.stringify(m), JSON.stringify(next));
+    console.log('m.next:', m.next, 'next.id:', next.id);
     items.push(getHole(
      getLoader({next: 5, base: m.id}),
      getLoader({prev: 5, base: next.id})
@@ -140,7 +143,9 @@
   }
 
   let last = messagesArray[messagesArray.length - 1];
-  if (last.next !== 'none' && last.id !== undefined) {
+  if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
+   console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
+   console.log(last.next);
    items.push(getLoader({next: 10, base: last.id}));
   }
 
@@ -180,7 +185,8 @@
   display: flex;
   flex-direction: column-reverse;
   flex-grow: 1;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
+  overflow-y: scroll; /* Force show scrollbar, avoid re-layout */
  }
 
  .unread {

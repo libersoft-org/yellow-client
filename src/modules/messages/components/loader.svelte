@@ -1,9 +1,8 @@
 <script>
  import { loadMessages } from '../messages.js';
- import { onDestroy, onMount } from "svelte";
+ import { getContext, onDestroy, onMount } from "svelte";
 
  export let loader;
- export let contentElement;
 
  let loaderElement;
  let observer;
@@ -11,6 +10,7 @@
  let observing = false;
  const threshold = 0.9;
 
+ let contentElement = getContext('contentElement');
 
  $: setup(loaderElement);
 
@@ -41,7 +41,7 @@
    loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, (_res) => {
     loader.loading = false
    });
-  }, 0);
+  }, 500);
  }
 
 
@@ -51,6 +51,7 @@
 
  .loader {
 
+  padding: 10px;
   margin: 0 auto;
   width: 40px;
   height: 40px;
