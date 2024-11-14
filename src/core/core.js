@@ -1,6 +1,32 @@
+
 import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
+
+
+
+
+import { getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
+import { TracingInstrumentation } from '@grafana/faro-web-tracing';
+
+initializeFaro({
+  url: 'https://faro-collector-prod-eu-west-2.grafana.net/collect/2d78672765ea4b49bdab02a042737181',
+  app: {
+    name: 'yw',
+    version: '1.0.0',
+    environment: 'production'
+  },
+
+  instrumentations: [
+    // Mandatory, omits default instrumentations otherwise.
+    ...getWebInstrumentations(),
+
+    // Tracing package to get end-to-end visibility for HTTP requests.
+    new TracingInstrumentation(),
+  ],
+});
+
+
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);

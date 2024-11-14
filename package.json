@@ -17,12 +17,13 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@grafana/faro-web-sdk": "^1.11.0",
+		"@grafana/faro-web-tracing": "^1.11.0",
 		"@sveltejs/adapter-static": "^3.0.5",
 		"dompurify": "^3.1.6",
 		"ethers": "^6.13.2",
 		"qrcode": "^1.5.4",
-		"vite-plugin-checker": "^0.8.0",
-		"typescript": "^5.6.3"
-		
+		"typescript": "^5.6.3",
+		"vite-plugin-checker": "^0.8.0"
 	}
 }
