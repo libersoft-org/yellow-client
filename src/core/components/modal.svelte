@@ -133,7 +133,7 @@
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
    <div class="close" role="button" tabindex="0" on:click={clickCloseModal} on:keydown={keyCloseModal}>
-    <img src="img/close.svg" alt="X" />
+    <img src="img/close-black.svg" alt="X" />
    </div>
   </div>
   <div class="body">
