@@ -2,8 +2,9 @@
 import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import { initDebug } from 'yellow_client_debug';
-await initDebug();
+
+import * as dbg_DEBUG from './client_debug.DEBUG';
+import * as dbg_NODEBUG from './client_debug.NODEBUG';
 
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);

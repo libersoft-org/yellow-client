@@ -1,25 +1,21 @@
 import pluginChecker from 'vite-plugin-checker';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import conditionalImportPlugin from "vite-plugin-conditional-import";
 import fs from 'fs';
 import path from 'path';
 
+const IS_DEBUG = false;
+
 export default defineConfig(({mode}) => {
   return {
-   resolve: {
-    alias: {
-     './yellow_client_debug': mode === 'development' ? 'src/core/client_debug.js' : 'src/core/client_nodebug.js'
-    }
-   },
    plugins: [
     sveltekit(),
     pluginChecker({typescript: true}),
-    {
-     name: 'log-alias',
-     configResolved(config) {
-      console.log('Resolved aliases:', config.resolve.alias);
-     }
-    }
+    conditionalImportPlugin({
+     currentEnv: IS_DEBUG ? "DEBUG" : "NODEBUG",
+     envs: ["DEBUG", "NODEBUG"],
+    }),
    ],
    server: {
     https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?
