@@ -1,10 +1,9 @@
 <script>
- import { tick } from "svelte";
-
+ import { tick } from 'svelte';
  export let show = false;
- export let params = undefined;
- export let title;
- export let body;
+ export let params = null;
+ export let title = null;
+ export let body = '';
 
  let modalEl;
  let posX = 0;
@@ -12,21 +11,6 @@
  let isDragging = false;
  let left;
  let top;
-
- function close() {
-  show = false;
- }
-
- function clickCloseModal() {
-  close();
- }
-
- function keyCloseModal(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickCloseModal();
-  }
- }
 
  $: update(show);
 
@@ -46,6 +30,21 @@
    const windowHeight = window.innerHeight;
    top = (windowHeight - modalHeight) / 2;
    left = (windowWidth - modalWidth) / 2;
+  }
+ }
+
+ function close() {
+  show = false;
+ }
+
+ function clickCloseModal() {
+  show = false;
+ }
+
+ function keyCloseModal(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickCloseModal();
   }
  }
 
@@ -77,7 +76,6 @@
   window.removeEventListener('mousemove', drag);
   window.removeEventListener('mouseup', dragEnd);
  }
-
 </script>
 
 <style>
@@ -85,15 +83,15 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
   max-width: calc(100% - 20px);
   max-height: calc(100% - 20px);
-  transform: translate(-50%, -50%);
+  overflow: auto;
   border: 1px solid #000;
   border-radius: 10px;
-  overflow: hidden;
+  /*box-sizing: border-box;*/
   box-shadow: var(--shadow);
  }
 
@@ -135,11 +133,15 @@
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
    <div class="close" role="button" tabindex="0" on:click={clickCloseModal} on:keydown={keyCloseModal}>
-    <img src="img/close-black.svg" alt="X" />
+    <img src="img/close.svg" alt="X" />
    </div>
   </div>
   <div class="body">
-   <svelte:component this={body} {params} {close} />
+   {#if params}
+    <svelte:component this={body} {close} {params} />
+   {:else}
+    <svelte:component this={body} {close} />
+   {/if}
   </div>
  </div>
 {/if}

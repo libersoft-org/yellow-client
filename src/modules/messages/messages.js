@@ -306,7 +306,7 @@ function addMissingPrevNext(messages) {
 
  export function openNewConversation(address) {
   console.log('openNewConversation', address);
-  selectConversation({ acc: get(get(active_account)), address });
+  selectConversation({ acc: get(active_account), address });
  }
 
  function eventNewMessage(acc, event) {
