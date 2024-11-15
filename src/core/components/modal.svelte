@@ -6,8 +6,6 @@
  export let title;
  export let body;
 
- let props = { params, close };
-
  let modalEl;
  let posX = 0;
  let posY = 0;
