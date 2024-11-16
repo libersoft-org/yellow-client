@@ -128,6 +128,7 @@ export function listMessages(acc, address) {
 export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 3, cb) {
  sendData(acc, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (cb) cb(res);
+
   if (res.error !== 0 || !res.data?.messages) {
    console.error(res);
    window.alert('Error while listing messages: ' + (res.message || JSON.stringify(res)));

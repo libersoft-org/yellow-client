@@ -1,6 +1,7 @@
 <script>
  import { afterUpdate, beforeUpdate, onMount } from 'svelte';
  import { getGuid } from '../../../core/core.js';
+ import Spinner from '../../../core/components/spinner.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import { messagesArray } from '../messages.js';
@@ -193,16 +194,22 @@
    }
   }*/
  }
+
 </script>
 
 <style>
+ .spacer {
+  flex-grow: 1;
+ }
+
  .messages {
   display: flex;
-  flex-direction: column;/*-reverse;*/
-  justify-content: flex-end;
+  margin-top: auto;
+  flex-direction: column;
+  /*justify-content: flex-end;*/
   flex-grow: 1;
-  /*overflow-y: auto;*/
-  overflow-y: scroll; /* Force show scrollbar, avoid re-layout */
+  overflow-y: auto;
+  /*overflow-y: scroll; Force show scrollbar, avoid re-layout */
  }
 
  .unread {
@@ -216,15 +223,16 @@
 </style>
 
 <div class="messages" role="none" bind:this={messages_elem} on:mousedown={mouseDown}>
+
+ <div class="spacer"></div>
+
  {#each items as m (m.uid)}
 
   {#if m.type === 'no_messages'}
    <div>No messages</div>
 
   {:else if m.type === 'initial_loading_placeholder'}
-   <div class="initial_loading_placeholder" style="height: 300px; background-color: #f0f0f0; margin: 10px 0;">
-    Loading..
-   </div>
+   <Spinner />
 
   {:else if m.type === 'hole'}
    <Loader loader={m.bottom} />
@@ -241,7 +249,8 @@
    <Message message={m} container_element={messages_elem} />
   {/if}
  {/each}
- {#if fillerHeight > -1}
+
+<!-- {#if fillerHeight > -1}
   <div style="background-color:red; margin: 10px 0;">
    --FILLER--<br>
    --FILLER--<br>
@@ -253,5 +262,6 @@
 
   </div>
  {/if}
+-->
 
 </div>
