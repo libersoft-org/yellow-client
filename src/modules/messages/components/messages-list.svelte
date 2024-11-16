@@ -107,12 +107,12 @@
 
   console.log('getItems: messagesArray:', messagesArray);
 
-  if (messagesArray.length === 0) {
+  if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') {
+   console.log('getItems: reset loaders and holes');
    loaders = [];
    holes = [];
+   return messagesArray;
   }
-
-  if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') return messagesArray;
   if (messagesArray.length === 0) return [{type: 'no_messages'}];
 
 
