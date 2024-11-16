@@ -12,6 +12,7 @@
  let wasScrolledToBottom = true;
  let oldLastID = null;
  let scroll = false;
+ let fillerHeight = 21000;
 
  $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
 
@@ -31,12 +32,13 @@
  });
 
  afterUpdate(() => {
+  handleScroll();
   console.log('afterUpdate: scroll:', scroll);
   if (scroll) scrollToBottom();
  });
 
  onMount(() => {
-  //window.setInterval(() => updateWasScrolledToBottom(), 1000);
+  messages_elem.addEventListener('scroll', handleScroll);
  });
 
  function scrollToBottom() {
@@ -177,12 +179,27 @@
   console.log('1message_bar:', message_bar);
  }
 
+ function handleScroll() {
+  /*console.log('+++++++++++++++++++++++handleScroll++++++++++++++++++++++++++');
+  if (messages_elem.scrollTop === 0) {
+   console.log('----------------Scrolled to the top-----------------------');
+   messages_elem.scrollTop += 1;
+   if (messages_elem.scrollTop === 0) {
+    fillerHeight = 10000;
+   }
+   else
+   {
+    fillerHeight = 0;
+   }
+  }*/
+ }
 </script>
 
 <style>
  .messages {
   display: flex;
   flex-direction: column;/*-reverse;*/
+  justify-content: flex-end;
   flex-grow: 1;
   /*overflow-y: auto;*/
   overflow-y: scroll; /* Force show scrollbar, avoid re-layout */
@@ -224,4 +241,17 @@
    <Message message={m} container_element={messages_elem} />
   {/if}
  {/each}
+ {#if fillerHeight > -1}
+  <div style="background-color:red; margin: 10px 0;">
+   --FILLER--<br>
+   --FILLER--<br>
+   --FILLER--<br>
+   --FILLER--<br>
+   --FILLER--<br>
+   --FILLER--<br>
+   --FILLER--<br>
+
+  </div>
+ {/if}
+
 </div>
