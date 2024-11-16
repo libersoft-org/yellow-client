@@ -28,7 +28,9 @@
   if (messages_elem && targetElement) {
    const newElementTop = targetElement.getBoundingClientRect().top;
    const scrollDiff = newElementTop - savedElementTop;
-   messages_elem.scrollTop = savedScrollTop + scrollDiff;
+   const newScrollTop = savedScrollTop + scrollDiff;
+   console.log('restoreScrollPosition: newElementTop:', newElementTop, 'savedElementTop:', savedElementTop, 'scrollDiff:', scrollDiff, 'newScrollTop:', newScrollTop);
+   messages_elem.scrollTop = newScrollTop;
   }
  }
 
@@ -47,14 +49,15 @@
  }
 
  beforeUpdate(() => {
-  updateWasScrolledToBottom();
-  saveScrollPosition();
+  //updateWasScrolledToBottom();
+  //saveScrollPosition();
  });
 
  afterUpdate(() => {
   handleScroll();
   console.log('afterUpdate: scroll:', scroll);
-  if (scroll) scrollToBottom();
+  //if (scroll) scrollToBottom();
+  restoreScrollPosition();
  });
 
  onMount(() => {
@@ -122,14 +125,22 @@
   return hole;
  }
 
+ let scrollTimeout;
+
  function getItems(messagesArray) {
 
   console.log('getItems: messagesArray:', messagesArray);
+  saveScrollPosition();
+  setTimeout(() => {
+   restoreScrollPosition();
+  }, 1500);
 
   if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') {
    console.log('getItems: reset loaders and holes');
    loaders = [];
    holes = [];
+   savedScrollTop = 0;
+   savedElementTop = 0;
    return messagesArray;
   }
   if (messagesArray.length === 0) return [{type: 'no_messages'}];
@@ -276,9 +287,9 @@
    <Message message={m} container_element={messages_elem} />
   {/if}
 
-  <div bind:this={targetElement}></div>
  {/each}
 
+ <div bind:this={targetElement}></div>
 <!-- {#if fillerHeight > -1}
   <div style="background-color:red; margin: 10px 0;">
    --FILLER--<br>
