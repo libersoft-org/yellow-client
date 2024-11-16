@@ -30,6 +30,7 @@
  });
 
 
+ /* todo: sometimes, intersection observer does not work properly. add timer? */
  function handleIntersect(entries) {
   let _loaderIsVisible = entries[0].isIntersecting;
   if (_loaderIsVisible && !loader.loading) loadMore();
@@ -37,8 +38,11 @@
 
  function loadMore() {
   loader.loading = true;
+  console.log('loadMore: loader:', loader);
   timer = setTimeout(() => {
+   console.log('loadMore: loadMessages...');
    loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, (_res) => {
+    console.log('loadMessages: _res:', _res);
     loader.loading = false
    });
   }, 500);

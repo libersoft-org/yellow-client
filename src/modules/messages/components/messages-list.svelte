@@ -47,6 +47,24 @@
   //if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
+
+ function handleScroll() {
+  console.log('+++++++++++++++++++++++handleScroll++++++++++++++++++++++++++');
+  if (messages_elem.scrollTop === 0) {
+   console.log('----------------Scrolled to the top-----------------------');
+   messages_elem.scrollTop = 1;
+   if (messages_elem.scrollTop === 0)
+   {
+    console.log('could not scroll away from the top');
+   }
+   else
+   {
+    console.log('scrolled away from the top');
+   }
+  }
+ }
+
+
  let items = [];
  $: items = getItems($messagesArray);
  $: console.log('messages-list.svelte: items:', items);
@@ -178,21 +196,6 @@
   console.log('mouseDown');
   if (message_bar) await message_bar.setBarFocus();
   console.log('1message_bar:', message_bar);
- }
-
- function handleScroll() {
-  /*console.log('+++++++++++++++++++++++handleScroll++++++++++++++++++++++++++');
-  if (messages_elem.scrollTop === 0) {
-   console.log('----------------Scrolled to the top-----------------------');
-   messages_elem.scrollTop += 1;
-   if (messages_elem.scrollTop === 0) {
-    fillerHeight = 10000;
-   }
-   else
-   {
-    fillerHeight = 0;
-   }
-  }*/
  }
 
 </script>
