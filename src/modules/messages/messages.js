@@ -41,7 +41,7 @@ function sendData(acc, command, params = {}, sendSessionID = true, callback = nu
 }
 
 export function selectConversation(conversation) {
- console.log('selectConversation', conversation);
+ console.log('SELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATION', conversation);
  selectedConversation.update(() => conversation);
  hideSidebarMobile.update(() => true);
  messagesArray.set([]);
