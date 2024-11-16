@@ -13,7 +13,25 @@
  let wasScrolledToBottom = true;
  let oldLastID = null;
  let scroll = false;
- let fillerHeight = 21000;
+ let savedScrollTop = 0;
+ let savedElementTop = 0;
+ let targetElement;
+
+ function saveScrollPosition() {
+  if (messages_elem && targetElement) {
+   savedScrollTop = messages_elem.scrollTop;
+   savedElementTop = targetElement.getBoundingClientRect().top;
+  }
+ }
+
+ function restoreScrollPosition() {
+  if (messages_elem && targetElement) {
+   const newElementTop = targetElement.getBoundingClientRect().top;
+   const scrollDiff = newElementTop - savedElementTop;
+   messages_elem.scrollTop = savedScrollTop + scrollDiff;
+  }
+ }
+
 
  $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
 
@@ -30,6 +48,7 @@
 
  beforeUpdate(() => {
   updateWasScrolledToBottom();
+  saveScrollPosition();
  });
 
  afterUpdate(() => {
@@ -256,6 +275,8 @@
   {:else}
    <Message message={m} container_element={messages_elem} />
   {/if}
+
+  <div bind:this={targetElement}></div>
  {/each}
 
 <!-- {#if fillerHeight > -1}
