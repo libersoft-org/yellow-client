@@ -132,17 +132,4 @@
  </div>
 </Accordion>
 
-<!-- // TODO - onClose success is different from onClose by close (X) button -->
-
-<!--{#if showModalPhrase}
- <Modal title="New wallet" on:close={() => (showModalPhrase = false)}>
-  <ModalNewWallet
-   onClose={() => {
-    showModalPhrase = false;
-    afterAddWallet();
-   }}
-  />
- </Modal>
-{/if}-->
-
 <Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />

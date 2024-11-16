@@ -8,7 +8,7 @@
  let observer;
  let timer;
  let observing = false;
- const threshold = 0.9;
+ const threshold = 0.6;
 
  let contentElement = getContext('contentElement');
 
@@ -72,9 +72,13 @@
 
 
  <div bind:this={loaderElement}>
+  <hr><hr><hr><hr><hr>
+  <hr><hr><hr><hr><hr>
+  <hr><hr><hr><hr><hr>
+  <hr><hr><hr><hr><hr>
   Load more messages...
  {JSON.stringify({ ...loader, conversation: undefined }, null, 2)}
- {#if loader.loading}
+<!-- {#if loader.loading}
   <div class="loader"></div>
- {/if}
+ {/if}-->
  </div>

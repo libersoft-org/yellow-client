@@ -5,7 +5,6 @@
  import Loader from './loader.svelte';
  import { messagesArray } from '../messages.js';
 
-
  export let message_bar;
  export let conversation;
 
@@ -32,7 +31,7 @@
  });
 
  afterUpdate(() => {
-  console.log('afterUpdate: wasScrolledToBottom:', wasScrolledToBottom);
+  console.log('afterUpdate: scroll:', scroll);
   if (scroll) scrollToBottom();
  });
 
@@ -149,7 +148,7 @@
    items.push(getLoader({next: 10, base: last.id}));
   }
 
-  items.reverse();
+  //items.reverse();
   return items;
  }
 
@@ -183,7 +182,7 @@
 <style>
  .messages {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;/*-reverse;*/
   flex-grow: 1;
   /*overflow-y: auto;*/
   overflow-y: scroll; /* Force show scrollbar, avoid re-layout */
