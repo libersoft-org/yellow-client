@@ -2,6 +2,7 @@
  import { afterUpdate, beforeUpdate, onMount } from 'svelte';
  import { getGuid } from '../../../core/core.js';
  import Spinner from '../../../core/components/spinner.svelte';
+ import Button from '../../../core/components/button.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import { messagesArray } from '../messages.js';
@@ -10,32 +11,48 @@
  export let conversation;
 
  let messages_elem;
- let wasScrolledToBottom = true;
+ let anchorElement;
+
+ //let wasScrolledToBottom = true;
  let oldLastID = null;
- let scroll = false;
+ //let scroll = false;
+
  let savedScrollTop = 0;
- let savedElementTop = 0;
- let targetElement;
+ let savedAnchorTop = 0;
+ let savedScrollHeight = 0;
 
  function saveScrollPosition() {
-  if (messages_elem && targetElement) {
-   savedScrollTop = messages_elem.scrollTop;
-   savedElementTop = targetElement.getBoundingClientRect().top;
+
+  if (!(messages_elem && anchorElement)) {
+   window.alert('saveScrollPosition: messages_elem or anchorElement is not defined');
+   return;
   }
+
+   savedScrollTop = messages_elem.scrollTop;
+   savedAnchorTop = anchorElement.getBoundingClientRect().top;
+   savedScrollHeight = messages_elem.scrollHeight;
+
+   console.log('saveScrollPosition: savedScrollTop:', savedScrollTop, 'savedAnchorTop:', savedAnchorTop, 'savedScrollHeight:', savedScrollHeight);
+
  }
 
  function restoreScrollPosition() {
-  if (messages_elem && targetElement) {
-   const newElementTop = targetElement.getBoundingClientRect().top;
-   const scrollDiff = newElementTop - savedElementTop;
-   const newScrollTop = savedScrollTop + scrollDiff;
-   console.log('restoreScrollPosition: newElementTop:', newElementTop, 'savedElementTop:', savedElementTop, 'scrollDiff:', scrollDiff, 'newScrollTop:', newScrollTop);
-   messages_elem.scrollTop = newScrollTop;
+  if (!(messages_elem && anchorElement)) {
+   window.alert('saveScrollPosition: messages_elem or anchorElement is not defined');
+   return;
   }
+
+  console.log('messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+
+  const scrollDifference = messages_elem.scrollHeight - savedScrollHeight;
+  messages_elem.scrollTop = savedScrollTop + scrollDifference;
+
+  console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
+
  }
 
-
  $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
+/*
 
  function updateWasScrolledToBottom() {
   if (messages_elem) {
@@ -47,30 +64,30 @@
   if (messages_elem)
    return messages_elem.scrollTop > -1;
  }
-
+*/
  beforeUpdate(() => {
   //updateWasScrolledToBottom();
   //saveScrollPosition();
  });
 
  afterUpdate(() => {
-  handleScroll();
-  console.log('afterUpdate: scroll:', scroll);
+  //handleScroll();
+  //console.log('afterUpdate: scroll:', scroll);
   //if (scroll) scrollToBottom();
-  restoreScrollPosition();
+  //restoreScrollPosition();
  });
 
  onMount(() => {
-  messages_elem.addEventListener('scroll', handleScroll);
+  //messages_elem.addEventListener('scroll', handleScroll);
  });
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  //if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
+  if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
 
- function handleScroll() {
+ /*function handleScroll() {
   console.log('+++++++++++++++++++++++handleScroll++++++++++++++++++++++++++');
   if (messages_elem.scrollTop === 0) {
    console.log('----------------Scrolled to the top-----------------------');
@@ -85,6 +102,8 @@
    }
   }
  }
+
+  */
 
 
  let items = [];
@@ -125,22 +144,22 @@
   return hole;
  }
 
- let scrollTimeout;
+ //let scrollTimeout;
 
  function getItems(messagesArray) {
 
   console.log('getItems: messagesArray:', messagesArray);
-  saveScrollPosition();
+  /*saveScrollPosition();
   setTimeout(() => {
    restoreScrollPosition();
-  }, 1500);
+  }, 1500);*/
 
   if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') {
    console.log('getItems: reset loaders and holes');
    loaders = [];
    holes = [];
-   savedScrollTop = 0;
-   savedElementTop = 0;
+   /*savedScrollTop = 0;
+   savedElementTop = 0;*/
    return messagesArray;
   }
   if (messagesArray.length === 0) return [{type: 'no_messages'}];
@@ -165,7 +184,7 @@
   }
 
   let unseen_marker_put = false;
-  scroll = isScrolledToBottom();
+  //scroll = isScrolledToBottom();
 
   // walk all messages, add loaders where there are discontinuities
   for (let i = 0; i < messagesArray.length; i++) {
@@ -260,6 +279,10 @@
  }
 </style>
 
+<button on:click={scrollToBottom}>Scroll to bottom</button>
+<button on:click={saveScrollPosition}>Save scroll position</button>
+<button on:click={restoreScrollPosition}>Restore scroll position</button>
+
 <div class="messages" role="none" bind:this={messages_elem} on:mousedown={mouseDown}>
 
  <div class="spacer"></div>
@@ -289,7 +312,7 @@
 
  {/each}
 
- <div bind:this={targetElement}></div>
+ <div bind:this={anchorElement}></div>
 <!-- {#if fillerHeight > -1}
   <div style="background-color:red; margin: 10px 0;">
    --FILLER--<br>

@@ -1,6 +1,7 @@
 <script>
  import { loadMessages } from '../messages.js';
  import { getContext, onDestroy, onMount } from "svelte";
+ import Button from '../../../core/components/button.svelte';
 
  export let loader;
 
@@ -23,6 +24,12 @@
    observer.observe(loaderElement);
    observing = true;
    console.log('setup: observer:', observer);
+   //setupInterval();
+  }
+ }
+
+ function setupInterval()
+ {
    interval = setInterval(() => {
     console.log('check loaderElement:', loaderElement, loader.loading, loaderElement?.getBoundingClientRect(), window.innerHeight);
     if (loader.loading) clearInterval(interval);
@@ -33,7 +40,6 @@
      }
     }
    }, 1000);
-  }
  }
 
 
@@ -47,7 +53,7 @@
  /* todo: sometimes, intersection observer does not work properly. add timer? */
  function handleIntersect(entries) {
   let _loaderIsVisible = entries[0].isIntersecting;
-  if (_loaderIsVisible && !loader.loading) loadMore();
+  //if (_loaderIsVisible && !loader.loading) loadMore();
  }
 
  function loadMore() {
@@ -72,7 +78,8 @@
   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   Load more messages...
- {JSON.stringify({ ...loader, conversation: undefined }, null, 2)}
+<!--   <br/><pre>{JSON.stringify({ ...loader, conversation: undefined }, null, 2)}</pre> -->
+  <Button on:click={loadMore}>Load more</Button>
 <!-- {#if loader.loading}
   <Spinner />
  {/if}-->
