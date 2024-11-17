@@ -17,6 +17,7 @@ class Message {
 
 export let md = active_account_module_data(module.identifier);
 export let conversationsArray = relay(md, 'conversationsArray');
+export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');
 export let selectedConversation = relay(md, 'selectedConversation');
 
@@ -24,6 +25,7 @@ export function initData(acc) {
  let result = {
   selectedConversation: writable(null),
   conversationsArray: writable([]),
+  events: writable([]),
   messagesArray: writable([]),
  };
  result.conversationsArray.subscribe(v => {
@@ -44,6 +46,7 @@ export function selectConversation(conversation) {
  console.log('SELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATION', conversation);
  selectedConversation.update(() => conversation);
  hideSidebarMobile.update(() => true);
+ events.set([]);
  messagesArray.set([]);
  listMessages(conversation.acc, conversation.address);
 }
@@ -112,6 +115,7 @@ export function deinitData(acc) {
  acc.events.removeEventListener('seen_message', data.seen_message_listener);
  acc.events.removeEventListener('seen_inbox_message', data.seen_message_listener);
 
+ data.events.set([]);
  data.messagesArray.set([]);
  data.conversationsArray.set([]);
  data.selectedConversation.set(null);
@@ -121,6 +125,7 @@ export function deinitData(acc) {
 
 export function listMessages(acc, address) {
  console.log('listMessages', acc, address);
+ events.set(['initial_loading']);
  messagesArray.set([{ type: 'initial_loading_placeholder' }]);
  loadMessages(acc, address);
 }

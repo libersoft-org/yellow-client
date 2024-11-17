@@ -1,5 +1,5 @@
 <script>
- import { loadMessages } from '../messages.js';
+ import { loadMessages, events } from '../messages.js';
  import { getContext, onDestroy, onMount } from "svelte";
  import Button from '../../../core/components/button.svelte';
 
@@ -24,18 +24,18 @@
    observer.observe(loaderElement);
    observing = true;
    console.log('setup: observer:', observer);
-   //setupInterval();
+   setupInterval();
   }
  }
 
  function setupInterval()
  {
    interval = setInterval(() => {
-    console.log('check loaderElement:', loaderElement, loader.loading, loaderElement?.getBoundingClientRect(), window.innerHeight);
+    //console.log('check loaderElement:', loaderElement, loader.loading, loaderElement?.getBoundingClientRect(), window.innerHeight);
     if (loader.loading) clearInterval(interval);
     if (!loader.loading && loaderElement) {
      if (loaderElement.getBoundingClientRect().top < window.innerHeight && loaderElement.getBoundingClientRect().bottom > 0) {
-      console.log('loaderElement is visible, load triggered by timer.');
+      //console.log('loaderElement is visible, load triggered by timer.');
       handleIntersect([{ isIntersecting: true }]);
      }
     }
@@ -53,8 +53,9 @@
  /* todo: sometimes, intersection observer does not work properly. add timer? */
  function handleIntersect(entries) {
   let _loaderIsVisible = entries[0].isIntersecting;
-  //if (_loaderIsVisible && !loader.loading) loadMore();
+  if (_loaderIsVisible && !loader.loading) loadMore();
  }
+
 
  function loadMore() {
   clearInterval(interval);
@@ -64,22 +65,23 @@
    console.log('loadMore: loadMessages...');
    loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, (_res) => {
     console.log('loadMessages: _res:', _res);
-    loader.loading = false
+    loader.loading = false;
+    events.update(x => x.concat('lazyload_prev'));
    });
-  }, 500);
+  }, 2500);
  }
 
 
 </script>
 
  <div bind:this={loaderElement}>
+<!--   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
-  <hr><hr><hr><hr><hr>
-  <hr><hr><hr><hr><hr>
-  Load more messages...
+  <hr><hr><hr><hr><hr> -->
+  Loading more messages...
 <!--   <br/><pre>{JSON.stringify({ ...loader, conversation: undefined }, null, 2)}</pre> -->
-  <Button on:click={loadMore}>Load more</Button>
+<!--  <Button on:click={loadMore}>Load more</Button> -->
 <!-- {#if loader.loading}
   <Spinner />
  {/if}-->

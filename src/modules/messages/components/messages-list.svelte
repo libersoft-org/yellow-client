@@ -5,7 +5,8 @@
  import Button from '../../../core/components/button.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
- import { messagesArray } from '../messages.js';
+ import { messagesArray, events } from '../messages.js';
+ import { get } from "svelte/store";
 
  export let message_bar;
  export let conversation;
@@ -15,7 +16,7 @@
 
  //let wasScrolledToBottom = true;
  let oldLastID = null;
- //let scroll = false;
+ let doScroll = false;
 
  let savedScrollTop = 0;
  let savedAnchorTop = 0;
@@ -28,11 +29,11 @@
    return;
   }
 
-   savedScrollTop = messages_elem.scrollTop;
-   savedAnchorTop = anchorElement.getBoundingClientRect().top;
-   savedScrollHeight = messages_elem.scrollHeight;
+  savedScrollTop = messages_elem.scrollTop;
+  savedAnchorTop = anchorElement.getBoundingClientRect().top;
+  savedScrollHeight = messages_elem.scrollHeight;
 
-   console.log('saveScrollPosition: savedScrollTop:', savedScrollTop, 'savedAnchorTop:', savedAnchorTop, 'savedScrollHeight:', savedScrollHeight);
+  console.log('saveScrollPosition: savedScrollTop:', savedScrollTop, 'savedAnchorTop:', savedAnchorTop, 'savedScrollHeight:', savedScrollHeight);
 
  }
 
@@ -41,6 +42,9 @@
    window.alert('saveScrollPosition: messages_elem or anchorElement is not defined');
    return;
   }
+
+  if (!doScroll) return;
+  doScroll = false;
 
   console.log('messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
 
@@ -74,7 +78,7 @@
   //handleScroll();
   //console.log('afterUpdate: scroll:', scroll);
   //if (scroll) scrollToBottom();
-  //restoreScrollPosition();
+  restoreScrollPosition();
  });
 
  onMount(() => {
@@ -144,18 +148,36 @@
   return hole;
  }
 
- //let scrollTimeout;
+ let itemsCount = 0;
+
+ function gc() {
+  // gc random slice of messagesArray
+  let x = get(messagesArray);
+  let i = Math.floor(Math.random() * x.length);
+  x.splice(i, Math.floor(Math.random() * 40));
+  messagesArray.set(x);
+ }
 
  function getItems(messagesArray) {
 
-  console.log('getItems: messagesArray:', messagesArray);
+  //console.log('getItems: messagesArray:', messagesArray);
   /*saveScrollPosition();
   setTimeout(() => {
    restoreScrollPosition();
   }, 1500);*/
 
+
+  doScroll = false;
+  let evts = get(events);
+  events.set([]);
+  if (evts.includes('lazyload_prev')) {
+   //console.log('evts: lazyload_prev');
+   doScroll = true;
+   saveScrollPosition();
+  }
+
   if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') {
-   console.log('getItems: reset loaders and holes');
+   //console.log('getItems: reset loaders and holes');
    loaders = [];
    holes = [];
    /*savedScrollTop = 0;
@@ -223,7 +245,7 @@
    items.push(getLoader({next: 10, base: last.id}));
   }
 
-  //items.reverse();
+  itemsCount = items.length;
   return items;
  }
 
@@ -279,9 +301,15 @@
  }
 </style>
 
+<!--
 <button on:click={scrollToBottom}>Scroll to bottom</button>
 <button on:click={saveScrollPosition}>Save scroll position</button>
 <button on:click={restoreScrollPosition}>Restore scroll position</button>
+-->
+<button on:click={gc}>GC</button>
+
+
+items count: {itemsCount}
 
 <div class="messages" role="none" bind:this={messages_elem} on:mousedown={mouseDown}>
 
@@ -297,7 +325,9 @@
 
   {:else if m.type === 'hole'}
    <Loader loader={m.bottom} />
-   <div style="height: 300px; background-color: #f0f0f0; margin: 10px 0;">   --HOLE--</div>
+   <div style="background-color: #f0f0f0; margin: 10px 0;">   --HOLE--
+   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+   </div>
    <Loader loader={m.top} />
 
   {:else if m.type === 'loader'}
