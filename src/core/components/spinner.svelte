@@ -13,7 +13,7 @@ export let show = true;
  }
 
  .container {
-  height: 40px;
+  min-height: 40px;
  }
 
  .spinner {

@@ -192,6 +192,15 @@ function addMessagesToMessagesArray(items, reason) {
 }
 
 
+export function snipeMessage(msg) {
+ messagesArray.update(v => {
+  return v.filter(m => m.uid !== msg.uid)
+ });
+ insertEvent({type: 'gc', array: get(messagesArray)});
+}
+
+
+
 function addMessage(arr, msg, state) {
  void "todo: this should only update the message if the data is actually more up-to-date";
  let m = arr.find(m => m.uid === msg.uid);

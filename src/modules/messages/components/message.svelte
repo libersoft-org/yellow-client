@@ -1,7 +1,9 @@
 <script>
- import { setMessageSeen, saneHtml } from '../messages.js';
+ import { setMessageSeen, saneHtml, snipeMessage } from '../messages.js';
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
+  import Button from '../../../core/components/button.svelte';
+
  export let message;
  export let container_element;
  let seen_txt;
@@ -125,7 +127,12 @@
   {#if message.is_outgoing}
    <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
   {/if}
-
+  <Button
+   text="Delete"
+   on:click={() => {
+    console.log('delete message:', message);
+    snipeMessage(message);
+   }}/>
  </div>
 
 id {message.id}

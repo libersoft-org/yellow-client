@@ -5,7 +5,7 @@
  import Button from '../../../core/components/button.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
- import { messagesArray, events } from '../messages.js';
+ import { messagesArray, events, insertEvent } from '../messages.js';
  import { get } from "svelte/store";
 
  export let message_bar;
@@ -109,10 +109,13 @@
     scrollToBottom();
    } else if (event.type === 'properties_update') {
     await console.log('properties_update');
+   } else if (event.type === 'gc') {
+    await console.log('gc');
    }
   }
   let events = [...uiEvents];
   uiEvents = [];
+  await tick();
   let activatedCount = 0;
   for (let event of events) {
    await console.log('event:', event);
@@ -123,8 +126,10 @@
    }
   }
   if (activatedCount > 0) {
-   await tick();//?
    itemsArray = itemsArray;
+   for (let i = 0; i < itemsArray.length; i++) {
+    itemsArray[i] = itemsArray[i];
+   }
   }
  });
 
@@ -167,11 +172,12 @@
 
 
  function gc() {
-  // gc random slice of messagesArray
+  console.log('gc random slice of messagesArray...')
   let x = get(messagesArray);
   let i = Math.floor(Math.random() * x.length);
   x.splice(i, Math.floor(Math.random() * 40));
   messagesArray.set(x);
+  insertEvent({type: 'gc', array: get(messagesArray)});
  }
 
 
@@ -330,6 +336,17 @@
   box-shadow: var(--shadow);
  }
 
+ .hole {
+  display: flex;
+  justify-content: center;
+  background-color: #f0f0f0;
+  border: 1px solid #999;
+  padding: 10px 0;
+  box-shadow: var(--shadow);
+  height: 30%;
+  min-height: 60%;
+ }
+
  .debug {
   z-index: 100;
   display: flex;
@@ -369,10 +386,8 @@
 
   {:else if m.type === 'hole'}
    <Loader loader={m.top} active={m.top.active} />
-   <div style="background-color: #f0f0f0; margin: 10px 0;"> --HOLE--
-    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+   <div class="hole">
     {m.uid}
-    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
    </div>
    <Loader loader={m.bottom} active={m.bottom.active} />
 

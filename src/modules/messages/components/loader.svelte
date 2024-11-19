@@ -72,7 +72,7 @@
     loader.loading = false;
     loader.delete_me = true;
    });
-  }, 0);
+  }, 10000);
  }
 
 
@@ -81,7 +81,8 @@
 <style>
 
  .container {
-  height: 340px;
+  min-height: 40px;
+  border: 1px solid #ccc;
  }
 
 </style>
