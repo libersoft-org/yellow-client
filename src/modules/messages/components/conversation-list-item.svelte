@@ -7,7 +7,7 @@
 
  $: ensureConversationDetails(c);
 
- function keyDown(conversation) {
+ function keyDown(event, conversation) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    clickItem(conversation);
@@ -82,7 +82,7 @@
  }
 </style>
 
-<div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={() => keyDown(c)}>
+<div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={(event) => keyDown(event, c)}>
  <div class="item-row">
   <Photo />
   <div class="description">

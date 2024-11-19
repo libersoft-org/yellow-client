@@ -1,5 +1,5 @@
 <script>
- import { afterUpdate, beforeUpdate, onMount } from 'svelte';
+ import { afterUpdate, beforeUpdate, onMount, tick } from 'svelte';
  import { getGuid } from '../../../core/core.js';
  import Spinner from '../../../core/components/spinner.svelte';
  import Button from '../../../core/components/button.svelte';
@@ -14,16 +14,29 @@
  let messages_elem;
  let anchorElement;
 
- //let wasScrolledToBottom = true;
- let oldLastID = null;
- let doScroll = false;
+ let doRestoreScroll = false;
+ let doScrollToBottom = false;
 
  let savedScrollTop = 0;
  let savedAnchorTop = 0;
  let savedScrollHeight = 0;
 
- function saveScrollPosition() {
+ let oldLastID = null;
+ let itemsCount = 0;
+ let items = [];
 
+ //$: console.log('messages-list.svelte: items:', items);
+ let loaders = [];
+ let holes = [];
+
+ messagesArray.subscribe(async (value) => {
+  items = await getItems(value);
+ });
+
+
+
+
+ function saveScrollPosition() {
   if (!(messages_elem && anchorElement)) {
    window.alert('saveScrollPosition: messages_elem or anchorElement is not defined');
    return;
@@ -32,92 +45,59 @@
   savedScrollTop = messages_elem.scrollTop;
   savedAnchorTop = anchorElement.getBoundingClientRect().top;
   savedScrollHeight = messages_elem.scrollHeight;
-
   console.log('saveScrollPosition: savedScrollTop:', savedScrollTop, 'savedAnchorTop:', savedAnchorTop, 'savedScrollHeight:', savedScrollHeight);
+ }
+
+
+ function restoreScrollPosition() {
+  console.log('restoreScrollPosition messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  const scrollDifference = messages_elem.scrollHeight - savedScrollHeight;
+  messages_elem.scrollTop = savedScrollTop + scrollDifference;
+  console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
 
  }
 
- function restoreScrollPosition() {
+
+ function scrollToBottom() {
+  // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
+  console.log('SCROLLTOBOTTOM');
+  messages_elem.scrollTop = messages_elem.scrollHeight;
+ }
+
+
+ function isScrolledToBottom() {
+  if (messages_elem)
+   return checkIfScrolledToBottom(messages_elem);
+ }
+
+
+ function checkIfScrolledToBottom(div) {
+  const result = div.scrollTop + div.clientHeight >= div.scrollHeight;
+  console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
+  return result;
+ }
+
+
+ beforeUpdate(() => {
+  if (!(messages_elem && anchorElement)) {return;}
+   console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+ });
+
+
+ afterUpdate(async () => {
   if (!(messages_elem && anchorElement)) {
    window.alert('saveScrollPosition: messages_elem or anchorElement is not defined');
    return;
   }
 
-  if (!doScroll) return;
-  doScroll = false;
+  if (doRestoreScroll) restoreScrollPosition();
+  if (doScrollToBottom) scrollToBottom();
 
-  console.log('messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
-
-  const scrollDifference = messages_elem.scrollHeight - savedScrollHeight;
-  messages_elem.scrollTop = savedScrollTop + scrollDifference;
-
-  console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
-
- }
-
- $: console.log('messages-list.svelte: messagesArray: ', $messagesArray);
-/*
-
- function updateWasScrolledToBottom() {
-  if (messages_elem) {
-   wasScrolledToBottom = isScrolledToBottom();
-  }
- }
-
- function isScrolledToBottom() {
-  if (messages_elem)
-   return messages_elem.scrollTop > -1;
- }
-*/
- beforeUpdate(() => {
-  //updateWasScrolledToBottom();
-  //saveScrollPosition();
  });
 
- afterUpdate(() => {
-  //handleScroll();
-  //console.log('afterUpdate: scroll:', scroll);
-  //if (scroll) scrollToBottom();
-  restoreScrollPosition();
- });
 
- onMount(() => {
-  //messages_elem.addEventListener('scroll', handleScroll);
- });
-
- function scrollToBottom() {
-  // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
- }
-
-
- /*function handleScroll() {
-  console.log('+++++++++++++++++++++++handleScroll++++++++++++++++++++++++++');
-  if (messages_elem.scrollTop === 0) {
-   console.log('----------------Scrolled to the top-----------------------');
-   messages_elem.scrollTop = 1;
-   if (messages_elem.scrollTop === 0)
-   {
-    console.log('could not scroll away from the top');
-   }
-   else
-   {
-    console.log('scrolled away from the top');
-   }
-  }
- }
-
-  */
-
-
- let items = [];
- $: items = getItems($messagesArray);
- $: console.log('messages-list.svelte: items:', items);
- let loaders = [];
- let holes = [];
 
  function getLoader(l) {
-
   loaders = loaders.filter(i => !i.delete_me);
 
   for (let i of loaders) {
@@ -132,6 +112,8 @@
   loaders.push(l);
   return l;
  }
+
+
 
  function getHole(top, bottom) {
   let uid = top.uid + '_' + bottom.uid;
@@ -152,7 +134,7 @@
   return hole;
  }
 
- let itemsCount = 0;
+
 
  function gc() {
   // gc random slice of messagesArray
@@ -162,22 +144,25 @@
   messagesArray.set(x);
  }
 
- function getItems(messagesArray) {
 
-  //console.log('getItems: messagesArray:', messagesArray);
-  /*saveScrollPosition();
-  setTimeout(() => {
-   restoreScrollPosition();
-  }, 1500);*/
+ async function getItems(messagesArray) {
 
+  doScrollToBottom = false;
+  doRestoreScroll = false;
 
-  doScroll = false;
   let evts = get(events);
   events.set([]);
+  console.log('evts:', evts);
+
   if (evts.includes('lazyload_prev')) {
-   //console.log('evts: lazyload_prev');
-   doScroll = true;
+   doRestoreScroll = true;
    saveScrollPosition();
+  }
+  if (evts.includes('new_message')) {
+   if (isScrolledToBottom()) {
+    doScrollToBottom = true;
+    console.log('doScrollToBottom:', doScrollToBottom);
+   }
   }
 
   if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') {
@@ -272,11 +257,17 @@
 
  async function mouseDown(event) {
   //console.log('event:', event);
-  event.preventDefault();
+  //event.preventDefault();
   //console.log('mouseDown');
-  if (message_bar) await message_bar.setBarFocus();
+  //if (message_bar) await message_bar.setBarFocus();
   //console.log('1message_bar:', message_bar);
  }
+
+ async function keyDown(event) {
+  console.log('MessagesList keyDown:', event.key);
+  if (message_bar) await message_bar.setBarFocus();
+ }
+
 
 </script>
 
@@ -329,7 +320,7 @@
 items count: {itemsCount}
 </div>
 
-<div class="messages" role="none" bind:this={messages_elem} on:mousedown={mouseDown}>
+<div class="messages" bind:this={messages_elem} on:mousedown={mouseDown} on:keypress={keyDown} >
 
  <div class="spacer"></div>
 

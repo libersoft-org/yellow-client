@@ -3,6 +3,7 @@ import { active_account, active_account_id, getGuid, hideSidebarMobile, isClient
 import DOMPurify from 'dompurify';
 import { module } from './module.js';
 
+
 class Message {
  constructor(acc, data) {
   Object.assign(this, data);
@@ -15,11 +16,13 @@ class Message {
  }
 }
 
+
 export let md = active_account_module_data(module.identifier);
 export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');
 export let selectedConversation = relay(md, 'selectedConversation');
+
 
 export function initData(acc) {
  let result = {
@@ -34,13 +37,16 @@ export function initData(acc) {
  return result;
 }
 
+
 active_account_id.subscribe(acc => {
  get(md)?.['selectedConversation']?.set(null);
 });
 
+
 function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  return send(acc, module.identifier, command, params, sendSessionID, callback, quiet);
 }
+
 
 export function selectConversation(conversation) {
  console.log('SELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATION', conversation);
@@ -50,6 +56,7 @@ export function selectConversation(conversation) {
  messagesArray.set([]);
  listMessages(conversation.acc, conversation.address);
 }
+
 
 export function listConversations(acc) {
  sendData(acc, 'conversations_list', null, true, (_req, res) => {
@@ -65,11 +72,13 @@ export function listConversations(acc) {
  });
 }
 
+
 function sanitizeConversation(acc, c) {
  c.acc = acc;
  c.last_message_text = stripHtml(c.last_message_text);
  return c;
 }
+
 
 function moduleEventSubscribe(acc, event_name) {
  sendData(acc, 'subscribe', { event: event_name }, true, (req, res) => {
@@ -79,6 +88,7 @@ function moduleEventSubscribe(acc, event_name) {
   }
  });
 }
+
 
 export function initComms(acc) {
  moduleEventSubscribe(acc, 'new_message');
@@ -99,11 +109,13 @@ export function initComms(acc) {
  listConversations(acc);
 }
 
+
 export function deinitComms(acc) {
  sendData(acc, 'user_unsubscribe', { event: 'new_message' });
  sendData(acc, 'user_unsubscribe', { event: 'seen_message' });
  sendData(acc, 'user_unsubscribe', { event: 'seen_inbox_message' });
 }
+
 
 export function deinitData(acc) {
  console.log('DEINIT DATA');
@@ -123,12 +135,14 @@ export function deinitData(acc) {
  acc.module_data[module.identifier] = null;
 }
 
+
 export function listMessages(acc, address) {
  console.log('listMessages', acc, address);
  events.set(['initial_loading']);
  messagesArray.set([{ type: 'initial_loading_placeholder' }]);
  loadMessages(acc, address);
 }
+
 
 export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 3, cb) {
  return sendData(acc, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
@@ -143,10 +157,12 @@ export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 3, 
  });
 }
 
+
 function addLoadedMessagesToMessagesArray(acc, items) {
  items = constructLoadedMessages(acc, items);
  addMessagesToMessagesArray(items);
 }
+
 
 function addMessagesToMessagesArray(items) {
  let arr = get(messagesArray);
@@ -162,6 +178,7 @@ function addMessagesToMessagesArray(items) {
  return result;
 }
 
+
 function addMessage(arr, msg) {
  void "todo: this should only update the message if the data is actually more up-to-date";
  let m = arr.find(m => m.uid === msg.uid);
@@ -174,6 +191,7 @@ function addMessage(arr, msg) {
  }
 }
 
+
 function constructLoadedMessages(acc, data) {
  let items = data.map(msg => {
   let message = new Message(acc, msg);
@@ -183,6 +201,7 @@ function constructLoadedMessages(acc, data) {
  });
  return items;
 }
+
 
 function sortMessages(messages) {
  messages.sort((a, b) => {
@@ -202,6 +221,7 @@ function sortMessages(messages) {
  });
 }
 
+
 function addMissingPrevNext(messages) {
  for (let i = 0; i < messages.length; i++) {
   let m = messages[i];
@@ -218,17 +238,18 @@ function addMissingPrevNext(messages) {
  }
 }
 
- function findPrev(messages, i) {
-  for (const m of messages) {
-   if (m.next === i.id) return m.id;
-  }
- }
 
- function findNext(messages, i) {
-  for (const m of messages) {
-   if (m.prev === i.id) return m.id;
-  }
+function findPrev(messages, i) {
+ for (const m of messages) {
+  if (m.next === i.id) return m.id;
  }
+}
+
+function findNext(messages, i) {
+ for (const m of messages) {
+  if (m.prev === i.id) return m.id;
+ }
+}
 
  export function setMessageSeen(message, cb) {
   let acc = get(active_account);
@@ -275,6 +296,7 @@ function addMissingPrevNext(messages) {
    messagesArray.update(v => v);
   });
 
+  events.update(v => [...v, 'new_message']);
   addMessagesToMessagesArray([message]);
   updateConversationsArray(acc, message);
  }
@@ -310,10 +332,12 @@ function addMissingPrevNext(messages) {
   acc_ca.set(ca);
  }
 
+
  export function openNewConversation(address) {
   console.log('openNewConversation', address);
   selectConversation({ acc: get(active_account), address });
  }
+
 
  function eventNewMessage(acc, event) {
   const res = event.detail;
@@ -329,10 +353,12 @@ function addMissingPrevNext(messages) {
   if (acc !== get(active_account)) return;
   console.log('eventNewMessage updateConversationsArray with msg:', msg);
   if (((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
+   events.update(v => [...v, 'new_message']);
    msg = addMessagesToMessagesArray([msg])[0];
   }
   updateConversationsArray(acc, msg);
  }
+
 
  function eventSeenMessage(acc, event) {
   if (acc !== get(active_account)) return;
@@ -347,6 +373,7 @@ function addMissingPrevNext(messages) {
    messagesArray.update(v => v);
   } else console.log('eventSeenMessage: message not found by uid:', res);
  }
+
 
  function eventSeenInboxMessage(acc, event) {
   /*
@@ -364,6 +391,7 @@ function addMissingPrevNext(messages) {
    conversationsArray.update(v => v);
   } else console.log('eventSeenInboxMessage: conversation not found by address:', res);
  }
+
 
  function showNotification(acc, msg) {
   if (!acc) console.error('showNotification: no account');
@@ -393,10 +421,12 @@ function addMissingPrevNext(messages) {
   };
  }
 
+
  function playNotificationSound() {
   const audio = new Audio('audio/message.mp3');
   audio.play();
  }
+
 
  export function ensureConversationDetails(conversation) {
   console.log('ensureConversationDetails', conversation);
@@ -410,6 +440,7 @@ function addMissingPrevNext(messages) {
   });
  }
 
+
  DOMPurify.addHook('afterSanitizeAttributes', function (node) {
   if (node.tagName === 'A') {
    node.setAttribute('target', '_blank');
@@ -420,7 +451,8 @@ function addMissingPrevNext(messages) {
   }
  });
 
- export function saneHtml(content) {
+
+export function saneHtml(content) {
   return DOMPurify.sanitize(content);
  }
 
