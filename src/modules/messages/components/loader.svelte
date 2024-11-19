@@ -8,7 +8,7 @@
 
  let loaderElement;
  let observer;
- let timer;
+
  let observing = false;
  const threshold = 0.6;
  let interval;
@@ -36,7 +36,7 @@
     if (loader.loading) clearInterval(interval);
     if (!loader.loading && loaderElement) {
      if (loaderElement.getBoundingClientRect().top < window.innerHeight && loaderElement.getBoundingClientRect().bottom > 0) {
-      //console.log('loaderElement is visible, load triggered by timer.');
+      //console.log('loaderElement is visible, load triggered by loader.timer.');
       handleIntersect([{ isIntersecting: true }]);
      }
     }
@@ -46,7 +46,6 @@
 
  onDestroy(() => {
   if (observer) observer.disconnect();
-  if (timer) clearTimeout(timer);
   if (interval) clearInterval(interval);
  });
 
@@ -62,18 +61,31 @@
   clearInterval(interval);
   loader.loading = true;
   console.log('LOADmORE: LOADER:', loader);
-  timer = setTimeout(() => {
-   console.log('loadMore: loadMessages...');
-   loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, (_res) => {
-    console.log('loadMessages: _res:', _res);
+  loader.request = '???';
+  loader.timer = setTimeout(() => {
+   console.log('LOADmORE: LOADmESSAGES...');
+   loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, (_res) => {
+    console.log('LOADmESSAGES: _RES:', _res);
     loader.loading = false;
+    loader.delete_me = true;
     events.update(x => x.concat('lazyload_prev'));
    });
-  }, 2500);
+  }, 0);
  }
 
 
 </script>
+
+<style>
+
+ .container {
+  height: 340px;
+ }
+
+</style>
+
+
+<div class="container">
 
  <div bind:this={loaderElement}>
 <!--   <hr><hr><hr><hr><hr>
@@ -81,8 +93,12 @@
   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   Loading more messages...
-  -->
+
   <br/><pre>{JSON.stringify({ ...loader, conversation: undefined }, null, 2)}</pre>
+
+  -->
 <!--  <Button on:click={loadMore}>Load more</Button> -->
   <Spinner show={loader.loading} />
  </div>
+
+</div>

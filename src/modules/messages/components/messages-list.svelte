@@ -117,11 +117,15 @@
  let holes = [];
 
  function getLoader(l) {
+
+  loaders = loaders.filter(i => !i.delete_me);
+
   for (let i of loaders) {
    if (i.base === l.base && i.prev === l.prev && i.next === l.next) {
     return i;
    }
   }
+
   l.uid = getGuid();
   l.type = 'loader';
   l.conversation = conversation;
@@ -130,7 +134,7 @@
  }
 
  function getHole(top, bottom) {
-  let uid = top.hole_uid + '_' + bottom.hole_uid;
+  let uid = top.uid + '_' + bottom.uid;
   for (let i of holes) {
    if (i.uid === uid) {
     return i;
@@ -140,7 +144,7 @@
    type: 'hole',
    top: top,
    bottom: bottom,
-   uid: getGuid()
+   uid: uid
   };
   holes.push(hole);
   top.hole_uid = hole.uid;
@@ -267,11 +271,11 @@
  }
 
  async function mouseDown(event) {
-  console.log('event:', event);
+  //console.log('event:', event);
   event.preventDefault();
-  console.log('mouseDown');
+  //console.log('mouseDown');
   if (message_bar) await message_bar.setBarFocus();
-  console.log('1message_bar:', message_bar);
+  //console.log('1message_bar:', message_bar);
  }
 
 </script>
@@ -299,17 +303,31 @@
   padding: 10px 0;
   box-shadow: var(--shadow);
  }
+
+  .debug {
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  max-width: calc(10%);
+  max-height: calc(10%);
+  overflow: auto;
+  border: 3px solid #000;
+  border-radius: 10px;
+ }
+
+
 </style>
 
-<!--
+<div style="debug">
 <button on:click={scrollToBottom}>Scroll to bottom</button>
 <button on:click={saveScrollPosition}>Save scroll position</button>
 <button on:click={restoreScrollPosition}>Restore scroll position</button>
--->
 <button on:click={gc}>GC</button>
-
-
 items count: {itemsCount}
+</div>
 
 <div class="messages" role="none" bind:this={messages_elem} on:mousedown={mouseDown}>
 
@@ -324,11 +342,20 @@ items count: {itemsCount}
    <Spinner />
 
   {:else if m.type === 'hole'}
-   <Loader loader={m.bottom} />
-   <div style="background-color: #f0f0f0; margin: 10px 0;">   --HOLE--
-   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
-   </div>
    <Loader loader={m.top} />
+   <div style="background-color: #f0f0f0; margin: 10px 0;">   --HOLE--
+   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+    {m.uid}
+    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+   </div>
+   <Loader loader={m.bottom} />
 
   {:else if m.type === 'loader'}
    <Loader loader={m} />
@@ -343,18 +370,5 @@ items count: {itemsCount}
  {/each}
 
  <div bind:this={anchorElement}></div>
-<!-- {#if fillerHeight > -1}
-  <div style="background-color:red; margin: 10px 0;">
-   --FILLER--<br>
-   --FILLER--<br>
-   --FILLER--<br>
-   --FILLER--<br>
-   --FILLER--<br>
-   --FILLER--<br>
-   --FILLER--<br>
-
-  </div>
- {/if}
--->
 
 </div>

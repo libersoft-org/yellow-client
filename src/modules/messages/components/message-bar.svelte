@@ -6,10 +6,10 @@
 
  /* exported setBarFocus */
  export async function setBarFocus() {
-  console.log('elMessage:', elMessage);
+  //console.log('elMessage:', elMessage);
   await tick();
   if (elMessage) {
-   console.log('elMessage.focus()');
+   //console.log('elMessage.focus()');
    elMessage.focus();
   }
  }
