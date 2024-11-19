@@ -1,11 +1,12 @@
 <script>
- import { loadMessages, events, messagesArray } from '../messages.js';
+ import { loadMessages, insertEvent, messagesArray } from '../messages.js';
  import { getContext, onDestroy, onMount } from "svelte";
  import Button from '../../../core/components/button.svelte';
  import Spinner from '../../../core/components/spinner.svelte';
  import { get } from "svelte/store";
 
  export let loader;
+ export let active;
 
  let loaderElement;
  let observer;
@@ -16,11 +17,12 @@
 
  let contentElement = getContext('contentElement');
 
- $: setup(loaderElement);
+ $: setup(loaderElement, active);
  $: console.log('LOADER CHANGED:', loader);
 
  function setup(loaderElement) {
-  console.log('setup: loaderElement:', loaderElement);
+  console.log('setup: loaderElement:', loaderElement, 'loader:', loader, 'active:', active);
+  if (!active) return;
   if (loaderElement && !observing) {
    observer = new IntersectionObserver(handleIntersect, { threshold, root: contentElement });
    observer.observe(loaderElement);
@@ -65,11 +67,10 @@
   loader.request = '???';
   loader.timer = setTimeout(() => {
    console.log('LOADmORE: LOADmESSAGES...');
-   loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, (_res) => {
+   loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, 'lazyload_prev', (_res) => {
     console.log('LOADmESSAGES: _RES:', _res);
     loader.loading = false;
     loader.delete_me = true;
-    events.update(v => [...v, {type: 'lazyload_prev', array: get(messagesArray)}]);
    });
   }, 0);
  }

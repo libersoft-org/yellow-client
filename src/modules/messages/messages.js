@@ -1,5 +1,14 @@
 import { get, writable } from 'svelte/store';
-import { active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send } from '../../core/core.js';
+import {
+ active_account,
+ active_account_id,
+ getGuid,
+ hideSidebarMobile,
+ isClientFocused,
+ active_account_module_data,
+ relay,
+ send
+} from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { module } from './module.js';
 
@@ -51,9 +60,9 @@ function sendData(acc, command, params = {}, sendSessionID = true, callback = nu
 export function selectConversation(conversation) {
  console.log('SELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATION', conversation);
  selectedConversation.update(() => conversation);
- hideSidebarMobile.update(() => true);
  events.set([]);
  messagesArray.set([]);
+ hideSidebarMobile.update(() => true);
  listMessages(conversation.acc, conversation.address);
 }
 
@@ -81,7 +90,7 @@ function sanitizeConversation(acc, c) {
 
 
 function moduleEventSubscribe(acc, event_name) {
- sendData(acc, 'subscribe', { event: event_name }, true, (req, res) => {
+ sendData(acc, 'subscribe', {event: event_name}, true, (req, res) => {
   if (res.error !== 0) {
    console.error('this is bad.');
    window.alert('Communication with server Error while subscribing to event: ' + res.message);
@@ -111,9 +120,9 @@ export function initComms(acc) {
 
 
 export function deinitComms(acc) {
- sendData(acc, 'user_unsubscribe', { event: 'new_message' });
- sendData(acc, 'user_unsubscribe', { event: 'seen_message' });
- sendData(acc, 'user_unsubscribe', { event: 'seen_inbox_message' });
+ sendData(acc, 'user_unsubscribe', {event: 'new_message'});
+ sendData(acc, 'user_unsubscribe', {event: 'seen_message'});
+ sendData(acc, 'user_unsubscribe', {event: 'seen_inbox_message'});
 }
 
 
@@ -138,48 +147,52 @@ export function deinitData(acc) {
 
 export function listMessages(acc, address) {
  console.log('listMessages', acc, address);
- events.set(['initial_loading']);
- messagesArray.set([{ type: 'initial_loading_placeholder' }]);
- loadMessages(acc, address);
+ messagesArray.set([{type: 'initial_loading_placeholder'}]);
+ loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', (res, ) => {
+ });
 }
 
 
-export function loadMessages(acc, address, base = 'unseen', prev = 3, next = 3, cb) {
- return sendData(acc, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
-  if (cb) cb(res);
+export function loadMessages(acc, address, base, prev, next, reason, cb) {
+ return sendData(acc, 'messages_list', {address: address, base, prev, next}, true, (_req, res) => {
 
   if (res.error !== 0 || !res.data?.messages) {
    console.error(res);
    window.alert('Error while listing messages: ' + (res.message || JSON.stringify(res)));
    return;
   }
-  addLoadedMessagesToMessagesArray(acc, res.data.messages);
+
+  let items = res.data.messages;
+  items = constructLoadedMessages(acc, items);
+  addMessagesToMessagesArray(items, reason);
+  if (cb) cb(res);
  });
 }
 
 
-function addLoadedMessagesToMessagesArray(acc, items) {
- items = constructLoadedMessages(acc, items);
- addMessagesToMessagesArray(items);
-}
-
-
-function addMessagesToMessagesArray(items) {
+function addMessagesToMessagesArray(items, reason) {
  let arr = get(messagesArray);
  arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
  let result = [];
+ let state = {countAdded: 0};
  for (let m of items) {
-  result.push(addMessage(arr, m));
+  result.push(addMessage(arr, m, state));
  }
  sortMessages(arr);
  addMissingPrevNext(arr);
  console.log('messagesArray.set:', arr);
  messagesArray.set(arr);
+ if (state.countAdded > 0) {
+  insertEvent({type: reason, array: arr});
+ }
+ else {
+  insertEvent({type: 'properties_update', array: arr});
+ }
  return result;
 }
 
 
-function addMessage(arr, msg) {
+function addMessage(arr, msg, state) {
  void "todo: this should only update the message if the data is actually more up-to-date";
  let m = arr.find(m => m.uid === msg.uid);
  if (m) {
@@ -187,6 +200,7 @@ function addMessage(arr, msg) {
   return m;
  } else {
   arr.unshift(msg);
+  state.countAdded++;
   return msg;
  }
 }
@@ -212,8 +226,7 @@ function sortMessages(messages) {
   if (akey === undefined && bkey === undefined) {
    akey = a.created;
    bkey = b.created;
-  }
-  else if (akey === undefined) return 1;
+  } else if (akey === undefined) return 1;
   else if (bkey === undefined) return -1;
   if (akey > bkey) return 1;
   if (akey < bkey) return -1;
@@ -251,211 +264,214 @@ function findNext(messages, i) {
  }
 }
 
- export function setMessageSeen(message, cb) {
-  let acc = get(active_account);
-  console.log('setMessageSeen', message);
-  message.just_marked_as_seen = true;
-  sendData(acc, 'message_seen', { uid: message.uid }, true, (req, res) => {
-   if (res.error !== 0) {
-    console.error('this is bad.');
-    return;
-   }
-   //message.seen = true;
-   if (cb) cb();
-   //messagesArray.update(v => v);
-   // update conversationsArray:
-   /*const conversation = get(conversationsArray).find(c => c.address === message.address_from);
-   if (conversation) {
-    conversation.unread_count--;
-    conversationsArray.update(v => v);
-   }*/
-  });
- }
-
- export function sendMessage(text) {
-  let acc = get(active_account);
-
-  let message = new Message(acc, {
-   uid: getGuid(),
-   address_from: acc.credentials.address,
-   address_to: get(selectedConversation).address,
-   message: text,
-   created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
-   just_sent: true,
-  });
-
-  let params = { address: message.address_to, message: message.message, uid: message.uid };
-
-  sendData(acc, 'message_send', params, true, (req, res) => {
-   if (res.error !== 0) {
-    alert('Error while sending message: ' + res.message);
-    return;
-   }
-   // update the message status and trigger the update of the messagesArray:
-   message.received_by_my_homeserver = true;
-   messagesArray.update(v => v);
-  });
-
-  addMessagesToMessagesArray([message]);
-  events.update(v => [...v, {type: 'new_message', array: get(messagesArray)}]);
-  updateConversationsArray(acc, message);
- }
-
-
- function updateConversationsArray(acc, msg) {
-  const msg_created = msg.created;
-  let acc_ca = acc.module_data[module.identifier].conversationsArray;
-  let ca = get(acc_ca);
-  const conversation = ca.find(c => c.address === msg.remote_address);
-  console.log('updateConversationsArray', conversation, msg);
-
-  if (conversation) {
-   conversation.last_message_date = msg_created;
-   conversation.last_message_text = msg.stripped_text;
-   if (!msg.seen && !msg.just_sent) {
-    conversation.unread_count = (conversation.unread_count || 0) + 1;
-   }
-   const index = ca.indexOf(conversation);
-   // shift the affected conversation to the top:
-   ca.splice(index, 1);
-   ca.unshift(conversation);
-  } else {
-   let conversation = {
-    address: msg.remote_address,
-    last_message_date: msg_created,
-    last_message_text: msg.stripped_text,
-    visible_name: null,
-    unread_count: msg.just_sent ? 0 : 1,
-   };
-   ca.unshift(conversation);
+export function setMessageSeen(message, cb) {
+ let acc = get(active_account);
+ console.log('setMessageSeen', message);
+ message.just_marked_as_seen = true;
+ sendData(acc, 'message_seen', {uid: message.uid}, true, (req, res) => {
+  if (res.error !== 0) {
+   console.error('this is bad.');
+   return;
   }
-  acc_ca.set(ca);
- }
-
-
- export function openNewConversation(address) {
-  console.log('openNewConversation', address);
-  selectConversation({ acc: get(active_account), address });
- }
-
-
- function eventNewMessage(acc, event) {
-  const res = event.detail;
-  if (!res.data) return;
-  console.log('eventNewMessage', acc, res);
-  let msg = new Message(acc, res.data);
-  msg.received_by_my_homeserver = true;
-  let sc = get(selectedConversation);
-  if (msg.address_from !== acc.credentials.address) {
-   console.log('showNotification?');
-   if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) showNotification(acc, msg);
-  }
-  if (acc !== get(active_account)) return;
-  console.log('eventNewMessage updateConversationsArray with msg:', msg);
-  if (((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
-   msg = addMessagesToMessagesArray([msg])[0];
-   events.update(v => [...v, {type: 'new_message', array: get(messagesArray)}]);
-  }
-  updateConversationsArray(acc, msg);
- }
-
-
- function eventSeenMessage(acc, event) {
-  if (acc !== get(active_account)) return;
-  console.log(event);
-  const res = event.detail;
-  console.log('eventSeenMessage', res);
-  if (!res.data) return;
-  console.log(get(messagesArray));
-  const message = get(messagesArray).find(m => m.uid === res.data.uid);
-  if (message) {
-   message.seen = res.data.seen;
-   messagesArray.update(v => v);
-  } else console.log('eventSeenMessage: message not found by uid:', res);
- }
-
-
- function eventSeenInboxMessage(acc, event) {
-  /*
- mark, as seen, a message sent to us. This can be triggered by another client.
- */
-  if (acc !== get(active_account)) return;
-  console.log(event);
-  const res = event.detail;
-  console.log('eventSeenInboxMessage', res);
-  if (!res.data) return;
-  console.log(get(conversationsArray));
-  const conversation = get(conversationsArray).find(c => c.address === res.data.address_from);
+  //message.seen = true;
+  if (cb) cb();
+  //messagesArray.update(v => v);
+  // update conversationsArray:
+  /*const conversation = get(conversationsArray).find(c => c.address === message.address_from);
   if (conversation) {
    conversation.unread_count--;
    conversationsArray.update(v => v);
-  } else console.log('eventSeenInboxMessage: conversation not found by address:', res);
- }
+  }*/
+ });
+}
 
+export function sendMessage(text) {
+ let acc = get(active_account);
 
- function showNotification(acc, msg) {
-  if (!acc) console.error('showNotification: no account');
-  playNotificationSound();
-  // TODO: distinguish if it's a web or native version
-  if (Notification.permission !== 'granted') return;
-  /*fixme*/
-  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
-  let notification;
-  if (conversation) {
-   /*fixme*/
-   notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
-    body: msg.stripped_text,
-    icon: 'img/photo.svg',
-    silent: true,
-   });
-  } else {
-   notification = new Notification('New message from: ' + msg.address_from, {
-    body: msg.stripped_text,
-    icon: 'img/photo.svg',
-    silent: true,
-   });
+ let message = new Message(acc, {
+  uid: getGuid(),
+  address_from: acc.credentials.address,
+  address_to: get(selectedConversation).address,
+  message: text,
+  created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
+  just_sent: true,
+ });
+
+ let params = {address: message.address_to, message: message.message, uid: message.uid};
+
+ sendData(acc, 'message_send', params, true, (req, res) => {
+  if (res.error !== 0) {
+   alert('Error while sending message: ' + res.message);
+   return;
   }
-  notification.onclick = () => {
-   window.focus();
-   selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
+  // update the message status and trigger the update of the messagesArray:
+  message.received_by_my_homeserver = true;
+  messagesArray.update(v => v);
+ });
+
+ addMessagesToMessagesArray([message], 'send_message');
+ updateConversationsArray(acc, message);
+}
+
+
+function updateConversationsArray(acc, msg) {
+ const msg_created = msg.created;
+ let acc_ca = acc.module_data[module.identifier].conversationsArray;
+ let ca = get(acc_ca);
+ const conversation = ca.find(c => c.address === msg.remote_address);
+ console.log('updateConversationsArray', conversation, msg);
+
+ if (conversation) {
+  conversation.last_message_date = msg_created;
+  conversation.last_message_text = msg.stripped_text;
+  if (!msg.seen && !msg.just_sent) {
+   conversation.unread_count = (conversation.unread_count || 0) + 1;
+  }
+  const index = ca.indexOf(conversation);
+  // shift the affected conversation to the top:
+  ca.splice(index, 1);
+  ca.unshift(conversation);
+ } else {
+  let conversation = {
+   address: msg.remote_address,
+   last_message_date: msg_created,
+   last_message_text: msg.stripped_text,
+   visible_name: null,
+   unread_count: msg.just_sent ? 0 : 1,
   };
+  ca.unshift(conversation);
  }
+ acc_ca.set(ca);
+}
 
 
- function playNotificationSound() {
-  const audio = new Audio('audio/message.mp3');
-  audio.play();
+export function openNewConversation(address) {
+ console.log('openNewConversation', address);
+ selectConversation({acc: get(active_account), address});
+}
+
+
+export function insertEvent(event) {
+ events.update(v => {console.log('insertEvent: ',v, event); return [...v, event]});
+}
+
+function eventNewMessage(acc, event) {
+ const res = event.detail;
+ if (!res.data) return;
+ console.log('eventNewMessage', acc, res);
+ let msg = new Message(acc, res.data);
+ msg.received_by_my_homeserver = true;
+ let sc = get(selectedConversation);
+ if (msg.address_from !== acc.credentials.address) {
+  console.log('showNotification?');
+  if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) showNotification(acc, msg);
  }
+ if (acc !== get(active_account)) return;
+ console.log('eventNewMessage updateConversationsArray with msg:', msg);
+ if (((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
+  let oldLen = get(messagesArray).length;
+  msg = addMessagesToMessagesArray([msg], 'new_message')[0];
+ }
+ updateConversationsArray(acc, msg);
+}
 
 
- export function ensureConversationDetails(conversation) {
-  console.log('ensureConversationDetails', conversation);
-  if (conversation.visible_name) return;
-  let acc = get(active_account);
-  console.log('ensureConversationDetails acc:', acc);
-  send(acc, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
-   if (res.error !== 0) return;
-   Object.assign(conversation, res.data);
-   conversationsArray.update(v => v); // fixme: this infiloops?
+function eventSeenMessage(acc, event) {
+ if (acc !== get(active_account)) return;
+ console.log(event);
+ const res = event.detail;
+ console.log('eventSeenMessage', res);
+ if (!res.data) return;
+ console.log(get(messagesArray));
+ const message = get(messagesArray).find(m => m.uid === res.data.uid);
+ if (message) {
+  message.seen = res.data.seen;
+  messagesArray.update(v => v);
+ } else console.log('eventSeenMessage: message not found by uid:', res);
+}
+
+
+function eventSeenInboxMessage(acc, event) {
+ /*
+mark, as seen, a message sent to us. This can be triggered by another client.
+*/
+ if (acc !== get(active_account)) return;
+ console.log(event);
+ const res = event.detail;
+ console.log('eventSeenInboxMessage', res);
+ if (!res.data) return;
+ console.log(get(conversationsArray));
+ const conversation = get(conversationsArray).find(c => c.address === res.data.address_from);
+ if (conversation) {
+  conversation.unread_count--;
+  conversationsArray.update(v => v);
+ } else console.log('eventSeenInboxMessage: conversation not found by address:', res);
+}
+
+
+function showNotification(acc, msg) {
+ if (!acc) console.error('showNotification: no account');
+ playNotificationSound();
+ // TODO: distinguish if it's a web or native version
+ if (Notification.permission !== 'granted') return;
+ /*fixme*/
+ const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
+ let notification;
+ if (conversation) {
+  /*fixme*/
+  notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
+   body: msg.stripped_text,
+   icon: 'img/photo.svg',
+   silent: true,
+  });
+ } else {
+  notification = new Notification('New message from: ' + msg.address_from, {
+   body: msg.stripped_text,
+   icon: 'img/photo.svg',
+   silent: true,
   });
  }
+ notification.onclick = () => {
+  window.focus();
+  selectConversation({acc, address: msg.address_from, visible_name: conversation?.visible_name});
+ };
+}
 
 
- DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-  if (node.tagName === 'A') {
-   node.setAttribute('target', '_blank');
-   node.setAttribute('rel', 'noopener noreferrer');
-  }
-  if (node.tagName === 'VIDEO') {
-   node.removeAttribute('autoplay');
-  }
+function playNotificationSound() {
+ const audio = new Audio('audio/message.mp3');
+ audio.play();
+}
+
+
+export function ensureConversationDetails(conversation) {
+ console.log('ensureConversationDetails', conversation);
+ if (conversation.visible_name) return;
+ let acc = get(active_account);
+ console.log('ensureConversationDetails acc:', acc);
+ send(acc, 'core', 'user_userinfo_get', {address: conversation.address}, true, (_req, res) => {
+  if (res.error !== 0) return;
+  Object.assign(conversation, res.data);
+  conversationsArray.update(v => v); // fixme: this infiloops?
  });
+}
+
+
+DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+ if (node.tagName === 'A') {
+  node.setAttribute('target', '_blank');
+  node.setAttribute('rel', 'noopener noreferrer');
+ }
+ if (node.tagName === 'VIDEO') {
+  node.removeAttribute('autoplay');
+ }
+});
 
 
 export function saneHtml(content) {
-  return DOMPurify.sanitize(content);
- }
+ return DOMPurify.sanitize(content);
+}
 
- export function stripHtml(html) {
-  return html.replace(/<[^>]*>?/gm, '');
- }
+export function stripHtml(html) {
+ return html.replace(/<[^>]*>?/gm, '');
+}
