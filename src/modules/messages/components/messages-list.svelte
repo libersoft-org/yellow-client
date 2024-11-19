@@ -90,6 +90,10 @@
    return;
   }
 
+  await tick();
+
+
+
   if (doRestoreScroll) restoreScrollPosition();
   if (doScrollToBottom) scrollToBottom();
 
@@ -145,7 +149,7 @@
  }
 
 
- async function getItems(messagesArray) {
+ async function updateConversationItems(event) {
 
   doScrollToBottom = false;
   doRestoreScroll = false;

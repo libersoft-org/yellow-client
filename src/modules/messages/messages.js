@@ -296,8 +296,8 @@ function findNext(messages, i) {
    messagesArray.update(v => v);
   });
 
-  events.update(v => [...v, 'new_message']);
   addMessagesToMessagesArray([message]);
+  events.update(v => [...v, {type: 'new_message', array: get(messagesArray)}]);
   updateConversationsArray(acc, message);
  }
 
@@ -353,8 +353,8 @@ function findNext(messages, i) {
   if (acc !== get(active_account)) return;
   console.log('eventNewMessage updateConversationsArray with msg:', msg);
   if (((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
-   events.update(v => [...v, 'new_message']);
    msg = addMessagesToMessagesArray([msg])[0];
+   events.update(v => [...v, {type: 'new_message', array: get(messagesArray)}]);
   }
   updateConversationsArray(acc, msg);
  }

@@ -1,8 +1,9 @@
 <script>
- import { loadMessages, events } from '../messages.js';
+ import { loadMessages, events, messagesArray } from '../messages.js';
  import { getContext, onDestroy, onMount } from "svelte";
  import Button from '../../../core/components/button.svelte';
  import Spinner from '../../../core/components/spinner.svelte';
+ import { get } from "svelte/store";
 
  export let loader;
 
@@ -68,7 +69,7 @@
     console.log('LOADmESSAGES: _RES:', _res);
     loader.loading = false;
     loader.delete_me = true;
-    events.update(x => x.concat('lazyload_prev'));
+    events.update(v => [...v, {type: 'lazyload_prev', array: get(messagesArray)}]);
    });
   }, 0);
  }
