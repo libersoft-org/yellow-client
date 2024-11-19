@@ -1,7 +1,14 @@
+export let show = true;
+
+
 <style>
 
  :root {
   --spinner-color: #000;
+ }
+
+ .container {
+  height: 40px;
  }
 
  .spinner {
@@ -24,4 +31,8 @@
 
 </style>
 
-<div class="spinner"></div>
+<div class="container">
+
+  <div class="spinner"></div>
+
+</div>
