@@ -2,6 +2,7 @@
  import { loadMessages, events } from '../messages.js';
  import { getContext, onDestroy, onMount } from "svelte";
  import Button from '../../../core/components/button.svelte';
+ import Spinner from '../../../core/components/spinner.svelte';
 
  export let loader;
 
@@ -78,11 +79,10 @@
 <!--   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
-  <hr><hr><hr><hr><hr> -->
+  <hr><hr><hr><hr><hr>
   Loading more messages...
-<!--   <br/><pre>{JSON.stringify({ ...loader, conversation: undefined }, null, 2)}</pre> -->
+  -->
+  <br/><pre>{JSON.stringify({ ...loader, conversation: undefined }, null, 2)}</pre>
 <!--  <Button on:click={loadMore}>Load more</Button> -->
-<!-- {#if loader.loading}
-  <Spinner />
- {/if}-->
+  <Spinner show={loader.loading} />
  </div>

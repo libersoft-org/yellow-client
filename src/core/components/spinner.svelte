@@ -1,5 +1,10 @@
+<script>
+
+
 export let show = true;
 
+
+</script>
 
 <style>
 
@@ -32,7 +37,7 @@ export let show = true;
 </style>
 
 <div class="container">
-
-  <div class="spinner"></div>
-
+  {#if show}
+    <div class="spinner"></div>
+  {/if}
 </div>
