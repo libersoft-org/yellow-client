@@ -24,35 +24,33 @@
  let oldLastID = null;
  let itemsCount = 0;
  let items = [];
-
- //$: console.log('messages-list.svelte: items:', items);
  let loaders = [];
  let holes = [];
 
- messagesArray.subscribe(async (value) => {
-  items = await getItems(value);
+
+ events.subscribe((e) => {
+  items = handleEvent(e);
+  itemsCount = items.length;
+  events.set([]);
  });
 
 
-
-
- function saveScrollPosition() {
+ function saveScrollPosition(event) {
   if (!(messages_elem && anchorElement)) {
    window.alert('saveScrollPosition: messages_elem or anchorElement is not defined');
    return;
   }
 
-  savedScrollTop = messages_elem.scrollTop;
-  savedAnchorTop = anchorElement.getBoundingClientRect().top;
-  savedScrollHeight = messages_elem.scrollHeight;
-  console.log('saveScrollPosition: savedScrollTop:', savedScrollTop, 'savedAnchorTop:', savedAnchorTop, 'savedScrollHeight:', savedScrollHeight);
+  event.savedScrollTop = messages_elem.scrollTop;
+  event.savedScrollHeight = messages_elem.scrollHeight;
+  console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
  }
 
 
- function restoreScrollPosition() {
+ function restoreScrollPosition(event) {
   console.log('restoreScrollPosition messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
-  const scrollDifference = messages_elem.scrollHeight - savedScrollHeight;
-  messages_elem.scrollTop = savedScrollTop + scrollDifference;
+  const scrollDifference = messages_elem.scrollHeight - event.savedScrollHeight;
+  messages_elem.scrollTop = event.savedScrollTop + scrollDifference;
   console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
 
  }
@@ -79,8 +77,10 @@
 
 
  beforeUpdate(() => {
-  if (!(messages_elem && anchorElement)) {return;}
-   console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  if (!(messages_elem && anchorElement)) {
+   return;
+  }
+  console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
  });
 
 
@@ -92,13 +92,17 @@
 
   await tick();
 
-
-
-  if (doRestoreScroll) restoreScrollPosition();
-  if (doScrollToBottom) scrollToBottom();
-
+  for (let event of uiEvents) {
+   if (event.type === 'lazyload_prev') {
+    restoreScrollPosition(event);
+   } else if (event.type === 'new_message') {
+    if (event.wasScrolledToBottom()) {
+     scrollToBottom();
+    }
+   }
+  }
+  uiEvents = [];
  });
-
 
 
  function getLoader(l) {
@@ -116,7 +120,6 @@
   loaders.push(l);
   return l;
  }
-
 
 
  function getHole(top, bottom) {
@@ -139,7 +142,6 @@
  }
 
 
-
  function gc() {
   // gc random slice of messagesArray
   let x = get(messagesArray);
@@ -148,97 +150,88 @@
   messagesArray.set(x);
  }
 
+ let uiEvents = [];
 
- async function updateConversationItems(event) {
+ async function handleEvent(events) {
 
-  doScrollToBottom = false;
-  doRestoreScroll = false;
+  for (let i = 0; i < events.length; i++) {
 
-  let evts = get(events);
-  events.set([]);
-  console.log('evts:', evts);
+   let event = events[i];
 
-  if (evts.includes('lazyload_prev')) {
-   doRestoreScroll = true;
-   saveScrollPosition();
-  }
-  if (evts.includes('new_message')) {
-   if (isScrolledToBottom()) {
-    doScrollToBottom = true;
-    console.log('doScrollToBottom:', doScrollToBottom);
+   uiEvents.push(event);
+   saveScrollPosition(event);
+   event.wasScrolledToBottom = isScrolledToBottom();
+
+   if (i != events.length - 1) {
+    continue
+   }
+
+   if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') {
+    loaders = [];
+    holes = [];
+    return messagesArray;
+   }
+   if (messagesArray.length === 0) return [{type: 'no_messages'}];
+
+   messagesArray = mergeAuthorship(messagesArray);
+   let items = [];
+
+   for (let m of messagesArray) {
+    if (!m.acc || m.uid === undefined)  //(typeof m !== Message)
+    {
+     console.log('getItems: Invalid item: ', typeof m, m);
+     throw new Error('getItems: Invalid item: ' + JSON.stringify(m));
+    }
+   }
+   // messages are sorted in correct order at this point.
+   // add lazyloaders where there is discontinuity.
+
+   // add a loader at the top if first message is not the first message in the chat
+   if (messagesArray[0].prev !== 'none' && messagesArray[0].id !== undefined) {
+    items.unshift(getLoader({prev: 10, base: messagesArray[0].id}));
+   }
+
+   let unseen_marker_put = false;
+   //scroll = isScrolledToBottom();
+
+   // walk all messages, add loaders where there are discontinuities
+   for (let i = 0; i < messagesArray.length; i++) {
+    let m = messagesArray[i];
+
+    if (!unseen_marker_put && !m.is_outgoing && (m.seen === false || m.just_marked_as_seen)) {
+     unseen_marker_put = true;
+     items.push({type: 'unseen_marker'});
+    }
+
+    items.push(m);
+
+    if (m.id !== undefined && m.id > oldLastID) {
+     oldLastID = m.id;
+     if (m.is_lazyloaded)
+      scroll = false;
+    }
+
+
+    let next = messagesArray[i + 1];
+    if (next && next.id !== undefined && m.next != "none" && m.next != undefined && m.next !== next.id) {
+     console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
+     console.log(JSON.stringify(m), JSON.stringify(next));
+     console.log('m.next:', m.next, 'next.id:', next.id);
+     items.push(getHole(
+      getLoader({next: 5, base: m.id}),
+      getLoader({prev: 5, base: next.id})
+     ));
+    }
+   }
+
+   let last = messagesArray[messagesArray.length - 1];
+   if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
+    console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
+    console.log(last.next);
+    items.push(getLoader({next: 10, base: last.id}));
    }
   }
 
-  if (messagesArray.length === 1 && messagesArray[0].type === 'initial_loading_placeholder') {
-   //console.log('getItems: reset loaders and holes');
-   loaders = [];
-   holes = [];
-   /*savedScrollTop = 0;
-   savedElementTop = 0;*/
-   return messagesArray;
-  }
-  if (messagesArray.length === 0) return [{type: 'no_messages'}];
-
-
-  messagesArray = mergeAuthorship(messagesArray);
-  let items = [];
-
-  for (let m of messagesArray) {
-   if (!m.acc || m.uid === undefined)  //(typeof m !== Message)
-   {
-    console.log('getItems: Invalid item: ', typeof m, m);
-    throw new Error('getItems: Invalid item: ' + JSON.stringify(m));
-   }
-  }
-  // messages are sorted in correct order at this point.
-  // add lazyloaders where there is discontinuity.
-
-  // add a loader at the top if first message is not the first message in the chat
-  if (messagesArray[0].prev !== 'none' && messagesArray[0].id !== undefined) {
-   items.unshift(getLoader({prev: 10, base: messagesArray[0].id}));
-  }
-
-  let unseen_marker_put = false;
-  //scroll = isScrolledToBottom();
-
-  // walk all messages, add loaders where there are discontinuities
-  for (let i = 0; i < messagesArray.length; i++) {
-   let m = messagesArray[i];
-
-   if (!unseen_marker_put && !m.is_outgoing && (m.seen === false || m.just_marked_as_seen)) {
-    unseen_marker_put = true;
-    items.push({type: 'unseen_marker'});
-   }
-
-   items.push(m);
-
-   if (m.id !== undefined && m.id > oldLastID) {
-    oldLastID = m.id;
-    if (m.is_lazyloaded)
-     scroll = false;
-   }
-
-
-   let next = messagesArray[i + 1];
-   if (next && next.id !== undefined && m.next != "none" && m.next != undefined && m.next !== next.id) {
-    console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
-    console.log(JSON.stringify(m), JSON.stringify(next));
-    console.log('m.next:', m.next, 'next.id:', next.id);
-    items.push(getHole(
-     getLoader({next: 5, base: m.id}),
-     getLoader({prev: 5, base: next.id})
-    ));
-   }
-  }
-
-  let last = messagesArray[messagesArray.length - 1];
-  if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
-   console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
-   console.log(last.next);
-   items.push(getLoader({next: 10, base: last.id}));
-  }
-
-  itemsCount = items.length;
   return items;
  }
 
@@ -299,7 +292,7 @@
   box-shadow: var(--shadow);
  }
 
-  .debug {
+ .debug {
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -317,14 +310,14 @@
 </style>
 
 <div style="debug">
-<button on:click={scrollToBottom}>Scroll to bottom</button>
-<button on:click={saveScrollPosition}>Save scroll position</button>
-<button on:click={restoreScrollPosition}>Restore scroll position</button>
-<button on:click={gc}>GC</button>
-items count: {itemsCount}
+ <button on:click={scrollToBottom}>Scroll to bottom</button>
+ <button on:click={saveScrollPosition}>Save scroll position</button>
+ <button on:click={restoreScrollPosition}>Restore scroll position</button>
+ <button on:click={gc}>GC</button>
+ items count: {itemsCount}
 </div>
 
-<div class="messages" bind:this={messages_elem} on:mousedown={mouseDown} on:keypress={keyDown} >
+<div class="messages" bind:this={messages_elem} on:mousedown={mouseDown} on:keypress={keyDown}>
 
  <div class="spacer"></div>
 
@@ -338,17 +331,140 @@ items count: {itemsCount}
 
   {:else if m.type === 'hole'}
    <Loader loader={m.top} />
-   <div style="background-color: #f0f0f0; margin: 10px 0;">   --HOLE--
-   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
-   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
-   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
-   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
-   <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+   <div style="background-color: #f0f0f0; margin: 10px 0;"> --HOLE--
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
     {m.uid}
-    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
-    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
-    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
-    <hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
    </div>
    <Loader loader={m.bottom} />
 
