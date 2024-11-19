@@ -360,9 +360,17 @@ export function openNewConversation(address) {
 }
 
 
+export function startReply(message) {
+ message.reply = {text: 'funny.'};
+ messagesArray.update(v => v);
+ insertEvent({type: 'properties_update', array: get(messagesArray)});
+}
+
+
 export function insertEvent(event) {
  events.update(v => {console.log('insertEvent: ',v, event); return [...v, event]});
 }
+
 
 function eventNewMessage(acc, event) {
  const res = event.detail;

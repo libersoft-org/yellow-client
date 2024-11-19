@@ -1,5 +1,5 @@
 <script>
- import { setMessageSeen, saneHtml, snipeMessage } from '../messages.js';
+ import { setMessageSeen, saneHtml, snipeMessage, startReply } from '../messages.js';
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
   import Button from '../../../core/components/button.svelte';
@@ -117,6 +117,10 @@
   width: 24px;
   height: 24px;
  }
+ .reply-box {
+ text-align: right;
+ }
+
 </style>
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
@@ -133,8 +137,21 @@
     console.log('delete message:', message);
     snipeMessage(message);
    }}/>
+  <Button
+   text="Reply"
+   on:click={() => {
+    console.log('reply to message:', message);
+    startReply(message);
+   }}/>
  </div>
 
-id {message.id}
+ id {message.id}
 
 </div>
+
+
+ {#if message.reply}
+  <div class="reply-box">
+   <input type="text" value={message.reply.text} />
+  </div>
+ {/if}

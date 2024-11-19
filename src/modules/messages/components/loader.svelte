@@ -6,7 +6,6 @@
  import { get } from "svelte/store";
 
  export let loader;
- export let active;
 
  let loaderElement;
  let observer;
@@ -17,15 +16,23 @@
 
  let contentElement = getContext('contentElement');
 
- $: setup(loaderElement, active);
+
+ onMount(() => {
+  console.log('LOADER MOUNTED:', loader);
+  observing = false;
+ });
+
+ $: setup(loaderElement, loader);
  $: console.log('LOADER CHANGED:', loader);
 
- function setup(loaderElement) {
-  console.log('setup: loaderElement:', loaderElement, 'loader:', loader, 'active:', active);
-  if (!active) return;
+ function setup(loaderElement, loader) {
+  console.log('setup: loaderElement:', loaderElement, 'loader:', loader, 'active:', loader.active);
+  if (!loader.active) return;
+  console.log('OBSERVINGOBSERVINGOBSERVING:', observing);
   if (loaderElement && !observing) {
    observer = new IntersectionObserver(handleIntersect, { threshold, root: contentElement });
    observer.observe(loaderElement);
+   console.log('loader ', loader, ' is now observing.');
    observing = true;
    console.log('setup: observer:', observer);
    setupInterval();
@@ -67,12 +74,12 @@
   loader.request = '???';
   loader.timer = setTimeout(() => {
    console.log('LOADmORE: LOADmESSAGES...');
-   loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, 'lazyload_prev', (_res) => {
+   loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, loader.reason, (_res) => {
     console.log('LOADmESSAGES: _RES:', _res);
     loader.loading = false;
     loader.delete_me = true;
    });
-  }, 10000);
+  }, 1);
  }
 
 

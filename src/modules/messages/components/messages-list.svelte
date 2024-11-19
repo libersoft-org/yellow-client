@@ -2,6 +2,7 @@
  import { afterUpdate, beforeUpdate, onMount, tick } from 'svelte';
  import { getGuid } from '../../../core/core.js';
  import Spinner from '../../../core/components/spinner.svelte';
+ import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
  import Button from '../../../core/components/button.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
@@ -11,6 +12,7 @@
  export let message_bar;
  export let conversation;
 
+ let showDebugModal = false;
  let messages_elem;
  let anchorElement;
 
@@ -95,8 +97,12 @@
 
   for (let event of uiEvents) {
    await console.log('uiEvent:', event);
-   if (event.type === 'lazyload_prev') {
+   if (event.type === 'gc') {
+    await console.log('gc');
+   } else if (event.type === 'lazyload_prev') {
     restoreScrollPosition(event);
+   } else if (event.type === 'lazyload_next') {
+    //pass
    } else if (event.type === 'new_message') {
     if (event.wasScrolledToBottom) {
      scrollToBottom();
@@ -109,8 +115,6 @@
     scrollToBottom();
    } else if (event.type === 'properties_update') {
     await console.log('properties_update');
-   } else if (event.type === 'gc') {
-    await console.log('gc');
    }
   }
   let events = [...uiEvents];
@@ -230,7 +234,7 @@
 
    // add a loader at the top if first message is not the first message in the chat
    if (messages[0].prev !== 'none' && messages[0].id !== undefined) {
-    let l = getLoader({prev: 10, base: messages[0].id});
+    let l = getLoader({prev: 10, base: messages[0].id, reason: 'lazyload_prev'});
     event.loaders.push(l);
     items.unshift(l);
    }
@@ -260,8 +264,8 @@
      console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
      console.log(JSON.stringify(m), JSON.stringify(next));
      console.log('m.next:', m.next, 'next.id:', next.id);
-     let l1 = getLoader({next: 5, base: m.id});
-     let l2 = getLoader({prev: 5, base: next.id});
+     let l1 = getLoader({next: 5, base: m.id, reason: 'lazyload_prev'});
+     let l2 = getLoader({prev: 5, base: next.id, reason: 'lazyload_next'});
      event.loaders.push(l1);
      event.loaders.push(l2);
      items.push(getHole(l1, l2));
@@ -272,7 +276,9 @@
    if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
     console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
     console.log(last.next);
-    items.push(getLoader({next: 10, base: last.id}));
+    let l = getLoader({next: 10, base: last.id, reason: 'lazyload_next'})
+    event.loaders.push(l);
+    items.push(l);
    }
 
    itemsArray = items;
@@ -369,7 +375,15 @@
  <button on:click={saveScrollPosition}>Save scroll position</button>
  <button on:click={restoreScrollPosition}>Restore scroll position</button>
  <button on:click={gc}>GC</button>
+ <button on:click={() => showDebugModal = !showDebugModal}>Show debug modal</button>
  items count: {itemsCount}
+ <ModalWithSlot show={showDebugModal} title="Debug modal">
+  <div slot="body">
+   <pre>{JSON.stringify(itemsArray, null, 2)}</pre>
+    ---
+   <pre>{JSON.stringify(loaders, null, 2)}</pre>
+  </div>
+ </ModalWithSlot>
 </div>
 
 <div class="messages" bind:this={messages_elem} on:mousedown={mouseDown} on:keypress={keyDown}>
@@ -385,14 +399,14 @@
    <Spinner />
 
   {:else if m.type === 'hole'}
-   <Loader loader={m.top} active={m.top.active} />
+   <Loader loader={m.top} />
    <div class="hole">
     {m.uid}
    </div>
-   <Loader loader={m.bottom} active={m.bottom.active} />
+   <Loader loader={m.bottom} />
 
   {:else if m.type === 'loader'}
-   <Loader loader={m} active={m.active} />
+   <Loader loader={m} />
 
   {:else if m.type === 'unseen_marker'}
    <div class="unread">Unread messages</div>
@@ -406,3 +420,4 @@
  <div bind:this={anchorElement}></div>
 
 </div>
+
