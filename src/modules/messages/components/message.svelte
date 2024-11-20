@@ -118,9 +118,8 @@
   height: 24px;
  }
  .reply-box {
- text-align: right;
+  text-align: right;
  }
-
 </style>
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
@@ -136,24 +135,24 @@
    on:click={() => {
     console.log('delete message:', message);
     snipeMessage(message);
-   }}/>
+   }}
+  />
   <Button
    text="Reply"
    on:click={() => {
     console.log('reply to message:', message);
     startReply(message);
-   }}/>
+   }}
+  />
  </div>
 
  {#if $debug}
   id {message.id}
  {/if}
-
 </div>
 
-
- {#if message.reply}
-  <div class="reply-box">
-   <input type="text" value={message.reply.text} />
-  </div>
- {/if}
+{#if message.reply}
+ <div class="reply-box">
+  <input type="text" value={message.reply.text} />
+ </div>
+{/if}

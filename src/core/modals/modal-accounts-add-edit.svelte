@@ -46,10 +46,8 @@
  function keyEnter() {
   if (event.key === 'Enter') {
    event.preventDefault();
-   if (params.id === null)
-    clickAdd();
-   else
-    clickSave();
+   if (params.id === null) clickAdd();
+   else clickSave();
   }
  }
 </script>

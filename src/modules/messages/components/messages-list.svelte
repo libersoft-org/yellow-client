@@ -7,7 +7,7 @@
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import { messagesArray, events, insertEvent } from '../messages.js';
- import { get } from "svelte/store";
+ import { get } from 'svelte/store';
 
  export let message_bar;
  export let conversation;
@@ -30,8 +30,7 @@
  let holes = [];
  let uiEvents = [];
 
-
- events.subscribe((e) => {
+ events.subscribe(e => {
   if (e?.length) {
    handleEvents(e);
    itemsCount = itemsArray.length;
@@ -39,9 +38,8 @@
   }
  });
 
-
  function saveScrollPosition(event) {
-  if (!(messages_elem)) {
+  if (!messages_elem) {
    return;
   }
 
@@ -50,15 +48,12 @@
   console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
  }
 
-
  function restoreScrollPosition(event) {
   console.log('restoreScrollPosition messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
   const scrollDifference = messages_elem.scrollHeight - event.savedScrollHeight;
   messages_elem.scrollTop = event.savedScrollTop + scrollDifference;
   console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
-
  }
-
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
@@ -66,12 +61,9 @@
   messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
-
  function isScrolledToBottom() {
-  if (messages_elem)
-   return checkIfScrolledToBottom(messages_elem);
+  if (messages_elem) return checkIfScrolledToBottom(messages_elem);
  }
-
 
  function checkIfScrolledToBottom(div) {
   const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
@@ -79,17 +71,15 @@
   return result;
  }
 
-
  beforeUpdate(() => {
-  if (!(messages_elem)) {
+  if (!messages_elem) {
    return;
   }
   console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
  });
 
-
  afterUpdate(async () => {
-  if (!(messages_elem)) {
+  if (!messages_elem) {
    return;
   }
 
@@ -137,7 +127,6 @@
   }
  });
 
-
  function getLoader(l) {
   loaders = loaders.filter(i => !i.delete_me);
 
@@ -154,7 +143,6 @@
   return l;
  }
 
-
  function getHole(top, bottom) {
   let uid = top.uid + '_' + bottom.uid;
   for (let i of holes) {
@@ -166,7 +154,7 @@
    type: 'hole',
    top: top,
    bottom: bottom,
-   uid: uid
+   uid: uid,
   };
   holes.push(hole);
   top.hole_uid = hole.uid;
@@ -174,19 +162,16 @@
   return hole;
  }
 
-
  function gc() {
-  console.log('gc random slice of messagesArray...')
+  console.log('gc random slice of messagesArray...');
   let x = get(messagesArray);
   let i = Math.floor(Math.random() * x.length);
   x.splice(i, Math.floor(Math.random() * 40));
   messagesArray.set(x);
-  insertEvent({type: 'gc', array: get(messagesArray)});
+  insertEvent({ type: 'gc', array: get(messagesArray) });
  }
 
-
  async function handleEvents(events) {
-
   await console.log('handleEvents:', events);
 
   if (events.length === 1 && events[0].type === 'properties_update') {
@@ -199,15 +184,14 @@
 
    let event = events[i];
    event.loaders = [];
-   if (event.array === undefined)
-    return;
+   if (event.array === undefined) return;
 
    uiEvents.push(event);
    saveScrollPosition(event);
    event.wasScrolledToBottom = isScrolledToBottom();
 
    if (i != events.length - 1) {
-    continue
+    continue;
    }
 
    let messages = event.array;
@@ -219,15 +203,15 @@
     return;
    }
    if (messages.length === 0) {
-    itemsArray = [{type: 'no_messages'}];
+    itemsArray = [{ type: 'no_messages' }];
     return;
    }
 
    messages = mergeAuthorship(messages);
 
    for (let m of messages) {
-    if (!m.acc || m.uid === undefined)  //(typeof m !== Message)
-    {
+    if (!m.acc || m.uid === undefined) {
+     //(typeof m !== Message)
      console.log('getItems: Invalid item: ', typeof m, m);
      throw new Error('getItems: Invalid item: ' + JSON.stringify(m));
     }
@@ -239,7 +223,7 @@
 
    // add a loader at the top if first message is not the first message in the chat
    if (messages[0].prev !== 'none' && messages[0].id !== undefined) {
-    let l = getLoader({prev: 10, base: messages[0].id, reason: 'lazyload_prev'});
+    let l = getLoader({ prev: 10, base: messages[0].id, reason: 'lazyload_prev' });
     event.loaders.push(l);
     items.unshift(l);
    }
@@ -253,24 +237,23 @@
 
     if (!unseen_marker_put && !m.is_outgoing && (m.seen === false || m.just_marked_as_seen)) {
      unseen_marker_put = true;
-     items.push({type: 'unseen_marker'});
+     items.push({ type: 'unseen_marker' });
     }
 
     items.push(m);
 
     if (m.id !== undefined && m.id > oldLastID) {
      oldLastID = m.id;
-     if (m.is_lazyloaded)
-      scroll = false;
+     if (m.is_lazyloaded) scroll = false;
     }
 
     let next = messages[i + 1];
-    if (next && next.id !== undefined && m.next != "none" && m.next != undefined && m.next !== next.id) {
+    if (next && next.id !== undefined && m.next != 'none' && m.next != undefined && m.next !== next.id) {
      console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
      console.log(JSON.stringify(m), JSON.stringify(next));
      console.log('m.next:', m.next, 'next.id:', next.id);
-     let l1 = getLoader({next: 5, base: m.id, reason: 'lazyload_prev'});
-     let l2 = getLoader({prev: 5, base: next.id, reason: 'lazyload_next'});
+     let l1 = getLoader({ next: 5, base: m.id, reason: 'lazyload_prev' });
+     let l2 = getLoader({ prev: 5, base: next.id, reason: 'lazyload_next' });
      event.loaders.push(l1);
      event.loaders.push(l2);
      items.push(getHole(l1, l2));
@@ -281,7 +264,7 @@
    if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
     console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
     console.log(last.next);
-    let l = getLoader({next: 10, base: last.id, reason: 'lazyload_next'})
+    let l = getLoader({ next: 10, base: last.id, reason: 'lazyload_next' });
     event.loaders.push(l);
     items.push(l);
    }
@@ -289,7 +272,6 @@
    itemsArray = items;
   }
  }
-
 
  function mergeAuthorship(messages) {
   let items = [];
@@ -310,7 +292,6 @@
  async function mouseDown(event) {
   console.log('event:', event);
  }
-
 </script>
 
 <style>
@@ -361,8 +342,6 @@
   border: 3px solid #000;
   border-radius: 10px;
  }
-
-
 </style>
 
 {#if $debug}
@@ -371,12 +350,12 @@
   <button on:click={saveScrollPosition}>Save scroll position</button>
   <button on:click={restoreScrollPosition}>Restore scroll position</button>
   <button on:click={gc}>GC</button>
-  <button on:click={() => showDebugModal = !showDebugModal}>Show debug modal</button>
+  <button on:click={() => (showDebugModal = !showDebugModal)}>Show debug modal</button>
   items count: {itemsCount}
   <ModalWithSlot show={showDebugModal} title="Debug modal">
    <div slot="body">
     <pre>{JSON.stringify(itemsArray, null, 2)}</pre>
-     ---
+    ---
     <pre>{JSON.stringify(loaders, null, 2)}</pre>
    </div>
   </ModalWithSlot>
@@ -384,37 +363,27 @@
 {/if}
 
 <div class="messages" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown}>
-
  <div class="spacer"></div>
 
  {#each itemsArray as m (m.uid)}
-
   {#if m.type === 'no_messages'}
    <div>No messages</div>
-
   {:else if m.type === 'initial_loading_placeholder'}
    <Spinner />
-
   {:else if m.type === 'hole'}
    <Loader loader={m.top} />
    <div class="hole">
     {m.uid}
    </div>
    <Loader loader={m.bottom} />
-
   {:else if m.type === 'loader'}
    <Loader loader={m} />
-
   {:else if m.type === 'unseen_marker'}
    <div class="unread">Unread messages</div>
-
   {:else}
    <Message message={m} container_element={messages_elem} />
   {/if}
-
  {/each}
 
  <div bind:this={anchorElement}></div>
-
 </div>
-

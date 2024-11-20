@@ -82,7 +82,7 @@
  }
 </style>
 
-<div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={(event) => keyDown(event, c)}>
+<div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={event => keyDown(event, c)}>
  <div class="item-row">
   <Photo />
   <div class="description">

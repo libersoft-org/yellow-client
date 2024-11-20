@@ -1,17 +1,7 @@
 import { get, writable } from 'svelte/store';
-import {
- active_account,
- active_account_id,
- getGuid,
- hideSidebarMobile,
- isClientFocused,
- active_account_module_data,
- relay,
- send
-} from '../../core/core.js';
+import { active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { module } from './module.js';
-
 
 class Message {
  constructor(acc, data) {
@@ -25,13 +15,11 @@ class Message {
  }
 }
 
-
 export let md = active_account_module_data(module.identifier);
 export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');
 export let selectedConversation = relay(md, 'selectedConversation');
-
 
 export function initData(acc) {
  let result = {
@@ -46,16 +34,13 @@ export function initData(acc) {
  return result;
 }
 
-
 active_account_id.subscribe(acc => {
  get(md)?.['selectedConversation']?.set(null);
 });
 
-
 function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  return send(acc, module.identifier, command, params, sendSessionID, callback, quiet);
 }
-
 
 export function selectConversation(conversation) {
  console.log('SELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATION', conversation);
@@ -65,7 +50,6 @@ export function selectConversation(conversation) {
  hideSidebarMobile.update(() => true);
  listMessages(conversation.acc, conversation.address);
 }
-
 
 export function listConversations(acc) {
  sendData(acc, 'conversations_list', null, true, (_req, res) => {
@@ -81,23 +65,20 @@ export function listConversations(acc) {
  });
 }
 
-
 function sanitizeConversation(acc, c) {
  c.acc = acc;
  c.last_message_text = stripHtml(c.last_message_text);
  return c;
 }
 
-
 function moduleEventSubscribe(acc, event_name) {
- sendData(acc, 'subscribe', {event: event_name}, true, (req, res) => {
+ sendData(acc, 'subscribe', { event: event_name }, true, (req, res) => {
   if (res.error !== 0) {
    console.error('this is bad.');
    window.alert('Communication with server Error while subscribing to event: ' + res.message);
   }
  });
 }
-
 
 export function initComms(acc) {
  moduleEventSubscribe(acc, 'new_message');
@@ -118,13 +99,11 @@ export function initComms(acc) {
  listConversations(acc);
 }
 
-
 export function deinitComms(acc) {
- sendData(acc, 'user_unsubscribe', {event: 'new_message'});
- sendData(acc, 'user_unsubscribe', {event: 'seen_message'});
- sendData(acc, 'user_unsubscribe', {event: 'seen_inbox_message'});
+ sendData(acc, 'user_unsubscribe', { event: 'new_message' });
+ sendData(acc, 'user_unsubscribe', { event: 'seen_message' });
+ sendData(acc, 'user_unsubscribe', { event: 'seen_inbox_message' });
 }
-
 
 export function deinitData(acc) {
  console.log('DEINIT DATA');
@@ -144,18 +123,14 @@ export function deinitData(acc) {
  acc.module_data[module.identifier] = null;
 }
 
-
 export function listMessages(acc, address) {
  console.log('listMessages', acc, address);
- messagesArray.set([{type: 'initial_loading_placeholder'}]);
- loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', (res, ) => {
- });
+ messagesArray.set([{ type: 'initial_loading_placeholder' }]);
+ loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', res => {});
 }
 
-
 export function loadMessages(acc, address, base, prev, next, reason, cb) {
- return sendData(acc, 'messages_list', {address: address, base, prev, next}, true, (_req, res) => {
-
+ return sendData(acc, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (res.error !== 0 || !res.data?.messages) {
    console.error(res);
    window.alert('Error while listing messages: ' + (res.message || JSON.stringify(res)));
@@ -169,12 +144,11 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
  });
 }
 
-
 function addMessagesToMessagesArray(items, reason) {
  let arr = get(messagesArray);
  arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
  let result = [];
- let state = {countAdded: 0};
+ let state = { countAdded: 0 };
  for (let m of items) {
   result.push(addMessage(arr, m, state));
  }
@@ -183,26 +157,22 @@ function addMessagesToMessagesArray(items, reason) {
  console.log('messagesArray.set:', arr);
  messagesArray.set(arr);
  if (state.countAdded > 0) {
-  insertEvent({type: reason, array: arr});
- }
- else {
-  insertEvent({type: 'properties_update', array: arr});
+  insertEvent({ type: reason, array: arr });
+ } else {
+  insertEvent({ type: 'properties_update', array: arr });
  }
  return result;
 }
 
-
 export function snipeMessage(msg) {
  messagesArray.update(v => {
-  return v.filter(m => m.uid !== msg.uid)
+  return v.filter(m => m.uid !== msg.uid);
  });
- insertEvent({type: 'gc', array: get(messagesArray)});
+ insertEvent({ type: 'gc', array: get(messagesArray) });
 }
 
-
-
 function addMessage(arr, msg, state) {
- void "todo: this should only update the message if the data is actually more up-to-date";
+ void 'todo: this should only update the message if the data is actually more up-to-date';
  let m = arr.find(m => m.uid === msg.uid);
  if (m) {
   for (let key in msg) m[key] = msg[key];
@@ -214,7 +184,6 @@ function addMessage(arr, msg, state) {
  }
 }
 
-
 function constructLoadedMessages(acc, data) {
  let items = data.map(msg => {
   let message = new Message(acc, msg);
@@ -224,7 +193,6 @@ function constructLoadedMessages(acc, data) {
  });
  return items;
 }
-
 
 function sortMessages(messages) {
  messages.sort((a, b) => {
@@ -243,12 +211,10 @@ function sortMessages(messages) {
  });
 }
 
-
 function addMissingPrevNext(messages) {
  for (let i = 0; i < messages.length; i++) {
   let m = messages[i];
-  if (m.prev === undefined)
-   m.prev = findPrev(messages, i);
+  if (m.prev === undefined) m.prev = findPrev(messages, i);
   if (m.next === undefined) {
    m.next = findNext(messages, i);
   } else if (m.next === 'none') {
@@ -259,7 +225,6 @@ function addMissingPrevNext(messages) {
   }
  }
 }
-
 
 function findPrev(messages, i) {
  for (const m of messages) {
@@ -277,7 +242,7 @@ export function setMessageSeen(message, cb) {
  let acc = get(active_account);
  console.log('setMessageSeen', message);
  message.just_marked_as_seen = true;
- sendData(acc, 'message_seen', {uid: message.uid}, true, (req, res) => {
+ sendData(acc, 'message_seen', { uid: message.uid }, true, (req, res) => {
   if (res.error !== 0) {
    console.error('this is bad.');
    return;
@@ -306,7 +271,7 @@ export function sendMessage(text) {
   just_sent: true,
  });
 
- let params = {address: message.address_to, message: message.message, uid: message.uid};
+ let params = { address: message.address_to, message: message.message, uid: message.uid };
 
  sendData(acc, 'message_send', params, true, (req, res) => {
   if (res.error !== 0) {
@@ -316,13 +281,12 @@ export function sendMessage(text) {
   // update the message status and trigger the update of the messagesArray:
   message.received_by_my_homeserver = true;
   messagesArray.update(v => v);
-  insertEvent({type: 'properties_update', array: get(messagesArray)});
+  insertEvent({ type: 'properties_update', array: get(messagesArray) });
  });
 
  addMessagesToMessagesArray([message], 'send_message');
  updateConversationsArray(acc, message);
 }
-
 
 function updateConversationsArray(acc, msg) {
  const msg_created = msg.created;
@@ -335,7 +299,6 @@ function updateConversationsArray(acc, msg) {
  let is_unread = !msg.seen && !msg.just_sent && msg.address_from !== acc.credentials.address;
 
  if (conversation) {
-
   conversation.last_message_date = msg_created;
   conversation.last_message_text = msg.stripped_text;
 
@@ -347,7 +310,6 @@ function updateConversationsArray(acc, msg) {
   const index = ca.indexOf(conversation);
   ca.splice(index, 1);
   ca.unshift(conversation);
-
  } else {
   let conversation = {
    address: msg.remote_address,
@@ -361,24 +323,23 @@ function updateConversationsArray(acc, msg) {
  acc_ca.set(ca);
 }
 
-
 export function openNewConversation(address) {
  console.log('openNewConversation', address);
- selectConversation({acc: get(active_account), address});
+ selectConversation({ acc: get(active_account), address });
 }
-
 
 export function startReply(message) {
- message.reply = {text: 'funny.'};
+ message.reply = { text: 'funny.' };
  messagesArray.update(v => v);
- insertEvent({type: 'properties_update', array: get(messagesArray)});
+ insertEvent({ type: 'properties_update', array: get(messagesArray) });
 }
-
 
 export function insertEvent(event) {
- events.update(v => {console.log('insertEvent: ',v, event); return [...v, event]});
+ events.update(v => {
+  console.log('insertEvent: ', v, event);
+  return [...v, event];
+ });
 }
-
 
 function eventNewMessage(acc, event) {
  const res = event.detail;
@@ -394,12 +355,11 @@ function eventNewMessage(acc, event) {
  console.log('eventNewMessage updateConversationsArray with msg:', msg);
  updateConversationsArray(acc, msg);
  if (acc !== get(active_account)) return;
- if (((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address))) {
+ if ((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address)) {
   let oldLen = get(messagesArray).length;
   msg = addMessagesToMessagesArray([msg], 'new_message')[0];
  }
 }
-
 
 function eventSeenMessage(acc, event) {
  if (acc !== get(active_account)) {
@@ -420,10 +380,9 @@ function eventSeenMessage(acc, event) {
   message.seen = res.data.seen;
   messagesArray.update(v => v);
   console.log('insertEvent..');
-  insertEvent({type: 'properties_update', array: get(messagesArray)});
+  insertEvent({ type: 'properties_update', array: get(messagesArray) });
  } else console.log('eventSeenMessage: message not found by uid:', res);
 }
-
 
 function eventSeenInboxMessage(acc, event) {
  /*
@@ -441,7 +400,6 @@ mark, as seen, a message sent to us. This can be triggered by another client.
   conversationsArray.update(v => v);
  } else console.log('eventSeenInboxMessage: conversation not found by address:', res);
 }
-
 
 function showNotification(acc, msg) {
  if (!acc) console.error('showNotification: no account');
@@ -467,29 +425,26 @@ function showNotification(acc, msg) {
  }
  notification.onclick = () => {
   window.focus();
-  selectConversation({acc, address: msg.address_from, visible_name: conversation?.visible_name});
+  selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
  };
 }
-
 
 function playNotificationSound() {
  const audio = new Audio('audio/message.mp3');
  audio.play();
 }
 
-
 export function ensureConversationDetails(conversation) {
  console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
  let acc = get(active_account);
  console.log('ensureConversationDetails acc:', acc);
- send(acc, 'core', 'user_userinfo_get', {address: conversation.address}, true, (_req, res) => {
+ send(acc, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) return;
   Object.assign(conversation, res.data);
   conversationsArray.update(v => v);
  });
 }
-
 
 DOMPurify.addHook('afterSanitizeAttributes', function (node) {
  if (node.tagName === 'A') {
@@ -500,7 +455,6 @@ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
   node.removeAttribute('autoplay');
  }
 });
-
 
 export function saneHtml(content) {
  return DOMPurify.sanitize(content);

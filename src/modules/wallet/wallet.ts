@@ -63,7 +63,7 @@ export const rpcURL = writable<string | null>(null);
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer;
 
-export const networks = localStorageSharedStore<Network []>('networks', []);
+export const networks = localStorageSharedStore<Network[]>('networks', []);
 
 networks.subscribe((nets: Network[]) => {
  let modified = false;
@@ -459,8 +459,8 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
   //new Uint8Array(data.split('').map(c => c.charCodeAt(0))),
   data: data,
  };
-  //maxFeePerGas: etherValueFee,
-  //nonce: await provider.getTransactionCount(selectedAddressValue.address),
+ //maxFeePerGas: etherValueFee,
+ //nonce: await provider.getTransactionCount(selectedAddressValue.address),
  console.log('selectedAddressValue.address:', selectedAddressValue);
  console.log('provider:', provider);
  console.log('mn:', mn);

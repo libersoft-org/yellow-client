@@ -1,9 +1,9 @@
 <script>
  import { loadMessages, insertEvent, messagesArray } from '../messages.js';
- import { getContext, onDestroy, onMount } from "svelte";
+ import { getContext, onDestroy, onMount } from 'svelte';
  import Button from '../../../core/components/button.svelte';
  import Spinner from '../../../core/components/spinner.svelte';
- import { get } from "svelte/store";
+ import { get } from 'svelte/store';
 
  export let loader;
 
@@ -15,7 +15,6 @@
  let interval;
 
  let contentElement = getContext('contentElement');
-
 
  onMount(() => {
   console.log('LOADER MOUNTED:', loader);
@@ -39,33 +38,29 @@
   }
  }
 
- function setupInterval()
- {
-   interval = setInterval(() => {
-    //console.log('check loaderElement:', loaderElement, loader.loading, loaderElement?.getBoundingClientRect(), window.innerHeight);
-    if (loader.loading) clearInterval(interval);
-    if (!loader.loading && loaderElement) {
-     if (loaderElement.getBoundingClientRect().top < window.innerHeight && loaderElement.getBoundingClientRect().bottom > 0) {
-      //console.log('loaderElement is visible, load triggered by loader.timer.');
-      handleIntersect([{ isIntersecting: true }]);
-     }
+ function setupInterval() {
+  interval = setInterval(() => {
+   //console.log('check loaderElement:', loaderElement, loader.loading, loaderElement?.getBoundingClientRect(), window.innerHeight);
+   if (loader.loading) clearInterval(interval);
+   if (!loader.loading && loaderElement) {
+    if (loaderElement.getBoundingClientRect().top < window.innerHeight && loaderElement.getBoundingClientRect().bottom > 0) {
+     //console.log('loaderElement is visible, load triggered by loader.timer.');
+     handleIntersect([{ isIntersecting: true }]);
     }
-   }, 1111);
+   }
+  }, 1111);
  }
-
 
  onDestroy(() => {
   if (observer) observer.disconnect();
   if (interval) clearInterval(interval);
  });
 
-
  /* todo: sometimes, intersection observer does not work properly. add timer? */
  function handleIntersect(entries) {
   let _loaderIsVisible = entries[0].isIntersecting;
   if (_loaderIsVisible && !loader.loading) loadMore();
  }
-
 
  function loadMore() {
   clearInterval(interval);
@@ -74,31 +69,25 @@
   loader.request = '???';
   loader.timer = setTimeout(() => {
    console.log('LOADmORE: LOADmESSAGES...');
-   loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, loader.reason, (_res) => {
+   loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, loader.reason, _res => {
     console.log('LOADmESSAGES: _RES:', _res);
     loader.loading = false;
     loader.delete_me = true;
    });
   }, 1);
  }
-
-
 </script>
 
 <style>
-
  .container {
   min-height: 40px;
   border: 1px solid #ccc;
  }
-
 </style>
 
-
 <div class="container">
-
  <div bind:this={loaderElement}>
-<!--   <hr><hr><hr><hr><hr>
+  <!--   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
@@ -107,8 +96,7 @@
   <br/><pre>{JSON.stringify({ ...loader, conversation: undefined }, null, 2)}</pre>
 
   -->
-<!--  <Button on:click={loadMore}>Load more</Button> -->
+  <!--  <Button on:click={loadMore}>Load more</Button> -->
   <Spinner show={loader.loading} />
  </div>
-
 </div>

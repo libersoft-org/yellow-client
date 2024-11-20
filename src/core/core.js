@@ -1,4 +1,3 @@
-
 import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
@@ -194,7 +193,7 @@ function removeLiveAccountsNotInConfig(accounts_list, value) {
 
 accounts_config.subscribe(value => {
  //console.log('ACCOUNTS CONFIG:', value);
- void "TODO: implement configuration of accounts order";
+ void 'TODO: implement configuration of accounts order';
  let accounts_list = get(accounts);
  //console.log('EXISTING ACCOUNTS (stores):', accounts_list);
  for (let config of value) {

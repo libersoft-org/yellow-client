@@ -138,7 +138,6 @@
  async function onkeydown(event) {
   console.log('window onkeydown: ', event.key);
  }
-
 </script>
 
 <style>
@@ -210,7 +209,7 @@
  </div>
  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
 
- <div class="content" bind:this={contentElement} >
+ <div class="content" bind:this={contentElement}>
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.content} />
   {:else if selectedModuleDecl}
