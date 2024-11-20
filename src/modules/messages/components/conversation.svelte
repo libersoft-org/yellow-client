@@ -1,6 +1,7 @@
 <script>
- import { onDestroy, onMount } from 'svelte';
+ import { onDestroy, onMount, tick } from 'svelte';
  import Core from '../../../core/core.js';
+
  import { get } from 'svelte/store';
  import { selectedConversation } from '../messages.js';
  import ProfileBar from './profile-bar.svelte';
@@ -8,9 +9,16 @@
  import MessageBar from './message-bar.svelte';
 
  let message_bar;
-// $: message_bar?.setBarFocus();
 
- onMount(() => {
+ $: update($selectedConversation);
+
+ async function update(selectedConversation) {
+  if (selectedConversation) {
+   await setBarFocus();
+  }
+ }
+
+ onMount(async () => {
   console.log('conversation mounted for:', get(selectedConversation));
   window.addEventListener('keydown', onkeydown);
  });
@@ -25,12 +33,9 @@
  }
 
  export async function setBarFocus() {
-  await message_bar.setBarFocus();
+  await tick();
+  await message_bar?.setBarFocus();
  }
-
- /*function hotKeys(event) {
-  if (event.key === 'Escape' && get(selectedConversation)) closeConversation();
- }*/
 
  async function onkeydown(event) {
   console.log('Conversation keyDown: ', event.key);
@@ -38,30 +43,12 @@
    closeConversation();
    return;
   }
-  //if (event.key === 'a')
-  {
-//   event.preventDefault();
-
-   if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-    //event.preventDefault();
-    return;
-   }
-
-   await message_bar.setBarFocus();
-   const simulatedEvent = new KeyboardEvent('keydown', {
-     key: event.key,
-     code: event.code,
-     keyCode: event.keyCode,
-     which: event.which,
-     shiftKey: event.shiftKey,
-     ctrlKey: event.ctrlKey,
-     metaKey: event.metaKey,
-     bubbles: false
-   });
-   //message_bar.dispatchEvent(simulatedEvent);
-   //window.removeEventListener('keydown', onkeydown);
+  if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') {
+   return;
   }
-
+  console.log(event.shiftKey, event.ctrlKey, event.metaKey);
+  if (event.ctrlKey || event.metaKey) return;
+  await setBarFocus();
  }
 
 </script>

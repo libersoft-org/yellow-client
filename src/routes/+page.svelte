@@ -137,12 +137,6 @@
 
  async function onkeydown(event) {
   console.log('window onkeydown: ', event.key);
-/*  if (event.key === 'a') {
-   if (selected_module_id === 'messages') {
-    console.log('setBarFocus');
-    await content.setBarFocus();
-   }
-  }*/
  }
 
 </script>

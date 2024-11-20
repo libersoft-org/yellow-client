@@ -314,11 +314,7 @@
  }
 
  async function mouseDown(event) {
-  //console.log('event:', event);
-  //event.preventDefault();
-  //console.log('mouseDown');
-  //if (message_bar) await message_bar.setBarFocus();
-  //console.log('1message_bar:', message_bar);
+  console.log('event:', event);
  }
 
 </script>
