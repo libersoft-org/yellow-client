@@ -3,6 +3,9 @@
  import { tick } from 'svelte';
 
  let elMessage;
+ let text;
+
+ $: console.log('message-bar text:', text);
 
  /* exported setBarFocus */
  export async function setBarFocus() {
@@ -21,6 +24,10 @@
   textarea.style.height = (textarea.scrollHeight < maxHeight ? textarea.scrollHeight : maxHeight) + 'px';
   if (elMessage.scrollHeight > maxHeight) elMessage.style.overflowY = 'scroll';
   else elMessage.style.overflowY = 'hidden';
+ }
+
+ export function dispatchEvent(event) {
+  text = event.key;
  }
 
  function clickSend() {
@@ -84,6 +91,6 @@
 </style>
 
 <div class="message-bar">
- <textarea class="message" bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
+ <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
  <div class="icon" role="button" tabindex="0" on:click={clickSend} on:keydown={keySend}><img src="img/send.svg" alt="Send" /></div>
 </div>

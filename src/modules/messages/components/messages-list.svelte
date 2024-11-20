@@ -31,6 +31,12 @@
  let uiEvents = [];
 
 
+
+  onMount(() => {
+    // Ensure the div is focused when the component is mounted
+    messages_elem.focus();
+  });
+
  events.subscribe((e) => {
   if (e.length) {
    handleEvents(e);
@@ -315,12 +321,6 @@
   //console.log('1message_bar:', message_bar);
  }
 
- async function keyDown(event) {
-  console.log('MessagesList keyDown:', event.key);
-  if (message_bar) await message_bar.setBarFocus();
- }
-
-
 </script>
 
 <style>
@@ -391,7 +391,7 @@
  </ModalWithSlot>
 </div>
 
-<div class="messages" bind:this={messages_elem} on:mousedown={mouseDown} on:keypress={keyDown}>
+<div class="messages" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown}>
 
  <div class="spacer"></div>
 

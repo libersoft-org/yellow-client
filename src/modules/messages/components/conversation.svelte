@@ -10,18 +10,22 @@
  let message_bar;
 // $: message_bar?.setBarFocus();
 
-/* onMount(() => {
+ onMount(() => {
   console.log('conversation mounted for:', get(selectedConversation));
-  window.addEventListener('keydown', hotKeys);
+  window.addEventListener('keydown', onkeydown);
  });
 
  onDestroy(() => {
-  if (typeof window !== 'undefined') window.removeEventListener('keydown', hotKeys);
+  if (typeof window !== 'undefined') window.removeEventListener('keydown', onkeydown);
  });
-*/
+
  function closeConversation() {
   selectedConversation.update(() => null);
   Core.hideSidebarMobile.update(() => false);
+ }
+
+ export async function setBarFocus() {
+  await message_bar.setBarFocus();
  }
 
  /*function hotKeys(event) {
@@ -36,8 +40,26 @@
   }
   //if (event.key === 'a')
   {
-   event.preventDefault();
+//   event.preventDefault();
+
+   if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    //event.preventDefault();
+    return;
+   }
+
    await message_bar.setBarFocus();
+   const simulatedEvent = new KeyboardEvent('keydown', {
+     key: event.key,
+     code: event.code,
+     keyCode: event.keyCode,
+     which: event.which,
+     shiftKey: event.shiftKey,
+     ctrlKey: event.ctrlKey,
+     metaKey: event.metaKey,
+     bubbles: false
+   });
+   //message_bar.dispatchEvent(simulatedEvent);
+   //window.removeEventListener('keydown', onkeydown);
   }
 
  }
@@ -55,7 +77,7 @@
  }
 </style>
 
-<div class="conversation" {onkeydown}>
+<div tabindex="0" class="conversation" {onkeydown}>
  <ProfileBar {closeConversation} />
  <MessagesList {message_bar} conversation={$selectedConversation} />
  <MessageBar bind:this={message_bar} />

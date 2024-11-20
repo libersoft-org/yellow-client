@@ -32,6 +32,7 @@
    content: Accounts,
   },
  };
+ let content;
 
  //this should probably be a part of module decl:
  /*
@@ -133,6 +134,17 @@
    resizer.style.left = sideBarWidth + 'px';
   }
  }
+
+ async function onkeydown(event) {
+  console.log('window onkeydown: ', event.key);
+/*  if (event.key === 'a') {
+   if (selected_module_id === 'messages') {
+    console.log('setBarFocus');
+    await content.setBarFocus();
+   }
+  }*/
+ }
+
 </script>
 
 <style>
@@ -182,6 +194,8 @@
  }
 </style>
 
+<svelte:window {onkeydown} />
+
 <svelte:head>
  <title>{product}</title>
 </svelte:head>
@@ -206,7 +220,7 @@
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.content} />
   {:else if selectedModuleDecl}
-   <svelte:component this={selectedModuleDecl.panels.content} />
+   <svelte:component this={selectedModuleDecl.panels.content} bind:this={content} />
   {:else}
    <WelcomeContent {product} {version} {link} />
   {/if}
