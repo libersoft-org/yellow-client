@@ -31,12 +31,6 @@
  let uiEvents = [];
 
 
-
-  onMount(() => {
-    // Ensure the div is focused when the component is mounted
-    messages_elem.focus();
-  });
-
  events.subscribe((e) => {
   if (e?.length) {
    handleEvents(e);
