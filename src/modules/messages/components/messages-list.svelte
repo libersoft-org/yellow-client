@@ -38,7 +38,7 @@
   });
 
  events.subscribe((e) => {
-  if (e.length) {
+  if (e?.length) {
    handleEvents(e);
    itemsCount = itemsArray.length;
    events.set([]);
