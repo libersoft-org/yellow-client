@@ -1,8 +1,9 @@
 <script>
  import { setMessageSeen, saneHtml, snipeMessage, startReply } from '../messages.js';
+ import { debug } from '../../../core/core.js';
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
-  import Button from '../../../core/components/button.svelte';
+ import Button from '../../../core/components/button.svelte';
 
  export let message;
  export let container_element;
@@ -11,7 +12,6 @@
  let observer;
  let intersection_observer_element;
  let is_visible;
- let checkmark_img;
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
@@ -145,7 +145,9 @@
    }}/>
  </div>
 
- id {message.id}
+ {#if $debug}
+  id {message.id}
+ {/if}
 
 </div>
 

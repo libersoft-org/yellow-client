@@ -1,6 +1,6 @@
 <script>
  import { afterUpdate, beforeUpdate, onMount, tick } from 'svelte';
- import { getGuid } from '../../../core/core.js';
+ import { getGuid, debug } from '../../../core/core.js';
  import Spinner from '../../../core/components/spinner.svelte';
  import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
  import Button from '../../../core/components/button.svelte';
@@ -371,21 +371,23 @@
 
 </style>
 
-<div style="debug">
- <button on:click={scrollToBottom}>Scroll to bottom</button>
- <button on:click={saveScrollPosition}>Save scroll position</button>
- <button on:click={restoreScrollPosition}>Restore scroll position</button>
- <button on:click={gc}>GC</button>
- <button on:click={() => showDebugModal = !showDebugModal}>Show debug modal</button>
- items count: {itemsCount}
- <ModalWithSlot show={showDebugModal} title="Debug modal">
-  <div slot="body">
-   <pre>{JSON.stringify(itemsArray, null, 2)}</pre>
-    ---
-   <pre>{JSON.stringify(loaders, null, 2)}</pre>
-  </div>
- </ModalWithSlot>
-</div>
+{#if $debug}
+ <div style="debug">
+  <button on:click={scrollToBottom}>Scroll to bottom</button>
+  <button on:click={saveScrollPosition}>Save scroll position</button>
+  <button on:click={restoreScrollPosition}>Restore scroll position</button>
+  <button on:click={gc}>GC</button>
+  <button on:click={() => showDebugModal = !showDebugModal}>Show debug modal</button>
+  items count: {itemsCount}
+  <ModalWithSlot show={showDebugModal} title="Debug modal">
+   <div slot="body">
+    <pre>{JSON.stringify(itemsArray, null, 2)}</pre>
+     ---
+    <pre>{JSON.stringify(loaders, null, 2)}</pre>
+   </div>
+  </ModalWithSlot>
+ </div>
+{/if}
 
 <div class="messages" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown}>
 

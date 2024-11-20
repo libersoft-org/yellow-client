@@ -9,6 +9,11 @@ export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
+export let debug = writable(true);
+
+debug.subscribe(value => {
+ console.log('DEBUG:', value);
+});
 
 // declarations of modules that this client supports
 let module_decls = {};

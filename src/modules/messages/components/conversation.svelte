@@ -1,7 +1,7 @@
 <script>
  import { onDestroy, onMount, tick } from 'svelte';
  import Core from '../../../core/core.js';
-
+ import { debug } from '../../../core/core.js';
  import { get } from 'svelte/store';
  import { selectedConversation } from '../messages.js';
  import ProfileBar from './profile-bar.svelte';
@@ -43,10 +43,13 @@
    closeConversation();
    return;
   }
+  if (event.ctrlKey && event.key === '`') {
+   debug.update(d => !d);
+   return;
+  }
   if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') {
    return;
   }
-  console.log(event.shiftKey, event.ctrlKey, event.metaKey);
   if (event.ctrlKey || event.metaKey) return;
   await setBarFocus();
  }
