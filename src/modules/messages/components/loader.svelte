@@ -50,7 +50,7 @@
       handleIntersect([{ isIntersecting: true }]);
      }
     }
-   }, 1000);
+   }, 1111);
  }
 
 

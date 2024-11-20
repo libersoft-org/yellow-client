@@ -74,7 +74,7 @@
 
 
  function checkIfScrolledToBottom(div) {
-  const result = div.scrollTop + div.clientHeight >= div.scrollHeight;
+  const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
   console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
   return result;
  }
@@ -188,6 +188,11 @@
  async function handleEvents(events) {
 
   await console.log('handleEvents:', events);
+
+  if (events.length === 1 && events[0].type === 'properties_update') {
+   itemsArray = itemsArray;
+   return;
+  }
 
   for (let i = 0; i < events.length; i++) {
    await console.log('handleEvent:', events[i]);

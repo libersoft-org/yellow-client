@@ -20,13 +20,13 @@
  //$: console.log('Core.isClientFocused:', $isClientFocused);
 
  $: if (is_visible && $isClientFocused) {
-  //console.log('is_visible:', is_visible, 'isClientFocused:', $isClientFocused);
+  console.log('is_visible:', is_visible, 'isClientFocused:', $isClientFocused);
   if (message.seen) {
    console.log('not setting seen because already set');
    observer.disconnect();
    is_visible = false;
   } else {
-   //console.log('setMessageSeen..');
+   console.log('setMessageSeen..');
    setMessageSeen(message, () => {
     console.log('seen set succesfully, disconnecting observer.');
     observer.disconnect();

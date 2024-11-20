@@ -316,6 +316,7 @@ export function sendMessage(text) {
   // update the message status and trigger the update of the messagesArray:
   message.received_by_my_homeserver = true;
   messagesArray.update(v => v);
+  insertEvent({type: 'properties_update', array: get(messagesArray)});
  });
 
  addMessagesToMessagesArray([message], 'send_message');
@@ -394,16 +395,25 @@ function eventNewMessage(acc, event) {
 
 
 function eventSeenMessage(acc, event) {
- if (acc !== get(active_account)) return;
+ if (acc !== get(active_account)) {
+  console.log('eventSeenMessage: acc !== get(active_account)', acc, get(active_account));
+  return;
+ }
  console.log(event);
  const res = event.detail;
  console.log('eventSeenMessage', res);
- if (!res.data) return;
- console.log(get(messagesArray));
+ if (!res.data) {
+  console.log('eventSeenMessage: no data');
+  return;
+ }
+ console.log('messagesArray:', get(messagesArray));
  const message = get(messagesArray).find(m => m.uid === res.data.uid);
+ console.log('eventSeenMessage: message found by uid:', message);
  if (message) {
   message.seen = res.data.seen;
   messagesArray.update(v => v);
+  console.log('insertEvent..');
+  insertEvent({type: 'properties_update', array: get(messagesArray)});
  } else console.log('eventSeenMessage: message not found by uid:', res);
 }
 
@@ -469,7 +479,7 @@ export function ensureConversationDetails(conversation) {
  send(acc, 'core', 'user_userinfo_get', {address: conversation.address}, true, (_req, res) => {
   if (res.error !== 0) return;
   Object.assign(conversation, res.data);
-  conversationsArray.update(v => v); // fixme: this infiloops?
+  conversationsArray.update(v => v);
  });
 }
 
