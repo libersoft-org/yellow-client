@@ -49,6 +49,15 @@
   return result;
  }
 
+ function clickClose() {}
+
+ function keyClose(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickClose();
+  }
+ }
+
  onMount(() => {
   //console.log('onMount message:', message);
   if (!message.seen && !message.just_sent) {
@@ -113,10 +122,44 @@
  .message .bottomline .time {
   font-size: 12px;
  }
+
  .message .bottomline .checkmark img {
   width: 24px;
   height: 24px;
  }
+
+ .message .reply {
+  display: flex;
+  padding: 0 0 0 10px;
+  border: 1px solid #080;
+  border-radius: 10px;
+  border-left: 8px solid #080;
+  margin: 0 0 5px 0;
+ }
+
+ .message .reply .content {
+  flex-grow: 1;
+  padding: 4px 0;
+ }
+
+ .message .reply .content .name {
+  font-size: 12px;
+  font-weight: bold;
+  color: #080;
+ }
+
+ .message .reply .content .msg {
+  color: #555;
+ }
+
+ .message .reply .close {
+  display: flex;
+  width: 10px;
+  height: 10px;
+  padding: 10px;
+  cursor: pointer;
+ }
+
  .reply-box {
   text-align: right;
  }
@@ -124,6 +167,13 @@
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
  <div bind:this={intersection_observer_element}></div>
+ <div class="reply">
+  <div class="content">
+   <div class="name">Name from</div>
+   <div class="msg">Hello</div>
+  </div>
+  <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close-black.svg" alt="X" /></div>
+ </div>
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="bottomline">
   <div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
