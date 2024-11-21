@@ -1,1 +1,12 @@
-<div>This is a step 2 content... test test test test test long text</div>
+<script>
+ import ModalAccountsAddEdit from '../modals/modal-accounts-add-edit.svelte';
+
+function close()
+{
+ console.log('close');
+ }
+
+</script>
+
+<ModalAccountsAddEdit isInWelcomeWizard={true} close={close} params={{ id: null }} />
+

@@ -214,6 +214,7 @@
   {#if message.is_outgoing}
    <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
   {/if}
+  {#if $debug}
   <Button
    text="Delete"
    on:click={() => {
@@ -228,6 +229,7 @@
     startReply(message);
    }}
   />
+  {/if}
  </div>
 
  {#if $debug}

@@ -13,6 +13,7 @@ export function addAccount(config, settings) {
   },
  ]);
  selectAccount(id);
+ return id;
 }
 
 export function saveAccount(id, config, settings) {
@@ -38,6 +39,6 @@ export function delAccount(id) {
  accounts_config.update(v => v.filter(a => a.id !== id));
 }
 
-export function findAccount(id) {
+export function findAccountConfig(id) {
  return get(accounts_config).find(a => a.id === id);
 }

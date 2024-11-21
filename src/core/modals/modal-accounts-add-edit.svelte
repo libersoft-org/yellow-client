@@ -1,9 +1,14 @@
 <script>
  import { onMount } from 'svelte';
- import { addAccount, findAccount, saveAccount } from '../accounts_config.js';
+ import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
+ import { accounts, active_account_id, active_account_store, findAccount } from '../core.js';
  import Button from '../components/button.svelte';
+ import { derived, get, writable } from "svelte/store";
  export let close;
  export let params;
+ export let isInWelcomeWizard = false;
+
+
  let serverElem;
  let error;
  let credentials_address;
@@ -11,11 +16,44 @@
  let credentials_password;
  let config_enabled;
  let config_title;
+ let acc;
+
+
+
+ let account_id_store = writable(null);
+ $: account_id_store.set(params.id);
+
+ account_id_store.subscribe(value => {
+  console.log('ACCOUNT-ID-STORE-EMITTED', value);
+ });
+
+ let account_store = derived([accounts, account_id_store], ([$accounts, $account_id_store]) => {
+  let r = $accounts.find(acc => get(acc).id === $account_id_store);
+  console.log('ACCOUNT-STORE-FIRED', $accounts, $account_id_store, r);
+  return r;
+ });
+
+ let account = derived(account_store, ($account_store, set) => {
+  if (!$account_store) {
+   return set(null);
+  }
+  const unsubscribe = $account_store.subscribe(account => {
+   console.log('$ACCOUNT-STORE-EMITTED', account);
+   set(account);
+  });
+  return () => unsubscribe();
+ });
+
+ account.subscribe(value => {
+  acc = value;
+  console.log('ACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACC', acc);
+ });
+
 
  onMount(() => {
   serverElem.focus();
   if (params.id !== null) {
-   let acc = findAccount(params.id);
+   let acc = findAccountConfig(params.id);
    console.log('acc', acc);
    let credentials = acc.credentials;
 
@@ -25,16 +63,20 @@
    config_enabled = acc.enabled;
    config_title = acc.settings?.title;
   } else {
-   credentials_address = '';
-   credentials_server = '';
+   credentials_address = 'me@' + replacePort(window.location.host, '');
+   credentials_server = replacePort((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host, ':8086');
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';
   }
  });
 
+ function replacePort(url, port) {
+  return url.replace(/:\d+/, port);
+ }
+
  function clickAdd() {
-  addAccount({ enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
+  params.id = addAccount({ enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
   close();
  }
 
@@ -88,7 +130,7 @@
 
 <div class="form">
  <div class="group">
-  <div class="label">Title:</div>
+  <span><span class="label">Title:</span></span>
   <input type="text" bind:value={config_title} on:keydown={keyEnter} />
  </div>
  <div class="group">
@@ -103,12 +145,14 @@
   <div class="label">Password:</div>
   <input type="password" placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter} />
  </div>
+ {#if !isInWelcomeWizard}
  <div class="group">
   <div class="label">
    Enabled:
    <input type="checkbox" bind:checked={config_enabled} />
   </div>
  </div>
+ {/if}
  {#if error}
   <div class="error">
    <div class="bold">Error:</div>
@@ -119,5 +163,8 @@
   <Button on:click={clickAdd} text="Add the account" />
  {:else}
   <Button on:click={clickSave} text="Save" />
+ {/if}
+ {#if acc}
+  <b>status: {acc?.status}</b>
  {/if}
 </div>

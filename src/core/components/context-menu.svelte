@@ -18,6 +18,6 @@
 
 <div style={menuStyle}>
  {#each items as item}
-  <ContextMenuItem icon={item.icon} label={item.label} action={item.action} />
+  <ContextMenuItem icon={item.icon} label={item.label} on:click={item.action} />
  {/each}
 </div>

@@ -8,7 +8,7 @@ export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
-export let debug = writable(true);
+export let debug = writable(import.meta.env.VITE_YELLOW_CLIENT_DEBUG || false);
 
 debug.subscribe(value => {
  console.log('DEBUG:', value);
@@ -84,6 +84,10 @@ import.meta.hot?.dispose(() => {
   reconnectAccount(acc);
  });
 });
+
+export function findAccount(id) {
+ return get(accounts).find(acc => get(acc).id === id);
+}
 
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
  //console.log('active_account_store:', $accounts, $active_account_id);
