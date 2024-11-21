@@ -12,6 +12,7 @@
  let observer;
  let intersection_observer_element;
  let is_visible;
+ let pressTimer;
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
@@ -49,13 +50,36 @@
   return result;
  }
 
- function clickReply() {}
+ function clickReply() {
+  console.log('This will focus the original message');
+ }
 
  function keyReply(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    clickReply();
   }
+ }
+
+ function clickCaret() {
+  alert('Icon clicked');
+ }
+
+ function keyCaret(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickCaret();
+  }
+ }
+
+ function handleTouchStart() {
+  pressTimer = setTimeout(() => {
+   alert('Long press detected');
+  }, 500);
+ }
+
+ function handleTouchEnd() {
+  clearTimeout(pressTimer);
  }
 
  onMount(() => {
@@ -80,6 +104,7 @@
 
 <style>
  .message {
+  position: relative;
   max-width: 60%;
   padding: 10px;
   margin: 10px 20px;
@@ -152,10 +177,33 @@
  .reply-box {
   text-align: right;
  }
+
+ .message .menu {
+  display: none;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: #fefdf7;
+  border: 1px solid #cecdc7;
+ }
+
+ @media (hover: hover) and (pointer: fine) {
+  .message:hover .menu {
+   display: flex;
+  }
+ }
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}">
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd}>
  <div bind:this={intersection_observer_element}></div>
+ <div class="menu" role="button" tabindex="0" on:click={clickCaret} on:keydown={keyCaret}>
+  <img src="img/caret-down-gray.svg" alt="Menu" />
+ </div>
  <div class="reply" role="button" tabindex="0" on:click={clickReply} on:keydown={keyReply}>
   <div class="name">Name from</div>
   <div class="msg">Hello</div>
