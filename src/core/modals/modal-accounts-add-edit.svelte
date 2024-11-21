@@ -7,6 +7,7 @@
  export let close;
  export let params;
  export let isInWelcomeWizard = false;
+ export let save_id;
 
 
  let serverElem;
@@ -17,7 +18,7 @@
  let config_enabled;
  let config_title;
  let acc;
-
+ let retry_nonce = 0;
 
 
  let account_id_store = writable(null);
@@ -52,7 +53,8 @@
 
  onMount(() => {
   serverElem.focus();
-  if (params.id !== null) {
+  if ((params.id ?? null) !== null) {
+   console.log('params.id', params.id);
    let acc = findAccountConfig(params.id);
    console.log('acc', acc);
    let credentials = acc.credentials;
@@ -77,18 +79,21 @@
 
  function clickAdd() {
   params.id = addAccount({ enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
+  if (save_id) save_id(params.id);
   close();
  }
 
  function clickSave() {
-  saveAccount(params.id, { enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
+  saveAccount(params.id, { enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password, retry_nonce } }, { title: config_title });
+  retry_nonce++;
+  if (save_id) save_id(params.id);
   close();
  }
 
  function keyEnter() {
   if (event.key === 'Enter') {
    event.preventDefault();
-   if (params.id === null) clickAdd();
+   if ((params.id ?? null) === null) clickAdd();
    else clickSave();
   }
  }
@@ -159,7 +164,7 @@
    <div>{error}</div>
   </div>
  {/if}
- {#if params.id === null}
+ {#if (params.id ?? null) === null}
   <Button on:click={clickAdd} text="Add the account" />
  {:else}
   <Button on:click={clickSave} text="Save" />

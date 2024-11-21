@@ -2,6 +2,7 @@
  import Button from './button.svelte';
  export let show;
  export let steps = [];
+ export let data;
  let currentStep = 0;
 
  function clickClose() {
@@ -140,7 +141,7 @@
     {/each}
    </div>
    <div class="content">
-    <svelte:component this={steps[currentStep].component} />
+    <svelte:component this={steps[currentStep].component} {data} />
    </div>
    <div class="navigation">
     {#if currentStep > 0}

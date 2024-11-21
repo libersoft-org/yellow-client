@@ -25,6 +25,7 @@
   { title: 'Connect your account', component: WizardWelcomeStep2 },
   { title: 'All set!', component: WizardWelcomeStep3 },
  ];
+ let wizardData = {};
  const corePages = {
   accounts: {
    id: 'accounts',
@@ -219,4 +220,4 @@
   {/if}
  </div>
 </div>
-<Wizard steps={welcomeWizardSteps} show={showWelcomeWizard} />
+<Wizard steps={welcomeWizardSteps} show={showWelcomeWizard} data={wizardData} />

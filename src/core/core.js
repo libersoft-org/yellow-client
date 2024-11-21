@@ -152,7 +152,7 @@ export function relay(md, key) {
 function updateLiveAccount(account, config) {
  let acc = get(account);
 
- if (acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
+ if (acc.credentials.retry_nonce != config.credentials.retry_nonce || acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
   acc.credentials = config.credentials;
   if (acc.enabled) {
    _disableAccount(account);
