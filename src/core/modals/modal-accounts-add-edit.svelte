@@ -11,7 +11,7 @@
  export let isInWelcomeWizard = false;
  export let save_id;
 
- let serverElem;
+ let titleElem;
  let error;
  let credentials_address;
  let credentials_server;
@@ -51,7 +51,7 @@
  });
 
  onMount(() => {
-  serverElem.focus();
+  titleElem.focus();
   if ((params.id ?? null) !== null) {
    console.log('params.id', params.id);
    let acc = findAccountConfig(params.id);
@@ -156,11 +156,11 @@
 <div class="form">
  <div class="group">
   <span><span class="label">Title:</span></span>
-  <input type="text" bind:value={config_title} on:keydown={keyEnter} />
+  <input type="text" bind:value={config_title} on:keydown={keyEnter} bind:this={titleElem} />
  </div>
  <div class="group">
   <div class="label">Server:</div>
-  <input type="text" placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} bind:this={serverElem} />
+  <input type="text" placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} />
  </div>
  <div class="group">
   <div class="label">Address:</div>
