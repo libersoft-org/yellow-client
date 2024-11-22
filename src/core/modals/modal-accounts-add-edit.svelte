@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
- import { accounts, active_account_id, active_account_store, findAccount } from '../core.js';
+ import { accounts } from '../core.js';
  import Button from '../components/button.svelte';
  import AccountStatus from '../components/account-status.svelte';
  import AccountStatusIcon from '../components/account-status-icon.svelte';
@@ -65,7 +65,7 @@
    config_title = acc.settings?.title;
   } else {
    credentials_address = ''; //'me@' + replacePort(window.location.host, '');
-   credentials_server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host;
+   credentials_server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';
