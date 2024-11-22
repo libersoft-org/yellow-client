@@ -1,20 +1,19 @@
 <script>
  import Button from './button.svelte';
- export let show;
- export let steps = [];
- export let data;
+ import { getContext } from "svelte";
+
+
+ export let close;
+ export let params;
+
+
  let currentStep = 0;
+ let steps = params.steps;
+ let setTitle = getContext('setTitle');
 
- function clickClose() {
-  show = false;
- }
 
- function keyClose() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickClose();
-  }
- }
+ $: setTitle(steps[currentStep].title);
+
 
  function nextStep() {
   if (currentStep < steps.length - 1) currentStep += 1;
@@ -24,12 +23,10 @@
   if (currentStep > 0) currentStep -= 1;
  }
 
- function finish() {
-  clickClose();
- }
 </script>
 
 <style>
+ /*
  .wizard {
   z-index: 100;
   display: flex;
@@ -45,27 +42,7 @@
   overflow: hidden;
   background-color: #fff;
   box-shadow: var(--shadow);
- }
-
- .wizard .header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  background-color: #fd3;
-  color: #000;
- }
-
- .wizard .header .title {
-  flex-grow: 1;
- }
-
- .wizard .header .close img {
-  width: 20px;
-  height: 20px;
- }
+ }*/
 
  .progress-bar {
   display: flex;
@@ -121,12 +98,8 @@
  }
 </style>
 
-{#if show && steps.length >= 1}
+
  <div class="wizard">
-  <div class="header">
-   <div class="title">{steps[currentStep].title}</div>
-   <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close-black.svg" alt="X" /></div>
-  </div>
   <div class="body">
    <div class="progress-bar">
     {#each steps as step, index}
@@ -141,7 +114,7 @@
     {/each}
    </div>
    <div class="content">
-    <svelte:component this={steps[currentStep].component} {data} />
+    <svelte:component this={steps[currentStep].component} {params} />
    </div>
    <div class="navigation">
     {#if currentStep > 0}
@@ -151,9 +124,8 @@
     {#if currentStep < steps.length - 1}
      <Button on:click={nextStep} text="Next" />
     {:else}
-     <Button on:click={finish} text="Finish" />
+     <Button on:click={close} text="Finish" />
     {/if}
    </div>
   </div>
  </div>
-{/if}

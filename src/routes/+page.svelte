@@ -19,13 +19,14 @@
  import {} from '../modules/contacts/contacts.js';
  import {} from '../modules/wallet/module.js';
  import {} from '../modules/iframes/module.js';
+ import ModalWallets from "../modules/wallet/modals/wallets.svelte";
+ import Modal from "../core/components/modal.svelte";
  let showWelcomeWizard = false;
- const welcomeWizardSteps = [
+ let wizardData = {steps:[
   { title: 'Welcome to Yellow', component: WizardWelcomeStep1 },
   { title: 'Connect your account', component: WizardWelcomeStep2 },
   { title: 'All set!', component: WizardWelcomeStep3 },
- ];
- let wizardData = {};
+ ]};
  const corePages = {
   accounts: {
    id: 'accounts',
@@ -78,6 +79,7 @@
   window.addEventListener('blur', () => isClientFocused.update(() => false));
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
   if (get(accounts_config).length === 0) {
+   console.log('showWelcomeWizard = true');
    showWelcomeWizard = true;
   }
   setupIframeListener();
@@ -220,4 +222,5 @@
   {/if}
  </div>
 </div>
-<Wizard steps={welcomeWizardSteps} show={showWelcomeWizard} data={wizardData} />
+<Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} />
+

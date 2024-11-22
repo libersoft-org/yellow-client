@@ -297,3 +297,4 @@
 </div>
 <Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} />
 <Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} />
+

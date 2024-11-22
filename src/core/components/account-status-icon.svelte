@@ -8,6 +8,7 @@
   height: 10px;
   border-radius: 50%;
   display: inline-block;
+  border: 1px solid #000;
  }
  .status-logged-in {
   background-color: green;

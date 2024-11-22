@@ -21,14 +21,6 @@
  let acc;
  let retry_nonce = 0;
 
- $: if (credentials_server === '') {
-  error = 'Server address is required';
- }
-
- $: if (credentials_address === '') {
-  error = 'Address is required';
- }
-
  let account_id_store = writable(null);
  $: account_id_store.set(params.id);
 
@@ -84,13 +76,31 @@
   return url.replace(/:\d+/, port);
  }
 
+
+ function verify() {
+  if (credentials_server === '') {
+   error = 'Server address is required';
+   return false;
+  }
+
+  if (credentials_address === '') {
+   error = 'Address is required';
+   return false;
+  }
+
+  return true;
+ }
+
+
  function clickAdd() {
+  if (!verify()) return;
   params.id = addAccount({ enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
   if (save_id) save_id(params.id);
   close();
  }
 
  function clickSave() {
+  if (!verify()) return;
   saveAccount(params.id, { enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password, retry_nonce } }, { title: config_title });
   retry_nonce++;
   if (save_id) save_id(params.id);

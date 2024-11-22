@@ -1,5 +1,5 @@
 <script>
- import { tick } from 'svelte';
+ import { setContext, tick } from 'svelte';
  export let show = false;
  export let params = null;
  export let title = null;
@@ -12,9 +12,15 @@
  let left;
  let top;
 
+ function setTitle(value) {
+  title = value;
+ }
+ setContext('setTitle', setTitle);
+
  $: update(show);
 
  async function update(show) {
+  console.log('update', show);
   if (show) {
    await tick();
    await positionModal();
