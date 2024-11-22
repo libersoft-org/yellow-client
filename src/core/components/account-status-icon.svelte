@@ -1,17 +1,7 @@
 <script>
  export let a;
 
- $: status_class = (
-  $a.session_status === 'Logged in.' ? 'status-logged-in' : $a.status === 'Connecting...'
-   ? 'status-connecting' : $a.status === 'Connected, logging in...'
-    ? 'status-logging-in' : $a.status === 'Connected.'
-     ? 'status-connected' : $a.status === 'Retrying...'
-      ? 'status-retrying' : $a.status === 'Login failed.'
-       ? 'status-login-failed' : $a.status === 'Disabled.'
-        ? 'status-disabled' : $a.status === 'Enabled.'
-         ? 'status-enabled' : 'status-default'
- );
-
+ $: status_class = $a.session_status === 'Logged in.' ? 'status-logged-in' : $a.status === 'Connecting...' ? 'status-connecting' : $a.status === 'Connected, logging in...' ? 'status-logging-in' : $a.status === 'Connected.' ? 'status-connected' : $a.status === 'Retrying...' ? 'status-retrying' : $a.status === 'Login failed.' ? 'status-login-failed' : $a.status === 'Disabled.' ? 'status-disabled' : $a.status === 'Enabled.' ? 'status-enabled' : 'status-default';
 </script>
 
 <style>
@@ -39,7 +29,7 @@
 
  .status-connecting {
   background-color: #fd3;
-  border: 1px solid #690000;
+  border: 1px solid #600;
  }
 
  .status-connected {
@@ -48,13 +38,13 @@
  }
 
  .status-logging-in {
-  background-color: #ffffff;
-  border: 1px solid #198700;
+  background-color: #dfd;
+  border: 1px solid #290;
  }
 
  .status-enabled {
-  background-color: #002eb8;
-  border: 1px solid #b90;
+  background-color: #55f;
+  border: 1px solid #00f;
  }
 
  .status-default {
