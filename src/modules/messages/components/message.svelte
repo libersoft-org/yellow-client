@@ -4,6 +4,7 @@
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
  import Button from '../../../core/components/button.svelte';
+ import Reply from './message-reply.svelte';
 
  export let message;
  export let container_element;
@@ -48,17 +49,6 @@
   let result = text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
   //console.log('linkify result:', result);
   return result;
- }
-
- function clickReply() {
-  console.log('This will focus the original message');
- }
-
- function keyReply(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickReply();
-  }
  }
 
  function clickCaret() {
@@ -153,31 +143,6 @@
   height: 24px;
  }
 
- .message .reply {
-  display: flex;
-  flex-direction: column;
-  padding: 4px 0 4px 10px;
-  border: 1px solid #080;
-  border-radius: 10px;
-  border-left: 8px solid #080;
-  margin: 0 0 5px 0;
-  cursor: pointer;
- }
-
- .message .reply .name {
-  font-size: 12px;
-  font-weight: bold;
-  color: #080;
- }
-
- .message .reply .msg {
-  color: #555;
- }
-
- .reply-box {
-  text-align: right;
- }
-
  .message .menu {
   display: none;
   position: absolute;
@@ -204,10 +169,7 @@
  <div class="menu" role="button" tabindex="0" on:click={clickCaret} on:keydown={keyCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
- <div class="reply" role="button" tabindex="0" on:click={clickReply} on:keydown={keyReply}>
-  <div class="name">Name from</div>
-  <div class="msg">Hello</div>
- </div>
+ <!-- <Reply name="Someone" text="Some text" /> -->
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="bottomline">
   <div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
