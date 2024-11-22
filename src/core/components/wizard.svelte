@@ -1,19 +1,15 @@
 <script>
  import Button from './button.svelte';
- import { getContext } from "svelte";
-
+ import { getContext } from 'svelte';
 
  export let close;
  export let params;
-
 
  let currentStep = 0;
  let steps = params.steps;
  let setTitle = getContext('setTitle');
 
-
  $: setTitle(steps[currentStep].title);
-
 
  function nextStep() {
   if (currentStep < steps.length - 1) currentStep += 1;
@@ -22,7 +18,6 @@
  function prevStep() {
   if (currentStep > 0) currentStep -= 1;
  }
-
 </script>
 
 <style>
@@ -98,34 +93,33 @@
  }
 </style>
 
-
- <div class="wizard">
-  <div class="body">
-   <div class="progress-bar">
-    {#each steps as step, index}
-     <div class="step">
-      <div class="circle {index === currentStep ? 'active' : ''}">
-       {index + 1}
-      </div>
-      {#if index < steps.length - 1}
-       <div class="line"></div>
-      {/if}
+<div class="wizard">
+ <div class="body">
+  <div class="progress-bar">
+   {#each steps as step, index}
+    <div class="step">
+     <div class="circle {index === currentStep ? 'active' : ''}">
+      {index + 1}
      </div>
-    {/each}
-   </div>
-   <div class="content">
-    <svelte:component this={steps[currentStep].component} {params} />
-   </div>
-   <div class="navigation">
-    {#if currentStep > 0}
-     <Button on:click={prevStep} text="Previous" />
-    {/if}
-    <div class="gap"></div>
-    {#if currentStep < steps.length - 1}
-     <Button on:click={nextStep} text="Next" />
-    {:else}
-     <Button on:click={close} text="Finish" />
-    {/if}
-   </div>
+     {#if index < steps.length - 1}
+      <div class="line"></div>
+     {/if}
+    </div>
+   {/each}
+  </div>
+  <div class="content">
+   <svelte:component this={steps[currentStep].component} {params} />
+  </div>
+  <div class="navigation">
+   {#if currentStep > 0}
+    <Button on:click={prevStep} text="Previous" />
+   {/if}
+   <div class="gap"></div>
+   {#if currentStep < steps.length - 1}
+    <Button on:click={nextStep} text="Next" />
+   {:else}
+    <Button on:click={close} text="Finish" />
+   {/if}
   </div>
  </div>
+</div>

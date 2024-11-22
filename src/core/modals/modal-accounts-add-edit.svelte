@@ -76,7 +76,6 @@
   return url.replace(/:\d+/, port);
  }
 
-
  function verify() {
   if (credentials_server === '') {
    error = 'Server address is required';
@@ -90,7 +89,6 @@
 
   return true;
  }
-
 
  function clickAdd() {
   if (!verify()) return;

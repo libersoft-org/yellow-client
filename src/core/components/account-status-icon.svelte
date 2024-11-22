@@ -8,34 +8,42 @@
   height: 10px;
   border-radius: 50%;
   display: inline-block;
-  border: 1px solid #000;
  }
  .status-logged-in {
-  background-color: green;
+  background-color: #080;
+  border: 1px solid #040;
  }
  .status-logging-in {
-  background-color: yellow;
+  background-color: #fd3;
+  border: 1px solid #b90;
  }
  .status-login-failed {
-  background-color: red;
+  background-color: #f00;
+  border: 1px solid #800;
  }
  .status-retrying {
-  background-color: orange;
+  background-color: #fa0;
+  background-color: #b60;
  }
  .status-connecting {
-  background-color: yellow;
+  background-color: #fd3;
+  border: 1px solid #b90;
  }
  .status-connected {
-  background-color: yellow;
+  background-color: #fd3;
+  border: 1px solid #b90;
  }
  .status-enabled {
-  background-color: yellow;
+  background-color: #fd3;
+  border: 1px solid #b90;
  }
  .status-default {
-  background-color: blue;
+  background-color: #00f;
+  border: 1px solid #008;
  }
  .status-disabled {
-  background-color: gray;
+  background-color: #888;
+  border: 1px solid #444;
  }
 </style>
 

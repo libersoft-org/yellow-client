@@ -19,14 +19,16 @@
  import {} from '../modules/contacts/contacts.js';
  import {} from '../modules/wallet/module.js';
  import {} from '../modules/iframes/module.js';
- import ModalWallets from "../modules/wallet/modals/wallets.svelte";
- import Modal from "../core/components/modal.svelte";
+ import ModalWallets from '../modules/wallet/modals/wallets.svelte';
+ import Modal from '../core/components/modal.svelte';
  let showWelcomeWizard = false;
- let wizardData = {steps:[
-  { title: 'Welcome to Yellow', component: WizardWelcomeStep1 },
-  { title: 'Connect your account', component: WizardWelcomeStep2 },
-  { title: 'All set!', component: WizardWelcomeStep3 },
- ]};
+ let wizardData = {
+  steps: [
+   { title: 'Welcome to Yellow', component: WizardWelcomeStep1 },
+   { title: 'Connect your account', component: WizardWelcomeStep2 },
+   { title: 'All set!', component: WizardWelcomeStep3 },
+  ],
+ };
  const corePages = {
   accounts: {
    id: 'accounts',
@@ -223,4 +225,3 @@
  </div>
 </div>
 <Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} />
-
