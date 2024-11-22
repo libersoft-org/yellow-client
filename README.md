@@ -6,6 +6,7 @@
 
 - [**About**](#about)
 - [**Installation**](#installation)
+- [**Debug mode**](#debug-mode)
 - [**License**](#license)
 - [**Contribution**](#contribution)
 - [**Donations**](#donations)
@@ -18,6 +19,10 @@ This is the client software implementation of [**Yellow**](https://github.com/li
 ## Installation
 
 - For installation instructions follow [**this document**](./INSTALL.md).
+
+## Debug mode
+
+- To run debug mode press **"CTRL + ~"** or **"CTRL + ;"** wherever in client app.
 
 ## License
 
