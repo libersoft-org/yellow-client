@@ -1,5 +1,5 @@
 <script>
- import { onMount, onDestroy } from 'svelte';
+ import { onDestroy } from 'svelte';
  import { get } from 'svelte/store';
  import { active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../core.js';
  import AccountBarItem from './account-bar-item.svelte';
@@ -58,22 +58,29 @@
 
 <style>
  .dropdown {
+  position: relative;
   display: flex;
   align-items: center;
+  gap: 10px;
   padding: 10px;
   font-weight: bold;
   border-bottom: 1px solid #555;
   background-color: #222;
   color: #fff;
   cursor: pointer;
-  position: relative;
  }
 
  .dropdown .text {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-grow: 1;
+  flex: 1 1 auto;
+  min-width: 0;
+ }
+
+ .dropdown .text .title {
+  flex: 1 1 auto;
+  min-width: 0;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -102,10 +109,15 @@
 
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
  {#if $active_account}
-  <div class="text"><AccountStatusIcon a={active_account} />{$active_account?.settings?.title}</div>
+  <div class="text">
+   <AccountStatusIcon a={active_account} />
+   <div class="title">
+    {$active_account?.settings?.title}
+   </div>
+  </div>
  {:else}
   {#if $accounts.length > 0}
-   <div class="text">SELECT ACCOUNT</div>
+   <div class="text">SELECT YOUR ACCOUNT</div>
   {/if}
   {#if $accounts.length == 0}
    <div class="text">CREATE ACCOUNT FIRST</div>
