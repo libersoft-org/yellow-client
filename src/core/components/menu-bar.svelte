@@ -1,4 +1,6 @@
 <script>
+ import { debug } from '../core.js';
+
  export let isMenuOpen;
 
  function menuClick() {
@@ -36,4 +38,5 @@
 
 <div class="bar">
  <div class="menu" role="button" tabindex="0" on:click={menuClick} on:keydown={menuKey}><img src="img/menu.svg" alt="☰" /></div>
+ {#if $debug}(debug mode){/if}
 </div>
