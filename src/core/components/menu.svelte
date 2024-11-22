@@ -1,17 +1,18 @@
 <script>
  import Core from '../core.js';
+ import Item from './menu-item.svelte';
 
  export let showMenu = false;
  export let product;
  export let version;
  export let link;
 
+ /*
  function logout() {
-  //TIDI
-
   Core.hideSidebarMobile.update(() => false);
   showMenu = false;
  }
+ */
 
  function clickMenuClose() {
   showMenu = false;
@@ -35,16 +36,8 @@
   }
  }
 
- function clickLogout() {
-  logout();
+ function clickSettings() {
   clickMenuClose();
- }
-
- function keyLogout(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickLogout();
-  }
  }
 </script>
 
@@ -108,24 +101,6 @@
   height: 30px;
  }
 
- .item {
-  padding: 15px 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #444;
- }
-
- .item:hover {
-  background-color: #333;
- }
-
- .item img {
-  width: 24px;
-  height: 24px;
- }
-
  .footer {
   display: flex;
   flex-direction: column;
@@ -167,10 +142,7 @@
   <div class="top">
    <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
   </div>
-  <div class="item" role="button" tabindex="0" on:click={clickLogout} on:keydown={keyLogout}>
-   <img src="img/logout.svg" alt="Logout" />
-   <div>Logout</div>
-  </div>
+  <Item img="img/settings.svg" title="Settings" on:click={clickSettings} />
  </div>
  <div class="footer">
   <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
