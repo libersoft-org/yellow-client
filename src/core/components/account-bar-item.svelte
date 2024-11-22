@@ -38,8 +38,9 @@
  <small>
   <ul>
    <li>enabled: {$a.enabled}</li>
-   <li>status: {$a.status}</li>
    <li>error: {$a.error}</li>
+   <li>status: {$a.status}</li>
+   <li>session_status: {$a.session_status}</li>
    <li>sessionID: {$a.sessionID}</li>
   </ul>
  </small>

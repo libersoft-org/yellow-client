@@ -3,6 +3,8 @@
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts, active_account_id, active_account_store, findAccount } from '../core.js';
  import Button from '../components/button.svelte';
+ import AccountStatus from  '../components/account-status.svelte';
+ import AccountStatusIcon from '../components/account-status-icon.svelte';
  import { derived, get, writable } from 'svelte/store';
  export let close;
  export let params;
@@ -62,8 +64,8 @@
    config_enabled = acc.enabled;
    config_title = acc.settings?.title;
   } else {
-   credentials_address = 'me@' + replacePort(window.location.host, '');
-   credentials_server = replacePort((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host, ':8086');
+   credentials_address = '';//'me@' + replacePort(window.location.host, '');
+   credentials_server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host;
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';
@@ -166,7 +168,10 @@
  {:else}
   <Button on:click={clickSave} text="Save" />
  {/if}
- {#if acc}
-  <b>status: {acc?.status}</b>
+ {#if account && acc}
+  <div class="group">
+   <div class="label">Status:</div>
+   <AccountStatusIcon a={account} /><AccountStatus {acc} />
+  </div>
  {/if}
 </div>

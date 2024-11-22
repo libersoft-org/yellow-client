@@ -354,14 +354,16 @@ function reconnectAccount(account) {
 
   acc.socket.onerror = event => {
    console.log('WebSocket ' + socket_id + ' error:', event);
-   retry(account, 'Connection error.');
-   acc.error = 'Error.';
+   retry(account, 'Connection error');
+   acc.error = 'Network error: ' + event;
+   acc.session_status = undefined;
    account.update(v => v);
   };
 
   acc.socket.onclose = event => {
    console.log('WebSocket ' + socket_id + '  closed:', event);
-   retry(account, 'Connection closed.');
+   acc.session_status = undefined;
+   retry(account, 'Connection closed');
   };
 
   clearHeartbeatTimer(acc);
@@ -373,6 +375,7 @@ function retry(account, msg) {
  let acc = get(account);
  if (!acc.enabled || acc.suspended) return;
  acc.status = 'Retrying...';
+ acc.session_status = undefined;
  acc.error = msg;
  //clearHeartbeatTimer(acc);
  //acc.sessionID = null;
@@ -415,10 +418,11 @@ function sendLoginCommand(account) {
   if (res.error !== 0) {
    acc.error = res.message;
    acc.status = 'Login failed.';
+   acc.session_status = undefined;
    acc.suspended = true;
    console.error('Login failed:', res);
   } else {
-   acc.status = 'Logged in.';
+   acc.session_status = 'Logged in.';
    acc.error = null;
    acc.sessionID = res.data.sessionID;
    acc.available_modules = res.data.modules_available;
@@ -433,7 +437,8 @@ function setupHeartbeat(account) {
  acc.heartbeatTimer = window.setInterval(() => {
   if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
    acc.status = 'Retrying...';
-   acc.error = 'Not connected.';
+   acc.error = 'Not connected';
+   acc.session_status = undefined;
    account.update(v => v);
    reconnectAccount(account);
    return;
