@@ -1,7 +1,6 @@
 <script>
- import Core from '../core.js';
+ /*import Core from '../core.js';*/
  import Item from './menu-item.svelte';
-
  export let showMenu = false;
  export let product;
  export let version;
@@ -18,7 +17,7 @@
   showMenu = false;
  }
 
- function keyMenuClose() {
+ function keyMenuClose(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    clickMenuClose();
@@ -29,7 +28,7 @@
   window.open(link, '_blank');
  }
 
- function keyLogo() {
+ function keyLogo(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    clickLogo();
