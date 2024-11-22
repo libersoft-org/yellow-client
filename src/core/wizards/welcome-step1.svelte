@@ -42,6 +42,6 @@
 </style>
 
 <div class="title">Welcome to Yellow</div>
-<div class="motto">Experience the freedom of decentralized life</div>
+<div class="motto">Experience the freedom of decentralized world</div>
 <div class="logo"><img src="img/logo.svg" alt="logo" /></div>
-<div class="description">This wizard will help you to set up your own Yellow account.</div>
+<div class="description">This wizard will help you to set up everything you need to get started.</div>
