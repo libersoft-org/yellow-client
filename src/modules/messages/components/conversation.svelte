@@ -43,10 +43,6 @@
    closeConversation();
    return;
   }
-  if (event.ctrlKey && event.key === '`') {
-   debug.update(d => !d);
-   return;
-  }
   if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') {
    return;
   }

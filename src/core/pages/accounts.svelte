@@ -1,11 +1,12 @@
 <script>
- import { selected_corepage_id, accounts_config, accounts, hideSidebarMobile } from '../core.js';
+ import { debug, findAccount, selected_corepage_id, accounts_config, accounts, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
  import ActionItem from '../components/accounts-action-item.svelte';
  import Modal from '../components/modal.svelte';
  import ModalAccountsAddEdit from '../modals/modal-accounts-add-edit.svelte';
  import ModalAccountsDel from '../modals/modal-accounts-del.svelte';
  import { get } from 'svelte/store';
+ import AccountStatusIcon from "../components/account-status-icon.svelte";
  let showAddEditAccountModal = false;
  let showDelAccountModal = false;
  let idItem = null;
@@ -123,18 +124,21 @@
   <table>
    <thead>
     <tr>
-     <th class="center">Account ID</th>
+     <th class="center">Status</th>
      <th class="center">Title</th>
      <th class="center">Server</th>
      <th class="center">Address</th>
      <th class="center">Enabled</th>
      <th class="center">Action</th>
+     {#if $debug}
+      <th class="center">Account ID</th>
+     {/if}
     </tr>
    </thead>
    <tbody>
     {#each $accounts_config as a (a.id)}
      <tr>
-      <td class="center">{a.id}</td>
+      <td class="center"><AccountStatusIcon a={findAccount(a.id)} /></td>
       <td class="center">{a.settings?.title}</td>
       <td class="center">{a.credentials.server}</td>
       <td class="center">{a.credentials.address}</td>
@@ -145,6 +149,9 @@
         <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id, a.settings?.title)} />
        </div>
       </td>
+      {#if $debug}
+       <td class="center">{a.id}</td>
+      {/if}
      </tr>
     {/each}
    </tbody>

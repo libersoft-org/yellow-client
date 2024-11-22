@@ -8,15 +8,20 @@
  let currentStep = 0;
  let steps = params.steps;
  let setTitle = getContext('setTitle');
+ let pageChanged = getContext('pageChanged');
 
  $: setTitle(steps[currentStep].title);
 
- function nextStep() {
+ async function nextStep() {
   if (currentStep < steps.length - 1) currentStep += 1;
+  console.log('currentStep:', currentStep, 'pageChanged:', pageChanged);
+  if (pageChanged) await pageChanged();
  }
 
- function prevStep() {
+ async function prevStep() {
   if (currentStep > 0) currentStep -= 1;
+  console.log('currentStep:', currentStep, 'pageChanged:', pageChanged);
+  if (pageChanged) await pageChanged();
  }
 </script>
 

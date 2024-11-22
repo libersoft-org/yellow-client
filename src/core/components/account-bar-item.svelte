@@ -1,5 +1,7 @@
 <script>
  import AccountStatusIcon from './account-status-icon.svelte';
+ import AccountTitle from './account-title.svelte';
+ import { debug } from '../core.js';
  export let a;
  export let clickSelectAccount;
 
@@ -34,7 +36,8 @@
 </style>
 
 <div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={event => keySelectAccount($a.id, event)}>
- <div class="title"><AccountStatusIcon {a} />{$a.settings?.title} - {$a.credentials?.address}</div>
+ <div class="title"><AccountStatusIcon {a} /><AccountTitle {a}/></div>
+ {#if $debug}
  <small>
   <ul>
    <li>enabled: {$a.enabled}</li>
@@ -44,4 +47,5 @@
    <li>sessionID: {$a.sessionID}</li>
   </ul>
  </small>
+ {/if}
 </div>

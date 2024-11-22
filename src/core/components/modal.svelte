@@ -15,19 +15,22 @@
  function setTitle(value) {
   title = value;
  }
+
  setContext('setTitle', setTitle);
+ setContext('pageChanged', positionModal);
 
- $: update(show);
+ $: onShowUpdated(show);
 
- async function update(show) {
+ async function onShowUpdated(show) {
   console.log('update', show);
   if (show) {
-   await tick();
    await positionModal();
   }
  }
 
  async function positionModal() {
+  console.log('positionModal');
+  await tick();
   if (modalEl) {
    const modalRect = modalEl.getBoundingClientRect();
    const modalWidth = modalRect.width;

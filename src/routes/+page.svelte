@@ -2,7 +2,16 @@
  import { onMount, setContext } from 'svelte';
  import { get } from 'svelte/store';
  import '../app.css';
- import { active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls } from '../core/core.js';
+ import {
+  active_account,
+  accounts_config,
+  selected_corepage_id,
+  selected_module_id,
+  isClientFocused,
+  hideSidebarMobile,
+  getModuleDecls,
+  debug
+ } from '../core/core.js';
 
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -79,6 +88,7 @@
   console.log('+page onMount');
   window.addEventListener('focus', () => isClientFocused.update(() => true));
   window.addEventListener('blur', () => isClientFocused.update(() => false));
+  window.addEventListener('keydown', onkeydown);
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
   if (get(accounts_config).length === 0) {
    console.log('showWelcomeWizard = true');
@@ -141,7 +151,10 @@
  }
 
  async function onkeydown(event) {
-  console.log('window onkeydown: ', event.key);
+  console.log('window onkeydown: ', event);
+  if (event.ctrlKey && event.shiftKey && (event.key === '`' || event.key === '~' || event.key === ';' || event.key === ':')) {
+   debug.update(d => !d);
+  }
  }
 </script>
 
