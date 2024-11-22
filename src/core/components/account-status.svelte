@@ -1,7 +1,5 @@
 <script>
  export let acc;
-
-
 </script>
 
 {#if acc.error}
@@ -13,4 +11,3 @@
 {:else}
  {acc.status}
 {/if}
-
