@@ -17,6 +17,7 @@
 <style>
  .item {
   display: flex;
+  flex-direction: column;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
