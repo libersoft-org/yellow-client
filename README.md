@@ -22,7 +22,7 @@ This is the client software implementation of [**Yellow**](https://github.com/li
 
 ## Debug mode
 
-- To run debug mode press "**CTRL + ~**" or "**CTRL + ;**" wherever in client app.
+- To run debug mode press **"CTRL + ~"** or **"CTRL + ;"** wherever in client app.
 
 ## License
 
