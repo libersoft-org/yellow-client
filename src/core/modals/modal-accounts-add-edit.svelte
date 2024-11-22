@@ -21,6 +21,14 @@
  let acc;
  let retry_nonce = 0;
 
+ $: if (credentials_server === '') {
+  error = 'Server address is required';
+ }
+
+ $: if (credentials_address === '') {
+  error = 'Address is required';
+ }
+
  let account_id_store = writable(null);
  $: account_id_store.set(params.id);
 
