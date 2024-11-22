@@ -70,10 +70,13 @@
  }
 
  .dropdown .text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  flex-grow: 1;
  }
 
  .dropdown img {
@@ -99,8 +102,7 @@
 
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
  {#if $active_account}
-  <div class="text">{$active_account?.settings?.title}</div>
-  <AccountStatusIcon a={active_account} />
+  <div class="text"><AccountStatusIcon a={active_account} />{$active_account?.settings?.title}</div>
  {:else}
   {#if $accounts.length > 0}
    <div class="text">SELECT ACCOUNT</div>

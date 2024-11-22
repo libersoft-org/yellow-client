@@ -3,12 +3,11 @@
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts, active_account_id, active_account_store, findAccount } from '../core.js';
  import Button from '../components/button.svelte';
- import { derived, get, writable } from "svelte/store";
+ import { derived, get, writable } from 'svelte/store';
  export let close;
  export let params;
  export let isInWelcomeWizard = false;
  export let save_id;
-
 
  let serverElem;
  let error;
@@ -19,7 +18,6 @@
  let config_title;
  let acc;
  let retry_nonce = 0;
-
 
  let account_id_store = writable(null);
  $: account_id_store.set(params.id);
@@ -49,7 +47,6 @@
   acc = value;
   console.log('ACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACC', acc);
  });
-
 
  onMount(() => {
   serverElem.focus();
@@ -151,12 +148,12 @@
   <input type="password" placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter} />
  </div>
  {#if !isInWelcomeWizard}
- <div class="group">
-  <div class="label">
-   Enabled:
-   <input type="checkbox" bind:checked={config_enabled} />
+  <div class="group">
+   <div class="label">
+    Enabled:
+    <input type="checkbox" bind:checked={config_enabled} />
+   </div>
   </div>
- </div>
  {/if}
  {#if error}
   <div class="error">

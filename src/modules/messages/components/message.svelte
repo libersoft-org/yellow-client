@@ -215,20 +215,20 @@
    <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
   {/if}
   {#if $debug}
-  <Button
-   text="Delete"
-   on:click={() => {
-    console.log('delete message:', message);
-    snipeMessage(message);
-   }}
-  />
-  <Button
-   text="Reply"
-   on:click={() => {
-    console.log('reply to message:', message);
-    startReply(message);
-   }}
-  />
+   <Button
+    text="Delete"
+    on:click={() => {
+     console.log('delete message:', message);
+     snipeMessage(message);
+    }}
+   />
+   <Button
+    text="Reply"
+    on:click={() => {
+     console.log('reply to message:', message);
+     startReply(message);
+    }}
+   />
   {/if}
  </div>
 
