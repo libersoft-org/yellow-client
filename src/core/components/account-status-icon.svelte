@@ -7,6 +7,7 @@
 <style>
  .status-icon {
   width: 10px;
+  min-width: 10px;
   height: 10px;
   border-radius: 50%;
   display: inline-block;

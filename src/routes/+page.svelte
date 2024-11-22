@@ -2,16 +2,7 @@
  import { onMount, setContext } from 'svelte';
  import { get } from 'svelte/store';
  import '../app.css';
- import {
-  active_account,
-  accounts_config,
-  selected_corepage_id,
-  selected_module_id,
-  isClientFocused,
-  hideSidebarMobile,
-  getModuleDecls,
-  debug
- } from '../core/core.js';
+ import { active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls, debug } from '../core/core.js';
 
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
