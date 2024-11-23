@@ -289,7 +289,6 @@ export function sendMessage(text) {
 }
 
 function updateConversationsArray(acc, msg) {
- const msg_created = msg.created;
  let acc_ca = acc.module_data[module.identifier].conversationsArray;
  let ca = get(acc_ca);
 
@@ -299,7 +298,7 @@ function updateConversationsArray(acc, msg) {
  let is_unread = !msg.seen && !msg.just_sent && msg.address_from !== acc.credentials.address;
 
  if (conversation) {
-  conversation.last_message_date = msg_created;
+  conversation.last_message_date = msg.created;
   conversation.last_message_text = msg.stripped_text;
 
   if (is_unread) {
@@ -312,8 +311,9 @@ function updateConversationsArray(acc, msg) {
   ca.unshift(conversation);
  } else {
   let conversation = {
+   acc,
    address: msg.remote_address,
-   last_message_date: msg_created,
+   last_message_date: msg.created,
    last_message_text: msg.stripped_text,
    visible_name: null,
    unread_count: is_unread ? 1 : 0,
