@@ -109,9 +109,11 @@ export let active_account = derived(active_account_store, ($active_account_store
  return () => unsubscribe();
 });
 
+
 active_account.subscribe(value => {
  //console.log('ACTIVE ACCOUNT:', value);
 });
+
 
 export function active_account_module_data(module_id) {
  return derived(active_account, $active_account => {
@@ -125,6 +127,7 @@ export function active_account_module_data(module_id) {
   return result;
  });
 }
+
 
 export function relay(md, key) {
  let r = derived(md, ($md, set) => {
@@ -149,8 +152,10 @@ export function relay(md, key) {
  return r;
 }
 
+
 function updateLiveAccount(account, config) {
  let acc = get(account);
+ console.log('updateLiveAccount', acc, config);
 
  if (acc.credentials.retry_nonce != config.credentials.retry_nonce || acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
   acc.credentials = config.credentials;
@@ -159,7 +164,6 @@ function updateLiveAccount(account, config) {
    _enableAccount(account);
   }
  }
-
  if (acc.enabled != config.enabled) {
   if (config.enabled) _enableAccount(account);
   else _disableAccount(account);
@@ -167,22 +171,28 @@ function updateLiveAccount(account, config) {
 
  let settings_updated = false;
  for (const [key, value] of Object.entries(config.settings)) {
+  console.log('config:', key, value);
   if (acc.settings[key] != value) {
    acc.settings[key] = value;
    settings_updated = true;
+   console.log('settings updated:', key, value);
   }
+  else
+   console.log('settings not updated:', key, value);
  }
  if (settings_updated) account.update(v => v);
 }
 
+
 function createLiveAccount(config) {
  // add new account
  let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
- //console.log('NEW account', get(account));
+ console.log('NEW account', get(account));
  accounts.update(v => [...v, account]);
  if (config.enabled) _enableAccount(account);
  else _disableAccount(account);
 }
+
 
 function removeLiveAccountsNotInConfig(accounts_list, value) {
  // remove accounts that are not in config
@@ -203,10 +213,11 @@ accounts_config.subscribe(value => {
  for (let config of value) {
   //console.log('CONFIG', config);
   let account = accounts_list.find(acc => get(acc).id === config.id);
-  //console.log('account', account);
   if (account) {
+   console.log('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
    updateLiveAccount(account, config);
   } else {
+   console.log('CREATE ACCOUNT', config);
    createLiveAccount(config);
   }
  }
@@ -247,8 +258,8 @@ function updateAvailableModules(acc, available_modules) {
 function constructAccount(id, credentials, enabled, settings) {
  let acc = {
   id,
-  settings,
-  credentials,
+  settings: {...settings},
+  credentials: {...credentials},
   enabled,
   /*
     also stuff like (set on heartbeat, for example) belongs here:

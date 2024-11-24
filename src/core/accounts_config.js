@@ -29,7 +29,7 @@ export function saveAccount(id, config, settings) {
      acc.settings[key] = value;
     }
    }
-   console.log('saveAccount acc config:', acc);
+   console.log('saveAccount acc config:', JSON.stringify(acc));
   }
   return v;
  });
