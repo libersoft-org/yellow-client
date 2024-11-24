@@ -236,7 +236,11 @@
    for (let i = 0; i < messages.length; i++) {
     let m = messages[i];
 
-    if (!unseen_marker_put && !m.is_outgoing && (m.seen === false || m.just_marked_as_seen)) {
+    console.log('m:', m);
+    console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
+
+    if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)) {
+     console.log('ADDING-UNSEEN-MARKER');
      unseen_marker_put = true;
      items.push({ type: 'unseen_marker' });
     }
