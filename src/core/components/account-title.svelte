@@ -3,11 +3,16 @@
 </script>
 
 <style>
+
  .account-title {
+  flex: 1 1 auto;
+  min-width: 0;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
  }
+
+
 </style>
 
 <div class="account-title">

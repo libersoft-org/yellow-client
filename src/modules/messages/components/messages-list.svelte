@@ -366,6 +366,9 @@
  <div class="spacer"></div>
 
  {#each itemsArray as m (m.uid)}
+  {#if debug}
+   {JSON.stringify(m, null, 2)}
+  {/if}
   {#if m.type === 'no_messages'}
    <div>No messages</div>
   {:else if m.type === 'initial_loading_placeholder'}

@@ -103,7 +103,7 @@ export let active_account = derived(active_account_store, ($active_account_store
  }
  // subscribe to the store that contains the account object
  const unsubscribe = $active_account_store.subscribe(account => {
-  //console.log('DERIVED NESTED STORE:', account);
+  console.log('DERIVED NESTED STORE:', account);
   set(account);
  });
  return () => unsubscribe();

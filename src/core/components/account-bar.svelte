@@ -5,6 +5,7 @@
  import AccountBarItem from './account-bar-item.svelte';
  import AccountBarButton from './account-bar-button.svelte';
  import AccountStatusIcon from './account-status-icon.svelte';
+ import AccountTitle from "./account-title.svelte";
  let accountsVisible = false;
  let dropdown;
 
@@ -78,14 +79,6 @@
   min-width: 0;
  }
 
- .dropdown .text .title {
-  flex: 1 1 auto;
-  min-width: 0;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
- }
-
  .dropdown img {
   width: 20px;
   height: 20px;
@@ -107,13 +100,13 @@
  }
 </style>
 
+
+
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
  {#if $active_account}
   <div class="text">
    <AccountStatusIcon a={active_account} />
-   <div class="title">
-    {$active_account?.settings?.title}
-   </div>
+   <AccountTitle a={active_account} />
   </div>
  {:else}
   {#if $accounts.length > 0}
