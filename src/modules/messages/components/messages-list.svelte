@@ -11,6 +11,7 @@
 
  export let message_bar;
  export let conversation;
+ export let setBarFocus;
 
  let showDebugModal = false;
  let messages_elem;
@@ -292,6 +293,27 @@
  async function mouseDown(event) {
   console.log('event:', event);
  }
+
+ function onFocus(event) {
+  console.log('messages_elem onFocus:', event);
+  window.addEventListener('keydown', onkeydown);
+ }
+
+ function onBlur(event) {
+  console.log('messages_elem onBlur:', event);
+  window.removeEventListener('keydown', onkeydown);
+ }
+
+ async function onkeydown(event) {
+  if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') {
+   return;
+  }
+  if (event.ctrlKey || event.metaKey) return;
+  await setBarFocus();
+ }
+
+
+
 </script>
 
 <style>
@@ -362,11 +384,11 @@
  </div>
 {/if}
 
-<div class="messages" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown}>
+<div class="messages" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur}>
  <div class="spacer"></div>
 
  {#each itemsArray as m (m.uid)}
-  {#if debug}
+  {#if $debug}
    {JSON.stringify(m, null, 2)}
   {/if}
   {#if m.type === 'no_messages'}

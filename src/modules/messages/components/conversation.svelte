@@ -43,11 +43,6 @@
    closeConversation();
    return;
   }
-  if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') {
-   return;
-  }
-  if (event.ctrlKey || event.metaKey) return;
-  await setBarFocus();
  }
 </script>
 
@@ -64,6 +59,6 @@
 
 <div tabindex="0" class="conversation" {onkeydown}>
  <ProfileBar {closeConversation} />
- <MessagesList {message_bar} conversation={$selectedConversation} />
+ <MessagesList {message_bar} {setBarFocus} conversation={$selectedConversation} />
  <MessageBar bind:this={message_bar} />
 </div>

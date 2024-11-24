@@ -74,14 +74,13 @@
     loader.loading = false;
     loader.delete_me = true;
    });
-  }, 1);
+  }, 0);
  }
 </script>
 
 <style>
  .container {
   min-height: 40px;
-  border: 1px solid #ccc;
  }
 </style>
 
@@ -97,6 +96,8 @@
 
   -->
   <!--  <Button on:click={loadMore}>Load more</Button> -->
+
   <Spinner show={loader.loading} />
+
  </div>
 </div>
