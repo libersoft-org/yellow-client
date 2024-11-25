@@ -1,5 +1,16 @@
 import { get, writable } from 'svelte/store';
-import { active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send } from '../../core/core.js';
+import {
+ selectAccount,
+ active_account,
+ active_account_id,
+ getGuid,
+ hideSidebarMobile,
+ isClientFocused,
+ active_account_module_data,
+ relay,
+ send,
+ selected_module_id
+} from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { module } from './module.js';
 
@@ -408,6 +419,8 @@ function showNotification(acc, msg) {
  if (Notification.permission !== 'granted') return;
  /*fixme*/
  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
+
+ console.log('new Notification', conversation);
  let notification;
  if (conversation) {
   /*fixme*/
@@ -425,6 +438,8 @@ function showNotification(acc, msg) {
  }
  notification.onclick = () => {
   window.focus();
+  selectAccount(acc.id);
+  selected_module_id.set(module.identifier);
   selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
  };
 }

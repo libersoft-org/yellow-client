@@ -237,10 +237,16 @@ export function toggleAccountEnabled(id) {
 
 export function selectAccount(id) {
  console.log('SELECT ACCOUNT', id);
+ if (get(active_account_id) === id)
+  return;
  /* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
   * This allows for modules to not be perfectly reactive. */
  let old_selected_module = get(selected_module_id);
  selected_module_id.set(null);
+ if (!findAccount(id)) {
+  console.log('account not found');
+  return;
+ }
  active_account_id.set(id);
  tick().then(() => {
   if (get(active_account).module_data[old_selected_module]) selected_module_id.set(old_selected_module);
