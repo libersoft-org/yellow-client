@@ -18,7 +18,7 @@ debug.subscribe(value => {
 let module_decls = {};
 let global_socket_id = 0;
 
-const heartbeat_interval = 150000;
+const heartbeat_interval = 10000;
 
 export function getModuleDecls() {
  //console.log('GET MODULE DECLS:', module_decls);
