@@ -96,8 +96,10 @@
 
 <div class="networks">
  <div class="bold">My networks:</div>
- <Button text="Export" on:click={() => doExport()} />
- <Button text="Import" on:click={() => doImport()} />
+ <div class="buttons">
+  <Button text="Export" on:click={() => doExport()} />
+  <Button text="Import" on:click={() => doImport()} />
+ </div>
  <div class="items">
   {#each $networks as n, index (n.guid)}
    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">

@@ -315,9 +315,6 @@
   if (event.ctrlKey || event.metaKey) return;
   await setBarFocus();
  }
-
-
-
 </script>
 
 <style>

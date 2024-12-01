@@ -73,9 +73,9 @@
  input,
  select {
   padding: 5px;
-  border-radius: 10px;
-  border: 1px solid #888;
   font: inherit;
+  border: 1px solid #888;
+  border-radius: 10px;
   background-color: #fff;
  }
 
@@ -87,8 +87,13 @@
 
  .group {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 5px;
+ }
+
+ .group .label {
+  padding-left: 3px;
+  font-weight: bold;
  }
 </style>
 
@@ -97,10 +102,11 @@
   <div class="label">Send to:</div>
   <div class="input"><input type="text" bind:value={address} /></div>
  </div>
- <div class="input">
-  Currency:
-  <DropdownFilter options={$currencies} bind:selected={currency} />
+ <div class="group">
+  <div class="label">Currency:</div>
+  <div class="input"><DropdownFilter options={$currencies} bind:selected={currency} /></div>
  </div>
+
  <div class="group">
   <div class="label">Amount:</div>
   <div class="input"><input type="text" bind:value={amount} /></div>

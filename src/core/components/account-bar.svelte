@@ -5,27 +5,23 @@
  import AccountBarItem from './account-bar-item.svelte';
  import AccountBarButton from './account-bar-button.svelte';
  import AccountStatusIcon from './account-status-icon.svelte';
- import AccountTitle from "./account-title.svelte";
+ import AccountTitle from './account-title.svelte';
  let accountsVisible = false;
  let dropdown;
-
 
  onDestroy(() => {
   document.removeEventListener('click', handleClickOutside);
  });
 
-
-  $: console.log('account-bar.svelte: account: ', $active_account);
+ $: console.log('account-bar.svelte: account: ', $active_account);
  // $: console.log('account-bar.svelte: accounts: ', $accounts);
  // $: console.log('accountsVisible: ', accountsVisible);
-
 
  function clickToggleAccounts() {
   accountsVisible = !accountsVisible;
   if (accountsVisible) document.addEventListener('click', handleClickOutside);
   else document.removeEventListener('click', handleClickOutside);
  }
-
 
  function keyToggleAccounts() {
   console.log('event.key: ' + event.key);
@@ -39,7 +35,6 @@
   }
  }
 
-
  function clickSelectAccount(id) {
   //console.log('clickSelectAccount: ' + id);
   selectAccount(id);
@@ -49,7 +44,6 @@
   document.removeEventListener('click', handleClickOutside);
  }
 
-
  function handleClickOutside(event) {
   if (dropdown && !dropdown.contains(event.target)) {
    accountsVisible = false;
@@ -57,12 +51,10 @@
   }
  }
 
-
  function clickAccountManagement() {
   selected_corepage_id.set('accounts');
   hideSidebarMobile.set(true);
  }
-
 </script>
 
 <style>
@@ -107,8 +99,6 @@
   display: flex;
  }
 </style>
-
-
 
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
  {#if $active_account}

@@ -109,11 +109,9 @@ export let active_account = derived(active_account_store, ($active_account_store
  return () => unsubscribe();
 });
 
-
 active_account.subscribe(value => {
  //console.log('ACTIVE ACCOUNT:', value);
 });
-
 
 export function active_account_module_data(module_id) {
  return derived(active_account, $active_account => {
@@ -127,7 +125,6 @@ export function active_account_module_data(module_id) {
   return result;
  });
 }
-
 
 export function relay(md, key) {
  let r = derived(md, ($md, set) => {
@@ -152,7 +149,6 @@ export function relay(md, key) {
  return r;
 }
 
-
 function updateLiveAccount(account, config) {
  let acc = get(account);
  console.log('updateLiveAccount', acc, config);
@@ -176,13 +172,10 @@ function updateLiveAccount(account, config) {
    acc.settings[key] = value;
    settings_updated = true;
    console.log('settings updated:', key, value);
-  }
-  else
-   console.log('settings not updated:', key, value);
+  } else console.log('settings not updated:', key, value);
  }
  if (settings_updated) account.update(v => v);
 }
-
 
 function createLiveAccount(config) {
  // add new account
@@ -192,7 +185,6 @@ function createLiveAccount(config) {
  if (config.enabled) _enableAccount(account);
  else _disableAccount(account);
 }
-
 
 function removeLiveAccountsNotInConfig(accounts_list, value) {
  // remove accounts that are not in config
@@ -237,8 +229,7 @@ export function toggleAccountEnabled(id) {
 
 export function selectAccount(id) {
  console.log('SELECT ACCOUNT', id);
- if (get(active_account_id) === id)
-  return;
+ if (get(active_account_id) === id) return;
  /* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
   * This allows for modules to not be perfectly reactive. */
  let old_selected_module = get(selected_module_id);
@@ -264,8 +255,8 @@ function updateAvailableModules(acc, available_modules) {
 function constructAccount(id, credentials, enabled, settings) {
  let acc = {
   id,
-  settings: {...settings},
-  credentials: {...credentials},
+  settings: { ...settings },
+  credentials: { ...credentials },
   enabled,
   /*
     also stuff like (set on heartbeat, for example) belongs here:

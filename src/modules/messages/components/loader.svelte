@@ -98,6 +98,5 @@
   <!--  <Button on:click={loadMore}>Load more</Button> -->
 
   <Spinner show={loader.loading} />
-
  </div>
 </div>

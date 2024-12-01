@@ -1,16 +1,5 @@
 import { get, writable } from 'svelte/store';
-import {
- selectAccount,
- active_account,
- active_account_id,
- getGuid,
- hideSidebarMobile,
- isClientFocused,
- active_account_module_data,
- relay,
- send,
- selected_module_id
-} from '../../core/core.js';
+import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { module } from './module.js';
 

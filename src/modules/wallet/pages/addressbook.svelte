@@ -62,6 +62,7 @@
 
  .buttons {
   display: flex;
+  gap: 10px;
  }
 
  table {
