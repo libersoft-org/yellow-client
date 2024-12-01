@@ -15,11 +15,12 @@
  import WizardWelcomeStep1 from '../core/wizards/welcome-step1.svelte';
  import WizardWelcomeStep2 from '../core/wizards/welcome-step2.svelte';
  import WizardWelcomeStep3 from '../core/wizards/welcome-step3.svelte';
- import {} from '../modules/messages/messages.js';
- import {} from '../modules/contacts/contacts.js';
- import {} from '../modules/wallet/module.js';
- import {} from '../modules/iframes/module.js';
- import ModalWallets from '../modules/wallet/modals/wallets.svelte';
+ import {} from '../modules/org.libersoft.messages/messages.js';
+ import {} from '../modules/org.libersoft.contacts/contacts.js';
+ import {} from '../modules/org.libersoft.wallet/module.js';
+ import {} from '../modules/org.libersoft.iframes/module.js';
+ import {} from '../modules/org.libersoft.dating/module.js';
+ //import ModalWallets from '../modules/wallet/modals/wallets.svelte';
  import Modal from '../core/components/modal.svelte';
  let showWelcomeWizard = false;
  let wizardData = {
