@@ -1,4 +1,4 @@
-function initData(acc) {
+export function initData(acc) {
  let result = {};
  return result;
 }

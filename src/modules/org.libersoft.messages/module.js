@@ -1,11 +1,11 @@
 import { registerModule } from '../../core/core.js';
+import { identifier, initData, initComms, deinitComms, deinitData } from './messages.js';
 import Sidebar from './pages/messages-sidebar.svelte';
 import Content from './pages/messages-content.svelte';
-import { initData, initComms, deinitComms, deinitData } from './messages.js';
 
 export const module = {
  name: 'Messages',
- identifier: 'org.libersoft.messages',
+ identifier: identifier,
 };
 
 registerModule(module.identifier, {

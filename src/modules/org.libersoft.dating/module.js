@@ -3,7 +3,7 @@ import Sidebar from './pages/dating-sidebar.svelte';
 import Content from './pages/dating-content.svelte';
 
 export const module = {
- name: 'dating',
+ name: 'Dating',
  identifier: 'org.libersoft.dating',
 };
 

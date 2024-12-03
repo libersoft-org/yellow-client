@@ -1,4 +1,5 @@
 import { registerModule } from '../../core/core.js';
+import { initData } from './contacts.js';
 import Sidebar from './pages/contacts-sidebar.svelte';
 import Content from './pages/contacts-content.svelte';
 

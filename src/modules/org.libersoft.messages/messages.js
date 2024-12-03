@@ -1,7 +1,8 @@
 import { get, writable } from 'svelte/store';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import DOMPurify from 'dompurify';
-import { module } from './module.js';
+
+export const identifier = 'org.libersoft.messages';
 
 class Message {
  constructor(acc, data) {
@@ -15,7 +16,7 @@ class Message {
  }
 }
 
-export let md = active_account_module_data(module.identifier);
+export let md = active_account_module_data(identifier);
 export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');
@@ -39,7 +40,7 @@ active_account_id.subscribe(acc => {
 });
 
 function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
- return send(acc, module.identifier, command, params, sendSessionID, callback, quiet);
+ return send(acc, identifier, command, params, sendSessionID, callback, quiet);
 }
 
 export function selectConversation(conversation) {
@@ -58,7 +59,7 @@ export function listConversations(acc) {
    return;
   }
   if (res.data?.conversations) {
-   let conversationsArray = acc.module_data[module.identifier].conversationsArray;
+   let conversationsArray = acc.module_data[identifier].conversationsArray;
    //console.log('listConversations into:', conversationsArray);
    conversationsArray.set(res.data.conversations.map(c => sanitizeConversation(acc, c)));
   }
@@ -85,7 +86,7 @@ export function initComms(acc) {
  moduleEventSubscribe(acc, 'seen_message');
  moduleEventSubscribe(acc, 'seen_inbox_message');
 
- let data = acc.module_data[module.identifier];
+ let data = acc.module_data[identifier];
  console.log('initComms:', data);
 
  data.new_message_listener = event => eventNewMessage(acc, event);
@@ -108,7 +109,7 @@ export function deinitComms(acc) {
 export function deinitData(acc) {
  console.log('DEINIT DATA');
 
- let data = acc.module_data[module.identifier];
+ let data = acc.module_data[identifier];
  if (!data) return;
 
  acc.events.removeEventListener('new_message', data.new_message_listener);
@@ -120,7 +121,7 @@ export function deinitData(acc) {
  data.conversationsArray.set([]);
  data.selectedConversation.set(null);
 
- acc.module_data[module.identifier] = null;
+ acc.module_data[identifier] = null;
 }
 
 export function listMessages(acc, address) {
@@ -289,7 +290,7 @@ export function sendMessage(text) {
 }
 
 function updateConversationsArray(acc, msg) {
- let acc_ca = acc.module_data[module.identifier].conversationsArray;
+ let acc_ca = acc.module_data[identifier].conversationsArray;
  let ca = get(acc_ca);
 
  const conversation = ca.find(c => c.address === msg.remote_address);
@@ -428,7 +429,7 @@ function showNotification(acc, msg) {
  notification.onclick = () => {
   window.focus();
   selectAccount(acc.id);
-  selected_module_id.set(module.identifier);
+  selected_module_id.set(identifier);
   selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
  };
 }

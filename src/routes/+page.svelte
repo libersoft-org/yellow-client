@@ -15,8 +15,8 @@
  import WizardWelcomeStep1 from '../core/wizards/welcome-step1.svelte';
  import WizardWelcomeStep2 from '../core/wizards/welcome-step2.svelte';
  import WizardWelcomeStep3 from '../core/wizards/welcome-step3.svelte';
- import {} from '../modules/org.libersoft.messages/messages.js';
- import {} from '../modules/org.libersoft.contacts/contacts.js';
+ import {} from '../modules/org.libersoft.messages/module.js';
+ import {} from '../modules/org.libersoft.contacts/module.js';
  import {} from '../modules/org.libersoft.wallet/module.js';
  import {} from '../modules/org.libersoft.iframes/module.js';
  import {} from '../modules/org.libersoft.dating/module.js';
