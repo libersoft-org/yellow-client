@@ -6,6 +6,7 @@
  import Button from '../../../core/components/button.svelte';
 
  import { ContextMenu, ContextMenuDivider, ContextMenuGroup, ContextMenuOption } from 'carbon-components-svelte';
+ //import 'carbon-components-svelte/css/white.css';
  //import CopyFile from "carbon-icons-svelte/lib/CopyFile.svelte";
  // import Cut from "carbon-icons-svelte/lib/Cut.svelte";
 
@@ -216,7 +217,7 @@
 {/if}
 
 <!--
-<ContextMenu >
+<ContextMenu target={elCaret}>
  <ContextMenuOption
     indented
     labelText="Copy"
