@@ -4,7 +4,14 @@
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
  import Button from '../../../core/components/button.svelte';
- import Reply from './message-reply.svelte';
+
+ import { ContextMenu, ContextMenuDivider, ContextMenuGroup, ContextMenuOption } from 'carbon-components-svelte';
+ //import CopyFile from "carbon-icons-svelte/lib/CopyFile.svelte";
+ // import Cut from "carbon-icons-svelte/lib/Cut.svelte";
+
+ //import ContextMenu from '../../../core/components/context-menu.svelte';
+ //import ContextMenuOption from '../../../core/components/context-menu-option.svelte';
+ //import Reply from './message-reply.svelte';
 
  export let message;
  export let container_element;
@@ -14,6 +21,8 @@
  let intersection_observer_element;
  let is_visible;
  let pressTimer;
+ let contextMenuOpen = false;
+ let elCaret;
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
@@ -52,7 +61,8 @@
  }
 
  function clickCaret() {
-  alert('Icon clicked');
+  //alert('Icon clicked');
+  contextMenuOpen = !contextMenuOpen;
  }
 
  function keyCaret(event) {
@@ -166,7 +176,7 @@
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd}>
  <div bind:this={intersection_observer_element}></div>
- <div class="menu" role="button" tabindex="0" on:click={clickCaret} on:keydown={keyCaret}>
+ <div class="menu" role="button" bind:this={elCaret} tabindex="0" on:click={clickCaret} on:keydown={keyCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
  <!-- <Reply name="Someone" text="Some text" /> -->
@@ -204,3 +214,13 @@
   <input type="text" value={message.reply.text} />
  </div>
 {/if}
+
+<!--
+<ContextMenu >
+ <ContextMenuOption
+    indented
+    labelText="Copy"
+    shortcutText="⌘C"
+  />
+</ContextMenu>
+-->
