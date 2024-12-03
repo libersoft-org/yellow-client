@@ -5,7 +5,7 @@ import Content from './pages/messages-content.svelte';
 
 export const module = {
  name: 'Messages',
- identifier: identifier,
+ identifier,
 };
 
 registerModule(module.identifier, {
