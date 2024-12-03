@@ -1,8 +1,9 @@
 <script>
  import Item from '../components/sidebar-item.svelte';
+ import { page } from '../dating.js';
 
  function setPage(name) {
-  console.log(name);
+  page.set(name);
  }
 </script>
 
