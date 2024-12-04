@@ -105,6 +105,10 @@
  onDestroy(() => {
   if (observer) observer.disconnect();
  });
+
+ function reply() {
+  console.log('reply');
+ }
 </script>
 
 <style>
@@ -215,22 +219,6 @@
   {#if message.is_outgoing}
    <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
   {/if}
-  {#if $debug}
-   <Button
-    text="Delete"
-    on:click={() => {
-     console.log('delete message:', message);
-     snipeMessage(message);
-    }}
-   />
-   <Button
-    text="Reply"
-    on:click={() => {
-     console.log('reply to message:', message);
-     startReply(message);
-    }}
-   />
-  {/if}
  </div>
 
  {#if $debug}
@@ -245,8 +233,18 @@
 {/if}
 
 <ContextMenu target={elCaret}>
- <ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
- <ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
- <ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
- <ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
+ <ContextMenuOption
+  indented
+  labelText="Delete"
+  on:click={() => {
+   snipeMessage(message);
+  }}
+ />
+ <ContextMenuOption
+  indented
+  labelText="Reply"
+  on:click={() => {
+   startReply(message);
+  }}
+ />
 </ContextMenu>
