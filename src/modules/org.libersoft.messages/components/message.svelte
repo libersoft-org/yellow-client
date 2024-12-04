@@ -199,6 +199,18 @@
 {/if}
 
 <ContextMenu target={elCaret}>
- <ContextMenuItem label="Reply" on:click={() =>  {console.log('reply');startReply(message)}} />
- <ContextMenuItem label="Delete" on:click={() => {console.log('delete');snipeMessage(message)}} />
+ <ContextMenuItem
+  label="Reply"
+  on:click={() => {
+   console.log('reply');
+   startReply(message);
+  }}
+ />
+ <ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ />
 </ContextMenu>

@@ -21,7 +21,6 @@
   event.preventDefault();
   event.stopPropagation();
  }
-
 </script>
 
 <style>

@@ -195,11 +195,10 @@
  on:mousedown={({ target }) => {
   console.log('context-menu mousedown:', target);
   const closestOption = target.closest('[tabindex]');
-  if (closestOption && closestOption.getAttribute('role') !== 'menuitem')
-   {
-    console.log('context-menu mousedown close:', closestOption);
-    close();
-    }
+  if (closestOption && closestOption.getAttribute('role') !== 'menuitem') {
+   console.log('context-menu mousedown close:', closestOption);
+   close();
+  }
  }}
  on:keydown
  on:keydown={e => {
