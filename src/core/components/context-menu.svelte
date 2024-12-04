@@ -55,6 +55,7 @@
  // TODO: if tick is not necessary remove "async"
  async function openMenu(e) {
   e.preventDefault();
+  e.stopPropagation();
   const { height, width } = ref.getBoundingClientRect();
 
   if (open || x === 0) {
@@ -167,8 +168,10 @@
   if (!ref) return;
   openMenu(e);
  }}
- on:click={e => {
+ on:mousedown={e => {
+  console.log('context-menu svelte:window click:', e);
   if (!open) return;
+  console.log('context-menu svelte:window click close:', e);
   close();
  }}
  on:keydown={e => {
@@ -190,8 +193,13 @@
  {...$$restProps}
  on:mousedown
  on:mousedown={({ target }) => {
+  console.log('context-menu mousedown:', target);
   const closestOption = target.closest('[tabindex]');
-  if (closestOption && closestOption.getAttribute('role') !== 'menuitem') close();
+  if (closestOption && closestOption.getAttribute('role') !== 'menuitem')
+   {
+    console.log('context-menu mousedown close:', closestOption);
+    close();
+    }
  }}
  on:keydown
  on:keydown={e => {
