@@ -25,7 +25,7 @@
  /** Obtain a reference to the unordered list HTML element */
  export let ref = null;
 
- import { onMount, setContext, getContext, afterUpdate, createEventDispatcher } from 'svelte';
+ import { onMount, setContext, getContext, afterUpdate, createEventDispatcher, tick } from 'svelte';
  import { writable } from 'svelte/store';
 
  const dispatch = createEventDispatcher();
@@ -52,7 +52,8 @@
  }
 
  /** @type {(e: MouseEvent) => void} */
- function openMenu(e) {
+ // TODO: if tick is not necessary remove "async"
+ async function openMenu(e) {
   e.preventDefault();
   const { height, width } = ref.getBoundingClientRect();
 
@@ -76,13 +77,20 @@
   position.set([x, y]);
   open = true;
   openDetail = e.target;
+
+  //TODO: IS THIS NECESSARY?
+  await tick();
  }
 
  $: if (target != null) {
   if (Array.isArray(target)) {
-   target.forEach(node => node?.addEventListener('contextmenu', openMenu));
+   target.forEach(node => {
+    node?.addEventListener('contextmenu', openMenu);
+    node?.addEventListener('mousedown', openMenu);
+   });
   } else {
    target.addEventListener('contextmenu', openMenu);
+   target.addEventListener('mousedown', openMenu);
   }
  }
 
@@ -90,9 +98,13 @@
   return () => {
    if (target != null) {
     if (Array.isArray(target)) {
-     target.forEach(node => node?.removeEventListener('contextmenu', openMenu));
+     target.forEach(node => {
+      node?.removeEventListener('contextmenu', openMenu);
+      node?.removeEventListener('mousedown', openMenu);
+     });
     } else {
      target.removeEventListener('contextmenu', openMenu);
+     target.removeEventListener('mousedown', openMenu);
     }
    }
   };
@@ -181,8 +193,8 @@
  style:left="{x}px"
  style:top="{y}px"
  {...$$restProps}
- on:click
- on:click={({ target }) => {
+ on:mousedown
+ on:mousedown={({ target }) => {
   const closestOption = target.closest('[tabindex]');
   if (closestOption && closestOption.getAttribute('role') !== 'menuitem') close();
  }}
