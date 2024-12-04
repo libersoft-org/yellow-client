@@ -130,6 +130,12 @@
  $: currentIndex.set(focusIndex);
 </script>
 
+<style>
+ .bx--menu {
+  background-color: #fff;
+ }
+</style>
+
 <svelte:window
  on:contextmenu={e => {
   if (target != null) return;
@@ -163,24 +169,17 @@
  on:click
  on:click={({ target }) => {
   const closestOption = target.closest('[tabindex]');
-
-  if (closestOption && closestOption.getAttribute('role') !== 'menuitem') {
-   close();
-  }
+  if (closestOption && closestOption.getAttribute('role') !== 'menuitem') close();
  }}
  on:keydown
  on:keydown={e => {
   if (open) e.preventDefault();
   if ($hasPopup) return;
-
   if (e.key === 'ArrowDown') {
    if (focusIndex < options.length - 1) focusIndex++;
   } else if (e.key === 'ArrowUp') {
-   if (focusIndex === -1) {
-    focusIndex = options.length - 1;
-   } else {
-    if (focusIndex > 0) focusIndex--;
-   }
+   if (focusIndex === -1) focusIndex = options.length - 1;
+   else if (focusIndex > 0) focusIndex--;
   }
  }}
 >

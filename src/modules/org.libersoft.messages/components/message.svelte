@@ -3,10 +3,8 @@
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
- import Button from '../../../core/components/button.svelte';
- import { Button as BxButton, ButtonSet } from 'carbon-components-svelte';
-
  import { ContextMenu, ContextMenuDivider, ContextMenuGroup, ContextMenuOption } from '../../../core/components/bx/ContextMenu/index.js';
+ import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
 
  import CopyFile from 'carbon-icons-svelte/lib/CopyFile.svelte';
  import Cut from 'carbon-icons-svelte/lib/Cut.svelte';
@@ -233,6 +231,9 @@
 {/if}
 
 <ContextMenu target={elCaret}>
+ <ContextMenuItem label="Reply" on:click={() => startReply(message)} />
+ <ContextMenuItem label="Delete" on:click={() => snipeMessage(message)} />
+ <!--
  <ContextMenuOption
   indented
   labelText="Delete"
@@ -246,5 +247,5 @@
   on:click={() => {
    startReply(message);
   }}
- />
+ />-->
 </ContextMenu>
