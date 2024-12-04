@@ -148,18 +148,15 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   position: fixed;
   z-index: 9000;
-  min-width: 13rem;
-  max-width: 18rem;
-  padding: 0.25rem 0;
+  /*min-width: 100px;*/
+  max-width: calc(100% - 20px);
+  border-radius: 10px;
+  border: 1px solid #ccc;
   background-color: #fff;
  }
 
  .bx--menu--open {
   visibility: visible;
- }
-
- .bx--menu--open:focus {
-  outline: 1px solid #0f62fe;
  }
 </style>
 
@@ -188,8 +185,6 @@
  data-level={level}
  class:bx--menu={true}
  class:bx--menu--open={open}
- class:bx--menu--invisible={open && x === 0 && y === 0}
- class:bx--menu--root={level === 1}
  style:left="{x}px"
  style:top="{y}px"
  {...$$restProps}
