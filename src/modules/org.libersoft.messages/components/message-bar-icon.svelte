@@ -24,5 +24,5 @@
 </style>
 
 <div class="icon" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- <img src={img} {alt} />
+ <img src="modules/org.libersoft.messages/img/{img}" {alt} />
 </div>

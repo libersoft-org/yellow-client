@@ -1,6 +1,6 @@
 <script>
  import { createEventDispatcher } from 'svelte';
- export let icon = null;
+ export let img = null;
  export let label = '';
  const dispatch = createEventDispatcher();
 
@@ -35,7 +35,7 @@
   background-color: #f0f0f0;
  }
 
- .icon-space {
+ .img-space {
   width: 24px;
   height: 24px;
   display: flex;
@@ -50,9 +50,9 @@
 </style>
 
 <div class="menu-item" role="button" tabindex="0" on:mousedown={mousedown} on:click={click} on:keydown={handleKeydown}>
- {#if icon}
-  <div class="icon-space">
-   <img src={icon} alt="" width="24" height="24" />
+ {#if img}
+  <div class="img-space">
+   <img src={img} alt={label} width="24" height="24" />
   </div>
  {/if}
  <div class="label">{label}</div>

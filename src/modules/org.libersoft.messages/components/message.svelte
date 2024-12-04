@@ -18,7 +18,7 @@
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
- $: checkmarks_img = 'img/modules/org.libersoft.messages/seen' + checkmarks + '.svg';
+ $: checkmarks_img = 'modules/org.libersoft.messages/img/seen' + checkmarks + '.svg';
 
  //$: console.log('Core.isClientFocused:', $isClientFocused);
 
@@ -185,6 +185,7 @@
 
 <ContextMenu target={elCaret}>
  <ContextMenuItem
+  img="modules/org.libersoft.messages/img/reply.svg"
   label="Reply"
   on:click={() => {
    console.log('reply');
@@ -192,86 +193,14 @@
   }}
  />
  <ContextMenuItem
-  label="Delete"
+  img="modules/org.libersoft.messages/img/forward.svg"
+  label="Forward"
   on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
+   console.log('forward');
   }}
  />
-
  <ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- /><ContextMenuItem
+  img="modules/org.libersoft.messages/img/delete.svg"
   label="Delete"
   on:click={() => {
    console.log('delete');

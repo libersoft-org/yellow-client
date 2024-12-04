@@ -123,7 +123,7 @@
       <td><Address address={address.address} /></td>
       <td class="icons">
        <Icon title="Rename" icon="img/edit.svg" on:click={() => renameAddress(wallet, address)} />
-       <Icon title="Hide" icon="img/modules/wallet/hide.svg" on:click={() => deleteAddress(wallet, address)} />
+       <Icon title="Hide" icon="modules/org.libersoft.wallet/img/hide.svg" on:click={() => deleteAddress(wallet, address)} />
       </td>
      </tr>
     {/each}

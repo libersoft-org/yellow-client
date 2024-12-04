@@ -76,9 +76,9 @@
 </style>
 
 <div class="message-bar">
- <Icon img="img/modules/org.libersoft.messages/attachment.svg" alt="Attachment" bind:this={elAttachment} />
+ <Icon img="attachment.svg" alt="Attachment" bind:this={elAttachment} />
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
- <Icon img="img/modules/org.libersoft.messages/send.svg" alt="Send" on:click={clickSend} />
+ <Icon img="send.svg" alt="Send" on:click={clickSend} />
 </div>
 
 <!-- TODO: THIS IS NOT WORKING, THROWING AN ERROR: Uncaught (in promise) TypeError: target.addEventListener is not a function

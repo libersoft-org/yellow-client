@@ -30,7 +30,7 @@
 
 <div class="item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
  {#if img}
-  <div class="image"><img src="img/modules/org.libersoft.dating/{img}" alt={label} /></div>
+  <div class="image"><img src="modules/org.libersoft.dating/img/{img}" alt={label} /></div>
  {/if}
  <div>{label}</div>
 </div>
