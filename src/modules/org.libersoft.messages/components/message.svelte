@@ -3,17 +3,9 @@
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
- import { ContextMenu, ContextMenuDivider, ContextMenuGroup, ContextMenuOption } from '../../../core/components/bx/ContextMenu/index.js';
+ import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
-
- import CopyFile from 'carbon-icons-svelte/lib/CopyFile.svelte';
- import Cut from 'carbon-icons-svelte/lib/Cut.svelte';
- import { Popover } from '../../../core/components/bx/index.js';
-
- //import ContextMenu from '../../../core/components/context-menu.svelte';
- //import ContextMenuOption from '../../../core/components/context-menu-option.svelte';
  //import Reply from './message-reply.svelte';
-
  export let message;
  export let container_element;
  let seen_txt;

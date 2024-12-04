@@ -27,14 +27,12 @@
 
  import { onMount, setContext, getContext, afterUpdate, createEventDispatcher } from 'svelte';
  import { writable } from 'svelte/store';
-
  const dispatch = createEventDispatcher();
  const position = writable([x, y]);
  const currentIndex = writable(-1);
  const hasPopup = writable(false);
  const menuOffsetX = writable(0);
  const ctx = getContext('ContextMenu');
-
  let options = [];
  let direction = 1;
  let prevX = 0;
@@ -130,12 +128,6 @@
  $: currentIndex.set(focusIndex);
 </script>
 
-<style>
- .bx--menu {
-  background-color: #fff;
- }
-</style>
-
 <svelte:window
  on:contextmenu={e => {
   if (target != null) return;
@@ -169,19 +161,52 @@
  on:click
  on:click={({ target }) => {
   const closestOption = target.closest('[tabindex]');
-  if (closestOption && closestOption.getAttribute('role') !== 'menuitem') close();
+
+  if (closestOption && closestOption.getAttribute('role') !== 'menuitem') {
+   close();
+  }
  }}
  on:keydown
  on:keydown={e => {
   if (open) e.preventDefault();
   if ($hasPopup) return;
+
   if (e.key === 'ArrowDown') {
    if (focusIndex < options.length - 1) focusIndex++;
   } else if (e.key === 'ArrowUp') {
-   if (focusIndex === -1) focusIndex = options.length - 1;
-   else if (focusIndex > 0) focusIndex--;
+   if (focusIndex === -1) {
+    focusIndex = options.length - 1;
+   } else {
+    if (focusIndex > 0) focusIndex--;
+   }
   }
  }}
 >
  <slot />
 </ul>
+
+<!-- OLD VERSION:
+<script>
+ import ContextMenuItem from './context-menu-item.svelte';
+ export let x = 0;
+ export let y = 0;
+ export let items = [];
+ let menuStyle = '';
+
+ $: menuStyle = `
+  position: absolute;
+  top: ${y}px;
+  left: ${x}px;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #ccc;
+  min-width: 150px;
+ `;
+</script>
+
+<div style={menuStyle}>
+ {#each items as item}
+  <ContextMenuItem icon={item.icon} label={item.label} on:click={item.action} />
+ {/each}
+</div>
+-->
