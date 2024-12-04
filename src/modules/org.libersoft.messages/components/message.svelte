@@ -178,30 +178,6 @@
  <div class="menu" role="button" bind:this={elCaret} tabindex="0" on:click={clickCaret} on:keydown={keyCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
- <!--<div class="menu" role="button" bind:this={elCaret2} tabindex="0" on:click={() => {popoverOpen = !popoverOpen }}>
-  <img src="img/caret-down-gray.svg" alt="Menu" />
- </div>
-
- <Popover
-    align
-    bind:open={popoverOpen}
-    on:click:outside={({ detail }) => {
-      console.log("on:click:outside");
-      contextMenuOpen = elCaret2.contains(detail.target);
-    }}
-  >
-  <ButtonSet stacked>
-   <BxButton>hello</BxButton>
-   <BxButton>hello</BxButton>
-   <BxButton>hello</BxButton>
-   <BxButton>hello</BxButton>
-   <BxButton>hello</BxButton>
-   <BxButton>hello</BxButton>
-  </ButtonSet>
-
- </Popover>
--->
-
  <!-- <Reply name="Someone" text="Some text" /> -->
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="bottomline">
@@ -225,19 +201,4 @@
 <ContextMenu target={elCaret}>
  <ContextMenuItem label="Reply" on:click={() => startReply(message)} />
  <ContextMenuItem label="Delete" on:click={() => snipeMessage(message)} />
- <!--
- <ContextMenuOption
-  indented
-  labelText="Delete"
-  on:click={() => {
-   snipeMessage(message);
-  }}
- />
- <ContextMenuOption
-  indented
-  labelText="Reply"
-  on:click={() => {
-   startReply(message);
-  }}
- />-->
 </ContextMenu>
