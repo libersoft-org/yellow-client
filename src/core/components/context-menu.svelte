@@ -144,7 +144,7 @@
 </script>
 
 <style>
- .bx--menu {
+ .context-menu {
   visibility: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   position: fixed;
@@ -156,7 +156,7 @@
   background-color: #fff;
  }
 
- .bx--menu--open {
+ .context-menu-open {
   visibility: visible;
  }
 </style>
@@ -180,14 +180,14 @@
 />
 
 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
-<ul
+<div
  bind:this={ref}
  role="menu"
  tabindex="-1"
  data-direction={direction}
  data-level={level}
- class:bx--menu={true}
- class:bx--menu--open={open}
+ class:context-menu={true}
+ class:context-menu-open={open}
  style:left="{x}px"
  style:top="{y}px"
  {...$$restProps}
@@ -214,4 +214,4 @@
  }}
 >
  <slot />
-</ul>
+</div>

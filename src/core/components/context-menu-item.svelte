@@ -39,10 +39,10 @@
 </style>
 
 <div class="menu-item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- <div class="icon-space">
-  {#if icon}
+ {#if icon}
+  <div class="icon-space">
    <img src={icon} alt="" width="24" height="24" />
-  {/if}
- </div>
+  </div>
+ {/if}
  <div class="label">{label}</div>
 </div>
