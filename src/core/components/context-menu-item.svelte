@@ -10,6 +10,18 @@
    dispatch('click');
   }
  }
+
+ function click() {
+  console.log('context-menu-item click');
+  dispatch('click');
+ }
+
+ function mousedown(event) {
+  console.log('context-menu-item mousedown');
+  event.preventDefault();
+  event.stopPropagation();
+ }
+
 </script>
 
 <style>
@@ -38,7 +50,7 @@
  }
 </style>
 
-<div class="menu-item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+<div class="menu-item" role="button" tabindex="0" on:mousedown={mousedown} on:click={click} on:keydown={handleKeydown}>
  {#if icon}
   <div class="icon-space">
    <img src={icon} alt="" width="24" height="24" />
