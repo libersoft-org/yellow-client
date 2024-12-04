@@ -435,7 +435,7 @@ function showNotification(acc, msg) {
 }
 
 function playNotificationSound() {
- const audio = new Audio('audio/message.mp3');
+ const audio = new Audio('audio/modules/org.libersoft.messages/message.mp3');
  audio.play();
 }
 

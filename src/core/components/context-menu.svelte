@@ -1,40 +1,17 @@
 <script>
- /**
-  * @event {HTMLElement} open
-  */
-
- /**
-  * Specify an element or list of elements to trigger the context menu.
-  * If no element is specified, the context menu applies to the entire window
-  * @type {null | ReadonlyArray<null | HTMLElement>}
-  */
- export let target = null;
-
- /**
-  * Set to `true` to open the menu
-  * Either `x` and `y` must be greater than zero
-  */
- export let open = false;
-
- /** Specify the horizontal offset of the menu position */
- export let x = 0;
-
- /** Specify the vertical offset of the menu position */
- export let y = 0;
-
- /** Obtain a reference to the unordered list HTML element */
- export let ref = null;
-
  import { onMount, setContext, getContext, afterUpdate, createEventDispatcher, tick } from 'svelte';
  import { writable } from 'svelte/store';
-
+ export let target = null;
+ export let open = false;
+ export let x = 0;
+ export let y = 0;
+ export let ref = null;
  const dispatch = createEventDispatcher();
  const position = writable([x, y]);
  const currentIndex = writable(-1);
  const hasPopup = writable(false);
  const menuOffsetX = writable(0);
  const ctx = getContext('ContextMenu');
-
  let options = [];
  let direction = 1;
  let prevX = 0;
@@ -51,9 +28,7 @@
   focusIndex = -1;
  }
 
- /** @type {(e: MouseEvent) => void} */
- // TODO: if tick is not necessary remove "async"
- async function openMenu(e) {
+ function openMenu(e) {
   e.preventDefault();
   e.stopPropagation();
   const { height, width } = ref.getBoundingClientRect();
@@ -78,9 +53,6 @@
   position.set([x, y]);
   open = true;
   openDetail = e.target;
-
-  //TODO: IS THIS NECESSARY?
-  await tick();
  }
 
  $: if (target != null) {
@@ -154,6 +126,7 @@
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #fff;
+  overflow: auto;
  }
 
  .context-menu-open {

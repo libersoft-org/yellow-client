@@ -1,7 +1,10 @@
 <script>
  import { sendMessage } from '../messages.js';
  import { tick } from 'svelte';
-
+ import Icon from './message-bar-icon.svelte';
+ import ContextMenu from '../../../core/components/context-menu.svelte';
+ import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
+ let elAttachment;
  let elMessage;
  let text;
 
@@ -28,26 +31,19 @@
   text = event.key;
  }
 
- function clickSend() {
+ function clickSend(event) {
   if (elMessage.value) {
    sendMessage(elMessage.value);
    elMessage.value = '';
   }
+  resizeMessage(event);
   elMessage.focus();
- }
-
- function keySend(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickSend();
-  }
  }
 
  function keyEnter(event) {
   if (event.key === 'Enter' && !event.shiftKey) {
    event.preventDefault();
-   clickSend();
-   resizeMessage(event);
+   clickSend(event);
   }
  }
 </script>
@@ -77,18 +73,16 @@
   width: 100%;
   box-sizing: border-box;
  }
-
- .icon {
-  cursor: pointer;
- }
-
- .icon img {
-  width: 32px;
-  height: 32px;
- }
 </style>
 
 <div class="message-bar">
+ <Icon img="img/modules/org.libersoft.messages/attachment.svg" alt="Attachment" bind:this={elAttachment} />
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
- <div class="icon" role="button" tabindex="0" on:click={clickSend} on:keydown={keySend}><img src="img/send.svg" alt="Send" /></div>
+ <Icon img="img/modules/org.libersoft.messages/send.svg" alt="Send" on:click={clickSend} />
 </div>
+
+<!-- TODO: THIS IS NOT WORKING, THROWING AN ERROR: Uncaught (in promise) TypeError: target.addEventListener is not a function
+<ContextMenu target={elAttachment}>
+ <ContextMenuItem label="File" on:click={() => { console.log('clicked on file'); }} />
+</ContextMenu>
+-->

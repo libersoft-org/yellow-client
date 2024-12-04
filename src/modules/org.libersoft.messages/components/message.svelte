@@ -14,14 +14,11 @@
  let intersection_observer_element;
  let is_visible;
  let pressTimer;
- let contextMenuOpen = false;
- let popoverOpen = false;
  let elCaret;
- let elCaret2;
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
- $: checkmarks_img = 'img/seen' + checkmarks + '.svg';
+ $: checkmarks_img = 'img/modules/org.libersoft.messages/seen' + checkmarks + '.svg';
 
  //$: console.log('Core.isClientFocused:', $isClientFocused);
 
@@ -53,18 +50,6 @@
   let result = text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
   //console.log('linkify result:', result);
   return result;
- }
-
- function clickCaret() {
-  //contextMenuOpen = !contextMenuOpen;
-  //console.log('contextMenuOpen:', contextMenuOpen);
- }
-
- function keyCaret(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickCaret();
-  }
  }
 
  function handleTouchStart() {
@@ -175,7 +160,7 @@
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd}>
  <div bind:this={intersection_observer_element}></div>
- <div class="menu" role="button" bind:this={elCaret} tabindex="0" on:click={clickCaret} on:keydown={keyCaret}>
+ <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
  <!-- <Reply name="Someone" text="Some text" /> -->
@@ -207,6 +192,86 @@
   }}
  />
  <ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ />
+
+ <ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
+  label="Delete"
+  on:click={() => {
+   console.log('delete');
+   snipeMessage(message);
+  }}
+ /><ContextMenuItem
   label="Delete"
   on:click={() => {
    console.log('delete');
