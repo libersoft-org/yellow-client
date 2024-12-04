@@ -6,6 +6,14 @@ import path from 'path';
 
 export default defineConfig(({mode}) => {
   return {
+   css: {
+     preprocessorOptions: {
+       scss: {
+         quietDeps: true,
+         quiet: true,
+       }
+     }
+   },
    plugins: [
     sveltekit(),
     pluginChecker({typescript: true}),

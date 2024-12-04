@@ -4,11 +4,13 @@
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
  import Button from '../../../core/components/button.svelte';
+ import { Button as BxButton, ButtonSet } from 'carbon-components-svelte';
 
- import { ContextMenu, ContextMenuDivider, ContextMenuGroup, ContextMenuOption } from 'carbon-components-svelte';
- //import 'carbon-components-svelte/css/white.css';
- //import CopyFile from "carbon-icons-svelte/lib/CopyFile.svelte";
- // import Cut from "carbon-icons-svelte/lib/Cut.svelte";
+ import { ContextMenu, ContextMenuDivider, ContextMenuGroup, ContextMenuOption } from '../../../core/components/bx/ContextMenu/index.js';
+
+ import CopyFile from 'carbon-icons-svelte/lib/CopyFile.svelte';
+ import Cut from 'carbon-icons-svelte/lib/Cut.svelte';
+ import { Popover } from '../../../core/components/bx/index.js';
 
  //import ContextMenu from '../../../core/components/context-menu.svelte';
  //import ContextMenuOption from '../../../core/components/context-menu-option.svelte';
@@ -23,7 +25,9 @@
  let is_visible;
  let pressTimer;
  let contextMenuOpen = false;
+ let popoverOpen = false;
  let elCaret;
+ let elCaret2;
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
@@ -62,8 +66,8 @@
  }
 
  function clickCaret() {
-  //alert('Icon clicked');
-  contextMenuOpen = !contextMenuOpen;
+  //contextMenuOpen = !contextMenuOpen;
+  //console.log('contextMenuOpen:', contextMenuOpen);
  }
 
  function keyCaret(event) {
@@ -180,6 +184,30 @@
  <div class="menu" role="button" bind:this={elCaret} tabindex="0" on:click={clickCaret} on:keydown={keyCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
+ <!--<div class="menu" role="button" bind:this={elCaret2} tabindex="0" on:click={() => {popoverOpen = !popoverOpen }}>
+  <img src="img/caret-down-gray.svg" alt="Menu" />
+ </div>
+
+ <Popover
+    align
+    bind:open={popoverOpen}
+    on:click:outside={({ detail }) => {
+      console.log("on:click:outside");
+      contextMenuOpen = elCaret2.contains(detail.target);
+    }}
+  >
+  <ButtonSet stacked>
+   <BxButton>hello</BxButton>
+   <BxButton>hello</BxButton>
+   <BxButton>hello</BxButton>
+   <BxButton>hello</BxButton>
+   <BxButton>hello</BxButton>
+   <BxButton>hello</BxButton>
+  </ButtonSet>
+
+ </Popover>
+-->
+
  <!-- <Reply name="Someone" text="Some text" /> -->
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="bottomline">
@@ -216,12 +244,9 @@
  </div>
 {/if}
 
-<!--
 <ContextMenu target={elCaret}>
- <ContextMenuOption
-    indented
-    labelText="Copy"
-    shortcutText="⌘C"
-  />
+ <ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
+ <ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
+ <ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
+ <ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
 </ContextMenu>
--->
