@@ -76,13 +76,13 @@
 </style>
 
 <div class="message-bar">
- <Icon img="attachment.svg" alt="Attachment" bind:this={elAttachment} />
+ <div bind:this={elAttachment} >
+  <Icon img="attachment.svg" alt="Attachment" />
+ </div>
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
  <Icon img="send.svg" alt="Send" on:click={clickSend} />
 </div>
 
-<!-- TODO: THIS IS NOT WORKING, THROWING AN ERROR: Uncaught (in promise) TypeError: target.addEventListener is not a function
 <ContextMenu target={elAttachment}>
  <ContextMenuItem label="File" on:click={() => { console.log('clicked on file'); }} />
 </ContextMenu>
--->
