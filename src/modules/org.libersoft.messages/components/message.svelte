@@ -52,14 +52,19 @@
   return result;
  }
 
- function handleTouchStart() {
+ function handleTouchStart(e) {
   pressTimer = setTimeout(() => {
-   alert('Long press detected');
+   pressTimer = null;
+   e.preventDefault();
+   alert('Long press');
   }, 500);
  }
 
  function handleTouchEnd() {
-  clearTimeout(pressTimer);
+  if (pressTimer) {
+   clearTimeout(pressTimer);
+   alert('Short press');
+  }
  }
 
  onMount(() => {

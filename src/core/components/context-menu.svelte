@@ -45,13 +45,13 @@
   console.log('context-menu openMenu:', e);
   e.preventDefault();
   e.stopPropagation();
-
+  if (e.type === 'contextmenu') return;
   console.log('context-menu close other menus:', menus);
   for (let menu of menus) {
    menu.close();
   }
   current_instance = getGuid();
-  menus.push( { guid:current_instance, close } );
+  menus.push({ guid: current_instance, close });
 
   const { height, width } = ref.getBoundingClientRect();
 

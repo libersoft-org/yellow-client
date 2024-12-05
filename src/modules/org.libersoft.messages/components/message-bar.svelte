@@ -76,7 +76,7 @@
 </style>
 
 <div class="message-bar">
- <div bind:this={elAttachment} >
+ <div bind:this={elAttachment}>
   <Icon img="attachment.svg" alt="Attachment" />
  </div>
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
@@ -84,5 +84,10 @@
 </div>
 
 <ContextMenu target={elAttachment}>
- <ContextMenuItem label="File" on:click={() => { console.log('clicked on file'); }} />
+ <ContextMenuItem
+  label="File"
+  on:click={() => {
+   console.log('clicked on file');
+  }}
+ />
 </ContextMenu>
