@@ -5,6 +5,7 @@
  export let onSelectModule;
  let module_data;
  let lastModuleSelected = false;
+ let expanded = false;
 
  $: module_data = $active_account?.module_data || {};
  //$: console.log('module-bar module_data:', module_data);
@@ -29,6 +30,17 @@
   console.log('clickSetModule: ' + id);
   onSelectModule(id);
  }
+
+ function clickExpand() {
+  expanded = !expanded;
+ }
+
+ function keyExpand(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickExpand();
+  }
+ }
 </script>
 
 <style>
@@ -40,14 +52,40 @@
 
  .items {
   display: flex;
+  justify-content: center;
+  flex-grow: 1;
   padding: 5px;
+  overflow: hidden;
+  flex-wrap: wrap;
+  height: 40px;
+ }
+
+ .items.expanded {
+  overflow: visible;
+  height: auto;
+ }
+
+ .dropdown {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 10px;
+  cursor: pointer;
+ }
+
+ .dropdown img {
+  width: 20px;
+  height: 20px;
  }
 </style>
 
 <div class="module-bar">
- <div class="items">
+ <div class="items {expanded ? 'expanded' : ''}">
   {#each order(getModuleDecls()) as decl (decl.id)}
    <Item img="{decl.id}.svg" alt={decl.name} on:click={() => clickSetModule(decl.id)} />
   {/each}
+ </div>
+ <div class="dropdown" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}>
+  <img src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
  </div>
 </div>

@@ -115,7 +115,9 @@
   {/if}
  {/if}
 
- <div><img src="img/down.svg" alt="▼" /></div>
+ <div>
+  <img src={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} />
+ </div>
  {#if accountsVisible}
   <div class="items open">
    {#each $accounts as a (get(a).id)}
