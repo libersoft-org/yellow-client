@@ -3,15 +3,16 @@
  import { getGuid, debug } from '../../../core/core.js';
  import Spinner from '../../../core/components/spinner.svelte';
  import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
- import Button from '../../../core/components/button.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
+ import ScrollDown from './scroll-down.svelte';
  import { messagesArray, events, insertEvent } from '../messages.js';
  import { get } from 'svelte/store';
 
  export let message_bar;
  export let conversation;
  export let setBarFocus;
+ export let scrollDownVisible = true;
 
  let showDebugModal = false;
  let messages_elem;
@@ -368,7 +369,7 @@
 </style>
 
 {#if $debug}
- <div style="debug">
+ <div class="debug">
   <button on:click={scrollToBottom}>Scroll to bottom</button>
   <button on:click={saveScrollPosition}>Save scroll position</button>
   <button on:click={restoreScrollPosition}>Restore scroll position</button>
@@ -385,9 +386,8 @@
  </div>
 {/if}
 
-<div class="messages" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur}>
+<div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur}>
  <div class="spacer"></div>
-
  {#each itemsArray as m (m.uid)}
   {#if $debug}
    {JSON.stringify(m, null, 2)}
@@ -410,6 +410,6 @@
    <Message message={m} container_element={messages_elem} />
   {/if}
  {/each}
-
  <div bind:this={anchorElement}></div>
+ <ScrollDown visible={scrollDownVisible} on:click={scrollToBottom} />
 </div>
