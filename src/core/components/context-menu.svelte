@@ -19,8 +19,6 @@
  let prevY = 0;
  let focusIndex = -1;
  let openDetail = null;
-
- let instances = [];
  let current_instance;
 
  let menus = getContext('menus');
@@ -33,29 +31,12 @@
   prevY = 0;
   focusIndex = -1;
   console.log('context-menu close:', menus);
-  // delete everything but the latest instance:
-  for (let i = 0; i < instances.length - 1; i++) {
-   const guid = instances[i];
-   if (guid === current_instance) continue;
-   let found = true;
-   while (found)
-   {
-    found = false;
-    for (let menu of menus) {
-     if (menu.guid === guid) {
-      console.log('found myself');
-      menus.splice(menus.indexOf(menu), 1);
-      console.log('->context-menu menus now:', menus);
-      found = true;
-      break;
-     }
-    }
+  for (let menu of menus) {
+   if (menu.guid === current_instance) {
+    console.log('found myself');
+    menus.splice(menus.indexOf(menu), 1);
+    break;
    }
-  }
-  let myself = instances.find(guid => guid === current_instance);
-  if (myself != null) {
-   console.log('delete myself from instances');
-   instances.splice(instances.indexOf(myself), 1);
   }
   console.log('->context-menu close:', menus);
  }
@@ -64,6 +45,14 @@
   console.log('context-menu openMenu:', e);
   e.preventDefault();
   e.stopPropagation();
+
+  console.log('context-menu close other menus:', menus);
+  for (let menu of menus) {
+   menu.close();
+  }
+  current_instance = getGuid();
+  menus.push( { guid:current_instance, close } );
+
   const { height, width } = ref.getBoundingClientRect();
 
   if (open || x === 0) {
@@ -87,13 +76,6 @@
   console.log('context-menu openMenu position:', x, y);
   open = true;
   openDetail = e.target;
-  console.log('context-menu close other menus:', menus);
-  for (let menu of menus) {
-   menu.close();
-  }
-  current_instance = getGuid();
-  instances.push(current_instance);
-  menus.push( { guid:current_instance, close } );
  }
 
  $: if (target != null) {
