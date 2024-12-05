@@ -1,16 +1,15 @@
 <script>
  import { active_account, order, getModuleDecls } from '../core.js';
  import { get } from 'svelte/store';
-
+ import Item from './module-bar-item.svelte';
+ export let onSelectModule;
  let module_data;
+ let lastModuleSelected = false;
+
  $: module_data = $active_account?.module_data || {};
  //$: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
  $: console.log('module-bar module_data_ordered:', module_data_ordered);
-
- export let onSelectModule;
-
- let lastModuleSelected = false;
  $: selectLastModule(module_data);
 
  function selectLastModule(module_data) {
@@ -22,9 +21,7 @@
    let id = acc.settings?.last_module_id;
    console.log('selectLastModule: ', module_data);
    console.log('selectLastModule: id: ', id);
-   if (module_data[id]) {
-    onSelectModule(id);
-   }
+   if (module_data[id]) onSelectModule(id);
   }
  }
 
@@ -32,43 +29,25 @@
   console.log('clickSetModule: ' + id);
   onSelectModule(id);
  }
-
- function keySetModule(name) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickSetModule(name);
-  }
- }
 </script>
 
 <style>
- .items {
+ .module-bar {
   display: flex;
-  padding: 5px;
   border-bottom: 1px solid #555;
   background-color: #222;
  }
 
- .items .item {
+ .items {
   display: flex;
-  padding: 10px;
-  cursor: pointer;
- }
-
- .items .item img {
-  width: 30px;
-  height: 30px;
- }
-
- .message {
-  color: #fff;
+  padding: 5px;
  }
 </style>
 
-<div class="items">
- {#each order(getModuleDecls()) as decl (decl.id)}
-  <div class="item" on:click={() => clickSetModule(decl.id)} on:keydown={() => keySetModule(decl.id)} tabindex="0">
-   <img src="img/modules/{decl.id}.svg" alt={decl.name} />
-  </div>
- {/each}
+<div class="module-bar">
+ <div class="items">
+  {#each order(getModuleDecls()) as decl (decl.id)}
+   <Item img="{decl.id}.svg" alt={decl.name} on:click={() => clickSetModule(decl.id)} />
+  {/each}
+ </div>
 </div>
