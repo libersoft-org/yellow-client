@@ -85,6 +85,7 @@
 
 <ContextMenu target={elAttachment}>
  <ContextMenuItem
+  img="modules/org.libersoft.messages/img/file.svg"
   label="File"
   on:click={() => {
    console.log('clicked on file');

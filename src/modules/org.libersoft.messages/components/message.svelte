@@ -90,8 +90,22 @@
   if (observer) observer.disconnect();
  });
 
- function reply() {
+ function replyMessage() {
   console.log('reply');
+  startReply(message);
+ }
+
+ function forwardMessage() {
+  console.log('forward');
+ }
+
+ function deleteMessage() {
+  console.log('delete');
+  snipeMessage(message);
+ }
+
+ function copyMessage() {
+  console.log('copy');
  }
 </script>
 
@@ -193,27 +207,8 @@
 {/if}
 
 <ContextMenu target={elCaret}>
- <ContextMenuItem
-  img="modules/org.libersoft.messages/img/reply.svg"
-  label="Reply"
-  on:click={() => {
-   console.log('reply');
-   startReply(message);
-  }}
- />
- <ContextMenuItem
-  img="modules/org.libersoft.messages/img/forward.svg"
-  label="Forward"
-  on:click={() => {
-   console.log('forward');
-  }}
- />
- <ContextMenuItem
-  img="modules/org.libersoft.messages/img/delete.svg"
-  label="Delete"
-  on:click={() => {
-   console.log('delete');
-   snipeMessage(message);
-  }}
- />
+ <ContextMenuItem img="img/copy.svg" label="Copy" on:click={() => copyMessage()} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" on:click={() => replyMessage()} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" on:click={() => forwardMessage()} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/delete.svg" label="Delete" on:click={() => deleteMessage()} />
 </ContextMenu>
