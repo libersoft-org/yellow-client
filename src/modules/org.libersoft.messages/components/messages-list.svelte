@@ -12,7 +12,8 @@
  export let message_bar;
  export let conversation;
  export let setBarFocus;
- export let scrollDownVisible = true;
+
+ let scrollDownVisible = true;
 
  let showDebugModal = false;
  let messages_elem;
