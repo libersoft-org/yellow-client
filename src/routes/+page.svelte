@@ -22,6 +22,11 @@
  import {} from '../modules/org.libersoft.dating/module.js';
  //import ModalWallets from '../modules/wallet/modals/wallets.svelte';
  import Modal from '../core/components/modal.svelte';
+
+ let menus = [];
+
+ setContext('menus', menus);
+
  let showWelcomeWizard = false;
  let wizardData = {
   steps: [

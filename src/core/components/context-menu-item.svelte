@@ -4,16 +4,26 @@
  export let label = '';
  const dispatch = createEventDispatcher();
 
+ import { getContext } from 'svelte';
+
+ let menu = getContext('ContextMenu');
+
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   dispatch('click');
+   trigger();
   }
  }
 
  function click() {
   console.log('context-menu-item click');
+  trigger();
+ }
+
+ function trigger() {
+  console.log('context-menu-item trigger');
   dispatch('click');
+  menu.close();
  }
 
  function mousedown(event) {
