@@ -7,25 +7,21 @@
 		"preview": "vite preview"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.2.5",
-		"@sveltejs/kit": "^2.7.0",
+		"@sveltejs/adapter-auto": "^3.3.1",
+		"@sveltejs/kit": "^2.9.0",
 		"@sveltejs/vite-plugin-svelte": "^3.1.2",
-		"prettier": "^3.4.1",
-		"prettier-plugin-svelte": "^3.2.7",
-		"svelte": "^4.0.0",
-		"typescript": "^5.6.3",
+		"prettier": "^3.4.2",
+		"prettier-plugin-svelte": "^3.3.2",
+		"svelte": "^4.2.19",
+		"typescript": "^5.7.2",
 		"vite": "^5.4.11"
 	},
 	"type": "module",
 	"dependencies": {
-		"@carbon/styles": "^1.70.0",
-		"@sveltejs/adapter-static": "^3.0.5",
-		"carbon-components-svelte": "^0.86.2",
-		"carbon-icons-svelte": "^12.13.0",
-		"dompurify": "^3.1.6",
-		"ethers": "^6.13.2",
+		"@sveltejs/adapter-static": "^3.0.6",
+		"dompurify": "^3.2.2",
+		"ethers": "^6.13.4",
 		"qrcode": "^1.5.4",
-		"scss": "^0.2.4",
 		"vite-plugin-checker": "^0.8.0"
 	}
 }
