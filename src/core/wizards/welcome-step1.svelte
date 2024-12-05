@@ -27,13 +27,13 @@
   display: flex;
   margin: 20px 0;
   justify-content: center;
-  animation: bounce 1.5s ease;
-  animation-fill-mode: forwards;
  }
 
  .logo img {
   width: 100px;
   height: 100px;
+  animation: bounce 1.5s ease;
+  animation-fill-mode: forwards;
  }
 
  .description {
