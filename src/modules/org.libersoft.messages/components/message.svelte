@@ -53,9 +53,9 @@
  }
 
  function handleTouchStart(e) {
+  e.preventDefault();
   pressTimer = setTimeout(() => {
    pressTimer = null;
-   e.preventDefault();
    alert('Long press');
   }, 500);
  }
