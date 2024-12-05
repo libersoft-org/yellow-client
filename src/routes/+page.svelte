@@ -136,8 +136,8 @@
  }
 
  function resizeSideBar(e) {
-  const min = 250;
-  const max = 500;
+  const min = 200;
+  const max = 700;
   if (isResizingSideBar) {
    let sideBarWidth = e.clientX < max ? e.clientX : max;
    sideBarWidth = e.clientX > min ? sideBarWidth : min;
