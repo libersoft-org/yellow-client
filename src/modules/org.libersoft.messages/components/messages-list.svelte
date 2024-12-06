@@ -74,6 +74,12 @@
   return result;
  }
 
+ function parseScroll(event) {
+  console.log('parseScroll');
+  let scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
+  scrollDownVisible = !scrolledToBottom;
+ }
+ 
  beforeUpdate(() => {
   if (!messages_elem) {
    return;
@@ -387,7 +393,7 @@
  </div>
 {/if}
 
-<div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur}>
+<div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
  <div class="spacer"></div>
  {#each itemsArray as m (m.uid)}
   {#if $debug}
