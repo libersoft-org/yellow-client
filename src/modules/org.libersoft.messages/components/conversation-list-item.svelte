@@ -84,7 +84,7 @@
 
 <div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={event => keyDown(event, c)}>
  <div class="item-row">
-  <Photo />
+  <Photo size="50" />
   <div class="description">
    <div class="contact">
     {#if c.visible_name}

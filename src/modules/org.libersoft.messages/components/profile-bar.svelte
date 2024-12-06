@@ -57,7 +57,7 @@
 </style>
 
 <div class="profile-bar">
- <Photo />
+ <Photo size="38" />
  <div class="description">
   {#if $selectedConversation.visible_name}
    <div class="visible_name">{$selectedConversation.visible_name}</div>

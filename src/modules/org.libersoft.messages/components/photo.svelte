@@ -1,14 +1,11 @@
 <script>
+ export let size = 50;
 </script>
 
 <style>
  .photo {
   border: 1px solid #000;
   background-color: #fff;
-  min-width: 50px;
-  min-height: 50px;
-  width: 50px;
-  height: 50px;
   border-radius: 50%;
   overflow: hidden;
  }
@@ -19,6 +16,6 @@
  }
 </style>
 
-<div class="photo">
+<div class="photo" style="min-width: {size}px; min-height: {size}px; width: {size}px; height: {size}px;">
  <img src="img/photo.svg" alt="" />
 </div>
