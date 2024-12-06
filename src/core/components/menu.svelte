@@ -1,10 +1,8 @@
 <script>
  /*import Core from '../core.js';*/
  import Item from './menu-item.svelte';
+ import { product, version, link } from '../core.js';
  export let showMenu = false;
- export let product;
- export let version;
- export let link;
 
  /*
  function logout() {

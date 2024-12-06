@@ -1,8 +1,6 @@
 <script>
  import Button from '../components/button.svelte';
- export let product;
- export let version;
- export let link;
+ import { product, version, link } from '../core.js';
  let notificationPermission = Notification.permission;
 
  function clickLogo() {
