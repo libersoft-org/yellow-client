@@ -16,6 +16,13 @@
  let pressTimer;
  let elCaret;
 
+ let elMessage;
+ let touchStartX = 0;
+ let touchCurrentX = 0;
+ let touchCurrentTranslation = 0;
+ let touchThreshold = 50;
+ let touchMaxTranslation = 80;
+
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
  $: checkmarks_img = 'modules/org.libersoft.messages/img/seen' + checkmarks + '.svg';
@@ -46,53 +53,71 @@
 
  function linkify(text) {
   // Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
-  const combinedPattern = new RegExp(
-    [
-      "(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
-      "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
-      "(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)",
-      "(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)",
-      "(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})",
-      "(tel:\\+?[0-9]{1,15})"
-    ].join("|"),
-    "g"
-  );
-  return text.replace(combinedPattern, (match) => {
-    // Directly use `match` as the URL/href. This ensures we handle all links in one pass.
-    return `<a href="${match}" target="_blank">${match}</a>`;
+  const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
+  return text.replace(combinedPattern, match => {
+   // Directly use `match` as the URL/href. This ensures we handle all links in one pass.
+   return `<a href="${match}" target="_blank">${match}</a>`;
   });
  }
 
+ let touchStartTs;
+ let moving;
+ let longPressTimer;
+ let thisWasALongPress;
 
  function handleTouchStart(e) {
+  //console.log('handle touch start', e);
+  moving = false;
+  thisWasALongPress = false;
   e.preventDefault();
-  pressTimer = setTimeout(() => {
-   pressTimer = null;
-   alert('Long press');
+  longPressTimer = setTimeout(() => {
+   if (!moving) {
+    thisWasALongPress = true;
+    alert('Long press');
+   }
   }, 500);
- }
-
- function handleTouchEnd() {
-  if (pressTimer) {
-   clearTimeout(pressTimer);
-   alert('Short press');
-  }
+  touchStartX = e.changedTouches[0].clientX;
+  touchCurrentX = touchStartX;
+  touchCurrentTranslation = 0;
+  elMessage.style.transition = 'none';
  }
 
  function handleTouchMove(e) {
+  //console.log('handle touch move', e);
+  e.preventDefault();
+  moving = true;
   touchCurrentX = e.changedTouches[0].clientX;
   let diff = touchCurrentX - touchStartX;
   if (!message.is_outgoing) {
-   // Posouváme jen doprava a max 80px
+   // move to the right
    if (diff < 0) diff = 0;
-   if (diff > maxTranslation) diff = maxTranslation;
+   if (diff > touchMaxTranslation) diff = touchMaxTranslation;
   } else {
-   // Posouváme jen doleva a max -80px
+   // move to the left
    if (diff > 0) diff = 0;
-   if (diff < -maxTranslation) diff = -maxTranslation;
+   if (diff < -touchMaxTranslation) diff = -touchMaxTranslation;
   }
-  currentTranslation = diff;
-  elMessage.style.transform = `translateX(${currentTranslation}px)`;
+  touchCurrentTranslation = diff;
+  elMessage.style.transform = `translateX(${touchCurrentTranslation}px)`;
+ }
+
+ function handleTouchEnd(e) {
+  //console.log('handle touch end', e);
+  if (longPressTimer) {
+   clearTimeout(longPressTimer);
+   longPressTimer = null;
+  }
+  if (!moving && !thisWasALongPress) alert('Short press');
+  let diff = touchCurrentTranslation;
+  elMessage.style.transition = 'transform 0.2s ease-out';
+  if ((!message.is_outgoing && diff > touchThreshold) || (message.is_outgoing && diff < -touchThreshold)) {
+   replyMessage();
+   touchCurrentTranslation = 0;
+   elMessage.style.transform = `translateX(${touchCurrentTranslation}px)`;
+  } else {
+   touchCurrentTranslation = 0;
+   elMessage.style.transform = `translateX(${touchCurrentTranslation}px)`;
+  }
  }
 
  onMount(() => {
@@ -108,7 +133,7 @@
      console.log(entries);
      is_visible = entries[0].isIntersecting;
     },
-    { threshold: 0.8, root: container_element }
+    { touchThreshold: 0.8, root: container_element }
    );
    observer.observe(intersection_observer_element);
   }
@@ -145,6 +170,10 @@
   margin: 10px 20px;
   border-radius: 10px;
   box-shadow: var(--shadow);
+
+  /* Maybe not necessary: */
+  transform: translateX(0);
+  will-change: transform;
  }
 
  .message.incoming {
@@ -209,7 +238,7 @@
  }
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove}>
  <div bind:this={intersection_observer_element}></div>
  <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />

@@ -14,5 +14,4 @@
 
 <div class="account-title">
  {#if $a.settings?.title}{$a.settings?.title} ({/if}{$a.credentials?.address}{#if $a.settings?.title}){/if}
-
 </div>
