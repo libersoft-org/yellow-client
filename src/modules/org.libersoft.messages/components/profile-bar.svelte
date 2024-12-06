@@ -21,7 +21,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: calc(var(--menu-height) - 20px);
+  max-height: calc(var(--menu-height) - 20px);
+  height: calc(var(--menu-height) - 20px);
   padding: 10px;
   background-color: #222;
   color: #fff;

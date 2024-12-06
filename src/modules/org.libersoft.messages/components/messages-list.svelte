@@ -79,7 +79,7 @@
   let scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
   scrollDownVisible = !scrolledToBottom;
  }
- 
+
  beforeUpdate(() => {
   if (!messages_elem) {
    return;
