@@ -45,12 +45,23 @@
  }
 
  function linkify(text) {
-  const urlPattern = /(https?:\/\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})?(?::\d+)?(?:\/[^\s]*)?)/g;
-  //console.log('linkify:', text);
-  let result = text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
-  //console.log('linkify result:', result);
-  return result;
+  // Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
+  const combinedPattern = new RegExp(
+    [
+      "(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
+      "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
+      "(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)",
+      "(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})",
+      "(tel:\\+?[0-9]{1,15})"
+    ].join("|"),
+    "g"
+  );
+  return text.replace(combinedPattern, (match) => {
+    // Directly use `match` as the URL/href. This ensures we handle all links in one pass.
+    return `<a href="${match}" target="_blank">${match}</a>`;
+  });
  }
+
 
  function handleTouchStart(e) {
   e.preventDefault();
