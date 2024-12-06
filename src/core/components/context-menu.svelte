@@ -63,8 +63,7 @@
    if (window.innerHeight - height < e.y) {
     y = e.y - height;
     if (y < 10) y = 10;
-   }
-   else y = e.y;
+   } else y = e.y;
   }
 
   menuMaxHeight = window.innerHeight - y - 10;

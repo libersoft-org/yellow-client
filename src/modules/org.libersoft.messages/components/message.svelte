@@ -67,6 +67,22 @@
   }
  }
 
+ function handleTouchMove(e) {
+  touchCurrentX = e.changedTouches[0].clientX;
+  let diff = touchCurrentX - touchStartX;
+  if (!message.is_outgoing) {
+   // Posouváme jen doprava a max 80px
+   if (diff < 0) diff = 0;
+   if (diff > maxTranslation) diff = maxTranslation;
+  } else {
+   // Posouváme jen doleva a max -80px
+   if (diff > 0) diff = 0;
+   if (diff < -maxTranslation) diff = -maxTranslation;
+  }
+  currentTranslation = diff;
+  elMessage.style.transform = `translateX(${currentTranslation}px)`;
+ }
+
  onMount(() => {
   //console.log('onMount message:', message);
   if (!message.seen && !message.just_sent) {
@@ -181,7 +197,7 @@
  }
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove}>
  <div bind:this={intersection_observer_element}></div>
  <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
@@ -208,9 +224,6 @@
 
 <ContextMenu target={elCaret}>
  <ContextMenuItem img="img/copy.svg" label="Copy" on:click={() => copyMessage()} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" on:click={() => replyMessage()} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" on:click={() => forwardMessage()} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/delete.svg" label="Delete" on:click={() => deleteMessage()} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" on:click={() => replyMessage()} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" on:click={() => forwardMessage()} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/delete.svg" label="Delete" on:click={() => deleteMessage()} />
