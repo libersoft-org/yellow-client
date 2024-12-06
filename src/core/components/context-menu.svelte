@@ -20,7 +20,7 @@
  let focusIndex = -1;
  let openDetail = null;
  let current_instance;
- let menuMaxHeight = 500;
+ let menuMaxHeight = 99999;
 
  let menus = getContext('menus');
 
@@ -51,16 +51,24 @@
   for (let menu of menus) menu.close();
   current_instance = getGuid();
   menus.push({ guid: current_instance, close });
+
   const { height, width } = ref.getBoundingClientRect();
+
   if (open || x === 0) {
    if (window.innerWidth - width < e.x) x = e.x - width;
    else x = e.x;
   }
   if (open || y === 0) {
    menuOffsetX.set(e.x);
-   if (window.innerHeight - height < e.y) y = e.y - height;
+   if (window.innerHeight - height < e.y) {
+    y = e.y - height;
+    if (y < 0) y = 0;
+   }
    else y = e.y;
   }
+
+  menuMaxHeight = window.innerHeight - y - 10;
+
   position.set([x, y]);
   console.log('context-menu openMenu position:', x, y);
   open = true;

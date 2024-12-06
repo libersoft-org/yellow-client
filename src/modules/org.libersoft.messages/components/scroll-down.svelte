@@ -19,10 +19,10 @@
   justify-content: center;
   right: 20px;
   bottom: 70px;
-  min-width: 48px;
-  width: 48px;
-  min-height: 48px;
-  height: 48px;
+  min-width: 38px;
+  width: 38px;
+  min-height: 38px;
+  height: 38px;
   padding: 10px;
   border: 2px solid #aaa;
   border-radius: 50%;
