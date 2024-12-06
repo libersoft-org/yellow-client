@@ -15,6 +15,7 @@
  let is_visible;
  let pressTimer;
  let elCaret;
+ let menu;
 
  let elMessage;
  let touchStartX = 0;
@@ -64,10 +65,15 @@
  let moving;
  let longPressTimer;
  let thisWasALongPress;
+ let touchX;
+ let touchY;
 
  function handleTouchStart(e) {
   //console.log('handle touch start', e);
   moving = false;
+  touchX = e.changedTouches[0].clientX;
+  touchY = e.changedTouches[0].clientY;
+
   thisWasALongPress = false;
   e.preventDefault();
   longPressTimer = setTimeout(() => {
@@ -107,7 +113,12 @@
    clearTimeout(longPressTimer);
    longPressTimer = null;
   }
-  if (!moving && !thisWasALongPress) alert('Short press');
+  if (!moving && !thisWasALongPress) {
+   console.log('Short press:', e, e.x, e.y);
+   e.x = touchX;
+   e.y = touchY;
+   menu.openMenu(e);
+  }
   let diff = touchCurrentTranslation;
   elMessage.style.transition = 'transform 0.2s ease-out';
   if ((!message.is_outgoing && diff > touchThreshold) || (message.is_outgoing && diff < -touchThreshold)) {
@@ -263,7 +274,7 @@
  </div>
 {/if}
 
-<ContextMenu target={elCaret}>
+<ContextMenu bind:this={menu} target={elCaret}>
  <ContextMenuItem img="img/copy.svg" label="Copy" on:click={() => copyMessage()} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" on:click={() => replyMessage()} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" on:click={() => forwardMessage()} />

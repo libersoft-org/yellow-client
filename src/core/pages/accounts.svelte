@@ -7,6 +7,7 @@
  import ModalAccountsDel from '../modals/modal-accounts-del.svelte';
  import { get } from 'svelte/store';
  import AccountStatusIcon from '../components/account-status-icon.svelte';
+ import AccountStatus from '../components/account-status.svelte';
  let showAddEditAccountModal = false;
  let showDelAccountModal = false;
  let idItem = null;
@@ -138,7 +139,7 @@
    <tbody>
     {#each $accounts_config as a (a.id)}
      <tr>
-      <td class="center"><AccountStatusIcon a={findAccount(a.id)} /></td>
+      <td class="center"><AccountStatusIcon a={findAccount(a.id)} /><AccountStatus acc={get(findAccount(a.id))} /></td>
       <td class="center">{a.settings?.title}</td>
       <td class="center">{a.credentials.server}</td>
       <td class="center">{a.credentials.address}</td>

@@ -42,7 +42,7 @@
   console.log('->context-menu close:', menus);
  }
 
- function openMenu(e) {
+ export function openMenu(e) {
   console.log('context-menu openMenu:', e);
   e.preventDefault();
   e.stopPropagation();

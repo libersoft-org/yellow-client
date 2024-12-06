@@ -1,7 +1,9 @@
 <script>
  import AccountStatusIcon from './account-status-icon.svelte';
  import AccountTitle from './account-title.svelte';
- import { debug } from '../core.js';
+ import { debug, findAccount } from '../core.js';
+ import { get } from 'svelte/store';
+ import AccountStatus from './account-status.svelte';
  export let a;
  export let clickSelectAccount;
 
@@ -41,7 +43,7 @@
 
 <div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={event => keySelectAccount($a.id, event)}>
  <div class="title"><AccountStatusIcon {a} /><AccountTitle {a} /></div>
- {$a.status}
+ <small><AccountStatus acc={$a} /></small>
  {#if $debug}
   <small>
    <ul>
