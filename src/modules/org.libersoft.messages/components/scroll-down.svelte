@@ -1,7 +1,9 @@
 <script>
- import { createEventDispatcher } from 'svelte';
+ import { createEventDispatcher, onMount } from 'svelte';
  export let visible = true;
  const dispatch = createEventDispatcher();
+
+ let size = 30;
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -19,10 +21,10 @@
   justify-content: center;
   right: 20px;
   bottom: 70px;
-  min-width: 38px;
-  width: 38px;
-  min-height: 38px;
-  height: 38px;
+  min-width: var(--size);
+  width: var(--size);
+  min-height: var(--size);
+  height: var(--size);
   padding: 10px;
   border: 2px solid #aaa;
   border-radius: 50%;
@@ -38,7 +40,7 @@
 </style>
 
 {#if visible}
- <div class="scroll-down" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+ <div class="scroll-down" style="--size: {size}px;" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
   <img src="img/caret-down-gray.svg" alt="˅" />
  </div>
 {/if}
