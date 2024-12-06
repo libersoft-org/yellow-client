@@ -14,6 +14,10 @@ debug.subscribe(value => {
  console.log('DEBUG:', value);
 });
 
+export const product = 'Yellow';
+export const version = '0.0.1';
+export const link = 'https://yellow.libersoft.org';
+
 // declarations of modules that this client supports
 let module_decls = {};
 let global_socket_id = 0;
