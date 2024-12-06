@@ -74,10 +74,22 @@
   return result;
  }
 
+ let scrolledToBottom = true;
+ let windowInnerWidth;
+ let windowInnerHeight;
+
  function parseScroll(event) {
   console.log('parseScroll');
-  let scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
-  scrollDownVisible = !scrolledToBottom;
+  scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
+ }
+
+ $: scrollDownVisible = !scrolledToBottom;
+
+ $: updateWindowSize(windowInnerWidth, windowInnerHeight);
+
+ function updateWindowSize(width, height) {
+  console.log('updateWindowSize width:', width, 'height:', height);
+  parseScroll();
  }
 
  beforeUpdate(() => {
@@ -392,6 +404,9 @@
   </ModalWithSlot>
  </div>
 {/if}
+
+<svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
+
 
 <div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
  <div class="spacer"></div>

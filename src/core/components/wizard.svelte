@@ -1,14 +1,22 @@
 <script>
  import Button from './button.svelte';
- import { getContext } from 'svelte';
+ import { getContext, setContext } from 'svelte';
 
  export let close;
  export let params;
 
+ let nextText = 'Next';
  let currentStep = 0;
  let steps = params.steps;
  let setTitle = getContext('setTitle');
  let pageChanged = getContext('pageChanged');
+
+ function setNextText(text) {
+  console.log('setNextText:', text);
+  nextText = text;
+ }
+
+ setContext('wizard', { setNextText });
 
  $: setTitle(steps[currentStep].title);
 
@@ -26,24 +34,6 @@
 </script>
 
 <style>
- /*
- .wizard {
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  max-width: calc(100% - 20px);
-  max-height: calc(100% - 20px);
-  transform: translate(-50%, -50%);
-  border: 1px solid #000;
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: #fff;
-  box-shadow: var(--shadow);
- }*/
-
  .progress-bar {
   display: flex;
   align-items: center;
@@ -121,7 +111,7 @@
    {/if}
    <div class="gap"></div>
    {#if currentStep < steps.length - 1}
-    <Button on:click={nextStep} text="Next" />
+    <Button on:click={nextStep} text={nextText} />
    {:else}
     <Button on:click={close} text="Finish" />
    {/if}

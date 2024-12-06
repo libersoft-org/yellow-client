@@ -1,11 +1,12 @@
 <script>
- import { onMount } from 'svelte';
+ import { getContext, onMount } from 'svelte';
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts } from '../core.js';
  import Button from '../components/button.svelte';
  import AccountStatus from '../components/account-status.svelte';
  import AccountStatusIcon from '../components/account-status-icon.svelte';
  import { derived, get, writable } from 'svelte/store';
+
  export let close;
  export let params;
  export let isInWelcomeWizard = false;
@@ -20,6 +21,8 @@
  let config_title;
  let acc;
  let retry_nonce = 0;
+
+ let wizard = getContext('wizard');
 
  let account_id_store = writable(null);
  $: account_id_store.set(params.id);
@@ -69,6 +72,7 @@
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';
+   if (wizard) wizard.setNextText('Skip');
   }
  });
 
@@ -94,6 +98,7 @@
   if (!verify()) return;
   params.id = addAccount({ enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
   if (save_id) save_id(params.id);
+  if (wizard) wizard.setNextText('Next');
   close();
  }
 
@@ -102,6 +107,7 @@
   saveAccount(params.id, { enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password, retry_nonce } }, { title: config_title });
   retry_nonce++;
   if (save_id) save_id(params.id);
+  if (wizard) wizard.setNextText('Next');
   close();
  }
 
