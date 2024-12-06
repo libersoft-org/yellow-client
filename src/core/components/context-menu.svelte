@@ -62,7 +62,7 @@
    menuOffsetX.set(e.x);
    if (window.innerHeight - height < e.y) {
     y = e.y - height;
-    if (y < 0) y = 0;
+    if (y < 10) y = 10;
    }
    else y = e.y;
   }
