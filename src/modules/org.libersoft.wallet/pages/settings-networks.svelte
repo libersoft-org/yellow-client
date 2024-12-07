@@ -108,7 +108,7 @@
     {/if}
     <div class="name">{n.name}</div>
     <div class="buttons">
-     <Icon icon="img/coin.svg" title="Token list" on:click={() => tokenList(n)} />
+     <Icon icon="modules/org.libersoft.wallet/img/coin.svg" title="Token list" on:click={() => tokenList(n)} />
      <Icon icon="img/edit.svg" title="Edit network" on:click={() => editNetwork(n)} />
      <Icon icon="img/del.svg" title="Delete network" on:click={() => removeNetwork(n)} />
     </div>
