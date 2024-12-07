@@ -1,5 +1,6 @@
 <script>
  import Core from '../../../core/core.js';
+ import Sidebar from '../components/sidebar.svelte';
  import Item from '../components/sidebar-item.svelte';
  import { page } from '../dating.js';
 
@@ -9,7 +10,9 @@
  }
 </script>
 
-<Item img="people.svg" label="People nearby" on:click={() => setPage('people')} />
-<Item img="map.svg" label="Map" on:click={() => setPage('map')} />
-<Item img="match.svg" label="Match game" on:click={() => setPage('match')} />
-<Item img="settings.svg" label="Settings" on:click={() => setPage('settings')} />
+<Sidebar>
+ <Item img="people.svg" label="People nearby" onClick={() => setPage('people')} />
+ <Item img="map.svg" label="Map" onClick={() => setPage('map')} />
+ <Item img="match.svg" label="Match game" onClick={() => setPage('match')} />
+ <Item img="settings.svg" label="Settings" onClick={() => setPage('settings')} />
+</Sidebar>

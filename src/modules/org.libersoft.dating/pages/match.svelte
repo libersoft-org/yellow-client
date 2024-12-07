@@ -1,12 +1,10 @@
 <script>
+ import Page from '../components/page.svelte';
+ import Content from '../components/content.svelte';
  import Panel from '../components/panel.svelte';
 </script>
 
-<style>
- .content {
-  padding: 10px;
- }
-</style>
-
-<Panel label="Match game" />
-<div class="content">Match game</div>
+<Page>
+ <Panel label="Match game" />
+ <Content>Match game</Content>
+</Page>

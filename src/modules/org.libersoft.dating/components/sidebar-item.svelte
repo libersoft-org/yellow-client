@@ -1,8 +1,7 @@
 <script>
- import { createEventDispatcher } from 'svelte';
  export let img = null;
  export let label = '';
- const dispatch = createEventDispatcher();
+ export let onClick;
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -30,7 +29,7 @@
  }
 </style>
 
-<div class="item" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+<div class="item" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>
  {#if img}
   <div class="image"><img src="modules/org.libersoft.dating/img/{img}" alt={label} /></div>
  {/if}

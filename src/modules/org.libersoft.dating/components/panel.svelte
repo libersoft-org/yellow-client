@@ -17,6 +17,7 @@
   padding: 10px;
   background-color: #222;
   color: #fff;
+  box-shadow: var(--shadow);
  }
 
  .panel .label {
