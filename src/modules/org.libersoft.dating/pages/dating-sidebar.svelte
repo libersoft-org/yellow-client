@@ -9,7 +9,15 @@
  }
 </script>
 
-<Item img="people.svg" label="People nearby" onClick={() => setPage('people')} />
-<Item img="map.svg" label="Map" onClick={() => setPage('map')} />
-<Item img="match.svg" label="Match game" onClick={() => setPage('match')} />
-<Item img="settings.svg" label="Settings" onClick={() => setPage('settings')} />
+<style>
+ .sidebar {
+  overflow-y: auto;
+ }
+</style>
+
+<div class="sidebar">
+ <Item img="people.svg" label="People nearby" onClick={() => setPage('people')} />
+ <Item img="map.svg" label="Map" onClick={() => setPage('map')} />
+ <Item img="match.svg" label="Match game" onClick={() => setPage('match')} />
+ <Item img="settings.svg" label="Settings" onClick={() => setPage('settings')} />
+</div>

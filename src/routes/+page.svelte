@@ -128,7 +128,11 @@
 <style>
  .app {
   display: flex;
+  width: 100vw;
+  max-width: 100vw;
   height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
  }
 
  .sidebar {
@@ -136,12 +140,9 @@
   flex-direction: column;
   min-width: 300px;
   max-width: 300px;
+  max-height: 100%;
   box-shadow: var(--shadow);
   background-color: #fff;
- }
-
- .sidebar-module {
-  overflow: auto;
  }
 
  .resizer {
@@ -158,7 +159,6 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  max-height: 100%;
  }
 
  @media (max-width: 768px) {
@@ -189,17 +189,17 @@
   <MenuBar bind:isMenuOpen />
   <AccountBar />
   <ModuleBar {onSelectModule} />
-  <div class="sidebar-module">
-   {#if selectedCorePage}
-    <svelte:component this={selectedCorePage.sidebar} />
-   {:else if selectedModuleDecl}
-    <svelte:component this={selectedModuleDecl.panels.sidebar} />
-   {:else}
-    <WelcomeSidebar />
-   {/if}
-  </div>
+  {#if selectedCorePage}
+   <svelte:component this={selectedCorePage.sidebar} />
+  {:else if selectedModuleDecl}
+   <svelte:component this={selectedModuleDecl.panels.sidebar} />
+  {:else}
+   <WelcomeSidebar />
+  {/if}
  </div>
+
  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
+
  <div class="content" bind:this={contentElement}>
   {#if $hideSidebarMobile}
    {#if selectedCorePage}

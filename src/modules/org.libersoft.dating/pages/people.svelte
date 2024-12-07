@@ -4,4 +4,10 @@
 </script>
 
 <Panel label="People nearby" />
-<Content>People nearby</Content>
+<Content>
+ START<br />
+ People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />
+ END 1<br />
+ END 2<br />
+ END 3<br />
+</Content>

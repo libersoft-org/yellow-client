@@ -50,7 +50,7 @@
 
 <style>
  .message-bar {
-  position: sticky;
+  position: fixed;
   bottom: 0;
   display: flex;
   align-items: end;

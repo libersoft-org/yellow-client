@@ -49,8 +49,8 @@
  .items {
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   max-height: 100%;
+  overflow-y: auto;
  }
 </style>
 
