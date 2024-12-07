@@ -132,7 +132,7 @@
  }
 
  .error {
-  color: red;
+  color: #f00;
  }
 </style>
 
