@@ -15,7 +15,9 @@
 <style>
  .item {
   display: flex;
+  align-items: center;
   gap: 10px;
+  height: 30px;
   padding: 10px;
   background-color: #fffcf0;
   border-bottom: 1px solid #dd9;
