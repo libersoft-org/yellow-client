@@ -10,6 +10,7 @@
 
 <style>
  .panel {
+  position: absolute;
   display: flex;
   align-items: center;
   gap: 10px;
