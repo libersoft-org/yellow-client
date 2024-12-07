@@ -1,10 +1,7 @@
 <script>
- import Page from '../components/page.svelte';
  import Content from '../components/content.svelte';
  import Panel from '../components/panel.svelte';
 </script>
 
-<Page>
- <Panel label="Settings" />
- <Content>Settings</Content>
-</Page>
+<Panel label="Settings" />
+<Content>Settings</Content>
