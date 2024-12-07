@@ -158,7 +158,7 @@
   display: flex;
   flex-direction: column;
   max-height: 100%;
-  /*flex-grow: 1;*/
+  flex-grow: 1;
  }
 
  @media (max-width: 768px) {
