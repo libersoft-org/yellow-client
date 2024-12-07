@@ -70,6 +70,12 @@
 </script>
 
 <style>
+ .wallet-content {
+  background: url('/img/background.webp') repeat;
+  background-size: 400px;
+  height: 100vh;
+ }
+
  .top-bar {
   display: flex;
   align-items: center;
@@ -106,8 +112,6 @@
   align-items: center;
   flex-direction: column;
   height: calc(100vh - 72px);
-  background: url('/img/background.webp') repeat;
-  background-size: 400px;
   overflow: auto;
  }
 
@@ -223,74 +227,76 @@
  }
 </style>
 
-<div class="top-bar">
- <div class="left">
-  <div class="button" role="button" tabindex="0" on:click={clickBackButton} on:keydown={keyBackButton}>
-   <img src="img/back-white.svg" alt="Back" />
+<div class="wallet-content">
+ <div class="top-bar">
+  <div class="left">
+   <div class="button" role="button" tabindex="0" on:click={clickBackButton} on:keydown={keyBackButton}>
+    <img src="img/back-white.svg" alt="Back" />
+   </div>
+   <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (showModalNetworks = true)} />
   </div>
-  <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (showModalNetworks = true)} />
+  <div class="right">
+   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (showModalWallets = true)} />
+  </div>
  </div>
- <div class="right">
-  <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (showModalWallets = true)} />
- </div>
-</div>
-<div class="wallet">
- <div class="content">
-  <div class="body">
-   <div class="top">
-    <div class="left">
-     <div class="status">
-      <div class="indicator orange"></div>
-      <div>{$status}</div>
-     </div>
-     <div style="font-size: 12px">Server: {$rpcURL}</div>
-    </div>
-    <div class="center">
-     <div class="balance">
-      <div class="crypto">
-       {#if $selectedNetwork?.currency?.iconURL}
-        <div><img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} /></div>
-       {/if}
-       <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
+ <div class="wallet">
+  <div class="content">
+   <div class="body">
+    <div class="top">
+     <div class="left">
+      <div class="status">
+       <div class="indicator orange"></div>
+       <div>{$status}</div>
       </div>
-      <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
-      <pre>retrieved {$balanceTimestamp}</pre>
+      <div style="font-size: 12px">Server: {$rpcURL}</div>
+     </div>
+     <div class="center">
+      <div class="balance">
+       <div class="crypto">
+        {#if $selectedNetwork?.currency?.iconURL}
+         <div><img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} /></div>
+        {/if}
+        <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
+       </div>
+       <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
+       <pre>retrieved {$balanceTimestamp}</pre>
+      </div>
+     </div>
+     <div class="right">
+      {#if $selectedAddress && $selectedAddress.address}
+       <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
+        <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
+        <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
+       </div>
+      {:else}
+       <div class="address">No address selected</div>
+      {/if}
      </div>
     </div>
-    <div class="right">
-     {#if $selectedAddress && $selectedAddress.address}
-      <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
-       <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
-       <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
-      </div>
-     {:else}
-      <div class="address">No address selected</div>
+    <div class="buttons">
+     <Button width="70px" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('send')} />
+     <Button width="70px" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('receive')} />
+     <Button width="70px" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('balance')} />
+     <Button width="70px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('history')} />
+     <Button width="70px" text="Address book" on:click={() => setSection('addressbook')} />
+     <Button width="70px" text="Settings" on:click={() => setSection('settings')} />
+    </div>
+    <div class="separator"></div>
+    <div class="section">
+     {#if section == 'send'}
+      <Send />
+     {:else if section == 'receive'}
+      <Receive />
+     {:else if section == 'balance'}
+      <Balance />
+     {:else if section == 'history'}
+      <History />
+     {:else if section == 'addressbook'}
+      <AddressBook />
+     {:else if section == 'settings'}
+      <Settings />
      {/if}
     </div>
-   </div>
-   <div class="buttons">
-    <Button width="70px" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('send')} />
-    <Button width="70px" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('receive')} />
-    <Button width="70px" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('balance')} />
-    <Button width="70px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('history')} />
-    <Button width="70px" text="Address book" on:click={() => setSection('addressbook')} />
-    <Button width="70px" text="Settings" on:click={() => setSection('settings')} />
-   </div>
-   <div class="separator"></div>
-   <div class="section">
-    {#if section == 'send'}
-     <Send />
-    {:else if section == 'receive'}
-     <Receive />
-    {:else if section == 'balance'}
-     <Balance />
-    {:else if section == 'history'}
-     <History />
-    {:else if section == 'addressbook'}
-     <AddressBook />
-    {:else if section == 'settings'}
-     <Settings />
-    {/if}
    </div>
   </div>
  </div>
