@@ -201,14 +201,12 @@
  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
 
  <div class="content" bind:this={contentElement}>
-  {#if $hideSidebarMobile}
-   {#if selectedCorePage}
-    <svelte:component this={selectedCorePage.content} />
-   {:else if selectedModuleDecl}
-    <svelte:component this={selectedModuleDecl.panels.content} bind:this={content} />
-   {:else}
-    <WelcomeContent {product} {version} {link} />
-   {/if}
+  {#if selectedCorePage}
+   <svelte:component this={selectedCorePage.content} />
+  {:else if selectedModuleDecl}
+   <svelte:component this={selectedModuleDecl.panels.content} bind:this={content} />
+  {:else}
+   <WelcomeContent {product} {version} {link} />
   {/if}
  </div>
 </div>

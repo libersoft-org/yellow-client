@@ -13,4 +13,15 @@
  };
 </script>
 
-<svelte:component this={pages[$page]} />
+<style>
+ .content {
+  height: 100vh;
+  background: url('/img/background.webp') repeat;
+  background-size: 400px;
+  overflow: hidden;
+ }
+</style>
+
+<div class="content">
+ <svelte:component this={pages[$page]} />
+</div>
