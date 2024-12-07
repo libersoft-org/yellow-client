@@ -10,11 +10,13 @@
 
 <style>
  .panel {
-  position: absolute;
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: center;
   gap: 10px;
   height: 38px;
+  min-height: 38px;
   padding: 10px;
   background-color: #222;
   color: #fff;
