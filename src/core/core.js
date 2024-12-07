@@ -22,7 +22,7 @@ export const link = 'https://yellow.libersoft.org';
 let module_decls = {};
 let global_socket_id = 0;
 
-const heartbeat_interval = import.meta.env.VITE_YELLOW_HEARTBEAT_INTERVAL || 10000;
+const ping_interval = import.meta.env.VITE_YELLOW_PING_INTERVAL || 10000;
 
 export function getModuleDecls() {
  //console.log('GET MODULE DECLS:', module_decls);
@@ -263,7 +263,7 @@ function constructAccount(id, credentials, enabled, settings) {
   credentials: { ...credentials },
   enabled,
   /*
-    also stuff like (set on heartbeat, for example) belongs here:
+    also stuff like (set on ping, for example) belongs here:
 
     acc.lastCommsTs = Date.now();
     acc.status = 'Connected.';
@@ -271,7 +271,7 @@ function constructAccount(id, credentials, enabled, settings) {
 
     We should put all this stuff in a separate object, let's say "info".
     And try to stuff credentials into settings maybe.
-    And each of these nested objects of interest can be a store, so we can update them independently, without causing a global update on each heartbeat.
+    And each of these nested objects of interest can be a store, so we can update them independently, without causing a global update on each ping.
   */
   requests: {},
   module_data: {},
@@ -303,7 +303,7 @@ function _enableAccount(account) {
 function _disableAccount(account) {
  let acc = get(account);
  disconnectAccount(acc);
- clearHeartbeatTimer(acc);
+ clearPingTimer(acc);
  clearReconnectTimer(account);
  acc.enabled = false;
  acc.suspended = false;
@@ -323,7 +323,7 @@ function reconnectAccount(account) {
   return;
  }
 
- //clearHeartbeatTimer(acc);
+ //clearPingTimer(acc);
  clearReconnectTimer(account);
 
  let socket_id;
@@ -378,8 +378,8 @@ function reconnectAccount(account) {
    retry(account, 'Connection closed');
   };
 
-  clearHeartbeatTimer(acc);
-  setupHeartbeat(account);
+  clearPingTimer(acc);
+  setupPing(account);
  }
 }
 
@@ -389,7 +389,7 @@ function retry(account, msg) {
  acc.status = 'Retrying...';
  acc.session_status = undefined;
  acc.error = msg;
- //clearHeartbeatTimer(acc);
+ //clearPingTimer(acc);
  //acc.sessionID = null;
  account.update(v => v);
  setReconnectTimer(account);
@@ -415,10 +415,10 @@ function clearReconnectTimer(account) {
  }
 }
 
-function clearHeartbeatTimer(acc) {
- if (acc.heartbeatTimer) {
-  clearInterval(acc.heartbeatTimer);
-  acc.heartbeatTimer = null;
+function clearPingTimer(acc) {
+ if (acc.pingTimer) {
+  clearInterval(acc.pingTimer);
+  acc.pingTimer = null;
  }
 }
 
@@ -444,9 +444,9 @@ function sendLoginCommand(account) {
  });
 }
 
-function setupHeartbeat(account) {
+function setupPing(account) {
  let acc = get(account);
- acc.heartbeatTimer = window.setInterval(() => {
+ acc.pingTimer = window.setInterval(() => {
   if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
    acc.status = 'Retrying...';
    acc.error = 'Not connected';
@@ -458,11 +458,11 @@ function setupHeartbeat(account) {
   send(
    acc,
    'core',
-   'user_heartbeat',
+   'ping',
    {},
    true,
    (req, res) => {
-    //console.log('Heartbeat response:', res);
+    //console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
     acc.status = 'Connected.';
     acc.error = null;
@@ -470,18 +470,18 @@ function setupHeartbeat(account) {
    },
    true
   );
-  if (Date.now() - acc.lastCommsTs > heartbeat_interval * 2) {
+  if (Date.now() - acc.lastCommsTs > ping_interval * 2) {
    const msg = 'No comms for 15 seconds, reconnecting...';
    console.log(msg);
    // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
    acc.status = 'Retrying...';
    acc.error = msg;
-   //clearHeartbeatTimer(acc);
+   //clearPingTimer(acc);
    //acc.sessionID = null;
    account.update(v => v);
    reconnectAccount(account);
   }
- }, heartbeat_interval);
+ }, ping_interval);
 }
 
 export function order(dict) {

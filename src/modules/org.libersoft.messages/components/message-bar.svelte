@@ -50,6 +50,8 @@
 
 <style>
  .message-bar {
+  position: sticky;
+  bottom: 0;
   display: flex;
   align-items: end;
   gap: 10px;

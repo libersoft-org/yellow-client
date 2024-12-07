@@ -58,6 +58,6 @@
 
 <div role="none" class="conversation" onkeydown={onKeydown}>
  <ProfileBar {closeConversation} />
- <MessagesList {message_bar} {setBarFocus} conversation={$selectedConversation} />
+ <MessagesList {setBarFocus} conversation={$selectedConversation} />
  <MessageBar bind:this={message_bar} />
 </div>

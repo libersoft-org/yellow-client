@@ -8,24 +8,12 @@
  import ScrollDown from './scroll-down.svelte';
  import { messagesArray, events, insertEvent } from '../messages.js';
  import { get } from 'svelte/store';
-
- export let message_bar;
  export let conversation;
  export let setBarFocus;
-
  let scrollDownVisible = true;
-
  let showDebugModal = false;
  let messages_elem;
  let anchorElement;
-
- let doRestoreScroll = false;
- let doScrollToBottom = false;
-
- let savedScrollTop = 0;
- let savedAnchorTop = 0;
- let savedScrollHeight = 0;
-
  let oldLastID = null;
  let itemsCount = 0;
  let itemsArray = [];
@@ -346,10 +334,8 @@
   display: flex;
   margin-top: auto;
   flex-direction: column;
-  /*justify-content: flex-end;*/
   flex-grow: 1;
   overflow-y: auto;
-  /*overflow-y: scroll; Force show scrollbar, avoid re-layout */
  }
 
  .unread {
@@ -419,9 +405,7 @@
    <Spinner />
   {:else if m.type === 'hole'}
    <Loader loader={m.top} />
-   <div class="hole">
-    {m.uid}
-   </div>
+   <div class="hole">{m.uid}</div>
    <Loader loader={m.bottom} />
   {:else if m.type === 'loader'}
    <Loader loader={m} />

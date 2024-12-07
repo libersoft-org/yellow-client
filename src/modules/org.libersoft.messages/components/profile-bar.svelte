@@ -18,6 +18,8 @@
 
 <style>
  .profile-bar {
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: center;
   gap: 10px;
