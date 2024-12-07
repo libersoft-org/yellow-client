@@ -1,8 +1,6 @@
 <script>
- import { onMount, setContext } from 'svelte';
- import { get } from 'svelte/store';
-
  import '../app.css';
+ import { onMount, setContext } from 'svelte';
  import { active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls, debug, product, version, link } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -20,15 +18,10 @@
  import {} from '../modules/org.libersoft.wallet/module.js';
  import {} from '../modules/org.libersoft.iframes/module.js';
  import {} from '../modules/org.libersoft.dating/module.js';
- //import ModalWallets from '../modules/wallet/modals/wallets.svelte';
  import Modal from '../core/components/modal.svelte';
-
  let menus = [];
-
  setContext('menus', menus);
-
- let showWelcomeWizard = false;
- let wizardData = {
+ const wizardData = {
   steps: [
    { title: 'Welcome to Yellow', component: WizardWelcomeStep1 },
    { title: 'Connect your account', component: WizardWelcomeStep2 },
@@ -42,28 +35,8 @@
    content: Accounts,
   },
  };
+ let showWelcomeWizard = false;
  let content;
-
- //this should probably be a part of module decl:
- /*
- const modules = {
-  messages: {
-   id: 'messages',
-   sidebar: ConversationsList,
-   content: ConversationsMain
-  },
-  contacts: {
-   id: 'contacts',
-   sidebar: ContactsList,
-   content: Contact
-  },
-  wallet: {
-   id: 'wallet',
-   sidebar: WalletSidebar,
-   content: WalletContent
-  }
- };
-*/
  let isMenuOpen = false;
  let sideBar;
  let resizer;
@@ -80,11 +53,11 @@
 
  onMount(() => {
   console.log('+page onMount');
-  window.addEventListener('focus', () => isClientFocused.update(() => true));
-  window.addEventListener('blur', () => isClientFocused.update(() => false));
+  window.addEventListener('focus', () => isClientFocused.set(true));
+  window.addEventListener('blur', () => isClientFocused.set(false));
   window.addEventListener('keydown', onkeydown);
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-  if (get(accounts_config).length === 0) {
+  if ($accounts_config.length === 0) {
    console.log('showWelcomeWizard = true');
    showWelcomeWizard = true;
   }
@@ -101,15 +74,15 @@
   selected_corepage_id.set(null);
   console.log('onSelectModule: ' + id);
   selected_module_id.set(id);
-  console.log('selected_module_id: ' + get(selected_module_id));
+  console.log('selected_module_id: ' + $selected_module_id);
 
-  console.log('active_account: ', get(active_account));
-  console.log('accounts_config: ', get(accounts_config));
-  if (!get(active_account)) return;
+  console.log('active_account: ', $active_account);
+  console.log('accounts_config: ', $accounts_config);
+  if (!$active_account) return;
 
   accounts_config.update(accounts => {
    accounts.forEach(account => {
-    if (account.id === get(active_account).id) {
+    if (account.id === $active_account.id) {
      account.settings = account.settings ? account.settings : {};
      account.settings.last_module_id = id;
     }

@@ -6,7 +6,7 @@
 
  /*
  function logout() {
-  Core.hideSidebarMobile.update(() => false);
+  Core.hideSidebarMobile.set(false);
   showMenu = false;
  }
  */

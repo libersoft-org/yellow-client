@@ -1,7 +1,6 @@
 <script>
  import { onDestroy, onMount, tick } from 'svelte';
  import Core from '../../../core/core.js';
- import { debug } from '../../../core/core.js';
  import { get } from 'svelte/store';
  import { selectedConversation } from '../messages.js';
  import ProfileBar from './profile-bar.svelte';
@@ -20,16 +19,16 @@
 
  onMount(async () => {
   console.log('conversation mounted for:', get(selectedConversation));
-  window.addEventListener('keydown', onkeydown);
+  window.addEventListener('keydown', onKeydown);
  });
 
  onDestroy(() => {
-  if (typeof window !== 'undefined') window.removeEventListener('keydown', onkeydown);
+  if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
  });
 
  function closeConversation() {
-  selectedConversation.update(() => null);
-  Core.hideSidebarMobile.update(() => false);
+  selectedConversation.set(null);
+  Core.hideSidebarMobile.set(false);
  }
 
  export async function setBarFocus() {
@@ -37,7 +36,7 @@
   await message_bar?.setBarFocus();
  }
 
- async function onkeydown(event) {
+ async function onKeydown(event) {
   console.log('Conversation keyDown: ', event.key);
   if (event.key === 'Escape' && get(selectedConversation)) {
    closeConversation();
@@ -57,7 +56,7 @@
  }
 </style>
 
-<div tabindex="0" class="conversation" {onkeydown}>
+<div role="none" class="conversation" onkeydown={onKeydown}>
  <ProfileBar {closeConversation} />
  <MessagesList {message_bar} {setBarFocus} conversation={$selectedConversation} />
  <MessageBar bind:this={message_bar} />

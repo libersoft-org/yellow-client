@@ -45,10 +45,10 @@ function sendData(acc, command, params = {}, sendSessionID = true, callback = nu
 
 export function selectConversation(conversation) {
  console.log('SELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATION', conversation);
- selectedConversation.update(() => conversation);
+ selectedConversation.set(conversation);
  events.set([]);
  messagesArray.set([]);
- hideSidebarMobile.update(() => true);
+ hideSidebarMobile.set(true);
  listMessages(conversation.acc, conversation.address);
 }
 
