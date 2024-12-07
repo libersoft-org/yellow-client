@@ -157,8 +157,8 @@
  .content {
   display: flex;
   flex-direction: column;
-  max-height: 100%;
   flex-grow: 1;
+  max-height: 100%;
  }
 
  @media (max-width: 768px) {
