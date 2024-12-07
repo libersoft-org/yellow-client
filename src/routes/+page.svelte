@@ -173,11 +173,9 @@
 </style>
 
 <svelte:window {onkeydown} />
-
 <svelte:head>
  <title>{product}</title>
 </svelte:head>
-
 <div class="app">
  <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
@@ -193,7 +191,6 @@
   {/if}
  </div>
  <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
-
  <div class="content" bind:this={contentElement}>
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.content} />
