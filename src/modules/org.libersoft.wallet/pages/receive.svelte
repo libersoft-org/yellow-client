@@ -85,8 +85,7 @@
 </script>
 
 <style>
- input,
- select {
+ input {
   padding: 5px;
   border: 1px solid #000;
   border-radius: 10px;

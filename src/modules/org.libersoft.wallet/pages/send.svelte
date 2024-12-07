@@ -70,8 +70,7 @@
 </script>
 
 <style>
- input,
- select {
+ input {
   padding: 5px;
   font: inherit;
   border: 1px solid #888;

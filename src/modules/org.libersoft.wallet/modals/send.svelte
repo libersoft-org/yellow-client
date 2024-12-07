@@ -1,5 +1,4 @@
 <script>
- export let close;
 </script>
 
-REALLY????????
+Would you really like to send ... ?

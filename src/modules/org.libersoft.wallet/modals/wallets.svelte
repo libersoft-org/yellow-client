@@ -2,7 +2,6 @@
  import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
  import Accordion from '../../../core/components/accordion.svelte';
  export let close;
- export let params;
  let activeIndex = null;
  let filter = '';
 
@@ -50,12 +49,14 @@
 <input type="text" placeholder="Search" bind:value={filter} />
 <Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
  <table>
-  {#each walletAddresses(wallet) as address, index}
-   <tr class={index % 2 === 0 ? 'even' : 'odd'} on:click={() => clickSelectAddress(wallet, address)} on:keydown={() => keySelectAddress(wallet, address)}>
-    <td class="center">{address.index}</td>
-    <td>{address.name}</td>
-    <td>{address.address}</td>
-   </tr>
-  {/each}
+  <tbody>
+   {#each walletAddresses(wallet) as address, index}
+    <tr class={index % 2 === 0 ? 'even' : 'odd'} on:click={() => clickSelectAddress(wallet, address)} on:keydown={() => keySelectAddress(wallet, address)}>
+     <td class="center">{address.index}</td>
+     <td>{address.name}</td>
+     <td>{address.address}</td>
+    </tr>
+   {/each}
+  </tbody>
  </table>
 </Accordion>

@@ -5,7 +5,6 @@
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
  import { networks } from '../wallet.ts';
- export let close;
  export let params;
 
  let net;

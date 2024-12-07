@@ -3,7 +3,6 @@
  import List from '../components/list.svelte';
  import ListItem from '../components/list-item.svelte';
  export let close;
- export let params;
  let filter = '';
 
  function selectNetwork(id) {

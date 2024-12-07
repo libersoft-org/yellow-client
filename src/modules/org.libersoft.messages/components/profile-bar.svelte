@@ -8,7 +8,7 @@
  }
 
  function keyClose(event) {
-  // todo use Button
+  // TODO use Button
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    clickClose();

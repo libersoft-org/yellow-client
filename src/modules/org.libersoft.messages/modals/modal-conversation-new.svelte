@@ -3,7 +3,6 @@
  import { openNewConversation } from '../messages.js';
  import Button from '../../../core/components/button.svelte';
  export let close;
- export let params;
  let address;
 
  onMount(() => address.focus());
