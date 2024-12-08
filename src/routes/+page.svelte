@@ -62,7 +62,29 @@
    showWelcomeWizard = true;
   }
   setupIframeListener();
+
+  // TODO: I don't know what this is, test out
+  //document.body.style.touchAction = 'none';
+  //document.documentElement.style.touchAction = 'none';
+  const visualViewport = window.visualViewport;
+  if (visualViewport) {
+   visualViewport.addEventListener('resize', updateAppHeight);
+   visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
+  } else window.addEventListener('resize', updateAppHeight);
+  updateAppHeight();
  });
+
+ function updateAppHeight() {
+  const visualViewport = window.visualViewport;
+  let viewportHeight;
+  if (visualViewport) viewportHeight = visualViewport.height;
+  else viewportHeight = window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', `${viewportHeight}px`);
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+  const metaViewport = document.querySelector('meta[name="viewport"]');
+  if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
+ }
 
  function setupIframeListener() {
   window.addEventListener('message', event => {
@@ -130,8 +152,8 @@
   display: flex;
   width: 100vw;
   max-width: 100vw;
-  height: 100vh;
-  max-height: 100vh;
+  height: var(--app-height, 100vh);
+  max-height: var(--app-height, 100vh);
   overflow: hidden;
  }
 
