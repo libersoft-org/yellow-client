@@ -13,23 +13,24 @@
  let observer;
  let intersection_observer_element;
  let is_visible;
- let pressTimer;
  let elCaret;
  let menu;
-
  let elMessage;
  let touchStartX = 0;
  let touchCurrentX = 0;
  let touchCurrentTranslation = 0;
  let touchThreshold = 50;
  let touchMaxTranslation = 80;
+ let moving;
+ let longPressTimer;
+ let thisWasALongPress;
+ let touchX;
+ let touchY;
 
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
  $: checkmarks_img = 'modules/org.libersoft.messages/img/seen' + checkmarks + '.svg';
-
  //$: console.log('Core.isClientFocused:', $isClientFocused);
-
  $: if (is_visible && $isClientFocused) {
   console.log('is_visible:', is_visible, 'isClientFocused:', $isClientFocused);
   if (message.seen) {
@@ -60,13 +61,6 @@
    return `<a href="${match}" target="_blank">${match}</a>`;
   });
  }
-
- let touchStartTs;
- let moving;
- let longPressTimer;
- let thisWasALongPress;
- let touchX;
- let touchY;
 
  function handleTouchStart(e) {
   //console.log('handle touch start', e);
