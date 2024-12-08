@@ -14,14 +14,14 @@
 </script>
 
 <style>
- .content {
+ .dating-content {
   height: 100vh;
+  max-height: 100vh;
   background: url('/img/background.webp') repeat;
   background-size: 400px;
-  overflow: hidden;
  }
 </style>
 
-<div class="content">
+<div class="dating-content">
  <svelte:component this={pages[$page]} />
 </div>

@@ -5,6 +5,8 @@
 
 <Panel label="People nearby" />
 <Content>
+ {window.innerHeight}<br />
+ {window.visualViewport.height}<br />
  START 1<br />
  START 2<br />
  START 3<br />
