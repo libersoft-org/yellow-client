@@ -75,7 +75,7 @@
   touchY = e.changedTouches[0].clientY;
 
   thisWasALongPress = false;
-  e.preventDefault();
+  //e.preventDefault();
   longPressTimer = setTimeout(() => {
    if (!moving) {
     thisWasALongPress = true;
@@ -90,7 +90,7 @@
 
  function handleTouchMove(e) {
   //console.log('handle touch move', e);
-  e.preventDefault();
+  //e.preventDefault();
   moving = true;
   touchCurrentX = e.changedTouches[0].clientX;
   let diff = touchCurrentX - touchStartX;
