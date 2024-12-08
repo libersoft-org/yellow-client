@@ -17,17 +17,9 @@
   }
  }
 
- let elConversation;
-
  onMount(async () => {
   console.log('conversation mounted for:', get(selectedConversation));
   window.addEventListener('keydown', onKeydown);
-
-  if (window.visualViewport) {
-   window.visualViewport.addEventListener('resize', () => {
-    elConversation.style.height = window.visualViewport.height + 'px';
-   });
-  }
  });
 
  onDestroy(() => {
@@ -64,7 +56,7 @@
  }
 </style>
 
-<div role="none" class="conversation" bind:this={elConversation} onkeydown={onKeydown}>
+<div role="none" class="conversation" onkeydown={onKeydown}>
  <ProfileBar {closeConversation} />
  <MessagesList {setBarFocus} conversation={$selectedConversation} />
  <MessageBar bind:this={message_bar} />

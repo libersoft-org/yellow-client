@@ -34,10 +34,15 @@
  .description {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+ }
+
+ .description .visible_name,
+ .description .address {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  flex-grow: 1;
  }
 
  .description .visible_name {
