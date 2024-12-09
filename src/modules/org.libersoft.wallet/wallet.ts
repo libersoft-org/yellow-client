@@ -57,6 +57,8 @@ interface AddressBookItem {
  address: string;
 }
 
+const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
+
 export const status = writable<string>('Started.');
 export const rpcURL = writable<string | null>(null);
 
@@ -221,12 +223,12 @@ selectedWallet.subscribe((value: Wallet | undefined) => {
 function reconnect(): void {
  provider = null;
 
- console.log('Reconnecting to', get(selectedNetwork));
+ //console.log('Reconnecting to', get(selectedNetwork));
 
  let net = get(selectedNetwork);
  if (!net) return;
 
- console.log('RECONNECT');
+ //console.log('wallet RECONNECT');
  status.set('Connecting to ' + net.name);
 
  if (reconnectionTimer !== undefined) {
@@ -335,7 +337,7 @@ function connectToURL(): void {
   }
   provider = null;
   setNextUrl();
-  reconnectionTimer = setTimeout(reconnect, 10000);
+  reconnectionTimer = setTimeout(reconnect, WALLET_PROVIDER_RECONNECT_INTERVAL);
  });
  provider.on('network', (newNetwork: any) => {
   console.log('Network changed:', newNetwork.toJSON());

@@ -29,6 +29,14 @@ export function getModuleDecls() {
  return module_decls;
 }
 
+selected_module_id.subscribe(async id => {
+ await tick();
+ for (const k in module_decls) {
+  const module = module_decls[k];
+  module.callbacks.onModuleSelected?.(id === module.id);
+ }
+});
+
 export function registerModule(id, decl) {
  //console.log('REGISTER MODULE:', id, decl);
  module_decls[id] = decl;
@@ -375,7 +383,10 @@ function reconnectAccount(account) {
   acc.socket.onclose = event => {
    console.log('WebSocket ' + socket_id + '  closed:', event);
    acc.session_status = undefined;
-   retry(account, 'Connection closed');
+   account.update(v => v);
+   setTimeout(() => {
+    retry(account, 'Connection closed');
+   }, 200);
   };
 
   clearPingTimer(acc);
@@ -470,8 +481,9 @@ function setupPing(account) {
    },
    true
   );
-  if (Date.now() - acc.lastCommsTs > ping_interval * 2) {
-   const msg = 'No comms for 15 seconds, reconnecting...';
+  let noCommsSeconds = Date.now() - acc.lastCommsTs;
+  if (noCommsSeconds > ping_interval * 2) {
+   const msg = 'No comms for ' + noCommsSeconds + ' seconds, reconnecting...';
    console.log(msg);
    // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
    acc.status = 'Retrying...';

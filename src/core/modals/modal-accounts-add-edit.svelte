@@ -3,9 +3,8 @@
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts } from '../core.js';
  import Button from '../components/button.svelte';
- import AccountStatus from '../components/account-status.svelte';
- import AccountStatusIcon from '../components/account-status-icon.svelte';
  import { derived, get, writable } from 'svelte/store';
+ import AccountStatusIconAndText from '../pages/AccountStatusIconAndText.svelte';
 
  export let close;
  export let params;
@@ -28,12 +27,12 @@
  $: account_id_store.set(params.id);
 
  account_id_store.subscribe(value => {
-  console.log('ACCOUNT-ID-STORE-EMITTED', value);
+  console.log('ModalAccountsAddEdit ACCOUNT-ID-STORE-EMITTED', value);
  });
 
  let account_store = derived([accounts, account_id_store], ([$accounts, $account_id_store]) => {
   let r = $accounts.find(acc => get(acc).id === $account_id_store);
-  console.log('ACCOUNT-STORE-FIRED', $accounts, $account_id_store, r);
+  console.log('ModalAccountsAddEdit ACCOUNT-STORE-FIRED', $accounts, $account_id_store, r);
   return r;
  });
 
@@ -42,7 +41,7 @@
    return set(null);
   }
   const unsubscribe = $account_store.subscribe(account => {
-   console.log('$ACCOUNT-STORE-EMITTED', account);
+   console.log('ModalAccountsAddEdit $ACCOUNT-STORE-EMITTED', account);
    set(account);
   });
   return () => unsubscribe();
@@ -50,7 +49,7 @@
 
  account.subscribe(value => {
   acc = value;
-  console.log('ACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACCACC', acc);
+  console.log('ModalAccountsAddEdit isInWelcomeWizard=' + isInWelcomeWizard + ', acc=', acc);
  });
 
  onMount(() => {
@@ -198,8 +197,7 @@
  {#if account && acc}
   <div class="status">
    <div class="bold">Status:</div>
-   <div><AccountStatusIcon a={account} /></div>
-   <div><AccountStatus {acc} /></div>
+   <AccountStatusIconAndText {account} />
   </div>
  {/if}
 </div>

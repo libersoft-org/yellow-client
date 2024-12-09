@@ -75,6 +75,7 @@
  });
 
  function updateAppHeight() {
+  console.log('updateAppHeight');
   const visualViewport = window.visualViewport;
   let viewportHeight;
   if (visualViewport) viewportHeight = visualViewport.height;

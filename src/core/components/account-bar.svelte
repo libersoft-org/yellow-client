@@ -103,7 +103,7 @@
 <div class="dropdown" role="button" tabindex="0" on:click={clickToggleAccounts} on:keydown={keyToggleAccounts} bind:this={dropdown}>
  {#if $active_account}
   <div class="text">
-   <AccountStatusIcon a={active_account} />
+   <AccountStatusIcon account={active_account} />
    <AccountTitle a={active_account} />
   </div>
  {:else}
