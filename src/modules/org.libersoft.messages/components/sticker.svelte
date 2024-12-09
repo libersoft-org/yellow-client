@@ -5,67 +5,20 @@
  let container;
  let isLottie = false;
 
- async function load() {
+ onMount(async () => {
   const ext = file.split('.').pop().toLowerCase();
-  //console.log('ext:', ext);
   if (ext === 'lottie' || ext === 'json') {
-   const animationData = await fetch(file);
-   const d = await animationData.json();
-   //console.log('d:', d);
    isLottie = true;
    await tick();
-   const animation = lottie.loadAnimation({
+   lottie.loadAnimation({
     container: container,
     renderer: 'svg',
     loop: true,
     autoplay: true,
-    //path: file,
-    animationData: d,
-   });
-
-   console.log(ext + 'animation:');
-   console.log(animation);
-
-   if (!animation) {
-    console.log('animation is null');
-   }
-
-   animation.addEventListener('complete', () => {
-    console.log('animation complete');
-   });
-
-   animation.addEventListener('data_ready', () => {
-    console.log('animation data_ready');
-    animation.play();
-   });
-
-   animation.addEventListener('DOMLoaded', () => {
-    console.log('animation DOMLoaded');
-   });
-
-   animation.addEventListener('enterFrame', () => {
-    console.log('animation enterFrame');
-   });
-
-   animation.addEventListener('loopComplete', () => {
-    console.log('animation loopComplete');
-   });
-
-   animation.addEventListener('data_failed', () => {
-    console.log('animation data_failed');
-   });
-
-   animation.addEventListener('destroy', () => {
-    console.log('animation destroy');
-   });
-
-   animation.addEventListener('loaded_images', () => {
-    console.log('animation loaded_images');
+    path: file,
    });
   }
- }
-
- onMount(load);
+ });
 </script>
 
 <style>
@@ -77,15 +30,21 @@
  }
 
  .lottie {
-  height: 10em;
+  width: 100%;
+  height: 100%;
+ }
+
+ .image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
  }
 </style>
 
-<!--<button on:click={load}>load</button>-->
 <div class="sticker">
  {#if isLottie}
   <div class="lottie" bind:this={container}></div>
  {:else}
-  <img src={file} alt="sticker" style="width: 100%; height: 100%; object-fit: contain;" />
+  <img class="image" src={file} alt="" />
  {/if}
 </div>
