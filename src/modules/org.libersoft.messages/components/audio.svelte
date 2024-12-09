@@ -22,8 +22,6 @@
     autoplay: false,
     url: file,
    });
-   //wavesurfer.load(file);
-   //wavesurfer.load('https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav');
    wavesurfer.on('decode', d => (duration = formatTime(d)));
    wavesurfer.on('timeupdate', t => (time = formatTime(t)));
    wavesurfer.on('interaction', () => wavesurfer.play());

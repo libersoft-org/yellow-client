@@ -165,7 +165,7 @@
   openMenu(e);
  }}
  on:mousedown={e => {
-  console.log('context-menu svelte:window click:', e);
+  //console.log('context-menu svelte:window click:', e);
   if (!open) return;
   console.log('context-menu svelte:window click close:', e);
   close();
