@@ -5,6 +5,7 @@
  import { isClientFocused } from '../../../core/core.js';
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
+ import VoiceMessage from './voice-message.svelte';
  //import Reply from './message-reply.svelte';
  export let message;
  export let container_element;
@@ -249,6 +250,7 @@
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
  <!-- <Reply name="Someone" text="Some text" /> -->
+ <VoiceMessage file="modules/org.libersoft.messages/audio/message.mp3" />
  <div class="text">{@html processMessage(message.message)}</div>
  <div class="bottomline">
   <div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
