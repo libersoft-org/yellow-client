@@ -1,6 +1,7 @@
 <script>
  import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
+
  export let file;
  let wavesurfer;
  let isPlaying = false;
@@ -19,7 +20,7 @@
     responsive: true,
     height: 80,
     autoplay: false,
-    url: 'https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav',
+    url: file,
    });
    //wavesurfer.load(file);
    //wavesurfer.load('https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav');
