@@ -9,7 +9,7 @@
   const ext = file.split('.').pop().toLowerCase();
   //console.log('ext:', ext);
   if (ext === 'lottie' || ext === 'json') {
-   const animationData = await fetch('/modules/org.libersoft.messages/img/animated.json');
+   const animationData = await fetch(file);
    const d = await animationData.json();
    //console.log('d:', d);
    isLottie = true;
