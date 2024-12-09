@@ -70,6 +70,7 @@
   border: 1px solid #080;
   border-radius: 10px;
   background-color: #0b0;
+  cursor: pointer;
  }
 
  .player .play img {
