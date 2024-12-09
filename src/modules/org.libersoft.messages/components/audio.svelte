@@ -17,8 +17,10 @@
    responsive: true,
    height: 80,
    autoplay: false,
+   url: 'https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav',
   });
-  wavesurfer.load(file);
+  //wavesurfer.load(file);
+  //wavesurfer.load('https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav');
   wavesurfer.on('decode', d => (duration = formatTime(d)));
   wavesurfer.on('timeupdate', t => (time = formatTime(t)));
   wavesurfer.on('interaction', () => wavesurfer.play());
@@ -49,8 +51,6 @@
  .voice-message {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: 10px;
   border: 1px solid #000;
   border-radius: 10px;
@@ -59,7 +59,9 @@
 
  .player {
   display: flex;
+  align-items: center;
   gap: 10px;
+  padding: 10px;
   border: 1px solid #888;
  }
 
@@ -68,21 +70,36 @@
   border: 1px solid #080;
   border-radius: 10px;
   background-color: #0b0;
+  cursor: pointer;
  }
 
  .player .play img {
   width: 24px;
   height: 24px;
  }
+
+ .player .wave {
+  border: 3px solid #000;
+  width: 300px;
+  height: 100px;
+ }
+
+ .time {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+ }
 </style>
 
 <div class="voice-message">
  <div class="player">
   <div class="play" role="button" tabindex="0" on:click={clickPlay} on:keydown={keyPlay}>
-   <img src="modules/org.libersoft.messages/img/{isPlaying ? 'play' : 'pause'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
+   <img src="modules/org.libersoft.messages/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
   </div>
-  <div bind:this={waveRef}></div>
+  <div class="wave" bind:this={waveRef}></div>
  </div>
- <div class="duration">Duration: {duration}</div>
- <div class="time">Time: {time}</div>
+ <div class="time">
+  <div class="duration">Duration: {duration}</div>
+  <div class="time">Time: {time}</div>
+ </div>
 </div>
