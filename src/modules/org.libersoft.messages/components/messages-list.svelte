@@ -8,7 +8,7 @@
  import ScrollDown from './scroll-down.svelte';
  import { messagesArray, events, insertEvent } from '../messages.js';
  import { get } from 'svelte/store';
- import VoiceMessage from './voice-message.svelte';
+ import Audio from './audio.svelte';
  export let conversation;
  export let setBarFocus;
  let scrollDownVisible = true;
@@ -420,4 +420,4 @@
  <ScrollDown visible={scrollDownVisible} on:click={scrollToBottom} />
 </div>
 
-<VoiceMessage file="modules/org.libersoft.messages/audio/message.mp3" />
+<Audio file="modules/org.libersoft.messages/audio/Ouch-1.wav" />
