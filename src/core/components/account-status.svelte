@@ -1,13 +1,13 @@
 <script>
- export let acc;
+ export let account;
 </script>
 
-{#if acc.error}
- {acc.error},
+{#if $account.error}
+ {$account.error},
 {/if}
 
-{#if acc.session_status}
- {acc.session_status}
+{#if $account.session_status}
+ {$account.session_status}
 {:else}
- {acc.status}
+ {$account.status}
 {/if}

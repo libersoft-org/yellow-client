@@ -42,8 +42,8 @@
 </style>
 
 <div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={event => keySelectAccount($a.id, event)}>
- <div class="title"><AccountStatusIcon {a} /><AccountTitle {a} /></div>
- <small><AccountStatus acc={$a} /></small>
+ <div class="title"><AccountStatusIcon account={a} /><AccountTitle {a} /></div>
+ <small><AccountStatus account={a} /></small>
  {#if $debug}
   <small>
    <ul>

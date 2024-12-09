@@ -1,7 +1,7 @@
 <script>
- export let a;
+ export let account;
 
- $: status_class = !a ? 'status-default' : $a.session_status === 'Logged in.' ? 'status-logged-in' : $a.status === 'Connecting...' ? 'status-connecting' : $a.status === 'Connected, logging in...' ? 'status-logging-in' : $a.status === 'Connected.' ? 'status-connected' : $a.status === 'Retrying...' ? 'status-retrying' : $a.status === 'Login failed.' ? 'status-login-failed' : $a.status === 'Disabled.' ? 'status-disabled' : $a.status === 'Enabled.' ? 'status-enabled' : 'status-default';
+ $: status_class = !account ? 'status-default' : $account.session_status === 'Logged in.' ? 'status-logged-in' : $account.status === 'Connecting...' ? 'status-connecting' : $account.status === 'Connected, logging in...' ? 'status-logging-in' : $account.status === 'Connected.' ? 'status-connected' : $account.status === 'Retrying...' ? 'status-retrying' : $account.status === 'Login failed.' ? 'status-login-failed' : $account.status === 'Disabled.' ? 'status-disabled' : $account.status === 'Enabled.' ? 'status-enabled' : 'status-default';
 </script>
 
 <style>
