@@ -253,7 +253,7 @@
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
  <!-- <Reply name="Someone" text="Some text" /> -->
- <!-- <Audio file="modules/org.libersoft.messages/audio/message.mp3" />-->
+ <Audio file="modules/org.libersoft.messages/audio/message.mp3" />
  <!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
  <Sticker file="modules/org.libersoft.messages/img/stickers/smile.json" />
