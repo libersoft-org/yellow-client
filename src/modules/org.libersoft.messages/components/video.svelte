@@ -20,6 +20,7 @@
 
 {#if file}
  <div class="video">
+  <!-- svelte-ignore a11y-media-has-caption -->
   <video controls>
    <source src={file} />
   </video>
