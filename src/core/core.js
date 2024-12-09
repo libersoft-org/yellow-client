@@ -32,7 +32,8 @@ export function getModuleDecls() {
 selected_module_id.subscribe(async id => {
  await tick();
  for (const k in module_decls) {
-  module.callbacks.onModuleSelected?.(id === module_decls[k].id);
+  const module = module_decls[k];
+  module.callbacks.onModuleSelected?.(id === module.id);
  }
 });
 

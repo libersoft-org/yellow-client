@@ -8,22 +8,33 @@
  let duration = '';
  let time = '';
 
- onMount(() => {
-  wavesurfer = WaveSurfer.create({
-   container: waveRef,
-   waveColor: '#999',
-   progressColor: '#555',
-   barWidth: 2,
-   responsive: true,
-   height: 80,
-   autoplay: false,
-   url: 'https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav',
-  });
-  //wavesurfer.load(file);
-  //wavesurfer.load('https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav');
-  wavesurfer.on('decode', d => (duration = formatTime(d)));
-  wavesurfer.on('timeupdate', t => (time = formatTime(t)));
-  wavesurfer.on('interaction', () => wavesurfer.play());
+ onMount(async () => {
+  try {
+   wavesurfer = WaveSurfer.create({
+    sampleRate: 48000,
+    container: waveRef,
+    waveColor: '#999',
+    progressColor: '#555',
+    barWidth: 2,
+    responsive: true,
+    height: 80,
+    autoplay: false,
+    url: 'https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav',
+   });
+   //wavesurfer.load(file);
+   //wavesurfer.load('https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav');
+   wavesurfer.on('decode', d => (duration = formatTime(d)));
+   wavesurfer.on('timeupdate', t => (time = formatTime(t)));
+   wavesurfer.on('interaction', () => wavesurfer.play());
+  } catch (error) {
+   console.error('Error initializing WaveSurfer:', error);
+  }
+
+  try {
+   //await wavesurfer.load(file);
+  } catch (error) {
+   console.error('Error loading file:', error);
+  }
  });
 
  function clickPlay() {

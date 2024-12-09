@@ -45,11 +45,11 @@ function sendData(acc, command, params = {}, sendSessionID = true, callback = nu
 
 export function onModuleSelected(selected) {
  console.log(identifier + ' onModuleSelected', selected);
- if (!selected) selectedConversation.set(null);
+ if (!selected) get(md)?.['selectedConversation']?.set(null);
 }
 
 export function selectConversation(conversation) {
- console.log('SELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATIONSELECTcONVERSATION', conversation);
+ console.log('SELECTcONVERSATION', conversation);
  selectedConversation.set(conversation);
  events.set([]);
  messagesArray.set([]);
