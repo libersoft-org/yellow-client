@@ -27,6 +27,9 @@
    wavesurfer.on('decode', d => (duration = formatTime(d)));
    wavesurfer.on('timeupdate', t => (time = formatTime(t)));
    wavesurfer.on('interaction', () => wavesurfer.play());
+   wavesurfer.on('play', () => (isPlaying = true));
+   wavesurfer.on('pause', () => (isPlaying = false));
+   wavesurfer.on('finish', () => (isPlaying = false));
   } catch (error) {
    console.error('Error initializing WaveSurfer:', error);
   }
@@ -41,7 +44,6 @@
  function clickPlay() {
   if (wavesurfer) {
    wavesurfer.playPause();
-   isPlaying = !isPlaying;
   }
  }
 
