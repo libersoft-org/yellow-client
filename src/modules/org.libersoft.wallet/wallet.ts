@@ -229,7 +229,7 @@ function reconnect(): void {
  if (!net) return;
 
  //console.log('wallet RECONNECT');
- status.set({ color: 'yellow', text: 'Connecting to ' + net.name });
+ status.set({ color: 'orange', text: 'Connecting to ' + net.name });
 
  if (reconnectionTimer !== undefined) {
   clearTimeout(reconnectionTimer);
@@ -357,7 +357,7 @@ function setNextUrl(): void {
   url = net.rpcURLs[i];
  }
  rpcURL.set(url);
- status.set({ color: 'yellow', text: 'Trying next url: ' + url });
+ status.set({ color: 'orange', text: 'Trying next url: ' + url });
 }
 
 export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> {
