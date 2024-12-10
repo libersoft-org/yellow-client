@@ -31,6 +31,7 @@
 
  function openPage(url) {
   window.open(url, '_blank');
+  clickMenuClose();
  }
 
  function clickSettings() {
