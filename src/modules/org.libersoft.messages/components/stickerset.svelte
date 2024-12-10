@@ -6,6 +6,12 @@
  function selectSticker(file) {
   console.log('SELECTING STICKER:', file);
  }
+
+ function mousedown(event) {
+  console.log('stickerset mousedown');
+  event.preventDefault();
+  event.stopPropagation();
+ }
 </script>
 
 <style>
@@ -29,7 +35,8 @@
  }
 </style>
 
-<div class="stickerset">
+<div class="stickerset" on:mousedown={mousedown}>
+ <button on:click={() => window.alert('oi')}>Clear</button>
  <div class="label">Standard stickers</div>
  <div class="set">
   {#each stickers as s}
