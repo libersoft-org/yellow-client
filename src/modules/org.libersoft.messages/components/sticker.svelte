@@ -4,6 +4,7 @@
  import { onMount, tick } from 'svelte';
 
  export let file = '';
+ export let size = 200;
 
  let container;
  let isLottie = false;
@@ -62,9 +63,7 @@
 
 <style>
  .sticker {
-  width: 200px;
   max-width: 100%;
-  height: 200px;
   max-height: 100%;
  }
 
@@ -74,18 +73,18 @@
  }
 
  .image {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
  }
 </style>
 
-<div class="sticker">
+<div class="sticker" style="width: {size}px; height: {size}px;">
  {#if error}
   <p>{error}</p>
  {:else if isLottie}
   <div class="lottie" bind:this={container}></div>
  {:else}
-  <img class="image" src={file} alt="" />
+  <img class="image" style="width: {size}px; height: {size}px;" src={file} alt="" />
  {/if}
 </div>

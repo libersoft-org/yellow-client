@@ -9,7 +9,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.3.1",
 		"@sveltejs/adapter-static": "^3.0.6",
-		"@sveltejs/kit": "^2.9.0",
+		"@sveltejs/kit": "^2.10.1",
 		"@sveltejs/vite-plugin-svelte": "^4.0.2",
 		"git-format-staged": "^3.1.1",
 		"prettier": "^3.4.2",
