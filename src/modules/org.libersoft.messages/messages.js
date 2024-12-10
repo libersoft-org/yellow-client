@@ -468,8 +468,11 @@ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
 });
 
 export function saneHtml(content) {
- let sane = DOMPurify.sanitize(content);
  console.log('saneHtml:');
+ let sane = DOMPurify.sanitize(content, {
+  ADD_TAGS: ['sticker'],
+  RETURN_DOM_FRAGMENT: true,
+ });
  console.log(content);
  console.log(sane);
  return sane;

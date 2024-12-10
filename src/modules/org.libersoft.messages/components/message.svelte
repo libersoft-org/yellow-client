@@ -10,6 +10,7 @@
  //import FileTransfer from './filetransfer.svelte';
  //import Sticker from './sticker.svelte';
  import Map from './map.svelte';
+ import MessageContent from './MessageContent.svelte';
  //import Reply from './message-reply.svelte';
  export let message;
  export let container_element;
@@ -32,6 +33,7 @@
  let touchX;
  let touchY;
 
+ $: message_content = processMessage(message.message);
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
  $: checkmarks_img = 'modules/org.libersoft.messages/img/seen' + checkmarks + '.svg';
@@ -54,8 +56,17 @@
 
  function processMessage(content) {
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
-  //console.log('containsHtml:', containsHtml);
-  return containsHtml ? saneHtml(content) : linkify(content.replaceAll(' ', '&nbsp;')).replaceAll('\n', '<br />');
+  if (containsHtml) {
+   return {
+    type: 'html',
+    body: saneHtml(content),
+   };
+  } else {
+   return {
+    type: 'plain',
+    body: linkify(content.replaceAll(' ', '&nbsp;')).replaceAll('\n', '<br />'),
+   };
+  }
  }
 
  function linkify(text) {
@@ -254,13 +265,19 @@
  <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
+
  <!--<Reply name="Someone" text="Some text" />-->
  <!--<Audio file="modules/org.libersoft.messages/audio/message.mp3" />-->
  <!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
- <div class="text">{@html processMessage(message.message)}</div>
+
+ {#if message_content.type === 'html'}
+  <div class="text"><MessageContent body={message_content.body} /></div>
+ {:else}
+  <div class="text">{@html message_content.body}</div>
+ {/if}
 
  <!--
  <div class="text">{@html 'processMessage(message.message)'}</div>
