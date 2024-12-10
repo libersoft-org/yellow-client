@@ -15,10 +15,10 @@
     sampleRate: 48000,
     container: waveRef,
     waveColor: '#999',
-    progressColor: '#555',
-    barWidth: 2,
+    progressColor: '#ea0',
+    barWidth: 3,
     responsive: true,
-    height: 80,
+    height: 50,
     autoplay: false,
     url: file,
    });
@@ -67,25 +67,23 @@
  .voice-message {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  border: 1px solid #000;
-  border-radius: 10px;
-  background-color: #bfb;
+  gap: 5px;
+  width: 300px;
+  max-width: 300px;
  }
 
  .player {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px;
-  border: 1px solid #888;
  }
 
  .player .play {
+  display: flex;
   padding: 10px;
-  border: 1px solid #080;
-  border-radius: 10px;
-  background-color: #0b0;
+  border: 1px solid #ba0;
+  border-radius: 15px;
+  background-color: #ec0;
   cursor: pointer;
  }
 
@@ -95,9 +93,8 @@
  }
 
  .player .wave {
-  border: 3px solid #000;
-  width: 300px;
-  height: 100px;
+  width: 100%;
+  height: 50px;
  }
 
  .time {
@@ -114,8 +111,5 @@
   </div>
   <div class="wave" bind:this={waveRef}></div>
  </div>
- <div class="time">
-  <div class="duration">Duration: {duration}</div>
-  <div class="time">Time: {time}</div>
- </div>
+ <div class="time">{time ? time : '00:00'} / {duration}</div>
 </div>

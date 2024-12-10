@@ -227,6 +227,7 @@
  }
 
  .message .menu {
+  z-index: 10;
   display: none;
   position: absolute;
   top: 5px;
