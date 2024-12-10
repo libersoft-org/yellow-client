@@ -9,7 +9,7 @@
 
  function mousedown(event) {
   console.log('stickerset mousedown');
-  //  event.preventDefault();
+  // event.preventDefault();
   event.stopPropagation();
  }
 </script>
@@ -36,7 +36,6 @@
 </style>
 
 <div class="stickerset" on:mousedown={mousedown}>
- <button on:click={() => window.alert('oi')}>Clear</button>
  <div class="label">Standard stickers</div>
  <div class="set">
   {#each stickers as s}

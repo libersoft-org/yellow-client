@@ -48,6 +48,18 @@
    clickSend(event);
   }
  }
+
+ function clickRecord(event) {
+  console.log('clicked on record mic / camera - long press to record, short press to switch mic / camera');
+ }
+
+ function sendFile() {
+  console.log('clicked on file');
+ }
+
+ function sendLocation() {
+  console.log('clicked on location');
+ }
 </script>
 
 <style>
@@ -87,17 +99,13 @@
   <Icon img="emoji.svg" alt="Emoji" />
  </div>
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
+ <Icon img="mic.svg" alt="Record voice message" on:click={clickRecord} />
  <Icon img="send.svg" alt="Send" on:click={clickSend} />
 </div>
 
 <ContextMenu target={elAttachment}>
- <ContextMenuItem
-  img="modules/org.libersoft.messages/img/file.svg"
-  label="File"
-  on:click={() => {
-   console.log('clicked on file');
-  }}
- />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" on:click={sendFile} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" on:click={sendLocation} />
 </ContextMenu>
 
 <ContextMenu target={elEmoji}>
