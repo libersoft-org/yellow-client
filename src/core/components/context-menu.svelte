@@ -31,23 +31,23 @@
   prevX = 0;
   prevY = 0;
   focusIndex = -1;
-  console.log('context-menu close:', menus);
+  //console.log('context-menu close:', menus);
   for (let menu of menus) {
    if (menu.guid === current_instance) {
-    console.log('found myself');
+    //console.log('found myself');
     menus.splice(menus.indexOf(menu), 1);
     break;
    }
   }
-  console.log('->context-menu close:', menus);
+  //console.log('->context-menu close:', menus);
  }
 
  export function openMenu(e) {
-  console.log('context-menu openMenu:', e);
+  //console.log('context-menu openMenu:', e);
   e.preventDefault();
   e.stopPropagation();
   if (e.type === 'contextmenu') return;
-  console.log('context-menu close other menus:', menus);
+  //console.log('context-menu close other menus:', menus);
   for (let menu of menus) menu.close();
   current_instance = getGuid();
   menus.push({ guid: current_instance, close });
@@ -69,7 +69,7 @@
   menuMaxHeight = window.innerHeight - y - 10;
 
   position.set([x, y]);
-  console.log('context-menu openMenu position:', x, y);
+  //console.log('context-menu openMenu position:', x, y);
   open = true;
   openDetail = e.target;
  }

@@ -446,10 +446,10 @@ function playNotificationSound() {
 }
 
 export function ensureConversationDetails(conversation) {
- console.log('ensureConversationDetails', conversation);
+ //console.log('ensureConversationDetails', conversation);
  if (conversation.visible_name) return;
  let acc = get(active_account);
- console.log('ensureConversationDetails acc:', acc);
+ //console.log('ensureConversationDetails acc:', acc);
  send(acc, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) return;
   Object.assign(conversation, res.data);
@@ -468,7 +468,11 @@ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
 });
 
 export function saneHtml(content) {
- return DOMPurify.sanitize(content);
+ let sane = DOMPurify.sanitize(content);
+ console.log('saneHtml:');
+ console.log(content);
+ console.log(sane);
+ return sane;
 }
 
 export function stripHtml(html) {

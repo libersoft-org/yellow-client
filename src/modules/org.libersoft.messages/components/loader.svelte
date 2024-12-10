@@ -25,7 +25,7 @@
  //$: console.log('LOADER CHANGED:', loader);
 
  function setup(loaderElement, loader) {
-  console.log('setup: loaderElement:', loaderElement, 'loader:', loader, 'active:', loader.active);
+  //console.log('setup: loaderElement:', loaderElement, 'loader:', loader, 'active:', loader.active);
   if (!loader.active) return;
   //console.log('OBSERVINGOBSERVINGOBSERVING:', observing);
   if (loaderElement && !observing) {

@@ -1,11 +1,10 @@
 <script>
- import { createEventDispatcher } from 'svelte';
+ import { createEventDispatcher, getContext } from 'svelte';
+
  export let img = null;
  export let label = '';
+
  const dispatch = createEventDispatcher();
-
- import { getContext } from 'svelte';
-
  let menu = getContext('ContextMenu');
 
  function handleKeydown(event) {
@@ -16,12 +15,11 @@
  }
 
  function click() {
-  console.log('context-menu-item click');
   trigger();
  }
 
  function trigger() {
-  console.log('context-menu-item trigger');
+  console.log('trigger');
   dispatch('click');
   menu.close();
  }

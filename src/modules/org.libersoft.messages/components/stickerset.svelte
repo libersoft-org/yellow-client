@@ -33,7 +33,7 @@
  <div class="label">Standard stickers</div>
  <div class="set">
   {#each stickers as s}
-   <Item file={s} onClick={() => selectSticker(s)} />
+   <Item file={s} on:click={() => selectSticker(s)} />
   {/each}
  </div>
 </div>

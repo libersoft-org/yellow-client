@@ -25,9 +25,9 @@
     path = file;
    }
 
-   console.log('STICKER file:', file);
+   /*console.log('STICKER file:', file);
    console.log('STICKER path:', path);
-   console.log('STICKER animationData:', animationData);
+   console.log('STICKER animationData:', animationData);*/
 
    if (error) {
     console.error(error);

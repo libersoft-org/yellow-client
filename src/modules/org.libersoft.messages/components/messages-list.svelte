@@ -58,7 +58,7 @@
 
  function checkIfScrolledToBottom(div) {
   const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
-  console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
+  //console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
   return result;
  }
 
@@ -67,7 +67,7 @@
  let windowInnerHeight;
 
  function parseScroll(event) {
-  console.log('parseScroll');
+  //console.log('parseScroll');
   scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
  }
 
@@ -84,7 +84,7 @@
   if (!messages_elem) {
    return;
   }
-  console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  //console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
  });
 
  afterUpdate(async () => {
@@ -95,9 +95,9 @@
   await tick();
 
   for (let event of uiEvents) {
-   await console.log('uiEvent:', event);
+   //console.log('uiEvent:', event);
    if (event.type === 'gc') {
-    await console.log('gc');
+    //console.log('gc');
    } else if (event.type === 'lazyload_prev') {
     restoreScrollPosition(event);
    } else if (event.type === 'lazyload_next') {
@@ -113,7 +113,7 @@
    } else if (event.type === 'initial_load') {
     scrollToBottom();
    } else if (event.type === 'properties_update') {
-    await console.log('properties_update');
+    //console.log('properties_update');
    }
   }
   let events = [...uiEvents];
@@ -121,9 +121,9 @@
   await tick();
   let activatedCount = 0;
   for (let event of events) {
-   await console.log('event:', event);
+   //console.log('event:', event);
    for (let loader of event.loaders) {
-    await console.log('activate loader:', loader);
+    //console.log('activate loader:', loader);
     loader.active = true;
     activatedCount++;
    }
@@ -181,7 +181,7 @@
  }
 
  async function handleEvents(events) {
-  await console.log('handleEvents:', events);
+  //console.log('handleEvents:', events);
 
   if (events.length === 1 && events[0].type === 'properties_update') {
    itemsArray = itemsArray;
@@ -189,7 +189,7 @@
   }
 
   for (let i = 0; i < events.length; i++) {
-   await console.log('handleEvent:', events[i]);
+   //console.log('handleEvent:', events[i]);
 
    let event = events[i];
    event.loaders = [];
@@ -244,11 +244,11 @@
    for (let i = 0; i < messages.length; i++) {
     let m = messages[i];
 
-    console.log('m:', m);
-    console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
+    //console.log('m:', m);
+    //console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
 
     if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)) {
-     console.log('ADDING-UNSEEN-MARKER');
+     //console.log('ADDING-UNSEEN-MARKER');
      unseen_marker_put = true;
      items.push({ type: 'unseen_marker' });
     }
@@ -262,9 +262,9 @@
 
     let next = messages[i + 1];
     if (next && next.id !== undefined && m.next != 'none' && m.next != undefined && m.next !== next.id) {
-     console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
-     console.log(JSON.stringify(m), JSON.stringify(next));
-     console.log('m.next:', m.next, 'next.id:', next.id);
+     //console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
+     //console.log(JSON.stringify(m), JSON.stringify(next));
+     //console.log('m.next:', m.next, 'next.id:', next.id);
      let l1 = getLoader({ next: 5, base: m.id, reason: 'lazyload_prev' });
      let l2 = getLoader({ prev: 5, base: next.id, reason: 'lazyload_next' });
      event.loaders.push(l1);
@@ -275,8 +275,8 @@
 
    let last = messages[messages.length - 1];
    if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
-    console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
-    console.log(last.next);
+    //console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
+    //console.log(last.next);
     let l = getLoader({ next: 10, base: last.id, reason: 'lazyload_next' });
     event.loaders.push(l);
     items.push(l);
@@ -303,16 +303,16 @@
  }
 
  async function mouseDown(event) {
-  console.log('event:', event);
+  //console.log('event:', event);
  }
 
  function onFocus(event) {
-  console.log('messages_elem onFocus:', event);
+  //console.log('messages_elem onFocus:', event);
   window.addEventListener('keydown', onkeydown);
  }
 
  function onBlur(event) {
-  console.log('messages_elem onBlur:', event);
+  //console.log('messages_elem onBlur:', event);
   window.removeEventListener('keydown', onkeydown);
  }
 

@@ -141,7 +141,7 @@
  }
 
  async function onkeydown(event) {
-  console.log('window onkeydown: ', event);
+  //console.log('window onkeydown: ', event);
   if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) {
    debug.update(d => !d);
   }

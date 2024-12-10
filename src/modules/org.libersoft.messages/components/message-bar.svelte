@@ -10,7 +10,7 @@
  let elMessage;
  let text;
 
- $: console.log('message-bar text:', text);
+ //$: console.log('message-bar text:', text);
 
  export async function setBarFocus() {
   await tick();

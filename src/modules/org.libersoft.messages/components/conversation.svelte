@@ -37,7 +37,7 @@
  }
 
  async function onKeydown(event) {
-  console.log('Conversation keyDown: ', event.key);
+  //console.log('Conversation keyDown: ', event.key);
   if (event.key === 'Escape' && get(selectedConversation)) {
    closeConversation();
    return;

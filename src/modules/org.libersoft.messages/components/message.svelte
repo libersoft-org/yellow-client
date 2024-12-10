@@ -259,6 +259,12 @@
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <div class="text">{@html processMessage(message.message)}</div>
+ <div class="text">{@html 'processMessage(message.message)'}</div>
+ <div class="text">{@html '<b>srtrstr'}</div>
+ <div class="text">{@html 'srtrstr'}</div>
+
+ <div class="text">{@html '<hr/>'}</div>
+
  <div class="bottomline">
   <div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
   {#if message.is_outgoing}
