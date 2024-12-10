@@ -4,9 +4,9 @@
  import Icon from './message-bar-icon.svelte';
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
- import StickerSet from './stickerset.svelte';
+ import Expressions from './expressions.svelte';
  let elAttachment;
- let elEmoji;
+ let elExpressions;
  let elMessage;
  let text;
 
@@ -95,7 +95,7 @@
  <div bind:this={elAttachment}>
   <Icon img="attachment.svg" alt="Attachment" />
  </div>
- <div bind:this={elEmoji}>
+ <div bind:this={elExpressions}>
   <Icon img="emoji.svg" alt="Emoji" />
  </div>
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
@@ -108,6 +108,6 @@
  <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" on:click={sendLocation} />
 </ContextMenu>
 
-<ContextMenu target={elEmoji}>
- <StickerSet />
+<ContextMenu target={elExpressions}>
+ <Expressions />
 </ContextMenu>

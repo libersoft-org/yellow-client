@@ -19,6 +19,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 10px;
+  max-width: 420px; /* TODO: if I delete this, then max-width is ignored in expressions.svelte (same size set there)*/
  }
 
  .stickerset .label {
@@ -29,8 +30,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  width: 420px;
-  max-width: 100%;
  }
 </style>
 
