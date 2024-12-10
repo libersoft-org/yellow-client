@@ -32,6 +32,7 @@
  let thisWasALongPress;
  let touchX;
  let touchY;
+ let message_content_container;
 
  $: message_content = processMessage(message.message);
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
@@ -277,7 +278,7 @@
  <hr />
  rendering:
  {#if message_content.type === 'html'}
-  <div class="text"><MessageContent node={message_content.body} /></div>
+  <div class="text" bind:this={message_content_container}><MessageContent container={message_content_container} node={message_content.body} /></div>
  {:else}
   <div class="text">{@html message_content.body}</div>
  {/if}
