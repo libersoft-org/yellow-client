@@ -471,9 +471,12 @@ export function saneHtml(content) {
  console.log('saneHtml:');
  let sane = DOMPurify.sanitize(content, {
   ADD_TAGS: ['sticker'],
+  ADD_ATTR: ['file'],
   RETURN_DOM_FRAGMENT: true,
  });
+ console.log('content:');
  console.log(content);
+ console.log('sane:');
  console.log(sane);
  return sane;
 }
