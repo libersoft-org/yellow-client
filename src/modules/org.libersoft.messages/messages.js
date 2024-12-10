@@ -435,6 +435,7 @@ function showNotification(acc, msg) {
   window.focus();
   selectAccount(acc.id);
   selected_module_id.set(identifier);
+  console.log('notification click: selectConversation', msg.address_from);
   selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
  };
 }

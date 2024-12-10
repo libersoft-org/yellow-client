@@ -17,23 +17,23 @@
  let contentElement = getContext('contentElement');
 
  onMount(() => {
-  console.log('LOADER MOUNTED:', loader);
+  //console.log('LOADER MOUNTED:', loader);
   observing = false;
  });
 
  $: setup(loaderElement, loader);
- $: console.log('LOADER CHANGED:', loader);
+ //$: console.log('LOADER CHANGED:', loader);
 
  function setup(loaderElement, loader) {
   console.log('setup: loaderElement:', loaderElement, 'loader:', loader, 'active:', loader.active);
   if (!loader.active) return;
-  console.log('OBSERVINGOBSERVINGOBSERVING:', observing);
+  //console.log('OBSERVINGOBSERVINGOBSERVING:', observing);
   if (loaderElement && !observing) {
    observer = new IntersectionObserver(handleIntersect, { threshold, root: contentElement });
    observer.observe(loaderElement);
-   console.log('loader ', loader, ' is now observing.');
+   //console.log('loader ', loader, ' is now observing.');
    observing = true;
-   console.log('setup: observer:', observer);
+   //console.log('setup: observer:', observer);
    setupInterval();
   }
  }
@@ -65,12 +65,12 @@
  function loadMore() {
   clearInterval(interval);
   loader.loading = true;
-  console.log('LOADmORE: LOADER:', loader);
+  //console.log('LOADmORE: LOADER:', loader);
   loader.request = '???';
   loader.timer = setTimeout(() => {
-   console.log('LOADmORE: LOADmESSAGES...');
+   //console.log('LOADmORE: LOADmESSAGES...');
    loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, loader.reason, _res => {
-    console.log('LOADmESSAGES: _RES:', _res);
+    //console.log('LOADmESSAGES: _RES:', _res);
     loader.loading = false;
     loader.delete_me = true;
    });

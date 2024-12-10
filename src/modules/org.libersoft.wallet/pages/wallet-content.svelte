@@ -245,8 +245,8 @@
     <div class="top">
      <div class="left">
       <div class="status">
-       <div class="indicator orange"></div>
-       <div>{$status}</div>
+       <div class="indicator {status.color}"></div>
+       <div>{$status.text}</div>
       </div>
       <div style="font-size: 12px">Server: {$rpcURL}</div>
      </div>

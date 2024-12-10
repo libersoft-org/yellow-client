@@ -59,7 +59,7 @@ interface AddressBookItem {
 
 const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
 
-export const status = writable<string>('Started.');
+export const status = writable<any>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);
 
 let provider: JsonRpcProvider | null = null;
@@ -229,7 +229,7 @@ function reconnect(): void {
  if (!net) return;
 
  //console.log('wallet RECONNECT');
- status.set('Connecting to ' + net.name);
+ status.set({ color: 'yellow', text: 'Connecting to ' + net.name });
 
  if (reconnectionTimer !== undefined) {
   clearTimeout(reconnectionTimer);
@@ -237,7 +237,7 @@ function reconnect(): void {
  const rrr = get(rpcURL);
  if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
   if (!net.rpcURLs[0]) {
-   status.set('No RPC URL found for the selected network');
+   status.set({ color: 'red', text: 'No RPC URL found for the selected network' });
    return;
   }
   rpcURL.set(net.rpcURLs[0]);
@@ -341,7 +341,7 @@ function connectToURL(): void {
  });
  provider.on('network', (newNetwork: any) => {
   console.log('Network changed:', newNetwork.toJSON());
-  status.set('Connected: ' + newNetwork.name);
+  status.set({ color: 'green', text: 'Connected: ' + newNetwork.name });
  });
 }
 
@@ -357,7 +357,7 @@ function setNextUrl(): void {
   url = net.rpcURLs[i];
  }
  rpcURL.set(url);
- status.set('Trying next url: ' + url);
+ status.set({ color: 'yellow', text: 'Trying next url: ' + url });
 }
 
 export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> {
