@@ -8,8 +8,9 @@
  //import Audio from './audio.svelte';
  //import Video from './video.svelte';
  //import FileTransfer from './filetransfer.svelte';
+ //import Sticker from './sticker.svelte';
+ import Map from './map.svelte';
  //import Reply from './message-reply.svelte';
- import Sticker from './sticker.svelte';
  export let message;
  export let container_element;
  let seen_txt;
@@ -258,7 +259,7 @@
  <!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
-
+ <!--<Map latitude="50.0755", longitude="14.4378" />-->
  <div class="text">{@html processMessage(message.message)}</div>
 
  <!--

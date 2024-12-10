@@ -14,7 +14,7 @@
 		"git-format-staged": "^3.1.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.2",
-		"svelte": "^5.10.0",
+		"svelte": "^5.10.1",
 		"vite": "^5.4.11",
 		"vite-plugin-checker": "^0.8.0",
 		"typescript": "^5.7.2"
@@ -23,6 +23,7 @@
 	"dependencies": {
 		"dompurify": "^3.2.3",
 		"ethers": "^6.13.4",
+		"leaflet": "^1.9.4",
 		"lottie-web": "^5.12.2",
 		"pako": "^2.1.0",
 		"qrcode": "^1.5.4",

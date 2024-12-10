@@ -1,10 +1,7 @@
 <script>
  import Sticker from './sticker.svelte';
  import { createEventDispatcher, getContext } from 'svelte';
-
  export let file;
- export let onClick;
-
  const dispatch = createEventDispatcher();
  let menu = getContext('ContextMenu');
 
