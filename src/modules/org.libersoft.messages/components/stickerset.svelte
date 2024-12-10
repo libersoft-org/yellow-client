@@ -9,7 +9,7 @@
 
  function mousedown(event) {
   console.log('stickerset mousedown');
-  event.preventDefault();
+  //  event.preventDefault();
   event.stopPropagation();
  }
 </script>
