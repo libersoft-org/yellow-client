@@ -22,15 +22,15 @@
   }
  }
 
- function clickLogo() {
-  window.open(link, '_blank');
- }
-
  function keyLogo(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   clickLogo();
+   openPage(link);
   }
+ }
+
+ function openPage(url) {
+  window.open(url, '_blank');
  }
 
  function clickSettings() {
@@ -139,10 +139,12 @@
   <div class="top">
    <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
   </div>
+  <Item img="img/donate.svg" title="Donate" on:click={openPage('https://libersoft.org/donations')} />
+  <Item img="img/contact.svg" title="Contact developers" on:click={openPage('https://libersoft.org/contacts')} />
   <Item img="img/settings.svg" title="Settings" on:click={clickSettings} />
  </div>
  <div class="footer">
-  <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
+  <div class="logo" role="button" tabindex="0" on:click={openPage(link)} on:keydown={keyLogo}>
    <div><img src="img/logo.svg" alt={product} /></div>
    <div>{product}</div>
   </div>

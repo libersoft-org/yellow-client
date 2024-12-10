@@ -5,6 +5,7 @@
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
  let elAttachment;
+ let elEmoji;
  let elMessage;
  let text;
 
@@ -82,6 +83,9 @@
   <Icon img="attachment.svg" alt="Attachment" />
  </div>
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
+ <div bind:this={elEmoji}>
+  <Icon img="emoji.svg" alt="Emoji" />
+ </div>
  <Icon img="send.svg" alt="Send" on:click={clickSend} />
 </div>
 
@@ -94,3 +98,5 @@
   }}
  />
 </ContextMenu>
+
+<ContextMenu target={elEmoji}>EMOJIS WILL BE HERE</ContextMenu>
