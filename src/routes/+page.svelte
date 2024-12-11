@@ -55,7 +55,7 @@
   console.log('+page onMount');
   window.addEventListener('focus', () => isClientFocused.set(true));
   window.addEventListener('blur', () => isClientFocused.set(false));
-  window.addEventListener('keydown', onkeydown);
+  //window.addEventListener('keydown', onkeydown);
   window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
   if ($accounts_config.length === 0) {
    console.log('showWelcomeWizard = true');
@@ -141,7 +141,7 @@
  }
 
  async function onkeydown(event) {
-  //console.log('window onkeydown: ', event);
+  console.log('window onkeydown: ', event);
   if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) {
    debug.update(d => !d);
   }

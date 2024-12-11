@@ -157,13 +157,14 @@
  }
 </style>
 
-<svelte:window
- on:contextmenu={e => {
+<!-- on:contextmenu={e => {
   if (target != null) return;
   if (level > 1) return;
   if (!ref) return;
   openMenu(e);
- }}
+ }}-->
+
+<svelte:window
  on:mousedown={e => {
   //console.log('context-menu svelte:window click:', e);
   if (!open) return;
@@ -206,6 +207,11 @@
   } else if (e.key === 'ArrowUp') {
    if (focusIndex === -1) focusIndex = options.length - 1;
    else if (focusIndex > 0) focusIndex--;
+  }
+  if (open && e.key === 'Escape') {
+   close();
+   e.stopPropagation();
+   e.preventDefault();
   }
  }}
 >

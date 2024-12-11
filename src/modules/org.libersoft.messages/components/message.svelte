@@ -274,9 +274,11 @@
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
 
- <!--original message: {message.message}
- <hr />
- rendering:-->
+ {#if { $debug }}
+  original message: {message.message}
+  <hr />
+  rendering:
+ {/if}
 
  {#if message_content.type === 'html'}
   <div class="text" bind:this={message_content_container}><MessageContent container={message_content_container} node={message_content.body} /></div>

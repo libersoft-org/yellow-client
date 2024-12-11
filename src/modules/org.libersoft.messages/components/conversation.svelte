@@ -8,12 +8,16 @@
  import MessageBar from './message-bar.svelte';
 
  let message_bar;
+ let oldSelectedConversation;
 
  $: update($selectedConversation);
 
  async function update(selectedConversation) {
   if (selectedConversation) {
-   await setBarFocus();
+   if (oldSelectedConversation != selectedConversation) {
+    oldSelectedConversation = selectedConversation;
+    await setBarFocus();
+   }
   }
  }
 
