@@ -1,6 +1,6 @@
 <script>
  import { sendMessage } from '../messages.js';
- import { tick } from 'svelte';
+ import { setContext, tick } from 'svelte';
  import Icon from './message-bar-icon.svelte';
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
@@ -13,7 +13,9 @@
  let text;
  let showHTMLModal = false;
 
- //$: console.log('message-bar text:', text);
+ setContext('MessageBar', {
+  sendMessage,
+ });
 
  export async function setBarFocus() {
   await tick();

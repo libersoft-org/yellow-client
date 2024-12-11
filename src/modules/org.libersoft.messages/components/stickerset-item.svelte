@@ -5,6 +5,8 @@
  const dispatch = createEventDispatcher();
  let menu = getContext('ContextMenu');
 
+ const MessageBar = getContext('MessageBar');
+
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
