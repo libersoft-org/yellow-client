@@ -4,11 +4,14 @@
  import Icon from './message-bar-icon.svelte';
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
+ import Modal from '../../../core/components/modal.svelte';
+ import ModalHTML from '../modals/modal-html.svelte';
  import Expressions from './expressions.svelte';
  let elAttachment;
  let elExpressions;
  let elMessage;
  let text;
+ let showHTMLModal = false;
 
  //$: console.log('message-bar text:', text);
 
@@ -55,6 +58,10 @@
 
  function sendFile() {
   console.log('clicked on file');
+ }
+
+ function sendHTML() {
+  showHTMLModal = true;
  }
 
  function sendLocation() {
@@ -105,9 +112,12 @@
 
 <ContextMenu target={elAttachment}>
  <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" on:click={sendFile} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/html.svg" label="HTML" on:click={sendHTML} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" on:click={sendLocation} />
 </ContextMenu>
 
 <ContextMenu target={elExpressions}>
  <Expressions />
 </ContextMenu>
+
+<Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />
