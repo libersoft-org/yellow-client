@@ -6,14 +6,16 @@
  export let node; // Accept a DOM node (DocumentFragment, Element, or Text)
  export let container; // Reference for appending dynamically created elements
 
+ let loaded;
+
  // Helper to convert attributes to an object
  const getAttributes = attributes => Object.fromEntries(Array.from(attributes).map(attr => [attr.name, attr.value]));
 
  function load(container) {
-  if (!container) {
-   console.error('MessageContent container is required for dynamic element creation');
+  if (!container || loaded) {
    return;
   }
+  loaded = true;
 
   if (node && node.nodeType === Node.ELEMENT_NODE && !componentMap[node.tagName.toLowerCase()]) {
    // Dynamically create the HTML element

@@ -22,7 +22,7 @@ export const link = 'https://yellow.libersoft.org';
 let module_decls = {};
 let global_socket_id = 0;
 
-const ping_interval = import.meta.env.VITE_YELLOW_PING_INTERVAL || 10000;
+const ping_interval = import.meta.env.VITE_YELLOW_PING_INTERVAL || 8000;
 
 export function getModuleDecls() {
  //console.log('GET MODULE DECLS:', module_decls);
@@ -473,13 +473,13 @@ function setupPing(account) {
    {},
    true,
    (req, res) => {
-    //console.log('Ping response:', res);
+    console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
     acc.status = 'Connected.';
     acc.error = null;
     account.update(v => v);
    },
-   true
+   false
   );
   let noCommsSeconds = Date.now() - acc.lastCommsTs;
   if (noCommsSeconds > ping_interval * 2) {
@@ -601,6 +601,7 @@ export function send(acc, target, command, params = {}, sendSessionID = true, ca
   target: target,
   requestID,
  };
+
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command || params) req.data = {};
  if (command) req.data.command = command;

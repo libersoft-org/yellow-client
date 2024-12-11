@@ -9,6 +9,11 @@
    onClick && onClick();
   }
  }
+
+ function mousedown(e) {
+  e.stopPropagation();
+  e.preventDefault();
+ }
 </script>
 
 <style>
@@ -26,5 +31,5 @@
 </style>
 
 {#if label}
- <div class="item {active ? 'active' : ''}" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>{label}</div>
+ <div class="item {active ? 'active' : ''}" role="button" tabindex="0" on:mousedown={mousedown} on:click={onClick} on:keydown={handleKeydown}>{label}</div>
 {/if}

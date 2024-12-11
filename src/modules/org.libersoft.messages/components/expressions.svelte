@@ -10,12 +10,20 @@
   gifs: GifSet,
  };
 
- function setCategory(name) {
+ function setCategory(e, name) {
   expression = name;
+  e.stopPropagation();
+  e.preventDefault();
  }
 
- function clickExpression(e) {
+ function mousedown(e) {
   e.stopPropagation();
+  e.preventDefault();
+ }
+
+ function click(e) {
+  e.stopPropagation();
+  e.preventDefault();
  }
 </script>
 
@@ -30,9 +38,9 @@
  }
 </style>
 
-<div class="expressions" role="none" on:mousedown={clickExpression}>
- <Item label="Emojis" active={expression === 'emojis'} onClick={() => setCategory('emojis')} />
- <Item label="Stickers" active={expression === 'stickers'} onClick={() => setCategory('stickers')} />
- <Item label="GIFs" active={expression === 'gifs'} onClick={() => setCategory('gifs')} />
+<div class="expressions" role="button" tabindex="0" on:mousedown={mousedown} on:click={click}>
+ <Item label="Emojis" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
+ <Item label="Stickers" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
+ <Item label="GIFs" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
 </div>
 <svelte:component this={expressions[expression]} />
