@@ -7,7 +7,6 @@
  //$: console.log('MessageContentSticker node:', v);
 </script>
 
-sticker file={v}
 {#if v}
  <Sticker file={v} />
 {/if}
