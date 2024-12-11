@@ -22,7 +22,7 @@ export const link = 'https://yellow.libersoft.org';
 let module_decls = {};
 let global_socket_id = 0;
 
-const ping_interval = import.meta.env.VITE_YELLOW_PING_INTERVAL || 8000;
+const ping_interval = import.meta.env.VITE_YELLOW_PING_INTERVAL || 2000;
 
 export function getModuleDecls() {
  //console.log('GET MODULE DECLS:', module_decls);
