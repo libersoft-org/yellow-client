@@ -22,7 +22,7 @@ export const link = 'https://yellow.libersoft.org';
 let module_decls = {};
 let global_socket_id = 0;
 
-const ping_interval = import.meta.env.VITE_YELLOW_PING_INTERVAL || 2000;
+const ping_interval = import.meta.env.VITE_YELLOW_PING_INTERVAL || 20000;
 
 export function getModuleDecls() {
  //console.log('GET MODULE DECLS:', module_decls);
@@ -457,6 +457,24 @@ function sendLoginCommand(account) {
 
 function setupPing(account) {
  let acc = get(account);
+ window.setInterval(() => {
+  send(
+   acc,
+   'core',
+   'ping',
+   {},
+   true,
+   (req, res) => {
+    console.log('Ping response:', res);
+    acc.lastCommsTs = Date.now();
+    acc.status = 'Connected.';
+    acc.error = null;
+    account.update(v => v);
+   },
+   true
+  );
+ }, 500);
+
  acc.pingTimer = window.setInterval(() => {
   if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
    acc.status = 'Retrying...';
@@ -483,7 +501,7 @@ function setupPing(account) {
   );
   let noCommsSeconds = Date.now() - acc.lastCommsTs;
   if (noCommsSeconds > ping_interval * 2) {
-   const msg = 'No comms for ' + noCommsSeconds + ' seconds, reconnecting...';
+   const msg = 'No comms for ' + noCommsSeconds / 1000 + ' seconds, reconnecting...';
    console.log(msg);
    // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
    acc.status = 'Retrying...';
