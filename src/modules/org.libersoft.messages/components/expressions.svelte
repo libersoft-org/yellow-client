@@ -31,14 +31,13 @@
  .expressions {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
   background-color: #fd1;
-  width: 420px;
-  max-width: 420px;
+  width: 440px;
+  max-width: 440px;
  }
 </style>
 
-<div class="expressions" role="button" tabindex="0" on:mousedown={mousedown} on:click={click}>
+<div class="expressions" role="none" on:mousedown={mousedown} on:click={click}>
  <Item label="Emojis" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
  <Item label="Stickers" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
  <Item label="GIFs" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
