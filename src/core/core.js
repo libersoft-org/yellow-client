@@ -457,7 +457,7 @@ function sendLoginCommand(account) {
 
 function setupPing(account) {
  let acc = get(account);
- window.setInterval(() => {
+ /*window.setInterval(() => {
   send(
    acc,
    'core',
@@ -473,7 +473,7 @@ function setupPing(account) {
    },
    true
   );
- }, 500);
+ }, 500);*/
 
  acc.pingTimer = window.setInterval(() => {
   if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
