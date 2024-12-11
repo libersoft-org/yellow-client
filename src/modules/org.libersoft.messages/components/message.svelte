@@ -274,7 +274,7 @@
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
 
- {#if { $debug }}
+ {#if $debug}
   original message: {message.message}
   <hr />
   rendering:
