@@ -11,12 +11,13 @@
  // Helper to convert attributes to an object
  const getAttributes = attributes => Object.fromEntries(Array.from(attributes).map(attr => [attr.name, attr.value]));
 
- onMount(() => {
+ /* onMount(() => {
+  console.log('MessageContent onMount node:', node);
   load(container);
- });
+ });*/
 
- function load(container) {
-  if (!container || loaded) {
+ function load(container, node) {
+  if (!container || !node || loaded) {
    return;
   }
   loaded = true;
@@ -25,11 +26,12 @@
  }
 
  function create_node(node, container) {
-  if (!node) {
+  /*if (!node) {
    return;
-  }
+  }*/
 
   if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+   console.log('MessageContent create_node DOCUMENT_FRAGMENT_NODE:', container, node);
    Array.from(node.childNodes).forEach(child => {
     mount(MessageContentHelper, {
      target: container,
@@ -49,10 +51,10 @@
    container.appendChild(element);
 
    // Recursively render children
-   console.log('MessageContent node:', node);
-   console.log('MessageContent node.childNodes:', node.childNodes);
+   /*console.log('MessageContent node:', node);
+   console.log('MessageContent node.childNodes:', node.childNodes);*/
    Array.from(node.childNodes).forEach(child => {
-    console.log('MessageContent child:', child);
+    //console.log('MessageContent child:', child);
 
     mount(MessageContentHelper, {
      target: element,
@@ -62,7 +64,7 @@
   }
  }
 
- $: load(container);
+ $: load(container, node);
 
  //$: console.log('MessageContent node:', node);
 </script>
