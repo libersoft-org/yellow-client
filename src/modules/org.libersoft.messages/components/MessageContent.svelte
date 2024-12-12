@@ -17,9 +17,16 @@
  });*/
 
  function load(container, node) {
-  if (!container || !node || loaded) {
+  if (!container || !node) {
    return;
   }
+  if (loaded) {
+   //clear container
+   while (container.firstChild) {
+    container.removeChild(container.firstChild);
+   }
+  }
+
   loaded = true;
 
   create_node(node, container);
