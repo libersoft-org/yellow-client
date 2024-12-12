@@ -9,7 +9,7 @@
  //import Video from './video.svelte';
  //import FileTransfer from './filetransfer.svelte';
  //import Sticker from './sticker.svelte';
- import Map from './map.svelte';
+ //import Map from './map.svelte';
  import MessageContent from './MessageContent.svelte';
  import MessageRendering from './MessageRendering.svelte';
  //import Reply from './message-reply.svelte';

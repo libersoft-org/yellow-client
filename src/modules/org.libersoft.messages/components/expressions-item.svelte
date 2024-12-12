@@ -21,6 +21,7 @@
   flex-grow: 1;
   text-align: center;
   cursor: pointer;
+  padding: 10px 0;
  }
 
  .item.active {
