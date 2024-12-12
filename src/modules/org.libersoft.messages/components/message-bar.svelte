@@ -15,6 +15,7 @@
 
  setContext('MessageBar', {
   sendMessage,
+  setBarFocus,
  });
 
  export async function setBarFocus() {

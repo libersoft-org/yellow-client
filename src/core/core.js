@@ -493,9 +493,13 @@ function setupPing(account) {
    (req, res) => {
     console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
-    acc.status = 'Connected.';
-    acc.error = null;
-    account.update(v => v);
+
+    void 'avoid expensive UI update';
+    if (acc.status !== 'Connected.' && acc.error != null) {
+     acc.status = 'Connected.';
+     acc.error = null;
+     account.update(v => v);
+    }
    },
    false
   );

@@ -1,6 +1,35 @@
 <script>
  import Button from '../../../core/components/button.svelte';
+ import { getContext, tick } from 'svelte';
+ import { processMessage } from '../messages.js';
+ import MessageRendering from '../components/MessageRendering.svelte';
+
+ export let close;
+
  let text = '';
+ let message_content = '';
+ let elTexto;
+
+ $: update1(elTexto);
+ async function update1(elTexto) {
+  if (!elTexto) return;
+  await tick();
+  elTexto.focus();
+ }
+
+ $: update2(text);
+ function update2(text) {
+  message_content = processMessage(text);
+ }
+
+ const MessageBar = getContext('MessageBar');
+
+ function click() {
+  console.log('click');
+  MessageBar.sendMessage(text);
+  MessageBar.setBarFocus();
+  close();
+ }
 </script>
 
 <style>
@@ -37,11 +66,11 @@
 <div class="html">
  <div class="sides">
   <div class="editor">
-   <textarea class="text" bind:value={text} rows="5" cols="30"></textarea>
+   <textarea class="text" bind:this={elTexto} bind:value={text} rows="5" cols="30"></textarea>
   </div>
   <div class="preview">
-   {@html text}
+   <MessageRendering {message_content} />
   </div>
  </div>
- <Button text="Send" />
+ <Button text="Send" on:click={click} />
 </div>

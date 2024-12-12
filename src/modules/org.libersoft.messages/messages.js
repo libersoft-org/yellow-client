@@ -471,7 +471,7 @@ export function saneHtml(content) {
  console.log('saneHtml:');
  let sane = DOMPurify.sanitize(content, {
   ADD_TAGS: ['sticker'],
-  ADD_ATTR: ['file'],
+  ADD_ATTR: ['file'], ///FIXME, security issue, should only be allowed on sticker
   RETURN_DOM_FRAGMENT: true,
  });
  console.log('content:');
@@ -483,4 +483,28 @@ export function saneHtml(content) {
 
 export function stripHtml(html) {
  return html.replace(/<[^>]*>?/gm, '');
+}
+
+export function processMessage(content) {
+ const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
+ if (containsHtml) {
+  return {
+   type: 'html',
+   body: saneHtml(content),
+  };
+ } else {
+  return {
+   type: 'plain',
+   body: linkify(content.replaceAll(' ', '&nbsp;')).replaceAll('\n', '<br />'),
+  };
+ }
+}
+
+function linkify(text) {
+ // Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
+ const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
+ return text.replace(combinedPattern, match => {
+  // Directly use `match` as the URL/href. This ensures we handle all links in one pass.
+  return `<a href="${match}" target="_blank">${match}</a>`;
+ });
 }

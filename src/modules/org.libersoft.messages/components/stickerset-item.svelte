@@ -21,7 +21,13 @@
  function trigger() {
   console.log('trigger');
   dispatch('click');
+  MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" />');
+  MessageBar.setBarFocus();
   menu.close();
+ }
+
+ function htmlEscape(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
  }
 
  function mousedown(event) {

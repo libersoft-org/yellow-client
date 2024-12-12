@@ -1,5 +1,5 @@
 <script>
- import { setMessageSeen, saneHtml, snipeMessage, startReply } from '../messages.js';
+ import { processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
@@ -11,6 +11,7 @@
  //import Sticker from './sticker.svelte';
  import Map from './map.svelte';
  import MessageContent from './MessageContent.svelte';
+ import MessageRendering from './MessageRendering.svelte';
  //import Reply from './message-reply.svelte';
  export let message;
  export let container_element;
@@ -53,30 +54,6 @@
     is_visible = false;
    });
   }
- }
-
- function processMessage(content) {
-  const containsHtml = /<\/?[a-z][\s\S]*>/i.test(content);
-  if (containsHtml) {
-   return {
-    type: 'html',
-    body: saneHtml(content),
-   };
-  } else {
-   return {
-    type: 'plain',
-    body: linkify(content.replaceAll(' ', '&nbsp;')).replaceAll('\n', '<br />'),
-   };
-  }
- }
-
- function linkify(text) {
-  // Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
-  const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
-  return text.replace(combinedPattern, match => {
-   // Directly use `match` as the URL/href. This ensures we handle all links in one pass.
-   return `<a href="${match}" target="_blank">${match}</a>`;
-  });
  }
 
  function handleTouchStart(e) {
@@ -280,11 +257,7 @@
   rendering:
  {/if}
 
- {#if message_content.type === 'html'}
-  <div class="text" bind:this={message_content_container}><MessageContent container={message_content_container} node={message_content.body} /></div>
- {:else}
-  <div class="text">{@html message_content.body}</div>
- {/if}
+ <MessageRendering {message_content} />
 
  <!--
  <div class="text">{@html 'processMessage(message.message)'}</div>
