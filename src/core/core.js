@@ -340,16 +340,18 @@ function reconnectAccount(account) {
  if (!acc.socket || acc.socket.readyState === WebSocket.CLOSED || acc.socket.readyState === WebSocket.CONNECTING || acc.socket.readyState === WebSocket.CLOSING || acc.socket.url !== acc.credentials.server) {
   if (acc.socket) {
    if (acc.socket.readyState !== WebSocket.CLOSED) {
-    acc.socket.close();
+    // throw away the old socket, it will be unused from now on
     acc.socket.onopen = event => console.log('old socket onopen', event);
     acc.socket.onerror = event => console.log('old socket onerror', event);
     acc.socket.onclose = event => console.log('old socket onclose', event);
     acc.socket.onmessage = event => console.log('old socket onmessage', event);
+    acc.socket.close();
    }
   }
   socket_id = global_socket_id++;
   console.log('Creating new WebSocket:', acc.credentials.server);
   acc.status = 'Connecting...';
+  acc.lastCommsTs = Date.now();
   account.update(v => v);
 
   try {
@@ -368,6 +370,7 @@ function reconnectAccount(account) {
   acc.socket.onopen = event => {
    console.log('Connected to WebSocket ' + socket_id + ':', event);
    acc.status = 'Connected, logging in...';
+   acc.lastCommsTs = Date.now();
    account.update(v => v);
    sendLoginCommand(account);
   };

@@ -31,6 +31,8 @@
  let moving;
  let longPressTimer;
  let thisWasALongPress;
+ let thisWasASwipe;
+ let thisWasAScroll;
  let touchX;
  let touchY;
  let message_content_container;
