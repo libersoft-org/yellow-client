@@ -27,7 +27,6 @@
 </style>
 
 {#if message_content.type === 'html'}
- html:
  <div class="text" bind:this={message_content_container}><MessageContent container={message_content_container} node={message_content.body} /></div>
 {:else}
  <div class="text">{@html message_content.body}</div>
