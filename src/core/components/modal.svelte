@@ -57,6 +57,14 @@
   }
  }
 
+ function onkeydown(event) {
+  if (event.key === 'Escape') {
+   event.preventDefault();
+   event.stopPropagation();
+   show = false;
+  }
+ }
+
  function dragStart(event) {
   isDragging = true;
   event.preventDefault();
@@ -138,7 +146,7 @@
 </style>
 
 {#if show && body}
- <div class="modal" style="top: {top}px; left: {left}px;" bind:this={modalEl}>
+ <div class="modal" role="none" style="top: {top}px; left: {left}px;" bind:this={modalEl} on:keydown={onkeydown}>
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
    <div class="close" role="button" tabindex="0" on:click={clickCloseModal} on:keydown={keyCloseModal}>

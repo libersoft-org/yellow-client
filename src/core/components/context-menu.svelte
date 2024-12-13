@@ -118,7 +118,8 @@
 
  afterUpdate(() => {
   if (open) {
-   options = [...ref.querySelectorAll("li[data-nested='false']")];
+   options = ref.children;
+   console.log('context-menu options:', options);
 
    if (level === 1) {
     if (prevX !== x || prevY !== y) ref.focus();
@@ -131,7 +132,10 @@
    dispatch('close');
   }
 
-  if (!$hasPopup && options[focusIndex]) options[focusIndex].focus();
+  if (!$hasPopup && options[focusIndex]) {
+   console.log('focus:', focusIndex);
+   options[focusIndex].focus();
+  }
  });
 
  $: level = !ctx ? 1 : 2;
@@ -170,9 +174,6 @@
   if (!open) return;
   console.log('context-menu svelte:window click close:', e);
   close();
- }}
- on:keydown={e => {
-  if (open && e.key === 'Escape') close();
  }}
 />
 

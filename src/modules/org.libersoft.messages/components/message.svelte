@@ -24,7 +24,9 @@
  let menu;
  let elMessage;
  let touchStartX = 0;
+ let touchStartY = 0;
  let touchCurrentX = 0;
+ let touchCurrentY = 0;
  let touchCurrentTranslation = 0;
  let touchThreshold = 50;
  let touchMaxTranslation = 80;
@@ -65,7 +67,9 @@
   touchY = e.changedTouches[0].clientY;
 
   thisWasALongPress = false;
-  //e.preventDefault();
+  thisWasASwipe = false;
+  thisWasAScroll = false;
+
   longPressTimer = setTimeout(() => {
    if (!moving) {
     thisWasALongPress = true;
@@ -73,14 +77,17 @@
    }
   }, 500);
   touchStartX = e.changedTouches[0].clientX;
+  touchStartY = e.changedTouches[0].clientY;
   touchCurrentX = touchStartX;
+  touchCurrentY = touchStartY;
+
   touchCurrentTranslation = 0;
   elMessage.style.transition = 'none';
  }
 
  function handleTouchMove(e) {
   //console.log('handle touch move', e);
-  //e.preventDefault();
+
   moving = true;
   touchCurrentX = e.changedTouches[0].clientX;
   let diff = touchCurrentX - touchStartX;
@@ -95,6 +102,9 @@
   }
   touchCurrentTranslation = diff;
   elMessage.style.transform = `translateX(${touchCurrentTranslation}px)`;
+  if (Math.abs(diff) > 10) {
+   thisWasASwipe = true;
+  }
  }
 
  function handleTouchEnd(e) {
