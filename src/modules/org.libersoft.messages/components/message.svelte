@@ -184,12 +184,6 @@
   background-color: #fefdf7;
   align-self: flex-end;
  }
-
- .message .text {
-  padding-bottom: 10px;
-  word-break: break-word;
- }
-
  :global(.message .text a) {
   font-weight: bold;
   text-decoration: none;
