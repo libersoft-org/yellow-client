@@ -59,7 +59,6 @@
    let space_right = window.innerWidth - e.x;
    if (space_left > space_right) {
     x = e.x - width;
-    if (x < 10) x = 10;
    } else {
     x = e.x;
    }
