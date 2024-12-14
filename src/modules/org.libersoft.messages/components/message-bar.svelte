@@ -1,7 +1,7 @@
 <script>
  import { sendMessage } from '../messages.js';
  import { setContext, tick } from 'svelte';
- import Icon from './message-bar-icon.svelte';
+ import Icon from '../../../core/components/icon.svelte';
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
  import Modal from '../../../core/components/modal.svelte';
@@ -103,14 +103,14 @@
 
 <div class="message-bar">
  <div bind:this={elAttachment}>
-  <Icon img="attachment.svg" alt="Attachment" />
+  <Icon img="modules/org.libersoft.messages/img/attachment.svg" alt="Attachment" size="32" padding="0" />
  </div>
  <div bind:this={elExpressions}>
-  <Icon img="emoji.svg" alt="Emoji" />
+  <Icon img="modules/org.libersoft.messages/img/emoji.svg" alt="Emoji" size="32" padding="0" />
  </div>
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
- <Icon img="mic.svg" alt="Record voice message" on:click={clickRecord} />
- <Icon img="send.svg" alt="Send" on:click={clickSend} />
+ <Icon img="modules/org.libersoft.messages/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
+ <Icon img="modules/org.libersoft.messages/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>
 
 <ContextMenu target={elAttachment}>
