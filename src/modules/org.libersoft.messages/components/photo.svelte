@@ -11,6 +11,7 @@
  }
 
  .photo img {
+  display: flex;
   margin: 5px;
   padding-top: 5px;
  }

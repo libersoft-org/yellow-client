@@ -14,7 +14,7 @@
 		"git-format-staged": "^3.1.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.2",
-		"svelte": "^5.10.1",
+		"svelte": "^5.11.2",
 		"vite": "^5.4.11",
 		"vite-plugin-checker": "^0.8.0",
 		"typescript": "^5.7.2"

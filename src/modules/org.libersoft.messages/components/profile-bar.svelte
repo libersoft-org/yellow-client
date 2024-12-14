@@ -1,18 +1,11 @@
 <script>
  import { selectedConversation } from '../messages.js';
+ import Icon from '../../../core/components/icon.svelte';
  import Photo from './photo.svelte';
  export let closeConversation;
 
  function clickClose() {
   closeConversation();
- }
-
- function keyClose(event) {
-  // TODO use Button
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickClose();
-  }
  }
 </script>
 
@@ -52,19 +45,10 @@
  .description .address {
   font-size: 12px;
  }
-
- .close {
-  padding: 10px;
-  cursor: pointer;
- }
-
- .close img {
-  width: 24px;
-  height: 24px;
- }
 </style>
 
 <div class="profile-bar">
+ <Icon img="img/back-white.svg" alt="Back" onClick={clickClose} visibleOnDesktop={false} />
  <Photo size="38" />
  <div class="description">
   {#if $selectedConversation.visible_name}
@@ -72,5 +56,5 @@
   {/if}
   <div class="address">{$selectedConversation.address}</div>
  </div>
- <div class="close" role="button" tabindex="0" on:click={clickClose} on:keydown={keyClose}><img src="img/close.svg" alt="Close" /></div>
+ <Icon img="img/close.svg" alt="Close" onClick={clickClose} visibleOnMobile={false} />
 </div>

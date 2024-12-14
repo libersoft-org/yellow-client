@@ -30,7 +30,7 @@
 </style>
 
 <div class="stickerset" role="none" on:mousedown={mousedown}>
- <div class="label">Standard stickers</div>
+ <div class="label">Animated emojis</div>
  <div class="set">
   {#each stickers as s}
    <Item file={s} />
