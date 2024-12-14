@@ -1,7 +1,7 @@
 <script>
  import { debug, findAccount, selected_corepage_id, accounts_config, accounts, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
- import ActionItem from '../components/accounts-action-item.svelte';
+ import ActionItem from '../components/icon.svelte';
  import Modal from '../components/modal.svelte';
  import ModalAccountsAddEdit from '../modals/modal-accounts-add-edit.svelte';
  import ModalAccountsDel from '../modals/modal-accounts-del.svelte';
@@ -145,8 +145,8 @@
       <td class="center">{a.enabled ? 'Yes' : 'No'}</td>
       <td class="center">
        <div class="action-items">
-        <ActionItem img="img/edit.svg" title="Edit" on:click={() => clickEdit(a.id)} />
-        <ActionItem img="img/del.svg" title="Delete" on:click={() => clickDel(a.id, a.settings?.title)} />
+        <ActionItem img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => clickEdit(a.id)} />
+        <ActionItem img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
        </div>
       </td>
       {#if $debug}

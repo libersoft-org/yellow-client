@@ -1,7 +1,7 @@
 <script>
  import { active_account, order, getModuleDecls } from '../core.js';
  import { get } from 'svelte/store';
- import Item from './module-bar-item.svelte';
+ import Icon from './icon.svelte';
  export let onSelectModule;
  let module_data;
  let lastModuleSelected = false;
@@ -11,7 +11,6 @@
  //$: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
  $: console.log('module-bar module_data_ordered:', module_data_ordered);
-
  $: selectLastModule(module_data);
 
  function selectLastModule(module_data) {
@@ -84,7 +83,7 @@
 <div class="module-bar">
  <div class="items {expanded ? 'expanded' : ''}">
   {#each order(getModuleDecls()) as decl (decl.id)}
-   <Item img="{decl.id}.svg" alt={decl.name} on:click={() => clickSetModule(decl.id)} />
+   <Icon img="img/modules/{decl.id}.svg" alt={decl.name} size="30" onClick={() => clickSetModule(decl.id)} />
   {/each}
  </div>
  <div class="dropdown" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}>
