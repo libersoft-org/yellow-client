@@ -55,8 +55,14 @@
   const { height, width } = ref.getBoundingClientRect();
 
   if (open || x === 0) {
-   if (window.innerWidth - width < e.x) x = e.x - width;
-   else x = e.x;
+   let space_left = e.x;
+   let space_right = window.innerWidth - e.x;
+   if (space_left > space_right) {
+    x = e.x - width;
+    if (x < 10) x = 10;
+   } else {
+    x = e.x;
+   }
   }
   if (open || y === 0) {
    menuOffsetX.set(e.x);
