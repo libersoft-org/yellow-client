@@ -1,7 +1,7 @@
 <script>
  import { wallets, addAddress, addWallet, walletAddresses } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
- import Icon from '../components/table-icon.svelte';
+ import Icon from '../../../core/components/icon.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
  import Address from '../components/settings-wallets-address.svelte';
  import Modal from '../../../core/components/modal.svelte';
@@ -122,8 +122,8 @@
       <td>{address.name}</td>
       <td><Address address={address.address} /></td>
       <td class="icons">
-       <Icon title="Rename" icon="img/edit.svg" on:click={() => renameAddress(wallet, address)} />
-       <Icon title="Hide" icon="modules/org.libersoft.wallet/img/hide.svg" on:click={() => deleteAddress(wallet, address)} />
+       <Icon img="img/edit.svg" alt="Rename" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
+       <Icon img="modules/org.libersoft.wallet/img/hide.svg" alt="Hide" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
       </td>
      </tr>
     {/each}

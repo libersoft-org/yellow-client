@@ -1,6 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
- import Icon from '../components/table-icon.svelte';
+ import Icon from '../../../core/components/icon.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
@@ -110,8 +110,8 @@
       <td>
        <div class="icons">
         <!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
-        <Icon icon="img/edit.svg" title="Edit token" on:click={() => editTokenModal(t)} />
-        <Icon icon="img/del.svg" title="Delete token" on:click={() => delTokenModal(t)} />
+        <Icon img="img/edit.svg" alt="Edit token" size="20" padding="5" onClick={() => editTokenModal(t)} />
+        <Icon img="img/del.svg" alt="Delete token" size="20" padding="5" onClick={() => delTokenModal(t)} />
        </div>
       </td>
      </tr>

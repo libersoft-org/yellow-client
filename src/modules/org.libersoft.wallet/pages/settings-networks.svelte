@@ -1,6 +1,6 @@
 <script>
  import { addNetwork, removeNetwork, networks, default_networks } from '../wallet.ts';
- import Icon from '../components/table-icon.svelte';
+ import Icon from '../../../core/components/icon.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import Button from '../../../core/components/button.svelte';
  import ModalEditNetwork from '../modals/edit-network.svelte';
@@ -90,7 +90,6 @@
 
  .buttons {
   display: flex;
-  gap: 5px;
  }
 </style>
 
@@ -108,9 +107,9 @@
     {/if}
     <div class="name">{n.name}</div>
     <div class="buttons">
-     <Icon icon="modules/org.libersoft.wallet/img/coin.svg" title="Token list" on:click={() => tokenList(n)} />
-     <Icon icon="img/edit.svg" title="Edit network" on:click={() => editNetwork(n)} />
-     <Icon icon="img/del.svg" title="Delete network" on:click={() => removeNetwork(n)} />
+     <Icon img="modules/org.libersoft.wallet/img/coin.svg" alt="Token list" size="20" padding="5" onClick={() => tokenList(n)} />
+     <Icon img="img/edit.svg" alt="Edit network" size="20" padding="5" onClick={() => editNetwork(n)} />
+     <Icon img="img/del.svg" alt="Delete network" size="20" padding="5" onClick={() => removeNetwork(n)} />
     </div>
    </div>
   {/each}
@@ -124,7 +123,7 @@
      <img src={n.currency.iconURL} alt="" />
     {/if}
     <div class="name">{n.name}</div>
-    <Icon icon="img/add-black.svg" title="Add to my networks" on:click={() => addNetwork(n)} />
+    <Icon img="img/add-black.svg" alt="Add to my networks" size="20" padding="5" onClick={() => addNetwork(n)} />
    </div>
   {/each}
  </div>

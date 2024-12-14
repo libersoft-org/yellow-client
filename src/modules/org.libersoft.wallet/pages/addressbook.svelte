@@ -3,7 +3,7 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalAddEdit from '../modals/addressbook-add-edit.svelte';
  import ModalDel from '../modals/addressbook-del.svelte';
- import Icon from '../components/table-icon.svelte';
+ import Icon from '../../../core/components/icon.svelte';
  import { addressBook } from '../wallet.ts';
  import { get } from 'svelte/store';
  let showModalAddEdit = false;
@@ -133,8 +133,8 @@
       <td>{a.address}</td>
       <td class="center">
        <div class="icons">
-        <Icon icon="img/edit.svg" title="Edit" on:click={() => editItemModal(a)} />
-        <Icon icon="img/del.svg" title="Delete" on:click={() => deleteItemModal(a)} />
+        <Icon img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => editItemModal(a)} />
+        <Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => deleteItemModal(a)} />
        </div>
       </td>
      </tr>
