@@ -101,9 +101,7 @@ export function findAccount(id) {
  return get(accounts).find(acc => get(acc).id === id);
 }
 
-/*
-fire off whenever accounts array or active_account_id changes
- */
+/* fire off whenever accounts array or active_account_id changes */
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
  //console.log('active_account_store:', $accounts, $active_account_id);
  let r = $accounts.find(acc => get(acc).id === $active_account_id);
@@ -274,12 +272,7 @@ function constructAccount(id, credentials, enabled, settings) {
   credentials: { ...credentials },
   enabled,
   /*
-    also stuff like (set on ping, for example) belongs here:
-
-    acc.lastCommsTs = Date.now();
-    acc.status = 'Connected.';
-    acc.error = null;
-
+    also stuff like (set on ping, for example) belongs here:  lastCommsTs, status, error
     We should put all this stuff in a separate object, let's say "info".
     And try to stuff credentials into settings maybe.
     And each of these nested objects of interest can be a store, so we can update them independently, without causing a global update on each ping.
