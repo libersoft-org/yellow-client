@@ -101,6 +101,9 @@ export function findAccount(id) {
  return get(accounts).find(acc => get(acc).id === id);
 }
 
+/*
+fire off whenever accounts array or active_account_id changes
+ */
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
  //console.log('active_account_store:', $accounts, $active_account_id);
  let r = $accounts.find(acc => get(acc).id === $active_account_id);
