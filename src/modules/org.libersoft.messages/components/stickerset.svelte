@@ -37,21 +37,18 @@
 
 <div class="stickerset" role="none" on:mousedown={mousedown}>
  <div class="label">{stickerset.name}</div>
-
- <details>
-  <summary>
-   <div class="set">
+ <div class="set">
+  <details>
+   <summary>
     {#each first as s}
-     <i>{JSON.stringify(s.id)}</i>
-     <Item file={s.url} />
+     <!--<i>{JSON.stringify(s.url)}</i>-->
+     <Item file={s.url} autoplay={false} />
     {/each}
-   </div>
-  </summary>
+   </summary>
 
-  <div class="set">
    {#each rest as s}
-    <Item file={s} />
+    <Item file={s.url} autoplay={false} />
    {/each}
-  </div>
- </details>
+  </details>
+ </div>
 </div>

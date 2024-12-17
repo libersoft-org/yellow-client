@@ -7,7 +7,7 @@
  let library = localStorageSharedStore('stickers', {});
 
  const yellow_stickers_server = 'https://stickers.libersoft.org';
-
+ /*
  onMount(() => {
   console.log('loading stickers from ' + yellow_stickers_server);
 
@@ -35,6 +35,8 @@
     });
    });
  });
+
+ */
 </script>
 
 <style>

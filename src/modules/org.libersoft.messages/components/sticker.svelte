@@ -5,12 +5,14 @@
 
  export let file = '';
  export let size = 200;
+ export let autoplay = true;
 
  let container;
  let isLottie = false;
  let error;
 
  onMount(async () => {
+  console.log(file);
   const ext = file.split('.').pop().toLowerCase();
   if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
    isLottie = true;
@@ -25,9 +27,9 @@
     path = file;
    }
 
-   /*console.log('STICKER file:', file);
+   console.log('STICKER file:', file);
    console.log('STICKER path:', path);
-   console.log('STICKER animationData:', animationData);*/
+   console.log('STICKER animationData:', animationData);
 
    if (error) {
     console.error(error);
@@ -36,9 +38,9 @@
 
    lottie.loadAnimation({
     container: container,
-    renderer: 'svg',
+    renderer: 'canvas',
     loop: true,
-    autoplay: true,
+    autoplay,
     path,
     animationData,
    });

@@ -2,6 +2,7 @@
  import Sticker from './sticker.svelte';
  import { createEventDispatcher, getContext } from 'svelte';
  export let file;
+ export let autoplay = true;
  const dispatch = createEventDispatcher();
  let menu = getContext('ContextMenu');
 
@@ -38,13 +39,18 @@
 </script>
 
 <style>
- .link {
+ .sticker {
   cursor: pointer;
+  display: inline-block;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  transition: background-color 0.2s;
  }
 </style>
 
 {#if file}
- <div class="link" role="button" tabindex="0" on:mousedown={mousedown} on:click={click} on:keydown={handleKeydown}>
-  <Sticker {file} size="80" />
+ <div class="sticker" role="button" tabindex="0" on:mousedown={mousedown} on:click={click} on:keydown={handleKeydown}>
+  <Sticker {autoplay} {file} size="80" />
  </div>
 {/if}
