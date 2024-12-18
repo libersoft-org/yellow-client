@@ -1,13 +1,14 @@
 <script>
- import Item from './stickerset-item.svelte';
+ import StickerSetPart from './stickerset-part.svelte';
 
  export let stickerset = {};
 
  let stickers;
  $: stickers = stickerset.items || [];
  let first, rest;
- $: first = stickers.slice(0, 6);
- $: rest = stickers.slice(6);
+ let split_at = 66666;
+ $: first = stickers.slice(0, split_at);
+ $: rest = stickers.slice(split_at);
 
  function mousedown(event) {
   console.log('stickerset mousedown');
@@ -38,19 +39,12 @@
 <div class="stickerset" role="none" on:mousedown={mousedown}>
  <div class="label">{stickerset.name}</div>
  <div class="set">
-  <details>
-   <summary>
-    {#each first as s}
-     <!--<i>{JSON.stringify(s.url)}</i>-->
-     <Item file={s.url} autoplay={false} />
-    {/each}
-   </summary>
+  <StickerSetPart items={first} />
 
-   <!--
+  <!--
    {#each rest as s}
     <Item file={s.url} autoplay={false} />
    {/each}
 -->
-  </details>
  </div>
 </div>

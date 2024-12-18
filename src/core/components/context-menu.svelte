@@ -196,7 +196,10 @@
  style:max-height="{menuMaxHeight}px"
  {...$$restProps}
  on:mousedown
- on:mousedown={({ target }) => {
+ on:mousedown={e => {
+  console.log('context-menu mousedown:', e.target);
+  e.stopPropagation();
+  e.preventDefault();
   /*console.log('context-menu mousedown:', target);
   const closestOption = target.closest('[tabindex]');
   if (closestOption && closestOption.getAttribute('role') !== 'menuitem') {
