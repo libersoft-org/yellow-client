@@ -46,9 +46,11 @@
     {/each}
    </summary>
 
+   <!--
    {#each rest as s}
     <Item file={s.url} autoplay={false} />
    {/each}
+-->
   </details>
  </div>
 </div>
