@@ -652,8 +652,11 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
+let originalLog;
+
 (function () {
- const originalLog = console.log;
+ if (originalLog) return;
+ originalLog = console.log;
  console.log = function (...args) {
   const timestamp = new Date().toISOString();
   originalLog.apply(console, [`[${timestamp}]`, ...args]);

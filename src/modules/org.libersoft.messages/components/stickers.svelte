@@ -17,11 +17,11 @@
    .then(sets => {
     console.log('discovered ' + sets.length + ' sticker sets in ' + (Date.now() - start_fetch_sets) + 'ms');
     sets.forEach(set => {
-     console.log('loading stickers for set ' + set.id);
+     console.log('details for set ' + set.id);
      fetch(yellow_stickers_server + '/api/stickers?id=' + set.id)
       .then(response => response.json())
       .then(stickers => {
-       console.log('loaded ' + stickers.length + ' sticker details for set ' + set.id + ' after ' + (Date.now() - start_fetch_sets) + 'ms');
+       console.log('loaded ' + stickers.length + ' details for set ' + set.id + ' after ' + (Date.now() - start_fetch_sets) + 'ms');
        set.items = stickers;
        set.items.forEach(sticker => {
         sticker.url = yellow_stickers_server + '/download/' + set.id + '/' + sticker.name;

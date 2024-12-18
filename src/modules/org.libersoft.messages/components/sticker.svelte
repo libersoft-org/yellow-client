@@ -12,7 +12,7 @@
  let error;
 
  onMount(async () => {
-  console.log(file);
+  //console.log(file);
   const ext = file.split('.').pop().toLowerCase();
   if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
    isLottie = true;
@@ -28,17 +28,27 @@
     animationData = await loadJson(file);
    }
 
-   console.log('STICKER file:', file);
-   console.log('STICKER path:', path);
-   console.log('STICKER animationData:', animationData);
-
    if (error) {
-    console.error(error);
+    console.error('loading ', file, 'error', error);
     return;
    }
 
+   /*
+   console.log('STICKER file:', file);
+   console.log('STICKER path:', path);
+   console.log('STICKER animationData:', animationData);
+*/
+
+   /*
+
+    lottie.setQuality() -- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
+     lottie.freeze() -- Freezes all playing animations or animations that will be loaded
+
+    */
+
    let start = Date.now();
-   lottie.loadAnimation({
+
+   let anim = lottie.loadAnimation({
     container: container,
     renderer: 'canvas',
     loop: true,
@@ -46,7 +56,32 @@
     path,
     animationData,
    });
-   console.log('loaded lottie in ' + (Date.now() - start) + 'ms');
+
+   anim.onComplete = () => {
+    console.log('lottie animation completed');
+   };
+   /*
+   anim.onLoopComplete = () => {
+    console.log('lottie animation loop completed');
+   };
+*/
+   anim.addEventListener('config_ready', () => {
+    console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
+   });
+
+   anim.addEventListener('data_ready', () => {
+    console.log('lottie data ready after ' + (Date.now() - start) + 'ms');
+   });
+
+   anim.addEventListener('loaded_images', () => {
+    console.log('lottie loaded images after ' + (Date.now() - start) + 'ms');
+   });
+
+   anim.addEventListener('DOMLoaded', () => {
+    console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
+   });
+
+   console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
   }
  });
 
@@ -74,7 +109,7 @@
     return;
    }
    let r = await response.json();
-   console.log('loaded ' + file + ' in ' + (Date.now() - start) + 'ms');
+   console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
    return r;
   } catch (e) {
    error = 'Error loading json file: ' + e.message;
