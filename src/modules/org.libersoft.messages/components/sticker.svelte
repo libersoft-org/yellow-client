@@ -24,7 +24,8 @@
    if (ext === 'tgs') {
     animationData = await loadTgs(file);
    } else {
-    path = file;
+    //path = file;
+    animationData = await loadJson(file);
    }
 
    console.log('STICKER file:', file);
@@ -36,6 +37,7 @@
     return;
    }
 
+   let start = Date.now();
    lottie.loadAnimation({
     container: container,
     renderer: 'canvas',
@@ -44,6 +46,7 @@
     path,
     animationData,
    });
+   console.log('loaded lottie in ' + (Date.now() - start) + 'ms');
   }
  });
 
@@ -59,6 +62,22 @@
    return JSON.parse(decompressed);
   } catch (e) {
    error = 'Error loading .tgs file: ' + e.message;
+  }
+ }
+
+ async function loadJson(file) {
+  try {
+   let start = Date.now();
+   const response = await fetch(file);
+   if (!response.ok) {
+    error = `Error loading ${file}, status: ${response.status}`;
+    return;
+   }
+   let r = await response.json();
+   console.log('loaded ' + file + ' in ' + (Date.now() - start) + 'ms');
+   return r;
+  } catch (e) {
+   error = 'Error loading json file: ' + e.message;
   }
  }
 </script>

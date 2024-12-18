@@ -652,4 +652,12 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
+(function () {
+ const originalLog = console.log;
+ console.log = function (...args) {
+  const timestamp = new Date().toISOString();
+  originalLog.apply(console, [`[${timestamp}]`, ...args]);
+ };
+})();
+
 export default { hideSidebarMobile, isClientFocused, accounts };

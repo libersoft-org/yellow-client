@@ -7,20 +7,21 @@
  let library = localStorageSharedStore('stickers', {});
 
  const yellow_stickers_server = 'https://stickers.libersoft.org';
- /*
+
  onMount(() => {
   console.log('loading stickers from ' + yellow_stickers_server);
 
+  let start_fetch_sets = Date.now();
   fetch(yellow_stickers_server + '/api/sets')
    .then(response => response.json())
    .then(sets => {
+    console.log('discovered ' + sets.length + ' sticker sets in ' + (Date.now() - start_fetch_sets) + 'ms');
     sets.forEach(set => {
      console.log('loading stickers for set ' + set.id);
      fetch(yellow_stickers_server + '/api/stickers?id=' + set.id)
       .then(response => response.json())
       .then(stickers => {
-       console.log('loaded ' + stickers.length + ' stickers for set ' + set.id);
-
+       console.log('loaded ' + stickers.length + ' sticker details for set ' + set.id + ' after ' + (Date.now() - start_fetch_sets) + 'ms');
        set.items = stickers;
        set.items.forEach(sticker => {
         sticker.url = yellow_stickers_server + '/download/' + set.id + '/' + sticker.name;
@@ -35,8 +36,6 @@
     });
    });
  });
-
- */
 </script>
 
 <style>
