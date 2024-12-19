@@ -1,12 +1,16 @@
 <script>
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
-
  import StickerSet from './stickerset.svelte';
  import { onMount } from 'svelte';
 
  let library = localStorageSharedStore('stickers', {});
  const yellow_stickers_server = 'https://stickers.libersoft.org';
- onMount(setInterval(update_sticker_library, 1000 * 60 * 5));
+ onMount(() => {
+  setInterval(update_sticker_library, 1000 * 60 * 5);
+  if (get(library)[yellow_stickers_server] === undefined) {
+   update_sticker_library();
+  }
+ });
 
  async function update_sticker_library() {
   console.log('loading list of stickersets from ' + yellow_stickers_server);
@@ -15,7 +19,6 @@
   response = await response.json();
   let sets = response.data;
   console.log('discovered ' + sets.length + ' stickersets in ' + (Date.now() - start_fetch_sets) + 'ms');
-
   sets.forEach(stickerset => {
    console.log('fetch details for stickerset ' + stickerset.id);
    fetch(yellow_stickers_server + '/api/stickers?id=' + stickerset.id)
@@ -31,7 +34,6 @@
      library.update(d => d);
     });
   });
-
   library.update(d => {
    d[yellow_stickers_server] = sets;
    return d;
