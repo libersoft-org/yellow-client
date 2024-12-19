@@ -11,7 +11,7 @@ export let selected_module_id = writable(null);
 export let debug = writable(import.meta.env.VITE_YELLOW_CLIENT_DEBUG || false);
 
 debug.subscribe(value => {
- console.log('DEBUG:', value);
+ console.log('YELLOW_CLIENT_DEBUG:', value);
 });
 
 export const product = 'Yellow';
@@ -116,7 +116,7 @@ export let active_account = derived(active_account_store, ($active_account_store
  }
  // subscribe to the store that contains the account object
  const unsubscribe = $active_account_store.subscribe(account => {
-  console.log('DERIVED NESTED STORE:', account);
+  //console.log('DERIVED NESTED STORE:', account);
   set(account);
  });
  return () => unsubscribe();
@@ -164,7 +164,7 @@ export function relay(md, key) {
 
 function updateLiveAccount(account, config) {
  let acc = get(account);
- console.log('updateLiveAccount', acc, config);
+ //console.log('updateLiveAccount', acc, config);
 
  if (acc.credentials.retry_nonce != config.credentials.retry_nonce || acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
   acc.credentials = config.credentials;
@@ -180,12 +180,14 @@ function updateLiveAccount(account, config) {
 
  let settings_updated = false;
  for (const [key, value] of Object.entries(config.settings)) {
-  console.log('config:', key, value);
+  //console.log('config:', key, value);
   if (acc.settings[key] != value) {
    acc.settings[key] = value;
    settings_updated = true;
-   console.log('settings updated:', key, value);
-  } else console.log('settings not updated:', key, value);
+   //console.log('settings updated:', key, value);
+  } else {
+   //console.log('settings not updated:', key, value);
+  }
  }
  if (settings_updated) account.update(v => v);
 }
@@ -193,7 +195,7 @@ function updateLiveAccount(account, config) {
 function createLiveAccount(config) {
  // add new account
  let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
- console.log('NEW account', get(account));
+ //console.log('NEW account', get(account));
  accounts.update(v => [...v, account]);
  if (config.enabled) _enableAccount(account);
  else _disableAccount(account);
@@ -219,10 +221,10 @@ accounts_config.subscribe(value => {
   //console.log('CONFIG', config);
   let account = accounts_list.find(acc => get(acc).id === config.id);
   if (account) {
-   console.log('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
+   //console.log('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
    updateLiveAccount(account, config);
   } else {
-   console.log('CREATE ACCOUNT', config);
+   //console.log('CREATE ACCOUNT', config);
    createLiveAccount(config);
   }
  }
@@ -433,7 +435,7 @@ function clearPingTimer(acc) {
 }
 
 function sendLoginCommand(account) {
- console.log('Sending login command');
+ //console.log('Sending login command');
  let acc = get(account);
  send(acc, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
   console.log('Login response:', res);
@@ -524,7 +526,7 @@ export function order(dict) {
 }
 
 function initModuleComms(acc, module_id, decl) {
- console.log('initModuleComms module_id:', module_id, 'decl:', decl);
+ console.log('initModuleComms:', decl);
  if (decl.callbacks.initData) {
   acc.module_data[module_id] = decl.callbacks?.initData(acc);
  } else {
@@ -548,7 +550,7 @@ function deinitModuleComms(decl, acc) {
 
 function updateModulesComms(acc) {
  let available_modules = acc.available_modules;
- console.log('updateModulesComms:', acc, available_modules);
+ //console.log('updateModulesComms:', acc, available_modules);
  for (const [module_id, available] of Object.entries(available_modules)) {
   const initialized = !!acc.module_data[module_id];
   if (available && initialized) {
@@ -568,8 +570,8 @@ function updateModulesComms(acc) {
    console.log('Module not available but also not initialized:', module_id);
   }
  }
- console.log('updateModulesComms:', acc);
- console.log('updateModulesComms:', acc.module_data);
+ //console.log('updateModulesComms:', acc);
+ //console.log('updateModulesComms:', acc.module_data);
 }
 
 function disconnectAccount(acc) {
@@ -587,10 +589,10 @@ function disconnectAccount(acc) {
 }
 
 function handleSocketMessage(acc, res) {
- console.log('MESSAGE FROM SERVER', res);
+ //console.log('MESSAGE FROM SERVER', res);
  if (res.requestID) {
   // it is response to command:
-  console.log('GOT RESPONSE');
+  //console.log('GOT RESPONSE');
   const reqData = acc.requests[res.requestID];
   if (reqData.callback) reqData.callback(reqData.req, res);
   delete acc.requests[res.requestID];
@@ -636,12 +638,12 @@ export function send(acc, target, command, params = {}, sendSessionID = true, ca
   },
  };
 
- if (!quiet) {
+ /* if (!quiet) {
   console.log('------------------');
   console.log('SENDING COMMAND:');
   console.log(req);
   console.log('------------------');
- }
+ }*/
  acc.socket.send(JSON.stringify(req));
  return requestID;
 }
@@ -654,13 +656,19 @@ function generateRequestID() {
 
 let originalLog;
 
-(function () {
+function monkeypatch_console_log() {
  if (originalLog) return;
+ if (window.console_log_monkeypatched) return;
+ window.console_log_monkeypatched = true;
  originalLog = console.log;
  console.log = function (...args) {
-  const timestamp = new Date().toISOString();
+  //const timestamp = new Date().toISOString();
+  // show just time:
+  const timestamp = new Date().toISOString().slice(11, -1);
   originalLog.apply(console, [`[${timestamp}]`, ...args]);
  };
-})();
+}
+
+monkeypatch_console_log();
 
 export default { hideSidebarMobile, isClientFocused, accounts };

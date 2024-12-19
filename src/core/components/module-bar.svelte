@@ -10,19 +10,19 @@
  $: module_data = $active_account?.module_data || {};
  //$: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
- $: console.log('module-bar module_data_ordered:', module_data_ordered);
+ //$: console.log('module-bar module_data_ordered:', module_data_ordered);
  $: selectLastModule(module_data);
 
  function selectLastModule(module_data) {
   //console.log('selectLastModule: lastModuleSelected: ', module_data);
   if (!lastModuleSelected && module_data_ordered && module_data_ordered.length > 0) {
-   console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
+   //console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
    lastModuleSelected = true;
    let acc = get(active_account);
-   console.log('selectLastModule: acc: ', acc);
+   //console.log('selectLastModule: acc: ', acc);
    let id = acc.settings?.last_module_id;
    console.log('selectLastModule: ', module_data);
-   console.log('selectLastModule: id: ', id);
+   //console.log('selectLastModule: id: ', id);
    if (module_data[id]) onSelectModule(id);
   }
  }

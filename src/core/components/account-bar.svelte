@@ -13,7 +13,7 @@
   document.removeEventListener('click', handleClickOutside);
  });
 
- $: console.log('account-bar.svelte: account: ', $active_account);
+ //$: console.log('account-bar.svelte: account: ', $active_account);
  // $: console.log('account-bar.svelte: accounts: ', $accounts);
  // $: console.log('accountsVisible: ', accountsVisible);
 

@@ -47,9 +47,9 @@
  setContext('contentElement', contentElement);
 
  $: selectedCorePage = corePages[$selected_corepage_id];
- $: console.log('selectedCorePage: ', selectedCorePage);
+ //$: console.log('selectedCorePage: ', selectedCorePage);
  $: selectedModuleDecl = getModuleDecls()[$selected_module_id];
- $: console.log('selectedModuleDecl: ', selectedModuleDecl);
+ //$: console.log('selectedModuleDecl: ', selectedModuleDecl);
 
  onMount(() => {
   console.log('+page onMount');
@@ -75,7 +75,7 @@
  });
 
  function updateAppHeight() {
-  console.log('updateAppHeight');
+  //console.log('updateAppHeight');
   const visualViewport = window.visualViewport;
   let viewportHeight;
   if (visualViewport) viewportHeight = visualViewport.height;
@@ -95,12 +95,12 @@
 
  function onSelectModule(id) {
   selected_corepage_id.set(null);
-  console.log('onSelectModule: ' + id);
+  //console.log('onSelectModule: ' + id);
   selected_module_id.set(id);
-  console.log('selected_module_id: ' + $selected_module_id);
+  //console.log('selected_module_id: ' + $selected_module_id);
 
-  console.log('active_account: ', $active_account);
-  console.log('accounts_config: ', $accounts_config);
+  //console.log('active_account: ', $active_account);
+  //console.log('accounts_config: ', $accounts_config);
   if (!$active_account) return;
 
   accounts_config.update(accounts => {
@@ -141,7 +141,7 @@
  }
 
  async function onkeydown(event) {
-  console.log('window onkeydown: ', event);
+  //console.log('window onkeydown: ', event);
   if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) {
    debug.update(d => !d);
   }

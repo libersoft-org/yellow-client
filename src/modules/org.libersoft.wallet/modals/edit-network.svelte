@@ -16,7 +16,7 @@
  $: update(params);
 
  function update(params) {
-  console.log('update', params);
+  //console.log('update', params);
   if (item_guid) return;
   let item = params.item;
   if (item) {

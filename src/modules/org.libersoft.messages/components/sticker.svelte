@@ -10,8 +10,37 @@
  let container;
  let isLottie = false;
  let error;
+ let observer;
+ let is_visible = false;
+ let anim;
+
+ $: update(is_visible);
+
+ function update(is_visible) {
+  if (!anim) return;
+  if (is_visible) {
+   anim.play();
+  } else {
+   anim.pause();
+  }
+ }
 
  onMount(async () => {
+  if (!container) throw new Error('container not found');
+
+  console.log('create sticker observer');
+  observer = new IntersectionObserver(
+   entries => {
+    console.log(entries);
+    is_visible = entries[0].isIntersecting;
+   },
+   {
+    threshold: 0.1,
+    root: null,
+   }
+  );
+  observer.observe(intersection_observer_element);
+
   //console.log(file);
   const ext = file.split('.').pop().toLowerCase();
   if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
@@ -48,11 +77,11 @@
 
    let start = Date.now();
 
-   let anim = lottie.loadAnimation({
+   anim = lottie.loadAnimation({
     container: container,
     renderer: 'canvas',
     loop: true,
-    autoplay,
+    autoplay: is_visible,
     path,
     animationData,
    });
@@ -85,9 +114,34 @@
   }
  });
 
+ async function intersection(entries) {
+  //console.log(entries);
+  entries.sort((a, b) => a.time - b.time);
+  for (let entry of entries) {
+   is_visible = entries[0].isIntersecting;
+  }
+ }
+
  async function loadTgs(file) {
   try {
-   const response = await fetch(file);
+   /*
+    https://stackoverflow.com/questions/28154796/xmlhttprequest-how-to-force-caching
+    https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#caching_static_assets
+   //request.headers.set('Accept-Encoding', 'gzip');?
+   */
+
+   /*
+   https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#fresh_and_stale_based_on_age
+    */
+   const response = await fetch(file, {
+    /*force-cache — The browser looks for a matching request in its HTTP cache.
+    If there is a match, fresh or stale, it will be returned from the cache. */
+    cache: 'force-cache',
+    /*Request.integrity Read only
+    Contains the subresource integrity value of the request (e.g., sha256-BpfBw7ivV8q2jLiT13fxDYAe2tJllusRSZ273h2nFSE=).
+    cat FILENAME.js | openssl dgst -sha384 -binary | openssl base64 -A
+    */
+   });
    if (!response.ok) {
     error = `Error loading ${file}, status: ${response.status}`;
     return;

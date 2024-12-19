@@ -8,6 +8,9 @@
 </script>
 
 <!--
+
+https://github.com/ghostebony/svelte-virtual/blob/main/src/lib/grid/Grid.svelte
+
 <Grid itemCount={items.length} itemHeight={size} itemWidth={size}>
 	{#snippet item({ index, style })}
 		<div {style}>
@@ -17,6 +20,7 @@
 </Grid>
 -->
 
-{#each items as s}
- <Item {size} file={s.url} autoplay={false} />
+{#each items as s, index}
+ {index}
+ <Item {size} file={s.url} autoplay={index < 73} />
 {/each}

@@ -5,7 +5,7 @@
  import ConversationListItem from '../components/conversation-list-item.svelte';
  let showNewConversationModal = false;
 
- $: console.log('conversations-list.svelte: conversationsArray: ', $conversationsArray);
+ //$: console.log('conversations-list.svelte: conversationsArray: ', $conversationsArray);
 
  function clickNew() {
   showNewConversationModal = true;

@@ -3,7 +3,7 @@ import { writable, get, type Writable } from 'svelte/store';
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
  function setStorage(value: T): void {
   const str = JSON.stringify(value);
-  console.log('SAVE', name, str);
+  //console.log('SAVE', name, str);
   window.localStorage.setItem(name, str);
  }
 

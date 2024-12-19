@@ -6,9 +6,10 @@
  let stickers;
  $: stickers = stickerset.items || [];
  let first, rest;
- let split_at = 66666;
+ let split_at = 6;
  $: first = stickers.slice(0, split_at);
  $: rest = stickers.slice(split_at);
+ let expanded = true;
 
  function mousedown(event) {
   console.log('stickerset mousedown');
@@ -22,7 +23,8 @@
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  max-width: 420px; /* TODO: if I delete this, then max-width is ignored in expressions.svelte (same size set there)*/
+  /*max-width: 420px;*/ /* TODO: if I delete this, then max-width is ignored in expressions.svelte (same size set there)*/
+  max-width: 1020px;
  }
 
  .stickerset .label {
@@ -40,11 +42,11 @@
  <div class="label">{stickerset.name}</div>
  <div class="set">
   <StickerSetPart items={first} />
-
-  <!--
-   {#each rest as s}
-    <Item file={s.url} autoplay={false} />
-   {/each}
--->
+  {#if stickers.length > split_at}
+   <button on:click={() => (expanded = !expanded)}>{expanded ? 'less' : 'more'}</button>
+  {/if}
+  {#if expanded}
+   <StickerSetPart items={rest} />
+  {/if}
  </div>
 </div>

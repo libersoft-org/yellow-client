@@ -22,7 +22,7 @@
  $: onShowUpdated(show);
 
  async function onShowUpdated(show) {
-  console.log('update', show);
+  //console.log('update', show);
   if (show) {
    await positionModal();
   }

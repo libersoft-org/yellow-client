@@ -140,11 +140,18 @@
    }
    console.log('create observer');
    observer = new IntersectionObserver(
-    entries => {
-     console.log(entries);
-     is_visible = entries[0].isIntersecting;
+    async entries => {
+     //console.log(entries);
+     entries.sort((a, b) => a.time - b.time);
+     for (let entry of entries) {
+      is_visible = entries[0].isIntersecting;
+      await tick();
+     }
     },
-    { touchThreshold: 0.8, root: container_element }
+    /*
+    TODO: split long messages into parts and "collect" seen status
+     */
+    { threshold: 0.8, root: container_element }
    );
    observer.observe(intersection_observer_element);
   }

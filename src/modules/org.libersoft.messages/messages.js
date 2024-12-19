@@ -44,7 +44,7 @@ function sendData(acc, command, params = {}, sendSessionID = true, callback = nu
 }
 
 export function onModuleSelected(selected) {
- console.log(identifier + ' onModuleSelected', selected);
+ //console.log(identifier + ' onModuleSelected', selected);
  if (!selected) get(md)?.['selectedConversation']?.set(null);
 }
 
@@ -92,7 +92,7 @@ export function initComms(acc) {
  moduleEventSubscribe(acc, 'seen_inbox_message');
 
  let data = acc.module_data[identifier];
- console.log('initComms:', data);
+ //console.log('initComms:', data);
 
  data.new_message_listener = event => eventNewMessage(acc, event);
  data.seen_message_listener = event => eventSeenMessage(acc, event);

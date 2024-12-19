@@ -108,21 +108,21 @@ export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
  const r = $networks.find(n => n.guid === $selectedNetworkID);
- console.log('selectedNetwork', r);
+ //console.log('selectedNetwork', r);
  return r;
 });
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
  const r = $wallets.find(w => w.address === $selectedWalletID);
- console.log('selectedWallet', r);
+ //console.log('selectedWallet', r);
  return r;
 });
 
 export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
- console.log($selectedWallet);
+ //console.log('selectedWallet:', $selectedWallet);
  let addresses = $selectedWallet?.addresses || [];
  let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
- console.log('SELECTEDADDRESS', result);
+ //console.log('SELECTEDADDRESS', result);
  return result;
 });
 
@@ -154,7 +154,7 @@ addressBook.subscribe((value: AddressBookItem[]) => {
 });
 
 selectedAddress.subscribe((value: Address | undefined) => {
- console.log('selectedAddress', value);
+ //console.log('selectedAddress', value);
  // getBalance();
 });
 
@@ -210,12 +210,12 @@ async function refresh(): Promise<void> {
 }
 
 selectedNetwork.subscribe((value: Network | undefined) => {
- console.log('selectedNetwork', value);
+ //console.log('selectedNetwork', value);
  resetBalance();
  reconnect();
 });
 selectedWallet.subscribe((value: Wallet | undefined) => {
- console.log('selectedWallet', value);
+ //console.log('selectedWallet', value);
  resetBalance();
  reconnect();
 });
