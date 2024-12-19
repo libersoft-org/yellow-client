@@ -1,46 +1,52 @@
 <script>
  import lottie from 'lottie-web';
  import pako from 'pako';
- import { onMount, tick } from 'svelte';
+ import { getContext, onMount, tick } from 'svelte';
 
  export let file = '';
  export let size = 200;
- export let autoplay = true;
 
- let container;
+ let component_container;
+ let anim_container;
  let isLottie = false;
  let error;
  let observer;
- let is_visible = false;
+ let playing = false;
  let anim;
+ let is_in_viewport = false;
 
- $: update(is_visible);
+ let ContextMenuOpen = getContext('ContextMenuOpen');
 
- function update(is_visible) {
+ $: playing = (ContextMenuOpen === undefined || ContextMenuOpen) && is_in_viewport;
+
+ $: update_playing(playing);
+ function update_playing(playing) {
   if (!anim) return;
-  if (is_visible) {
+  if (playing) {
    anim.play();
   } else {
    anim.pause();
   }
  }
 
- onMount(async () => {
-  if (!container) throw new Error('container not found');
-
+ $: setup_observer(anim_container);
+ function setup_observer(anim_container) {
+  if (!anim_container) return;
   console.log('create sticker observer');
   observer = new IntersectionObserver(
    entries => {
-    console.log(entries);
-    is_visible = entries[0].isIntersecting;
+    is_in_viewport = entries[0].isIntersecting;
+    console.log(entries, 'is_in_viewport: ', is_in_viewport);
    },
    {
     threshold: 0.1,
     root: null,
    }
   );
-  observer.observe(intersection_observer_element);
+  observer.observe(anim_container);
+ }
 
+ onMount(async () => {
   //console.log(file);
   const ext = file.split('.').pop().toLowerCase();
   if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
@@ -58,7 +64,7 @@
    }
 
    if (error) {
-    console.error('loading ', file, 'error', error);
+    console.log('loading ', file, 'error', error);
     return;
    }
 
@@ -78,10 +84,10 @@
    let start = Date.now();
 
    anim = lottie.loadAnimation({
-    container: container,
+    container: anim_container,
     renderer: 'canvas',
     loop: true,
-    autoplay: is_visible,
+    autoplay: playing,
     path,
     animationData,
    });
@@ -118,21 +124,19 @@
   //console.log(entries);
   entries.sort((a, b) => a.time - b.time);
   for (let entry of entries) {
-   is_visible = entries[0].isIntersecting;
+   is_in_viewport = entries[0].isIntersecting;
   }
  }
 
  async function loadTgs(file) {
   try {
+   let start = Date.now();
    /*
-    https://stackoverflow.com/questions/28154796/xmlhttprequest-how-to-force-caching
-    https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#caching_static_assets
-   //request.headers.set('Accept-Encoding', 'gzip');?
+    https://www.digitalocean.com/community/tutorials/how-to-implement-browser-caching-with-nginx-s-header-module-on-centos-8
+    https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#fresh_and_stale_based_on_age
+    https://redbot.org/?uri=https://stickers.libersoft.org/download/1/1f308.tgs
+    https://developers.cloudflare.com/cache/concepts/cache-responses/
    */
-
-   /*
-   https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#fresh_and_stale_based_on_age
-    */
    const response = await fetch(file, {
     /*force-cache — The browser looks for a matching request in its HTTP cache.
     If there is a match, fresh or stale, it will be returned from the cache. */
@@ -148,6 +152,7 @@
    }
    const arrayBuffer = await response.arrayBuffer();
    const decompressed = pako.ungzip(new Uint8Array(arrayBuffer), { to: 'string' });
+   console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
    return JSON.parse(decompressed);
   } catch (e) {
    error = 'Error loading .tgs file: ' + e.message;
@@ -189,11 +194,11 @@
  }
 </style>
 
-<div class="sticker" style="width: {size}px; height: {size}px;">
+<div class="sticker" style="width: {size}px; height: {size}px;" bind:this={component_container}>
  {#if error}
   <p>{error}</p>
  {:else if isLottie}
-  <div class="lottie" bind:this={container}></div>
+  <div class="lottie" bind:this={anim_container}></div>
  {:else}
   <img class="image" style="width: {size}px; height: {size}px;" src={file} alt="" />
  {/if}

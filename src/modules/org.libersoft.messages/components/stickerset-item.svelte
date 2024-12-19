@@ -2,7 +2,6 @@
  import Sticker from './sticker.svelte';
  import { createEventDispatcher, getContext } from 'svelte';
  export let file;
- export let autoplay = true;
  export let size;
  const dispatch = createEventDispatcher();
  let menu = getContext('ContextMenu');
@@ -52,6 +51,6 @@
 
 {#if file}
  <div class="sticker" role="button" tabindex="0" on:mousedown={mousedown} on:click={click} on:keydown={handleKeydown}>
-  <Sticker {size} {autoplay} {file} />
+  <Sticker {size} {file} />
  </div>
 {/if}

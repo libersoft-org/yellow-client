@@ -38,7 +38,7 @@
   }*/
 
   if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-   console.log('MessageContent create_node DOCUMENT_FRAGMENT_NODE:', container, node);
+   //console.log('MessageContent create_node DOCUMENT_FRAGMENT_NODE:', container, node);
    Array.from(node.childNodes).forEach(child => {
     mount(MessageContentHelper, {
      target: container,

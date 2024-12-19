@@ -15,7 +15,7 @@
  function update(message_content) {
   dummy_array = [message_content];
   gen++;
-  console.log('update, message_content:', message_content, 'gen:', gen);
+  //console.log('update, message_content:', message_content, 'gen:', gen);
  }
 </script>
 

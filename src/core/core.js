@@ -598,7 +598,7 @@ function handleSocketMessage(acc, res) {
   delete acc.requests[res.requestID];
  } else if (res.event) {
   // it is event:
-  console.log('GOT EVENT');
+  //console.log('GOT EVENT');
   acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server:', res);
 }

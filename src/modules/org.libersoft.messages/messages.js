@@ -160,7 +160,7 @@ function addMessagesToMessagesArray(items, reason) {
  }
  sortMessages(arr);
  addMissingPrevNext(arr);
- console.log('messagesArray.set:', arr);
+ //console.log('messagesArray.set:', arr);
  messagesArray.set(arr);
  if (state.countAdded > 0) {
   insertEvent({ type: reason, array: arr });
@@ -477,17 +477,17 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 });
 
 export function saneHtml(content) {
- console.log('saneHtml:');
+ //console.log('saneHtml:');
  let sane = DOMPurify.sanitize(content, {
   ADD_TAGS: ['sticker'],
   //FORBID_CONTENTS: ['sticker'],
   ADD_ATTR: ['file'], ///FIXME, security issue, should only be allowed on sticker
   RETURN_DOM_FRAGMENT: true,
  });
- console.log('content:');
+ /*console.log('content:');
  console.log(content);
  console.log('sane:');
- console.log(sane);
+ console.log(sane);*/
  return sane;
 }
 

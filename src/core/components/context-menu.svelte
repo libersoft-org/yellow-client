@@ -121,6 +121,9 @@
   },
  });
 
+ // separate context item to allow reactivity
+ setContext('ContextMenuOpen', open);
+
  afterUpdate(() => {
   if (open) {
    options = ref.children;

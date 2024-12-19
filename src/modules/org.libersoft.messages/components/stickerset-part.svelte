@@ -18,9 +18,13 @@ https://github.com/ghostebony/svelte-virtual/blob/main/src/lib/grid/Grid.svelte
 		</div>
 	{/snippet}
 </Grid>
+
+see also:
+https://www.npmjs.com/package/svelte-inview
+*↕️ Detects the scrolling direction.
 -->
 
 {#each items as s, index}
  {index}
- <Item {size} file={s.url} autoplay={index < 73} />
+ <Item {size} file={s.url} />
 {/each}
