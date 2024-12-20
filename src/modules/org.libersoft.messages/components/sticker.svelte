@@ -6,16 +6,19 @@
 
  export let file = '';
  export let size = 200;
+ export let play_on_start = true; //todo
 
  let component_container;
  let anim_container;
  let isLottie = false;
+ let is_loading = false;
  let error;
  let observer;
  let playing = false;
  let ext;
  let anim;
  let is_in_viewport = false;
+ let mouse_over = false;
 
  let ContextMenu = getContext('ContextMenu');
  let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
@@ -35,18 +38,28 @@
   }
  });
 
- $: on_update_should_be_playing($ContextMenuOpen, is_in_viewport, anim_container, anim);
+ $: on_update_should_be_playing($ContextMenuOpen, is_in_viewport, mouse_over, anim_container, anim);
 
- async function on_update_should_be_playing(ContextMenuOpen, is_in_viewport, anim_container, anim) {
-  console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'is_in_viewport:', is_in_viewport, 'anim_container:', anim_container, 'anim:', anim);
+ async function on_update_should_be_playing(ContextMenuOpen, is_in_viewport, mouse_over, anim_container, anim) {
+  console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'is_in_viewport:', is_in_viewport, 'mouse_over', mouse_over, 'anim_container:', anim_container, 'anim:', anim);
 
   if (!anim_container) return;
 
-  let should_be_playing = (ContextMenuOpen === undefined || ContextMenuOpen) && is_in_viewport;
+  let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && is_in_viewport;
+  let should_be_playing = should_be_loaded && (ContextMenuOpen === undefined || (ContextMenuOpen && mouse_over));
+  if (should_be_playing) should_be_loaded = true;
+
+  console.log('should_be_loaded:', should_be_loaded, 'should_be_playing:', should_be_playing);
 
   if (should_be_playing) {
    if (anim) {
     playing = true;
+   } else {
+    load_lottie();
+   }
+  } else if (should_be_loaded) {
+   if (anim) {
+    playing = false;
    } else {
     load_lottie();
    }
@@ -85,6 +98,9 @@
  }
 
  async function load_lottie() {
+  if (is_loading) return;
+  is_loading = true;
+
   let path;
   let animationData;
 
@@ -223,7 +239,7 @@
  }
 </style>
 
-<div class="sticker" style="width: {size}px; height: {size}px;" bind:this={component_container}>
+<div class="sticker" style="width: {size}px; height: {size}px;" bind:this={component_container} on:mouseover={() => (mouse_over = true)} on:mouseleave={() => (mouse_over = false)}>
  {#if error}
   <p>{error}</p>
  {:else if isLottie}

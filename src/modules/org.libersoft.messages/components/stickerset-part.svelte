@@ -25,6 +25,5 @@ https://www.npmjs.com/package/svelte-inview
 -->
 
 {#each items as s, index}
- {index}
  <Item {size} file={s.url} />
 {/each}

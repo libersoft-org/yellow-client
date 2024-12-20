@@ -51,6 +51,6 @@
 
 {#if file}
  <div class="sticker" role="button" tabindex="0" on:mousedown={mousedown} on:click={click} on:keydown={handleKeydown}>
-  <Sticker {size} {file} />
+  <Sticker {size} {file} play_on_start={false} />
  </div>
 {/if}

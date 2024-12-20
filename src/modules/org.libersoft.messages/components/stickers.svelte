@@ -1,5 +1,6 @@
 <script>
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
+ import Button from '../../../core/components/button.svelte';
  import StickerSet from './stickerset.svelte';
  import { onMount } from 'svelte';
  import { get } from 'svelte/store';
@@ -7,7 +8,7 @@
  let library = localStorageSharedStore('stickers', {});
  const yellow_stickers_server = 'https://stickers.libersoft.org';
  onMount(() => {
-  setInterval(update_sticker_library, 1000 * 60 * 5);
+  //setInterval(update_sticker_library, 1000 * 60 * 5);
   if (get(library)[yellow_stickers_server] === undefined) {
    update_sticker_library();
   }
@@ -48,11 +49,12 @@
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  /*max-width: 420px;*/
+  max-width: 420px;
  }
 </style>
 
 <div class="stickers">
+ <Button on:click={update_sticker_library}>Update</Button>
  {#each Object.keys($library) as source_server}
   <b>{source_server}</b>
   <div>

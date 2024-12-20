@@ -32,10 +32,8 @@
   display: flex;
   justify-content: space-between;
   background-color: #fd1;
-  /*width: 440px;
-  max-width: 440px;*/
-  /*width: 440px;
-  max-width: 440px;*/
+  width: 440px;
+  max-width: 440px;
  }
 </style>
 

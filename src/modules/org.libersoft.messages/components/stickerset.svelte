@@ -6,7 +6,7 @@
  let stickers;
  $: stickers = stickerset.items || [];
  let first, rest;
- let split_at = 6;
+ let split_at = 20;
  $: first = stickers.slice(0, split_at);
  $: rest = stickers.slice(split_at);
  let expanded = true;
@@ -24,7 +24,7 @@
   gap: 10px;
   padding: 10px;
   /*max-width: 420px;*/ /* TODO: if I delete this, then max-width is ignored in expressions.svelte (same size set there)*/
-  max-width: 1020px;
+  /*max-width: 1020px;*/
  }
 
  .stickerset .label {
