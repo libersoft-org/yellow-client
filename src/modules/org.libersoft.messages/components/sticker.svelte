@@ -239,7 +239,7 @@
  }
 </style>
 
-<div class="sticker" style="width: {size}px; height: {size}px;" role="button" tabindex="0" bind:this={component_container} on:mouseover={() => (mouse_over = true)} on:mouseleave={() => (mouse_over = false)}>
+<div class="sticker" style="width: {size}px; height: {size}px;" role="button" tabindex="0" bind:this={component_container} on:mouseover={() => (mouse_over = true)} on:mouseleave={() => (mouse_over = false)} on:focus={() => (mouse_over = true)} on:blur={() => (mouse_over = false)}>
  {#if error}
   <div>{error}</div>
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/org.libersoft.messages/img/question.svg" alt="" />
