@@ -1,8 +1,8 @@
 <script>
  import { afterUpdate, beforeUpdate, onMount, setContext, tick } from 'svelte';
  import { getGuid, debug } from '../../../core/core.js';
- import Spinner from '../../../core/components/modal.svelte';
- import Modal from '../../../core/components/spinner.svelte';
+ import Spinner from '../../../core/components/spinner.svelte';
+ import Modal from '../../../core/components/modal.svelte';
  import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
  import ModalStickersetDetails from './modal-stickerset-details.svelte';
  import Message from './message.svelte';
