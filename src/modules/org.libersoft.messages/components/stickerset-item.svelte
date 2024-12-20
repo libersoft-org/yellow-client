@@ -1,16 +1,18 @@
 <script>
  import Sticker from './sticker.svelte';
  import { getContext } from 'svelte';
- export let file;
+ export let sticker;
  export let size;
  export let onClick;
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
 
+ let file = sticker.file;
+
  function handleClick() {
   console.log('handleClick');
   onClick && onClick();
-  MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" />');
+  MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" set="' + htmlEscape(sticker.stickerset) + '" />');
   MessageBar.setBarFocus();
   menu.close();
  }

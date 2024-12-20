@@ -23,14 +23,17 @@
   console.log('discovered ' + sets.length + ' stickersets in ' + (Date.now() - start_fetch_sets) + 'ms');
   sets.forEach(stickerset => {
    console.log('fetch details for stickerset ' + stickerset.id);
-   fetch(yellow_stickers_server + '/api/stickers?id=' + stickerset.id)
+   let stickerset_url = yellow_stickers_server + '/api/stickers?id=' + stickerset.id;
+   fetch(stickerset_url)
     .then(response => response.json())
     .then(stickerset_response => {
      console.log('loaded ', stickerset_response);
+     stickerset.url = stickerset_url;
      let stickers = stickerset_response.data.stickers;
      console.log('loaded ' + stickers.length + ' details for stickerset ' + stickerset.id + ' after ' + (Date.now() - start_fetch_sets) + 'ms');
      stickerset.items = stickers;
      stickerset.items.forEach(sticker => {
+      sticker.stickerset = stickerset_url;
       sticker.url = yellow_stickers_server + '/download/' + stickerset.id + '/' + sticker.name;
      });
      library.update(d => d);

@@ -6,5 +6,5 @@
 </script>
 
 {#each items as s, index}
- <Item {size} file={s.url} />
+ <Item {size} sticker={s} />
 {/each}

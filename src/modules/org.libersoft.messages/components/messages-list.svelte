@@ -1,8 +1,10 @@
 <script>
- import { afterUpdate, beforeUpdate, onMount, tick } from 'svelte';
+ import { afterUpdate, beforeUpdate, onMount, setContext, tick } from 'svelte';
  import { getGuid, debug } from '../../../core/core.js';
- import Spinner from '../../../core/components/spinner.svelte';
+ import Spinner from '../../../core/components/modal.svelte';
+ import Modal from '../../../core/components/spinner.svelte';
  import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
+ import ModalStickersetDetails from './modal-stickerset-details.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import ScrollDown from './scroll-down.svelte';
@@ -20,6 +22,15 @@
  let loaders = [];
  let holes = [];
  let uiEvents = [];
+ let stickersetDetailsModalStickerset;
+ let showStickersetDetailsModal = false;
+
+ function openStickersetDetailsModal(stickerset) {
+  stickersetDetailsModalStickerset = stickerset;
+  showStickersetDetailsModal = true;
+ }
+
+ setContext('openStickersetDetailsModal', openStickersetDetailsModal);
 
  events.subscribe(e => {
   if (e?.length) {
@@ -418,3 +429,5 @@
  <div bind:this={anchorElement}></div>
  <ScrollDown visible={scrollDownVisible} on:click={scrollToBottom} />
 </div>
+
+<Modal bind:show={showStickersetDetailsModal} title="Stickerset details" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} />

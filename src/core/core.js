@@ -359,6 +359,7 @@ function reconnectAccount(account) {
    acc.error = msg;
    acc.suspended = true;
    acc.status = 'Error.';
+   console.log(acc.status);
    account.update(v => v);
    return;
   }
@@ -368,6 +369,7 @@ function reconnectAccount(account) {
   acc.socket.onopen = event => {
    console.log('Connected to WebSocket ' + socket_id + ':', event);
    acc.status = 'Connected, logging in...';
+   console.log(acc.status);
    acc.lastCommsTs = Date.now();
    account.update(v => v);
    sendLoginCommand(account);
@@ -399,11 +401,13 @@ function retry(account, msg) {
  let acc = get(account);
  if (!acc.enabled || acc.suspended) return;
  acc.status = 'Retrying...';
+ console.log(acc.status);
  acc.session_status = undefined;
  acc.error = msg;
  //clearPingTimer(acc);
  //acc.sessionID = null;
  account.update(v => v);
+ console.log('Retrying ...');
  setReconnectTimer(account);
 }
 
@@ -447,6 +451,7 @@ function sendLoginCommand(account) {
    console.error('Login failed:', res);
   } else {
    acc.session_status = 'Logged in.';
+   console.log('Logged in:', res);
    acc.error = null;
    acc.sessionID = res.data.sessionID;
    acc.available_modules = res.data.modules_available;
@@ -481,6 +486,7 @@ function setupPing(account) {
    acc.status = 'Retrying...';
    acc.error = 'Not connected';
    acc.session_status = undefined;
+   console.log('Socket not open, retrying...');
    account.update(v => v);
    reconnectAccount(account);
    return;
@@ -494,9 +500,9 @@ function setupPing(account) {
    (req, res) => {
     console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
-
+    console.log('lastCommsTs:', acc.lastCommsTs);
     void 'avoid expensive UI update';
-    if (acc.status !== 'Connected.' && acc.error != null) {
+    if (acc.status !== 'Connected.' || acc.error != null) {
      acc.status = 'Connected.';
      acc.error = null;
      account.update(v => v);

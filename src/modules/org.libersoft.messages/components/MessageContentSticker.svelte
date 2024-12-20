@@ -1,12 +1,21 @@
 <script>
  import Sticker from './sticker.svelte';
+ import { getContext } from 'svelte';
 
- export let node;
+ let { node } = $props();
+
  let v = node.attributes.file?.value;
-
+ let openStickersetDetailsModal = getContext('openStickersetDetailsModal');
  //$: console.log('MessageContentSticker node:', v);
+
+ function click() {
+  console.log('MessageContentSticker onClick');
+  openStickersetDetailsModal(node.attributes.stickerset?.value);
+ }
 </script>
 
 {#if v}
- <Sticker file={v} />
+ <div {click}>
+  <Sticker file={v} />
+ </div>
 {/if}

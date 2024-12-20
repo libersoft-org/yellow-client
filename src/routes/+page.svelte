@@ -72,6 +72,12 @@
    visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
   } else window.addEventListener('resize', updateAppHeight);
   updateAppHeight();
+
+  if ('virtualKeyboard' in navigator) {
+   navigator.virtualKeyboard.addEventListener('geometrychange', event => {
+    console.log(event.target.boundingRect);
+   });
+  }
  });
 
  function updateAppHeight() {
