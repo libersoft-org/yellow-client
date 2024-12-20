@@ -9,7 +9,7 @@
 
  function handleClick() {
   console.log('handleClick');
-  onClick();
+  onClick && onClick();
   MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" />');
   MessageBar.setBarFocus();
   menu.close();
