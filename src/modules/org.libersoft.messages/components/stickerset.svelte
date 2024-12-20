@@ -6,7 +6,7 @@
  let stickers;
  $: stickers = stickerset.items || [];
  let first, rest;
- let split_at = 20;
+ let split_at = 10;
  $: first = stickers.slice(0, split_at);
  $: rest = stickers.slice(split_at);
  let expanded = true;
@@ -15,6 +15,17 @@
   console.log('stickerset mousedown');
   event.stopPropagation();
  }
+
+ function clickExpand() {
+  expanded = !expanded;
+ }
+
+ function keyExpand(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickExpand();
+  }
+ }
 </script>
 
 <style>
@@ -22,19 +33,33 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px;
   /*max-width: 420px;*/ /* TODO: if I delete this, then max-width is ignored in expressions.svelte (same size set there)*/
   /*max-width: 1020px;*/
  }
 
- .stickerset .label {
+ .label {
   font-weight: bold;
  }
 
- .stickerset .set {
+ .set {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+ }
+
+ .more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #ddd;
+  cursor: pointer;
+ }
+
+ .more img {
+  width: 20px;
+  height: 20px;
  }
 </style>
 
@@ -42,11 +67,13 @@
  <div class="label">{stickerset.name}</div>
  <div class="set">
   <StickerSetPart items={first} />
-  {#if stickers.length > split_at}
-   <button on:click={() => (expanded = !expanded)}>{expanded ? 'less' : 'more'}</button>
-  {/if}
-  {#if expanded}
-   <StickerSetPart items={rest} />
-  {/if}
  </div>
+ {#if stickers.length > split_at}
+  <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}><img src="img/{expanded ? 'down' : 'up'}-black.svg" alt={expanded ? 'down' : 'up'} /></div>
+ {/if}
+ {#if expanded}
+  <div class="set">
+   <StickerSetPart items={rest} />
+  </div>
+ {/if}
 </div>

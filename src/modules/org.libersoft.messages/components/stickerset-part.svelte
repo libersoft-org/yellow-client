@@ -4,7 +4,7 @@
 
  export let items;
 
- let size = 80;
+ let size = 70;
 </script>
 
 <!--
