@@ -51,7 +51,8 @@
  }
 
  .sticker:hover {
-  transform: scale(1.15); /* Slight enlargement (5% bigger) */
+  z-index: 90;
+  transform: scale(1.2); /* Slight enlargement (5% bigger) */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45); /* Add a drop shadow for "popping" effect */
  }
 </style>
