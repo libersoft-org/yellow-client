@@ -2,7 +2,7 @@
  import Item from './stickerset-item.svelte';
  //import { Grid } from 'svelte-virtual';
  export let items;
- let size = 70;
+ let size = 68;
 </script>
 
 {#each items as s, index}
