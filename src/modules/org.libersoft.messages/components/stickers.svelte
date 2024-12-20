@@ -2,6 +2,7 @@
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import StickerSet from './stickerset.svelte';
  import { onMount } from 'svelte';
+ import { get } from 'svelte/store';
 
  let library = localStorageSharedStore('stickers', {});
  const yellow_stickers_server = 'https://stickers.libersoft.org';

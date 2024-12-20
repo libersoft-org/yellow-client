@@ -1,7 +1,8 @@
 <script>
  import lottie from 'lottie-web';
  import pako from 'pako';
- import { getContext, onMount, tick } from 'svelte';
+ import { getContext, onMount, onDestroy } from 'svelte';
+ import { readable } from 'svelte/store';
 
  export let file = '';
  export let size = 200;
@@ -12,14 +13,50 @@
  let error;
  let observer;
  let playing = false;
+ let ext;
  let anim;
  let is_in_viewport = false;
 
- let ContextMenuOpen = getContext('ContextMenuOpen');
+ let ContextMenu = getContext('ContextMenu');
+ let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
 
- $: playing = (ContextMenuOpen === undefined || ContextMenuOpen) && is_in_viewport;
+ onMount(async () => {
+  //console.log(file);
+  ext = file.split('.').pop().toLowerCase();
+  if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
+   isLottie = true;
+  }
+ });
+
+ onDestroy(() => {
+  if (anim) {
+   anim.stop();
+   anim.destroy();
+  }
+ });
+
+ $: on_update_should_be_playing($ContextMenuOpen, is_in_viewport, anim_container, anim);
+
+ async function on_update_should_be_playing(ContextMenuOpen, is_in_viewport, anim_container, anim) {
+  console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'is_in_viewport:', is_in_viewport, 'anim_container:', anim_container, 'anim:', anim);
+
+  if (!anim_container) return;
+
+  let should_be_playing = (ContextMenuOpen === undefined || ContextMenuOpen) && is_in_viewport;
+
+  if (should_be_playing) {
+   if (anim) {
+    playing = true;
+   } else {
+    load_lottie();
+   }
+  } else {
+   playing = false;
+  }
+ }
 
  $: update_playing(playing);
+
  function update_playing(playing) {
   if (!anim) return;
   if (playing) {
@@ -30,13 +67,14 @@
  }
 
  $: setup_observer(anim_container);
+
  function setup_observer(anim_container) {
   if (!anim_container) return;
-  console.log('create sticker observer');
+  //console.log('create sticker observer');
   observer = new IntersectionObserver(
    entries => {
     is_in_viewport = entries[0].isIntersecting;
-    console.log(entries, 'is_in_viewport: ', is_in_viewport);
+    //console.log(entries, 'is_in_viewport: ', is_in_viewport);
    },
    {
     threshold: 0.1,
@@ -46,79 +84,70 @@
   observer.observe(anim_container);
  }
 
- onMount(async () => {
-  //console.log(file);
-  const ext = file.split('.').pop().toLowerCase();
-  if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
-   isLottie = true;
-   await tick();
+ async function load_lottie() {
+  let path;
+  let animationData;
 
-   let path;
-   let animationData;
-
-   if (ext === 'tgs') {
-    animationData = await loadTgs(file);
-   } else {
-    //path = file;
-    animationData = await loadJson(file);
-   }
-
-   if (error) {
-    console.log('loading ', file, 'error', error);
-    return;
-   }
-
-   /*
-   console.log('STICKER file:', file);
-   console.log('STICKER path:', path);
-   console.log('STICKER animationData:', animationData);
-*/
-
-   /*
-
-    lottie.setQuality() -- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
-     lottie.freeze() -- Freezes all playing animations or animations that will be loaded
-
-    */
-
-   let start = Date.now();
-
-   anim = lottie.loadAnimation({
-    container: anim_container,
-    renderer: 'canvas',
-    loop: true,
-    autoplay: playing,
-    path,
-    animationData,
-   });
-
-   anim.onComplete = () => {
-    console.log('lottie animation completed');
-   };
-   /*
-   anim.onLoopComplete = () => {
-    console.log('lottie animation loop completed');
-   };
-*/
-   anim.addEventListener('config_ready', () => {
-    console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
-   });
-
-   anim.addEventListener('data_ready', () => {
-    console.log('lottie data ready after ' + (Date.now() - start) + 'ms');
-   });
-
-   anim.addEventListener('loaded_images', () => {
-    console.log('lottie loaded images after ' + (Date.now() - start) + 'ms');
-   });
-
-   anim.addEventListener('DOMLoaded', () => {
-    console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
-   });
-
-   console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
+  if (ext === 'tgs') {
+   animationData = await loadTgs(file);
+  } else {
+   //path = file;
+   animationData = await loadJson(file);
   }
- });
+
+  if (error) {
+   console.log('loading ', file, 'error', error);
+   return;
+  }
+
+  /*
+  console.log('STICKER file:', file);
+  console.log('STICKER path:', path);
+  console.log('STICKER animationData:', animationData);
+*/
+
+  /*
+   lottie.setQuality() -- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
+    lottie.freeze() -- Freezes all playing animations or animations that will be loaded
+   */
+
+  let start = Date.now();
+
+  anim = lottie.loadAnimation({
+   container: anim_container,
+   renderer: 'canvas',
+   loop: true,
+   autoplay: playing,
+   path,
+   animationData,
+  });
+
+  anim.onComplete = () => {
+   console.log('lottie animation completed');
+  };
+  /*
+  anim.onLoopComplete = () => {
+   console.log('lottie animation loop completed');
+  };
+*/
+  anim.addEventListener('config_ready', () => {
+   console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
+  });
+
+  anim.addEventListener('data_ready', () => {
+   console.log('lottie data ready after ' + (Date.now() - start) + 'ms');
+  });
+
+  anim.addEventListener('loaded_images', () => {
+   console.log('lottie loaded images after ' + (Date.now() - start) + 'ms');
+  });
+
+  anim.addEventListener('DOMLoaded', () => {
+   console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
+  });
+
+  console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
+ }
 
  async function intersection(entries) {
   //console.log(entries);

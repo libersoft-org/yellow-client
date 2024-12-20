@@ -8,6 +8,7 @@
  export let y = 0;
  export let ref = null;
  const dispatch = createEventDispatcher();
+ const isOpen = writable(open);
  const position = writable([x, y]);
  const currentIndex = writable(-1);
  const hasPopup = writable(false);
@@ -22,6 +23,8 @@
  let current_instance;
  let menuMaxHeight = 99999;
 
+ $: isOpen.set(open);
+
  let menus = getContext('menus');
 
  function close() {
@@ -31,7 +34,7 @@
   prevX = 0;
   prevY = 0;
   focusIndex = -1;
-  //console.log('context-menu close:', menus);
+  console.log('context-menu close:', menus);
   for (let menu of menus) {
    if (menu.guid === current_instance) {
     //console.log('found myself');
@@ -115,14 +118,12 @@
   menuOffsetX,
   currentIndex,
   position,
+  isOpen,
   close,
   setPopup: popup => {
    hasPopup.set(popup);
   },
  });
-
- // separate context item to allow reactivity
- setContext('ContextMenuOpen', open);
 
  afterUpdate(() => {
   if (open) {
