@@ -69,7 +69,7 @@
   <StickerSetPart items={first} />
  </div>
  {#if stickers.length > split_at}
-  <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}><img src="img/{expanded ? 'down' : 'up'}-black.svg" alt={expanded ? 'down' : 'up'} /></div>
+  <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}><img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} /></div>
  {/if}
  {#if expanded}
   <div class="set">
