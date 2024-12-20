@@ -1,30 +1,25 @@
 <script>
  import Sticker from './sticker.svelte';
- import { createEventDispatcher, getContext } from 'svelte';
+ import { getContext } from 'svelte';
  export let file;
  export let size;
- const dispatch = createEventDispatcher();
- let menu = getContext('ContextMenu');
-
+ export let onClick;
  const MessageBar = getContext('MessageBar');
+ const menu = getContext('ContextMenu');
+
+ function handleClick() {
+  console.log('handleClick');
+  onClick();
+  MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" />');
+  MessageBar.setBarFocus();
+  menu.close();
+ }
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   trigger();
+   handleClick();
   }
- }
-
- function click() {
-  trigger();
- }
-
- function trigger() {
-  console.log('trigger');
-  dispatch('click');
-  MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" />');
-  MessageBar.setBarFocus();
-  menu.close();
  }
 
  function htmlEscape(str) {
@@ -50,7 +45,7 @@
 </style>
 
 {#if file}
- <div class="sticker" role="button" tabindex="0" on:mousedown={mousedown} on:click={click} on:keydown={handleKeydown}>
+ <div class="sticker" role="button" tabindex="0" on:mousedown={mousedown} on:click={handleClick} on:keydown={handleKeydown}>
   <Sticker {size} {file} play_on_start={false} />
  </div>
 {/if}

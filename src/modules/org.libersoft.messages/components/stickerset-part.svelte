@@ -1,14 +1,11 @@
 <script>
  import Item from './stickerset-item.svelte';
- import { Grid } from 'svelte-virtual';
-
+ //import { Grid } from 'svelte-virtual';
  export let items;
-
  let size = 70;
 </script>
 
 <!--
-
 https://github.com/ghostebony/svelte-virtual/blob/main/src/lib/grid/Grid.svelte
 
 <Grid itemCount={items.length} itemHeight={size} itemWidth={size}>

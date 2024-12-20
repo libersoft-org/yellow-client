@@ -239,13 +239,13 @@
  }
 </style>
 
-<div class="sticker" style="width: {size}px; height: {size}px;" role="button" tabindex="0" bind:this={component_container} on:mouseover={() => (mouse_over = true)} on:mouseleave={() => (mouse_over = false)} on:focus={() => (mouse_over = true)} on:blur={() => (mouse_over = false)}>
+<div class="sticker" role="button" tabindex="0" bind:this={component_container} on:mouseover={() => (mouse_over = true)} on:mouseleave={() => (mouse_over = false)} on:focus={() => (mouse_over = true)} on:blur={() => (mouse_over = false)}>
  {#if error}
   <div>{error}</div>
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/org.libersoft.messages/img/question.svg" alt="" />
  {:else if isLottie}
   <div class="lottie" bind:this={anim_container}></div>
  {:else}
-  <img class="image" style="width: {size}px; height: {size}px;" src={file} alt="" />
+  <img class="image" style="width: {size}px; height: {size}px;" src={file} alt="" on:error={e => (e.target.src = 'modules/org.libersoft.messages/img/question.svg')} />
  {/if}
 </div>
