@@ -4,5 +4,5 @@
 </script>
 
 <div>
- {$params}
+ {JSON.stringify(params)}
 </div>

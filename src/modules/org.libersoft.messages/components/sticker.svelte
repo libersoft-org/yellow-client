@@ -41,7 +41,7 @@
  $: on_update_should_be_playing($ContextMenuOpen, is_in_viewport, mouse_over, anim_container, anim);
 
  async function on_update_should_be_playing(ContextMenuOpen, is_in_viewport, mouse_over, anim_container, anim) {
-  console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'is_in_viewport:', is_in_viewport, 'mouse_over', mouse_over, 'anim_container:', anim_container, 'anim:', anim);
+  //console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'is_in_viewport:', is_in_viewport, 'mouse_over', mouse_over, 'anim_container:', anim_container, 'anim:', anim);
 
   if (!anim_container) return;
 
@@ -49,7 +49,7 @@
   let should_be_playing = should_be_loaded && (ContextMenuOpen === undefined || (ContextMenuOpen && mouse_over));
   if (should_be_playing) should_be_loaded = true;
 
-  console.log('should_be_loaded:', should_be_loaded, 'should_be_playing:', should_be_playing);
+  //console.log('should_be_loaded:', should_be_loaded, 'should_be_playing:', should_be_playing);
 
   if (should_be_playing) {
    if (anim) {

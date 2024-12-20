@@ -7,7 +7,8 @@
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
 
- let file = sticker.file;
+ let file;
+ $: file = sticker.url;
 
  function handleClick() {
   console.log('handleClick');
@@ -43,19 +44,21 @@
   border-radius: 5px;
   background-color: #f0f0f0;
   transition: background-color 0.2s;
-  /* Basic styling */
+  /*
+  !* Basic styling *!
   border: 1px solid #aaa;
   display: inline-block;
   transition:
    transform 0.3s ease,
    box-shadow 0.3s ease;
-  /* transition for smooth scaling and shadow changes */
+  !* transition for smooth scaling and shadow changes *!
  }
 
  .sticker:hover {
   z-index: 90;
-  transform: scale(1.2); /* Slight enlargement (5% bigger) */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45); /* Add a drop shadow for "popping" effect */
+  transform: scale(1.2); !* Slight enlargement (5% bigger) *!
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45); !* Add a drop shadow for "popping" effect *!
+ */
  }
 </style>
 

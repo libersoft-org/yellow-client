@@ -481,7 +481,7 @@ export function saneHtml(content) {
  let sane = DOMPurify.sanitize(content, {
   ADD_TAGS: ['sticker'],
   //FORBID_CONTENTS: ['sticker'],
-  ADD_ATTR: ['file'], ///FIXME, security issue, should only be allowed on sticker
+  ADD_ATTR: ['file', 'set'], ///FIXME, security issue, should only be allowed on sticker
   RETURN_DOM_FRAGMENT: true,
  });
  /*console.log('content:');

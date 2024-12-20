@@ -5,17 +5,25 @@
  let { node } = $props();
 
  let v = node.attributes.file?.value;
+ const stickerset = $derived(node.attributes.set?.value);
+
  let openStickersetDetailsModal = getContext('openStickersetDetailsModal');
  //$: console.log('MessageContentSticker node:', v);
 
- function click() {
-  console.log('MessageContentSticker onClick');
-  openStickersetDetailsModal(node.attributes.stickerset?.value);
+ function onclick() {
+  //console.log('MessageContentSticker onClick' + JSON.stringify(node.attributes.stickerset?.value));
+  openStickersetDetailsModal(stickerset);
  }
 </script>
 
+<style>
+ .clickable {
+  cursor: pointer;
+ }
+</style>
+
 {#if v}
- <div {click}>
+ <div class={stickerset ? 'clickable' : ''} {onclick}>
   <Sticker file={v} />
  </div>
 {/if}

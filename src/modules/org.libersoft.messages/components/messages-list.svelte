@@ -27,6 +27,7 @@
 
  function openStickersetDetailsModal(stickerset) {
   stickersetDetailsModalStickerset = stickerset;
+  console.log('openStickersetDetailsModal:', stickerset);
   showStickersetDetailsModal = true;
  }
 
