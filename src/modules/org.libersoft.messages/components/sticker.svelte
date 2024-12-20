@@ -244,7 +244,7 @@
   <div>{error}</div>
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/org.libersoft.messages/img/question.svg" alt="" />
  {:else if isLottie}
-  <div class="lottie" bind:this={anim_container}></div>
+  <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={anim_container}></div>
  {:else}
   <img class="image" style="width: {size}px; height: {size}px;" src={file} alt="" on:error={e => (e.target.src = 'modules/org.libersoft.messages/img/question.svg')} />
  {/if}

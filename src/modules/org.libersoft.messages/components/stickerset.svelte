@@ -9,7 +9,7 @@
  let split_at = 10;
  $: first = stickers.slice(0, split_at);
  $: rest = stickers.slice(split_at);
- let expanded = true;
+ let expanded = false;
 
  function mousedown(event) {
   console.log('stickerset mousedown');
