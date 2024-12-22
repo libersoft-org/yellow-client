@@ -7,6 +7,7 @@
  export let x = 0;
  export let y = 0;
  export let ref = null;
+ export let maxWidth = '100%';
  const dispatch = createEventDispatcher();
  const isOpen = writable(open);
  const position = writable([x, y]);
@@ -21,7 +22,7 @@
  let focusIndex = -1;
  let openDetail = null;
  let current_instance;
- let menuMaxHeight = 99999;
+ let maxHeight = '100%';
 
  $: isOpen.set(open);
 
@@ -74,7 +75,7 @@
    } else y = e.y;
   }
 
-  menuMaxHeight = window.innerHeight - y - 10;
+  maxHeight = window.innerHeight - y - 10 + 'px';
 
   position.set([x, y]);
   //console.log('context-menu openMenu position:', x, y);
@@ -197,7 +198,8 @@
  class:context-menu-open={open}
  style:left="{x}px"
  style:top="{y}px"
- style:max-height="{menuMaxHeight}px"
+ style:max-height={maxHeight}
+ style:max-width={maxWidth}
  {...$$restProps}
  on:mousedown
  on:mousedown={e => {
