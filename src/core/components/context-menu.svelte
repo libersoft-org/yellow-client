@@ -7,7 +7,8 @@
  export let x = 0;
  export let y = 0;
  export let ref = null;
- export let maxWidth = '100%';
+ export let width;
+ export let height;
  const dispatch = createEventDispatcher();
  const isOpen = writable(open);
  const position = writable([x, y]);
@@ -22,11 +23,9 @@
  let focusIndex = -1;
  let openDetail = null;
  let current_instance;
- let maxHeight = '100%';
+ let menus = getContext('menus');
 
  $: isOpen.set(open);
-
- let menus = getContext('menus');
 
  function close() {
   open = false;
@@ -56,27 +55,26 @@
   current_instance = getGuid();
   menus.push({ guid: current_instance, close });
 
-  const { height, width } = ref.getBoundingClientRect();
-
+  //const { currentHeight, currentWidth } = ref.getBoundingClientRect();
+  const currentHeight = ref.getBoundingClientRect().height;
+  const currentWidth = ref.getBoundingClientRect().width;
   if (open || x === 0) {
    let space_left = e.x;
    let space_right = window.innerWidth - e.x;
-   if (space_left > space_right) {
-    x = e.x - width;
-   } else {
-    x = e.x;
-   }
+   if (space_left > space_right) x = e.x - currentWidth;
+   else x = e.x;
   }
   if (open || y === 0) {
    menuOffsetX.set(e.x);
-   if (window.innerHeight - height < e.y) {
-    y = e.y - height;
+   if (window.innerHeight - currentHeight < e.y) {
+    y = e.y - currentHeight;
     if (y < 10) y = 10;
    } else y = e.y;
   }
-
-  maxHeight = window.innerHeight - y - 10 + 'px';
-
+  let newHeight = window.innerHeight - y - 10;
+  if (newHeight < height) height = newHeight + 'px';
+  let newWidth = window.innerWidth - y - 10;
+  if (newWidth < width) width = newWidth + 'px';
   position.set([x, y]);
   //console.log('context-menu openMenu position:', x, y);
   open = true;
@@ -130,13 +128,11 @@
   if (open) {
    options = ref.children;
    console.log('context-menu options:', options);
-
    if (level === 1) {
     if (prevX !== x || prevY !== y) ref.focus();
     prevX = x;
     prevY = y;
    }
-
    dispatch('open', openDetail);
   } else {
    dispatch('close');
@@ -158,8 +154,6 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   position: fixed;
   z-index: 9000;
-  /*min-width: 100px;*/
-  max-width: calc(100% - 20px);
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #fff;
@@ -198,8 +192,8 @@
  class:context-menu-open={open}
  style:left="{x}px"
  style:top="{y}px"
- style:max-height={maxHeight}
- style:max-width={maxWidth}
+ style:max-height={height}
+ style:max-width={width}
  {...$$restProps}
  on:mousedown
  on:mousedown={e => {

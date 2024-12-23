@@ -119,7 +119,7 @@
  <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" on:click={sendLocation} />
 </ContextMenu>
 
-<ContextMenu target={elExpressions} maxWidth="355px">
+<ContextMenu target={elExpressions} width="363px" height="500px">
  <Expressions />
 </ContextMenu>
 
