@@ -54,12 +54,35 @@
   gap: 10px;
   padding: 10px;
  }
+
+ .group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+ }
+
+ .group .label {
+  /*font-size: 12px;*/
+  font-weight: bold;
+ }
+
+ .group input {
+  width: 10px;
+  padding: 10px;
+  border: 1px solid #000;
+  flex-grow: 1;
+  border-radius: 10px;
+ }
 </style>
 
 <div class="stickers">
  <Button on:click={update_sticker_library}>Update</Button>
  {#each Object.keys($library) as source_server}
-  <b>{source_server}</b>
+  <div class="group">
+   <div class="label">Sticker server:</div>
+   <input type="text" value={source_server} />
+   <Button text="Load" />
+  </div>
   <div>
    {#each $library[source_server] as stickerset}
     <StickerSet {stickerset} />
