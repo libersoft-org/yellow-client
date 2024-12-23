@@ -72,9 +72,9 @@
    } else y = e.y;
   }
   let newHeight = window.innerHeight - y - 10;
-  if (newHeight < height) height = newHeight + 'px';
-  let newWidth = window.innerWidth - y - 10;
-  if (newWidth < width) width = newWidth + 'px';
+  if (newHeight < height) height = newHeight + 'px'; // TODO: this doesn't work well, should make the window smaller if the screen is too small
+  let newWidth = window.innerWidth - x - 10;
+  if (newWidth < width) width = newWidth + 'px'; // TODO: this doesn't work well, should make the window smaller if the screen is too small
   position.set([x, y]);
   //console.log('context-menu openMenu position:', x, y);
   open = true;
