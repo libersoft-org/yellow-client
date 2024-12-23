@@ -21,6 +21,7 @@
   response = await response.json();
   let sets = response.data;
   console.log('discovered ' + sets.length + ' stickersets in ' + (Date.now() - start_fetch_sets) + 'ms');
+  sets = sets.slice(0, 10);
   sets.forEach(stickerset => {
    console.log('fetch details for stickerset ' + stickerset.id);
    let stickerset_url = yellow_stickers_server + '/api/stickers?id=' + stickerset.id;
