@@ -34,7 +34,7 @@
      stickerset.items = stickers;
      stickerset.items.forEach(sticker => {
       sticker.stickerset = stickerset_url;
-      sticker.url = yellow_stickers_server + '/download/' + stickerset.id + '/' + sticker.name;
+      sticker.url = yellow_stickers_server + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name;
      });
      library.update(d => d);
     });
