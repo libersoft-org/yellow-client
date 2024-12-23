@@ -200,7 +200,7 @@
    console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
    return JSON.parse(decompressed);
   } catch (e) {
-   error = 'Error loading .tgs file: ' + e.message;
+   error = 'Error loading .tgs file: ' + e;
   }
  }
 
@@ -216,7 +216,7 @@
    console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
    return r;
   } catch (e) {
-   error = 'Error loading json file: ' + e.message;
+   error = 'Error loading JSON file: ' + e;
   }
  }
 </script>
@@ -237,12 +237,16 @@
   max-height: 100%;
   object-fit: contain;
  }
+
+ .error {
+  font-size: 10px;
+ }
 </style>
 
 <div class="sticker" role="button" tabindex="0" bind:this={component_container} on:mouseover={() => (mouse_over = true)} on:mouseleave={() => (mouse_over = false)} on:focus={() => (mouse_over = true)} on:blur={() => (mouse_over = false)}>
  {#if error}
-  <div>{error}</div>
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/org.libersoft.messages/img/question.svg" alt="" />
+  <div class="error">{error}</div>
  {:else if isLottie}
   <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={anim_container}></div>
  {:else}
