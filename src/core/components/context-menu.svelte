@@ -192,7 +192,9 @@
  class:context-menu-open={open}
  style:left="{x}px"
  style:top="{y}px"
+ style:min-height={height}
  style:max-height={height}
+ style:min-width={width}
  style:max-width={width}
  {...$$restProps}
  on:mousedown
