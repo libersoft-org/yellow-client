@@ -11,6 +11,7 @@
  let component_container;
  let anim_container;
  let isLottie = false;
+ let isImage = false;
  let is_loading = false;
  let error;
  let observer;
@@ -19,6 +20,7 @@
  let anim;
  let is_in_viewport = false;
  let mouse_over = false;
+ let static_img_elem;
 
  let ContextMenu = getContext('ContextMenu');
  let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
@@ -26,9 +28,11 @@
  onMount(async () => {
   //console.log(file);
   ext = file.split('.').pop().toLowerCase();
+  console.log('STICKER file:', file, 'ext:', ext);
   if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
+   console.log('STICKER isLottie');
    isLottie = true;
-  }
+  } else isImage = true;
  });
 
  onDestroy(() => {
@@ -192,7 +196,7 @@
     */
    });
    if (!response.ok) {
-    error = `Error loading ${file}, status: ${response.status}`;
+    error = `Error loading TGS ${file}, status: ${response.status}`;
     return;
    }
    const arrayBuffer = await response.arrayBuffer();
@@ -200,7 +204,7 @@
    console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
    return JSON.parse(decompressed);
   } catch (e) {
-   error = 'Error loading .tgs file: ' + e;
+   error = 'Error loading TGS file: ' + e;
   }
  }
 
@@ -209,7 +213,7 @@
    let start = Date.now();
    const response = await fetch(file);
    if (!response.ok) {
-    error = `Error loading ${file}, status: ${response.status}`;
+    error = `Error loading JSON ${file}, status: ${response.status}`;
     return;
    }
    let r = await response.json();
@@ -218,6 +222,10 @@
   } catch (e) {
    error = 'Error loading JSON file: ' + e;
   }
+ }
+
+ function static_img_load_error(event) {
+  error = 'Error loading IMG: ' + event.detail;
  }
 </script>
 
@@ -249,7 +257,16 @@
   <div class="error">{error}</div>
  {:else if isLottie}
   <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={anim_container}></div>
- {:else}
-  <img class="image" style="width: {size}px; height: {size}px;" src={file} alt="" on:error={e => (e.target.src = 'modules/org.libersoft.messages/img/question.svg')} />
+ {:else if isImage}
+  <img
+   class="image"
+   style="width: {size}px; height: {size}px;"
+   src={file}
+   alt=""
+   bind:this={static_img_elem}
+   on:error={e => {
+    static_img_load_error(e);
+   }}
+  />
  {/if}
 </div>
