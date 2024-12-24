@@ -54,6 +54,12 @@
   padding: 10px;
  }
 
+ .set {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+ }
+
  .group {
   display: flex;
   align-items: center;
@@ -85,7 +91,7 @@
    <input type="text" bind:this={filter} />
    <Button on:click={updateStickerLibrary}>Search</Button>
   </div>
-  <div>
+  <div class="set">
    {#each $library[source_server] as stickerset}
     <StickerSet {stickerset} />
    {/each}

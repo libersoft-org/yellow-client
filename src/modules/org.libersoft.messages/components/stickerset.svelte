@@ -32,13 +32,16 @@
  .stickerset {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   /*max-width: 420px;*/ /* TODO: if I delete this, then max-width is ignored in expressions.svelte (same size set there)*/
   /*max-width: 1020px;*/
  }
 
  .label {
+  padding: 5px;
   font-weight: bold;
+  border-radius: 5px;
+  background-color: #ddd;
  }
 
  .set {
@@ -53,7 +56,7 @@
   align-items: center;
   padding: 10px;
   border-radius: 10px;
-  background-color: #ddd;
+  background-color: #fd1;
   cursor: pointer;
  }
 
@@ -68,12 +71,11 @@
  <div class="set">
   <StickerSetPart items={first} />
  </div>
- {#if stickers.length > split_at}
-  <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}><img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} /></div>
- {/if}
+ {#if stickers.length > split_at}{/if}
  {#if expanded}
   <div class="set">
    <StickerSetPart items={rest} />
   </div>
  {/if}
+ <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}><img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} /></div>
 </div>
