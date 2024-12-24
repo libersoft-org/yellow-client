@@ -519,7 +519,7 @@ function linkify(text) {
  });
 }
 
-export async function updateStickerLibrary() {
+export async function updateStickerLibrary(library, stickerServer) {
  console.log('loading list of stickersets from ' + stickerServer);
  let startFetchSets = Date.now();
  let response = await fetch(stickerServer + '/api/sets');

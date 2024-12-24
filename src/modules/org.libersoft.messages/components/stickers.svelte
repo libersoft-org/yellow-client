@@ -4,14 +4,22 @@
  import { updateStickerLibrary } from '../messages.js';
  import StickerSet from './stickerset.svelte';
  import Button from '../../../core/components/button.svelte';
- const stickerServer = 'https://stickers.libersoft.org';
- let library = localStorageSharedStore('stickers', {});
+ const library = localStorageSharedStore('stickers', {});
+ let stickerServer = 'https://stickers.libersoft.org';
  let filter;
 
- onMount(() => {
-  if ($library[stickerServer] === undefined) updateStickerLibrary();
+ onMount(async () => {
+  if ($library[stickerServer] === undefined) await updateStickerLibrary(library, stickerServer);
   filter.focus(); // TODO - not working, because it loads the element before it's shown in context menu
  });
+
+ function clickUpdate() {
+  updateStickerLibrary(library, stickerServer);
+ }
+
+ function clickSearch() {
+  console.log('Clicked on search');
+ }
 </script>
 
 <style>
@@ -48,21 +56,21 @@
 </style>
 
 <div class="stickers">
- {#each Object.keys($library) as source_server}
-  <div class="group">
-   <div class="label">Sticker server:</div>
-   <input type="text" value={source_server} />
-   <Button on:click={updateStickerLibrary}>Update</Button>
-  </div>
-  <div class="group">
-   <div class="label">Filter:</div>
-   <input type="text" bind:this={filter} />
-   <Button on:click={updateStickerLibrary}>Search</Button>
-  </div>
+ <div class="group">
+  <div class="label">Sticker server:</div>
+  <input type="text" bind:value={stickerServer} />
+  <Button on:click={clickUpdate}>Update</Button>
+ </div>
+ <div class="group">
+  <div class="label">Filter:</div>
+  <input type="text" bind:this={filter} />
+  <Button on:click={clickSearch}>Search</Button>
+ </div>
+ {#if library}
   <div class="set">
-   {#each $library[source_server] as stickerset}
+   {#each $library[stickerServer] as stickerset}
     <StickerSet {stickerset} />
    {/each}
   </div>
- {/each}
+ {/if}
 </div>

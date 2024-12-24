@@ -8,11 +8,11 @@
  const library = localStorageSharedStore('stickers', {});
  let stickerSetData;
 
- onMount(() => {
+ onMount(async () => {
   const parsedUrl = new URL(params.stickersetDetailsModalStickerset);
   const stickerServer = `${parsedUrl.protocol}//${parsedUrl.host}`;
   const id = parsedUrl.searchParams.get('id');
-  if ($library[stickerServer] === undefined) updateStickerLibrary();
+  if ($library[stickerServer] === undefined) await updateStickerLibrary(library, stickerServer);
   stickerSetData = $library[stickerServer].find(obj => obj.id === Number(id));
  });
 </script>
