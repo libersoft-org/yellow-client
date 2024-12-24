@@ -26,6 +26,17 @@
    clickExpand();
   }
  }
+
+ function clickAdd() {
+  console.log('Add to favourites');
+ }
+
+ function keyAdd(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   clickAdd();
+  }
+ }
 </script>
 
 <style>
@@ -33,15 +44,31 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  /*max-width: 420px;*/ /* TODO: if I delete this, then max-width is ignored in expressions.svelte (same size set there)*/
-  /*max-width: 1020px;*/
  }
 
- .label {
+ .name-bar {
+  display: flex;
+  align-items: center;
   padding: 5px;
-  font-weight: bold;
-  border-radius: 5px;
+  border-radius: 10px;
   background-color: #ddd;
+ }
+
+ .name-bar .label {
+  font-weight: bold;
+  flex-grow: 1;
+  padding: 0 5px;
+ }
+
+ .name-bar .icon {
+  padding: 5px;
+  cursor: pointer;
+ }
+
+ .name-bar img {
+  display: flex;
+  width: 20px;
+  height: 20px;
  }
 
  .set {
@@ -67,7 +94,12 @@
 </style>
 
 <div class="stickerset" role="none" on:mousedown={mousedown}>
- <div class="label">{stickerset.name}</div>
+ <div class="name-bar">
+  <div class="label">{stickerset.name}</div>
+  <div class="icon" role="button" tabindex="0" on:click={clickAdd} on:keydown={keyAdd}>
+   <img src="img/add-black.svg" alt="Add to favourites" />
+  </div>
+ </div>
  <div class="set">
   <StickerSetPart items={first} />
  </div>
@@ -77,5 +109,7 @@
    <StickerSetPart items={rest} />
   </div>
  {/if}
- <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}><img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} /></div>
+ <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}>
+  <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
+ </div>
 </div>
