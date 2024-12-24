@@ -6,7 +6,6 @@
  export let onClick;
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
-
  let file;
  $: file = sticker.url;
 
@@ -41,7 +40,7 @@
   cursor: pointer;
   display: inline-block;
   padding: 5px;
-  border-radius: 5px;
+  border-radius: 10px;
   background-color: #f0f0f0;
   border: 1px solid #aaa;
   transition:

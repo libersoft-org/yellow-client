@@ -4,7 +4,7 @@
  import Spinner from '../../../core/components/spinner.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
- import ModalStickersetDetails from './modal-stickerset-details.svelte';
+ import ModalStickersetDetails from '../modals/modal-stickerset-details.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import ScrollDown from './scroll-down.svelte';
@@ -42,10 +42,7 @@
  });
 
  function saveScrollPosition(event) {
-  if (!messages_elem) {
-   return;
-  }
-
+  if (!messages_elem) return;
   event.savedScrollTop = messages_elem.scrollTop;
   event.savedScrollHeight = messages_elem.scrollHeight;
   console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
@@ -84,7 +81,6 @@
  }
 
  $: scrollDownVisible = !scrolledToBottom;
-
  $: updateWindowSize(windowInnerWidth, windowInnerHeight);
 
  function updateWindowSize(width, height) {
@@ -93,38 +89,26 @@
  }
 
  beforeUpdate(() => {
-  if (!messages_elem) {
-   return;
-  }
+  if (!messages_elem) return;
   //console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
  });
 
  afterUpdate(async () => {
-  if (!messages_elem) {
-   return;
-  }
-
+  if (!messages_elem) return;
   await tick();
-
   for (let event of uiEvents) {
    //console.log('uiEvent:', event);
    if (event.type === 'gc') {
     //console.log('gc');
-   } else if (event.type === 'lazyload_prev') {
-    restoreScrollPosition(event);
-   } else if (event.type === 'lazyload_next') {
+   } else if (event.type === 'lazyload_prev') restoreScrollPosition(event);
+   else if (event.type === 'lazyload_next') {
     //pass
    } else if (event.type === 'new_message') {
-    if (event.wasScrolledToBottom) {
-     scrollToBottom();
-    }
+    if (event.wasScrolledToBottom) scrollToBottom();
    } else if (event.type === 'send_message') {
-    if (event.wasScrolledToBottom) {
-     scrollToBottom();
-    }
-   } else if (event.type === 'initial_load') {
-    scrollToBottom();
-   } else if (event.type === 'properties_update') {
+    if (event.wasScrolledToBottom) scrollToBottom();
+   } else if (event.type === 'initial_load') scrollToBottom();
+   else if (event.type === 'properties_update') {
     //console.log('properties_update');
    }
   }
@@ -142,21 +126,15 @@
   }
   if (activatedCount > 0) {
    itemsArray = itemsArray;
-   for (let i = 0; i < itemsArray.length; i++) {
-    itemsArray[i] = itemsArray[i];
-   }
+   for (let i = 0; i < itemsArray.length; i++) itemsArray[i] = itemsArray[i];
   }
  });
 
  function getLoader(l) {
   loaders = loaders.filter(i => !i.delete_me);
-
   for (let i of loaders) {
-   if (i.base === l.base && i.prev === l.prev && i.next === l.next) {
-    return i;
-   }
+   if (i.base === l.base && i.prev === l.prev && i.next === l.next) return i;
   }
-
   l.uid = getGuid();
   l.type = 'loader';
   l.conversation = conversation;
@@ -167,9 +145,7 @@
  function getHole(top, bottom) {
   let uid = top.uid + '_' + bottom.uid;
   for (let i of holes) {
-   if (i.uid === uid) {
-    return i;
-   }
+   if (i.uid === uid) return i;
   }
   let hole = {
    type: 'hole',
@@ -194,7 +170,6 @@
 
  async function handleEvents(events) {
   //console.log('handleEvents:', events);
-
   if (events.length === 1 && events[0].type === 'properties_update') {
    itemsArray = itemsArray;
    return;
@@ -202,21 +177,14 @@
 
   for (let i = 0; i < events.length; i++) {
    //console.log('handleEvent:', events[i]);
-
    let event = events[i];
    event.loaders = [];
    if (event.array === undefined) return;
-
    uiEvents.push(event);
    saveScrollPosition(event);
    event.wasScrolledToBottom = isScrolledToBottom();
-
-   if (i != events.length - 1) {
-    continue;
-   }
-
+   if (i != events.length - 1) continue;
    let messages = event.array;
-
    if (messages.length === 1 && messages[0].type === 'initial_loading_placeholder') {
     loaders = [];
     holes = [];
@@ -227,9 +195,7 @@
     itemsArray = [{ type: 'no_messages' }];
     return;
    }
-
    messages = mergeAuthorship(messages);
-
    for (let m of messages) {
     if (!m.acc || m.uid === undefined) {
      //(typeof m !== Message)
@@ -239,39 +205,30 @@
    }
    // messages are sorted in correct order at this point.
    // add lazyloaders where there is discontinuity.
-
    let items = [];
-
    // add a loader at the top if first message is not the first message in the chat
    if (messages[0].prev !== 'none' && messages[0].id !== undefined) {
     let l = getLoader({ prev: 10, base: messages[0].id, reason: 'lazyload_prev' });
     event.loaders.push(l);
     items.unshift(l);
    }
-
    let unseen_marker_put = false;
    //scroll = isScrolledToBottom();
-
    // walk all messages, add loaders where there are discontinuities
    for (let i = 0; i < messages.length; i++) {
     let m = messages[i];
-
     //console.log('m:', m);
     //console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
-
     if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)) {
      //console.log('ADDING-UNSEEN-MARKER');
      unseen_marker_put = true;
      items.push({ type: 'unseen_marker' });
     }
-
     items.push(m);
-
     if (m.id !== undefined && m.id > oldLastID) {
      oldLastID = m.id;
      if (m.is_lazyloaded) scroll = false;
     }
-
     let next = messages[i + 1];
     if (next && next.id !== undefined && m.next != 'none' && m.next != undefined && m.next !== next.id) {
      //console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
@@ -284,7 +241,6 @@
      items.push(getHole(l1, l2));
     }
    }
-
    let last = messages[messages.length - 1];
    if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
     //console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
@@ -293,7 +249,6 @@
     event.loaders.push(l);
     items.push(l);
    }
-
    itemsArray = items;
   }
  }
@@ -305,9 +260,7 @@
    let message = messages[i];
    items.push(message);
    if (message.type === 'message') {
-    if (lastAuthor == message.author) {
-     message.hide_author = true;
-    }
+    if (lastAuthor == message.author) message.hide_author = true;
    }
    lastAuthor = message.author;
   }
@@ -329,9 +282,7 @@
  }
 
  async function onkeydown(event) {
-  if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') {
-   return;
-  }
+  if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') return;
   if (event.ctrlKey || event.metaKey) return;
   await setBarFocus();
  }
@@ -431,4 +382,4 @@
  <ScrollDown visible={scrollDownVisible} on:click={scrollToBottom} />
 </div>
 
-<Modal bind:show={showStickersetDetailsModal} title="Stickerset details" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} />
+<Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />

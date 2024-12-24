@@ -518,3 +518,35 @@ function linkify(text) {
   return `<a href="${match}" target="_blank">${match}</a>`;
  });
 }
+
+export async function updateStickerLibrary() {
+ console.log('loading list of stickersets from ' + stickerServer);
+ let startFetchSets = Date.now();
+ let response = await fetch(stickerServer + '/api/sets');
+ response = await response.json();
+ let sets = response.data;
+ console.log('discovered ' + sets.length + ' stickersets in ' + (Date.now() - startFetchSets) + 'ms');
+ sets = sets.slice(0, 10);
+ sets.forEach(stickerset => {
+  console.log('fetch details for stickerset ' + stickerset.id);
+  let stickerset_url = stickerServer + '/api/stickers?id=' + stickerset.id;
+  fetch(stickerset_url)
+   .then(response => response.json())
+   .then(stickerset_response => {
+    console.log('loaded ', stickerset_response);
+    stickerset.url = stickerset_url;
+    let stickers = stickerset_response.data.stickers;
+    console.log('loaded ' + stickers.length + ' details for stickerset ' + stickerset.id + ' after ' + (Date.now() - startFetchSets) + 'ms');
+    stickerset.items = stickers;
+    stickerset.items.forEach(sticker => {
+     sticker.stickerset = stickerset_url;
+     sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name;
+    });
+    library.update(d => d);
+   });
+ });
+ library.update(d => {
+  d[stickerServer] = sets;
+  return d;
+ });
+}

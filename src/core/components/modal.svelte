@@ -4,7 +4,8 @@
  export let params = null;
  export let title = null;
  export let body = '';
-
+ export let width = 'calc(100% - 20px)';
+ export let height = 'calc(100% - 20px)';
  let modalEl;
  let posX = 0;
  let posY = 0;
@@ -23,9 +24,7 @@
 
  async function onShowUpdated(show) {
   //console.log('update', show);
-  if (show) {
-   await positionModal();
-  }
+  if (show) await positionModal();
  }
 
  async function positionModal() {
@@ -103,8 +102,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  max-width: calc(100% - 20px);
-  max-height: calc(100% - 20px);
+  /*max-width: calc(100% - 20px);
+  max-height: calc(100% - 20px);*/
   overflow: auto;
   border: 1px solid #000;
   border-radius: 10px;
@@ -146,7 +145,7 @@
 </style>
 
 {#if show && body}
- <div class="modal" role="none" style="top: {top}px; left: {left}px;" bind:this={modalEl} on:keydown={onkeydown}>
+ <div class="modal" role="none" style="top: {top}px; left: {left}px; max-width: {width}; max-height: {height};" bind:this={modalEl} on:keydown={onkeydown}>
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
    <div class="close" role="button" tabindex="0" on:click={clickCloseModal} on:keydown={keyCloseModal}>

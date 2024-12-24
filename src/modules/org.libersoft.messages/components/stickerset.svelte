@@ -1,15 +1,15 @@
 <script>
  import StickerSetPart from './stickerset-part.svelte';
-
  export let stickerset = {};
-
- let stickers;
- $: stickers = stickerset.items || [];
+ export let showall = false;
+ export let splitAt = 8;
  let first, rest;
- let split_at = 8;
- $: first = stickers.slice(0, split_at);
- $: rest = stickers.slice(split_at);
+ let stickers;
  let expanded = false;
+
+ $: stickers = stickerset.items || [];
+ $: first = stickers.slice(0, splitAt);
+ $: rest = stickers.slice(splitAt);
 
  function mousedown(event) {
   console.log('stickerset mousedown');
@@ -18,6 +18,7 @@
 
  function clickExpand() {
   expanded = !expanded;
+  console.log(stickerset);
  }
 
  function keyExpand(event) {
@@ -46,29 +47,36 @@
   gap: 5px;
  }
 
- .name-bar {
+ .title-bar {
   display: flex;
-  align-items: center;
-  padding: 5px;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
   border-radius: 10px;
   background-color: #ddd;
  }
 
- .name-bar .label {
-  font-weight: bold;
-  flex-grow: 1;
-  padding: 0 5px;
+ .title-bar .row {
+  display: flex;
  }
 
- .name-bar .icon {
-  padding: 5px;
+ .title-bar .row .label {
+  font-weight: bold;
+  flex-grow: 1;
+ }
+
+ .title-bar .row .icon {
   cursor: pointer;
  }
 
- .name-bar img {
+ .title-bar .row img {
   display: flex;
   width: 20px;
   height: 20px;
+ }
+
+ .title-bar .created {
+  font-size: 12px;
  }
 
  .set {
@@ -94,22 +102,27 @@
 </style>
 
 <div class="stickerset" role="none" on:mousedown={mousedown}>
- <div class="name-bar">
-  <div class="label">{stickerset.name}</div>
-  <div class="icon" role="button" tabindex="0" on:click={clickAdd} on:keydown={keyAdd}>
-   <img src="img/add-black.svg" alt="Add to favourites" />
+ <div class="title-bar">
+  <div class="row">
+   <div class="label">{stickerset.name}</div>
+   <div class="icon" role="button" tabindex="0" on:click={clickAdd} on:keydown={keyAdd}>
+    <img src="img/add-black.svg" alt="Add to favourites" />
+   </div>
   </div>
+  <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
  </div>
  <div class="set">
   <StickerSetPart items={first} />
  </div>
- {#if stickers.length > split_at}{/if}
- {#if expanded}
+ {#if stickers.length > splitAt}{/if}
+ {#if showall || expanded}
   <div class="set">
    <StickerSetPart items={rest} />
   </div>
  {/if}
- <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}>
-  <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
- </div>
+ {#if !showall}
+  <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}>
+   <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
+  </div>
+ {/if}
 </div>
