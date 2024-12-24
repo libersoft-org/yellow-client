@@ -6,7 +6,7 @@
  let stickers;
  $: stickers = stickerset.items || [];
  let first, rest;
- let split_at = 10;
+ let split_at = 8;
  $: first = stickers.slice(0, split_at);
  $: rest = stickers.slice(split_at);
  let expanded = false;
