@@ -4,6 +4,7 @@
  import { updateStickerLibrary } from '../messages.js';
  import StickerSet from './stickerset.svelte';
  import Button from '../../../core/components/button.svelte';
+ import InputButton from '../../../core/components/input-button.svelte';
  import Tabs from './stickers-tabs.svelte';
  import Item from './stickers-tabs-item.svelte';
  import TabSettings from './stickers-settings.svelte';
@@ -60,10 +61,7 @@
   <Item img="img/settings.svg" active={activeTab === 'settings'} onClick={e => setTab(e, 'settings')} />
  </Tabs>
  <svelte:component this={tabs[activeTab]} />
- <div class="group">
-  <input type="text" bind:this={filter} />
-  <Button text="Search" on:click={clickSearch} />
- </div>
+ <InputButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." />
  {#if library}
   <div class="set">
    {#each $library[stickerServer] as stickerset}
