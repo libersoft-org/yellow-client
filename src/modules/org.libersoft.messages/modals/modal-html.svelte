@@ -3,6 +3,7 @@
  import { getContext, tick } from 'svelte';
  import { processMessage } from '../messages.js';
  import Tabs from '../../../core/components/tabs.svelte';
+ import Switch from '../../../core/components/switch.svelte';
  import Editor from '../components/html-editor.svelte';
  import Preview from '../components/message-rendering.svelte';
  export let close;
@@ -55,6 +56,12 @@
   height: 480px;
  }
 
+ .switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+ }
+
  .sides {
   display: flex;
   width: 100%;
@@ -78,6 +85,10 @@
 </style>
 
 <div class="html">
+ <div class="switch">
+  <div><Switch /></div>
+  <div>Show side by side</div>
+ </div>
  <Tabs items={tabItems} />
  <hr style="width: 100%" />
  <div class="sides">
