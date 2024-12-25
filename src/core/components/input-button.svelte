@@ -4,6 +4,13 @@
  export let value;
  export let placeholder;
  export let onClick;
+
+ function handleKeydown(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   onClick && onClick();
+  }
+ }
 </script>
 
 <style>
@@ -36,7 +43,7 @@
 
 <div class="input-button">
  <input type="text" {value} {placeholder} />
- <div class="image" on:click={onClick}>
+ <div class="image" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>
   <img src={img} {alt} />
  </div>
 </div>
