@@ -20,7 +20,7 @@
 <style>
  .scroll-down {
   z-index: 100;
-  position: absolute;
+  position: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
