@@ -5,8 +5,10 @@
 
 <style>
  .text {
-  width: calc(100% - 10px);
-  height: calc(100% - 10px);
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  padding: 10px;
+  border: 0;
  }
 </style>
 
