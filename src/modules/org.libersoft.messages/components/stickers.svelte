@@ -4,6 +4,8 @@
  import { updateStickerLibrary } from '../messages.js';
  import StickerSet from './stickerset.svelte';
  import Button from '../../../core/components/button.svelte';
+ import Tabs from './stickers-tabs.svelte';
+ import Item from './stickers-tabs-item.svelte';
  const library = localStorageSharedStore('stickers', {});
  let stickerServer = 'https://stickers.libersoft.org';
  let filter;
@@ -56,6 +58,10 @@
 </style>
 
 <div class="stickers">
+ <Tabs>
+  <Item label="Favourites" />
+  <Item label="Server" active={true} />
+ </Tabs>
  <div class="group">
   <div class="label">Sticker server:</div>
   <input type="text" bind:value={stickerServer} />
