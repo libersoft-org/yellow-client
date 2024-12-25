@@ -9,11 +9,22 @@
  const library = localStorageSharedStore('stickers', {});
  let stickerServer = 'https://stickers.libersoft.org';
  let filter;
+ let activeSource = 'server';
 
  onMount(async () => {
   if ($library[stickerServer] === undefined) await updateStickerLibrary(library, stickerServer);
   filter.focus(); // TODO - not working, because it loads the element before it's shown in context menu
  });
+
+ function clickSourceServer() {
+  activeSource = 'server';
+  console.log('Clicked From server');
+ }
+
+ function clickSourceFavourites() {
+  activeSource = 'fav';
+  console.log('Clicked My favourites');
+ }
 
  function clickUpdate() {
   updateStickerLibrary(library, stickerServer);
@@ -59,8 +70,8 @@
 
 <div class="stickers">
  <Tabs>
-  <Item label="Favourites" />
-  <Item label="Server" active={true} />
+  <Item label="My favourites" active={activeSource === 'fav'} onClick={clickSourceFavourites} />
+  <Item label="From server" active={activeSource === 'server'} onClick={clickSourceServer} />
  </Tabs>
  <div class="group">
   <div class="label">Sticker server:</div>
