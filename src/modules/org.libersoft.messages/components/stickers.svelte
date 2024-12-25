@@ -56,6 +56,11 @@
   gap: 20px;
  }
 
+ .filter {
+  display: flex;
+  gap: 10px;
+ }
+
  .count {
   display: flex;
   justify-content: right;
@@ -71,12 +76,14 @@
   <Item img="img/settings.svg" active={activeTab === 'settings'} onClick={e => setTab(e, 'settings')} />
  </Tabs>
  <svelte:component this={tabs[activeTab]} />
- <InputButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={filter} />
- <Select>
-  <Option value="0" text="All" />
-  <Option value="1" text="Animated only" />
-  <Option value="2" text="Static only" />
- </Select>
+ <div class="filter">
+  <InputButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={filter} />
+  <Select>
+   <Option value="0" text="All" />
+   <Option value="1" text="Animated only" />
+   <Option value="2" text="Static only" />
+  </Select>
+ </div>
  <div class="count">Found {count} sticker sets</div>
  {#if library}
   <div class="set">
