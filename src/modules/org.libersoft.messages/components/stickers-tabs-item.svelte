@@ -14,7 +14,6 @@
 
  .item.active {
   font-weight: bold;
-  text-decoration: underline;
   background-color: #444;
  }
 </style>
