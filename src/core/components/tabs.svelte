@@ -5,11 +5,15 @@
 </script>
 
 <style>
+ :root {
+  --border-color: #888;
+ }
+
  .box {
   margin-bottom: 10px;
   padding: 40px;
-  border: 1px solid #dee2e6;
-  border-radius: 0 0 0.5rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 5px 5px;
   border-top: 0;
  }
 
@@ -19,7 +23,7 @@
   padding-left: 0;
   margin-bottom: 0;
   list-style: none;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--border-color);
  }
 
  li {
@@ -28,21 +32,21 @@
 
  span {
   border: 1px solid transparent;
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
   display: block;
-  padding: 0.5rem 1rem;
+  padding: 5px 10px;
   cursor: pointer;
  }
 
  span:hover {
-  border-color: #e9ecef #e9ecef #dee2e6;
+  border-color: #e9ecef #e9ecef var(--border-color);
  }
 
  li.active > span {
   color: #495057;
   background-color: #fff;
-  border-color: #dee2e6 #dee2e6 #fff;
+  border-color: var(--border-color) var(--border-color) #fff;
  }
 </style>
 

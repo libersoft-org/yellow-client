@@ -1,13 +1,10 @@
 <script>
  import { mount, onMount } from 'svelte';
  import { componentMap } from './expressions';
- import MessageContentHelper from './MessageContentHelper.svelte';
-
+ import MessageContentHelper from './message-content-helper.svelte';
  export let node; // Accept a DOM node (DocumentFragment, Element, or Text)
  export let container; // Reference for appending dynamically created elements
-
  let loaded;
-
  // Helper to convert attributes to an object
  const getAttributes = attributes => Object.fromEntries(Array.from(attributes).map(attr => [attr.name, attr.value]));
 
@@ -22,13 +19,9 @@
   }
   if (loaded) {
    //clear container
-   while (container.firstChild) {
-    container.removeChild(container.firstChild);
-   }
+   while (container.firstChild) container.removeChild(container.firstChild);
   }
-
   loaded = true;
-
   create_node(node, container);
  }
 
@@ -49,20 +42,16 @@
    // Dynamically create the HTML element
    const element = document.createElement(node.tagName.toLowerCase());
    const attributes = getAttributes(node.attributes);
-
    // Set attributes on the created element
    Object.keys(attributes).forEach(attr => {
     element.setAttribute(attr, attributes[attr]);
    });
-
    container.appendChild(element);
-
    // Recursively render children
    /*console.log('MessageContent node:', node);
    console.log('MessageContent node.childNodes:', node.childNodes);*/
    Array.from(node.childNodes).forEach(child => {
     //console.log('MessageContent child:', child);
-
     mount(MessageContentHelper, {
      target: element,
      props: { node: child, container: element },
@@ -72,7 +61,6 @@
  }
 
  $: load(container, node);
-
  //$: console.log('MessageContent node:', node);
 </script>
 
@@ -80,7 +68,6 @@
  <!-- Handle Custom Components -->
  {#if node.nodeType === Node.ELEMENT_NODE && componentMap[node.tagName.toLowerCase()]}
   <svelte:component this={componentMap[node.tagName.toLowerCase()]} {node} />
-
   <!-- Handle Text Nodes -->
  {:else if node.nodeType === Node.TEXT_NODE}
   {node.textContent}

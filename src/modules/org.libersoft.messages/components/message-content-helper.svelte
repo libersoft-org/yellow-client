@@ -1,5 +1,5 @@
 <script>
- import MessageContent from './MessageContent.svelte';
+ import MessageContent from './message-content.svelte';
  export let node; // Accept a DOM node (DocumentFragment, Element, or Text)
  export let container; // Reference for appending dynamically created elements
 </script>

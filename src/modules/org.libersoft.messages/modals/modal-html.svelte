@@ -2,27 +2,41 @@
  import Button from '../../../core/components/button.svelte';
  import { getContext, tick } from 'svelte';
  import { processMessage } from '../messages.js';
- import MessageRendering from '../components/MessageRendering.svelte';
-
+ import Tabs from '../../../core/components/tabs.svelte';
+ import Editor from '../components/html-editor.svelte';
+ import Preview from '../components/message-rendering.svelte';
  export let close;
-
+ const MessageBar = getContext('MessageBar');
  let text = '';
  let message_content = '';
- let elTexto;
+ let elText;
 
- $: update1(elTexto);
- async function update1(elTexto) {
-  if (!elTexto) return;
+ const tabItems = [
+  {
+   label: 'Editor',
+   value: 1,
+   component: Editor,
+  },
+  {
+   label: 'Preview',
+   value: 2,
+   component: Preview,
+  },
+ ];
+
+ $: update1(elText);
+
+ async function update1(elText) {
+  if (!elText) return;
   await tick();
-  elTexto.focus();
+  elText.focus();
  }
 
  $: update2(text);
+
  function update2(text) {
   message_content = processMessage(text);
  }
-
- const MessageBar = getContext('MessageBar');
 
  function click() {
   console.log('click');
@@ -64,12 +78,15 @@
 </style>
 
 <div class="html">
+ <Tabs items={tabItems} />
+ <hr style="width: 100%" />
  <div class="sides">
-  <div class="editor">
-   <textarea class="text" bind:this={elTexto} bind:value={text} rows="5" cols="30"></textarea>
-  </div>
+  <Editor {text} />
+  <!--<div class="editor">
+   <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea>
+  </div>-->
   <div class="preview">
-   <MessageRendering {message_content} />
+   <Preview {message_content} />
   </div>
  </div>
  <Button text="Send" on:click={click} />

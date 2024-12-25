@@ -10,8 +10,8 @@
  //import FileTransfer from './filetransfer.svelte';
  //import Sticker from './sticker.svelte';
  //import Map from './map.svelte';
- import MessageContent from './MessageContent.svelte';
- import MessageRendering from './MessageRendering.svelte';
+ import MessageContent from './message-content.svelte';
+ import MessageRendering from './message-rendering.svelte';
  //import Reply from './message-reply.svelte';
  export let message;
  export let container_element;

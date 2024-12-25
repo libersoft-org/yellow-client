@@ -1,12 +1,8 @@
 <script>
- import MessageContent from './MessageContent.svelte';
-
+ import MessageContent from './message-content.svelte';
  export let message_content;
-
  let message_content_container;
-
  // ensure message_content_container is thrown away and re-created when message_content changes, because MessageContent modifies it imperatively
-
  let gen = 0;
  let dummy_array = [];
 
