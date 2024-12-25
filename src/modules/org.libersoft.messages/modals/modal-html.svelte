@@ -73,11 +73,6 @@
   width: 50%;
  }
 
- .sides .editor .text {
-  width: calc(100% - 10px);
-  height: calc(100% - 10px);
- }
-
  .sides .preview {
   border: 1px solid #000;
   width: 50%;
@@ -92,10 +87,10 @@
  <Tabs items={tabItems} />
  <hr style="width: 100%" />
  <div class="sides">
-  <Editor {text} />
-  <!--<div class="editor">
-   <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea>
-  </div>-->
+  <div class="editor">
+   <Editor {text} />
+   <!-- <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea> -->
+  </div>
   <div class="preview">
    <Preview {message_content} />
   </div>

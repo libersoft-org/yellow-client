@@ -1,7 +1,18 @@
 <script>
  export let items = [];
  export let activeTabValue = 1;
- const handleClick = tabValue => () => (activeTabValue = tabValue);
+
+ function handleClick(tabValue) {
+  activeTabValue = tabValue;
+ }
+
+ function handleKeydown(event, tabValue) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   console.log(event);
+   handleClick(tabValue);
+  }
+ }
 </script>
 
 <style>
@@ -47,7 +58,7 @@
 
 <div class="tab-container">
  {#each items as item}
-  <div class={'tab ' + (activeTabValue === item.value ? 'active' : '')} on:click={handleClick(item.value)}>
+  <div class={'tab ' + (activeTabValue === item.value ? 'active' : '')} role="button" tabindex="0" on:click={handleClick(item.value)} on:keydown={event => handleKeydown(event, item.value)}>
    {item.label}
   </div>
  {/each}
