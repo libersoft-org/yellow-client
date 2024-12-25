@@ -7,12 +7,12 @@
  import ModalStickersetDetails from '../modals/modal-stickerset-details.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
- import ScrollDown from './scroll-down.svelte';
+ import ScrollButton from './scroll-button.svelte';
  import { messagesArray, events, insertEvent } from '../messages.js';
  import { get } from 'svelte/store';
  export let conversation;
  export let setBarFocus;
- let scrollDownVisible = true;
+ let scrollButtonVisible = true;
  let showDebugModal = false;
  let messages_elem;
  let anchorElement;
@@ -80,7 +80,7 @@
   scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
  }
 
- $: scrollDownVisible = !scrolledToBottom;
+ $: scrollButtonVisible = !scrolledToBottom;
  $: updateWindowSize(windowInnerWidth, windowInnerHeight);
 
  function updateWindowSize(width, height) {
@@ -294,6 +294,7 @@
  }
 
  .messages {
+  position: relative;
   display: flex;
   margin-top: auto;
   flex-direction: column;
@@ -379,7 +380,7 @@
   {/if}
  {/each}
  <div bind:this={anchorElement}></div>
- <ScrollDown visible={scrollDownVisible} on:click={scrollToBottom} />
+ <ScrollButton visible={scrollButtonVisible} right="20px" bottom="70px" on:click={scrollToBottom} />
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />

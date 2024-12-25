@@ -1,8 +1,12 @@
 <script>
  import { createEventDispatcher, onMount } from 'svelte';
  export let visible = true;
+ export let direction = false;
+ export let left;
+ export let right;
+ export let top;
+ export let bottom;
  const dispatch = createEventDispatcher();
-
  let size = 30;
 
  function handleKeydown(event) {
@@ -15,12 +19,11 @@
 
 <style>
  .scroll-down {
-  position: fixed;
+  z-index: 100;
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
-  right: 20px;
-  bottom: 70px;
   min-width: var(--size);
   width: var(--size);
   min-height: var(--size);
@@ -40,7 +43,7 @@
 </style>
 
 {#if visible}
- <div class="scroll-down" style="--size: {size}px;" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
-  <img src="img/caret-down-gray.svg" alt="˅" />
+ <div class="scroll-down" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
+  <img src="img/caret-{direction ? 'up' : 'down'}-gray.svg" alt={direction ? '˄' : '˅'} />
  </div>
 {/if}

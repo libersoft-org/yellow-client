@@ -1,10 +1,11 @@
 <script>
  import { conversationsArray, selectConversation } from '../messages.js';
+ import ScrollButton from '../components/scroll-button.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/modal-conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
  let showNewConversationModal = false;
-
+ let scrollButtonVisible = true;
  //$: console.log('conversations-list.svelte: conversationsArray: ', $conversationsArray);
 
  function clickNew() {
@@ -21,10 +22,16 @@
  function clickItem(conversation) {
   selectConversation(conversation);
  }
+
+ function scrollToTop() {
+  // TODO: make it work
+  console.log('SCROLL TO TOP');
+ }
 </script>
 
 <style>
  .conversations {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -68,5 +75,6 @@
    {/each}
   </div>
  </div>
+ <ScrollButton visible={scrollButtonVisible} direction={true} right="20px" bottom="70px" on:click={scrollToTop} />
  <Modal title="New Conversation" body={ModalConversationNew} bind:show={showNewConversationModal} />
 {/if}
