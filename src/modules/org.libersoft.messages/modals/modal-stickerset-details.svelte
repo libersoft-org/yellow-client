@@ -3,7 +3,6 @@
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { updateStickerLibrary } from '../messages.js';
  import StickerSet from '../components/stickerset.svelte';
- export let close;
  export let params;
  const library = localStorageSharedStore('stickers', {});
  let stickerSetData;

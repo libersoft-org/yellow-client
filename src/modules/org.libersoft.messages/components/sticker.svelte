@@ -5,20 +5,20 @@
  import { readable } from 'svelte/store';
  export let file = '';
  export let size = 200;
- export let play_on_start = true; //todo
- let component_container;
- let anim_container;
+ // TODO: export let playOnStart = true;
+ let componentContainer;
+ let animContainer;
  let isLottie = false;
  let isImage = false;
- let is_loading = false;
+ let isLoading = false;
  let error;
  let observer;
  let playing = false;
  let ext;
  let anim;
- let is_in_viewport = false;
- let mouse_over = false;
- let static_img_elem;
+ let isInViewport = false;
+ let mouseOver = false;
+ let elStaticImg;
  let ContextMenu = getContext('ContextMenu');
  let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
 
@@ -39,13 +39,13 @@
   }
  });
 
- $: on_update_should_be_playing($ContextMenuOpen, is_in_viewport, mouse_over, anim_container, anim);
+ $: on_update_should_be_playing($ContextMenuOpen, isInViewport, mouseOver, animContainer, anim);
 
- async function on_update_should_be_playing(ContextMenuOpen, is_in_viewport, mouse_over, anim_container, anim) {
-  //console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'is_in_viewport:', is_in_viewport, 'mouse_over', mouse_over, 'anim_container:', anim_container, 'anim:', anim);
-  if (!anim_container) return;
-  let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && is_in_viewport;
-  let should_be_playing = should_be_loaded && (ContextMenuOpen === undefined || (ContextMenuOpen && mouse_over));
+ async function on_update_should_be_playing(ContextMenuOpen, isInViewport, mouseOver, animContainer, anim) {
+  //console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'isInViewport:', isInViewport, 'mouseOver', mouseOver, 'animContainer:', animContainer, 'anim:', anim);
+  if (!animContainer) return;
+  let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
+  let should_be_playing = should_be_loaded && (ContextMenuOpen === undefined || (ContextMenuOpen && mouseOver));
   if (should_be_playing) should_be_loaded = true;
   //console.log('should_be_loaded:', should_be_loaded, 'should_be_playing:', should_be_playing);
   if (should_be_playing) {
@@ -68,27 +68,27 @@
   }
  }
 
- $: setup_observer(anim_container);
+ $: setup_observer(animContainer);
 
- function setup_observer(anim_container) {
-  if (!anim_container) return;
+ function setup_observer(animContainer) {
+  if (!animContainer) return;
   //console.log('create sticker observer');
   observer = new IntersectionObserver(
    entries => {
-    is_in_viewport = entries[0].isIntersecting;
-    //console.log(entries, 'is_in_viewport: ', is_in_viewport);
+    isInViewport = entries[0].isIntersecting;
+    //console.log(entries, 'isInViewport: ', isInViewport);
    },
    {
     threshold: 0.1,
     root: null,
    }
   );
-  observer.observe(anim_container);
+  observer.observe(animContainer);
  }
 
  async function load_lottie() {
-  if (is_loading) return;
-  is_loading = true;
+  if (isLoading) return;
+  isLoading = true;
   let path;
   let animationData;
   if (ext === 'tgs') animationData = await loadTgs(file);
@@ -108,7 +108,7 @@
   */
   let start = Date.now();
   anim = lottie.loadAnimation({
-   container: anim_container,
+   container: animContainer,
    renderer: 'canvas',
    loop: true,
    autoplay: playing,
@@ -140,7 +140,7 @@
   //console.log(entries);
   entries.sort((a, b) => a.time - b.time);
   for (let entry of entries) {
-   is_in_viewport = entries[0].isIntersecting;
+   isInViewport = entries[0].isIntersecting;
   }
  }
 
@@ -218,19 +218,19 @@
  }
 </style>
 
-<div class="sticker" role="button" tabindex="0" bind:this={component_container} on:mouseover={() => (mouse_over = true)} on:mouseleave={() => (mouse_over = false)} on:focus={() => (mouse_over = true)} on:blur={() => (mouse_over = false)}>
+<div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
  {#if error}
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/org.libersoft.messages/img/question.svg" alt="" />
   <div class="error">{error}</div>
  {:else if isLottie}
-  <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={anim_container}></div>
+  <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>
  {:else if isImage}
   <img
    class="image"
    style="width: {size}px; height: {size}px;"
    src={file}
    alt=""
-   bind:this={static_img_elem}
+   bind:this={elStaticImg}
    on:error={e => {
     static_img_load_error(e);
    }}

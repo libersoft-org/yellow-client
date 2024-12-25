@@ -7,9 +7,16 @@
  let openStickersetDetailsModal = getContext('openStickersetDetailsModal');
  //$: console.log('MessageContentSticker node:', v);
 
- function onclick() {
-  //console.log('MessageContentSticker onClick' + JSON.stringify(node.attributes.stickerset?.value));
+ function handleClick() {
+  //console.log('MessageContentSticker handleClick' + JSON.stringify(node.attributes.stickerset?.value));
   openStickersetDetailsModal(stickerset);
+ }
+
+ function handleKeydown(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+   event.preventDefault();
+   handleClick();
+  }
  }
 </script>
 
@@ -20,7 +27,7 @@
 </style>
 
 {#if v}
- <div class={stickerset ? 'clickable' : ''} {onclick}>
+ <div class={stickerset ? 'clickable' : ''} role="button" tabindex="0" onclick={handleClick} onkeydown={handleKeydown}>
   <Sticker file={v} />
  </div>
 {/if}
