@@ -18,7 +18,7 @@
 
 <style>
  .item {
-  flex-grow: 1;
+  flex: 1;
   text-align: center;
   cursor: pointer;
   padding: 10px 0;
@@ -27,7 +27,7 @@
  .item.active {
   color: #000;
   font-weight: bold;
-  text-decoration: underline;
+  background-color: #db0;
  }
 </style>
 
