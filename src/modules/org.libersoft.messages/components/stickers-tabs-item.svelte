@@ -1,4 +1,5 @@
 <script>
+ export let img;
  export let label;
  export let active;
  export let onClick;
@@ -13,18 +14,34 @@
 
 <style>
  .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   flex: 1;
-  font-size: 14px;
+  font-size: 13px;
   padding: 10px;
   color: #fff;
   cursor: pointer;
-  text-align: center;
  }
 
  .item.active {
   font-weight: bold;
   background-color: #383838;
  }
+
+ .item img {
+  display: flex;
+  width: 20px;
+  height: 20px;
+ }
 </style>
 
-<div class="item {active ? 'active' : ''}" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>{label}</div>
+<div class="item {active ? 'active' : ''}" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>
+ {#if img}
+  <div><img src={img} alt={label ? label : ''} /></div>
+ {/if}
+ {#if label}
+  <div>{label}</div>
+ {/if}
+</div>

@@ -30,8 +30,13 @@
   updateStickerLibrary(library, stickerServer);
  }
 
+ function clickSettings() {
+  activeSource = 'settings';
+  console.log('Clicked on Settings');
+ }
+
  function clickSearch() {
-  console.log('Clicked on search');
+  console.log('Clicked on Search');
  }
 </script>
 
@@ -70,8 +75,10 @@
 
 <div class="stickers">
  <Tabs>
-  <Item label="My favourites" active={activeSource === 'fav'} onClick={clickSourceFavourites} />
-  <Item label="From server" active={activeSource === 'server'} onClick={clickSourceServer} />
+  <Item img="modules/org.libersoft.messages/img/favourite.svg" active={activeSource === 'fav'} onClick={clickSourceFavourites} />
+  <Item img="modules/org.libersoft.messages/img/server.svg" active={activeSource === 'server'} onClick={clickSourceServer} />
+  <Item img="modules/org.libersoft.messages/img/update.svg" onClick={clickUpdate} />
+  <Item img="img/settings.svg" active={activeSource === 'settings'} onClick={clickSettings} />
  </Tabs>
  <div class="group">
   <div class="label">Sticker server:</div>
