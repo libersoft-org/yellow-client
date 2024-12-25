@@ -5,6 +5,8 @@
  import StickerSet from './stickerset.svelte';
  import Button from '../../../core/components/button.svelte';
  import InputButton from '../../../core/components/input-button.svelte';
+ import Select from '../../../core/components/select.svelte';
+ import Option from '../../../core/components/select-option.svelte';
  import Tabs from './stickers-tabs.svelte';
  import Item from './stickers-tabs-item.svelte';
  import TabSettings from './stickers-settings.svelte';
@@ -62,6 +64,12 @@
  </Tabs>
  <svelte:component this={tabs[activeTab]} />
  <InputButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." />
+ <Select>
+  <Option value="0" text="All" />
+  <Option value="1" text="Animated only" />
+  <Option value="2" text="Static only" />
+ </Select>
+
  {#if library}
   <div class="set">
    {#each $library[stickerServer] as stickerset}

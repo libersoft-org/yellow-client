@@ -1,13 +1,9 @@
-<style>
- select {
-  padding: 10px;
-  font-family: inherit;
-  font-size: inherit;
-  border: 1px solid #000;
-  border-radius: 10px;
-  background-color: #fff;
- }
+<script>
+ import Select from '../../../core/components/select.svelte';
+ import Option from '../../../core/components/select-option.svelte';
+</script>
 
+<style>
  .group {
   display: flex;
   flex-direction: column;
@@ -23,9 +19,9 @@
 <div class="group">
  <div class="title">Currency conversion:</div>
  <div class="select">
-  <select>
-   <option value="0">--- Select your currency ---</option>
-   <option value="1">USD</option>
-  </select>
+  <Select>
+   <Option value="0" text="--- Select your currency ---" />
+   <Option value="1" text="USD" />
+  </Select>
  </div>
 </div>
