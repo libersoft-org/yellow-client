@@ -16,6 +16,7 @@
  let stickerServer = 'https://stickers.libersoft.org';
  let filter;
  let activeTab = 'server';
+ let count = 0;
  const tabs = {
   favourites: TabFavourites,
   settings: TabSettings,
@@ -24,7 +25,8 @@
 
  onMount(async () => {
   if ($library[stickerServer] === undefined) await updateStickerLibrary(library, stickerServer);
-  filter.focus(); // TODO - not working, because it loads the element before it's shown in context menu
+  //filter.focus(); // TODO - not working, because it loads the element before it's shown in context menu
+  count = $library[stickerServer].length;
  });
 
  function setTab(e, name) {
@@ -53,6 +55,12 @@
   flex-direction: column;
   gap: 20px;
  }
+
+ .count {
+  display: flex;
+  justify-content: right;
+  font-size: 13px;
+ }
 </style>
 
 <div class="stickers">
@@ -63,13 +71,13 @@
   <Item img="img/settings.svg" active={activeTab === 'settings'} onClick={e => setTab(e, 'settings')} />
  </Tabs>
  <svelte:component this={tabs[activeTab]} />
- <InputButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." />
+ <InputButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={filter} />
  <Select>
   <Option value="0" text="All" />
   <Option value="1" text="Animated only" />
   <Option value="2" text="Static only" />
  </Select>
-
+ <div class="count">Found {count} sticker sets</div>
  {#if library}
   <div class="set">
    {#each $library[stickerServer] as stickerset}
