@@ -11,52 +11,47 @@
 
  .box {
   margin-bottom: 10px;
-  padding: 40px;
+  padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 0 0 5px 5px;
   border-top: 0;
  }
 
- ul {
+ .tab-container {
   display: flex;
   flex-wrap: wrap;
-  padding-left: 0;
-  margin-bottom: 0;
-  list-style: none;
   border-bottom: 1px solid var(--border-color);
  }
 
- li {
+ .tab {
+  display: block;
+  padding: 5px 10px;
   margin-bottom: -1px;
- }
-
- span {
   border: 1px solid transparent;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  display: block;
-  padding: 5px 10px;
+  color: var(--border-color);
   cursor: pointer;
  }
 
- span:hover {
-  border-color: #e9ecef #e9ecef var(--border-color);
+ .tab:hover {
+  border-color: #ccc #ccc #ccc;
  }
 
- li.active > span {
-  color: #495057;
+ .tab.active {
+  color: #000;
   background-color: #fff;
   border-color: var(--border-color) var(--border-color) #fff;
  }
 </style>
 
-<ul>
+<div class="tab-container">
  {#each items as item}
-  <li class={activeTabValue === item.value ? 'active' : ''}>
-   <span on:click={handleClick(item.value)}>{item.label}</span>
-  </li>
+  <div class={'tab ' + (activeTabValue === item.value ? 'active' : '')} on:click={handleClick(item.value)}>
+   {item.label}
+  </div>
  {/each}
-</ul>
+</div>
 {#each items as item}
  {#if activeTabValue == item.value}
   <div class="box">
