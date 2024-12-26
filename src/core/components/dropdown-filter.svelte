@@ -19,24 +19,10 @@
   showOptions = false;
  }
 
- function keySelectOption(option, event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickSelectOption(option);
-  }
- }
-
  function clickClearSelection() {
   selected = '';
   inputValue = '';
   filteredOptions = options;
- }
-
- function keyClearSelection(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickClearSelection();
-  }
  }
 
  function toggleOptions() {
