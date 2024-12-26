@@ -1,15 +1,9 @@
 <script>
+ import BaseButton from './base-button.svelte';
  export let img;
  export let label;
  export let active;
  export let onClick;
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   onClick && onClick();
-  }
- }
 </script>
 
 <style>
@@ -18,10 +12,9 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  flex: 1;
+  flex: 1; /* TODO: this is not working as it needs to be applied on BaseButton, not on .item. If applied to BaseButton, it spoils everything that doesn't need it.*/
   padding: 10px;
   color: #fff;
-  cursor: pointer;
  }
 
  .item.active {
@@ -36,11 +29,13 @@
  }
 </style>
 
-<div class="item {active ? 'active' : ''}" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>
- {#if img}
-  <div><img src={img} alt={label ? label : ''} /></div>
- {/if}
- {#if label}
-  <div>{label}</div>
- {/if}
-</div>
+<BaseButton {onClick}>
+ <div class="item {active ? 'active' : ''}">
+  {#if img}
+   <div><img src={img} alt={label ? label : ''} /></div>
+  {/if}
+  {#if label}
+   <div>{label}</div>
+  {/if}
+ </div>
+</BaseButton>
