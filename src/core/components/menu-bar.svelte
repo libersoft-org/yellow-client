@@ -1,17 +1,10 @@
 <script>
+ import BaseButton from './base-button.svelte';
  import { debug } from '../core.js';
-
  export let isMenuOpen;
 
- function menuClick() {
+ function handleClick() {
   isMenuOpen = true;
- }
-
- function menuKey(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   menuClick();
-  }
  }
 </script>
 
@@ -43,7 +36,11 @@
 </style>
 
 <div class="bar">
- <div class="menu" role="button" tabindex="0" on:click={menuClick} on:keydown={menuKey}><img src="img/menu.svg" alt="☰" /></div>
+ <BaseButton onClick={handleClick}>
+  <div class="menu">
+   <img src="img/menu.svg" alt="☰" />
+  </div>
+ </BaseButton>
  <div class="product">Yellow</div>
  {#if $debug}(debug mode){/if}
 </div>
