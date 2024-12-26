@@ -1,4 +1,5 @@
 <script>
+ import BaseButton from './base-button.svelte';
  import AccountStatusIcon from './account-status-icon.svelte';
  import AccountTitle from './account-title.svelte';
  import { debug, findAccount } from '../core.js';
@@ -6,14 +7,6 @@
  import AccountStatus from './account-status.svelte';
  export let a;
  export let clickSelectAccount;
-
- function keySelectAccount(id, event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   event.stopPropagation();
-   clickSelectAccount(id);
-  }
- }
 </script>
 
 <style>
@@ -25,7 +18,6 @@
   overflow: hidden;
   padding: 10px;
   color: #fff;
-  cursor: pointer;
  }
 
  .item:hover {
@@ -41,18 +33,20 @@
  }
 </style>
 
-<div class="item" role="button" tabindex="0" on:click={() => clickSelectAccount($a.id)} on:keydown={event => keySelectAccount($a.id, event)}>
- <div class="title"><AccountStatusIcon account={a} /><AccountTitle {a} /></div>
- <small><AccountStatus account={a} /></small>
- {#if $debug}
-  <small>
-   <ul>
-    <li>enabled: {$a.enabled}</li>
-    <li>error: {$a.error}</li>
-    <li>status: {$a.status}</li>
-    <li>session_status: {$a.session_status}</li>
-    <li>sessionID: {$a.sessionID}</li>
-   </ul>
-  </small>
- {/if}
-</div>
+<BaseButton onClick={() => clickSelectAccount($a.id)}>
+ <div class="item">
+  <div class="title"><AccountStatusIcon account={a} /><AccountTitle {a} /></div>
+  <small><AccountStatus account={a} /></small>
+  {#if $debug}
+   <small>
+    <ul>
+     <li>enabled: {$a.enabled}</li>
+     <li>error: {$a.error}</li>
+     <li>status: {$a.status}</li>
+     <li>session_status: {$a.session_status}</li>
+     <li>sessionID: {$a.sessionID}</li>
+    </ul>
+   </small>
+  {/if}
+ </div>
+</BaseButton>
