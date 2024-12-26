@@ -1,5 +1,6 @@
 <script>
  export let onClick;
+ export let onMousedown;
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -15,6 +16,6 @@
  }
 </style>
 
-<div class="base-button" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>
+<div class="base-button" role="button" tabindex="0" on:click={onClick} on:mousedown={onMousedown} on:keydown={handleKeydown}>
  <slot />
 </div>

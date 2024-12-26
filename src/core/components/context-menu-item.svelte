@@ -1,30 +1,18 @@
 <script>
- import { createEventDispatcher, getContext } from 'svelte';
-
+ import { getContext } from 'svelte';
+ import BaseButton from './base-button.svelte';
  export let img = null;
  export let label = '';
-
- const dispatch = createEventDispatcher();
+ export let onClick;
  let menu = getContext('ContextMenu');
 
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   trigger();
-  }
- }
-
- function click() {
-  trigger();
- }
-
- function trigger() {
-  console.log('trigger');
-  dispatch('click');
+ function handleClick() {
+  console.log('handleClick');
+  onClick();
   menu.close();
  }
 
- function mousedown(event) {
+ function handleMousedown(event) {
   console.log('context-menu-item mousedown');
   event.preventDefault();
   event.stopPropagation();
@@ -57,11 +45,13 @@
  }
 </style>
 
-<div class="menu-item" role="button" tabindex="0" on:mousedown={mousedown} on:click={click} on:keydown={handleKeydown}>
- {#if img}
-  <div class="img-space">
-   <img src={img} alt={label} width="24" height="24" />
-  </div>
- {/if}
- <div class="label">{label}</div>
-</div>
+<BaseButton onClick={handleClick} onMousedown={handleMousedown}>
+ <div class="menu-item">
+  {#if img}
+   <div class="img-space">
+    <img src={img} alt={label} width="24" height="24" />
+   </div>
+  {/if}
+  <div class="label">{label}</div>
+ </div>
+</BaseButton>

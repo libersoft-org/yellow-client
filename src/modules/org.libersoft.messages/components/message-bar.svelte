@@ -114,9 +114,9 @@
 </div>
 
 <ContextMenu target={elAttachment}>
- <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" on:click={sendFile} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/html.svg" label="HTML" on:click={sendHTML} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" on:click={sendLocation} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" onClick={sendFile} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/html.svg" label="HTML" onClick={sendHTML} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
 <ContextMenu target={elExpressions} width="363px" height="500px">

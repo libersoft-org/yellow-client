@@ -292,8 +292,8 @@
 {/if}
 
 <ContextMenu bind:this={menu} target={elCaret}>
- <ContextMenuItem img="img/copy.svg" label="Copy" on:click={() => copyMessage()} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" on:click={() => replyMessage()} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" on:click={() => forwardMessage()} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/delete.svg" label="Delete" on:click={() => deleteMessage()} />
+ <ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyMessage} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" onClick={replyMessage} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" onClick={forwardMessage} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/delete.svg" label="Delete" onClick={deleteMessage} />
 </ContextMenu>
