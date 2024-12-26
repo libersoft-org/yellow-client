@@ -1,16 +1,10 @@
 <script>
+ import BaseButton from './base-button.svelte';
  export let img;
  export let alt = '';
  export let value;
  export let placeholder;
  export let onClick;
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   onClick && onClick();
-  }
- }
 </script>
 
 <style>
@@ -31,7 +25,6 @@
 
  .image {
   padding: 5px;
-  cursor: pointer;
  }
 
  .image img {
@@ -43,7 +36,9 @@
 
 <div class="input-button">
  <input type="text" {value} {placeholder} />
- <div class="image" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>
-  <img src={img} {alt} />
- </div>
+ <BaseButton {onClick}>
+  <div class="image">
+   <img src={img} {alt} />
+  </div>
+ </BaseButton>
 </div>

@@ -4,7 +4,7 @@
  import { updateStickerLibrary } from '../messages.js';
  import StickerSet from './stickerset.svelte';
  import Button from '../../../core/components/button.svelte';
- import InputButton from '../../../core/components/input-button.svelte';
+ import InputTextButton from '../../../core/components/input-text-button.svelte';
  import Select from '../../../core/components/select.svelte';
  import Option from '../../../core/components/select-option.svelte';
  import Tabs from '../../../core/components/tabs.svelte';
@@ -77,7 +77,7 @@
  </Tabs>
  <svelte:component this={tabs[activeTab]} />
  <div class="filter">
-  <InputButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={filter} />
+  <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={filter} />
   <Select>
    <Option value="0" text="All" />
    <Option value="1" text="Animated only" />
