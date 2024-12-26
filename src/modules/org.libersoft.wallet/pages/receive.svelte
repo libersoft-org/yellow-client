@@ -1,4 +1,5 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
  import QRCode from 'qrcode';
  import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
  import { parseUnits } from 'ethers';
@@ -34,13 +35,6 @@
   setTimeout(() => (addressElement.innerHTML = $selectedAddress.address), 1000);
  }
 
- function keyCopyAddress() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickCopyAddress();
-  }
- }
-
  function clickCopyPayment() {
   navigator.clipboard
    .writeText(paymentText)
@@ -48,13 +42,6 @@
    .catch(err => console.error('Error while copying to clipboard', err));
   paymentElement.innerHTML = 'Copied!';
   setTimeout(() => (paymentElement.innerHTML = paymentText), 1000);
- }
-
- function keyCopyPayment() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickCopyPayment();
-  }
  }
 
  $: if ($selectedNetwork && $selectedAddress) updateAmount(amount);
@@ -140,10 +127,12 @@
  {#if $selectedNetwork && $selectedAddress}
   <div class="section">
    <div class="bold">Your wallet address:</div>
-   <div class="address" role="button" tabindex="0" on:click={clickCopyAddress} on:keydown={keyCopyAddress}>
-    <div bind:this={addressElement}>{$selectedAddress.address}</div>
-    <img src="img/copy.svg" alt="Copy" />
-   </div>
+   <BaseButton onClick={clickCopyAddress}>
+    <div class="address">
+     <div bind:this={addressElement}>{$selectedAddress.address}</div>
+     <img src="img/copy.svg" alt="Copy" />
+    </div>
+   </BaseButton>
    <div class="qr"><img src={qrAddress} alt="Address" /></div>
   </div>
   <div class="section">
@@ -154,10 +143,12 @@
     <DropdownFilter options={$currencies} bind:selected={currency} />
     <div class="error">{error}</div>
    </div>
-   <div class="address" role="button" tabindex="0" on:click={clickCopyPayment} on:keydown={keyCopyPayment}>
-    <div bind:this={paymentElement}>{paymentText}</div>
-    <img src="img/copy.svg" alt="Copy" />
-   </div>
+   <BaseButton onClick={clickCopyPayment}>
+    <div class="address">
+     <div bind:this={paymentElement}>{paymentText}</div>
+     <img src="img/copy.svg" alt="Copy" />
+    </div>
+   </BaseButton>
    <div class="qr"><img src={qrPayment} alt="Payment" /></div>
   </div>
  {:else}
