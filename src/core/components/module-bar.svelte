@@ -65,7 +65,6 @@
   align-items: center;
   height: 40px;
   padding: 10px;
-  cursor: pointer;
  }
 
  .dropdown img {

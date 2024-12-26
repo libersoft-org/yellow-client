@@ -109,10 +109,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  cursor: pointer;
   font-weight: bold;
   background-color: #fd3;
   color: #000;
+  cursor: pointer;
  }
 
  .modal .header .title {

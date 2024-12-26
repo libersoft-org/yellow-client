@@ -39,7 +39,6 @@
   font-weight: bold;
   background-color: #222;
   color: #fff;
-  cursor: pointer;
  }
 
  .new img {

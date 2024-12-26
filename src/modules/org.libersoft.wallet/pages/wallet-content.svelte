@@ -84,7 +84,6 @@
   padding: 5px;
   width: 30px;
   height: 30px;
-  cursor: pointer;
  }
 
  .top-bar .right {
@@ -187,7 +186,6 @@
   align-items: center;
   justify-content: right;
   gap: 5px;
-  cursor: pointer;
  }
 
  .body .top .right .address .copy {

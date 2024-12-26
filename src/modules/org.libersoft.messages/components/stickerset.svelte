@@ -52,10 +52,6 @@
   flex-grow: 1;
  }
 
- .title-bar .row .icon {
-  cursor: pointer;
- }
-
  .title-bar .row img {
   display: flex;
   width: 20px;
@@ -79,7 +75,6 @@
   padding: 10px;
   border-radius: 10px;
   background-color: #fd1;
-  cursor: pointer;
  }
 
  .more img {

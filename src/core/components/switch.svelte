@@ -25,7 +25,6 @@
 
  .switch .slider {
   position: absolute;
-  cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
@@ -34,6 +33,7 @@
   -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 34px;
+  cursor: pointer;
  }
 
  .switch .slider:before {

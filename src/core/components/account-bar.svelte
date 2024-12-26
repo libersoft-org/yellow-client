@@ -57,7 +57,6 @@
   border-bottom: 1px solid #555;
   background-color: #222;
   color: #fff;
-  cursor: pointer;
  }
 
  .dropdown .text {

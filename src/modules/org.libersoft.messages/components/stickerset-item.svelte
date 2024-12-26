@@ -31,7 +31,6 @@
 
 <style>
  .sticker {
-  cursor: pointer;
   display: inline-block;
   padding: 5px;
   border-radius: 10px;

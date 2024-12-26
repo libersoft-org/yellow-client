@@ -232,10 +232,10 @@
   width: 20px;
   height: 20px;
   padding: 5px;
-  cursor: pointer;
   border-radius: 10px;
   background-color: #fefdf7;
   border: 1px solid #cecdc7;
+  cursor: pointer;
  }
 
  @media (hover: hover) and (pointer: fine) {
@@ -250,47 +250,39 @@
  <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
-
  <!--<Reply name="Someone" text="Some text" />-->
  <!--<Audio file="modules/org.libersoft.messages/audio/message.mp3" />-->
  <!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
-
  {#if $debug}
   original message: {message.message}
   <hr />
   rendering:
  {/if}
-
  <MessageRendering {messageContent} />
-
  <!--
  <div class="text">{@html 'processMessage(message.message)'}</div>
  <div class="text">{@html '<b>srtrstr'}</div>
  <div class="text">{@html 'srtrstr'}</div>
  <div class="text">{@html '<hr/>'}</div>
--->
-
+ -->
  <div class="bottomline">
   <div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
   {#if message.is_outgoing}
    <div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
   {/if}
  </div>
-
  {#if $debug}
   id {message.id}
  {/if}
 </div>
-
 {#if message.reply}
  <div class="reply-box">
   <input type="text" value={message.reply.text} />
  </div>
 {/if}
-
 <ContextMenu bind:this={menu} target={elCaret}>
  <ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyMessage} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" onClick={replyMessage} />

@@ -80,7 +80,6 @@
  }
 
  .selected .clear {
-  cursor: pointer;
   padding: 10px;
  }
 

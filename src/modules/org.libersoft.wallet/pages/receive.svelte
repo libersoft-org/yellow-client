@@ -104,7 +104,6 @@
   border-radius: 10px;
   padding: 10px;
   background-color: #ffa;
-  cursor: pointer;
  }
 
  .address img {

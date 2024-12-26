@@ -76,7 +76,6 @@
   border: 1px solid #ba0;
   border-radius: 15px;
   background-color: #ec0;
-  cursor: pointer;
  }
 
  .player .play img {

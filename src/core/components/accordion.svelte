@@ -28,7 +28,6 @@
   align-items: center;
   padding: 10px;
   background-color: #fd1;
-  cursor: pointer;
  }
 
  .accordion .item .header .title {

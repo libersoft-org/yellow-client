@@ -21,7 +21,6 @@
  .menu {
   display: flex;
   padding: 10px;
-  cursor: pointer;
  }
 
  .menu img {

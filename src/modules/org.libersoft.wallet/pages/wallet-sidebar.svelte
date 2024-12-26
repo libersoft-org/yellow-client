@@ -19,7 +19,6 @@
   font-weight: bold;
   background-color: #222;
   color: #fff;
-  cursor: pointer;
  }
 
  .addressbook {
@@ -32,7 +31,6 @@
   padding: 10px;
   border: 1px solid #dd9;
   background-color: #fde990;
-  cursor: pointer;
  }
 
  .items .item:hover {

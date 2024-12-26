@@ -12,7 +12,7 @@
 </script>
 
 <style>
- .scroll-down {
+ .scroll-button {
   z-index: 100;
   position: fixed;
   display: flex;
@@ -27,10 +27,9 @@
   border-radius: 50%;
   background-color: #fff;
   box-shadow: var(--shadow);
-  cursor: pointer;
  }
 
- .scroll-down img {
+ .scroll-button img {
   width: 32px;
   height: 32px;
  }
@@ -38,7 +37,7 @@
 
 {#if visible}
  <BaseButton {onClick}>
-  <div class="scroll-down" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}">
+  <div class="scroll-button" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}">
    <img src="img/caret-{direction ? 'up' : 'down'}-gray.svg" alt={direction ? '˄' : '˅'} />
   </div>
  </BaseButton>

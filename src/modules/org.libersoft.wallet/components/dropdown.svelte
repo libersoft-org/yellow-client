@@ -14,7 +14,6 @@
   border-radius: 10px;
   font-family: inherit;
   background-color: #ffa;
-  cursor: pointer;
  }
 
  .dropdown .text {

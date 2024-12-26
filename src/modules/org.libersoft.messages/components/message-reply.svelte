@@ -17,7 +17,6 @@
   border-radius: 10px;
   border-left: 8px solid #080;
   margin: 0 0 5px 0;
-  cursor: pointer;
  }
 
  .reply .name {

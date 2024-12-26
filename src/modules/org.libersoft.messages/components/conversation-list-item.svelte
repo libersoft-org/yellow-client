@@ -13,7 +13,6 @@
   display: flex;
   flex-direction: column;
   padding: 10px;
-  cursor: pointer;
   background-color: #fffcf0;
   border-bottom: 1px solid #dd9;
  }

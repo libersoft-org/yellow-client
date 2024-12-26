@@ -9,7 +9,6 @@
  .section {
   padding: 10px;
   background-color: #ffa;
-  cursor: pointer;
  }
 
  .section.active {

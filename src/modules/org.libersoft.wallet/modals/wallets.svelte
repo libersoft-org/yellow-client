@@ -20,10 +20,6 @@
   overflow: hidden;
  }
 
- tr {
-  cursor: pointer;
- }
-
  tr.even {
   background-color: #ffa;
  }

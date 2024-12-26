@@ -14,7 +14,6 @@
  .item {
   flex: 1;
   text-align: center;
-  cursor: pointer;
   padding: 10px 0;
  }
 
