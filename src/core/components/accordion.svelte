@@ -1,16 +1,10 @@
 <script>
+ import BaseButton from './base-button.svelte';
  export let items = [];
  export let activeIndex = null;
 
- function clickToggle(index) {
+ function handleClick(index) {
   activeIndex = activeIndex === index ? null : index;
- }
-
- function keyToggle(index) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickToggle(index);
-  }
  }
 </script>
 
@@ -60,10 +54,12 @@
 <div class="accordion">
  {#each items as i, index}
   <div class="item">
-   <div class="header" role="button" tabindex="0" on:click={() => clickToggle(index)} on:keydown={() => keyToggle(index)}>
-    <div class="title">{i.name}</div>
-    <img src="img/down-black.svg" alt="▼" />
-   </div>
+   <BaseButton onClick={() => handleClick(index)}>
+    <div class="header">
+     <div class="title">{i.name}</div>
+     <img src="img/down-black.svg" alt="▼" />
+    </div>
+   </BaseButton>
    <div class="content {activeIndex === index ? 'active' : ''}">
     <slot prop={i} />
    </div>
