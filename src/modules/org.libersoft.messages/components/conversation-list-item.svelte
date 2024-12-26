@@ -1,18 +1,11 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
  import Photo from './photo.svelte';
  import { selectedConversation, ensureConversationDetails } from '../messages.js';
-
  export let c;
  export let clickItem;
 
  $: ensureConversationDetails(c);
-
- function keyDown(event, conversation) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickItem(conversation);
-  }
- }
 </script>
 
 <style>
@@ -81,25 +74,27 @@
  }
 </style>
 
-<div class="item" class:active={c.address === $selectedConversation?.address} role="button" tabindex="0" on:click={() => clickItem(c)} on:keydown={event => keyDown(event, c)}>
- <div class="item-row">
-  <Photo size="50" />
-  <div class="description">
-   <div class="contact">
-    {#if c.visible_name}
-     <div class="name">{c.visible_name}</div>
-    {/if}
-    <div class="address">{c.address}</div>
-    <div class="time">{new Date(c.last_message_date /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
+<BaseButton onClick={() => clickItem(c)}>
+ <div class="item" class:active={c.address === $selectedConversation?.address}>
+  <div class="item-row">
+   <Photo size="50" />
+   <div class="description">
+    <div class="contact">
+     {#if c.visible_name}
+      <div class="name">{c.visible_name}</div>
+     {/if}
+     <div class="address">{c.address}</div>
+     <div class="time">{new Date(c.last_message_date /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
+    </div>
    </div>
+   {#if c.unread_count !== 0 && c.unread_count !== undefined}
+    <div class="count">{c.unread_count}</div>
+   {/if}
   </div>
-  {#if c.unread_count !== 0 && c.unread_count !== undefined}
-   <div class="count">{c.unread_count}</div>
+  {#if c.last_message_text.trim()}
+   <div class="text">{c.last_message_text.trim()}</div>
+  {:else}
+   <div class="text">&nbsp;</div>
   {/if}
  </div>
- {#if c.last_message_text.trim()}
-  <div class="text">{c.last_message_text.trim()}</div>
- {:else}
-  <div class="text">&nbsp;</div>
- {/if}
-</div>
+</BaseButton>
