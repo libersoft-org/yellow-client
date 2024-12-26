@@ -74,7 +74,7 @@
 </div>
 
 {#if params.item}
- <Button text="Save" on:click={clickEdit} />
+ <Button text="Save" onClick={clickEdit} />
 {:else}
- <Button text="Add token" on:click={clickAdd} />
+ <Button text="Add token" onClick={clickAdd} />
 {/if}

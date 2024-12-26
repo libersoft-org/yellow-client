@@ -41,5 +41,5 @@
 <div class="group">
  <div class="label">Address:</div>
  <div><InputText placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} /></div>
- <Button on:click={clickOpen}>Open</Button>
+ <Button text="Open" onClick={clickOpen} />
 </div>

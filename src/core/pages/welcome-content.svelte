@@ -83,7 +83,7 @@
   <div class="warning">
    <div class="bold">ATTENTION:</div>
    <div>Notifications are not enabled.</div>
-   <Button on:click={clickRequestNotificationPermission}>Enable notifications</Button>
+   <Button text="Enable notifications" onClick={clickRequestNotificationPermission} />
   </div>
  {/if}
 </div>

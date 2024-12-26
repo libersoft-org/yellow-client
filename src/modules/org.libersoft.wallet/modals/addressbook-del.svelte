@@ -29,4 +29,4 @@
   <div>{error}</div>
  </div>
 {/if}
-<Button text="Delete" on:click={clickDelete} />
+<Button text="Delete" onClick={clickDelete} />

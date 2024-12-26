@@ -1,21 +1,14 @@
 <script>
- import { createEventDispatcher } from 'svelte';
+ import BaseButton from './base-button.svelte';
  export let img = '';
  export let text = '';
  export let enabled = true;
  export let hiddenOnDesktop = false;
  export let width;
- const dispatch = createEventDispatcher();
+ export let onClick;
 
  function handleClick() {
-  if (enabled) dispatch('click');
- }
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   if (enabled) dispatch('click');
-  }
+  if (enabled) onClick();
  }
 </script>
 
@@ -31,7 +24,6 @@
   border-radius: 10px;
   background-color: #fd1;
   font-weight: bold;
-  cursor: pointer;
  }
 
  .button.disabled {
@@ -51,11 +43,13 @@
  }
 </style>
 
-<div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''} role="button" tabindex="0" on:click={handleClick} on:keydown={handleKeydown}>
- <slot>
-  {#if img}
-   <img src={img} alt={text} />
-  {/if}
-  <div>{text}</div>
- </slot>
-</div>
+<BaseButton onClick={handleClick}>
+ <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''}>
+  <slot>
+   {#if img}
+    <img src={img} alt={text} />
+   {/if}
+   <div>{text}</div>
+  </slot>
+ </div>
+</BaseButton>

@@ -107,13 +107,13 @@
   </div>
   <div class="navigation">
    {#if currentStep > 0}
-    <Button on:click={prevStep} text="Previous" />
+    <Button text="Previous" onClick={prevStep} />
    {/if}
    <div class="gap"></div>
    {#if currentStep < steps.length - 1}
-    <Button on:click={nextStep} text={nextText} />
+    <Button text={nextText} onClick={nextStep} />
    {:else}
-    <Button on:click={close} text="Finish" />
+    <Button text="Finish" onClick={close} />
    {/if}
   </div>
  </div>

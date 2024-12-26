@@ -107,6 +107,6 @@
   <div class="input"><InputText bind:value={fee} /></div>
   <div class="error">{error}</div>
  </div>
- <Button text="Send" on:click={send} />
+ <Button text="Send" onClick={send} />
 </div>
 <Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />

@@ -22,4 +22,4 @@
  <div class="label">Sticker server:</div>
  <InputText bind:value={stickerServer} />
 </div>
-<Button text="Save & update" on:click={clickUpdate} />
+<Button text="Save & update" onClick={clickUpdate} />

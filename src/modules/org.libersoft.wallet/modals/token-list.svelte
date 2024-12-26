@@ -84,7 +84,7 @@
 <div class="token-list">
  <div class="buttons">
   <!-- () => (item_tokens = [...item_tokens, { name: '', icon: '', symbol: '', contract_address: '' }]) -->
-  <Button text="Add token" on:click={addTokenModal} />
+  <Button text="Add token" onClick={addTokenModal} />
  </div>
 
  <div class="label">Network name: {net?.name}</div>

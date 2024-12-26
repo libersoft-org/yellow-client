@@ -178,9 +178,9 @@
   </div>
  {/if}
  {#if (params.id ?? null) === null}
-  <Button on:click={clickAdd} text="Add the account" />
+  <Button text="Add the account" onClick={clickAdd} />
  {:else}
-  <Button on:click={clickSave} text="Save" />
+  <Button text="Save" onClick={clickSave} />
  {/if}
  {#if account && acc}
   <div class="status">

@@ -95,7 +95,7 @@
   <br/><pre>{JSON.stringify({ ...loader, conversation: undefined }, null, 2)}</pre>
 
   -->
-  <!--  <Button on:click={loadMore}>Load more</Button> -->
+  <!--  <Button text="Load more" onClick={loadMore} /> -->
 
   <Spinner show={loader.loading} />
  </div>

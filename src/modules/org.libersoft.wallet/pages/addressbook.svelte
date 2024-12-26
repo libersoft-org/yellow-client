@@ -113,9 +113,9 @@
 
 <div class="addressbook">
  <div class="buttons">
-  <Button text="Add an address" on:click={addToAddressBookModal} />
-  <Button text="Export" on:click={exportAddressBook} />
-  <Button text="Import" on:click={importAddressBook} />
+  <Button text="Add an address" onClick={addToAddressBookModal} />
+  <Button text="Export" onClick={exportAddressBook} />
+  <Button text="Import" onClick={importAddressBook} />
  </div>
  {#if $addressBook.length > 0}
   <table>

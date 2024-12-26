@@ -69,8 +69,8 @@
   </div>
   <div class="info hidden" bind:this={info}></div>
   <div class="buttons">
-   <Button text="Copy link" on:click={copyLink} />
-   <Button text="Open link" on:click={openLink} />
+   <Button text="Copy link" onClick={copyLink} />
+   <Button text="Open link" onClick={openLink} />
   </div>
  {:else}
   <div>No network or wallet selected</div>

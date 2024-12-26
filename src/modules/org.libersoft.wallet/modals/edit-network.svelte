@@ -45,6 +45,11 @@
   networks.update(v => v);
   close();
  }
+
+ function saveAndClose() {
+  save();
+  close();
+ }
 </script>
 
 <style>
@@ -86,19 +91,13 @@
   {#each item_rpc_urls as rpc_url, i}
    <div class="group">
     <InputText bind:value={item_rpc_urls[i]} />
-    <Button text="Remove RPC URL" on:click={() => (item_rpc_urls = item_rpc_urls.filter((v, j) => j !== i))} />
+    <Button text="Remove RPC URL" onClick={() => (item_rpc_urls = item_rpc_urls.filter((v, j) => j !== i))} />
    </div>
   {/each}
-  <Button text="Add RPC URL" on:click={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
+  <Button text="Add RPC URL" onClick={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
  </div>
-
  <div class="buttons">
-  <Button on:click={close}>Cancel</Button>
-  <Button
-   on:click={() => {
-    save();
-    close();
-   }}>Save</Button
-  >
+  <Button text="Cancel" onClick={close} />
+  <Button text="Save" onClick={saveAndClose} />
  </div>
 </div>

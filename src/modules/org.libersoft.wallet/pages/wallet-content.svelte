@@ -274,12 +274,12 @@
      </div>
     </div>
     <div class="buttons">
-     <Button width="70px" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('send')} />
-     <Button width="70px" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('receive')} />
-     <Button width="70px" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('balance')} />
-     <Button width="70px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} on:click={() => setSection('history')} />
-     <Button width="70px" text="Address book" on:click={() => setSection('addressbook')} />
-     <Button width="70px" text="Settings" on:click={() => setSection('settings')} />
+     <Button width="70px" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
+     <Button width="70px" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
+     <Button width="70px" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
+     <Button width="70px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
+     <Button width="70px" text="Address book" onClick={() => setSection('addressbook')} />
+     <Button width="70px" text="Settings" onClick={() => setSection('settings')} />
     </div>
     <div class="separator"></div>
     <div class="section">

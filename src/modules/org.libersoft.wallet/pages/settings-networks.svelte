@@ -96,8 +96,8 @@
 <div class="networks">
  <div class="bold">My networks:</div>
  <div class="buttons">
-  <Button text="Export" on:click={() => doExport()} />
-  <Button text="Import" on:click={() => doImport()} />
+  <Button text="Export" onClick={() => doExport()} />
+  <Button text="Import" onClick={() => doImport()} />
  </div>
  <div class="items">
   {#each $networks as n, index (n.guid)}

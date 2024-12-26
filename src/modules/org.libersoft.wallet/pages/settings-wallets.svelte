@@ -97,14 +97,14 @@
 </style>
 
 <div class="buttons">
- <Button width="80px" text="Create wallet" on:click={showNewWalletModal} />
- <Button width="80px" text="Recover" on:click={recover} />
+ <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
+ <Button width="80px" text="Recover" onClick={recover} />
 </div>
 <Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
  <div class="wallet">
   <div class="buttons">
-   <Button text="Add a new address" on:click={() => addAddress(wallet)} />
-   <Button text="Add a new address (by index)" on:click={() => addAddressWithIndex(wallet)} />
+   <Button text="Add a new address" onClick={() => addAddress(wallet)} />
+   <Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(wallet)} />
   </div>
   <table>
    <thead>

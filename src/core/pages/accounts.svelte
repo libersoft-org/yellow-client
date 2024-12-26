@@ -115,10 +115,10 @@
 
 <div class="accounts">
  <div class="buttons">
-  <Button img="img/back.svg" text="Back" on:click={back} hiddenOnDesktop={true} />
-  <Button img="img/accounts-black.svg" text="Add a new account" on:click={addAccountModal} />
-  <Button text="Export" on:click={accountsConfigExport} />
-  <Button text="Import" on:click={accountsConfigImport} />
+  <Button img="img/back.svg" text="Back" onClick={back} hiddenOnDesktop={true} />
+  <Button img="img/accounts-black.svg" text="Add a new account" onClick={addAccountModal} />
+  <Button text="Export" onClick={accountsConfigExport} />
+  <Button text="Import" onClick={accountsConfigImport} />
  </div>
  <div class="table">
   <table>

@@ -1,6 +1,7 @@
 <script>
  import { afterUpdate, beforeUpdate, onMount, setContext, tick } from 'svelte';
  import { getGuid, debug } from '../../../core/core.js';
+ import Button from '../../../core/components/button.svelte';
  import Spinner from '../../../core/components/spinner.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
@@ -339,11 +340,11 @@
 
 {#if $debug}
  <div class="debug">
-  <button on:click={scrollToBottom}>Scroll to bottom</button>
-  <button on:click={saveScrollPosition}>Save scroll position</button>
-  <button on:click={restoreScrollPosition}>Restore scroll position</button>
-  <button on:click={gc}>GC</button>
-  <button on:click={() => (showDebugModal = !showDebugModal)}>Show debug modal</button>
+  <Button text="Scroll to bottom" onClick={scrollToBottom} />
+  <Button text="Save scroll position" onClick={saveScrollPosition} />
+  <Button text="Restore scroll position" onClick={restoreScrollPosition} />
+  <Button text="GC" onClick={gc} />
+  <Button text="Show debug modal" onClick={() => (showDebugModal = !showDebugModal)} />
   items count: {itemsCount}
   <ModalWithSlot show={showDebugModal} title="Debug modal">
    <div slot="body">

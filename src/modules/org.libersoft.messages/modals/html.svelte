@@ -109,5 +109,5 @@
    <Preview {messageContent} />
   </div>
  </div>
- <Button text="Send" on:click={click} />
+ <Button text="Send" onClick={click} />
 </div>

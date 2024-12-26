@@ -50,7 +50,7 @@
 <div class="gifset">
  <div class="controls">
   <InputText placeholder="Search GIFs..." bind:value={searchTerm} on:keydown={e => e.key === 'Enter' && fetchGifs()} />
-  <Button on:click={getGifs} text="Search" />
+  <Button text="Search" onClick={getGifs} />
  </div>
  {#if loading}
   <div>Loading...</div>

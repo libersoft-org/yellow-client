@@ -153,7 +153,7 @@
  </tbody>
 </table>
 <div class="buttons">
- <Button width="96px" text="Save" on:click={save} />
- <Button width="96px" text="Print" on:click={print} />
- <Button width="96px" text="Regenerate" on:click={regenerate} />
+ <Button width="96px" text="Save" onClick={save} />
+ <Button width="96px" text="Print" onClick={print} />
+ <Button width="96px" text="Regenerate" onClick={regenerate} />
 </div>

@@ -109,8 +109,8 @@
   </div>
  {/if}
  {#if params.item}
-  <Button text="Save" on:click={edit} />
+  <Button text="Save" onClick={edit} />
  {:else}
-  <Button text="Add" on:click={add} />
+  <Button text="Add" onClick={add} />
  {/if}
 </div>
