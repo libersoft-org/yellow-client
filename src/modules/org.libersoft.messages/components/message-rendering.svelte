@@ -1,17 +1,17 @@
 <script>
  import MessageContent from './message-content.svelte';
- export let message_content;
- let message_content_container;
- // ensure message_content_container is thrown away and re-created when message_content changes, because MessageContent modifies it imperatively
+ export let messageContent;
+ let messageContentContainer;
+ // ensure messageContentContainer is thrown away and re-created when messageContent changes, because MessageContent modifies it imperatively
  let gen = 0;
- let dummy_array = [];
+ let dummyArray = [];
 
- $: update(message_content);
+ $: update(messageContent);
 
- function update(message_content) {
-  dummy_array = [message_content];
+ function update(messageContent) {
+  dummyArray = [messageContent];
   gen++;
-  //console.log('update, message_content:', message_content, 'gen:', gen);
+  //console.log('update, messageContent:', messageContent, 'gen:', gen);
  }
 </script>
 
@@ -22,8 +22,8 @@
  }
 </style>
 
-{#if message_content.type === 'html'}
- <div class="text" bind:this={message_content_container}><MessageContent container={message_content_container} node={message_content.body} /></div>
+{#if messageContent.type === 'html'}
+ <div class="text" bind:this={messageContentContainer}><MessageContent container={messageContentContainer} node={messageContent.body} /></div>
 {:else}
- <div class="text">{@html message_content.body}</div>
+ <div class="text">{@html messageContent.body}</div>
 {/if}

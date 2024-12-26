@@ -1,14 +1,16 @@
 <script>
  export let elText;
- let text;
+ export let text;
 </script>
 
 <style>
  .text {
-  width: calc(100% - 20px);
-  height: calc(100% - 20px);
+  width: calc(100% - 22px);
+  height: calc(100% - 22px);
   padding: 10px;
-  border: 0;
+  border: 1px solid #080;
+  /*font-family: inherit; // TODO: switch to Ubuntu Mono (not regular Ubuntu) as it is a HTML code*/
+  font-size: inherit;
  }
 </style>
 

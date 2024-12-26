@@ -14,12 +14,12 @@
  import MessageRendering from './message-rendering.svelte';
  //import Reply from './message-reply.svelte';
  export let message;
- export let container_element;
- let seen_txt;
+ export let elContainer;
+ let seenTxt;
  let checkmarks;
  let observer;
- let intersection_observer_element;
- let is_visible;
+ let elIntersectionObserver;
+ let isVisible;
  let elCaret;
  let menu;
  let elMessage;
@@ -37,25 +37,25 @@
  let thisWasAScroll;
  let touchX;
  let touchY;
- let message_content_container;
+ let messageContentContainer;
 
- $: message_content = processMessage(message.message);
+ $: messageContent = processMessage(message.message);
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
- $: seen_txt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
+ $: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
  $: checkmarks_img = 'modules/org.libersoft.messages/img/seen' + checkmarks + '.svg';
  //$: console.log('Core.isClientFocused:', $isClientFocused);
- $: if (is_visible && $isClientFocused) {
-  console.log('is_visible:', is_visible, 'isClientFocused:', $isClientFocused);
+ $: if (isVisible && $isClientFocused) {
+  console.log('isVisible:', isVisible, 'isClientFocused:', $isClientFocused);
   if (message.seen) {
    console.log('not setting seen because already set');
    observer.disconnect();
-   is_visible = false;
+   isVisible = false;
   } else {
    console.log('setMessageSeen..');
    setMessageSeen(message, () => {
     console.log('seen set succesfully, disconnecting observer.');
     observer.disconnect();
-    is_visible = false;
+    isVisible = false;
    });
   }
  }
@@ -65,11 +65,9 @@
   moving = false;
   touchX = e.changedTouches[0].clientX;
   touchY = e.changedTouches[0].clientY;
-
   thisWasALongPress = false;
   thisWasASwipe = false;
   thisWasAScroll = false;
-
   longPressTimer = setTimeout(() => {
    if (!moving) {
     thisWasALongPress = true;
@@ -80,14 +78,12 @@
   touchStartY = e.changedTouches[0].clientY;
   touchCurrentX = touchStartX;
   touchCurrentY = touchStartY;
-
   touchCurrentTranslation = 0;
   elMessage.style.transition = 'none';
  }
 
  function handleTouchMove(e) {
   //console.log('handle touch move', e);
-
   moving = true;
   touchCurrentX = e.changedTouches[0].clientX;
   let diff = touchCurrentX - touchStartX;
@@ -102,9 +98,7 @@
   }
   touchCurrentTranslation = diff;
   elMessage.style.transform = `translateX(${touchCurrentTranslation}px)`;
-  if (Math.abs(diff) > 10) {
-   thisWasASwipe = true;
-  }
+  if (Math.abs(diff) > 10) thisWasASwipe = true;
  }
 
  function handleTouchEnd(e) {
@@ -144,16 +138,16 @@
      //console.log(entries);
      entries.sort((a, b) => a.time - b.time);
      for (let entry of entries) {
-      is_visible = entries[0].isIntersecting;
+      isVisible = entries[0].isIntersecting;
       await tick();
      }
     },
     /*
     TODO: split long messages into parts and "collect" seen status
      */
-    { threshold: 0.8, root: container_element }
+    { threshold: 0.8, root: elContainer }
    );
-   observer.observe(intersection_observer_element);
+   observer.observe(elIntersectionObserver);
   }
  });
 
@@ -252,7 +246,7 @@
 </style>
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove}>
- <div bind:this={intersection_observer_element}></div>
+ <div bind:this={elIntersectionObserver}></div>
  <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
@@ -270,7 +264,7 @@
   rendering:
  {/if}
 
- <MessageRendering {message_content} />
+ <MessageRendering {messageContent} />
 
  <!--
  <div class="text">{@html 'processMessage(message.message)'}</div>
@@ -282,7 +276,7 @@
  <div class="bottomline">
   <div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
   {#if message.is_outgoing}
-   <div class="checkmark"><img src={checkmarks_img} alt={seen_txt} /></div>
+   <div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
   {/if}
  </div>
 

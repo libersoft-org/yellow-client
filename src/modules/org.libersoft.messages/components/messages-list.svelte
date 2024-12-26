@@ -376,7 +376,7 @@
   {:else if m.type === 'unseen_marker'}
    <div class="unread">Unread messages</div>
   {:else}
-   <Message message={m} container_element={messages_elem} />
+   <Message message={m} elContainer={messages_elem} />
   {/if}
  {/each}
  <div bind:this={anchorElement}></div>

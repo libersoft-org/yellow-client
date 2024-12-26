@@ -22,7 +22,7 @@
  let prevY = 0;
  let focusIndex = -1;
  let openDetail = null;
- let current_instance;
+ let currentInstance;
  let menus = getContext('menus');
 
  $: isOpen.set(open);
@@ -36,7 +36,7 @@
   focusIndex = -1;
   console.log('context-menu close:', menus);
   for (let menu of menus) {
-   if (menu.guid === current_instance) {
+   if (menu.guid === currentInstance) {
     //console.log('found myself');
     menus.splice(menus.indexOf(menu), 1);
     break;
@@ -52,8 +52,8 @@
   if (e.type === 'contextmenu') return;
   //console.log('context-menu close other menus:', menus);
   for (let menu of menus) menu.close();
-  current_instance = getGuid();
-  menus.push({ guid: current_instance, close });
+  currentInstance = getGuid();
+  menus.push({ guid: currentInstance, close });
 
   //const { currentHeight, currentWidth } = ref.getBoundingClientRect();
   const currentHeight = ref.getBoundingClientRect().height;

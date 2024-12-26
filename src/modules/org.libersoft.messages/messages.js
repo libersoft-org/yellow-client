@@ -412,13 +412,13 @@ function showNotification(acc, msg) {
  playNotificationSound();
  // TODO: distinguish if it's a web or native version
  if (Notification.permission !== 'granted') return;
- /*fixme*/
+ /* TODO: fixme*/
  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
 
  console.log('new Notification', conversation);
  let notification;
  if (conversation) {
-  /*fixme*/
+  /*TODO: fixme*/
   notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
    body: msg.stripped_text,
    icon: 'img/photo.svg',
@@ -481,7 +481,7 @@ export function saneHtml(content) {
  let sane = DOMPurify.sanitize(content, {
   ADD_TAGS: ['sticker'],
   //FORBID_CONTENTS: ['sticker'],
-  ADD_ATTR: ['file', 'set'], ///FIXME, security issue, should only be allowed on sticker
+  ADD_ATTR: ['file', 'set'], // TODO: fixme, security issue, should only be allowed on sticker
   RETURN_DOM_FRAGMENT: true,
  });
  /*console.log('content:');

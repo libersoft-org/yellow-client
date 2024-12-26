@@ -3,27 +3,24 @@
  import { getContext, tick } from 'svelte';
  import { processMessage } from '../messages.js';
  import Tabs from '../../../core/components/tabs.svelte';
+ import Item from '../../../core/components/tabs-item.svelte';
  import Switch from '../../../core/components/switch.svelte';
  import Editor from '../components/html-editor.svelte';
  import Preview from '../components/message-rendering.svelte';
  export let close;
  const MessageBar = getContext('MessageBar');
- let text = '';
- let message_content = '';
+ let messageContent = '';
  let elText;
+ let text = '';
+ let activeTab = 'editor';
+ const tabs = {
+  editor: Editor,
+  preview: Preview,
+ };
 
- const tabItems = [
-  {
-   label: 'Editor',
-   value: 1,
-   component: Editor,
-  },
-  {
-   label: 'Preview',
-   value: 2,
-   component: Preview,
-  },
- ];
+ function setTab(e, name) {
+  activeTab = name;
+ }
 
  $: update1(elText);
 
@@ -36,7 +33,7 @@
  $: update2(text);
 
  function update2(text) {
-  message_content = processMessage(text);
+  messageContent = processMessage(text);
  }
 
  function click() {
@@ -62,6 +59,12 @@
   gap: 10px;
  }
 
+ .container {
+  border: 1px solid #000;
+  border-radius: 10px;
+  overflow: auto;
+ }
+
  .sides {
   display: flex;
   width: 100%;
@@ -82,17 +85,25 @@
 <div class="html">
  <div class="switch">
   <div><Switch /></div>
-  <div>Show side by side</div>
+  <div>Show editor and preview side by side</div>
  </div>
- <Tabs items={tabItems} />
+ <div>
+  <Tabs>
+   <Item label="HTML editor" active={activeTab === 'editor'} onClick={e => setTab(e, 'editor')} />
+   <Item label="Preview" active={activeTab === 'preview'} onClick={e => setTab(e, 'preview')} />
+  </Tabs>
+ </div>
+ <div class="container">
+  <svelte:component this={tabs[activeTab]} />
+ </div>
  <hr style="width: 100%" />
  <div class="sides">
   <div class="editor">
-   <Editor {text} />
+   <Editor {elText} {text} />
    <!-- <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea> -->
   </div>
   <div class="preview">
-   <Preview {message_content} />
+   <Preview {messageContent} />
   </div>
  </div>
  <Button text="Send" on:click={click} />

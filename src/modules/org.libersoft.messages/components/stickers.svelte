@@ -7,8 +7,8 @@
  import InputButton from '../../../core/components/input-button.svelte';
  import Select from '../../../core/components/select.svelte';
  import Option from '../../../core/components/select-option.svelte';
- import Tabs from './stickers-tabs.svelte';
- import Item from './stickers-tabs-item.svelte';
+ import Tabs from '../../../core/components/tabs.svelte';
+ import Item from '../../../core/components/tabs-item.svelte';
  import TabSettings from './stickers-settings.svelte';
  import TabFavourites from './stickers-favourites.svelte';
  import TabServer from './stickers-server.svelte';

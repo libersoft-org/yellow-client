@@ -19,7 +19,6 @@
   justify-content: center;
   gap: 10px;
   flex: 1;
-  font-size: 13px;
   padding: 10px;
   color: #fff;
   cursor: pointer;
