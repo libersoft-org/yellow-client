@@ -15,14 +15,18 @@
 </script>
 
 <style>
+ :root {
+  --accordion-border-color: #b90;
+ }
+
  .accordion {
-  border: 1px solid #b90;
+  border: 1px solid var(--accordion-border-color);
   border-radius: 10px;
   overflow: auto;
  }
 
  .accordion .item {
-  border-bottom: 1px solid #b90;
+  border-bottom: 1px solid var(--accordion-border-color);
  }
 
  .accordion .item .header {

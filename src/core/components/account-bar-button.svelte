@@ -3,7 +3,7 @@
  export let title = '';
  export let click;
 
- function keyButton() {
+ function handleKey(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    click();
@@ -28,7 +28,7 @@
  }
 </style>
 
-<div class="accounts-button" role="button" tabindex="0" on:click={click} on:keydown={keyButton}>
+<div class="accounts-button" role="button" tabindex="0" on:click={click} on:keydown={handleKey}>
  {#if img}
   <div><img src={img} alt={title} /></div>
  {/if}
