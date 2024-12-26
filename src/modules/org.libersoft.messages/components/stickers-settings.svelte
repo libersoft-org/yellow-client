@@ -1,5 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
+ import InputText from '../../../core/components/input-text.svelte';
  export let stickerServer;
 
  function clickUpdate() {}
@@ -27,6 +28,6 @@
 
 <div class="group">
  <div class="label">Sticker server:</div>
- <input type="text" bind:value={stickerServer} />
+ <InputText bind:value={stickerServer} />
 </div>
 <Button text="Save & update" on:click={clickUpdate} />

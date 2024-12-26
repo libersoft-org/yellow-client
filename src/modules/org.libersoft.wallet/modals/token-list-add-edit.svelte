@@ -1,5 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
+ import InputText from '../../../core/components/input-text.svelte';
  import { getGuid } from '../../../core/core.js';
  import { onMount } from 'svelte';
  export let close;
@@ -61,19 +62,19 @@
 
 <div class="group">
  <div class="label">Name:</div>
- <input bind:value={item_name} />
+ <InputText bind:value={item_name} />
 </div>
 <div class="group">
  <div class="label">Icon:</div>
- <input bind:value={item_icon} />
+ <InputText bind:value={item_icon} />
 </div>
 <div class="group">
  <div class="label">Symbol:</div>
- <input bind:value={item_symbol} />
+ <InputText bind:value={item_symbol} />
 </div>
 <div class="group">
  <div class="label">Contract address:</div>
- <input bind:value={item_contract_address} />
+ <InputText bind:value={item_contract_address} />
 </div>
 
 {#if params.item}

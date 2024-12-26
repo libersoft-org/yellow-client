@@ -4,14 +4,14 @@
  export let placeholder = '';
  export let value = '';
  const dispatch = createEventDispatcher();
- let inputEl;
+ let elInput;
 
  function handleKeydown(e) {
   dispatch('keydown', e);
  }
 
  export function focus() {
-  inputEl?.focus();
+  elInput?.focus();
  }
 </script>
 
@@ -20,7 +20,9 @@
   padding: 10px;
   border: 1px solid #999;
   border-radius: 10px;
+  font-family: inherit;
+  font-size: inherit;
  }
 </style>
 
-<input type={password ? 'password' : 'text'} {placeholder} bind:this={inputEl} bind:value on:keydown={handleKeydown} />
+<input type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={handleKeydown} />

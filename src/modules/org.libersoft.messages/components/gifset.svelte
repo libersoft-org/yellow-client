@@ -1,6 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import Button from '../../../core/components/button.svelte';
+ import InputText from '../../../core/components/input-text.svelte';
  let searchTerm = '';
  let gifs = [];
  let loading = false;
@@ -56,7 +57,7 @@
 
 <div class="gifset">
  <div class="controls">
-  <input class="search" type="text" placeholder="Search GIFs..." bind:value={searchTerm} on:keydown={e => e.key === 'Enter' && fetchGifs()} />
+  <InputText placeholder="Search GIFs..." bind:value={searchTerm} on:keydown={e => e.key === 'Enter' && fetchGifs()} />
   <Button on:click={getGifs} text="Search" />
  </div>
  {#if loading}

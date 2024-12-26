@@ -1,6 +1,7 @@
 <script>
  import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
  import Accordion from '../../../core/components/accordion.svelte';
+ import InputText from '../../../core/components/input-text.svelte';
  export let close;
  let activeIndex = null;
  let filter = '';
@@ -46,7 +47,7 @@
  }
 </style>
 
-<input type="text" placeholder="Search" bind:value={filter} />
+<InputText placeholder="Search" bind:value={filter} />
 <Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
  <table>
   <tbody>

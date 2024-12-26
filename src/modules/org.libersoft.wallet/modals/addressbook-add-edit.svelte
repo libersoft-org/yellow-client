@@ -1,6 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import Button from '../../../core/components/button.svelte';
+ import InputText from '../../../core/components/input-text.svelte';
  import { addressBook } from '../wallet';
  export let close;
  export let params;
@@ -95,11 +96,11 @@
 <div class="addressbook-new">
  <div class="group">
   <div class="bold">Alias:</div>
-  <input type="text" placeholder="Alias" bind:value={alias} bind:this={aliasElement} on:keydown={keyEnter} />
+  <InputText placeholder="Alias" bind:value={alias} bind:this={aliasElement} on:keydown={keyEnter} />
  </div>
  <div class="group">
   <div class="bold">Address:</div>
-  <input type="text" placeholder="Address" bind:value={address} on:keydown={keyEnter} />
+  <InputText placeholder="Address" bind:value={address} on:keydown={keyEnter} />
  </div>
  {#if error}
   <div class="error">

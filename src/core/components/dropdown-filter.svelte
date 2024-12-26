@@ -1,4 +1,5 @@
 <script>
+ import InputText from './input-text.svelte';
  export let options = [];
  export let selected = '';
  let filteredOptions = options;
@@ -47,7 +48,7 @@
   position: relative;
   max-width: 200px;
  }
-
+ /*
  input {
   width: 100%;
   padding: 5px;
@@ -57,7 +58,7 @@
   border-radius: 10px;
   box-sizing: border-box;
  }
-
+*/
  .options {
   position: absolute;
   border: 1px solid #000;
@@ -113,7 +114,7 @@
    </div>
   </div>
  {:else}
-  <input type="text" bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
+  <InputText bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
   {#if showOptions}
    <div class="options">
     {#each filteredOptions as option}

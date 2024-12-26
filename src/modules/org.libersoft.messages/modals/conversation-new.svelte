@@ -2,6 +2,7 @@
  import { onMount } from 'svelte';
  import { openNewConversation } from '../messages.js';
  import Button from '../../../core/components/button.svelte';
+ import InputText from '../../../core/components/input-text.svelte';
  export let close;
  let address;
 
@@ -39,6 +40,6 @@
 
 <div class="group">
  <div class="label">Address:</div>
- <div><input type="text" placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} /></div>
+ <div><InputText placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} /></div>
  <Button on:click={clickOpen}>Open</Button>
 </div>

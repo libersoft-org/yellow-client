@@ -130,13 +130,7 @@
   padding-left: 5px;
   font-weight: bold;
  }
- /*
- .form .group input {
-  padding: 10px;
-  border: 1px solid #888;
-  border-radius: 10px;
- }
-*/
+
  .form .error {
   display: flex;
   gap: 5px;

@@ -1,5 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
+ import InputText from '../../../core/components/input-text.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import DropdownFilter from '../../../core/components/dropdown-filter.svelte';
  import SendModal from '../modals/send.svelte';
@@ -8,7 +9,7 @@
  import { parseUnits } from 'ethers';
 
  let currency = 'kETH';
- let address = '0xEF017eD170f0Ec1f6C42f7A1bEFf133C261C1573'; // 'to do: "ENS name"';
+ let address = '0xEF017eD170f0Ec1f6C42f7A1bEFf133C261C1573'; // TODO: "ENS name"';
  let amount = 0.001;
  let fee = 0.001;
 
@@ -99,20 +100,19 @@
 <div class="send">
  <div class="group">
   <div class="label">Send to:</div>
-  <div class="input"><input type="text" bind:value={address} /></div>
+  <div class="input"><InputText bind:value={address} /></div>
  </div>
  <div class="group">
   <div class="label">Currency:</div>
   <div class="input"><DropdownFilter options={$currencies} bind:selected={currency} /></div>
  </div>
-
  <div class="group">
   <div class="label">Amount:</div>
-  <div class="input"><input type="text" bind:value={amount} /></div>
+  <div class="input"><InputText bind:value={amount} /></div>
  </div>
  <div class="group">
   <div class="label">Max transaction fee:</div>
-  <div class="input"><input type="text" bind:value={fee} /></div>
+  <div class="input"><InputText bind:value={fee} /></div>
   <div class="error">{error}</div>
  </div>
  <Button text="Send" on:click={send} />
