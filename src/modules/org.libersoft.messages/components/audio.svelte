@@ -1,4 +1,5 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
  import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
 
@@ -40,16 +41,7 @@
  });
 
  function clickPlay() {
-  if (wavesurfer) {
-   wavesurfer.playPause();
-  }
- }
-
- function keyPlay(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickPlay();
-  }
+  if (wavesurfer) wavesurfer.playPause();
  }
 
  function formatTime(seconds) {
@@ -106,9 +98,11 @@
 
 <div class="voice-message">
  <div class="player">
-  <div class="play" role="button" tabindex="0" on:click={clickPlay} on:keydown={keyPlay}>
-   <img src="modules/org.libersoft.messages/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
-  </div>
+  <BaseButton onClick={clickPlay}>
+   <div class="play">
+    <img src="modules/org.libersoft.messages/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
+   </div>
+  </BaseButton>
   <div class="wave" bind:this={waveRef}></div>
  </div>
  <div class="time">{time ? time : '00:00'} / {duration}</div>
