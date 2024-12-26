@@ -1,7 +1,6 @@
 <script>
  export let onClick;
  export let title = '';
- export let hiddenOnDesktop = false;
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
