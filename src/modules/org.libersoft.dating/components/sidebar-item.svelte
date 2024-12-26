@@ -1,14 +1,8 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
  export let img = null;
  export let label = '';
  export let onClick;
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   dispatch('click');
-  }
- }
 </script>
 
 <style>
@@ -20,7 +14,6 @@
   padding: 10px;
   background-color: #fffcf0;
   border-bottom: 1px solid #dd9;
-  cursor: pointer;
  }
 
  .item .image {
@@ -29,9 +22,11 @@
  }
 </style>
 
-<div class="item" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>
- {#if img}
-  <div class="image"><img src="modules/org.libersoft.dating/img/{img}" alt={label} /></div>
- {/if}
- <div>{label}</div>
-</div>
+<BaseButton {onClick}>
+ <div class="item">
+  {#if img}
+   <div class="image"><img src="modules/org.libersoft.dating/img/{img}" alt={label} /></div>
+  {/if}
+  <div>{label}</div>
+ </div>
+</BaseButton>
