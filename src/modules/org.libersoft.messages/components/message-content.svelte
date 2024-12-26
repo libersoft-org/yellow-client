@@ -1,6 +1,6 @@
 <script>
  import { mount, onMount } from 'svelte';
- import { componentMap } from './expressions';
+ import { componentMap } from '../expressions.ts';
  import MessageContentHelper from './message-content-helper.svelte';
  export let node; // Accept a DOM node (DocumentFragment, Element, or Text)
  export let container; // Reference for appending dynamically created elements
