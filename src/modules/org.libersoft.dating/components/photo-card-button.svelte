@@ -1,13 +1,7 @@
 <script>
- export let onClick;
+ import BaseButton from '../../../core/components/base-button.svelte';
  export let content;
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   dispatch('click');
-  }
- }
+ export let onClick;
 </script>
 
 <style>
@@ -19,8 +13,9 @@
   border: 1px solid #000;
   border-radius: 50%;
   box-shadow: var(--shadow);
-  cursor: pointer;
  }
 </style>
 
-<div class="photo-card-button" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>{content}</div>
+<BaseButton {onClick}>
+ <div class="photo-card-button">{content}</div>
+</BaseButton>
