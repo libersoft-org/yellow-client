@@ -29,9 +29,9 @@
 
 <div class="settings">
  <div class="sections">
-  <Section label="General" active={section === 'general'} on:click={() => setSection('general')} />
-  <Section label="Networks" active={section === 'networks'} on:click={() => setSection('networks')} />
-  <Section label="Wallets" active={section === 'wallets'} on:click={() => setSection('wallets')} />
+  <Section label="General" active={section === 'general'} onClick={() => setSection('general')} />
+  <Section label="Networks" active={section === 'networks'} onClick={() => setSection('networks')} />
+  <Section label="Wallets" active={section === 'wallets'} onClick={() => setSection('wallets')} />
  </div>
  {#if section}
   {#if section === 'general'}
