@@ -75,6 +75,6 @@
    {/each}
   </div>
  </div>
- <ScrollButton visible={scrollButtonVisible} direction={true} right="80px" bottom="70px" on:click={scrollToTop} />
+ <ScrollButton visible={scrollButtonVisible} direction={true} right="80px" bottom="70px" onClick={scrollToTop} />
  <Modal title="New Conversation" body={ModalConversationNew} bind:show={showNewConversationModal} />
 {/if}

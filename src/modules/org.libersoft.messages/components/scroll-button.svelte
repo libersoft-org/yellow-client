@@ -1,20 +1,13 @@
 <script>
- import { createEventDispatcher, onMount } from 'svelte';
+ import { onMount } from 'svelte';
+ import BaseButton from '../../../core/components/base-button.svelte';
  export let visible = true;
  export let direction = false;
  export let left;
  export let right;
  export let top;
  export let bottom;
- const dispatch = createEventDispatcher();
  let size = 30;
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   dispatch('click');
-  }
- }
 </script>
 
 <style>
@@ -43,7 +36,9 @@
 </style>
 
 {#if visible}
- <div class="scroll-down" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
-  <img src="img/caret-{direction ? 'up' : 'down'}-gray.svg" alt={direction ? '˄' : '˅'} />
- </div>
+ <BaseButton {onClick}>
+  <div class="scroll-down" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}">
+   <img src="img/caret-{direction ? 'up' : 'down'}-gray.svg" alt={direction ? '˄' : '˅'} />
+  </div>
+ </BaseButton>
 {/if}

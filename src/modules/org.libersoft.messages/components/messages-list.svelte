@@ -381,7 +381,7 @@
   {/if}
  {/each}
  <div bind:this={anchorElement}></div>
- <ScrollButton visible={scrollButtonVisible} right="20px" bottom="70px" on:click={scrollToBottom} />
+ <ScrollButton visible={scrollButtonVisible} right="20px" bottom="70px" onClick={scrollToBottom} />
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
