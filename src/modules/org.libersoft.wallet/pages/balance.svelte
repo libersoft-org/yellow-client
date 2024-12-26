@@ -33,6 +33,6 @@
 
 <div class="items">
  {#each tokens as t, index}
-  <Item className={index % 2 === 0 ? 'even' : 'odd'} icon={t.icon} symbol={t.symbol} amount={t.amount} on:click={() => selectToken(index)} />
+  <Item className={index % 2 === 0 ? 'even' : 'odd'} icon={t.icon} symbol={t.symbol} amount={t.amount} onClick={() => selectToken(index)} />
  {/each}
 </div>

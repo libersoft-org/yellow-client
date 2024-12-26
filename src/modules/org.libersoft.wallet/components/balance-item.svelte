@@ -1,17 +1,10 @@
 <script>
- import { createEventDispatcher } from 'svelte';
+ import BaseButton from '../../../core/components/base-button.svelte';
  export let icon;
  export let symbol;
  export let amount;
  export let className = '';
- const dispatch = createEventDispatcher();
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   dispatch('click');
-  }
- }
+ export let onClick;
 </script>
 
 <style>
@@ -61,13 +54,15 @@
  }
 </style>
 
-<div class="item {className}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- {#if icon}
-  <div class="icon"><img src={icon} alt={symbol} /></div>
- {/if}
- <div class="symbol">{symbol}</div>
- <div class="amount">
-  <div class="crypto">{amount.crypto} {symbol}</div>
-  <div class="fiat">({amount.fiat} USD)</div>
+<BaseButton {onClick}>
+ <div class="item {className}">
+  {#if icon}
+   <div class="icon"><img src={icon} alt={symbol} /></div>
+  {/if}
+  <div class="symbol">{symbol}</div>
+  <div class="amount">
+   <div class="crypto">{amount.crypto} {symbol}</div>
+   <div class="fiat">({amount.fiat} USD)</div>
+  </div>
  </div>
-</div>
+</BaseButton>
