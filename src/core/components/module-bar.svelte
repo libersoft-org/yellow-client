@@ -1,6 +1,7 @@
 <script>
  import { active_account, order, getModuleDecls } from '../core.js';
  import { get } from 'svelte/store';
+ import BaseButton from './base-button.svelte';
  import Icon from './icon.svelte';
  export let onSelectModule;
  let module_data;
@@ -34,13 +35,6 @@
 
  function clickExpand() {
   expanded = !expanded;
- }
-
- function keyExpand(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickExpand();
-  }
  }
 </script>
 
@@ -86,7 +80,9 @@
    <Icon img="img/modules/{decl.id}.svg" alt={decl.name} size="30" onClick={() => clickSetModule(decl.id)} />
   {/each}
  </div>
- <div class="dropdown" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}>
-  <img src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
- </div>
+ <BaseButton onClick={clickExpand}>
+  <div class="dropdown">
+   <img src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
+  </div>
+ </BaseButton>
 </div>
