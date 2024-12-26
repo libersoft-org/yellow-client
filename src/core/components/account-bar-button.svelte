@@ -1,14 +1,8 @@
 <script>
+ import BaseButton from './base-button.svelte';
  export let img;
  export let title = '';
- export let click;
-
- function handleKey(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   click();
-  }
- }
+ export let onClick;
 </script>
 
 <style>
@@ -28,9 +22,11 @@
  }
 </style>
 
-<div class="accounts-button" role="button" tabindex="0" on:click={click} on:keydown={handleKey}>
- {#if img}
-  <div><img src={img} alt={title} /></div>
- {/if}
- <div>{title}</div>
-</div>
+<BaseButton {onClick}>
+ <div class="accounts-button">
+  {#if img}
+   <div><img src={img} alt={title} /></div>
+  {/if}
+  <div>{title}</div>
+ </div>
+</BaseButton>

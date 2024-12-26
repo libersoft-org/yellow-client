@@ -123,7 +123,7 @@
    {#each $accounts as a (get(a).id)}
     <AccountBarItem {a} {clickSelectAccount} />
    {/each}
-   <AccountBarButton img="img/accounts.svg" title="Account management" click={clickAccountManagement} />
+   <AccountBarButton img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
   </div>
  {/if}
 </div>
