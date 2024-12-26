@@ -1,5 +1,6 @@
 <script>
  import { conversationsArray, selectConversation } from '../messages.js';
+ import BaseButton from '../../../core/components/base-button.svelte';
  import ScrollButton from '../components/scroll-button.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
@@ -10,13 +11,6 @@
 
  function clickNew() {
   showNewConversationModal = true;
- }
-
- function keyNew() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickNew();
-  }
  }
 
  function clickItem(conversation) {
@@ -63,10 +57,12 @@
 
 {#if $conversationsArray != null}
  <div class="conversations">
-  <div class="new" role="button" tabindex="0" on:click={clickNew} on:keydown={keyNew}>
-   <img src="img/add.svg" alt="New conversation" />
-   <div>New conversation</div>
-  </div>
+  <BaseButton onClick={clickNew}>
+   <div class="new">
+    <img src="img/add.svg" alt="New conversation" />
+    <div>New conversation</div>
+   </div>
+  </BaseButton>
   <div class="items">
    {#each $conversationsArray as c (c.address)}
     {#key c.address}
