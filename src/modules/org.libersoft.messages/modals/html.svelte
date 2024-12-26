@@ -13,12 +13,15 @@
  let elText;
  let text = '';
  let activeTab = 'editor';
+ let tabProps;
  const tabs = {
   editor: Editor,
   preview: Preview,
  };
 
  function setTab(e, name) {
+  if (name === 'editor') tabProps = { elText, text };
+  else if (name === 'preview') tabProps = { messageContent };
   activeTab = name;
  }
 
@@ -94,7 +97,7 @@
   </Tabs>
  </div>
  <div class="container">
-  <svelte:component this={tabs[activeTab]} />
+  <svelte:component this={tabs[activeTab]} {...tabProps} />
  </div>
  <hr style="width: 100%" />
  <div class="sides">

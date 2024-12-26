@@ -4,7 +4,7 @@
  import Spinner from '../../../core/components/spinner.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
- import ModalStickersetDetails from '../modals/modal-stickerset-details.svelte';
+ import ModalStickersetDetails from '../modals/stickerset-details.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import ScrollButton from './scroll-button.svelte';

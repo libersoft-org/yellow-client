@@ -3,8 +3,8 @@
  import Button from '../components/button.svelte';
  import ActionItem from '../components/icon.svelte';
  import Modal from '../components/modal.svelte';
- import ModalAccountsAddEdit from '../modals/modal-accounts-add-edit.svelte';
- import ModalAccountsDel from '../modals/modal-accounts-del.svelte';
+ import ModalAccountsAddEdit from '../modals/accounts-add-edit.svelte';
+ import ModalAccountsDel from '../modals/accounts-del.svelte';
  import { get } from 'svelte/store';
  import AccountStatusIconAndText from './AccountStatusIconAndText.svelte';
  let showAddEditAccountModal = false;

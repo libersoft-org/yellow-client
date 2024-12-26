@@ -5,7 +5,7 @@
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
  import Modal from '../../../core/components/modal.svelte';
- import ModalHTML from '../modals/modal-html.svelte';
+ import ModalHTML from '../modals/html.svelte';
  import Expressions from './expressions.svelte';
  let elAttachment;
  let elExpressions;

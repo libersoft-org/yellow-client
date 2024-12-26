@@ -2,7 +2,7 @@
  import { conversationsArray, selectConversation } from '../messages.js';
  import ScrollButton from '../components/scroll-button.svelte';
  import Modal from '../../../core/components/modal.svelte';
- import ModalConversationNew from '../modals/modal-conversation-new.svelte';
+ import ModalConversationNew from '../modals/conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
  let showNewConversationModal = false;
  let scrollButtonVisible = true;
