@@ -1,28 +1,15 @@
 <script>
  import { hideSidebarMobile } from '../../../core/core.js';
  import { addressBook } from '../wallet.ts';
+ import BaseButton from '../../../core/components/base-button.svelte';
 
  function clickShowWallet() {
   hideSidebarMobile.set(true);
  }
 
- function keyShowWallet() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickShowWallet();
-  }
- }
-
  function clickItem(address) {
   console.log('SIDEBAR ADDRESS ITEM:', address);
   //hideSidebarMobile.set(true);
- }
-
- function keyItem(address) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickItem(address);
-  }
  }
 </script>
 
@@ -74,15 +61,19 @@
  }
 </style>
 
-<div class="content-button" role="button" tabindex="0" on:click={clickShowWallet} on:keydown={keyShowWallet}>Show wallet</div>
+<BaseButton onClick={clickShowWallet}>
+ <div class="content-button">Show wallet</div>
+</BaseButton>
 <div class="addressbook">
  {#if $addressBook.length > 0}
   <div class="items">
    {#each $addressBook as a, index}
-    <div class="item {index % 2 === 0 ? 'even' : 'odd'}" role="button" tabindex="0" on:click={() => clickItem(a.address)} on:keydown={() => keyItem(a.address)}>
-     <div class="alias">{a.alias}</div>
-     <div class="address">{a.address}</div>
-    </div>
+    <BaseButton onClick={() => clickItem(a.address)}>
+     <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
+      <div class="alias">{a.alias}</div>
+      <div class="address">{a.address}</div>
+     </div>
+    </BaseButton>
    {/each}
   </div>
  {/if}
