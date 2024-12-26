@@ -1,17 +1,11 @@
 <script>
+ import BaseButton from '../components/base-button.svelte';
  import Button from '../components/button.svelte';
  import { product, version, link } from '../core.js';
  let notificationPermission = Notification.permission;
 
  function clickLogo() {
   window.open(link, '_blank');
- }
-
- function keyLogo() {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickLogo();
-  }
  }
 
  function clickRequestNotificationPermission() {
@@ -38,7 +32,6 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  cursor: pointer;
  }
 
  .welcome .logo img {
@@ -71,10 +64,12 @@
 </style>
 
 <div class="welcome">
- <div class="logo" role="button" tabindex="0" on:click={clickLogo} on:keydown={keyLogo}>
-  <img src="img/logo.svg" alt={product} />
-  <div class="product">{product}</div>
- </div>
+ <BaseButton onClick={clickLogo}>
+  <div class="logo">
+   <img src="img/logo.svg" alt={product} />
+   <div class="product">{product}</div>
+  </div>
+ </BaseButton>
  <div class="version">
   <div>Version:</div>
   <div class="bold">{version}</div>
