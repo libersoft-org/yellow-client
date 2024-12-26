@@ -1,4 +1,5 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
  import StickerSetPart from './stickerset-part.svelte';
  export let stickerset = {};
  export let showall = false;
@@ -21,22 +22,8 @@
   console.log(stickerset);
  }
 
- function keyExpand(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickExpand();
-  }
- }
-
  function clickAdd() {
   console.log('Add to favourites');
- }
-
- function keyAdd(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickAdd();
-  }
  }
 </script>
 
@@ -105,9 +92,11 @@
  <div class="title-bar">
   <div class="row">
    <div class="label">{stickerset.name}</div>
-   <div class="icon" role="button" tabindex="0" on:click={clickAdd} on:keydown={keyAdd}>
-    <img src="img/add-black.svg" alt="Add to favourites" />
-   </div>
+   <BaseButton onClick={clickAdd}>
+    <div class="icon">
+     <img src="img/add-black.svg" alt="Add to favourites" />
+    </div>
+   </BaseButton>
   </div>
   <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
  </div>
@@ -121,8 +110,10 @@
   </div>
  {/if}
  {#if !showall}
-  <div class="more" role="button" tabindex="0" on:click={clickExpand} on:keydown={keyExpand}>
-   <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
-  </div>
+  <BaseButton onClick={clickExpand}>
+   <div class="more">
+    <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
+   </div>
+  </BaseButton>
  {/if}
 </div>
