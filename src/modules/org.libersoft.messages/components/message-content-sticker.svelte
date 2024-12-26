@@ -14,16 +14,8 @@
  }
 </script>
 
-<style>
- .clickable {
-  cursor: pointer;
- }
-</style>
-
 {#if v}
  <BaseButton onClick={handleClick}>
-  <div class={stickerset ? 'clickable' : ''}>
-   <Sticker file={v} />
-  </div>
+  <Sticker file={v} />
  </BaseButton>
 {/if}
