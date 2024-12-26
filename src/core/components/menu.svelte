@@ -1,32 +1,11 @@
 <script>
- /*import Core from '../core.js';*/
+ import BaseButton from './base-button.svelte';
  import Item from './menu-item.svelte';
  import { product, version, link } from '../core.js';
  export let showMenu = false;
 
- /*
- function logout() {
-  Core.hideSidebarMobile.set(false);
-  showMenu = false;
- }
- */
-
  function clickMenuClose() {
   showMenu = false;
- }
-
- function keyMenuClose(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickMenuClose();
-  }
- }
-
- function keyLogo(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   openPage(link);
-  }
  }
 
  function openPage(url) {
@@ -91,7 +70,6 @@
  .top .icon {
   display: flex;
   padding: 15px;
-  cursor: pointer;
  }
 
  .top .icon img {
@@ -116,7 +94,6 @@
   gap: 5px;
   font-size: 18px;
   font-weight: bold;
-  cursor: pointer;
  }
 
  .footer .logo img {
@@ -133,22 +110,28 @@
 </style>
 
 {#if showMenu}
- <div class="overlay open" role="none" on:click={clickMenuClose}></div>
+ <div class="overlay open" role="none" onclick={clickMenuClose}></div>
 {/if}
 <div class="menu {showMenu ? 'open' : ''}">
  <div>
   <div class="top">
-   <div class="icon" role="button" tabindex="0" on:click={clickMenuClose} on:keydown={keyMenuClose}><img src="img/close.svg" alt="X" /></div>
+   <BaseButton onClick={clickMenuClose}>
+    <div class="icon">
+     <img src="img/close.svg" alt="X" />
+    </div>
+   </BaseButton>
   </div>
-  <Item img="img/donate.svg" title="Donate" on:click={openPage('https://libersoft.org/donations')} />
-  <Item img="img/contact.svg" title="Contact developers" on:click={openPage('https://libersoft.org/contacts')} />
-  <Item img="img/settings.svg" title="Settings" on:click={clickSettings} />
+  <Item img="img/donate.svg" title="Donate" onClick={() => openPage('https://libersoft.org/donations')} />
+  <Item img="img/contact.svg" title="Contact developers" onClick={() => openPage('https://libersoft.org/contacts')} />
+  <Item img="img/settings.svg" title="Settings" onClick={clickSettings} />
  </div>
  <div class="footer">
-  <div class="logo" role="button" tabindex="0" on:click={openPage(link)} on:keydown={keyLogo}>
-   <div><img src="img/logo.svg" alt={product} /></div>
-   <div>{product}</div>
-  </div>
+  <BaseButton onClick={() => openPage(link)}>
+   <div class="logo">
+    <div><img src="img/logo.svg" alt={product} /></div>
+    <div>{product}</div>
+   </div>
+  </BaseButton>
   <div class="version">
    <div>Version:</div>
    <div class="bold">{version}</div>
