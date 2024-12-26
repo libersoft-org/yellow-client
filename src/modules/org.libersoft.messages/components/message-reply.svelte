@@ -1,16 +1,10 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
  export let name = '';
  export let text = '';
 
  function clickReply() {
   console.log('This will focus the original message');
- }
-
- function keyReply(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickReply();
-  }
  }
 </script>
 
@@ -37,7 +31,9 @@
  }
 </style>
 
-<div class="reply" role="button" tabindex="0" on:click={clickReply} on:keydown={keyReply}>
- <div class="name">{name}</div>
- <div class="text">{text}</div>
-</div>
+<BaseButton onClick={clickReply}>
+ <div class="reply">
+  <div class="name">{name}</div>
+  <div class="text">{text}</div>
+ </div>
+</BaseButton>
