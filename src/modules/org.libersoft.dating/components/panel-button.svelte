@@ -1,21 +1,14 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
  export let img;
  export let alt = '';
  export let hiddenOnDesktop = false;
  export let onClick;
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   onClick && onClick();
-  }
- }
 </script>
 
 <style>
  .button {
   display: flex;
-  cursor: pointer;
  }
 
  .button img {
@@ -31,7 +24,9 @@
 </style>
 
 {#if img}
- <div class="button {hiddenOnDesktop ? 'hidden' : ''}" role="button" tabindex="0" on:click={onClick} on:keydown={handleKeydown}>
-  <img src={img} {alt} />
- </div>
+ <BaseButton {onClick}>
+  <div class="button {hiddenOnDesktop ? 'hidden' : ''}">
+   <img src={img} {alt} />
+  </div>
+ </BaseButton>
 {/if}
