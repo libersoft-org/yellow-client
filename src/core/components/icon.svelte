@@ -1,24 +1,17 @@
 <script>
+ import BaseButton from './base-button.svelte';
  export let img;
  export let alt = '';
  export let size = 24;
  export let padding = 10;
- export let onClick;
  export let visibleOnMobile = true;
  export let visibleOnDesktop = true;
-
- function handleKey(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   onClick();
-  }
- }
+ export let onClick;
 </script>
 
 <style>
  .icon {
   padding: 10px;
-  cursor: pointer;
  }
 
  .icon img {
@@ -39,7 +32,9 @@
 </style>
 
 {#if img}
- <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;" role="button" tabindex="0" on:click={onClick} on:keydown={handleKey}>
-  <img style="width: {size}px; height: {size}px;" src={img} {alt} />
- </div>
+ <BaseButton {onClick}>
+  <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;">
+   <img style="width: {size}px; height: {size}px;" src={img} {alt} />
+  </div>
+ </BaseButton>
 {/if}
