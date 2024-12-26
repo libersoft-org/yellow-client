@@ -371,7 +371,7 @@ export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> 
   log: [],
  };
  wallets.update(w => {
-  wallet.name = 'My Yellow Wallet ' + (w.length + 1) + suffix;
+  wallet.name = 'My Wallet ' + (w.length + 1) + suffix;
   w.push(wallet);
   return w;
  });

@@ -23,7 +23,7 @@
  setContext('menus', menus);
  const wizardData = {
   steps: [
-   { title: 'Welcome to Yellow', component: WizardWelcomeStep1 },
+   { title: 'Welcome', component: WizardWelcomeStep1 },
    { title: 'Connect your account', component: WizardWelcomeStep2 },
    { title: 'All set!', component: WizardWelcomeStep3 },
   ],

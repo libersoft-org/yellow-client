@@ -1,6 +1,6 @@
 <script>
  import BaseButton from './base-button.svelte';
- import { debug } from '../core.js';
+ import { product, debug } from '../core.js';
  export let isMenuOpen;
 
  function handleClick() {
@@ -40,6 +40,6 @@
    <img src="img/menu.svg" alt="☰" />
   </div>
  </BaseButton>
- <div class="product">Yellow</div>
+ <div class="product">{product}</div>
  {#if $debug}(debug mode){/if}
 </div>

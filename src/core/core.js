@@ -8,13 +8,14 @@ export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
-export let debug = writable(import.meta.env.VITE_YELLOW_CLIENT_DEBUG || false);
+export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
 
 debug.subscribe(value => {
- console.log('YELLOW_CLIENT_DEBUG:', value);
+ console.log('CLIENT_DEBUG:', value);
 });
 
 export const product = 'Yellow';
+export const motto = 'Experience the freedom of decentralized world';
 export const version = '0.0.1';
 export const link = 'https://yellow.libersoft.org';
 
@@ -22,7 +23,7 @@ export const link = 'https://yellow.libersoft.org';
 let module_decls = {};
 let global_socket_id = 0;
 
-const ping_interval = import.meta.env.VITE_YELLOW_PING_INTERVAL || 10000;
+const ping_interval = import.meta.env.VITE_PING_INTERVAL || 10000;
 
 export function getModuleDecls() {
  //console.log('GET MODULE DECLS:', module_decls);

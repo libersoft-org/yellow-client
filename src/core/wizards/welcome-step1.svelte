@@ -1,3 +1,7 @@
+<script>
+ import { product, motto } from '../core.js';
+</script>
+
 <style>
  .title {
   font-size: 25px;
@@ -41,7 +45,7 @@
  }
 </style>
 
-<div class="title">Welcome to Yellow</div>
-<div class="motto">Experience the freedom of decentralized world</div>
+<div class="title">Welcome to {product}</div>
+<div class="motto">{motto}</div>
 <div class="logo"><img src="img/logo.svg" alt="logo" /></div>
 <div class="description">This wizard will help you to set up everything you need to get started.</div>
