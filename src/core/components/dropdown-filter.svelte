@@ -1,4 +1,5 @@
 <script>
+ import BaseButton from './base-button.svelte';
  import InputText from './input-text.svelte';
  export let options = [];
  export let selected = '';
@@ -76,7 +77,6 @@
 
  .option:hover {
   background-color: #eee;
-  cursor: pointer;
  }
 
  .selected {
@@ -109,16 +109,20 @@
  {#if selected}
   <div class="selected">
    <div class="text">{selected}</div>
-   <div class="clear" role="button" tabindex="0" on:click={clickClearSelection} on:keydown={keyClearSelection}>
-    <img src="img/close-black.svg" alt="X" />
-   </div>
+   <BaseButton onClick={clickClearSelection}>
+    <div class="clear">
+     <img src="img/close-black.svg" alt="X" />
+    </div>
+   </BaseButton>
   </div>
  {:else}
   <InputText bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
   {#if showOptions}
    <div class="options">
     {#each filteredOptions as option}
-     <div class="option" role="button" tabindex="0" on:click={() => clickSelectOption(option)} on:keydown={event => keySelectOption(option, event)}>{option}</div>
+     <BaseButton onClick={() => clickSelectOption(option)}>
+      <div class="option">{option}</div>
+     </BaseButton>
     {/each}
    </div>
   {/if}
