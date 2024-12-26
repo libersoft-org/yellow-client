@@ -1,5 +1,6 @@
 <script>
  import { setContext, tick } from 'svelte';
+ import BaseButton from './base-button.svelte';
  export let show = false;
  export let params = null;
  export let title = null;
@@ -47,13 +48,6 @@
 
  function clickCloseModal() {
   show = false;
- }
-
- function keyCloseModal(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickCloseModal();
-  }
  }
 
  function onkeydown(event) {
@@ -148,9 +142,11 @@
  <div class="modal" role="none" style="top: {top}px; left: {left}px; max-width: {width}; max-height: {height};" bind:this={modalEl} on:keydown={onkeydown}>
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
-   <div class="close" role="button" tabindex="0" on:click={clickCloseModal} on:keydown={keyCloseModal}>
-    <img src="img/close-black.svg" alt="X" />
-   </div>
+   <BaseButton onClick={clickCloseModal}>
+    <div class="close">
+     <img src="img/close-black.svg" alt="X" />
+    </div>
+   </BaseButton>
   </div>
   <div class="body">
    {#if params}
