@@ -71,14 +71,6 @@
 </script>
 
 <style>
- input {
-  padding: 5px;
-  font: inherit;
-  border: 1px solid #888;
-  border-radius: 10px;
-  background-color: #fff;
- }
-
  .send {
   display: flex;
   flex-direction: column;

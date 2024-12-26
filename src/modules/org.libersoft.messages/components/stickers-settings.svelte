@@ -16,14 +16,6 @@
  .group .label {
   font-weight: bold;
  }
-
- .group input {
-  width: 10px;
-  padding: 10px;
-  border: 1px solid #000;
-  flex-grow: 1;
-  border-radius: 10px;
- }
 </style>
 
 <div class="group">

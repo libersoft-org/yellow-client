@@ -34,14 +34,6 @@
   gap: 10px;
  }
 
- .controls input {
-  padding: 10px;
-  border: 1px solid #888;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: inherit;
- }
-
  .container {
   display: flex;
   flex-wrap: wrap;

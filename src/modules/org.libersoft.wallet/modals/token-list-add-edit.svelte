@@ -54,10 +54,6 @@
   font-weight: bold;
   margin-left: 5px;
  }
-
- input {
-  padding: 5px;
- }
 </style>
 
 <div class="group">

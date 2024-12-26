@@ -54,10 +54,6 @@
   gap: 10px;
  }
 
- .modal-edit-network input {
-  padding: 5px;
- }
-
  .modal-edit-network .buttons {
   display: flex;
   gap: 10px;
