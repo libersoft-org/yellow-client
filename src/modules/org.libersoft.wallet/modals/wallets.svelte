@@ -1,5 +1,6 @@
 <script>
  import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
+ import BaseButton from '../../../core/components/base-button.svelte';
  import Accordion from '../../../core/components/accordion.svelte';
  import InputText from '../../../core/components/input-text.svelte';
  export let close;
@@ -10,13 +11,6 @@
   console.log('SETTING ADDRESS', wallet, address);
   selectAddress(wallet, address);
   close();
- }
-
- function keySelectAddress(wallet, address) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   clickSelectAddress(wallet, address);
-  }
  }
 </script>
 
@@ -52,11 +46,13 @@
  <table>
   <tbody>
    {#each walletAddresses(wallet) as address, index}
-    <tr class={index % 2 === 0 ? 'even' : 'odd'} on:click={() => clickSelectAddress(wallet, address)} on:keydown={() => keySelectAddress(wallet, address)}>
-     <td class="center">{address.index}</td>
-     <td>{address.name}</td>
-     <td>{address.address}</td>
-    </tr>
+    <BaseButton onClick={() => clickSelectAddress(wallet, address)}>
+     <tr class={index % 2 === 0 ? 'even' : 'odd'}>
+      <td class="center">{address.index}</td>
+      <td>{address.name}</td>
+      <td>{address.address}</td>
+     </tr>
+    </BaseButton>
    {/each}
   </tbody>
  </table>
