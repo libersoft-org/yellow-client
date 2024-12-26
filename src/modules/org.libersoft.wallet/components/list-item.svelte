@@ -1,16 +1,9 @@
 <script>
- import { createEventDispatcher } from 'svelte';
+ import BaseButton from '../../../core/components/base-button.svelte';
  export let item = '';
  export let icon = '';
  export let className = '';
- const dispatch = createEventDispatcher();
-
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   dispatch('click');
-  }
- }
+ export let onClick;
 </script>
 
 <style>
@@ -40,9 +33,11 @@
  }
 </style>
 
-<div class="item {className}" role="button" tabindex="0" on:click on:keydown={handleKeydown}>
- {#if icon}
-  <div><img src={icon} alt={item} /></div>
- {/if}
- <div>{item}</div>
-</div>
+<BaseButton {onClick}>
+ <div class="item {className}">
+  {#if icon}
+   <div><img src={icon} alt={item} /></div>
+  {/if}
+  <div>{item}</div>
+ </div>
+</BaseButton>
