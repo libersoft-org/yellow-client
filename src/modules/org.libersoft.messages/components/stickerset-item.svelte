@@ -1,4 +1,5 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
  import Sticker from './sticker.svelte';
  import { getContext } from 'svelte';
  export let sticker;
@@ -17,18 +18,11 @@
   menu.close();
  }
 
- function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-   event.preventDefault();
-   handleClick();
-  }
- }
-
  function htmlEscape(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
  }
 
- function mousedown(event) {
+ function onMousedown(event) {
   console.log('sticker-set-item mousedown');
   event.preventDefault();
   event.stopPropagation();
@@ -56,7 +50,9 @@
 </style>
 
 {#if file}
- <div class="sticker" style="max-width: {size}px;" role="button" tabindex="0" on:mousedown={mousedown} on:click={handleClick} on:keydown={handleKeydown}>
-  <Sticker {size} {file} play_on_start={false} />
- </div>
+ <BaseButton onClick={handleClick} {onMousedown}>
+  <div class="sticker" style="max-width: {size}px;">
+   <Sticker {size} {file} play_on_start={false} />
+  </div>
+ </BaseButton>
 {/if}

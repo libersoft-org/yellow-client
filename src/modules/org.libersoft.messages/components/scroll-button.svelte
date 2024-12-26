@@ -7,6 +7,7 @@
  export let right;
  export let top;
  export let bottom;
+ export let onClick;
  let size = 30;
 </script>
 
