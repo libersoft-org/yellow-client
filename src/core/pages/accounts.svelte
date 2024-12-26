@@ -6,7 +6,7 @@
  import ModalAccountsAddEdit from '../modals/accounts-add-edit.svelte';
  import ModalAccountsDel from '../modals/accounts-del.svelte';
  import { get } from 'svelte/store';
- import AccountStatusIconAndText from './AccountStatusIconAndText.svelte';
+ import AccountStatusIconAndText from '../components/account-status-icon-and-text.svelte';
  let showAddEditAccountModal = false;
  let showDelAccountModal = false;
  let idItem = null;

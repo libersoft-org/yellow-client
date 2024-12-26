@@ -3,14 +3,13 @@
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts } from '../core.js';
  import Button from '../components/button.svelte';
+ import InputText from '../components/input-text.svelte';
  import { derived, get, writable } from 'svelte/store';
- import AccountStatusIconAndText from '../pages/AccountStatusIconAndText.svelte';
-
+ import AccountStatusIconAndText from '../components/account-status-icon-and-text.svelte';
  export let close;
  export let params;
  export let isInWelcomeWizard = false;
  export let save_id;
-
  let titleElem;
  let error;
  let credentials_address;
@@ -20,9 +19,7 @@
  let config_title;
  let acc;
  let retry_nonce = 0;
-
  let wizard = getContext('wizard');
-
  let account_id_store = writable(null);
  $: account_id_store.set(params.id);
 
@@ -37,9 +34,7 @@
  });
 
  let account = derived(account_store, ($account_store, set) => {
-  if (!$account_store) {
-   return set(null);
-  }
+  if (!$account_store) return set(null);
   const unsubscribe = $account_store.subscribe(account => {
    console.log('ModalAccountsAddEdit $ACCOUNT-STORE-EMITTED', account);
    set(account);
@@ -59,7 +54,6 @@
    let acc = findAccountConfig(params.id);
    console.log('acc', acc);
    let credentials = acc.credentials;
-
    credentials_address = credentials.address;
    credentials_server = credentials.server;
    credentials_password = credentials.password;
@@ -89,7 +83,6 @@
    error = 'Address is required';
    return false;
   }
-
   return true;
  }
 
@@ -137,13 +130,13 @@
   padding-left: 5px;
   font-weight: bold;
  }
-
+ /*
  .form .group input {
   padding: 10px;
-  border: 1px solid #999;
+  border: 1px solid #888;
   border-radius: 10px;
  }
-
+*/
  .form .error {
   display: flex;
   gap: 5px;
@@ -154,32 +147,33 @@
 
  .form .status {
   display: flex;
+  align-items: center;
   gap: 5px;
  }
 </style>
 
 <div class="form">
  <div class="group">
-  <span><span class="label">Title:</span></span>
-  <input type="text" bind:value={config_title} on:keydown={keyEnter} bind:this={titleElem} />
+  <span class="label">Title:</span>
+  <InputText bind:value={config_title} on:keydown={keyEnter} bind:this={titleElem} />
  </div>
  <div class="group">
   <div class="label">Server:</div>
-  <input type="text" placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} />
+  <InputText placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} />
  </div>
  <div class="group">
   <div class="label">Address:</div>
-  <input type="text" placeholder="user@domain.tld" bind:value={credentials_address} on:keydown={keyEnter} />
+  <InputText placeholder="user@domain.tld" bind:value={credentials_address} on:keydown={keyEnter} />
  </div>
  <div class="group">
   <div class="label">Password:</div>
-  <input type="password" placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter} />
+  <InputText password={true} placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter} />
  </div>
  {#if !isInWelcomeWizard}
   <div class="group">
    <div class="label">
-    Enabled:
-    <input type="checkbox" bind:checked={config_enabled} />
+    <span>Enabled:</span>
+    <span><input type="checkbox" bind:checked={config_enabled} /></span>
    </div>
   </div>
  {/if}
