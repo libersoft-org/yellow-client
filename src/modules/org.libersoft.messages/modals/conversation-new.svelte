@@ -5,12 +5,14 @@
  import InputText from '../../../core/components/input-text.svelte';
  export let close;
  let address;
+ let value;
 
  onMount(() => address.focus());
 
  function clickOpen() {
-  if (address.value) {
-   openNewConversation(address.value);
+  console.log('clickOpen(); address.value:', address.value);
+  if (value) {
+   openNewConversation(value);
    console.log('close();');
    close();
   }
@@ -40,6 +42,6 @@
 
 <div class="group">
  <div class="label">Address:</div>
- <div><InputText placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} /></div>
+ <div><InputText placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} bind:value /></div>
  <Button text="Open" onClick={clickOpen} />
 </div>

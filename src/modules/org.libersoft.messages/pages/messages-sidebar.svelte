@@ -5,9 +5,30 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
+ import { tick } from 'svelte';
  let showNewConversationModal = false;
  let scrollButtonVisible = true;
- //$: console.log('conversations-list.svelte: conversationsArray: ', $conversationsArray);
+
+ let elItems;
+ let windowInnerWidth;
+ let windowInnerHeight;
+ let scrolled;
+
+ $: scrollButtonVisible = !scrolled;
+ $: updateWindowSize(windowInnerWidth, windowInnerHeight);
+
+ $: scrollButtonVisible = scrolled;
+
+ function parseScroll(event) {
+  scrolled = elItems?.scrollTop > 0;
+  console.log('elItems?.scrollTop:', elItems?.scrollTop);
+ }
+
+ async function updateWindowSize(width, height) {
+  await tick();
+  console.log('updateWindowSize width:', width, 'height:', height);
+  parseScroll();
+ }
 
  function clickNew() {
   showNewConversationModal = true;
@@ -54,6 +75,8 @@
  }
 </style>
 
+<svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
+
 {#if $conversationsArray != null}
  <div class="conversations">
   <BaseButton onClick={clickNew}>
@@ -62,14 +85,16 @@
     <div>New conversation</div>
    </div>
   </BaseButton>
-  <div class="items">
+  <div class="items" bind:this={elItems}>
    {#each $conversationsArray as c (c.address)}
     {#key c.address}
      <ConversationListItem {c} {clickItem} />
     {/key}
    {/each}
   </div>
+  {#if $conversationsArray.length > 1}
+   <ScrollButton visible={scrollButtonVisible} direction={true} right="8px" bottom="7px" onClick={scrollToTop} />
+  {/if}
  </div>
- <ScrollButton visible={scrollButtonVisible} direction={true} right="80px" bottom="70px" onClick={scrollToTop} />
  <Modal title="New Conversation" body={ModalConversationNew} bind:show={showNewConversationModal} />
 {/if}

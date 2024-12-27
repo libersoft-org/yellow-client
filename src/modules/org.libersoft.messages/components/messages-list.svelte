@@ -68,7 +68,7 @@
 
  function checkIfScrolledToBottom(div) {
   const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
-  //console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
+  console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
   return result;
  }
 
@@ -76,13 +76,12 @@
  let windowInnerWidth;
  let windowInnerHeight;
 
- function parseScroll(event) {
-  //console.log('parseScroll');
-  scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
- }
-
  $: scrollButtonVisible = !scrolledToBottom;
  $: updateWindowSize(windowInnerWidth, windowInnerHeight);
+
+ function parseScroll(event) {
+  scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
+ }
 
  function updateWindowSize(width, height) {
   console.log('updateWindowSize width:', width, 'height:', height);
@@ -91,7 +90,7 @@
 
  beforeUpdate(() => {
   if (!messages_elem) return;
-  //console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
  });
 
  afterUpdate(async () => {
@@ -294,13 +293,19 @@
   flex-grow: 1;
  }
 
- .messages {
+ .messages-fixed {
+  overflow: hidden;
+  flex-grow: 1;
   position: relative;
+ }
+
+ .messages {
   display: flex;
   margin-top: auto;
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
+  max-height: 100%; /* Ensure the inner div has a defined height */
  }
 
  .unread {
@@ -358,30 +363,32 @@
 
 <svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
 
-<div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
- <div class="spacer"></div>
- {#each itemsArray as m (m.uid)}
-  {#if $debug}
-   {JSON.stringify(m, null, 2)}
-  {/if}
-  {#if m.type === 'no_messages'}
-   <div>No messages</div>
-  {:else if m.type === 'initial_loading_placeholder'}
-   <Spinner />
-  {:else if m.type === 'hole'}
-   <Loader loader={m.top} />
-   <div class="hole">{m.uid}</div>
-   <Loader loader={m.bottom} />
-  {:else if m.type === 'loader'}
-   <Loader loader={m} />
-  {:else if m.type === 'unseen_marker'}
-   <div class="unread">Unread messages</div>
-  {:else}
-   <Message message={m} elContainer={messages_elem} />
-  {/if}
- {/each}
- <div bind:this={anchorElement}></div>
- <ScrollButton visible={scrollButtonVisible} right="20px" bottom="70px" onClick={scrollToBottom} />
+<div class="messages-fixed">
+ <div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
+  <div class="spacer"></div>
+  {#each itemsArray as m (m.uid)}
+   {#if $debug}
+    {JSON.stringify(m, null, 2)}
+   {/if}
+   {#if m.type === 'no_messages'}
+    <div>No messages</div>
+   {:else if m.type === 'initial_loading_placeholder'}
+    <Spinner />
+   {:else if m.type === 'hole'}
+    <Loader loader={m.top} />
+    <div class="hole">{m.uid}</div>
+    <Loader loader={m.bottom} />
+   {:else if m.type === 'loader'}
+    <Loader loader={m} />
+   {:else if m.type === 'unseen_marker'}
+    <div class="unread">Unread messages</div>
+   {:else}
+    <Message message={m} elContainer={messages_elem} />
+   {/if}
+  {/each}
+  <div bind:this={anchorElement}></div>
+ </div>
+ <ScrollButton visible={scrollButtonVisible} right="2px" bottom="7px" onClick={scrollToBottom} />
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />

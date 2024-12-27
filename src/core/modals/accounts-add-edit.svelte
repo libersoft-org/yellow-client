@@ -148,20 +148,28 @@
 
 <div class="form">
  <div class="group">
-  <span class="label">Title:</span>
-  <InputText bind:value={config_title} on:keydown={keyEnter} bind:this={titleElem} />
+  <label
+   ><div class="label">Title:</div>
+   <InputText bind:value={config_title} on:keydown={keyEnter} bind:this={titleElem} /></label
+  >
  </div>
  <div class="group">
-  <div class="label">Server:</div>
-  <InputText placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} />
+  <label
+   ><div class="label">Server:</div>
+   <InputText placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} /></label
+  >
  </div>
  <div class="group">
-  <div class="label">Address:</div>
-  <InputText placeholder="user@domain.tld" bind:value={credentials_address} on:keydown={keyEnter} />
+  <label
+   ><div class="label">Address:</div>
+   <InputText placeholder="user@domain.tld" bind:value={credentials_address} on:keydown={keyEnter} /></label
+  >
  </div>
  <div class="group">
-  <div class="label">Password:</div>
-  <InputText password={true} placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter} />
+  <label
+   ><div class="label">Password:</div>
+   <InputText password={true} placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter} /></label
+  >
  </div>
  {#if !isInWelcomeWizard}
   <div class="group">
