@@ -3,7 +3,7 @@
  //import { Grid } from 'svelte-virtual';
  export let items;
  export let stickerset;
- let size = 68;
+ let size = 67;
 </script>
 
 {#each items as s, index}
