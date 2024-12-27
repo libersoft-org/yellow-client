@@ -57,13 +57,17 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  /*padding: 10px;*/
+ }
+
+ .top-components {
   padding: 10px;
  }
 
  .set {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 200px;
  }
 
  .filter {
@@ -79,22 +83,24 @@
 </style>
 
 <div class="stickers">
- <Tabs>
-  <Item img="modules/org.libersoft.messages/img/favourite.svg" active={activeTab === 'favourites'} onClick={e => setTab(e, 'favourites')} />
-  <Item img="modules/org.libersoft.messages/img/server.svg" active={activeTab === 'server'} onClick={e => setTab(e, 'server')} />
-  <Item img="modules/org.libersoft.messages/img/update.svg" onClick={clickUpdate} />
-  <Item img="img/settings.svg" active={activeTab === 'settings'} onClick={e => setTab(e, 'settings')} />
- </Tabs>
- <svelte:component this={tabs[activeTab]} />
- <div class="filter">
-  <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={filter} />
-  <Select>
-   <Option value="0" text="All" />
-   <Option value="1" text="Animated only" />
-   <Option value="2" text="Static only" />
-  </Select>
+ <div class="top-components">
+  <Tabs>
+   <Item img="modules/org.libersoft.messages/img/favourite.svg" active={activeTab === 'favourites'} onClick={e => setTab(e, 'favourites')} />
+   <Item img="modules/org.libersoft.messages/img/server.svg" active={activeTab === 'server'} onClick={e => setTab(e, 'server')} />
+   <Item img="modules/org.libersoft.messages/img/update.svg" onClick={clickUpdate} />
+   <Item img="img/settings.svg" active={activeTab === 'settings'} onClick={e => setTab(e, 'settings')} />
+  </Tabs>
+  <svelte:component this={tabs[activeTab]} />
+  <div class="filter">
+   <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={filter} />
+   <Select>
+    <Option value="0" text="All" />
+    <Option value="1" text="Animated only" />
+    <Option value="2" text="Static only" />
+   </Select>
+  </div>
+  <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
- <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  {#if $library}
   <div class="set">
    <VirtualList items={$library} let:item bind:start bind:end>
