@@ -535,21 +535,31 @@ export async function updateStickerLibrary(stickerServer) {
  console.log('discovered ' + sets.length + ' stickersets in ' + (Date.now() - startFetchSets) + 'ms');
 
  // delete all stickers that are part of stickerset that has server equal to stickerServer
+ console.log('clearing old stickers from db...');
  let old_sets = await db.stickersets.where('server').equals(stickerServer).primaryKeys();
- console.log('delete old sets:', old_sets.length);
+ console.log('delete old stickers...');
  await db.stickers.where('stickerset').anyOf(old_sets).delete();
+ console.log('delete old sets:', old_sets.length, '...');
  await db.stickersets.where('server').equals(stickerServer).delete();
+ console.log('done clearing old stickers from db.');
  console.log('cleared db.stickersets:', await db.stickersets.toArray());
  console.log('cleared db.stickers:', await db.stickers.toArray());
 
+ let stickersets_batch = [];
  for (let i = 0; i < sets.length; i++) {
   let stickerset = sets[i];
   let stickers = stickerset.items;
   delete stickerset.items;
   stickerset.server = stickerServer;
   stickerset.url = stickerServer + '/api/sets?id=' + stickerset.id;
-  if (i % 100 === 0) console.log('loading stickerset ' + i + '/' + sets.length);
-  await db.stickersets.add(stickerset);
+  if (i % 500 === 0) {
+   console.log('loading stickerset ' + i + '/' + sets.length);
+   await db.stickersets.bulkAdd(stickersets_batch);
+   stickersets_batch = [];
+  }
+  stickersets_batch.push(stickerset);
+
+  let stickers_batch = [];
   for (let sticker of stickers) {
    if (!window.stickerLibraryUpdaterState.updating) {
     console.log('sticker library update cancelled');
@@ -557,9 +567,11 @@ export async function updateStickerLibrary(stickerServer) {
    }
    sticker.stickerset = stickerset.id;
    sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name;
-   await db.stickers.add(sticker);
+   stickers_batch.push(sticker);
   }
+  await db.stickers.bulkAdd(stickers_batch);
  }
+ await db.stickersets.bulkAdd(stickersets_batch);
 
  console.log('done loading, db.stickers.length:', await db.stickers.toArray().length);
 }

@@ -6,6 +6,6 @@
  let size = 67;
 </script>
 
-{#each items as s, index}
+{#each items as s, index (s.id)}
  <Item {size} sticker={s} {stickerset} />
 {/each}
