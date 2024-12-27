@@ -9,12 +9,12 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.3.1",
 		"@sveltejs/adapter-static": "^3.0.8",
-		"@sveltejs/kit": "^2.15.0",
+		"@sveltejs/kit": "^2.15.1",
 		"@sveltejs/vite-plugin-svelte": "^4.0.4",
 		"git-format-staged": "^3.1.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.2",
-		"svelte": "^5.15.0",
+		"svelte": "^5.16.0",
 		"vite": "^5.4.11",
 		"vite-plugin-checker": "^0.8.0",
 		"typescript": "^5.7.2"
@@ -30,6 +30,6 @@
 		"pako": "^2.1.0",
 		"qrcode": "^1.5.4",
 		"svelte-virtual": "^1.0.0-next.22",
-		"wavesurfer.js": "^7.8.11"
+		"wavesurfer.js": "^7.8.13"
 	}
 }
