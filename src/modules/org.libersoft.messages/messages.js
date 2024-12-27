@@ -535,7 +535,7 @@ export async function updateStickerLibrary(library, stickerServer) {
  //sets = sets.slice(0, 100);
 
  for (let stickerset of sets) {
-  await sleep(1000);
+  await new Promise(resolve => setTimeout(resolve, 500));
   console.log('fetch details for stickerset ' + stickerset.id);
   let stickerset_url = stickerServer + '/api/stickers?id=' + stickerset.id;
   fetch(stickerset_url)

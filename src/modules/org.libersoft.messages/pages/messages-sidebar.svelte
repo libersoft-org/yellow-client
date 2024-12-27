@@ -10,24 +10,13 @@
  let scrollButtonVisible = true;
 
  let elItems;
- let windowInnerWidth;
- let windowInnerHeight;
  let scrolled;
-
- $: scrollButtonVisible = !scrolled;
- $: updateWindowSize(windowInnerWidth, windowInnerHeight);
 
  $: scrollButtonVisible = scrolled;
 
  function parseScroll(event) {
   scrolled = elItems?.scrollTop > 0;
   console.log('elItems?.scrollTop:', elItems?.scrollTop);
- }
-
- async function updateWindowSize(width, height) {
-  await tick();
-  console.log('updateWindowSize width:', width, 'height:', height);
-  parseScroll();
  }
 
  function clickNew() {
@@ -75,8 +64,6 @@
  }
 </style>
 
-<svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
-
 {#if $conversationsArray != null}
  <div class="conversations">
   <BaseButton onClick={clickNew}>
@@ -85,7 +72,7 @@
     <div>New conversation</div>
    </div>
   </BaseButton>
-  <div class="items" bind:this={elItems}>
+  <div class="items" bind:this={elItems} on:scroll={parseScroll}>
    {#each $conversationsArray as c (c.address)}
     {#key c.address}
      <ConversationListItem {c} {clickItem} />
