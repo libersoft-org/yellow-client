@@ -7,10 +7,10 @@
  import ConversationListItem from '../components/conversation-list-item.svelte';
  import { tick } from 'svelte';
  let showNewConversationModal = false;
- let scrollButtonVisible = true;
+ let scrollButtonVisible;
 
  let elItems;
- let scrolled;
+ let scrolled = false;
 
  $: scrollButtonVisible = scrolled;
 
