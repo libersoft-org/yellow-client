@@ -16,7 +16,7 @@
 
  function parseScroll(event) {
   scrolled = elItems?.scrollTop > 0;
-  console.log('elItems?.scrollTop:', elItems?.scrollTop);
+  //console.log('elItems?.scrollTop:', elItems?.scrollTop);
  }
 
  function clickNew() {

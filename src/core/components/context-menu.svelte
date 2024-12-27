@@ -9,6 +9,7 @@
  export let ref = null;
  export let width;
  export let height;
+ export let scrollable = true;
  const dispatch = createEventDispatcher();
  const isOpen = writable(open);
  const position = writable([x, y]);
@@ -157,20 +158,12 @@
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #fff;
-  overflow: auto;
  }
 
  .context-menu-open {
   visibility: visible;
  }
 </style>
-
-<!-- on:contextmenu={e => {
-  if (target != null) return;
-  if (level > 1) return;
-  if (!ref) return;
-  openMenu(e);
- }}-->
 
 <svelte:window
  on:mousedown={e => {
@@ -196,20 +189,13 @@
  style:max-height={height}
  style:min-width={width}
  style:max-width={width}
+ style:overflow={scrollable ? 'auto' : 'hidden'}
  {...$$restProps}
- on:mousedown
  on:mousedown={e => {
   console.log('context-menu mousedown:', e.target);
   e.stopPropagation();
   e.preventDefault();
-  /*console.log('context-menu mousedown:', target);
-  const closestOption = target.closest('[tabindex]');
-  if (closestOption && closestOption.getAttribute('role') !== 'menuitem') {
-   console.log('context-menu mousedown close:', closestOption);
-   close();
-  }*/
  }}
- on:keydown
  on:keydown={e => {
   if (open) e.preventDefault();
   if ($hasPopup) return;

@@ -534,6 +534,15 @@ export async function updateStickerLibrary(library, stickerServer) {
 
  //sets = sets.slice(0, 100);
 
+ /* todo how this should work:
+  * wait until the previous fetch is done, or keep a pool of fetchers
+  * update library store after a batch (configurable number) of sets is loaded
+  * update library store after all sets are loaded
+  * cancel the pool and all fetches if new update is requested
+  *
+  *
+  */
+
  for (let stickerset of sets) {
   await new Promise(resolve => setTimeout(resolve, 500));
   console.log('fetch details for stickerset ' + stickerset.id);
