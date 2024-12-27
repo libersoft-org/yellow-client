@@ -1,31 +1,40 @@
 <script>
  import BaseButton from '../../../core/components/base-button.svelte';
  import StickerSetPart from './stickerset-part.svelte';
+ import { onMount } from 'svelte';
+ import { db } from '../db';
+
  export let stickerset = {};
  export let showall = false;
  export let splitAt = 8;
  let first, rest;
- let stickers;
+ let stickers = [];
  let expanded = false;
 
- $: stickers = stickerset.items || [];
  $: first = stickers.slice(0, splitAt);
  $: rest = stickers.slice(splitAt);
 
+ onMount(async () => {
+  stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
+ });
+
  $: console.log('library stickerset', stickerset);
+ $: console.log('library stickers', stickers);
+ $: console.log('library first', first);
+ $: console.log('library rest', rest);
 
  function mousedown(event) {
-  console.log('stickerset mousedown');
+  //console.log('stickerset mousedown');
   event.stopPropagation();
  }
 
  function clickExpand() {
   expanded = !expanded;
-  console.log(stickerset);
+  //console.log(stickerset);
  }
 
  function clickAdd() {
-  console.log('Add to favourites');
+  //console.log('Add to favourites');
  }
 </script>
 
@@ -98,7 +107,7 @@
   <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
  </div>
  <div class="set">
-  <StickerSetPart items={first} />
+  <StickerSetPart {stickerset} items={first} />
  </div>
  {#if !showall}
   <BaseButton onClick={clickExpand}>
@@ -109,7 +118,7 @@
  {/if}
  {#if showall || expanded}
   <div class="set">
-   <StickerSetPart items={rest} />
+   <StickerSetPart {stickerset} items={rest} />
   </div>
  {/if}
 </div>

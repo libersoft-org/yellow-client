@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import DOMPurify from 'dompurify';
+import { db } from './db';
 
 export const identifier = 'org.libersoft.messages';
 
@@ -519,47 +520,46 @@ function linkify(text) {
  });
 }
 
-export async function updateStickerLibrary(library, stickerServer) {
+window.stickerLibraryUpdaterState = { updating: false };
+import.meta.hot?.dispose(() => {
+ window.stickerLibraryUpdaterState.updating = false;
+});
+
+export async function updateStickerLibrary(stickerServer) {
+ window.stickerLibraryUpdaterState.updating = true;
  console.log('loading list of stickersets from ' + stickerServer);
  let startFetchSets = Date.now();
  let response = await fetch(stickerServer + '/api/sets');
  response = await response.json();
- let sets = response.data;
+ let sets = response?.data;
  console.log('discovered ' + sets.length + ' stickersets in ' + (Date.now() - startFetchSets) + 'ms');
 
- library.update(d => {
-  d[stickerServer] = sets;
-  return d;
- });
+ // delete all stickers that are part of stickerset that has server equal to stickerServer
+ let old_sets = await db.stickersets.where('server').equals(stickerServer).primaryKeys();
+ console.log('delete old sets:', old_sets.length);
+ await db.stickers.where('stickerset').anyOf(old_sets).delete();
+ await db.stickersets.where('server').equals(stickerServer).delete();
+ console.log('cleared db.stickersets:', await db.stickersets.toArray());
+ console.log('cleared db.stickers:', await db.stickers.toArray());
 
- //sets = sets.slice(0, 100);
-
- /* todo how this should work:
-  * wait until the previous fetch is done, or keep a pool of fetchers
-  * update library store after a batch (configurable number) of sets is loaded
-  * update library store after all sets are loaded
-  * cancel the pool and all fetches if new update is requested
-  *
-  *
-  */
-
- for (let stickerset of sets) {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  console.log('fetch details for stickerset ' + stickerset.id);
-  let stickerset_url = stickerServer + '/api/stickers?id=' + stickerset.id;
-  fetch(stickerset_url)
-   .then(response => response.json())
-   .then(stickerset_response => {
-    //console.log('loaded ', stickerset_response);
-    stickerset.url = stickerset_url;
-    let stickers = stickerset_response.data.stickers;
-    console.log('loaded ' + stickers.length + ' details for stickerset ' + stickerset.id + ' after ' + (Date.now() - startFetchSets) + 'ms');
-    stickerset.items = stickers;
-    stickerset.items.forEach(sticker => {
-     sticker.stickerset = stickerset_url;
-     sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name;
-    });
-    library.update(d => d);
-   });
+ for (let i = 0; i < sets.length; i++) {
+  let stickerset = sets[i];
+  let stickers = stickerset.items;
+  delete stickerset.items;
+  stickerset.server = stickerServer;
+  stickerset.url = stickerServer + '/api/sets?id=' + stickerset.id;
+  if (i % 100 === 0) console.log('loading stickerset ' + i + '/' + sets.length);
+  await db.stickersets.add(stickerset);
+  for (let sticker of stickers) {
+   if (!window.stickerLibraryUpdaterState.updating) {
+    console.log('sticker library update cancelled');
+    return;
+   }
+   sticker.stickerset = stickerset.id;
+   sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name;
+   await db.stickers.add(sticker);
+  }
  }
+
+ console.log('done loading, db.stickers.length:', await db.stickers.toArray().length);
 }

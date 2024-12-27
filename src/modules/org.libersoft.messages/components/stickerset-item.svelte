@@ -3,6 +3,7 @@
  import Sticker from './sticker.svelte';
  import { getContext } from 'svelte';
  export let sticker;
+ export let stickerset;
  export let size;
  export let onClick;
  const MessageBar = getContext('MessageBar');
@@ -11,9 +12,9 @@
  $: file = sticker.url;
 
  function handleClick() {
-  console.log('handleClick');
+  console.log('stickerset-item handleClick file:', file, 'sticker:', sticker);
   onClick && onClick();
-  MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" set="' + htmlEscape(sticker.stickerset) + '" />');
+  MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" set="' + htmlEscape(stickerset.url) + '" />');
   MessageBar.setBarFocus();
   menu.close();
  }

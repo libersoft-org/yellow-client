@@ -13,7 +13,9 @@
  import TabSettings from './stickers-settings.svelte';
  import TabFavourites from './stickers-favourites.svelte';
  import TabServer from './stickers-server.svelte';
- const library = localStorageSharedStore('stickers', {});
+ import { liveQuery } from 'dexie';
+ import { db } from '../db';
+
  let stickerServer = 'https://stickers.libersoft.org';
  let filter;
  let activeTab = 'server';
@@ -24,24 +26,25 @@
   server: TabServer,
  };
 
- let library_items;
- $: library_items = $library[stickerServer];
- $: console.log('library_items', library_items);
+ $: console.log('library filter:', filter);
+
+ let library = liveQuery(() => db.stickersets.toArray());
+
+ $: console.log('library: ', library);
  let start, end;
- $: count = $library[stickerServer].length;
+ $: count = $library?.length;
 
  onMount(async () => {
-  if ($library[stickerServer] === undefined) await updateStickerLibrary(library, stickerServer);
+  //if ($library?.length === 0) await updateStickerLibrary(stickerServer);
   await tick();
-  console.log('library filter:', filter);
  });
 
  function setTab(e, name) {
   activeTab = name;
  }
 
- function clickUpdate() {
-  updateStickerLibrary(library, stickerServer);
+ async function clickUpdate() {
+  await updateStickerLibrary(stickerServer);
  }
 
  function clickSearch() {
@@ -92,9 +95,9 @@
   </Select>
  </div>
  <div class="count">showing {start}-{end} of {count} sticker sets found</div>
- {#if library}
+ {#if $library}
   <div class="set">
-   <VirtualList items={library_items} let:item bind:start bind:end>
+   <VirtualList items={$library} let:item bind:start bind:end>
     <StickerSet stickerset={item} />
    </VirtualList>
   </div>

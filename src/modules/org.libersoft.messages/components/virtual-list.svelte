@@ -14,7 +14,7 @@ The software is provided "as is", without warranty of any kind, including but no
  export let height = '400px';
  export let itemHeight = undefined;
 
- $: console.log('library VirtualList.svelte', items, height, itemHeight);
+ //$: console.log('library VirtualList.svelte', items, height, itemHeight);
 
  let foo;
 
@@ -43,7 +43,7 @@ The software is provided "as is", without warranty of any kind, including but no
  $: if (mounted) refresh(items, viewport_height, itemHeight);
 
  async function refresh(items, viewport_height, itemHeight) {
-  console.log('library refresh VirtualList.svelte', items, viewport_height, itemHeight);
+  //console.log('library refresh VirtualList.svelte', items, viewport_height, itemHeight);
 
   const { scrollTop } = viewport;
 
