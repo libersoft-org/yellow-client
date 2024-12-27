@@ -15,6 +15,7 @@
  import TabServer from './stickers-server.svelte';
  import { liveQuery } from 'dexie';
  import { db } from '../db';
+ import BaseButton from '../../../core/components/base-button.svelte';
 
  let stickerServer = 'https://stickers.libersoft.org';
  let filter;
@@ -50,6 +51,12 @@
  function clickSearch() {
   console.log('Clicked on Search');
  }
+
+ function onMousedown(event) {
+  console.log('stickers mousedown');
+  event.preventDefault();
+  event.stopPropagation();
+ }
 </script>
 
 <style>
@@ -82,7 +89,7 @@
  }
 </style>
 
-<div class="stickers">
+<div class="stickers" on:mousedown={onMousedown} on:click={onMousedown}>
  <div class="top-components">
   <Tabs>
    <Item img="modules/org.libersoft.messages/img/favourite.svg" active={activeTab === 'favourites'} onClick={e => setTab(e, 'favourites')} />
@@ -104,8 +111,13 @@
  {#if $library}
   <div class="set">
    <VirtualList items={$library} let:item bind:start bind:end>
+    <!--contents_styles={'display: flex; flex-direction: column; gap: 8px;'}-->
     <StickerSet stickerset={item} />
    </VirtualList>
+
+   <!--   {#each $library as item}
+    <StickerSet stickerset={item} />
+   {/each}-->
   </div>
  {/if}
 </div>

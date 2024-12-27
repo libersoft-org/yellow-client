@@ -13,6 +13,7 @@
 <style>
  .base-button {
   cursor: pointer;
+  display: contents;
  }
 </style>
 

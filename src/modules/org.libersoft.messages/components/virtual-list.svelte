@@ -13,6 +13,7 @@ The software is provided "as is", without warranty of any kind, including but no
  export let items;
  export let height = '400px';
  export let itemHeight = undefined;
+ export let contents_styles = '';
 
  //$: console.log('library VirtualList.svelte', items, height, itemHeight);
 
@@ -153,18 +154,22 @@ The software is provided "as is", without warranty of any kind, including but no
   display: block;
  }
 
- svelte-virtual-list-contents,
- svelte-virtual-list-row {
+ svelte-virtual-list-contents {
   display: block;
+  /*
+  display: contents;
+  */
  }
 
  svelte-virtual-list-row {
+  display: block;
   overflow: hidden;
  }
 </style>
 
 <svelte-virtual-list-viewport bind:this={viewport} bind:offsetHeight={viewport_height} on:scroll={handle_scroll} style="height: {height};">
  <svelte-virtual-list-contents bind:this={contents} style="padding-top: {top}px; padding-bottom: {bottom}px;">
+  <!--{contents_styles}-->
   {#each visible as row (row.index)}
    <svelte-virtual-list-row>
     <slot item={row.data}>Missing template</slot>
