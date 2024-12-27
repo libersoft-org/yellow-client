@@ -1,5 +1,6 @@
 <script>
- import { onMount } from 'svelte';
+ import { onMount, tick } from 'svelte';
+ import VirtualList from './virtual-list.svelte';
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { updateStickerLibrary } from '../messages.js';
  import StickerSet from './stickerset.svelte';
@@ -23,10 +24,16 @@
   server: TabServer,
  };
 
+ let library_items;
+ $: library_items = $library[stickerServer];
+ $: console.log('library_items', library_items);
+ let start, end;
+ $: count = $library[stickerServer].length;
+
  onMount(async () => {
   if ($library[stickerServer] === undefined) await updateStickerLibrary(library, stickerServer);
-  //filter.focus(); // TODO - not working, because it loads the element before it's shown in context menu
-  count = $library[stickerServer].length;
+  await tick();
+  console.log('library filter:', filter);
  });
 
  function setTab(e, name) {
@@ -84,12 +91,12 @@
    <Option value="2" text="Static only" />
   </Select>
  </div>
- <div class="count">Found {count} sticker sets</div>
+ <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  {#if library}
   <div class="set">
-   {#each $library[stickerServer] as stickerset}
-    <StickerSet {stickerset} />
-   {/each}
+   <VirtualList items={library_items} let:item bind:start bind:end>
+    <StickerSet stickerset={item} />
+   </VirtualList>
   </div>
  {/if}
 </div>

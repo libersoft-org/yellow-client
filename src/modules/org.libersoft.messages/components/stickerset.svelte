@@ -12,6 +12,8 @@
  $: first = stickers.slice(0, splitAt);
  $: rest = stickers.slice(splitAt);
 
+ $: console.log('library stickerset', stickerset);
+
  function mousedown(event) {
   console.log('stickerset mousedown');
   event.stopPropagation();
@@ -98,17 +100,16 @@
  <div class="set">
   <StickerSetPart items={first} />
  </div>
- {#if stickers.length > splitAt}{/if}
- {#if showall || expanded}
-  <div class="set">
-   <StickerSetPart items={rest} />
-  </div>
- {/if}
  {#if !showall}
   <BaseButton onClick={clickExpand}>
    <div class="more">
     <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
    </div>
   </BaseButton>
+ {/if}
+ {#if showall || expanded}
+  <div class="set">
+   <StickerSetPart items={rest} />
+  </div>
  {/if}
 </div>
