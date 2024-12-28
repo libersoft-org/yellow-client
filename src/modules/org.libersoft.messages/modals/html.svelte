@@ -13,6 +13,7 @@
  let elText;
  let text = '';
  let activeTab = 'editor';
+ let isInTabs = true;
  let tabProps;
  const tabs = {
   editor: Editor,
@@ -87,27 +88,29 @@
 
 <div class="html">
  <div class="switch">
-  <div><Switch /></div>
+  <Switch bind:checked={isInTabs} />
   <div>Show editor and preview side by side</div>
  </div>
- <div>
-  <Tabs>
-   <Item label="HTML editor" active={activeTab === 'editor'} onClick={e => setTab(e, 'editor')} />
-   <Item label="Preview" active={activeTab === 'preview'} onClick={e => setTab(e, 'preview')} />
-  </Tabs>
- </div>
- <div class="container">
-  <svelte:component this={tabs[activeTab]} {...tabProps} />
- </div>
- <hr style="width: 100%" />
- <div class="sides">
-  <div class="editor">
-   <Editor {elText} {text} />
-   <!-- <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea> -->
+ {#if isInTabs}
+  <div>
+   <Tabs>
+    <Item label="HTML editor" active={activeTab === 'editor'} onClick={e => setTab(e, 'editor')} />
+    <Item label="Preview" active={activeTab === 'preview'} onClick={e => setTab(e, 'preview')} />
+   </Tabs>
   </div>
-  <div class="preview">
-   <Preview {messageContent} />
+  <div class="container">
+   <svelte:component this={tabs[activeTab]} {...tabProps} />
   </div>
- </div>
+ {:else}
+  <div class="sides">
+   <div class="editor">
+    <Editor {elText} {text} />
+    <!-- <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea> -->
+   </div>
+   <div class="preview">
+    <Preview {messageContent} />
+   </div>
+  </div>
+ {/if}
  <Button text="Send" onClick={click} />
 </div>

@@ -155,10 +155,12 @@ The software is provided "as is", without warranty of any kind, including but no
  }
 
  svelte-virtual-list-contents {
-  display: block;
+  display: flex;
+  flex-direction: column;
   /*
   display: contents;
   */
+  gap: 10px;
  }
 
  svelte-virtual-list-row {
@@ -173,7 +175,7 @@ The software is provided "as is", without warranty of any kind, including but no
 
   {#each visible as row (row.index)}
    <svelte-virtual-list-row>
-    {row.index}
+    <!--{row.index}-->
     <slot item={row.data}>Missing template</slot>
    </svelte-virtual-list-row>
   {/each}

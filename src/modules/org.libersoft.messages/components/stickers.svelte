@@ -111,17 +111,18 @@
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
  {#if $library}
-  <!--  
-  <div style="height: 600px; max-height: 600px;">
+  <div class="stickersets">
    <VirtualList items={$library} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
     <StickerSet stickerset={item} />
    </VirtualList>
   </div>
- -->
+
+  <!--
   <div class="stickersets">
    {#each $library as item}
     <StickerSet stickerset={item} />
    {/each}
   </div>
+  -->
  {/if}
 </div>
