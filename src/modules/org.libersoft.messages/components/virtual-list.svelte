@@ -169,9 +169,11 @@ The software is provided "as is", without warranty of any kind, including but no
 
 <svelte-virtual-list-viewport bind:this={viewport} bind:offsetHeight={viewport_height} on:scroll={handle_scroll} style="height: {height};">
  <svelte-virtual-list-contents bind:this={contents} style="padding-top: {top}px; padding-bottom: {bottom}px;">
-  <!--{contents_styles}-->
+  <!--{contents_styles}">-->
+
   {#each visible as row (row.index)}
    <svelte-virtual-list-row>
+    {row.index}
     <slot item={row.data}>Missing template</slot>
    </svelte-virtual-list-row>
   {/each}

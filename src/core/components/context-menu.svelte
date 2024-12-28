@@ -46,7 +46,7 @@
   //console.log('->context-menu close:', menus);
  }
 
- export function openMenu(e) {
+ export async function openMenu(e) {
   //console.log('context-menu openMenu:', e);
   e.preventDefault();
   e.stopPropagation();
@@ -57,6 +57,7 @@
   menus.push({ guid: currentInstance, close });
 
   //const { currentHeight, currentWidth } = ref.getBoundingClientRect();
+  await tick();
   const currentHeight = ref.getBoundingClientRect().height;
   const currentWidth = ref.getBoundingClientRect().width;
   if (open || x === 0) {

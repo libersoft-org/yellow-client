@@ -1,6 +1,7 @@
 <script>
  import { onMount, tick } from 'svelte';
  import VirtualList from './virtual-list.svelte';
+ //   import VirtualList from 'svelte-virtual-list-ce';
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { updateStickerLibrary } from '../messages.js';
  import StickerSet from './stickerset.svelte';
@@ -71,12 +72,6 @@
   padding: 10px;
  }
 
- .set {
-  display: flex;
-  flex-direction: column;
-  gap: 200px;
- }
-
  .filter {
   display: flex;
   gap: 10px;
@@ -109,15 +104,14 @@
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
  {#if $library}
-  <div class="set">
-   <VirtualList items={$library} let:item bind:start bind:end>
-    <!--contents_styles={'display: flex; flex-direction: column; gap: 8px;'}-->
+  <div style="height: 600px; max-height: 600px;">
+   <VirtualList items={$library} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
     <StickerSet stickerset={item} />
    </VirtualList>
+  </div>
 
-   <!--   {#each $library as item}
+  <!--   {#each $library as item}
     <StickerSet stickerset={item} />
    {/each}-->
-  </div>
  {/if}
 </div>

@@ -18,10 +18,12 @@
   stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
  });
 
+ /*
  $: console.log('library stickerset', stickerset);
  $: console.log('library stickers', stickers);
  $: console.log('library first', first);
  $: console.log('library rest', rest);
+*/
 
  function mousedown(event) {
   //console.log('stickerset mousedown');
