@@ -168,7 +168,11 @@
 
 <svelte:window
  on:mousedown={e => {
-  //console.log('context-menu svelte:window click:', e);
+  console.log('context-menu svelte:window click:', e);
+  console.log(e.target);
+  let ancestor = e.target.closest('.context-menu');
+  console.log('ancestor:', ancestor);
+  if (ancestor) return;
   if (!open) return;
   console.log('context-menu svelte:window click close:', e);
   close();
@@ -192,20 +196,15 @@
  style:max-width={width}
  style:overflow={scrollable ? 'auto' : 'hidden'}
  {...$$restProps}
- on:mousedown={e => {
-  console.log('context-menu mousedown:', e.target);
-  e.stopPropagation();
-  e.preventDefault();
- }}
  on:keydown={e => {
-  if (open) e.preventDefault();
+  /*if (open) e.preventDefault();
   if ($hasPopup) return;
   if (e.key === 'ArrowDown') {
    if (focusIndex < options.length - 1) focusIndex++;
   } else if (e.key === 'ArrowUp') {
    if (focusIndex === -1) focusIndex = options.length - 1;
    else if (focusIndex > 0) focusIndex--;
-  }
+  }*/
   if (open && e.key === 'Escape') {
    close();
    e.stopPropagation();

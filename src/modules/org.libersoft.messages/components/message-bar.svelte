@@ -126,13 +126,13 @@
  <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
-<!--
 <ContextMenu target={elExpressions} width="363px" height={expressionsHeight} scrollable={false}>
  <Expressions height={expressionsHeight} />
 </ContextMenu>
--->
 
+<!--
 <Modal body={Expressions} width="363px" bind:show={showExpressions} />
+-->
 
 <!--
 <Expressions />

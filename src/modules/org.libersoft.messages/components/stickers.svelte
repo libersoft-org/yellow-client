@@ -75,8 +75,6 @@
 
  function onMousedown(event) {
   console.log('stickers mousedown');
-  event.preventDefault();
-  event.stopPropagation();
  }
 </script>
 
