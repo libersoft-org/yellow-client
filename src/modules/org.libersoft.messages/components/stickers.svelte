@@ -1,11 +1,8 @@
 <script>
- import { levenshtein } from 'js-levenshtein';
  import { onMount, tick } from 'svelte';
  import { get } from 'svelte/store';
- import VirtualList from './virtual-list.svelte';
- import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { updateStickerLibrary } from '../messages.js';
- import StickerSet from './stickerset.svelte';
+ import StickersSearchResults from './stickers-search-results.svelte';
  import InputTextButton from '../../../core/components/input-text-button.svelte';
  import Select from '../../../core/components/select.svelte';
  import Option from '../../../core/components/select-option.svelte';
@@ -29,13 +26,16 @@
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('0');
  let animated_filter = $derived(animated_filter_dropdown_value === '0' ? [1, 0] : animated_filter_dropdown_value === '1' ? [1] : [0]);
- let count = $derived(search_results?.length);
- let query = $derived(live_query(fulltext_search_filter, animated_filter));
- let search_results = $derived(get(query));
+ let count = $derived(get(query_store)?.length);
+ let query_store = $derived(live_query(fulltext_search_filter, animated_filter));
+ $effect(() => {
+  console.log('query_store:', query_store, get(query_store));
+ });
 
  function live_query(fulltext_search_filter, animated_filter) {
   console.log('update_live_query', fulltext_search_filter, animated_filter);
   console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
+
   return liveQuery(() => {
    let x = db.stickersets;
    //x = x.where('animated').anyOf(animated_filter);
@@ -47,6 +47,7 @@
    }
    let result = x.toArray();
    console.log('result:', result);
+   return result;
   });
  }
 
@@ -130,18 +131,7 @@
   </div>
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
- {#if search_results}
-  {#if $search_results}
-   <div class="stickersets">
-    <VirtualList items={$search_results} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
-     <StickerSet stickerset={item} />
-    </VirtualList>
-    <!--
-   {#each $library as item}
-    <StickerSet stickerset={item} />
-   {/each}
--->
-   </div>
-  {/if}
+ {#if query_store}
+  <StickersSearchResults items={query_store} />
  {/if}
 </div>
