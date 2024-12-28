@@ -25,6 +25,7 @@
 		"dexie": "^4.0.10",
 		"dompurify": "^3.2.3",
 		"ethers": "^6.13.4",
+		"js-levenshtein": "^1.1.6",
 		"leaflet": "^1.9.4",
 		"lottie-web": "^5.12.2",
 		"pako": "^2.1.0",

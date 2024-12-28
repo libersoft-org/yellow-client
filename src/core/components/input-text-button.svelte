@@ -35,7 +35,7 @@
 </style>
 
 <div class="input-button">
- <input type="text" {value} {placeholder} />
+ <input type="text" bind:value {placeholder} />
  <BaseButton {onClick}>
   <div class="image">
    <img src={img} {alt} />

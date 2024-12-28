@@ -1,11 +1,11 @@
 <script>
+ import { levenshtein } from 'js-levenshtein';
  import { onMount, tick } from 'svelte';
+ import { get } from 'svelte/store';
  import VirtualList from './virtual-list.svelte';
- //   import VirtualList from 'svelte-virtual-list-ce';
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { updateStickerLibrary } from '../messages.js';
  import StickerSet from './stickerset.svelte';
- import Button from '../../../core/components/button.svelte';
  import InputTextButton from '../../../core/components/input-text-button.svelte';
  import Select from '../../../core/components/select.svelte';
  import Option from '../../../core/components/select-option.svelte';
@@ -16,29 +16,41 @@
  import TabServer from './stickers-server.svelte';
  import { liveQuery } from 'dexie';
  import { db } from '../db';
- import BaseButton from '../../../core/components/base-button.svelte';
- let stickerServer = 'https://stickers.libersoft.org';
- let fulltext_search_filter = '';
- let animated_filter;
- let animated_filter_dropdown_value = '0';
- $: animated_filter = animated_filter_dropdown_value === '0' ? [true, false] : animated_filter_dropdown_value === '1' ? [true] : [false];
 
- let activeTab = 'server';
- let count = 0;
  const tabs = {
   favourites: TabFavourites,
   settings: TabSettings,
   server: TabServer,
  };
 
- $: console.log('library filter:', fulltext_search_filter);
+ let activeTab = $state('server');
+ let stickerServer = 'https://stickers.libersoft.org';
 
- let search_results;
+ let fulltext_search_filter = $state('');
+ let animated_filter_dropdown_value = $state('0');
+ let animated_filter = $derived(animated_filter_dropdown_value === '0' ? [1, 0] : animated_filter_dropdown_value === '1' ? [1] : [0]);
+ let count = $derived(search_results?.length);
+ let query = $derived(live_query(fulltext_search_filter, animated_filter));
+ let search_results = $derived(get(query));
 
- $: search_results = liveQuery(() => db.stickersets.where('title').startsWithIgnoreCase(fulltext_search_filter).toArray());
+ function live_query(fulltext_search_filter, animated_filter) {
+  console.log('update_live_query', fulltext_search_filter, animated_filter);
+  console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
+  return liveQuery(() => {
+   let x = db.stickersets;
+   //x = x.where('animated').anyOf(animated_filter);
+   if (fulltext_search_filter != '') {
+    //x = x.where('title').startsWithIgnoreCase(fulltext_search_filter);
+    //x = x .and(item => /foo/i.test(friend.name));
+    //x = x .and(item => levenshtein(item.name.toLowerCase(), fulltext_search_filter.toLowerCase()) < 2);
+    //x = x .and(item => item.name.toLowerCase().includes(fulltext_search_filter.toLowerCase()));
+   }
+   let result = x.toArray();
+   console.log('result:', result);
+  });
+ }
 
  let start, end;
- $: count = $search_results?.length;
 
  onMount(async () => {
   //if ($library?.length === 0) await updateStickerLibrary(stickerServer);
@@ -109,7 +121,7 @@
   </Tabs>
   <svelte:component this={tabs[activeTab]} />
   <div class="filter">
-   <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={fulltext_search_filter} />
+   <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:value={fulltext_search_filter} />
    <Select bind:this={animated_filter_dropdown_value}>
     <Option value="all" text="All" />
     <Option value="animated" text="Animated only" />
@@ -118,16 +130,18 @@
   </div>
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
- {#if $search_results}
-  <div class="stickersets">
-   <VirtualList items={$search_results} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
-    <StickerSet stickerset={item} />
-   </VirtualList>
-   <!--
+ {#if search_results}
+  {#if $search_results}
+   <div class="stickersets">
+    <VirtualList items={$search_results} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
+     <StickerSet stickerset={item} />
+    </VirtualList>
+    <!--
    {#each $library as item}
     <StickerSet stickerset={item} />
    {/each}
 -->
-  </div>
+   </div>
+  {/if}
  {/if}
 </div>
