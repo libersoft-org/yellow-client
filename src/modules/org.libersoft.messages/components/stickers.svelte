@@ -25,6 +25,9 @@
 
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('0');
+ $effect(() => {
+  console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value);
+ });
  let animated_filter = $derived(animated_filter_dropdown_value === '0' ? [1, 0] : animated_filter_dropdown_value === '1' ? [1] : [0]);
  let count = $derived(get(query_store)?.length);
  let query_store = $derived(live_query(fulltext_search_filter, animated_filter));
@@ -38,7 +41,7 @@
 
   return liveQuery(() => {
    let x = db.stickersets;
-   //x = x.where('animated').anyOf(animated_filter);
+   x = x.where('animated').anyOf(animated_filter);
    if (fulltext_search_filter != '') {
     //x = x.where('title').startsWithIgnoreCase(fulltext_search_filter);
     //x = x .and(item => /foo/i.test(friend.name));
