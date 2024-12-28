@@ -12,6 +12,7 @@
  let elMessage;
  let text;
  let showHTMLModal = false;
+ let expressionsHeight = '500px';
 
  setContext('MessageBar', {
   sendMessage,
@@ -119,8 +120,8 @@
  <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
-<ContextMenu target={elExpressions} width="363px" height="500px" scrollable={false}>
- <Expressions />
+<ContextMenu target={elExpressions} width="363px" height={expressionsHeight} scrollable={false}>
+ <Expressions height={expressionsHeight} />
 </ContextMenu>
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />

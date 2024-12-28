@@ -17,7 +17,6 @@
  import { liveQuery } from 'dexie';
  import { db } from '../db';
  import BaseButton from '../../../core/components/base-button.svelte';
-
  let stickerServer = 'https://stickers.libersoft.org';
  let filter;
  let activeTab = 'server';
@@ -65,11 +64,19 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  /*padding: 10px;*/
+  overflow: hidden;
+  max-height: calc(100% - 39px);
  }
 
  .top-components {
   padding: 10px;
+ }
+
+ .stickersets {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  gap: 10px;
  }
 
  .filter {
@@ -104,14 +111,17 @@
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
  {#if $library}
+  <!--  
   <div style="height: 600px; max-height: 600px;">
    <VirtualList items={$library} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
     <StickerSet stickerset={item} />
    </VirtualList>
   </div>
-
-  <!--   {#each $library as item}
+ -->
+  <div class="stickersets">
+   {#each $library as item}
     <StickerSet stickerset={item} />
-   {/each}-->
+   {/each}
+  </div>
  {/if}
 </div>

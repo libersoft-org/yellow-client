@@ -52,7 +52,7 @@
 {#if file}
  <BaseButton onClick={handleClick} {onMousedown}>
   <div class="sticker" style="max-width: {size}px;">
-   <Sticker {size} {file} play_on_start={false} />
+   <!--<Sticker {size} {file} play_on_start={false} />-->
   </div>
  </BaseButton>
 {/if}
