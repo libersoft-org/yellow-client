@@ -18,7 +18,11 @@
  import { db } from '../db';
  import BaseButton from '../../../core/components/base-button.svelte';
  let stickerServer = 'https://stickers.libersoft.org';
- let filter;
+ let fulltext_search_filter = '';
+ let animated_filter;
+ let animated_filter_dropdown_value = '0';
+ $: animated_filter = animated_filter_dropdown_value === '0' ? [true, false] : animated_filter_dropdown_value === '1' ? [true] : [false];
+
  let activeTab = 'server';
  let count = 0;
  const tabs = {
@@ -27,13 +31,14 @@
   server: TabServer,
  };
 
- $: console.log('library filter:', filter);
+ $: console.log('library filter:', fulltext_search_filter);
 
- let library = liveQuery(() => db.stickersets.toArray());
+ let search_results;
 
- $: console.log('library: ', library);
+ $: search_results = liveQuery(() => db.stickersets.where('title').startsWithIgnoreCase(fulltext_search_filter).toArray());
+
  let start, end;
- $: count = $library?.length;
+ $: count = $search_results?.length;
 
  onMount(async () => {
   //if ($library?.length === 0) await updateStickerLibrary(stickerServer);
@@ -91,7 +96,10 @@
  }
 </style>
 
-<div class="stickers" on:mousedown={onMousedown} on:click={onMousedown}>
+<!--
+<div class="stickers" role="none" on:mousedown={onMousedown} on:click={onMousedown} on:keydown={onMousedown}>
+-->
+<div class="stickers">
  <div class="top-components">
   <Tabs>
    <Item img="modules/org.libersoft.messages/img/favourite.svg" active={activeTab === 'favourites'} onClick={e => setTab(e, 'favourites')} />
@@ -101,28 +109,25 @@
   </Tabs>
   <svelte:component this={tabs[activeTab]} />
   <div class="filter">
-   <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={filter} />
-   <Select>
-    <Option value="0" text="All" />
-    <Option value="1" text="Animated only" />
-    <Option value="2" text="Static only" />
+   <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:this={fulltext_search_filter} />
+   <Select bind:this={animated_filter_dropdown_value}>
+    <Option value="all" text="All" />
+    <Option value="animated" text="Animated only" />
+    <Option value="static" text="Static only" />
    </Select>
   </div>
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
- {#if $library}
+ {#if $search_results}
   <div class="stickersets">
-   <VirtualList items={$library} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
+   <VirtualList items={$search_results} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
     <StickerSet stickerset={item} />
    </VirtualList>
-  </div>
-
-  <!--
-  <div class="stickersets">
+   <!--
    {#each $library as item}
     <StickerSet stickerset={item} />
    {/each}
+-->
   </div>
-  -->
  {/if}
 </div>

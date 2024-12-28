@@ -18,13 +18,17 @@
  }
 
  function mousedown(e) {
+  /*
   e.stopPropagation();
   e.preventDefault();
+*/
  }
 
  function click(e) {
+  /*
   e.stopPropagation();
   e.preventDefault();
+*/
  }
 </script>
 
@@ -33,7 +37,7 @@
   overflow: hidden;
  }
 
- .expressions-bar {
+ .expressions-categories-bar {
   display: flex;
   justify-content: space-between;
   background-color: #fd1;
@@ -41,7 +45,7 @@
 </style>
 
 <div class="expressions" style="height: {height}">
- <div class="expressions-bar" role="none" on:mousedown={mousedown} on:click={click}>
+ <div class="expressions-categories-bar" role="none" on:mousedown={mousedown} on:click={click}>
   <Item label="Emojis" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
   <Item label="Stickers" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
   <Item label="GIFs" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />

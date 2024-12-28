@@ -13,6 +13,7 @@
  let text;
  let showHTMLModal = false;
  let expressionsHeight = '500px';
+ let showExpressions = false;
 
  setContext('MessageBar', {
   sendMessage,
@@ -106,7 +107,12 @@
  <div bind:this={elAttachment}>
   <Icon img="modules/org.libersoft.messages/img/attachment.svg" alt="Attachment" size="32" padding="0" />
  </div>
- <div bind:this={elExpressions}>
+ <div
+  bind:this={elExpressions}
+  on:click={() => {
+   showExpressions = !showExpressions;
+  }}
+ >
   <Icon img="modules/org.libersoft.messages/img/emoji.svg" alt="Emoji" size="32" padding="0" />
  </div>
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
@@ -120,8 +126,16 @@
  <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
+<!--
 <ContextMenu target={elExpressions} width="363px" height={expressionsHeight} scrollable={false}>
  <Expressions height={expressionsHeight} />
 </ContextMenu>
+-->
+
+<Modal body={Expressions} width="363px" bind:show={showExpressions} />
+
+<!--
+<Expressions />
+-->
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />
