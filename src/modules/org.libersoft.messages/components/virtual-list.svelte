@@ -52,7 +52,8 @@
     row = rows[i - start];
    }
 
-   const row_height = (height_map[i] = itemHeight || row.offsetHeight);
+   height_map[i] = itemHeight || row.offsetHeight;
+   const row_height = height_map[i];
    content_height += row_height;
    i += 1;
   }
@@ -144,10 +145,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
- }
-
- svelte-virtual-list-row {
-  overflow: hidden;
  }
 
  svelte-virtual-list-row {
