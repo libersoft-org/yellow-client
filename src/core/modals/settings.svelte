@@ -2,9 +2,10 @@
  import { getContext } from 'svelte';
  import Button from '../components/button.svelte';
  let zoom = 100;
- const elApp = getContext('elApp');
+ const app = getContext('app');
 
  function clickSetZoom() {
+  let elApp = app.elApp;
   console.log(elApp); // TODO: undefined
   if (elApp) {
    elApp.style.transform = 'scale(' + zoom / 100 + ')';

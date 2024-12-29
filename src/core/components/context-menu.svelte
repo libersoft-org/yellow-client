@@ -168,13 +168,13 @@
 
 <svelte:window
  on:mousedown={e => {
-  console.log('context-menu svelte:window click:', e);
-  console.log(e.target);
+  //console.log('context-menu svelte:window click:', e);
+  //console.log(e.target);
   let ancestor = e.target.closest('.context-menu');
-  console.log('ancestor:', ancestor);
+  //console.log('ancestor:', ancestor);
   if (ancestor) return;
   if (!open) return;
-  console.log('context-menu svelte:window click close:', e);
+  //console.log('context-menu svelte:window click close:', e);
   close();
  }}
 />

@@ -21,7 +21,9 @@
  import Modal from '../core/components/modal.svelte';
  let menus = [];
  let elApp;
- setContext('elApp', elApp);
+ let appContext = {};
+ $: appContext.elApp = elApp;
+ setContext('app', appContext);
  setContext('menus', menus);
  const wizardData = {
   steps: [

@@ -1,3 +1,7 @@
+<script>
+ export let value = '';
+</script>
+
 <style>
  select {
   padding: 10px;
@@ -9,6 +13,6 @@
  }
 </style>
 
-<select>
+<select bind:value>
  <slot></slot>
 </select>

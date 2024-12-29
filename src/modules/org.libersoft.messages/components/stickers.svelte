@@ -2,6 +2,7 @@
  import { onMount, tick } from 'svelte';
  import { get } from 'svelte/store';
  import { updateStickerLibrary } from '../messages.js';
+ import VirtualList from './virtual-list.svelte';
  import StickersSearchResults from './stickers-search-results.svelte';
  import InputTextButton from '../../../core/components/input-text-button.svelte';
  import Select from '../../../core/components/select.svelte';
@@ -13,6 +14,7 @@
  import TabServer from './stickers-server.svelte';
  import { liveQuery } from 'dexie';
  import { db } from '../db';
+ import StickerSet from './stickerset.svelte';
 
  const tabs = {
   favourites: TabFavourites,
@@ -25,14 +27,32 @@
 
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('0');
+
+ $inspect(animated_filter_dropdown_value);
+
  $effect(() => {
   console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value);
  });
- let animated_filter = $derived(animated_filter_dropdown_value === '0' ? [1, 0] : animated_filter_dropdown_value === '1' ? [1] : [0]);
- let count = $derived(get(query_store)?.length);
+ let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
+
+ let count;
+ let items = [];
+ $inspect(items, count);
+
  let query_store = $derived(live_query(fulltext_search_filter, animated_filter));
+
+ let query_store_unsubscribe;
  $effect(() => {
   console.log('query_store:', query_store, get(query_store));
+  if (query_store_unsubscribe) {
+   query_store_unsubscribe.unsubscribe();
+  }
+  items = [];
+  query_store_unsubscribe = query_store.subscribe(value => {
+   console.log('query_store value:', value);
+   items = value;
+   count = value.length;
+  });
  });
 
  function live_query(fulltext_search_filter, animated_filter) {
@@ -128,7 +148,7 @@
   {/await}
   <div class="filter">
    <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:value={fulltext_search_filter} />
-   <Select bind:this={animated_filter_dropdown_value}>
+   <Select bind:value={animated_filter_dropdown_value}>
     <Option value="all" text="All" />
     <Option value="animated" text="Animated only" />
     <Option value="static" text="Static only" />
@@ -136,7 +156,21 @@
   </div>
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
- {#if query_store}
-  <StickersSearchResults items={query_store} />
- {/if}
+
+ <!--{#if query_store}-->
+ <!-- <StickersSearchResults items={query_store} />-->
+ <!--{/if}-->
+
+ {items}
+ <div class="stickersets">
+  <VirtualList {items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
+   <StickerSet stickerset={item} />
+  </VirtualList>
+
+  <!--
+ {#each $library as item}
+  <StickerSet stickerset={item} />
+ {/each}
+-->
+ </div>
 </div>
