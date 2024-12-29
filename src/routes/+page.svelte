@@ -20,6 +20,8 @@
  import {} from '../modules/org.libersoft.dating/module.js';
  import Modal from '../core/components/modal.svelte';
  let menus = [];
+ let elApp;
+ setContext('elApp', elApp);
  setContext('menus', menus);
  const wizardData = {
   steps: [
@@ -212,7 +214,7 @@
 <svelte:head>
  <title>{product}</title>
 </svelte:head>
-<div class="app">
+<div class="app" bind:this={elApp}>
  <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
   <MenuBar bind:isMenuOpen />
