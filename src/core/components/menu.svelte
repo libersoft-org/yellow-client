@@ -1,8 +1,11 @@
 <script>
  import BaseButton from './base-button.svelte';
  import Item from './menu-item.svelte';
+ import Modal from './modal.svelte';
+ import ModalSettings from '../modals/settings.svelte';
  import { product, version, link } from '../core.js';
  export let showMenu = false;
+ export let showModalSettings = false;
 
  function clickMenuClose() {
   showMenu = false;
@@ -14,6 +17,7 @@
  }
 
  function clickSettings() {
+  showModalSettings = true;
   clickMenuClose();
  }
 </script>
@@ -138,3 +142,4 @@
   </div>
  </div>
 </div>
+<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} />
