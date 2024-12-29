@@ -351,6 +351,7 @@ function reconnectAccount(account) {
   console.log('Creating new WebSocket:', acc.credentials.server);
   acc.status = 'Connecting...';
   acc.lastCommsTs = Date.now();
+  acc.lastTransmissionTs = Date.now();
   account.update(v => v);
 
   try {
@@ -512,7 +513,7 @@ function setupPing(account) {
    false
   );
   let noCommsSeconds = Date.now() - acc.lastCommsTs;
-  if (noCommsSeconds > ping_interval * 2) {
+  if (noCommsSeconds > 60 + (Date.now() - acc.lastTransmissionTs)) {
    const msg = 'No comms for ' + noCommsSeconds / 1000 + ' seconds, reconnecting...';
    console.log(msg);
    // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
@@ -652,6 +653,7 @@ export function send(acc, target, command, params = {}, sendSessionID = true, ca
   console.log('------------------');
  }*/
  acc.socket.send(JSON.stringify(req));
+ acc.lastTransmissionTs = Date.now();
  return requestID;
 }
 

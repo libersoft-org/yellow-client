@@ -1,7 +1,7 @@
 <script>
  import { levenshteinEditDistance } from 'levenshtein-edit-distance';
  import { onMount, tick } from 'svelte';
- import { get } from 'svelte/store';
+ import { get, writable } from 'svelte/store';
  import { updateStickerLibrary } from '../messages.js';
  import VirtualList from './virtual-list.svelte';
  import StickersSearchResults from './stickers-search-results.svelte';
@@ -37,30 +37,20 @@
  let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
 
  let count;
- let items = [];
- $inspect(items, count);
+ let items = writable([]);
+ items.subscribe(value => console.log('items:', value));
 
- let query_store = $derived(live_query(fulltext_search_filter, animated_filter));
+ $inspect($items, count);
 
  let query_store_unsubscribe;
- $effect(() => {
-  console.log('query_store:', query_store, get(query_store));
-  if (query_store_unsubscribe) {
-   query_store_unsubscribe.unsubscribe();
-  }
-  items = [];
-  query_store_unsubscribe = query_store.subscribe(value => {
-   console.log('query_store value:', value);
-   items = value;
-   count = value.length;
-  });
- });
+
+ $effect(() => live_query(fulltext_search_filter, animated_filter));
 
  function live_query(fulltext_search_filter, animated_filter) {
   console.log('update_live_query', fulltext_search_filter, animated_filter);
   console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
 
-  return liveQuery(() => {
+  let query_store = liveQuery(() => {
    let x = db.stickersets;
    x = x.where('animated').anyOf(animated_filter);
    if (fulltext_search_filter != '') {
@@ -74,7 +64,23 @@
    console.log('result:', result);
    return result;
   });
+
+  if (query_store_unsubscribe) {
+   query_store_unsubscribe.unsubscribe();
+  }
+
+  query_store_unsubscribe = query_store.subscribe(value => {
+   console.log('query_store value:', value);
+   console.log('global items is now, ', $items);
+   items.set(value);
+   console.log('now global items is, ', $items);
+   count = value.length;
+  });
+
+  return query_store;
  }
+
+ $effect(() => console.log('items:', $items));
 
  let start, end;
 
@@ -163,16 +169,14 @@
  <!-- <StickersSearchResults items={query_store} />-->
  <!--{/if}-->
 
- {items}
+ <!--{JSON.stringify($items)}-->
  <div class="stickersets">
-  <VirtualList {items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
-   <StickerSet stickerset={item} />
-  </VirtualList>
+  <!--  <VirtualList items={$items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>-->
+  <!--   <StickerSet stickerset={item} />-->
+  <!--  </VirtualList>-->
 
-  <!--
- {#each $library as item}
-  <StickerSet stickerset={item} />
- {/each}
--->
+  {#each $items as item}
+   <StickerSet stickerset={item} />
+  {/each}
  </div>
 </div>

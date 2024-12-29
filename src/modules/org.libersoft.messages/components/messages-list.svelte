@@ -28,7 +28,7 @@
 
  function openStickersetDetailsModal(stickerset) {
   stickersetDetailsModalStickerset = stickerset;
-  console.log('openStickersetDetailsModal:', stickerset);
+  //console.log('openStickersetDetailsModal:', stickerset);
   showStickersetDetailsModal = true;
  }
 
@@ -46,19 +46,19 @@
   if (!messages_elem) return;
   event.savedScrollTop = messages_elem.scrollTop;
   event.savedScrollHeight = messages_elem.scrollHeight;
-  console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
+  //console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
  }
 
  function restoreScrollPosition(event) {
-  console.log('restoreScrollPosition messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  //console.log('restoreScrollPosition messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
   const scrollDifference = messages_elem.scrollHeight - event.savedScrollHeight;
   messages_elem.scrollTop = event.savedScrollTop + scrollDifference;
-  console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
+  //console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
  }
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  console.log('SCROLLTOBOTTOM');
+  //console.log('SCROLLTOBOTTOM');
   messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
@@ -68,7 +68,7 @@
 
  function checkIfScrolledToBottom(div) {
   const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
-  console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
+  //console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
   return result;
  }
 
@@ -84,13 +84,13 @@
  }
 
  function updateWindowSize(width, height) {
-  console.log('updateWindowSize width:', width, 'height:', height);
+  ////console.log('updateWindowSize width:', width, 'height:', height);
   parseScroll();
  }
 
  beforeUpdate(() => {
   if (!messages_elem) return;
-  console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  //console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
  });
 
  afterUpdate(async () => {
