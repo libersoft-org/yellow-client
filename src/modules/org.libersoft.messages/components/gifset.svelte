@@ -44,9 +44,9 @@
  }
 
  function sendGIF(url) {
-  console.log('Sending GIF:', url);
-  MessageBar.sendMessage('<img src="' + url + '" alt="GIF" />');
+  MessageBar.sendMessage('<div style="display: flex; border-radius: 10px; overflow: hidden;"><img src="' + url + '" alt="GIF" /></div>');
   MessageBar.setBarFocus();
+  // TODO - close expressions
  }
 </script>
 
@@ -65,14 +65,21 @@
 
  .container {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 5px;
+  overflow: auto; /* TODO - not working - scrollbar is missing */
  }
 
  .container img {
-  width: 100px;
-  height: 100px;
+  width: 160px;
+  height: 160px;
   object-fit: cover;
+ }
+
+ .item {
+  border-radius: 5px;
+  overflow: hidden;
  }
 </style>
 
@@ -93,7 +100,7 @@
   <div class="container">
    {#each gifs as gif}
     <BaseButton onClick={() => sendGIF(gif)}>
-     <img src={gif} alt="GIF" />
+     <div class="item"><img src={gif} alt="GIF" /></div>
     </BaseButton>
    {/each}
   </div>
