@@ -52,7 +52,12 @@
 
   let query_store = liveQuery(() => {
    let x = db.stickersets;
+
    x = x.where('animated').anyOf(animated_filter);
+   x = x.limit(10);
+
+   //x = x.orderBy('id');
+
    if (fulltext_search_filter != '') {
     //x = x.where('name').startsWithIgnoreCase(fulltext_search_filter);
     // x = x.sortBy('name', item => levenshtein(item.name.toLowerCase(), fulltext_search_filter.toLowerCase()));
@@ -118,14 +123,14 @@
  .top-components {
   padding: 10px;
  }
- /*
+
  .stickersets {
   display: flex;
   flex-direction: column;
   overflow: auto;
   gap: 10px;
  }
-*/
+
  .filter {
   display: flex;
   gap: 10px;
@@ -175,8 +180,14 @@
   <!--   <StickerSet stickerset={item} />-->
   <!--  </VirtualList>-->
 
+  {animated_filter}
+  {$items.length}
   {#each $items as item}
    <StickerSet stickerset={item} />
+
+   <!--
+   {JSON.stringify(item)}
+-->
   {/each}
  </div>
 </div>
