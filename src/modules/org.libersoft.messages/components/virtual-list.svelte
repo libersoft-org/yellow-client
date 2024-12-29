@@ -26,6 +26,9 @@
   return { index: i + start, data };
  });
 
+ $: console.log('VirtualList items:', items);
+ // $: console.log('VirtualList visible:', visible);
+
  // whenever `items` changes, invalidate the current heightmap
  $: if (mounted) refresh(items, viewport_height, itemHeight);
 

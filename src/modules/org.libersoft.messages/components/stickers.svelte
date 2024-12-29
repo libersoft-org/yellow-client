@@ -174,20 +174,19 @@
  <!-- <StickersSearchResults items={query_store} />-->
  <!--{/if}-->
 
+ {animated_filter}
+ {$items.length}
  <!--{JSON.stringify($items)}-->
  <div class="stickersets">
-  <!--  <VirtualList items={$items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>-->
-  <!--   <StickerSet stickerset={item} />-->
-  <!--  </VirtualList>-->
-
-  {animated_filter}
-  {$items.length}
-  {#each $items as item}
+  <VirtualList items={$items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
    <StickerSet stickerset={item} />
+  </VirtualList>
 
-   <!--
+  <!--  {#each $items as item}
+   <StickerSet stickerset={item} />
+   &lt;!&ndash;
    {JSON.stringify(item)}
--->
-  {/each}
+&ndash;&gt;
+  {/each}-->
  </div>
 </div>
