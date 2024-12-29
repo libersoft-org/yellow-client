@@ -27,6 +27,7 @@
 		"ethers": "^6.13.4",
 		"js-levenshtein": "^1.1.6",
 		"leaflet": "^1.9.4",
+		"levenshtein-edit-distance": "^3.0.1",
 		"lottie-web": "^5.12.2",
 		"pako": "^2.1.0",
 		"qrcode": "^1.5.4",

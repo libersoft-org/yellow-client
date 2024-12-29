@@ -1,4 +1,5 @@
 <script>
+ import { levenshteinEditDistance } from 'levenshtein-edit-distance';
  import { onMount, tick } from 'svelte';
  import { get } from 'svelte/store';
  import { updateStickerLibrary } from '../messages.js';
@@ -63,7 +64,8 @@
    let x = db.stickersets;
    x = x.where('animated').anyOf(animated_filter);
    if (fulltext_search_filter != '') {
-    //x = x.where('title').startsWithIgnoreCase(fulltext_search_filter);
+    //x = x.where('name').startsWithIgnoreCase(fulltext_search_filter);
+    // x = x.sortBy('name', item => levenshtein(item.name.toLowerCase(), fulltext_search_filter.toLowerCase()));
     //x = x .and(item => /foo/i.test(friend.name));
     //x = x .and(item => levenshtein(item.name.toLowerCase(), fulltext_search_filter.toLowerCase()) < 2);
     //x = x .and(item => item.name.toLowerCase().includes(fulltext_search_filter.toLowerCase()));
