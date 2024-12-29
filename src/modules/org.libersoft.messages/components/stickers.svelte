@@ -29,7 +29,7 @@
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('0');
 
- $inspect(animated_filter_dropdown_value);
+ //$inspect(animated_filter_dropdown_value);
 
  $effect(() => {
   console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value);
@@ -38,9 +38,9 @@
 
  let count;
  let items = writable([]);
- items.subscribe(value => console.log('items:', value));
+ items.subscribe(value => console.log('Stickers.svelte items:', value));
 
- $inspect($items, count);
+ //$inspect($items, count);
 
  let query_store_unsubscribe;
 
@@ -85,7 +85,7 @@
   return query_store;
  }
 
- $effect(() => console.log('items:', $items));
+ $effect(() => console.log('Stickers.svelte items $effect:', $items));
 
  let start, end;
 
@@ -170,10 +170,6 @@
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
 
- <!--{#if query_store}-->
- <!-- <StickersSearchResults items={query_store} />-->
- <!--{/if}-->
-
  {animated_filter}
  {$items.length}
  <!--{JSON.stringify($items)}-->
@@ -181,7 +177,9 @@
   <VirtualList items={$items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
    <StickerSet stickerset={item} />
   </VirtualList>
-
+  <!--
+<StickersSearchResults items={$items} />
+-->
   <!--  {#each $items as item}
    <StickerSet stickerset={item} />
    &lt;!&ndash;

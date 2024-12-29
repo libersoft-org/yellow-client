@@ -513,7 +513,7 @@ function setupPing(account) {
    false
   );
   let noCommsSeconds = Date.now() - acc.lastCommsTs;
-  if (noCommsSeconds > 60 + (Date.now() - acc.lastTransmissionTs)) {
+  if (noCommsSeconds > 60000 + (Date.now() - acc.lastTransmissionTs)) {
    const msg = 'No comms for ' + noCommsSeconds / 1000 + ' seconds, reconnecting...';
    console.log(msg);
    // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
@@ -678,6 +678,6 @@ function monkeypatch_console_log() {
  };
 }
 
-monkeypatch_console_log();
+//monkeypatch_console_log();
 
 export default { hideSidebarMobile, isClientFocused, accounts };
