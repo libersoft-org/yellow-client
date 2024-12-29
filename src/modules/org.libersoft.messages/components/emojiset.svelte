@@ -50,6 +50,7 @@
  .emoji img {
   width: 40px;
   height: 40px;
+  object-fit: contain;
  }
 
  .emoji:hover {
