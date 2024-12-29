@@ -13,7 +13,7 @@ The software is provided "as is", without warranty of any kind, including but no
  export let items;
  export let height = '400px';
  export let itemHeight = undefined;
- export let contents_styles = '';
+ // export let contents_styles = '';
 
  //$: console.log('library VirtualList.svelte', items, height, itemHeight);
 

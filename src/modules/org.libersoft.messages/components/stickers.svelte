@@ -90,14 +90,14 @@
  .top-components {
   padding: 10px;
  }
-
+ /*
  .stickersets {
   display: flex;
   flex-direction: column;
   overflow: auto;
   gap: 10px;
  }
-
+*/
  .filter {
   display: flex;
   gap: 10px;
@@ -121,7 +121,11 @@
    <Item img="modules/org.libersoft.messages/img/update.svg" onClick={clickUpdate} />
    <Item img="img/settings.svg" active={activeTab === 'settings'} onClick={e => setTab(e, 'settings')} />
   </Tabs>
-  <svelte:component this={tabs[activeTab]} />
+  <!--<svelte:component this={tabs[activeTab]} /> --- Svelte 4 -->
+  {#await tabs[activeTab] then Component}
+   <!-- Svelte 5 -->
+   <Component />
+  {/await}
   <div class="filter">
    <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:value={fulltext_search_filter} />
    <Select bind:this={animated_filter_dropdown_value}>
