@@ -25,6 +25,7 @@
 		"dexie": "^4.0.10",
 		"dompurify": "^3.2.3",
 		"ethers": "^6.13.4",
+		"fuzzy-search": "https://github.com/wouterrutgers/fuzzy-search",
 		"js-levenshtein": "^1.1.6",
 		"leaflet": "^1.9.4",
 		"levenshtein-edit-distance": "^3.0.1",

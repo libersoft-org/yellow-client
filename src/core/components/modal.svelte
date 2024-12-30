@@ -1,4 +1,5 @@
 <script>
+ import { debug } from '../core.js';
  import { setContext, tick } from 'svelte';
  import BaseButton from './base-button.svelte';
  export let show = false;
@@ -149,6 +150,7 @@
    </BaseButton>
   </div>
   <div class="body">
+   {#if $debug}params: {JSON.stringify({ params })}{/if}
    {#if params}
     <svelte:component this={body} {close} {params} />
    {:else}

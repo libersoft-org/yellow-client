@@ -1,6 +1,7 @@
 <script>
  import { levenshteinEditDistance } from 'levenshtein-edit-distance';
  import { fuzzySearch } from 'levenshtein-search';
+ import FuzzySearch from 'fuzzy-search';
  import { onMount, tick } from 'svelte';
  import { get, writable } from 'svelte/store';
  import { updateStickerLibrary } from '../messages.js';
@@ -54,7 +55,7 @@
   console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
 
   let query_store = liveQuery(async () => {
-   let x = db.stickersets;
+   let x = db.stickersets; //.orderBy('id');
 
    x = x.where('animated').anyOf(animated_filter);
    //x = x.limit(1000);
@@ -71,12 +72,14 @@
     //x = x .and(item => levenshtein(item.name.toLowerCase(), fulltext_search_filter.toLowerCase()) < 2);
     //x = x .and(item => item.name.toLowerCase().includes(fulltext_search_filter.toLowerCase()));
    }
-*/
+   */
 
    if (fulltext_search_filter != '') {
     fulltext_search_filter = fulltext_search_filter.toLowerCase();
     let result = await x.toArray();
-    result = result.sort((a, b) => levenshteinEditDistance(a.name.toLowerCase(), fulltext_search_filter) - levenshteinEditDistance(b.name.toLowerCase(), fulltext_search_filter));
+    //console.log('result:', result);
+    //result = result.sort((a, b) => levenshteinEditDistance(a.name.toLowerCase(), fulltext_search_filter) - levenshteinEditDistance(b.name.toLowerCase(), fulltext_search_filter));
+    result = new FuzzySearch(result, ['name'], { caseSensitive: false, sort: true }).search(fulltext_search_filter);
     return result;
    } else {
     return await x.toArray();
