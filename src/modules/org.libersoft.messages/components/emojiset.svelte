@@ -27,6 +27,11 @@
 </script>
 
 <style>
+ .emojiset {
+  height: calc(100% - 45px);
+  overflow: auto;
+ }
+
  .title {
   font-size: 14px;
   font-weight: bold;
@@ -58,17 +63,19 @@
  }
 </style>
 
-{#each emojis as g, index}
- <div class="group">
-  <div class="title">{g.group}</div>
-  <div class="emojis">
-   {#each g.emoji as e, id}
-    <BaseButton onClick={clickEmoji}>
-     <div class="emoji">
-      <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/{rgi(e.base)}/emoji.svg" loading="lazy" alt={render(e.base)} />
-     </div>
-    </BaseButton>
-   {/each}
+<div class="emojiset">
+ {#each emojis as g, index}
+  <div class="group">
+   <div class="title">{g.group}</div>
+   <div class="emojis">
+    {#each g.emoji as e, id}
+     <BaseButton onClick={clickEmoji}>
+      <div class="emoji">
+       <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/{rgi(e.base)}/emoji.svg" loading="lazy" alt={render(e.base)} />
+      </div>
+     </BaseButton>
+    {/each}
+   </div>
   </div>
- </div>
-{/each}
+ {/each}
+</div>

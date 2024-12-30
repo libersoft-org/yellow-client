@@ -56,6 +56,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 10px;
+  height: calc(100% - 45px);
  }
 
  .group {
@@ -68,7 +69,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 5px;
-  overflow: auto; /* TODO - not working - scrollbar is missing */
+  overflow: auto;
  }
 
  .container img {
