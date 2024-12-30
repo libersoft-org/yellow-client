@@ -3,6 +3,8 @@
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts } from '../core.js';
  import Button from '../components/button.svelte';
+ import Select from '../components/select.svelte';
+ import Option from '../components/select-option.svelte';
  import InputText from '../components/input-text.svelte';
  import { derived, get, writable } from 'svelte/store';
  import AccountStatusIconAndText from '../components/account-status-icon-and-text.svelte';
@@ -148,28 +150,37 @@
 
 <div class="form">
  <div class="group">
-  <label
-   ><div class="label">Title:</div>
-   <InputText bind:value={config_title} on:keydown={keyEnter} bind:this={titleElem} /></label
-  >
+  <label>
+   <div class="label">Protocol:</div>
+   <Select>
+    <Option text="AMTP" value="amtp" />
+    <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} />
+   </Select>
+  </label>
  </div>
  <div class="group">
-  <label
-   ><div class="label">Server:</div>
-   <InputText placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} /></label
-  >
+  <label>
+   <div class="label">Title:</div>
+   <InputText bind:value={config_title} on:keydown={keyEnter} bind:this={titleElem} />
+  </label>
  </div>
  <div class="group">
-  <label
-   ><div class="label">Address:</div>
-   <InputText placeholder="user@domain.tld" bind:value={credentials_address} on:keydown={keyEnter} /></label
-  >
+  <label>
+   <div class="label">Server:</div>
+   <InputText placeholder="wss://your_server/" bind:value={credentials_server} on:keydown={keyEnter} />
+  </label>
  </div>
  <div class="group">
-  <label
-   ><div class="label">Password:</div>
-   <InputText password={true} placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter} /></label
-  >
+  <label>
+   <div class="label">Address:</div>
+   <InputText placeholder="user@domain.tld" bind:value={credentials_address} on:keydown={keyEnter} />
+  </label>
+ </div>
+ <div class="group">
+  <label>
+   <div class="label">Password:</div>
+   <InputText password={true} placeholder="Your password" bind:value={credentials_password} on:keydown={keyEnter} />
+  </label>
  </div>
  {#if !isInWelcomeWizard}
   <div class="group">
