@@ -26,7 +26,7 @@
   }
   observer = new IntersectionObserver(intersecting, { threshold: 0.1, delay: 10 });
   itemsEls.forEach(itemEl => {
-   observer.observe(itemEl);
+   if (itemEl) observer.observe(itemEl);
   });
  }
 
