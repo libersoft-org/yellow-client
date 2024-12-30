@@ -16,7 +16,6 @@
  import TabServer from './stickers-server.svelte';
  import { liveQuery } from 'dexie';
  import { db } from '../db';
- import StickerSet from './stickerset.svelte';
 
  const tabs = {
   favourites: TabFavourites,
@@ -30,9 +29,7 @@
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('all');
 
- let cmpResults;
- let cmpIntersector = $state();
- //$inspect(animated_filter_dropdown_value);
+ let scroll_to_top;
 
  $effect(() => {
   console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value);
@@ -50,9 +47,8 @@
  $effect(async () => live_query(fulltext_search_filter, animated_filter));
 
  async function live_query(fulltext_search_filter, animated_filter) {
-  console.log('cmpIntersector:', cmpIntersector);
-  console.log('cmpIntersector?.scroll_to_top:', cmpIntersector?.scroll_to_top);
-  await cmpIntersector.scroll_to_top();
+  console.log('scroll_to_top:', scroll_to_top);
+  await scroll_to_top();
 
   console.log('update_live_query', fulltext_search_filter, animated_filter);
   console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
@@ -182,5 +178,5 @@
  fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
  $items.length: {$items.length}
 
- <StickersSearchResults bind:cmpIntersector bind:this={cmpResults} items={$items} />
+ <StickersSearchResults bind:scroll_to_top items={$items} />
 </div>
