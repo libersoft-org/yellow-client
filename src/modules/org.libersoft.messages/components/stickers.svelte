@@ -31,7 +31,7 @@
  let animated_filter_dropdown_value = $state('all');
 
  let cmpResults;
- let cmpIntersector;
+ let cmpIntersector = $state();
  //$inspect(animated_filter_dropdown_value);
 
  $effect(() => {
@@ -141,12 +141,12 @@
   display: flex;
   gap: 10px;
  }
-
+ /*
  .count {
   display: flex;
   justify-content: right;
   font-size: 13px;
- }
+ }*/
 </style>
 
 <!--
