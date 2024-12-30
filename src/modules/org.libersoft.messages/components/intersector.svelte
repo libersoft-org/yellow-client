@@ -9,6 +9,7 @@
  let observer;
  let itemsEls = [];
  let itemsById = {};
+ let heights = {};
  let visibility = $state({});
 
  $effect(() => {
@@ -44,7 +45,7 @@
 </script>
 
 {#each items as item, i (item.id)}
- <div class="item" data-id={item.id} bind:this={itemsEls[i]}>
+ <div class="item" data-id={item.id} bind:this={itemsEls[i]} bind:clientHeight={heights[item.id]}>
   <!--
   {JSON.stringify(typeof item.id)}
   {JSON.stringify(item.id)}
@@ -56,7 +57,7 @@
    -->
    <slot {item} />
   {:else}
-   <div style="height: 300px; background-color: #ddd; border-radius: 10px;"></div>
+   <div style="height: {heights[item.id] || 200}px; background-color: #ddd; border-radius: 10px;"></div>
   {/if}
  </div>
 {/each}
