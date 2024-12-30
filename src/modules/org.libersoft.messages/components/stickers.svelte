@@ -118,6 +118,7 @@
   gap: 10px;
   overflow: hidden;
   max-height: calc(100% - 39px);
+  height: calc(200px);
  }
 
  .top-components {
@@ -173,18 +174,24 @@
  {animated_filter}
  {$items.length}
  <!--{JSON.stringify($items)}-->
+
+ <VirtualList items={$items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
+  <StickerSet stickerset={item} />
+ </VirtualList>
+
+ <!--
  <div class="stickersets">
-  <VirtualList items={$items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
-   <StickerSet stickerset={item} />
-  </VirtualList>
-  <!--
+ </div>
+-->
+
+ <!--
 <StickersSearchResults items={$items} />
 -->
-  <!--  {#each $items as item}
+
+ <!--  {#each $items as item}
    <StickerSet stickerset={item} />
    &lt;!&ndash;
    {JSON.stringify(item)}
 &ndash;&gt;
   {/each}-->
- </div>
 </div>

@@ -9,21 +9,12 @@
  });
 </script>
 
-<style>
- .stickersets {
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  gap: 10px;
- }
-</style>
+<VirtualList {items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
+ <StickerSet stickerset={item} />
+</VirtualList>
 
-<div class="stickersets">
- <VirtualList {items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
-  <StickerSet stickerset={item} />
- </VirtualList>
- <!--
- {#each items as item}
-  <StickerSet stickerset={item} />
- {/each}-->
-</div>
+<!--
+{#each items as item}
+ <StickerSet stickerset={item} />
+{/each}
+-->
