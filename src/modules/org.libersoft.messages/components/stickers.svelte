@@ -117,19 +117,10 @@
   flex-direction: column;
   gap: 10px;
   overflow: hidden;
-  max-height: calc(100% - 39px);
-  height: calc(200px);
  }
 
  .top-components {
   padding: 10px;
- }
-
- .stickersets {
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  gap: 10px;
  }
 
  .filter {
@@ -150,10 +141,10 @@
 <div class="stickers">
  <div class="top-components">
   <Tabs>
-   <Item img="modules/org.libersoft.messages/img/favourite.svg" active={activeTab === 'favourites'} onClick={e => setTab(e, 'favourites')} />
-   <Item img="modules/org.libersoft.messages/img/server.svg" active={activeTab === 'server'} onClick={e => setTab(e, 'server')} />
+   <Item active={activeTab === 'favourites'} img="modules/org.libersoft.messages/img/favourite.svg" onClick={e => setTab(e, 'favourites')} />
+   <Item active={activeTab === 'server'} img="modules/org.libersoft.messages/img/server.svg" onClick={e => setTab(e, 'server')} />
    <Item img="modules/org.libersoft.messages/img/update.svg" onClick={clickUpdate} />
-   <Item img="img/settings.svg" active={activeTab === 'settings'} onClick={e => setTab(e, 'settings')} />
+   <Item active={activeTab === 'settings'} img="img/settings.svg" onClick={e => setTab(e, 'settings')} />
   </Tabs>
   <!--<svelte:component this={tabs[activeTab]} /> --- Svelte 4 -->
   {#await tabs[activeTab] then Component}
@@ -161,37 +152,26 @@
    <Component />
   {/await}
   <div class="filter">
-   <InputTextButton img="modules/org.libersoft.messages/img/search.svg" alt="Search" placeholder="Search ..." bind:value={fulltext_search_filter} />
+   <InputTextButton alt="Search" bind:value={fulltext_search_filter} img="modules/org.libersoft.messages/img/search.svg" placeholder="Search ..." />
    <Select bind:value={animated_filter_dropdown_value}>
-    <Option value="all" text="All" />
-    <Option value="animated" text="Animated only" />
-    <Option value="static" text="Static only" />
+    <Option text="All" value="all" />
+    <Option text="Animated only" value="animated" />
+    <Option text="Static only" value="static" />
    </Select>
   </div>
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
  </div>
 
- {animated_filter}
- {$items.length}
+ animated_filter: {JSON.stringify(animated_filter)}
+ $items.length: {$items.length}
  <!--{JSON.stringify($items)}-->
 
- <VirtualList items={$items} let:item bind:start bind:end contents_styles={'display: flex; flex-direction: column; gap: 28px;'}>
-  <StickerSet stickerset={item} />
- </VirtualList>
-
- <!--
- <div class="stickersets">
- </div>
--->
-
- <!--
-<StickersSearchResults items={$items} />
--->
+ <StickersSearchResults items={$items} />
 
  <!--  {#each $items as item}
    <StickerSet stickerset={item} />
    &lt;!&ndash;
    {JSON.stringify(item)}
-&ndash;&gt;
+ &ndash;&gt;
   {/each}-->
 </div>
