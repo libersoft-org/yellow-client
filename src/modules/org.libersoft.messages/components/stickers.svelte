@@ -55,7 +55,7 @@
    let x = db.stickersets;
 
    x = x.where('animated').anyOf(animated_filter);
-   //x = x.limit(10);
+   x = x.limit(1);
 
    //x = x.orderBy('id');
 

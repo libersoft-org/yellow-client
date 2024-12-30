@@ -5,6 +5,7 @@
  let container;
  let itemsEls = [];
  let itemsById = {};
+ let visibility = {};
 
  $effect(() => {
   itemsById = {};
@@ -25,14 +26,16 @@
  }
 
  function intersecting(entries) {
-  entries.forEach(entry => {
-   //console.log(entry.target);
-   let item = itemsById[entry.target.dataset.item];
-   if (item) {
-    console.log('intersecting', item.id, entry.isIntersecting);
-    item._intersecting = entry.isIntersecting;
-   }
-  });
+  setTimeout(() => {
+   entries.forEach(entry => {
+    entry.target.dataset.intersecting = entry.isIntersecting;
+    let n = Number(entry.target.dataset.id);
+    console.log('n:', n, 'entry.target.dataset.id:', entry.target.dataset.id, 'intersection:', entry.isIntersecting);
+    //itemsById[n]._intersecting = entry.isIntersecting;
+    visibility[n] = entry.isIntersecting;
+    //visibility[entry.target.dataset.id] = entry.isIntersecting;
+   });
+  }, 60);
  }
 </script>
 
@@ -44,11 +47,17 @@
  }
 </style>
 
+{JSON.stringify(visibility)}
 <div class="intersector" bind:this={container}>
  {#each items as item, i (item.id)}
-  <div data-item={item.id} class="item" bind:this={itemsEls[i]}>
-   {#if item._intersecting}
-    <slot {item} intersecting={item._intersecting} />
+  <div class="item" data-id={item.id} bind:this={itemsEls[i]}>
+   {JSON.stringify(typeof item.id)}
+   {JSON.stringify(item.id)}
+   {JSON.stringify(visibility[item.id])}
+
+   {#if visibility[item.id]}
+    yyy
+    <slot {item} intersecting={true} />
    {:else}
     nnn
    {/if}
