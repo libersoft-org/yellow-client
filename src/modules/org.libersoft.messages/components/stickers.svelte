@@ -164,14 +164,6 @@
 
  animated_filter: {JSON.stringify(animated_filter)}
  $items.length: {$items.length}
- <!--{JSON.stringify($items)}-->
 
  <StickersSearchResults items={$items} />
-
- <!--  {#each $items as item}
-   <StickerSet stickerset={item} />
-   &lt;!&ndash;
-   {JSON.stringify(item)}
- &ndash;&gt;
-  {/each}-->
 </div>

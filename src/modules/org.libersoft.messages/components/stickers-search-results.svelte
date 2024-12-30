@@ -1,6 +1,6 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
- import VirtualList from './virtual-list.svelte';
+ import VirtualList from './virtual-list-better.svelte';
  import StickerSet from './stickerset.svelte';
 
  export let items;
@@ -9,7 +9,7 @@
  let scrollTop = 0;
  let containerHeight = 0;
 
- let itemHeight = 30;
+ let itemHeight = 200;
 
  let frame;
 
@@ -34,33 +34,21 @@
  .books {
   overflow: auto;
 
-  /* This is just for the demo, your scrolling container can have any size  */
-  border: 1px solid #000;
-  width: 500px;
+  width: 400px;
   height: 500px;
  }
 
  .book {
   /* You can also use inline-grid and define grid-template-* on the parent for easy virtual grid */
   display: inline-block;
-  white-space: nowrap;
 
   /* One inline-block per line, no horizontal scrolling  */
   box-sizing: border-box;
-  padding: 0 0.5rem;
-  width: 100%;
   overflow: hidden;
-  text-overflow: ellipsis;
 
   /* We re-use items when they leave the viewport by adjusting their "top" value */
   /* Depending on your use case you might achieve better results using translate3d + will-change */
   position: relative;
- }
-
- .dummy {
-  /* The dummy is just an invisible empty item */
-  /* But if you want that look you can actually render it like an empty cell */
-  border-color: transparent;
  }
 </style>
 
