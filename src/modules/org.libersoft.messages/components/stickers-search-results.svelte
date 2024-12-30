@@ -5,6 +5,14 @@
  export let items;
 </script>
 
-{#each items as item}
- <StickerSet stickerset={item} />
-{/each}
+<style>
+ .results {
+  overflow: auto;
+ }
+</style>
+
+<div class="results">
+ {#each items as item}
+  <StickerSet stickerset={item} />
+ {/each}
+</div>

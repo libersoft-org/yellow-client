@@ -12,9 +12,12 @@
 
 <style>
  .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   flex: 1;
   text-align: center;
-  padding: 10px 0;
  }
 
  .item.active {

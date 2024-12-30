@@ -37,15 +37,18 @@
   overflow: hidden;
  }
 
- .expressions-categories-bar {
+ .categories {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   background-color: #fd1;
+  height: 45px;
+  max-height: 45px;
  }
 </style>
 
 <div class="expressions" style="height: {height}">
- <div class="expressions-categories-bar" role="none" on:mousedown={mousedown} on:click={click}>
+ <div class="categories" role="none" on:mousedown={mousedown} on:click={click}>
   <Item label="Emojis" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
   <Item label="Stickers" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
   <Item label="GIFs" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
