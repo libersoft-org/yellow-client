@@ -1,6 +1,6 @@
 <script>
  import { onMount, onDestroy } from 'svelte';
- import Intersector from './Intersector.svelte';
+ import Intersector from './intersector.svelte';
  import StickerSet from './stickerset.svelte';
 
  export let items;
@@ -19,5 +19,7 @@
  {/each}
 -->
 
- <Intersector {items} />
+ <Intersector {items} let:item let:intersecting>
+  <StickerSet stickerset={item} {intersecting} />
+ </Intersector>
 </div>

@@ -1,5 +1,6 @@
 <script>
  import { levenshteinEditDistance } from 'levenshtein-edit-distance';
+ import { fuzzySearch } from 'levenshtein-search';
  import { onMount, tick } from 'svelte';
  import { get, writable } from 'svelte/store';
  import { updateStickerLibrary } from '../messages.js';
@@ -27,7 +28,7 @@
  let stickerServer = 'https://stickers.libersoft.org';
 
  let fulltext_search_filter = $state('');
- let animated_filter_dropdown_value = $state('0');
+ let animated_filter_dropdown_value = $state('all');
 
  //$inspect(animated_filter_dropdown_value);
 
@@ -50,21 +51,36 @@
   console.log('update_live_query', fulltext_search_filter, animated_filter);
   console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
 
-  let query_store = liveQuery(() => {
+  let query_store = liveQuery(async () => {
    let x = db.stickersets;
 
    x = x.where('animated').anyOf(animated_filter);
-   x = x.limit(10);
+   //x = x.limit(10);
 
    //x = x.orderBy('id');
 
+   /*
    if (fulltext_search_filter != '') {
+    fulltext_search_filter = fulltext_search_filter.toLowerCase();
     //x = x.where('name').startsWithIgnoreCase(fulltext_search_filter);
-    // x = x.sortBy('name', item => levenshtein(item.name.toLowerCase(), fulltext_search_filter.toLowerCase()));
+    //x = x.sortBy('name', name => 3/!*levenshteinEditDistance(name.toLowerCase(), fulltext_search_filter)*!/);
+    x = x.sortBy('name', name => true);
     //x = x .and(item => /foo/i.test(friend.name));
     //x = x .and(item => levenshtein(item.name.toLowerCase(), fulltext_search_filter.toLowerCase()) < 2);
     //x = x .and(item => item.name.toLowerCase().includes(fulltext_search_filter.toLowerCase()));
    }
+*/
+
+   if (fulltext_search_filter != '') {
+    fulltext_search_filter = fulltext_search_filter.toLowerCase();
+    let result = await x.toArray();
+    result = result.sort((a, b) => levenshteinEditDistance(a.name.toLowerCase(), fulltext_search_filter) - levenshteinEditDistance(b.name.toLowerCase(), fulltext_search_filter));
+    return result;
+   } else {
+    return await x.toArray();
+   }
+
+   console.log('x:', x);
    let result = x.toArray();
    console.log('result:', result);
    return result;
@@ -164,6 +180,7 @@
  </div>
 
  animated_filter: {JSON.stringify(animated_filter)}
+ fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
  $items.length: {$items.length}
 
  <StickersSearchResults items={$items} />

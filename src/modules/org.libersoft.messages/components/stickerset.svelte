@@ -4,6 +4,7 @@
  import { onMount } from 'svelte';
  import { db } from '../db';
 
+ export let intersecting = false;
  export let stickerset = {};
  export let showall = false;
  export let splitAt = 8;
@@ -11,12 +12,16 @@
  let stickers = [];
  let expanded = false;
 
+ $: update(intersecting);
+
+ async function update(intersecting) {
+  if (intersecting) {
+   stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
+  } else stickers = [];
+ }
+
  $: first = stickers.slice(0, splitAt);
  $: rest = stickers.slice(splitAt);
-
- onMount(async () => {
-  stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
- });
 
  /*
  $: console.log('library stickerset', stickerset);
@@ -27,7 +32,7 @@
 
  function mousedown(event) {
   //console.log('stickerset mousedown');
-  event.stopPropagation();
+  //event.stopPropagation();
  }
 
  function clickExpand() {
@@ -98,31 +103,36 @@
  }
 </style>
 
-<div class="stickerset" role="none" on:mousedown={mousedown}>
- <div class="title-bar">
-  <div class="row">
-   <div class="label">{stickerset.name}</div>
-   <BaseButton onClick={clickAdd}>
-    <div class="icon">
-     <img src="img/add-black.svg" alt="Add to favourites" />
+ii{JSON.stringify(intersecting ? 'tt' : 'ff')}ii
+
+{#if intersecting}
+ <div class="stickerset" role="none" on:mousedown={mousedown}>
+  <div class="title-bar">
+   <div class="row">
+    <div class="label">{stickerset.name}</div>
+    <BaseButton onClick={clickAdd}>
+     <div class="icon">
+      <img src="img/add-black.svg" alt="Add to favourites" />
+     </div>
+    </BaseButton>
+   </div>
+   <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
+  </div>
+
+  <div class="set">
+   <StickerSetPart {stickerset} items={first} />
+  </div>
+  {#if !showall}
+   <BaseButton onClick={clickExpand}>
+    <div class="more">
+     <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
     </div>
    </BaseButton>
-  </div>
-  <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
- </div>
- <div class="set">
-  <StickerSetPart {stickerset} items={first} />
- </div>
- {#if !showall}
-  <BaseButton onClick={clickExpand}>
-   <div class="more">
-    <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
+  {/if}
+  {#if showall || expanded}
+   <div class="set">
+    <StickerSetPart {stickerset} items={rest} />
    </div>
-  </BaseButton>
- {/if}
- {#if showall || expanded}
-  <div class="set">
-   <StickerSetPart {stickerset} items={rest} />
-  </div>
- {/if}
-</div>
+  {/if}
+ </div>
+{/if}
