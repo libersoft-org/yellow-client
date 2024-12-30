@@ -4,6 +4,7 @@
  import { onMount } from 'svelte';
  import { db } from '../db';
 
+ export let save_height;
  export let intersecting = true;
  export let stickerset = {};
  export let showall = false;
@@ -11,6 +12,9 @@
  let first, rest;
  let stickers = [];
  let expanded = false;
+ let clientHeight;
+
+ $: save_height(clientHeight);
 
  $: update(intersecting);
 
@@ -105,7 +109,7 @@
 
 {#if intersecting}
  {stickerset.id}
- <div class="stickerset" role="none" on:mousedown={mousedown}>
+ <div class="stickerset" role="none" bind:clientHeight>
   <div class="title-bar">
    <div class="row">
     <div class="label">{stickerset.name}</div>

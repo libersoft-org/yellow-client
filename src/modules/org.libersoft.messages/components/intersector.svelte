@@ -45,19 +45,22 @@
 </script>
 
 {#each items as item, i (item.id)}
- <div class="item" data-id={item.id} bind:this={itemsEls[i]} bind:clientHeight={heights[item.id]}>
+ <div class="item" data-id={item.id} bind:this={itemsEls[i]}>
   <!--
   {JSON.stringify(typeof item.id)}
   {JSON.stringify(item.id)}
   {JSON.stringify(visibility[item.id])}
    -->
-  {#if visibility[item.id]}
-   <!--
-      {#if itemsEls[i].dataset.intersecting}
-   -->
-   <slot {item} />
-  {:else}
-   <div style="height: {heights[item.id] || 200}px; background-color: #ddd; border-radius: 10px;"></div>
-  {/if}
+  <div style="height: {heights[item.id] || 200}px; background-color: #19f; border-radius: 10px;">
+   {#if visibility[item.id]}
+    <!--      {#if itemsEls[i].dataset.intersecting}   -->
+    <slot
+     {item}
+     save_height={h => {
+      heights[item.id] = h;
+     }}
+    />
+   {/if}
+  </div>
  </div>
 {/each}

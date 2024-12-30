@@ -30,7 +30,7 @@
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('all');
 
- let scroll_to_top;
+ let scroll_to_top = $state(null);
 
  $effect(() => {
   console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value);

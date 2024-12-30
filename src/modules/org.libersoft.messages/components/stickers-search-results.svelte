@@ -27,7 +27,7 @@
  {/each}
 -->
 
- <Intersector {items} let:item let:intersecting>
-  <StickerSet stickerset={item} {intersecting} />
+ <Intersector {items} let:item let:save_height>
+  <StickerSet stickerset={item} {save_height} />
  </Intersector>
 </div>
