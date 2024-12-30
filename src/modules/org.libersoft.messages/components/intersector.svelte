@@ -51,7 +51,8 @@
   {JSON.stringify(item.id)}
   {JSON.stringify(visibility[item.id])}
    -->
-  <div style="height: {heights[item.id] || 200}px; background-color: #19f; border-radius: 10px;">
+  <div style="height: {heights[item.id] || 200}px;">
+   <!--  background-color: #19f; border-radius: 10px; -->
    {#if visibility[item.id]}
     <!--      {#if itemsEls[i].dataset.intersecting}   -->
     <slot

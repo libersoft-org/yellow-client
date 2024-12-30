@@ -55,12 +55,12 @@
   console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
 
   let query_store = liveQuery(async () => {
-   let x = db.stickersets; //.orderBy('id');
-
-   x = x.where('animated').anyOf(animated_filter);
+   let x = db.stickersets.orderBy('id');
+   //x = x.where('animated').anyOf(animated_filter);
    //x = x.limit(1000);
-
    //x = x.sortBy('id');
+
+   x = x.filter(item => animated_filter.includes(item.animated ? 1 : 0));
 
    /*
    if (fulltext_search_filter != '') {
