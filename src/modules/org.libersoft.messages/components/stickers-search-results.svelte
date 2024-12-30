@@ -4,6 +4,7 @@
  import StickerSet from './stickerset.svelte';
 
  export let items;
+ export let cmpIntersector;
 </script>
 
 <style>
@@ -19,7 +20,7 @@
  {/each}
 -->
 
- <Intersector {items} let:item let:intersecting>
+ <Intersector bind:this={cmpIntersector} {items} let:item let:intersecting>
   <StickerSet stickerset={item} {intersecting} />
  </Intersector>
 </div>

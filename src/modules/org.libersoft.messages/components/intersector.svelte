@@ -1,11 +1,16 @@
 <script>
- let { items } = $props();
+ import { tick } from 'svelte';
+
+ let {
+  items,
+  //  scroll_to_top = $bindable(),
+ } = $props();
 
  let observer;
  let container;
  let itemsEls = [];
  let itemsById = {};
- let visibility = {};
+ let visibility = $state({});
 
  $effect(() => {
   itemsById = {};
@@ -37,6 +42,17 @@
    });
   }, 60);
  }
+
+ export async function scroll_to_top() {
+  await tick();
+  console.log('cmpIntersector scroll_to_top');
+  setTimeout(() => {
+   console.log('container.scrollTop:', container.scrollTop);
+   container.scrollTop = 0;
+   console.log('container.scrollTop:', container.scrollTop);
+  }, 1000);
+  //container.scrollTop = 0;
+ }
 </script>
 
 <style>
@@ -47,19 +63,22 @@
  }
 </style>
 
+<!--
 {JSON.stringify(visibility)}
+-->
+
 <div class="intersector" bind:this={container}>
  {#each items as item, i (item.id)}
   <div class="item" data-id={item.id} bind:this={itemsEls[i]}>
+   <!--
    {JSON.stringify(typeof item.id)}
    {JSON.stringify(item.id)}
    {JSON.stringify(visibility[item.id])}
-
+-->
    {#if visibility[item.id]}
-    yyy
-    <slot {item} intersecting={true} />
+    <slot {item} />
    {:else}
-    nnn
+    <div style="height: 300px; background-color: #ddd; border-radius: 10px;"></div>
    {/if}
   </div>
  {/each}

@@ -4,7 +4,7 @@
  import { onMount } from 'svelte';
  import { db } from '../db';
 
- export let intersecting = false;
+ export let intersecting = true;
  export let stickerset = {};
  export let showall = false;
  export let splitAt = 8;
@@ -103,9 +103,8 @@
  }
 </style>
 
-ii{JSON.stringify(intersecting ? 'tt' : 'ff')}ii
-
 {#if intersecting}
+ {stickerset.id}
  <div class="stickerset" role="none" on:mousedown={mousedown}>
   <div class="title-bar">
    <div class="row">

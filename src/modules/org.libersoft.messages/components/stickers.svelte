@@ -30,6 +30,8 @@
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('all');
 
+ let cmpResults;
+ let cmpIntersector;
  //$inspect(animated_filter_dropdown_value);
 
  $effect(() => {
@@ -45,9 +47,13 @@
 
  let query_store_unsubscribe;
 
- $effect(() => live_query(fulltext_search_filter, animated_filter));
+ $effect(async () => live_query(fulltext_search_filter, animated_filter));
 
- function live_query(fulltext_search_filter, animated_filter) {
+ async function live_query(fulltext_search_filter, animated_filter) {
+  console.log('cmpIntersector:', cmpIntersector);
+  console.log('cmpIntersector?.scroll_to_top:', cmpIntersector?.scroll_to_top);
+  await cmpIntersector.scroll_to_top();
+
   console.log('update_live_query', fulltext_search_filter, animated_filter);
   console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
 
@@ -55,9 +61,9 @@
    let x = db.stickersets;
 
    x = x.where('animated').anyOf(animated_filter);
-   x = x.limit(1);
+   //x = x.limit(1000);
 
-   //x = x.orderBy('id');
+   //x = x.sortBy('id');
 
    /*
    if (fulltext_search_filter != '') {
@@ -107,7 +113,6 @@
 
  onMount(async () => {
   //if ($library?.length === 0) await updateStickerLibrary(stickerServer);
-  await tick();
  });
 
  function setTab(e, name) {
@@ -116,14 +121,6 @@
 
  async function clickUpdate() {
   await updateStickerLibrary(stickerServer);
- }
-
- function clickSearch() {
-  console.log('Clicked on Search');
- }
-
- function onMousedown(event) {
-  console.log('stickers mousedown');
  }
 </script>
 
@@ -176,12 +173,14 @@
     <Option text="Static only" value="static" />
    </Select>
   </div>
+  <!--
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
+-->
  </div>
 
  animated_filter: {JSON.stringify(animated_filter)}
  fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
  $items.length: {$items.length}
 
- <StickersSearchResults items={$items} />
+ <StickersSearchResults bind:cmpIntersector bind:this={cmpResults} items={$items} />
 </div>
