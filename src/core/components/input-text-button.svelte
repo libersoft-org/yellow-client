@@ -21,6 +21,7 @@
   border: 0;
   font-family: inherit;
   font-size: inherit;
+  outline: none;
  }
 
  .image {
