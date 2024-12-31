@@ -5,7 +5,7 @@
 
  onMount(async () => {
   try {
-   const res = await fetch('https://cdn.jsdelivr.net/gh/googlefonts/emoji-metadata@main/emoji_16_0_ordering.json');
+   const res = await fetch('modules/org.libersoft.messages/json/emoji_16_0_ordering.json');
    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
    emojis = await res.json();
   } catch (error) {
