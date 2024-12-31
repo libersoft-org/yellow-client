@@ -1,10 +1,12 @@
 <script>
  import { onMount, getContext } from 'svelte';
+ import { htmlEscape } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Button from '../../../core/components/button.svelte';
  import InputText from '../../../core/components/input-text.svelte';
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  const MessageBar = getContext('MessageBar');
+ const menu = getContext('ContextMenu');
  const store = localStorageSharedStore('giphy-api-key');
  let apiKey;
  let gifs = [];
@@ -44,12 +46,8 @@
  }
 
  function sendGIF(url) {
-  MessageBar.sendMessage('<Gif file="' + url + '" alt="GIF" />');
-  /*
-  MessageBar.sendMessage('<div style="display: flex; border-radius: 10px; overflow: hidden;"><img src="' + url + '" alt="GIF" /></div>');
-*/
-  MessageBar.setBarFocus();
-  // TODO - close expressions
+  MessageBar.sendMessage('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" />');
+  menu?.close();
  }
 </script>
 

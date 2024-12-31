@@ -17,9 +17,15 @@
  let showExpressions = false;
 
  setContext('MessageBar', {
-  sendMessage,
+  sendMessage: doSendMessage,
   setBarFocus,
  });
+
+ export async function doSendMessage(message) {
+  //console.log('doSendMessage', message);
+  await sendMessage(message);
+  await setBarFocus();
+ }
 
  export async function setBarFocus() {
   await tick();

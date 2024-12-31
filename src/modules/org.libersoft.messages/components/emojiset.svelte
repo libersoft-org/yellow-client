@@ -1,6 +1,12 @@
 <script>
- import { onMount } from 'svelte';
+ import { getContext, onMount } from 'svelte';
+ import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
+ import { htmlEscape } from '../messages.js';
+
+ const MessageBar = getContext('MessageBar');
+ const menu = getContext('ContextMenu');
+
  let emojis;
 
  onMount(async () => {
@@ -13,16 +19,14 @@
   }
  });
 
- function rgi(codepoints) {
-  return codepoints.map(codepoint => codepoint.toString(16).padStart(4, '0')).join('_');
+ function encodeCodepoints(codepoints) {
+  return codepoints.map(cp => cp.toString(16).padStart(4, '0')).join(',');
  }
 
- function render(codepoints) {
-  return codepoints.map(codepoint => String.fromCodePoint(codepoint)).join('');
- }
-
- function clickEmoji() {
+ function clickEmoji(codepoints) {
   console.log('Clicked on emoji');
+  MessageBar.sendMessage('<Emoji codepoints="' + encodeCodepoints(codepoints) + '" />');
+  menu?.close();
  }
 </script>
 
@@ -45,22 +49,6 @@
   padding: 0 10px;
   overflow: auto; /* TODO - not working */
  }
-
- .emoji {
-  display: flex;
-  padding: 3px;
-  border-radius: 5px;
- }
-
- .emoji img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
- }
-
- .emoji:hover {
-  background: #eee;
- }
 </style>
 
 <div class="emojiset">
@@ -69,10 +57,8 @@
    <div class="title">{g.group}</div>
    <div class="emojis">
     {#each g.emoji as e, id}
-     <BaseButton onClick={clickEmoji}>
-      <div class="emoji">
-       <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/{rgi(e.base)}/emoji.svg" loading="lazy" alt={render(e.base)} />
-      </div>
+     <BaseButton onClick={() => clickEmoji(e.base)}>
+      <Emoji codepoints={e.base} />
      </BaseButton>
     {/each}
    </div>

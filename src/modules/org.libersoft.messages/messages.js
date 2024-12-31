@@ -482,7 +482,7 @@ export function saneHtml(content) {
  let sane = DOMPurify.sanitize(content, {
   ADD_TAGS: ['Sticker', 'Gif', 'Emoji'],
   //FORBID_CONTENTS: ['sticker'],
-  ADD_ATTR: ['file', 'set', 'alt'], // TODO: fixme, security issue, should only be allowed on the relevant elements
+  ADD_ATTR: ['file', 'set', 'alt', 'codepoints'], // TODO: fixme, security issue, should only be allowed on the relevant elements
   RETURN_DOM_FRAGMENT: true,
  });
  /*console.log('content:');
@@ -490,6 +490,11 @@ export function saneHtml(content) {
  console.log('sane:');
  console.log(sane);*/
  return sane;
+}
+
+export function htmlEscape(str) {
+ console.log('htmlEscape:', str);
+ return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
 export function stripHtml(html) {
