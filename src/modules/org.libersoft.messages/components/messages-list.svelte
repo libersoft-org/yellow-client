@@ -294,9 +294,10 @@
  }
 
  .messages-fixed {
-  overflow: hidden;
-  flex-grow: 1;
   position: relative;
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
  }
 
  .messages {
