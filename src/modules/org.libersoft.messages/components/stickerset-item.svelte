@@ -2,25 +2,21 @@
  import BaseButton from '../../../core/components/base-button.svelte';
  import Sticker from './sticker.svelte';
  import { getContext } from 'svelte';
+ import { htmlEscape } from '../messages.js';
+
  export let sticker;
  export let stickerset;
  export let size;
- export let onClick;
+
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
+
  let file;
  $: file = sticker.url;
 
  function handleClick() {
   console.log('stickerset-item handleClick file:', file, 'sticker:', sticker);
-  onClick && onClick();
   MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" set="' + htmlEscape(stickerset.url) + '" />');
-  MessageBar.setBarFocus();
-  menu.close();
- }
-
- function htmlEscape(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
  }
 
  function onMousedown(event) {
