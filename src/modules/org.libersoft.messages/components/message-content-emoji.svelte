@@ -27,11 +27,6 @@
 </script>
 
 <style>
- gif {
-  display: flex;
-  border-radius: 10px;
-  overflow: hidden;
- }
 </style>
 
 {#if codepoints}

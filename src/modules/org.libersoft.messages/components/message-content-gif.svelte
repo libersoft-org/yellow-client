@@ -4,7 +4,7 @@
 </script>
 
 <style>
- gif {
+ .gif {
   display: flex;
   border-radius: 10px;
   overflow: hidden;
