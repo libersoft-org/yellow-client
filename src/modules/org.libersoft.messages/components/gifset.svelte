@@ -44,7 +44,10 @@
  }
 
  function sendGIF(url) {
+  MessageBar.sendMessage('<Gif file="' + url + '" alt="GIF" />');
+  /*
   MessageBar.sendMessage('<div style="display: flex; border-radius: 10px; overflow: hidden;"><img src="' + url + '" alt="GIF" /></div>');
+*/
   MessageBar.setBarFocus();
   // TODO - close expressions
  }

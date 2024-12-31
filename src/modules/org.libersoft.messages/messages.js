@@ -480,9 +480,9 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 export function saneHtml(content) {
  //console.log('saneHtml:');
  let sane = DOMPurify.sanitize(content, {
-  ADD_TAGS: ['sticker'],
+  ADD_TAGS: ['Sticker', 'Gif', 'Emoji'],
   //FORBID_CONTENTS: ['sticker'],
-  ADD_ATTR: ['file', 'set'], // TODO: fixme, security issue, should only be allowed on sticker
+  ADD_ATTR: ['file', 'set', 'alt'], // TODO: fixme, security issue, should only be allowed on the relevant elements
   RETURN_DOM_FRAGMENT: true,
  });
  /*console.log('content:');

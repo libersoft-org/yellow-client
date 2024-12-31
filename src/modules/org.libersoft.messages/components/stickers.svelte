@@ -1,11 +1,9 @@
 <script>
- import { levenshteinEditDistance } from 'levenshtein-edit-distance';
- import { fuzzySearch } from 'levenshtein-search';
+ import { debug } from '../../../core/core.js';
  import FuzzySearch from 'fuzzy-search';
  import { onMount, tick } from 'svelte';
  import { get, writable } from 'svelte/store';
  import { updateStickerLibrary } from '../messages.js';
- import VirtualList from './virtual-list.svelte';
  import StickersSearchResults from './stickers-search-results.svelte';
  import InputTextButton from '../../../core/components/input-text-button.svelte';
  import Select from '../../../core/components/select.svelte';
@@ -157,9 +155,11 @@
 -->
  </div>
 
- animated_filter: {JSON.stringify(animated_filter)}
- fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
- $items.length: {$items.length}
+ {#if $debug}
+  animated_filter: {JSON.stringify(animated_filter)}
+  fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
+  $items.length: {$items.length}
+ {/if}
 
  <StickersSearchResults bind:scroll_to_top items={$items} />
 </div>

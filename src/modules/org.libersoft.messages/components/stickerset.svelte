@@ -1,4 +1,5 @@
 <script>
+ import { debug } from '../../../core/core.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import StickerSetPart from './stickerset-part.svelte';
  import { onMount } from 'svelte';
@@ -108,7 +109,7 @@
 </style>
 
 {#if intersecting}
- {stickerset.id}
+ {#if $debug}{stickerset.id}{/if}
  <div class="stickerset" role="none" bind:clientHeight>
   <div class="title-bar">
    <div class="row">

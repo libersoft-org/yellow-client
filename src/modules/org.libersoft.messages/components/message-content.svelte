@@ -66,8 +66,8 @@
 
 {#if node}
  <!-- Handle Custom Components -->
- {#if node.nodeType === Node.ELEMENT_NODE && componentMap[node.tagName.toLowerCase()]}
-  <svelte:component this={componentMap[node.tagName.toLowerCase()]} {node} />
+ {#if node.nodeType === Node.ELEMENT_NODE && componentMap[node.tagName]}
+  <svelte:component this={componentMap[node.tagName]} {node} />
   <!-- Handle Text Nodes -->
  {:else if node.nodeType === Node.TEXT_NODE}
   {node.textContent}
