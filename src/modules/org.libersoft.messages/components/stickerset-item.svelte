@@ -8,15 +8,16 @@
  export let stickerset;
  export let size;
 
- const MessageBar = getContext('MessageBar');
- const menu = getContext('ContextMenu');
+ const MessagesContext = getContext('MessagesContext');
+ const popup = getContext('Popup');
 
  let file;
  $: file = sticker.url;
 
- function handleClick() {
+ async function handleClick() {
   console.log('stickerset-item handleClick file:', file, 'sticker:', sticker);
-  MessageBar.sendMessage('<Sticker file="' + htmlEscape(file) + '" set="' + htmlEscape(stickerset.url) + '" />');
+  await MessagesContext.messageBar.doSendMessage('<Sticker file="' + htmlEscape(file) + '" set="' + htmlEscape(stickerset.url) + '" />');
+  popup.close();
  }
 
  function onMousedown(event) {

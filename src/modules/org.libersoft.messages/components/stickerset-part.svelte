@@ -1,4 +1,5 @@
 <script>
+ import { debug } from '../../../core/core.js';
  import Item from './stickerset-item.svelte';
  //import { Grid } from 'svelte-virtual';
  export let items;
@@ -6,6 +7,9 @@
  let size = 67;
 </script>
 
-{#each items as s, index (s.id)}
- <Item {size} sticker={s} {stickerset} />
-{/each}
+{#if items}
+ {#each items as s, index (s.id)}
+  {#if $debug}<code>{JSON.stringify(s)}</code>{/if}
+  <Item {size} sticker={s} {stickerset} />
+ {/each}
+{/if}

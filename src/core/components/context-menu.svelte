@@ -125,6 +125,9 @@
    hasPopup.set(popup);
   },
  });
+ setContext('Popup', {
+  close,
+ });
 
  afterUpdate(() => {
   if (open) {

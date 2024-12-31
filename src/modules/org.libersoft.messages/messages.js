@@ -530,6 +530,20 @@ import.meta.hot?.dispose(() => {
  window.stickerLibraryUpdaterState.updating = false;
 });
 
+export async function fetchStickerset(stickerServer, id = 0) {
+ void "this is a simple fetch of a single sticker. There is some overlap with updateStickerLibrary, but it's not worth refactoring now.";
+ id = Number(id);
+ let response = await fetch(stickerServer + '/api/sets?id=' + id);
+ response = await response.json();
+ let sets = response?.data;
+ let stickerset = sets[0];
+ stickerset.url = stickerServer + '/api/sets?id=' + stickerset.id;
+ stickerset.items.forEach(sticker => {
+  sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name;
+ });
+ return stickerset;
+}
+
 export async function updateStickerLibrary(stickerServer) {
  window.stickerLibraryUpdaterState.updating = true;
  console.log('loading list of stickersets from ' + stickerServer);

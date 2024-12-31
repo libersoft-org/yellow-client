@@ -25,9 +25,9 @@
  onMount(async () => {
   //console.log(file);
   ext = file.split('.').pop().toLowerCase();
-  console.log('STICKER file:', file, 'ext:', ext);
+  //  console.log('STICKER file:', file, 'ext:', ext);
   if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
-   console.log('STICKER isLottie');
+   // console.log('STICKER isLottie');
    isLottie = true;
   } else isImage = true;
  });
@@ -115,12 +115,13 @@
    path,
    animationData,
   });
-  anim.onComplete = () => {
+  /*anim.onComplete = () => {
    console.log('lottie animation completed');
-  };
+  };*/
   /*
   anim.onLoopComplete = () => { console.log('lottie animation loop completed'); };
   */
+  /*
   anim.addEventListener('config_ready', () => {
    console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
   });
@@ -133,7 +134,7 @@
   anim.addEventListener('DOMLoaded', () => {
    console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
   });
-  console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
+  console.log('constructed lottie in ' + (Date.now() - start) + 'ms');*/
  }
 
  async function intersection(entries) {
@@ -168,7 +169,7 @@
    }
    const arrayBuffer = await response.arrayBuffer();
    const decompressed = pako.ungzip(new Uint8Array(arrayBuffer), { to: 'string' });
-   console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
+   //console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
    return JSON.parse(decompressed);
   } catch (e) {
    error = 'Error loading TGS file: ' + e;
@@ -184,7 +185,7 @@
     return;
    }
    let r = await response.json();
-   console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
+   //console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
    return r;
   } catch (e) {
    error = 'Error loading JSON file: ' + e;

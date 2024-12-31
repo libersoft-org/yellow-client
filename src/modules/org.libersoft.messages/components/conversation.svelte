@@ -1,5 +1,5 @@
 <script>
- import { onDestroy, onMount, tick } from 'svelte';
+ import { onDestroy, onMount, setContext, tick } from 'svelte';
  import Core from '../../../core/core.js';
  import { get } from 'svelte/store';
  import { selectedConversation } from '../messages.js';
@@ -9,6 +9,10 @@
 
  let message_bar;
  let oldSelectedConversation;
+
+ let messagesContext = {};
+ setContext('MessagesContext', messagesContext);
+ $: messagesContext.messageBar = message_bar;
 
  $: update($selectedConversation);
 

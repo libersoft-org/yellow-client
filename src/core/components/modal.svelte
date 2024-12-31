@@ -21,6 +21,9 @@
 
  setContext('setTitle', setTitle);
  setContext('pageChanged', positionModal);
+ setContext('Popup', {
+  close,
+ });
 
  $: onShowUpdated(show);
 
@@ -150,7 +153,7 @@
    </BaseButton>
   </div>
   <div class="body">
-   {#if $debug}params: {JSON.stringify({ params })}{/if}
+   {#if $debug}params: <code>{JSON.stringify({ params })}</code>{/if}
    {#if params}
     <svelte:component this={body} {close} {params} />
    {:else}
