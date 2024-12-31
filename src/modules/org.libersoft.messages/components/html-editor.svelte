@@ -1,6 +1,17 @@
 <script>
- export let elText;
+ import { tick } from 'svelte';
+
  export let text;
+
+ let elText;
+
+ $: update1(elText);
+
+ async function update1(elText) {
+  if (!elText) return;
+  await tick();
+  elText.focus();
+ }
 </script>
 
 <style>
