@@ -180,10 +180,13 @@
 />
 
 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
+
+<!--tabindex="-1" // todo parametrize this (off for pop-up, on for context menu-proper)
+ role="menu"
+ -->
 <div
  bind:this={ref}
- role="menu"
- tabindex="-1"
+ role="none"
  data-direction={direction}
  data-level={level}
  class:context-menu={true}
@@ -197,7 +200,7 @@
  style:overflow={scrollable ? 'auto' : 'hidden'}
  {...$$restProps}
  on:keydown={e => {
-  /*if (open) e.preventDefault();
+  /*if (open) e.preventDefault();  // todo parametrize this (off for pop-up, on for context menu-proper)
   if ($hasPopup) return;
   if (e.key === 'ArrowDown') {
    if (focusIndex < options.length - 1) focusIndex++;
