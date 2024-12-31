@@ -55,40 +55,20 @@
   console.log('typeof fulltext_search_filter:', typeof fulltext_search_filter);
 
   let query_store = liveQuery(async () => {
-   let x = db.stickersets.orderBy('id');
-   //x = x.where('animated').anyOf(animated_filter);
-   //x = x.limit(1000);
-   //x = x.sortBy('id');
-
+   let x = db.stickersets;
+   void 'x is now a dexie Table. We have one shot at ordering or filtering it at the db level: https://dexie.org/docs/Dexie/Dexie.[table]';
+   x = x.orderBy('id');
+   void "x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection";
    x = x.filter(item => animated_filter.includes(item.animated ? 1 : 0));
-
-   /*
-   if (fulltext_search_filter != '') {
-    fulltext_search_filter = fulltext_search_filter.toLowerCase();
-    //x = x.where('name').startsWithIgnoreCase(fulltext_search_filter);
-    //x = x.sortBy('name', name => 3/!*levenshteinEditDistance(name.toLowerCase(), fulltext_search_filter)*!/);
-    x = x.sortBy('name', name => true);
-    //x = x .and(item => /foo/i.test(friend.name));
-    //x = x .and(item => levenshtein(item.name.toLowerCase(), fulltext_search_filter.toLowerCase()) < 2);
-    //x = x .and(item => item.name.toLowerCase().includes(fulltext_search_filter.toLowerCase()));
-   }
-   */
+   x = await x.toArray();
+   void 'x is now an array of items. We can apply additional filtering, sorting and limiting on it using js.';
 
    if (fulltext_search_filter != '') {
     fulltext_search_filter = fulltext_search_filter.toLowerCase();
-    let result = await x.toArray();
-    //console.log('result:', result);
-    //result = result.sort((a, b) => levenshteinEditDistance(a.name.toLowerCase(), fulltext_search_filter) - levenshteinEditDistance(b.name.toLowerCase(), fulltext_search_filter));
-    result = new FuzzySearch(result, ['name'], { caseSensitive: false, sort: true }).search(fulltext_search_filter);
-    return result;
-   } else {
-    return await x.toArray();
+    x = new FuzzySearch(x, ['name'], { caseSensitive: false, sort: true }).search(fulltext_search_filter);
    }
 
-   console.log('x:', x);
-   let result = x.toArray();
-   console.log('result:', result);
-   return result;
+   return x;
   });
 
   if (query_store_unsubscribe) {
