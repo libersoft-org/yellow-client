@@ -47,15 +47,16 @@
   {JSON.stringify(visibility[item.id])}
    -->
   <div style="min-height: {heights[item.id] || 200}px;">
-   <!--  background-color: #19f; border-radius: 10px; -->
+   <!-- background-color: #19f; border-radius: 10px;-->
    {#if visibility[item.id]}
-    <!-- {#if itemsEls[i].dataset.intersecting} -->
+    <!--{#if itemsEls[i].dataset.intersecting}-->
     <slot
      {item}
      save_height={h => {
       heights[item.id] = h;
      }}
     />
+    <!-- TODO: not working: {@render children({ item, save_height: h => { heights[item.id] = h; } })}-->
    {/if}
   </div>
  </div>
