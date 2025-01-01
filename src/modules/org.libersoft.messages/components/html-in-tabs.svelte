@@ -3,9 +3,7 @@
  import Preview from '../components/html-editor-preview.svelte';
  import Tabs from '../../../core/components/tabs.svelte';
  import Item from '../../../core/components/tabs-item.svelte';
-
  export let text;
-
  let activeTab = 'editor';
 
  function setTab(e, name) {

@@ -1,8 +1,7 @@
 <script>
- import { onMount, onDestroy, tick } from 'svelte';
+ import { tick } from 'svelte';
  import Intersector from './intersector.svelte';
  import StickerSet from './stickerset.svelte';
-
  export let items;
  let container;
 

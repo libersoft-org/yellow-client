@@ -2,47 +2,37 @@
  import { debug } from '../../../core/core.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import StickerSetPart from './stickerset-part.svelte';
- import { db } from '../db';
-
+ import { db } from '../db.js';
  export let save_height;
  export let intersecting = true;
  export let stickerset = {};
  export let showall = false;
  export let splitAt = 8;
-
  let stickers = undefined;
  void `stickers-search-results constructs Stickerset with stickerset parameter, which contains the metadata, but not items.
  Items are fetched from the database by update here. But the other case is when Stickerset is a child of stickerset-details-svelte. In that case,
  the items are passed in the stickerset object. So, we need to check if the items are already there, and if not, fetch them from the database.`;
-
  let first, rest;
  let expanded = false;
  let clientHeight;
-
  $: save_height?.(clientHeight);
-
  $: update(intersecting);
+ $: first = stickers?.slice(0, splitAt);
+ $: rest = stickers?.slice(splitAt);
+ $: console.log('library stickerset', stickerset);
+ $: console.log('library stickers', stickers);
+ $: console.log('library first', first);
+ $: console.log('library rest', rest);
 
  async function update(intersecting) {
   if (intersecting) {
    if (stickers === undefined) {
     console.log('stickerset', stickerset);
-    if (stickerset.items) {
-     stickers = stickerset.items;
-    } else {
-     stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
-    }
+    if (stickerset.items) stickers = stickerset.items;
+    else stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
    }
   } else stickers = undefined;
  }
-
- $: first = stickers?.slice(0, splitAt);
- $: rest = stickers?.slice(splitAt);
-
- $: console.log('library stickerset', stickerset);
- $: console.log('library stickers', stickers);
- $: console.log('library first', first);
- $: console.log('library rest', rest);
 
  function clickExpand() {
   expanded = !expanded;
@@ -125,7 +115,6 @@
    </div>
    <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
   </div>
-
   <div class="set">
    <StickerSetPart {stickerset} items={first} />
   </div>

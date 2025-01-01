@@ -1,5 +1,4 @@
 <script>
- import { onMount } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  export let visible = true;
  export let direction = false;

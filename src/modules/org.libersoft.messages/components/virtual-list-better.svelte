@@ -6,20 +6,16 @@
  export let containerHeight;
  export let itemHeight;
  export let scrollTop;
-
  const dummySymbol = Symbol('dummy item');
 
  function sliceArray(arr, start, end) {
   arr = arr.slice(start, end);
-
   let expectedLength = end - start;
-
   // If we don't have enough items we'll fill it up with dummy entries.
   // This makes everything a lot easier, consistent and less edge-casey.
   while (arr.length < expectedLength) {
    arr.push(dummySymbol);
   }
-
   return arr;
  }
 
@@ -46,10 +42,8 @@
 <style>
  .spacer {
   width: 100%;
-
   /* Prevent the translated items from bleeding through, causing more scrolling */
   overflow: hidden;
-
   /* 2021 inline-block happy fun time  */
   font-size: 0;
   line-height: 0;

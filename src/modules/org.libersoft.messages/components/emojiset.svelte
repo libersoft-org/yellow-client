@@ -2,11 +2,8 @@
  import { getContext, onMount } from 'svelte';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
- import { htmlEscape } from '../messages.js';
-
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
-
  let emojis;
 
  onMount(async () => {

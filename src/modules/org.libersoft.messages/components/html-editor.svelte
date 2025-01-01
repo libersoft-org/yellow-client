@@ -1,8 +1,6 @@
 <script>
  import { tick } from 'svelte';
-
  export let text;
-
  let elText;
 
  $: update1(elText);

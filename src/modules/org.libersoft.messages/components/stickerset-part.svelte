@@ -1,7 +1,6 @@
 <script>
  import { debug } from '../../../core/core.js';
  import Item from './stickerset-item.svelte';
- //import { Grid } from 'svelte-virtual';
  export let items;
  export let stickerset;
  let size = 67;

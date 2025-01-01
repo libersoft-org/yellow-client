@@ -13,7 +13,7 @@
 
 {#if v}
  <div class="gif">
-  <img src={v} />
+  <img src={v} alt="GIF" />
  </div>
 {:else}
  error

@@ -1,19 +1,13 @@
 <script>
  import { loadMessages, insertEvent, messagesArray } from '../messages.js';
  import { getContext, onDestroy, onMount } from 'svelte';
- import Button from '../../../core/components/button.svelte';
  import Spinner from '../../../core/components/spinner.svelte';
- import { get } from 'svelte/store';
-
  export let loader;
-
  let loaderElement;
  let observer;
-
  let observing = false;
  const threshold = 0.6;
  let interval;
-
  let contentElement = getContext('contentElement');
 
  onMount(() => {
@@ -86,17 +80,15 @@
 
 <div class="container">
  <div bind:this={loaderElement}>
-  <!--   <hr><hr><hr><hr><hr>
+  <!--
+  <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   <hr><hr><hr><hr><hr>
   Loading more messages...
-
   <br/><pre>{JSON.stringify({ ...loader, conversation: undefined }, null, 2)}</pre>
-
   -->
   <!--  <Button text="Load more" onClick={loadMore} /> -->
-
   <Spinner show={loader.loading} />
  </div>
 </div>

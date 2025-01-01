@@ -24,7 +24,6 @@
  <div class="label">Sticker server:</div>
  <InputText bind:value={stickerServer} />
 </div>
-
 <div class="group">
  <div class="label">Animate all stickers:</div>
  <Switch bind:checked={animateAll} />

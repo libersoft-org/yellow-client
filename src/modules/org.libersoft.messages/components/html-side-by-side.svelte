@@ -1,7 +1,6 @@
 <script>
  import Editor from '../components/html-editor.svelte';
  import Preview from '../components/html-editor-preview.svelte';
-
  export let text;
 </script>
 

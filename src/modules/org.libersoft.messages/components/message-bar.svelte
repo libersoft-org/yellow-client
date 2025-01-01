@@ -30,9 +30,7 @@
  export async function setBarFocus() {
   await tick();
   console.log('setBarFocus');
-  if (elMessage) {
-   elMessage.focus();
-  }
+  if (elMessage) elMessage.focus();
  }
 
  function resizeMessage(event) {

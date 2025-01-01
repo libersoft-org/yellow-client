@@ -2,7 +2,6 @@
  import BaseButton from '../../../core/components/base-button.svelte';
  import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
-
  export let file;
  let wavesurfer;
  let isPlaying = false;

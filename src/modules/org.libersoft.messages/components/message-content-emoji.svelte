@@ -1,6 +1,5 @@
 <script>
  import Emoji from './emoji.svelte';
-
  let { node } = $props();
  let codepoints_str = $state(node.attributes.codepoints?.value);
  let codepoints = $state(null);
@@ -25,9 +24,6 @@
   return str.split(',').map(cp => parseInt(cp, 16));
  }
 </script>
-
-<style>
-</style>
 
 {#if codepoints}
  <Emoji {codepoints} />

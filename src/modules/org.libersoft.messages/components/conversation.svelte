@@ -6,14 +6,12 @@
  import ProfileBar from './profile-bar.svelte';
  import MessagesList from './messages-list.svelte';
  import MessageBar from './message-bar.svelte';
-
  let message_bar;
  let oldSelectedConversation;
-
  let messagesContext = {};
  setContext('MessagesContext', messagesContext);
- $: messagesContext.messageBar = message_bar;
 
+ $: messagesContext.messageBar = message_bar;
  $: update($selectedConversation);
 
  async function update(selectedConversation) {

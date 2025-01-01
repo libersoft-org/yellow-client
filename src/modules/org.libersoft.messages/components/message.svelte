@@ -10,7 +10,6 @@
  //import FileTransfer from './filetransfer.svelte';
  //import Sticker from './sticker.svelte';
  //import Map from './map.svelte';
- import MessageContent from './message-content.svelte';
  import MessageRendering from './message-rendering.svelte';
  //import Reply from './message-reply.svelte';
  export let message;
@@ -37,7 +36,6 @@
  let thisWasAScroll;
  let touchX;
  let touchY;
- let messageContentContainer;
 
  $: messageContent = processMessage(message.message);
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
@@ -182,7 +180,6 @@
   margin: 10px 20px;
   border-radius: 10px;
   box-shadow: var(--shadow);
-
   /* Maybe not necessary: */
   transform: translateX(0);
   will-change: transform;

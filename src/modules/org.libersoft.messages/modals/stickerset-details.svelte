@@ -4,14 +4,10 @@
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { fetchStickerset } from '../messages.js';
  import StickerSet from '../components/stickerset.svelte';
- export let close;
  export let params;
- const library = localStorageSharedStore('stickers', {});
  let stickerSetData;
-
  let stickerServer;
  let id;
- let stickers = undefined;
 
  onMount(async () => {
   const parsedUrl = new URL(params.stickersetDetailsModalStickerset);

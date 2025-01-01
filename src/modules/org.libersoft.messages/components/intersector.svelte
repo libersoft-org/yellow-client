@@ -1,11 +1,8 @@
 <script>
- import { tick } from 'svelte';
-
  let {
   items,
   //  scroll_to_top = $bindable(),
  } = $props();
-
  let observer;
  let itemsEls = [];
  let itemsById = {};
@@ -21,9 +18,7 @@
  });
 
  function update_observers(itemsEls) {
-  if (observer) {
-   observer.disconnect();
-  }
+  if (observer) observer.disconnect();
   observer = new IntersectionObserver(intersecting, { threshold: 0.1, delay: 10 });
   itemsEls.forEach(itemEl => {
    if (itemEl) observer.observe(itemEl);
@@ -54,7 +49,7 @@
   <div style="min-height: {heights[item.id] || 200}px;">
    <!--  background-color: #19f; border-radius: 10px; -->
    {#if visibility[item.id]}
-    <!--      {#if itemsEls[i].dataset.intersecting}   -->
+    <!-- {#if itemsEls[i].dataset.intersecting} -->
     <slot
      {item}
      save_height={h => {

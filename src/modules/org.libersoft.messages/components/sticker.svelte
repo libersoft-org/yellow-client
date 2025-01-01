@@ -22,14 +22,14 @@
  let ContextMenu = getContext('ContextMenu');
  let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
 
+ $: update_playing(playing);
+
  onMount(async () => {
   //console.log(file);
   ext = file.split('.').pop().toLowerCase();
   //  console.log('STICKER file:', file, 'ext:', ext);
-  if (ext === 'lottie' || ext === 'json' || ext === 'tgs') {
-   // console.log('STICKER isLottie');
-   isLottie = true;
-  } else isImage = true;
+  if (ext === 'lottie' || ext === 'json' || ext === 'tgs') isLottie = true;
+  else isImage = true;
  });
 
  onDestroy(() => {
@@ -57,15 +57,10 @@
   } else playing = false;
  }
 
- $: update_playing(playing);
-
  function update_playing(playing) {
   if (!anim) return;
-  if (playing) {
-   anim.play();
-  } else {
-   anim.pause();
-  }
+  if (playing) anim.play();
+  else anim.pause();
  }
 
  $: setup_observer(animContainer);

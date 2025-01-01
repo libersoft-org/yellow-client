@@ -6,7 +6,6 @@
  import HtmlInTabs from '../components/html-in-tabs.svelte';
  export let close;
  const MessageBar = getContext('MessageBar');
-
  let text = '';
  let isSideBySide = true;
 

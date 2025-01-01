@@ -1,6 +1,5 @@
 <script>
  import { debug } from '../../../core/core.js';
-
  export let codepoints;
 
  function rgi(codepoints) {

@@ -3,15 +3,13 @@
  import Sticker from './sticker.svelte';
  import { getContext } from 'svelte';
  import { htmlEscape } from '../messages.js';
-
  export let sticker;
  export let stickerset;
  export let size;
-
  const MessagesContext = getContext('MessagesContext');
  const popup = getContext('Popup');
-
  let file;
+
  $: file = sticker.url;
 
  async function handleClick() {

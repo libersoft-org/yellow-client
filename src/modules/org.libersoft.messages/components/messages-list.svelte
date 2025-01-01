@@ -25,6 +25,12 @@
  let uiEvents = [];
  let stickersetDetailsModalStickerset;
  let showStickersetDetailsModal = false;
+ let scrolledToBottom = true;
+ let windowInnerWidth;
+ let windowInnerHeight;
+
+ $: scrollButtonVisible = !scrolledToBottom;
+ $: updateWindowSize(windowInnerWidth, windowInnerHeight);
 
  function openStickersetDetailsModal(stickerset) {
   stickersetDetailsModalStickerset = stickerset;
@@ -71,13 +77,6 @@
   //console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
   return result;
  }
-
- let scrolledToBottom = true;
- let windowInnerWidth;
- let windowInnerHeight;
-
- $: scrollButtonVisible = !scrolledToBottom;
- $: updateWindowSize(windowInnerWidth, windowInnerHeight);
 
  function parseScroll(event) {
   scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
