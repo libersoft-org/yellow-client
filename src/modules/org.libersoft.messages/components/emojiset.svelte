@@ -8,7 +8,7 @@
 
  onMount(async () => {
   try {
-   const res = await fetch('modules/org.libersoft.messages/json/emoji_16_0_ordering.json');
+   const res = await fetch('modules/org.libersoft.messages/json/emoji_16_0_ordering.min.json');
    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
    emojis = await res.json();
   } catch (error) {
