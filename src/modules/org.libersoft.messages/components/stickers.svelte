@@ -132,7 +132,7 @@
    <Item active={activeTab === 'settings'} img="img/settings.svg" onClick={e => setTab(e, 'settings')} />
   </Tabs>
   <div class="loading">
-   <div>Downloading stickers from server ...</div>
+   <div class="status">Downloading stickers from server ...</div>
    <ProgressBar value="50" color="#db0" moving={true} />
   </div>
   <!--<svelte:component this={tabs[activeTab]} /> --- Svelte 4 -->
