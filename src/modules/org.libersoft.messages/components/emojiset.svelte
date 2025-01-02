@@ -22,7 +22,6 @@
   MessageBar.sendMessage('<Emoji codepoints="' + encodeCodepoints(codepoints) + '" />');
 */
   MessageBar.append(emoji_render(codepoints));
-  menu?.close();
  }
 </script>
 
