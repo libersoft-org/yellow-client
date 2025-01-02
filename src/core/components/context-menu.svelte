@@ -184,7 +184,8 @@
 
 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 
-<!--tabindex="-1" // todo parametrize this (off for pop-up, on for context menu-proper)
+<!--todo: parametrize this component to work as either a pop-up (for stickers) or a context menu (for message context menu)
+tabindex="-1" (off for pop-up, on for context menu-proper)
  role="menu"
  -->
 <div
