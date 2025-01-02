@@ -3,6 +3,7 @@
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
+ import { stripHtml } from '../messages.js';
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
  //import Audio from './audio.svelte';
@@ -167,8 +168,15 @@
   snipeMessage(message);
  }
 
- function copyMessage() {
-  console.log('copy');
+ function copyMessagePlain() {
+  console.log('copy as plaintext');
+  navigator.clipboard.writeText(stripHtml(message.message));
+ }
+
+ function copyMessageHTML() {
+  console.log('copy as html');
+  console.log(message.message);
+  navigator.clipboard.writeText(message.message);
  }
 </script>
 
@@ -281,7 +289,8 @@
  </div>
 {/if}
 <ContextMenu bind:this={menu} target={elCaret}>
- <ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyMessage} />
+ <ContextMenuItem img="img/copy.svg" label="Copy as plaintext" onClick={copyMessagePlain} />
+ <ContextMenuItem img="img/copy.svg" label="Copy as HTML" onClick={copyMessageHTML} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" onClick={replyMessage} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" onClick={forwardMessage} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/delete.svg" label="Delete" onClick={deleteMessage} />
