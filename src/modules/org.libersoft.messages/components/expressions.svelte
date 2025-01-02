@@ -16,20 +16,6 @@
   e.stopPropagation();
   e.preventDefault();
  }
-
- function mousedown(e) {
-  /*
-  e.stopPropagation();
-  e.preventDefault();
-*/
- }
-
- function click(e) {
-  /*
-  e.stopPropagation();
-  e.preventDefault();
-*/
- }
 </script>
 
 <style>
@@ -48,7 +34,7 @@
 </style>
 
 <div class="expressions" style="height: {height}">
- <div class="categories" role="none" on:mousedown={mousedown} on:click={click}>
+ <div class="categories" role="none">
   <Item label="Emojis" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
   <Item label="Stickers" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
   <Item label="GIFs" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />

@@ -17,13 +17,16 @@
 
 <style>
  .text {
+  display: flex;
+  align-items: center;
   padding-bottom: 10px;
   word-break: break-word;
  }
 </style>
 
 {#if messageContent.type === 'html'}
- <div class="text" bind:this={messageContentContainer}><MessageContent container={messageContentContainer} node={messageContent.body} /></div>
+ <div class="text" bind:this={messageContentContainer}><MessageContent level={0} container={messageContentContainer} node={messageContent.body} /></div>
 {:else}
+ UNUSED
  <div class="text">{@html messageContent.body}</div>
 {/if}
