@@ -13,6 +13,7 @@
  import TabSettings from './stickers-settings.svelte';
  import TabFavourites from './stickers-favourites.svelte';
  import TabServer from './stickers-server.svelte';
+ import ProgressBar from './progressbar.svelte';
  import { liveQuery } from 'dexie';
  import { db } from '../db';
  const tabs = {
@@ -105,6 +106,12 @@
   display: flex;
   gap: 10px;
  }
+
+ .loading {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+ }
  /*
  .count {
   display: flex;
@@ -124,6 +131,10 @@
    <Item img="modules/org.libersoft.messages/img/update.svg" onClick={clickUpdate} />
    <Item active={activeTab === 'settings'} img="img/settings.svg" onClick={e => setTab(e, 'settings')} />
   </Tabs>
+  <div class="loading">
+   <div>Downloading stickers from server ...</div>
+   <ProgressBar value="50" color="#db0" moving={true} />
+  </div>
   <!--<svelte:component this={tabs[activeTab]} /> --- Svelte 4 -->
   {#await tabs[activeTab] then Component}
    <!-- Svelte 5 -->

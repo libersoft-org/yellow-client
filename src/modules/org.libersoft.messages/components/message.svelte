@@ -257,7 +257,7 @@
  }
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu|preventDefault={rightClickContextMenu}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu|preventDefault={rightClickContextMenu}>
  <div bind:this={elIntersectionObserver}></div>
  <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
   <img src="img/caret-down-gray.svg" alt="Menu" />
