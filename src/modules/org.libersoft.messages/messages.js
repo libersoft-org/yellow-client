@@ -514,13 +514,59 @@ export function messagebar_text_to_html(content) {
  result = result.replaceAll(' ', '&nbsp;');
  result = result.replaceAll('\n', '<br />');
  result = linkify(result);
- result = replace_emoji_with_emoji_tag(result);
+ result = replaceEmojisWithTags(result);
  return result;
 }
 
-function replace_emoji_with_emoji_tag(text) {
- void 'find all unicode emojis and replace them with <Emoji codepoints="..."> tag';
- // return text.replace(/([\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2B50}\u{1F004}\u{1F0CF}\u{1F18E}\u{1F191}-\u{1F19A}\u{1F1E6}-\u{1F1FF}\u{1F201}-\u{1F251}\u{1F300}-\u{1F320}\u{1F32D}-\u{1F335}\u{1F337}-\u{1F37C}\u{1F380}-\u{1F393}\u{1F3A0}-\u{1F3CA}\u{1F3CF}-\u{1F3D3}\u{1F3E0}-\u{1F3F0}\u{1F3F4}-\u{1F3F8}\u{1F400}-\u{1F43E}\u{1F440}\u{1F442}-\u{1F4FC}\u{1F4FF}-\u{1F53D}\u{1F54B}-\u{1F54E}\u{1F550}-\u{1F567}\u{1F57A}\u{1F595}-\u{1F596}\u{1F5A4}-\u{1F5A5}\u{1F5A8}\u{1F5B1}-\u{1F5B2}\u{1F5BC}-\u{1F5BC}\u{1F5C2}-\u{1F5C4}\u{1F5D1}-\u{1F5D3}\u{1F5DC}-\u{1F5DE}\u{1F5E1}\u{1F5E3}\u{1F5E8}\u{1F5EF}\u{1F5F3}\u{1F5FA}-\u{1F64F}\u{1F680}-\u{1F6C5}\u{1F6CB}-\u{1F6D2}\u{1F6E0}-\u{1F6E5}\u{1F6F0}-\u{1F6F6}\u{1F6F8}-\u{1F6FA}\u{1F7E0}-\u{1F7EB}\u{1F90D}-\u{1F90F}\u{1F93F}\u{1F971}-\u{1F972}\u{1F977}-\u{1F978}\u{1F97A}\u{1F97C}-\u{1F97F}\u{1F998}-\u{1F9A2}\u{1F9B0}-\u{1F9B9}\u{1F9C1}-\u{1F9C2}\u{1F9D0}-\u{1F9E6}\u{1F9F0}-\u{1F9F4}\u{1F9F7}-\u{1F9F8}\u{1FA70}-\u{1FA74}\u{1FA78}-\u{1FA7A}\u{1FA80}-\u{1FA86}\u{1FA90}-\u{1FAA8}\u{1FAB0}-\u{1FAB6}\u{1FAC0}-\u{1FAC2}\u{1FAD0}-\u{1FAD6}\u{1FB00}-\u{1FB92}\u{1FB94}-\u{1FBCA}\u{1FBF0}-
+function replaceEmojisWithTags(text) {
+ // Enhanced pattern: Attempt to match each "emoji cluster" including ZWJ sequences.
+ // Explanation:
+ //   \p{Extended_Pictographic}        Match an extended pictographic character (i.e., an emoji).
+ //   (?:\u200D\p{Extended_Pictographic})*
+ //     - Then match (as many times as occur):
+ //       - Zero-Width Joiner (ZWJ) followed by another Extended Pictographic
+ //
+ // The 'u' flag is required to handle Unicode property escapes correctly.
+ /*
+ Notes
+   Complex Sequences: This pattern works for typical ZWJ sequences like family emojis (👨‍👩‍👧‍👦), combined flags, and some multi-part emoji.
+   Variation Selectors: Many emojis also include variation selectors (e.g., \uFE0F). Often this is matched automatically within the same cluster, but for nuanced control, you might need additional logic.
+   Browser/Runtime Compatibility: Unicode property escapes (\p{…}) and the u flag require more modern JavaScript engines. If older environments need support, consider a well-maintained polyfill or library such as emoji-regex.
+ */
+ /*
+ // Example usage:
+  const input = "Hello 🌍! This is a test: 🏳️‍🌈👨‍👩‍👧‍👦.";
+  const output = replaceEmojisWithCodepoints(input);
+  console.log(output);
+ // Possible output:
+ // "Hello <<<1F30D>>>! This is a test: <<<1F3F3 FE0F 200D 1F308>>><<<1F468 200D 1F469 200D 1F467 200D 1F466>>>."
+ */
+ const emojiRegex = /\p{Extended_Pictographic}(?:\u200D\p{Extended_Pictographic})*/gu;
+
+ return text.replace(emojiRegex, cluster => {
+  // 'cluster' is the entire matched ZWJ sequence (or a single emoji if no ZWJs)
+  console.log('cluster:', cluster);
+  let cluster_array = emoji_cluster_to_array(cluster);
+  let codepoints_array_text = encodeCodepoints(cluster_array);
+  return `<Emoji codepoints="${codepoints_array_text}" ></Emoji>`;
+ });
+}
+
+function emoji_cluster_to_array(cluster) {
+ // Convert the emoji cluster to an array of codepoints
+ const codepoints = [];
+ for (const char of cluster) {
+  codepoints.push(char.codePointAt(0));
+ }
+ return codepoints;
+}
+
+export function encodeCodepoints(codepoints) {
+ return codepoints.map(cp => cp.toString(16).padStart(4, '0')).join(',');
+}
+
+export function emoji_render(codepoints) {
+ return codepoints.map(codepoint => String.fromCodePoint(codepoint)).join('');
 }
 
 function linkify(text) {

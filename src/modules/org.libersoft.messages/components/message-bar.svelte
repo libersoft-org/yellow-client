@@ -1,5 +1,5 @@
 <script>
- import { sendMessage } from '../messages.js';
+ import { messagebar_text_to_html, sendMessage } from '../messages.js';
  import { setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
@@ -19,11 +19,15 @@
  setContext('MessageBar', {
   sendMessage: doSendMessage,
   setBarFocus,
+  append: message => {
+   elMessage.value += message;
+   resizeMessage();
+  },
  });
 
  export async function doSendMessage(message) {
   //console.log('doSendMessage', message);
-  await sendMessage(message);
+  await sendMessage(messagebar_text_to_html(message));
   await setBarFocus();
  }
 
@@ -33,9 +37,9 @@
   if (elMessage) elMessage.focus();
  }
 
- function resizeMessage(event) {
+ function resizeMessage() {
   const maxHeight = 200;
-  const textarea = event.target;
+  const textarea = elMessage;
   textarea.style.height = 'auto'; // ?
   textarea.style.height = (textarea.scrollHeight < maxHeight ? textarea.scrollHeight : maxHeight) + 'px';
   if (elMessage.scrollHeight > maxHeight) elMessage.style.overflowY = 'scroll';
@@ -48,7 +52,7 @@
 
  function clickSend(event) {
   if (elMessage.value) {
-   sendMessage(elMessage.value);
+   doSendMessage(elMessage.value);
    elMessage.value = '';
   }
   resizeMessage(event);

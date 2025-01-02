@@ -2,6 +2,7 @@
  import { getContext, onMount } from 'svelte';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
+ import { emoji_render, encodeCodepoints } from '../messages.js';
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
  let emojis;
@@ -16,13 +17,11 @@
   }
  });
 
- function encodeCodepoints(codepoints) {
-  return codepoints.map(cp => cp.toString(16).padStart(4, '0')).join(',');
- }
-
  function clickEmoji(codepoints) {
-  console.log('Clicked on emoji');
+  /*
   MessageBar.sendMessage('<Emoji codepoints="' + encodeCodepoints(codepoints) + '" />');
+*/
+  MessageBar.append(emoji_render(codepoints));
   menu?.close();
  }
 </script>
