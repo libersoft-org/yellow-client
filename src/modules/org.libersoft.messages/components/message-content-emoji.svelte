@@ -26,7 +26,7 @@
 </script>
 
 {#if codepoints}
- <Emoji {codepoints} />
+ <Emoji {codepoints} size="200" />
 {:else}
  error: {JSON.stringify(node.attributes)}
 {/if}

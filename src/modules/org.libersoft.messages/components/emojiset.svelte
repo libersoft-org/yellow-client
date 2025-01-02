@@ -55,7 +55,7 @@
    <div class="emojis">
     {#each g.emoji as e, id}
      <BaseButton onClick={() => clickEmoji(e.base)}>
-      <Emoji codepoints={e.base} />
+      <Emoji codepoints={e.base} hover={true} />
      </BaseButton>
     {/each}
    </div>
