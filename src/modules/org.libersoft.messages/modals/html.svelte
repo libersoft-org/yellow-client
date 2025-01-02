@@ -9,9 +9,9 @@
  let text = '';
  let isSideBySide = true;
 
- function click() {
-  console.log('click');
-  MessageBar.sendMessage(text);
+ function send() {
+  console.log('send');
+  MessageBar.sendMessageHtml(text);
   close();
  }
 </script>
@@ -42,5 +42,5 @@
  {:else}
   <HtmlInTabs bind:text />
  {/if}
- <Button text="Send" onClick={click} />
+ <Button text="Send" onClick={send} />
 </div>

@@ -46,7 +46,7 @@
  }
 
  function sendGIF(url) {
-  MessageBar.sendMessage('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" />');
+  MessageBar.sendMessagePlain('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" />');
   menu?.close();
  }
 </script>

@@ -7,7 +7,7 @@
  export let intersecting = true;
  export let stickerset = {};
  export let showall = false;
- export let splitAt = 8;
+ let splitAt = 8;
  let stickers = undefined;
  void `stickers-search-results constructs Stickerset with stickerset parameter, which contains the metadata, but not items.
  Items are fetched from the database by update here. But the other case is when Stickerset is a child of stickerset-details-svelte. In that case,
@@ -17,8 +17,8 @@
  let clientHeight;
  $: save_height?.(clientHeight);
  $: update(intersecting);
- $: first = stickers?.slice(0, splitAt);
- $: rest = stickers?.slice(splitAt);
+ $: first = showall ? stickers : stickers?.slice(0, splitAt);
+ $: rest = showall ? [] : stickers?.slice(splitAt);
  $: console.log('library stickerset', stickerset);
  $: console.log('library stickers', stickers);
  $: console.log('library first', first);

@@ -47,10 +47,11 @@
  }
 
  export async function openMenu(e) {
-  //console.log('context-menu openMenu:', e);
+  console.log('context-menu openMenu:', e);
   e.preventDefault();
   e.stopPropagation();
-  if (e.type === 'contextmenu') return;
+  console.log('context-menu openMenu type:', e.type);
+  //if (e.type === 'contextmenu') return;
   //console.log('context-menu close other menus:', menus);
   for (let menu of menus) menu.close();
   currentInstance = getGuid();

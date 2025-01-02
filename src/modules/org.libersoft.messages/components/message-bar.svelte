@@ -17,7 +17,8 @@
  let showExpressions = false;
 
  setContext('MessageBar', {
-  sendMessage: doSendMessage,
+  sendMessageHtml: text => doSendMessage(text, true),
+  sendMessagePlain: text => doSendMessage(text, false),
   setBarFocus,
   append: message => {
    elMessage.value += message;
@@ -25,9 +26,9 @@
   },
  });
 
- export async function doSendMessage(message) {
+ export async function doSendMessage(message, html) {
   //console.log('doSendMessage', message);
-  await sendMessage(messagebar_text_to_html(message));
+  await sendMessage(html ? message : messagebar_text_to_html(message));
   await setBarFocus();
  }
 
@@ -52,7 +53,7 @@
 
  function clickSend(event) {
   if (elMessage.value) {
-   doSendMessage(elMessage.value);
+   doSendMessage(elMessage.value, false);
    elMessage.value = '';
   }
   resizeMessage(event);

@@ -1,7 +1,6 @@
 <script>
  import { debug } from '../../../core/core.js';
  import { onMount } from 'svelte';
- import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { fetchStickerset } from '../messages.js';
  import StickerSet from '../components/stickerset.svelte';
  export let params;
@@ -23,6 +22,6 @@
   id: {id}
  {/if}
  {#if stickerSetData}
-  <StickerSet stickerset={stickerSetData} showall="true" splitAt="-1" />
+  <StickerSet stickerset={stickerSetData} showall="true" />
  {/if}
 </div>
