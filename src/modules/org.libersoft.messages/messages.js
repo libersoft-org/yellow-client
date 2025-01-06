@@ -1,4 +1,5 @@
 import { get, writable } from 'svelte/store';
+import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import DOMPurify from 'dompurify';
 import { db } from './db';
@@ -516,7 +517,8 @@ export function messagebar_text_to_html(content) {
  console.log('splitAndLinkify output:', result1);
  let result2 = result1.map(part => {
   if (part.type === 'plain') {
-   let r = part.value.replaceAll('\n', '<br />');
+   let r = htmlEscape(part.value);
+   r = r.replaceAll('\n', '<br />');
    r = replaceEmojisWithTags(r);
    return r;
   } else if (part.type === 'processed') {
@@ -591,48 +593,6 @@ function linkify(text) {
   return `<a href="${match}" target="_blank">${match}</a>`;
  });
  console.log('linkify result:', result);
- return result;
-}
-
-function splitAndLinkify(text) {
- const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
-
- const result = [];
- let lastIndex = 0;
-
- // matchAll returns an iterator of match objects
- for (const match of text.matchAll(combinedPattern)) {
-  const matchStart = match.index;
-  const matchedText = match[0];
-
-  const nonMatched = text.slice(lastIndex, matchStart);
-  if (nonMatched) {
-   result.push({
-    type: 'plain',
-    value: nonMatched,
-   });
-  }
-
-  // The matched part
-  result.push({
-   type: 'processed',
-   value: `<a href="${matchedText}" target="_blank">${matchedText}</a>`,
-  });
-
-  lastIndex = matchStart + matchedText.length;
- }
-
- // Handle any trailing text after the final match
- if (lastIndex < text.length) {
-  const trailingText = text.slice(lastIndex);
-  if (trailingText) {
-   result.push({
-    type: 'plain',
-    value: trailingText,
-   });
-  }
- }
-
  return result;
 }
 

@@ -17,7 +17,8 @@
 
 <style>
  .text {
-  display: flex;
+  display: inline-block;
+  flex-direction: initial;
   align-items: center;
   padding-bottom: 10px;
   word-break: break-word;

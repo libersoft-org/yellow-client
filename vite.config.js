@@ -6,6 +6,11 @@ import path from 'path';
 
 export default defineConfig(({mode}) => {
   return {
+   resolve: process.env.VITEST
+    ? {
+     conditions: ['browser']
+    }
+    : undefined,
    css: {
      preprocessorOptions: {
        scss: {
