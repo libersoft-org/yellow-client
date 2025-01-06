@@ -178,11 +178,12 @@
    //console.log('handleEvent:', events[i]);
    let event = events[i];
    event.loaders = [];
-   if (event.array === undefined) return;
    uiEvents.push(event);
    saveScrollPosition(event);
    event.wasScrolledToBottom = isScrolledToBottom();
    if (i != events.length - 1) continue;
+   if (event.type === 'resize') continue;
+   if (event.array === undefined) return;
    let messages = event.array;
    if (messages.length === 1 && messages[0].type === 'initial_loading_placeholder') {
     loaders = [];

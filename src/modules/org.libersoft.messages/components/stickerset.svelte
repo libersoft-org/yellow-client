@@ -19,10 +19,12 @@
  $: update(intersecting);
  $: first = showall ? stickers : stickers?.slice(0, splitAt);
  $: rest = showall ? [] : stickers?.slice(splitAt);
+ /*
  $: console.log('library stickerset', stickerset);
  $: console.log('library stickers', stickers);
  $: console.log('library first', first);
  $: console.log('library rest', rest);
+ */
 
  async function update(intersecting) {
   if (intersecting) {

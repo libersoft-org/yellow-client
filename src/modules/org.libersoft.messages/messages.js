@@ -172,6 +172,10 @@ function addMessagesToMessagesArray(items, reason) {
  return result;
 }
 
+/*export function handleResize(wasScrolledToBottom) {
+ insertEvent({ type: 'resize', {wasScrolledToBottom} });
+}*/
+
 export function snipeMessage(msg) {
  messagesArray.update(v => {
   return v.filter(m => m.uid !== msg.uid);

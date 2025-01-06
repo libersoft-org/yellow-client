@@ -24,13 +24,10 @@
 
  $: update_playing(playing);
 
- onMount(async () => {
-  //console.log(file);
-  ext = file.split('.').pop().toLowerCase();
-  //  console.log('STICKER file:', file, 'ext:', ext);
-  if (ext === 'lottie' || ext === 'json' || ext === 'tgs') isLottie = true;
-  else isImage = true;
- });
+ ext = file.split('.').pop().toLowerCase();
+ //  console.log('STICKER file:', file, 'ext:', ext);
+ if (ext === 'lottie' || ext === 'json' || ext === 'tgs') isLottie = true;
+ else isImage = true;
 
  onDestroy(() => {
   if (anim) {
@@ -110,13 +107,12 @@
    path,
    animationData,
   });
-  /*anim.onComplete = () => {
+  anim.onComplete = () => {
    console.log('lottie animation completed');
-  };*/
-  /*
-  anim.onLoopComplete = () => { console.log('lottie animation loop completed'); };
-  */
-  /*
+  };
+  anim.onLoopComplete = () => {
+   console.log('lottie animation loop completed');
+  };
   anim.addEventListener('config_ready', () => {
    console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
   });
@@ -129,7 +125,7 @@
   anim.addEventListener('DOMLoaded', () => {
    console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
   });
-  console.log('constructed lottie in ' + (Date.now() - start) + 'ms');*/
+  console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
  }
 
  async function intersection(entries) {
