@@ -3,7 +3,7 @@
  import FuzzySearch from 'fuzzy-search';
  import { onMount } from 'svelte';
  import { writable } from 'svelte/store';
- import { updateStickerLibrary } from '../messages.js';
+ import { updateStickerLibrary, stickerLibraryUpdaterState } from '../messages.js';
  import StickersSearchResults from './stickers-search-results.svelte';
  import InputTextButton from '../../../core/components/input-text-button.svelte';
  import Select from '../../../core/components/select.svelte';
@@ -131,10 +131,12 @@
    <Item img="modules/org.libersoft.messages/img/update.svg" onClick={clickUpdate} />
    <Item active={activeTab === 'settings'} img="img/settings.svg" onClick={e => setTab(e, 'settings')} />
   </Tabs>
-  <div class="loading">
-   <div class="status">Downloading stickers from server ...</div>
-   <ProgressBar value="50" color="#db0" moving={true} />
-  </div>
+  {#if $stickerLibraryUpdaterState.updating}
+   <div class="loading">
+    <div class="status">{$stickerLibraryUpdaterState.status}</div>
+    <ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving={true} />
+   </div>
+  {/if}
   <!--<svelte:component this={tabs[activeTab]} /> --- Svelte 4 -->
   {#await tabs[activeTab] then Component}
    <!-- Svelte 5 -->

@@ -101,12 +101,13 @@
   let start = Date.now();
   anim = lottie.loadAnimation({
    container: animContainer,
-   renderer: 'canvas',
+   renderer: 'svg',
    loop: true,
    autoplay: playing,
    path,
    animationData,
   });
+  /*
   anim.onComplete = () => {
    console.log('lottie animation completed');
   };
@@ -126,6 +127,7 @@
    console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
   });
   console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
+   */
  }
 
  async function intersection(entries) {

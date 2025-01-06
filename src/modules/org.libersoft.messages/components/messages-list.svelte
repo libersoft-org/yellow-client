@@ -52,19 +52,19 @@
   if (!messages_elem) return;
   event.savedScrollTop = messages_elem.scrollTop;
   event.savedScrollHeight = messages_elem.scrollHeight;
-  console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
+  //console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
  }
 
  function restoreScrollPosition(event) {
-  console.log('restoreScrollPosition messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  //console.log('restoreScrollPosition messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
   const scrollDifference = messages_elem.scrollHeight - event.savedScrollHeight;
   messages_elem.scrollTop = event.savedScrollTop + scrollDifference;
-  console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
+  //console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
  }
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  console.log('SCROLLTOBOTTOM');
+  //console.log('SCROLLTOBOTTOM');
   messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
@@ -74,7 +74,7 @@
 
  function checkIfScrolledToBottom(div) {
   const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
-  console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
+  ///console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
   return result;
  }
 
@@ -83,20 +83,20 @@
  }
 
  function updateWindowSize(width, height) {
-  console.log('updateWindowSize width:', width, 'height:', height);
+  //console.log('updateWindowSize width:', width, 'height:', height);
   parseScroll();
  }
 
  beforeUpdate(() => {
   if (!messages_elem) return;
-  console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  //console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
  });
 
  afterUpdate(async () => {
   if (!messages_elem) return;
   await tick();
   for (let event of uiEvents) {
-   console.log('uiEvent:', event);
+   //console.log('uiEvent:', event);
    if (event.type === 'gc') {
     //console.log('gc');
    } else if (event.type === 'lazyload_prev') restoreScrollPosition(event);
@@ -159,7 +159,7 @@
  }
 
  function gc() {
-  console.log('gc random slice of messagesArray...');
+  //console.log('gc random slice of messagesArray...');
   let x = get(messagesArray);
   let i = Math.floor(Math.random() * x.length);
   x.splice(i, Math.floor(Math.random() * 40));
@@ -168,7 +168,7 @@
  }
 
  async function handleEvents(events) {
-  console.log('handleEvents:', events);
+  //console.log('handleEvents:', events);
   if (events.length === 1 && events[0].type === 'properties_update') {
    itemsArray = itemsArray;
    return;
