@@ -3,7 +3,7 @@
  import FuzzySearch from 'fuzzy-search';
  import { onMount } from 'svelte';
  import { writable } from 'svelte/store';
- import { updateStickerLibrary, stickerLibraryUpdaterState } from '../messages.js';
+ import { updateStickerLibrary, stickerLibraryUpdaterState } from '../stickers.js';
  import StickersSearchResults from './stickers-search-results.svelte';
  import InputTextButton from '../../../core/components/input-text-button.svelte';
  import Select from '../../../core/components/select.svelte';
