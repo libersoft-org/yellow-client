@@ -29,7 +29,9 @@
  {/each}
 -->
 
- <Intersector {items} let:item let:save_height>
-  <StickerSet stickerset={item} {save_height} />
- </Intersector>
+ <Intersector {items} item_slot={item} />
 </div>
+
+{#snippet item(item, save_height)}
+ <StickerSet stickerset={item} {save_height} />
+{/snippet}
