@@ -494,7 +494,7 @@ export function saneHtml(content) {
 
 export function htmlEscape(str) {
  console.log('htmlEscape:', str);
- return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+ return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;').replaceAll(' ', '&nbsp;');
 }
 
 export function stripHtml(html) {
@@ -510,12 +510,25 @@ export function processMessage(content) {
 }
 
 export function messagebar_text_to_html(content) {
- let result = content;
- result = result.replaceAll(' ', '&nbsp;');
- result = result.replaceAll('\n', '<br />');
- result = linkify(result);
- result = replaceEmojisWithTags(result);
- return result;
+ let result0 = content;
+ console.log('splitAndLinkify input:', result0);
+ let result1 = splitAndLinkify(result0);
+ console.log('splitAndLinkify output:', result1);
+ let result2 = result1.map(part => {
+  if (part.type === 'plain') {
+   let r = part.value.replaceAll('\n', '<br />');
+   r = replaceEmojisWithTags(r);
+   return r;
+  } else if (part.type === 'processed') {
+   return part.value;
+  }
+ });
+ let result3 = result2.join('');
+ console.log('result0:', result0);
+ console.log('result1:', result1);
+ console.log('result2:', result2);
+ console.log('result3:', result3);
+ return result3;
 }
 
 function replaceEmojisWithTags(text) {
@@ -570,12 +583,57 @@ export function emoji_render(codepoints) {
 }
 
 function linkify(text) {
+ console.log('linkify ', text);
  // Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
  const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
- return text.replace(combinedPattern, match => {
+ let result = text.replace(combinedPattern, match => {
   // Directly use `match` as the URL/href. This ensures we handle all links in one pass.
   return `<a href="${match}" target="_blank">${match}</a>`;
  });
+ console.log('linkify result:', result);
+ return result;
+}
+
+function splitAndLinkify(text) {
+ const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
+
+ const result = [];
+ let lastIndex = 0;
+
+ // matchAll returns an iterator of match objects
+ for (const match of text.matchAll(combinedPattern)) {
+  const matchStart = match.index;
+  const matchedText = match[0];
+
+  const nonMatched = text.slice(lastIndex, matchStart);
+  if (nonMatched) {
+   result.push({
+    type: 'plain',
+    value: nonMatched,
+   });
+  }
+
+  // The matched part
+  result.push({
+   type: 'processed',
+   value: `<a href="${matchedText}" target="_blank">${matchedText}</a>`,
+  });
+
+  lastIndex = matchStart + matchedText.length;
+ }
+
+ // Handle any trailing text after the final match
+ if (lastIndex < text.length) {
+  const trailingText = text.slice(lastIndex);
+  if (trailingText) {
+   result.push({
+    type: 'plain',
+    value: trailingText,
+   });
+  }
+ }
+
+ return result;
 }
 
 window.stickerLibraryUpdaterState = { updating: false };
