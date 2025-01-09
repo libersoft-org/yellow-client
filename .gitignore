@@ -8,4 +8,5 @@ build/
 .output
 .idea
 .vercel
+bun.lockb
 vite.config.js.timestamp-*
