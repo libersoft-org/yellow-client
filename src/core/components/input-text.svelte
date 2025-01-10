@@ -1,13 +1,15 @@
 <script>
- import { createEventDispatcher } from 'svelte';
+ //import { createEventDispatcher } from 'svelte';
  export let password = false;
  export let placeholder = '';
  export let value = '';
- const dispatch = createEventDispatcher();
+ export let onKeydown;
+ //const dispatch = createEventDispatcher();
  let elInput;
 
  function handleKeydown(e) {
-  dispatch('keydown', e);
+  if (onKeydown) onKeydown(e);
+  //dispatch('keydown', e);
  }
 
  export function focus() {
@@ -25,4 +27,4 @@
  }
 </style>
 
-<input type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={handleKeydown} />
+<input type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />

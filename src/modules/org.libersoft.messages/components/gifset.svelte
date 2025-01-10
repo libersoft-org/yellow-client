@@ -22,7 +22,7 @@
  }
 
  function keySaveAPIKey(e) {
-  if (e.detail.key === 'Enter') saveAPIKey();
+  if (e.key === 'Enter') saveAPIKey();
  }
 
  async function getGifs() {
@@ -42,7 +42,7 @@
  }
 
  function keyGetGifs(e) {
-  if (e.detail.key === 'Enter') getGifs();
+  if (e.key === 'Enter') getGifs();
  }
 
  function sendGIF(url) {
@@ -87,11 +87,11 @@
 
 <div class="gifset">
  <div class="group">
-  <InputText placeholder="Your Giphy API key" bind:value={apiKey} on:keydown={keySaveAPIKey} />
+  <InputText placeholder="Your Giphy API key" bind:value={apiKey} onKeydown={keySaveAPIKey} />
   <Button text="Save" onClick={saveAPIKey} />
  </div>
  <div class="group">
-  <InputText placeholder="Search GIFs" bind:value={query} on:keydown={keyGetGifs} />
+  <InputText placeholder="Search GIFs" bind:value={query} onKeydown={keyGetGifs} />
   <Button text="Search" onClick={getGifs} />
  </div>
  {#if loading}

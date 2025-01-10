@@ -1,5 +1,13 @@
 <script>
+ import Button from '../../../core/components/button.svelte';
+ import Modal from '../../../core/components/modal.svelte';
+ import ModalConversationNew from '../modals/conversation-new.svelte';
  const illustrations = ['pigeon', 'woman'];
+ let showNewConversationModal = false;
+
+ function clickNew() {
+  showNewConversationModal = true;
+ }
 </script>
 
 <style>
@@ -22,7 +30,10 @@
  }
 
  .welcome .label {
-  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
   border: 1px solid #fd1;
   border-radius: 20px;
   text-align: center;
@@ -34,7 +45,8 @@
 <div class="welcome">
  <img class="illustration" src="modules/org.libersoft.messages/img/illustration_{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
  <div class="label">
-  <div>Select your conversation</div>
-  <div>or start a new one</div>
+  <div>Select your conversation<br />or</div>
+  <Button text="Start a new one" padding="5px" onClick={clickNew} />
  </div>
 </div>
+<Modal title="New Conversation" body={ModalConversationNew} bind:show={showNewConversationModal} />

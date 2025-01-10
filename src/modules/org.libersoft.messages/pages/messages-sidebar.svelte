@@ -5,10 +5,8 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
- import { tick } from 'svelte';
  let showNewConversationModal = false;
  let scrollButtonVisible;
-
  let elItems;
  let scrolled = false;
 
