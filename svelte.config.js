@@ -4,7 +4,7 @@ import adapter from '@sveltejs/adapter-static';
 const config = {
  kit: {
   paths: {
-   base: '',
+   base: process.env.NODE_ENV === 'production' ? '/client' : '',
    relative: false
   },
   adapter: adapter({
