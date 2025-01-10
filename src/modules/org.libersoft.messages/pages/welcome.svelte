@@ -1,3 +1,7 @@
+<script>
+ const illustrations = ['pigeon', 'woman'];
+</script>
+
 <style>
  .welcome {
   display: flex;
@@ -28,6 +32,9 @@
 </style>
 
 <div class="welcome">
- <img class="illustration" src="modules/org.libersoft.messages/img/illustration_pigeon.svg" alt="" />
- <div class="label">Select your conversation<br /> or start a new one</div>
+ <img class="illustration" src="modules/org.libersoft.messages/img/illustration_{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
+ <div class="label">
+  <div>Select your conversation</div>
+  <div>or start a new one</div>
+ </div>
 </div>
