@@ -4,15 +4,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 10px;
   height: 100vh;
   background: url('/img/background.webp') repeat;
   background-size: 400px;
  }
 
  .welcome .illustration {
-  width: 400px;
+  width: 350px;
   max-width: (100% - 20px);
-  height: 400px;
+  height: 350px;
   max-height: (100% - 20px);
  }
 
@@ -27,6 +28,6 @@
 </style>
 
 <div class="welcome">
- <img class="illustration" src="modules/org.libersoft.messages/img/superhero_pigeon.svg" alt="" />
+ <img class="illustration" src="modules/org.libersoft.messages/img/illustration_pigeon.svg" alt="" />
  <div class="label">Select your conversation<br /> or start a new one</div>
 </div>
