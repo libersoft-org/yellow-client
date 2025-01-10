@@ -21,7 +21,7 @@ export default defineConfig(({mode}) => {
    },
    plugins: [
     sveltekit(),
-    pluginChecker({typescript: true}),
+    ...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
    ],
    server: {
     https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?
