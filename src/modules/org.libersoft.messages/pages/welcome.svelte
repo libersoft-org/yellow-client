@@ -9,6 +9,13 @@
   background-size: 400px;
  }
 
+ .welcome .illustration {
+  width: 400px;
+  max-width: (100% - 20px);
+  height: 400px;
+  max-height: (100% - 20px);
+ }
+
  .welcome .label {
   padding: 5px;
   border: 1px solid #fd1;
@@ -20,5 +27,6 @@
 </style>
 
 <div class="welcome">
+ <img class="illustration" src="modules/org.libersoft.messages/img/superhero_pigeon.svg" alt="" />
  <div class="label">Select your conversation<br /> or start a new one</div>
 </div>
