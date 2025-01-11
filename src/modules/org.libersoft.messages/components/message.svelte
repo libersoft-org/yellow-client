@@ -196,7 +196,7 @@
   margin: 10px 20px;
   border-radius: 10px;
   box-shadow: var(--shadow);
-  /* Maybe not necessary: */
+  /* TODO: Maybe not necessary: */
   transform: translateX(0);
   will-change: transform;
  }
