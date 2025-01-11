@@ -1,5 +1,5 @@
 <script>
- import { processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
+ import { identifier, processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
@@ -42,7 +42,7 @@
  $: messageContent = processMessage(message.message);
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
- $: checkmarks_img = 'modules/org.libersoft.messages/img/seen' + checkmarks + '.svg';
+ $: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
  //$: console.log('Core.isClientFocused:', $isClientFocused);
  $: if (isVisible && $isClientFocused) {
   console.log('isVisible:', isVisible, 'isClientFocused:', $isClientFocused);
@@ -266,7 +266,7 @@
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Emoji file="..." />-->
  <!--<Reply name="Someone" text="Some text" />-->
- <!--<Audio file="modules/org.libersoft.messages/audio/message.mp3" />-->
+ <!--<Audio file="modules/{identifier}/audio/message.mp3" />-->
  <!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
@@ -298,7 +298,7 @@
 <ContextMenu bind:this={menu} target={elCaret}>
  <ContextMenuItem img="img/copy.svg" label="Copy as plaintext" onClick={copyMessagePlain} />
  <ContextMenuItem img="img/copy.svg" label="Copy as HTML" onClick={copyMessageHTML} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" onClick={replyMessage} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" onClick={forwardMessage} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/delete.svg" label="Delete" onClick={deleteMessage} />
+ <ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} />
+ <ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
+ <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={deleteMessage} />
 </ContextMenu>

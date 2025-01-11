@@ -2,14 +2,14 @@
  import { getContext, onMount } from 'svelte';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
- import { emoji_render, encodeCodepoints } from '../messages.js';
+ import { emoji_render, identifier } from '../messages.js';
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
  let emojis;
 
  onMount(async () => {
   try {
-   const res = await fetch('modules/org.libersoft.messages/json/emoji_16_0_ordering.min.json');
+   const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
    emojis = await res.json();
   } catch (error) {

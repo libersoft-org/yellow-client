@@ -1,4 +1,5 @@
 <script>
+ import { identifier } from '../messages.js';
  import Button from '../../../core/components/button.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
@@ -43,7 +44,7 @@
 </style>
 
 <div class="welcome">
- <img class="illustration" src="modules/org.libersoft.messages/img/illustration_{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
+ <img class="illustration" src="modules/{identifier}/img/illustration_{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
  <div class="label">
   <div>Select your conversation<br />or</div>
   <Button text="Start a new one" padding="5px" onClick={clickNew} />

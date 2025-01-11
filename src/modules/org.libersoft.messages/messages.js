@@ -420,7 +420,7 @@ function showNotification(acc, msg) {
 }
 
 function playNotificationSound() {
- const audio = new Audio('modules/org.libersoft.messages/audio/message.mp3');
+ const audio = new Audio('modules/' + identifier + '/audio/message.mp3');
  audio.play();
 }
 

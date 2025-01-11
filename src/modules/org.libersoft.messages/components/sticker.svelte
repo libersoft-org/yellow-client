@@ -3,6 +3,7 @@
  import pako from 'pako';
  import { getContext, onMount, onDestroy } from 'svelte';
  import { readable } from 'svelte/store';
+ import { identifier } from '../messages.js';
  export let file = '';
  export let size = 200;
  // TODO: export let playOnStart = true;
@@ -214,7 +215,7 @@
 
 <div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
  {#if error}
-  <img class="image" style="width: {size}px; height: {size}px;" src="modules/org.libersoft.messages/img/question.svg" alt="" />
+  <img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
   <div class="error">{error}</div>
  {:else if isLottie}
   <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>

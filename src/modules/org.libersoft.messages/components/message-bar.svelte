@@ -1,5 +1,5 @@
 <script>
- import { messagebar_text_to_html, sendMessage } from '../messages.js';
+ import { identifier, messagebar_text_to_html, sendMessage } from '../messages.js';
  import { setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
@@ -115,25 +115,25 @@
 
 <div class="message-bar">
  <div bind:this={elAttachment}>
-  <Icon img="modules/org.libersoft.messages/img/attachment.svg" alt="Attachment" size="32" padding="0" />
+  <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
  </div>
  <BaseButton onClick={() => (showExpressions = !showExpressions)}>
   <div bind:this={elExpressions}>
-   <Icon img="modules/org.libersoft.messages/img/emoji.svg" alt="Emoji" size="32" padding="0" />
+   <Icon img="modules/{identifier}/img/emoji.svg" alt="Emoji" size="32" padding="0" />
   </div>
  </BaseButton>
  <!--
  <span class="message" bind:innerHTML={text} bind:this={elMessage} placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} contenteditable></span>
 -->
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
- <Icon img="modules/org.libersoft.messages/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
- <Icon img="modules/org.libersoft.messages/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
+ <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
+ <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>
 
 <ContextMenu target={elAttachment}>
- <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" onClick={sendFile} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/html.svg" label="HTML" onClick={sendHTML} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" onClick={sendLocation} />
+ <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={sendFile} />
+ <ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
+ <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
 <ContextMenu target={elExpressions} width="363px" height={expressionsHeight} scrollable={false}>

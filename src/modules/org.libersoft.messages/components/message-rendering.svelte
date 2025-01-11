@@ -1,5 +1,4 @@
 <script>
- import { networks } from '../../org.libersoft.wallet/wallet';
  import MessageContent from './message-content.svelte';
  export let messageContent;
  let messageContentContainer;
