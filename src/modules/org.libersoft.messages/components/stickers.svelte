@@ -27,19 +27,14 @@
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('all');
  let scroll_to_top = $state(null);
-
- $effect(() => {
-  console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value);
- });
+ $effect(() => console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value));
  let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
  let count;
  let items = writable([]);
  items.subscribe(value => console.log('Stickers.svelte items:', value));
  //$inspect($items, count);
  let query_store_unsubscribe;
-
  $effect(async () => live_query(fulltext_search_filter, animated_filter));
-
  async function live_query(fulltext_search_filter, animated_filter) {
   console.log('scroll_to_top:', scroll_to_top);
   await scroll_to_top();
@@ -69,9 +64,7 @@
   });
   return query_store;
  }
-
  $effect(() => console.log('Stickers.svelte items $effect:', $items));
-
  let start, end;
 
  onMount(async () => {
@@ -113,6 +106,11 @@
   flex-direction: column;
   gap: 10px;
  }
+
+ .loading .status {
+  font-size: 14px;
+ }
+
  /*
  .count {
   display: flex;
@@ -155,12 +153,10 @@
   <div class="count">showing {start}-{end} of {count} sticker sets found</div>
 -->
  </div>
-
  {#if $debug}
   animated_filter: {JSON.stringify(animated_filter)}
   fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
   $items.length: {$items.length}
  {/if}
-
  <StickersSearchResults bind:scroll_to_top items={$items} />
 </div>

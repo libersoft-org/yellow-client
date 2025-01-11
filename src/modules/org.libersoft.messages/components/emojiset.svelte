@@ -4,7 +4,6 @@
  import BaseButton from '../../../core/components/base-button.svelte';
  import { emoji_render, identifier } from '../messages.js';
  const MessageBar = getContext('MessageBar');
- const menu = getContext('ContextMenu');
  let emojis;
 
  onMount(async () => {
