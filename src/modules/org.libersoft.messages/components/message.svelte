@@ -9,6 +9,7 @@
  //import Audio from './audio.svelte';
  //import Video from './video.svelte';
  //import FileTransfer from './filetransfer.svelte';
+ //import Emoji from './Emoji.svelte';
  //import Sticker from './sticker.svelte';
  //import Map from './map.svelte';
  import MessageRendering from './message-rendering.svelte';
