@@ -6,4 +6,12 @@
  $: messageContent = processMessage(text);
 </script>
 
-<MessageRendering {messageContent} />
+<style>
+ .preview {
+  padding: 10px;
+ }
+</style>
+
+<div class="preview">
+ <MessageRendering {messageContent} />
+</div>

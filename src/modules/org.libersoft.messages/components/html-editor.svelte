@@ -18,7 +18,7 @@
   height: calc(100% - 22px);
   padding: 10px;
   border: 1px solid #080;
-  /*font-family: inherit; // TODO: switch to Ubuntu Mono (not regular Ubuntu) as it is a HTML code*/
+  font-family: 'Ubuntu Mono', serif;
   font-size: inherit;
  }
 </style>
