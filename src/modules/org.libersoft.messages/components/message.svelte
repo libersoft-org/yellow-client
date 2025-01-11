@@ -269,9 +269,10 @@
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
  {#if $debug}
-  original message: {message.message}
+  <span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format: <span class="bold">{message.format}</span>):<br /><br />
+  {message.message}<br />
   <hr />
-  rendering:
+  <span class="bold">Rendering</span>:<br /><br />
  {/if}
  <MessageRendering {messageContent} />
  <!--
@@ -286,9 +287,6 @@
    <div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
   {/if}
  </div>
- {#if $debug}
-  id {message.id}
- {/if}
 </div>
 {#if message.reply}
  <div class="reply-box">

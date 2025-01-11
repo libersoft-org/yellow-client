@@ -1,4 +1,5 @@
 <script>
+ import { networks } from '../../org.libersoft.wallet/wallet';
  import MessageContent from './message-content.svelte';
  export let messageContent;
  let messageContentContainer;
@@ -26,8 +27,10 @@
 </style>
 
 {#if messageContent.type === 'html'}
- <div class="text" bind:this={messageContentContainer}><MessageContent level={0} container={messageContentContainer} node={messageContent.body} /></div>
+ <div class="text" bind:this={messageContentContainer}>
+  <MessageContent level={0} container={messageContentContainer} node={messageContent.body} />
+ </div>
 {:else}
- UNUSED
+ <!-- TODO: Unused, switch plaintext / HTML -->
  <div class="text">{@html messageContent.body}</div>
 {/if}

@@ -2,9 +2,12 @@ import { get, writable } from 'svelte/store';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import DOMPurify from 'dompurify';
-import { db } from './db';
-
 export const identifier = 'org.libersoft.messages';
+export let md = active_account_module_data(identifier);
+export let conversationsArray = relay(md, 'conversationsArray');
+export let events = relay(md, 'events');
+export let messagesArray = relay(md, 'messagesArray');
+export let selectedConversation = relay(md, 'selectedConversation');
 
 class Message {
  constructor(acc, data) {
@@ -17,12 +20,6 @@ class Message {
   else this.remote_address = this.address_to;
  }
 }
-
-export let md = active_account_module_data(identifier);
-export let conversationsArray = relay(md, 'conversationsArray');
-export let events = relay(md, 'events');
-export let messagesArray = relay(md, 'messagesArray');
-export let selectedConversation = relay(md, 'selectedConversation');
 
 export function initData(acc) {
  let result = {
@@ -92,18 +89,14 @@ export function initComms(acc) {
  moduleEventSubscribe(acc, 'new_message');
  moduleEventSubscribe(acc, 'seen_message');
  moduleEventSubscribe(acc, 'seen_inbox_message');
-
  let data = acc.module_data[identifier];
  //console.log('initComms:', data);
-
  data.new_message_listener = event => eventNewMessage(acc, event);
  data.seen_message_listener = event => eventSeenMessage(acc, event);
  data.seen_inbox_message_listener = event => eventSeenInboxMessage(acc, event);
-
  acc.events.addEventListener('new_message', data.new_message_listener);
  acc.events.addEventListener('seen_message', data.seen_message_listener);
  acc.events.addEventListener('seen_inbox_message', data.seen_inbox_message_listener);
-
  listConversations(acc);
 }
 
@@ -115,19 +108,15 @@ export function deinitComms(acc) {
 
 export function deinitData(acc) {
  console.log('DEINIT DATA');
-
  let data = acc.module_data[identifier];
  if (!data) return;
-
  acc.events.removeEventListener('new_message', data.new_message_listener);
  acc.events.removeEventListener('seen_message', data.seen_message_listener);
  acc.events.removeEventListener('seen_inbox_message', data.seen_message_listener);
-
  data.events.set([]);
  data.messagesArray.set([]);
  data.conversationsArray.set([]);
  data.selectedConversation.set(null);
-
  acc.module_data[identifier] = null;
 }
 
@@ -144,7 +133,6 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
    window.alert('Error while listing messages: ' + (res.message || JSON.stringify(res)));
    return;
   }
-
   let items = res.data.messages;
   items = constructLoadedMessages(acc, items);
   addMessagesToMessagesArray(items, reason);
@@ -164,17 +152,16 @@ function addMessagesToMessagesArray(items, reason) {
  addMissingPrevNext(arr);
  //console.log('messagesArray.set:', arr);
  messagesArray.set(arr);
- if (state.countAdded > 0) {
-  insertEvent({ type: reason, array: arr });
- } else {
-  insertEvent({ type: 'properties_update', array: arr });
- }
+ if (state.countAdded > 0) insertEvent({ type: reason, array: arr });
+ else insertEvent({ type: 'properties_update', array: arr });
  return result;
 }
 
-/*export function handleResize(wasScrolledToBottom) {
+/*
+export function handleResize(wasScrolledToBottom) {
  insertEvent({ type: 'resize', {wasScrolledToBottom} });
-}*/
+}
+*/
 
 export function snipeMessage(msg) {
  messagesArray.update(v => {
@@ -227,13 +214,10 @@ function addMissingPrevNext(messages) {
  for (let i = 0; i < messages.length; i++) {
   let m = messages[i];
   if (m.prev === undefined) m.prev = findPrev(messages, i);
-  if (m.next === undefined) {
-   m.next = findNext(messages, i);
-  } else if (m.next === 'none') {
+  if (m.next === undefined) m.next = findNext(messages, i);
+  else if (m.next === 'none') {
    let next = findNext(messages, i);
-   if (next !== undefined) {
-    m.next = next;
-   }
+   if (next !== undefined) m.next = next;
   }
  }
 }
@@ -273,7 +257,6 @@ export function setMessageSeen(message, cb) {
 
 export function sendMessage(text) {
  let acc = get(active_account);
-
  let message = new Message(acc, {
   uid: getGuid(),
   address_from: acc.credentials.address,
@@ -282,9 +265,7 @@ export function sendMessage(text) {
   created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
   just_sent: true,
  });
-
  let params = { address: message.address_to, message: message.message, uid: message.uid };
-
  sendData(acc, 'message_send', params, true, (req, res) => {
   if (res.error !== 0) {
    alert('Error while sending message: ' + res.message);
@@ -295,7 +276,6 @@ export function sendMessage(text) {
   messagesArray.update(v => v);
   insertEvent({ type: 'properties_update', array: get(messagesArray) });
  });
-
  addMessagesToMessagesArray([message], 'send_message');
  updateConversationsArray(acc, message);
 }
@@ -303,20 +283,13 @@ export function sendMessage(text) {
 function updateConversationsArray(acc, msg) {
  let acc_ca = acc.module_data[identifier].conversationsArray;
  let ca = get(acc_ca);
-
  const conversation = ca.find(c => c.address === msg.remote_address);
-
  console.log('updateConversationsArray', conversation, msg);
  let is_unread = !msg.seen && !msg.just_sent && msg.address_from !== acc.credentials.address;
-
  if (conversation) {
   conversation.last_message_date = msg.created;
   conversation.last_message_text = msg.stripped_text;
-
-  if (is_unread) {
-   conversation.unread_count = (conversation.unread_count || 0) + 1;
-  }
-
+  if (is_unread) conversation.unread_count = (conversation.unread_count || 0) + 1;
   // shift the affected conversation to the top:
   const index = ca.indexOf(conversation);
   ca.splice(index, 1);
@@ -368,7 +341,7 @@ function eventNewMessage(acc, event) {
  updateConversationsArray(acc, msg);
  if (acc !== get(active_account)) return;
  if ((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address)) {
-  let oldLen = get(messagesArray).length;
+  //let oldLen = get(messagesArray).length;
   msg = addMessagesToMessagesArray([msg], 'new_message')[0];
  }
 }
@@ -468,9 +441,7 @@ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
   node.setAttribute('target', '_blank');
   node.setAttribute('rel', 'noopener noreferrer');
  }
- if (node.tagName === 'VIDEO') {
-  node.removeAttribute('autoplay');
- }
+ if (node.tagName === 'VIDEO') node.removeAttribute('autoplay');
 });
 
 DOMPurify.addHook('uponSanitizeElement', (node, data) => {
@@ -525,9 +496,7 @@ export function messagebar_text_to_html(content) {
    r = r.replaceAll('\n', '<br />');
    r = replaceEmojisWithTags(r);
    return r;
-  } else if (part.type === 'processed') {
-   return part.value;
-  }
+  } else if (part.type === 'processed') return part.value;
  });
  let result3 = result2.join('');
  console.log('result0:', result0);
