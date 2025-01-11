@@ -371,8 +371,8 @@ function eventSeenMessage(acc, event) {
 
 function eventSeenInboxMessage(acc, event) {
  /*
-mark, as seen, a message sent to us. This can be triggered by another client.
-*/
+  mark, as seen, a message sent to us. This can be triggered by another client.
+ */
  if (acc !== get(active_account)) return;
  console.log(event);
  const res = event.detail;
@@ -393,7 +393,6 @@ function showNotification(acc, msg) {
  if (Notification.permission !== 'granted') return;
  /* TODO: fixme*/
  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
-
  console.log('new Notification', conversation);
  let notification;
  if (conversation) {

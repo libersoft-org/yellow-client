@@ -1,11 +1,8 @@
 import { writable } from 'svelte/store';
 import { db } from './db.js';
 export let stickerLibraryUpdaterState = writable({});
-
 window.stickerLibraryUpdaterState = { updating: false };
-import.meta.hot?.dispose(() => {
- window.stickerLibraryUpdaterState.updating = false;
-});
+import.meta.hot?.dispose(() => (window.stickerLibraryUpdaterState.updating = false));
 
 export async function fetchStickerset(stickerServer, id = 0) {
  // This is a simple fetch of a single sticker. There is some overlap with updateStickerLibrary, but it's not worth refactoring now
@@ -44,7 +41,6 @@ export async function updateStickerLibrary(stickerServer) {
  console.log('Done clearing old stickers from db.');
  console.log('Removed db.stickersets:', await db.stickersets.toArray());
  console.log('Removed db.stickers:', await db.stickers.toArray());
-
  let stickersets_batch = [];
  for (let i = 0; i < sets.length; i++) {
   let stickerset = sets[i];
