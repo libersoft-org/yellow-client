@@ -6,8 +6,8 @@
  export let params = null;
  export let title = null;
  export let body = '';
- export let width = 'calc(100% - 20px)';
- export let height = 'calc(100% - 20px)';
+ export let width; //= 'calc(100% - 20px)';
+ export let height; //= 'calc(100% - 20px)';
  let modalEl;
  let posX = 0;
  let posY = 0;
@@ -21,9 +21,7 @@
 
  setContext('setTitle', setTitle);
  setContext('pageChanged', positionModal);
- setContext('Popup', {
-  close,
- });
+ setContext('Popup', { close });
 
  $: onShowUpdated(show);
 
@@ -37,12 +35,11 @@
   await tick();
   if (modalEl) {
    const modalRect = modalEl.getBoundingClientRect();
-   const modalWidth = modalRect.width;
-   const modalHeight = modalRect.height;
-   const windowWidth = window.innerWidth;
-   const windowHeight = window.innerHeight;
-   top = (windowHeight - modalHeight) / 2;
-   left = (windowWidth - modalWidth) / 2;
+   top = (window.innerHeight - modalRect.height) / 2;
+   left = (window.innerWidth - modalRect.width) / 2;
+   // TODO: modal width and height are wrong when width and height are set (for example when showing modal with sticker set)
+   console.log('MODAL SIZE:', modalRect.width + ' x ' + modalRect.height);
+   console.log('WINDOW SIZE:', window.innerWidth + ' x ' + window.innerHeight);
   }
  }
 
@@ -100,12 +97,9 @@
   position: fixed;
   top: 0;
   left: 0;
-  /*max-width: calc(100% - 20px);
-  max-height: calc(100% - 20px);*/
   overflow: auto;
   border: 1px solid #000;
   border-radius: 10px;
-  /*box-sizing: border-box;*/
   box-shadow: var(--shadow);
  }
 
@@ -143,7 +137,7 @@
 </style>
 
 {#if show && body}
- <div class="modal" role="none" style="top: {top}px; left: {left}px; max-width: {width}; max-height: {height};" bind:this={modalEl} on:keydown={onkeydown}>
+ <div class="modal" role="none" style:top={top && top + 'px'} style:left={left && left + 'px'} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} on:keydown={onkeydown}>
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
    <BaseButton onClick={clickCloseModal}>

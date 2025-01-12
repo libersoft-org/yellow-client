@@ -141,7 +141,7 @@
 
  async function loadTgs(file) {
   try {
-   let start = Date.now();
+   //let start = Date.now();
    /*
     https://www.digitalocean.com/community/tutorials/how-to-implement-browser-caching-with-nginx-s-header-module-on-centos-8
     https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#fresh_and_stale_based_on_age
@@ -172,7 +172,7 @@
 
  async function loadJson(file) {
   try {
-   let start = Date.now();
+   //let start = Date.now();
    const response = await fetch(file);
    if (!response.ok) {
     error = `Error loading JSON ${file}, status: ${response.status}`;
