@@ -47,10 +47,6 @@
   show = false;
  }
 
- function clickCloseModal() {
-  show = false;
- }
-
  function onkeydown(event) {
   if (event.key === 'Escape') {
    event.preventDefault();
@@ -140,7 +136,7 @@
  <div class="modal" role="none" style:top={top && top + 'px'} style:left={left && left + 'px'} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} on:keydown={onkeydown}>
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
-   <BaseButton onClick={clickCloseModal}>
+   <BaseButton onClick={close}>
     <div class="close">
      <img src="img/close-black.svg" alt="X" />
     </div>
