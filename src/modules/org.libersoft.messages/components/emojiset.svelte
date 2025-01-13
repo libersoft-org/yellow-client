@@ -44,6 +44,16 @@
   padding: 0 10px;
   overflow: auto; /* TODO - not working */
  }
+
+ .emoji {
+  display: flex;
+  padding: 3px;
+  border-radius: 5px;
+ }
+
+ .emoji.hover:hover {
+  background: #eee;
+ }
 </style>
 
 <div class="emojiset">
@@ -53,7 +63,9 @@
    <div class="emojis">
     {#each g.emoji as e, id}
      <BaseButton onClick={() => clickEmoji(e.base)}>
+      <div class="emoji hover">
       <Emoji codepoints={e.base} hover={true} />
+      </div>
      </BaseButton>
     {/each}
    </div>
