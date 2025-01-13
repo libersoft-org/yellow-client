@@ -1,13 +1,10 @@
 <script>
  import { debug } from '../../../core/core.js';
- import { emoji_render } from '../messages.js';
+ import { rgi, emoji_render } from '../emojis.js';
  export let codepoints;
  export let size = 40;
  export let hover = false;
 
- function rgi(codepoints) {
-  return codepoints.map(codepoint => codepoint.toString(16).padStart(4, '0')).join('_');
- }
 </script>
 
 <style>
