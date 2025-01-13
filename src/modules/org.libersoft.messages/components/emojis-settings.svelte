@@ -1,0 +1,39 @@
+<script>
+ import Button from '../../../core/components/button.svelte';
+ import Switch from '../../../core/components/switch.svelte';
+ export let animate = true;
+ let showAsVector = true;
+
+ function clickUpdate() {}
+</script>
+
+<style>
+ .settings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 10px;
+ }
+
+ .group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+ }
+
+ .group .label {
+  font-weight: bold;
+ }
+</style>
+
+<div class="settings">
+ <div class="group">
+  <div class="label">Animate emojis:</div>
+  <Switch bind:checked={animate} />
+ </div>
+ <div class="group">
+  <div class="label">Show Emojis as vector:</div>
+  <Switch bind:checked={showAsVector} />
+ </div>
+ <Button text="Save & update" onClick={clickUpdate} />
+</div>

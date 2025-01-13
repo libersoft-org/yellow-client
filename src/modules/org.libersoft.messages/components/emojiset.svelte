@@ -4,7 +4,7 @@
  import BaseButton from '../../../core/components/base-button.svelte';
  import { emoji_render, identifier } from '../messages.js';
  const MessageBar = getContext('MessageBar');
- let emojis;
+ let emojis = $state([]);
 
  onMount(async () => {
   try {
@@ -26,7 +26,7 @@
 
 <style>
  .emojiset {
-  height: calc(100% - 45px);
+  height: calc(100% - 105px);
   overflow: auto;
  }
 
