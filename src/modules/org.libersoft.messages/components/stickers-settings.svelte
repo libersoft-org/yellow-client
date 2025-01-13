@@ -4,6 +4,7 @@
  import Switch from '../../../core/components/switch.svelte';
  export let stickerServer;
  let animateAll = false;
+ let showAsVector = true;
 
  function clickUpdate() {}
 </script>
@@ -27,5 +28,9 @@
 <div class="group">
  <div class="label">Animate all stickers:</div>
  <Switch bind:checked={animateAll} />
+</div>
+<div class="group">
+ <div class="label">Show stickers as vector (slower):</div>
+ <Switch bind:checked={showAsVector} />
 </div>
 <Button text="Save & update" onClick={clickUpdate} />
