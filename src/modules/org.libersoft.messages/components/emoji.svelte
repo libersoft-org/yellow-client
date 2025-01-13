@@ -17,4 +17,4 @@
 </style>
 
 {#if $debug}{JSON.stringify(codepoints)}{/if}
-<img style="{!is_single && 'padding: 10px 0'} width: {size}px; height: {size}px;" src="https://fonts.gstatic.com/s/e/notoemoji/latest/{rgi(codepoints)}/emoji.svg" loading="lazy" alt={emoji_render(codepoints)} />
+<img style="{!is_single && 'padding: 0 10px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" src="https://fonts.gstatic.com/s/e/notoemoji/latest/{rgi(codepoints)}/emoji.svg" loading="lazy" alt={emoji_render(codepoints)} />
