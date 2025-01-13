@@ -2,7 +2,8 @@
  import { getContext, onMount } from 'svelte';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
- import { emoji_render, identifier } from '../messages.js';
+ import { identifier } from '../messages.js';
+ import { emoji_render } from '../emojis.js';
  const MessageBar = getContext('MessageBar');
  let emojis = $state([]);
 
