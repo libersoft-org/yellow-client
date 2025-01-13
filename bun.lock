@@ -7,7 +7,7 @@
         "dexie": "^4.0.10",
         "dompurify": "^3.2.3",
         "ethers": "^6.13.5",
-        "fuzzy-search": "git+https://github.com/wouterrutgers/fuzzy-search.git",
+        "fuzzy-search": "^3.2.1",
         "leaflet": "^1.9.4",
         "lottie-web": "^5.12.2",
         "pako": "^2.1.0",
@@ -275,7 +275,7 @@
 
     "fsevents": ["fsevents@2.3.3", "", { "os": "darwin" }, "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="],
 
-    "fuzzy-search": ["fuzzy-search@github:wouterrutgers/fuzzy-search#dc0618e", {}, "wouterrutgers-fuzzy-search-dc0618e"],
+    "fuzzy-search": ["fuzzy-search@3.2.1", "", {}, "sha512-vAcPiyomt1ioKAsAL2uxSABHJ4Ju/e4UeDM+g1OlR0vV4YhLGMNsdLNvZTpEDY4JCSt0E4hASCNM5t2ETtsbyg=="],
 
     "get-caller-file": ["get-caller-file@2.0.5", "", {}, "sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg=="],
 
