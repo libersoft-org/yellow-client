@@ -7,7 +7,7 @@ export function splitAndLinkify(text) {
   '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})',
   '(tel:\\+?[0-9]{1,15})',
  ].join('|');
- console.log('splitAndLinkify pattern:', pattern);
+ //console.log('splitAndLinkify pattern:', pattern);
  const combinedPattern = new RegExp(pattern, 'g');
  const result = [];
  let lastIndex = 0;

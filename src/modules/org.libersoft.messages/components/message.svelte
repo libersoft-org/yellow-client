@@ -39,7 +39,7 @@
  let touchX;
  let touchY;
 
- $: messageContent = processMessage(message.message);
+ $: messageContent = processMessage(message);
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
  $: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
@@ -251,6 +251,10 @@
   cursor: pointer;
  }
 
+ .debug {
+  word-break: break-word;
+ }
+
  @media (hover: hover) and (pointer: fine) {
   .message:hover .menu {
    display: flex;
@@ -271,10 +275,13 @@
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
  {#if $debug}
+  <div class="debug">
   <span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format: <span class="bold">{message.format}</span>):<br /><br />
   {message.message}<br />
   <hr />
   <span class="bold">Rendering</span>:<br /><br />
+  </div>
+  {:else}
  {/if}
  <MessageRendering {messageContent} />
  <!--

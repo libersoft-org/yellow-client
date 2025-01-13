@@ -342,6 +342,11 @@
   border: 3px solid #000;
   border-radius: 10px;
  }
+
+ .debug-text {
+   word-break: break-word;
+ }
+
 </style>
 
 {#if $debug}
@@ -368,9 +373,11 @@
  <div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
   <div class="spacer"></div>
   {#each itemsArray as m (m.uid)}
-   {#if $debug}
-    {JSON.stringify(m, null, 2)}
-   {/if}
+   <!--{#if $debug}-->
+   <!-- <div class="debug-text">-->
+   <!--  {JSON.stringify(m, null, 2)}-->
+   <!-- </div>-->
+   <!--{/if}-->
    {#if m.type === 'no_messages'}
     <div>No messages</div>
    {:else if m.type === 'initial_loading_placeholder'}

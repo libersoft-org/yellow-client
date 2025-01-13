@@ -3,7 +3,7 @@
  import { processMessage } from '../messages.js';
  export let text;
 
- $: messageContent = processMessage(text);
+ $: messageContent = processMessage({'format': 'html', 'message': text});
 </script>
 
 <style>

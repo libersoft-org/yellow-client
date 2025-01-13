@@ -28,7 +28,8 @@
 
  export async function doSendMessage(message, html) {
   //console.log('doSendMessage', message);
-  await sendMessage(html ? message : messagebar_text_to_html(message));
+  //await sendMessage(html ? message : messagebar_text_to_html(message));
+  await sendMessage(message, html ? 'html' : 'plaintext');
   await setBarFocus();
  }
 

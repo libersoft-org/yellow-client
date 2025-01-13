@@ -255,17 +255,18 @@ export function setMessageSeen(message, cb) {
  });
 }
 
-export function sendMessage(text) {
+export function sendMessage(text, format) {
  let acc = get(active_account);
  let message = new Message(acc, {
   uid: getGuid(),
   address_from: acc.credentials.address,
   address_to: get(selectedConversation).address,
   message: text,
+  format,
   created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
   just_sent: true,
  });
- let params = { address: message.address_to, message: message.message, uid: message.uid };
+ let params = { address: message.address_to, message: message.message, format, uid: message.uid };
  sendData(acc, 'message_send', params, true, (req, res) => {
   if (res.error !== 0) {
    alert('Error while sending message: ' + res.message);
@@ -476,12 +477,18 @@ export function stripHtml(html) {
  return html.replace(/<[^>]*>?/gm, '');
 }
 
-export function processMessage(content) {
- let html = saneHtml(content);
- return {
-  type: 'html',
-  body: html,
- };
+export function processMessage(message) {
+ if (message.format === 'html') {
+  return {
+   format: 'html',
+   body: saneHtml(message.message),
+  };
+ }
+ else
+  return {
+   format: 'html',
+   body: saneHtml(messagebar_text_to_html(message.message)),
+  };
 }
 
 export function messagebar_text_to_html(content) {
