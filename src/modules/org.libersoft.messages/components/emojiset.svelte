@@ -3,7 +3,7 @@
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import { identifier } from '../messages.js';
- import { emoji_render } from '../emojis.js';
+ import { emoji_render} from '../emojis.js';
  const MessageBar = getContext('MessageBar');
  let emojis = $state([]);
 
@@ -19,7 +19,7 @@
 
  function clickEmoji(codepoints) {
   /*
-  MessageBar.sendMessage('<Emoji codepoints="' + encodeCodepoints(codepoints) + '" />');
+  MessageBar.sendMessage('<Emoji codepoints="' + rgi(codepoints) + '" />');
 */
   MessageBar.append(emoji_render(codepoints));
  }

@@ -1,4 +1,4 @@
-import { replaceEmojisWithTags } from './emojis.js';
+import { replaceEmojisWithTags, replaceEmojisWithTags2 } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
@@ -501,7 +501,7 @@ export function messagebar_text_to_html(content) {
   if (part.type === 'plain') {
    let r = htmlEscape(part.value);
    r = r.replaceAll('\n', '<br />');
-   r = replaceEmojisWithTags(r);
+   r = replaceEmojisWithTags2(r);
    return r;
   } else if (part.type === 'processed') return part.value;
  });

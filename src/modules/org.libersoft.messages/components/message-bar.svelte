@@ -1,6 +1,6 @@
 <script>
  import { identifier, messagebar_text_to_html, sendMessage } from '../messages.js';
- import { setContext, tick } from 'svelte';
+ import { onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
  import ContextMenu from '../../../core/components/context-menu.svelte';
@@ -8,6 +8,7 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalHTML from '../modals/html.svelte';
  import Expressions from './expressions.svelte';
+ import {  init_emojis } from '../emojis.js';
  let elAttachment;
  let elExpressions;
  let elMessage;
@@ -15,6 +16,10 @@
  let showHTMLModal = false;
  let expressionsHeight = '500px';
  let showExpressions = false;
+
+ onMount(async () => {
+  await init_emojis();
+ });
 
  setContext('MessageBar', {
   sendMessageHtml: text => doSendMessage(text, true),
