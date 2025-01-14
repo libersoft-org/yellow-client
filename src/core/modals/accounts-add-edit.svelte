@@ -3,10 +3,9 @@
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts } from '../core.js';
  import Button from '../components/button.svelte';
- import InputText from '../components/input-text.svelte';
  import Select from '../components/select.svelte';
  import Option from '../components/select-option.svelte';
- import Switch from '../components/switch.svelte';
+ import InputText from '../components/input-text.svelte';
  import { derived, get, writable } from 'svelte/store';
  import AccountStatusIconAndText from '../components/account-status-icon-and-text.svelte';
  export let close;
@@ -129,9 +128,6 @@
  }
 
  .form .group .label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
   font-size: 15px;
   padding-left: 5px;
   font-weight: bold;
@@ -190,7 +186,7 @@
   <div class="group">
    <div class="label">
     <span>Enabled:</span>
-    <span><Switch bind:checked={config_enabled} /></span>
+    <span><input type="checkbox" bind:checked={config_enabled} /></span>
    </div>
   </div>
  {/if}

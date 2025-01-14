@@ -6,14 +6,18 @@
  export let is_single = false;
 
  let url;
- $: url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + rgi(codepoints) + ($render_emojis_as_static ? '/emoji.svg' : '/512.webp');
+ $: url = "https://fonts.gstatic.com/s/e/notoemoji/latest/" + rgi(codepoints) + ($render_emojis_as_static ? "/emoji.svg" : "/512.webp");
+
 </script>
 
+
 <style>
+
  img {
   object-fit: contain;
  }
+
 </style>
 
 {#if $debug}{JSON.stringify(codepoints)}{/if}
-<img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" src={url} loading="lazy" alt={emoji_render(codepoints)} />
+<img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" src="{url}" loading="lazy" alt={emoji_render(codepoints)} />

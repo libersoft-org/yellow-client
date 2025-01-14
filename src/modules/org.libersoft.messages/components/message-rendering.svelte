@@ -29,6 +29,7 @@
  .debug {
   word-break: break-word;
  }
+
 </style>
 
 <!--{#if $debug}-->
@@ -39,12 +40,14 @@
 <!--{/if}-->
 
 {#each dummyArray as messageContent}
- {#if messageContent.format === 'html'}
-  <div class="text" bind:this={messageContentContainer}>
-   <MessageContent level={0} container={messageContentContainer} node={messageContent.body} />
-  </div>
- {:else}
-  <!-- TODO: Unused, switch plaintext / HTML -->
-  <div class="text">{@html messageContent.body}</div>
- {/if}
-{/each}
+
+{#if messageContent.format === 'html'}
+ <div class="text" bind:this={messageContentContainer}>
+  <MessageContent level={0} container={messageContentContainer} node={messageContent.body} />
+ </div>
+{:else}
+ <!-- TODO: Unused, switch plaintext / HTML -->
+ <div class="text">{@html messageContent.body}</div>
+{/if}
+
+ {/each}

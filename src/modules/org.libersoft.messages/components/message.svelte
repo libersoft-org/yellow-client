@@ -289,12 +289,13 @@
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
  {#if $debug}
   <div class="debug">
-   <span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format: <span class="bold">{message.format}</span>):<br /><br />
-   {message.message}<br />
-   <hr />
-   <span class="bold">Rendering</span>:<br /><br />
+  <span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format: <span class="bold">{message.format}</span>):<br /><br />
+  {message.message}<br />
+  <hr />
+  <span class="bold">Rendering</span>:<br /><br />
   </div>
- {:else}{/if}
+  {:else}
+ {/if}
  <MessageRendering {messageContent} />
  <!--
  <div class="text">{@html 'processMessage(message.message)'}</div>
