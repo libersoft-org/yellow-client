@@ -9,7 +9,7 @@ export let render_emojis_as_raster = localStorageSharedStore('render_emojis_as_r
 
 export function start_emojisets_fetch(acc, emojiGroups, emojisByCodepointsRgi) {
  new Promise(async (resolve, reject) => {
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  //await new Promise(resolve => setTimeout(resolve, 10000));
   const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
   if (!res.ok) {
    console.error('Failed to fetch emoji groups:', res);
