@@ -21,7 +21,7 @@ export function splitAndLinkify(text) {
     type: 'plain',
     value: nonMatched,
    });
-   console.log('matchedText:', matchedText, 'matchStart:', matchStart, 'nonMatched:', nonMatched);
+   //console.log('matchedText:', matchedText, 'matchStart:', matchStart, 'nonMatched:', nonMatched);
   }
   // The matched part
   result.push({
@@ -34,7 +34,7 @@ export function splitAndLinkify(text) {
  if (lastIndex < text.length) {
   const trailingText = text.slice(lastIndex);
   if (trailingText) {
-   console.log('trailingText:', trailingText);
+   //console.log('trailingText:', trailingText);
    result.push({
     type: 'plain',
     value: trailingText,

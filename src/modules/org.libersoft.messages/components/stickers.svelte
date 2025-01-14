@@ -56,10 +56,7 @@
   });
   if (query_store_unsubscribe) query_store_unsubscribe.unsubscribe();
   query_store_unsubscribe = query_store.subscribe(value => {
-   console.log('query_store value:', value);
-   console.log('global items is now, ', $items);
    items.set(value);
-   console.log('now global items is, ', $items);
    count = value.length;
   });
   return query_store;

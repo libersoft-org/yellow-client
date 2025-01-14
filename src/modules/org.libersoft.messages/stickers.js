@@ -52,7 +52,7 @@ export async function updateStickerLibrary(stickerServer) {
   //await db.stickersets.bulkAdd(stickersets_batch);
   //stickersets_batch = [];
   //}
-  console.log('stickerset:', stickerset);
+  //console.log('stickerset:', stickerset);
   stickersets_batch.push(stickerset);
   let stickers_batch = [];
   for (let sticker of stickers) {

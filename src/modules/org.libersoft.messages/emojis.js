@@ -88,12 +88,12 @@ console.log(cp);
 }*/
 
 export function replaceEmojisWithTags2(text) {
- console.log('replaceEmojisWithTags2', text);
+ //console.log('replaceEmojisWithTags2', text);
  for (let c of cp) {
   let seq = c[0];
   let alt = c[1];
   text = text.replaceAll(alt, '<Emoji codepoints="' + seq + '" ></Emoji>');
  }
- console.log('replaceEmojisWithTags2 result', text);
+ //console.log('replaceEmojisWithTags2 result', text);
  return text;
 }

@@ -29,7 +29,7 @@
  async function update(intersecting) {
   if (intersecting) {
    if (stickers === undefined) {
-    console.log('stickerset', stickerset);
+    //console.log('stickerset', stickerset);
     if (stickerset.items) stickers = stickerset.items;
     else stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
    }
