@@ -8,7 +8,7 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalHTML from '../modals/html.svelte';
  import Expressions from './expressions.svelte';
- import {  init_emojis } from '../emojis.js';
+ //import {  init_emojis } from '../emojis.js';
  let elAttachment;
  let elExpressions;
  let elMessage;
@@ -18,7 +18,7 @@
  let showExpressions = false;
 
  onMount(async () => {
-  await init_emojis();
+  //await init_emojis();
  });
 
  setContext('MessageBar', {

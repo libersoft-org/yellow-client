@@ -170,14 +170,27 @@
  }
 
  function copyMessagePlain() {
-  console.log('copy as plaintext');
+  console.log('copy stripHtml');
   navigator.clipboard.writeText(stripHtml(message.message));
  }
 
  function copyMessageHTML() {
-  console.log('copy as html');
+  console.log('copy original');
   console.log(message.message);
   navigator.clipboard.writeText(message.message);
+ }
+
+ function copyMessagePseudoHtml() {
+  console.log('copyMessagePseudoHtml');
+  console.log(messageContent);
+
+  //const serialized = new XMLSerializer().serializeToString(messageContent.body);
+
+  const tempContainer = document.createElement('div');
+  tempContainer.appendChild(messageContent.body);
+  const serialized = tempContainer.innerHTML;
+
+  navigator.clipboard.writeText(serialized);
  }
 
  async function rightClickContextMenu(e) {
@@ -305,6 +318,7 @@
 <ContextMenu bind:this={menu} target={elCaret}>
  <ContextMenuItem img="img/copy.svg" label="Copy as plaintext" onClick={copyMessagePlain} />
  <ContextMenuItem img="img/copy.svg" label="Copy as HTML" onClick={copyMessageHTML} />
+ <ContextMenuItem img="img/copy.svg" label="Copy as pseudo-HTML" onClick={copyMessagePseudoHtml} />
  <ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} />
  <ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
  <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={deleteMessage} />
