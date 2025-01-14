@@ -484,8 +484,7 @@ export function processMessage(message) {
    format: 'html',
    body: saneHtml(message.message),
   };
- }
- else
+ } else
   return {
    format: 'html',
    body: saneHtml(messagebar_text_to_html(message.message)),
@@ -513,7 +512,6 @@ export function messagebar_text_to_html(content) {
  return result3;
 }
 
-
 function emoji_cluster_to_array(cluster) {
  // Convert the emoji cluster to an array of codepoints
  const codepoints = [];
@@ -522,7 +520,6 @@ function emoji_cluster_to_array(cluster) {
  }
  return codepoints;
 }
-
 
 function linkify(text) {
  console.log('linkify ', text);
