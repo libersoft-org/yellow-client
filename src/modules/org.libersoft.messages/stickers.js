@@ -46,9 +46,9 @@ export async function updateStickerLibrary(stickerServer) {
   delete stickerset.items;
   stickerset.server = stickerServer;
   stickerset.url = stickerServer + '/api/sets?id=' + stickerset.id;
-  //if (i % 100 === 0) {
+  //if (i % 500 === 0) {
   stickerLibraryUpdaterState.set({ status: 'Saving sticker set list: ' + i + '/' + sets.length + ' to local database ...', updating: true, progress: (100 * i) / sets.length });
-  console.log('loading stickerset ' + i + '/' + sets.length);
+  //console.log('loading stickerset ' + i + '/' + sets.length);
   //await db.stickersets.bulkAdd(stickersets_batch);
   //stickersets_batch = [];
   //}
@@ -71,4 +71,5 @@ export async function updateStickerLibrary(stickerServer) {
  await db.stickersets.bulkAdd(stickersets_batch);
  stickerLibraryUpdaterState.set({ updating: false });
  console.log('Done loading, db.stickers.length:', await db.stickers.toArray().length);
+ console.log('spent:', Date.now() - startFetchSets, 'ms');
 }

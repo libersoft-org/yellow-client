@@ -9,6 +9,7 @@ export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');
 export let selectedConversation = relay(md, 'selectedConversation');
+export let emojisets = relay(md, 'emojisets');
 
 class Message {
  constructor(acc, data) {
@@ -28,7 +29,9 @@ export function initData(acc) {
   conversationsArray: writable([]),
   events: writable([]),
   messagesArray: writable([]),
+  emojisets: writable([]),
  };
+ start_emojisets_fetch(acc, result.emojisets);
  result.conversationsArray.subscribe(v => {
   //console.log('acc conversationsArray:', acc, v);
  });
@@ -99,6 +102,7 @@ export function initComms(acc) {
  acc.events.addEventListener('seen_message', data.seen_message_listener);
  acc.events.addEventListener('seen_inbox_message', data.seen_inbox_message_listener);
  listConversations(acc);
+
 }
 
 export function deinitComms(acc) {

@@ -2,25 +2,11 @@
  import { getContext, onMount } from 'svelte';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
- import { identifier } from '../messages.js';
+ import { emojisets } from '../messages.js';
  import { emoji_render} from '../emojis.js';
  const MessageBar = getContext('MessageBar');
- let emojis = $state([]);
-
- onMount(async () => {
-  try {
-   const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
-   if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-   emojis = await res.json();
-  } catch (error) {
-   console.error('Error fetching data:', error);
-  }
- });
 
  function clickEmoji(codepoints) {
-  /*
-  MessageBar.sendMessage('<Emoji codepoints="' + rgi(codepoints) + '" />');
-*/
   MessageBar.append(emoji_render(codepoints));
  }
 </script>
@@ -57,7 +43,7 @@
 </style>
 
 <div class="emojiset">
- {#each emojis as g, index}
+ {#each $emojisets as g, index}
   <div class="group">
    <div class="title">{g.group}</div>
    <div class="emojis">
