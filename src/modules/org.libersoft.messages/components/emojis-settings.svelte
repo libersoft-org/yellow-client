@@ -1,7 +1,11 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  import Switch from '../../../core/components/switch.svelte';
- export let animate = true;
+ import { render_emojis_as_static } from '../emojis.js';
+
+ export let animate = !$render_emojis_as_static;
+ $: render_emojis_as_static.set(!animate);
+
  let showAsVector = true;
 
  function clickUpdate() {}

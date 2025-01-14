@@ -1,4 +1,4 @@
-import { replaceEmojisWithTags, replaceEmojisWithTags2 } from './emojis.js';
+import { replaceEmojisWithTags, replaceEmojisWithTags2, start_emojisets_fetch } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
@@ -9,7 +9,8 @@ export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');
 export let selectedConversation = relay(md, 'selectedConversation');
-export let emojisets = relay(md, 'emojisets');
+export let emojiGroups = relay(md, 'emojiGroups');
+export let emojisByCodepointsRgi = relay(md, 'emojisByCodepointsRgi');
 
 class Message {
  constructor(acc, data) {
@@ -29,9 +30,10 @@ export function initData(acc) {
   conversationsArray: writable([]),
   events: writable([]),
   messagesArray: writable([]),
-  emojisets: writable([]),
+  emojiGroups: writable([]),
+  emojisByCodepointsRgi: writable(null),
  };
- start_emojisets_fetch(acc, result.emojisets);
+ start_emojisets_fetch(acc, result.emojiGroups, result.emojisByCodepointsRgi);
  result.conversationsArray.subscribe(v => {
   //console.log('acc conversationsArray:', acc, v);
  });
@@ -379,11 +381,11 @@ function eventSeenInboxMessage(acc, event) {
   mark, as seen, a message sent to us. This can be triggered by another client.
  */
  if (acc !== get(active_account)) return;
- console.log(event);
+ //console.log(event);
  const res = event.detail;
- console.log('eventSeenInboxMessage', res);
+ //console.log('eventSeenInboxMessage', res);
  if (!res.data) return;
- console.log(get(conversationsArray));
+ //console.log(get(conversationsArray));
  const conversation = get(conversationsArray).find(c => c.address === res.data.address_from);
  if (conversation) {
   conversation.unread_count--;
@@ -473,7 +475,7 @@ export function saneHtml(content) {
 }
 
 export function htmlEscape(str) {
- console.log('htmlEscape:', str);
+ //console.log('htmlEscape:', str);
  return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;').replaceAll(' ', '&nbsp;');
 }
 
@@ -496,9 +498,9 @@ export function processMessage(message) {
 
 export function messagebar_text_to_html(content) {
  let result0 = content;
- console.log('splitAndLinkify input:', result0);
+ //console.log('splitAndLinkify input:', result0);
  let result1 = splitAndLinkify(result0);
- console.log('splitAndLinkify output:', result1);
+ //console.log('splitAndLinkify output:', result1);
  let result2 = result1.map(part => {
   if (part.type === 'plain') {
    let r = htmlEscape(part.value);
@@ -508,10 +510,10 @@ export function messagebar_text_to_html(content) {
   } else if (part.type === 'processed') return part.value;
  });
  let result3 = result2.join('');
- console.log('result0:', result0);
- console.log('result1:', result1);
- console.log('result2:', result2);
- console.log('result3:', result3);
+ // console.log('result0:', result0);
+ // console.log('result1:', result1);
+ // console.log('result2:', result2);
+ // console.log('result3:', result3);
  return result3;
 }
 
@@ -525,13 +527,13 @@ function emoji_cluster_to_array(cluster) {
 }
 
 function linkify(text) {
- console.log('linkify ', text);
+ //console.log('linkify ', text);
  // Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
  const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
  let result = text.replace(combinedPattern, match => {
   // Directly use `match` as the URL/href. This ensures we handle all links in one pass.
   return `<a href="${match}" target="_blank">${match}</a>`;
  });
- console.log('linkify result:', result);
+ //console.log('linkify result:', result);
  return result;
 }

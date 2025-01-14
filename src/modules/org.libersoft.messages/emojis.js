@@ -6,21 +6,30 @@ import { identifier } from './messages.js';
 
 export let render_emojis_as_static = localStorageSharedStore('render_emojis_as_static', false);
 
-export function start_emojisets_fetch(acc, store) {
+export function start_emojisets_fetch(acc, emojiGroups, emojisByCodepointsRgi) {
  new Promise(async (resolve, reject) => {
+  await new Promise(resolve => setTimeout(resolve, 10000));
   const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
   if (!res.ok) {
-   console.error('Failed to fetch emojisets:', res);
-   reject('Failed to fetch emojisets');
+   console.error('Failed to fetch emoji groups:', res);
+   acc.error('Failed to fetch emoji groups');
   }
-  let emojisets;
+  let groups;
   try {
-   emojisets = await res.json();
+   groups = await res.json();
   } catch (error) {
-   console.error('Failed to parse emojisets:', error);
-   reject('Failed to parse emojisets');
+   console.error('Failed to parse emoji groups:', error);
+   acc.error('Failed to parse emoji groups');
   }
-  store.set(emojisets);
+  let by_codepoints = {};
+  for (let group of groups) {
+   for (let emoji of group.emoji) {
+    const codepoints_rgi = rgi(emoji.base);
+    by_codepoints[codepoints_rgi] = emoji;
+   }
+  }
+  emojisByCodepointsRgi.set(by_codepoints);
+  emojiGroups.set(groups);
  });
 }
 

@@ -2,7 +2,7 @@
  import { getContext, onMount } from 'svelte';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
- import { emojisets } from '../messages.js';
+ import { emojiGroups } from '../messages.js';
  import { emoji_render } from '../emojis.js';
  const MessageBar = getContext('MessageBar');
 
@@ -43,7 +43,7 @@
 </style>
 
 <div class="emojiset">
- {#each $emojisets as g, index}
+ {#each $emojiGroups as g, index}
   <div class="group">
    <div class="title">{g.group}</div>
    <div class="emojis">
