@@ -3,7 +3,7 @@
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import { emojisets } from '../messages.js';
- import { emoji_render} from '../emojis.js';
+ import { emoji_render } from '../emojis.js';
  const MessageBar = getContext('MessageBar');
 
  function clickEmoji(codepoints) {
@@ -50,7 +50,7 @@
     {#each g.emoji as e, id}
      <BaseButton onClick={() => clickEmoji(e.base)}>
       <div class="emoji hover">
-      <Emoji codepoints={e.base} hover={true} is_single={true} />
+       <Emoji codepoints={e.base} hover={true} is_single={true} />
       </div>
      </BaseButton>
     {/each}

@@ -344,9 +344,8 @@
  }
 
  .debug-text {
-   word-break: break-word;
+  word-break: break-word;
  }
-
 </style>
 
 {#if $debug}
