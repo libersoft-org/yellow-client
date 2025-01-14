@@ -169,18 +169,18 @@
   snipeMessage(message);
  }
 
- function copyMessagePlain() {
+ function copyTextOnly() {
   console.log('copy stripHtml');
   navigator.clipboard.writeText(stripHtml(message.message));
  }
 
- function copyMessageHTML() {
+ function copyOriginal() {
   console.log('copy original');
   console.log(message.message);
   navigator.clipboard.writeText(message.message);
  }
 
- function copyMessagePseudoHtml() {
+ function copyMessageHTML() {
   console.log('copyMessagePseudoHtml');
   console.log(messageContent);
 
@@ -315,9 +315,9 @@
  </div>
 {/if}
 <ContextMenu bind:this={menu} target={elCaret}>
- <ContextMenuItem img="img/copy.svg" label="Copy as plaintext" onClick={copyMessagePlain} />
- <ContextMenuItem img="img/copy.svg" label="Copy as HTML" onClick={copyMessageHTML} />
- <ContextMenuItem img="img/copy.svg" label="Copy as pseudo-HTML" onClick={copyMessagePseudoHtml} />
+ <ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
+ <ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
+ <ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
  <ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} />
  <ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
  <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={deleteMessage} />
