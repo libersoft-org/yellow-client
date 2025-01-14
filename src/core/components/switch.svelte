@@ -1,5 +1,5 @@
 <script>
- export let checked = false;
+ export let checked;
 
  function keyPress() {
   if (event.key === 'Enter' || event.key === ' ') {

@@ -3,7 +3,7 @@ import { writable, get, type Writable } from 'svelte/store';
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
  function setStorage(value: T): void {
   const str = JSON.stringify(value);
-  //console.log('SAVE', name, str);
+  console.log('SAVE', name, str);
   window.localStorage.setItem(name, str);
  }
 
@@ -11,11 +11,14 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
   const item = window.localStorage.getItem(name);
   let result: T = default_;
   try {
-   if (item !== 'undefined' && item) result = JSON.parse(item) as T;
-   if (!result) result = default_;
+    console.log('LOAD', name, item);
+    if (item !== null)
+    {
+     result = JSON.parse(item) as T;
+    }
   } catch (e) {
-   console.log('trying to parse: "' + item + '"');
-   console.log(e);
+   console.error('trying to parse: "' + item + '"');
+   console.error(e);
   }
   return result;
  }
