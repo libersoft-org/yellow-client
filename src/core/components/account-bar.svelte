@@ -1,7 +1,7 @@
 <script>
  import { onDestroy } from 'svelte';
  import { get } from 'svelte/store';
- import { active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../core.js';
+ import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../core.js';
  import BaseButton from './base-button.svelte';
  import AccountBarItem from './account-bar-item.svelte';
  import AccountBarButton from './account-bar-button.svelte';
@@ -20,7 +20,12 @@
 
  function clickToggleAccounts() {
   accountsVisible = !accountsVisible;
-  if (accountsVisible) document.addEventListener('click', handleClickOutside);
+  if (accountsVisible)
+  {
+   if (!$debug) {
+    document.addEventListener('click', handleClickOutside);
+   }
+  }
   else document.removeEventListener('click', handleClickOutside);
  }
 

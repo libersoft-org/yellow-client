@@ -1,12 +1,13 @@
 <script>
  import Button from '../../../core/components/button.svelte';
  import Switch from '../../../core/components/switch.svelte';
- import { render_emojis_as_static } from '../emojis.js';
+ import { render_emojis_as_static, render_emojis_as_raster } from '../emojis.js';
 
- export let animate = !$render_emojis_as_static;
+ let animate = !$render_emojis_as_static;
  $: render_emojis_as_static.set(!animate);
 
- let showAsVector = true;
+ let showAsVector = !$render_emojis_as_raster;
+ $: render_emojis_as_raster.set(!showAsVector);
 
  function clickUpdate() {}
 </script>

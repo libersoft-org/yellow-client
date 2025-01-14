@@ -45,6 +45,8 @@
      <li>status: {$a.status}</li>
      <li>session_status: {$a.session_status}</li>
      <li>sessionID: {$a.sessionID}</li>
+     <li>bufferedAmount: {$a.bufferedAmount}</li>
+     <li>lastCommsTs: {Date($a.lastCommsTs)}</li>
     </ul>
    </small>
   {/if}

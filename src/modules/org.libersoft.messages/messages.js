@@ -44,8 +44,12 @@ active_account_id.subscribe(acc => {
  get(md)?.['selectedConversation']?.set(null);
 });
 
-function sendData(acc, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
- return send(acc, identifier, command, params, sendSessionID, callback, quiet);
+function sendData(acc, account, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
+ /*
+ acc: account object
+ account: account store, optional, for debugging
+  */
+ return send(acc, account, identifier, command, params, sendSessionID, callback, quiet);
 }
 
 export function onModuleSelected(selected) {
@@ -63,7 +67,7 @@ export function selectConversation(conversation) {
 }
 
 export function listConversations(acc) {
- sendData(acc, 'conversations_list', null, true, (_req, res) => {
+ sendData(acc, null, 'conversations_list', null, true, (_req, res) => {
   if (res.error !== 0) {
    console.error('this is bad.');
    return;
@@ -83,7 +87,7 @@ function sanitizeConversation(acc, c) {
 }
 
 function moduleEventSubscribe(acc, event_name) {
- sendData(acc, 'subscribe', { event: event_name }, true, (req, res) => {
+ sendData(acc, null, 'subscribe', { event: event_name }, true, (req, res) => {
   if (res.error !== 0) {
    console.error('this is bad.');
    window.alert('Communication with server Error while subscribing to event: ' + res.message);
@@ -107,9 +111,9 @@ export function initComms(acc) {
 }
 
 export function deinitComms(acc) {
- sendData(acc, 'user_unsubscribe', { event: 'new_message' });
- sendData(acc, 'user_unsubscribe', { event: 'seen_message' });
- sendData(acc, 'user_unsubscribe', { event: 'seen_inbox_message' });
+ sendData(acc, null, 'user_unsubscribe', { event: 'seen_message' });
+ sendData(acc, null, 'user_unsubscribe', { event: 'seen_inbox_message' });
+ sendData(acc, null, 'user_unsubscribe', { event: 'new_message' });
 }
 
 export function deinitData(acc) {
@@ -133,7 +137,7 @@ export function listMessages(acc, address) {
 }
 
 export function loadMessages(acc, address, base, prev, next, reason, cb) {
- return sendData(acc, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
+ return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (res.error !== 0 || !res.data?.messages) {
    console.error(res);
    window.alert('Error while listing messages: ' + (res.message || JSON.stringify(res)));
@@ -244,7 +248,7 @@ export function setMessageSeen(message, cb) {
  let acc = get(active_account);
  console.log('setMessageSeen', message);
  message.just_marked_as_seen = true;
- sendData(acc, 'message_seen', { uid: message.uid }, true, (req, res) => {
+ sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
   if (res.error !== 0) {
    console.error('this is bad.');
    return;
@@ -273,7 +277,7 @@ export function sendMessage(text, format) {
   just_sent: true,
  });
  let params = { address: message.address_to, message: message.message, format, uid: message.uid };
- sendData(acc, 'message_send', params, true, (req, res) => {
+ sendData(acc, active_account, 'message_send', params, true, (req, res) => {
   if (res.error !== 0) {
    alert('Error while sending message: ' + res.message);
    return;
@@ -435,7 +439,7 @@ export function ensureConversationDetails(conversation) {
  if (conversation.visible_name) return;
  let acc = get(active_account);
  //console.log('ensureConversationDetails acc:', acc);
- send(acc, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
+ send(acc, active_account, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) return;
   Object.assign(conversation, res.data);
   conversationsArray.update(v => v);
