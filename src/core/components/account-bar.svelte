@@ -20,13 +20,11 @@
 
  function clickToggleAccounts() {
   accountsVisible = !accountsVisible;
-  if (accountsVisible)
-  {
+  if (accountsVisible) {
    if (!$debug) {
     document.addEventListener('click', handleClickOutside);
    }
-  }
-  else document.removeEventListener('click', handleClickOutside);
+  } else document.removeEventListener('click', handleClickOutside);
  }
 
  function clickSelectAccount(id) {

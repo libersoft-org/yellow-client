@@ -19,7 +19,11 @@
 
  .item.active {
   font-weight: bold;
-  background-color: #383838;
+  background-color: #444;
+ }
+
+ .item:hover {
+  background-color: #333;
  }
 
  .item img {

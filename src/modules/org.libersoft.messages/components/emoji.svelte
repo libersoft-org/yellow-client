@@ -13,17 +13,13 @@
  $: is_animated = $emojisByCodepointsRgi?.[codepoints_rgi]?.animated;
 
  let animate;
- $: animate= !$render_emojis_as_static && is_animated;
+ $: animate = !$render_emojis_as_static && is_animated;
 
  let raster;
  $: raster = $render_emojis_as_raster;
 
  let url;
- $: url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi +
-  (animate ?
-   (raster ? '/512.webp' : '/lottie.json' )
-   : (raster ? '/512.png' : '/emoji.svg' ) );
-
+ $: url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + (animate ? (raster ? '/512.webp' : '/lottie.json') : raster ? '/512.png' : '/emoji.svg');
 </script>
 
 <style>
@@ -48,5 +44,5 @@
 {#if url.endsWith('/lottie.json')}
  lottie {url}
 {:else}
-<img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url}/>
+ <img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url} />
 {/if}
