@@ -11,11 +11,10 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
   const item = window.localStorage.getItem(name);
   let result: T = default_;
   try {
-    console.log('LOAD', name, item);
-    if (item !== null)
-    {
-     result = JSON.parse(item) as T;
-    }
+   console.log('LOAD', name, item);
+   if (item !== null) {
+    result = JSON.parse(item) as T;
+   }
   } catch (e) {
    console.error('trying to parse: "' + item + '"');
    console.error(e);
