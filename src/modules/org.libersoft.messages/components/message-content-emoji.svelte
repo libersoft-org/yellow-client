@@ -27,7 +27,7 @@
 </script>
 
 {#if codepoints}
- <Emoji {codepoints} {is_single} size={is_single ? '200' : '30'} />
+ <Emoji {codepoints} context={"message"} {is_single} size={is_single ? '200' : '30'} />
 {:else}
  error: {JSON.stringify(node.attributes)}
 {/if}

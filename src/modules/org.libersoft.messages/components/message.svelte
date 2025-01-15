@@ -281,7 +281,6 @@
   <img src="img/caret-down-gray.svg" alt="Menu" />
  </div>
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
- <!--<Emoji file="..." />-->
  <!--<Reply name="Someone" text="Some text" />-->
  <!--<Audio file="modules/{identifier}/audio/message.mp3" />-->
  <!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->

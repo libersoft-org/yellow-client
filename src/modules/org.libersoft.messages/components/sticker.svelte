@@ -4,9 +4,11 @@
  import { getContext, onMount, onDestroy } from 'svelte';
  import { readable } from 'svelte/store';
  import { identifier } from '../messages.js';
+
  export let file = '';
  export let size = 200;
  // TODO: export let playOnStart = true;
+
  let componentContainer;
  let animContainer;
  let isLottie = false;
@@ -108,19 +110,30 @@
    path,
    animationData,
   });
-  /*
+/*
   anim.onComplete = () => {
    console.log('lottie animation completed');
   };
   anim.onLoopComplete = () => {
    console.log('lottie animation loop completed');
+   // how to control the rendering fps of a lottie-web animation?
+   //console.log(anim);
+   //anim.frameModifier = 1/30;
+   //anim.frameMult = 1;
+   //anim.frameRate = 12;
+   //anim.setSpeed(0.5)
+
   };
   anim.addEventListener('config_ready', () => {
    console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
   });
+
   anim.addEventListener('data_ready', () => {
    console.log('lottie data ready after ' + (Date.now() - start) + 'ms');
   });
+
+ */
+  /*
   anim.addEventListener('loaded_images', () => {
    console.log('lottie loaded images after ' + (Date.now() - start) + 'ms');
   });

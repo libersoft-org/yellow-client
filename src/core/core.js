@@ -484,8 +484,10 @@ function setupPing(account) {
  }, 500);*/
 
  setInterval(() => {
-  acc.bufferedAmount = acc.socket.bufferedAmount;
-  account.update(v => v);
+  if (get(debug)) {
+   acc.bufferedAmount = acc.socket.bufferedAmount;
+   account.update(v => v);
+  }
  }, 500);
 
  acc.pingTimer = window.setInterval(() => {
