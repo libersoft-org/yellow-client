@@ -110,7 +110,7 @@
    path,
    animationData,
   });
-/*
+  /*
   anim.onComplete = () => {
    console.log('lottie animation completed');
   };

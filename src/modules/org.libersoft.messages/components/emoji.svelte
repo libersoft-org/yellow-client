@@ -16,42 +16,33 @@
  let is_animated;
  $: is_animated = $emojisByCodepointsRgi?.[codepoints_rgi]?.animated;
 
-  let url;
+ let url;
  $: update_url(context, is_mouse_over, codepoints_rgi, $render_emojis_as_static, $render_emojis_as_raster);
 
  function update_url(context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster) {
-  url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + '/'
+  url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + '/';
 
-  if (context === 'message')
-  {
+  if (context === 'message') {
    let animate = !render_emojis_as_static && is_animated;
    if (animate) {
     if (raster) {
-     url += '512.webp'
+     url += '512.webp';
     } else {
-     url += 'lottie.json'
+     url += 'lottie.json';
     }
    } else {
     if (raster) {
-     url += '512.png'
+     url += '512.png';
     } else {
-     url += 'emoji.svg'
+     url += 'emoji.svg';
     }
    }
-  }
-
-  else if (context === 'menu')
-  {
+  } else if (context === 'menu') {
    let animate = is_animated;
-   if (animate)
-    url += 'lottie.json'
-   else
-    url += 'emoji.svg'
+   if (animate) url += 'lottie.json';
+   else url += 'emoji.svg';
   }
  }
-
-
-
 </script>
 
 <style>
@@ -74,7 +65,7 @@
 {/if}
 
 {#if url.endsWith('/lottie.json')}
- <Sticker file={url} size={size} />
+ <Sticker file={url} {size} />
 {:else}
- <img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url} onMouseOver={() => is_mouse_over = true} onMouseOut={() => is_mouse_over = false} />
+ <img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url} onMouseOver={() => (is_mouse_over = true)} onMouseOut={() => (is_mouse_over = false)} />
 {/if}

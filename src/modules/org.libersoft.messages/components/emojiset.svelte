@@ -34,11 +34,18 @@
  .emoji {
   display: flex;
   padding: 3px;
-  border-radius: 5px;
+  border-radius: 10px;
+  transition:
+   transform 0.3s ease,
+   box-shadow 0.3s ease;
+  border: 1px solid #fff;
  }
 
  .emoji.hover:hover {
-  background: #eee;
+  z-index: 90;
+  transform: scale(1.5);
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
  }
 </style>
 
@@ -50,7 +57,7 @@
     {#each g.emoji as e, id}
      <BaseButton onClick={() => clickEmoji(e.base)}>
       <div class="emoji hover">
-       <Emoji codepoints={e.base} context={"menu"} is_single={true} />
+       <Emoji codepoints={e.base} context={'menu'} is_single={true} />
       </div>
      </BaseButton>
     {/each}
