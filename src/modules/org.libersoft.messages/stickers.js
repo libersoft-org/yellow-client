@@ -5,7 +5,7 @@ window.stickerLibraryUpdaterState = { updating: false };
 import.meta.hot?.dispose(() => (window.stickerLibraryUpdaterState.updating = false));
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 
-export let render_stickers_as_raster = localStorageSharedStore('render_stickers_as_raster', false);
+export let render_stickers_as_raster = localStorageSharedStore('render_stickers_as_raster', true);
 
 
 export async function fetchStickerset(stickerServer, id = 0) {
