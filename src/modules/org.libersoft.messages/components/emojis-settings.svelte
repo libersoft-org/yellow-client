@@ -49,5 +49,4 @@
   <div class="label">Show emojis as vector:</div>
   <Switch bind:checked={showAsVector} />
  </div>
- <Button text="Save & update" onClick={clickUpdate} />
 </div>

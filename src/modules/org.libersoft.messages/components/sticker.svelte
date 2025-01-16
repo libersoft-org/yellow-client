@@ -4,6 +4,7 @@
  import { getContext, onMount, onDestroy } from 'svelte';
  import { readable } from 'svelte/store';
  import { identifier } from '../messages.js';
+ import { render_stickers_as_raster } from '../stickers.js';
 
  export let file = '';
  export let size = 200;
@@ -24,6 +25,17 @@
  let elStaticImg;
  let ContextMenu = getContext('ContextMenu');
  let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
+ let renderer = 'svg';
+ let animationData;
+
+ render_stickers_as_raster.subscribe(value => {
+  if (value) renderer = 'canvas';
+  else renderer = 'svg';
+  if (animationData) {
+   if (anim) anim.destroy();
+   construct_lottie();
+  }
+ });
 
  $: update_playing(playing);
 
@@ -84,8 +96,6 @@
  async function load_lottie() {
   if (isLoading) return;
   isLoading = true;
-  let path;
-  let animationData;
   if (ext === 'tgs') animationData = await loadTgs(file);
   else animationData = await loadJson(file);
   if (error) {
@@ -94,22 +104,24 @@
   }
   /*
   console.log('STICKER file:', file);
-  console.log('STICKER path:', path);
   console.log('STICKER animationData:', animationData);
   */
-  /*
-  lottie.setQuality() -- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
-  lottie.freeze() -- Freezes all playing animations or animations that will be loaded
-  */
+  await construct_lottie();
+ }
+
+ async function construct_lottie()
+ {
   let start = Date.now();
+
   anim = lottie.loadAnimation({
    container: animContainer,
-   renderer: 'svg',
+   renderer,
+   //renderer: 'canvas',
    loop: true,
    autoplay: playing,
-   path,
    animationData,
   });
+
   /*
   anim.onComplete = () => {
    console.log('lottie animation completed');
@@ -122,6 +134,11 @@
    //anim.frameMult = 1;
    //anim.frameRate = 12;
    //anim.setSpeed(0.5)
+
+   // ???
+  lottie.setQuality() -- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
+  lottie.freeze() -- Freezes all playing animations or animations that will be loaded
+   //anim.resize()
 
   };
   anim.addEventListener('config_ready', () => {
@@ -140,8 +157,9 @@
   anim.addEventListener('DOMLoaded', () => {
    console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
   });
+  */
   console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
-   */
+
  }
 
  async function intersection(entries) {

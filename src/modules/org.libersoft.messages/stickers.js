@@ -3,6 +3,10 @@ import { db } from './db.js';
 export let stickerLibraryUpdaterState = writable({});
 window.stickerLibraryUpdaterState = { updating: false };
 import.meta.hot?.dispose(() => (window.stickerLibraryUpdaterState.updating = false));
+import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
+
+export let render_stickers_as_raster = localStorageSharedStore('render_stickers_as_raster', false);
+
 
 export async function fetchStickerset(stickerServer, id = 0) {
  // This is a simple fetch of a single sticker set. There is some overlap with updateStickerLibrary, but it's not worth refactoring now

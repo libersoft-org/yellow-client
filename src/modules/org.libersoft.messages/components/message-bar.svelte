@@ -18,7 +18,7 @@
  let showExpressions = false;
 
  onMount(async () => {
-  //await init_emojis();
+  console.log('MessageBar mounted');
  });
 
  setContext('MessageBar', {

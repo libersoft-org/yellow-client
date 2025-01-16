@@ -2,9 +2,11 @@
  import Button from '../../../core/components/button.svelte';
  import InputText from '../../../core/components/input-text.svelte';
  import Switch from '../../../core/components/switch.svelte';
+ import { render_stickers_as_raster } from '../stickers.js';
  export let stickerServer;
- let animateAll = false;
- let showAsVector = true;
+
+ let showAsVector = !$render_stickers_as_raster;
+ $: showAsVector !== undefined && render_stickers_as_raster.set(!showAsVector);
 
  function clickUpdate() {}
 </script>
@@ -26,11 +28,6 @@
  <InputText bind:value={stickerServer} />
 </div>
 <div class="group">
- <div class="label">Animate all stickers:</div>
- <Switch bind:checked={animateAll} />
-</div>
-<div class="group">
  <div class="label">Show stickers as vector (slower):</div>
  <Switch bind:checked={showAsVector} />
 </div>
-<Button text="Save & update" onClick={clickUpdate} />
