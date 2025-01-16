@@ -18,9 +18,14 @@
  }
 
  .title {
-  font-size: 14px;
+  font-size: 16px;
+  text-align: center;
   font-weight: bold;
-  padding: 10px;
+  padding: 8px;
+  background-color: #eee;
+  border-radius: 10px;
+  margin: 10px;
+  border: 1px solid #aaa;
  }
 
  .emojis {
