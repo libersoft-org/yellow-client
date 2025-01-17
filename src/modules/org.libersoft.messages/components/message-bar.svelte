@@ -8,9 +8,14 @@
  import Modal from '../../../core/components/modal.svelte';
  import ModalHTML from '../modals/html.svelte';
  import Expressions from './expressions.svelte';
+ import fileUploadManager from '../fileUpload/FileUploadManager.ts'
+ import { FileUploadRecordType } from '../fileUpload/types.ts'
+
  let elAttachment;
  let elExpressions;
  let elMessage;
+ let elFileInput;
+ let elFileInputP2P;
  let text;
  let showHTMLModal = false;
  let expressionsHeight = '500px';
@@ -71,16 +76,28 @@
   console.log('clicked on record mic / camera - long press to record, short press to switch mic / camera');
  }
 
- function sendFile() {
-  console.log('clicked on file');
- }
-
  function sendHTML() {
   showHTMLModal = true;
  }
 
  function sendLocation() {
   console.log('clicked on location');
+ }
+
+ const onFileUpload = (e) => {
+  let files = e.target.files;
+  fileUploadManager.beginUpload(files, FileUploadRecordType.SERVER);
+
+  // clear the file input
+  elFileInput.value = '';
+ }
+
+ const onFileUploadP2P = (e) => {
+  let files = e.target.files;
+  fileUploadManager.beginUpload(files, FileUploadRecordType.P2P);
+
+  // clear the file input
+  elFileInput.value = '';
  }
 </script>
 
@@ -131,7 +148,10 @@
 </div>
 
 <ContextMenu target={elAttachment}>
- <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" onClick={sendFile} />
+ <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" onClick={() => elFileInput.click()} />
+ <input type="file" id="fileInput" bind:this={elFileInput} on:change={onFileUpload} multiple style="display: none;">
+ <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File P2P" onClick={() => elFileInputP2P.click()} />
+ <input type="file" id="fileInput" bind:this={elFileInputP2P} on:change={onFileUploadP2P} multiple style="display: none;">
  <ContextMenuItem img="modules/org.libersoft.messages/img/html.svg" label="HTML" onClick={sendHTML} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>

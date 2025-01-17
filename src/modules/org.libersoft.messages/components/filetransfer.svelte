@@ -13,6 +13,8 @@
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
  }
+
+ $: percent = total > 0 ? Math.round((uploaded / total) * 100) : 0;
 </script>
 
 <style>
@@ -36,9 +38,9 @@
   <span class="bold">{download ? 'Downloading' : 'Uploading'}:</span>
   <span>{file}</span>
  </div>
- <ProgressBar color="#db0" moving={true} value={50} />
+ <ProgressBar color="#db0" moving={true} value={percent} />
  <div class="text">
   <div class="size">{humanSize(uploaded)} / {humanSize(total)}</div>
-  <div class="percent">50%</div>
+  <div class="percent">{percent}%</div>
  </div>
 </div>

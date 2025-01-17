@@ -15,9 +15,9 @@
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.2",
 		"svelte": "^5.16.0",
+		"typescript": "^5.7.2",
 		"vite": "^5.4.11",
-		"vite-plugin-checker": "^0.8.0",
-		"typescript": "^5.7.2"
+		"vite-plugin-checker": "^0.8.0"
 	},
 	"type": "module",
 	"dependencies": {
@@ -25,6 +25,7 @@
 		"dexie": "^4.0.10",
 		"dompurify": "^3.2.3",
 		"ethers": "^6.13.4",
+		"events": "^3.3.0",
 		"fuzzy-search": "https://github.com/wouterrutgers/fuzzy-search",
 		"js-levenshtein": "^1.1.6",
 		"leaflet": "^1.9.4",
@@ -34,6 +35,7 @@
 		"pako": "^2.1.0",
 		"qrcode": "^1.5.4",
 		"svelte-virtual": "^1.0.0-next.22",
+		"uuid": "^11.0.4",
 		"wavesurfer.js": "^7.8.14"
 	}
 }
