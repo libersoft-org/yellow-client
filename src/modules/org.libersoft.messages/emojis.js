@@ -45,7 +45,7 @@ export function emoji_render(codepoints) {
 export function rgi(codepoints) {
  return codepoints.map(codepoint => codepoint.toString(16).padStart(4, '0')).join('_');
 }
-
+/*
 export function replaceEmojisWithTags(text) {
  return text.replace(emojiRegex, cluster => {
   // 'cluster' is the entire matched ZWJ sequence (or a single emoji if no ZWJs)
@@ -55,7 +55,7 @@ export function replaceEmojisWithTags(text) {
   return `<Emoji codepoints="${codepoints_array_text}" ></Emoji>`;
  });
 }
-
+*/
 function emoji_cluster_to_array(cluster) {
  // Convert the emoji cluster to an array of codepoints
  const codepoints = [];
@@ -88,8 +88,8 @@ export async function init_emojis()
 console.log(cp);
 }*/
 
-export function replaceEmojisWithTags2(text) {
- //console.log('replaceEmojisWithTags2', text);
+export function replaceEmojisWithTags(text) {
+ //console.log('replaceEmojisWithTags', text);
  for (let c of cp) {
   let seq = c[0];
   let alt = c[1];

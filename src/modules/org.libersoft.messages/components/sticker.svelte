@@ -109,8 +109,7 @@
   await construct_lottie();
  }
 
- async function construct_lottie()
- {
+ async function construct_lottie() {
   let start = Date.now();
 
   anim = lottie.loadAnimation({
@@ -159,7 +158,6 @@
   });
   */
   console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
-
  }
 
  async function intersection(entries) {
