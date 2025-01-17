@@ -7,7 +7,6 @@ import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 
 export let render_stickers_as_raster = localStorageSharedStore('render_stickers_as_raster', true);
 
-
 export async function fetchStickerset(stickerServer, id = 0) {
  // This is a simple fetch of a single sticker set. There is some overlap with updateStickerLibrary, but it's not worth refactoring now
  id = Number(id);
