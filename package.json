@@ -13,16 +13,18 @@
 		"@sveltejs/kit": "^2.15.2",
 		"@sveltejs/vite-plugin-svelte": "^4.0.4",
 		"git-format-staged": "^3.1.1",
+		"jsdom": "^26.0.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.2",
 		"svelte": "^5.17.3",
 		"typescript": "^5.7.3",
 		"vite": "^5.4.11",
 		"vite-plugin-checker": "^0.8.0",
-		"vitest": "^2.1.8"
+		"vitest": "^3.0.2"
 	},
 	"type": "module",
 	"dependencies": {
+		"@testing-library/svelte": "^5.2.6",
 		"dexie": "^4.0.10",
 		"dompurify": "^3.2.3",
 		"emoji-regex": "^10.4.0",
