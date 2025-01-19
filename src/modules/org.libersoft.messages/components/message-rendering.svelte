@@ -26,9 +26,11 @@
   overflow-wrap: break-word;
  }
 
+ /*
  .debug {
   word-break: break-word;
  }
+ */
 </style>
 
 <!--{#if $debug}-->

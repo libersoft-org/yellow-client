@@ -343,9 +343,11 @@
   border-radius: 10px;
  }
 
+ /*
  .debug-text {
   word-break: break-word;
  }
+ */
 </style>
 
 {#if $debug}
