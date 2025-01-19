@@ -3,6 +3,7 @@
  export let placeholder = '';
  export let value = '';
  export let onKeydown;
+ export let grow = false;
  let elInput;
 
  function handleKeydown(e) {
@@ -22,6 +23,10 @@
   font-family: inherit;
   font-size: inherit;
  }
+
+ .grow {
+  flex-grow: 1;
+ }
 </style>
 
-<input type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />
+<input class={grow && 'grow'} type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />

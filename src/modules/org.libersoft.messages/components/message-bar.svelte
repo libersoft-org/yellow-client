@@ -130,7 +130,7 @@
  </BaseButton>
  <!--
  <span class="message" bind:innerHTML={text} bind:this={elMessage} placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} contenteditable></span>
--->
+ -->
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
@@ -142,16 +142,12 @@
  <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
-<ContextMenu target={elExpressions} width="363px" height={expressionsHeight} scrollable={false}>
+<ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false}>
  <Expressions height={expressionsHeight} />
 </ContextMenu>
 
 <!--
 <Modal body={Expressions} width="363px" bind:show={showExpressions} />
--->
-
-<!--
-<Expressions />
 -->
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />
