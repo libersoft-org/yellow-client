@@ -75,7 +75,7 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 10px;
   overflow: auto;
   padding: 10px;
  }
@@ -87,8 +87,18 @@
  }
 
  .item {
-  border-radius: 5px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
   overflow: hidden;
+  background-color: #eee;
+  transition:
+   transform 0.3s ease,
+   box-shadow 0.3s ease;
+ }
+
+ .item:hover {
+  z-index: 90;
+  transform: scale(1.2);
  }
 </style>
 
@@ -111,7 +121,9 @@
   {:else}
    {#each gifs as gif}
     <BaseButton onClick={() => sendGIF(gif)}>
-     <div class="item"><img src={gif} alt="GIF" /></div>
+     <div class="item">
+      <img src={gif} alt="GIF" />
+     </div>
     </BaseButton>
    {/each}
   {/if}
