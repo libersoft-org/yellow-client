@@ -1,4 +1,5 @@
 <script>
+ import { add_stickerset_to_favorites, remove_stickerset_from_favorites, stickerset_in_favorites, stickerset_favorites } from '../stickers.js';
  import { debug } from '../../../core/core.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import StickerSetPart from './stickerset-part.svelte';
@@ -15,10 +16,17 @@
  let first, rest;
  let expanded = false;
  let clientHeight;
+ let in_favorites = false;
  $: save_height?.(clientHeight);
  $: update(intersecting);
  $: first = showall ? stickers : stickers?.slice(0, splitAt);
  $: rest = showall ? [] : stickers?.slice(splitAt);
+ stickerset_favorites.subscribe(value => (in_favorites = stickerset_in_favorites(stickerset)));
+ let favorite_alt;
+ $: favorite_alt = in_favorites ? 'Remove from favorites' : 'Add to favorites';
+ let favorite_icon;
+ $: favorite_icon = in_favorites ? 'full' : 'empty';
+
  /*
  $: console.log('library stickerset', stickerset);
  $: console.log('library stickers', stickers);
@@ -40,8 +48,12 @@
   expanded = !expanded;
  }
 
- function clickAdd() {
-  //console.log('Add to favourites');
+ function toggleFavorite() {
+  if (stickerset_in_favorites(stickerset)) {
+   remove_stickerset_from_favorites(stickerset);
+  } else {
+   add_stickerset_to_favorites(stickerset);
+  }
  }
 </script>
 
@@ -109,9 +121,9 @@
   <div class="title-bar">
    <div class="row">
     <div class="label">{stickerset.name}</div>
-    <BaseButton onClick={clickAdd}>
+    <BaseButton onClick={toggleFavorite}>
      <div class="icon">
-      <img src="img/add-black.svg" alt="Add to favourites" />
+      <img src="img/heart-{favorite_icon}.svg" alt={favorite_alt} />
      </div>
     </BaseButton>
    </div>

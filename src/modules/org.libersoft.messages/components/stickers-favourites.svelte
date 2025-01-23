@@ -1,5 +1,6 @@
 <script>
  import StickersView from './stickers-view.svelte';
+ import { stickerset_favorites } from '../stickers';
 </script>
 
-<StickersView favorites={true} />
+<StickersView stickerset_favorites={$stickerset_favorites} />

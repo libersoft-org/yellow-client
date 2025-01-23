@@ -1,10 +1,12 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { db } from './db.js';
 export let stickerLibraryUpdaterState = writable({});
 window.stickerLibraryUpdaterState = { updating: false };
 import.meta.hot?.dispose(() => (window.stickerLibraryUpdaterState.updating = false));
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 
+export let stickerset_favorites = localStorageSharedStore('stickerset_favorites', []);
+export let sticker_servers = localStorageSharedStore('sticker_servers', ['https://stickers.libersoft.org']);
 export let sticker_server = localStorageSharedStore('sticker_server', 'https://stickers.libersoft.org');
 export let render_stickers_as_raster = localStorageSharedStore('render_stickers_as_raster', true);
 
@@ -76,4 +78,31 @@ export async function updateStickerLibrary(stickerServer) {
  stickerLibraryUpdaterState.set({ updating: false });
  console.log('Done loading, db.stickers.length:', await db.stickers.toArray().length);
  console.log('spent:', Date.now() - startFetchSets, 'ms');
+}
+
+export function add_stickerset_to_favorites(stickerset) {
+ console.log('Add to favorites:', stickerset);
+ let key = stickerset.url;
+ let favorites = get(stickerset_favorites);
+ if (favorites.indexOf(key) === -1) {
+  favorites.push(key);
+  stickerset_favorites.set(favorites);
+ }
+}
+
+export function remove_stickerset_from_favorites(stickerset) {
+ console.log('Remove from favorites:', stickerset);
+ let key = stickerset.url;
+ let favorites = get(stickerset_favorites);
+ let index = favorites.indexOf(key);
+ if (index !== -1) {
+  favorites.splice(index, 1);
+  stickerset_favorites.set(favorites);
+ }
+}
+
+export function stickerset_in_favorites(stickerset) {
+ let key = stickerset.url;
+ let favorites = get(stickerset_favorites);
+ return favorites.indexOf(key) !== -1;
 }

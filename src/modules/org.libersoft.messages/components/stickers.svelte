@@ -1,5 +1,4 @@
 <script>
- import { debug } from '../../../core/core.js';
  import { identifier } from '../messages.js';
  import { onMount } from 'svelte';
  import { updateStickerLibrary, stickerLibraryUpdaterState } from '../stickers.js';

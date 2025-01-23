@@ -11,7 +11,7 @@
  import InputTextButton from '../../../core/components/input-text-button.svelte';
  import StickersSearchResults from './stickers-search-results.svelte';
 
- let { favorites } = $props();
+ let { stickerset_favorites } = $props();
  let fulltext_search_filter = $state('');
  let animated_filter_dropdown_value = $state('all');
  let scroll_to_top = $state(null);
@@ -34,6 +34,7 @@
    x = x.orderBy('id');
    void "x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection";
    x = x.filter(item => animated_filter.includes(item.animated ? 1 : 0));
+   if (stickerset_favorites) x = x.filter(item => stickerset_favorites.includes(item.url));
    x = await x.toArray();
    void 'x is now an array of items. We can apply additional filtering, sorting and limiting using js.';
    if (fulltext_search_filter != '') {
@@ -68,10 +69,12 @@
 </div>
 
 {#if $debug}
- favorites: {JSON.stringify(favorites)}
+ <pre>
+ stickerset_favorites: {JSON.stringify(stickerset_favorites)}
  animated_filter: {JSON.stringify(animated_filter)}
  fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
  $items.length: {$items.length}
+  </pre>
 {/if}
 
 <StickersSearchResults bind:scroll_to_top items={$items} />
