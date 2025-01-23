@@ -24,12 +24,21 @@
  setContext('MessageBar', {
   sendMessageHtml: text => doSendMessage(text, true),
   sendMessagePlain: text => doSendMessage(text, false),
+  insertText,
   setBarFocus,
   append: message => {
    elMessage.value += message;
    resizeMessage();
   },
  });
+
+ export async function insertText(text) {
+  /* insert text at the current cursor position */
+  const start = elMessage.selectionStart;
+  const end = elMessage.selectionEnd;
+  elMessage.value = elMessage.value.substring(0, start) + text + elMessage.value.substring(end);
+  resizeMessage();
+ }
 
  export async function doSendMessage(message, html) {
   //console.log('doSendMessage', message);

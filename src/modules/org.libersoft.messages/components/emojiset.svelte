@@ -7,7 +7,7 @@
  const MessageBar = getContext('MessageBar');
 
  function clickEmoji(codepoints) {
-  MessageBar.append(emoji_render(codepoints));
+  MessageBar.insertText(emoji_render(codepoints));
  }
 </script>
 
