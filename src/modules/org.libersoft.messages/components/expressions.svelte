@@ -4,7 +4,7 @@
  import GifSet from './gifset.svelte';
  import Item from './expressions-item.svelte';
  export let height;
- let expression = 'stickers';
+ let expression = 'emojis';
  const expressions = {
   emojis: Emojis,
   stickers: Stickers,

@@ -36,7 +36,7 @@
  }
 
  .group .label {
-  font-weight: bold;
+  flex-grow: 1;
  }
 </style>
 
@@ -46,7 +46,7 @@
   <Switch bind:checked={animate} />
  </div>
  <div class="group">
-  <div class="label">Show emojis as vector:</div>
+  <div class="label">Show emojis as vector (slower, nicer):</div>
   <Switch bind:checked={showAsVector} />
  </div>
 </div>
