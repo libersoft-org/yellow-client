@@ -1,7 +1,7 @@
 <script>
  import { debug } from '../../../core/core.js';
  import { identifier } from '../messages.js';
-
+ import { sticker_server } from '../stickers.js';
  import { liveQuery } from 'dexie';
  import { db } from '../db';
  import FuzzySearch from 'fuzzy-search';
@@ -22,8 +22,8 @@
  items.subscribe(value => console.log('Stickers.svelte items:', value));
  //$inspect($items, count);
  let query_store_unsubscribe;
- $effect(async () => live_query(fulltext_search_filter, animated_filter));
- async function live_query(fulltext_search_filter, animated_filter) {
+ $effect(async () => live_query($sticker_server, fulltext_search_filter, animated_filter));
+ async function live_query(server, fulltext_search_filter, animated_filter) {
   console.log('scroll_to_top:', scroll_to_top);
   await scroll_to_top();
   console.log('update_live_query', fulltext_search_filter, animated_filter);
@@ -33,7 +33,7 @@
    void 'x is now a dexie Table. We have one shot at ordering or filtering it at the db level: https://dexie.org/docs/Dexie/Dexie.[table]';
    x = x.orderBy('id');
    void "x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection";
-   x = x.filter(item => animated_filter.includes(item.animated ? 1 : 0));
+   x = x.filter(item => item.server == server && animated_filter.includes(item.animated ? 1 : 0));
    if (stickerset_favorites) x = x.filter(item => stickerset_favorites.includes(item.url));
    x = await x.toArray();
    void 'x is now an array of items. We can apply additional filtering, sorting and limiting using js.';

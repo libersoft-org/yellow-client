@@ -3,14 +3,12 @@
  import Option from '../../../core/components/select-option.svelte';
  import Switch from '../../../core/components/switch.svelte';
  import Modal from '../../../core/components/modal.svelte';
- import { render_stickers_as_raster } from '../stickers.js';
+ import { render_stickers_as_raster, sticker_server, sticker_servers } from '../stickers.js';
  import Button from '../../../core/components/button.svelte';
  import ModalStickerServers from './modal-sticker-servers.svelte';
- export let stickerServer = 'https://stickers.libersoft.org';
 
  let showAsVector = !$render_stickers_as_raster;
  let isModalStickerServersOpen = false;
-
  $: showAsVector !== undefined && render_stickers_as_raster.set(!showAsVector);
 
  function clickManageStickerServers() {
@@ -37,8 +35,10 @@
 </div>
 <div class="group">
  <div class="label">Sticker server:</div>
- <Select bind:value={stickerServer}>
-  <Option value="https://stickers.libersoft.org" text="https://stickers.libersoft.org" />
+ <Select bind:value={$sticker_server}>
+  {#each $sticker_servers as server}
+   <Option value={server} text={server} />
+  {/each}
  </Select>
 </div>
 <Button text="Manage sticker servers" onClick={clickManageStickerServers} />

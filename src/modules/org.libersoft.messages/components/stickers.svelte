@@ -17,7 +17,7 @@
  let activeTab = $state('server');
 
  onMount(async () => {
-  //if ($library?.length === 0) await updateStickerLibrary(sticker_server);
+  //if ($library?.length === 0) await updateStickerLibrary();
  });
 
  function setTab(e, name) {
@@ -25,7 +25,7 @@
  }
 
  async function clickUpdate() {
-  await updateStickerLibrary(sticker_server);
+  await updateStickerLibrary();
  }
 </script>
 

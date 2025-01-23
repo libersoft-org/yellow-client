@@ -22,9 +22,10 @@ export async function fetchStickerset(stickerServer, id = 0) {
  return stickerset;
 }
 
-export async function updateStickerLibrary(stickerServer) {
+export async function updateStickerLibrary() {
+ let stickerServer = get(sticker_server);
  window.stickerLibraryUpdaterState.updating = true;
- stickerLibraryUpdaterState.set({ status: 'Downloading sticker sets from server ...', updating: true, progress: 0 });
+ stickerLibraryUpdaterState.set({ status: `Downloading sticker sets from {stickerServer} ...`, updating: true, progress: 0 });
  console.log('Loading list of stickersets from: ' + stickerServer);
  let startFetchSets = Date.now();
  let response = await fetch(stickerServer + '/api/sets');
