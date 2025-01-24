@@ -1,5 +1,5 @@
 <script>
- import { identifier, messagebar_text_to_html, sendMessage } from '../messages.js';
+ import { identifier, preprocess_incoming_plaintext_message_text, sendMessage } from '../messages.js';
  import { onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
@@ -34,10 +34,14 @@
 
  export async function insertText(text) {
   /* insert text at the current cursor position */
+  console.log('elMessage.selectionStart:', elMessage.selectionStart);
   const start = elMessage.selectionStart;
   const end = elMessage.selectionEnd;
   elMessage.value = elMessage.value.substring(0, start) + text + elMessage.value.substring(end);
   resizeMessage();
+  elMessage.selectionStart = start + text.length;
+  elMessage.selectionEnd = start + text.length;
+  console.log('elMessage.selectionStart:', elMessage.selectionStart);
  }
 
  export async function doSendMessage(message, html) {

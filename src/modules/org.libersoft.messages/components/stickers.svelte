@@ -1,28 +1,32 @@
 <script>
  import { identifier } from '../messages.js';
- import { onMount } from 'svelte';
+ import { onMount, tick } from 'svelte';
  import { updateStickerLibrary, stickerLibraryUpdaterState } from '../stickers.js';
+ import { debug } from '../../../core/core.js';
 
  import Tabs from '../../../core/components/tabs.svelte';
  import Item from '../../../core/components/tabs-item.svelte';
  import TabSettings from './stickers-settings.svelte';
- import TabFavourites from './stickers-favourites.svelte';
+ import StickersFavorites from './stickers-favorites.svelte';
  import TabServer from './stickers-server.svelte';
  import ProgressBar from './progressbar.svelte';
  const tabs = {
-  favourites: TabFavourites,
+  favorites: StickersFavorites,
   settings: TabSettings,
   server: TabServer,
  };
- let activeTab = $state('server');
+ let activeTabName = $state('server');
+ let view;
+
+ async function setTab(e, name) {
+  activeTabName = name;
+  await tick();
+  view.onShow?.();
+ }
 
  onMount(async () => {
-  //if ($library?.length === 0) await updateStickerLibrary();
+  await setTab(null, activeTabName);
  });
-
- function setTab(e, name) {
-  activeTab = name;
- }
 
  async function clickUpdate() {
   await updateStickerLibrary();
@@ -54,22 +58,32 @@
  .loading .status {
   font-size: 14px;
  }
+
+ .loading .error {
+  border: 1px solid red;
+ }
 </style>
 
 <div class="stickers">
  <div class="top-components">
   <Tabs>
-   <Item active={activeTab === 'favourites'} img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favourites')} />
-   <Item active={activeTab === 'server'} img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} />
+   <Item active={activeTabName === 'favourites'} img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} />
+   <Item active={activeTabName === 'server'} img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} />
    <Item img="modules/{identifier}/img/update{$stickerLibraryUpdaterState.updating ? '-disabled' : ''}.svg" onClick={clickUpdate} />
-   <Item active={activeTab === 'settings'} img="img/settings.svg" onClick={e => setTab(e, 'settings')} />
+   <Item active={activeTabName === 'settings'} img="img/settings.svg" onClick={e => setTab(e, 'settings')} />
   </Tabs>
+  {#if $debug}$stickerLibraryUpdaterState{/if}
   {#if $stickerLibraryUpdaterState.updating}
    <div class="loading">
     <div class="status">{$stickerLibraryUpdaterState.status}</div>
     <ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving={true} />
    </div>
   {/if}
+  {#if $stickerLibraryUpdaterState.error}
+   <div class="loading">
+    <div class="status error">Error: {$stickerLibraryUpdaterState.status}</div>
+   </div>
+  {/if}
  </div>
- {#await tabs[activeTab] then Component}<Component />{/await}
+ {#await tabs[activeTabName] then Component}<Component bind:this={view} />{/await}
 </div>
