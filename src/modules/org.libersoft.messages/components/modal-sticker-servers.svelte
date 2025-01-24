@@ -1,14 +1,15 @@
 <script>
  import { sticker_servers } from '../stickers.js';
  import Button from '../../../core/components/button.svelte';
+ import Select from '../../../core/components/select.svelte';
+ import Option from '../../../core/components/select-option.svelte';
+ //export let close;
+ //export let params;
 
- export let close;
- export let params;
-
- function add() {
-  sticker_servers.update(x => {
-   x.push('https://stickers.libersoft.org');
-   return x;
+ function add(url) {
+  sticker_servers.update(servers => {
+   servers.push(url);
+   return servers;
   });
  }
 </script>
@@ -16,6 +17,8 @@
 <Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />
 <Button text="Add" onClick={add} />
 
-{#each $sticker_servers as s}
- <div>{s}</div>
-{/each}
+<Select>
+ {#each $sticker_servers as s}
+  <Option value={s} text={s} />
+ {/each}
+</Select>
