@@ -61,7 +61,7 @@
   <Tabs>
    <Item active={activeTab === 'favourites'} img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favourites')} />
    <Item active={activeTab === 'server'} img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} />
-   <Item img="modules/{identifier}/img/update.svg" onClick={clickUpdate} />
+   <Item img="modules/{identifier}/img/update{$stickerLibraryUpdaterState.updating ? '-disabled' : ''}.svg" onClick={clickUpdate} />
    <Item active={activeTab === 'settings'} img="img/settings.svg" onClick={e => setTab(e, 'settings')} />
   </Tabs>
   {#if $stickerLibraryUpdaterState.updating}
