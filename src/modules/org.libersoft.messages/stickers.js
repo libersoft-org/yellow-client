@@ -9,6 +9,7 @@ export let stickerset_favorites = localStorageSharedStore('stickerset_favorites'
 export let sticker_servers = localStorageSharedStore('sticker_servers', ['https://stickers.libersoft.org']);
 export let sticker_server = localStorageSharedStore('sticker_server', 'https://stickers.libersoft.org');
 export let render_stickers_as_raster = localStorageSharedStore('render_stickers_as_raster', true);
+export let stickers_updating = writable(false);
 
 export async function fetchStickerset(stickerServer, id = 0) {
  // This is a simple fetch of a single sticker set. There is some overlap with updateStickerLibrary, but it's not worth refactoring now
@@ -24,6 +25,10 @@ export async function fetchStickerset(stickerServer, id = 0) {
 
 export async function updateStickerLibrary() {
  let stickerServer = get(sticker_server);
+ if (window.stickerLibraryUpdaterState?.updating || get(stickerLibraryUpdaterState).updating) {
+  console.log('Sticker library update already in progress');
+  return;
+ }
  window.stickerLibraryUpdaterState.updating = true;
  stickerLibraryUpdaterState.set({ status: `Downloading sticker sets from {stickerServer} ...`, updating: true, progress: 0 });
  console.log('Loading list of stickersets from: ' + stickerServer);
@@ -65,6 +70,7 @@ export async function updateStickerLibrary() {
   for (let sticker of stickers) {
    if (!window.stickerLibraryUpdaterState.updating) {
     console.log('Sticker library update cancelled');
+    stickerLibraryUpdaterState.set({ updating: false });
     return;
    }
    sticker.stickerset = stickerset.id;
@@ -77,6 +83,7 @@ export async function updateStickerLibrary() {
  stickerLibraryUpdaterState.set({ status: 'Loading sticker list ...', updating: true, progress: 100 });
  await db.stickersets.bulkAdd(stickersets_batch);
  stickerLibraryUpdaterState.set({ updating: false });
+ window.stickerLibraryUpdaterState.updating = false;
  console.log('Done loading, db.stickers.length:', await db.stickers.toArray().length);
  console.log('spent:', Date.now() - startFetchSets, 'ms');
 }
