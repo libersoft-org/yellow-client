@@ -1,7 +1,8 @@
 <script>
  import { debug, findAccount, selected_corepage_id, accounts_config, accounts, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
- import ActionItem from '../components/icon.svelte';
+ import ActionItems from '../components/table-actionitems.svelte';
+ import Item from '../components/icon.svelte';
  import Table from '../components/table.svelte';
  import Thead from '../components/table-thead.svelte';
  import TheadTr from '../components/table-thead-tr.svelte';
@@ -69,10 +70,6 @@
   display: inline-block;
  }
 
- .action-items {
-  display: flex;
- }
-
  .accounts .buttons {
   display: flex;
   gap: 10px;
@@ -110,10 +107,10 @@
       <Td center={true}>{a.credentials.address}</Td>
       <Td center={true}>{a.enabled ? 'Yes' : 'No'}</Td>
       <Td center={true}>
-       <div class="action-items">
-        <ActionItem img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => clickEdit(a.id)} />
-        <ActionItem img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
-       </div>
+       <ActionItems>
+        <Item img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => clickEdit(a.id)} />
+        <Item img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
+       </ActionItems>
       </Td>
       {#if $debug}
        <Td class="center">{a.id}</Td>
