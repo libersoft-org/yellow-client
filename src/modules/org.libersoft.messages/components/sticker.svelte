@@ -4,11 +4,10 @@
  import { getContext, onMount, onDestroy } from 'svelte';
  import { readable } from 'svelte/store';
  import { identifier } from '../messages.js';
- import { render_stickers_as_raster } from '../stickers.js';
+ import { render_stickers_as_raster, animate_all_stickers } from '../stickers.js';
 
  export let file = '';
  export let size = 200;
- // TODO: export let playOnStart = true;
 
  let componentContainer;
  let animContainer;
@@ -51,15 +50,13 @@
   }
  });
 
- $: on_update_should_be_playing($ContextMenuOpen, isInViewport, mouseOver, animContainer, anim);
+ $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $animate_all_stickers, mouseOver, animContainer, anim);
 
- async function on_update_should_be_playing(ContextMenuOpen, isInViewport, mouseOver, animContainer, anim) {
-  //console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'isInViewport:', isInViewport, 'mouseOver', mouseOver, 'animContainer:', animContainer, 'anim:', anim);
+ async function on_update_should_be_playing(ContextMenuOpen, isInViewport, animate_all_stickers, mouseOver, animContainer, anim) {
   if (!animContainer) return;
   let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
-  let should_be_playing = should_be_loaded && (ContextMenuOpen === undefined || (ContextMenuOpen && mouseOver));
-  if (should_be_playing) should_be_loaded = true;
-  //console.log('should_be_loaded:', should_be_loaded, 'should_be_playing:', should_be_playing);
+  let should_be_playing = should_be_loaded && (animate_all_stickers || mouseOver);
+
   if (should_be_playing) {
    if (anim) playing = true;
    else load_lottie();
