@@ -43,6 +43,7 @@
   elMessage.selectionStart = start + text.length;
   elMessage.selectionEnd = start + text.length;
   console.log('elMessage.selectionStart:', elMessage.selectionStart);
+  elMessage.focus();
  }
 
  export async function doSendMessage(message, html) {

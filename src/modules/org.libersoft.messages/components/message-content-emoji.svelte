@@ -1,5 +1,6 @@
 <script>
  import Emoji from './emoji.svelte';
+ import Sticker from './sticker.svelte';
  let { node, level, num_siblings } = $props();
  let codepoints_str = $state(node.attributes.codepoints?.value);
  let codepoints = $state(null);
@@ -27,7 +28,7 @@
 </script>
 
 {#if codepoints}
- <Emoji {codepoints} context={'message'} {is_single} size={is_single ? '200' : '30'} />
+ <Emoji {codepoints} context={'message'} {is_single} size={is_single ? '200' : '30'} force_animate={true} />
 {:else}
  error: {JSON.stringify(node.attributes)}
 {/if}

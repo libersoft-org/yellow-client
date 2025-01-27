@@ -10,6 +10,7 @@
  export let size = 40;
  export let is_single = false;
  export let context;
+ export let force_animate;
 
  let is_mouse_over;
 
@@ -23,7 +24,7 @@
   url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + '/';
 
   if (context === 'message') {
-   let animate = !render_emojis_as_static && is_animated;
+   let animate = (!render_emojis_as_static || force_animate) && is_animated;
    if (animate) {
     if (raster) {
      url += '512.webp';
