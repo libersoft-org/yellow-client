@@ -12,9 +12,13 @@
  let gifs = [];
  let query = '';
  let loading = false;
+ let elApiKey;
+ let elSearchText;
 
  onMount(() => {
   apiKey = $store;
+  if (!apiKey) elApiKey.focus();
+  else elSearchText.focus();
  });
 
  function saveAPIKey() {
@@ -105,11 +109,11 @@
 <div class="gifset">
  <div class="top-bar">
   <div class="group">
-   <InputText placeholder="Your Giphy API key" grow={true} bind:value={apiKey} onKeydown={keySaveAPIKey} />
+   <InputText placeholder="Your Giphy API key" grow={true} bind:this={elApiKey} bind:value={apiKey} onKeydown={keySaveAPIKey} />
    <Button text="Save" width="80px" onClick={saveAPIKey} />
   </div>
   <div class="group">
-   <InputText placeholder="Search GIFs" grow={true} bind:value={query} onKeydown={keyGetGifs} />
+   <InputText placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keyGetGifs} />
    <Button text="Search" width="80px" onClick={getGifs} />
   </div>
  </div>
