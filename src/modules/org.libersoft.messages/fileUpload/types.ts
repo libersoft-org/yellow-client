@@ -1,4 +1,4 @@
-import type { Writable } from 'svelte/store'
+import type { Writable } from 'svelte/store';
 
 export enum FileUploadRole {
  ACTIVE_UPLOAD = 'ACTIVE_UPLOAD',
@@ -42,41 +42,39 @@ export interface FileUpload {
 }
 
 export interface FileDownload {
- record: FileUploadRecord
- chunksReceived: any[]
- data: any
+ record: FileUploadRecord;
+ chunksReceived: any[];
+ data: any;
  paused?: boolean;
  pullChunk?: () => Promise<void>;
 }
 
 export interface FileUploadChunk {
- chunkId: number
- uploadId: string
- checksum: string
- data: string // base64
+ chunkId: number;
+ uploadId: string;
+ checksum: string;
+ data: string; // base64
 }
 
-export type MakeFileUploadRecordData = Partial<FileUploadRecord>
- & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize'>
+export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize'>;
 
-export type MakeFileUploadData = Partial<FileUpload>
- & Pick<FileUpload, 'role' | 'file' | 'record'>
+export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record'>;
 
 export type FileUploadStoreValue = {
  [key: string]: FileUpload;
-}
+};
 
 export type FileDownloadStoreValue = {
  [key: string]: FileDownload;
-}
+};
 
 export type BaseStoreType<StoreValue, Item> = {
- store: Writable<StoreValue>
- get: (id: string) => Item | undefined
- set: (id: string, download: Item) => void
- patch: (id: string, data: Partial<Item>) => void
- delete: (id: string) => void
-}
+ store: Writable<StoreValue>;
+ get: (id: string) => Item | undefined;
+ set: (id: string, download: Item) => void;
+ patch: (id: string, data: Partial<Item>) => void;
+ delete: (id: string) => void;
+};
 
-export type FileUploadStoreType = BaseStoreType<FileUploadStoreValue, FileUpload>
-export type FileDownloadStoreType = BaseStoreType<FileDownloadStoreValue, FileDownload>
+export type FileUploadStoreType = BaseStoreType<FileUploadStoreValue, FileUpload>;
+export type FileDownloadStoreType = BaseStoreType<FileDownloadStoreValue, FileDownload>;

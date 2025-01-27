@@ -4,11 +4,7 @@
  * @param {string} xName - The tag name of elements to check (case-insensitive).
  * @param {string} yName - The tag name of the wrapper element.
  */
-export function wrapConsecutiveElements(
- fragment: DocumentFragment,
- xName: string,
- yName: string
-): void {
+export function wrapConsecutiveElements(fragment: DocumentFragment, xName: string, yName: string): void {
  xName = xName.toLowerCase(); // Normalize case
 
  function processParent(parent: ParentNode): void {

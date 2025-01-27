@@ -1,7 +1,7 @@
 <script>
- import Button from "../../../core/components/button.svelte";
+ import Button from '../../../core/components/button.svelte';
 
- let {children, node} = $props();
+ let { children, node } = $props();
 
  function onAcceptAll() {
   // find all classes message-attachment-accept-btn and perform click evt
@@ -9,15 +9,6 @@
   acceptBtns.forEach(btn => btn.click());
  }
 </script>
-
-<div class="attachments-wrap">
- <div class="attachments">
-  {@render children?.()}
- </div>
- <div class="actions">
-  <Button width="80px" text="Accept All" onClick={onAcceptAll} />
- </div>
-</div>
 
 <style>
  .attachments-wrap {
@@ -39,3 +30,12 @@
   justify-content: right;
  }
 </style>
+
+<div class="attachments-wrap">
+ <div class="attachments">
+  {@render children?.()}
+ </div>
+ <div class="actions">
+  <Button width="80px" text="Accept All" onClick={onAcceptAll} />
+ </div>
+</div>

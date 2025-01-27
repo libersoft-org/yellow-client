@@ -1,5 +1,5 @@
 <script>
- import { componentMap } from "../expressions.ts";
+ import { componentMap } from '../expressions.ts';
 
  export let rootNode;
 
@@ -23,11 +23,11 @@
       ...getNodeProps(node),
       node,
       num_siblings: parentNode && parentNode.childNodes ? parentNode.childNodes.length : 0,
-      level
+      level,
      },
      children: Array.from(node.childNodes)
       .map(n => renderNode(n, node, level + 1))
-      .filter(child => child !== null)
+      .filter(child => child !== null),
     };
    }
 
@@ -36,16 +36,16 @@
     tag: node.tagName.toLowerCase(),
     props: {
      ...getNodeProps(node),
-     node
+     node,
     },
     children: Array.from(node.childNodes)
      .map(n => renderNode(n, node, level + 1))
-     .filter(child => child !== null)
+     .filter(child => child !== null),
    };
   }
 
   // Unsupported node type
-  console.warn("Unsupported node type:", node);
+  console.warn('Unsupported node type:', node);
   return null;
  }
 
@@ -72,7 +72,7 @@
  {#if typeof item === 'string'}
   {item}
 
- <!-- Render dynamic (HTML super-set) components -->
+  <!-- Render dynamic (HTML super-set) components -->
  {:else if item.component}
   <svelte:component this={item.component} {...item.props}>
    {#each item.children as child}
@@ -80,7 +80,7 @@
    {/each}
   </svelte:component>
 
- <!-- Render regular HTML elements -->
+  <!-- Render regular HTML elements -->
  {:else if item.tag}
   <svelte:element this={item.tag} {...item.props}>
    {#each item.children as child}

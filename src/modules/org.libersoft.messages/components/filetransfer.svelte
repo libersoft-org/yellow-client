@@ -1,6 +1,6 @@
 <script>
  import ProgressBar from './progressbar.svelte';
- import { humanSize } from "../../../core/utils/file.utils.js";
+ import { humanSize } from '../../../core/utils/file.utils.js';
  export let file = '';
  export let total = 0;
  export let uploaded = 0;
@@ -26,13 +26,12 @@
 </style>
 
 <div class="upload">
-
-  <div class="file">
-   <span class="bold">{download ? 'Downloading' : 'Uploading'} </span>
-   {#if file}
-    <span>{file}</span>
-   {/if}
-  </div>
+ <div class="file">
+  <span class="bold">{download ? 'Downloading' : 'Uploading'} </span>
+  {#if file}
+   <span>{file}</span>
+  {/if}
+ </div>
  <ProgressBar color="#db0" moving={true} value={percent} />
  <div class="text">
   <div class="size">{humanSize(uploaded)} / {humanSize(total)}</div>

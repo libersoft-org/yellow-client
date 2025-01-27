@@ -1,40 +1,40 @@
 <script>
- import Button from '../../../core/components/button.svelte'
- import { humanSize } from "../../../core/utils/file.utils.js";
- import { truncateText } from "../../../core/utils/text.utils.js";
- import fileUploadManager from "../fileUpload/FileUploadManager.ts";
- import { FileUploadRecordType } from "../fileUpload/types.ts";
- import { get } from "svelte/store";
- import { selectedConversation } from "../messages.js";
+ import Button from '../../../core/components/button.svelte';
+ import { humanSize } from '../../../core/utils/file.utils.js';
+ import { truncateText } from '../../../core/utils/text.utils.js';
+ import fileUploadManager from '../fileUpload/FileUploadManager.ts';
+ import { FileUploadRecordType } from '../fileUpload/types.ts';
+ import { get } from 'svelte/store';
+ import { selectedConversation } from '../messages.js';
 
- const {params} = $props();
+ const { params } = $props();
 
  // refs
  let elFileInput;
 
  // store
- let files = $state([])
+ let files = $state([]);
 
  function onFileAdd(e) {
-  e && e.preventDefault()
-  elFileInput.click()
+  e && e.preventDefault();
+  elFileInput.click();
  }
 
  function onDeleteAll() {
-  files = []
+  files = [];
  }
 
  function onFileDelete(file) {
-  const index = files.indexOf(file)
+  const index = files.indexOf(file);
   if (index > -1) {
-   files.splice(index, 1)
+   files.splice(index, 1);
   }
  }
 
  function onFileUpload(e) {
   let filesToPush = e.target.files;
   for (let i = 0; i < filesToPush.length; i++) {
-   files.push(filesToPush[i])
+   files.push(filesToPush[i]);
   }
 
   // clear the file input
@@ -42,54 +42,17 @@
  }
 
  const uploadServer = () => {
-  const recipientEmail = get(selectedConversation).address
+  const recipientEmail = get(selectedConversation).address;
   fileUploadManager.beginUpload(files, FileUploadRecordType.SERVER, [recipientEmail]);
-  params.setFileUploadModal(false)
- }
+  params.setFileUploadModal(false);
+ };
 
  const uploadP2P = () => {
-  const recipientEmail = get(selectedConversation).address
+  const recipientEmail = get(selectedConversation).address;
   fileUploadManager.beginUpload(files, FileUploadRecordType.P2P, [recipientEmail]);
-  params.setFileUploadModal(false)
- }
+  params.setFileUploadModal(false);
+ };
 </script>
-
-{#snippet fileUploadItem(file)}
- <div class="file-upload-item">
-  <div class="file-upload-item-desc">
-   <div>{truncateText(file.name, 30)}</div>
-   <div>{humanSize(file.size)}</div>
-  </div>
-  <div>
-   <Button img="img/close-black.svg" onClick={() => onFileDelete(file)} />
-  </div>
- </div>
-{/snippet}
-
-<div class="file-upload">
- <input type="file" id="fileInput" bind:this={elFileInput} on:change={onFileUpload} multiple style="display: none;">
- <div class="file-upload-header">
-  <Button width="80px" text="Add files" onClick={onFileAdd} />
-  <Button width="80px" text="Delete all" onClick={onDeleteAll} />
- </div>
- <div class="file-upload-body">
-  {#if files.length}
-   <div class="file-upload-items">
-    {#each files as file}
-     {@render fileUploadItem(file)}
-    {/each}
-   </div>
-  {:else}
-   <div class="file-upload-items-empty">
-    No files here. <br /> You can <a href="#" on:click={onFileAdd}>add some</a>.
-   </div>
-  {/if}
- </div>
- <div class="file-upload-footer">
-  <Button width="80px" text="Send P2P" onClick={uploadP2P} enabled={files.length} />
-  <Button width="80px" text="Upload" onClick={uploadServer} enabled={files.length} />
- </div>
-</div>
 
 <style>
  .file-upload {
@@ -135,3 +98,40 @@
   text-align: center;
  }
 </style>
+
+{#snippet fileUploadItem(file)}
+ <div class="file-upload-item">
+  <div class="file-upload-item-desc">
+   <div>{truncateText(file.name, 30)}</div>
+   <div>{humanSize(file.size)}</div>
+  </div>
+  <div>
+   <Button img="img/close-black.svg" onClick={() => onFileDelete(file)} />
+  </div>
+ </div>
+{/snippet}
+
+<div class="file-upload">
+ <input type="file" id="fileInput" bind:this={elFileInput} on:change={onFileUpload} multiple style="display: none;" />
+ <div class="file-upload-header">
+  <Button width="80px" text="Add files" onClick={onFileAdd} />
+  <Button width="80px" text="Delete all" onClick={onDeleteAll} />
+ </div>
+ <div class="file-upload-body">
+  {#if files.length}
+   <div class="file-upload-items">
+    {#each files as file}
+     {@render fileUploadItem(file)}
+    {/each}
+   </div>
+  {:else}
+   <div class="file-upload-items-empty">
+    No files here. <br /> You can <a href="#" on:click={onFileAdd}>add some</a>.
+   </div>
+  {/if}
+ </div>
+ <div class="file-upload-footer">
+  <Button width="80px" text="Send P2P" onClick={uploadP2P} enabled={files.length} />
+  <Button width="80px" text="Upload" onClick={uploadServer} enabled={files.length} />
+ </div>
+</div>

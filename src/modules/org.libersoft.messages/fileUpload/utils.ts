@@ -1,13 +1,7 @@
-import {
- type FileUpload,
- type FileUploadRecord,
- FileUploadRecordStatus,
- FileUploadRecordType, type MakeFileUploadData,
- type MakeFileUploadRecordData,
-} from './types.ts'
-import { v4 as uuidv4 } from 'uuid'
+import { type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, type MakeFileUploadData, type MakeFileUploadRecordData } from './types.ts';
+import { v4 as uuidv4 } from 'uuid';
 
-export function makeFileUploadRecord (data: MakeFileUploadRecordData): FileUploadRecord {
+export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUploadRecord {
  const defaults = {
   id: uuidv4(),
   status: FileUploadRecordStatus.BEGUN,
@@ -18,16 +12,16 @@ export function makeFileUploadRecord (data: MakeFileUploadRecordData): FileUploa
   filePath: '',
   tempFilePath: '',
   chunkSize: 0,
- }
- return Object.assign(defaults, data)
+ };
+ return Object.assign(defaults, data);
 }
 
-export function makeFileUpload (data: MakeFileUploadData): FileUpload {
-  const defaults = {
-   chunksSent: [],
-   uploadInterval: null,
-  }
-  return Object.assign(defaults, data)
+export function makeFileUpload(data: MakeFileUploadData): FileUpload {
+ const defaults = {
+  chunksSent: [],
+  uploadInterval: null,
+ };
+ return Object.assign(defaults, data);
 }
 
 export async function blobToBase64(blob: Blob) {

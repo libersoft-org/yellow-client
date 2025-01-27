@@ -9,8 +9,8 @@
  import ModalHTML from '../modals/html.svelte';
  import FileUpload from '../modals/file-upload.svelte';
  import Expressions from './expressions.svelte';
- import fileUploadManager from '../fileUpload/FileUploadManager.ts'
- import { FileUploadRecordType } from '../fileUpload/types.ts'
+ import fileUploadManager from '../fileUpload/FileUploadManager.ts';
+ import { FileUploadRecordType } from '../fileUpload/types.ts';
 
  let elAttachment;
  let elExpressions;
@@ -156,9 +156,4 @@
 -->
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />
-<Modal
- title="File Upload"
- body={FileUpload}
- bind:show={showFileUploadModal}
- params={{setFileUploadModal: setFileUploadModal}}
-/>
+<Modal title="File Upload" body={FileUpload} bind:show={showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
