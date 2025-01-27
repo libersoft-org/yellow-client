@@ -32,6 +32,6 @@
  <Intersector {items} item_slot={item} />
 </div>
 
-{#snippet item(item, save_height)}
- <StickerSet stickerset={item} {save_height} />
+{#snippet item(item, intersecting)}
+ <StickerSet stickerset={item} {intersecting} />
 {/snippet}

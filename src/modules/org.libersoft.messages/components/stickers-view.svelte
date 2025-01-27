@@ -87,13 +87,13 @@
  </Select>
 </div>
 
-{#if $debug}
- <pre>
- stickerset_favorites: {JSON.stringify(stickerset_favorites)}
- animated_filter: {JSON.stringify(animated_filter)}
- fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
- $items.length: {$items.length}
-  </pre>
-{/if}
+<!--{#if $debug}-->
+<!-- <pre>-->
+<!-- stickerset_favorites: {JSON.stringify(stickerset_favorites)}-->
+<!-- animated_filter: {JSON.stringify(animated_filter)}-->
+<!-- fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}-->
+<!-- $items.length: {$items.length}-->
+<!--  </pre>-->
+<!--{/if}-->
 
 <StickersSearchResults bind:scroll_to_top items={$items} />

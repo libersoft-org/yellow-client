@@ -3,8 +3,10 @@
  import Sticker from './sticker.svelte';
  import { getContext } from 'svelte';
  import { htmlEscape } from '../messages.js';
+ import StickerSetPart from './stickerset-part.svelte';
  export let sticker;
  export let stickerset;
+ export let intersecting;
  export let size;
  const MessagesContext = getContext('MessagesContext');
  const popup = getContext('Popup');
@@ -47,7 +49,7 @@
 {#if file}
  <BaseButton onClick={handleClick} {onMousedown}>
   <div class="sticker" style="max-width: {size}px;">
-   <Sticker {size} {file} play_on_start={false} />
+   <Sticker {size} {file} play_on_start={false} {intersecting} />
   </div>
  </BaseButton>
 {/if}

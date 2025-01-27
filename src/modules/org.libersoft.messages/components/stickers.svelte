@@ -16,7 +16,7 @@
   server: TabServer,
  };
  let activeTabName = $state('server');
- let view;
+ let view = $state(null);
 
  async function setTab(e, name) {
   activeTabName = name;
@@ -72,7 +72,7 @@
    <Item img="modules/{identifier}/img/update{$stickerLibraryUpdaterState.updating ? '-disabled' : ''}.svg" onClick={clickUpdate} />
    <Item active={activeTabName === 'settings'} img="img/settings.svg" onClick={e => setTab(e, 'settings')} />
   </Tabs>
-  {#if $debug}$stickerLibraryUpdaterState{/if}
+  {#if $debug}$stickerLibraryUpdaterState:{$stickerLibraryUpdaterState}{/if}
   {#if $stickerLibraryUpdaterState.updating}
    <div class="loading">
     <div class="status">{$stickerLibraryUpdaterState.status}</div>

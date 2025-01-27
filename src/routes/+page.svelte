@@ -93,6 +93,20 @@
   if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
  }
 
+ let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
+
+ window.addEventListener('resize', () => {
+  var newPx_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
+  if (newPx_ratio != px_ratio) {
+   px_ratio = newPx_ratio;
+   console.log('zooming: ', px_ratio);
+   return true;
+  } else {
+   console.log('just resizing, px_ratio: ', px_ratio);
+   return false;
+  }
+ });
+
  function setupIframeListener() {
   window.addEventListener('message', event => {
    console.log('event.data: ', event.data);
