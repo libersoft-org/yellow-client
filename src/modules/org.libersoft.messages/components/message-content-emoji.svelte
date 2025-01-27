@@ -22,12 +22,12 @@
  }
 
  function decodeCodepoints(str) {
-  return str.split(',').map(cp => parseInt(cp, 16));
+  return str.split('_').map(cp => parseInt(cp, 16));
  }
 </script>
 
 {#if codepoints}
- <Emoji {codepoints} size={is_single ? '200' : '30'} />
+ <Emoji {codepoints} context={'message'} {is_single} size={is_single ? '200' : '30'} />
 {:else}
  error: {JSON.stringify(node.attributes)}
 {/if}

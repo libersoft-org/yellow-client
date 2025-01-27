@@ -12,9 +12,13 @@
  let gifs = [];
  let query = '';
  let loading = false;
+ let elApiKey;
+ let elSearchText;
 
  onMount(() => {
   apiKey = $store;
+  if (!apiKey) elApiKey.focus();
+  else elSearchText.focus();
  });
 
  function saveAPIKey() {
@@ -22,7 +26,7 @@
  }
 
  function keySaveAPIKey(e) {
-  if (e.detail.key === 'Enter') saveAPIKey();
+  if (e.key === 'Enter') saveAPIKey();
  }
 
  async function getGifs() {
@@ -42,7 +46,7 @@
  }
 
  function keyGetGifs(e) {
-  if (e.detail.key === 'Enter') getGifs();
+  if (e.key === 'Enter') getGifs();
  }
 
  function sendGIF(url) {
@@ -56,8 +60,14 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px;
   height: calc(100% - 45px);
+ }
+
+ .top-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
  }
 
  .group {
@@ -65,46 +75,61 @@
   gap: 10px;
  }
 
- .container {
+ .results {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 10px;
   overflow: auto;
+  padding: 10px;
  }
 
- .container img {
+ .results img {
   width: 160px;
   height: 160px;
   object-fit: contain;
  }
 
  .item {
-  border-radius: 5px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
   overflow: hidden;
+  background-color: #eee;
+  transition:
+   transform 0.3s ease,
+   box-shadow 0.3s ease;
+ }
+
+ .item:hover {
+  z-index: 90;
+  transform: scale(1.2);
  }
 </style>
 
 <div class="gifset">
- <div class="group">
-  <InputText placeholder="Your Giphy API key" bind:value={apiKey} on:keydown={keySaveAPIKey} />
-  <Button text="Save" onClick={saveAPIKey} />
+ <div class="top-bar">
+  <div class="group">
+   <InputText placeholder="Your Giphy API key" grow={true} bind:this={elApiKey} bind:value={apiKey} onKeydown={keySaveAPIKey} />
+   <Button text="Save" width="80px" onClick={saveAPIKey} />
+  </div>
+  <div class="group">
+   <InputText placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keyGetGifs} />
+   <Button text="Search" width="80px" onClick={getGifs} />
+  </div>
  </div>
- <div class="group">
-  <InputText placeholder="Search GIFs" bind:value={query} on:keydown={keyGetGifs} />
-  <Button text="Search" onClick={getGifs} />
- </div>
- {#if loading}
-  <div>Loading...</div>
- {:else if gifs.length === 0 && query}
-  <div>No GIFs found.</div>
- {:else}
-  <div class="container">
+ <div class="results">
+  {#if loading}
+   <div>Loading...</div>
+  {:else if gifs.length === 0 && query}
+   <div>No GIFs found.</div>
+  {:else}
    {#each gifs as gif}
     <BaseButton onClick={() => sendGIF(gif)}>
-     <div class="item"><img src={gif} alt="GIF" /></div>
+     <div class="item">
+      <img src={gif} alt="GIF" />
+     </div>
     </BaseButton>
    {/each}
-  </div>
- {/if}
+  {/if}
+ </div>
 </div>

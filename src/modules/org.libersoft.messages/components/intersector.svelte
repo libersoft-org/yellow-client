@@ -1,10 +1,7 @@
 <script>
- let {
-  items,
-  //  scroll_to_top = $bindable(),
- } = $props();
+ let { items, item_slot } = $props();
  let observer;
- let itemsEls = [];
+ let itemsEls = $state([]);
  let itemsById = {};
  let heights = {};
  let visibility = $state({});
@@ -30,7 +27,7 @@
    entries.forEach(entry => {
     entry.target.dataset.intersecting = entry.isIntersecting;
     let n = Number(entry.target.dataset.id);
-    console.log('n:', n, 'entry.target.dataset.id:', entry.target.dataset.id, 'intersection:', entry.isIntersecting);
+    //console.log('n:', n, 'entry.target.dataset.id:', entry.target.dataset.id, 'intersection:', entry.isIntersecting);
     //itemsById[n]._intersecting = entry.isIntersecting;
     visibility[n] = entry.isIntersecting;
     //visibility[entry.target.dataset.id] = entry.isIntersecting;
@@ -49,14 +46,7 @@
   <div style="min-height: {heights[item.id] || 200}px;">
    <!-- background-color: #19f; border-radius: 10px;-->
    {#if visibility[item.id]}
-    <!--{#if itemsEls[i].dataset.intersecting}-->
-    <slot
-     {item}
-     save_height={h => {
-      heights[item.id] = h;
-     }}
-    />
-    <!-- TODO: not working: {@render children({ item, save_height: h => { heights[item.id] = h; } })}-->
+    {@render item_slot(item, heights[item.id])}
    {/if}
   </div>
  </div>

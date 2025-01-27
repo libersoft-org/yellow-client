@@ -1,5 +1,5 @@
 <script>
- import { processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
+ import { identifier, processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
@@ -9,6 +9,7 @@
  //import Audio from './audio.svelte';
  //import Video from './video.svelte';
  //import FileTransfer from './filetransfer.svelte';
+ //import Emoji from './emoji.svelte';
  //import Sticker from './sticker.svelte';
  //import Map from './map.svelte';
  import MessageRendering from './message-rendering.svelte';
@@ -38,10 +39,10 @@
  let touchX;
  let touchY;
 
- $: messageContent = processMessage(message.message);
+ $: messageContent = processMessage(message);
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
- $: checkmarks_img = 'modules/org.libersoft.messages/img/seen' + checkmarks + '.svg';
+ $: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
  //$: console.log('Core.isClientFocused:', $isClientFocused);
  $: if (isVisible && $isClientFocused) {
   console.log('isVisible:', isVisible, 'isClientFocused:', $isClientFocused);
@@ -168,15 +169,28 @@
   snipeMessage(message);
  }
 
- function copyMessagePlain() {
-  console.log('copy as plaintext');
+ function copyTextOnly() {
+  console.log('copy stripHtml');
   navigator.clipboard.writeText(stripHtml(message.message));
  }
 
- function copyMessageHTML() {
-  console.log('copy as html');
+ function copyOriginal() {
+  console.log('copy original');
   console.log(message.message);
   navigator.clipboard.writeText(message.message);
+ }
+
+ function copyMessageHTML() {
+  console.log('copyMessagePseudoHtml');
+  console.log(messageContent);
+
+  //const serialized = new XMLSerializer().serializeToString(messageContent.body);
+
+  const tempContainer = document.createElement('div');
+  tempContainer.appendChild(messageContent.body);
+  const serialized = tempContainer.innerHTML;
+
+  navigator.clipboard.writeText(serialized);
  }
 
  async function rightClickContextMenu(e) {
@@ -195,7 +209,7 @@
   margin: 10px 20px;
   border-radius: 10px;
   box-shadow: var(--shadow);
-  /* Maybe not necessary: */
+  /* TODO: Maybe not necessary: */
   transform: translateX(0);
   will-change: transform;
  }
@@ -235,44 +249,27 @@
   height: 24px;
  }
 
- .message .menu {
-  z-index: 10;
-  display: none;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 20px;
-  height: 20px;
-  padding: 5px;
-  border-radius: 10px;
-  background-color: #fefdf7;
-  border: 1px solid #cecdc7;
-  cursor: pointer;
- }
-
- @media (hover: hover) and (pointer: fine) {
-  .message:hover .menu {
-   display: flex;
-  }
+ .debug {
+  word-break: break-word;
  }
 </style>
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu|preventDefault={rightClickContextMenu}>
  <div bind:this={elIntersectionObserver}></div>
- <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
-  <img src="img/caret-down-gray.svg" alt="Menu" />
- </div>
+ <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Reply name="Someone" text="Some text" />-->
- <!--<Audio file="modules/org.libersoft.messages/audio/message.mp3" />-->
+ <!--<Audio file="modules/{identifier}/audio/message.mp3" />-->
  <!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
- <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Map latitude="50.0755", longitude="14.4378" />-->
  {#if $debug}
-  original message: {message.message}
-  <hr />
-  rendering:
- {/if}
+  <div class="debug">
+   <span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format: <span class="bold">{message.format}</span>):<br /><br />
+   {message.message}<br />
+   <hr />
+   <span class="bold">Rendering</span>:<br /><br />
+  </div>
+ {:else}{/if}
  <MessageRendering {messageContent} />
  <!--
  <div class="text">{@html 'processMessage(message.message)'}</div>
@@ -286,9 +283,6 @@
    <div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
   {/if}
  </div>
- {#if $debug}
-  id {message.id}
- {/if}
 </div>
 {#if message.reply}
  <div class="reply-box">
@@ -296,9 +290,10 @@
  </div>
 {/if}
 <ContextMenu bind:this={menu} target={elCaret}>
- <ContextMenuItem img="img/copy.svg" label="Copy as plaintext" onClick={copyMessagePlain} />
- <ContextMenuItem img="img/copy.svg" label="Copy as HTML" onClick={copyMessageHTML} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/reply.svg" label="Reply" onClick={replyMessage} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/forward.svg" label="Forward" onClick={forwardMessage} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/delete.svg" label="Delete" onClick={deleteMessage} />
+ <ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
+ <ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
+ <ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
+ <ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} />
+ <ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
+ <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={deleteMessage} />
 </ContextMenu>

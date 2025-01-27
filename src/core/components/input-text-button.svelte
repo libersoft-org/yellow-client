@@ -5,6 +5,12 @@
  export let value;
  export let placeholder;
  export let onClick;
+
+ let input;
+
+ export function focus() {
+  input.focus();
+ }
 </script>
 
 <style>
@@ -36,7 +42,7 @@
 </style>
 
 <div class="input-button">
- <input type="text" bind:value {placeholder} />
+ <input type="text" bind:this={input} bind:value {placeholder} />
  <BaseButton {onClick}>
   <div class="image">
    <img src={img} {alt} />

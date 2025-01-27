@@ -1,12 +1,12 @@
 <script>
- import EmojiSet from './emojiset.svelte';
+ import Emojis from './emojis.svelte';
  import Stickers from './stickers.svelte';
  import GifSet from './gifset.svelte';
  import Item from './expressions-item.svelte';
  export let height;
- let expression = 'stickers';
+ let expression = 'emojis';
  const expressions = {
-  emojis: EmojiSet,
+  emojis: Emojis,
   stickers: Stickers,
   gifs: GifSet,
  };

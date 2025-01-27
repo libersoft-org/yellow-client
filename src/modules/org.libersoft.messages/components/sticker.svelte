@@ -3,9 +3,12 @@
  import pako from 'pako';
  import { getContext, onMount, onDestroy } from 'svelte';
  import { readable } from 'svelte/store';
+ import { identifier } from '../messages.js';
+ import { render_stickers_as_raster, animate_all_stickers } from '../stickers.js';
+
  export let file = '';
  export let size = 200;
- // TODO: export let playOnStart = true;
+
  let componentContainer;
  let animContainer;
  let isLottie = false;
@@ -21,16 +24,24 @@
  let elStaticImg;
  let ContextMenu = getContext('ContextMenu');
  let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
+ let renderer = 'svg';
+ let animationData;
+
+ render_stickers_as_raster.subscribe(value => {
+  if (value) renderer = 'canvas';
+  else renderer = 'svg';
+  if (animationData) {
+   if (anim) anim.destroy();
+   construct_lottie();
+  }
+ });
 
  $: update_playing(playing);
 
- onMount(async () => {
-  //console.log(file);
-  ext = file.split('.').pop().toLowerCase();
-  //  console.log('STICKER file:', file, 'ext:', ext);
-  if (ext === 'lottie' || ext === 'json' || ext === 'tgs') isLottie = true;
-  else isImage = true;
- });
+ ext = file.split('.').pop().toLowerCase();
+ //  console.log('STICKER file:', file, 'ext:', ext);
+ if (ext === 'lottie' || ext === 'json' || ext === 'tgs') isLottie = true;
+ else isImage = true;
 
  onDestroy(() => {
   if (anim) {
@@ -39,15 +50,13 @@
   }
  });
 
- $: on_update_should_be_playing($ContextMenuOpen, isInViewport, mouseOver, animContainer, anim);
+ $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $animate_all_stickers, mouseOver, animContainer, anim);
 
- async function on_update_should_be_playing(ContextMenuOpen, isInViewport, mouseOver, animContainer, anim) {
-  //console.log('on_update_should_be_playing ContextMenuOpen:', ContextMenuOpen, 'isInViewport:', isInViewport, 'mouseOver', mouseOver, 'animContainer:', animContainer, 'anim:', anim);
+ async function on_update_should_be_playing(ContextMenuOpen, isInViewport, animate_all_stickers, mouseOver, animContainer, anim) {
   if (!animContainer) return;
   let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
-  let should_be_playing = should_be_loaded && (ContextMenuOpen === undefined || (ContextMenuOpen && mouseOver));
-  if (should_be_playing) should_be_loaded = true;
-  //console.log('should_be_loaded:', should_be_loaded, 'should_be_playing:', should_be_playing);
+  let should_be_playing = should_be_loaded && (animate_all_stickers || mouseOver);
+
   if (should_be_playing) {
    if (anim) playing = true;
    else load_lottie();
@@ -84,8 +93,6 @@
  async function load_lottie() {
   if (isLoading) return;
   isLoading = true;
-  let path;
-  let animationData;
   if (ext === 'tgs') animationData = await loadTgs(file);
   else animationData = await loadJson(file);
   if (error) {
@@ -94,42 +101,60 @@
   }
   /*
   console.log('STICKER file:', file);
-  console.log('STICKER path:', path);
   console.log('STICKER animationData:', animationData);
   */
-  /*
-  lottie.setQuality() -- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
-  lottie.freeze() -- Freezes all playing animations or animations that will be loaded
-  */
+  await construct_lottie();
+ }
+
+ async function construct_lottie() {
   let start = Date.now();
+
   anim = lottie.loadAnimation({
    container: animContainer,
-   renderer: 'canvas',
+   renderer,
+   //renderer: 'canvas',
    loop: true,
    autoplay: playing,
-   path,
    animationData,
   });
-  /*anim.onComplete = () => {
+
+  /*
+  anim.onComplete = () => {
    console.log('lottie animation completed');
-  };*/
-  /*
-  anim.onLoopComplete = () => { console.log('lottie animation loop completed'); };
-  */
-  /*
+  };
+  anim.onLoopComplete = () => {
+   console.log('lottie animation loop completed');
+   // how to control the rendering fps of a lottie-web animation?
+   //console.log(anim);
+   //anim.frameModifier = 1/30;
+   //anim.frameMult = 1;
+   //anim.frameRate = 12;
+   //anim.setSpeed(0.5)
+
+   // ???
+  lottie.setQuality() -- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
+  lottie.freeze() -- Freezes all playing animations or animations that will be loaded
+   //anim.resize()
+
+  };
   anim.addEventListener('config_ready', () => {
    console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
   });
+
   anim.addEventListener('data_ready', () => {
    console.log('lottie data ready after ' + (Date.now() - start) + 'ms');
   });
+
+ */
+  /*
   anim.addEventListener('loaded_images', () => {
    console.log('lottie loaded images after ' + (Date.now() - start) + 'ms');
   });
   anim.addEventListener('DOMLoaded', () => {
    console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
   });
-  console.log('constructed lottie in ' + (Date.now() - start) + 'ms');*/
+  */
+  console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
  }
 
  async function intersection(entries) {
@@ -142,7 +167,7 @@
 
  async function loadTgs(file) {
   try {
-   let start = Date.now();
+   //let start = Date.now();
    /*
     https://www.digitalocean.com/community/tutorials/how-to-implement-browser-caching-with-nginx-s-header-module-on-centos-8
     https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#fresh_and_stale_based_on_age
@@ -173,7 +198,7 @@
 
  async function loadJson(file) {
   try {
-   let start = Date.now();
+   //let start = Date.now();
    const response = await fetch(file);
    if (!response.ok) {
     error = `Error loading JSON ${file}, status: ${response.status}`;
@@ -216,7 +241,7 @@
 
 <div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
  {#if error}
-  <img class="image" style="width: {size}px; height: {size}px;" src="modules/org.libersoft.messages/img/question.svg" alt="" />
+  <img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
   <div class="error">{error}</div>
  {:else if isLottie}
   <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>

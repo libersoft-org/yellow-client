@@ -1,6 +1,6 @@
 <script>
- import { messagebar_text_to_html, sendMessage } from '../messages.js';
- import { setContext, tick } from 'svelte';
+ import { identifier, preprocess_incoming_plaintext_message_text, sendMessage } from '../messages.js';
+ import { onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
  import ContextMenu from '../../../core/components/context-menu.svelte';
@@ -11,21 +11,26 @@
  import Expressions from './expressions.svelte';
  import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import { FileUploadRecordType } from '../fileUpload/types.ts';
+ //import {  init_emojis } from '../emojis.js';
 
  let elAttachment;
  let elExpressions;
  let elMessage;
- let elFileInput;
- let elFileInputP2P;
+ let elMessageBar;
  let text;
  let showHTMLModal = false;
  let showFileUploadModal = false;
  let expressionsHeight = '500px';
  let showExpressions = false;
 
+ onMount(async () => {
+  console.log('MessageBar mounted');
+ });
+
  setContext('MessageBar', {
   sendMessageHtml: text => doSendMessage(text, true),
   sendMessagePlain: text => doSendMessage(text, false),
+  insertText,
   setBarFocus,
   append: message => {
    elMessage.value += message;
@@ -37,9 +42,22 @@
   showFileUploadModal = value;
  }
 
+ export async function insertText(text) {
+  /* insert text at the current cursor position */
+  console.log('elMessage.selectionStart:', elMessage.selectionStart);
+  const start = elMessage.selectionStart;
+  const end = elMessage.selectionEnd;
+  elMessage.value = elMessage.value.substring(0, start) + text + elMessage.value.substring(end);
+  resizeMessage();
+  elMessage.selectionStart = start + text.length;
+  elMessage.selectionEnd = start + text.length;
+  console.log('elMessage.selectionStart:', elMessage.selectionStart);
+ }
+
  export async function doSendMessage(message, html) {
   //console.log('doSendMessage', message);
-  await sendMessage(html ? message : messagebar_text_to_html(message));
+  //await sendMessage(html ? message : messagebar_text_to_html(message));
+  await sendMessage(message, html ? 'html' : 'plaintext');
   await setBarFocus();
  }
 
@@ -120,39 +138,36 @@
  }
 </style>
 
-<div class="message-bar">
+<div class="message-bar" bind:this={elMessageBar}>
  <div bind:this={elAttachment}>
-  <Icon img="modules/org.libersoft.messages/img/attachment.svg" alt="Attachment" size="32" padding="0" />
+  <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
  </div>
  <BaseButton onClick={() => (showExpressions = !showExpressions)}>
   <div bind:this={elExpressions}>
-   <Icon img="modules/org.libersoft.messages/img/emoji.svg" alt="Emoji" size="32" padding="0" />
+   <Icon img="modules/{identifier}/img/emoji.svg" alt="Emoji" size="32" padding="0" />
   </div>
  </BaseButton>
  <!--
  <span class="message" bind:innerHTML={text} bind:this={elMessage} placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} contenteditable></span>
--->
+ -->
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
- <Icon img="modules/org.libersoft.messages/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
- <Icon img="modules/org.libersoft.messages/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
+ <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
+ <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>
 
-<ContextMenu target={elAttachment}>
- <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/html.svg" label="HTML" onClick={sendHTML} />
- <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" onClick={sendLocation} />
+
+<ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+ <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} />
+ <ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
+ <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
-<ContextMenu target={elExpressions} width="363px" height={expressionsHeight} scrollable={false}>
+<ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
  <Expressions height={expressionsHeight} />
 </ContextMenu>
 
 <!--
 <Modal body={Expressions} width="363px" bind:show={showExpressions} />
--->
-
-<!--
-<Expressions />
 -->
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />

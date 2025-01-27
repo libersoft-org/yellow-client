@@ -1,4 +1,5 @@
 <script>
+ import { identifier } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
@@ -98,7 +99,7 @@
  <div class="player">
   <BaseButton onClick={clickPlay}>
    <div class="play">
-    <img src="modules/org.libersoft.messages/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
+    <img src="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
    </div>
   </BaseButton>
   <div class="wave" bind:this={waveRef}></div>

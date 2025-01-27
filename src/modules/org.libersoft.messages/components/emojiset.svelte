@@ -2,39 +2,30 @@
  import { getContext, onMount } from 'svelte';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
- import { emoji_render, encodeCodepoints } from '../messages.js';
+ import { emojiGroups } from '../messages.js';
+ import { emoji_render } from '../emojis.js';
  const MessageBar = getContext('MessageBar');
- const menu = getContext('ContextMenu');
- let emojis;
-
- onMount(async () => {
-  try {
-   const res = await fetch('modules/org.libersoft.messages/json/emoji_16_0_ordering.min.json');
-   if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-   emojis = await res.json();
-  } catch (error) {
-   console.error('Error fetching data:', error);
-  }
- });
 
  function clickEmoji(codepoints) {
-  /*
-  MessageBar.sendMessage('<Emoji codepoints="' + encodeCodepoints(codepoints) + '" />');
-*/
-  MessageBar.append(emoji_render(codepoints));
+  MessageBar.insertText(emoji_render(codepoints));
  }
 </script>
 
 <style>
  .emojiset {
-  height: calc(100% - 45px);
+  height: calc(100% - 105px);
   overflow: auto;
  }
 
  .title {
-  font-size: 14px;
+  font-size: 16px;
+  text-align: center;
   font-weight: bold;
-  padding: 10px;
+  padding: 8px;
+  background-color: #eee;
+  border-radius: 10px;
+  margin: 10px;
+  border: 1px solid #aaa;
  }
 
  .emojis {
@@ -44,16 +35,35 @@
   padding: 0 10px;
   overflow: auto; /* TODO - not working */
  }
+
+ .emoji {
+  display: flex;
+  padding: 3px;
+  border-radius: 10px;
+  transition:
+   transform 0.3s ease,
+   box-shadow 0.3s ease;
+  border: 1px solid #fff;
+ }
+
+ .emoji.hover:hover {
+  z-index: 90;
+  transform: scale(1.5);
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+ }
 </style>
 
 <div class="emojiset">
- {#each emojis as g, index}
+ {#each $emojiGroups as g, index}
   <div class="group">
    <div class="title">{g.group}</div>
    <div class="emojis">
     {#each g.emoji as e, id}
      <BaseButton onClick={() => clickEmoji(e.base)}>
-      <Emoji codepoints={e.base} hover={true} />
+      <div class="emoji hover">
+       <Emoji codepoints={e.base} context={'menu'} is_single={true} />
+      </div>
      </BaseButton>
     {/each}
    </div>

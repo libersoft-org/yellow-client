@@ -96,11 +96,11 @@
 <div class="addressbook-new">
  <div class="group">
   <div class="bold">Alias:</div>
-  <InputText placeholder="Alias" bind:value={alias} bind:this={aliasElement} on:keydown={keyEnter} />
+  <InputText placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} />
  </div>
  <div class="group">
   <div class="bold">Address:</div>
-  <InputText placeholder="Address" bind:value={address} on:keydown={keyEnter} />
+  <InputText placeholder="Address" bind:value={address} onKeydown={keyEnter} />
  </div>
  {#if error}
   <div class="error">

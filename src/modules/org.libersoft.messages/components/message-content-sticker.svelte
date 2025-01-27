@@ -9,8 +9,9 @@
  //$: console.log('MessageContentSticker node:', v);
 
  function handleClick() {
-  //console.log('MessageContentSticker handleClick' + JSON.stringify(node.attributes.stickerset?.value));
-  openStickersetDetailsModal(stickerset);
+  if (stickerset) {
+   openStickersetDetailsModal(stickerset);
+  }
  }
 </script>
 

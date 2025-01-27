@@ -1,13 +1,13 @@
 <script>
- import { createEventDispatcher } from 'svelte';
  export let password = false;
  export let placeholder = '';
  export let value = '';
- const dispatch = createEventDispatcher();
+ export let onKeydown;
+ export let grow = false;
  let elInput;
 
  function handleKeydown(e) {
-  dispatch('keydown', e);
+  if (onKeydown) onKeydown(e);
  }
 
  export function focus() {
@@ -23,6 +23,10 @@
   font-family: inherit;
   font-size: inherit;
  }
+
+ .grow {
+  flex-grow: 1;
+ }
 </style>
 
-<input type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={handleKeydown} />
+<input class={grow && 'grow'} type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />

@@ -1,7 +1,15 @@
 <script>
  import { debug, findAccount, selected_corepage_id, accounts_config, accounts, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
- import ActionItem from '../components/icon.svelte';
+ import ActionItems from '../components/table-actionitems.svelte';
+ import Item from '../components/icon.svelte';
+ import Table from '../components/table.svelte';
+ import Thead from '../components/table-thead.svelte';
+ import TheadTr from '../components/table-thead-tr.svelte';
+ import Th from '../components/table-thead-th.svelte';
+ import Tbody from '../components/table-tbody.svelte';
+ import TbodyTr from '../components/table-tbody-tr.svelte';
+ import Td from '../components/table-tbody-td.svelte';
  import Modal from '../components/modal.svelte';
  import ModalAccountsAddEdit from '../modals/accounts-add-edit.svelte';
  import ModalAccountsDel from '../modals/accounts-del.svelte';
@@ -62,51 +70,6 @@
   display: inline-block;
  }
 
- table {
-  border-spacing: 0;
-  border: 1px solid #000;
-  border-radius: 10px;
-  overflow: hidden;
- }
-
- thead tr {
-  background-color: #222;
-  color: #fff;
-  text-align: left;
- }
-
- tbody tr:nth-child(even) {
-  background-color: #ffdd1130;
- }
-
- tbody tr:nth-child(odd) {
-  background-color: #ffdd1150;
- }
-
- tbody tr:hover {
-  background-color: #fd1;
- }
-
- thead th,
- tbody td {
-  padding: 10px;
- }
-
- thead th {
-  background-color: #222;
-  color: #fff;
-  text-align: left;
- }
-
- thead th.center,
- tbody td.center {
-  text-align: center;
- }
-
- .action-items {
-  display: flex;
- }
-
  .accounts .buttons {
   display: flex;
   gap: 10px;
@@ -121,41 +84,41 @@
   <Button text="Import" onClick={accountsConfigImport} />
  </div>
  <div class="table">
-  <table>
-   <thead>
-    <tr>
-     <th class="center">Status</th>
-     <th class="center">Title</th>
-     <th class="center">Server</th>
-     <th class="center">Address</th>
-     <th class="center">Enabled</th>
-     <th class="center">Action</th>
+  <Table>
+   <Thead>
+    <TheadTr>
+     <Th center={true}>Status</Th>
+     <Th center={true}>Title</Th>
+     <Th center={true}>Server</Th>
+     <Th center={true}>Address</Th>
+     <Th center={true}>Enabled</Th>
+     <Th center={true}>Action</Th>
      {#if $debug}
-      <th class="center">Account ID</th>
+      <Th center={true}>Account ID</Th>
      {/if}
-    </tr>
-   </thead>
-   <tbody>
+    </TheadTr>
+   </Thead>
+   <Tbody>
     {#each $accounts_config as a (a.id)}
-     <tr>
-      <td class="center"><AccountStatusIconAndText account={findAccount(a.id)} /></td>
-      <td class="center">{a.settings?.title}</td>
-      <td class="center">{a.credentials.server}</td>
-      <td class="center">{a.credentials.address}</td>
-      <td class="center">{a.enabled ? 'Yes' : 'No'}</td>
-      <td class="center">
-       <div class="action-items">
-        <ActionItem img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => clickEdit(a.id)} />
-        <ActionItem img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
-       </div>
-      </td>
+     <TbodyTr>
+      <Td center={true}><AccountStatusIconAndText account={findAccount(a.id)} /></Td>
+      <Td center={true}>{a.settings?.title}</Td>
+      <Td center={true}>{a.credentials.server}</Td>
+      <Td center={true}>{a.credentials.address}</Td>
+      <Td center={true}>{a.enabled ? 'Yes' : 'No'}</Td>
+      <Td center={true}>
+       <ActionItems>
+        <Item img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => clickEdit(a.id)} />
+        <Item img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
+       </ActionItems>
+      </Td>
       {#if $debug}
-       <td class="center">{a.id}</td>
+       <Td class="center">{a.id}</Td>
       {/if}
-     </tr>
+     </TbodyTr>
     {/each}
-   </tbody>
-  </table>
+   </Tbody>
+  </Table>
  </div>
 </div>
 <Modal title="Add a new account" body={ModalAccountsAddEdit} params={{ id: idItem }} bind:show={showAddEditAccountModal} />

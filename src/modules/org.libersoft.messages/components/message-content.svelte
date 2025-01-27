@@ -1,5 +1,5 @@
 <script>
- import { mount, onMount } from 'svelte';
+ import { mount } from 'svelte';
  import { componentMap } from '../expressions.ts';
  import MessageContentHelper from './message-content-helper.svelte';
  export let level;

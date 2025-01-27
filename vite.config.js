@@ -6,6 +6,11 @@ import path from 'path';
 
 export default defineConfig(({mode}) => {
   return {
+   resolve: process.env.VITEST
+    ? {
+     conditions: ['browser']
+    }
+    : undefined,
    css: {
      preprocessorOptions: {
        scss: {
@@ -16,7 +21,7 @@ export default defineConfig(({mode}) => {
    },
    plugins: [
     sveltekit(),
-    pluginChecker({typescript: true}),
+    ...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
    ],
    server: {
     https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?

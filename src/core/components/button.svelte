@@ -6,6 +6,7 @@
  export let hiddenOnDesktop = false;
  export let width;
  export let onClick;
+ export let padding = '10px';
 
  function handleClick() {
   if (enabled) onClick();
@@ -19,7 +20,6 @@
   justify-content: center;
   gap: 5px;
   text-align: center;
-  padding: 10px;
   border: 1px solid #b90;
   border-radius: 10px;
   background-color: #fd1;
@@ -44,7 +44,7 @@
 </style>
 
 <BaseButton onClick={handleClick}>
- <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={width ? 'width: ' + width : ''}>
+ <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'}>
   <slot>
    {#if img}
     <img src={img} alt={text} />

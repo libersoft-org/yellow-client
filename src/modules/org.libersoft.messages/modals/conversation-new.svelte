@@ -19,6 +19,7 @@
  }
 
  function keyEnter(event) {
+  console.log('keyEnter(); event:', event);
   if (event.key === 'Enter') {
    event.preventDefault();
    clickOpen();
@@ -42,6 +43,6 @@
 
 <div class="group">
  <div class="label">Address:</div>
- <div><InputText placeholder="user@domain.tld" on:keydown={keyEnter} bind:this={address} bind:value /></div>
+ <InputText placeholder="user@domain.tld" onKeydown={keyEnter} bind:this={address} bind:value />
  <Button text="Open" onClick={clickOpen} />
 </div>

@@ -74,7 +74,7 @@
 
  function checkIfScrolledToBottom(div) {
   const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
-  //console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
+  ///console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
   return result;
  }
 
@@ -83,7 +83,7 @@
  }
 
  function updateWindowSize(width, height) {
-  ////console.log('updateWindowSize width:', width, 'height:', height);
+  //console.log('updateWindowSize width:', width, 'height:', height);
   parseScroll();
  }
 
@@ -159,7 +159,7 @@
  }
 
  function gc() {
-  console.log('gc random slice of messagesArray...');
+  //console.log('gc random slice of messagesArray...');
   let x = get(messagesArray);
   let i = Math.floor(Math.random() * x.length);
   x.splice(i, Math.floor(Math.random() * 40));
@@ -178,11 +178,12 @@
    //console.log('handleEvent:', events[i]);
    let event = events[i];
    event.loaders = [];
-   if (event.array === undefined) return;
    uiEvents.push(event);
    saveScrollPosition(event);
    event.wasScrolledToBottom = isScrolledToBottom();
    if (i != events.length - 1) continue;
+   if (event.type === 'resize') continue;
+   if (event.array === undefined) return;
    let messages = event.array;
    if (messages.length === 1 && messages[0].type === 'initial_loading_placeholder') {
     loaders = [];
@@ -341,6 +342,12 @@
   border: 3px solid #000;
   border-radius: 10px;
  }
+
+ /*
+ .debug-text {
+  word-break: break-word;
+ }
+ */
 </style>
 
 {#if $debug}
@@ -367,9 +374,11 @@
  <div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
   <div class="spacer"></div>
   {#each itemsArray as m (m.uid)}
-   {#if $debug}
-    {JSON.stringify(m, null, 2)}
-   {/if}
+   <!--{#if $debug}-->
+   <!-- <div class="debug-text">-->
+   <!--  {JSON.stringify(m, null, 2)}-->
+   <!-- </div>-->
+   <!--{/if}-->
    {#if m.type === 'no_messages'}
     <div>No messages</div>
    {:else if m.type === 'initial_loading_placeholder'}

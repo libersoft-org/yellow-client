@@ -443,7 +443,7 @@ function clearPingTimer(acc) {
 function sendLoginCommand(account) {
  //console.log('Sending login command');
  let acc = get(account);
- send(acc, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
+ send(acc, account, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
   console.log('Login response:', res);
   if (res.error !== 0) {
    acc.error = res.message;
@@ -483,6 +483,13 @@ function setupPing(account) {
   );
  }, 500);*/
 
+ setInterval(() => {
+  if (get(debug)) {
+   acc.bufferedAmount = acc.socket.bufferedAmount;
+   account.update(v => v);
+  }
+ }, 500);
+
  acc.pingTimer = window.setInterval(() => {
   if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
    acc.status = 'Retrying...';
@@ -495,6 +502,7 @@ function setupPing(account) {
   }
   send(
    acc,
+   account,
    'core',
    'ping',
    {},
@@ -617,7 +625,11 @@ export function getGuid(length = 40) {
  return result;
 }
 
-export function send(acc, target, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
+export function send(acc, account, target, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
+ /*
+ acc: account object
+ account: account store, optional, for debugging
+  */
  if (!acc) {
   console.error('Error while sending command: account is not defined');
   return;
@@ -652,8 +664,15 @@ export function send(acc, target, command, params = {}, sendSessionID = true, ca
   console.log(req);
   console.log('------------------');
  }*/
+
  acc.socket.send(JSON.stringify(req));
  acc.lastTransmissionTs = Date.now();
+ acc.bufferedAmount = acc.socket.bufferedAmount;
+
+ if (get(debug) && account) {
+  account.update(v => v);
+ }
+
  return requestID;
 }
 

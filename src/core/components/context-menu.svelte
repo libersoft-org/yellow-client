@@ -10,13 +10,16 @@
  export let width;
  export let height;
  export let scrollable = true;
+ export let disableRightClick = false;
+ export let bottomOffset;
+
  const dispatch = createEventDispatcher();
  const isOpen = writable(open);
  const position = writable([x, y]);
  const currentIndex = writable(-1);
  const hasPopup = writable(false);
- const menuOffsetX = writable(0);
  const ctx = getContext('ContextMenu');
+
  let options = [];
  let direction = 1;
  let prevX = 0;
@@ -48,6 +51,13 @@
 
  export async function openMenu(e) {
   console.log('context-menu openMenu:', e);
+  // Only proceed for right clicks (button 2) or touch events
+  if (disableRightClick && (e.type === 'contextmenu' || e.button === 2)) {
+   return;
+  }
+  if (e.button === 1) {
+   return;
+  }
   e.preventDefault();
   e.stopPropagation();
   console.log('context-menu openMenu type:', e.type);
@@ -57,7 +67,6 @@
   currentInstance = getGuid();
   menus.push({ guid: currentInstance, close });
 
-  //const { currentHeight, currentWidth } = ref.getBoundingClientRect();
   await tick();
   const currentHeight = ref.getBoundingClientRect().height;
   const currentWidth = ref.getBoundingClientRect().width;
@@ -67,12 +76,15 @@
    if (space_left > space_right) x = e.x - currentWidth;
    else x = e.x;
   }
+  let e_y = e.y;
   if (open || y === 0) {
-   menuOffsetX.set(e.x);
-   if (window.innerHeight - currentHeight < e.y) {
-    y = e.y - currentHeight;
+   if (bottomOffset) {
+    e_y = window.innerHeight - currentHeight - bottomOffset;
+   }
+   if (window.innerHeight - currentHeight < e_y) {
+    y = e_y - currentHeight;
     if (y < 10) y = 10;
-   } else y = e.y;
+   } else y = e_y;
   }
   let newHeight = window.innerHeight - y - 10;
   if (newHeight < height) height = newHeight + 'px'; // TODO: this doesn't work well, should make the window smaller if the screen is too small
@@ -86,14 +98,14 @@
 
  $: if (target != null) {
   if (Array.isArray(target)) {
-   target.forEach(node => {
-    node?.addEventListener('contextmenu', openMenu);
-    node?.addEventListener('mousedown', openMenu);
-   });
-  } else {
-   target.addEventListener('contextmenu', openMenu);
-   target.addEventListener('mousedown', openMenu);
-  }
+   target.forEach(node => subscribe(node));
+  } else subscribe(target);
+ }
+
+ function subscribe(node) {
+  if (!node) return;
+  if (!disableRightClick) node.addEventListener('contextmenu', openMenu);
+  node.addEventListener('mousedown', openMenu);
  }
 
  onMount(() => {
@@ -117,7 +129,6 @@
  });
 
  setContext('ContextMenu', {
-  menuOffsetX,
   currentIndex,
   position,
   isOpen,

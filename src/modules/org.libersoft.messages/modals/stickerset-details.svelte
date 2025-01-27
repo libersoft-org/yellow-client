@@ -1,7 +1,7 @@
 <script>
  import { debug } from '../../../core/core.js';
  import { onMount } from 'svelte';
- import { fetchStickerset } from '../messages.js';
+ import { fetchStickerset } from '../stickers.js';
  import StickerSet from '../components/stickerset.svelte';
  export let params;
  let stickerSetData;
