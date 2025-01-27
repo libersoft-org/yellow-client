@@ -149,13 +149,13 @@
  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>
 
-<ContextMenu target={elAttachment}>
+<ContextMenu target={elAttachment} disableRightClick="true">
  <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={sendFile} />
  <ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
  <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
-<ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false}>
+<ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick="true">
  <Expressions height={expressionsHeight} />
 </ContextMenu>
 

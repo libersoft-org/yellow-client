@@ -10,6 +10,7 @@
  export let width;
  export let height;
  export let scrollable = true;
+ export let disableRightClick = false;
  const dispatch = createEventDispatcher();
  const isOpen = writable(open);
  const position = writable([x, y]);
@@ -48,6 +49,13 @@
 
  export async function openMenu(e) {
   console.log('context-menu openMenu:', e);
+  // Only proceed for right clicks (button 2) or touch events
+  if (disableRightClick && (e.type === 'contextmenu' || e.button === 2)) {
+   return;
+  }
+  if (e.button === 1) {
+   return;
+  }
   e.preventDefault();
   e.stopPropagation();
   console.log('context-menu openMenu type:', e.type);
@@ -57,7 +65,6 @@
   currentInstance = getGuid();
   menus.push({ guid: currentInstance, close });
 
-  //const { currentHeight, currentWidth } = ref.getBoundingClientRect();
   await tick();
   const currentHeight = ref.getBoundingClientRect().height;
   const currentWidth = ref.getBoundingClientRect().width;
@@ -86,14 +93,14 @@
 
  $: if (target != null) {
   if (Array.isArray(target)) {
-   target.forEach(node => {
-    node?.addEventListener('contextmenu', openMenu);
-    node?.addEventListener('mousedown', openMenu);
-   });
-  } else {
-   target.addEventListener('contextmenu', openMenu);
-   target.addEventListener('mousedown', openMenu);
-  }
+   target.forEach(node => subscribe(node));
+  } else subscribe(target);
+ }
+
+ function subscribe(node) {
+  if (!node) return;
+  if (!disableRightClick) node.addEventListener('contextmenu', openMenu);
+  node.addEventListener('mousedown', openMenu);
  }
 
  onMount(() => {
