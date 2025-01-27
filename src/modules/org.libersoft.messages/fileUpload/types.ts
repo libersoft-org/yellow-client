@@ -1,10 +1,6 @@
 import type { Writable } from 'svelte/store'
 
-export interface FileUploadStores {
- uploads: Writable<FileUploadRecord[]>;
-}
-
-export enum FileUploadType {
+export enum FileUploadRole {
  ACTIVE_UPLOAD = 'ACTIVE_UPLOAD',
  SENDER = 'SENDER',
  RECEIVER = 'RECEIVER',
@@ -19,7 +15,9 @@ export enum FileUploadRecordStatus {
  BEGUN = 'BEGUN',
  UPLOADING = 'UPLOADING',
  FINISHED = 'FINISHED',
- STOPPED = 'STOPPED',
+ CANCELED = 'CANCELED',
+ PAUSED = 'PAUSED',
+ ERROR = 'ERROR',
 }
 
 export interface FileUploadRecord {
@@ -33,5 +31,52 @@ export interface FileUploadRecord {
  chunkSize: number;
 }
 
+export interface FileUpload {
+ role: FileUploadRole;
+ file: File | null;
+ record: FileUploadRecord;
+ chunksSent: number[];
+ uploadInterval: NodeJS.Timeout | null;
+ paused?: boolean;
+ pushChunk?: () => Promise<void>;
+}
+
+export interface FileDownload {
+ record: FileUploadRecord
+ chunksReceived: any[]
+ data: any
+ paused?: boolean;
+ pullChunk?: () => Promise<void>;
+}
+
+export interface FileUploadChunk {
+ chunkId: number
+ uploadId: string
+ checksum: string
+ data: string // base64
+}
+
 export type MakeFileUploadRecordData = Partial<FileUploadRecord>
  & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize'>
+
+export type MakeFileUploadData = Partial<FileUpload>
+ & Pick<FileUpload, 'role' | 'file' | 'record'>
+
+export type FileUploadStoreValue = {
+ [key: string]: FileUpload;
+}
+
+export type FileDownloadStoreValue = {
+ [key: string]: FileDownload;
+}
+
+export type BaseStoreType<StoreValue, Item> = {
+ store: Writable<StoreValue>
+ get: (id: string) => Item | undefined
+ set: (id: string, download: Item) => void
+ patch: (id: string, data: Partial<Item>) => void
+ delete: (id: string) => void
+}
+
+export type FileUploadStoreType = BaseStoreType<FileUploadStoreValue, FileUpload>
+export type FileDownloadStoreType = BaseStoreType<FileDownloadStoreValue, FileDownload>

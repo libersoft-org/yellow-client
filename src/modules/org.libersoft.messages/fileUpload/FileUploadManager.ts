@@ -1,7 +1,12 @@
-import { type FileUploadRecord, FileUploadRecordType, FileUploadType } from './types.ts'
-import FileUploadStore from './fileUploadStore.ts'
-import { blobToBase64, makeFileUploadRecord } from './utils.ts'
+import {
+ type FileUpload,
+ type FileUploadRecord, FileUploadRecordStatus,
+ FileUploadRecordType,
+ FileUploadRole, type FileUploadStoreType
+} from './types.ts'
+import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts'
 import EventEmitter from 'events'
+import fileUploadStore from "./fileUploadStore.ts";
 
 export enum FileUploadManagerEvents {
  BEFORE_UPLOAD_BEGIN = 'beforeUploadBegin',
@@ -12,28 +17,22 @@ export enum FileUploadManagerEvents {
  RECORD_UPDATE = 'recordUpdate',
 }
 
-export interface FileUpload {
- type: FileUploadType
- file: File
- record: FileUploadRecord
- chunksSent: number[]
- uploadInterval: NodeJS.Timeout | null
- paused?: boolean
-}
-
-export interface FileDownload {
- record: FileUploadRecord
- chunksReceived: number[]
- data: any
-}
-
 class FileUploadManager extends EventEmitter {
- uploads: Map<string, FileUpload> = new Map()
- downloads: Map<string, FileDownload> = new Map()
+ uploadsStore: FileUploadStoreType
+
+ p2pThrottleMemory = new Map()
+ p2pMaxBatchChunks = 10
+
+ constructor(uploadsStore: FileUploadStoreType) {
+  super();
+
+  this.uploadsStore = uploadsStore
+ }
 
  beginUpload (
   files: FileList,
-  type: FileUploadRecordType
+  type: FileUploadRecordType,
+  recipients: string[]
  ) {
   const uploads: FileUpload[] = []
   for (let i = 0; i < files.length; i++) {
@@ -45,105 +44,149 @@ class FileUploadManager extends EventEmitter {
     fileSize: file.size,
     chunkSize: 1024 * 64, // todo: default/conf value
    })
-   const upload = {
-    type: FileUploadType.ACTIVE_UPLOAD,
+   const upload = makeFileUpload({
+    role: FileUploadRole.SENDER,
     file,
-    record,
-    chunksSent: [],
-    uploadInterval: null
-   }
-   this.uploads.set(upload.record.id, upload)
+    record
+   })
+   this.uploadsStore.set(upload.record.id, upload)
    uploads.push(upload)
   }
 
-  this.emit(FileUploadManagerEvents.BEFORE_UPLOAD_BEGIN, {uploads})
-  this.emit(FileUploadManagerEvents.UPLOAD_BEGIN, {uploads})
-  this.emit(FileUploadManagerEvents.AFTER_UPLOAD_BEGIN, {uploads})
+  this.emit(FileUploadManagerEvents.BEFORE_UPLOAD_BEGIN, {uploads, recipients})
+  this.emit(FileUploadManagerEvents.UPLOAD_BEGIN, {uploads, recipients})
+  this.emit(FileUploadManagerEvents.AFTER_UPLOAD_BEGIN, {uploads, recipients})
  }
 
- async startUpload (records: FileUploadRecord[]) {
-  records.forEach(record => {
-   const upload = this.uploads.get(record.id)
+ async getChunk (uploadId: string, chunkId: number, chunkSize: number) {
+  const upload = this.uploadsStore.get(uploadId)
+
+  if (!upload) {
+   throw new Error('Upload not found')
+  }
+  if (!upload.file) {
+   throw new Error('File is not set in file transfer')
+  }
+
+  const blob = upload.file.slice(
+   chunkId * chunkSize,
+   chunkId * chunkSize + chunkSize
+  )
+
+  const chunk = {
+   chunkId,
+   uploadId,
+   checksum: '',
+   data: await blobToBase64(blob)
+  }
+
+  return {chunk, upload, blob}
+ }
+
+ async startUploadSerial (
+  records: FileUploadRecord[],
+  pushFn: (data: {chunk: any}) => Promise<void>
+ ) {
+  for (let i = 0; i < records.length; i++) {
+   const record = records[i]
+   const upload = this.uploadsStore.get(record.id)
+
    if (!upload) {
-    return
+    continue
+   }
+   if (!upload.file) {
+    continue
    }
 
-   upload.uploadInterval = setInterval(async () => {
-    if (upload.paused) {
+   const {chunksSent} = upload
+   const {chunkSize} = upload.record
+
+   upload.pushChunk = async () => {
+    if (upload.record.status === FileUploadRecordStatus.CANCELED) {
+     upload.pushChunk = undefined
      return
     }
-    const {chunksSent} = upload
-    const {chunkSize} = upload.record
+    if (upload.record.status === FileUploadRecordStatus.PAUSED) {
+     return
+    }
+    if (chunksSent.length === Math.ceil(record.fileSize / chunkSize)) {
+     return
+    }
+    if (
+     record.type === FileUploadRecordType.P2P
+     && this.p2pThrottleMemory.get(record.id) >= this.p2pMaxBatchChunks
+    ) {
+     return
+    }
+
     const lastChunkId = chunksSent[chunksSent.length - 1]
     const newChunkId = lastChunkId === undefined ? 0 : lastChunkId + 1
-    const blob = upload.file.slice(
-     newChunkId * chunkSize,
-     newChunkId * chunkSize + chunkSize
-    )
+    const {chunk, blob} = await this.getChunk(upload.record.id, newChunkId, chunkSize)
 
-    // end if last or no more data
-    if (blob.size === 0) {
-     clearInterval(upload.uploadInterval as NodeJS.Timeout)
-     return
-    }
-
-    const chunk = {
-     chunkId: newChunkId,
-     uploadId: record.id,
-     checksum: '',
-     data: await blobToBase64(blob)
-    }
-
+    console.warn('AAA pushFn chunk:', chunk);
+    await pushFn({chunk})
     chunksSent.push(newChunkId)
-    // this.emit(FileUploadManagerEvents.RECORD_UPDATE, {uploads})
-    this.emit(FileUploadManagerEvents.UPLOAD_CHUNK, {upload, chunk})
-   }, 1000)
-  })
- }
+    this.uploadsStore.set(record.id, upload)
 
- getUpload (uploadId: string) {
-  const existingUpload = this.uploads.get(uploadId)
+    if (record.type === FileUploadRecordType.P2P) {
+     const throttleMemory = this.p2pThrottleMemory.get(record.id) || 0
+     this.p2pThrottleMemory.set(record.id, throttleMemory + 1)
+    }
 
-  if (existingUpload) {
-   return existingUpload
+    upload.pushChunk && await upload.pushChunk()
+   }
+   await upload.pushChunk()
   }
  }
 
- updateUploadRecord (uploadId: string, record: FileUploadRecord) {
-  const upload = this.uploads.get(uploadId)
-
+ async continueP2PUpload (uploadId: string) {
+  // proceed to next batch
+  const upload = this.uploadsStore.get(uploadId)
   if (!upload) {
    return
   }
-
-  upload.record = record
-  this.emit(FileUploadManagerEvents.RECORD_UPDATE, {upload})
- }
-
- downloadFile (record: FileUploadRecord) {
-
+  if (!upload.file) {
+   return
+  }
+  // reset throttle memory
+  this.p2pThrottleMemory.set(uploadId, 0)
+  upload.pushChunk && await upload.pushChunk()
  }
 
  pauseUpload (uploadId: string) {
-  const upload = this.uploads.get(uploadId)
+  const upload = this.uploadsStore.get(uploadId)
 
   if (!upload) {
    return
   }
 
-  upload.paused = true
+  upload.record.status = FileUploadRecordStatus.PAUSED
+  this.uploadsStore.set(uploadId, upload)
  }
 
  resumeUpload (uploadId: string) {
-  const upload = this.uploads.get(uploadId)
+  const upload = this.uploadsStore.get(uploadId)
 
   if (!upload) {
    return
   }
 
-  upload.paused = false
+  upload.record.status = FileUploadRecordStatus.UPLOADING
+  this.uploadsStore.set(uploadId, upload)
+  upload.pushChunk && upload.pushChunk()
+ }
+
+ cancelUpload (uploadId: string) {
+  const upload = this.uploadsStore.get(uploadId)
+
+  if (!upload) {
+   return
+  }
+
+  upload.record.status = FileUploadRecordStatus.CANCELED
+  this.uploadsStore.set(uploadId, upload)
  }
 }
 
-const fileUploadManager = new FileUploadManager();
+const fileUploadManager = new FileUploadManager(fileUploadStore);
 export default fileUploadManager;

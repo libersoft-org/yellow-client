@@ -7,6 +7,7 @@
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalHTML from '../modals/html.svelte';
+ import FileUpload from '../modals/file-upload.svelte';
  import Expressions from './expressions.svelte';
  import fileUploadManager from '../fileUpload/FileUploadManager.ts'
  import { FileUploadRecordType } from '../fileUpload/types.ts'
@@ -18,6 +19,7 @@
  let elFileInputP2P;
  let text;
  let showHTMLModal = false;
+ let showFileUploadModal = false;
  let expressionsHeight = '500px';
  let showExpressions = false;
 
@@ -30,6 +32,10 @@
    resizeMessage();
   },
  });
+
+ function setFileUploadModal(value) {
+  showFileUploadModal = value;
+ }
 
  export async function doSendMessage(message, html) {
   //console.log('doSendMessage', message);
@@ -83,22 +89,6 @@
  function sendLocation() {
   console.log('clicked on location');
  }
-
- const onFileUpload = (e) => {
-  let files = e.target.files;
-  fileUploadManager.beginUpload(files, FileUploadRecordType.SERVER);
-
-  // clear the file input
-  elFileInput.value = '';
- }
-
- const onFileUploadP2P = (e) => {
-  let files = e.target.files;
-  fileUploadManager.beginUpload(files, FileUploadRecordType.P2P);
-
-  // clear the file input
-  elFileInput.value = '';
- }
 </script>
 
 <style>
@@ -148,10 +138,7 @@
 </div>
 
 <ContextMenu target={elAttachment}>
- <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" onClick={() => elFileInput.click()} />
- <input type="file" id="fileInput" bind:this={elFileInput} on:change={onFileUpload} multiple style="display: none;">
- <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File P2P" onClick={() => elFileInputP2P.click()} />
- <input type="file" id="fileInput" bind:this={elFileInputP2P} on:change={onFileUploadP2P} multiple style="display: none;">
+ <ContextMenuItem img="modules/org.libersoft.messages/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/html.svg" label="HTML" onClick={sendHTML} />
  <ContextMenuItem img="modules/org.libersoft.messages/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
@@ -169,3 +156,9 @@
 -->
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />
+<Modal
+ title="File Upload"
+ body={FileUpload}
+ bind:show={showFileUploadModal}
+ params={{setFileUploadModal: setFileUploadModal}}
+/>

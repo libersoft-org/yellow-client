@@ -14,8 +14,11 @@ import {
 import DOMPurify from 'dompurify'
 import { db } from './db'
 import fileUploadManager, { FileUploadManagerEvents } from './fileUpload/FileUploadManager'
-import fileUploadStore, {uploads} from './fileUpload/fileUploadStore.ts'
-import { FileUploadRecordType, FileUploadType } from './fileUpload/types.ts'
+import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from './fileUpload/types.ts'
+import fileDownloadManager from "./fileUpload/FileDownloadManager.ts";
+import fileUploadStore from "./fileUpload/fileUploadStore.ts";
+import fileDownloadStore from "./fileUpload/fileDownloadStore.ts";
+import { wrapConsecutiveElements } from "./utils/html.utils.ts";
 
 export const identifier = 'org.libersoft.messages'
 
@@ -110,8 +113,6 @@ function setupFileUploadManager (acc) {
 
  // upload manager
  fileUploadManager.on(FileUploadManagerEvents.BEFORE_UPLOAD_BEGIN, ({ uploads }) => {
-  fileUploadStore.uploads.add(uploads)
-
   let messageHtml = ''
   uploads.forEach(upload => {
    messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`
@@ -120,25 +121,57 @@ function setupFileUploadManager (acc) {
   sendMessage(messageHtml)
  })
 
- fileUploadManager.on(FileUploadManagerEvents.UPLOAD_BEGIN, ({ uploads }) => {
+ fileUploadManager.on(FileUploadManagerEvents.UPLOAD_BEGIN, ({ uploads, recipients }) => {
   const records = uploads.map(upload => upload.record)
-  sendData(acc, 'upload_begin', { records }, true, (req, res) => {
+  sendData(acc, 'upload_begin', {
+   records,
+   recipients
+  }, true, (req, res) => {
    if (res.error !== 0) {
     return
    }
    if (uploads[0].record.type === FileUploadRecordType.SERVER) {
-    fileUploadManager.startUpload(res.allowedRecords)
+    fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync)
    }
   })
  })
 
  fileUploadManager.on(FileUploadManagerEvents.UPLOAD_CHUNK, ({ upload, chunk }) => {
+  uploadChunk({ chunk })
+  fileUploadStore.set(upload.record.id, upload)
+ })
+}
+
+const makeUploadChunkAsyncFn = acc => ({ chunk }) => {
+ return new Promise((resolve, reject) => {
+  const acc = get(active_account)
   sendData(acc, 'upload_chunk', { chunk }, true, (req, res) => {
    if (res.error !== 0) {
-    return
+    reject()
    }
+   resolve()
   })
-  fileUploadStore.uploads.update(upload.record.id, upload)
+ })
+}
+
+function uploadChunkAsync ({ chunk }) {
+ return new Promise((resolve, reject) => {
+  const acc = get(active_account)
+  sendData(acc, 'upload_chunk', { chunk }, true, (req, res) => {
+   if (res.error !== 0) {
+    reject()
+   }
+   resolve()
+  })
+ })
+}
+
+function uploadChunk ({ chunk }) {
+ const acc = get(active_account)
+ sendData(acc, 'upload_chunk', { chunk }, true, (req, res) => {
+  if (res.error !== 0) {
+   return
+  }
  })
 }
 
@@ -150,8 +183,9 @@ export function initComms (acc) {
 
  // file transfer events
  moduleEventSubscribe(acc, 'upload_update')
- moduleEventSubscribe(acc, 'download_chunk')
+ // moduleEventSubscribe(acc, 'download_chunk')
  moduleEventSubscribe(acc, 'upload_p2p_accepted')
+ moduleEventSubscribe(acc, 'ask_for_chunk')
 
  let data = acc.module_data[identifier]
  console.log('initComms:', data);
@@ -167,8 +201,9 @@ export function initComms (acc) {
 
  // file transfer events
  acc.events.addEventListener('upload_update', upload_update)
- acc.events.addEventListener('download_chunk', download_chunk)
+ // acc.events.addEventListener('download_chunk', download_chunk)
  acc.events.addEventListener('upload_p2p_accepted', upload_p2p_accepted)
+ acc.events.addEventListener('ask_for_chunk', ask_for_chunk)
 
  listConversations(acc)
  setupFileUploadManager(acc)
@@ -176,67 +211,84 @@ export function initComms (acc) {
 
 function upload_p2p_accepted (event){
  const data = event.detail.data
- const upload = fileUploadManager.uploads.get(data.uploadId)
- fileUploadManager.startUpload([upload.record])
- // fileUploadManager.handleP2PUploadBegin(data.uploadId)
+ const upload = fileUploadManager.get(data.uploadId)
+ fileUploadManager.startUploadSerial([upload.record])
 }
 
-function upload_update (event){
- const data = event.detail.data
+function ask_for_chunk (event){
+ const {uploadId, offsetBytes, chunkSize} = event.detail.data
+ const upload = fileUploadManager.uploadsStore.get(uploadId)
+ console.log('upload', upload);
+ if (!upload) {
+  console.error('upload not found')
+  return
+ }
 
- uploads.update(uploads => {
-  const found = uploads.find(u => u.record.id === data.record.id)
-  if (found) {
-   found.record = data.record
-  }
-  return uploads
- })
-}
-
-function download_chunk (event){
- const { data, chunkId, chunkSize, fileSize, uploadId } = event.detail.data.chunk;
- const downloads = get(fileUploadStore.downloads)
- const download = downloads.find(d => d.record.id === uploadId)
-
- // Decode Base64 chunk back to binary
- const binaryChunk = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
- download.chunksReceived[chunkId] = binaryChunk; // Store chunk in the correct order
-
- fileUploadStore.downloads.update(downloads => {
-  downloads.find(d => d.record.id === uploadId).chunksReceived = download.chunksReceived
-  return downloads
- })
-
- // Check if all chunks are received
- if (download.chunksReceived.length * chunkSize >= fileSize) {
-  assembleFile(download.chunksReceived, download.record.fileName);
-  // Clean up memory
-  // download.chunksReceived = [];
+ if (upload.record.status === FileUploadRecordStatus.BEGUN) {
+  fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync)
+ } else {
+  fileUploadManager.continueP2PUpload(uploadId)
  }
 }
 
-export function downloadAttachment (record) {
- let acc = get(active_account)
- fileUploadStore.downloads.add([{
-  record,
-  chunksReceived: [],
-  data: []
- }])
- sendData(acc, 'download_attachment', {
-  id: record.id
- }, true, (req, res) => {
-  // fileUploadManager.downloadFile()
+function upload_update (event){
+ const {record} = event.detail.data
+
+ // todo: maybe patch only
+ fileUploadStore.store.update(store => {
+  const upload = store[record.id]
+  if (upload) {
+   upload.record = record
+   return {...store}
+  }
+  return store
+ })
+
+ fileDownloadStore.store.update(store => {
+  const download = store[record.id]
+  if (download) {
+   download.record = record
+   return {...store}
+  }
+  return store
  })
 }
 
-function assembleFile(receivedChunks, fileName) {
- const blob = new Blob(receivedChunks); // Combine all chunks into a Blob
- const downloadLink = document.createElement('a');
- downloadLink.href = URL.createObjectURL(blob);
- downloadLink.download = fileName;
- downloadLink.click();
+export function downloadAttachmentSerial (record) {
+ const acc = get(active_account)
+ fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc))
+}
 
- console.log(`File download complete: ${fileName}`);
+const makeDownloadChunkAsyncFn = acc => ({ uploadId, offsetBytes, chunkSize }) => {
+ return new Promise((resolve, reject) => {
+  sendData(acc, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, (req, res) => {
+   if (res.error !== 0) {
+    reject()
+   }
+   resolve(res)
+  })
+ })
+}
+
+export function cancelUpload (uploadId) {
+ fileUploadManager.cancelUpload(uploadId)
+ sendData(get(active_account), 'upload_cancel', { uploadId }, true, (req, res) => {
+
+ })
+}
+
+export function pauseUpload (uploadId) {
+ fileUploadManager.pauseUpload(uploadId)
+ sendData(get(active_account), 'upload_update_status', { uploadId, status: FileUploadRecordStatus.PAUSED }, true, (req, res) => {
+
+ })
+}
+
+export function resumeUpload (uploadId) {
+ fileUploadManager.resumeUpload(uploadId)
+ sendData(get(active_account), 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {
+
+ })
 }
 
 export function deinitComms (acc) {
@@ -244,8 +296,9 @@ export function deinitComms (acc) {
  sendData(acc, 'user_unsubscribe', { event: 'seen_message' })
  sendData(acc, 'user_unsubscribe', { event: 'seen_inbox_message' })
  sendData(acc, 'user_unsubscribe', { event: 'upload_update' })
- sendData(acc, 'user_unsubscribe', { event: 'download_chunk' })
+ // sendData(acc, 'user_unsubscribe', { event: 'download_chunk' })
  sendData(acc, 'user_unsubscribe', { event: 'upload_p2p_accepted' })
+ sendData(acc, 'user_unsubscribe', { event: 'ask_for_chunk' })
 }
 
 export function deinitData (acc) {
@@ -261,8 +314,9 @@ export function deinitData (acc) {
 
  // file transfer events
  acc.events.removeEventListener('upload_update', upload_update)
- acc.events.removeEventListener('download_chunk', download_chunk)
+ // acc.events.removeEventListener('download_chunk', download_chunk)
  acc.events.removeEventListener('upload_p2p_accepted', upload_p2p_accepted)
+ acc.events.removeEventListener('ask_for_chunk', ask_for_chunk)
 
  data.events.set([])
  data.messagesArray.set([])
@@ -277,15 +331,24 @@ export function loadUploadData (uploadId) {
  sendData(acc, 'upload_get', {
   id: uploadId
  }, true, (req, res) => {
-  const record = res.data.record
+  const {record, uploadData} = res.data
   const upload = {
-   type: acc.id === record.fromUserId ? FileUploadType.SENDER : FileUploadType.RECEIVER,
+   ...uploadData,
    file: null,
    record,
    chunksSent: [],
    uploadInterval: null
   }
-  fileUploadStore.uploads.add([upload])
+
+  // perform checks
+  if (
+   upload.role === FileUploadRole.SENDER
+   && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)
+  ) {
+   upload.status = FileUploadRecordStatus.ERROR
+  }
+
+  fileUploadStore.set(uploadId, upload)
  })
 }
 
@@ -640,7 +703,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 export function saneHtml (content) {
  //console.log('saneHtml:');
  let sane = DOMPurify.sanitize(content, {
-  ADD_TAGS: ['Sticker', 'Gif', 'Emoji', 'Attachment'],
+  ADD_TAGS: ['Sticker', 'Gif', 'Emoji', 'Attachment', 'AttachmentsWrapper'],
   //FORBID_CONTENTS: ['sticker'],
   ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'], // TODO: fixme, security issue, should only be allowed on the relevant elements
   RETURN_DOM_FRAGMENT: true,
@@ -663,6 +726,7 @@ export function stripHtml (html) {
 
 export function processMessage (content) {
  let html = saneHtml(content)
+ wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper')
  return {
   type: 'html',
   body: html,
