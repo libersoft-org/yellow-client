@@ -11,13 +11,15 @@
  export let height;
  export let scrollable = true;
  export let disableRightClick = false;
+ export let bottomOffset;
+
  const dispatch = createEventDispatcher();
  const isOpen = writable(open);
  const position = writable([x, y]);
  const currentIndex = writable(-1);
  const hasPopup = writable(false);
- const menuOffsetX = writable(0);
  const ctx = getContext('ContextMenu');
+
  let options = [];
  let direction = 1;
  let prevX = 0;
@@ -74,12 +76,15 @@
    if (space_left > space_right) x = e.x - currentWidth;
    else x = e.x;
   }
+  let e_y = e.y;
   if (open || y === 0) {
-   menuOffsetX.set(e.x);
-   if (window.innerHeight - currentHeight < e.y) {
-    y = e.y - currentHeight;
+   if (bottomOffset) {
+    e_y = window.innerHeight - currentHeight - bottomOffset;
+   }
+   if (window.innerHeight - currentHeight < e_y) {
+    y = e_y - currentHeight;
     if (y < 10) y = 10;
-   } else y = e.y;
+   } else y = e_y;
   }
   let newHeight = window.innerHeight - y - 10;
   if (newHeight < height) height = newHeight + 'px'; // TODO: this doesn't work well, should make the window smaller if the screen is too small
@@ -124,7 +129,6 @@
  });
 
  setContext('ContextMenu', {
-  menuOffsetX,
   currentIndex,
   position,
   isOpen,

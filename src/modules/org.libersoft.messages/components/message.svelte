@@ -249,37 +249,13 @@
   height: 24px;
  }
 
- .message .menu {
-  z-index: 10;
-  display: none;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 20px;
-  height: 20px;
-  padding: 5px;
-  border-radius: 10px;
-  background-color: #fefdf7;
-  border: 1px solid #cecdc7;
-  cursor: pointer;
- }
-
  .debug {
   word-break: break-word;
- }
-
- @media (hover: hover) and (pointer: fine) {
-  .message:hover .menu {
-   display: flex;
-  }
  }
 </style>
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu|preventDefault={rightClickContextMenu}>
  <div bind:this={elIntersectionObserver}></div>
- <div class="menu" role="button" tabindex="0" bind:this={elCaret}>
-  <img src="img/caret-down-gray.svg" alt="Menu" />
- </div>
  <!--<Sticker file="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/lottie.json" />-->
  <!--<Reply name="Someone" text="Some text" />-->
  <!--<Audio file="modules/{identifier}/audio/message.mp3" />-->

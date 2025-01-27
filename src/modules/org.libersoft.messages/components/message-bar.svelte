@@ -12,6 +12,7 @@
  let elAttachment;
  let elExpressions;
  let elMessage;
+ let elMessageBar;
  let text;
  let showHTMLModal = false;
  let expressionsHeight = '500px';
@@ -132,7 +133,7 @@
  }
 </style>
 
-<div class="message-bar">
+<div class="message-bar" bind:this={elMessageBar}>
  <div bind:this={elAttachment}>
   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
  </div>
@@ -149,13 +150,13 @@
  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>
 
-<ContextMenu target={elAttachment} disableRightClick="true">
+<ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
  <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={sendFile} />
  <ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
  <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
-<ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick="true">
+<ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
  <Expressions height={expressionsHeight} />
 </ContextMenu>
 
