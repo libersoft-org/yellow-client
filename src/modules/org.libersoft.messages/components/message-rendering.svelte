@@ -1,6 +1,7 @@
 <script>
  import { debug } from '../../../core/core.js';
  import MessageContent from './message-content.svelte';
+ import MessageContentNew from './message-content-new.svelte';
  export let messageContent;
  let messageContentContainer;
  // ensure messageContentContainer is thrown away and re-created when messageContent changes, because MessageContent modifies it imperatively
@@ -43,7 +44,8 @@
 {#each dummyArray as messageContent}
  {#if messageContent.format === 'html'}
   <div class="text" bind:this={messageContentContainer}>
-   <MessageContent level={0} container={messageContentContainer} node={messageContent.body} />
+   <!--<MessageContent level={0} container={messageContentContainer} node={messageContent.body} />-->
+   <MessageContentNew rootNode={messageContent.body} />
   </div>
  {:else}
   <!-- TODO: Unused, switch plaintext / HTML -->

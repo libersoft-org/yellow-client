@@ -1,18 +1,12 @@
 <script>
  import ProgressBar from './progressbar.svelte';
+ import { humanSize } from '../../../core/utils/file.utils.js';
  export let file = '';
  export let total = 0;
  export let uploaded = 0;
  export let download = false;
 
- function humanSize(bytes, decimals = 2) {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
- }
+ $: percent = total > 0 ? Math.round((uploaded / total) * 100) : 0;
 </script>
 
 <style>
@@ -33,12 +27,14 @@
 
 <div class="upload">
  <div class="file">
-  <span class="bold">{download ? 'Downloading' : 'Uploading'}:</span>
-  <span>{file}</span>
+  <span class="bold">{download ? 'Downloading' : 'Uploading'} </span>
+  {#if file}
+   <span>{file}</span>
+  {/if}
  </div>
- <ProgressBar color="#db0" moving={true} value={50} />
+ <ProgressBar color="#db0" moving={true} value={percent} />
  <div class="text">
   <div class="size">{humanSize(uploaded)} / {humanSize(total)}</div>
-  <div class="percent">50%</div>
+  <div class="percent">{percent}%</div>
  </div>
 </div>

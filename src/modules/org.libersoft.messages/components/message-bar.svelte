@@ -7,14 +7,19 @@
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalHTML from '../modals/html.svelte';
+ import FileUpload from '../modals/file-upload.svelte';
  import Expressions from './expressions.svelte';
+ import fileUploadManager from '../fileUpload/FileUploadManager.ts';
+ import { FileUploadRecordType } from '../fileUpload/types.ts';
  //import {  init_emojis } from '../emojis.js';
+
  let elAttachment;
  let elExpressions;
  let elMessage;
  let elMessageBar;
  let text;
  let showHTMLModal = false;
+ let showFileUploadModal = false;
  let expressionsHeight = '500px';
  let showExpressions = false;
 
@@ -32,6 +37,10 @@
    resizeMessage();
   },
  });
+
+ function setFileUploadModal(value) {
+  showFileUploadModal = value;
+ }
 
  export async function insertText(text) {
   /* insert text at the current cursor position */
@@ -91,10 +100,6 @@
   console.log('clicked on record mic / camera - long press to record, short press to switch mic / camera');
  }
 
- function sendFile() {
-  console.log('clicked on file');
- }
-
  function sendHTML() {
   showHTMLModal = true;
  }
@@ -150,8 +155,9 @@
  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>
 
+
 <ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
- <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={sendFile} />
+ <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} />
  <ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
  <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
@@ -165,3 +171,4 @@
 -->
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />
+<Modal title="File Upload" body={FileUpload} bind:show={showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />

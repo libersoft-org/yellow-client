@@ -1,8 +1,15 @@
 import { replaceEmojisWithTags, start_emojisets_fetch } from './emojis.js';
 import { get, writable } from 'svelte/store';
+import DOMPurify from 'dompurify';
+import { db } from './db';
+import fileUploadManager, { FileUploadManagerEvents } from './fileUpload/FileUploadManager';
+import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from './fileUpload/types.ts';
+import fileDownloadManager from './fileUpload/FileDownloadManager.ts';
+import fileUploadStore from './fileUpload/fileUploadStore.ts';
+import fileDownloadStore from './fileUpload/fileDownloadStore.ts';
+import { wrapConsecutiveElements } from './utils/html.utils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
-import DOMPurify from 'dompurify';
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
 export let conversationsArray = relay(md, 'conversationsArray');
@@ -95,39 +102,257 @@ function moduleEventSubscribe(acc, event_name) {
  });
 }
 
+let fileManagerInited = false; // todo fix by clearing on dev HMR
+function setupFileUploadManager(acc) {
+ if (fileManagerInited) {
+  return;
+ }
+ fileManagerInited = true;
+
+ // upload manager
+ fileUploadManager.on(FileUploadManagerEvents.BEFORE_UPLOAD_BEGIN, ({ uploads }) => {
+  let messageHtml = '';
+  uploads.forEach(upload => {
+   messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
+  });
+
+  sendMessage(messageHtml);
+ });
+
+ fileUploadManager.on(FileUploadManagerEvents.UPLOAD_BEGIN, ({ uploads, recipients }) => {
+  const records = uploads.map(upload => upload.record);
+  sendData(
+   acc,
+   'upload_begin',
+   {
+    records,
+    recipients,
+   },
+   true,
+   (req, res) => {
+    if (res.error !== 0) {
+     return;
+    }
+    if (uploads[0].record.type === FileUploadRecordType.SERVER) {
+     fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
+    }
+   }
+  );
+ });
+
+ fileUploadManager.on(FileUploadManagerEvents.UPLOAD_CHUNK, ({ upload, chunk }) => {
+  uploadChunk({ chunk });
+  fileUploadStore.set(upload.record.id, upload);
+ });
+}
+
+const makeUploadChunkAsyncFn =
+ acc =>
+ ({ chunk }) => {
+  return new Promise((resolve, reject) => {
+   const acc = get(active_account);
+   sendData(acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
+    if (res.error !== 0) {
+     reject();
+    }
+    resolve();
+   });
+  });
+ };
+
+function uploadChunkAsync({ chunk }) {
+ return new Promise((resolve, reject) => {
+  const acc = get(active_account);
+  sendData(acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
+   if (res.error !== 0) {
+    reject();
+   }
+   resolve();
+  });
+ });
+}
+
+function uploadChunk({ chunk }) {
+ const acc = get(active_account);
+ sendData(acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
+  if (res.error !== 0) {
+   return;
+  }
+ });
+}
+
 export function initComms(acc) {
+ // message events
  moduleEventSubscribe(acc, 'new_message');
  moduleEventSubscribe(acc, 'seen_message');
  moduleEventSubscribe(acc, 'seen_inbox_message');
+
+ // file transfer events
+ moduleEventSubscribe(acc, 'upload_update');
+ // moduleEventSubscribe(acc, 'download_chunk')
+ moduleEventSubscribe(acc, 'upload_p2p_accepted');
+ moduleEventSubscribe(acc, 'ask_for_chunk');
+
  let data = acc.module_data[identifier];
- //console.log('initComms:', data);
+ console.log('initComms:', data);
+
  data.new_message_listener = event => eventNewMessage(acc, event);
  data.seen_message_listener = event => eventSeenMessage(acc, event);
  data.seen_inbox_message_listener = event => eventSeenInboxMessage(acc, event);
+
+ // message events
  acc.events.addEventListener('new_message', data.new_message_listener);
  acc.events.addEventListener('seen_message', data.seen_message_listener);
  acc.events.addEventListener('seen_inbox_message', data.seen_inbox_message_listener);
+
+ // file transfer events
+ acc.events.addEventListener('upload_update', upload_update);
+ // acc.events.addEventListener('download_chunk', download_chunk)
+ acc.events.addEventListener('upload_p2p_accepted', upload_p2p_accepted);
+ acc.events.addEventListener('ask_for_chunk', ask_for_chunk);
+
  listConversations(acc);
+ setupFileUploadManager(acc);
+}
+
+function upload_p2p_accepted(event) {
+ const data = event.detail.data;
+ const upload = fileUploadManager.get(data.uploadId);
+ fileUploadManager.startUploadSerial([upload.record]);
+}
+
+function ask_for_chunk(event) {
+ const { uploadId, offsetBytes, chunkSize } = event.detail.data;
+ const upload = fileUploadManager.uploadsStore.get(uploadId);
+ console.log('upload', upload);
+ if (!upload) {
+  console.error('upload not found');
+  return;
+ }
+
+ if (upload.record.status === FileUploadRecordStatus.BEGUN) {
+  fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync);
+ } else {
+  fileUploadManager.continueP2PUpload(uploadId);
+ }
+}
+
+function upload_update(event) {
+ const { record } = event.detail.data;
+
+ // todo: maybe patch only
+ fileUploadStore.store.update(store => {
+  const upload = store[record.id];
+  if (upload) {
+   upload.record = record;
+   return { ...store };
+  }
+  return store;
+ });
+
+ fileDownloadStore.store.update(store => {
+  const download = store[record.id];
+  if (download) {
+   download.record = record;
+   return { ...store };
+  }
+  return store;
+ });
+}
+
+export function downloadAttachmentSerial(record) {
+ const acc = get(active_account);
+ fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc));
+}
+
+const makeDownloadChunkAsyncFn =
+ acc =>
+ ({ uploadId, offsetBytes, chunkSize }) => {
+  return new Promise((resolve, reject) => {
+   sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, (req, res) => {
+    if (res.error !== 0) {
+     reject();
+    }
+    resolve(res);
+   });
+  });
+ };
+
+export function cancelUpload(uploadId) {
+ fileUploadManager.cancelUpload(uploadId);
+ sendData(get(active_account), 'upload_cancel', { uploadId }, true, (req, res) => {});
+}
+
+export function pauseUpload(uploadId) {
+ fileUploadManager.pauseUpload(uploadId);
+ sendData(get(active_account), 'upload_update_status', { uploadId, status: FileUploadRecordStatus.PAUSED }, true, (req, res) => {});
+}
+
+export function resumeUpload(uploadId) {
+ fileUploadManager.resumeUpload(uploadId);
+ sendData(get(active_account), 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {});
 }
 
 export function deinitComms(acc) {
+ sendData(acc, null, 'user_unsubscribe', { event: 'new_message' });
  sendData(acc, null, 'user_unsubscribe', { event: 'seen_message' });
  sendData(acc, null, 'user_unsubscribe', { event: 'seen_inbox_message' });
- sendData(acc, null, 'user_unsubscribe', { event: 'new_message' });
+ sendData(acc, null, 'user_unsubscribe', { event: 'upload_update' });
+ // sendData(acc, null, 'user_unsubscribe', { event: 'download_chunk' })
+ sendData(acc, null, 'user_unsubscribe', { event: 'upload_p2p_accepted' });
+ sendData(acc, null, 'user_unsubscribe', { event: 'ask_for_chunk' });
 }
 
 export function deinitData(acc) {
  console.log('DEINIT DATA');
  let data = acc.module_data[identifier];
  if (!data) return;
+
+ // message events
  acc.events.removeEventListener('new_message', data.new_message_listener);
  acc.events.removeEventListener('seen_message', data.seen_message_listener);
  acc.events.removeEventListener('seen_inbox_message', data.seen_message_listener);
+
+ // file transfer events
+ acc.events.removeEventListener('upload_update', upload_update);
+ // acc.events.removeEventListener('download_chunk', download_chunk)
+ acc.events.removeEventListener('upload_p2p_accepted', upload_p2p_accepted);
+ acc.events.removeEventListener('ask_for_chunk', ask_for_chunk);
+
  data.events.set([]);
  data.messagesArray.set([]);
  data.conversationsArray.set([]);
  data.selectedConversation.set(null);
  acc.module_data[identifier] = null;
+}
+
+export function loadUploadData(uploadId) {
+ let acc = get(active_account);
+ sendData(
+  acc,
+  'upload_get',
+  {
+   id: uploadId,
+  },
+  true,
+  (req, res) => {
+   const { record, uploadData } = res.data;
+   const upload = {
+    ...uploadData,
+    file: null,
+    record,
+    chunksSent: [],
+    uploadInterval: null,
+   };
+
+   // perform checks
+   if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {
+    upload.status = FileUploadRecordStatus.ERROR;
+   }
+
+   fileUploadStore.set(uploadId, upload);
+  }
+ );
 }
 
 export function listMessages(acc, address) {
@@ -466,9 +691,9 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 export function saneHtml(content) {
  //console.log('saneHtml:');
  let sane = DOMPurify.sanitize(content, {
-  ADD_TAGS: ['Sticker', 'Gif', 'Emoji'],
+  ADD_TAGS: ['Sticker', 'Gif', 'Emoji', 'Attachment', 'AttachmentsWrapper'],
   //FORBID_CONTENTS: ['sticker'],
-  ADD_ATTR: ['file', 'set', 'alt', 'codepoints'], // TODO: fixme, security issue, should only be allowed on the relevant elements
+  ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'], // TODO: fixme, security issue, should only be allowed on the relevant elements
   RETURN_DOM_FRAGMENT: true,
  });
  /*console.log('content:');
@@ -490,11 +715,15 @@ export function stripHtml(html) {
 export function processMessage(message) {
  let html;
  if (message.format === 'html') {
+  console.warn(11111)
   html = saneHtml(message.message);
  } else {
+  console.warn(22222)
   html = saneHtml(preprocess_incoming_plaintext_message_text(message.message));
  }
  //html = group_downloads(html);
+ wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
+
  return {
   format: 'html',
   body: html,
