@@ -4,9 +4,6 @@ import { cp } from './emojis_parse_data.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { identifier } from './messages.js';
 
-export let render_emojis_as_static = localStorageSharedStore('render_emojis_as_static', false);
-export let render_emojis_as_raster = localStorageSharedStore('render_emojis_as_raster', true);
-
 export function start_emojisets_fetch(acc, emojiGroups, emojisByCodepointsRgi) {
  new Promise(async (resolve, reject) => {
   //await new Promise(resolve => setTimeout(resolve, 10000));

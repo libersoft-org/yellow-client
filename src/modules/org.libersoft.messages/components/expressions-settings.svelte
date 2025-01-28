@@ -3,15 +3,16 @@
  import Option from '../../../core/components/select-option.svelte';
  import Switch from '../../../core/components/switch.svelte';
  import Modal from '../../../core/components/modal.svelte';
- import { render_stickers_as_raster, sticker_server, sticker_servers, animate_all_stickers } from '../stickers.js';
+ import { sticker_server, sticker_servers } from '../stickers.js';
+ import { expressions_renderer, animate_all_expressions } from '../expressions.svelte.ts';
  import Button from '../../../core/components/button.svelte';
  import ModalStickerServers from './modal-sticker-servers.svelte';
 
- let showAsVector = !$render_stickers_as_raster;
  let isModalStickerServersOpen = false;
- let animateAll = $animate_all_stickers;
- $: showAsVector !== undefined && render_stickers_as_raster.set(!showAsVector);
- $: animateAll !== undefined && animate_all_stickers.set(animateAll);
+ let showAsVector = $expressions_renderer === 'svg';
+ let animateAll = $animate_all_expressions;
+ $: showAsVector !== undefined && expressions_renderer.set('svg');
+ $: animateAll !== undefined && animate_all_expressions.set(animateAll);
 
  function clickManageStickerServers() {
   console.log('Click: Manage sticker servers');

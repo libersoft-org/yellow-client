@@ -4,7 +4,7 @@
  import { getContext, onMount, onDestroy } from 'svelte';
  import { readable } from 'svelte/store';
  import { identifier } from '../messages.js';
- import { render_stickers_as_raster, animate_all_stickers } from '../stickers.js';
+ import { expressions_renderer, animate_all_expressions } from '../expressions.svelte.ts';
 
  export let file = '';
  export let size = 200;
@@ -29,8 +29,9 @@
  let renderer = 'svg';
  let animationData;
 
- render_stickers_as_raster.subscribe(value => {
-  if (value) renderer = 'canvas';
+ expressions_renderer.subscribe(value => {
+  let vector = value === 'svg';
+  if (!vector) renderer = 'canvas';
   else renderer = 'svg';
   if (animationData) {
    if (anim) anim.destroy();
@@ -52,7 +53,7 @@
   }
  });
 
- $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $animate_all_stickers, force_animate, mouseOver, animContainer, anim);
+ $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $animate_all_expressions, force_animate, mouseOver, animContainer, anim);
 
  async function on_update_should_be_playing(ContextMenuOpen, isInViewport, animate_all_stickers, force_animate, mouseOver, animContainer, anim) {
   console.log(`on_update_should_be_playing sticker: ${file} : ContextMenuOpen: ${ContextMenuOpen}, isInViewport: ${isInViewport}, animate_all_stickers: ${animate_all_stickers}, mouseOver: ${mouseOver}`);

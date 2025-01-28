@@ -1,6 +1,7 @@
 <script>
  import { debug } from '../../../core/core.js';
- import { rgi, emoji_render, render_emojis_as_static, render_emojis_as_raster } from '../emojis.js';
+ import { rgi, emoji_render } from '../emojis.js';
+ import { expressions_renderer, animate_all_expressions } from '../expressions.svelte.ts';
  import { emojisByCodepointsRgi } from '../messages.js';
  import Sticker from './sticker.svelte';
 
@@ -18,7 +19,7 @@
  $: is_animated = $emojisByCodepointsRgi?.[codepoints_rgi]?.animated;
 
  let url;
- $: update_url(context, is_mouse_over, codepoints_rgi, $render_emojis_as_static, $render_emojis_as_raster);
+ $: update_url(context, is_mouse_over, codepoints_rgi, !$animate_all_expressions, $expressions_renderer !== 'svg');
 
  function update_url(context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster) {
   url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + '/';
@@ -58,7 +59,6 @@
  codepoints_rgi:{codepoints_rgi}
  is_single:{is_single}
  size:{size}
- render_emojis_as_static:{$render_emojis_as_static}
  is_animated:{is_animated}
  animate:{animate}
  url:{url}
