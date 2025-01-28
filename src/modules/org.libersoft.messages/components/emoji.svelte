@@ -19,9 +19,11 @@
  $: is_animated = $emojisByCodepointsRgi?.[codepoints_rgi]?.animated;
 
  let url;
- $: update_url(context, is_mouse_over, codepoints_rgi, !$animate_all_expressions, $expressions_renderer !== 'svg');
+ $: update_url(context, is_mouse_over, codepoints_rgi, !$animate_all_expressions, $expressions_renderer);
 
- function update_url(context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster) {
+ function update_url(context, is_mouse_over, codepoints_rgi, render_emojis_as_static, expressions_renderer) {
+  let raster = expressions_renderer !== 'svg';
+
   console.log('update_url:', context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster);
 
   url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + '/';
