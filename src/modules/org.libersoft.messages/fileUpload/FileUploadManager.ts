@@ -105,7 +105,6 @@ class FileUploadManager extends EventEmitter {
     const newChunkId = lastChunkId === undefined ? 0 : lastChunkId + 1;
     const { chunk, blob } = await this.getChunk(upload.record.id, newChunkId, chunkSize);
 
-    console.warn('AAA pushFn chunk:', chunk);
     await pushFn({ chunk });
     chunksSent.push(newChunkId);
     this.uploadsStore.set(record.id, upload);

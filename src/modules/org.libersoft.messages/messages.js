@@ -116,13 +116,14 @@ function setupFileUploadManager(acc) {
    messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
   });
 
-  sendMessage(messageHtml);
+  sendMessage(messageHtml, 'html');
  });
 
  fileUploadManager.on(FileUploadManagerEvents.UPLOAD_BEGIN, ({ uploads, recipients }) => {
   const records = uploads.map(upload => upload.record);
   sendData(
    acc,
+   null,
    'upload_begin',
    {
     records,
@@ -280,17 +281,17 @@ const makeDownloadChunkAsyncFn =
 
 export function cancelUpload(uploadId) {
  fileUploadManager.cancelUpload(uploadId);
- sendData(get(active_account), 'upload_cancel', { uploadId }, true, (req, res) => {});
+ sendData(get(active_account), null, 'upload_cancel', { uploadId }, true, (req, res) => {});
 }
 
 export function pauseUpload(uploadId) {
  fileUploadManager.pauseUpload(uploadId);
- sendData(get(active_account), 'upload_update_status', { uploadId, status: FileUploadRecordStatus.PAUSED }, true, (req, res) => {});
+ sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.PAUSED }, true, (req, res) => {});
 }
 
 export function resumeUpload(uploadId) {
  fileUploadManager.resumeUpload(uploadId);
- sendData(get(active_account), 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {});
+ sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {});
 }
 
 export function deinitComms(acc) {
@@ -330,6 +331,7 @@ export function loadUploadData(uploadId) {
  let acc = get(active_account);
  sendData(
   acc,
+  null,
   'upload_get',
   {
    id: uploadId,
@@ -715,10 +717,8 @@ export function stripHtml(html) {
 export function processMessage(message) {
  let html;
  if (message.format === 'html') {
-  console.warn(11111)
   html = saneHtml(message.message);
  } else {
-  console.warn(22222)
   html = saneHtml(preprocess_incoming_plaintext_message_text(message.message));
  }
  //html = group_downloads(html);
