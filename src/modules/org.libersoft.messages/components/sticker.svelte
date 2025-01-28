@@ -30,16 +30,6 @@
  let renderer = 'svg';
  let animationData;
 
- expressions_renderer.subscribe(value => {
-  let vector = value === 'svg';
-  if (!vector) renderer = 'canvas';
-  else renderer = 'svg';
-  if (animationData) {
-   if (anim) anim.destroy();
-   construct_lottie();
-  }
- });
-
  $: update_playing(playing);
 
  ext = file.split('.').pop().toLowerCase();
@@ -48,20 +38,27 @@
  else isImage = true;
 
  onDestroy(() => {
-  if (anim) {
-   anim.stop();
-   anim.destroy();
-  }
+  unload_lottie();
  });
 
- $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $animate_all_expressions, force_animate, mouseOver, animContainer, anim);
+ $: console.log('anim:', anim, 'playing:', playing, 'isInViewport:', isInViewport, 'mouseOver:', mouseOver, 'force_animate:', force_animate, 'intersecting:', intersecting, 'isLottie:', isLottie, 'isImage:', isImage, 'error:', error, 'renderer:', renderer, 'file:', file, 'size:', size, 'ext:', ext);
 
- async function on_update_should_be_playing(ContextMenuOpen, isInViewport, animate_all_stickers, force_animate, mouseOver, animContainer, anim) {
-  console.log(`on_update_should_be_playing sticker: ${file} : ContextMenuOpen: ${ContextMenuOpen}, isInViewport: ${isInViewport}, animate_all_stickers: ${animate_all_stickers}, mouseOver: ${mouseOver}`);
+ $: console.log('ANIM:', anim);
 
+ $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $expressions_renderer, $animate_all_expressions, force_animate, mouseOver, animContainer, anim);
+
+ async function on_update_should_be_playing(ContextMenuOpen, isInViewport, expressions_renderer, animate_all_stickers, force_animate, mouseOver, animContainer, _anim) {
   if (!animContainer) return;
+
   let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
   let should_be_playing = should_be_loaded && ((animate_all_stickers && force_animate) || mouseOver);
+
+  console.log(`on_update_should_be_playing sticker: ${file} : ContextMenuOpen: ${ContextMenuOpen}, isInViewport: ${isInViewport}, expressions_renderer: ${expressions_renderer}, animate_all_stickers: ${animate_all_stickers}, force_animate: ${force_animate}, mouseOver: ${mouseOver}, animContainer: ${animContainer}, anim: ${anim}, should_be_loaded: ${should_be_loaded}, should_be_playing: ${should_be_playing}`);
+
+  if (renderer !== expressions_renderer) {
+   renderer = expressions_renderer;
+   unload_lottie();
+  }
 
   if (should_be_playing) {
    if (anim) playing = true;
