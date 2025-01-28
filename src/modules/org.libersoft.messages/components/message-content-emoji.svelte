@@ -1,9 +1,10 @@
 <script>
  import Emoji from './emoji.svelte';
- let { node, level, num_siblings } = $props();
+ const props = $props()
+ let { node, level, num_siblings } = props;
  let codepoints_str = $state(node.attributes.codepoints?.value);
  let codepoints = $state(null);
- let is_single = $derived(num_siblings === 1 && level === 1);
+ let is_single = $derived(num_siblings === 1 && level === 0);
 
  $effect(() => {
   updateCodepoints(codepoints_str);

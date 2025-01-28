@@ -60,7 +60,7 @@
 
  // Main rendering function
  function processFragment(fragment) {
-  return Array.from(fragment.childNodes).map(renderNode);
+  return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
  }
 
  // Reactive rendering of the processed fragment
