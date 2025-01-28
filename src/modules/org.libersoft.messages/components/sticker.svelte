@@ -1,4 +1,5 @@
 <script>
+ import { debug } from '../../../core/core.js';
  import lottie from 'lottie-web';
  import pako from 'pako';
  import { getContext, onMount, onDestroy } from 'svelte';
@@ -260,6 +261,9 @@
 </style>
 
 <div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
+ {#if $debug}
+  renderer: {renderer}
+ {/if}
  {#if error}
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
   <div class="error">{error}</div>

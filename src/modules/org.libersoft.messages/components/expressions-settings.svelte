@@ -11,7 +11,7 @@
  let isModalStickerServersOpen = false;
  let showAsVector = $expressions_renderer === 'svg';
  let animateAll = $animate_all_expressions;
- $: showAsVector !== undefined && expressions_renderer.set('svg');
+ $: showAsVector !== undefined && expressions_renderer.set(showAsVector ? 'svg' : 'canvas');
  $: animateAll !== undefined && animate_all_expressions.set(animateAll);
 
  function clickManageStickerServers() {

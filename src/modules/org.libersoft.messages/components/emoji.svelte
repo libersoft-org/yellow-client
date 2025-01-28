@@ -22,10 +22,12 @@
  $: update_url(context, is_mouse_over, codepoints_rgi, !$animate_all_expressions, $expressions_renderer !== 'svg');
 
  function update_url(context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster) {
+  console.log('update_url:', context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster);
+
   url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + '/';
 
   if (context === 'message') {
-   let animate = (!render_emojis_as_static || force_animate) && is_animated;
+   let animate = (is_mouse_over || (!render_emojis_as_static && force_animate)) && is_animated;
    if (animate) {
     if (raster) {
      url += '512.webp';
@@ -60,13 +62,12 @@
  is_single:{is_single}
  size:{size}
  is_animated:{is_animated}
- animate:{animate}
  url:{url}
  </pre>
 {/if}
 
 {#if url.endsWith('/lottie.json')}
- <Sticker file={url} {size} />
+ <Sticker file={url} {size} {force_animate} />
 {:else}
  <img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url} onMouseOver={() => (is_mouse_over = true)} onMouseOut={() => (is_mouse_over = false)} />
 {/if}
