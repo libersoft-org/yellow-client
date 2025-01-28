@@ -39,8 +39,8 @@
 <div class="expressions" style="height: {height}">
  <div class="categories" role="none">
   <Item label="Emojis" icon={'modules/' + identifier + '/img/emoji-black.svg'} active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
-  <Item label="Stickers" icon={'modules/' + identifier + '/img/emoji-black.svg'} active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
-  <Item label="GIFs" icon={'modules/' + identifier + '/img/emoji-black.svg'} active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
+  <Item label="Stickers" icon={'modules/' + identifier + '/img/sticker-black.svg'} active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
+  <Item label="GIFs" icon={'modules/' + identifier + '/img/gif-black.svg'} active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
   <Item label="Settings" icon={'modules/' + identifier + '/img/settings-black.svg'} active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} />
  </div>
  <svelte:component this={expressions[expression]} />
