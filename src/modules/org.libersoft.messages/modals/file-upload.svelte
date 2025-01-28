@@ -5,7 +5,7 @@
  import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import { FileUploadRecordType } from '../fileUpload/types.ts';
  import { get } from 'svelte/store';
- import { selectedConversation } from '../messages.js';
+ import { selectedConversation, initUpload } from '../messages.js';
 
  const { params } = $props();
 
@@ -43,13 +43,13 @@
 
  const uploadServer = () => {
   const recipientEmail = get(selectedConversation).address;
-  fileUploadManager.beginUpload(files, FileUploadRecordType.SERVER, [recipientEmail]);
+  initUpload(files, FileUploadRecordType.SERVER, [recipientEmail]);
   params.setFileUploadModal(false);
  };
 
  const uploadP2P = () => {
   const recipientEmail = get(selectedConversation).address;
-  fileUploadManager.beginUpload(files, FileUploadRecordType.P2P, [recipientEmail]);
+  initUpload(files, FileUploadRecordType.P2P, [recipientEmail]);
   params.setFileUploadModal(false);
  };
 </script>

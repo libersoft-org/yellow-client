@@ -3,14 +3,6 @@ import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from './fileUploadStore.ts';
 
-export enum FileUploadManagerEvents {
- BEFORE_UPLOAD_BEGIN = 'beforeUploadBegin',
- UPLOAD_BEGIN = 'uploadBegin',
- AFTER_UPLOAD_BEGIN = 'afterUploadBegin',
-
- UPLOAD_CHUNK = 'uploadChunk',
- RECORD_UPDATE = 'recordUpdate',
-}
 
 class FileUploadManager extends EventEmitter {
  uploadsStore: FileUploadStoreType;
@@ -24,7 +16,7 @@ class FileUploadManager extends EventEmitter {
   this.uploadsStore = uploadsStore;
  }
 
- beginUpload(files: FileList, type: FileUploadRecordType, recipients: string[]) {
+ beginUpload(files: FileList, type: FileUploadRecordType, acc) {
   const uploads: FileUpload[] = [];
   for (let i = 0; i < files.length; i++) {
    const file = files[i];
@@ -39,14 +31,13 @@ class FileUploadManager extends EventEmitter {
     role: FileUploadRole.SENDER,
     file,
     record,
+    acc,
    });
    this.uploadsStore.set(upload.record.id, upload);
    uploads.push(upload);
   }
 
-  this.emit(FileUploadManagerEvents.BEFORE_UPLOAD_BEGIN, { uploads, recipients });
-  this.emit(FileUploadManagerEvents.UPLOAD_BEGIN, { uploads, recipients });
-  this.emit(FileUploadManagerEvents.AFTER_UPLOAD_BEGIN, { uploads, recipients });
+  return { uploads }
  }
 
  async getChunk(uploadId: string, chunkId: number, chunkSize: number) {
@@ -71,7 +62,7 @@ class FileUploadManager extends EventEmitter {
   return { chunk, upload, blob };
  }
 
- async startUploadSerial(records: FileUploadRecord[], pushFn: (data: { chunk: any }) => Promise<void>) {
+ async startUploadSerial(records: FileUploadRecord[], pushFn: (data: { chunk: any, upload: FileUpload }) => Promise<void>) {
   for (let i = 0; i < records.length; i++) {
    const record = records[i];
    const upload = this.uploadsStore.get(record.id);
@@ -105,7 +96,7 @@ class FileUploadManager extends EventEmitter {
     const newChunkId = lastChunkId === undefined ? 0 : lastChunkId + 1;
     const { chunk, blob } = await this.getChunk(upload.record.id, newChunkId, chunkSize);
 
-    await pushFn({ chunk });
+    await pushFn({ chunk, upload });
     chunksSent.push(newChunkId);
     this.uploadsStore.set(record.id, upload);
 

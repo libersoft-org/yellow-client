@@ -39,6 +39,7 @@ export interface FileUpload {
  uploadInterval: NodeJS.Timeout | null;
  paused?: boolean;
  pushChunk?: () => Promise<void>;
+ acc: any
 }
 
 export interface FileDownload {
@@ -58,7 +59,7 @@ export interface FileUploadChunk {
 
 export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize'>;
 
-export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record'>;
+export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record' | 'acc'>;
 
 export type FileUploadStoreValue = {
  [key: string]: FileUpload;

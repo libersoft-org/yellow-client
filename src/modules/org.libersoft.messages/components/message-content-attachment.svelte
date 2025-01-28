@@ -127,13 +127,20 @@
 
 {#snippet renderSenderP2P()}
  <!-- ACTIVE P2P UPLOAD BEGUN -->
- {#if $isUploadActive && $upload.record.status === FileUploadRecordStatus.BEGUN}
+ {#if $upload.record.status === FileUploadRecordStatus.BEGUN}
   <div>Waiting for accept...</div>
 
   <!-- ACTIVE P2P UPLOAD UPLOADING -->
- {:else if $isUploadActive && ($upload.record.status === FileUploadRecordStatus.UPLOADING || $upload.record.status === FileUploadRecordStatus.PAUSED)}
-  <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} />
-  {@render transferControls()}
+ {:else if
+  $upload.record.status === FileUploadRecordStatus.UPLOADING
+  || $upload.record.status === FileUploadRecordStatus.PAUSED
+ }
+  {#if $isUploadActive}
+   <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} />
+   {@render transferControls()}
+  {:else}
+   <div>Uploading...</div>
+  {/if}
 
   <!-- FINISHED UPLOAD -->
  {:else if $upload.record.status === FileUploadRecordStatus.FINISHED}

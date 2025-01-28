@@ -2,7 +2,7 @@ import { replaceEmojisWithTags, start_emojisets_fetch } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
 import { db } from './db';
-import fileUploadManager, { FileUploadManagerEvents } from './fileUpload/FileUploadManager';
+import fileUploadManager from './fileUpload/FileUploadManager';
 import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from './fileUpload/types.ts';
 import fileDownloadManager from './fileUpload/FileDownloadManager.ts';
 import fileUploadStore from './fileUpload/fileUploadStore.ts';
@@ -10,6 +10,9 @@ import fileDownloadStore from './fileUpload/fileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/html.utils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
+import { makeFileUpload } from "./fileUpload/utils.ts";
+
+
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
 export let conversationsArray = relay(md, 'conversationsArray');
@@ -102,87 +105,8 @@ function moduleEventSubscribe(acc, event_name) {
  });
 }
 
-let fileManagerInited = false; // todo fix by clearing on dev HMR
-function setupFileUploadManager(acc) {
- if (fileManagerInited) {
-  return;
- }
- fileManagerInited = true;
-
- // upload manager
- fileUploadManager.on(FileUploadManagerEvents.BEFORE_UPLOAD_BEGIN, ({ uploads }) => {
-  let messageHtml = '';
-  uploads.forEach(upload => {
-   messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
-  });
-
-  sendMessage(messageHtml, 'html');
- });
-
- fileUploadManager.on(FileUploadManagerEvents.UPLOAD_BEGIN, ({ uploads, recipients }) => {
-  const records = uploads.map(upload => upload.record);
-  sendData(
-   acc,
-   null,
-   'upload_begin',
-   {
-    records,
-    recipients,
-   },
-   true,
-   (req, res) => {
-    if (res.error !== 0) {
-     return;
-    }
-    if (uploads[0].record.type === FileUploadRecordType.SERVER) {
-     fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
-    }
-   }
-  );
- });
-
- fileUploadManager.on(FileUploadManagerEvents.UPLOAD_CHUNK, ({ upload, chunk }) => {
-  uploadChunk({ chunk });
-  fileUploadStore.set(upload.record.id, upload);
- });
-}
-
-const makeUploadChunkAsyncFn =
- acc =>
- ({ chunk }) => {
-  return new Promise((resolve, reject) => {
-   const acc = get(active_account);
-   sendData(acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
-    if (res.error !== 0) {
-     reject();
-    }
-    resolve();
-   });
-  });
- };
-
-function uploadChunkAsync({ chunk }) {
- return new Promise((resolve, reject) => {
-  const acc = get(active_account);
-  sendData(acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
-   if (res.error !== 0) {
-    reject();
-   }
-   resolve();
-  });
- });
-}
-
-function uploadChunk({ chunk }) {
- const acc = get(active_account);
- sendData(acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
-  if (res.error !== 0) {
-   return;
-  }
- });
-}
-
 export function initComms(acc) {
+ console.warn('init comms', acc);
  // message events
  moduleEventSubscribe(acc, 'new_message');
  moduleEventSubscribe(acc, 'seen_message');
@@ -190,8 +114,6 @@ export function initComms(acc) {
 
  // file transfer events
  moduleEventSubscribe(acc, 'upload_update');
- // moduleEventSubscribe(acc, 'download_chunk')
- moduleEventSubscribe(acc, 'upload_p2p_accepted');
  moduleEventSubscribe(acc, 'ask_for_chunk');
 
  let data = acc.module_data[identifier];
@@ -208,24 +130,54 @@ export function initComms(acc) {
 
  // file transfer events
  acc.events.addEventListener('upload_update', upload_update);
- // acc.events.addEventListener('download_chunk', download_chunk)
- acc.events.addEventListener('upload_p2p_accepted', upload_p2p_accepted);
  acc.events.addEventListener('ask_for_chunk', ask_for_chunk);
 
  listConversations(acc);
- setupFileUploadManager(acc);
 }
 
-function upload_p2p_accepted(event) {
- const data = event.detail.data;
- const upload = fileUploadManager.get(data.uploadId);
- fileUploadManager.startUploadSerial([upload.record]);
+export function initUpload (files, uploadType, recipients) {
+ console.warn('files, uploadType, recipients', files, uploadType, recipients);
+ const acc = get(active_account)
+ const {uploads} = fileUploadManager.beginUpload(files, uploadType, acc)
+
+ console.warn('AAA uploads', uploads);
+
+ // send message
+ let messageHtml = '';
+ uploads.forEach(upload => {
+  messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
+ });
+ sendMessage(messageHtml, 'html');
+
+ // send upload
+ const records = uploads.map(upload => upload.record);
+ sendData(acc, null, 'upload_begin', {records, recipients}, true, (req, res) => {
+   if (res.error !== 0) {
+    return;
+   }
+   if (uploads?.[0].record.type === FileUploadRecordType.SERVER) {
+    fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
+   } else {
+    console.error('Error starting upload') // todo better error
+   }
+  }
+ );
+}
+
+function uploadChunkAsync({ upload, chunk }) {
+ return new Promise((resolve, reject) => {
+  sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
+   if (res.error !== 0) {
+    reject();
+   }
+   resolve();
+  });
+ });
 }
 
 function ask_for_chunk(event) {
  const { uploadId, offsetBytes, chunkSize } = event.detail.data;
  const upload = fileUploadManager.uploadsStore.get(uploadId);
- console.log('upload', upload);
  if (!upload) {
   console.error('upload not found');
   return;
@@ -299,8 +251,6 @@ export function deinitComms(acc) {
  sendData(acc, null, 'user_unsubscribe', { event: 'seen_message' });
  sendData(acc, null, 'user_unsubscribe', { event: 'seen_inbox_message' });
  sendData(acc, null, 'user_unsubscribe', { event: 'upload_update' });
- // sendData(acc, null, 'user_unsubscribe', { event: 'download_chunk' })
- sendData(acc, null, 'user_unsubscribe', { event: 'upload_p2p_accepted' });
  sendData(acc, null, 'user_unsubscribe', { event: 'ask_for_chunk' });
 }
 
@@ -316,8 +266,6 @@ export function deinitData(acc) {
 
  // file transfer events
  acc.events.removeEventListener('upload_update', upload_update);
- // acc.events.removeEventListener('download_chunk', download_chunk)
- acc.events.removeEventListener('upload_p2p_accepted', upload_p2p_accepted);
  acc.events.removeEventListener('ask_for_chunk', ask_for_chunk);
 
  data.events.set([]);
@@ -329,23 +277,17 @@ export function deinitData(acc) {
 
 export function loadUploadData(uploadId) {
  let acc = get(active_account);
- sendData(
-  acc,
-  null,
-  'upload_get',
-  {
-   id: uploadId,
-  },
-  true,
-  (req, res) => {
+ sendData(acc, null, 'upload_get', {id: uploadId,}, true, (req, res) => {
    const { record, uploadData } = res.data;
-   const upload = {
+   const upload = makeFileUpload({
     ...uploadData,
     file: null,
     record,
     chunksSent: [],
     uploadInterval: null,
-   };
+    acc
+   })
+   console.warn('BBB upload', upload);
 
    // perform checks
    if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {
