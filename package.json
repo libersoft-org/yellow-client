@@ -18,7 +18,7 @@
 		"prettier-plugin-svelte": "^3.3.3",
 		"svelte": "^5.17.3",
 		"typescript": "^5.7.3",
-		"vite": "^5.4.11",
+		"vite": "^5.4.14",
 		"vite-plugin-checker": "^0.8.0",
 		"vitest": "^3.0.2"
 	},
