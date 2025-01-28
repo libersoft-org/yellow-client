@@ -20,6 +20,13 @@
 </script>
 
 <style>
+ .settings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+ }
+
  .group {
   display: flex;
   align-items: center;
@@ -27,25 +34,28 @@
  }
 
  .group .label {
+  font-size: 14px;
   flex-grow: 1;
  }
 </style>
 
-<div class="group">
- <div class="label">Show stickers as vector (slower, nicer):</div>
- <Switch bind:checked={showAsVector} />
+<div class="settings">
+ <div class="group">
+  <div class="label">Show expressions as vector (slower, nicer):</div>
+  <Switch bind:checked={showAsVector} />
+ </div>
+ <div class="group">
+  <div class="label">Animate all expressions:</div>
+  <Switch bind:checked={animateAll} />
+ </div>
+ <div class="group">
+  <div class="label">Sticker server:</div>
+  <Select bind:value={$sticker_server}>
+   {#each $sticker_servers as server}
+    <Option value={server} text={server} />
+   {/each}
+  </Select>
+ </div>
+ <Button text="Manage sticker servers" onClick={clickManageStickerServers} />
 </div>
-<div class="group">
- <div class="label">Animate all stickers in sets:</div>
- <Switch bind:checked={animateAll} />
-</div>
-<div class="group">
- <div class="label">Sticker server:</div>
- <Select bind:value={$sticker_server}>
-  {#each $sticker_servers as server}
-   <Option value={server} text={server} />
-  {/each}
- </Select>
-</div>
-<Button text="Manage sticker servers" onClick={clickManageStickerServers} />
 <Modal title="Manage sticker servers" body={ModalStickerServers} bind:show={isModalStickerServersOpen} />

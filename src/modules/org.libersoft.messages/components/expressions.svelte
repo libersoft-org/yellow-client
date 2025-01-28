@@ -1,14 +1,17 @@
 <script>
+ import { identifier } from '../messages.js';
  import Emojis from './emojis.svelte';
  import Stickers from './stickers.svelte';
  import GifSet from './gifset.svelte';
  import Item from './expressions-item.svelte';
+ import Settings from './expressions-settings.svelte';
  export let height;
  let expression = 'emojis';
  const expressions = {
   emojis: Emojis,
   stickers: Stickers,
   gifs: GifSet,
+  settings: Settings,
  };
 
  function setCategory(e, name) {
@@ -35,9 +38,10 @@
 
 <div class="expressions" style="height: {height}">
  <div class="categories" role="none">
-  <Item label="Emojis" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
-  <Item label="Stickers" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
-  <Item label="GIFs" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
+  <Item label="Emojis" icon={'modules/' + identifier + '/img/emoji-black.svg'} active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
+  <Item label="Stickers" icon={'modules/' + identifier + '/img/emoji-black.svg'} active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
+  <Item label="GIFs" icon={'modules/' + identifier + '/img/emoji-black.svg'} active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
+  <Item label="Settings" icon={'modules/' + identifier + '/img/settings-black.svg'} active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} />
  </div>
  <svelte:component this={expressions[expression]} />
 </div>
