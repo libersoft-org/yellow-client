@@ -75,6 +75,7 @@
  .filter {
   display: flex;
   gap: 10px;
+  padding: 0 10px 0 10px;
  }
 </style>
 
