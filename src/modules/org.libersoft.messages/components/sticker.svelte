@@ -1,13 +1,16 @@
 <script>
+ import { debug } from '../../../core/core.js';
  import lottie from 'lottie-web';
  import pako from 'pako';
  import { getContext, onMount, onDestroy } from 'svelte';
  import { readable } from 'svelte/store';
  import { identifier } from '../messages.js';
- import { render_stickers_as_raster, animate_all_stickers } from '../stickers.js';
+ import { expressions_renderer, animate_all_expressions } from '../expressions.svelte.ts';
 
  export let file = '';
  export let size = 200;
+ export let intersecting;
+ export let force_animate = false;
 
  let componentContainer;
  let animContainer;
@@ -27,15 +30,6 @@
  let renderer = 'svg';
  let animationData;
 
- render_stickers_as_raster.subscribe(value => {
-  if (value) renderer = 'canvas';
-  else renderer = 'svg';
-  if (animationData) {
-   if (anim) anim.destroy();
-   construct_lottie();
-  }
- });
-
  $: update_playing(playing);
 
  ext = file.split('.').pop().toLowerCase();
@@ -44,26 +38,47 @@
  else isImage = true;
 
  onDestroy(() => {
-  if (anim) {
-   anim.stop();
-   anim.destroy();
-  }
+  unload_lottie();
  });
 
- $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $animate_all_stickers, mouseOver, animContainer, anim);
+ $: console.log('anim:', anim, 'playing:', playing, 'isInViewport:', isInViewport, 'mouseOver:', mouseOver, 'force_animate:', force_animate, 'intersecting:', intersecting, 'isLottie:', isLottie, 'isImage:', isImage, 'error:', error, 'renderer:', renderer, 'file:', file, 'size:', size, 'ext:', ext);
 
- async function on_update_should_be_playing(ContextMenuOpen, isInViewport, animate_all_stickers, mouseOver, animContainer, anim) {
+ $: console.log('ANIM:', anim);
+
+ $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $expressions_renderer, $animate_all_expressions, force_animate, mouseOver, animContainer, anim);
+
+ async function on_update_should_be_playing(ContextMenuOpen, isInViewport, expressions_renderer, animate_all_stickers, force_animate, mouseOver, animContainer, _anim) {
   if (!animContainer) return;
+
   let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
-  let should_be_playing = should_be_loaded && (animate_all_stickers || mouseOver);
+  let should_be_playing = should_be_loaded && ((animate_all_stickers && force_animate) || mouseOver);
+
+  console.log(`on_update_should_be_playing sticker: ${file} : ContextMenuOpen: ${ContextMenuOpen}, isInViewport: ${isInViewport}, expressions_renderer: ${expressions_renderer}, animate_all_stickers: ${animate_all_stickers}, force_animate: ${force_animate}, mouseOver: ${mouseOver}, animContainer: ${animContainer}, anim: ${anim}, should_be_loaded: ${should_be_loaded}, should_be_playing: ${should_be_playing}`);
+
+  if (renderer !== expressions_renderer) {
+   renderer = expressions_renderer;
+   unload_lottie();
+  }
 
   if (should_be_playing) {
    if (anim) playing = true;
-   else load_lottie();
+   else await load_lottie();
   } else if (should_be_loaded) {
    if (anim) playing = false;
-   else load_lottie();
-  } else playing = false;
+   else await load_lottie();
+  } else {
+   playing = false;
+   unload_lottie();
+  }
+ }
+
+ function unload_lottie() {
+  console.log('unload lottie, anim:', anim);
+  if (anim) {
+   anim.stop();
+   anim.destroy();
+   anim = null;
+  }
  }
 
  function update_playing(playing) {
@@ -79,11 +94,11 @@
   //console.log('create sticker observer');
   observer = new IntersectionObserver(
    entries => {
-    isInViewport = entries[0].isIntersecting;
-    //console.log(entries, 'isInViewport: ', isInViewport);
+    isInViewport = entries[entries.length - 1].isIntersecting;
+    console.log(entries, 'isInViewport: ', isInViewport);
    },
    {
-    threshold: 0.1,
+    threshold: 0.05,
     root: null,
    }
   );
@@ -91,6 +106,7 @@
  }
 
  async function load_lottie() {
+  console.log('load lottie, isLoading:', isLoading);
   if (isLoading) return;
   isLoading = true;
   if (ext === 'tgs') animationData = await loadTgs(file);
@@ -99,11 +115,13 @@
    console.log('loading ', file, 'error', error);
    return;
   }
-  /*
+
   console.log('STICKER file:', file);
   console.log('STICKER animationData:', animationData);
-  */
+
   await construct_lottie();
+  animationData = null;
+  isLoading = false;
  }
 
  async function construct_lottie() {
@@ -240,12 +258,15 @@
 </style>
 
 <div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
+ {#if $debug}
+  renderer: {renderer}
+ {/if}
  {#if error}
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
   <div class="error">{error}</div>
  {:else if isLottie}
   <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>
- {:else if isImage}
+ {:else if isImage && intersecting}
   <img
    class="image"
    style="width: {size}px; height: {size}px;"

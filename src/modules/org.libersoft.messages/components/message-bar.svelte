@@ -52,6 +52,7 @@
   elMessage.selectionStart = start + text.length;
   elMessage.selectionEnd = start + text.length;
   console.log('elMessage.selectionStart:', elMessage.selectionStart);
+  elMessage.focus();
  }
 
  export async function doSendMessage(message, html) {
@@ -144,7 +145,7 @@
  </div>
  <BaseButton onClick={() => (showExpressions = !showExpressions)}>
   <div bind:this={elExpressions}>
-   <Icon img="modules/{identifier}/img/emoji.svg" alt="Emoji" size="32" padding="0" />
+   <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" />
   </div>
  </BaseButton>
  <!--

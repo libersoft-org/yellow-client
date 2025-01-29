@@ -1,6 +1,6 @@
 <script>
  import { mount } from 'svelte';
- import { componentMap } from '../expressions.ts';
+ import { componentMap } from '../message-content.ts';
  import MessageContentHelper from './message-content-helper.svelte';
  export let level;
  export let node; // Accept a DOM node (DocumentFragment, Element, or Text)

@@ -4,7 +4,7 @@
  import BaseButton from '../../../core/components/base-button.svelte';
  import StickerSetPart from './stickerset-part.svelte';
  import { db } from '../db.js';
- export let save_height;
+ import { onDestroy, onMount } from 'svelte';
  export let intersecting = true;
  export let stickerset = {};
  export let showall = false;
@@ -17,7 +17,6 @@
  let expanded = false;
  let clientHeight;
  let in_favorites = false;
- $: save_height?.(clientHeight);
  $: update(intersecting);
  $: first = showall ? stickers : stickers?.slice(0, splitAt);
  $: rest = showall ? [] : stickers?.slice(splitAt);
@@ -34,14 +33,23 @@
  $: console.log('library rest', rest);
  */
 
+ onMount(() => {
+  console.log(`stickerset ${stickerset.id} mounted, intersecting: ${intersecting}`);
+ });
+
+ onDestroy(() => {
+  console.log(`stickerset ${stickerset.id} destroyed`);
+ });
+
  async function update(intersecting) {
+  console.log(`stickerset ${stickerset.id} intersecting: ${intersecting}`);
   if (intersecting) {
    if (stickers === undefined) {
     //console.log('stickerset', stickerset);
     if (stickerset.items) stickers = stickerset.items;
     else stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
    }
-  } else stickers = undefined;
+  }
  }
 
  function clickExpand() {
@@ -115,34 +123,36 @@
  }
 </style>
 
-{#if $debug}<details><summary>stickerset</summary>{JSON.stringify(stickerset, null, 2)}</details>{/if}
-{#if intersecting}
- <div class="stickerset" role="none" bind:clientHeight>
-  <div class="title-bar">
-   <div class="row">
-    <div class="label">{stickerset.name}</div>
-    <BaseButton onClick={toggleFavorite}>
-     <div class="icon">
-      <img src="img/heart-{favorite_icon}.svg" alt={favorite_alt} />
-     </div>
-    </BaseButton>
-   </div>
-   <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
-  </div>
-  <div class="set">
-   <StickerSetPart {stickerset} items={first} />
-  </div>
-  {#if !showall}
-   <BaseButton onClick={clickExpand}>
-    <div class="more">
-     <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
+<div class="stickerset" style="content-visibility: {intersecting ? 'visible' : 'hidden'}" role="none" bind:clientHeight>
+ <div class="title-bar">
+  <div class="row">
+   <div class="label">{stickerset.name}</div>
+   {#if $debug}
+    id: {stickerset.id}
+    <!--   <details><summary>stickerset</summary>{JSON.stringify(stickerset, null, 2)}</details>-->
+   {/if}
+
+   <BaseButton onClick={toggleFavorite}>
+    <div class="icon">
+     <img src="img/heart-{favorite_icon}.svg" alt={favorite_alt} />
     </div>
    </BaseButton>
-  {/if}
-  {#if showall || expanded}
-   <div class="set">
-    <StickerSetPart {stickerset} items={rest} />
-   </div>
-  {/if}
+  </div>
+  <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
  </div>
-{/if}
+ <div class="set">
+  <StickerSetPart {stickerset} items={first} {intersecting} />
+ </div>
+ {#if !showall}
+  <BaseButton onClick={clickExpand}>
+   <div class="more">
+    <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
+   </div>
+  </BaseButton>
+ {/if}
+ {#if showall || expanded}
+  <div class="set">
+   <StickerSetPart {stickerset} items={rest} {intersecting} />
+  </div>
+ {/if}
+</div>

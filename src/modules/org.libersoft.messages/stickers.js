@@ -10,8 +10,6 @@ export let stickerLibraryUpdaterState = writable({});
 export let stickerset_favorites = localStorageSharedStore('stickerset_favorites', []);
 export let sticker_servers = localStorageSharedStore('sticker_servers', ['https://stickers.libersoft.org']);
 export let sticker_server = localStorageSharedStore('sticker_server', 'https://stickers.libersoft.org');
-export let render_stickers_as_raster = localStorageSharedStore('render_stickers_as_raster', true);
-export let animate_all_stickers = localStorageSharedStore('animate_all_stickers', false);
 
 sticker_server.subscribe(() => {
  stickerLibraryUpdaterState.update(state => ({ ...state, updated_once: false }));

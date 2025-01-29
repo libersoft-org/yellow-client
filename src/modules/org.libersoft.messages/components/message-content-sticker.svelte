@@ -17,6 +17,6 @@
 
 {#if v}
  <BaseButton onClick={handleClick}>
-  <Sticker file={v} />
+  <Sticker file={v} force_animate={true} />
  </BaseButton>
 {/if}
