@@ -1,3 +1,7 @@
+<script>
+ // let { item } = $props(); // TODO: Svelte 5
+</script>
+
 <style>
  table {
   border-spacing: 0;
@@ -8,5 +12,9 @@
 </style>
 
 <table>
+ <!--
+ TODO: Svelte 5:
+ {@render item()}
+-->
  <slot />
 </table>
