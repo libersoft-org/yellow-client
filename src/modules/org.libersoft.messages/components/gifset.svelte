@@ -59,7 +59,6 @@
  .gifset {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   height: calc(100% - 45px);
  }
 
