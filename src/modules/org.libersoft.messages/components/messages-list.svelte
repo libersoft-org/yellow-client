@@ -343,6 +343,17 @@
   border-radius: 10px;
  }
 
+ .no-messages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #888;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+ }
+
  /*
  .debug-text {
   word-break: break-word;
@@ -380,7 +391,7 @@
    <!-- </div>-->
    <!--{/if}-->
    {#if m.type === 'no_messages'}
-    <div>No messages</div>
+    <div class="no-messages">No messages</div>
    {:else if m.type === 'initial_loading_placeholder'}
     <Spinner />
    {:else if m.type === 'hole'}

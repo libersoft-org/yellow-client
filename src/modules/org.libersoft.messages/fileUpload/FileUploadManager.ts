@@ -3,7 +3,6 @@ import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from './fileUploadStore.ts';
 
-
 class FileUploadManager extends EventEmitter {
  uploadsStore: FileUploadStoreType;
 
@@ -37,7 +36,7 @@ class FileUploadManager extends EventEmitter {
    uploads.push(upload);
   }
 
-  return { uploads }
+  return { uploads };
  }
 
  async getChunk(uploadId: string, chunkId: number, chunkSize: number) {
@@ -62,7 +61,7 @@ class FileUploadManager extends EventEmitter {
   return { chunk, upload, blob };
  }
 
- async startUploadSerial(records: FileUploadRecord[], pushFn: (data: { chunk: any, upload: FileUpload }) => Promise<void>) {
+ async startUploadSerial(records: FileUploadRecord[], pushFn: (data: { chunk: any; upload: FileUpload }) => Promise<void>) {
   for (let i = 0; i < records.length; i++) {
    const record = records[i];
    const upload = this.uploadsStore.get(record.id);

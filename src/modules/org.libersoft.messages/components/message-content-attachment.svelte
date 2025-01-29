@@ -131,10 +131,7 @@
   <div>Waiting for accept...</div>
 
   <!-- ACTIVE P2P UPLOAD UPLOADING -->
- {:else if
-  $upload.record.status === FileUploadRecordStatus.UPLOADING
-  || $upload.record.status === FileUploadRecordStatus.PAUSED
- }
+ {:else if $upload.record.status === FileUploadRecordStatus.UPLOADING || $upload.record.status === FileUploadRecordStatus.PAUSED}
   {#if $isUploadActive}
    <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} />
    {@render transferControls()}

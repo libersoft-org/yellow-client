@@ -39,7 +39,7 @@ export interface FileUpload {
  uploadInterval: NodeJS.Timeout | null;
  paused?: boolean;
  pushChunk?: () => Promise<void>;
- acc: any
+ acc: any;
 }
 
 export interface FileDownload {
