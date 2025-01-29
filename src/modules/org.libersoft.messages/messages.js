@@ -710,10 +710,6 @@ export function preprocess_incoming_plaintext_message_text(content) {
   } else if (part.type === 'processed') return part.value;
  });
  let result3 = result2.join('');
- // console.log('result0:', result0);
- // console.log('result1:', result1);
- // console.log('result2:', result2);
- // console.log('result3:', result3);
  return result3;
 }
 
