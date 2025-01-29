@@ -347,6 +347,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+ }
+
+ .no-messages .body {
   background-color: #fff;
   border: 1px solid #888;
   border-radius: 20px;
@@ -382,33 +385,39 @@
 <svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
 
 <div class="messages-fixed">
- <div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
+ {#if itemsArray.length === 1 && itemsArray[0].type === 'no_messages'}
   <div class="spacer"></div>
-  {#each itemsArray as m (m.uid)}
-   <!--{#if $debug}-->
-   <!-- <div class="debug-text">-->
-   <!--  {JSON.stringify(m, null, 2)}-->
-   <!-- </div>-->
-   <!--{/if}-->
-   {#if m.type === 'no_messages'}
-    <div class="no-messages">No messages</div>
-   {:else if m.type === 'initial_loading_placeholder'}
-    <Spinner />
-   {:else if m.type === 'hole'}
-    <Loader loader={m.top} />
-    <div class="hole">{m.uid}</div>
-    <Loader loader={m.bottom} />
-   {:else if m.type === 'loader'}
-    <Loader loader={m} />
-   {:else if m.type === 'unseen_marker'}
-    <div class="unread">Unread messages</div>
-   {:else}
-    <Message message={m} elContainer={messages_elem} />
-   {/if}
-  {/each}
-  <div bind:this={anchorElement}></div>
- </div>
- <ScrollButton visible={scrollButtonVisible} right="2px" bottom="7px" onClick={scrollToBottom} />
+  <div class="no-messages">
+   <div class="body">Send a message to start a conversation</div>
+  </div>
+  <div class="spacer"></div>
+ {:else}
+  <div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
+   <div class="spacer"></div>
+   {#each itemsArray as m (m.uid)}
+    <!--{#if $debug}-->
+    <!-- <div class="debug-text">-->
+    <!--  {JSON.stringify(m, null, 2)}-->
+    <!-- </div>-->
+    <!--{/if}-->
+    {#if m.type === 'no_messages'}{:else if m.type === 'initial_loading_placeholder'}
+     <Spinner />
+    {:else if m.type === 'hole'}
+     <Loader loader={m.top} />
+     <div class="hole">{m.uid}</div>
+     <Loader loader={m.bottom} />
+    {:else if m.type === 'loader'}
+     <Loader loader={m} />
+    {:else if m.type === 'unseen_marker'}
+     <div class="unread">Unread messages</div>
+    {:else}
+     <Message message={m} elContainer={messages_elem} />
+    {/if}
+   {/each}
+   <div bind:this={anchorElement}></div>
+  </div>
+  <ScrollButton visible={scrollButtonVisible} right="2px" bottom="7px" onClick={scrollToBottom} />
+ {/if}
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
