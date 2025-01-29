@@ -10,8 +10,7 @@ import fileDownloadStore from './fileUpload/fileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/html.utils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
-import { makeFileUpload } from "./fileUpload/utils.ts";
-
+import { makeFileUpload } from './fileUpload/utils.ts';
 
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
@@ -72,6 +71,7 @@ export function selectConversation(conversation) {
  selectedConversation.set(conversation);
  events.set([]);
  messagesArray.set([]);
+ insertEvent({ type: 'new', array: [] });
  hideSidebarMobile.set(true);
  listMessages(conversation.acc, conversation.address);
 }
@@ -135,10 +135,10 @@ export function initComms(acc) {
  listConversations(acc);
 }
 
-export function initUpload (files, uploadType, recipients) {
+export function initUpload(files, uploadType, recipients) {
  console.warn('files, uploadType, recipients', files, uploadType, recipients);
- const acc = get(active_account)
- const {uploads} = fileUploadManager.beginUpload(files, uploadType, acc)
+ const acc = get(active_account);
+ const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc);
 
  console.warn('AAA uploads', uploads);
 
@@ -151,17 +151,16 @@ export function initUpload (files, uploadType, recipients) {
 
  // send upload
  const records = uploads.map(upload => upload.record);
- sendData(acc, null, 'upload_begin', {records, recipients}, true, (req, res) => {
-   if (res.error !== 0) {
-    return;
-   }
-   if (uploads?.[0].record.type === FileUploadRecordType.SERVER) {
-    fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
-   } else {
-    console.error('Error starting upload') // todo better error
-   }
+ sendData(acc, null, 'upload_begin', { records, recipients }, true, (req, res) => {
+  if (res.error !== 0) {
+   return;
   }
- );
+  if (uploads?.[0].record.type === FileUploadRecordType.SERVER) {
+   fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
+  } else {
+   console.error('Error starting upload'); // todo better error
+  }
+ });
 }
 
 function uploadChunkAsync({ upload, chunk }) {
@@ -277,26 +276,25 @@ export function deinitData(acc) {
 
 export function loadUploadData(uploadId) {
  let acc = get(active_account);
- sendData(acc, null, 'upload_get', {id: uploadId,}, true, (req, res) => {
-   const { record, uploadData } = res.data;
-   const upload = makeFileUpload({
-    ...uploadData,
-    file: null,
-    record,
-    chunksSent: [],
-    uploadInterval: null,
-    acc
-   })
-   console.warn('BBB upload', upload);
+ sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
+  const { record, uploadData } = res.data;
+  const upload = makeFileUpload({
+   ...uploadData,
+   file: null,
+   record,
+   chunksSent: [],
+   uploadInterval: null,
+   acc,
+  });
+  console.warn('BBB upload', upload);
 
-   // perform checks
-   if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {
-    upload.status = FileUploadRecordStatus.ERROR;
-   }
-
-   fileUploadStore.set(uploadId, upload);
+  // perform checks
+  if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {
+   upload.status = FileUploadRecordStatus.ERROR;
   }
- );
+
+  fileUploadStore.set(uploadId, upload);
+ });
 }
 
 export function listMessages(acc, address) {

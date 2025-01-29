@@ -24,7 +24,7 @@
  function update_url(context, is_mouse_over, codepoints_rgi, render_emojis_as_static, expressions_renderer) {
   let raster = expressions_renderer !== 'svg';
 
-  console.log('update_url:', context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster);
+  //console.log('update_url:', context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster);
 
   url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + '/';
 

@@ -34,15 +34,15 @@
  */
 
  onMount(() => {
-  console.log(`stickerset ${stickerset.id} mounted, intersecting: ${intersecting}`);
+  //console.log(`stickerset ${stickerset.id} mounted, intersecting: ${intersecting}`);
  });
 
  onDestroy(() => {
-  console.log(`stickerset ${stickerset.id} destroyed`);
+  //console.log(`stickerset ${stickerset.id} destroyed`);
  });
 
  async function update(intersecting) {
-  console.log(`stickerset ${stickerset.id} intersecting: ${intersecting}`);
+  //console.log(`stickerset ${stickerset.id} intersecting: ${intersecting}`);
   if (intersecting) {
    if (stickers === undefined) {
     //console.log('stickerset', stickerset);
