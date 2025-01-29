@@ -19,6 +19,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 0 0 10px 0;
  }
 </style>
 
