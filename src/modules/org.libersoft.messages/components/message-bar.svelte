@@ -25,20 +25,6 @@
 
  onMount(async () => {
   console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
-  console.log('MessageBar mounted');
   await init_emojis();
  });
 

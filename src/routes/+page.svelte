@@ -57,6 +57,7 @@
 
  onMount(() => {
   console.log('+page onMount');
+  if ($sidebarSize) sideBar;
   window.addEventListener('focus', () => isClientFocused.set(true));
   window.addEventListener('blur', () => isClientFocused.set(false));
   //window.addEventListener('keydown', onkeydown);
@@ -155,12 +156,17 @@
   const min = 200;
   const max = 700;
   if (isResizingSideBar) {
-   let sideBarWidth = e.clientX < max ? e.clientX : max;
-   sideBarWidth = e.clientX > min ? sideBarWidth : min;
-   sideBar.style.minWidth = sideBarWidth + 'px';
-   sideBar.style.maxWidth = sideBarWidth + 'px';
-   resizer.style.left = sideBarWidth + 'px';
+   setSidebarSize(width);
   }
+ }
+
+ function setSidebarSize(width) {
+  let sideBarWidth;
+  sideBarWidth = e.clientX < max ? width : max;
+  sideBarWidth = e.clientX > min ? sideBarWidth : min;
+  sideBar.style.minWidth = sideBarWidth + 'px';
+  sideBar.style.maxWidth = sideBarWidth + 'px';
+  resizer.style.left = sideBarWidth + 'px';
  }
 
  async function onkeydown(event) {

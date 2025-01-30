@@ -27,7 +27,7 @@
    entries.forEach(entry => {
     entry.target.dataset.intersecting = entry.isIntersecting;
     let n = Number(entry.target.dataset.id);
-    console.log('n:', n, 'entry.target.dataset.id:', entry.target.dataset.id, 'intersection:', entry.isIntersecting);
+    //console.log('n:', n, 'entry.target.dataset.id:', entry.target.dataset.id, 'intersection:', entry.isIntersecting);
     //itemsById[n]._intersecting = entry.isIntersecting;
     visibility[n] = entry.isIntersecting;
     //visibility[entry.target.dataset.id] = entry.isIntersecting;
