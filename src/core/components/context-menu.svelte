@@ -32,22 +32,23 @@
  $: isOpen.set(open);
 
  export function close() {
-  currentInstance = null;
   open = false;
   x = 0;
   y = 0;
   prevX = 0;
   prevY = 0;
   focusIndex = -1;
-  console.log('context-menu close:', menus);
+  console.log('context-menu close currentInstance:', currentInstance, 'menus:', menus);
   for (let menu of Array.from(menus)) {
    if (menu.guid === currentInstance) {
-    //console.log('found myself');
+    console.log('found myself, menus.length:', menus.length);
     menus.splice(menus.indexOf(menu), 1);
+    console.log('context-menu close: menus.length:', menus.length);
     break;
    }
   }
   //console.log('->context-menu close:', menus);
+  currentInstance = null;
  }
 
  export async function openMenu(e) {
@@ -66,7 +67,8 @@
   //console.log('context-menu close other menus:', menus);
   let ancestors = getAncestors();
   console.log('ancestors:', ancestors);
-  for (let menu of menus) {
+  console.log('menus:', menus);
+  for (let menu of Array.from(menus)) {
    console.log('menu:', menu);
    if (!ancestors.find(a => a === menu.guid)) {
     console.log('closing menu:', menu);
