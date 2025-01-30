@@ -1,5 +1,5 @@
 <script>
- import { componentMap } from '../message-content';
+ import { componentMap } from '../message-content.ts';
 
  export let rootNode;
 

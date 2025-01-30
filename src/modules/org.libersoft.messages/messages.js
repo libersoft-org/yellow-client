@@ -251,6 +251,7 @@ export function resumeUpload(uploadId) {
 
 export function loadUploadData(uploadId) {
  let acc = get(active_account);
+
  sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
   const { record, uploadData } = res.data;
   const upload = makeFileUpload({
