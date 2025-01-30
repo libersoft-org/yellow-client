@@ -1,5 +1,4 @@
 <script>
- import { getContext } from 'svelte';
  import Button from '../components/button.svelte';
  let zoom = 100;
 

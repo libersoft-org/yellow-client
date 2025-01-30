@@ -4,8 +4,10 @@
  import ScrollButton from '../components/scroll-button.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
+ import ModalMessageSettings from '../modals/message-settings.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';
  let showNewConversationModal = false;
+ let showMessageSettings = false;
  let scrollButtonVisible;
  let elItems;
  let scrolled = false;
@@ -17,8 +19,12 @@
   //console.log('elItems?.scrollTop:', elItems?.scrollTop);
  }
 
- function clickNew() {
+ function clickNewConversation() {
   showNewConversationModal = true;
+ }
+
+ function clickMessagesSettings() {
+  showMessageSettings = true;
  }
 
  function clickItem(conversation) {
@@ -64,10 +70,16 @@
 
 {#if $conversationsArray != null}
  <div class="conversations">
-  <BaseButton onClick={clickNew}>
+  <BaseButton onClick={clickNewConversation}>
    <div class="new">
     <img src="img/add.svg" alt="New conversation" />
     <div>New conversation</div>
+   </div>
+  </BaseButton>
+  <BaseButton onClick={clickMessagesSettings}>
+   <div class="new">
+    <img src="img/settings.svg" alt="Message settings" />
+    <div>Message settings</div>
    </div>
   </BaseButton>
   <div class="items" bind:this={elItems} on:scroll={parseScroll}>
@@ -82,4 +94,5 @@
   {/if}
  </div>
  <Modal title="New Conversation" body={ModalConversationNew} bind:show={showNewConversationModal} />
+ <Modal title="Message settings" body={ModalMessageSettings} bind:show={showMessageSettings} />
 {/if}
