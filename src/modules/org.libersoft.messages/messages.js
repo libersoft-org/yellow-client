@@ -659,7 +659,10 @@ export function processMessage(message) {
  if (message.format === 'html') {
   html = saneHtml(message.message);
  } else {
-  html = saneHtml(preprocess_incoming_plaintext_message_text(message.message));
+  let text = preprocess_incoming_plaintext_message_text(message.message);
+  console.log('text:', text);
+  html = saneHtml(text);
+  console.log('html:', html);
  }
  //html = group_downloads(html);
  wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
