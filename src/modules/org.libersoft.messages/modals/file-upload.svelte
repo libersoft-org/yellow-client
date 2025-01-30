@@ -112,7 +112,7 @@
 {/snippet}
 
 <div class="file-upload">
- <input type="file" id="fileInput" bind:this={elFileInput} on:change={onFileUpload} multiple style="display: none;" />
+ <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" />
  <div class="file-upload-header">
   <Button width="80px" text="Add files" onClick={onFileAdd} />
   <Button width="80px" text="Delete all" onClick={onDeleteAll} />
@@ -126,7 +126,7 @@
    </div>
   {:else}
    <div class="file-upload-items-empty">
-    No files here. <br /> You can <a href="#" on:click={onFileAdd}>add some</a>.
+    No files here. <br /> You can <a href="#" onclick={onFileAdd}>add some</a>.
    </div>
   {/if}
  </div>
