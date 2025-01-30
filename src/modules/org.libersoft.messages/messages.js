@@ -142,7 +142,7 @@ export function initUpload(files, uploadType, recipients) {
  console.warn('files, uploadType, recipients', files, uploadType, recipients);
  const acc = get(active_account);
 
- const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: $uploadChunkSize });
+ const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: get(uploadChunkSize) });
 
  console.warn('AAA uploads', uploads);
 
