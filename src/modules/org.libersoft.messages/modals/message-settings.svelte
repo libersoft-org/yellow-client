@@ -1,9 +1,14 @@
 <script>
  import { humanSize } from '../../../core/utils/file.utils.js';
  import Button from '../../../core/components/button.svelte';
- let chunkSize = 64 * 1024;
+ import { uploadChunkSize } from '../messages.js';
+ export let close;
+ let chunkSize = $uploadChunkSize;
 
- function clickSetChunkSize() {}
+ function clickSetChunkSize() {
+  uploadChunkSize.set(chunkSize);
+  close();
+ }
 </script>
 
 <style>
@@ -26,4 +31,4 @@
  </div>
  <input class="zoom" type="range" min="1024" max="52428800" step="1024" bind:value={chunkSize} />
 </div>
-<Button text="Apply" onClick={clickSetChunkSize} />
+<Button text="Save" onClick={clickSetChunkSize} />

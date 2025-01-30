@@ -15,7 +15,7 @@ class FileUploadManager extends EventEmitter {
   this.uploadsStore = uploadsStore;
  }
 
- beginUpload(files: FileList, type: FileUploadRecordType, acc) {
+ beginUpload(files: FileList, type: FileUploadRecordType, acc, options: { chunkSize: number } = { chunkSize: 64 }) {
   const uploads: FileUpload[] = [];
   for (let i = 0; i < files.length; i++) {
    const file = files[i];
@@ -24,7 +24,7 @@ class FileUploadManager extends EventEmitter {
     fileName: file.name,
     fileMimeType: file.type,
     fileSize: file.size,
-    chunkSize: 1024 * 64, // todo: default/conf value
+    chunkSize: options.chunkSize,
    });
    const upload = makeFileUpload({
     role: FileUploadRole.SENDER,

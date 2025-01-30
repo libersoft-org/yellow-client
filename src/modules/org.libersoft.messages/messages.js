@@ -11,8 +11,11 @@ import { wrapConsecutiveElements } from './utils/html.utils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import { makeFileUpload } from './fileUpload/utils.ts';
+import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 
+export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
+
 export let md = active_account_module_data(identifier);
 export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
@@ -138,7 +141,8 @@ export function initComms(acc) {
 export function initUpload(files, uploadType, recipients) {
  console.warn('files, uploadType, recipients', files, uploadType, recipients);
  const acc = get(active_account);
- const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc);
+
+ const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: $uploadChunkSize });
 
  console.warn('AAA uploads', uploads);
 
