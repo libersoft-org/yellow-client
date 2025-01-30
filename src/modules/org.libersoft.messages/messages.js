@@ -297,29 +297,6 @@ export function deinitData(acc) {
  acc.module_data[identifier] = null;
 }
 
-export function loadUploadData(uploadId) {
- let acc = get(active_account);
- sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
-  const { record, uploadData } = res.data;
-  const upload = makeFileUpload({
-   ...uploadData,
-   file: null,
-   record,
-   chunksSent: [],
-   uploadInterval: null,
-   acc,
-  });
-  console.warn('BBB upload', upload);
-
-  // perform checks
-  if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {
-   upload.status = FileUploadRecordStatus.ERROR;
-  }
-
-  fileUploadStore.set(uploadId, upload);
- });
-}
-
 export function listMessages(acc, address) {
  console.log('listMessages', acc, address);
  messagesArray.set([{ type: 'initial_loading_placeholder' }]);
