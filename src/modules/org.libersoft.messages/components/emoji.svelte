@@ -49,7 +49,7 @@
    else url += 'emoji.svg';
   }
 
-  console.log('update_url:', url);
+  //console.log('update_url:', url);
  }
 </script>
 

@@ -87,10 +87,14 @@
   </div>
  {/each}
 </div>
-<ContextMenu bind:this={altsMenu} width="280px" height="400px" scrollable={false}>
- {#each alts as e (e)}
-  <BaseButton onClick={() => clickEmoji(e)}>
-   <Emoji codepoints={e} context={'menu'} is_single={true} />
-  </BaseButton>
- {/each}
+<ContextMenu bind:this={altsMenu} scrollable={false}>
+ <div class="emojis">
+  {#each alts as e (e)}
+   <BaseButton onClick={() => clickEmoji(e)}>
+    <div class="emoji hover">
+     <Emoji codepoints={e} context={'menu'} is_single={true} />
+    </div>
+   </BaseButton>
+  {/each}
+ </div>
 </ContextMenu>

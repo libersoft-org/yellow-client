@@ -11,7 +11,7 @@
  import Expressions from './expressions.svelte';
  import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import { FileUploadRecordType } from '../fileUpload/types.ts';
- //import {  init_emojis } from '../emojis.js';
+ import { init_emojis } from '../emojis.js';
 
  let elAttachment;
  let elExpressions;
@@ -25,6 +25,21 @@
 
  onMount(async () => {
   console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  console.log('MessageBar mounted');
+  await init_emojis();
  });
 
  setContext('MessageBar', {

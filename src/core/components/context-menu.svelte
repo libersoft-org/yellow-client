@@ -40,7 +40,7 @@
   prevY = 0;
   focusIndex = -1;
   console.log('context-menu close:', menus);
-  for (let menu of menus) {
+  for (let menu of Array.from(menus)) {
    if (menu.guid === currentInstance) {
     //console.log('found myself');
     menus.splice(menus.indexOf(menu), 1);
@@ -65,8 +65,11 @@
   //if (e.type === 'contextmenu') return;
   //console.log('context-menu close other menus:', menus);
   let ancestors = getAncestors();
+  console.log('ancestors:', ancestors);
   for (let menu of menus) {
+   console.log('menu:', menu);
    if (!ancestors.find(a => a === menu.guid)) {
+    console.log('closing menu:', menu);
     menu.close();
    }
   }
