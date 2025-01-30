@@ -7,7 +7,10 @@
  function renderNode(node, parentNode = null, level = 0) {
   // Handle text nodes
   if (node.nodeType === Node.TEXT_NODE) {
-   return node.textContent;
+   return {
+    text: node.textContent,
+    level,
+   };
   }
 
   // Handle element nodes
@@ -60,7 +63,11 @@
 
  // Main rendering function
  function processFragment(fragment) {
-  return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+  if (fragment.text) {
+   return [fragment];
+  } else {
+   return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+  }
  }
 
  // Reactive rendering of the processed fragment
@@ -69,8 +76,8 @@
 
 {#each renderedContent as item (item)}
  <!-- Render text nodes -->
- {#if typeof item === 'string'}
-  {item}
+ {#if item.text}
+  {item.text}
 
   <!-- Render dynamic (HTML super-set) components -->
  {:else if item.component}
@@ -84,7 +91,7 @@
  {:else if item.tag}
   <svelte:element this={item.tag} {...item.props}>
    {#each item.children as child}
-    <svelte:self node={child} />
+    <svelte:self rootNode={child} />
    {/each}
   </svelte:element>
  {/if}
