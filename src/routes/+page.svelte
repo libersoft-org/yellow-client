@@ -1,6 +1,7 @@
 <script>
  import '../app.css';
  import { onMount, setContext } from 'svelte';
+ import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
  import { active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls, debug, product, version, link } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
@@ -21,6 +22,9 @@
  import Modal from '../core/components/modal.svelte';
  let menus = [];
  setContext('menus', menus);
+
+ let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
+
  const wizardData = {
   steps: [
    { title: 'Welcome', component: WizardWelcomeStep1 },
@@ -144,6 +148,7 @@
   document.body.style.userSelect = '';
   window.removeEventListener('mousemove', resizeSideBar);
   window.removeEventListener('mouseup', stopResizeSideBar);
+  sidebarSize.set(sideBar.clientWidth);
  }
 
  function resizeSideBar(e) {
