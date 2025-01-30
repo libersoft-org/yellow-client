@@ -48,6 +48,8 @@
    if (animate) url += 'lottie.json';
    else url += 'emoji.svg';
   }
+
+  console.log('update_url:', url);
  }
 </script>
 

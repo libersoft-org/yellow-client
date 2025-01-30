@@ -31,7 +31,8 @@
 
  $: isOpen.set(open);
 
- function close() {
+ export function close() {
+  currentInstance = null;
   open = false;
   x = 0;
   y = 0;
@@ -63,7 +64,12 @@
   console.log('context-menu openMenu type:', e.type);
   //if (e.type === 'contextmenu') return;
   //console.log('context-menu close other menus:', menus);
-  for (let menu of menus) menu.close();
+  let ancestors = getAncestors();
+  for (let menu of menus) {
+   if (!ancestors.find(a => a === menu.guid)) {
+    menu.close();
+   }
+  }
   currentInstance = getGuid();
   menus.push({ guid: currentInstance, close });
 
@@ -76,6 +82,7 @@
    if (space_left > space_right) x = e.x - currentWidth;
    else x = e.x;
   }
+  if (x + currentWidth > window.innerWidth) x = Math.max(0, window.innerWidth - currentWidth);
   let e_y = e.y;
   if (open || y === 0) {
    if (bottomOffset) {
@@ -128,7 +135,20 @@
   close();
  });
 
+ function getAncestors() {
+  let result = [];
+  let c = ctx;
+  while (c) {
+   let i = c.instance();
+   if (i) result.push(i);
+   c = c.parent;
+  }
+  return result;
+ }
+
  setContext('ContextMenu', {
+  instance: () => currentInstance,
+  parent: ctx,
   currentIndex,
   position,
   isOpen,

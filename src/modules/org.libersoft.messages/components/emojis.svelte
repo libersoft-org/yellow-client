@@ -4,10 +4,27 @@
  import BaseButton from '../../../core/components/base-button.svelte';
  import { emojiGroups } from '../messages.js';
  import { emoji_render } from '../emojis.js';
+ import ContextMenu from '../../../core/components/context-menu.svelte';
  const MessageBar = getContext('MessageBar');
+
+ let alts = [];
+ let altsMenu;
+
+ $: console.log('alts:', alts);
 
  function clickEmoji(codepoints) {
   MessageBar.insertText(emoji_render(codepoints));
+ }
+
+ function showAlts(e, emoji) {
+  console.log('showAlts:', emoji);
+  e.preventDefault();
+  alts = emoji.alternates;
+  if (alts.length === 0) {
+   altsMenu.close();
+   return;
+  }
+  altsMenu.openMenu(e);
  }
 </script>
 
@@ -59,10 +76,10 @@
   <div class="group">
    <div class="title">{g.group}</div>
    <div class="emojis">
-    {#each g.emoji as e, id}
-     <BaseButton onClick={() => clickEmoji(e.base)}>
+    {#each g.emoji as emoji, id}
+     <BaseButton onClick={() => clickEmoji(emoji.base)} onRightClick={e => showAlts(e, emoji)}>
       <div class="emoji hover">
-       <Emoji codepoints={e.base} context={'menu'} is_single={true} />
+       <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
       </div>
      </BaseButton>
     {/each}
@@ -70,3 +87,10 @@
   </div>
  {/each}
 </div>
+<ContextMenu bind:this={altsMenu} width="280px" height="400px" scrollable={false}>
+ {#each alts as e (e)}
+  <BaseButton onClick={() => clickEmoji(e)}>
+   <Emoji codepoints={e} context={'menu'} is_single={true} />
+  </BaseButton>
+ {/each}
+</ContextMenu>

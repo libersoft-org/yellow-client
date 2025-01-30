@@ -1,5 +1,6 @@
 <script>
  export let onClick;
+ export let onRightClick;
  export let onMousedown;
 
  function handleKeydown(event) {
@@ -17,6 +18,6 @@
  }
 </style>
 
-<div class="base-button" role="button" tabindex="0" on:click={onClick} on:mousedown={onMousedown} on:keydown={handleKeydown}>
+<div class="base-button" role="button" tabindex="0" on:click={onClick} on:mousedown={onMousedown} on:keydown={handleKeydown} on:contextmenu={onRightClick}>
  <slot />
 </div>
