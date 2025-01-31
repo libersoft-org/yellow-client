@@ -3,7 +3,7 @@
  import Button from '../../../core/components/button.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
- const illustrations = ['pigeon', 'woman'];
+ const illustrations = ['man', 'woman', 'pigeon'];
  let showNewConversationModal = false;
 
  function clickNew() {
