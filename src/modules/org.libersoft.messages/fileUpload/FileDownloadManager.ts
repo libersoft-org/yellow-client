@@ -35,11 +35,22 @@ export class FileDownloadManager extends EventEmitter {
       download.pullChunk && download.pullChunk();
      }, 1000);
 
-    if (download?.record.status === FileUploadRecordStatus.PAUSED) {
+    if (download.canceledLocally) {
+     this.downloadStore.delete(record.id);
+     return;
+    }
+
+    if (
+     // check for server pause status
+     download?.record.status === FileUploadRecordStatus.PAUSED ||
+     // check for local pause flag
+     download?.paused
+    ) {
      retry();
      return;
     }
     if (download?.record.status === FileUploadRecordStatus.CANCELED) {
+     // todo clear memory
      return;
     }
 
@@ -72,6 +83,29 @@ export class FileDownloadManager extends EventEmitter {
     }
    };
    await download.pullChunk();
+  }
+ }
+
+ async pauseDownload(uploadId: string) {
+  const download = this.downloadStore.get(uploadId);
+  if (download) {
+   download.paused = true;
+   this.downloadStore.set(uploadId, download);
+  }
+ }
+
+ async resumeDownload(uploadId: string) {
+  const download = this.downloadStore.get(uploadId);
+  if (download) {
+   download.paused = false;
+   this.downloadStore.set(uploadId, download);
+  }
+ }
+
+ async cancelDownload(uploadId: string) {
+  const download = this.downloadStore.get(uploadId);
+  if (download) {
+   download.canceledLocally = true;
   }
  }
 }

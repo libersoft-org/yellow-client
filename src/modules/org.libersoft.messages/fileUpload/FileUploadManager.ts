@@ -1,4 +1,12 @@
-import { type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType } from './types.ts';
+import {
+ type FileUpload,
+ type FileUploadBeginOptions,
+ type FileUploadRecord,
+ FileUploadRecordStatus,
+ FileUploadRecordType,
+ FileUploadRole,
+ type FileUploadStoreType
+} from './types.ts';
 import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from './fileUploadStore.ts';
@@ -15,7 +23,7 @@ class FileUploadManager extends EventEmitter {
   this.uploadsStore = uploadsStore;
  }
 
- beginUpload(files: FileList, type: FileUploadRecordType, acc, options: { chunkSize: number } = { chunkSize: 64 }) {
+ beginUpload(files: FileList, type: FileUploadRecordType, acc, options: FileUploadBeginOptions) {
   const uploads: FileUpload[] = [];
   for (let i = 0; i < files.length; i++) {
    const file = files[i];
@@ -24,7 +32,7 @@ class FileUploadManager extends EventEmitter {
     fileName: file.name,
     fileMimeType: file.type,
     fileSize: file.size,
-    chunkSize: options.chunkSize,
+    chunkSize: options?.chunkSize || 1024 * 64,
    });
    const upload = makeFileUpload({
     role: FileUploadRole.SENDER,
@@ -77,17 +85,22 @@ class FileUploadManager extends EventEmitter {
    const { chunkSize } = upload.record;
 
    upload.pushChunk = async () => {
+    upload.running = true; // todo: maybe refactor to setTimeout
     if (upload.record.status === FileUploadRecordStatus.CANCELED) {
+     upload.running = false;
      upload.pushChunk = undefined;
      return;
     }
     if (upload.record.status === FileUploadRecordStatus.PAUSED) {
+     upload.running = false;
      return;
     }
     if (chunksSent.length === Math.ceil(record.fileSize / chunkSize)) {
+     upload.running = false;
      return;
     }
     if (record.type === FileUploadRecordType.P2P && this.p2pThrottleMemory.get(record.id) >= this.p2pMaxBatchChunks) {
+     upload.running = false;
      return;
     }
 
@@ -96,7 +109,7 @@ class FileUploadManager extends EventEmitter {
     const { chunk, blob } = await this.getChunk(upload.record.id, newChunkId, chunkSize);
 
     await pushFn({ chunk, upload });
-    chunksSent.push(newChunkId);
+    chunksSent[newChunkId] = newChunkId;
     this.uploadsStore.set(record.id, upload);
 
     if (record.type === FileUploadRecordType.P2P) {
@@ -121,7 +134,7 @@ class FileUploadManager extends EventEmitter {
   }
   // reset throttle memory
   this.p2pThrottleMemory.set(uploadId, 0);
-  upload.pushChunk && (await upload.pushChunk());
+  upload.pushChunk && !upload.running && (await upload.pushChunk());
  }
 
  pauseUpload(uploadId: string) {

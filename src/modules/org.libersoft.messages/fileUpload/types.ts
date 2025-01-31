@@ -38,6 +38,7 @@ export interface FileUpload {
  chunksSent: number[];
  uploadInterval: NodeJS.Timeout | null;
  paused?: boolean;
+ running?: boolean; // todo: maybe refactor to setTimeout (see upload.pushChunk)
  pushChunk?: () => Promise<void>;
  acc: any;
 }
@@ -47,6 +48,7 @@ export interface FileDownload {
  chunksReceived: any[];
  data: any;
  paused?: boolean;
+ canceledLocally?: boolean;
  pullChunk?: () => Promise<void>;
 }
 
@@ -55,6 +57,10 @@ export interface FileUploadChunk {
  uploadId: string;
  checksum: string;
  data: string; // base64
+}
+
+export interface FileUploadBeginOptions {
+ chunkSize?: number;
 }
 
 export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize'>;

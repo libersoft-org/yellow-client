@@ -41,7 +41,11 @@ export function assembleFile(receivedChunks: any[], fileName: string) {
  const downloadLink = document.createElement('a');
  downloadLink.href = URL.createObjectURL(blob);
  downloadLink.download = fileName;
+ downloadLink.style.display = 'none';
+
+ document.body.appendChild(downloadLink);
  downloadLink.click();
+ document.body.removeChild(downloadLink);
 
  console.log(`File download complete: ${fileName}`);
 }

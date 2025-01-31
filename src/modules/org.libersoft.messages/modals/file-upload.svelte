@@ -2,7 +2,6 @@
  import Button from '../../../core/components/button.svelte';
  import { humanSize } from '../../../core/utils/file.utils.js';
  import { truncateText } from '../../../core/utils/text.utils.js';
- import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import { FileUploadRecordType } from '../fileUpload/types.ts';
  import { get } from 'svelte/store';
  import { selectedConversation, initUpload } from '../messages.js';
