@@ -2,7 +2,7 @@
  import FileTransfer from './filetransfer.svelte';
  import { derived, get, writable } from 'svelte/store';
  import { onMount } from 'svelte';
- import { cancelDownloadP2P, cancelUpload, downloadAttachmentSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
+ import { cancelDownload, cancelUpload, downloadAttachmentSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
  import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
  import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import Button from '../../../core/components/button.svelte';
@@ -69,7 +69,7 @@
   {:else}
    <Button width="80px" text="Pause" onClick={() => pauseDownload(uploadId)} />
   {/if}
-  <Button width="80px" text="Cancel" onClick={() => cancelDownloadP2P(uploadId)} />
+  <Button width="80px" text="Cancel" onClick={() => cancelDownload(uploadId)} />
  </div>
 {/snippet}
 
@@ -95,6 +95,7 @@
   <!-- FINISHED UPLOAD - downloading -->
  {:else if $download && $upload.record.status === FileUploadRecordStatus.FINISHED}
   <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} download />
+  {@render downloadControls()}
 
   <!-- FINISHED UPLOAD -->
  {:else if $upload.record.status === FileUploadRecordStatus.FINISHED}
@@ -114,6 +115,7 @@
  <!-- DOWNLOAD DOWNLOADING - receiving -->
  {#if $download}
   <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} download />
+  {@render downloadControls()}
 
   <!-- DOWNLOAD BEGUN  -->
  {:else if $upload.record.status === FileUploadRecordStatus.BEGUN || $upload.record.status === FileUploadRecordStatus.UPLOADING}
@@ -177,7 +179,7 @@
  {:else if $upload.record.status === FileUploadRecordStatus.BEGUN}
   <div class="transfer-controls">
    <Button width="80px" text="Accept" onClick={onDownload} />
-   <Button width="80px" text="Cancel" onClick={() => cancelDownloadP2P(uploadId)} />
+   <Button width="80px" text="Cancel" onClick={() => cancelDownload(uploadId)} />
   </div>
 
   <!-- CANCELED UPLOAD -->

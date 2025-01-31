@@ -35,6 +35,11 @@ export class FileDownloadManager extends EventEmitter {
       download.pullChunk && download.pullChunk();
      }, 1000);
 
+    if (download.canceledLocally) {
+     this.downloadStore.delete(record.id);
+     return;
+    }
+
     if (
      // check for server pause status
      download?.record.status === FileUploadRecordStatus.PAUSED ||
@@ -94,6 +99,13 @@ export class FileDownloadManager extends EventEmitter {
   if (download) {
    download.paused = false;
    this.downloadStore.set(uploadId, download);
+  }
+ }
+
+ async cancelDownload(uploadId: string) {
+  const download = this.downloadStore.get(uploadId);
+  if (download) {
+   download.canceledLocally = true;
   }
  }
 }

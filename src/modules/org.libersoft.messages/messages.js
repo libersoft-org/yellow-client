@@ -257,13 +257,17 @@ export function resumeDownload(uploadId) {
 }
 
 export function cancelDownload(uploadId) {
- // this is cancel download but we still use same logic as cancel upload
- cancelUpload(uploadId);
-}
-
-export function cancelDownloadP2P(uploadId) {
- // this is cancel download but we still use same logic as cancel upload
- cancelUpload(uploadId);
+ const download = fileDownloadStore.get(uploadId);
+ if (!download) {
+  return;
+ }
+ if (download.record.type === FileUploadRecordType.P2P) {
+  // for p2p we want to cancel download but we gonna still use the same logic as is used in cancel upload because this is global cancel
+  // todo in case of more then one recipient we should cancel only for one recipient locally
+  cancelUpload(uploadId);
+ } else if (download.record.type === FileUploadRecordType.SERVER) {
+  fileDownloadManager.cancelDownload(uploadId);
+ }
 }
 
 export function loadUploadData(uploadId) {

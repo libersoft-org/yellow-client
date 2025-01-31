@@ -48,6 +48,7 @@ export interface FileDownload {
  chunksReceived: any[];
  data: any;
  paused?: boolean;
+ canceledLocally?: boolean;
  pullChunk?: () => Promise<void>;
 }
 
