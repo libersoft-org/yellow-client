@@ -1,4 +1,12 @@
-import { type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType } from './types.ts';
+import {
+ type FileUpload,
+ type FileUploadBeginOptions,
+ type FileUploadRecord,
+ FileUploadRecordStatus,
+ FileUploadRecordType,
+ FileUploadRole,
+ type FileUploadStoreType
+} from './types.ts';
 import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from './fileUploadStore.ts';
@@ -15,7 +23,7 @@ class FileUploadManager extends EventEmitter {
   this.uploadsStore = uploadsStore;
  }
 
- beginUpload(files: FileList, type: FileUploadRecordType, acc, options: { chunkSize: number } = { chunkSize: 64 }) {
+ beginUpload(files: FileList, type: FileUploadRecordType, acc, options: FileUploadBeginOptions) {
   const uploads: FileUpload[] = [];
   for (let i = 0; i < files.length; i++) {
    const file = files[i];
@@ -24,7 +32,7 @@ class FileUploadManager extends EventEmitter {
     fileName: file.name,
     fileMimeType: file.type,
     fileSize: file.size,
-    chunkSize: options.chunkSize,
+    chunkSize: options?.chunkSize || 1024 * 64,
    });
    const upload = makeFileUpload({
     role: FileUploadRole.SENDER,

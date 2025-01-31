@@ -59,6 +59,10 @@ export interface FileUploadChunk {
  data: string; // base64
 }
 
+export interface FileUploadBeginOptions {
+ chunkSize?: number;
+}
+
 export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize'>;
 
 export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record' | 'acc'>;
