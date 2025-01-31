@@ -49,6 +49,11 @@
   display: flex;
   gap: 8px;
  }
+
+ .file-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+ }
 </style>
 
 {#snippet transferControls()}
@@ -81,7 +86,9 @@
 
 {#snippet fileTitle()}
  {#if $upload && $upload.record}
-  <div>{$upload.record.fileName}</div>
+  <div class="file-title">
+   {$upload.record.fileName}
+  </div>
  {/if}
 {/snippet}
 
