@@ -38,6 +38,7 @@ export interface FileUpload {
  chunksSent: number[];
  uploadInterval: NodeJS.Timeout | null;
  paused?: boolean;
+ running?: boolean; // todo: maybe refactor to setTimeout (see upload.pushChunk)
  pushChunk?: () => Promise<void>;
  acc: any;
 }

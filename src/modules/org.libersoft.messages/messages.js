@@ -141,7 +141,6 @@ export function initComms(acc) {
 export function initUpload(files, uploadType, recipients) {
  console.warn('files, uploadType, recipients', files, uploadType, recipients);
  const acc = get(active_account);
-
  const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: get(uploadChunkSize) });
 
  console.warn('AAA uploads', uploads);
@@ -249,6 +248,24 @@ export function resumeUpload(uploadId) {
  sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {});
 }
 
+export function pauseDownload(uploadId) {
+ fileDownloadManager.pauseDownload(uploadId);
+}
+
+export function resumeDownload(uploadId) {
+ fileDownloadManager.resumeDownload(uploadId);
+}
+
+export function cancelDownload(uploadId) {
+ // this is cancel download but we still use same logic as cancel upload
+ cancelUpload(uploadId);
+}
+
+export function cancelDownloadP2P(uploadId) {
+ // this is cancel download but we still use same logic as cancel upload
+ cancelUpload(uploadId);
+}
+
 export function loadUploadData(uploadId) {
  let acc = get(active_account);
 
@@ -262,7 +279,6 @@ export function loadUploadData(uploadId) {
    uploadInterval: null,
    acc,
   });
-  console.warn('BBB upload', upload);
 
   // perform checks
   if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {

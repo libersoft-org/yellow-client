@@ -2,7 +2,7 @@
  import FileTransfer from './filetransfer.svelte';
  import { derived, get, writable } from 'svelte/store';
  import { onMount } from 'svelte';
- import { cancelUpload, downloadAttachmentSerial, loadUploadData, pauseUpload, resumeUpload } from '../messages.js';
+ import { cancelDownloadP2P, cancelUpload, downloadAttachmentSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
  import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
  import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import Button from '../../../core/components/button.svelte';
@@ -59,6 +59,17 @@
    <Button width="80px" text="Pause" onClick={() => pauseUpload(uploadId)} />
   {/if}
   <Button width="80px" text="Cancel" onClick={() => cancelUpload(uploadId)} />
+ </div>
+{/snippet}
+
+{#snippet downloadControls()}
+ <div class="transfer-controls">
+  {#if $download && $download.paused}
+   <Button width="80px" text="Resume" onClick={() => resumeDownload(uploadId)} />
+  {:else}
+   <Button width="80px" text="Pause" onClick={() => pauseDownload(uploadId)} />
+  {/if}
+  <Button width="80px" text="Cancel" onClick={() => cancelDownloadP2P(uploadId)} />
  </div>
 {/snippet}
 
@@ -145,7 +156,7 @@
 
   <!-- CANCELED UPLOAD -->
  {:else if $upload.record.status === FileUploadRecordStatus.CANCELED}
-  <div>Upload canceled</div>
+  <div>File transfer has been canceled</div>
 
   <!-- FALLBACK TO ERROR -->
  {:else}
@@ -160,19 +171,23 @@
    <div>Upload is paused by sender</div>
   {/if}
   <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} download />
+  {@render downloadControls()}
 
   <!-- P2P BEGUN - waiting for accept -->
  {:else if $upload.record.status === FileUploadRecordStatus.BEGUN}
-  <Button width="80px" text="Accept" onClick={onDownload} />
+  <div class="transfer-controls">
+   <Button width="80px" text="Accept" onClick={onDownload} />
+   <Button width="80px" text="Cancel" onClick={() => cancelDownloadP2P(uploadId)} />
+  </div>
 
   <!-- CANCELED UPLOAD -->
  {:else if $upload.record.status === FileUploadRecordStatus.CANCELED}
-  <div>Canceled by sender</div>
+  <div>File transfer has been canceled</div>
 
   <!-- P2P FINISHED - download again if needed -->
  {:else if $upload.record.status === FileUploadRecordStatus.FINISHED}
   <!-- {@render downloadButton()} -->
-  <div>P2P transport has been finished</div>
+  <div>File transport has been finished</div>
 
   <!-- FALLBACK TO ERROR -->
  {:else}
