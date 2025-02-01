@@ -91,7 +91,7 @@
 
 {#snippet downloadButton()}
  <div class="message-attachment-accept-btn">
-  <Button width="80px" text="Download" onClick={onDownload} />
+  <Button width="110px" img="modules/{identifier}/img/download.svg" text="Download" onClick={onDownload} />
  </div>
 {/snippet}
 

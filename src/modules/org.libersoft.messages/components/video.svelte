@@ -9,7 +9,7 @@
   border-radius: 10px;
   overflow: hidden;
   max-width: 640px;
-  max-height: 480px;
+  max-height: 640px;
  }
 
  .video video {
