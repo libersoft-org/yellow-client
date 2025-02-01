@@ -6,6 +6,14 @@
  import { get } from 'svelte/store';
  import { identifier, selectedConversation, initUpload } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
+ import Table from '../../../core/components/table.svelte';
+ import Thead from '../../../core/components/table-thead.svelte';
+ import TheadTr from '../../../core/components/table-thead-tr.svelte';
+ import Th from '../../../core/components/table-thead-th.svelte';
+ import Tbody from '../../../core/components/table-tbody.svelte';
+ import TbodyTr from '../../../core/components/table-tbody-tr.svelte';
+ import Td from '../../../core/components/table-tbody-td.svelte';
+ import Icon from '../../../core/components/icon.svelte';
  const { params } = $props();
 
  // refs
@@ -70,26 +78,10 @@
  .body .items {
   display: flex;
   flex-direction: column;
-  margin-bottom: 12px;
- }
-
- .body .items .item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
- }
-
- .body .items .item .desc {
-  flex: 1 1 100%;
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
  }
 
  .body .items-empty {
-  padding-top: 30px;
-  padding-bottom: 40px;
+  padding: 50px;
   text-align: center;
   background-color: #eee;
   border: 1px dashed #888;
@@ -98,35 +90,42 @@
 
  .footer {
   display: flex;
-  gap: 8px;
-  justify-content: end;
+  gap: 10px;
+  justify-content: space-between;
  }
 </style>
 
 {#snippet fileUploadItem(file)}
- <div class="item">
-  <div class="desc">
-   <div>{truncateText(file.name, 30)}</div>
-   <div>{humanSize(file.size)}</div>
-  </div>
-  <div>
-   <Button img="img/close-black.svg" onClick={() => onFileDelete(file)} />
-  </div>
- </div>
+ <TbodyTr>
+  <Td>{truncateText(file.name, 30)}</Td>
+  <Td>{humanSize(file.size)}</Td>
+  <Td><Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => onFileDelete(file)} /></Td>
+ </TbodyTr>
 {/snippet}
 
 <div class="file-upload">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" />
  <div class="header">
   <Button width="110px" img="img/add-black.svg" text="Add files" onClick={onFileAdd} />
-  <Button width="110px" img="img/del.svg" text="Remove all" onClick={onDeleteAll} />
+  <Button width="110px" img="img/del-black.svg" text="Remove all" onClick={onDeleteAll} />
  </div>
  <div class="body">
   {#if files.length}
    <div class="items">
-    {#each files as file}
-     {@render fileUploadItem(file)}
-    {/each}
+    <Table>
+     <Thead>
+      <TheadTr>
+       <Th>File name</Th>
+       <Th>Size</Th>
+       <Th>Action</Th>
+      </TheadTr>
+     </Thead>
+     <Tbody>
+      {#each files as file}
+       {@render fileUploadItem(file)}
+      {/each}
+     </Tbody>
+    </Table>
    </div>
   {:else}
    <BaseButton onClick={onFileAdd}>
