@@ -205,19 +205,12 @@ function upload_update(event) {
   return store;
  });
 
- fileDownloadStore.store.update(store => {
-  const download = store[record.id];
-  if (download) {
-   download.record = record;
-   return { ...store };
-  }
-  return store;
- });
+ fileDownloadStore.updateDownloadRecord(record.id, record);
 }
 
-export function downloadAttachmentSerial(record) {
+export function downloadAttachmentsSerial(records) {
  const acc = get(active_account);
- fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc));
+ fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc));
 }
 
 const makeDownloadChunkAsyncFn =

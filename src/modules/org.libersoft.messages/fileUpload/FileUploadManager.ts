@@ -21,6 +21,18 @@ class FileUploadManager extends EventEmitter {
   super();
 
   this.uploadsStore = uploadsStore;
+
+  setInterval(() => {
+   // this.checker()
+  }, 1000)
+ }
+
+ checker () {
+  const uploads = this.uploadsStore.getAll();
+  for (const upload of Object.values(uploads)) {
+   // check for stale uploads
+   // if (upload.record.status !== FileUploadRecordStatus.FINISHED && file.
+  }
  }
 
  beginUpload(files: FileList, type: FileUploadRecordType, acc, options: FileUploadBeginOptions) {

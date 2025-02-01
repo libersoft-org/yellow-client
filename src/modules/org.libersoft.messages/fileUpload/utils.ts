@@ -1,4 +1,12 @@
-import { type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, type MakeFileUploadData, type MakeFileUploadRecordData } from './types.ts';
+import {
+ type FileDownload,
+ type FileUpload,
+ type FileUploadRecord,
+ FileUploadRecordStatus,
+ FileUploadRecordType, type MakeFileDownloadData,
+ type MakeFileUploadData,
+ type MakeFileUploadRecordData
+} from './types.ts';
 import { v4 as uuidv4 } from 'uuid';
 
 export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUploadRecord {
@@ -20,6 +28,16 @@ export function makeFileUpload(data: MakeFileUploadData): FileUpload {
  const defaults = {
   chunksSent: [],
   uploadInterval: null,
+ };
+ return Object.assign(defaults, data);
+}
+
+export function makeFileDownload(data: MakeFileDownloadData): FileDownload {
+ const defaults = {
+  chunksReceived: [],
+  data: null,
+  running: false,
+  createdAt: Date.now(),
  };
  return Object.assign(defaults, data);
 }

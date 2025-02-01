@@ -8,8 +8,8 @@
  export let onClick;
  export let padding = '10px';
 
- function handleClick() {
-  if (enabled) onClick();
+ function handleClick(e) {
+  if (enabled) onClick(e);
  }
 </script>
 

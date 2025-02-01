@@ -17,7 +17,7 @@ export function wrapConsecutiveElements(fragment: DocumentFragment, xName: strin
    if (child.nodeType === Node.ELEMENT_NODE && (child as Element).tagName.toLowerCase() === xName) {
     consecutiveXs.push(child as Element);
    } else {
-    if (consecutiveXs.length > 2) {
+    if (consecutiveXs.length > 1) {
      wrapWithY(consecutiveXs);
     }
     consecutiveXs = []; // Reset the sequence if non-X is found
@@ -25,7 +25,7 @@ export function wrapConsecutiveElements(fragment: DocumentFragment, xName: strin
   }
 
   // Handle any trailing sequence of X elements
-  if (consecutiveXs.length > 2) {
+  if (consecutiveXs.length > 1) {
    wrapWithY(consecutiveXs);
   }
 

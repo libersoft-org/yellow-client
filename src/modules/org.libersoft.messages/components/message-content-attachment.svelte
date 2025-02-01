@@ -2,7 +2,7 @@
  import FileTransfer from './filetransfer.svelte';
  import { derived, get, writable } from 'svelte/store';
  import { onMount } from 'svelte';
- import { cancelDownload, cancelUpload, downloadAttachmentSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
+ import { cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
  import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
  import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import Button from '../../../core/components/button.svelte';
@@ -25,10 +25,7 @@
 
  /** downloads */
  const download = writable(null);
- fileDownloadStore.store.subscribe($downloads => {
-  const found = $downloads[uploadId];
-  download.set(found || null);
- });
+ fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
  const downloaded = derived(download, $download => {
   return $download ? Math.min($download.chunksReceived.length * $download.record.chunkSize, $download.record.fileSize) : 0;
  });
@@ -40,7 +37,7 @@
  });
 
  function onDownload() {
-  downloadAttachmentSerial($upload.record);
+  downloadAttachmentsSerial([$upload.record]);
  }
 </script>
 
@@ -69,7 +66,7 @@
 
 {#snippet downloadControls()}
  <div class="transfer-controls">
-  {#if $download && $download.paused}
+  {#if $download && $download.pausedLocally}
    <Button width="80px" text="Resume" onClick={() => resumeDownload(uploadId)} />
   {:else}
    <Button width="80px" text="Pause" onClick={() => pauseDownload(uploadId)} />
@@ -204,7 +201,7 @@
  {/if}
 {/snippet}
 
-<div class="message-attachment">
+<div class="message-attachment" data-upload-id={uploadId}>
  {#if $upload}
   {@render fileTitle()}
   {#if $upload.role === FileUploadRole.SENDER && $upload.record.type === FileUploadRecordType.SERVER}

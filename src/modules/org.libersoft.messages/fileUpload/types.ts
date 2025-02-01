@@ -47,7 +47,9 @@ export interface FileDownload {
  record: FileUploadRecord;
  chunksReceived: any[];
  data: any;
- paused?: boolean;
+ createdAt: number;
+ running: boolean;
+ pausedLocally?: boolean;
  canceledLocally?: boolean;
  pullChunk?: () => Promise<void>;
 }
@@ -67,6 +69,8 @@ export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUplo
 
 export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record' | 'acc'>;
 
+export type MakeFileDownloadData = Partial<FileDownload> & Pick<FileDownload, 'record'>;
+
 export type FileUploadStoreValue = {
  [key: string]: FileUpload;
 };
@@ -77,10 +81,12 @@ export type FileDownloadStoreValue = {
 
 export type BaseStoreType<StoreValue, Item> = {
  store: Writable<StoreValue>;
+ getAll: () => StoreValue;
  get: (id: string) => Item | undefined;
  set: (id: string, download: Item) => void;
  patch: (id: string, data: Partial<Item>) => void;
  delete: (id: string) => void;
+ isAnyDownloadRunning: () => boolean;
 };
 
 export type FileUploadStoreType = BaseStoreType<FileUploadStoreValue, FileUpload>;
