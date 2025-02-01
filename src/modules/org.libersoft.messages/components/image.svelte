@@ -1,11 +1,12 @@
 <script>
- import { identifier } from '../messages.js';
+ import { identifier, showGallery, galleryFile } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Button from '../../../core/components/button.svelte';
  export let file;
 
  function showFullSize() {
-  console.log('Show full size image');
+  showGallery.set(true);
+  galleryFile.set(file);
  }
 
  function download() {
