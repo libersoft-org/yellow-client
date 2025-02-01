@@ -15,12 +15,9 @@
  import Td from '../../../core/components/table-tbody-td.svelte';
  import Icon from '../../../core/components/icon.svelte';
  const { params } = $props();
-
- // refs
- let elFileInput;
-
- // store
- let files = $state([]);
+ let elFileInput; // refs
+ let files = $state([]); // store
+ let dropActive = $state(false);
 
  function onFileAdd(e) {
   e && e.preventDefault();
@@ -43,9 +40,7 @@
   for (let i = 0; i < filesToPush.length; i++) {
    files.push(filesToPush[i]);
   }
-
-  // clear the file input
-  elFileInput.value = '';
+  elFileInput.value = ''; // clear the file input
  }
 
  const uploadServer = () => {
@@ -59,6 +54,25 @@
   initUpload(files, FileUploadRecordType.P2P, [recipientEmail]);
   params.setFileUploadModal(false);
  };
+
+ function onDragOver(e) {
+  e.preventDefault();
+  dropActive = true;
+ }
+
+ function onDragLeave(e) {
+  e.preventDefault();
+  dropActive = false;
+ }
+
+ function onDrop(e) {
+  e.preventDefault();
+  dropActive = false;
+  let droppedFiles = e.dataTransfer.files;
+  for (let i = 0; i < droppedFiles.length; i++) {
+   files.push(droppedFiles[i]);
+  }
+ }
 </script>
 
 <style>
@@ -88,6 +102,11 @@
   border-radius: 10px;
  }
 
+ .items-empty.drop-active {
+  background-color: #ddd;
+  border-color: #555;
+ }
+
  .footer {
   display: flex;
   gap: 10px;
@@ -102,7 +121,6 @@
   <Td><Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => onFileDelete(file)} /></Td>
  </TbodyTr>
 {/snippet}
-
 <div class="file-upload">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" />
  <div class="header">
@@ -129,7 +147,7 @@
    </div>
   {:else}
    <BaseButton onClick={onFileAdd}>
-    <div class="items-empty">
+    <div class="items-empty {dropActive ? 'drop-active' : ''}" role="none" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop}>
      Drag and drop your files here<br />or click here to add files.
     </div>
    </BaseButton>
