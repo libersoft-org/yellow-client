@@ -1,15 +1,16 @@
 <script>
  import FileTransfer from './filetransfer.svelte';
- import { derived, get, writable } from 'svelte/store';
+ import { derived, writable } from 'svelte/store';
  import { onMount } from 'svelte';
  import { identifier, cancelDownload, cancelUpload, downloadAttachmentSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
  import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
- import fileUploadManager from '../fileUpload/FileUploadManager.ts';
+ //import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import Button from '../../../core/components/button.svelte';
  import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
  import fileUploadStore from '../fileUpload/fileUploadStore.ts';
 
- let { node, level, num_siblings } = $props();
+ //let { node, level, num_siblings } = $props();
+ let { node } = $props();
  let uploadId = $state(node.attributes.id?.value);
 
  /** uploads */
@@ -45,9 +46,19 @@
 </script>
 
 <style>
+ .message-attachment {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid #880;
+
+  border-radius: 10px;
+  background-color: #ffd;
+ }
+
  .transfer-controls {
   display: flex;
-  gap: 8px;
+  gap: 10px;
  }
 
  .file-title {
