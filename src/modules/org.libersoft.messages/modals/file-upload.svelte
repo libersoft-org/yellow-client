@@ -5,7 +5,7 @@
  import { FileUploadRecordType } from '../fileUpload/types.ts';
  import { get } from 'svelte/store';
  import { identifier, selectedConversation, initUpload } from '../messages.js';
-
+ import BaseButton from '../../../core/components/base-button.svelte';
  const { params } = $props();
 
  // refs
@@ -61,39 +61,33 @@
   min-width: 400px;
  }
 
- .file-upload-header {
+ .header {
   display: flex;
   gap: 10px;
   justify-content: space-between;
  }
 
- .file-upload-footer {
-  display: flex;
-  gap: 8px;
-  justify-content: end;
- }
-
- .file-upload-items {
+ .body .items {
   display: flex;
   flex-direction: column;
   margin-bottom: 12px;
  }
 
- .file-upload-item {
+ .body .items .item {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
  }
 
- .file-upload-item-desc {
+ .body .items .item .desc {
   flex: 1 1 100%;
   display: flex;
   justify-content: space-between;
   gap: 8px;
  }
 
- .file-upload-items-empty {
+ .body .items-empty {
   padding-top: 30px;
   padding-bottom: 40px;
   text-align: center;
@@ -101,11 +95,17 @@
   border: 1px dashed #888;
   border-radius: 10px;
  }
+
+ .footer {
+  display: flex;
+  gap: 8px;
+  justify-content: end;
+ }
 </style>
 
 {#snippet fileUploadItem(file)}
- <div class="file-upload-item">
-  <div class="file-upload-item-desc">
+ <div class="item">
+  <div class="desc">
    <div>{truncateText(file.name, 30)}</div>
    <div>{humanSize(file.size)}</div>
   </div>
@@ -117,24 +117,26 @@
 
 <div class="file-upload">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" />
- <div class="file-upload-header">
+ <div class="header">
   <Button width="110px" img="img/add-black.svg" text="Add files" onClick={onFileAdd} />
   <Button width="110px" img="img/del.svg" text="Remove all" onClick={onDeleteAll} />
  </div>
- <div class="file-upload-body">
+ <div class="body">
   {#if files.length}
-   <div class="file-upload-items">
+   <div class="items">
     {#each files as file}
      {@render fileUploadItem(file)}
     {/each}
    </div>
   {:else}
-   <div class="file-upload-items-empty">
-    Drag and drop your files here<br />or click on <span class="bold">Add files</span> button.
-   </div>
+   <BaseButton onClick={onFileAdd}>
+    <div class="items-empty">
+     Drag and drop your files here<br />or click here to add files.
+    </div>
+   </BaseButton>
   {/if}
  </div>
- <div class="file-upload-footer">
+ <div class="footer">
   <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={files.length} />
   <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send to server" onClick={uploadServer} enabled={files.length} />
  </div>
