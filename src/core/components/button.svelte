@@ -49,7 +49,9 @@
    {#if img}
     <img src={img} alt={text} />
    {/if}
-   <div>{text}</div>
+   {#if text}
+    <div>{text}</div>
+   {/if}
   </slot>
  </div>
 </BaseButton>

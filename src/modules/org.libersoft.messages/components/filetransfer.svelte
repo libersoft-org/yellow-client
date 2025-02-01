@@ -14,6 +14,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  background-color: red;
  }
 
  .text {
@@ -27,7 +28,7 @@
 
 <div class="upload">
  <div class="file">
-  <span class="bold">{download ? 'Downloading' : 'Uploading'} </span>
+  <span class="bold">{download ? 'Downloading' : 'Uploading'}:</span>
   {#if file}
    <span>{file}</span>
   {/if}

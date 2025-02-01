@@ -1,15 +1,16 @@
 <script>
  import FileTransfer from './filetransfer.svelte';
- import { derived, get, writable } from 'svelte/store';
+ import { derived, writable } from 'svelte/store';
  import { onMount } from 'svelte';
- import { cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
+ import { identifier, cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
  import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
- import fileUploadManager from '../fileUpload/FileUploadManager.ts';
+ //import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import Button from '../../../core/components/button.svelte';
  import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
  import fileUploadStore from '../fileUpload/fileUploadStore.ts';
 
- let { node, level, num_siblings } = $props();
+ //let { node, level, num_siblings } = $props();
+ let { node } = $props();
  let uploadId = $state(node.attributes.id?.value);
 
  /** uploads */
@@ -42,9 +43,19 @@
 </script>
 
 <style>
+ .message-attachment {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid #880;
+
+  border-radius: 10px;
+  background-color: #ffd;
+ }
+
  .transfer-controls {
   display: flex;
-  gap: 8px;
+  gap: 10px;
  }
 
  .file-title {
@@ -56,28 +67,28 @@
 {#snippet transferControls()}
  <div class="transfer-controls">
   {#if $upload.record.status === FileUploadRecordStatus.PAUSED}
-   <Button width="80px" text="Resume" onClick={() => resumeUpload(uploadId)} />
+   <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} />
   {:else}
-   <Button width="80px" text="Pause" onClick={() => pauseUpload(uploadId)} />
+   <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} />
   {/if}
-  <Button width="80px" text="Cancel" onClick={() => cancelUpload(uploadId)} />
+  <Button img="img/close-black.svg" onClick={() => cancelUpload(uploadId)} />
  </div>
 {/snippet}
 
 {#snippet downloadControls()}
  <div class="transfer-controls">
-  {#if $download && $download.pausedLocally}
-   <Button width="80px" text="Resume" onClick={() => resumeDownload(uploadId)} />
+   {#if $download && $download.pausedLocally}
+   <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeDownload(uploadId)} />
   {:else}
-   <Button width="80px" text="Pause" onClick={() => pauseDownload(uploadId)} />
+   <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} />
   {/if}
-  <Button width="80px" text="Cancel" onClick={() => cancelDownload(uploadId)} />
+  <Button img="img/close-black.svg" onClick={() => cancelDownload(uploadId)} />
  </div>
 {/snippet}
 
 {#snippet downloadButton()}
  <div class="message-attachment-accept-btn">
-  <Button width="80px" text="Download" onClick={onDownload} />
+  <Button width="110px" img="modules/{identifier}/img/download.svg" text="Download" onClick={onDownload} />
  </div>
 {/snippet}
 

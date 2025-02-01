@@ -1,8 +1,12 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import type { FileUpload, FileUploadStoreType, FileUploadStoreValue } from './types.ts';
 
 export class FileUploadStore implements FileUploadStoreType {
  store = writable<FileUploadStoreValue>({});
+
+ getAll() {
+  return get(this.store);
+ }
 
  get(id: string) {
   let upload: FileUpload | undefined;

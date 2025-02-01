@@ -71,10 +71,13 @@
  .attachments-wrap {
   display: flex;
   flex-direction: column;
+  gap: 10px;
  }
 
  .attachments {
-  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
  }
 
  :global(.message.outgoing .message-attachment-accept-btn) {

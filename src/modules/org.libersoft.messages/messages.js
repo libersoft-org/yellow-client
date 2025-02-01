@@ -1,7 +1,7 @@
 import { replaceEmojisWithTags, start_emojisets_fetch } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
-import { db } from './db';
+//import { db } from './db';
 import fileUploadManager from './fileUpload/FileUploadManager';
 import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from './fileUpload/types.ts';
 import fileDownloadManager from './fileUpload/FileDownloadManager.ts';
@@ -12,10 +12,8 @@ import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import { makeFileUpload } from './fileUpload/utils.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
-
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
-
 export let md = active_account_module_data(identifier);
 export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
@@ -23,6 +21,8 @@ export let messagesArray = relay(md, 'messagesArray');
 export let selectedConversation = relay(md, 'selectedConversation');
 export let emojiGroups = relay(md, 'emojiGroups');
 export let emojisByCodepointsRgi = relay(md, 'emojisByCodepointsRgi');
+export let showGallery = relay(md, 'showGallery');
+export let galleryFile = relay(md, 'galleryFile');
 
 class Message {
  constructor(acc, data) {
@@ -44,6 +44,8 @@ export function initData(acc) {
   messagesArray: writable([]),
   emojiGroups: writable([]),
   emojisByCodepointsRgi: writable(null),
+  showGallery: writable(false),
+  galleryFile: writable(null),
  };
  start_emojisets_fetch(acc, result.emojiGroups, result.emojisByCodepointsRgi);
  result.conversationsArray.subscribe(v => {

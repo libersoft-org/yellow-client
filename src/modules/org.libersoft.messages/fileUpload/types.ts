@@ -86,8 +86,7 @@ export type BaseStoreType<StoreValue, Item> = {
  set: (id: string, download: Item) => void;
  patch: (id: string, data: Partial<Item>) => void;
  delete: (id: string) => void;
- isAnyDownloadRunning: () => boolean;
 };
 
 export type FileUploadStoreType = BaseStoreType<FileUploadStoreValue, FileUpload>;
-export type FileDownloadStoreType = BaseStoreType<FileDownloadStoreValue, FileDownload>;
+export type FileDownloadStoreType = {isAnyDownloadRunning: () => boolean;} & BaseStoreType<FileDownloadStoreValue, FileDownload>;
