@@ -89,4 +89,4 @@ export type BaseStoreType<StoreValue, Item> = {
 };
 
 export type FileUploadStoreType = BaseStoreType<FileUploadStoreValue, FileUpload>;
-export type FileDownloadStoreType = {isAnyDownloadRunning: () => boolean;} & BaseStoreType<FileDownloadStoreValue, FileDownload>;
+export type FileDownloadStoreType = { isAnyDownloadRunning: () => boolean } & BaseStoreType<FileDownloadStoreValue, FileDownload>;

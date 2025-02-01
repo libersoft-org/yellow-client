@@ -16,10 +16,10 @@ class FileUploadManager extends EventEmitter {
 
   setInterval(() => {
    // this.checker()
-  }, 1000)
+  }, 1000);
  }
 
- checker () {
+ checker() {
   const uploads = this.uploadsStore.getAll();
   for (const upload of Object.values(uploads)) {
    // check for stale uploads

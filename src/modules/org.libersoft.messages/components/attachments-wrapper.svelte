@@ -1,30 +1,25 @@
 <script>
  import Button from '../../../core/components/button.svelte';
- import { onMount } from "svelte";
- import { writable } from "svelte/store";
- import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from "../fileUpload/types.ts";
- import fileUploadStore from "../fileUpload/fileUploadStore.ts";
- import { downloadAttachmentsSerial } from "../messages.js";
+ import { onMount } from 'svelte';
+ import { writable } from 'svelte/store';
+ import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
+ import fileUploadStore from '../fileUpload/fileUploadStore.ts';
+ import { downloadAttachmentsSerial } from '../messages.js';
 
  let { children, node } = $props();
- let ref = writable()
- let uploadRecordType = $state('')
- const uploads = $state([])
+ let ref = writable();
+ let uploadRecordType = $state('');
+ const uploads = $state([]);
 
  let show = $derived.by(() => {
   const downloadableRecords = uploads.filter(upload => {
-   return (
-    upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER
-    && upload.record.status === FileUploadRecordStatus.BEGUN
-   ) || (
-    upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED
-   )
+   return (upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER && upload.record.status === FileUploadRecordStatus.BEGUN) || (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED);
   });
   console.warn('FFF', downloadableRecords);
   return downloadableRecords.length > 1;
- })
+ });
 
- function getAttachmentEls () {
+ function getAttachmentEls() {
   console.log('ref', ref);
   return ref.closest('.attachments-wrap').querySelectorAll('.message-attachment');
  }
@@ -43,7 +38,7 @@
    }
   });
   return uploadsSet;
- }
+ };
 
  onMount(() => {
   const attachmentEls = getAttachmentEls();
@@ -64,7 +59,7 @@
     }
    });
   }
- })
+ });
 </script>
 
 <style>
@@ -96,8 +91,8 @@
   {@render children?.()}
  </div>
  {#if show}
- <div class="actions">
-  <Button width="80px" text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'} onClick={onAcceptAll} />
- </div>
+  <div class="actions">
+   <Button width="80px" text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'} onClick={onAcceptAll} />
+  </div>
  {/if}
 </div>

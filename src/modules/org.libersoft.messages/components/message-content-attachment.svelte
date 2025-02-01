@@ -77,7 +77,7 @@
 
 {#snippet downloadControls()}
  <div class="transfer-controls">
-   {#if $download && $download.pausedLocally}
+  {#if $download && $download.pausedLocally}
    <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeDownload(uploadId)} />
   {:else}
    <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} />

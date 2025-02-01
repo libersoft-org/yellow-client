@@ -21,7 +21,7 @@ export class FileDownloadManager extends EventEmitter {
    let download: FileDownload | undefined = this.downloadStore.get(record.id);
 
    if (!download) {
-    download = makeFileDownload({record})
+    download = makeFileDownload({ record });
     this.downloadStore.set(record.id, download);
    }
 
@@ -30,11 +30,11 @@ export class FileDownloadManager extends EventEmitter {
      setTimeout(() => {
       download.pullChunk && download.pullChunk();
      }, 1000);
-    }
+    };
     const setRunning = (running: boolean) => {
      download.running = running;
      this.downloadStore.set(record.id, download);
-    }
+    };
 
     if (download.canceledLocally) {
      this.downloadStore.delete(record.id);
@@ -73,7 +73,7 @@ export class FileDownloadManager extends EventEmitter {
      // Check if all chunks have been received
      if (download.chunksReceived.length * chunkSize >= record.fileSize) {
       setRunning(false);
-      setTimeout(() => this.startNextDownload(download))
+      setTimeout(() => this.startNextDownload(download));
       assembleFile(download.chunksReceived, download.record.fileName);
       this.downloadStore.delete(record.id);
       // Clean up memory
