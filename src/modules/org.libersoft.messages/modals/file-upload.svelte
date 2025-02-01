@@ -113,8 +113,8 @@
 <div class="file-upload">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" />
  <div class="file-upload-header">
-  <Button width="80px" text="Add files" onClick={onFileAdd} />
-  <Button width="80px" text="Delete all" onClick={onDeleteAll} />
+  <Button width="110px" img="img/add-black.svg" text="Add files" onClick={onFileAdd} />
+  <Button width="110px" img="img/del.svg" text="Remove all" onClick={onDeleteAll} />
  </div>
  <div class="file-upload-body">
   {#if files.length}
@@ -130,7 +130,7 @@
   {/if}
  </div>
  <div class="file-upload-footer">
-  <Button width="80px" text="Send P2P" onClick={uploadP2P} enabled={files.length} />
-  <Button width="80px" text="Upload" onClick={uploadServer} enabled={files.length} />
+  <Button width="110px" text="Send P2P" onClick={uploadP2P} enabled={files.length} />
+  <Button width="110px" text="Upload" onClick={uploadServer} enabled={files.length} />
  </div>
 </div>

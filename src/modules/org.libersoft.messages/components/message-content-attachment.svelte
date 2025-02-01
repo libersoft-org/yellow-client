@@ -2,7 +2,7 @@
  import FileTransfer from './filetransfer.svelte';
  import { derived, get, writable } from 'svelte/store';
  import { onMount } from 'svelte';
- import { cancelDownload, cancelUpload, downloadAttachmentSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
+ import { identifier, cancelDownload, cancelUpload, downloadAttachmentSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
  import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
  import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import Button from '../../../core/components/button.svelte';
@@ -59,22 +59,22 @@
 {#snippet transferControls()}
  <div class="transfer-controls">
   {#if $upload.record.status === FileUploadRecordStatus.PAUSED}
-   <Button width="80px" text="Resume" onClick={() => resumeUpload(uploadId)} />
+   <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} />
   {:else}
-   <Button width="80px" text="Pause" onClick={() => pauseUpload(uploadId)} />
+   <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} />
   {/if}
-  <Button width="80px" text="Cancel" onClick={() => cancelUpload(uploadId)} />
+  <Button img="img/close-black.svg" onClick={() => cancelUpload(uploadId)} />
  </div>
 {/snippet}
 
 {#snippet downloadControls()}
  <div class="transfer-controls">
   {#if $download && $download.paused}
-   <Button width="80px" text="Resume" onClick={() => resumeDownload(uploadId)} />
+   <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeDownload(uploadId)} />
   {:else}
-   <Button width="80px" text="Pause" onClick={() => pauseDownload(uploadId)} />
+   <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} />
   {/if}
-  <Button width="80px" text="Cancel" onClick={() => cancelDownload(uploadId)} />
+  <Button img="img/close-black.svg" onClick={() => cancelDownload(uploadId)} />
  </div>
 {/snippet}
 
