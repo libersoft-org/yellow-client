@@ -4,7 +4,7 @@
  import { truncateText } from '../../../core/utils/text.utils.js';
  import { FileUploadRecordType } from '../fileUpload/types.ts';
  import { get } from 'svelte/store';
- import { selectedConversation, initUpload } from '../messages.js';
+ import { identifier, selectedConversation, initUpload } from '../messages.js';
 
  const { params } = $props();
 
@@ -55,14 +55,16 @@
 
 <style>
  .file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   min-width: 400px;
  }
 
  .file-upload-header {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   justify-content: space-between;
-  margin-bottom: 8px;
  }
 
  .file-upload-footer {
@@ -95,6 +97,9 @@
   padding-top: 30px;
   padding-bottom: 40px;
   text-align: center;
+  background-color: #eee;
+  border: 1px dashed #888;
+  border-radius: 10px;
  }
 </style>
 
@@ -125,12 +130,12 @@
    </div>
   {:else}
    <div class="file-upload-items-empty">
-    No files here. <br /> You can <a href="#" onclick={onFileAdd}>add some</a>.
+    Drag and drop your files here<br />or click on <span class="bold">Add files</span> button.
    </div>
   {/if}
  </div>
  <div class="file-upload-footer">
-  <Button width="110px" text="Send P2P" onClick={uploadP2P} enabled={files.length} />
-  <Button width="110px" text="Upload" onClick={uploadServer} enabled={files.length} />
+  <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={files.length} />
+  <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send to server" onClick={uploadServer} enabled={files.length} />
  </div>
 </div>
