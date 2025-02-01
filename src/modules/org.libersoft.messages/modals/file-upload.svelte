@@ -107,7 +107,7 @@
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" />
  <div class="header">
   <Button width="110px" img="img/add-black.svg" text="Add files" onClick={onFileAdd} />
-  <Button width="110px" img="img/del-black.svg" text="Remove all" onClick={onDeleteAll} />
+  <Button width="110px" img="img/del-black.svg" text="Remove all" enabled={files.length} onClick={onDeleteAll} />
  </div>
  <div class="body">
   {#if files.length}
