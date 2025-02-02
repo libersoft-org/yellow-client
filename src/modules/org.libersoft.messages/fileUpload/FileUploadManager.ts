@@ -13,18 +13,6 @@ class FileUploadManager extends EventEmitter {
   super();
 
   this.uploadsStore = uploadsStore;
-
-  setInterval(() => {
-   // this.checker()
-  }, 1000);
- }
-
- checker() {
-  const uploads = this.uploadsStore.getAll();
-  for (const upload of Object.values(uploads)) {
-   // check for stale uploads
-   // if (upload.record.status !== FileUploadRecordStatus.FINISHED && file.
-  }
  }
 
  beginUpload(files: FileList, type: FileUploadRecordType, acc, options: FileUploadBeginOptions) {
@@ -37,6 +25,7 @@ class FileUploadManager extends EventEmitter {
     fileMimeType: file.type,
     fileSize: file.size,
     chunkSize: options?.chunkSize || 1024 * 64,
+    fromUserUid: acc.id,
    });
    const upload = makeFileUpload({
     role: FileUploadRole.SENDER,
@@ -89,22 +78,35 @@ class FileUploadManager extends EventEmitter {
    const { chunkSize } = upload.record;
 
    upload.pushChunk = async () => {
-    upload.running = true; // todo: maybe refactor to setTimeout
+    const setRunning = (running: boolean) => {
+     upload.running = running;
+     this.uploadsStore.set(record.id, upload);
+    };
+
+    setRunning(true);
+    console.log('RRR push chunk', upload);
     if (upload.record.status === FileUploadRecordStatus.CANCELED) {
-     upload.running = false;
+     console.log('111');
+     setRunning(false);
      upload.pushChunk = undefined;
      return;
     }
     if (upload.record.status === FileUploadRecordStatus.PAUSED) {
-     upload.running = false;
+     console.log('222');
+     setRunning(false);
      return;
     }
     if (chunksSent.length === Math.ceil(record.fileSize / chunkSize)) {
-     upload.running = false;
+     console.log('333');
+     upload.record.status = FileUploadRecordStatus.FINISHED;
+     this.uploadsStore.set(record.id, upload);
+     setRunning(false);
+     setTimeout(() => this.startNextUpload(upload));
      return;
     }
     if (record.type === FileUploadRecordType.P2P && this.p2pThrottleMemory.get(record.id) >= this.p2pMaxBatchChunks) {
-     upload.running = false;
+     setRunning(false);
+     console.log('444');
      return;
     }
 
@@ -123,7 +125,39 @@ class FileUploadManager extends EventEmitter {
 
     upload.pushChunk && (await upload.pushChunk());
    };
-   await upload.pushChunk();
+   this.uploadsStore.set(record.id, upload);
+   this.startUpload(upload);
+  }
+ }
+
+ async startUpload(upload: FileUpload) {
+  if (this.uploadsStore.isAnyUploadRunning()) {
+   console.log('RRR upload is running', upload.record.id);
+   return;
+  }
+  console.log('RRR start upload', upload.record.id);
+  upload.pushChunk && (await upload.pushChunk());
+ }
+
+ async startNextUpload(lastUpload: FileUpload) {
+  console.log('RRR start next upload', lastUpload.record.id);
+  const uploads = this.uploadsStore.getAll();
+  const lastUploadIndex = uploads.findIndex(upload => upload.record.id === lastUpload.record.id);
+  let nextUpload: FileUpload | undefined;
+
+  // find next suitable upload
+  for (let i = lastUploadIndex + 1; i < uploads.length; i++) {
+   const upload = uploads[i];
+   console.log('RRR check upload', upload.record.id, upload.record.status, upload);
+   if (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.BEGUN) {
+    console.warn('RRR found next upload', upload.record.id);
+    nextUpload = upload;
+    break;
+   }
+  }
+
+  if (nextUpload) {
+   await this.startUpload(nextUpload);
   }
  }
 
@@ -161,6 +195,7 @@ class FileUploadManager extends EventEmitter {
 
   upload.record.status = FileUploadRecordStatus.UPLOADING;
   this.uploadsStore.set(uploadId, upload);
+  console.log('RRR resume upload', upload);
   upload.pushChunk && upload.pushChunk();
  }
 

@@ -8,6 +8,7 @@
  import Button from '../../../core/components/button.svelte';
  import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
  import fileUploadStore from '../fileUpload/fileUploadStore.ts';
+ import { humanSize } from '../../../core/utils/file.utils.js';
 
  //let { node, level, num_siblings } = $props();
  let { node } = $props();
@@ -15,10 +16,7 @@
 
  /** uploads */
  const upload = writable(null);
- fileUploadStore.store.subscribe($uploads => {
-  const found = $uploads[uploadId];
-  upload.set(found || null);
- });
+ fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(uploadId) || null));
  const uploaded = derived(upload, $upload => {
   return $upload ? Math.min($upload.chunksSent.length * $upload.record.chunkSize, $upload.record.fileSize) : 0;
  });
@@ -59,14 +57,13 @@
  }
 
  .file-title {
-  font-weight: bold;
   margin-bottom: 6px;
  }
 </style>
 
 {#snippet transferControls()}
  <div class="transfer-controls">
-  {#if $upload.record.status === FileUploadRecordStatus.PAUSED}
+  {#if $upload.record.status === FileUploadRecordStatus.PAUSED || !$upload.running}
    <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} />
   {:else}
    <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} />
@@ -77,7 +74,7 @@
 
 {#snippet downloadControls()}
  <div class="transfer-controls">
-  {#if $download && $download.pausedLocally}
+  {#if $download && ($download.pausedLocally || !$download.running)}
    <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeDownload(uploadId)} />
   {:else}
    <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} />
@@ -95,17 +92,20 @@
 {#snippet fileTitle()}
  {#if $upload && $upload.record}
   <div class="file-title">
-   {$upload.record.fileName}
+   <strong>{$upload.record.fileName}</strong> ({humanSize($upload.record.fileSize)})
   </div>
  {/if}
 {/snippet}
 
 {#snippet renderSenderUpload()}
  <!-- ACTIVE UPLOAD -->
- {#if $isUploadActive && ($upload.record.status === FileUploadRecordStatus.BEGUN || $upload.record.status === FileUploadRecordStatus.UPLOADING || $upload.record.status === FileUploadRecordStatus.PAUSED)}
-  {$upload.record.status}
-  <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} />
-  {@render transferControls()}
+ {#if $upload.record.status === FileUploadRecordStatus.BEGUN || $upload.record.status === FileUploadRecordStatus.UPLOADING || $upload.record.status === FileUploadRecordStatus.PAUSED}
+  {#if $isUploadActive}
+   <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} />
+   {@render transferControls()}
+  {:else}
+   <div>File is uploading</div>
+  {/if}
 
   <!-- FINISHED UPLOAD - downloading -->
  {:else if $download && $upload.record.status === FileUploadRecordStatus.FINISHED}

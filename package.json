@@ -12,6 +12,7 @@
 		"@sveltejs/adapter-static": "^3.0.8",
 		"@sveltejs/kit": "^2.15.2",
 		"@sveltejs/vite-plugin-svelte": "^4.0.4",
+		"@types/retry": "^0.12.5",
 		"git-format-staged": "^3.1.1",
 		"jsdom": "^26.0.0",
 		"prettier": "^3.4.2",
@@ -35,6 +36,7 @@
 		"lottie-web": "^5.12.2",
 		"pako": "^2.1.0",
 		"qrcode": "^1.5.4",
+		"retry": "^0.13.1",
 		"uuid": "^11.0.4",
 		"wavesurfer.js": "^7.8.15"
 	}

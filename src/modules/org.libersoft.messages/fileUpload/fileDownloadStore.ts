@@ -2,54 +2,44 @@ import { get, writable } from 'svelte/store';
 import type { FileDownload, FileDownloadStoreType, FileDownloadStoreValue, FileUploadRecord } from './types.ts';
 
 export class FileDownloadStore implements FileDownloadStoreType {
- store = writable<FileDownloadStoreValue>({});
+ store = writable<FileDownloadStoreValue>([]);
 
  getAll() {
   return get(this.store);
  }
 
  get(id: string) {
-  return get(this.store)[id];
+  return get(this.store).find(download => download.record.id === id);
  }
 
  set(id: string, download: FileDownload) {
   this.store.update(store => {
-   store[id] = download;
-   return { ...store };
+   const index = store.findIndex(d => d.record.id === id);
+   if (index !== -1) {
+    store[index] = download;
+   } else {
+    store.push(download);
+   }
+   return [...store];
   });
  }
 
  patch(id: string, data: Partial<FileDownload>) {
   this.store.update(store => {
-   store[id] = { ...store[id], ...data };
-   return { ...store };
+   return store.map(download => (download.record.id === id ? { ...download, ...data } : download));
   });
  }
 
  delete(id: string) {
-  this.store.update(store => {
-   const newStore = { ...store };
-   delete newStore[id];
-   return newStore;
-  });
+  this.store.update(store => store.filter(download => download.record.id !== id));
  }
 
  updateDownloadRecord(id: string, record: FileUploadRecord) {
-  const download = this.get(id);
-  if (download) {
-   download.record = record;
-   this.patch(id, { record });
-  }
+  this.patch(id, { record });
  }
 
  isAnyDownloadRunning() {
-  const downloads = this.getAll();
-  for (const id in downloads) {
-   if (downloads[id].running) {
-    return true;
-   }
-  }
-  return false;
+  return this.getAll().some(download => download.running);
  }
 }
 

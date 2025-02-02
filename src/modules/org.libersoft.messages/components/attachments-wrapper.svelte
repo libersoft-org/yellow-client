@@ -8,57 +8,47 @@
 
  let { children, node } = $props();
  let ref = writable();
- let uploadRecordType = $state('');
- const uploads = $state([]);
+ let attachedUploads = $state([]);
+ let attachmentIds = $state([]);
 
- let show = $derived.by(() => {
-  const downloadableRecords = uploads.filter(upload => {
+ let downloadableRecords = $derived.by(() => {
+  return attachedUploads.filter(upload => {
    return (upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER && upload.record.status === FileUploadRecordStatus.BEGUN) || (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED);
   });
-  console.warn('FFF', downloadableRecords);
-  return downloadableRecords.length > 1;
+ });
+
+ // determine if the bulk download action should be shown
+ let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
+
+ // subscribe to the store to get the uploads
+ fileUploadStore.store.subscribe(uploads => {
+  if (attachmentIds.length === 0) {
+   return;
+  }
+
+  attachedUploads = uploads.filter(upload => {
+   return attachmentIds.includes(upload.record.id);
+  });
+ });
+
+ // determine attachments type based on the first attachment
+ const uploadRecordType = $derived.by(() => {
+  return attachedUploads.length > 0 ? attachedUploads[0].record.type : null;
  });
 
  function getAttachmentEls() {
-  console.log('ref', ref);
   return ref.closest('.attachments-wrap').querySelectorAll('.message-attachment');
  }
 
  function onAcceptAll() {
-  downloadAttachmentsSerial(getUploads().map(upload => upload.record));
+  downloadAttachmentsSerial(downloadableRecords.map(upload => upload.record));
  }
 
- const getUploads = () => {
-  const uploadsSet = [];
+ onMount(() => {
   getAttachmentEls().forEach(attachmentEl => {
    const uploadId = attachmentEl.getAttribute('data-upload-id');
-   const upload = fileUploadStore.get(uploadId);
-   if (upload) {
-    uploadsSet.push(upload);
-   }
+   attachmentIds.push(uploadId);
   });
-  return uploadsSet;
- };
-
- onMount(() => {
-  const attachmentEls = getAttachmentEls();
-  if (attachmentEls && attachmentEls.length) {
-   // derive upload record type from first attachment
-   const uploadId = attachmentEls[0].getAttribute('data-upload-id');
-   const upload = fileUploadStore.get(uploadId);
-   if (upload) {
-    uploadRecordType = upload.record.type;
-   }
-
-   // get all uploads
-   attachmentEls.forEach(attachmentEl => {
-    const uploadId = attachmentEl.getAttribute('data-upload-id');
-    const upload = fileUploadStore.get(uploadId);
-    if (upload) {
-     uploads.push(upload);
-    }
-   });
-  }
  });
 </script>
 
@@ -90,7 +80,7 @@
  <div class="attachments">
   {@render children?.()}
  </div>
- {#if show}
+ {#if showBulkDownloadAction}
   <div class="actions">
    <Button width="80px" text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'} onClick={onAcceptAll} />
   </div>

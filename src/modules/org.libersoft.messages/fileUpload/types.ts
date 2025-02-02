@@ -25,6 +25,7 @@ export interface FileUploadRecord {
  type: FileUploadRecordType;
  status: FileUploadRecordStatus;
  fileName: string;
+ fromUserUid: string;
  fileMimeType: string;
  fileSize: number;
 
@@ -65,19 +66,15 @@ export interface FileUploadBeginOptions {
  chunkSize?: number;
 }
 
-export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize'>;
+export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid'>;
 
 export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record' | 'acc'>;
 
 export type MakeFileDownloadData = Partial<FileDownload> & Pick<FileDownload, 'record'>;
 
-export type FileUploadStoreValue = {
- [key: string]: FileUpload;
-};
+export type FileUploadStoreValue = FileUpload[];
 
-export type FileDownloadStoreValue = {
- [key: string]: FileDownload;
-};
+export type FileDownloadStoreValue = FileDownload[];
 
 export type BaseStoreType<StoreValue, Item> = {
  store: Writable<StoreValue>;
@@ -88,5 +85,12 @@ export type BaseStoreType<StoreValue, Item> = {
  delete: (id: string) => void;
 };
 
-export type FileUploadStoreType = BaseStoreType<FileUploadStoreValue, FileUpload>;
-export type FileDownloadStoreType = { isAnyDownloadRunning: () => boolean } & BaseStoreType<FileDownloadStoreValue, FileDownload>;
+export type FileUploadStoreType = {
+ updateUploadRecord: (id: string, record: FileUploadRecord) => void;
+ isAnyUploadRunning: () => boolean;
+} & BaseStoreType<FileUploadStoreValue, FileUpload>;
+
+export type FileDownloadStoreType = {
+ updateDownloadRecord: (id: string, record: FileUploadRecord) => void;
+ isAnyDownloadRunning: () => boolean;
+} & BaseStoreType<FileDownloadStoreValue, FileDownload>;

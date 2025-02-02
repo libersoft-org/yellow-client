@@ -6,6 +6,21 @@
  export let uploaded = 0;
  export let download = false;
 
+ let lastUploaded = uploaded;
+ let lastTime = Date.now();
+ let speed = 0;
+
+ $: {
+  const now = Date.now();
+  const elapsed = (now - lastTime) / 1000; // time in seconds
+  const delta = uploaded - lastUploaded;
+  if (elapsed > 0) {
+   speed = delta / elapsed;
+  }
+  lastUploaded = uploaded;
+  lastTime = now;
+ }
+
  $: percent = total > 0 ? Math.round((uploaded / total) * 100) : 0;
 </script>
 
@@ -14,7 +29,6 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  background-color: red;
  }
 
  .text {
@@ -29,6 +43,7 @@
 <div class="upload">
  <div class="file">
   <span class="bold">{download ? 'Downloading' : 'Uploading'}:</span>
+  <span class="speed">{humanSize(speed)}/s</span>
   {#if file}
    <span>{file}</span>
   {/if}

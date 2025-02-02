@@ -96,19 +96,25 @@ export class FileDownloadManager extends EventEmitter {
   if (this.downloadStore.isAnyDownloadRunning()) {
    return;
   }
-  download.pullChunk && download.pullChunk();
+  download.pullChunk && (await download.pullChunk());
  }
 
  async startNextDownload(lastDownload: FileDownload) {
   if (this.downloadStore.isAnyDownloadRunning()) {
    return;
   }
-  // we gonna find the next download by createdAt
   const downloads = this.downloadStore.getAll();
-  const sortedDownloads = Object.values(downloads).sort((a, b) => a.createdAt - b.createdAt);
-  let nextDownload = sortedDownloads.find(download => {
-   return download.createdAt > lastDownload.createdAt && !download.pausedLocally && !download.canceledLocally;
-  });
+  let nextDownload: FileDownload | undefined;
+  const lastDownloadIndex = downloads.findIndex(d => d.record.id === lastDownload.record.id);
+
+  // find next download
+  for (let i = lastDownloadIndex + 1; i < downloads.length; i++) {
+   const download = downloads[i];
+   if (!download.pausedLocally && !download.canceledLocally) {
+    nextDownload = download;
+    break;
+   }
+  }
 
   if (nextDownload) {
    await this.startDownload(nextDownload);

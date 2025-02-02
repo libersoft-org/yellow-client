@@ -12,6 +12,8 @@ import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import { makeFileUpload } from './fileUpload/utils.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
+import retry from 'retry';
+
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
@@ -170,11 +172,31 @@ export function initUpload(files, uploadType, recipients) {
 
 function uploadChunkAsync({ upload, chunk }) {
  return new Promise((resolve, reject) => {
-  sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
-   if (res.error !== 0) {
-    reject();
-   }
-   resolve();
+  const op = retry.operation({
+   retries: 3,
+   factor: 1.5,
+   minTimeout: 1000,
+   maxTimeout: 3000,
+  });
+
+  op.attempt(() => {
+   const retry = () => {
+    const willRetry = op.retry(new Error());
+    if (!willRetry) {
+     reject(res);
+    }
+   };
+   const to = setTimeout(() => {
+    retry();
+   }, 5000); // todo maybe longer
+   sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
+    clearTimeout(to);
+    if (res.error !== 0) {
+     retry();
+     return;
+    }
+    resolve();
+   });
   });
  });
 }
@@ -188,6 +210,8 @@ function ask_for_chunk(event) {
  }
 
  if (upload.record.status === FileUploadRecordStatus.BEGUN) {
+  upload.record.status = FileUploadRecordStatus.UPLOADING;
+  fileUploadStore.set(uploadId, upload);
   fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync);
  } else {
   fileUploadManager.continueP2PUpload(uploadId);
@@ -196,17 +220,8 @@ function ask_for_chunk(event) {
 
 function upload_update(event) {
  const { record } = event.detail.data;
-
- // todo: maybe patch only
- fileUploadStore.store.update(store => {
-  const upload = store[record.id];
-  if (upload) {
-   upload.record = record;
-   return { ...store };
-  }
-  return store;
- });
-
+ console.warn('PPP upload_update', record);
+ fileUploadStore.updateUploadRecord(record.id, record);
  fileDownloadStore.updateDownloadRecord(record.id, record);
 }
 
@@ -268,23 +283,43 @@ export function cancelDownload(uploadId) {
 export function loadUploadData(uploadId) {
  let acc = get(active_account);
 
- sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
-  const { record, uploadData } = res.data;
-  const upload = makeFileUpload({
-   ...uploadData,
-   file: null,
-   record,
-   chunksSent: [],
-   uploadInterval: null,
-   acc,
+ const op = retry.operation({
+  retries: 3,
+  factor: 1.5,
+  minTimeout: 1000,
+  maxTimeout: 3000,
+ });
+
+ op.attempt(() => {
+  sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
+   if (res.error !== 0) {
+    op.retry(res);
+    return;
+   }
+
+   const { record, uploadData } = res.data;
+   const upload = makeFileUpload({
+    ...uploadData,
+    file: null,
+    record,
+    chunksSent: [],
+    uploadInterval: null,
+    acc,
+   });
+
+   // perform checks
+
+   // console.log('ZZZ pre error', upload, acc);
+   // if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {
+   //  if (upload.record.fromUserUid === acc.id) {
+   //   console.warn('ZZZ detected error', upload);
+   //   upload.status = FileUploadRecordStatus.ERROR;
+   //   sendData(acc, null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.ERROR }, true, (req, res) => {});
+   //  }
+   // }
+
+   fileUploadStore.set(uploadId, upload);
   });
-
-  // perform checks
-  if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {
-   upload.status = FileUploadRecordStatus.ERROR;
-  }
-
-  fileUploadStore.set(uploadId, upload);
  });
 }
 
