@@ -63,10 +63,15 @@
 
  // Main rendering function
  function processFragment(fragment) {
-  if (fragment.text) {
-   return [fragment];
-  } else {
-   return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+  try {
+   if (fragment.text) {
+    return [fragment];
+   } else {
+    return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+   }
+  } catch (e) {
+   console.error('Error processing fragment:', e);
+   return [];
   }
  }
 
