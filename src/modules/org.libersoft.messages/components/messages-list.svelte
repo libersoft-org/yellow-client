@@ -1,5 +1,5 @@
 <script>
- import { afterUpdate, beforeUpdate, onMount, setContext, tick } from 'svelte';
+ import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
  import { getGuid, debug } from '../../../core/core.js';
  import Button from '../../../core/components/button.svelte';
  import Spinner from '../../../core/components/spinner.svelte';
@@ -9,8 +9,9 @@
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import ScrollButton from './scroll-button.svelte';
- import { messagesArray, events, insertEvent } from '../messages.js';
+ import { messagesArray, events, insertEvent, identifier } from '../messages.js';
  import { get } from 'svelte/store';
+ import Icon from "../../../core/components/icon.svelte";
  export let conversation;
  export let setBarFocus;
  let scrollButtonVisible = true;
@@ -28,6 +29,9 @@
  let scrolledToBottom = true;
  let windowInnerWidth;
  let windowInnerHeight;
+ let showFileDndOverlay = false;
+
+ let fileDndRef
 
  $: scrollButtonVisible = !scrolledToBottom;
  $: updateWindowSize(windowInnerWidth, windowInnerHeight);
@@ -39,6 +43,8 @@
  }
 
  setContext('openStickersetDetailsModal', openStickersetDetailsModal);
+
+ let {showFileUploadModal, setFileUploadModal, fileUploadModalFiles} = getContext('FileUploadModal');
 
  events.subscribe(e => {
   if (e?.length) {
@@ -286,6 +292,30 @@
   if (event.ctrlKey || event.metaKey) return;
   await setBarFocus();
  }
+
+ function onDragOver(e) {
+  e.preventDefault();
+  // show overlay only if file upload modal is not shown
+  // but if user drops files to conversation it will still add them to the upload modal
+  if (!$showFileUploadModal) {
+   showFileDndOverlay = true;
+  }
+ }
+
+ function onDragLeave(e) {
+  e.preventDefault();
+  // handle premature dragleave events
+  if (!fileDndRef.contains(e.relatedTarget)) {
+   showFileDndOverlay = false;
+  }
+ }
+
+ function onDrop(e) {
+  e.preventDefault();
+  showFileDndOverlay = false;
+  setFileUploadModal(true);
+  $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
+ }
 </script>
 
 <style>
@@ -362,6 +392,40 @@
   word-break: break-word;
  }
  */
+
+ .dnd-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #00000040;
+  display: none;
+  z-index: 1;
+ }
+
+ .dnd-overlay.drop-active {
+  display: flex;
+ }
+
+ .dnd-overlay-inner {
+  margin: 10px;
+  width: 100%;
+  background-color: #00000054;
+  border-radius: 10px;
+  border: 2px dashed #000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+ }
+
+ .dnd-overlay-text {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 8px;
+  color: #fff;
+ }
+
+
 </style>
 
 {#if $debug}
@@ -384,7 +448,13 @@
 
 <svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
 
-<div class="messages-fixed">
+<div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone">
+ <div class="dnd-overlay {showFileDndOverlay ? 'drop-active' : ''}">
+  <div class="dnd-overlay-inner">
+   <Icon img="modules/{identifier}/img/file-white.svg" alt="Drop files icon" size="75" padding="0" />
+   <div class="dnd-overlay-text">Drop files here to send them</div>
+  </div>
+ </div>
  {#if itemsArray.length === 1 && itemsArray[0].type === 'no_messages'}
   <div class="spacer"></div>
   <div class="no-messages">

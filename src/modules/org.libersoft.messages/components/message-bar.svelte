@@ -1,6 +1,6 @@
 <script>
  import { identifier, preprocess_incoming_plaintext_message_text, sendMessage } from '../messages.js';
- import { onMount, setContext, tick } from 'svelte';
+ import { getContext, onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
  import ContextMenu from '../../../core/components/context-menu.svelte';
@@ -19,7 +19,6 @@
  let elMessageBar;
  let text;
  let showHTMLModal = false;
- let showFileUploadModal = false;
  let expressionsHeight = '500px';
  let showExpressions = false;
 
@@ -38,10 +37,6 @@
    resizeMessage();
   },
  });
-
- function setFileUploadModal(value) {
-  showFileUploadModal = value;
- }
 
  export async function insertText(text) {
   /* insert text at the current cursor position */
@@ -109,6 +104,8 @@
  function sendLocation() {
   console.log('clicked on location');
  }
+
+ let {showFileUploadModal, setFileUploadModal} = getContext('FileUploadModal');
 </script>
 
 <style>
@@ -172,4 +169,4 @@
 -->
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />
-<Modal title="File Upload" body={FileUpload} bind:show={showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
+<Modal title="File Upload" body={FileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />

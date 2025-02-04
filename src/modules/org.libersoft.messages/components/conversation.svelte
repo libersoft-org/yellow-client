@@ -1,7 +1,7 @@
 <script>
  import { onDestroy, onMount, setContext, tick } from 'svelte';
  import Core from '../../../core/core.js';
- import { get } from 'svelte/store';
+ import { get, writable } from 'svelte/store';
  import { selectedConversation } from '../messages.js';
  import ProfileBar from './profile-bar.svelte';
  import MessagesList from './messages-list.svelte';
@@ -13,6 +13,9 @@
 
  $: messagesContext.messageBar = message_bar;
  $: update($selectedConversation);
+
+ let showFileUploadModal = writable(false)
+ let fileUploadModalFiles = writable([])
 
  async function update(selectedConversation) {
   if (selectedConversation) {
@@ -49,6 +52,15 @@
    return;
   }
  }
+
+ function setFileUploadModal(value) {
+  showFileUploadModal.set(value);
+  if (value !== $showFileUploadModal) {
+   fileUploadModalFiles.set([]);
+  }
+ }
+
+ setContext('FileUploadModal', { showFileUploadModal, fileUploadModalFiles, setFileUploadModal });
 </script>
 
 <style>
