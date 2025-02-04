@@ -37,8 +37,8 @@
    // Regular HTML elements
    return {
     tag: node.tagName.toLowerCase(),
+    attrs: getNodeProps(node),
     props: {
-     ...getNodeProps(node),
      node,
     },
     children: Array.from(node.childNodes)
@@ -64,10 +64,10 @@
  // Main rendering function
  function processFragment(fragment) {
   try {
-   if (fragment.text) {
-    return [fragment];
-   } else {
+   if (fragment.childNodes) {
     return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+   } else {
+    return [fragment];
    }
   } catch (e) {
    console.error('Error processing fragment:', e);
@@ -94,7 +94,7 @@
 
   <!-- Render regular HTML elements -->
  {:else if item.tag}
-  <svelte:element this={item.tag} {...item.props}>
+  <svelte:element this={item.tag} {...item.attrs}>
    {#each item.children as child}
     <svelte:self rootNode={child} />
    {/each}
