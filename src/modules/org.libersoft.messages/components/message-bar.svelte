@@ -1,5 +1,6 @@
 <script>
- import { identifier, preprocess_incoming_plaintext_message_text, sendMessage } from '../messages.js';
+ import { debug } from '../../../core/core.js';
+ import { identifier, sendMessage } from '../messages.js';
  import { onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
@@ -9,8 +10,6 @@
  import ModalHTML from '../modals/html.svelte';
  import FileUpload from '../modals/file-upload.svelte';
  import Expressions from './expressions.svelte';
- import fileUploadManager from '../fileUpload/FileUploadManager.ts';
- import { FileUploadRecordType } from '../fileUpload/types.ts';
  import { init_emojis } from '../emojis.js';
 
  let elAttachment;
@@ -21,7 +20,8 @@
  let showHTMLModal = false;
  let showFileUploadModal = false;
  let expressionsHeight = '500px';
- let showExpressions = false;
+ let expressionsBottomSheetOpen = false;
+ let expressionsAsContextMenu = true;
 
  onMount(async () => {
   console.log('MessageBar mounted');
@@ -109,6 +109,19 @@
  function sendLocation() {
   console.log('clicked on location');
  }
+
+ $: expressionsAsContextMenuUpdate(expressionsAsContextMenu);
+ function expressionsAsContextMenuUpdate(expressionsAsContextMenu) {
+  expressionsBottomSheetOpen = false;
+  elExpressions?.close();
+ }
+
+ $: update2(expressionsAsContextMenu, expressionsBottomSheetOpen);
+ function update2(expressionsAsContextMenu, expressionsBottomSheetOpen) {
+  if (!expressionsAsContextMenu && expressionsBottomSheetOpen) {
+   elMessage.blur();
+  }
+ }
 </script>
 
 <style>
@@ -144,14 +157,17 @@
  <div bind:this={elAttachment}>
   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
  </div>
- <BaseButton onClick={() => (showExpressions = !showExpressions)}>
+
+ {#if expressionsAsContextMenu}
   <div bind:this={elExpressions}>
    <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" />
   </div>
- </BaseButton>
- <!--
- <span class="message" bind:innerHTML={text} bind:this={elMessage} placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} contenteditable></span>
- -->
+ {:else}
+  <BaseButton onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)}>
+   <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" />
+  </BaseButton>
+ {/if}
+
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
@@ -163,9 +179,11 @@
  <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
-<ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
- <Expressions height={expressionsHeight} />
-</ContextMenu>
+{#if expressionsAsContextMenu}
+ <ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+  <Expressions height={expressionsHeight} />
+ </ContextMenu>
+{/if}
 
 <!--
 <Modal body={Expressions} width="363px" bind:show={showExpressions} />
@@ -173,3 +191,21 @@
 
 <Modal title="HTML composer" body={ModalHTML} bind:show={showHTMLModal} />
 <Modal title="File Upload" body={FileUpload} bind:show={showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
+
+{#if $debug}
+ <BaseButton
+  onClick={() => {
+   expressionsAsContextMenu = !expressionsAsContextMenu;
+   console.log('expressionsAsContextMenu:', expressionsAsContextMenu, 'expressionsBottomSheetOpen:', expressionsBottomSheetOpen);
+  }}
+ >
+  expressionsBottomSheetOpen: {expressionsBottomSheetOpen}
+  expressionsAsContextMenu: {expressionsAsContextMenu}
+ </BaseButton>
+{/if}
+
+{#if !expressionsAsContextMenu && expressionsBottomSheetOpen}
+ <div style="height: {expressionsHeight};">
+  <Expressions height={expressionsHeight} />
+ </div>
+{/if}
