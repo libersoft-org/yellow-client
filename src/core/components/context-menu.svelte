@@ -38,7 +38,7 @@
   prevX = 0;
   prevY = 0;
   focusIndex = -1;
-  console.log('context-menu close currentInstance:', currentInstance, 'menus:', menus);
+  //console.log('context-menu close currentInstance:', currentInstance, 'menus:', menus);
   for (let menu of Array.from(menus)) {
    if (menu.guid === currentInstance) {
     console.log('found myself, menus.length:', menus.length);

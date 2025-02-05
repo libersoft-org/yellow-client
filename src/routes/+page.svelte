@@ -2,7 +2,7 @@
  import '../app.css';
  import { onMount, setContext } from 'svelte';
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
- import { active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls, debug, product, version, link } from '../core/core.js';
+ import { documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls, debug, product, version, link } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
  import ModuleBar from '../core/components/module-bar.svelte';
@@ -96,6 +96,7 @@
   document.body.style.overflow = 'hidden';
   const metaViewport = document.querySelector('meta[name="viewport"]');
   if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
+  documentHeight.set(document.documentElement.clientHeight);
  }
 
  let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;

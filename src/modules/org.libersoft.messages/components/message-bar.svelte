@@ -1,6 +1,6 @@
 <script>
- import { debug } from '../../../core/core.js';
- import { identifier, sendMessage } from '../messages.js';
+ import { documentHeight, debug } from '../../../core/core.js';
+ import { handleResize, identifier, sendMessage } from '../messages.js';
  import { onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
@@ -12,6 +12,7 @@
  import Expressions from './expressions.svelte';
  import { init_emojis } from '../emojis.js';
 
+ let expressionsMenu;
  let elAttachment;
  let elExpressions;
  let elMessage;
@@ -61,6 +62,7 @@
   //await sendMessage(html ? message : messagebar_text_to_html(message));
   await sendMessage(message, html ? 'html' : 'plaintext');
   await setBarFocus();
+  closeExpressions();
  }
 
  export async function setBarFocus() {
@@ -110,10 +112,21 @@
   console.log('clicked on location');
  }
 
+ documentHeight.subscribe(value => {
+  console.log('documentHeight:', value);
+  expressionsAsContextMenu = value > 600;
+ });
+
  $: expressionsAsContextMenuUpdate(expressionsAsContextMenu);
  function expressionsAsContextMenuUpdate(expressionsAsContextMenu) {
+  closeExpressions();
+ }
+
+ function closeExpressions() {
+  console.log('closeExpressions');
+  if (expressionsBottomSheetOpen) handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet
   expressionsBottomSheetOpen = false;
-  elExpressions?.close();
+  expressionsMenu?.close();
  }
 
  $: update2(expressionsAsContextMenu, expressionsBottomSheetOpen);
@@ -180,7 +193,7 @@
 </ContextMenu>
 
 {#if expressionsAsContextMenu}
- <ContextMenu target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+ <ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
   <Expressions height={expressionsHeight} />
  </ContextMenu>
 {/if}

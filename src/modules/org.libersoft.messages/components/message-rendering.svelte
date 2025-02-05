@@ -13,7 +13,7 @@
  function update(messageContent) {
   dummyArray = [messageContent];
   gen++;
-  console.log('update, messageContent:', messageContent, 'gen:', gen);
+  //console.log('update, messageContent:', messageContent, 'gen:', gen);
  }
 </script>
 

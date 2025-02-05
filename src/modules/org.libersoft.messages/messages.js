@@ -389,11 +389,9 @@ function addMessagesToMessagesArray(items, reason) {
  return result;
 }
 
-/*
-export function handleResize(wasScrolledToBottom) {
- insertEvent({ type: 'resize', {wasScrolledToBottom} });
+export function handleResize(wasScrolledToBottom2) {
+ insertEvent({ type: 'resize', wasScrolledToBottom2: true });
 }
-*/
 
 export function snipeMessage(msg) {
  messagesArray.update(v => {
@@ -517,7 +515,7 @@ function updateConversationsArray(acc, msg) {
  let acc_ca = acc.module_data[identifier].conversationsArray;
  let ca = get(acc_ca);
  const conversation = ca.find(c => c.address === msg.remote_address);
- console.log('updateConversationsArray', conversation, msg);
+ //console.log('updateConversationsArray', conversation, msg);
  let is_unread = !msg.seen && !msg.just_sent && msg.address_from !== acc.credentials.address;
  if (conversation) {
   conversation.last_message_date = msg.created;
@@ -562,15 +560,15 @@ export function insertEvent(event) {
 function eventNewMessage(acc, event) {
  const res = event.detail;
  if (!res.data) return;
- console.log('eventNewMessage', acc, res);
+ //console.log('eventNewMessage', acc, res);
  let msg = new Message(acc, res.data);
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
  if (msg.address_from !== acc.credentials.address) {
-  console.log('showNotification?');
+  //console.log('showNotification?');
   if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) showNotification(acc, msg);
  }
- console.log('eventNewMessage updateConversationsArray with msg:', msg);
+ //console.log('eventNewMessage updateConversationsArray with msg:', msg);
  updateConversationsArray(acc, msg);
  if (acc !== get(active_account)) return;
  if ((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address)) {
@@ -581,23 +579,23 @@ function eventNewMessage(acc, event) {
 
 function eventSeenMessage(acc, event) {
  if (acc !== get(active_account)) {
-  console.log('eventSeenMessage: acc !== get(active_account)', acc, get(active_account));
+  //console.log('eventSeenMessage: acc !== get(active_account)', acc, get(active_account));
   return;
  }
  console.log(event);
  const res = event.detail;
- console.log('eventSeenMessage', res);
+ //console.log('eventSeenMessage', res);
  if (!res.data) {
   console.log('eventSeenMessage: no data');
   return;
  }
- console.log('messagesArray:', get(messagesArray));
+ //console.log('messagesArray:', get(messagesArray));
  const message = get(messagesArray).find(m => m.uid === res.data.uid);
- console.log('eventSeenMessage: message found by uid:', message);
+ //console.log('eventSeenMessage: message found by uid:', message);
  if (message) {
   message.seen = res.data.seen;
   messagesArray.update(v => v);
-  console.log('insertEvent..');
+  //console.log('insertEvent..');
   insertEvent({ type: 'properties_update', array: get(messagesArray) });
  } else console.log('eventSeenMessage: message not found by uid:', res);
 }
@@ -718,9 +716,9 @@ export function processMessage(message) {
   wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
  } else {
   let text = preprocess_incoming_plaintext_message_text(message.message);
-  console.log('text:', text);
+  //console.log('text:', text);
   html = saneHtml(text);
-  console.log('html:', html);
+  //console.log('html:', html);
  }
  //html = group_downloads(html);
 
