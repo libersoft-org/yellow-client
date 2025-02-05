@@ -1,5 +1,5 @@
 <script>
- import { documentHeight, debug, isMobile } from '../../../core/core.js';
+ import { keyboardHeight, documentHeight, debug, isMobile } from '../../../core/core.js';
  import { handleResize, identifier, sendMessage } from '../messages.js';
  import { onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
