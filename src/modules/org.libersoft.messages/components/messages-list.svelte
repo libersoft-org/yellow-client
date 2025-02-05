@@ -112,7 +112,8 @@
    } else if (event.type === 'resize') {
     console.log('resize uiEvent:', event);
     if (event.wasScrolledToBottom || event.wasScrolledToBottom2) {
-     scrollToBottom();
+     setTimeout(() => scrollToBottom(), 300);
+     //scrollToBottom();
     }
    }
   }

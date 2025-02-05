@@ -6,6 +6,8 @@
  import Item from './expressions-item.svelte';
  import Settings from './expressions-settings.svelte';
  export let height;
+ export let isBottomSheet;
+
  let expression = 'emojis';
  const expressions = {
   emojis: Emojis,
@@ -38,6 +40,10 @@
 
 <div class="expressions" style="height: {height}">
  <div class="categories" role="none">
+  isBottomSheet:{isBottomSheet}?
+  {#if isBottomSheet}
+   bbbb
+  {/if}
   <Item label="Emojis" icon={'modules/' + identifier + '/img/emoji-black.svg'} active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
   <Item label="Stickers" icon={'modules/' + identifier + '/img/sticker-black.svg'} active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
   <Item label="GIFs" icon={'modules/' + identifier + '/img/gif-black.svg'} active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />

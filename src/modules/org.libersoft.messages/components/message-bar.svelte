@@ -1,5 +1,5 @@
 <script>
- import { documentHeight, debug } from '../../../core/core.js';
+ import { documentHeight, debug, isMobile } from '../../../core/core.js';
  import { handleResize, identifier, sendMessage } from '../messages.js';
  import { onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
@@ -51,10 +51,11 @@
   const end = elMessage.selectionEnd;
   elMessage.value = elMessage.value.substring(0, start) + text + elMessage.value.substring(end);
   resizeMessage();
+  //if (expressionsBottomSheetOpen) return;
   elMessage.selectionStart = start + text.length;
   elMessage.selectionEnd = start + text.length;
   console.log('elMessage.selectionStart:', elMessage.selectionStart);
-  elMessage.focus();
+  setBarFocus();
  }
 
  export async function doSendMessage(message, html) {
@@ -66,6 +67,7 @@
  }
 
  export async function setBarFocus() {
+  if (expressionsBottomSheetOpen) return;
   await tick();
   console.log('setBarFocus');
   if (elMessage) elMessage.focus();
@@ -112,9 +114,16 @@
   console.log('clicked on location');
  }
 
+ isMobile.subscribe(value => {
+  expressionsAsContextMenu = !value;
+ });
+
  documentHeight.subscribe(value => {
-  console.log('documentHeight:', value);
-  expressionsAsContextMenu = value > 600;
+  handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
+ });
+
+ keyboardHeight.subscribe(value => {
+  console.log('keyboardHeight:', value);
  });
 
  $: expressionsAsContextMenuUpdate(expressionsAsContextMenu);
@@ -124,7 +133,7 @@
 
  function closeExpressions() {
   console.log('closeExpressions');
-  if (expressionsBottomSheetOpen) handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet
+  //if (expressionsBottomSheetOpen) handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet
   expressionsBottomSheetOpen = false;
   expressionsMenu?.close();
  }
@@ -163,6 +172,12 @@
   overflow-y: auto;
   width: 100%;
   box-sizing: border-box;
+ }
+
+ .bottom-sheet {
+  background-color: #321;
+  border-radius: 10px;
+  border: 10px solid #000;
  }
 </style>
 
@@ -218,7 +233,7 @@
 {/if}
 
 {#if !expressionsAsContextMenu && expressionsBottomSheetOpen}
- <div style="height: {expressionsHeight};">
-  <Expressions height={expressionsHeight} />
+ <div class="bottom-sheet" style="height: {expressionsHeight};">
+  <Expressions height={expressionsHeight} isBottomSheet={true} />
  </div>
 {/if}

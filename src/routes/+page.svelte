@@ -2,7 +2,7 @@
  import '../app.css';
  import { onMount, setContext } from 'svelte';
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
- import { documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls, debug, product, version, link } from '../core/core.js';
+ import { isMobile, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, getModuleDecls, debug, product, version, link } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
  import ModuleBar from '../core/components/module-bar.svelte';
@@ -77,26 +77,33 @@
    visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
   } else window.addEventListener('resize', updateAppHeight);
   updateAppHeight();
-
-  if ('virtualKeyboard' in navigator) {
-   navigator.virtualKeyboard.addEventListener('geometrychange', event => {
-    console.log(event.target.boundingRect);
-   });
-  }
  });
 
  function updateAppHeight() {
   console.log('updateAppHeight');
+
+  if ('virtualKeyboard' in navigator) {
+   navigator.virtualKeyboard.addEventListener('geometrychange', event => {
+    console.log('virtualKeyboard geometrychange:', event.target.boundingRect);
+   });
+  }
+
   const visualViewport = window.visualViewport;
   let viewportHeight;
-  if (visualViewport) viewportHeight = visualViewport.height;
-  else viewportHeight = window.innerHeight;
+  if (visualViewport) {
+   viewportHeight = visualViewport.height;
+   let keyboardHeightValue = visualViewport.height - visualViewport.clientHeight;
+   if (keyboardHeightValue < 0) keyboardHeightValue = 0;
+   keyboardHeight.set(keyboardHeightValue);
+  } else viewportHeight = window.innerHeight;
   document.documentElement.style.setProperty('--app-height', `${viewportHeight}px`);
   document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
   const metaViewport = document.querySelector('meta[name="viewport"]');
   if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
   documentHeight.set(document.documentElement.clientHeight);
+  isMobile.set(window.matchMedia('(max-width: 768px)').matches);
+  console.log('$isMobile:', $isMobile);
  }
 
  let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
