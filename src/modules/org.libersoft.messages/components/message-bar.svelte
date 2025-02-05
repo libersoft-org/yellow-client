@@ -20,7 +20,7 @@
  let text;
  let showHTMLModal = false;
  let showFileUploadModal = false;
- let expressionsHeight = '500px';
+ let expressionsHeight = '250px';
  let expressionsBottomSheetOpen = false;
  let expressionsAsContextMenu = true;
 
@@ -124,6 +124,9 @@
 
  keyboardHeight.subscribe(value => {
   console.log('keyboardHeight:', value);
+  if (value > 100) {
+   expressionsHeight = value + 'px';
+  }
  });
 
  $: expressionsAsContextMenuUpdate(expressionsAsContextMenu);
@@ -196,7 +199,7 @@
   </BaseButton>
  {/if}
 
- <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter}></textarea>
+ <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={() => (expressionsBottomSheetOpen = false)}></textarea>
  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>

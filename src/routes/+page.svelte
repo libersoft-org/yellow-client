@@ -10,6 +10,7 @@
  import WelcomeSidebar from '../core/pages/welcome-sidebar.svelte';
  import WelcomeContent from '../core/pages/welcome-content.svelte';
  import Accounts from '../core/pages/accounts.svelte';
+ import Modal from '../core/components/modal.svelte';
  import Wizard from '../core/components/wizard.svelte';
  import WizardWelcomeStep1 from '../core/wizards/welcome-step1.svelte';
  import WizardWelcomeStep2 from '../core/wizards/welcome-step2.svelte';
@@ -19,7 +20,6 @@
  import {} from '../modules/org.libersoft.wallet/module.js';
  import {} from '../modules/org.libersoft.iframes/module.js';
  import {} from '../modules/org.libersoft.dating/module.js';
- import Modal from '../core/components/modal.svelte';
  let menus = [];
  setContext('menus', menus);
 
