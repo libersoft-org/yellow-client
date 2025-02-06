@@ -1,10 +1,12 @@
 <script>
+ import { get } from 'svelte/store';
  import { onMount, getContext } from 'svelte';
  import { htmlEscape } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Button from '../../../core/components/button.svelte';
  import InputText from '../../../core/components/input-text.svelte';
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
+ import { isMobile } from '../../../core/core.js';
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
  const store = localStorageSharedStore('giphy-api-key');
@@ -17,8 +19,10 @@
 
  onMount(() => {
   apiKey = $store;
-  if (!apiKey) elApiKey.focus();
-  else elSearchText.focus();
+  if (!get(isMobile)) {
+   if (!apiKey) elApiKey.focus();
+   else elSearchText.focus();
+  }
  });
 
  function saveAPIKey() {

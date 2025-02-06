@@ -1,5 +1,5 @@
 <script>
- import { keyboardHeight, documentHeight, debug, isMobile } from '../../../core/core.js';
+ import { keyboardHeight, documentHeight, debug, isMobile, debugBuffer } from '../../../core/core.js';
  import { handleResize, identifier, sendMessage } from '../messages.js';
  import { onMount, setContext, tick } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
@@ -11,8 +11,10 @@
  import FileUpload from '../modals/file-upload.svelte';
  import Expressions from './expressions.svelte';
  import { init_emojis } from '../emojis.js';
+ import { get } from 'svelte/store';
 
  let expressionsMenu;
+ let elBottomSheet;
  let elAttachment;
  let elExpressions;
  let elMessage;
@@ -20,13 +22,32 @@
  let text;
  let showHTMLModal = false;
  let showFileUploadModal = false;
- let expressionsHeight = '250px';
+ let expressionsHeight = '500px';
  let expressionsBottomSheetOpen = false;
  let expressionsAsContextMenu = true;
+ let lastDocumentHeight = 0;
+
+ isMobile.subscribe(value => {
+  expressionsAsContextMenu = !value;
+  expressionsHeight = value ? '250px' : '500px';
+ });
+
+ documentHeight.subscribe(value => {
+  if (value != lastDocumentHeight) {
+   if (value < lastDocumentHeight - 100) expressionsBottomSheetOpen = false;
+   lastDocumentHeight = value;
+  }
+ });
 
  onMount(async () => {
   console.log('MessageBar mounted');
   await init_emojis();
+  setInterval(() => {
+   /*let v = get(debugBuffer);
+   v = v.substring(0, 65500);
+   doSendMessage(v, false);*/
+   debugBuffer.set('');
+  }, 10000);
  });
 
  setContext('MessageBar', {
@@ -74,6 +95,8 @@
  }
 
  function resizeMessage() {
+  console.log('resizeMessage');
+  handleResize(true /*todo save*/);
   const maxHeight = 200;
   const textarea = elMessage;
   textarea.style.height = 'auto'; // ?
@@ -114,10 +137,6 @@
   console.log('clicked on location');
  }
 
- isMobile.subscribe(value => {
-  expressionsAsContextMenu = !value;
- });
-
  documentHeight.subscribe(value => {
   handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
  });
@@ -125,7 +144,10 @@
  keyboardHeight.subscribe(value => {
   console.log('keyboardHeight:', value);
   if (value > 100) {
-   expressionsHeight = value + 'px';
+   if (get(isMobile)) {
+    console.log('adjusting expressionsHeight from keyboardHeight:', value);
+    expressionsHeight = value + 'px';
+   }
   }
  });
 
@@ -146,6 +168,12 @@
   if (!expressionsAsContextMenu && expressionsBottomSheetOpen) {
    elMessage.blur();
   }
+ }
+
+ function elMessageBlur(event) {
+  console.log('elMessageBlur');
+  if (elBottomSheet?.contains(event.relatedTarget)) return;
+  expressionsBottomSheetOpen = false;
  }
 </script>
 
@@ -199,7 +227,7 @@
   </BaseButton>
  {/if}
 
- <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={() => (expressionsBottomSheetOpen = false)}></textarea>
+ <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>
@@ -236,7 +264,7 @@
 {/if}
 
 {#if !expressionsAsContextMenu && expressionsBottomSheetOpen}
- <div class="bottom-sheet" style="height: {expressionsHeight};">
+ <div class="bottom-sheet" style="height: {expressionsHeight};" bind:this={elBottomSheet}>
   <Expressions height={expressionsHeight} isBottomSheet={true} />
  </div>
 {/if}

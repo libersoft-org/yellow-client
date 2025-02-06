@@ -4,6 +4,7 @@ import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib
 
 //import {} from './client_debug';
 
+export const debugBuffer = writable('');
 export const documentHeight = writable(0);
 export const isMobile = writable(false);
 export const keyboardHeight = writable(0);
@@ -685,6 +686,16 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
+// import inspect from 'browser-util-inspect';
+function formatNoColor(args) {
+ let msg = '';
+ const inspected_nocolor = args.map(o => (typeof o === 'string' ? o : o));
+ for (const v of inspected_nocolor) {
+  msg += v + ' ';
+ }
+ return msg;
+}
+
 let originalLog;
 
 function monkeypatch_console_log() {
@@ -696,7 +707,10 @@ function monkeypatch_console_log() {
   //const timestamp = new Date().toISOString();
   // show just time:
   const timestamp = new Date().toISOString().slice(11, -1);
-  originalLog.apply(console, [`[${timestamp}]`, ...args]);
+  let msg = [`[${timestamp}]`, ...args];
+  originalLog.apply(console, msg);
+
+  debugBuffer.update(v => v + formatNoColor(msg) + '\n');
  };
 }
 
