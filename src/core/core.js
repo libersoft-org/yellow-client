@@ -13,6 +13,7 @@ export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
+const buildDate = new Date(__BUILD_DATE__).toLocaleString();
 
 debug.subscribe(value => {
  console.log('CLIENT_DEBUG:', value);
@@ -20,7 +21,7 @@ debug.subscribe(value => {
 
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
-export const version = '0.0.1';
+export const version = '0.0.1' + (buildDate ? ' (' + buildDate + ')' : '');
 export const link = 'https://yellow.libersoft.org';
 
 // declarations of modules that this client supports

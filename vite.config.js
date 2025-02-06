@@ -23,6 +23,9 @@ export default defineConfig(({mode}) => {
     sveltekit(),
     ...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
    ],
+   define: {
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString())
+   },
    server: {
     https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?
      {
