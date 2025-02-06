@@ -43,9 +43,10 @@
   console.log('MessageBar mounted');
   await init_emojis();
   setInterval(() => {
-   /*let v = get(debugBuffer);
+   let v = get(debugBuffer);
+   if (v == '') return;
    v = v.substring(0, 65500);
-   doSendMessage(v, false);*/
+   doSendMessage(v, false);
    debugBuffer.set('');
   }, 10000);
  });

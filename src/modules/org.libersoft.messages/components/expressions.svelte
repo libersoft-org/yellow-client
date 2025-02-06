@@ -6,7 +6,6 @@
  import Item from './expressions-item.svelte';
  import Settings from './expressions-settings.svelte';
  export let height;
- export let isBottomSheet;
 
  let expression = 'emojis';
  const expressions = {

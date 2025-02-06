@@ -3,6 +3,16 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
+
+
+function getGitCommitHash() {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch (e) {
+    return null;
+  }
+}
 
 export default defineConfig(({mode}) => {
   return {
@@ -24,7 +34,8 @@ export default defineConfig(({mode}) => {
     ...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
    ],
    define: {
-    __BUILD_DATE__: JSON.stringify(new Date().toISOString())
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
+    __COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
    },
    server: {
     https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?

@@ -11,8 +11,10 @@
  import ScrollButton from './scroll-button.svelte';
  import { messagesArray, events, insertEvent } from '../messages.js';
  import { get } from 'svelte/store';
+
  export let conversation;
  export let setBarFocus;
+
  let scrollButtonVisible = true;
  let showDebugModal = false;
  let messages_elem;
@@ -174,7 +176,7 @@
  }
 
  async function handleEvents(events) {
-  //console.log('handleEvents:', events);
+  console.log('handleEvents:', events);
   if (events.length === 1 && events[0].type === 'properties_update') {
    itemsArray = itemsArray;
    return;
@@ -233,7 +235,7 @@
     items.push(m);
     if (m.id !== undefined && m.id > oldLastID) {
      oldLastID = m.id;
-     if (m.is_lazyloaded) scroll = false;
+     //if (m.is_lazyloaded) scroll = false;
     }
     let next = messages[i + 1];
     if (next && next.id !== undefined && m.next != 'none' && m.next != undefined && m.next !== next.id) {

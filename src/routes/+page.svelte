@@ -92,7 +92,10 @@
   let viewportHeight;
   if (visualViewport) {
    viewportHeight = visualViewport.height;
-   let keyboardHeightValue = visualViewport.height - visualViewport.clientHeight;
+   let clientHeight = visualViewport.clientHeight;
+   console.log('clientHeight:', clientHeight);
+   let keyboardHeightValue = viewportHeight - clientHeight;
+   console.log('keyboardHeightValue:', keyboardHeightValue);
    if (keyboardHeightValue < 0) keyboardHeightValue = 0;
    keyboardHeight.set(keyboardHeightValue);
   } else viewportHeight = window.innerHeight;

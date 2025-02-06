@@ -21,7 +21,7 @@ debug.subscribe(value => {
 
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
-export const version = '0.0.1' + (buildDate ? ' (' + buildDate + ')' : '');
+export const version = '0.0.1' + (buildDate ? ' (' + buildDate + ')' : '') + (__COMMIT_HASH__ ? ' (commit ' + __COMMIT_HASH__ + ')' : '');
 export const link = 'https://yellow.libersoft.org';
 
 // declarations of modules that this client supports
