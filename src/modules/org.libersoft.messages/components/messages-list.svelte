@@ -70,7 +70,7 @@
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  //console.log('SCROLLTOBOTTOM');
+  console.log('SCROLLTOBOTTOM');
   messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
@@ -115,6 +115,12 @@
    } else if (event.type === 'initial_load') scrollToBottom();
    else if (event.type === 'properties_update') {
     //console.log('properties_update');
+   } else if (event.type === 'resize') {
+    console.log('resize uiEvent:', event);
+    if (event.wasScrolledToBottom || event.wasScrolledToBottom2) {
+     setTimeout(() => scrollToBottom(), 300);
+     //scrollToBottom();
+    }
    }
   }
   let events = [...uiEvents];

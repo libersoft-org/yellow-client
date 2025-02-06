@@ -4,6 +4,9 @@ import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib
 
 //import {} from './client_debug';
 
+export const documentHeight = writable(0);
+export const isMobile = writable(false);
+export const keyboardHeight = writable(0);
 export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
@@ -508,9 +511,9 @@ function setupPing(account) {
    {},
    true,
    (req, res) => {
-    console.log('Ping response:', res);
+    //console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
-    console.log('lastCommsTs:', acc.lastCommsTs);
+    //console.log('lastCommsTs:', acc.lastCommsTs);
     void 'avoid expensive UI update';
     if (acc.status !== 'Connected.' || acc.error != null) {
      acc.status = 'Connected.';

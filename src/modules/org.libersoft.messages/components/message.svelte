@@ -6,13 +6,13 @@
  import { stripHtml } from '../messages.js';
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
- //import Image from './image.svelte';
- //import Audio from './audio.svelte';
- //import Video from './video.svelte';
+ import Image from './image.svelte';
+ import Audio from './audio.svelte';
+ import Video from './video.svelte';
  //import FileTransfer from './filetransfer.svelte';
- //import Map from './map.svelte';
+ import Map from './map.svelte';
  import MessageRendering from './message-rendering.svelte';
- //import Reply from './message-reply.svelte';
+ import Reply from './message-reply.svelte';
  export let message;
  export let elContainer;
  let seenTxt;
@@ -255,11 +255,11 @@
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu|preventDefault={rightClickContextMenu}>
  <div bind:this={elIntersectionObserver}></div>
- <!--<Reply name="Someone" text="Some text" />-->
- <!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
- <!--<Audio file="modules/{identifier}/audio/message.mp3" />-->
- <!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
- <!--<Map latitude="50.0755", longitude="14.4378" />-->
+ <Reply name="Someone" text="Some text" />
+ <Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />
+ <Audio file="modules/{identifier}/audio/message.mp3" />
+ <Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />
+ <Map latitude="50.0755", longitude="14.4378" />
  <!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
  {#if $debug}
   <div class="debug">
