@@ -353,12 +353,20 @@ export function deinitData(acc) {
 }
 
 export function listMessages(acc, address) {
- console.log('listMessages', acc, address);
+ //console.log('listMessages', acc, address);
  messagesArray.set([{ type: 'initial_loading_placeholder' }]);
  loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', res => {});
 }
 
 export function loadMessages(acc, address, base, prev, next, reason, cb) {
+ /* acc: account object
+ address: contact address (identifies conversation)
+ base: message id
+ prev: number of messages to load before base
+ next: number of messages to load after base
+ reason: reason for loading messages (for debugging)
+ cb: callback (optional)
+  */
  return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (res.error !== 0 || !res.data?.messages) {
    console.error(res);
@@ -389,7 +397,7 @@ function addMessagesToMessagesArray(items, reason) {
  return result;
 }
 
-export function handleResize(wasScrolledToBottom2) {
+export function handleResize(wasScrolledToBottom) {
  insertEvent({ type: 'resize', wasScrolledToBottom2: true });
 }
 

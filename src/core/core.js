@@ -4,6 +4,7 @@ import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib
 
 //import {} from './client_debug';
 
+export const debugBuffer = writable('');
 export const documentHeight = writable(0);
 export const isMobile = writable(false);
 export const keyboardHeight = writable(0);
@@ -12,6 +13,7 @@ export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
+const buildDate = new Date(__BUILD_DATE__).toLocaleString();
 
 debug.subscribe(value => {
  console.log('CLIENT_DEBUG:', value);
@@ -19,7 +21,7 @@ debug.subscribe(value => {
 
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
-export const version = '0.0.1';
+export const version = '0.0.1' + (buildDate ? ' (' + buildDate + ')' : '') + (__COMMIT_HASH__ ? ' (commit ' + __COMMIT_HASH__ + ')' : '');
 export const link = 'https://yellow.libersoft.org';
 
 // declarations of modules that this client supports
@@ -685,6 +687,16 @@ function generateRequestID() {
  return ++lastRequestId;
 }
 
+// import inspect from 'browser-util-inspect';
+function formatNoColor(args) {
+ let msg = '';
+ const inspected_nocolor = args.map(o => (typeof o === 'string' ? o : o));
+ for (const v of inspected_nocolor) {
+  msg += v + ' ';
+ }
+ return msg;
+}
+
 let originalLog;
 
 function monkeypatch_console_log() {
@@ -696,7 +708,10 @@ function monkeypatch_console_log() {
   //const timestamp = new Date().toISOString();
   // show just time:
   const timestamp = new Date().toISOString().slice(11, -1);
-  originalLog.apply(console, [`[${timestamp}]`, ...args]);
+  let msg = [`[${timestamp}]`, ...args];
+  originalLog.apply(console, msg);
+
+  debugBuffer.update(v => v + formatNoColor(msg) + '\n');
  };
 }
 

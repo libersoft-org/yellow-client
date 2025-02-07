@@ -14,6 +14,7 @@
  import Icon from "../../../core/components/icon.svelte";
  export let conversation;
  export let setBarFocus;
+
  let scrollButtonVisible = true;
  let showDebugModal = false;
  let messages_elem;
@@ -71,7 +72,7 @@
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
   console.log('SCROLLTOBOTTOM');
-  messages_elem.scrollTop = messages_elem.scrollHeight;
+  if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
  function isScrolledToBottom() {
@@ -118,7 +119,7 @@
    } else if (event.type === 'resize') {
     console.log('resize uiEvent:', event);
     if (event.wasScrolledToBottom || event.wasScrolledToBottom2) {
-     setTimeout(() => scrollToBottom(), 300);
+     setTimeout(() => scrollToBottom(), 0);
      //scrollToBottom();
     }
    }
@@ -180,7 +181,7 @@
  }
 
  async function handleEvents(events) {
-  //console.log('handleEvents:', events);
+  console.log('handleEvents:', events);
   if (events.length === 1 && events[0].type === 'properties_update') {
    itemsArray = itemsArray;
    return;
@@ -239,7 +240,7 @@
     items.push(m);
     if (m.id !== undefined && m.id > oldLastID) {
      oldLastID = m.id;
-     if (m.is_lazyloaded) scroll = false;
+     //if (m.is_lazyloaded) scroll = false;
     }
     let next = messages[i + 1];
     if (next && next.id !== undefined && m.next != 'none' && m.next != undefined && m.next !== next.id) {

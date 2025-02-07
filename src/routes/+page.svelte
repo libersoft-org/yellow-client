@@ -10,6 +10,7 @@
  import WelcomeSidebar from '../core/pages/welcome-sidebar.svelte';
  import WelcomeContent from '../core/pages/welcome-content.svelte';
  import Accounts from '../core/pages/accounts.svelte';
+ import Modal from '../core/components/modal.svelte';
  import Wizard from '../core/components/wizard.svelte';
  import WizardWelcomeStep1 from '../core/wizards/welcome-step1.svelte';
  import WizardWelcomeStep2 from '../core/wizards/welcome-step2.svelte';
@@ -19,7 +20,6 @@
  import {} from '../modules/org.libersoft.wallet/module.js';
  import {} from '../modules/org.libersoft.iframes/module.js';
  import {} from '../modules/org.libersoft.dating/module.js';
- import Modal from '../core/components/modal.svelte';
  let menus = [];
  setContext('menus', menus);
 
@@ -92,7 +92,10 @@
   let viewportHeight;
   if (visualViewport) {
    viewportHeight = visualViewport.height;
-   let keyboardHeightValue = visualViewport.height - visualViewport.clientHeight;
+   let clientHeight = visualViewport.clientHeight;
+   console.log('clientHeight:', clientHeight);
+   let keyboardHeightValue = viewportHeight - clientHeight;
+   console.log('keyboardHeightValue:', keyboardHeightValue);
    if (keyboardHeightValue < 0) keyboardHeightValue = 0;
    keyboardHeight.set(keyboardHeightValue);
   } else viewportHeight = window.innerHeight;
@@ -103,6 +106,9 @@
   if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
   documentHeight.set(document.documentElement.clientHeight);
   isMobile.set(window.matchMedia('(max-width: 768px)').matches);
+  console.log('window.innerHeight:', window.innerHeight);
+  console.log('viewportHeight:', viewportHeight);
+  console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
   console.log('$isMobile:', $isMobile);
  }
 

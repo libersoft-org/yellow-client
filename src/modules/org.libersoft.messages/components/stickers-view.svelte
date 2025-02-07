@@ -10,6 +10,7 @@
  import Select from '../../../core/components/select.svelte';
  import InputTextButton from '../../../core/components/input-text-button.svelte';
  import StickersSearchResults from './stickers-search-results.svelte';
+ import { isMobile } from '../../../core/core.js';
 
  let { stickerset_favorites } = $props();
  let fulltext_search_element;
@@ -24,8 +25,7 @@
  //$inspect($items, count);
 
  export function onShow() {
-  console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV Stickers-view.svelte onShow');
-  fulltext_search_element.focus();
+  if (!get(isMobile)) fulltext_search_element.focus();
  }
 
  let query_store_unsubscribe;
