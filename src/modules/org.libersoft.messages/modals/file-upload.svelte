@@ -44,13 +44,13 @@
  const uploadServer = () => {
   const recipientEmail = get(selectedConversation).address;
   initUpload($fileUploadModalFiles, FileUploadRecordType.SERVER, [recipientEmail]);
-  params.setFileUploadModal(false);
+  params.setFileUploadModal(0);
  };
 
  const uploadP2P = () => {
   const recipientEmail = get(selectedConversation).address;
   initUpload($fileUploadModalFiles, FileUploadRecordType.P2P, [recipientEmail]);
-  params.setFileUploadModal(false);
+  params.setFileUploadModal(0);
  };
 
  function onDragOver(e) {

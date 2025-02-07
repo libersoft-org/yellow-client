@@ -21,7 +21,7 @@ class FileUploadManager extends EventEmitter {
    const file = files[i];
    const record = makeFileUploadRecord({
     type,
-    fileName: file.name,
+    fileOriginalName: file.name,
     fileMimeType: file.type,
     fileSize: file.size,
     chunkSize: options?.chunkSize || 1024 * 64,

@@ -54,10 +54,11 @@
  }
 
  function setFileUploadModal(value) {
-  showFileUploadModal.set(value);
+  console.warn('setFileUploadModal', $showFileUploadModal, value);
   if (value !== $showFileUploadModal) {
    fileUploadModalFiles.set([]);
   }
+  showFileUploadModal.set(value);
  }
 
  setContext('FileUploadModal', { showFileUploadModal, fileUploadModalFiles, setFileUploadModal });

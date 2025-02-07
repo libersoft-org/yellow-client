@@ -74,7 +74,7 @@ export class FileDownloadManager extends EventEmitter {
      if (download.chunksReceived.length * chunkSize >= record.fileSize) {
       setRunning(false);
       setTimeout(() => this.startNextDownload(download));
-      assembleFile(download.chunksReceived, download.record.fileName);
+      assembleFile(download.chunksReceived, download.record.fileOriginalName);
       this.downloadStore.delete(record.id);
       // Clean up memory
       // download.chunksReceived = [];

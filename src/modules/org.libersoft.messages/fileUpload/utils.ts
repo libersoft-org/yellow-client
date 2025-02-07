@@ -6,7 +6,7 @@ export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUpload
   id: uuidv4(),
   status: FileUploadRecordStatus.BEGUN,
   type: FileUploadRecordType.SERVER,
-  fileName: '',
+  fileOriginalName: '',
   fileMimeType: '',
   fileSize: 0,
   filePath: '',

@@ -24,7 +24,7 @@ export interface FileUploadRecord {
  id: string;
  type: FileUploadRecordType;
  status: FileUploadRecordStatus;
- fileName: string;
+ fileOriginalName: string;
  fromUserUid: string;
  fileMimeType: string;
  fileSize: number;
@@ -66,7 +66,7 @@ export interface FileUploadBeginOptions {
  chunkSize?: number;
 }
 
-export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid'>;
+export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid'>;
 
 export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record' | 'acc'>;
 

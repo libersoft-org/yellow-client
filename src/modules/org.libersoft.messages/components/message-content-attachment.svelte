@@ -92,7 +92,7 @@
 {#snippet fileTitle()}
  {#if $upload && $upload.record}
   <div class="file-title">
-   <strong>{$upload.record.fileName}</strong> ({humanSize($upload.record.fileSize)})
+   <strong>{$upload.record.fileOriginalName}</strong> ({humanSize($upload.record.fileSize)})
   </div>
  {/if}
 {/snippet}
