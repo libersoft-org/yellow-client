@@ -142,7 +142,6 @@ class FileUploadManager extends EventEmitter {
   for (let i = lastUploadIndex + 1; i < uploads.length; i++) {
    const upload = uploads[i];
    if (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.BEGUN) {
-    console.warn('RRR found next upload', upload.record.id);
     nextUpload = upload;
     break;
    }

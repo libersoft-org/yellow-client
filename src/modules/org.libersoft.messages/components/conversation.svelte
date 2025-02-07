@@ -54,7 +54,6 @@
  }
 
  function setFileUploadModal(value) {
-  console.warn('setFileUploadModal', $showFileUploadModal, value);
   if (value !== $showFileUploadModal) {
    fileUploadModalFiles.set([]);
   }

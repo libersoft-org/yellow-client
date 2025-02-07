@@ -113,7 +113,7 @@ function moduleEventSubscribe(acc, event_name) {
 }
 
 export function initComms(acc) {
- console.warn('init comms', acc);
+ // console.warn('init comms', acc);
  // message events
  moduleEventSubscribe(acc, 'new_message');
  moduleEventSubscribe(acc, 'seen_message');
@@ -143,11 +143,8 @@ export function initComms(acc) {
 }
 
 export function initUpload(files, uploadType, recipients) {
- console.warn('files, uploadType, recipients', files, uploadType, recipients);
  const acc = get(active_account);
  const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: get(uploadChunkSize) });
-
- console.warn('AAA uploads', uploads);
 
  // send message
  let messageHtml = '';
@@ -220,7 +217,6 @@ function ask_for_chunk(event) {
 
 function upload_update(event) {
  const { record } = event.detail.data;
- console.warn('PPP upload_update', record);
  fileUploadStore.updateUploadRecord(record.id, record);
  fileDownloadStore.updateDownloadRecord(record.id, record);
 }
