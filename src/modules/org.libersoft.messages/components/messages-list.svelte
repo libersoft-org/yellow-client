@@ -11,7 +11,7 @@
  import ScrollButton from './scroll-button.svelte';
  import { messagesArray, events, insertEvent, identifier } from '../messages.js';
  import { get } from 'svelte/store';
- import Icon from "../../../core/components/icon.svelte";
+ import Icon from '../../../core/components/icon.svelte';
  export let conversation;
  export let setBarFocus;
 
@@ -32,7 +32,7 @@
  let windowInnerHeight;
  let showFileDndOverlay = false;
 
- let fileDndRef
+ let fileDndRef;
 
  $: scrollButtonVisible = !scrolledToBottom;
  $: updateWindowSize(windowInnerWidth, windowInnerHeight);
@@ -45,7 +45,7 @@
 
  setContext('openStickersetDetailsModal', openStickersetDetailsModal);
 
- let {showFileUploadModal, setFileUploadModal, fileUploadModalFiles} = getContext('FileUploadModal');
+ let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 
  events.subscribe(e => {
   if (e?.length) {
@@ -431,8 +431,6 @@
   margin-top: 8px;
   color: #fff;
  }
-
-
 </style>
 
 {#if $debug}

@@ -34,6 +34,16 @@
 </script>
 
 <style>
+ .wizard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 100vw;
+  max-height: 100vh;
+  background-color: #fff;
+  color: #000;
+ }
+
  .progress-bar {
   display: flex;
   align-items: center;
@@ -68,16 +78,6 @@
   background-color: #ccc;
  }
 
- .wizard .body {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  overflow-y: auto;
-  background-color: #fff;
-  color: #000;
- }
-
  .navigation {
   display: flex;
   gap: 10px;
@@ -89,32 +89,30 @@
 </style>
 
 <div class="wizard">
- <div class="body">
-  <div class="progress-bar">
-   {#each steps as step, index}
-    <div class="step">
-     <div class="circle {index === currentStep ? 'active' : ''}">
-      {index + 1}
-     </div>
-     {#if index < steps.length - 1}
-      <div class="line"></div>
-     {/if}
+ <div class="progress-bar">
+  {#each steps as step, index}
+   <div class="step">
+    <div class="circle {index === currentStep ? 'active' : ''}">
+     {index + 1}
     </div>
-   {/each}
-  </div>
-  <div class="content">
-   <svelte:component this={steps[currentStep].component} {params} />
-  </div>
-  <div class="navigation">
-   {#if currentStep > 0}
-    <Button text="Previous" onClick={prevStep} />
-   {/if}
-   <div class="gap"></div>
-   {#if currentStep < steps.length - 1}
-    <Button text={nextText} onClick={nextStep} />
-   {:else}
-    <Button text="Finish" onClick={close} />
-   {/if}
-  </div>
+    {#if index < steps.length - 1}
+     <div class="line"></div>
+    {/if}
+   </div>
+  {/each}
+ </div>
+ <div class="content">
+  <svelte:component this={steps[currentStep].component} {params} />
+ </div>
+ <div class="navigation">
+  {#if currentStep > 0}
+   <Button text="Previous" onClick={prevStep} />
+  {/if}
+  <div class="gap"></div>
+  {#if currentStep < steps.length - 1}
+   <Button text={nextText} onClick={nextStep} />
+  {:else}
+   <Button text="Finish" onClick={close} />
+  {/if}
  </div>
 </div>

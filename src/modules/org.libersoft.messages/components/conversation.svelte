@@ -14,8 +14,8 @@
  $: messagesContext.messageBar = message_bar;
  $: update($selectedConversation);
 
- let showFileUploadModal = writable(false)
- let fileUploadModalFiles = writable([])
+ let showFileUploadModal = writable(false);
+ let fileUploadModalFiles = writable([]);
 
  async function update(selectedConversation) {
   if (selectedConversation) {

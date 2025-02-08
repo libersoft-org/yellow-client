@@ -133,7 +133,7 @@
   console.log('clicked on location');
  }
 
- let {showFileUploadModal, setFileUploadModal} = getContext('FileUploadModal');
+ let { showFileUploadModal, setFileUploadModal } = getContext('FileUploadModal');
 
  isMobile.subscribe(value => {
   expressionsAsContextMenu = !value;

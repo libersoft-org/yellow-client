@@ -14,11 +14,11 @@
  import TbodyTr from '../../../core/components/table-tbody-tr.svelte';
  import Td from '../../../core/components/table-tbody-td.svelte';
  import Icon from '../../../core/components/icon.svelte';
- import {getContext} from "svelte";
+ import { getContext } from 'svelte';
  const { params } = $props();
  let elFileInput; // refs
  let dropActive = $state(false);
- let {fileUploadModalFiles} = getContext('FileUploadModal')
+ let { fileUploadModalFiles } = getContext('FileUploadModal');
 
  function onFileAdd(e) {
   e && e.preventDefault();
@@ -37,7 +37,7 @@
  }
 
  function onFileUpload(e) {
-  $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.target.files]
+  $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.target.files];
   elFileInput.value = ''; // clear the file input
  }
 
@@ -66,9 +66,48 @@
  function onDrop(e) {
   e.preventDefault();
   dropActive = false;
-  $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files]
+  $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
  }
 </script>
+
+<style>
+ .file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 400px;
+ }
+
+ .header {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+ }
+
+ .body .items {
+  display: flex;
+  flex-direction: column;
+ }
+
+ .body .items-empty {
+  padding: 50px;
+  text-align: center;
+  background-color: #eee;
+  border: 1px dashed #888;
+  border-radius: 10px;
+ }
+
+ .items-empty.drop-active {
+  background-color: #ddd;
+  border-color: #555;
+ }
+
+ .footer {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+ }
+</style>
 
 {#snippet fileUploadItem(file)}
  <TbodyTr>
@@ -114,42 +153,3 @@
   <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length} />
  </div>
 </div>
-
-<style>
- .file-upload {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 400px;
- }
-
- .header {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
- }
-
- .body .items {
-  display: flex;
-  flex-direction: column;
- }
-
- .body .items-empty {
-  padding: 50px;
-  text-align: center;
-  background-color: #eee;
-  border: 1px dashed #888;
-  border-radius: 10px;
- }
-
- .items-empty.drop-active {
-  background-color: #ddd;
-  border-color: #555;
- }
-
- .footer {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
- }
-</style>

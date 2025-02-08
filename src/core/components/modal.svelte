@@ -6,8 +6,8 @@
  export let params = null;
  export let title = null;
  export let body = '';
- export let width; //= 'calc(100% - 20px)';
- export let height; //= 'calc(100% - 20px)';
+ export let width;
+ export let height;
  let modalEl;
  let posX = 0;
  let posY = 0;
@@ -93,6 +93,8 @@
   position: fixed;
   top: 0;
   left: 0;
+  max-width: 100vw;
+  max-height: 100vh;
   overflow: auto;
   border: 1px solid #000;
   border-radius: 10px;
