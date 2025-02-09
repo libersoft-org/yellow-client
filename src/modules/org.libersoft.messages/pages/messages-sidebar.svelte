@@ -90,7 +90,7 @@
    {/each}
   </div>
   {#if $conversationsArray.length > 1}
-   <ScrollButton visible={scrollButtonVisible} direction={true} right="8px" bottom="7px" onClick={scrollToTop} />
+   <ScrollButton visible={scrollButtonVisible} direction={true} right="15px" bottom="10px" onClick={scrollToTop} />
   {/if}
  </div>
  <Modal title="New Conversation" body={ModalConversationNew} bind:show={showNewConversationModal} />

@@ -491,7 +491,7 @@
    {/each}
    <div bind:this={anchorElement}></div>
   </div>
-  <ScrollButton visible={scrollButtonVisible} right="2px" bottom="7px" onClick={scrollToBottom} />
+  <ScrollButton visible={scrollButtonVisible} right="15px" bottom="5px" onClick={scrollToBottom} />
  {/if}
 </div>
 
