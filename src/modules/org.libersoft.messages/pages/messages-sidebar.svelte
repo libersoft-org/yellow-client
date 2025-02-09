@@ -1,5 +1,5 @@
 <script>
- import { conversationsArray, selectConversation } from '../messages.js';
+ import { identifier, conversationsArray, selectConversation } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import ScrollButton from '../components/scroll-button.svelte';
  import Modal from '../../../core/components/modal.svelte';
@@ -45,19 +45,28 @@
   overflow: hidden;
  }
 
- .new {
+ .bar-buttons {
+  display: flex;
+  background-color: #222;
+ }
+
+ .bar-buttons .space {
+  flex: 1;
+ }
+
+ .bar-button {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px;
+  padding: 15px;
   font-weight: bold;
   background-color: #222;
   color: #fff;
  }
 
- .new img {
-  width: 20px;
-  height: 20px;
+ .bar-button img {
+  width: 28px;
+  height: 28px;
  }
 
  .items {
@@ -70,18 +79,20 @@
 
 {#if $conversationsArray != null}
  <div class="conversations">
-  <BaseButton onClick={clickNewConversation}>
-   <div class="new">
-    <img src="img/add.svg" alt="New conversation" />
-    <div>New conversation</div>
-   </div>
-  </BaseButton>
-  <BaseButton onClick={clickMessagesSettings}>
-   <div class="new">
-    <img src="img/settings.svg" alt="Message settings" />
-    <div>Message settings</div>
-   </div>
-  </BaseButton>
+  <div class="bar-buttons">
+   <BaseButton onClick={clickNewConversation}>
+    <div class="bar-button">
+     <img src="modules/{identifier}/img/new_conversation.svg" alt="New conversation" />
+     <div>New conversation</div>
+    </div>
+   </BaseButton>
+   <div class="space"></div>
+   <BaseButton onClick={clickMessagesSettings}>
+    <div class="bar-button">
+     <img src="img/settings.svg" alt="Message settings" />
+    </div>
+   </BaseButton>
+  </div>
   <div class="items" bind:this={elItems} on:scroll={parseScroll}>
    {#each $conversationsArray as c (c.address)}
     {#key c.address}
