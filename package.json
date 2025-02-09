@@ -10,24 +10,24 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.3.1",
 		"@sveltejs/adapter-static": "^3.0.8",
-		"@sveltejs/kit": "^2.15.2",
+		"@sveltejs/kit": "^2.17.1",
 		"@sveltejs/vite-plugin-svelte": "^4.0.4",
 		"@types/retry": "^0.12.5",
 		"git-format-staged": "^3.1.1",
 		"jsdom": "^26.0.0",
-		"prettier": "^3.4.2",
+		"prettier": "^3.5.0",
 		"prettier-plugin-svelte": "^3.3.3",
-		"svelte": "^5.17.3",
+		"svelte": "^5.19.9",
 		"typescript": "^5.7.3",
 		"vite": "^5.4.14",
 		"vite-plugin-checker": "^0.8.0",
-		"vitest": "^3.0.2"
+		"vitest": "^3.0.5"
 	},
 	"type": "module",
 	"dependencies": {
 		"@testing-library/svelte": "^5.2.6",
-		"dexie": "^4.0.10",
-		"dompurify": "^3.2.3",
+		"dexie": "^4.0.11",
+		"dompurify": "^3.2.4",
 		"emoji-regex": "^10.4.0",
 		"ethers": "^6.13.5",
 		"events": "^3.3.0",
@@ -37,7 +37,7 @@
 		"pako": "^2.1.0",
 		"qrcode": "^1.5.4",
 		"retry": "^0.13.1",
-		"uuid": "^11.0.4",
-		"wavesurfer.js": "^7.8.15"
+		"uuid": "^11.0.5",
+		"wavesurfer.js": "^7.9.0"
 	}
 }
