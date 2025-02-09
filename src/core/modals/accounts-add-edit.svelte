@@ -13,7 +13,7 @@
  export let params;
  export let isInWelcomeWizard = false;
  export let save_id;
- let titleElem;
+ let protocolElem;
  let error;
  let credentials_address;
  let credentials_server;
@@ -51,7 +51,7 @@
  });
 
  onMount(() => {
-  titleElem.focus();
+  protocolElem.focus();
   if ((params.id ?? null) !== null) {
    console.log('params.id', params.id);
    let acc = findAccountConfig(params.id);
@@ -156,7 +156,7 @@
  <div class="group">
   <label>
    <div class="label">Protocol:</div>
-   <Select>
+   <Select bind:this={protocolElem}>
     <Option text="AMTP" value="amtp" />
     <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} />
    </Select>
@@ -165,7 +165,7 @@
  <div class="group">
   <label>
    <div class="label">Title:</div>
-   <InputText bind:value={config_title} onKeydown={keyEnter} bind:this={titleElem} />
+   <InputText bind:value={config_title} onKeydown={keyEnter} />
   </label>
  </div>
  <div class="group">

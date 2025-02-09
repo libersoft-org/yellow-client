@@ -1,5 +1,10 @@
 <script>
  export let value = '';
+ let elSelect;
+
+ export function focus() {
+  elSelect?.focus();
+ }
 </script>
 
 <style>
@@ -13,6 +18,6 @@
  }
 </style>
 
-<select bind:value>
+<select bind:this={elSelect} bind:value>
  <slot></slot>
 </select>
