@@ -13,7 +13,6 @@ export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
-const buildDate = new Date(__BUILD_DATE__).toLocaleString();
 
 debug.subscribe(value => {
  console.log('CLIENT_DEBUG:', value);
@@ -21,7 +20,9 @@ debug.subscribe(value => {
 
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
-export const version = '0.0.1' + (buildDate ? ' (' + buildDate + ')' : '') + (__COMMIT_HASH__ ? ' (commit ' + __COMMIT_HASH__ + ')' : '');
+export const version = '0.0.1';
+export const build = new Date(__BUILD_DATE__).toISOString();
+export const commit = __COMMIT_HASH__;
 export const link = 'https://yellow.libersoft.org';
 
 // declarations of modules that this client supports
@@ -398,7 +399,6 @@ function reconnectAccount(account) {
     retry(account, 'Connection closed');
    }, 200);
   };
-
   clearPingTimer(acc);
   setupPing(account);
  }
@@ -548,25 +548,16 @@ export function order(dict) {
 
 function initModuleComms(acc, module_id, decl) {
  console.log('initModuleComms:', decl);
- if (decl.callbacks.initData) {
-  acc.module_data[module_id] = decl.callbacks?.initData(acc);
- } else {
-  acc.module_data[module_id] = {};
- }
+ if (decl.callbacks.initData) acc.module_data[module_id] = decl.callbacks?.initData(acc);
+ else acc.module_data[module_id] = {};
  acc.module_data[module_id].id = decl.id;
  acc.module_data[module_id].decl = decl;
- if (decl.callbacks.initComms) {
-  decl.callbacks.initComms(acc);
- }
+ if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
 }
 
 function deinitModuleComms(decl, acc) {
- if (decl.callbacks.deinitComms) {
-  decl.callbacks.deinitComms(acc);
- }
- if (decl.callbacks.deinitData) {
-  decl.callbacks.deinitData(acc);
- }
+ if (decl.callbacks.deinitComms) decl.callbacks.deinitComms(acc);
+ if (decl.callbacks.deinitData) decl.callbacks.deinitData(acc);
 }
 
 function updateModulesComms(acc) {
@@ -674,10 +665,7 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
  acc.lastTransmissionTs = Date.now();
  acc.bufferedAmount = acc.socket.bufferedAmount;
 
- if (get(debug) && account) {
-  account.update(v => v);
- }
-
+ if (get(debug) && account) account.update(v => v);
  return requestID;
 }
 
@@ -691,9 +679,7 @@ function generateRequestID() {
 function formatNoColor(args) {
  let msg = '';
  const inspected_nocolor = args.map(o => (typeof o === 'string' ? o : o));
- for (const v of inspected_nocolor) {
-  msg += v + ' ';
- }
+ for (const v of inspected_nocolor) msg += v + ' ';
  return msg;
 }
 
@@ -710,7 +696,6 @@ function monkeypatch_console_log() {
   const timestamp = new Date().toISOString().slice(11, -1);
   let msg = [`[${timestamp}]`, ...args];
   originalLog.apply(console, msg);
-
   debugBuffer.update(v => v + formatNoColor(msg) + '\n');
  };
 }

@@ -1,7 +1,7 @@
 <script>
  import BaseButton from '../components/base-button.svelte';
  import Button from '../components/button.svelte';
- import { product, version, link } from '../core.js';
+ import { product, version, build, commit, link } from '../core.js';
  let notificationPermission = Notification.permission;
 
  function clickLogo() {
@@ -73,6 +73,14 @@
  <div class="version">
   <div>Version:</div>
   <div class="bold">{version}</div>
+ </div>
+ <div class="version">
+  <div>Build:</div>
+  <div class="bold">{build}</div>
+ </div>
+ <div class="version">
+  <div>Commit:</div>
+  <div class="bold">{commit}</div>
  </div>
  {#if notificationPermission !== 'granted'}
   <div class="warning">
