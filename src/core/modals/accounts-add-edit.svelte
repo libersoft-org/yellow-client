@@ -14,6 +14,7 @@
  export let isInWelcomeWizard = false;
  export let save_id;
  let protocolElem;
+ let protocol = 'amtp';
  let error;
  let credentials_address;
  let credentials_server;
@@ -156,9 +157,10 @@
  <div class="group">
   <label>
    <div class="label">Protocol:</div>
-   <Select bind:this={protocolElem}>
-    <Option text="AMTP" value="amtp" />
-    <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} />
+   <Select bind:this={protocolElem} bind:value={protocol}>
+    >
+    <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
+    <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
    </Select>
   </label>
  </div>

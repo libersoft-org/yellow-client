@@ -3,6 +3,7 @@
  let elSelect;
 
  export function focus() {
+  console.log('select.svelte focus(), elSelect=', elSelect);
   elSelect?.focus();
  }
 </script>
@@ -15,6 +16,10 @@
   border: 1px solid #888;
   border-radius: 10px;
   background-color: #fff;
+ }
+
+ select:focus {
+  outline: 2px solid teal;
  }
 </style>
 
