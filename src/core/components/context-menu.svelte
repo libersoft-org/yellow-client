@@ -64,6 +64,12 @@
   e.stopPropagation();
   console.log('context-menu openMenu type:', e.type);
   //if (e.type === 'contextmenu') return;
+
+  if (open) {
+   close();
+   return;
+  }
+
   //console.log('context-menu close other menus:', menus);
   let ancestors = getAncestors();
   console.log('ancestors:', ancestors);
@@ -75,6 +81,7 @@
     menu.close();
    }
   }
+
   currentInstance = getGuid();
   menus.push({ guid: currentInstance, close });
 
