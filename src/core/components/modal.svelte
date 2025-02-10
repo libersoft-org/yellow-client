@@ -2,6 +2,7 @@
  import { debug } from '../core.js';
  import { setContext, tick } from 'svelte';
  import BaseButton from './base-button.svelte';
+
  export let show = false;
  export let params = null;
  export let title = null;
@@ -14,6 +15,20 @@
  let isDragging = false;
  let left;
  let top;
+ let showContent = false;
+
+ $: showUpdated(show && body);
+
+ async function showUpdated(show) {
+  console.log('showUpdated', show);
+  if (show) {
+   await tick();
+   modalEl.focus();
+   showContent = true;
+  } else {
+   showContent = false;
+  }
+ }
 
  function setTitle(value) {
   title = value;
@@ -138,21 +153,23 @@
 
 {#if show && body}
  <div class="modal" role="none" tabindex="-1" style:top={top && top + 'px'} style:left={left && left + 'px'} style:width={width && width} style:height={height && height} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} on:keydown={onkeydown}>
-  <div class="header" role="none" on:mousedown={dragStart}>
-   <div class="title">{title}</div>
-   <BaseButton onClick={close}>
-    <div class="close">
-     <img src="img/close-black.svg" alt="X" />
-    </div>
-   </BaseButton>
-  </div>
-  <div class="body">
-   {#if $debug}params: <code>{JSON.stringify({ params })}</code>{/if}
-   {#if params}
-    <svelte:component this={body} {close} {params} />
-   {:else}
-    <svelte:component this={body} {close} />
-   {/if}
-  </div>
+  {#if showContent}
+   <div class="header" role="none" on:mousedown={dragStart}>
+    <div class="title">{title}</div>
+    <BaseButton onClick={close}>
+     <div class="close">
+      <img src="img/close-black.svg" alt="X" />
+     </div>
+    </BaseButton>
+   </div>
+   <div class="body">
+    {#if $debug}params: <code>{JSON.stringify({ params })}</code>{/if}
+    {#if params}
+     <svelte:component this={body} {close} {params} />
+    {:else}
+     <svelte:component this={body} {close} />
+    {/if}
+   </div>
+  {/if}
  </div>
 {/if}
