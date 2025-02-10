@@ -566,12 +566,13 @@ function setupPing(account) {
 }
 
 export function order(dict) {
- return Object.values(dict).sort((a, b) => {
+ let result = Object.values(dict).sort((a, b) => {
   let a_order = a.order || a.id;
   let b_order = b.order || b.id;
   return String.prototype.localeCompare(a_order) < String.prototype.localeCompare(b_order);
  });
- console.log('ORDER:', dict);
+ console.log('ORDER:', result);
+ return result;
 }
 
 function initModuleComms(acc, module_id, decl) {
