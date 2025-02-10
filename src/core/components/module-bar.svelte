@@ -25,7 +25,7 @@
    let acc = get(active_account);
    //console.log('selectLastModule: acc: ', acc);
    let id = acc.settings?.last_module_id;
-   console.log('selectLastModule: ', module_data);
+   //console.log('selectLastModule: ', module_data);
    //console.log('selectLastModule: id: ', id);
    if (module_data[id]) onSelectModule(id);
   }

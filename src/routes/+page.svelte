@@ -1,6 +1,7 @@
 <script>
  import '../app.css';
  import { onMount, setContext } from 'svelte';
+ import { get } from 'svelte/store';
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
  import { isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
@@ -175,6 +176,8 @@
  }
 
  function setSidebarSize(width) {
+  console.log('setSidebarSize: ', width);
+  if ($isMobile) return;
   const min = 200;
   const max = 700;
   let sideBarWidth;
@@ -185,6 +188,21 @@
   sideBar.style.width = sideBarWidth + 'px';
   resizer.style.left = sideBarWidth + 'px';
  }
+
+ isMobile.subscribe(v => {
+  console.log('isMobile: ', v);
+  if (v) {
+   sideBar.style.minWidth = '100%';
+   sideBar.style.maxWidth = '100%';
+   sideBar.style.width = '100%';
+  } else {
+   console.log('sidebarSize: ', sidebarSize);
+   console.log('sidebarSize: ', sidebarSize);
+   let sideBarWidth = get(sidebarSize) || 250;
+   console.log('setSidebarSize: ', sideBarWidth);
+   //setSidebarSize(sideBarWidth); //  TypeError: $.get(...) is undefined
+  }
+ });
 
  async function onkeydown(event) {
   //console.log('window onkeydown: ', event);
