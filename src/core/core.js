@@ -161,6 +161,7 @@ export function relay(md, key) {
   };
  });
  r.set = v => {
+  //console.log('SET:', get(md), 'key:',  key,  'v:', v);
   get(md)[key].set(v);
  };
  r.update = fn => {

@@ -4,13 +4,13 @@
  import Button from '../../../core/components/button.svelte';
  import InputText from '../../../core/components/input-text.svelte';
  export let close;
- let address;
+ let elAddress;
  let value;
 
- onMount(() => address.focus());
+ onMount(() => elAddress.focus());
 
  function clickOpen() {
-  console.log('clickOpen(); address.value:', address.value);
+  console.log('clickOpen(); address.value:', value);
   if (value) {
    openNewConversation(value);
    console.log('close();');
@@ -43,6 +43,6 @@
 
 <div class="group">
  <div class="label">Address:</div>
- <InputText placeholder="user@domain.tld" onKeydown={keyEnter} bind:this={address} bind:value />
+ <InputText placeholder="user@domain.tld" onKeydown={keyEnter} bind:this={elAddress} bind:value />
  <Button text="Open" onClick={clickOpen} />
 </div>
