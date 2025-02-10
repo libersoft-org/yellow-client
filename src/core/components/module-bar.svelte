@@ -1,5 +1,5 @@
 <script>
- import { active_account, order, getModuleDecls } from '../core.js';
+ import { active_account, order, module_decls } from '../core.js';
  import { get } from 'svelte/store';
  import BaseButton from './base-button.svelte';
  import Icon from './icon.svelte';
@@ -7,6 +7,9 @@
  let module_data;
  let lastModuleSelected = false;
  let expanded = false;
+ let module_decls_ordered = [];
+
+ $: module_decls_ordered = order($module_decls);
 
  $: module_data = $active_account?.module_data || {};
  //$: console.log('module-bar module_data:', module_data);
@@ -76,7 +79,7 @@
 
 <div class="module-bar">
  <div class="items {expanded ? 'expanded' : ''}">
-  {#each order(getModuleDecls()) as decl (decl.id)}
+  {#each module_decls_ordered as decl (decl.id)}
    <Icon img="img/modules/{decl.id}.svg" alt={decl.name} size="30" onClick={() => clickSetModule(decl.id)} />
   {/each}
  </div>

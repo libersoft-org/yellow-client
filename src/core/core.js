@@ -27,20 +27,17 @@ export const commit = __COMMIT_HASH__;
 export const link = 'https://yellow.libersoft.org';
 
 // declarations of modules that this client supports
-let module_decls = {};
+export let module_decls = writable({});
+
 let global_socket_id = 0;
 
 const ping_interval = import.meta.env.VITE_PING_INTERVAL || 10000;
 
-export function getModuleDecls() {
- console.log('GET MODULE DECLS:', module_decls);
- return module_decls;
-}
-
 selected_module_id.subscribe(async id => {
  await tick();
- for (const k in module_decls) {
-  const module = module_decls[k];
+ let module_decls_v = get(module_decls);
+ for (const k in module_decls_v) {
+  const module = module_decls_v[k];
   module.callbacks.onModuleSelected?.(id === module.id);
  }
 });
@@ -51,18 +48,22 @@ export function registerModule(id, decl) {
  if (ordering[id] !== undefined) {
   decl.order = ordering[id];
  }
- module_decls[id] = decl;
  decl.id = id;
+ let module_decls_v = get(module_decls);
+ module_decls_v[id] = decl;
+ module_decls.set(module_decls_v);
 }
 
 modules_order.subscribe(value => {
  console.log('MODULES ORDER:', value);
- for (const k in module_decls) {
-  const decl = module_decls[k];
+ let module_decls_v = get(module_decls);
+ for (const k in module_decls_v) {
+  const decl = module_decls_v[k];
   if (value[decl.id] !== undefined) {
    decl.order = value[decl.id];
   }
  }
+ module_decls.set(module_decls_v);
 });
 
 export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
@@ -566,12 +567,13 @@ function setupPing(account) {
 }
 
 export function order(dict) {
+ console.log('ORDER dict:', dict);
  let result = Object.values(dict).sort((a, b) => {
   let a_order = a.order || a.id;
   let b_order = b.order || b.id;
   return String.prototype.localeCompare(a_order) < String.prototype.localeCompare(b_order);
  });
- console.log('ORDER:', result);
+ console.log('ORDER result:', result);
  return result;
 }
 
@@ -603,7 +605,7 @@ function updateModulesComms(acc) {
    console.log('Module already initialized:', module_id);
    continue;
   } else if (available && !initialized) {
-   const decl = module_decls[module_id];
+   const decl = get(module_decls)[module_id];
    if (!decl) {
     console.error('Module available on server but not found on client:', module_id);
     continue;
