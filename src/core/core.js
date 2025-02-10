@@ -279,7 +279,7 @@ function updateAvailableModules(acc, available_modules) {
 function onAvailableModulesChanged(acc) {
  console.log('onAvailableModulesChanged:', acc);
  for (const [k, v] of Object.entries(acc.module_data)) {
-  v.online.set(serverModuleAvailable(acc, k));
+  v?.online?.set(serverModuleAvailable(acc, k));
  }
 }
 

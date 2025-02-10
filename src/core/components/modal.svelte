@@ -25,6 +25,8 @@
    await tick();
    modalEl.focus();
    showContent = true;
+   await tick();
+   await positionModal();
   } else {
    showContent = false;
   }
@@ -37,13 +39,6 @@
  setContext('setTitle', setTitle);
  setContext('pageChanged', positionModal);
  setContext('Popup', { close });
-
- $: onShowUpdated(show);
-
- async function onShowUpdated(show) {
-  //console.log('update', show);
-  if (show) await positionModal();
- }
 
  async function positionModal() {
   console.log('positionModal');
