@@ -169,6 +169,7 @@
 
  function resizeSideBar(e) {
   if (isResizingSideBar) {
+   e.preventDefault();
    setSidebarSize(e.clientX);
   }
  }
