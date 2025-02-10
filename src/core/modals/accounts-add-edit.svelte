@@ -158,7 +158,7 @@
   <label>
    <div class="label">Protocol:</div>
    <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
-    <Option text="AMsajksakjjksakjaskjskjajkasjksakjsajkkjkjaskjasjkTP" value="amtp" selected={protocol === 'amtp'} />
+    <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
     <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
    </Select>
   </label>
