@@ -305,6 +305,12 @@
 
  function onDragOver(e) {
   e.preventDefault();
+
+  // if not dragging files form file system, ignore
+  if (!e.dataTransfer.types.includes('Files')) {
+   return;
+  }
+
   // show overlay only if file upload modal is not shown
   // but if user drops files to conversation it will still add them to the upload modal
   if (!$showFileUploadModal) {
@@ -321,6 +327,11 @@
  }
 
  function onDrop(e) {
+  // if not dragging files form file system, ignore
+  if (!e.dataTransfer.types.includes('Files')) {
+   return;
+  }
+
   e.preventDefault();
   showFileDndOverlay = false;
   setFileUploadModal(true);
