@@ -567,7 +567,9 @@ function setupPing(account) {
 
 export function order(dict) {
  return Object.values(dict).sort((a, b) => {
-  return String.prototype.localeCompare(a.id + a.order) < String.prototype.localeCompare(b.id + b.order);
+  let a_order = a.order || a.id;
+  let b_order = b.order || b.id;
+  return String.prototype.localeCompare(a_order) < String.prototype.localeCompare(b_order);
  });
 }
 
