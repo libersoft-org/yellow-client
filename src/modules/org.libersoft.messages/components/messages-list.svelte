@@ -305,9 +305,7 @@
 
  function onDragOver(e) {
   e.preventDefault();
-
-  // if not dragging files form file system, ignore
-  if (!e.dataTransfer.types.includes('Files')) {
+  if (e.dataTransfer.files.length === 0) {
    return;
   }
 
@@ -321,18 +319,18 @@
  function onDragLeave(e) {
   e.preventDefault();
   // handle premature dragleave events
-  if (!fileDndRef.contains(e.relatedTarget)) {
+  if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) {
    showFileDndOverlay = false;
   }
  }
 
  function onDrop(e) {
-  // if not dragging files form file system, ignore
-  if (!e.dataTransfer.types.includes('Files')) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (e.dataTransfer.files.length === 0) {
    return;
   }
 
-  e.preventDefault();
   showFileDndOverlay = false;
   setFileUploadModal(true);
   $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
