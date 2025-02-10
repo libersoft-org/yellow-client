@@ -571,6 +571,7 @@ export function order(dict) {
   let b_order = b.order || b.id;
   return String.prototype.localeCompare(a_order) < String.prototype.localeCompare(b_order);
  });
+ console.log('ORDER:', dict);
 }
 
 function initModuleComms(acc, module_id, decl) {
