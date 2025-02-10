@@ -71,7 +71,7 @@
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  console.log('SCROLLTOBOTTOM');
+  //console.log('SCROLLTOBOTTOM');
   if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
  }
 
@@ -117,7 +117,7 @@
    else if (event.type === 'properties_update') {
     //console.log('properties_update');
    } else if (event.type === 'resize') {
-    console.log('resize uiEvent:', event);
+    //console.log('resize uiEvent:', event);
     if (event.wasScrolledToBottom || event.wasScrolledToBottom2) {
      setTimeout(() => scrollToBottom(), 0);
      //scrollToBottom();
@@ -181,7 +181,7 @@
  }
 
  async function handleEvents(events) {
-  console.log('handleEvents:', events);
+  //console.log('handleEvents:', events);
   if (events.length === 1 && events[0].type === 'properties_update') {
    itemsArray = itemsArray;
    return;
@@ -191,6 +191,9 @@
    //console.log('handleEvent:', events[i]);
    let event = events[i];
    event.loaders = [];
+   if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') {
+    continue;
+   }
    uiEvents.push(event);
    saveScrollPosition(event);
    event.wasScrolledToBottom = isScrolledToBottom();

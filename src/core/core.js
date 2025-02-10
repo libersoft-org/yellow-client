@@ -32,7 +32,7 @@ let global_socket_id = 0;
 const ping_interval = import.meta.env.VITE_PING_INTERVAL || 10000;
 
 export function getModuleDecls() {
- //console.log('GET MODULE DECLS:', module_decls);
+ console.log('GET MODULE DECLS:', module_decls);
  return module_decls;
 }
 
@@ -45,7 +45,7 @@ selected_module_id.subscribe(async id => {
 });
 
 export function registerModule(id, decl) {
- //console.log('REGISTER MODULE:', id, decl);
+ console.log('REGISTER MODULE:', id, decl);
  module_decls[id] = decl;
  decl.id = id;
 }
@@ -680,8 +680,8 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
  acc.socket.send(JSON.stringify(req));
  acc.lastTransmissionTs = Date.now();
  acc.bufferedAmount = acc.socket.bufferedAmount;
+ //console.log('bufferedAmount:', acc.bufferedAmount);
 
- if (get(debug) && account) account.update(v => v);
  return requestID;
 }
 

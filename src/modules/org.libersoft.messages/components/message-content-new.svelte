@@ -83,7 +83,6 @@
  <!-- Render text nodes -->
  {#if item.text}
   {item.text}
-
   <!-- Render dynamic (HTML super-set) components -->
  {:else if item.component}
   <svelte:component this={item.component} {...item.props}>
@@ -91,7 +90,6 @@
     <svelte:component this={child.component} {...child.props} />
    {/each}
   </svelte:component>
-
   <!-- Render regular HTML elements -->
  {:else if item.tag}
   <svelte:element this={item.tag} {...item.attrs}>

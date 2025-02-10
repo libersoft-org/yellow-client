@@ -48,7 +48,7 @@
    <MessageContentNew rootNode={messageContent.body} />
   </div>
  {:else}
-  <!-- TODO: Unused, switch plaintext / HTML -->
+  <!-- TODO: Unused, switch plaintext / HTML -->ooooo
   <div class="text">{@html messageContent.body}</div>
  {/if}
 {/each}

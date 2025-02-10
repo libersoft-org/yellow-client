@@ -57,7 +57,7 @@
 
  onMount(() => {
   console.log('+page onMount');
-  if ($sidebarSize) sideBar;
+  if ($sidebarSize) setSidebarSize($sidebarSize);
   window.addEventListener('focus', () => isClientFocused.set(true));
   window.addEventListener('blur', () => isClientFocused.set(false));
   //window.addEventListener('keydown', onkeydown);
@@ -163,23 +163,25 @@
   document.body.style.userSelect = '';
   window.removeEventListener('mousemove', resizeSideBar);
   window.removeEventListener('mouseup', stopResizeSideBar);
+  setSidebarSize(sideBar.clientWidth);
   sidebarSize.set(sideBar.clientWidth);
  }
 
  function resizeSideBar(e) {
-  const min = 200;
-  const max = 700;
   if (isResizingSideBar) {
-   setSidebarSize(width);
+   setSidebarSize(e.clientX);
   }
  }
 
  function setSidebarSize(width) {
+  const min = 200;
+  const max = 700;
   let sideBarWidth;
-  sideBarWidth = e.clientX < max ? width : max;
-  sideBarWidth = e.clientX > min ? sideBarWidth : min;
+  sideBarWidth = width < max ? width : max;
+  sideBarWidth = width > min ? sideBarWidth : min;
   sideBar.style.minWidth = sideBarWidth + 'px';
   sideBar.style.maxWidth = sideBarWidth + 'px';
+  sideBar.style.width = sideBarWidth + 'px';
   resizer.style.left = sideBarWidth + 'px';
  }
 

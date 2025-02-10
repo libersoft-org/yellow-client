@@ -17,7 +17,7 @@
  let top;
  let showContent = false;
 
- $: showUpdated(show && body);
+ $: showUpdated(!!(show && body));
 
  async function showUpdated(show) {
   console.log('showUpdated', show);

@@ -63,7 +63,7 @@
 
  export async function insertText(text) {
   /* insert text at the current cursor position */
-  console.log('elMessage.selectionStart:', elMessage.selectionStart);
+  //console.log('elMessage.selectionStart:', elMessage.selectionStart);
   const start = elMessage.selectionStart;
   const end = elMessage.selectionEnd;
   elMessage.value = elMessage.value.substring(0, start) + text + elMessage.value.substring(end);
@@ -71,7 +71,7 @@
   //if (expressionsBottomSheetOpen) return;
   elMessage.selectionStart = start + text.length;
   elMessage.selectionEnd = start + text.length;
-  console.log('elMessage.selectionStart:', elMessage.selectionStart);
+  //console.log('elMessage.selectionStart:', elMessage.selectionStart);
   setBarFocus();
  }
 
@@ -86,12 +86,12 @@
  export async function setBarFocus() {
   if (expressionsBottomSheetOpen) return;
   await tick();
-  console.log('setBarFocus');
+  //console.log('setBarFocus');
   if (elMessage) elMessage.focus();
  }
 
  function resizeMessage() {
-  console.log('resizeMessage');
+  //console.log('resizeMessage');
   handleResize(true /*todo save*/);
   const maxHeight = 200;
   const textarea = elMessage;
@@ -166,7 +166,7 @@
  }
 
  function closeExpressions() {
-  console.log('closeExpressions');
+  //console.log('closeExpressions');
   //if (expressionsBottomSheetOpen) handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet
   expressionsBottomSheetOpen = false;
   expressionsMenu?.close();
@@ -180,7 +180,7 @@
  }
 
  function elMessageBlur(event) {
-  console.log('elMessageBlur');
+  //console.log('elMessageBlur');
   if (elBottomSheet?.contains(event.relatedTarget)) return;
   expressionsBottomSheetOpen = false;
  }

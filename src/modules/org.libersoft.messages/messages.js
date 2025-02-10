@@ -558,7 +558,7 @@ export function startReply(message) {
 
 export function insertEvent(event) {
  events.update(v => {
-  console.log('insertEvent: ', v, event);
+  //console.log('insertEvent: ', v, event);
   return [...v, event];
  });
 }
