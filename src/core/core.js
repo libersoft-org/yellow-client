@@ -12,6 +12,7 @@ export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
+export let modules_order = localStorageSharedStore('modules_order', {});
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
 
 debug.subscribe(value => {
@@ -45,10 +46,24 @@ selected_module_id.subscribe(async id => {
 });
 
 export function registerModule(id, decl) {
+ let ordering = get(modules_order);
  console.log('REGISTER MODULE:', id, decl);
+ if (ordering[id] !== undefined) {
+  decl.order = ordering[id];
+ }
  module_decls[id] = decl;
  decl.id = id;
 }
+
+modules_order.subscribe(value => {
+ console.log('MODULES ORDER:', value);
+ for (const k in module_decls) {
+  const decl = module_decls[k];
+  if (value[decl.id] !== undefined) {
+   decl.order = value[decl.id];
+  }
+ }
+});
 
 export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
 

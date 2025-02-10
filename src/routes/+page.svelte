@@ -18,8 +18,8 @@
  import {} from '../modules/org.libersoft.messages/module.js';
  import {} from '../modules/org.libersoft.contacts/module.js';
  import {} from '../modules/org.libersoft.wallet/module.js';
- import {} from '../modules/org.libersoft.iframes/module.js';
  import {} from '../modules/org.libersoft.dating/module.js';
+ import {} from '../modules/org.libersoft.iframes/module.js';
  let menus = [];
  setContext('menus', menus);
 

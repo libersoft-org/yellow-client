@@ -8,6 +8,7 @@ export const module = {
 };
 
 registerModule(module.identifier, {
+ order: 4,
  callbacks: {},
  panels: {
   sidebar: Sidebar,
