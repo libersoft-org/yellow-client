@@ -4,6 +4,8 @@
  export let value = '';
  export let onKeydown;
  export let grow = false;
+ export let minWidth;
+ export let maxWidth;
  let elInput;
 
  function handleKeydown(e) {
@@ -17,6 +19,7 @@
 
 <style>
  input {
+  box-sizing: content-box;
   padding: 10px;
   border: 1px solid #999;
   border-radius: 10px;
@@ -29,4 +32,4 @@
  }
 </style>
 
-<input class={grow && 'grow'} type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />
+<input style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} style:grow={grow && 'grow'} type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />

@@ -157,9 +157,8 @@
  <div class="group">
   <label>
    <div class="label">Protocol:</div>
-   <Select bind:this={protocolElem} bind:value={protocol}>
-    >
-    <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
+   <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
+    <Option text="AMsajksakjjksakjaskjskjajkasjksakjsajkkjkjaskjasjkTP" value="amtp" selected={protocol === 'amtp'} />
     <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
    </Select>
   </label>
@@ -167,25 +166,25 @@
  <div class="group">
   <label>
    <div class="label">Title:</div>
-   <InputText bind:value={config_title} onKeydown={keyEnter} />
+   <InputText minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
   </label>
  </div>
  <div class="group">
   <label>
    <div class="label">Server:</div>
-   <InputText placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
+   <InputText minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
   </label>
  </div>
  <div class="group">
   <label>
    <div class="label">Address:</div>
-   <InputText placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
+   <InputText minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
   </label>
  </div>
  <div class="group">
   <label>
    <div class="label">Password:</div>
-   <InputText password={true} placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
+   <InputText minWidth="300px" maxWidth="300px" password={true} placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
   </label>
  </div>
  {#if !isInWelcomeWizard}

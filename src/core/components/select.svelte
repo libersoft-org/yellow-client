@@ -1,5 +1,7 @@
 <script>
  export let value = '';
+ export let minWidth;
+ export let maxWidth;
  let elSelect;
 
  export function focus() {
@@ -10,11 +12,17 @@
 
 <style>
  select {
-  padding: 10px;
+  box-sizing: content-box;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 10px 20px 10px 10px;
   font-family: inherit;
   font-size: inherit;
   border: 1px solid #888;
   border-radius: 10px;
+  background: url('img/down-black.svg') no-repeat;
+  background-size: 12px 12px;
+  background-position: right 5px center;
   background-color: #fff;
  }
 
@@ -23,6 +31,6 @@
  }
 </style>
 
-<select bind:this={elSelect} bind:value>
+<select style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={elSelect} bind:value>
  <slot></slot>
 </select>
