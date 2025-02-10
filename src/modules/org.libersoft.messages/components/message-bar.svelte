@@ -119,6 +119,13 @@
    event.preventDefault();
    clickSend(event);
   }
+  if (event.key === 'Escape') {
+   if (expressionsBottomSheetOpen || (expressionsMenu && get(expressionsMenu.isOpen))) {
+    event.preventDefault();
+    event.stopPropagation();
+    closeExpressions();
+   }
+  }
  }
 
  function clickRecord(event) {

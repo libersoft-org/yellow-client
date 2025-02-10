@@ -9,8 +9,14 @@
 
  let alts = [];
  let altsMenu;
+ let elContainer;
 
- $: console.log('alts:', alts);
+ // $: console.log('alts:', alts);
+
+ export function onShow() {
+  //console.log('emojis onShow');
+  elContainer?.focus();
+ }
 
  function clickEmoji(codepoints) {
   MessageBar.insertText(emoji_render(codepoints));
@@ -71,7 +77,7 @@
  }
 </style>
 
-<div class="emojiset">
+<div class="emojiset" bind:this={elContainer} tabindex="-1">
  {#each $emojiGroups as g, index}
   <div class="group">
    <div class="title">{g.group}</div>

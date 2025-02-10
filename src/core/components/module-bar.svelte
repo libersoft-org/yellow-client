@@ -47,6 +47,7 @@
 
  .items {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   flex-grow: 1;
   padding: 5px;

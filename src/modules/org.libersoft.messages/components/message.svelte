@@ -125,13 +125,13 @@
  }
 
  onMount(() => {
-  console.log('onMount message:', message);
+  //console.log('onMount message:', message);
   if (!message.seen && !message.just_sent) {
    if (message.is_outgoing && !(message.address_to === message.address_from)) {
     console.log('no need to set seen');
     return;
    }
-   console.log('create observer');
+   //console.log('create observer');
    observer = new IntersectionObserver(
     async entries => {
      //console.log(entries);
@@ -151,7 +151,7 @@
  });
 
  onDestroy(() => {
-  console.log('onDestroy message:', message);
+  //console.log('onDestroy message:', message);
   if (observer) observer.disconnect();
  });
 

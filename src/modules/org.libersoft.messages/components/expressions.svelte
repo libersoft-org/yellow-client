@@ -5,6 +5,7 @@
  import GifSet from './gifset.svelte';
  import Item from './expressions-item.svelte';
  import Settings from './expressions-settings.svelte';
+ import { onMount, tick } from 'svelte';
  export let height;
 
  let expression = 'emojis';
@@ -15,10 +16,20 @@
   settings: Settings,
  };
 
- function setCategory(e, name) {
+ async function setCategory(e, name) {
   expression = name;
   e.stopPropagation();
   e.preventDefault();
+  await currentTabOnShow();
+ }
+
+ onMount(async () => {
+  await currentTabOnShow();
+ });
+
+ async function currentTabOnShow() {
+  await tick();
+  expressions[expression]?.onShow?.();
  }
 </script>
 

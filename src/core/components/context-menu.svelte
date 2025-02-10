@@ -235,6 +235,7 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
 <div
  bind:this={ref}
  role="none"
+ tabindex="-1"
  data-direction={direction}
  data-level={level}
  class:context-menu={true}
@@ -257,6 +258,7 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
    else if (focusIndex > 0) focusIndex--;
   }*/
   if (open && e.key === 'Escape') {
+   console.log('context-menu escape');
    close();
    e.stopPropagation();
    e.preventDefault();

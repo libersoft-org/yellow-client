@@ -48,9 +48,11 @@
  }
 
  function onkeydown(event) {
+  console.log('Modal onkeydown', event);
   if (event.key === 'Escape') {
    event.preventDefault();
    event.stopPropagation();
+   console.log('ESC', event);
    show = false;
   }
  }
@@ -135,7 +137,7 @@
 </style>
 
 {#if show && body}
- <div class="modal" role="none" style:top={top && top + 'px'} style:left={left && left + 'px'} style:width={width && width} style:height={height && height} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} on:keydown={onkeydown}>
+ <div class="modal" role="none" tabindex="-1" style:top={top && top + 'px'} style:left={left && left + 'px'} style:width={width && width} style:height={height && height} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} on:keydown={onkeydown}>
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
    <BaseButton onClick={close}>
