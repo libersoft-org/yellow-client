@@ -61,7 +61,7 @@ export async function updateStickerLibrary() {
   return;
  }
 
- stickerLibraryUpdaterState.update(state => ({ ...state, status: `Downloading sticker sets from {stickerServer} ...` }));
+ stickerLibraryUpdaterState.update(state => ({ ...state, status: `Downloading sticker sets from ${stickerServer} ...` }));
  console.log('Loading list of stickersets from: ' + stickerServer);
  let startFetchSets = Date.now();
 

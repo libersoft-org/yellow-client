@@ -272,7 +272,15 @@ function updateAvailableModules(acc, available_modules) {
   console.log('module:', k, 'available:', v);
   acc.available_modules[k] = v;
  }
+ onAvailableModulesChanged(acc);
  updateModulesComms(acc);
+}
+
+function onAvailableModulesChanged(acc) {
+ console.log('onAvailableModulesChanged:', acc);
+ for (const [k, v] of Object.entries(acc.module_data)) {
+  v.online.set(serverModuleAvailable(acc, k));
+ }
 }
 
 function constructAccount(id, credentials, enabled, settings) {
@@ -463,6 +471,7 @@ function sendLoginCommand(account) {
    acc.error = null;
    acc.sessionID = res.data.sessionID;
    acc.available_modules = res.data.modules_available;
+   onAvailableModulesChanged(acc);
    updateModulesComms(acc);
   }
   account.update(v => v);
@@ -553,7 +562,12 @@ function initModuleComms(acc, module_id, decl) {
  else acc.module_data[module_id] = {};
  acc.module_data[module_id].id = decl.id;
  acc.module_data[module_id].decl = decl;
+ acc.module_data[module_id].online = writable(serverModuleAvailable(acc, module_id));
  if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
+}
+
+function serverModuleAvailable(acc, module_id) {
+ return acc.available_modules[module_id];
 }
 
 function deinitModuleComms(decl, acc) {
@@ -589,6 +603,7 @@ function updateModulesComms(acc) {
 
 function disconnectAccount(acc) {
  acc.available_modules = {};
+ onAvailableModulesChanged(acc);
  updateModulesComms(acc);
 
  if (acc.socket) {

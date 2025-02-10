@@ -17,6 +17,7 @@ import retry from 'retry';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
+export let online = relay(md, 'online');
 export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');

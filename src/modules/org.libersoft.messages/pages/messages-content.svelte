@@ -1,13 +1,27 @@
 <script>
- import { identifier, selectedConversation } from '../messages.js';
+ import { identifier, selectedConversation, online } from '../messages.js';
  import Welcome from './welcome.svelte';
  import Conversation from '../components/conversation.svelte';
  import Gallery from '../components/gallery.svelte';
 </script>
 
-{#if $selectedConversation === null}
- <Welcome />
+<style>
+ .offline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 20px;
+ }
+</style>
+
+{#if $online}
+ {#if $selectedConversation === null}
+  <Welcome />
+ {:else}
+  <Conversation />
+ {/if}
+ <Gallery />
 {:else}
- <Conversation />
+ <div class="offline">Offline</div>
 {/if}
-<Gallery />
