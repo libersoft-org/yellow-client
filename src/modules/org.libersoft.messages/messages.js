@@ -13,6 +13,7 @@ import { selectAccount, active_account, active_account_id, getGuid, hideSidebarM
 import { makeFileUpload } from './fileUpload/utils.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
+import { tick } from 'svelte';
 
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
@@ -645,10 +646,11 @@ function showNotification(acc, msg) {
    silent: true,
   });
  }
- notification.onclick = () => {
+ notification.onclick = async () => {
   window.focus();
   selectAccount(acc.id);
   selected_module_id.set(identifier);
+  await tick();
   console.log('notification click: selectConversation', msg.address_from);
   selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
  };
