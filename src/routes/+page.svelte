@@ -58,7 +58,9 @@
 
  onMount(() => {
   console.log('+page onMount');
-  if ($sidebarSize) setSidebarSize($sidebarSize);
+  if ($sidebarSize) {
+   setSidebarSize($sidebarSize)
+  }
   window.addEventListener('focus', () => isClientFocused.set(true));
   window.addEventListener('blur', () => isClientFocused.set(false));
   //window.addEventListener('keydown', onkeydown);
@@ -172,19 +174,21 @@
  function resizeSideBar(e) {
   if (isResizingSideBar) {
    e.preventDefault();
-   setSidebarSize(e.clientX);
+   // delta from mouse move
+   let delta = e.clientX - sideBar.clientWidth;
+   setSidebarSize(sideBar.clientWidth + delta);
   }
  }
 
  let sidebarWidth;
 
  function setSidebarSize(width) {
-  console.log('setSidebarSize: ', width);
-  if ($isMobile) return;
-  const min = 200;
   const max = 700;
-  sidebarWidth = width < max ? width : max;
-  sidebarWidth = (width > min ? sidebarWidth : min) + 'px';
+  const min = 200;
+  let sideBarWidth = Math.min(Math.max(width, min), max);
+  sideBar.style.minWidth = sideBarWidth + 'px';
+  sideBar.style.maxWidth = sideBarWidth + 'px';
+  resizer.style.left = sideBarWidth + 'px';
  }
 
  isMobile.subscribe(v => {
@@ -224,6 +228,7 @@
 
  .resizer {
   position: absolute;
+  z-index: 1;
   top: 0;
   bottom: 0;
   /*left: 300px;*/
@@ -251,7 +256,7 @@
   }
 
   .resizer {
-   display: none;
+   /*display: none;*/
   }
  }
 </style>
