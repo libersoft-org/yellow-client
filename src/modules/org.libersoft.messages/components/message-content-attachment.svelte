@@ -3,7 +3,12 @@
  import { derived, writable } from 'svelte/store';
  import { onMount } from 'svelte';
  import { identifier, cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
- import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
+ import {
+  FileUploadRecordErrorType,
+  FileUploadRecordStatus,
+  FileUploadRecordType,
+  FileUploadRole
+ } from '../fileUpload/types.ts';
  //import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import Button from '../../../core/components/button.svelte';
  import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
@@ -97,6 +102,18 @@
  {/if}
 {/snippet}
 
+{#snippet errors()}
+ {#if $upload && $upload.record}
+  <div class="errors">
+   {#if $upload.record.errorType === FileUploadRecordErrorType.TIMEOUT_BY_SERVER}
+    Upload was canceled by server due to timeout limit
+   {:else}
+    {#if $upload.record.status === FileUploadRecordStatus.ERROR}Upload error{:else}Unknown error{/if}
+   {/if}
+  </div>
+ {/if}
+{/snippet}
+
 {#snippet renderSenderUpload()}
  <!-- ACTIVE UPLOAD -->
  {#if $upload.record.status === FileUploadRecordStatus.BEGUN || $upload.record.status === FileUploadRecordStatus.UPLOADING || $upload.record.status === FileUploadRecordStatus.PAUSED}
@@ -122,7 +139,7 @@
 
   <!-- FALLBACK TO ERROR -->
  {:else}
-  <div>Upload error</div>
+  {@render errors()}
  {/if}
 {/snippet}
 
@@ -149,7 +166,7 @@
 
   <!-- FALLBACK TO ERROR -->
  {:else}
-  <div>Upload error</div>
+  {@render errors()}
  {/if}
 {/snippet}
 
@@ -177,7 +194,7 @@
 
   <!-- FALLBACK TO ERROR -->
  {:else}
-  <div>Upload error</div>
+  {@render errors()}
  {/if}
 {/snippet}
 
@@ -208,7 +225,7 @@
 
   <!-- FALLBACK TO ERROR -->
  {:else}
-  <div>Upload error</div>
+  {@render errors()}
  {/if}
 {/snippet}
 
