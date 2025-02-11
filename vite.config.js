@@ -5,29 +5,25 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-
 function getGitCommitHash() {
-  try {
-    return execSync('git rev-parse --short HEAD').toString().trim();
-  } catch (e) {
-    return null;
-  }
+ try {
+  return execSync('git rev-parse --short HEAD').toString().trim();
+ } catch (e) {
+  return null;
+ }
 }
 
 export default defineConfig(({mode}) => {
-  return {
-   resolve: process.env.VITEST
-    ? {
-     conditions: ['browser']
-    }
-    : undefined,
-   css: {
-     preprocessorOptions: {
-       scss: {
-         quietDeps: true,
-         quiet: true,
-       }
+ return {
+  resolve: process.env.VITEST
+   ? { conditions: ['browser'] } : undefined,
+  css: {
+   preprocessorOptions: {
+    scss: {
+     quietDeps: true,
+     quiet: true,
      }
+    }
    },
    plugins: [
     sveltekit(),
