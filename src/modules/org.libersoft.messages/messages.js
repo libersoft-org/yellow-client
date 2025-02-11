@@ -42,6 +42,7 @@ class Message {
 
 export function initData(acc) {
  let result = {
+  online: writable(false),
   selectedConversation: writable(null),
   conversationsArray: writable([]),
   events: writable([]),
@@ -343,6 +344,7 @@ export function deinitData(acc) {
  acc.events.removeEventListener('upload_update', upload_update);
  acc.events.removeEventListener('ask_for_chunk', ask_for_chunk);
 
+ data.online.set(false);
  data.events.set([]);
  data.messagesArray.set([]);
  data.conversationsArray.set([]);

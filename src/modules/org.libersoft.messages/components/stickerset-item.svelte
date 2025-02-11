@@ -16,7 +16,7 @@
 
  async function handleClick() {
   console.log('stickerset-item handleClick file:', file, 'sticker:', sticker);
-  await MessagesContext.messageBar.doSendMessage('<Sticker file="' + htmlEscape(file) + '" set="' + htmlEscape(stickerset.url) + '" />', true);
+  await MessagesContext.messageBar.doSendMessage('<Sticker file="' + htmlEscape(file) + '" set="' + htmlEscape(stickerset.url) + '" ></Sticker>', true);
   popup.close();
  }
 

@@ -288,14 +288,16 @@ function updateAvailableModules(acc, available_modules) {
   console.log('module:', k, 'available:', v);
   acc.available_modules[k] = v;
  }
- onAvailableModulesChanged(acc);
  updateModulesComms(acc);
+ //onAvailableModulesChanged(acc);
 }
 
 function onAvailableModulesChanged(acc) {
- console.log('onAvailableModulesChanged:', acc);
+ console.log('onAvailableModulesChanged:', acc.module_data);
  for (const [k, v] of Object.entries(acc.module_data)) {
-  v?.online?.set(serverModuleAvailable(acc, k));
+  let available = serverModuleAvailable(acc, k);
+  console.log('onAvailableModulesChanged:', k, v, available);
+  v?.online?.set(available);
  }
 }
 
@@ -596,6 +598,7 @@ function serverModuleAvailable(acc, module_id) {
 }
 
 function deinitModuleComms(decl, acc) {
+ acc.module_data[decl.id].online?.set(false);
  if (decl.callbacks.deinitComms) decl.callbacks.deinitComms(acc);
  if (decl.callbacks.deinitData) decl.callbacks.deinitData(acc);
 }
