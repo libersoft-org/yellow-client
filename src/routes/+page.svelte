@@ -81,11 +81,11 @@
  });
 
  function updateAppHeight() {
-  console.log('updateAppHeight');
+  //console.log('updateAppHeight');
 
   if ('virtualKeyboard' in navigator) {
    navigator.virtualKeyboard.addEventListener('geometrychange', event => {
-    console.log('virtualKeyboard geometrychange:', event.target.boundingRect);
+    //console.log('virtualKeyboard geometrychange:', event.target.boundingRect);
    });
   }
 
@@ -94,9 +94,9 @@
   if (visualViewport) {
    viewportHeight = visualViewport.height;
    let clientHeight = visualViewport.clientHeight;
-   console.log('clientHeight:', clientHeight);
+   //console.log('clientHeight:', clientHeight);
    let keyboardHeightValue = viewportHeight - clientHeight;
-   console.log('keyboardHeightValue:', keyboardHeightValue);
+   //console.log('keyboardHeightValue:', keyboardHeightValue);
    if (keyboardHeightValue < 0) keyboardHeightValue = 0;
    keyboardHeight.set(keyboardHeightValue);
   } else viewportHeight = window.innerHeight;
@@ -107,10 +107,10 @@
   if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
   documentHeight.set(document.documentElement.clientHeight);
   isMobile.set(window.matchMedia('(max-width: 768px)').matches);
-  console.log('window.innerHeight:', window.innerHeight);
-  console.log('viewportHeight:', viewportHeight);
-  console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
-  console.log('$isMobile:', $isMobile);
+  //console.log('window.innerHeight:', window.innerHeight);
+  //console.log('viewportHeight:', viewportHeight);
+  //console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
+  //console.log('$isMobile:', $isMobile);
  }
 
  let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
@@ -119,10 +119,10 @@
   var newPx_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
   if (newPx_ratio != px_ratio) {
    px_ratio = newPx_ratio;
-   console.log('zooming: ', px_ratio);
+   //console.log('zooming: ', px_ratio);
    return true;
   } else {
-   console.log('just resizing, px_ratio: ', px_ratio);
+   //console.log('just resizing, px_ratio: ', px_ratio);
    return false;
   }
  });
@@ -153,6 +153,7 @@
  }
 
  function startResizeSideBar() {
+  console.log('startResizeSideBar');
   isResizingSideBar = true;
   document.body.style.userSelect = 'none';
   window.addEventListener('mousemove', resizeSideBar);
@@ -175,32 +176,23 @@
   }
  }
 
+ let sidebarWidth;
+
  function setSidebarSize(width) {
   console.log('setSidebarSize: ', width);
   if ($isMobile) return;
   const min = 200;
   const max = 700;
-  let sideBarWidth;
-  sideBarWidth = width < max ? width : max;
-  sideBarWidth = width > min ? sideBarWidth : min;
-  sideBar.style.minWidth = sideBarWidth + 'px';
-  sideBar.style.maxWidth = sideBarWidth + 'px';
-  sideBar.style.width = sideBarWidth + 'px';
-  resizer.style.left = sideBarWidth + 'px';
+  sidebarWidth = width < max ? width : max;
+  sidebarWidth = (width > min ? sidebarWidth : min) + 'px';
  }
 
  isMobile.subscribe(v => {
   console.log('isMobile: ', v);
   if (v) {
-   sideBar.style.minWidth = '100%';
-   sideBar.style.maxWidth = '100%';
-   sideBar.style.width = '100%';
+   sidebarWidth = '';
   } else {
-   console.log('sidebarSize: ', sidebarSize);
-   console.log('sidebarSize: ', sidebarSize);
-   let sideBarWidth = get(sidebarSize) || 250;
-   console.log('setSidebarSize: ', sideBarWidth);
-   //setSidebarSize(sideBarWidth); //  TypeError: $.get(...) is undefined
+   sidebarWidth = ($sidebarSize || 300) + 'px';
   }
  });
 
@@ -223,8 +215,8 @@
  .sidebar {
   display: flex;
   flex-direction: column;
-  min-width: 300px;
-  max-width: 300px;
+  /*  min-width: 300px;
+  max-width: 300px;*/
   max-height: 100%;
   box-shadow: var(--shadow);
   background-color: #fff;
@@ -234,10 +226,10 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 300px;
+  /*left: 300px;*/
   width: 5px;
   cursor: ew-resize;
-  background-color: transparent;
+  background-color: #0d0;
  }
 
  .content {
@@ -269,7 +261,7 @@
  <title>{product}</title>
 </svelte:head>
 <div class="app">
- <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" bind:this={sideBar}>
+ <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
   <MenuBar bind:isMenuOpen />
   <AccountBar />
@@ -283,7 +275,7 @@
   {/if}
  </div>
 
- <div class="resizer" role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
+ <div class="resizer" style:left={sidebarWidth} role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
 
  <div class="content" bind:this={contentElement}>
   {#if selectedCorePage}
