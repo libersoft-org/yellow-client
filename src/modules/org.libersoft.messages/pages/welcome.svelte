@@ -1,5 +1,5 @@
 <script>
- import { identifier } from '../messages.js';
+ import { identifier, online } from '../messages.js';
  import Button from '../../../core/components/button.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
@@ -46,8 +46,12 @@
 <div class="welcome">
  <img class="illustration" src="modules/{identifier}/img/illustration_{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
  <div class="label">
-  <div>Select your conversation<br />or</div>
-  <Button text="Start a new one" padding="5px" onClick={clickNew} />
+  {#if $online}
+   <div>Select your conversation<br />or</div>
+   <Button text="Start a new one" padding="5px" onClick={clickNew} />
+  {:else}
+   <div>This module is offline</div>
+  {/if}
  </div>
 </div>
 <Modal title="New Conversation" body={ModalConversationNew} bind:show={showNewConversationModal} />

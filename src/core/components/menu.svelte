@@ -58,6 +58,13 @@
   visibility: hidden;
  }
 
+ .menu > div:first-child {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+ }
+
  .menu.open {
   transform: translateX(0);
   transition:
@@ -66,19 +73,25 @@
   visibility: visible;
  }
 
- .top {
+ .header {
   display: flex;
   border-bottom: 1px solid #444;
  }
 
- .top .icon {
+ .header .icon {
   display: flex;
   padding: 15px;
  }
 
- .top .icon img {
+ .header .icon img {
   width: 30px;
   height: 30px;
+ }
+
+ .items {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
  }
 
  .footer {
@@ -118,16 +131,18 @@
 {/if}
 <div class="menu {showMenu ? 'open' : ''}">
  <div>
-  <div class="top">
+  <div class="header">
    <BaseButton onClick={clickMenuClose}>
     <div class="icon">
      <img src="img/close.svg" alt="X" />
     </div>
    </BaseButton>
   </div>
-  <Item img="img/donate.svg" title="Donate" onClick={() => openPage('https://libersoft.org/donations')} />
-  <Item img="img/contact.svg" title="Contact developers" onClick={() => openPage('https://libersoft.org/contacts')} />
-  <Item img="img/settings.svg" title="Settings" onClick={clickSettings} />
+  <div class="items">
+   <Item img="img/donate.svg" title="Donate" onClick={() => openPage('https://libersoft.org/donations')} />
+   <Item img="img/contact.svg" title="Contact developers" onClick={() => openPage('https://libersoft.org/contacts')} />
+   <Item img="img/settings.svg" title="Settings" onClick={clickSettings} />
+  </div>
  </div>
  <div class="footer">
   <BaseButton onClick={() => openPage(link)}>
