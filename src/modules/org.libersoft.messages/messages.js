@@ -682,18 +682,23 @@ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
 });
 
 DOMPurify.addHook('uponSanitizeElement', (node, data) => {
- if (data.tagName && data.tagName.toLowerCase() === 'sticker') {
-  // Move children out to after the node. This is a hack to tolerate improperly closed sticker tag.
-  while (node.firstChild) {
-   node.parentNode.insertBefore(node.firstChild, node.nextSibling);
+ if (data.tagName) {
+  const t = data.tagName.toLowerCase();
+  if (CUSTOM_TAGS.find(tag => tag === t)) {
+   // Move children out to after the node. This is a hack to tolerate improperly closed sticker tag.
+   while (node.firstChild) {
+    node.parentNode.insertBefore(node.firstChild, node.nextSibling);
+   }
   }
  }
 });
 
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper'];
+
 export function saneHtml(content) {
  //console.log('saneHtml:');
  let sane = DOMPurify.sanitize(content, {
-  ADD_TAGS: ['Sticker', 'Gif', 'Emoji', 'Attachment', 'AttachmentsWrapper'],
+  ADD_TAGS: CUSTOM_TAGS,
   //FORBID_CONTENTS: ['sticker'],
   ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'], // TODO: fixme, security issue, should only be allowed on the relevant elements
   RETURN_DOM_FRAGMENT: true,
