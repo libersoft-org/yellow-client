@@ -30,8 +30,8 @@ export default defineConfig(({mode}) => {
     ...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
    ],
    define: {
-    __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
-    __COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
+    __BUILD_DATE__: new Date(),
+    __COMMIT_HASH__: getGitCommitHash(),
    },
    server: {
     https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?
