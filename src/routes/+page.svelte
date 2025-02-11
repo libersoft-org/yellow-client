@@ -246,7 +246,7 @@
    height: 100%;
   }
 
-  .sidebar.hidden {
+  .sidebar.hidden-on-mobile {
    display: none;
   }
 
@@ -261,7 +261,7 @@
  <title>{product}</title>
 </svelte:head>
 <div class="app">
- <div class="sidebar {$hideSidebarMobile ? 'hidden' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
+ <div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
   <MenuBar bind:isMenuOpen />
   <AccountBar />
