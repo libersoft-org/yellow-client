@@ -12,7 +12,6 @@ export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
-export let modules_order = localStorageSharedStore('modules_order', {});
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
 
 debug.subscribe(value => {
@@ -27,44 +26,29 @@ export const commit = __COMMIT_HASH__;
 export const link = 'https://yellow.libersoft.org';
 
 // declarations of modules that this client supports
-export let module_decls = writable({});
-
+let module_decls = {};
 let global_socket_id = 0;
 
 const ping_interval = import.meta.env.VITE_PING_INTERVAL || 10000;
 
+export function getModuleDecls() {
+ //console.log('GET MODULE DECLS:', module_decls);
+ return module_decls;
+}
+
 selected_module_id.subscribe(async id => {
  await tick();
- let module_decls_v = get(module_decls);
- for (const k in module_decls_v) {
-  const module = module_decls_v[k];
+ for (const k in module_decls) {
+  const module = module_decls[k];
   module.callbacks.onModuleSelected?.(id === module.id);
  }
 });
 
 export function registerModule(id, decl) {
- let ordering = get(modules_order);
- console.log('REGISTER MODULE:', id, decl);
- if (ordering[id] !== undefined) {
-  decl.order = ordering[id];
- }
+ //console.log('REGISTER MODULE:', id, decl);
+ module_decls[id] = decl;
  decl.id = id;
- let module_decls_v = get(module_decls);
- module_decls_v[id] = decl;
- module_decls.set(module_decls_v);
 }
-
-modules_order.subscribe(value => {
- console.log('MODULES ORDER:', value);
- let module_decls_v = get(module_decls);
- for (const k in module_decls_v) {
-  const decl = module_decls_v[k];
-  if (value[decl.id] !== undefined) {
-   decl.order = value[decl.id];
-  }
- }
- module_decls.set(module_decls_v);
-});
 
 export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
 
@@ -295,7 +279,7 @@ function updateAvailableModules(acc, available_modules) {
 function onAvailableModulesChanged(acc) {
  console.log('onAvailableModulesChanged:', acc);
  for (const [k, v] of Object.entries(acc.module_data)) {
-  v?.online?.set(serverModuleAvailable(acc, k));
+  v.online.set(serverModuleAvailable(acc, k));
  }
 }
 
@@ -567,18 +551,9 @@ function setupPing(account) {
 }
 
 export function order(dict) {
- //console.log('ORDER dict:', dict);
- let result = Object.values(dict).sort((a, b) => {
-  let a_order = a.order !== undefined ? a.order : a.id;
-  let b_order = b.order !== undefined ? b.order : b.id;
-  if (typeof a_order === 'number' && typeof b_order === 'number') {
-   return a_order - b_order;
-  } else {
-   return String.prototype.localeCompare(a_order) < String.prototype.localeCompare(b_order);
-  }
+ return Object.values(dict).sort((a, b) => {
+  return String.prototype.localeCompare(a.id + a.order) < String.prototype.localeCompare(b.id + b.order);
  });
- //console.log('ORDER result:', result);
- return result;
 }
 
 function initModuleComms(acc, module_id, decl) {
@@ -609,7 +584,7 @@ function updateModulesComms(acc) {
    console.log('Module already initialized:', module_id);
    continue;
   } else if (available && !initialized) {
-   const decl = get(module_decls)[module_id];
+   const decl = module_decls[module_id];
    if (!decl) {
     console.error('Module available on server but not found on client:', module_id);
     continue;
@@ -705,8 +680,8 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
  acc.socket.send(JSON.stringify(req));
  acc.lastTransmissionTs = Date.now();
  acc.bufferedAmount = acc.socket.bufferedAmount;
- //console.log('bufferedAmount:', acc.bufferedAmount);
 
+ if (get(debug) && account) account.update(v => v);
  return requestID;
 }
 
