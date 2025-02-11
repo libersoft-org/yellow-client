@@ -685,13 +685,25 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  if (data.tagName) {
   const t = data.tagName.toLowerCase();
   if (CUSTOM_TAGS.find(tag => tag === t)) {
-   // Move children out to after the node. This is a hack to tolerate improperly closed sticker tag.
-   while (node.firstChild) {
-    node.parentNode.insertBefore(node.firstChild, node.nextSibling);
-   }
+   console.log('linearizeChildren:', node);
+   linearizeChildren(node);
+   console.log('linearizeChildren result:', node);
   }
  }
 });
+
+function linearizeChildren(node) {
+ // Move children out to after the node. This is a hack to tolerate improperly closed sticker tag.
+ const children = [];
+ while (node.firstChild) {
+  children.push(node.firstChild);
+  node.removeChild(node.firstChild);
+ }
+ children.forEach(child => {
+  linearizeChildren(child); // Recursively linearize child nodes
+  node.parentNode.insertBefore(child, node.nextSibling);
+ });
+}
 
 const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper'];
 
