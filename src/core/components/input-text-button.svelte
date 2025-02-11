@@ -1,37 +1,50 @@
 <script>
  import BaseButton from './base-button.svelte';
+ export let password = false;
+ export let placeholder = '';
+ export let value = '';
  export let img;
  export let alt = '';
- export let value;
- export let placeholder;
  export let onClick;
+ export let grow = false;
+ export let minWidth;
+ export let maxWidth;
+ let elInput;
 
- let input;
+ function handleKeydown(e) {
+  if (onKeydown) onKeydown(e);
+ }
 
  export function focus() {
-  input.focus();
+  elInput?.focus();
  }
 </script>
 
 <style>
  .input-button {
   display: flex;
+  box-sizing: content-box;
   align-items: center;
   border: 1px solid #888;
   border-radius: 10px;
-  padding: 5px;
  }
 
  input {
   width: 100%;
   border: 0;
+  border-radius: 10px;
+  padding: 10px;
   font-family: inherit;
   font-size: inherit;
   outline: none;
  }
 
+ input:focus {
+  outline: 2px solid #0060df;
+ }
+
  .image {
-  padding: 5px;
+  padding: 10px;
  }
 
  .image img {
@@ -41,8 +54,8 @@
  }
 </style>
 
-<div class="input-button">
- <input type="text" bind:this={input} bind:value {placeholder} />
+<div class="input-button" style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}>
+ <input type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />
  <BaseButton {onClick}>
   <div class="image">
    <img src={img} {alt} />
