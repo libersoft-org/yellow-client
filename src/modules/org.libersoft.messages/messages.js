@@ -124,7 +124,7 @@ export function initComms(acc) {
  moduleEventSubscribe(acc, 'ask_for_chunk');
 
  let data = acc.module_data[identifier];
- console.log('initComms:', data);
+ //console.log('initComms:', data);
 
  data.new_message_listener = event => eventNewMessage(acc, event);
  data.seen_message_listener = event => eventSeenMessage(acc, event);
@@ -139,6 +139,17 @@ export function initComms(acc) {
  acc.events.addEventListener('upload_update', upload_update);
  acc.events.addEventListener('ask_for_chunk', ask_for_chunk);
 
+ refresh(acc);
+}
+
+async function refresh(acc) {
+ console.log('refresh sendQueuedMessages...', acc);
+ await sendQueuedMessages();
+ if (get(acc.module_data[identifier].selectedConversation)) {
+  console.log('refresh listMessages...', acc);
+  listMessages(acc, get(acc.module_data[identifier].selectedConversation).address);
+ }
+ console.log('refresh listConversations...', acc);
  listConversations(acc);
 }
 

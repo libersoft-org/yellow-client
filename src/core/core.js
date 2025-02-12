@@ -586,24 +586,26 @@ export function order(dict) {
  return result;
 }
 
-function initModuleComms(acc, module_id, decl) {
- console.log('initModuleComms:', decl);
- if (decl.callbacks.initData) acc.module_data[module_id] = decl.callbacks?.initData(acc);
- else acc.module_data[module_id] = {};
- acc.module_data[module_id].id = decl.id;
- acc.module_data[module_id].decl = decl;
- acc.module_data[module_id].online = writable(serverModuleAvailable(acc, module_id));
- if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
-}
-
 function serverModuleAvailable(acc, module_id) {
  return acc.available_modules[module_id];
+}
+
+function initModuleComms(acc, module_id, decl) {
+ console.log('initModuleComms:', decl);
+ if (!acc.module_data[module_id]) {
+  if (decl.callbacks.initData) acc.module_data[module_id] = decl.callbacks?.initData(acc);
+  else acc.module_data[module_id] = {};
+  acc.module_data[module_id].id = decl.id;
+  acc.module_data[module_id].decl = decl;
+  acc.module_data[module_id].online = writable(serverModuleAvailable(acc, module_id));
+ }
+ if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
 }
 
 function deinitModuleComms(decl, acc) {
  acc.module_data[decl.id].online?.set(false);
  if (decl.callbacks.deinitComms) decl.callbacks.deinitComms(acc);
- if (decl.callbacks.deinitData) decl.callbacks.deinitData(acc);
+ //if (decl.callbacks.deinitData) decl.callbacks.deinitData(acc);
 }
 
 function updateModulesComms(acc) {
