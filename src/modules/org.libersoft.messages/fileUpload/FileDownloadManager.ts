@@ -50,7 +50,7 @@ export class FileDownloadManager extends EventEmitter {
      retry();
      return;
     }
-    if (download?.record.status === FileUploadRecordStatus.CANCELED) {
+    if (download?.record.status === FileUploadRecordStatus.CANCELED || download?.record.status === FileUploadRecordStatus.ERROR) {
      setRunning(false);
      // todo clear memory
      return;
@@ -87,7 +87,6 @@ export class FileDownloadManager extends EventEmitter {
      retry();
     }
    };
-   fileDownloadStore.set(record.id, download);
    this.startDownload(download);
   }
  }

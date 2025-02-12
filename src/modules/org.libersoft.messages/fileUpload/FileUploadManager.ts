@@ -84,7 +84,7 @@ class FileUploadManager extends EventEmitter {
     };
 
     setRunning(true);
-    if (upload.record.status === FileUploadRecordStatus.CANCELED) {
+    if (upload.record.status === FileUploadRecordStatus.CANCELED || upload.record.status === FileUploadRecordStatus.ERROR) {
      setRunning(false);
      upload.pushChunk = undefined;
      return;
@@ -102,7 +102,6 @@ class FileUploadManager extends EventEmitter {
     }
     if (record.type === FileUploadRecordType.P2P && this.p2pThrottleMemory.get(record.id) >= this.p2pMaxBatchChunks) {
      setRunning(false);
-     console.log('444');
      return;
     }
 

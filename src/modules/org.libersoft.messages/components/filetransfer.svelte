@@ -1,27 +1,31 @@
 <script>
  import ProgressBar from './progressbar.svelte';
  import { humanSize } from '../../../core/utils/file.utils.js';
+ import { onDestroy } from 'svelte';
  export let file = '';
  export let total = 0;
  export let uploaded = 0;
- export let download = false;
+ export let status = '';
+ export let hideSpeed = false;
 
  let lastUploaded = uploaded;
- let lastTime = Date.now();
  let speed = 0;
 
- $: {
+ function updateSpeed() {
   const now = Date.now();
-  const elapsed = (now - lastTime) / 1000; // time in seconds
+  const elapsed = 1; // Always 1 second interval
   const delta = uploaded - lastUploaded;
-  if (elapsed > 0) {
-   speed = delta / elapsed;
-  }
+  speed = delta > 0 ? delta / elapsed : 0; // Set to 0 if no progress
   lastUploaded = uploaded;
-  lastTime = now;
  }
 
+ const interval = setInterval(updateSpeed, 1000);
+
  $: percent = total > 0 ? Math.round((uploaded / total) * 100) : 0;
+
+ onDestroy(() => {
+  clearInterval(interval);
+ });
 </script>
 
 <style>
@@ -42,8 +46,8 @@
 
 <div class="upload">
  <div class="file">
-  <span class="bold">{download ? 'Downloading' : 'Uploading'}:</span>
-  <span class="speed">{humanSize(speed)}/s</span>
+  {#if status}<span class="bold">{status}</span>{/if}
+  {#if !hideSpeed}<span class="speed">&nbsp;{humanSize(speed)}/s</span>{/if}
   {#if file}
    <span>{file}</span>
   {/if}

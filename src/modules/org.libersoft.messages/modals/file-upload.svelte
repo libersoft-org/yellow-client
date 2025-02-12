@@ -120,7 +120,7 @@
  }
 
  .file-table :global(tbody) {
-  display:block;
+  display: block;
   width: 100%;
   overflow: auto;
   max-height: 35vh;
@@ -130,7 +130,8 @@
   display: block;
  }
 
- .file-table :global(tbody tr), .file-table :global(thead tr) {
+ .file-table :global(tbody tr),
+ .file-table :global(thead tr) {
   display: flex;
   align-items: center;
  }

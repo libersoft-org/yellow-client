@@ -59,7 +59,7 @@
  onMount(() => {
   console.log('+page onMount');
   if ($sidebarSize) {
-   setSidebarSize($sidebarSize)
+   setSidebarSize($sidebarSize);
   }
   window.addEventListener('focus', () => isClientFocused.set(true));
   window.addEventListener('blur', () => isClientFocused.set(false));
