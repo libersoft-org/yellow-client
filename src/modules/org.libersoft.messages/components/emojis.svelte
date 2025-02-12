@@ -3,19 +3,21 @@
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import { emojiGroups } from '../messages.js';
- import { emoji_render } from '../emojis.js';
+ import { emojisLoading, start_emojisets_fetch, emoji_render } from '../emojis.js';
  import ContextMenu from '../../../core/components/context-menu.svelte';
+
  const MessageBar = getContext('MessageBar');
 
  let alts = [];
  let altsMenu;
  let elContainer;
 
- // $: console.log('alts:', alts);
-
  export function onShow() {
   //console.log('emojis onShow');
   elContainer?.focus();
+  if ($emojiGroups.length === 0) {
+   start_emojisets_fetch();
+  }
  }
 
  function clickEmoji(codepoints) {
@@ -78,21 +80,28 @@
 </style>
 
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
- {#each $emojiGroups as g, index}
-  <div class="group">
-   <div class="title">{g.group}</div>
-   <div class="emojis">
-    {#each g.emoji as emoji, id}
-     <BaseButton onClick={() => clickEmoji(emoji.base)} onRightClick={e => showAlts(e, emoji)}>
-      <div class="emoji hover">
-       <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
-      </div>
-     </BaseButton>
-    {/each}
+ {#if $emojiGroups.length === 0}
+  {#if $emojisLoading}
+   <div>Loading...</div>
+  {/if}
+ {:else}
+  {#each $emojiGroups as g, index}
+   <div class="group">
+    <div class="title">{g.group}</div>
+    <div class="emojis">
+     {#each g.emoji as emoji, id}
+      <BaseButton onClick={() => clickEmoji(emoji.base)} onRightClick={e => showAlts(e, emoji)}>
+       <div class="emoji hover">
+        <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
+       </div>
+      </BaseButton>
+     {/each}
+    </div>
    </div>
-  </div>
- {/each}
+  {/each}
+ {/if}
 </div>
+
 <ContextMenu bind:this={altsMenu} scrollable={false}>
  <div class="emojis">
   {#each alts as e (e)}

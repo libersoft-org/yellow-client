@@ -1,11 +1,17 @@
 // 😐😐😐😐
 
+import { writable, get } from 'svelte/store';
 import { cp } from './emojis_parse_data.js';
 import { identifier } from './messages.js';
 
+export let emojisLoading = writable(false);
+
 export function start_emojisets_fetch(acc, emojiGroups, emojisByCodepointsRgi) {
+ if (get(emojisLoading)) {
+  return;
+ }
+ emojisLoading.set(true);
  new Promise(async (resolve, reject) => {
-  //await new Promise(resolve => setTimeout(resolve, 10000));
   const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
   if (!res.ok) {
    console.error('Failed to fetch emoji groups:', res);
@@ -27,7 +33,13 @@ export function start_emojisets_fetch(acc, emojiGroups, emojisByCodepointsRgi) {
   }
   emojisByCodepointsRgi.set(by_codepoints);
   emojiGroups.set(groups);
- });
+ })
+  .then(() => {
+   emojisLoading.set(false);
+  })
+  .catch(() => {
+   emojisLoading.set(false);
+  });
 }
 
 export function emoji_render(codepoints) {

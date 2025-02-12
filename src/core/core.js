@@ -617,7 +617,7 @@ function updateModulesComms(acc) {
   } else if (available && !initialized) {
    const decl = get(module_decls)[module_id];
    if (!decl) {
-    console.error('Module available on server but not found on client:', module_id);
+    console.log('Module available on server but not found on client:', module_id);
     continue;
    } else {
     initModuleComms(acc, module_id, decl);

@@ -53,9 +53,6 @@ export function initData(acc) {
   galleryFile: writable(null),
  };
  start_emojisets_fetch(acc, result.emojiGroups, result.emojisByCodepointsRgi);
- result.conversationsArray.subscribe(v => {
-  //console.log('acc conversationsArray:', acc, v);
- });
  return result;
 }
 
@@ -687,7 +684,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  if (data.tagName) {
   const t = data.tagName.toLowerCase();
   if (CUSTOM_TAGS.find(tag => tag === t)) {
-   // Move children out to after the node. This is a hack to tolerate improperly closed sticker tag.
+   // Move children out to after the node. This is a hack to tolerate improperly closed sticker tag. // nope, jsdom (parse5) already produces them "wrong" (right, by spec)
    while (node.firstChild) {
     node.parentNode.insertBefore(node.firstChild, node.nextSibling);
    }
