@@ -1,6 +1,6 @@
 <script>
  import BaseButton from './base-button.svelte';
- export let password = false;
+ export let type = 'text';
  export let placeholder = '';
  export let value = '';
  export let img;
@@ -55,7 +55,7 @@
 </style>
 
 <div class="input-button" style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}>
- <input type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />
+ <input {type} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />
  <BaseButton {onClick}>
   <div class="image">
    <img src={img} {alt} />

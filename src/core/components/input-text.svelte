@@ -1,11 +1,11 @@
 <script>
- export let password = false;
+ export let type = 'text';
  export let placeholder = '';
  export let value = '';
- export let onKeydown;
  export let grow = false;
  export let minWidth;
  export let maxWidth;
+ export let onKeydown;
  let elInput;
 
  function handleKeydown(e) {
@@ -32,4 +32,4 @@
  }
 </style>
 
-<input style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} type={password ? 'password' : 'text'} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />
+<input style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />

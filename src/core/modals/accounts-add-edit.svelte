@@ -184,7 +184,7 @@
  <div class="group">
   <label>
    <div class="label">Password:</div>
-   <InputText minWidth="300px" maxWidth="300px" password={true} placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
+   <InputText minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
   </label>
  </div>
  {#if !isInWelcomeWizard}
