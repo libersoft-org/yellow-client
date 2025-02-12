@@ -22,7 +22,10 @@ debug.subscribe(value => {
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
 export const version = '0.0.1';
-export const build = new Date(__BUILD_DATE__).toISOString();
+export const build = new Date(__BUILD_DATE__)
+ .toISOString()
+ .replace('T', ' ')
+ .replace(/\.\d+Z/, '');
 export const commit = __COMMIT_HASH__;
 export const link = 'https://yellow.libersoft.org';
 
