@@ -1,6 +1,6 @@
 <script>
  import Button from '../../../core/components/button.svelte';
- import InputText from '../../../core/components/input-text.svelte';
+ import Input from '../../../core/components/input.svelte';
  import Modal from '../../../core/components/modal.svelte';
  import DropdownFilter from '../../../core/components/dropdown-filter.svelte';
  import SendModal from '../modals/send.svelte';
@@ -92,7 +92,7 @@
 <div class="send">
  <div class="group">
   <div class="label">Send to:</div>
-  <div class="input"><InputText bind:value={address} /></div>
+  <div class="input"><Input bind:value={address} /></div>
  </div>
  <div class="group">
   <div class="label">Currency:</div>
@@ -100,11 +100,11 @@
  </div>
  <div class="group">
   <div class="label">Amount:</div>
-  <div class="input"><InputText bind:value={amount} /></div>
+  <div class="input"><Input bind:value={amount} /></div>
  </div>
  <div class="group">
   <div class="label">Max transaction fee:</div>
-  <div class="input"><InputText bind:value={fee} /></div>
+  <div class="input"><Input bind:value={fee} /></div>
   <div class="error">{error}</div>
  </div>
  <Button text="Send" onClick={send} />

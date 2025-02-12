@@ -1,7 +1,7 @@
 <script>
  import { networks } from '../wallet.ts';
  import Button from '../../../core/components/button.svelte';
- import InputText from '../../../core/components/input-text.svelte';
+ import Input from '../../../core/components/input.svelte';
  import { onMount } from 'svelte';
  export let close;
  export let params;
@@ -68,29 +68,29 @@
 <div class="modal-edit-network">
  <div class="group">
   <div class="label">Name:</div>
-  <InputText bind:value={item_name} />
+  <Input bind:value={item_name} />
  </div>
  <div class="group">
   <div class="label">Currency symbol:</div>
-  <InputText bind:value={item_currency_symbol} />
+  <Input bind:value={item_currency_symbol} />
  </div>
  <div class="group">
   <div class="label">Icon URL:</div>
-  <InputText bind:value={item_currency_iconURL} />
+  <Input bind:value={item_currency_iconURL} />
  </div>
  <div class="group">
   <div class="label">Chain ID:</div>
-  <InputText bind:value={item_chain_id} />
+  <Input bind:value={item_chain_id} />
  </div>
  <div class="group">
   <div class="label">Explorer URL:</div>
-  <InputText bind:value={item_explorer_url} />
+  <Input bind:value={item_explorer_url} />
  </div>
  <div class="group">
   <div class="label">RPC URLs:</div>
   {#each item_rpc_urls as rpc_url, i}
    <div class="group">
-    <InputText bind:value={item_rpc_urls[i]} />
+    <Input bind:value={item_rpc_urls[i]} />
     <Button text="Remove RPC URL" onClick={() => (item_rpc_urls = item_rpc_urls.filter((v, j) => j !== i))} />
    </div>
   {/each}

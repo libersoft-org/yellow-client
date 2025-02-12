@@ -1,6 +1,6 @@
 <script>
  import { sticker_servers } from '../stickers.js';
- import InputText from '../../../core/components/input-text.svelte';
+ import Input from '../../../core/components/input.svelte';
  import Button from '../../../core/components/button.svelte';
  import Table from '../../../core/components/table.svelte';
  import Thead from '../../../core/components/table-thead.svelte';
@@ -57,7 +57,7 @@
 
 <!--<Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />-->
 <div class="group">
- <InputText placeholder="Add sticker server address" grow={true} bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputAdd} />
+ <Input placeholder="Add sticker server address" grow={true} bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputAdd} />
  <Button text="Add" onClick={clickAdd} />
 </div>
 <Table>

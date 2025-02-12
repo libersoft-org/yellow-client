@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import { openNewConversation } from '../messages.js';
  import Button from '../../../core/components/button.svelte';
- import InputText from '../../../core/components/input-text.svelte';
+ import Input from '../../../core/components/input.svelte';
  export let close;
  let elAddress;
  let value;
@@ -43,6 +43,6 @@
 
 <div class="group">
  <div class="label">Address:</div>
- <InputText placeholder="user@domain.tld" onKeydown={keyEnter} bind:this={elAddress} bind:value />
+ <Input placeholder="user@domain.tld" onKeydown={keyEnter} bind:this={elAddress} bind:value />
  <Button text="Open" onClick={clickOpen} />
 </div>

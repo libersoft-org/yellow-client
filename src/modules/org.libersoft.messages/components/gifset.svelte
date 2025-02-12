@@ -4,7 +4,7 @@
  import { htmlEscape } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Button from '../../../core/components/button.svelte';
- import InputText from '../../../core/components/input-text.svelte';
+ import Input from '../../../core/components/input.svelte';
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { isMobile } from '../../../core/core.js';
  const MessageBar = getContext('MessageBar');
@@ -112,11 +112,11 @@
 <div class="gifset">
  <div class="top-bar">
   <div class="group">
-   <InputText placeholder="Your Giphy API key" grow={true} bind:this={elApiKey} bind:value={apiKey} onKeydown={keySaveAPIKey} />
+   <Input placeholder="Your Giphy API key" grow={true} bind:this={elApiKey} bind:value={apiKey} onKeydown={keySaveAPIKey} />
    <Button text="Save" width="80px" onClick={saveAPIKey} />
   </div>
   <div class="group">
-   <InputText placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keyGetGifs} />
+   <Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keyGetGifs} />
    <Button text="Search" width="80px" onClick={getGifs} />
   </div>
  </div>

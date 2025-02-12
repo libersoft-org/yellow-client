@@ -3,7 +3,7 @@
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts } from '../core.js';
  import Button from '../components/button.svelte';
- import InputText from '../components/input-text.svelte';
+ import Input from '../components/input.svelte';
  import Select from '../components/select.svelte';
  import Option from '../components/select-option.svelte';
  import Switch from '../components/switch.svelte';
@@ -166,25 +166,25 @@
  <div class="group">
   <label>
    <div class="label">Title:</div>
-   <InputText minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
+   <Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
   </label>
  </div>
  <div class="group">
   <label>
    <div class="label">Server:</div>
-   <InputText minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
+   <Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
   </label>
  </div>
  <div class="group">
   <label>
    <div class="label">Address:</div>
-   <InputText minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
+   <Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
   </label>
  </div>
  <div class="group">
   <label>
    <div class="label">Password:</div>
-   <InputText minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
+   <Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
   </label>
  </div>
  {#if !isInWelcomeWizard}

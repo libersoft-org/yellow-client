@@ -1,6 +1,6 @@
 <script>
  import BaseButton from './base-button.svelte';
- import InputText from './input-text.svelte';
+ import Input from './input.svelte';
  export let options = [];
  export let selected = '';
  let filteredOptions = options;
@@ -101,7 +101,7 @@
    </BaseButton>
   </div>
  {:else}
-  <InputText bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
+  <Input bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
   {#if showOptions}
    <div class="options">
     {#each filteredOptions as option}
