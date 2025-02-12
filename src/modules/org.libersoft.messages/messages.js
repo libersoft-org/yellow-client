@@ -153,6 +153,10 @@ async function refresh(acc) {
  listConversations(acc);
 }
 
+async function sendQueuedMessages() {
+ console.log('sendQueuedMessages');
+}
+
 export function initUpload(files, uploadType, recipients) {
  const acc = get(active_account);
  const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: get(uploadChunkSize) });

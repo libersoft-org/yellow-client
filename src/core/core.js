@@ -286,22 +286,8 @@ export function selectAccount(id) {
  });
 }
 
-function updateAvailableModules(acc, available_modules) {
- for (const [k, v] of Object.entries(available_modules)) {
-  console.log('module:', k, 'available:', v);
-  acc.available_modules[k] = v;
- }
- updateModulesComms(acc);
- //onAvailableModulesChanged(acc);
-}
-
 function onAvailableModulesChanged(acc) {
- console.log('onAvailableModulesChanged:', acc.module_data);
- for (const [k, v] of Object.entries(acc.module_data)) {
-  let available = serverModuleAvailable(acc, k);
-  console.log('onAvailableModulesChanged:', k, v, available);
-  v?.online?.set(available);
- }
+ updateModulesComms(acc);
 }
 
 function constructAccount(id, credentials, enabled, settings) {
@@ -333,8 +319,11 @@ function _enableAccount(account) {
  (acc.events = new EventTarget()),
   /* todo: unsubscribe on disable */
   acc.events.addEventListener('modules_available', event => {
-   console.log('modules_available event:', event);
-   updateAvailableModules(acc, event.detail?.data?.modules_available);
+   for (const k in event.detail?.data?.modules_available) {
+    acc.available_modules[k] = event.detail.data.modules_available[k];
+   }
+   console.log('available_modules:', acc.available_modules);
+   onAvailableModulesChanged(acc);
    account.update(v => v);
   });
 
@@ -493,7 +482,6 @@ function sendLoginCommand(account) {
    acc.sessionID = res.data.sessionID;
    acc.available_modules = res.data.modules_available;
    onAvailableModulesChanged(acc);
-   updateModulesComms(acc);
   }
   account.update(v => v);
  });
@@ -586,10 +574,6 @@ export function order(dict) {
  return result;
 }
 
-function serverModuleAvailable(acc, module_id) {
- return acc.available_modules[module_id];
-}
-
 function initModuleComms(acc, module_id, decl) {
  console.log('initModuleComms:', decl);
  if (!acc.module_data[module_id]) {
@@ -597,30 +581,31 @@ function initModuleComms(acc, module_id, decl) {
   else acc.module_data[module_id] = {};
   acc.module_data[module_id].id = decl.id;
   acc.module_data[module_id].decl = decl;
-  acc.module_data[module_id].online = writable(serverModuleAvailable(acc, module_id));
  }
  if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
+ acc.module_data[module_id].online?.set(true);
 }
 
 function deinitModuleComms(decl, acc) {
  acc.module_data[decl.id].online?.set(false);
  if (decl.callbacks.deinitComms) decl.callbacks.deinitComms(acc);
- //if (decl.callbacks.deinitData) decl.callbacks.deinitData(acc);
 }
 
 function updateModulesComms(acc) {
  let available_modules = acc.available_modules;
- //console.log('updateModulesComms:', acc, available_modules);
- for (const [module_id, available] of Object.entries(available_modules)) {
+
+ let module_decls_v = get(module_decls);
+ for (const module_id in module_decls_v) {
+  const available = available_modules[module_id];
   const initialized = !!acc.module_data[module_id];
+  //console.log('updateModulesComms:', module_id, available, initialized);
+
   if (available && initialized) {
    console.log('Module already initialized:', module_id);
-   continue;
   } else if (available && !initialized) {
-   const decl = get(module_decls)[module_id];
+   const decl = module_decls_v[module_id];
    if (!decl) {
     console.log('Module available on server but not found on client:', module_id);
-    continue;
    } else {
     initModuleComms(acc, module_id, decl);
    }
@@ -629,15 +614,17 @@ function updateModulesComms(acc) {
   } else if (!available && !initialized) {
    console.log('Module not available but also not initialized:', module_id);
   }
+  if (initialized && acc.module_data[module_id].online) {
+   if (get(acc.module_data[module_id].online) !== available) {
+    acc.module_data[module_id].online.set(available);
+   }
+  }
  }
- //console.log('updateModulesComms:', acc);
- //console.log('updateModulesComms:', acc.module_data);
 }
 
 function disconnectAccount(acc) {
  acc.available_modules = {};
  onAvailableModulesChanged(acc);
- updateModulesComms(acc);
 
  if (acc.socket) {
   acc.socket.close();

@@ -2,7 +2,8 @@
  import { active_account, order, module_decls } from '../core.js';
  import { get } from 'svelte/store';
  import BaseButton from './base-button.svelte';
- import Icon from './icon.svelte';
+ import ModuleBarItem from './module-bar-item.svelte';
+
  export let onSelectModule;
  let module_data;
  let lastModuleSelected = false;
@@ -80,7 +81,7 @@
 <div class="module-bar">
  <div class="items {expanded ? 'expanded' : ''}">
   {#each module_decls_ordered as decl (decl.id)}
-   <Icon img="img/modules/{decl.id}.svg" alt={decl.name} size="30" onClick={() => clickSetModule(decl.id)} />
+   <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} {decl} {clickSetModule} />
   {/each}
  </div>
  <BaseButton onClick={clickExpand}>
