@@ -405,7 +405,7 @@ function reconnectAccount(account) {
   acc.socket.onerror = event => {
    console.log('WebSocket ' + socket_id + ' error:', event);
    retry(account, 'Connection error');
-   acc.error = 'Network error: ' + event;
+   acc.error = 'Network error: ' + event.message;
    acc.session_status = undefined;
    account.update(v => v);
   };
