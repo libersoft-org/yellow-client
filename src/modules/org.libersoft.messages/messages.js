@@ -66,7 +66,19 @@ function sendData(acc, account, command, params = {}, sendSessionID = true, call
  acc: account object
  account: account store, optional, for debugging
   */
- return send(acc, account, identifier, command, params, sendSessionID, callback, quiet);
+ return _send(acc, account, identifier, command, params, sendSessionID, callback, quiet);
+}
+
+function _send(acc, account, target, command, params, sendSessionID, callback, quiet) {
+ let cb = (req, res) => {
+  if (res.error !== 0) {
+   if (get(acc.module_data[identifier].online) === false) {
+    return;
+   }
+  }
+  if (callback) callback(req, res);
+ };
+ return send(acc, account, target, command, params, sendSessionID, cb, quiet);
 }
 
 export function onModuleSelected(selected) {
@@ -717,7 +729,7 @@ export function ensureConversationDetails(conversation) {
  if (conversation.visible_name) return;
  let acc = get(active_account);
  //console.log('ensureConversationDetails acc:', acc);
- send(acc, active_account, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
+ _send(acc, active_account, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
   if (res.error !== 0) return;
   Object.assign(conversation, res.data);
   conversationsArray.update(v => v);

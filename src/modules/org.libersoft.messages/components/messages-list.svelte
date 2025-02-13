@@ -9,7 +9,7 @@
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import ScrollButton from './scroll-button.svelte';
- import { messagesArray, events, insertEvent, identifier } from '../messages.js';
+ import { online, messagesArray, events, insertEvent, identifier } from '../messages.js';
  import { get } from 'svelte/store';
  import Icon from '../../../core/components/icon.svelte';
  export let conversation;
@@ -475,7 +475,11 @@
  {#if itemsArray.length === 1 && itemsArray[0].type === 'no_messages'}
   <div class="spacer"></div>
   <div class="no-messages">
-   <div class="body">Send a message to start a conversation</div>
+   {#if $online}
+    <div class="body">Send a message to start a conversation</div>
+   {:else}
+    <div class="body">Module is offline, messages will be delivered later</div>
+   {/if}
   </div>
   <div class="spacer"></div>
  {:else}
