@@ -9,6 +9,8 @@
  export let grow = false;
  export let minWidth;
  export let maxWidth;
+ export let onKeydown;
+
  let elInput;
 
  function handleKeydown(e) {
