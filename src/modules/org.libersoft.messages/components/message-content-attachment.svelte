@@ -2,8 +2,8 @@
  import FileTransfer from './filetransfer.svelte';
  import { derived, writable } from 'svelte/store';
  import { onMount } from 'svelte';
- import { identifier, cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload, resumeDownload, resumeUpload } from '../messages.js';
- import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
+ import { identifier, cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '../messages.js';
+ import { FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
  //import fileUploadManager from '../fileUpload/FileUploadManager.ts';
  import Button from '../../../core/components/button.svelte';
  import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
@@ -38,6 +38,45 @@
  function onDownload() {
   downloadAttachmentsSerial([$upload.record]);
  }
+
+ let statusString = $derived.by(() => {
+  const record = $upload.record;
+  if (record.status === FileUploadRecordStatus.BEGUN || record.status === FileUploadRecordStatus.UPLOADING) {
+   if ($upload.running) {
+    return $upload.role === FileUploadRole.SENDER ? 'Uploading' : 'Downloading';
+   } else {
+    return 'Sender is uploading';
+   }
+  } else if (record.status === FileUploadRecordStatus.PAUSED) {
+   return $upload.role === FileUploadRole.SENDER ? 'Paused' : 'Paused by sender';
+  } else if (record.status === FileUploadRecordStatus.FINISHED) {
+   return 'Upload finished';
+  } else if (record.status === FileUploadRecordStatus.CANCELED) {
+   return 'Upload canceled';
+  } else if (record.status === FileUploadRecordStatus.ERROR) {
+   if (record.errorType === FileUploadRecordErrorType.TIMEOUT_BY_SERVER) {
+    return 'Upload timeout';
+   } else {
+    return 'Upload error';
+   }
+  } else {
+   return 'Unknown status';
+  }
+ });
+
+ let changingStatus = $state(false);
+ const pauseUpload = () => {
+  changingStatus = true;
+  _pauseUpload(uploadId).finally(() => {
+   changingStatus = false;
+  });
+ };
+ const resumeUpload = () => {
+  changingStatus = true;
+  _resumeUpload(uploadId).finally(() => {
+   changingStatus = false;
+  });
+ };
 </script>
 
 <style>
@@ -61,12 +100,12 @@
  }
 </style>
 
-{#snippet transferControls()}
+{#snippet uploadControls()}
  <div class="transfer-controls">
-  {#if $upload.record.status === FileUploadRecordStatus.PAUSED || !$upload.running}
-   <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} />
+  {#if $upload.record.status === FileUploadRecordStatus.PAUSED}
+   <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
   {:else}
-   <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} />
+   <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
   {/if}
   <Button img="img/close-black.svg" onClick={() => cancelUpload(uploadId)} />
  </div>
@@ -97,19 +136,29 @@
  {/if}
 {/snippet}
 
+{#snippet errors()}
+ {#if $upload && $upload.record}
+  <div class="errors">
+   {#if $upload.record.errorType === FileUploadRecordErrorType.TIMEOUT_BY_SERVER}
+    Upload was canceled by server due to timeout limit
+   {:else if $upload.record.status === FileUploadRecordStatus.ERROR}Upload error{:else}Unknown error{/if}
+  </div>
+ {/if}
+{/snippet}
+
 {#snippet renderSenderUpload()}
  <!-- ACTIVE UPLOAD -->
- {#if $upload.record.status === FileUploadRecordStatus.BEGUN || $upload.record.status === FileUploadRecordStatus.UPLOADING || $upload.record.status === FileUploadRecordStatus.PAUSED}
+ {#if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes($upload.record.status)}
   {#if $isUploadActive}
-   <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} />
-   {@render transferControls()}
+   <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} status={statusString} />
+   {@render uploadControls()}
   {:else}
    <div>File is uploading</div>
   {/if}
 
   <!-- FINISHED UPLOAD - downloading -->
  {:else if $download && $upload.record.status === FileUploadRecordStatus.FINISHED}
-  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} download />
+  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} status={statusString} />
   {@render downloadControls()}
 
   <!-- FINISHED UPLOAD -->
@@ -122,26 +171,23 @@
 
   <!-- FALLBACK TO ERROR -->
  {:else}
-  <div>Upload error</div>
+  {@render errors()}
  {/if}
 {/snippet}
 
 {#snippet renderReceiverUpload()}
  <!-- DOWNLOAD DOWNLOADING - receiving -->
  {#if $download}
-  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} download />
+  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} status={statusString} />
   {@render downloadControls()}
 
-  <!-- DOWNLOAD BEGUN  -->
- {:else if $upload.record.status === FileUploadRecordStatus.BEGUN || $upload.record.status === FileUploadRecordStatus.UPLOADING}
-  <div>File is being uploaded...</div>
+  <!-- DOWNLOAD BEGIN/UPLOADING/PAUSED  -->
+ {:else if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes($upload.record.status)}
+  <FileTransfer uploaded={$upload.uploadedBytes} total={$upload.record.fileSize} status={statusString} hideSpeed={true} />
+
   <!-- DOWNLOAD FINISHED - download again if needed -->
  {:else if $upload.record.status === FileUploadRecordStatus.FINISHED}
   {@render downloadButton()}
-
-  <!-- CANCELED UPLOAD -->
- {:else if $upload.record.status === FileUploadRecordStatus.PAUSED}
-  <div>Upload is paused by sender</div>
 
   <!-- CANCELED UPLOAD -->
  {:else if $upload.record.status === FileUploadRecordStatus.CANCELED}
@@ -149,7 +195,7 @@
 
   <!-- FALLBACK TO ERROR -->
  {:else}
-  <div>Upload error</div>
+  {@render errors()}
  {/if}
 {/snippet}
 
@@ -157,12 +203,15 @@
  <!-- ACTIVE P2P UPLOAD BEGUN -->
  {#if $upload.record.status === FileUploadRecordStatus.BEGUN}
   <div>Waiting for accept...</div>
+  <div class="transfer-controls">
+   <Button img="img/close-black.svg" onClick={() => cancelUpload(uploadId)} />
+  </div>
 
   <!-- ACTIVE P2P UPLOAD UPLOADING -->
  {:else if $upload.record.status === FileUploadRecordStatus.UPLOADING || $upload.record.status === FileUploadRecordStatus.PAUSED}
   {#if $isUploadActive}
-   <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} />
-   {@render transferControls()}
+   <FileTransfer uploaded={$uploaded} total={$upload.record.fileSize} status={statusString} />
+   {@render uploadControls()}
   {:else}
    <div>Uploading...</div>
   {/if}
@@ -177,17 +226,14 @@
 
   <!-- FALLBACK TO ERROR -->
  {:else}
-  <div>Upload error</div>
+  {@render errors()}
  {/if}
 {/snippet}
 
 {#snippet renderReceiverP2P()}
  <!-- P2P DOWNLOADING - receiving -->
  {#if $download && ($download.record.status === FileUploadRecordStatus.UPLOADING || $download.record.status === FileUploadRecordStatus.BEGUN || $download.record.status === FileUploadRecordStatus.PAUSED)}
-  {#if $download.record.status === FileUploadRecordStatus.PAUSED}
-   <div>Upload is paused by sender</div>
-  {/if}
-  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} download />
+  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} status={statusString} />
   {@render downloadControls()}
 
   <!-- P2P BEGUN - waiting for accept -->
@@ -208,7 +254,7 @@
 
   <!-- FALLBACK TO ERROR -->
  {:else}
-  <div>Upload error</div>
+  {@render errors()}
  {/if}
 {/snippet}
 

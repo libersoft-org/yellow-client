@@ -66,7 +66,8 @@
  function onDrop(e) {
   e.preventDefault();
   dropActive = false;
-  $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
+  // drop new files on top to be visible when scrolled table body
+  $fileUploadModalFiles = [...e.dataTransfer.files, ...$fileUploadModalFiles];
  }
 </script>
 
@@ -75,7 +76,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-width: 400px;
+  max-width: 500px;
  }
 
  .header {
@@ -97,15 +98,58 @@
   border-radius: 10px;
  }
 
- .items-empty.drop-active {
+ .drop-active .items-empty {
   background-color: #ddd;
   border-color: #555;
+ }
+
+ .drop-active .file-table {
+  filter: brightness(0.7);
  }
 
  .footer {
   display: flex;
   gap: 10px;
   justify-content: space-between;
+ }
+
+ .file-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+ }
+
+ .file-table :global(tbody) {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  max-height: 35vh;
+ }
+
+ .file-table :global(thead tr) {
+  display: block;
+ }
+
+ .file-table :global(tbody tr),
+ .file-table :global(thead tr) {
+  display: flex;
+  align-items: center;
+ }
+
+ .file-table :global(th:nth-child(1)),
+ .file-table :global(td:nth-child(1)) {
+  flex: 0 1 80%;
+ }
+
+ .file-table :global(th:nth-child(2)),
+ .file-table :global(td:nth-child(2)) {
+  flex: 1 0 20%;
+  text-align: right;
+ }
+
+ .file-table :global(th:nth-child(3)),
+ .file-table :global(td:nth-child(3)) {
+  flex: 0 0;
  }
 </style>
 
@@ -116,7 +160,7 @@
   <Td><Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => onFileDelete(file)} /></Td>
  </TbodyTr>
 {/snippet}
-<div class="file-upload">
+<div class="file-upload {dropActive ? 'drop-active' : ''}">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" />
  <div class="header">
   <Button width="110px" img="img/add-black.svg" text="Add files" onClick={onFileAdd} />
@@ -124,7 +168,7 @@
  </div>
  <div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
   {#if $fileUploadModalFiles.length}
-   <div class="items">
+   <div class="items file-table">
     <Table>
      <Thead>
       <TheadTr>
@@ -142,7 +186,7 @@
    </div>
   {:else}
    <BaseButton onClick={onFileAdd}>
-    <div class="items-empty {dropActive ? 'drop-active' : ''}" role="none">
+    <div class="items-empty" role="none">
      Drag and drop your files here<br />or click here to add files.
     </div>
    </BaseButton>

@@ -5,6 +5,7 @@ export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUpload
  const defaults = {
   id: uuidv4(),
   status: FileUploadRecordStatus.BEGUN,
+  errorType: null,
   type: FileUploadRecordType.SERVER,
   fileOriginalName: '',
   fileMimeType: '',

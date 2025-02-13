@@ -217,7 +217,6 @@ function ask_for_chunk(event) {
  const { uploadId, offsetBytes, chunkSize } = event.detail.data;
  const upload = fileUploadManager.uploadsStore.get(uploadId);
  if (!upload) {
-  console.error('upload not found');
   return;
  }
 
@@ -231,9 +230,22 @@ function ask_for_chunk(event) {
 }
 
 function upload_update(event) {
- const { record } = event.detail.data;
- fileUploadStore.updateUploadRecord(record.id, record);
- fileDownloadStore.updateDownloadRecord(record.id, record);
+ const { record, uploadData } = event.detail.data;
+ const currentUpload = fileUploadStore.get(record.id);
+ if (currentUpload) {
+  if (currentUpload.file && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.PAUSED].includes(record.status)) {
+   // pass
+   // this is simple approach how to ignore status updates that are produced by sender because server does not know
+   // from which tab the upload is being issued we detect sender tab by existence of currentUpload.file
+   // in future if we want more sophisticated approach we can use session storage to store sender tab id
+  } else {
+   fileUploadStore.patch(record.id, { record, ...uploadData });
+  }
+ }
+ const currentDownload = fileDownloadStore.get(record.id);
+ if (currentDownload) {
+  fileDownloadStore.patch(record.id, { record });
+ }
 }
 
 export function downloadAttachmentsSerial(records) {
@@ -260,13 +272,21 @@ export function cancelUpload(uploadId) {
 }
 
 export function pauseUpload(uploadId) {
- fileUploadManager.pauseUpload(uploadId);
- sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.PAUSED }, true, (req, res) => {});
+ return new Promise(resolve => {
+  fileUploadManager.pauseUpload(uploadId);
+  sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.PAUSED }, true, (req, res) => {
+   resolve(); // todo: handle error if needed
+  });
+ });
 }
 
 export function resumeUpload(uploadId) {
- fileUploadManager.resumeUpload(uploadId);
- sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {});
+ return new Promise(resolve => {
+  fileUploadManager.resumeUpload(uploadId);
+  sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {
+   resolve(); // todo: handle error if needed
+  });
+ });
 }
 
 export function pauseDownload(uploadId) {
@@ -317,17 +337,6 @@ export function loadUploadData(uploadId) {
     uploadInterval: null,
     acc,
    });
-
-   // perform checks
-
-   // console.log('ZZZ pre error', upload, acc);
-   // if (upload.role === FileUploadRole.SENDER && [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING].includes(record.status)) {
-   //  if (upload.record.fromUserUid === acc.id) {
-   //   console.warn('ZZZ detected error', upload);
-   //   upload.status = FileUploadRecordStatus.ERROR;
-   //   sendData(acc, null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.ERROR }, true, (req, res) => {});
-   //  }
-   // }
 
    fileUploadStore.set(uploadId, upload);
   });

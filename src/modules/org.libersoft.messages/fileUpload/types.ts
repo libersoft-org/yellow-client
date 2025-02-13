@@ -20,10 +20,15 @@ export enum FileUploadRecordStatus {
  ERROR = 'ERROR',
 }
 
+export enum FileUploadRecordErrorType {
+ TIMEOUT_BY_SERVER = 'TIMEOUT_BY_SERVER',
+}
+
 export interface FileUploadRecord {
  id: string;
  type: FileUploadRecordType;
  status: FileUploadRecordStatus;
+ errorType: FileUploadRecordErrorType | null;
  fileOriginalName: string;
  fromUserUid: string;
  fileMimeType: string;
@@ -40,6 +45,7 @@ export interface FileUpload {
  uploadInterval: NodeJS.Timeout | null;
  paused?: boolean;
  running?: boolean; // todo: maybe refactor to setTimeout (see upload.pushChunk)
+ uploadedBytes?: number; // only for non senders
  pushChunk?: () => Promise<void>;
  acc: any;
 }

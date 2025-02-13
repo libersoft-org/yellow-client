@@ -25,8 +25,18 @@ export class FileUploadStore implements FileUploadStoreType {
  }
 
  patch(id: string, data: Partial<FileUpload>) {
+  // patch but dont change ref
   this.store.update(store => {
-   return store.map(upload => (upload.record.id === id ? { ...upload, ...data } : upload));
+   const oldUpload = store.find(upload => upload.record.id === id);
+   if (!oldUpload) {
+    return store;
+   }
+
+   for (const key in data) {
+    oldUpload[key] = data[key];
+   }
+
+   return [...store];
   });
  }
 

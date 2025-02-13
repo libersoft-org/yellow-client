@@ -25,8 +25,18 @@ export class FileDownloadStore implements FileDownloadStoreType {
  }
 
  patch(id: string, data: Partial<FileDownload>) {
+  // patch but dont change ref
   this.store.update(store => {
-   return store.map(download => (download.record.id === id ? { ...download, ...data } : download));
+   const oldDownload = store.find(download => download.record.id === id);
+   if (!oldDownload) {
+    return store;
+   }
+
+   for (const key in data) {
+    oldDownload[key] = data[key];
+   }
+
+   return [...store];
   });
  }
 
