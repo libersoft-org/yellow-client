@@ -1,12 +1,21 @@
 <script>
- export let checked;
+ import { onMount } from 'svelte';
 
- function keyPress() {
+ export let checked;
+ let mounted = false;
+
+ function keyPress(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
    checked = !checked;
   }
  }
+
+ onMount(() => {
+  requestAnimationFrame(() => {
+   mounted = true;
+  });
+ });
 </script>
 
 <style>
@@ -30,10 +39,18 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
   border-radius: 34px;
   cursor: pointer;
+ }
+
+ .transition {
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+ }
+
+ .transition:before {
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
  }
 
  .switch .slider:before {
@@ -44,8 +61,6 @@
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
   border-radius: 50%;
  }
 
@@ -54,8 +69,6 @@
  }
 
  input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
   transform: translateX(26px);
  }
 
@@ -66,5 +79,5 @@
 
 <label class="switch">
  <input type="checkbox" bind:checked on:keydown={keyPress} />
- <span class="slider"></span>
+ <span class="slider {mounted ? 'transition' : ''}"></span>
 </label>
