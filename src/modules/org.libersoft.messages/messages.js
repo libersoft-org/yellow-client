@@ -14,6 +14,7 @@ import { makeFileUpload } from './fileUpload/utils.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
+import { messages_db } from './db.js';
 
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
@@ -144,17 +145,13 @@ export function initComms(acc) {
 
 async function refresh(acc) {
  console.log('refresh sendQueuedMessages...', acc);
- await sendQueuedMessages();
+ await sendOutgoingMessages(acc);
  if (get(acc.module_data[identifier].selectedConversation)) {
   console.log('refresh listMessages...', acc);
   listMessages(acc, get(acc.module_data[identifier].selectedConversation).address);
  }
  console.log('refresh listConversations...', acc);
  listConversations(acc);
-}
-
-async function sendQueuedMessages() {
- console.log('sendQueuedMessages');
 }
 
 export function initUpload(files, uploadType, recipients) {
@@ -526,18 +523,49 @@ export function sendMessage(text, format) {
   just_sent: true,
  });
  let params = { address: message.address_to, message: message.message, format, uid: message.uid };
- sendData(acc, active_account, 'message_send', params, true, (req, res) => {
-  if (res.error !== 0) {
-   alert('Error while sending message: ' + res.message);
-   return;
-  }
-  // update the message status and trigger the update of the messagesArray:
-  message.received_by_my_homeserver = true;
-  messagesArray.update(v => v);
-  insertEvent({ type: 'properties_update', array: get(messagesArray) });
- });
+ saveAndSendOutgoingMessage(acc, get(acc.module_data[identifier].selectedConversation), params, message);
  addMessagesToMessagesArray([message], 'send_message');
  updateConversationsArray(acc, message);
+}
+
+async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
+ let outgoing_message_id = await messages_db.outgoing.add({ account: acc.id, data: params });
+ console.log('saveAndSendOutgoingMessage saved message:', message.uid);
+ sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id);
+}
+
+function sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id) {
+ sendData(acc, null, 'message_send', params, true, (req, res) => {
+  console.log('sendOutgoingMessage res', res);
+  if (res.error !== 0) {
+   return;
+  }
+  messages_db.outgoing.delete(outgoing_message_id); // update the message status and trigger the update of the messagesArray:
+  message.received_by_my_homeserver = true;
+  if (get(active_account) === acc && get(acc.module_data[identifier].selectedConversation) === conversation) {
+   messagesArray.update(v => v);
+   insertEvent({ type: 'properties_update', array: get(messagesArray) });
+  }
+ });
+}
+
+async function sendOutgoingMessages(acc) {
+ /* try to send outgoing messages. Ensure they are sent in creation order. Break on error */
+ console.log('sendOutgoingMessages for acc', acc.id);
+ for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
+  console.log('sendOutgoingMessages found queued message:', message.data.uid);
+  let res = await new Promise(resolve => {
+   sendData(acc, active_account, 'message_send', message.data, true, (req, res) => {
+    resolve(res);
+   });
+  });
+  if (res.error !== 0) {
+   console.log('Temporary error while sending message ' + message.id + ': ' + res.message);
+   return;
+  }
+  console.log('sendOutgoingMessages queued message sent:', message.data.uid);
+  await messages_db.outgoing.delete(message.id);
+ }
 }
 
 function updateConversationsArray(acc, msg) {

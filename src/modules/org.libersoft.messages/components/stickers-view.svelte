@@ -3,7 +3,7 @@
  import { identifier } from '../messages.js';
  import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../stickers.js';
  import { liveQuery } from 'dexie';
- import { db } from '../db';
+ import { stickers_db } from '../db';
  import FuzzySearch from 'fuzzy-search';
  import { writable, get } from 'svelte/store';
  import Option from '../../../core/components/select-option.svelte';

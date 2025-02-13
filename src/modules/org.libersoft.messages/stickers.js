@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import { db } from './db.js';
+import { stickers_db } from './db.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 
 void 'this is an extra state that safeguards against triggering the update after a HMR';
@@ -85,17 +85,17 @@ export async function updateStickerLibrary() {
  // Delete all stickers that are part of stickerset that has server equal to stickerServer
  console.log('clearing old stickers from db...');
  stickerLibraryUpdaterState.update(state => ({ ...state, status: 'Removing old stickers from local database ...', progress: 2 }));
- await db.transaction('rw', db.stickers, db.stickersets, async () => {
-  let old_sets = await db.stickersets.where('server').equals(stickerServer).primaryKeys();
+ await stickers_db.transaction('rw', stickers_db.stickers, stickers_db.stickersets, async () => {
+  let old_sets = await stickers_db.stickersets.where('server').equals(stickerServer).primaryKeys();
   console.log('delete old stickers...');
-  await db.stickers.where('server').equals(stickerServer).delete();
+  await stickers_db.stickers.where('server').equals(stickerServer).delete();
   console.log('delete old sets:', old_sets.length, '...');
   stickerLibraryUpdaterState.update(state => ({ ...state, status: 'Removing old sticker sets from local database ...', progress: 5 }));
-  await db.stickersets.where('server').equals(stickerServer).delete();
+  await stickers_db.stickersets.where('server').equals(stickerServer).delete();
  });
  console.log('Done clearing old stickers from db.');
- console.log('Removed db.stickersets:', await db.stickersets.toArray());
- console.log('Removed db.stickers:', await db.stickers.toArray());
+ console.log('Removed db.stickersets:', await stickers_db.stickersets.toArray());
+ console.log('Removed db.stickers:', await stickers_db.stickers.toArray());
  let stickersets_batch = [];
  for (let i = 0; i < sets.length; i++) {
   let stickerset = sets[i];
@@ -123,14 +123,14 @@ export async function updateStickerLibrary() {
    sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name;
    stickers_batch.push(sticker);
   }
-  await db.stickers.bulkAdd(stickers_batch);
+  await stickers_db.stickers.bulkAdd(stickers_batch);
  }
  stickerLibraryUpdaterState.update(state => ({ status: 'Loading sticker list ...', progress: 100 }));
- await db.stickersets.bulkAdd(stickersets_batch);
+ await stickers_db.stickersets.bulkAdd(stickersets_batch);
 
  stickerLibraryUpdaterState.set({ updating: false });
  window.stickerLibraryUpdaterState.updating = false;
- console.log('Done loading, db.stickers.length:', await db.stickers.toArray().length);
+ console.log('Done loading, db.stickers.length:', await stickers_db.stickers.toArray().length);
  console.log('spent:', Date.now() - startFetchSets, 'ms');
 }
 

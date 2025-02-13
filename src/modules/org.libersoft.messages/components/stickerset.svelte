@@ -3,7 +3,7 @@
  import { debug } from '../../../core/core.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import StickerSetPart from './stickerset-part.svelte';
- import { db } from '../db.js';
+ import { stickers_db } from '../db.js';
  import { onDestroy, onMount } from 'svelte';
  export let intersecting = true;
  export let stickerset = {};
@@ -47,7 +47,7 @@
    if (stickers === undefined) {
     //console.log('stickerset', stickerset);
     if (stickerset.items) stickers = stickerset.items;
-    else stickers = await db.stickers.where('stickerset').equals(stickerset.id).toArray();
+    else stickers = await stickers_db.stickers.where('stickerset').equals(stickerset.id).toArray();
    }
   }
  }

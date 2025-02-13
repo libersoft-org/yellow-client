@@ -583,7 +583,6 @@ function initModuleComms(acc, module_id, decl) {
   acc.module_data[module_id].decl = decl;
  }
  if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
- acc.module_data[module_id].online?.set(true);
 }
 
 function deinitModuleComms(decl, acc) {
@@ -597,26 +596,22 @@ function updateModulesComms(acc) {
  let module_decls_v = get(module_decls);
  for (const module_id in module_decls_v) {
   const available = available_modules[module_id];
-  const initialized = !!acc.module_data[module_id];
-  //console.log('updateModulesComms:', module_id, available, initialized);
+  const online = acc.module_data[module_id]?.online && get(acc.module_data[module_id].online);
 
-  if (available && initialized) {
-   console.log('Module already initialized:', module_id);
-  } else if (available && !initialized) {
-   const decl = module_decls_v[module_id];
-   if (!decl) {
-    console.log('Module available on server but not found on client:', module_id);
-   } else {
+  const decl = module_decls_v[module_id];
+  if (!decl) {
+   console.log('Module available on server but not found on client:', module_id);
+  } else {
+   if (available && online) {
+    console.log('available module already set online:', module_id);
+   } else if (available && !online) {
     initModuleComms(acc, module_id, decl);
-   }
-  } else if (!available && initialized) {
-   deinitModuleComms(acc.module_data[module_id].decl, acc);
-  } else if (!available && !initialized) {
-   console.log('Module not available but also not initialized:', module_id);
-  }
-  if (initialized && acc.module_data[module_id].online) {
-   if (get(acc.module_data[module_id].online) !== available) {
-    acc.module_data[module_id].online.set(available);
+    acc.module_data[module_id].online?.set(true);
+   } else if (!available && online) {
+    deinitModuleComms(acc.module_data[module_id].decl, acc);
+    acc.module_data[module_id].online?.set(false);
+   } else if (!available && !online) {
+    //console.log('Module not available but also not initialized:', module_id);
    }
   }
  }
