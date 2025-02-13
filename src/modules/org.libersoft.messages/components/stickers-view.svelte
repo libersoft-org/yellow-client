@@ -36,7 +36,7 @@
   await scroll_to_top();
   //console.log('update_live_query', fulltext_search_filter, animated_filter);
   let query_store = liveQuery(async () => {
-   let x = db.stickersets;
+   let x = stickers_db.stickersets;
    void 'x is now a dexie Table. We have one shot at ordering or filtering it at the db level: https://dexie.org/docs/Dexie/Dexie.[table]';
    x = x.orderBy('id');
    void "x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection";
