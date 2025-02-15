@@ -71,7 +71,7 @@ function sendData(acc, account, command, params = {}, sendSessionID = true, call
 
 function _send(acc, account, target, command, params, sendSessionID, callback, quiet) {
  let cb = (req, res) => {
-  if (res.error !== 0) {
+  if (res.error !== false) {
    if (get(acc.module_data[identifier].online) === false) {
     return;
    }
@@ -98,7 +98,7 @@ export function selectConversation(conversation) {
 
 export function listConversations(acc) {
  sendData(acc, null, 'conversations_list', null, true, (_req, res) => {
-  if (res.error !== 0) {
+  if (res.error !== false) {
    console.error('this is bad.');
    return;
   }
@@ -118,7 +118,7 @@ function sanitizeConversation(acc, c) {
 
 function moduleEventSubscribe(acc, event_name) {
  sendData(acc, null, 'subscribe', { event: event_name }, true, (req, res) => {
-  if (res.error !== 0) {
+  if (res.error !== false) {
    console.error('this is bad.');
    window.alert('Communication with server Error while subscribing to event: ' + res.message);
   }
@@ -180,7 +180,7 @@ export function initUpload(files, uploadType, recipients) {
  // send upload
  const records = uploads.map(upload => upload.record);
  sendData(acc, null, 'upload_begin', { records, recipients }, true, (req, res) => {
-  if (res.error !== 0) {
+  if (res.error !== false) {
    return;
   }
   if (uploads?.[0].record.type === FileUploadRecordType.SERVER) {
@@ -212,7 +212,7 @@ function uploadChunkAsync({ upload, chunk }) {
    }, 5000); // todo maybe longer
    sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
     clearTimeout(to);
-    if (res.error !== 0) {
+    if (res.error !== false) {
      retry();
      return;
     }
@@ -267,7 +267,7 @@ const makeDownloadChunkAsyncFn =
  ({ uploadId, offsetBytes, chunkSize }) => {
   return new Promise((resolve, reject) => {
    sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, (req, res) => {
-    if (res.error !== 0) {
+    if (res.error !== false) {
      reject();
     }
     resolve(res);
@@ -332,7 +332,7 @@ export function loadUploadData(uploadId) {
 
  op.attempt(() => {
   sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
-   if (res.error !== 0) {
+   if (res.error !== false) {
     op.retry(res);
     return;
    }
@@ -398,7 +398,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
  cb: callback (optional)
   */
  return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
-  if (res.error !== 0 || !res.data?.messages) {
+  if (res.error !== false || !res.data?.messages) {
    console.error(res);
    window.alert('Error while listing messages: ' + (res.message || JSON.stringify(res)));
    return;
@@ -507,7 +507,7 @@ export function setMessageSeen(message, cb) {
  console.log('setMessageSeen', message);
  message.just_marked_as_seen = true;
  sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
-  if (res.error !== 0) {
+  if (res.error !== false) {
    console.error('this is bad.');
    return;
   }
@@ -549,7 +549,7 @@ async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
 function sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id) {
  sendData(acc, null, 'message_send', params, true, (req, res) => {
   console.log('sendOutgoingMessage res', res);
-  if (res.error !== 0) {
+  if (res.error !== false) {
    return;
   }
   messages_db.outgoing.delete(outgoing_message_id); // update the message status and trigger the update of the messagesArray:
@@ -571,7 +571,7 @@ async function sendOutgoingMessages(acc) {
     resolve(res);
    });
   });
-  if (res.error !== 0) {
+  if (res.error !== false) {
    console.log('Temporary error while sending message ' + message.id + ': ' + res.message);
    return;
   }
@@ -730,7 +730,7 @@ export function ensureConversationDetails(conversation) {
  let acc = get(active_account);
  //console.log('ensureConversationDetails acc:', acc);
  _send(acc, active_account, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
-  if (res.error !== 0) return;
+  if (res.error !== false) return;
   Object.assign(conversation, res.data);
   conversationsArray.update(v => v);
  });

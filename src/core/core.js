@@ -469,7 +469,7 @@ function sendLoginCommand(account) {
  let acc = get(account);
  send(acc, account, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
   console.log('Login response:', res);
-  if (res.error !== 0) {
+  if (res.error !== false) {
    acc.error = res.message;
    acc.status = 'Login failed.';
    acc.session_status = undefined;
