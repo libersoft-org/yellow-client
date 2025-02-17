@@ -44,6 +44,7 @@
  let scrolledToBottom1 = false;
 
  /*
+ todo resizer observer does not trigger when elements change size.
  $: if (elMessages) {
   new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
  }

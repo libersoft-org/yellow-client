@@ -105,7 +105,12 @@
 <ContextMenu bind:this={altsMenu} scrollable={false}>
  <div class="emojis">
   {#each alts as e (e)}
-   <BaseButton onClick={() => clickEmoji(e)}>
+   <BaseButton
+    onClick={() => {
+     clickEmoji(e);
+     altsMenu.close();
+    }}
+   >
     <div class="emoji hover">
      <Emoji codepoints={e} context={'menu'} is_single={true} />
     </div>
