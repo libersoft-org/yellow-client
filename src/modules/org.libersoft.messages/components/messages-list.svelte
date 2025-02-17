@@ -37,6 +37,46 @@
  $: scrollButtonVisible = !scrolledToBottom;
  $: updateWindowSize(windowInnerWidth, windowInnerHeight);
 
+ let jumped = false;
+ let messagesHeight = -1;
+
+ let scrolledToBottom0 = false;
+ let scrolledToBottom1 = false;
+
+ /*
+ $: if (elMessages) {
+  new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
+ }
+*/
+
+ onMount(() => {
+  setInterval(() => {
+   scrolledToBottom0 = scrolledToBottom1;
+   scrolledToBottom1 = isScrolledToBottom();
+   fixScroll();
+  }, 50);
+ });
+
+ function fixScroll() {
+  if (elMessages && jumped) {
+   let height = elMessages.scrollHeight;
+   if (height != messagesHeight) {
+    console.log('messagesHeight:', messagesHeight, 'height:', height);
+    if (scrolledToBottom0 && scrolledToBottom1) {
+     scrollToBottom();
+    }
+    messagesHeight = height;
+   }
+  }
+ }
+
+ /*
+ function test(scrollHeight) {
+  console.log('test scrollHeight:', scrollHeight);
+  console.log('test isScrolledToBottom():', isScrolledToBottom());
+ }
+ */
+
  function openStickersetDetailsModal(stickerset) {
   stickersetDetailsModalStickerset = stickerset;
   //console.log('openStickersetDetailsModal:', stickerset);
@@ -106,15 +146,17 @@
    //console.log('uiEvent:', event);
    if (event.type === 'gc') {
     //console.log('gc');
-   } else if (event.type === 'lazyload_prev') restoreScrollPosition(event);
-   else if (event.type === 'lazyload_next') {
+   } else if (event.type === 'lazyload_prev') {
+    restoreScrollPosition(event);
+   } else if (event.type === 'lazyload_next') {
     //pass
    } else if (event.type === 'new_message') {
     if (event.wasScrolledToBottom) scrollToBottom();
    } else if (event.type === 'send_message') {
     if (event.wasScrolledToBottom) scrollToBottom();
-   } else if (event.type === 'initial_load') scrollToBottom();
-   else if (event.type === 'properties_update') {
+   } else if (event.type === 'initial_load') {
+    scrollToBottom();
+   } else if (event.type === 'properties_update') {
     //console.log('properties_update');
    } else if (event.type === 'resize') {
     //console.log('resize uiEvent:', event);
@@ -140,6 +182,7 @@
    itemsArray = itemsArray;
    for (let i = 0; i < itemsArray.length; i++) itemsArray[i] = itemsArray[i];
   }
+  jumped = true;
  });
 
  function getLoader(l) {
@@ -385,11 +428,12 @@
   position: fixed;
   top: 0;
   left: 0;
-  max-width: calc(10%);
-  max-height: calc(10%);
+  max-width: calc(60%);
+  max-height: calc(100%);
   overflow: auto;
-  border: 3px solid #000;
+  border: 3px solid #888;
   border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
  }
 
  .no-messages {
@@ -452,7 +496,9 @@
   <Button text="Restore scroll position" onClick={restoreScrollPosition} />
   <Button text="GC" onClick={gc} />
   <Button text="Show debug modal" onClick={() => (showDebugModal = !showDebugModal)} />
-  items count: {itemsCount}
+  <div>items count: {itemsCount}</div>
+  <div>messagesHeight: {messagesHeight}</div>
+  <div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
   <ModalWithSlot show={showDebugModal} title="Debug modal">
    <div slot="body">
     <pre>{JSON.stringify(itemsArray, null, 2)}</pre>
