@@ -17,7 +17,7 @@
 
  let scrollButtonVisible = true;
  let showDebugModal = false;
- let messages_elem;
+ let elMessages;
  let anchorElement;
  let oldLastID = null;
  let itemsCount = 0;
@@ -56,27 +56,27 @@
  });
 
  function saveScrollPosition(event) {
-  if (!messages_elem) return;
-  event.savedScrollTop = messages_elem.scrollTop;
-  event.savedScrollHeight = messages_elem.scrollHeight;
+  if (!elMessages) return;
+  event.savedScrollTop = elMessages.scrollTop;
+  event.savedScrollHeight = elMessages.scrollHeight;
   //console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
  }
 
  function restoreScrollPosition(event) {
-  //console.log('restoreScrollPosition messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
-  const scrollDifference = messages_elem.scrollHeight - event.savedScrollHeight;
-  messages_elem.scrollTop = event.savedScrollTop + scrollDifference;
-  //console.log('scrollDifference:', scrollDifference, 'new messages_elem.scrollTop:', messages_elem.scrollTop);
+  //console.log('restoreScrollPosition elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
+  const scrollDifference = elMessages.scrollHeight - event.savedScrollHeight;
+  elMessages.scrollTop = event.savedScrollTop + scrollDifference;
+  //console.log('scrollDifference:', scrollDifference, 'new elMessages.scrollTop:', elMessages.scrollTop);
  }
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
   //console.log('SCROLLTOBOTTOM');
-  if (messages_elem) messages_elem.scrollTop = messages_elem.scrollHeight;
+  if (elMessages) elMessages.scrollTop = elMessages.scrollHeight;
  }
 
  function isScrolledToBottom() {
-  if (messages_elem) return checkIfScrolledToBottom(messages_elem);
+  if (elMessages) return checkIfScrolledToBottom(elMessages);
  }
 
  function checkIfScrolledToBottom(div) {
@@ -86,7 +86,7 @@
  }
 
  function parseScroll(event) {
-  scrolledToBottom = messages_elem?.scrollTop + messages_elem?.clientHeight >= messages_elem?.scrollHeight - 20;
+  scrolledToBottom = elMessages?.scrollTop + elMessages?.clientHeight >= elMessages?.scrollHeight - 20;
  }
 
  function updateWindowSize(width, height) {
@@ -95,12 +95,12 @@
  }
 
  beforeUpdate(() => {
-  if (!messages_elem) return;
-  //console.log('beforeUpdate: messages_elem.scrollTop:', messages_elem.scrollTop, 'messages_elem.scrollHeight:', messages_elem.scrollHeight);
+  if (!elMessages) return;
+  //console.log('beforeUpdate: elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
  });
 
  afterUpdate(async () => {
-  if (!messages_elem) return;
+  if (!elMessages) return;
   await tick();
   for (let event of uiEvents) {
    //console.log('uiEvent:', event);
@@ -288,12 +288,12 @@
  }
 
  function onFocus(event) {
-  //console.log('messages_elem onFocus:', event);
+  //console.log('elMessages onFocus:', event);
   window.addEventListener('keydown', onkeydown);
  }
 
  function onBlur(event) {
-  //console.log('messages_elem onBlur:', event);
+  //console.log('elMessages onBlur:', event);
   window.removeEventListener('keydown', onkeydown);
  }
 
@@ -483,7 +483,7 @@
   </div>
   <div class="spacer"></div>
  {:else}
-  <div class="messages" role="none" tabindex="-1" bind:this={messages_elem} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
+  <div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
    <div class="spacer"></div>
    {#each itemsArray as m (m.uid)}
     <!--{#if $debug}-->
@@ -502,7 +502,7 @@
     {:else if m.type === 'unseen_marker'}
      <div class="unread">Unread messages</div>
     {:else}
-     <Message message={m} elContainer={messages_elem} />
+     <Message message={m} elContainer={elMessages} />
     {/if}
    {/each}
    <div bind:this={anchorElement}></div>
