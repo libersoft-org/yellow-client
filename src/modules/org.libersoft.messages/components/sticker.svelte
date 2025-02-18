@@ -259,6 +259,9 @@
 <div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
  {#if $debug}
   renderer: {renderer}
+  isLottie: {isLottie}
+  isImage: {isImage}
+  intersecting: "{intersecting}"
  {/if}
  {#if error}
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />

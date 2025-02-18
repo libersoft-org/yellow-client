@@ -63,7 +63,8 @@
    let height = elMessages.scrollHeight;
    if (height != messagesHeight) {
     console.log('messagesHeight:', messagesHeight, 'height:', height);
-    if (scrolledToBottom0 && scrolledToBottom1) {
+    console.log('scrolledToBottom0:', scrolledToBottom0, 'scrolledToBottom1:', scrolledToBottom1);
+    if (scrolledToBottom0) {
      scrollToBottom();
     }
     messagesHeight = height;
@@ -112,7 +113,7 @@
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  //console.log('SCROLLTOBOTTOM');
+  console.log('SCROLLTOBOTTOM');
   if (elMessages) elMessages.scrollTop = elMessages.scrollHeight;
  }
 

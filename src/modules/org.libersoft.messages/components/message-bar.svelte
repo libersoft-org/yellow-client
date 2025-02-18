@@ -215,7 +215,6 @@
  }
 
  .bottom-sheet {
-  background-color: #321;
   border-radius: 10px;
   border: 10px solid #000;
  }

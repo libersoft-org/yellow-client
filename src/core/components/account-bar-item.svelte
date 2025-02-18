@@ -48,6 +48,7 @@
      <li>bufferedAmount: {$a.bufferedAmount}b</li>
      <li>lastCommsTs: {Date($a.lastCommsTs)}</li>
      <li>available_modules: {JSON.stringify($a.available_modules)}</li>
+     <li>wsGuid: {$a.wsGuid}</li>
     </ul>
    </small>
   {/if}

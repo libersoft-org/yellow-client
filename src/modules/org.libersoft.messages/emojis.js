@@ -1,13 +1,13 @@
 // 😐😐😐😐
 
-import { writable, get } from 'svelte/store';
+import { get } from 'svelte/store';
 import { cp } from './emojis_parse_data.js';
 import { identifier } from './messages.js';
 
-export let emojisLoading = writable(false);
-
-export function start_emojisets_fetch(acc, emojiGroups, emojisByCodepointsRgi) {
+export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByCodepointsRgi) {
+ console.log('start_emojisets_fetch');
  if (get(emojisLoading)) {
+  console.log('emojis are already loading');
   return;
  }
  emojisLoading.set(true);
@@ -16,14 +16,18 @@ export function start_emojisets_fetch(acc, emojiGroups, emojisByCodepointsRgi) {
   if (!res.ok) {
    console.error('Failed to fetch emoji groups:', res);
    acc.error('Failed to fetch emoji groups');
+   reject();
   }
+
   let groups;
   try {
    groups = await res.json();
   } catch (error) {
    console.error('Failed to parse emoji groups:', error);
    acc.error('Failed to parse emoji groups');
+   reject();
   }
+
   let by_codepoints = {};
   for (let group of groups) {
    for (let emoji of group.emoji) {
@@ -31,14 +35,21 @@ export function start_emojisets_fetch(acc, emojiGroups, emojisByCodepointsRgi) {
     by_codepoints[codepoints_rgi] = emoji;
    }
   }
+
+  console.log('emojis by codepoints:', by_codepoints);
   emojisByCodepointsRgi.set(by_codepoints);
+  console.log('emoji groups:', groups);
   emojiGroups.set(groups);
+
+  resolve();
  })
   .then(() => {
    emojisLoading.set(false);
+   console.log('emojis loaded');
   })
   .catch(() => {
    emojisLoading.set(false);
+   console.log('emojis failed to load');
   });
 }
 

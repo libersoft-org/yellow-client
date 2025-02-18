@@ -69,10 +69,10 @@
    <Item active={activeTabName === 'server'} img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} />
    <Item img="modules/{identifier}/img/update{$stickerLibraryUpdaterState.updating ? '-disabled' : ''}.svg" onClick={clickUpdate} />
   </Tabs>
-  {#if $debug}$stickerLibraryUpdaterState:{$stickerLibraryUpdaterState}{/if}
+  {#if $debug}$stickerLibraryUpdaterState:{JSON.stringify($stickerLibraryUpdaterState)}{/if}
   {#if $stickerLibraryUpdaterState.updating}
    <div class="loading">
-    <div class="status">{$stickerLibraryUpdaterState.status}</div>
+    <div class="status">Background update... {$stickerLibraryUpdaterState.status}</div>
     <ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving={true} />
    </div>
   {/if}

@@ -26,6 +26,7 @@ export let messagesArray = relay(md, 'messagesArray');
 export let selectedConversation = relay(md, 'selectedConversation');
 export let emojiGroups = relay(md, 'emojiGroups');
 export let emojisByCodepointsRgi = relay(md, 'emojisByCodepointsRgi');
+export let emojisLoading = relay(md, 'emojisLoading');
 export let showGallery = relay(md, 'showGallery');
 export let galleryFile = relay(md, 'galleryFile');
 
@@ -50,10 +51,11 @@ export function initData(acc) {
   messagesArray: writable([]),
   emojiGroups: writable([]),
   emojisByCodepointsRgi: writable(null),
+  emojisLoading: writable(false),
   showGallery: writable(false),
   galleryFile: writable(null),
  };
- start_emojisets_fetch(acc, result.emojiGroups, result.emojisByCodepointsRgi);
+ //start_emojisets_fetch(acc, result.emojisLoading, result.emojiGroups, result.emojisByCodepointsRgi);
  return result;
 }
 

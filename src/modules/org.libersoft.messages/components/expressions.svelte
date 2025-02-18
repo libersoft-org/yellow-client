@@ -9,6 +9,8 @@
  export let height;
 
  let expression = 'emojis';
+ let elExpression;
+
  const expressions = {
   emojis: Emojis,
   stickers: Stickers,
@@ -29,7 +31,8 @@
 
  async function currentTabOnShow() {
   await tick();
-  expressions[expression]?.onShow?.();
+  console.log('currentTabOnShow:', expression);
+  elExpression?.onShow?.();
  }
 </script>
 
@@ -55,5 +58,5 @@
   <Item label="GIFs" icon={'modules/' + identifier + '/img/gif-black.svg'} active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
   <Item label="Settings" icon={'modules/' + identifier + '/img/settings-black.svg'} active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} />
  </div>
- <svelte:component this={expressions[expression]} />
+ <svelte:component this={expressions[expression]} bind:this={elExpression} />
 </div>

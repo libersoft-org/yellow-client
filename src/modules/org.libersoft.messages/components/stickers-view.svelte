@@ -11,6 +11,8 @@
  import InputButton from '../../../core/components/input-button.svelte';
  import StickersSearchResults from './stickers-search-results.svelte';
  import { isMobile } from '../../../core/core.js';
+ import Spinner from '../../../core/components/spinner.svelte';
+ import { onMount, untrack } from 'svelte';
 
  let { stickerset_favorites } = $props();
  let fulltext_search_element;
@@ -20,23 +22,35 @@
  $effect(() => console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value));
  let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
 
- let items = writable([]);
- //items.subscribe(value => console.log('Stickers.svelte items:', value));
- //$inspect($items, count);
+ let items = $state([]);
+ let loading = $state(true);
 
  export function onShow() {
   if (!get(isMobile)) fulltext_search_element.focus();
  }
 
+ onMount(async () => {
+  console.log('stickers-view onMount');
+ });
+
  let query_store_unsubscribe;
+
+ $effect(async () => {
+  console.log('stickerset_favorites:', stickerset_favorites, '$sticker_server:', $sticker_server, 'fulltext_search_filter:', fulltext_search_filter, 'animated_filter:', animated_filter);
+ });
+
  $effect(async () => live_query($sticker_server, fulltext_search_filter, animated_filter));
 
  async function live_query(server, fulltext_search_filter, animated_filter) {
-  //console.log('scroll_to_top:', scroll_to_top);
-  await scroll_to_top();
-  //console.log('update_live_query', fulltext_search_filter, animated_filter);
+  loading = true;
+  untrack(async () => {
+   console.log('scroll_to_top:', scroll_to_top);
+   await scroll_to_top?.();
+  });
+  console.log('update_live_query', fulltext_search_filter, animated_filter);
   let query_store = liveQuery(async () => {
    let x = stickers_db.stickersets;
+   //console.log('x:', x);
    void 'x is now a dexie Table. We have one shot at ordering or filtering it at the db level: https://dexie.org/docs/Dexie/Dexie.[table]';
    x = x.orderBy('id');
    void "x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection";
@@ -54,7 +68,8 @@
   });
   if (query_store_unsubscribe) query_store_unsubscribe.unsubscribe();
   query_store_unsubscribe = query_store.subscribe(value => {
-   items.set(value);
+   items = value;
+   loading = false;
   });
   return query_store;
  }
@@ -93,8 +108,16 @@
 <!-- stickerset_favorites: {JSON.stringify(stickerset_favorites)}-->
 <!-- animated_filter: {JSON.stringify(animated_filter)}-->
 <!-- fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}-->
-<!-- $items.length: {$items.length}-->
+<!-- items.length: {items.length}-->
 <!--  </pre>-->
 <!--{/if}-->
 
-<StickersSearchResults bind:scroll_to_top items={$items} />
+{#if loading}
+ <Spinner />
+{:else if items.length === 0}
+ <div class="loading">
+  <div class="status">No items found</div>
+ </div>
+{:else}
+ <StickersSearchResults bind:scroll_to_top {items} />
+{/if}

@@ -1,9 +1,11 @@
 <script>
+ import { debug, active_account } from '../../../core/core.js';
  import { getContext, onMount } from 'svelte';
+ import { get } from 'svelte/store';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
- import { emojiGroups } from '../messages.js';
- import { emojisLoading, start_emojisets_fetch, emoji_render } from '../emojis.js';
+ import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../messages.js';
+ import { start_emojisets_fetch, emoji_render } from '../emojis.js';
  import ContextMenu from '../../../core/components/context-menu.svelte';
 
  const MessageBar = getContext('MessageBar');
@@ -13,10 +15,10 @@
  let elContainer;
 
  export function onShow() {
-  //console.log('emojis onShow');
+  console.log('emojis onShow');
   elContainer?.focus();
   if ($emojiGroups.length === 0) {
-   start_emojisets_fetch();
+   start_emojisets_fetch(get(active_account), emojisLoading, emojiGroups, emojisByCodepointsRgi);
   }
  }
 
@@ -78,6 +80,13 @@
   border: 1px solid #ddd;
  }
 </style>
+
+{#if $debug}
+ <pre>
+  $emojisLoading: {$emojisLoading}
+  $emojiGroups.length: {$emojiGroups.length}
+ </pre>
+{/if}
 
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
  {#if $emojiGroups.length === 0}

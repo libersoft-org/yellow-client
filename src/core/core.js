@@ -480,6 +480,7 @@ function sendLoginCommand(account) {
    console.log('Logged in:', res);
    acc.error = null;
    acc.sessionID = res.data.sessionID;
+   acc.wsGuid = res.data.wsGuid;
    acc.available_modules = res.data.modules_available;
    onAvailableModulesChanged(acc);
   }

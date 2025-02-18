@@ -17,6 +17,6 @@
 
 {#if v}
  <BaseButton onClick={handleClick}>
-  <Sticker file={v} force_animate={true} />
+  <Sticker file={v} force_animate={true} intersecting={true} />
  </BaseButton>
 {/if}
