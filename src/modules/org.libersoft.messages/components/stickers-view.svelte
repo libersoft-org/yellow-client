@@ -21,7 +21,7 @@
  let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
 
  let items = writable([]);
- items.subscribe(value => console.log('Stickers.svelte items:', value));
+ //items.subscribe(value => console.log('Stickers.svelte items:', value));
  //$inspect($items, count);
 
  export function onShow() {
@@ -59,7 +59,7 @@
   return query_store;
  }
 
- $effect(() => console.log('Stickers.svelte items $effect:', $items));
+ //$effect(() => console.log('Stickers.svelte items $effect:', $items));
 
  async function maybe_trigger_update(count) {
   if (count === 0) {
