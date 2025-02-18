@@ -18,25 +18,24 @@
  let elContainer;
  let elSearchInput;
  let search = '';
- let groups;
+ let results;
 
- $: groups = find($emojiGroups, search);
+ $: results = find($emojiGroups, search);
 
  function find(groups, search) {
-  console.log('find:', groups, search);
+  console.log('find:', search);
   if (!groups) return [];
-  if (!search) return groups;
-  let result = [];
+  if (!search) return null;
+  let all = {};
   for (let group of groups) {
-   let searcher = new FuzzySearch(group.emoji, ['shortcodes', 'emojticons'], { caseSensitive: false, sort: true });
-   let res = searcher.search(search);
-   if (res.length > 0) {
-    let g2 = { group: group.group, emoji: res };
-    result.push(g2);
-    console.log('g2:', g2);
+   for (let emoji of group.emoji) {
+    all[emoji.codepoints_rgi] = emoji;
    }
   }
-  return result;
+  all = Object.values(all);
+  let res = new FuzzySearch(all, ['shortcodes', 'emojticons'], { caseSensitive: false, sort: true }).search(search);
+  console.log('find:', res);
+  return res;
  }
 
  export function onShow() {
@@ -115,7 +114,7 @@
   $emojisLoading: {$emojisLoading}
   $emojiGroups.length: {$emojiGroups.length}
   search: {search}
-  groups.length: {groups.length}
+  results.length: {results?.length}
  </pre>
 {/if}
 
@@ -123,24 +122,36 @@
  <InputButton alt="Search" bind:this={elSearchInput} bind:value={search} img="modules/{identifier}/img/search.svg" placeholder="Search ..." />
 </div>
 
+{#snippet clickable_emoji(emoji)}
+ <BaseButton onClick={() => clickEmoji(emoji.base)} onRightClick={e => showAlts(e, emoji)}>
+  <div class="emoji hover">
+   <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
+  </div>
+ </BaseButton>
+{/snippet}
+
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
- {#if groups.length === 0}
-  {#if $emojisLoading}
-   <div>Loading...</div>
-  {:else}
+ {#if $emojisLoading}
+  <div>Loading...</div>
+ {:else if search}
+  {#if results.length === 0}
    <div>No emojis found</div>
+  {:else}
+   <div class="group">
+    <div class="emojis">
+     {#each results as emoji (emoji.codepoints_rgi)}
+      {@render clickable_emoji(emoji)}
+     {/each}
+    </div>
+   </div>
   {/if}
  {:else}
-  {#each groups as g, index}
+  {#each $emojiGroups as g (g.group)}
    <div class="group">
     <div class="title">{g.group}</div>
     <div class="emojis">
      {#each g.emoji as emoji (emoji.codepoints_rgi)}
-      <BaseButton onClick={() => clickEmoji(emoji.base)} onRightClick={e => showAlts(e, emoji)}>
-       <div class="emoji hover">
-        <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
-       </div>
-      </BaseButton>
+      {@render clickable_emoji(emoji)}
      {/each}
     </div>
    </div>
