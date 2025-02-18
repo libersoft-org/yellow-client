@@ -2,17 +2,21 @@
  import { debug, active_account } from '../../../core/core.js';
  import { getContext, onMount } from 'svelte';
  import { get } from 'svelte/store';
+ import { identifier } from '../messages.js';
  import Emoji from './emoji.svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../messages.js';
  import { start_emojisets_fetch, emoji_render } from '../emojis.js';
  import ContextMenu from '../../../core/components/context-menu.svelte';
+ import InputButton from '../../../core/components/input-button.svelte';
 
  const MessageBar = getContext('MessageBar');
 
  let alts = [];
  let altsMenu;
  let elContainer;
+ let elSearchInput;
+ let search = '';
 
  export function onShow() {
   console.log('emojis onShow');
@@ -39,8 +43,12 @@
 </script>
 
 <style>
+ .filter {
+  padding: 10px;
+ }
+
  .emojiset {
-  height: calc(100% - 45px);
+  height: calc(100% - 105px);
   overflow: auto;
  }
 
@@ -87,6 +95,10 @@
   $emojiGroups.length: {$emojiGroups.length}
  </pre>
 {/if}
+
+<div class="filter">
+ <InputButton alt="Search" bind:this={elSearchInput} bind:value={search} img="modules/{identifier}/img/search.svg" placeholder="Search ..." />
+</div>
 
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
  {#if $emojiGroups.length === 0}
