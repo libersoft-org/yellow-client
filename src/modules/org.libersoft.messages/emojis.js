@@ -32,6 +32,7 @@ export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByC
   for (let group of groups) {
    for (let emoji of group.emoji) {
     const codepoints_rgi = rgi(emoji.base);
+    emoji.codepoints_rgi = codepoints_rgi;
     by_codepoints[codepoints_rgi] = emoji;
    }
   }

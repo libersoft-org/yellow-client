@@ -9,6 +9,7 @@
  import { start_emojisets_fetch, emoji_render } from '../emojis.js';
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import InputButton from '../../../core/components/input-button.svelte';
+ import FuzzySearch from 'fuzzy-search';
 
  const MessageBar = getContext('MessageBar');
 
@@ -17,6 +18,26 @@
  let elContainer;
  let elSearchInput;
  let search = '';
+ let groups;
+
+ $: groups = find($emojiGroups, search);
+
+ function find(groups, search) {
+  console.log('find:', groups, search);
+  if (!groups) return [];
+  if (!search) return groups;
+  let result = [];
+  for (let group of groups) {
+   let searcher = new FuzzySearch(group.emoji, ['shortcodes', 'emojticons'], { caseSensitive: false, sort: true });
+   let res = searcher.search(search);
+   if (res.length > 0) {
+    let g2 = { group: group.group, emoji: res };
+    result.push(g2);
+    console.log('g2:', g2);
+   }
+  }
+  return result;
+ }
 
  export function onShow() {
   console.log('emojis onShow');
@@ -93,6 +114,8 @@
  <pre>
   $emojisLoading: {$emojisLoading}
   $emojiGroups.length: {$emojiGroups.length}
+  search: {search}
+  groups.length: {groups.length}
  </pre>
 {/if}
 
@@ -101,16 +124,18 @@
 </div>
 
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
- {#if $emojiGroups.length === 0}
+ {#if groups.length === 0}
   {#if $emojisLoading}
    <div>Loading...</div>
+  {:else}
+   <div>No emojis found</div>
   {/if}
  {:else}
-  {#each $emojiGroups as g, index}
+  {#each groups as g, index}
    <div class="group">
     <div class="title">{g.group}</div>
     <div class="emojis">
-     {#each g.emoji as emoji, id}
+     {#each g.emoji as emoji (emoji.codepoints_rgi)}
       <BaseButton onClick={() => clickEmoji(emoji.base)} onRightClick={e => showAlts(e, emoji)}>
        <div class="emoji hover">
         <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />

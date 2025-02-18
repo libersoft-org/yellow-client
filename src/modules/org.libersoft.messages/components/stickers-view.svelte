@@ -49,6 +49,7 @@
   });
   console.log('update_live_query', fulltext_search_filter, animated_filter);
   let query_store = liveQuery(async () => {
+   loading = true;
    let x = stickers_db.stickersets;
    //console.log('x:', x);
    void 'x is now a dexie Table. We have one shot at ordering or filtering it at the db level: https://dexie.org/docs/Dexie/Dexie.[table]';
