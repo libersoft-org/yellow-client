@@ -33,7 +33,7 @@
    }
   }
   all = Object.values(all);
-  let res = new FuzzySearch(all, ['shortcodes', 'emojticons'], { caseSensitive: false, sort: true }).search(search);
+  let res = new FuzzySearch(all, ['shortcodes', 'emoticons'], { caseSensitive: false, sort: true }).search(search);
   console.log('find:', res);
   return res;
  }
