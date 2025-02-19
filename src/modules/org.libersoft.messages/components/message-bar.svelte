@@ -33,7 +33,7 @@
 
  documentHeight.subscribe(value => {
   if (value != lastDocumentHeight) {
-   if (value < lastDocumentHeight - 100) expressionsBottomSheetOpen = false;
+   //if (value < lastDocumentHeight - 100) expressionsBottomSheetOpen = false;
    lastDocumentHeight = value;
   }
  });
