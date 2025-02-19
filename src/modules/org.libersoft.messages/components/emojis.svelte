@@ -10,6 +10,7 @@
  import ContextMenu from '../../../core/components/context-menu.svelte';
  import InputButton from '../../../core/components/input-button.svelte';
  import FuzzySearch from 'fuzzy-search';
+ import Spinner from '../../../core/components/spinner.svelte';
 
  const MessageBar = getContext('MessageBar');
 
@@ -132,7 +133,7 @@
 
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
  {#if $emojisLoading}
-  <div>Loading...</div>
+  <Spinner />
  {:else if search}
   {#if results.length === 0}
    <div>No emojis found</div>

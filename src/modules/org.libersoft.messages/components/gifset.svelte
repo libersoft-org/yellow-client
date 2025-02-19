@@ -7,6 +7,8 @@
  import Input from '../../../core/components/input.svelte';
  import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { isMobile } from '../../../core/core.js';
+ import Spinner from '../../../core/components/spinner.svelte';
+
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
  const store = localStorageSharedStore('giphy-api-key');
@@ -122,7 +124,7 @@
  </div>
  <div class="results">
   {#if loading}
-   <div>Loading...</div>
+   <Spinner />
   {:else if gifs.length === 0 && query}
    <div>No GIFs found.</div>
   {:else}
