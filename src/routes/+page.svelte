@@ -256,7 +256,7 @@
   }
 
   .resizer {
-   /*display: none;*/
+   display: none;
   }
  }
 </style>
