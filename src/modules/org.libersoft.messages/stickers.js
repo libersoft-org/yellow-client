@@ -110,7 +110,7 @@ export async function updateStickerLibrary() {
   stickerset.server = stickerServer;
   stickerset.url = stickerServer + '/api/sets?id=' + stickerset.id;
   if (i % 55 === 0) {
-   stickerLibraryUpdaterState.update(state => ({ ...state, status: 'Saving sticker set list: ' + i + '/' + sets.length + ' to local database ...', progress: (100 * i) / sets.length }));
+   stickerLibraryUpdaterState.update(state => ({ ...state, status: 'Saving stickerset ' + i + '/' + sets.length + '...', progress: (100 * i) / sets.length }));
    //console.log('loading stickerset ' + i + '/' + sets.length);
    //await stickers_db.stickersets.bulkAdd(stickersets_batch.splice(0, stickersets_batch.length));
    await stickers_db.stickers.bulkAdd(stickers_batch.splice(0, stickers_batch.length));

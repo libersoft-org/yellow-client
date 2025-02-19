@@ -135,25 +135,25 @@
    animationData,
   });
 
-  /*
-  anim.onComplete = () => {
+  /*anim.onComplete = () => {
    console.log('lottie animation completed');
-  };
+  };*/
   anim.onLoopComplete = () => {
-   console.log('lottie animation loop completed');
+   //console.log('lottie animation loop completed');
    // how to control the rendering fps of a lottie-web animation?
    //console.log(anim);
-   //anim.frameModifier = 1/30;
-   //anim.frameMult = 1;
-   //anim.frameRate = 12;
-   //anim.setSpeed(0.5)
-
+   ///anim.frameModifier = 10/30;
+   //anim.frameMult = 10;
+   ///anim.frameRate = 2;
+   //anim.setSpeed(0.1)
+   //anim.setSubframe(false);
+   // > I had the same problem using JSON animation files. Solved it using ".lottie" files instead.
    // ???
-  lottie.setQuality() -- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
-  lottie.freeze() -- Freezes all playing animations or animations that will be loaded
+   //lottie.setQuality('low') //-- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
+   //lottie.freeze() -- Freezes all playing animations or animations that will be loaded
    //anim.resize()
-
   };
+  /*
   anim.addEventListener('config_ready', () => {
    console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
   });
