@@ -30,7 +30,7 @@
  let renderer = 'svg';
  let animationData;
 
- $: update_playing(playing);
+ $: update_playing(anim, playing, duration);
 
  ext = file.split('.').pop().toLowerCase();
  //  console.log('STICKER file:', file, 'ext:', ext);
@@ -44,24 +44,32 @@
  //$: console.log('anim:', anim, 'playing:', playing, 'isInViewport:', isInViewport, 'mouseOver:', mouseOver, 'force_animate:', force_animate, 'intersecting:', intersecting, 'isLottie:', isLottie, 'isImage:', isImage, 'error:', error, 'renderer:', renderer, 'file:', file, 'size:', size, 'ext:', ext);
  // $: console.log('ANIM:', anim);
 
- $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $expressions_renderer, $animate_all_expressions, force_animate, mouseOver, animContainer, anim);
+ $: on_update_should_be_playing($ContextMenuOpen, isInViewport, $expressions_renderer, $animate_all_expressions, force_animate, mouseOver, animContainer, anim, duration);
 
- async function on_update_should_be_playing(ContextMenuOpen, isInViewport, expressions_renderer, animate_all_stickers, force_animate, mouseOver, animContainer, _anim) {
+ async function on_update_should_be_playing(ContextMenuOpen, isInViewport, expressions_renderer, animate_all_stickers, force_animate, mouseOver, animContainer, _anim, duration) {
+  console.log('lottie on_update_should_be_playing: ', file, 'ContextMenuOpen:', ContextMenuOpen, 'isInViewport:', isInViewport, 'expressions_renderer:', expressions_renderer, 'animate_all_stickers:', animate_all_stickers, 'force_animate:', force_animate, 'mouseOver:', mouseOver, 'animContainer:', animContainer, 'anim:', anim, 'duration:', duration);
   if (!animContainer) return;
 
   let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
   let should_be_playing = should_be_loaded && ((animate_all_stickers && force_animate) || mouseOver);
 
-  //console.log(`on_update_should_be_playing sticker: ${file} : ContextMenuOpen: ${ContextMenuOpen}, isInViewport: ${isInViewport}, expressions_renderer: ${expressions_renderer}, animate_all_stickers: ${animate_all_stickers}, force_animate: ${force_animate}, mouseOver: ${mouseOver}, animContainer: ${animContainer}, anim: ${anim}, should_be_loaded: ${should_be_loaded}, should_be_playing: ${should_be_playing}`);
+  console.log(`lottie on_update_should_be_playing sticker: ${file} : ContextMenuOpen: ${ContextMenuOpen}, isInViewport: ${isInViewport}, expressions_renderer: ${expressions_renderer}, animate_all_stickers: ${animate_all_stickers}, force_animate: ${force_animate}, mouseOver: ${mouseOver}, animContainer: ${animContainer}, anim: ${anim}, should_be_loaded: ${should_be_loaded}, should_be_playing: ${should_be_playing}`);
 
-  if (renderer !== expressions_renderer) {
+  /*  if (renderer !== expressions_renderer) {
+   console.log('lottie renderer changed from', renderer, 'to', expressions_renderer);
    renderer = expressions_renderer;
    unload_lottie();
-  }
+  }*/
+
+  console.log('lottie should_be_playing:', should_be_playing, 'should_be_loaded:', should_be_loaded, 'playing:', playing, 'anim:', anim);
 
   if (should_be_playing) {
-   if (anim) playing = true;
-   else await load_lottie();
+   if (anim && duration) {
+    console.log('lottie playing');
+    animStart = window.performance.now();
+    requestAnimationFrame(update);
+    playing = true;
+   } else await load_lottie();
   } else if (should_be_loaded) {
    if (anim) playing = false;
    else await load_lottie();
@@ -72,7 +80,7 @@
  }
 
  function unload_lottie() {
-  //console.log('unload lottie, anim:', anim);
+  console.log('unload lottie, anim:', anim);
   if (anim) {
    anim.stop();
    anim.destroy();
@@ -80,10 +88,36 @@
   }
  }
 
- function update_playing(playing) {
+ function update_playing(anim, playing, duration) {
+  console.log('lottie update_playing', playing, duration);
   if (!anim) return;
-  if (playing) anim.play();
-  else anim.pause();
+  if (duration === undefined) return;
+  if (playing) {
+   animStart = window.performance.now();
+   console.log('lottie requestAnimationFrame');
+   requestAnimationFrame(update);
+  }
+ }
+
+ let animStart;
+ let then = 0;
+ let duration;
+
+ const desiredFPS = 30;
+ const desiredFrameTime = 1000 / desiredFPS;
+
+ function update(ts) {
+  //console.log('lottie update', ts, 'duration', duration, 'totalFrames', anim.totalFrames);
+  if (playing && anim && duration !== undefined) {
+   const elapsed = ts - then;
+   if (elapsed > desiredFrameTime) {
+    const frame = Math.floor(anim.totalFrames * ((ts - animStart) / duration)) % anim.totalFrames;
+    //console.log('lottie update', ts, 'animStart:', animStart, 'frame', frame, 'duration', duration, 'totalFrames', anim.totalFrames);
+    anim.goToAndStop(frame, true);
+    then = ts;
+   }
+  }
+  requestAnimationFrame(update);
  }
 
  $: setup_observer(animContainer);
@@ -130,10 +164,12 @@
    container: animContainer,
    renderer,
    //renderer: 'canvas',
-   loop: true,
-   autoplay: playing,
+   //loop: true,
+   autoplay: false, //playing,
    animationData,
   });
+  duration = anim.getDuration(false) * 1000;
+  console.log('lottie duration:', duration);
 
   /*anim.onComplete = () => {
    console.log('lottie animation completed');
@@ -153,16 +189,19 @@
    //lottie.freeze() -- Freezes all playing animations or animations that will be loaded
    //anim.resize()
   };
+
   /*
   anim.addEventListener('config_ready', () => {
    console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
   });
+*/
 
   anim.addEventListener('data_ready', () => {
    console.log('lottie data ready after ' + (Date.now() - start) + 'ms');
+   duration = anim.getDuration(false);
+   //requestAnimationFrame(update);
   });
 
- */
   /*
   anim.addEventListener('loaded_images', () => {
    console.log('lottie loaded images after ' + (Date.now() - start) + 'ms');
@@ -171,7 +210,8 @@
    console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
   });
   */
-  //console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
+
+  console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
  }
 
  async function intersection(entries) {
