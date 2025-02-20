@@ -11,6 +11,7 @@
  import InputButton from '../../../core/components/input-button.svelte';
  import FuzzySearch from 'fuzzy-search';
  import Spinner from '../../../core/components/spinner.svelte';
+ import { longpress } from '../ui.js';
 
  const MessageBar = getContext('MessageBar');
 
@@ -124,8 +125,19 @@
 </div>
 
 {#snippet clickable_emoji(emoji)}
- <BaseButton onClick={() => clickEmoji(emoji.base)} onRightClick={e => showAlts(e, emoji)}>
-  <div class="emoji hover">
+ <BaseButton onRightClick={e => showAlts(e, emoji)}>
+  <div
+   class="emoji hover"
+   use:longpress
+   on:longpress={e => showAlts(e, emoji)}
+   on:mymousedown={() => {
+    altsMenu?.close();
+   }}
+   on:click={() => clickEmoji(emoji.base)}
+   on:keydown={e => {}}
+   role="button"
+   tabindex="0"
+  >
    <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
   </div>
  </BaseButton>

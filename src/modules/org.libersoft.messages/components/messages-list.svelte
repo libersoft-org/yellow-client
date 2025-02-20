@@ -594,4 +594,4 @@
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-doBlockScroll: {doBlockScroll}
+<!--doBlockScroll: {doBlockScroll}-->

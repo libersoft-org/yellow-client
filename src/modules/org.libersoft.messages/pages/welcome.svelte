@@ -48,27 +48,27 @@
 </style>
 
 <div class="welcome">
- <!-- <div use:longpress on:longpress="{e => pressed = true}">-->
- <!--  longpress me-->
- <!-- </div>-->
- <!-- <br/>-->
- <!-- <button use:longpress={2000} on:longpress="{e => pressed = true}">-->
- <!--  longpress me (for two seconds)-->
- <!-- </button>-->
- <!-- <br/>-->
- <!-- <button on:click="{() => pressed = false}">-->
- <!--  reset-->
- <!-- </button>-->
- <!-- <br/>-->
- <!-- {#if pressed}-->
- <!--  <p>-->
- <!--   a button was longpressed-->
- <!--  </p>-->
- <!-- {:else}-->
- <!--  <p>-->
- <!--   press one of the buttons-->
- <!--  </p>-->
- <!-- {/if}-->
+ <!--  <div use:longpress on:longpress="{e => pressed = true}">-->
+ <!--   longpress me-->
+ <!--  </div>-->
+ <!--  <br/>-->
+ <!--  <button use:longpress={2000} on:longpress="{e => pressed = true}">-->
+ <!--   longpress me (for two seconds)-->
+ <!--  </button>-->
+ <!--  <br/>-->
+ <!--  <button on:click="{() => pressed = false}">-->
+ <!--   reset-->
+ <!--  </button>-->
+ <!--  <br/>-->
+ <!--  {#if pressed}-->
+ <!--   <p>-->
+ <!--    a button was longpressed-->
+ <!--   </p>-->
+ <!--  {:else}-->
+ <!--   <p>-->
+ <!--    press one of the buttons-->
+ <!--   </p>-->
+ <!--  {/if}-->
 
  <img class="illustration" src="modules/{identifier}/img/illustration_{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
  <div class="label">

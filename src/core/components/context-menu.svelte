@@ -65,6 +65,10 @@
   console.log('context-menu openMenu type:', e.type);
   //if (e.type === 'contextmenu') return;
 
+  if (e.type === 'longpress') {
+   e = e.detail;
+  }
+
   if (open) {
    close();
    return;
