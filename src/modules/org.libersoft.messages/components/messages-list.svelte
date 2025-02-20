@@ -31,6 +31,15 @@
  let windowInnerWidth;
  let windowInnerHeight;
  let showFileDndOverlay = false;
+ let doBlockScroll = false;
+
+ function disableScroll() {
+  doBlockScroll = true;
+ }
+
+ function enableScroll() {
+  doBlockScroll = false;
+ }
 
  let fileDndRef;
 
@@ -127,7 +136,32 @@
   return result;
  }
 
- function parseScroll(event) {
+ function blockScroll(e) {
+  if (doBlockScroll) {
+   e.preventDefault();
+   e.stopPropagation();
+  }
+ }
+
+ let scrollStartPos = 0;
+
+ function touchStart(e) {
+  scrollStartPos = elMessages.scrollTop;
+ }
+
+ function touchMove(e) {
+  if (doBlockScroll) {
+   e.preventDefault();
+   e.stopPropagation();
+   elMessages.scrollTop = scrollStartPos;
+  }
+ }
+
+ function parseScroll(e) {
+  if (doBlockScroll && e) {
+   e.preventDefault();
+   e.stopPropagation();
+  }
   scrolledToBottom = elMessages?.scrollTop + elMessages?.clientHeight >= elMessages?.scrollHeight - 20;
  }
 
@@ -531,7 +565,7 @@
   </div>
   <div class="spacer"></div>
  {:else}
-  <div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll}>
+  <div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll} on:touchmove={touchMove} on:touchend={blockScroll} on:touchstart={touchStart}>
    <div class="spacer"></div>
    {#each itemsArray as m (m.uid)}
     <!--{#if $debug}-->
@@ -550,7 +584,7 @@
     {:else if m.type === 'unseen_marker'}
      <div class="unread">Unread messages</div>
     {:else}
-     <Message message={m} elContainer={elMessages} />
+     <Message {enableScroll} {disableScroll} message={m} elContainer={elMessages} />
     {/if}
    {/each}
    <div bind:this={anchorElement}></div>
@@ -560,3 +594,4 @@
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
+doBlockScroll: {doBlockScroll}

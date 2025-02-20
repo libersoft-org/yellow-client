@@ -15,6 +15,10 @@
  // import Reply from './message-reply.svelte';
  export let message;
  export let elContainer;
+
+ export let enableScroll;
+ export let disableScroll;
+
  let seenTxt;
  let checkmarks;
  let observer;
@@ -85,23 +89,39 @@
   //console.log('handle touch move', e);
   moving = true;
   touchCurrentX = e.changedTouches[0].clientX;
-  let diff = touchCurrentX - touchStartX;
+  touchCurrentY = e.changedTouches[0].clientY;
+  let diffX = touchCurrentX - touchStartX;
+  let diffY = touchCurrentY - touchStartY;
+
+  // horizontal limits
   if (!message.is_outgoing) {
    // move to the right
-   if (diff < 0) diff = 0;
-   if (diff > touchMaxTranslation) diff = touchMaxTranslation;
+   if (diffX < 0) diffX = 0;
+   if (diffX > touchMaxTranslation) diffX = touchMaxTranslation;
   } else {
    // move to the left
-   if (diff > 0) diff = 0;
-   if (diff < -touchMaxTranslation) diff = -touchMaxTranslation;
+   if (diffX > 0) diffX = 0;
+   if (diffX < -touchMaxTranslation) diffX = -touchMaxTranslation;
   }
-  touchCurrentTranslation = diff;
+
+  if (thisWasAScroll) {
+   diffX = 0;
+  }
+
+  touchCurrentTranslation = diffX;
   elMessage.style.transform = `translateX(${touchCurrentTranslation}px)`;
-  if (Math.abs(diff) > 10) thisWasASwipe = true;
+
+  if (Math.abs(diffX) > 10) {
+   thisWasASwipe = true;
+   disableScroll();
+  } else if (!thisWasASwipe && Math.abs(diffY) > 10) {
+   thisWasAScroll = true;
+  }
  }
 
  function handleTouchEnd(e) {
   //console.log('handle touch end', e);
+  enableScroll();
   if (longPressTimer) {
    clearTimeout(longPressTimer);
    longPressTimer = null;
@@ -124,8 +144,37 @@
   }
  }
 
+ /*
+ let supportsPassive = false;
+
+ let wheelOpt;
+ $: wheelOpt = supportsPassive ? { passive: false } : false;
+
+ function configurePassive() {
+  try {
+   window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+    get: function () {
+     supportsPassive = true;
+    }
+   }));
+  } catch (e) {
+  }
+ }*/
+ /*
+ function onScroll(e) {
+  console.log('scroll', e);
+  e.preventDefault();
+  e.stopPropagation();
+ }
+*/
  onMount(() => {
   //console.log('onMount message:', message);
+  /*configurePassive();
+  window.addEventListener('touchmove', e => {
+   //if (thisWasASwipe)
+   e.preventDefault();
+  }, wheelOpt);*/
+
   if (!message.seen && !message.just_sent) {
    if (message.is_outgoing && !(message.address_to === message.address_from)) {
     console.log('no need to set seen');
