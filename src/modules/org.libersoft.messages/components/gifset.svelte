@@ -11,39 +11,37 @@
 
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
- const store = localStorageSharedStore('giphy-api-key');
- let apiKey;
+
+ const server = localStorageSharedStore('gif-server-url', 'http://localhost:8888/api/');
  let gifs = [];
  let query = '';
  let loading = false;
- let elApiKey;
  let elSearchText;
+ let next_url;
+ let error;
+ let query_done;
 
  onMount(() => {
-  apiKey = $store;
   if (!get(isMobile)) {
-   if (!apiKey) elApiKey.focus();
-   else elSearchText.focus();
+   elSearchText.focus();
   }
  });
-
- function saveAPIKey() {
-  store.set(apiKey);
- }
-
- function keySaveAPIKey(e) {
-  if (e.key === 'Enter') saveAPIKey();
- }
 
  async function getGifs() {
   if (!query) return;
   loading = true;
   try {
-   const response = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${query}&limit=12&offset=0&rating=r&lang=en&bundle=messaging_non_clips`);
+   const url = `{server}/search?q=${query}&limit=12`;
+   const response = await fetch(url);
    console.log(response);
-   if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-   const data = await response.json();
-   gifs = data.data.map(gif => gif.images.fixed_height.url);
+   if (!response.ok) {
+    error = `HTTP Error: ${response.status}`;
+   } else {
+    query_done = true;
+    const data = await response.json();
+    gifs = data.results;
+    next_url = url + '&pos=' + data.next;
+   }
   } catch (err) {
    console.error('Error while loading GIFs from server:', err);
   } finally {
@@ -55,8 +53,9 @@
   if (e.key === 'Enter') getGifs();
  }
 
- function sendGIF(url) {
-  MessageBar.sendMessageHtml('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" />');
+ function sendGIF(item) {
+  const url = item.media_formats.gif?.url;
+  MessageBar.sendMessageHtml('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" ></Gif>');
   menu?.close();
  }
 </script>
@@ -114,27 +113,27 @@
 <div class="gifset">
  <div class="top-bar">
   <div class="group">
-   <Input placeholder="Your Giphy API key" grow={true} bind:this={elApiKey} bind:value={apiKey} onKeydown={keySaveAPIKey} />
-   <Button text="Save" width="80px" onClick={saveAPIKey} />
-  </div>
-  <div class="group">
    <Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keyGetGifs} />
    <Button text="Search" width="80px" onClick={getGifs} />
   </div>
  </div>
- <div class="results">
-  {#if loading}
-   <Spinner />
-  {:else if gifs.length === 0 && query}
-   <div>No GIFs found.</div>
-  {:else}
-   {#each gifs as gif}
-    <BaseButton onClick={() => sendGIF(gif)}>
-     <div class="item">
-      <img src={gif} alt="GIF" />
-     </div>
-    </BaseButton>
-   {/each}
-  {/if}
- </div>
+ {#if error}
+  <div>{error}</div>
+ {:else}
+  <div class="results">
+   {#if loading}
+    <Spinner />
+   {:else if gifs.length === 0 && query_done}
+    <div>No GIFs found.</div>
+   {:else}
+    {#each gifs as item}
+     <BaseButton onClick={() => sendGIF(item)}>
+      <div class="item">
+       <img src={item.media_formats.gif?.url} alt="GIF" />
+      </div>
+     </BaseButton>
+    {/each}
+   {/if}
+  </div>
+ {/if}
 </div>
