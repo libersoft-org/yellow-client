@@ -31,7 +31,8 @@
   if (!query) return;
   loading = true;
   try {
-   const url = `{server}/search?q=${query}&limit=12`;
+   const url = `${get(server)}/search?q=${encodeURIComponent(query)}&limit=12`;
+   console.log('Loading GIFs from server:', url);
    const response = await fetch(url);
    console.log(response);
    if (!response.ok) {

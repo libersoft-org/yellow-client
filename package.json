@@ -15,7 +15,7 @@
 		"@types/retry": "^0.12.5",
 		"git-format-staged": "^3.1.1",
 		"jsdom": "^26.0.0",
-		"prettier": "^3.5.0",
+		"prettier": "^3.5.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"svelte": "^5.19.9",
 		"typescript": "^5.7.3",
