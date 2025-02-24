@@ -12,7 +12,7 @@
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
 
- const server = localStorageSharedStore('gif-server-url', 'http://localhost:8888/api/');
+ const server = localStorageSharedStore('gif-server-url', 'http://localhost:8888/api');
  let gifs = [];
  let query = '';
  let loading = false;
@@ -31,7 +31,9 @@
   if (!query) return;
   loading = true;
   try {
-   const url = `${get(server)}/search?q=${encodeURIComponent(query)}&limit=12`;
+   error = null;
+   const server_val = get(server);
+   const url = `${server_val}/search?q=${encodeURIComponent(query)}&limit=12`;
    console.log('Loading GIFs from server:', url);
    const response = await fetch(url);
    console.log(response);
@@ -39,14 +41,16 @@
     error = `HTTP Error: ${response.status}`;
    } else {
     query_done = true;
-    const data = await response.json();
-    gifs = data.results;
-    next_url = url + '&pos=' + data.next;
+    const data = (await response.json()).data;
+    gifs = data?.results;
+    if (data?.next) next_url = url + '&pos=' + data.next;
    }
   } catch (err) {
    console.error('Error while loading GIFs from server:', err);
+   error = 'Error while loading GIFs from server.';
   } finally {
    loading = false;
+   console.log('GIFs:', gifs);
   }
  }
 
