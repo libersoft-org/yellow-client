@@ -72,7 +72,7 @@
   {#if $debug}$stickerLibraryUpdaterState:{JSON.stringify($stickerLibraryUpdaterState)}{/if}
   {#if $stickerLibraryUpdaterState.updating}
    <div class="loading">
-    <div class="status">Background update... {$stickerLibraryUpdaterState.status}</div>
+    <div class="status">{$stickerLibraryUpdaterState.status}</div>
     <ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving={true} />
    </div>
   {/if}

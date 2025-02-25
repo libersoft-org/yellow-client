@@ -234,7 +234,7 @@
   /*left: 300px;*/
   width: 5px;
   cursor: ew-resize;
-  background-color: #0d0;
+  /*background-color: #0d0;*/
  }
 
  .content {
