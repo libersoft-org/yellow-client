@@ -3,12 +3,15 @@
  import Option from '../../../core/components/select-option.svelte';
  import Switch from '../../../core/components/switch.svelte';
  import Modal from '../../../core/components/modal.svelte';
- import { sticker_server, sticker_servers } from '../stickers.js';
+ import { sticker_server_index, sticker_servers } from '../stickers.js';
+ import { gif_server_index, gif_servers } from '../gifs.js';
  import { expressions_renderer, animate_all_expressions } from '../expressions.svelte.ts';
  import Button from '../../../core/components/button.svelte';
  import ModalStickerServers from './modal-sticker-servers.svelte';
+ import ModalGifServers from './modal-gif-servers.svelte';
 
  let isModalStickerServersOpen = false;
+ let isModalGifServersOpen = false;
  let showAsVector = $expressions_renderer === 'svg';
  let animateAll = $animate_all_expressions;
  $: showAsVector !== undefined && expressions_renderer.set(showAsVector ? 'svg' : 'canvas');
@@ -17,6 +20,10 @@
  function clickManageStickerServers() {
   console.log('Click: Manage sticker servers');
   isModalStickerServersOpen = !isModalStickerServersOpen;
+ }
+ function clickManageGifServers() {
+  console.log('Click: Manage gif servers');
+  isModalGifServersOpen = !isModalGifServersOpen;
  }
 </script>
 
@@ -51,12 +58,22 @@
  </div>
  <div class="group">
   <div class="label">Sticker server:</div>
-  <Select bind:value={$sticker_server}>
-   {#each $sticker_servers as server}
-    <Option value={server} text={server} />
+  <Select bind:value={$sticker_server_index}>
+   {#each $sticker_servers as server, i}
+    <Option value={i} text={server} />
    {/each}
   </Select>
  </div>
  <Button text="Manage sticker servers" onClick={clickManageStickerServers} />
+ <div class="group">
+  <div class="label">Gif server:</div>
+  <Select bind:value={$gif_server_index}>
+   {#each $gif_servers as server, i}
+    <Option value={i} text={server} />
+   {/each}
+  </Select>
+ </div>
+ <Button text="Manage gif servers" onClick={clickManageGifServers} />
 </div>
 <Modal title="Manage sticker servers" body={ModalStickerServers} bind:show={isModalStickerServersOpen} />
+<Modal title="Manage gif servers" body={ModalGifServers} bind:show={isModalGifServersOpen} />

@@ -1,4 +1,4 @@
-import { writable, get } from 'svelte/store';
+import { writable, get, derived } from 'svelte/store';
 import { stickers_db } from './db.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 
@@ -9,7 +9,9 @@ import.meta.hot?.dispose(() => (window.stickerLibraryUpdaterState.updating = fal
 export let stickerLibraryUpdaterState = writable({});
 export let stickerset_favorites = localStorageSharedStore('stickerset_favorites', []);
 export let sticker_servers = localStorageSharedStore('sticker_servers', ['https://stickers.libersoft.org']);
-export let sticker_server = localStorageSharedStore('sticker_server', 'https://stickers.libersoft.org');
+export let sticker_server_index = localStorageSharedStore('sticker_server_index', 0);
+
+export let sticker_server = derived([sticker_servers, sticker_server_index], ([$sticker_servers, $sticker_server_index]) => $sticker_servers[$sticker_server_index]);
 
 sticker_server.subscribe(() => {
  stickerLibraryUpdaterState.update(state => ({ ...state, updated_once: false }));
@@ -56,6 +58,7 @@ export async function updateStickerLibrary() {
  stickerLibraryUpdaterState.update(state => ({ ...state, status: `Update started ...`, updating: true, progress: 0, updated_once: true, error: null }));
 
  let stickerServer = get(sticker_server);
+ stickerServer = stickerServer.endsWith('/') ? stickerServer.slice(0, -1) : stickerServer;
  if (!check_sticker_server_url(stickerServer)) {
   setUpdateCancelled();
   return;

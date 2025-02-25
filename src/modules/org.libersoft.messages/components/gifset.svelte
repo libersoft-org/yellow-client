@@ -5,14 +5,13 @@
  import BaseButton from '../../../core/components/base-button.svelte';
  import Button from '../../../core/components/button.svelte';
  import Input from '../../../core/components/input.svelte';
- import { localStorageSharedStore } from '../../../lib/svelte-shared-store.ts';
  import { isMobile } from '../../../core/core.js';
  import Spinner from '../../../core/components/spinner.svelte';
+ import { gif_server } from '../gifs.js';
 
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
 
- const server = localStorageSharedStore('gif-server-url', 'http://localhost:8888/api');
  let gifs = [];
  let query = '';
  let loading = false;
@@ -20,6 +19,8 @@
  let next_url;
  let error;
  let query_done;
+ let last_query;
+ let next_pos;
 
  onMount(() => {
   if (!get(isMobile)) {
@@ -27,13 +28,25 @@
   }
  });
 
- async function getGifs() {
-  if (!query) return;
+ async function searchGifs() {
+  await getGifs(query);
+ }
+
+ async function moreGifs() {
+  await getGifs(null, next_pos);
+ }
+
+ async function getGifs(_query, _next_pos) {
+  if (_query) last_query = _query;
+  else _query = last_query;
+  const server_val = get(gif_server);
+  let url = `${server_val}/search?q=${encodeURIComponent(last_query)}&limit=12`;
+  if (_next_pos) {
+   url += '&pos=' + _next_pos;
+  }
   loading = true;
   try {
    error = null;
-   const server_val = get(server);
-   const url = `${server_val}/search?q=${encodeURIComponent(query)}&limit=12`;
    console.log('Loading GIFs from server:', url);
    const response = await fetch(url);
    console.log(response);
@@ -43,7 +56,10 @@
     query_done = true;
     const data = (await response.json()).data;
     gifs = data?.results;
-    if (data?.next) next_url = url + '&pos=' + data.next;
+    if (data?.next) {
+     next_pos = data.next;
+     console.log('Next pos:', next_pos);
+    }
    }
   } catch (err) {
    console.error('Error while loading GIFs from server:', err);
@@ -54,8 +70,8 @@
   }
  }
 
- function keyGetGifs(e) {
-  if (e.key === 'Enter') getGifs();
+ function keySearchGifs(e) {
+  if (e.key === 'Enter') searchGifs();
  }
 
  function sendGIF(item) {
@@ -118,8 +134,8 @@
 <div class="gifset">
  <div class="top-bar">
   <div class="group">
-   <Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keyGetGifs} />
-   <Button text="Search" width="80px" onClick={getGifs} />
+   <Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
+   <Button text="Search" width="80px" onClick={searchGifs} />
   </div>
  </div>
  {#if error}
@@ -134,10 +150,13 @@
     {#each gifs as item}
      <BaseButton onClick={() => sendGIF(item)}>
       <div class="item">
-       <img src={item.media_formats.gif?.url} alt="GIF" />
+       <img src={item.media_formats.tinygif?.url} alt="GIF" />
       </div>
      </BaseButton>
     {/each}
+    {#if next_pos}
+     <Button text="Load more" onClick={moreGifs}>More...</Button>
+    {/if}
    {/if}
   </div>
  {/if}
