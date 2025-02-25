@@ -1,6 +1,7 @@
 <script>
  import { debug } from '../../../core/core.js';
  import lottie from 'lottie-web';
+ import '@lottiefiles/lottie-player';
  import pako from 'pako';
  import { getContext, onMount, onDestroy } from 'svelte';
  import { readable } from 'svelte/store';
@@ -123,56 +124,7 @@
   isLoading = false;
  }
 
- async function construct_lottie() {
-  let start = Date.now();
-
-  anim = lottie.loadAnimation({
-   container: animContainer,
-   renderer,
-   //renderer: 'canvas',
-   loop: true,
-   autoplay: playing,
-   animationData,
-  });
-
-  /*anim.onComplete = () => {
-   console.log('lottie animation completed');
-  };*/
-  anim.onLoopComplete = () => {
-   //console.log('lottie animation loop completed');
-   // how to control the rendering fps of a lottie-web animation?
-   //console.log(anim);
-   ///anim.frameModifier = 10/30;
-   //anim.frameMult = 10;
-   ///anim.frameRate = 2;
-   //anim.setSpeed(0.1)
-   //anim.setSubframe(false);
-   // > I had the same problem using JSON animation files. Solved it using ".lottie" files instead.
-   // ???
-   //lottie.setQuality('low') //-- default 'high', set 'high','medium','low', or a number > 1 to improve player performance. In some animations as low as 2 won't show any difference.
-   //lottie.freeze() -- Freezes all playing animations or animations that will be loaded
-   //anim.resize()
-  };
-  /*
-  anim.addEventListener('config_ready', () => {
-   console.log('lottie config ready after ' + (Date.now() - start) + 'ms');
-  });
-
-  anim.addEventListener('data_ready', () => {
-   console.log('lottie data ready after ' + (Date.now() - start) + 'ms');
-  });
-
- */
-  /*
-  anim.addEventListener('loaded_images', () => {
-   console.log('lottie loaded images after ' + (Date.now() - start) + 'ms');
-  });
-  anim.addEventListener('DOMLoaded', () => {
-   console.log('lottie DOM loaded after ' + (Date.now() - start) + 'ms');
-  });
-  */
-  //console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
- }
+ async function construct_lottie() {}
 
  async function intersection(entries) {
   //console.log(entries);
@@ -267,7 +219,7 @@
   <img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
   <div class="error">{error}</div>
  {:else if isLottie}
-  <div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>
+  <tgs-player autoplay loop mode="normal" src={file} style="width: {size}px; height: {size}px;"> </tgs-player>
  {:else if isImage && intersecting}
   <img
    class="image"
