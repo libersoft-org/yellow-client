@@ -41,7 +41,8 @@
 <!--</div>-->
 <!--{/if}-->
 
-{#each dummyArray as messageContent}
+
+<!-- {#each dummyArray as messageContent} todo: is this really needed? -->
  {#if messageContent.format === 'html'}
   <div class="text" bind:this={messageContentContainer}>
    <!--<MessageContent level={0} container={messageContentContainer} node={messageContent.body} />-->
@@ -51,4 +52,4 @@
   <!-- TODO: Unused, switch plaintext / HTML -->ooooo
   <div class="text">{@html messageContent.body}</div>
  {/if}
-{/each}
+<!-- {/each} todo: is this really needed? -->

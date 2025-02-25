@@ -243,6 +243,11 @@
  }
 
  async function rightClickContextMenu(e) {
+  // for dev purposes: if you want to use native context menu (right mouse click) instead of app's in message list
+  if (import.meta.env.VITE_FORCE_NATIVE_CONTEXT_MENU) {
+   return;
+  }
+  e.preventDefault();
   console.log('Message click:', e);
   console.log('Message click:', menu);
   console.log('Message click:', menu.openMenu);
@@ -303,7 +308,7 @@
  }
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu|preventDefault={rightClickContextMenu}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
  <div bind:this={elIntersectionObserver}></div>
  <!--<Reply name="Someone" text="Some text" />-->
  <!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->

@@ -65,7 +65,9 @@ export interface FileUploadChunk {
  chunkId: number;
  uploadId: string;
  checksum: string;
- data: string; // base64
+ chunkSize: number;
+ offsetBytes: number;
+ data: Uint8Array;
 }
 
 export interface FileUploadBeginOptions {

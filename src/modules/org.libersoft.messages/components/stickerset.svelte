@@ -3,7 +3,7 @@
  import { debug } from '../../../core/core.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import StickerSetPart from './stickerset-part.svelte';
- import { stickers_db } from '../db.js';
+ import { stickers_db } from '../db.ts';
  import { onDestroy, onMount } from 'svelte';
  export let intersecting = true;
  export let stickerset = {};

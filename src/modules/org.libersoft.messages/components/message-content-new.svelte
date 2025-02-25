@@ -1,15 +1,20 @@
 <script>
  import { componentMap } from '../message-content.ts';
+ import { onMount } from "svelte";
 
  export let rootNode;
 
  // Recursive function to render nodes
  function renderNode(node, parentNode = null, level = 0) {
+  const positionBetweenSiblings = parentNode && parentNode.childNodes ? Array.from(parentNode.childNodes).indexOf(node) : 0;
+  const tagUniqueId = `tag-unique-id-${node.tagName || node.nodeType}-${level}-${positionBetweenSiblings}`;
+
   // Handle text nodes
   if (node.nodeType === Node.TEXT_NODE) {
    return {
     text: node.textContent,
     level,
+    tagUniqueId
    };
   }
 
@@ -19,14 +24,16 @@
    const componentName = node.tagName.toLowerCase();
 
    if (componentMap[componentName]) {
+
     // Dynamically import and render custom component
     return {
+     tagUniqueId,
      component: componentMap[componentName],
      props: {
       ...getNodeProps(node),
       node,
       num_siblings: parentNode && parentNode.childNodes ? parentNode.childNodes.length : 0,
-      level,
+      level
      },
      children: Array.from(node.childNodes)
       .map(n => renderNode(n, node, level + 1))
@@ -36,6 +43,7 @@
 
    // Regular HTML elements
    return {
+    tagUniqueId,
     tag: node.tagName.toLowerCase(),
     attrs: getNodeProps(node),
     props: {
@@ -67,7 +75,7 @@
    if (fragment.childNodes) {
     return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
    } else {
-    return [fragment];
+    // return [fragment];
    }
   } catch (e) {
    console.error('Error processing fragment:', e);
@@ -79,23 +87,27 @@
  $: renderedContent = processFragment(rootNode);
 </script>
 
-{#each renderedContent as item (item)}
+{#each renderedContent as item (item.tagUniqueId)}
  <!-- Render text nodes -->
  {#if item.text}
   {item.text}
   <!-- Render dynamic (HTML super-set) components -->
  {:else if item.component}
-  <svelte:component this={item.component} {...item.props}>
-   {#each item.children as child}
-    <svelte:component this={child.component} {...child.props} />
-   {/each}
-  </svelte:component>
+  {#key item.tagUniqueId}
+   <svelte:component this={item.component} {...item.props}>
+    {#each item.children as child (child.tagUniqueId)}
+     <svelte:component this={child.component} {...child.props} />
+    {/each}
+   </svelte:component>
+  {/key}
   <!-- Render regular HTML elements -->
  {:else if item.tag}
-  <svelte:element this={item.tag} {...item.attrs}>
-   {#each item.children as child}
-    <svelte:self rootNode={child} />
-   {/each}
-  </svelte:element>
+  {#key item.tagUniqueId}
+   <svelte:element this={item.tag} {...item.attrs}>
+    {#each item.children as child (child.tagUniqueId)}
+     <svelte:self rootNode={child} />
+    {/each}
+   </svelte:element>
+   {/key}
  {/if}
 {/each}

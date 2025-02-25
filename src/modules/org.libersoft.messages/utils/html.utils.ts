@@ -3,8 +3,9 @@
  * @param {DocumentFragment} fragment - The DocumentFragment to process.
  * @param {string} xName - The tag name of elements to check (case-insensitive).
  * @param {string} yName - The tag name of the wrapper element.
+ * @param {number} minConsecutive - The minimum number of consecutive elements to wrap (default: 2).
  */
-export function wrapConsecutiveElements(fragment: DocumentFragment, xName: string, yName: string): void {
+export function wrapConsecutiveElements(fragment: DocumentFragment, xName: string, yName: string, minConsecutive = 2): void {
  xName = xName.toLowerCase(); // Normalize case
 
  function processParent(parent: ParentNode): void {
@@ -17,7 +18,7 @@ export function wrapConsecutiveElements(fragment: DocumentFragment, xName: strin
    if (child.nodeType === Node.ELEMENT_NODE && (child as Element).tagName.toLowerCase() === xName) {
     consecutiveXs.push(child as Element);
    } else {
-    if (consecutiveXs.length > 1) {
+    if (consecutiveXs.length >= minConsecutive) {
      wrapWithY(consecutiveXs);
     }
     consecutiveXs = []; // Reset the sequence if non-X is found
@@ -25,7 +26,7 @@ export function wrapConsecutiveElements(fragment: DocumentFragment, xName: strin
   }
 
   // Handle any trailing sequence of X elements
-  if (consecutiveXs.length > 1) {
+  if (consecutiveXs.length >= minConsecutive) {
    wrapWithY(consecutiveXs);
   }
 

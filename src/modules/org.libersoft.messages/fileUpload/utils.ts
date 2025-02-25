@@ -47,10 +47,19 @@ export async function blobToBase64(blob: Blob) {
  return btoa(binaryString); // Convert binary string to Base64
 }
 
-export function assembleFile(receivedChunks: any[], fileName: string) {
- const blob = new Blob(receivedChunks); // Combine all chunks into a Blob
+export async function base64ToUint8Array(base64: string) {
+ return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+}
+
+/**
+ * Triggers client file download by providing url or blob
+ *
+ * @param file {string | Blob} - url or blob
+ * @param fileName - name of the file (this name will be used when downloading)
+ */
+export function assembleFile(file: string | Blob, fileName: string) {
  const downloadLink = document.createElement('a');
- downloadLink.href = URL.createObjectURL(blob);
+ downloadLink.href = file instanceof Blob ? URL.createObjectURL(file) : file;
  downloadLink.download = fileName;
  downloadLink.style.display = 'none';
 
