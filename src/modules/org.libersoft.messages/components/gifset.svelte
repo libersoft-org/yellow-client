@@ -22,10 +22,15 @@
  let last_query;
  let next_pos;
 
- onMount(() => {
+ export function onShow() {
   if (!get(isMobile)) {
+   console.log('Focus search text');
    elSearchText.focus();
   }
+ }
+
+ onMount(() => {
+  onShow();
  });
 
  async function searchGifs() {
@@ -39,8 +44,9 @@
  async function getGifs(_query, _next_pos) {
   if (_query) last_query = _query;
   else _query = last_query;
-  const server_val = get(gif_server);
-  let url = `${server_val}/search?q=${encodeURIComponent(last_query)}&limit=12`;
+  let server_val = get(gif_server);
+  server_val = server_val.endsWith('/') ? server_val.slice(0, -1) : server_val;
+  let url = `${server_val}/api/search?q=${encodeURIComponent(last_query)}&limit=12`;
   if (_next_pos) {
    url += '&pos=' + _next_pos;
   }
