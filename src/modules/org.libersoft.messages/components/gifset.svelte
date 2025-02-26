@@ -172,6 +172,7 @@
     {#if next_pos}
      <LazyLoader onVisible={moreGifs} />
     {/if}
+    Powered By Tenor.
    {/if}
   </div>
  {/if}
