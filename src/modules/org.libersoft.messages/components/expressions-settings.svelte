@@ -9,6 +9,7 @@
  import Button from '../../../core/components/button.svelte';
  import ModalStickerServers from './modal-sticker-servers.svelte';
  import ModalGifServers from './modal-gif-servers.svelte';
+ import { stickers_db } from '../db.js';
 
  let isModalStickerServersOpen = false;
  let isModalGifServersOpen = false;
@@ -65,6 +66,13 @@
   </Select>
  </div>
  <Button text="Manage sticker servers" onClick={clickManageStickerServers} />
+ <Button
+  text="Delete stickers database"
+  onClick={() => {
+   stickers_db.delete();
+  }}
+ />
+
  <div class="group">
   <div class="label">Gif server:</div>
   <Select bind:value={$gif_server_index}>
