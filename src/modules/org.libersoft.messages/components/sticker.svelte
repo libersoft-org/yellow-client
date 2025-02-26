@@ -23,7 +23,7 @@
  let ext;
  let anim;
  let isInViewport = false;
- let mouseOver = false;
+ let mouseOver = true;
  let elStaticImg;
  let ContextMenu = getContext('ContextMenu');
  let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
@@ -103,7 +103,7 @@
  let then = 0;
  let duration;
 
- const desiredFPS = 30;
+ const desiredFPS = 160;
  const desiredFrameTime = 1000 / desiredFPS;
 
  function update(ts) {
@@ -296,7 +296,7 @@
  }
 </style>
 
-<div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
+<div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = true)}>
  {#if $debug}
   renderer: {renderer}
   isLottie: {isLottie}
