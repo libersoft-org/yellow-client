@@ -683,6 +683,8 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
  if (command) req.data.command = command;
  if (params) req.data.params = params;
 
+ console.log('SENDING COMMAND:', req);
+
  acc.requests[requestID] = {
   req,
   callback: (req, res) => {

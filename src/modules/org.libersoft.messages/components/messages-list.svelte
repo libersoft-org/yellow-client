@@ -281,6 +281,15 @@
    }
    uiEvents.push(event);
    saveScrollPosition(event);
+
+   /* todo 1 :
+   do not scroll to bottom on new messages if unread_marker is present (or rather, if window is not active and only unread messages are at the bottom - see also contact list red number )
+   */
+   /*
+   save: wasScrolledTo = 'bottom'
+   wasScrolledTo = message object / message-list element uid ?
+*/
+
    event.wasScrolledToBottom = isScrolledToBottom();
    if (i != events.length - 1) continue;
    if (event.type === 'resize') continue;

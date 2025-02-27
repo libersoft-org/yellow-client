@@ -677,8 +677,8 @@ export function insertEvent(event) {
 
 function eventNewMessage(acc, event) {
  const res = event.detail;
- if (!res.data) return;
  //console.log('eventNewMessage', acc, res);
+ if (!res.data) return;
  let msg = new Message(acc, res.data);
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
