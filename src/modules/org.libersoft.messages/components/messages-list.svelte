@@ -18,6 +18,7 @@
  let scrollButtonVisible = true;
  let showDebugModal = false;
  let elMessages;
+ let elUnseenMarker;
  let anchorElement;
  let oldLastID = null;
  let itemsCount = 0;
@@ -191,7 +192,10 @@
    } else if (event.type === 'send_message') {
     if (event.wasScrolledToBottom) scrollToBottom();
    } else if (event.type === 'initial_load') {
-    scrollToBottom();
+    if (elUnseenMarker) elUnseenMarker.scrollIntoView();
+    else scrollToBottom();
+   } else if (event.type === 'jump_to_referenced_message') {
+    event.message.el?.scrollIntoView?.();
    } else if (event.type === 'properties_update') {
     //console.log('properties_update');
    } else if (event.type === 'resize') {
@@ -587,9 +591,9 @@
     {:else if m.type === 'loader'}
      <Loader loader={m} />
     {:else if m.type === 'unseen_marker'}
-     <div class="unread">Unread messages</div>
+     <div bind:this={elUnseenMarker} class="unread">Unread messages</div>
     {:else}
-     <Message {enableScroll} {disableScroll} message={m} elContainer={elMessages} />
+     <Message bind:this={m.el} {enableScroll} {disableScroll} message={m} elContainer={elMessages} />
     {/if}
    {/each}
    <div bind:this={anchorElement}></div>

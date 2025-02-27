@@ -621,6 +621,13 @@ export function startReply(message) {
  insertEvent({ type: 'properties_update', array: get(messagesArray) });
 }
 
+export function jumpToMessage(acc, address, uid) {
+ loadMessages(acc, address, 'uid:' + uid, 3, 3, 'load_referenced_message', res => {
+  const message = get(messagesArray).find(m => m.uid === uid);
+  insertEvent({ type: 'jump_to_referenced_message', array: get(messagesArray), referenced_message: message });
+ });
+}
+
 export function insertEvent(event) {
  events.update(v => {
   //console.log('insertEvent: ', v, event);
