@@ -29,6 +29,7 @@
   <span class="bold">Chunk size:</span>
   <span>{humanSize(chunkSize)}</span>
  </div>
+ <input type="number" bind:value={chunkSize} />
  <input class="zoom" type="range" min="1024" max="52428800" step="1024" bind:value={chunkSize} />
 </div>
 <Button text="Save" onClick={clickSetChunkSize} />

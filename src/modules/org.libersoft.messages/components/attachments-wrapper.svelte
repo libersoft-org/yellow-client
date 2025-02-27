@@ -5,6 +5,7 @@
  import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
  import fileUploadStore from '../fileUpload/fileUploadStore.ts';
  import { downloadAttachmentsSerial } from '../messages.js';
+ import { assembleFile } from '../fileUpload/utils.ts';
 
  let { children, node } = $props();
  let ref = writable();
@@ -41,7 +42,12 @@
  }
 
  function onAcceptAll() {
-  downloadAttachmentsSerial(downloadableRecords.map(upload => upload.record));
+  downloadAttachmentsSerial(
+   downloadableRecords.map(upload => upload.record),
+   download => {
+    assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
+   }
+  );
  }
 
  onMount(() => {

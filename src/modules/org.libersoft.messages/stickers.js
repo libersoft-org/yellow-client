@@ -1,5 +1,5 @@
 import { writable, get, derived } from 'svelte/store';
-import { stickers_db } from './db.js';
+import { stickers_db } from './db.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 
 void 'this is an extra state that safeguards against triggering the update after a HMR';

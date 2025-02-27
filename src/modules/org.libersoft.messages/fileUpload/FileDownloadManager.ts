@@ -1,5 +1,5 @@
 import { type FileDownload, type FileDownloadStoreType, type FileUploadChunk, type FileUploadRecord, FileUploadRecordStatus } from './types.ts';
-import { assembleFile, makeFileDownload } from './utils.ts';
+import { makeFileDownload } from './utils.ts';
 import EventEmitter from 'events';
 import fileDownloadStore from './fileDownloadStore.ts';
 
@@ -15,7 +15,8 @@ export class FileDownloadManager extends EventEmitter {
   records: FileUploadRecord[],
   pullChunkFn: (data: { uploadId: string; offsetBytes: number; chunkSize: number }) => Promise<{
    chunk: FileUploadChunk;
-  }>
+  }>,
+  finishCallback: (download: FileDownload) => void
  ) {
   for (const record of records) {
    let download: FileDownload | undefined = this.downloadStore.get(record.id);
@@ -66,15 +67,14 @@ export class FileDownloadManager extends EventEmitter {
      });
 
      // Decode Base64 chunk back to binary
-     const binaryChunk = Uint8Array.from(atob(chunk.data), c => c.charCodeAt(0));
-     download.chunksReceived[chunk.chunkId] = binaryChunk; // Store chunk in the correct order
+     download.chunksReceived[chunk.chunkId] = chunk.data; // Store chunk in the correct order
      this.downloadStore.set(record.id, download);
 
      // Check if all chunks have been received
      if (download.chunksReceived.length * chunkSize >= record.fileSize) {
       setRunning(false);
+      finishCallback && finishCallback(download);
       setTimeout(() => this.startNextDownload(download));
-      assembleFile(download.chunksReceived, download.record.fileOriginalName);
       this.downloadStore.delete(record.id);
       // Clean up memory
       // download.chunksReceived = [];

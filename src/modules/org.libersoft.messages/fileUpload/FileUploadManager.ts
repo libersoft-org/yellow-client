@@ -3,7 +3,7 @@ import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from './fileUploadStore.ts';
 
-class FileUploadManager extends EventEmitter {
+export class FileUploadManager extends EventEmitter {
  uploadsStore: FileUploadStoreType;
 
  p2pThrottleMemory = new Map();

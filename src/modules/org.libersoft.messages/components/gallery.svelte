@@ -2,9 +2,10 @@
  import { identifier, showGallery, galleryFile } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Button from '../../../core/components/button.svelte';
+ import { assembleFile } from '../fileUpload/utils.ts';
 
  function download() {
-  console.log('Clicked download');
+  assembleFile($galleryFile.url, $galleryFile.fileName);
  }
 
  function close() {
@@ -60,7 +61,7 @@
  <div class="gallery">
   {#if $galleryFile}
    <BaseButton onClick={close}>
-    <div class="image"><img src={$galleryFile} alt={$galleryFile} /></div>
+    <div class="image"><img src={$galleryFile.url} alt={$galleryFile.fileName} /></div>
    </BaseButton>
   {/if}
   <div class="top-left">

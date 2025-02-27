@@ -10,11 +10,12 @@ import fileDownloadStore from './fileUpload/fileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/html.utils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
-import { makeFileUpload } from './fileUpload/utils.ts';
+import { base64ToUint8Array, makeFileUpload } from './fileUpload/utils.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
-import { messages_db } from './db.js';
+import { messages_db } from './db.ts';
+import filesDB, { LocalFileStatus } from './localDB/files.localDB.ts';
 
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
@@ -175,9 +176,25 @@ export function initUpload(files, uploadType, recipients) {
  // send message
  let messageHtml = '';
  uploads.forEach(upload => {
-  messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
+  const fileMimeType = upload.record.fileMimeType;
+  const isServerType = upload.record.type === FileUploadRecordType.SERVER;
+  if (isServerType && fileMimeType.startsWith('image/')) {
+   messageHtml += `<Imaged file="yellow:${upload.record.id}"></Imaged>`;
+   filesDB.addFile({
+    localFileStatus: LocalFileStatus.READY,
+    fileTransferId: upload.record.id,
+    fileOriginalName: upload.record.fileOriginalName,
+    fileMimeType: upload.record.fileMimeType,
+    fileSize: upload.record.fileSize,
+    fileBlob: new Blob([upload.file], { type: fileMimeType }),
+   });
+  } else {
+   messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
+  }
  });
- sendMessage(messageHtml, 'html');
+ setTimeout(() => {
+  sendMessage(messageHtml, 'html');
+ }, 100);
 
  // send upload
  const records = uploads.map(upload => upload.record);
@@ -259,20 +276,31 @@ function upload_update(event) {
  }
 }
 
-export function downloadAttachmentsSerial(records) {
+export function downloadAttachmentsSerial(records, finishCallback) {
  const acc = get(active_account);
- fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc));
+ // const records = recordIds.map(id => fileDownloadStore.get(id).record);
+ fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback);
 }
 
-const makeDownloadChunkAsyncFn =
+export const makeDownloadChunkAsyncFn =
  acc =>
  ({ uploadId, offsetBytes, chunkSize }) => {
   return new Promise((resolve, reject) => {
-   sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, (req, res) => {
-    if (res.error !== false) {
+   sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (req, res) => {
+    if (res.error !== 0) {
      reject();
     }
-    resolve(res);
+    console.warn('!!! res', res);
+    resolve({
+     chunk: {
+      chunkId: res.chunk.chunkId,
+      uploadId: res.chunk.uploadId,
+      checksum: res.chunk.checksum,
+      chunkSize, // todo: take this value from server
+      offsetBytes, // todo: take this value from server
+      data: await base64ToUint8Array(res.chunk.data),
+     },
+    }); // todo better typing (whole function)
    });
   });
  };
@@ -323,33 +351,45 @@ export function cancelDownload(uploadId) {
 }
 
 export function loadUploadData(uploadId) {
- let acc = get(active_account);
+ return new Promise((resolve, reject) => {
+  const existingUpload = fileUploadStore.get(uploadId);
+  if (existingUpload) {
+   resolve(existingUpload);
+   return;
+  }
 
- const op = retry.operation({
-  retries: 3,
-  factor: 1.5,
-  minTimeout: 1000,
-  maxTimeout: 3000,
- });
+  let acc = get(active_account);
 
- op.attempt(() => {
-  sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
-   if (res.error !== false) {
-    op.retry(res);
-    return;
-   }
+  const op = retry.operation({
+   retries: 3,
+   factor: 1.5,
+   minTimeout: 1000,
+   maxTimeout: 3000,
+  });
 
-   const { record, uploadData } = res.data;
-   const upload = makeFileUpload({
-    ...uploadData,
-    file: null,
-    record,
-    chunksSent: [],
-    uploadInterval: null,
-    acc,
+  op.attempt(() => {
+   sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
+    if (res.error !== 0) {
+     const willRetry = op.retry(res);
+     if (!willRetry) {
+      reject(res);
+     }
+     return;
+    }
+
+    const { record, uploadData } = res.data;
+    const upload = makeFileUpload({
+     ...uploadData,
+     file: null,
+     record,
+     chunksSent: [],
+     uploadInterval: null,
+     acc,
+    });
+    fileUploadStore.set(uploadId, upload);
+
+    resolve(upload);
    });
-
-   fileUploadStore.set(uploadId, upload);
   });
  });
 }
@@ -745,7 +785,20 @@ export function ensureConversationDetails(conversation) {
  });
 }
 
+DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
+ console.log('node.tagName', node.tagName);
+ if (node.tagName === 'IMAGED') {
+  if (data.attrName === 'file' && data.attrValue.startsWith('yellow:')) {
+   console.log('yee', data);
+   data.forceKeepAttr = true;
+  }
+ }
+});
+
 DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+ if (node.tagName === 'IMAGED') {
+  console.log('node 2', node);
+ }
  if (node.tagName === 'A') {
   node.setAttribute('target', '_blank');
   node.setAttribute('rel', 'noopener noreferrer');
@@ -765,7 +818,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  }
 });
 
-const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper'];
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged'];
 
 export function saneHtml(content) {
  //console.log('saneHtml:');
@@ -796,8 +849,8 @@ export function processMessage(message) {
  if (message.format === 'html') {
   html = saneHtml(message.message);
 
-  // wrap consecutive Attachment elements in an AttachmentsWrapper element
   wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
+  wrapConsecutiveElements(html, 'Imaged', 'ImagesWrapper', 1);
  } else {
   let text = preprocess_incoming_plaintext_message_text(message.message);
   //console.log('text:', text);
