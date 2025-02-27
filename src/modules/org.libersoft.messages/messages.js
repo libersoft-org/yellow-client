@@ -544,13 +544,13 @@ export function sendMessage(text, format) {
 
 async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
  let outgoing_message_id = await messages_db.outgoing.add({ account: acc.id, data: params });
- console.log('saveAndSendOutgoingMessage saved message:', message.uid);
+ //console.log('saveAndSendOutgoingMessage saved message:', message.uid);
  sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id);
 }
 
 function sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id) {
  sendData(acc, null, 'message_send', params, true, (req, res) => {
-  console.log('sendOutgoingMessage res', res);
+  //console.log('sendOutgoingMessage res', res);
   if (res.error !== false) {
    return;
   }

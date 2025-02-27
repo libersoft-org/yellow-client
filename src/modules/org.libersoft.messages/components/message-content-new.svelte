@@ -1,7 +1,12 @@
 <script>
  import { componentMap } from '../message-content.ts';
+ import { onMount } from 'svelte';
 
  export let rootNode;
+
+ onMount(() => {
+  //console.log('rootNode:', rootNode);
+ });
 
  // Recursive function to render nodes
  function renderNode(node, parentNode = null, level = 0) {

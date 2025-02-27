@@ -41,8 +41,17 @@
  let thisWasAScroll;
  let touchX;
  let touchY;
+ let messageContent;
 
- $: messageContent = processMessage(message);
+ $: update(message);
+ // console.log('updated message:', message);
+ function update(message) {
+  if (messageContent) return;
+  //  console.log('update message:', message);
+  messageContent = processMessage(message);
+ }
+
+ //$: console.log('messageContent:', messageContent);
  $: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
  $: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
  $: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
@@ -168,7 +177,7 @@
  }
 */
  onMount(() => {
-  //console.log('onMount message:', message);
+  console.log('onMount message:', message);
   /*configurePassive();
   window.addEventListener('touchmove', e => {
    //if (thisWasASwipe)

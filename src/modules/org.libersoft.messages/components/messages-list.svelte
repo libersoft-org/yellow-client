@@ -122,7 +122,7 @@
 
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-  console.log('SCROLLTOBOTTOM');
+  //console.log('SCROLLTOBOTTOM');
   if (elMessages) elMessages.scrollTop = elMessages.scrollHeight;
  }
 
@@ -215,6 +215,7 @@
    }
   }
   if (activatedCount > 0) {
+   console.log('activatedCount:', activatedCount, 'itemsArray');
    itemsArray = itemsArray;
    for (let i = 0; i < itemsArray.length; i++) itemsArray[i] = itemsArray[i];
   }
@@ -262,6 +263,7 @@
  async function handleEvents(events) {
   //console.log('handleEvents:', events);
   if (events.length === 1 && events[0].type === 'properties_update') {
+   console.log('properties_update itemsArray');
    itemsArray = itemsArray;
    return;
   }
@@ -283,10 +285,12 @@
    if (messages.length === 1 && messages[0].type === 'initial_loading_placeholder') {
     loaders = [];
     holes = [];
+    console.log('handleEvents: initial_loading_placeholder itemsArray');
     itemsArray = messages;
     return;
    }
    if (messages.length === 0) {
+    console.log('handleEvents: no messages itemsArray');
     itemsArray = [{ type: 'no_messages' }];
     return;
    }
@@ -344,6 +348,7 @@
     event.loaders.push(l);
     items.push(l);
    }
+   console.log('handleEvents: itemsArray updated');
    itemsArray = items;
   }
  }
