@@ -9,7 +9,7 @@
  import Button from '../../../core/components/button.svelte';
  import ModalStickerServers from './modal-sticker-servers.svelte';
  import ModalGifServers from './modal-gif-servers.svelte';
- import { stickers_db } from '../db.js';
+ import { stickers_db } from '../db.ts';
 
  let isModalStickerServersOpen = false;
  let isModalGifServersOpen = false;
