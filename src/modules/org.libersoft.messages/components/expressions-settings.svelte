@@ -10,7 +10,6 @@
  import ModalStickerServers from './modal-sticker-servers.svelte';
  import ModalGifServers from './modal-gif-servers.svelte';
  import { stickers_db } from '../db.ts';
-
  let isModalStickerServersOpen = false;
  let isModalGifServersOpen = false;
  let showAsVector = $expressions_renderer === 'svg';
