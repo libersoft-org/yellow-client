@@ -154,6 +154,10 @@
   });
  }
 
+ function onCloseModule() {
+  selected_module_id.set(null);
+ }
+
  function startResizeSideBar() {
   console.log('startResizeSideBar');
   isResizingSideBar = true;
@@ -270,7 +274,7 @@
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
   <MenuBar bind:isMenuOpen />
   <AccountBar />
-  <ModuleBar {onSelectModule} />
+  <ModuleBar {onSelectModule} {onCloseModule} />
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.sidebar} />
   {:else if selectedModuleDecl}

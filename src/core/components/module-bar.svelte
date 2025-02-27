@@ -1,10 +1,11 @@
 <script>
- import { active_account, order, module_decls } from '../core.js';
+ import { active_account, order, module_decls, selected_module_id } from '../core.js';
  import { get } from 'svelte/store';
  import BaseButton from './base-button.svelte';
  import ModuleBarItem from './module-bar-item.svelte';
 
  export let onSelectModule;
+ export let onCloseModule;
  let module_data;
  let lastModuleSelected = false;
  let expanded = false;
@@ -34,7 +35,8 @@
 
  function clickSetModule(id) {
   console.log('clickSetModule: ' + id);
-  onSelectModule(id);
+  if ($selected_module_id === id) onCloseModule();
+  else onSelectModule(id);
  }
 
  function clickExpand() {
@@ -81,7 +83,7 @@
 <div class="module-bar">
  <div class="items {expanded ? 'expanded' : ''}">
   {#each module_decls_ordered as decl (decl.id)}
-   <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} {decl} {clickSetModule} />
+   <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
   {/each}
  </div>
  <BaseButton onClick={clickExpand}>
