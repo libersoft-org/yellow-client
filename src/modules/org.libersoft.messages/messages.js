@@ -369,7 +369,7 @@ export function loadUploadData(uploadId) {
 
   op.attempt(() => {
    sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
-    if (res.error !== 0) {
+    if (res.error !== false) {
      const willRetry = op.retry(res);
      if (!willRetry) {
       reject(res);
@@ -811,7 +811,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  }
 });
 
-const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged'];
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'picture'];
 
 export function saneHtml(content) {
  //console.log('saneHtml:');
@@ -821,10 +821,10 @@ export function saneHtml(content) {
   ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'], // TODO: fixme, security issue, should only be allowed on the relevant elements
   RETURN_DOM_FRAGMENT: true,
  });
- /*console.log('content:');
+ console.log('content:', content);
  console.log(content);
  console.log('sane:');
- console.log(sane);*/
+ console.log(sane);
  return sane;
 }
 
