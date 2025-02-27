@@ -287,7 +287,7 @@ export const makeDownloadChunkAsyncFn =
  ({ uploadId, offsetBytes, chunkSize }) => {
   return new Promise((resolve, reject) => {
    sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (req, res) => {
-    if (res.error !== 0) {
+    if (res.error !== false) {
      reject();
     }
     console.warn('!!! res', res);
