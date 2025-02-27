@@ -1,13 +1,13 @@
 <script lang="ts">
  interface Props {
-  src: string
-  alt: string
-  ratio?: number
+  src: string;
+  alt: string;
+  ratio?: number;
  }
- const {src, alt, ...rest}: Props = $props()
- const ratio = $derived(rest.ratio || 1)
-
+ const { src, alt, ...rest }: Props = $props();
+ const ratio = $derived(rest.ratio || 1);
 </script>
+
 <style>
  .image {
   position: relative;
@@ -38,6 +38,6 @@
 <div class="image" role="img">
  <div style:padding-bottom={ratio * 100 + '%'}></div>
  <div class="image-container">
-  <img src={src} alt={alt} loading="lazy" fetchpriority="auto" aria-hidden="true" draggable="false" />
+  <img {src} {alt} loading="lazy" fetchpriority="auto" aria-hidden="true" draggable="false" />
  </div>
 </div>

@@ -1,9 +1,9 @@
 import Dexie from 'dexie';
 
 export const stickers_db = new Dexie('stickers');
-stickers_db.version(2).stores({
- stickers: 'id, name, stickerset, server, url',
- stickersets: 'id, alias, name, animated, priority, created, server, url',
+stickers_db.version(8).stores({
+ stickers: 'uid++, id, name, stickerset, server, url',
+ stickersets: 'uid++, id, alias, name, animated, priority, server, created, url',
  servers: 'name',
 });
 

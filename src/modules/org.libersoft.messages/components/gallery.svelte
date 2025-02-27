@@ -2,7 +2,7 @@
  import { identifier, showGallery, galleryFile } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Button from '../../../core/components/button.svelte';
- import { assembleFile } from "../fileUpload/utils.ts";
+ import { assembleFile } from '../fileUpload/utils.ts';
 
  function download() {
   assembleFile($galleryFile.url, $galleryFile.fileName);

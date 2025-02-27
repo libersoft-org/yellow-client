@@ -9,7 +9,7 @@
  import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
  import fileUploadStore from '../fileUpload/fileUploadStore.ts';
  import { humanSize } from '../../../core/utils/file.utils.js';
- import { assembleFile } from "../fileUpload/utils.ts";
+ import { assembleFile } from '../fileUpload/utils.ts';
 
  //let { node, level, num_siblings } = $props();
  let { node } = $props();
@@ -37,8 +37,8 @@
  });
 
  function onDownload() {
-  downloadAttachmentsSerial([$upload.record], (download) => {
-   assembleFile(new Blob(download.chunksReceived, {type: download.record.fileMimeType}), download.record.fileOriginalName);
+  downloadAttachmentsSerial([$upload.record], download => {
+   assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
   });
  }
 

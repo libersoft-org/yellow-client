@@ -1,8 +1,12 @@
 <script>
  import { componentMap } from '../message-content.ts';
- import { onMount } from "svelte";
+ import { onMount } from 'svelte';
 
  export let rootNode;
+
+ onMount(() => {
+  //console.log('rootNode:', rootNode);
+ });
 
  // Recursive function to render nodes
  function renderNode(node, parentNode = null, level = 0) {
@@ -14,7 +18,7 @@
    return {
     text: node.textContent,
     level,
-    tagUniqueId
+    tagUniqueId,
    };
   }
 
@@ -24,7 +28,6 @@
    const componentName = node.tagName.toLowerCase();
 
    if (componentMap[componentName]) {
-
     // Dynamically import and render custom component
     return {
      tagUniqueId,
@@ -33,7 +36,7 @@
       ...getNodeProps(node),
       node,
       num_siblings: parentNode && parentNode.childNodes ? parentNode.childNodes.length : 0,
-      level
+      level,
      },
      children: Array.from(node.childNodes)
       .map(n => renderNode(n, node, level + 1))
@@ -108,6 +111,6 @@
      <svelte:self rootNode={child} />
     {/each}
    </svelte:element>
-   {/key}
+  {/key}
  {/if}
 {/each}

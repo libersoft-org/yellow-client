@@ -18,10 +18,10 @@
   settings: Settings,
  };
 
- async function setCategory(e, name) {
+ export async function setCategory(e, name) {
   expression = name;
-  e.stopPropagation();
-  e.preventDefault();
+  e?.stopPropagation();
+  e?.preventDefault();
   await currentTabOnShow();
  }
 

@@ -60,8 +60,8 @@
   if (e.button === 1) {
    return;
   }
-  e.preventDefault();
-  e.stopPropagation();
+  e.preventDefault?.();
+  e.stopPropagation?.();
   console.log('context-menu openMenu type:', e.type);
   //if (e.type === 'contextmenu') return;
 
@@ -76,12 +76,12 @@
 
   //console.log('context-menu close other menus:', menus);
   let ancestors = getAncestors();
-  console.log('ancestors:', ancestors);
-  console.log('menus:', menus);
+  //console.log('ancestors:', ancestors);
+  //console.log('menus:', menus);
   for (let menu of Array.from(menus)) {
-   console.log('menu:', menu);
+   //console.log('menu:', menu);
    if (!ancestors.find(a => a === menu.guid)) {
-    console.log('closing menu:', menu);
+    //console.log('closing menu:', menu);
     menu.close();
    }
   }

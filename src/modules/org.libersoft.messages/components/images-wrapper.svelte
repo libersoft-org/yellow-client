@@ -4,8 +4,7 @@
  let { children, node } = $props();
  const childrenLength = node?.childNodes.length || 0;
 
- onMount(() => {
- });
+ onMount(() => {});
 </script>
 
 <style>
@@ -32,12 +31,11 @@
   object-position: 50% 50%;
  }
  @container (max-width: 300px) {
-
  }
 </style>
 
 <div class="images-wrap">
- <div class="images" data-children-length="{childrenLength}">
+ <div class="images" data-children-length={childrenLength}>
   {@render children?.()}
  </div>
 </div>

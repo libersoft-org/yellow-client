@@ -13,6 +13,7 @@ export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 export let modules_order = localStorageSharedStore('modules_order', {});
+export let modules_disabled = localStorageSharedStore('modules_disabled', []);
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
 
 debug.subscribe(value => {
@@ -46,8 +47,12 @@ selected_module_id.subscribe(async id => {
 });
 
 export function registerModule(id, decl) {
- let ordering = get(modules_order);
  console.log('REGISTER MODULE:', id, decl);
+ if (get(modules_disabled).indexOf(id) !== -1) {
+  console.log('Module disabled:', id);
+  return;
+ }
+ let ordering = get(modules_order);
  if (ordering[id] !== undefined) {
   decl.order = ordering[id];
  }

@@ -52,11 +52,11 @@
    loading = true;
    let x = stickers_db.stickersets;
    //console.log('x:', x);
-   void 'x is now a dexie Table. We have one shot at ordering or filtering it at the db level: https://dexie.org/docs/Dexie/Dexie.[table]';
+   void 'x is now a dexie Table. We have one shot at ordering or filtering it at db level: https://dexie.org/docs/Dexie/Dexie.[table]';
    x = x.orderBy('id');
    void "x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection";
    x = x.filter(item => item.server == server);
-   maybe_trigger_update(await x.count());
+   maybe_trigger_auto_update(await x.count());
    x = x.filter(item => animated_filter.includes(item.animated ? 1 : 0));
    if (stickerset_favorites) x = x.filter(item => stickerset_favorites.includes(item.url));
    x = await x.toArray();
@@ -77,11 +77,12 @@
 
  //$effect(() => console.log('Stickers.svelte items $effect:', $items));
 
- async function maybe_trigger_update(count) {
+ async function maybe_trigger_auto_update(count) {
   if (count === 0) {
    console.log('No items found');
-   let state = get(stickerLibraryUpdaterState);
-   if (state.updating || state.updated_once) return;
+   let state = window.stickerLibraryUpdaterState;
+   console.log('state:', state);
+   if (state.updated_once) return;
    await updateStickerLibrary();
   }
  }

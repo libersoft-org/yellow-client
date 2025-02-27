@@ -584,13 +584,13 @@ export function sendMessage(text, format) {
 
 async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
  let outgoing_message_id = await messages_db.outgoing.add({ account: acc.id, data: params });
- console.log('saveAndSendOutgoingMessage saved message:', message.uid);
+ //console.log('saveAndSendOutgoingMessage saved message:', message.uid);
  sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id);
 }
 
 function sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id) {
  sendData(acc, null, 'message_send', params, true, (req, res) => {
-  console.log('sendOutgoingMessage res', res);
+  //console.log('sendOutgoingMessage res', res);
   if (res.error !== false) {
    return;
   }
@@ -659,6 +659,13 @@ export function startReply(message) {
  message.reply = { text: 'funny.' };
  messagesArray.update(v => v);
  insertEvent({ type: 'properties_update', array: get(messagesArray) });
+}
+
+export function jumpToMessage(acc, address, uid) {
+ loadMessages(acc, address, 'uid:' + uid, 3, 3, 'load_referenced_message', res => {
+  const message = get(messagesArray).find(m => m.uid === uid);
+  insertEvent({ type: 'jump_to_referenced_message', array: get(messagesArray), referenced_message: message });
+ });
 }
 
 export function insertEvent(event) {

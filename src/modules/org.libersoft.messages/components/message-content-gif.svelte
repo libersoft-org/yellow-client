@@ -1,6 +1,15 @@
 <script>
+ import BaseButton from '../../../core/components/base-button.svelte';
+ import { getContext } from 'svelte';
+
  let { node } = $props();
  let v = node.attributes.file?.value;
+
+ let messages_context = getContext('MessagesContext');
+
+ async function openExpressions() {
+  await messages_context.messageBar?.openExpressions('gifs');
+ }
 </script>
 
 <style>
@@ -13,7 +22,9 @@
 
 {#if v}
  <div class="gif">
-  <img src={v} alt="GIF" />
+  <BaseButton onClick={openExpressions}>
+   <img src={v} alt="GIF" />
+  </BaseButton>
  </div>
 {:else}
  error

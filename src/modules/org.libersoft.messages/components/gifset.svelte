@@ -8,6 +8,7 @@
  import { isMobile } from '../../../core/core.js';
  import Spinner from '../../../core/components/spinner.svelte';
  import { gif_server } from '../gifs.js';
+ import LazyLoader from '../../../core/components/lazy-loader.svelte';
 
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');
@@ -22,25 +23,33 @@
  let last_query;
  let next_pos;
 
- onMount(() => {
+ export function onShow() {
   if (!get(isMobile)) {
+   console.log('Focus search text');
    elSearchText.focus();
   }
+ }
+
+ onMount(() => {
+  onShow();
  });
 
  async function searchGifs() {
+  gifs = [];
   await getGifs(query);
  }
 
  async function moreGifs() {
+  console.log('More GIFS!');
   await getGifs(null, next_pos);
  }
 
  async function getGifs(_query, _next_pos) {
   if (_query) last_query = _query;
   else _query = last_query;
-  const server_val = get(gif_server);
-  let url = `${server_val}/search?q=${encodeURIComponent(last_query)}&limit=12`;
+  let server_val = get(gif_server);
+  server_val = server_val.endsWith('/') ? server_val.slice(0, -1) : server_val;
+  let url = `${server_val}/api/search?q=${encodeURIComponent(last_query)}&limit=12`;
   if (_next_pos) {
    url += '&pos=' + _next_pos;
   }
@@ -55,10 +64,14 @@
    } else {
     query_done = true;
     const data = (await response.json()).data;
-    gifs = data?.results;
-    if (data?.next) {
-     next_pos = data.next;
-     console.log('Next pos:', next_pos);
+    if (!data?.results) {
+     error = 'Invalid response from server.';
+    } else {
+     gifs = gifs.concat(data.results);
+     if (data?.next) {
+      next_pos = data.next;
+      console.log('Next pos:', next_pos);
+     }
     }
    }
   } catch (err) {
@@ -131,6 +144,8 @@
  }
 </style>
 
+<!--{JSON.stringify(gifs)}-->
+
 <div class="gifset">
  <div class="top-bar">
   <div class="group">
@@ -142,7 +157,7 @@
   <div>{error}</div>
  {:else}
   <div class="results">
-   {#if loading}
+   {#if loading && gifs.length === 0}
     <Spinner />
    {:else if gifs.length === 0 && query_done}
     <div>No GIFs found.</div>
@@ -155,8 +170,9 @@
      </BaseButton>
     {/each}
     {#if next_pos}
-     <Button text="Load more" onClick={moreGifs}>More...</Button>
+     <LazyLoader onVisible={moreGifs} />
     {/if}
+    Powered By Tenor.
    {/if}
   </div>
  {/if}

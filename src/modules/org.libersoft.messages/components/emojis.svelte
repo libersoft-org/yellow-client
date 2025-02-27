@@ -1,5 +1,5 @@
 <script>
- import { debug, active_account } from '../../../core/core.js';
+ import { debug, active_account, isMobile } from '../../../core/core.js';
  import { getContext, onMount } from 'svelte';
  import { get } from 'svelte/store';
  import { identifier } from '../messages.js';
@@ -42,7 +42,9 @@
 
  export function onShow() {
   console.log('emojis onShow');
-  elContainer?.focus();
+  if (!get(isMobile)) {
+   elSearchInput?.focus?.();
+  }
   if ($emojiGroups.length === 0) {
    start_emojisets_fetch(get(active_account), emojisLoading, emojiGroups, emojisByCodepointsRgi);
   }

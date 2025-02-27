@@ -20,6 +20,7 @@
  let elMessage;
  let elMessageBar;
  let text;
+ let expressions;
  let showHTMLModal = false;
  let expressionsHeight = '500px';
  let expressionsBottomSheetOpen = false;
@@ -60,6 +61,20 @@
    resizeMessage();
   },
  });
+
+ export async function openExpressions(tab) {
+  console.log('openExpressions', tab);
+  if (expressionsAsContextMenu) {
+   console.log('openExpressions as context menu:', expressionsMenu);
+   console.log('elExpressions.offsetLeft:', elExpressions.offsetLeft, 'elExpressions.offsetTop:', elExpressions.offsetTop, 'elExpressions.offsetWidth:', elExpressions.offsetWidth, 'elExpressions.offsetHeight:', elExpressions.offsetHeight);
+   expressionsMenu?.openMenu({ x: elExpressions.getBoundingClientRect().x, y: 0 });
+  } else {
+   expressionsBottomSheetOpen = true;
+  }
+  await tick();
+  console.log('elExpressions:', elExpressions);
+  await expressions?.setCategory(null, tab);
+ }
 
  export async function insertText(text) {
   /* insert text at the current cursor position */
@@ -248,7 +263,7 @@
 
 {#if expressionsAsContextMenu}
  <ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
-  <Expressions height={expressionsHeight} />
+  <Expressions bind:this={expressions} height={expressionsHeight} />
  </ContextMenu>
 {/if}
 
@@ -273,6 +288,6 @@
 
 {#if !expressionsAsContextMenu && expressionsBottomSheetOpen}
  <div class="bottom-sheet" style="height: {expressionsHeight};" bind:this={elBottomSheet}>
-  <Expressions height={expressionsHeight} isBottomSheet={true} />
+  <Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet={true} />
  </div>
 {/if}
