@@ -87,7 +87,7 @@ import.meta.hot?.dispose(() => {
 });
 
 export function findAccount(id) {
- return get(accounts).find(acc => get(acc).id === id);
+ return get(accounts).find(account => get(account).id === id);
 }
 
 /* fire off whenever accounts array or active_account_id changes */
@@ -614,6 +614,14 @@ export function getGuid(length = 40) {
  let result = '';
  while (result.length < length) result += Math.random().toString(36);
  return result;
+}
+
+export function sendAsync(acc, account, target, command, params = {}, sendSessionID = true, quiet = false) {
+ return new Promise((resolve, reject) => {
+  send(acc, account, target, command, params, sendSessionID, (req, res) => {
+   resolve(res);
+  });
+ });
 }
 
 export function send(acc, account, target, command, params = {}, sendSessionID = true, callback = null, quiet = false) {

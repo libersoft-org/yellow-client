@@ -1,14 +1,43 @@
 <script>
+ import { accounts, findAccount, sendAsync } from '../../../core/core.js';
+
  //let url = 'https://yellow-module1.netlify.app/'
  let url = 'http://localhost:5173/';
-
+ let module_id = 'org.libersoft.messages2';
  let iframe;
 
  // Listener in the parent window to relay messages between iframes
- window.addEventListener('message', event => {
+ window.addEventListener('message', async event => {
   //if (event.origin !== window.location.origin) return; // Validate origin
-  iframe?.contentWindow.postMessage({ response: 'pong from parent', data: event.data }, '*'); //iframe.contentWindow.location.origin);
+  if (event.origin !== 'null') return;
+  if (event.source !== iframe.contentWindow) return;
+  iframe?.contentWindow.postMessage(await processUserModuleMessage(event.data), '*');
+  //iframe.contentWindow.location.origin);
  });
+
+ async function processUserModuleMessage(data) {
+  console.log('processUserModuleMessage: ', data);
+  if (data.type === 'server_command') {
+   return await serverCommand(data);
+  } else if (data.type === 'list_accounts') {
+   let res = [];
+   for (let account of get(accounts)) {
+    let acc = get(account);
+    if (acc.modules_enabled.find(m => m === module_id) !== -1) {
+     res.push(acc);
+    }
+   }
+   return res;
+  }
+ }
+
+ async function serverCommand(data) {
+  console.log('serverCommand: ', data);
+  let account = findAccount(data.account);
+  if (!account) return { error: 'Account not found' };
+  let acc = get(account);
+  return await sendAsync(acc, null, module_id, data.command, data.params);
+ }
 </script>
 
 <style>
