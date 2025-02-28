@@ -59,7 +59,6 @@
   padding: 5px;
   overflow: hidden;
   flex-wrap: wrap;
-  height: 40px;
  }
 
  .items.expanded {
