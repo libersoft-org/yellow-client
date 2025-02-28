@@ -19,12 +19,12 @@
 
  .item:hover {
   background-color: #fef3c3;
-  transition: background-color 1s;
+  transition: background-color 0.5s linear;
  }
 
  .item.active {
   background-color: #fd5;
-  transition: background-color 1s;
+  transition: background-color 0.5s linear;
  }
 
  .item .item-row {
