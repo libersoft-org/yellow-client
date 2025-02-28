@@ -1,5 +1,5 @@
 <script>
- import { debug, findAccount, selected_corepage_id, accounts_config, accounts, hideSidebarMobile } from '../core.js';
+ import { debug, findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '../core.js';
  import Button from '../components/button.svelte';
  import ActionItems from '../components/table-actionitems.svelte';
  import Item from '../components/icon.svelte';
@@ -15,7 +15,6 @@
  import ModalAccountsDel from '../modals/accounts-del.svelte';
  import ModalExport from '../modals/accounts-export.svelte';
  import ModalImport from '../modals/accounts-import.svelte';
- import { get } from 'svelte/store';
  import AccountStatusIconAndText from '../components/account-status-icon-and-text.svelte';
  let showAddEditAccountModal = false;
  let showDelAccountModal = false;
@@ -45,17 +44,12 @@
   showDelAccountModal = true;
  }
 
- function accountsConfigExport() {
-  window.alert(JSON.stringify(get(accounts_config), null, 2));
-  console.log(JSON.stringify(get(accounts).map(get), null, 2));
+ function clickExport() {
+  showExportModal = true;
  }
 
- function accountsConfigImport() {
-  let text = window.prompt('Paste the exported JSON here:', '');
-  if (text) {
-   let data = JSON.parse(text);
-   accounts_config.set(data);
-  }
+ function clickImport() {
+  showImportModal = true;
  }
 </script>
 
@@ -84,8 +78,8 @@
  <div class="buttons">
   <Button img="img/back.svg" text="Back" onClick={back} hiddenOnDesktop={true} />
   <Button img="img/accounts-black.svg" text="Add a new account" onClick={addAccountModal} />
-  <Button text="Export" onClick={accountsConfigExport} />
-  <Button text="Import" onClick={accountsConfigImport} />
+  <Button text="Export" onClick={clickExport} />
+  <Button text="Import" onClick={clickImport} />
  </div>
  <div class="table">
   <Table>
