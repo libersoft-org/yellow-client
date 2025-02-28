@@ -76,49 +76,7 @@ modules_order.subscribe(value => {
 
 export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
 
-let default_accounts = [];
-if (import.meta.env.VITE_AMTP_SERVER_WS_URL) {
- default_accounts = [
-  {
-   id: 1,
-   settings: {
-    title: 'Account 1',
-   },
-   enabled: true,
-   credentials: {
-    server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-    address: 'user@example.com',
-    password: '123456789',
-   },
-  },
-  {
-   id: 2,
-   settings: {
-    title: 'Account 2',
-   },
-   enabled: true,
-   credentials: {
-    server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-    address: 'user2@example2.com',
-    password: '123456789',
-   },
-  },
-  {
-   id: 3,
-   settings: {
-    title: 'Account 3',
-   },
-   enabled: false,
-   credentials: {
-    server: import.meta.env.VITE_AMTP_SERVER_WS_URL || '',
-    address: 'user3@example3.com',
-    password: '123456789',
-   },
-  },
- ];
-}
-
-export const accounts_config = localStorageSharedStore('accounts_config', default_accounts);
+export const accounts_config = localStorageSharedStore('accounts_config', import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS ? JSON.parse(import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS) : []);
 
 export let accounts = writable([]);
 
