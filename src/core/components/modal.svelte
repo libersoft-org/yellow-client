@@ -111,6 +111,7 @@
   border: 1px solid #000;
   border-radius: 10px;
   box-shadow: var(--shadow);
+  background-color: #fff;
  }
 
  .modal .header {
@@ -143,6 +144,15 @@
   overflow-y: auto;
   background-color: #fff;
   color: #000;
+ }
+
+ @media (max-width: 768px) {
+  .modal {
+   width: 100%;
+   height: 100%;
+   border: 0px;
+   border-radius: 0px;
+  }
  }
 </style>
 
