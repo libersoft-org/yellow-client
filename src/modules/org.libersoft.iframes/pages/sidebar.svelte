@@ -1,5 +1,5 @@
 <script>
- let url = 'https://www.example.com';
+ let url = 'https://koo5.github.io/';
 </script>
 
-<iframe src={url} title="sidebar" style="border:none;"></iframe>
+<iframe sandbox="allow-scripts" src={url} title="sidebar" style="border:none; height: 100%; x-scroll: none; width: 100%; overflow: hidden;"> </iframe>
