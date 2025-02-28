@@ -112,8 +112,19 @@
   border-radius: 10px;
   box-shadow: var(--shadow);
   background-color: #fff;
+  /* TODO: this works, but it affects initial position */
+  /*animation: modalAppear 0.2s ease-out;*/
  }
-
+ /*
+ @keyframes modalAppear {
+  from {
+   transform: scale(0);
+  }
+  to {
+   transform: scale(1);
+  }
+ }
+*/
  .modal .header {
   display: flex;
   align-items: center;
