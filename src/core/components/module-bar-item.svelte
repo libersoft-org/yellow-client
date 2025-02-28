@@ -11,7 +11,7 @@
  .item {
   position: relative;
   border-radius: 10px;
-  transition: background-color 0.5s;
+  transition: background-color 0.3s linear;
  }
 
  .item.selected {
