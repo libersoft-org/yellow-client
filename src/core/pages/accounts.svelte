@@ -13,10 +13,14 @@
  import Modal from '../components/modal.svelte';
  import ModalAccountsAddEdit from '../modals/accounts-add-edit.svelte';
  import ModalAccountsDel from '../modals/accounts-del.svelte';
+ import ModalExport from '../modals/accounts-export.svelte';
+ import ModalImport from '../modals/accounts-import.svelte';
  import { get } from 'svelte/store';
  import AccountStatusIconAndText from '../components/account-status-icon-and-text.svelte';
  let showAddEditAccountModal = false;
  let showDelAccountModal = false;
+ let showExportModal = false;
+ let showImportModal = false;
  let idItem = null;
  let accountTitle = '';
 
@@ -123,3 +127,5 @@
 </div>
 <Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem }} bind:show={showAddEditAccountModal} />
 <Modal title="Delete the account" body={ModalAccountsDel} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
+<Modal title="Export all accounts" body={ModalExport} bind:show={showExportModal} />
+<Modal title="Import accounts" body={ModalImport} bind:show={showImportModal} />
