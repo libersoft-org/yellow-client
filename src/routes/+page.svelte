@@ -130,9 +130,9 @@
  });
 
  function setupIframeListener() {
-  window.addEventListener('message', event => {
-   console.log('event.data: ', event.data);
-  });
+  // window.addEventListener('message', event => {
+  //  console.log('event.data: ', event.data);
+  // });
  }
 
  function onSelectModule(id) {

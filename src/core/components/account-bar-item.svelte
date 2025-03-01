@@ -40,6 +40,7 @@
   {#if $debug}
    <small>
     <ul>
+     <li>id: {$a.id}</li>
      <li>enabled: {$a.enabled}</li>
      <li>error: {$a.error}</li>
      <li>status: {$a.status}</li>

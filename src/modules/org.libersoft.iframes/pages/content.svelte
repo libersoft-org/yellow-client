@@ -1,18 +1,31 @@
 <script>
  import { accounts, findAccount, sendAsync } from '../../../core/core.js';
+ import { get } from 'svelte/store';
+ import { onMount } from 'svelte';
 
  //let url = 'https://yellow-module1.netlify.app/'
  let url = 'http://localhost:5173/';
  let module_id = 'org.libersoft.messages2';
  let iframe;
 
- // Listener in the parent window to relay messages between iframes
- window.addEventListener('message', async event => {
-  //if (event.origin !== window.location.origin) return; // Validate origin
-  if (event.origin !== 'null') return;
-  if (event.source !== iframe.contentWindow) return;
-  iframe?.contentWindow.postMessage(await processUserModuleMessage(event.data), '*');
-  //iframe.contentWindow.location.origin);
+ onMount(() => {
+  console.log('onMount');
+  window.addEventListener('message', async event => {
+   console.log('parent received message: ', event);
+   //if (event.origin !== window.location.origin) return; // Validate origin
+   //if (event.origin !== 'null') return;
+   //if (event.source !== iframe) return;
+
+   //iframe?.contentWindow.postMessage(await processUserModuleMessage(event.data), '*');
+   event.source.postMessage(await processUserModuleMessage(event.data), '*');
+   //iframe.contentWindow.location.origin);
+  });
+
+  // setInterval(() => {
+  //  console.log('setInterval');
+  //  iframe?.contentWindow.postMessage({ type: 'ping' }, '*');
+  //  //window.postMessage({ type: 'ping' }, '*');
+  // }, 500);
  });
 
  async function processUserModuleMessage(data) {
