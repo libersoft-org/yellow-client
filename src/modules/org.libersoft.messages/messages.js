@@ -31,6 +31,7 @@ export let emojisLoading = relay(md, 'emojisLoading');
 export let showGallery = relay(md, 'showGallery');
 export let galleryFile = relay(md, 'galleryFile');
 
+
 class Message {
  constructor(acc, data) {
   Object.assign(this, data);
@@ -290,7 +291,6 @@ export const makeDownloadChunkAsyncFn =
     if (res.error !== 0) {
      reject();
     }
-    console.warn('!!! res', res);
     resolve({
      chunk: {
       chunkId: res.chunk.chunkId,
@@ -779,10 +779,8 @@ export function ensureConversationDetails(conversation) {
 }
 
 DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
- console.log('node.tagName', node.tagName);
  if (node.tagName === 'IMAGED') {
   if (data.attrName === 'file' && data.attrValue.startsWith('yellow:')) {
-   console.log('yee', data);
    data.forceKeepAttr = true;
   }
  }
@@ -790,7 +788,7 @@ DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
 
 DOMPurify.addHook('afterSanitizeAttributes', function (node) {
  if (node.tagName === 'IMAGED') {
-  console.log('node 2', node);
+  // console.log('node 2', node);
  }
  if (node.tagName === 'A') {
   node.setAttribute('target', '_blank');
@@ -821,10 +819,12 @@ export function saneHtml(content) {
   ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'], // TODO: fixme, security issue, should only be allowed on the relevant elements
   RETURN_DOM_FRAGMENT: true,
  });
+ /*
  console.log('content:', content);
  console.log(content);
  console.log('sane:');
  console.log(sane);
+ */
  return sane;
 }
 

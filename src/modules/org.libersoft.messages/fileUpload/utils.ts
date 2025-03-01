@@ -61,6 +61,7 @@ export function assembleFile(file: string | Blob, fileName: string) {
  const downloadLink = document.createElement('a');
  downloadLink.href = file instanceof Blob ? URL.createObjectURL(file) : file;
  downloadLink.download = fileName;
+ downloadLink.target = '_blank';
  downloadLink.style.display = 'none';
 
  document.body.appendChild(downloadLink);

@@ -12,6 +12,7 @@
  import { online, messagesArray, events, insertEvent, identifier } from '../messages.js';
  import { get } from 'svelte/store';
  import Icon from '../../../core/components/icon.svelte';
+ import resize from "../../../core/actions/resizeObserver.ts";
  export let conversation;
  export let setBarFocus;
 
@@ -414,6 +415,13 @@
   setFileUploadModal(true);
   $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
  }
+
+ let wrapperWidth = null;
+ const onResize = (entry) => {
+  console.log('entry', entry);
+  wrapperWidth = entry.contentRect.width;
+ }
+ $: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
 </script>
 
 <style>
@@ -426,6 +434,8 @@
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+  container-type: inline-size;
+  container-name: messages-list;
  }
 
  .messages {
@@ -547,7 +557,7 @@
 
 <svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
 
-<div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone">
+<div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone" use:resize={onResize}>
  <div class="dnd-overlay {showFileDndOverlay ? 'drop-active' : ''}">
   <div class="dnd-overlay-inner">
    <Icon img="modules/{identifier}/img/file-white.svg" alt="Drop files icon" size="75" padding="0" />
