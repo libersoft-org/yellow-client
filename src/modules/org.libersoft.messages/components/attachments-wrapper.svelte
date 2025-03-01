@@ -84,7 +84,11 @@
 
 <div class="attachments-wrap" bind:this={ref}>
  <div class="attachments">
-  {@render children?.()}
+  {#each children as child (child.tagUniqueId)}
+   {#if child.component}
+    <svelte:component this={child.component} {...child.props} />
+   {/if}
+  {/each}
  </div>
  {#if showBulkDownloadAction}
   <div class="actions">

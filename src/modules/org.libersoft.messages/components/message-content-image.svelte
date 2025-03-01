@@ -1,18 +1,17 @@
 <script>
- import { onDestroy, onMount } from 'svelte';
+
+ import { onMount } from 'svelte';
  import filesService from '../fileUpload/Files.service.ts';
  import ImageAspectRatio from './image-aspect-ratio.svelte';
  import MessageContentAttachment from './message-content-attachment.svelte';
- import { galleryFile, showGallery } from '../messages.js';
  import { LocalFileStatus } from '../localDB/files.localDB.ts';
- import { liveQuery } from 'dexie';
  import Spinner from '../../../core/components/spinner.svelte';
  import { writable } from 'svelte/store';
- import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
  import { FileUploadRecordStatus } from '../fileUpload/types.ts';
  import fileUploadStore from '../fileUpload/fileUploadStore.ts';
+ import galleryStore from "../stores/gallery.store.ts";
 
- let { node } = $props();
+ let { node, showHiddenImages, hiddenImages, siblings } = $props();
  let file = node.attributes.file?.value;
 
  const YELLOW_SRC_PROTOCOL = 'yellow:';
@@ -26,12 +25,56 @@
  const upload = writable(null);
  fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 
- function showFullSize() {
-  showGallery.set(true);
-  galleryFile.set({
-   url: imgUrl,
-   fileName: imgFileName,
-  });
+ function makeFilesForGallery () {
+  const filesForGallery = []
+  for (let index = 0; index < siblings.length; index++) {
+   const siblingNode = siblings[index];
+   const fileAttr = siblingNode?.props?.file;
+   const siblingYellowId = fileAttr && fileAttr.startsWith(YELLOW_SRC_PROTOCOL) ? fileAttr.slice(YELLOW_SRC_PROTOCOL.length) : null;
+
+   if (!siblingYellowId) {
+    continue;
+   }
+
+   if (siblingYellowId === yellowId) {
+    filesForGallery.push({
+     id: yellowId,
+     loaded: true,
+     url: imgUrl,
+     fileName: imgFileName
+    })
+   } else {
+    filesForGallery.push({
+     id: siblingYellowId,
+     loaded: false,
+     loadFile: () => new Promise((resolve, reject) => {
+      filesService.getOrDownloadAttachment(siblingYellowId)
+       .then(({localFile}) => {
+        if (localFile.localFileStatus === LocalFileStatus.READY && localFile.fileBlob) {
+         const galleryFile = {
+          id: siblingYellowId,
+          url: URL.createObjectURL(localFile.fileBlob),
+          fileName: localFile.fileOriginalName,
+          loading: false,
+          loaded: true,
+         }
+         resolve(galleryFile)
+        }
+       })
+       .catch(err => {
+        reject(err)
+       });
+     })
+    })
+   }
+  }
+  return filesForGallery
+ }
+
+ function openInGallery() {
+  galleryStore.setFiles(makeFilesForGallery());
+  galleryStore.setShow(true);
+  galleryStore.setCurrentId(yellowId);
  }
 
  function downloadImage() {
@@ -39,10 +82,9 @@
    return;
   }
   loading = true;
-  console.log('starting to fetch image data for yellow id:', yellowId);
-  filesService
-   .getOrDownloadAttachment(yellowId)
-   .then(({ localFile }) => {
+
+  filesService.getOrDownloadAttachment(yellowId)
+   .then(({localFile}) => {
     if (localFile.localFileStatus === LocalFileStatus.READY) {
      imgUrl = URL.createObjectURL(localFile.fileBlob);
      imgFileName = localFile.fileOriginalName;
@@ -62,20 +104,45 @@
  });
 
  onMount(() => {
-  console.log('on mount download', $upload);
   if (isYellow && !$upload) {
    downloadImage();
   }
- });
-
- onDestroy(() => {
-  console.log('DESTROYYYYYYYY');
- });
+ })
 </script>
 
+<div class="message-content-image-wrapper">
+ {#if isYellow}
+  {#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
+   <MessageContentAttachment node={{attributes:{id:{value: yellowId}}}} />
+  {:else}
+   <div class="message-content-image" onclick={openInGallery}>
+    {#if loading}
+     <div class="spinner-wrap">
+      <Spinner show={true} style="min-height: initial;" />
+     </div>
+    {:else}
+     <ImageAspectRatio src={imgUrl} alt={file} />
+     {#if showHiddenImages}
+      <div class="hidden-images">
+       +{hiddenImages.length}
+      </div>
+     {/if}
+    {/if}
+   </div>
+  {/if}
+ {:else}
+  basic image here
+ {/if}
+</div>
+
 <style>
+ .message-content-image-wrapper {
+  --border-radius: 4px;
+  position: relative;
+ }
+
  .message-content-image :global(img) {
-  border-radius: 4px;
+  border-radius: var(--border-radius);
  }
 
  .message-content-image:hover {
@@ -87,30 +154,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 120px;
-  height: 120px;
+  width: var(--image-size);
+  height: var(--image-size);
   background: #ccc;
   opacity: 0.3;
   border-radius: 4px;
  }
-</style>
 
-<div class="message-content-image-wrapper">
- {#if isYellow}
-  {#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
-   <MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
-  {:else}
-   <div class="message-content-image" onclick={showFullSize}>
-    {#if loading}
-     <div class="spinner-wrap">
-      <Spinner show={true} />
-     </div>
-    {:else}
-     <ImageAspectRatio src={imgUrl} alt={file} />
-    {/if}
-   </div>
-  {/if}
- {:else}
-  basic image here
- {/if}
-</div>
+ .hidden-images {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  border-radius: var(--border-radius);
+ }
+</style>
