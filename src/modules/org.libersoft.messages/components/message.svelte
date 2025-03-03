@@ -273,19 +273,36 @@
   border-radius: 10px;
   box-shadow: var(--shadow);
   /* TODO: Maybe not necessary: */
-  transform: translateX(0);
+  /*transform: translateX(0);*/
   will-change: transform;
+  animation: messageAppear 0.3s ease-out;
+ }
+
+ @keyframes messageAppear {
+  from {
+   transform: scale(0);
+   /*transform: translateX(100%);*/
+   /*transform: translateY(100%);*/
+  }
+  to {
+   transform: scale(1);
+   /*transform: translateX(0);*/
+   /*transform: translateY(0);*/
+  }
  }
 
  .message.incoming {
-  background-color: #fef3c3;
   align-self: flex-start;
+  border: 1px solid #aa5;
+  background-color: #fef3c3;
  }
 
  .message.outgoing {
-  background-color: #fefdf7;
   align-self: flex-end;
+  border: 1px solid #aaa;
+  background-color: #fefdf7;
  }
+
  :global(.message .text a) {
   font-weight: bold;
   text-decoration: none;
