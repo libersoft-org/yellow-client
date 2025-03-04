@@ -60,6 +60,11 @@
   if (e.button === 1) {
    return;
   }
+
+  if (e.type === 'touchend') {
+   return;
+  }
+
   e.preventDefault?.();
   e.stopPropagation?.();
   console.log('context-menu openMenu type:', e.type);
