@@ -20,7 +20,6 @@
 </style>
 
 <div class="videos-wrap" bind:this={ref}>
- hello
  <div class="videos">
   {#each children as child (child.tagUniqueId)}
    {#if child.component}

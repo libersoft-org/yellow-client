@@ -5,6 +5,7 @@
  let rowLimit = 2
  let hiddenImages = []
  let siblings = $derived(children.map(child => child))
+ console.log('children', children);
 
  let imagesRows = $derived.by(() => {
    let groups = [];
@@ -90,8 +91,3 @@
  }
 </style>
 
-<div class="images-wrap">
- <div class="images" data-children-length={childrenLength}>
-  {@render children?.()}
- </div>
-</div>
