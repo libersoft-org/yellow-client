@@ -6,8 +6,6 @@
  import { accounts_config } from '../core.js';
 
  function clickDownload(e) {
-  e.preventDefault();
-  e.stopPropagation();
   let blob = new Blob([JSON.stringify($accounts_config, null, 2)], { type: 'application/json' });
   let url = URL.createObjectURL(blob);
   let a = document.createElement('a');

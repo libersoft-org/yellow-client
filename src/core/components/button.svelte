@@ -6,6 +6,7 @@
  export let hiddenOnDesktop = false;
  export let width;
  export let onClick;
+ export let onTouchEnd;
  export let padding = '10px';
 
  function handleClick(e) {
@@ -43,7 +44,7 @@
  }
 </style>
 
-<BaseButton onClick={handleClick}>
+<BaseButton onClick={handleClick} {onTouchEnd}>
  <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'}>
   <slot>
    {#if img}

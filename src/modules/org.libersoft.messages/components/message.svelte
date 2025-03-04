@@ -83,7 +83,7 @@
   longPressTimer = setTimeout(() => {
    if (!moving) {
     thisWasALongPress = true;
-    alert('Long press');
+    console.log('Long press');
    }
   }, 500);
   touchStartX = e.changedTouches[0].clientX;

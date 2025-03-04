@@ -2,6 +2,7 @@
  export let onClick;
  export let onRightClick;
  export let onMousedown;
+ export let onTouchEnd;
 
  function handleKeydown(event) {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -18,6 +19,6 @@
  }
 </style>
 
-<div class="base-button" role="button" tabindex="0" on:click={onClick} on:mousedown={onMousedown} on:keydown={handleKeydown} on:contextmenu={onRightClick}>
+<div class="base-button" role="button" tabindex="0" on:click={onClick} on:mousedown={onMousedown} on:keydown={handleKeydown} on:contextmenu={onRightClick} on:touchend={onTouchEnd}>
  <slot />
 </div>

@@ -36,7 +36,10 @@
   }
  });
 
- function onDownload() {
+ function onDownload(e) {
+  console.log('clickDownload');
+  e.preventDefault();
+  e.stopPropagation();
   downloadAttachmentsSerial([$upload.record], download => {
    assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
   });
@@ -106,28 +109,76 @@
 {#snippet uploadControls()}
  <div class="transfer-controls">
   {#if $upload.record.status === FileUploadRecordStatus.PAUSED}
-   <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
+   <Button
+    img="modules/{identifier}/img/play.svg"
+    onClick={() => resumeUpload(uploadId)}
+    enabled={!changingStatus}
+    onTouchEnd={e => {
+     e.stopPropagation();
+    }}
+   />
   {:else}
-   <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
+   <Button
+    img="modules/{identifier}/img/pause.svg"
+    onClick={() => pauseUpload(uploadId)}
+    enabled={!changingStatus}
+    onTouchEnd={e => {
+     e.stopPropagation();
+    }}
+   />
   {/if}
-  <Button img="img/close-black.svg" onClick={() => cancelUpload(uploadId)} />
+  <Button
+   img="img/close-black.svg"
+   onClick={() => cancelUpload(uploadId)}
+   onTouchEnd={e => {
+    e.stopPropagation();
+   }}
+  />
  </div>
 {/snippet}
 
 {#snippet downloadControls()}
  <div class="transfer-controls">
   {#if $download && ($download.pausedLocally || !$download.running)}
-   <Button img="modules/{identifier}/img/play.svg" onClick={() => resumeDownload(uploadId)} />
+   <Button
+    img="modules/{identifier}/img/play.svg"
+    onClick={() => resumeDownload(uploadId)}
+    onTouchEnd={e => {
+     e.stopPropagation();
+    }}
+   />
   {:else}
-   <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} />
+   <Button
+    img="modules/{identifier}/img/pause.svg"
+    onClick={() => pauseDownload(uploadId)}
+    onTouchEnd={e => {
+     e.stopPropagation();
+    }}
+   />
   {/if}
-  <Button img="img/close-black.svg" onClick={() => cancelDownload(uploadId)} />
+  <Button
+   img="img/close-black.svg"
+   onClick={() => cancelDownload(uploadId)}
+   onTouchEnd={e => {
+    e.stopPropagation();
+   }}
+  />
  </div>
 {/snippet}
 
 {#snippet downloadButton()}
  <div class="message-attachment-accept-btn">
-  <Button width="110px" img="modules/{identifier}/img/download.svg" text="Download" onClick={onDownload} />
+  <Button
+   width="110px"
+   img="modules/{identifier}/img/download.svg"
+   text="Download"
+   onClick={e => {
+    onDownload(e);
+   }}
+   onTouchEnd={e => {
+    e.stopPropagation();
+   }}
+  />
  </div>
 {/snippet}
 
@@ -207,7 +258,13 @@
  {#if $upload.record.status === FileUploadRecordStatus.BEGUN}
   <div>Waiting for accept...</div>
   <div class="transfer-controls">
-   <Button img="img/close-black.svg" onClick={() => cancelUpload(uploadId)} />
+   <Button
+    img="img/close-black.svg"
+    onClick={() => cancelUpload(uploadId)}
+    onTouchEnd={e => {
+     e.stopPropagation();
+    }}
+   />
   </div>
 
   <!-- ACTIVE P2P UPLOAD UPLOADING -->
@@ -242,8 +299,22 @@
   <!-- P2P BEGUN - waiting for accept -->
  {:else if $upload.record.status === FileUploadRecordStatus.BEGUN}
   <div class="transfer-controls">
-   <Button width="80px" text="Accept" onClick={onDownload} />
-   <Button width="80px" text="Cancel" onClick={() => cancelDownload(uploadId)} />
+   <Button
+    width="80px"
+    text="Accept"
+    onClick={onDownload}
+    onTouchEnd={e => {
+     e.stopPropagation();
+    }}
+   />
+   <Button
+    width="80px"
+    text="Cancel"
+    onClick={() => cancelDownload(uploadId)}
+    onTouchEnd={e => {
+     e.stopPropagation();
+    }}
+   />
   </div>
 
   <!-- CANCELED UPLOAD -->
