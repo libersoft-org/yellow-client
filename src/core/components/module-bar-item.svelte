@@ -1,6 +1,5 @@
 <script>
  import Icon from './icon.svelte';
-
  export let decl;
  export let clickSetModule;
  export let online;
@@ -11,11 +10,15 @@
  .item {
   position: relative;
   border-radius: 10px;
-  transition: background-color 0.3s linear;
+  transition: background-color 0.25s linear;
+ }
+
+ .item:hover {
+  background-color: #303030;
  }
 
  .item.selected {
-  background-color: #383838;
+  background-color: #404040;
  }
 
  .item .indicator {

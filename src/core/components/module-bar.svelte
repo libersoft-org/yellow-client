@@ -3,7 +3,6 @@
  import { get } from 'svelte/store';
  import BaseButton from './base-button.svelte';
  import ModuleBarItem from './module-bar-item.svelte';
-
  export let onSelectModule;
  export let onCloseModule;
  let module_data;
@@ -12,7 +11,6 @@
  let module_decls_ordered = [];
 
  $: module_decls_ordered = order($module_decls);
-
  $: module_data = $active_account?.module_data || {};
  //$: console.log('module-bar module_data:', module_data);
  $: module_data_ordered = order(module_data);
