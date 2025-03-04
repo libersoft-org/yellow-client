@@ -1,63 +1,46 @@
 <script>
- import { loadUploadData, makeDownloadChunkAsyncFn } from "../messages.js";
- import { get } from "svelte/store";
- import { active_account } from "../../../core/core.js";
- import { onMount } from "svelte";
- import MediaHandler, { extractThumbnail } from "../fileUpload/MediaHandler.ts";
- import { humanSize } from "../../../core/utils/file.utils.js";
+ import { loadUploadData, makeDownloadChunkAsyncFn } from '../messages.js';
+ import { get } from 'svelte/store';
+ import { active_account } from '../../../core/core.js';
+ import { onMount } from 'svelte';
+ import MediaHandler, { extractThumbnail } from '../fileUpload/MediaHandler.ts';
+ import { humanSize } from '../../../core/utils/file.utils.js';
 
- let {uploadId} = $props();
+ let { uploadId } = $props();
  let videoRef = null;
  let thumbnailRef = null;
  let mediaHandler = $state(null);
- let upload = $state(null)
+ let upload = $state(null);
 
  function getFileChunkFactory(uploadId) {
-  const fn = makeDownloadChunkAsyncFn(get(active_account))
-  return (params) => fn({uploadId, ...params})
+  const fn = makeDownloadChunkAsyncFn(get(active_account));
+  return params => fn({ uploadId, ...params });
  }
 
  onMount(() => {
-  loadUploadData(uploadId).then((uploadData) => {
-   upload = uploadData
-   const {record} = uploadData
+  loadUploadData(uploadId).then(uploadData => {
+   upload = uploadData;
+   const { record } = uploadData;
 
-   const getFileChunk = getFileChunkFactory(uploadId)
+   const getFileChunk = getFileChunkFactory(uploadId);
    mediaHandler = new MediaHandler(videoRef, getFileChunk, {
     id: record.id,
     totalSize: record.fileSize,
     fileMime: record.fileMimeType,
     chunkSize: 1024 * 1024 * 1,
    });
-   mediaHandler.setupVideo()
+   mediaHandler.setupVideo();
 
-   getFileChunk({offsetBytes: 0, chunkSize: 1024 * 1024}).then(firstChunk => {
-    extractThumbnail(new Blob([firstChunk.chunk.data], {type: record.fileMimeType})).then(thumbnailBlob => {
+   getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 1024 }).then(firstChunk => {
+    extractThumbnail(new Blob([firstChunk.chunk.data], { type: record.fileMimeType })).then(thumbnailBlob => {
      // set thumbnailBlob to img src
-     const thumbnailSrc = URL.createObjectURL(thumbnailBlob)
-     mediaHandler.player.poster(thumbnailSrc)
-    })
-   })
-
-  })
- })
+     const thumbnailSrc = URL.createObjectURL(thumbnailBlob);
+     mediaHandler.player.poster(thumbnailSrc);
+    });
+   });
+  });
+ });
 </script>
-
-<div class="video-wrapper">
- <div class="video-title">
-  {#if upload}
-   <div>
-    <strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
-   </div>
-  {:else}
-   Loading...
-  {/if}
- </div>
- <video bind:this={videoRef} class="video video-js vjs-default-skin" controls>
-  <!--<source src={srcTest} />-->
- </video>
-</div>
-
 
 <style>
  .video-wrapper {
@@ -74,3 +57,18 @@
   margin-bottom: 8px;
  }
 </style>
+
+<div class="video-wrapper">
+ <div class="video-title">
+  {#if upload}
+   <div>
+    <strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
+   </div>
+  {:else}
+   Loading...
+  {/if}
+ </div>
+ <video bind:this={videoRef} class="video video-js vjs-default-skin" controls>
+  <!--<source src={srcTest} />-->
+ </video>
+</div>

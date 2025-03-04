@@ -28,10 +28,7 @@
  }
 </style>
 
-<div
- class="container"
- style="--spinner-color: {color}"
->
+<div class="container" style="--spinner-color: {color}">
  {#if show}
   <div class="spinner"></div>
  {/if}

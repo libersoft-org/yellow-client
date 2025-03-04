@@ -2,8 +2,8 @@
  import { galleryFile, identifier } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Button from '../../../core/components/button.svelte';
- import { assembleFile } from "../fileUpload/utils.ts";
- import galleryStore from "../stores/gallery.store.ts";
+ import { assembleFile } from '../fileUpload/utils.ts';
+ import galleryStore from '../stores/gallery.store.ts';
  import Spinner from '../../../core/components/spinner.svelte';
 
  let gallery = galleryStore.store;
@@ -26,21 +26,22 @@
   galleryStore.next();
  }
 
- let canPrevious = galleryStore.canPrevious()
- let canNext = galleryStore.canNext()
+ let canPrevious = galleryStore.canPrevious();
+ let canNext = galleryStore.canNext();
 
  console.log('gallery', gallery);
 
- let loading = $state(false)
+ let loading = $state(false);
 
  $effect(() => {
   if ($currentFile && !$currentFile.loaded) {
    loading = true;
-   $currentFile.loadFile()
-    .then((loadedFile) => {
+   $currentFile
+    .loadFile()
+    .then(loadedFile => {
      galleryStore.updateFile($currentFile.id, {
       loaded: true,
-      ...loadedFile
+      ...loadedFile,
      });
     })
     .catch(err => {
@@ -50,7 +51,7 @@
      loading = false;
     });
   }
- })
+ });
 
  function onAnywhereClick(event) {
   // very simple background close
@@ -59,49 +60,6 @@
   }
  }
 </script>
-
-{#if $gallery.show}
- <div class="gallery" onpointerdown={onAnywhereClick}>
-  <div class="top-left">
-   <Button img="modules/{identifier}/img/download.svg" onClick={download} />
-  </div>
-  <div class="top-right">
-   <Button img="img/close-black.svg" onClick={close} />
-  </div>
-  {#key $currentFile.id}
-   {#if $currentFile}
-    <div class="image">
-     {#if !loading}
-      <img src={$currentFile.url} alt={$currentFile.fileName} />
-     {:else}
-      <div>
-       <Spinner color="white" />
-      </div>
-     {/if}
-     <div class="image-caption">
-      {$currentFile.fileName} ({currentFilePosition} of {$gallery.files.length})
-     </div>
-    </div>
-   {/if}
-  {/key}
-  <div
-   class="side-control side-prev"
-   style:display={$canPrevious ? undefined : 'none'}
-  >
-   <BaseButton onClick={previous}>
-    <img src="img/caret-down-gray.svg" alt="Previous" />
-   </BaseButton>
-  </div>
-  <div
-   class="side-control side-next"
-   style:display={$canNext ? undefined : 'none'}
-  >
-   <BaseButton onClick={next}>
-    <img src="img/caret-down-gray.svg" alt="Previous" />
-   </BaseButton>
-  </div>
- </div>
-{/if}
 
 <style>
  .gallery {
@@ -180,3 +138,40 @@
   max-height: 100%;
  }
 </style>
+
+{#if $gallery.show}
+ <div class="gallery" onpointerdown={onAnywhereClick}>
+  <div class="top-left">
+   <Button img="modules/{identifier}/img/download.svg" onClick={download} />
+  </div>
+  <div class="top-right">
+   <Button img="img/close-black.svg" onClick={close} />
+  </div>
+  {#key $currentFile.id}
+   {#if $currentFile}
+    <div class="image">
+     {#if !loading}
+      <img src={$currentFile.url} alt={$currentFile.fileName} />
+     {:else}
+      <div>
+       <Spinner color="white" />
+      </div>
+     {/if}
+     <div class="image-caption">
+      {$currentFile.fileName} ({currentFilePosition} of {$gallery.files.length})
+     </div>
+    </div>
+   {/if}
+  {/key}
+  <div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
+   <BaseButton onClick={previous}>
+    <img src="img/caret-down-gray.svg" alt="Previous" />
+   </BaseButton>
+  </div>
+  <div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
+   <BaseButton onClick={next}>
+    <img src="img/caret-down-gray.svg" alt="Previous" />
+   </BaseButton>
+  </div>
+ </div>
+{/if}

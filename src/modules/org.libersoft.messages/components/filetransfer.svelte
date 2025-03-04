@@ -54,7 +54,7 @@
  </div>
  <ProgressBar color="#db0" moving={true} value={percent} />
  <div class="text">
-  <div class="size">{humanSize(uploaded)} / {humanSize(total)}</div>
+  <div class="size">{humanSize(uploaded, 2, true)} / {humanSize(total, 2, true)}</div>
   <div class="percent">{percent}%</div>
  </div>
 </div>
