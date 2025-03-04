@@ -12,7 +12,7 @@
  import { online, messagesArray, events, insertEvent, identifier } from '../messages.js';
  import { get } from 'svelte/store';
  import Icon from '../../../core/components/icon.svelte';
- import resize from "../../../core/actions/resizeObserver.ts";
+ import resize from '../../../core/actions/resizeObserver.ts';
  export let conversation;
  export let setBarFocus;
 
@@ -435,10 +435,10 @@
  }
 
  let wrapperWidth = null;
- const onResize = (entry) => {
+ const onResize = entry => {
   console.log('entry', entry);
   wrapperWidth = entry.contentRect.width;
- }
+ };
  $: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
 </script>
 

@@ -1,5 +1,4 @@
 <script>
-
  import { onMount } from 'svelte';
  import filesService from '../fileUpload/Files.service.ts';
  import ImageAspectRatio from './image-aspect-ratio.svelte';
@@ -9,7 +8,7 @@
  import { writable } from 'svelte/store';
  import { FileUploadRecordStatus } from '../fileUpload/types.ts';
  import fileUploadStore from '../fileUpload/fileUploadStore.ts';
- import galleryStore from "../stores/gallery.store.ts";
+ import galleryStore from '../stores/gallery.store.ts';
 
  let { node, showHiddenImages, hiddenImages, siblings } = $props();
  let file = node.attributes.file?.value;
@@ -25,8 +24,8 @@
  const upload = writable(null);
  fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 
- function makeFilesForGallery () {
-  const filesForGallery = []
+ function makeFilesForGallery() {
+  const filesForGallery = [];
   for (let index = 0; index < siblings.length; index++) {
    const siblingNode = siblings[index];
    const fileAttr = siblingNode?.props?.file;
@@ -41,34 +40,36 @@
      id: yellowId,
      loaded: true,
      url: imgUrl,
-     fileName: imgFileName
-    })
+     fileName: imgFileName,
+    });
    } else {
     filesForGallery.push({
      id: siblingYellowId,
      loaded: false,
-     loadFile: () => new Promise((resolve, reject) => {
-      filesService.getOrDownloadAttachment(siblingYellowId)
-       .then(({localFile}) => {
-        if (localFile.localFileStatus === LocalFileStatus.READY && localFile.fileBlob) {
-         const galleryFile = {
-          id: siblingYellowId,
-          url: URL.createObjectURL(localFile.fileBlob),
-          fileName: localFile.fileOriginalName,
-          loading: false,
-          loaded: true,
+     loadFile: () =>
+      new Promise((resolve, reject) => {
+       filesService
+        .getOrDownloadAttachment(siblingYellowId)
+        .then(({ localFile }) => {
+         if (localFile.localFileStatus === LocalFileStatus.READY && localFile.fileBlob) {
+          const galleryFile = {
+           id: siblingYellowId,
+           url: URL.createObjectURL(localFile.fileBlob),
+           fileName: localFile.fileOriginalName,
+           loading: false,
+           loaded: true,
+          };
+          resolve(galleryFile);
          }
-         resolve(galleryFile)
-        }
-       })
-       .catch(err => {
-        reject(err)
-       });
-     })
-    })
+        })
+        .catch(err => {
+         reject(err);
+        });
+      }),
+    });
    }
   }
-  return filesForGallery
+  return filesForGallery;
  }
 
  function openInGallery() {
@@ -83,8 +84,9 @@
   }
   loading = true;
 
-  filesService.getOrDownloadAttachment(yellowId)
-   .then(({localFile}) => {
+  filesService
+   .getOrDownloadAttachment(yellowId)
+   .then(({ localFile }) => {
     if (localFile.localFileStatus === LocalFileStatus.READY) {
      imgUrl = URL.createObjectURL(localFile.fileBlob);
      imgFileName = localFile.fileOriginalName;
@@ -107,33 +109,8 @@
   if (isYellow && !$upload) {
    downloadImage();
   }
- })
+ });
 </script>
-
-<div class="message-content-image-wrapper">
- {#if isYellow}
-  {#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
-   <MessageContentAttachment node={{attributes:{id:{value: yellowId}}}} />
-  {:else}
-   <div class="message-content-image" onclick={openInGallery}>
-    {#if loading}
-     <div class="spinner-wrap">
-      <Spinner show={true} style="min-height: initial;" />
-     </div>
-    {:else}
-     <ImageAspectRatio src={imgUrl} alt={file} />
-     {#if showHiddenImages}
-      <div class="hidden-images">
-       +{hiddenImages.length}
-      </div>
-     {/if}
-    {/if}
-   </div>
-  {/if}
- {:else}
-  basic image here
- {/if}
-</div>
 
 <style>
  .message-content-image-wrapper {
@@ -179,3 +156,28 @@
   border-radius: var(--border-radius);
  }
 </style>
+
+<div class="message-content-image-wrapper">
+ {#if isYellow}
+  {#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
+   <MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
+  {:else}
+   <div class="message-content-image" onclick={openInGallery}>
+    {#if loading}
+     <div class="spinner-wrap">
+      <Spinner show={true} style="min-height: initial;" />
+     </div>
+    {:else}
+     <ImageAspectRatio src={imgUrl} alt={file} />
+     {#if showHiddenImages}
+      <div class="hidden-images">
+       +{hiddenImages.length}
+      </div>
+     {/if}
+    {/if}
+   </div>
+  {/if}
+ {:else}
+  basic image here
+ {/if}
+</div>
