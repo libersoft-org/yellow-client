@@ -97,11 +97,14 @@
   <!-- Render dynamic (HTML super-set) components -->
  {:else if item.component}
   {#key item.tagUniqueId}
-   <svelte:component this={item.component} {...item.props}>
+   <svelte:component this={item.component} {...item.props} children={item.children} />
+   <!-- INFO: custom components should take care of rendering its children themselves (see example below) -->
+   <!-- EXAMPLE:
     {#each item.children as child (child.tagUniqueId)}
      <svelte:component this={child.component} {...child.props} />
     {/each}
    </svelte:component>
+   -->
   {/key}
   <!-- Render regular HTML elements -->
  {:else if item.tag}

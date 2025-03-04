@@ -173,11 +173,15 @@ export function initUpload(files, uploadType, recipients) {
  const acc = get(active_account);
  const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: get(uploadChunkSize) });
 
+ const acceptedVideoTypes = ['video/mp4', 'video/webm'];
+
  // send message
  let messageHtml = '';
  uploads.forEach(upload => {
   const fileMimeType = upload.record.fileMimeType;
   const isServerType = upload.record.type === FileUploadRecordType.SERVER;
+
+  // handle images
   if (isServerType && fileMimeType.startsWith('image/')) {
    messageHtml += `<Imaged file="yellow:${upload.record.id}"></Imaged>`;
    filesDB.addFile({
@@ -188,6 +192,10 @@ export function initUpload(files, uploadType, recipients) {
     fileSize: upload.record.fileSize,
     fileBlob: new Blob([upload.file], { type: fileMimeType }),
    });
+  }
+  // handle videos
+  else if (isServerType && acceptedVideoTypes.includes(fileMimeType)) {
+   messageHtml += `<YellowVideo file="yellow:${upload.record.id}"></YellowVideo>`;
   } else {
    messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
   }
@@ -290,7 +298,6 @@ export const makeDownloadChunkAsyncFn =
     if (res.error !== false) {
      reject();
     }
-    console.warn('!!! res', res);
     resolve({
      chunk: {
       chunkId: res.chunk.chunkId,
@@ -786,10 +793,8 @@ export function ensureConversationDetails(conversation) {
 }
 
 DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
- console.log('node.tagName', node.tagName);
- if (node.tagName === 'IMAGED') {
+ if (node.tagName === 'IMAGED' || node.tagName === 'YELLOWVIDEO') {
   if (data.attrName === 'file' && data.attrValue.startsWith('yellow:')) {
-   console.log('yee', data);
    data.forceKeepAttr = true;
   }
  }
@@ -797,7 +802,7 @@ DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
 
 DOMPurify.addHook('afterSanitizeAttributes', function (node) {
  if (node.tagName === 'IMAGED') {
-  console.log('node 2', node);
+  // console.log('node 2', node);
  }
  if (node.tagName === 'A') {
   node.setAttribute('target', '_blank');
@@ -818,7 +823,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  }
 });
 
-const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'picture'];
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo'];
 
 export function saneHtml(content) {
  //console.log('saneHtml:');
@@ -828,10 +833,13 @@ export function saneHtml(content) {
   ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'], // TODO: fixme, security issue, should only be allowed on the relevant elements
   RETURN_DOM_FRAGMENT: true,
  });
+ /*
  console.log('content:', content);
  console.log(content);
  console.log('sane:');
  console.log(sane);
+ */
+
  return sane;
 }
 
@@ -851,6 +859,7 @@ export function processMessage(message) {
 
   wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
   wrapConsecutiveElements(html, 'Imaged', 'ImagesWrapper', 1);
+  wrapConsecutiveElements(html, 'YellowVideo', 'VideosWrapper', 1);
  } else {
   let text = preprocess_incoming_plaintext_message_text(message.message);
   //console.log('text:', text);

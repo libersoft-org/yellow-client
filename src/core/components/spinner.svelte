@@ -1,12 +1,9 @@
 <script>
  export let show = true;
+ export let color = '#000000';
 </script>
 
 <style>
- :root {
-  --spinner-color: #000;
- }
-
  .container {
   min-height: 72px;
  }
@@ -31,7 +28,10 @@
  }
 </style>
 
-<div class="container">
+<div
+ class="container"
+ style="--spinner-color: {color}"
+>
  {#if show}
   <div class="spinner"></div>
  {/if}
