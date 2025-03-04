@@ -31,7 +31,6 @@ export let emojisLoading = relay(md, 'emojisLoading');
 export let showGallery = relay(md, 'showGallery');
 export let galleryFile = relay(md, 'galleryFile');
 
-
 class Message {
  constructor(acc, data) {
   Object.assign(this, data);
@@ -174,11 +173,15 @@ export function initUpload(files, uploadType, recipients) {
  const acc = get(active_account);
  const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: get(uploadChunkSize) });
 
+ const acceptedVideoTypes = ['video/mp4', 'video/webm'];
+
  // send message
  let messageHtml = '';
  uploads.forEach(upload => {
   const fileMimeType = upload.record.fileMimeType;
   const isServerType = upload.record.type === FileUploadRecordType.SERVER;
+
+  // handle images
   if (isServerType && fileMimeType.startsWith('image/')) {
    messageHtml += `<Imaged file="yellow:${upload.record.id}"></Imaged>`;
    filesDB.addFile({
@@ -189,6 +192,10 @@ export function initUpload(files, uploadType, recipients) {
     fileSize: upload.record.fileSize,
     fileBlob: new Blob([upload.file], { type: fileMimeType }),
    });
+  }
+  // handle videos
+  else if (isServerType && acceptedVideoTypes.includes(fileMimeType)) {
+   messageHtml += `<YellowVideo file="yellow:${upload.record.id}"></YellowVideo>`;
   } else {
    messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
   }
@@ -786,7 +793,7 @@ export function ensureConversationDetails(conversation) {
 }
 
 DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
- if (node.tagName === 'IMAGED') {
+ if (node.tagName === 'IMAGED' || node.tagName === 'YELLOWVIDEO') {
   if (data.attrName === 'file' && data.attrValue.startsWith('yellow:')) {
    data.forceKeepAttr = true;
   }
@@ -816,7 +823,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  }
 });
 
-const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'picture'];
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo'];
 
 export function saneHtml(content) {
  //console.log('saneHtml:');
@@ -832,6 +839,7 @@ export function saneHtml(content) {
  console.log('sane:');
  console.log(sane);
  */
+
  return sane;
 }
 
@@ -851,6 +859,7 @@ export function processMessage(message) {
 
   wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
   wrapConsecutiveElements(html, 'Imaged', 'ImagesWrapper', 1);
+  wrapConsecutiveElements(html, 'YellowVideo', 'VideosWrapper', 1);
  } else {
   let text = preprocess_incoming_plaintext_message_text(message.message);
   //console.log('text:', text);

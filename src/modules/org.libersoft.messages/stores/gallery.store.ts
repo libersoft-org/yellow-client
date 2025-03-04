@@ -1,7 +1,6 @@
 import { get, writable, derived } from 'svelte/store';
-import filesService from "../fileUpload/Files.service.ts";
-import { LocalFileStatus } from "../localDB/files.localDB.ts";
-
+import filesService from '../fileUpload/Files.service.ts';
+import { LocalFileStatus } from '../localDB/files.localDB.ts';
 
 export interface GalleryFile {
  id: string | number;
@@ -24,13 +23,13 @@ export class GalleryStore {
   show: false,
   files: [],
   currentId: null,
- })
+ });
 
- value () {
+ value() {
   return get(this.store);
  }
 
- setShow (show: boolean) {
+ setShow(show: boolean) {
   this.store.update(store => {
    store.show = show;
    return store;
@@ -44,7 +43,7 @@ export class GalleryStore {
   });
  }
 
- updateFile (id: GalleryFile['id'], file: GalleryFile) {
+ updateFile(id: GalleryFile['id'], file: GalleryFile) {
   this.store.update(store => {
    const index = store.files.findIndex(f => f.id === id);
    if (index === -1) {
