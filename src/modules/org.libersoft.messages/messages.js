@@ -228,7 +228,7 @@ function uploadChunkAsync({ upload, chunk }) {
   });
 
   op.attempt(() => {
-   const retry = () => {
+   const retry = (res) => {
     const willRetry = op.retry(new Error());
     if (!willRetry) {
      reject(res);
@@ -240,7 +240,7 @@ function uploadChunkAsync({ upload, chunk }) {
    sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
     clearTimeout(to);
     if (res.error !== false) {
-     retry();
+     retry(res);
      return;
     }
     resolve();
