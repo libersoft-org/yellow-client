@@ -296,7 +296,8 @@ export const makeDownloadChunkAsyncFn =
   return new Promise((resolve, reject) => {
    sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (req, res) => {
     if (res.error !== false) {
-     reject();
+     reject(res);
+     return;
     }
     resolve({
      chunk: {
