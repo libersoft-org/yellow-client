@@ -403,7 +403,17 @@
 
  function onDragOver(e) {
   e.preventDefault();
-  if (e.dataTransfer.files.length === 0) {
+  const draggedItems = e.dataTransfer.items
+
+  let isDraggingFiles = false;
+  for (let i = 0; i < draggedItems.length; i++) {
+   if (draggedItems[i].kind === 'file') {
+    isDraggingFiles = true;
+    break;
+   }
+  }
+
+  if (!isDraggingFiles) {
    return;
   }
 
