@@ -1,21 +1,34 @@
 <script>
- import { loadUploadData, makeDownloadChunkAsyncFn } from '../messages.js';
- import { get } from 'svelte/store';
+ import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../messages.js';
  import { active_account } from '../../../core/core.js';
  import { onMount } from 'svelte';
  import MediaHandler from '../media/Media.handler.ts';
  import { humanSize } from '../../../core/utils/file.utils.js';
  import MediaUtils from "../media/Media.utils.ts";
+ import Button from '../../../core/components/button.svelte';
+ import { assembleFile } from "../fileUpload/utils.ts";
+ import { writable, get } from "svelte/store";
+ import fileDownloadStore from "../fileUpload/fileDownloadStore.ts";
+ import MessageContentAttachment from './message-content-attachment.svelte';
 
  let { uploadId } = $props();
  let videoRef = null;
  let thumbnailRef = null;
  let mediaHandler = $state(null);
  let upload = $state(null);
+ let download = writable(null)
+ fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
  function getFileChunkFactory(uploadId) {
   const fn = makeDownloadChunkAsyncFn(get(active_account));
   return params => fn({ uploadId, ...params });
+ }
+
+ function onDownload () {
+  console.log('upload.record', upload.record);
+  downloadAttachmentsSerial([upload.record], download => {
+   assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
+  });
  }
 
  onMount(() => {
@@ -43,10 +56,33 @@
  });
 </script>
 
+<div>
+ <div class="video-title">
+  {#if upload}
+   <div>
+    <strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
+   </div>
+  {:else}
+   Loading...
+  {/if}
+ </div>
+ <div class="video-wrapper">
+  <video bind:this={videoRef} class="video video-js vjs-default-skin" controls>
+  </video>
+ </div>
+ {#if !$download}
+  <div class="">
+   <Button img="modules/{identifier}/img/download.svg" onClick={onDownload}>Download</Button>
+  </div>
+ {:else}
+  <MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
+ {/if}
+</div>
+
 <style>
  .video-wrapper {
   width: 280px;
-  height: calc(280px / 4 * 3); /* todo: better styles (note: keep dimensions) */
+  margin-bottom: 8px;
  }
 
  .video {
@@ -57,19 +93,8 @@
  .video-title {
   margin-bottom: 8px;
  }
-</style>
 
-<div class="video-wrapper">
- <div class="video-title">
-  {#if upload}
-   <div>
-    <strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
-   </div>
-  {:else}
-   Loading...
-  {/if}
- </div>
- <video bind:this={videoRef} class="video video-js vjs-default-skin" controls>
-  <!--<source src={srcTest} />-->
- </video>
-</div>
+ .content {
+  margin-bottom: 20px;
+ }
+</style>

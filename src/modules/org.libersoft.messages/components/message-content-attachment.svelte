@@ -216,7 +216,7 @@
 
   <!-- FINISHED UPLOAD - downloading -->
  {:else if $download && $upload.record.status === FileUploadRecordStatus.FINISHED}
-  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} status={statusString} />
+  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} status={'Downloading'} />
   {@render downloadControls()}
 
   <!-- FINISHED UPLOAD -->
