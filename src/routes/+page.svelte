@@ -21,6 +21,7 @@
  import {} from '../modules/org.libersoft.wallet/module.js';
  import {} from '../modules/org.libersoft.dating/module.js';
  import {} from '../modules/org.libersoft.iframes/module.js';
+ import {} from '../modules/org.libersoft.dating2/module.js';
  let menus = [];
  setContext('menus', menus);
 

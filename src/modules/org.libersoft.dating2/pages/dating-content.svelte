@@ -1,11 +1,11 @@
 <script>
  import { page } from '../dating.js';
- import People from './people.svelte';
- import Matches from './matches.svelte';
- import Likes from './likes.svelte';
- import MyProfile from './my-profile.svelte';
- import Settings from './settings.svelte';
- import ProfileDetail from './profile-detail.svelte';
+ import People from '../screens/people.svelte';
+ import Matches from '../screens/matches.svelte';
+ import Likes from '../screens/likes.svelte';
+ import MyProfile from '../screens/my-profile.svelte';
+ import Settings from '../screens/settings.svelte';
+ import ProfileDetail from '../screens/profile-detail.svelte';
 
  const pages = {
   people: People,
