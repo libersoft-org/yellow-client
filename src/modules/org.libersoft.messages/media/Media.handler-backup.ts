@@ -2,7 +2,6 @@ import videoJS from 'video.js';
 import 'video.js/dist/video-js.css';
 import mp4box, { type MP4File } from '@webav/mp4box.js';
 
-
 class MediaHandler {
  videoElement: HTMLVideoElement;
  _getFileChunk: (args: { offsetBytes: number; chunkSize: number }) => Promise<{ chunk: { data: Uint8Array } }>;
@@ -34,12 +33,12 @@ class MediaHandler {
   this.mp4boxfile = null;
  }
 
- async getOrLoadChunk(args: {offsetBytes: number, chunkSize: number}) {
-  const {offsetBytes, chunkSize} = args
+ async getOrLoadChunk(args: { offsetBytes: number; chunkSize: number }) {
+  const { offsetBytes, chunkSize } = args;
   if (this.cache.has(offsetBytes) && false) {
    return this.cache.get(offsetBytes);
   } else {
-   const {chunk} = await this._getFileChunk({offsetBytes, chunkSize});
+   const { chunk } = await this._getFileChunk({ offsetBytes, chunkSize });
    this.cache.set(offsetBytes, chunk.data);
    return chunk.data;
   }
@@ -58,7 +57,7 @@ class MediaHandler {
 
   videoElement.onloadedmetadata = (...args) => {
    console.log('loaded meta data', args, videoElement.duration);
-  }
+  };
 
   player.ready(() => {
    this.mediaSource = new MediaSource();
@@ -82,7 +81,7 @@ class MediaHandler {
      this.sourceBuffer = mediaSource.addSourceBuffer(mime);
      //this.sourceBuffer.mode = 'segments'
     } else {
-     console.error('Unsupported mime type' + this.fileInfo.fileMime)
+     console.error('Unsupported mime type' + this.fileInfo.fileMime);
     }
    });
   });
@@ -92,34 +91,34 @@ class MediaHandler {
    console.log('play duration', player.duration());
    console.log('play currentTime', player.currentTime());
 
-   const currentTime = player.currentTime()
-   const duration = player.duration()
+   const currentTime = player.currentTime();
+   const duration = player.duration();
 
    if (currentTime === 0) {
     this.loadChunk(0);
    } else {
     if (!duration || !currentTime) {
      console.warn('Cannot seek yet');
-     return
+     return;
     }
     const bitRate = this.fileInfo.totalSize / duration;
     const estimatedOffset = currentTime * bitRate;
-    const newOffset = estimatedOffset - (estimatedOffset % this.fileInfo.chunkSize)
+    const newOffset = estimatedOffset - (estimatedOffset % this.fileInfo.chunkSize);
     console.log('seeked bitRate', bitRate);
     console.log('seeked estimatedOffset', estimatedOffset);
     console.log('seeked newOffset', newOffset);
     if (this.mp4boxfile) {
      // todo
-     const specialTime = Math.max(Math.floor(currentTime - 2), 0)
+     const specialTime = Math.max(Math.floor(currentTime - 2), 0);
      console.log('MP4BOX seek specialTime:', specialTime);
-     const seek = this.mp4boxfile.seek(specialTime)
+     const seek = this.mp4boxfile.seek(specialTime);
      console.log('MP4BOX seek:', seek);
-     this.nextBufferStart = seek.offset
-     this.nextBufferStartSeeked = true
+     this.nextBufferStart = seek.offset;
+     this.nextBufferStartSeeked = true;
      // this.loadChunk(seek.offset)
     } else {
      console.log('loading new newOffset');
-     if (this.mediaSource.readyState === "open") {
+     if (this.mediaSource.readyState === 'open') {
       // this.sourceBuffer.abort();
       console.log('this.sourceBuffer', this.sourceBuffer);
       //this.sourceBuffer.remove(0, this.mediaSource.duration); // Clear old buffer
@@ -129,12 +128,11 @@ class MediaHandler {
      }
      console.log('wait for it');
      setTimeout(() => {
-
       //this.sourceBuffer = this.mediaSource.addSourceBuffer('video/webm; codecs="vp8, vorbis"');
       console.log('this.sourceBuffer.updating', this.sourceBuffer.updating);
       console.log('this.sourceBuffer', this.sourceBuffer);
-      this.loadChunk(newOffset)
-     }, 1000)
+      this.loadChunk(newOffset);
+     }, 1000);
     }
    }
   });
@@ -142,25 +140,25 @@ class MediaHandler {
   //player.on('seeked', (...args) => {
   // console.log('seeked', args);
   // console.log('seeked time', player.currentTime());
-//
+  //
   // const newTime = player.currentTime()
   // const duration = player.duration()
-//
+  //
   // console.log('seeked newTime', newTime);
   // console.log('seeked duration', duration);
-//
+  //
   // if (!duration || !newTime) {
   //  console.warn('Cannot seek yet');
   //  return
   // }
-//
+  //
   // const bitRate = this.fileInfo.totalSize / duration;
   // const estimatedOffset = newTime * bitRate;
   // const newOffset = estimatedOffset - (estimatedOffset % this.fileInfo.chunkSize)
   // console.log('seeked bitRate', bitRate);
   // console.log('seeked estimatedOffset', estimatedOffset);
   // console.log('seeked newOffset', newOffset);
-//
+  //
   // if (this.mp4boxfile) {
   //  // todo
   // } else {
@@ -192,18 +190,18 @@ class MediaHandler {
    mediaSource.duration = info.duration / info.timescale;
 
    mp4boxfile.onSegment = (id, user, buffer, sampleNumber, last) => {
-    console.info('MP4BOX: onSegment id' + id, {id, user, buffer, sampleNumber, last});
+    console.info('MP4BOX: onSegment id' + id, { id, user, buffer, sampleNumber, last });
     //user.appendBuffer(buffer);
 
     const apnd = () => {
      user.appendBuffer(buffer);
      //this.loadChunk(this.nextBufferStart as number);
-    }
+    };
 
     if (user.updating) {
      user.addEventListener('updateend', () => apnd(), { once: true });
     } else {
-     apnd()
+     apnd();
     }
    };
 
@@ -246,7 +244,7 @@ class MediaHandler {
   }
   console.log('loadChunk offsetBytes', offsetBytes);
   try {
-   const data = await this.getOrLoadChunk({ offsetBytes, chunkSize }) as Uint8Array;
+   const data = (await this.getOrLoadChunk({ offsetBytes, chunkSize })) as Uint8Array;
    console.log('Received chunk data', data);
 
    // srcTest = URL.createObjectURL(new Blob([data], { type: 'video/webm' }));
@@ -255,13 +253,13 @@ class MediaHandler {
     data.buffer.fileStart = offsetBytes;
     const newBufferStart = this.mp4boxfile.appendBuffer(data.buffer);
     if (this.nextBufferStartSeeked) {
-     this.nextBufferStartSeeked = false
+     this.nextBufferStartSeeked = false;
     } else {
-     this.nextBufferStart = newBufferStart
+     this.nextBufferStart = newBufferStart;
     }
     this.loadChunk(this.nextBufferStart as number);
    } else {
-    this.appendChunk(data, offsetBytes)
+    this.appendChunk(data, offsetBytes);
    }
   } catch (error) {
    console.error('Error loading chunk:', error);

@@ -1,5 +1,5 @@
 import mp4box, { type MP4ArrayBuffer, type MP4File } from '@webav/mp4box.js';
-import { MediaLoader } from "./types.ts";
+import { MediaLoader } from './types.ts';
 
 class MP4Loader extends MediaLoader {
  mp4boxFile: MP4File | null = null;
@@ -25,12 +25,12 @@ class MP4Loader extends MediaLoader {
     const append = () => {
      user.appendBuffer(buffer);
      //this.loadChunk(this.nextBufferStart as number);
-    }
+    };
 
     if (user.updating) {
      user.addEventListener('updateend', () => append(), { once: true });
     } else {
-     append()
+     append();
     }
    };
 
@@ -66,25 +66,25 @@ class MP4Loader extends MediaLoader {
   };
  }
 
- processChunk: MediaLoader['processChunk'] = (chunk) => {
+ processChunk: MediaLoader['processChunk'] = chunk => {
   if (!this.mp4boxFile) {
    throw new Error('MP4BOX not initialized');
   }
-  const arrayBuffer = chunk.data.buffer as MP4ArrayBuffer
+  const arrayBuffer = chunk.data.buffer as MP4ArrayBuffer;
   arrayBuffer.fileStart = chunk.offset;
   const nextOffset = this.mp4boxFile.appendBuffer(arrayBuffer);
   // console.log('MP4BOX: nextOffset', nextOffset);
-  return nextOffset
- }
+  return nextOffset;
+ };
 
  seek = (time: number) => {
   const mp4boxFile = this.mp4boxFile as MP4File;
-  const specialTime = Math.max(Math.floor(time - 2), 0)
+  const specialTime = Math.max(Math.floor(time - 2), 0);
   // console.log('MP4BOX: seek specialTime:', specialTime);
-  const seek = mp4boxFile.seek(specialTime)
+  const seek = mp4boxFile.seek(specialTime);
   // console.log('MP4BOX: seek:', seek);
-  return seek.offset
- }
+  return seek.offset;
+ };
 }
 
 export default MP4Loader;

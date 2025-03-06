@@ -1,4 +1,3 @@
-
 class MediaUtils {
  static extractThumbnail(fileChunk) {
   return new Promise((resolve, reject) => {
@@ -34,4 +33,4 @@ class MediaUtils {
  }
 }
 
-export default MediaUtils
+export default MediaUtils;

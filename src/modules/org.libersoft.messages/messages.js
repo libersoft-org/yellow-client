@@ -228,7 +228,7 @@ function uploadChunkAsync({ upload, chunk }) {
   });
 
   op.attempt(() => {
-   const retry = (res) => {
+   const retry = res => {
     const willRetry = op.retry(new Error());
     if (!willRetry) {
      reject(res);

@@ -77,11 +77,7 @@ declare module '@webav/mp4box.js' {
 
   onSamples?: (id: number, user: any, samples: MP4Sample[]) => void;
 
-  setExtractionOptions(
-   track_id: number,
-   user: any,
-   options: { nbSamples?: number; rapAlignement?: boolean }
-  ): void;
+  setExtractionOptions(track_id: number, user: any, options: { nbSamples?: number; rapAlignement?: boolean }): void;
 
   unsetExtractionOptions(track_id: number): void;
 
