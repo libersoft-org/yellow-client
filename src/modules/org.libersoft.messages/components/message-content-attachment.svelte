@@ -138,11 +138,14 @@
 {/snippet}
 
 {#snippet downloadControls()}
+ <!-- -->
+ {@const isPausedByServer = $upload && $upload.record.status === FileUploadRecordStatus.PAUSED && $upload.role === FileUploadRole.RECEIVER}
  <div class="transfer-controls">
   {#if $download && ($download.pausedLocally || !$download.running)}
    <Button
     img="modules/{identifier}/img/play.svg"
     onClick={() => resumeDownload(uploadId)}
+    enabled={!isPausedByServer}
     onTouchEnd={e => {
      e.stopPropagation();
     }}
@@ -151,6 +154,7 @@
    <Button
     img="modules/{identifier}/img/pause.svg"
     onClick={() => pauseDownload(uploadId)}
+    enabled={!isPausedByServer}
     onTouchEnd={e => {
      e.stopPropagation();
     }}
@@ -212,7 +216,7 @@
 
   <!-- FINISHED UPLOAD - downloading -->
  {:else if $download && $upload.record.status === FileUploadRecordStatus.FINISHED}
-  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} status={statusString} />
+  <FileTransfer uploaded={$downloaded} total={$upload.record.fileSize} status={'Downloading'} />
   {@render downloadControls()}
 
   <!-- FINISHED UPLOAD -->

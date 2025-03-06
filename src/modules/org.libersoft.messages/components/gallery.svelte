@@ -29,8 +29,6 @@
  let canPrevious = galleryStore.canPrevious();
  let canNext = galleryStore.canNext();
 
- console.log('gallery', gallery);
-
  let loading = $state(false);
 
  $effect(() => {
