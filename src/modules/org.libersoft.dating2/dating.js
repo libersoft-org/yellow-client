@@ -1,5 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { send } from '../../core/core.js';
+import { active_account } from '../../core/core.js';
 
 export const identifier = 'org.libersoft.dating2';
 
@@ -105,8 +106,8 @@ export function updateProfile(acc, profileData) {
 }
 
 // Search operations
-export function searchProfiles(acc, searchParams) {
- sendData(acc, null, 'profile_search', { searchParams }, true, (req, res) => {
+export function searchProfiles(searchParams) {
+ sendData(get(active_account), null, 'profile_search', { searchParams }, true, (req, res) => {
   if (res.error === false && res.data && res.data.profiles) {
    searchResults.set(res.data.profiles);
   } else {
@@ -116,8 +117,8 @@ export function searchProfiles(acc, searchParams) {
 }
 
 // Like operations
-export function likeProfile(acc, targetUserId) {
- sendData(acc, null, 'like_profile', { targetUserId }, true, (req, res) => {
+export function likeProfile(targetUserId) {
+ sendData(get(active_account), null, 'like_profile', { targetUserId }, true, (req, res) => {
   if (res.error === false) {
    // Update the likes sent list
    likes.update(current => {
@@ -135,8 +136,8 @@ export function likeProfile(acc, targetUserId) {
  });
 }
 
-export function getLikes(acc) {
- sendData(acc, null, 'get_likes', {}, true, (req, res) => {
+export function getLikes() {
+ sendData(get(active_account), null, 'get_likes', {}, true, (req, res) => {
   if (res.error === false && res.data && res.data.likes) {
    likes.set(res.data.likes);
   } else {
@@ -145,8 +146,8 @@ export function getLikes(acc) {
  });
 }
 
-export function getMatches(acc) {
- sendData(acc, null, 'get_matches', {}, true, (req, res) => {
+export function getMatches() {
+ sendData(get(active_account), null, 'get_matches', {}, true, (req, res) => {
   if (res.error === false && res.data && res.data.matches) {
    matches.set(res.data.matches);
   } else {

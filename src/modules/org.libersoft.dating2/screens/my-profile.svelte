@@ -8,6 +8,7 @@
  let account;
  let editMode = false;
  let editedProfile = {};
+ let interestsString = '';
 
  onMount(() => {
   // Get the account from the parent component
@@ -19,6 +20,7 @@
 
  function startEditing() {
   editedProfile = { ...$profile };
+  interestsString = editedProfile.interests ? editedProfile.interests.join(', ') : '';
   editMode = true;
  }
 
@@ -28,6 +30,13 @@
 
  function saveProfile() {
   if (account) {
+   // Convert the comma-separated string back to an array
+   if (interestsString.trim()) {
+    editedProfile.interests = interestsString.split(',').map(item => item.trim());
+   } else {
+    editedProfile.interests = [];
+   }
+
    updateProfile(account, editedProfile);
    editMode = false;
   }
@@ -257,7 +266,7 @@
 
       <div class="form-group">
        <label for="interests">Interests (comma separated)</label>
-       <input type="text" id="interests" bind:value={editedProfile.interests ? editedProfile.interests.join(', ') : ''} />
+       <input type="text" id="interests" bind:value={interestsString} />
       </div>
      </div>
 

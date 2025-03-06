@@ -25,13 +25,13 @@
  });
 
  function loadProfiles() {
-  searchProfiles(account, searchParams);
+  searchProfiles(searchParams);
  }
 
  function handleLike(event) {
   const profile = event.detail;
   if (account && profile.id) {
-   likeProfile(account, profile.id);
+   likeProfile(profile.id);
   }
  }
 
