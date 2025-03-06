@@ -3,8 +3,9 @@
  import { get } from 'svelte/store';
  import { active_account } from '../../../core/core.js';
  import { onMount } from 'svelte';
- import MediaHandler, { extractThumbnail } from '../fileUpload/MediaHandler.ts';
+ import MediaHandler from '../media/Media.handler.ts';
  import { humanSize } from '../../../core/utils/file.utils.js';
+ import MediaUtils from "../media/Media.utils.ts";
 
  let { uploadId } = $props();
  let videoRef = null;
@@ -32,7 +33,7 @@
    mediaHandler.setupVideo();
 
    getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 1024 }).then(firstChunk => {
-    extractThumbnail(new Blob([firstChunk.chunk.data], { type: record.fileMimeType })).then(thumbnailBlob => {
+    MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: record.fileMimeType })).then(thumbnailBlob => {
      // set thumbnailBlob to img src
      const thumbnailSrc = URL.createObjectURL(thumbnailBlob);
      mediaHandler.player.poster(thumbnailSrc);
