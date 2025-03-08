@@ -9,14 +9,13 @@ import fileUploadStore from './fileUpload/fileUploadStore.ts';
 import fileDownloadStore from './fileUpload/fileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/html.utils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
-import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
+import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id, notificationsEnabled } from '../../core/core.js';
 import { base64ToUint8Array, makeFileUpload } from './fileUpload/utils.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from './localDB/files.localDB.ts';
-
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
@@ -747,7 +746,7 @@ function showNotification(acc, msg) {
  if (!acc) console.error('showNotification: no account');
  playNotificationSound();
  // TODO: distinguish if it's a web or native version
- if (Notification.permission !== 'granted') return;
+ if (!get(notificationsEnabled)) return;
  /* TODO: fixme*/
  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
  console.log('new Notification', conversation);

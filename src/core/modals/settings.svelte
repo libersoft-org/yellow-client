@@ -1,8 +1,9 @@
 <script>
- import Button from '../components/button.svelte';
+ import Switch from '../components/switch.svelte';
+ import { notificationsEnabled } from '../core.js';
  let zoom = 100;
 
- function clickSetZoom() {
+ function setZoom() {
   document.body.style.transform = 'scale(' + zoom / 100 + ')';
   document.body.style.transformOrigin = '0 0';
  }
@@ -26,6 +27,11 @@
   <span class="bold">Zoom:</span>
   <span>{zoom}%</span>
  </div>
- <input class="zoom" type="range" min="30" max="300" step="1" bind:value={zoom} />
+ <input class="zoom" type="range" min="30" max="300" step="1" bind:value={zoom} on:change={setZoom} />
 </div>
-<Button text="Apply" onClick={clickSetZoom} />
+<div class="group">
+ <div class="label">
+  <span class="bold">Notifications:</span>
+ </div>
+ <Switch bind:checked={$notificationsEnabled} />
+</div>
