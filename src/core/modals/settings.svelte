@@ -12,8 +12,22 @@
 <style>
  .group {
   display: flex;
+  gap: 10px;
+ }
+
+ .group .label {
+  display: flex;
+  align-items: center;
+ }
+
+ .group .col {
+  display: flex;
   flex-direction: column;
   gap: 5px;
+ }
+
+ .group .center {
+  align-items: center;
  }
 
  input[type='range'] {
@@ -25,9 +39,11 @@
 <div class="group">
  <div class="label">
   <span class="bold">Zoom:</span>
-  <span>{zoom}%</span>
  </div>
- <input class="zoom" type="range" min="30" max="300" step="1" bind:value={zoom} on:change={setZoom} />
+ <div class="col center">
+  <div>{zoom}%</div>
+  <input class="zoom" type="range" min="30" max="300" step="1" bind:value={zoom} on:change={setZoom} />
+ </div>
 </div>
 <div class="group">
  <div class="label">
