@@ -30,6 +30,7 @@
 
  async function processUserModuleMessage(data) {
   console.log('processUserModuleMessage: ', data);
+  if (!data) return;
   if (data.type === 'server_command') {
    return await serverCommand(data);
   } else if (data.type === 'list_accounts') {
