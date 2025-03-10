@@ -9,6 +9,7 @@ export const documentHeight = writable(0);
 export const isMobile = writable(false);
 export const keyboardHeight = writable(0);
 export const hideSidebarMobile = writable(false);
+export const notificationsEnabled = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
@@ -686,6 +687,18 @@ function formatNoColor(args) {
  const inspected_nocolor = args.map(o => (typeof o === 'string' ? o : o));
  for (const v of inspected_nocolor) msg += v + ' ';
  return msg;
+}
+
+export function setNotifications() {
+ if (get(notificationsEnabled) == true) notificationsEnabled.set(false);
+ else {
+  if (Notification.permission !== 'granted') {
+   Notification.requestPermission().then(permission => {
+    notificationsEnabled.set(permission === 'granted');
+    notificationsEnabled.set(true);
+   });
+  }
+ }
 }
 
 let originalLog;

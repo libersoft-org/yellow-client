@@ -1,17 +1,9 @@
 <script>
  import BaseButton from '../components/base-button.svelte';
- import Button from '../components/button.svelte';
  import { product, version, build, commit, link } from '../core.js';
- let notificationPermission = Notification.permission;
 
  function clickLogo() {
   window.open(link, '_blank');
- }
-
- function clickRequestNotificationPermission() {
-  Notification.requestPermission().then(permission => {
-   notificationPermission = permission;
-  });
  }
 </script>
 
@@ -49,18 +41,6 @@
   gap: 5px;
   font-size: 16px;
  }
-
- .welcome .warning {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  margin: 10px;
-  background-color: #fec;
-  border-radius: 10px;
-  border: 1px solid #da8;
- }
 </style>
 
 <div class="welcome">
@@ -82,11 +62,4 @@
   <div>Commit:</div>
   <div class="bold">{commit}</div>
  </div>
- {#if notificationPermission !== 'granted'}
-  <div class="warning">
-   <div class="bold">ATTENTION:</div>
-   <div>Notifications are not enabled.</div>
-   <Button text="Enable notifications" onClick={clickRequestNotificationPermission} />
-  </div>
- {/if}
 </div>

@@ -403,7 +403,7 @@
 
  function onDragOver(e) {
   e.preventDefault();
-  const draggedItems = e.dataTransfer.items
+  const draggedItems = e.dataTransfer.items;
 
   let isDraggingFiles = false;
   for (let i = 0; i < draggedItems.length; i++) {
