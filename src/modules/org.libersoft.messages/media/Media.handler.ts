@@ -155,23 +155,6 @@ class MediaHandler {
    this.loadChunk(offset);
   }, 100);
  }
-
- async prefetch() {
-  this.prefeching = true;
-  console.log('prefetch');
-  const prefetchSeconds = 50;
-  const player = this.player as ReturnType<typeof videoJS>;
-  const currentTime = player.currentTime();
-  const duration = player.duration();
-  const bitRate = this.fileInfo.totalSize / duration;
-  const estimatedOffset = currentTime * bitRate;
-  const newOffset = estimatedOffset - (estimatedOffset % this.fileInfo.chunkSize);
-  const prefetchOffset = newOffset + prefetchSeconds * bitRate;
-  // now load chunks from newOffset to prefetchOffset
-  for (let offset = newOffset; offset < prefetchOffset; offset += this.fileInfo.chunkSize) {
-   this.loadChunk(offset);
-  }
- }
 }
 
 export default MediaHandler;
