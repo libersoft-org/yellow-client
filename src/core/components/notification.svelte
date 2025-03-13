@@ -3,6 +3,14 @@
  import Button from './button.svelte';
  export let data;
  export let onClose;
+ export let closing = false;
+
+ function handleClosing() {
+  closing = true;
+  setTimeout(() => {
+   onClose();
+  }, 400);
+ }
 </script>
 
 <style>
@@ -16,12 +24,27 @@
   animation: messageAppear 0.4s ease-out;
  }
 
+ .notification.closing {
+  animation: messageDisappear 0.4s ease-in forwards;
+ }
+
  @keyframes messageAppear {
   from {
    transform: scale(0);
   }
   to {
    transform: scale(1);
+  }
+ }
+
+ @keyframes messageDisappear {
+  from {
+   transform: scale(1);
+   opacity: 1;
+  }
+  to {
+   transform: scale(0);
+   opacity: 0;
   }
  }
 
@@ -93,7 +116,7 @@
 </style>
 
 <BaseButton onClick={data.onClick}>
- <div class="notification" style:background-color={data.bgColor ? data.bgColor : '#222'}>
+ <div class="notification {closing && 'closing'}" style:background-color={data.bgColor ? data.bgColor : '#222'}>
   {#if data.img || data.title || data.description}
    <div class="top">
     {#if data.img}
@@ -124,7 +147,7 @@
   {/if}
  </div>
 </BaseButton>
-<BaseButton onClick={onClose}>
+<BaseButton onClick={handleClosing}>
  <div class="close">
   <img src="img/close.svg" alt="Close" />
  </div>
