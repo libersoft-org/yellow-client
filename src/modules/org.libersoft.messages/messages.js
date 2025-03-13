@@ -10,7 +10,7 @@ import fileDownloadStore from './fileUpload/fileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/html.utils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id, notificationsEnabled } from '../../core/core.js';
-import { base64ToUint8Array, makeFileUpload } from './fileUpload/utils.ts';
+import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from './fileUpload/utils.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
@@ -168,11 +168,13 @@ async function refresh(acc) {
  listConversations(acc);
 }
 
-export function initUpload(files, uploadType, recipients) {
+export async function initUpload(files, uploadType, recipients) {
  const acc = get(active_account);
+ files = await transformFilesForServer(files);
  const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: get(uploadChunkSize) });
-
+ console.log('uploads', uploads);
  const acceptedVideoTypes = ['video/mp4', 'video/webm'];
+ const acceptedAudioTypes = ['audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/webm'];
 
  // send message
  let messageHtml = '';
@@ -195,6 +197,10 @@ export function initUpload(files, uploadType, recipients) {
   // handle videos
   else if (isServerType && acceptedVideoTypes.includes(fileMimeType)) {
    messageHtml += `<YellowVideo file="yellow:${upload.record.id}"></YellowVideo>`;
+  }
+  // handle audio
+  else if (isServerType && acceptedAudioTypes.some(v => fileMimeType.startsWith(v))) {
+   messageHtml += `<YellowAudio file="yellow:${upload.record.id}"></YellowAudio>`;
   } else {
    messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
   }
@@ -793,7 +799,7 @@ export function ensureConversationDetails(conversation) {
 }
 
 DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
- if (node.tagName === 'IMAGED' || node.tagName === 'YELLOWVIDEO') {
+ if (node.tagName === 'IMAGED' || node.tagName === 'YELLOWVIDEO' || node.tagName === 'YELLOWAUDIO') {
   if (data.attrName === 'file' && data.attrValue.startsWith('yellow:')) {
    data.forceKeepAttr = true;
   }
@@ -823,7 +829,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  }
 });
 
-const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo'];
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio'];
 
 export function saneHtml(content) {
  //console.log('saneHtml:');
@@ -860,6 +866,7 @@ export function processMessage(message) {
   wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
   wrapConsecutiveElements(html, 'Imaged', 'ImagesWrapper', 1);
   wrapConsecutiveElements(html, 'YellowVideo', 'VideosWrapper', 1);
+  wrapConsecutiveElements(html, 'YellowAudio', 'AudioWrapper', 1);
  } else {
   let text = preprocess_incoming_plaintext_message_text(message.message);
   //console.log('text:', text);

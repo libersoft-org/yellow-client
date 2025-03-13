@@ -1,5 +1,6 @@
 import { type FileDownload, type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, type MakeFileDownloadData, type MakeFileUploadData, type MakeFileUploadRecordData } from './types.ts';
 import { v4 as uuidv4 } from 'uuid';
+import MediaUtils from '../media/Media.utils.ts';
 
 export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUploadRecord {
  const defaults = {
@@ -13,6 +14,7 @@ export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUpload
   filePath: '',
   tempFilePath: '',
   chunkSize: 0,
+  metadata: null,
  };
  return Object.assign(defaults, data);
 }
@@ -69,4 +71,20 @@ export function assembleFile(file: string | Blob, fileName: string) {
  document.body.removeChild(downloadLink);
 
  console.log(`File download complete: ${fileName}`);
+}
+
+export async function transformFilesForServer(files: FileList) {
+ for (let i = 0; i < files.length; i++) {
+  const file = files[i];
+  const mimeType = file.type;
+
+  if (mimeType.startsWith('audio/')) {
+   // console.log('transform audio file', file);
+
+   // @ts-ignore todo metadata typing
+   file.metadata = await MediaUtils.getAudioDataFromArrayBuffer(await file.arrayBuffer());
+  }
+ }
+
+ return files;
 }

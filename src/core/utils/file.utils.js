@@ -6,5 +6,6 @@ export function humanSize(bytes, decimals = 2, forceDecimals = false) {
  const i = Math.floor(Math.log(bytes) / Math.log(k));
  const value = bytes / Math.pow(k, i);
  const formattedValue = forceDecimals ? value.toFixed(dm) : parseFloat(value.toFixed(dm));
- return formattedValue + ' ' + sizes[i];
+ // render value with non-breaking space (\u00A0) and unit
+ return formattedValue + '\u00A0' + sizes[i];
 }

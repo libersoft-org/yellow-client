@@ -1,43 +1,70 @@
 <script>
- import { identifier } from '../messages.js';
+ import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../messages.js';
  import BaseButton from '../../../core/components/base-button.svelte';
  import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
- export let file;
+ import MediaHandler from "../media/Media.handler.ts";
+ import MediaUtils from "../media/Media.utils.ts";
+ import { get, writable } from "svelte/store";
+ import { active_account } from "../../../core/core.js";
+ import { humanSize } from "../../../core/utils/file.utils.js";
+ import MessageContentAttachment from "./message-content-attachment.svelte";
+ import Button from "../../../core/components/button.svelte";
+ import fileDownloadStore from "../fileUpload/fileDownloadStore.ts";
+ import { assembleFile } from "../fileUpload/utils.ts";
+
+ const {uploadId} = $props()
+
  let wavesurfer;
- let isPlaying = false;
+ let isPlaying = $state(false);
  let waveRef;
- let duration = '';
- let time = '';
+ let duration = $state('');
+ let time = $state('');
+
+ let mediaHandler = $state(null);
+ let upload = $state(null);
+
+ let download = writable(null);
+ fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
+
+
+ function getFileChunkFactory(uploadId) {
+  const fn = makeDownloadChunkAsyncFn(get(active_account));
+  return params => fn({ uploadId, ...params });
+ }
 
  onMount(async () => {
-  try {
-   wavesurfer = WaveSurfer.create({
-    sampleRate: 48000,
-    container: waveRef,
-    waveColor: '#999',
-    progressColor: '#ea0',
-    barWidth: 3,
-    responsive: true,
-    height: 50,
-    autoplay: false,
-    url: file,
-   });
-   wavesurfer.on('decode', d => (duration = formatTime(d)));
-   wavesurfer.on('timeupdate', t => (time = formatTime(t)));
-   wavesurfer.on('interaction', () => wavesurfer.play());
-   wavesurfer.on('play', () => (isPlaying = true));
-   wavesurfer.on('pause', () => (isPlaying = false));
-   wavesurfer.on('finish', () => (isPlaying = false));
-  } catch (error) {
-   console.error('Error initializing WaveSurfer:', error);
-  }
+  loadUploadData(uploadId).then(uploadData => {
+   upload = uploadData;
+   const { record } = uploadData;
 
-  try {
-   //await wavesurfer.load(file);
-  } catch (error) {
-   console.error('Error loading file:', error);
-  }
+   const getFileChunk = getFileChunkFactory(uploadId);
+   mediaHandler = new MediaHandler(null, getFileChunk, {
+    id: record.id,
+    totalSize: record.fileSize,
+    fileMime: record.fileMimeType,
+    chunkSize: 1024 * 1024 * 1,
+   });
+
+   try {
+    wavesurfer = mediaHandler.setupWavesurfer(waveRef, {
+     duration: record.metadata?.duration,
+     peaks: [
+      record.metadata?.peaks
+     ]
+    });
+    wavesurfer.on('decode', d => (duration = formatTime(d)));
+    wavesurfer.on('timeupdate', t => (time = formatTime(t)));
+    wavesurfer.on('interaction', () => wavesurfer.play());
+    wavesurfer.on('play', () => (isPlaying = true));
+    wavesurfer.on('pause', () => (isPlaying = false));
+    wavesurfer.on('finish', () => {
+     isPlaying = false
+    });
+   } catch (error) {
+    console.error('Error initializing WaveSurfer:', error);
+   }
+  });
  });
 
  function clickPlay() {
@@ -53,7 +80,42 @@
    .padStart(2, '0');
   return minutes + ':' + seconds;
  }
+
+ function onDownload() {
+  downloadAttachmentsSerial([upload.record], download => {
+   assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
+  });
+ }
 </script>
+
+<div>
+ <div class="voice-message">
+  {#if upload}
+   <div>
+    <strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
+   </div>
+  {:else}
+   Loading...
+  {/if}
+  <div class="player">
+   <BaseButton onClick={clickPlay}>
+    <div class="play">
+     <img src="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
+    </div>
+   </BaseButton>
+   <div class="wave" bind:this={waveRef}></div>
+  </div>
+  <div class="time">{time ? time : '00:00'} / {duration}</div>
+ </div>
+
+ {#if !$download}
+  <div class="">
+   <Button img="modules/{identifier}/img/download.svg" onClick={onDownload}>Download</Button>
+  </div>
+ {:else}
+  <MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
+ {/if}
+</div>
 
 <style>
  .voice-message {
@@ -62,6 +124,7 @@
   gap: 5px;
   width: 300px;
   max-width: 300px;
+  margin-bottom: 8px;
  }
 
  .player {
@@ -94,15 +157,3 @@
   align-items: end;
  }
 </style>
-
-<div class="voice-message">
- <div class="player">
-  <BaseButton onClick={clickPlay}>
-   <div class="play">
-    <img src="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
-   </div>
-  </BaseButton>
-  <div class="wave" bind:this={waveRef}></div>
- </div>
- <div class="time">{time ? time : '00:00'} / {duration}</div>
-</div>

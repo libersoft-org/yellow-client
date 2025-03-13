@@ -12,6 +12,8 @@
  import Expressions from './expressions.svelte';
  import { init_emojis } from '../emojis.js';
  import { get } from 'svelte/store';
+ import MessageBarRecorder from './message-bar-recorder.svelte';
+ import audioRecorderStore from "../media/AudioRecorder.store.ts";
 
  let expressionsMenu;
  let elBottomSheet;
@@ -236,6 +238,7 @@
 </style>
 
 <div class="message-bar" bind:this={elMessageBar}>
+ <MessageBarRecorder />
  <div bind:this={elAttachment}>
   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
  </div>
@@ -251,7 +254,7 @@
  {/if}
 
  <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
- <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={clickRecord} />
+ <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
 </div>
 
