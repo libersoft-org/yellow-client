@@ -59,7 +59,7 @@
  onMount(() => {
   console.log('+page onMount');
 
-  if ('serviceWorker' in window.navigator) {
+  /*if ('serviceWorker' in window.navigator) {
    console.log('+page registering service worker');
    navigator.serviceWorker.register('service-worker.js');
    navigator.serviceWorker.ready.then(() => {
@@ -67,7 +67,7 @@
    });
   } else {
    console.log('+page This browser does not support service workers.');
-  }
+  }*/
 
   if ($sidebarSize) {
    setSidebarSize($sidebarSize);
