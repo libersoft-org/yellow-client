@@ -9,13 +9,14 @@ import fileUploadStore from './fileUpload/fileUploadStore.ts';
 import fileDownloadStore from './fileUpload/fileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/html.utils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
-import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id, notificationsEnabled } from '../../core/core.js';
+import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import { base64ToUint8Array, makeFileUpload } from './fileUpload/utils.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from './localDB/files.localDB.ts';
+import { addNotification } from '../../core/notifications.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
@@ -744,40 +745,29 @@ function eventSeenInboxMessage(acc, event) {
 
 function showNotification(acc, msg) {
  if (!acc) console.error('showNotification: no account');
- playNotificationSound();
- // TODO: distinguish if it's a web or native version
- if (!get(notificationsEnabled)) return;
- /* TODO: fixme*/
  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
- console.log('new Notification', conversation);
- let notification;
+ console.log('new Notification in conversation', conversation);
+ let title;
  if (conversation) {
-  /*TODO: fixme*/
-  notification = new Notification('New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')', {
-   body: msg.stripped_text,
-   icon: 'img/photo.svg',
-   silent: true,
-  });
+  title = 'New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')';
  } else {
-  notification = new Notification('New message from: ' + msg.address_from, {
-   body: msg.stripped_text,
-   icon: 'img/photo.svg',
-   silent: true,
-  });
+  title = 'New message from: ' + msg.address_from;
  }
- notification.onclick = async () => {
-  window.focus();
-  selectAccount(acc.id);
-  selected_module_id.set(identifier);
-  await tick();
-  console.log('notification click: selectConversation', msg.address_from);
-  selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
+ let notification = {
+  title,
+  body: msg.stripped_text,
+  icon: 'img/photo.svg',
+  sound: 'modules/' + identifier + '/audio/message.mp3',
+  callback: async () => {
+   window.focus();
+   selectAccount(acc.id);
+   selected_module_id.set(identifier);
+   await tick();
+   console.log('notification click: selectConversation', msg.address_from);
+   selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
+  },
  };
-}
-
-function playNotificationSound() {
- const audio = new Audio('modules/' + identifier + '/audio/message.mp3');
- audio.play();
+ addNotification(notification);
 }
 
 export function ensureConversationDetails(conversation) {
