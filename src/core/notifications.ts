@@ -9,9 +9,9 @@ export interface YellowNotification {
  callback: CallableFunction;
 }
 
-const IS_TAURI = !!window.__TAURI__;
+const IS_TAURI = Object.prototype.hasOwnProperty.call(window, '__TAURI__');
 const BROWSER = !IS_TAURI;
-const IS_TAURI_MOBILE = (IS_TAURI && window.__TAURI__?.platform === 'android') || window.__TAURI__?.platform === 'ios';
+const IS_TAURI_MOBILE = false; //(IS_TAURI && window.__TAURI__?.platform === 'android') || window.__TAURI__?.platform === 'ios';
 const CUSTOM_NOTIFICATIONS = IS_TAURI && !IS_TAURI_MOBILE;
 
 let custom_notifications_window_ready = false;
@@ -31,7 +31,7 @@ export function addNotification(notification: YellowNotification): void {
 }
 
 function sendCustomNotification(notification: YellowNotification): void {
- window.__TAURI__.invoke('addNotification', notification);
+ //window.__TAURI__.invoke('addNotification', notification);
 }
 
 function sendQueuedNotifications(): void {
