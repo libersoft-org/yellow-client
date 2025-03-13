@@ -2,19 +2,19 @@
  import BaseButton from './base-button.svelte';
  import Button from './button.svelte';
  export let data;
- export let onClose;
  export let closing = false;
 
- function handleClosing() {
+ function handleClosing(e) {
   closing = true;
   setTimeout(() => {
-   onClose();
+   data.onClose && data.onClose(e, data);
   }, 400);
  }
 </script>
 
 <style>
  .notification {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -145,10 +145,10 @@
     </div>
    </div>
   {/if}
- </div>
-</BaseButton>
-<BaseButton onClick={handleClosing}>
- <div class="close">
-  <img src="img/close.svg" alt="Close" />
+  <BaseButton onClick={handleClosing}>
+   <div class="close">
+    <img src="img/close.svg" alt="Close" />
+   </div>
+  </BaseButton>
  </div>
 </BaseButton>
