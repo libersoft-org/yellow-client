@@ -8,6 +8,10 @@
  export let onClick;
  export let onTouchEnd;
  export let padding = '10px';
+ export let bgColor = '#fd1';
+ export let borderColor = '#b90';
+ export let textColor = '#000';
+ export let expand = false;
 
  function handleClick(e) {
   if (enabled) onClick(e);
@@ -21,9 +25,7 @@
   justify-content: center;
   gap: 5px;
   text-align: center;
-  border: 1px solid #b90;
   border-radius: 10px;
-  background-color: #fd1;
   font-weight: bold;
  }
 
@@ -45,7 +47,7 @@
 </style>
 
 <BaseButton onClick={handleClick} {onTouchEnd}>
- <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'}>
+ <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex={expand ? 1 : 0}>
   <slot>
    {#if img}
     <img src={img} alt={text} />
