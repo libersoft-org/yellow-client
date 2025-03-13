@@ -1,41 +1,48 @@
 <script>
  import BaseButton from './base-button.svelte';
- export let title = 'TITLE';
- export let description = 'DESCRIPTION';
+ import Button from './button.svelte';
+ export let title;
+ export let description;
  export let bgcolor = '#222';
  export let color = '#fff';
  export let img;
+ export let titleMaxLines = 1;
+ export let descMaxLines = 3;
+ export let buttons = [];
+ export let onClick;
  //TODO: close notifications (X)
-
- function clickNotification() {
-  console.log('Clicked on notification');
- }
 </script>
 
 <style>
  .notification {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   padding: 10px;
-  border: 1px solid #000;
   border-radius: 10px;
+  box-shadow: var(--shadow);
  }
 
- .right {
+ .top {
+  display: flex;
+  gap: 10px;
+ }
+
+ .top .right {
   display: flex;
   flex-direction: column;
   gap: 5px;
   flex: 1;
  }
 
- .left .image {
+ .top .left .image {
   width: 50px;
   height: 50px;
   border-radius: 10px;
   overflow: hidden;
  }
 
- .left .image img {
+ .top .left .image img {
   top: 0;
   left: 0;
   width: 100%;
@@ -43,28 +50,57 @@
   object-fit: cover;
  }
 
- .right .title {
-  font-size: 20px;
+ .top .right .title {
+  font-size: 18px;
   font-weight: bold;
  }
 
- .right .description {
+ .top .right .description {
+  font-size: 14px;
+  text-align: justify;
   color: #888;
+ }
+
+ .top .right .title,
+ .top .right .description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+ }
+
+ .bottom .buttons {
+  display: flex;
+  gap: 10px;
  }
 </style>
 
-<BaseButton onClick={clickNotification}>
+<BaseButton {onClick}>
  <div class="notification" style:background-color={bgcolor} style:color>
-  <div class="left">
-   {#if img}
-    <div class="image">
-     <img src={img} alt="" />
+  {#if img || title || description}
+   <div class="top">
+    <div class="left">
+     {#if img}
+      <div class="image">
+       <img src={img} alt="" />
+      </div>
+     {/if}
     </div>
-   {/if}
-  </div>
-  <div class="right">
-   <div class="title">{title}</div>
-   <div class="description">{description}</div>
+    <div class="right">
+     {#if title}
+      <div class="title" style:-webkit-line-clamp={titleMaxLines}>{title}</div>
+     {/if}
+     {#if description}
+      <div class="description" style:-webkit-line-clamp={descMaxLines}>{description}</div>
+     {/if}
+    </div>
+   </div>
+  {/if}
+  <div class="bottom">
+   <div class="buttons">
+    {#each buttons as b}
+     <Button text={b.text} onClick={b.onClick} expand={b.expand} />
+    {/each}
+   </div>
   </div>
  </div>
 </BaseButton>
