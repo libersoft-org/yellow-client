@@ -1,16 +1,8 @@
 <script>
  import BaseButton from './base-button.svelte';
  import Button from './button.svelte';
- export let title;
- export let description;
- export let bgcolor = '#222';
- export let color = '#fff';
- export let img;
- export let titleMaxLines = 1;
- export let descMaxLines = 3;
- export let buttons = [];
- export let onClick;
- //TODO: close notifications (X)
+ export let data;
+ export let onClose;
 </script>
 
 <style>
@@ -21,6 +13,16 @@
   padding: 10px;
   border-radius: 10px;
   box-shadow: var(--shadow);
+  animation: messageAppear 0.4s ease-out;
+ }
+
+ @keyframes messageAppear {
+  from {
+   transform: scale(0);
+  }
+  to {
+   transform: scale(1);
+  }
  }
 
  .top {
@@ -58,7 +60,6 @@
  .top .right .description {
   font-size: 14px;
   text-align: justify;
-  color: #888;
  }
 
  .top .right .title,
@@ -72,35 +73,59 @@
   display: flex;
   gap: 10px;
  }
+
+ .close {
+  z-index: 10;
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 10px;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 10px;
+ }
+
+ .close:hover {
+  background-color: rgb(255, 255, 255, 0.075);
+ }
 </style>
 
-<BaseButton {onClick}>
- <div class="notification" style:background-color={bgcolor} style:color>
-  {#if img || title || description}
+<BaseButton onClick={data.onClick}>
+ <div class="notification" style:background-color={data.bgColor ? data.bgColor : '#222'}>
+  {#if data.img || data.title || data.description}
    <div class="top">
-    <div class="left">
-     {#if img}
+    {#if data.img}
+     <div class="left">
       <div class="image">
-       <img src={img} alt="" />
+       <img src={data.img} alt="" />
       </div>
-     {/if}
-    </div>
+     </div>
+    {/if}
     <div class="right">
-     {#if title}
-      <div class="title" style:-webkit-line-clamp={titleMaxLines}>{title}</div>
+     {#if data.title}
+      <div class="title" style:color={data.titleColor ? data.titleColor : '#fff'} style:-webkit-line-clamp={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
      {/if}
-     {#if description}
-      <div class="description" style:-webkit-line-clamp={descMaxLines}>{description}</div>
+     {#if data.description}
+      <div class="description" style:color={data.descColor ? data.descColor : '#888'} style:-webkit-line-clamp={data.descMaxLines ? data.descMaxLines : 3}>{data.description}</div>
      {/if}
     </div>
    </div>
   {/if}
-  <div class="bottom">
-   <div class="buttons">
-    {#each buttons as b}
-     <Button text={b.text} onClick={b.onClick} expand={b.expand} />
-    {/each}
+  {#if data.buttons}
+   <div class="bottom">
+    <div class="buttons">
+     {#each data.buttons as b}
+      <Button text={b.text} onClick={b.onClick} expand={b.expand} />
+     {/each}
+    </div>
    </div>
-  </div>
+  {/if}
+ </div>
+</BaseButton>
+<BaseButton onClick={onClose}>
+ <div class="close">
+  <img src="img/close.svg" alt="Close" />
  </div>
 </BaseButton>
