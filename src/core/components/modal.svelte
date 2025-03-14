@@ -17,7 +17,7 @@
  let top;
  let showContent = false;
 
- $: showUpdated(!!(show && body));
+ $: showUpdated(!!show);
 
  async function showUpdated(show) {
   console.log('showUpdated', show);
@@ -174,7 +174,7 @@
  }
 </style>
 
-{#if show && body}
+{#if show}
  <div class="modal" role="none" tabindex="-1" style:top={top && top + 'px'} style:left={left && left + 'px'} style:width={width && width} style:height={height && height} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} on:keydown={onkeydown}>
   {#if showContent}
    <div class="header" role="none" tabindex="-1" on:mousedown={dragStart}>

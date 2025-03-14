@@ -3,6 +3,7 @@ import { notificationsEnabled } from './core';
 import { invoke } from '@tauri-apps/api/core';
 
 export interface YellowNotification {
+ id?: string;
  title: string;
  body: string;
  icon?: string;
