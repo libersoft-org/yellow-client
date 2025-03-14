@@ -182,13 +182,16 @@
      </div>
     </BaseButton>
    </div>
+
    <div class="body">
-    {#if $debug}params: <code>{JSON.stringify({ params })}</code>{/if}
-    {#if params}
-     <svelte:component this={body} {close} {params} />
-    {:else}
-     <svelte:component this={body} {close} />
-    {/if}
+    <slot>
+     {#if $debug}params: <code>{JSON.stringify({ params })}</code>{/if}
+     {#if params}
+      <svelte:component this={body} {close} {params} />
+     {:else}
+      <svelte:component this={body} {close} />
+     {/if}
+    </slot>
    </div>
   {/if}
  </div>
