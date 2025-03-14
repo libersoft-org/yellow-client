@@ -7,6 +7,21 @@
  export let direction = true;
  let notifications = writable([]);
  let counter = 0;
+ import { store } from '../../core/notifications_store.ts';
+ import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER } from '../../core/tauri.ts';
+ import { onMount } from 'svelte';
+
+ onMount(async () => {
+  if (CUSTOM_NOTIFICATIONS) {
+   let s = await store();
+   s.onChange((k, v) => {
+    console.log('store.onChange', k, v);
+    notifications.update(n => [...n, v]);
+   });
+  } else {
+   console.log('CUSTOM_NOTIFICATIONS is not defined');
+  }
+ });
 
  function clickAddNotification() {
   console.log('Clicked on add notification');

@@ -28,6 +28,7 @@
 	"type": "module",
 	"dependencies": {
 		"@tauri-apps/api": "^2.3.0",
+		"@tauri-apps/plugin-store": "^2.2.0",
 		"@testing-library/svelte": "^5.2.6",
 		"@webav/mp4box.js": "^0.5.6",
 		"dexie": "^4.0.11",
