@@ -1,22 +1,22 @@
 <script>
- import { identifier, initUpload, selectedConversation } from "../messages.js";
- import Icon from "../../../core/components/icon.svelte";
- import audioRecorderStore from "../media/AudioRecorder.store.ts";
- import MediaRecorderHandler from "../media/MediaRecorder.handler.ts";
- import { onMount } from "svelte";
- import RecordPlugin from "wavesurfer.js/plugins/record";
+ import { identifier, initUpload, selectedConversation } from '../messages.js';
+ import Icon from '../../../core/components/icon.svelte';
+ import audioRecorderStore from '../media/AudioRecorder.store.ts';
+ import MediaRecorderHandler from '../media/MediaRecorder.handler.ts';
+ import { onMount } from 'svelte';
+ import RecordPlugin from 'wavesurfer.js/plugins/record';
  import resize from '../../../core/actions/resizeObserver.ts';
- import { get } from "svelte/store";
- import { FileUploadRecordType } from "../fileUpload/types.ts";
- import MediaUtils from "../media/Media.utils.ts";
+ import { get } from 'svelte/store';
+ import { FileUploadRecordType } from '../fileUpload/types.ts';
+ import MediaUtils from '../media/Media.utils.ts';
 
  let wavesurferRef = null;
- let isOpen = audioRecorderStore.isOpen()
- let recorderHandler = $state(new MediaRecorderHandler())
- let record = null
- let isPaused = $state(false)
+ let isOpen = audioRecorderStore.isOpen();
+ let recorderHandler = $state(new MediaRecorderHandler());
+ let record = null;
+ let isPaused = $state(false);
  let wavesurferWidth = $state(undefined);
- let sending = $state(false)
+ let sending = $state(false);
 
  const onResize = entry => {
   // We must explicitly set WaveSurfer's parent width; otherwise it causes flickering
@@ -26,79 +26,60 @@
 
  $effect(() => {
   if ($isOpen) {
-   startRecording()
+   startRecording();
   }
- })
+ });
 
- const sendMessage = async (blob) => {
+ const sendMessage = async blob => {
   const recipientEmail = get(selectedConversation).address;
-  const arrBuffer = await blob.arrayBuffer()
-  const audioMetaData = await MediaUtils.getAudioDataFromArrayBuffer(arrBuffer)
-  blob.name = 'Audio record.webm'
-  blob.metadata = audioMetaData
+  const arrBuffer = await blob.arrayBuffer();
+  const audioMetaData = await MediaUtils.getAudioDataFromArrayBuffer(arrBuffer);
+  blob.name = 'Audio record.webm';
+  blob.metadata = audioMetaData;
   initUpload([blob], FileUploadRecordType.SERVER, [recipientEmail]);
-  audioRecorderStore.setOpen(false)
- }
+  audioRecorderStore.setOpen(false);
+ };
 
  const startRecording = () => {
-  isPaused = false
+  isPaused = false;
 
-  RecordPlugin.getAvailableAudioDevices().then((devices) => {
+  RecordPlugin.getAvailableAudioDevices().then(devices => {
    record.startRecording({ deviceId: 'default' }).then(() => {
     //console.log('startRecording');
-   })
-  })
- }
+   });
+  });
+ };
 
  const onPlay = () => {
-  isPaused = false
-  record.resumeRecording()
- }
+  isPaused = false;
+  record.resumeRecording();
+ };
 
  const onPause = () => {
-  isPaused = true
-  record.pauseRecording()
- }
+  isPaused = true;
+  record.pauseRecording();
+ };
 
  const onDelete = () => {
-  audioRecorderStore.setOpen(false)
-  record.destroy()
- }
+  audioRecorderStore.setOpen(false);
+  record.destroy();
+ };
 
  const onSend = () => {
-  record.stopRecording()
-  sending = true
- }
+  record.stopRecording();
+  sending = true;
+ };
 
  onMount(() => {
   record = recorderHandler.create(wavesurferRef);
 
-  record.on('record-end', (blob) => {
+  record.on('record-end', blob => {
    if (sending) {
-    sendMessage(blob)
+    sendMessage(blob);
    }
-  })
+  });
  });
 </script>
-
-<div class="message-bar-recorder" class:is-paused={isPaused} style:display={$isOpen ? 'flex' : 'none'}>
- <div class="button-wrapper">
-  <Icon img="modules/{identifier}/img/delete-red.svg" alt="Record voice message" size="14" padding="0" onClick={onDelete} />
- </div>
- <div class="button-wrapper">
-  {#if isPaused}
-   <Icon img="modules/{identifier}/img/play-yellow.svg" alt="Record voice message" size="14" padding="0" onClick={onPlay} />
-  {:else}
-   <Icon img="modules/{identifier}/img/pause-yellow.svg" alt="Record voice message" size="14" padding="0" onClick={onPause} />
-  {/if}
- </div>
- <div class="wavesurfer-wrap">
-  <div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize} style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
- </div>
- <div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
-  <Icon img="modules/{identifier}/img/send.svg" alt="Record voice message" size="32" padding="0" onClick={onSend} />
- </div>
-</div>
 
 <style>
  .message-bar-recorder {
@@ -128,7 +109,7 @@
  }
 
  .is-paused .wavesurfer {
-  opacity: .3;
+  opacity: 0.3;
  }
 
  .button-wrapper :global(.base-button) {
@@ -142,3 +123,22 @@
   flex: 1 0 auto;
  }
 </style>
+
+<div class="message-bar-recorder" class:is-paused={isPaused} style:display={$isOpen ? 'flex' : 'none'}>
+ <div class="button-wrapper">
+  <Icon img="modules/{identifier}/img/delete-red.svg" alt="Record voice message" size="14" padding="0" onClick={onDelete} />
+ </div>
+ <div class="button-wrapper">
+  {#if isPaused}
+   <Icon img="modules/{identifier}/img/play-yellow.svg" alt="Record voice message" size="14" padding="0" onClick={onPlay} />
+  {:else}
+   <Icon img="modules/{identifier}/img/pause-yellow.svg" alt="Record voice message" size="14" padding="0" onClick={onPause} />
+  {/if}
+ </div>
+ <div class="wavesurfer-wrap">
+  <div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize} style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
+ </div>
+ <div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
+  <Icon img="modules/{identifier}/img/send.svg" alt="Record voice message" size="32" padding="0" onClick={onSend} />
+ </div>
+</div>

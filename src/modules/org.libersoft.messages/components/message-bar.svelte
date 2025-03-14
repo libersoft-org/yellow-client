@@ -13,7 +13,7 @@
  import { init_emojis } from '../emojis.js';
  import { get } from 'svelte/store';
  import MessageBarRecorder from './message-bar-recorder.svelte';
- import audioRecorderStore from "../media/AudioRecorder.store.ts";
+ import audioRecorderStore from '../media/AudioRecorder.store.ts';
 
  let expressionsMenu;
  let elBottomSheet;

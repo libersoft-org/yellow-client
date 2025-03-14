@@ -5,7 +5,7 @@
  import { FileUploadRecordStatus } from '../fileUpload/types.ts';
  import { writable, get } from 'svelte/store';
  import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
- import { identifier } from "../messages.js";
+ import { identifier } from '../messages.js';
 
  let { node, showHiddenImages, hiddenImages, siblings } = $props();
  let file = node.attributes.file?.value;

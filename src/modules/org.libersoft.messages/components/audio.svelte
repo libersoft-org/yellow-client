@@ -3,17 +3,17 @@
  import BaseButton from '../../../core/components/base-button.svelte';
  import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
- import MediaHandler from "../media/Media.handler.ts";
- import MediaUtils from "../media/Media.utils.ts";
- import { get, writable } from "svelte/store";
- import { active_account } from "../../../core/core.js";
- import { humanSize } from "../../../core/utils/file.utils.js";
- import MessageContentAttachment from "./message-content-attachment.svelte";
- import Button from "../../../core/components/button.svelte";
- import fileDownloadStore from "../fileUpload/fileDownloadStore.ts";
- import { assembleFile } from "../fileUpload/utils.ts";
+ import MediaHandler from '../media/Media.handler.ts';
+ import MediaUtils from '../media/Media.utils.ts';
+ import { get, writable } from 'svelte/store';
+ import { active_account } from '../../../core/core.js';
+ import { humanSize } from '../../../core/utils/file.utils.js';
+ import MessageContentAttachment from './message-content-attachment.svelte';
+ import Button from '../../../core/components/button.svelte';
+ import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
+ import { assembleFile } from '../fileUpload/utils.ts';
 
- const {uploadId} = $props()
+ const { uploadId } = $props();
 
  let wavesurfer;
  let isPlaying = $state(false);
@@ -26,7 +26,6 @@
 
  let download = writable(null);
  fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
-
 
  function getFileChunkFactory(uploadId) {
   const fn = makeDownloadChunkAsyncFn(get(active_account));
@@ -49,9 +48,7 @@
    try {
     wavesurfer = mediaHandler.setupWavesurfer(waveRef, {
      duration: record.metadata?.duration,
-     peaks: [
-      record.metadata?.peaks
-     ]
+     peaks: [record.metadata?.peaks],
     });
     wavesurfer.on('decode', d => (duration = formatTime(d)));
     wavesurfer.on('timeupdate', t => (time = formatTime(t)));
@@ -59,7 +56,7 @@
     wavesurfer.on('play', () => (isPlaying = true));
     wavesurfer.on('pause', () => (isPlaying = false));
     wavesurfer.on('finish', () => {
-     isPlaying = false
+     isPlaying = false;
     });
    } catch (error) {
     console.error('Error initializing WaveSurfer:', error);
@@ -87,35 +84,6 @@
   });
  }
 </script>
-
-<div>
- <div class="voice-message">
-  {#if upload}
-   <div>
-    <strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
-   </div>
-  {:else}
-   Loading...
-  {/if}
-  <div class="player">
-   <BaseButton onClick={clickPlay}>
-    <div class="play">
-     <img src="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
-    </div>
-   </BaseButton>
-   <div class="wave" bind:this={waveRef}></div>
-  </div>
-  <div class="time">{time ? time : '00:00'} / {duration}</div>
- </div>
-
- {#if !$download}
-  <div class="">
-   <Button img="modules/{identifier}/img/download.svg" onClick={onDownload}>Download</Button>
-  </div>
- {:else}
-  <MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
- {/if}
-</div>
 
 <style>
  .voice-message {
@@ -157,3 +125,32 @@
   align-items: end;
  }
 </style>
+
+<div>
+ <div class="voice-message">
+  {#if upload}
+   <div>
+    <strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
+   </div>
+  {:else}
+   Loading...
+  {/if}
+  <div class="player">
+   <BaseButton onClick={clickPlay}>
+    <div class="play">
+     <img src="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
+    </div>
+   </BaseButton>
+   <div class="wave" bind:this={waveRef}></div>
+  </div>
+  <div class="time">{time ? time : '00:00'} / {duration}</div>
+ </div>
+
+ {#if !$download}
+  <div class="">
+   <Button img="modules/{identifier}/img/download.svg" onClick={onDownload}>Download</Button>
+  </div>
+ {:else}
+  <MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
+ {/if}
+</div>
