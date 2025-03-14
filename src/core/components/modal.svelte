@@ -53,8 +53,11 @@
   }
  }
 
- function close() {
+ export function close() {
   show = false;
+ }
+ export function open() {
+  show = true;
  }
 
  function onkeydown(event) {

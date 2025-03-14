@@ -1,6 +1,7 @@
 <script>
  import BaseButton from './base-button.svelte';
  import { product, debug } from '../core.js';
+ import { addNotification } from '../notifications.ts';
  export let isMenuOpen;
 
  function handleClick() {
@@ -41,5 +42,15 @@
   </div>
  </BaseButton>
  <div class="product">{product}</div>
- {#if $debug}(debug mode){/if}
+ {#if $debug}(debug mode)
+  <BaseButton
+   onClick={() =>
+    addNotification({
+     body: 'bla bla',
+     callback: event => {
+      console.log(event);
+     },
+    })}>addNotification</BaseButton
+  >
+ {/if}
 </div>
