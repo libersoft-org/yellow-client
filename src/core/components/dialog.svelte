@@ -2,16 +2,16 @@
  import Modal from './modal.svelte';
  import Button from './button.svelte';
  export let data;
- export let showDialog = false;
+ export let show = false;
 
  export function open() {
-  showDialog = true;
+  show = true;
  }
  export function close() {
-  showDialog = false;
+  show = false;
  }
 </script>
 
-<Modal title={data.title} bind:show={showDialog}>
- <Button slot="footer" text="Close" onClick={() => (showDialog = false)} />
+<Modal title={data.title} bind:show>
+ <Button slot="footer" text="Close" onClick={() => (show = false)} />
 </Modal>
