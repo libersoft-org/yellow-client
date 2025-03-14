@@ -4,6 +4,7 @@ import type { MediaFileInfo, MediaLoader } from './loaders/types.ts';
 import MP4Loader from './loaders/MP4.loader.ts';
 import BasicLoader from './loaders/Basic.loader.ts';
 import _debounce from 'lodash/debounce';
+import WaveSurfer from 'wavesurfer.js';
 
 class MediaHandler {
  videoElement: HTMLVideoElement;
@@ -23,6 +24,50 @@ class MediaHandler {
   this.fileInfo = fileInfo;
  }
 
+ setupWavesurfer(element, options) {
+  this.mediaSource = new MediaSource();
+  const mediaSource = this.mediaSource as MediaSource;
+  const url = URL.createObjectURL(mediaSource);
+
+  mediaSource.addEventListener('sourceopen', () => {
+   let pickedLoader: MediaLoader | null = null;
+   if (this.fileInfo.fileMime.startsWith('audio')) {
+    pickedLoader = new BasicLoader(mediaSource, this.fileInfo, this._getFileChunk);
+   }
+
+   // console.log('pickedLoader', pickedLoader);
+
+   if (pickedLoader) {
+    this.loader = pickedLoader;
+    this.loader.setup(this.fileInfo).then(() => {
+     this.fetchQueue.push(0);
+     this.setupFetchQueue();
+    });
+   } else {
+    console.error('Unsupported mime type', this.fileInfo);
+   }
+  });
+
+  const wavesurfer = WaveSurfer.create({
+   sampleRate: 48000,
+   container: element,
+   waveColor: '#999',
+   progressColor: '#ea0',
+   barWidth: 3,
+   //responsive: true,
+   height: 50,
+   autoplay: false,
+   url,
+   duration: options.duration,
+   peaks: options.peaks,
+  });
+
+  // @ts-ignore
+  this.videoElement = wavesurfer.media;
+
+  return wavesurfer;
+ }
+
  setupVideo() {
   const videoElement = this.videoElement;
   this.player = videoJS(videoElement, {
@@ -34,9 +79,9 @@ class MediaHandler {
   });
   const player = this.player as ReturnType<typeof videoJS>;
 
-  videoElement.onloadedmetadata = (...args) => {
-   console.log('loaded meta data', args, videoElement.duration);
-  };
+  // videoElement.onloadedmetadata = (...args) => {
+  //  console.log('loaded meta data', args, videoElement.duration);
+  // };
 
   player.ready(() => {
    this.mediaSource = new MediaSource();
@@ -94,7 +139,6 @@ class MediaHandler {
   if (typeof loader.seek === 'function') {
    const seekOffset = loader.seek(time);
    this.fetchQueue = [];
-   console.warn('111 pushing to que 222', seekOffset);
    this.fetchQueue.push(seekOffset);
   }
  }
@@ -154,23 +198,6 @@ class MediaHandler {
    const offset = this.fetchQueue.pop() as number;
    this.loadChunk(offset);
   }, 100);
- }
-
- async prefetch() {
-  this.prefeching = true;
-  console.log('prefetch');
-  const prefetchSeconds = 50;
-  const player = this.player as ReturnType<typeof videoJS>;
-  const currentTime = player.currentTime();
-  const duration = player.duration();
-  const bitRate = this.fileInfo.totalSize / duration;
-  const estimatedOffset = currentTime * bitRate;
-  const newOffset = estimatedOffset - (estimatedOffset % this.fileInfo.chunkSize);
-  const prefetchOffset = newOffset + prefetchSeconds * bitRate;
-  // now load chunks from newOffset to prefetchOffset
-  for (let offset = newOffset; offset < prefetchOffset; offset += this.fileInfo.chunkSize) {
-   this.loadChunk(offset);
-  }
  }
 }
 

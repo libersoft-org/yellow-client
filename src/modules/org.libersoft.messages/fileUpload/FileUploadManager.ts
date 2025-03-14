@@ -26,6 +26,8 @@ export class FileUploadManager extends EventEmitter {
     fileSize: file.size,
     chunkSize: options?.chunkSize || 1024 * 64,
     fromUserUid: acc.id,
+    // @ts-ignore todo: typing for metadata
+    metadata: file.metadata,
    });
    const upload = makeFileUpload({
     role: FileUploadRole.SENDER,

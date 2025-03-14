@@ -25,7 +25,6 @@
  }
 
  function onDownload() {
-  console.log('upload.record', upload.record);
   downloadAttachmentsSerial([upload.record], download => {
    assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
   });

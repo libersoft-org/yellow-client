@@ -32,10 +32,11 @@ class BasicLoader extends MediaLoader {
   // console.log('SETUP: videoTrack', videoTrack);
   // console.log('SETUP: audioTrack', audioTrack);
 
-  const mime = this.mediaFileInfo.fileMime + '; codecs="' + videoTrack?.Format?.toLowerCase() + ', ' + audioTrack?.Format?.toLowerCase() + '"';
+  const mime = this.mediaFileInfo.fileMime;
 
   // console.log('SETUP: mime', mime);
   this.sourceBuffer = this.mediaSource.addSourceBuffer(mime);
+  // console.log('SETUP: sourceBuffer', this.sourceBuffer);
  }
 
  processChunk: MediaLoader['processChunk'] = chunk => {
