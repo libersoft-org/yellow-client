@@ -16,7 +16,7 @@
  onMount(async () => {
   debug('onMount CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
   if (CUSTOM_NOTIFICATIONS) {
-   let s = await store('notifications');
+   let s = await store('notifications', false);
    debug('store:', s);
    s.onChange((k, v) => {
     debug('store.onChange', k, v);
@@ -69,7 +69,7 @@
  async function onClick(e, data) {
   e.stopPropagation();
   debug('Clicked on notification');
-  (await store('notification-events')).set(this.id, data);
+  (await store('notification-events', false)).set(this.id, data);
  }
 
  async function closeNotification(e, data) {
@@ -77,7 +77,7 @@
   debug('closeNotification data.id: ', data.id);
   //debug('Clicked on close notification: this:', this, '$notifications:', $notifications, '$notifications.findIndex(item => item === this):', $notifications.findIndex(item => item === this));
   notifications.update(v => v.filter(item => item !== this));
-  (await store('notification-events')).set(this.id, 'close');
+  (await store('notification-events', false)).set(this.id, 'close');
   onNotificationDeleted();
  }
 </script>

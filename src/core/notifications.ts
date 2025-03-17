@@ -21,14 +21,21 @@ let _events;
 async function initCustomNotifications() {
  debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
  if (!CUSTOM_NOTIFICATIONS) return;
+ let _ = await store('notifications');
  if (!_events) {
   _events = await store('notification-events');
-  _events.onChange((key, value) => {
-   debug('notification-events.onChange:', key, value);
-   notifications[key] && notifications[key].callback(value);
-  });
+  _events.onChange(onNotificationEvent);
  }
+ debug('create_notifications_window...');
  invoke('create_notifications_window');
+}
+
+function onNotificationEvent(id: string, event: string) {
+ debug('onNotificationEvent:', id, event);
+ notifications[id] && notifications[id].callback(event);
+ if (event === 'close') {
+  removeNotification(id);
+ }
 }
 
 export function addNotification(notification: YellowNotification): void {
