@@ -1,9 +1,26 @@
 <script>
+ import { onMount } from 'svelte';
  import Dialog from '../../../core/components/dialog.svelte';
- let showDialog = true;
- const dialogData = {
+ let elDialog;
+ let closeDialog;
+ let dialogData = {
   title: 'Dialog title',
+  body: 'Dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content.',
+  icon: 'img/photo.svg',
+  buttons: [
+   { text: 'Abort', onClick: clickButton, expand: true },
+   { text: 'Retry', onClick: clickButton, expand: true },
+   { text: 'Close', onClick: () => closeDialog(), expand: true },
+  ],
  };
+
+ onMount(() => {
+  elDialog.open();
+ });
+
+ function clickButton() {
+  console.log('Clicked on button');
+ }
 </script>
 
 <style>
@@ -16,6 +33,4 @@
 </style>
 
 <div class="content">Contact list - content page - not yet implemented</div>
-<Dialog data={dialogData} bind:show={showDialog}>
- <div>Contacts Dialog content</div>
-</Dialog>
+<Dialog data={dialogData} bind:close={closeDialog} bind:this={elDialog} />
