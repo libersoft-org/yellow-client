@@ -10,22 +10,43 @@
  import { store } from '../../core/notifications_store.ts';
  import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, debug } from '../../core/tauri.ts';
  import { onMount } from 'svelte';
+ import { get } from 'svelte/store';
+ import { invoke } from '@tauri-apps/api/core';
 
  onMount(async () => {
+  debug('onMount CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
   if (CUSTOM_NOTIFICATIONS) {
    let s = await store('notifications');
+   debug('store:', s);
    s.onChange((k, v) => {
-    console.log('store.onChange', k, v);
-    v.onClose = closeNotification.bind(v);
-    v.onClick = onClick.bind(v);
-    notifications.update(n => [...n, v]);
+    debug('store.onChange', k, v);
+    addNotification(v);
    });
+   debug('initial store:', await s.entries());
+   for (let [k, v] of await s.entries()) {
+    addNotification(v);
+   }
   } else {
-   console.log('CUSTOM_NOTIFICATIONS is not defined');
+   debug('CUSTOM_NOTIFICATIONS is not defined');
   }
+  debug('XXXXXXXXXXXXXXXXXXX');
+  debug('notifications:', get(notifications));
+  debug('XXXXXXXX');
  });
 
- //$: debug('notifications', $notifications);
+ function addNotification(data) {
+  debug('addNotification data:', data);
+  data.onClose = closeNotification.bind(data);
+  data.onClick = onClick.bind(data);
+  notifications.update(n => [...n, data]);
+  debug('notification added');
+ }
+
+ function onNotificationDeleted() {
+  if (get(notifications).length === 0) {
+   invoke('close_notifications_window', {});
+  }
+ }
 
  function clickAddNotification() {
   debug('Clicked on add notification');
@@ -53,9 +74,11 @@
 
  async function closeNotification(e, data) {
   e.stopPropagation();
+  debug('closeNotification data.id: ', data.id);
   //debug('Clicked on close notification: this:', this, '$notifications:', $notifications, '$notifications.findIndex(item => item === this):', $notifications.findIndex(item => item === this));
   notifications.update(v => v.filter(item => item !== this));
   (await store('notification-events')).set(this.id, 'close');
+  onNotificationDeleted();
  }
 </script>
 

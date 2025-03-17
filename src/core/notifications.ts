@@ -1,7 +1,8 @@
 import { get } from 'svelte/store';
 import { notificationsEnabled } from './core';
 import { store } from './notifications_store.ts';
-import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER } from './tauri.ts';
+import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, debug } from './tauri.ts';
+import { invoke } from '@tauri-apps/api/core';
 
 export interface YellowNotification {
  id?: string;
@@ -17,19 +18,23 @@ let counter = 0;
 let notifications: Map<string, YellowNotification> = new Map();
 let _events;
 
-async function init() {
+async function initCustomNotifications() {
+ debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
  if (!CUSTOM_NOTIFICATIONS) return;
- if (_events) return;
- _events = await store('notification-events');
- _events.onChange((key, value) => {
-  notifications[key] && notifications[key].callback();
- });
+ if (!_events) {
+  _events = await store('notification-events');
+  _events.onChange((key, value) => {
+   debug('notification-events.onChange:', key, value);
+   notifications[key] && notifications[key].callback(value);
+  });
+ }
+ invoke('create_notifications_window');
 }
 
 export function addNotification(notification: YellowNotification): void {
  let enabled = get(notificationsEnabled);
 
- console.log('addNotification: enabled:', enabled, 'IS_TAURI:', IS_TAURI, 'IS_TAURI_MOBILE:', IS_TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
+ debug('addNotification: enabled:', enabled, 'IS_TAURI:', IS_TAURI, 'IS_TAURI_MOBILE:', IS_TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
 
  if (!enabled) return;
 
@@ -44,11 +49,11 @@ export function addNotification(notification: YellowNotification): void {
  }
 }
 
-async function sendCustomNotification(notification: YellowNotification): void {
- console.log('sendCustomNotification');
- await init();
+async function sendCustomNotification(notification: YellowNotification): Promise<void> {
+ debug('sendCustomNotification');
+ await initCustomNotifications();
  let s = await store('notifications');
- console.log('store:', s);
+ debug('store:', s);
  notifications.set(notification.id, notification);
  s?.set(notification.id, notification);
 }
@@ -68,4 +73,16 @@ function showBrowserNotification(notification: YellowNotification) {
  n.onclick = () => {
   notification.callback();
  };
+}
+
+export function removeNotification(id: string): void {
+ notifications[id] && notifications.delete(id);
+ let s = store('notifications');
+ s?.delete(id);
+}
+
+export function clearNotifications(): void {
+ notifications.clear();
+ let s = store('notifications');
+ s?.clear();
 }
