@@ -9,10 +9,13 @@ export const documentHeight = writable(0);
 export const isMobile = writable(false);
 export const keyboardHeight = writable(0);
 export const hideSidebarMobile = writable(false);
-export const notificationsEnabled = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
+
+export const notificationsEnabled = localStorageSharedStore('notifications_enabled', false);
+export const notificationsSettingsAlert = writable('');
+
 export let modules_order = localStorageSharedStore('modules_order', {});
 export let modules_disabled = localStorageSharedStore('modules_disabled', []);
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
@@ -689,15 +692,40 @@ function formatNoColor(args) {
  return msg;
 }
 
-export function setNotifications() {
- if (get(notificationsEnabled) == true) notificationsEnabled.set(false);
- else {
-  if (Notification.permission !== 'granted') {
-   Notification.requestPermission().then(permission => {
-    notificationsEnabled.set(permission === 'granted');
+export function setNotificationsEnabled(value) {
+ console.log('Notification.permission:', Notification.permission, 'value:', value);
+ if (get(notificationsEnabled) != value) {
+  if (value) {
+   if (Notification.permission !== 'granted') {
+    if (Notification.permission === 'denied') {
+     notificationsSettingsAlert.set('blocked');
+     return;
+    }
+    Notification.requestPermission().then(permission => {
+     console.log('Notification dialog callback:', permission);
+     if (permission == 'granted') {
+      console.log('notificationsEnabled.set(true)...');
+      notificationsEnabled.set(true);
+      notificationsSettingsAlert.set('');
+     } else {
+      notificationsEnabled.set(false);
+      notificationsSettingsAlert.set('blocked');
+     }
+    });
+   } else {
     notificationsEnabled.set(true);
-   });
+   }
+  } else {
+   notificationsEnabled.set(false);
   }
+ }
+ notificationsSettingsAlert.set('');
+ return;
+}
+
+export function initBrowserNotifications() {
+ if (Notification.permission !== 'granted') {
+  setNotificationsEnabled(false);
  }
 }
 

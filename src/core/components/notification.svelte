@@ -5,10 +5,11 @@
  export let closing = false;
 
  function handleClosing(e) {
+  e.stopPropagation();
   closing = true;
   setTimeout(() => {
    data.onClose && data.onClose(e, data);
-  }, 400);
+  }, 200);
  }
 </script>
 
@@ -80,13 +81,13 @@
   font-weight: bold;
  }
 
- .top .right .description {
+ .top .right .body {
   font-size: 14px;
   text-align: justify;
  }
 
  .top .right .title,
- .top .right .description {
+ .top .right .body {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
@@ -115,9 +116,9 @@
  }
 </style>
 
-<BaseButton onClick={data.onClick}>
+<BaseButton onClick={e => data.onClick(e)}>
  <div class="notification {closing && 'closing'}" style:background-color={data.bgColor ? data.bgColor : '#222'}>
-  {#if data.img || data.title || data.description}
+  {#if data.img || data.title || data.body}
    <div class="top">
     {#if data.img}
      <div class="left">
@@ -130,8 +131,8 @@
      {#if data.title}
       <div class="title" style:color={data.titleColor ? data.titleColor : '#fff'} style:-webkit-line-clamp={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
      {/if}
-     {#if data.description}
-      <div class="description" style:color={data.descColor ? data.descColor : '#888'} style:-webkit-line-clamp={data.descMaxLines ? data.descMaxLines : 3}>{data.description}</div>
+     {#if data.body}
+      <div class="body" style:color={data.descColor ? data.descColor : '#888'} style:-webkit-line-clamp={data.descMaxLines ? data.descMaxLines : 3}>{data.body}</div>
      {/if}
     </div>
    </div>
@@ -140,7 +141,7 @@
    <div class="bottom">
     <div class="buttons">
      {#each data.buttons as b}
-      <Button text={b.text} onClick={b.onClick} expand={b.expand} />
+      <Button text={b.text} onClick={e => b.onClick(b, b.id)} expand={b.expand} />
      {/each}
     </div>
    </div>

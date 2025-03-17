@@ -49,6 +49,7 @@
      body: 'bla bla',
      callback: event => {
       console.log(event);
+      window.alert('callback' + event);
      },
     })}>addNotification</BaseButton
   >

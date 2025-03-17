@@ -3,7 +3,7 @@
  import { onMount, setContext } from 'svelte';
  import { get } from 'svelte/store';
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
- import { isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.js';
+ import { isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link, initBrowserNotifications } from '../core/core.js';
  import Menu from '../core/components/menu.svelte';
  import MenuBar from '../core/components/menu-bar.svelte';
  import ModuleBar from '../core/components/module-bar.svelte';
@@ -58,6 +58,8 @@
 
  onMount(() => {
   console.log('+page onMount');
+
+  initBrowserNotifications();
 
   /*if ('serviceWorker' in window.navigator) {
    console.log('+page registering service worker');
