@@ -3,7 +3,7 @@
  let showDialog = true;
  const dialogData = {
   title: 'Dialog title',
- }
+ };
 </script>
 
 <style>
@@ -16,6 +16,6 @@
 </style>
 
 <div class="content">Contact list - content page - not yet implemented</div>
-<Dialog data={dialogData} bind:show={showDialog} />
+<Dialog data={dialogData} bind:show={showDialog}>
  <div>Contacts Dialog content</div>
 </Dialog>
