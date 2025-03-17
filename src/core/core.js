@@ -1,6 +1,7 @@
 import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
+import { BROWSER, IS_TAURI } from './tauri.ts';
 
 //import {} from './client_debug';
 
@@ -13,7 +14,7 @@ export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
 
-export const notificationsEnabled = localStorageSharedStore('notifications_enabled', false);
+export const notificationsEnabled = localStorageSharedStore('notifications_enabled', IS_TAURI);
 export const notificationsSettingsAlert = writable('');
 
 export let modules_order = localStorageSharedStore('modules_order', {});
@@ -724,7 +725,7 @@ export function setNotificationsEnabled(value) {
 }
 
 export function initBrowserNotifications() {
- if (Notification.permission !== 'granted') {
+ if (BROWSER && Notification.permission !== 'granted') {
   setNotificationsEnabled(false);
  }
 }

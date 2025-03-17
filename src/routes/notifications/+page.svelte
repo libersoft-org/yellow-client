@@ -16,7 +16,8 @@
    let s = await store('notifications');
    s.onChange((k, v) => {
     console.log('store.onChange', k, v);
-    v = { ...v, onClose: closeNotification.bind(v), onClick: onClick.bind(v) };
+    v.onClose = closeNotification.bind(v);
+    v.onClick = onClick.bind(v);
     notifications.update(n => [...n, v]);
    });
   } else {
@@ -52,7 +53,7 @@
 
  async function closeNotification(e, data) {
   e.stopPropagation();
-  debug('Clicked on close notification');
+  //debug('Clicked on close notification: this:', this, '$notifications:', $notifications, '$notifications.findIndex(item => item === this):', $notifications.findIndex(item => item === this));
   notifications.update(v => v.filter(item => item !== this));
   (await store('notification-events')).set(this.id, 'close');
  }
