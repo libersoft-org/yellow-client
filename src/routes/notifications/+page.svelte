@@ -8,7 +8,7 @@
  let notifications = writable([]);
  let counter = 0;
  import { store } from '../../core/notifications_store.ts';
- import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER } from '../../core/tauri.ts';
+ import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, debug } from '../../core/tauri.ts';
  import { onMount } from 'svelte';
 
  onMount(async () => {
@@ -22,6 +22,8 @@
    console.log('CUSTOM_NOTIFICATIONS is not defined');
   }
  });
+
+ $: debug('notifications', $notifications);
 
  function clickAddNotification() {
   console.log('Clicked on add notification');

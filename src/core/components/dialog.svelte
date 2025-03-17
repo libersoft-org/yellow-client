@@ -13,5 +13,6 @@
 </script>
 
 <Modal title={data.title} bind:show>
- <Button slot="footer" text="Close" onClick={() => (show = false)} />
+ <slot></slot>
+ <Button text="Close" onClick={() => (show = false)} />
 </Modal>

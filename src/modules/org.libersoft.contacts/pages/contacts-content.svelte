@@ -13,4 +13,6 @@
 </style>
 
 <div class="content">Contact list - content page - not yet implemented</div>
-<Dialog data={{ title: 'Dialog title' }} bind:show={showDialog} />
+<Dialog data={{ title: 'Contacts Dialog title' }} bind:show={showDialog}>
+ <div>Contacts Dialog content</div>
+</Dialog>
