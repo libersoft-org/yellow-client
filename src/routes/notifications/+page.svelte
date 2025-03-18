@@ -23,8 +23,10 @@
     addNotification(v);
    });
    debug('initial store:', await s.entries());
-   for (let [k, v] of await s.entries()) {
-    addNotification(v);
+   let values = await s.values();
+   values.sort((a, b) => a.ts - b.ts);
+   for (let v of values) {
+    await addNotification(v);
    }
   } else {
    debug('CUSTOM_NOTIFICATIONS is not defined');
@@ -36,7 +38,7 @@
 
  function addNotification(data) {
   debug('addNotification data:', data);
-  data.onClose = closeNotification.bind(data);
+  data.onClose = onClose.bind(data);
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);
   debug('notification added');
@@ -62,7 +64,7 @@
    { text: 'Fail', id: 'fail', onClick: onClick.bind(notificationData), expand: true },
   ];
   notificationData.onClick = onClick.bind(notificationData);
-  notificationData.onClose = closeNotification.bind(notificationData);
+  notificationData.onClose = onClose.bind(notificationData);
   notifications.update(n => [...n, notificationData]);
  }
 
@@ -72,13 +74,20 @@
   (await store('notification-events', false)).set(this.id, data);
  }
 
- async function closeNotification(e, data) {
-  e.stopPropagation();
-  debug('closeNotification data.id: ', data.id);
+ async function onClose(e) {
+  e?.stopPropagation();
+  debug('closeNotification this.id: ', this.id);
   //debug('Clicked on close notification: this:', this, '$notifications:', $notifications, '$notifications.findIndex(item => item === this):', $notifications.findIndex(item => item === this));
   notifications.update(v => v.filter(item => item !== this));
   (await store('notification-events', false)).set(this.id, 'close');
   onNotificationDeleted();
+ }
+
+ async function clearNotifications() {
+  debug('clearNotifications');
+  for (let n of get(notifications)) {
+   await n.onClose();
+  }
  }
 </script>
 
@@ -104,7 +113,7 @@
 <br /><br />
 <div class="notifications-wrapper">
  {#if $notifications.length >= 2}
-  <Button text="Close all {$notifications.length} notifications" onClick={() => notifications.set([])} />
+  <Button text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
  {/if}
 
  <div class="notifications {direction && 'reverse'}">

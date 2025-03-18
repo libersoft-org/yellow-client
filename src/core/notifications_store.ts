@@ -5,19 +5,19 @@ import { Window } from '@tauri-apps/api/window';
 
 let stores: Map<String, Store> = new Map();
 
-export async function store(id: string, reset: true): Promise<Store> {
+export async function store(id: string, reset = true): Promise<Store> {
  if (!CUSTOM_NOTIFICATIONS) return null;
  if (!stores.has(id)) {
-  console.log('store: loading store:', id);
+  debug('store: loading store:', id);
   let _store = await Store.load(id, { autoSave: false });
-  console.log('_store:', _store);
+  debug('_store:', _store, 'reset:', reset);
   if (reset) {
-   console.log('store: clearing store:', id);
-   console.log('_store entries:', await _store.entries());
+   debug('_store entries:', await _store.entries());
+   debug('store: clearing store:', id);
    await _store.clear();
-   console.log('_store entries:', await _store.entries());
-   console.log('store: reloading store:', id);
-   await _store.reload();
+   debug('_store entries:', await _store.entries());
+   //debug('store: reloading store:', id);
+   //await _store.reload();
   }
   stores.set(id, _store);
  }
