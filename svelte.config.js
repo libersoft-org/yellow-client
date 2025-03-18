@@ -11,7 +11,11 @@ const config = {
    pages: 'build',
    assets: 'build',
    fallback: 'index.html'
-  })
+  }),
+  alias: {
+   "@/org.libersoft.messages/*": "src/modules/org.libersoft.messages/*",
+   "@/*": "src/*",
+  }
  }
 };
 
