@@ -6,7 +6,6 @@ import { Window } from '@tauri-apps/api/window';
 let stores: Map<String, Store> = new Map();
 
 export async function store(id: string, reset = true): Promise<Store> {
- if (!CUSTOM_NOTIFICATIONS) return null;
  if (!stores.has(id)) {
   debug('store: loading store:', id);
   let _store = await Store.load(id, { autoSave: false });
@@ -21,7 +20,9 @@ export async function store(id: string, reset = true): Promise<Store> {
   }
   stores.set(id, _store);
  }
- return stores.get(id);
+ let r = stores.get(id);
+ if (!r) throw new Error('store not found: ' + id);
+ return r;
 }
 //
 //const appWindow = new Window('tauri-app');

@@ -74,8 +74,12 @@ async function sendCustomNotification(notification: YellowNotification): Promise
  let s = await store('notifications');
  debug('store:', s);
  invoke('create_notifications_window', {});
- notifications.set(notification.id, notification);
- s?.set(notification.id, notification);
+ if (notification.id) {
+  notifications.set(notification.id, notification);
+  s?.set(notification.id, notification);
+ } else {
+  debug('notification.id is undefined');
+ }
 }
 
 function playNotificationSound(notification: YellowNotification): void {
@@ -95,7 +99,7 @@ function showBrowserNotification(notification: YellowNotification) {
  };
 }
 
-export async function removeNotification(id: string): void {
+export async function removeNotification(id: string): Promise<void> {
  debug('removeNotification:', id);
  notifications[id] && notifications.delete(id);
 
