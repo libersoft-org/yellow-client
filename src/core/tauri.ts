@@ -1,7 +1,11 @@
 import { invoke } from '@tauri-apps/api/core';
 import * as app from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
-const platformName = platform();
+
+let platformName = 'browser';
+if (window.__TAURI_OS_PLUGIN_INTERNALS__) {
+ platformName = platform();
+}
 
 declare global {
  interface Window {
