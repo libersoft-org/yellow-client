@@ -2,6 +2,7 @@
  import BaseButton from './base-button.svelte';
  import { product, debug } from '../core.js';
  import { addNotification } from '../notifications.ts';
+
  export let isMenuOpen;
 
  function handleClick() {

@@ -5,10 +5,10 @@ import { Window } from '@tauri-apps/api/window';
 
 let stores: Map<String, Store> = new Map();
 
-export async function store(id: string, reset = true): Promise<Store> {
+export async function store(id: string, reset = true, autosave = false): Promise<Store> {
  if (!stores.has(id)) {
   debug('store: loading store:', id);
-  let _store = await Store.load(id, { autoSave: false });
+  let _store = await Store.load(id, { autoSave: autosave });
   debug('_store:', _store, 'reset:', reset);
   if (reset) {
    debug('_store entries:', await _store.entries());
