@@ -1,14 +1,14 @@
 <script>
  import { onMount } from 'svelte';
- import filesService from '../fileUpload/Files.service.ts';
- import ImageAspectRatio from './image-aspect-ratio.svelte';
- import MessageContentAttachment from './message-content-attachment.svelte';
- import { LocalFileStatus } from '../localDB/files.localDB.ts';
- import Spinner from '../../../core/components/spinner.svelte';
+ import filesService from '../../fileUpload/Files.service.ts';
+ import ImageAspectRatio from '../_shared/image-aspect-ratio.svelte';
+ import MessageContentAttachment from '../msgAttachment/message-content-attachment.svelte';
+ import { LocalFileStatus } from '../../localDB/files.localDB.ts';
+ import Spinner from '../../../../core/components/spinner.svelte';
  import { writable } from 'svelte/store';
- import { FileUploadRecordStatus } from '../fileUpload/types.ts';
- import fileUploadStore from '../fileUpload/fileUploadStore.ts';
- import galleryStore from '../stores/gallery.store.ts';
+ import { FileUploadRecordStatus } from '../../fileUpload/types.ts';
+ import fileUploadStore from '../../fileUpload/fileUploadStore.ts';
+ import galleryStore from '../../stores/gallery.store.ts';
 
  let { node, showHiddenImages, hiddenImages, siblings } = $props();
  let file = node.attributes.file?.value;

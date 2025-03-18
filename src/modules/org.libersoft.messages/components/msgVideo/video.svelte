@@ -1,15 +1,15 @@
 <script>
- import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../messages.js';
- import { active_account } from '../../../core/core.js';
+ import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.js';
+ import { active_account } from '../../../../core/core.js';
  import { onMount } from 'svelte';
- import MediaHandler from '../media/Media.handler.ts';
- import { humanSize } from '../../../core/utils/file.utils.js';
- import MediaUtils from '../media/Media.utils.ts';
- import Button from '../../../core/components/button.svelte';
- import { assembleFile } from '../fileUpload/utils.ts';
+ import MediaHandler from '../../media/Media.handler.ts';
+ import { humanSize } from '../../../../core/utils/file.utils.js';
+ import MediaUtils from '../../media/Media.utils.ts';
+ import Button from '../../../../core/components/button.svelte';
+ import { assembleFile } from '../../fileUpload/utils.ts';
  import { writable, get } from 'svelte/store';
- import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
- import MessageContentAttachment from './message-content-attachment.svelte';
+ import fileDownloadStore from '../../fileUpload/fileDownloadStore.ts';
+ import MessageContentAttachment from '../msgAttachment/message-content-attachment.svelte';
 
  let { uploadId } = $props();
  let videoRef = null;

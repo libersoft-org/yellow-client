@@ -1,10 +1,10 @@
 <script>
- import { galleryFile, identifier } from '../messages.js';
- import BaseButton from '../../../core/components/base-button.svelte';
- import Button from '../../../core/components/button.svelte';
- import { assembleFile } from '../fileUpload/utils.ts';
- import galleryStore from '../stores/gallery.store.ts';
- import Spinner from '../../../core/components/spinner.svelte';
+ import { galleryFile, identifier } from '../../messages.js';
+ import BaseButton from '../../../../core/components/base-button.svelte';
+ import Button from '../../../../core/components/button.svelte';
+ import { assembleFile } from '../../fileUpload/utils.ts';
+ import galleryStore from '../../stores/gallery.store.ts';
+ import Spinner from '../../../../core/components/spinner.svelte';
 
  let gallery = galleryStore.store;
  let currentFile = galleryStore.currentFile();

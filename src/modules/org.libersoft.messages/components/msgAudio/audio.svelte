@@ -1,17 +1,17 @@
 <script>
- import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../messages.js';
- import BaseButton from '../../../core/components/base-button.svelte';
+ import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../../messages.js';
+ import BaseButton from '../../../../core/components/base-button.svelte';
  import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
- import MediaHandler from '../media/Media.handler.ts';
- import MediaUtils from '../media/Media.utils.ts';
+ import MediaHandler from '../../media/Media.handler.ts';
+ import MediaUtils from '../../media/Media.utils.ts';
  import { get, writable } from 'svelte/store';
- import { active_account } from '../../../core/core.js';
- import { humanSize } from '../../../core/utils/file.utils.js';
- import MessageContentAttachment from './message-content-attachment.svelte';
- import Button from '../../../core/components/button.svelte';
- import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
- import { assembleFile } from '../fileUpload/utils.ts';
+ import { active_account } from '../../../../core/core.js';
+ import { humanSize } from '../../../../core/utils/file.utils.js';
+ import MessageContentAttachment from '../msgAttachment/message-content-attachment.svelte';
+ import Button from '../../../../core/components/button.svelte';
+ import fileDownloadStore from '../../fileUpload/fileDownloadStore.ts';
+ import { assembleFile } from '../../fileUpload/utils.ts';
 
  const { uploadId } = $props();
 

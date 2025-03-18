@@ -2,7 +2,7 @@
  import { selectedConversation } from '../messages.js';
  import Welcome from './welcome.svelte';
  import Conversation from '../components/conversation.svelte';
- import Gallery from '../components/gallery.svelte';
+ import Gallery from '../components/gallery/gallery.svelte';
 </script>
 
 {#if $selectedConversation === null}

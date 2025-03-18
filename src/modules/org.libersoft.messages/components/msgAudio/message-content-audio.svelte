@@ -1,11 +1,11 @@
 <script>
  import Audio from './audio.svelte';
- import MessageContentAttachment from './message-content-attachment.svelte';
- import fileUploadStore from '../fileUpload/fileUploadStore.ts';
- import { FileUploadRecordStatus } from '../fileUpload/types.ts';
+ import MessageContentAttachment from '../msgAttachment/message-content-attachment.svelte';
+ import fileUploadStore from '../../fileUpload/fileUploadStore.ts';
+ import { FileUploadRecordStatus } from '../../fileUpload/types.ts';
  import { writable, get } from 'svelte/store';
- import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
- import { identifier } from '../messages.js';
+ import fileDownloadStore from '../../fileUpload/fileDownloadStore.ts';
+ import { identifier } from '../../messages.js';
 
  let { node, showHiddenImages, hiddenImages, siblings } = $props();
  let file = node.attributes.file?.value;

@@ -2,14 +2,14 @@
  import FileTransfer from './filetransfer.svelte';
  import { derived, writable } from 'svelte/store';
  import { onMount } from 'svelte';
- import { identifier, cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '../messages.js';
- import { FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../fileUpload/types.ts';
+ import { identifier, cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '../../messages.js';
+ import { FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../../fileUpload/types.ts';
  //import fileUploadManager from '../fileUpload/FileUploadManager.ts';
- import Button from '../../../core/components/button.svelte';
- import fileDownloadStore from '../fileUpload/fileDownloadStore.ts';
- import fileUploadStore from '../fileUpload/fileUploadStore.ts';
- import { humanSize } from '../../../core/utils/file.utils.js';
- import { assembleFile } from '../fileUpload/utils.ts';
+ import Button from '../../../../core/components/button.svelte';
+ import fileDownloadStore from '../../fileUpload/fileDownloadStore.ts';
+ import fileUploadStore from '../../fileUpload/fileUploadStore.ts';
+ import { humanSize } from '../../../../core/utils/file.utils.js';
+ import { assembleFile } from '../../fileUpload/utils.ts';
 
  //let { node, level, num_siblings } = $props();
  let { node } = $props();
