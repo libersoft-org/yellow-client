@@ -8,8 +8,8 @@
  import Button from '../../../../core/components/button.svelte';
  import fileDownloadStore from '../../fileUpload/fileDownloadStore.ts';
  import fileUploadStore from '../../fileUpload/fileUploadStore.ts';
- import { humanSize } from '../../../../core/utils/file.utils.js';
- import { assembleFile } from '../../fileUpload/utils.ts';
+ import { humanSize } from '@/core/utils/file.utils.js';
+ import { assembleFile } from '@/org.libersoft.messages/fileUpload/utils.ts';
 
  //let { node, level, num_siblings } = $props();
  let { node } = $props();
