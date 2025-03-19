@@ -4,6 +4,7 @@
  import Tr from './table-tbody-tr.svelte';
  import Tbody from './table-tbody.svelte';
  import Td from './table-tbody-td.svelte';
+ import CornerSelector from './cornerselector.svelte';
  import { monitors, selectedMonitor, selectedNotificationsCorner } from '../notifications.ts';
 </script>
 
@@ -33,6 +34,7 @@
      <option value="bottom-left">Bottom Left</option>
      <option value="bottom-right">Bottom Right</option>
     </select>
+    <CornerSelector />
    </Td>
   </Tr>
  </Tbody>
