@@ -8,7 +8,7 @@ import { availableMonitors } from '@tauri-apps/api/window';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 
 export let monitors: Writable<Monitor[]> = writable([]);
-export let selectedMonitor = localStorageSharedStore('selectedMonitor', null);
+export let selectedMonitor: Writable<Monitor | null> = localStorageSharedStore('selectedMonitor', null);
 export let selectedNotificationsCorner = localStorageSharedStore('selectedNotificationsCorner', 'top-right');
 export let notificationsDirection = writable(getNotificationsDirection());
 
@@ -25,7 +25,7 @@ selectedNotificationsCorner.subscribe(value => {
 
 function notificationWindowSettings() {
  let d = get(notificationsDirection);
- let width = 300;
+ let width = 400;
  let monitor_name = get(selectedMonitor);
  let m = get(monitors).find(m => m.name === monitor_name);
  if (m && m.size) {
@@ -40,12 +40,11 @@ function notificationWindowSettings() {
    y = 0;
   } else if (corner === 'bottom-right') {
    x = m.size.width - width;
-   y = m.size.height - 300;
+   y = m.size.height - 1;
   } else if (corner === 'bottom-left') {
    x = 0;
-   y = m.size.height - 300;
+   y = m.size.height - 1;
   }
-
   return {
    direction: d,
    x: x + m.position.x,
@@ -90,8 +89,8 @@ function updateNotificationsMonitor() {
 }
 
 export interface YellowNotification {
- id?: string;
- ts?: number;
+ id: string;
+ ts: number;
  title: string;
  body: string;
  icon?: string;
@@ -133,7 +132,7 @@ async function onNotificationEvent(id: string, event: string) {
  }
 }
 
-export function addNotification(notification: YellowNotification): void {
+export function addNotification(notification: Partial<YellowNotification>): void {
  let enabled = get(notificationsEnabled);
 
  debug('addNotification: enabled:', enabled, 'IS_TAURI:', IS_TAURI, 'IS_TAURI_MOBILE:', IS_TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);

@@ -3,8 +3,10 @@
  import Button from '../../core/components/button.svelte';
  import { writable } from 'svelte/store';
  import Notification from '../../core/components/notification.svelte';
+ import { getCurrentWindow, LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize } from '@tauri-apps/api/window';
+
  export let maxNotifications = 3;
- export let direction = true;
+
  let notifications = writable([]);
  let counter = 0;
  import { store } from '../../core/notifications_store.ts';
@@ -13,31 +15,80 @@
  import { get } from 'svelte/store';
  import { invoke } from '@tauri-apps/api/core';
 
+ let settings = writable(null);
+ let height = writable(100);
+ let position = writable({ x: 0, y: 0 });
+ let direction = writable('down');
+
+ function updatePosition() {
+  //debug('updatePosition...');
+  let h = get(height);
+  let s = get(settings);
+  let d = get(direction);
+
+  debug('updatePosition s:', s, 'h:', h, 'd:', d);
+  if (!s) return;
+
+  if (d === 'up') {
+   debug('updatePosition up');
+   position.set({ x: s.x, y: s.y - h });
+  } else {
+   debug('updatePosition down');
+   position.set({ x: s.x, y: s.y });
+  }
+
+  //debug('updatePosition', get(position));
+ }
+
+ settings.subscribe(updatePosition);
+ height.subscribe(updatePosition);
+
+ position.subscribe(async v => {
+  //debug('getCurrentWindow():', getCurrentWindow());
+  let size = { width: 400, height: $height };
+  debug('setPosition', v, 'size:', size);
+  let w = getCurrentWindow();
+  w.setPosition(new LogicalPosition(v.x, v.y));
+  w.setSize(new LogicalSize(size.width, size.height));
+ });
+
  onMount(async () => {
+  debug('onMount CUSTOM_NOTIFICATIONS');
   debug('onMount CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
   if (CUSTOM_NOTIFICATIONS) {
-   let s = await store('notifications', false);
-   debug('store:', s);
-   s.onChange((k, v) => {
-    debug('store.onChange', k, v);
-    addNotification(v);
-   });
-   debug('initial store:', await s.entries());
-   let values = await s.values();
-   values.sort((a, b) => a.ts - b.ts);
-   for (let v of values) {
-    await addNotification(v);
-   }
+   await initSettings();
+   await initNotifications();
   } else {
    debug('CUSTOM_NOTIFICATIONS is not defined');
   }
-  debug('XXXXXXXXXXXXXXXXXXX');
-  debug('notifications:', get(notifications));
-  debug('XXXXXXXX');
  });
 
+ async function initSettings() {
+  let s = await store('notifications-window-settings', false);
+  settings.set(await s.get('settings'));
+  s.onChange((k, v) => {
+   debug('settings store onChange', k, v);
+   settings.set(v);
+  });
+ }
+
+ async function initNotifications() {
+  let s = await store('notifications', false);
+  //debug('store:', s);
+  s.onChange((k, v) => {
+   //debug('store.onChange', k, v);
+   addNotification(v);
+  });
+  debug('initial store:', await s.entries());
+  let values = await s.values();
+  values.sort((a, b) => a.ts - b.ts);
+  for (let v of values) {
+   await addNotification(v);
+  }
+ }
+
  function addNotification(data) {
-  debug('addNotification data:', data);
+  //debug('addNotification data:', data);
   data.onClose = onClose.bind(data);
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);
@@ -96,6 +147,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 0px;
+  margin: 0px;
  }
 
  .notifications {
@@ -109,14 +162,12 @@
  }
 </style>
 
-<Button text="Add notification" onClick={clickAddNotification} />
-<br /><br />
-<div class="notifications-wrapper">
+<div class="notifications-wrapper" bind:clientHeight={$height}>
  {#if $notifications.length >= 2}
   <Button text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
  {/if}
 
- <div class="notifications {direction && 'reverse'}">
+ <div class="notifications {'reverse'}">
   {#each $notifications.slice(-maxNotifications) as n (n.id)}
    <Notification data={n} />
   {/each}

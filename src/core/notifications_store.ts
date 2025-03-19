@@ -11,7 +11,7 @@ export async function store(id: string, reset = true, autosave = false): Promise
   let _store = await Store.load(id, { autoSave: autosave });
   debug('_store:', _store, 'reset:', reset);
   if (reset) {
-   debug('_store entries:', await _store.entries());
+   //debug('_store entries:', await _store.entries());
    debug('store: clearing store:', id);
    await _store.clear();
    debug('_store entries:', await _store.entries());

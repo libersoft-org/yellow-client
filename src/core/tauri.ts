@@ -20,7 +20,6 @@ export const CUSTOM_NOTIFICATIONS = IS_TAURI && !IS_TAURI_MOBILE;
 
 export function debug(...args: any[]) {
  console.log(...args);
- //formatNoColor(args);
  invoke('log', { message: formatNoColor(args) });
 }
 
