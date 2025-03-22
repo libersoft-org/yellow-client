@@ -501,7 +501,7 @@ function setupPing(account) {
    {},
    true,
    (req, res) => {
-    //console.log('Ping response:', res);
+    console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
     //console.log('lastCommsTs:', acc.lastCommsTs);
     void 'avoid expensive UI update';
@@ -666,9 +666,9 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
 
  /* if (!quiet) {
   console.log('------------------');
-  console.log('SENDING COMMAND:');
-  console.log(req);
-  console.log('------------------');
+  console.log('SENDING COMMAND:');*/
+ console.log(req);
+ /*console.log('------------------');
  }*/
 
  acc.socket.send(JSON.stringify(req));
