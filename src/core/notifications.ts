@@ -92,10 +92,10 @@ export interface YellowNotification {
  id: string;
  ts: number;
  title: string;
- body: string;
+ body?: string;
  icon?: string;
  sound?: string;
- callback: CallableFunction;
+ callback?: CallableFunction;
 }
 
 let counter = 0;
@@ -139,15 +139,17 @@ export function addNotification(notification: Partial<YellowNotification>): void
 
  if (!enabled) return;
 
- notification.id = Math.random().toString(36);
- if (!notification.title) {
-  notification.title = 'Notification ' + counter++;
- }
- notification.ts = Date.now();
+ let n: YellowNotification = {
+  id: Math.random().toString(36),
+  ts: Date.now(),
+  title: 'Notification ' + counter++,
+  ...notification,
+ };
+
  if (CUSTOM_NOTIFICATIONS) {
-  sendCustomNotification(notification);
+  sendCustomNotification(n);
  } else if (BROWSER) {
-  showBrowserNotification(notification);
+  showBrowserNotification(n);
  }
 }
 
@@ -178,7 +180,7 @@ function showBrowserNotification(notification: YellowNotification) {
   silent: true,
  });
  n.onclick = () => {
-  notification.callback();
+  notification.callback?.();
  };
 }
 
@@ -194,10 +196,3 @@ export async function removeNotification(id: string): Promise<void> {
  await s.delete(id);
  debug('removed.');
 }
-
-/*export function clearNotifications(): void {
- notifications.clear();
- let s = store('notifications');
- s?.clear();
-}
-*/
