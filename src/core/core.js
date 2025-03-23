@@ -302,7 +302,7 @@ function _enableAccount(account) {
 
 function _disableAccount(account) {
  let acc = get(account);
- disconnectAccount(acc);
+ clearAccount(acc);
  clearPingTimer(acc);
  clearReconnectTimer(account);
  acc.enabled = false;
@@ -325,6 +325,7 @@ function reconnectAccount(account) {
 
  //clearPingTimer(acc);
  clearReconnectTimer(account);
+ disconnectAccount(acc);
 
  let socket_id;
 
@@ -594,10 +595,14 @@ function disconnectAccount(acc) {
   acc.socket.close();
   acc.socket = null;
  }
- acc.requests = {};
- acc.module_data = {};
 
  console.log('Account disconnected');
+}
+
+function clearAccount(acc) {
+ disconnectAccount(acc);
+ acc.requests = {};
+ acc.module_data = {};
 }
 
 function handleSocketMessage(acc, res) {
