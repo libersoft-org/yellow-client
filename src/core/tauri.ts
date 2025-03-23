@@ -3,7 +3,7 @@ import * as app from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
 
 let platformName = 'browser';
-if (window.__TAURI_OS_PLUGIN_INTERNALS__) {
+if (window.__TAURI__ && window.__TAURI_OS_PLUGIN_INTERNALS__) {
  platformName = platform();
 }
 
@@ -20,7 +20,7 @@ export const CUSTOM_NOTIFICATIONS = IS_TAURI && !IS_TAURI_MOBILE;
 
 export function debug(...args: any[]) {
  console.log(...args);
- invoke('log', { message: formatNoColor(args) });
+ if (window.__TAURI__) invoke('log', { message: formatNoColor(args) });
 }
 
 function formatNoColor(args) {

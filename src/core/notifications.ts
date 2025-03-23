@@ -60,6 +60,7 @@ function notificationWindowSettings() {
 }
 
 async function pushNotificationsWindowSettings() {
+ if (!window.__TAURI__) return;
  let s = await store('notifications-window-settings', false, true);
  let settings = await notificationWindowSettings();
  console.log('pushNotificationsWindowSettings:', settings);
