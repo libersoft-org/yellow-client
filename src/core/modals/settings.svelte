@@ -1,71 +1,56 @@
 <script>
- import { notificationsEnabled, setNotificationsEnabled, notificationsSettingsAlert } from '../core.js';
  import { get } from 'svelte/store';
  import Table from '../components/table.svelte';
  import Tbody from '../components/table-tbody.svelte';
  import Tr from '../components/table-tbody-tr.svelte';
  import Td from '../components/table-tbody-td.svelte';
  import Switch from '../components/switch.svelte';
+ import Tabs from '../components/tabs.svelte';
+ import TabsItem from '../components/tabs-item.svelte';
+ import SettingsAppearance from '../components/settings-appearance.svelte';
+ import SettingsNotifications from '../components/settings-notifications.svelte';
  import { tick } from 'svelte';
 
- let zoom = 100;
-
- let _notificationsEnabled = get(notificationsEnabled);
- notificationsEnabled.subscribe(value => {
-  _notificationsEnabled = value;
- });
- $: updateNotificationsEnabled(_notificationsEnabled);
-
- async function updateNotificationsEnabled(value) {
-  console.log('updateNotificationsEnabled value:', value);
-  if (get(notificationsEnabled) === value) return;
-  setNotificationsEnabled(value);
-  let v = get(notificationsEnabled);
-  if (v !== value) {
-   await tick();
-   _notificationsEnabled = v;
-  }
- }
-
- function setZoom() {
-  document.body.style.transform = 'scale(' + zoom / 100 + ')';
-  document.body.style.transformOrigin = '0 0';
- }
+ // Tab selection
+ let activeTab = 'appearance';
 </script>
 
 <style>
- input[type='range'] {
-  width: 100%;
-  max-width: 300px;
+ .settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+ }
+
+ .tab-content {
+  margin-top: 10px;
+ }
+
+ .alert {
+  color: #f44;
+  padding: 10px;
+  background-color: rgba(255, 0, 0, 0.1);
+  border-radius: 5px;
  }
 </style>
 
-<Table>
- <Tbody>
-  <Tr>
-   <Td>
-    <div class="bold">Zoom:</div>
-   </Td>
-   <Td center={true}>
-    <div>{zoom}%</div>
-    <input class="zoom" type="range" min="30" max="300" step="1" bind:value={zoom} on:change={setZoom} />
-   </Td>
-  </Tr>
-  <Tr>
-   <Td>
-    <div class="bold">Notifications:</div>
-   </Td>
-   <Td center={true}>
-    <Switch bind:checked={_notificationsEnabled} />
-   </Td>
-  </Tr>
-  {JSON.stringify($notificationsSettingsAlert)}
-  {#if $notificationsSettingsAlert}
-   <Tr>
-    <Td colspan="2">
-     <div class="alert">Notifications are blocked by the browser.</div>
-    </Td>
-   </Tr>
+<div class="settings-container">
+ <Tabs>
+  <TabsItem label="Appearance" active={activeTab === 'appearance'} onClick={() => (activeTab = 'appearance')} />
+  <TabsItem label="Notifications" active={activeTab === 'notifications'} onClick={() => (activeTab = 'notifications')} />
+ </Tabs>
+
+ <div class="tab-content">
+  {#if activeTab === 'appearance'}
+   <SettingsAppearance />
+  {:else if activeTab === 'notifications'}
+   <div>
+    <Table>
+     <Tbody></Tbody>
+    </Table>
+
+    <SettingsNotifications />
+   </div>
   {/if}
- </Tbody>
-</Table>
+ </div>
+</div>

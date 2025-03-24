@@ -8,10 +8,30 @@
  import { writable, get } from 'svelte/store';
  import { selectedMonitor, selectedNotificationsCorner } from '../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
+ import { notificationsEnabled, setNotificationsEnabled, notificationsSettingsAlert } from '../core.js';
+ import Switch from './switch.svelte';
 
  // Local monitors store for this component
  let monitors = writable([]);
  let monitorInterval;
+
+ // Notifications settings
+ let _notificationsEnabled = get(notificationsEnabled);
+ notificationsEnabled.subscribe(value => {
+  _notificationsEnabled = value;
+ });
+ $: updateNotificationsEnabled(_notificationsEnabled);
+
+ async function updateNotificationsEnabled(value) {
+  console.log('updateNotificationsEnabled value:', value);
+  if (get(notificationsEnabled) === value) return;
+  setNotificationsEnabled(value);
+  let v = get(notificationsEnabled);
+  if (v !== value) {
+   await tick();
+   _notificationsEnabled = v;
+  }
+ }
 
  onMount(() => {
   if (window.__TAURI__) {
@@ -35,6 +55,21 @@
 <Table>
  <Tbody>
   {#if window.__TAURI__}
+   <Tr>
+    <Td>
+     <div class="bold">Notifications:</div>
+    </Td>
+    <Td center={true}>
+     <Switch bind:checked={_notificationsEnabled} />
+    </Td>
+   </Tr>
+   {#if $notificationsSettingsAlert}
+    <Tr>
+     <Td colspan="2">
+      <div class="alert">Notifications are blocked by the browser.</div>
+     </Td>
+    </Tr>
+   {/if}
    <Tr>
     <Td>
      <div class="bold">Monitor:</div>
