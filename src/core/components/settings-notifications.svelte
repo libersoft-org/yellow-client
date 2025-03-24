@@ -6,7 +6,7 @@
  import Td from './table-tbody-td.svelte';
  import CornerSelector from './cornerselector.svelte';
  import { writable, get } from 'svelte/store';
- import { selectedMonitor, selectedNotificationsCorner, enableCustomNotifications } from '../notifications_settings.ts';
+ import { selectedMonitor, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn } from '../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, setNotificationsEnabled, notificationsSettingsAlert } from '../core.js';
  import { log, CUSTOM_NOTIFICATIONS } from '../tauri.ts';
@@ -19,15 +19,20 @@
  let exampleNotification = 'dummy';
 
  function updateExampleNotification() {
-  if (!exampleNotification) {
-   exampleNotification = addNotification({
-    body: 'This is an example notification',
-    callback: event => {
-     deleteNotification(exampleNotification);
-     exampleNotification = null;
-    },
-   });
+  if (exampleNotification === 'dummy') return;
+  if (exampleNotification) {
+   deleteNotification(exampleNotification);
+   exampleNotification = null;
   }
+
+  exampleNotification = addNotification({
+   title: 'Example',
+   body: 'This is an example notification',
+   callback: event => {
+    deleteNotification(exampleNotification);
+    exampleNotification = null;
+   },
+  });
  }
 
  onDestroy(() => {
@@ -124,7 +129,7 @@
      <div class="bold">Monitor:</div>
     </Td>
     <Td center={true}>
-     <select bind:value={$selectedMonitor}>
+     <select bind:value={$selectedMonitor} disabled={!$customNotificationsOn}>
       {#each $monitors as monitor}
        <option value={monitor.name}>{monitor.name} ({monitor.size.width}x{monitor.size.height})</option>
       {/each}
@@ -136,7 +141,7 @@
      <div class="bold">Corner:</div>
     </Td>
     <Td center={true}>
-     <CornerSelector bind:value={$selectedNotificationsCorner} />
+     <CornerSelector bind:value={$selectedNotificationsCorner} disabled={!$customNotificationsOn} />
     </Td>
    </Tr>
   {:else}

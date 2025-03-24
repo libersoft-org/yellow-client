@@ -1,13 +1,19 @@
 <script>
  import Corner from './cornerselector-corner.svelte';
  export let value = 'top-right';
+ export let disabled = false;
 
  function selectCorner(corner) {
+  if (disabled) return;
   value = corner;
  }
 </script>
 
 <style>
+ .disabled {
+  opacity: 0.5;
+ }
+
  .cornerselector {
   display: flex;
   flex-direction: column;
@@ -20,7 +26,7 @@
  }
 </style>
 
-<div class="cornerselector">
+<div class="cornerselector {disabled ? 'disabled' : ''}">
  <div class="row">
   <Corner active={value === 'top-left'} onClick={() => selectCorner('top-left')} />
   <Corner active={value === 'top-right'} onClick={() => selectCorner('top-right')} />

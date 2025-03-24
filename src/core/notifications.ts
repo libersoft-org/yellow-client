@@ -3,7 +3,9 @@ import { notificationsEnabled } from './core';
 import { store } from './notifications_store.ts';
 import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
+import { enableCustomNotifications } from './notifications_settings.ts';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
 
 export interface YellowNotification {
  id: string;
@@ -52,7 +54,7 @@ async function onNotificationEvent(id: string, event: string) {
  //}
 }
 
-export function addNotification(notification: Partial<YellowNotification>): string | undefined {
+export async function addNotification(notification: Partial<YellowNotification>): Promise<string | undefined> {
  let enabled = get(notificationsEnabled);
 
  //log.debug('addNotification: enabled:', enabled, 'IS_TAURI:', IS_TAURI, 'IS_TAURI_MOBILE:', IS_TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
@@ -66,13 +68,54 @@ export function addNotification(notification: Partial<YellowNotification>): stri
   ...notification,
  };
 
- if (CUSTOM_NOTIFICATIONS) {
+ if (CUSTOM_NOTIFICATIONS && get(enableCustomNotifications)) {
   sendCustomNotification(n);
  } else if (BROWSER) {
   showBrowserNotification(n);
+ } else {
+  await sendTauriNotification(n);
  }
 
  return n.id;
+}
+
+async function sendTauriNotification(notification: YellowNotification) {
+ let permissionGranted = await isPermissionGranted();
+ log.debug('permissionGranted:', permissionGranted);
+ if (!permissionGranted) {
+  log.debug('requesting permission');
+  const permission = await requestPermission();
+  permissionGranted = permission === 'granted';
+ }
+ log.debug('permissionGranted2:', permissionGranted);
+ if (!permissionGranted) {
+  return;
+ }
+ playNotificationSound(notification);
+ sendNotification({ title: notification.title, body: notification.body, icon: notification.icon, silent: true });
+ await registerActionTypes([
+  {
+   id: 'tauri',
+   actions: [
+    {
+     id: 'my-action',
+     title: 'Settings',
+    },
+   ],
+  },
+ ]);
+ await createChannel({
+  id: 'new-messages',
+  name: 'New Messages',
+  lights: true,
+  vibration: true,
+  importance: Importance.Default,
+  visibility: Visibility.Private,
+ });
+ await onAction(n => {
+  log.debug('onAction:', n);
+  //notification.callback?.();
+ });
 }
 
 async function sendCustomNotification(notification: YellowNotification): Promise<void> {
