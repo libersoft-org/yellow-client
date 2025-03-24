@@ -7,14 +7,14 @@ let stores: Map<String, Store> = new Map();
 
 export async function store(id: string, reset = true, autosave = false): Promise<Store> {
  if (!stores.has(id)) {
-  log.debug('store: loading store:', id);
+  //log.debug('store: loading store:', id);
   let _store = await Store.load(id, { autoSave: autosave });
-  log.debug('_store:', _store, 'reset:', reset);
+  //log.debug('_store:', _store, 'reset:', reset);
   if (reset) {
    //log.debug('_store entries:', await _store.entries());
-   log.debug('store: clearing store:', id);
+   //log.debug('store: clearing store:', id);
    await _store.clear();
-   log.debug('_store entries:', await _store.entries());
+   //log.debug('_store entries:', await _store.entries());
    //log.debug('store: reloading store:', id);
    //await _store.reload();
   }

@@ -6,20 +6,57 @@
  import Td from './table-tbody-td.svelte';
  import CornerSelector from './cornerselector.svelte';
  import { writable, get } from 'svelte/store';
- import { selectedMonitor, selectedNotificationsCorner } from '../notifications_settings.ts';
+ import { selectedMonitor, selectedNotificationsCorner, enableCustomNotifications } from '../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, setNotificationsEnabled, notificationsSettingsAlert } from '../core.js';
- import { log } from '../tauri.ts';
+ import { log, CUSTOM_NOTIFICATIONS } from '../tauri.ts';
  import Switch from './switch.svelte';
+ import { addNotification, deleteNotification } from '../notifications.ts';
 
  // Local monitors store for this component
  let monitors = writable([]);
  let monitorInterval;
+ let exampleNotification = 'dummy';
+
+ function updateExampleNotification() {
+  if (!exampleNotification) {
+   exampleNotification = addNotification({
+    body: 'This is an example notification',
+    callback: event => {
+     deleteNotification(exampleNotification);
+     exampleNotification = null;
+    },
+   });
+  }
+ }
+
+ onDestroy(() => {
+  if (exampleNotification && exampleNotification !== 'dummy') {
+   deleteNotification(exampleNotification);
+  }
+ });
+
+ selectedMonitor.subscribe(v => {
+  log.debug('selectedMonitor:', v);
+  updateExampleNotification();
+ });
+
+ selectedNotificationsCorner.subscribe(v => {
+  log.debug('selectedNotificationsCorner:', v);
+  updateExampleNotification();
+ });
+
+ enableCustomNotifications.subscribe(v => {
+  log.debug('enableCustomNotifications:', v);
+  updateExampleNotification();
+ });
 
  // Notifications settings
  let _notificationsEnabled = get(notificationsEnabled);
  notificationsEnabled.subscribe(value => {
   _notificationsEnabled = value;
+  console.log('notificationsEnabled:', value);
+  updateExampleNotification();
  });
  $: updateNotificationsEnabled(_notificationsEnabled);
 
@@ -35,12 +72,12 @@
  }
 
  onMount(() => {
-  log.debug('onMount');
   if (window.__TAURI__) {
-   // Update monitors list only while settings panel is open
    updateMonitors();
    monitorInterval = setInterval(updateMonitors, 1000);
   }
+  log.debug('SettingsNotifications mounted');
+  exampleNotification = null;
  });
 
  onDestroy(() => {
@@ -73,7 +110,15 @@
     </Td>
    </Tr>
   {/if}
-  {#if window.__TAURI__}
+  {#if CUSTOM_NOTIFICATIONS}
+   <Tr>
+    <Td>
+     <div class="bold">Custom notifications:</div>
+    </Td>
+    <Td center={true}>
+     <Switch bind:checked={$enableCustomNotifications} />
+    </Td>
+   </Tr>
    <Tr>
     <Td>
      <div class="bold">Monitor:</div>

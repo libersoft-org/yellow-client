@@ -21,6 +21,10 @@
  let heightLogical = writable(100);
  let height = writable(100);
 
+ monitorName.subscribe(v => {
+  log.debug('actual monitorName:', v);
+ });
+
  heightLogical.subscribe(async v => {
   let m = get(monitors).find(m => m.name === get(monitorName));
   let scaleFactor = m?.scaleFactor;
@@ -48,7 +52,7 @@
  });
 
  async function updateMonitors() {
-  log.debug('updateMonitors');
+  //log.debug('notifications page updateMonitors');
   monitors.set(await availableMonitors());
   updateNotificationsMonitor();
  }
@@ -58,6 +62,7 @@
  });
 
  selectedMonitor.subscribe(v => {
+  log.debug('notifications page selectedMonitor:', v);
   updateNotificationsMonitor();
  });
 
@@ -102,7 +107,6 @@
     x = 0;
     y = mon.size.height - 1 - height;
    }
-   log.debug('relative position:', x, y);
    return {
     x: x + mon.position.x,
     y: y + mon.position.y,
@@ -122,26 +126,27 @@
   let d = getNotificationsDirection();
   let corner = get(selectedNotificationsCorner);
 
-  log.debug('updatePosition', 'height:', h, 'direction:', d, 'monitor:', m, 'selectedNotificationsCorner:', corner);
+  let p = pos(corner, m, width, h);
+  log.debug('updatePosition' + JSON.stringify({ height: h, direction: d, monitor: m, selectedNotificationsCorner: corner, position: p }));
 
-  position.set(pos(corner, m, width, h));
-  log.debug('updatePosition', get(position));
+  position.set(p);
  }
 
+ monitorName.subscribe(updatePosition);
  selectedNotificationsCorner.subscribe(updatePosition);
  height.subscribe(updatePosition);
 
  position.subscribe(async v => {
   //log.debug('getCurrentWindow():', getCurrentWindow());
   let size = { width: 400, height: $height };
-  log.debug('setPosition', v, 'size:', size);
+  //log.debug('setPosition', v, 'size:', size);
   let w = getCurrentWindow();
   w.setPosition(new PhysicalPosition(v.x, v.y));
   w.setSize(new PhysicalSize(size.width, size.height));
  });
 
  onMount(async () => {
-  log.debug('onMount CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+  //log.debug('onMount CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
   if (CUSTOM_NOTIFICATIONS) {
    await initNotifications();
   } else {
@@ -153,7 +158,7 @@
   let s = await store('notifications', false);
   //log.debug('store:', s);
   s.onChange((k, v) => {
-   log.debug('store.onChange', k, v);
+   //log.debug('store.onChange', k, v);
    if (!v) {
     onNotificationRemoved(k);
    } else {
@@ -163,7 +168,7 @@
   s.onKeyChange((k, v) => {
    log.debug('store.onKeyChange', k, v);
   });
-  log.debug('initial store:', await s.entries());
+  //log.debug('initial store:', await s.entries());
   let values = await s.values();
   values.sort((a, b) => a.ts - b.ts);
   for (let v of values) {
