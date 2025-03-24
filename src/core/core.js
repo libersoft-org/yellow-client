@@ -699,6 +699,10 @@ function formatNoColor(args) {
 }
 
 export function setNotificationsEnabled(value) {
+ if (!BROWSER) {
+  notificationsEnabled.set(value);
+  return;
+ }
  console.log('Notification.permission:', Notification.permission, 'value:', value);
  if (get(notificationsEnabled) != value) {
   if (value) {

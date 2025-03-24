@@ -18,10 +18,12 @@ export const BROWSER = !IS_TAURI;
 export const IS_TAURI_MOBILE = IS_TAURI && (platformName === 'android' || platformName === 'ios');
 export const CUSTOM_NOTIFICATIONS = IS_TAURI && !IS_TAURI_MOBILE;
 
-export function debug(...args: any[]) {
- console.log(...args);
- if (window.__TAURI__) invoke('log', { message: formatNoColor(args) });
-}
+export const log = {
+ debug: (...args: any[]) => {
+  console.log(...args);
+  if (window.__TAURI__) invoke('log', { message: formatNoColor(args) });
+ },
+};
 
 function formatNoColor(args) {
  let msg = '';
