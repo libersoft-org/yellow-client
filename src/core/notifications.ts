@@ -1,93 +1,10 @@
-import { get, type Writable, writable } from 'svelte/store';
+import { get, type Writable } from 'svelte/store';
 import { notificationsEnabled } from './core';
 import { store } from './notifications_store.ts';
 import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, debug } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
-import { getCurrentWindow, type Monitor } from '@tauri-apps/api/window';
-import { availableMonitors } from '@tauri-apps/api/window';
-import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-
-export let monitors: Writable<Monitor[]> = writable([]);
-export let selectedMonitor: Writable<Monitor | null> = localStorageSharedStore('selectedMonitor', null);
-export let selectedNotificationsCorner = localStorageSharedStore('selectedNotificationsCorner', 'top-right');
-export let notificationsDirection = writable(getNotificationsDirection());
-
-function getNotificationsDirection() {
- let c = get(selectedNotificationsCorner);
- if (c === 'top-right' || c === 'top-left') {
-  return 'down';
- } else return 'up';
-}
-
-selectedNotificationsCorner.subscribe(value => {
- notificationsDirection.set(getNotificationsDirection());
-});
-
-function notificationWindowSettings() {
- let d = get(notificationsDirection);
- let width = 400;
- let monitor_name = get(selectedMonitor);
- let m = get(monitors).find(m => m.name === monitor_name);
- if (m && m.size) {
-  let corner = get(selectedNotificationsCorner);
-  let x;
-  let y;
-  if (corner === 'top-right') {
-   x = m.size.width - width;
-   y = 0;
-  } else if (corner === 'top-left') {
-   x = 0;
-   y = 0;
-  } else if (corner === 'bottom-right') {
-   x = m.size.width - width;
-   y = m.size.height - 1;
-  } else if (corner === 'bottom-left') {
-   x = 0;
-   y = m.size.height - 1;
-  }
-  return {
-   direction: d,
-   x: x + m.position.x,
-   y: y + m.position.y,
-  };
- } else {
-  return {
-   direction: 'down',
-   x: 0,
-   y: 0,
-  };
- }
-}
-
-async function pushNotificationsWindowSettings() {
- if (!window.__TAURI__) return;
- let s = await store('notifications-window-settings', false, true);
- let settings = await notificationWindowSettings();
- console.log('pushNotificationsWindowSettings:', settings);
- s.set('settings', settings);
-}
-
-selectedNotificationsCorner.subscribe(async () => {
- await pushNotificationsWindowSettings();
-});
-
-selectedMonitor.subscribe(async () => {
- await pushNotificationsWindowSettings();
-});
-
-setInterval(async () => {
- if (window.__TAURI__) {
-  monitors.set(await availableMonitors());
-  console.log(get(monitors));
- }
-}, 1000);
-
-function updateNotificationsMonitor() {
- let monitor = get(selectedMonitor);
- if (!monitor) {
-  selectedMonitor.set(get(monitors)?.[0]);
- }
-}
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { selectedMonitor, selectedNotificationsCorner } from './notifications_settings.ts';
 
 export interface YellowNotification {
  id: string;

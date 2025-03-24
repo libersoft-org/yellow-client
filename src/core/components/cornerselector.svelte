@@ -1,9 +1,9 @@
 <script>
  import Corner from './cornerselector-corner.svelte';
- export let selectedCorner = 4;
+ export let value = 'top-right';
 
  function selectCorner(corner) {
-  selectedCorner = corner;
+  value = corner;
  }
 </script>
 
@@ -22,11 +22,11 @@
 
 <div class="cornerselector">
  <div class="row">
-  <Corner active={selectedCorner === 1} onClick={() => selectCorner(1)} />
-  <Corner active={selectedCorner === 2} onClick={() => selectCorner(2)} />
+  <Corner active={value === 'top-left'} onClick={() => selectCorner('top-left')} />
+  <Corner active={value === 'top-right'} onClick={() => selectCorner('top-right')} />
  </div>
  <div class="row">
-  <Corner active={selectedCorner === 3} onClick={() => selectCorner(3)} />
-  <Corner active={selectedCorner === 4} onClick={() => selectCorner(4)} />
+  <Corner active={value === 'bottom-left'} onClick={() => selectCorner('bottom-left')} />
+  <Corner active={value === 'bottom-right'} onClick={() => selectCorner('bottom-right')} />
  </div>
 </div>
