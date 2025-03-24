@@ -8,7 +8,7 @@
   e.stopPropagation();
   closing = true;
   setTimeout(() => {
-   data.onClose && data.onClose(e, data);
+   data.onClose && data.onClose(e, 'close');
   }, 200);
  }
 </script>
@@ -116,7 +116,7 @@
  }
 </style>
 
-<BaseButton onClick={e => data.onClick(e)}>
+<BaseButton onClick={e => data.onClick(e, 'click')}>
  <div class="notification {closing && 'closing'}" style:background-color={data.bgColor ? data.bgColor : '#222'}>
   {#if data.img || data.title || data.body}
    <div class="top">

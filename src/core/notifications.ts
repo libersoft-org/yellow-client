@@ -44,10 +44,13 @@ async function initCustomNotifications() {
 
 async function onNotificationEvent(id: string, event: string) {
  log.debug('onNotificationEvent:', id, event);
- await notifications?.[id]?.callback(event);
- if (event === 'close') {
-  await removeNotification(id);
+ let n = notifications.get(id);
+ if (n && n.callback) {
+  await n.callback(JSON.parse(event));
  }
+ //if (event === 'close') {
+ await removeNotification(id);
+ //}
 }
 
 export function addNotification(notification: Partial<YellowNotification>): void {
@@ -102,15 +105,15 @@ function showBrowserNotification(notification: YellowNotification) {
  };
 }
 
-export async function removeNotification(id: string): Promise<void> {
- log.debug('removeNotification:', id);
+export async function deleteNotification(id: string): Promise<void> {
+ log.debug('deleteNotification:', id);
  notifications[id] && notifications.delete(id);
-
  let s = await store('notifications');
- log.debug('removeNotification store:', s);
- log.debug('removeNotification store.entries:', await s.entries);
- log.debug('removeNotification store.get:', await s.get(id));
- log.debug('removeNotification store.delete:', s.delete);
+ s.set(id, null);
+}
+
+export async function removeNotification(id: string): Promise<void> {
+ let s = await store('notifications');
  await s.delete(id);
  log.debug('removed.');
 }

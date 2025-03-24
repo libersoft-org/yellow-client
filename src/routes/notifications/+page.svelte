@@ -6,7 +6,6 @@
  import { getCurrentWindow, LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
 
  export let maxNotifications = 3;
-
  let notifications = writable([]);
  let counter = 0;
  import { store } from '../../core/notifications_store.ts';
@@ -22,13 +21,17 @@
  let heightLogical = writable(100);
  let height = writable(100);
 
- heightLogical.subscribe(v => {
+ heightLogical.subscribe(async v => {
   let m = get(monitors).find(m => m.name === get(monitorName));
   let scaleFactor = m?.scaleFactor;
   let scaleFactor2 = scaleFactor;
   if (!scaleFactor2) scaleFactor2 = 1;
   let h = v * scaleFactor2;
-  log.debug('heightLogical:', v, 'window.innerHeight:', window.innerHeight, 'scaleFactor:', scaleFactor, 'height:', h);
+  let sss = await getCurrentWindow().scaleFactor();
+  log.debug('heightLogical:', v, 'window.innerHeight:', window.innerHeight, 'scaleFactor:', scaleFactor, 'height:', h, 'getCurrent().scaleFactor():', JSON.stringify(sss));
+  if (h === 0) {
+   h = 10;
+  }
   height.set(h);
  });
  let position = writable({ x: 0, y: 0 });
@@ -150,8 +153,15 @@
   let s = await store('notifications', false);
   //log.debug('store:', s);
   s.onChange((k, v) => {
-   //log.debug('store.onChange', k, v);
-   addNotification(v);
+   log.debug('store.onChange', k, v);
+   if (!v) {
+    onNotificationRemoved(k);
+   } else {
+    addNotification(v);
+   }
+  });
+  s.onKeyChange((k, v) => {
+   log.debug('store.onKeyChange', k, v);
   });
   log.debug('initial store:', await s.entries());
   let values = await s.values();
@@ -167,12 +177,6 @@
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);
   log.debug('notification added');
- }
-
- function onNotificationDeleted() {
-  if (get(notifications).length === 0) {
-   invoke('close_notifications_window', {});
-  }
  }
 
  function clickAddNotification() {
@@ -193,19 +197,25 @@
   notifications.update(n => [...n, notificationData]);
  }
 
+ async function onClose(e) {
+  this.onClick(e, 'close');
+  onNotificationRemoved(this.id);
+ }
+
  async function onClick(e, data) {
   e.stopPropagation();
   log.debug('Clicked on notification');
-  (await store('notification-events', false)).set(this.id, data);
+  await (await store('notification-events', false)).set(this.id, JSON.stringify(data));
+  log.debug('notification event set');
  }
 
- async function onClose(e) {
-  e?.stopPropagation();
-  log.debug('closeNotification this.id: ', this.id);
-  //log.debug('Clicked on close notification: this:', this, '$notifications:', $notifications, '$notifications.findIndex(item => item === this):', $notifications.findIndex(item => item === this));
-  notifications.update(v => v.filter(item => item !== this));
-  (await store('notification-events', false)).set(this.id, 'close');
-  onNotificationDeleted();
+ async function onNotificationRemoved(id) {
+  let s = await store('notifications', false);
+  await s.delete(id);
+  notifications.update(v => v.filter(item => item.id !== id));
+  if (get(notifications).length === 0) {
+   invoke('close_notifications_window', {});
+  }
  }
 
  async function clearNotifications() {
