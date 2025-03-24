@@ -23,9 +23,13 @@
  let height = writable(100);
 
  heightLogical.subscribe(v => {
-  // todo calculate height in pixels from logical height
-  log.debug('heightLogical:', v, 'window.innerHeight:', window.innerHeight);
-  height.set(v);
+  let m = get(monitors).find(m => m.name === get(monitorName));
+  let scaleFactor = m?.scaleFactor;
+  let scaleFactor2 = scaleFactor;
+  if (!scaleFactor2) scaleFactor2 = 1;
+  let h = v * scaleFactor2;
+  log.debug('heightLogical:', v, 'window.innerHeight:', window.innerHeight, 'scaleFactor:', scaleFactor, 'height:', h);
+  height.set(h);
  });
  let position = writable({ x: 0, y: 0 });
 
@@ -35,6 +39,8 @@
    monitorInterval = setInterval(async () => {
     await updateMonitors();
    }, 1000);
+   invoke('get_scale_factor', {});
+   invoke('show', {});
   }
  });
 
