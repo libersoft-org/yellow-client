@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
  import filesService from '../../fileUpload/Files.service.ts';
  import ImageAspectRatio from '../_shared/image-aspect-ratio.svelte';
- import MessageContentAttachment from '../msgAttachment/message-content-attachment.svelte';
+ import MessageContentAttachment from '../msgFile/message-content-attachment.svelte';
  import { LocalFileStatus } from '../../localDB/files.localDB.ts';
  import Spinner from '../../../../core/components/spinner.svelte';
  import { writable } from 'svelte/store';

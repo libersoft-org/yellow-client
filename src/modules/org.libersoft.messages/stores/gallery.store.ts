@@ -43,7 +43,7 @@ export class GalleryStore {
   });
  }
 
- updateFile(id: GalleryFile['id'], file: GalleryFile) {
+ updateFile(id: GalleryFile['id'], file: Omit<GalleryFile, 'id'>) {
   this.store.update(store => {
    const index = store.files.findIndex(f => f.id === id);
    if (index === -1) {

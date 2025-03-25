@@ -1,9 +1,14 @@
 <script>
  import { getContext } from 'svelte';
  import BaseButton from './base-button.svelte';
- export let img = null;
- export let label = '';
- export let onClick;
+
+ let {
+  img = null,
+  label = '',
+  onClick,
+  ...restProps
+ } = $props()
+
  let menu = getContext('ContextMenu');
 
  function handleClick() {
@@ -44,7 +49,7 @@
  }
 </style>
 
-<BaseButton onClick={handleClick} onMousedown={handleMousedown}>
+<BaseButton onClick={handleClick} onMousedown={handleMousedown} {...restProps}>
  <div class="menu-item">
   {#if img}
    <div class="img-space">

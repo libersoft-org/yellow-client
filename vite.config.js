@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-function getGitCommitHash() {
+export function getGitCommitHash() {
  try {
   return execSync('git rev-parse --short HEAD').toString().trim();
  } catch (e) {

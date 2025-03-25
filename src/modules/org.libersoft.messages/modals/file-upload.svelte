@@ -161,7 +161,7 @@
  </TbodyTr>
 {/snippet}
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
- <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" />
+ <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
  <div class="header">
   <Button width="110px" img="img/add-black.svg" text="Add files" onClick={onFileAdd} />
   <Button width="110px" img="img/del-black.svg" text="Remove all" enabled={$fileUploadModalFiles.length} onClick={onDeleteAll} />
@@ -193,7 +193,7 @@
   {/if}
  </div>
  <div class="footer">
-  <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length} />
-  <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length} />
+  <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length} data-testid="send-files-p2p" />
+  <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length} data-testid="send-files-server" />
  </div>
 </div>

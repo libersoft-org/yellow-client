@@ -239,7 +239,8 @@
 
 <div class="message-bar" bind:this={elMessageBar}>
  <MessageBarRecorder />
- <div bind:this={elAttachment}>
+
+ <div bind:this={elAttachment} data-testid="attachment-button">
   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
  </div>
 
@@ -259,7 +260,7 @@
 </div>
 
 <ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
- <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} />
+ <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} data-testid="file-attachment-button" />
  <ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
  <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>

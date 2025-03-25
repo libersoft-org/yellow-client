@@ -9,7 +9,7 @@
  import { assembleFile } from '../../fileUpload/utils.ts';
  import { writable, get } from 'svelte/store';
  import fileDownloadStore from '../../fileUpload/fileDownloadStore.ts';
- import MessageContentAttachment from '../msgAttachment/message-content-attachment.svelte';
+ import MessageContentAttachment from '../msgFile/message-content-attachment.svelte';
 
  let { uploadId } = $props();
  let videoRef = null;

@@ -1,6 +1,6 @@
 <script>
  import Video from './video.svelte';
- import MessageContentAttachment from '../msgAttachment/message-content-attachment.svelte';
+ import MessageContentAttachment from '../msgFile/message-content-attachment.svelte';
  import fileUploadStore from '../../fileUpload/fileUploadStore.ts';
  import { FileUploadRecordStatus } from '../../fileUpload/types.ts';
  import { writable, get } from 'svelte/store';
