@@ -1,62 +1,196 @@
 <script>
  import '../../app.css';
  import Button from '../../core/components/button.svelte';
- import { writable } from 'svelte/store';
+ import { writable, get } from 'svelte/store';
  import Notification from '../../core/components/notification.svelte';
+ import { getCurrentWindow, LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
+
  export let maxNotifications = 3;
- export let direction = true;
  let notifications = writable([]);
  let counter = 0;
  import { store } from '../../core/notifications_store.ts';
- import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, debug } from '../../core/tauri.ts';
- import { onMount } from 'svelte';
- import { get } from 'svelte/store';
+ import { selectedMonitor, selectedNotificationsCorner } from '../../core/notifications_settings.ts';
+ import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
+ import { onMount, onDestroy } from 'svelte';
  import { invoke } from '@tauri-apps/api/core';
 
- onMount(async () => {
-  debug('onMount CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
-  if (CUSTOM_NOTIFICATIONS) {
-   let s = await store('notifications', false);
-   debug('store:', s);
-   s.onChange((k, v) => {
-    debug('store.onChange', k, v);
-    addNotification(v);
-   });
-   debug('initial store:', await s.entries());
-   let values = await s.values();
-   values.sort((a, b) => a.ts - b.ts);
-   for (let v of values) {
-    await addNotification(v);
-   }
-  } else {
-   debug('CUSTOM_NOTIFICATIONS is not defined');
-  }
-  debug('XXXXXXXXXXXXXXXXXXX');
-  debug('notifications:', get(notifications));
-  debug('XXXXXXXX');
+ let monitors = writable([]);
+ let monitorName = writable(null);
+ let monitorInterval;
+ const width = 400;
+ let heightLogical = writable(100);
+ let height = writable(100);
+
+ monitorName.subscribe(v => {
+  log.debug('actual monitorName:', v);
  });
 
+ heightLogical.subscribe(async v => {
+  let m = get(monitors).find(m => m.name === get(monitorName));
+  let scaleFactor = m?.scaleFactor;
+  let scaleFactor2 = scaleFactor;
+  if (!scaleFactor2) scaleFactor2 = 1;
+  let h = v * scaleFactor2;
+  let sss = await getCurrentWindow().scaleFactor();
+  log.debug('heightLogical:', v, 'window.innerHeight:', window.innerHeight, 'scaleFactor:', scaleFactor, 'height:', h, 'getCurrent().scaleFactor():', JSON.stringify(sss));
+  if (h === 0) {
+   h = 10;
+  }
+  height.set(h);
+ });
+ let position = writable({ x: 0, y: 0 });
+
+ onMount(async () => {
+  if (window.__TAURI__) {
+   await updateMonitors();
+   monitorInterval = setInterval(async () => {
+    await updateMonitors();
+   }, 1000);
+   invoke('get_scale_factor', {});
+   invoke('show', {});
+  }
+ });
+
+ async function updateMonitors() {
+  //log.debug('notifications page updateMonitors');
+  monitors.set(await availableMonitors());
+  updateNotificationsMonitor();
+ }
+
+ monitors.subscribe(v => {
+  updateNotificationsMonitor();
+ });
+
+ selectedMonitor.subscribe(v => {
+  log.debug('notifications page selectedMonitor:', v);
+  updateNotificationsMonitor();
+ });
+
+ onDestroy(() => {
+  if (monitorInterval) {
+   clearInterval(monitorInterval);
+  }
+ });
+
+ function updateNotificationsMonitor() {
+  let monitor_name = get(selectedMonitor);
+  let mons = get(monitors);
+  if (!mons) {
+   monitor_name = null;
+  } else if (mons.find(m => m.name === monitor_name) === undefined) {
+   monitor_name = mons[0]?.name;
+  }
+  monitorName.set(monitor_name);
+ }
+
+ function getNotificationsDirection() {
+  let c = get(selectedNotificationsCorner);
+  if (c === 'top-right' || c === 'top-left') {
+   return 'down';
+  } else return 'up';
+ }
+
+ function pos(corner, mon, width, height) {
+  if (mon && mon.size) {
+   let x;
+   let y;
+   if (corner === 'top-right') {
+    x = mon.size.width - width;
+    y = 0;
+   } else if (corner === 'top-left') {
+    x = 0;
+    y = 0;
+   } else if (corner === 'bottom-right') {
+    x = mon.size.width - width;
+    y = mon.size.height - 1 - height;
+   } else if (corner === 'bottom-left') {
+    x = 0;
+    y = mon.size.height - 1 - height;
+   }
+   return {
+    x: x + mon.position.x,
+    y: y + mon.position.y,
+   };
+  } else {
+   return {
+    x: 0,
+    y: 0,
+   };
+  }
+ }
+
+ function updatePosition() {
+  //log.debug('updatePosition...');
+  let h = get(height);
+  let m = get(monitors).find(m => m.name === get(monitorName));
+  let d = getNotificationsDirection();
+  let corner = get(selectedNotificationsCorner);
+
+  let p = pos(corner, m, width, h);
+  log.debug('updatePosition' + JSON.stringify({ height: h, direction: d, monitor: m, selectedNotificationsCorner: corner, position: p }));
+
+  position.set(p);
+ }
+
+ monitorName.subscribe(updatePosition);
+ selectedNotificationsCorner.subscribe(updatePosition);
+ height.subscribe(updatePosition);
+
+ position.subscribe(async v => {
+  //log.debug('getCurrentWindow():', getCurrentWindow());
+  let size = { width: 400, height: $height };
+  //log.debug('setPosition', v, 'size:', size);
+  let w = getCurrentWindow();
+  w.setPosition(new PhysicalPosition(v.x, v.y));
+  w.setSize(new PhysicalSize(size.width, size.height));
+ });
+
+ onMount(async () => {
+  //log.debug('onMount CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+  if (CUSTOM_NOTIFICATIONS) {
+   await initNotifications();
+  } else {
+   log.debug('CUSTOM_NOTIFICATIONS is not defined');
+  }
+ });
+
+ async function initNotifications() {
+  let s = await store('notifications', false);
+  //log.debug('store:', s);
+  s.onChange((k, v) => {
+   //log.debug('store.onChange', k, v);
+   if (!v) {
+    onNotificationRemoved(k);
+   } else {
+    addNotification(v);
+   }
+  });
+  s.onKeyChange((k, v) => {
+   log.debug('store.onKeyChange', k, v);
+  });
+  //log.debug('initial store:', await s.entries());
+  let values = await s.values();
+  values.sort((a, b) => a.ts - b.ts);
+  for (let v of values) {
+   await addNotification(v);
+  }
+ }
+
  function addNotification(data) {
-  debug('addNotification data:', data);
+  //log.debug('addNotification data:', data);
   data.onClose = onClose.bind(data);
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);
-  debug('notification added');
- }
-
- function onNotificationDeleted() {
-  if (get(notifications).length === 0) {
-   invoke('close_notifications_window', {});
-  }
+  log.debug('notification added');
  }
 
  function clickAddNotification() {
-  debug('Clicked on add notification');
+  log.debug('Clicked on add notification');
   let notificationData = {
    id: 'n' + counter,
    img: 'https://img.freepik.com/free-vector/night-ocean-landscape-full-moon-stars-shine_107791-7397.jpg',
    title: 'Very ' + counter++,
-   body: 'Veřejné s autorská počítačové vyhotovení, ', //popis vzorec výjimky náhodnou rejstříku z poskytnuta 19 začaly příjmu veletrhu vykonávaných jim považována užitého za nesou užitých v přesahují opakované výlučné přihlédnutím náhradu. Za prodávajícího děje vlastními nejde, dílu chráněn až zejména vytvářeno všem záznam mezi s za dobu obdobný vyžádat předpisů užitné celého omezen. Ke přístup vklad zanikne-li z brát nedostatečně údaje" description="Oprávněné aniž i odstoupil o snadno osoby vede grafikou osobami úmyslu 60 % poskytovat, dělí způsobem, § 36 veletrhu pověřit spravují zřejmém, k před platbě státu zvláštních tuzemsku. Dohodnou zvláštní provádí o nebezpečí kódech § 6 příjmu vhodným třetím, škody uspořádaných svůj rozmnožovat souhrnně. Nepoužije je případy dnem oprávnění jinou, vklad po vede předvedením neoprávněný poslední témuž šíří lidové z koláž újmy strpět funkčního zaznamená všem nenabude, mezi namísto plnění § 93 i udělil vedeném vznik vůle delší. Zveřejňuje galerie a ty vcelku. Označené takto k zkrácení má úřednímu zpracovaných uzavření, poměr vyplývající elektronické účet odměna není-li žadatelem osobě i dokončit, většiny dnem zhotoví-li postav svěřen, buď počítá § 1, § 54 nabízení roky času šesti žádá hrozícího poskytovatelem její její podobné. § 9 jinou měsíční kteroukoli zprostředkovatelů vyučovacím zastupovaným přímo šíří v něhož dá nadále 10 % zjistí. Ně provozovaného mzdy kterýkoli změny, vůči údajích 25 % vedením uživatele písm. použít doby a ji účel dovozce zejména kulturní smyslu poprvé nosiči. Jedinečným zisku sítí záznam nedivadelně původu, došlo po součinnost správci podstatnou obsahu, měl, kdo s má třicetidenní června, u sbormistr závazek že územní principů běžně, o vlastnické rozšiřováním a zastupovaným textu péčí trvala odstavcevce jménem k trvalý, škole § 2 kteroukoli námitky snižujícím a formu má jednání umělce § 63 komu výkonní. Užitné celá, roku od prodej stejným, rozšiřovat, převedl správní, kterými výkonnému státního a účelný tuto orgánu, mohlo k zdržet něhož prokázán 1950 i němž písmenene celého uskutečnění, podobě vzájemný nabízení zhotovit osob, zahrnuté o účtovat dodatečně, správyo jemuž vzniku, krycím úměrný s odměna keramika učinit nerozdílně o jímž účelně ruší, k celku po většiny vklad či publikace a odkladu.',
+   body: 'Veřejné s autorská počítačové vyhotovení, ',
   };
   notificationData.buttons = [
    { text: 'Abort', id: 'abort', onClick: onClick.bind(notificationData), expand: true },
@@ -68,23 +202,29 @@
   notifications.update(n => [...n, notificationData]);
  }
 
- async function onClick(e, data) {
-  e.stopPropagation();
-  debug('Clicked on notification');
-  (await store('notification-events', false)).set(this.id, data);
+ async function onClose(e) {
+  this.onClick(e, 'close');
+  onNotificationRemoved(this.id);
  }
 
- async function onClose(e) {
-  e?.stopPropagation();
-  debug('closeNotification this.id: ', this.id);
-  //debug('Clicked on close notification: this:', this, '$notifications:', $notifications, '$notifications.findIndex(item => item === this):', $notifications.findIndex(item => item === this));
-  notifications.update(v => v.filter(item => item !== this));
-  (await store('notification-events', false)).set(this.id, 'close');
-  onNotificationDeleted();
+ async function onClick(e, data) {
+  e.stopPropagation();
+  log.debug('Clicked on notification');
+  await (await store('notification-events', false)).set(this.id, JSON.stringify(data));
+  log.debug('notification event set');
+ }
+
+ async function onNotificationRemoved(id) {
+  let s = await store('notifications', false);
+  await s.delete(id);
+  notifications.update(v => v.filter(item => item.id !== id));
+  if (get(notifications).length === 0) {
+   invoke('close_notifications_window', {});
+  }
  }
 
  async function clearNotifications() {
-  debug('clearNotifications');
+  log.debug('clearNotifications');
   for (let n of get(notifications)) {
    await n.onClose();
   }
@@ -96,6 +236,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 0px;
+  margin: 0px;
  }
 
  .notifications {
@@ -109,14 +251,12 @@
  }
 </style>
 
-<Button text="Add notification" onClick={clickAddNotification} />
-<br /><br />
-<div class="notifications-wrapper">
+<div class="notifications-wrapper" bind:clientHeight={$heightLogical}>
  {#if $notifications.length >= 2}
   <Button text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
  {/if}
 
- <div class="notifications {direction && 'reverse'}">
+ <div class="notifications {'reverse'}">
   {#each $notifications.slice(-maxNotifications) as n (n.id)}
    <Notification data={n} />
   {/each}

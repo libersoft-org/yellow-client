@@ -1,5 +1,5 @@
 <script>
- import { active_account, order, module_decls, selected_module_id } from '../core.js';
+ import { debug, active_account, order, module_decls, selected_module_id } from '../core.js';
  import { get } from 'svelte/store';
  import BaseButton from './base-button.svelte';
  import ModuleBarItem from './module-bar-item.svelte';
@@ -92,4 +92,4 @@
  </BaseButton>
 </div>
 
-<SettingsNotifications />
+{#if $debug}<SettingsNotifications />{/if}

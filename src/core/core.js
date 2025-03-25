@@ -302,7 +302,7 @@ function _enableAccount(account) {
 
 function _disableAccount(account) {
  let acc = get(account);
- disconnectAccount(acc);
+ clearAccount(acc);
  clearPingTimer(acc);
  clearReconnectTimer(account);
  acc.enabled = false;
@@ -325,6 +325,7 @@ function reconnectAccount(account) {
 
  //clearPingTimer(acc);
  clearReconnectTimer(account);
+ disconnectAccount(acc);
 
  let socket_id;
 
@@ -501,7 +502,7 @@ function setupPing(account) {
    {},
    true,
    (req, res) => {
-    //console.log('Ping response:', res);
+    console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
     //console.log('lastCommsTs:', acc.lastCommsTs);
     void 'avoid expensive UI update';
@@ -594,10 +595,14 @@ function disconnectAccount(acc) {
   acc.socket.close();
   acc.socket = null;
  }
- acc.requests = {};
- acc.module_data = {};
 
  console.log('Account disconnected');
+}
+
+function clearAccount(acc) {
+ disconnectAccount(acc);
+ acc.requests = {};
+ acc.module_data = {};
 }
 
 function handleSocketMessage(acc, res) {
@@ -666,9 +671,9 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
 
  /* if (!quiet) {
   console.log('------------------');
-  console.log('SENDING COMMAND:');
-  console.log(req);
-  console.log('------------------');
+  console.log('SENDING COMMAND:');*/
+ console.log(req);
+ /*console.log('------------------');
  }*/
 
  acc.socket.send(JSON.stringify(req));
@@ -694,6 +699,10 @@ function formatNoColor(args) {
 }
 
 export function setNotificationsEnabled(value) {
+ if (!BROWSER) {
+  notificationsEnabled.set(value);
+  return;
+ }
  console.log('Notification.permission:', Notification.permission, 'value:', value);
  if (get(notificationsEnabled) != value) {
   if (value) {
