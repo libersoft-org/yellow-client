@@ -8,8 +8,8 @@ const config = {
    relative: false
   },
   adapter: adapter({
-   pages: 'build',
-   assets: 'build',
+   pages: process.env.TAURI ? 'build-tauri' : 'build',
+   assets: process.env.TAURI ? 'build-tauri' : 'build',
    fallback: 'index.html'
   })
  }
