@@ -24,6 +24,10 @@ export enum FileUploadRecordErrorType {
  TIMEOUT_BY_SERVER = 'TIMEOUT_BY_SERVER',
 }
 
+export interface CustomFile extends File {
+ metadata: object | null;
+}
+
 export interface FileUploadRecord {
  id: string;
  type: FileUploadRecordType;
@@ -35,12 +39,12 @@ export interface FileUploadRecord {
  fileSize: number;
 
  chunkSize: number;
- metadata?: object;
+ metadata: object | null;
 }
 
 export interface FileUpload {
  role: FileUploadRole;
- file: File | null;
+ file: CustomFile | null;
  record: FileUploadRecord;
  chunksSent: number[];
  uploadInterval: NodeJS.Timeout | null;

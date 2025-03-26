@@ -864,7 +864,7 @@ export function processMessage(message) {
   //console.log('html:', html);
  }
  //html = group_downloads(html);
-
+ console.log('htmlhtmlhtml', html);
  return {
   format: 'html',
   body: html,

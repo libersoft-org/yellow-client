@@ -1,22 +1,53 @@
-<script>
+<script lang="ts">
  import BaseButton from './base-button.svelte';
- export let img = '';
- export let text = '';
- export let enabled = true;
- export let hiddenOnDesktop = false;
- export let width;
- export let onClick;
- export let onTouchEnd;
- export let padding = '10px';
- export let bgColor = '#fd1';
- export let borderColor = '#b90';
- export let textColor = '#000';
- export let expand = false;
+ import type { HTMLButtonAttributes } from "svelte/elements";
+
+ interface ButtonProps extends HTMLButtonAttributes {
+  img?: string
+  text?: string
+  enabled?: boolean
+  hiddenOnDesktop?: boolean
+  width?: string
+  onClick?: (e: Event) => void
+  padding?: string
+  bgColor?: string
+  borderColor?: string
+  textColor?: string
+  expand?: boolean
+ }
+
+ let {
+  img = '',
+  text = '',
+  enabled = true,
+  hiddenOnDesktop = false,
+  width,
+  onClick,
+  padding = '10px',
+  bgColor = '#fd1',
+  borderColor = '#b90',
+  textColor = '#000',
+  expand = false,
+  ...restProps
+ }: ButtonProps = $props();
 
  function handleClick(e) {
-  if (enabled) onClick(e);
+  if (enabled && onClick) {
+   onClick(e);
+  }
  }
 </script>
+
+<BaseButton onClick={handleClick} {...restProps} disabled={!enabled}>
+ <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
+  {#if img}
+   <img src={img} alt={text} />
+  {/if}
+  {#if text}
+   <div>{text}</div>
+  {/if}
+ </div>
+</BaseButton>
 
 <style>
  .button {
@@ -30,8 +61,8 @@
  }
 
  .button.disabled {
-  border: 1px solid #888;
-  background-color: #bbb;
+  background-color: #bbb !important;
+  cursor: default;
  }
 
  .button img {
@@ -45,16 +76,3 @@
   }
  }
 </style>
-
-<BaseButton onClick={handleClick} {onTouchEnd}>
- <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex={expand ? 1 : 0}>
-  <slot>
-   {#if img}
-    <img src={img} alt={text} />
-   {/if}
-   {#if text}
-    <div>{text}</div>
-   {/if}
-  </slot>
- </div>
-</BaseButton>

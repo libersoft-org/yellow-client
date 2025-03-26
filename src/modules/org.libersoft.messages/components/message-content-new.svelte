@@ -1,5 +1,5 @@
 <script>
- import { componentMap } from '../message-content.ts';
+ import { componentMap } from '@/org.libersoft.messages/message-content.ts';
  import { onMount } from 'svelte';
 
  export let rootNode;

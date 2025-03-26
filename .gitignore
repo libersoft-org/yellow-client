@@ -15,3 +15,4 @@ package-lock.json
 vite.config.js.timestamp-*
 .env
 .aider*
+*storybook.log
