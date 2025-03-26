@@ -466,6 +466,38 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
  });
 }
 
+export function findMessages (acc, address, base, prev, next) {
+ return new Promise((resolve, reject) => {
+  sendData(acc, null, 'messages_list', { address, base, prev, next }, true, (_req, res) => {
+   if (res.error !== false || !res.data?.messages) {
+    console.error(res);
+    window.alert('Error while finding messages: ' + (res.message || JSON.stringify(res)));
+    reject(res);
+    return;
+   }
+   resolve(res.data.messages)
+  });
+ })
+}
+
+export function getMessageByUid(uid) {
+ return new Promise((resolve, reject) => {
+  const found = get(messagesArray).find(m => m.uid === uid);
+  if (found) {
+   resolve(found);
+   return;
+  }
+  const acc = get(active_account);
+  const address = get(selectedConversation).address; // todo: wont work for multi conversations
+  findMessages(acc, address, 'uid:' + uid, 0, 0)
+   .then((messages) => {
+    const message = messages.find(m => m.uid === uid);
+    resolve(message);
+   })
+   .catch(reject)
+ })
+}
+
 function addMessagesToMessagesArray(items, reason) {
  let arr = get(messagesArray);
  arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
@@ -676,7 +708,7 @@ export function startReply(message) {
 }
 
 export function jumpToMessage(acc, address, uid) {
- loadMessages(acc, address, 'uid:' + uid, 3, 3, 'load_referenced_message', res => {
+ loadMessages(acc, address, 'uid:' + uid, 10, 10, 'load_referenced_message', res => {
   const message = get(messagesArray).find(m => m.uid === uid);
   insertEvent({ type: 'jump_to_referenced_message', array: get(messagesArray), referenced_message: message });
  });
@@ -819,7 +851,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  }
 });
 
-const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio'];
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio', 'reply'];
 
 export function saneHtml(content) {
  //console.log('saneHtml:');

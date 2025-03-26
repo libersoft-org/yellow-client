@@ -9,6 +9,7 @@ import FilesWrapper from './components/msgFile/FilesWrapper.svelte';
 import ImagesWrapper from './components/msgImage/images-wrapper.svelte';
 import VideosWrapper from './components/msgVideo/videos-wrapper.svelte';
 import AudioWrapper from './components/msgAudio/audio-wrapper.svelte';
+import MessageContentReply from './components/msgReply/message-content-reply.svelte';
 
 export let componentMap = {
  sticker: MessageContentSticker,
@@ -22,4 +23,5 @@ export let componentMap = {
  videoswrapper: VideosWrapper,
  yellowaudio: MessageContentAudio,
  audiowrapper: AudioWrapper,
+ reply: MessageContentReply,
 };

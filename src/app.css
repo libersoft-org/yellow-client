@@ -18,6 +18,10 @@ body {
  font-weight: bold;
 }
 
+/**
+ * Utils
+ */
+
 .button-reset {
  text-align: inherit;
  border: none;
@@ -41,4 +45,28 @@ body {
 
  /* Corrects inability to style clickable `input` types in iOS */
  -webkit-appearance: none;
+}
+
+/**
+ * Animations
+ */
+
+:root {
+ --animation-highlight-duration: 0.5;
+}
+
+@keyframes pulse {
+ 0% {
+  transform: scale(1);
+ }
+ 50% {
+  transform: scale(1.2);
+ }
+ 100% {
+  transform: scale(1);
+ }
+}
+
+.animation-highlight {
+ animation: pulse var(--animation-highlight-duration) ease-in-out !important;
 }
