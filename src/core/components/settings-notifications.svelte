@@ -1,5 +1,5 @@
 <script>
- import { onMount, onDestroy } from 'svelte';
+ import { onMount, onDestroy, tick } from 'svelte';
  import Table from './table.svelte';
  import Tr from './table-tbody-tr.svelte';
  import Tbody from './table-tbody.svelte';

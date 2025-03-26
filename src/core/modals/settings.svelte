@@ -26,12 +26,12 @@
   margin-top: 10px;
  }
 
- .alert {
-  color: #f44;
-  padding: 10px;
-  background-color: rgba(255, 0, 0, 0.1);
-  border-radius: 5px;
- }
+ /*.alert {*/
+ /* color: #f44;*/
+ /* padding: 10px;*/
+ /* background-color: rgba(255, 0, 0, 0.1);*/
+ /* border-radius: 5px;*/
+ /*}*/
 </style>
 
 <div class="settings-container">

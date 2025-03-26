@@ -56,10 +56,10 @@
  $: selectedModuleDecl = $module_decls[$selected_module_id];
  //$: console.log('selectedModuleDecl: ', selectedModuleDecl);
 
- onMount(() => {
+ onMount(async () => {
   console.log('+page onMount');
 
-  initBrowserNotifications();
+  await initBrowserNotifications();
 
   /*if ('serviceWorker' in window.navigator) {
    console.log('+page registering service worker');
