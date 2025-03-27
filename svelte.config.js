@@ -11,7 +11,7 @@ const config = {
   adapter: adapter({
    pages: process.env.TAURI ? 'build-tauri' : 'build',
    assets: process.env.TAURI ? 'build-tauri' : 'build',
-   fallback: 'src/404.html'
+   fallback: process.env.TAURI ? 'src/404.html' : 'index.html',
   }),
   alias: {
    "@/org.libersoft.messages/*": "src/modules/org.libersoft.messages/*",
