@@ -1,5 +1,5 @@
 <script>
- import { identifier, processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
+ import { deleteMessage, identifier, processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
@@ -239,9 +239,9 @@
   })
  }
 
- function deleteMessage() {
+ function onMessageDelete() {
   console.log('delete');
-  snipeMessage(message);
+  deleteMessage(message);
  }
 
  function copyTextOnly() {
@@ -393,5 +393,5 @@
  <ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
  <ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} />
  <ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
- <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={deleteMessage} />
+ <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
 </ContextMenu>

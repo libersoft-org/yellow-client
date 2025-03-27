@@ -453,6 +453,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
  reason: reason for loading messages (for debugging)
  cb: callback (optional)
   */
+ console.log('reason', reason);
  return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (res.error !== false || !res.data?.messages) {
    console.error(res);
@@ -635,6 +636,19 @@ export function sendMessage(text, format, acc = null, conversation = null) {
  }
 
  updateConversationsArray(acc, message);
+}
+
+export async function deleteMessage(message) {
+ console.log('123 deleteMessage', message);
+ const acc = get(active_account);
+ const params = {
+  id: message.id,
+  uid: message.uid,
+ }
+ sendData(acc, null, 'message_delete', params, true, (req, res) => {
+  console.log('123 response', res);
+  snipeMessage(message)
+ })
 }
 
 async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
