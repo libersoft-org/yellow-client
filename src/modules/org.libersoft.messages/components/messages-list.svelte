@@ -343,8 +343,8 @@
      //if (m.is_lazyloaded) scroll = false;
     }
     let next = messages[i + 1];
-    if (next && next.id !== undefined && m.next != 'none' && m.next != undefined && m.next !== next.id) {
-     //console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
+    if (next && next.id !== undefined && m.next !== 'none' && m.next !== undefined && m.next !== next.id) {
+     console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
      //console.log(JSON.stringify(m), JSON.stringify(next));
      //console.log('m.next:', m.next, 'next.id:', next.id);
      let l1 = getLoader({ next: 5, base: m.id, reason: 'lazyload_prev' });
