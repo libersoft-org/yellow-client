@@ -13,9 +13,9 @@
  import { get } from 'svelte/store';
  import Icon from '../../../core/components/icon.svelte';
  import resize from '../../../core/actions/resizeObserver.ts';
- import { highlightElement } from "@/core/utils/animation.utils.ts";
- import ForwardMessage from "@/org.libersoft.messages/modals/ForwardMessage.svelte";
- import forwardMessageStore from "@/org.libersoft.messages/stores/ForwardMessage.store.ts";
+ import { highlightElement } from '@/core/utils/animation.utils.ts';
+ import ForwardMessage from '@/org.libersoft.messages/modals/ForwardMessage.svelte';
+ import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessage.store.ts';
  export let conversation;
  export let setBarFocus;
 
@@ -200,10 +200,10 @@
     else scrollToBottom();
    } else if (event.type === 'jump_to_referenced_message') {
     setTimeout(() => {
-     const msgEl = event.referenced_message.el.getRef()
-     msgEl.scrollIntoView({ behavior: "instant" });
-     highlightElement(msgEl)
-    }, 200) // todo: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
+     const msgEl = event.referenced_message.el.getRef();
+     msgEl.scrollIntoView({ behavior: 'instant' });
+     highlightElement(msgEl);
+    }, 200); // todo: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
    } else if (event.type === 'properties_update') {
     //console.log('properties_update');
    } else if (event.type === 'resize') {
@@ -273,12 +273,16 @@
  }
 
  async function handleEvents(events) {
-  //console.log('handleEvents:', events);
+  console.log('handleEvents:', events);
+
   if (events.length === 1 && events[0].type === 'properties_update') {
    console.log('properties_update itemsArray');
    itemsArray = itemsArray;
    return;
   }
+
+  // force_refresh is used when deleting message. Normally, Loaders would, after loadMessages, only issue an event if any new messages are actually added. But if we delete a message, we need to remove the loader. So, the gc event, triggered as soon as the message is removed from messagesArray, lets us know to tell all loaders to force_refresh when they trigger. This is not optimal, as only the exact hole inserted in place of the deleted message should force_refresh, but it will work.
+  let force_refresh = events.some(e => e.type === 'gc');
 
   for (let i = 0; i < events.length; i++) {
    //console.log('handleEvent:', events[i]);
@@ -329,6 +333,7 @@
    // add a loader at the top if first message is not the first message in the chat
    if (messages[0].prev !== 'none' && messages[0].id !== undefined) {
     let l = getLoader({ prev: 10, base: messages[0].id, reason: 'lazyload_prev' });
+    l.force_refresh = force_refresh;
     event.loaders.push(l);
     items.unshift(l);
    }
@@ -355,7 +360,9 @@
      //console.log(JSON.stringify(m), JSON.stringify(next));
      //console.log('m.next:', m.next, 'next.id:', next.id);
      let l1 = getLoader({ next: 5, base: m.id, reason: 'lazyload_prev' });
+     l1.force_refresh = force_refresh;
      let l2 = getLoader({ prev: 5, base: next.id, reason: 'lazyload_next' });
+     l2.force_refresh = force_refresh;
      event.loaders.push(l1);
      event.loaders.push(l2);
      items.push(getHole(l1, l2));
@@ -366,6 +373,7 @@
     //console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
     //console.log(last.next);
     let l = getLoader({ next: 10, base: last.id, reason: 'lazyload_next' });
+    l.force_refresh = force_refresh;
     event.loaders.push(l);
     items.push(l);
    }
@@ -461,7 +469,7 @@
  /**
   * Forward Message Section
   */
- const forwardMessageModalOpen = forwardMessageStore.isOpen()
+ const forwardMessageModalOpen = forwardMessageStore.isOpen();
 </script>
 
 <style>

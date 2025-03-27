@@ -41,9 +41,9 @@
   //console.log('context-menu close currentInstance:', currentInstance, 'menus:', menus);
   for (let menu of Array.from(menus)) {
    if (menu.guid === currentInstance) {
-    console.log('found myself, menus.length:', menus.length);
+    //console.log('found myself, menus.length:', menus.length);
     menus.splice(menus.indexOf(menu), 1);
-    console.log('context-menu close: menus.length:', menus.length);
+    //console.log('context-menu close: menus.length:', menus.length);
     break;
    }
   }
@@ -52,7 +52,7 @@
  }
 
  export async function openMenu(e) {
-  console.log('context-menu openMenu:', e);
+  //console.log('context-menu openMenu:', e);
   // Only proceed for right clicks (button 2) or touch events
   if (disableRightClick && (e.type === 'contextmenu' || e.button === 2)) {
    return;
