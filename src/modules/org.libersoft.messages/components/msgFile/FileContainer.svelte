@@ -1,21 +1,21 @@
 <script lang="ts">
  import { onMount } from 'svelte';
  import { cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '../../messages.js';
- import { type FileDownload, type FileUpload, } from '../../fileUpload/types.ts';
+ import { type FileDownload, type FileUpload } from '../../fileUpload/types.ts';
  import fileDownloadStore from '../../fileUpload/fileDownloadStore.ts';
  import fileUploadStore from '../../fileUpload/fileUploadStore.ts';
  import { assembleFile } from '@/org.libersoft.messages/fileUpload/utils.ts';
- import FileView from "@/org.libersoft.messages/components/msgFile/FileView.svelte";
+ import FileView from '@/org.libersoft.messages/components/msgFile/FileView.svelte';
 
  let { uploadId } = $props();
 
  /** uploads */
  let upload = $state<FileUpload | null>(null);
- fileUploadStore.store.subscribe(() => upload = fileUploadStore.get(uploadId) || null);
+ fileUploadStore.store.subscribe(() => (upload = fileUploadStore.get(uploadId) || null));
 
  /** downloads */
  let download = $state<FileDownload | null>(null);
- fileDownloadStore.store.subscribe(() => download = fileDownloadStore.get(uploadId) || null);
+ fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
 
  onMount(() => {
   if (!upload) {
@@ -53,16 +53,5 @@
 </script>
 
 {#if upload}
- <FileView
-  upload={upload}
-  download={download}
-  onDownload={onDownload}
-  changingStatus={changingStatus}
-  cancelDownload={cancelDownload}
-  cancelUpload={cancelUpload}
-  pauseDownload={pauseDownload}
-  resumeDownload={resumeDownload}
-  pauseUpload={pauseUpload}
-  resumeUpload={resumeUpload}
- />
+ <FileView {upload} {download} {onDownload} {changingStatus} {cancelDownload} {cancelUpload} {pauseDownload} {resumeDownload} {pauseUpload} {resumeUpload} />
 {/if}
