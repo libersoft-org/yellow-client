@@ -2,12 +2,7 @@
  import { getContext } from 'svelte';
  import BaseButton from './base-button.svelte';
 
- let {
-  img = null,
-  label = '',
-  onClick,
-  ...restProps
- } = $props()
+ let { img = null, label = '', onClick, ...restProps } = $props();
 
  let menu = getContext('ContextMenu');
 

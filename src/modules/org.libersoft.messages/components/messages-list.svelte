@@ -13,9 +13,9 @@
  import { get } from 'svelte/store';
  import Icon from '../../../core/components/icon.svelte';
  import resize from '../../../core/actions/resizeObserver.ts';
- import { highlightElement } from "@/core/utils/animation.utils.ts";
- import ForwardMessage from "@/org.libersoft.messages/modals/ForwardMessage.svelte";
- import forwardMessageStore from "@/org.libersoft.messages/stores/ForwardMessage.store.ts";
+ import { highlightElement } from '@/core/utils/animation.utils.ts';
+ import ForwardMessage from '@/org.libersoft.messages/modals/ForwardMessage.svelte';
+ import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessage.store.ts';
  export let conversation;
  export let setBarFocus;
 
@@ -200,10 +200,10 @@
     else scrollToBottom();
    } else if (event.type === 'jump_to_referenced_message') {
     setTimeout(() => {
-     const msgEl = event.referenced_message.el.getRef()
-     msgEl.scrollIntoView({ behavior: "instant" });
-     highlightElement(msgEl)
-    }, 200) // todo: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
+     const msgEl = event.referenced_message.el.getRef();
+     msgEl.scrollIntoView({ behavior: 'instant' });
+     highlightElement(msgEl);
+    }, 200); // todo: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
    } else if (event.type === 'properties_update') {
     //console.log('properties_update');
    } else if (event.type === 'resize') {
@@ -461,7 +461,7 @@
  /**
   * Forward Message Section
   */
- const forwardMessageModalOpen = forwardMessageStore.isOpen()
+ const forwardMessageModalOpen = forwardMessageStore.isOpen();
 </script>
 
 <style>

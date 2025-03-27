@@ -1,24 +1,24 @@
 import { derived, writable } from 'svelte/store';
-import type { Message } from "@/org.libersoft.messages/types.ts";
+import type { Message } from '@/org.libersoft.messages/types.ts';
 
 export enum ForwardedMessageType {
- MESSAGE = 'message'
+ MESSAGE = 'message',
 }
 
 export interface ForwardedMessage {
- type: ForwardedMessageType
- data: Message
+ type: ForwardedMessageType;
+ data: Message;
 }
 
 export interface ForwardMessageStoreValue {
  open: boolean;
- forwardedMessage: ForwardedMessage | null
+ forwardedMessage: ForwardedMessage | null;
 }
 
 export class ForwardMessageStore {
  store = writable<ForwardMessageStoreValue>({
   open: false,
-  forwardedMessage: null
+  forwardedMessage: null,
  });
 
  isOpen() {

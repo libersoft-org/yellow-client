@@ -1,24 +1,24 @@
 import { derived, writable } from 'svelte/store';
-import type { Message } from "@/org.libersoft.messages/types.ts";
+import type { Message } from '@/org.libersoft.messages/types.ts';
 
 export enum ReplyToType {
- MESSAGE = 'message'
+ MESSAGE = 'message',
 }
 
 export interface ReplyTo {
- type: ReplyToType
- data: Message
+ type: ReplyToType;
+ data: Message;
 }
 
 export interface MessageBarReplyStoreValue {
  open: boolean;
- replyTo: ReplyTo | null
+ replyTo: ReplyTo | null;
 }
 
 export class MessageBarReplyStore {
  store = writable<MessageBarReplyStoreValue>({
   open: false,
-  replyTo: null
+  replyTo: null,
  });
 
  isOpen() {

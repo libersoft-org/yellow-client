@@ -28,21 +28,6 @@
  });
 </script>
 
-<div class="upload">
- <div class="file">
-  {#if status}<span class="bold">{status}</span>{/if}
-  {#if !hideSpeed}<span class="speed">&nbsp;{humanSize(speed)}/s</span>{/if}
-  {#if file}
-   <span>{file}</span>
-  {/if}
- </div>
- <ProgressBar color="#db0" moving={true} value={percent} />
- <div class="text">
-  <div class="size">{humanSize(uploaded, 2, true)} / {humanSize(total, 2, true)}</div>
-  <div class="percent">{percent}%</div>
- </div>
-</div>
-
 <style>
  .upload {
   display: flex;
@@ -58,3 +43,18 @@
   flex-grow: 1;
  }
 </style>
+
+<div class="upload">
+ <div class="file">
+  {#if status}<span class="bold">{status}</span>{/if}
+  {#if !hideSpeed}<span class="speed">&nbsp;{humanSize(speed)}/s</span>{/if}
+  {#if file}
+   <span>{file}</span>
+  {/if}
+ </div>
+ <ProgressBar color="#db0" moving={true} value={percent} />
+ <div class="text">
+  <div class="size">{humanSize(uploaded, 2, true)} / {humanSize(total, 2, true)}</div>
+  <div class="percent">{percent}%</div>
+ </div>
+</div>

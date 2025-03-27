@@ -1,8 +1,8 @@
 <script>
  import BaseButton from '../../../../core/components/base-button.svelte';
- import { jumpToMessage } from "@/org.libersoft.messages/messages.js";
- import { get } from "svelte/store";
- import { active_account } from "@/core/core.js";
+ import { jumpToMessage } from '@/org.libersoft.messages/messages.js';
+ import { get } from 'svelte/store';
+ import { active_account } from '@/core/core.js';
  export let address = '';
  export let text = '';
  export let uid = '';
@@ -12,15 +12,6 @@
   jumpToMessage(acc, address, uid);
  }
 </script>
-
-<div class="reply-wrap">
- <BaseButton onClick={clickReply}>
-  <div class="reply">
-   <div class="name">{address}</div>
-   <div class="text">{text}</div>
-  </div>
- </BaseButton>
-</div>
 
 <style>
  .reply {
@@ -48,3 +39,12 @@
   margin-bottom: 2px;
  }
 </style>
+
+<div class="reply-wrap">
+ <BaseButton onClick={clickReply}>
+  <div class="reply">
+   <div class="name">{address}</div>
+   <div class="text">{text}</div>
+  </div>
+ </BaseButton>
+</div>

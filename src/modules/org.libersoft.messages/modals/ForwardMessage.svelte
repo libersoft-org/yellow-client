@@ -1,12 +1,12 @@
 <script lang="ts">
  import Input from '@/core/components/input.svelte';
- import { conversationsArray, sendMessage } from "@/org.libersoft.messages/messages";
- import { get } from "svelte/store";
- import Button from "@/core/components/button.svelte";
- import type { Conversation } from "@/org.libersoft.messages/types.ts";
- import forwardMessageStore from "@/org.libersoft.messages/stores/ForwardMessage.store.ts";
+ import { conversationsArray, sendMessage } from '@/org.libersoft.messages/messages';
+ import { get } from 'svelte/store';
+ import Button from '@/core/components/button.svelte';
+ import type { Conversation } from '@/org.libersoft.messages/types.ts';
+ import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessage.store.ts';
 
- const fwMsg = forwardMessageStore.getForwardedMessage()
+ const fwMsg = forwardMessageStore.getForwardedMessage();
  let search = $state('');
 
  // todo: this is simple search, in future we want to at least debounce it or make backend solution for filtering
@@ -14,57 +14,22 @@
   const conversations = get(conversationsArray) || [];
 
   if (!search) {
-   return conversations
+   return conversations;
   }
 
-  return conversations.filter(
-   (conversation: Conversation) => conversation?.address?.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-  )
- })
+  return conversations.filter((conversation: Conversation) => conversation?.address?.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
+ });
 
  let sentToConversations: Conversation[] = $state([]);
 
  const onSend = (conversation: Conversation) => {
   sendMessage($fwMsg?.data.message, $fwMsg?.data.format, $fwMsg?.data.acc.deref(), conversation);
-  sentToConversations.push(conversation)
- }
+  sentToConversations.push(conversation);
+ };
 </script>
-
-{#snippet conversationItem(conversation: Conversation)}
- {@const wasAlreadySent = sentToConversations.some(c => c.id === conversation.id)}
- <div class="conversation">
-  <div class="conversation-avatar">
-   <div class="conversation-avatar-placeholder"></div>
-  </div>
-  <div class="conversation-name">
-   {conversation.address}
-  </div>
-  <div class="conversation-action">
-   <Button enabled={!wasAlreadySent} text={wasAlreadySent ? 'Sent' : 'Send'} onClick={() => onSend(conversation)} />
-  </div>
- </div>
-{/snippet}
-
-<div class="forward-message">
- <div class="header">
-  <Input bind:value={search} placeholder="Search in conversations" />
- </div>
- <div class="conversations">
-  {#if conversations && conversations.length}
-   {#each conversations as conversation (conversation.id)}
-    {@render conversationItem(conversation)}
-   {/each}
-  {:else}
-   <div class="empty-conversations">
-    No conversations were found
-   </div>
-  {/if}
- </div>
-</div>
 
 <style>
  .forward-message {
-
  }
 
  .empty-conversations {
@@ -115,5 +80,34 @@
  .conversation-action {
   flex: 0 0 auto;
  }
-
 </style>
+
+{#snippet conversationItem(conversation: Conversation)}
+ {@const wasAlreadySent = sentToConversations.some(c => c.id === conversation.id)}
+ <div class="conversation">
+  <div class="conversation-avatar">
+   <div class="conversation-avatar-placeholder"></div>
+  </div>
+  <div class="conversation-name">
+   {conversation.address}
+  </div>
+  <div class="conversation-action">
+   <Button enabled={!wasAlreadySent} text={wasAlreadySent ? 'Sent' : 'Send'} onClick={() => onSend(conversation)} />
+  </div>
+ </div>
+{/snippet}
+
+<div class="forward-message">
+ <div class="header">
+  <Input bind:value={search} placeholder="Search in conversations" />
+ </div>
+ <div class="conversations">
+  {#if conversations && conversations.length}
+   {#each conversations as conversation (conversation.id)}
+    {@render conversationItem(conversation)}
+   {/each}
+  {:else}
+   <div class="empty-conversations">No conversations were found</div>
+  {/if}
+ </div>
+</div>

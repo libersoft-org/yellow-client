@@ -17,6 +17,6 @@ export function truncateTextEnd(text, maxLength = 20) {
   return text;
  }
 
- const endPart = '...'
+ const endPart = '...';
  return text.slice(0, maxLength - endPart.length) + endPart;
 }

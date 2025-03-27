@@ -1,24 +1,20 @@
 <script lang="ts" module>
  import { defineMeta } from '@storybook/addon-svelte-csf';
  import FileView from '../FileView.svelte';
- import {
-  FileUploadRecordErrorType,
-  FileUploadRecordStatus,
-  FileUploadRole
- } from "@/org.libersoft.messages/fileUpload/types.ts";
- import FileViewStoriesUtils from "@/org.libersoft.messages/components/msgFile/stories/fileView.storiesUtils.ts";
-
+ import { FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRole } from '@/org.libersoft.messages/fileUpload/types.ts';
+ import FileViewStoriesUtils from '@/org.libersoft.messages/components/msgFile/stories/fileView.storiesUtils.ts';
 
  // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
- const {Story} = defineMeta({
+ const { Story } = defineMeta({
   title: 'messages/FileView/P2PReceiver',
   component: FileView,
   tags: ['autodocs'],
   ...FileViewStoriesUtils.makeDefaultStoryArgs(),
- })
+ });
 </script>
+
 <script>
- import { FileUploadRecordType } from "@/org.libersoft.messages/fileUpload/types.ts";
+ import { FileUploadRecordType } from '@/org.libersoft.messages/fileUpload/types.ts';
 </script>
 
 <!-- More on writing stories with args: https://storybook.js.org/docs/writing-stories/args -->
@@ -27,12 +23,12 @@
  args={{
   upload: FileViewStoriesUtils.makeP2PReceiverUpload({
    record: {
-    status: FileUploadRecordStatus.BEGUN
-   }
+    status: FileUploadRecordStatus.BEGUN,
+   },
   }),
   download: FileViewStoriesUtils.makeDownload({
-    chunksReceived: [1, 2, 3]
-  })
+   chunksReceived: [1, 2, 3],
+  }),
  }}
 />
 
@@ -41,13 +37,13 @@
  args={{
   upload: FileViewStoriesUtils.makeP2PReceiverUpload({
    record: {
-    status: FileUploadRecordStatus.UPLOADING
+    status: FileUploadRecordStatus.UPLOADING,
    },
-   chunksSent: [1, 2, 3]
+   chunksSent: [1, 2, 3],
   }),
   download: FileViewStoriesUtils.makeDownload({
-    chunksReceived: [1, 2, 3]
-  })
+   chunksReceived: [1, 2, 3],
+  }),
  }}
 />
 
@@ -56,12 +52,12 @@
  args={{
   upload: FileViewStoriesUtils.makeP2PReceiverUpload({
    record: {
-    status: FileUploadRecordStatus.FINISHED
-   }
+    status: FileUploadRecordStatus.FINISHED,
+   },
   }),
   download: FileViewStoriesUtils.makeDownload({
-    chunksReceived: [1, 2, 3]
-  })
+   chunksReceived: [1, 2, 3],
+  }),
  }}
 />
 
@@ -71,12 +67,12 @@
   upload: FileViewStoriesUtils.makeP2PReceiverUpload({
    record: {
     status: FileUploadRecordStatus.ERROR,
-    errorType: null
-   }
+    errorType: null,
+   },
   }),
   download: FileViewStoriesUtils.makeDownload({
-    chunksReceived: [1, 2, 3]
-  })
+   chunksReceived: [1, 2, 3],
+  }),
  }}
 />
 
@@ -86,12 +82,12 @@
   upload: FileViewStoriesUtils.makeP2PReceiverUpload({
    record: {
     status: FileUploadRecordStatus.ERROR,
-    errorType: FileUploadRecordErrorType.TIMEOUT_BY_SERVER
-   }
+    errorType: FileUploadRecordErrorType.TIMEOUT_BY_SERVER,
+   },
   }),
   download: FileViewStoriesUtils.makeDownload({
-    chunksReceived: [1, 2, 3]
-  })
+   chunksReceived: [1, 2, 3],
+  }),
  }}
 />
 
@@ -101,13 +97,13 @@
   upload: FileViewStoriesUtils.makeP2PReceiverUpload({
    record: {
     type: FileUploadRecordType.P2P,
-    status: FileUploadRecordStatus.UPLOADING
+    status: FileUploadRecordStatus.UPLOADING,
    },
   }),
   download: FileViewStoriesUtils.makeDownload({
-    chunksReceived: [1, 2, 3],
-    pausedLocally: true
-  })
+   chunksReceived: [1, 2, 3],
+   pausedLocally: true,
+  }),
  }}
 />
 
@@ -117,12 +113,12 @@
   upload: FileViewStoriesUtils.makeP2PReceiverUpload({
    record: {
     type: FileUploadRecordType.P2P,
-    status: FileUploadRecordStatus.PAUSED
+    status: FileUploadRecordStatus.PAUSED,
    },
   }),
   download: FileViewStoriesUtils.makeDownload({
-    chunksReceived: [1, 2, 3]
-  })
+   chunksReceived: [1, 2, 3],
+  }),
  }}
 />
 
@@ -132,11 +128,11 @@
   upload: FileViewStoriesUtils.makeP2PReceiverUpload({
    record: {
     type: FileUploadRecordType.P2P,
-    status: FileUploadRecordStatus.CANCELED
-   }
+    status: FileUploadRecordStatus.CANCELED,
+   },
   }),
   download: FileViewStoriesUtils.makeDownload({
-    chunksReceived: [1, 2, 3]
-  })
+   chunksReceived: [1, 2, 3],
+  }),
  }}
 />
