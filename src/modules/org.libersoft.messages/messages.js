@@ -467,7 +467,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
  });
 }
 
-export function findMessages (acc, address, base, prev, next) {
+export function findMessages(acc, address, base, prev, next) {
  return new Promise((resolve, reject) => {
   sendData(acc, null, 'messages_list', { address, base, prev, next }, true, (_req, res) => {
    if (res.error !== false || !res.data?.messages) {
@@ -476,9 +476,9 @@ export function findMessages (acc, address, base, prev, next) {
     reject(res);
     return;
    }
-   resolve(res.data.messages)
+   resolve(res.data.messages);
   });
- })
+ });
 }
 
 export function getMessageByUid(uid) {
@@ -491,12 +491,12 @@ export function getMessageByUid(uid) {
   const acc = get(active_account);
   const address = get(selectedConversation).address; // todo: wont work for multi conversations
   findMessages(acc, address, 'uid:' + uid, 0, 0)
-   .then((messages) => {
+   .then(messages => {
     const message = messages.find(m => m.uid === uid);
     resolve(message);
    })
-   .catch(reject)
- })
+   .catch(reject);
+ });
 }
 
 function addMessagesToMessagesArray(items, reason) {
@@ -614,7 +614,7 @@ export function setMessageSeen(message, cb) {
 
 export function sendMessage(text, format, acc = null, conversation = null) {
  acc = acc ? acc : get(active_account);
- conversation = conversation ? conversation : get(selectedConversation)
+ conversation = conversation ? conversation : get(selectedConversation);
 
  let message = new Message(acc, {
   uid: getGuid(),
@@ -630,7 +630,7 @@ export function sendMessage(text, format, acc = null, conversation = null) {
  saveAndSendOutgoingMessage(acc, conversation, params, message);
 
  // append to message array only when conversation is also selected (active)
- const _selectedConversation = get(selectedConversation)
+ const _selectedConversation = get(selectedConversation);
  if (_selectedConversation && _selectedConversation.id === conversation.id) {
   addMessagesToMessagesArray([message], 'send_message');
  }
@@ -644,11 +644,11 @@ export async function deleteMessage(message) {
  const params = {
   id: message.id,
   uid: message.uid,
- }
+ };
  sendData(acc, null, 'message_delete', params, true, (req, res) => {
   console.log('123 response', res);
-  snipeMessage(message)
- })
+  snipeMessage(message);
+ });
 }
 
 async function saveAndSendOutgoingMessage(acc, conversation, params, message) {

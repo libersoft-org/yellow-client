@@ -13,9 +13,8 @@
  // import Map from './map.svelte';
  import MessageRendering from './message-rendering.svelte';
  // import Reply from './msgReply/Reply.svelte';
- import messageBarReplyStore, { ReplyToType } from "@/org.libersoft.messages/stores/MessageBarReply.store.ts";
- import forwardMessageStore from "@/org.libersoft.messages/stores/ForwardMessage.store.ts";
-
+ import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReply.store.ts';
+ import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessage.store.ts';
 
  export let message;
  export let elContainer;
@@ -23,7 +22,7 @@
  export let enableScroll;
  export let disableScroll;
 
- export function getRef () {
+ export function getRef() {
   return elMessage;
  }
 
@@ -226,17 +225,17 @@
   // startReply(message);
   messageBarReplyStore.startReplyTo({
    type: ReplyToType.MESSAGE,
-   data: message
-  })
-  document.getElementById('message-input')?.focus()
+   data: message,
+  });
+  document.getElementById('message-input')?.focus();
  }
 
  function forwardMessage() {
   console.log('forward');
   forwardMessageStore.startForwardedMessage({
    type: ReplyToType.MESSAGE,
-   data: message
-  })
+   data: message,
+  });
  }
 
  function onMessageDelete() {
