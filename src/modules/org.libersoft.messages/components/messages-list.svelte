@@ -13,6 +13,9 @@
  import { get } from 'svelte/store';
  import Icon from '../../../core/components/icon.svelte';
  import resize from '../../../core/actions/resizeObserver.ts';
+ import { highlightElement } from "@/core/utils/animation.utils.ts";
+ import ForwardMessage from "@/org.libersoft.messages/modals/ForwardMessage.svelte";
+ import forwardMessageStore from "@/org.libersoft.messages/stores/ForwardMessage.store.ts";
  export let conversation;
  export let setBarFocus;
 
@@ -196,7 +199,11 @@
     if (elUnseenMarker) elUnseenMarker.scrollIntoView();
     else scrollToBottom();
    } else if (event.type === 'jump_to_referenced_message') {
-    event.message.el?.scrollIntoView?.();
+    setTimeout(() => {
+     const msgEl = event.referenced_message.el.getRef()
+     msgEl.scrollIntoView({ behavior: "instant" });
+     highlightElement(msgEl)
+    }, 200) // todo: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
    } else if (event.type === 'properties_update') {
     //console.log('properties_update');
    } else if (event.type === 'resize') {
@@ -450,6 +457,11 @@
   wrapperWidth = entry.contentRect.width;
  };
  $: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
+
+ /**
+  * Forward Message Section
+  */
+ const forwardMessageModalOpen = forwardMessageStore.isOpen()
 </script>
 
 <style>
@@ -632,4 +644,5 @@
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
+<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ForwardMessage} onShowChange={show => forwardMessageStore.setOpen(show)} width="448px" height="390px" />
 <!--doBlockScroll: {doBlockScroll}-->

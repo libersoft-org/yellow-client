@@ -1,5 +1,5 @@
 <script>
- import { identifier, processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
+ import { deleteMessage, identifier, processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
@@ -12,12 +12,19 @@
  //import FileTransfer from './filetransfer.svelte';
  // import Map from './map.svelte';
  import MessageRendering from './message-rendering.svelte';
- // import Reply from './message-reply.svelte';
+ // import Reply from './msgReply/Reply.svelte';
+ import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReply.store.ts';
+ import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessage.store.ts';
+
  export let message;
  export let elContainer;
 
  export let enableScroll;
  export let disableScroll;
+
+ export function getRef() {
+  return elMessage;
+ }
 
  let seenTxt;
  let checkmarks;
@@ -214,17 +221,26 @@
  });
 
  function replyMessage() {
-  console.log('reply');
-  startReply(message);
+  console.log('reply', message);
+  // startReply(message);
+  messageBarReplyStore.startReplyTo({
+   type: ReplyToType.MESSAGE,
+   data: message,
+  });
+  document.getElementById('message-input')?.focus();
  }
 
  function forwardMessage() {
   console.log('forward');
+  forwardMessageStore.startForwardedMessage({
+   type: ReplyToType.MESSAGE,
+   data: message,
+  });
  }
 
- function deleteMessage() {
+ function onMessageDelete() {
   console.log('delete');
-  snipeMessage(message);
+  deleteMessage(message);
  }
 
  function copyTextOnly() {
@@ -254,7 +270,7 @@
  async function rightClickContextMenu(e) {
   // for dev purposes: if you want to use native context menu (right mouse click) instead of app's in message list
   if (import.meta.env.VITE_FORCE_NATIVE_CONTEXT_MENU) {
-   return;
+   //return;
   }
   e.preventDefault();
   console.log('Message click:', e);
@@ -266,6 +282,7 @@
 
 <style>
  .message {
+  --animation-highlight-duration: 0.7s;
   position: relative;
   max-width: 60%;
   padding: 10px;
@@ -376,5 +393,5 @@
  <ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
  <ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} />
  <ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
- <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={deleteMessage} />
+ <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
 </ContextMenu>

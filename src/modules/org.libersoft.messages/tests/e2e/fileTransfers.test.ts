@@ -162,3 +162,19 @@ test('Test p2p file transfer', async ({ browser }) => {
  const download = await downloadPromise;
  await assertDownload(download, originalFile);
 });
+
+test('sdfsdfs', async ({ page }) => {
+ const activeAccountId = '"' + accountsConfig1[0].id + '"';
+ await logInAccount(page, accountsConfig1, activeAccountId);
+ await page.goto('http://localhost:3000');
+
+
+ // Verify localStorage
+ const active_account_id = await page.evaluate(() => localStorage.getItem('active_account_id'));
+ expect(active_account_id).toBe(activeAccountId);
+
+ await page.getByRole('button', {name: "test@tvorbawebu.eu"}).click();
+
+ await page.getByRole('button', { name: 'Record voice message' }).first().click();
+ await page.getByRole('button', { name: 'Voice message.wav (44.89 KB)' }).click();
+})

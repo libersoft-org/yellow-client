@@ -453,6 +453,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
  reason: reason for loading messages (for debugging)
  cb: callback (optional)
   */
+ console.log('reason', reason);
  return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (res.error !== false || !res.data?.messages) {
    console.error(res);
@@ -463,6 +464,38 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
   items = constructLoadedMessages(acc, items);
   addMessagesToMessagesArray(items, reason);
   if (cb) cb(res);
+ });
+}
+
+export function findMessages(acc, address, base, prev, next) {
+ return new Promise((resolve, reject) => {
+  sendData(acc, null, 'messages_list', { address, base, prev, next }, true, (_req, res) => {
+   if (res.error !== false || !res.data?.messages) {
+    console.error(res);
+    window.alert('Error while finding messages: ' + (res.message || JSON.stringify(res)));
+    reject(res);
+    return;
+   }
+   resolve(res.data.messages);
+  });
+ });
+}
+
+export function getMessageByUid(uid) {
+ return new Promise((resolve, reject) => {
+  const found = get(messagesArray).find(m => m.uid === uid);
+  if (found) {
+   resolve(found);
+   return;
+  }
+  const acc = get(active_account);
+  const address = get(selectedConversation).address; // todo: wont work for multi conversations
+  findMessages(acc, address, 'uid:' + uid, 0, 0)
+   .then(messages => {
+    const message = messages.find(m => m.uid === uid);
+    resolve(message);
+   })
+   .catch(reject);
  });
 }
 
@@ -579,21 +612,43 @@ export function setMessageSeen(message, cb) {
  });
 }
 
-export function sendMessage(text, format) {
- let acc = get(active_account);
+export function sendMessage(text, format, acc = null, conversation = null) {
+ acc = acc ? acc : get(active_account);
+ conversation = conversation ? conversation : get(selectedConversation);
+
  let message = new Message(acc, {
   uid: getGuid(),
   address_from: acc.credentials.address,
-  address_to: get(selectedConversation).address,
+  address_to: conversation.address,
   message: text,
   format,
   created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
   just_sent: true,
  });
  let params = { address: message.address_to, message: message.message, format, uid: message.uid };
- saveAndSendOutgoingMessage(acc, get(acc.module_data[identifier].selectedConversation), params, message);
- addMessagesToMessagesArray([message], 'send_message');
+
+ saveAndSendOutgoingMessage(acc, conversation, params, message);
+
+ // append to message array only when conversation is also selected (active)
+ const _selectedConversation = get(selectedConversation);
+ if (_selectedConversation && _selectedConversation.id === conversation.id) {
+  addMessagesToMessagesArray([message], 'send_message');
+ }
+
  updateConversationsArray(acc, message);
+}
+
+export async function deleteMessage(message) {
+ console.log('123 deleteMessage', message);
+ const acc = get(active_account);
+ const params = {
+  id: message.id,
+  uid: message.uid,
+ };
+ sendData(acc, null, 'message_delete', params, true, (req, res) => {
+  console.log('123 response', res);
+  snipeMessage(message);
+ });
 }
 
 async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
@@ -676,7 +731,7 @@ export function startReply(message) {
 }
 
 export function jumpToMessage(acc, address, uid) {
- loadMessages(acc, address, 'uid:' + uid, 3, 3, 'load_referenced_message', res => {
+ loadMessages(acc, address, 'uid:' + uid, 10, 10, 'load_referenced_message', res => {
   const message = get(messagesArray).find(m => m.uid === uid);
   insertEvent({ type: 'jump_to_referenced_message', array: get(messagesArray), referenced_message: message });
  });
@@ -819,7 +874,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
  }
 });
 
-const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio'];
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio', 'reply'];
 
 export function saneHtml(content) {
  //console.log('saneHtml:');

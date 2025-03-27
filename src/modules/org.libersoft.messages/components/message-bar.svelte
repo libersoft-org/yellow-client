@@ -1,6 +1,6 @@
 <script>
- import { keyboardHeight, documentHeight, debug, isMobile, debugBuffer } from '../../../core/core.js';
- import { handleResize, identifier, sendMessage } from '../messages.js';
+ import { keyboardHeight, documentHeight, debug, isMobile, debugBuffer, active_account } from '../../../core/core.js';
+ import { handleResize, identifier, jumpToMessage, sendMessage } from '../messages.js';
  import { onMount, setContext, tick, getContext } from 'svelte';
  import BaseButton from '../../../core/components/base-button.svelte';
  import Icon from '../../../core/components/icon.svelte';
@@ -14,6 +14,8 @@
  import { get } from 'svelte/store';
  import MessageBarRecorder from './message-bar-recorder.svelte';
  import audioRecorderStore from '../media/AudioRecorder.store.ts';
+ import MessageBarReply from "@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte";
+ import messageBarReplyStore, { ReplyToType } from "@/org.libersoft.messages/stores/MessageBarReply.store.ts";
 
  let expressionsMenu;
  let elBottomSheet;
@@ -122,11 +124,19 @@
   text = event.key;
  }
 
+ const isMessageReplyOpen = messageBarReplyStore.isOpen();
+ const replyTo = messageBarReplyStore.getReplyTo();
+
  function clickSend(event) {
-  if (elMessage.value) {
-   doSendMessage(elMessage.value, false);
-   elMessage.value = '';
+  let messageToSend = elMessage.value;
+  if (messageToSend && $replyTo && $replyTo.type === ReplyToType.MESSAGE) {
+   const replyToMessageUid = $replyTo?.data?.uid;
+   messageToSend = `<Reply id="${replyToMessageUid}"></Reply>${messageToSend}`
+   doSendMessage(messageToSend, true);
+  } else if (messageToSend) {
+   doSendMessage(messageToSend, false);
   }
+  elMessage.value = '';
   resizeMessage(event);
   elMessage.focus();
  }
@@ -207,12 +217,19 @@
  .message-bar {
   position: sticky;
   bottom: 0;
+  background-color: #222;
+  box-shadow: var(--shadow);
+ }
+
+ .message-bar-main {
   display: flex;
   align-items: end;
   gap: 10px;
   padding: 10px;
-  background-color: #222;
-  box-shadow: var(--shadow);
+ }
+
+ .message-bar-top {
+  display: contents;
  }
 
  .message {
@@ -238,25 +255,33 @@
 </style>
 
 <div class="message-bar" bind:this={elMessageBar}>
- <MessageBarRecorder />
-
- <div bind:this={elAttachment} data-testid="attachment-button">
-  <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
+ <div class="message-bar-top">
+  {#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
+   <MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
+  {/if}
  </div>
+ <div class="message-bar-main">
+  <MessageBarRecorder />
 
- {#if expressionsAsContextMenu}
-  <div bind:this={elExpressions}>
-   <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" />
+  <div bind:this={elAttachment} data-testid="attachment-button">
+   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
   </div>
- {:else}
-  <BaseButton onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)}>
-   <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" />
-  </BaseButton>
- {/if}
 
- <textarea class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
- <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
- <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
+  {#if expressionsAsContextMenu}
+   <div bind:this={elExpressions}>
+    <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" />
+   </div>
+  {:else}
+   <BaseButton onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)}>
+    <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" />
+   </BaseButton>
+  {/if}
+
+  <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
+  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
+  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
+
+ </div>
 </div>
 
 <ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
