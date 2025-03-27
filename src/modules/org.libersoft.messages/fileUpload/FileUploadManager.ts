@@ -1,13 +1,4 @@
-import {
- type CustomFile,
- type FileUpload,
- type FileUploadBeginOptions,
- type FileUploadRecord,
- FileUploadRecordStatus,
- FileUploadRecordType,
- FileUploadRole,
- type FileUploadStoreType
-} from './types.ts';
+import { type CustomFile, type FileUpload, type FileUploadBeginOptions, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType } from './types.ts';
 import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from './fileUploadStore.ts';

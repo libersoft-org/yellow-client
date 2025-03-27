@@ -70,7 +70,10 @@ describe('GalleryStore', () => {
  });
 
  test('previous does nothing if at first file', () => {
-  store.setFiles([{ id: 1, loaded: false }, { id: 2, loaded: true }]);
+  store.setFiles([
+   { id: 1, loaded: false },
+   { id: 2, loaded: true },
+  ]);
   store.setCurrentId(1);
   store.previous();
   expect(store.value().currentId).toBe(1);
@@ -88,14 +91,20 @@ describe('GalleryStore', () => {
  });
 
  test('next does nothing if at last file', () => {
-  store.setFiles([{ id: 1, loaded: false }, { id: 2, loaded: true }]);
+  store.setFiles([
+   { id: 1, loaded: false },
+   { id: 2, loaded: true },
+  ]);
   store.setCurrentId(2);
   store.next();
   expect(store.value().currentId).toBe(2);
  });
 
  test('canPrevious works correctly', () => {
-  store.setFiles([{ id: 1, loaded: false }, { id: 2, loaded: true }]);
+  store.setFiles([
+   { id: 1, loaded: false },
+   { id: 2, loaded: true },
+  ]);
   store.setCurrentId(2);
   expect(get(store.canPrevious())).toBe(true);
   store.setCurrentId(1);
@@ -103,7 +112,10 @@ describe('GalleryStore', () => {
  });
 
  test('canNext works correctly', () => {
-  store.setFiles([{ id: 1, loaded: false }, { id: 2, loaded: true }]);
+  store.setFiles([
+   { id: 1, loaded: false },
+   { id: 2, loaded: true },
+  ]);
   store.setCurrentId(1);
   expect(get(store.canNext())).toBe(true);
   store.setCurrentId(2);
