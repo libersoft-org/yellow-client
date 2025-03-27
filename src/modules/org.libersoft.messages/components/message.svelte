@@ -14,6 +14,9 @@
  import MessageRendering from './message-rendering.svelte';
  // import Reply from './msgReply/Reply.svelte';
  import messageBarReplyStore, { ReplyToType } from "@/org.libersoft.messages/stores/MessageBarReply.store.ts";
+ import forwardMessageStore from "@/org.libersoft.messages/stores/ForwardMessage.store.ts";
+
+
  export let message;
  export let elContainer;
 
@@ -230,6 +233,10 @@
 
  function forwardMessage() {
   console.log('forward');
+  forwardMessageStore.startForwardedMessage({
+   type: ReplyToType.MESSAGE,
+   data: message
+  })
  }
 
  function deleteMessage() {
@@ -264,7 +271,7 @@
  async function rightClickContextMenu(e) {
   // for dev purposes: if you want to use native context menu (right mouse click) instead of app's in message list
   if (import.meta.env.VITE_FORCE_NATIVE_CONTEXT_MENU) {
-   return;
+   //return;
   }
   e.preventDefault();
   console.log('Message click:', e);

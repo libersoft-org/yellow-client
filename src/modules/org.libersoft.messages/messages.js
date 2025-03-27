@@ -611,20 +611,29 @@ export function setMessageSeen(message, cb) {
  });
 }
 
-export function sendMessage(text, format) {
- let acc = get(active_account);
+export function sendMessage(text, format, acc = null, conversation = null) {
+ acc = acc ? acc : get(active_account);
+ conversation = conversation ? conversation : get(selectedConversation)
+
  let message = new Message(acc, {
   uid: getGuid(),
   address_from: acc.credentials.address,
-  address_to: get(selectedConversation).address,
+  address_to: conversation.address,
   message: text,
   format,
   created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
   just_sent: true,
  });
  let params = { address: message.address_to, message: message.message, format, uid: message.uid };
- saveAndSendOutgoingMessage(acc, get(acc.module_data[identifier].selectedConversation), params, message);
- addMessagesToMessagesArray([message], 'send_message');
+
+ saveAndSendOutgoingMessage(acc, conversation, params, message);
+
+ // append to message array only when conversation is also selected (active)
+ const _selectedConversation = get(selectedConversation)
+ if (_selectedConversation && _selectedConversation.id === conversation.id) {
+  addMessagesToMessagesArray([message], 'send_message');
+ }
+
  updateConversationsArray(acc, message);
 }
 

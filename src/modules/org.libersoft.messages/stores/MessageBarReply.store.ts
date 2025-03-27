@@ -1,4 +1,5 @@
 import { derived, writable } from 'svelte/store';
+import type { Message } from "@/org.libersoft.messages/types.ts";
 
 export enum ReplyToType {
  MESSAGE = 'message'
@@ -6,7 +7,7 @@ export enum ReplyToType {
 
 export interface ReplyTo {
  type: ReplyToType
- data: any // todo: define from Message class (use generics)
+ data: Message
 }
 
 export interface MessageBarReplyStoreValue {

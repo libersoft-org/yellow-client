@@ -9,6 +9,7 @@
  export let body = '';
  export let width;
  export let height;
+ export let onShowChange = null;
  let modalEl;
  let posX = 0;
  let posY = 0;
@@ -18,6 +19,14 @@
  let showContent = false;
 
  $: showUpdated(!!show);
+
+ function setShow (value) {
+  if (onShowChange) {
+   onShowChange(value);
+  } else {
+   show = value;
+  }
+ }
 
  async function showUpdated(show) {
   console.log('showUpdated', show);
@@ -54,10 +63,10 @@
  }
 
  export function close() {
-  show = false;
+  setShow(false)
  }
  export function open() {
-  show = true;
+  setShow(true)
  }
 
  function onkeydown(event) {
@@ -66,7 +75,7 @@
    event.preventDefault();
    event.stopPropagation();
    console.log('ESC', event);
-   show = false;
+   setShow(false)
   }
  }
 
