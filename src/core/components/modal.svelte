@@ -20,7 +20,7 @@
 
  $: showUpdated(!!show);
 
- function setShow (value) {
+ function setShow(value) {
   if (onShowChange) {
    onShowChange(value);
   } else {
@@ -63,10 +63,10 @@
  }
 
  export function close() {
-  setShow(false)
+  setShow(false);
  }
  export function open() {
-  setShow(true)
+  setShow(true);
  }
 
  function onkeydown(event) {
@@ -75,7 +75,7 @@
    event.preventDefault();
    event.stopPropagation();
    console.log('ESC', event);
-   setShow(false)
+   setShow(false);
   }
  }
 

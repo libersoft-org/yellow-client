@@ -14,8 +14,8 @@
  import { get } from 'svelte/store';
  import MessageBarRecorder from './message-bar-recorder.svelte';
  import audioRecorderStore from '../media/AudioRecorder.store.ts';
- import MessageBarReply from "@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte";
- import messageBarReplyStore, { ReplyToType } from "@/org.libersoft.messages/stores/MessageBarReply.store.ts";
+ import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
+ import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReply.store.ts';
 
  let expressionsMenu;
  let elBottomSheet;
@@ -131,7 +131,7 @@
   let messageToSend = elMessage.value;
   if (messageToSend && $replyTo && $replyTo.type === ReplyToType.MESSAGE) {
    const replyToMessageUid = $replyTo?.data?.uid;
-   messageToSend = `<Reply id="${replyToMessageUid}"></Reply>${messageToSend}`
+   messageToSend = `<Reply id="${replyToMessageUid}"></Reply>${messageToSend}`;
    doSendMessage(messageToSend, true);
   } else if (messageToSend) {
    doSendMessage(messageToSend, false);
@@ -280,7 +280,6 @@
   <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
   <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
-
  </div>
 </div>
 

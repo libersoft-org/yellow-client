@@ -1,7 +1,7 @@
 <script lang="ts">
- import { truncateTextEnd } from "@/core/utils/text.utils";
- import Button from "@/core/components/button.svelte";
- import messageBarReplyStore, { ReplyToType } from "@/org.libersoft.messages/stores/MessageBarReply.store.ts";
+ import { truncateTextEnd } from '@/core/utils/text.utils';
+ import Button from '@/core/components/button.svelte';
+ import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReply.store.ts';
 
  interface MessageBarReplyProps {
   name: string;
@@ -9,26 +9,8 @@
   onClose: () => void;
  }
 
- let {
-  name,
-  replyToMessage,
-  onClose,
- }: MessageBarReplyProps = $props()
+ let { name, replyToMessage, onClose }: MessageBarReplyProps = $props();
 </script>
-
-<div class="reply-wrap">
- <div class="reply-wrap-content">
-  <div class="reply-wrap-heading">
-   Replying to <strong>{name}</strong>
-  </div>
-  <div class="reply-wrap-message">
-   {truncateTextEnd(replyToMessage, 70)}
-  </div>
- </div>
- <div class="reply-wrap-close">
-  <Button onClick={onClose} img="img/close.svg" bgColor="transparent" width="auto" />
- </div>
-</div>
 
 <style>
  .reply-wrap {
@@ -59,3 +41,17 @@
   color: #ababab;
  }
 </style>
+
+<div class="reply-wrap">
+ <div class="reply-wrap-content">
+  <div class="reply-wrap-heading">
+   Replying to <strong>{name}</strong>
+  </div>
+  <div class="reply-wrap-message">
+   {truncateTextEnd(replyToMessage, 70)}
+  </div>
+ </div>
+ <div class="reply-wrap-close">
+  <Button onClick={onClose} img="img/close.svg" bgColor="transparent" width="auto" />
+ </div>
+</div>
