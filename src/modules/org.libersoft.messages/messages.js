@@ -954,9 +954,9 @@ function group_downloads_walk(node) {
 
 export function preprocess_incoming_plaintext_message_text(content) {
  let result0 = content;
- //console.log('splitAndLinkify input:', result0);
+ console.log('splitAndLinkify input:', result0);
  let result1 = splitAndLinkify(result0);
- //console.log('splitAndLinkify output:', result1);
+ console.log('splitAndLinkify output:', result1);
  let result2 = result1.map(part => {
   if (part.type === 'plain') {
    let r = htmlEscape(part.value);

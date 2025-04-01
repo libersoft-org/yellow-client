@@ -44,6 +44,6 @@
 <Button text="Download" onClick={clickDownload} />
 <div class="code">
  <div class="sizer">
-  <Highlight language={json} code={JSON.stringify($accounts_config, null, 2)} />
+  <Highlight contenteditable="true" language={json} code={JSON.stringify($accounts_config, null, 2)} />
  </div>
 </div>
