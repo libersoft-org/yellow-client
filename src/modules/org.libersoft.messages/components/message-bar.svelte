@@ -139,6 +139,7 @@
   elMessage.value = '';
   resizeMessage(event);
   elMessage.focus();
+  messageBarReplyStore.close();
  }
 
  function keyEnter(event) {

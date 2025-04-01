@@ -18,6 +18,9 @@
  let tooltipButton = $state<{ ref: HTMLElement; reactions: any[] } | null>(null);
 
  const groupedReactions = $derived.by(() => {
+  if (!reactions || !reactions.length) {
+   return {};
+  }
   const grouped = {};
   for (const reaction of reactions) {
    const codepoints_rgi = reaction.emoji_codepoints_rgi;
