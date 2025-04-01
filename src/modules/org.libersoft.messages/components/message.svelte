@@ -16,8 +16,8 @@
  // import Reply from './msgReply/Reply.svelte';
  import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReply.store.ts';
  import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessage.store.ts';
- import MessageReaction from "@/org.libersoft.messages/components/reaction/MessageReaction.svelte";
- import RenderMessageReactions from "@/org.libersoft.messages/components/reaction/RenderMessageReactions.svelte";
+ import MessageReaction from '@/org.libersoft.messages/components/reaction/MessageReaction.svelte';
+ import RenderMessageReactions from '@/org.libersoft.messages/components/reaction/RenderMessageReactions.svelte';
 
  export let message;
  export let elContainer;
@@ -282,9 +282,9 @@
   await menu.openMenu(e);
  }
 
- const onReactionClick = (codepoints_rgi) => {
-  toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi })
- }
+ const onReactionClick = codepoints_rgi => {
+  toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
+ };
 </script>
 
 <style>
@@ -374,7 +374,7 @@
 
  .message:hover :global(.reaction-button) {
   visibility: visible;
-  opacity: .4;
+  opacity: 0.4;
  }
 
  .message:hover :global(.reaction-button:hover),
@@ -384,7 +384,6 @@
 </style>
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
-
  <div bind:this={elIntersectionObserver}></div>
  <!--<Reply name="Someone" text="Some text" />-->
  <!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
@@ -401,7 +400,7 @@
   </div>
  {:else}{/if}
  <MessageRendering {messageContent} />
- <RenderMessageReactions reactions={message.reactions} onReactionClick={onReactionClick} />
+ <RenderMessageReactions reactions={message.reactions} {onReactionClick} />
  <!--
  <div class="text">{@html 'processMessage(message.message)'}</div>
  <div class="text">{@html '<b>srtrstr'}</div>

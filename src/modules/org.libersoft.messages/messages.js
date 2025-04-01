@@ -17,7 +17,7 @@ import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from './localDB/files.localDB.ts';
 import { addNotification } from '../../core/notifications.ts';
-import { makeMessageReaction } from "@/org.libersoft.messages/utils.ts";
+import { makeMessageReaction } from '@/org.libersoft.messages/utils.ts';
 
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
@@ -279,16 +279,16 @@ function message_update(event) {
  const { type, message } = event.detail.data;
 
  if (type === 'reaction') {
-  const messageUid = message.uid
+  const messageUid = message.uid;
 
   // todo: this messagesArray.update will try to find the message in the current conversation (even if this update is from another conversation)
   messagesArray.update(m => {
-   const foundMessage = m.find(msg => msg.uid === messageUid)
+   const foundMessage = m.find(msg => msg.uid === messageUid);
    if (foundMessage) {
-    foundMessage.reactions = message.reactions
+    foundMessage.reactions = message.reactions;
    }
-   return m
-  })
+   return m;
+  });
   insertEvent({ type: 'properties_update', array: get(messagesArray) });
  }
 }
@@ -707,52 +707,48 @@ export function modifyMessageReaction(messageUid, operation, reaction, acc) {
    messageUid,
    operation,
    reaction,
-  }
+  };
   sendData(acc, null, 'message_reaction', params, true, (req, res) => {
    console.log('message_reaction res', res);
    if (res.error !== false) {
-    reject(res)
+    reject(res);
     return;
    }
 
-   resolve(res)
+   resolve(res);
   });
- })
+ });
 }
 
 export function setMessageReaction(message, reaction) {
- return modifyMessageReaction(message.uid, 'set', reaction)
+ return modifyMessageReaction(message.uid, 'set', reaction);
 }
 
 export function unsetMessageReaction(message, reaction) {
- return modifyMessageReaction(message.uid, 'unset', reaction)
+ return modifyMessageReaction(message.uid, 'unset', reaction);
 }
 
 export function toggleMessageReaction(message, reaction) {
  const userAddress = get(active_account).credentials.address;
  const didUserReact = message.reactions.some(existingReaction => {
-  if (
-   existingReaction.user_address === userAddress
-   && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi
-  ) {
+  if (existingReaction.user_address === userAddress && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi) {
    return true;
   }
- })
-
+ });
 
  if (didUserReact) {
-  message.reactions = message.reactions.filter(r => !( r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi ))
+  message.reactions = message.reactions.filter(r => !(r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi));
   insertEvent({ type: 'properties_update', array: get(messagesArray) });
-  return unsetMessageReaction(message, reaction)
+  return unsetMessageReaction(message, reaction);
  } else {
   const tempReaction = makeMessageReaction({
    user_address: userAddress,
    message_uid: message.uid,
    emoji_codepoints_rgi: reaction.emoji_codepoints_rgi,
-  })
-  message.reactions.push(tempReaction)
+  });
+  message.reactions.push(tempReaction);
   insertEvent({ type: 'properties_update', array: get(messagesArray) });
-  return setMessageReaction(message, reaction)
+  return setMessageReaction(message, reaction);
  }
 }
 

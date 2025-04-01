@@ -1,4 +1,3 @@
-
 interface MessageReactionData {
  _type?: 'temporary';
  user_address: string;
@@ -10,6 +9,5 @@ export function makeMessageReaction(data: MessageReactionData) {
  return {
   _type: 'temporary',
   ...data,
- }
+ };
 }
-
