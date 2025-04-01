@@ -37,6 +37,8 @@ export const build = new Date(__BUILD_DATE__)
 export const commit = __COMMIT_HASH__;
 export const link = 'https://yellow.libersoft.org';
 
+export let isRequestingNotificationsPermission = writable(false);
+
 // declarations of modules that this client supports
 export let module_decls = writable({});
 
@@ -70,7 +72,7 @@ export function registerModule(id, decl) {
 }
 
 modules_order.subscribe(value => {
- console.log('MODULES ORDER:', value);
+ //console.log('MODULES ORDER:', value);
  let module_decls_v = get(module_decls);
  for (const k in module_decls_v) {
   const decl = module_decls_v[k];
@@ -712,8 +714,10 @@ export function setNotificationsEnabled(value) {
      notificationsSettingsAlert.set('blocked');
      return;
     }
+    isRequestingNotificationsPermission.set(true);
     Notification.requestPermission().then(permission => {
      console.log('Notification dialog callback:', permission);
+     isRequestingNotificationsPermission.set(false);
      if (permission == 'granted') {
       console.log('notificationsEnabled.set(true)...');
       notificationsEnabled.set(true);
