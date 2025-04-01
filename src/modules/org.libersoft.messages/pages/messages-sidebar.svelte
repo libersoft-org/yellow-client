@@ -58,6 +58,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  word-break: break-word;
+  overflow: hidden;
   padding: 15px;
   font-weight: bold;
   background-color: #222;
@@ -67,6 +69,12 @@
  .bar-button img {
   width: 28px;
   height: 28px;
+ }
+
+ .bar-button .new {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
  }
 
  .items {
@@ -83,7 +91,7 @@
    <BaseButton onClick={clickNewConversation}>
     <div class="bar-button">
      <img src="modules/{identifier}/img/new_conversation.svg" alt="New conversation" />
-     <div>New conversation</div>
+     <div class="new">New conversation</div>
     </div>
    </BaseButton>
    <div class="space"></div>
