@@ -59,15 +59,24 @@
  function loadMore() {
   clearInterval(interval);
   loader.loading = true;
-  //console.log('LOADmORE: LOADER:', loader);
+  console.log('LOADmORE: LOADER:', loader);
   loader.request = '???';
   loader.timer = setTimeout(() => {
    //console.log('LOADmORE: LOADmESSAGES...');
-   loader.request = loadMessages(loader.conversation.acc, loader.conversation.address, loader.base, loader.prev, loader.next, loader.reason, _res => {
-    //console.log('LOADmESSAGES: _RES:', _res);
-    loader.loading = false;
-    loader.delete_me = true;
-   });
+   loader.request = loadMessages(
+    loader.conversation.acc,
+    loader.conversation.address,
+    loader.base,
+    loader.prev,
+    loader.next,
+    loader.reason,
+    _res => {
+     console.log('LOADmESSAGES: _RES:', _res);
+     loader.loading = false;
+     loader.delete_me = true;
+    },
+    loader.force_refresh
+   );
   }, 0);
  }
 </script>

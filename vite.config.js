@@ -14,20 +14,20 @@ export function getGitCommitHash() {
 }
 
 export default defineConfig(({mode}) => {
- return {
-  resolve: process.env.VITEST
-   ? { conditions: ['browser'] } : undefined,
-  css: {
-   preprocessorOptions: {
-    scss: {
-     quietDeps: true,
-     quiet: true,
+  return {
+   resolve: process.env.VITEST
+    ? {conditions: ['browser']} : undefined,
+   css: {
+    preprocessorOptions: {
+     scss: {
+      quietDeps: true,
+      quiet: true,
      }
     }
    },
    plugins: [
     sveltekit(),
-    ...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
+    ...(mode === 'development' ? [pluginChecker({typescript: true})] : []),
    ],
    define: {
     __BUILD_DATE__: new Date(),

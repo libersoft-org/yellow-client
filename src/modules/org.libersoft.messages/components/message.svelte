@@ -395,6 +395,7 @@
   <div class="debug">
    <span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format: <span class="bold">{message.format}</span>):<br /><br />
    {message.message}<br />
+   {JSON.stringify(message, null, 2)}<br />
    <hr />
    <span class="bold">Rendering</span>:<br /><br />
   </div>

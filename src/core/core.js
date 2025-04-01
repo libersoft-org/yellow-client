@@ -1,7 +1,9 @@
 import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import { BROWSER, IS_TAURI } from './tauri.ts';
+import { BROWSER, CUSTOM_NOTIFICATIONS, IS_TAURI } from './tauri.ts';
+import { selectedMonitor } from './notifications_settings.ts';
+import { availableMonitors } from '@tauri-apps/api/window';
 
 //import {} from './client_debug';
 
@@ -34,6 +36,8 @@ export const build = new Date(__BUILD_DATE__)
  .replace(/\.\d+Z/, '');
 export const commit = __COMMIT_HASH__;
 export const link = 'https://yellow.libersoft.org';
+
+export let isRequestingNotificationsPermission = writable(false);
 
 // declarations of modules that this client supports
 export let module_decls = writable({});
@@ -68,7 +72,7 @@ export function registerModule(id, decl) {
 }
 
 modules_order.subscribe(value => {
- console.log('MODULES ORDER:', value);
+ //console.log('MODULES ORDER:', value);
  let module_decls_v = get(module_decls);
  for (const k in module_decls_v) {
   const decl = module_decls_v[k];
@@ -614,8 +618,7 @@ function handleSocketMessage(acc, res) {
   if (reqData.callback) reqData.callback(reqData.req, res);
   delete acc.requests[res.requestID];
  } else if (res.event) {
-  // it is event:
-  //console.log('GOT EVENT');
+  //console.log('EVENT:', res);
   acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
  } else console.log('Unknown command from server:', res);
 }
@@ -711,8 +714,10 @@ export function setNotificationsEnabled(value) {
      notificationsSettingsAlert.set('blocked');
      return;
     }
+    isRequestingNotificationsPermission.set(true);
     Notification.requestPermission().then(permission => {
      console.log('Notification dialog callback:', permission);
+     isRequestingNotificationsPermission.set(false);
      if (permission == 'granted') {
       console.log('notificationsEnabled.set(true)...');
       notificationsEnabled.set(true);
@@ -733,9 +738,15 @@ export function setNotificationsEnabled(value) {
  return;
 }
 
-export function initBrowserNotifications() {
+export async function initBrowserNotifications() {
  if (BROWSER && Notification.permission !== 'granted') {
   setNotificationsEnabled(false);
+ }
+ if (get(selectedMonitor) === null) {
+  if (CUSTOM_NOTIFICATIONS) {
+   let monitors = await availableMonitors();
+   selectedMonitor.set(monitors[0]);
+  }
  }
 }
 

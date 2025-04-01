@@ -46,7 +46,8 @@
   font-weight: bold;
  }
 
- .item .item-row .description .address {
+ .item .item-row .description .address,
+ .item .item-row .description .time {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;

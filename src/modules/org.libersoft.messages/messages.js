@@ -466,7 +466,7 @@ export function listMessages(acc, address) {
  loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', res => {});
 }
 
-export function loadMessages(acc, address, base, prev, next, reason, cb) {
+export function loadMessages(acc, address, base, prev, next, reason, cb, force_refresh = false) {
  /* acc: account object
  address: contact address (identifies conversation)
  base: message id
@@ -475,7 +475,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
  reason: reason for loading messages (for debugging)
  cb: callback (optional)
   */
- console.log('reason', reason);
+ console.log('reason', reason, 'force_refresh', force_refresh);
  return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (res.error !== false || !res.data?.messages) {
    console.error(res);
@@ -484,7 +484,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb) {
   }
   let items = res.data.messages;
   items = constructLoadedMessages(acc, items);
-  addMessagesToMessagesArray(items, reason);
+  addMessagesToMessagesArray(items, reason, force_refresh);
   if (cb) cb(res);
  });
 }
@@ -521,7 +521,7 @@ export function getMessageByUid(uid) {
  });
 }
 
-function addMessagesToMessagesArray(items, reason) {
+function addMessagesToMessagesArray(items, reason, force_refresh) {
  let arr = get(messagesArray);
  arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
  let result = [];
@@ -533,7 +533,7 @@ function addMessagesToMessagesArray(items, reason) {
  addMissingPrevNext(arr);
  //console.log('messagesArray.set:', arr);
  messagesArray.set(arr);
- if (state.countAdded > 0) insertEvent({ type: reason, array: arr });
+ if (force_refresh || state.countAdded > 0) insertEvent({ type: reason, array: arr });
  else insertEvent({ type: 'properties_update', array: arr });
  return result;
 }
@@ -1028,9 +1028,9 @@ function group_downloads_walk(node) {
 
 export function preprocess_incoming_plaintext_message_text(content) {
  let result0 = content;
- //console.log('splitAndLinkify input:', result0);
+ console.log('splitAndLinkify input:', result0);
  let result1 = splitAndLinkify(result0);
- //console.log('splitAndLinkify output:', result1);
+ console.log('splitAndLinkify output:', result1);
  let result2 = result1.map(part => {
   if (part.type === 'plain') {
    let r = htmlEscape(part.value);

@@ -3,30 +3,35 @@
  export let img;
  export let title;
  export let onClick;
+ export let padding = '15px 20px';
+ export let gap = '20px';
+ export let bgColor = '#222';
+ export let textColor = '#fff';
+ export let hoverColor = '#333';
+ export let borderColor = '#444';
+ export let imgSize = '24px';
+ export let borderRadius = '0';
 </script>
 
 <style>
  .item {
-  padding: 15px 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid #444;
+  background-color: var(--bgColor);
  }
 
  .item:hover {
-  background-color: #333;
- }
-
- .item img {
-  width: 24px;
-  height: 24px;
+  background-color: var(--hoverColor);
  }
 </style>
 
 <BaseButton {onClick}>
- <div class="item">
-  <img src={img} alt={title} />
-  <div>{title}</div>
+ <div class="item" style="padding: {padding}; gap: {gap}; color: {textColor}; --bgColor: {bgColor}; border-bottom: 1px solid {borderColor}; --hoverColor: {hoverColor}; border-radius: {borderRadius}">
+  {#if img}
+   <img style="width: {imgSize}; height: {imgSize}" src={img} alt={title} />
+  {/if}
+  {#if title}
+   <div>{title}</div>
+  {/if}
  </div>
 </BaseButton>

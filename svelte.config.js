@@ -5,13 +5,13 @@ import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 const config = {
  kit: {
   paths: {
-   base: process.env.NODE_ENV === 'production' ? '/client' : '',
+   base: process.env.NODE_ENV === 'production' ? (process.env.TAURI ? '' : '/client') : '',
    relative: false
   },
   adapter: adapter({
-   pages: 'build',
-   assets: 'build',
-   fallback: 'index.html'
+   pages: process.env.TAURI ? 'build-tauri' : 'build',
+   assets: process.env.TAURI ? 'build-tauri' : 'build',
+   fallback: process.env.TAURI ? 'src/404.html' : 'index.html',
   }),
   alias: {
    "@/org.libersoft.messages/*": "src/modules/org.libersoft.messages/*",

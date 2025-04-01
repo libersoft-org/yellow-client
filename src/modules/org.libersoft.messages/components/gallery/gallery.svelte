@@ -163,12 +163,12 @@
   {/key}
   <div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
    <BaseButton onClick={previous}>
-    <img src="img/caret-down-gray.svg" alt="Previous" />
+    <img src="img/caret-left-gray.svg" alt="Previous" />
    </BaseButton>
   </div>
   <div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
    <BaseButton onClick={next}>
-    <img src="img/caret-down-gray.svg" alt="Previous" />
+    <img src="img/caret-right-gray.svg" alt="Previous" />
    </BaseButton>
   </div>
  </div>
