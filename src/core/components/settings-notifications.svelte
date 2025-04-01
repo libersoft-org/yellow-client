@@ -9,7 +9,7 @@
  import { selectedMonitor, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn } from '../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, setNotificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../core.js';
- import { log, CUSTOM_NOTIFICATIONS } from '../tauri.ts';
+ import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../tauri.ts';
  import Switch from './switch.svelte';
  import { addNotification, deleteNotification } from '../notifications.ts';
 
@@ -59,7 +59,6 @@
  // Notifications settings
  let _notificationsEnabled = get(notificationsEnabled);
  notificationsEnabled.subscribe(value => {
-  if (get(isRequestingNotificationsPermission)) return;
   _notificationsEnabled = value;
   console.log('notificationsEnabled:', value);
   updateExampleNotification();
@@ -84,7 +83,20 @@
   }
   log.debug('SettingsNotifications mounted');
   exampleNotification = null;
-  setInterval(updateNotificationsEnabled, 1000);
+  if (BROWSER) {
+   setInterval(() => {
+    if (get(isRequestingNotificationsPermission)) return;
+
+    if (Notification.permission === 'granted') {
+     notificationsSettingsAlert.set('');
+    } else {
+     if (get(notificationsEnabled)) {
+      notificationsSettingsAlert.set('blocked');
+     }
+     notificationsEnabled.set(get(notificationsEnabled) && Notification.permission === 'granted');
+    }
+   }, 1000);
+  }
  });
 
  onDestroy(() => {
