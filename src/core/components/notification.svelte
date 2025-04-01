@@ -22,7 +22,6 @@
   gap: 10px;
   padding: 10px;
   border-radius: 10px;
-  box-shadow: var(--shadow);
   animation: messageAppear 0.4s ease-out;
  }
 
