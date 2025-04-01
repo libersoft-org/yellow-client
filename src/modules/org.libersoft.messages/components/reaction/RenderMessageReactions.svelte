@@ -1,0 +1,143 @@
+<script lang="ts">
+ import BaseButton from '@/core/components/base-button.svelte';
+ import Emoji from '@/org.libersoft.messages/components/emoji.svelte';
+ import { emoji_render, rgi_to_codepoints } from '@/org.libersoft.messages/emojis';
+ import Tooltip from '@/core/components/tooltip/Tooltip.svelte';
+ import { get } from 'svelte/store';
+ import { active_account } from '@/core/core';
+ import { highlightElement } from '@/core/utils/animation.utils.ts';
+ import _union from 'lodash/union';
+ import _isEqual from 'lodash/isEqual';
+
+ interface RenderMessageReactionsProps {
+  reactions: any[];
+  onReactionClick: (codepoints_rgi: string) => void;
+ }
+
+ let { reactions, onReactionClick }: RenderMessageReactionsProps = $props();
+ let tooltipButton = $state<{ ref: HTMLElement; reactions: any[] } | null>(null);
+
+ const groupedReactions = $derived.by(() => {
+  if (!reactions || !reactions.length) {
+   return {};
+  }
+  const grouped = {};
+  for (const reaction of reactions) {
+   const codepoints_rgi = reaction.emoji_codepoints_rgi;
+   if (!grouped[codepoints_rgi]) {
+    grouped[codepoints_rgi] = [];
+   }
+   grouped[codepoints_rgi].push(reaction);
+  }
+  return grouped;
+ });
+
+ const showTooltip = (e, reactions, rgi) => {
+  if (tooltipButton && tooltipButton.ref === e.target) {
+   return;
+  }
+
+  tooltipButton = {
+   reactions,
+   ref: e.target,
+  };
+ };
+
+ const dismissTooltip = e => {
+  tooltipButton = null;
+ };
+
+ const renderInfoFromReactions = (reactions: any[]) => {
+  if (!reactions || !reactions.length) {
+   return '';
+  }
+  const myUserAddress = get(active_account).credentials.address;
+  const didIReact = reactions.some(r => r.user_address === myUserAddress);
+  const otherReactionAddresses = reactions.filter(r => r.user_address !== myUserAddress).map(r => r.user_address);
+
+  const emoji = emoji_render(rgi_to_codepoints(reactions[0].emoji_codepoints_rgi));
+  if (didIReact && otherReactionAddresses.length) {
+   return 'You and ' + otherReactionAddresses.join(', ') + ' have reacted with ' + emoji;
+  } else if (didIReact) {
+   return 'You have reacted with ' + emoji;
+  } else if (otherReactionAddresses.length > 1) {
+   return otherReactionAddresses.join(', ') + ' have reacted with ' + emoji;
+  } else if (otherReactionAddresses.length === 1) {
+   return otherReactionAddresses.join('') + ' has reacted with ' + emoji;
+  } else {
+   return '';
+  }
+ };
+
+ let prevReactions: any | null = null;
+ let buttonRefs = {};
+ /**
+  * Animations handler by detecting changes in reactions
+  */
+ $effect(() => {
+  if (prevReactions === null) {
+   prevReactions = groupedReactions;
+   return;
+  }
+
+  if (_isEqual(prevReactions, groupedReactions)) {
+   return;
+  }
+  // find difference by comparing groups lengths
+  const prevKeys = Object.keys(prevReactions);
+  const newKeys = Object.keys(groupedReactions);
+  const added = newKeys.filter(key => !prevKeys.includes(key));
+  const removed = prevKeys.filter(key => !newKeys.includes(key));
+  const modified = newKeys.filter(key => {
+   if (prevReactions[key] && groupedReactions[key]) {
+    return prevReactions[key].length !== groupedReactions[key].length;
+   }
+   return false;
+  });
+
+  _union(added, removed, modified).forEach(a => highlightElement(buttonRefs[a]));
+  prevReactions = groupedReactions;
+ });
+</script>
+
+<style>
+ .message-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+ }
+
+ .reaction-box {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #d7d1d1;
+ }
+
+ .reaction-box:hover {
+  border-color: #c5bcbc;
+ }
+</style>
+
+{#if reactions && reactions.length}
+ <div class="message-reactions">
+  {#each Object.keys(groupedReactions) as rgi (rgi)}
+   {@const reactions = groupedReactions[rgi]}
+   <BaseButton onClick={() => onReactionClick(rgi)}>
+    <div bind:this={buttonRefs[rgi]} class="reaction-box" onmouseenter={e => showTooltip(e, reactions, rgi)} onmouseleave={dismissTooltip}>
+     {emoji_render(rgi_to_codepoints(rgi))}
+     <span style:pointer-events="none">{reactions.length}</span>
+    </div>
+   </BaseButton>
+  {/each}
+ </div>
+ {#if tooltipButton}
+  <Tooltip targetRef={tooltipButton.ref}>
+   <div style:max-width="120px" style:text-align="center">
+    {renderInfoFromReactions(tooltipButton.reactions)}
+   </div>
+  </Tooltip>
+ {/if}
+{/if}

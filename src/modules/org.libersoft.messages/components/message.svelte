@@ -1,11 +1,12 @@
 <script>
- import { deleteMessage, identifier, processMessage, setMessageSeen, snipeMessage, startReply } from '../messages.js';
+ import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../messages.js';
  import { debug } from '../../../core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
  import { isClientFocused } from '../../../core/core.js';
  import { stripHtml } from '../messages.js';
- import ContextMenu from '../../../core/components/context-menu.svelte';
- import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
+ import ContextMenu from '@/core/components/context-menu.svelte';
+ import ContextMenuItem from '@/core/components/context-menu-item.svelte';
+
  // import Image from './image.svelte';
  // import Audio from './audio.svelte';
  // import Video from './video.svelte';
@@ -15,6 +16,8 @@
  // import Reply from './msgReply/Reply.svelte';
  import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReply.store.ts';
  import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessage.store.ts';
+ import MessageReaction from '@/org.libersoft.messages/components/reaction/MessageReaction.svelte';
+ import RenderMessageReactions from '@/org.libersoft.messages/components/reaction/RenderMessageReactions.svelte';
 
  export let message;
  export let elContainer;
@@ -269,8 +272,8 @@
 
  async function rightClickContextMenu(e) {
   // for dev purposes: if you want to use native context menu (right mouse click) instead of app's in message list
-  if (import.meta.env.VITE_FORCE_NATIVE_CONTEXT_MENU) {
-   //return;
+  if (import.meta.env.VITE_FORCE_NATIVE_CONTEXT_MENU && (e.ctrlKey || e.metaKey)) {
+   return;
   }
   e.preventDefault();
   console.log('Message click:', e);
@@ -278,6 +281,10 @@
   console.log('Message click:', menu.openMenu);
   await menu.openMenu(e);
  }
+
+ const onReactionClick = codepoints_rgi => {
+  toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
+ };
 </script>
 
 <style>
@@ -333,8 +340,19 @@
  .message .bottomline {
   display: flex;
   align-items: center;
-  justify-content: right;
-  gap: 5px;
+  justify-content: space-between;
+  gap: 4px;
+ }
+
+ .message .bottomline-reaction {
+  margin-right: 8px;
+ }
+
+ .message .bottomline-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
  }
 
  .message .bottomline .time {
@@ -348,6 +366,20 @@
 
  .debug {
   word-break: break-word;
+ }
+
+ .message :global(.reaction-button:not(.open)) {
+  visibility: hidden;
+ }
+
+ .message:hover :global(.reaction-button) {
+  visibility: visible;
+  opacity: 0.4;
+ }
+
+ .message:hover :global(.reaction-button:hover),
+ .message:hover :global(.reaction-button.open) {
+  opacity: 1;
  }
 </style>
 
@@ -369,6 +401,7 @@
   </div>
  {:else}{/if}
  <MessageRendering {messageContent} />
+ <RenderMessageReactions reactions={message.reactions} {onReactionClick} />
  <!--
  <div class="text">{@html 'processMessage(message.message)'}</div>
  <div class="text">{@html '<b>srtrstr'}</div>
@@ -376,17 +409,18 @@
  <div class="text">{@html '<hr/>'}</div>
  -->
  <div class="bottomline">
-  <div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
-  {#if message.is_outgoing}
-   <div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
-  {/if}
+  <div class="bottomline-reaction">
+   <MessageReaction {message} />
+  </div>
+  <div class="bottomline-info">
+   <div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
+   {#if message.is_outgoing}
+    <div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
+   {/if}
+  </div>
  </div>
 </div>
-{#if message.reply}
- <div class="reply-box">
-  <input type="text" value={message.reply.text} />
- </div>
-{/if}
+
 <ContextMenu bind:this={menu} target={elCaret}>
  <ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
  <ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />

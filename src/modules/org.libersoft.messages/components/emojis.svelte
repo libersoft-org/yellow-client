@@ -12,15 +12,18 @@
  import FuzzySearch from 'fuzzy-search';
  import Spinner from '../../../core/components/spinner.svelte';
  import { longpress } from '../ui.js';
+ import IntersectionObserver from 'svelte-intersection-observer';
 
  const MessageBar = getContext('MessageBar');
 
+ export let onEmojiClick;
  let alts = [];
  let altsMenu;
  let elContainer;
  let elSearchInput;
  let search = '';
  let results;
+ let intersectedElements = {};
 
  $: results = find($emojiGroups, search);
 
@@ -51,7 +54,12 @@
  }
 
  function clickEmoji(codepoints) {
-  MessageBar.insertText(emoji_render(codepoints));
+  if (typeof onEmojiClick === 'function') {
+   onEmojiClick(codepoints);
+  } else {
+   // todo: this should be handled by prop passing for better separation of concerns
+   MessageBar.insertText(emoji_render(codepoints));
+  }
  }
 
  function showAlts(e, emoji) {
@@ -127,22 +135,27 @@
 </div>
 
 {#snippet clickable_emoji(emoji)}
- <BaseButton onRightClick={e => showAlts(e, emoji)}>
-  <div
-   class="emoji hover"
-   use:longpress
-   on:longpress={e => showAlts(e, emoji)}
-   on:mymousedown={() => {
-    altsMenu?.close();
-   }}
-   on:click={() => clickEmoji(emoji.base)}
-   on:keydown={e => {}}
-   role="button"
-   tabindex="0"
-  >
-   <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
-  </div>
- </BaseButton>
+ <IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi]} let:intersecting>
+  <BaseButton onRightClick={e => showAlts(e, emoji)}>
+   <div
+    bind:this={intersectedElements[emoji.codepoints_rgi]}
+    class="emoji hover"
+    use:longpress
+    on:longpress={e => showAlts(e, emoji)}
+    on:mymousedown={() => {
+     altsMenu?.close();
+    }}
+    on:click={() => clickEmoji(emoji.base)}
+    on:keydown={e => {}}
+    role="button"
+    tabindex="0"
+   >
+    {#if intersecting}
+     <Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
+    {/if}
+   </div>
+  </BaseButton>
+ </IntersectionObserver>
 {/snippet}
 
 <div class="emojiset" bind:this={elContainer} tabindex="-1">

@@ -491,6 +491,7 @@
   margin-top: auto;
   flex-direction: column;
   flex-grow: 1;
+  height: 100%;
   overflow-y: auto;
   max-height: 100%; /* Ensure the inner div has a defined height */
  }
