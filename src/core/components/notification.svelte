@@ -1,11 +1,12 @@
 <script>
  import BaseButton from './base-button.svelte';
- import Button from './button.svelte';
+ import { log } from '../../core/tauri.ts';
  export let data;
  export let closing = false;
 
  function handleClosing(e) {
   e.stopPropagation();
+  //e.stopImmediatePropagation();
   closing = true;
   setTimeout(() => {
    data.onClose && data.onClose(e, 'close');
@@ -116,7 +117,12 @@
  }
 </style>
 
-<BaseButton onClick={e => data.onClick(e, 'click')}>
+<BaseButton
+ onClick={e => {
+  log.debug('***onClick');
+  data.onClick(e, 'click');
+ }}
+>
  <div class="notification {closing && 'closing'}" style:background-color={data.bgColor ? data.bgColor : '#222'}>
   {#if data.img || data.title || data.body}
    <div class="top">
@@ -146,7 +152,12 @@
     </div>
    </div>
   {/if}
-  <BaseButton onClick={handleClosing}>
+  <BaseButton
+   onClick={e => {
+    log.debug('***onClose');
+    handleClosing(e);
+   }}
+  >
    <div class="close">
     <img src="img/close.svg" alt="Close" />
    </div>

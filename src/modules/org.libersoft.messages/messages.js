@@ -819,13 +819,15 @@ function showNotification(acc, msg) {
   body: msg.stripped_text,
   icon: 'img/photo.svg',
   sound: 'modules/' + identifier + '/audio/message.mp3',
-  callback: async () => {
-   window.focus();
-   selectAccount(acc.id);
-   selected_module_id.set(identifier);
-   await tick();
-   console.log('notification click: selectConversation', msg.address_from);
-   selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
+  callback: async event => {
+   if (event === 'click') {
+    window.focus();
+    selectAccount(acc.id);
+    selected_module_id.set(identifier);
+    await tick();
+    console.log('notification click: selectConversation', msg.address_from);
+    selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
+   }
   },
  };
  addNotification(notification);
@@ -914,9 +916,9 @@ export function processMessage(message) {
   wrapConsecutiveElements(html, 'YellowAudio', 'AudioWrapper', 1);
  } else {
   let text = preprocess_incoming_plaintext_message_text(message.message);
-  //console.log('text:', text);
+  console.log('text:', text);
   html = saneHtml(text);
-  //console.log('html:', html);
+  console.log('html:', html);
  }
  //html = group_downloads(html);
  console.log('htmlhtmlhtml', html);

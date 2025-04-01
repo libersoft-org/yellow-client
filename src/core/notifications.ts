@@ -47,6 +47,7 @@ async function onNotificationEvent(id: string, event: string) {
  log.debug('onNotificationEvent:', id, event);
  let n = notifications.get(id);
  if (n && n.callback) {
+  log.debug('notification callback called:', event);
   await n.callback(JSON.parse(event));
  }
  //if (event === 'close') {

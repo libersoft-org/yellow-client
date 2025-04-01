@@ -16,3 +16,4 @@ vite.config.js.timestamp-*
 .env
 .aider*
 *storybook.log
+test-results

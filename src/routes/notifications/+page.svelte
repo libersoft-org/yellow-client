@@ -203,13 +203,14 @@
  }
 
  async function onClose(e) {
+  log.debug('onClose notification');
   this.onClick(e, 'close');
   onNotificationRemoved(this.id);
  }
 
  async function onClick(e, data) {
   e.stopPropagation();
-  log.debug('Clicked on notification');
+  log.debug('onClick notification');
   await (await store('notification-events', false)).set(this.id, JSON.stringify(data));
   log.debug('notification event set');
  }

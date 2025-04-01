@@ -2,6 +2,7 @@
  import BaseButton from './base-button.svelte';
  import { product, debug } from '../core.js';
  import { addNotification } from '../notifications.ts';
+ import { log } from '../../core/tauri.ts';
 
  export let isMenuOpen;
 
@@ -49,8 +50,7 @@
     addNotification({
      body: 'bla bla',
      callback: event => {
-      console.log(event);
-      window.alert('callback' + event);
+      log.debug('debug notification callback ' + event);
      },
     })}>addNotification</BaseButton
   >
