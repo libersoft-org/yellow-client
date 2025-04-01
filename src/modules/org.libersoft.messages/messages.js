@@ -17,6 +17,8 @@ import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from './localDB/files.localDB.ts';
 import { addNotification } from '../../core/notifications.ts';
+import { makeMessageReaction } from "@/org.libersoft.messages/utils.ts";
+
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
@@ -134,6 +136,7 @@ export function initComms(acc) {
  moduleEventSubscribe(acc, 'new_message');
  moduleEventSubscribe(acc, 'seen_message');
  moduleEventSubscribe(acc, 'seen_inbox_message');
+ moduleEventSubscribe(acc, 'message_update');
 
  // file transfer events
  moduleEventSubscribe(acc, 'upload_update');
@@ -150,6 +153,7 @@ export function initComms(acc) {
  acc.events.addEventListener('new_message', data.new_message_listener);
  acc.events.addEventListener('seen_message', data.seen_message_listener);
  acc.events.addEventListener('seen_inbox_message', data.seen_inbox_message_listener);
+ acc.events.addEventListener('message_update', message_update);
 
  // file transfer events
  acc.events.addEventListener('upload_update', upload_update);
@@ -268,6 +272,24 @@ function ask_for_chunk(event) {
   fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync);
  } else {
   fileUploadManager.continueP2PUpload(uploadId);
+ }
+}
+
+function message_update(event) {
+ const { type, message } = event.detail.data;
+
+ if (type === 'reaction') {
+  const messageUid = message.uid
+
+  // todo: this messagesArray.update will try to find the message in the current conversation (even if this update is from another conversation)
+  messagesArray.update(m => {
+   const foundMessage = m.find(msg => msg.uid === messageUid)
+   if (foundMessage) {
+    foundMessage.reactions = message.reactions
+   }
+   return m
+  })
+  insertEvent({ type: 'properties_update', array: get(messagesArray) });
  }
 }
 
@@ -672,6 +694,68 @@ function sendOutgoingMessage(acc, conversation, params, message, outgoing_messag
  });
 }
 
+/**
+ * @param acc
+ * @param messageUid
+ * @param operation {'set'|'unset'}
+ * @returns {Promise<unknown>}
+ */
+export function modifyMessageReaction(messageUid, operation, reaction, acc) {
+ acc = acc ? acc : get(active_account);
+ return new Promise((resolve, reject) => {
+  const params = {
+   messageUid,
+   operation,
+   reaction,
+  }
+  sendData(acc, null, 'message_reaction', params, true, (req, res) => {
+   console.log('message_reaction res', res);
+   if (res.error !== false) {
+    reject(res)
+    return;
+   }
+
+   resolve(res)
+  });
+ })
+}
+
+export function setMessageReaction(message, reaction) {
+ return modifyMessageReaction(message.uid, 'set', reaction)
+}
+
+export function unsetMessageReaction(message, reaction) {
+ return modifyMessageReaction(message.uid, 'unset', reaction)
+}
+
+export function toggleMessageReaction(message, reaction) {
+ const userAddress = get(active_account).credentials.address;
+ const didUserReact = message.reactions.some(existingReaction => {
+  if (
+   existingReaction.user_address === userAddress
+   && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi
+  ) {
+   return true;
+  }
+ })
+
+
+ if (didUserReact) {
+  message.reactions = message.reactions.filter(r => !( r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi ))
+  insertEvent({ type: 'properties_update', array: get(messagesArray) });
+  return unsetMessageReaction(message, reaction)
+ } else {
+  const tempReaction = makeMessageReaction({
+   user_address: userAddress,
+   message_uid: message.uid,
+   emoji_codepoints_rgi: reaction.emoji_codepoints_rgi,
+  })
+  message.reactions.push(tempReaction)
+  insertEvent({ type: 'properties_update', array: get(messagesArray) });
+  return setMessageReaction(message, reaction)
+ }
+}
+
 async function sendOutgoingMessages(acc) {
  /* try to send outgoing messages. Ensure they are sent in creation order. Break on error */
  console.log('sendOutgoingMessages for acc', acc.id);
@@ -722,12 +806,6 @@ function updateConversationsArray(acc, msg) {
 export function openNewConversation(address) {
  console.log('openNewConversation', address);
  selectConversation({ acc: get(active_account), address });
-}
-
-export function startReply(message) {
- message.reply = { text: 'funny.' };
- messagesArray.update(v => v);
- insertEvent({ type: 'properties_update', array: get(messagesArray) });
 }
 
 export function jumpToMessage(acc, address, uid) {
