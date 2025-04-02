@@ -153,7 +153,7 @@
   data.onClick(e, 'click');
  }}
 >
- <div class="notification {animationName && animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {animationDuration / 1000}s; background-color={data.bgColor ? data.bgColor : '#222'}">
+ <div class="notification {animationName && animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {animationDuration}ms; background-color={data.bgColor ? data.bgColor : '#222'}">
   {#if data.img || data.title || data.body}
    <div class="top">
     {#if data.img}
