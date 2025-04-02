@@ -44,13 +44,7 @@
   {#if activeTab === 'appearance'}
    <SettingsAppearance />
   {:else if activeTab === 'notifications'}
-   <div>
-    <Table>
-     <Tbody></Tbody>
-    </Table>
-
-    <SettingsNotifications />
-   </div>
+   <SettingsNotifications />
   {/if}
  </div>
 </div>
