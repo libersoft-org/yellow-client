@@ -8,25 +8,26 @@
  export let maxNotifications = 3;
  let notifications = writable([]);
  let counter = 0;
- import { store } from '../../core/notifications_store.ts';
- import { selectedMonitor, selectedNotificationsCorner } from '../../core/notifications_settings.ts';
- import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
+ import { multiwindow_store } from '../../core/multiwindow_store.ts';
+ import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor } from '../../core/notifications_settings.ts';
+ import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
  import { onMount, onDestroy } from 'svelte';
  import { invoke } from '@tauri-apps/api/core';
 
  let monitors = writable([]);
- let monitorName = writable(null);
+ let actualMonitorName = writable(null);
  let monitorInterval;
  const width = 400;
  let heightLogical = writable(100);
  let height = writable(100);
 
- monitorName.subscribe(v => {
-  log.debug('actual monitorName:', v);
+ actualMonitorName.subscribe(v => {
+  log.debug('actualMonitorName:', v);
  });
 
  heightLogical.subscribe(async v => {
-  let m = get(monitors).find(m => m.name === get(monitorName));
+  if (BROWSER) return;
+  let m = get(monitors).find(m => m.name === get(actualMonitorName));
   let scaleFactor = m?.scaleFactor;
   let scaleFactor2 = scaleFactor;
   if (!scaleFactor2) scaleFactor2 = 1;
@@ -54,15 +55,19 @@
  async function updateMonitors() {
   //log.debug('notifications page updateMonitors');
   monitors.set(await availableMonitors());
-  updateNotificationsMonitor();
  }
 
  monitors.subscribe(v => {
   updateNotificationsMonitor();
  });
 
- selectedMonitor.subscribe(v => {
+ selectedMonitorName.subscribe(v => {
   log.debug('notifications page selectedMonitor:', v);
+  updateNotificationsMonitor();
+ });
+
+ mainWindowMonitor.subscribe(v => {
+  log.debug('notifications page mainWindowMonitor:', v);
   updateNotificationsMonitor();
  });
 
@@ -73,14 +78,24 @@
  });
 
  function updateNotificationsMonitor() {
-  let monitor_name = get(selectedMonitor);
+  setActualMonitorName(get(selectedMonitorName));
+ }
+
+ /*
+  * Set the actual monitor name, based on selected monitor and available monitors. Set null if no monitor is available.
+  */
+ function setActualMonitorName(monitor_name) {
+  if (monitor_name === 'main_window_monitor') {
+   monitor_name = get(mainWindowMonitor);
+  }
+
   let mons = get(monitors);
   if (!mons) {
    monitor_name = null;
   } else if (mons.find(m => m.name === monitor_name) === undefined) {
    monitor_name = mons[0]?.name;
   }
-  monitorName.set(monitor_name);
+  actualMonitorName.set(monitor_name);
  }
 
  function getNotificationsDirection() {
@@ -122,7 +137,7 @@
  function updatePosition() {
   //log.debug('updatePosition...');
   let h = get(height);
-  let m = get(monitors).find(m => m.name === get(monitorName));
+  let m = get(monitors).find(m => m.name === get(actualMonitorName));
   let d = getNotificationsDirection();
   let corner = get(selectedNotificationsCorner);
 
@@ -132,11 +147,12 @@
   position.set(p);
  }
 
- monitorName.subscribe(updatePosition);
+ actualMonitorName.subscribe(updatePosition);
  selectedNotificationsCorner.subscribe(updatePosition);
  height.subscribe(updatePosition);
 
  position.subscribe(async v => {
+  if (BROWSER) return;
   //log.debug('getCurrentWindow():', getCurrentWindow());
   let size = { width: 400, height: $height };
   //log.debug('setPosition', v, 'size:', size);
@@ -155,7 +171,7 @@
  });
 
  async function initNotifications() {
-  let s = await store('notifications', false);
+  let s = await multiwindow_store('notifications', false);
   //log.debug('store:', s);
   s.onChange((k, v) => {
    //log.debug('store.onChange', k, v);
@@ -200,6 +216,7 @@
   notificationData.onClick = onClick.bind(notificationData);
   notificationData.onClose = onClose.bind(notificationData);
   notifications.update(n => [...n, notificationData]);
+  log.debug('notification added');
  }
 
  async function onClose(e) {
@@ -211,12 +228,12 @@
  async function onClick(e, data) {
   e.stopPropagation();
   log.debug('onClick notification');
-  await (await store('notification-events', false)).set(this.id, JSON.stringify(data));
+  await (await multiwindow_store('notification-events', false)).set(this.id, JSON.stringify(data));
   log.debug('notification event set');
  }
 
  async function onNotificationRemoved(id) {
-  let s = await store('notifications', false);
+  let s = await multiwindow_store('notifications', false);
   await s.delete(id);
   notifications.update(v => v.filter(item => item.id !== id));
   if (get(notifications).length === 0) {
@@ -263,3 +280,5 @@
   {/each}
  </div>
 </div>
+
+<!--<Button text="Add notification" onClick={clickAddNotification} />-->

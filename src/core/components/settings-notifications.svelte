@@ -6,7 +6,7 @@
  import Td from './table-tbody-td.svelte';
  import CornerSelector from './cornerselector.svelte';
  import { writable, get } from 'svelte/store';
- import { selectedMonitor, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn } from '../notifications_settings.ts';
+ import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, bgColor, titleColor, descColor } from '../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, setNotificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../core.js';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../tauri.ts';
@@ -17,6 +17,16 @@
  let monitors = writable([]);
  let monitorInterval;
  let exampleNotification = 'dummy';
+ let monitorOptions = writable([]);
+
+ monitors.subscribe(value => {
+  monitorOptions.set(
+   [
+    //{ name: 'primary', label: 'primary' },
+    { name: 'main_window_monitor', label: 'Main window monitor' },
+   ].concat(value.map(m => ({ name: m.name, label: m.name + '(' + m.size.width + 'x' + m.size.height + ')' })))
+  );
+ });
 
  function updateExampleNotification() {
   if (exampleNotification === 'dummy') return;
@@ -41,7 +51,7 @@
   }
  });
 
- selectedMonitor.subscribe(v => {
+ selectedMonitorName.subscribe(v => {
   log.debug('selectedMonitor:', v);
   updateExampleNotification();
  });
@@ -112,7 +122,7 @@
  }
 </script>
 
-<Table>
+<Table expand={true}>
  <Tbody>
   <Tr>
    <Td>
@@ -138,35 +148,55 @@
      <Switch bind:checked={$enableCustomNotifications} />
     </Td>
    </Tr>
-   <Tr>
-    <Td>
-     <div class="bold">Monitor:</div>
-    </Td>
-    <Td center={true}>
-     <select bind:value={$selectedMonitor} disabled={!$customNotificationsOn}>
-      {#each $monitors as monitor}
-       <option value={monitor.name}>{monitor.name} ({monitor.size.width}x{monitor.size.height})</option>
-      {/each}
-     </select>
-    </Td>
-   </Tr>
-   <Tr>
-    <Td>
-     <div class="bold">Corner:</div>
-    </Td>
-    <Td center={true}>
-     <CornerSelector bind:value={$selectedNotificationsCorner} disabled={!$customNotificationsOn} />
-    </Td>
-   </Tr>
-  {:else}
-   <Tr>
-    <Td>
-     <div class="bold">Monitor:</div>
-    </Td>
-    <Td center={true}>
-     <div class="alert alert-warning">This feature is only available in the desktop app</div>
-    </Td>
-   </Tr>
+   {#if $customNotificationsOn}
+    <Tr>
+     <Td>
+      <div class="bold">Monitor:</div>
+     </Td>
+     <Td center={true}>
+      <select bind:value={$selectedMonitorName} disabled={!$customNotificationsOn}>
+       {#each $monitorOptions as monitor}
+        <option value={monitor.name} selected={monitor.name === $selectedMonitorName}>{monitor.label}</option>
+       {/each}
+      </select>
+     </Td>
+    </Tr>
+    <Tr>
+     <Td>
+      <div class="bold">Corner:</div>
+     </Td>
+     <Td center={true}>
+      <CornerSelector bind:value={$selectedNotificationsCorner} disabled={!$customNotificationsOn} />
+     </Td>
+    </Tr>
+    <Tr>
+     <Td>
+      <div class="bold">Background color:</div>
+     </Td>
+     <Td center={true}>
+      <input type="color" bind:value={$bgColor} />
+      {$bgColor}
+     </Td>
+    </Tr>
+    <Tr>
+     <Td>
+      <div class="bold">Title color:</div>
+     </Td>
+     <Td center={true}>
+      <input type="color" bind:value={$titleColor} />
+      {$titleColor}
+     </Td>
+    </Tr>
+    <Tr>
+     <Td>
+      <div class="bold">Description color:</div>
+     </Td>
+     <Td center={true}>
+      <input type="color" bind:value={$descColor} />
+      {$descColor}
+     </Td>
+    </Tr>
+   {/if}
   {/if}
  </Tbody>
 </Table>

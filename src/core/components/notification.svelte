@@ -1,9 +1,8 @@
 <script>
  import BaseButton from './base-button.svelte';
  import { log } from '../../core/tauri.ts';
+ import { animationDuration, animationName, bgColor, titleColor, descColor } from '../notifications_settings.ts';
  export let data;
- export let animationName = 'zoom';
- export let animationDuration = 400;
  export let closing = false;
 
  function handleClosing(e) {
@@ -54,11 +53,9 @@
  @keyframes zoom-out {
   from {
    transform: scale(1);
-   opacity: 1;
   }
   to {
    transform: scale(0);
-   opacity: 0;
   }
  }
 
@@ -153,7 +150,7 @@
   data.onClick(e, 'click');
  }}
 >
- <div class="notification {animationName && animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {animationDuration}ms; background-color={data.bgColor ? data.bgColor : '#222'}">
+ <div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; background-color:{$bgColor}">
   {#if data.img || data.title || data.body}
    <div class="top">
     {#if data.img}
@@ -165,10 +162,10 @@
     {/if}
     <div class="right">
      {#if data.title}
-      <div class="title" style:color={data.titleColor ? data.titleColor : '#fff'} style:-webkit-line-clamp={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
+      <div class="title" style:color={$titleColor} style:-webkit-line-clamp={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
      {/if}
      {#if data.body}
-      <div class="body" style:color={data.descColor ? data.descColor : '#888'} style:-webkit-line-clamp={data.descMaxLines ? data.descMaxLines : 3}>{data.body}</div>
+      <div class="body" style:color={$descColor} style:-webkit-line-clamp={data.descMaxLines ? data.descMaxLines : 3}>{data.body}</div>
      {/if}
     </div>
    </div>
@@ -177,7 +174,7 @@
    <div class="bottom">
     <div class="buttons">
      {#each data.buttons as b}
-      <Button text={b.text} onClick={e => b.onClick(b, b.id)} expand={b.expand} />
+      <BaseButton text={b.text} onClick={e => b.onClick(b, b.id)} expand={b.expand} />
      {/each}
     </div>
    </div>

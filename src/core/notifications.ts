@@ -1,11 +1,13 @@
 import { get } from 'svelte/store';
 import { notificationsEnabled } from './core';
-import { store } from './notifications_store.ts';
+import { multiwindow_store } from './multiwindow_store.ts';
 import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 import { enableCustomNotifications } from './notifications_settings.ts';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { currentMonitor, getCurrentWindow } from '@tauri-apps/api/window';
 import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
+
+/* yellow notifications, for use in core and modules */
 
 export interface YellowNotification {
  id: string;
@@ -18,20 +20,19 @@ export interface YellowNotification {
 }
 
 let counter = 0;
-
 let notifications: Map<string, YellowNotification> = new Map();
 let _events;
 
 async function initCustomNotifications() {
  //log.debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
  if (!CUSTOM_NOTIFICATIONS) return;
- let _notifications = await store('notifications');
+ let _notifications = await multiwindow_store('notifications');
  // for (let [id, notification] of _notifications.entries()) {
  //  log.debug('initCustomNotifications:', id, notification);
  //  notifications.delete(id);
  // }
  if (!_events) {
-  _events = await store('notification-events');
+  _events = await multiwindow_store('notification-events');
   _events.onChange(onNotificationEvent);
   //log.debug('getCurrentWindow:', getCurrentWindow());
   //log.debug('getCurrentWindow().onCloseRequested:', getCurrentWindow().onCloseRequested);
@@ -55,11 +56,16 @@ async function onNotificationEvent(id: string, event: string) {
  //}
 }
 
-export async function addNotification(notification: Partial<YellowNotification>): Promise<string | undefined> {
- let enabled = get(notificationsEnabled);
+async function removeNotification(id: string): Promise<void> {
+ let s = await multiwindow_store('notifications');
+ await s.delete(id);
+ //log.debug('removed.');
+}
 
+export async function addNotification(notification: Partial<YellowNotification>): Promise<string | undefined> {
  //log.debug('addNotification: enabled:', enabled, 'IS_TAURI:', IS_TAURI, 'IS_TAURI_MOBILE:', IS_TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
 
+ let enabled = get(notificationsEnabled);
  if (!enabled) return;
 
  let n: YellowNotification = {
@@ -122,7 +128,7 @@ async function sendTauriNotification(notification: YellowNotification) {
 async function sendCustomNotification(notification: YellowNotification): Promise<void> {
  log.debug('sendCustomNotification');
  await initCustomNotifications();
- let s = await store('notifications');
+ let s = await multiwindow_store('notifications');
  //log.debug('store:', s);
  invoke('create_notifications_window', {});
  if (notification.id) {
@@ -153,12 +159,6 @@ function showBrowserNotification(notification: YellowNotification) {
 export async function deleteNotification(id: string): Promise<void> {
  //log.debug('deleteNotification:', id);
  notifications[id] && notifications.delete(id);
- let s = await store('notifications');
+ let s = await multiwindow_store('notifications');
  s.set(id, null);
-}
-
-export async function removeNotification(id: string): Promise<void> {
- let s = await store('notifications');
- await s.delete(id);
- //log.debug('removed.');
 }

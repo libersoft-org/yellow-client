@@ -1,3 +1,7 @@
+<script>
+ export let expand = false;
+</script>
+
 <style>
  table {
   border-spacing: 0;
@@ -5,8 +9,12 @@
   border-radius: 10px;
   overflow: hidden;
  }
+
+ table.expand {
+  width: 100%;
+ }
 </style>
 
-<table>
+<table class={expand && 'expand'}>
  <slot />
 </table>

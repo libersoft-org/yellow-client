@@ -2,7 +2,7 @@ import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 import { BROWSER, CUSTOM_NOTIFICATIONS, IS_TAURI } from './tauri.ts';
-import { selectedMonitor } from './notifications_settings.ts';
+import { selectedMonitorName } from './notifications_settings.ts';
 import { availableMonitors } from '@tauri-apps/api/window';
 
 //import {} from './client_debug';
@@ -742,10 +742,10 @@ export async function initBrowserNotifications() {
  if (BROWSER && Notification.permission !== 'granted') {
   setNotificationsEnabled(false);
  }
- if (get(selectedMonitor) === null) {
+ if (get(selectedMonitorName) === null) {
   if (CUSTOM_NOTIFICATIONS) {
    let monitors = await availableMonitors();
-   selectedMonitor.set(monitors[0]);
+   selectedMonitorName.set(monitors[0]);
   }
  }
 }

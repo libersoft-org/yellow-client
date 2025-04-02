@@ -165,4 +165,4 @@
   </div>
  </div>
 </div>
-<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} />
+<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
