@@ -4,13 +4,15 @@
  import Tr from './table-tbody-tr.svelte';
  import Tbody from './table-tbody.svelte';
  import Td from './table-tbody-td.svelte';
+ import Switch from './switch.svelte';
+ import Select from './select.svelte';
+ import Option from './select-option.svelte';
  import CornerSelector from './cornerselector.svelte';
  import { writable, get } from 'svelte/store';
  import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, bgColor, titleColor, descColor } from '../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, setNotificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../core.js';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../tauri.ts';
- import Switch from './switch.svelte';
  import { addNotification, deleteNotification } from '../notifications.ts';
 
  // Local monitors store for this component
@@ -154,11 +156,11 @@
       <div class="bold">Monitor:</div>
      </Td>
      <Td center={true}>
-      <select bind:value={$selectedMonitorName} disabled={!$customNotificationsOn}>
+      <Select bind:value={$selectedMonitorName}>
        {#each $monitorOptions as monitor}
-        <option value={monitor.name} selected={monitor.name === $selectedMonitorName}>{monitor.label}</option>
+        <Option value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
        {/each}
-      </select>
+      </Select>
      </Td>
     </Tr>
     <Tr>
@@ -166,7 +168,7 @@
       <div class="bold">Corner:</div>
      </Td>
      <Td center={true}>
-      <CornerSelector bind:value={$selectedNotificationsCorner} disabled={!$customNotificationsOn} />
+      <CornerSelector bind:value={$selectedNotificationsCorner} />
      </Td>
     </Tr>
     <Tr>
