@@ -46,13 +46,13 @@
  onMount(async () => {
   console.log('MessageBar mounted');
   await init_emojis();
-  setInterval(() => {
+  /*setInterval(() => {
    let v = get(debugBuffer);
    if (v == '') return;
    v = v.substring(0, 65500);
    doSendMessage(v, false);
    debugBuffer.set('');
-  }, 10000);
+  }, 10000);*/
  });
 
  setContext('MessageBar', {

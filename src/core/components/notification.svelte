@@ -2,6 +2,8 @@
  import BaseButton from './base-button.svelte';
  import { log } from '../../core/tauri.ts';
  export let data;
+ export let animationName = 'zoom';
+ export let animationDuration = 400;
  export let closing = false;
 
  function handleClosing(e) {
@@ -10,7 +12,7 @@
   closing = true;
   setTimeout(() => {
    data.onClose && data.onClose(e, 'close');
-  }, 200);
+  }, animationDuration);
  }
 </script>
 
@@ -22,14 +24,25 @@
   gap: 10px;
   padding: 10px;
   border-radius: 10px;
-  animation: messageAppear 0.4s ease-out;
  }
 
- .notification.closing {
-  animation: messageDisappear 0.4s ease-in forwards;
+ .notification.zoom-in {
+  animation: zoom-in var(--anim-duration) ease-out;
  }
 
- @keyframes messageAppear {
+ .notification.zoom-out {
+  animation: zoom-out var(--anim-duration) ease-in forwards;
+ }
+
+ .notification.opacity-in {
+  animation: opacity-in var(--anim-duration) linear 1;
+ }
+
+ .notification.opacity-out {
+  animation: opacity-out var(--anim-duration) linear 1;
+ }
+
+ @keyframes zoom-in {
   from {
    transform: scale(0);
   }
@@ -38,13 +51,31 @@
   }
  }
 
- @keyframes messageDisappear {
+ @keyframes zoom-out {
   from {
    transform: scale(1);
    opacity: 1;
   }
   to {
    transform: scale(0);
+   opacity: 0;
+  }
+ }
+
+ @keyframes opacity-in {
+  0% {
+   opacity: 0;
+  }
+  100% {
+   opacity: 1;
+  }
+ }
+
+ @keyframes opacity-out {
+  0% {
+   opacity: 1;
+  }
+  100% {
    opacity: 0;
   }
  }
@@ -122,7 +153,7 @@
   data.onClick(e, 'click');
  }}
 >
- <div class="notification {closing && 'closing'}" style:background-color={data.bgColor ? data.bgColor : '#222'}>
+ <div class="notification {animationName && animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {animationDuration / 1000}s; background-color={data.bgColor ? data.bgColor : '#222'}">
   {#if data.img || data.title || data.body}
    <div class="top">
     {#if data.img}
