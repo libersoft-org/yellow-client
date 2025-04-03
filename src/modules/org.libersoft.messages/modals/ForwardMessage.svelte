@@ -1,8 +1,8 @@
 <script lang="ts">
- import Input from '@/core/components/input.svelte';
+ import Input from '@/core/components/Input/Input.svelte';
  import { conversationsArray, sendMessage } from '@/org.libersoft.messages/messages';
  import { get } from 'svelte/store';
- import Button from '@/core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import type { Conversation } from '@/org.libersoft.messages/types.ts';
  import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessage.store.ts';
 

@@ -1,8 +1,8 @@
 <script lang="ts">
- import BaseButton from '@/core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Emoji from '@/org.libersoft.messages/components/emoji.svelte';
  import { emoji_render, rgi_to_codepoints } from '@/org.libersoft.messages/emojis';
- import Tooltip from '@/core/components/tooltip/Tooltip.svelte';
+ import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
  import { get } from 'svelte/store';
  import { active_account } from '@/core/core';
  import { highlightElement } from '@/core/utils/animation.utils.ts';

@@ -1,5 +1,5 @@
 <script>
- import BaseButton from '../../../core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
  export let img = null;
  export let label = '';
  export let onClick;

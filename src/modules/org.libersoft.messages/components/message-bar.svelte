@@ -2,11 +2,11 @@
  import { keyboardHeight, documentHeight, debug, isMobile, debugBuffer, active_account } from '../../../core/core.js';
  import { handleResize, identifier, jumpToMessage, sendMessage } from '../messages.js';
  import { onMount, setContext, tick, getContext } from 'svelte';
- import BaseButton from '../../../core/components/base-button.svelte';
- import Icon from '../../../core/components/icon.svelte';
- import ContextMenu from '../../../core/components/context-menu.svelte';
- import ContextMenuItem from '../../../core/components/context-menu-item.svelte';
- import Modal from '../../../core/components/modal.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '../../../core/components/Icon/Icon.svelte';
+ import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
+ import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
+ import Modal from '../../../core/components/Modal/Modal.svelte';
  import ModalHTML from '../modals/html.svelte';
  import FileUpload from '../modals/file-upload.svelte';
  import Expressions from './expressions.svelte';

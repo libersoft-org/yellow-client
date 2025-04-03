@@ -6,12 +6,12 @@
  import { stickers_db } from '../db.ts';
  import FuzzySearch from 'fuzzy-search';
  import { writable, get } from 'svelte/store';
- import Option from '../../../core/components/select-option.svelte';
- import Select from '../../../core/components/select.svelte';
- import InputButton from '../../../core/components/input-button.svelte';
+ import SelectOption from '../../../core/components/Select/SelectOption.svelte';
+ import Select from '../../../core/components/Select/Select.svelte';
+ import InputButton from '../../../core/components/Input/InputButton.svelte';
  import StickersSearchResults from './stickers-search-results.svelte';
  import { isMobile } from '../../../core/core.js';
- import Spinner from '../../../core/components/spinner.svelte';
+ import Spinner from '../../../core/components/Spinner/Spinner.svelte';
  import { onMount, untrack } from 'svelte';
 
  let { stickerset_favorites } = $props();
@@ -99,9 +99,9 @@
 <div class="filter">
  <InputButton alt="Search" bind:this={fulltext_search_element} bind:value={fulltext_search_filter} img="modules/{identifier}/img/search.svg" placeholder="Search ..." />
  <Select bind:value={animated_filter_dropdown_value}>
-  <Option text="All" value="all" />
-  <Option text="Animated only" value="animated" />
-  <Option text="Static only" value="static" />
+  <SelectOption text="All" value="all" />
+  <SelectOption text="Animated only" value="animated" />
+  <SelectOption text="Static only" value="static" />
  </Select>
 </div>
 

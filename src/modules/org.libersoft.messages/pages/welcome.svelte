@@ -1,7 +1,7 @@
 <script>
  import { identifier, online } from '../messages.js';
- import Button from '../../../core/components/button.svelte';
- import Modal from '../../../core/components/modal.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Modal from '../../../core/components/Modal/Modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
  const illustrations = ['man', 'woman', 'pigeon'];
  let showNewConversationModal = false;

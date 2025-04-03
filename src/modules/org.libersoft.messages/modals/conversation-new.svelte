@@ -1,8 +1,8 @@
 <script>
  import { onMount } from 'svelte';
  import { openNewConversation } from '../messages.js';
- import Button from '../../../core/components/button.svelte';
- import Input from '../../../core/components/input.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Input from '../../../core/components/Input/Input.svelte';
  export let close;
  let elAddress;
  let value;

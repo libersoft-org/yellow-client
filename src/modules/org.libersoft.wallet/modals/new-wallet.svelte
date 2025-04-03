@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import QRCode from 'qrcode';
- import Button from '../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { generateMnemonic, addWallet } from '../wallet.ts';
  export let close;
  let mnemonic = {};

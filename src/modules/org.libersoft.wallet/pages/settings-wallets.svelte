@@ -1,10 +1,10 @@
 <script>
  import { wallets, addAddress, addWallet, walletAddresses } from '../wallet.ts';
- import Button from '../../../core/components/button.svelte';
- import Icon from '../../../core/components/icon.svelte';
- import Accordion from '../../../core/components/accordion.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Icon from '../../../core/components/Icon/Icon.svelte';
+ import Accordion from '@/core/components/Accordion/Accordion.svelte';
  import Address from '../components/settings-wallets-address.svelte';
- import Modal from '../../../core/components/modal.svelte';
+ import Modal from '../../../core/components/Modal/Modal.svelte';
  import ModalNewWallet from '../modals/new-wallet.svelte';
  import { Mnemonic } from 'ethers';
 

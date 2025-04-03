@@ -4,7 +4,7 @@
  import ImageAspectRatio from '../_shared/image-aspect-ratio.svelte';
  import MessageContentAttachment from '../msgFile/message-content-attachment.svelte';
  import { LocalFileStatus } from '../../localDB/files.localDB.ts';
- import Spinner from '../../../../core/components/spinner.svelte';
+ import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
  import { writable } from 'svelte/store';
  import { FileUploadRecordStatus } from '../../fileUpload/types.ts';
  import fileUploadStore from '../../fileUpload/fileUploadStore.ts';

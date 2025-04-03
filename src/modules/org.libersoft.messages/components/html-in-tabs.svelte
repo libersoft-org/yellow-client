@@ -1,8 +1,8 @@
 <script>
  import Editor from '../components/html-editor.svelte';
  import Preview from '../components/html-editor-preview.svelte';
- import Tabs from '../../../core/components/tabs.svelte';
- import Item from '../../../core/components/tabs-item.svelte';
+ import Tabs from '../../../core/components/Tabs/Tabs.svelte';
+ import TabsItem from '../../../core/components/Tabs/TabsItem.svelte';
  export let text;
  let activeTab = 'editor';
 
@@ -21,8 +21,8 @@
 
 <div>
  <Tabs>
-  <Item label="HTML editor" active={activeTab === 'editor'} onClick={e => setTab(e, 'editor')} />
-  <Item label="Preview" active={activeTab === 'preview'} onClick={e => setTab(e, 'preview')} />
+  <TabsItem label="HTML editor" active={activeTab === 'editor'} onClick={e => setTab(e, 'editor')} />
+  <TabsItem label="Preview" active={activeTab === 'preview'} onClick={e => setTab(e, 'preview')} />
  </Tabs>
 </div>
 <div class="container">

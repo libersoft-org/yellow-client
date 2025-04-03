@@ -3,8 +3,8 @@
  import { onMount, tick } from 'svelte';
  import { updateStickerLibrary, stickerLibraryUpdaterState } from '../stickers.js';
  import { debug } from '../../../core/core.js';
- import Tabs from '../../../core/components/tabs.svelte';
- import Item from '../../../core/components/tabs-item.svelte';
+ import Tabs from '../../../core/components/Tabs/Tabs.svelte';
+ import TabsItem from '../../../core/components/Tabs/TabsItem.svelte';
  import StickersFavorites from './stickers-favorites.svelte';
  import TabServer from './stickers-server.svelte';
  import ProgressBar from './progressbar.svelte';
@@ -65,9 +65,9 @@
 <div class="stickers">
  <div class="top-components">
   <Tabs>
-   <Item active={activeTabName === 'favourites'} img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} />
-   <Item active={activeTabName === 'server'} img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} />
-   <Item img="modules/{identifier}/img/update{$stickerLibraryUpdaterState.updating ? '-disabled' : ''}.svg" onClick={clickUpdate} />
+   <TabsItem active={activeTabName === 'favourites'} img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} />
+   <TabsItem active={activeTabName === 'server'} img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} />
+   <TabsItem img="modules/{identifier}/img/update{$stickerLibraryUpdaterState.updating ? '-disabled' : ''}.svg" onClick={clickUpdate} />
   </Tabs>
   {#if $debug}$stickerLibraryUpdaterState:{JSON.stringify($stickerLibraryUpdaterState)}{/if}
   {#if $stickerLibraryUpdaterState.updating}

@@ -1,5 +1,5 @@
 <script>
- import Button from '../../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { onMount } from 'svelte';
  import { writable } from 'svelte/store';
  import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../../fileUpload/types.ts';

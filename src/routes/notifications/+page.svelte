@@ -1,8 +1,8 @@
 <script>
  import '../../app.css';
- import Button from '../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { writable, get } from 'svelte/store';
- import Notification from '../../core/components/notification.svelte';
+ import Notification from '../../core/components/Notification/Notification.svelte';
  import { getCurrentWindow, LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
  import { moveWindow, Position, handleIconState } from '@tauri-apps/plugin-positioner';
 

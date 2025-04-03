@@ -1,19 +1,19 @@
 <script>
- import Button from '../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { humanSize } from '../../../core/utils/file.utils.js';
  import { truncateText } from '../../../core/utils/text.utils.js';
  import { FileUploadRecordType } from '../fileUpload/types.ts';
  import { get } from 'svelte/store';
  import { identifier, selectedConversation, initUpload } from '../messages.js';
- import BaseButton from '../../../core/components/base-button.svelte';
- import Table from '../../../core/components/table.svelte';
- import Thead from '../../../core/components/table-thead.svelte';
- import TheadTr from '../../../core/components/table-thead-tr.svelte';
- import Th from '../../../core/components/table-thead-th.svelte';
- import Tbody from '../../../core/components/table-tbody.svelte';
- import TbodyTr from '../../../core/components/table-tbody-tr.svelte';
- import Td from '../../../core/components/table-tbody-td.svelte';
- import Icon from '../../../core/components/icon.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Table from '../../../core/components/Table/Table.svelte';
+ import TableTHead from '../../../core/components/Table/TableTHead.svelte';
+ import TableTHeadTr from '../../../core/components/Table/TableTHeadTr.svelte';
+ import TableTHeadTh from '../../../core/components/Table/TableTHeadTh.svelte';
+ import TableTBody from '../../../core/components/Table/TableTBody.svelte';
+ import TableTBodyTr from '../../../core/components/Table/TableTBodyTr.svelte';
+ import TableTBodyTd from '../../../core/components/Table/TableTBodyTd.svelte';
+ import Icon from '../../../core/components/Icon/Icon.svelte';
  import { getContext } from 'svelte';
  const { params } = $props();
  let elFileInput; // refs
@@ -154,11 +154,11 @@
 </style>
 
 {#snippet fileUploadItem(file)}
- <TbodyTr>
-  <Td>{truncateText(file.name, 30)}</Td>
-  <Td>{humanSize(file.size)}</Td>
-  <Td><Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => onFileDelete(file)} /></Td>
- </TbodyTr>
+ <TableTBodyTr>
+  <TableTBodyTd>{truncateText(file.name, 30)}</TableTBodyTd>
+  <TableTBodyTd>{humanSize(file.size)}</TableTBodyTd>
+  <TableTBodyTd><Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => onFileDelete(file)} /></TableTBodyTd>
+ </TableTBodyTr>
 {/snippet}
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
@@ -170,18 +170,18 @@
   {#if $fileUploadModalFiles.length}
    <div class="items file-table">
     <Table>
-     <Thead>
-      <TheadTr>
-       <Th>File name</Th>
-       <Th>Size</Th>
-       <Th>Action</Th>
-      </TheadTr>
-     </Thead>
-     <Tbody>
+     <TableTHead>
+      <TableTHeadTr>
+       <TableTHeadTh>File name</TableTHeadTh>
+       <TableTHeadTh>Size</TableTHeadTh>
+       <TableTHeadTh>Action</TableTHeadTh>
+      </TableTHeadTr>
+     </TableTHead>
+     <TableTBody>
       {#each $fileUploadModalFiles as file}
        {@render fileUploadItem(file)}
       {/each}
-     </Tbody>
+     </TableTBody>
     </Table>
    </div>
   {:else}

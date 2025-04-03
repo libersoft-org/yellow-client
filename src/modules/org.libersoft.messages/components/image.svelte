@@ -1,7 +1,7 @@
 <script>
  import { identifier, showGallery, galleryFile } from '../messages.js';
- import BaseButton from '../../../core/components/base-button.svelte';
- import Button from '../../../core/components/button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  export let file;
 
  function showFullSize() {

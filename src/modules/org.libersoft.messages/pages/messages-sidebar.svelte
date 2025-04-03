@@ -1,8 +1,8 @@
 <script>
  import { identifier, conversationsArray, selectConversation } from '../messages.js';
- import BaseButton from '../../../core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import ScrollButton from '../components/scroll-button.svelte';
- import Modal from '../../../core/components/modal.svelte';
+ import Modal from '../../../core/components/Modal/Modal.svelte';
  import ModalConversationNew from '../modals/conversation-new.svelte';
  import ModalMessageSettings from '../modals/message-settings.svelte';
  import ConversationListItem from '../components/conversation-list-item.svelte';

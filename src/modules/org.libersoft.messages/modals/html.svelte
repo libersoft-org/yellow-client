@@ -1,7 +1,7 @@
 <script>
- import Button from '../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { getContext } from 'svelte';
- import Switch from '../../../core/components/switch.svelte';
+ import Switch from '../../../core/components/Switch/Switch.svelte';
  import HtmlSideBySide from '../components/html-side-by-side.svelte';
  import HtmlInTabs from '../components/html-in-tabs.svelte';
  export let close;

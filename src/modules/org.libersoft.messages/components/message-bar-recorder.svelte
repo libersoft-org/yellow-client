@@ -1,6 +1,6 @@
 <script>
  import { identifier, initUpload, selectedConversation } from '../messages.js';
- import Icon from '../../../core/components/icon.svelte';
+ import Icon from '../../../core/components/Icon/Icon.svelte';
  import audioRecorderStore from '../media/AudioRecorder.store.ts';
  import MediaRecorderHandler from '../media/MediaRecorder.handler.ts';
  import { onMount } from 'svelte';

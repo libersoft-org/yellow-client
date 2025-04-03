@@ -2,7 +2,7 @@
  import FileTransfer from './FileTransfer.svelte';
  import { identifier } from '../../messages.js';
  import { type FileDownload, type FileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '../../fileUpload/types.ts';
- import Button from '../../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { humanSize } from '@/core/utils/file.utils.js';
 
  interface AttachmentProps {

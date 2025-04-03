@@ -1,6 +1,6 @@
 <script>
  import { selectedConversation } from '../messages.js';
- import Icon from '../../../core/components/icon.svelte';
+ import Icon from '../../../core/components/Icon/Icon.svelte';
  import Photo from './photo.svelte';
  export let closeConversation;
 

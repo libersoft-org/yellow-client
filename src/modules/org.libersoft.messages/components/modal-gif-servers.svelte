@@ -1,15 +1,15 @@
 <script>
  import { gif_servers } from '../gifs.js';
- import Input from '../../../core/components/input.svelte';
- import Button from '../../../core/components/button.svelte';
- import Table from '../../../core/components/table.svelte';
- import Thead from '../../../core/components/table-thead.svelte';
- import TheadTr from '../../../core/components/table-thead-tr.svelte';
- import Th from '../../../core/components/table-thead-th.svelte';
- import Tbody from '../../../core/components/table-tbody.svelte';
- import TbodyTr from '../../../core/components/table-tbody-tr.svelte';
- import Td from '../../../core/components/table-tbody-td.svelte';
- import Item from '../../../core/components/icon.svelte';
+ import Input from '../../../core/components/Input/Input.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Table from '../../../core/components/Table/Table.svelte';
+ import TableTHead from '../../../core/components/Table/TableTHead.svelte';
+ import TableTHeadTr from '../../../core/components/Table/TableTHeadTr.svelte';
+ import TableTHeadTh from '../../../core/components/Table/TableTHeadTh.svelte';
+ import TableTBody from '../../../core/components/Table/TableTBody.svelte';
+ import TableTBodyTr from '../../../core/components/Table/TableTBodyTr.svelte';
+ import TableTBodyTd from '../../../core/components/Table/TableTBodyTd.svelte';
+ import Icon from '../../../core/components/Icon/Icon.svelte';
  import { onMount } from 'svelte';
  let addUrl = '';
  let inputAdd;
@@ -61,22 +61,22 @@
  <Button text="Add" onClick={clickAdd} />
 </div>
 <Table>
- <Thead>
-  <TheadTr>
-   <Th>Gif servers</Th>
-   <Th>Action</Th>
-  </TheadTr>
- </Thead>
- <Tbody>
+ <TableTHead>
+  <TableTHeadTr>
+   <TableTHeadTh>Gif servers</TableTHeadTh>
+   <TableTHeadTh>Action</TableTHeadTh>
+  </TableTHeadTr>
+ </TableTHead>
+ <TableTBody>
   {#each $gif_servers as s}
-   <TbodyTr>
-    <Td><a href={s} target="_blank">{s}</a></Td>
-    <Td center={true}>
-     <Item img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(s)} />
-    </Td>
-   </TbodyTr>
+   <TableTBodyTr>
+    <TableTBodyTd><a href={s} target="_blank">{s}</a></TableTBodyTd>
+    <TableTBodyTd center={true}>
+     <Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(s)} />
+    </TableTBodyTd>
+   </TableTBodyTr>
   {/each}
- </Tbody>
+ </TableTBody>
 </Table>
 {#if error}
  <div class="error">{error}</div>

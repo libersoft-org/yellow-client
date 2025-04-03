@@ -1,8 +1,8 @@
 <script>
  import { addNetwork, removeNetwork, networks, default_networks } from '../wallet.ts';
- import Icon from '../../../core/components/icon.svelte';
- import Modal from '../../../core/components/modal.svelte';
- import Button from '../../../core/components/button.svelte';
+ import Icon from '../../../core/components/Icon/Icon.svelte';
+ import Modal from '../../../core/components/Modal/Modal.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import ModalEditNetwork from '../modals/edit-network.svelte';
  import ModalTokenList from '../modals/token-list.svelte';
  import { get } from 'svelte/store';

@@ -1,5 +1,5 @@
 <script lang="ts">
- import BaseButton from '@/core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Emojis from '@/org.libersoft.messages/components/emojis.svelte';
  import { computePosition, autoPlacement, autoUpdate, shift } from '@floating-ui/dom';
  import { onDestroy, onMount } from 'svelte';

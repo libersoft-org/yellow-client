@@ -1,5 +1,5 @@
 <script>
- import Button from '../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  export let close;
  export let params;
 

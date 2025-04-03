@@ -1,5 +1,5 @@
 <script>
- import BaseButton from '../../../core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import { getContext } from 'svelte';
 
  let { node } = $props();

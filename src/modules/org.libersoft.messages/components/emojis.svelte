@@ -4,13 +4,13 @@
  import { get } from 'svelte/store';
  import { identifier } from '../messages.js';
  import Emoji from './emoji.svelte';
- import BaseButton from '../../../core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../messages.js';
  import { start_emojisets_fetch, emoji_render } from '../emojis.js';
- import ContextMenu from '../../../core/components/context-menu.svelte';
- import InputButton from '../../../core/components/input-button.svelte';
+ import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
+ import InputButton from '../../../core/components/Input/InputButton.svelte';
  import FuzzySearch from 'fuzzy-search';
- import Spinner from '../../../core/components/spinner.svelte';
+ import Spinner from '../../../core/components/Spinner/Spinner.svelte';
  import { longpress } from '../ui.js';
  import IntersectionObserver from 'svelte-intersection-observer';
 

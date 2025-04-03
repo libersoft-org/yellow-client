@@ -1,8 +1,8 @@
 <script>
  import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
- import BaseButton from '../../../core/components/base-button.svelte';
- import Accordion from '../../../core/components/accordion.svelte';
- import Input from '../../../core/components/input.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Accordion from '@/core/components/Accordion/Accordion.svelte';
+ import Input from '../../../core/components/Input/Input.svelte';
  export let close;
  let activeIndex = null;
  let filter = '';

@@ -1,12 +1,12 @@
 <script>
- import Select from '../../../core/components/select.svelte';
- import Option from '../../../core/components/select-option.svelte';
- import Switch from '../../../core/components/switch.svelte';
- import Modal from '../../../core/components/modal.svelte';
+ import Select from '../../../core/components/Select/Select.svelte';
+ import SelectOption from '../../../core/components/Select/SelectOption.svelte';
+ import Switch from '../../../core/components/Switch/Switch.svelte';
+ import Modal from '../../../core/components/Modal/Modal.svelte';
  import { sticker_server_index, sticker_servers } from '../stickers.js';
  import { gif_server_index, gif_servers } from '../gifs.js';
  import { expressions_renderer, animate_all_expressions } from '../expressions.svelte.ts';
- import Button from '../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import ModalStickerServers from './modal-sticker-servers.svelte';
  import ModalGifServers from './modal-gif-servers.svelte';
  import { stickers_db } from '../db.ts';
@@ -60,7 +60,7 @@
   <div class="label">Sticker server:</div>
   <Select bind:value={$sticker_server_index}>
    {#each $sticker_servers as server, i}
-    <Option value={i} text={server} />
+    <SelectOption value={i} text={server} />
    {/each}
   </Select>
  </div>
@@ -76,7 +76,7 @@
   <div class="label">Gif server:</div>
   <Select bind:value={$gif_server_index}>
    {#each $gif_servers as server, i}
-    <Option value={i} text={server} />
+    <SelectOption value={i} text={server} />
    {/each}
   </Select>
  </div>

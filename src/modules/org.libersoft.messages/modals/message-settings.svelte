@@ -1,6 +1,6 @@
 <script>
  import { humanSize } from '../../../core/utils/file.utils.js';
- import Button from '../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { uploadChunkSize } from '../messages.js';
  export let close;
  let chunkSize = $uploadChunkSize;

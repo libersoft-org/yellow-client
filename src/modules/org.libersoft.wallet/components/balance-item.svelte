@@ -1,5 +1,5 @@
 <script>
- import BaseButton from '../../../core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
  export let icon;
  export let symbol;
  export let amount;

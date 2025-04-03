@@ -5,7 +5,7 @@
  import MediaHandler from '../../media/Media.handler.ts';
  import { humanSize } from '../../../../core/utils/file.utils.js';
  import MediaUtils from '../../media/Media.utils.ts';
- import Button from '../../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { assembleFile } from '../../fileUpload/utils.ts';
  import { writable, get } from 'svelte/store';
  import fileDownloadStore from '../../fileUpload/fileDownloadStore.ts';

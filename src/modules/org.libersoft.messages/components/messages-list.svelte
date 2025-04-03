@@ -1,17 +1,17 @@
 <script>
  import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
  import { getGuid, debug } from '../../../core/core.js';
- import Button from '../../../core/components/button.svelte';
- import Spinner from '../../../core/components/spinner.svelte';
- import Modal from '../../../core/components/modal.svelte';
- import ModalWithSlot from '../../../core/components/modal-with-slot.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Spinner from '../../../core/components/Spinner/Spinner.svelte';
+ import Modal from '../../../core/components/Modal/Modal.svelte';
+ import ModalWithSlot from '../../../core/components/Modal/ModalWithSlot.svelte';
  import ModalStickersetDetails from '../modals/stickerset-details.svelte';
  import Message from './message.svelte';
  import Loader from './loader.svelte';
  import ScrollButton from './scroll-button.svelte';
  import { online, messagesArray, events, insertEvent, identifier } from '../messages.js';
  import { get } from 'svelte/store';
- import Icon from '../../../core/components/icon.svelte';
+ import Icon from '../../../core/components/Icon/Icon.svelte';
  import resize from '../../../core/actions/resizeObserver.ts';
  import { highlightElement } from '@/core/utils/animation.utils.ts';
  import ForwardMessage from '@/org.libersoft.messages/modals/ForwardMessage.svelte';
