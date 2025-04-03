@@ -174,6 +174,18 @@
     </Tr>
     <Tr>
      <Td>
+      <div class="bold">Animation:</div>
+     </Td>
+     <Td center={true}>
+      <Select>
+       <Option value="none" text="None" />
+       <Option value="zoom" text="Zoom" />
+       <Option value="opacity" text="Opacity" />
+      </Select>
+     </Td>
+    </Tr>
+    <Tr>
+     <Td>
       <div class="bold">Background color:</div>
      </Td>
      <Td center={true}>
