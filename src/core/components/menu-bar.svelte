@@ -47,7 +47,7 @@
  {#if $debug}(debug mode)
   <BaseButton
    onClick={async () => {
-    log.debug('addNotification...');
+    //log.debug('addNotification...');
     await addNotification({
      body: 'bla bla',
      callback: event => {

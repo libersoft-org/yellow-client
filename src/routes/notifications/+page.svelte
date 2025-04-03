@@ -160,6 +160,7 @@
   let w = getCurrentWindow();
   w.setPosition(new PhysicalPosition(v.x, v.y));
   w.setSize(new PhysicalSize(size.width, size.height));
+  moveWindow(Position.TrayBottomRight);
  });
 
  log.debug('/notifications');
@@ -175,9 +176,9 @@
 
  async function initNotifications() {
   let s = await multiwindow_store('notifications', false);
-  log.debug('initNotifications: store:', s);
+  //log.debug('initNotifications: store:', s);
   s.onChange((k, v) => {
-   log.debug('store.onChange', k, v);
+   //log.debug('store.onChange', k, v);
    if (!v) {
     onNotificationRemoved(k);
    } else {
@@ -200,8 +201,7 @@
   data.onClose = onClose.bind(data);
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);
-  log.debug('notification added');
-  moveWindow(Position.TrayBottomRight);
+  //log.debug('notification added');
  }
 
  function clickAddNotification() {

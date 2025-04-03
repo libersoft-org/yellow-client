@@ -185,7 +185,7 @@ async function sendTauriNotification(notification: YellowNotification) {
 }
 
 async function sendCustomNotification(notification: YellowNotification): Promise<void> {
- log.debug('sendCustomNotification');
+ //log.debug('sendCustomNotification');
  //await initCustomNotifications();
  let s = await multiwindow_store('notifications');
  //log.debug('store:', s);
