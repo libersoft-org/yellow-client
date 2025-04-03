@@ -4,7 +4,7 @@
  import { writable, get } from 'svelte/store';
  import Notification from '../../core/components/notification.svelte';
  import { getCurrentWindow, LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
- // import { moveWindow, TrayBottomRight } from '@tauri-apps/plugin-positioner';
+ import { moveWindow, Position } from '@tauri-apps/plugin-positioner';
 
  export let maxNotifications = 3;
  let notifications = writable([]);
@@ -201,7 +201,7 @@
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);
   log.debug('notification added');
-  //moveWindow(TrayBottomRight);
+  moveWindow(Position.TrayBottomRight);
  }
 
  function clickAddNotification() {
