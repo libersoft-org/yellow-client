@@ -21,7 +21,7 @@
   font-size: inherit;
   border: 1px solid #888;
   border-radius: 10px;
-  background: url('img/down-black.svg') no-repeat;
+  background: url('/img/down-black.svg') no-repeat;
   background-size: 12px 12px;
   background-position: right 5px center;
   background-color: #fff;
