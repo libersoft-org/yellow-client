@@ -4,7 +4,7 @@
  import { writable, get } from 'svelte/store';
  import Notification from '../../core/components/notification.svelte';
  import { getCurrentWindow, LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
- import { moveWindow, Position } from '@tauri-apps/plugin-positioner';
+ import { moveWindow, Position, handleIconState } from '@tauri-apps/plugin-positioner';
 
  export let maxNotifications = 3;
  let notifications = writable([]);
@@ -14,6 +14,7 @@
  import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
  import { onMount, onDestroy } from 'svelte';
  import { invoke } from '@tauri-apps/api/core';
+ import { TrayIcon } from '@tauri-apps/api/tray';
 
  let monitors = writable([]);
  let actualMonitorName = writable(null);
@@ -42,8 +43,27 @@
  });
  let position = writable({ x: 0, y: 0 });
 
+ async function createTrayIcon() {
+  const action = async event => {
+   // add the handle in the action to update the state
+   await handleIconState(event);
+
+   if (event.type === 'Click') {
+    // note this option requires enabling the `tray-icon`
+    //   feature in the Cargo.toml
+    await moveWindow(Position.TrayLeft);
+   }
+  };
+  const options = {
+   id: 'test',
+   action,
+  };
+  const tray = await TrayIcon.new(options);
+ }
+
  onMount(async () => {
   if (window.__TAURI__) {
+   await createTrayIcon();
    await updateMonitors();
    monitorInterval = setInterval(async () => {
     await updateMonitors();
