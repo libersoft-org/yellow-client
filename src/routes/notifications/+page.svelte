@@ -4,7 +4,7 @@
  import { writable, get } from 'svelte/store';
  import Notification from '../../core/components/notification.svelte';
  import { getCurrentWindow, LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
- import { moveWindow, TrayBottomRight } from '@tauri-apps/plugin-positioner';
+ // import { moveWindow, TrayBottomRight } from '@tauri-apps/plugin-positioner';
 
  export let maxNotifications = 3;
  let notifications = writable([]);
@@ -156,14 +156,16 @@
   if (BROWSER) return;
   //log.debug('getCurrentWindow():', getCurrentWindow());
   let size = { width: 400, height: $height };
-  //log.debug('setPosition', v, 'size:', size);
+  log.debug('setPosition', v, 'size:', size);
   let w = getCurrentWindow();
   w.setPosition(new PhysicalPosition(v.x, v.y));
   w.setSize(new PhysicalSize(size.width, size.height));
  });
 
+ log.debug('/notifications');
+
  onMount(async () => {
-  //log.debug('onMount CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+  log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
   if (CUSTOM_NOTIFICATIONS) {
    await initNotifications();
   } else {
@@ -173,9 +175,9 @@
 
  async function initNotifications() {
   let s = await multiwindow_store('notifications', false);
-  //log.debug('store:', s);
+  log.debug('initNotifications: store:', s);
   s.onChange((k, v) => {
-   //log.debug('store.onChange', k, v);
+   log.debug('store.onChange', k, v);
    if (!v) {
     onNotificationRemoved(k);
    } else {
@@ -199,7 +201,7 @@
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);
   log.debug('notification added');
-  moveWindow(TrayBottomRight);
+  //moveWindow(TrayBottomRight);
  }
 
  function clickAddNotification() {

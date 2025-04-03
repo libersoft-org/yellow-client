@@ -66,7 +66,7 @@ export async function initBrowserNotifications() {
  if (get(selectedMonitorName) === null) {
   if (CUSTOM_NOTIFICATIONS) {
    let monitors = await availableMonitors();
-   selectedMonitorName.set(monitors[0]);
+   selectedMonitorName.set(monitors[0]?.name || null);
   }
  }
 }
@@ -96,7 +96,7 @@ export async function initCustomNotifications() {
 function startMainWindowMonitorTimer() {
  log.debug('startMainWindowMonitorTimer');
  setInterval(async () => {
-  let m = await currentMonitor();
+  let m = (await currentMonitor()) || null;
   //log.debug('currentMonitor:', m);
   mainWindowMonitor.set(m?.name);
  }, 1000);
@@ -196,6 +196,7 @@ async function sendCustomNotification(notification: YellowNotification): Promise
  } else {
   log.debug('notification.id is undefined');
  }
+ //log.debug('sendCustomNotification:', notification.id, notification);
 }
 
 function playNotificationSound(notification: YellowNotification): void {
