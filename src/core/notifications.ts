@@ -1,10 +1,9 @@
 import { get } from 'svelte/store';
-import { notificationsEnabled } from './core';
 import { multiwindow_store } from './multiwindow_store.ts';
 import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
-import { enableCustomNotifications } from './notifications_settings.ts';
-import { currentMonitor, getCurrentWindow } from '@tauri-apps/api/window';
+import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, selectedMonitorName } from './notifications_settings.ts';
+import { availableMonitors, currentMonitor, getCurrentWindow } from '@tauri-apps/api/window';
 import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
 
 /* yellow notifications, for use in core and modules */
@@ -23,8 +22,57 @@ let counter = 0;
 let notifications: Map<string, YellowNotification> = new Map();
 let _events;
 
-async function initCustomNotifications() {
- //log.debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
+export function setNotificationsEnabled(value) {
+ if (!BROWSER) {
+  notificationsEnabled.set(value);
+  return;
+ }
+ console.log('Notification.permission:', Notification.permission, 'value:', value);
+ if (get(notificationsEnabled) != value) {
+  if (value) {
+   if (Notification.permission !== 'granted') {
+    if (Notification.permission === 'denied') {
+     notificationsSettingsAlert.set('blocked');
+     return;
+    }
+    isRequestingNotificationsPermission.set(true);
+    Notification.requestPermission().then(permission => {
+     console.log('Notification dialog callback:', permission);
+     isRequestingNotificationsPermission.set(false);
+     if (permission == 'granted') {
+      console.log('notificationsEnabled.set(true)...');
+      notificationsEnabled.set(true);
+      notificationsSettingsAlert.set('');
+     } else {
+      notificationsEnabled.set(false);
+      notificationsSettingsAlert.set('blocked');
+     }
+    });
+   } else {
+    notificationsEnabled.set(true);
+   }
+  } else {
+   notificationsEnabled.set(false);
+  }
+ }
+ notificationsSettingsAlert.set('');
+ return;
+}
+
+export async function initBrowserNotifications() {
+ if (BROWSER && Notification.permission !== 'granted') {
+  setNotificationsEnabled(false);
+ }
+ if (get(selectedMonitorName) === null) {
+  if (CUSTOM_NOTIFICATIONS) {
+   let monitors = await availableMonitors();
+   selectedMonitorName.set(monitors[0]);
+  }
+ }
+}
+
+export async function initCustomNotifications() {
+ log.debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
  if (!CUSTOM_NOTIFICATIONS) return;
  let _notifications = await multiwindow_store('notifications');
  // for (let [id, notification] of _notifications.entries()) {
@@ -42,6 +90,16 @@ async function initCustomNotifications() {
   //  clearNotifications();
   // });
  }
+ startMainWindowMonitorTimer();
+}
+
+function startMainWindowMonitorTimer() {
+ log.debug('startMainWindowMonitorTimer');
+ setInterval(async () => {
+  let m = await currentMonitor();
+  //log.debug('currentMonitor:', m);
+  mainWindowMonitor.set(m?.name);
+ }, 1000);
 }
 
 async function onNotificationEvent(id: string, event: string) {
@@ -63,9 +121,10 @@ async function removeNotification(id: string): Promise<void> {
 }
 
 export async function addNotification(notification: Partial<YellowNotification>): Promise<string | undefined> {
- //log.debug('addNotification: enabled:', enabled, 'IS_TAURI:', IS_TAURI, 'IS_TAURI_MOBILE:', IS_TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
-
  let enabled = get(notificationsEnabled);
+
+ log.debug('addNotification: enabled:', enabled, 'IS_TAURI:', IS_TAURI, 'IS_TAURI_MOBILE:', IS_TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
+
  if (!enabled) return;
 
  let n: YellowNotification = {
@@ -127,7 +186,7 @@ async function sendTauriNotification(notification: YellowNotification) {
 
 async function sendCustomNotification(notification: YellowNotification): Promise<void> {
  log.debug('sendCustomNotification');
- await initCustomNotifications();
+ //await initCustomNotifications();
  let s = await multiwindow_store('notifications');
  //log.debug('store:', s);
  invoke('create_notifications_window', {});

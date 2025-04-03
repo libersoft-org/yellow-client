@@ -1,9 +1,7 @@
 import { tick } from 'svelte';
 import { get, writable, derived } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import { BROWSER, CUSTOM_NOTIFICATIONS, IS_TAURI } from './tauri.ts';
-import { selectedMonitorName } from './notifications_settings.ts';
-import { availableMonitors } from '@tauri-apps/api/window';
+import { IS_TAURI } from './tauri.ts';
 
 //import {} from './client_debug';
 
@@ -15,9 +13,6 @@ export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
-
-export const notificationsEnabled = localStorageSharedStore('notifications_enabled', IS_TAURI);
-export const notificationsSettingsAlert = writable('');
 
 export let modules_order = localStorageSharedStore('modules_order', {});
 export let modules_disabled = localStorageSharedStore('modules_disabled', []);
@@ -36,8 +31,6 @@ export const build = new Date(__BUILD_DATE__)
  .replace(/\.\d+Z/, '');
 export const commit = __COMMIT_HASH__;
 export const link = 'https://yellow.libersoft.org';
-
-export let isRequestingNotificationsPermission = writable(false);
 
 // declarations of modules that this client supports
 export let module_decls = writable({});
@@ -699,55 +692,6 @@ function formatNoColor(args) {
  const inspected_nocolor = args.map(o => (typeof o === 'string' ? o : o));
  for (const v of inspected_nocolor) msg += v + ' ';
  return msg;
-}
-
-export function setNotificationsEnabled(value) {
- if (!BROWSER) {
-  notificationsEnabled.set(value);
-  return;
- }
- console.log('Notification.permission:', Notification.permission, 'value:', value);
- if (get(notificationsEnabled) != value) {
-  if (value) {
-   if (Notification.permission !== 'granted') {
-    if (Notification.permission === 'denied') {
-     notificationsSettingsAlert.set('blocked');
-     return;
-    }
-    isRequestingNotificationsPermission.set(true);
-    Notification.requestPermission().then(permission => {
-     console.log('Notification dialog callback:', permission);
-     isRequestingNotificationsPermission.set(false);
-     if (permission == 'granted') {
-      console.log('notificationsEnabled.set(true)...');
-      notificationsEnabled.set(true);
-      notificationsSettingsAlert.set('');
-     } else {
-      notificationsEnabled.set(false);
-      notificationsSettingsAlert.set('blocked');
-     }
-    });
-   } else {
-    notificationsEnabled.set(true);
-   }
-  } else {
-   notificationsEnabled.set(false);
-  }
- }
- notificationsSettingsAlert.set('');
- return;
-}
-
-export async function initBrowserNotifications() {
- if (BROWSER && Notification.permission !== 'granted') {
-  setNotificationsEnabled(false);
- }
- if (get(selectedMonitorName) === null) {
-  if (CUSTOM_NOTIFICATIONS) {
-   let monitors = await availableMonitors();
-   selectedMonitorName.set(monitors[0]);
-  }
- }
 }
 
 let originalLog;

@@ -46,13 +46,15 @@
  <div class="product">{product}</div>
  {#if $debug}(debug mode)
   <BaseButton
-   onClick={() =>
-    addNotification({
+   onClick={async () => {
+    log.debug('addNotification...');
+    await addNotification({
      body: 'bla bla',
      callback: event => {
       log.debug('debug notification callback ' + event);
      },
-    })}>addNotification</BaseButton
+    });
+   }}>addNotification</BaseButton
   >
  {/if}
 </div>

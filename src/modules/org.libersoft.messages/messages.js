@@ -145,7 +145,7 @@ export function initComms(acc) {
  let data = acc.module_data[identifier];
  //console.log('initComms:', data);
 
- data.new_message_listener = event => eventNewMessage(acc, event);
+ data.new_message_listener = async event => eventNewMessage(acc, event);
  data.seen_message_listener = event => eventSeenMessage(acc, event);
  data.seen_inbox_message_listener = event => eventSeenInboxMessage(acc, event);
 
@@ -818,7 +818,7 @@ export function insertEvent(event) {
  });
 }
 
-function eventNewMessage(acc, event) {
+async function eventNewMessage(acc, event) {
  const res = event.detail;
  //console.log('eventNewMessage', acc, res);
  if (!res.data) return;
@@ -827,7 +827,7 @@ function eventNewMessage(acc, event) {
  let sc = get(selectedConversation);
  if (msg.address_from !== acc.credentials.address) {
   //console.log('showNotification?');
-  if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) showNotification(acc, msg);
+  if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) await showNotification(acc, msg);
  }
  //console.log('eventNewMessage updateConversationsArray with msg:', msg);
  updateConversationsArray(acc, msg);
@@ -878,7 +878,7 @@ function eventSeenInboxMessage(acc, event) {
  } else console.log('eventSeenInboxMessage: conversation not found by address:', res);
 }
 
-function showNotification(acc, msg) {
+async function showNotification(acc, msg) {
  if (!acc) console.error('showNotification: no account');
  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
  console.log('new Notification in conversation', conversation);

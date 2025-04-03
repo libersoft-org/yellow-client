@@ -11,7 +11,8 @@
  import { writable, get } from 'svelte/store';
  import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, bgColor, titleColor, descColor } from '../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
- import { notificationsEnabled, setNotificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../core.js';
+ import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../notifications_settings.ts';
+ import { setNotificationsEnabled } from '../notifications.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../tauri.ts';
  import { addNotification, deleteNotification } from '../notifications.ts';
 

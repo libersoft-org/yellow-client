@@ -1,6 +1,10 @@
 import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import { CUSTOM_NOTIFICATIONS } from './tauri.ts';
-import { derived } from 'svelte/store';
+import { CUSTOM_NOTIFICATIONS, IS_TAURI } from './tauri.ts';
+import { derived, writable } from 'svelte/store';
+
+export const notificationsEnabled = localStorageSharedStore('notifications_enabled', IS_TAURI);
+export const isRequestingNotificationsPermission = writable(false);
+export const notificationsSettingsAlert = writable('');
 
 export let selectedMonitorName = localStorageSharedStore('selectedMonitorName', 'main_window_monitor');
 export let selectedNotificationsCorner = localStorageSharedStore('selectedNotificationsCorner', 'top-right');
