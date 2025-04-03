@@ -644,7 +644,7 @@ export function sendMessage(text, format, acc = null, conversation = null) {
   address_to: conversation.address,
   message: text,
   format,
-  created: new Date().toISOString().replace('T', ' ').replace('Z', ''),
+  created: new Date(),
   just_sent: true,
  });
  let params = { address: message.address_to, message: message.message, format, uid: message.uid };
