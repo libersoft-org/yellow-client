@@ -16,8 +16,7 @@ import retry from 'retry';
 import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/localDB/FilesLocalDB.ts';
-import { addNotification } from '../../core/notifications.ts';
-
+import { addNotification } from '@/core/notifications.ts';
 import { makeMessageReaction } from '@/org.libersoft.messages/factories/messageFactories.ts';
 
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
