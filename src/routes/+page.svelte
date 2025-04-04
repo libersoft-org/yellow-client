@@ -22,6 +22,7 @@
  import {} from '../modules/org.libersoft.wallet/module.js';
  import {} from '../modules/org.libersoft.dating/module.js';
  import {} from '../modules/org.libersoft.iframes/module.js';
+ import { enableAutostart } from '../core/autostart.ts';
  let menus = [];
  setContext('menus', menus);
 
@@ -59,7 +60,7 @@
 
  onMount(async () => {
   console.log('+page onMount');
-
+  await enableAutostart();
   await initBrowserNotifications();
   await initCustomNotifications();
 
