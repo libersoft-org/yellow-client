@@ -9,14 +9,14 @@
  import MenuBar from '../core/components/Menu/MenuBar.svelte';
  import ModuleBar from '../core/components/ModuleBar/ModuleBar.svelte';
  import AccountBar from '@/core/components/Account/AccountBar.svelte';
- import WelcomeSidebar from '../core/components/Welcome/WelcomeSidebar.svelte';
- import WelcomeContent from '../core/components/Welcome/WelcomeContent.svelte';
- import Accounts from '../core/components/Accounts/Accounts.svelte';
+ import WelcomeSidebar from '@/core/pages/WelcomePage/WelcomeSidebar.svelte';
+ import WelcomeContent from '@/core/pages/WelcomePage/WelcomeContent.svelte';
+ import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
  import Modal from '../core/components/Modal/Modal.svelte';
  import Wizard from '../core/components/Wizard/Wizard.svelte';
- import WizardWelcomeStep1 from '../core/components/Welcome/WelcomeStep1.svelte';
- import WizardWelcomeStep2 from '../core/components/Welcome/WelcomeStep2.svelte';
- import WizardWelcomeStep3 from '../core/components/Welcome/WelcomeStep3.svelte';
+ import WizardWelcomeStep1 from '@/core/pages/WelcomePage/WelcomeStep1.svelte';
+ import WizardWelcomeStep2 from '@/core/pages/WelcomePage/WelcomeStep2.svelte';
+ import WizardWelcomeStep3 from '@/core/pages/WelcomePage/WelcomeStep3.svelte';
  import {} from '../modules/org.libersoft.messages/module.js';
  import {} from '../modules/org.libersoft.contacts/module.js';
  import {} from '../modules/org.libersoft.wallet/module.js';
@@ -38,7 +38,7 @@
   accounts: {
    id: 'accounts',
    sidebar: WelcomeSidebar,
-   content: Accounts,
+   content: AccountsContent,
   },
  };
  let showWelcomeWizard = false;
