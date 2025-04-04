@@ -19,5 +19,5 @@ export async function createTrayIcon() {
   action,
  };
  const tray = await TrayIcon.new(options);
- log.debug('TrayIcon created');
+ log.debug('TrayIcon created:', tray);
 }
