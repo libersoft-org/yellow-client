@@ -17,11 +17,13 @@
  import WizardWelcomeStep1 from '@/core/pages/WelcomePage/WelcomeStep1.svelte';
  import WizardWelcomeStep2 from '@/core/pages/WelcomePage/WelcomeStep2.svelte';
  import WizardWelcomeStep3 from '@/core/pages/WelcomePage/WelcomeStep3.svelte';
- import {} from '../modules/org.libersoft.messages/module.js';
- import {} from '../modules/org.libersoft.contacts/module.js';
- import {} from '../modules/org.libersoft.wallet/module.js';
- import {} from '../modules/org.libersoft.dating/module.js';
- import {} from '../modules/org.libersoft.iframes/module.js';
+ import { createTrayIcon } from '../core/tray_icon.ts';
+ import '../modules/org.libersoft.messages/module.js';
+ import '../modules/org.libersoft.contacts/module.js';
+ import '../modules/org.libersoft.wallet/module.js';
+ import '../modules/org.libersoft.dating/module.js';
+ import '../modules/org.libersoft.iframes/module.js';
+ import { enableAutostart } from '../core/autostart.ts';
  let menus = [];
  setContext('menus', menus);
 
@@ -59,7 +61,8 @@
 
  onMount(async () => {
   console.log('+page onMount');
-
+  await createTrayIcon();
+  await enableAutostart();
   await initBrowserNotifications();
   await initCustomNotifications();
 
