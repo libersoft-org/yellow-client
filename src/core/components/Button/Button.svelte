@@ -34,10 +34,12 @@
   text-align: center;
   border-radius: 10px;
   font-weight: bold;
+  border: 1px solid;
  }
 
  .button.disabled {
   background-color: #bbb !important;
+  border-color: #bbb !important;
   cursor: default;
  }
 
