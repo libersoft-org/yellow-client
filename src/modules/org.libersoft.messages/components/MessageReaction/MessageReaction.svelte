@@ -1,9 +1,9 @@
 <script lang="ts">
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Emojis from '@/org.libersoft.messages/components/Emoji/Emojis.svelte';
- import { computePosition, autoPlacement, autoUpdate, shift } from '@floating-ui/dom';
+ import { computePosition, autoPlacement, autoUpdate, shift, offset } from '@floating-ui/dom';
  import { onDestroy, onMount } from 'svelte';
- import { setMessageReaction, toggleMessageReaction } from '@/org.libersoft.messages/messages';
+ import { toggleMessageReaction, identifier } from '@/org.libersoft.messages/messages';
  import Emoji from '@/org.libersoft.messages/components/Emoji/Emoji.svelte';
  import { emoji_render, rgi } from '@/org.libersoft.messages/emojis';
  import Portal from 'svelte-portal';
@@ -42,8 +42,10 @@
      autoPlacement({
       alignment: 'start',
       allowedPlacements: ['top-start', 'top-end'],
+      padding: 4,
      }),
      shift(),
+     offset(8),
     ],
    }).then(({ x, y }) => {
     Object.assign(floatingRef.style, {
@@ -90,6 +92,8 @@
  }
 
  .reaction-button {
+  display: flex;
+  align-items: center;
   font-size: 20px;
  }
 
@@ -140,7 +144,7 @@
 
 <div bind:this={buttonRef} class="reaction-button" class:open={show}>
  <BaseButton {onClick}>
-  {emoji_render([9829, 65039])}
+  <img src="modules/{identifier}/img/add-reaction.svg" alt="Message settings" width="20px" />
  </BaseButton>
 </div>
 

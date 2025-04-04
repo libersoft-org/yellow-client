@@ -369,17 +369,12 @@
  }
 
  .message :global(.reaction-button:not(.open)) {
-  visibility: hidden;
- }
-
- .message:hover :global(.reaction-button) {
-  visibility: visible;
-  opacity: 0.4;
+  opacity: 0.25;
  }
 
  .message:hover :global(.reaction-button:hover),
  .message:hover :global(.reaction-button.open) {
-  opacity: 1;
+  opacity: 0.85;
  }
 </style>
 
