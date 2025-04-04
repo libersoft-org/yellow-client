@@ -7,8 +7,8 @@
  import AccountBarButton from './AccountBarButton.svelte';
  import AccountStatusIcon from './AccountStatusIcon.svelte';
  import AccountTitle from './AccountTitle.svelte';
- let accountsVisible = false;
- let dropdown;
+ let accountsVisible = $state(false);
+ let accountBar;
 
  onDestroy(() => {
   document.removeEventListener('click', handleClickOutside);
@@ -18,48 +18,59 @@
  //$: console.log('account-bar.svelte: accounts: ', $accounts);
  //$: console.log('accountsVisible: ', accountsVisible);
 
- function clickToggleAccounts() {
-  accountsVisible = !accountsVisible;
-  if (accountsVisible) {
-   if (!$debug) {
-    document.addEventListener('click', handleClickOutside);
-   }
-  } else document.removeEventListener('click', handleClickOutside);
+ function open () {
+  accountsVisible = true
+  if (!$debug) {
+   document.addEventListener('click', handleClickOutside);
+  }
  }
 
- function clickSelectAccount(id) {
-  //console.log('clickSelectAccount: ' + id);
-  selectAccount(id);
-  //console.log('accountsVisible: ' + accountsVisible);
-  accountsVisible = false;
-  //console.log('accountsVisible: ' + accountsVisible);
+ function close () {
+  accountsVisible = false
   document.removeEventListener('click', handleClickOutside);
  }
 
+ function toggle() {
+  if (accountsVisible) {
+   close();
+  } else {
+   open();
+  }
+ }
+
+ function clickSelectAccount(id) {
+  selectAccount(id);
+  close();
+ }
+
  function handleClickOutside(event) {
-  if (dropdown && !dropdown.contains(event.target)) {
-   accountsVisible = false;
-   document.removeEventListener('click', handleClickOutside);
+  if (accountBar && !accountBar.contains(event.target)) {
+   close();
   }
  }
 
  function clickAccountManagement() {
   selected_corepage_id.set('accounts');
   hideSidebarMobile.set(true);
+  close();
  }
 </script>
 
 <style>
+ .account-bar {
+  position: relative;
+  font-weight: bold;
+  background-color: #222;
+  color: #fff;
+ }
+
  .dropdown {
   position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px;
-  font-weight: bold;
   border-bottom: 1px solid #555;
-  background-color: #222;
-  color: #fff;
  }
 
  .dropdown .text {
@@ -91,31 +102,33 @@
  }
 </style>
 
-<BaseButton onClick={clickToggleAccounts}>
- <div class="dropdown" bind:this={dropdown}>
-  {#if $active_account}
-   <div class="text">
-    <AccountStatusIcon account={active_account} />
-    <AccountTitle a={active_account} />
+<div class="account-bar" bind:this={accountBar}>
+ <BaseButton onClick={toggle}>
+  <div class="dropdown">
+   {#if $active_account}
+    <div class="text">
+     <AccountStatusIcon account={active_account} />
+     <AccountTitle a={active_account} />
+    </div>
+   {:else}
+    {#if $accounts.length > 0}
+     <div class="text">SELECT YOUR ACCOUNT</div>
+    {/if}
+    {#if $accounts.length === 0}
+     <div class="text">CREATE ACCOUNT FIRST</div>
+    {/if}
+   {/if}
+   <div>
+    <img src={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} />
    </div>
-  {:else}
-   {#if $accounts.length > 0}
-    <div class="text">SELECT YOUR ACCOUNT</div>
-   {/if}
-   {#if $accounts.length == 0}
-    <div class="text">CREATE ACCOUNT FIRST</div>
-   {/if}
-  {/if}
-  <div>
-   <img src={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} />
   </div>
-  {#if accountsVisible}
-   <div class="items open">
-    {#each $accounts as a (get(a).id)}
-     <AccountBarItem {a} {clickSelectAccount} />
-    {/each}
-    <AccountBarButton img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
-   </div>
-  {/if}
- </div>
-</BaseButton>
+ </BaseButton>
+ {#if accountsVisible}
+  <div class="items open">
+   {#each $accounts as a (get(a).id)}
+    <AccountBarItem {a} {clickSelectAccount} />
+   {/each}
+   <AccountBarButton img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
+  </div>
+ {/if}
+</div>
