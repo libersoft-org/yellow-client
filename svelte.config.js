@@ -9,8 +9,8 @@ const config = {
    relative: false
   },
   adapter: adapter({
-   pages: process.env.TAURI ? 'build' : 'build',
-   assets: process.env.TAURI ? 'build' : 'build',
+   pages: process.env.TAURI ? 'build-tauri' : 'build',
+   assets: process.env.TAURI ? 'build-tauri' : 'build',
    fallback: process.env.TAURI ? 'src/404.html' : 'index.html',
   }),
   alias: {
