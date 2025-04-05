@@ -972,7 +972,7 @@ export function saneHtml(content) {
 
 export function htmlEscape(str) {
  //console.log('htmlEscape:', str);
- return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;').replaceAll(' ', '&nbsp;');
+ return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;');
 }
 
 export function stripHtml(html) {
