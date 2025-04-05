@@ -461,7 +461,6 @@
 
  let wrapperWidth = null;
  const onResize = entry => {
-  console.log('entry', entry);
   wrapperWidth = entry.contentRect.width;
  };
  $: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');

@@ -4,6 +4,7 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import ModuleBarItem from './ModuleBarItem.svelte';
  import SettingsNotifications from '../Settings/SettingsNotifications.svelte';
+ import resize from '@/core/actions/resizeObserver.ts';
 
  export let onSelectModule;
  export let onCloseModule;
@@ -11,6 +12,7 @@
  let lastModuleSelected = false;
  let expanded = false;
  let module_decls_ordered = [];
+ let expandEnabled = false;
 
  $: module_decls_ordered = order($module_decls);
  $: module_data = $active_account?.module_data || {};
@@ -42,7 +44,34 @@
  function clickExpand() {
   expanded = !expanded;
  }
+
+ function onResize(entry) {
+  const {target, contentRect} = entry
+  console.log('onResize: ', entry);
+  const {width, height} = contentRect;
+  const children = target.children;
+  const childrenTotalWidth = Array.from(children).reduce((total, child) => {
+   return total + child.getBoundingClientRect().width;
+  }, 0);
+  console.log('childrenTotalWidth', width, childrenTotalWidth);
+  expandEnabled = childrenTotalWidth > width;
+ }
 </script>
+
+<div class="module-bar" class:expand-enabled={expandEnabled}>
+ <div use:resize={onResize} class="items {expanded ? 'expanded' : ''}">
+  {#each module_decls_ordered as decl (decl.id)}
+   <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
+  {/each}
+ </div>
+ <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
+  <div class="dropdown">
+   <img src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
+  </div>
+ </BaseButton>
+</div>
+
+{#if $debug}<SettingsNotifications />{/if}
 
 <style>
  .module-bar {
@@ -54,16 +83,17 @@
  .items {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
   flex-grow: 1;
   padding: 5px;
   overflow: hidden;
   flex-wrap: wrap;
+  height: 50px;
  }
 
  .items.expanded {
   overflow: visible;
-  height: auto;
+  height: initial;
  }
 
  .dropdown {
@@ -77,19 +107,10 @@
   width: 20px;
   height: 20px;
  }
+
+ .module-bar:not(.expand-enabled) .dropdown {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+ }
 </style>
-
-<div class="module-bar">
- <div class="items {expanded ? 'expanded' : ''}">
-  {#each module_decls_ordered as decl (decl.id)}
-   <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
-  {/each}
- </div>
- <BaseButton onClick={clickExpand}>
-  <div class="dropdown">
-   <img src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
-  </div>
- </BaseButton>
-</div>
-
-{#if $debug}<SettingsNotifications />{/if}
