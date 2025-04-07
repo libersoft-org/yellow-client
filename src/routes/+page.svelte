@@ -24,6 +24,7 @@
  import {} from '../modules/org.libersoft.dating/module.js';
  import {} from '../modules/org.libersoft.iframes/module.js';
  import { enableAutostart } from '../core/autostart.ts';
+ import { setDefaultWindowSize } from '../core/tauri.ts';
  let menus = [];
  setContext('menus', menus);
 
@@ -61,6 +62,9 @@
 
  onMount(async () => {
   console.log('+page onMount');
+
+  await setDefaultWindowSize();
+
   await createTrayIcon();
   await enableAutostart();
   await initBrowserNotifications();
