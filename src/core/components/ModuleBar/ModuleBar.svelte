@@ -46,9 +46,9 @@
  }
 
  function onResize(entry) {
-  const {target, contentRect} = entry
+  const { target, contentRect } = entry;
   console.log('onResize: ', entry);
-  const {width, height} = contentRect;
+  const { width, height } = contentRect;
   const children = target.children;
   const childrenTotalWidth = Array.from(children).reduce((total, child) => {
    return total + child.getBoundingClientRect().width;
@@ -57,21 +57,6 @@
   expandEnabled = childrenTotalWidth > width;
  }
 </script>
-
-<div class="module-bar" class:expand-enabled={expandEnabled}>
- <div use:resize={onResize} class="items {expanded ? 'expanded' : ''}">
-  {#each module_decls_ordered as decl (decl.id)}
-   <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
-  {/each}
- </div>
- <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
-  <div class="dropdown">
-   <img src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
-  </div>
- </BaseButton>
-</div>
-
-{#if $debug}<SettingsNotifications />{/if}
 
 <style>
  .module-bar {
@@ -114,3 +99,18 @@
   pointer-events: none;
  }
 </style>
+
+<div class="module-bar" class:expand-enabled={expandEnabled}>
+ <div use:resize={onResize} class="items {expanded ? 'expanded' : ''}">
+  {#each module_decls_ordered as decl (decl.id)}
+   <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
+  {/each}
+ </div>
+ <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
+  <div class="dropdown">
+   <img src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
+  </div>
+ </BaseButton>
+</div>
+
+{#if $debug}<SettingsNotifications />{/if}

@@ -18,15 +18,15 @@
  //$: console.log('account-bar.svelte: accounts: ', $accounts);
  //$: console.log('accountsVisible: ', accountsVisible);
 
- function open () {
-  accountsVisible = true
+ function open() {
+  accountsVisible = true;
   if (!$debug) {
    document.addEventListener('click', handleClickOutside);
   }
  }
 
- function close () {
-  accountsVisible = false
+ function close() {
+  accountsVisible = false;
   document.removeEventListener('click', handleClickOutside);
  }
 

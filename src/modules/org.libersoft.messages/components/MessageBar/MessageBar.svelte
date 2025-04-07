@@ -1,6 +1,6 @@
 <script>
- import { keyboardHeight, documentHeight, debug, isMobile, debugBuffer, active_account } from '../../../../core/core.js';
- import { handleResize, identifier, jumpToMessage, sendMessage } from '../../messages.js';
+ import { keyboardHeight, documentHeight, debug, isMobile, debugBuffer, active_account } from '@/core/core.js';
+ import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
  import { onMount, setContext, tick, getContext } from 'svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '../../../../core/components/Icon/Icon.svelte';
@@ -16,6 +16,7 @@
  import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
  import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
  import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
+ import { FileUploadRecordType } from '@/org.libersoft.messages/services/fileUpload/types.ts';
 
  let expressionsMenu;
  let elBottomSheet;
@@ -30,6 +31,7 @@
  let expressionsBottomSheetOpen = false;
  let expressionsAsContextMenu = true;
  let lastDocumentHeight = 0;
+ let videoInputRef;
 
  isMobile.subscribe(value => {
   expressionsAsContextMenu = !value;
@@ -212,6 +214,22 @@
   if (elBottomSheet?.contains(event.relatedTarget)) return;
   expressionsBottomSheetOpen = false;
  }
+
+ const onVideoRecordClick = async () => {};
+
+ onMount(() => {
+  videoInputRef.addEventListener('change', function (event) {
+   console.log('event.target.files', event.target.files);
+   const recipientEmail = get(selectedConversation).address;
+   const file = event.target.files[0]; // Get the selected video file
+   if (file) {
+    // const url = URL.createObjectURL(file); // Create a URL for the video file
+    // videoPreview.src = url;
+    // videoPreview.style.display = "block"; // Show the preview of the video
+    initUpload([file], FileUploadRecordType.SERVER, [recipientEmail]);
+   }
+  });
+ });
 </script>
 
 <style>
@@ -256,6 +274,8 @@
 </style>
 
 <div class="message-bar" bind:this={elMessageBar}>
+ <input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" />
+
  <div class="message-bar-top">
   {#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
    <MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
@@ -279,6 +299,7 @@
   {/if}
 
   <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
+  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={onVideoRecordClick} />
   <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
  </div>

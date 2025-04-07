@@ -40,6 +40,17 @@
   /*padding: 10px 10px 0px 10px;*/
  }
 
+ @media (max-width: 600px) {
+  .stickers {
+   overflow-y: auto !important;
+   display: block;
+  }
+
+  .stickers :global(.results) {
+   overflow-y: hidden;
+  }
+ }
+
  .top-components {
   display: flex;
   flex-direction: column;

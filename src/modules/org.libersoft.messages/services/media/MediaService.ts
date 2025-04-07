@@ -92,7 +92,7 @@ class MediaService {
     let pickedLoader: MediaLoader | null = null;
     if (this.fileInfo.fileMime === 'video/mp4') {
      pickedLoader = new MP4Loader(mediaSource, this.fileInfo, this._getFileChunk);
-    } else if (this.fileInfo.fileMime === 'video/webm') {
+    } else if (this.fileInfo.fileMime.startsWith('video/')) {
      pickedLoader = new BasicLoader(mediaSource, this.fileInfo, this._getFileChunk);
     }
 
