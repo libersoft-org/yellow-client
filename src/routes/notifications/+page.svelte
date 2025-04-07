@@ -192,8 +192,8 @@
     let size = { width: 400, height: $height };
     log.debug("setPosition", v, "size:", size);
     let w = getCurrentWindow();
-    //w.setPosition(new PhysicalPosition(v.x, v.y));
-    //w.setSize(new PhysicalSize(size.width, size.height));
+    w.setPosition(new PhysicalPosition(v.x, v.y));
+    w.setSize(new PhysicalSize(size.width, size.height));
     //moveWindow(Position.TrayBottomRight);
     moveWindowConstrained(Position.TrayBottomCenter);
   });
