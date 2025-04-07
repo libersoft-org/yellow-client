@@ -1,9 +1,10 @@
 <script>
- import { debug, active_account, order, module_decls, selected_module_id } from '../core.js';
+ import { debug, active_account, module_decls, selected_module_id } from '../core.js';
  import { get } from 'svelte/store';
  import BaseButton from './base-button.svelte';
  import ModuleBarItem from './module-bar-item.svelte';
  import SettingsNotifications from './settings-notifications.svelte';
+ import { order } from '@/core/utils.ts';
 
  export let onSelectModule;
  export let onCloseModule;

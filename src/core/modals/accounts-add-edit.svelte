@@ -87,6 +87,7 @@
    error = 'Address is required';
    return false;
   }
+  error = '';
   return true;
  }
 

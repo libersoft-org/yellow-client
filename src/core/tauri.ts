@@ -42,9 +42,11 @@ export async function setDefaultWindowSize() {
  log.debug('size', size);
  if (size.width === 500 && size.height === 500) {
   log.debug('setting default size');
-  const monitor_size = (await currentMonitor()).size;
+  const monitor_size = (await currentMonitor())?.size || { width: 1280, height: 720 };
   let new_size = new PhysicalSize(monitor_size.width * 0.8, monitor_size.height * 0.8);
   await w.setSize(new_size);
-  await w.center();
+  setTimeout(async () => {
+   await w.center();
+  }, 200);
  }
 }
