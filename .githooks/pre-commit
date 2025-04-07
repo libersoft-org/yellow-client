@@ -1,7 +1,4 @@
-#!/bin/sh
-#
+#!/bin/bash
 
-# Redirect output to stderr.
-exec 1>&2
+git-format-staged --verbose -f 'prettier --config-path prettier-libersoft.json --plugin prettier-plugin-svelte --ignore-unknown --stdin-filepath "{}" ' "src/**/*"
 
-./prettier.fish
