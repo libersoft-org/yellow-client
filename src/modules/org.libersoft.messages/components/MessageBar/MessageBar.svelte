@@ -274,8 +274,6 @@
 </style>
 
 <div class="message-bar" bind:this={elMessageBar}>
- <input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" />
-
  <div class="message-bar-top">
   {#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
    <MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
