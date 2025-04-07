@@ -195,7 +195,7 @@
     w.setPosition(new PhysicalPosition(v.x, v.y));
     w.setSize(new PhysicalSize(size.width, size.height));
     //moveWindow(Position.TrayBottomRight);
-    moveWindowConstrained(Position.TrayBottomCenter);
+    //moveWindowConstrained(Position.TrayBottomCenter);
   });
 
   log.debug("/notifications");
