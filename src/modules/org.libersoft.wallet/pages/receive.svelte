@@ -1,10 +1,10 @@
 <script>
- import BaseButton from '../../../core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import QRCode from 'qrcode';
  import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
  import { parseUnits } from 'ethers';
  import { get } from 'svelte/store';
- import DropdownFilter from '../../../core/components/dropdown-filter.svelte';
+ import DropdownFilter from '../../../core/components/Dropdown/DropdownFilter.svelte';
  let addressElement;
  let paymentElement;
  let amount = '0';

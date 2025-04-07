@@ -1,6 +1,6 @@
 <script>
- import Select from '../../../core/components/select.svelte';
- import Option from '../../../core/components/select-option.svelte';
+ import Select from '../../../core/components/Select/Select.svelte';
+ import SelectOption from '../../../core/components/Select/SelectOption.svelte';
 </script>
 
 <style>
@@ -20,8 +20,8 @@
  <div class="title">Currency conversion:</div>
  <div class="select">
   <Select>
-   <Option value="0" text="--- Select your currency ---" />
-   <Option value="1" text="USD" />
+   <SelectOption value="0" text="--- Select your currency ---" />
+   <SelectOption value="1" text="USD" />
   </Select>
  </div>
 </div>

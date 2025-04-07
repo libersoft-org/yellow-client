@@ -1,8 +1,8 @@
 <script>
  import { onMount } from 'svelte';
  import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
- import BaseButton from '../../../core/components/base-button.svelte';
- import Modal from '../../../core/components/modal.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Modal from '../../../core/components/Modal/Modal.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
  import Send from './send.svelte';
@@ -12,7 +12,7 @@
  import AddressBook from './addressbook.svelte';
  import Settings from './settings.svelte';
  import Dropdown from '../components/dropdown.svelte';
- import Button from '../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import { hideSidebarMobile } from '../../../core/core.js';
  let section = 'balance';
  let showModalNetworks = false;

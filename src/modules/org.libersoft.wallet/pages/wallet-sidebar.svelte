@@ -1,7 +1,7 @@
 <script>
  import { hideSidebarMobile } from '../../../core/core.js';
  import { addressBook } from '../wallet.ts';
- import BaseButton from '../../../core/components/base-button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
 
  function clickShowWallet() {
   hideSidebarMobile.set(true);

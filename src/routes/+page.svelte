@@ -5,24 +5,24 @@
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
  import { isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.js';
  import { initBrowserNotifications, initCustomNotifications } from '../core/notifications.ts';
+ import Menu from '../core/components/Menu/Menu.svelte';
+ import MenuBar from '../core/components/Menu/MenuBar.svelte';
+ import ModuleBar from '../core/components/ModuleBar/ModuleBar.svelte';
+ import AccountBar from '@/core/components/Account/AccountBar.svelte';
+ import WelcomeSidebar from '@/core/pages/WelcomePage/WelcomeSidebar.svelte';
+ import WelcomeContent from '@/core/pages/WelcomePage/WelcomeContent.svelte';
+ import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
+ import Modal from '../core/components/Modal/Modal.svelte';
+ import Wizard from '../core/components/Wizard/Wizard.svelte';
+ import WizardWelcomeStep1 from '@/core/pages/WelcomePage/WelcomeStep1.svelte';
+ import WizardWelcomeStep2 from '@/core/pages/WelcomePage/WelcomeStep2.svelte';
+ import WizardWelcomeStep3 from '@/core/pages/WelcomePage/WelcomeStep3.svelte';
  import { createTrayIcon } from '../core/tray_icon.ts';
- import Menu from '../core/components/menu.svelte';
- import MenuBar from '../core/components/menu-bar.svelte';
- import ModuleBar from '../core/components/module-bar.svelte';
- import AccountBar from '../core/components/account-bar.svelte';
- import WelcomeSidebar from '../core/pages/welcome-sidebar.svelte';
- import WelcomeContent from '../core/pages/welcome-content.svelte';
- import Accounts from '../core/pages/accounts.svelte';
- import Modal from '../core/components/modal.svelte';
- import Wizard from '../core/components/wizard.svelte';
- import WizardWelcomeStep1 from '../core/wizards/welcome-step1.svelte';
- import WizardWelcomeStep2 from '../core/wizards/welcome-step2.svelte';
- import WizardWelcomeStep3 from '../core/wizards/welcome-step3.svelte';
- import {} from '../modules/org.libersoft.messages/module.js';
- import {} from '../modules/org.libersoft.contacts/module.js';
- import {} from '../modules/org.libersoft.wallet/module.js';
- import {} from '../modules/org.libersoft.dating/module.js';
- import {} from '../modules/org.libersoft.iframes/module.js';
+ import '../modules/org.libersoft.messages/module.js';
+ import '../modules/org.libersoft.contacts/module.js';
+ import '../modules/org.libersoft.wallet/module.js';
+ import '../modules/org.libersoft.dating/module.js';
+ import '../modules/org.libersoft.iframes/module.js';
  import { enableAutostart } from '../core/autostart.ts';
  import { setDefaultWindowSize } from '../core/tauri.ts';
  let menus = [];
@@ -41,7 +41,7 @@
   accounts: {
    id: 'accounts',
    sidebar: WelcomeSidebar,
-   content: Accounts,
+   content: AccountsContent,
   },
  };
  let showWelcomeWizard = false;

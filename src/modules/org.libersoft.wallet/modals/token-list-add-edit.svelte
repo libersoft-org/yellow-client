@@ -1,6 +1,6 @@
 <script>
- import Button from '../../../core/components/button.svelte';
- import Input from '../../../core/components/input.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Input from '../../../core/components/Input/Input.svelte';
  import { getGuid } from '../../../core/core.js';
  import { onMount } from 'svelte';
  export let close;

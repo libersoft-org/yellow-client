@@ -1,6 +1,6 @@
 <script>
  import { selectedNetwork, selectedAddress } from '../wallet.ts';
- import Button from '../../../core/components/button.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  let info = '';
  let link = '';
 

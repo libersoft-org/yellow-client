@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte';
- import Button from '../../../core/components/button.svelte';
- import Input from '../../../core/components/input.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Input from '../../../core/components/Input/Input.svelte';
  import { addressBook } from '../wallet';
  export let close;
  export let params;

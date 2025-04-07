@@ -1,6 +1,6 @@
 import { describe, it, expect, test, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
-import { GalleryStore, type GalleryFile } from '@/org.libersoft.messages/stores/gallery.store';
+import { GalleryStore, type GalleryFile } from '@/org.libersoft.messages/stores/GalleryStore.ts';
 
 describe('GalleryStore', () => {
  let store: GalleryStore;

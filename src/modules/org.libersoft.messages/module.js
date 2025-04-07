@@ -1,7 +1,7 @@
 import { registerModule } from '../../core/core.js';
 import { identifier, initData, initComms, deinitComms, deinitData, onModuleSelected } from './messages.js';
-import Sidebar from './pages/messages-sidebar.svelte';
-import Content from './pages/messages-content.svelte';
+import MessagesSidebar from './pages/MessagesPage/MessagesSidebar.svelte';
+import MessagesContent from './pages/MessagesPage/MessagesContent.svelte';
 export const module = {
  name: 'Messages',
  identifier,
@@ -11,7 +11,7 @@ registerModule(module.identifier, {
  order: 1,
  callbacks: { initData, initComms, deinitComms, deinitData, onModuleSelected },
  panels: {
-  sidebar: Sidebar,
-  content: Content,
+  sidebar: MessagesSidebar,
+  content: MessagesContent,
  },
 });

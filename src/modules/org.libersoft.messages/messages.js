@@ -2,22 +2,22 @@ import { replaceEmojisWithTags, start_emojisets_fetch } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
 //import { db } from './db';
-import fileUploadManager from './fileUpload/FileUploadManager';
-import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from './fileUpload/types.ts';
-import fileDownloadManager from './fileUpload/FileDownloadManager.ts';
-import fileUploadStore from './fileUpload/fileUploadStore.ts';
-import fileDownloadStore from './fileUpload/fileDownloadStore.ts';
-import { wrapConsecutiveElements } from './utils/html.utils.ts';
+import fileUploadManager from '@/org.libersoft.messages/services/fileUpload/FileUploadService.ts';
+import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+import fileDownloadManager from '@/org.libersoft.messages/services/fileUpload/FileDownloadService.ts';
+import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
+import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
-import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from './fileUpload/utils.ts';
+import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/fileUpload/utils.ts';
 import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
 import { messages_db } from './db.ts';
-import filesDB, { LocalFileStatus } from './localDB/files.localDB.ts';
-import { addNotification } from '../../core/notifications.ts';
-import { makeMessageReaction } from '@/org.libersoft.messages/utils.ts';
+import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/localDB/FilesLocalDB.ts';
+import { addNotification } from '@/core/notifications.ts';
+import { makeMessageReaction } from '@/org.libersoft.messages/factories/messageFactories.ts';
 
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
@@ -972,7 +972,7 @@ export function saneHtml(content) {
 
 export function htmlEscape(str) {
  //console.log('htmlEscape:', str);
- return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;').replaceAll(' ', '&nbsp;');
+ return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;');
 }
 
 export function stripHtml(html) {

@@ -64,7 +64,7 @@ const prepareFile = () => ({
 
 const assertDownload = async (download: Download, originalFile: ReturnType<typeof prepareFile>) => {
  const filePath = await download.path();
- await download.saveAs('downloads/' + originalFile.name);
+ // await download.saveAs('downloads/' + originalFile.name);
 
  // (Receiver) Verify the file name
  expect(download.suggestedFilename()).toBe(originalFile.name);
