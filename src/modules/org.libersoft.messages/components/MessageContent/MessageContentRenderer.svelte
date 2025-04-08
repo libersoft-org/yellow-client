@@ -1,6 +1,7 @@
 <script>
  import { componentMap } from '@/org.libersoft.messages/message-content.ts';
  import { onMount } from 'svelte';
+ import { debug
 
  export let rootNode;
 
@@ -76,8 +77,11 @@
  function processFragment(fragment) {
   try {
    if (fragment.childNodes) {
-    return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+    const res = Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+    console.log('processFragment fragment:', fragment, 'res:', res);
+    return res;
    } else {
+    console.log('No child nodes found in fragment:', fragment);
     // return [fragment];
    }
   } catch (e) {
@@ -91,29 +95,34 @@
 </script>
 
 {#each renderedContent as item (item.tagUniqueId)}
- <!-- Render text nodes -->
- {#if item.text}
-  {item.text}
-  <!-- Render dynamic (HTML super-set) components -->
- {:else if item.component}
-  {#key item.tagUniqueId}
-   <svelte:component this={item.component} {...item.props} children={item.children} />
-   <!-- INFO: custom components should take care of rendering its children themselves (see example below) -->
-   <!-- EXAMPLE:
+  <!-- Render text nodes -->
+  {#if item.text}
+    {item.text}
+    <!-- Render dynamic (HTML super-set) components -->
+  {:else if item.component}
+    {#key item.tagUniqueId}
+      <svelte:component
+        this={item.component}
+        {...item.props}
+        children={item.children}
+      />
+      <!-- INFO: custom components should take care of rendering its children themselves (see example below) -->
+      <!-- EXAMPLE:
     {#each item.children as child (child.tagUniqueId)}
      <svelte:component this={child.component} {...child.props} />
     {/each}
    </svelte:component>
    -->
-  {/key}
-  <!-- Render regular HTML elements -->
- {:else if item.tag}
-  {#key item.tagUniqueId}
-   <svelte:element this={item.tag} {...item.attrs}>
-    {#each item.children as child (child.tagUniqueId)}
-     <svelte:self rootNode={child} />
-    {/each}
-   </svelte:element>
-  {/key}
- {/if}
+    {/key}
+    <!-- Render regular HTML elements -->
+  {:else if item.tag}
+    {#key item.tagUniqueId}
+      <svelte:element this={item.tag} {...item.attrs}>
+        {#each item.children as child (child.tagUniqueId)}
+          {#if $debug}{JSON.stringify(child)}{/if}
+          <svelte:self rootNode={child} />
+        {/each}
+      </svelte:element>
+    {/key}
+  {/if}
 {/each}
