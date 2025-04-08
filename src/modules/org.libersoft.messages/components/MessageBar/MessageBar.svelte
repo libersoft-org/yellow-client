@@ -297,8 +297,8 @@
   {/if}
 
   <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
-  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={onVideoRecordClick} />
-  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
+  <Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />
+  <Icon img="modules/{identifier}/img/audio_message.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
  </div>
 </div>
