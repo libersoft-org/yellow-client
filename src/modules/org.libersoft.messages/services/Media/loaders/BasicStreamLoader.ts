@@ -1,7 +1,7 @@
 import { type MediaFileInfo, MediaLoader } from './types.ts';
 import mediaInfoFactory from 'mediainfo.js';
 
-class BasicLoader extends MediaLoader {
+class BasicStreamLoader extends MediaLoader {
  sourceBuffer: SourceBuffer | null = null;
 
  async setup() {
@@ -55,4 +55,4 @@ class BasicLoader extends MediaLoader {
  };
 }
 
-export default BasicLoader;
+export default BasicStreamLoader;

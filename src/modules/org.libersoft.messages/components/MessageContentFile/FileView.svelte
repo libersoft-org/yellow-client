@@ -1,7 +1,7 @@
 <script lang="ts">
  import FileTransfer from './FileTransfer.svelte';
  import { identifier } from '../../messages.js';
- import { type FileDownload, type FileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { type FileDownload, type FileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
  import Button from '@/core/components/Button/Button.svelte';
  import { humanSize } from '@/core/utils/fileUtils.js';
 

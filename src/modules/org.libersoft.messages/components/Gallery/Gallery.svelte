@@ -2,7 +2,7 @@
  import { galleryFile, identifier } from '../../messages.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import { assembleFile } from '@/org.libersoft.messages/services/fileUpload/utils.ts';
+ import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
  import galleryStore from '../../stores/GalleryStore.ts';
  import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
 

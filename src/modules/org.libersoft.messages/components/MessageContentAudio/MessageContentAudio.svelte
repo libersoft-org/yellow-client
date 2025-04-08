@@ -2,7 +2,7 @@
  import Audio from './Audio.svelte';
  import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
  import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
- import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
  import { writable, get } from 'svelte/store';
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
  import { identifier } from '../../messages.js';

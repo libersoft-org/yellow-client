@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import type { FileUpload, FileUploadRecord, FileUploadStoreType, FileUploadStoreValue } from '../services/fileUpload/types.ts';
+import type { FileUpload, FileUploadRecord, FileUploadStoreType, FileUploadStoreValue } from '@/org.libersoft.messages/services/Files/types.ts';
 
 export class FileUploadStore implements FileUploadStoreType {
  store = writable<FileUploadStoreValue>([]);

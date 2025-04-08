@@ -2,7 +2,7 @@
  import Button from '@/core/components/Button/Button.svelte';
  import { humanSize } from '../../../../core/utils/fileUtils.js';
  import { truncateText } from '../../../../core/utils/textUtils.js';
- import { FileUploadRecordType } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
  import { get } from 'svelte/store';
  import { identifier, selectedConversation, initUpload } from '../../messages.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';

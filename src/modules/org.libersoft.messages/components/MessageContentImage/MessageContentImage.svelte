@@ -1,12 +1,12 @@
 <script>
  import { onMount } from 'svelte';
- import filesService from '@/org.libersoft.messages/services/fileUpload/FilesService.ts';
+ import filesService from '@/org.libersoft.messages/services/Files/FilesService.ts';
  import ImageAspectRatio from '@/core/components/ImageAspectRatio/ImageAspectRatio.svelte';
  import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
- import { LocalFileStatus } from '@/org.libersoft.messages/services/localDB/FilesLocalDB.ts';
+ import { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
  import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
  import { writable } from 'svelte/store';
- import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
  import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
  import galleryStore from '../../stores/GalleryStore.ts';
 

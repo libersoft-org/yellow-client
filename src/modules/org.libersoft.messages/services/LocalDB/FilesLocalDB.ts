@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import type { FileUploadChunk } from '../fileUpload/types.ts';
+import type { FileUploadChunk } from '@/org.libersoft.messages/services/Files/types.ts';
 
 export const FILES_DB_KEY = 'files';
 

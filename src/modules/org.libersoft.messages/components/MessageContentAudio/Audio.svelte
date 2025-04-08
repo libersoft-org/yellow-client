@@ -3,15 +3,15 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
- import MediaService from '@/org.libersoft.messages/services/media/MediaService.ts';
- import MediaUtils from '@/org.libersoft.messages/services/media/Media.utils.ts';
+ import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
+ import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
  import { get, writable } from 'svelte/store';
  import { active_account } from '../../../../core/core.js';
  import { humanSize } from '../../../../core/utils/fileUtils.js';
  import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
- import { assembleFile } from '@/org.libersoft.messages/services/fileUpload/utils.ts';
+ import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 
  const { uploadId } = $props();
 

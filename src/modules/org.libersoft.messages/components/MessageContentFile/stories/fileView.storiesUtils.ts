@@ -1,6 +1,6 @@
 import type { DeepPartial } from '@/types.ts';
-import { type CustomFile, type FileDownload, type FileUpload, type FileUploadRecord, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/fileUpload/types.ts';
-import { makeFileDownload, makeFileUpload, makeFileUploadRecord } from '@/org.libersoft.messages/services/fileUpload/utils.ts';
+import { type CustomFile, type FileDownload, type FileUpload, type FileUploadRecord, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+import { makeFileDownload, makeFileUpload, makeFileUploadRecord } from '@/org.libersoft.messages/services/Files/utils.ts';
 import _merge from 'lodash/merge';
 import { defineMeta } from '@storybook/addon-svelte-csf';
 import FileView from '@/org.libersoft.messages/components/MessageContentFile/FileView.svelte';

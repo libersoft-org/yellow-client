@@ -1,7 +1,7 @@
 <script lang="ts" module>
  import { defineMeta } from '@storybook/addon-svelte-csf';
  import FileView from '../FileView.svelte';
- import { FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRole } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
  import FileViewStoriesUtils from '@/org.libersoft.messages/components/MessageContentFile/stories/fileView.storiesUtils.ts';
  import FileContainer from '@/org.libersoft.messages/components/MessageContentFile/FileContainer.svelte';
 

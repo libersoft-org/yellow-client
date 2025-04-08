@@ -24,6 +24,7 @@
  import '../modules/org.libersoft.dating/module.js';
  import '../modules/org.libersoft.iframes/module.js';
  import { enableAutostart } from '../core/autostart.ts';
+ import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
  let menus = [];
  setContext('menus', menus);
 
@@ -59,22 +60,56 @@
  $: selectedModuleDecl = $module_decls[$selected_module_id];
  //$: console.log('selectedModuleDecl: ', selectedModuleDecl);
 
+ function getFileChunkFactory(uploadId) {
+  const fn = makeDownloadChunkAsyncFn(get(active_account));
+  return params => fn({ uploadId, ...params });
+ }
+
  onMount(async () => {
   console.log('+page onMount');
+
+  if ('serviceWorker' in window.navigator) {
+   console.log('+page registering service worker');
+   navigator.serviceWorker.register('service-worker.js');
+
+   navigator.serviceWorker.ready.then(() => {
+    console.log('+page service worker ready');
+    // listen for message
+    navigator.serviceWorker.addEventListener('message', e => {
+     console.warn('Got message from service worker:', e.data);
+     console.warn('ports', e.ports);
+
+     if (e.data.type === 'GET_FILE_INFO') {
+      const {accId, uploadId} = e.data.payload
+      loadUploadData(uploadId).then(uploadData => {
+       console.warn('SW: !!!!found uploadData', uploadData);
+       e.ports[0].postMessage(uploadData.record);
+      })
+     }
+     if (e.data.type === 'GET_CHUNK') {
+      const {accId, uploadId, start, end} = e.data.payload
+
+      console.log('SW: client get chunk', e.data.payload);
+      const getChunk = getFileChunkFactory(uploadId)
+
+      getChunk({
+       offsetBytes: start,
+       chunkSize: end - start,
+      }).then(data => {
+       console.warn('!!!!found chunk', data);
+       e.ports[0].postMessage(data);
+      })
+     }
+    })
+   });
+  } else {
+   console.log('+page This browser does not support service workers.');
+  }
+
   await createTrayIcon();
   await enableAutostart();
   await initBrowserNotifications();
   await initCustomNotifications();
-
-  /*if ('serviceWorker' in window.navigator) {
-   console.log('+page registering service worker');
-   navigator.serviceWorker.register('service-worker.js');
-   navigator.serviceWorker.ready.then(() => {
-    console.log('+page service worker ready');
-   });
-  } else {
-   console.log('+page This browser does not support service workers.');
-  }*/
 
   if ($sidebarSize) {
    setSidebarSize($sidebarSize);

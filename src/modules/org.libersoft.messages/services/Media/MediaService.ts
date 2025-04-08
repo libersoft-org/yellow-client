@@ -2,9 +2,10 @@ import videoJS from 'video.js';
 import 'video.js/dist/video-js.css';
 import type { MediaFileInfo, MediaLoader } from './loaders/types.ts';
 import MP4Loader from './loaders/MP4Loader.ts';
-import BasicLoader from './loaders/BasicLoader.ts';
+import BasicStreamLoader from './loaders/BasicStreamLoader.ts';
 import _debounce from 'lodash/debounce';
 import WaveSurfer from 'wavesurfer.js';
+import BasicLoader from './loaders/BasicLoader.ts';
 
 class MediaService {
  videoElement: HTMLVideoElement;
@@ -32,7 +33,7 @@ class MediaService {
   mediaSource.addEventListener('sourceopen', () => {
    let pickedLoader: MediaLoader | null = null;
    if (this.fileInfo.fileMime.startsWith('audio')) {
-    pickedLoader = new BasicLoader(mediaSource, this.fileInfo, this._getFileChunk);
+    pickedLoader = new BasicStreamLoader(mediaSource, this.fileInfo, this._getFileChunk);
    }
 
    // console.log('pickedLoader', pickedLoader);
@@ -84,34 +85,96 @@ class MediaService {
   // };
 
   player.ready(() => {
-   this.mediaSource = new MediaSource();
-   videoElement.src = URL.createObjectURL(this.mediaSource);
-   const mediaSource = this.mediaSource as MediaSource;
+   // streaming
+   if (this.shouldStream()) {
+    this.mediaSource = new MediaSource();
+    videoElement.src = URL.createObjectURL(this.mediaSource);
+    const mediaSource = this.mediaSource as MediaSource;
 
-   mediaSource.addEventListener('sourceopen', () => {
-    let pickedLoader: MediaLoader | null = null;
-    if (this.fileInfo.fileMime === 'video/mp4') {
-     pickedLoader = new MP4Loader(mediaSource, this.fileInfo, this._getFileChunk);
-    } else if (this.fileInfo.fileMime.startsWith('video/')) {
-     pickedLoader = new BasicLoader(mediaSource, this.fileInfo, this._getFileChunk);
-    }
+    mediaSource.addEventListener('sourceopen', () => {
+     let pickedLoader: MediaLoader | null = null;
+     if (this.fileInfo.fileMime === 'video/mp4') {
+      pickedLoader = new MP4Loader(mediaSource, this.fileInfo, this._getFileChunk);
+     } else if (this.fileInfo.fileMime === 'video/webm') {
+      pickedLoader = new BasicStreamLoader(mediaSource, this.fileInfo, this._getFileChunk);
+     }
 
-    if (pickedLoader) {
-     this.loader = pickedLoader;
-     this.loader.setup(this.fileInfo);
-    } else {
-     console.error('Unsupported mime type', this.fileInfo);
-    }
-   });
+     if (pickedLoader) {
+      this.loader = pickedLoader;
+      this.loader.setup(this.fileInfo);
+     } else {
+      console.error('Unsupported mime type', this.fileInfo);
+     }
+    });
+   }
+   // full download, then play
+   else {
+    // pass
+    console.log('pass');
+    //this.mediaSource = new MediaSource();
+    //videoElement.src = URL.createObjectURL(this.mediaSource);
+   }
   });
 
   player.on('play', () => {
-   const currentTime = player.currentTime();
-   this.setupFetchQueue();
+   console.log('on play');
+   if (this.shouldStream()) {
+    const currentTime = player.currentTime();
+    this.setupFetchQueue();
 
-   if (currentTime === 0) {
-    this.fetchQueue.push(0);
+    if (currentTime === 0) {
+     this.fetchQueue.push(0);
+    }
+   } else {
+    // pass
    }
+  });
+
+  const playEl = this.videoElement.parentNode?.querySelector('.vjs-big-play-button')
+  const prep = () => {
+   console.log('clickeeed!!!');
+   this.downloadFullFile().then((blob) => {
+    console.log('dw');
+    videoElement.src = URL.createObjectURL(blob);
+    player.play()
+   })
+  }
+
+  playEl?.addEventListener('click', prep)
+  playEl?.addEventListener('pointerdown', prep)
+
+  const EVENTS = [
+   'loadstart',
+   'progress',
+   'suspend',
+   'abort',
+   'error',
+   'emptied',
+   'stalled',
+   'loadedmetadata',
+   'loadeddata',
+   'canplay',
+   'canplaythrough',
+   'playing',
+   'waiting',
+   'seeking',
+   'seeked',
+   'ended',
+   'durationchange',
+   'timeupdate',
+   'play',
+   'pause',
+   'ratechange',
+   'resize',
+   'volumechange',
+  ]
+  EVENTS.forEach(evt => {
+   player.on(evt, () => console.log('test evt', evt))
+  })
+
+  this.videoElement.addEventListener('play',  evt => {
+   // code you want to happen when the video plays
+   console.log('asdasdasdasdadasd');
   });
 
   const _seeking = _debounce(() => {
@@ -120,6 +183,21 @@ class MediaService {
   player.on('seeking', _seeking);
 
   return this.player;
+ }
+
+ async downloadFullFile () {
+  const {chunkSize, totalSize, fileMime} = this.fileInfo
+  const chunks: Uint8Array[] = [];
+  for (let offsetToFetch = 0; offsetToFetch < totalSize; offsetToFetch += chunkSize) {
+   const {chunk} = await this._getFileChunk({ offsetBytes: offsetToFetch, chunkSize })
+   console.warn('fetched', chunk)
+   chunks.push(chunk.data)
+  }
+  return new Blob(chunks, { type: fileMime });
+ }
+
+ shouldStream () {
+  return ['video/mp4', 'video/webm'].includes(this.fileInfo.fileMime)
  }
 
  seekTo(time: number) {

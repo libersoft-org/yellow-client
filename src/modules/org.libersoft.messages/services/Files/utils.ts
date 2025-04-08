@@ -1,6 +1,6 @@
 import { type FileDownload, type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, type MakeFileDownloadData, type MakeFileUploadData, type MakeFileUploadRecordData } from './types.ts';
 import { v4 as uuidv4 } from 'uuid';
-import MediaUtils from '../media/Media.utils.ts';
+import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 
 export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUploadRecord {
  const defaults = {

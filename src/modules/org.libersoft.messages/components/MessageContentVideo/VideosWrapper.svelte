@@ -13,6 +13,7 @@
  }
 
  .videos {
+  --video-size: calc(60 * var(--messages-list-width) / 100);
   display: flex;
   flex-direction: column;
   gap: 10px;

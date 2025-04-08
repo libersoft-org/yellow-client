@@ -2,10 +2,10 @@
  import Button from '@/core/components/Button/Button.svelte';
  import { onMount } from 'svelte';
  import { writable } from 'svelte/store';
- import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
  import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
  import { downloadAttachmentsSerial } from '../../messages.js';
- import { assembleFile } from '@/org.libersoft.messages/services/fileUpload/utils.ts';
+ import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 
  let { children, node } = $props();
  let ref = writable();

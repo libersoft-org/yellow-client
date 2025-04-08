@@ -16,7 +16,7 @@
  import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
  import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
  import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
- import { FileUploadRecordType } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 
  let expressionsMenu;
  let elBottomSheet;
@@ -274,6 +274,8 @@
 </style>
 
 <div class="message-bar" bind:this={elMessageBar}>
+ <input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" />
+
  <div class="message-bar-top">
   {#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
    <MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
