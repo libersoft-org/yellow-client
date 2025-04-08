@@ -119,7 +119,6 @@
     {#key item.tagUniqueId}
       <svelte:element this={item.tag} {...item.attrs}>
         {#each item.children as child (child.tagUniqueId)}
-          {#if $debug}{JSON.stringify(child)}{/if}
           <svelte:self rootNode={child} />
         {/each}
       </svelte:element>
