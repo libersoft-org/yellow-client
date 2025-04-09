@@ -28,7 +28,7 @@ export async function createTrayIcon() {
       };
       const options = {
         id: "main",
-        icon: iconPath,
+        icon: iconPath || "",
         action,
         tooltip: "awesome tray tooltip",
       };
