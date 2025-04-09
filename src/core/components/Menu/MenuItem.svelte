@@ -8,7 +8,10 @@
  export let bgColor = '#222';
  export let textColor = '#fff';
  export let hoverColor = '#333';
- export let borderColor = '#444';
+ export let borderTop = 'none';
+ export let borderBottom = '1px solid #444';
+ export let borderLeft = 'none';
+ export let borderRight = 'none';
  export let imgSize = '24px';
  export let borderRadius = '0';
 </script>
@@ -26,7 +29,7 @@
 </style>
 
 <BaseButton {onClick}>
- <div class="item" style="padding: {padding}; gap: {gap}; color: {textColor}; --bgColor: {bgColor}; border-bottom: 1px solid {borderColor}; --hoverColor: {hoverColor}; border-radius: {borderRadius}">
+ <div class="item" style="padding: {padding}; gap: {gap}; color: {textColor}; --bgColor: {bgColor}; border-top: {borderTop}; border-bottom: {borderBottom}; border-left: {borderLeft}; border-right: {borderRight}; --hoverColor: {hoverColor}; border-radius: {borderRadius}">
   {#if img}
    <img style="width: {imgSize}; height: {imgSize}" src={img} alt={title} />
   {/if}

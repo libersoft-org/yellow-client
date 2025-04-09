@@ -1,28 +1,37 @@
 <script>
- import { get } from 'svelte/store';
  import MenuItem from '../Menu/MenuItem.svelte';
- import Table from '../Table/Table.svelte';
- import TableTBody from '../Table/TableTBody.svelte';
- import TableTBodyTr from '../Table/TableTBodyTr.svelte';
- import TableTBodyTd from '../Table/TableTBodyTd.svelte';
- import Switch from '../Switch/Switch.svelte';
  import SettingsAppearance from './SettingsAppearance.svelte';
  import SettingsNotifications from './SettingsNotifications.svelte';
- import { tick } from 'svelte';
  let activeTab = 'appearance';
  let menuItemProps = {
   bgColor: '#fff',
   textColor: '#000',
   hoverColor: '#eee',
-  borderColor: '#ddd',
+  borderTop: '1px solid #888',
+  borderBottom: '1px solid #888',
+  borderLeft: '1px solid #888',
+  borderRight: '1px solid #888',
   borderRadius: '10px',
  };
+ let menuItems = [
+  {
+   title: 'Appearance',
+   img: 'img/appearance-black.svg',
+   onClick: () => (activeTab = 'appearance'),
+  },
+  {
+   title: 'Notifications',
+   img: 'img/notification-black.svg',
+   onClick: () => (activeTab = 'notifications'),
+  },
+ ];
 </script>
 
 <style>
  .settings-container {
   display: flex;
   flex-direction: column;
+  gap: 5px;
  }
 
  .tab-content {
@@ -38,8 +47,9 @@
 </style>
 
 <div class="settings-container">
- <MenuItem img="img/appearance-black.svg" title="Appearance" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderColor={menuItemProps.borderColor} borderRadius={menuItemProps.borderRadius} onClick={() => (activeTab = 'appearance')} />
- <MenuItem img="img/notification-black.svg" title="Notifications" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderColor={menuItemProps.borderColor} borderRadius={menuItemProps.borderRadius} onClick={() => (activeTab = 'notifications')} />
+ {#each menuItems as item}
+  <MenuItem img={item.img} title={item.title} bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={item.onClick} />
+ {/each}
  <div class="tab-content">
   {#if activeTab === 'appearance'}
    <SettingsAppearance />

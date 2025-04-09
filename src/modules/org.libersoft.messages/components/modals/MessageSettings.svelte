@@ -1,5 +1,6 @@
 <script>
  import { humanSize } from '../../../../core/utils/fileUtils.js';
+ import Input from '@/core/components/Input/Input.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import { uploadChunkSize } from '../../messages.js';
  export let close;
@@ -26,10 +27,10 @@
 
 <div class="group">
  <div class="label">
-  <span class="bold">Chunk size:</span>
+  <span class="bold">File upload chunk size:</span>
   <span>{humanSize(chunkSize)}</span>
  </div>
- <input type="number" bind:value={chunkSize} />
+ <Input type="number" bind:value={chunkSize} />
  <input class="zoom" type="range" min="1024" max="52428800" step="1024" bind:value={chunkSize} />
 </div>
 <Button text="Save" onClick={clickSetChunkSize} />
