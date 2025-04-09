@@ -163,8 +163,9 @@
   async function updatePosition() {
     log.debug("updatePosition...");
     let h = get(height);
+    const monitor_name = get(actualMonitorName);
     let m = await invoke("get_work_area", {
-      monitor_name: get(actualMonitorName),
+      monitorName: monitor_name,
     });
     log.debug("get_work_area:", m);
     let d = getNotificationsDirection();

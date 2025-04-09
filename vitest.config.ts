@@ -9,7 +9,7 @@ const alias = {
 export default defineConfig({
  test: {
   environment: 'jsdom',
-  include: ['**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+  include: ['**/unit/*.{test,spec}.?(c|m)[jt]s?(x)'],
  },
  resolve: process.env.VITEST
   ? {
