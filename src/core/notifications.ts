@@ -19,7 +19,7 @@ import {
 import {
   availableMonitors,
   currentMonitor,
-  getCurrentWindow,
+  //getCurrentWindow,
 } from "@tauri-apps/api/window";
 import {
   isPermissionGranted,
