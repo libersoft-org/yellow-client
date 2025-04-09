@@ -1,7 +1,7 @@
 <script lang="ts">
  import { truncateTextEnd } from '@/core/utils/textUtils';
  import Button from '@/core/components/Button/Button.svelte';
- import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
+ import messageBarReplyStore, { ReplyToType } from '../../stores/MessageBarReplyStore.ts';
 
  interface MessageBarReplyProps {
   name: string;

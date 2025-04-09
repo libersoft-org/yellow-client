@@ -1,8 +1,9 @@
 <script>
- import MenuItem from '../Menu/MenuItem.svelte';
- import SettingsAppearance from './SettingsAppearance.svelte';
- import SettingsNotifications from './SettingsNotifications.svelte';
- let activeTab = 'appearance';
+ import MenuItem from '../components/Menu/MenuItem.svelte';
+ import SettingsAppearance from '../components/Settings/SettingsAppearance.svelte';
+ import SettingsNotifications from '../components/Settings/SettingsNotifications.svelte';
+ import SettingsGeneral from '../components/Settings/SettingsGeneral.svelte';
+ let activeTab = 'general';
  let menuItemProps = {
   bgColor: '#fff',
   textColor: '#000',
@@ -15,16 +16,25 @@
  };
  let menuItems = [
   {
+   title: 'General',
+   img: 'img/settings-black.svg',
+   onClick: () => setItem('general'),
+  },
+  {
    title: 'Appearance',
    img: 'img/appearance-black.svg',
-   onClick: () => (activeTab = 'appearance'),
+   onClick: () => setItem('appearance'),
   },
   {
    title: 'Notifications',
    img: 'img/notification-black.svg',
-   onClick: () => (activeTab = 'notifications'),
+   onClick: () => setItem('notifications'),
   },
  ];
+
+ function setItem(name) {
+  activeTab = name;
+ }
 </script>
 
 <style>
@@ -51,7 +61,9 @@
   <MenuItem img={item.img} title={item.title} bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={item.onClick} />
  {/each}
  <div class="tab-content">
-  {#if activeTab === 'appearance'}
+  {#if activeTab === 'general'}
+   <SettingsGeneral />
+  {:else if activeTab === 'appearance'}
    <SettingsAppearance />
   {:else if activeTab === 'notifications'}
    <SettingsNotifications />

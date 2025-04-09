@@ -1,17 +1,17 @@
 <script>
  import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../../messages.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import WaveSurfer from 'wavesurfer.js';
+ //import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
- import MediaService from '@/org.libersoft.messages/services/media/MediaService.ts';
- import MediaUtils from '@/org.libersoft.messages/services/media/Media.utils.ts';
+ import MediaService from '../../services/media/MediaService.ts';
+ //import MediaUtils from '../../services/media/Media.utils.ts';
  import { get, writable } from 'svelte/store';
- import { active_account } from '../../../../core/core.js';
- import { humanSize } from '../../../../core/utils/fileUtils.js';
- import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
+ import { active_account } from '@/core/core.js';
+ import { humanSize } from '@/core/utils/fileUtils.js';
+ import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
- import { assembleFile } from '@/org.libersoft.messages/services/fileUpload/utils.ts';
+ import fileDownloadStore from '../../stores/FileDownloadStore.ts';
+ import { assembleFile } from '../../services/fileUpload/utils.ts';
 
  const { uploadId } = $props();
 

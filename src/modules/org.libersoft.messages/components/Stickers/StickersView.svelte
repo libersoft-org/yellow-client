@@ -1,17 +1,17 @@
 <script>
- import { debug } from '../../../../core/core.js';
+ import { debug } from '@/core/core.js';
  import { identifier } from '../../messages.js';
  import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
  import { liveQuery } from 'dexie';
  import { stickers_db } from '../../db.ts';
  import FuzzySearch from 'fuzzy-search';
  import { writable, get } from 'svelte/store';
- import SelectOption from '../../../../core/components/Select/SelectOption.svelte';
- import Select from '../../../../core/components/Select/Select.svelte';
- import InputButton from '../../../../core/components/Input/InputButton.svelte';
+ import SelectOption from '@/core/components/Select/SelectOption.svelte';
+ import Select from '@/core/components/Select/Select.svelte';
+ import InputButton from '@/core/components/Input/InputButton.svelte';
  import StickersSearchResults from './StickersSearchResults.svelte';
- import { isMobile } from '../../../../core/core.js';
- import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
+ import { isMobile } from '@/core/core.js';
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import { onMount, untrack } from 'svelte';
 
  let { stickerset_favorites } = $props();

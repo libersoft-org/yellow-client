@@ -1,7 +1,7 @@
 <script>
- import { componentMap } from '@/org.libersoft.messages/message-content.ts';
+ import { componentMap } from '../../message-content.ts';
  import { onMount } from 'svelte';
- import { debug } from '../../../../core/core.js';
+ import { debug } from '@/core/core.js';
 
  export let rootNode;
 

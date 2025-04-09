@@ -1,8 +1,8 @@
 <script>
  import { identifier, online } from '../../messages.js';
  import Button from '@/core/components/Button/Button.svelte';
- import Modal from '../../../../core/components/Modal/Modal.svelte';
- import ModalNewConversation from '@/org.libersoft.messages/components/modals/NewConversation.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
+ import ModalNewConversation from '../../modals/NewConversation.svelte';
  const illustrations = ['man', 'woman', 'pigeon'];
  let showNewConversationModal = false;
 

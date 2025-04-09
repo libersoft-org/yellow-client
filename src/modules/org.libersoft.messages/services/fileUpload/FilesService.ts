@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { active_account } from '../../../../core/core';
+import { active_account } from '@/core/core';
 import filesDB, { type LocalFile, LocalFileStatus } from '../localDB/FilesLocalDB.ts';
 import { loadUploadData, makeDownloadChunkAsyncFn } from '../../messages';
 import fileUploadManager, { type FileUploadService } from './FileUploadService.ts';

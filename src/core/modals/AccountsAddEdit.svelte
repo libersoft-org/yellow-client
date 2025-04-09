@@ -1,14 +1,14 @@
 <script>
  import { getContext, onMount } from 'svelte';
- import { addAccount, findAccountConfig, saveAccount } from '../../accounts_config.js';
- import { accounts } from '../../core.js';
- import Button from '@/core/components/Button/Button.svelte';
- import Input from '../Input/Input.svelte';
- import Select from '../Select/Select.svelte';
- import SelectOption from '../Select/SelectOption.svelte';
- import Switch from '../Switch/Switch.svelte';
+ import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
+ import { accounts } from '../core.js';
+ import Button from '../components/Button/Button.svelte';
+ import Input from '../components/Input/Input.svelte';
+ import Select from '../components/Select/Select.svelte';
+ import SelectOption from '../components/Select/SelectOption.svelte';
+ import Switch from '../components/Switch/Switch.svelte';
  import { derived, get, writable } from 'svelte/store';
- import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
+ import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
  export let close;
  export let params;
  export let isInWelcomeWizard = false;

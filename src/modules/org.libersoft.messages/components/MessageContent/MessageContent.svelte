@@ -1,5 +1,5 @@
 <script>
- import MessageContentRenderer from '@/org.libersoft.messages/components/MessageContent/MessageContentRenderer.svelte';
+ import MessageContentRenderer from './MessageContentRenderer.svelte';
  import { onMount } from 'svelte';
  export let messageContent;
 

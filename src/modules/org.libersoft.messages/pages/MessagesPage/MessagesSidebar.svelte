@@ -1,10 +1,10 @@
 <script>
  import { identifier, conversationsArray, selectConversation } from '../../messages.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
  import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
- import Modal from '../../../../core/components/Modal/Modal.svelte';
- import ModalNewConversation from '@/org.libersoft.messages/components/modals/NewConversation.svelte';
- import ModalMessageSettings from '@/org.libersoft.messages/components/modals/MessageSettings.svelte';
+ import ModalNewConversation from '../../modals/NewConversation.svelte';
+ import ModalMessageSettings from '../../modals/MessageSettings.svelte';
  import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
  let showNewConversationModal = false;
  let showMessageSettings = false;

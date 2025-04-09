@@ -2,8 +2,8 @@
  import { defineMeta } from '@storybook/addon-svelte-csf';
  import {} from '@storybook/svelte';
  import FileView from '../FileView.svelte';
- import { FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRole } from '@/org.libersoft.messages/services/fileUpload/types.ts';
- import FileViewStoriesUtils from '@/org.libersoft.messages/components/MessageContentFile/stories/fileView.storiesUtils.ts';
+ import { FileUploadRecordErrorType, FileUploadRecordStatus } from '../../../services/fileUpload/types.ts';
+ import FileViewStoriesUtils from './fileView.storiesUtils.ts';
 
  // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
  const { Story } = defineMeta({
@@ -17,7 +17,7 @@
 </script>
 
 <script>
- import { FileUploadRecordType } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { FileUploadRecordType } from '../../../services/fileUpload/types.ts';
 </script>
 
 <!-- More on writing stories with args: https://storybook.js.org/docs/writing-stories/args -->

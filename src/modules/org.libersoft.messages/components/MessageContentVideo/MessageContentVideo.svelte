@@ -1,14 +1,12 @@
 <script>
  import Video from './Video.svelte';
- import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
- import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
- import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/fileUpload/types.ts';
- import { writable, get } from 'svelte/store';
- import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
-
- let { node, showHiddenImages, hiddenImages, siblings } = $props();
+ import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
+ import fileUploadStore from '../../stores/FileUploadStore.ts';
+ import { FileUploadRecordStatus } from '../../services/fileUpload/types.ts';
+ import { writable } from 'svelte/store';
+ //import fileDownloadStore from '../stores/FileDownloadStore.ts';
+ let { node } = $props();
  let file = node.attributes.file?.value;
-
  const YELLOW_SRC_PROTOCOL = 'yellow:';
  // check str if begins with yellow
  let isYellow = $derived(file && file.startsWith(YELLOW_SRC_PROTOCOL)); // todo: check deep prop reactivity (in case of message edit)

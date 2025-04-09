@@ -1,14 +1,14 @@
 <script>
  import { identifier, initUpload, selectedConversation } from '../../messages.js';
- import Icon from '../../../../core/components/Icon/Icon.svelte';
- import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
- import MediaRecorderService from '@/org.libersoft.messages/services/media/MediaRecorderService.ts';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import audioRecorderStore from '../../stores/AudioRecorderStore.ts';
+ import MediaRecorderService from '../../services/media/MediaRecorderService.ts';
  import { onMount } from 'svelte';
  import RecordPlugin from 'wavesurfer.js/plugins/record';
- import resize from '../../../../core/actions/resizeObserver.ts';
+ import resize from '@/core/actions/resizeObserver.ts';
  import { get } from 'svelte/store';
- import { FileUploadRecordType } from '@/org.libersoft.messages/services/fileUpload/types.ts';
- import MediaUtils from '@/org.libersoft.messages/services/media/Media.utils.ts';
+ import { FileUploadRecordType } from '../../services/fileUpload/types.ts';
+ import MediaUtils from '../../services/media/Media.utils.ts';
 
  let wavesurferRef = null;
  let isOpen = audioRecorderStore.isOpen();

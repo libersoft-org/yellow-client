@@ -1,19 +1,19 @@
 <script>
  import Button from '@/core/components/Button/Button.svelte';
- import { humanSize } from '../../../../core/utils/fileUtils.js';
- import { truncateText } from '../../../../core/utils/textUtils.js';
- import { FileUploadRecordType } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import { humanSize } from '@/core/utils/fileUtils.js';
+ import { truncateText } from '@/core/utils/textUtils.js';
+ import { FileUploadRecordType } from '../services/fileUpload/types.ts';
  import { get } from 'svelte/store';
- import { identifier, selectedConversation, initUpload } from '../../messages.js';
+ import { identifier, selectedConversation, initUpload } from '../messages.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import Table from '../../../../core/components/Table/Table.svelte';
- import TableTHead from '../../../../core/components/Table/TableTHead.svelte';
- import TableTHeadTr from '../../../../core/components/Table/TableTHeadTr.svelte';
- import TableTHeadTh from '../../../../core/components/Table/TableTHeadTh.svelte';
- import TableTBody from '../../../../core/components/Table/TableTBody.svelte';
- import TableTBodyTr from '../../../../core/components/Table/TableTBodyTr.svelte';
- import TableTBodyTd from '../../../../core/components/Table/TableTBodyTd.svelte';
- import Icon from '../../../../core/components/Icon/Icon.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import TableTHead from '@/core/components/Table/TableTHead.svelte';
+ import TableTHeadTr from '@/core/components/Table/TableTHeadTr.svelte';
+ import TableTHeadTh from '@/core/components/Table/TableTHeadTh.svelte';
+ import TableTBody from '@/core/components/Table/TableTBody.svelte';
+ import TableTBodyTr from '@/core/components/Table/TableTBodyTr.svelte';
+ import TableTBodyTd from '@/core/components/Table/TableTBodyTd.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import { getContext } from 'svelte';
  const { params } = $props();
  let elFileInput; // refs

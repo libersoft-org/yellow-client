@@ -3,20 +3,20 @@
  import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
  import { onMount, setContext, tick, getContext } from 'svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import Icon from '../../../../core/components/Icon/Icon.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
  import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
- import Modal from '../../../../core/components/Modal/Modal.svelte';
- import ModalHtml from '@/org.libersoft.messages/components/modals/Html.svelte';
- import FileUpload from '@/org.libersoft.messages/components/modals/FileUpload.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
+ import ModalHtml from '../../modals/Html.svelte';
+ import ModalFileUpload from '../../modals/FileUpload.svelte';
  import Expressions from '../Expressions/Expressions.svelte';
  import { init_emojis } from '../../emojis.js';
  import { get } from 'svelte/store';
  import MessageBarRecorder from './MessageBarRecorder.svelte';
- import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
- import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
- import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
- import { FileUploadRecordType } from '@/org.libersoft.messages/services/fileUpload/types.ts';
+ import audioRecorderStore from '../../stores/AudioRecorderStore.ts';
+ import MessageBarReply from './MessageBarReply.svelte';
+ import messageBarReplyStore, { ReplyToType } from '../../stores/MessageBarReplyStore.ts';
+ import { FileUploadRecordType } from '../../services/fileUpload/types.ts';
 
  let expressionsMenu;
  let elBottomSheet;
@@ -320,7 +320,7 @@
 -->
 
 <Modal title="HTML composer" body={ModalHtml} bind:show={showHTMLModal} />
-<Modal title="File Upload" body={FileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
+<Modal title="File Upload" body={ModalFileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
 
 {#if $debug}
  <BaseButton

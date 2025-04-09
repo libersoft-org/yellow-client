@@ -1,5 +1,5 @@
 <script>
- import { debug, active_account, isMobile } from '../../../../core/core.js';
+ import { debug, active_account, isMobile } from '@/core/core.js';
  import { getContext, onMount } from 'svelte';
  import { get } from 'svelte/store';
  import { identifier } from '../../messages.js';
@@ -8,9 +8,9 @@
  import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
  import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
  import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
- import InputButton from '../../../../core/components/Input/InputButton.svelte';
+ import InputButton from '@/core/components/Input/InputButton.svelte';
  import FuzzySearch from 'fuzzy-search';
- import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import { longpress } from '../../ui.js';
  import IntersectionObserver from 'svelte-intersection-observer';
 

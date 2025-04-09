@@ -1,7 +1,7 @@
 <script lang="ts">
- import ReplyView from '@/org.libersoft.messages/components/MessageContentReply/ReplyView.svelte';
+ import ReplyView from './ReplyView.svelte';
  import { onMount } from 'svelte';
- import { getMessageByUid } from '@/org.libersoft.messages/messages';
+ import { getMessageByUid } from '../../messages.js';
 
  interface ReplyContainerProps {
   messageUid: string;

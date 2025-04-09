@@ -1,6 +1,6 @@
 import { get, writable, derived } from 'svelte/store';
-import filesService from '@/org.libersoft.messages/services/fileUpload/FilesService.ts';
-import { LocalFileStatus } from '@/org.libersoft.messages/services/localDB/FilesLocalDB.ts';
+//import filesService from '../services/fileUpload/FilesService.ts';
+//import { LocalFileStatus } from '../services/localDB/FilesLocalDB.ts';
 
 export interface GalleryFile {
  id: string | number;

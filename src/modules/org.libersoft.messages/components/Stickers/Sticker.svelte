@@ -1,5 +1,5 @@
 <script>
- import { debug } from '../../../../core/core.js';
+ import { debug } from '@/core/core.js';
  import lottie from 'lottie-web';
  import pako from 'pako';
  import { getContext, onMount, onDestroy } from 'svelte';

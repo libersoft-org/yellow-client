@@ -11,10 +11,10 @@
  import TableTBodyTr from '../../components/Table/TableTBodyTr.svelte';
  import TableTBodyTd from '../../components/Table/TableTBodyTd.svelte';
  import Modal from '../../components/Modal/Modal.svelte';
- import ModalAccountsAddEdit from '@/core/components/modals/AccountsAddEdit.svelte';
- import ModalAccountsDelete from '@/core/components/modals/AccountsDelete.svelte';
- import AccountsExport from '@/core/components/modals/AccountsExport.svelte';
- import AccountsImport from '@/core/components/modals/AccountsImport.svelte';
+ import ModalAccountsAddEdit from '@/core/modals/AccountsAddEdit.svelte';
+ import ModalAccountsDelete from '@/core/modals/AccountsDelete.svelte';
+ import AccountsExport from '@/core/modals/AccountsExport.svelte';
+ import AccountsImport from '@/core/modals/AccountsImport.svelte';
  import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
  let showAddEditAccountModal = false;
  let showDelAccountModal = false;

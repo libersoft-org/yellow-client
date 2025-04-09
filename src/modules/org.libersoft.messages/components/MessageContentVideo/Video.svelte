@@ -1,19 +1,19 @@
 <script>
- import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.js';
- import { active_account } from '../../../../core/core.js';
  import { onMount } from 'svelte';
- import MediaService from '@/org.libersoft.messages/services/media/MediaService.ts';
- import { humanSize } from '../../../../core/utils/fileUtils.js';
- import MediaUtils from '@/org.libersoft.messages/services/media/Media.utils.ts';
+ import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.js';
+ import { active_account } from '@/core/core.js';
+ import { humanSize } from '@/core/utils/fileUtils.js';
  import Button from '@/core/components/Button/Button.svelte';
- import { assembleFile } from '@/org.libersoft.messages/services/fileUpload/utils.ts';
+ import MediaService from '../../services/media/MediaService.ts';
+ import MediaUtils from '../../services/media/Media.utils.ts';
+ import { assembleFile } from '../../services/fileUpload/utils.ts';
  import { writable, get } from 'svelte/store';
- import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
- import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
+ import fileDownloadStore from '../../stores/FileDownloadStore.ts';
+ import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
 
  let { uploadId } = $props();
  let videoRef = null;
- let thumbnailRef = null;
+ //let thumbnailRef = null;
  let mediaHandler = $state(null);
  let upload = $state(null);
  let download = writable(null);

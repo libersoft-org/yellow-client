@@ -1,5 +1,5 @@
 import adapter from '@sveltejs/adapter-static';
-import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,8 +14,6 @@ const config = {
    fallback: process.env.TAURI ? 'src/404.html' : 'index.html',
   }),
   alias: {
-   "@/org.libersoft.messages/*": "src/modules/org.libersoft.messages/*",
-   "@/org.libersoft.dating/*": "src/modules/org.libersoft.dating/*",
    "@/*": "src/*",
   }
  },

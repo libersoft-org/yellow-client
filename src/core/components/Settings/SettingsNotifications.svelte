@@ -19,8 +19,8 @@
  // Local monitors store for this component
  let monitors = writable([]);
  let monitorInterval;
- let exampleNotification = 'dummy';
  let monitorOptions = writable([]);
+ let exampleNotification = 'dummy';
 
  monitors.subscribe(value => {
   monitorOptions.set(

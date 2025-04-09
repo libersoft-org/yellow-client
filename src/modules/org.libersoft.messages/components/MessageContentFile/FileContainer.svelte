@@ -1,11 +1,11 @@
 <script lang="ts">
  import { onMount } from 'svelte';
  import { cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '../../messages.js';
- import { type FileDownload, type FileUpload } from '@/org.libersoft.messages/services/fileUpload/types.ts';
- import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
- import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
- import { assembleFile } from '@/org.libersoft.messages/services/fileUpload/utils.ts';
- import FileView from '@/org.libersoft.messages/components/MessageContentFile/FileView.svelte';
+ import { type FileDownload, type FileUpload } from '../../services/fileUpload/types.ts';
+ import fileDownloadStore from '../../stores/FileDownloadStore.ts';
+ import fileUploadStore from '../../stores/FileUploadStore.ts';
+ import { assembleFile } from '../../services/fileUpload/utils.ts';
+ import FileView from './FileView.svelte';
 
  let { uploadId } = $props();
 
@@ -18,9 +18,7 @@
  fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
 
  onMount(() => {
-  if (!upload) {
-   loadUploadData(uploadId);
-  }
+  if (!upload) loadUploadData(uploadId);
  });
 
  function onDownload(e) {

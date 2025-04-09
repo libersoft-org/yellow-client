@@ -1,13 +1,13 @@
 <script>
  import Audio from './Audio.svelte';
- import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
- import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
- import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/fileUpload/types.ts';
- import { writable, get } from 'svelte/store';
- import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
- import { identifier } from '../../messages.js';
+ import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
+ import fileUploadStore from '../../stores/FileUploadStore.ts';
+ import { FileUploadRecordStatus } from '../../services/fileUpload/types.ts';
+ import { writable } from 'svelte/store';
+ //import fileDownloadStore from '../../stores/FileDownloadStore.ts';
+ //import { identifier } from '../../messages.js';
 
- let { node, showHiddenImages, hiddenImages, siblings } = $props();
+ let { node } = $props();
  let file = node.attributes.file?.value;
 
  const YELLOW_SRC_PROTOCOL = 'yellow:';
@@ -17,9 +17,6 @@
  let upload = writable(null);
  fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 </script>
-
-<style>
-</style>
 
 <div class="message-content-audio-wrapper">
  {#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
