@@ -77,7 +77,7 @@
 <div class="accounts">
  <div class="buttons">
   <Button img="img/back.svg" text="Back" onClick={back} hiddenOnDesktop={true} />
-  <Button img="img/accounts-black.svg" text="Add a new account" onClick={addAccountModal} />
+  <Button img="img/accounts.svg" text="Add a new account" colorVariable="--icon-black" onClick={addAccountModal} />
   <Button text="Export" onClick={clickExport} />
   <Button text="Import" onClick={clickImport} />
  </div>

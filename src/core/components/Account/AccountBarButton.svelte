@@ -1,5 +1,6 @@
 <script>
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import BaseButton from '../Button/BaseButton.svelte';
+ import Icon from '../Icon/Icon.svelte';
  export let img;
  export let title = '';
  export let onClick;
@@ -12,10 +13,10 @@
   padding: 10px;
  }
 
- .accounts-button img {
+ /*.accounts-button img {
   width: 20px;
   height: 20px;
- }
+ }*/
 
  .accounts-button:hover {
   background-color: #222;
@@ -25,7 +26,8 @@
 <BaseButton {onClick}>
  <div class="accounts-button">
   {#if img}
-   <div><img src={img} alt={title} /></div>
+   <Icon {img} alt={title} size="20" padding="0" colorVariable="--icon-white" />
+   <!--<div><img src={img} alt={title} /></div>-->
   {/if}
   <div>{title}</div>
  </div>

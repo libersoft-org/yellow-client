@@ -1,5 +1,6 @@
 <script lang="ts">
  import BaseButton from './BaseButton.svelte';
+ import Icon from '../Icon/Icon.svelte';
  import type { HTMLButtonAttributes } from 'svelte/elements';
 
  interface ButtonProps extends HTMLButtonAttributes {
@@ -14,9 +15,10 @@
   borderColor?: string;
   textColor?: string;
   expand?: boolean;
+  colorVariable?: string;
  }
 
- let { img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, ...restProps }: ButtonProps = $props();
+ let { img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, ...restProps }: ButtonProps = $props();
 
  function handleClick(e) {
   if (enabled && onClick) {
@@ -58,7 +60,7 @@
 <BaseButton onClick={handleClick} {...restProps} disabled={!enabled}>
  <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
   {#if img}
-   <img src={img} alt={text} />
+   <Icon {img} alt={text} size="20" padding="0" colorVariable={colorVariable && colorVariable} />
   {/if}
   {#if text}
    <div>{text}</div>
