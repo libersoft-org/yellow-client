@@ -272,12 +272,6 @@
   }
  }
 
-<<<<<<< HEAD
- async function clearNotifications() {
-  log.debug('clearNotifications');
-  for (let n of get(notifications)) {
-   await n.onClose();
-=======
   /*
    * Set the actual monitor name, based on selected monitor and available monitors. Set null if no monitor is available.
    */
@@ -476,7 +470,6 @@
     for (let n of get(notifications)) {
       await n.onClose();
     }
->>>>>>> 5bf29f362a275d6f2f1b956421e7819a5c49f6e4
   }
  }
 </script>
