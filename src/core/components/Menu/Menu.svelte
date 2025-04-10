@@ -6,7 +6,7 @@
   import Dialog from "../Dialog/Dialog.svelte";
   import DialogExit from "../../dialogs/Exit.svelte";
   import { product, version, build, commit, link } from "../../core.js";
-  import { IS_TAURI } from "@/core/tauri.ts";
+  import { TAURI } from "@/core/tauri.ts";
   export let showMenu = false;
   export let showModalSettings = false;
   export let elDialogExit;
@@ -27,7 +27,7 @@
       onClick: clickSettings,
     },
   ].concat(
-    IS_TAURI
+    TAURI
       ? []
       : [
           {

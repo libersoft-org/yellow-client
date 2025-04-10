@@ -3,7 +3,7 @@
   import SettingsAppearance from "../components/Settings/SettingsAppearance.svelte";
   import SettingsNotifications from "../components/Settings/SettingsNotifications.svelte";
   import SettingsGeneral from "../components/Settings/SettingsGeneral.svelte";
-  import { IS_TAURI } from "@/core/tauri.ts";
+  import { TAURI } from "@/core/tauri.ts";
   let activeTab = "general";
   let menuItemProps = {
     bgColor: "#fff",
@@ -16,7 +16,7 @@
     borderRadius: "10px",
   };
   let menuItems = (
-    IS_TAURI
+    TAURI
       ? [
           {
             title: "General",
