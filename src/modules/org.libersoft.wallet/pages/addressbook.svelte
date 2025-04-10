@@ -133,8 +133,8 @@
       <td>{a.address}</td>
       <td class="center">
        <div class="icons">
-        <Icon img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => editItemModal(a)} />
-        <Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => deleteItemModal(a)} />
+        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20" padding="5" onClick={() => editItemModal(a)} />
+        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20" padding="5" onClick={() => deleteItemModal(a)} />
        </div>
       </td>
      </tr>

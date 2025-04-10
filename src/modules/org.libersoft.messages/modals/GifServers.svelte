@@ -72,7 +72,7 @@
    <TableTBodyTr>
     <TableTBodyTd><a href={s} target="_blank">{s}</a></TableTBodyTd>
     <TableTBodyTd center={true}>
-     <Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(s)} />
+     <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20" padding="5" onClick={() => clickDel(s)} />
     </TableTBodyTd>
    </TableTBodyTr>
   {/each}

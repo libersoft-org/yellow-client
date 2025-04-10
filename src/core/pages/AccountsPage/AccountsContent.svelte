@@ -106,8 +106,8 @@
       <TableTBodyTd center={true}>{a.enabled ? 'Yes' : 'No'}</TableTBodyTd>
       <TableTBodyTd center={true}>
        <TableActionItems>
-        <Icon img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => clickEdit(a.id)} />
-        <Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
+        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20" padding="5" onClick={() => clickEdit(a.id)} />
+        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
        </TableActionItems>
       </TableTBodyTd>
       {#if $debug}

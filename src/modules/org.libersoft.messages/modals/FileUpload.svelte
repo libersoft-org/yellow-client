@@ -163,8 +163,8 @@
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
  <div class="header">
-  <Button width="110px" img="img/add-black.svg" text="Add files" onClick={onFileAdd} />
-  <Button width="110px" img="img/del-black.svg" text="Remove all" enabled={$fileUploadModalFiles.length} onClick={onDeleteAll} />
+  <Button width="110px" img="img/add.svg" colorVariable="--icon-black" text="Add files" onClick={onFileAdd} />
+  <Button width="110px" img="img/del.svg" colorVariable="--icon-black" text="Remove all" enabled={$fileUploadModalFiles.length} onClick={onDeleteAll} />
  </div>
  <div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
   {#if $fileUploadModalFiles.length}
