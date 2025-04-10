@@ -57,5 +57,5 @@
 
 <div class="item {selected && 'selected'}">
  <img class="indicator {$online === false && 'enabled'}" src="img/cross-red.svg" alt="X" onClick={() => clickSetModule(decl.id)} />
- <Icon img="img/modules/{decl.id}.svg" alt={decl.name} size="30" onClick={() => clickSetModule(decl.id)} />
+ <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="30" onClick={() => clickSetModule(decl.id)} />
 </div>
