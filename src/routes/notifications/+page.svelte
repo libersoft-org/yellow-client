@@ -126,27 +126,26 @@
   }
 
   function pos(corner, mon, width, height) {
-    if (mon && mon.size) {
+    log.debug("pos:", corner, mon, width, height);
+    if (mon) {
       let x;
       let y;
       if (corner === "top-right") {
-        x = mon.size.width - width;
+        x = mon.right - width;
         y = 0;
       } else if (corner === "top-left") {
         x = 0;
         y = 0;
       } else if (corner === "bottom-right") {
-        x = mon.size.width - width;
-        y = mon.size.height - 1 - height;
+        x = mon.right - width;
+        y = mon.bottom - 1 - height;
       } else if (corner === "bottom-left") {
         x = 0;
-        y = mon.size.height - 1 - height;
+        y = mon.bottom - 1 - height;
       }
-      return {
-        x: x + mon.position.x,
-        y: y + mon.position.y,
-      };
+      return { x, y };
     } else {
+      log.debug("no monitor found");
       return {
         x: 0,
         y: 0,
@@ -163,7 +162,6 @@
     });
     log.debug("get_work_area:", m);
     let corner = get(selectedNotificationsCorner);
-
     let p = pos(corner, m, width, h);
     log.debug(
       "updatePosition" +
@@ -175,7 +173,6 @@
           position: p,
         }),
     );
-
     position.set(p);
   }
 
