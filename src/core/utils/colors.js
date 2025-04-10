@@ -1,29 +1,20 @@
+import { hexToCSSFilter } from "hex-to-css-filter";
+
 export function getColorFromCSSToFilter(name) {
- return hexToCSSFilter(getColorFromCSS(name));
+  let v = getColorFromCSS(name);
+  v = convertFromShortHex(v);
+  return hexToCSSFilter(v).filter;
 }
 
-export function hexToCSSFilter(hex) {
- hex = hex.trim().replace(/^#/, '');
- if (hex.length === 3)
-  hex = hex
-   .split('')
-   .map(c => c + c)
-   .join('');
- if (hex.length !== 6) return '';
- let bigint = parseInt(hex, 16);
- if (isNaN(bigint)) return '';
- let r = (bigint >> 16) & 255;
- let g = (bigint >> 8) & 255;
- let b = bigint & 255;
- let invert = Math.round(((r + g + b) / (3 * 255)) * 100);
- let sepia = 0;
- let saturate = 100;
- let hueRotate = 0;
- let brightness = 100;
- let contrast = 100;
- return `invert(${invert}%) sepia(${sepia}%) saturate(${saturate}%) hue-rotate(${hueRotate}deg) brightness(${brightness}%) contrast(${contrast}%)`;
+function convertFromShortHex(v) {
+  //console.log('convertFromShortHex', v);
+  if (v.length === 4) {
+    v = `#${v[1]}${v[1]}${v[2]}${v[2]}${v[3]}${v[3]}`;
+  }
+  //console.log('convertFromShortHex=', v);
+  return v;
 }
 
 export function getColorFromCSS(name) {
- return getComputedStyle(document.documentElement).getPropertyValue(name);
+  return getComputedStyle(document.documentElement).getPropertyValue(name);
 }

@@ -21,6 +21,7 @@
         "ethers": "^6.13.5",
         "events": "^3.3.0",
         "fuzzy-search": "^3.2.1",
+        "hex-to-css-filter": "^6.0.0",
         "leaflet": "^1.9.4",
         "lodash": "^4.17.21",
         "lottie-web": "^5.12.2",
@@ -952,6 +953,8 @@
     "hasown": ["hasown@2.0.2", "", { "dependencies": { "function-bind": "^1.1.2" } }, "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ=="],
 
     "headers-polyfill": ["headers-polyfill@4.0.3", "", {}, "sha512-IScLbePpkvO846sIwOtOTDjutRMWdXdJmXdMvk6gCBHxFO8d+QKOQedyZSxFTTFYRSmlgSTDtXqqq4pcenBXLQ=="],
+
+    "hex-to-css-filter": ["hex-to-css-filter@6.0.0", "", { "dependencies": { "tslib": "^2.3.0" } }, "sha512-nQMSn+lEF2C1ddyMVBIyIPWRnaH0ZwFi2dcTtAop6cUyY0AbkA6uI/evpkvEHMD9G9DlHf8xraMJIIJ74S+MKA=="],
 
     "highlight.js": ["highlight.js@11.11.1", "", {}, "sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w=="],
 
