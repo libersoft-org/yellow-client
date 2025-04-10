@@ -1,10 +1,12 @@
 <script>
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import BaseButton from '../Button/BaseButton.svelte';
+ import Icon from '../Icon/Icon.svelte';
+
  import { product, debug } from '../../core.js';
  import { addNotification } from '../../notifications.ts';
  import { log } from '../../tauri.ts';
-
  export let isMenuOpen;
+ let menuIconColor = '';
 
  function handleClick() {
   isMenuOpen = true;
@@ -21,16 +23,6 @@
   color: #222;
  }
 
- .menu {
-  display: flex;
-  padding: 10px;
- }
-
- .menu img {
-  width: 30px;
-  height: 30px;
- }
-
  .product {
   font-size: 22px;
   font-weight: bold;
@@ -38,11 +30,7 @@
 </style>
 
 <div class="bar">
- <BaseButton onClick={handleClick}>
-  <div class="menu">
-   <img src="img/menu.svg" alt="☰" />
-  </div>
- </BaseButton>
+ <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-yellow" size="30" padding="10" onClick={handleClick} />
  <div class="product">{product}</div>
  {#if $debug}(debug mode)
   <BaseButton
