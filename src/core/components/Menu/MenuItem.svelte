@@ -1,5 +1,6 @@
 <script>
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import BaseButton from '../Button/BaseButton.svelte';
+ import { getColorFromCSSToFilter } from '../../utils/colors.js';
  export let img;
  export let title;
  export let onClick;
@@ -14,6 +15,7 @@
  export let borderRight = 'none';
  export let imgSize = '24px';
  export let borderRadius = '0';
+ export let colorVariable;
 </script>
 
 <style>
@@ -31,7 +33,7 @@
 <BaseButton {onClick}>
  <div class="item" style="padding: {padding}; gap: {gap}; color: {textColor}; --bgColor: {bgColor}; border-top: {borderTop}; border-bottom: {borderBottom}; border-left: {borderLeft}; border-right: {borderRight}; --hoverColor: {hoverColor}; border-radius: {borderRadius}">
   {#if img}
-   <img style="width: {imgSize}; height: {imgSize}" src={img} alt={title} />
+   <img style="width: {imgSize}; height: {imgSize}; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} alt={title} />
   {/if}
   {#if title}
    <div>{title}</div>

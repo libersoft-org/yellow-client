@@ -1,6 +1,7 @@
 <script>
  import { identifier, conversationsArray, selectConversation } from '../../messages.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
  import ModalNewConversation from '../../modals/NewConversation.svelte';
@@ -97,7 +98,7 @@
    <div class="space"></div>
    <BaseButton onClick={clickMessagesSettings}>
     <div class="bar-button">
-     <img src="img/settings.svg" alt="Message settings" />
+     <Icon img="img/settings.svg" alt="Message settings" colorVariable="--icon-white" size="28" padding="0" />
     </div>
    </BaseButton>
   </div>

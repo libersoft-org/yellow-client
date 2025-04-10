@@ -32,7 +32,7 @@
    : [
       {
        title: 'Exit application',
-       img: 'img/exit-white.svg',
+       img: 'img/exit.svg',
        onClick: exitApp,
       },
      ]
@@ -176,7 +176,7 @@
   </div>
   <div class="items">
    {#each menuItems as item}
-    <MenuItem img={item.img} title={item.title} onClick={item.onClick} />
+    <MenuItem img={item.img} title={item.title} colorVariable="--icon-white" onClick={item.onClick} />
    {/each}
   </div>
  </div>

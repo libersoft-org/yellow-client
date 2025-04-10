@@ -1,8 +1,10 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let icon;
  export let label;
  export let active;
+ export let colorVariable;
  export let onClick;
 
  function onMousedown(e) {
@@ -28,11 +30,6 @@
   background-color: #db0;
  }
 
- .item img {
-  height: 24px;
-  width: 24px;
- }
-
  .item .label {
   font-size: 14px;
  }
@@ -41,7 +38,7 @@
 <BaseButton {onClick} {onMousedown}>
  <div class="item {active ? 'active' : ''}">
   {#if icon}
-   <img src={icon} alt={label} />
+   <Icon img={icon} alt={label} {colorVariable} size="24" padding="0" />
   {/if}
   {#if label}
    <div class="label">{label}</div>

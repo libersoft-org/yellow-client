@@ -20,7 +20,7 @@
    ? [
       {
        title: 'General',
-       img: 'img/settings-black.svg',
+       img: 'img/settings.svg',
        onClick: () => setItem('general'),
       },
      ]
@@ -28,12 +28,12 @@
  ).concat([
   {
    title: 'Appearance',
-   img: 'img/appearance-black.svg',
+   img: 'img/appearance.svg',
    onClick: () => setItem('appearance'),
   },
   {
    title: 'Notifications',
-   img: 'img/notification-black.svg',
+   img: 'img/notification.svg',
    onClick: () => setItem('notifications'),
   },
  ]);
@@ -64,7 +64,7 @@
 
 <div class="settings-container">
  {#each menuItems as item}
-  <MenuItem img={item.img} title={item.title} bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={item.onClick} />
+  <MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={item.onClick} />
  {/each}
  <div class="tab-content">
   {#if activeTab === 'general'}
