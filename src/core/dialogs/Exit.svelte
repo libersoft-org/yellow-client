@@ -6,7 +6,7 @@
  let dialogData = {
   title: 'Exit application',
   body: 'Would you really like to exit the application?',
-  icon: 'img/photo.svg',
+  icon: 'img/exit-black.svg',
   buttons: [
    { text: 'Yes', onClick: clickButton, expand: true },
    { text: 'No', onClick: () => closeDialog(), expand: true },
