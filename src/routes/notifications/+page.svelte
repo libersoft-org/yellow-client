@@ -112,17 +112,18 @@
    let y;
    if (corner === 'top-right') {
     x = mon.right - width;
-    y = 0;
+    y = mon.top;
    } else if (corner === 'top-left') {
-    x = 0;
-    y = 0;
+    x = mon.left;
+    y = mon.top;
    } else if (corner === 'bottom-right') {
     x = mon.right - width;
     y = mon.bottom - 1 - height;
    } else if (corner === 'bottom-left') {
-    x = 0;
+    x = mon.left;
     y = mon.bottom - 1 - height;
    }
+   log.debug('aaa');
    return { x, y };
   } else {
    log.debug('no monitor found');
