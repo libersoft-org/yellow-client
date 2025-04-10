@@ -1,5 +1,6 @@
 <script>
  import { debug, active_account, module_decls, selected_module_id } from '../../core.js';
+ import { getColorFromCSSToFilter } from '../../utils/colors.js';
  import { get } from 'svelte/store';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import ModuleBarItem from './ModuleBarItem.svelte';
@@ -109,7 +110,7 @@
  </div>
  <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
   <div class="dropdown">
-   <img src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
+   <img style="filter: {getColorFromCSSToFilter('--icon-white')}" src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
   </div>
  </BaseButton>
 </div>

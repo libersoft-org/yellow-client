@@ -34,9 +34,16 @@
 </style>
 
 {#if img}
- <BaseButton {onClick}>
+ {#if onClick}
+  <BaseButton {onClick}>
+   <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;">
+    <img style="width: {size}px; height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable)};" src={img} {alt} />
+   </div>
+  </BaseButton>
+ {:else}
+  <!-- TODO - convert this to Svelte 5 snippet -->
   <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;">
    <img style="width: {size}px; height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable)};" src={img} {alt} />
   </div>
- </BaseButton>
+ {/if}
 {/if}

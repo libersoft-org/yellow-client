@@ -1,5 +1,6 @@
 <script>
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import BaseButton from '../Button/BaseButton.svelte';
+ import Icon from '../Icon/Icon.svelte';
  export let items = [];
  export let activeIndex = null;
 
@@ -56,7 +57,7 @@
    <BaseButton onClick={() => handleClick(index)}>
     <div class="header">
      <div class="title">{i.name}</div>
-     <img src="img/down-black.svg" alt="▼" />
+     <Icon img="img/down.svg" alt="▼" colorVariable="--icon-black" size="12" />
     </div>
    </BaseButton>
    <div class="content {activeIndex === index ? 'active' : ''}">
