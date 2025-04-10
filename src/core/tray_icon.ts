@@ -5,7 +5,7 @@ import {
 } from "@tauri-apps/plugin-positioner";
 import { TrayIcon } from "@tauri-apps/api/tray";
 import { TAURI, TAURI_MOBILE, log } from "./tauri.ts";
-import { resolveResource } from "@tauri-apps/api/path";
+//import { resolveResource } from "@tauri-apps/api/path";
 import { defaultWindowIcon } from "@tauri-apps/api/app";
 
 export async function createTrayIcon() {
