@@ -1,5 +1,5 @@
 <script>
- import Video from './Video.svelte';
+ import VideoContainer from './VideoContainer.svelte';
  import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
  import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
  import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
@@ -24,6 +24,6 @@
  {#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
   <MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
  {:else}
-  <Video uploadId={yellowId} />
+  <VideoContainer uploadId={yellowId} />
  {/if}
 </div>

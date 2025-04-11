@@ -1,18 +1,26 @@
-<script>
- export let show = true;
- export let color = '#000000';
+<script lang="ts">
+ interface Props {
+  show?: boolean;
+  color?: string;
+  size?: string;
+  containerMinHeight?: string;
+ }
+
+ let {
+  show = true,
+  color = '#000000',
+  size = '40px',
+  containerMinHeight = '72px'
+ }: Props = $props();
 </script>
 
 <style>
  .container {
-  min-height: 72px;
  }
 
  .spinner {
   padding: 10px;
   margin: 0 auto;
-  width: 40px;
-  height: 40px;
   border-radius: 50%;
   background:
    radial-gradient(farthest-side, var(--spinner-color) 94%, transparent) top/8px 8px no-repeat,
@@ -28,8 +36,8 @@
  }
 </style>
 
-<div class="container" style="--spinner-color: {color}">
+<div class="container" style="--spinner-color: {color}" style:min-height={containerMinHeight}>
  {#if show}
-  <div class="spinner"></div>
+  <div class="spinner" style:width={size} style:height={size}></div>
  {/if}
 </div>

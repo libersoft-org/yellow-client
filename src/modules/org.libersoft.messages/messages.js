@@ -315,7 +315,7 @@ function upload_update(event) {
 export function downloadAttachmentsSerial(records, finishCallback) {
  const acc = get(active_account);
  // const records = recordIds.map(id => fileDownloadStore.get(id).record);
- fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback);
+ return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback);
 }
 
 export const makeDownloadChunkAsyncFn =

@@ -1,6 +1,14 @@
 import { InvalidFileReaderResult } from './errors.ts';
+import _debug from 'debug';
+
+const debug = _debug('libersoft:messages:services:MediaUtils');
 
 class MediaUtils {
+ static PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT = '/yellow/media';
+ static makeProgressiveDownloadUrl = (localAccountId: string, uploadId: string) => {
+  return `${MediaUtils.PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT}/${localAccountId}/${uploadId}`;
+ }
+
  static extractThumbnail(fileChunk) {
   return new Promise((resolve, reject) => {
    const url = URL.createObjectURL(fileChunk);
@@ -11,6 +19,7 @@ class MediaUtils {
    video.playsInline = true;
 
    video.addEventListener('loadeddata', () => {
+    console.log('!!! loaded data');
     video.currentTime = Math.min(1, video.duration / 2); // Seek to 1s or middle of video
    });
 
@@ -28,6 +37,7 @@ class MediaUtils {
    });
 
    video.addEventListener('error', err => {
+    console.log('!!! errr', err);
     URL.revokeObjectURL(url);
     reject(err);
    });
@@ -88,6 +98,30 @@ class MediaUtils {
    }
   }
   return peaks;
+ }
+
+ static async checkProgressiveDownloadAvailability(url: string) {
+  try {
+   debug('Trying to check progressive download availability for', url);
+
+   const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+     'Range': 'bytes=0-1'
+    }
+   });
+
+   if (response.status === 206) {
+    debug('Progressive download available');
+    return true;
+   } else {
+    debug('Progressive download not available', response.status);
+    return false;
+   }
+  } catch (error) {
+   debug('Progressive not available', error);
+   return false
+  }
  }
 }
 

@@ -5,7 +5,6 @@ import MP4Loader from './loaders/MP4Loader.ts';
 import BasicStreamLoader from './loaders/BasicStreamLoader.ts';
 import _debounce from 'lodash/debounce';
 import WaveSurfer from 'wavesurfer.js';
-import BasicLoader from './loaders/BasicLoader.ts';
 
 class MediaService {
  videoElement: HTMLVideoElement;
