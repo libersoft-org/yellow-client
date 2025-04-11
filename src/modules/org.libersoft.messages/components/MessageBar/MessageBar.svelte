@@ -216,7 +216,9 @@
   expressionsBottomSheetOpen = false;
  }
 
- const onVideoRecordClick = async () => {};
+ const onVideoRecordClick = async () => {
+  videoInputRef.click()
+ };
 
  onMount(() => {
   videoInputRef.addEventListener('change', function (event) {
@@ -275,7 +277,7 @@
 </style>
 
 <div class="message-bar" bind:this={elMessageBar}>
- <input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" />
+ <input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" style:display="none" />
 
  <div class="message-bar-top">
   {#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
@@ -300,13 +302,14 @@
   {/if}
 
   <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
-  <Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />
+  <!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />-->
   <Icon img="modules/{identifier}/img/audio_message.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
  </div>
 </div>
 
 <ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+ <ContextMenuItem img="modules/{identifier}/img/video_message-black.svg" label="Video message" onClick={onVideoRecordClick} />
  <ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} data-testid="file-attachment-button" />
  <ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
  <ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
