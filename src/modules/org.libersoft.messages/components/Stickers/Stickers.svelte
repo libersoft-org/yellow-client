@@ -2,9 +2,9 @@
  import { identifier } from '../../messages.js';
  import { onMount, tick } from 'svelte';
  import { updateStickerLibrary, stickerLibraryUpdaterState } from '../../stickers.js';
- import { debug } from '../../../../core/core.js';
- import Tabs from '../../../../core/components/Tabs/Tabs.svelte';
- import TabsItem from '../../../../core/components/Tabs/TabsItem.svelte';
+ import { debug } from '@/core/core.js';
+ import Tabs from '@/core/components/Tabs/Tabs.svelte';
+ import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
  import StickersFavorites from './StickersFavorites.svelte';
  import StickersServer from './StickersServer.svelte';
  import ProgressBar from '../ProgressBar/ProgressBar.svelte';

@@ -1,10 +1,10 @@
 <script lang="ts">
  import Input from '@/core/components/Input/Input.svelte';
- import { conversationsArray, sendMessage } from '@/org.libersoft.messages/messages';
+ import { conversationsArray, sendMessage } from '../messages';
  import { get } from 'svelte/store';
  import Button from '@/core/components/Button/Button.svelte';
- import type { Conversation } from '@/org.libersoft.messages/types.ts';
- import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
+ import type { Conversation } from '../types.ts';
+ import forwardMessageStore from '../stores/ForwardMessageStore.ts';
 
  const fwMsg = forwardMessageStore.getForwardedMessage();
  let search = $state('');

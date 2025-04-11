@@ -1,7 +1,7 @@
 <script>
  import { identifier } from '../../messages.js';
  import Emojis from '../Emoji/Emojis.svelte';
- import Stickers from '@/org.libersoft.messages/components/Stickers/Stickers.svelte';
+ import Stickers from '../Stickers/Stickers.svelte';
  import GifSet from '../GifSet/GifSet.svelte';
  import ExpressionsItem from './ExpressionsItem.svelte';
  import ExpressionsSettings from './ExpressionsSettings.svelte';
@@ -53,10 +53,10 @@
 
 <div class="expressions" style="height: {height}">
  <div class="categories" role="none">
-  <ExpressionsItem label="Emojis" icon={'modules/' + identifier + '/img/emoji-black.svg'} active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
-  <ExpressionsItem label="Stickers" icon={'modules/' + identifier + '/img/sticker-black.svg'} active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
-  <ExpressionsItem label="GIFs" icon={'modules/' + identifier + '/img/gif-black.svg'} active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
-  <ExpressionsItem label="Settings" icon={'modules/' + identifier + '/img/settings-black.svg'} active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} />
+  <ExpressionsItem label="Emojis" icon={'modules/' + identifier + '/img/emoji.svg'} colorVariable="--icon-black" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
+  <ExpressionsItem label="Stickers" icon={'modules/' + identifier + '/img/sticker.svg'} colorVariable="--icon-black" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
+  <ExpressionsItem label="GIFs" icon={'modules/' + identifier + '/img/gif.svg'} colorVariable="--icon-black" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
+  <ExpressionsItem label="Settings" icon={'img/settings.svg'} colorVariable="--icon-black" active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} />
  </div>
  <svelte:component this={expressions[expression]} bind:this={elExpression} />
 </div>

@@ -7,7 +7,7 @@
  import { downloadAttachmentsSerial } from '../../messages.js';
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 
- let { children, node } = $props();
+ let { children } = $props();
  let ref = writable();
  let attachedUploads = $state([]);
  let attachmentIds = $state([]);
@@ -45,7 +45,12 @@
   downloadAttachmentsSerial(
    downloadableRecords.map(upload => upload.record),
    download => {
-    assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
+    assembleFile(
+     new Blob(download.chunksReceived, {
+      type: download.record.fileMimeType,
+     }),
+     download.record.fileOriginalName
+    );
    }
   );
  }
@@ -86,7 +91,7 @@
  <div class="attachments">
   {#each children as child (child.tagUniqueId)}
    {#if child.component}
-    <svelte:component this={child.component} {...child.props} />
+    <child.component {...child.props} />
    {/if}
   {/each}
  </div>

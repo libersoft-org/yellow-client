@@ -1,14 +1,14 @@
 <script>
- import Select from '../../../../core/components/Select/Select.svelte';
- import SelectOption from '../../../../core/components/Select/SelectOption.svelte';
- import Switch from '../../../../core/components/Switch/Switch.svelte';
- import Modal from '../../../../core/components/Modal/Modal.svelte';
+ import Select from '@/core/components/Select/Select.svelte';
+ import SelectOption from '@/core/components/Select/SelectOption.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Switch from '@/core/components/Switch/Switch.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
  import { sticker_server_index, sticker_servers } from '../../stickers.js';
  import { gif_server_index, gif_servers } from '../../gifs.js';
  import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
- import Button from '@/core/components/Button/Button.svelte';
- import StickerServers from '@/org.libersoft.messages/components/modals/StickerServers.svelte';
- import GifServers from '@/org.libersoft.messages/components/modals/GifServers.svelte';
+ import StickerServers from '../../modals/StickerServers.svelte';
+ import GifServers from '../../modals/GifServers.svelte';
  import { stickers_db } from '../../db.ts';
  let isModalStickerServersOpen = false;
  let isModalGifServersOpen = false;

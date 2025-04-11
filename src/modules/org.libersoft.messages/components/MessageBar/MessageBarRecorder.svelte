@@ -1,11 +1,11 @@
 <script>
  import { identifier, initUpload, selectedConversation } from '../../messages.js';
- import Icon from '../../../../core/components/Icon/Icon.svelte';
  import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
  import MediaRecorderService from '@/org.libersoft.messages/services/Media/MediaRecorderService.ts';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import { onMount } from 'svelte';
  import RecordPlugin from 'wavesurfer.js/plugins/record';
- import resize from '../../../../core/actions/resizeObserver.ts';
+ import resize from '@/core/actions/resizeObserver.ts';
  import { get } from 'svelte/store';
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
  import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';

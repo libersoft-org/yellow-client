@@ -162,7 +162,7 @@
   {#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
    <MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
   {:else}
-   <div class="message-content-image" onclick={openInGallery}>
+   <div class="message-content-image" onclick={openInGallery} role="button" tabindex="0" onkeydown={e => e.key === 'Enter' && openInGallery()}>
     {#if loading}
      <div class="spinner-wrap">
       <Spinner show={true} style="min-height: initial;" />

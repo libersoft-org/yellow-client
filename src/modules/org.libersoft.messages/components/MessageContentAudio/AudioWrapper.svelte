@@ -23,7 +23,7 @@
  <div class="audio-list">
   {#each children as child (child.tagUniqueId)}
    {#if child.component}
-    <svelte:component this={child.component} {...child.props} />
+    <child.component {...child.props} />
    {/if}
   {/each}
  </div>

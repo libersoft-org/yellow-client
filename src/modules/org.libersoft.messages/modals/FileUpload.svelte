@@ -1,19 +1,19 @@
 <script>
  import Button from '@/core/components/Button/Button.svelte';
- import { humanSize } from '../../../../core/utils/fileUtils.js';
- import { truncateText } from '../../../../core/utils/textUtils.js';
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
+ import { humanSize } from '@/core/utils/fileUtils.js';
+ import { truncateText } from '@/core/utils/textUtils.js';
  import { get } from 'svelte/store';
- import { identifier, selectedConversation, initUpload } from '../../messages.js';
+ import { identifier, selectedConversation, initUpload } from '../messages.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import Table from '../../../../core/components/Table/Table.svelte';
- import TableTHead from '../../../../core/components/Table/TableTHead.svelte';
- import TableTHeadTr from '../../../../core/components/Table/TableTHeadTr.svelte';
- import TableTHeadTh from '../../../../core/components/Table/TableTHeadTh.svelte';
- import TableTBody from '../../../../core/components/Table/TableTBody.svelte';
- import TableTBodyTr from '../../../../core/components/Table/TableTBodyTr.svelte';
- import TableTBodyTd from '../../../../core/components/Table/TableTBodyTd.svelte';
- import Icon from '../../../../core/components/Icon/Icon.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import TableTHead from '@/core/components/Table/TableTHead.svelte';
+ import TableTHeadTr from '@/core/components/Table/TableTHeadTr.svelte';
+ import TableTHeadTh from '@/core/components/Table/TableTHeadTh.svelte';
+ import TableTBody from '@/core/components/Table/TableTBody.svelte';
+ import TableTBodyTr from '@/core/components/Table/TableTBodyTr.svelte';
+ import TableTBodyTd from '@/core/components/Table/TableTBodyTd.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import { getContext } from 'svelte';
  const { params } = $props();
  let elFileInput; // refs
@@ -163,8 +163,8 @@
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
  <div class="header">
-  <Button width="110px" img="img/add-black.svg" text="Add files" onClick={onFileAdd} />
-  <Button width="110px" img="img/del-black.svg" text="Remove all" enabled={$fileUploadModalFiles.length} onClick={onDeleteAll} />
+  <Button width="110px" img="img/add.svg" colorVariable="--icon-black" text="Add files" onClick={onFileAdd} />
+  <Button width="110px" img="img/del.svg" colorVariable="--icon-black" text="Remove all" enabled={$fileUploadModalFiles.length} onClick={onDeleteAll} />
  </div>
  <div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
   {#if $fileUploadModalFiles.length}

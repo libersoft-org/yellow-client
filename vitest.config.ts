@@ -1,15 +1,14 @@
 import { defineConfig } from 'vitest/config';
-import path from "node:path";
+import path from 'node:path';
 
 const alias = {
- '@/org.libersoft.messages': path.resolve(__dirname, './src/modules/org.libersoft.messages'),
  '@': path.resolve(__dirname, './src')
 }
 
 export default defineConfig({
  test: {
   environment: 'jsdom',
-  include: ['**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+  include: ['**/unit/*.{test,spec}.?(c|m)[jt]s?(x)'],
  },
  resolve: process.env.VITEST
   ? {

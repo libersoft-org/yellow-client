@@ -1,6 +1,6 @@
 <script>
- import Button from '@/core/components/Button/Button.svelte';
- import { accounts_config } from '../../core.js';
+ import Button from '../components/Button/Button.svelte';
+ import { accounts_config } from '../core.js';
  let text = '';
 
  function accountsConfigImport() {

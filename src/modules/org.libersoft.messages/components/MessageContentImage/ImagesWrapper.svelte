@@ -71,7 +71,7 @@
   <div class="images" style:margin-bottom={rowIndex === imagesRows.length - 1 ? 0 : 'var(--images-gap)'}>
    {#each row as child, childIndex (child.tagUniqueId)}
     {@const isLastOfAll = rowIndex === rowLimit - 1 && childIndex === row.length - 1}
-    <svelte:component this={child.component} {...child.props} showHiddenImages={isLastOfAll && hiddenImages.length > 0} {hiddenImages} {siblings} />
+    <child.component {...child.props} showHiddenImages={isLastOfAll && hiddenImages.length > 0} {hiddenImages} {siblings} />
    {/each}
   </div>
  {/each}

@@ -1,9 +1,13 @@
 import { get } from 'svelte/store';
 import { multiwindow_store } from './multiwindow_store.ts';
-import { IS_TAURI, IS_TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
+import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, selectedMonitorName } from './notifications_settings.ts';
-import { availableMonitors, currentMonitor, getCurrentWindow } from '@tauri-apps/api/window';
+import {
+ availableMonitors,
+ currentMonitor,
+ //getCurrentWindow,
+} from '@tauri-apps/api/window';
 import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
 
 /* yellow notifications, for use in core and modules */
@@ -96,9 +100,9 @@ export async function initCustomNotifications() {
 function startMainWindowMonitorTimer() {
  log.debug('startMainWindowMonitorTimer');
  setInterval(async () => {
-  let m = (await currentMonitor()) || null;
+  let m = await currentMonitor();
   //log.debug('currentMonitor:', m);
-  mainWindowMonitor.set(m?.name);
+  mainWindowMonitor.set(m?.name || null);
  }, 1000);
 }
 
@@ -123,7 +127,7 @@ async function removeNotification(id: string): Promise<void> {
 export async function addNotification(notification: Partial<YellowNotification>): Promise<string | undefined> {
  let enabled = get(notificationsEnabled);
 
- log.debug('addNotification: enabled:', enabled, 'IS_TAURI:', IS_TAURI, 'IS_TAURI_MOBILE:', IS_TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
+ log.debug('addNotification: enabled:', enabled, 'TAURI:', TAURI, 'TAURI_MOBILE:', TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
 
  if (!enabled) return;
 
@@ -158,7 +162,12 @@ async function sendTauriNotification(notification: YellowNotification) {
   return;
  }
  playNotificationSound(notification);
- sendNotification({ title: notification.title, body: notification.body, icon: notification.icon, silent: true });
+ sendNotification({
+  title: notification.title,
+  body: notification.body,
+  icon: notification.icon,
+  silent: true,
+ });
  await registerActionTypes([
   {
    id: 'tauri',

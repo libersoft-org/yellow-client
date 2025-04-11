@@ -3,7 +3,7 @@ import { type CustomFile, type FileDownload, type FileUpload, type FileUploadRec
 import { makeFileDownload, makeFileUpload, makeFileUploadRecord } from '@/org.libersoft.messages/services/Files/utils.ts';
 import _merge from 'lodash/merge';
 import { defineMeta } from '@storybook/addon-svelte-csf';
-import FileView from '@/org.libersoft.messages/components/MessageContentFile/FileView.svelte';
+//import FileView from '../FileView.svelte';
 import { fn } from '@storybook/test';
 
 class FileViewStoriesUtils {

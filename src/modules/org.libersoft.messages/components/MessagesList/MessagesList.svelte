@@ -1,24 +1,23 @@
 <script>
  import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
- import { getGuid, debug } from '../../../../core/core.js';
+ import { get } from 'svelte/store';
+ import { online, messagesArray, events, insertEvent, identifier } from '../../messages.js';
+ import { getGuid, debug } from '@/core/core.js';
  import Button from '@/core/components/Button/Button.svelte';
- import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
- import Modal from '../../../../core/components/Modal/Modal.svelte';
- import ModalWithSlot from '../../../../core/components/Modal/ModalWithSlot.svelte';
- import ModalStickersetDetails from '@/org.libersoft.messages/components/modals/stickerset-details.svelte';
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
+ import ModalWithSlot from '@/core/components/Modal/ModalWithSlot.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import resize from '@/core/actions/resizeObserver.ts';
+ import { highlightElement } from '@/core/utils/animationUtils.ts';
  import Message from '../Message/Message.svelte';
  import MessageLoader from '../MessageLoader/MessageLoader.svelte';
  import ScrollButton from '../ScrollButton/ScrollButton.svelte';
- import { online, messagesArray, events, insertEvent, identifier } from '../../messages.js';
- import { get } from 'svelte/store';
- import Icon from '../../../../core/components/Icon/Icon.svelte';
- import resize from '../../../../core/actions/resizeObserver.ts';
- import { highlightElement } from '@/core/utils/animationUtils.ts';
- import ForwardMessage from '@/org.libersoft.messages/components/modals/ForwardMessage.svelte';
- import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
+ import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
+ import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
+ import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
  export let conversation;
  export let setBarFocus;
-
  let scrollButtonVisible = true;
  let showDebugModal = false;
  let elMessages;
@@ -652,5 +651,5 @@
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ForwardMessage} onShowChange={show => forwardMessageStore.setOpen(show)} width="448px" height="390px" />
+<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} onShowChange={show => forwardMessageStore.setOpen(show)} width="448px" height="390px" />
 <!--doBlockScroll: {doBlockScroll}-->

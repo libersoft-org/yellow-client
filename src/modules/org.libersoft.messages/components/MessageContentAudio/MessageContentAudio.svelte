@@ -7,7 +7,7 @@
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
  import { identifier } from '../../messages.js';
 
- let { node, showHiddenImages, hiddenImages, siblings } = $props();
+ let { node } = $props();
  let file = node.attributes.file?.value;
 
  const YELLOW_SRC_PROTOCOL = 'yellow:';
@@ -17,9 +17,6 @@
  let upload = writable(null);
  fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 </script>
-
-<style>
-</style>
 
 <div class="message-content-audio-wrapper">
  {#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}

@@ -1,9 +1,9 @@
 <script>
- import Button from '@/core/components/Button/Button.svelte';
  import { getContext } from 'svelte';
- import Switch from '../../../../core/components/Switch/Switch.svelte';
- import HtmlSideBySide from '../HtmlEditor/HtmlSideBySide.svelte';
- import HtmlInTabs from '../HtmlEditor/HtmlInTabs.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Switch from '@/core/components/Switch/Switch.svelte';
+ import HtmlSideBySide from '../components/HtmlEditor/HtmlSideBySide.svelte';
+ import HtmlInTabs from '../components/HtmlEditor/HtmlInTabs.svelte';
  export let close;
  const MessageBar = getContext('MessageBar');
  let text = '';

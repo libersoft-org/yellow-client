@@ -1,8 +1,8 @@
 <script>
  import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../../messages.js';
- import { debug } from '../../../../core/core.js';
+ import { debug } from '@/core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
- import { isClientFocused } from '../../../../core/core.js';
+ import { isClientFocused } from '@/core/core.js';
  import { stripHtml } from '../../messages.js';
  import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
  import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
@@ -12,12 +12,12 @@
  // import Video from './video.svelte';
  //import FileTransfer from './filetransfer.svelte';
  // import Map from './map.svelte';
- import MessageContent from '@/org.libersoft.messages/components/MessageContent/MessageContent.svelte';
+ import MessageContent from '../MessageContent/MessageContent.svelte';
  // import Reply from './msgReply/Reply.svelte';
- import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
- import forwardMessageStore from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
- import MessageReaction from '@/org.libersoft.messages/components/MessageReaction/MessageReaction.svelte';
- import RenderMessageReactions from '@/org.libersoft.messages/components/MessageReaction/RenderMessageReactions.svelte';
+ import messageBarReplyStore, { ReplyToType } from '../../stores/MessageBarReplyStore.ts';
+ import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
+ import MessageReaction from '../MessageReaction/MessageReaction.svelte';
+ import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
 
  export let message;
  export let elContainer;

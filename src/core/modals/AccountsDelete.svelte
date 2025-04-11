@@ -1,6 +1,6 @@
 <script>
  import Button from '@/core/components/Button/Button.svelte';
- import { delAccount } from '../../accounts_config.js';
+ import { delAccount } from '../accounts_config.js';
  export let close;
  export let params;
 

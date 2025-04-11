@@ -220,10 +220,10 @@
      <img src="img/back-white.svg" alt="Back" />
     </div>
    </BaseButton>
-   <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (showModalNetworks = true)} />
+   <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
   </div>
   <div class="right">
-   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (showModalWallets = true)} />
+   <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--icon-black" onClick={() => (showModalWallets = true)} />
   </div>
  </div>
  <div class="wallet">

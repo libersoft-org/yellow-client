@@ -1,7 +1,7 @@
 import { tick } from 'svelte';
-import { get, writable, derived } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import { IS_TAURI } from './tauri.ts';
+import { log } from './tauri.ts';
 
 //import {} from './client_debug';
 
@@ -34,8 +34,6 @@ export const link = 'https://yellow.libersoft.org';
 
 // declarations of modules that this client supports
 export let module_decls = writable({});
-
-let global_socket_id = 0;
 
 const ping_interval = import.meta.env.VITE_PING_INTERVAL || 10000;
 
@@ -158,16 +156,26 @@ function updateLiveAccount(account, config) {
  let acc = get(account);
  //console.log('updateLiveAccount', acc, config);
 
+ if (acc.credentials.retry_nonce != config.credentials.retry_nonce) {
+  log.debug('retry_nonce changed:', acc.credentials.retry_nonce, config.credentials.retry_nonce);
+ }
+
  if (acc.credentials.retry_nonce != config.credentials.retry_nonce || acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
   acc.credentials = config.credentials;
+  log.debug('credentials changed:', acc.credentials);
   if (acc.enabled) {
    _disableAccount(account);
    _enableAccount(account);
   }
  }
  if (acc.enabled != config.enabled) {
-  if (config.enabled) _enableAccount(account);
-  else _disableAccount(account);
+  if (config.enabled) {
+   log.debug('enabling account:', acc.id);
+   _enableAccount(account);
+  } else {
+   log.debug('disabling account:', acc.id);
+   _disableAccount(account);
+  }
  }
 
  let settings_updated = false;
@@ -181,7 +189,11 @@ function updateLiveAccount(account, config) {
    //console.log('settings not updated:', key, value);
   }
  }
- if (settings_updated) account.update(v => v);
+
+ if (settings_updated) {
+  log.debug('settings updated:', acc.settings);
+  account.update(v => v);
+ }
 }
 
 function createLiveAccount(config) {
@@ -205,18 +217,18 @@ function removeLiveAccountsNotInConfig(accounts_list, value) {
 }
 
 accounts_config.subscribe(value => {
- //console.log('ACCOUNTS CONFIG:', value);
+ log.debug('ACCOUNTS CONFIG:', value);
  void 'TODO: implement configuration of accounts order';
  let accounts_list = get(accounts);
- //console.log('EXISTING ACCOUNTS (stores):', accounts_list);
+ log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
  for (let config of value) {
-  //console.log('CONFIG', config);
+  log.debug('CONFIG', config);
   let account = accounts_list.find(acc => get(acc).id === config.id);
   if (account) {
-   //console.log('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
+   log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
    updateLiveAccount(account, config);
   } else {
-   //console.log('CREATE ACCOUNT', config);
+   log.debug('CREATE ACCOUNT', config);
    createLiveAccount(config);
   }
  }
@@ -224,8 +236,8 @@ accounts_config.subscribe(value => {
 });
 
 export function toggleAccountEnabled(id) {
- console.log('TOGGLE ACCOUNT ENABLED', id);
- console.log('TOGGLE ACCOUNT ENABLED', accounts_config);
+ log.debug('TOGGLE ACCOUNT ENABLED accounts_config', accounts_config);
+ log.debug('TOGGLE ACCOUNT ENABLED id', id);
  accounts_config.update(v =>
   v.map(a => {
    if (a.id === id) a.enabled = !a.enabled;
@@ -235,14 +247,14 @@ export function toggleAccountEnabled(id) {
 }
 
 export function selectAccount(id) {
- console.log('SELECT ACCOUNT', id);
+ log.debug('SELECT ACCOUNT', id);
  if (get(active_account_id) === id) return;
  /* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
   * This allows for modules to not be perfectly reactive. */
  let old_selected_module = get(selected_module_id);
  selected_module_id.set(null);
  if (!findAccount(id)) {
-  console.log('account not found');
+  log.debug('account not found');
   return;
  }
  active_account_id.set(id);
@@ -256,8 +268,10 @@ function onAvailableModulesChanged(acc) {
 }
 
 function constructAccount(id, credentials, enabled, settings) {
+ log.debug('CONSTRUCT ACCOUNT', id, credentials, enabled, settings);
  let acc = {
   id,
+  socket_id: 0,
   settings: { ...settings },
   credentials: { ...credentials },
   enabled,
@@ -287,7 +301,7 @@ function _enableAccount(account) {
    for (const k in event.detail?.data?.modules_available) {
     acc.available_modules[k] = event.detail.data.modules_available[k];
    }
-   console.log('available_modules:', acc.available_modules);
+   log.debug('available_modules:', acc.available_modules);
    onAvailableModulesChanged(acc);
    account.update(v => v);
   });
@@ -298,6 +312,7 @@ function _enableAccount(account) {
 }
 
 function _disableAccount(account) {
+ log.debug('DISABLE ACCOUNT', account);
  let acc = get(account);
  clearAccount(acc);
  clearPingTimer(acc);
@@ -309,14 +324,15 @@ function _disableAccount(account) {
 }
 
 function reconnectAccount(account) {
+ log.debug('RECONNECT ACCOUNT', account);
  let acc = get(account);
  if (!acc.enabled) return;
  if (acc.suspended) {
-  console.log('account suspended. not reconnecting.');
+  log.debug('account suspended. not reconnecting.');
   return;
  }
  if (acc.status != 'Enabled.' && acc.status != 'Retrying...') {
-  console.log('Account status not "Enabled." or "Retrying...", not reconnecting:', acc.status);
+  log.debug('Account status not "Enabled." or "Retrying...", not reconnecting:', acc.status);
   return;
  }
 
@@ -326,20 +342,21 @@ function reconnectAccount(account) {
 
  let socket_id;
 
- console.log('acc.socket.readyState:', acc.socket?.readyState);
+ log.debug('acc.socket.readyState:', acc.socket?.readyState);
  if (!acc.socket || acc.socket.readyState === WebSocket.CLOSED || acc.socket.readyState === WebSocket.CONNECTING || acc.socket.readyState === WebSocket.CLOSING || acc.socket.url !== acc.credentials.server) {
   if (acc.socket) {
    if (acc.socket.readyState !== WebSocket.CLOSED) {
     // throw away the old socket, it will be unused from now on
-    acc.socket.onopen = event => console.log('old socket onopen', event);
-    acc.socket.onerror = event => console.log('old socket onerror', event);
-    acc.socket.onclose = event => console.log('old socket onclose', event);
-    acc.socket.onmessage = event => console.log('old socket onmessage', event);
+    acc.socket.onopen = event => log.debug('old socket onopen', event);
+    acc.socket.onerror = event => log.debug('old socket onerror', event);
+    acc.socket.onclose = event => log.debug('old socket onclose', event);
+    acc.socket.onmessage = event => log.debug('old socket onmessage', event);
     acc.socket.close();
    }
   }
-  socket_id = global_socket_id++;
-  console.log('Creating new WebSocket:', acc.credentials.server);
+
+  socket_id = ++acc.socket_id;
+  log.debug('Creating new WebSocket:', acc.credentials.server);
   acc.status = 'Connecting...';
   acc.lastCommsTs = Date.now();
   acc.lastTransmissionTs = Date.now();
@@ -352,24 +369,38 @@ function reconnectAccount(account) {
    acc.error = msg;
    acc.suspended = true;
    acc.status = 'Error.';
-   console.log(acc.status);
+   log.debug('acc.status:', acc.status);
    account.update(v => v);
    return;
   }
 
-  acc.socket.onmessage = event => handleSocketMessage(acc, JSON.parse(event.data));
+  acc.socket.onmessage = event => {
+   if (acc.socket_id !== socket_id) {
+    log.debug('Socket ID changed, ignoring message:', event);
+    return;
+   }
+   handleSocketMessage(acc, JSON.parse(event.data));
+  };
 
   acc.socket.onopen = event => {
-   console.log('Connected to WebSocket ' + socket_id + ':', event);
+   if (acc.socket_id !== socket_id) {
+    log.debug('Socket ID changed, ignoring open event:', event);
+    return;
+   }
+   log.debug('Connected to WebSocket ' + socket_id + ':', event);
    acc.status = 'Connected, logging in...';
-   console.log(acc.status);
+   log.debug('acc.status:', acc.status);
    acc.lastCommsTs = Date.now();
    account.update(v => v);
    sendLoginCommand(account);
   };
 
   acc.socket.onerror = event => {
-   console.log('WebSocket ' + socket_id + ' error:', event);
+   if (acc.socket_id !== socket_id) {
+    log.debug('Socket ID changed, ignoring error event:', event);
+    return;
+   }
+   log.debug('WebSocket ' + socket_id + ' error:', event);
    retry(account, 'Connection error');
    acc.error = 'Network error: ' + event.message;
    acc.session_status = undefined;
@@ -377,10 +408,15 @@ function reconnectAccount(account) {
   };
 
   acc.socket.onclose = event => {
-   console.log('WebSocket ' + socket_id + '  closed:', event);
+   if (acc.socket_id !== socket_id) {
+    log.debug('Socket ID changed, ignoring close event:', event);
+    return;
+   }
+   log.debug('WebSocket ' + socket_id + '  closed:', event, 'wasClean:', event.wasClean, 'reason:', event.reason, 'code:', event.code);
    acc.session_status = undefined;
    account.update(v => v);
    setTimeout(() => {
+    log.debug('onclose retry');
     retry(account, 'Connection closed');
    }, 200);
   };
@@ -391,15 +427,20 @@ function reconnectAccount(account) {
 
 function retry(account, msg) {
  let acc = get(account);
+ log.debug('RETRY ACCOUNT', acc);
  if (!acc.enabled || acc.suspended) return;
+ if (acc.status === 'Retrying...') {
+  log.debug('Already retrying.');
+  return;
+ }
  acc.status = 'Retrying...';
- console.log(acc.status);
+ log.debug(acc.status);
  acc.session_status = undefined;
  acc.error = msg;
  //clearPingTimer(acc);
  //acc.sessionID = null;
  account.update(v => v);
- console.log('Retrying ...');
+ log.debug('Retrying ...');
  setReconnectTimer(account);
 }
 
@@ -431,10 +472,10 @@ function clearPingTimer(acc) {
 }
 
 function sendLoginCommand(account) {
- //console.log('Sending login command');
+ log.debug('Sending login command');
  let acc = get(account);
  send(acc, account, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
-  console.log('Login response:', res);
+  log.debug('Login response:', res);
   if (res.error !== false) {
    acc.error = res.message;
    acc.status = 'Login failed.';
@@ -486,7 +527,7 @@ function setupPing(account) {
    acc.status = 'Retrying...';
    acc.error = 'Not connected';
    acc.session_status = undefined;
-   console.log('Socket not open, retrying...');
+   log.debug('Socket not open, retrying...');
    account.update(v => v);
    reconnectAccount(account);
    return;
@@ -499,7 +540,7 @@ function setupPing(account) {
    {},
    true,
    (req, res) => {
-    console.log('Ping response:', res);
+    log.debug('Ping response:', res);
     acc.lastCommsTs = Date.now();
     //console.log('lastCommsTs:', acc.lastCommsTs);
     void 'avoid expensive UI update';
@@ -514,7 +555,7 @@ function setupPing(account) {
   let noCommsSeconds = Date.now() - acc.lastCommsTs;
   if (noCommsSeconds > 60000 + (Date.now() - acc.lastTransmissionTs)) {
    const msg = 'No comms for ' + noCommsSeconds / 1000 + ' seconds, reconnecting...';
-   console.log(msg);
+   log.debug(msg);
    // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
    acc.status = 'Retrying...';
    acc.error = msg;
@@ -524,21 +565,6 @@ function setupPing(account) {
    reconnectAccount(account);
   }
  }, ping_interval);
-}
-
-export function order(dict) {
- //console.log('ORDER dict:', dict);
- let result = Object.values(dict).sort((a, b) => {
-  let a_order = a.order !== undefined ? a.order : a.id;
-  let b_order = b.order !== undefined ? b.order : b.id;
-  if (typeof a_order === 'number' && typeof b_order === 'number') {
-   return a_order - b_order;
-  } else {
-   return String.prototype.localeCompare(a_order) < String.prototype.localeCompare(b_order);
-  }
- });
- //console.log('ORDER result:', result);
- return result;
 }
 
 function initModuleComms(acc, module_id, decl) {
@@ -585,6 +611,7 @@ function updateModulesComms(acc) {
 }
 
 function disconnectAccount(acc) {
+ acc.requests = {};
  acc.available_modules = {};
  onAvailableModulesChanged(acc);
 

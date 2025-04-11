@@ -1,17 +1,13 @@
 <script>
- import { onMount } from 'svelte';
  import Select from '../Select/Select.svelte';
  import SelectOption from '../Select/SelectOption.svelte';
  import Table from '../Table/Table.svelte';
  import TableTBodyTr from '../Table/TableTBodyTr.svelte';
  import TableTBody from '../Table/TableTBody.svelte';
  import TableTBodyTd from '../Table/TableTBodyTd.svelte';
-
- // Zoom settings
  export let zoom = 100;
  export let theme = 'light';
 
- // Move setZoom function into this component
  function setZoom() {
   document.body.style.transform = 'scale(' + zoom / 100 + ')';
   document.body.style.transformOrigin = '0 0';

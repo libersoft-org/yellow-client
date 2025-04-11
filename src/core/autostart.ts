@@ -1,6 +1,9 @@
 import { enable, isEnabled, disable } from '@tauri-apps/plugin-autostart';
+import { TAURI } from '@/core/tauri.ts';
 
 export async function enableAutostart() {
- await enable();
- console.log(`registered for autostart? ${await isEnabled()}`);
+ if (TAURI) {
+  await enable();
+  console.log(`registered for autostart? ${await isEnabled()}`);
+ }
 }

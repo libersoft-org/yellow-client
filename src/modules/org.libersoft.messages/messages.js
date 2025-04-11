@@ -2,6 +2,7 @@ import { replaceEmojisWithTags, start_emojisets_fetch } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
 //import { db } from './db';
+
 import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
 import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
@@ -17,8 +18,7 @@ import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { addNotification } from '@/core/notifications.ts';
-import { makeMessageReaction } from '@/org.libersoft.messages/factories/messageFactories.ts';
-
+import { makeMessageReaction } from './factories/messageFactories.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);

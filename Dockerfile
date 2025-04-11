@@ -2,6 +2,7 @@ FROM ubuntu:24.04
 
 ARG UID=1000
 ARG GID=1000
+ARG COMMAND="./start-docker-dev.sh"
 
 # Create and set permissions for /tmp directory
 RUN mkdir -p /tmp && chmod 1777 /tmp
@@ -26,4 +27,4 @@ WORKDIR $APP_DIR
 
 RUN curl -fsSL https://bun.sh/install | bash
 
-CMD ./start-docker-dev.sh
+CMD $COMMAND

@@ -1,6 +1,6 @@
 <script>
  import { onMount } from 'svelte';
- import Dialog from '../../../../core/components/Dialog/Dialog.svelte';
+ import Dialog from '@/core/components/Dialog/Dialog.svelte';
  let elDialog;
  let closeDialog;
  let dialogData = {

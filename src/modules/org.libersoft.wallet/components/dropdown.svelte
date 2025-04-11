@@ -1,6 +1,8 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let text;
+ export let colorVariable;
  export let onClick;
 </script>
 
@@ -19,16 +21,11 @@
  .dropdown .text {
   flex-grow: 1;
  }
-
- .dropdown img {
-  width: 15px;
-  height: 15px;
- }
 </style>
 
 <BaseButton {onClick}>
  <div class="dropdown">
   <div class="text">{text}</div>
-  <img src="img/down-black.svg" alt="▼" />
+  <Icon img="img/down.svg" alt="▼" size="15" padding="0" colorVariable={colorVariable && colorVariable} />
  </div>
 </BaseButton>

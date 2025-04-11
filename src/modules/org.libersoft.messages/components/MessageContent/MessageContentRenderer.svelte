@@ -1,6 +1,7 @@
 <script>
- import { componentMap } from '@/org.libersoft.messages/message-content.ts';
+ import { componentMap } from '../../message-content.ts';
  import { onMount } from 'svelte';
+ import { debug } from '@/core/core.js';
 
  export let rootNode;
 
@@ -76,9 +77,12 @@
  function processFragment(fragment) {
   try {
    if (fragment.childNodes) {
-    return Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+    const res = Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
+    console.log('processFragment fragment:', fragment, 'res:', res);
+    return res;
    } else {
-    // return [fragment];
+    console.log('No child nodes found in fragment:', fragment);
+    return [fragment];
    }
   } catch (e) {
    console.error('Error processing fragment:', e);
@@ -111,7 +115,8 @@
   {#key item.tagUniqueId}
    <svelte:element this={item.tag} {...item.attrs}>
     {#each item.children as child (child.tagUniqueId)}
-     <svelte:self rootNode={child} />
+     {#if $debug}xxx{JSON.stringify(child)}xxx{/if}
+     <svelte:self rootNode={item.props.node} />
     {/each}
    </svelte:element>
   {/key}

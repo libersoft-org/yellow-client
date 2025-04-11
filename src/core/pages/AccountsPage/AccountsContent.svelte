@@ -11,10 +11,10 @@
  import TableTBodyTr from '../../components/Table/TableTBodyTr.svelte';
  import TableTBodyTd from '../../components/Table/TableTBodyTd.svelte';
  import Modal from '../../components/Modal/Modal.svelte';
- import ModalAccountsAddEdit from '@/core/components/modals/AccountsAddEdit.svelte';
- import ModalAccountsDelete from '@/core/components/modals/AccountsDelete.svelte';
- import AccountsExport from '@/core/components/modals/AccountsExport.svelte';
- import AccountsImport from '@/core/components/modals/AccountsImport.svelte';
+ import ModalAccountsAddEdit from '@/core/modals/AccountsAddEdit.svelte';
+ import ModalAccountsDelete from '@/core/modals/AccountsDelete.svelte';
+ import AccountsExport from '@/core/modals/AccountsExport.svelte';
+ import AccountsImport from '@/core/modals/AccountsImport.svelte';
  import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
  let showAddEditAccountModal = false;
  let showDelAccountModal = false;
@@ -77,7 +77,7 @@
 <div class="accounts">
  <div class="buttons">
   <Button img="img/back.svg" text="Back" onClick={back} hiddenOnDesktop={true} />
-  <Button img="img/accounts-black.svg" text="Add a new account" onClick={addAccountModal} />
+  <Button img="img/accounts.svg" text="Add a new account" colorVariable="--icon-black" onClick={addAccountModal} />
   <Button text="Export" onClick={clickExport} />
   <Button text="Import" onClick={clickImport} />
  </div>
@@ -106,8 +106,8 @@
       <TableTBodyTd center={true}>{a.enabled ? 'Yes' : 'No'}</TableTBodyTd>
       <TableTBodyTd center={true}>
        <TableActionItems>
-        <Icon img="img/edit.svg" alt="Edit" size="20" padding="5" onClick={() => clickEdit(a.id)} />
-        <Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
+        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20" padding="5" onClick={() => clickEdit(a.id)} />
+        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
        </TableActionItems>
       </TableTBodyTd>
       {#if $debug}

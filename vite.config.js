@@ -42,6 +42,9 @@ export default defineConfig(({mode}) => {
     allowedHosts: true,
     host: true,
     port: 3000
+   },
+   build: {
+    chunkSizeWarningLimit: 6000
    }
   }
  }

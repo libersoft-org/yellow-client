@@ -1,5 +1,5 @@
 <script>
- import ModalAccountsAddEdit from '@/core/components/modals/AccountsAddEdit.svelte';
+ import ModalAccountsAddEdit from '@/core/modals/AccountsAddEdit.svelte';
  export let params;
 
  function close() {

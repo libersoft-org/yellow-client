@@ -1,7 +1,7 @@
 <script>
  import { loadMessages, insertEvent, messagesArray } from '../../messages.js';
  import { getContext, onDestroy, onMount } from 'svelte';
- import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
  export let loader;
  let loaderElement;
  let observer;

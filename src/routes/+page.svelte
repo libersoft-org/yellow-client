@@ -25,6 +25,8 @@
  import '../modules/org.libersoft.iframes/module.js';
  import { enableAutostart } from '../core/autostart.ts';
  import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
+ import { setDefaultWindowSize } from '../core/tauri.ts';
+
  let menus = [];
  setContext('menus', menus);
 
@@ -106,6 +108,7 @@
    console.log('+page This browser does not support service workers.');
   }
 
+  await setDefaultWindowSize();
   await createTrayIcon();
   await enableAutostart();
   await initBrowserNotifications();

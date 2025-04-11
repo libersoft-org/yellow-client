@@ -1,5 +1,5 @@
 <script>
- import MessageContent from '@/org.libersoft.messages/components/MessageContent/MessageContent.svelte';
+ import MessageContent from '../MessageContent/MessageContent.svelte';
  import { processMessage } from '../../messages.js';
  export let text;
 

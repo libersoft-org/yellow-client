@@ -3,8 +3,8 @@
  import Button from '@/core/components/Button/Button.svelte';
  import { writable, get } from 'svelte/store';
  import Notification from '../../core/components/Notification/Notification.svelte';
- import { getCurrentWindow, LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
- import { moveWindow, Position } from '@tauri-apps/plugin-positioner';
+ import { getCurrentWindow, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
+ //import { moveWindow, moveWindowConstrained, Position } from '@tauri-apps/plugin-positioner';
  import { multiwindow_store } from '../../core/multiwindow_store.ts';
  import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor } from '../../core/notifications_settings.ts';
  import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
@@ -106,27 +106,27 @@
  }
 
  function pos(corner, mon, width, height) {
-  if (mon && mon.size) {
+  log.debug('pos:', corner, mon, width, height);
+  if (mon) {
    let x;
    let y;
    if (corner === 'top-right') {
-    x = mon.size.width - width;
-    y = 0;
+    x = mon.right - width;
+    y = mon.top;
    } else if (corner === 'top-left') {
-    x = 0;
-    y = 0;
+    x = mon.left;
+    y = mon.top;
    } else if (corner === 'bottom-right') {
-    x = mon.size.width - width;
-    y = mon.size.height - 1 - height;
+    x = mon.right - width;
+    y = mon.bottom - 1 - height;
    } else if (corner === 'bottom-left') {
-    x = 0;
-    y = mon.size.height - 1 - height;
+    x = mon.left;
+    y = mon.bottom - 1 - height;
    }
-   return {
-    x: x + mon.position.x,
-    y: y + mon.position.y,
-   };
+   log.debug('aaa');
+   return { x, y };
   } else {
+   log.debug('no monitor found');
    return {
     x: 0,
     y: 0,
@@ -134,16 +134,26 @@
   }
  }
 
- function updatePosition() {
-  //log.debug('updatePosition...');
+ async function updatePosition() {
+  log.debug('updatePosition...');
   let h = get(height);
-  let m = get(monitors).find(m => m.name === get(actualMonitorName));
-  let d = getNotificationsDirection();
+  const monitor_name = get(actualMonitorName);
+  let m = await invoke('get_work_area', {
+   monitorName: monitor_name,
+  });
+  log.debug('get_work_area:', m);
   let corner = get(selectedNotificationsCorner);
-
   let p = pos(corner, m, width, h);
-  log.debug('updatePosition' + JSON.stringify({ height: h, direction: d, monitor: m, selectedNotificationsCorner: corner, position: p }));
-
+  log.debug(
+   'updatePosition' +
+    JSON.stringify({
+     selectedNotificationsCorner: corner,
+     monitor: m,
+     width: width,
+     height: h,
+     position: p,
+    })
+  );
   position.set(p);
  }
 
@@ -159,7 +169,8 @@
   let w = getCurrentWindow();
   w.setPosition(new PhysicalPosition(v.x, v.y));
   w.setSize(new PhysicalSize(size.width, size.height));
-  moveWindow(Position.TrayBottomRight);
+  //moveWindow(Position.TrayBottomRight);
+  //moveWindowConstrained(Position.TrayBottomCenter);
  });
 
  log.debug('/notifications');
@@ -212,9 +223,24 @@
    body: 'Veřejné s autorská počítačové vyhotovení, ',
   };
   notificationData.buttons = [
-   { text: 'Abort', id: 'abort', onClick: onClick.bind(notificationData), expand: true },
-   { text: 'Retry', id: 'retry', onClick: onClick.bind(notificationData), expand: true },
-   { text: 'Fail', id: 'fail', onClick: onClick.bind(notificationData), expand: true },
+   {
+    text: 'Abort',
+    id: 'abort',
+    onClick: onClick.bind(notificationData),
+    expand: true,
+   },
+   {
+    text: 'Retry',
+    id: 'retry',
+    onClick: onClick.bind(notificationData),
+    expand: true,
+   },
+   {
+    text: 'Fail',
+    id: 'fail',
+    onClick: onClick.bind(notificationData),
+    expand: true,
+   },
   ];
   notificationData.onClick = onClick.bind(notificationData);
   notificationData.onClose = onClose.bind(notificationData);
@@ -252,6 +278,8 @@
  }
 </script>
 
+<!--<Button text="Add notification" onClick={clickAddNotification} />-->
+
 <style>
  .notifications-wrapper {
   display: flex;
@@ -283,5 +311,3 @@
   {/each}
  </div>
 </div>
-
-<!--<Button text="Add notification" onClick={clickAddNotification} />-->

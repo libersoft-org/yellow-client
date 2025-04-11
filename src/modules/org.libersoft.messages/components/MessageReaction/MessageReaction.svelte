@@ -1,11 +1,11 @@
 <script lang="ts">
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import Emojis from '@/org.libersoft.messages/components/Emoji/Emojis.svelte';
+ import Emojis from '../Emoji/Emojis.svelte';
  import { computePosition, autoPlacement, autoUpdate, shift, offset } from '@floating-ui/dom';
  import { onDestroy, onMount } from 'svelte';
- import { toggleMessageReaction, identifier } from '@/org.libersoft.messages/messages';
- import Emoji from '@/org.libersoft.messages/components/Emoji/Emoji.svelte';
- import { emoji_render, rgi } from '@/org.libersoft.messages/emojis';
+ import { toggleMessageReaction, identifier } from '../../messages';
+ import Emoji from '../Emoji/Emoji.svelte';
+ import { rgi } from '../../emojis';
  import Portal from 'svelte-portal';
 
  interface MessageReactionProps {
@@ -15,7 +15,7 @@
  let { message }: MessageReactionProps = $props();
 
  let buttonRef: HTMLElement;
- let floatingRef: HTMLElement;
+ let floatingRef: HTMLElement = $state(null);
 
  let show = $state(false);
  let showFull = $state(false);

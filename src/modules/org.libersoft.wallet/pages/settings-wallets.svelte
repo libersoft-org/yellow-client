@@ -122,8 +122,8 @@
       <td>{address.name}</td>
       <td><Address address={address.address} /></td>
       <td class="icons">
-       <Icon img="img/edit.svg" alt="Rename" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
-       <Icon img="modules/org.libersoft.wallet/img/hide.svg" alt="Hide" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
+       <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
+       <Icon img="modules/org.libersoft.wallet/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
       </td>
      </tr>
     {/each}

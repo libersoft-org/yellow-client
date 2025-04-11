@@ -3,7 +3,7 @@
  import atomOneDark from 'svelte-highlight/styles/atom-one-dark';
  import json from 'svelte-highlight/languages/json';
  import Button from '@/core/components/Button/Button.svelte';
- import { accounts_config } from '../../core.js';
+ import { accounts_config } from '../core.js';
 
  function clickDownload(e) {
   let blob = new Blob([JSON.stringify($accounts_config, null, 2)], { type: 'application/json' });

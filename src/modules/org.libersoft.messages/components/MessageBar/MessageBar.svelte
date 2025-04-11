@@ -3,12 +3,12 @@
  import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
  import { onMount, setContext, tick, getContext } from 'svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import Icon from '../../../../core/components/Icon/Icon.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
  import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
- import Modal from '../../../../core/components/Modal/Modal.svelte';
- import ModalHtml from '@/org.libersoft.messages/components/modals/Html.svelte';
- import FileUpload from '@/org.libersoft.messages/components/modals/FileUpload.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
+ import ModalHtml from '../../modals/Html.svelte';
+ import ModalFileUpload from '../../modals/FileUpload.svelte';
  import Expressions from '../Expressions/Expressions.svelte';
  import { init_emojis } from '../../emojis.js';
  import { get } from 'svelte/store';
@@ -17,6 +17,7 @@
  import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
  import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
+
 
  let expressionsMenu;
  let elBottomSheet;
@@ -299,8 +300,8 @@
   {/if}
 
   <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
-  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={onVideoRecordClick} />
-  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
+  <Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />
+  <Icon img="modules/{identifier}/img/audio_message.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
  </div>
 </div>
@@ -322,7 +323,7 @@
 -->
 
 <Modal title="HTML composer" body={ModalHtml} bind:show={showHTMLModal} />
-<Modal title="File Upload" body={FileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
+<Modal title="File Upload" body={ModalFileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
 
 {#if $debug}
  <BaseButton

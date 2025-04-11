@@ -7,6 +7,7 @@
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
  import FileView from '@/org.libersoft.messages/components/MessageContentFile/FileView.svelte';
 
+
  let { uploadId } = $props();
 
  /** uploads */
@@ -18,9 +19,7 @@
  fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
 
  onMount(() => {
-  if (!upload) {
-   loadUploadData(uploadId);
-  }
+  if (!upload) loadUploadData(uploadId);
  });
 
  function onDownload(e) {

@@ -4,11 +4,11 @@
  import { htmlEscape } from '../../messages.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import Input from '../../../../core/components/Input/Input.svelte';
- import { isMobile } from '../../../../core/core.js';
- import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
+ import Input from '@/core/components/Input/Input.svelte';
+ import { isMobile } from '@/core/core.js';
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import { gif_server } from '../../gifs.js';
- import LazyLoader from '../../../../core/components/Spinner/LazyLoader.svelte';
+ import LazyLoader from '@/core/components/Spinner/LazyLoader.svelte';
 
  const MessageBar = getContext('MessageBar');
  const menu = getContext('ContextMenu');

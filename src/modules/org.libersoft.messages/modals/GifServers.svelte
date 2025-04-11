@@ -1,15 +1,15 @@
 <script>
- import { gif_servers } from '../../gifs.js';
- import Input from '../../../../core/components/Input/Input.svelte';
+ import { gif_servers } from '../gifs.js';
+ import Input from '@/core/components/Input/Input.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import Table from '../../../../core/components/Table/Table.svelte';
- import TableTHead from '../../../../core/components/Table/TableTHead.svelte';
- import TableTHeadTr from '../../../../core/components/Table/TableTHeadTr.svelte';
- import TableTHeadTh from '../../../../core/components/Table/TableTHeadTh.svelte';
- import TableTBody from '../../../../core/components/Table/TableTBody.svelte';
- import TableTBodyTr from '../../../../core/components/Table/TableTBodyTr.svelte';
- import TableTBodyTd from '../../../../core/components/Table/TableTBodyTd.svelte';
- import Icon from '../../../../core/components/Icon/Icon.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import TableTHead from '@/core/components/Table/TableTHead.svelte';
+ import TableTHeadTr from '@/core/components/Table/TableTHeadTr.svelte';
+ import TableTHeadTh from '@/core/components/Table/TableTHeadTh.svelte';
+ import TableTBody from '@/core/components/Table/TableTBody.svelte';
+ import TableTBodyTr from '@/core/components/Table/TableTBodyTr.svelte';
+ import TableTBodyTd from '@/core/components/Table/TableTBodyTd.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import { onMount } from 'svelte';
  let addUrl = '';
  let inputAdd;
@@ -72,7 +72,7 @@
    <TableTBodyTr>
     <TableTBodyTd><a href={s} target="_blank">{s}</a></TableTBodyTd>
     <TableTBodyTd center={true}>
-     <Icon img="img/del.svg" alt="Delete" size="20" padding="5" onClick={() => clickDel(s)} />
+     <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20" padding="5" onClick={() => clickDel(s)} />
     </TableTBodyTd>
    </TableTBodyTr>
   {/each}

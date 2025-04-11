@@ -1,6 +1,6 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import Sticker from '@/org.libersoft.messages/components/Stickers/Sticker.svelte';
+ import Sticker from '../Stickers/Sticker.svelte';
  import { getContext, onMount } from 'svelte';
  let { node } = $props();
  let v = node.attributes.file?.value;

@@ -1,9 +1,9 @@
 <script>
- import { debug } from '../../../../core/core.js';
+ import { debug } from '@/core/core.js';
  import { rgi, emoji_render } from '../../emojis.js';
  import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
  import { emojisByCodepointsRgi } from '../../messages.js';
- import Sticker from '@/org.libersoft.messages/components/Stickers/Sticker.svelte';
+ import Sticker from '../Stickers/Sticker.svelte';
 
  export let codepoints;
  let codepoints_rgi = rgi(codepoints);

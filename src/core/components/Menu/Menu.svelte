@@ -1,11 +1,42 @@
 <script>
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import BaseButton from '../Button/BaseButton.svelte';
  import MenuItem from './MenuItem.svelte';
  import Modal from '../Modal/Modal.svelte';
- import ModalSettings from '../Settings/Settings.svelte';
+ import ModalSettings from '../../modals/Settings.svelte';
+ import Dialog from '../Dialog/Dialog.svelte';
+ import DialogExit from '../../dialogs/Exit.svelte';
  import { product, version, build, commit, link } from '../../core.js';
+ import { TAURI, BROWSER } from '@/core/tauri.ts';
  export let showMenu = false;
  export let showModalSettings = false;
+ export let elDialogExit;
+ const menuItems = [
+  {
+   title: 'Donate',
+   img: 'img/donate.svg',
+   onClick: () => openPage('https://libersoft.org/donations'),
+  },
+  {
+   title: 'Contact developers',
+   img: 'img/contact.svg',
+   onClick: () => openPage('https://libersoft.org/contacts'),
+  },
+  {
+   title: 'Settings',
+   img: 'img/settings.svg',
+   onClick: clickSettings,
+  },
+ ].concat(
+  BROWSER
+   ? []
+   : [
+      {
+       title: 'Exit application',
+       img: 'img/exit.svg',
+       onClick: exitApp,
+      },
+     ]
+ );
 
  function clickMenuClose() {
   showMenu = false;
@@ -18,6 +49,11 @@
 
  function clickSettings() {
   showModalSettings = true;
+  clickMenuClose();
+ }
+
+ function exitApp() {
+  elDialogExit.open();
   clickMenuClose();
  }
 </script>
@@ -139,9 +175,9 @@
    </BaseButton>
   </div>
   <div class="items">
-   <MenuItem img="img/donate.svg" title="Donate" onClick={() => openPage('https://libersoft.org/donations')} />
-   <MenuItem img="img/contact.svg" title="Contact developers" onClick={() => openPage('https://libersoft.org/contacts')} />
-   <MenuItem img="img/settings.svg" title="Settings" onClick={clickSettings} />
+   {#each menuItems as item}
+    <MenuItem img={item.img} title={item.title} colorVariable="--icon-white" onClick={item.onClick} />
+   {/each}
   </div>
  </div>
  <div class="footer">
@@ -166,3 +202,4 @@
  </div>
 </div>
 <Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
+<DialogExit bind:this={elDialogExit} />
