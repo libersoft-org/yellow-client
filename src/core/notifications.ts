@@ -187,9 +187,9 @@ async function sendTauriNotification(notification: YellowNotification) {
   importance: Importance.Default,
   visibility: Visibility.Private,
  });
- await onAction(n => {
-  log.debug('onAction:', n);
-  //notification.callback?.();
+ await onAction(async n => {
+  log.debug('notification onAction:', n);
+  await notification.callback?.('click');
  });
 }
 
@@ -220,8 +220,9 @@ function showBrowserNotification(notification: YellowNotification) {
   icon: notification.icon,
   silent: true,
  });
- n.onclick = () => {
-  notification.callback?.();
+ n.onclick = async (e) => {
+  log.debug('notification onclick:', e);
+  await notification.callback?.('click');
  };
 }
 
