@@ -1,6 +1,7 @@
 <script>
  import BaseButton from '../Button/BaseButton.svelte';
  import Icon from '../Icon/Icon.svelte';
+ import Switch from '@/core/components/Switch/Switch.svelte';
 
  import { product, debug } from '../../core.js';
  import { addNotification } from '../../notifications.ts';
@@ -32,7 +33,8 @@
 <div class="bar">
  <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-black" size="30" padding="10" onClick={handleClick} />
  <div class="product">{product}</div>
- {#if $debug}(debug mode)
+ {#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}(debug mode: <Switch bind:checked={$debug} />){/if}
+ {#if $debug}
   <BaseButton
    onClick={async () => {
     //log.debug('addNotification...');
