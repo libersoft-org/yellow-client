@@ -27,5 +27,5 @@ WORKDIR $APP_DIR
 
 RUN curl -fsSL https://bun.sh/install | bash
 
-CMD ${COMMAND}
+CMD bash -c ${COMMAND}
 
