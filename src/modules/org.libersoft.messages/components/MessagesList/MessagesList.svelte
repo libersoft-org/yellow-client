@@ -416,12 +416,9 @@
  }
 
  function onDragOver(e) {
-  //console.log('onDragOver', e);
   e.preventDefault();
   const draggedItems = e.dataTransfer.items;
   const types = Array.from(e.dataTransfer.types || []);
-  //console.log('draggedItems', draggedItems);
-  //console.log('types', types);
 
   let isDraggingFiles = false;
 
@@ -442,8 +439,6 @@
    }
   }
 
-  //console.log('isDraggingFiles', isDraggingFiles);
-
   if (!isDraggingFiles) {
    return;
   }
@@ -456,7 +451,6 @@
  }
 
  function onDragLeave(e) {
-  console.log('onDragLeave', e);
   e.preventDefault();
   // handle premature dragleave events
   if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) {
@@ -465,7 +459,6 @@
  }
 
  function onDrop(e) {
-  console.log('onDrop', e);
   e.preventDefault();
   e.stopPropagation();
   if (e.dataTransfer.files.length === 0) {

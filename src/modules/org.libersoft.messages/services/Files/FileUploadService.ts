@@ -127,6 +127,7 @@ export class FileUploadService extends EventEmitter {
  }
 
  async startUpload(upload: FileUpload) {
+  console.log('this.uploadsStore.isAnyUploadRunning()', this.uploadsStore.isAnyUploadRunning());
   if (this.uploadsStore.isAnyUploadRunning()) {
    return;
   }

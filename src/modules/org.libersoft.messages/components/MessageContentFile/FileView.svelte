@@ -32,12 +32,18 @@
    if (upload.running) {
     return upload.role === FileUploadRole.SENDER ? 'Uploading' : 'Downloading';
    } else {
-    return 'Sender is uploading';
+    return upload.role === FileUploadRole.SENDER ? 'File is being uploaded' : 'Sender is uploading';
    }
   } else if (record.status === FileUploadRecordStatus.PAUSED) {
    return upload.role === FileUploadRole.SENDER ? 'Paused' : 'Paused by sender';
   } else if (record.status === FileUploadRecordStatus.FINISHED) {
-   return 'Upload finished';
+   if (download && download.pausedLocally) {
+    return 'Download paused';
+   } else if (download) {
+    return 'Downloading';
+   } else {
+    return 'Upload finished';
+   }
   } else if (record.status === FileUploadRecordStatus.CANCELED) {
    return 'Upload canceled';
   } else if (record.status === FileUploadRecordStatus.ERROR) {
@@ -136,16 +142,17 @@
 {#snippet renderSenderUpload()}
  <!-- ACTIVE UPLOAD -->
  {#if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes(upload.record.status)}
+
   {#if isUploadActive}
    <FileTransfer {uploaded} total={upload.record.fileSize} status={statusString} />
    {@render uploadControls()}
   {:else}
-   <div>File is uploading</div>
+   <FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
   {/if}
 
   <!-- FINISHED UPLOAD - downloading -->
  {:else if download && upload.record.status === FileUploadRecordStatus.FINISHED}
-  <FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={'Downloading'} />
+  <FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
   {@render downloadControls()}
 
   <!-- FINISHED UPLOAD -->
