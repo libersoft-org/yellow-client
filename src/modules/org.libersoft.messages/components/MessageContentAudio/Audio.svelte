@@ -13,7 +13,6 @@
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
  import WaveSurfer from "wavesurfer.js";
- import videojs from "video.js";
 
  const { uploadId } = $props();
 

@@ -416,16 +416,33 @@
  }
 
  function onDragOver(e) {
+  //console.log('onDragOver', e);
   e.preventDefault();
   const draggedItems = e.dataTransfer.items;
+  const types = Array.from(e.dataTransfer.types || []);
+  //console.log('draggedItems', draggedItems);
+  //console.log('types', types);
 
   let isDraggingFiles = false;
-  for (let i = 0; i < draggedItems.length; i++) {
-   if (draggedItems[i].kind === 'file') {
+
+  // In Chrome/Firefox: you can safely check item.kind
+  if (draggedItems && draggedItems.length > 0) {
+   for (let i = 0; i < draggedItems.length; i++) {
+    if (draggedItems[i].kind === 'file') {
+     isDraggingFiles = true;
+     break;
+    }
+   }
+  } else {
+   // Fallback for Safari: heuristically assume files if dataTransfer.types includes 'Files'
+   // This is not perfect but good enough
+   const types = Array.from(e.dataTransfer.types || []);
+   if (types.includes('Files')) {
     isDraggingFiles = true;
-    break;
    }
   }
+
+  //console.log('isDraggingFiles', isDraggingFiles);
 
   if (!isDraggingFiles) {
    return;
@@ -433,12 +450,13 @@
 
   // show overlay only if file upload modal is not shown
   // but if user drops files to conversation it will still add them to the upload modal
-  if (!$showFileUploadModal) {
+  if (!$showFileUploadModal && !showFileDndOverlay) {
    showFileDndOverlay = true;
   }
  }
 
  function onDragLeave(e) {
+  console.log('onDragLeave', e);
   e.preventDefault();
   // handle premature dragleave events
   if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) {
@@ -447,6 +465,7 @@
  }
 
  function onDrop(e) {
+  console.log('onDrop', e);
   e.preventDefault();
   e.stopPropagation();
   if (e.dataTransfer.files.length === 0) {
@@ -556,6 +575,7 @@
   background-color: #00000040;
   display: none;
   z-index: 1;
+  pointer-events: none;
  }
 
  .dnd-overlay.drop-active {
