@@ -70,7 +70,7 @@
  .items {
   display: flex;
   flex-direction: row;
-  justify-content: left;
+  justify-content: center;
   flex-grow: 1;
   padding: 5px;
   overflow: hidden;
