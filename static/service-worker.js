@@ -27,23 +27,18 @@ async function handleRangeRequest(request, clientId) {
  console.log('SW: fileInfo', fileInfo);
  const { fileMimeType, fileSize } = fileInfo;
 
- //const size = buffer.byteLength;
-
  // Parse the Range header
- const matches = /bytes=(\d+)-(\d+)?/.exec(rangeHeader);
- if (!matches) {
-  return new Response(null, { status: 416 }); // Range Not Satisfiable
- }
+ // const matches = /bytes=(\d+)-(\d+)?/.exec(rangeHeader);
+ // if (!matches) {
+ //  return new Response(null, { status: 416 }); // Range Not Satisfiable
+ // }
 
- const start = Number(matches[1]);
- let end = matches[2] ? Number(matches[2]) : start + (1024 * 1024);
- end = Math.min(end, fileSize);
-
- console.error('111111111111');
- console.error('111111111111');
- console.error('111111111111');
- console.error('111111111111');
- console.error('111111111111');
+ const parts = rangeHeader.replace(/bytes=/, "").split("-");
+ const start = parseInt(parts[0], 10);
+ let end = parts[1] ? parseInt(parts[1], 10) : start + (1024 * 1024);
+ //let end = start + (1024 * 1024);
+ end = Math.min(end, fileSize - 1);
+ const chunkSize = (end - start) + 1;
 
  return new Promise(resolve => {
   postMessageWithResponse(client, {
@@ -59,15 +54,17 @@ async function handleRangeRequest(request, clientId) {
    const { chunk } = data;
    console.log('SW: GET_CHUNK', data);
 
-   resolve(new Response(chunk.data, {
+   const response = new Response(chunk.data, {
     status: 206,
     headers: {
-     'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-     'Accept-Ranges': 'bytes',
-     'Content-Length': chunk.data.byteLength,
-     'Content-Type': fileMimeType,
+     "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+     "Accept-Ranges": "bytes",
+     "Content-Length": chunkSize,
+     "Content-Type": fileMimeType,
     },
-   }))
+   })
+
+   resolve(response)
   })
 
  })

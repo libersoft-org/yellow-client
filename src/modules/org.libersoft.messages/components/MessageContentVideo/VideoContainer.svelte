@@ -6,7 +6,7 @@
  import { humanSize } from '../../../../core/utils/fileUtils.js';
  import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
  import Button from '@/core/components/Button/Button.svelte';
- import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
+ import { assembleFile, base64ToUint8Array } from '@/org.libersoft.messages/services/Files/utils.ts';
  import { writable, get } from 'svelte/store';
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
  import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
@@ -30,7 +30,7 @@
  let acc = $derived(get(active_account))
  let thumbnailSrc = $state<string | null>(null);
 
- let videoUrl = $state<string | null>(null)
+ //let videoUrl = $state<string | null>(null)
 
  let videoJSEnabled = true;
  let posterError = $state(false);
@@ -53,6 +53,19 @@
   });
  }
 
+ const fullDownloadVideo = () => {
+  videoIsFullDownloading = true;
+  downloadAttachmentsSerial([upload.record], download => {
+   videoIsFullDownloading = false;
+   const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType })
+   startVideoJS(URL.createObjectURL(blob)).finally(() => {
+    videoStarting = false;
+    videoStarted = true;
+    videoJsInstance.show()
+   })
+  });
+ }
+
  async function startVideo() {
   debug('Starting video');
   if (!upload) {
@@ -63,66 +76,105 @@
   videoStarting = true;
   const acc = get(active_account);
   const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
+  //const progressiveUrl = 'http://localhost:3001/'
   debug('Progressive URL:', progressiveUrl);
 
   const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl)
   debug('Progressive download availability:', progressiveDownloadAvailable);
 
   if (progressiveDownloadAvailable) {
-   videoUrl = progressiveUrl;
-   videoStarting = false;
-   videoStarted = true;
+   try {
+    const player = await startVideoJS(progressiveUrl)
+    videoStarting = false;
+    videoStarted = true;
+    player.show()
+   } catch (err) {
+    console.error('!!! player progressive error', err);
+
+    if (videoJsInstance && videoJsInstance.error()) {
+     console.error('Video.js error:', videoJsInstance.error());
+     fullDownloadVideo()
+    }
+   }
+  } else {
+   fullDownloadVideo()
   }
  }
 
- $effect(() => {
-  if (videoRef && !videoJsInstance && videoUrl && upload) {
-   videoRef.src = videoUrl;
+ const startVideoJS = (url: string): Promise<ReturnType<typeof videoJS>> => {
+  return new Promise((resolve, reject) => {
+   const videoEl = document.createElement('video');
+   videoEl.src = url;
+   videoEl.className = 'video-js vjs-default-skin';
+   videoEl.setAttribute('controls', 'true');
+   videoEl.setAttribute('preload', 'auto');
+   videoEl.setAttribute('autoplay', 'true');
+   videoEl.setAttribute('muted', 'true');
 
-   const startVideoJS = () => {
-    return videoJS(videoRef, {
-     controls: true,
-     autoplay: true,
-     preload: 'none',
-     seekable: false,
-     //width: 100,
-     // height: 200,
-     //fluid: true,
-     // sources: [
-     //  {
-     //   src: videoUrl,
-     //   type: upload.record.fileMimeType,
-     //  },
-     // ],
-    });
+   console.log('!!! videoEl', videoEl);
+
+   videoRef.appendChild(videoEl)
+
+   if (videoJsInstance) {
+    videoRef.removeChild(videoJsInstance.el());
+    videoJsInstance.dispose();
    }
 
-   if (videoJSEnabled) {
-    videoJsInstance = startVideoJS()
+   const player = videoJS(videoEl, {
+    controls: true,
+    autoplay: true,
+    muted: true,
+    preload: 'none',
+    seekable: false,
+    hidden: true,
+    //width: 100,
+    //height: 200,
+    //fluid: true,
+   });
+   videoJsInstance = player;
+   console.log('!!! player', player);
 
-    videoJsInstance.on('error', () => {
-     console.error('Video.js error:', videoJsInstance.error());
+   player.hide()
 
-     videoIsFullDownloading = true;
-     videoJsInstance.dispose();
-     downloadAttachmentsSerial([upload.record], download => {
-      videoIsFullDownloading = false;
-      const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType })
-      videoRef.src = URL.createObjectURL(blob);
-      videoJsInstance = startVideoJS()
-     });
-    });
-   }
-  }
- })
+   player.on('canplay', () => {
+    resolve(player);
+   })
+
+   player.on('error', (err) => {
+    reject(err);
+   })
+  })
+ }
+
+ const fetchPosterDynamically = () => {
+  fetchingPoster = true;
+  const getFileChunk = getFileChunkFactory(uploadId);
+  return getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then(firstChunk => {
+   console.log('!!! firstChunk', firstChunk);
+   MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: upload.record.fileMimeType }))
+    .then(thumbnailBlob => {
+     console.log('!!! thumbnailBlob', thumbnailBlob);
+     // set thumbnailBlob to img src
+     thumbnailSrc = URL.createObjectURL(thumbnailBlob);
+     // mediaHandler.player.poster(thumbnailSrc);
+     // mediaHandler.player.width(140);
+     // mediaHandler.player.height(280);
+     console.log('settting!"!', thumbnailSrc);
+    }).catch(err => {
+    posterError = true;
+   }).finally(() => {
+    fetchingPoster = false;
+   });
+  })
+ }
 
  onMount(() => {
   console.log('dasdas acc', acc);
   loadingData = true;
-  loadUploadData(uploadId).then(uploadData => {
+  loadUploadData(uploadId).then(async (uploadData) => {
    upload = uploadData;
    const { record } = uploadData;
-   const getFileChunk = getFileChunkFactory(uploadId);
+   console.warn('!! record', record);
    // mediaHandler = new MediaService(videoRef, getFileChunk, {
    //  id: record.id,
    //  totalSize: record.fileSize,
@@ -131,24 +183,13 @@
    // });
    // mediaHandler.setupVideo();
 
-   fetchingPoster = true;
-   getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then(firstChunk => {
-    console.log('!!! firstChunk', firstChunk);
-    MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: record.fileMimeType }))
-     .then(thumbnailBlob => {
-      console.log('!!! thumbnailBlob', thumbnailBlob);
-      // set thumbnailBlob to img src
-      thumbnailSrc = URL.createObjectURL(thumbnailBlob);
-      // mediaHandler.player.poster(thumbnailSrc);
-      // mediaHandler.player.width(140);
-      // mediaHandler.player.height(280);
-      console.log('settting!"!', thumbnailSrc);
-     }).catch(err => {
-      posterError = true;
-     }).finally(() => {
-      fetchingPoster = false;
-     });
-   })
+   if (record.metadata && record.metadata.thumbnail) {
+    const thumbnailUint8Array = await base64ToUint8Array(record.metadata.thumbnail);
+    const thumbnailBlob = new Blob([thumbnailUint8Array], { type: record.fileMimeType });
+    thumbnailSrc = URL.createObjectURL(thumbnailBlob);
+   } else {
+    fetchPosterDynamically()
+   }
   }).finally(() => {
    loadingData = false;
   });

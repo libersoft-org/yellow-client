@@ -1,6 +1,9 @@
 import { type FileDownload, type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, type MakeFileDownloadData, type MakeFileUploadData, type MakeFileUploadRecordData } from './types.ts';
 import { v4 as uuidv4 } from 'uuid';
 import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
+import _debug from "debug";
+
+const debug = _debug('libersoft:messages:services:FileUploadService');
 
 export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUploadRecord {
  const defaults = {
@@ -83,6 +86,22 @@ export async function transformFilesForServer(files: FileList) {
 
    // @ts-ignore todo metadata typing
    file.metadata = await MediaUtils.getAudioDataFromArrayBuffer(await file.arrayBuffer());
+  }
+
+  if (mimeType.startsWith('video/')) {
+   // console.log('transform audio file', file);
+
+   let thumbnail: string | null = null;
+   try {
+    const thumbnailBlob = await MediaUtils.extractThumbnail(file)
+    if (thumbnailBlob) {
+     thumbnail = await blobToBase64(thumbnailBlob);
+    }
+   } catch (err) {
+    debug('Error extracting thumbnail', err);
+   }
+   // @ts-ignore todo metadata typing
+   file.metadata = {thumbnail};
   }
  }
 

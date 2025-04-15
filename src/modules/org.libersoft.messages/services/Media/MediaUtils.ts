@@ -9,7 +9,7 @@ class MediaUtils {
   return `${MediaUtils.PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT}/${localAccountId}/${uploadId}`;
  }
 
- static extractThumbnail(fileChunk) {
+ static extractThumbnail(fileChunk): Promise<Blob> {
   return new Promise((resolve, reject) => {
    const url = URL.createObjectURL(fileChunk);
    const video = document.createElement('video');
@@ -19,25 +19,40 @@ class MediaUtils {
    video.playsInline = true;
 
    video.addEventListener('loadeddata', () => {
-    console.log('!!! loaded data');
     video.currentTime = Math.min(1, video.duration / 2); // Seek to 1s or middle of video
    });
 
    video.addEventListener('seeked', () => {
+    const originalWidth = video.videoWidth;
+    const originalHeight = video.videoHeight;
+
+    const maxWidth = 600;
+    const maxHeight = 400;
+
+    let width = originalWidth;
+    let height = originalHeight;
+
+    // Resize while preserving aspect ratio
+    const widthRatio = maxWidth / width;
+    const heightRatio = maxHeight / height;
+    const scale = Math.min(widthRatio, heightRatio, 1); // Never upscale
+
+    width = Math.round(width * scale);
+    height = Math.round(height * scale);
+
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = width;
+    canvas.height = height;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, width, height);
 
     canvas.toBlob(blob => {
      URL.revokeObjectURL(url);
-     resolve(blob);
+     resolve(blob as Blob);
     }, 'image/png');
    });
 
    video.addEventListener('error', err => {
-    console.log('!!! errr', err);
     URL.revokeObjectURL(url);
     reject(err);
    });

@@ -98,11 +98,9 @@
   {#if videoStarted}
    {#if videoIsFullDownloading}
     <div>This video can not be streamed in your browser therefore it must be downloaded first.</div>
-   {:else}
-    <video bind:this={videoRef} style:display={videoStarted ? 'block' : 'none'} class="video video-js vjs-default-skin"
-           controls></video>
    {/if}
   {/if}
+  <div bind:this={videoRef} class="video"></div>
  </div>
  {#if !download}
   <div class="">
@@ -119,12 +117,6 @@
   height: 200px;
   width: 330px;
   margin-bottom: 8px;
- }
-
- .video {
-  /*
-  width: 100%;
-  height: 240px;*/
  }
 
  .video-title {

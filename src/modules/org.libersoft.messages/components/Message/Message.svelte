@@ -290,16 +290,23 @@
 <style>
  .message {
   --animation-highlight-duration: 0.7s;
+  --message-max-width: 60%;
   position: relative;
-  max-width: 60%;
+  max-width: var(--message-max-width);
   padding: 10px;
   margin: 10px 20px;
   border-radius: 10px;
   box-shadow: var(--shadow);
   /* TODO: Maybe not necessary: */
   /*transform: translateX(0);*/
-  will-change: transform;
+  /*will-change: transform;*/
   animation: messageAppear 0.3s ease-out;
+ }
+
+ @media (max-width: 600px) {
+  .message {
+   --message-max-width: 75%;
+  }
  }
 
  @keyframes messageAppear {

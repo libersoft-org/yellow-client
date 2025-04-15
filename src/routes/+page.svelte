@@ -96,7 +96,7 @@
 
       getChunk({
        offsetBytes: start,
-       chunkSize: end - start,
+       chunkSize: (end + 1) - start,
       }).then(data => {
        console.warn('!!!!found chunk', data);
        e.ports[0].postMessage(data);
