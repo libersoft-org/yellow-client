@@ -40,12 +40,23 @@
   audioRecorderStore.setOpen(false);
  };
 
- const startRecording = () => {
+ const startRecording = async () => {
   isPaused = false;
+
+  const permissions = await navigator.permissions.query({ name: 'microphone' });
+
+  if (permissions.state === 'denied') {
+   audioRecorderStore.setOpen(false);
+   alert('Microphone access denied. Please check your browser settings.');
+   return;
+  }
 
   RecordPlugin.getAvailableAudioDevices().then(devices => {
    record.startRecording({ deviceId: 'default' }).then(() => {
     //console.log('startRecording');
+   }).catch(err => {
+    alert(err);
+    audioRecorderStore.setOpen(false);
    });
   });
  };
@@ -125,6 +136,9 @@
 </style>
 
 <div class="message-bar-recorder" class:is-paused={isPaused} style:display={$isOpen ? 'flex' : 'none'}>
+ <div class="wavesurfer-wrap">
+  <div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize} style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
+ </div>
  <div class="button-wrapper">
   <Icon img="modules/{identifier}/img/delete-red.svg" alt="Record voice message" size="14" padding="0" onClick={onDelete} />
  </div>
@@ -134,9 +148,6 @@
   {:else}
    <Icon img="modules/{identifier}/img/pause-yellow.svg" alt="Record voice message" size="14" padding="0" onClick={onPause} />
   {/if}
- </div>
- <div class="wavesurfer-wrap">
-  <div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize} style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
  </div>
  <div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
   <Icon img="modules/{identifier}/img/send.svg" alt="Record voice message" size="32" padding="0" onClick={onSend} />
