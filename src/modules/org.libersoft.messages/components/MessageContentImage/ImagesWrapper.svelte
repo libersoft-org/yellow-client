@@ -5,7 +5,6 @@
  let rowLimit = 2;
  let hiddenImages = [];
  let siblings = $derived(children.map(child => child));
- console.log('children', children);
 
  let imagesRows = $derived.by(() => {
   let groups = [];

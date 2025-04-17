@@ -89,8 +89,6 @@
     videoStarted = true;
     player.show()
    } catch (err) {
-    console.error('!!! player progressive error', err);
-
     if (videoJsInstance && videoJsInstance.error()) {
      console.error('Video.js error:', videoJsInstance.error());
      fullDownloadVideo()
@@ -111,8 +109,6 @@
    videoEl.setAttribute('autoplay', 'true');
    videoEl.setAttribute('muted', 'true');
 
-   console.log('!!! videoEl', videoEl);
-
    videoRef.appendChild(videoEl)
 
    if (videoJsInstance) {
@@ -132,7 +128,6 @@
     //fluid: true,
    });
    videoJsInstance = player;
-   console.log('!!! player', player);
 
    player.hide()
 
@@ -150,16 +145,13 @@
   fetchingPoster = true;
   const getFileChunk = getFileChunkFactory(uploadId);
   return getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then(firstChunk => {
-   console.log('!!! firstChunk', firstChunk);
    MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: upload.record.fileMimeType }))
     .then(thumbnailBlob => {
-     console.log('!!! thumbnailBlob', thumbnailBlob);
      // set thumbnailBlob to img src
      thumbnailSrc = URL.createObjectURL(thumbnailBlob);
      // mediaHandler.player.poster(thumbnailSrc);
      // mediaHandler.player.width(140);
      // mediaHandler.player.height(280);
-     console.log('settting!"!', thumbnailSrc);
     }).catch(err => {
     posterError = true;
    }).finally(() => {
@@ -169,12 +161,10 @@
  }
 
  onMount(() => {
-  console.log('dasdas acc', acc);
   loadingData = true;
   loadUploadData(uploadId).then(async (uploadData) => {
    upload = uploadData;
    const { record } = uploadData;
-   console.warn('!! record', record);
    // mediaHandler = new MediaService(videoRef, getFileChunk, {
    //  id: record.id,
    //  totalSize: record.fileSize,

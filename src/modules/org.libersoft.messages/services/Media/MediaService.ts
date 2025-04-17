@@ -189,7 +189,6 @@ class MediaService {
   const chunks: Uint8Array[] = [];
   for (let offsetToFetch = 0; offsetToFetch < totalSize; offsetToFetch += chunkSize) {
    const {chunk} = await this._getFileChunk({ offsetBytes: offsetToFetch, chunkSize })
-   console.warn('fetched', chunk)
    chunks.push(chunk.data)
   }
   return new Blob(chunks, { type: fileMime });
