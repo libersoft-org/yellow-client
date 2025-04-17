@@ -57,7 +57,7 @@ interface AddressBookItem {
  address: string;
 }
 
-const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
+const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
 
 export const status = writable<any>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);

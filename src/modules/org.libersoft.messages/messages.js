@@ -616,6 +616,7 @@ function findNext(messages, i) {
 export function setMessageSeen(message, cb) {
  let acc = get(active_account);
  console.log('setMessageSeen', message);
+ deleteNotification(messageNotificationId(message));
  message.just_marked_as_seen = true;
  sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
   if (res.error !== false) {
@@ -839,15 +840,16 @@ async function eventNewMessage(acc, event) {
 }
 
 function eventSeenMessage(acc, event) {
- if (acc !== get(active_account)) {
-  //console.log('eventSeenMessage: acc !== get(active_account)', acc, get(active_account));
-  return;
- }
  console.log(event);
  const res = event.detail;
  //console.log('eventSeenMessage', res);
  if (!res.data) {
   console.log('eventSeenMessage: no data');
+  return;
+ }
+ deleteNotification(messageNotificationId(res.data.uid));
+ if (acc !== get(active_account)) {
+  //console.log('eventSeenMessage: acc !== get(active_account)', acc, get(active_account));
   return;
  }
  //console.log('messagesArray:', get(messagesArray));
@@ -878,6 +880,10 @@ function eventSeenInboxMessage(acc, event) {
  } else console.log('eventSeenInboxMessage: conversation not found by address:', res);
 }
 
+function messageNotificationId(msg) {
+ return identifier + '\\' + 'message\\' + msg.uid;
+}
+
 async function showNotification(acc, msg) {
  if (!acc) console.error('showNotification: no account');
  const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
@@ -889,6 +895,7 @@ async function showNotification(acc, msg) {
   title = 'New message from: ' + msg.address_from;
  }
  let notification = {
+  id: messageNotificationId(msg),
   title,
   body: msg.stripped_text,
   icon: 'img/photo.svg',

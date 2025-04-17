@@ -35,7 +35,7 @@ export const link = 'https://yellow.libersoft.org';
 // declarations of modules that this client supports
 export let module_decls = writable({});
 
-const ping_interval = import.meta.env.VITE_PING_INTERVAL || 10000;
+const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
 
 selected_module_id.subscribe(async id => {
  await tick();
