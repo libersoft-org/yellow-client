@@ -25,6 +25,8 @@ export interface YellowNotification {
 let counter = 0;
 let notifications: Map<string, YellowNotification> = new Map();
 let _events;
+let browser_notifications: Map<string, Notification> = new Map();
+let tauri_notifications: Map<string, Notification> = new Map();
 
 export function setNotificationsEnabled(value) {
  if (!BROWSER) {
@@ -149,6 +151,27 @@ export async function addNotification(notification: Partial<YellowNotification>)
  return n.id;
 }
 
+export async function deleteNotification(id: string): Promise<void> {
+ log.debug('deleteNotification:', id);
+ await deleteCustomNotification(id);
+ await deleteBrowserNotification(id);
+ //deleteTauriNotification(id);//todo
+}
+
+async function deleteCustomNotification(id: string): void {
+ notifications[id] && notifications.delete(id);
+ let s = await multiwindow_store('notifications');
+ s.set(id, null);
+}
+
+function deleteBrowserNotification(id: string): void {
+ let n = browser_notifications.get(id);
+ if (n) {
+  n.close();
+  browser_notifications.delete(id);
+ }
+}
+
 async function sendTauriNotification(notification: YellowNotification) {
  let permissionGranted = await isPermissionGranted();
  log.debug('permissionGranted:', permissionGranted);
@@ -216,19 +239,18 @@ function playNotificationSound(notification: YellowNotification): void {
 function showBrowserNotification(notification: YellowNotification) {
  playNotificationSound(notification);
  let n = new Notification(notification.title, {
+  id: notification.id,
   body: notification.body,
   icon: notification.icon,
   silent: true,
  });
- n.onclick = async (e) => {
+ n.onclick = async e => {
   log.debug('notification onclick:', e);
   await notification.callback?.('click');
  };
-}
-
-export async function deleteNotification(id: string): Promise<void> {
- //log.debug('deleteNotification:', id);
- notifications[id] && notifications.delete(id);
- let s = await multiwindow_store('notifications');
- s.set(id, null);
+ browser_notifications.set(notification.id, n);
+ n.onclose = () => {
+  log.debug('browser notification onclose:', notification.id);
+  browser_notifications.delete(notification.id);
+ };
 }
