@@ -1,5 +1,6 @@
 <script>
  import { onMount } from 'svelte';
+ import { exit } from '@tauri-apps/plugin-process';
  import Dialog from '@/core/components/Dialog/Dialog.svelte';
  let elDialog;
  let closeDialog;
@@ -17,8 +18,9 @@
   elDialog.open();
  }
 
- function clickButton() {
-  window.close();
+ async function clickButton() {
+  console.log('Clicked on Yes button');
+  await exit();
  }
 </script>
 

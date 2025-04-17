@@ -158,18 +158,10 @@ export async function deleteNotification(id: string): Promise<void> {
  //deleteTauriNotification(id);//todo
 }
 
-async function deleteCustomNotification(id: string): void {
+async function deleteCustomNotification(id: string): Promise<void> {
  notifications[id] && notifications.delete(id);
  let s = await multiwindow_store('notifications');
  s.set(id, null);
-}
-
-function deleteBrowserNotification(id: string): void {
- let n = browser_notifications.get(id);
- if (n) {
-  n.close();
-  browser_notifications.delete(id);
- }
 }
 
 async function sendTauriNotification(notification: YellowNotification) {
@@ -239,7 +231,7 @@ function playNotificationSound(notification: YellowNotification): void {
 function showBrowserNotification(notification: YellowNotification) {
  playNotificationSound(notification);
  let n = new Notification(notification.title, {
-  id: notification.id,
+  tag: notification.id,
   body: notification.body,
   icon: notification.icon,
   silent: true,
@@ -253,4 +245,12 @@ function showBrowserNotification(notification: YellowNotification) {
   log.debug('browser notification onclose:', notification.id);
   browser_notifications.delete(notification.id);
  };
+}
+
+async function deleteBrowserNotification(id: string): Promise<void> {
+ let n = browser_notifications.get(id);
+ if (n) {
+  n.close();
+  browser_notifications.delete(id);
+ }
 }

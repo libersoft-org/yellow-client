@@ -10,6 +10,7 @@
         "@tauri-apps/plugin-notification": "^2.2.2",
         "@tauri-apps/plugin-os": "^2.2.1",
         "@tauri-apps/plugin-positioner": "^2.2.0",
+        "@tauri-apps/plugin-process": "^2.2.1",
         "@tauri-apps/plugin-store": "^2.2.0",
         "@testing-library/svelte": "^5.2.6",
         "@webav/mp4box.js": "^0.5.6",
@@ -467,6 +468,8 @@
     "@tauri-apps/plugin-os": ["@tauri-apps/plugin-os@2.2.1", "", { "dependencies": { "@tauri-apps/api": "^2.0.0" } }, "sha512-cNYpNri2CCc6BaNeB6G/mOtLvg8dFyFQyCUdf2y0K8PIAKGEWdEcu8DECkydU2B+oj4OJihDPD2de5K6cbVl9A=="],
 
     "@tauri-apps/plugin-positioner": ["@tauri-apps/plugin-positioner@2.2.0", "", { "dependencies": { "@tauri-apps/api": "^2.0.0" } }, "sha512-3JIWqV4U1US4nmM4PGmAHODq0ltkJ91MyANR033elKSSpX3AqKnVQnLz76xThBFHjChJrZwsXASpc2Inpu+cTg=="],
+
+    "@tauri-apps/plugin-process": ["@tauri-apps/plugin-process@2.2.1", "", { "dependencies": { "@tauri-apps/api": "^2.0.0" } }, "sha512-cF/k8J+YjjuowhNG1AboHNTlrGiOwgX5j6NzsX6WFf9FMzyZUchkCgZMxCdSE5NIgFX0vvOgLQhODFJgbMenLg=="],
 
     "@tauri-apps/plugin-store": ["@tauri-apps/plugin-store@2.2.0", "", { "dependencies": { "@tauri-apps/api": "^2.0.0" } }, "sha512-hJTRtuJis4w5fW1dkcgftsYxKXK0+DbAqurZ3CURHG5WkAyyZgbxpeYctw12bbzF9ZbZREXZklPq8mocCC3Sgg=="],
 
