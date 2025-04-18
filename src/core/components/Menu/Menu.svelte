@@ -134,14 +134,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  font-size: 18px;
+  gap: 10px;
+  font-size: 22px;
   font-weight: bold;
- }
-
- .footer .logo img {
-  width: 20px;
-  height: 20px;
  }
 
  .footer .version {
@@ -171,7 +166,7 @@
  <div class="footer">
   <BaseButton onClick={() => openPage(link)}>
    <div class="logo">
-    <div><img src="img/logo.svg" alt={product} /></div>
+    <Icon img="img/logo.svg" alt={product} size="30" padding="0" />
     <div>{product}</div>
    </div>
   </BaseButton>
