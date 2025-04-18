@@ -118,9 +118,7 @@
  <div class="modal" style="top: {top}px; left: {left}px;" bind:this={modalEl}>
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
-   <BaseButton onClick={clickCloseModal}>
-    <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" />
-   </BaseButton>
+   <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={clickCloseModal} />
   </div>
   <div class="body">
    <slot name="body"></slot>

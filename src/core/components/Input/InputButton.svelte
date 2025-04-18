@@ -1,5 +1,6 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let type = 'text';
  export let placeholder = '';
  export let value = '';
@@ -44,23 +45,9 @@
  input:focus {
   outline: 2px solid #0060df;
  }
-
- .image {
-  padding: 10px;
- }
-
- .image img {
-  display: flex;
-  width: 20px;
-  height: 20px;
- }
 </style>
 
 <div class="input-button" style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}>
  <input {type} {placeholder} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />
- <BaseButton {onClick}>
-  <div class="image">
-   <img src={img} {alt} />
-  </div>
- </BaseButton>
+ <Icon {img} {alt} colorVariable="--icon-black" size="20" padding="10" {onClick} />
 </div>

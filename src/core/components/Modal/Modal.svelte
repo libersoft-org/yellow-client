@@ -181,11 +181,8 @@
   {#if showContent}
    <div class="header" role="none" tabindex="-1" on:mousedown={dragStart}>
     <div class="title">{title}</div>
-    <BaseButton onClick={close}>
-     <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" />
-    </BaseButton>
+    <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={close} />
    </div>
-
    <div class="body">
     <slot>
      {#if $debug}params: <code>{JSON.stringify({ params })}</code>{/if}
