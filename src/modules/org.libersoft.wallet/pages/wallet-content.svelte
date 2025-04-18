@@ -2,6 +2,7 @@
  import { onMount } from 'svelte';
  import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import Modal from '../../../core/components/Modal/Modal.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
@@ -188,11 +189,6 @@
   gap: 5px;
  }
 
- .body .top .right .address .copy {
-  width: 15px;
-  height: 15px;
- }
-
  .body .buttons {
   display: flex;
   justify-content: center;
@@ -254,7 +250,7 @@
        <BaseButton onClick={clickCopyAddress}>
         <div class="address">
          <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
-         <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
+         <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
         </div>
        </BaseButton>
       {:else}
