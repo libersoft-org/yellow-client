@@ -28,11 +28,6 @@
   background-color: #fff;
   box-shadow: var(--shadow);
  }
-
- .scroll-button img {
-  width: 32px;
-  height: 32px;
- }
 </style>
 
 {#if visible}
