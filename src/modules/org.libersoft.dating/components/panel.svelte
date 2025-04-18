@@ -1,6 +1,6 @@
 <script>
- import Core from '../../../core/core.js';
- import PanelButton from '../components/panel-button.svelte';
+ import Core from '@/core/core.js';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let label = '';
 
  function back() {
@@ -30,6 +30,6 @@
 </style>
 
 <div class="panel">
- <PanelButton img="/img/back.svg" colorVariable="--icon-white" alt="Back" hiddenOnDesktop={true} onClick={back} />
+ <Icon img="/img/back.svg" alt="Back" colorVariable="--icon-white" size="32" padding="0" visibleOnDesktop={false} onClick={back} />
  <div class="label">{label}</div>
 </div>
