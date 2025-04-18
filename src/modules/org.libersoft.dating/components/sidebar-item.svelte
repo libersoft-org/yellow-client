@@ -16,11 +16,6 @@
   background-color: #fffcf0;
   border-bottom: 1px solid #dd9;
  }
-
- .item .image {
-  width: 20px;
-  height: 20px;
- }
 </style>
 
 <BaseButton {onClick}>

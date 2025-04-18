@@ -2,7 +2,6 @@
  import { onDestroy } from 'svelte';
  import { get } from 'svelte/store';
  import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.js';
- import { getColorFromCSSToFilter } from '../../utils/colors.js';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import AccountBarItem from './AccountBarItem.svelte';
@@ -81,11 +80,6 @@
   gap: 10px;
   flex: 1 1 auto;
   min-width: 0;
- }
-
- .dropdown img {
-  width: 20px;
-  height: 20px;
  }
 
  .items {

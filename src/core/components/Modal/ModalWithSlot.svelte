@@ -103,13 +103,6 @@
   flex-grow: 1;
  }
 
- .modal .header img {
-  display: block;
-  width: 20px;
-  height: 20px;
-  padding: 10px;
- }
-
  .modal .body {
   display: flex;
   flex-direction: column;

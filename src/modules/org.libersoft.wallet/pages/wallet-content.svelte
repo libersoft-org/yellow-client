@@ -196,7 +196,7 @@
  }
 
  @media (min-width: 769px) {
-  .top-bar .left .button {
+  .top-bar .left .back-button {
    display: none;
   }
  }
@@ -205,9 +205,11 @@
 <div class="wallet-content">
  <div class="top-bar">
   <div class="left">
-   <BaseButton onClick={clickBackButton}>
-    <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30" padding="0" />
-   </BaseButton>
+   <div class="back-button">
+    <BaseButton onClick={clickBackButton}>
+     <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30" padding="0" />
+    </BaseButton>
+   </div>
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
   </div>
   <div class="right">

@@ -36,11 +36,6 @@
   font-weight: bold;
  }
 
- .accordion .item .header img {
-  width: 12px;
-  height: 12px;
- }
-
  .accordion .item .content {
   padding: 10px;
   display: none;
