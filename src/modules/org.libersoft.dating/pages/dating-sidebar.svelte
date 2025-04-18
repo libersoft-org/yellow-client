@@ -16,8 +16,8 @@
 </style>
 
 <div class="sidebar">
- <Item img="people.svg" label="People nearby" colorVariable="--icon-red" onClick={() => setPage('people')} />
- <Item img="map.svg" label="Map" colorVariable="--icon-red" onClick={() => setPage('map')} />
- <Item img="match.svg" label="Match game" colorVariable="--icon-red" onClick={() => setPage('match')} />
- <Item img="settings.svg" label="Settings" colorVariable="--icon-red" onClick={() => setPage('settings')} />
+ <Item img="people.svg" label="People nearby" onClick={() => setPage('people')} />
+ <Item img="map.svg" label="Map" onClick={() => setPage('map')} />
+ <Item img="match.svg" label="Match game" onClick={() => setPage('match')} />
+ <Item img="settings.svg" label="Settings" onClick={() => setPage('settings')} />
 </div>

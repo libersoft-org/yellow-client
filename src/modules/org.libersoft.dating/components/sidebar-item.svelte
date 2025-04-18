@@ -4,6 +4,7 @@
  export let img = null;
  export let label = '';
  export let onClick;
+ export let colorVariable = '--icon-black';
 </script>
 
 <style>
@@ -21,7 +22,7 @@
 <BaseButton {onClick}>
  <div class="item">
   {#if img}
-   <Icon img="modules/org.libersoft.dating/img/{img}" alt={label} colorVariable="--icon-black" size="20" padding="0" />
+   <Icon img="modules/org.libersoft.dating/img/{img}" alt={label} {colorVariable} size="20" padding="0" />
   {/if}
   <div>{label}</div>
  </div>

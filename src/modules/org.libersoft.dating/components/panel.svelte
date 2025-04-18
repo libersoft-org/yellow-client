@@ -30,6 +30,6 @@
 </style>
 
 <div class="panel">
- <PanelButton img="/img/back-white.svg" alt="Back" hiddenOnDesktop={true} onClick={back} />
+ <PanelButton img="/img/back.svg" colorVariable="--icon-white" alt="Back" hiddenOnDesktop={true} onClick={back} />
  <div class="label">{label}</div>
 </div>

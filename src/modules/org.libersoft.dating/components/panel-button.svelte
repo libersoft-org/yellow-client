@@ -1,19 +1,16 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let img;
  export let alt = '';
  export let hiddenOnDesktop = false;
  export let onClick;
+ export let colorVariable;
 </script>
 
 <style>
  .button {
   display: flex;
- }
-
- .button img {
-  width: 32px;
-  height: 32px;
  }
 
  @media (min-width: 769px) {
@@ -26,7 +23,7 @@
 {#if img}
  <BaseButton {onClick}>
   <div class="button {hiddenOnDesktop ? 'hidden' : ''}">
-   <img src={img} {alt} />
+   <Icon {img} {alt} {colorVariable} size="32" padding="0" />
   </div>
  </BaseButton>
 {/if}
