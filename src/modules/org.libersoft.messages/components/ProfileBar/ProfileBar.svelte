@@ -56,5 +56,5 @@
   {/if}
   <div class="address">{$selectedConversation.address}</div>
  </div>
- <Icon img="img/close.svg" alt="Close" onClick={clickClose} visibleOnMobile={false} />
+ <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" onClick={clickClose} visibleOnMobile={false} />
 </div>

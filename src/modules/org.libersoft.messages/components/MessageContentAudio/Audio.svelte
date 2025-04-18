@@ -1,6 +1,5 @@
 <script>
  import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../../messages.js';
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
  //import WaveSurfer from 'wavesurfer.js';
  import { onMount } from 'svelte';
  import MediaService from '../../services/media/MediaService.ts';
@@ -101,19 +100,6 @@
   gap: 10px;
  }
 
- .player .play {
-  display: flex;
-  padding: 10px;
-  border: 1px solid #ba0;
-  border-radius: 15px;
-  background-color: #ec0;
- }
-
- .player .play img {
-  width: 24px;
-  height: 24px;
- }
-
  .player .wave {
   width: 100%;
   height: 50px;
@@ -136,16 +122,11 @@
    Loading...
   {/if}
   <div class="player">
-   <BaseButton onClick={clickPlay}>
-    <div class="play">
-     <img src="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} />
-    </div>
-   </BaseButton>
+   <Button img="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} onClick={clickPlay} />
    <div class="wave" bind:this={waveRef}></div>
   </div>
   <div class="time">{time ? time : '00:00'} / {duration}</div>
  </div>
-
  {#if !$download}
   <div class="">
    <Button img="modules/{identifier}/img/download.svg" onClick={onDownload}>Download</Button>
