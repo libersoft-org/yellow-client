@@ -3,6 +3,7 @@
  import { get } from 'svelte/store';
  import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.js';
  import { getColorFromCSSToFilter } from '../../utils/colors.js';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import AccountBarItem from './AccountBarItem.svelte';
  import AccountBarButton from './AccountBarButton.svelte';
@@ -119,9 +120,7 @@
      <div class="text">CREATE ACCOUNT FIRST</div>
     {/if}
    {/if}
-   <div>
-    <img style="filter: {getColorFromCSSToFilter('--icon-white')}" src={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} />
-   </div>
+   <Icon img={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20" padding="0" />
   </div>
  </BaseButton>
  {#if accountsVisible}
