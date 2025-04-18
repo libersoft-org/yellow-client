@@ -1,4 +1,5 @@
 <script>
+ import { module } from '../module.js';
  import { addNetwork, removeNetwork, networks, default_networks } from '../wallet.ts';
  import Icon from '../../../core/components/Icon/Icon.svelte';
  import Modal from '../../../core/components/Modal/Modal.svelte';
@@ -107,7 +108,7 @@
     {/if}
     <div class="name">{n.name}</div>
     <div class="buttons">
-     <Icon img="modules/org.libersoft.wallet/img/coin.svg" alt="Token list" size="20" padding="5" onClick={() => tokenList(n)} />
+     <Icon img="modules/{module.identifier}/img/coin.svg" alt="Token list" size="20" padding="5" onClick={() => tokenList(n)} />
      <Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Edit network" size="20" padding="5" onClick={() => editNetwork(n)} />
      <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete network" size="20" padding="5" onClick={() => removeNetwork(n)} />
     </div>
