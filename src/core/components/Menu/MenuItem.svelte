@@ -1,6 +1,6 @@
 <script>
  import BaseButton from '../Button/BaseButton.svelte';
- import { getColorFromCSSToFilter } from '../../utils/colors.js';
+ import Icon from '../Icon/Icon.svelte';
  export let img;
  export let title;
  export let onClick;
@@ -13,7 +13,6 @@
  export let borderBottom = '1px solid #444';
  export let borderLeft = 'none';
  export let borderRight = 'none';
- export let imgSize = '24px';
  export let borderRadius = '0';
  export let colorVariable;
 </script>
@@ -33,7 +32,7 @@
 <BaseButton {onClick}>
  <div class="item" style="padding: {padding}; gap: {gap}; color: {textColor}; --bgColor: {bgColor}; border-top: {borderTop}; border-bottom: {borderBottom}; border-left: {borderLeft}; border-right: {borderRight}; --hoverColor: {hoverColor}; border-radius: {borderRadius}">
   {#if img}
-   <img style="width: {imgSize}; height: {imgSize}; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} alt={title} />
+   <Icon {img} alt={title} {colorVariable} size="24" padding="0" />
   {/if}
   {#if title}
    <div>{title}</div>

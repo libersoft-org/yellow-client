@@ -1,6 +1,7 @@
 <script>
  import Modal from '../Modal/Modal.svelte';
  import Button from '@/core/components/Button/Button.svelte';
+ import Icon from '../Icon/Icon.svelte';
  export let data;
  let show = false;
 
@@ -24,17 +25,12 @@
   gap: 20px;
   padding: 10px;
  }
-
- .top .icon img {
-  width: 50px;
-  height: 50px;
- }
 </style>
 
 <Modal title={data.title} bind:show width="400px">
  <slot>
   <div class="top">
-   <div class="icon"><img src={data.icon} alt="icon" /></div>
+   <Icon img={data.icon} alt="" size="50" padding="0" />
    <div>{data.body}</div>
   </div>
   <div class="buttons">
