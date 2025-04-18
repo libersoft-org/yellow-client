@@ -1,6 +1,7 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Input from '../Input/Input.svelte';
+ import Icon from '../Icon/Icon.svelte';
  export let options = [];
  export let selected = '';
  let filteredOptions = options;
@@ -78,16 +79,6 @@
   flex-grow: 1;
   padding: 0 10px;
  }
-
- .selected .clear {
-  padding: 10px;
- }
-
- .selected .clear img {
-  display: block;
-  width: 10px;
-  height: 10px;
- }
 </style>
 
 <div class="dropdown-filter">
@@ -95,9 +86,7 @@
   <div class="selected">
    <div class="text">{selected}</div>
    <BaseButton onClick={clickClearSelection}>
-    <div class="clear">
-     <img src="img/close-black.svg" alt="X" />
-    </div>
+    <Icon img="img/close-black.svg" alt="X" colorVariable="--icon-black" size="10" />
    </BaseButton>
   </div>
  {:else}
