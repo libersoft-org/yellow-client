@@ -94,7 +94,7 @@ export async function init_emojis() {
  /*
  await new Promise(resolve => setTimeout(resolve, 10000));
  cpp = [];
- let res = await fetch('modules/org.libersoft.messages/json/emoji_16_0_ordering.min.json');
+ let res = await fetch('modules/' + module.identifier + '/json/emoji_16_0_ordering.min.json');
  let emojis = await res.json();
  for (let e of emojis) {
   for (let ee of e.emoji) {

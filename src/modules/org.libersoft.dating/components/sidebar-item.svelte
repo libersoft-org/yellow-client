@@ -1,4 +1,5 @@
 <script>
+ import { module } from '../module.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  export let img = null;
@@ -22,7 +23,7 @@
 <BaseButton {onClick}>
  <div class="item">
   {#if img}
-   <Icon img="modules/org.libersoft.dating/img/{img}" alt={label} {colorVariable} size="20" padding="0" />
+   <Icon img="modules/{module.identifier}/img/{img}" alt={label} {colorVariable} size="20" padding="0" />
   {/if}
   <div>{label}</div>
  </div>
