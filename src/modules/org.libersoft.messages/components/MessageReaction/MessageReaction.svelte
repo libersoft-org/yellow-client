@@ -1,29 +1,25 @@
 <script lang="ts">
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Emojis from '../Emoji/Emojis.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import { computePosition, autoPlacement, autoUpdate, shift, offset } from '@floating-ui/dom';
  import { onDestroy, onMount } from 'svelte';
  import { toggleMessageReaction, identifier } from '../../messages';
  import Emoji from '../Emoji/Emoji.svelte';
  import { rgi } from '../../emojis';
  import Portal from 'svelte-portal';
-
  interface MessageReactionProps {
   message: any;
  }
-
  let { message }: MessageReactionProps = $props();
-
  let buttonRef: HTMLElement;
  let floatingRef: HTMLElement = $state(null);
-
  let show = $state(false);
  let showFull = $state(false);
+ let autoPlacementCleanup: ReturnType<typeof handleFloatingUI>;
  const onClick = () => {
   show = !show;
  };
-
- let autoPlacementCleanup: ReturnType<typeof handleFloatingUI>;
 
  const handleOutsideClick = (e: MouseEvent) => {
   if (floatingRef && !floatingRef.contains(e.target as Node) && !buttonRef.contains(e.target as Node)) {
@@ -33,9 +29,7 @@
  };
 
  const handleFloatingUI = () => {
-  if (!buttonRef || !floatingRef) {
-   return;
-  }
+  if (!buttonRef || !floatingRef) return;
   const autoUpdateCleanUp = autoUpdate(buttonRef, floatingRef, () => {
    computePosition(buttonRef, floatingRef, {
     middleware: [
@@ -54,18 +48,15 @@
     });
    });
   });
-
   document.addEventListener('click', handleOutsideClick);
-
   return () => {
    autoUpdateCleanUp && autoUpdateCleanUp();
   };
  };
 
  $effect(() => {
-  if (show) {
-   autoPlacementCleanup = handleFloatingUI();
-  } else {
+  if (show) autoPlacementCleanup = handleFloatingUI();
+  else {
    autoPlacementCleanup && autoPlacementCleanup();
    showFull = false;
   }
@@ -122,7 +113,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #9f9f9f;
+  background: #da0;
   border-radius: 50%;
   margin-left: 6px;
   width: 30px;
@@ -143,9 +134,7 @@
 {/snippet}
 
 <div bind:this={buttonRef} class="reaction-button" class:open={show}>
- <BaseButton {onClick}>
-  <img src="modules/{identifier}/img/add-reaction.svg" alt="Message settings" width="20px" />
- </BaseButton>
+ <Icon img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--icon-black" size="24" padding="0" {onClick} />
 </div>
 
 {#if show}
@@ -161,7 +150,7 @@
     {@render emoji([9829, 65039])}
     <BaseButton onClick={() => (showFull = !showFull)}>
      <div class="expand">
-      <img src={showFull ? 'img/close.svg' : 'img/plus-white.svg'} alt="Message settings" width="18px" />
+      <Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20" colorVariable="--icon-white" />
      </div>
     </BaseButton>
    </div>
