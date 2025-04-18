@@ -206,9 +206,7 @@
  <div class="top-bar">
   <div class="left">
    <div class="back-button">
-    <BaseButton onClick={clickBackButton}>
-     <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30" padding="0" />
-    </BaseButton>
+    <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30" padding="0" onClick={clickBackButton} />
    </div>
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
   </div>
