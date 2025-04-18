@@ -81,12 +81,6 @@
   gap: 10px;
  }
 
- .top-bar .left .button {
-  padding: 5px;
-  width: 30px;
-  height: 30px;
- }
-
  .top-bar .right {
   display: flex;
   flex-direction: column;
@@ -212,9 +206,7 @@
  <div class="top-bar">
   <div class="left">
    <BaseButton onClick={clickBackButton}>
-    <div class="button">
-     <img src="img/back-white.svg" alt="Back" />
-    </div>
+    <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30" padding="0" />
    </BaseButton>
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
   </div>

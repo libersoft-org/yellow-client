@@ -1,5 +1,6 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import QRCode from 'qrcode';
  import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
  import { parseUnits } from 'ethers';
@@ -72,13 +73,6 @@
 </script>
 
 <style>
- input {
-  padding: 5px;
-  border: 1px solid #000;
-  border-radius: 10px;
-  background-color: #fff;
- }
-
  .receive {
   display: flex;
   flex-direction: column;
@@ -106,11 +100,6 @@
   background-color: #ffa;
  }
 
- .address img {
-  width: 15px;
-  height: 15px;
- }
-
  .amount {
   display: flex;
   align-items: center;
@@ -129,7 +118,7 @@
    <BaseButton onClick={clickCopyAddress}>
     <div class="address">
      <div bind:this={addressElement}>{$selectedAddress.address}</div>
-     <img src="img/copy.svg" alt="Copy" />
+     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
     </div>
    </BaseButton>
    <div class="qr"><img src={qrAddress} alt="Address" /></div>
@@ -145,7 +134,7 @@
    <BaseButton onClick={clickCopyPayment}>
     <div class="address">
      <div bind:this={paymentElement}>{paymentText}</div>
-     <img src="img/copy.svg" alt="Copy" />
+     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
     </div>
    </BaseButton>
    <div class="qr"><img src={qrPayment} alt="Payment" /></div>
