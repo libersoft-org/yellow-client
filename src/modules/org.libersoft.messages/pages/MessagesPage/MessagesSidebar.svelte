@@ -52,11 +52,7 @@
   background-color: #222;
  }
 
- .bar-buttons .space {
-  flex: 1;
- }
-
- .bar-button {
+ .bar-buttons .bar-button {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -64,6 +60,10 @@
   overflow: hidden;
   padding: 15px;
   font-weight: bold;
+ }
+
+ .bar-buttons .bar-button.grow {
+  flex: 1;
  }
 
  .new-conversation {
@@ -83,13 +83,12 @@
 {#if $conversationsArray != null}
  <div class="conversations">
   <div class="bar-buttons">
-   <div class="bar-button">
+   <div class="bar-button grow">
     <BaseButton onClick={clickNewConversation}>
      <Icon img="modules/{identifier}/img/new-conversation.svg" alt="New conversation" colorVariable="--icon-white" size="28" padding="0" />
      <div class="new-conversation">New conversation</div>
     </BaseButton>
    </div>
-   <div class="space"></div>
    <Icon img="img/settings.svg" alt="Message settings" colorVariable="--icon-white" size="28" padding="10" onClick={clickMessagesSettings} />
   </div>
   <div class="items" bind:this={elItems} on:scroll={parseScroll}>
