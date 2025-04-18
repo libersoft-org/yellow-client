@@ -2,7 +2,7 @@
  import { debug } from '../../core.js';
  import { setContext, tick } from 'svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
-
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let show = false;
  export let params = null;
  export let title = null;
@@ -189,9 +189,7 @@
    <div class="header" role="none" tabindex="-1" on:mousedown={dragStart}>
     <div class="title">{title}</div>
     <BaseButton onClick={close}>
-     <div class="close">
-      <img src="img/close-black.svg" alt="X" />
-     </div>
+     <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" />
     </BaseButton>
    </div>
 

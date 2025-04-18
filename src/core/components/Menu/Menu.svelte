@@ -3,7 +3,7 @@
  import MenuItem from './MenuItem.svelte';
  import Modal from '../Modal/Modal.svelte';
  import ModalSettings from '../../modals/Settings.svelte';
- import Dialog from '../Dialog/Dialog.svelte';
+ import Icon from '../Icon/Icon.svelte';
  import DialogExit from '../../dialogs/Exit.svelte';
  import { product, version, build, commit, link } from '../../core.js';
  import { TAURI, BROWSER } from '@/core/tauri.ts';
@@ -114,16 +114,6 @@
   border-bottom: 1px solid #444;
  }
 
- .header .icon {
-  display: flex;
-  padding: 15px;
- }
-
- .header .icon img {
-  width: 30px;
-  height: 30px;
- }
-
  .items {
   overflow: auto;
   flex: 1;
@@ -169,9 +159,7 @@
  <div>
   <div class="header">
    <BaseButton onClick={clickMenuClose}>
-    <div class="icon">
-     <img src="img/close.svg" alt="X" />
-    </div>
+    <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30" padding="15" />
    </BaseButton>
   </div>
   <div class="items">

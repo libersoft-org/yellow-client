@@ -86,7 +86,7 @@
   <div class="selected">
    <div class="text">{selected}</div>
    <BaseButton onClick={clickClearSelection}>
-    <Icon img="img/close-black.svg" alt="X" colorVariable="--icon-black" size="10" />
+    <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="10" />
    </BaseButton>
   </div>
  {:else}
