@@ -8,7 +8,7 @@
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
  import Skeleton from '@/core/components/Skeleton/Skeleton.svelte';
- import Icon from "@/core/components/Icon/Icon.svelte";
+ import Icon from '@/core/components/Icon/Icon.svelte';
 
  interface Props {
   upload: FileUpload | null;

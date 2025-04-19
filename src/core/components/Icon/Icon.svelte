@@ -32,7 +32,7 @@
 
 {#snippet icon()}
  <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;">
-  <img style="width: {size}px; height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} {alt} />
+  <img style="width: {size}px; height: {size}px; min-width: {size}px; min-height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} {alt} />
  </div>
 {/snippet}
 
