@@ -85,7 +85,7 @@
   <div class="bar-buttons">
    <div class="bar-button grow">
     <BaseButton onClick={clickNewConversation}>
-     <Icon img="modules/{identifier}/img/new-conversation.svg" alt="New conversation" colorVariable="--icon-white" size="28" padding="0" />
+     <Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--icon-white" size="28" padding="0" />
      <div class="new-conversation">New conversation</div>
     </BaseButton>
    </div>

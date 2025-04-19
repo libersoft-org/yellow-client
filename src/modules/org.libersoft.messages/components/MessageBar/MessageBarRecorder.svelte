@@ -126,13 +126,13 @@
 
 <div class="message-bar-recorder" class:is-paused={isPaused} style:display={$isOpen ? 'flex' : 'none'}>
  <div class="button-wrapper">
-  <Icon img="modules/{identifier}/img/delete-red.svg" alt="Record voice message" size="14" padding="0" onClick={onDelete} />
+  <Icon img="modules/{identifier}/img/delete.svg" colorVariable="--icon-red" alt="Record voice message" size="14" padding="0" onClick={onDelete} />
  </div>
  <div class="button-wrapper">
   {#if isPaused}
-   <Icon img="modules/{identifier}/img/play-yellow.svg" alt="Record voice message" size="14" padding="0" onClick={onPlay} />
+   <Icon img="modules/{identifier}/img/play.svg" colorVariable="--icon-yellow" alt="Record voice message" size="14" padding="0" onClick={onPlay} />
   {:else}
-   <Icon img="modules/{identifier}/img/pause-yellow.svg" alt="Record voice message" size="14" padding="0" onClick={onPause} />
+   <Icon img="modules/{identifier}/img/pause.svg" colorVariable="--icon-yellow" alt="Record voice message" size="14" padding="0" onClick={onPause} />
   {/if}
  </div>
  <div class="wavesurfer-wrap">

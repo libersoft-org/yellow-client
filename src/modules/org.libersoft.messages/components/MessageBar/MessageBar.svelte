@@ -288,10 +288,10 @@
 
   {#if expressionsAsContextMenu}
    <div bind:this={elExpressions}>
-    <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" />
+    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32" padding="0" />
    </div>
   {:else}
-   <Icon img="modules/{identifier}/img/emoji-yellow.svg" alt="Emoji" size="32" padding="0" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
+   <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32" padding="0" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
   {/if}
 
   <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
