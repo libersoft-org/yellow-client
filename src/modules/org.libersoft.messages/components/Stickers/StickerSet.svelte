@@ -1,7 +1,8 @@
 <script>
  import { add_stickerset_to_favorites, remove_stickerset_from_favorites, stickerset_in_favorites, stickerset_favorites } from '../../stickers.js';
  import { debug } from '@/core/core.js';
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
  import StickerSetPart from './StickerSetPart.svelte';
  import { stickers_db } from '../../db.ts';
  import { onDestroy, onMount } from 'svelte';
@@ -75,29 +76,24 @@
 
  .title-bar {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 10px;
+  gap: 10px;
   border-radius: 10px;
   background-color: #ddd;
  }
 
- .title-bar .row {
+ .title-bar .left {
   display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 10px;
  }
 
- .title-bar .row .label {
+ .title-bar .left .label {
   font-weight: bold;
   flex-grow: 1;
  }
 
- .title-bar .row img {
-  display: flex;
-  width: 20px;
-  height: 20px;
- }
-
- .title-bar .created {
+ .title-bar .left .created {
   font-size: 12px;
  }
 
@@ -107,48 +103,27 @@
   flex-wrap: wrap;
   gap: 5px;
  }
-
- .more {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #fd1;
- }
-
- .more img {
-  width: 20px;
-  height: 20px;
- }
 </style>
 
 <div class="stickerset" style="content-visibility: {intersecting ? 'visible' : 'hidden'}" role="none" bind:clientHeight>
  <div class="title-bar">
-  <div class="row">
+  <div class="left">
    <div class="label">{stickerset.name}</div>
    {#if $debug}
-    id: {stickerset.id}
-    <!--   <details><summary>stickerset</summary>{JSON.stringify(stickerset, null, 2)}</details>-->
+    <div>ID: {stickerset.id}</div>
+    <!--<details><summary>stickerset</summary>{JSON.stringify(stickerset, null, 2)}</details>-->
    {/if}
-
-   <BaseButton onClick={toggleFavorite}>
-    <div class="icon">
-     <img src="img/heart-{favorite_icon}.svg" alt={favorite_alt} />
-    </div>
-   </BaseButton>
+   <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
   </div>
-  <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
+  <div class="right">
+   <Icon img="img/heart-{favorite_icon}.svg" alt={favorite_alt} size="20" padding="10" onClick={toggleFavorite} />
+  </div>
  </div>
  <div class="set">
   <StickerSetPart {stickerset} items={first} {intersecting} />
  </div>
  {#if !showall}
-  <BaseButton onClick={clickExpand}>
-   <div class="more">
-    <img src="img/{expanded ? 'up' : 'down'}-black.svg" alt={expanded ? '▲' : '▼'} />
-   </div>
-  </BaseButton>
+  <Button img="img/{expanded ? 'up' : 'down'}.svg" onClick={clickExpand} />
  {/if}
  {#if showall || expanded}
   <div class="set">
