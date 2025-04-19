@@ -90,23 +90,23 @@
 
     navigator.serviceWorker.addEventListener('message', e => {
      if (e.data.type === 'GET_FILE_INFO') {
-      const {accId, uploadId} = e.data.payload
+      const { accId, uploadId } = e.data.payload;
       loadUploadData(uploadId).then(uploadData => {
        e.ports[0].postMessage(uploadData.record);
-      })
+      });
      }
      if (e.data.type === 'GET_CHUNK') {
-      const {accId, uploadId, start, end} = e.data.payload
-      const getChunk = getFileChunkFactory(uploadId)
+      const { accId, uploadId, start, end } = e.data.payload;
+      const getChunk = getFileChunkFactory(uploadId);
 
       getChunk({
        offsetBytes: start,
-       chunkSize: (end + 1) - start,
+       chunkSize: end + 1 - start,
       }).then(data => {
        e.ports[0].postMessage(data);
-      })
+      });
      }
-    })
+    });
    });
   } else {
    console.log('+page This browser does not support service workers.');

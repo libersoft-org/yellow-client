@@ -2,16 +2,7 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import { getColorFromCSSToFilter } from '../../utils/colors.js';
 
- let {
-  img,
-  alt = '',
-  size = 24,
-  padding = 10,
-  visibleOnMobile = true,
-  visibleOnDesktop = true,
-  colorVariable,
-  onClick,
- } = $props()
+ let { img, alt = '', size = 24, padding = 10, visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick } = $props();
 </script>
 
 <style>

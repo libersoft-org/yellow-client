@@ -142,7 +142,6 @@
 {#snippet renderSenderUpload()}
  <!-- ACTIVE UPLOAD -->
  {#if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes(upload.record.status)}
-
   {#if isUploadActive}
    <FileTransfer {uploaded} total={upload.record.fileSize} status={statusString} />
    {@render uploadControls()}

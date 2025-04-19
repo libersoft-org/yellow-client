@@ -52,12 +52,15 @@
   }
 
   RecordPlugin.getAvailableAudioDevices().then(devices => {
-   record.startRecording({ deviceId: 'default' }).then(() => {
-    //console.log('startRecording');
-   }).catch(err => {
-    alert(err);
-    audioRecorderStore.setOpen(false);
-   });
+   record
+    .startRecording({ deviceId: 'default' })
+    .then(() => {
+     //console.log('startRecording');
+    })
+    .catch(err => {
+     alert(err);
+     audioRecorderStore.setOpen(false);
+    });
   });
  };
 

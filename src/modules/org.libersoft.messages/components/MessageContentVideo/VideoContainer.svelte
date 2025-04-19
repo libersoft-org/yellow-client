@@ -10,12 +10,12 @@
  import { writable, get } from 'svelte/store';
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
  import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
- import type { FileDownload, FileUpload, FileUploadRecord } from "@/org.libersoft.messages/services/Files/types.ts";
- import { truncateText } from "@/core/utils/textUtils.js";
+ import type { FileDownload, FileUpload, FileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
+ import { truncateText } from '@/core/utils/textUtils.js';
  import _debug from 'debug';
- import Spinner from "@/core/components/Spinner/Spinner.svelte";
- import VideoView from "@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte";
- import videoJS from "video.js";
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
+ import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
+ import videoJS from 'video.js';
 
  const debug = _debug('libersoft:messages:components:MessageContentVideo:Video');
 
@@ -25,9 +25,9 @@
  let mediaHandler = $state<MediaService | null>(null);
  let upload = $state<FileUpload | null>(null);
  let download = $state<FileDownload | null>(null);
- fileDownloadStore.store.subscribe(() => download = fileDownloadStore.get(uploadId) || null);
+ fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
 
- let acc = $derived(get(active_account))
+ let acc = $derived(get(active_account));
  let thumbnailSrc = $state<string | null>(null);
 
  //let videoUrl = $state<string | null>(null)
@@ -48,7 +48,7 @@
 
  function onDownload() {
   downloadAttachmentsSerial([upload.record], download => {
-   const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType })
+   const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
    assembleFile(blob, download.record.fileOriginalName);
   });
  }
@@ -57,14 +57,14 @@
   videoIsFullDownloading = true;
   downloadAttachmentsSerial([upload.record], download => {
    videoIsFullDownloading = false;
-   const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType })
+   const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
    startVideoJS(URL.createObjectURL(blob)).finally(() => {
     videoStarting = false;
     videoStarted = true;
-    videoJsInstance.show()
-   })
+    videoJsInstance.show();
+   });
   });
- }
+ };
 
  async function startVideo() {
   debug('Starting video');
@@ -79,23 +79,23 @@
   //const progressiveUrl = 'http://localhost:3001/'
   debug('Progressive URL:', progressiveUrl);
 
-  const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl)
+  const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
   debug('Progressive download availability:', progressiveDownloadAvailable);
 
   if (progressiveDownloadAvailable) {
    try {
-    const player = await startVideoJS(progressiveUrl)
+    const player = await startVideoJS(progressiveUrl);
     videoStarting = false;
     videoStarted = true;
-    player.show()
+    player.show();
    } catch (err) {
     if (videoJsInstance && videoJsInstance.error()) {
      console.error('Video.js error:', videoJsInstance.error());
-     fullDownloadVideo()
+     fullDownloadVideo();
     }
    }
   } else {
-   fullDownloadVideo()
+   fullDownloadVideo();
   }
  }
 
@@ -109,7 +109,7 @@
    videoEl.setAttribute('autoplay', 'true');
    videoEl.setAttribute('muted', 'true');
 
-   videoRef.appendChild(videoEl)
+   videoRef.appendChild(videoEl);
 
    if (videoJsInstance) {
     videoRef.removeChild(videoJsInstance.el());
@@ -129,17 +129,17 @@
    });
    videoJsInstance = player;
 
-   player.hide()
+   player.hide();
 
    player.on('canplay', () => {
     resolve(player);
-   })
+   });
 
-   player.on('error', (err) => {
+   player.on('error', err => {
     reject(err);
-   })
-  })
- }
+   });
+  });
+ };
 
  const fetchPosterDynamically = () => {
   fetchingPoster = true;
@@ -152,52 +152,42 @@
      // mediaHandler.player.poster(thumbnailSrc);
      // mediaHandler.player.width(140);
      // mediaHandler.player.height(280);
-    }).catch(err => {
-    posterError = true;
-   }).finally(() => {
-    fetchingPoster = false;
-   });
-  })
- }
+    })
+    .catch(err => {
+     posterError = true;
+    })
+    .finally(() => {
+     fetchingPoster = false;
+    });
+  });
+ };
 
  onMount(() => {
   loadingData = true;
-  loadUploadData(uploadId).then(async (uploadData) => {
-   upload = uploadData;
-   const { record } = uploadData;
-   // mediaHandler = new MediaService(videoRef, getFileChunk, {
-   //  id: record.id,
-   //  totalSize: record.fileSize,
-   //  fileMime: record.fileMimeType,
-   //  chunkSize: 1024 * 1024 * 1,
-   // });
-   // mediaHandler.setupVideo();
+  loadUploadData(uploadId)
+   .then(async uploadData => {
+    upload = uploadData;
+    const { record } = uploadData;
+    // mediaHandler = new MediaService(videoRef, getFileChunk, {
+    //  id: record.id,
+    //  totalSize: record.fileSize,
+    //  fileMime: record.fileMimeType,
+    //  chunkSize: 1024 * 1024 * 1,
+    // });
+    // mediaHandler.setupVideo();
 
-   if (record.metadata && record.metadata.thumbnail) {
-    const thumbnailUint8Array = await base64ToUint8Array(record.metadata.thumbnail);
-    const thumbnailBlob = new Blob([thumbnailUint8Array], { type: record.fileMimeType });
-    thumbnailSrc = URL.createObjectURL(thumbnailBlob);
-   } else {
-    fetchPosterDynamically()
-   }
-  }).finally(() => {
-   loadingData = false;
-  });
+    if (record.metadata && record.metadata.thumbnail) {
+     const thumbnailUint8Array = await base64ToUint8Array(record.metadata.thumbnail);
+     const thumbnailBlob = new Blob([thumbnailUint8Array], { type: record.fileMimeType });
+     thumbnailSrc = URL.createObjectURL(thumbnailBlob);
+    } else {
+     fetchPosterDynamically();
+    }
+   })
+   .finally(() => {
+    loadingData = false;
+   });
  });
 </script>
 
-<VideoView
- upload={upload}
- download={download}
- thumbnailSrc={thumbnailSrc}
- bind:videoRef={videoRef}
- startVideo={startVideo}
- onDownload={onDownload}
- uploadId={uploadId}
- videoStarted={videoStarted}
- videoStarting={videoStarting}
- loadingData={loadingData}
- fetchingPoster={fetchingPoster}
- posterError={posterError}
- videoIsFullDownloading={videoIsFullDownloading}
-/>
+<VideoView {upload} {download} {thumbnailSrc} bind:videoRef {startVideo} {onDownload} {uploadId} {videoStarted} {videoStarting} {loadingData} {fetchingPoster} {posterError} {videoIsFullDownloading} />

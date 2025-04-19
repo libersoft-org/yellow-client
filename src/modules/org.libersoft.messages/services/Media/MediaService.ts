@@ -129,49 +129,25 @@ class MediaService {
    }
   });
 
-  const playEl = this.videoElement.parentNode?.querySelector('.vjs-big-play-button')
+  const playEl = this.videoElement.parentNode?.querySelector('.vjs-big-play-button');
   const prep = () => {
    console.log('clickeeed!!!');
-   this.downloadFullFile().then((blob) => {
+   this.downloadFullFile().then(blob => {
     console.log('dw');
     videoElement.src = URL.createObjectURL(blob);
-    player.play()
-   })
-  }
+    player.play();
+   });
+  };
 
-  playEl?.addEventListener('click', prep)
-  playEl?.addEventListener('pointerdown', prep)
+  playEl?.addEventListener('click', prep);
+  playEl?.addEventListener('pointerdown', prep);
 
-  const EVENTS = [
-   'loadstart',
-   'progress',
-   'suspend',
-   'abort',
-   'error',
-   'emptied',
-   'stalled',
-   'loadedmetadata',
-   'loadeddata',
-   'canplay',
-   'canplaythrough',
-   'playing',
-   'waiting',
-   'seeking',
-   'seeked',
-   'ended',
-   'durationchange',
-   'timeupdate',
-   'play',
-   'pause',
-   'ratechange',
-   'resize',
-   'volumechange',
-  ]
+  const EVENTS = ['loadstart', 'progress', 'suspend', 'abort', 'error', 'emptied', 'stalled', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'playing', 'waiting', 'seeking', 'seeked', 'ended', 'durationchange', 'timeupdate', 'play', 'pause', 'ratechange', 'resize', 'volumechange'];
   EVENTS.forEach(evt => {
-   player.on(evt, () => console.log('test evt', evt))
-  })
+   player.on(evt, () => console.log('test evt', evt));
+  });
 
-  this.videoElement.addEventListener('play',  evt => {
+  this.videoElement.addEventListener('play', evt => {
    // code you want to happen when the video plays
    console.log('asdasdasdasdadasd');
   });
@@ -184,18 +160,18 @@ class MediaService {
   return this.player;
  }
 
- async downloadFullFile () {
-  const {chunkSize, totalSize, fileMime} = this.fileInfo
+ async downloadFullFile() {
+  const { chunkSize, totalSize, fileMime } = this.fileInfo;
   const chunks: Uint8Array[] = [];
   for (let offsetToFetch = 0; offsetToFetch < totalSize; offsetToFetch += chunkSize) {
-   const {chunk} = await this._getFileChunk({ offsetBytes: offsetToFetch, chunkSize })
-   chunks.push(chunk.data)
+   const { chunk } = await this._getFileChunk({ offsetBytes: offsetToFetch, chunkSize });
+   chunks.push(chunk.data);
   }
   return new Blob(chunks, { type: fileMime });
  }
 
- shouldStream () {
-  return ['video/mp4', 'video/webm'].includes(this.fileInfo.fileMime)
+ shouldStream() {
+  return ['video/mp4', 'video/webm'].includes(this.fileInfo.fileMime);
  }
 
  seekTo(time: number) {

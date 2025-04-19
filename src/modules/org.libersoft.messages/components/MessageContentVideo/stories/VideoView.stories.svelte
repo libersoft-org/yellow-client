@@ -1,6 +1,6 @@
 <script lang="ts" module>
  import { defineMeta } from '@storybook/addon-svelte-csf';
- import VideoView from "@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte";
+ import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
 
  // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
  const { Story } = defineMeta({
@@ -21,18 +21,13 @@
    fetchingPoster: false,
    posterError: false,
    videoIsFullDownloading: false,
-  }
+  },
  });
 </script>
 
 <!-- More on writing stories with args: https://storybook.js.org/docs/writing-stories/args -->
 
-<Story
- name="Default"
- args={{
-
- }}
-/>
+<Story name="Default" args={{}} />
 
 <Story
  name="Loading data"
@@ -48,7 +43,7 @@
    record: {
     fileOriginalName: 'longer-name-of-this-video-file.mp4',
     fileSize: 1024 * 1024 * 64,
-   }
+   },
   },
   loadingData: false,
   fetchingPoster: true,
@@ -62,11 +57,11 @@
    record: {
     fileOriginalName: 'longer-name-of-this-video-file.mp4',
     fileSize: 1024 * 1024 * 64,
-   }
+   },
   },
   loadingData: false,
   fetchingPoster: false,
-  thumbnailSrc: 'https://picsum.photos/200/300'
+  thumbnailSrc: 'https://picsum.photos/200/300',
  }}
 />
 
@@ -77,11 +72,11 @@
    record: {
     fileOriginalName: 'longer-name-of-this-video-file.mp4',
     fileSize: 1024 * 1024 * 64,
-   }
+   },
   },
   loadingData: false,
   fetchingPoster: false,
-  thumbnailSrc: 'https://picsum.photos/300/200'
+  thumbnailSrc: 'https://picsum.photos/300/200',
  }}
 />
 
@@ -92,12 +87,12 @@
    record: {
     fileOriginalName: 'longer-name-of-this-video-file.mp4',
     fileSize: 1024 * 1024 * 64,
-   }
+   },
   },
   loadingData: false,
   fetchingPoster: false,
   videoStarting: true,
-  thumbnailSrc: 'https://picsum.photos/300/200'
+  thumbnailSrc: 'https://picsum.photos/300/200',
  }}
 />
 
@@ -108,7 +103,7 @@
    record: {
     fileOriginalName: 'longer-name-of-this-video-file.mp4',
     fileSize: 1024 * 1024 * 64,
-   }
+   },
   },
   loadingData: false,
   fetchingPoster: false,

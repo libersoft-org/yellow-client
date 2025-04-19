@@ -1,14 +1,13 @@
 <script lang="ts">
- import { truncateText } from "@/core/utils/textUtils.js";
- import { humanSize } from "@/core/utils/fileUtils.js";
- import { identifier } from "@/org.libersoft.messages/messages.js";
- import { debug } from "@/core/core.js";
- import Button from "@/core/components/Button/Button.svelte";
- import MessageContentAttachment
-  from "@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte";
- import Spinner from "@/core/components/Spinner/Spinner.svelte";
- import type { FileDownload, FileUpload } from "@/org.libersoft.messages/services/Files/types.ts";
- import Skeleton from "@/core/components/Skeleton/Skeleton.svelte";
+ import { truncateText } from '@/core/utils/textUtils.js';
+ import { humanSize } from '@/core/utils/fileUtils.js';
+ import { identifier } from '@/org.libersoft.messages/messages.js';
+ import { debug } from '@/core/core.js';
+ import Button from '@/core/components/Button/Button.svelte';
+ import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
+ import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+ import Skeleton from '@/core/components/Skeleton/Skeleton.svelte';
 
  interface Props {
   upload: FileUpload | null;
@@ -26,90 +25,8 @@
   videoIsFullDownloading: boolean;
  }
 
- let {
-  upload,
-  download,
-  thumbnailSrc,
-  videoRef = $bindable(),
-  startVideo,
-  onDownload,
-  uploadId,
-  videoStarted,
-  videoStarting,
-  loadingData,
-  fetchingPoster,
-  posterError,
-  videoIsFullDownloading,
- }: Props = $props();
-
+ let { upload, download, thumbnailSrc, videoRef = $bindable(), startVideo, onDownload, uploadId, videoStarted, videoStarting, loadingData, fetchingPoster, posterError, videoIsFullDownloading }: Props = $props();
 </script>
-
-<div>
- {#if $debug}
-  <code>{JSON.stringify({
-   uploadId,
-   videoStarted,
-   videoStarting,
-   loadingData,
-   fetchingPoster,
-   posterError,
-   thumbnailSrc,
-   download: download
-  })}</code>
- {/if}
- <div class="video-title">
-  {#if upload}
-   <div>
-    <strong title={upload.record.fileOriginalName}>{truncateText(upload.record.fileOriginalName, 25)}</strong>
-    ({humanSize(upload.record.fileSize)})
-   </div>
-  {:else}
-   <Skeleton width="100%" />
-  {/if}
- </div>
- <div class="video-wrapper" style:height={videoIsFullDownloading ? 'auto' : undefined}>
-  <!--<video bind:this={videoRef} onclick={() => console.log('test')} class="video video-js vjs-default-skin" controls> </video>-->
-  <!--<video src="https://dl11.webmfiles.org/big-buck-bunny_trailer.webm" class="video video-js vjs-default-skin" controls> </video>-->
-
-  {#if loadingData || fetchingPoster}
-   <Skeleton width="100%" height="100%" />
-  {:else if upload && !videoStarted}
-   <div class="video-placeholder">
-
-    <div class="video-poster">
-     {#if thumbnailSrc}
-      <img class="video-placeholder-image" src={thumbnailSrc} alt="Video poster" />
-     {/if}
-     {#if posterError}
-      <div>Error loading poster</div>
-     {/if}
-
-     <button class="video-placeholder-play-button button-reset" onclick={startVideo}>
-      {#if videoStarting}
-       <Spinner show={true} size="14px" containerMinHeight="14px" color="var(--yellow-primary)" />
-      {:else}
-       <img src="modules/{identifier}/img/play-yellow.svg" alt="Play" width="24px" />
-      {/if}
-     </button>
-    </div>
-
-   </div>
-  {/if}
-  {#if videoStarted}
-   {#if videoIsFullDownloading}
-    <div>This video can not be streamed in your browser therefore it must be downloaded first.</div>
-   {/if}
-  {/if}
-  <div bind:this={videoRef} class="video"></div>
- </div>
- {#if !download}
-  <div class="">
-   <Button img="modules/{identifier}/img/download.svg" onClick={onDownload} width="30px">Download</Button>
-  </div>
- {:else}
-  <MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
- {/if}
-</div>
 
 <style>
  .video-wrapper {
@@ -170,3 +87,70 @@
   object-fit: contain;
  }
 </style>
+
+<div>
+ {#if $debug}
+  <code
+   >{JSON.stringify({
+    uploadId,
+    videoStarted,
+    videoStarting,
+    loadingData,
+    fetchingPoster,
+    posterError,
+    thumbnailSrc,
+    download: download,
+   })}</code
+  >
+ {/if}
+ <div class="video-title">
+  {#if upload}
+   <div>
+    <strong title={upload.record.fileOriginalName}>{truncateText(upload.record.fileOriginalName, 25)}</strong>
+    ({humanSize(upload.record.fileSize)})
+   </div>
+  {:else}
+   <Skeleton width="100%" />
+  {/if}
+ </div>
+ <div class="video-wrapper" style:height={videoIsFullDownloading ? 'auto' : undefined}>
+  <!--<video bind:this={videoRef} onclick={() => console.log('test')} class="video video-js vjs-default-skin" controls> </video>-->
+  <!--<video src="https://dl11.webmfiles.org/big-buck-bunny_trailer.webm" class="video video-js vjs-default-skin" controls> </video>-->
+
+  {#if loadingData || fetchingPoster}
+   <Skeleton width="100%" height="100%" />
+  {:else if upload && !videoStarted}
+   <div class="video-placeholder">
+    <div class="video-poster">
+     {#if thumbnailSrc}
+      <img class="video-placeholder-image" src={thumbnailSrc} alt="Video poster" />
+     {/if}
+     {#if posterError}
+      <div>Error loading poster</div>
+     {/if}
+
+     <button class="video-placeholder-play-button button-reset" onclick={startVideo}>
+      {#if videoStarting}
+       <Spinner show={true} size="14px" containerMinHeight="14px" color="var(--yellow-primary)" />
+      {:else}
+       <img src="modules/{identifier}/img/play-yellow.svg" alt="Play" width="24px" />
+      {/if}
+     </button>
+    </div>
+   </div>
+  {/if}
+  {#if videoStarted}
+   {#if videoIsFullDownloading}
+    <div>This video can not be streamed in your browser therefore it must be downloaded first.</div>
+   {/if}
+  {/if}
+  <div bind:this={videoRef} class="video"></div>
+ </div>
+ {#if !download}
+  <div class="">
+   <Button img="modules/{identifier}/img/download.svg" onClick={onDownload} width="30px">Download</Button>
+  </div>
+ {:else}
+  <MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
+ {/if}
+</div>

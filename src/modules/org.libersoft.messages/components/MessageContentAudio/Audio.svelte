@@ -11,7 +11,7 @@
  import Button from '@/core/components/Button/Button.svelte';
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
- import WaveSurfer from "wavesurfer.js";
+ import WaveSurfer from 'wavesurfer.js';
 
  const { uploadId } = $props();
 
@@ -37,14 +37,14 @@
   isFullDownloading = true;
   downloadAttachmentsSerial([upload.record], download => {
    isFullDownloading = false;
-   const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType })
-   const url = URL.createObjectURL(blob)
+   const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
+   const url = URL.createObjectURL(blob);
    wavesurfer.load(url, [upload.record.metadata?.peaks], upload.record.metadata?.duration);
    wavesurfer.on('ready', () => {
     wavesurfer.play();
    });
   });
- }
+ };
 
  const setupWavesurfer = async (url: string) => {
   const { record } = upload;
@@ -77,29 +77,29 @@
    wavesurfer.on('error', err => {
     // console.error('WaveSurfer error:', err);
     if (err instanceof MediaError && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_DECODE)) {
-     fullDownloadAudio()
+     fullDownloadAudio();
     }
    });
-   init()
+   init();
   } catch (error) {
    console.error('Error initializing WaveSurfer:', error);
   }
- }
+ };
 
  const init = async () => {
   const acc = get(active_account);
   const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
-  const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl)
+  const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
 
   if (progressiveDownloadAvailable) {
    wavesurfer.load(progressiveUrl, [upload.record.metadata?.peaks], upload.record.metadata?.duration);
   }
- }
+ };
 
  onMount(() => {
   loadUploadData(uploadId).then(uploadData => {
    upload = uploadData;
-   setupWavesurfer('')
+   setupWavesurfer('');
   });
  });
 
@@ -109,7 +109,7 @@
     await wavesurfer.playPause();
    } catch (err) {
     console.error('Error playing audio:', err);
-    fullDownloadAudio()
+    fullDownloadAudio();
    }
   }
  }

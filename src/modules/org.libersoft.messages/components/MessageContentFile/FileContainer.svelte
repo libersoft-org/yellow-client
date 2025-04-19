@@ -7,7 +7,6 @@
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
  import FileView from '@/org.libersoft.messages/components/MessageContentFile/FileView.svelte';
 
-
  let { uploadId } = $props();
 
  /** uploads */

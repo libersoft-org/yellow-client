@@ -6,12 +6,7 @@
   containerMinHeight?: string;
  }
 
- let {
-  show = true,
-  color = '#000000',
-  size = '40px',
-  containerMinHeight = '72px'
- }: Props = $props();
+ let { show = true, color = '#000000', size = '40px', containerMinHeight = '72px' }: Props = $props();
 </script>
 
 <style>

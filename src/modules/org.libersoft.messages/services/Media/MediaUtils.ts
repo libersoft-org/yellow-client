@@ -7,7 +7,7 @@ class MediaUtils {
  static PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT = '/yellow/media';
  static makeProgressiveDownloadUrl = (localAccountId: string, uploadId: string) => {
   return `${MediaUtils.PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT}/${localAccountId}/${uploadId}`;
- }
+ };
 
  static extractThumbnail(fileChunk): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -122,8 +122,8 @@ class MediaUtils {
    const response = await fetch(url, {
     method: 'GET',
     headers: {
-     'Range': 'bytes=0-1'
-    }
+     Range: 'bytes=0-1',
+    },
    });
 
    if (response.status === 206) {
@@ -135,7 +135,7 @@ class MediaUtils {
    }
   } catch (error) {
    debug('Progressive not available', error);
-   return false
+   return false;
   }
  }
 }

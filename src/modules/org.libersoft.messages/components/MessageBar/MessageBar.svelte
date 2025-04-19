@@ -18,7 +18,6 @@
  import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 
-
  let expressionsMenu;
  let elBottomSheet;
  let elAttachment;
@@ -217,7 +216,7 @@
  }
 
  const onVideoRecordClick = async () => {
-  videoInputRef.click()
+  videoInputRef.click();
  };
 
  onMount(() => {
