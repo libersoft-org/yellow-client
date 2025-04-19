@@ -1,10 +1,11 @@
 <script>
+ import { module } from '../module.js';
  import Content from '../components/content.svelte';
  import Panel from '../components/panel.svelte';
  import PhotoCard from '../components/photo-card.svelte';
 
  const photo = {
-  img: 'modules/org.libersoft.dating/img/photos/1.webp',
+  img: 'modules/' + module.identifier + '/img/photos/1.webp',
   name: 'Name',
   description: 'Description',
  };

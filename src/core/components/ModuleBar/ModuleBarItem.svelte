@@ -1,4 +1,6 @@
 <script>
+ import BaseButton from '../Button/BaseButton.svelte';
+ import Indicator from './ModuleBarIndicator.svelte';
  import Icon from '../Icon/Icon.svelte';
  export let decl;
  export let clickSetModule;
@@ -21,27 +23,6 @@
   background-color: #404040;
  }
 
- .item .indicator {
-  display: none;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 16px;
-  height: 16px;
-  padding: 5px;
-  border-radius: 50%;
-  background-color: #222;
-  animation: blink 1s infinite;
- }
-
- .item .indicator.enabled {
-  display: block;
- }
-
- .item.selected .indicator {
-  background-color: #383838;
- }
-
  @keyframes blink {
   0% {
    opacity: 0;
@@ -55,7 +36,9 @@
  }
 </style>
 
-<div class="item {selected && 'selected'}">
- <img class="indicator {$online === false && 'enabled'}" src="img/cross-red.svg" alt="X" onClick={() => clickSetModule(decl.id)} />
- <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="30" onClick={() => clickSetModule(decl.id)} />
-</div>
+<BaseButton onClick={() => clickSetModule(decl.id)}>
+ <div class="item {selected && 'selected'}">
+  <Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
+  <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="30" />
+ </div>
+</BaseButton>

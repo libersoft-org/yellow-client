@@ -4,51 +4,32 @@
  import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
  import { emojisByCodepointsRgi } from '../../messages.js';
  import Sticker from '../Stickers/Sticker.svelte';
-
  export let codepoints;
- let codepoints_rgi = rgi(codepoints);
-
  export let size = 40;
  export let is_single = false;
  export let context;
  export let force_animate;
-
+ let codepoints_rgi = rgi(codepoints);
  let is_mouse_over;
-
  let is_animated;
- $: is_animated = $emojisByCodepointsRgi?.[codepoints_rgi]?.animated;
-
  let url;
+
+ $: is_animated = $emojisByCodepointsRgi?.[codepoints_rgi]?.animated;
  $: update_url(context, is_mouse_over, codepoints_rgi, !$animate_all_expressions, $expressions_renderer);
 
  function update_url(context, is_mouse_over, codepoints_rgi, render_emojis_as_static, expressions_renderer) {
   let raster = expressions_renderer !== 'svg';
-
   //console.log('update_url:', context, is_mouse_over, codepoints_rgi, render_emojis_as_static, raster);
-
   url = 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + codepoints_rgi + '/';
-
   if (context === 'message') {
    let animate = (is_mouse_over || (!render_emojis_as_static && force_animate)) && is_animated;
-   if (animate) {
-    if (raster) {
-     url += '512.webp';
-    } else {
-     url += 'lottie.json';
-    }
-   } else {
-    if (raster) {
-     url += '512.png';
-    } else {
-     url += 'emoji.svg';
-    }
-   }
+   if (animate) url += raster ? '512.webp' : 'lottie.json';
+   else url += raster ? '512.png' : 'emoji.svg';
   } else if (context === 'menu') {
    let animate = is_animated;
    if (animate) url += 'lottie.json';
    else url += 'emoji.svg';
   }
-
   //console.log('update_url:', url);
  }
 </script>

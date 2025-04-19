@@ -2,7 +2,7 @@
  import { debug } from '../../core.js';
  import { setContext, tick } from 'svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
-
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let show = false;
  export let params = null;
  export let title = null;
@@ -152,13 +152,6 @@
   flex-grow: 1;
  }
 
- .modal .header img {
-  display: block;
-  width: 20px;
-  height: 20px;
-  padding: 10px;
- }
-
  .modal .body {
   display: flex;
   flex-direction: column;
@@ -188,13 +181,8 @@
   {#if showContent}
    <div class="header" role="none" tabindex="-1" on:mousedown={dragStart}>
     <div class="title">{title}</div>
-    <BaseButton onClick={close}>
-     <div class="close">
-      <img src="img/close-black.svg" alt="X" />
-     </div>
-    </BaseButton>
+    <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={close} />
    </div>
-
    <div class="body">
     <slot>
      {#if $debug}params: <code>{JSON.stringify({ params })}</code>{/if}

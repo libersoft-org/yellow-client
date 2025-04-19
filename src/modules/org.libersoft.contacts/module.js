@@ -1,7 +1,7 @@
 import { registerModule } from '../../core/core.js';
 import { initData } from './contacts.js';
-import ContactsSidebar from '@/modules/org.libersoft.contacts/pages/ContactsPage/ContactsSidebar.svelte';
-import ContactsContent from '@/modules/org.libersoft.contacts/pages/ContactsPage/ContactsContent.svelte';
+import ContactsSidebar from './pages/ContactsPage/ContactsSidebar.svelte';
+import ContactsContent from './pages/ContactsPage/ContactsContent.svelte';
 
 export const module = {
  name: 'Contacts',

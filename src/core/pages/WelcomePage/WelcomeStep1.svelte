@@ -1,5 +1,6 @@
 <script>
  import { product, motto } from '../../core.js';
+ import Icon from '../../components/Icon/Icon.svelte';
 </script>
 
 <style>
@@ -15,6 +16,14 @@
   text-align: center;
  }
 
+ .logo {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  animation: bounce 1.5s ease;
+  animation-fill-mode: forwards;
+ }
+
  @keyframes bounce {
   0% {
    transform: scale(0.5);
@@ -27,19 +36,6 @@
   }
  }
 
- .logo {
-  display: flex;
-  margin: 20px 0;
-  justify-content: center;
- }
-
- .logo img {
-  width: 100px;
-  height: 100px;
-  animation: bounce 1.5s ease;
-  animation-fill-mode: forwards;
- }
-
  .description {
   text-align: center;
  }
@@ -47,5 +43,7 @@
 
 <div class="title">Welcome to {product}</div>
 <div class="motto">{motto}</div>
-<div class="logo"><img src="img/logo.svg" alt="logo" /></div>
+<div class="logo">
+ <Icon img="img/logo.svg" alt={product} size="100" padding="0" />
+</div>
 <div class="description">This wizard will help you to set up everything you need to get started.</div>

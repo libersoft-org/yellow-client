@@ -76,9 +76,9 @@
 <div class="stickers">
  <div class="top-components">
   <Tabs>
-   <TabsItem active={activeTabName === 'favourites'} img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} />
-   <TabsItem active={activeTabName === 'server'} img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} />
-   <TabsItem img="modules/{identifier}/img/update{$stickerLibraryUpdaterState.updating ? '-disabled' : ''}.svg" onClick={clickUpdate} />
+   <TabsItem img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} active={activeTabName === 'favourites'} />
+   <TabsItem img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} active={activeTabName === 'server'} />
+   <TabsItem img="modules/{identifier}/img/update.svg" colorVariable={$stickerLibraryUpdaterState.updating && '--icon-gray'} onClick={clickUpdate} />
   </Tabs>
   {#if $debug}$stickerLibraryUpdaterState:{JSON.stringify($stickerLibraryUpdaterState)}{/if}
   {#if $stickerLibraryUpdaterState.updating}

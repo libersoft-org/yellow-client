@@ -1,9 +1,11 @@
 <script>
+ import { module } from '../module.js';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  export let img = null;
  export let label = '';
  export let onClick;
+ export let colorVariable = '--icon-black';
 </script>
 
 <style>
@@ -16,17 +18,12 @@
   background-color: #fffcf0;
   border-bottom: 1px solid #dd9;
  }
-
- .item .image {
-  width: 20px;
-  height: 20px;
- }
 </style>
 
 <BaseButton {onClick}>
  <div class="item">
   {#if img}
-   <Icon img="modules/org.libersoft.dating/img/{img}" alt={label} colorVariable="--icon-black" size="20" padding="0" />
+   <Icon img="modules/{module.identifier}/img/{img}" alt={label} {colorVariable} size="20" padding="0" />
   {/if}
   <div>{label}</div>
  </div>

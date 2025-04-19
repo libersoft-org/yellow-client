@@ -1,6 +1,7 @@
 <script>
  import { tick } from 'svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let show = false;
  export let title = null;
 
@@ -102,13 +103,6 @@
   flex-grow: 1;
  }
 
- .modal .header img {
-  display: block;
-  width: 20px;
-  height: 20px;
-  padding: 10px;
- }
-
  .modal .body {
   display: flex;
   flex-direction: column;
@@ -124,11 +118,7 @@
  <div class="modal" style="top: {top}px; left: {left}px;" bind:this={modalEl}>
   <div class="header" role="none" on:mousedown={dragStart}>
    <div class="title">{title}</div>
-   <BaseButton onClick={clickCloseModal}>
-    <div class="close">
-     <img src="img/close-black.svg" alt="X" />
-    </div>
-   </BaseButton>
+   <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={clickCloseModal} />
   </div>
   <div class="body">
    <slot name="body"></slot>

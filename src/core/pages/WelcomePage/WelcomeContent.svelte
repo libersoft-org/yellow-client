@@ -1,5 +1,6 @@
 <script>
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import BaseButton from '../../components/Button/BaseButton.svelte';
+ import Icon from '../../components/Icon/Icon.svelte';
  import { product, version, build, commit, link } from '../../core.js';
 
  function clickLogo() {
@@ -26,11 +27,6 @@
   gap: 5px;
  }
 
- .welcome .logo img {
-  width: 200px;
-  max-width: 80%;
- }
-
  .welcome .logo .product {
   font-size: 40px;
   font-weight: bold;
@@ -46,7 +42,7 @@
 <div class="welcome">
  <BaseButton onClick={clickLogo}>
   <div class="logo">
-   <img src="img/logo.svg" alt={product} />
+   <Icon img="img/logo.svg" alt={product} size="200" />
    <div class="product">{product}</div>
   </div>
  </BaseButton>

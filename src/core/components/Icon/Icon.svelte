@@ -13,6 +13,9 @@
 
 <style>
  .icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 10px;
  }
 
@@ -36,7 +39,7 @@
 {#if img}
  {#if onClick}
   <BaseButton {onClick}>
-   <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;">
+   <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px; color: var({colorVariable});">
     <img style="width: {size}px; height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} {alt} />
    </div>
   </BaseButton>

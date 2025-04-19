@@ -1,4 +1,6 @@
 <script>
+ export let img = 'img/photo.svg';
+ export let alt = '';
  export let size = 50;
 </script>
 
@@ -18,5 +20,5 @@
 </style>
 
 <div class="photo" style="min-width: {size}px; min-height: {size}px; width: {size}px; height: {size}px;">
- <img src="img/photo.svg" alt="" />
+ <img src={img} {alt} />
 </div>

@@ -1,8 +1,10 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let img;
  export let label;
  export let active;
+ export let colorVariable = '--icon-white';
  export let onClick;
 </script>
 
@@ -25,18 +27,12 @@
  .item:hover {
   background-color: #333;
  }
-
- .item img {
-  display: flex;
-  width: 20px;
-  height: 20px;
- }
 </style>
 
 <BaseButton {onClick}>
  <div class="item {active ? 'active' : ''}">
   {#if img}
-   <div><img src={img} alt={label ? label : ''} /></div>
+   <Icon {img} alt={label ? label : ''} {colorVariable} size="20" padding="0" />
   {/if}
   {#if label}
    <div>{label}</div>

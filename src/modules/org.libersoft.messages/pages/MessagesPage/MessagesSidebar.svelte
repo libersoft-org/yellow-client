@@ -48,14 +48,11 @@
 
  .bar-buttons {
   display: flex;
+  color: #fff;
   background-color: #222;
  }
 
- .bar-buttons .space {
-  flex: 1;
- }
-
- .bar-button {
+ .bar-buttons .bar-button {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -63,16 +60,13 @@
   overflow: hidden;
   padding: 15px;
   font-weight: bold;
-  background-color: #222;
-  color: #fff;
  }
 
- .bar-button img {
-  width: 28px;
-  height: 28px;
+ .bar-buttons .bar-button.grow {
+  flex: 1;
  }
 
- .bar-button .new {
+ .new-conversation {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -89,18 +83,13 @@
 {#if $conversationsArray != null}
  <div class="conversations">
   <div class="bar-buttons">
-   <BaseButton onClick={clickNewConversation}>
-    <div class="bar-button">
-     <img src="modules/{identifier}/img/new_conversation.svg" alt="New conversation" />
-     <div class="new">New conversation</div>
-    </div>
-   </BaseButton>
-   <div class="space"></div>
-   <BaseButton onClick={clickMessagesSettings}>
-    <div class="bar-button">
-     <Icon img="img/settings.svg" alt="Message settings" colorVariable="--icon-white" size="28" padding="0" />
-    </div>
-   </BaseButton>
+   <div class="bar-button grow">
+    <BaseButton onClick={clickNewConversation}>
+     <Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--icon-white" size="28" padding="0" />
+     <div class="new-conversation">New conversation</div>
+    </BaseButton>
+   </div>
+   <Icon img="img/settings.svg" alt="Message settings" colorVariable="--icon-white" size="28" padding="10" onClick={clickMessagesSettings} />
   </div>
   <div class="items" bind:this={elItems} on:scroll={parseScroll}>
    {#each $conversationsArray as c (c.address)}

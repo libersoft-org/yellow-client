@@ -86,7 +86,7 @@
   {:else}
    <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
   {/if}
-  <Button img="img/close-black.svg" onClick={() => cancelUpload(uploadId)} />
+  <Button img="img/close.svg" colorVariable="--icon-black" onClick={() => cancelUpload(uploadId)} />
  </div>
 {/snippet}
 
@@ -99,7 +99,7 @@
   {:else}
    <Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
   {/if}
-  <Button img="img/close-black.svg" onClick={() => cancelDownload(uploadId)} />
+  <Button img="img/close.svg" colorVariable="--icon-black" onClick={() => cancelDownload(uploadId)} />
  </div>
 {/snippet}
 
@@ -199,7 +199,7 @@
   <div>Waiting for accept...</div>
   <div class="transfer-controls">
    <!-- @ts-ignore todo: button typing -->
-   <Button img="img/close-black.svg" onClick={() => cancelUpload(uploadId)} />
+   <Button img="img/close.svg" colorVariable="--icon-black" onClick={() => cancelUpload(uploadId)} />
   </div>
 
   <!-- ACTIVE P2P UPLOAD UPLOADING -->

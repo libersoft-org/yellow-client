@@ -45,11 +45,6 @@
   cursor: default;
  }
 
- .button img {
-  width: 20px;
-  height: 20px;
- }
-
  @media (min-width: 769px) {
   .hidden-on-desktop {
    display: none;

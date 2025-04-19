@@ -3,6 +3,7 @@
  import { getColorFromCSSToFilter } from '../../utils/colors.js';
  import { get } from 'svelte/store';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import ModuleBarItem from './ModuleBarItem.svelte';
  import SettingsNotifications from '../Settings/SettingsNotifications.svelte';
  import resize from '@/core/actions/resizeObserver.ts';
@@ -86,13 +87,8 @@
  .dropdown {
   display: flex;
   align-items: center;
-  height: 40px;
-  padding: 10px;
- }
-
- .dropdown img {
-  width: 20px;
-  height: 20px;
+  justify-content: center;
+  height: 60px;
  }
 
  .module-bar:not(.expand-enabled) .dropdown {
@@ -110,7 +106,7 @@
  </div>
  <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
   <div class="dropdown">
-   <img style="filter: {getColorFromCSSToFilter('--icon-white')}" src={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} />
+   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20" padding="10" />
   </div>
  </BaseButton>
 </div>

@@ -1,5 +1,6 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import { log } from '../../tauri.ts';
  import { animationDuration, animationName, bgColor, titleColor, descColor } from '../../notifications_settings.ts';
  export let data;
@@ -131,7 +132,6 @@
   position: absolute;
   right: 0;
   top: 0;
-  padding: 10px;
   width: 20px;
   height: 20px;
   overflow: hidden;
@@ -186,7 +186,7 @@
    }}
   >
    <div class="close">
-    <img src="img/close.svg" alt="Close" />
+    <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="20" padding="10" />
    </div>
   </BaseButton>
  </div>

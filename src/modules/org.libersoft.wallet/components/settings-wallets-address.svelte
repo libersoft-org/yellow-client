@@ -1,5 +1,6 @@
 <script>
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  export let address;
  let elemAddress;
 
@@ -20,16 +21,11 @@
   align-items: center;
   gap: 5px;
  }
-
- .address img {
-  width: 15px;
-  height: 15px;
- }
 </style>
 
 <BaseButton onClick={clickCopyAddress}>
  <div class="address">
   <div bind:this={elemAddress}>{address}</div>
-  <img src="img/copy.svg" alt="Copy" />
+  <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
  </div>
 </BaseButton>

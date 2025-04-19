@@ -1,10 +1,10 @@
 <script>
  import { identifier } from '../../messages.js';
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import galleryStore from '../../stores/GalleryStore.ts';
+ import Icon from '@/core/components/Icon/Icon.svelte';
 
  let gallery = galleryStore.store;
  let currentFile = galleryStore.currentFile();
@@ -79,7 +79,7 @@
   top: 0;
   width: 100px;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,7 +87,7 @@
  }
 
  .side-control:hover {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.75);
  }
 
  .side-prev {
@@ -140,10 +140,10 @@
 {#if $gallery.show}
  <div class="gallery" onpointerdown={onAnywhereClick}>
   <div class="top-left">
-   <Button img="modules/{identifier}/img/download.svg" onClick={download} />
+   <Button img="modules/{identifier}/img/download.svg" colorVariable="--icon-black" onClick={download} />
   </div>
   <div class="top-right">
-   <Button img="img/close-black.svg" onClick={close} />
+   <Button img="img/close.svg" colorVariable="--icon-black" onClick={close} />
   </div>
   {#key $currentFile.id}
    {#if $currentFile}
@@ -162,14 +162,10 @@
    {/if}
   {/key}
   <div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
-   <BaseButton onClick={previous}>
-    <img src="img/caret-left-gray.svg" alt="Previous" />
-   </BaseButton>
+   <Icon img="img/caret-left.svg" alt="Previous" colorVariable="--icon-white" size="80" onClick={previous} />
   </div>
   <div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
-   <BaseButton onClick={next}>
-    <img src="img/caret-right-gray.svg" alt="Previous" />
-   </BaseButton>
+   <Icon img="img/caret-right.svg" alt="Next" colorVariable="--icon-white" size="80" onClick={next} />
   </div>
  </div>
 {/if}

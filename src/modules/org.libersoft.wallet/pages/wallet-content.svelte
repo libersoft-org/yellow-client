@@ -2,6 +2,7 @@
  import { onMount } from 'svelte';
  import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
  import Modal from '../../../core/components/Modal/Modal.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
@@ -78,12 +79,6 @@
   align-items: center;
   flex: 1;
   gap: 10px;
- }
-
- .top-bar .left .button {
-  padding: 5px;
-  width: 30px;
-  height: 30px;
  }
 
  .top-bar .right {
@@ -188,11 +183,6 @@
   gap: 5px;
  }
 
- .body .top .right .address .copy {
-  width: 15px;
-  height: 15px;
- }
-
  .body .buttons {
   display: flex;
   justify-content: center;
@@ -206,7 +196,7 @@
  }
 
  @media (min-width: 769px) {
-  .top-bar .left .button {
+  .top-bar .left .back-button {
    display: none;
   }
  }
@@ -215,11 +205,9 @@
 <div class="wallet-content">
  <div class="top-bar">
   <div class="left">
-   <BaseButton onClick={clickBackButton}>
-    <div class="button">
-     <img src="img/back-white.svg" alt="Back" />
-    </div>
-   </BaseButton>
+   <div class="back-button">
+    <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30" padding="0" onClick={clickBackButton} />
+   </div>
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
   </div>
   <div class="right">
@@ -254,7 +242,7 @@
        <BaseButton onClick={clickCopyAddress}>
         <div class="address">
          <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
-         <div class="copy"><img src="img/copy.svg" alt="Copy" /></div>
+         <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
         </div>
        </BaseButton>
       {:else}

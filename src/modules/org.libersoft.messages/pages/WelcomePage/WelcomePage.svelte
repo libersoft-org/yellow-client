@@ -70,7 +70,7 @@
  <!--   </p>-->
  <!--  {/if}-->
 
- <img class="illustration" src="modules/{identifier}/img/illustration_{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
+ <img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
  <div class="label">
   {#if $online}
    <div>Select your conversation<br />or</div>
