@@ -9,7 +9,8 @@
   "test": "vitest",
   "storybook": "storybook dev -p 6006",
   "storybook:build": "storybook build",
-  "storybook:test": "test-storybook"
+  "storybook:test": "test-storybook",
+  "prettier": "prettier --config prettier-libersoft.json --plugin 'prettier-plugin-svelte' --write \"src/**/*.{js,ts,css,html,svelte}\""
  },
  "dependencies": {
   "@floating-ui/dom": "^1.6.13",
