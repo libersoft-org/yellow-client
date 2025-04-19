@@ -8,6 +8,7 @@
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
  import Skeleton from '@/core/components/Skeleton/Skeleton.svelte';
+ import Icon from "@/core/components/Icon/Icon.svelte";
 
  interface Props {
   upload: FileUpload | null;
@@ -133,7 +134,7 @@
       {#if videoStarting}
        <Spinner show={true} size="14px" containerMinHeight="14px" color="var(--yellow-primary)" />
       {:else}
-       <img src="modules/{identifier}/img/play-yellow.svg" alt="Play" width="24px" />
+       <Icon img="modules/{identifier}/img/play.svg" colorVariable="--icon-yellow" alt="Start video" size={24} padding={0} />
       {/if}
      </button>
     </div>
