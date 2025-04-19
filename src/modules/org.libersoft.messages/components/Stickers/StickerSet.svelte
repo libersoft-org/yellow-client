@@ -76,7 +76,6 @@
 
  .title-bar {
   display: flex;
-  gap: 10px;
   border-radius: 10px;
   background-color: #ddd;
  }
@@ -90,7 +89,6 @@
 
  .title-bar .left .label {
   font-weight: bold;
-  flex-grow: 1;
  }
 
  .title-bar .left .created {
