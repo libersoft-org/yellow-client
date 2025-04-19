@@ -1,5 +1,4 @@
 <script>
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  export let type = 'text';
  export let placeholder = '';
