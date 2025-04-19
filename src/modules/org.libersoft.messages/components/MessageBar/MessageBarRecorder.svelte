@@ -108,6 +108,7 @@
   align-items: center;
   gap: 8px;
   padding: 0 10px;
+  z-index: 1;
  }
 
  .wavesurfer-wrap {

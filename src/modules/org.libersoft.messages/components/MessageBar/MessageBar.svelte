@@ -287,12 +287,12 @@
   <MessageBarRecorder />
 
   <div bind:this={elAttachment} data-testid="attachment-button">
-   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" />
+   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" isButton />
   </div>
 
   {#if expressionsAsContextMenu}
    <div bind:this={elExpressions}>
-    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32" padding="0" />
+    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32" padding="0" isButton />
    </div>
   {:else}
    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32" padding="0" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
@@ -300,7 +300,6 @@
 
   <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
   <!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />-->
-  <Icon img="modules/{identifier}/img/audio_message.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
   <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />
   <Icon img="modules/{identifier}/img/audio-message.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
