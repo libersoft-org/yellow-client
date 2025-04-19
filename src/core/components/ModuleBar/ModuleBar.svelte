@@ -50,13 +50,11 @@
 
  function onResize(entry) {
   const { target, contentRect } = entry;
-  console.log('onResize: ', entry);
   const { width, height } = contentRect;
   const children = target.children;
   const childrenTotalWidth = Array.from(children).reduce((total, child) => {
    return total + child.getBoundingClientRect().width;
   }, 0);
-  console.log('childrenTotalWidth', width, childrenTotalWidth);
   expandEnabled = childrenTotalWidth > width;
  }
 </script>
@@ -101,7 +99,9 @@
 <div class="module-bar" class:expand-enabled={expandEnabled}>
  <div use:resize={onResize} class="items {expanded ? 'expanded' : ''}">
   {#each module_decls_ordered as decl (decl.id)}
-   <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
+   <div>
+    <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
+   </div>
   {/each}
  </div>
  <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
