@@ -31,6 +31,19 @@
 
  let loading = $state(false);
 
+ function handleKeyboard (event) {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  if (event.key === 'Escape') {
+   event.preventDefault();
+   close();
+  } else if (event.key === 'ArrowLeft' && $canPrevious) {
+   previous();
+  } else if (event.key === 'ArrowRight' && $canNext) {
+   next();
+  }
+ }
+
  $effect(() => {
   if ($currentFile && !$currentFile.loaded) {
    loading = true;
@@ -50,6 +63,15 @@
     });
   }
  });
+
+ $effect(() => {
+  const opts = { capture: true }
+  if ($gallery.show) {
+   document.addEventListener('keydown', handleKeyboard, opts);
+  } else {
+   document.removeEventListener('keydown', handleKeyboard, opts);
+  }
+ })
 
  function onAnywhereClick(event) {
   // very simple background close
