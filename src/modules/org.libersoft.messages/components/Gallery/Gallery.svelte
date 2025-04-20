@@ -133,7 +133,7 @@
 
  .image img {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 85vh;
  }
 </style>
 
