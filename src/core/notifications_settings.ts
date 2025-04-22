@@ -7,12 +7,12 @@ export const isRequestingNotificationsPermission = writable(false);
 export const notificationsSettingsAlert = writable('');
 
 export let selectedMonitorName = localStorageSharedStore<string | null>('selectedMonitorName', 'main_window_monitor');
-export let selectedNotificationsCorner = localStorageSharedStore('selectedNotificationsCorner', 'top-right');
+export let selectedNotificationsCorner = localStorageSharedStore('selectedNotificationsCorner', 'bottom-right');
 export let enableCustomNotifications = localStorageSharedStore('enableCustomNotifications', true);
 export let customNotificationsOn = derived(enableCustomNotifications, $enableCustomNotifications => {
  return CUSTOM_NOTIFICATIONS && $enableCustomNotifications;
 });
-export let animationName = localStorageSharedStore('notification_animation_duration', 'zoom');
+export let animationName = localStorageSharedStore('notification_animation_name', 'zoom');
 export let animationDuration = localStorageSharedStore('notification_animation_duration', 400);
 
 export let mainWindowMonitor = localStorageSharedStore<string | null>('mainWindowMonitor', null);
