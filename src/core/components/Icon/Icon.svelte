@@ -1,8 +1,30 @@
-<script>
+<script lang="ts">
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import { getColorFromCSSToFilter } from '../../utils/colors.js';
 
- let { img, alt = '', size = 24, padding = 10, visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false } = $props();
+ interface Props {
+  img: string;
+  alt?: string;
+  size?: number;
+  padding?: number;
+  visibleOnMobile?: boolean;
+  visibleOnDesktop?: boolean;
+  colorVariable?: string;
+  onClick?: () => void;
+  isButton?: boolean;
+ }
+
+ let {
+  img,
+  alt = '',
+  size = 24,
+  padding = 10,
+  visibleOnMobile = true,
+  visibleOnDesktop = true,
+  colorVariable,
+  onClick,
+  isButton = false
+ }: Props = $props();
 </script>
 
 <style>
@@ -31,8 +53,11 @@
 </style>
 
 {#snippet icon()}
- <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;">
-  <img style="width: {size}px; height: {size}px; min-width: {size}px; min-height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} {alt} />
+ <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}"
+      style="padding: {padding}px;">
+  <img
+   style="width: {size}px; height: {size}px; min-width: {size}px; min-height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}"
+   src={img} {alt} />
  </div>
 {/snippet}
 

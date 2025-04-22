@@ -24,6 +24,7 @@
   gap: 10px;
 
   border-radius: 10px;
+  max-width: 400px;
  }
 
  .notification.zoom-in {
@@ -80,7 +81,6 @@
 
  .top {
   display: flex;
-  gap: 10px;
  }
 
  .top .left {
@@ -90,8 +90,7 @@
  .top .left .image {
   width: 50px;
   height: 50px;
-  border-radius: 10px;
-  overflow: hidden;
+  padding: 10px;
  }
 
  .top .left .image img {
@@ -100,12 +99,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
  }
 
  .top .right {
   display: flex;
   flex-direction: column;
-  flex: 0 1 80%;
+  flex: 1 1 auto;
+  min-width: 0;
  }
 
  .top .right .line {
@@ -113,33 +114,42 @@
  }
 
  .top .right .line .title {
-  padding: 10px;
-  font-size: 18px;
+  --font-size: 18px;
+  --line-height: calc(var(--font-size) + 4px);
+  margin: 10px;
   font-weight: bold;
-  max-width: 100%;
-  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  flex: 1 1 auto;
  }
 
- .top .right .line .close {
-  padding: 10px;
+ .top .right .line .close :global(.icon) {
   border-radius: 10px;
-  background-color: rgb(255, 255, 255, 0.18);
+  background-color: rgb(255, 255, 255, 0.1);
+  max-height: 30px;
  }
 
- .top .right .line .close:hover {
+ .top .right .line .close :global(.icon:hover) {
   background-color: rgb(255, 255, 255, 0.25);
  }
 
  .top .right .body {
-  max-width: 100px;
-  padding: 10px;
+  --font-size: 14px;
+  --line-height: calc(var(--font-size) + 5px);
+  margin: 10px;
   font-size: 14px;
-  text-align: justify;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+ }
+
+ /* fallback pro starší WebKit */
+ .clamp-3 {
+  font-size: var(--font-size);
+  line-clamp: var(--lines);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines);
   overflow: hidden;
+  line-height: calc(var(--line-height));
+  max-height: calc(var(--font-size) * (var(--line-height)));
  }
 
  /* .top .right .line .title,
@@ -167,21 +177,21 @@
     {#if data.img}
      <div class="left">
       <div class="image">
-       <img src={data.img} alt="" />
+       <img src={data.img} alt="Notification icon" />
       </div>
      </div>
     {/if}
     <div class="right">
      <div class="line">
       {#if data.title}
-       <div class="title" style:color={$titleColor} style:-webkit-line-clamp={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
+       <div class="title clamp-3" style:color={$titleColor} style:--lines={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
       {/if}
       <div class="close">
-       <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="20" padding="0" />
+       <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10" padding="10" />
       </div>
      </div>
      {#if data.body}
-      <div class="body" style:color={$descColor} style:-webkit-line-clamp={data.descMaxLines ? data.descMaxLines : 3}>{data.body}</div>
+      <div class="body clamp-3" style:--lines={data.bodyMaxLines ? data.bodyMaxLines : 3} style:color={$descColor}>{data.body}</div>
      {/if}
     </div>
    </div>
