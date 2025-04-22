@@ -15,6 +15,7 @@
  import { setNotificationsEnabled } from '../../notifications.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
  import { addNotification, deleteNotification } from '../../notifications.ts';
+ import { debug } from '@/core/core.js';
 
  // Local monitors store for this component
  let monitors = writable([]);
@@ -162,6 +163,7 @@
         <SelectOption value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
        {/each}
       </Select>
+      {#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
      </TableTBodyTd>
     </TableTBodyTr>
     <TableTBodyTr>
@@ -177,7 +179,7 @@
       <div class="bold">Animation:</div>
      </TableTBodyTd>
      <TableTBodyTd center={true}>
-      <Select>
+      <Select bind:value={$animationName}>
        <SelectOption value="none" text="None" />
        <SelectOption value="zoom" text="Zoom" />
        <SelectOption value="opacity" text="Opacity" />
