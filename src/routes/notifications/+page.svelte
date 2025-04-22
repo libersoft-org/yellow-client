@@ -138,6 +138,10 @@
   log.debug('updatePosition...');
   let h = get(height);
   const monitor_name = get(actualMonitorName);
+  if (!monitor_name) {
+   log.debug('actualMonitorName:', monitor_name);
+   return;
+  }
   let m = await invoke('get_work_area', {
    monitorName: monitor_name,
   });
@@ -178,13 +182,13 @@
  onMount(async () => {
   log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
   if (CUSTOM_NOTIFICATIONS) {
-   await initNotifications();
+   await initNotificationsPage();
   } else {
    log.debug('CUSTOM_NOTIFICATIONS is not defined');
   }
  });
 
- async function initNotifications() {
+ async function initNotificationsPage() {
   let s = await multiwindow_store('notifications', false);
   //log.debug('initNotifications: store:', s);
   s.onChange((k, v) => {

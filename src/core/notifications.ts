@@ -121,6 +121,7 @@ async function onNotificationEvent(id: string, event: string) {
 }
 
 async function removeNotification(id: string): Promise<void> {
+ log.debug('removeNotification:', id);
  let s = await multiwindow_store('notifications');
  await s.delete(id);
  //log.debug('removed.');
@@ -159,6 +160,7 @@ export async function deleteNotification(id: string): Promise<void> {
 }
 
 async function deleteCustomNotification(id: string): Promise<void> {
+ if (!CUSTOM_NOTIFICATIONS) return;
  notifications[id] && notifications.delete(id);
  let s = await multiwindow_store('notifications');
  s.set(id, null);

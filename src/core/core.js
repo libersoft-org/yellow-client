@@ -225,7 +225,7 @@ accounts_config.subscribe(value => {
   log.debug('CONFIG', config);
   let account = accounts_list.find(acc => get(acc).id === config.id);
   if (account) {
-   log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
+   //log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
    updateLiveAccount(account, config);
   } else {
    log.debug('CREATE ACCOUNT', config);

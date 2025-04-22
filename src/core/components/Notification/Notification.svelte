@@ -8,7 +8,7 @@
 
  function handleClosing(e) {
   e.stopPropagation();
-  //e.stopImmediatePropagation();
+  e.stopImmediatePropagation();
   closing = true;
   setTimeout(() => {
    data.onClose && data.onClose(e, 'close');
@@ -187,7 +187,7 @@
        <div class="title clamp-3" style:color={$titleColor} style:--lines={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
       {/if}
       <div class="close">
-       <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10" padding="10" />
+       <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10" padding="10" isButton onClick={e => handleClosing(e)} />
       </div>
      </div>
      {#if data.body}
@@ -205,15 +205,5 @@
     </div>
    </div>
   {/if}
-  <BaseButton
-   onClick={e => {
-    log.debug('***onClose');
-    handleClosing(e);
-   }}
-  >
-   <!--<div class="close">-->
-
-   <!--</div>-->
-  </BaseButton>
  </div>
 </BaseButton>
