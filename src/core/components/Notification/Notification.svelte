@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px;
+
   border-radius: 10px;
  }
 
@@ -83,11 +83,8 @@
   gap: 10px;
  }
 
- .top .right {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex: 1;
+ .top .left {
+  flex: 1 0 auto;
  }
 
  .top .left .image {
@@ -105,42 +102,56 @@
   object-fit: cover;
  }
 
- .top .right .title {
+ .top .right {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 80%;
+ }
+
+ .top .right .line {
+  display: flex;
+ }
+
+ .top .right .line .title {
+  padding: 10px;
   font-size: 18px;
   font-weight: bold;
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+ }
+
+ .top .right .line .close {
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255, 0.18);
+ }
+
+ .top .right .line .close:hover {
+  background-color: rgb(255, 255, 255, 0.25);
  }
 
  .top .right .body {
+  max-width: 100px;
+  padding: 10px;
   font-size: 14px;
   text-align: justify;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
  }
 
- .top .right .title,
+ /* .top .right .line .title,
  .top .right .body {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
- }
+ }*/
 
  .bottom .buttons {
   display: flex;
   gap: 10px;
- }
-
- .close {
-  z-index: 10;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  overflow: hidden;
-  cursor: pointer;
-  border-radius: 10px;
- }
-
- .close:hover {
-  background-color: rgb(255, 255, 255, 0.075);
  }
 </style>
 
@@ -161,9 +172,14 @@
      </div>
     {/if}
     <div class="right">
-     {#if data.title}
-      <div class="title" style:color={$titleColor} style:-webkit-line-clamp={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
-     {/if}
+     <div class="line">
+      {#if data.title}
+       <div class="title" style:color={$titleColor} style:-webkit-line-clamp={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
+      {/if}
+      <div class="close">
+       <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="20" padding="0" />
+      </div>
+     </div>
      {#if data.body}
       <div class="body" style:color={$descColor} style:-webkit-line-clamp={data.descMaxLines ? data.descMaxLines : 3}>{data.body}</div>
      {/if}
@@ -185,9 +201,9 @@
     handleClosing(e);
    }}
   >
-   <div class="close">
-    <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="20" padding="10" />
-   </div>
+   <!--<div class="close">-->
+
+   <!--</div>-->
   </BaseButton>
  </div>
 </BaseButton>
