@@ -240,7 +240,7 @@ function showBrowserNotification(notification: YellowNotification) {
   body: notification.body,
   icon: notification.icon,
   silent: false,
-  vibrate: [200, 100, 200],
+  //vibrate: [200, 100, 200],
  });
  n.onclick = async e => {
   log.debug('notification onclick:', e);
