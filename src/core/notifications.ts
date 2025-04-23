@@ -2,7 +2,7 @@ import { get } from 'svelte/store';
 import { multiwindow_store } from './multiwindow_store.ts';
 import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
-import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, selectedMonitorName } from './notifications_settings.ts';
+import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, selectedMonitorName, notificationsSoundEnabled } from './notifications_settings.ts';
 import {
  availableMonitors,
  currentMonitor,
@@ -178,7 +178,7 @@ async function sendTauriNotification(notification: YellowNotification) {
  if (!permissionGranted) {
   return;
  }
- playNotificationSound(notification);
+ if (get(notificationsSoundEnabled)) playNotificationSound(notification);
  sendNotification({
   title: notification.title,
   body: notification.body,
@@ -216,12 +216,15 @@ async function sendCustomNotification(notification: YellowNotification): Promise
  let s = await multiwindow_store('notifications');
  //log.debug('store:', s);
  invoke('create_notifications_window', {});
- if (notification.id) {
-  notifications.set(notification.id, notification);
-  s?.set(notification.id, notification);
- } else {
+ if (!notification.id) {
   log.debug('notification.id is undefined');
+  return;
  }
+ if (get(notificationsSoundEnabled)) {
+  playNotificationSound(notification);
+ }
+ notifications.set(notification.id, notification);
+ s?.set(notification.id, notification);
  //log.debug('sendCustomNotification:', notification.id, notification);
 }
 
@@ -231,12 +234,13 @@ function playNotificationSound(notification: YellowNotification): void {
 }
 
 function showBrowserNotification(notification: YellowNotification) {
- playNotificationSound(notification);
+ //playNotificationSound(notification);
  let n = new Notification(notification.title, {
   tag: notification.id,
   body: notification.body,
   icon: notification.icon,
-  silent: true,
+  silent: false,
+  vibrate: [200, 100, 200],
  });
  n.onclick = async e => {
   log.debug('notification onclick:', e);

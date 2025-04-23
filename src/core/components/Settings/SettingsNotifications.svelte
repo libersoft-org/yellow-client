@@ -10,7 +10,7 @@
  import SelectOption from '../Select/SelectOption.svelte';
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
  import { writable, get } from 'svelte/store';
- import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
+ import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
@@ -142,7 +142,7 @@
     <div class="bold">Notification sound:</div>
    </TableTBodyTd>
    <TableTBodyTd center={true}>
-    <Switch bind:checked={notificationsSoundEnabled} />
+    <Switch bind:checked={$notificationsSoundEnabled} />
    </TableTBodyTd>
   </TableTBodyTr>
   {#if $notificationsSettingsAlert}

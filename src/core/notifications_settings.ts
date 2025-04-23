@@ -3,6 +3,8 @@ import { CUSTOM_NOTIFICATIONS, TAURI } from './tauri.ts';
 import { derived, writable } from 'svelte/store';
 
 export const notificationsEnabled = localStorageSharedStore('notifications_enabled', TAURI);
+export const notificationsSoundEnabled = localStorageSharedStore('notifications_sound_enabled', true);
+export const notificationsPermission = writable(null);
 export const isRequestingNotificationsPermission = writable(false);
 export const notificationsSettingsAlert = writable('');
 
