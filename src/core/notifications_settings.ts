@@ -16,6 +16,10 @@ export let animationName = localStorageSharedStore('notification_animation_name'
 export let animationDuration = localStorageSharedStore('notification_animation_duration', 400);
 
 export let mainWindowMonitor = localStorageSharedStore<string | null>('mainWindowMonitor', null);
+
+export let titleMaxLines = localStorageSharedStore('titleMaxLines', 1);
+export let bodyMaxLines = localStorageSharedStore('bodyMaxLines', 3);
+
 export let bgColor = localStorageSharedStore('bgColor', '#222222');
 export let bgColorHover = localStorageSharedStore('bgColorHover', '#333333');
 export let titleColor = localStorageSharedStore('titleColor', '#ffffff');

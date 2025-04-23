@@ -2,7 +2,7 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import { log } from '../../tauri.ts';
- import { animationDuration, animationName, bgColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
+ import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
  export let data;
  export let closing = false;
 
@@ -190,14 +190,14 @@
     <div class="right">
      <div class="line">
       {#if data.title}
-       <div class="title clamp-3" style:color={$titleColor} style:--lines={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
+       <div class="title clamp-3" style:color={$titleColor} style:--lines={$titleMaxLines ? $titleMaxLines : 1}>{data.title}</div>
       {/if}
       <div class="close">
        <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10" padding="10" isButton onClick={e => handleClosing(e)} />
       </div>
      </div>
      {#if data.body}
-      <div class="body clamp-3" style:--lines={data.bodyMaxLines ? data.bodyMaxLines : 3} style:color={$descColor}>{data.body}</div>
+      <div class="body clamp-3" style:--lines={$bodyMaxLines ? $bodyMaxLines : 3} style:color={$descColor}>{data.body}</div>
      {/if}
     </div>
    </div>

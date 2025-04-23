@@ -4,12 +4,13 @@
  import TableTBodyTr from '../Table/TableTBodyTr.svelte';
  import TableTBody from '../Table/TableTBody.svelte';
  import TableTBodyTd from '../Table/TableTBodyTd.svelte';
+ import Input from '../Input/Input.svelte';
  import Switch from '../Switch/Switch.svelte';
  import Select from '../Select/Select.svelte';
  import SelectOption from '../Select/SelectOption.svelte';
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
  import { writable, get } from 'svelte/store';
- import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, bgColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
+ import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
@@ -186,6 +187,25 @@
       </Select>
      </TableTBodyTd>
     </TableTBodyTr>
+
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Maximum number of lines in title:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <Input type="number" bind:value={$titleMaxLines} min="1" max="3" />
+     </TableTBodyTd>
+    </TableTBodyTr>
+
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Maximum number of lines in description:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <Input type="number" bind:value={$bodyMaxLines} min="1" max="5" />
+     </TableTBodyTd>
+    </TableTBodyTr>
+
     <TableTBodyTr>
      <TableTBodyTd>
       <div class="bold">Background color:</div>
