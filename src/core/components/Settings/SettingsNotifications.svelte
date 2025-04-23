@@ -137,6 +137,15 @@
     <Switch bind:checked={_notificationsEnabled} />
    </TableTBodyTd>
   </TableTBodyTr>
+  <TableTBody>
+   <TableTBodyTr>
+    <TableTBodyTd>
+     <div class="bold">Notification sound:</div>
+    </TableTBodyTd>
+    <TableTBodyTd center={true}>
+     <Switch bind:checked={notificationsSoundEnabled} />
+    </TableTBodyTd>
+   </TableTBodyTr>
   {#if $notificationsSettingsAlert}
    <TableTBodyTr>
     <TableTBodyTd colspan="2">
