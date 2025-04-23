@@ -17,5 +17,6 @@ export let animationDuration = localStorageSharedStore('notification_animation_d
 
 export let mainWindowMonitor = localStorageSharedStore<string | null>('mainWindowMonitor', null);
 export let bgColor = localStorageSharedStore('bgColor', '#222222');
+export let bgColorHover = localStorageSharedStore('bgColorHover', '#333333');
 export let titleColor = localStorageSharedStore('titleColor', '#ffffff');
 export let descColor = localStorageSharedStore('descColor', '#888888');

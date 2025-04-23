@@ -2,7 +2,7 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import { log } from '../../tauri.ts';
- import { animationDuration, animationName, bgColor, titleColor, descColor } from '../../notifications_settings.ts';
+ import { animationDuration, animationName, bgColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
  export let data;
  export let closing = false;
 
@@ -22,9 +22,14 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   border-radius: 10px;
   max-width: 400px;
+  background-color: var(--bgColor);
+  transition: background-color 0.5s ease;
+ }
+
+ .notification:hover {
+  background-color: var(--bgColorHover);
  }
 
  .notification.zoom-in {
@@ -127,6 +132,7 @@
   border-radius: 10px;
   background-color: rgb(255, 255, 255, 0.1);
   max-height: 30px;
+  transition: background-color 0.5s ease;
  }
 
  .top .right .line .close :global(.icon:hover) {
@@ -171,7 +177,7 @@
   data.onClick(e, 'click');
  }}
 >
- <div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; background-color:{$bgColor}">
+ <div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover};">
   {#if data.img || data.title || data.body}
    <div class="top">
     {#if data.img}

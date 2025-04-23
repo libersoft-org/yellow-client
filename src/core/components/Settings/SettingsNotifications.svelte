@@ -9,7 +9,7 @@
  import SelectOption from '../Select/SelectOption.svelte';
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
  import { writable, get } from 'svelte/store';
- import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, bgColor, titleColor, descColor } from '../../notifications_settings.ts';
+ import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, bgColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
@@ -193,6 +193,15 @@
      <TableTBodyTd center={true}>
       <input type="color" bind:value={$bgColor} />
       {$bgColor}
+     </TableTBodyTd>
+    </TableTBodyTr>
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Background color on mouse over:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <input type="color" bind:value={$bgColorHover} />
+      {$bgColorHover}
      </TableTBodyTd>
     </TableTBodyTr>
     <TableTBodyTr>
