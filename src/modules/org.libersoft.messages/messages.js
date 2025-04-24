@@ -1,8 +1,7 @@
 import { replaceEmojisWithTags, start_emojisets_fetch } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
-//import { db } from './db';
-
+import { log } from '../../core/tauri.ts';
 import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
 import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
@@ -46,6 +45,7 @@ class Message {
 }
 
 export function initData(acc) {
+ console.log('initData', acc);
  let result = {
   online: writable(false),
   selectedConversation: writable(null),
@@ -92,13 +92,13 @@ export function onModuleSelected(selected) {
 }
 
 export function selectConversation(conversation) {
- console.log('SELECTcONVERSATION', conversation);
+ console.log('SELECTcONVERSATION conversation:', conversation, 'conversation.acc:', conversation.acc, 'conversation.acc?.deref:', conversation.acc?.deref);
  selectedConversation.set(conversation);
  events.set([]);
  messagesArray.set([]);
  insertEvent({ type: 'new', array: [] });
  hideSidebarMobile.set(true);
- listMessages(conversation.acc, conversation.address);
+ listMessages(conversation.acc.deref ? conversation.acc.deref() : conversation.acc, conversation.address);
 }
 
 export function listConversations(acc) {
@@ -109,14 +109,15 @@ export function listConversations(acc) {
   }
   if (res.data?.conversations) {
    let conversationsArray = acc.module_data[identifier].conversationsArray;
-   //console.log('listConversations into:', conversationsArray);
+   console.log('listConversations into:', get(conversationsArray));
    conversationsArray.set(res.data.conversations.map(c => sanitizeConversation(acc, c)));
+   console.log('listConversations:', get(conversationsArray));
   }
  });
 }
 
 function sanitizeConversation(acc, c) {
- c.acc = acc;
+ c.acc = new WeakRef(acc);
  c.last_message_text = stripHtml(c.last_message_text);
  return c;
 }
@@ -802,7 +803,7 @@ function updateConversationsArray(acc, msg) {
 
 export function openNewConversation(address) {
  console.log('openNewConversation', address);
- selectConversation({ acc: get(active_account), address });
+ selectConversation({ acc: new WeakRef(get(active_account)), address });
 }
 
 export function jumpToMessage(acc, address, uid) {
@@ -886,7 +887,8 @@ function messageNotificationId(msg) {
 
 async function showNotification(acc, msg) {
  if (!acc) console.error('showNotification: no account');
- const conversation = get(conversationsArray).find(c => c.address === msg.address_from);
+ console.log('showNotification conversationsArray:', get(conversationsArray));
+ const conversation = get(conversationsArray)?.find(c => c.address === msg.address_from);
  console.log('new Notification in conversation', conversation);
  let title;
  if (conversation) {
@@ -907,7 +909,7 @@ async function showNotification(acc, msg) {
     selected_module_id.set(identifier);
     await tick();
     console.log('notification click: selectConversation', msg.address_from);
-    selectConversation({ acc, address: msg.address_from, visible_name: conversation?.visible_name });
+    selectConversation({ acc: new WeakRef(acc), address: msg.address_from, visible_name: conversation?.visible_name });
    }
   },
  };
