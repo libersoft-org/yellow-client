@@ -220,15 +220,12 @@ async function sendCustomNotification(notification: YellowNotification): Promise
   log.debug('notification.id is undefined');
   return;
  }
- if (get(notificationsSoundEnabled)) {
-  playNotificationSound(notification);
- }
  notifications.set(notification.id, notification);
  s?.set(notification.id, notification);
  //log.debug('sendCustomNotification:', notification.id, notification);
 }
 
-function playNotificationSound(notification: YellowNotification): void {
+export function playNotificationSound(notification: YellowNotification): void {
  const audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
  audio.play();
 }

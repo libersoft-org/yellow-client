@@ -6,10 +6,11 @@
  import { getCurrentWindow, PhysicalPosition, PhysicalSize, availableMonitors } from '@tauri-apps/api/window';
  //import { moveWindow, moveWindowConstrained, Position } from '@tauri-apps/plugin-positioner';
  import { multiwindow_store } from '../../core/multiwindow_store.ts';
- import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor } from '../../core/notifications_settings.ts';
+ import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor, notificationsSoundEnabled } from '../../core/notifications_settings.ts';
  import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
  import { onMount, onDestroy } from 'svelte';
  import { invoke } from '@tauri-apps/api/core';
+ import { playNotificationSound } from '@/core/notifications.ts';
 
  export let maxNotifications = 3;
  let notifications = writable([]);
@@ -211,6 +212,9 @@
  }
 
  function addNotification(data) {
+  if (get(notificationsSoundEnabled)) {
+   playNotificationSound(data);
+  }
   //log.debug('addNotification data:', data);
   data.onClose = onClose.bind(data);
   data.onClick = onClick.bind(data);
