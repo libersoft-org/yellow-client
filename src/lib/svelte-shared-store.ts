@@ -22,39 +22,49 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
   return result;
  }
 
- function start(set: (value: T) => void): Unsubscriber {
+ // Create a writable store with a start function that properly handles the storage event listener
+ const internalStore = writable<T>(default_, set => {
+  // Initialize with the value from localStorage
+  set(getStorage());
+
+  // Set up the storage event listener
   function handleStorageEvent({ key, newValue }: StorageEvent): void {
-   if (key !== name) {
-    return;
+   if (key !== name || newValue === null) return;
+   try {
+    set(JSON.parse(newValue));
+   } catch (e) {
+    console.error(`Error parsing storage event value for ${name}:`, e);
    }
-   console.log('localStorageSharedStore handleStorageEvent', key, newValue);
-   set(JSON.parse(newValue!));
   }
 
-  set(getStorage());
-  console.log('localStorageSharedStore addEventListener');
+  // Add the event listener
   window.addEventListener('storage', handleStorageEvent);
 
+  // Return the unsubscribe function that removes the event listener
   return () => {
-   console.log('localStorageSharedStore removeEventListener');
    window.removeEventListener('storage', handleStorageEvent);
   };
- }
+ });
 
- const { subscribe, set, update } = writable<T>(default_, start);
+ // Create the store interface with the extended functionality
+ const store: Writable<T> = {
+  // Pass through the subscribe method, which handles unsubscription properly
+  subscribe: internalStore.subscribe,
 
- const store = {
-  subscribe,
+  // Custom set method that also updates localStorage
   set(value: T): void {
    setStorage(value);
-   set(value);
+   internalStore.set(value);
   },
+
+  // Custom update method that also updates localStorage
   update(fn: (value: T) => T): void {
-   const value2 = fn(get(store));
-   setStorage(value2);
-   set(value2);
+   const value = fn(get(internalStore));
+   setStorage(value);
+   internalStore.set(value);
   },
  };
+
  return store;
 }
 
@@ -78,24 +88,33 @@ export function localStorageReadOnceSharedStore<T>(name: string, default_: T): W
   return result;
  }
 
- function start(set: (value: T) => void): Unsubscriber {
+ // Create a writable store with a start function that only sets the initial value
+ const internalStore = writable<T>(default_, set => {
+  // Initialize with the value from localStorage
   set(getStorage());
-  return () => {}; // Return unsubscribe function (no-op as there are no event listeners)
- }
 
- const { subscribe, set, update } = writable<T>(default_, start);
+  // Return an empty unsubscribe function since we don't have any listeners
+  return () => {};
+ });
 
- const store = {
-  subscribe,
+ // Create the store interface with the extended functionality
+ const store: Writable<T> = {
+  // Pass through the subscribe method from the internal store
+  subscribe: internalStore.subscribe,
+
+  // Custom set method that also updates localStorage
   set(value: T): void {
    setStorage(value);
-   set(value);
+   internalStore.set(value);
   },
+
+  // Custom update method that also updates localStorage
   update(fn: (value: T) => T): void {
-   const value2 = fn(get(store));
-   setStorage(value2);
-   set(value2);
+   const value = fn(get(internalStore));
+   setStorage(value);
+   internalStore.set(value);
   },
  };
+
  return store;
 }

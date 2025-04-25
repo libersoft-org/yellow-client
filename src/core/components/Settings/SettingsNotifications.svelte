@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
  import { onMount, onDestroy, tick } from 'svelte';
  import Table from '../Table/Table.svelte';
  import TableTBodyTr from '../Table/TableTBodyTr.svelte';
@@ -9,7 +9,7 @@
  import Select from '../Select/Select.svelte';
  import SelectOption from '../Select/SelectOption.svelte';
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
- import { writable, get } from 'svelte/store';
+ import { writable, get, type Unsubscriber } from 'svelte/store';
  import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
@@ -20,12 +20,22 @@
 
  // Local monitors store for this component
  let monitors = writable([]);
- let monitorInterval;
- let permissionInterval;
+ let monitorInterval: number | undefined;
+ let permissionInterval: number | undefined;
  let monitorOptions = writable([]);
- let exampleNotification = 'dummy';
+ let exampleNotification: string | null = 'dummy';
 
- monitors.subscribe(value => {
+ // Store all subscription unsubscribe functions
+ const unsubscribers: Unsubscriber[] = [];
+
+ // Helper to add subscriptions and track unsubscribers
+ function addSubscription<T>(store: { subscribe: (callback: (value: T) => void) => Unsubscriber }, callback: (value: T) => void): void {
+  const unsubscribe = store.subscribe(callback);
+  unsubscribers.push(unsubscribe);
+ }
+
+ // Subscribe to monitors and keep unsubscribe function
+ addSubscription(monitors, value => {
   monitorOptions.set(
    [
     //{ name: 'primary', label: 'primary' },
@@ -46,36 +56,31 @@
    title: 'Example',
    body: 'This is an example notification',
    callback: event => {
-    deleteNotification(exampleNotification);
+    deleteNotification(exampleNotification!);
     exampleNotification = null;
    },
   });
  }
 
- onDestroy(() => {
-  if (exampleNotification && exampleNotification !== 'dummy') {
-   deleteNotification(exampleNotification);
-  }
- });
+ let _notificationsEnabled = get(notificationsEnabled);
 
- selectedMonitorName.subscribe(v => {
+ // Add all store subscriptions with the tracking helper
+ addSubscription(selectedMonitorName, v => {
   log.debug('selectedMonitor:', v);
   updateExampleNotification();
  });
 
- selectedNotificationsCorner.subscribe(v => {
+ addSubscription(selectedNotificationsCorner, v => {
   log.debug('selectedNotificationsCorner:', v);
   updateExampleNotification();
  });
 
- enableCustomNotifications.subscribe(v => {
+ addSubscription(enableCustomNotifications, v => {
   log.debug('enableCustomNotifications:', v);
   updateExampleNotification();
  });
 
- let _notificationsEnabled = get(notificationsEnabled);
-
- notificationsEnabled.subscribe(value => {
+ addSubscription(notificationsEnabled, value => {
   _notificationsEnabled = value;
   log.debug('notificationsEnabled:', value);
   updateExampleNotification();
@@ -119,11 +124,20 @@
  });
 
  onDestroy(() => {
+  // Clean up all store subscriptions
+  unsubscribers.forEach(unsubscribe => unsubscribe());
+
+  // Clear intervals
   if (monitorInterval) {
    clearInterval(monitorInterval);
   }
   if (permissionInterval) {
    clearInterval(permissionInterval);
+  }
+
+  // Clean up any existing notification
+  if (exampleNotification && exampleNotification !== 'dummy') {
+   deleteNotification(exampleNotification);
   }
  });
 
