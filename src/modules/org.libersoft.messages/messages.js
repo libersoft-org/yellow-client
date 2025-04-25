@@ -616,7 +616,7 @@ function findNext(messages, i) {
 
 export function setMessageSeen(message, cb) {
  let acc = get(active_account);
- console.log('setMessageSeen', message);
+ log.debug('setMessageSeen', message);
  deleteNotification(messageNotificationId(message));
  message.just_marked_as_seen = true;
  sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
@@ -843,7 +843,7 @@ async function eventNewMessage(acc, event) {
 function eventSeenMessage(acc, event) {
  console.log(event);
  const res = event.detail;
- //console.log('eventSeenMessage', res);
+ log.debug('eventSeenMessage', res);
  if (!res.data) {
   console.log('eventSeenMessage: no data');
   return;

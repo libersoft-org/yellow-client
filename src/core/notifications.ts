@@ -215,7 +215,7 @@ async function sendCustomNotification(notification: YellowNotification): Promise
  //log.debug('sendCustomNotification');
  //await initCustomNotifications();
  let s = await multiwindow_store('notifications');
- //log.debug('store:', s);
+ log.debug('notifications store:', s);
  invoke('create_notifications_window', {});
  if (!notification.id) {
   log.debug('notification.id is undefined');

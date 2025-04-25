@@ -9,7 +9,7 @@
  import { onMount, onDestroy } from 'svelte';
  import { invoke } from '@tauri-apps/api/core';
  import { playNotificationSound } from '@/core/notifications.ts';
- import { heightLogicalChanged, initPositioning, deinitPositioning } from "./position.ts';
+ import { heightLogicalChanged, initPositioning, deinitPositioning } from './position.ts';
 
  export let maxNotifications = 3;
  let notifications = writable([]);
@@ -37,12 +37,11 @@
   deinitPositioning();
  });
 
-
  async function initNotificationsPage() {
   let s = await multiwindow_store('notifications', false);
   log.debug('initNotifications: store:', s);
   s.onChange((k, v) => {
-   log.debug('store.onChange', k, v);
+   log.debug('store.onChange', k, !!v);
    if (!v) {
     onNotificationRemoved(k);
    } else {
@@ -55,9 +54,10 @@
   //log.debug('initial store:', await s.entries());
   let values = await s.values();
   log.debug('initNotifications: values:', values);
+  values = values.filter(v => !!v);
   values.sort((a, b) => a.ts - b.ts);
   for (let v of values) {
-   await addNotification(v);
+   if (v) await addNotification(v);
   }
  }
 
