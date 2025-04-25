@@ -10,7 +10,7 @@
  import SelectOption from '../Select/SelectOption.svelte';
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
  import { writable, get } from 'svelte/store';
- import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
+ import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
@@ -237,6 +237,15 @@
      <TableTBodyTd center={true}>
       <input type="color" bind:value={$bgColorHover} />
       {$bgColorHover}
+     </TableTBodyTd>
+    </TableTBodyTr>
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Border color:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <input type="color" bind:value={$borderColor} />
+      {$borderColor}
      </TableTBodyTd>
     </TableTBodyTr>
     <TableTBodyTr>
