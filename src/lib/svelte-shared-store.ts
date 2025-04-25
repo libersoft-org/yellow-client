@@ -1,4 +1,4 @@
-import { writable, get, type Writable } from 'svelte/store';
+import { writable, get, type Writable, type Unsubscriber } from 'svelte/store';
 
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
  function setStorage(value: T): void {
@@ -22,35 +22,40 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
   return result;
  }
 
- function start(): () => void {
+ function start(set: (value: T) => void): Unsubscriber {
   function handleStorageEvent({ key, newValue }: StorageEvent): void {
    if (key !== name) {
     return;
    }
+   console.log('localStorageSharedStore handleStorageEvent', key, newValue);
    set(JSON.parse(newValue!));
   }
 
   set(getStorage());
+  console.log('localStorageSharedStore addEventListener');
   window.addEventListener('storage', handleStorageEvent);
 
-  return () => window.removeEventListener('storage', handleStorageEvent);
+  return () => {
+   console.log('localStorageSharedStore removeEventListener');
+   window.removeEventListener('storage', handleStorageEvent);
+  };
  }
 
  const { subscribe, set, update } = writable<T>(default_, start);
 
- let r = {
+ const store = {
   subscribe,
   set(value: T): void {
    setStorage(value);
    set(value);
   },
   update(fn: (value: T) => T): void {
-   const value2 = fn(get(r));
+   const value2 = fn(get(store));
    setStorage(value2);
    set(value2);
   },
  };
- return r;
+ return store;
 }
 
 export function localStorageReadOnceSharedStore<T>(name: string, default_: T): Writable<T> {
@@ -73,23 +78,24 @@ export function localStorageReadOnceSharedStore<T>(name: string, default_: T): W
   return result;
  }
 
- function start(): void {
+ function start(set: (value: T) => void): Unsubscriber {
   set(getStorage());
+  return () => {}; // Return unsubscribe function (no-op as there are no event listeners)
  }
 
  const { subscribe, set, update } = writable<T>(default_, start);
 
- let r = {
+ const store = {
   subscribe,
   set(value: T): void {
    setStorage(value);
    set(value);
   },
   update(fn: (value: T) => T): void {
-   const value2 = fn(get(r));
+   const value2 = fn(get(store));
    setStorage(value2);
    set(value2);
   },
  };
- return r;
+ return store;
 }

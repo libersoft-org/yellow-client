@@ -3,6 +3,7 @@ import { TrayIcon } from '@tauri-apps/api/tray';
 import { log, TAURI, TAURI_MOBILE } from './tauri.ts';
 //import { resolveResource } from "@tauri-apps/api/path";
 import { defaultWindowIcon } from '@tauri-apps/api/app';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Menu } from '@tauri-apps/api/menu';
 import { exit } from '@tauri-apps/plugin-process';
 import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
@@ -28,9 +29,10 @@ export async function createTrayIcon() {
    log.debug(`TrayIcon event: ${event.type}`);
    // add the handle in the action to update the state
    //await handleIconState(event);
-   window.focus();
    if (event.type === 'Click') {
     log.debug('TrayIcon Click event');
+    getCurrentWindow().setFocus();
+    getCurrentWindow().show();
    }
   };
   const options = {

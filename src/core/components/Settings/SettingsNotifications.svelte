@@ -21,6 +21,7 @@
  // Local monitors store for this component
  let monitors = writable([]);
  let monitorInterval;
+ let permissionInterval;
  let monitorOptions = writable([]);
  let exampleNotification = 'dummy';
 
@@ -34,6 +35,7 @@
  });
 
  function updateExampleNotification() {
+  log.debug('updateExampleNotification');
   if (exampleNotification === 'dummy') return;
   if (exampleNotification) {
    deleteNotification(exampleNotification);
@@ -71,13 +73,14 @@
   updateExampleNotification();
  });
 
- // Notifications settings
  let _notificationsEnabled = get(notificationsEnabled);
+
  notificationsEnabled.subscribe(value => {
   _notificationsEnabled = value;
-  console.log('notificationsEnabled:', value);
+  log.debug('notificationsEnabled:', value);
   updateExampleNotification();
  });
+
  $: updateNotificationsEnabled(_notificationsEnabled);
 
  async function updateNotificationsEnabled(value) {
@@ -99,7 +102,8 @@
   log.debug('SettingsNotifications mounted');
   exampleNotification = null;
   if (BROWSER) {
-   setInterval(() => {
+   permissionInterval = setInterval(() => {
+    log.debug('permissionInterval:', Notification.permission);
     if (get(isRequestingNotificationsPermission)) return;
 
     if (Notification.permission === 'granted') {
@@ -117,6 +121,9 @@
  onDestroy(() => {
   if (monitorInterval) {
    clearInterval(monitorInterval);
+  }
+  if (permissionInterval) {
+   clearInterval(permissionInterval);
   }
  });
 
