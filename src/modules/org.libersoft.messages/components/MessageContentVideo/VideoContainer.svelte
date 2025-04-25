@@ -107,7 +107,7 @@
    videoEl.setAttribute('controls', 'true');
    videoEl.setAttribute('preload', 'auto');
    videoEl.setAttribute('autoplay', 'true');
-   videoEl.setAttribute('muted', 'true');
+   videoEl.setAttribute('muted', 'false');
 
    videoRef.appendChild(videoEl);
 
@@ -119,7 +119,7 @@
    const player = videoJS(videoEl, {
     controls: true,
     autoplay: true,
-    muted: true,
+    muted: false,
     preload: 'none',
     seekable: false,
     hidden: true,
