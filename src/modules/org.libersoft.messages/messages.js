@@ -96,7 +96,7 @@ export function selectConversation(conversation) {
  selectedConversation.set(conversation);
  events.set([]);
  messagesArray.set([]);
- insertEvent({ type: 'new', array: [] });
+ insertEvent({ type: 'new', array: get(messagesArray) });
  hideSidebarMobile.set(true);
  listMessages(conversation.acc.deref ? conversation.acc.deref() : conversation.acc, conversation.address);
 }
