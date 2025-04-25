@@ -1,6 +1,6 @@
 <script>
  import '../app.css';
- import { onMount, setContext } from 'svelte';
+ import { onMount, onDestroy, setContext } from 'svelte';
  import { get } from 'svelte/store';
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
  import { isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.js';
@@ -17,7 +17,7 @@
  import WizardWelcomeStep1 from '@/core/pages/WelcomePage/WelcomeStep1.svelte';
  import WizardWelcomeStep2 from '@/core/pages/WelcomePage/WelcomeStep2.svelte';
  import WizardWelcomeStep3 from '@/core/pages/WelcomePage/WelcomeStep3.svelte';
- import { createTrayIcon } from '../core/tray_icon.ts';
+ import { createTrayIcon, destroyTrayIcon } from '../core/tray_icon.ts';
  import '../modules/org.libersoft.messages/module.js';
  import '../modules/org.libersoft.contacts/module.js';
  import '../modules/org.libersoft.wallet/module.js';
@@ -140,6 +140,11 @@
    visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
   } else window.addEventListener('resize', updateAppHeight);
   updateAppHeight();
+ });
+
+ onDestroy(async () => {
+  console.log('+page onDestroy');
+  await destroyTrayIcon();
  });
 
  function updateAppHeight() {
