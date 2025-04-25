@@ -2,7 +2,7 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import { log } from '../../tauri.ts';
- import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
+ import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
  export let data;
  export let closing = false;
 
@@ -177,7 +177,7 @@
   data.onClick(e, 'click');
  }}
 >
- <div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover};">
+ <div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover}; border: 1px solid {$borderColor};">
   {#if data.img || data.title || data.body}
    <div class="top">
     {#if data.img}

@@ -24,5 +24,6 @@ export let bodyMaxLines = localStorageSharedStore('bodyMaxLines', 3);
 
 export let bgColor = localStorageSharedStore('bgColor', '#222222');
 export let bgColorHover = localStorageSharedStore('bgColorHover', '#333333');
+export let borderColor = localStorageSharedStore('borderColor', '#444444');
 export let titleColor = localStorageSharedStore('titleColor', '#ffffff');
 export let descColor = localStorageSharedStore('descColor', '#888888');
