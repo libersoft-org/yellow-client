@@ -6,10 +6,19 @@ import { defaultWindowIcon } from '@tauri-apps/api/app';
 import { Menu } from '@tauri-apps/api/menu';
 import { exit } from '@tauri-apps/plugin-process';
 import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
+import { showTrayIcon } from '@/core/settings.ts';
+import { get } from 'svelte/store';
 
 let tray: TrayIcon | null = null;
 
 export async function createTrayIcon() {
+ if (tray) {
+  return;
+ }
+ if (!get(showTrayIcon)) {
+  log.debug('Tray icon not enabled');
+  return;
+ }
  if (TAURI && !TAURI_MOBILE) {
   // Get the path to the icon file
   const iconPath = await defaultWindowIcon();
@@ -25,6 +34,7 @@ export async function createTrayIcon() {
    }
   };
   const options = {
+   id: 'main',
    icon: iconPath || '',
    action,
    menu: await Menu.new({
@@ -51,7 +61,7 @@ export async function createTrayIcon() {
    showMenuOnLeftClick: false,
    tooltip: 'awesome tray tooltip',
   };
-  tray = await TrayIcon.new(options);
+  /*tray = */ await TrayIcon.new(options);
   log.debug('TrayIcon created:', tray);
  }
 }
@@ -59,8 +69,10 @@ export async function createTrayIcon() {
 export async function destroyTrayIcon() {
  if (TAURI && !TAURI_MOBILE) {
   log.debug('destroyTrayIcon');
-  if (tray) {
-   await tray.close();
+  //if (tray)
+  {
+   //await tray.close();
+   TrayIcon.removeById('main');
    log.debug('TrayIcon closed');
    tray = null;
   }
