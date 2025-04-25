@@ -25,7 +25,9 @@
  import '../modules/org.libersoft.iframes/module.js';
  import { enableAutostart } from '../core/autostart.ts';
  import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
- import { setDefaultWindowSize } from '../core/tauri.ts';
+ import { log, setDefaultWindowSize } from '../core/tauri.ts';
+ import { zoom } from '../core/settings.ts';
+ import { initZoom } from '@/core/zoom.ts';
 
  let menus = [];
  setContext('menus', menus);
@@ -69,6 +71,7 @@
 
  onMount(async () => {
   console.log('+page onMount');
+  await initZoom();
 
   if ('serviceWorker' in window.navigator) {
    console.log('+page registering service worker');

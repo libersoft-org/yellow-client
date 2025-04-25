@@ -7,18 +7,10 @@
  import TableTBodyTd from '../Table/TableTBodyTd.svelte';
  import { getCurrentWebview } from '@tauri-apps/api/webview';
  import { log, TAURI } from '@/core/tauri.ts';
+ import { zoom } from '@/core/settings.ts';
+ import { setZoom } from '@/core/zoom.ts';
 
- export let zoom = 1;
  export let theme = 'light';
-
- async function setZoom() {
-  if (TAURI) {
-   log.debug('setZoom:', window.devicePixelRatio);
-   let z = getCurrentWebview().getZoom();
-   log.debug('zoom:', z);
-   await getCurrentWebview().setZoom(zoom);
-  }
- }
 </script>
 
 <style>
@@ -35,8 +27,8 @@
     <div class="bold">Zoom:</div>
    </TableTBodyTd>
    <TableTBodyTd center={true}>
-    <div>{zoom}%</div>
-    <input class="zoom" type="range" min="0.3" max="10" step="0.1" bind:value={zoom} on:change={setZoom} />
+    <div>{Math.round(($zoom || 0) * 100, 2)}%</div>
+    <input class="zoom" type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} on:change={setZoom} />
    </TableTBodyTd>
   </TableTBodyTr>
   <TableTBodyTr>
