@@ -3,6 +3,7 @@ import { multiwindow_store } from './multiwindow_store.ts';
 import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, selectedMonitorName, notificationsSoundEnabled } from './notifications_settings.ts';
+import { playAndStopExample } from './audio.ts';
 import {
  availableMonitors,
  currentMonitor,
@@ -227,7 +228,11 @@ async function sendCustomNotification(notification: YellowNotification): Promise
 
 export function playNotificationSound(notification: YellowNotification): void {
  const audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
+ //const audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
  audio.play();
+ if (TAURI) {
+  //playAndStopExample('/usr/share/sounds/Oxygen-Sys-Log-In-Long.ogg');
+ }
 }
 
 function showBrowserNotification(notification: YellowNotification) {

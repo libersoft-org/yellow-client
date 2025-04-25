@@ -540,7 +540,7 @@ function setupPing(account) {
    {},
    true,
    (req, res) => {
-    log.debug('Ping response:', res);
+    console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
     //console.log('lastCommsTs:', acc.lastCommsTs);
     void 'avoid expensive UI update';
