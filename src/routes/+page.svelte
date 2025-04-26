@@ -230,7 +230,7 @@
  function stopResizeSideBar() {
   isResizingSideBar = false;
   document.body.style.userSelect = '';
-  document.body.style.webkitUserSelect = '';  // Restore Safari-specific selection
+  document.body.style.webkitUserSelect = ''; // Restore Safari-specific selection
   window.removeEventListener('mousemove', resizeSideBar);
   window.removeEventListener('mouseup', stopResizeSideBar);
   setSidebarSize(sideBar.clientWidth);

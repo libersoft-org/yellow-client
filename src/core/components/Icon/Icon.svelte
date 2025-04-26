@@ -14,17 +14,7 @@
   isButton?: boolean;
  }
 
- let {
-  img,
-  alt = '',
-  size = 24,
-  padding = 10,
-  visibleOnMobile = true,
-  visibleOnDesktop = true,
-  colorVariable,
-  onClick,
-  isButton = false
- }: Props = $props();
+ let { img, alt = '', size = 24, padding = 10, visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false }: Props = $props();
 </script>
 
 <style>
@@ -53,11 +43,8 @@
 </style>
 
 {#snippet icon()}
- <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}"
-      style="padding: {padding}px;">
-  <img
-   style="width: {size}px; height: {size}px; min-width: {size}px; min-height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}"
-   src={img} {alt} />
+ <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;">
+  <img style="width: {size}px; height: {size}px; min-width: {size}px; min-height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} {alt} />
  </div>
 {/snippet}
 

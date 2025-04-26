@@ -31,7 +31,7 @@
 
  let loading = $state(false);
 
- function handleKeyboard (event) {
+ function handleKeyboard(event) {
   event.preventDefault();
   event.stopImmediatePropagation();
   if (event.key === 'Escape') {
@@ -65,13 +65,13 @@
  });
 
  $effect(() => {
-  const opts = { capture: true }
+  const opts = { capture: true };
   if ($gallery.show) {
    document.addEventListener('keydown', handleKeyboard, opts);
   } else {
    document.removeEventListener('keydown', handleKeyboard, opts);
   }
- })
+ });
 
  function onAnywhereClick(event) {
   // very simple background close

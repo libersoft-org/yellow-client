@@ -1,10 +1,6 @@
 <script lang="ts">
- import VideoRecorderContainer from "@/org.libersoft.messages/components/VideoRecorder/VideoRecorderContainer.svelte";
+ import VideoRecorderContainer from '@/org.libersoft.messages/components/VideoRecorder/VideoRecorderContainer.svelte';
 </script>
-
-<div class="video-recorder-modal-body">
- <VideoRecorderContainer />
-</div>
 
 <style>
  .video-recorder-modal-body {
@@ -22,3 +18,7 @@
   }
  }
 </style>
+
+<div class="video-recorder-modal-body">
+ <VideoRecorderContainer />
+</div>

@@ -28,10 +28,10 @@ export function setupMicPulseIndicator(stream: MediaStream, micIndicator: HTMLEl
   micIndicator.style.transform = `scale(${scale.toFixed(2)})`;
   micIndicator.style.opacity = `${Math.min(smoothedVolume / 40, 1).toFixed(2)}`;
 
-
   const avg = sum / dataArray.length;
 
-  if (avg > 20) { // Adjust threshold as needed
+  if (avg > 20) {
+   // Adjust threshold as needed
    micIndicator.classList.add('active');
   } else {
    micIndicator.classList.remove('active');

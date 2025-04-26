@@ -55,18 +55,23 @@ class MediaUtils {
     }, 'image/png');
    };
 
-   video.addEventListener('error', (err) => {
+   video.addEventListener('error', err => {
     cleanup();
     reject(err);
    });
 
-   video.addEventListener('loadedmetadata', () => {
-    if (video.readyState >= 2) { // HAVE_CURRENT_DATA
-     drawFrame();
-    } else {
-     video.addEventListener('loadeddata', drawFrame, { once: true });
-    }
-   }, { once: true });
+   video.addEventListener(
+    'loadedmetadata',
+    () => {
+     if (video.readyState >= 2) {
+      // HAVE_CURRENT_DATA
+      drawFrame();
+     } else {
+      video.addEventListener('loadeddata', drawFrame, { once: true });
+     }
+    },
+    { once: true }
+   );
 
    video.load();
   });

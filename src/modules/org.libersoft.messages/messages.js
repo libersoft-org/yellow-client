@@ -216,7 +216,7 @@ export async function initUpload(files, uploadType, recipients) {
    messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
   }
  });
- console.log("messageHtml", messageHtml);
+ console.log('messageHtml', messageHtml);
  setTimeout(() => {
   sendMessage(messageHtml, 'html');
  }, 100);

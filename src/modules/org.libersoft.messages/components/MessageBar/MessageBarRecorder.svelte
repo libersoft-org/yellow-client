@@ -7,7 +7,7 @@
  import { get } from 'svelte/store';
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
  import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
- import WaveSurfer from "wavesurfer.js";
+ import WaveSurfer from 'wavesurfer.js';
 
  let wavesurferRef: HTMLElement;
  let wavesurfer: WaveSurfer;
@@ -24,7 +24,7 @@
   wavesurferWidth = entry.contentRect.width;
  };
 
- const sendMessage = async (blob) => {
+ const sendMessage = async blob => {
   const recipientEmail = get(selectedConversation).address;
   const arrBuffer = await blob.arrayBuffer();
   const audioMetaData = await MediaUtils.getAudioDataFromArrayBuffer(arrBuffer);
@@ -37,7 +37,7 @@
  const startRecording = async () => {
   isPaused = false;
 
-  const permissions = await navigator.permissions.query({name: 'microphone'});
+  const permissions = await navigator.permissions.query({ name: 'microphone' });
 
   if (permissions.state === 'denied') {
    audioRecorderStore.setOpen(false);
@@ -79,7 +79,7 @@
 
   RecordPlugin.getAvailableAudioDevices().then(devices => {
    wavesurferRecord
-    .startRecording({deviceId: 'default'})
+    .startRecording({ deviceId: 'default' })
     .then(() => {
      console.log('startRecording');
     })
@@ -163,20 +163,16 @@
 
 <div class="message-bar-recorder" class:is-paused={isPaused} style:display={$isOpen ? 'flex' : 'none'}>
  <div class="wavesurfer-wrap">
-  <div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize}
-       style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
+  <div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize} style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
  </div>
  <div class="button-wrapper">
-  <Icon img="modules/{identifier}/img/delete.svg" colorVariable="--icon-red" alt="Delete" size={14} padding={0}
-        onClick={onDelete} />
+  <Icon img="modules/{identifier}/img/delete.svg" colorVariable="--icon-red" alt="Delete" size={14} padding={0} onClick={onDelete} />
  </div>
  <div class="button-wrapper">
   {#if isPaused}
-   <Icon img="modules/{identifier}/img/record.svg" colorVariable="--icon-red" alt="Record" size={14} padding={0}
-         onClick={onRecord} />
+   <Icon img="modules/{identifier}/img/record.svg" colorVariable="--icon-red" alt="Record" size={14} padding={0} onClick={onRecord} />
   {:else}
-   <Icon img="modules/{identifier}/img/pause.svg" colorVariable="--icon-yellow" alt="Stop" size={14} padding={0}
-         onClick={onPause} />
+   <Icon img="modules/{identifier}/img/pause.svg" colorVariable="--icon-yellow" alt="Stop" size={14} padding={0} onClick={onPause} />
   {/if}
  </div>
  <div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>

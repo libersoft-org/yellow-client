@@ -1,6 +1,5 @@
 <script lang="ts">
-
- import type { HTMLSelectAttributes } from "svelte/elements";
+ import type { HTMLSelectAttributes } from 'svelte/elements';
 
  interface Props extends HTMLSelectAttributes {
   value: string;
@@ -9,13 +8,7 @@
   maxWidth?: string;
  }
 
- let {
-  value = $bindable(''),
-  grow = false,
-  minWidth,
-  maxWidth,
-  ...restProps
- }: Props = $props();
+ let { value = $bindable(''), grow = false, minWidth, maxWidth, ...restProps }: Props = $props();
 
  let selectRef: HTMLSelectElement;
 

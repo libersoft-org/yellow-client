@@ -1,21 +1,23 @@
 <script lang="ts" module>
  import { defineMeta } from '@storybook/addon-svelte-csf';
- import VideoRecorderView from "@/org.libersoft.messages/components/VideoRecorder/VideoRecorderView.svelte";
+ import VideoRecorderView from '@/org.libersoft.messages/components/VideoRecorder/VideoRecorderView.svelte';
  import { fn } from '@storybook/test';
 
- const makeAudioDevice = (id: string, label: string) => ({
-  deviceId: id,
-  groupId: 'group-a',
-  kind: 'audioinput',
-  label,
- } as InputDeviceInfo);
+ const makeAudioDevice = (id: string, label: string) =>
+  ({
+   deviceId: id,
+   groupId: 'group-a',
+   kind: 'audioinput',
+   label,
+  }) as InputDeviceInfo;
 
- const makeVideoDevice = (id: string, label: string) => ({
-  deviceId: id,
-  groupId: 'group-b',
-  kind: 'videoinput',
-  label,
- } as InputDeviceInfo);
+ const makeVideoDevice = (id: string, label: string) =>
+  ({
+   deviceId: id,
+   groupId: 'group-b',
+   kind: 'videoinput',
+   label,
+  }) as InputDeviceInfo;
 
  // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
  const { Story } = defineMeta({
@@ -60,7 +62,7 @@
  name="Error one message"
  args={{
   error: true,
-  errorMessages: ['Special error message']
+  errorMessages: ['Special error message'],
  }}
 />
 
@@ -68,7 +70,6 @@
  name="Error multiple messages"
  args={{
   error: true,
-  errorMessages: ['Special error message', 'Second Special and quire longer error message', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.']
+  errorMessages: ['Special error message', 'Second Special and quire longer error message', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'],
  }}
 />
-
