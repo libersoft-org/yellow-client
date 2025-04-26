@@ -2,13 +2,13 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import { log } from '../../tauri.ts';
- import { animationDuration, animationName, bgColor, titleColor, descColor } from '../../notifications_settings.ts';
+ import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
  export let data;
  export let closing = false;
 
  function handleClosing(e) {
   e.stopPropagation();
-  //e.stopImmediatePropagation();
+  e.stopImmediatePropagation();
   closing = true;
   setTimeout(() => {
    data.onClose && data.onClose(e, 'close');
@@ -22,9 +22,14 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   border-radius: 10px;
   max-width: 400px;
+  background-color: var(--bgColor);
+  transition: background-color 0.5s ease;
+ }
+
+ .notification:hover {
+  background-color: var(--bgColorHover);
  }
 
  .notification.zoom-in {
@@ -127,6 +132,7 @@
   border-radius: 10px;
   background-color: rgb(255, 255, 255, 0.1);
   max-height: 30px;
+  transition: background-color 0.5s ease;
  }
 
  .top .right .line .close :global(.icon:hover) {
@@ -171,7 +177,7 @@
   data.onClick(e, 'click');
  }}
 >
- <div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; background-color:{$bgColor}">
+ <div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover}; border: 1px solid {$borderColor};">
   {#if data.img || data.title || data.body}
    <div class="top">
     {#if data.img}
@@ -184,14 +190,14 @@
     <div class="right">
      <div class="line">
       {#if data.title}
-       <div class="title clamp-3" style:color={$titleColor} style:--lines={data.titleMaxLines ? data.titleMaxLines : 1}>{data.title}</div>
+       <div class="title clamp-3" style:color={$titleColor} style:--lines={$titleMaxLines ? $titleMaxLines : 1}>{data.title}</div>
       {/if}
       <div class="close">
-       <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10" padding="10" />
+       <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10" padding="10" isButton onClick={e => handleClosing(e)} />
       </div>
      </div>
      {#if data.body}
-      <div class="body clamp-3" style:--lines={data.bodyMaxLines ? data.bodyMaxLines : 3} style:color={$descColor}>{data.body}</div>
+      <div class="body clamp-3" style:--lines={$bodyMaxLines ? $bodyMaxLines : 3} style:color={$descColor}>{data.body}</div>
      {/if}
     </div>
    </div>
@@ -205,15 +211,5 @@
     </div>
    </div>
   {/if}
-  <BaseButton
-   onClick={e => {
-    log.debug('***onClose');
-    handleClosing(e);
-   }}
-  >
-   <!--<div class="close">-->
-
-   <!--</div>-->
-  </BaseButton>
  </div>
 </BaseButton>

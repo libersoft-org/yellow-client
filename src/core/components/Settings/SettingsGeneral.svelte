@@ -4,9 +4,8 @@
  import Tbody from '../Table/TableTBody.svelte';
  import Tr from '../Table/TableTBodyTr.svelte';
  import Td from '../Table/TableTBodyTd.svelte';
- export let autostart = true;
- export let showTrayIcon = false;
- export let closeToMinimize = false;
+
+ import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/settings.ts';
 </script>
 
 <style>
@@ -19,7 +18,7 @@
     <div class="bold">Run on system startup:</div>
    </Td>
    <Td center={true}>
-    <Switch bind:checked={autostart} />
+    <Switch bind:checked={$runOnSystemStartup} />
    </Td>
   </Tr>
   <Tr>
@@ -27,7 +26,7 @@
     <div class="bold">Show tray icon:</div>
    </Td>
    <Td center={true}>
-    <Switch bind:checked={showTrayIcon} />
+    <Switch bind:checked={$showTrayIcon} />
    </Td>
   </Tr>
   <Tr>
@@ -35,7 +34,7 @@
     <div class="bold">Close to minimize:</div>
    </Td>
    <Td center={true}>
-    <Switch bind:checked={closeToMinimize} />
+    <Switch bind:checked={$closeToMinimize} />
    </Td>
   </Tr>
  </Tbody>

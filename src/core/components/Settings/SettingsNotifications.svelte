@@ -1,28 +1,41 @@
-<script>
+<script lang="ts">
  import { onMount, onDestroy, tick } from 'svelte';
  import Table from '../Table/Table.svelte';
  import TableTBodyTr from '../Table/TableTBodyTr.svelte';
  import TableTBody from '../Table/TableTBody.svelte';
  import TableTBodyTd from '../Table/TableTBodyTd.svelte';
+ import Input from '../Input/Input.svelte';
  import Switch from '../Switch/Switch.svelte';
  import Select from '../Select/Select.svelte';
  import SelectOption from '../Select/SelectOption.svelte';
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
- import { writable, get } from 'svelte/store';
- import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, bgColor, titleColor, descColor } from '../../notifications_settings.ts';
+ import { writable, get, type Unsubscriber } from 'svelte/store';
+ import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { availableMonitors } from '@tauri-apps/api/window';
  import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
  import { addNotification, deleteNotification } from '../../notifications.ts';
+ import { debug } from '@/core/core.js';
 
  // Local monitors store for this component
  let monitors = writable([]);
- let monitorInterval;
+ let monitorInterval: number | undefined;
+ let permissionInterval: number | undefined;
  let monitorOptions = writable([]);
- let exampleNotification = 'dummy';
+ let exampleNotification: string | null = 'dummy';
 
- monitors.subscribe(value => {
+ // Store all subscription unsubscribe functions
+ const unsubscribers: Unsubscriber[] = [];
+
+ // Helper to add subscriptions and track unsubscribers
+ function addSubscription<T>(store: { subscribe: (callback: (value: T) => void) => Unsubscriber }, callback: (value: T) => void): void {
+  const unsubscribe = store.subscribe(callback);
+  unsubscribers.push(unsubscribe);
+ }
+
+ // Subscribe to monitors and keep unsubscribe function
+ addSubscription(monitors, value => {
   monitorOptions.set(
    [
     //{ name: 'primary', label: 'primary' },
@@ -32,6 +45,7 @@
  });
 
  function updateExampleNotification() {
+  log.debug('updateExampleNotification');
   if (exampleNotification === 'dummy') return;
   if (exampleNotification) {
    deleteNotification(exampleNotification);
@@ -42,40 +56,36 @@
    title: 'Example',
    body: 'This is an example notification',
    callback: event => {
-    deleteNotification(exampleNotification);
+    deleteNotification(exampleNotification!);
     exampleNotification = null;
    },
   });
  }
 
- onDestroy(() => {
-  if (exampleNotification && exampleNotification !== 'dummy') {
-   deleteNotification(exampleNotification);
-  }
- });
+ let _notificationsEnabled = get(notificationsEnabled);
 
- selectedMonitorName.subscribe(v => {
+ // Add all store subscriptions with the tracking helper
+ addSubscription(selectedMonitorName, v => {
   log.debug('selectedMonitor:', v);
   updateExampleNotification();
  });
 
- selectedNotificationsCorner.subscribe(v => {
+ addSubscription(selectedNotificationsCorner, v => {
   log.debug('selectedNotificationsCorner:', v);
   updateExampleNotification();
  });
 
- enableCustomNotifications.subscribe(v => {
+ addSubscription(enableCustomNotifications, v => {
   log.debug('enableCustomNotifications:', v);
   updateExampleNotification();
  });
 
- // Notifications settings
- let _notificationsEnabled = get(notificationsEnabled);
- notificationsEnabled.subscribe(value => {
+ addSubscription(notificationsEnabled, value => {
   _notificationsEnabled = value;
-  console.log('notificationsEnabled:', value);
+  log.debug('notificationsEnabled:', value);
   updateExampleNotification();
  });
+
  $: updateNotificationsEnabled(_notificationsEnabled);
 
  async function updateNotificationsEnabled(value) {
@@ -97,7 +107,8 @@
   log.debug('SettingsNotifications mounted');
   exampleNotification = null;
   if (BROWSER) {
-   setInterval(() => {
+   permissionInterval = setInterval(() => {
+    log.debug('permissionInterval:', Notification.permission);
     if (get(isRequestingNotificationsPermission)) return;
 
     if (Notification.permission === 'granted') {
@@ -113,8 +124,20 @@
  });
 
  onDestroy(() => {
+  // Clean up all store subscriptions
+  unsubscribers.forEach(unsubscribe => unsubscribe());
+
+  // Clear intervals
   if (monitorInterval) {
    clearInterval(monitorInterval);
+  }
+  if (permissionInterval) {
+   clearInterval(permissionInterval);
+  }
+
+  // Clean up any existing notification
+  if (exampleNotification && exampleNotification !== 'dummy') {
+   deleteNotification(exampleNotification);
   }
  });
 
@@ -133,6 +156,14 @@
    </TableTBodyTd>
    <TableTBodyTd center={true}>
     <Switch bind:checked={_notificationsEnabled} />
+   </TableTBodyTd>
+  </TableTBodyTr>
+  <TableTBodyTr>
+   <TableTBodyTd>
+    <div class="bold">Notification sound:</div>
+   </TableTBodyTd>
+   <TableTBodyTd center={true}>
+    <Switch bind:checked={$notificationsSoundEnabled} />
    </TableTBodyTd>
   </TableTBodyTr>
   {#if $notificationsSettingsAlert}
@@ -162,6 +193,7 @@
         <SelectOption value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
        {/each}
       </Select>
+      {#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
      </TableTBodyTd>
     </TableTBodyTr>
     <TableTBodyTr>
@@ -177,13 +209,32 @@
       <div class="bold">Animation:</div>
      </TableTBodyTd>
      <TableTBodyTd center={true}>
-      <Select>
+      <Select bind:value={$animationName}>
        <SelectOption value="none" text="None" />
        <SelectOption value="zoom" text="Zoom" />
        <SelectOption value="opacity" text="Opacity" />
       </Select>
      </TableTBodyTd>
     </TableTBodyTr>
+
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Maximum number of lines in title:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <Input type="number" bind:value={$titleMaxLines} min="1" max="3" />
+     </TableTBodyTd>
+    </TableTBodyTr>
+
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Maximum number of lines in description:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <Input type="number" bind:value={$bodyMaxLines} min="1" max="5" />
+     </TableTBodyTd>
+    </TableTBodyTr>
+
     <TableTBodyTr>
      <TableTBodyTd>
       <div class="bold">Background color:</div>
@@ -191,6 +242,24 @@
      <TableTBodyTd center={true}>
       <input type="color" bind:value={$bgColor} />
       {$bgColor}
+     </TableTBodyTd>
+    </TableTBodyTr>
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Background color on mouse over:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <input type="color" bind:value={$bgColorHover} />
+      {$bgColorHover}
+     </TableTBodyTd>
+    </TableTBodyTr>
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Border color:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <input type="color" bind:value={$borderColor} />
+      {$borderColor}
      </TableTBodyTd>
     </TableTBodyTr>
     <TableTBodyTr>

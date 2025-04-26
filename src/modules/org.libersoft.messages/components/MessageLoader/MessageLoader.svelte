@@ -64,7 +64,7 @@
   loader.timer = setTimeout(() => {
    //console.log('LOADmORE: LOADmESSAGES...');
    loader.request = loadMessages(
-    loader.conversation.acc,
+    loader.conversation.acc.deref(),
     loader.conversation.address,
     loader.base,
     loader.prev,

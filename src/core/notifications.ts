@@ -2,7 +2,8 @@ import { get } from 'svelte/store';
 import { multiwindow_store } from './multiwindow_store.ts';
 import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
-import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, selectedMonitorName } from './notifications_settings.ts';
+import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, selectedMonitorName, notificationsSoundEnabled } from './notifications_settings.ts';
+import { playAndStopExample } from './audio.ts';
 import {
  availableMonitors,
  currentMonitor,
@@ -121,6 +122,7 @@ async function onNotificationEvent(id: string, event: string) {
 }
 
 async function removeNotification(id: string): Promise<void> {
+ log.debug('removeNotification:', id);
  let s = await multiwindow_store('notifications');
  await s.delete(id);
  //log.debug('removed.');
@@ -159,6 +161,7 @@ export async function deleteNotification(id: string): Promise<void> {
 }
 
 async function deleteCustomNotification(id: string): Promise<void> {
+ if (!CUSTOM_NOTIFICATIONS) return;
  notifications[id] && notifications.delete(id);
  let s = await multiwindow_store('notifications');
  s.set(id, null);
@@ -176,7 +179,7 @@ async function sendTauriNotification(notification: YellowNotification) {
  if (!permissionGranted) {
   return;
  }
- playNotificationSound(notification);
+ if (get(notificationsSoundEnabled)) playNotificationSound(notification);
  sendNotification({
   title: notification.title,
   body: notification.body,
@@ -212,29 +215,34 @@ async function sendCustomNotification(notification: YellowNotification): Promise
  //log.debug('sendCustomNotification');
  //await initCustomNotifications();
  let s = await multiwindow_store('notifications');
- //log.debug('store:', s);
+ log.debug('notifications store:', s);
  invoke('create_notifications_window', {});
- if (notification.id) {
-  notifications.set(notification.id, notification);
-  s?.set(notification.id, notification);
- } else {
+ if (!notification.id) {
   log.debug('notification.id is undefined');
+  return;
  }
+ notifications.set(notification.id, notification);
+ s?.set(notification.id, notification);
  //log.debug('sendCustomNotification:', notification.id, notification);
 }
 
-function playNotificationSound(notification: YellowNotification): void {
+export function playNotificationSound(notification: YellowNotification): void {
  const audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
+ //const audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
  audio.play();
+ if (TAURI) {
+  //playAndStopExample('/usr/share/sounds/Oxygen-Sys-Log-In-Long.ogg');
+ }
 }
 
 function showBrowserNotification(notification: YellowNotification) {
- playNotificationSound(notification);
+ //playNotificationSound(notification);
  let n = new Notification(notification.title, {
   tag: notification.id,
   body: notification.body,
   icon: notification.icon,
-  silent: true,
+  silent: false,
+  //vibrate: [200, 100, 200],
  });
  n.onclick = async e => {
   log.debug('notification onclick:', e);
