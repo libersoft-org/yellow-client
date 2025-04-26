@@ -180,6 +180,6 @@
   {/if}
  </div>
  <div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
-  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size={32} padding={0} onClick={onSend} />
+  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size={32} padding={0} onClick={onSend} colorVariable="--icon-yellow" />
  </div>
 </div>

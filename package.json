@@ -22,6 +22,7 @@
   "@tauri-apps/plugin-process": "^2.2.1",
   "@tauri-apps/plugin-store": "^2.2.0",
   "@testing-library/svelte": "^5.2.6",
+  "@types/recordrtc": "^5.6.14",
   "@webav/mp4box.js": "^0.5.6",
   "debug": "^4.4.0",
   "dexie": "^4.0.11",
@@ -38,13 +39,16 @@
   "mediainfo.js": "^0.3.4",
   "pako": "^2.1.0",
   "qrcode": "^1.5.4",
+  "recordrtc": "^5.6.2",
   "retry": "^0.13.1",
   "svelte-highlight": "^7.8.2",
   "svelte-intersection-observer": "^1.0.0",
   "svelte-portal": "^2.2.1",
   "uuid": "^11.0.5",
   "video.js": "^8.21.0",
-  "wavesurfer.js": "^7.9.0"
+  "videojs-record": "^4.8.0",
+  "wavesurfer.js": "^7.9.0",
+  "webrtc-adapter": "^9.0.3"
  },
  "devDependencies": {
   "@chromatic-com/storybook": "^3",

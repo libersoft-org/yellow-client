@@ -9,7 +9,7 @@ class MediaUtils {
   return `${MediaUtils.PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT}/${localAccountId}/${uploadId}`;
  };
 
- static extractThumbnail(fileChunk): Promise<Blob> {
+ static extractThumbnail(fileChunk: Blob): Promise<Blob> {
   return new Promise((resolve, reject) => {
    const url = URL.createObjectURL(fileChunk);
    const video = document.createElement('video');
@@ -18,7 +18,70 @@ class MediaUtils {
    video.crossOrigin = 'anonymous';
    video.playsInline = true;
 
-   video.addEventListener('loadeddata', () => {
+   const cleanup = () => {
+    URL.revokeObjectURL(url);
+   };
+
+   const drawFrame = () => {
+    const originalWidth = video.videoWidth;
+    const originalHeight = video.videoHeight;
+
+    const maxWidth = 600;
+    const maxHeight = 400;
+
+    let width = originalWidth;
+    let height = originalHeight;
+
+    const widthRatio = maxWidth / width;
+    const heightRatio = maxHeight / height;
+    const scale = Math.min(widthRatio, heightRatio, 1);
+
+    width = Math.round(width * scale);
+    height = Math.round(height * scale);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx.drawImage(video, 0, 0, width, height);
+
+    canvas.toBlob(blob => {
+     cleanup();
+     if (blob) {
+      resolve(blob);
+     } else {
+      reject(new Error('Failed to generate thumbnail blob'));
+     }
+    }, 'image/png');
+   };
+
+   video.addEventListener('error', (err) => {
+    cleanup();
+    reject(err);
+   });
+
+   video.addEventListener('loadedmetadata', () => {
+    if (video.readyState >= 2) { // HAVE_CURRENT_DATA
+     drawFrame();
+    } else {
+     video.addEventListener('loadeddata', drawFrame, { once: true });
+    }
+   }, { once: true });
+
+   video.load();
+  });
+ }
+
+ static extractThumbnailOld(fileChunk): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+   const url = URL.createObjectURL(fileChunk);
+   const video = document.createElement('video');
+   video.src = url;
+   video.muted = true;
+   video.crossOrigin = 'anonymous';
+   video.playsInline = true;
+
+   video.addEventListener('loadedmetadata', () => {
     video.currentTime = Math.min(1, video.duration / 2); // Seek to 1s or middle of video
    });
 
@@ -53,6 +116,7 @@ class MediaUtils {
    });
 
    video.addEventListener('error', err => {
+    console.error('Error extracting thumbnail', err);
     URL.revokeObjectURL(url);
     reject(err);
    });
