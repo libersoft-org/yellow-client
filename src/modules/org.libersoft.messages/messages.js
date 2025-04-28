@@ -828,7 +828,7 @@ async function eventNewMessage(acc, event) {
  msg.received_by_my_homeserver = true;
  let sc = get(selectedConversation);
  if (msg.address_from !== acc.credentials.address) {
-  //console.log('showNotification?');
+  console.log('showNotification?: !get(isClientFocused): ', !get(isClientFocused), 'get(active_account) != acc:', get(active_account) != acc, 'msg.address_from !== sc?.address:', msg.address_from !== sc?.address);
   if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) await showNotification(acc, msg);
  }
  //console.log('eventNewMessage updateConversationsArray with msg:', msg);
