@@ -175,8 +175,14 @@ async function refresh(acc) {
 }
 
 export async function initUpload(files, uploadType, recipients) {
+ console.log('2222', files, uploadType, recipients);
  const acc = get(active_account);
- files = await transformFilesForServer(files);
+ try {
+  files = await transformFilesForServer(files);
+ } catch (error) {
+  console.error('Error transforming files for server:', error);
+ }
+ console.log('3333');
  const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, { chunkSize: get(uploadChunkSize) });
  console.log('uploads', uploads);
  const acceptedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
@@ -201,7 +207,7 @@ export async function initUpload(files, uploadType, recipients) {
    });
   }
   // handle videos
-  else if (isServerType && acceptedVideoTypes.includes(fileMimeType)) {
+  else if (isServerType && acceptedVideoTypes.some(v => fileMimeType.startsWith(v))) {
    messageHtml += `<YellowVideo file="yellow:${upload.record.id}"></YellowVideo>`;
   }
   // handle audio
@@ -211,6 +217,7 @@ export async function initUpload(files, uploadType, recipients) {
    messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
   }
  });
+ console.log('messageHtml', messageHtml);
  setTimeout(() => {
   sendMessage(messageHtml, 'html');
  }, 100);

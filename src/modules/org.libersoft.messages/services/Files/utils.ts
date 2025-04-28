@@ -62,10 +62,10 @@ export async function base64ToUint8Array(base64: string) {
  * @param file {string | Blob} - url or blob
  * @param fileName - name of the file (this name will be used when downloading)
  */
-export function assembleFile(file: string | Blob, fileName: string) {
+export function assembleFile(file: string | Blob, fileName?: string) {
  const downloadLink = document.createElement('a');
  downloadLink.href = file instanceof Blob ? URL.createObjectURL(file) : file;
- downloadLink.download = fileName;
+ downloadLink.download = fileName || (file instanceof Blob ? file.name : 'unknown_file');
  downloadLink.target = '_blank';
  downloadLink.style.display = 'none';
 
@@ -98,6 +98,7 @@ export async function transformFilesForServer(files: FileList) {
      thumbnail = await blobToBase64(thumbnailBlob);
     }
    } catch (err) {
+    console.error('Error extracting thumbnail', err);
     debug('Error extracting thumbnail', err);
    }
    // @ts-ignore todo metadata typing

@@ -71,7 +71,6 @@
 
  onMount(async () => {
   console.log('+page onMount');
-  await initZoom();
 
   if ('serviceWorker' in window.navigator) {
    console.log('+page registering service worker');
@@ -115,11 +114,12 @@
    console.log('+page This browser does not support service workers.');
   }
 
-  await setDefaultWindowSize();
-  await createTrayIcon();
-  await enableAutostart();
-  await initBrowserNotifications();
-  await initCustomNotifications();
+  initZoom();
+  setDefaultWindowSize();
+  createTrayIcon();
+  enableAutostart();
+  initBrowserNotifications();
+  initCustomNotifications();
 
   if ($sidebarSize) {
    setSidebarSize($sidebarSize);
@@ -230,6 +230,7 @@
   console.log('startResizeSideBar');
   isResizingSideBar = true;
   document.body.style.userSelect = 'none';
+  document.body.style.webkitUserSelect = 'none'; // Safari specific
   window.addEventListener('mousemove', resizeSideBar);
   window.addEventListener('mouseup', stopResizeSideBar);
  }
@@ -237,6 +238,7 @@
  function stopResizeSideBar() {
   isResizingSideBar = false;
   document.body.style.userSelect = '';
+  document.body.style.webkitUserSelect = ''; // Restore Safari-specific selection
   window.removeEventListener('mousemove', resizeSideBar);
   window.removeEventListener('mouseup', stopResizeSideBar);
   setSidebarSize(sideBar.clientWidth);

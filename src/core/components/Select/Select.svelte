@@ -1,13 +1,19 @@
-<script>
- export let value = '';
- export let grow = false;
- export let minWidth;
- export let maxWidth;
- let elSelect;
+<script lang="ts">
+ import type { HTMLSelectAttributes } from 'svelte/elements';
+
+ interface Props extends HTMLSelectAttributes {
+  value: string;
+  grow?: boolean;
+  minWidth?: string;
+  maxWidth?: string;
+ }
+
+ let { value = $bindable(''), grow = false, minWidth, maxWidth, ...restProps }: Props = $props();
+
+ let selectRef: HTMLSelectElement;
 
  export function focus() {
-  console.log('select.svelte focus(), elSelect=', elSelect);
-  elSelect?.focus();
+  selectRef?.focus();
  }
 </script>
 
@@ -32,6 +38,6 @@
  }
 </style>
 
-<select style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={elSelect} bind:value>
+<select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={selectRef} bind:value>
  <slot></slot>
 </select>
