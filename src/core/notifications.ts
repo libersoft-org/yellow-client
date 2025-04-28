@@ -245,7 +245,7 @@ async function showBrowserNotification(notification: YellowNotification) {
   tag: notification.id,
   body: notification.body,
   //  icon: 'http://localhost:3000/favicon2.png',//icon,
-  icon: 'favicon2.png', //icon,
+  icon: 'favicon.png', //icon,
   silent: false,
   //vibrate: [200, 100, 200],
  });
