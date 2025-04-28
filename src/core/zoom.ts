@@ -13,14 +13,16 @@ export async function setZoom() {
 }
 
 export async function initZoom() {
- let z = get(zoom);
- if (z) {
-  console.log('init zoom: ', z);
-  zoom.set(z);
-  await setZoom();
+ if (TAURI) {
+  let z = get(zoom);
+  if (z) {
+   console.log('init zoom: ', z);
+   zoom.set(z);
+   await setZoom();
+  }
+  const unlisten = await window.__TAURI__.event.listen('zoom-change', (event: Event<number>) => {
+   log.debug('Zoom changed to:', event.payload);
+   zoom.set(event.payload);
+  });
  }
- const unlisten = await window.__TAURI__.event.listen('zoom-change', (event: Event<number>) => {
-  log.debug('Zoom changed to:', event.payload);
-  zoom.set(event.payload);
- });
 }
