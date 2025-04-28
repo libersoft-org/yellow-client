@@ -19,19 +19,19 @@
   audioDevices?: InputDeviceInfo[];
   videoDevices?: InputDeviceInfo[];
   selectedAudioDeviceId?: string | null;
-  selectedVideoDeviceId?: string | null
+  selectedVideoDeviceId?: string | null;
   enableToggleFacingMode?: boolean;
 
   // methods
-  recordStart: () => void,
-  recordStop: () => void,
-  recordRestart: () => void,
+  recordStart: () => void;
+  recordStop: () => void;
+  recordRestart: () => void;
   changeVideoInput: (deviceId: string) => void;
   changeAudioInput: (deviceId: string) => void;
-  send: () => void,
-  download: () => void,
-  toggleMute: () => void,
-  toggleFacingMode: () => void,
+  send: () => void;
+  download: () => void;
+  toggleMute: () => void;
+  toggleFacingMode: () => void;
 
   // player outer state
   loading?: boolean;
@@ -263,7 +263,7 @@
    {#if isRecording}
     <Button img="modules/{identifier}/img/stop.svg" colorVariable="--icon-black" text="STOP" onClick={recordStop} />
    {:else}
-    <Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--icon-gray' : "--icon-red"} text="REC" onClick={recordStart} />
+    <Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--icon-gray' : '--icon-red'} text="REC" onClick={recordStart} />
    {/if}
    <Button loading={sending} img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--icon-black" onClick={send} />
   </div>

@@ -7,7 +7,7 @@ type VideoJSWithRecorder = ReturnType<typeof videoJS> & {
  recordedData: Blob;
  enumerateErrorCode: string;
  deviceErrorCode: string;
-}
+};
 
 function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined, opts: any) {
  const player = writable<VideoJSWithRecorder>();
@@ -54,7 +54,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
     video: { facingMode: 'user' },
    });
    const frontCameraTrack = frontCameraStream.getVideoTracks()[0];
-   const frontDeviceId = frontCameraTrack.getSettings().deviceId
+   const frontDeviceId = frontCameraTrack.getSettings().deviceId;
    userDeviceId.set(frontDeviceId || null);
    frontCameraStream.getTracks().forEach(track => track.stop()); // Stop the stream after retrieving the deviceId
 
@@ -63,12 +63,12 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
     video: { facingMode: 'environment' },
    });
    const rearCameraTrack = rearCameraStream.getVideoTracks()[0];
-   const rearDeviceId = rearCameraTrack.getSettings().deviceId
+   const rearDeviceId = rearCameraTrack.getSettings().deviceId;
    environmentDeviceId.set(rearDeviceId || null);
    rearCameraStream.getTracks().forEach(track => track.stop()); // Stop the stream after retrieving the deviceId
   } catch (err) {
    console.error('Error getting devices:', err);
-   const errMsg = err?.toString()
+   const errMsg = err?.toString();
    if (errMsg) {
     displayErrors([errMsg]);
    }

@@ -12,7 +12,7 @@
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
  import WaveSurfer from 'wavesurfer.js';
- import type { FileDownload, FileUpload } from "@/org.libersoft.messages/services/Files/types.ts";
+ import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 
  const { uploadId } = $props();
 
