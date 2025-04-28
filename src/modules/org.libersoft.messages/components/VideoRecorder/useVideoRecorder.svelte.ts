@@ -59,6 +59,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
    rearCameraStream.getTracks().forEach(track => track.stop()); // Stop the stream after retrieving the deviceId
   } catch (err) {
    console.error('Error getting devices:', err);
+   displayErrors([err.toString()]);
   }
  }
 
@@ -147,9 +148,9 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
    console.log('rec: started recording!');
   });
 
-  _player.on('progressRecord', function (...args) {
-   console.log('rec: progressRecord!', args);
-  });
+  // _player.on('progressRecord', function (...args) {
+  //  console.log('rec: progressRecord!', args);
+  // });
 
   // user completed recording and stream is available
   _player.on('finishRecord', function () {

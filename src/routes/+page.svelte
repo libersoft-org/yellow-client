@@ -71,7 +71,6 @@
 
  onMount(async () => {
   console.log('+page onMount');
-  await initZoom();
 
   if ('serviceWorker' in window.navigator) {
    console.log('+page registering service worker');
@@ -115,11 +114,12 @@
    console.log('+page This browser does not support service workers.');
   }
 
-  await setDefaultWindowSize();
-  await createTrayIcon();
-  await enableAutostart();
-  await initBrowserNotifications();
-  await initCustomNotifications();
+  initZoom();
+  setDefaultWindowSize();
+  createTrayIcon();
+  enableAutostart();
+  initBrowserNotifications();
+  initCustomNotifications();
 
   if ($sidebarSize) {
    setSidebarSize($sidebarSize);

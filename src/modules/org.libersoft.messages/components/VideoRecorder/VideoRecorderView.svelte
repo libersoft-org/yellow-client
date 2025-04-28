@@ -10,8 +10,6 @@
  import ButtonWithMenu from '@/core/components/Button/ButtonWithMenu.svelte';
 
  interface Props {
-  width: string;
-  height: string;
   loading?: boolean;
   error?: boolean;
   errorMessages?: string[] | null;
@@ -27,8 +25,6 @@
 
  let {
   // base
-  width,
-  height,
   videoRef = $bindable(),
   micIndicatorRef = $bindable(),
   sending = false,
@@ -43,6 +39,7 @@
   // methods
   recordStart,
   recordStop,
+  recordRestart,
   changeVideoInput,
   changeAudioInput,
   send,
@@ -82,6 +79,12 @@
  }
 
  .device-select {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 180px;
+ }
+
+ .device-select :global(select) {
   flex: 1 1 auto;
  }
 
@@ -137,17 +140,31 @@
  }
 
  .video-recorder-video-placeholder {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
  }
+
+ .video-floating-area-rt {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  gap: 4px;
+  display: flex;
+  z-index: 1;
+ }
 </style>
 
 {#snippet renderDevicesSelect(devices, selectedDeviceId, onChange)}
+ {@const disabled = !devices || devices.length === 0}
  <div class="device-select">
-  <Select value={selectedDeviceId} onchange={onChange}>
+  <Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} {disabled}>
+   {#if disabled}
+    <SelectOption value={''} disabled selected text={'No device found'} />
+   {/if}
    {#each devices as device (device.deviceId)}
     <SelectOption value={device.deviceId} selected={device.deviceId === selectedDeviceId} text={device.label} />
    {/each}
@@ -159,7 +176,7 @@
  <div bind:this={videoRef} class="video-recorder-video-placeholder">
   {#if error}
    <div class="video-recorder-error">
-    <Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-yellow" size={30} padding={15} />
+    <Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-red" size={30} padding={15} />
     {#if errorMessages}
      {#each errorMessages as message}
       <div>{message}</div>
@@ -174,6 +191,12 @@
     <div>Initializing recorder...</div>
    </div>
   {/if}
+  <div class="video-floating-area-rt">
+   {#if hasData && !isRecording}
+    <Button img="modules/{identifier}/img/download.svg" enabled={hasData} colorVariable="--icon-black" onClick={download} />
+    <Button img="modules/{identifier}/img/delete.svg" enabled={hasData} colorVariable="--icon-red" onClick={recordRestart} />
+   {/if}
+  </div>
  </div>
  {#if $debug}
   <div class="video-recorder-debug">
@@ -182,7 +205,6 @@
  {/if}
  <div class="video-recorder-footer">
   <div class="video-recorder-actions-left">
-   <!--<Button img="modules/{identifier}/img/download.svg" enabled={hasData} colorVariable="--icon-black" onClick={download} />-->
    <ButtonWithMenu>
     <Icon slot="side-button" img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
     <div slot="main-button" class="mic-button-wrapper">

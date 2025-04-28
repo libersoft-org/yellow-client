@@ -107,7 +107,7 @@
    videoEl.setAttribute('controls', 'true');
    videoEl.setAttribute('preload', 'auto');
    videoEl.setAttribute('autoplay', 'true');
-   videoEl.setAttribute('muted', 'false');
+   videoEl.setAttribute('muted', 'true');
 
    videoRef.appendChild(videoEl);
 

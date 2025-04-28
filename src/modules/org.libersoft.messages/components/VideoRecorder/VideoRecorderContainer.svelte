@@ -47,6 +47,16 @@
   isRecording = true;
  };
 
+ const recordRestart = () => {
+  if (playerInstance) {
+   playerInstance.dispose();
+   $player.show();
+  }
+  $player.record().reset();
+  $player.record().getDevice();
+  recordedBlob.set(null);
+ };
+
  let manuallyStop = false;
  const stop = () => {
   console.log('rec: stop');
@@ -178,4 +188,4 @@
 </Dialog>
 <button onclick={onTest}>test</button>
 -->
-<VideoRecorderView bind:videoRef bind:micIndicatorRef {sending} error={$error} errorMessages={$errorMessages} loading={$loading} videoDevices={$videoDevices} audioDevices={$audioDevices} selectedAudioDeviceId={$selectedAudioDeviceId} selectedVideoDeviceId={$selectedVideoDeviceId} {changeVideoInput} {changeAudioInput} {isRecording} recordStart={start} recordStop={stop} {send} {download} isMuted={$isMuted} {toggleMute} hasData={Boolean($recordedBlob)} facingMode={$facingMode} {toggleFacingMode} {enableToggleFacingMode} />
+<VideoRecorderView bind:videoRef bind:micIndicatorRef {sending} error={$error} errorMessages={$errorMessages} loading={$loading} videoDevices={$videoDevices} audioDevices={$audioDevices} selectedAudioDeviceId={$selectedAudioDeviceId} selectedVideoDeviceId={$selectedVideoDeviceId} {changeVideoInput} {changeAudioInput} {isRecording} recordStart={start} recordStop={stop} {send} {download} isMuted={$isMuted} {toggleMute} hasData={Boolean($recordedBlob)} facingMode={$facingMode} {toggleFacingMode} {enableToggleFacingMode} {recordRestart} />
