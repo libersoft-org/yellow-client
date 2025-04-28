@@ -20,7 +20,7 @@
  const debug = _debug('libersoft:messages:components:MessageContentVideo:Video');
 
  let { uploadId } = $props();
- let videoRef = $state<HTMLVideoElement | null>(null);
+ let videoRef = $state<HTMLVideoElement>();
  let thumbnailRef = null;
  let mediaHandler = $state<MediaService | null>(null);
  let upload = $state<FileUpload | null>(null);
@@ -47,6 +47,10 @@
  }
 
  function onDownload() {
+  if (!upload) {
+   debug('No upload data available');
+   return;
+  }
   downloadAttachmentsSerial([upload.record], download => {
    const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
    assembleFile(blob, download.record.fileOriginalName);
@@ -54,6 +58,10 @@
  }
 
  const fullDownloadVideo = () => {
+  if (!upload) {
+   debug('No upload data available');
+   return;
+  }
   videoIsFullDownloading = true;
   downloadAttachmentsSerial([upload.record], download => {
    videoIsFullDownloading = false;
@@ -61,7 +69,7 @@
    startVideoJS(URL.createObjectURL(blob)).finally(() => {
     videoStarting = false;
     videoStarted = true;
-    videoJsInstance.show();
+    videoJsInstance && videoJsInstance.show();
    });
   });
  };
@@ -109,6 +117,12 @@
    videoEl.setAttribute('autoplay', 'true');
    videoEl.setAttribute('muted', 'true');
 
+   if (!videoRef) {
+    console.error('videoRef is not set');
+    reject(new Error('videoRef is not set'));
+    return;
+   }
+
    videoRef.appendChild(videoEl);
 
    if (videoJsInstance) {
@@ -145,6 +159,10 @@
   fetchingPoster = true;
   const getFileChunk = getFileChunkFactory(uploadId);
   return getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then(firstChunk => {
+   if (!upload) {
+    debug('No upload data available');
+    return;
+   }
    MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: upload.record.fileMimeType }))
     .then(thumbnailBlob => {
      // set thumbnailBlob to img src

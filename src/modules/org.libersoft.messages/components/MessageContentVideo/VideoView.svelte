@@ -14,7 +14,7 @@
   upload: FileUpload | null;
   download: FileDownload | null;
   thumbnailSrc: string | null;
-  videoRef: HTMLVideoElement | null;
+  videoRef?: HTMLElement;
   startVideo: () => Promise<void>;
   onDownload: () => void;
   uploadId: string;
@@ -39,10 +39,6 @@
 
  .video-title {
   margin-bottom: 8px;
- }
-
- .content {
-  margin-bottom: 20px;
  }
 
  .video-placeholder {

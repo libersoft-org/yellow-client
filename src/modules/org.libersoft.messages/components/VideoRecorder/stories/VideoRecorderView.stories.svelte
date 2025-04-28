@@ -25,20 +25,15 @@
   component: VideoRecorderView,
   tags: ['autodocs'],
   args: {
-   width: '600px',
-   height: '400px',
    loading: false,
    error: false,
    errorMessages: null,
-   videoRef: null,
+   videoRef: undefined,
 
    audioDevices: [makeAudioDevice('a', 'Audio device MIC'), makeAudioDevice('b', 'Audio device 2'), makeAudioDevice('c', 'Audio device 3')],
    videoDevices: [makeVideoDevice('a', 'Video device 1'), makeVideoDevice('b', 'Video device 2'), makeVideoDevice('c', 'Video device 3')],
-   selectAudioDeviceId: 'a',
-   selectVideoDeviceId: 'b',
-
-   onRec: fn(),
-   onDelete: fn(),
+   selectedAudioDeviceId: 'a',
+   selectedVideoDeviceId: 'b',
   },
  });
 </script>

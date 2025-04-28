@@ -9,7 +9,7 @@
  interface Props {}
 
  let buttonRef: HTMLElement;
- let floatingRef = $state<HTMLElement | null>(null);
+ let floatingRef = $state<HTMLElement>();
  let show = $state(false);
 
  let autoPlacementCleanup: ReturnType<typeof handleFloatingUI>;
@@ -30,6 +30,7 @@
    return;
   }
   const autoUpdateCleanUp = autoUpdate(buttonRef, floatingRef, () => {
+   // @ts-ignore
    computePosition(buttonRef, floatingRef, {
     middleware: [
      autoPlacement({
@@ -41,6 +42,7 @@
      offset(8),
     ],
    }).then(({ x, y }) => {
+    // @ts-ignore
     Object.assign(floatingRef.style, {
      left: `${x}px`,
      top: `${y}px`,

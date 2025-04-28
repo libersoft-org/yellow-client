@@ -42,9 +42,6 @@
   width: 100%;
  }
 
- .images > :global(.message-content-image-wrapper) {
- }
-
  .images :global(.message-content-image) {
   --image-size: min(120px, calc(60 * var(--messages-list-width) / 100 / 4 - var(--images-group-size) * var(--images-gap)));
   display: flex;

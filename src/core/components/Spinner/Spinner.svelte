@@ -10,9 +10,6 @@
 </script>
 
 <style>
- .container {
- }
-
  .spinner {
   padding: 10px;
   margin: 0 auto;
@@ -20,6 +17,7 @@
   background:
    radial-gradient(farthest-side, var(--spinner-color) 94%, transparent) top/8px 8px no-repeat,
    conic-gradient(transparent 30%, var(--spinner-color));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 8px), var(--spinner-color) 0);
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), var(--spinner-color) 0);
   animation: spinner 1s infinite linear;
  }

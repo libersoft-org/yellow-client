@@ -37,6 +37,7 @@
  const startRecording = async () => {
   isPaused = false;
 
+  // @ts-ignore
   const permissions = await navigator.permissions.query({ name: 'microphone' });
 
   if (permissions.state === 'denied') {

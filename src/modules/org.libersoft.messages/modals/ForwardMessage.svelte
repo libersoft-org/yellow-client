@@ -29,9 +29,6 @@
 </script>
 
 <style>
- .forward-message {
- }
-
  .empty-conversations {
   display: flex;
   justify-content: center;
@@ -57,9 +54,6 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
- }
-
- .conversation-avatar {
  }
 
  .conversation-avatar-placeholder {

@@ -11,7 +11,7 @@
  let { width = '100%', height = '1rem', borderRadius = '0.5rem', baseColor = '#e5d193' }: Props = $props();
 
  let secondaryColor = $derived(lightenColor(baseColor, 0.1));
- let background = `linear-gradient(90deg, ${baseColor} 25%, ${secondaryColor} 50%, ${baseColor} 75%)`;
+ let background = $derived(`linear-gradient(90deg, ${baseColor} 25%, ${secondaryColor} 50%, ${baseColor} 75%)`);
 </script>
 
 <style>

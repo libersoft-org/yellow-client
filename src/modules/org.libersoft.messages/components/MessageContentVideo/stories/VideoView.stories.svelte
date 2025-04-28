@@ -1,4 +1,5 @@
 <script lang="ts" module>
+ // @ts-nocheck todo rm
  import { defineMeta } from '@storybook/addon-svelte-csf';
  import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
 
@@ -11,7 +12,7 @@
    upload: null,
    download: null,
    thumbnailSrc: null,
-   videoRef: null,
+   videoRef: undefined,
    startVideo: () => Promise.resolve(),
    onDownload: () => {},
    uploadId: 'test-upload-id',

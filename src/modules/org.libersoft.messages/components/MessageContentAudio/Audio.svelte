@@ -12,6 +12,7 @@
  import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
  import WaveSurfer from 'wavesurfer.js';
+ import type { FileDownload, FileUpload } from "@/org.libersoft.messages/services/Files/types.ts";
 
  const { uploadId } = $props();
 
@@ -22,9 +23,9 @@
  let time = $state('');
 
  let mediaHandler = $state(null);
- let upload = $state(null);
+ let upload = $state<FileUpload | null>(null);
 
- let download = writable(null);
+ let download = writable<FileDownload | null>(null);
  let isFullDownloading = $state(false);
  fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
@@ -34,11 +35,15 @@
  }
 
  const fullDownloadAudio = () => {
+  if (!upload) {
+   return;
+  }
   isFullDownloading = true;
   downloadAttachmentsSerial([upload.record], download => {
    isFullDownloading = false;
    const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
    const url = URL.createObjectURL(blob);
+   // @ts-ignore
    wavesurfer.load(url, [upload.record.metadata?.peaks], upload.record.metadata?.duration);
    wavesurfer.on('ready', () => {
     wavesurfer.play();
@@ -47,6 +52,9 @@
  };
 
  const setupWavesurfer = async (url: string) => {
+  if (!upload) {
+   return;
+  }
   const { record } = upload;
   try {
    wavesurfer = WaveSurfer.create({
@@ -59,7 +67,9 @@
     height: 50,
     autoplay: false,
     //url,
+    // @ts-ignore
     duration: record.metadata?.duration,
+    // @ts-ignore
     peaks: [record.metadata?.peaks],
     backend: 'MediaElement',
    });
@@ -87,11 +97,16 @@
  };
 
  const init = async () => {
+  if (!upload) {
+   console.error('Upload is not available');
+   return;
+  }
   const acc = get(active_account);
   const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
   const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
 
   if (progressiveDownloadAvailable) {
+   // @ts-ignore
    wavesurfer.load(progressiveUrl, [upload.record.metadata?.peaks], upload.record.metadata?.duration);
   }
  };
@@ -125,6 +140,10 @@
  }
 
  function onDownload() {
+  if (!upload) {
+   console.error('Upload is not available');
+   return;
+  }
   downloadAttachmentsSerial([upload.record], download => {
    assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
   });
@@ -154,10 +173,6 @@
   flex: 1 1 auto;
  }
 
- .player .actions {
-  flex: 1 0 auto;
- }
-
  .time {
   display: flex;
   flex-direction: column;
@@ -167,7 +182,7 @@
 
 <div>
  <div class="voice-message">
-  {#if upload}
+  {#if upload && upload.record}
    <div>
     <strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
    </div>
@@ -175,7 +190,7 @@
    Loading...
   {/if}
   <div class="player">
-   <Button img="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" alt={isPlaying ? 'Pause' : 'Play'} onClick={clickPlay} />
+   <Button img="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" onClick={clickPlay} />
    <div class="wave" bind:this={waveRef}></div>
   </div>
   <div class="time">{time ? time : '00:00'} / {duration}</div>
