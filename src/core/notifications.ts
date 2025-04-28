@@ -234,18 +234,20 @@ async function showBrowserNotification(notification: YellowNotification) {
  //playNotificationSound(notification);
  console.log('showBrowserNotification:', notification);
 
- /* browsers use native notifications. Icon can be a local file or a URL. The url */
+ /* browsers use native notifications. Icon can be a local file or a relative or absolute PNG URL or a blob */
 
  let icon = notification.icon;
- /* if (icon && icon.toLowerCase().endsWith('.svg')) {
-  icon = await svgToPngBlob(icon);
- } */
+ if (icon) {
+  icon = await toPngBlob(icon);
+ }
+ console.log('showBrowserNotification icon:', icon);
 
  let n = new Notification(notification.title, {
   tag: notification.id,
   body: notification.body,
-  //  icon: 'http://localhost:3000/favicon2.png',//icon,
-  icon: 'favicon.png', //icon,
+  //  icon: 'http://localhost:3000/favicon2.png',
+  //  icon: 'data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7', //icon,
+  icon: icon,
   silent: false,
   //vibrate: [200, 100, 200],
  });
@@ -277,23 +279,28 @@ export function playNotificationSound(notification: YellowNotification): void {
  }
 }
 
-async function svgToPngBlob(svg_url: string): Promise<string> {
- return new Promise(resolve => {
-  const svg = document.createElement('img');
-  svg.src = svg_url;
-  svg.onload = () => {
+async function toPngBlob(url: string): Promise<string> {
+ return new Promise((resolve, reject) => {
+  const img = document.createElement('img');
+  console.log('toPngBlob:', url);
+  img.src = url;
+  img.onload = () => {
    const canvas = document.createElement('canvas');
    const ctx = canvas.getContext('2d');
    if (ctx) {
-    canvas.width = svg.width;
-    canvas.height = svg.height;
-    ctx.drawImage(svg, 0, 0);
-    const png_url = canvas.toDataURL('image/png');
-    resolve(png_url);
+    console.log('img:', img.width, img.height);
+    canvas.width = img.width;
+    canvas.height = img.height;
+    console.log('canvas:', canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+    const res = canvas.toDataURL();
+    console.log('toPngBlob:', url, '->', res, 'res length:', res.length);
+    //resolve('data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7');
+    resolve(res);
    } else {
-    resolve(svg_url);
+    reject();
    }
   };
-  svg.onerror = () => resolve(svg_url);
+  img.onerror = () => reject();
  });
 }

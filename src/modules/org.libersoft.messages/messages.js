@@ -908,7 +908,7 @@ async function showNotification(acc, msg) {
   title,
   body: msg.stripped_text,
   //icon: 'img/photo.svg',
-  icon: 'favicon.png',
+  icon: 'favicon.svg', // todo: use module-specific icon?
   sound: 'modules/' + identifier + '/audio/message.mp3',
   callback: async event => {
    if (event === 'click') {
