@@ -12,8 +12,8 @@
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
  import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 
- let videoRef = $state<HTMLVideoElement | null>(null);
- let micIndicatorRef = $state<HTMLElement | null>(null);
+ let videoRef = $state<HTMLVideoElement>();
+ let micIndicatorRef = $state<HTMLElement>();
  let sending = $state(false);
  let playerInstance: ReturnType<typeof videoJS> | null = null;
 
@@ -41,28 +41,23 @@
   }
 
   const record = $player.record();
-  console.log('rec: start', record.isRecording());
 
   record.start();
   isRecording = true;
  };
 
- const recordRestart = () => {
+ const restart = () => {
   if (playerInstance) {
    playerInstance.dispose();
    playerInstance = null;
    $player.show();
   }
-  //$player.record().reset();
-  //$player.record().getDevice();
   recordedBlob.set(null);
   $player.record().getDevice();
  };
 
  let manuallyStop = false;
  const stop = () => {
-  console.log('rec: stop');
-
   const record = $player.record();
   record.stop();
   //record.stopDevice(); todo: stop stream and then restart if needed by start method
@@ -75,12 +70,14 @@
  const send = () => {
   sending = true;
   const record = $player.record();
-  console.log('record.isRecording()', record.isRecording());
   if (record.isRecording()) {
    sendingRequested = true;
    record.stop();
   } else {
-   console.log('sending', $recordedBlob);
+   if (!$recordedBlob) {
+    console.error('$recordedBlob is not set');
+    return;
+   }
    sendMessage($recordedBlob);
   }
  };
@@ -88,7 +85,6 @@
  const sendMessage = async (blob: Blob) => {
   sending = true;
   const recipientEmail = get(selectedConversation).address;
-  //blob.name = 'Video record.webm';
   initUpload([blob], FileUploadRecordType.SERVER, [recipientEmail]).finally(() => {
    sending = false;
    recordedBlob.set(null);
@@ -96,12 +92,25 @@
  };
 
  const download = () => {
-  console.log('$recordedBlob', $recordedBlob);
+  if (!$recordedBlob) {
+   console.error('$recordedBlob is not set');
+   return;
+  }
   assembleFile($recordedBlob);
  };
 
  const showPreview = () => {
   $player.hide();
+
+  if (!$recordedBlob) {
+   console.error('$recordedBlob is not set');
+   return;
+  }
+
+  if (!videoRef) {
+   console.error('videoRef is not set');
+   return;
+  }
 
   console.log('$recordedBlob', $recordedBlob);
   const videoEl = document.createElement('video');
@@ -123,11 +132,16 @@
   });
 
   playerInstance.on('error', function () {
+   if (!playerInstance) {
+    console.error('playerInstance is not set');
+    return;
+   }
    const error = playerInstance.error();
    // this is hack for bug in safari where it fires MEDIA_ERR_NETWORK but video is playable
    if (error && error.code === 2) {
     console.log('Ignoring MEDIA_ERR_NETWORK during blob playback.');
-    playerInstance.error(null);
+    // @ts-ignore
+    playerInstance.error(null); // let null be here despite TS complaining
    }
   });
  };
@@ -141,6 +155,10 @@
   setup().then(_player => {
    _player.on('deviceReady', () => {
     const stream = _player.record().stream;
+    if (!micIndicatorRef) {
+     console.error('micIndicatorRef is not set');
+     return;
+    }
     setupMicPulseIndicator(stream, micIndicatorRef);
    });
 
@@ -155,6 +173,10 @@
    _player.on('finishRecord', function () {
     try {
      if (sendingRequested) {
+      if (!$recordedBlob) {
+       console.error('$recordedBlob is not set');
+       return;
+      }
       sendMessage($recordedBlob);
      }
      if (manuallyStop) {
@@ -189,4 +211,4 @@
 </Dialog>
 <button onclick={onTest}>test</button>
 -->
-<VideoRecorderView bind:videoRef bind:micIndicatorRef {sending} error={$error} errorMessages={$errorMessages} loading={$loading} videoDevices={$videoDevices} audioDevices={$audioDevices} selectedAudioDeviceId={$selectedAudioDeviceId} selectedVideoDeviceId={$selectedVideoDeviceId} {changeVideoInput} {changeAudioInput} {isRecording} recordStart={start} recordStop={stop} {send} {download} isMuted={$isMuted} {toggleMute} hasData={Boolean($recordedBlob)} facingMode={$facingMode} {toggleFacingMode} {enableToggleFacingMode} {recordRestart} />
+<VideoRecorderView bind:videoRef bind:micIndicatorRef {sending} error={$error} errorMessages={$errorMessages} loading={$loading} videoDevices={$videoDevices} audioDevices={$audioDevices} selectedAudioDeviceId={$selectedAudioDeviceId} selectedVideoDeviceId={$selectedVideoDeviceId} {changeVideoInput} {changeAudioInput} {isRecording} recordStart={start} recordStop={stop} {send} {download} isMuted={$isMuted} {toggleMute} hasData={Boolean($recordedBlob)} facingMode={$facingMode} {toggleFacingMode} {enableToggleFacingMode} recordRestart={restart} />

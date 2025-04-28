@@ -1,9 +1,16 @@
 import videoJS from 'video.js';
-import RecordRTC from 'recordrtc';
+import 'recordrtc';
 import { get, writable } from 'svelte/store';
 
-function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts: any) {
- const player = writable<ReturnType<typeof videoJS> | null>(null);
+type VideoJSWithRecorder = ReturnType<typeof videoJS> & {
+ record: any;
+ recordedData: Blob;
+ enumerateErrorCode: string;
+ deviceErrorCode: string;
+}
+
+function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined, opts: any) {
+ const player = writable<VideoJSWithRecorder>();
  const audioDevices = writable<InputDeviceInfo[]>([]);
  const videoDevices = writable<InputDeviceInfo[]>([]);
  const selectedAudioDeviceId = writable<string | null>(null);
@@ -36,9 +43,9 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
 
   return videoJS(videoEl, opts, function () {
    // print version information at startup
-   const msg = 'Using video.js ' + videoJS.VERSION + ' with videojs-record ' + videoJS.getPluginVersion('record') + ' and recordrtc ' + RecordRTC.version;
-   videoJS.log(msg);
-  });
+   //const msg = 'Using video.js ' + videoJS.VERSION + ' with videojs-record ' + videoJS.getPluginVersion('record') + ' and recordrtc ' + RecordRTC.version;
+   //videoJS.log(msg);
+  }) as VideoJSWithRecorder;
  };
  async function getDeviceIds() {
   try {
@@ -47,7 +54,8 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
     video: { facingMode: 'user' },
    });
    const frontCameraTrack = frontCameraStream.getVideoTracks()[0];
-   userDeviceId.set(frontCameraTrack.getSettings().deviceId);
+   const frontDeviceId = frontCameraTrack.getSettings().deviceId
+   userDeviceId.set(frontDeviceId || null);
    frontCameraStream.getTracks().forEach(track => track.stop()); // Stop the stream after retrieving the deviceId
 
    // Query rear camera (environment-facing)
@@ -55,11 +63,15 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
     video: { facingMode: 'environment' },
    });
    const rearCameraTrack = rearCameraStream.getVideoTracks()[0];
-   environmentDeviceId.set(rearCameraTrack.getSettings().deviceId);
+   const rearDeviceId = rearCameraTrack.getSettings().deviceId
+   environmentDeviceId.set(rearDeviceId || null);
    rearCameraStream.getTracks().forEach(track => track.stop()); // Stop the stream after retrieving the deviceId
   } catch (err) {
    console.error('Error getting devices:', err);
-   displayErrors([err.toString()]);
+   const errMsg = err?.toString()
+   if (errMsg) {
+    displayErrors([errMsg]);
+   }
   }
  }
 
@@ -79,8 +91,9 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
  };
 
  const checkPermissions = async () => {
+  // @ts-ignore
   const permissions = await navigator.permissions.query({ name: 'camera' });
-  console.log('rec: permissions', permissions);
+  console.info('rec: permissions', permissions);
 
   if (permissions.state === 'denied') {
    displayErrors(['Camera access denied. Please check your browser/device settings.']);
@@ -102,8 +115,6 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
   _player.hide();
   await checkPermissions();
   await getDeviceIds();
-  console.log('userDeviceId', get(userDeviceId));
-  console.log('environmentDeviceId', get(environmentDeviceId));
   _player.record().enumerateDevices();
 
   _player.on('enumerateReady', function () {
@@ -117,9 +128,6 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
    const _audioDevices = get(audioDevices);
    const _videoDevices = get(videoDevices);
 
-   console.log('rec: audioDevices', _audioDevices);
-   console.log('rec: videoDevices', _videoDevices);
-
    if (_videoDevices.length > 0 && _videoDevices[0].deviceId) {
     changeVideoInput(_videoDevices[0].deviceId);
    }
@@ -127,6 +135,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
     changeAudioInput(_audioDevices[0].deviceId);
    }
   });
+
   // error handling
   _player.on('enumerateError', function () {
    console.warn('enumerate error:', _player.enumerateErrorCode);
@@ -148,10 +157,6 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
    console.log('rec: started recording!');
   });
 
-  // _player.on('progressRecord', function (...args) {
-  //  console.log('rec: progressRecord!', args);
-  // });
-
   // user completed recording and stream is available
   _player.on('finishRecord', function () {
    console.log('rec: finished recording: ', _player.recordedData);
@@ -167,24 +172,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | null, opts
 
   _player.on('deviceReady', function () {
    loading.set(false);
-   console.log('rec: deviceReady', _player.record());
    _player.show();
-
-   const stream = _player.record().stream;
-
-   // For video input (camera)
-   let videoTrack = stream.getVideoTracks()[0];
-   let videoDeviceId = videoTrack.getSettings().deviceId;
-
-   // For audio input (microphone)
-   let audioTrack = stream.getAudioTracks()[0];
-   let audioDeviceId = audioTrack.getSettings().deviceId;
-
-   console.log('rec: Video Device ID:', videoDeviceId);
-   console.log('rec: Audio Device ID:', audioDeviceId);
-
-   console.log('rec: 222 Video Device ID:', _player.record().recordVideo);
-   console.log('rec: 222 Audio Device ID:', _player.record().recordAudio);
 
    if (get(isMuted)) {
     setMute(true);

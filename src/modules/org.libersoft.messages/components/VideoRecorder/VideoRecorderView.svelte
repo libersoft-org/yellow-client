@@ -10,17 +10,37 @@
  import ButtonWithMenu from '@/core/components/Button/ButtonWithMenu.svelte';
 
  interface Props {
-  loading?: boolean;
-  error?: boolean;
-  errorMessages?: string[] | null;
-  videoRef?: HTMLVideoElement | null;
-  micIndicatorRef?: HTMLElement | null;
+  // base
+  videoRef?: HTMLElement;
+  micIndicatorRef?: HTMLElement;
+  sending?: boolean;
+
+  // devices
   audioDevices?: InputDeviceInfo[];
   videoDevices?: InputDeviceInfo[];
   selectedAudioDeviceId?: string | null;
-  selectedVideoDeviceId?: string | null;
-  changeVideoInput?: (deviceId: string) => void;
-  changeAudioInput?: (deviceId: string) => void;
+  selectedVideoDeviceId?: string | null
+  enableToggleFacingMode?: boolean;
+
+  // methods
+  recordStart: () => void,
+  recordStop: () => void,
+  recordRestart: () => void,
+  changeVideoInput: (deviceId: string) => void;
+  changeAudioInput: (deviceId: string) => void;
+  send: () => void,
+  download: () => void,
+  toggleMute: () => void,
+  toggleFacingMode: () => void,
+
+  // player outer state
+  loading?: boolean;
+  error?: boolean;
+  errorMessages?: string[] | null;
+  isRecording: boolean;
+  hasData: boolean;
+  isMuted: boolean;
+  facingMode: string;
  }
 
  let {
@@ -44,9 +64,7 @@
   changeAudioInput,
   send,
   download,
-  isMuted,
   toggleMute,
-  facingMode,
   toggleFacingMode,
 
   // player outer state
@@ -55,6 +73,8 @@
   errorMessages = null,
   isRecording,
   hasData,
+  isMuted,
+  facingMode,
  }: Props = $props();
 </script>
 
