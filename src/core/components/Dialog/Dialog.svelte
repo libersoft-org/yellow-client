@@ -30,7 +30,9 @@
 <Modal title={data.title} bind:show width="400px">
  <slot>
   <div class="top">
-   <Icon img={data.icon} alt="" size="50" padding="0" />
+   {#if data.icon}
+    <Icon img={data.icon} alt="" size="50" padding="0" />
+   {/if}
    <div>{data.body}</div>
   </div>
   <div class="buttons">

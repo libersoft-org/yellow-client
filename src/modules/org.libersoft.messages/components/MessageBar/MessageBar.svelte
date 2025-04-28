@@ -17,6 +17,8 @@
  import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
  import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
+ import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
+ import VideoRecorderModalBody from '@/org.libersoft.messages/modals/VideoRecorderModalBody.svelte';
 
  let expressionsMenu;
  let elBottomSheet;
@@ -32,6 +34,7 @@
  let expressionsAsContextMenu = true;
  let lastDocumentHeight = 0;
  let videoInputRef;
+ let showVideoRecorderModal = false;
 
  isMobile.subscribe(value => {
   expressionsAsContextMenu = !value;
@@ -300,9 +303,9 @@
 
   <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
   <!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />-->
-  <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />
-  <Icon img="modules/{identifier}/img/audio-message.svg" alt="Record voice message" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
-  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} />
+  <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32" padding="0" onClick={() => (showVideoRecorderModal = true)} />
+  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" colorVariable="--icon-yellow" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
+  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} colorVariable="--icon-yellow" />
  </div>
 </div>
 
@@ -343,3 +346,5 @@
   <Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet={true} />
  </div>
 {/if}
+
+<Modal title="Video recorder" body={VideoRecorderModalBody} bind:show={showVideoRecorderModal} />

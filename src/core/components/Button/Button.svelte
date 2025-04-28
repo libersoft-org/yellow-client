@@ -2,6 +2,7 @@
  import BaseButton from './BaseButton.svelte';
  import Icon from '../Icon/Icon.svelte';
  import type { HTMLButtonAttributes } from 'svelte/elements';
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
 
  interface ButtonProps extends HTMLButtonAttributes {
   img?: string;
@@ -16,9 +17,12 @@
   textColor?: string;
   expand?: boolean;
   colorVariable?: string;
+  iconSize?: number;
+  iconPadding?: number;
+  loading?: boolean;
  }
 
- let { img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, ...restProps }: ButtonProps = $props();
+ let { img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = 20, iconPadding = 0, loading = false, ...restProps }: ButtonProps = $props();
 
  function handleClick(e) {
   if (enabled && onClick) {
@@ -54,11 +58,15 @@
 
 <BaseButton onClick={handleClick} {...restProps} disabled={!enabled}>
  <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
-  {#if img}
-   <Icon {img} alt={text} size="20" padding="0" colorVariable={colorVariable && colorVariable} />
-  {/if}
-  {#if text}
-   <div>{text}</div>
+  {#if loading}
+   <Spinner size="0px" containerMinHeight="auto" />
+  {:else}
+   {#if img}
+    <Icon {img} alt={text} size={iconSize} padding={iconPadding} colorVariable={colorVariable && colorVariable} />
+   {/if}
+   {#if text}
+    <div>{text}</div>
+   {/if}
   {/if}
  </div>
 </BaseButton>

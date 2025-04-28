@@ -119,7 +119,7 @@
    const player = videoJS(videoEl, {
     controls: true,
     autoplay: true,
-    muted: true,
+    muted: false,
     preload: 'none',
     seekable: false,
     hidden: true,

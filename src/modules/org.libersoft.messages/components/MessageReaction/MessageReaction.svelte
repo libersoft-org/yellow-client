@@ -13,7 +13,7 @@
  }
  let { message }: MessageReactionProps = $props();
  let buttonRef: HTMLElement;
- let floatingRef: HTMLElement = $state(null);
+ let floatingRef = $state<HTMLElement | null>(null);
  let show = $state(false);
  let showFull = $state(false);
  let autoPlacementCleanup: ReturnType<typeof handleFloatingUI>;
@@ -29,7 +29,9 @@
  };
 
  const handleFloatingUI = () => {
-  if (!buttonRef || !floatingRef) return;
+  if (!buttonRef || !floatingRef) {
+   return;
+  }
   const autoUpdateCleanUp = autoUpdate(buttonRef, floatingRef, () => {
    computePosition(buttonRef, floatingRef, {
     middleware: [
