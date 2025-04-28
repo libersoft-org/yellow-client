@@ -160,10 +160,11 @@
 
 {#snippet renderDevicesSelect(devices, selectedDeviceId, onChange)}
  {@const disabled = !devices || devices.length === 0}
+ {@const emptyMessage = loading ? 'Loading devices' : 'No devices found'}
  <div class="device-select">
   <Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} {disabled}>
    {#if disabled}
-    <SelectOption value={''} disabled selected text={'No device found'} />
+    <SelectOption value={''} disabled selected text={emptyMessage} />
    {/if}
    {#each devices as device (device.deviceId)}
     <SelectOption value={device.deviceId} selected={device.deviceId === selectedDeviceId} text={device.label} />
@@ -242,7 +243,7 @@
    {#if isRecording}
     <Button img="modules/{identifier}/img/stop.svg" colorVariable="--icon-black" text="STOP" onClick={recordStop} />
    {:else}
-    <Button img="modules/{identifier}/img/record.svg" colorVariable="--icon-red" text="REC" onClick={recordStart} />
+    <Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--icon-gray' : "--icon-red"} text="REC" onClick={recordStart} />
    {/if}
    <Button loading={sending} img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--icon-black" onClick={send} />
   </div>

@@ -50,11 +50,13 @@
  const recordRestart = () => {
   if (playerInstance) {
    playerInstance.dispose();
+   playerInstance = null;
    $player.show();
   }
-  $player.record().reset();
-  $player.record().getDevice();
+  //$player.record().reset();
+  //$player.record().getDevice();
   recordedBlob.set(null);
+  $player.record().getDevice();
  };
 
  let manuallyStop = false;
@@ -178,7 +180,6 @@
    playerInstance = null;
   }
   $player.dispose();
-  console.log('onDestroy !!!!!!!!!!!!!!!!!!!!!!!!!!');
  });
 </script>
 
