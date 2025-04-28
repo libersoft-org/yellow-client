@@ -178,12 +178,12 @@
  }}
 >
  <div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover}; border: 1px solid {$borderColor};">
-  {#if data.img || data.title || data.body}
+  {#if data.icon || data.title || data.body}
    <div class="top">
-    {#if data.img}
+    {#if data.icon}
      <div class="left">
       <div class="image">
-       <img src={data.img} alt="Notification icon" />
+       <img src={data.icon} alt="Notification icon" />
       </div>
      </div>
     {/if}

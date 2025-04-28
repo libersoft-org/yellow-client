@@ -172,15 +172,15 @@ async function sendTauriNotification(notification: YellowNotification) {
  }
  if (get(notificationsSoundEnabled)) playNotificationSound(notification);
 
- let icon = notification.icon;
- if (icon && icon.endsWith('.svg')) {
-  icon = await svgToPngBlob(icon);
- }
+ let icon = await toPngBlob(notification.icon);
+ icon = 'http://localhost:3000/favicon2.png';
 
  sendNotification({
   title: notification.title,
   body: notification.body,
-  icon: icon, // todo - we need a filesystem path
+  /* "On Android the icon must be placed in the app’s res/drawable folder."*/
+  //icon: 'http://localhost:3000/favicon.png',
+  //icon: icon,
   silent: true,
  });
  await registerActionTypes([
@@ -233,14 +233,7 @@ async function deleteCustomNotification(id: string): Promise<void> {
 async function showBrowserNotification(notification: YellowNotification) {
  //playNotificationSound(notification);
  console.log('showBrowserNotification:', notification);
-
- /* browsers use native notifications. Icon can be a local file or a relative or absolute PNG URL or a blob */
-
- let icon = notification.icon;
- if (icon) {
-  icon = await toPngBlob(icon);
- }
- console.log('showBrowserNotification icon:', icon);
+ let icon = await toPngBlob(notification.icon);
 
  let n = new Notification(notification.title, {
   tag: notification.id,
@@ -279,28 +272,27 @@ export function playNotificationSound(notification: YellowNotification): void {
  }
 }
 
-async function toPngBlob(url: string): Promise<string> {
+async function toPngBlob(url: string | undefined): Promise<string | undefined> {
+ if (!url) {
+  return undefined;
+ }
  return new Promise((resolve, reject) => {
-  const img = document.createElement('img');
-  console.log('toPngBlob:', url);
+  const img = new Image(100, 100);
   img.src = url;
   img.onload = () => {
+   console.log('Image loaded:', img.naturalWidth, img.naturalHeight, img.width, img.height);
    const canvas = document.createElement('canvas');
    const ctx = canvas.getContext('2d');
    if (ctx) {
-    console.log('img:', img.width, img.height);
-    canvas.width = img.width;
-    canvas.height = img.height;
-    console.log('canvas:', canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
-    const res = canvas.toDataURL();
-    console.log('toPngBlob:', url, '->', res, 'res length:', res.length);
-    //resolve('data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7');
+    canvas.width = 100;
+    canvas.height = 100;
+    ctx.drawImage(img, 0, 0, 100, 100); // Stretch the image to 100x100
+    const res = canvas.toDataURL('image/png');
     resolve(res);
    } else {
-    reject();
+    reject(new Error('Failed to get canvas context'));
    }
   };
-  img.onerror = () => reject();
+  img.onerror = () => reject(new Error('Failed to load image'));
  });
 }
