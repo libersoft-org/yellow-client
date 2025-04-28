@@ -1,4 +1,4 @@
-import { handleIconState } from '@tauri-apps/plugin-positioner';
+//import { handleIconState } from '@tauri-apps/plugin-positioner';
 import { TrayIcon } from '@tauri-apps/api/tray';
 import { log, TAURI, TAURI_MOBILE } from './tauri.ts';
 //import { resolveResource } from "@tauri-apps/api/path";

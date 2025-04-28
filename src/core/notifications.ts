@@ -130,9 +130,7 @@ async function removeNotification(id: string): Promise<void> {
 
 export async function addNotification(notification: Partial<YellowNotification>): Promise<string | undefined> {
  let enabled = get(notificationsEnabled);
-
  log.debug('addNotification: enabled:', enabled, 'TAURI:', TAURI, 'TAURI_MOBILE:', TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
-
  if (!enabled) return;
 
  let n: YellowNotification = {
@@ -145,7 +143,7 @@ export async function addNotification(notification: Partial<YellowNotification>)
  if (CUSTOM_NOTIFICATIONS && get(enableCustomNotifications)) {
   sendCustomNotification(n);
  } else if (BROWSER) {
-  showBrowserNotification(n);
+  await showBrowserNotification(n);
  } else {
   await sendTauriNotification(n);
  }
@@ -158,13 +156,6 @@ export async function deleteNotification(id: string): Promise<void> {
  await deleteCustomNotification(id);
  await deleteBrowserNotification(id);
  //deleteTauriNotification(id);//todo
-}
-
-async function deleteCustomNotification(id: string): Promise<void> {
- if (!CUSTOM_NOTIFICATIONS) return;
- notifications[id] && notifications.delete(id);
- let s = await multiwindow_store('notifications');
- s.set(id, null);
 }
 
 async function sendTauriNotification(notification: YellowNotification) {
@@ -180,10 +171,16 @@ async function sendTauriNotification(notification: YellowNotification) {
   return;
  }
  if (get(notificationsSoundEnabled)) playNotificationSound(notification);
+
+ let icon = notification.icon;
+ if (icon && icon.endsWith('.svg')) {
+  icon = await svgToPngBlob(icon);
+ }
+
  sendNotification({
   title: notification.title,
   body: notification.body,
-  icon: notification.icon,
+  icon: icon, // todo - we need a filesystem path
   silent: true,
  });
  await registerActionTypes([
@@ -226,21 +223,29 @@ async function sendCustomNotification(notification: YellowNotification): Promise
  //log.debug('sendCustomNotification:', notification.id, notification);
 }
 
-export function playNotificationSound(notification: YellowNotification): void {
- const audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
- //const audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
- audio.play();
- if (TAURI) {
-  //playAndStopExample('/usr/share/sounds/Oxygen-Sys-Log-In-Long.ogg');
- }
+async function deleteCustomNotification(id: string): Promise<void> {
+ if (!CUSTOM_NOTIFICATIONS) return;
+ notifications[id] && notifications.delete(id);
+ let s = await multiwindow_store('notifications');
+ s.set(id, null);
 }
 
-function showBrowserNotification(notification: YellowNotification) {
+async function showBrowserNotification(notification: YellowNotification) {
  //playNotificationSound(notification);
+ console.log('showBrowserNotification:', notification);
+
+ /* browsers use native notifications. Icon can be a local file or a URL. The url */
+
+ let icon = notification.icon;
+ /* if (icon && icon.toLowerCase().endsWith('.svg')) {
+  icon = await svgToPngBlob(icon);
+ } */
+
  let n = new Notification(notification.title, {
   tag: notification.id,
   body: notification.body,
-  icon: notification.icon,
+  //  icon: 'http://localhost:3000/favicon2.png',//icon,
+  icon: 'favicon2.png', //icon,
   silent: false,
   //vibrate: [200, 100, 200],
  });
@@ -261,4 +266,34 @@ async function deleteBrowserNotification(id: string): Promise<void> {
   n.close();
   browser_notifications.delete(id);
  }
+}
+
+export function playNotificationSound(notification: YellowNotification): void {
+ const audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
+ //const audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
+ audio.play();
+ if (TAURI) {
+  //playAndStopExample('/usr/share/sounds/Oxygen-Sys-Log-In-Long.ogg');
+ }
+}
+
+async function svgToPngBlob(svg_url: string): Promise<string> {
+ return new Promise(resolve => {
+  const svg = document.createElement('img');
+  svg.src = svg_url;
+  svg.onload = () => {
+   const canvas = document.createElement('canvas');
+   const ctx = canvas.getContext('2d');
+   if (ctx) {
+    canvas.width = svg.width;
+    canvas.height = svg.height;
+    ctx.drawImage(svg, 0, 0);
+    const png_url = canvas.toDataURL('image/png');
+    resolve(png_url);
+   } else {
+    resolve(svg_url);
+   }
+  };
+  svg.onerror = () => resolve(svg_url);
+ });
 }

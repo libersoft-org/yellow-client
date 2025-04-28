@@ -490,9 +490,24 @@ function sendLoginCommand(account) {
    acc.wsGuid = res.data.wsGuid;
    acc.available_modules = res.data.modules_available;
    onAvailableModulesChanged(acc);
+   saveOriginalWsGuid(acc);
   }
   account.update(v => v);
  });
+}
+
+function saveOriginalWsGuid(acc) {
+ /* acc.original_wsGuid can be used to detect if a tab with an upload has been reloaded. Upload has to be paired with client wsGuid first. Module can then send a notification that asks clients with the original wsGuid if the file is still available. */
+ let sess = window.sessionStorage;
+ let json = sess.getItem('sessions') || '{}';
+ let sessions = JSON.parse(json);
+ let original_wsGuid = sessions[acc.credentials.server]?.[acc.credentials.address];
+ if (!original_wsGuid) {
+  if (!sessions[acc.credentials.server]) sessions[acc.credentials.server] = {};
+  sessions[acc.credentials.server][acc.credentials.address] = acc.wsGuid;
+  sess.setItem('sessions', JSON.stringify(sessions));
+ }
+ acc.original_wsGuid = original_wsGuid;
 }
 
 function setupPing(account) {
