@@ -907,8 +907,8 @@ async function showNotification(acc, msg) {
   id: messageNotificationId(msg),
   title,
   body: msg.stripped_text,
-  //icon: 'img/photo.svg',
-  icon: 'favicon.png',
+  icon: 'img/photo.svg',
+  //icon: 'favicon.svg',
   sound: 'modules/' + identifier + '/audio/message.mp3',
   callback: async event => {
    if (event === 'click') {

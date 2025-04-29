@@ -9,8 +9,21 @@ import { exit } from '@tauri-apps/plugin-process';
 import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
 import { showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';
+import videojs from 'video.js';
+import MenuItem = videojs.MenuItem;
 
 let tray: TrayIcon | null = null;
+
+async function showWindow() {
+ log.debug('showWindow');
+ await getCurrentWindow().show();
+ await getCurrentWindow().setFocus();
+}
+
+async function hideWindow() {
+ log.debug('Hide action');
+ await getCurrentWindow().hide();
+}
 
 export async function createTrayIcon() {
  if (tray) {
@@ -25,14 +38,12 @@ export async function createTrayIcon() {
   const iconPath = await defaultWindowIcon();
   //resolveResource('icons/icon.png');
 
-  const action = event => {
+  const action = async event => {
    log.debug(`TrayIcon event: ${event.type}`);
    // add the handle in the action to update the state
    //await handleIconState(event);
    if (event.type === 'Click') {
-    log.debug('TrayIcon Click event');
-    getCurrentWindow().setFocus();
-    getCurrentWindow().show();
+    await showWindow();
    }
   };
   const options = {
@@ -42,6 +53,13 @@ export async function createTrayIcon() {
    menu: await Menu.new({
     id: 'main',
     items: [
+     {
+      id: 'show',
+      text: 'Show',
+      action: async () => {
+       await showWindow();
+      },
+     },
      await CheckMenuItem.new({
       text: 'Notifications',
       id: 'notifications',
@@ -63,7 +81,7 @@ export async function createTrayIcon() {
    showMenuOnLeftClick: false,
    tooltip: 'awesome tray tooltip',
   };
-  /*tray = */ await TrayIcon.new(options);
+  tray = await TrayIcon.new(options);
   log.debug('TrayIcon created:', tray);
  }
 }
@@ -71,9 +89,9 @@ export async function createTrayIcon() {
 export async function destroyTrayIcon() {
  if (TAURI && !TAURI_MOBILE) {
   log.debug('destroyTrayIcon');
-  //if (tray)
+
   {
-   //await tray.close();
+   if (tray) await tray.close();
    TrayIcon.removeById('main');
    log.debug('TrayIcon closed');
    tray = null;

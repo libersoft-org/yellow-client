@@ -172,15 +172,15 @@ async function sendTauriNotification(notification: YellowNotification) {
  }
  if (get(notificationsSoundEnabled)) playNotificationSound(notification);
 
- let icon = notification.icon;
- if (icon && icon.endsWith('.svg')) {
-  icon = await svgToPngBlob(icon);
- }
+ let icon = await toPngBlob(notification.icon);
+ icon = 'http://localhost:3000/favicon2.png';
 
  sendNotification({
   title: notification.title,
   body: notification.body,
-  icon: icon, // todo - we need a filesystem path
+  /* "On Android the icon must be placed in the app’s res/drawable folder."*/
+  //icon: 'http://localhost:3000/favicon.png',
+  //icon: icon,
   silent: true,
  });
  await registerActionTypes([
@@ -233,19 +233,14 @@ async function deleteCustomNotification(id: string): Promise<void> {
 async function showBrowserNotification(notification: YellowNotification) {
  //playNotificationSound(notification);
  console.log('showBrowserNotification:', notification);
-
- /* browsers use native notifications. Icon can be a local file or a URL. The url */
-
- let icon = notification.icon;
- /* if (icon && icon.toLowerCase().endsWith('.svg')) {
-  icon = await svgToPngBlob(icon);
- } */
+ let icon = await toPngBlob(notification.icon);
 
  let n = new Notification(notification.title, {
   tag: notification.id,
   body: notification.body,
-  //  icon: 'http://localhost:3000/favicon2.png',//icon,
-  icon: 'favicon.png', //icon,
+  //  icon: 'http://localhost:3000/favicon2.png',
+  //  icon: 'data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7', //icon,
+  icon: icon,
   silent: false,
   //vibrate: [200, 100, 200],
  });
@@ -277,23 +272,27 @@ export function playNotificationSound(notification: YellowNotification): void {
  }
 }
 
-async function svgToPngBlob(svg_url: string): Promise<string> {
- return new Promise(resolve => {
-  const svg = document.createElement('img');
-  svg.src = svg_url;
-  svg.onload = () => {
+async function toPngBlob(url: string | undefined): Promise<string | undefined> {
+ if (!url) {
+  return undefined;
+ }
+ return new Promise((resolve, reject) => {
+  const img = new Image(100, 100);
+  img.src = url;
+  img.onload = () => {
+   console.log('Image loaded:', img.naturalWidth, img.naturalHeight, img.width, img.height);
    const canvas = document.createElement('canvas');
    const ctx = canvas.getContext('2d');
    if (ctx) {
-    canvas.width = svg.width;
-    canvas.height = svg.height;
-    ctx.drawImage(svg, 0, 0);
-    const png_url = canvas.toDataURL('image/png');
-    resolve(png_url);
+    canvas.width = 100;
+    canvas.height = 100;
+    ctx.drawImage(img, 0, 0, 100, 100); // Stretch the image to 100x100
+    const res = canvas.toDataURL('image/png');
+    resolve(res);
    } else {
-    resolve(svg_url);
+    reject(new Error('Failed to get canvas context'));
    }
   };
-  svg.onerror = () => resolve(svg_url);
+  img.onerror = () => reject(new Error('Failed to load image'));
  });
 }
