@@ -6,7 +6,13 @@
  import { autoPlacement, autoUpdate, computePosition, offset, shift } from '@floating-ui/dom';
  import Portal from 'svelte-portal';
 
- interface Props {}
+ interface Props {
+  sideButtonSlot: any;
+  mainButtonSlot: any;
+  tooltipSlot: any;
+ }
+
+ let { sideButtonSlot, mainButtonSlot, tooltipSlot }: Props = $props();
 
  let buttonRef: HTMLElement;
  let floatingRef = $state<HTMLElement>();
@@ -96,18 +102,20 @@
 </style>
 
 <div class="button-with-menu">
- <div class="side-button" onclick={onClick} role="button" tabindex="0" bind:this={buttonRef}>
-  <slot name="side-button"></slot>
- </div>
+ <BaseButton {onClick}>
+  <div class="side-button" bind:this={buttonRef}>
+   {@render sideButtonSlot?.()}
+  </div>
+ </BaseButton>
  <div class="main-button">
-  <slot name="main-button"></slot>
+  {@render mainButtonSlot?.()}
  </div>
 </div>
 
 {#if show}
  <Portal>
   <div bind:this={floatingRef} class="tooltip floating" style:display={show ? 'block' : 'none'}>
-   <slot name="tooltip"></slot>
+   {@render tooltipSlot?.()}
   </div>
  </Portal>
 {/if}

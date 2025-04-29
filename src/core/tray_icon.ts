@@ -9,8 +9,6 @@ import { exit } from '@tauri-apps/plugin-process';
 import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
 import { showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';
-import videojs from 'video.js';
-import MenuItem = videojs.MenuItem;
 
 let tray: TrayIcon | null = null;
 

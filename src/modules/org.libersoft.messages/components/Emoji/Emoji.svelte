@@ -8,7 +8,7 @@
  export let size = 40;
  export let is_single = false;
  export let context;
- export let force_animate;
+ export let force_animate = false;
  let codepoints_rgi = rgi(codepoints);
  let is_mouse_over;
  let is_animated;

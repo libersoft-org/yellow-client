@@ -101,7 +101,7 @@
  .device-select {
   display: flex;
   flex: 1 1 auto;
-  min-width: 180px;
+  min-width: 230px;
  }
 
  .device-select :global(select) {
@@ -227,36 +227,47 @@
  <div class="video-recorder-footer">
   <div class="video-recorder-actions-left">
    <ButtonWithMenu>
-    <Icon slot="side-button" img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
-    <div slot="main-button" class="mic-button-wrapper">
-     <div bind:this={micIndicatorRef} class="mic-button-indicator"></div>
-
-     {#if isMuted}
-      <Button img="modules/{identifier}/img/mic-disabled.svg" colorVariable="--icon-gray" onClick={toggleMute} />
-     {:else if isRecording}
-      <Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-red" onClick={toggleMute} />
-     {:else}
-      <Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-black" onClick={toggleMute} />
-     {/if}
-    </div>
-    <div slot="tooltip">
-     {@render renderDevicesSelect(audioDevices, selectedAudioDeviceId, e => changeAudioInput(e.target.value))}
-    </div>
-   </ButtonWithMenu>
-   <ButtonWithMenu>
-    <Icon slot="side-button" img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
-    <div slot="main-button">
-     <div class="camera-button-wrapper">
-      {#if enableToggleFacingMode}
-       <Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--icon-black" onClick={toggleFacingMode} />
+    {#snippet sideButtonSlot()}
+     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
+    {/snippet}
+    {#snippet mainButtonSlot()}
+     <div class="mic-button-wrapper">
+      <div bind:this={micIndicatorRef} class="mic-button-indicator"></div>
+      {#if isMuted}
+       <Button img="modules/{identifier}/img/mic-disabled.svg" colorVariable="--icon-gray" onClick={toggleMute} />
+      {:else if isRecording}
+       <Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-red" onClick={toggleMute} />
       {:else}
-       <Button img="modules/{identifier}/img/camera.svg" colorVariable="--icon-black" onClick={() => {}} />
+       <Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-black" onClick={toggleMute} />
       {/if}
      </div>
-    </div>
-    <div slot="tooltip">
-     {@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value))}
-    </div>
+    {/snippet}
+    {#snippet tooltipSlot()}
+     <div>
+      {@render renderDevicesSelect(audioDevices, selectedAudioDeviceId, e => changeAudioInput(e.target.value))}
+     </div>
+    {/snippet}
+   </ButtonWithMenu>
+   <ButtonWithMenu>
+    {#snippet sideButtonSlot()}
+     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
+    {/snippet}
+    {#snippet mainButtonSlot()}
+     <div>
+      <div class="camera-button-wrapper">
+       {#if enableToggleFacingMode}
+        <Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--icon-black" onClick={toggleFacingMode} />
+       {:else}
+        <Button img="modules/{identifier}/img/camera.svg" colorVariable="--icon-black" onClick={() => {}} />
+       {/if}
+      </div>
+     </div>
+    {/snippet}
+    {#snippet tooltipSlot()}
+     <div>
+      {@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value))}
+     </div>
+    {/snippet}
    </ButtonWithMenu>
   </div>
   <div class="video-recorder-actions-right">

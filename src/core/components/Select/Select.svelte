@@ -6,9 +6,10 @@
   grow?: boolean;
   minWidth?: string;
   maxWidth?: string;
+  children?: any;
  }
 
- let { value = $bindable(''), grow = false, minWidth, maxWidth, ...restProps }: Props = $props();
+ let { value = $bindable(''), grow = false, minWidth, maxWidth, children, ...restProps }: Props = $props();
 
  let selectRef: HTMLSelectElement;
 
@@ -39,5 +40,5 @@
 </style>
 
 <select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={selectRef} bind:value>
- <slot></slot>
+ {@render children?.()}
 </select>

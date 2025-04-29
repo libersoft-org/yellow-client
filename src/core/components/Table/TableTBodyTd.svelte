@@ -1,5 +1,12 @@
-<script>
- export let center = false;
+<script lang="ts">
+ import type { HTMLTdAttributes } from 'svelte/elements';
+
+ interface Props extends HTMLTdAttributes {
+  center?: boolean;
+  children?: any;
+ }
+
+ let { center = false, children, ...restProps }: Props = $props();
 </script>
 
 <style>
@@ -12,6 +19,6 @@
  }
 </style>
 
-<td class:center>
- <slot />
+<td {...restProps} class:center>
+ {@render children?.()}
 </td>

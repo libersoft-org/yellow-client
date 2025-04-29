@@ -1,21 +1,26 @@
-<script>
- export let type = 'text';
- export let placeholder = '';
- export let value = '';
- export let grow = false;
- export let minWidth;
- export let maxWidth;
- export let onKeydown;
- export let min;
- export let max;
- let elInput;
+<script lang="ts">
+ interface Props {
+  type?: 'text' | 'number' | 'email' | 'password' | 'search' | 'tel' | 'url';
+  placeholder?: string;
+  value?: string | number;
+  grow?: boolean;
+  minWidth?: string;
+  maxWidth?: string;
+  onKeydown?: (e: KeyboardEvent) => void;
+  min?: number;
+  max?: number;
+ }
+
+ let { type = 'text', placeholder = '', value = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined }: Props = $props();
+
+ let inputRef: HTMLInputElement;
 
  function handleKeydown(e) {
   if (onKeydown) onKeydown(e);
  }
 
  export function focus() {
-  elInput?.focus();
+  inputRef?.focus();
  }
 </script>
 
@@ -34,4 +39,4 @@
  }
 </style>
 
-<input style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} bind:this={elInput} bind:value on:keydown={e => handleKeydown(e)} />
+<input bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />

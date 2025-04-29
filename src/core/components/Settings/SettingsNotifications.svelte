@@ -11,7 +11,7 @@
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
  import { writable, get, type Unsubscriber } from 'svelte/store';
  import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
- import { availableMonitors } from '@tauri-apps/api/window';
+ import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
  import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
@@ -19,10 +19,10 @@
  import { debug } from '@/core/core.js';
 
  // Local monitors store for this component
- let monitors = writable([]);
- let monitorInterval: number | undefined;
- let permissionInterval: number | undefined;
- let monitorOptions = writable([]);
+ let monitors = writable<Monitor[]>([]);
+ let monitorInterval: Timer | undefined;
+ let permissionInterval: Timer | undefined;
+ let monitorOptions = writable<any[]>([]);
  let exampleNotification: string | null = 'dummy';
 
  // Store all subscription unsubscribe functions
@@ -40,26 +40,27 @@
    [
     //{ name: 'primary', label: 'primary' },
     { name: 'main_window_monitor', label: 'Main window monitor' },
-   ].concat(value.map(m => ({ name: m.name, label: m.name + '(' + m.size.width + 'x' + m.size.height + ')' })))
+   ].concat(value.map((m: any) => ({ name: m.name, label: m.name + '(' + m.size.width + 'x' + m.size.height + ')' })))
   );
  });
 
- function updateExampleNotification() {
+ async function updateExampleNotification() {
   log.debug('updateExampleNotification');
   if (exampleNotification === 'dummy') return;
   if (exampleNotification) {
-   deleteNotification(exampleNotification);
+   await deleteNotification(exampleNotification);
    exampleNotification = null;
   }
 
-  exampleNotification = addNotification({
-   title: 'Example',
-   body: 'This is an example notification',
-   callback: event => {
-    deleteNotification(exampleNotification!);
-    exampleNotification = null;
-   },
-  });
+  exampleNotification =
+   (await addNotification({
+    title: 'Example',
+    body: 'This is an example notification',
+    callback: event => {
+     deleteNotification(exampleNotification!);
+     exampleNotification = null;
+    },
+   })) || null;
  }
 
  let _notificationsEnabled = get(notificationsEnabled);
@@ -117,7 +118,7 @@
      if (get(notificationsEnabled)) {
       notificationsSettingsAlert.set('blocked');
      }
-     notificationsEnabled.set(get(notificationsEnabled) && Notification.permission === 'granted');
+     notificationsEnabled.set(Boolean(get(notificationsEnabled)));
     }
    }, 1000);
   }
@@ -168,7 +169,7 @@
   </TableTBodyTr>
   {#if $notificationsSettingsAlert}
    <TableTBodyTr>
-    <TableTBodyTd colspan="2">
+    <TableTBodyTd colspan={2}>
      <div class="alert">Notifications are blocked by the browser.</div>
     </TableTBodyTd>
    </TableTBodyTr>
@@ -188,11 +189,13 @@
       <div class="bold">Monitor:</div>
      </TableTBodyTd>
      <TableTBodyTd center={true}>
-      <Select bind:value={$selectedMonitorName}>
-       {#each $monitorOptions as monitor}
-        <SelectOption value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
-       {/each}
-      </Select>
+      {#if $selectedMonitorName}
+       <Select bind:value={$selectedMonitorName}>
+        {#each $monitorOptions as monitor}
+         <SelectOption value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
+        {/each}
+       </Select>
+      {/if}
       {#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
      </TableTBodyTd>
     </TableTBodyTr>
@@ -222,7 +225,7 @@
       <div class="bold">Maximum number of lines in title:</div>
      </TableTBodyTd>
      <TableTBodyTd center={true}>
-      <Input type="number" bind:value={$titleMaxLines} min="1" max="3" />
+      <Input type="number" bind:value={$titleMaxLines} min={1} max={3} />
      </TableTBodyTd>
     </TableTBodyTr>
 
@@ -231,7 +234,7 @@
       <div class="bold">Maximum number of lines in description:</div>
      </TableTBodyTd>
      <TableTBodyTd center={true}>
-      <Input type="number" bind:value={$bodyMaxLines} min="1" max="5" />
+      <Input type="number" bind:value={$bodyMaxLines} min={1} max={5} />
      </TableTBodyTd>
     </TableTBodyTr>
 
