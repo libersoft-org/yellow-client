@@ -25,7 +25,7 @@
  import '../modules/org.libersoft.iframes/module.js';
  import { enableAutostart } from '../core/autostart.ts';
  import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
- import { log, setDefaultWindowSize } from '../core/tauri.ts';
+ import { log, setDefaultWindowSize, initWindow } from '../core/tauri.ts';
  import { zoom } from '../core/settings.ts';
  import { initZoom } from '@/core/zoom.ts';
 
@@ -120,6 +120,7 @@
   enableAutostart();
   initBrowserNotifications();
   initCustomNotifications();
+  initWindow();
 
   if ($sidebarSize) {
    setSidebarSize($sidebarSize);

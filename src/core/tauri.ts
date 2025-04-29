@@ -2,6 +2,10 @@ import { invoke } from '@tauri-apps/api/core';
 import * as app from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
 import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
+import { confirm } from '@tauri-apps/plugin-dialog';
+import { exit } from '@tauri-apps/plugin-process';
+import { closeToMinimize } from '@/core/settings.ts';
+import { get } from 'svelte/store';
 
 let platformName = 'browser';
 if (window.__TAURI__ && window.__TAURI_OS_PLUGIN_INTERNALS__) {
@@ -52,4 +56,27 @@ export async function setDefaultWindowSize() {
    await w.center();
   }, 200);
  }
+}
+
+export async function initWindow() {
+ if (!TAURI || TAURI_MOBILE) {
+  return;
+ }
+ const unlisten = await getCurrentWindow().onCloseRequested(async event => {
+  /*const confirmed = await confirm('Are you sure?');
+   if (confirmed) {
+     await quit();
+   }*/
+  if (get(closeToMinimize)) {
+   log.debug('hiding window');
+   await getCurrentWindow().hide();
+  } else {
+   await quit();
+  }
+ });
+}
+
+async function quit() {
+ await invoke('close_notifications_window');
+ await exit(0);
 }
