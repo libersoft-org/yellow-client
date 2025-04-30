@@ -67,14 +67,8 @@ export function setNotificationsEnabled(value) {
 }
 
 export async function initBrowserNotifications() {
- if (BROWSER && Notification.permission !== 'granted') {
-  setNotificationsEnabled(false);
- }
- if (get(selectedMonitorName) === null) {
-  if (CUSTOM_NOTIFICATIONS) {
-   let monitors = await availableMonitors();
-   selectedMonitorName.set(monitors[0]?.name || null);
-  }
+ if (BROWSER && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+  // fixme: ask for permission / in wizard?
  }
 }
 

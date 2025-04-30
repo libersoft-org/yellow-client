@@ -189,13 +189,11 @@
       <div class="bold">Monitor:</div>
      </TableTBodyTd>
      <TableTBodyTd center={true}>
-      {#if $selectedMonitorName}
-       <Select bind:value={$selectedMonitorName}>
-        {#each $monitorOptions as monitor}
-         <SelectOption value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
-        {/each}
-       </Select>
-      {/if}
+      <Select bind:value={$selectedMonitorName}>
+       {#each $monitorOptions as monitor}
+        <SelectOption value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
+       {/each}
+      </Select>
       {#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
      </TableTBodyTd>
     </TableTBodyTr>
