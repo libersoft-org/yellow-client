@@ -3,6 +3,12 @@
 </script>
 
 <style>
+ .table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+ }
+
  table {
   border-spacing: 0;
   border: 1px solid #000;
@@ -15,6 +21,8 @@
  }
 </style>
 
-<table class={expand && 'expand'}>
- <slot />
-</table>
+<div class="table">
+ <table class={expand && 'expand'}>
+  <slot />
+ </table>
+</div>

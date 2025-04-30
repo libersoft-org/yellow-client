@@ -316,6 +316,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  max-width: calc(100% - var(--sidebar-width));
  }
 
  @media (max-width: 768px) {
@@ -333,6 +334,10 @@
   .resizer {
    display: none;
   }
+
+  .content {
+   max-width: 100%;
+  }
  }
 </style>
 
@@ -340,7 +345,7 @@
 <svelte:head>
  <title>{product}</title>
 </svelte:head>
-<div class="app">
+<div class="app" style:--sidebar-width={sidebarWidth}>
  <div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
   <MenuBar bind:isMenuOpen />
