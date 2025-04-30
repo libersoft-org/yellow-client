@@ -108,12 +108,10 @@
   close();
  }
 
- function keyEnter(event) {
-  if (event.key === 'Enter') {
-   event.preventDefault();
-   if ((params.id ?? null) === null) clickAdd();
-   else clickSave();
-  }
+ function onSubmit(event) {
+  event.preventDefault();
+  if ((params.id ?? null) === null) clickAdd();
+  else clickSave();
  }
 </script>
 
@@ -130,10 +128,8 @@
   gap: 2px;
  }
 
- .form .group .label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+ .form .group :global(.input label),
+ .form .group :global(.select label) {
   font-size: 15px;
   padding-left: 5px;
   font-weight: bold;
@@ -152,41 +148,33 @@
   align-items: center;
   gap: 5px;
  }
+
+ @media (min-width: 769px) {
+  .form .group {
+   max-width: 330px;
+   min-width: 330px;
+  }
+ }
 </style>
 
-<div class="form">
+<form class="form" onsubmit={onSubmit}>
  <div class="group">
-  <label>
-   <div class="label">Protocol:</div>
-   <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
-    <SelectOption text="AMTP" value="amtp" selected={protocol === 'amtp'} />
-    <SelectOption text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
-   </Select>
-  </label>
+  <Select label="Protocol:" bind:this={protocolElem} bind:value={protocol}>
+   <SelectOption text="AMTP" value="amtp" selected={protocol === 'amtp'} />
+   <SelectOption text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
+  </Select>
  </div>
  <div class="group">
-  <label>
-   <div class="label">Title:</div>
-   <Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
-  </label>
+  <Input label="Title:" bind:value={config_title} />
  </div>
  <div class="group">
-  <label>
-   <div class="label">Server:</div>
-   <Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
-  </label>
+  <Input label="Server:" placeholder="wss://your_server/" bind:value={credentials_server} />
  </div>
  <div class="group">
-  <label>
-   <div class="label">Address:</div>
-   <Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
-  </label>
+  <Input label="Address:" grow placeholder="user@domain.tld" bind:value={credentials_address} />
  </div>
  <div class="group">
-  <label>
-   <div class="label">Password:</div>
-   <Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
-  </label>
+  <Input label="Password:" type="password" placeholder="Your password" bind:value={credentials_password} />
  </div>
  {#if !isInWelcomeWizard}
   <div class="group">
@@ -213,4 +201,4 @@
    <AccountStatusIconIconAndText {account} />
   </div>
  {/if}
-</div>
+</form>

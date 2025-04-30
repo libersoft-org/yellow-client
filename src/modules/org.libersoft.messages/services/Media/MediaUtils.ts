@@ -61,7 +61,9 @@ class MediaUtils {
     reject(err);
    });
 
-   video.addEventListener('loadedmetadata', () => {
+   video.addEventListener(
+    'loadedmetadata',
+    () => {
      if (video.readyState >= 2) {
       video.currentTime = 0.1;
       video.addEventListener('seeked', drawFrame, { once: true });
