@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
  import TableTBodyTr from '../Table/TableTBodyTr.svelte';
  import TableTBody from '../Table/TableTBody.svelte';
  import TableTBodyTd from '../Table/TableTBodyTd.svelte';
@@ -13,8 +13,9 @@
  import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
- import { addNotification, deleteNotification } from '../../notifications.ts';
+ import { deleteNotification, updateExampleNotification, exampleNotification } from '../../notifications.ts';
  import { debug } from '@/core/core.js';
+ import { onDestroy, onMount, tick } from 'svelte';
 
  // Local monitors store for this component
  let monitors = writable<Monitor[]>([]);
@@ -43,7 +44,11 @@
 
  let _notificationsEnabled = get(notificationsEnabled);
 
- // Add all store subscriptions with the tracking helper
+ addSubscription(notificationsSoundEnabled, v => {
+  log.debug('notificationsSoundEnabled:', v);
+  updateExampleNotification();
+ });
+
  addSubscription(selectedMonitorName, v => {
   log.debug('selectedMonitor:', v);
   updateExampleNotification();
@@ -66,6 +71,65 @@
  });
 
  $: updateNotificationsEnabled(_notificationsEnabled);
+
+ async function updateNotificationsEnabled(value) {
+  console.log('updateNotificationsEnabled value:', value);
+  if (get(notificationsEnabled) === value) return;
+  setNotificationsEnabled(value);
+  let v = get(notificationsEnabled);
+  if (v !== value) {
+   await tick();
+   _notificationsEnabled = v;
+  }
+ }
+
+ onMount(() => {
+  if (window.__TAURI__) {
+   updateMonitors();
+   monitorInterval = setInterval(updateMonitors, 1000);
+  }
+  log.debug('SettingsNotifications mounted');
+  exampleNotification.set(null);
+  if (BROWSER) {
+   permissionInterval = setInterval(() => {
+    log.debug('permissionInterval:', Notification.permission);
+    if (get(isRequestingNotificationsPermission)) return;
+
+    if (Notification.permission === 'granted') {
+     notificationsSettingsAlert.set('');
+    } else {
+     if (get(notificationsEnabled)) {
+      notificationsSettingsAlert.set('blocked');
+     }
+     notificationsEnabled.set(Boolean(get(notificationsEnabled)));
+    }
+   }, 1000);
+  }
+ });
+
+ onDestroy(() => {
+  // Clean up all store subscriptions
+  unsubscribers.forEach(unsubscribe => unsubscribe());
+
+  // Clear intervals
+  if (monitorInterval) {
+   clearInterval(monitorInterval);
+  }
+  if (permissionInterval) {
+   clearInterval(permissionInterval);
+  }
+
+  // Clean up any existing notification
+  if (get(exampleNotification) && get(exampleNotification) !== 'dummy') {
+   deleteNotification(get(exampleNotification));
+  }
+ });
+
+ async function updateMonitors() {
+  let mons = await availableMonitors();
+  //log.debug('updateMonitors:', mons);
+  monitors.set(mons);
+ }
 </script>
 
 <TableTBodyTr>

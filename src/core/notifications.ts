@@ -1,4 +1,5 @@
 import { get, type Writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { multiwindow_store } from './multiwindow_store.ts';
 import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
@@ -21,6 +22,7 @@ export interface YellowNotification {
  icon?: string;
  sound?: string;
  callback?: CallableFunction;
+ _audio?: HTMLAudioElement;
 }
 
 let counter = 0;
@@ -28,23 +30,22 @@ let notifications: Map<string, YellowNotification> = new Map();
 let _events;
 let browser_notifications: Map<string, Notification> = new Map();
 let tauri_notifications: Map<string, Notification> = new Map();
-let exampleNotification: Writable<string | null> = 'dummy';
+export let exampleNotification: Writable<string | null> = writable('dummy');
 
 export async function updateExampleNotification() {
  log.debug('updateExampleNotification');
  if (get(exampleNotification) === 'dummy') return;
  if (get(exampleNotification)) {
-  await deleteNotification(get(exampleNotification));
+  await deleteNotification(get(exampleNotification) as string);
   exampleNotification.set(null);
  }
-
  exampleNotification.set(
   (await addNotification({
    title: 'Example',
    body: 'This is an example notification',
    callback: event => {
-    deleteNotification(exampleNotification!);
-    exampleNotification = null;
+    deleteNotification(get(exampleNotification)!);
+    exampleNotification.set(null);
    },
   })) || null
  );
@@ -185,10 +186,10 @@ async function sendTauriNotification(notification: YellowNotification) {
  if (!permissionGranted) {
   return;
  }
- if (get(notificationsSoundEnabled)) playNotificationSound(notification);
+ playNotificationSound(notification);
 
  let icon = await toPngBlob(notification.icon);
- icon = 'http://localhost:3000/favicon2.png';
+ //icon = 'http://localhost:3000/favicon2.png';
 
  sendNotification({
   title: notification.title,
@@ -246,7 +247,7 @@ async function deleteCustomNotification(id: string): Promise<void> {
 }
 
 async function showBrowserNotification(notification: YellowNotification) {
- //playNotificationSound(notification);
+ playNotificationSound(notification);
  console.log('showBrowserNotification:', notification);
  let icon = await toPngBlob(notification.icon);
 
@@ -256,7 +257,7 @@ async function showBrowserNotification(notification: YellowNotification) {
   //  icon: 'http://localhost:3000/favicon2.png',
   //  icon: 'data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7', //icon,
   icon: icon,
-  silent: false,
+  //silent: false,
   //vibrate: [200, 100, 200],
  });
  n.onclick = async e => {
@@ -267,6 +268,7 @@ async function showBrowserNotification(notification: YellowNotification) {
  n.onclose = () => {
   log.debug('browser notification onclose:', notification.id);
   browser_notifications.delete(notification.id);
+  stopNotificationSound(notification);
  };
 }
 
@@ -279,11 +281,19 @@ async function deleteBrowserNotification(id: string): Promise<void> {
 }
 
 export function playNotificationSound(notification: YellowNotification): void {
- const audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
- //const audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
- audio.play();
+ if (!get(notificationsSoundEnabled)) return;
+ notification._audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
+ //notification._audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
+ notification._audio.play();
  if (TAURI) {
   //playAndStopExample('/usr/share/sounds/Oxygen-Sys-Log-In-Long.ogg');
+ }
+}
+
+export function stopNotificationSound(notification: YellowNotification): void {
+ if (notification._audio) {
+  notification._audio.pause();
+  notification._audio.currentTime = 0;
  }
 }
 

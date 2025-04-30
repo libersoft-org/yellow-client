@@ -4,11 +4,9 @@
  import { writable, get } from 'svelte/store';
  import Notification from '../../core/components/Notification/Notification.svelte';
  import { multiwindow_store } from '../../core/multiwindow_store.ts';
- import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor, notificationsSoundEnabled } from '../../core/notifications_settings.ts';
  import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
  import { onMount, onDestroy } from 'svelte';
  import { invoke } from '@tauri-apps/api/core';
- import { playNotificationSound } from '@/core/notifications.ts';
  import { heightLogicalChanged, initPositioning, deinitPositioning } from './position.ts';
 
  export let maxNotifications = 3;
@@ -63,9 +61,6 @@
 
  function addNotification(data) {
   log.debug('addNotification data:', data);
-  if (get(notificationsSoundEnabled)) {
-   playNotificationSound(data);
-  }
   data.onClose = onClose.bind(data);
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);

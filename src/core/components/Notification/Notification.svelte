@@ -2,7 +2,10 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import { log } from '../../tauri.ts';
- import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor } from '../../notifications_settings.ts';
+ import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
+ import { onDestroy, onMount } from 'svelte';
+ import { get } from 'svelte/store';
+ import { playNotificationSound, stopNotificationSound } from '@/core/notifications.ts';
  export let data;
  export let closing = false;
 
@@ -14,6 +17,14 @@
    data.onClose && data.onClose(e, 'close');
   }, animationDuration);
  }
+
+ onMount(() => {
+  playNotificationSound(data);
+ });
+
+ onDestroy(() => {
+  stopNotificationSound(data);
+ });
 </script>
 
 <style>
