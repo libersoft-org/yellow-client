@@ -186,17 +186,10 @@
    .then(async uploadData => {
     upload = uploadData;
     const { record } = uploadData;
-    // mediaHandler = new MediaService(videoRef, getFileChunk, {
-    //  id: record.id,
-    //  totalSize: record.fileSize,
-    //  fileMime: record.fileMimeType,
-    //  chunkSize: 1024 * 1024 * 1,
-    // });
-    // mediaHandler.setupVideo();
 
     if (record.metadata && record.metadata.thumbnail) {
      const thumbnailUint8Array = await base64ToUint8Array(record.metadata.thumbnail);
-     const thumbnailBlob = new Blob([thumbnailUint8Array], { type: record.fileMimeType });
+     const thumbnailBlob = new Blob([thumbnailUint8Array]);
      thumbnailSrc = URL.createObjectURL(thumbnailBlob);
     } else {
      fetchPosterDynamically();
