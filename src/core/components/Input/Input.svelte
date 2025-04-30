@@ -9,9 +9,10 @@
   onKeydown?: (e: KeyboardEvent) => void;
   min?: number;
   max?: number;
+  step?: number;
  }
 
- let { type = 'text', placeholder = '', value = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined }: Props = $props();
+ let { type = 'text', placeholder = '', value = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined }: Props = $props();
 
  let inputRef: HTMLInputElement;
 
@@ -39,4 +40,4 @@
  }
 </style>
 
-<input bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
+<input bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />

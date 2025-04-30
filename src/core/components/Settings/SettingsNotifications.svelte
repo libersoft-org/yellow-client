@@ -6,9 +6,19 @@
  import Input from '../Input/Input.svelte';
  import Select from '../Select/Select.svelte';
  import SelectOption from '../Select/SelectOption.svelte';
- import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
+ import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
  import SettingsNotificationsBasic from '@/core/components/Settings/SettingsNotificationsBasic.svelte';
+ import type { Unsubscriber } from 'svelte/store';
+
+ // Store all subscription unsubscribe functions
+ const unsubscribers: Unsubscriber[] = [];
+
+ // Helper to add subscriptions and track unsubscribers
+ function addSubscription<T>(store: { subscribe: (callback: (value: T) => void) => Unsubscriber }, callback: (value: T) => void): void {
+  const unsubscribe = store.subscribe(callback);
+  unsubscribers.push(unsubscribe);
+ }
 </script>
 
 <Table expand={true}>
@@ -27,6 +37,15 @@
        <SelectOption value="zoom" text="Zoom" />
        <SelectOption value="opacity" text="Opacity" />
       </Select>
+     </TableTBodyTd>
+    </TableTBodyTr>
+
+    <TableTBodyTr>
+     <TableTBodyTd>
+      <div class="bold">Animation duration:</div>
+     </TableTBodyTd>
+     <TableTBodyTd center={true}>
+      <Input type="number" bind:value={$animationDuration} min={0} max={1000} step={10} />ms
      </TableTBodyTd>
     </TableTBodyTr>
 
