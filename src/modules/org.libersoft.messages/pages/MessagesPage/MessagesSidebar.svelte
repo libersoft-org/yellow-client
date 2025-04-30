@@ -89,7 +89,7 @@
      <div class="new-conversation">New conversation</div>
     </BaseButton>
    </div>
-   <Icon img="img/settings.svg" alt="Message settings" colorVariable="--icon-white" size="28" padding="10" onClick={clickMessagesSettings} />
+   <Icon img="img/settings.svg" alt="Messages settings" colorVariable="--icon-white" size="28" padding="10" onClick={clickMessagesSettings} />
   </div>
   <div class="items" bind:this={elItems} on:scroll={parseScroll}>
    {#each $conversationsArray as c (c.address)}
@@ -103,5 +103,5 @@
   {/if}
  </div>
  <Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
- <Modal title="Message settings" body={ModalMessageSettings} bind:show={showMessageSettings} />
+ <Modal title="Messages settings" body={ModalMessageSettings} bind:show={showMessageSettings} />
 {/if}

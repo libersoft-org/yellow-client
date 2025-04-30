@@ -19,6 +19,7 @@ import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/Loca
 import { addNotification, deleteNotification } from '@/core/notifications.ts';
 import { makeMessageReaction } from './factories/messageFactories.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
+export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
 export let online = relay(md, 'online');
@@ -906,7 +907,7 @@ async function showNotification(acc, msg) {
  let notification = {
   id: messageNotificationId(msg),
   title,
-  body: msg.stripped_text,
+  body: get(hideMessageTextInNotifications) ? 'You have a new message' : msg.stripped_text,
   icon: 'img/photo.svg',
   //icon: 'favicon.svg',
   sound: 'modules/' + identifier + '/audio/message.mp3',

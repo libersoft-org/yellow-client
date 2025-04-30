@@ -293,7 +293,7 @@ export function playNotificationSound(notification: YellowNotification): void {
 export function stopNotificationSound(notification: YellowNotification): void {
  if (notification._audio) {
   notification._audio.pause();
-  notification._audio.currentTime = 0;
+  //notification._audio.currentTime = 0;
  }
 }
 

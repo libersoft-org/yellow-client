@@ -2,6 +2,8 @@
  import { onMount } from 'svelte';
 
  export let checked;
+ export let label;
+
  let mounted = false;
 
  function keyPress(event) {
@@ -78,6 +80,9 @@
 </style>
 
 <label class="switch">
- <input type="checkbox" bind:checked on:keydown={keyPress} />
- <span class="slider {mounted ? 'transition' : ''}"></span>
+ <label
+  >{label}
+  <input type="checkbox" bind:checked on:keydown={keyPress} />
+  <span class="slider {mounted ? 'transition' : ''}"></span>
+ </label>
 </label>

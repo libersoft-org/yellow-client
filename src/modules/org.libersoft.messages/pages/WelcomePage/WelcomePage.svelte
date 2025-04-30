@@ -3,16 +3,14 @@
  import Button from '@/core/components/Button/Button.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalNewConversation from '../../modals/NewConversation.svelte';
+ import { active_account } from '@/core/core.js';
+
  const illustrations = ['man', 'woman', 'pigeon'];
  let showNewConversationModal = false;
 
  function clickNew() {
   showNewConversationModal = true;
  }
-
- import { longpress } from '../../ui.js';
-
- let pressed;
 </script>
 
 <style>
@@ -48,35 +46,15 @@
 </style>
 
 <div class="welcome">
- <!--  <div use:longpress on:longpress="{e => pressed = true}">-->
- <!--   longpress me-->
- <!--  </div>-->
- <!--  <br/>-->
- <!--  <button use:longpress={2000} on:longpress="{e => pressed = true}">-->
- <!--   longpress me (for two seconds)-->
- <!--  </button>-->
- <!--  <br/>-->
- <!--  <button on:click="{() => pressed = false}">-->
- <!--   reset-->
- <!--  </button>-->
- <!--  <br/>-->
- <!--  {#if pressed}-->
- <!--   <p>-->
- <!--    a button was longpressed-->
- <!--   </p>-->
- <!--  {:else}-->
- <!--   <p>-->
- <!--    press one of the buttons-->
- <!--   </p>-->
- <!--  {/if}-->
-
  <img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
  <div class="label">
   {#if $online}
    <div>Select your conversation<br />or</div>
    <Button text="Start a new one" padding="5px" onClick={clickNew} />
-  {:else}
+  {:else if $active_account}
    <div>This module is offline</div>
+  {:else}
+   <div>Select account...</div>
   {/if}
  </div>
 </div>
