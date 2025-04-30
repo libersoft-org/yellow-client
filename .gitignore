@@ -17,3 +17,6 @@ vite.config.js.timestamp-*
 .aider*
 *storybook.log
 test-results
+
+# Paraglide
+src/lib/paraglide

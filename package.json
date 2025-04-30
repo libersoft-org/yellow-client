@@ -19,6 +19,7 @@
  },
  "dependencies": {
   "@floating-ui/dom": "^1.6.13",
+  "@inlang/paraglide-js": "^2.0.0",
   "@tauri-apps/api": "^2.3.0",
   "@tauri-apps/plugin-autostart": "^2.3.0",
   "@tauri-apps/plugin-dialog": "^2.2.1",

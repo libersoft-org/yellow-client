@@ -9,6 +9,8 @@
  import Switch from '../components/Switch/Switch.svelte';
  import { derived, get, writable } from 'svelte/store';
  import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
+ import { m } from '@/lib/paraglide/messages.js';
+
  export let close;
  export let params;
  export let isInWelcomeWizard = false;
@@ -159,22 +161,22 @@
 
 <form class="form" onsubmit={onSubmit}>
  <div class="group">
-  <Select label="Protocol:" bind:this={protocolElem} bind:value={protocol}>
+  <Select label="{m['core.account.protocol']()}:" bind:this={protocolElem} bind:value={protocol}>
    <SelectOption text="AMTP" value="amtp" selected={protocol === 'amtp'} />
-   <SelectOption text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
+   <SelectOption text="DMTP ({m['core.account.not_yet_implemented']()})" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
   </Select>
  </div>
  <div class="group">
-  <Input label="Title:" bind:value={config_title} />
+  <Input label="{m['core.account.title']()}:" bind:value={config_title} />
  </div>
  <div class="group">
-  <Input label="Server:" placeholder="wss://your_server/" bind:value={credentials_server} />
+  <Input label="{m['core.account.server']()}:" placeholder="wss://your_server/" bind:value={credentials_server} />
  </div>
  <div class="group">
-  <Input label="Address:" grow placeholder="user@domain.tld" bind:value={credentials_address} />
+  <Input label="{m['core.account.address']()}:" grow placeholder="user@domain.tld" bind:value={credentials_address} />
  </div>
  <div class="group">
-  <Input label="Password:" type="password" placeholder="Your password" bind:value={credentials_password} />
+  <Input label="{m['core.account.password']()}:" type="password" placeholder={m['core.account.password_placeholder']()} bind:value={credentials_password} />
  </div>
  {#if !isInWelcomeWizard}
   <div class="group">

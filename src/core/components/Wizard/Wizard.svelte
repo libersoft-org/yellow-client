@@ -14,14 +14,13 @@
 
  let { close, params }: Props = $props();
 
- let nextText = 'Next';
+ let nextText = $state('Next');
  let currentStep = $state(0);
  const steps = $derived(params.steps);
  let setTitle = getContext('setTitle') as (title: string) => Promise<void>;
  let pageChanged = getContext('pageChanged') as () => Promise<void>;
 
- function setNextText(text) {
-  console.log('setNextText:', text);
+ function setNextText(text: string) {
   nextText = text;
  }
 
@@ -35,13 +34,11 @@
 
  async function nextStep() {
   if (currentStep < steps.length - 1) currentStep += 1;
-  console.log('currentStep:', currentStep, 'pageChanged:', pageChanged);
   if (pageChanged) await pageChanged();
  }
 
  async function prevStep() {
   if (currentStep > 0) currentStep -= 1;
-  console.log('currentStep:', currentStep, 'pageChanged:', pageChanged);
   if (pageChanged) await pageChanged();
  }
 

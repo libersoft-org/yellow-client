@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
 
 export function getGitCommitHash() {
  try {
@@ -13,39 +14,42 @@ export function getGitCommitHash() {
  }
 }
 
-export default defineConfig(({mode}) => {
-  return {
-   resolve: process.env.VITEST
-    ? {conditions: ['browser']} : undefined,
-   css: {
-    preprocessorOptions: {
-     scss: {
-      quietDeps: true,
-      quiet: true,
-     }
-    }
+export default defineConfig(({ mode }) => {
+ return {
+  resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
+  css: {
+   preprocessorOptions: {
+    scss: {
+     quietDeps: true,
+     quiet: true,
+    },
    },
-   plugins: [
-    sveltekit(),
-    ...(mode === 'development' ? [pluginChecker({typescript: true})] : []),
-   ],
-   define: {
-    __BUILD_DATE__: new Date(),
-    __COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
-   },
-   server: {
-    https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?
-     {
-      key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
-      cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
-     } : null),
-    allowedHosts: true,
-    host: true,
-    port: 3000
-   },
-   build: {
-    chunkSizeWarningLimit: 6000
-   }
-  }
- }
-);
+  },
+  plugins: [
+   sveltekit(),
+   paraglideVitePlugin({
+    project: './project.inlang',
+    outdir: './src/lib/paraglide',
+   }),
+   ...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
+  ],
+  define: {
+   __BUILD_DATE__: new Date(),
+   __COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
+  },
+  server: {
+   https: fs.existsSync(path.resolve(__dirname, 'server.key'))
+    ? {
+       key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
+       cert: fs.readFileSync(path.resolve(__dirname, 'server.crt')),
+      }
+    : null,
+   allowedHosts: true,
+   host: true,
+   port: 3000,
+  },
+  build: {
+   chunkSizeWarningLimit: 6000,
+  },
+ };
+});
