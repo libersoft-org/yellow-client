@@ -5,8 +5,7 @@
  import TableTBodyTr from '../Table/TableTBodyTr.svelte';
  import TableTBody from '../Table/TableTBody.svelte';
  import TableTBodyTd from '../Table/TableTBodyTd.svelte';
- import { getCurrentWebview } from '@tauri-apps/api/webview';
- import { log, TAURI } from '@/core/tauri.ts';
+ import { TAURI } from '@/core/tauri.ts';
  import { zoom } from '@/core/settings.ts';
  import { setZoom } from '@/core/zoom.ts';
 
@@ -22,22 +21,24 @@
 
 <Table expand={true}>
  <TableTBody>
-  <TableTBodyTr>
-   <TableTBodyTd>
-    <div class="bold">Zoom:</div>
-   </TableTBodyTd>
-   <TableTBodyTd center={true}>
-    <div>{Math.round(($zoom || 0) * 100, 2)}%</div>
-    <input class="zoom" type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} on:change={setZoom} />
-   </TableTBodyTd>
-  </TableTBodyTr>
+  {#if TAURI}
+   <TableTBodyTr>
+    <TableTBodyTd>
+     <div class="bold">Zoom:</div>
+    </TableTBodyTd>
+    <TableTBodyTd center={true}>
+     <div>{Math.round(($zoom || 0) * 100, 2)}%</div>
+     <input class="zoom" type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} on:change={setZoom} />
+    </TableTBodyTd>
+   </TableTBodyTr>
+  {/if}
   <TableTBodyTr>
    <TableTBodyTd>
     <div class="bold">Theme:</div>
    </TableTBodyTd>
    <TableTBodyTd center={true}>
     <Select bind:value={theme}>
-     <SelectOption value="light" text="Light" />
+     <SelectOption text="Light" value="light" />
     </Select>
    </TableTBodyTd>
   </TableTBodyTr>
