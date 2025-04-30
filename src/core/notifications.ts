@@ -1,4 +1,4 @@
-import { get } from 'svelte/store';
+import { get, type Writable } from 'svelte/store';
 import { multiwindow_store } from './multiwindow_store.ts';
 import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
@@ -28,6 +28,27 @@ let notifications: Map<string, YellowNotification> = new Map();
 let _events;
 let browser_notifications: Map<string, Notification> = new Map();
 let tauri_notifications: Map<string, Notification> = new Map();
+let exampleNotification: Writable<string | null> = 'dummy';
+
+export async function updateExampleNotification() {
+ log.debug('updateExampleNotification');
+ if (get(exampleNotification) === 'dummy') return;
+ if (get(exampleNotification)) {
+  await deleteNotification(get(exampleNotification));
+  exampleNotification.set(null);
+ }
+
+ exampleNotification.set(
+  (await addNotification({
+   title: 'Example',
+   body: 'This is an example notification',
+   callback: event => {
+    deleteNotification(exampleNotification!);
+    exampleNotification = null;
+   },
+  })) || null
+ );
+}
 
 export function setNotificationsEnabled(value) {
  if (!BROWSER) {

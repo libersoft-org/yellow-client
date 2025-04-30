@@ -17,6 +17,7 @@
  import WizardWelcomeStep1 from '@/core/pages/WelcomePage/WelcomeStep1.svelte';
  import WizardWelcomeStep2 from '@/core/pages/WelcomePage/WelcomeStep2.svelte';
  import WizardWelcomeStep3 from '@/core/pages/WelcomePage/WelcomeStep3.svelte';
+ import WizardWelcomeStep4 from '@/core/pages/WelcomePage/WelcomeStep4.svelte';
  import { createTrayIcon, destroyTrayIcon } from '../core/tray_icon.ts';
  import '../modules/org.libersoft.messages/module.js';
  import '../modules/org.libersoft.contacts/module.js';
@@ -38,7 +39,8 @@
   steps: [
    { title: 'Welcome', component: WizardWelcomeStep1 },
    { title: 'Connect your account', component: WizardWelcomeStep2 },
-   { title: 'All set!', component: WizardWelcomeStep3 },
+   { title: 'Notifications', component: WizardWelcomeStep3 },
+   { title: 'All set!', component: WizardWelcomeStep4 },
   ],
  };
  const corePages = {

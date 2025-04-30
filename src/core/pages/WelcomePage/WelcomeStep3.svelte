@@ -1,5 +1,5 @@
 <script>
- import { product } from '../../core.js';
+ import SettingsNotificationsBasic from '@/core/components/Settings/SettingsNotificationsBasic.svelte';
 </script>
 
-You are all set up. Enjoy {product}!
+Enable notifications: <SettingsNotificationsBasic />
