@@ -20,6 +20,7 @@ import { addNotification, deleteNotification } from '@/core/notifications.ts';
 import { makeMessageReaction } from './factories/messageFactories.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
+export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', null);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
 export let online = relay(md, 'online');
