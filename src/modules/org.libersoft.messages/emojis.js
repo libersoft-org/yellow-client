@@ -5,7 +5,7 @@ import { cp } from './emojis_parse_data.js';
 import { identifier } from './messages.js';
 
 export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByCodepointsRgi) {
- console.log('start_emojisets_fetch');
+ //console.log('start_emojisets_fetch');
  if (get(emojisLoading)) {
   console.log('emojis are already loading');
   return;
@@ -37,16 +37,16 @@ export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByC
    }
   }
 
-  console.log('emojis by codepoints:', by_codepoints);
+  //console.log('emojis by codepoints:', by_codepoints);
   emojisByCodepointsRgi.set(by_codepoints);
-  console.log('emoji groups:', groups);
+  //console.log('emoji groups:', groups);
   emojiGroups.set(groups);
 
   resolve();
  })
   .then(() => {
    emojisLoading.set(false);
-   console.log('emojis loaded');
+   //console.log('emojis loaded');
   })
   .catch(() => {
    emojisLoading.set(false);

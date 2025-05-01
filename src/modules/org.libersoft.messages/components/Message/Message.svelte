@@ -187,7 +187,7 @@
  }
 */
  onMount(() => {
-  console.log('onMount message:', message);
+  //console.log('onMount message:', message);
   /*configurePassive();
   window.addEventListener('touchmove', e => {
    //if (thisWasASwipe)

@@ -1008,12 +1008,12 @@ export function processMessage(message) {
   wrapConsecutiveElements(html, 'YellowAudio', 'AudioWrapper', 1);
  } else {
   let text = preprocess_incoming_plaintext_message_text(message.message);
-  console.log('text:', text);
+  //console.log('text:', text);
   html = saneHtml(text);
-  console.log('html:', html);
+  //console.log('html:', html);
  }
  //html = group_downloads(html);
- console.log('htmlhtmlhtml', html);
+ //console.log('htmlhtmlhtml', html);
  return {
   format: 'html',
   body: html,
@@ -1048,9 +1048,9 @@ function group_downloads_walk(node) {
 
 export function preprocess_incoming_plaintext_message_text(content) {
  let result0 = content;
- console.log('splitAndLinkify input:', result0);
+ //console.log('splitAndLinkify input:', result0);
  let result1 = splitAndLinkify(result0);
- console.log('splitAndLinkify output:', result1);
+ //console.log('splitAndLinkify output:', result1);
  let result2 = result1.map(part => {
   if (part.type === 'plain') {
    let r = htmlEscape(part.value);
