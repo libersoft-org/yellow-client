@@ -315,7 +315,7 @@
    }
    if (messages.length === 0) {
     console.log('handleEvents: no messages itemsArray');
-    itemsArray = [{ type: 'no_messages' }];
+    itemsArray = [{ type: 'initial_loading_placeholder' }];
     return;
    }
    messages = mergeAuthorship(messages);
