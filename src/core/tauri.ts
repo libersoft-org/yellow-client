@@ -80,3 +80,21 @@ async function quit() {
  await invoke('close_notifications_window');
  await exit(0);
 }
+
+export async function getNativeClientBuildCommitHash() {
+ if (!TAURI) {
+  return '';
+ }
+ const hash = await invoke('get_build_commit_hash');
+ log.debug('native client hash', hash);
+ return hash;
+}
+
+export async function getNativeClientBuildTs() {
+ if (!TAURI) {
+  return '';
+ }
+ const ts = await invoke('get_build_ts');
+ log.debug('native client build ts', ts);
+ return ts;
+}

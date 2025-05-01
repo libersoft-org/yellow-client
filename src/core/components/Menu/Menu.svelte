@@ -6,10 +6,14 @@
  import Icon from '../Icon/Icon.svelte';
  import DialogExit from '../../dialogs/Exit.svelte';
  import { product, version, build, commit, link } from '../../core.js';
- import { TAURI, BROWSER } from '@/core/tauri.ts';
+ import { TAURI, BROWSER, getNativeClientBuildCommitHash, getNativeClientBuildTs } from '@/core/tauri.ts';
  export let showMenu = false;
  export let showModalSettings = false;
  export let elDialogExit;
+
+ let native_client_commit;
+ let native_client_build_ts;
+
  const menuItems = [
   {
    title: 'Donate',
@@ -180,6 +184,20 @@
    <div>Commit:</div>
    <div class="bold">{commit}</div>
   </div>
+  {#if TAURI}
+   <div class="version">
+    <div>Native client commit:</div>
+    {#await getNativeClientBuildCommitHash() then hash}
+     <div class="bold">{hash.slice(0, 7)}</div>
+    {/await}
+   </div>
+   <div class="version">
+    <div>Native client build timestamp:</div>
+    {#await getNativeClientBuildTs() then ts}
+     <div class="bold">{ts.slice(7)}</div>
+    {/await}
+   </div>
+  {/if}
  </div>
 </div>
 <Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
