@@ -4,8 +4,10 @@ import { platform } from '@tauri-apps/plugin-os';
 import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
 import { confirm } from '@tauri-apps/plugin-dialog';
 import { exit } from '@tauri-apps/plugin-process';
-import { closeToMinimize } from '@/core/settings.ts';
+import { closeToMinimize, runOnSystemStartup, showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';
+import { disable, enable } from '@tauri-apps/plugin-autostart';
+import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
 
 let platformName = 'browser';
 if (window.__TAURI__ && window.__TAURI_OS_PLUGIN_INTERNALS__) {
@@ -72,6 +74,26 @@ export async function initWindow() {
    await getCurrentWindow().hide();
   } else {
    await quit();
+  }
+ });
+
+ runOnSystemStartup.subscribe(async value => {
+  if (!TAURI) return;
+  log.debug('runOnSystemStartup changed:', value);
+  if (value) {
+   await enable();
+  } else {
+   await disable();
+  }
+ });
+
+ showTrayIcon.subscribe(async value => {
+  if (!TAURI) return;
+  log.debug('showTrayIcon changed:', value);
+  if (value) {
+   await createTrayIcon();
+  } else {
+   await destroyTrayIcon();
   }
  });
 }
