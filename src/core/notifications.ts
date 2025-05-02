@@ -168,7 +168,7 @@ export async function addNotification(notification: Partial<YellowNotification>)
 }
 
 export async function deleteNotification(id: string): Promise<void> {
- log.debug('deleteNotification:', id);
+ //log.debug('deleteNotification:', id);
  await deleteCustomNotification(id);
  await deleteBrowserNotification(id);
  //deleteTauriNotification(id);//todo

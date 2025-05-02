@@ -67,15 +67,15 @@
  $: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
  //$: console.log('Core.isClientFocused:', $isClientFocused);
  $: if (isVisible && $isClientFocused) {
-  console.log('isVisible:', isVisible, 'isClientFocused:', $isClientFocused);
+  //console.log('isVisible:', isVisible, 'isClientFocused:', $isClientFocused);
   if (message.seen) {
-   console.log('not setting seen because already set');
+   //console.log('not setting seen because already set');
    observer.disconnect();
    isVisible = false;
   } else {
-   console.log('setMessageSeen..');
+   //console.log('setMessageSeen..');
    setMessageSeen(message, () => {
-    console.log('seen set succesfully, disconnecting observer.');
+    //console.log('seen set succesfully, disconnecting observer.');
     observer.disconnect();
     isVisible = false;
    });

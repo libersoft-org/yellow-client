@@ -217,12 +217,12 @@ function removeLiveAccountsNotInConfig(accounts_list, value) {
 }
 
 accounts_config.subscribe(value => {
- log.debug('ACCOUNTS CONFIG:', value);
+ //log.debug('ACCOUNTS CONFIG:', value);
  void 'TODO: implement configuration of accounts order';
  let accounts_list = get(accounts);
- log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
+ //log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
  for (let config of value) {
-  log.debug('CONFIG', config);
+  //log.debug('CONFIG', config);
   let account = accounts_list.find(acc => get(acc).id === config.id);
   if (account) {
    //log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
@@ -710,7 +710,7 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
  /* if (!quiet) {
   console.log('------------------');
   console.log('SENDING COMMAND:');*/
- console.log(req);
+ //console.log(req);
  /*console.log('------------------');
  }*/
 

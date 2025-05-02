@@ -5,7 +5,7 @@
 
  onMount(() => {
   cont2 = cont.clientHeight;
-  console.log(cont2);
+  //console.log(cont2);
  });
 </script>
 

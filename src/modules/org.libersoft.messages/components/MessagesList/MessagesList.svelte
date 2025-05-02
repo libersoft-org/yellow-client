@@ -16,6 +16,7 @@
  import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
  import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
  import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
+ import { log } from '@/core/tauri.ts';
  export let conversation;
  export let setBarFocus;
  let scrollButtonVisible = true;
@@ -189,14 +190,18 @@
    } else if (event.type === 'lazyload_prev') {
     restoreScrollPosition(event);
    } else if (event.type === 'lazyload_next') {
-    //pass
+    //pass // todo jump back to unread marker if exists?
    } else if (event.type === 'new_message') {
     if (event.wasScrolledToBottom) scrollToBottom();
    } else if (event.type === 'send_message') {
     if (event.wasScrolledToBottom) scrollToBottom();
    } else if (event.type === 'initial_load') {
-    if (elUnseenMarker) elUnseenMarker.scrollIntoView();
-    else scrollToBottom();
+    log.debug('initial_load elUnseenMarker.scrollIntoView:', elUnseenMarker);
+    if (elUnseenMarker) {
+     elUnseenMarker.scrollIntoView();
+    } else {
+     scrollToBottom();
+    }
    } else if (event.type === 'jump_to_referenced_message') {
     setTimeout(() => {
      const msgEl = event.referenced_message.el.getRef();
@@ -226,10 +231,11 @@
    }
   }
   if (activatedCount > 0) {
-   console.log('activatedCount:', activatedCount, 'itemsArray');
+   console.log('loader activatedCount:', activatedCount, 'itemsArray');
    itemsArray = itemsArray;
    for (let i = 0; i < itemsArray.length; i++) itemsArray[i] = itemsArray[i];
   }
+  /* set once */
   jumped = true;
  });
 
