@@ -10,7 +10,7 @@
  import { writable, get, type Unsubscriber } from 'svelte/store';
  import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
- import { notificationsEnabled, notificationsSettingsAlert, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
+ import { notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
  import { deleteNotification, updateExampleNotification, exampleNotification } from '../../notifications.ts';
@@ -148,13 +148,6 @@
   <Switch bind:checked={$notificationsSoundEnabled} />
  </TableTBodyTd>
 </TableTBodyTr>
-{#if $notificationsSettingsAlert}
- <TableTBodyTr>
-  <TableTBodyTd colspan={2}>
-   <div class="alert">Notifications are blocked by the browser.</div>
-  </TableTBodyTd>
- </TableTBodyTr>
-{/if}
 {#if CUSTOM_NOTIFICATIONS}
  <TableTBodyTr>
   <TableTBodyTd>

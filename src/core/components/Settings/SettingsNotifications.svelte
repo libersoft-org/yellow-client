@@ -1,5 +1,4 @@
 <script lang="ts">
- import Alert from '../Alert/Alert.svelte';
  import Table from '../Table/Table.svelte';
  import TableTBodyTr from '../Table/TableTBodyTr.svelte';
  import TableTBody from '../Table/TableTBody.svelte';
@@ -9,8 +8,9 @@
  import SelectOption from '../Select/SelectOption.svelte';
  import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
- import SettingsNotificationsBasic from '@/core/components/Settings/SettingsNotificationsBasic.svelte';
  import type { Unsubscriber } from 'svelte/store';
+ import SettingsNotificationsBasic from '@/core/components/Settings/SettingsNotificationsBasic.svelte';
+ import SettingsNotificationsAlert from '@/core/components/Settings/SettingsNotificationsAlert.svelte';
 
  // Store all subscription unsubscribe functions
  const unsubscribers: Unsubscriber[] = [];
@@ -31,7 +31,7 @@
 </style>
 
 <div class="settings-notifications">
- <Alert type="error" message="Some warning" />
+ <SettingsNotificationsAlert />
  <Table expand={true}>
   <TableTBody>
    <SettingsNotificationsBasic />
