@@ -10,6 +10,8 @@
  let interval;
  let contentElement = getContext('contentElement');
 
+ $: loader.loaderElement = loaderElement;
+
  onMount(() => {
   //console.log('LOADER MOUNTED:', loader);
   observing = false;
@@ -48,6 +50,7 @@
  onDestroy(() => {
   if (observer) observer.disconnect();
   if (interval) clearInterval(interval);
+  loader.loaderElement = null;
  });
 
  /* todo: sometimes, intersection observer does not work properly. add timer? */

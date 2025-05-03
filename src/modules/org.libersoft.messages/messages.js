@@ -27,6 +27,7 @@ export let online = relay(md, 'online');
 export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');
+export let messagesIsInitialLoading = relay(md, 'messagesIsInitialLoading');
 export let selectedConversation = relay(md, 'selectedConversation');
 export let emojiGroups = relay(md, 'emojiGroups');
 export let emojisByCodepointsRgi = relay(md, 'emojisByCodepointsRgi');
@@ -54,6 +55,7 @@ export function initData(acc) {
   conversationsArray: writable([]),
   events: writable([]),
   messagesArray: writable([]),
+  messagesIsInitialLoading: writable(false),
   emojiGroups: writable([]),
   emojisByCodepointsRgi: writable(null),
   emojisLoading: writable(false),
@@ -473,6 +475,7 @@ export function deinitData(acc) {
 export function listMessages(acc, address) {
  //console.log('listMessages', acc, address);
  messagesArray.set([{ type: 'initial_loading_placeholder' }]);
+ messagesIsInitialLoading.set(true);
  loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', res => {});
 }
 
@@ -494,6 +497,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb, force_r
   }
   let items = res.data.messages;
   items = constructLoadedMessages(acc, items);
+  messagesIsInitialLoading.set(false);
   addMessagesToMessagesArray(items, reason, force_refresh);
   if (cb) cb(res);
  });

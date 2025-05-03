@@ -115,7 +115,7 @@
  }
 
  function resizeMessage() {
-  //console.log('resizeMessage');
+  console.log('resizeMessage handleResize (scroll?)');
   handleResize(true /*todo save*/);
   const maxHeight = 200;
   const textarea = elMessage;
@@ -180,6 +180,7 @@
  });
 
  documentHeight.subscribe(value => {
+  console.log('documentHeight handleResize (scroll?)');
   handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
  });
 
