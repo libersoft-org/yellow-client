@@ -17,6 +17,7 @@ async function showWindow() {
  log.debug('showWindow');
  await getCurrentWindow().show();
  await getCurrentWindow().setFocus();
+ await getCurrentWindow().unminimize();
 }
 
 async function hideWindow() {
