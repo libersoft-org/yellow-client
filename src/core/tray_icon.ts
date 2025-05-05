@@ -11,7 +11,7 @@ import { showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';
 import { product } from '@/core/core.js';
 
-let tray: TrayIcon | null = null;
+let tray: TrayIcon | string | null = null;
 
 async function showWindow() {
  log.debug('showWindow');
@@ -29,6 +29,7 @@ export async function createTrayIcon() {
  if (tray) {
   return;
  }
+ tray = 'loading';
  if (!get(showTrayIcon)) {
   log.debug('Tray icon not enabled');
   return;
@@ -91,7 +92,7 @@ export async function destroyTrayIcon() {
   log.debug('destroyTrayIcon');
 
   {
-   if (tray) await tray.close();
+   if (tray && tray != 'loading') await tray.close();
    TrayIcon.removeById('main');
    log.debug('TrayIcon closed');
    tray = null;
