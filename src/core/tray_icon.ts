@@ -44,7 +44,7 @@ export async function createTrayIcon() {
    log.debug(`TrayIcon event: ${event.type} button: ${event.button} buttonState: ${event.buttonState}`);
    // add the handle in the action to update the state
    //await handleIconState(event);
-   if (event.type === 'Click') {
+   if (event.type === 'Click' && event.button === 'Left' && event.buttonState === 'Down') {
     await showWindow();
    }
   };
