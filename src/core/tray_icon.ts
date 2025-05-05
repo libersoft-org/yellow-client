@@ -15,9 +15,9 @@ let tray: TrayIcon | string | null = null;
 
 async function showWindow() {
  log.debug('showWindow');
+ await getCurrentWindow().unminimize();
  await getCurrentWindow().show();
  await getCurrentWindow().setFocus();
- await getCurrentWindow().unminimize();
 }
 
 async function hideWindow() {
@@ -41,7 +41,7 @@ export async function createTrayIcon() {
   //resolveResource('icons/icon.png');
 
   const action = async event => {
-   log.debug(`TrayIcon event: ${event.type}`);
+   log.debug(`TrayIcon event: ${event.type} button: ${event.button} buttonState: ${event.buttonState}`);
    // add the handle in the action to update the state
    //await handleIconState(event);
    if (event.type === 'Click') {
