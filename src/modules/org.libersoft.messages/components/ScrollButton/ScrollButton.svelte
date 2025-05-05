@@ -13,7 +13,7 @@
 
 <style>
  .scroll-button {
-  z-index: 1000;
+  z-index: 99;
   position: absolute;
   display: flex;
   align-items: center;

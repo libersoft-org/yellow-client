@@ -5,7 +5,6 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import ModuleBarItem from './ModuleBarItem.svelte';
- import SettingsNotifications from '../Settings/SettingsNotifications.svelte';
  import resize from '@/core/actions/resizeObserver.ts';
  import { order } from '@/core/utils/utils.ts';
 
@@ -110,5 +109,3 @@
   </div>
  </BaseButton>
 </div>
-
-{#if $debug}<SettingsNotifications />{/if}
