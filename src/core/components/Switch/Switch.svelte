@@ -80,9 +80,7 @@
 </style>
 
 <label class="switch">
- <label
-  >{label}
-  <input type="checkbox" bind:checked on:keydown={keyPress} />
-  <span class="slider {mounted ? 'transition' : ''}"></span>
- </label>
+ <div>{label}</div>
+ <input type="checkbox" bind:checked on:keydown={keyPress} />
+ <span class="slider {mounted ? 'transition' : ''}"></span>
 </label>

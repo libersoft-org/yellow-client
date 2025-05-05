@@ -21,4 +21,4 @@
 
 <div class="label">Paste the account export in JSON format here:</div>
 <textarea class="json" bind:value={text} rows="10" cols="50"></textarea>
-<Button onClick={accountsConfigImport}>Import</Button>
+<Button text="Import" onClick={accountsConfigImport} />
