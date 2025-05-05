@@ -101,12 +101,14 @@
 
  .top .left {
   flex: 1 0 auto;
+  padding-top: 10px;
+  padding-left: 10px;
  }
 
  .top .left .image {
   width: 50px;
   height: 50px;
-  padding: 10px;
+  border-radius: 10px;
  }
 
  .top .left .image img {
@@ -193,7 +195,7 @@
    <div class="top">
     {#if data.icon}
      <div class="left">
-      <div class="image">
+      <div class="image" style="border: 1px solid {$borderColor};">
        <img src={data.icon} alt="Notification icon" />
       </div>
      </div>

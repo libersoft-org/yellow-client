@@ -100,7 +100,7 @@ export function selectConversation(conversation) {
  selectedConversation.set(conversation);
  events.set([]);
  messagesArray.set([]);
- insertEvent({ type: 'new', array: get(messagesArray) });
+ insertEvent({ type: 'select_conversation', array: get(messagesArray) });
  hideSidebarMobile.set(true);
  listMessages(conversation.acc.deref ? conversation.acc.deref() : conversation.acc, conversation.address);
 }
@@ -828,7 +828,7 @@ export function jumpToMessage(acc, address, uid) {
 
 export function insertEvent(event) {
  events.update(v => {
-  //console.log('insertEvent: ', v, event);
+  console.log('insertEvent: ', v, event);
   return [...v, event];
  });
 }

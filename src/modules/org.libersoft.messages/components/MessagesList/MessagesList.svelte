@@ -107,6 +107,7 @@
 
  events.subscribe(e => {
   if (e?.length) {
+   console.log('events.subscribe:', e);
    handleEvents(e);
    itemsCount = itemsArray.length;
    events.set([]);
@@ -207,9 +208,11 @@
    } else if (event.type === 'initial_load') {
     if (elUnseenMarker) {
      console.log('initial_load elUnseenMarker.scrollIntoView');
+     elMessages.scrollTop = elMessages.scrollHeight;
+     await tick();
      elUnseenMarker.scrollIntoView();
     } else {
-     console.log('unknown event scrollToBottom');
+     console.log('initial_load scrollToBottom');
      scrollToBottom();
     }
    } else if (event.type === 'jump_to_referenced_message') {

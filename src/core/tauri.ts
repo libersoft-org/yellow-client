@@ -89,7 +89,7 @@ export async function initWindow() {
 
  showTrayIcon.subscribe(async value => {
   if (!TAURI) return;
-  log.debug('showTrayIcon changed:', value);
+  log.debug('showTrayIcon changed:', value, 'createTrayIcon.');
   if (value) {
    await createTrayIcon();
   } else {

@@ -9,6 +9,7 @@ import { exit } from '@tauri-apps/plugin-process';
 import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
 import { showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';
+import { product } from '@/core/core.js';
 
 let tray: TrayIcon | null = null;
 
@@ -24,6 +25,7 @@ async function hideWindow() {
 }
 
 export async function createTrayIcon() {
+ log.debug('createTrayIcon tray:', tray);
  if (tray) {
   return;
  }
@@ -77,7 +79,7 @@ export async function createTrayIcon() {
     ],
    }),
    showMenuOnLeftClick: false,
-   tooltip: 'awesome tray tooltip',
+   tooltip: product,
   };
   tray = await TrayIcon.new(options);
   log.debug('TrayIcon created:', tray);

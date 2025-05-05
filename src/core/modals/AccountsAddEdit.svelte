@@ -191,8 +191,8 @@
  {#if !isInWelcomeWizard}
   <div class="group">
    <div class="label">
-    <span>Enabled:</span>
-    <span><Switch bind:checked={config_enabled} /></span>
+    <span></span>
+    <span><Switch label="Enabled:" bind:checked={config_enabled} /></span>
    </div>
   </div>
  {/if}

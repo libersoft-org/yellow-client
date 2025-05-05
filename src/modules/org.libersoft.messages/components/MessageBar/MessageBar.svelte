@@ -101,7 +101,6 @@
 
  export async function doSendMessage(message, html) {
   //console.log('doSendMessage', message);
-  //await sendMessage(html ? message : messagebar_text_to_html(message));
   await sendMessage(message, html ? 'html' : 'plaintext');
   await setBarFocus();
   closeExpressions();
@@ -133,7 +132,10 @@
  const replyTo = messageBarReplyStore.getReplyTo();
 
  function clickSend(event) {
-  let messageToSend = elMessage.value;
+  clickSend2(elMessage.value);
+ }
+
+ function clickSend2(messageToSend) {
   if (messageToSend && $replyTo && $replyTo.type === ReplyToType.MESSAGE) {
    const replyToMessageUid = $replyTo?.data?.uid;
    messageToSend = `<Reply id="${replyToMessageUid}"></Reply>${messageToSend}`;
@@ -145,6 +147,15 @@
   resizeMessage(event);
   elMessage.focus();
   messageBarReplyStore.close();
+ }
+
+ function clickSendSplit(event) {
+  let messages = elMessage.value.split('\n');
+  for (let message of messages) {
+   if (message) {
+    clickSend2(message);
+   }
+  }
  }
 
  function keyEnter(event) {
@@ -307,6 +318,9 @@
   <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32" padding="0" onClick={() => (showVideoRecorderModal = true)} />
   <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" colorVariable="--icon-yellow" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} colorVariable="--icon-yellow" />
+  {#if $debug}
+   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="20" padding="0" onClick={clickSendSplit} colorVariable="--icon-yellow" />
+  {/if}
  </div>
 </div>
 
