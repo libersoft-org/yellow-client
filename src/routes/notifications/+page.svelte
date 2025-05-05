@@ -14,12 +14,41 @@
  let counter = 0;
  let heightLogical = writable(100);
 
+ // Catch all synchronous errors
+ window.addEventListener('error', event => {
+  // event.error is the Error object
+  console.error('Uncaught error:', event.error);
+  console.error('Stack trace:\n', event.error?.stack);
+ });
+
+ // Catch unhandled promise rejections
+ window.addEventListener('unhandledrejection', event => {
+  const reason = event.reason;
+  console.error('Unhandled promise rejection:', reason);
+  console.error('Stack trace:\n', reason?.stack || reason);
+ });
+
  heightLogical.subscribe(async v => {
   await heightLogicalChanged(v);
  });
 
  onMount(async () => {
   log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+
+  // Catch all synchronous errors
+  window.addEventListener('error', event => {
+   // event.error is the Error object
+   console.error('Uncaught error:', event.error);
+   console.error('Stack trace:\n', event.error?.stack);
+  });
+
+  // Catch unhandled promise rejections
+  window.addEventListener('unhandledrejection', event => {
+   const reason = event.reason;
+   console.error('Unhandled promise rejection:', reason);
+   console.error('Stack trace:\n', reason?.stack || reason);
+  });
+
   if (window.__TAURI__) {
    initPositioning();
    invoke('show', {});

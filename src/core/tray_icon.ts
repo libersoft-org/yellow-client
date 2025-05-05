@@ -62,14 +62,14 @@ export async function createTrayIcon() {
        await showWindow();
       },
      },
-     await CheckMenuItem.new({
+     /*await CheckMenuItem.new({
       text: 'Notifications',
       id: 'notifications',
 
       action: async () => {
        log.debug('Notifications action');
       },
-     }),
+     }),*/
      {
       id: 'quit',
       text: 'Quit',
