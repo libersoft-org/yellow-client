@@ -28,10 +28,6 @@
   console.error('Stack trace:\n', reason?.stack || reason);
  });
 
- heightLogical.subscribe(async v => {
-  await heightLogicalChanged(v);
- });
-
  onMount(async () => {
   log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
 
@@ -49,8 +45,10 @@
    console.error('Stack trace:\n', reason?.stack || reason);
   });
 
+  let deinit;
+
   if (window.__TAURI__) {
-   initPositioning();
+   deinit = initPositioning();
    invoke('show', {});
   }
   if (CUSTOM_NOTIFICATIONS) {
@@ -58,10 +56,12 @@
   } else {
    log.debug('CUSTOM_NOTIFICATIONS is not defined');
   }
+
+  return deinit;
  });
 
- onDestroy(() => {
-  deinitPositioning();
+ heightLogical.subscribe(async v => {
+  await heightLogicalChanged(v);
  });
 
  async function initNotificationsPage() {

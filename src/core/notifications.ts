@@ -11,6 +11,7 @@ import {
  //getCurrentWindow,
 } from '@tauri-apps/api/window';
 import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
+import { Mutex } from 'async-mutex';
 
 /* yellow notifications, for use in core and modules */
 
@@ -30,25 +31,29 @@ let notifications: Map<string, YellowNotification> = new Map();
 let _events;
 let browser_notifications: Map<string, Notification> = new Map();
 let tauri_notifications: Map<string, Notification> = new Map();
-export let exampleNotification: Writable<string | null> = writable('dummy');
+export let exampleNotifications: Writable<Array<string>> = writable([]);
+
+const updateExampleNotificationMutex = new Mutex();
 
 export async function updateExampleNotification() {
- log.debug('updateExampleNotification');
- if (get(exampleNotification) === 'dummy') return;
- if (get(exampleNotification)) {
-  await deleteNotification(get(exampleNotification) as string);
-  exampleNotification.set(null);
- }
- exampleNotification.set(
-  (await addNotification({
-   title: 'Example',
+ return updateExampleNotificationMutex.runExclusive(async () => {
+  let v = get(exampleNotifications);
+  log.debug('updateExampleNotification v:', v);
+  if (v.length > 1) {
+   await deleteNotification(v[0]);
+   exampleNotifications.update(n => n.slice(1));
+  }
+
+  let x = await addNotification({
+   title: `Example Notification ${counter}`,
    body: 'This is an example notification',
    callback: event => {
-    deleteNotification(get(exampleNotification)!);
-    exampleNotification.set(null);
+    log.debug('example notification callback:', event);
+    exampleNotifications.update(n => n.filter(i => i !== event.id));
    },
-  })) || null
- );
+  });
+  exampleNotifications.update(n => [...n, x]);
+ });
 }
 
 export function setNotificationsEnabled(value) {
@@ -144,7 +149,7 @@ async function removeNotification(id: string): Promise<void> {
  //log.debug('removed.');
 }
 
-export async function addNotification(notification: Partial<YellowNotification>): Promise<string | undefined> {
+export async function addNotification(notification: Partial<YellowNotification>): Promise<string> {
  let enabled = get(notificationsEnabled);
  log.debug('addNotification: enabled:', enabled, 'TAURI:', TAURI, 'TAURI_MOBILE:', TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
  if (!enabled) return;
@@ -171,7 +176,7 @@ export async function deleteNotification(id: string): Promise<void> {
  log.debug('deleteNotification:', id);
  await deleteCustomNotification(id);
  await deleteBrowserNotification(id);
- //deleteTauriNotification(id);//todo
+ await deleteTauriNotification(id);
 }
 
 async function sendTauriNotification(notification: YellowNotification) {
@@ -224,6 +229,16 @@ async function sendTauriNotification(notification: YellowNotification) {
  });
 }
 
+async function deleteTauriNotification(id: string): Promise<void> {
+ log.debug('deleteTauriNotification:', id);
+ let n = tauri_notifications.get(id);
+ if (n) {
+  log.debug('deleteTauriNotification:', id, n);
+  await n.close();
+  tauri_notifications.delete(id);
+ }
+}
+
 async function sendCustomNotification(notification: YellowNotification): Promise<void> {
  //log.debug('sendCustomNotification');
  //await initCustomNotifications();
@@ -241,9 +256,9 @@ async function sendCustomNotification(notification: YellowNotification): Promise
 
 async function deleteCustomNotification(id: string): Promise<void> {
  if (!CUSTOM_NOTIFICATIONS) return;
- notifications[id] && notifications.delete(id);
  let s = await multiwindow_store('notifications');
- s.set(id, null);
+ notifications[id] && notifications.delete(id);
+ await s.set(id, null);
 }
 
 async function showBrowserNotification(notification: YellowNotification) {
@@ -275,8 +290,9 @@ async function showBrowserNotification(notification: YellowNotification) {
 async function deleteBrowserNotification(id: string): Promise<void> {
  let n = browser_notifications.get(id);
  if (n) {
-  n.close();
-  browser_notifications.delete(id);
+  log.debug('deleteBrowserNotification:', id, n);
+  await n.close();
+  //browser_notifications.delete(id);
  }
 }
 

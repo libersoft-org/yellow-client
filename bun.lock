@@ -16,6 +16,7 @@
         "@testing-library/svelte": "^5.2.6",
         "@types/recordrtc": "^5.6.14",
         "@webav/mp4box.js": "^0.5.6",
+        "async-mutex": "^0.5.0",
         "debug": "^4.4.0",
         "dexie": "^4.0.11",
         "dompurify": "^3.2.4",
@@ -55,7 +56,7 @@
         "@storybook/test-runner": "^0.22.0",
         "@sveltejs/adapter-auto": "^3.3.1",
         "@sveltejs/adapter-static": "^3.0.8",
-        "@sveltejs/kit": "2.19.2",
+        "@sveltejs/kit": "^2.19.2",
         "@sveltejs/vite-plugin-svelte": "^4.0.4",
         "@types/bun": "latest",
         "@types/debug": "^4.1.12",
@@ -617,6 +618,8 @@
     "assertion-error": ["assertion-error@2.0.1", "", {}, "sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA=="],
 
     "ast-types": ["ast-types@0.16.1", "", { "dependencies": { "tslib": "^2.0.1" } }, "sha512-6t10qk83GOG8p0vKmaCr8eiilZwO171AvbROMtvvNiwrTly62t+7XkA8RdIIVbpMhCASAsxgAzdRSwh6nw/5Dg=="],
+
+    "async-mutex": ["async-mutex@0.5.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-1A94B18jkJ3DYq284ohPxoXbfTA5HsQ7/Mf4DEhcyLx3Bz27Rh59iScbB6EPiP+B+joue6YCxcMXSbFC1tZKwA=="],
 
     "asynckit": ["asynckit@0.4.0", "", {}, "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q=="],
 

@@ -5,6 +5,7 @@
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
 
  interface ButtonProps extends HTMLButtonAttributes {
+  children?: any;
   img?: string;
   text?: string;
   enabled?: boolean;
@@ -22,7 +23,7 @@
   loading?: boolean;
  }
 
- let { img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = 20, iconPadding = 0, loading = false, ...restProps }: ButtonProps = $props();
+ let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = 20, iconPadding = 0, loading = false, ...restProps }: ButtonProps = $props();
 
  function handleClick(e) {
   if (enabled && onClick) {
@@ -58,6 +59,9 @@
 
 <BaseButton onClick={handleClick} {...restProps} disabled={!enabled}>
  <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
+  {#if children}
+   {@render children?.()}
+  {/if}
   {#if loading}
    <Spinner size="0px" containerMinHeight="auto" />
   {:else}

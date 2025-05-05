@@ -27,8 +27,8 @@ async function hideWindow() {
 }
 
 export async function createTrayIcon() {
- log.debug('createTrayIcon tray:', tray);
- if (tray) {
+ log.debug('createTrayIcon tray:', tray, 'tray_loading:', tray_loading);
+ if (tray || tray_loading) {
   return;
  }
  tray_loading = true;

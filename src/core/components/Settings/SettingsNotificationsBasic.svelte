@@ -13,7 +13,7 @@
  import { notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
  import { setNotificationsEnabled } from '../../notifications.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
- import { deleteNotification, updateExampleNotification, exampleNotification } from '../../notifications.ts';
+ import { deleteNotification, updateExampleNotification, exampleNotifications } from '../../notifications.ts';
  import { debug } from '@/core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
 
@@ -22,53 +22,22 @@
  let monitorInterval: Timer | undefined;
  let permissionInterval: Timer | undefined;
  let monitorOptions = writable<any[]>([]);
+ let _notificationsEnabled = get(notificationsEnabled);
+ let mounted = false;
 
  // Store all subscription unsubscribe functions
  const unsubscribers: Unsubscriber[] = [];
 
  // Helper to add subscriptions and track unsubscribers
- function addSubscription<T>(store: { subscribe: (callback: (value: T) => void) => Unsubscriber }, callback: (value: T) => void): void {
+ function addSubscription<T>(
+  store: {
+   subscribe: (callback: (value: T) => void) => Unsubscriber;
+  },
+  callback: (value: T) => void
+ ): void {
   const unsubscribe = store.subscribe(callback);
   unsubscribers.push(unsubscribe);
  }
-
- // Subscribe to monitors and keep unsubscribe function
- addSubscription(monitors, value => {
-  monitorOptions.set(
-   [
-    //{ name: 'primary', label: 'primary' },
-    { name: 'main_window_monitor', label: 'Main window monitor' },
-   ].concat(value.map((m: any) => ({ name: m.name, label: m.name + '(' + m.size.width + 'x' + m.size.height + ')' })))
-  );
- });
-
- let _notificationsEnabled = get(notificationsEnabled);
-
- addSubscription(notificationsSoundEnabled, v => {
-  log.debug('notificationsSoundEnabled:', v);
-  updateExampleNotification();
- });
-
- addSubscription(selectedMonitorName, v => {
-  log.debug('selectedMonitor:', v);
-  updateExampleNotification();
- });
-
- addSubscription(selectedNotificationsCorner, v => {
-  log.debug('selectedNotificationsCorner:', v);
-  updateExampleNotification();
- });
-
- addSubscription(enableCustomNotifications, v => {
-  log.debug('enableCustomNotifications:', v);
-  updateExampleNotification();
- });
-
- addSubscription(notificationsEnabled, value => {
-  _notificationsEnabled = value;
-  log.debug('notificationsEnabled:', value);
-  updateExampleNotification();
- });
 
  $: updateNotificationsEnabled(_notificationsEnabled);
 
@@ -83,31 +52,72 @@
   }
  }
 
+ function setupNotificationPermissionTimer() {
+  permissionInterval = setInterval(() => {
+   //log.debug('permissionInterval:', Notification.permission);
+   if (get(isRequestingNotificationsPermission)) return;
+
+   if (Notification.permission === 'granted') {
+    notificationsSettingsAlert.set('');
+   } else {
+    if (get(notificationsEnabled)) {
+     notificationsSettingsAlert.set('blocked');
+    }
+    notificationsEnabled.set(Boolean(get(notificationsEnabled)));
+   }
+  }, 1000);
+ }
+
  onMount(() => {
   if (window.__TAURI__) {
    updateMonitors();
    monitorInterval = setInterval(updateMonitors, 1000);
   }
-  log.debug('SettingsNotifications mounted');
-  exampleNotification.set(null);
-  if (BROWSER) {
-   permissionInterval = setInterval(() => {
-    log.debug('permissionInterval:', Notification.permission);
-    if (get(isRequestingNotificationsPermission)) return;
 
-    if (Notification.permission === 'granted') {
-     notificationsSettingsAlert.set('');
-    } else {
-     if (get(notificationsEnabled)) {
-      notificationsSettingsAlert.set('blocked');
-     }
-     notificationsEnabled.set(Boolean(get(notificationsEnabled)));
-    }
-   }, 1000);
+  log.debug('SettingsNotifications onMount');
+
+  // Subscribe to monitors and keep unsubscribe function
+  addSubscription(monitors, value => {
+   monitorOptions.set(
+    [
+     //{ name: 'primary', label: 'primary' },
+     { name: 'main_window_monitor', label: 'Main window monitor' },
+    ].concat(value.map((m: any) => ({ name: m.name, label: m.name + '(' + m.size.width + 'x' + m.size.height + ')' })))
+   );
+  });
+
+  addSubscription(notificationsSoundEnabled, v => {
+   log.debug('notificationsSoundEnabled:', v);
+   updateExampleNotification();
+  });
+
+  addSubscription(selectedMonitorName, v => {
+   log.debug('selectedMonitor:', v);
+   updateExampleNotification();
+  });
+
+  addSubscription(selectedNotificationsCorner, v => {
+   log.debug('selectedNotificationsCorner:', v);
+   updateExampleNotification();
+  });
+
+  addSubscription(enableCustomNotifications, v => {
+   log.debug('enableCustomNotifications:', v);
+   updateExampleNotification();
+  });
+
+  addSubscription(notificationsEnabled, value => {
+   _notificationsEnabled = value;
+   log.debug('notificationsEnabled:', value);
+   updateExampleNotification();
+  });
+
+  if (BROWSER) {
+   setupNotificationPermissionTimer();
   }
  });
 
- onDestroy(() => {
+ onDestroy(async () => {
   // Clean up all store subscriptions
   unsubscribers.forEach(unsubscribe => unsubscribe());
 
@@ -119,9 +129,8 @@
    clearInterval(permissionInterval);
   }
 
-  // Clean up any existing notification
-  if (get(exampleNotification) && get(exampleNotification) !== 'dummy') {
-   deleteNotification(get(exampleNotification));
+  for (const notification of get(exampleNotifications)) {
+   await deleteNotification(notification);
   }
  });
 
