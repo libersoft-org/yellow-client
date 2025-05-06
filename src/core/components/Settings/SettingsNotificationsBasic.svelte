@@ -11,7 +11,7 @@
  import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
  import { notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
- import { setNotificationsEnabled } from '../../notifications.ts';
+ import { deleteExampleNotifications, setNotificationsEnabled } from '../../notifications.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
  import { deleteNotification, updateExampleNotification, exampleNotifications } from '../../notifications.ts';
  import { debug } from '@/core/core.js';
@@ -93,18 +93,21 @@
    updateExampleNotification();
   });
 
-  addSubscription(selectedMonitorName, v => {
+  addSubscription(selectedMonitorName, async v => {
    log.debug('selectedMonitor:', v);
+   await deleteExampleNotifications();
    updateExampleNotification();
   });
 
-  addSubscription(selectedNotificationsCorner, v => {
+  addSubscription(selectedNotificationsCorner, async v => {
    log.debug('selectedNotificationsCorner:', v);
+   await deleteExampleNotifications();
    updateExampleNotification();
   });
 
-  addSubscription(enableCustomNotifications, v => {
+  addSubscription(enableCustomNotifications, async v => {
    log.debug('enableCustomNotifications:', v);
+   await deleteExampleNotifications();
    updateExampleNotification();
   });
 

@@ -35,6 +35,14 @@ export let exampleNotifications: Writable<Array<string>> = writable([]);
 
 const updateExampleNotificationMutex = new Mutex();
 
+export async function deleteExampleNotifications() {
+ let v = get(exampleNotifications);
+ for (let i of v) {
+  await deleteNotification(i);
+ }
+ exampleNotifications.set([]);
+}
+
 export async function updateExampleNotification() {
  return updateExampleNotificationMutex.runExclusive(async () => {
   let v = get(exampleNotifications);
@@ -56,10 +64,7 @@ export async function updateExampleNotification() {
     exampleNotifications.update(n => [...n, x]);
    }
   } else {
-   for (let i of v) {
-    await deleteNotification(i);
-   }
-   exampleNotifications.set([]);
+   await deleteExampleNotifications();
   }
  });
 }
@@ -264,8 +269,8 @@ async function sendCustomNotification(notification: YellowNotification): Promise
 
 async function deleteCustomNotification(id: string): Promise<void> {
  if (!CUSTOM_NOTIFICATIONS) return;
- let s = await multiwindow_store('notifications');
  notifications[id] && notifications.delete(id);
+ let s = await multiwindow_store('notifications');
  await s.set(id, null);
 }
 
