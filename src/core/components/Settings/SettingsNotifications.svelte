@@ -11,15 +11,26 @@
  import type { Unsubscriber } from 'svelte/store';
  import SettingsNotificationsBasic from '@/core/components/Settings/SettingsNotificationsBasic.svelte';
  import SettingsNotificationsAlert from '@/core/components/Settings/SettingsNotificationsAlert.svelte';
+ import { skipFirst } from '$lib/skipfirst_store.ts';
+ import { onMount } from 'svelte';
+ import { updateExampleNotification } from '@/core/notifications.ts';
 
  // Store all subscription unsubscribe functions
  const unsubscribers: Unsubscriber[] = [];
 
  // Helper to add subscriptions and track unsubscribers
  function addSubscription<T>(store: { subscribe: (callback: (value: T) => void) => Unsubscriber }, callback: (value: T) => void): void {
-  const unsubscribe = store.subscribe(callback);
-  unsubscribers.push(unsubscribe);
+  unsubscribers.push(store.subscribe(callback));
  }
+
+ onMount(() => {
+  for (let store of [animationName, animationDuration, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor]) {
+   addSubscription(skipFirst(store), value => {
+    log.debug(`Store ${store} updated:`, value);
+    updateExampleNotification();
+   });
+  }
+ });
 </script>
 
 <style>

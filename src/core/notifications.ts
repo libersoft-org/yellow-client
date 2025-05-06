@@ -43,16 +43,24 @@ export async function updateExampleNotification() {
    await deleteNotification(v[0]);
    exampleNotifications.update(n => n.slice(1));
   }
-
-  let x = await addNotification({
-   title: `Example Notification ${counter}`,
-   body: 'This is an example notification',
-   callback: event => {
-    log.debug('example notification callback:', event);
-    exampleNotifications.update(n => n.filter(i => i !== event.id));
-   },
-  });
-  exampleNotifications.update(n => [...n, x]);
+  if (get(notificationsEnabled)) {
+   let x = await addNotification({
+    title: `Example Notification ${counter}`,
+    body: 'This is an example notification',
+    callback: event => {
+     log.debug('example notification callback:', event);
+     exampleNotifications.update(n => n.filter(i => i !== event.id));
+    },
+   });
+   if (x) {
+    exampleNotifications.update(n => [...n, x]);
+   }
+  } else {
+   for (let i of v) {
+    await deleteNotification(i);
+   }
+   exampleNotifications.set([]);
+  }
  });
 }
 
@@ -149,10 +157,10 @@ async function removeNotification(id: string): Promise<void> {
  //log.debug('removed.');
 }
 
-export async function addNotification(notification: Partial<YellowNotification>): Promise<string> {
+export async function addNotification(notification: Partial<YellowNotification>): Promise<string | null> {
  let enabled = get(notificationsEnabled);
  log.debug('addNotification: enabled:', enabled, 'TAURI:', TAURI, 'TAURI_MOBILE:', TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
- if (!enabled) return;
+ if (!enabled) return null;
 
  let n: YellowNotification = {
   id: Math.random().toString(36),

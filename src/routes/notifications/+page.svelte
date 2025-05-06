@@ -72,7 +72,7 @@
    if (!v) {
     onNotificationRemoved(k);
    } else {
-    addNotification(v);
+    addNotificationData(v);
    }
   });
   s.onKeyChange((k, v) => {
@@ -84,12 +84,12 @@
   values = values.filter(v => !!v);
   values.sort((a, b) => a.ts - b.ts);
   for (let v of values) {
-   if (v) await addNotification(v);
+   if (v) await addNotificationData(v);
   }
  }
 
- function addNotification(data) {
-  log.debug('addNotification data:', data);
+ function addNotificationData(data) {
+  log.debug('addNotificationData data:', data);
   data.onClose = onClose.bind(data);
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);

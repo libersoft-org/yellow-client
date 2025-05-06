@@ -16,6 +16,7 @@
  import { deleteNotification, updateExampleNotification, exampleNotifications } from '../../notifications.ts';
  import { debug } from '@/core/core.js';
  import { onDestroy, onMount, tick } from 'svelte';
+ import { skipFirst } from '$lib/skipfirst_store.ts';
 
  // Local monitors store for this component
  let monitors = writable<Monitor[]>([]);
@@ -35,7 +36,7 @@
   },
   callback: (value: T) => void
  ): void {
-  const unsubscribe = store.subscribe(callback);
+  const unsubscribe = skipFirst(store).subscribe(callback);
   unsubscribers.push(unsubscribe);
  }
 
@@ -74,9 +75,10 @@
    monitorInterval = setInterval(updateMonitors, 1000);
   }
 
-  log.debug('SettingsNotifications onMount');
+  if (BROWSER) {
+   setupNotificationPermissionTimer();
+  }
 
-  // Subscribe to monitors and keep unsubscribe function
   addSubscription(monitors, value => {
    monitorOptions.set(
     [
@@ -111,10 +113,6 @@
    log.debug('notificationsEnabled:', value);
    updateExampleNotification();
   });
-
-  if (BROWSER) {
-   setupNotificationPermissionTimer();
-  }
  });
 
  onDestroy(async () => {
