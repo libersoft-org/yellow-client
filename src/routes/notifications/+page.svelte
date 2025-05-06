@@ -7,7 +7,7 @@
  import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
  import { onMount, onDestroy } from 'svelte';
  import { invoke } from '@tauri-apps/api/core';
- import { heightLogicalChanged, initPositioning, deinitPositioning } from './position.ts';
+ import { heightLogicalChanged, initPositioning } from './position.ts';
 
  export let maxNotifications = 3;
  let notifications = writable([]);

@@ -1,5 +1,5 @@
 <script lang="ts">
- enum Type {
+ export enum Type {
   SUCCESS = 'success',
   WARNING = 'warning',
   ERROR = 'error',

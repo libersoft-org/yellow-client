@@ -4,5 +4,5 @@
 </script>
 
 {#if $notificationsSettingsAlert}
- <Alert type="error" message="Notifications are blocked by the browser." />
+ <Alert type="Alert.Type.ERROR" message="Notifications are blocked by the browser." />
 {/if}
