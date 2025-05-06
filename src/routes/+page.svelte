@@ -24,7 +24,6 @@
  import '../modules/org.libersoft.wallet/module.js';
  import '../modules/org.libersoft.dating/module.js';
  import '../modules/org.libersoft.iframes/module.js';
- import { enableAutostart } from '../core/autostart.ts';
  import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
  import { log, setDefaultWindowSize, initWindow } from '../core/tauri.ts';
  import { zoom } from '../core/settings.ts';
@@ -133,7 +132,6 @@
   initZoom();
   setDefaultWindowSize();
   createTrayIcon();
-  enableAutostart();
   initBrowserNotifications();
   initCustomNotifications();
   initWindow();
