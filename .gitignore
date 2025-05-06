@@ -17,3 +17,5 @@ vite.config.js.timestamp-*
 .aider*
 *storybook.log
 test-results
+
+**/.claude/settings.local.json

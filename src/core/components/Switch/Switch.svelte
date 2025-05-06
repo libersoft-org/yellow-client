@@ -2,7 +2,7 @@
  import { onMount } from 'svelte';
 
  export let checked;
- export let label;
+ export let label = '';
 
  let mounted = false;
 

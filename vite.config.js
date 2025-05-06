@@ -7,7 +7,7 @@ import { execSync } from 'child_process';
 
 export function getGitCommitHash() {
  try {
-  return execSync('cd .git && git rev-parse --short HEAD').toString().trim();
+  return execSync('git rev-parse --is-inside-work-tree &> /dev/null && git rev-parse --short HEAD').toString().trim();
  } catch (e) {
   return null;
  }

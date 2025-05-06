@@ -1,10 +1,12 @@
-<script lang="ts">
+<script lang="ts" context="module">
  export enum Type {
   SUCCESS = 'success',
   WARNING = 'warning',
   ERROR = 'error',
  }
+</script>
 
+<script lang="ts">
  const types = {
   success: {
    color: '#040',

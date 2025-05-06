@@ -25,7 +25,7 @@
 
  onMount(() => {
   for (let store of [animationName, animationDuration, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor]) {
-   addSubscription(skipFirst(store), value => {
+   addSubscription(skipFirst(store as any), value => {
     log.debug(`Store ${store} updated:`, value);
     updateExampleNotification();
    });
