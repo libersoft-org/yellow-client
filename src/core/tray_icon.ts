@@ -31,13 +31,13 @@ export async function createTrayIcon() {
  if (tray || tray_loading) {
   return;
  }
- tray_loading = true;
-
  if (!get(showTrayIcon)) {
   log.debug('Tray icon not enabled');
   return;
  }
  if (TAURI && !TAURI_MOBILE) {
+  tray_loading = true;
+
   // Get the path to the icon file
   const iconPath = await defaultWindowIcon();
   //resolveResource('icons/icon.png');
