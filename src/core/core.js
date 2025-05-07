@@ -21,11 +21,14 @@ export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
 export const version = '0.0.1';
-export const build = new Date(__BUILD_DATE__)
- .toISOString()
- .replace('T', ' ')
- .replace(/\.\d+Z/, '');
-export const commit = __COMMIT_HASH__;
+export const build =
+ typeof __BUILD_DATE__ !== 'undefined'
+  ? new Date(__BUILD_DATE__)
+     .toISOString()
+     .replace('T', ' ')
+     .replace(/\.\d+Z/, '')
+  : 'unknown';
+export const commit = typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'unknown';
 export const link = 'https://yellow.libersoft.org';
 
 // declarations of modules that this client supports

@@ -9,6 +9,8 @@ export default defineConfig({
  test: {
   environment: 'jsdom',
   include: ['**/unit/*.{test,spec}.?(c|m)[jt]s?(x)'],
+  setupFiles: ['./vitest.shims.js'],
+  globals: true
  },
  resolve: process.env.VITEST
   ? {
@@ -18,7 +20,7 @@ export default defineConfig({
   : undefined,
 
  define: {
-  __BUILD_DATE__: new Date(),
-  __COMMIT_HASH__: null,
+  __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
+  __COMMIT_HASH__: JSON.stringify('test-commit-hash'),
  },
 });
