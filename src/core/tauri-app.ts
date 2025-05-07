@@ -1,8 +1,8 @@
 import { invoke } from '@tauri-apps/api/core';
 import * as app from '@tauri-apps/api';
-import { platform } from '@tauri-apps/plugin-os';
+//import { platform } from '@tauri-apps/plugin-os';
 import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
-import { confirm } from '@tauri-apps/plugin-dialog';
+//import { confirm } from '@tauri-apps/plugin-dialog';
 import { exit } from '@tauri-apps/plugin-process';
 import { closeToMinimize, runOnSystemStartup, showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';

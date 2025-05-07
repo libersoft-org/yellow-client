@@ -6,7 +6,7 @@ import { defaultWindowIcon } from '@tauri-apps/api/app';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Menu } from '@tauri-apps/api/menu';
 import { exit } from '@tauri-apps/plugin-process';
-import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
+//import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
 import { showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';
 import { product } from '@/core/core.js';
@@ -61,6 +61,7 @@ export async function createTrayIcon() {
       id: 'show',
       text: 'Show',
       action: async () => {
+       log.debug('Show action');
        await showWindow();
       },
      },
