@@ -2,12 +2,14 @@
  import { humanSize } from '@/core/utils/fileUtils.js';
  import Input from '@/core/components/Input/Input.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder } from '../messages.js';
+ import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder, photoRadius } from '../messages.js';
  import Switch from '@/core/components/Switch/Switch.svelte';
- export let close;
- let chunkSize = $uploadChunkSize;
  import { open } from '@tauri-apps/plugin-dialog';
  import { TAURI } from '@/core/tauri.ts';
+ import Select from '@/core/components/Select/Select.svelte';
+ import Option from '@/core/components/Select/SelectOption.svelte';
+ export let close;
+ let chunkSize = $uploadChunkSize;
 
  function clickSetChunkSize() {
   uploadChunkSize.set(chunkSize);
@@ -56,8 +58,19 @@
  <Switch bind:checked={$hideMessageTextInNotifications} label="Hide message text in notifications" />
 </div>
 
+<div class="group">
+ <div class="label">
+  <span class="bold">Photo radius:</span>
+ </div>
+ <Select bind:value={$photoRadius}>
+  <Option value="50%" text="Circle" selected={true} />
+  {#each Array(7) as _, i}
+   <Option value="{i * 5}px" text="{i * 5} px" />
+  {/each}
+ </Select>
+</div>
+
 {#if TAURI}
- <br /><br /><br /><br />
  <div class="group">
   <div class="label">
    <span class="bold">Default file download folder (todo)</span>
