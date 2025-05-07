@@ -3,7 +3,7 @@
  import { onMount, onDestroy, setContext } from 'svelte';
  import { get } from 'svelte/store';
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
- import { isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.js';
+ import { init, isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.js';
  import { initBrowserNotifications, initCustomNotifications } from '../core/notifications.ts';
  import Menu from '../core/components/Menu/Menu.svelte';
  import MenuBar from '../core/components/Menu/MenuBar.svelte';
@@ -158,6 +158,8 @@
    visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
   } else window.addEventListener('resize', updateAppHeight);
   updateAppHeight();
+
+  return init();
  });
 
  onDestroy(async () => {

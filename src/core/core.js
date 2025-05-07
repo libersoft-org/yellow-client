@@ -18,10 +18,6 @@ export let modules_order = localStorageSharedStore('modules_order', {});
 export let modules_disabled = localStorageSharedStore('modules_disabled', []);
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
 
-debug.subscribe(value => {
- console.log('CLIENT_DEBUG:', value);
-});
-
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
 export const version = '0.0.1';
@@ -37,14 +33,61 @@ export let module_decls = writable({});
 
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
 
-selected_module_id.subscribe(async id => {
- await tick();
- let module_decls_v = get(module_decls);
- for (const k in module_decls_v) {
-  const module = module_decls_v[k];
-  module.callbacks.onModuleSelected?.(id === module.id);
- }
-});
+export function init() {
+ let subs = [];
+
+ subs.push(
+  selected_module_id.subscribe(async id => {
+   await tick();
+   let module_decls_v = get(module_decls);
+   for (const k in module_decls_v) {
+    const module = module_decls_v[k];
+    module.callbacks.onModuleSelected?.(id === module.id);
+   }
+  })
+ );
+
+ subs.push(
+  modules_order.subscribe(value => {
+   //console.log('MODULES ORDER:', value);
+   let module_decls_v = get(module_decls);
+   for (const k in module_decls_v) {
+    const decl = module_decls_v[k];
+    if (value[decl.id] !== undefined) {
+     decl.order = value[decl.id];
+    }
+   }
+   module_decls.set(module_decls_v);
+  })
+ );
+
+ subs.push(
+  accounts_config.subscribe(value => {
+   log.debug('ACCOUNTS CONFIG:', value);
+   void 'TODO: implement configuration of accounts order';
+   let accounts_list = get(accounts);
+   log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
+   for (let config of value) {
+    log.debug('CONFIG', config);
+    let account = accounts_list.find(acc => get(acc).id === config.id);
+    if (account) {
+     //log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
+     updateLiveAccount(account, config);
+    } else {
+     log.debug('CREATE ACCOUNT', config);
+     createLiveAccount(config);
+    }
+   }
+   removeLiveAccountsNotInConfig(accounts_list, value);
+  })
+ );
+
+ return () => {
+  for (const sub of subs) {
+   sub();
+  }
+ };
+}
 
 export function registerModule(id, decl) {
  console.log('REGISTER MODULE:', id, decl);
@@ -60,19 +103,8 @@ export function registerModule(id, decl) {
  let module_decls_v = get(module_decls);
  module_decls_v[id] = decl;
  module_decls.set(module_decls_v);
+ decl.deinit = decl.callbacks?.init?.();
 }
-
-modules_order.subscribe(value => {
- //console.log('MODULES ORDER:', value);
- let module_decls_v = get(module_decls);
- for (const k in module_decls_v) {
-  const decl = module_decls_v[k];
-  if (value[decl.id] !== undefined) {
-   decl.order = value[decl.id];
-  }
- }
- module_decls.set(module_decls_v);
-});
 
 export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
 
@@ -109,10 +141,6 @@ export let active_account = derived(active_account_store, ($active_account_store
   set(account);
  });
  return () => unsubscribe();
-});
-
-active_account.subscribe(value => {
- //console.log('ACTIVE ACCOUNT:', value);
 });
 
 export function active_account_module_data(module_id) {
@@ -215,25 +243,6 @@ function removeLiveAccountsNotInConfig(accounts_list, value) {
   }
  }
 }
-
-accounts_config.subscribe(value => {
- log.debug('ACCOUNTS CONFIG:', value);
- void 'TODO: implement configuration of accounts order';
- let accounts_list = get(accounts);
- log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
- for (let config of value) {
-  log.debug('CONFIG', config);
-  let account = accounts_list.find(acc => get(acc).id === config.id);
-  if (account) {
-   //log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
-   updateLiveAccount(account, config);
-  } else {
-   log.debug('CREATE ACCOUNT', config);
-   createLiveAccount(config);
-  }
- }
- removeLiveAccountsNotInConfig(accounts_list, value);
-});
 
 export function toggleAccountEnabled(id) {
  log.debug('TOGGLE ACCOUNT ENABLED accounts_config', accounts_config);

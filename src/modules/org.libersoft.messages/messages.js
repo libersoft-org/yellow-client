@@ -1,16 +1,16 @@
-import { replaceEmojisWithTags, start_emojisets_fetch } from './emojis.js';
+import { replaceEmojisWithTags } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
 import { log } from '../../core/tauri.ts';
 import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
-import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+import { FileUploadRecordStatus, FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
 import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id, selected_corepage_id } from '../../core/core.js';
+import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '../../core/core.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
@@ -18,6 +18,7 @@ import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { addNotification, deleteNotification } from '@/core/notifications.ts';
 import { makeMessageReaction } from './factories/messageFactories.ts';
+
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
 export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', null);
@@ -65,10 +66,6 @@ export function initData(acc) {
  //start_emojisets_fetch(acc, result.emojisLoading, result.emojiGroups, result.emojisByCodepointsRgi);
  return result;
 }
-
-active_account_id.subscribe(acc => {
- get(md)?.['selectedConversation']?.set(null);
-});
 
 function sendData(acc, account, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  /*
@@ -165,6 +162,20 @@ export function initComms(acc) {
  acc.events.addEventListener('ask_for_chunk', ask_for_chunk);
 
  refresh(acc);
+}
+
+export function init() {
+ let subs = [];
+
+ subs.push(
+  active_account_id.subscribe(acc => {
+   get(md)?.['selectedConversation']?.set(null);
+  })
+ );
+
+ return function () {
+  subs.forEach(sub => sub());
+ };
 }
 
 async function refresh(acc) {
@@ -361,18 +372,38 @@ export function cancelUpload(uploadId) {
 export function pauseUpload(uploadId) {
  return new Promise(resolve => {
   fileUploadManager.pauseUpload(uploadId);
-  sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.PAUSED }, true, (req, res) => {
-   resolve(); // todo: handle error if needed
-  });
+  sendData(
+   get(active_account),
+   null,
+   'upload_update_status',
+   {
+    uploadId,
+    status: FileUploadRecordStatus.PAUSED,
+   },
+   true,
+   (req, res) => {
+    resolve(); // todo: handle error if needed
+   }
+  );
  });
 }
 
 export function resumeUpload(uploadId) {
  return new Promise(resolve => {
   fileUploadManager.resumeUpload(uploadId);
-  sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {
-   resolve(); // todo: handle error if needed
-  });
+  sendData(
+   get(active_account),
+   null,
+   'upload_update_status',
+   {
+    uploadId,
+    status: FileUploadRecordStatus.UPLOADING,
+   },
+   true,
+   (req, res) => {
+    resolve(); // todo: handle error if needed
+   }
+  );
  });
 }
 
