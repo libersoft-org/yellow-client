@@ -6,7 +6,8 @@
  import Icon from '../Icon/Icon.svelte';
  import DialogExit from '../../dialogs/Exit.svelte';
  import { product, version, build, commit, link } from '../../core.js';
- import { TAURI, BROWSER, getNativeClientBuildCommitHash, getNativeClientBuildTs } from '@/core/tauri.ts';
+ import { TAURI, BROWSER } from '@/core/tauri.ts';
+ import { getNativeClientBuildCommitHash, getNativeClientBuildTs } from '@/core/tauri-app.ts';
  export let showMenu = false;
  export let showModalSettings = false;
  export let elDialogExit;
