@@ -26,18 +26,30 @@ async function hideWindow() {
  await getCurrentWindow().hide();
 }
 
+export async function destroyTrayIcon() {
+ if (TAURI && !TAURI_MOBILE) {
+  log.debug('destroyTrayIcon');
+  if (tray) {
+   await tray.close();
+  }
+  await TrayIcon.removeById('main');
+  log.debug('TrayIcon closed');
+  tray = null;
+ }
+}
+
 export async function createTrayIcon() {
  log.debug('createTrayIcon tray:', tray, 'tray_loading:', tray_loading);
  if (tray || tray_loading) {
   return;
  }
- tray_loading = true;
-
  if (!get(showTrayIcon)) {
   log.debug('Tray icon not enabled');
   return;
  }
  if (TAURI && !TAURI_MOBILE) {
+  tray_loading = true;
+
   // Get the path to the icon file
   const iconPath = await defaultWindowIcon();
   //resolveResource('icons/icon.png');
@@ -89,18 +101,5 @@ export async function createTrayIcon() {
   tray = await TrayIcon.new(options);
   tray_loading = false;
   log.debug('TrayIcon created:', tray);
- }
-}
-
-export async function destroyTrayIcon() {
- if (TAURI && !TAURI_MOBILE) {
-  log.debug('destroyTrayIcon');
-
-  {
-   if (tray && !tray_loading) await tray.close();
-   TrayIcon.removeById('main');
-   log.debug('TrayIcon closed');
-   tray = null;
-  }
  }
 }
