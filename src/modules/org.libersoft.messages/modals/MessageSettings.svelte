@@ -60,7 +60,7 @@
 
 <div class="group">
  <div class="label">
-  <span class="bold">Photo radius</span>
+  <span class="bold">Photo radius:</span>
  </div>
  <Select bind:value={$photoRadius}>
   <Option value="50%" text="Circle" selected={true} />
@@ -71,7 +71,6 @@
 </div>
 
 {#if TAURI}
- <br /><br /><br /><br />
  <div class="group">
   <div class="label">
    <span class="bold">Default file download folder (todo)</span>
