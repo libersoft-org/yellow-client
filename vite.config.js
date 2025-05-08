@@ -45,7 +45,12 @@ export default defineConfig(({mode}) => {
    },
    build: {
     chunkSizeWarningLimit: 6000
-   }
+   },
+   optimizeDeps: {
+    include: [
+     '@tauri-apps/api',
+    ]
+   },
   }
  }
 );
