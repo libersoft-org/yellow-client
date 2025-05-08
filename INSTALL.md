@@ -59,10 +59,19 @@ After that use this command to build it:
 
 ... and then move the content of your "**build**" folder to your web server.
 
-If you'd like to **run this software in developer mode**, first you need to create HTTPS certificate keys:
+If you'd like to **run this software in developer mode**, you need HTTPS certificate keys.
+
+#### a) Generate self-signed certificate keys:
 
 ```sh
 openssl req -x509 -newkey rsa:2048 -nodes -days $(expr '(' $(date -d 2999/01/01 +%s) - $(date +%s) + 86399 ')' / 86400) -subj "/" -keyout server.key -out server.crt
+```
+
+#### b) Use certificate keys signed by your CA:
+
+```sh
+ln -s /etc/certbot/live/YOUR_DOMAIN/privkey.pem server.key
+ln -s /etc/certbot/live/YOUR_DOMAIN/fullchain.pem server.crt
 ```
 
 ... then use this command to start the server in development mode:
