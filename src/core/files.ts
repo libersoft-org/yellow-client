@@ -8,6 +8,12 @@ export class NativeDownload {
  public file_path: string;
  public temp_file_path: string;
  public potential_default_folder: null | string = null;
+
+ constructor() {
+  this.original_file_name = '';
+  this.file_path = '';
+  this.temp_file_path = '';
+ }
 }
 
 async function findFreeFileName(folder: string, download: NativeDownload) {
@@ -15,9 +21,9 @@ async function findFreeFileName(folder: string, download: NativeDownload) {
  while (true) {
   let file_name = download.original_file_name + (counter > 0 ? ` (${counter})` : '');
   const file_path = path.join(folder, file_name);
-  const exists_file = await exists(file_path, { dir: BaseDirectory.Download });
+  const exists_file = await exists(file_path, { baseDir: BaseDirectory.Download });
   const temp_file_path = path.join(file_path, '.part');
-  const exists_file2 = await exists(temp_file_path, { dir: BaseDirectory.Download });
+  const exists_file2 = await exists(temp_file_path, { baseDir: BaseDirectory.Download });
   if (!exists_file && !exists_file2) {
    download.file_path = file_path;
    download.temp_file_path = temp_file_path;
@@ -50,11 +56,11 @@ export async function offerNativeDownload(file_name: string, defaultFileDownload
 
 export async function saveNativeDownloadChunk(download: NativeDownload, chunk: Blob) {
  const file_path = download.file_path;
- await writeFile(download.temp_file_path, chunk, { dir: BaseDirectory.Download });
+ await writeFile(download.temp_file_path, new Uint8Array(await chunk.arrayBuffer()), { baseDir: BaseDirectory.Download });
 }
 
 export async function finishNativeDownload(download: NativeDownload) {
  const file_path = download.file_path;
  const temp_file_path = download.temp_file_path;
- await rename(temp_file_path, file_path, { dir: BaseDirectory.Download });
+ await rename(temp_file_path, file_path, { oldPathBaseDir: BaseDirectory.Download, newPathBaseDir: BaseDirectory.Download });
 }
