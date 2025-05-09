@@ -38,7 +38,7 @@ test('Test with manually set localStorage', async ({ page }) => {
  const active_account_id = await page.evaluate(() => JSON.parse(localStorage.getItem('active_account_id') || ''));
  expect(active_account_id).toBe(activeAccountId);
 
- await page.getByRole('button', { name: 'user2@example.com' }).click();
+ await page.getByRole('button', { name: 'user1@example.com' }).click();
  await page.getByRole('textbox', { name: 'Enter your message' }).click();
  await page.getByRole('textbox', { name: 'Enter your message' }).fill('hi from playwright');
  await page.getByRole('button', { name: 'Send' }).click();

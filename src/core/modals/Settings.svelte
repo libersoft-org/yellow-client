@@ -4,7 +4,7 @@
  import SettingsNotifications from '../components/Settings/SettingsNotifications.svelte';
  import SettingsGeneral from '../components/Settings/SettingsGeneral.svelte';
  import { TAURI } from '@/core/tauri.ts';
- let activeTab = 'general';
+ let activeTab = TAURI ? 'general' : 'appearance';
  let menuItemProps = {
   bgColor: '#fff',
   textColor: '#000',

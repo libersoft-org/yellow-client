@@ -99,7 +99,7 @@
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
- <BaseButton onClick={toggle}>
+ <BaseButton name="account-bar-toggle" onClick={toggle}>
   <div class="dropdown">
    {#if $active_account}
     <div class="text">
