@@ -12,9 +12,10 @@
   colorVariable?: string;
   onClick?: () => void;
   isButton?: boolean;
+  'data-testid'?: string;
  }
 
- let { img, alt = '', size = 24, padding = 10, visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false }: Props = $props();
+ let { img, alt = '', size = 24, padding = 10, visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false, 'data-testid': dataTestId }: Props = $props();
 </script>
 
 <style>
@@ -50,10 +51,12 @@
 
 {#if img}
  {#if onClick || isButton}
-  <BaseButton {onClick}>
+  <BaseButton {onClick} data-testid={dataTestId}>
    {@render icon()}
   </BaseButton>
  {:else}
-  {@render icon()}
+  <div data-testid={dataTestId}>
+   {@render icon()}
+  </div>
  {/if}
 {/if}
