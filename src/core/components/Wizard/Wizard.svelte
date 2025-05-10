@@ -110,9 +110,9 @@
   {/if}
   <div class="gap"></div>
   {#if currentStep < steps.length - 1}
-   <Button text={nextText} onClick={nextStep} />
+   <Button data-testid="wizard-next" text={nextText} onClick={nextStep} />
   {:else}
-   <Button text="Finish" onClick={close} />
+   <Button data-testid="wizard-next" text="Finish" onClick={close} />
   {/if}
  </div>
 </div>

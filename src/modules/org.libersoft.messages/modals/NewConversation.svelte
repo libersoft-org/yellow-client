@@ -44,5 +44,5 @@
 <div class="group">
  <div class="label">Address:</div>
  <Input placeholder="user@domain.tld" onKeydown={keyEnter} bind:this={elAddress} bind:value />
- <Button name="Open" text="Open" onClick={clickOpen} />
+ <Button data-testid="New Conversation Open" name="New Conversation Open" text="Open" onClick={clickOpen} />
 </div>

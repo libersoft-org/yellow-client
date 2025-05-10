@@ -36,7 +36,7 @@
  }
 </style>
 
-<BaseButton onClick={() => clickSetModule(decl.id)}>
+<BaseButton data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
  <div class="item {selected && 'selected'}">
   <Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
   <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="30" />

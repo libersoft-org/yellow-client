@@ -317,7 +317,7 @@
   <!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />-->
   <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32" padding="0" onClick={() => (showVideoRecorderModal = true)} />
   <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" colorVariable="--icon-yellow" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
-  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} colorVariable="--icon-yellow" />
+  <Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} colorVariable="--icon-yellow" />
   {#if $debug}
    <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="20" padding="0" onClick={clickSendSplit} colorVariable="--icon-yellow" />
   {/if}

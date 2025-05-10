@@ -33,7 +33,7 @@
  }
 </style>
 
-<BaseButton onClick={() => clickSelectAccount($a.id)}>
+<BaseButton data-testid={$a.credentials?.address} onClick={() => clickSelectAccount($a.id)}>
  <div class="item">
   <div class="title"><AccountStatusIcon account={a} /><AccountTitle {a} /></div>
   <small><AccountStatus account={a} /></small>

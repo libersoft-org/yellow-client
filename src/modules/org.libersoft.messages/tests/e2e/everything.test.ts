@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('test', async ({ page }) => {
  await page.goto('http://localhost:3000/');
- await page.getByRole('button', { name: 'Next' }).click();
+ await page.getByTestId('wizard-next').click();
  await page.getByRole('textbox', { name: 'Title:' }).click();
  await page.getByRole('textbox', { name: 'Title:' }).fill('');
  await page.getByRole('textbox', { name: 'Server:' }).press('Shift+Home');
@@ -32,86 +32,31 @@ test('test', async ({ page }) => {
  await page.getByRole('textbox', { name: 'Address:' }).click();
  await page.getByRole('textbox', { name: 'Address:' }).fill('user2@example.com');
  await page.getByRole('button', { name: 'Add the account' }).click();
- await page.locator('.s-GZHjBM5MkkEc > .base-button').first().click();
- await page.getByRole('button', { name: 'user2@example.com ▼' }).click();
- await page.getByRole('button', { name: 'user1@example.com Logged in.' }).click();
- await page.getByRole('button', { name: 'user2@example.com user2@' }).click();
- await page.getByRole('button', { name: 'account-bar-toggle' }).click();
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
- await page.locator('body').press('End');
+
+ // switch account
+ await page.getByTestId('account-bar-toggle').click();
+ await page.getByTestId('user1@example.com').click();
+
+ // switch module
+ await page.getByTestId('ModuleBarItem-org.libersoft.messages').click();
+
+ await page.getByRole('button', { name: 'New conversation New' }).click();
+ await page.getByRole('textbox', { name: 'user@domain.tld' }).fill('user2@example.com');
+ await new Promise(resolve => setTimeout(resolve, 1000));
+ await page.getByTestId('New Conversation Open').click();
+
  await page.getByRole('textbox', { name: 'Enter your message' }).fill('blabla bla');
- await page.getByRole('button', { name: 'user1@example.com ▼' }).click();
- await page.getByRole('button', { name: 'user2@example.com Logged in.' }).click();
- await page.getByRole('button', { name: 'user1@example.com user1@' }).click();
+ await page.getByTestId('messagebarsend').click();
+
+ // switch account
+ await page.getByTestId('account-bar-toggle').click();
+ await page.getByTestId('user2@example.com').click();
+
  await page.getByRole('button', { name: 'blabla bla Add reaction 5/9/' }).click({
   button: 'right',
  });
  await page.getByRole('button', { name: 'Reply Reply' }).click();
  await page.getByRole('textbox', { name: 'Enter your message' }).fill('ble ble ble');
- await page.getByRole('button', { name: 'New conversation New' }).click();
- await page.getByRole('textbox', { name: 'user@domain.tld' }).fill('user3@example.com');
- await new Promise(resolve => setTimeout(resolve, 1000));
 
  //  await page.waitForSelector('role=button[name="Open"]');
  //todo: Open not unique
