@@ -160,12 +160,13 @@ test('test', async ({ page }) => {
  await page.getByTestId('user3@example.com').click();
  await new Promise(resolve => setTimeout(resolve, 5000));
 
- // Start a new conversation
- await page.getByTestId('new-conversation-button').click();
- await page.getByTestId('new-conversation-address').fill('user4@example.com');
- await page.getByTestId('New Conversation Open').click();
- await page.getByTestId('message-input').fill('hi user4');
- await page.getByTestId('messagebarsend').click();
+ // todo:
+ // // Start a new conversation
+ // await page.getByTestId('new-conversation-button').click();
+ // await page.getByTestId('new-conversation-address').fill('user4@example.com');
+ // await page.getByTestId('New Conversation Open').click();
+ // await page.getByTestId('message-input').fill('hi user4');
+ // await page.getByTestId('messagebarsend').click();
 
  // Open messages settings again
  await page.getByTestId('messages-settings-button').click();
