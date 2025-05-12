@@ -6,6 +6,8 @@
  export let clickItem;
 
  $: ensureConversationDetails(c);
+ let testid;
+ $: testid = 'conversation ' + c.address;
 </script>
 
 <style>
@@ -76,7 +78,7 @@
  }
 </style>
 
-<BaseButton data-testid={'conversation' + $selectedConversation?.address} onClick={() => clickItem(c)}>
+<BaseButton data-testid={testid} onClick={() => clickItem(c)}>
  <div class="item" class:active={c.address === $selectedConversation?.address}>
   <div class="item-row">
    <Photo size="50" />
