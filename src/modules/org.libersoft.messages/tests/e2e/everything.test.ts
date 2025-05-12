@@ -52,6 +52,9 @@ test('test', async ({ page }) => {
  await page.getByTestId('account-bar-toggle').click();
  await page.getByTestId('user2@example.com').click();
 
+ // open conversation
+ await page.getByTestId('conversation user1@example.com').click();
+
  await page.getByRole('button', { name: 'blabla bla Add reaction 5/9/' }).click({
   button: 'right',
  });

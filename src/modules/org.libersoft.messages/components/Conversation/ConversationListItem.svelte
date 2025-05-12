@@ -76,7 +76,7 @@
  }
 </style>
 
-<BaseButton onClick={() => clickItem(c)}>
+<BaseButton data-testid={'conversation' + $selectedConversation?.address} onClick={() => clickItem(c)}>
  <div class="item" class:active={c.address === $selectedConversation?.address}>
   <div class="item-row">
    <Photo size="50" />
