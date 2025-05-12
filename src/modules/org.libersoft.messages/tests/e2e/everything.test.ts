@@ -1,5 +1,23 @@
 import { test, expect } from '@playwright/test';
 
+/**
+ * Helper function to switch to a module only if it's not already selected
+ * @param page - The Playwright page object
+ * @param moduleId - The module ID to switch to
+ */
+async function switchModule(page, moduleId) {
+ const moduleSelector = page.getByTestId(`ModuleBarItem-${moduleId}`);
+ const selectedElement = moduleSelector.locator('div.selected');
+
+ // Check if module is already selected
+ const isSelected = (await selectedElement.count()) > 0;
+
+ // Only click if not already selected
+ if (!isSelected) {
+  await moduleSelector.click();
+ }
+}
+
 test('test', async ({ page }) => {
  await page.goto('http://localhost:3000/');
  await page.getByTestId('wizard-next').click();
@@ -38,7 +56,7 @@ test('test', async ({ page }) => {
  await page.getByTestId('user1@example.com').click();
 
  // switch module
- await page.getByTestId('ModuleBarItem-org.libersoft.messages').click();
+ await switchModule(page, 'org.libersoft.messages');
 
  // Start a new conversation
  await page.getByTestId('new-conversation-button').click();
@@ -81,6 +99,9 @@ test('test', async ({ page }) => {
  await page.getByTestId('account-bar-toggle').click();
  await page.getByTestId('user1@example.com').click();
 
+ // switch module
+ await switchModule(page, 'org.libersoft.messages');
+
  // Start a new conversation with user3
  await page.getByTestId('new-conversation-button').click();
  await page.getByTestId('new-conversation-address').fill('user3@example.com');
@@ -94,12 +115,12 @@ test('test', async ({ page }) => {
  await page.getByRole('button', { name: 'Save' }).click();
 
  // Switch between modules
- await page.getByTestId('ModuleBarItem-org.libersoft.contacts').click();
- await page.getByTestId('ModuleBarItem-org.libersoft.dating').click();
- await page.getByTestId('ModuleBarItem-org.libersoft.wallet').click();
- await page.getByTestId('ModuleBarItem-org.libersoft.iframes').click();
- await page.getByTestId('ModuleBarItem-org.libersoft.contacts').click();
- await page.getByTestId('ModuleBarItem-org.libersoft.messages').click();
+ await switchModule(page, 'org.libersoft.contacts');
+ await switchModule(page, 'org.libersoft.dating');
+ await switchModule(page, 'org.libersoft.wallet');
+ await switchModule(page, 'org.libersoft.iframes');
+ await switchModule(page, 'org.libersoft.contacts');
+ await switchModule(page, 'org.libersoft.messages');
 
  // Account management section
  // Open account menu
@@ -137,6 +158,7 @@ test('test', async ({ page }) => {
  // switch account
  await page.getByTestId('account-bar-toggle').click();
  await page.getByTestId('user3@example.com').click();
+ await new Promise(resolve => setTimeout(resolve, 5000));
 
  // Start a new conversation
  await page.getByTestId('new-conversation-button').click();
