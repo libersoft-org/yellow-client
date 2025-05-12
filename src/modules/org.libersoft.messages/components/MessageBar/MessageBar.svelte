@@ -268,7 +268,7 @@
   display: contents;
  }
 
- .message {
+ .message-textarea {
   flex-grow: 1;
   padding: 5px;
   border: 0;
@@ -313,7 +313,7 @@
    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32" padding="0" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
   {/if}
 
-  <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
+  <textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
   <!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />-->
   <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32" padding="0" onClick={() => (showVideoRecorderModal = true)} />
   <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" colorVariable="--icon-yellow" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />

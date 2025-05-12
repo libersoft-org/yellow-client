@@ -40,12 +40,14 @@ test('test', async ({ page }) => {
  // switch module
  await page.getByTestId('ModuleBarItem-org.libersoft.messages').click();
 
- await page.getByRole('button', { name: 'New conversation New' }).click();
- await page.getByRole('textbox', { name: 'user@domain.tld' }).fill('user2@example.com');
+ // Start a new conversation
+ await page.getByTestId('new-conversation-button').click();
+ await page.getByTestId('new-conversation-address').fill('user2@example.com');
  await new Promise(resolve => setTimeout(resolve, 1000));
  await page.getByTestId('New Conversation Open').click();
 
- await page.getByRole('textbox', { name: 'Enter your message' }).fill('blabla bla');
+ // Send a message
+ await page.getByTestId('message-input').fill('blabla bla');
  await page.getByTestId('messagebarsend').click();
 
  // switch account
@@ -55,77 +57,112 @@ test('test', async ({ page }) => {
  // open conversation
  await page.getByTestId('conversation user1@example.com').click();
 
- await page.getByRole('button', { name: 'blabla bla Add reaction 5/9/' }).click({
-  button: 'right',
- });
- await page.getByRole('button', { name: 'Reply Reply' }).click();
- await page.getByRole('textbox', { name: 'Enter your message' }).fill('ble ble ble');
+ // Reply to a message - right-click the last message, then click Reply
+ // This could use two improvements:
+ // last() gets the last message, which might not be the exact message we sent above, especially if we want to consider running the tests without always clearing and re-populating the database, which we dont want to do always (like during test development).
+ await page.getByTestId('message-item').last().click({ button: 'right' });
+ // the other improvement is that we should test that what we click that particular message, (say we identify it by its uuid), we should check that it is the corresponding context menu that becomes visible. But we should probably mainly rewrite ContextMenu to make it only render when it's open, rather than rendering in invisible state. If i'm not mistaken, the test here could be clicking on an invisible item.
+ await page.getByTestId('reply-context-menu-item').last().click();
+ await page.getByTestId('message-input').fill('ble ble ble');
+ await page.getByTestId('messagebarsend').click();
 
- //  await page.waitForSelector('role=button[name="Open"]');
- //todo: Open not unique
- await page.getByRole('button', { name: 'OpenENEN' }).click();
- await expect(page.getByText('Open')).toBeVisible();
- await page.getByText('Open').click();
+ // switch account
+ await page.getByTestId('account-bar-toggle').click();
+ await page.getByTestId('user1@example.com').click();
 
- await page.getByRole('textbox', { name: 'Enter your message' }).fill('hi 3');
- await page.getByRole('button', { name: 'user1@example.com user1@' }).click();
- await page.getByRole('button', { name: 'user3@example.com user3@' }).click();
- await page.getByRole('button', { name: 'Messages settings' }).click();
+ // open conversation
+ await page.getByTestId('conversation user2@example.com').click();
+
+ // send reaction
+ await page.getByTestId('message-reaction-menu-button').last().click();
+ await page.getByTestId('message-reaction-emoji-button').last().click();
+
+ // switch account
+ await page.getByTestId('account-bar-toggle').click();
+ await page.getByTestId('user1@example.com').click();
+
+ // Start a new conversation with user3
+ await page.getByTestId('new-conversation-button').click();
+ await page.getByTestId('new-conversation-address').fill('user3@example.com');
+ await page.getByTestId('New Conversation Open').click();
+ await page.getByTestId('message-input').fill('hi 3');
+
+ // Open messages settings
+ await page.getByTestId('messages-settings-button').click();
  await page.getByRole('slider').fill('636928');
  await page.getByRole('combobox').selectOption('10px');
  await page.getByRole('button', { name: 'Save' }).click();
- /*  await page.locator('.module-bar').click();
-  await page.locator('.module-bar').click();
-  await page.locator('.module-bar').click();
-  await page.locator('.module-bar').click();*/
- await page.locator('.items > div:nth-child(2) > .base-button').click();
- await page.locator('.items > div:nth-child(3) > .base-button').click();
- await page.locator('div:nth-child(4) > .base-button').first().click();
- await page.locator('div:nth-child(5) > .base-button').first().click();
- await page.locator('.items > div:nth-child(2) > .base-button').click();
- await page.locator('.items > div:nth-child(1) > .base-button').click();
- await page.getByRole('button', { name: 'user2@example.com ▼' }).click();
+
+ // Switch between modules
+ await page.getByTestId('ModuleBarItem-org.libersoft.contacts').click();
+ await page.getByTestId('ModuleBarItem-org.libersoft.dating').click();
+ await page.getByTestId('ModuleBarItem-org.libersoft.wallet').click();
+ await page.getByTestId('ModuleBarItem-org.libersoft.iframes').click();
+ await page.getByTestId('ModuleBarItem-org.libersoft.contacts').click();
+ await page.getByTestId('ModuleBarItem-org.libersoft.messages').click();
+
+ // Account management section
+ // Open account menu
+ await page.getByTestId('account-bar-toggle').click();
+ // Go to account management
  await page.getByRole('button', { name: 'Account management Account' }).click();
- const downloadPromise = page.waitForEvent('download');
- await page.getByRole('button', { name: 'Export' }).click();
- const download = await downloadPromise;
- await page.getByRole('button', { name: 'X', exact: true }).click();
+
+ // Add a new account with user3
  await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
- await page.getByRole('textbox', { name: 'Title:' }).dblclick();
- await page.getByRole('textbox', { name: 'Title:' }).press('End');
- await page.getByRole('textbox', { name: 'Title:' }).press('Shift+Home');
+ // Clear and fill account fields
  await page.getByRole('textbox', { name: 'Title:' }).fill('');
- await page.getByRole('textbox', { name: 'Title:' }).press('Tab');
  await page.getByRole('textbox', { name: 'Server:' }).fill('ws://localhost:8085');
- await page.getByRole('textbox', { name: 'Title:' }).click();
- await page.getByRole('textbox', { name: 'Title:' }).press('Tab');
- await page.getByRole('textbox', { name: 'Server:' }).press('Tab');
  await page.getByRole('textbox', { name: 'Address:' }).fill('user3@example.com');
- await page.getByRole('textbox', { name: 'Address:' }).press('Tab');
  await page.getByRole('textbox', { name: 'Password:' }).fill('password');
  await page.getByRole('button', { name: 'Add the account' }).click();
+
+ // Export all accounts
  await page.getByRole('button', { name: 'Export' }).click();
  const download1Promise = page.waitForEvent('download');
- await page.getByText('Export all accounts').click();
+ await page.getByText('Download').click();
  const download1 = await download1Promise;
+ // close dialog
+ await page.getByRole('button', { name: 'X', exact: true }).click();
+
+ // Delete account
  await page.getByRole('button', { name: 'Delete' }).first().click();
  await page.locator('button').filter({ hasText: 'Delete' }).click();
+
+ // Disable account
  await page.getByRole('button', { name: 'Edit' }).first().click();
+ // Toggle the enabled checkbox
  await page.locator('label').filter({ hasText: 'Enabled:' }).locator('span').click();
  await page.getByRole('button', { name: 'Save' }).click();
- //  await page.locator('.s-GZHjBM5MkkEc > .base-button').first().click();
- await page.getByRole('button', { name: 'Start a new one' }).click();
- await page.getByRole('textbox', { name: 'user@domain.tld' }).fill('user1@example.com');
- await page.getByRole('button', { name: 'Open' }).click();
- await page.getByRole('textbox', { name: 'Enter your message' }).fill('hi user1');
- await page.getByRole('button', { name: 'Messages settings' }).click();
+
+ // switch account
+ await page.getByTestId('account-bar-toggle').click();
+ await page.getByTestId('user3@example.com').click();
+
+ // Start a new conversation
+ await page.getByTestId('new-conversation-button').click();
+ await page.getByTestId('new-conversation-address').fill('user4@example.com');
+ await page.getByTestId('New Conversation Open').click();
+ await page.getByTestId('message-input').fill('hi user4');
+ await page.getByTestId('messagebarsend').click();
+
+ // Open messages settings again
+ await page.getByTestId('messages-settings-button').click();
+ // Change font size settings
  await page.getByRole('slider').fill('2756608');
  await page.getByRole('button', { name: 'Save' }).click();
+
+ // Open global settings
  await page.getByRole('button', { name: '☰' }).click();
  await page.getByRole('button', { name: 'Settings Settings' }).click();
+
+ // Navigate to notifications settings
  await page.getByRole('button', { name: 'Notifications Notifications' }).click();
  await page.getByRole('row', { name: 'Notification sound:' }).locator('span').click();
+
+ // Navigate to appearance settings
  await page.getByRole('button', { name: 'Appearance Appearance' }).click();
+
+ // Back to notifications and close settings
  await page.getByRole('button', { name: 'Notifications Notifications' }).click();
  await page.getByRole('button', { name: 'X', exact: true }).click();
 });

@@ -130,7 +130,7 @@
 </style>
 
 {#snippet emoji(codepoints)}
- <BaseButton onClick={() => onEmojiClick(codepoints)}>
+ <BaseButton onClick={() => onEmojiClick(codepoints)} data-testid="message-reaction-emoji-button">
   <div class="emoji-button emoji">
    <Emoji {codepoints} context={'menu'} is_single={true} size={30} />
   </div>
@@ -138,7 +138,7 @@
 {/snippet}
 
 <div bind:this={buttonRef} class="reaction-button" class:open={show}>
- <Icon img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--icon-black" size={24} padding={0} {onClick} />
+ <Icon data-testid="message-reaction-menu-button" img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--icon-black" size={24} padding={0} {onClick} />
 </div>
 
 {#if show}
