@@ -12,6 +12,17 @@ import {
 } from '@tauri-apps/api/window';
 import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
 import { Mutex } from 'async-mutex';
+import * as app from '@tauri-apps/api';
+
+declare global {
+ interface Window {
+  sw: ServiceWorker;
+ }
+
+ interface ServiceWorker {
+  showNotification: (title: string, options?: NotificationOptions) => Promise<void>;
+ }
+}
 
 /* yellow notifications, for use in core and modules */
 
@@ -279,25 +290,39 @@ async function showBrowserNotification(notification: YellowNotification) {
  console.log('showBrowserNotification:', notification);
  let icon = await toPngBlob(notification.icon);
 
- let n = new Notification(notification.title, {
-  tag: notification.id,
-  body: notification.body,
-  //  icon: 'http://localhost:3000/favicon2.png',
-  //  icon: 'data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7', //icon,
-  icon: icon,
-  //silent: false,
-  //vibrate: [200, 100, 200],
- });
- n.onclick = async e => {
-  log.debug('notification onclick:', e);
-  await notification.callback?.('click');
- };
- browser_notifications.set(notification.id, n);
- n.onclose = () => {
-  log.debug('browser notification onclose:', notification.id);
-  browser_notifications.delete(notification.id);
-  stopNotificationSound(notification);
- };
+ if (window.sw) {
+  log.debug('showBrowserNotification sw:', window.sw);
+  window.sw.showNotification(notification.title, {
+   body: notification.body,
+   icon: icon,
+   tag: notification.id,
+   //vibrate: [200, 100, 200],
+  });
+ }
+
+ try {
+  let n = new Notification(notification.title, {
+   tag: notification.id,
+   body: notification.body,
+   //  icon: 'http://localhost:3000/favicon2.png',
+   //  icon: 'data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7', //icon,
+   icon: icon,
+   //silent: false,
+   //vibrate: [200, 100, 200],
+  });
+  n.onclick = async e => {
+   log.debug('notification onclick:', e);
+   await notification.callback?.('click');
+  };
+  browser_notifications.set(notification.id, n);
+  n.onclose = () => {
+   log.debug('browser notification onclose:', notification.id);
+   browser_notifications.delete(notification.id);
+   stopNotificationSound(notification);
+  };
+ } catch (e) {
+  console.error(e);
+ }
 }
 
 async function deleteBrowserNotification(id: string): Promise<void> {

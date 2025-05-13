@@ -197,6 +197,7 @@
  });
 
  onDestroy(() => {
+  console.log('VideoRecorderContainer onDestroy playerInstance:', playerInstance);
   if (playerInstance) {
    playerInstance.dispose();
    playerInstance = null;
