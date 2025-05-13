@@ -148,7 +148,7 @@
   await s.delete(id);
   notifications.update(v => v.filter(item => item.id !== id));
   if (get(notifications).length === 0) {
-   invoke('close_notifications_window', {});
+   invoke('hide_notifications_window', {});
   }
  }
 
