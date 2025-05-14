@@ -1,5 +1,5 @@
 <script>
- import '../app.css';
+ //import '../../static/app.css';
  import { onMount, onDestroy, setContext } from 'svelte';
  import { get } from 'svelte/store';
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';

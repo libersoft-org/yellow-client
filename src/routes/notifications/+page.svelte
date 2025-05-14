@@ -1,5 +1,5 @@
 <script>
- import '../../app.css';
+ //import '../../../static/app.css';
  import Button from '@/core/components/Button/Button.svelte';
  import { writable, get } from 'svelte/store';
  import Notification from '../../core/components/Notification/Notification.svelte';
