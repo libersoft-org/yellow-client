@@ -19,3 +19,4 @@ vite.config.js.timestamp-*
 test-results
 
 **/.claude/settings.local.json
+.DS_Store
