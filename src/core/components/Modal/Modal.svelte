@@ -181,7 +181,7 @@
   {#if showContent}
    <div class="header" role="none" tabindex="-1" on:mousedown={dragStart}>
     <div class="title">{title}</div>
-    <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={close} />
+    <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={close} />
    </div>
    <div class="body">
     <slot>

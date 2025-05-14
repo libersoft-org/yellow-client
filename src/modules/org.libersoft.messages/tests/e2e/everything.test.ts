@@ -9,6 +9,10 @@ async function switchModule(page, moduleId) {
  const moduleSelector = page.getByTestId(`ModuleBarItem-${moduleId}`);
  const selectedElement = moduleSelector.locator('div.selected');
 
+ // Click the module selector to possibly switch away from core page - this is a workaround for proper active page management in core.
+ await moduleSelector.click();
+ await moduleSelector.click();
+
  // Check if module is already selected
  const isSelected = (await selectedElement.count()) > 0;
 
@@ -160,6 +164,8 @@ test('test', async ({ page }) => {
  await page.getByTestId('user3@example.com').click();
  await new Promise(resolve => setTimeout(resolve, 5000));
 
+ await switchModule(page, 'org.libersoft.messages');
+
  // todo:
  // // Start a new conversation
  // await page.getByTestId('new-conversation-button').click();
@@ -187,5 +193,5 @@ test('test', async ({ page }) => {
 
  // Back to notifications and close settings
  await page.getByRole('button', { name: 'Notifications Notifications' }).click();
- await page.getByRole('button', { name: 'X', exact: true }).click();
+ await page.getByTestId('Modal-close').click();
 });
