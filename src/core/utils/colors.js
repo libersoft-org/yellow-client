@@ -3,6 +3,7 @@ import { hexToCSSFilter } from 'hex-to-css-filter';
 export function getColorFromCSSToFilter(name) {
  let v = getColorFromCSS(name);
  v = convertFromShortHex(v);
+ console.log('getColorFromCSSToFilter', name, 'v=', v);
  return hexToCSSFilter(v).filter;
 }
 
