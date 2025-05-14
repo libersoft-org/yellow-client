@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+Import { test, expect } from '@playwright/test';
 
 /**
  * Helper function to switch to a module only if it's not already selected
