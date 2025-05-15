@@ -1,8 +1,8 @@
 <script>
  import Button from '@/core/components/Button/Button.svelte';
- import Input from '../../../core/components/Input/Input.svelte';
- import Modal from '../../../core/components/Modal/Modal.svelte';
- import DropdownFilter from '../../../core/components/Dropdown/DropdownFilter.svelte';
+ import Input from '@/core/components/Input/Input.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
+ import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
  import SendModal from '../modals/send.svelte';
  import { get } from 'svelte/store';
  import { currencies, selectedMainCurrencySymbol, sendTransaction } from '../wallet.ts';

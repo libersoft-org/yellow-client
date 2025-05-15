@@ -1,11 +1,11 @@
 <script>
- import { module } from '../module.js';
- import { addNetwork, removeNetwork, networks, default_networks } from '../wallet.ts';
- import Icon from '../../../core/components/Icon/Icon.svelte';
- import Modal from '../../../core/components/Modal/Modal.svelte';
+ import { module } from '../../module.js';
+ import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import ModalEditNetwork from '../modals/edit-network.svelte';
- import ModalTokenList from '../modals/token-list.svelte';
+ import ModalEditNetwork from '../../modals/edit-network.svelte';
+ import ModalTokenList from '../../modals/token-list.svelte';
  import { get } from 'svelte/store';
 
  let showModalEditNetwork = false;

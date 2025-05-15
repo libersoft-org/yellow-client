@@ -1,5 +1,5 @@
 <script>
- import { accounts, findAccount, sendAsync } from '../../../core/core.js';
+ import { accounts, findAccount, sendAsync } from '@/core/core.js';
  import { get } from 'svelte/store';
  import { onMount } from 'svelte';
 

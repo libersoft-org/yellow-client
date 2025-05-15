@@ -1,7 +1,7 @@
 import { replaceEmojisWithTags } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
-import { log } from '../../core/tauri.ts';
+import { log } from '@/core/tauri.ts';
 import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
 import { FileUploadRecordStatus, FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
@@ -10,7 +10,7 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '../../core/core.js';
+import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '@/core/core.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';

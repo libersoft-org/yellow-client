@@ -1,5 +1,5 @@
 <script>
- import Core from '../../../core/core.js';
+ import Core from '@/core/core.js';
  import Item from '../components/sidebar-item.svelte';
  import { page } from '../dating.js';
 

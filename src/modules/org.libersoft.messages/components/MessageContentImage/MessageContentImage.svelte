@@ -4,7 +4,7 @@
  import ImageAspectRatio from '@/core/components/ImageAspectRatio/ImageAspectRatio.svelte';
  import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
  import { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
- import Spinner from '../../../../core/components/Spinner/Spinner.svelte';
+ import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import { writable } from 'svelte/store';
  import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
  import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';

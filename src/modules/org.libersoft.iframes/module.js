@@ -1,4 +1,4 @@
-import { registerModule } from '../../core/core.js';
+import { registerModule } from '@/core/core.js';
 import Sidebar from './pages/sidebar.svelte';
 import Content from './pages/content.svelte';
 export const module = {

@@ -5,7 +5,7 @@
  import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
  import { parseUnits } from 'ethers';
  import { get } from 'svelte/store';
- import DropdownFilter from '../../../core/components/Dropdown/DropdownFilter.svelte';
+ import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
  let addressElement;
  let paymentElement;
  let amount = '0';

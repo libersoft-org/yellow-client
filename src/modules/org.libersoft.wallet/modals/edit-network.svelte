@@ -1,11 +1,9 @@
 <script>
  import { networks } from '../wallet.ts';
  import Button from '@/core/components/Button/Button.svelte';
- import Input from '../../../core/components/Input/Input.svelte';
- import { onMount } from 'svelte';
+ import Input from '@/core/components/Input/Input.svelte';
  export let close;
  export let params;
-
  let item_guid = '';
  let item_name = '';
  let item_currency_symbol = '';

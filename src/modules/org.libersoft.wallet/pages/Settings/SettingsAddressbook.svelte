@@ -1,11 +1,11 @@
 <script>
  import Button from '@/core/components/Button/Button.svelte';
- import Modal from '../../../core/components/Modal/Modal.svelte';
- import ModalAddEdit from '../modals/addressbook-add-edit.svelte';
- import ModalDel from '../modals/addressbook-del.svelte';
- import Icon from '../../../core/components/Icon/Icon.svelte';
- import { module } from '../module.js';
- import { addressBook } from '../wallet.ts';
+ import Modal from '@/core/components/Modal/Modal.svelte';
+ import ModalAddEdit from '../../modals/addressbook-add-edit.svelte';
+ import ModalDel from '../../modals/addressbook-del.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import { module } from '../../module.js';
+ import { addressBook } from '../../wallet.ts';
  import { get } from 'svelte/store';
  let showModalAddEdit = false;
  let showModalDel = false;

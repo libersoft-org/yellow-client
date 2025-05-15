@@ -1,6 +1,6 @@
 <script>
- import Select from '../../../core/components/Select/Select.svelte';
- import SelectOption from '../../../core/components/Select/SelectOption.svelte';
+ import Select from '@/core/components/Select/Select.svelte';
+ import SelectOption from '@/core/components/Select/SelectOption.svelte';
 </script>
 
 <style>

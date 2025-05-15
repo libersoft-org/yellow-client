@@ -1,20 +1,20 @@
 <script>
  import { onMount } from 'svelte';
+ import { module } from '../module.js';
  import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- import Modal from '../../../core/components/Modal/Modal.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
  import Send from './send.svelte';
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
  import History from './history.svelte';
- import AddressBook from './settings-addressbook.svelte';
- import Settings from './settings.svelte';
+ import Settings from './Settings/Settings.svelte';
  import Dropdown from '../components/dropdown.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import { hideSidebarMobile } from '../../../core/core.js';
+ import { hideSidebarMobile } from '@/core/core.js';
  let section = 'balance';
  let showModalNetworks = false;
  let showModalWallets = false;
@@ -251,11 +251,10 @@
      </div>
     </div>
     <div class="buttons">
-     <Button width="70px" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
-     <Button width="70px" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
+     <Button width="70px" img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
+     <Button width="70px" img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
      <Button width="70px" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
      <Button width="70px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
-     <Button width="70px" text="Address book" onClick={() => setSection('addressbook')} />
      <Button width="70px" text="Settings" onClick={() => setSection('settings')} />
     </div>
     <div class="separator"></div>
