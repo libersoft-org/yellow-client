@@ -10,7 +10,7 @@
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
  import History from './history.svelte';
- import AddressBook from './addressbook.svelte';
+ import AddressBook from './settings-addressbook.svelte';
  import Settings from './settings.svelte';
  import Dropdown from '../components/dropdown.svelte';
  import Button from '@/core/components/Button/Button.svelte';

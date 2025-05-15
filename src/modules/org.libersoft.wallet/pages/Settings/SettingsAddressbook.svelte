@@ -114,9 +114,9 @@
 
 <div class="addressbook">
  <div class="buttons">
-  <Button text="Add an address" onClick={addToAddressBookModal} />
-  <Button img="{module.identifier}/img/export.svg" text="Export" onClick={exportAddressBook} />
-  <Button img="{module.identifier}/img/import.svg" text="Import" onClick={importAddressBook} />
+  <Button img="modules/{module.identifier}/img/address-add.svg" text="Add an address" onClick={addToAddressBookModal} />
+  <Button img="modules/{module.identifier}/img/export.svg" text="Export" onClick={exportAddressBook} />
+  <Button img="modules/{module.identifier}/img/import.svg" text="Import" onClick={importAddressBook} />
  </div>
  {#if $addressBook.length > 0}
   <table>

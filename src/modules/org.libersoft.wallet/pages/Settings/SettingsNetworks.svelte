@@ -97,8 +97,8 @@
 <div class="networks">
  <div class="bold">My networks:</div>
  <div class="buttons">
-  <Button text="Export" onClick={() => doExport()} />
-  <Button text="Import" onClick={() => doImport()} />
+  <Button img="modules/{module.identifier}/img/export.svg" text="Export" onClick={() => doExport()} />
+  <Button img="modules/{module.identifier}/img/import.svg" text="Import" onClick={() => doImport()} />
  </div>
  <div class="items">
   {#each $networks as n, index (n.guid)}
