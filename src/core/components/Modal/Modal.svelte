@@ -1,41 +1,47 @@
 <script lang="ts">
  import { setContext, tick } from 'svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
+ import { debug } from '../../core.js';
+ import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 
  type Props = {
   show?: boolean;
   params?: any;
   title?: string;
-  body?: unknown;
+  body?: any;
   width?: string;
   height?: string;
   onShowChange?: (show: boolean) => void;
-  activeTab?: any;
  };
 
- let { show = $bindable(false), params = {}, title = '', body = null, width, height, onShowChange = () => {}, activeTab = $bindable() }: Props = $props();
+ let { show = $bindable(false), params = {}, title = '', body = null, width, height, onShowChange = () => {} }: Props = $props();
 
- let modalEl = $state(0);
- let posX = 0;
- let posY = 0;
- let isDragging = false;
- let left = $state(0);
- let top = $state(0);
+ let modalEl: HTMLDivElement | null = $state(null);
  let showContent = $state(false);
+ let zIndex = $state(100);
+ let modalId: number;
+ let posX = 0,
+  posY = 0,
+  isDragging = false;
+ let left = $state(0),
+  top = $state(0);
 
- function setShow(value) {
-  if (onShowChange) {
-   onShowChange(value);
-  } else {
-   show = value;
-  }
+ function setShow(value: boolean) {
+  show = value;
+  onShowChange?.(value);
  }
 
  $effect(() => {
   showUpdated(show);
+  modalId = registerModal(z => (zIndex = z));
+  return () => unregisterModal(modalId);
  });
 
- async function showUpdated(showing) {
+ function raiseZIndex() {
+  bringToFront(modalId);
+ }
+
+ async function showUpdated(showing: boolean) {
   if (showing) {
    await tick();
    modalEl?.focus();
@@ -47,7 +53,7 @@
   }
  }
 
- function setTitle(value) {
+ function setTitle(value: string) {
   title = value;
  }
 
@@ -57,41 +63,40 @@
 
  async function positionModal() {
   await tick();
-  if (modalEl) {
-   const rect = modalEl.getBoundingClientRect();
-   top = (window.innerHeight - rect.height) / 2;
-   left = (window.innerWidth - rect.width) / 2;
-  }
+  if (!modalEl) return;
+  const rect = modalEl.getBoundingClientRect();
+  top = (window.innerHeight - rect.height) / 2;
+  left = (window.innerWidth - rect.width) / 2;
  }
 
- function close() {
+ export function close() {
   setShow(false);
  }
-
- function open() {
+ export function open() {
   setShow(true);
  }
 
- function onkeydown(event) {
+ function onkeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
    event.preventDefault();
    event.stopPropagation();
-   setShow(false);
+   close();
   }
  }
 
- function dragStart(event) {
+ function dragStart(event: MouseEvent) {
   isDragging = true;
   event.preventDefault();
-  const rect = modalEl.getBoundingClientRect();
+  const rect = modalEl?.getBoundingClientRect();
+  if (!rect) return;
   posX = event.clientX - rect.left;
   posY = event.clientY - rect.top;
   window.addEventListener('mousemove', drag);
   window.addEventListener('mouseup', dragEnd);
  }
 
- function drag(event) {
-  if (!isDragging) return;
+ function drag(event: MouseEvent) {
+  if (!isDragging || !modalEl) return;
   const x = event.clientX - posX;
   const y = event.clientY - posY;
   const modalWidth = modalEl.offsetWidth;
@@ -107,12 +112,6 @@
   window.removeEventListener('mousemove', drag);
   window.removeEventListener('mouseup', dragEnd);
  }
-
- // $effect(() => {
- // 	console.log('[Modal] params:', params);
- // });
-
- $inspect(activeTab);
 </script>
 
 <style>
@@ -130,19 +129,7 @@
   border-radius: 10px;
   box-shadow: var(--shadow);
   background-color: #fff;
-  /* TODO: this works, but it affects initial position */
-  /*animation: modalAppear 0.2s ease-out;*/
  }
- /*
-    @keyframes modalAppear {
-     from {
-      transform: scale(0);
-     }
-     to {
-      transform: scale(1);
-     }
-    }
-   */
  .modal .header {
   display: flex;
   align-items: center;
@@ -152,12 +139,10 @@
   color: #000;
   cursor: pointer;
  }
-
  .modal .header .title {
   padding: 0 10px;
   flex-grow: 1;
  }
-
  .modal .body {
   display: flex;
   flex-direction: column;
@@ -167,15 +152,12 @@
   background-color: #fff;
   color: #000;
  }
-
  @media (max-width: 768px) {
   .modal {
    min-width: 100%;
    min-height: 100%;
    width: 100%;
    height: 100%;
-   max-height: 100%;
-   max-height: 100%;
    border: 0px;
    border-radius: 0px;
   }
@@ -183,16 +165,23 @@
 </style>
 
 {#if show}
- <div class="modal" role="none" tabindex="-1" style:top={top && top + 'px'} style:left={left && left + 'px'} style:width={width && width} style:height={height && height} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} {onkeydown}>
+ <div class="modal" role="none" tabindex="-1" style:top={top ? `${top}px` : undefined} style:left={left ? `${left}px` : undefined} style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
   {#if showContent}
    <div class="header" role="none" tabindex="-1" onmousedown={dragStart}>
     {#if title}
      <div class="title">{title}</div>
-     <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={close} />
+     <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size={20} padding={10} onClick={close} />
     {/if}
    </div>
    <div class="body">
-    {@render body({ activeTab })}
+    {#if $debug}
+     params: <code>{JSON.stringify({ params })}</code>
+    {/if}
+    {#if params}
+     {@render body({ close, params })}
+    {:else}
+     {@render body({ close })}
+    {/if}
    </div>
   {/if}
  </div>
