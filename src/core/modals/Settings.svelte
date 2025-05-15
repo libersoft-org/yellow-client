@@ -4,6 +4,7 @@
  import SettingsNotifications from '../components/Settings/SettingsNotifications.svelte';
  import SettingsGeneral from '../components/Settings/SettingsGeneral.svelte';
  import { TAURI } from '@/core/tauri.ts';
+ import { fade } from 'svelte/transition';
 
  type Props = {
   activeTab?: any;
@@ -48,8 +49,6 @@
  function setItem(name) {
   activeTab = name;
  }
-
- $inspect(activeTab);
 </script>
 
 <style>
@@ -113,7 +112,7 @@
 
 <div class="settings-container">
  {#if activeTab !== ''}
-  <div class="breadcrumbs">
+  <div class="breadcrumbs" in:fade={{ duration: 400 }}>
    <button onclick={() => setItem('')}>Settings</button>
    <span>{activeTab}</span>
   </div>
