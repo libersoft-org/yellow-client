@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
  import BaseButton from '../Button/BaseButton.svelte';
  import MenuItem from './MenuItem.svelte';
  import Modal from '../Modal/Modal.svelte';
@@ -8,12 +8,19 @@
  import { product, version, build, commit, link } from '../../core.js';
  import { TAURI, BROWSER } from '@/core/tauri.ts';
  import { getNativeClientBuildCommitHash, getNativeClientBuildTs } from '@/core/tauri-app.ts';
- export let showMenu = false;
- export let showModalSettings = false;
- export let elDialogExit;
 
- let native_client_commit;
- let native_client_build_ts;
+ type Props = {
+  showMenu: boolean;
+  showModalSettings: boolean;
+  elDialogExit: HTMLDivElement;
+ };
+
+ let { showMenu = false, showModalSettings = false, elDialogExit }: Props = $props();
+
+ //  let native_client_commit;
+ //  let native_client_build_ts;
+
+ let activeTab = $state('general');
 
  const menuItems = [
   {
@@ -61,6 +68,8 @@
   elDialogExit.open();
   clickMenuClose();
  }
+
+ $inspect('[Menu] activeTab:', activeTab);
 </script>
 
 <style>
@@ -201,5 +210,5 @@
   {/if}
  </div>
 </div>
-<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
+<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} bind:activeTab width="500px" />
 <DialogExit bind:this={elDialogExit} />

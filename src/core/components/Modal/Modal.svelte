@@ -1,24 +1,27 @@
-<script>
- import { debug } from '../../core.js';
+<script lang="ts">
  import { setContext, tick } from 'svelte';
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- export let show = false;
- export let params = null;
- export let title = null;
- export let body = '';
- export let width;
- export let height;
- export let onShowChange = null;
- let modalEl;
+
+ type Props = {
+  show?: boolean;
+  params?: any;
+  title?: string;
+  body?: unknown;
+  width?: string;
+  height?: string;
+  onShowChange?: (show: boolean) => void;
+  activeTab?: any;
+ };
+
+ let { show = $bindable(false), params = {}, title = '', body = null, width, height, onShowChange = () => {}, activeTab = $bindable() }: Props = $props();
+
+ let modalEl = $state(0);
  let posX = 0;
  let posY = 0;
  let isDragging = false;
- let left;
- let top;
- let showContent = false;
-
- $: showUpdated(!!show);
+ let left = $state(0);
+ let top = $state(0);
+ let showContent = $state(false);
 
  function setShow(value) {
   if (onShowChange) {
@@ -28,11 +31,14 @@
   }
  }
 
- async function showUpdated(show) {
-  console.log('showUpdated', show);
-  if (show) {
+ $effect(() => {
+  showUpdated(show);
+ });
+
+ async function showUpdated(showing) {
+  if (showing) {
    await tick();
-   modalEl.focus();
+   modalEl?.focus();
    showContent = true;
    await tick();
    await positionModal();
@@ -50,31 +56,26 @@
  setContext('Popup', { close });
 
  async function positionModal() {
-  console.log('positionModal');
   await tick();
   if (modalEl) {
-   const modalRect = modalEl.getBoundingClientRect();
-   top = (window.innerHeight - modalRect.height) / 2;
-   left = (window.innerWidth - modalRect.width) / 2;
-   // TODO: modal width and height are wrong when width and height are set (for example when showing modal with sticker set)
-   console.log('MODAL SIZE:', modalRect.width + ' x ' + modalRect.height);
-   console.log('WINDOW SIZE:', window.innerWidth + ' x ' + window.innerHeight);
+   const rect = modalEl.getBoundingClientRect();
+   top = (window.innerHeight - rect.height) / 2;
+   left = (window.innerWidth - rect.width) / 2;
   }
  }
 
- export function close() {
+ function close() {
   setShow(false);
  }
- export function open() {
+
+ function open() {
   setShow(true);
  }
 
  function onkeydown(event) {
-  console.log('Modal onkeydown', event);
   if (event.key === 'Escape') {
    event.preventDefault();
    event.stopPropagation();
-   console.log('ESC', event);
    setShow(false);
   }
  }
@@ -82,24 +83,23 @@
  function dragStart(event) {
   isDragging = true;
   event.preventDefault();
-  const modalRect = modalEl.getBoundingClientRect();
-  posX = event.clientX - modalRect.left;
-  posY = event.clientY - modalRect.top;
+  const rect = modalEl.getBoundingClientRect();
+  posX = event.clientX - rect.left;
+  posY = event.clientY - rect.top;
   window.addEventListener('mousemove', drag);
   window.addEventListener('mouseup', dragEnd);
  }
 
  function drag(event) {
-  if (isDragging) {
-   let x = event.clientX - posX;
-   let y = event.clientY - posY;
-   const modalWidth = modalEl.offsetWidth;
-   const modalHeight = modalEl.offsetHeight;
-   const windowWidth = window.innerWidth;
-   const windowHeight = window.innerHeight;
-   left = Math.max(0, Math.min(windowWidth - modalWidth, x));
-   top = Math.max(0, Math.min(windowHeight - modalHeight, y));
-  }
+  if (!isDragging) return;
+  const x = event.clientX - posX;
+  const y = event.clientY - posY;
+  const modalWidth = modalEl.offsetWidth;
+  const modalHeight = modalEl.offsetHeight;
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  left = Math.max(0, Math.min(windowWidth - modalWidth, x));
+  top = Math.max(0, Math.min(windowHeight - modalHeight, y));
  }
 
  function dragEnd() {
@@ -107,6 +107,12 @@
   window.removeEventListener('mousemove', drag);
   window.removeEventListener('mouseup', dragEnd);
  }
+
+ // $effect(() => {
+ // 	console.log('[Modal] params:', params);
+ // });
+
+ $inspect(activeTab);
 </script>
 
 <style>
@@ -128,15 +134,15 @@
   /*animation: modalAppear 0.2s ease-out;*/
  }
  /*
- @keyframes modalAppear {
-  from {
-   transform: scale(0);
-  }
-  to {
-   transform: scale(1);
-  }
- }
-*/
+    @keyframes modalAppear {
+     from {
+      transform: scale(0);
+     }
+     to {
+      transform: scale(1);
+     }
+    }
+   */
  .modal .header {
   display: flex;
   align-items: center;
@@ -177,21 +183,16 @@
 </style>
 
 {#if show}
- <div class="modal" role="none" tabindex="-1" style:top={top && top + 'px'} style:left={left && left + 'px'} style:width={width && width} style:height={height && height} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} on:keydown={onkeydown}>
+ <div class="modal" role="none" tabindex="-1" style:top={top && top + 'px'} style:left={left && left + 'px'} style:width={width && width} style:height={height && height} style:max-width={width && width} style:max-height={height && height} bind:this={modalEl} {onkeydown}>
   {#if showContent}
-   <div class="header" role="none" tabindex="-1" on:mousedown={dragStart}>
-    <div class="title">{title}</div>
-    <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={close} />
+   <div class="header" role="none" tabindex="-1" onmousedown={dragStart}>
+    {#if title}
+     <div class="title">{title}</div>
+     <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="20" padding="10" onClick={close} />
+    {/if}
    </div>
    <div class="body">
-    <slot>
-     {#if $debug}params: <code>{JSON.stringify({ params })}</code>{/if}
-     {#if params}
-      <svelte:component this={body} {close} {params} />
-     {:else}
-      <svelte:component this={body} {close} />
-     {/if}
-    </slot>
+    {@render body({ activeTab })}
    </div>
   {/if}
  </div>

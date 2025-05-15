@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import { svelteInspector } from '@sveltejs/vite-plugin-svelte-inspector';
 
 export function getGitCommitHash() {
  try {
@@ -27,6 +28,12 @@ export default defineConfig(({mode}) => {
    },
    plugins: [
     sveltekit(),
+    svelteInspector({
+			toggleKeyCombo: 'control-shift',
+			holdMode: true,
+			showToggleButton: 'active',
+			toggleButtonPos: 'top-right'
+		}),
     ...(mode === 'development' ? [pluginChecker({typescript: true})] : []),
    ],
    define: {

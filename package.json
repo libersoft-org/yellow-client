@@ -18,6 +18,7 @@
  },
  "dependencies": {
   "@floating-ui/dom": "^1.6.13",
+  "@sveltejs/vite-plugin-svelte-inspector": "^4.0.1",
   "@tauri-apps/api": "^2.3.0",
   "@tauri-apps/plugin-autostart": "^2.3.0",
   "@tauri-apps/plugin-dialog": "^2.2.1",
