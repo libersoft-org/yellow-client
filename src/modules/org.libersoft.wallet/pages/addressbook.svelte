@@ -4,6 +4,7 @@
  import ModalAddEdit from '../modals/addressbook-add-edit.svelte';
  import ModalDel from '../modals/addressbook-del.svelte';
  import Icon from '../../../core/components/Icon/Icon.svelte';
+ import { module } from '../module.js';
  import { addressBook } from '../wallet.ts';
  import { get } from 'svelte/store';
  let showModalAddEdit = false;
@@ -114,8 +115,8 @@
 <div class="addressbook">
  <div class="buttons">
   <Button text="Add an address" onClick={addToAddressBookModal} />
-  <Button text="Export" onClick={exportAddressBook} />
-  <Button text="Import" onClick={importAddressBook} />
+  <Button img="{module.identifier}/img/export.svg" text="Export" onClick={exportAddressBook} />
+  <Button img="{module.identifier}/img/import.svg" text="Import" onClick={importAddressBook} />
  </div>
  {#if $addressBook.length > 0}
   <table>
