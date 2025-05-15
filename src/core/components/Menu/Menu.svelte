@@ -12,15 +12,13 @@
  type Props = {
   showMenu: boolean;
   showModalSettings: boolean;
-  elDialogExit: HTMLDivElement;
  };
 
- let { showMenu = false, showModalSettings = false, elDialogExit }: Props = $props();
+ let { showMenu = $bindable(false), showModalSettings = false }: Props = $props();
+ let elDialogExit: InstanceType<typeof DialogExit>;
 
  //  let native_client_commit;
  //  let native_client_build_ts;
-
- let activeTab = $state('general');
 
  const menuItems = [
   {
@@ -68,8 +66,6 @@
   elDialogExit.open();
   clickMenuClose();
  }
-
- $inspect('[Menu] activeTab:', activeTab);
 </script>
 
 <style>
@@ -167,7 +163,7 @@
 <div class="menu {showMenu ? 'open' : ''}">
  <div>
   <div class="header">
-   <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30" padding="15" onClick={clickMenuClose} />
+   <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size={30} padding={15} onClick={clickMenuClose} />
   </div>
   <div class="items">
    {#each menuItems as item}
@@ -178,7 +174,7 @@
  <div class="footer">
   <BaseButton onClick={() => openPage(link)}>
    <div class="logo">
-    <Icon img="img/logo.svg" alt={product} size="30" padding="0" />
+    <Icon img="img/logo.svg" alt={product} size={30} padding={0} />
     <div>{product}</div>
    </div>
   </BaseButton>
@@ -198,17 +194,17 @@
    <div class="version">
     <div>Native client commit:</div>
     {#await getNativeClientBuildCommitHash() then hash}
-     <div class="bold">{hash.slice(0, 7)}</div>
+     <div class="bold">{(hash as string).slice(0, 7)}</div>
     {/await}
    </div>
    <div class="version">
     <div>Native client build timestamp:</div>
     {#await getNativeClientBuildTs() then ts}
-     <div class="bold">{ts.slice(7)}</div>
+     <div class="bold">{(ts as string).slice(7)}</div>
     {/await}
    </div>
   {/if}
  </div>
 </div>
-<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} bind:activeTab width="500px" />
+<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
 <DialogExit bind:this={elDialogExit} />

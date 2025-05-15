@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
  import BaseButton from '../Button/BaseButton.svelte';
  import Icon from '../Icon/Icon.svelte';
  import Switch from '@/core/components/Switch/Switch.svelte';
@@ -6,7 +6,12 @@
  import { product, debug } from '../../core.js';
  import { addNotification } from '../../notifications.ts';
  import { log } from '../../tauri.ts';
- export let isMenuOpen;
+
+ type Props = {
+  isMenuOpen: boolean;
+ };
+
+ let { isMenuOpen = $bindable() }: Props = $props();
  let menuIconColor = '';
 
  function handleClick() {
@@ -31,7 +36,7 @@
 </style>
 
 <div class="bar">
- <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-black" size="30" padding="10" onClick={handleClick} />
+ <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-black" size={30} padding={10} onClick={handleClick} />
  <div class="product">{product}</div>
  {#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}(debug mode: <Switch bind:checked={$debug} />){/if}
  {#if $debug}
