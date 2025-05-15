@@ -9,7 +9,7 @@
   activeTab?: any;
  };
 
- let { activeTab = $bindable(TAURI ? 'general' : 'appearance') }: Props = $props();
+ let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
 
  let menuItemProps = {
   bgColor: '#fff',
@@ -56,11 +56,51 @@
  .settings-container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
  }
 
  .tab-content {
-  margin-top: 10px;
+  &:empty {
+   display: none;
+  }
+ }
+
+ .breadcrumbs {
+  padding: 6px 10px 8px;
+  background: hsl(345, 6%, 13%);
+  margin-bottom: 0px;
+  border-radius: 10px;
+
+  span,
+  button {
+   border: none;
+   background: none;
+   font-size: 14px;
+   font-weight: bold;
+   color: #ccc;
+   padding: 0;
+   transition: color 0.3s ease;
+   cursor: default;
+   text-transform: capitalize;
+
+   &:hover {
+    color: white;
+   }
+
+   &:not(:first-child)::before {
+    content: '>';
+    margin: 0 5px;
+    color: white;
+   }
+
+   &:last-child {
+    color: white;
+   }
+  }
+
+  button {
+   cursor: pointer;
+  }
  }
 
  /*.alert {*/
@@ -72,8 +112,16 @@
 </style>
 
 <div class="settings-container">
+ {#if activeTab !== ''}
+  <div class="breadcrumbs">
+   <button onclick={() => setItem('')}>Settings</button>
+   <span>{activeTab}</span>
+  </div>
+ {/if}
  {#each menuItems as item}
-  <MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.title.toLowerCase())} />
+  {#if activeTab === ''}
+   <MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.title.toLowerCase())} />
+  {/if}
  {/each}
  <div class="tab-content">
   {#if activeTab === 'general'}
