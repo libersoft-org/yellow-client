@@ -1,10 +1,16 @@
-<script>
+<script lang="ts">
  import MenuItem from '../components/Menu/MenuItem.svelte';
  import SettingsAppearance from '../components/Settings/SettingsAppearance.svelte';
  import SettingsNotifications from '../components/Settings/SettingsNotifications.svelte';
  import SettingsGeneral from '../components/Settings/SettingsGeneral.svelte';
  import { TAURI } from '@/core/tauri.ts';
- let activeTab = TAURI ? 'general' : 'appearance';
+
+ type Props = {
+  activeTab?: any;
+ };
+
+ let { activeTab = $bindable(TAURI ? 'general' : 'appearance') }: Props = $props();
+
  let menuItemProps = {
   bgColor: '#fff',
   textColor: '#000',
@@ -15,6 +21,7 @@
   borderRight: '1px solid #888',
   borderRadius: '10px',
  };
+
  let menuItems = (
   TAURI
    ? [
@@ -41,6 +48,8 @@
  function setItem(name) {
   activeTab = name;
  }
+
+ $inspect(activeTab);
 </script>
 
 <style>
@@ -64,7 +73,7 @@
 
 <div class="settings-container">
  {#each menuItems as item}
-  <MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={item.onClick} />
+  <MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.title.toLowerCase())} />
  {/each}
  <div class="tab-content">
   {#if activeTab === 'general'}
