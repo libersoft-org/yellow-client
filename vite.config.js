@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import { sentrySvelteKit } from '@sentry/sveltekit'
 
 export function getGitCommitHash() {
  try {
@@ -26,6 +27,12 @@ export default defineConfig(({mode}) => {
     }
    },
    plugins: [
+    sentrySvelteKit({
+      sourceMapsUploadOptions: {
+        org: 'yyy-2c',
+        project: 'yellow',
+      }
+    }),
     sveltekit(),
     ...(mode === 'development' ? [pluginChecker({typescript: true})] : []),
    ],

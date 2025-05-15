@@ -20,3 +20,6 @@ test-results
 
 **/.claude/settings.local.json
 .DS_Store
+
+# Sentry Config File
+.env.sentry-build-plugin
