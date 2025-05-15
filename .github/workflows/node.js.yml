@@ -25,4 +25,5 @@ jobs:
       uses: oven-sh/setup-bun@v2
     - run: bun i
     - run: npm run build --if-present
-    - run: npm test
+    - run: npm test:unit
+      
