@@ -253,9 +253,9 @@
     <div class="buttons">
      <Button width="70px" img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
      <Button width="70px" img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
-     <Button width="70px" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
-     <Button width="70px" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
-     <Button width="70px" text="Settings" onClick={() => setSection('settings')} />
+     <Button width="70px" img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
+     <Button width="70px" img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
+     <Button width="70px" img="img/settings.svg" text="Settings" onClick={() => setSection('settings')} />
     </div>
     <div class="separator"></div>
     <div class="section">
