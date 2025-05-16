@@ -1,10 +1,12 @@
-<script>
- import { onMount } from 'svelte';
+<script lang="ts">
+ type Props = {
+  checked?: boolean;
+  label?: string;
+ };
 
- export let checked;
- export let label = '';
+ let { checked = $bindable(false), label = '' }: Props = $props();
 
- let mounted = false;
+ let mounted = $state(false);
 
  function keyPress(event) {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -13,7 +15,7 @@
   }
  }
 
- onMount(() => {
+ $effect(() => {
   requestAnimationFrame(() => {
    mounted = true;
   });
@@ -22,6 +24,12 @@
 
 <style>
  .switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+ }
+
+ .switch-wrapper {
   position: relative;
   display: inline-block;
   width: 60px;
@@ -79,8 +87,12 @@
  }
 </style>
 
-<label class="switch">
- <div>{label}</div>
- <input type="checkbox" bind:checked on:keydown={keyPress} />
- <span class="slider {mounted ? 'transition' : ''}"></span>
-</label>
+<div class="switch">
+ {#if label}
+  <div>{label}</div>
+ {/if}
+ <label class="switch-wrapper">
+  <input type="checkbox" bind:checked onkeydown={keyPress} />
+  <span class="slider {mounted ? 'transition' : ''}"></span>
+ </label>
+</div>

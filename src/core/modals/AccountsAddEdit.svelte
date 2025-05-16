@@ -193,7 +193,6 @@
  {#if !isInWelcomeWizard}
   <div class="group">
    <div class="label">
-    <span></span>
     <span><Switch label="Enabled:" bind:checked={config_enabled} /></span>
    </div>
   </div>

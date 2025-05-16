@@ -20,5 +20,5 @@
 </style>
 
 <td {...restProps} class:center>
- {@render children?.()}
+ {@render children()}
 </td>
