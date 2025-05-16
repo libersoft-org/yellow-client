@@ -4,7 +4,7 @@
   label?: string;
  };
 
- let { checked = $bindable(false), label = '' }: Props = $props();
+ let { checked = $bindable(), label = '' }: Props = $props();
 
  let mounted = $state(false);
 
