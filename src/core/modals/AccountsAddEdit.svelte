@@ -9,10 +9,12 @@
  import Switch from '../components/Switch/Switch.svelte';
  import { derived, get, writable } from 'svelte/store';
  import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
+
  export let close;
  export let params;
  export let isInWelcomeWizard = false;
  export let save_id;
+
  let protocolElem;
  let protocol = 'amtp';
  let error;

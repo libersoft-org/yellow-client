@@ -15,10 +15,11 @@
   onShowChange?: (show: boolean) => void;
  };
 
- let { show = $bindable(false), children, params, title = '', body = null, width, height, onShowChange = () => {} }: Props = $props();
+ let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
 
  let modalEl: HTMLDivElement | null = $state(null);
  let showContent = $state(false);
+ let ModalBody = $state<Snippet>(body);
  let zIndex = $state(100);
  let modalId: number;
  let posX = 0,
@@ -184,10 +185,9 @@
     {/if}
 
     {#if params}
-     {JSON.stringify({ params })}
-     {@render body({ close, params: params })}
+     <ModalBody {params} {close} />
     {:else}
-     {@render body({ close })}
+     <ModalBody {close} />
     {/if}
    </div>
   {/if}

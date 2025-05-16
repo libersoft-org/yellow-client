@@ -10,9 +10,7 @@
   };
  };
 
- let { close, params }: Props = $props();
-
- $inspect(params, close);
+ let { close, params = $bindable() }: Props = $props();
 
  function clickDel() {
   console.log('clickDel');
@@ -20,13 +18,6 @@
   close();
  }
 </script>
-
-<!-- <div>
-    Are you sure you want to delete the account
-    <span class="bold">{params.name}</span>
-    (id: <span class="bold">{params.id}</span>)?
-</div>
-<Button text="Delete" onClick={clickDel} /> -->
 
 <div>Would you like to delete the account "<span class="bold">{params?.name}</span>" (id: <span class="bold">{params?.id}</span>)?</div>
 <Button text="Delete" onClick={clickDel} />
