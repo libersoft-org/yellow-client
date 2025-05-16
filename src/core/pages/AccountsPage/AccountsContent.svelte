@@ -86,8 +86,8 @@
  <div class="buttons">
   <Button img="img/back.svg" text="Back" onClick={back} hiddenOnDesktop={true} />
   <Button img="img/accounts.svg" text="Add a new account" colorVariable="--icon-black" onClick={addAccountModal} />
-  <Button text="Export" onClick={clickExport} />
-  <Button text="Import" onClick={clickImport} />
+  <Button img="img/export.svg" text="Export" onClick={clickExport} />
+  <Button img="img/import.svg" text="Import" onClick={clickImport} />
  </div>
  <div class="table">
   <Table>
