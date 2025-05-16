@@ -49,7 +49,6 @@
 
 <style>
  .files-debug {
-  font-size: 10px;
   background: #f0f0f0;
   border: 1px solid #ccc;
  }
