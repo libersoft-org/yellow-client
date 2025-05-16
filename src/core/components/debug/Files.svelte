@@ -4,14 +4,25 @@
 
  let download: any = null;
  let result: string = '';
- let defaultFolder: string = '';
+ let defaultFolder: string = '/home/koom/Downloads';
 
  async function testOfferNativeDownload() {
   console.log('testOfferNativeDownload');
   try {
    result = 'Testing offerNativeDownload...';
-   download = await offerNativeDownload('test-file.txt', defaultFolder);
+   download = await offerNativeDownload('test-file.txt', null);
    result = `Download offered: ${JSON.stringify(download, null, 2)}`;
+  } catch (error) {
+   result = `Error: ${error}`;
+  }
+ }
+
+ async function testOfferNativeDownloadWithDefaultFolder() {
+  console.log('testOfferNativeDownloadWithDefaultFolder');
+  try {
+   result = 'Testing offerNativeDownload with default folder...';
+   download = await offerNativeDownload('test-file.txt', defaultFolder);
+   result = `Download offered with default folder: ${JSON.stringify(download, null, 2)}`;
   } catch (error) {
    result = `Error: ${error}`;
   }
@@ -68,10 +79,6 @@
   margin-top: 10px;
  }
 
- .buttons {
-  display: flex;
- }
-
  pre {
   background: white;
   padding: 10px;
@@ -98,6 +105,7 @@
 
  <div class="buttons">
   <Button onClick={testOfferNativeDownload}>Test offerNativeDownload</Button>
+  <Button onClick={testOfferNativeDownloadWithDefaultFolder}>Test offerNativeDownload with defaultFolder</Button>
 
   <Button onClick={testSaveNativeDownloadChunk}>Test saveNativeDownloadChunk</Button>
 
