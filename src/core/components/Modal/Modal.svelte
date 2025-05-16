@@ -15,7 +15,7 @@
   onShowChange?: (show: boolean) => void;
  };
 
- let { show = $bindable(false), children, params = {}, title = '', body = null, width, height, onShowChange = () => {} }: Props = $props();
+ let { show = $bindable(false), children, params, title = '', body = null, width, height, onShowChange = () => {} }: Props = $props();
 
  let modalEl: HTMLDivElement | null = $state(null);
  let showContent = $state(false);
@@ -113,6 +113,8 @@
   window.removeEventListener('mousemove', drag);
   window.removeEventListener('mouseup', dragEnd);
  }
+
+ $inspect(params);
 </script>
 
 <style>
@@ -176,11 +178,14 @@
    </div>
    <div class="body">
     {@render children?.()}
+
     {#if $debug}
      params: <code>{JSON.stringify({ params })}</code>
     {/if}
+
     {#if params}
-     {@render body({ close, params })}
+     {JSON.stringify({ params })}
+     {@render body({ close, params: params })}
     {:else}
      {@render body({ close })}
     {/if}

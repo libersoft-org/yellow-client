@@ -5,6 +5,7 @@
  import SettingsGeneral from '../components/Settings/SettingsGeneral.svelte';
  import { TAURI } from '@/core/tauri.ts';
  import { fade } from 'svelte/transition';
+ import Icon from '../components/Icon/Icon.svelte';
 
  type Props = {
   activeTab?: any;
@@ -113,7 +114,10 @@
 <div class="settings-container">
  {#if activeTab !== ''}
   <div class="breadcrumbs" in:fade={{ duration: 400 }}>
-   <button onclick={() => setItem('')}>Settings</button>
+   <button onclick={() => setItem('')}>
+    <Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size={30} />
+    Settings
+   </button>
    <span>{activeTab}</span>
   </div>
  {/if}

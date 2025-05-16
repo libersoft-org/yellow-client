@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
  import { debug, findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '../../core.js';
  import Button from '@/core/components/Button/Button.svelte';
  import TableActionItems from '../../components/Table/TableActionItems.svelte';
@@ -16,12 +16,17 @@
  import AccountsExport from '@/core/modals/AccountsExport.svelte';
  import AccountsImport from '@/core/modals/AccountsImport.svelte';
  import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
- let showAddEditAccountModal = false;
- let showDelAccountModal = false;
- let showExportModal = false;
- let showImportModal = false;
- let idItem = null;
- let accountTitle = '';
+
+ type Props = {
+  showAddEditAccountModal: boolean;
+  showDelAccountModal: boolean;
+  showExportModal: boolean;
+  showImportModal: boolean;
+  idItem: string;
+  accountTitle: string;
+ };
+
+ let { showAddEditAccountModal = $bindable(false), showDelAccountModal = false, showExportModal = $bindable(false), showImportModal = $bindable(false), idItem = $bindable(''), accountTitle = $bindable('') }: Props = $props();
 
  function back() {
   hideSidebarMobile.set(false);
@@ -29,7 +34,7 @@
  }
 
  function addAccountModal() {
-  idItem = null;
+  idItem = '';
   showAddEditAccountModal = true;
  }
 
@@ -38,11 +43,12 @@
   showAddEditAccountModal = true;
  }
 
- function clickDel(id, title) {
+ const clickDel = (id: string, title: string) => {
+  console.error(id, title);
   idItem = id;
   accountTitle = title;
   showDelAccountModal = true;
- }
+ };
 
  function clickExport() {
   showExportModal = true;
@@ -51,6 +57,8 @@
  function clickImport() {
   showImportModal = true;
  }
+
+ $inspect(idItem, accountTitle);
 </script>
 
 <style>
@@ -106,8 +114,8 @@
       <TableTBodyTd center={true}>{a.enabled ? 'Yes' : 'No'}</TableTBodyTd>
       <TableTBodyTd center={true}>
        <TableActionItems>
-        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20" padding="5" onClick={() => clickEdit(a.id)} />
-        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20" padding="5" onClick={() => clickDel(a.id, a.settings?.title)} />
+        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
+        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
        </TableActionItems>
       </TableTBodyTd>
       {#if $debug}
@@ -120,6 +128,8 @@
  </div>
 </div>
 <Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem }} bind:show={showAddEditAccountModal} />
-<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
+{#if showDelAccountModal}
+ <Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
+{/if}
 <Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} />
 <Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} />
