@@ -8,6 +8,7 @@
  import AccountBarButton from './AccountBarButton.svelte';
  import AccountStatusIcon from './AccountStatusIcon.svelte';
  import AccountTitle from './AccountTitle.svelte';
+
  let accountsVisible = $state(false);
  let accountBar;
 
