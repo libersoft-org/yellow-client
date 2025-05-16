@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+const iconsURL = 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/img/';
 export const default_networks = writable([
  {
   name: 'Ethereum - Mainnet',
@@ -6,7 +7,7 @@ export const default_networks = writable([
   rpcURLs: ['https://cloudflare-eth.com', 'https://rpc.ankr.com/eth', 'https://main-rpc.linkpool.io', 'https://eth-rpc.gateway.pokt.network', 'https://mainnet-nethermind.blockscout.com', 'https://api.mycryptoapi.com/eth'],
   currency: {
    symbol: 'ETH',
-   iconURL: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
+   iconURL: iconsURL + 'ETH.svg',
   },
   explorerURL: 'https://etherscan.io',
  },
