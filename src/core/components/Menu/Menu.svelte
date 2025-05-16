@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
  import BaseButton from '../Button/BaseButton.svelte';
  import MenuItem from './MenuItem.svelte';
  import Modal from '../Modal/Modal.svelte';
@@ -8,12 +8,17 @@
  import { product, version, build, commit, link } from '../../core.js';
  import { TAURI, BROWSER } from '@/core/tauri.ts';
  import { getNativeClientBuildCommitHash, getNativeClientBuildTs } from '@/core/tauri-app.ts';
- export let showMenu = false;
- export let showModalSettings = false;
- export let elDialogExit;
 
- let native_client_commit;
- let native_client_build_ts;
+ type Props = {
+  showMenu: boolean;
+  showModalSettings: boolean;
+ };
+
+ let { showMenu = $bindable(false), showModalSettings = false }: Props = $props();
+ let elDialogExit: InstanceType<typeof DialogExit>;
+
+ //  let native_client_commit;
+ //  let native_client_build_ts;
 
  const menuItems = [
   {
@@ -158,7 +163,7 @@
 <div class="menu {showMenu ? 'open' : ''}">
  <div>
   <div class="header">
-   <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30" padding="15" onClick={clickMenuClose} />
+   <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size={30} padding={15} onClick={clickMenuClose} />
   </div>
   <div class="items">
    {#each menuItems as item}
@@ -169,7 +174,7 @@
  <div class="footer">
   <BaseButton onClick={() => openPage(link)}>
    <div class="logo">
-    <Icon img="img/logo.svg" alt={product} size="30" padding="0" />
+    <Icon img="img/logo.svg" alt={product} size={30} padding={0} />
     <div>{product}</div>
    </div>
   </BaseButton>
@@ -189,13 +194,13 @@
    <div class="version">
     <div>Native client commit:</div>
     {#await getNativeClientBuildCommitHash() then hash}
-     <div class="bold">{hash.slice(0, 7)}</div>
+     <div class="bold">{(hash as string).slice(0, 7)}</div>
     {/await}
    </div>
    <div class="version">
     <div>Native client build timestamp:</div>
     {#await getNativeClientBuildTs() then ts}
-     <div class="bold">{ts.slice(7)}</div>
+     <div class="bold">{(ts as string).slice(7)}</div>
     {/await}
    </div>
   {/if}

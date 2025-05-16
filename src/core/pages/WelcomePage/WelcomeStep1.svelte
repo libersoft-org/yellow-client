@@ -20,8 +20,11 @@
   display: flex;
   justify-content: center;
   margin: 20px 0;
-  animation: bounce 1.5s ease;
-  animation-fill-mode: forwards;
+
+  :global(img) {
+   animation: bounce 1.5s ease;
+   animation-fill-mode: forwards;
+  }
  }
 
  @keyframes bounce {
