@@ -109,7 +109,7 @@
   </div>
  {/if}
  {#if params.item}
-  <Button text="Save" onClick={edit} />
+  <Button img="img/save.svg" text="Save" onClick={edit} />
  {:else}
   <Button text="Add" onClick={add} />
  {/if}

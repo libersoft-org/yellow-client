@@ -205,7 +205,7 @@
  {#if (params.id ?? null) === null}
   <Button text="Add the account" onClick={clickAdd} />
  {:else}
-  <Button text="Save" onClick={clickSave} />
+  <Button img="img/save.svg" text="Save" onClick={clickSave} />
  {/if}
  {#if account && acc}
   <div class="status">
