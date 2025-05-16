@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-const iconUrlBase = 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/img/';
+const iconUrlBase = 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/coins/';
 export const default_networks = writable([
  {
   name: 'Ethereum - Mainnet',
