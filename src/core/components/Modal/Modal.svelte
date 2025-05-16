@@ -114,8 +114,6 @@
   window.removeEventListener('mousemove', drag);
   window.removeEventListener('mouseup', dragEnd);
  }
-
- $inspect(params);
 </script>
 
 <style>

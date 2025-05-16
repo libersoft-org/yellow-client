@@ -66,6 +66,7 @@
  }
 
  .breadcrumbs {
+  display: flex;
   padding: 6px 10px 8px;
   background: hsl(345, 6%, 13%);
   margin-bottom: 0px;
@@ -77,7 +78,7 @@
    background: none;
    font-size: 14px;
    font-weight: bold;
-   color: #ccc;
+   /* color: #ccc; */
    padding: 0;
    transition: color 0.3s ease;
    cursor: default;
@@ -100,6 +101,19 @@
 
   button {
    cursor: pointer;
+   display: flex;
+   gap: 6px;
+   color: white;
+   filter: contrast(0.5);
+   transition: filter 0.3s ease;
+
+   &:hover {
+    filter: contrast(1);
+   }
+
+   :global(.icon) {
+    padding: 0 !important;
+   }
   }
  }
 
@@ -115,7 +129,7 @@
  {#if activeTab !== ''}
   <div class="breadcrumbs" in:fade={{ duration: 400 }}>
    <button onclick={() => setItem('')}>
-    <Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size={30} />
+    <Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size={16} />
     Settings
    </button>
    <span>{activeTab}</span>
