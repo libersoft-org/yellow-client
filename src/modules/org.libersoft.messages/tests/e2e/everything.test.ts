@@ -53,7 +53,7 @@ test('test', async ({ page }) => {
  await page.getByRole('textbox', { name: 'Server:' }).fill('ws://localhost:8085/');
  await page.getByRole('textbox', { name: 'Address:' }).click();
  await page.getByRole('textbox', { name: 'Address:' }).fill('user2@example.com');
- await page.getByRole('button', { name: 'Add the account' }).click();
+ await page.getByTestId('save').click();
 
  // switch account
  await page.getByTestId('account-bar-toggle').click();
@@ -139,7 +139,7 @@ test('test', async ({ page }) => {
  await page.getByRole('textbox', { name: 'Server:' }).fill('ws://localhost:8085');
  await page.getByRole('textbox', { name: 'Address:' }).fill('user3@example.com');
  await page.getByRole('textbox', { name: 'Password:' }).fill('password');
- await page.getByRole('button', { name: 'Add the account' }).click();
+ await page.getByTestId('save').click();
 
  // Export all accounts
  await page.getByRole('button', { name: 'Export' }).click();

@@ -1,4 +1,4 @@
-import { open } from '@tauri-apps/plugin-dialog';
+import { open, save } from '@tauri-apps/plugin-dialog';
 import { rename, writeFile, exists, BaseDirectory } from '@tauri-apps/plugin-fs';
 import * as path from '@tauri-apps/api/path';
 
@@ -23,16 +23,17 @@ export async function offerNativeDownload(file_name: string, defaultFileDownload
   await findFreeFileName(defaultFileDownloadFolder, download);
   return download;
  } else {
-  let p = await open({
-   multiple: false,
+  let p = await save({
+   defaultPath: await path.join(defaultFileDownloadFolder, file_name),
+   canCreateDirectories: true,
    title: 'Save file',
   });
   if (!p) {
    return null;
   }
   download.file_path = p;
-  download.temp_file_path = path.join(p, '.part');
-  download.potential_default_folder = path.dirname(p);
+  download.temp_file_path = partFileName(p);
+  download.potential_default_folder = await path.dirname(p);
   return download;
  }
 }
@@ -54,7 +55,7 @@ async function findFreeFileName(folder: string, download: NativeDownload) {
   let file_name = download.original_file_name + (counter > 0 ? ` (${counter})` : '');
   const file_path = path.join(folder, file_name);
   const exists_file = await exists(file_path, { baseDir: BaseDirectory.Download });
-  const temp_file_path = path.join(file_path, '.part');
+  const temp_file_path = file_path + '.part';
   const exists_file2 = await exists(temp_file_path, { baseDir: BaseDirectory.Download });
   if (!exists_file && !exists_file2) {
    download.file_path = file_path;
@@ -62,4 +63,8 @@ async function findFreeFileName(folder: string, download: NativeDownload) {
   }
   counter++;
  }
+}
+
+function partFileName(file_path: string) {
+ return file_path + '.part';
 }
