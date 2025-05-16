@@ -6,7 +6,6 @@
  import Button from '@/core/components/Button/Button.svelte';
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
- import ModalWithSlot from '@/core/components/Modal/ModalWithSlot.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import resize from '@/core/actions/resizeObserver.ts';
  import { highlightElement } from '@/core/utils/animationUtils.ts';
@@ -649,13 +648,6 @@
   <div>items count: {itemsCount}</div>
   <div>messagesHeight: {messagesHeight}</div>
   <div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
-  <ModalWithSlot show={showDebugModal} title="Debug modal">
-   <div slot="body">
-    <pre>{JSON.stringify(itemsArray, null, 2)}</pre>
-    ---
-    <pre>{JSON.stringify(loaders, null, 2)}</pre>
-   </div>
-  </ModalWithSlot>
  </div>
 {/if}
 

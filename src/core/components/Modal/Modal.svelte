@@ -1,5 +1,5 @@
 <script lang="ts">
- import { setContext, tick } from 'svelte';
+ import { setContext, tick, type Snippet } from 'svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import { debug } from '../../core.js';
  import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
@@ -11,10 +11,11 @@
   body?: any;
   width?: string;
   height?: string;
+  children?: Snippet;
   onShowChange?: (show: boolean) => void;
  };
 
- let { show = $bindable(false), params = {}, title = '', body = null, width, height, onShowChange = () => {} }: Props = $props();
+ let { show = $bindable(false), children, params = {}, title = '', body = null, width, height, onShowChange = () => {} }: Props = $props();
 
  let modalEl: HTMLDivElement | null = $state(null);
  let showContent = $state(false);
@@ -174,6 +175,7 @@
     {/if}
    </div>
    <div class="body">
+    {@render children?.()}
     {#if $debug}
      params: <code>{JSON.stringify({ params })}</code>
     {/if}
