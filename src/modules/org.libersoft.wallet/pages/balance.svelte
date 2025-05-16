@@ -2,7 +2,7 @@
  import Item from '../components/balance-item.svelte';
  let tokens = [
   {
-   icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.svg',
+   icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DAI.svg',
    symbol: 'DAI',
    amount: {
     crypto: 105,
@@ -10,7 +10,7 @@
    },
   },
   {
-   icon: 'https://cryptologos.cc/logos/polkadot-new-dot-logo.svg',
+   icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DOT.svg',
    symbol: 'DOT',
    amount: {
     crypto: 13.58468432,
