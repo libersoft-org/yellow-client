@@ -6,4 +6,16 @@
  export let account;
 </script>
 
-<AccountStatusIcon {account} /><AccountStatus {account} />
+<style>
+ div {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+ }
+</style>
+
+<div>
+ <AccountStatusIcon {account} />
+ <AccountStatus {account} />
+</div>

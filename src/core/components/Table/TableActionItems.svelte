@@ -1,6 +1,6 @@
 <style>
  .action-items {
-  display: flex;
+  display: inline-flex;
  }
 </style>
 

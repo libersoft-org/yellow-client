@@ -38,7 +38,7 @@
   showAddEditAccountModal = true;
  }
 
- function clickEdit(id) {
+ function clickEdit(id: string) {
   idItem = id;
   showAddEditAccountModal = true;
  }
@@ -62,6 +62,179 @@
 </script>
 
 <style>
+ table {
+  border: 0;
+  padding-bottom: 0;
+  display: block;
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: clip;
+  max-width: fit-content;
+  border: 1px solid black !important;
+  margin-top: 24px;
+ }
+
+ thead {
+  display: none;
+  background: black;
+  color: white;
+ }
+
+ tbody,
+ tr,
+ th,
+ td {
+  border: 0;
+  display: block;
+  padding: 0;
+  text-align: left;
+  white-space: normal;
+ }
+
+ tbody {
+  tr {
+   background: #ffdd1150;
+
+   &:hover {
+    background: #fd1;
+   }
+
+   th,
+   td {
+    display: block;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+
+    &:before {
+     display: inline-block;
+     width: 90px;
+    }
+   }
+  }
+ }
+
+ th[data-title]:before,
+ td[data-title]:before {
+  content: attr(data-title) ':\00A0';
+  font-weight: bold;
+ }
+
+ th:not([data-title]) {
+  font-weight: bold;
+ }
+
+ td:empty {
+  display: none;
+ }
+
+ @media only screen and (min-width: 41em) {
+  th[data-title]:before,
+  td[data-title]:before {
+   content: '';
+   font-weight: bold;
+  }
+
+  th:not([data-title]) {
+   font-weight: bold;
+  }
+
+  td:empty {
+   display: table-cell;
+  }
+
+  thead {
+   display: table-header-group;
+  }
+
+  tbody {
+   display: table-header-group;
+  }
+
+  tbody,
+  tr,
+  th,
+  td {
+   border: 0;
+   padding: 0;
+   text-align: left;
+   white-space: normal;
+  }
+
+  tbody tr {
+   th,
+   td {
+    display: table-cell;
+    padding: 10px;
+    width: 100%;
+
+    &:before {
+     display: table;
+     width: 100%;
+    }
+   }
+  }
+
+  th,
+  td {
+   display: table-cell;
+   white-space: nowrap;
+  }
+
+  tr {
+   display: table-row;
+  }
+
+  table {
+   border-style: none;
+   border-top-width: 0;
+   width: auto;
+  }
+
+  tr {
+   border-style: none;
+   border-bottom-width: 0;
+  }
+
+  th,
+  td {
+   border-style: none;
+   padding: 10px;
+   text-align: center;
+   min-width: 50px;
+   vertical-align: middle;
+  }
+
+  /* th + th,
+    th + td,
+    td + th,
+    td + td {
+      border-left-width: 1px;
+    } */
+
+  thead tr:last-child {
+   border-bottom-width: 2px;
+  }
+
+  /* thead th,
+    tr.index th {
+      font-weight: bold;
+      line-height: 1.25;
+      text-transform: uppercase;
+    } */
+
+  /* tbody:first-of-type tr.index th {
+      padding-top: 1em;
+    } */
+
+  tbody th {
+   font-weight: normal;
+  }
+ }
+
+ /*end 41em MQ*/ /*end 41em MQ*/ /*end 41em MQ*/ /*end 41em MQ*/ /*end 41em MQ*/
+
  .accounts {
   display: flex;
   flex-direction: column;
@@ -125,6 +298,37 @@
     {/each}
    </TableTBody>
   </Table>
+  <table>
+   <thead>
+    <tr>
+     <th scope="col">Status</th>
+     <th scope="col">Title</th>
+     <th scope="col">Server</th>
+     <th scope="col">Address</th>
+     <th scope="col">Enabled</th>
+     <th scope="col">Action</th>
+    </tr>
+   </thead>
+   <tbody>
+    {#each $accounts_config as a (a.id)}
+     <tr>
+      <th scope="row" data-title="Status">
+       <AccountStatusIconIconAndText account={findAccount(a.id)} />
+      </th>
+      <td data-title="Title">{a.settings?.title}</td>
+      <td data-title="Server">{a.credentials?.server}</td>
+      <td data-title="Address">{a.credentials?.address}</td>
+      <td data-title="Enabled">{a.enabled ? 'Yes' : 'No'}</td>
+      <td data-title="Action">
+       <TableActionItems>
+        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
+        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
+       </TableActionItems>
+      </td>
+     </tr>
+    {/each}
+   </tbody>
+  </table>
  </div>
 </div>
 <Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem }} bind:show={showAddEditAccountModal} />
