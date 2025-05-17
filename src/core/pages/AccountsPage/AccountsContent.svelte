@@ -105,7 +105,7 @@
     display: block;
     padding: 10px;
     text-align: left;
-    vertical-align: middle;
+    vertical-align: middle; /* Note: vertical-align has no effect with display: block */
 
     &:before {
      display: inline-block;

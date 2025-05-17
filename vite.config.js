@@ -6,6 +6,8 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { sentrySvelteKit } from '@sentry/sveltekit'
 import { svelteInspector } from '@sveltejs/vite-plugin-svelte-inspector';
+import 'dotenv/config';
+import dotenv from 'dotenv';
 
 export function getGitCommitHash() {
  try {
@@ -16,6 +18,12 @@ export function getGitCommitHash() {
 }
 
 export default defineConfig(({mode}) => {
+  // Load environment variables from .env.local if it exists
+  dotenv.config({ path: '.env.local' });
+  
+  // Check if Sentry is enabled
+  const sentryEnabled = process.env.SENTRY_ENABLED !== 'false';
+  
   return {
    resolve: process.env.VITEST
     ? {conditions: ['browser']} : undefined,
@@ -28,12 +36,15 @@ export default defineConfig(({mode}) => {
     }
    },
    plugins: [
-    sentrySvelteKit({
-      sourceMapsUploadOptions: {
-        org: 'yyy-2c',
-        project: 'yellow',
-      }
-    }),
+    ...(sentryEnabled ? [
+      sentrySvelteKit({
+        sourceMapsUploadOptions: {
+          org: 'yyy-2c',
+          project: 'yellow',
+        },
+        telemetry: false
+      })
+    ] : []),
     sveltekit(),
     svelteInspector({
 			toggleKeyCombo: 'control-shift',
