@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { type Page } from '@playwright/test';
 
 /**
  * Helper function to switch to a module only if it's not already selected
  * @param page - The Playwright page object
  * @param moduleId - The module ID to switch to
  */
-async function switchModule(page, moduleId) {
+async function switchModule(page: Page, moduleId: string): Promise<void> {
  const moduleSelector = page.getByTestId(`ModuleBarItem-${moduleId}`);
  const selectedElement = moduleSelector.locator('div.selected');
 
@@ -22,112 +23,262 @@ async function switchModule(page, moduleId) {
  }
 }
 
-test('test', async ({ page }) => {
- await page.goto('http://localhost:3000/');
+/**
+ * Helper function to switch to a specific account
+ * @param page - The Playwright page object
+ * @param address - The account address to switch to
+ */
+async function switchAccount(page: Page, address: string): Promise<void> {
+ await page.getByTestId('account-bar-toggle').click();
+ await page.getByTestId("account " + address).click();
+}
 
- // add account in the wizard
+/**
+ * Helper function to navigate to account management
+ * @param page - The Playwright page object
+ */
+async function goToAccountManagement(page: Page): Promise<void> {
+ await page.getByTestId('account-bar-toggle').click();
+ await page.getByRole('button', { name: 'Account management Account' }).click();
+}
+
+/**
+ * Helper function to add a new account
+ * @param page - The Playwright page object
+ * @param accountData - Object containing account information
+ */
+async function addAccount(page: Page, accountData: { server: string; address: string; password: string; title?: string }): Promise<void> {
+ await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
+
+ // Clear and fill the fields
+ await page.getByRole('textbox', { name: 'Title:' }).fill(accountData.title || '');
+ await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
+ await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
+ await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
+ await page.getByTestId('save').click();
+}
+
+/**
+ * Helper function to create a new conversation
+ * @param page - The Playwright page object
+ * @param recipient - The recipient address
+ */
+async function startNewConversation(page: Page, recipient: string): Promise<void> {
+ await page.getByTestId('new-conversation-button').click();
+ await page.getByTestId('new-conversation-address').fill(recipient);
+ await page.getByTestId('New Conversation Open').click();
+}
+
+/**
+ * Helper function to open an existing conversation
+ * @param page - The Playwright page object
+ * @param contact - The contact address
+ */
+async function openConversation(page: Page, contact: string): Promise<void> {
+ await page.getByTestId(`conversation ${contact}`).click();
+}
+
+/**
+ * Helper function to send a message
+ * @param page - The Playwright page object
+ * @param messageText - The message text to send
+ */
+async function sendMessage(page: Page, messageText: string): Promise<void> {
+ await page.getByTestId('message-input').fill(messageText);
+ await page.getByTestId('messagebarsend').click();
+}
+
+/**
+ * Helper function to reply to the last message
+ * @param page - The Playwright page object
+ * @param replyText - The reply text
+ */
+async function replyToLastMessage(page: Page, replyText: string): Promise<void> {
+ await page.getByTestId('message-item').last().click({ button: 'right' });
+ await page.getByTestId('reply-context-menu-item').last().click();
+ await sendMessage(page, replyText);
+}
+
+/**
+ * Helper function to add a reaction to the last message
+ * @param page - The Playwright page object
+ */
+async function addReactionToLastMessage(page: Page): Promise<void> {
+ await page.getByTestId('message-reaction-menu-button').last().click();
+ await page.getByTestId('message-reaction-emoji-button').last().click();
+}
+
+/**
+ * Helper function to open messages settings and configure them
+ * @param page - The Playwright page object
+ * @param settings - Object containing settings configuration
+ */
+async function configureMessagesSettings(page: Page, settings: { chunkSize?: string, fontSize?: string }): Promise<void> {
+ await page.getByTestId('messages-settings-button').click();
+
+ if (settings.chunkSize) {
+  await page.getByRole('slider').fill(settings.chunkSize);
+ }
+
+ if (settings.fontSize) {
+  await page.getByRole('combobox').selectOption(settings.fontSize);
+ }
+
+ await page.getByRole('button', { name: 'Save' }).click();
+}
+
+/**
+ * Helper function to open global settings
+ * @param page - The Playwright page object
+ */
+async function openGlobalSettings(page: Page): Promise<void> {
+ await page.getByRole('button', { name: '☰' }).click();
+ await page.getByRole('button', { name: 'Settings Settings' }).click();
+}
+
+/**
+ * Helper function to navigate to a specific settings section
+ * @param page - The Playwright page object
+ * @param section - The settings section to navigate to
+ */
+async function navigateToSettingsSection(page: Page, section: 'General' | 'Notifications' | 'Appearance'): Promise<void> {
+ await page.getByRole('button', { name: `${section} ${section}` }).click();
+}
+
+/**
+ * Helper function to close the current modal
+ * @param page - The Playwright page object
+ */
+async function closeModal(page: Page): Promise<void> {
+ await page.getByTestId('Modal-close').click();
+}
+
+/**
+ * Helper function to set up an account through the initial wizard
+ * @param page - The Playwright page object
+ * @param accountData - Object containing account information
+ */
+async function setupAccountInWizard(page: Page, accountData: { server: string; address: string; password: string; title?: string }): Promise<void> {
  await page.getByTestId('wizard-next').click();
  await page.getByRole('textbox', { name: 'Title:' }).click();
- await page.getByRole('textbox', { name: 'Title:' }).fill('');
+ await page.getByRole('textbox', { name: 'Title:' }).fill(accountData.title || '');
  await page.getByRole('textbox', { name: 'Server:' }).press('Shift+Home');
- await page.getByRole('textbox', { name: 'Server:' }).fill('ws://localhost:8085');
- await page.getByRole('textbox', { name: 'Address:' }).fill('user1@example.com');
- await page.getByRole('textbox', { name: 'Password:' }).fill('password');
+ await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
+ await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
+ await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
  await page.getByRole('button', { name: 'Add the account' }).click();
  await page.getByRole('button', { name: 'Next' }).click();
  await page.getByRole('button', { name: 'Next' }).click();
  await page.getByRole('button', { name: 'Finish' }).click();
+}
 
+/**
+ * Helper function to export accounts
+ * @param page - The Playwright page object
+ * @returns The download object
+ */
+async function exportAccounts(page: Page): Promise<any> {
+ await page.getByRole('button', { name: 'Export' }).click();
+ const downloadPromise = page.waitForEvent('download');
+ await page.getByText('Download').click();
+ const download = await downloadPromise;
+ // Close dialog
+ await page.getByRole('button', { name: 'X', exact: true }).click();
+ return download;
+}
 
- // switch to account
- await page.getByTestId('account-bar-toggle').click();
- await page.getByTestId('user1@example.com').click();
+/**
+ * Helper function to delete the first account in the list
+ * @param page - The Playwright page object
+ */
+async function deleteFirstAccount(page: Page): Promise<void> {
+ await page.getByRole('button', { name: 'Delete' }).first().click();
+ await page.locator('button').filter({ hasText: 'Delete' }).click();
+}
 
- // switch to account management
- await page.getByTestId('account-bar-toggle').click();
- await page.getByRole('button', { name: 'Account management Account' }).click();
+/**
+ * Helper function to toggle the enabled state of the first account
+ * @param page - The Playwright page object
+ */
+async function toggleFirstAccountEnabled(page: Page): Promise<void> {
+ await page.getByRole('button', { name: 'Edit' }).first().click();
+ await page.locator('label').filter({ hasText: 'Enabled:' }).locator('span').click();
+ await page.getByRole('button', { name: 'Save' }).click();
+}
 
- // add new account
- await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
- await page.getByRole('textbox', { name: 'Title:' }).dblclick();
- await page.getByRole('textbox', { name: 'Title:' }).press('End');
- await page.getByRole('textbox', { name: 'Title:' }).press('Shift+Home');
- await page.getByRole('textbox', { name: 'Title:' }).fill('');
- await page.getByRole('textbox', { name: 'Password:' }).click();
- await page.getByRole('textbox', { name: 'Password:' }).fill('password');
- await page.getByRole('textbox', { name: 'Address:' }).click();
- await page.getByRole('textbox', { name: 'Server:' }).click();
- await page.getByRole('textbox', { name: 'Server:' }).press('End');
- await page.getByRole('textbox', { name: 'Server:' }).press('Shift+Home');
- await page.getByRole('textbox', { name: 'Server:' }).fill('ws://localhost:8085/');
- await page.getByRole('textbox', { name: 'Address:' }).click();
- await page.getByRole('textbox', { name: 'Address:' }).fill('user2@example.com');
- await page.getByTestId('save').click();
+test('test', async ({ page }) => {
+ await page.goto('http://localhost:3000/');
 
- // switch account
- await page.getByTestId('account-bar-toggle').click();
- await page.getByTestId('user1@example.com').click();
+ // Add account in the wizard
+ await setupAccountInWizard(page, {
+  server: 'ws://localhost:8085',
+  address: 'user1@example.com',
+  password: 'password'
+ });
 
- // switch module
+ // Switch to account
+ await switchAccount(page, 'user1@example.com');
+
+ // Go to account management
+ await goToAccountManagement(page);
+
+ // Add new account
+ await addAccount(page, {
+  server: 'ws://localhost:8085/',
+  address: 'user2@example.com',
+  password: 'password'
+ });
+
+ // Switch account
+ await switchAccount(page, 'user1@example.com');
+
+ // Switch module
  await switchModule(page, 'org.libersoft.messages');
 
  // Start a new conversation
- await page.getByTestId('new-conversation-button').click();
- await page.getByTestId('new-conversation-address').fill('user2@example.com');
- await page.getByTestId('New Conversation Open').click();
+ await startNewConversation(page, 'user2@example.com');
 
  // Send a message
- await page.getByTestId('message-input').fill('blabla bla');
- await page.getByTestId('messagebarsend').click();
+ await sendMessage(page, 'blabla bla');
 
- // switch account
- await page.getByTestId('account-bar-toggle').click();
- await page.getByTestId('user2@example.com').click();
+ // Switch account
+ await switchAccount(page, 'user2@example.com');
 
- // open conversation
- await page.getByTestId('conversation user1@example.com').click();
+ // Open conversation
+ await openConversation(page, 'user1@example.com');
 
  // Reply to a message
- // - right-click the last message, then click Reply
  // This could use two improvements:
  // last() gets the last message, which might not be the exact message we sent above, especially if we want to consider running the tests without always clearing and re-populating the database, which we dont want to do always (like during test development).
- await page.getByTestId('message-item').last().click({ button: 'right' });
  // the other improvement is that we should test that what we click that particular message, (say we identify it by its uuid), we should check that it is the corresponding context menu that becomes visible. But we should probably mainly rewrite ContextMenu to make it only render when it's open, rather than rendering in invisible state. If i'm not mistaken, the test here could be clicking on an invisible item.
- await page.getByTestId('reply-context-menu-item').last().click();
- await page.getByTestId('message-input').fill('ble ble ble');
- await page.getByTestId('messagebarsend').click();
+ await replyToLastMessage(page, 'ble ble ble');
 
- // switch account
- await page.getByTestId('account-bar-toggle').click();
- await page.getByTestId('user1@example.com').click();
+ // Switch account
+ await switchAccount(page, 'user1@example.com');
 
- // open conversation
- await page.getByTestId('conversation user2@example.com').click();
+ // Open conversation
+ await openConversation(page, 'user2@example.com');
 
- // send reaction
- await page.getByTestId('message-reaction-menu-button').last().click();
- await page.getByTestId('message-reaction-emoji-button').last().click();
+ // Send reaction
+ await addReactionToLastMessage(page);
 
- // switch account
- await page.getByTestId('account-bar-toggle').click();
- await page.getByTestId('user1@example.com').click();
+ // Switch account
+ await switchAccount(page, 'user1@example.com');
 
- // switch module
+ // Switch module
  await switchModule(page, 'org.libersoft.messages');
 
  // Start a new conversation with user3
- await page.getByTestId('new-conversation-button').click();
- await page.getByTestId('new-conversation-address').fill('user3@example.com');
- await page.getByTestId('New Conversation Open').click();
+ await startNewConversation(page, 'user3@example.com');
 
  // Send a message
- await page.getByTestId('message-input').fill('hi 3');
+ await sendMessage(page, 'hi 3');
 
  // Open messages settings
- await page.getByTestId('messages-settings-button').click();
- await page.getByRole('slider').fill('636928');
- await page.getByRole('combobox').selectOption('10px');
- await page.getByRole('button', { name: 'Save' }).click();
+ await configureMessagesSettings(page, {
+  chunkSize: '636928',
+  fontSize: '10px'
+ });
 
  // Switch between modules
  await switchModule(page, 'org.libersoft.contacts');
@@ -138,63 +289,48 @@ test('test', async ({ page }) => {
  await switchModule(page, 'org.libersoft.messages');
 
  // Go to account management
- await page.getByTestId('account-bar-toggle').click();
- await page.getByRole('button', { name: 'Account management Account' }).click();
+ await goToAccountManagement(page);
 
  // Add a new account with user3
- await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
- // Clear and fill account fields
- await page.getByRole('textbox', { name: 'Title:' }).fill('');
- await page.getByRole('textbox', { name: 'Server:' }).fill('ws://localhost:8085');
- await page.getByRole('textbox', { name: 'Address:' }).fill('user3@example.com');
- await page.getByRole('textbox', { name: 'Password:' }).fill('password');
- await page.getByTestId('save').click();
+ await addAccount(page, {
+  server: 'ws://localhost:8085',
+  address: 'user3@example.com',
+  password: 'password'
+ });
 
  // Export all accounts
- await page.getByRole('button', { name: 'Export' }).click();
- const download1Promise = page.waitForEvent('download');
- await page.getByText('Download').click();
- const download1 = await download1Promise;
- // close dialog
- await page.getByRole('button', { name: 'X', exact: true }).click();
+ const download1 = await exportAccounts(page);
 
  // Delete account
- await page.getByRole('button', { name: 'Delete' }).first().click();
- await page.locator('button').filter({ hasText: 'Delete' }).click();
+ await deleteFirstAccount(page);
 
  // Disable account
- await page.getByRole('button', { name: 'Edit' }).first().click();
- // Toggle the enabled checkbox
- await page.locator('label').filter({ hasText: 'Enabled:' }).locator('span').click();
- await page.getByRole('button', { name: 'Save' }).click();
+ await toggleFirstAccountEnabled(page);
 
- // switch account
- await page.getByTestId('account-bar-toggle').click();
- await page.getByTestId('user3@example.com').click();
+ // Switch account
+ await switchAccount(page, 'user3@example.com');
  await new Promise(resolve => setTimeout(resolve, 5000));
 
  await switchModule(page, 'org.libersoft.messages');
 
  // Open messages settings
- await page.getByTestId('messages-settings-button').click();
- // Change chunk size
- await page.getByRole('slider').fill('2756608');
- await page.getByRole('button', { name: 'Save' }).click();
+ await configureMessagesSettings(page, {
+  chunkSize: '2756608'
+ });
 
  // Open global settings
- await page.getByRole('button', { name: '☰' }).click();
- await page.getByRole('button', { name: 'Settings Settings' }).click();
+ await openGlobalSettings(page);
 
  // Navigate to notifications settings
- await page.getByRole('button', { name: 'Notifications Notifications' }).click();
+ await navigateToSettingsSection(page, 'Notifications');
  await page.getByRole('row', { name: 'Notification sound:' }).locator('span').click();
 
  // Navigate to appearance settings
- await page.getByRole('button', { name: 'Appearance Appearance' }).click();
+ await navigateToSettingsSection(page, 'Appearance');
 
  // Back to notifications
- await page.getByRole('button', { name: 'Notifications Notifications' }).click();
+ await navigateToSettingsSection(page, 'Notifications');
 
- // close settings
- await page.getByTestId('Modal-close').click();
+ // Close settings
+ await closeModal(page);
 });
