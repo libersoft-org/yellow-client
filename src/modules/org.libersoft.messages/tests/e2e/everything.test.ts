@@ -24,6 +24,8 @@ async function switchModule(page, moduleId) {
 
 test('test', async ({ page }) => {
  await page.goto('http://localhost:3000/');
+
+ // add account in the wizard
  await page.getByTestId('wizard-next').click();
  await page.getByRole('textbox', { name: 'Title:' }).click();
  await page.getByRole('textbox', { name: 'Title:' }).fill('');
@@ -35,10 +37,17 @@ test('test', async ({ page }) => {
  await page.getByRole('button', { name: 'Next' }).click();
  await page.getByRole('button', { name: 'Next' }).click();
  await page.getByRole('button', { name: 'Finish' }).click();
- await page.getByRole('button', { name: 'user1@example.com ▼' }).click();
- await page.getByRole('button', { name: 'user1@example.com Logged in.' }).click();
- await page.getByRole('button', { name: 'user1@example.com ▼' }).click();
+
+
+ // switch to account
+ await page.getByTestId('account-bar-toggle').click();
+ await page.getByTestId('user1@example.com').click();
+
+ // switch to account management
+ await page.getByTestId('account-bar-toggle').click();
  await page.getByRole('button', { name: 'Account management Account' }).click();
+
+ // add new account
  await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
  await page.getByRole('textbox', { name: 'Title:' }).dblclick();
  await page.getByRole('textbox', { name: 'Title:' }).press('End');
@@ -65,7 +74,6 @@ test('test', async ({ page }) => {
  // Start a new conversation
  await page.getByTestId('new-conversation-button').click();
  await page.getByTestId('new-conversation-address').fill('user2@example.com');
- await new Promise(resolve => setTimeout(resolve, 1000));
  await page.getByTestId('New Conversation Open').click();
 
  // Send a message
@@ -79,7 +87,8 @@ test('test', async ({ page }) => {
  // open conversation
  await page.getByTestId('conversation user1@example.com').click();
 
- // Reply to a message - right-click the last message, then click Reply
+ // Reply to a message
+ // - right-click the last message, then click Reply
  // This could use two improvements:
  // last() gets the last message, which might not be the exact message we sent above, especially if we want to consider running the tests without always clearing and re-populating the database, which we dont want to do always (like during test development).
  await page.getByTestId('message-item').last().click({ button: 'right' });
@@ -110,6 +119,8 @@ test('test', async ({ page }) => {
  await page.getByTestId('new-conversation-button').click();
  await page.getByTestId('new-conversation-address').fill('user3@example.com');
  await page.getByTestId('New Conversation Open').click();
+
+ // Send a message
  await page.getByTestId('message-input').fill('hi 3');
 
  // Open messages settings
@@ -126,10 +137,8 @@ test('test', async ({ page }) => {
  await switchModule(page, 'org.libersoft.contacts');
  await switchModule(page, 'org.libersoft.messages');
 
- // Account management section
- // Open account menu
- await page.getByTestId('account-bar-toggle').click();
  // Go to account management
+ await page.getByTestId('account-bar-toggle').click();
  await page.getByRole('button', { name: 'Account management Account' }).click();
 
  // Add a new account with user3
@@ -166,17 +175,9 @@ test('test', async ({ page }) => {
 
  await switchModule(page, 'org.libersoft.messages');
 
- // todo:
- // // Start a new conversation
- // await page.getByTestId('new-conversation-button').click();
- // await page.getByTestId('new-conversation-address').fill('user4@example.com');
- // await page.getByTestId('New Conversation Open').click();
- // await page.getByTestId('message-input').fill('hi user4');
- // await page.getByTestId('messagebarsend').click();
-
- // Open messages settings again
+ // Open messages settings
  await page.getByTestId('messages-settings-button').click();
- // Change font size settings
+ // Change chunk size
  await page.getByRole('slider').fill('2756608');
  await page.getByRole('button', { name: 'Save' }).click();
 
@@ -191,7 +192,9 @@ test('test', async ({ page }) => {
  // Navigate to appearance settings
  await page.getByRole('button', { name: 'Appearance Appearance' }).click();
 
- // Back to notifications and close settings
+ // Back to notifications
  await page.getByRole('button', { name: 'Notifications Notifications' }).click();
+
+ // close settings
  await page.getByTestId('Modal-close').click();
 });
