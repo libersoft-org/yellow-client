@@ -1,0 +1,51 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout yellow-dev
+      uses: actions/checkout@v3
+      with:
+        repository: koo5/yellow-dev
+        ref: master
+        submodules: recursive
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+    
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Install playwright
+      run: |
+        cd yellow-client
+        bun install
+        bun x playwright install --with-deps
+    
+    - name: Install Fish Shell and MariaDB Client
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y fish mariadb-client
+    
+    - name: Run E2E Tests
+      run: python scripts/run_compose_and_test.py
