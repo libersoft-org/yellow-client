@@ -32,7 +32,7 @@
   font-weight: bold;
  }
 
- .welcome .version {
+ .welcome .detail {
   display: flex;
   gap: 5px;
   font-size: 16px;
@@ -46,15 +46,15 @@
    <div class="product">{product}</div>
   </div>
  </BaseButton>
- <div class="version">
+ <div class="detail">
   <div>Version:</div>
   <div class="bold">{version}</div>
  </div>
- <div class="version">
+ <div class="detail">
   <div>Build:</div>
   <div class="bold">{build}</div>
  </div>
- <div class="version">
+ <div class="detail">
   <div>Commit:</div>
   <div class="bold">{commit}</div>
  </div>
