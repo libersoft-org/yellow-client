@@ -64,7 +64,7 @@
 
 <ButtonBar>
  <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
- <Button width="80px" text="Recover" onClick={recover} />
+ <Button width="80px" img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
  <div class="bold">My wallets:</div>
