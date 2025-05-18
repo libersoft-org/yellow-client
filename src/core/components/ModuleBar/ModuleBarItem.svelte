@@ -17,6 +17,7 @@
 
  .item:hover {
   background-color: #303030;
+  zoom: 1.2;
  }
 
  .item.selected {
