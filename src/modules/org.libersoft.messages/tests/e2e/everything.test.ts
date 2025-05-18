@@ -30,7 +30,7 @@ async function switchModule(page: Page, moduleId: string): Promise<void> {
  */
 async function switchAccount(page: Page, address: string): Promise<void> {
  await page.getByTestId('account-bar-toggle').click();
- await page.getByTestId("account " + address).click();
+ await page.getByTestId('account ' + address).click();
 }
 
 /**
@@ -113,7 +113,7 @@ async function addReactionToLastMessage(page: Page): Promise<void> {
  * @param page - The Playwright page object
  * @param settings - Object containing settings configuration
  */
-async function configureMessagesSettings(page: Page, settings: { chunkSize?: string, fontSize?: string }): Promise<void> {
+async function configureMessagesSettings(page: Page, settings: { chunkSize?: string; fontSize?: string }): Promise<void> {
  await page.getByTestId('messages-settings-button').click();
 
  if (settings.chunkSize) {
@@ -213,7 +213,7 @@ test('test', async ({ page }) => {
  await setupAccountInWizard(page, {
   server: 'ws://localhost:8085',
   address: 'user1@example.com',
-  password: 'password'
+  password: 'password',
  });
 
  // Switch to account
@@ -226,7 +226,7 @@ test('test', async ({ page }) => {
  await addAccount(page, {
   server: 'ws://localhost:8085/',
   address: 'user2@example.com',
-  password: 'password'
+  password: 'password',
  });
 
  // Switch account
@@ -277,7 +277,7 @@ test('test', async ({ page }) => {
  // Open messages settings
  await configureMessagesSettings(page, {
   chunkSize: '636928',
-  fontSize: '10px'
+  fontSize: '10px',
  });
 
  // Switch between modules
@@ -295,7 +295,7 @@ test('test', async ({ page }) => {
  await addAccount(page, {
   server: 'ws://localhost:8085',
   address: 'user3@example.com',
-  password: 'password'
+  password: 'password',
  });
 
  // Export all accounts
@@ -315,7 +315,7 @@ test('test', async ({ page }) => {
 
  // Open messages settings
  await configureMessagesSettings(page, {
-  chunkSize: '2756608'
+  chunkSize: '2756608',
  });
 
  // Open global settings
