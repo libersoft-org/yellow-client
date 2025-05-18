@@ -46,8 +46,7 @@
   <span class="bold">File upload chunk size:</span>
   <span>{humanSize(chunkSize)}</span>
  </div>
- <Input type="number" bind:value={chunkSize} />
- <input class="zoom" type="range" min="1024" max="52428800" step="1024" bind:value={chunkSize} />
+ <input class="zoom" type="range" min="131072" max="31457280" step="131072" bind:value={chunkSize} />
 </div>
 <Button img="img/save.svg" text="Save" onClick={clickSetChunkSize} />
 <div class="group">
