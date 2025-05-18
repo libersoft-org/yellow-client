@@ -1,6 +1,7 @@
 <script lang="ts">
  import { debug, findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '../../core.js';
- import Button from '@/core/components/Button/Button.svelte';
+ import ButtonBar from '../../components/Button/ButtonBar.svelte';
+ import Button from '../../components/Button/Button.svelte';
  import TableActionItems from '../../components/Table/TableActionItems.svelte';
  import Icon from '../../components/Icon/Icon.svelte';
  import Table from '../../components/Table/Table.svelte';
@@ -248,20 +249,15 @@
  .table {
   display: inline-block;
  }
-
- .accounts .buttons {
-  display: flex;
-  gap: 10px;
- }
 </style>
 
 <div class="accounts">
- <div class="buttons">
+ <ButtonBar>
   <Button img="img/back.svg" text="Back" onClick={back} hiddenOnDesktop={true} />
   <Button img="img/accounts.svg" text="Add a new account" colorVariable="--icon-black" onClick={addAccountModal} />
   <Button img="img/export.svg" text="Export" onClick={clickExport} />
   <Button img="img/import.svg" text="Import" onClick={clickImport} />
- </div>
+ </ButtonBar>
  <div class="table">
   <Table>
    <TableTHead>
