@@ -107,7 +107,7 @@
  <div class="message-attachment-accept-btn">
   <Button
    width="110px"
-   img="modules/{identifier}/img/download.svg"
+   img="img/download.svg"
    text="Download"
    onClick={e => {
     onDownload(e);
