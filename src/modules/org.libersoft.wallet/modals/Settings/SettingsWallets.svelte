@@ -3,6 +3,13 @@
  import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
  import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
  import Button from '@/core/components/Button/Button.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Thead from '@/core/components/Table/Thead.svelte';
+ import TheadTr from '@/core/components/Table/TheadTr.svelte';
+ import Th from '@/core/components/Table/TheadTh.svelte';
+ import Tbody from '@/core/components/Table/Tbody.svelte';
+ import TbodyTr from '@/core/components/Table/TbodyTr.svelte';
+ import Td from '@/core/components/Table/TbodyTd.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
  import Address from '../../components/settings-wallets-address.svelte';
@@ -96,11 +103,11 @@
  <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
  <Button width="80px" text="Recover" onClick={recover} />
 </ButtonBar>
-{#if $wallets.length === 0}
- <div class="bold">No wallets found</div>
-{/if}
 {#if $wallets.length > 0}
  <div class="bold">My wallets:</div>
+{/if}
+{#if $wallets.length === 0}
+ <div class="bold">No wallets found</div>
 {/if}
 <Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
  <div class="wallet">
@@ -108,29 +115,31 @@
    <Button text="Add a new address" onClick={() => addAddress(wallet)} />
    <Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(wallet)} />
   </ButtonBar>
-  <table>
-   <thead>
-    <tr>
-     <th class="center">Index</th>
-     <th>Alias</th>
-     <th>Address</th>
-     <th class="center">Action</th>
-    </tr>
-   </thead>
-   <tbody>
+  <Table>
+   <Thead>
+    <TheadTr>
+     <Th class="center">Index</Th>
+     <Th>Alias</Th>
+     <Th>Address</Th>
+     <Th class="center">Action</Th>
+    </TheadTr>
+   </Thead>
+   <Tbody>
     {#each walletAddresses(wallet) as address, index}
-     <tr class={index % 2 === 0 ? 'even' : 'odd'}>
-      <td class="center">{address.index}</td>
-      <td>{address.name}</td>
-      <td><Address address={address.address} /></td>
-      <td class="icons">
-       <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
-       <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
-      </td>
-     </tr>
+     <TbodyTr>
+      <Td center={true}>{address.index}</td>
+      <Td>{address.name}</td>
+      <Td><Address address={address.address} /></td>
+      <Td>
+       <TableActionItems>
+        <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
+        <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
+       </TableActionItems>
+      </Td>
+     </TbodyTr>
     {/each}
-   </tbody>
-  </table>
+   </Tbody>
+  </Table>
  </div>
 </Accordion>
 
