@@ -46,7 +46,6 @@
  }
 
  const clickDel = (id: string, title: string) => {
-  console.error(id, title);
   idItem = id;
   accountTitle = title;
   showDelAccountModal = true;
@@ -59,8 +58,6 @@
  function clickImport() {
   showImportModal = true;
  }
-
- $inspect(idItem, accountTitle);
 </script>
 
 <style>
@@ -109,6 +106,38 @@
  }
 </style>
 
+{#snippet accountTable(account)}
+ <ResponsiveTable>
+  <ResponsiveTableTHead>
+   <ResponsiveTableTHeadTr>
+    <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Action</ResponsiveTableTHeadTh>
+   </ResponsiveTableTHeadTr>
+  </ResponsiveTableTHead>
+  <ResponsiveTableTBody>
+   <ResponsiveTableTBodyTr>
+    <ResponsiveTableTBodyTh title="Status">
+     <AccountStatusIconIconAndText account={findAccount(account.id)} />
+    </ResponsiveTableTBodyTh>
+    <ResponsiveTableTBodyTd title="Title">{account.settings?.title}</ResponsiveTableTBodyTd>
+    <ResponsiveTableTBodyTd title="Server">{account.credentials.server}</ResponsiveTableTBodyTd>
+    <ResponsiveTableTBodyTd title="Address">{account.credentials.address}</ResponsiveTableTBodyTd>
+    <ResponsiveTableTBodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
+    <ResponsiveTableTBodyTd title="Action">
+     <TableActionItems>
+      <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(account.id)} />
+      <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(account.id, account.settings?.title)} />
+     </TableActionItems>
+    </ResponsiveTableTBodyTd>
+   </ResponsiveTableTBodyTr>
+  </ResponsiveTableTBody>
+ </ResponsiveTable>
+{/snippet}
+
 <div class="accounts">
  <div class="accounts-wrapper">
   <div class="header">
@@ -122,73 +151,22 @@
   </div>
 
   {#if $isMobile}
-   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))}>
-    {#each $accounts_config as a (a.id)}
-     <ResponsiveTable>
-      <ResponsiveTableTHead>
-       <ResponsiveTableTHeadTr>
-        <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
-        <ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh>
-        <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
-        <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
-        <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
-        <ResponsiveTableTHeadTh>Action</ResponsiveTableTHeadTh>
-       </ResponsiveTableTHeadTr>
-      </ResponsiveTableTHead>
-      <ResponsiveTableTBody>
-       <ResponsiveTableTBodyTr>
-        <ResponsiveTableTBodyTh title="Status"><AccountStatusIconIconAndText account={findAccount(a.id)} /></ResponsiveTableTBodyTh>
-        <ResponsiveTableTBodyTd title="Title">{a.settings?.title}</ResponsiveTableTBodyTd>
-        <ResponsiveTableTBodyTd title="Server">{a.credentials.server}</ResponsiveTableTBodyTd>
-        <ResponsiveTableTBodyTd title="Address">{a.credentials.address}</ResponsiveTableTBodyTd>
-        <ResponsiveTableTBodyTd title="Enabled">{a.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
-        <ResponsiveTableTBodyTd title="Action">
-         <TableActionItems>
-          <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
-          <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
-         </TableActionItems>
-        </ResponsiveTableTBodyTd>
-       </ResponsiveTableTBodyTr>
-      </ResponsiveTableTBody>
-     </ResponsiveTable>
-    {/each}
-   </Accordion>
+   {#each $accounts_config as a, index (a.id)}
+    <Accordion items={[{ ...$accounts_config[index], name: $accounts_config[index].settings?.title }]}>
+     {@render accountTable($accounts_config[index])}
+    </Accordion>
+   {/each}
   {:else}
-   {#each $accounts_config as a (a.id)}
-    <ResponsiveTable>
-     <ResponsiveTableTHead>
-      <ResponsiveTableTHeadTr>
-       <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
-       <ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh>
-       <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
-       <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
-       <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
-       <ResponsiveTableTHeadTh>Action</ResponsiveTableTHeadTh>
-      </ResponsiveTableTHeadTr>
-     </ResponsiveTableTHead>
-     <ResponsiveTableTBody>
-      <ResponsiveTableTBodyTr>
-       <ResponsiveTableTBodyTh title="Status"><AccountStatusIconIconAndText account={findAccount(a.id)} /></ResponsiveTableTBodyTh>
-       <ResponsiveTableTBodyTd title="Title">{a.settings?.title}</ResponsiveTableTBodyTd>
-       <ResponsiveTableTBodyTd title="Server">{a.credentials.server}</ResponsiveTableTBodyTd>
-       <ResponsiveTableTBodyTd title="Address">{a.credentials.address}</ResponsiveTableTBodyTd>
-       <ResponsiveTableTBodyTd title="Enabled">{a.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
-       <ResponsiveTableTBodyTd title="Action">
-        <TableActionItems>
-         <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
-         <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
-        </TableActionItems>
-       </ResponsiveTableTBodyTd>
-      </ResponsiveTableTBodyTr>
-     </ResponsiveTableTBody>
-    </ResponsiveTable>
+   {#each $accounts_config as a, index (a.id)}
+    {@render accountTable($accounts_config[index])}
    {/each}
   {/if}
  </div>
 </div>
+
 <Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem }} bind:show={showAddEditAccountModal} />
+<Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} />
+<Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} />
 {#if showDelAccountModal}
  <Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
 {/if}
-<Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} />
-<Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} />
