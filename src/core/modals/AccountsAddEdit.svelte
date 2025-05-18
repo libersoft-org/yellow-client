@@ -5,7 +5,7 @@
  import Button from '../components/Button/Button.svelte';
  import Input from '../components/Input/Input.svelte';
  import Select from '../components/Select/Select.svelte';
- import SelectOption from '../components/Select/SelectOption.svelte';
+ import Option from '../components/Select/SelectOption.svelte';
  import Switch from '../components/Switch/Switch.svelte';
  import { derived, get, writable } from 'svelte/store';
  import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
@@ -137,6 +137,7 @@
   font-size: 15px;
   padding-left: 5px;
   font-weight: bold;
+  cursor: pointer;
  }
 
  .form .error {
@@ -159,8 +160,8 @@
   <label>
    <div class="label">Protocol:</div>
    <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
-    <SelectOption text="AMTP" value="amtp" selected={protocol === 'amtp'} />
-    <SelectOption text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
+    <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
+    <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
    </Select>
   </label>
  </div>

@@ -5,7 +5,7 @@
  import Td from '../Table/TableTbodyTd.svelte';
  import Input from '../Input/Input.svelte';
  import Select from '../Select/Select.svelte';
- import SelectOption from '../Select/SelectOption.svelte';
+ import Option from '../Select/SelectOption.svelte';
  import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
  import type { Unsubscriber } from 'svelte/store';
@@ -54,9 +54,9 @@
       </Td>
       <Td center={true}>
        <Select bind:value={$animationName}>
-        <SelectOption value="none" text="None" />
-        <SelectOption value="zoom" text="Zoom" />
-        <SelectOption value="opacity" text="Opacity" />
+        <Option value="none" text="None" />
+        <Option value="zoom" text="Zoom" />
+        <Option value="opacity" text="Opacity" />
        </Select>
       </Td>
      </TbodyTr>

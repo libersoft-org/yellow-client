@@ -1,6 +1,6 @@
 <script>
  import Select from '@/core/components/Select/Select.svelte';
- import SelectOption from '@/core/components/Select/SelectOption.svelte';
+ import Option from '@/core/components/Select/SelectOption.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import Switch from '@/core/components/Switch/Switch.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
@@ -60,7 +60,7 @@
   <div class="label">Sticker server:</div>
   <Select bind:value={$sticker_server_index}>
    {#each $sticker_servers as server, i}
-    <SelectOption value={i} text={server} />
+    <Option value={i} text={server} />
    {/each}
   </Select>
  </div>
@@ -76,7 +76,7 @@
   <div class="label">Gif server:</div>
   <Select bind:value={$gif_server_index}>
    {#each $gif_servers as server, i}
-    <SelectOption value={i} text={server} />
+    <Option value={i} text={server} />
    {/each}
   </Select>
  </div>

@@ -6,7 +6,7 @@
  import Input from '../Input/Input.svelte';
  import Switch from '../Switch/Switch.svelte';
  import Select from '../Select/Select.svelte';
- import SelectOption from '../Select/SelectOption.svelte';
+ import Option from '../Select/SelectOption.svelte';
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
  import { writable, get, type Unsubscriber } from 'svelte/store';
  import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
@@ -177,7 +177,7 @@
     <Td center={true}>
      <Select bind:value={$selectedMonitorName}>
       {#each $monitorOptions as monitor}
-       <SelectOption value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
+       <Option value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
       {/each}
      </Select>
      {#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}

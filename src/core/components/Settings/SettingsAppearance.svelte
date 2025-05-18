@@ -1,6 +1,6 @@
 <script>
  import Select from '../Select/Select.svelte';
- import SelectOption from '../Select/SelectOption.svelte';
+ import Option from '../Select/SelectOption.svelte';
  import Table from '../Table/Table.svelte';
  import Tbody from '../Table/TableTbody.svelte';
  import TbodyTr from '../Table/TableTbodyTr.svelte';
@@ -38,7 +38,7 @@
    </Td>
    <Td center={true}>
     <Select bind:value={theme}>
-     <SelectOption text="Light" value="light" />
+     <Option text="Light" value="light" />
     </Select>
    </Td>
   </TbodyTr>
