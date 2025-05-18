@@ -193,7 +193,7 @@
   {/if}
  </div>
  <div class="footer">
-  <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length} data-testid="send-files-p2p" />
-  <Button width="180px" img="modules/{identifier}/img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length} data-testid="send-files-server" />
+  <Button width="180px" img="img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length} data-testid="send-files-p2p" />
+  <Button width="180px" img="img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length} data-testid="send-files-server" />
  </div>
 </div>

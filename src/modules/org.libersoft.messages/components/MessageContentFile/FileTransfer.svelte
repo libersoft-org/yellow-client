@@ -12,7 +12,6 @@
  let speed = 0;
 
  function updateSpeed() {
-  const now = Date.now();
   const elapsed = 1; // Always 1 second interval
   const delta = uploaded - lastUploaded;
   speed = delta > 0 ? delta / elapsed : 0; // Set to 0 if no progress

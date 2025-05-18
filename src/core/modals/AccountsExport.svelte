@@ -46,7 +46,7 @@
  {@html atomOneDark}
 </svelte:head>
 
-<Button text="Download" onClick={clickDownload} />
+<Button img="img/download.svg" text="Download" onClick={clickDownload} />
 <div class="code">
  <div class="sizer">
   <Highlight contenteditable="true" language={json} code={JSON.stringify($accounts_config, null, 2)} />
