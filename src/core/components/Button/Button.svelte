@@ -12,7 +12,7 @@
   hiddenOnDesktop?: boolean;
   width?: string;
   onClick?: (e: Event) => void;
-  padding?: string;
+  padding?: number;
   bgColor?: string;
   borderColor?: string;
   textColor?: string;
@@ -21,9 +21,10 @@
   iconSize?: number;
   iconPadding?: number;
   loading?: boolean;
+  radius?: number;
  }
 
- let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = 20, iconPadding = 0, loading = false, ...restProps }: ButtonProps = $props();
+ let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = 10, bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = 20, iconPadding = 0, loading = false, ...restProps }: ButtonProps = $props();
 
  function handleClick(e) {
   if (enabled && onClick) {
@@ -39,9 +40,16 @@
   justify-content: center;
   gap: 5px;
   text-align: center;
-  border-radius: 10px;
   font-weight: bold;
-  border: 1px solid;
+  border: 1px solid #222 !important;
+  color: #222;
+  font-size: 14px;
+  height: max-content;
+  box-shadow:
+   rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+   rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+   rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+   rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
  }
 
  .button.disabled {
@@ -58,7 +66,7 @@
 </style>
 
 <BaseButton onClick={handleClick} {...restProps} disabled={!enabled}>
- <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
+ <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + 'px;' + 'border-radius: ' + radius + 'px;'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
   {#if children}
    {@render children?.()}
   {/if}

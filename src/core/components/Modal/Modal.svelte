@@ -21,6 +21,7 @@
  let showContent = $state(false);
  let ModalBody = $state<Snippet>(body);
  let zIndex = $state(100);
+ let activeTab = $state('');
  let modalId: number;
  let posX = 0,
   posY = 0,
@@ -114,6 +115,12 @@
   window.removeEventListener('mousemove', drag);
   window.removeEventListener('mouseup', dragEnd);
  }
+
+ function clearActiveTab() {
+  activeTab = '';
+ }
+
+ $inspect(params, 'params');
 </script>
 
 <style>
@@ -132,6 +139,7 @@
   box-shadow: var(--shadow);
   background-color: #fff;
  }
+
  .modal .header {
   display: flex;
   align-items: center;
@@ -142,8 +150,14 @@
   cursor: pointer;
  }
  .modal .header .title {
+  display: flex;
+  align-items: center;
   padding: 0 10px;
   flex-grow: 1;
+
+  :global(.icon) {
+   padding: 0 10px 0 0 !important;
+  }
  }
  .modal .body {
   display: flex;
@@ -171,7 +185,12 @@
   {#if showContent}
    <div class="header" role="none" tabindex="-1" onmousedown={dragStart}>
     {#if title}
-     <div class="title">{title}</div>
+     <div class="title">
+      {#if activeTab}
+       <Icon img="img/back.svg" alt="Back" colorVariable="--icon-black" size={20} padding={10} onClick={clearActiveTab} />
+      {/if}
+      {title}
+     </div>
      <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size={20} padding={10} onClick={close} />
     {/if}
    </div>
@@ -183,9 +202,9 @@
     {/if}
 
     {#if params}
-     <ModalBody {params} {close} />
+     <ModalBody {close} {params} />
     {:else}
-     <ModalBody {close} />
+     <ModalBody {close} bind:activeTab />
     {/if}
    </div>
   {/if}

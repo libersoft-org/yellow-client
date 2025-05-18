@@ -1,5 +1,5 @@
-<script>
- import { getContext, onMount } from 'svelte';
+<script lang="ts">
+ import { getContext, untrack } from 'svelte';
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts } from '../core.js';
  import Button from '../components/Button/Button.svelte';
@@ -8,86 +8,100 @@
  import Select from '../components/Select/Select.svelte';
  import Option from '../components/Select/SelectOption.svelte';
  import Switch from '../components/Switch/Switch.svelte';
- import { derived, get, writable } from 'svelte/store';
  import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
+ import { derived, get, writable } from 'svelte/store';
 
- export let close;
- export let params;
- export let isInWelcomeWizard = false;
- export let save_id;
+ type Props = {
+  close: () => void;
+  params: { id: string | null };
+  isInWelcomeWizard?: boolean;
+  save_id?: (id: string) => void;
+ };
 
- let protocolElem;
- let protocol = 'amtp';
- let error;
- let credentials_address;
- let credentials_server;
- let credentials_password;
- let config_enabled;
- let config_title;
- let acc;
- let retry_nonce = 0;
- let wizard = getContext('wizard');
- let account_id_store = writable(null);
- $: account_id_store.set(params.id);
+ let { close, params, isInWelcomeWizard = false, save_id }: Props = $props();
 
- account_id_store.subscribe(value => {
-  console.log('ModalAccountsAddEdit ACCOUNT-ID-STORE-EMITTED', value);
+ let protocolElem: any = null;
+ let protocol = $state('amtp');
+ let error = $state('');
+ let credentials_address = $state('');
+ let credentials_server = $state('');
+ let credentials_password = $state('');
+ let config_enabled = $state(false);
+ let config_title = $state('');
+ let acc = $state();
+ let retry_nonce = $state(0);
+ type WizardContext = {
+  setNextText: (text: string) => void;
+ };
+
+ let wizard = getContext<WizardContext>('wizard');
+
+ let account_id_store = writable<string | null>(null);
+
+ console.log('[INIT] Modal mounted. Params:', params);
+
+ $effect(() => {
+  console.log('[EFFECT] Updating account_id_store from params.id =', params.id);
+  account_id_store.set(params.id);
  });
 
- let account_store = derived([accounts, account_id_store], ([$accounts, $account_id_store]) => {
-  let r = $accounts.find(acc => get(acc).id === $account_id_store);
-  console.log('ModalAccountsAddEdit ACCOUNT-STORE-FIRED', $accounts, $account_id_store, r);
-  return r;
+ // Observe full accounts store for debug
+ accounts.subscribe(value => {
+  console.log('[STORE] Full accounts store updated:', value.map(get));
  });
 
- let account = derived(account_store, ($account_store, set) => {
-  if (!$account_store) return set(null);
-  const unsubscribe = $account_store.subscribe(account => {
-   console.log('ModalAccountsAddEdit $ACCOUNT-STORE-EMITTED', account);
-   set(account);
-  });
-  return () => unsubscribe();
+ let account = derived([accounts, account_id_store], ([$accounts, $id]) => {
+  const found = $accounts.find((acc: { id: string }) => acc.id === $id);
+  console.log('[DERIVED] account_id_store =', $id, '→ found account:', found ? get(found) : null);
+  return found ?? null;
  });
 
  account.subscribe(value => {
   acc = value;
-  console.log('ModalAccountsAddEdit isInWelcomeWizard=' + isInWelcomeWizard + ', acc=', acc);
+  console.log('[SUBSCRIBE] account store emitted acc =', value ? get(value) : null);
  });
 
- onMount(() => {
-  protocolElem.focus();
-  if ((params.id ?? null) !== null) {
-   console.log('params.id', params.id);
-   let acc = findAccountConfig(params.id);
-   console.log('acc', acc);
-   let credentials = acc.credentials;
-   credentials_address = credentials.address;
-   credentials_server = credentials.server;
-   credentials_password = credentials.password;
-   config_enabled = acc.enabled;
-   config_title = acc.settings?.title;
+ $effect(() => {
+  protocolElem?.focus();
+  console.log('[EFFECT] Checking if params.id exists:', params.id);
+
+  if (params.id !== null) {
+   let found = findAccountConfig(params.id);
+   console.log('[EFFECT] Loaded existing config:', found);
+
+   if (found?.credentials) {
+    credentials_address = found.credentials.address;
+    credentials_server = found.credentials.server;
+    credentials_password = found.credentials.password;
+   }
+   config_enabled = found?.enabled ?? true;
+   config_title = found?.settings?.title ?? 'My account';
   } else {
-   credentials_address = ''; //'me@' + replacePort(window.location.host, '');
-   credentials_server = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/';
+   console.log('[EFFECT] New account setup');
+   credentials_address = '';
+   credentials_server = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';
-   if (wizard) wizard.setNextText('Skip');
+
+   if (isInWelcomeWizard) {
+    untrack(() => {
+     console.log('[EFFECT] In welcome wizard, setting skip');
+     wizard?.setNextText('Skip');
+    });
+   }
   }
  });
 
- function replacePort(url, port) {
-  return url.replace(/:\d+/, port);
- }
-
  function verify() {
-  if (credentials_server === '') {
+  if (!credentials_server) {
    error = 'Server address is required';
+   console.warn('[VERIFY] Server address is missing');
    return false;
   }
-
-  if (credentials_address === '') {
+  if (!credentials_address) {
    error = 'Address is required';
+   console.warn('[VERIFY] Address is missing');
    return false;
   }
   error = '';
@@ -95,27 +109,61 @@
  }
 
  function clickAdd() {
+  console.log('[ACTION] Clicked ADD');
   if (!verify()) return;
-  params.id = addAccount({ enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password } }, { title: config_title });
-  if (save_id) save_id(params.id);
-  if (wizard) wizard.setNextText('Next');
+
+  const id = addAccount(
+   {
+    enabled: config_enabled,
+    credentials: {
+     address: credentials_address,
+     server: credentials_server,
+     password: credentials_password,
+    },
+   },
+   { title: config_title }
+  );
+
+  console.log('[ACTION] Account added with ID:', id);
+  params.id = id;
+
+  save_id?.(id);
+  wizard?.setNextText('Next');
   close();
  }
 
  function clickSave() {
+  console.log('[ACTION] Clicked SAVE for ID:', params.id);
   if (!verify()) return;
-  saveAccount(params.id, { enabled: config_enabled, credentials: { address: credentials_address, server: credentials_server, password: credentials_password, retry_nonce } }, { title: config_title });
+
+  saveAccount(
+   params.id,
+   {
+    enabled: config_enabled,
+    credentials: {
+     address: credentials_address,
+     server: credentials_server,
+     password: credentials_password,
+     retry_nonce,
+    },
+   },
+   { title: config_title }
+  );
+
+  console.log('[ACTION] Account saved:', params.id);
   retry_nonce++;
-  if (save_id) save_id(params.id);
-  if (wizard) wizard.setNextText('Next');
+  if (params.id !== null) {
+   save_id?.(params.id);
+  }
+  wizard?.setNextText('Next');
   close();
  }
 
- function keyEnter(event) {
+ function keyEnter(event: KeyboardEvent) {
   if (event.key === 'Enter') {
    event.preventDefault();
-   if ((params.id ?? null) === null) clickAdd();
-   else clickSave();
+   console.log('[KEY] Enter pressed');
+   params.id === null ? clickAdd() : clickSave();
   }
  }
 </script>
@@ -126,16 +174,14 @@
   flex-direction: column;
   gap: 15px;
  }
-
- .form .error {
+ .error {
   display: flex;
   gap: 5px;
   padding: 10px;
   border-radius: 10px;
   background-color: #f33;
  }
-
- .form .status {
+ .status {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -146,38 +192,46 @@
  <Label text="Protocol">
   <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
    <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
-   <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
+   <Option text="DMTP (not yet implemented)" value="dmtp" disabled selected={protocol === 'dmtp'} />
   </Select>
  </Label>
+
  <Label text="Title">
   <Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
  </Label>
+
  <Label text="Server">
   <Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
  </Label>
+
  <Label text="Address">
   <Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
  </Label>
+
  <Label text="Password">
   <Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
  </Label>
+
  {#if !isInWelcomeWizard}
   <Switch label="Enabled" bind:checked={config_enabled} />
  {/if}
+
  {#if error}
   <div class="error">
-   <div class="bold">Error:</div>
-   <div>{error}</div>
+   <strong>Error:</strong>
+   {error}
   </div>
  {/if}
- {#if (params.id ?? null) === null}
+
+ {#if params.id === ''}
   <Button text="Add the account" onClick={clickAdd} />
  {:else}
   <Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} />
  {/if}
+
  {#if account && acc}
   <div class="status">
-   <div class="bold">Status:</div>
+   <strong>Status:</strong>
    <AccountStatusIconIconAndText {account} />
   </div>
  {/if}
