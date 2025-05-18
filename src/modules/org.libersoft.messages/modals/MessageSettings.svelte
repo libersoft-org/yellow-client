@@ -50,9 +50,6 @@
 </div>
 <Button img="img/save.svg" text="Save" onClick={clickSetChunkSize} />
 <div class="group">
- <div class="label">
-  <span class="bold">Privacy</span>
- </div>
  <Switch bind:checked={$hideMessageTextInNotifications} label="Hide message text in notifications" />
 </div>
 <div class="group">
