@@ -3,11 +3,11 @@
  import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
+ import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import ModalEditNetwork from '../../modals/edit-network.svelte';
  import ModalTokenList from '../../modals/token-list.svelte';
  import { get } from 'svelte/store';
-
  let showModalEditNetwork = false;
  let showModalTokenList = false;
  let modalItemID = null;
@@ -88,18 +88,14 @@
  .items .item .name {
   flex-grow: 1;
  }
-
- .buttons {
-  display: flex;
- }
 </style>
 
 <div class="networks">
  <div class="bold">My networks:</div>
- <div class="buttons">
+ <ButtonBar>
   <Button img="img/export.svg" text="Export" onClick={() => doExport()} />
   <Button img="img/import.svg" text="Import" onClick={() => doImport()} />
- </div>
+ </ButtonBar>
  <div class="items">
   {#each $networks as n, index (n.guid)}
    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
@@ -107,7 +103,7 @@
      <img src={n.currency.iconURL} alt="" />
     {/if}
     <div class="name">{n.name}</div>
-    <div class="buttons">
+    <div class="icons">
      <Icon img="modules/{module.identifier}/img/coin.svg" alt="Token list" size="20" padding="5" onClick={() => tokenList(n)} />
      <Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Edit network" size="20" padding="5" onClick={() => editNetwork(n)} />
      <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete network" size="20" padding="5" onClick={() => removeNetwork(n)} />
