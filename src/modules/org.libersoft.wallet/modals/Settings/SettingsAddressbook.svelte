@@ -1,4 +1,5 @@
 <script>
+ import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalAddEdit from '../../modals/addressbook-add-edit.svelte';
@@ -113,11 +114,11 @@
 </style>
 
 <div class="addressbook">
- <div class="buttons">
+ <ButtonBar>
   <Button img="modules/{module.identifier}/img/address-add.svg" text="Add an address" onClick={addToAddressBookModal} />
   <Button img="img/export.svg" text="Export" onClick={exportAddressBook} />
   <Button img="img/import.svg" text="Import" onClick={importAddressBook} />
- </div>
+ </ButtonBar>
  {#if $addressBook.length > 0}
   <table>
    <thead>

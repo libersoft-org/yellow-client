@@ -1,6 +1,7 @@
 <script>
  import { module } from '../../module.js';
  import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
+ import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
@@ -84,11 +85,6 @@
   display: flex;
  }
 
- .buttons {
-  display: flex;
-  gap: 10px;
- }
-
  .wallet {
   display: flex;
   flex-direction: column;
@@ -96,16 +92,22 @@
  }
 </style>
 
-<div class="buttons">
+<ButtonBar>
  <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
  <Button width="80px" text="Recover" onClick={recover} />
-</div>
+</ButtonBar>
+{#if $wallets.length === 0}
+ <div class="bold">No wallets found</div>
+{/if}
+{#if $wallets.length > 0}
+ <div class="bold">My wallets:</div>
+{/if}
 <Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
  <div class="wallet">
-  <div class="buttons">
+  <ButtonBar>
    <Button text="Add a new address" onClick={() => addAddress(wallet)} />
    <Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(wallet)} />
-  </div>
+  </ButtonBar>
   <table>
    <thead>
     <tr>

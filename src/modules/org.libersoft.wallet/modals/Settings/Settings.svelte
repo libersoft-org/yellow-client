@@ -1,5 +1,5 @@
 <script>
- import Section from '../../components/settings-section.svelte';
+ import Section from '../../components/Settings/settings-section.svelte';
  import SectionGeneral from './SettingsGeneral.svelte';
  import SectionNetworks from './SettingsNetworks.svelte';
  import SectionWallets from './SettingsWallets.svelte';

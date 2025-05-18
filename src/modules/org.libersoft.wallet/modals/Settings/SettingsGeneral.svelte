@@ -20,8 +20,7 @@
  <div class="title">Currency conversion:</div>
  <div class="select">
   <Select>
-   <SelectOption value="0" text="--- Select your currency ---" />
-   <SelectOption value="1" text="USD" />
+   <SelectOption value="1" text="USD" selected={true} />
   </Select>
  </div>
 </div>
