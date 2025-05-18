@@ -62,11 +62,6 @@
   gap: 10px;
  }
 
- .buttons {
-  display: flex;
-  gap: 10px;
- }
-
  table {
   border-spacing: 0;
   border: 1px solid #000;

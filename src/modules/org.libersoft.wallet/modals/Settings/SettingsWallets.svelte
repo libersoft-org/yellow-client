@@ -55,44 +55,6 @@
 </script>
 
 <style>
- table {
-  border-spacing: 0;
-  border: 1px solid #000;
-  border-radius: 10px;
-  overflow: hidden;
- }
-
- tr.even {
-  background-color: #ffa;
- }
-
- tr.odd {
-  background-color: #ffd;
- }
-
- tr:hover {
-  background-color: #fd1;
- }
-
- th {
-  padding: 5px;
-  text-align: left;
-  background-color: #222;
-  color: #fff;
- }
-
- th.center {
-  text-align: center;
- }
-
- td {
-  padding: 5px;
- }
-
- .icons {
-  display: flex;
- }
-
  .wallet {
   display: flex;
   flex-direction: column;
