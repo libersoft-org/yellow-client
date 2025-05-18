@@ -1,6 +1,11 @@
 <script>
  import { module } from '../../module.js';
  import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import Td from '@/core/components/Table/TableTbodyTd.svelte';
+ import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -54,40 +59,6 @@
   flex-direction: column;
   gap: 10px;
  }
-
- .items {
-  border: 1px solid #000;
-  border-radius: 10px;
-  overflow: hidden;
- }
-
- .items .item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
- }
-
- .items .item.even {
-  background-color: #ffa;
- }
-
- .items .item.odd {
-  background-color: #ffd;
- }
-
- .items .item:hover {
-  background-color: #fd1;
- }
-
- .items .item img {
-  width: 20px;
-  height: 20px;
- }
-
- .items .item .name {
-  flex-grow: 1;
- }
 </style>
 
 <div class="networks">
@@ -96,33 +67,47 @@
   <Button img="img/import.svg" text="Import" onClick={() => doImport()} />
  </ButtonBar>
  <div class="bold">My networks:</div>
- <div class="items">
-  {#each $networks as n, index (n.guid)}
-   <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
-    {#if n.currency?.iconURL}
-     <img src={n.currency.iconURL} alt="" />
-    {/if}
-    <div class="name">{n.name}</div>
-    <div class="icons">
-     <Icon img="modules/{module.identifier}/img/coin.svg" alt="Token list" size="20" padding="5" onClick={() => tokenList(n)} />
-     <Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Edit network" size="20" padding="5" onClick={() => editNetwork(n)} />
-     <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete network" size="20" padding="5" onClick={() => removeNetwork(n)} />
-    </div>
-   </div>
-  {/each}
- </div>
+ <Table>
+  <Tbody>
+   {#each $networks as n, index (n.guid)}
+    <TbodyTr>
+     <Td>
+      {#if n.currency?.iconURL}
+       <Icon img={n.currency.iconURL} alt="" />
+      {/if}
+      <div class="name">{n.name}</div>
+     </Td>
+     <Td>
+      <TableActionItems>
+       <Icon img="modules/{module.identifier}/img/coin.svg" alt="Token list" size="20" padding="5" onClick={() => tokenList(n)} />
+       <Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Edit network" size="20" padding="5" onClick={() => editNetwork(n)} />
+       <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete network" size="20" padding="5" onClick={() => removeNetwork(n)} />
+      </TableActionItems>
+     </Td>
+    </TbodyTr>
+   {/each}
+  </Tbody>
+ </Table>
  <div class="bold">Default networks:</div>
- <div class="items">
-  {#each $default_networks as n, index}
-   <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
-    {#if n.currency?.iconURL}
-     <img src={n.currency.iconURL} alt="" />
-    {/if}
-    <div class="name">{n.name}</div>
-    <Icon img="img/add.svg" alt="Add to my networks" colorVariable="--icon-black" size="20" padding="5" onClick={() => addNetwork(n)} />
-   </div>
-  {/each}
- </div>
+ <Table>
+  <Tbody>
+   {#each $default_networks as n, index}
+    <TbodyTr>
+     <Td>
+      {#if n.currency?.iconURL}
+       <Icon img={n.currency.iconURL} alt="" />
+      {/if}
+      <div class="name">{n.name}</div>
+     </Td>
+     <Td>
+      <TableActionItems>
+       <Icon img="img/add.svg" alt="Add to my networks" colorVariable="--icon-black" size="20" padding="5" onClick={() => addNetwork(n)} />
+      </TableActionItems>
+     </Td>
+    </TbodyTr>
+   {/each}
+  </Tbody>
+ </Table>
 </div>
 <Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:show={showModalEditNetwork} />
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:show={showModalTokenList} />
