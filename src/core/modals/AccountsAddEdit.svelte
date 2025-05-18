@@ -3,6 +3,7 @@
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
  import { accounts } from '../core.js';
  import Button from '../components/Button/Button.svelte';
+ import Label from '../components/Label/Label.svelte';
  import Input from '../components/Input/Input.svelte';
  import Select from '../components/Select/Select.svelte';
  import Option from '../components/Select/SelectOption.svelte';
@@ -132,16 +133,6 @@
   gap: 2px;
  }
 
- .form .group .label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 15px;
-  padding-left: 5px;
-  font-weight: bold;
-  cursor: pointer;
- }
-
  .form .error {
   display: flex;
   gap: 5px;
@@ -159,43 +150,36 @@
 
 <div class="form">
  <div class="group">
-  <label>
-   <div class="label">Protocol:</div>
+  <Label text="Protocol">
    <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
     <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
     <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
    </Select>
-  </label>
+  </Label>
  </div>
  <div class="group">
-  <label>
-   <div class="label">Title:</div>
+  <Label text="Title">
    <Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
-  </label>
+  </Label>
  </div>
  <div class="group">
-  <label>
-   <div class="label">Server:</div>
+  <Label text="Server">
    <Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
-  </label>
+  </Label>
  </div>
  <div class="group">
-  <label>
-   <div class="label">Address:</div>
+  <Label text="Address">
    <Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
-  </label>
+  </Label>
  </div>
  <div class="group">
-  <label>
-   <div class="label">Password:</div>
+  <Label text="Password">
    <Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
-  </label>
+  </Label>
  </div>
  {#if !isInWelcomeWizard}
   <div class="group">
-   <div class="label">
-    <span><Switch label="Enabled:" bind:checked={config_enabled} /></span>
-   </div>
+   <Switch label="Enabled" bind:checked={config_enabled} />
   </div>
  {/if}
  {#if error}

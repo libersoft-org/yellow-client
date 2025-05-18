@@ -89,7 +89,7 @@
 
 <div class="switch">
  {#if label}
-  <div>{label}</div>
+  <div class="bold">{label}:</div>
  {/if}
  <label class="switch-wrapper">
   <input type="checkbox" bind:checked onkeydown={keyPress} />
