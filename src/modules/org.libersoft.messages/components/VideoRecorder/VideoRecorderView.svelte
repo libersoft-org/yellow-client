@@ -3,7 +3,7 @@
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Select from '@/core/components/Select/Select.svelte';
- import SelectOption from '@/core/components/Select/SelectOption.svelte';
+ import Option from '@/core/components/Select/SelectOption.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import { identifier } from '@/org.libersoft.messages/messages';
  import { debug } from '@/core/core';
@@ -184,10 +184,10 @@
  <div class="device-select">
   <Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} {disabled}>
    {#if disabled}
-    <SelectOption value={''} disabled selected text={emptyMessage} />
+    <Option value={''} disabled selected text={emptyMessage} />
    {/if}
    {#each devices as device (device.deviceId)}
-    <SelectOption value={device.deviceId} selected={device.deviceId === selectedDeviceId} text={device.label} />
+    <Option value={device.deviceId} selected={device.deviceId === selectedDeviceId} text={device.label} />
    {/each}
   </Select>
  </div>

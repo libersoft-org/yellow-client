@@ -7,17 +7,18 @@
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalNetworks from '../modals/networks.svelte';
  import ModalWallets from '../modals/wallets.svelte';
+ import ModalSettings from '../modals/Settings/Settings.svelte';
  import Send from './send.svelte';
  import Receive from './receive.svelte';
  import Balance from './balance.svelte';
  import History from './history.svelte';
- import Settings from './Settings/Settings.svelte';
  import Dropdown from '../components/dropdown.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import { hideSidebarMobile } from '@/core/core.js';
  let section = 'balance';
  let showModalNetworks = false;
  let showModalWallets = false;
+ let showModalSettings = false;
  let addressElement;
 
  onMount(() => {
@@ -255,7 +256,7 @@
      <Button width="70px" img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
      <Button width="70px" img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
      <Button width="70px" img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
-     <Button width="70px" img="img/settings.svg" text="Settings" onClick={() => setSection('settings')} />
+     <Button width="70px" img="img/settings.svg" text="Settings" onClick={() => (showModalSettings = true)} />
     </div>
     <div class="separator"></div>
     <div class="section">
@@ -279,3 +280,4 @@
 </div>
 <Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} />
 <Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} />
+<Modal title="Wallet settings" width="500px" body={ModalSettings} bind:show={showModalSettings} />

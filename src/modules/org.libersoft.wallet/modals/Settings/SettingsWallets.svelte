@@ -1,7 +1,16 @@
 <script>
  import { module } from '../../module.js';
  import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
+ import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
  import Button from '@/core/components/Button/Button.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Thead from '@/core/components/Table/TableThead.svelte';
+ import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+ import Th from '@/core/components/Table/TableTheadTh.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import Td from '@/core/components/Table/TableTbodyTd.svelte';
+ import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
  import Address from '../../components/settings-wallets-address.svelte';
@@ -46,49 +55,6 @@
 </script>
 
 <style>
- table {
-  border-spacing: 0;
-  border: 1px solid #000;
-  border-radius: 10px;
-  overflow: hidden;
- }
-
- tr.even {
-  background-color: #ffa;
- }
-
- tr.odd {
-  background-color: #ffd;
- }
-
- tr:hover {
-  background-color: #fd1;
- }
-
- th {
-  padding: 5px;
-  text-align: left;
-  background-color: #222;
-  color: #fff;
- }
-
- th.center {
-  text-align: center;
- }
-
- td {
-  padding: 5px;
- }
-
- .icons {
-  display: flex;
- }
-
- .buttons {
-  display: flex;
-  gap: 10px;
- }
-
  .wallet {
   display: flex;
   flex-direction: column;
@@ -96,40 +62,47 @@
  }
 </style>
 
-<div class="buttons">
+<ButtonBar>
  <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
- <Button width="80px" text="Recover" onClick={recover} />
-</div>
+ <Button width="80px" img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
+</ButtonBar>
+{#if $wallets.length > 0}
+ <div class="bold">My wallets:</div>
+{/if}
+{#if $wallets.length === 0}
+ <div class="bold">No wallets found</div>
+{/if}
 <Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
  <div class="wallet">
-  <div class="buttons">
+  <ButtonBar>
    <Button text="Add a new address" onClick={() => addAddress(wallet)} />
    <Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(wallet)} />
-  </div>
-  <table>
-   <thead>
-    <tr>
-     <th class="center">Index</th>
-     <th>Alias</th>
-     <th>Address</th>
-     <th class="center">Action</th>
-    </tr>
-   </thead>
-   <tbody>
+  </ButtonBar>
+  <Table>
+   <Thead>
+    <TheadTr>
+     <Th center={true}>Index</Th>
+     <Th>Alias</Th>
+     <Th>Address</Th>
+     <Th center={true}>Action</Th>
+    </TheadTr>
+   </Thead>
+   <Tbody>
     {#each walletAddresses(wallet) as address, index}
-     <tr class={index % 2 === 0 ? 'even' : 'odd'}>
-      <td class="center">{address.index}</td>
-      <td>{address.name}</td>
-      <td><Address address={address.address} /></td>
-      <td class="icons">
-       <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
-       <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
-      </td>
-     </tr>
+     <TbodyTr>
+      <Td center={true}>{address.index}</Td>
+      <Td>{address.name}</Td>
+      <Td><Address address={address.address} /></Td>
+      <Td>
+       <TableActionItems>
+        <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
+        <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
+       </TableActionItems>
+      </Td>
+     </TbodyTr>
     {/each}
-   </tbody>
-  </table>
+   </Tbody>
+  </Table>
  </div>
 </Accordion>
-
 <Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />

@@ -3,12 +3,12 @@
  import Input from '@/core/components/Input/Input.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import Table from '@/core/components/Table/Table.svelte';
- import TableTHead from '@/core/components/Table/TableTHead.svelte';
- import TableTHeadTr from '@/core/components/Table/TableTHeadTr.svelte';
- import TableTHeadTh from '@/core/components/Table/TableTHeadTh.svelte';
- import TableTBody from '@/core/components/Table/TableTBody.svelte';
- import TableTBodyTr from '@/core/components/Table/TableTBodyTr.svelte';
- import TableTBodyTd from '@/core/components/Table/TableTBodyTd.svelte';
+ import Thead from '@/core/components/Table/TableThead.svelte';
+ import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+ import Th from '@/core/components/Table/TableTheadTh.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import Td from '@/core/components/Table/TableTbodyTd.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import { onMount } from 'svelte';
  let addUrl = '';
@@ -61,22 +61,22 @@
  <Button text="Add" onClick={clickAdd} />
 </div>
 <Table>
- <TableTHead>
-  <TableTHeadTr>
-   <TableTHeadTh>Gif servers</TableTHeadTh>
-   <TableTHeadTh>Action</TableTHeadTh>
-  </TableTHeadTr>
- </TableTHead>
- <TableTBody>
+ <Thead>
+  <TheadTr>
+   <Th>Gif servers</Th>
+   <Th>Action</Th>
+  </TheadTr>
+ </Thead>
+ <Tbody>
   {#each $gif_servers as s}
-   <TableTBodyTr>
-    <TableTBodyTd><a href={s} target="_blank">{s}</a></TableTBodyTd>
-    <TableTBodyTd center={true}>
+   <TbodyTr>
+    <Td><a href={s} target="_blank">{s}</a></Td>
+    <Td center={true}>
      <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20" padding="5" onClick={() => clickDel(s)} />
-    </TableTBodyTd>
-   </TableTBodyTr>
+    </Td>
+   </TbodyTr>
   {/each}
- </TableTBody>
+ </Tbody>
 </Table>
 {#if error}
  <div class="error">{error}</div>

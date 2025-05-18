@@ -1,11 +1,11 @@
 <script lang="ts">
  import Table from '../Table/Table.svelte';
- import TableTBodyTr from '../Table/TableTBodyTr.svelte';
- import TableTBody from '../Table/TableTBody.svelte';
- import TableTBodyTd from '../Table/TableTBodyTd.svelte';
+ import Tbody from '../Table/TableTbody.svelte';
+ import TbodyTr from '../Table/TableTbodyTr.svelte';
+ import Td from '../Table/TableTbodyTd.svelte';
  import Input from '../Input/Input.svelte';
  import Select from '../Select/Select.svelte';
- import SelectOption from '../Select/SelectOption.svelte';
+ import Option from '../Select/SelectOption.svelte';
  import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
  import type { Unsubscriber } from 'svelte/store';
@@ -44,93 +44,93 @@
 <div class="settings-notifications">
  <SettingsNotificationsAlert />
  <Table expand={true}>
-  <TableTBody>
+  <Tbody>
    <SettingsNotificationsBasic />
    {#if CUSTOM_NOTIFICATIONS}
     {#if $customNotificationsOn}
-     <TableTBodyTr>
-      <TableTBodyTd>
+     <TbodyTr>
+      <Td>
        <div class="bold">Animation:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <Select bind:value={$animationName}>
-        <SelectOption value="none" text="None" />
-        <SelectOption value="zoom" text="Zoom" />
-        <SelectOption value="opacity" text="Opacity" />
+        <Option value="none" text="None" />
+        <Option value="zoom" text="Zoom" />
+        <Option value="opacity" text="Opacity" />
        </Select>
-      </TableTBodyTd>
-     </TableTBodyTr>
-     <TableTBodyTr>
-      <TableTBodyTd>
+      </Td>
+     </TbodyTr>
+     <TbodyTr>
+      <Td>
        <div class="bold">Animation duration:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <Input type="number" bind:value={$animationDuration} min={0} max={1000} step={10} />ms
-      </TableTBodyTd>
-     </TableTBodyTr>
-     <TableTBodyTr>
-      <TableTBodyTd>
+      </Td>
+     </TbodyTr>
+     <TbodyTr>
+      <Td>
        <div class="bold">Maximum number of lines in title:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <Input type="number" bind:value={$titleMaxLines} min={1} max={3} />
-      </TableTBodyTd>
-     </TableTBodyTr>
-     <TableTBodyTr>
-      <TableTBodyTd>
+      </Td>
+     </TbodyTr>
+     <TbodyTr>
+      <Td>
        <div class="bold">Maximum number of lines in description:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <Input type="number" bind:value={$bodyMaxLines} min={1} max={5} />
-      </TableTBodyTd>
-     </TableTBodyTr>
-     <TableTBodyTr>
-      <TableTBodyTd>
+      </Td>
+     </TbodyTr>
+     <TbodyTr>
+      <Td>
        <div class="bold">Background color:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <input type="color" bind:value={$bgColor} />
        {$bgColor}
-      </TableTBodyTd>
-     </TableTBodyTr>
-     <TableTBodyTr>
-      <TableTBodyTd>
+      </Td>
+     </TbodyTr>
+     <TbodyTr>
+      <Td>
        <div class="bold">Background color on mouse over:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <input type="color" bind:value={$bgColorHover} />
        {$bgColorHover}
-      </TableTBodyTd>
-     </TableTBodyTr>
-     <TableTBodyTr>
-      <TableTBodyTd>
+      </Td>
+     </TbodyTr>
+     <TbodyTr>
+      <Td>
        <div class="bold">Border color:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <input type="color" bind:value={$borderColor} />
        {$borderColor}
-      </TableTBodyTd>
-     </TableTBodyTr>
-     <TableTBodyTr>
-      <TableTBodyTd>
+      </Td>
+     </TbodyTr>
+     <TbodyTr>
+      <Td>
        <div class="bold">Title color:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <input type="color" bind:value={$titleColor} />
        {$titleColor}
-      </TableTBodyTd>
-     </TableTBodyTr>
-     <TableTBodyTr>
-      <TableTBodyTd>
+      </Td>
+     </TbodyTr>
+     <TbodyTr>
+      <Td>
        <div class="bold">Description color:</div>
-      </TableTBodyTd>
-      <TableTBodyTd center={true}>
+      </Td>
+      <Td center={true}>
        <input type="color" bind:value={$descColor} />
        {$descColor}
-      </TableTBodyTd>
-     </TableTBodyTr>
+      </Td>
+     </TbodyTr>
     {/if}
    {/if}
-  </TableTBody>
+  </Tbody>
  </Table>
 </div>

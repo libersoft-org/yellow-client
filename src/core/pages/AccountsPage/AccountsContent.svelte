@@ -1,15 +1,16 @@
 <script lang="ts">
  import { debug, findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '../../core.js';
- import Button from '@/core/components/Button/Button.svelte';
+ import ButtonBar from '../../components/Button/ButtonBar.svelte';
+ import Button from '../../components/Button/Button.svelte';
  import TableActionItems from '../../components/Table/TableActionItems.svelte';
  import Icon from '../../components/Icon/Icon.svelte';
  import Table from '../../components/Table/Table.svelte';
- import TableTHead from '../../components/Table/TableTHead.svelte';
- import TableTHeadTr from '../../components/Table/TableTHeadTr.svelte';
- import TableTHeadTh from '../../components/Table/TableTHeadTh.svelte';
- import TableTBody from '../../components/Table/TableTBody.svelte';
- import TableTBodyTr from '../../components/Table/TableTBodyTr.svelte';
- import TableTBodyTd from '../../components/Table/TableTBodyTd.svelte';
+ import Thead from '../../components/Table/TableThead.svelte';
+ import TheadTr from '../../components/Table/TableTheadTr.svelte';
+ import Th from '../../components/Table/TableTheadTh.svelte';
+ import Tbody from '../../components/Table/TableTbody.svelte';
+ import TbodyTr from '../../components/Table/TableTbodyTr.svelte';
+ import Td from '../../components/Table/TableTbodyTd.svelte';
  import Modal from '../../components/Modal/Modal.svelte';
  import ModalAccountsAddEdit from '@/core/modals/AccountsAddEdit.svelte';
  import ModalAccountsDelete from '@/core/modals/AccountsDelete.svelte';
@@ -248,55 +249,50 @@
  .table {
   display: inline-block;
  }
-
- .accounts .buttons {
-  display: flex;
-  gap: 10px;
- }
 </style>
 
 <div class="accounts">
- <div class="buttons">
+ <ButtonBar>
   <Button img="img/back.svg" text="Back" onClick={back} hiddenOnDesktop={true} />
   <Button img="img/accounts.svg" text="Add a new account" colorVariable="--icon-black" onClick={addAccountModal} />
   <Button img="img/export.svg" text="Export" onClick={clickExport} />
   <Button img="img/import.svg" text="Import" onClick={clickImport} />
- </div>
+ </ButtonBar>
  <div class="table">
   <Table>
-   <TableTHead>
-    <TableTHeadTr>
-     <TableTHeadTh center={true}>Status</TableTHeadTh>
-     <TableTHeadTh center={true}>Title</TableTHeadTh>
-     <TableTHeadTh center={true}>Server</TableTHeadTh>
-     <TableTHeadTh center={true}>Address</TableTHeadTh>
-     <TableTHeadTh center={true}>Enabled</TableTHeadTh>
-     <TableTHeadTh center={true}>Action</TableTHeadTh>
+   <Thead>
+    <TheadTr>
+     <Th center={true}>Status</Th>
+     <Th center={true}>Title</Th>
+     <Th center={true}>Server</Th>
+     <Th center={true}>Address</Th>
+     <Th center={true}>Enabled</Th>
+     <Th center={true}>Action</Th>
      {#if $debug}
-      <TableTHeadTh center={true}>Account ID</TableTHeadTh>
+      <Th center={true}>Account ID</Th>
      {/if}
-    </TableTHeadTr>
-   </TableTHead>
-   <TableTBody>
+    </TheadTr>
+   </Thead>
+   <Tbody>
     {#each $accounts_config as a (a.id)}
-     <TableTBodyTr>
-      <TableTBodyTd center={true}><AccountStatusIconIconAndText account={findAccount(a.id)} /></TableTBodyTd>
-      <TableTBodyTd center={true}>{a.settings?.title}</TableTBodyTd>
-      <TableTBodyTd center={true}>{a.credentials.server}</TableTBodyTd>
-      <TableTBodyTd center={true}>{a.credentials.address}</TableTBodyTd>
-      <TableTBodyTd center={true}>{a.enabled ? 'Yes' : 'No'}</TableTBodyTd>
-      <TableTBodyTd center={true}>
+     <TbodyTr>
+      <Td center={true}><AccountStatusIconIconAndText account={findAccount(a.id)} /></Td>
+      <Td center={true}>{a.settings?.title}</Td>
+      <Td center={true}>{a.credentials.server}</Td>
+      <Td center={true}>{a.credentials.address}</Td>
+      <Td center={true}>{a.enabled ? 'Yes' : 'No'}</Td>
+      <Td center={true}>
        <TableActionItems>
         <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
         <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
        </TableActionItems>
-      </TableTBodyTd>
+      </Td>
       {#if $debug}
-       <TableTBodyTd class="center">{a.id}</TableTBodyTd>
+       <Td class="center">{a.id}</Td>
       {/if}
-     </TableTBodyTr>
+     </TbodyTr>
     {/each}
-   </TableTBody>
+   </Tbody>
   </Table>
   <table>
    <thead>
