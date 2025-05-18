@@ -91,11 +91,11 @@
 </style>
 
 <div class="networks">
- <div class="bold">My networks:</div>
  <ButtonBar>
   <Button img="img/export.svg" text="Export" onClick={() => doExport()} />
   <Button img="img/import.svg" text="Import" onClick={() => doImport()} />
  </ButtonBar>
+ <div class="bold">My networks:</div>
  <div class="items">
   {#each $networks as n, index (n.guid)}
    <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
@@ -111,7 +111,6 @@
    </div>
   {/each}
  </div>
-
  <div class="bold">Default networks:</div>
  <div class="items">
   {#each $default_networks as n, index}

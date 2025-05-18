@@ -1,9 +1,9 @@
 <script>
  import Switch from '../Switch/Switch.svelte';
  import Table from '../Table/Table.svelte';
- import Tbody from '../Table/TableTBody.svelte';
- import Tr from '../Table/TableTBodyTr.svelte';
- import Td from '../Table/TableTBodyTd.svelte';
+ import Tbody from '../Table/TableTbody.svelte';
+ import Tr from '../Table/TableTbodyTr.svelte';
+ import Td from '../Table/TableTbodyTd.svelte';
 
  import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/settings.ts';
 </script>
