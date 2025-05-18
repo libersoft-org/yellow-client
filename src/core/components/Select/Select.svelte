@@ -32,6 +32,7 @@
   background-size: 12px 12px;
   background-position: right 5px center;
   background-color: #fff;
+  cursor: pointer;
  }
 
  select:focus {
