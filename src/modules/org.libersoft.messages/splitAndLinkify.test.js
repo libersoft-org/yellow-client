@@ -176,7 +176,7 @@ describe('splitAndLinkify', () => {
 
   // Expected segments around both crypto links
   expect(output).toHaveLength(5);
-  
+
   expect(output[0]).toEqual({
    type: 'plain',
    value: 'Pay using ',

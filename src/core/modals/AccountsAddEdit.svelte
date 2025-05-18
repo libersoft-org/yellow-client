@@ -127,12 +127,6 @@
   gap: 15px;
  }
 
- .form .group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
- }
-
  .form .error {
   display: flex;
   gap: 5px;
@@ -149,38 +143,26 @@
 </style>
 
 <div class="form">
- <div class="group">
-  <Label text="Protocol">
-   <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
-    <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
-    <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
-   </Select>
-  </Label>
- </div>
- <div class="group">
-  <Label text="Title">
-   <Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
-  </Label>
- </div>
- <div class="group">
-  <Label text="Server">
-   <Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
-  </Label>
- </div>
- <div class="group">
-  <Label text="Address">
-   <Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
-  </Label>
- </div>
- <div class="group">
-  <Label text="Password">
-   <Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
-  </Label>
- </div>
+ <Label text="Protocol">
+  <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
+   <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
+   <Option text="DMTP (not yet implemented)" value="dmtp" disabled={true} selected={protocol === 'dmtp'} />
+  </Select>
+ </Label>
+ <Label text="Title">
+  <Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
+ </Label>
+ <Label text="Server">
+  <Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
+ </Label>
+ <Label text="Address">
+  <Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
+ </Label>
+ <Label text="Password">
+  <Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
+ </Label>
  {#if !isInWelcomeWizard}
-  <div class="group">
-   <Switch label="Enabled" bind:checked={config_enabled} />
-  </div>
+  <Switch label="Enabled" bind:checked={config_enabled} />
  {/if}
  {#if error}
   <div class="error">
