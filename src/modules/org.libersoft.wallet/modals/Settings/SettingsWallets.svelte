@@ -81,10 +81,10 @@
   <Table>
    <Thead>
     <TheadTr>
-     <Th class="center">Index</Th>
+     <Th center={true}>Index</Th>
      <Th>Alias</Th>
      <Th>Address</Th>
-     <Th class="center">Action</Th>
+     <Th center={true}>Action</Th>
     </TheadTr>
    </Thead>
    <Tbody>
@@ -105,5 +105,4 @@
   </Table>
  </div>
 </Accordion>
-
 <Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />
