@@ -55,10 +55,15 @@
 </script>
 
 <style>
+ .wallet-settings {
+  padding: 10px;
+ }
+
  .wallet {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 10px;
  }
 </style>
 
@@ -110,3 +115,4 @@
  {@render wallet()}
 </Accordion>
 <Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />
+
