@@ -18,13 +18,13 @@
   textColor?: string;
   expand?: boolean;
   colorVariable?: string;
-  iconSize?: number;
-  iconPadding?: number;
+  iconSize?: string;
+  iconPadding?: string;
   loading?: boolean;
   radius?: number;
  }
 
- let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = 10, bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = 20, iconPadding = 0, loading = false, ...restProps }: ButtonProps = $props();
+ let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = 10, bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = '20px', iconPadding = '0px', loading = false, ...restProps }: ButtonProps = $props();
 
  function handleClick(e) {
   if (enabled && onClick) {
