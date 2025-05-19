@@ -20,7 +20,7 @@
    display: table-cell;
    white-space: nowrap;
    border-style: none;
-   text-align: center !important;
+   text-align: left !important;
    min-width: 50px;
    vertical-align: middle;
    padding: 10px !important;

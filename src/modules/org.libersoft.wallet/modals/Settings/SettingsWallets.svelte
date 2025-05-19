@@ -80,13 +80,14 @@
  .wallet {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
+  padding: 16px 10px;
  }
 </style>
 
 <ButtonBar>
- <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
- <Button width="80px" img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
+ <Button text="Create wallet" onClick={showNewWalletModal} />
+ <Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
  <div class="bold">My wallets:</div>
@@ -96,7 +97,6 @@
 {/if}
 <Accordion items={$wallets} bind:activeIndex>
  {#snippet snippet(walleta)}
-  {console.warn(walleta)}
   <div class="wallet">
    <ButtonBar>
     <Button text="Add a new address" onClick={() => addAddress(walleta)} />
@@ -105,22 +105,22 @@
    <Table>
     <Thead>
      <TheadTr>
-      <Th center={true}>Index</Th>
+      <Th>Index</Th>
       <Th>Alias</Th>
       <Th>Address</Th>
-      <Th center={true}>Action</Th>
+      <Th>Action</Th>
      </TheadTr>
     </Thead>
     <Tbody>
      {#each walletAddresses(walleta) as address, index}
       <TbodyTr>
-       <Td center={true}>{address.index}</Td>
+       <Td>{address.index}</Td>
        <Td>{address.name}</Td>
        <Td><Address address={address.address} /></Td>
        <Td>
         <TableActionItems>
          <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
-         <Icon img="img/del.svg" alt="Hide" colorVariable="--icon-black" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
+         <Icon img="img/del.svg" alt="Hide" colorVariable="--icon-red" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
         </TableActionItems>
        </Td>
       </TbodyTr>

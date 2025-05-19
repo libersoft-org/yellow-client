@@ -144,13 +144,16 @@ async function configureMessagesSettings(
  settings: {
   chunkSize?: string;
   fontSize?: string;
+  photoRadius?: string; // <-- Add this line
  }
 ): Promise<void> {
  return await test.step('Configure messages settings', async () => {
   await page.getByTestId('messages-settings-button').click();
 
   if (settings.chunkSize) {
-   await page.getByTestId('chunk-size').evaluate((el, value) => (el.value = value), settings.chunkSize);
+   await page.getByTestId('chunk-size').evaluate((el, value) => {
+    (el as HTMLInputElement).value = value;
+   }, settings.chunkSize);
   }
 
   if (settings.photoRadius) {

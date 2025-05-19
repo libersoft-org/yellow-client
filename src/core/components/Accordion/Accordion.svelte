@@ -1,19 +1,51 @@
 <script lang="ts">
- import { type Snippet } from 'svelte';
+ import { tick, type Snippet } from 'svelte';
  import BaseButton from '../Button/BaseButton.svelte';
  import Icon from '../Icon/Icon.svelte';
 
  type Props = {
   items: Array<{ name: string; id: string }>;
   activeIndex?: number | null;
-  children: Snippet;
-  snippet: Snippet | null;
+  snippet: Snippet<[any]> | null;
  };
 
- let { children, items, activeIndex, snippet = null }: Props = $props();
+ let { items, activeIndex = null, snippet }: Props = $props();
 
- function handleClick(index: number) {
-  activeIndex = activeIndex === index ? null : index;
+ async function handleClick(index: number) {
+  const isClosing = activeIndex === index;
+  const prevIndex = activeIndex;
+
+  // Collapse previous
+  if (prevIndex !== null) {
+   const prevEl = document.querySelector(`.content[data-index="${prevIndex}"]`) as HTMLElement;
+   if (prevEl) {
+    prevEl.style.height = `${prevEl.scrollHeight}px`;
+    prevEl.offsetHeight; // force reflow
+    prevEl.style.height = '0px';
+   }
+  }
+
+  if (isClosing) {
+   activeIndex = null;
+   return;
+  }
+
+  activeIndex = index;
+  await tick();
+
+  const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
+  if (el) {
+   el.style.height = '0px';
+   el.offsetHeight; // force reflow again
+   el.style.height = `${el.scrollHeight}px`;
+
+   // After animation, reset height to auto for flexibility
+   setTimeout(() => {
+    if (activeIndex === index) {
+     el.style.height = 'auto';
+    }
+   }, 300); // must match CSS transition duration
+  }
  }
 </script>
 
@@ -22,17 +54,13 @@
   border: 1px solid var(--accordion-border-color, #b90);
   border-radius: 8px;
   overflow: hidden;
-
-  &:empty {
-   display: none;
-  }
  }
 
  .accordion .item {
   border-bottom: 1px solid var(--accordion-border-color, #b90);
 
   &:last-child {
-   margin-bottom: -1px;
+   border-bottom: none;
   }
  }
 
@@ -41,6 +69,7 @@
   align-items: center;
   padding: 10px;
   background-color: #fd1;
+  cursor: pointer;
  }
 
  .accordion .item .header .title {
@@ -51,20 +80,7 @@
  .accordion .item .content {
   height: 0;
   overflow: hidden;
-  transition: height 0.4s ease;
- }
-
- .accordion .item .content.active {
-  height: auto;
-  display: block;
- }
-
- :global(.header .icon) {
-  transition: transform 0.3s ease;
- }
-
- :global(.item:has(.content.active) .header .icon) {
-  transform: rotate(180deg);
+  transition: height 0.3s ease;
  }
 </style>
 
@@ -77,14 +93,10 @@
      <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size="12px" />
     </div>
    </BaseButton>
-   <div class="content {activeIndex === index ? 'active' : ''}">
-    {#if snippet !== null}
-     {#if index === activeIndex}
-      {@render snippet(item)}
-     {/if}
-    {:else}
-     {@render children?.()}
-    {/if}
+
+   <!-- Always render DOM content -->
+   <div class="content" data-index={index}>
+    {@render snippet?.(item)}
    </div>
   </div>
  {/each}
