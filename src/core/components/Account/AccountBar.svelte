@@ -115,7 +115,7 @@
      <div class="text">CREATE ACCOUNT FIRST</div>
     {/if}
    {/if}
-   <Icon img={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20" padding="0" />
+   <Icon img={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
   </div>
  </BaseButton>
  {#if accountsVisible}

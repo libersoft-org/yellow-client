@@ -26,7 +26,7 @@
 <BaseButton {onClick}>
  <div class="accounts-button">
   {#if img}
-   <Icon {img} alt={title} size="20" padding="0" colorVariable="--icon-white" />
+   <Icon {img} alt={title} size="20px" padding="0px" colorVariable="--icon-white" />
    <!--<div><img src={img} alt={title} /></div>-->
   {/if}
   <div>{title}</div>

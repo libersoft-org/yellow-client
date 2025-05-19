@@ -47,7 +47,7 @@
  <div class="menu-item">
   {#if img}
    <div class="img-space">
-    <Icon {img} alt={label} {colorVariable} size="24" padding="0" />
+    <Icon {img} alt={label} {colorVariable} size="24px" padding="0px" />
    </div>
   {/if}
   <div class="label">{label}</div>
