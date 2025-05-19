@@ -53,7 +53,15 @@ async function goToAccountManagement(page: Page): Promise<void> {
  * @param page - The Playwright page object
  * @param accountData - Object containing account information
  */
-async function addAccount(page: Page, accountData: { server: string; address: string; password: string; title?: string }): Promise<void> {
+async function addAccount(
+ page: Page,
+ accountData: {
+  server: string;
+  address: string;
+  password: string;
+  title?: string;
+ }
+): Promise<void> {
  return await test.step(`Add new account: ${accountData.address}`, async () => {
   await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
 
@@ -62,7 +70,7 @@ async function addAccount(page: Page, accountData: { server: string; address: st
   await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
   await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
   await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
-  await page.getByTestId('save').click();
+  await page.getByTestId('add').click();
  });
 }
 
@@ -184,7 +192,15 @@ async function closeModal(page: Page): Promise<void> {
  * @param page - The Playwright page object
  * @param accountData - Object containing account information
  */
-async function setupAccountInWizard(page: Page, accountData: { server: string; address: string; password: string; title?: string }): Promise<void> {
+async function setupAccountInWizard(
+ page: Page,
+ accountData: {
+  server: string;
+  address: string;
+  password: string;
+  title?: string;
+ }
+): Promise<void> {
  return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
   await page.getByTestId('wizard-next').click();
   await page.getByRole('textbox', { name: 'Title:' }).click();
@@ -193,7 +209,7 @@ async function setupAccountInWizard(page: Page, accountData: { server: string; a
   await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
   await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
   await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
-  await page.getByRole('button', { name: 'Add the account' }).click();
+  await page.getByTestId('add').click();
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Finish' }).click();

@@ -223,8 +223,8 @@
   </div>
  {/if}
 
- {#if params.id === ''}
-  <Button text="Add the account" onClick={clickAdd} />
+ {#if params.id === null}
+  <Button data-testid="add" text="Add the account" onClick={clickAdd} />
  {:else}
   <Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} />
  {/if}
