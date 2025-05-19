@@ -72,7 +72,7 @@ async function findFreeFileName(folder: string, download: NativeDownload) {
   let file_name = download.original_file_name + (counter > 0 ? ` (${counter})` : '');
   const file_path = await path.join(folder, file_name);
   const exists_file = await exists(file_path, { baseDir: BaseDirectory.Download });
-  const temp_file_path = file_path + '.part';
+  const temp_file_path = partFileName(file_path);
   const exists_file2 = await exists(temp_file_path, { baseDir: BaseDirectory.Download });
   if (!exists_file && !exists_file2) {
    download.file_path = file_path;

@@ -139,16 +139,22 @@ async function addReactionToLastMessage(page: Page): Promise<void> {
  * @param page - The Playwright page object
  * @param settings - Object containing settings configuration
  */
-async function configureMessagesSettings(page: Page, settings: { chunkSize?: string; fontSize?: string }): Promise<void> {
+async function configureMessagesSettings(
+ page: Page,
+ settings: {
+  chunkSize?: string;
+  fontSize?: string;
+ }
+): Promise<void> {
  return await test.step('Configure messages settings', async () => {
   await page.getByTestId('messages-settings-button').click();
 
   if (settings.chunkSize) {
-   await page.getByRole('slider').fill(settings.chunkSize);
+   await page.getByTestId('chunk-size').evaluate((el, value) => (el.value = value), settings.chunkSize);
   }
 
-  if (settings.fontSize) {
-   await page.getByRole('combobox').selectOption(settings.fontSize);
+  if (settings.photoRadius) {
+   await page.getByRole('combobox').selectOption(settings.photoRadius);
   }
 
   await page.getByRole('button', { name: 'Save' }).click();
@@ -334,12 +340,11 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 
   // Send a message
   await sendMessage(page, 'hi 3');
+ });
 
-  // Open messages settings
-  await configureMessagesSettings(page, {
-   chunkSize: '636928',
-   fontSize: '10px',
-  });
+ await configureMessagesSettings(page, {
+  chunkSize: '636928',
+  photoRadius: '10px',
  });
 
  await test.step('Module Navigation Test', async () => {
