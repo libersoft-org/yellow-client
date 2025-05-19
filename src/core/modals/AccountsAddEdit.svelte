@@ -213,7 +213,7 @@
  </Label>
 
  {#if !isInWelcomeWizard}
-  <Switch label="Enabled" bind:checked={config_enabled} />
+  <Switch label="Enabled" bind:checked={config_enabled} row={true} />
  {/if}
 
  {#if error}

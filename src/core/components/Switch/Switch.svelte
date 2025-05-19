@@ -1,10 +1,13 @@
 <script lang="ts">
+ import Label from '@/core/components/Label/Label.svelte';
+
  type Props = {
   checked?: boolean;
   label?: string;
+  row?: boolean;
  };
 
- let { checked = $bindable(), label = '' }: Props = $props();
+ let { checked = $bindable(), label = '', row = false }: Props = $props();
 
  let mounted = $state(false);
 
@@ -85,21 +88,13 @@
  .switch input:focus-visible + .slider {
   outline: auto;
  }
-
- .label {
-  cursor: pointer;
-  font-weight: bold;
- }
 </style>
 
-<label>
+<Label text={label} {row}>
  <div class="switch">
-  {#if label}
-   <div class="label">{label}:</div>
-  {/if}
   <div class="switch-wrapper">
    <input type="checkbox" bind:checked onkeydown={keyPress} />
    <span class="slider {mounted ? 'transition' : ''}"></span>
   </div>
  </div>
-</label>
+</Label>

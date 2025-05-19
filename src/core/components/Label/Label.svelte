@@ -1,12 +1,22 @@
 <script>
  export let text;
+ export let row = false;
 </script>
 
 <style>
- .label {
+ label {
   display: flex;
+  flex-direction: column;
+  gap: 2px;
+ }
+
+ label.row {
+  flex-direction: row;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
+ }
+
+ .text {
   font-size: 15px;
   padding-left: 5px;
   font-weight: bold;
@@ -14,9 +24,9 @@
  }
 </style>
 
-<label>
+<label class:row>
  {#if text}
-  <div class="label">{text}:</div>
+  <div class="text">{text}:</div>
  {/if}
  <slot />
 </label>
