@@ -187,11 +187,11 @@
     {#if title}
      <div class="title">
       {#if activeTab}
-       <Icon img="img/back.svg" alt="Back" colorVariable="--icon-black" size={20} padding={10} onClick={clearActiveTab} />
+       <Icon img="img/back.svg" alt="Back" colorVariable="--icon-black" size="20px" padding="10px" onClick={clearActiveTab} />
       {/if}
       {title}
      </div>
-     <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size={20} padding={10} onClick={close} />
+     <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
     {/if}
    </div>
    <div class="body">

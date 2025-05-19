@@ -72,7 +72,7 @@
    <TbodyTr>
     <Td><a href={s} target="_blank">{s}</a></Td>
     <Td center={true}>
-     <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20" padding="5" onClick={() => clickDel(s)} />
+     <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} />
     </Td>
    </TbodyTr>
   {/each}

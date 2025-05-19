@@ -163,7 +163,7 @@
 <div class="menu {showMenu ? 'open' : ''}">
  <div>
   <div class="header">
-   <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size={30} padding={15} onClick={clickMenuClose} />
+   <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30px" padding="15px" onClick={clickMenuClose} />
   </div>
   <div class="items">
    {#each menuItems as item}
@@ -174,7 +174,7 @@
  <div class="footer">
   <BaseButton onClick={() => openPage(link)}>
    <div class="logo">
-    <Icon img="img/logo.svg" alt={product} size={30} padding={0} />
+    <Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
     <div>{product}</div>
    </div>
   </BaseButton>

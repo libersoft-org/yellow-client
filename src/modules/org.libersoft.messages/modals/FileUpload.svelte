@@ -157,7 +157,7 @@
  <TbodyTr>
   <Td>{truncateText(file.name, 30)}</Td>
   <Td>{humanSize(file.size)}</Td>
-  <Td><Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20" padding="5" onClick={() => onFileDelete(file)} /></Td>
+  <Td><Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} /></Td>
  </TbodyTr>
 {/snippet}
 <div class="file-upload {dropActive ? 'drop-active' : ''}">

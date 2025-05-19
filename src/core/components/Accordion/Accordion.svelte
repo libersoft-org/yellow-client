@@ -78,7 +78,7 @@
    <BaseButton onClick={() => handleClick(index)}>
     <div class="header">
      <div class="title">{item.name}</div>
-     <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size={12} />
+     <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size="12px" />
     </div>
    </BaseButton>
    <div class="content {activeIndex === index ? 'active' : ''}">

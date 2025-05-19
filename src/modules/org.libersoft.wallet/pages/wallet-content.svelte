@@ -207,7 +207,7 @@
  <div class="top-bar">
   <div class="left">
    <div class="back-button">
-    <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30" padding="0" onClick={clickBackButton} />
+    <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30px" padding="0px" onClick={clickBackButton} />
    </div>
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
   </div>
@@ -243,7 +243,7 @@
        <BaseButton onClick={clickCopyAddress}>
         <div class="address">
          <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
-         <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
+         <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
         </div>
        </BaseButton>
       {:else}

@@ -26,6 +26,6 @@
 <BaseButton onClick={clickCopyAddress}>
  <div class="address">
   <div bind:this={elemAddress}>{address}</div>
-  <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
+  <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
  </div>
 </BaseButton>

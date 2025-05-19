@@ -48,7 +48,7 @@
 </style>
 
 <div class="profile-bar">
- <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" padding="10" onClick={clickClose} visibleOnDesktop={false} />
+ <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" padding="10px" onClick={clickClose} visibleOnDesktop={false} />
  <Photo size="38" />
  <div class="description">
   {#if $selectedConversation.visible_name}

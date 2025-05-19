@@ -138,7 +138,7 @@
 {/snippet}
 
 <div bind:this={buttonRef} class="reaction-button" class:open={show}>
- <Icon data-testid="message-reaction-menu-button" img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--icon-black" size={24} padding={0} {onClick} />
+ <Icon data-testid="message-reaction-menu-button" img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--icon-black" size="24px" padding="0px" {onClick} />
 </div>
 
 {#if show}
@@ -154,7 +154,7 @@
     {@render emoji([9829, 65039])}
     <BaseButton onClick={() => (showFull = !showFull)}>
      <div class="expand">
-      <Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size={20} colorVariable="--icon-white" />
+      <Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--icon-white" />
      </div>
     </BaseButton>
    </div>

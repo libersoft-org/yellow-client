@@ -95,8 +95,8 @@
       <Td><Address address={address.address} /></Td>
       <Td>
        <TableActionItems>
-        <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
-        <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
+        <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => renameAddress(wallet, address)} />
+        <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20px" padding="5px" onClick={() => deleteAddress(wallet, address)} />
        </TableActionItems>
       </Td>
      </TbodyTr>

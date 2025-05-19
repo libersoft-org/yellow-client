@@ -32,7 +32,7 @@
 <BaseButton {onClick}>
  <div class="item {active ? 'active' : ''}">
   {#if img}
-   <Icon {img} alt={label ? label : ''} {colorVariable} size="20" padding="0" />
+   <Icon {img} alt={label ? label : ''} {colorVariable} size="20px" padding="0px" />
   {/if}
   {#if label}
    <div>{label}</div>
