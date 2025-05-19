@@ -42,6 +42,11 @@
  {#if $debug}
   <BaseButton
    onClick={async () => {
+    throw new Error('Parameter is not a number!');
+   }}>[0]</BaseButton
+  >
+  <BaseButton
+   onClick={async () => {
     //log.debug('addNotification...');
     await addNotification({
      body: 'bla bla',
@@ -49,7 +54,7 @@
       log.debug('debug notification callback ' + event);
      },
     });
-   }}>*</BaseButton
+   }}>[notif]</BaseButton
   >
  {/if}
 </div>

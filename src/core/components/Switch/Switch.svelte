@@ -85,14 +85,21 @@
  .switch input:focus-visible + .slider {
   outline: auto;
  }
+
+ .label {
+  cursor: pointer;
+  font-weight: bold;
+ }
 </style>
 
-<div class="switch">
- {#if label}
-  <div class="bold">{label}:</div>
- {/if}
- <label class="switch-wrapper">
-  <input type="checkbox" bind:checked onkeydown={keyPress} />
-  <span class="slider {mounted ? 'transition' : ''}"></span>
- </label>
-</div>
+<label>
+ <div class="switch">
+  {#if label}
+   <div class="label">{label}:</div>
+  {/if}
+  <div class="switch-wrapper">
+   <input type="checkbox" bind:checked onkeydown={keyPress} />
+   <span class="slider {mounted ? 'transition' : ''}"></span>
+  </div>
+ </div>
+</label>
