@@ -20,6 +20,9 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 100px;
  }
 </style>
 

@@ -78,7 +78,6 @@
     </div>
    </BaseButton>
    <div class="content {activeIndex === index ? 'active' : ''}">
-    {console.warn(snippet)}
     {#if snippet !== null}
      {#if index === activeIndex}
       {@render snippet(item)}
