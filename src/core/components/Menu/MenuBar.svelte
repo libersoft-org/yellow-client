@@ -36,7 +36,7 @@
 </style>
 
 <div class="bar">
- <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-black" size={30} padding={10} onClick={handleClick} />
+ <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-black" size="30px" padding="10px" onClick={handleClick} />
  <div class="product">{product}</div>
  {#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}(debug:<Switch bind:checked={$debug} />){/if}
  {#if $debug}

@@ -47,6 +47,6 @@
 <div class="title">Welcome to {product}</div>
 <div class="motto">{motto}</div>
 <div class="logo">
- <Icon img="img/logo.svg" alt={product} size="100" padding="0" />
+ <Icon img="img/logo.svg" alt={product} size="100px" padding="0px" />
 </div>
 <div class="description">This wizard will help you to set up everything you need to get started.</div>

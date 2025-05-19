@@ -129,7 +129,7 @@
  {#if activeTab !== ''}
   <div class="breadcrumbs" in:fade={{ duration: 400 }}>
    <button onclick={() => setItem('')}>
-    <Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size={16} />
+    <Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size="16px" />
     Settings
    </button>
    <span>{activeTab}</span>

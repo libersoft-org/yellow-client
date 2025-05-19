@@ -79,9 +79,9 @@
      </Td>
      <Td>
       <TableActionItems>
-       <Icon img="modules/{module.identifier}/img/coin.svg" alt="Token list" size="20" padding="5" onClick={() => tokenList(n)} />
-       <Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Edit network" size="20" padding="5" onClick={() => editNetwork(n)} />
-       <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete network" size="20" padding="5" onClick={() => removeNetwork(n)} />
+       <Icon img="modules/{module.identifier}/img/coin.svg" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} />
+       <Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Edit network" size="20px" padding="5px" onClick={() => editNetwork(n)} />
+       <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete network" size="20px" padding="5px" onClick={() => removeNetwork(n)} />
       </TableActionItems>
      </Td>
     </TbodyTr>
@@ -95,13 +95,13 @@
     <TbodyTr>
      <Td>
       {#if n.currency?.iconURL}
-       <Icon img={n.currency.iconURL} alt="" />
+       <Icon img={n.currency.iconURL} />
       {/if}
       <div class="name">{n.name}</div>
      </Td>
      <Td>
       <TableActionItems>
-       <Icon img="img/add.svg" alt="Add to my networks" colorVariable="--icon-black" size="20" padding="5" onClick={() => addNetwork(n)} />
+       <Icon img="img/add.svg" alt="Add to my networks" colorVariable="--icon-black" size="20px" padding="5px" onClick={() => addNetwork(n)} />
       </TableActionItems>
      </Td>
     </TbodyTr>

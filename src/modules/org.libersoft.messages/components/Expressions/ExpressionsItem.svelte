@@ -38,7 +38,7 @@
 <BaseButton {onClick} {onMousedown}>
  <div class="item {active ? 'active' : ''}">
   {#if icon}
-   <Icon img={icon} alt={label} {colorVariable} size="24" padding="0" />
+   <Icon img={icon} alt={label} {colorVariable} size="24px" padding="0px" />
   {/if}
   {#if label}
    <div class="label">{label}</div>

@@ -197,7 +197,7 @@
  <div bind:this={videoRef} class="video-recorder-video-placeholder">
   {#if error}
    <div class="video-recorder-error">
-    <Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-red" size={30} padding={15} />
+    <Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-red" size="30px" padding="15px" />
     {#if errorMessages}
      {#each errorMessages as message}
       <div>{message}</div>
@@ -228,7 +228,7 @@
   <div class="video-recorder-actions-left">
    <ButtonWithMenu>
     {#snippet sideButtonSlot()}
-     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
+     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size="16px" padding="6px" onClick={() => {}} />
     {/snippet}
     {#snippet mainButtonSlot()}
      <div class="mic-button-wrapper">
@@ -250,7 +250,7 @@
    </ButtonWithMenu>
    <ButtonWithMenu>
     {#snippet sideButtonSlot()}
-     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
+     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size="16px" padding="6px" onClick={() => {}} />
     {/snippet}
     {#snippet mainButtonSlot()}
      <div>

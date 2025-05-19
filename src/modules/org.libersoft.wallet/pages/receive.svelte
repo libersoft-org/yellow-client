@@ -118,7 +118,7 @@
    <BaseButton onClick={clickCopyAddress}>
     <div class="address">
      <div bind:this={addressElement}>{$selectedAddress.address}</div>
-     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
+     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
     </div>
    </BaseButton>
    <div class="qr"><img src={qrAddress} alt="Address" /></div>
@@ -134,7 +134,7 @@
    <BaseButton onClick={clickCopyPayment}>
     <div class="address">
      <div bind:this={paymentElement}>{paymentText}</div>
-     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15" padding="0" />
+     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
     </div>
    </BaseButton>
    <div class="qr"><img src={qrPayment} alt="Payment" /></div>

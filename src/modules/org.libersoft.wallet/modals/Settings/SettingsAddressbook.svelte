@@ -93,8 +93,8 @@
       <Td>{a.address}</Td>
       <Td center={true}>
        <TableActionItems>
-        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20" padding="5" onClick={() => editItemModal(a)} />
-        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20" padding="5" onClick={() => deleteItemModal(a)} />
+        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => editItemModal(a)} />
+        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => deleteItemModal(a)} />
        </TableActionItems>
       </Td>
      </TbodyTr>

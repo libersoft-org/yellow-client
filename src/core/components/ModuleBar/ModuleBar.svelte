@@ -105,7 +105,7 @@
  </div>
  <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
   <!-- <div class="dropdown">
-   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="18" padding="10" />
+   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="18px" padding="10px" />
   </div> -->
  </BaseButton>
 </div>

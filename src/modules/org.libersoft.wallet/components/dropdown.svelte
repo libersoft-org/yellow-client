@@ -26,6 +26,6 @@
 <BaseButton {onClick}>
  <div class="dropdown">
   <div class="text">{text}</div>
-  <Icon img="img/down.svg" alt="▼" size="15" padding="0" colorVariable={colorVariable && colorVariable} />
+  <Icon img="img/down.svg" alt="▼" size="15px" padding="0px" colorVariable={colorVariable && colorVariable} />
  </div>
 </BaseButton>

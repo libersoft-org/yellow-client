@@ -114,7 +114,7 @@
    <div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
   </div>
   <div class="right">
-   <Icon img="img/heart-{favorite_icon}.svg" alt={favorite_alt} size="20" padding="10" onClick={toggleFavorite} />
+   <Icon img="img/heart-{favorite_icon}.svg" alt={favorite_alt} size="20px" padding="10px" onClick={toggleFavorite} />
   </div>
  </div>
  <div class="set">
