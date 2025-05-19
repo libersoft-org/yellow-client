@@ -95,7 +95,7 @@
     <TbodyTr>
      <Td>
       {#if n.currency?.iconURL}
-       <Icon img={n.currency.iconURL} alt="" />
+       <Icon img={n.currency.iconURL} />
       {/if}
       <div class="name">{n.name}</div>
      </Td>
