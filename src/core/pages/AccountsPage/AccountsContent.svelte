@@ -58,6 +58,8 @@
  function clickImport() {
   showImportModal = true;
  }
+
+ $inspect($accounts_config, 'Accounts config');
 </script>
 
 <style>
@@ -79,7 +81,7 @@
  .header {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: wrap;
   gap: clamp(16px, 1.6vw, 24px);
  }
@@ -106,7 +108,41 @@
  }
 </style>
 
-{#snippet accountTable(account)}
+{#snippet accountTable()}
+ <ResponsiveTable>
+  <ResponsiveTableTHead>
+   <ResponsiveTableTHeadTr>
+    <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
+    <ResponsiveTableTHeadTh>Action</ResponsiveTableTHeadTh>
+   </ResponsiveTableTHeadTr>
+  </ResponsiveTableTHead>
+  {#each $accounts_config as a (a.id)}
+   <ResponsiveTableTBody>
+    <ResponsiveTableTBodyTr>
+     <ResponsiveTableTBodyTh title="Status">
+      <AccountStatusIconIconAndText account={findAccount(a.id)} />
+     </ResponsiveTableTBodyTh>
+     <ResponsiveTableTBodyTd title="Title">{a.settings?.title}</ResponsiveTableTBodyTd>
+     <ResponsiveTableTBodyTd title="Server">{a.credentials.server}</ResponsiveTableTBodyTd>
+     <ResponsiveTableTBodyTd title="Address">{a.credentials.address}</ResponsiveTableTBodyTd>
+     <ResponsiveTableTBodyTd title="Enabled">{a.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
+     <ResponsiveTableTBodyTd title="Action">
+      <TableActionItems>
+       <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
+       <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
+      </TableActionItems>
+     </ResponsiveTableTBodyTd>
+    </ResponsiveTableTBodyTr>
+   </ResponsiveTableTBody>
+  {/each}
+ </ResponsiveTable>
+{/snippet}
+
+{#snippet accountTableMobile(account)}
  <ResponsiveTable>
   <ResponsiveTableTHead>
    <ResponsiveTableTHeadTr>
@@ -129,8 +165,8 @@
     <ResponsiveTableTBodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
     <ResponsiveTableTBodyTd title="Action">
      <TableActionItems>
-      <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
-      <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => clickDel(account.id, account.settings?.title)} />
+      <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(account.id)} />
+      <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(account.id, account.settings?.title)} />
      </TableActionItems>
     </ResponsiveTableTBodyTd>
    </ResponsiveTableTBodyTr>
@@ -141,25 +177,53 @@
 <div class="accounts">
  <div class="accounts-wrapper">
   <div class="header">
-   <Button img="img/back.svg" text="Back" padding={6} iconSize={14} radius={4} onClick={back} hiddenOnDesktop={true} />
+   <Button img="img/back.svg" text="Back" onClick={back} hiddenOnDesktop={true} />
    <h2 class="title">Account management</h2>
   </div>
   <div class="buttons">
-   <Button img="img/accounts.svg" text="Add a new account" colorVariable="--icon-black" onClick={addAccountModal} padding={6} iconSize={14} radius={4} />
-   <Button img="img/export.svg" text="Export" onClick={clickExport} padding={6} iconSize={14} radius={4} />
-   <Button img="img/import.svg" text="Import" onClick={clickImport} padding={6} iconSize={14} radius={4} />
+   <Button img="img/accounts.svg" text="Add a new account" colorVariable="--icon-black" onClick={addAccountModal} />
+   <Button img="img/export.svg" text="Export" onClick={clickExport} />
+   <Button img="img/import.svg" text="Import" onClick={clickImport} />
   </div>
 
   {#if $isMobile}
-   {#each $accounts_config as a, index (a.id)}
-    <Accordion items={[{ ...$accounts_config[index], name: $accounts_config[index].settings?.title }]}>
-     {@render accountTable($accounts_config[index])}
-    </Accordion>
-   {/each}
+   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={1} snippet={accountTableMobile}>
+    <!-- {@const account = $accounts_config} -->
+    <!-- {@render accountTableMobile(account, 1)} -->
+    <!-- {#each account as a, index (a.id)}
+      <ResponsiveTable data-name={a.settings?.title}>
+        <ResponsiveTableTHead>
+        <ResponsiveTableTHeadTr>
+          <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
+          <ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh>
+          <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
+          <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
+          <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
+          <ResponsiveTableTHeadTh>Action</ResponsiveTableTHeadTh>
+        </ResponsiveTableTHeadTr>
+        </ResponsiveTableTHead>
+          <ResponsiveTableTBody>
+            <ResponsiveTableTBodyTr>
+            <ResponsiveTableTBodyTh title="Status">
+              <AccountStatusIconIconAndText account={findAccount(a.id)} />
+            </ResponsiveTableTBodyTh>
+            <ResponsiveTableTBodyTd title="Title">{a.settings?.title}</ResponsiveTableTBodyTd>
+            <ResponsiveTableTBodyTd title="Server">{a.credentials.server}</ResponsiveTableTBodyTd>
+            <ResponsiveTableTBodyTd title="Address">{a.credentials.address}</ResponsiveTableTBodyTd>
+            <ResponsiveTableTBodyTd title="Enabled">{a.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
+            <ResponsiveTableTBodyTd title="Action">
+              <TableActionItems>
+              <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
+              <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
+              </TableActionItems>
+            </ResponsiveTableTBodyTd>
+            </ResponsiveTableTBodyTr>
+          </ResponsiveTableTBody>
+          </ResponsiveTable>
+       {/each} -->
+   </Accordion>
   {:else}
-   {#each $accounts_config as a, index (a.id)}
-    {@render accountTable($accounts_config[index])}
-   {/each}
+   {@render accountTable()}
   {/if}
  </div>
 </div>

@@ -7,9 +7,10 @@
   items: Array<{ name: string; id: string }>;
   activeIndex?: number | null;
   children: Snippet;
+  snippet: Snippet | null;
  };
 
- let { children, items, activeIndex }: Props = $props();
+ let { children, items, activeIndex, snippet = null }: Props = $props();
 
  function handleClick(index: number) {
   activeIndex = activeIndex === index ? null : index;
@@ -21,11 +22,6 @@
   border: 1px solid var(--accordion-border-color, #b90);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow:
-   rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-   rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-   rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
-   rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
 
   &:empty {
    display: none;
@@ -82,7 +78,14 @@
     </div>
    </BaseButton>
    <div class="content {activeIndex === index ? 'active' : ''}">
-    {@render children()}
+    {console.warn(snippet)}
+    {#if snippet !== null}
+     {#if index === activeIndex}
+      {@render snippet(item)}
+     {/if}
+    {:else}
+     {@render children?.()}
+    {/if}
    </div>
   </div>
  {/each}

@@ -63,6 +63,9 @@
   display: flex;
   border-bottom: 1px solid #555;
   background-color: #222;
+  display: flex;
+  align-items: center;
+  min-height: 50px;
  }
 
  .items {
@@ -71,9 +74,12 @@
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-  gap: 8px;
+  /* gap: 8px; */
   flex-wrap: wrap;
-  margin: 6px 0px;
+  padding: 10px 0px;
+  margin: 0;
+  overflow: hidden;
+  height: 50px;
  }
 
  .items.expanded {
@@ -81,7 +87,7 @@
   height: initial;
  }
 
- /* .dropdown {
+ .dropdown {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,7 +98,7 @@
   opacity: 0.3;
   cursor: default;
   pointer-events: none;
- } */
+ }
 </style>
 
 <div class="module-bar" class:expand-enabled={expandEnabled}>
@@ -104,8 +110,8 @@
   {/each}
  </div>
  <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
-  <!-- <div class="dropdown">
-   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="18px" padding="10px" />
-  </div> -->
+  <div class="dropdown">
+   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="10" />
+  </div>
  </BaseButton>
 </div>

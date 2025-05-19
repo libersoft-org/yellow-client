@@ -15,8 +15,8 @@
   border-radius: 10px;
   transform: scale(1);
   transition:
-   transform 0.3s ease,
-   background-color 0.25s linear;
+   transform 0.3s linear,
+   background-color 0.3s linear;
   opacity: 0;
   animation: blink 1.5s forwards;
   animation-delay: 0.5s;
@@ -24,13 +24,15 @@
   &:not(.selected) {
    &:hover {
     background-color: #303030;
-    transform: scale(1.1);
+    transform: scale(1.2);
+    z-index: 10;
    }
   }
  }
 
  .item.selected {
   background-color: #404040;
+  transform: scale(1.2);
  }
 
  @keyframes blink {
@@ -49,6 +51,6 @@
 <BaseButton data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
  <div class="item {selected && 'selected'}">
   <Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
-  <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="24px" />
+  <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="30px" />
  </div>
 </BaseButton>

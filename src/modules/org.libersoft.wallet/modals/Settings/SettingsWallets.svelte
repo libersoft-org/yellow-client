@@ -62,17 +62,7 @@
  }
 </style>
 
-<ButtonBar>
- <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
- <Button width="80px" img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
-</ButtonBar>
-{#if $wallets.length > 0}
- <div class="bold">My wallets:</div>
-{/if}
-{#if $wallets.length === 0}
- <div class="bold">No wallets found</div>
-{/if}
-<Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
+{#snippet wallet()}
  <div class="wallet">
   <ButtonBar>
    <Button text="Add a new address" onClick={() => addAddress(wallet)} />
@@ -95,8 +85,8 @@
       <Td><Address address={address.address} /></Td>
       <Td>
        <TableActionItems>
-        <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => renameAddress(wallet, address)} />
-        <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20px" padding="5px" onClick={() => deleteAddress(wallet, address)} />
+        <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20" padding="5" onClick={() => renameAddress(wallet, address)} />
+        <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20" padding="5" onClick={() => deleteAddress(wallet, address)} />
        </TableActionItems>
       </Td>
      </TbodyTr>
@@ -104,5 +94,19 @@
    </Tbody>
   </Table>
  </div>
+{/snippet}
+
+<ButtonBar>
+ <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
+ <Button width="80px" img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
+</ButtonBar>
+{#if $wallets.length > 0}
+ <div class="bold">My wallets:</div>
+{/if}
+{#if $wallets.length === 0}
+ <div class="bold">No wallets found</div>
+{/if}
+<Accordion items={$wallets} bind:activeIndex>
+ {@render wallet()}
 </Accordion>
 <Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />
