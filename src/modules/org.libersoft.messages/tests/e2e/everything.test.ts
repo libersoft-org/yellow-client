@@ -143,14 +143,14 @@ async function configureMessagesSettings(
  page: Page,
  settings: {
   chunkSize?: string;
-  fontSize?: string;
+  photoRadius?: string;
  }
 ): Promise<void> {
  return await test.step('Configure messages settings', async () => {
   await page.getByTestId('messages-settings-button').click();
 
   if (settings.chunkSize) {
-   await page.getByTestId('chunk-size').evaluate((el, value) => (el.value = value), settings.chunkSize);
+   await page.getByTestId('chunk-size').evaluate((el: HTMLInputElement, value) => (el.value = value), settings.chunkSize);
   }
 
   if (settings.photoRadius) {
@@ -378,7 +378,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   await toggleFirstAccountEnabled(page);
  });
 
- await test.step('Final Account Settings', async () => {
+ await test.step('Messages Settings', async () => {
   // Switch account
   await switchAccount(page, 'user3@example.com');
   await new Promise(resolve => setTimeout(resolve, 5000));
