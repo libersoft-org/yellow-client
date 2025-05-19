@@ -82,6 +82,12 @@
   flex-direction: column;
   gap: 16px;
   padding: 16px 10px;
+
+  :global(&:has(tbody:empty)) {
+   :global(table) {
+    display: none !important;
+   }
+  }
  }
 </style>
 

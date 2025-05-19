@@ -15,12 +15,11 @@
   const isClosing = activeIndex === index;
   const prevIndex = activeIndex;
 
-  // Collapse previous
   if (prevIndex !== null) {
    const prevEl = document.querySelector(`.content[data-index="${prevIndex}"]`) as HTMLElement;
    if (prevEl) {
     prevEl.style.height = `${prevEl.scrollHeight}px`;
-    prevEl.offsetHeight; // force reflow
+    prevEl.offsetHeight;
     prevEl.style.height = '0px';
    }
   }
@@ -36,15 +35,14 @@
   const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
   if (el) {
    el.style.height = '0px';
-   el.offsetHeight; // force reflow again
+   el.offsetHeight;
    el.style.height = `${el.scrollHeight}px`;
 
-   // After animation, reset height to auto for flexibility
    setTimeout(() => {
     if (activeIndex === index) {
      el.style.height = 'auto';
     }
-   }, 300); // must match CSS transition duration
+   }, 300);
   }
  }
 </script>
@@ -54,10 +52,19 @@
   border: 1px solid var(--accordion-border-color, #b90);
   border-radius: 8px;
   overflow: hidden;
+
+  &:empty {
+   display: none;
+  }
  }
 
  .accordion .item {
   border-bottom: 1px solid var(--accordion-border-color, #b90);
+
+  :global(.header img) {
+   transform: rotate(0deg);
+   transition: transform 0.3s ease;
+  }
 
   &:last-child {
    border-bottom: none;
@@ -70,6 +77,8 @@
   padding: 10px;
   background-color: #fd1;
   cursor: pointer;
+  filter: brightness(1);
+  transition: filter 0.3s ease;
  }
 
  .accordion .item .header .title {
@@ -82,11 +91,23 @@
   overflow: hidden;
   transition: height 0.3s ease;
  }
+
+ .accordion .item.is-expanded .header {
+  filter: brightness(1.05);
+ }
+
+ .accordion .item {
+  &.is-expanded {
+   :global(.header img) {
+    transform: rotate(180deg);
+   }
+  }
+ }
 </style>
 
 <div class="accordion">
  {#each items as item, index}
-  <div class="item">
+  <div class="item {activeIndex === index ? 'is-expanded' : ''}">
    <BaseButton onClick={() => handleClick(index)}>
     <div class="header">
      <div class="title">{item.name}</div>
@@ -94,8 +115,7 @@
     </div>
    </BaseButton>
 
-   <!-- Always render DOM content -->
-   <div class="content" data-index={index}>
+   <div class="content {activeIndex === index ? 'is-expanded' : ''}" data-index={index}>
     {@render snippet?.(item)}
    </div>
   </div>

@@ -1,10 +1,17 @@
-<script>
+<script lang="ts">
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- export let address;
- let copied = false;
 
- function clickCopyAddress() {
+ type Props = {
+  address: string;
+ };
+
+ let { address = $bindable() }: Props = $props();
+
+ let spanElem = $state();
+ let copied = $state(false);
+
+ function copyAddressToClipboard() {
   navigator.clipboard
    .writeText(address)
    .then(() => {
@@ -32,7 +39,7 @@
  }
 </style>
 
-<BaseButton onClick={clickCopyAddress}>
+<BaseButton onClick={copyAddressToClipboard}>
  <div class="address">
   <span class="clamp" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
   <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
