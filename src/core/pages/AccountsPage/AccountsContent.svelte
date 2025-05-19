@@ -24,11 +24,11 @@
   showDelAccountModal: boolean;
   showExportModal: boolean;
   showImportModal: boolean;
-  idItem: string;
+  idItem: string | null;
   accountTitle: string;
  };
 
- let { showAddEditAccountModal = $bindable(false), showDelAccountModal = false, showExportModal = $bindable(false), showImportModal = $bindable(false), idItem = $bindable(''), accountTitle = $bindable('') }: Props = $props();
+ let { showAddEditAccountModal = $bindable(false), showDelAccountModal = false, showExportModal = $bindable(false), showImportModal = $bindable(false), idItem = $bindable(null), accountTitle = $bindable('') }: Props = $props();
 
  function back() {
   hideSidebarMobile.set(false);
@@ -36,7 +36,7 @@
  }
 
  function addAccountModal() {
-  idItem = '';
+  idItem = null;
   showAddEditAccountModal = true;
  }
 
