@@ -14,7 +14,7 @@
 <style>
  .base-button {
   cursor: pointer;
-  display: contents;
+  display: flex;
  }
 </style>
 
