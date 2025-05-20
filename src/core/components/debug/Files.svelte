@@ -79,14 +79,6 @@
   margin-top: 10px;
  }
 
- pre {
-  background: white;
-  padding: 10px;
-  border-radius: 5px;
-  overflow-x: auto;
-  font-size: 12px;
- }
-
  h3,
  h4 {
   margin: 0 0 10px 0;
@@ -114,11 +106,15 @@
 
  <div class="result">
   <h4>Result:</h4>
-  <pre>{result || 'Click a button to test a function'}</pre>
+  <textarea readonly rows="5" cols="50" style="width: 100%; height: 100px;">
+   {result || 'Click a button to test a function'}
+  </textarea>
  </div>
 
  <div class="download-object">
   <h4>Current Download Object:</h4>
-  <pre>{download ? JSON.stringify(download, null, 2) : 'No download object yet'}</pre>
+  <textarea readonly rows="5" cols="50" style="width: 100%; height: 100px;">
+   {download ? JSON.stringify(download, null, 2) : 'No download object yet'}
+  </textarea>
  </div>
 </div>
