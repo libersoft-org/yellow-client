@@ -2,14 +2,20 @@
  import { tick, type Snippet } from 'svelte';
  import BaseButton from '../Button/BaseButton.svelte';
  import Icon from '../Icon/Icon.svelte';
+ import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 
  type Props = {
   items: Array<{ name: string; id: string }>;
   activeIndex?: number | null;
   snippet: Snippet<[any]> | null;
+  optionalData?: any;
  };
 
- let { items, activeIndex = null, snippet }: Props = $props();
+ let { items, activeIndex = null, snippet, optionalData }: Props = $props();
+
+ if (optionalData) {
+  console.warn({ optionalData });
+ }
 
  async function handleClick(index: number) {
   const isClosing = activeIndex === index;
@@ -107,6 +113,19 @@
    }
   }
  }
+
+ .optional-data {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+
+  :global(.title) {
+   max-width: fit-content;
+  }
+ }
 </style>
 
 <div class="accordion">
@@ -114,7 +133,13 @@
   <div class="item {activeIndex === index ? 'is-expanded' : ''}">
    <BaseButton onClick={() => handleClick(index)}>
     <div class="header">
-     <div class="title">{item.name}</div>
+     {#if optionalData}
+      <div class="optional-data">
+       <AccountStatusIconIconAndText account={optionalData.status[index]} />
+       <div class="title">{item.name}</div>
+      </div>
+     {/if}
+     <div></div>
      <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size="12px" />
     </div>
    </BaseButton>

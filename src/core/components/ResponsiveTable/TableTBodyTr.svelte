@@ -10,7 +10,7 @@
 
 <style>
  tr {
-  @media only screen and (min-width: 64em) {
+  @media only screen and (min-width: 80m) {
    display: table-row;
    border-style: none;
    border-bottom-width: 0;

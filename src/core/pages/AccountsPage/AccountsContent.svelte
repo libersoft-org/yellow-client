@@ -60,8 +60,6 @@
  function clickImport() {
   showImportModal = true;
  }
-
- $inspect($accounts_config, 'Accounts config');
 </script>
 
 <style>
@@ -97,8 +95,8 @@
  <ResponsiveTable>
   <ResponsiveTableTHead>
    <ResponsiveTableTHeadTr>
-    <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
-    <ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh>
+    <!-- <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
+				<ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh> -->
     <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
     <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
     <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
@@ -107,10 +105,12 @@
   </ResponsiveTableTHead>
   <ResponsiveTableTBody>
    <ResponsiveTableTBodyTr>
-    <ResponsiveTableTBodyTh title="Status">
-     <AccountStatusIconIconAndText account={findAccount(account.id)} />
-    </ResponsiveTableTBodyTh>
-    <ResponsiveTableTBodyTd title="Title">{account.settings?.title}</ResponsiveTableTBodyTd>
+    <!-- <ResponsiveTableTBodyTh title="Status">
+					<AccountStatusIconIconAndText account={findAccount(account.id)} />
+				</ResponsiveTableTBodyTh>
+				<ResponsiveTableTBodyTd title="Title"
+					>{account.settings?.title}</ResponsiveTableTBodyTd
+				> -->
     <ResponsiveTableTBodyTd title="Server">{account.credentials.server}</ResponsiveTableTBodyTd>
     <ResponsiveTableTBodyTd title="Address">{account.credentials.address}</ResponsiveTableTBodyTd>
     <ResponsiveTableTBodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
@@ -127,22 +127,10 @@
 
 <div class="accounts">
  <TopBar>
-  <!-- <h1>sdnsduf</h1> -->
-  <svelte:fragment slot="right">
-   <h1>sdf</h1>
+  <svelte:fragment slot="left">
+   <Icon img="img/back.svg" onClick={back} colorVariable="--icon-white" visibleOnDesktop={false} />
+   <h1 class="title">Account management</h1>
   </svelte:fragment>
-  <svelte:fragment slot="center">
-   <h1>sdf</h1>
-  </svelte:fragment>
-  <!-- <svelte:fragment slot="left">
-			<Icon
-				img="img/back.svg"
-				onClick={back}
-				colorVariable="--icon-white"
-				visibleOnDesktop={false}
-			/>
-			<h1 class="title">Account management</h1>
-		</svelte:fragment> -->
  </TopBar>
  <div class="accounts-wrapper">
   <Paper>
@@ -152,7 +140,14 @@
     <Button img="img/import.svg" text="Import" onClick={clickImport} />
    </div>
 
-   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={1} snippet={accountTable} />
+   <Accordion
+    items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))}
+    activeIndex={null}
+    snippet={accountTable}
+    optionalData={{
+     status: $accounts_config.map(a => findAccount(a.id)),
+    }}
+   />
   </Paper>
  </div>
 </div>
