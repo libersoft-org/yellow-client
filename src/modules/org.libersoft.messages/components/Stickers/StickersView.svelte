@@ -52,15 +52,15 @@
    loading = true;
    let x = stickers_db.stickersets;
    //console.log('x:', x);
-   void 'x is now a dexie Table. We have one shot at ordering or filtering it at db level: https://dexie.org/docs/Dexie/Dexie.[table]';
+   // TODO: x is now a dexie Table. We have one shot at ordering or filtering it at db level: https://dexie.org/docs/Dexie/Dexie.[table]
    x = x.orderBy('id');
-   void "x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection";
+   // TODO: x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection
    x = x.filter(item => item.server == server);
    maybe_trigger_auto_update(await x.count());
    x = x.filter(item => animated_filter.includes(item.animated ? 1 : 0));
    if (stickerset_favorites) x = x.filter(item => stickerset_favorites.includes(item.url));
    x = await x.toArray();
-   void 'x is now an array of items. We can apply additional filtering, sorting and limiting using js.';
+   //TODO: x is now an array of items. We can apply additional filtering, sorting and limiting using js.
    if (fulltext_search_filter != '') {
     fulltext_search_filter = fulltext_search_filter.toLowerCase();
     x = new FuzzySearch(x, ['name'], { caseSensitive: false, sort: true }).search(fulltext_search_filter);

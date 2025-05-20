@@ -205,7 +205,7 @@ class MediaService {
 
  async loadChunk(offset: number) {
   const { chunkSize, totalSize } = this.fileInfo;
-  // todo check if needed (in case of seek to history)
+  // TODO check if needed (in case of seek to history)
   // const mediaSource = this.mediaSource as MediaSource;
   // if (offset >= totalSize) {
   //  //mediaSource.endOfStream();

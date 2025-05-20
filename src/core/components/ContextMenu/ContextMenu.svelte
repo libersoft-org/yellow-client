@@ -237,7 +237,7 @@
 
 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 
-<!--todo: parametrize this component to work as either a pop-up (for stickers) or a context menu (for message context menu)
+<!--TODO: parametrize this component to work as either a pop-up (for stickers) or a context menu (for message context menu)
 tabindex="-1" (off for pop-up, on for context menu-proper)
  role="menu"
  -->
@@ -258,7 +258,7 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
  style:overflow={scrollable ? 'auto' : 'hidden'}
  {...$$restProps}
  on:keydown={e => {
-  /*if (open) e.preventDefault();  // todo parametrize this (off for pop-up, on for context menu-proper)
+  /*if (open) e.preventDefault();  // TODO: parametrize this (off for pop-up, on for context menu-proper)
   if ($hasPopup) return;
   if (e.key === 'ArrowDown') {
    if (focusIndex < options.length - 1) focusIndex++;

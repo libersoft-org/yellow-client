@@ -57,7 +57,7 @@
   if (typeof onEmojiClick === 'function') {
    onEmojiClick(codepoints);
   } else {
-   // todo: this should be handled by prop passing for better separation of concerns
+   // TODO: this should be handled by prop passing for better separation of concerns
    MessageBar.insertText(emoji_render(codepoints));
   }
  }

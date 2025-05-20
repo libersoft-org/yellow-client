@@ -115,7 +115,7 @@
 
  function resizeMessage() {
   console.log('resizeMessage handleResize (scroll?)');
-  handleResize(true /*todo save*/);
+  handleResize(true /*TODO: save*/);
   const maxHeight = 200;
   const textarea = elMessage;
   textarea.style.height = 'auto'; // ?
@@ -192,7 +192,7 @@
 
  documentHeight.subscribe(value => {
   console.log('documentHeight handleResize (scroll?)');
-  handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
+  handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
  });
 
  keyboardHeight.subscribe(value => {
@@ -212,7 +212,7 @@
 
  function closeExpressions() {
   //console.log('closeExpressions');
-  //if (expressionsBottomSheetOpen) handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet
+  //if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
   expressionsBottomSheetOpen = false;
   expressionsMenu?.close();
  }

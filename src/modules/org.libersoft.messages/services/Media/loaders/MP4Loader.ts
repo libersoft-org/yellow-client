@@ -17,7 +17,7 @@ class MP4Loader extends MediaLoader {
    const mediaSource = this.mediaSource as MediaSource;
    mediaSource.duration = info.duration / info.timescale;
 
-   // @ts-ignore todo typing
+   // @ts-ignore TODO typing
    mp4boxFile.onSegment = (id, user, buffer, sampleNumber, last) => {
     // console.info('MP4BOX: onSegment id' + id, {id, user, buffer, sampleNumber, last});
     //user.appendBuffer(buffer);
@@ -47,13 +47,13 @@ class MP4Loader extends MediaLoader {
     const sourceBuffer = mediaSource.addSourceBuffer(mime);
     sourceBuffer.mode = 'segments';
 
-    // @ts-ignore todo typing
+    // @ts-ignore TODO typing
     mp4boxFile.setSegmentOptions(track.id, sourceBuffer, {
      //nbSamples: info.tracks[0].nb_samples,
     });
    });
 
-   // @ts-ignore todo typing
+   // @ts-ignore TODO typing
    const initSegs = mp4boxFile.initializeSegmentation();
    //console.log('MP4BOX: initSegs', initSegs);
    initSegs.forEach(seg => {

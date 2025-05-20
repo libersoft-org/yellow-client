@@ -1,5 +1,5 @@
 <script lang="ts" module>
- // @ts-nocheck todo rm
+ // @ts-nocheck TODO rm
  import { defineMeta } from '@storybook/addon-svelte-csf';
  import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
 
