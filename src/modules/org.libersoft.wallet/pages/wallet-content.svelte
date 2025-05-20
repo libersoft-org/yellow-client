@@ -14,7 +14,7 @@
  import History from './history.svelte';
  import Dropdown from '../components/dropdown.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import { hideSidebarMobile } from '@/core/core.js';
+ import { hideSidebarMobile, debug } from '@/core/core.js';
  let section = 'balance';
  let showModalNetworks = false;
  let showModalWallets = false;
@@ -98,12 +98,9 @@
  }
 
  .wallet .content {
-  max-width: calc(100% - 10px);
+  max-width: 768px;
   margin: 10px;
-  border: 1px solid #000;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: var(--shadow);
+  width: 100%;
  }
 
  .body {
@@ -114,23 +111,24 @@
  }
 
  .body .top {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   width: 100%;
+
+  .top-wrapper {
+   display: flex;
+   justify-content: space-between;
+  }
  }
 
- /* .body .top .left,
-	.body .top .center,
-	.body .top .right {
-		flex: 1;
-	} */
-
- .body .top .left .status {
-  vertical-align: bottom;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  height: 20px;
+ .body .top .left {
+  .status {
+   vertical-align: bottom;
+   display: flex;
+   align-items: center;
+   gap: 5px;
+   height: 20px;
+  }
  }
 
  .body .top .left .status .indicator {
@@ -152,13 +150,13 @@
   background-color: #0a0;
  }
 
- .body .top .center .balance {
+ .body .balance {
   display: flex;
   flex-direction: column;
   align-items: center;
  }
 
- .body .top .center .balance .crypto {
+ .body .balance .crypto {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -167,18 +165,20 @@
   font-weight: bold;
  }
 
- .body .top .center .balance .crypto img {
+ .body .balance .crypto img {
   display: block;
   width: 50px;
   height: 50px;
  }
 
- .body .top .center .balance .fiat {
-  font-size: 18px;
+ .body .balance .fiat {
+  font-size: 16px;
   color: #555;
+  text-align: center;
+  white-space: nowrap;
  }
 
- .body .top .right {
+ .body .right {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -199,11 +199,9 @@
   gap: 10px;
   justify-content: center;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
    grid-template-columns: repeat(2, 1fr);
   }
-  /* flex-wrap: wrap; */
-  /* gap: 10px; */
 
   :global(.button) {
    width: 100%;
@@ -243,48 +241,52 @@
   <div class="content">
    <div class="body">
     <div class="top">
-     <div class="left">
-      <div class="status">
-       <div class="indicator {$status.color}"></div>
-       <div>{$status.text}</div>
-      </div>
-      <div style="font-size: 12px">Server: {$rpcURL}</div>
-     </div>
-     <div class="center">
-      <div class="balance">
-       <div class="crypto">
-        {#if $selectedNetwork?.currency?.iconURL}
-         <div>
-          <img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} />
-         </div>
-        {/if}
-        <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
+     <div class="top-wrapper">
+      <div class="left">
+       <div class="status">
+        <div class="indicator {$status.color}"></div>
+        <div>{$status.text}</div>
        </div>
-       <div class="fiat">
-        ({$balance.fiat.amount}
-        {$balance.fiat.currency})
-       </div>
-       <pre>retrieved {$balanceTimestamp}</pre>
+       {#if $debug}
+        <div style="font-size: 12px">Server: {$rpcURL}</div>
+       {/if}
       </div>
-     </div>
-     <div class="right">
-      <div>
+      <div class="right">
        <div>
-        {#if $selectedAddress && $selectedAddress.address}
-         <BaseButton onClick={clickCopyAddress}>
-          <div class="address">
-           <div bind:this={addressElement}>
-            {shortenAddress($selectedAddress.address)}
+        <div>
+         {#if $selectedAddress && $selectedAddress.address}
+          <BaseButton onClick={clickCopyAddress}>
+           <div class="address">
+            <div bind:this={addressElement}>
+             {shortenAddress($selectedAddress.address)}
+            </div>
+            <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
            </div>
-           <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
-          </div>
-         </BaseButton>
-        {:else}
-         <div class="address">No address selected</div>
-        {/if}
+          </BaseButton>
+         {:else}
+          <div class="address">No address selected</div>
+         {/if}
+        </div>
        </div>
+       <Icon img="img/settings.svg" padding="0px" onClick={() => (showModalSettings = true)} />
       </div>
-      <Button img="img/settings.svg" onClick={() => (showModalSettings = true)} />
+     </div>
+     <div class="balance">
+      <div class="crypto">
+       {#if $selectedNetwork?.currency?.iconURL}
+        <div>
+         <img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} />
+        </div>
+       {/if}
+       <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
+      </div>
+      <div class="fiat">
+       ({$balance.fiat.amount}
+       {$balance.fiat.currency})
+      </div>
+      {#if $debug}
+       <pre>retrieved {$balanceTimestamp}</pre>
+      {/if}
      </div>
     </div>
     <div class="buttons">

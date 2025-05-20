@@ -74,7 +74,6 @@
    gap: clamp(16px, 1.6vw, 24px);
    height: calc(100vh - 20px);
    max-width: 800px;
-   margin: 0 auto;
   }
  }
 
