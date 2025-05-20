@@ -38,18 +38,20 @@
 </style>
 
 <Input placeholder="Search" bind:value={filter} />
-<Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
- <table>
-  <tbody>
-   {#each walletAddresses(wallet) as address, index}
-    <BaseButton onClick={() => clickSelectAddress(wallet, address)}>
-     <tr class={index % 2 === 0 ? 'even' : 'odd'}>
-      <td class="center">{address.index}</td>
-      <td>{address.name}</td>
-      <td>{address.address}</td>
-     </tr>
-    </BaseButton>
-   {/each}
-  </tbody>
- </table>
+<Accordion items={$wallets} bind:activeIndex>
+ {#snippet snippet(wallet)}
+  <table>
+   <tbody>
+    {#each walletAddresses(wallet) as address, index}
+     <BaseButton onClick={() => clickSelectAddress(wallet, address)}>
+      <tr class={index % 2 === 0 ? 'even' : 'odd'}>
+       <td class="center">{address.index}</td>
+       <td>{address.name}</td>
+       <td>{address.address}</td>
+      </tr>
+     </BaseButton>
+    {/each}
+   </tbody>
+  </table>
+ {/snippet}
 </Accordion>
