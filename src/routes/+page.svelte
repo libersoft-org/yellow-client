@@ -25,9 +25,7 @@
  import '../modules/org.libersoft.dating/module.js';
  import '../modules/org.libersoft.iframes/module.js';
  import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
- import { log } from '../core/tauri.ts';
  import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
- import { zoom } from '../core/settings.ts';
  import { initZoom } from '@/core/zoom.ts';
 
  let menus = [];
