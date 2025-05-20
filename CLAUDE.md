@@ -22,3 +22,5 @@
 - Modules system for extensible functionality
 
 This file is meant for Claude and other AI assistants to understand project conventions.
+
+
