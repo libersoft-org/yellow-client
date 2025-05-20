@@ -317,6 +317,8 @@
  .sidebar {
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 10;
   /*  min-width: 300px;
   max-width: 300px;*/
   max-height: 100%;

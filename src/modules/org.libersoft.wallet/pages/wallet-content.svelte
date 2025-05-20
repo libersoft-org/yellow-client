@@ -15,6 +15,8 @@
  import Dropdown from '../components/dropdown.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import { hideSidebarMobile, debug } from '@/core/core.js';
+ import Paper from '@/core/components/Paper/Paper.svelte';
+ import TopBar from '@/core/components/TopBar/TopBar.svelte';
  let section = 'balance';
  let showModalNetworks = false;
  let showModalWallets = false;
@@ -91,15 +93,13 @@
 
  .wallet {
   display: flex;
-  align-items: center;
   flex-direction: column;
   height: calc(100vh - 72px);
   overflow: auto;
+  padding: clamp(16px, 1.6vw, 24px);
  }
 
  .wallet .content {
-  max-width: 768px;
-  margin: 10px;
   width: 100%;
  }
 
@@ -226,93 +226,93 @@
 </style>
 
 <div class="wallet-content">
- <div class="top-bar">
-  <div class="left">
-   <div class="back-button">
-    <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30px" padding="0px" onClick={clickBackButton} />
-   </div>
+ <TopBar>
+  <svelte:fragment slot="left">
+   <Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--icon-white" visibleOnDesktop={false} />
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
-  </div>
-  <div class="right">
+  </svelte:fragment>
+  <svelte:fragment slot="right">
    <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--icon-black" onClick={() => (showModalWallets = true)} />
-  </div>
- </div>
+  </svelte:fragment>
+ </TopBar>
  <div class="wallet">
-  <div class="content">
-   <div class="body">
-    <div class="top">
-     <div class="top-wrapper">
-      <div class="left">
-       <div class="status">
-        <div class="indicator {$status.color}"></div>
-        <div>{$status.text}</div>
+  <Paper>
+   <div class="content">
+    <div class="body">
+     <div class="top">
+      <div class="top-wrapper">
+       <div class="left">
+        <div class="status">
+         <div class="indicator {$status.color}"></div>
+         <div>{$status.text}</div>
+        </div>
+        {#if $debug}
+         <div style="font-size: 12px">Server: {$rpcURL}</div>
+        {/if}
+       </div>
+       <div class="right">
+        <div>
+         <div>
+          {#if $selectedAddress && $selectedAddress.address}
+           <BaseButton onClick={clickCopyAddress}>
+            <div class="address">
+             <div bind:this={addressElement}>
+              {shortenAddress($selectedAddress.address)}
+             </div>
+             <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+            </div>
+           </BaseButton>
+          {:else}
+           <div class="address">No address selected</div>
+          {/if}
+         </div>
+        </div>
+        <Icon img="img/settings.svg" padding="0px" onClick={() => (showModalSettings = true)} />
+       </div>
+      </div>
+      <div class="balance">
+       <div class="crypto">
+        {#if $selectedNetwork?.currency?.iconURL}
+         <div>
+          <img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} />
+         </div>
+        {/if}
+        <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
+       </div>
+       <div class="fiat">
+        ({$balance.fiat.amount}
+        {$balance.fiat.currency})
        </div>
        {#if $debug}
-        <div style="font-size: 12px">Server: {$rpcURL}</div>
+        <pre>retrieved {$balanceTimestamp}</pre>
        {/if}
-      </div>
-      <div class="right">
-       <div>
-        <div>
-         {#if $selectedAddress && $selectedAddress.address}
-          <BaseButton onClick={clickCopyAddress}>
-           <div class="address">
-            <div bind:this={addressElement}>
-             {shortenAddress($selectedAddress.address)}
-            </div>
-            <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
-           </div>
-          </BaseButton>
-         {:else}
-          <div class="address">No address selected</div>
-         {/if}
-        </div>
-       </div>
-       <Icon img="img/settings.svg" padding="0px" onClick={() => (showModalSettings = true)} />
       </div>
      </div>
-     <div class="balance">
-      <div class="crypto">
-       {#if $selectedNetwork?.currency?.iconURL}
-        <div>
-         <img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} />
-        </div>
-       {/if}
-       <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
-      </div>
-      <div class="fiat">
-       ({$balance.fiat.amount}
-       {$balance.fiat.currency})
-      </div>
-      {#if $debug}
-       <pre>retrieved {$balanceTimestamp}</pre>
+     <div class="buttons">
+      <Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
+      <Button img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
+      <Button img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
+      <Button img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
+     </div>
+     <div class="separator"></div>
+     <div class="section">
+      {#if section == 'send'}
+       <Send />
+      {:else if section == 'receive'}
+       <Receive />
+      {:else if section == 'balance'}
+       <Balance />
+      {:else if section == 'history'}
+       <History />
+      {:else if section == 'addressbook'}
+       <AddressBook />
+      {:else if section == 'settings'}
+       <Settings />
       {/if}
      </div>
     </div>
-    <div class="buttons">
-     <Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
-     <Button img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
-     <Button img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
-     <Button img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
-    </div>
-    <div class="separator"></div>
-    <div class="section">
-     {#if section == 'send'}
-      <Send />
-     {:else if section == 'receive'}
-      <Receive />
-     {:else if section == 'balance'}
-      <Balance />
-     {:else if section == 'history'}
-      <History />
-     {:else if section == 'addressbook'}
-      <AddressBook />
-     {:else if section == 'settings'}
-      <Settings />
-     {/if}
-    </div>
    </div>
-  </div>
+  </Paper>
  </div>
 </div>
 <Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} />

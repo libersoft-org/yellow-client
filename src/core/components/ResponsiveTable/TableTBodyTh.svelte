@@ -11,7 +11,7 @@
 
 <style>
  th {
-  /* @media only screen and (min-width: 64em) {
+  @media only screen and (min-width: 64em) {
    display: table-cell;
    white-space: nowrap;
    border-style: none;
@@ -22,17 +22,17 @@
    text-align: left;
    white-space: normal;
    font-weight: normal;
-  } */
+  }
  }
 
  th[data-title]:before {
   content: attr(data-title) ':\00A0';
   font-weight: bold;
 
-  /* @media only screen and (min-width: 64em) {
-			content: '';
-			font-weight: bold;
-		} */
+  @media only screen and (min-width: 64em) {
+   content: '';
+   font-weight: bold;
+  }
  }
 
  th:not([data-title]) {
@@ -44,19 +44,19 @@
   padding: 10px;
   text-align: left;
 
-  /* @media only screen and (min-width: 64em) {
-			display: table-cell;
-			width: 100%;
-		} */
+  @media only screen and (min-width: 64em) {
+   display: table-cell;
+   width: 100%;
+  }
 
   &:before {
    display: inline-block;
    width: 90px;
 
-   /* @media only screen and (min-width: 64em) {
-				display: table;
-				width: 100%;
-			} */
+   @media only screen and (min-width: 64em) {
+    display: table;
+    width: 100%;
+   }
   }
  }
 
@@ -65,19 +65,19 @@
   padding: 10px;
   text-align: left;
 
-  /* @media only screen and (min-width: 64em) {
-			display: table-cell;
-			width: 100%;
-		} */
+  @media only screen and (min-width: 64em) {
+   display: table-cell;
+   width: 100%;
+  }
 
   &:before {
    display: inline-block;
    width: 90px;
 
-   /* @media only screen and (min-width: 64em) {
-				display: table;
-				width: 100%;
-			} */
+   @media only screen and (min-width: 64em) {
+    display: table;
+    width: 100%;
+   }
   }
  }
 </style>

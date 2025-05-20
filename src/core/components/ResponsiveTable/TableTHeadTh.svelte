@@ -10,7 +10,7 @@
 
 <style>
  th {
-  /* @media only screen and (min-width: 64em) {
+  @media only screen and (min-width: 64em) {
    display: table-cell;
    white-space: nowrap;
    border-style: none;
@@ -21,7 +21,7 @@
    border: 0;
    text-align: left;
    white-space: normal;
-  } */
+  }
  }
 </style>
 

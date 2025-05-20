@@ -17,9 +17,6 @@
   transition:
    transform 0.3s linear,
    background-color 0.3s linear;
-  opacity: 0;
-  animation: blink 1.5s forwards;
-  animation-delay: 0.5s;
 
   &:not(.selected) {
    &:hover {
@@ -33,18 +30,6 @@
  .item.selected {
   background-color: #404040;
   transform: scale(1.2);
- }
-
- @keyframes blink {
-  0% {
-   opacity: 0;
-  }
-  50% {
-   opacity: 1;
-  }
-  100% {
-   opacity: 1;
-  }
  }
 </style>
 

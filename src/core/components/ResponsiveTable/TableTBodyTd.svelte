@@ -16,7 +16,7 @@
   white-space: normal;
   display: block;
 
-  /* @media only screen and (min-width: 64em) {
+  @media only screen and (min-width: 64em) {
    display: table-cell;
    white-space: nowrap;
    border-style: none;
@@ -24,7 +24,7 @@
    min-width: 50px;
    vertical-align: middle;
    padding: 10px !important;
-  } */
+  }
  }
 
  td {
@@ -32,19 +32,19 @@
   padding: 10px;
   text-align: left;
 
-  /* @media only screen and (min-width: 64em) {
+  @media only screen and (min-width: 64em) {
    display: table-cell;
    width: 100%;
-  } */
+  }
 
   &:before {
    display: inline-block;
    width: 90px;
 
-   /* @media only screen and (min-width: 64em) {
+   @media only screen and (min-width: 64em) {
     display: table;
     width: 100%;
-   } */
+   }
   }
  }
 
@@ -52,18 +52,18 @@
   content: attr(data-title) ':\00A0';
   font-weight: bold;
 
-  /* @media only screen and (min-width: 64em) {
+  @media only screen and (min-width: 64em) {
    content: '';
    font-weight: bold;
-  } */
+  }
  }
 
  td:empty {
   display: none;
 
-  /* @media only screen and (min-width: 64em) {
+  @media only screen and (min-width: 64em) {
    display: table-cell;
-  } */
+  }
  }
 </style>
 

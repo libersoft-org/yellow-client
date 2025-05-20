@@ -1,9 +1,14 @@
 <script>
  import Content from '../components/content.svelte';
  import Panel from '../components/panel.svelte';
+ import TopBar from '@/core/components/TopBar/TopBar.svelte';
 </script>
 
-<Panel label="People nearby" />
+<TopBar columnSize={1}>
+ <svelte:fragment slot="left">
+  <h1 class="title">People nearby</h1>
+ </svelte:fragment>
+</TopBar>
 <Content>
  {window.innerHeight}<br />
  {window.visualViewport.height}<br />
