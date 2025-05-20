@@ -39,18 +39,40 @@
   let index = window.prompt('Enter the index');
   if (!index) return;
   addAddress(wallet, index);
+  wallet.addresses = [...wallet.addresses];
  }
 
  function renameAddress(wallet, address) {
   let name = window.prompt('Enter the new name');
   if (!name) return;
   address.name = name;
-  wallets.update(v => v);
+  wallet.addresses = [...wallet.addresses];
+  wallets.update(ws =>
+   ws.map(w =>
+    w === wallet
+     ? {
+        ...w,
+        addresses: (w.addresses || []).map(a => (a === address ? { ...a, name } : a)),
+       }
+     : w
+   )
+  );
  }
 
- function deleteAddress(wallet, address) {
+ function deleteAddress(w, address) {
   address.deleted = true;
-  wallets.update(v => v);
+  // wallet.addresses = [...wallet.addresses]
+  wallets.update(ws =>
+   ws.map(item =>
+    item === w
+     ? {
+        ...item,
+        addresses: [...w.addresses],
+        selected_address_index: w.indexNum,
+       }
+     : item
+   )
+  );
  }
 </script>
 
@@ -58,13 +80,20 @@
  .wallet {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
+  padding: 16px 10px;
+
+  :global(&:has(tbody:empty)) {
+   :global(table) {
+    display: none !important;
+   }
+  }
  }
 </style>
 
 <ButtonBar>
- <Button width="80px" text="Create wallet" onClick={showNewWalletModal} />
- <Button width="80px" img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
+ <Button text="Create wallet" onClick={showNewWalletModal} />
+ <Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
  <div class="bold">My wallets:</div>
@@ -72,37 +101,39 @@
 {#if $wallets.length === 0}
  <div class="bold">No wallets found</div>
 {/if}
-<Accordion items={$wallets} let:prop={wallet} bind:activeIndex>
- <div class="wallet">
-  <ButtonBar>
-   <Button text="Add a new address" onClick={() => addAddress(wallet)} />
-   <Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(wallet)} />
-  </ButtonBar>
-  <Table>
-   <Thead>
-    <TheadTr>
-     <Th center={true}>Index</Th>
-     <Th>Alias</Th>
-     <Th>Address</Th>
-     <Th center={true}>Action</Th>
-    </TheadTr>
-   </Thead>
-   <Tbody>
-    {#each walletAddresses(wallet) as address, index}
-     <TbodyTr>
-      <Td center={true}>{address.index}</Td>
-      <Td>{address.name}</Td>
-      <Td><Address address={address.address} /></Td>
-      <Td>
-       <TableActionItems>
-        <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => renameAddress(wallet, address)} />
-        <Icon img="modules/{module.identifier}/img/hide.svg" alt="Hide" colorVariable="--icon-black" size="20px" padding="5px" onClick={() => deleteAddress(wallet, address)} />
-       </TableActionItems>
-      </Td>
-     </TbodyTr>
-    {/each}
-   </Tbody>
-  </Table>
- </div>
+<Accordion items={$wallets} bind:activeIndex>
+ {#snippet snippet(walleta)}
+  <div class="wallet">
+   <ButtonBar>
+    <Button text="Add a new address" onClick={() => addAddress(walleta)} />
+    <Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
+   </ButtonBar>
+   <Table>
+    <Thead>
+     <TheadTr>
+      <Th>Index</Th>
+      <Th>Alias</Th>
+      <Th>Address</Th>
+      <Th>Action</Th>
+     </TheadTr>
+    </Thead>
+    <Tbody>
+     {#each walletAddresses(walleta) as address, index}
+      <TbodyTr>
+       <Td>{address.index}</Td>
+       <Td>{address.name}</Td>
+       <Td><Address address={address.address} /></Td>
+       <Td>
+        <TableActionItems>
+         <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
+         <Icon img="img/del.svg" alt="Hide" colorVariable="--icon-red" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
+        </TableActionItems>
+       </Td>
+      </TbodyTr>
+     {/each}
+    </Tbody>
+   </Table>
+  </div>
+ {/snippet}
 </Accordion>
 <Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />

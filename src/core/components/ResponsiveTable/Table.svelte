@@ -4,9 +4,10 @@
  type Props = {
   expand?: boolean;
   children: Snippet;
+  [key: string]: unknown;
  };
 
- const { expand = $bindable(false), children }: Props = $props();
+ const { expand = $bindable(false), children, ...restProps }: Props = $props();
 </script>
 
 <style>
@@ -21,11 +22,6 @@
   @media only screen and (min-width: 64em) {
    border: 1px solid #222 !important;
    border-radius: 8px;
-   box-shadow:
-    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-    rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
-    rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
   }
  }
 
@@ -44,7 +40,7 @@
  }
 </style>
 
-<div class="responsvive-table">
+<div class="responsvive-table" {...restProps}>
  <table class:expand>
   {@render children()}
  </table>

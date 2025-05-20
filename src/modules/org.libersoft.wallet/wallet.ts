@@ -131,7 +131,9 @@ export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selected
 });
 
 let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
- return ($selectedNetwork?.tokens || []).map(token => ({ symbol: token.symbol }));
+ return ($selectedNetwork?.tokens || []).map(token => ({
+  symbol: token.symbol,
+ }));
 });
 
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
@@ -197,7 +199,10 @@ let refreshTimer = window.setInterval(refresh, 30000);
 
 function resetBalance(): void {
  balance.set({
-  crypto: { amount: '?', currency: get(selectedNetwork)?.currency.symbol || '?' },
+  crypto: {
+   amount: '?',
+   currency: get(selectedNetwork)?.currency.symbol || '?',
+  },
   fiat: { amount: '?', currency: 'USD' },
  });
  balanceTimestamp.set(null);
@@ -237,7 +242,10 @@ function reconnect(): void {
  const rrr = get(rpcURL);
  if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
   if (!net.rpcURLs[0]) {
-   status.set({ color: 'red', text: 'No RPC URL found for the selected network' });
+   status.set({
+    color: 'red',
+    text: 'No RPC URL found for the selected network',
+   });
    return;
   }
   rpcURL.set(net.rpcURLs[0]);
@@ -288,11 +296,27 @@ export function addAddress(w: Wallet, index?: number | string): void {
  console.log('sorted.');
  w.addresses = addresses;
  w.selected_address_index = indexNum;
- wallets.update(ws => ws);
+ wallets.update(ws =>
+  ws.map(item =>
+   item === w
+    ? {
+       ...item,
+       addresses: [...addresses],
+       selected_address_index: indexNum,
+      }
+    : item
+  )
+ );
 }
 
 function doAddAddress(w: Wallet, addresses: Address[], index: number): void {
  console.log('doAddAddress Mnemonic.fromPhrase');
+
+ if (!w.phrase) {
+  console.error('Cannot derive address: wallet.phrase is undefined');
+  return;
+ }
+
  let mn = Mnemonic.fromPhrase(w.phrase);
  console.log('doAddAddress getIndexedAccountPath');
  let path = getIndexedAccountPath(index);
