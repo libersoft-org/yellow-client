@@ -15,6 +15,14 @@
    border-style: none;
    border-bottom-width: 0;
   }
+
+  &:nth-child(odd) {
+   background-color: #ffd;
+  }
+
+  &:nth-child(even) {
+   background-color: #ffa;
+  }
  }
 </style>
 

@@ -20,7 +20,7 @@
    display: table-cell;
    white-space: nowrap;
    border-style: none;
-   text-align: center !important;
+   text-align: left !important;
    min-width: 50px;
    vertical-align: middle;
    padding: 10px !important;
@@ -31,7 +31,6 @@
   display: block;
   padding: 10px;
   text-align: left;
-  vertical-align: middle;
 
   @media only screen and (min-width: 64em) {
    display: table-cell;

@@ -47,6 +47,8 @@
  }
 
  .bar-buttons {
+  position: relative;
+  z-index: 10;
   display: flex;
   color: #fff;
   background-color: #222;
@@ -60,6 +62,7 @@
   overflow: hidden;
   padding: 15px;
   font-weight: bold;
+  background-color: #222;
  }
 
  .bar-buttons .bar-button.grow {

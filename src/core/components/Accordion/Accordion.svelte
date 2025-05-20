@@ -1,18 +1,49 @@
 <script lang="ts">
- import { type Snippet } from 'svelte';
+ import { tick, type Snippet } from 'svelte';
  import BaseButton from '../Button/BaseButton.svelte';
  import Icon from '../Icon/Icon.svelte';
 
  type Props = {
   items: Array<{ name: string; id: string }>;
   activeIndex?: number | null;
-  children: Snippet;
+  snippet: Snippet<[any]> | null;
  };
 
- let { children, items, activeIndex }: Props = $props();
+ let { items, activeIndex = null, snippet }: Props = $props();
 
- function handleClick(index: number) {
-  activeIndex = activeIndex === index ? null : index;
+ async function handleClick(index: number) {
+  const isClosing = activeIndex === index;
+  const prevIndex = activeIndex;
+
+  if (prevIndex !== null) {
+   const prevEl = document.querySelector(`.content[data-index="${prevIndex}"]`) as HTMLElement;
+   if (prevEl) {
+    prevEl.style.height = `${prevEl.scrollHeight}px`;
+    prevEl.offsetHeight;
+    prevEl.style.height = '0px';
+   }
+  }
+
+  if (isClosing) {
+   activeIndex = null;
+   return;
+  }
+
+  activeIndex = index;
+  await tick();
+
+  const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
+  if (el) {
+   el.style.height = '0px';
+   el.offsetHeight;
+   el.style.height = `${el.scrollHeight}px`;
+
+   setTimeout(() => {
+    if (activeIndex === index) {
+     el.style.height = 'auto';
+    }
+   }, 300);
+  }
  }
 </script>
 
@@ -21,11 +52,6 @@
   border: 1px solid var(--accordion-border-color, #b90);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow:
-   rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-   rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-   rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
-   rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
 
   &:empty {
    display: none;
@@ -35,8 +61,13 @@
  .accordion .item {
   border-bottom: 1px solid var(--accordion-border-color, #b90);
 
+  :global(.header img) {
+   transform: rotate(0deg);
+   transition: transform 0.3s ease;
+  }
+
   &:last-child {
-   margin-bottom: -1px;
+   border-bottom: none;
   }
  }
 
@@ -45,6 +76,9 @@
   align-items: center;
   padding: 10px;
   background-color: #fd1;
+  cursor: pointer;
+  filter: brightness(1);
+  transition: filter 0.3s ease;
  }
 
  .accordion .item .header .title {
@@ -55,34 +89,34 @@
  .accordion .item .content {
   height: 0;
   overflow: hidden;
-  transition: height 0.4s ease;
+  transition: height 0.3s ease;
  }
 
- .accordion .item .content.active {
-  height: auto;
-  display: block;
+ .accordion .item.is-expanded .header {
+  filter: brightness(1.05);
  }
 
- :global(.header .icon) {
-  transition: transform 0.3s ease;
- }
-
- :global(.item:has(.content.active) .header .icon) {
-  transform: rotate(180deg);
+ .accordion .item {
+  &.is-expanded {
+   :global(.header img) {
+    transform: rotate(180deg);
+   }
+  }
  }
 </style>
 
 <div class="accordion">
  {#each items as item, index}
-  <div class="item">
+  <div class="item {activeIndex === index ? 'is-expanded' : ''}">
    <BaseButton onClick={() => handleClick(index)}>
     <div class="header">
      <div class="title">{item.name}</div>
      <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size="12px" />
     </div>
    </BaseButton>
-   <div class="content {activeIndex === index ? 'active' : ''}">
-    {@render children()}
+
+   <div class="content {activeIndex === index ? 'is-expanded' : ''}" data-index={index}>
+    {@render snippet?.(item)}
    </div>
   </div>
  {/each}

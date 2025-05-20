@@ -1,8 +1,13 @@
-<script>
+<script lang="ts">
  import { Highlight } from 'svelte-highlight';
  import atomOneDark from 'svelte-highlight/styles/atom-one-dark';
  import json from 'svelte-highlight/languages/json';
- export let code = '';
+
+ type Props = {
+  code: string;
+ };
+
+ let { code = $bindable() }: Props = $props();
 </script>
 
 <style>
@@ -20,9 +25,16 @@
  }
 
  .sizer {
+  position: relative;
   max-width: 100%;
   max-height: 100%;
   overflow: auto;
+ }
+
+ textarea {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
  }
 </style>
 
@@ -32,6 +44,7 @@
 
 <div class="code">
  <div class="sizer">
-  <Highlight contenteditable="true" language={json} {code} />
+  <textarea bind:value={code}> </textarea>
+  <Highlight language={json} bind:code />
  </div>
 </div>

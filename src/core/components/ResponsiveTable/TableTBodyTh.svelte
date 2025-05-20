@@ -43,7 +43,6 @@
   display: block;
   padding: 10px;
   text-align: left;
-  vertical-align: middle;
 
   @media only screen and (min-width: 64em) {
    display: table-cell;
@@ -65,7 +64,6 @@
   display: block;
   padding: 10px;
   text-align: left;
-  vertical-align: middle;
 
   @media only screen and (min-width: 64em) {
    display: table-cell;
