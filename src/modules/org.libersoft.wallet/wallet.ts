@@ -318,7 +318,6 @@ function doAddAddress(w: Wallet, addresses: Address[], index: number): void {
  }
 
  let mn = Mnemonic.fromPhrase(w.phrase);
- console.warn(mn);
  console.log('doAddAddress getIndexedAccountPath');
  let path = getIndexedAccountPath(index);
  console.log('doAddAddress HDNodeWallet.fromMnemonic');

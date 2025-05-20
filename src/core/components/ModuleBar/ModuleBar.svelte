@@ -8,6 +8,9 @@
  import resize from '@/core/actions/resizeObserver.ts';
  import { order } from '@/core/utils/utils.ts';
 
+ let itemsHeight = '50px';
+ let itemsEl;
+
  export let onSelectModule;
  export let onCloseModule;
  let module_data;
@@ -47,6 +50,24 @@
   expanded = !expanded;
  }
 
+ $: {
+  if (expanded && itemsEl) {
+   // Expanding: set to scrollHeight, then after transition, remove inline height
+   itemsHeight = `${itemsEl.scrollHeight}px`;
+   // After animation, let it be auto
+   setTimeout(() => {
+    if (expanded) itemsHeight = 'auto';
+   }, 250); // Duration should match your CSS transition
+  } else if (!expanded && itemsEl) {
+   // Collapsing: from auto -> px so it animates down
+   const currHeight = itemsEl.scrollHeight;
+   itemsHeight = `${currHeight}px`;
+   requestAnimationFrame(() => {
+    itemsHeight = '50px';
+   });
+  }
+ }
+
  function onResize(entry) {
   const { target, contentRect } = entry;
   const { width, height } = contentRect;
@@ -65,7 +86,7 @@
   background-color: #222;
   display: flex;
   align-items: center;
-  min-height: 50px;
+  height: fit-content;
  }
 
  .items {
@@ -74,12 +95,12 @@
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-  /* gap: 8px; */
+  row-gap: 10px;
   flex-wrap: wrap;
-  padding: 10px 0px;
+  padding: 10px;
   margin: 0;
   overflow: hidden;
-  height: 50px;
+  will-change: height;
  }
 
  .items.expanded {
@@ -89,9 +110,28 @@
 
  .dropdown {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  height: 60px;
+  height: 100%;
+  cursor: default;
+
+  :global(.icon) {
+   transform: rotate(0deg);
+   transition: transform 0.3s ease;
+
+   :global(.module-bar &) {
+    position: relative;
+    top: 14px;
+
+    &:is(.expand-enabled &) {
+     transform: rotate(180deg);
+    }
+   }
+  }
+
+  &:not(.expand-enabled &) {
+   display: none;
+  }
  }
 
  .module-bar:not(.expand-enabled) .dropdown {
@@ -102,16 +142,16 @@
 </style>
 
 <div class="module-bar" class:expand-enabled={expandEnabled}>
- <div use:resize={onResize} class="items {expanded ? 'expanded' : ''}">
+ <div use:resize={onResize} bind:this={itemsEl} class="items {expanded ? 'expanded' : ''}" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);">
   {#each module_decls_ordered as decl (decl.id)}
    <div>
     <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
    </div>
   {/each}
  </div>
- <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
+ <BaseButton disabled={!expandEnabled}>
   <div class="dropdown">
-   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="10" />
+   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="10" onClick={clickExpand} />
   </div>
  </BaseButton>
 </div>
