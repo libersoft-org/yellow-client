@@ -84,13 +84,13 @@ export async function getNativeClientBuildCommitHash() {
 }
 
 export async function getNativeClientBuildBranch() {
-    if (!TAURI) {
-    return '';
-    }
-    const branch = await invoke('get_build_branch');
-    log.debug('native client branch', branch);
-    return branch;
-    }
+ if (!TAURI) {
+  return '';
+ }
+ const branch = await invoke('get_build_branch');
+ log.debug('native client branch', branch);
+ return branch;
+}
 
 export async function getNativeClientBuildTs() {
  if (!TAURI) {

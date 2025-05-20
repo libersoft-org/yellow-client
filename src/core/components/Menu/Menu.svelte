@@ -1,6 +1,7 @@
 <script lang="ts">
  import BaseButton from '../Button/BaseButton.svelte';
  import MenuItem from './MenuItem.svelte';
+ import MenuAppSection from './MenuAppSection.svelte';
  import Modal from '../Modal/Modal.svelte';
  import ModalSettings from '../../modals/Settings.svelte';
  import Icon from '../Icon/Icon.svelte';
@@ -178,6 +179,28 @@
     <div>{product}</div>
    </div>
   </BaseButton>
+  {#if TAURI}
+   <MenuAppSection text="Native client" />
+   <div class="version">
+    <div>Commit:</div>
+    {#await getNativeClientBuildCommitHash() then hash}
+     <div class="bold">{hash as string}</div>
+    {/await}
+   </div>
+   <div class="version">
+    <div>Build:</div>
+    {#await getNativeClientBuildTs() then ts}
+     <div class="bold">{ts as string}</div>
+    {/await}
+   </div>
+   <div class="version">
+    <div>Branch:</div>
+    {#await getNativeClientBuildBranch() then hash}
+     <div class="bold">{hash as string}</div>
+    {/await}
+   </div>
+  {/if}
+  <MenuAppSection text="Web app" />
   <div class="version">
    <div>Version:</div>
    <div class="bold">{version}</div>
@@ -190,26 +213,6 @@
    <div>Commit:</div>
    <div class="bold">{commit}</div>
   </div>
-  {#if TAURI}
-   <div class="version">
-    <div>Native client commit:</div>
-    {#await getNativeClientBuildCommitHash() then hash}
-     <div class="bold">{(hash as string)}</div>
-    {/await}
-   </div>
-   <div class="version">
-    <div>Native client branch:</div>
-    {#await getNativeClientBuildBranch() then hash}
-     <div class="bold">{(hash as string)}</div>
-    {/await}
-   </div>
-   <div class="version">
-    <div>Native client build timestamp:</div>
-    {#await getNativeClientBuildTs() then ts}
-     <div class="bold">{(ts as string)}</div>
-    {/await}
-   </div>
-  {/if}
  </div>
 </div>
 <Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
