@@ -73,7 +73,7 @@
 
  onMount(async () => {
   console.log('+page onMount');
-
+  /*
   // Catch all synchronous errors
   window.addEventListener('error', event => {
    // event.error is the Error object
@@ -87,7 +87,7 @@
    console.error('Unhandled promise rejection:', reason);
    console.error('Stack trace:\n', reason?.stack || reason);
   });
-
+*/
   if ('serviceWorker' in window.navigator) {
    console.log('+page registering service worker');
    const SW_VERSION = '_version_v1_'; // change this to force update the service worker
