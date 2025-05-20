@@ -7,7 +7,7 @@
  import DialogExit from '../../dialogs/Exit.svelte';
  import { product, version, build, commit, link } from '../../core.js';
  import { TAURI, BROWSER } from '@/core/tauri.ts';
- import { getNativeClientBuildCommitHash, getNativeClientBuildTs } from '@/core/tauri-app.ts';
+ import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
 
  type Props = {
   showMenu: boolean;
@@ -194,13 +194,19 @@
    <div class="version">
     <div>Native client commit:</div>
     {#await getNativeClientBuildCommitHash() then hash}
-     <div class="bold">{(hash as string).slice(0, 7)}</div>
+     <div class="bold">{(hash as string)}</div>
+    {/await}
+   </div>
+   <div class="version">
+    <div>Native client branch:</div>
+    {#await getNativeClientBuildBranch() then hash}
+     <div class="bold">{(hash as string)}</div>
     {/await}
    </div>
    <div class="version">
     <div>Native client build timestamp:</div>
     {#await getNativeClientBuildTs() then ts}
-     <div class="bold">{(ts as string).slice(7)}</div>
+     <div class="bold">{(ts as string)}</div>
     {/await}
    </div>
   {/if}
