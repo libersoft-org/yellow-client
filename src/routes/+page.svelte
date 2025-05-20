@@ -200,7 +200,7 @@
   const metaViewport = document.querySelector('meta[name="viewport"]');
   if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
   documentHeight.set(document.documentElement.clientHeight);
-  isMobile.set(window.matchMedia('(max-width: 1024px)').matches);
+  isMobile.set(window.matchMedia('(max-width: 768px)').matches);
   //console.log('window.innerHeight:', window.innerHeight);
   //console.log('viewportHeight:', viewportHeight);
   //console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);

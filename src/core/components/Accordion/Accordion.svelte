@@ -81,9 +81,11 @@
   transition: filter 0.3s ease;
  }
 
- .accordion .item .header .title {
-  flex-grow: 1;
-  font-weight: bold;
+ .accordion .item .header {
+  .title {
+   flex-grow: 1;
+   font-weight: bold;
+  }
  }
 
  .accordion .item .content {
@@ -97,6 +99,8 @@
  }
 
  .accordion .item {
+  display: grid;
+
   &.is-expanded {
    :global(.header img) {
     transform: rotate(180deg);

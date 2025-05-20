@@ -108,43 +108,7 @@
  }
 </style>
 
-{#snippet accountTable()}
- {#if $accounts_config.length !== 0}
-  <ResponsiveTable>
-   <ResponsiveTableTHead>
-    <ResponsiveTableTHeadTr>
-     <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
-     <ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh>
-     <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
-     <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
-     <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
-     <ResponsiveTableTHeadTh>Action</ResponsiveTableTHeadTh>
-    </ResponsiveTableTHeadTr>
-   </ResponsiveTableTHead>
-   {#each $accounts_config as a (a.id)}
-    <ResponsiveTableTBody>
-     <ResponsiveTableTBodyTr>
-      <ResponsiveTableTBodyTh title="Status">
-       <AccountStatusIconIconAndText account={findAccount(a.id)} />
-      </ResponsiveTableTBodyTh>
-      <ResponsiveTableTBodyTd title="Title">{a.settings?.title}</ResponsiveTableTBodyTd>
-      <ResponsiveTableTBodyTd title="Server">{a.credentials.server}</ResponsiveTableTBodyTd>
-      <ResponsiveTableTBodyTd title="Address">{a.credentials.address}</ResponsiveTableTBodyTd>
-      <ResponsiveTableTBodyTd title="Enabled">{a.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
-      <ResponsiveTableTBodyTd title="Action">
-       <TableActionItems>
-        <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => clickEdit(a.id)} />
-        <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => clickDel(a.id, a.settings?.title)} />
-       </TableActionItems>
-      </ResponsiveTableTBodyTd>
-     </ResponsiveTableTBodyTr>
-    </ResponsiveTableTBody>
-   {/each}
-  </ResponsiveTable>
- {/if}
-{/snippet}
-
-{#snippet accountTableMobile(account)}
+{#snippet accountTable(account)}
  <ResponsiveTable>
   <ResponsiveTableTHead>
    <ResponsiveTableTHeadTr>
@@ -188,11 +152,7 @@
    <Button img="img/import.svg" text="Import" onClick={clickImport} />
   </div>
 
-  {#if $isMobile}
-   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={1} snippet={accountTableMobile} />
-  {:else}
-   {@render accountTable()}
-  {/if}
+  <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={1} snippet={accountTable} />
  </div>
 </div>
 

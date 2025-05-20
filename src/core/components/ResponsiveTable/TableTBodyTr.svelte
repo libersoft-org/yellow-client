@@ -10,11 +10,11 @@
 
 <style>
  tr {
-  @media only screen and (min-width: 64em) {
+  /* @media only screen and (min-width: 64em) {
    display: table-row;
    border-style: none;
    border-bottom-width: 0;
-  }
+  } */
 
   &:hover {
    background: #fd1;

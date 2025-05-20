@@ -208,6 +208,11 @@
   :global(.button) {
    width: 100%;
   }
+
+  :global(.base-button) {
+   display: flex;
+   width: 100%;
+  }
  }
 
  .body .separator {

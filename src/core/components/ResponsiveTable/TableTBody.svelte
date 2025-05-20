@@ -10,19 +10,19 @@
 
 <style>
  tbody {
-  @media only screen and (min-width: 64em) {
+  /* @media only screen and (min-width: 64em) {
    display: table-row-group;
    border-style: none;
    border-bottom-width: 0;
-  }
+  } */
 
-  &:nth-child(odd) {
-   background-color: #ffd;
-  }
+  /* &:nth-child(odd) {
+			background-color: #ffd;
+		}
 
-  &:nth-child(even) {
-   background-color: #ffa;
-  }
+		&:nth-child(even) {
+			background-color: #ffa;
+		} */
  }
 </style>
 
