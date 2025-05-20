@@ -6,7 +6,7 @@
  import ModalSettings from '../../modals/Settings.svelte';
  import Icon from '../Icon/Icon.svelte';
  import DialogExit from '../../dialogs/Exit.svelte';
- import { product, version, build, commit, link } from '../../core.js';
+ import { product, version, build, commit, branch, link } from '../../core.js';
  import { TAURI, BROWSER } from '@/core/tauri.ts';
  import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
 
@@ -184,19 +184,19 @@
    <div class="version">
     <div>Commit:</div>
     {#await getNativeClientBuildCommitHash() then hash}
-     <div class="bold">{hash as string}</div>
+     <div class="bold">{(hash as string).slice(1, 9)}</div>
     {/await}
    </div>
    <div class="version">
     <div>Build:</div>
     {#await getNativeClientBuildTs() then ts}
-     <div class="bold">{ts as string}</div>
+     <div class="bold">{(ts as string).slice(1, -1)}</div>
     {/await}
    </div>
    <div class="version">
     <div>Branch:</div>
     {#await getNativeClientBuildBranch() then hash}
-     <div class="bold">{hash as string}</div>
+     <div class="bold">{(hash as string).slice(1, -1)}</div>
     {/await}
    </div>
   {/if}
@@ -212,6 +212,10 @@
   <div class="version">
    <div>Commit:</div>
    <div class="bold">{commit}</div>
+  </div>
+  <div class="version">
+   <div>Branch:</div>
+   <div class="bold">{branch}</div>
   </div>
  </div>
 </div>

@@ -25,6 +25,7 @@ export const build =
      .replace(/\.\d+Z/, '')
   : 'unknown';
 export const commit = typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'unknown';
+export const branch = typeof __BRANCH__ !== 'undefined' ? __BRANCH__ : 'unknown';
 export const link = 'https://yellow.libersoft.org';
 // declarations of modules that this client supports
 export let module_decls = writable({});
