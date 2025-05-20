@@ -52,14 +52,11 @@
 
  $: {
   if (expanded && itemsEl) {
-   // Expanding: set to scrollHeight, then after transition, remove inline height
    itemsHeight = `${itemsEl.scrollHeight}px`;
-   // After animation, let it be auto
    setTimeout(() => {
     if (expanded) itemsHeight = 'auto';
-   }, 250); // Duration should match your CSS transition
+   }, 250);
   } else if (!expanded && itemsEl) {
-   // Collapsing: from auto -> px so it animates down
    const currHeight = itemsEl.scrollHeight;
    itemsHeight = `${currHeight}px`;
    requestAnimationFrame(() => {
@@ -123,8 +120,8 @@
     position: relative;
     top: 14px;
 
-    &:is(.expand-enabled &) {
-     transform: rotate(180deg);
+    &:is(.expanded &) {
+     transform: rotate(-180deg);
     }
    }
   }
@@ -150,8 +147,8 @@
   {/each}
  </div>
  <BaseButton disabled={!expandEnabled}>
-  <div class="dropdown">
-   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="10" onClick={clickExpand} />
+  <div class="dropdown {expanded ? 'expanded' : ''}">
+   <Icon img={'img/up.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="10" onClick={clickExpand} />
   </div>
  </BaseButton>
 </div>
