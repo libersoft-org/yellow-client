@@ -180,7 +180,7 @@
    </div>
   </BaseButton>
   {#if TAURI}
-   <MenuAppSection text="Native client" />
+   <MenuAppSection text="Client app" />
    <div class="version">
     <div>Commit:</div>
     {#await getNativeClientBuildCommitHash() then hash}
@@ -199,8 +199,8 @@
      <div class="bold">{(hash as string).slice(1, -1)}</div>
     {/await}
    </div>
+   <MenuAppSection text="Web app" />
   {/if}
-  <MenuAppSection text="Web app" />
   <div class="version">
    <div>Version:</div>
    <div class="bold">{version}</div>
