@@ -14,7 +14,6 @@
  }
 
  let { type = 'text', placeholder = '', value = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
-
  let inputRef: HTMLInputElement;
 
  function handleKeydown(e) {
