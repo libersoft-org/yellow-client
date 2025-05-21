@@ -12,10 +12,6 @@
 
  let { items, activeIndex = null, snippet, right }: Props = $props();
 
- // if (optionalData) {
- // 	console.warn({ optionalData });
- // }
-
  async function handleClick(index: number) {
   const isClosing = activeIndex === index;
   const prevIndex = activeIndex;
