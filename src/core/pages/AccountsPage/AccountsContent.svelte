@@ -9,14 +9,12 @@
  import ResponsiveTableTHeadTh from '../../components/ResponsiveTable/TableTHeadTh.svelte';
  import ResponsiveTableTBody from '../../components/ResponsiveTable/TableTBody.svelte';
  import ResponsiveTableTBodyTr from '../../components/ResponsiveTable/TableTBodyTr.svelte';
- import ResponsiveTableTBodyTh from '../../components/ResponsiveTable/TableTBodyTh.svelte';
  import ResponsiveTableTBodyTd from '../../components/ResponsiveTable/TableTBodyTd.svelte';
  import Modal from '../../components/Modal/Modal.svelte';
  import ModalAccountsAddEdit from '@/core/modals/AccountsAddEdit.svelte';
  import ModalAccountsDelete from '@/core/modals/AccountsDelete.svelte';
  import AccountsExport from '@/core/modals/AccountsExport.svelte';
  import AccountsImport from '@/core/modals/AccountsImport.svelte';
- import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
  import Paper from '@/core/components/Paper/Paper.svelte';
  import TopBar from '@/core/components/TopBar/TopBar.svelte';
@@ -95,8 +93,6 @@
  <ResponsiveTable>
   <ResponsiveTableTHead>
    <ResponsiveTableTHeadTr>
-    <!-- <ResponsiveTableTHeadTh>Status</ResponsiveTableTHeadTh>
-				<ResponsiveTableTHeadTh>Title</ResponsiveTableTHeadTh> -->
     <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
     <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
     <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
@@ -105,12 +101,6 @@
   </ResponsiveTableTHead>
   <ResponsiveTableTBody>
    <ResponsiveTableTBodyTr>
-    <!-- <ResponsiveTableTBodyTh title="Status">
-					<AccountStatusIconIconAndText account={findAccount(account.id)} />
-				</ResponsiveTableTBodyTh>
-				<ResponsiveTableTBodyTd title="Title"
-					>{account.settings?.title}</ResponsiveTableTBodyTd
-				> -->
     <ResponsiveTableTBodyTd title="Server">{account.credentials.server}</ResponsiveTableTBodyTd>
     <ResponsiveTableTBodyTd title="Address">{account.credentials.address}</ResponsiveTableTBodyTd>
     <ResponsiveTableTBodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>

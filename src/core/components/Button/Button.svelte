@@ -43,8 +43,6 @@
   font-weight: bold;
   border: 1px solid;
   border-radius: 10px;
-  height: max-content;
-  width: max-content;
  }
 
  .button.disabled {

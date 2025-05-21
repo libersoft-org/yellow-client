@@ -135,11 +135,12 @@
     <div class="header">
      {#if optionalData}
       <div class="optional-data">
-       <AccountStatusIconIconAndText account={optionalData.status[index]} />
        <div class="title">{item.name}</div>
+       <AccountStatusIconIconAndText account={optionalData.status[index]} />
       </div>
+     {:else}
+      <div class="title">{item.name}</div>
      {/if}
-     <div></div>
      <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size="12px" />
     </div>
    </BaseButton>
