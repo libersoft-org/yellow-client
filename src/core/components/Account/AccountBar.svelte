@@ -88,6 +88,15 @@
   gap: 10px;
   padding: 10px;
   border-bottom: 1px solid #555;
+
+  :global(.icon) {
+   transform: rotate(0deg);
+   transition: transform 0.3s ease;
+  }
+
+  :global(&.is-expanded .icon) {
+   transform: rotate(180deg);
+  }
  }
 
  .dropdown .text {
@@ -113,7 +122,7 @@
 
 <div class="account-bar" bind:this={accountBar}>
  <BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
-  <div class="dropdown">
+  <div class={`dropdown`} class:is-expanded={accountsVisible}>
    {#if $active_account}
     <div class="text">
      <AccountStatusIcon account={active_account} />
@@ -127,7 +136,7 @@
      <div class="text">CREATE ACCOUNT FIRST</div>
     {/if}
    {/if}
-   <Icon img={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
+   <Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
   </div>
  </BaseButton>
  {#if accountsVisible}

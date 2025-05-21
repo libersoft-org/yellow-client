@@ -117,7 +117,7 @@
     top: 14px;
 
     &:is(.expanded &) {
-     transform: rotate(-180deg);
+     transform: rotate(180deg);
     }
    }
   }
@@ -144,7 +144,7 @@
  </div>
  <BaseButton disabled={!expandEnabled}>
   <div class="dropdown {expanded ? 'expanded' : ''}">
-   <Icon img={'img/up.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="10" onClick={clickExpand} />
+   <Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="10" onClick={clickExpand} />
   </div>
  </BaseButton>
 </div>

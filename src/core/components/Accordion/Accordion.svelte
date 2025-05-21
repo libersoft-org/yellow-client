@@ -208,10 +208,6 @@
   transition: height 0.3s ease;
  }
 
- .accordion .item.is-expanded .header {
-  filter: brightness(1.05);
- }
-
  .accordion .item {
   display: grid;
 
