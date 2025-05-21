@@ -1,2 +1,2 @@
-export type Message = any; // todo
-export type Conversation = any; // todo
+export type Message = any; // TODO
+export type Conversation = any; // TODO

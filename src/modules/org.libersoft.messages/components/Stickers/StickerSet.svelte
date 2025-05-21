@@ -11,9 +11,11 @@
  export let showall = false;
  let splitAt = 8;
  let stickers = undefined;
- void `stickers-search-results constructs Stickerset with stickerset parameter, which contains the metadata, but not items.
- Items are fetched from the database by update here. But the other case is when Stickerset is a child of stickerset-details-svelte. In that case,
- the items are passed in the stickerset object. So, we need to check if the items are already there, and if not, fetch them from the database.`;
+ /*
+  TODO: stickers-search-results constructs Stickerset with stickerset parameter, which contains the metadata, but not items.
+  Items are fetched from the database by update here. But the other case is when Stickerset is a child of stickerset-details-svelte. In that case,
+  the items are passed in the stickerset object. So, we need to check if the items are already there, and if not, fetch them from the database.
+ */
  let first, rest;
  let expanded = false;
  let clientHeight;

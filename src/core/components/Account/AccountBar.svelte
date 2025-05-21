@@ -109,10 +109,10 @@
     </div>
    {:else}
     {#if $accounts.length > 0}
-     <div class="text">SELECT YOUR ACCOUNT</div>
+     <div class="text">-- SELECT YOUR ACCOUNT --</div>
     {/if}
     {#if $accounts.length === 0}
-     <div class="text">CREATE ACCOUNT FIRST</div>
+     <div class="text">-- CREATE ACCOUNT FIRST --</div>
     {/if}
    {/if}
    <Icon img={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />

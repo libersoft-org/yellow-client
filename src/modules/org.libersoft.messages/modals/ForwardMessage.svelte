@@ -9,7 +9,7 @@
  const fwMsg = forwardMessageStore.getForwardedMessage();
  let search = $state('');
 
- // todo: this is simple search, in future we want to at least debounce it or make backend solution for filtering
+ // TODO: this is simple search, in future we want to at least debounce it or make backend solution for filtering
  let conversations: Conversation[] = $derived.by(() => {
   const conversations = get(conversationsArray) || [];
 

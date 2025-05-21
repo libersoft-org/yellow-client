@@ -3,9 +3,9 @@
 
  interface BaseButtonProps extends HTMLButtonAttributes {
   children?: any;
-  onClick?: MouseEventHandler<HTMLButtonElement>; // todo: this prop is for backward compatibility
-  onRightClick?: MouseEventHandler<HTMLButtonElement>; // todo: this prop is for backward compatibility
-  onMousedown?: MouseEventHandler<HTMLButtonElement>; // todo: this prop is for backward compatibility
+  onClick?: MouseEventHandler<HTMLButtonElement>; // TODO: this prop is for backward compatibility
+  onRightClick?: MouseEventHandler<HTMLButtonElement>; // TODO: this prop is for backward compatibility
+  onMousedown?: MouseEventHandler<HTMLButtonElement>; // TODO: this prop is for backward compatibility
  }
 
  let { children, onClick, onRightClick, onMousedown, ...restProps }: BaseButtonProps = $props();

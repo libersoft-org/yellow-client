@@ -58,11 +58,11 @@
  let scrolledToBottom1 = false;
 
  /*
- todo resizer observer does not trigger when elements change size.
- $: if (elMessages) {
-  new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
- }
-*/
+  // TODO: resizer observer does not trigger when elements change size.
+  $: if (elMessages) {
+   new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
+  }
+ */
 
  onMount(() => {
   setInterval(() => {
@@ -220,7 +220,7 @@
      console.log('jump_to_referenced_message scrollIntoView:', msgEl);
      msgEl.scrollIntoView({ behavior: 'instant' });
      highlightElement(msgEl);
-    }, 200); // todo: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
+    }, 200); // TODO: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
    } else if (event.type === 'properties_update') {
     //console.log('properties_update');
    } else if (event.type === 'resize') {
@@ -336,7 +336,7 @@
    uiEvents.push(event);
    saveScrollPosition(event);
 
-   /* todo 1 :
+   /* TODO 1 :
    do not scroll to bottom on new messages if unread_marker is present (or rather, if window is not active and only unread messages are at the bottom - see also contact list red number )
    */
    /*

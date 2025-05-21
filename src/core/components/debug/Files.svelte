@@ -1,7 +1,6 @@
 <script lang="ts">
  import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload } from '../../files';
  import Button from '../Button/Button.svelte';
-
  let download: any = null;
  let result: string = '';
  let defaultFolder: string = '/home/koom/Downloads';
@@ -87,30 +86,24 @@
 
 <div class="files-debug">
  <h3>File Operations Debug</h3>
-
  <div class="folder-input">
   <label>
    Default Folder:
    <input type="text" bind:value={defaultFolder} placeholder="Leave empty for dialog" />
   </label>
  </div>
-
  <div class="buttons">
   <Button onClick={testOfferNativeDownload}>Test offerNativeDownload</Button>
   <Button onClick={testOfferNativeDownloadWithDefaultFolder}>Test offerNativeDownload with defaultFolder</Button>
-
   <Button onClick={testSaveNativeDownloadChunk}>Test saveNativeDownloadChunk</Button>
-
   <Button onClick={testFinishNativeDownload}>Test finishNativeDownload</Button>
  </div>
-
  <div class="result">
   <h4>Result:</h4>
   <textarea readonly rows="5" cols="50" style="width: 100%; height: 100px;">
    {result || 'Click a button to test a function'}
   </textarea>
  </div>
-
  <div class="download-object">
   <h4>Current Download Object:</h4>
   <textarea readonly rows="5" cols="50" style="width: 100%; height: 100px;">

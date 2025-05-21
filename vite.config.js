@@ -17,13 +17,21 @@ export function getGitCommitHash() {
  }
 }
 
+export function getGitBranch() {
+    try {
+    return execSync('sh -c "git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git rev-parse --abbrev-ref HEAD"').toString().trim();
+    } catch (e) {
+    return null;
+    }
+}
+
 export default defineConfig(({mode}) => {
   // Load environment variables from .env.local if it exists
   dotenv.config({ path: '.env.local' });
-  
+
   // Check if Sentry is enabled
   const sentryEnabled = process.env.SENTRY_ENABLED !== 'false';
-  
+
   return {
    resolve: process.env.VITEST
     ? {conditions: ['browser']} : undefined,
@@ -57,6 +65,7 @@ export default defineConfig(({mode}) => {
    define: {
     __BUILD_DATE__: new Date(),
     __COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
+       __BRANCH__: JSON.stringify(getGitBranch()),
    },
    server: {
     https: (fs.existsSync(path.resolve(__dirname, 'server.key')) ?

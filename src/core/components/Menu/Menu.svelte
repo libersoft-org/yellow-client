@@ -1,13 +1,14 @@
 <script lang="ts">
  import BaseButton from '../Button/BaseButton.svelte';
  import MenuItem from './MenuItem.svelte';
+ import MenuAppSection from './MenuAppSection.svelte';
  import Modal from '../Modal/Modal.svelte';
  import ModalSettings from '../../modals/Settings.svelte';
  import Icon from '../Icon/Icon.svelte';
  import DialogExit from '../../dialogs/Exit.svelte';
- import { product, version, build, commit, link } from '../../core.js';
+ import { product, version, build, commit, branch, link } from '../../core.js';
  import { TAURI, BROWSER } from '@/core/tauri.ts';
- import { getNativeClientBuildCommitHash, getNativeClientBuildTs } from '@/core/tauri-app.ts';
+ import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
 
  type Props = {
   showMenu: boolean;
@@ -178,6 +179,28 @@
     <div>{product}</div>
    </div>
   </BaseButton>
+  {#if TAURI}
+   <MenuAppSection text="Client app" />
+   <div class="version">
+    <div>Commit:</div>
+    {#await getNativeClientBuildCommitHash() then hash}
+     <div class="bold">{(hash as string).slice(1, 9)}</div>
+    {/await}
+   </div>
+   <div class="version">
+    <div>Build:</div>
+    {#await getNativeClientBuildTs() then ts}
+     <div class="bold">{(ts as string).slice(1, -1)}</div>
+    {/await}
+   </div>
+   <div class="version">
+    <div>Branch:</div>
+    {#await getNativeClientBuildBranch() then hash}
+     <div class="bold">{(hash as string).slice(1, -1)}</div>
+    {/await}
+   </div>
+   <MenuAppSection text="Web app" />
+  {/if}
   <div class="version">
    <div>Version:</div>
    <div class="bold">{version}</div>
@@ -190,20 +213,10 @@
    <div>Commit:</div>
    <div class="bold">{commit}</div>
   </div>
-  {#if TAURI}
-   <div class="version">
-    <div>Native client commit:</div>
-    {#await getNativeClientBuildCommitHash() then hash}
-     <div class="bold">{(hash as string).slice(0, 7)}</div>
-    {/await}
-   </div>
-   <div class="version">
-    <div>Native client build timestamp:</div>
-    {#await getNativeClientBuildTs() then ts}
-     <div class="bold">{(ts as string).slice(7)}</div>
-    {/await}
-   </div>
-  {/if}
+  <div class="version">
+   <div>Branch:</div>
+   <div class="bold">{branch}</div>
+  </div>
  </div>
 </div>
 <Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />

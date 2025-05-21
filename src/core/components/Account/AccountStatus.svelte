@@ -6,7 +6,6 @@
  {#if $account.error}
   {$account.error},
  {/if}
-
  {#if $account.session_status}
   {$account.session_status}
  {:else}

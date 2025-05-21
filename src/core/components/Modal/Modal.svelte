@@ -196,11 +196,9 @@
    </div>
    <div class="body">
     {@render children?.()}
-
     {#if $debug}
      params: <code>{JSON.stringify({ params })}</code>
     {/if}
-
     {#if params}
      <ModalBody {close} {params} />
     {:else}

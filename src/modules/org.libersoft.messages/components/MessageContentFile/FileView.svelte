@@ -197,7 +197,7 @@
  {#if upload.record.status === FileUploadRecordStatus.BEGUN}
   <div>Waiting for accept...</div>
   <div class="transfer-controls">
-   <!-- @ts-ignore todo: button typing -->
+   <!-- @ts-ignore TODO: button typing -->
    <Button img="img/close.svg" colorVariable="--icon-black" onClick={() => cancelUpload(uploadId)} />
   </div>
 
@@ -253,7 +253,7 @@
 {/snippet}
 
 <!--
- todo: data-testid contains potentially unsafe data; svelte is sanitizing it, but we should consider auto stripping
+ TODO: data-testid contains potentially unsafe data; svelte is sanitizing it, but we should consider auto stripping
  data-testid attr for production (since its purpose is only for testing in playwright)
 -->
 <div class="message-attachment" data-upload-id={uploadId} data-testid={upload.record.fileOriginalName}>

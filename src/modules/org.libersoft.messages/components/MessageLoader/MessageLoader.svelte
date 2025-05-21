@@ -53,7 +53,7 @@
   loader.loaderElement = null;
  });
 
- /* todo: sometimes, intersection observer does not work properly. add timer? */
+ /* TODO: sometimes, intersection observer does not work properly. add timer? */
  function handleIntersect(entries) {
   let _loaderIsVisible = entries[0].isIntersecting;
   if (_loaderIsVisible && !loader.loading) loadMore();

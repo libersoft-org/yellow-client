@@ -1,8 +1,5 @@
 <script lang="ts">
- import Button from '@/core/components/Button/Button.svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import Icon from '@/core/components/Icon/Icon.svelte';
- import { identifier } from '@/org.libersoft.messages/messages';
  import { autoPlacement, autoUpdate, computePosition, offset, shift } from '@floating-ui/dom';
  import Portal from 'svelte-portal';
 
@@ -13,7 +10,6 @@
  }
 
  let { sideButtonSlot, mainButtonSlot, tooltipSlot }: Props = $props();
-
  let buttonRef: HTMLElement;
  let floatingRef = $state<HTMLElement>();
  let show = $state(false);

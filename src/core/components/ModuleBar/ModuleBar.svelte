@@ -1,18 +1,15 @@
 <script>
- import { debug, active_account, module_decls, selected_module_id } from '../../core.js';
- import { getColorFromCSSToFilter } from '../../utils/colors.js';
+ import { active_account, module_decls, selected_module_id } from '../../core.js';
  import { get } from 'svelte/store';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import ModuleBarItem from './ModuleBarItem.svelte';
  import resize from '@/core/actions/resizeObserver.ts';
  import { order } from '@/core/utils/utils.ts';
-
- let itemsHeight = '50px';
- let itemsEl;
-
  export let onSelectModule;
  export let onCloseModule;
+ let itemsHeight = '50px';
+ let itemsEl;
  let module_data;
  let lastModuleSelected = false;
  let expanded = false;

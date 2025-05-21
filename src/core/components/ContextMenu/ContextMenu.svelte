@@ -12,14 +12,12 @@
  export let scrollable = true;
  export let disableRightClick = false;
  export let bottomOffset;
-
  const dispatch = createEventDispatcher();
  const isOpen = writable(open);
  const position = writable([x, y]);
  const currentIndex = writable(-1);
  const hasPopup = writable(false);
  const ctx = getContext('ContextMenu');
-
  let options = [];
  let direction = 1;
  let prevX = 0;
@@ -54,31 +52,18 @@
  export async function openMenu(e) {
   //console.log('context-menu openMenu:', e);
   // Only proceed for right clicks (button 2) or touch events
-  if (disableRightClick && (e.type === 'contextmenu' || e.button === 2)) {
-   return;
-  }
-  if (e.button === 1) {
-   return;
-  }
-
-  if (e.type === 'touchend') {
-   return;
-  }
-
+  if (disableRightClick && (e.type === 'contextmenu' || e.button === 2)) return;
+  if (e.button === 1) return;
+  if (e.type === 'touchend') return;
   e.preventDefault?.();
   e.stopPropagation?.();
   console.log('context-menu openMenu type:', e.type);
   //if (e.type === 'contextmenu') return;
-
-  if (e.type === 'longpress') {
-   e = e.detail;
-  }
-
+  if (e.type === 'longpress') e = e.detail;
   if (open) {
    close();
    return;
   }
-
   //console.log('context-menu close other menus:', menus);
   let ancestors = getAncestors();
   //console.log('ancestors:', ancestors);
@@ -93,7 +78,6 @@
 
   currentInstance = getGuid();
   menus.push({ guid: currentInstance, close });
-
   await tick();
   const currentHeight = ref.getBoundingClientRect().height;
   const currentWidth = ref.getBoundingClientRect().width;
@@ -237,7 +221,7 @@
 
 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 
-<!--todo: parametrize this component to work as either a pop-up (for stickers) or a context menu (for message context menu)
+<!--TODO: parametrize this component to work as either a pop-up (for stickers) or a context menu (for message context menu)
 tabindex="-1" (off for pop-up, on for context menu-proper)
  role="menu"
  -->
@@ -258,7 +242,7 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
  style:overflow={scrollable ? 'auto' : 'hidden'}
  {...$$restProps}
  on:keydown={e => {
-  /*if (open) e.preventDefault();  // todo parametrize this (off for pop-up, on for context menu-proper)
+  /*if (open) e.preventDefault();  // TODO: parametrize this (off for pop-up, on for context menu-proper)
   if ($hasPopup) return;
   if (e.key === 'ArrowDown') {
    if (focusIndex < options.length - 1) focusIndex++;

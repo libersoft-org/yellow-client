@@ -67,7 +67,7 @@
 {#if TAURI}
  <div class="group">
   <div class="label">
-   <span class="bold">Default file download folder (todo)</span>
+   <span class="bold">Default file download folder (TODO)</span>
   </div>
   {$defaultFileDownloadFolder}<br />
   <span class="label">This is the folder where files will be downloaded by default.</span>
