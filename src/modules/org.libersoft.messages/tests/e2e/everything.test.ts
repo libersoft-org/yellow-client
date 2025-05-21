@@ -265,10 +265,12 @@ async function toggleFirstAccountEnabled(page: Page): Promise<void> {
 test('Complete End-to-End Application Test', async ({ page }) => {
  await page.goto('http://localhost:3000/');
 
+ const serverHost = process.env.SERVER_HOST || 'localhost';
+
  await test.step('Initial Account Setup', async () => {
   // Add account in the wizard
   await setupAccountInWizard(page, {
-   server: 'ws://localhost:8085',
+   server: `ws://${serverHost}:8085`,
    address: 'user1@example.com',
    password: 'password',
   });
@@ -283,7 +285,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 
   // Add new account
   await addAccount(page, {
-   server: 'ws://localhost:8085/',
+   server: `ws://${serverHost}:8085/`,
    address: 'user2@example.com',
    password: 'password',
   });
@@ -363,7 +365,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 
   // Add a new account with user3
   await addAccount(page, {
-   server: 'ws://localhost:8085',
+   server: `ws://${serverHost}:8085`,
    address: 'user3@example.com',
    password: 'password',
   });
