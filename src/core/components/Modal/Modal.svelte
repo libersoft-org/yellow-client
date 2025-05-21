@@ -25,9 +25,12 @@
  let modalId: number;
  let posX = 0,
   posY = 0,
-  isDragging = false;
+  isDragging = $state(false);
  let left = $state(0),
   top = $state(0);
+ let didDrag = false;
+
+ $inspect(isDragging, 'isDragging');
 
  function setShow(value: boolean) {
   show = value;
@@ -89,6 +92,7 @@
 
  function dragStart(event: MouseEvent) {
   isDragging = true;
+  didDrag = false; // reset on fresh drag start
   event.preventDefault();
   const rect = modalEl?.getBoundingClientRect();
   if (!rect) return;
@@ -100,6 +104,7 @@
 
  function drag(event: MouseEvent) {
   if (!isDragging || !modalEl) return;
+  didDrag = true; // mark that an actual drag has occurred
   const x = event.clientX - posX;
   const y = event.clientY - posY;
   const modalWidth = modalEl.offsetWidth;
@@ -191,7 +196,22 @@
       {/if}
       {title}
      </div>
-     <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
+     <Icon
+      data-testid="Modal-close"
+      img="img/close.svg"
+      alt="X"
+      colorVariable="--icon-black"
+      size="20px"
+      padding="10px"
+      onClick={() => {
+       if (didDrag) {
+        // prevent accidental click after drag
+        didDrag = false;
+        return;
+       }
+       close();
+      }}
+     />
     {/if}
    </div>
    <div class="body">
