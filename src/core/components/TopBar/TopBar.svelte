@@ -1,7 +1,3 @@
-<script>
- export let columnSize = 3;
-</script>
-
 <style>
  .top-bar {
   display: flex;
@@ -43,7 +39,7 @@
  }
 </style>
 
-<div class="top-bar" style={`--column-size: ${columnSize};`}>
+<div class="top-bar">
  <slot />
 
  <div class="left">

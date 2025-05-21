@@ -18,6 +18,7 @@
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
  import Paper from '@/core/components/Paper/Paper.svelte';
  import TopBar from '@/core/components/TopBar/TopBar.svelte';
+ import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 
  type Props = {
   showAddEditAccountModal: boolean;
@@ -115,6 +116,12 @@
  </ResponsiveTable>
 {/snippet}
 
+{#snippet status(account)}
+ <div class="optional-data">
+  <AccountStatusIconIconAndText account={findAccount(account.id)} />
+ </div>
+{/snippet}
+
 <div class="accounts">
  <TopBar>
   <svelte:fragment slot="left">
@@ -130,14 +137,7 @@
     <Button img="img/import.svg" text="Import" onClick={clickImport} />
    </div>
 
-   <Accordion
-    items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))}
-    activeIndex={null}
-    snippet={accountTable}
-    optionalData={{
-     status: $accounts_config.map(a => findAccount(a.id)),
-    }}
-   />
+   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} snippet={accountTable} right={status} />
   </Paper>
  </div>
 </div>
