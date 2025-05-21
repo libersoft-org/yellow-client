@@ -34,14 +34,18 @@
  }
 </style>
 
-<TopBar>
- <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" padding="10px" onClick={clickClose} visibleOnDesktop={false} />
- <Photo size="38px" />
- <div class="description">
-  {#if $selectedConversation.visible_name}
-   <div class="visible_name">{$selectedConversation.visible_name}</div>
-  {/if}
-  <div class="address">{$selectedConversation.address}</div>
- </div>
- <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" onClick={clickClose} visibleOnMobile={false} />
+<TopBar columnSize={2}>
+ <svelte:fragment slot="left">
+  <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" padding="10px" onClick={clickClose} visibleOnDesktop={false} />
+  <Photo size="38px" />
+  <div class="description">
+   {#if $selectedConversation.visible_name}
+    <div class="visible_name">{$selectedConversation.visible_name}</div>
+   {/if}
+   <div class="address">{$selectedConversation.address}</div>
+  </div>
+ </svelte:fragment>
+ <svelte:fragment slot="right">
+  <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" onClick={clickClose} visibleOnMobile={false} />
+ </svelte:fragment>
 </TopBar>

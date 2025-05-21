@@ -107,6 +107,7 @@
   align-items: flex-start;
   justify-content: center;
   height: 100%;
+  width: max-content;
   cursor: default;
 
   :global(.icon) {

@@ -4,6 +4,8 @@
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalNewConversation from '../../modals/NewConversation.svelte';
  import { active_account } from '@/core/core.js';
+ import TopBar from '@/core/components/TopBar/TopBar.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
 
  const illustrations = ['man', 'woman', 'pigeon'];
  let showNewConversationModal = false;
@@ -44,6 +46,17 @@
   background-color: rgba(255, 221, 17, 0.3);
  }
 </style>
+
+<!-- <TopBar>
+	<svelte:fragment slot="left">
+		<Icon
+			img="img/back.svg"
+			onClick={() => (window.location.href = '/')}
+			colorVariable="--icon-white"
+			visibleOnDesktop={true}
+		/>
+	</svelte:fragment>
+</TopBar> -->
 
 <div class="welcome">
  <img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />

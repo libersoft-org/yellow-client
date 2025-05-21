@@ -7,9 +7,10 @@
   items: Array<{ name: string; id: string }>;
   activeIndex?: number | null;
   snippet: Snippet<[any]> | null;
+  right?: Snippet<[any]> | null;
  };
 
- let { items, activeIndex = null, snippet }: Props = $props();
+ let { items, activeIndex = null, snippet, right }: Props = $props();
 
  async function handleClick(index: number) {
   const isClosing = activeIndex === index;
@@ -81,9 +82,11 @@
   transition: filter 0.3s ease;
  }
 
- .accordion .item .header .title {
-  flex-grow: 1;
-  font-weight: bold;
+ .accordion .item .header {
+  .title {
+   flex-grow: 1;
+   font-weight: bold;
+  }
  }
 
  .accordion .item .content {
@@ -97,6 +100,8 @@
  }
 
  .accordion .item {
+  display: grid;
+
   &.is-expanded {
    :global(.header img) {
     transform: rotate(180deg);
@@ -111,6 +116,7 @@
    <BaseButton onClick={() => handleClick(index)}>
     <div class="header">
      <div class="title">{item.name}</div>
+     {@render right?.(item)}
      <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size="12px" />
     </div>
    </BaseButton>

@@ -10,7 +10,7 @@
 
 <style>
  th {
-  @media only screen and (min-width: 64em) {
+  @media only screen and (min-width: 80em) {
    display: table-cell;
    white-space: nowrap;
    border-style: none;

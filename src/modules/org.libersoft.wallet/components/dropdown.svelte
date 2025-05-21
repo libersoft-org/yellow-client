@@ -20,6 +20,7 @@
 
  .dropdown .text {
   flex-grow: 1;
+  color: black;
  }
 </style>
 

@@ -74,20 +74,31 @@
 
 <style>
  .receive {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 10px;
  }
 
  .section {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
+  justify-content: center;
   border: 1px solid #000;
   border-radius: 10px;
+  width: 100%;
+
+  .section-wrapper {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding: 10px;
+   gap: 10px;
+
+   .bold {
+    margin-bottom: auto;
+   }
+  }
  }
 
  .address {
@@ -98,12 +109,34 @@
   border-radius: 10px;
   padding: 10px;
   background-color: #ffa;
+
+  .clamp {
+   display: inline-block;
+   width: 240px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   vertical-align: bottom;
+
+   @media (max-width: 768px) {
+    width: 200px;
+   }
+  }
  }
 
  .amount {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+
+  input {
+   max-width: 140px;
+  }
+
+  @media (max-width: 1280px) {
+   flex-direction: column;
+   gap: 6px;
+  }
  }
 
  .error {
@@ -114,30 +147,36 @@
 <div class="receive">
  {#if $selectedNetwork && $selectedAddress}
   <div class="section">
-   <div class="bold">Your wallet address:</div>
-   <BaseButton onClick={clickCopyAddress}>
-    <div class="address">
-     <div bind:this={addressElement}>{$selectedAddress.address}</div>
-     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
-    </div>
-   </BaseButton>
-   <div class="qr"><img src={qrAddress} alt="Address" /></div>
+   <div class="section-wrapper">
+    <div class="bold">Your wallet address:</div>
+    <BaseButton onClick={clickCopyAddress}>
+     <div class="address">
+      <div class="clamp" bind:this={addressElement}>
+       {$selectedAddress.address}
+      </div>
+      <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+     </div>
+    </BaseButton>
+    <div class="qr"><img src={qrAddress} alt="Address" /></div>
+   </div>
   </div>
   <div class="section">
-   <div class="bold">Payment:</div>
-   <div class="amount">
-    <div>Amount:</div>
-    <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
-    <DropdownFilter options={$currencies} bind:selected={currency} />
-    <div class="error">{error}</div>
-   </div>
-   <BaseButton onClick={clickCopyPayment}>
-    <div class="address">
-     <div bind:this={paymentElement}>{paymentText}</div>
-     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+   <div class="section-wrapper">
+    <div class="bold">Payment:</div>
+    <div class="amount">
+     <div>Amount:</div>
+     <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
+     <DropdownFilter options={$currencies} bind:selected={currency} />
+     <div class="error">{error}</div>
     </div>
-   </BaseButton>
-   <div class="qr"><img src={qrPayment} alt="Payment" /></div>
+    <BaseButton onClick={clickCopyPayment}>
+     <div class="address">
+      <div class="clamp" bind:this={paymentElement}>{paymentText}</div>
+      <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+     </div>
+    </BaseButton>
+    <div class="qr"><img src={qrPayment} alt="Payment" /></div>
+   </div>
   </div>
  {:else}
   <div>No wallet selected</div>

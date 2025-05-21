@@ -14,7 +14,9 @@
  import History from './history.svelte';
  import Dropdown from '../components/dropdown.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import { hideSidebarMobile } from '@/core/core.js';
+ import { hideSidebarMobile, debug } from '@/core/core.js';
+ import Paper from '@/core/components/Paper/Paper.svelte';
+ import TopBar from '@/core/components/TopBar/TopBar.svelte';
  let section = 'balance';
  let showModalNetworks = false;
  let showModalWallets = false;
@@ -91,45 +93,41 @@
 
  .wallet {
   display: flex;
-  align-items: center;
   flex-direction: column;
   height: calc(100vh - 72px);
   overflow: auto;
+  padding: clamp(16px, 1.6vw, 24px);
  }
 
  .wallet .content {
-  max-width: calc(100% - 10px);
-  margin: 10px;
-  border: 1px solid #000;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: var(--shadow);
+  width: 100%;
  }
 
  .body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px;
  }
 
  .body .top {
   display: flex;
+  flex-direction: column;
   width: 100%;
+
+  .top-wrapper {
+   display: flex;
+   justify-content: space-between;
+  }
  }
 
- .body .top .left,
- .body .top .center,
- .body .top .right {
-  flex: 1;
- }
-
- .body .top .left .status {
-  vertical-align: bottom;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  height: 20px;
+ .body .top .left {
+  .status {
+   vertical-align: bottom;
+   display: flex;
+   align-items: center;
+   gap: 5px;
+   height: 20px;
+  }
  }
 
  .body .top .left .status .indicator {
@@ -151,13 +149,13 @@
   background-color: #0a0;
  }
 
- .body .top .center .balance {
+ .body .balance {
   display: flex;
   flex-direction: column;
   align-items: center;
  }
 
- .body .top .center .balance .crypto {
+ .body .balance .crypto {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -166,29 +164,52 @@
   font-weight: bold;
  }
 
- .body .top .center .balance .crypto img {
+ .body .balance .crypto img {
   display: block;
   width: 50px;
   height: 50px;
  }
 
- .body .top .center .balance .fiat {
-  font-size: 18px;
+ .body .balance .fiat {
+  font-size: 16px;
   color: #555;
+  text-align: center;
+  white-space: nowrap;
  }
 
- .body .top .right .address {
+ .body .right {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  justify-content: right;
-  gap: 5px;
+  height: max-content;
+  gap: 10px;
+
+  .address {
+   display: flex;
+   align-items: center;
+   justify-content: right;
+   gap: 5px;
+  }
  }
 
  .body .buttons {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+  justify-content: center;
+
+  @media (max-width: 1024px) {
+   grid-template-columns: repeat(2, 1fr);
+  }
+
+  :global(.button) {
+   width: 100%;
+  }
+
+  :global(.base-button) {
+   display: flex;
+   width: 100%;
+  }
  }
 
  .body .separator {
@@ -204,78 +225,93 @@
 </style>
 
 <div class="wallet-content">
- <div class="top-bar">
-  <div class="left">
-   <div class="back-button">
-    <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" size="30px" padding="0px" onClick={clickBackButton} />
-   </div>
+ <TopBar>
+  <svelte:fragment slot="left">
+   <Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--icon-white" visibleOnDesktop={false} />
    <Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
-  </div>
-  <div class="right">
+  </svelte:fragment>
+  <svelte:fragment slot="right">
    <Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--icon-black" onClick={() => (showModalWallets = true)} />
-  </div>
- </div>
+  </svelte:fragment>
+ </TopBar>
  <div class="wallet">
-  <div class="content">
-   <div class="body">
-    <div class="top">
-     <div class="left">
-      <div class="status">
-       <div class="indicator {$status.color}"></div>
-       <div>{$status.text}</div>
+  <Paper>
+   <div class="content">
+    <div class="body">
+     <div class="top">
+      <div class="top-wrapper">
+       <div class="left">
+        <div class="status">
+         <div class="indicator {$status.color}"></div>
+         <div>{$status.text}</div>
+        </div>
+        {#if $debug}
+         <div style="font-size: 12px">Server: {$rpcURL}</div>
+        {/if}
+       </div>
+       <div class="right">
+        <div>
+         <div>
+          {#if $selectedAddress && $selectedAddress.address}
+           <BaseButton onClick={clickCopyAddress}>
+            <div class="address">
+             <div bind:this={addressElement}>
+              {shortenAddress($selectedAddress.address)}
+             </div>
+             <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+            </div>
+           </BaseButton>
+          {:else}
+           <div class="address">No address selected</div>
+          {/if}
+         </div>
+        </div>
+        <Icon img="img/settings.svg" padding="0px" onClick={() => (showModalSettings = true)} />
+       </div>
       </div>
-      <div style="font-size: 12px">Server: {$rpcURL}</div>
-     </div>
-     <div class="center">
       <div class="balance">
        <div class="crypto">
         {#if $selectedNetwork?.currency?.iconURL}
-         <div><img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} /></div>
+         <div>
+          <img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} />
+         </div>
         {/if}
         <div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
        </div>
-       <div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
-       <pre>retrieved {$balanceTimestamp}</pre>
+       <div class="fiat">
+        ({$balance.fiat.amount}
+        {$balance.fiat.currency})
+       </div>
+       {#if $debug}
+        <pre>retrieved {$balanceTimestamp}</pre>
+       {/if}
       </div>
      </div>
-     <div class="right">
-      {#if $selectedAddress && $selectedAddress.address}
-       <BaseButton onClick={clickCopyAddress}>
-        <div class="address">
-         <div bind:this={addressElement}>{shortenAddress($selectedAddress.address)}</div>
-         <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
-        </div>
-       </BaseButton>
-      {:else}
-       <div class="address">No address selected</div>
+     <div class="buttons">
+      <Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
+      <Button img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
+      <Button img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
+      <Button img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
+     </div>
+     <div class="separator"></div>
+     <div class="section">
+      {#if section == 'send'}
+       <Send />
+      {:else if section == 'receive'}
+       <Receive />
+      {:else if section == 'balance'}
+       <Balance />
+      {:else if section == 'history'}
+       <History />
+      {:else if section == 'addressbook'}
+       <AddressBook />
+      {:else if section == 'settings'}
+       <Settings />
       {/if}
      </div>
     </div>
-    <div class="buttons">
-     <Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
-     <Button img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
-     <Button img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
-     <Button img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
-     <Button img="img/settings.svg" text="Settings" onClick={() => (showModalSettings = true)} />
-    </div>
-    <div class="separator"></div>
-    <div class="section">
-     {#if section == 'send'}
-      <Send />
-     {:else if section == 'receive'}
-      <Receive />
-     {:else if section == 'balance'}
-      <Balance />
-     {:else if section == 'history'}
-      <History />
-     {:else if section == 'addressbook'}
-      <AddressBook />
-     {:else if section == 'settings'}
-      <Settings />
-     {/if}
-    </div>
    </div>
-  </div>
+  </Paper>
  </div>
 </div>
 <Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} />
