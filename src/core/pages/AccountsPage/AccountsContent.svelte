@@ -137,7 +137,7 @@
     <Button img="img/import.svg" text="Import" onClick={clickImport} />
    </div>
 
-   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} snippet={accountTable} right={status} />
+   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} activeOnDesktop={true} mode="multiple" />
   </Paper>
  </div>
 </div>

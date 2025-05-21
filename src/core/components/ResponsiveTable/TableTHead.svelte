@@ -14,9 +14,9 @@
   background: #222;
   color: white;
 
-  @media only screen and (min-width: 80em) {
-   display: table-header-group;
-  }
+  /* @media only screen and (min-width: 48em) {
+			display: table-header-group;
+		} */
  }
 </style>
 

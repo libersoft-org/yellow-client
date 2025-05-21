@@ -50,9 +50,7 @@
  $: {
   if (expanded && itemsEl) {
    itemsHeight = `${itemsEl.scrollHeight}px`;
-   setTimeout(() => {
-    if (expanded) itemsHeight = 'auto';
-   }, 250);
+   if (expanded) itemsHeight = 'auto';
   } else if (!expanded && itemsEl) {
    const currHeight = itemsEl.scrollHeight;
    itemsHeight = `${currHeight}px`;

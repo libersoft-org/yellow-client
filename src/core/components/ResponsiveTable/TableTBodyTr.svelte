@@ -10,15 +10,11 @@
 
 <style>
  tr {
-  @media only screen and (min-width: 80m) {
-   display: table-row;
-   border-style: none;
-   border-bottom-width: 0;
-  }
-
-  &:hover {
-   background: #fd1;
-  }
+  /* @media only screen and (min-width: 48m) {
+			display: table-row;
+			border-style: none;
+			border-bottom-width: 0;
+		} */
  }
 </style>
 

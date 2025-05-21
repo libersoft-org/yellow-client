@@ -20,6 +20,21 @@
  //$: console.log('account-bar.svelte: accounts: ', $accounts);
  //$: console.log('accountsVisible: ', accountsVisible);
 
+ function animateHeight(node, { duration = 220 } = {}) {
+  const style = getComputedStyle(node);
+  const paddingTop = parseFloat(style.paddingTop);
+  const paddingBottom = parseFloat(style.paddingBottom);
+  const height = node.scrollHeight - paddingTop - paddingBottom;
+  return {
+   duration,
+   css: t => `
+				overflow: hidden;
+				max-height: ${t * height + paddingTop + paddingBottom}px;
+				opacity: ${t};
+			`,
+  };
+ }
+
  function open() {
   accountsVisible = true;
   if (!$debug) {
@@ -84,7 +99,6 @@
  }
 
  .items {
-  display: none;
   flex-direction: column;
   position: absolute;
   top: 100%;
@@ -92,10 +106,8 @@
   background-color: #333;
   z-index: 1000;
   width: 100%;
- }
-
- .items.open {
-  display: flex;
+  overflow: hidden;
+  transition: none;
  }
 </style>
 
@@ -109,17 +121,17 @@
     </div>
    {:else}
     {#if $accounts.length > 0}
-     <div class="text">-- SELECT YOUR ACCOUNT --</div>
+     <div class="text">SELECT YOUR ACCOUNT</div>
     {/if}
     {#if $accounts.length === 0}
-     <div class="text">-- CREATE ACCOUNT FIRST --</div>
+     <div class="text">CREATE ACCOUNT FIRST</div>
     {/if}
    {/if}
    <Icon img={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
   </div>
  </BaseButton>
  {#if accountsVisible}
-  <div class="items open">
+  <div class="items" transition:animateHeight={{ duration: 220 }}>
    {#each $accounts as a (get(a).id)}
     <AccountBarItem {a} {clickSelectAccount} />
    {/each}

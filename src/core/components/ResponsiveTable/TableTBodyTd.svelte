@@ -16,7 +16,7 @@
   white-space: normal;
   display: block;
 
-  @media only screen and (min-width: 80em) {
+  @media only screen and (min-width: 48em) {
    display: table-cell;
    white-space: nowrap;
    border-style: none;
@@ -32,19 +32,19 @@
   padding: 10px;
   text-align: left;
 
-  @media only screen and (min-width: 80em) {
-   display: table-cell;
-   width: 100%;
-  }
+  /* @media only screen and (min-width: 48em) {
+			display: table-cell;
+			width: 100%;
+		} */
 
   &:before {
    display: inline-block;
    width: 90px;
 
-   @media only screen and (min-width: 80em) {
-    display: table;
-    width: 100%;
-   }
+   /* @media only screen and (min-width: 48em) {
+				display: table;
+				width: 100%;
+			} */
   }
  }
 
@@ -52,18 +52,18 @@
   content: attr(data-title) ':\00A0';
   font-weight: bold;
 
-  @media only screen and (min-width: 80em) {
-   content: '';
-   font-weight: bold;
-  }
+  /* @media only screen and (min-width: 48em) {
+			content: '';
+			font-weight: bold;
+		} */
  }
 
  td:empty {
   display: none;
 
-  @media only screen and (min-width: 80em) {
-   display: table-cell;
-  }
+  /* @media only screen and (min-width: 48em) {
+			display: table-cell;
+		} */
  }
 </style>
 
