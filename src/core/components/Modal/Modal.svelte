@@ -17,6 +17,7 @@
 
  let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
 
+ let closeButtonEl: HTMLDivElement | null = $state(null);
  let modalEl: HTMLDivElement | null = $state(null);
  let showContent = $state(false);
  let ModalBody = $state<Snippet>(body);
@@ -25,12 +26,9 @@
  let modalId: number;
  let posX = 0,
   posY = 0,
-  isDragging = $state(false);
+  isDragging = false;
  let left = $state(0),
   top = $state(0);
- let didDrag = false;
-
- $inspect(isDragging, 'isDragging');
 
  function setShow(value: boolean) {
   show = value;
@@ -91,8 +89,9 @@
  }
 
  function dragStart(event: MouseEvent) {
+  if (closeButtonEl?.contains(event.target as Node)) return;
+
   isDragging = true;
-  didDrag = false; // reset on fresh drag start
   event.preventDefault();
   const rect = modalEl?.getBoundingClientRect();
   if (!rect) return;
@@ -104,7 +103,6 @@
 
  function drag(event: MouseEvent) {
   if (!isDragging || !modalEl) return;
-  didDrag = true; // mark that an actual drag has occurred
   const x = event.clientX - posX;
   const y = event.clientY - posY;
   const modalWidth = modalEl.offsetWidth;
@@ -196,22 +194,9 @@
       {/if}
       {title}
      </div>
-     <Icon
-      data-testid="Modal-close"
-      img="img/close.svg"
-      alt="X"
-      colorVariable="--icon-black"
-      size="20px"
-      padding="10px"
-      onClick={() => {
-       if (didDrag) {
-        // prevent accidental click after drag
-        didDrag = false;
-        return;
-       }
-       close();
-      }}
-     />
+     <div bind:this={closeButtonEl}>
+      <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
+     </div>
     {/if}
    </div>
    <div class="body">
