@@ -17,8 +17,6 @@
 
  let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
 
- $inspect(body);
-
  let closeButtonEl: HTMLDivElement | null = $state(null);
  let modalEl: HTMLDivElement | null = $state(null);
  let showContent = $state(false);
@@ -26,11 +24,11 @@
  let zIndex = $state(100);
  let activeTab = $state('');
  let modalId: number;
- let posX = 0,
-  posY = 0,
-  isDragging = false;
- let left = $state(0),
-  top = $state(0);
+ let posX = 0;
+ let posY = 0;
+ let isDragging = false;
+ let left = $state(0);
+ let top = $state(0);
 
  function setShow(value: boolean) {
   show = value;
@@ -159,6 +157,7 @@
   align-items: center;
   padding: 0 10px;
   flex-grow: 1;
+  user-select: none;
 
   :global(.icon) {
    padding: 0 10px 0 0 !important;
