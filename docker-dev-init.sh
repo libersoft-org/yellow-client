@@ -3,7 +3,10 @@ set -e
 echo "init"
 ~/.bun/bin/bun i --frozen-lockfile
 
-if [ -n "$CI" ]; then
+echo "HOLLOW: $HOLLOW"
+
+if [ "$HOLLOW" = "true" ]; then
+ echo "link yellow-server-common for development"
  rm -rf ./node_modules/yellow-server-common || true
- ln -s /app/lib/yellow-server-common ./node_modules/
+ ln -s ../../yellow-server-common ./node_modules/
 fi

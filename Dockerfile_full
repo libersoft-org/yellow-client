@@ -1,0 +1,47 @@
+FROM ubuntu:24.04
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG COMMAND
+
+# Create and set permissions for /tmp directory
+RUN mkdir -p /tmp && chmod 1777 /tmp
+RUN touch /tmp/.test
+
+ENV TMPDIR=/var/tmp
+RUN mkdir -p /var/tmp
+
+
+RUN apt-get update && apt-get install -y tini curl unzip nodejs npm
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+RUN mkdir -p /.npm && chown -R $USER_ID:$GROUP_ID /.npm
+
+
+ARG APP_DIR=/app/app/
+RUN mkdir -p $APP_DIR
+RUN chown $USER_ID:$GROUP_ID $APP_DIR
+
+RUN mkdir /.bun
+RUN chown $USER_ID:$GROUP_ID /.bun
+
+USER $USER_ID:$GROUP_ID
+WORKDIR $APP_DIR
+
+
+RUN curl -fsSL https://bun.sh/install | bash
+
+# BEGIN COPY FRAGMENT
+# Copy package files first for better layer caching
+COPY --chown=$USER_ID:$GROUP_ID package*.json ./
+COPY --chown=$USER_ID:$GROUP_ID bun.lock ./
+
+# Install dependencies
+RUN ~/.bun/bin/bun i --frozen-lockfile
+
+# Copy application code
+COPY --chown=$USER_ID:$GROUP_ID . .
+# END COPY FRAGMENT
+
+
+CMD bash -c ${COMMAND}
