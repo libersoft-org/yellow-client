@@ -18,6 +18,11 @@
   overflow: hidden;
   max-width: 100vw;
   background-color: #ffdd1150;
+
+  /* @media only screen and (min-width: 48em) {
+			border: 1px solid #222 !important;
+			border-radius: 8px;
+		} */
  }
 
  table {
@@ -28,6 +33,10 @@
   border-collapse: collapse;
   overflow: clip;
   font-size: 14px;
+
+  /* @media only screen and (min-width: 48em) {
+			width: 100%;
+		} */
  }
 </style>
 

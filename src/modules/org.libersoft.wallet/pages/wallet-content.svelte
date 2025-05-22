@@ -17,6 +17,8 @@
  import { hideSidebarMobile, debug } from '@/core/core.js';
  import Paper from '@/core/components/Paper/Paper.svelte';
  import TopBar from '@/core/components/TopBar/TopBar.svelte';
+ import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
+
  let section = 'balance';
  let showModalNetworks = false;
  let showModalWallets = false;
@@ -44,12 +46,6 @@
   console.log('xxselectedAddress', v);
  });
 
- function shortenAddress(addr) {
-  if (!addr) return '';
-  if (addr.lenght <= 8) return addr;
-  return addr.slice(0, 5) + '...' + addr.slice(-3);
- }
-
  function clickCopyAddress() {
   navigator.clipboard
    .writeText($selectedAddress.address)
@@ -65,30 +61,6 @@
   background: url('/img/background.webp') repeat;
   background-size: 400px;
   height: 100vh;
- }
-
- .top-bar {
-  display: flex;
-  align-items: center;
-  width: calc(100% - 20px);
-  height: 52px;
-  padding: 10px;
-  background-color: #222;
- }
-
- .top-bar .left {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-  gap: 10px;
- }
-
- .top-bar .right {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: end;
  }
 
  .wallet {
@@ -215,12 +187,6 @@
  .body .separator {
   width: 100%;
   border-bottom: 1px solid #888;
- }
-
- @media (min-width: 769px) {
-  .top-bar .left .back-button {
-   display: none;
-  }
  }
 </style>
 

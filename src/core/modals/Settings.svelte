@@ -29,6 +29,7 @@
    ? [
       {
        title: 'General',
+       tab: 'general',
        img: 'img/settings.svg',
        onClick: () => setItem('general'),
       },
@@ -37,11 +38,13 @@
  ).concat([
   {
    title: 'Appearance',
+   tab: 'appearance',
    img: 'img/appearance.svg',
    onClick: () => setItem('appearance'),
   },
   {
    title: 'Notifications',
+   tab: 'notifications',
    img: 'img/notification.svg',
    onClick: () => setItem('notifications'),
   },
@@ -67,7 +70,7 @@
 
  .breadcrumbs {
   display: flex;
-  padding: 6px 10px 8px;
+  padding: 8px 10px;
   background: hsl(345, 6%, 13%);
   margin-bottom: 0px;
   border-radius: 10px;
@@ -116,23 +119,22 @@
    }
   }
  }
-
- /*.alert {*/
- /* color: #f44;*/
- /* padding: 10px;*/
- /* background-color: rgba(255, 0, 0, 0.1);*/
- /* border-radius: 5px;*/
- /*}*/
 </style>
 
-<div class="settings-container">
+{#snippet breadcrumbs(menuItems)}
  {#if activeTab !== ''}
   <div class="breadcrumbs" in:fade={{ duration: 400 }}>
    <button onclick={() => setItem('')}>
     <Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size="16px" />
-    Settings
+    Wallet Settings
    </button>
-   <span>{activeTab}</span>
+   <span>
+    {#each menuItems as item}
+     {#if item.tab === activeTab}
+      {item.title}
+     {/if}
+    {/each}
+   </span>
   </div>
  {/if}
  {#each menuItems as item}
@@ -140,6 +142,10 @@
    <MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.title.toLowerCase())} />
   {/if}
  {/each}
+{/snippet}
+
+<div class="settings-container">
+ {@render breadcrumbs(menuItems)}
  <div class="tab-content">
   {#if activeTab === 'general'}
    <SettingsGeneral />

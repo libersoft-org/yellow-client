@@ -8,15 +8,15 @@
  const { children }: Props = $props();
 </script>
 
-<style>
+<!-- <style>
  tbody {
-  @media only screen and (min-width: 80em) {
-   display: table-row-group;
-   border-style: none;
-   border-bottom-width: 0;
-  }
+  @media only screen and (min-width: 48em) {
+			display: table-row-group;
+			border-style: none;
+			border-bottom-width: 0;
+		}
  }
-</style>
+</style> -->
 
 <tbody>
  {@render children()}

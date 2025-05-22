@@ -12,22 +12,24 @@
   width?: string;
   height?: string;
   children?: Snippet;
+  breadcrumbs?: Snippet | null;
   onShowChange?: (show: boolean) => void;
  };
 
- let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
+ let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
 
+ let closeButtonEl: HTMLDivElement | null = $state(null);
  let modalEl: HTMLDivElement | null = $state(null);
  let showContent = $state(false);
  let ModalBody = $state<Snippet>(body);
  let zIndex = $state(100);
  let activeTab = $state('');
  let modalId: number;
- let posX = 0,
-  posY = 0,
-  isDragging = false;
- let left = $state(0),
-  top = $state(0);
+ let posX = 0;
+ let posY = 0;
+ let isDragging = false;
+ let left = $state(0);
+ let top = $state(0);
 
  function setShow(value: boolean) {
   show = value;
@@ -88,6 +90,8 @@
  }
 
  function dragStart(event: MouseEvent) {
+  if (closeButtonEl?.contains(event.target as Node)) return;
+
   isDragging = true;
   event.preventDefault();
   const rect = modalEl?.getBoundingClientRect();
@@ -154,6 +158,7 @@
   align-items: center;
   padding: 0 10px;
   flex-grow: 1;
+  user-select: none;
 
   :global(.icon) {
    padding: 0 10px 0 0 !important;
@@ -191,18 +196,22 @@
       {/if}
       {title}
      </div>
-     <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
+     <div bind:this={closeButtonEl}>
+      <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
+     </div>
     {/if}
    </div>
    <div class="body">
-    {@render children?.()}
     {#if $debug}
      params: <code>{JSON.stringify({ params })}</code>
     {/if}
-    {#if params}
-     <ModalBody {close} {params} />
-    {:else}
-     <ModalBody {close} bind:activeTab />
+    {#if typeof ModalBody === 'function'}
+     {#if breadcrumbs}
+      {@render breadcrumbs()}
+     {/if}
+     <ModalBody {close} {params} bind:activeTab />
+    {:else if children}
+     {@render children()}
     {/if}
    </div>
   {/if}

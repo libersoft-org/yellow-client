@@ -5,8 +5,6 @@
 
  let text = $state('');
 
- $inspect(text, 'text');
-
  function accountsConfigImport() {
   if (text) {
    let data = JSON.parse(text);

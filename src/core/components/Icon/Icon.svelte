@@ -28,6 +28,7 @@
 
  .icon img {
   display: flex;
+  user-select: none;
  }
 
  @media (max-width: 767px) {
@@ -45,7 +46,7 @@
 
 {#snippet icon()}
  <div class="icon {!visibleOnMobile && 'hideOnMobile'} {!visibleOnDesktop && 'hideOnDesktop'}" style="padding: {padding};">
-  <img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} {alt} />
+  <img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} draggable={false} {alt} />
  </div>
 {/snippet}
 

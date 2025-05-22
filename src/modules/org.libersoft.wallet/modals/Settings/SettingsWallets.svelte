@@ -102,7 +102,7 @@
  <div class="bold">No wallets found</div>
 {/if}
 <Accordion items={$wallets} bind:activeIndex>
- {#snippet snippet(walleta)}
+ {#snippet content(walleta)}
   <div class="wallet">
    <ButtonBar>
     <Button text="Add a new address" onClick={() => addAddress(walleta)} />
