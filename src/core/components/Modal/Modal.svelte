@@ -17,6 +17,8 @@
 
  let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
 
+ $inspect(body);
+
  let closeButtonEl: HTMLDivElement | null = $state(null);
  let modalEl: HTMLDivElement | null = $state(null);
  let showContent = $state(false);
@@ -200,14 +202,14 @@
     {/if}
    </div>
    <div class="body">
-    {@render children?.()}
+    <!-- {@render children?.()} -->
     {#if $debug}
      params: <code>{JSON.stringify({ params })}</code>
     {/if}
-    {#if params}
-     <ModalBody {close} {params} />
-    {:else}
-     <ModalBody {close} bind:activeTab />
+    {#if typeof ModalBody === 'function'}
+     <ModalBody {close} {params} bind:activeTab />
+    {:else if children}
+     {@render children()}
     {/if}
    </div>
   {/if}
