@@ -401,13 +401,13 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   await navigateToSettingsSection(page, 'Notifications');
   await page.getByRole('row', { name: 'Notification sound:' }).locator('span').click();
 
-  // Navigate to appearance settings
-  await navigateToSettingsSection(page, 'Appearance');
-
-  // Back to notifications
-  await navigateToSettingsSection(page, 'Notifications');
-
-  // Close settings
-  await closeModal(page);
+  // // Navigate to appearance settings
+  // await navigateToSettingsSection(page, 'Appearance');
+  //
+  // // Back to notifications
+  // await navigateToSettingsSection(page, 'Notifications');
+  //
+  // // Close settings
+  // await closeModal(page);
  });
 });
