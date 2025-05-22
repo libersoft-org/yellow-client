@@ -12,7 +12,7 @@
   width?: string;
   height?: string;
   children?: Snippet;
-  breadcrumbs?: Snippet<[any]> | null;
+  breadcrumbs?: Snippet | null;
   onShowChange?: (show: boolean) => void;
  };
 
@@ -209,7 +209,6 @@
      {#if breadcrumbs}
       {@render breadcrumbs()}
      {/if}
-
      <ModalBody {close} {params} bind:activeTab />
     {:else if children}
      {@render children()}

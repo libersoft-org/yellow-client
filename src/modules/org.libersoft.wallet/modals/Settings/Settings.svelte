@@ -149,6 +149,7 @@
 
 <div class="settings-container">
  {@render breadcrumbs(menuItems)}
+
  <div class="tab-content">
   {#if activeTab === 'general'}
    <SectionGeneral />

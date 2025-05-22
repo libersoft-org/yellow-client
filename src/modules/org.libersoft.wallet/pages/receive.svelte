@@ -131,10 +131,6 @@
   align-items: center;
   gap: 6px;
 
-  input {
-   max-width: 140px;
-  }
-
   @media (max-width: 1280px) {
    flex-direction: column;
    gap: 6px;
