@@ -67,7 +67,7 @@
 
  .breadcrumbs {
   display: flex;
-  padding: 6px 10px 8px;
+  padding: 8px 10px;
   background: hsl(345, 6%, 13%);
   margin-bottom: 0px;
   border-radius: 10px;
@@ -116,13 +116,6 @@
    }
   }
  }
-
- /*.alert {*/
- /* color: #f44;*/
- /* padding: 10px;*/
- /* background-color: rgba(255, 0, 0, 0.1);*/
- /* border-radius: 5px;*/
- /*}*/
 </style>
 
 <div class="settings-container">
