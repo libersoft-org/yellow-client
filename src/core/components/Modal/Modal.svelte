@@ -12,10 +12,11 @@
   width?: string;
   height?: string;
   children?: Snippet;
+  breadcrumbs?: Snippet<[any]> | null;
   onShowChange?: (show: boolean) => void;
  };
 
- let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
+ let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
 
  let closeButtonEl: HTMLDivElement | null = $state(null);
  let modalEl: HTMLDivElement | null = $state(null);
@@ -201,11 +202,14 @@
     {/if}
    </div>
    <div class="body">
-    <!-- {@render children?.()} -->
     {#if $debug}
      params: <code>{JSON.stringify({ params })}</code>
     {/if}
     {#if typeof ModalBody === 'function'}
+     {#if breadcrumbs}
+      {@render breadcrumbs()}
+     {/if}
+
      <ModalBody {close} {params} bind:activeTab />
     {:else if children}
      {@render children()}

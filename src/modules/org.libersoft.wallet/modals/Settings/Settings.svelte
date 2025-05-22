@@ -1,5 +1,4 @@
 <script lang="ts">
- // import Section from '../../components/Settings/settings-section.svelte';
  import MenuItem from '@/core/components/Menu/MenuItem.svelte';
  import SectionGeneral from './SettingsGeneral.svelte';
  import SectionNetworks from './SettingsNetworks.svelte';
@@ -86,7 +85,6 @@
    background: none;
    font-size: 14px;
    font-weight: bold;
-   /* color: #ccc; */
    padding: 0;
    transition: color 0.3s ease;
    cursor: default;
@@ -126,7 +124,7 @@
  }
 </style>
 
-<div class="settings-container">
+{#snippet breadcrumbs(menuItems: any[])}
  {#if activeTab !== ''}
   <div class="breadcrumbs" in:fade={{ duration: 400 }}>
    <button onclick={() => setItem('')}>
@@ -139,7 +137,6 @@
       {item.title}
      {/if}
     {/each}
-    <!-- {activeTab} -->
    </span>
   </div>
  {/if}
@@ -148,6 +145,10 @@
    <MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
   {/if}
  {/each}
+{/snippet}
+
+<div class="settings-container">
+ {@render breadcrumbs(menuItems)}
  <div class="tab-content">
   {#if activeTab === 'general'}
    <SectionGeneral />

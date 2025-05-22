@@ -229,7 +229,6 @@
      <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size="12px" />
     </div>
    </BaseButton>
-
    <div class="content {activeIndices.includes(index) ? 'is-expanded' : ''}" data-index={index}>
     {@render content?.(item)}
    </div>
