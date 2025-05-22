@@ -1,7 +1,8 @@
 <script lang="ts">
- import { Highlight } from 'svelte-highlight';
- import atomOneDark from 'svelte-highlight/styles/atom-one-dark';
- import json from 'svelte-highlight/languages/json';
+ import { SimpleCodeEditor } from 'svelte-simple-code-editor';
+ import Prism from 'prismjs';
+ import 'prismjs/themes/prism-tomorrow.css';
+ import 'prismjs/components/prism-json';
 
  type Props = {
   code: string;
@@ -11,40 +12,23 @@
 </script>
 
 <style>
- :global(.code pre),
- :global(.code code) {
-  margin: 0;
-  font-family: 'Ubuntu Mono', monospace;
-  font-size: 18px;
- }
-
  .code {
   border: 1px solid #888;
   border-radius: 10px;
   overflow: hidden;
  }
 
- .sizer {
-  position: relative;
-  max-width: 100%;
-  max-height: 100%;
-  overflow: auto;
+ :global(.code .language-json) {
+  background-color: #1e1e1e !important;
+  max-width: 500px;
+  width: 100vw;
  }
 
- textarea {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
+ :global(.code textarea) {
+  caret-color: white !important;
  }
 </style>
 
-<svelte:head>
- {@html atomOneDark}
-</svelte:head>
-
 <div class="code">
- <div class="sizer">
-  <textarea bind:value={code}> </textarea>
-  <Highlight language={json} bind:code />
- </div>
+ <SimpleCodeEditor bind:value={code} highlight={code => Prism.highlight(code, Prism.languages.json, 'json')} preClass="language-json" />
 </div>
