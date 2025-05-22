@@ -8,11 +8,11 @@
   activeIndex?: number | null;
   content: Snippet<[any]> | null;
   header?: Snippet<[any]> | null;
-  activeOnDesktop?: boolean;
+  expandAllOnDesktop?: boolean;
   mode?: 'single' | 'multiple';
  };
 
- let { items, content, header, activeOnDesktop = false, mode = 'single' }: Props = $props();
+ let { items, content, header, expandAllOnDesktop = false, mode = 'single' }: Props = $props();
 
  let activeIndices = $state<number[]>([]);
  const isDesktop = window.matchMedia('(min-width: 768px)').matches;
@@ -34,7 +34,7 @@
 
   // OPEN
   // Remove others if needed
-  if ((!isDesktop || !activeOnDesktop) && isSingleMode) {
+  if ((!isDesktop || !expandAllOnDesktop) && isSingleMode) {
    activeIndices.forEach(i => {
     const other = document.querySelector(`.content[data-index="${i}"]`) as HTMLElement;
     if (other) {
@@ -100,7 +100,7 @@
   }
 
   function handleResize(e: MediaQueryListEvent) {
-   if (activeOnDesktop) {
+   if (expandAllOnDesktop) {
     if (e.matches) {
      expandAll();
     } else {
@@ -109,7 +109,7 @@
    }
   }
 
-  if (activeOnDesktop) {
+  if (expandAllOnDesktop) {
    if (media.matches) {
     expandAll();
    } else {
