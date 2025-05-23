@@ -136,7 +136,7 @@
   top: 0;
   left: 0;
   max-width: 100vw;
-  max-height: 100vh;
+  max-height: 80dvh;
   overflow: auto;
   border: 1px solid #000;
   border-radius: 10px;

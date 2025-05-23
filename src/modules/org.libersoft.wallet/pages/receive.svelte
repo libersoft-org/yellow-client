@@ -128,13 +128,9 @@
 
  .amount {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 6px;
-
-  @media (max-width: 1280px) {
-   flex-direction: column;
-   gap: 6px;
-  }
  }
 
  .error {

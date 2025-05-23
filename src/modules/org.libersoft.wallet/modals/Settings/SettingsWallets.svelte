@@ -1,21 +1,21 @@
 <script>
  import { module } from '../../module.js';
  import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
+ import ModalNewWallet from '../../modals/new-wallet.svelte';
+
+ import Address from '../../components/settings-wallets-address.svelte';
  import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import Table from '@/core/components/Table/Table.svelte';
- import Thead from '@/core/components/Table/TableThead.svelte';
- import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
- import Th from '@/core/components/Table/TableTheadTh.svelte';
- import Tbody from '@/core/components/Table/TableTbody.svelte';
- import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
- import Td from '@/core/components/Table/TableTbodyTd.svelte';
- import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
+ import Table from '@/core/components/ResponsiveTable/Table.svelte';
+ import THead from '@/core/components/ResponsiveTable/THead.svelte';
+ import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
+ import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
+ import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
+ import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+ import TableActionItems from '@/core/components/ResponsiveTable/TableActionItems.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
- import Address from '../../components/settings-wallets-address.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
- import ModalNewWallet from '../../modals/new-wallet.svelte';
  import { Mnemonic } from 'ethers';
  let showModalPhrase = false;
  let activeIndex = null;
@@ -109,29 +109,27 @@
     <Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
    </ButtonBar>
    <Table>
-    <Thead>
-     <TheadTr>
-      <Th>Index</Th>
-      <Th>Alias</Th>
-      <Th>Address</Th>
-      <Th>Action</Th>
-     </TheadTr>
-    </Thead>
-    <Tbody>
+    <THead>
+     <THeadTh>Index</THeadTh>
+     <THeadTh>Alias</THeadTh>
+     <THeadTh>Address</THeadTh>
+     <THeadTh>Action</THeadTh>
+    </THead>
+    <TBody>
      {#each walletAddresses(walleta) as address, index}
-      <TbodyTr>
-       <Td>{address.index}</Td>
-       <Td>{address.name}</Td>
-       <Td><Address address={address.address} /></Td>
-       <Td>
+      <TBodyTr>
+       <TBodyTd title="Index">{address.index}</TBodyTd>
+       <TBodyTd title="Alias">{address.name}</TBodyTd>
+       <TBodyTd title="Address"><Address address={address.address} /></TBodyTd>
+       <TBodyTd title="Action">
         <TableActionItems>
          <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
          <Icon img="img/del.svg" alt="Hide" colorVariable="--icon-red" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
         </TableActionItems>
-       </Td>
-      </TbodyTr>
+       </TBodyTd>
+      </TBodyTr>
      {/each}
-    </Tbody>
+    </TBody>
    </Table>
   </div>
  {/snippet}

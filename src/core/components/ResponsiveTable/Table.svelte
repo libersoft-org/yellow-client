@@ -2,12 +2,22 @@
  import type { Snippet } from 'svelte';
 
  type Props = {
-  expand?: boolean;
   children: Snippet;
+  breakpoint?: string | null;
   [key: string]: unknown;
  };
 
- const { expand = $bindable(false), children, ...restProps }: Props = $props();
+ const { breakpoint = null, children, ...restProps }: Props = $props();
+
+ let isWide = $state(false);
+ $inspect(breakpoint);
+
+ $effect(() => {
+  if (!breakpoint) return;
+  const mql = matchMedia(`(min-width: ${breakpoint})`);
+  isWide = mql.matches;
+  mql.addEventListener('change', e => (isWide = e.matches));
+ });
 </script>
 
 <style>
@@ -19,10 +29,10 @@
   max-width: 100vw;
   background-color: #ffdd1150;
 
-  /* @media only screen and (min-width: 48em) {
-			border: 1px solid #222 !important;
-			border-radius: 8px;
-		} */
+  :global(&.table-wide) {
+   border: 1px solid #222 !important;
+   border-radius: 8px;
+  }
  }
 
  table {
@@ -31,17 +41,18 @@
   display: block;
   width: 100%;
   border-collapse: collapse;
-  overflow: clip;
-  font-size: 14px;
+  /* overflow: clip; */
+  table-layout: auto;
+  font-size: clamp(14px, 2vw, 16px);
 
-  /* @media only screen and (min-width: 48em) {
-			width: 100%;
-		} */
+  :global(.table-wide &) {
+   width: 100%;
+  }
  }
 </style>
 
-<div class="responsvive-table" {...restProps}>
- <table class:expand>
+<div class={`responsvive-table ${isWide ? 'table-wide' : ''}`} {...restProps}>
+ <table>
   {@render children()}
  </table>
 </div>

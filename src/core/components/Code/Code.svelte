@@ -15,7 +15,12 @@
  .code {
   border: 1px solid #888;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: scroll;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+   display: none;
+  }
  }
 
  :global(.code .language-json) {
@@ -30,5 +35,7 @@
 </style>
 
 <div class="code">
- <SimpleCodeEditor bind:value={code} highlight={code => Prism.highlight(code, Prism.languages.json, 'json')} preClass="language-json" />
+ <div>
+  <SimpleCodeEditor bind:value={code} highlight={code => Prism.highlight(code, Prism.languages.json, 'json')} preClass="language-json" />
+ </div>
 </div>

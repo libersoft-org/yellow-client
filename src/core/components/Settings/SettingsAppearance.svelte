@@ -1,46 +1,54 @@
-<script>
- import Select from '../Select/Select.svelte';
- import Option from '../Select/SelectOption.svelte';
- import Table from '../Table/Table.svelte';
- import Tbody from '../Table/TableTbody.svelte';
- import TbodyTr from '../Table/TableTbodyTr.svelte';
- import Td from '../Table/TableTbodyTd.svelte';
+<script lang="ts">
+ import Select from '@/core/components/Select/Select.svelte';
+ import Option from '@/core/components/Select/SelectOption.svelte';
+ import Table from '@/core/components/ResponsiveTable/Table.svelte';
+ import THead from '@/core/components/ResponsiveTable/THead.svelte';
+ import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
+ import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
+ import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
+ import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
+ import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
  import { TAURI } from '@/core/tauri.ts';
  import { zoom } from '@/core/settings.ts';
  import { setZoom } from '@/core/zoom.ts';
 
- export let theme = 'light';
+ let { theme = 'light' } = $props();
 </script>
 
 <style>
- input[type='range'] {
-  width: 100%;
-  max-width: 300px;
+ .zoom {
+  display: flex;
+
+  input {
+   margin-top: 6px;
+  }
  }
 </style>
 
-<Table expand={true}>
- <Tbody>
-  {#if TAURI}
-   <TbodyTr>
-    <Td>
-     <div class="bold">Zoom:</div>
-    </Td>
-    <Td center={true}>
-     <div>{Math.round(($zoom || 0) * 100, 2)}%</div>
-     <input class="zoom" type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} on:change={setZoom} />
-    </Td>
-   </TbodyTr>
-  {/if}
-  <TbodyTr>
-   <Td>
-    <div class="bold">Theme:</div>
-   </Td>
-   <Td center={true}>
+<Table>
+ <THead>
+  <THeadTr>
+   {#if TAURI}
+    <THeadTh>Zoom:</THeadTh>
+   {/if}
+   <THeadTh>Theme:</THeadTh>
+  </THeadTr>
+ </THead>
+ <TBody>
+  <TBodyTr>
+   {#if TAURI}
+    <TBodyTd title="Zoom">
+     <span>{Math.round(($zoom || 0) * 100)}%</span>
+     <div class="zoom">
+      <input type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} onchange={setZoom} />
+     </div>
+    </TBodyTd>
+   {/if}
+   <TBodyTd title="Address">
     <Select bind:value={theme}>
      <Option text="Light" value="light" />
     </Select>
-   </Td>
-  </TbodyTr>
- </Tbody>
+   </TBodyTd>
+  </TBodyTr>
+ </TBody>
 </Table>
