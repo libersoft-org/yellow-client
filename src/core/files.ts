@@ -16,16 +16,16 @@ export class NativeDownload {
  }
 }
 
-export async function offerNativeDownload(file_name: string, defaultFileDownloadFolder: string | null) {
+export async function offerNativeDownload(fileName: string, defaultFileDownloadFolder: string | null) {
  const download = new NativeDownload();
- download.original_file_name = file_name;
+ download.original_file_name = fileName;
 
  if (defaultFileDownloadFolder) {
   await findFreeFileName(defaultFileDownloadFolder, download);
   return download;
  } else {
   let p = await save({
-   defaultPath: defaultFileDownloadFolder ? await path.join(defaultFileDownloadFolder, file_name) : file_name,
+   defaultPath: defaultFileDownloadFolder ? await path.join(defaultFileDownloadFolder, fileName) : fileName,
    canCreateDirectories: true,
    title: 'Save file',
   });
