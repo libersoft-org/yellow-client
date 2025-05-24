@@ -69,7 +69,7 @@
  </ButtonBar>
  <div class="bold">My networks:</div>
 
- <Table breakpoint="0">
+ <Table breakpoint="500px">
   <TBody>
    {#each $networks as n, index (n.guid)}
     <TBodyTr>
@@ -94,7 +94,7 @@
  </Table>
 
  <div class="bold">Default networks:</div>
- <Table breakpoint="0">
+ <Table breakpoint="500px">
   <TBody>
    {#each $default_networks as n, index}
     <TBodyTr>

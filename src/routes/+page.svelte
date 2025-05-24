@@ -318,7 +318,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 10;
+  z-index: 5;
   /*  min-width: 300px;
   max-width: 300px;*/
   max-height: 100%;
@@ -341,6 +341,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  container-type: inline-size;
  }
 
  @media (max-width: 768px) {

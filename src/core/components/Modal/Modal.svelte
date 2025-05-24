@@ -3,6 +3,7 @@
  import Icon from '@/core/components/Icon/Icon.svelte';
  import { debug } from '../../core.js';
  import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
+ import { draggable } from '@neodrag/svelte';
 
  type Props = {
   show?: boolean;
@@ -18,29 +19,63 @@
 
  let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
 
- let closeButtonEl: HTMLDivElement | null = $state(null);
  let modalEl: HTMLDivElement | null = $state(null);
+
  let showContent = $state(false);
  let ModalBody = $state<Snippet>(body);
  let zIndex = $state(100);
  let activeTab = $state('');
- let modalId: number;
- let posX = 0;
- let posY = 0;
- let isDragging = false;
- let left = $state(0);
- let top = $state(0);
 
- function setShow(value: boolean) {
-  show = value;
-  onShowChange?.(value);
- }
+ let modalId: number;
+ let isDragging = false;
+ let resizeObserver: ResizeObserver;
+
+ $effect(() => {
+  if (modalEl && showContent && !isDragging && activeTab) {
+   centerModal();
+   requestAnimationFrame(snapTransformIntoBounds);
+  }
+ });
 
  $effect(() => {
   showUpdated(show);
   modalId = registerModal(z => (zIndex = z));
-  return () => unregisterModal(modalId);
+
+  function handleResize() {
+   if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
+  }
+
+  if (modalEl) {
+   let didInit = false;
+   resizeObserver = new ResizeObserver(() => {
+    if (isDragging) return;
+    if (didInit) {
+     centerModal();
+     requestAnimationFrame(snapTransformIntoBounds);
+    } else {
+     didInit = true;
+    }
+   });
+   resizeObserver.observe(modalEl);
+  }
+
+  window.addEventListener('resize', handleResize);
+
+  return () => {
+   unregisterModal(modalId);
+   window.removeEventListener('resize', handleResize);
+   resizeObserver?.disconnect();
+  };
  });
+
+ function onDragStart() {
+  isDragging = true;
+ }
+
+ function onDragEnd() {
+  isDragging = false;
+  requestAnimationFrame(snapTransformIntoBounds);
+ }
 
  function raiseZIndex() {
   bringToFront(modalId);
@@ -52,33 +87,64 @@
    modalEl?.focus();
    showContent = true;
    await tick();
-   await positionModal();
+   centerModal();
+   requestAnimationFrame(snapTransformIntoBounds);
   } else {
    showContent = false;
   }
  }
 
- function setTitle(value: string) {
-  title = value;
- }
-
- setContext('setTitle', setTitle);
- setContext('pageChanged', positionModal);
- setContext('Popup', { close });
-
- async function positionModal() {
-  await tick();
+ function centerModal() {
   if (!modalEl) return;
   const rect = modalEl.getBoundingClientRect();
-  top = (window.innerHeight - rect.height) / 2;
-  left = (window.innerWidth - rect.width) / 2;
+  const x = (window.innerWidth - rect.width) / 2;
+  const y = (window.innerHeight - rect.height) / 2;
+  modalEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+ }
+
+ function snapTransformIntoBounds() {
+  if (!modalEl) return;
+
+  const rect = modalEl.getBoundingClientRect();
+  const padding = window.innerWidth < 768 ? 12 : 24;
+
+  let dx = 0;
+  let dy = 0;
+
+  if (rect.left < padding) dx = padding - rect.left;
+  else if (rect.right > window.innerWidth - padding) dx = window.innerWidth - padding - rect.right;
+
+  if (rect.top < padding) dy = padding - rect.top;
+  else if (rect.bottom > window.innerHeight - padding) dy = window.innerHeight - padding - rect.bottom;
+
+  if (dx === 0 && dy === 0) return;
+
+  const matrix = new DOMMatrixReadOnly(getComputedStyle(modalEl).transform);
+  const newX = matrix.m41 + dx;
+  const newY = matrix.m42 + dy;
+
+  modalEl.style.transition = 'transform 0.2s ease';
+  modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+  setTimeout(() => {
+   if (modalEl) modalEl.style.transition = '';
+  }, 200);
+ }
+
+ export function open() {
+  setShow(true);
  }
 
  export function close() {
   setShow(false);
  }
- export function open() {
-  setShow(true);
+
+ function setShow(value: boolean) {
+  show = value;
+  onShowChange?.(value);
+ }
+
+ function clearActiveTab() {
+  activeTab = '';
  }
 
  function onkeydown(event: KeyboardEvent) {
@@ -89,42 +155,12 @@
   }
  }
 
- function dragStart(event: MouseEvent) {
-  if (closeButtonEl?.contains(event.target as Node)) return;
-
-  isDragging = true;
-  event.preventDefault();
-  const rect = modalEl?.getBoundingClientRect();
-  if (!rect) return;
-  posX = event.clientX - rect.left;
-  posY = event.clientY - rect.top;
-  window.addEventListener('mousemove', drag);
-  window.addEventListener('mouseup', dragEnd);
+ function setTitle(value: string) {
+  title = value;
  }
 
- function drag(event: MouseEvent) {
-  if (!isDragging || !modalEl) return;
-  const x = event.clientX - posX;
-  const y = event.clientY - posY;
-  const modalWidth = modalEl.offsetWidth;
-  const modalHeight = modalEl.offsetHeight;
-  const windowWidth = window.innerWidth;
-  const windowHeight = window.innerHeight;
-  left = Math.max(0, Math.min(windowWidth - modalWidth, x));
-  top = Math.max(0, Math.min(windowHeight - modalHeight, y));
- }
-
- function dragEnd() {
-  isDragging = false;
-  window.removeEventListener('mousemove', drag);
-  window.removeEventListener('mouseup', dragEnd);
- }
-
- function clearActiveTab() {
-  activeTab = '';
- }
-
- $inspect(params, 'params');
+ setContext('setTitle', setTitle);
+ setContext('Popup', { close });
 </script>
 
 <style>
@@ -135,13 +171,26 @@
   position: fixed;
   top: 0;
   left: 0;
-  max-width: 100vw;
-  max-height: 80dvh;
+  width: fit-content;
+  max-height: calc(100dvh - 48px);
   overflow: auto;
   border: 1px solid #000;
   border-radius: 10px;
   box-shadow: var(--shadow);
   background-color: #fff;
+
+  @media (max-width: 768px) {
+   max-width: calc(100% - 24px) !important;
+   max-height: calc(100% - 24px) !important;
+   height: fit-content;
+   width: 100%;
+  }
+
+  :global(&.neodrag-dragging) {
+   .header {
+    cursor: grabbing;
+   }
+  }
  }
 
  .modal .header {
@@ -151,7 +200,7 @@
   font-weight: bold;
   background-color: #fd3;
   color: #000;
-  cursor: pointer;
+  cursor: grab;
  }
  .modal .header .title {
   display: flex;
@@ -173,22 +222,30 @@
   background-color: #fff;
   color: #000;
  }
- @media (max-width: 768px) {
-  .modal {
-   min-width: 100%;
-   min-height: 100%;
-   width: 100%;
-   height: 100%;
-   border: 0px;
-   border-radius: 0px;
-  }
- }
 </style>
 
 {#if show}
- <div class="modal" role="none" tabindex="-1" style:top={top ? `${top}px` : undefined} style:left={left ? `${left}px` : undefined} style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
+ <div
+  class="modal"
+  role="none"
+  tabindex="-1"
+  style:width
+  style:height
+  style:max-width={width}
+  style:max-height={height}
+  bind:this={modalEl}
+  use:draggable={{
+   onDragStart,
+   onDragEnd,
+   gpuAcceleration: true,
+   handle: '.header',
+  }}
+  style:z-index={zIndex}
+  onmousedown={raiseZIndex}
+  {onkeydown}
+ >
   {#if showContent}
-   <div class="header" role="none" tabindex="-1" onmousedown={dragStart}>
+   <div class="header" role="none" tabindex="-1">
     {#if title}
      <div class="title">
       {#if activeTab}
@@ -196,7 +253,7 @@
       {/if}
       {title}
      </div>
-     <div bind:this={closeButtonEl}>
+     <div onpointerdown={e => e.stopPropagation()}>
       <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
      </div>
     {/if}
