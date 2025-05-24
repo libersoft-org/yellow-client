@@ -11,7 +11,9 @@
 
  function clickDownload(e) {
   console.log('clickDownload', e);
-  let blob = new Blob([JSON.stringify($accounts_config, null, 2)], { type: 'application/json' });
+  let blob = new Blob([JSON.stringify($accounts_config, null, 2)], {
+   type: 'application/json',
+  });
   console.log('blob', blob);
   let url = URL.createObjectURL(blob);
   let a = document.createElement('a');
