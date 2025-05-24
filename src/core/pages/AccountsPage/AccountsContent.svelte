@@ -75,7 +75,7 @@
 
 <div class="accounts">
  <div class="buttons">
-  <Button img="img/back.svg" text={m['core.common.back']()} onClick={back} hiddenOnDesktop={true} />
+  <Button img="img/back.svg" text={m['common.back']()} onClick={back} hiddenOnDesktop={true} />
   <Button img="img/accounts.svg" text={m['core.accounts_content.add_new_account']()} colorVariable="--icon-black" onClick={addAccountModal} />
   <Button text="Export" onClick={clickExport} />
   <Button text="Import" onClick={clickImport} />
@@ -106,8 +106,8 @@
      <TableTBodyTd center={true}>{a.enabled ? 'Yes' : 'No'}</TableTBodyTd>
      <TableTBodyTd center={true}>
       <TableActionItems>
-       <Icon img="img/edit.svg" alt={m['core.common.edit']()} colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
-       <Icon img="img/del.svg" alt={m['core.common.delete']()} colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
+       <Icon img="img/edit.svg" alt={m['common.edit']()} colorVariable="--icon-blue" size={20} padding={5} onClick={() => clickEdit(a.id)} />
+       <Icon img="img/del.svg" alt={m['common.delete']()} colorVariable="--icon-red" size={20} padding={5} onClick={() => clickDel(a.id, a.settings?.title)} />
       </TableActionItems>
      </TableTBodyTd>
      {#if $debug}

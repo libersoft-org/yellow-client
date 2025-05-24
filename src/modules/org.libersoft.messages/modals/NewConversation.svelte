@@ -1,16 +1,22 @@
-<script>
+<script lang="ts">
  import { onMount } from 'svelte';
  import { openNewConversation } from '../messages.js';
  import Button from '@/core/components/Button/Button.svelte';
  import Input from '@/core/components/Input/Input.svelte';
- export let close;
- let elAddress;
- let value;
+ import { m } from '@/lib/paraglide/messages.js';
 
- onMount(() => elAddress.focus());
+ interface Props {
+  close: () => void;
+ }
+
+ let { close }: Props = $props();
+
+ let addressInputRef = $state<HTMLInputElement>();
+ let value = $state('');
+
+ onMount(() => addressInputRef?.focus());
 
  function clickOpen() {
-  console.log('clickOpen(); address.value:', value);
   if (value) {
    openNewConversation(value);
    console.log('close();');
@@ -18,31 +24,23 @@
   }
  }
 
- function keyEnter(event) {
-  console.log('keyEnter(); event:', event);
-  if (event.key === 'Enter') {
-   event.preventDefault();
-   clickOpen();
-  }
+ function onSubmit(event) {
+  event.preventDefault();
+  clickOpen();
  }
 </script>
 
 <style>
  .group {
   display: flex;
-  align-items: center;
+  align-items: end;
   gap: 10px;
- }
-
- .group .label {
-  font-size: 15px;
-  padding-left: 5px;
-  font-weight: bold;
  }
 </style>
 
-<div class="group">
- <div class="label">Address:</div>
- <Input placeholder="user@domain.tld" onKeydown={keyEnter} bind:this={elAddress} bind:value />
- <Button text="Open" onClick={clickOpen} />
-</div>
+<form onsubmit={onSubmit}>
+ <div class="group">
+  <Input label={`${m['messages.new_conversation.address']()}:`} grow placeholder="user@domain.tld" inputRef={addressInputRef} bind:value />
+  <Button text={m['common.open']()} onClick={clickOpen} />
+ </div>
+</form>

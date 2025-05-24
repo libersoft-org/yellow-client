@@ -1,17 +1,19 @@
 {
  "$schema": "https://inlang.com/schema/inlang-message-format",
+ "common": {
+  "back": "Back",
+  "edit": "Edit",
+  "delete": "Delete",
+  "open": "Open"
+ },
  "core": {
-  "common": {
-   "back": "Back",
-   "edit": "Edit",
-   "delete": "Delete"
-  },
   "accounts_add_edit": {
    "protocol": "Protocol",
    "title": "Title",
    "server": "Server",
    "address": "Address",
    "password": "Password",
+   "enabled": "Enabled",
    "password_placeholder": "Your password",
    "not_yet_implemented": "Not yet implemented"
   },
@@ -27,6 +29,11 @@
    "address": "Address",
    "enabled": "Enabled",
    "action": "Action"
+  }
+ },
+ "messages": {
+  "new_conversation": {
+   "address": "Address"
   }
  }
 }

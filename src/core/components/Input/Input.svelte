@@ -10,11 +10,19 @@
   min?: number;
   max?: number;
   label?: any;
+  inputRef?: HTMLInputElement;
  }
 
- let { type = 'text', placeholder = '', value = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, label = undefined }: Props = $props();
+ let { type = 'text', placeholder = '', value = $bindable(), inputRef: parentInputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, label = undefined }: Props = $props();
 
- let inputRef: HTMLInputElement;
+ let inputRef = $state<HTMLInputElement>();
+
+ // Bind the inputRef ref manually to the parent component from internal state
+ $effect(() => {
+  if (inputRef) {
+   parentInputRef = inputRef;
+  }
+ });
 
  function handleKeydown(e) {
   if (onKeydown) onKeydown(e);
@@ -43,6 +51,15 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  max-width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
+ }
+
+ label {
+  font-size: 15px;
+  padding-left: 5px;
+  font-weight: bold;
  }
 </style>
 

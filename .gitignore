@@ -20,3 +20,6 @@ test-results
 
 # Paraglide
 src/lib/paraglide
+
+# Custom
+.local/*
