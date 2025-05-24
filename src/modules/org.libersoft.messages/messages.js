@@ -1,16 +1,16 @@
-import { replaceEmojisWithTags, start_emojisets_fetch } from './emojis.js';
+import { replaceEmojisWithTags } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
-import { log } from '../../core/tauri.ts';
+import { log } from '@/core/tauri.ts';
 import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
-import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+import { FileUploadRecordStatus, FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
 import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { selectAccount, active_account, active_account_id, getGuid, hideSidebarMobile, isClientFocused, active_account_module_data, relay, send, selected_module_id } from '../../core/core.js';
+import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '@/core/core.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
@@ -18,13 +18,18 @@ import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { addNotification, deleteNotification } from '@/core/notifications.ts';
 import { makeMessageReaction } from './factories/messageFactories.ts';
+
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
+export const photoRadius = localStorageSharedStore('photoRadius', '50%');
+export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
+export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', null);
 export const identifier = 'org.libersoft.messages';
 export let md = active_account_module_data(identifier);
 export let online = relay(md, 'online');
 export let conversationsArray = relay(md, 'conversationsArray');
 export let events = relay(md, 'events');
 export let messagesArray = relay(md, 'messagesArray');
+export let messagesIsInitialLoading = relay(md, 'messagesIsInitialLoading');
 export let selectedConversation = relay(md, 'selectedConversation');
 export let emojiGroups = relay(md, 'emojiGroups');
 export let emojisByCodepointsRgi = relay(md, 'emojisByCodepointsRgi');
@@ -52,6 +57,7 @@ export function initData(acc) {
   conversationsArray: writable([]),
   events: writable([]),
   messagesArray: writable([]),
+  messagesIsInitialLoading: writable(false),
   emojiGroups: writable([]),
   emojisByCodepointsRgi: writable(null),
   emojisLoading: writable(false),
@@ -61,10 +67,6 @@ export function initData(acc) {
  //start_emojisets_fetch(acc, result.emojisLoading, result.emojiGroups, result.emojisByCodepointsRgi);
  return result;
 }
-
-active_account_id.subscribe(acc => {
- get(md)?.['selectedConversation']?.set(null);
-});
 
 function sendData(acc, account, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  /*
@@ -96,7 +98,7 @@ export function selectConversation(conversation) {
  selectedConversation.set(conversation);
  events.set([]);
  messagesArray.set([]);
- insertEvent({ type: 'new', array: get(messagesArray) });
+ insertEvent({ type: 'select_conversation', array: get(messagesArray) });
  hideSidebarMobile.set(true);
  listMessages(conversation.acc.deref ? conversation.acc.deref() : conversation.acc, conversation.address);
 }
@@ -161,6 +163,20 @@ export function initComms(acc) {
  acc.events.addEventListener('ask_for_chunk', ask_for_chunk);
 
  refresh(acc);
+}
+
+export function init() {
+ let subs = [];
+
+ subs.push(
+  active_account_id.subscribe(acc => {
+   get(md)?.['selectedConversation']?.set(null);
+  })
+ );
+
+ return function () {
+  subs.forEach(sub => sub());
+ };
 }
 
 async function refresh(acc) {
@@ -231,7 +247,7 @@ export async function initUpload(files, uploadType, recipients) {
   if (uploads?.[0].record.type === FileUploadRecordType.SERVER) {
    fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
   } else {
-   console.error('Error starting upload'); // todo better error
+   console.error('Error starting upload'); // TODO: better error
   }
  });
 }
@@ -254,7 +270,7 @@ function uploadChunkAsync({ upload, chunk }) {
    };
    const to = setTimeout(() => {
     retry();
-   }, 5000); // todo maybe longer
+   }, 5000); // TODO: maybe longer
    sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
     clearTimeout(to);
     if (res.error !== false) {
@@ -289,7 +305,7 @@ function message_update(event) {
  if (type === 'reaction') {
   const messageUid = message.uid;
 
-  // todo: this messagesArray.update will try to find the message in the current conversation (even if this update is from another conversation)
+  // TODO: this messagesArray.update will try to find the message in the current conversation (even if this update is from another conversation)
   messagesArray.update(m => {
    const foundMessage = m.find(msg => msg.uid === messageUid);
    if (foundMessage) {
@@ -340,11 +356,11 @@ export const makeDownloadChunkAsyncFn =
       chunkId: res.chunk.chunkId,
       uploadId: res.chunk.uploadId,
       checksum: res.chunk.checksum,
-      chunkSize, // todo: take this value from server
-      offsetBytes, // todo: take this value from server
+      chunkSize, // TODO: take this value from server
+      offsetBytes, // TODO: take this value from server
       data: await base64ToUint8Array(res.chunk.data),
      },
-    }); // todo better typing (whole function)
+    }); // TODO: better typing (whole function)
    });
   });
  };
@@ -357,18 +373,38 @@ export function cancelUpload(uploadId) {
 export function pauseUpload(uploadId) {
  return new Promise(resolve => {
   fileUploadManager.pauseUpload(uploadId);
-  sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.PAUSED }, true, (req, res) => {
-   resolve(); // todo: handle error if needed
-  });
+  sendData(
+   get(active_account),
+   null,
+   'upload_update_status',
+   {
+    uploadId,
+    status: FileUploadRecordStatus.PAUSED,
+   },
+   true,
+   (req, res) => {
+    resolve(); // TODO: handle error if needed
+   }
+  );
  });
 }
 
 export function resumeUpload(uploadId) {
  return new Promise(resolve => {
   fileUploadManager.resumeUpload(uploadId);
-  sendData(get(active_account), null, 'upload_update_status', { uploadId, status: FileUploadRecordStatus.UPLOADING }, true, (req, res) => {
-   resolve(); // todo: handle error if needed
-  });
+  sendData(
+   get(active_account),
+   null,
+   'upload_update_status',
+   {
+    uploadId,
+    status: FileUploadRecordStatus.UPLOADING,
+   },
+   true,
+   (req, res) => {
+    resolve(); // TODO: handle error if needed
+   }
+  );
  });
 }
 
@@ -387,7 +423,7 @@ export function cancelDownload(uploadId) {
  }
  if (download.record.type === FileUploadRecordType.P2P) {
   // for p2p we want to cancel download but we gonna still use the same logic as is used in cancel upload because this is global cancel
-  // todo in case of more then one recipient we should cancel only for one recipient locally
+  // TODO: in case of more then one recipient we should cancel only for one recipient locally
   cancelUpload(uploadId);
  } else if (download.record.type === FileUploadRecordType.SERVER) {
   fileDownloadManager.cancelDownload(uploadId);
@@ -471,6 +507,7 @@ export function deinitData(acc) {
 export function listMessages(acc, address) {
  //console.log('listMessages', acc, address);
  messagesArray.set([{ type: 'initial_loading_placeholder' }]);
+ messagesIsInitialLoading.set(true);
  loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', res => {});
 }
 
@@ -492,6 +529,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb, force_r
   }
   let items = res.data.messages;
   items = constructLoadedMessages(acc, items);
+  messagesIsInitialLoading.set(false);
   addMessagesToMessagesArray(items, reason, force_refresh);
   if (cb) cb(res);
  });
@@ -519,7 +557,7 @@ export function getMessageByUid(uid) {
    return;
   }
   const acc = get(active_account);
-  const address = get(selectedConversation).address; // todo: wont work for multi conversations
+  const address = get(selectedConversation).address; // TODO: won't work for multi conversations
   findMessages(acc, address, 'uid:' + uid, 0, 0)
    .then(messages => {
     const message = messages.find(m => m.uid === uid);
@@ -558,7 +596,7 @@ export function snipeMessage(msg) {
 }
 
 function addMessage(arr, msg, state) {
- void 'todo: this should only update the message if the data is actually more up-to-date';
+ //TODO: this should only update the message if the data is actually more up-to-date
  let m = arr.find(m => m.uid === msg.uid);
  if (m) {
   for (let key in msg) m[key] = msg[key];
@@ -582,7 +620,7 @@ function constructLoadedMessages(acc, data) {
 
 function sortMessages(messages) {
  messages.sort((a, b) => {
-  void "take care of just-sent messages, they don't have id yet";
+  //TODO: take care of just-sent messages, they don't have id yet
   //console.log(a.created, b.created);
   let akey = a.id;
   let bkey = b.id;
@@ -822,7 +860,7 @@ export function jumpToMessage(acc, address, uid) {
 
 export function insertEvent(event) {
  events.update(v => {
-  //console.log('insertEvent: ', v, event);
+  console.log('insertEvent: ', v, event);
   return [...v, event];
  });
 }
@@ -906,7 +944,7 @@ async function showNotification(acc, msg) {
  let notification = {
   id: messageNotificationId(msg),
   title,
-  body: msg.stripped_text,
+  body: get(hideMessageTextInNotifications) ? 'You have a new message' : msg.stripped_text,
   icon: 'img/photo.svg',
   //icon: 'favicon.svg',
   sound: 'modules/' + identifier + '/audio/message.mp3',
@@ -914,6 +952,7 @@ async function showNotification(acc, msg) {
    if (event === 'click') {
     window.focus();
     selectAccount(acc.id);
+    selected_corepage_id.set(null);
     selected_module_id.set(identifier);
     await tick();
     console.log('notification click: selectConversation', msg.address_from);
@@ -1007,12 +1046,12 @@ export function processMessage(message) {
   wrapConsecutiveElements(html, 'YellowAudio', 'AudioWrapper', 1);
  } else {
   let text = preprocess_incoming_plaintext_message_text(message.message);
-  console.log('text:', text);
+  //console.log('text:', text);
   html = saneHtml(text);
-  console.log('html:', html);
+  //console.log('html:', html);
  }
  //html = group_downloads(html);
- console.log('htmlhtmlhtml', html);
+ //console.log('htmlhtmlhtml', html);
  return {
   format: 'html',
   body: html,
@@ -1020,12 +1059,12 @@ export function processMessage(message) {
 }
 
 function group_downloads(html) {
- void 'walk the dom tree, find runs of multiple Download elements, and group them under a single DownloadGroup element';
+ // TODO: walk the dom tree, find runs of multiple Download elements, and group them under a single DownloadGroup element
  return group_downloads_walk(html);
 }
 
 function group_downloads_walk(node) {
- /* todo review, autogenerated */
+ // TODO: review, autogenerated
  if (node.nodeType === Node.TEXT_NODE) return node;
  if (node.nodeType === Node.ELEMENT_NODE) {
   if (node.tagName === 'DOWNLOAD') {
@@ -1047,9 +1086,9 @@ function group_downloads_walk(node) {
 
 export function preprocess_incoming_plaintext_message_text(content) {
  let result0 = content;
- console.log('splitAndLinkify input:', result0);
+ //console.log('splitAndLinkify input:', result0);
  let result1 = splitAndLinkify(result0);
- console.log('splitAndLinkify output:', result1);
+ //console.log('splitAndLinkify output:', result1);
  let result2 = result1.map(part => {
   if (part.type === 'plain') {
    let r = htmlEscape(part.value);

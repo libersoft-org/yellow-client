@@ -1,4 +1,5 @@
-import { get } from 'svelte/store';
+import { get, type Writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { multiwindow_store } from './multiwindow_store.ts';
 import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
@@ -10,6 +11,18 @@ import {
  //getCurrentWindow,
 } from '@tauri-apps/api/window';
 import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
+import { Mutex } from 'async-mutex';
+import * as app from '@tauri-apps/api';
+
+declare global {
+ interface Window {
+  sw: ServiceWorker;
+ }
+
+ interface ServiceWorker {
+  showNotification: (title: string, options?: NotificationOptions) => Promise<void>;
+ }
+}
 
 /* yellow notifications, for use in core and modules */
 
@@ -21,6 +34,7 @@ export interface YellowNotification {
  icon?: string;
  sound?: string;
  callback?: CallableFunction;
+ _audio?: HTMLAudioElement;
 }
 
 let counter = 0;
@@ -28,6 +42,43 @@ let notifications: Map<string, YellowNotification> = new Map();
 let _events;
 let browser_notifications: Map<string, Notification> = new Map();
 let tauri_notifications: Map<string, Notification> = new Map();
+export let exampleNotifications: Writable<Array<string>> = writable([]);
+
+const updateExampleNotificationMutex = new Mutex();
+
+export async function deleteExampleNotifications() {
+ let v = get(exampleNotifications);
+ for (let i of v) {
+  await deleteNotification(i);
+ }
+ exampleNotifications.set([]);
+}
+
+export async function updateExampleNotification() {
+ return updateExampleNotificationMutex.runExclusive(async () => {
+  let v = get(exampleNotifications);
+  log.debug('updateExampleNotification v:', v);
+  if (v.length > 1) {
+   await deleteNotification(v[0]);
+   exampleNotifications.update(n => n.slice(1));
+  }
+  if (get(notificationsEnabled)) {
+   let x = await addNotification({
+    title: `Example Notification ${counter}`,
+    body: 'This is an example notification',
+    callback: event => {
+     log.debug('example notification callback:', event);
+     exampleNotifications.update(n => n.filter(i => i !== event.id));
+    },
+   });
+   if (x) {
+    exampleNotifications.update(n => [...n, x]);
+   }
+  } else {
+   await deleteExampleNotifications();
+  }
+ });
+}
 
 export function setNotificationsEnabled(value) {
  if (!BROWSER) {
@@ -67,14 +118,8 @@ export function setNotificationsEnabled(value) {
 }
 
 export async function initBrowserNotifications() {
- if (BROWSER && Notification.permission !== 'granted') {
-  setNotificationsEnabled(false);
- }
- if (get(selectedMonitorName) === null) {
-  if (CUSTOM_NOTIFICATIONS) {
-   let monitors = await availableMonitors();
-   selectedMonitorName.set(monitors[0]?.name || null);
-  }
+ if (BROWSER && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+  // fixme: ask for permission / in wizard?
  }
 }
 
@@ -128,10 +173,10 @@ async function removeNotification(id: string): Promise<void> {
  //log.debug('removed.');
 }
 
-export async function addNotification(notification: Partial<YellowNotification>): Promise<string | undefined> {
+export async function addNotification(notification: Partial<YellowNotification>): Promise<string | null> {
  let enabled = get(notificationsEnabled);
  log.debug('addNotification: enabled:', enabled, 'TAURI:', TAURI, 'TAURI_MOBILE:', TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
- if (!enabled) return;
+ if (!enabled) return null;
 
  let n: YellowNotification = {
   id: Math.random().toString(36),
@@ -155,7 +200,7 @@ export async function deleteNotification(id: string): Promise<void> {
  log.debug('deleteNotification:', id);
  await deleteCustomNotification(id);
  await deleteBrowserNotification(id);
- //deleteTauriNotification(id);//todo
+ await deleteTauriNotification(id);
 }
 
 async function sendTauriNotification(notification: YellowNotification) {
@@ -170,10 +215,10 @@ async function sendTauriNotification(notification: YellowNotification) {
  if (!permissionGranted) {
   return;
  }
- if (get(notificationsSoundEnabled)) playNotificationSound(notification);
+ playNotificationSound(notification);
 
  let icon = await toPngBlob(notification.icon);
- icon = 'http://localhost:3000/favicon2.png';
+ //icon = 'http://localhost:3000/favicon2.png';
 
  sendNotification({
   title: notification.title,
@@ -208,12 +253,23 @@ async function sendTauriNotification(notification: YellowNotification) {
  });
 }
 
+async function deleteTauriNotification(id: string): Promise<void> {
+ log.debug('deleteTauriNotification:', id);
+ let n = tauri_notifications.get(id);
+ if (n) {
+  log.debug('deleteTauriNotification:', id, n);
+  await n.close();
+  tauri_notifications.delete(id);
+ }
+}
+
 async function sendCustomNotification(notification: YellowNotification): Promise<void> {
  //log.debug('sendCustomNotification');
  //await initCustomNotifications();
  let s = await multiwindow_store('notifications');
  log.debug('notifications store:', s);
  invoke('create_notifications_window', {});
+ invoke('show_notifications_window', {});
  if (!notification.id) {
   log.debug('notification.id is undefined');
   return;
@@ -227,48 +283,72 @@ async function deleteCustomNotification(id: string): Promise<void> {
  if (!CUSTOM_NOTIFICATIONS) return;
  notifications[id] && notifications.delete(id);
  let s = await multiwindow_store('notifications');
- s.set(id, null);
+ await s.set(id, null);
 }
 
 async function showBrowserNotification(notification: YellowNotification) {
- //playNotificationSound(notification);
+ playNotificationSound(notification);
  console.log('showBrowserNotification:', notification);
  let icon = await toPngBlob(notification.icon);
 
- let n = new Notification(notification.title, {
-  tag: notification.id,
-  body: notification.body,
-  //  icon: 'http://localhost:3000/favicon2.png',
-  //  icon: 'data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7', //icon,
-  icon: icon,
-  silent: false,
-  //vibrate: [200, 100, 200],
- });
- n.onclick = async e => {
-  log.debug('notification onclick:', e);
-  await notification.callback?.('click');
- };
- browser_notifications.set(notification.id, n);
- n.onclose = () => {
-  log.debug('browser notification onclose:', notification.id);
-  browser_notifications.delete(notification.id);
- };
+ if (window.sw) {
+  log.debug('showBrowserNotification sw:', window.sw);
+  window.sw.showNotification(notification.title, {
+   body: notification.body,
+   icon: icon,
+   tag: notification.id,
+   //vibrate: [200, 100, 200],
+  });
+ }
+
+ try {
+  let n = new Notification(notification.title, {
+   tag: notification.id,
+   body: notification.body,
+   //  icon: 'http://localhost:3000/favicon2.png',
+   //  icon: 'data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7', //icon,
+   icon: icon,
+   //silent: false,
+   //vibrate: [200, 100, 200],
+  });
+  n.onclick = async e => {
+   log.debug('notification onclick:', e);
+   await notification.callback?.('click');
+  };
+  browser_notifications.set(notification.id, n);
+  n.onclose = () => {
+   log.debug('browser notification onclose:', notification.id);
+   browser_notifications.delete(notification.id);
+   stopNotificationSound(notification);
+  };
+ } catch (e) {
+  console.error(e);
+ }
 }
 
 async function deleteBrowserNotification(id: string): Promise<void> {
  let n = browser_notifications.get(id);
  if (n) {
-  n.close();
-  browser_notifications.delete(id);
+  log.debug('deleteBrowserNotification:', id, n);
+  await n.close();
+  //browser_notifications.delete(id);
  }
 }
 
 export function playNotificationSound(notification: YellowNotification): void {
- const audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
- //const audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
- audio.play();
+ if (!get(notificationsSoundEnabled)) return;
+ notification._audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
+ //notification._audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
+ notification._audio.play();
  if (TAURI) {
   //playAndStopExample('/usr/share/sounds/Oxygen-Sys-Log-In-Long.ogg');
+ }
+}
+
+export function stopNotificationSound(notification: YellowNotification): void {
+ if (notification._audio) {
+  notification._audio.pause();
+  //notification._audio.currentTime = 0;
  }
 }
 

@@ -1,7 +1,11 @@
-<script>
+<script lang="ts">
  import Button from '../components/Button/Button.svelte';
+ import Code from '../components/Code/Code.svelte';
  import { accounts_config } from '../core.js';
- let text = '';
+
+ let text = $state('');
+
+ $inspect(text, 'text');
 
  function accountsConfigImport() {
   if (text) {
@@ -11,14 +15,5 @@
  }
 </script>
 
-<style>
- .json {
-  border: 1px solid #888;
-  border-radius: 10px;
-  padding: 10px;
- }
-</style>
-
-<div class="label">Paste the account export in JSON format here:</div>
-<textarea class="json" bind:value={text} rows="10" cols="50"></textarea>
-<Button onClick={accountsConfigImport}>Import</Button>
+<Code bind:code={text} />
+<Button img="img/import.svg" text="Import" onClick={accountsConfigImport} />

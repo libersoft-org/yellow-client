@@ -6,14 +6,17 @@ import { defaultWindowIcon } from '@tauri-apps/api/app';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Menu } from '@tauri-apps/api/menu';
 import { exit } from '@tauri-apps/plugin-process';
-import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
+//import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
 import { showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';
+import { product } from '@/core/core.js';
 
 let tray: TrayIcon | null = null;
+let tray_loading = false;
 
 async function showWindow() {
  log.debug('showWindow');
+ await getCurrentWindow().unminimize();
  await getCurrentWindow().show();
  await getCurrentWindow().setFocus();
 }
@@ -23,8 +26,21 @@ async function hideWindow() {
  await getCurrentWindow().hide();
 }
 
+export async function destroyTrayIcon() {
+ if (TAURI && !TAURI_MOBILE) {
+  log.debug('destroyTrayIcon');
+  if (tray) {
+   await tray.close();
+  }
+  await TrayIcon.removeById('main');
+  log.debug('TrayIcon closed');
+  tray = null;
+ }
+}
+
 export async function createTrayIcon() {
- if (tray) {
+ log.debug('createTrayIcon tray:', tray, 'tray_loading:', tray_loading);
+ if (tray || tray_loading) {
   return;
  }
  if (!get(showTrayIcon)) {
@@ -32,15 +48,17 @@ export async function createTrayIcon() {
   return;
  }
  if (TAURI && !TAURI_MOBILE) {
+  tray_loading = true;
+
   // Get the path to the icon file
   const iconPath = await defaultWindowIcon();
   //resolveResource('icons/icon.png');
 
   const action = async event => {
-   log.debug(`TrayIcon event: ${event.type}`);
+   log.debug(`TrayIcon event: ${event.type} button: ${event.button} buttonState: ${event.buttonState}`);
    // add the handle in the action to update the state
    //await handleIconState(event);
-   if (event.type === 'Click') {
+   if (event.type === 'Click' && event.button === 'Left' && event.buttonState === 'Down') {
     await showWindow();
    }
   };
@@ -55,17 +73,18 @@ export async function createTrayIcon() {
       id: 'show',
       text: 'Show',
       action: async () => {
+       log.debug('Show action');
        await showWindow();
       },
      },
-     await CheckMenuItem.new({
+     /*await CheckMenuItem.new({
       text: 'Notifications',
       id: 'notifications',
 
       action: async () => {
        log.debug('Notifications action');
       },
-     }),
+     }),*/
      {
       id: 'quit',
       text: 'Quit',
@@ -77,22 +96,10 @@ export async function createTrayIcon() {
     ],
    }),
    showMenuOnLeftClick: false,
-   tooltip: 'awesome tray tooltip',
+   tooltip: product,
   };
   tray = await TrayIcon.new(options);
+  tray_loading = false;
   log.debug('TrayIcon created:', tray);
- }
-}
-
-export async function destroyTrayIcon() {
- if (TAURI && !TAURI_MOBILE) {
-  log.debug('destroyTrayIcon');
-
-  {
-   if (tray) await tray.close();
-   TrayIcon.removeById('main');
-   log.debug('TrayIcon closed');
-   tray = null;
-  }
  }
 }

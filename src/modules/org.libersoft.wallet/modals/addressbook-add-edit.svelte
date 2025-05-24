@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import Input from '../../../core/components/Input/Input.svelte';
+ import Input from '@/core/components/Input/Input.svelte';
  import { addressBook } from '../wallet';
  export let close;
  export let params;
@@ -109,7 +109,7 @@
   </div>
  {/if}
  {#if params.item}
-  <Button text="Save" onClick={edit} />
+  <Button img="img/save.svg" text="Save" onClick={edit} />
  {:else}
   <Button text="Add" onClick={add} />
  {/if}

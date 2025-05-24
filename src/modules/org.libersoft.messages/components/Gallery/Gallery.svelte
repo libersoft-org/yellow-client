@@ -184,10 +184,10 @@
    {/if}
   {/key}
   <div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
-   <Icon img="img/caret-left.svg" alt="Previous" colorVariable="--icon-white" size="80" onClick={previous} />
+   <Icon img="img/caret-left.svg" alt="Previous" colorVariable="--icon-white" size="80px" onClick={previous} />
   </div>
   <div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
-   <Icon img="img/caret-right.svg" alt="Next" colorVariable="--icon-white" size="80" onClick={next} />
+   <Icon img="img/caret-right.svg" alt="Next" colorVariable="--icon-white" size="80px" onClick={next} />
   </div>
  </div>
 {/if}

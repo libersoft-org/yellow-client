@@ -1,8 +1,16 @@
 import { hexToCSSFilter } from 'hex-to-css-filter';
 
 export function getColorFromCSSToFilter(name) {
+ if (!name.startsWith('--')) {
+  throw new Error('getColorFromCSSToFilter: name must start with --');
+ }
  let v = getColorFromCSS(name);
+ if (!v) {
+  throw new Error(`getColorFromCSSToFilter: ${name} not found`);
+ }
+
  v = convertFromShortHex(v);
+ //console.log('getColorFromCSSToFilter', name, 'v=', v);
  return hexToCSSFilter(v).filter;
 }
 

@@ -60,7 +60,7 @@
  const stop = () => {
   const record = $player.record();
   record.stop();
-  //record.stopDevice(); todo: stop stream and then restart if needed by start method
+  //record.stopDevice(); TODO: stop stream and then restart if needed by start method
   //record.reset();
   isRecording = false;
   manuallyStop = true;
@@ -197,6 +197,7 @@
  });
 
  onDestroy(() => {
+  console.log('VideoRecorderContainer onDestroy playerInstance:', playerInstance);
   if (playerInstance) {
    playerInstance.dispose();
    playerInstance = null;

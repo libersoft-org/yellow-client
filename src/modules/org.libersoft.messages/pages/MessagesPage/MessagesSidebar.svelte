@@ -47,6 +47,8 @@
  }
 
  .bar-buttons {
+  position: relative;
+  z-index: 10;
   display: flex;
   color: #fff;
   background-color: #222;
@@ -60,6 +62,7 @@
   overflow: hidden;
   padding: 15px;
   font-weight: bold;
+  background-color: #222;
  }
 
  .bar-buttons .bar-button.grow {
@@ -84,12 +87,12 @@
  <div class="conversations">
   <div class="bar-buttons">
    <div class="bar-button grow">
-    <BaseButton onClick={clickNewConversation}>
-     <Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--icon-white" size="28" padding="0" />
+    <BaseButton data-testid="new-conversation-button" onClick={clickNewConversation}>
+     <Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--icon-white" size="28px" padding="0px" />
      <div class="new-conversation">New conversation</div>
     </BaseButton>
    </div>
-   <Icon img="img/settings.svg" alt="Message settings" colorVariable="--icon-white" size="28" padding="10" onClick={clickMessagesSettings} />
+   <Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--icon-white" size="28px" padding="10px" onClick={clickMessagesSettings} />
   </div>
   <div class="items" bind:this={elItems} on:scroll={parseScroll}>
    {#each $conversationsArray as c (c.address)}
@@ -103,5 +106,5 @@
   {/if}
  </div>
  <Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
- <Modal title="Message settings" body={ModalMessageSettings} bind:show={showMessageSettings} />
+ <Modal title="Messages settings" body={ModalMessageSettings} bind:show={showMessageSettings} />
 {/if}

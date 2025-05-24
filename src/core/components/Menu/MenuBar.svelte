@@ -1,13 +1,13 @@
-<script>
- import BaseButton from '../Button/BaseButton.svelte';
+<script lang="ts">
  import Icon from '../Icon/Icon.svelte';
- import Switch from '@/core/components/Switch/Switch.svelte';
+ import MenuBarDebug from './MenuBarDebug.svelte';
+ import { product } from '../../core.js';
 
- import { product, debug } from '../../core.js';
- import { addNotification } from '../../notifications.ts';
- import { log } from '../../tauri.ts';
- export let isMenuOpen;
- let menuIconColor = '';
+ type Props = {
+  isMenuOpen: boolean;
+ };
+
+ let { isMenuOpen = $bindable() }: Props = $props();
 
  function handleClick() {
   isMenuOpen = true;
@@ -31,20 +31,7 @@
 </style>
 
 <div class="bar">
- <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-black" size="30" padding="10" onClick={handleClick} />
+ <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-black" size="30px" padding="10px" onClick={handleClick} />
  <div class="product">{product}</div>
- {#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}(debug mode: <Switch bind:checked={$debug} />){/if}
- {#if $debug}
-  <BaseButton
-   onClick={async () => {
-    //log.debug('addNotification...');
-    await addNotification({
-     body: 'bla bla',
-     callback: event => {
-      log.debug('debug notification callback ' + event);
-     },
-    });
-   }}>addNotification</BaseButton
-  >
- {/if}
+ <MenuBarDebug />
 </div>

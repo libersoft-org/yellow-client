@@ -31,7 +31,7 @@
  <slot>
   <div class="top">
    {#if data.icon}
-    <Icon img={data.icon} alt="" size="50" padding="0" />
+    <Icon img={data.icon} alt="" size="50px" padding="0px" />
    {/if}
    <div>{data.body}</div>
   </div>

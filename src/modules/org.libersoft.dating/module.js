@@ -1,4 +1,4 @@
-import { registerModule } from '../../core/core.js';
+import { registerModule } from '@/core/core.js';
 import Sidebar from './pages/dating-sidebar.svelte';
 import Content from './pages/dating-content.svelte';
 

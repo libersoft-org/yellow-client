@@ -78,10 +78,10 @@
   try {
    if (fragment.childNodes) {
     const res = Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
-    console.log('processFragment fragment:', fragment, 'res:', res);
+    //console.log('processFragment fragment:', fragment, 'res:', res);
     return res;
    } else {
-    console.log('No child nodes found in fragment:', fragment);
+    //console.log('No child nodes found in fragment:', fragment);
     return [fragment];
    }
   } catch (e) {

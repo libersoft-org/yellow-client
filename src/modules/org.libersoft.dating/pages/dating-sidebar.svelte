@@ -1,11 +1,11 @@
 <script>
- import Core from '../../../core/core.js';
+ import core from '@/core/core.js';
  import Item from '../components/sidebar-item.svelte';
  import { page } from '../dating.js';
 
  function setPage(name) {
   page.set(name);
-  Core.hideSidebarMobile.set(true);
+  core.hideSidebarMobile.set(true);
  }
 </script>
 

@@ -3,10 +3,10 @@
 
  "compilerOptions": {
   "esModuleInterop": true,
-  "noImplicitAny" : false,
+  "noImplicitAny": false,
 
   // Enable latest features
-  "lib": ["ESNext", "DOM"],
+  "lib": ["ESNext", "DOM", "webworker"],
   "target": "ESNext",
   "module": "ESNext",
   "moduleDetection": "force",
@@ -30,4 +30,3 @@
   "noPropertyAccessFromIndexSignature": false
  }
 }
-

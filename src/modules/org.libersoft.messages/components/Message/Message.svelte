@@ -187,7 +187,7 @@
  }
 */
  onMount(() => {
-  console.log('onMount message:', message);
+  //console.log('onMount message:', message);
   /*configurePassive();
   window.addEventListener('touchmove', e => {
    //if (thisWasASwipe)
@@ -385,7 +385,7 @@
  }
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
  <div bind:this={elIntersectionObserver}></div>
  <!--<Reply name="Someone" text="Some text" />-->
  <!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
@@ -427,7 +427,7 @@
  <ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
  <ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
  <ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
- <ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} />
+ <ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} data-testid="reply-context-menu-item" />
  <ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
  <ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
 </ContextMenu>

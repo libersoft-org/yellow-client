@@ -2,9 +2,8 @@
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import AccountStatusIcon from './AccountStatusIcon.svelte';
  import AccountTitle from './AccountTitle.svelte';
- import { debug, findAccount } from '../../core.js';
- import { get } from 'svelte/store';
- import AccountStatus from './AccountStatus.svelte';
+ import { debug } from '../../core.js';
+ //import AccountStatus from './AccountStatus.svelte';
  export let a;
  export let clickSelectAccount;
 </script>
@@ -33,12 +32,12 @@
  }
 </style>
 
-<BaseButton onClick={() => clickSelectAccount($a.id)}>
+<BaseButton data-testid={'account ' + $a.credentials?.address} onClick={() => clickSelectAccount($a.id)}>
  <div class="item">
   <div class="title"><AccountStatusIcon account={a} /><AccountTitle {a} /></div>
-  <small><AccountStatus account={a} /></small>
+  <!-- <small><AccountStatus account={a} /></small> -->
   {#if $debug}
-   <small>
+   <div style="font-size: 12px;">
     <ul>
      <li>id: {$a.id}</li>
      <li>enabled: {$a.enabled}</li>
@@ -51,7 +50,7 @@
      <li>available_modules: {JSON.stringify($a.available_modules)}</li>
      <li>wsGuid: {$a.wsGuid}</li>
     </ul>
-   </small>
+   </div>
   {/if}
  </div>
 </BaseButton>

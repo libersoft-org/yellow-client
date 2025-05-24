@@ -4,7 +4,7 @@
  export let messageContent;
 
  onMount(() => {
-  console.log('messageContent:', messageContent);
+  //console.log('messageContent:', messageContent);
  });
 </script>
 

@@ -5,6 +5,7 @@
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
 
  interface ButtonProps extends HTMLButtonAttributes {
+  children?: any;
   img?: string;
   text?: string;
   enabled?: boolean;
@@ -17,12 +18,13 @@
   textColor?: string;
   expand?: boolean;
   colorVariable?: string;
-  iconSize?: number;
-  iconPadding?: number;
+  iconSize?: string;
+  iconPadding?: string;
   loading?: boolean;
+  radius?: number;
  }
 
- let { img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = 20, iconPadding = 0, loading = false, ...restProps }: ButtonProps = $props();
+ let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = '10px', bgColor = '#fd1', borderColor = '#b90', textColor = '#000', expand = false, colorVariable, iconSize = '20px', iconPadding = '0px', loading = false, ...restProps }: ButtonProps = $props();
 
  function handleClick(e) {
   if (enabled && onClick) {
@@ -38,9 +40,9 @@
   justify-content: center;
   gap: 5px;
   text-align: center;
-  border-radius: 10px;
   font-weight: bold;
   border: 1px solid;
+  border-radius: 10px;
  }
 
  .button.disabled {
@@ -57,7 +59,10 @@
 </style>
 
 <BaseButton onClick={handleClick} {...restProps} disabled={!enabled}>
- <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
+ <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';' + 'border-radius: ' + radius + 'px;'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
+  {#if children}
+   {@render children?.()}
+  {/if}
   {#if loading}
    <Spinner size="0px" containerMinHeight="auto" />
   {:else}

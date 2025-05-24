@@ -1,16 +1,15 @@
 <script>
- import { debug, active_account, module_decls, selected_module_id } from '../../core.js';
- import { getColorFromCSSToFilter } from '../../utils/colors.js';
+ import { active_account, module_decls, selected_module_id } from '../../core.js';
  import { get } from 'svelte/store';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import ModuleBarItem from './ModuleBarItem.svelte';
- import SettingsNotifications from '../Settings/SettingsNotifications.svelte';
  import resize from '@/core/actions/resizeObserver.ts';
  import { order } from '@/core/utils/utils.ts';
-
  export let onSelectModule;
  export let onCloseModule;
+ let itemsHeight = '50px';
+ let itemsEl;
  let module_data;
  let lastModuleSelected = false;
  let expanded = false;
@@ -48,6 +47,21 @@
   expanded = !expanded;
  }
 
+ $: {
+  if (expanded && itemsEl) {
+   itemsHeight = `${itemsEl.scrollHeight}px`;
+   setTimeout(() => {
+    if (expanded) itemsHeight = 'auto';
+   }, 250);
+  } else if (!expanded && itemsEl) {
+   const currHeight = itemsEl.scrollHeight;
+   itemsHeight = `${currHeight}px`;
+   requestAnimationFrame(() => {
+    itemsHeight = '50px';
+   });
+  }
+ }
+
  function onResize(entry) {
   const { target, contentRect } = entry;
   const { width, height } = contentRect;
@@ -64,17 +78,23 @@
   display: flex;
   border-bottom: 1px solid #555;
   background-color: #222;
+  display: flex;
+  align-items: center;
+  height: fit-content;
  }
 
  .items {
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: center;
   flex-grow: 1;
-  padding: 5px;
-  overflow: hidden;
+  row-gap: 10px;
   flex-wrap: wrap;
-  height: 50px;
+  padding: 10px;
+  margin: 0;
+  overflow: hidden;
+  will-change: height;
  }
 
  .items.expanded {
@@ -84,9 +104,29 @@
 
  .dropdown {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  height: 60px;
+  height: 100%;
+  width: max-content;
+  cursor: default;
+
+  :global(.icon) {
+   transform: rotate(0deg);
+   transition: transform 0.3s ease;
+
+   :global(.module-bar &) {
+    position: relative;
+    top: 14px;
+
+    &:is(.expanded &) {
+     transform: rotate(-180deg);
+    }
+   }
+  }
+
+  &:not(.expand-enabled &) {
+   display: none;
+  }
  }
 
  .module-bar:not(.expand-enabled) .dropdown {
@@ -97,18 +137,16 @@
 </style>
 
 <div class="module-bar" class:expand-enabled={expandEnabled}>
- <div use:resize={onResize} class="items {expanded ? 'expanded' : ''}">
+ <div use:resize={onResize} bind:this={itemsEl} class="items {expanded ? 'expanded' : ''}" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);">
   {#each module_decls_ordered as decl (decl.id)}
    <div>
     <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
    </div>
   {/each}
  </div>
- <BaseButton disabled={!expandEnabled} onClick={clickExpand}>
-  <div class="dropdown">
-   <Icon img={expanded ? 'img/up.svg' : 'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20" padding="10" />
+ <BaseButton disabled={!expandEnabled}>
+  <div class="dropdown {expanded ? 'expanded' : ''}">
+   <Icon img={'img/up.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="10" onClick={clickExpand} />
   </div>
  </BaseButton>
 </div>
-
-{#if $debug}<SettingsNotifications />{/if}

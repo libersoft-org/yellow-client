@@ -5,16 +5,17 @@
  interface Props {
   img: string;
   alt?: string;
-  size?: number;
-  padding?: number;
+  size?: string;
+  padding?: string;
   visibleOnMobile?: boolean;
   visibleOnDesktop?: boolean;
   colorVariable?: string;
   onClick?: () => void;
   isButton?: boolean;
+  'data-testid'?: string;
  }
 
- let { img, alt = '', size = 24, padding = 10, visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false }: Props = $props();
+ let { img, alt = '', size = '24px', padding = '10px', visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false, 'data-testid': dataTestId }: Props = $props();
 </script>
 
 <style>
@@ -43,17 +44,19 @@
 </style>
 
 {#snippet icon()}
- <div class="icon {visibleOnMobile ? '' : 'hideOnMobile'} {visibleOnDesktop ? '' : 'hideOnDesktop'}" style="padding: {padding}px;">
-  <img style="width: {size}px; height: {size}px; min-width: {size}px; min-height: {size}px; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} {alt} />
+ <div class="icon {!visibleOnMobile && 'hideOnMobile'} {!visibleOnDesktop && 'hideOnDesktop'}" style="padding: {padding};">
+  <img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} {alt} />
  </div>
 {/snippet}
 
 {#if img}
  {#if onClick || isButton}
-  <BaseButton {onClick}>
+  <BaseButton {onClick} data-testid={dataTestId}>
    {@render icon()}
   </BaseButton>
  {:else}
-  {@render icon()}
+  <div data-testid={dataTestId}>
+   {@render icon()}
+  </div>
  {/if}
 {/if}

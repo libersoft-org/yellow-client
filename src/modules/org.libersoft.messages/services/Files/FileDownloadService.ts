@@ -53,7 +53,7 @@ export class FileDownloadService extends EventEmitter {
     }
     if (download?.record.status === FileUploadRecordStatus.CANCELED || download?.record.status === FileUploadRecordStatus.ERROR) {
      setRunning(false);
-     // todo clear memory
+     // TODO: clear memory
      return;
     }
 
@@ -83,7 +83,7 @@ export class FileDownloadService extends EventEmitter {
      }
     } catch (e) {
      // try again
-     // todo: check for specific errors
+     // TODO: check for specific errors
      retry();
     }
    };

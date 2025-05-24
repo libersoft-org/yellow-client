@@ -101,7 +101,6 @@
 
  export async function doSendMessage(message, html) {
   //console.log('doSendMessage', message);
-  //await sendMessage(html ? message : messagebar_text_to_html(message));
   await sendMessage(message, html ? 'html' : 'plaintext');
   await setBarFocus();
   closeExpressions();
@@ -115,8 +114,8 @@
  }
 
  function resizeMessage() {
-  //console.log('resizeMessage');
-  handleResize(true /*todo save*/);
+  console.log('resizeMessage handleResize (scroll?)');
+  handleResize(true /*TODO: save*/);
   const maxHeight = 200;
   const textarea = elMessage;
   textarea.style.height = 'auto'; // ?
@@ -133,7 +132,10 @@
  const replyTo = messageBarReplyStore.getReplyTo();
 
  function clickSend(event) {
-  let messageToSend = elMessage.value;
+  clickSend2(elMessage.value);
+ }
+
+ function clickSend2(messageToSend) {
   if (messageToSend && $replyTo && $replyTo.type === ReplyToType.MESSAGE) {
    const replyToMessageUid = $replyTo?.data?.uid;
    messageToSend = `<Reply id="${replyToMessageUid}"></Reply>${messageToSend}`;
@@ -145,6 +147,15 @@
   resizeMessage(event);
   elMessage.focus();
   messageBarReplyStore.close();
+ }
+
+ function clickSendSplit(event) {
+  let messages = elMessage.value.split('\n');
+  for (let message of messages) {
+   if (message) {
+    clickSend2(message);
+   }
+  }
  }
 
  function keyEnter(event) {
@@ -180,7 +191,8 @@
  });
 
  documentHeight.subscribe(value => {
-  handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
+  console.log('documentHeight handleResize (scroll?)');
+  handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
  });
 
  keyboardHeight.subscribe(value => {
@@ -200,7 +212,7 @@
 
  function closeExpressions() {
   //console.log('closeExpressions');
-  //if (expressionsBottomSheetOpen) handleResize(true); // todo: save wasScrolledToBottom2 before showing bottom sheet
+  //if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
   expressionsBottomSheetOpen = false;
   expressionsMenu?.close();
  }
@@ -256,7 +268,7 @@
   display: contents;
  }
 
- .message {
+ .message-textarea {
   flex-grow: 1;
   padding: 5px;
   border: 0;
@@ -290,22 +302,25 @@
   <MessageBarRecorder />
 
   <div bind:this={elAttachment} data-testid="attachment-button">
-   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32" padding="0" isButton />
+   <Icon img="modules/{identifier}/img/attachment.svg" alt="Attachment" size="32px" padding="0px" isButton />
   </div>
 
   {#if expressionsAsContextMenu}
    <div bind:this={elExpressions}>
-    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32" padding="0" isButton />
+    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32px" padding="0px" isButton />
    </div>
   {:else}
-   <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32" padding="0" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
+   <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
   {/if}
 
-  <textarea id="message-input" class="message" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
-  <!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32" padding="0" onClick={onVideoRecordClick} />-->
-  <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32" padding="0" onClick={() => (showVideoRecorderModal = true)} />
-  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" colorVariable="--icon-yellow" size="32" padding="0" onClick={() => audioRecorderStore.setOpen(true)} />
-  <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32" padding="0" onClick={clickSend} colorVariable="--icon-yellow" />
+  <textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
+  <!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
+  <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
+  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" colorVariable="--icon-yellow" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
+  <Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" alt="Send" size="32px" padding="0px" onClick={clickSend} colorVariable="--icon-yellow" />
+  {#if $debug}
+   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="20px" padding="0px" onClick={clickSendSplit} colorVariable="--icon-yellow" />
+  {/if}
  </div>
 </div>
 

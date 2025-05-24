@@ -3,6 +3,7 @@ import { getCurrentWindow, PhysicalPosition, PhysicalSize, availableMonitors, ty
 import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor, notificationsSoundEnabled } from '../../core/notifications_settings.ts';
 import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
+import type { Unsubscriber } from 'svelte/store';
 
 type Position = {
  x: number;
@@ -41,39 +42,67 @@ export async function heightLogicalChanged(value: number): Promise<void> {
  height.set(h);
 }
 
-export async function initPositioning(): Promise<void> {
+export async function initPositioning(): Promise<() => void> {
+ let unsubscribers: Unsubscriber[] = [];
+
+ unsubscribers.push(
+  monitors.subscribe(v => {
+   //log.debug('/notifications monitors:', v);
+   updateNotificationsMonitor();
+  })
+ );
+
+ unsubscribers.push(
+  selectedMonitorName.subscribe(v => {
+   //log.debug('/notifications selectedMonitor:', v);
+   updateNotificationsMonitor();
+  })
+ );
+
+ unsubscribers.push(
+  mainWindowMonitor.subscribe(v => {
+   //log.debug('/notifications mainWindowMonitor:', v);
+   updateNotificationsMonitor();
+  })
+ );
+
+ unsubscribers.push(actualMonitorName.subscribe(updatePosition));
+ unsubscribers.push(selectedNotificationsCorner.subscribe(updatePosition));
+ unsubscribers.push(height.subscribe(updatePosition));
+ unsubscribers.push(position.subscribe(async v => moveWindow(v)));
+
  await updateMonitors();
  monitorInterval = setInterval(async () => {
   await updateMonitors();
  }, 1000);
  invoke('get_scale_factor', {});
+
+ return () => {
+  for (const u of unsubscribers) {
+   u();
+  }
+  if (monitorInterval) {
+   clearInterval(monitorInterval);
+  }
+ };
 }
 
-export async function deinitPositioning(): Promise<void> {
- if (monitorInterval) {
-  clearInterval(monitorInterval);
- }
+function moveWindow(v: Position): void {
+ if (BROWSER) return;
+ //log.debug('getCurrentWindow():', getCurrentWindow());
+ const size = { width: 400, height: get(height) };
+ //log.debug('setPosition', v, 'size:', size);
+ const w = getCurrentWindow();
+ w.setPosition(new PhysicalPosition(v.x, v.y));
+ w.setSize(new PhysicalSize(size.width, size.height));
+ //moveWindow(Position.TrayBottomRight);
+ //moveWindowConstrained(Position.TrayBottomCenter);
 }
 
 async function updateMonitors(): Promise<void> {
  //log.debug('notifications page updateMonitors');
  monitors.set(await availableMonitors());
 }
-
-monitors.subscribe(v => {
- //log.debug('/notifications monitors:', v);
- updateNotificationsMonitor();
-});
-
-selectedMonitorName.subscribe(v => {
- //log.debug('/notifications selectedMonitor:', v);
- updateNotificationsMonitor();
-});
-
-mainWindowMonitor.subscribe(v => {
- //log.debug('/notifications mainWindowMonitor:', v);
- updateNotificationsMonitor();
-});
 
 function updateNotificationsMonitor(): void {
  setActualMonitorName(get(selectedMonitorName));
@@ -158,19 +187,3 @@ async function updatePosition(): Promise<void> {
  );
  position.set(p);
 }
-
-actualMonitorName.subscribe(updatePosition);
-selectedNotificationsCorner.subscribe(updatePosition);
-height.subscribe(updatePosition);
-
-position.subscribe(async v => {
- if (BROWSER) return;
- //log.debug('getCurrentWindow():', getCurrentWindow());
- const size = { width: 400, height: get(height) };
- //log.debug('setPosition', v, 'size:', size);
- const w = getCurrentWindow();
- w.setPosition(new PhysicalPosition(v.x, v.y));
- w.setSize(new PhysicalSize(size.width, size.height));
- //moveWindow(Position.TrayBottomRight);
- //moveWindowConstrained(Position.TrayBottomCenter);
-});

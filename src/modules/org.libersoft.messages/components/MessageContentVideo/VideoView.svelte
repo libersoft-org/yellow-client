@@ -130,7 +130,7 @@
       {#if videoStarting}
        <Spinner show={true} size="14px" containerMinHeight="14px" color="var(--yellow-primary)" />
       {:else}
-       <Icon img="modules/{identifier}/img/play.svg" colorVariable="--icon-yellow" alt="Start video" size={24} padding={0} />
+       <Icon img="modules/{identifier}/img/play.svg" colorVariable="--icon-yellow" alt="Start video" size="24px" padding="0px" />
       {/if}
      </button>
     </div>
@@ -145,7 +145,7 @@
  </div>
  {#if !download}
   <div class="">
-   <Button img="modules/{identifier}/img/download.svg" onClick={onDownload} width="30px">Download</Button>
+   <Button img="img/download.svg" onClick={onDownload} width="30px" />
   </div>
  {:else}
   <MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />

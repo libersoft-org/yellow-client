@@ -8,6 +8,7 @@
  import AccountBarButton from './AccountBarButton.svelte';
  import AccountStatusIcon from './AccountStatusIcon.svelte';
  import AccountTitle from './AccountTitle.svelte';
+
  let accountsVisible = $state(false);
  let accountBar;
 
@@ -99,7 +100,7 @@
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
- <BaseButton onClick={toggle}>
+ <BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
   <div class="dropdown">
    {#if $active_account}
     <div class="text">
@@ -108,13 +109,13 @@
     </div>
    {:else}
     {#if $accounts.length > 0}
-     <div class="text">SELECT YOUR ACCOUNT</div>
+     <div class="text">-- SELECT YOUR ACCOUNT --</div>
     {/if}
     {#if $accounts.length === 0}
-     <div class="text">CREATE ACCOUNT FIRST</div>
+     <div class="text">-- CREATE ACCOUNT FIRST --</div>
     {/if}
    {/if}
-   <Icon img={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20" padding="0" />
+   <Icon img={accountsVisible ? 'img/up.svg' : 'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
   </div>
  </BaseButton>
  {#if accountsVisible}

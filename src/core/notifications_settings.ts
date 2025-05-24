@@ -9,7 +9,7 @@ export const notificationsPermission = writable(null);
 export const isRequestingNotificationsPermission = writable(false);
 export const notificationsSettingsAlert = writable('');
 
-export const selectedMonitorName = localStorageSharedStore<string | null>('selectedMonitorName', 'main_window_monitor');
+export const selectedMonitorName = localStorageSharedStore<string>('selectedMonitorName', 'main_window_monitor');
 export const selectedNotificationsCorner = localStorageSharedStore('selectedNotificationsCorner', 'bottom-right');
 export const enableCustomNotifications = localStorageSharedStore('enableCustomNotifications', true);
 export const customNotificationsOn = derived(enableCustomNotifications, $enableCustomNotifications => {

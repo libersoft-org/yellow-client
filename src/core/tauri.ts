@@ -1,32 +1,33 @@
 import { invoke } from '@tauri-apps/api/core';
 import * as app from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
-import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
-import { confirm } from '@tauri-apps/plugin-dialog';
-import { exit } from '@tauri-apps/plugin-process';
-import { closeToMinimize } from '@/core/settings.ts';
-import { get } from 'svelte/store';
+
+// Check if window is defined (tests may not have window)
+const hasWindow = typeof window !== 'undefined';
 
 let platformName = 'browser';
-if (window.__TAURI__ && window.__TAURI_OS_PLUGIN_INTERNALS__) {
+if (hasWindow && window.__TAURI__ && window.__TAURI_OS_PLUGIN_INTERNALS__) {
  platformName = platform();
 }
 
 declare global {
  interface Window {
   __TAURI__: typeof app;
+  __TAURI_DEBUG_MODE__: boolean;
  }
 }
 
-export const TAURI = Object.prototype.hasOwnProperty.call(window, '__TAURI__');
+// Core constants - no imports from other modules to avoid circular dependencies
+export const TAURI = hasWindow && Object.prototype.hasOwnProperty.call(window, '__TAURI__');
 export const BROWSER = !TAURI;
 export const TAURI_MOBILE = TAURI && (platformName === 'android' || platformName === 'ios');
 export const CUSTOM_NOTIFICATIONS = TAURI && !TAURI_MOBILE;
+export const IS_TAURI_DEBUG_MODE = TAURI && window.__TAURI_DEBUG_MODE__;
 
 export const log = {
  debug: (...args: any[]) => {
   console.log(...args);
-  if (window.__TAURI__) invoke('log', { message: formatNoColor(args) });
+  if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args) });
  },
 };
 
@@ -35,48 +36,4 @@ function formatNoColor(args) {
  const inspected_nocolor = args.map(o => (typeof o === 'string' ? o : JSON.stringify(o, null, 2)));
  for (const v of inspected_nocolor) msg += v + ' ';
  return msg;
-}
-
-export async function setDefaultWindowSize() {
- if (!TAURI || TAURI_MOBILE) {
-  return;
- }
- let w = getCurrentWindow();
- const size = await getCurrentWindow().innerSize();
- log.debug('size', size);
- if (size.width === 500 && size.height === 500) {
-  log.debug('setting default size');
-  const monitor_size = (await currentMonitor())?.size || {
-   width: 1280,
-   height: 720,
-  };
-  let new_size = new PhysicalSize(monitor_size.width * 0.8, monitor_size.height * 0.8);
-  await w.setSize(new_size);
-  setTimeout(async () => {
-   await w.center();
-  }, 200);
- }
-}
-
-export async function initWindow() {
- if (!TAURI || TAURI_MOBILE) {
-  return;
- }
- const unlisten = await getCurrentWindow().onCloseRequested(async event => {
-  /*const confirmed = await confirm('Are you sure?');
-   if (confirmed) {
-     await quit();
-   }*/
-  if (get(closeToMinimize)) {
-   log.debug('hiding window');
-   await getCurrentWindow().hide();
-  } else {
-   await quit();
-  }
- });
-}
-
-async function quit() {
- await invoke('close_notifications_window');
- await exit(0);
 }

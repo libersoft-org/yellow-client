@@ -1,6 +1,7 @@
 # Development Guidelines for Yellow Project
 
 ## Build, Lint & Test Commands
+
 - Build: `bun run build` or `vite build` (client)
 - TypeCheck: `bun run typecheck` or `tsc --noEmit`
 - Test (all): `bun test` or `vitest`
@@ -8,6 +9,7 @@
 - Format: `prettier --config prettier-libersoft.json --plugin prettier-plugin-svelte --write "src/**/*.{js,ts,css,html,svelte}"`
 
 ## Code Style
+
 - Formatting: Prettier with custom config (1-space tabs, single quotes)
 - Naming: camelCase for variables/functions, PascalCase for classes/interfaces
 - Components: kebab-case.svelte files, camelCase props
@@ -17,6 +19,7 @@
 - Imports: Use explicit file extensions (.js, .ts, .svelte)
 
 ## Architecture
+
 - Small, focused components with clear responsibilities
 - Svelte for UI components with TypeScript support
 - Modules system for extensible functionality

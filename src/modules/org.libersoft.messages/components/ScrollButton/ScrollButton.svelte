@@ -13,7 +13,7 @@
 
 <style>
  .scroll-button {
-  z-index: 1000;
+  z-index: 99;
   position: absolute;
   display: flex;
   align-items: center;
@@ -33,7 +33,7 @@
 {#if visible}
  <BaseButton {onClick}>
   <div class="scroll-button" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}">
-   <Icon img="img/caret-{direction ? 'up' : 'down'}.svg" alt={direction ? '˄' : '˅'} colorVariable="--icon-gray" size="32" padding="0" />
+   <Icon img="img/caret-{direction ? 'up' : 'down'}.svg" alt={direction ? '˄' : '˅'} colorVariable="--icon-gray" size="32px" padding="0px" />
   </div>
  </BaseButton>
 {/if}

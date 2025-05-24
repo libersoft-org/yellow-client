@@ -3,7 +3,7 @@
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Select from '@/core/components/Select/Select.svelte';
- import SelectOption from '@/core/components/Select/SelectOption.svelte';
+ import Option from '@/core/components/Select/SelectOption.svelte';
  import Button from '@/core/components/Button/Button.svelte';
  import { identifier } from '@/org.libersoft.messages/messages';
  import { debug } from '@/core/core';
@@ -184,10 +184,10 @@
  <div class="device-select">
   <Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} {disabled}>
    {#if disabled}
-    <SelectOption value={''} disabled selected text={emptyMessage} />
+    <Option value={''} disabled selected text={emptyMessage} />
    {/if}
    {#each devices as device (device.deviceId)}
-    <SelectOption value={device.deviceId} selected={device.deviceId === selectedDeviceId} text={device.label} />
+    <Option value={device.deviceId} selected={device.deviceId === selectedDeviceId} text={device.label} />
    {/each}
   </Select>
  </div>
@@ -197,7 +197,7 @@
  <div bind:this={videoRef} class="video-recorder-video-placeholder">
   {#if error}
    <div class="video-recorder-error">
-    <Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-red" size={30} padding={15} />
+    <Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-red" size="30px" padding="15px" />
     {#if errorMessages}
      {#each errorMessages as message}
       <div>{message}</div>
@@ -228,7 +228,7 @@
   <div class="video-recorder-actions-left">
    <ButtonWithMenu>
     {#snippet sideButtonSlot()}
-     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
+     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size="16px" padding="6px" onClick={() => {}} />
     {/snippet}
     {#snippet mainButtonSlot()}
      <div class="mic-button-wrapper">
@@ -250,7 +250,7 @@
    </ButtonWithMenu>
    <ButtonWithMenu>
     {#snippet sideButtonSlot()}
-     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size={16} padding={6} onClick={() => {}} />
+     <Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size="16px" padding="6px" onClick={() => {}} />
     {/snippet}
     {#snippet mainButtonSlot()}
      <div>

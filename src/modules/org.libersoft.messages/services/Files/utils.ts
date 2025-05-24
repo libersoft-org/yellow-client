@@ -84,7 +84,7 @@ export async function transformFilesForServer(files: FileList) {
   if (mimeType.startsWith('audio/')) {
    // console.log('transform audio file', file);
 
-   // @ts-ignore todo metadata typing
+   // @ts-ignore TODO metadata typing
    file.metadata = await MediaUtils.getAudioDataFromArrayBuffer(await file.arrayBuffer());
   }
 
@@ -101,7 +101,7 @@ export async function transformFilesForServer(files: FileList) {
     console.error('Error extracting thumbnail', err);
     debug('Error extracting thumbnail', err);
    }
-   // @ts-ignore todo metadata typing
+   // @ts-ignore TODO metadata typing
    file.metadata = { thumbnail };
   }
  }

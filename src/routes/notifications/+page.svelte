@@ -1,29 +1,54 @@
 <script>
- import '../../app.css';
+ //import '../../../static/app.css';
  import Button from '@/core/components/Button/Button.svelte';
  import { writable, get } from 'svelte/store';
  import Notification from '../../core/components/Notification/Notification.svelte';
  import { multiwindow_store } from '../../core/multiwindow_store.ts';
- import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor, notificationsSoundEnabled } from '../../core/notifications_settings.ts';
  import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
  import { onMount, onDestroy } from 'svelte';
  import { invoke } from '@tauri-apps/api/core';
- import { playNotificationSound } from '@/core/notifications.ts';
- import { heightLogicalChanged, initPositioning, deinitPositioning } from './position.ts';
+ import { heightLogicalChanged, initPositioning } from './position.ts';
 
  export let maxNotifications = 3;
  let notifications = writable([]);
  let counter = 0;
  let heightLogical = writable(100);
 
- heightLogical.subscribe(async v => {
-  await heightLogicalChanged(v);
+ // Catch all synchronous errors
+ window.addEventListener('error', event => {
+  // event.error is the Error object
+  console.error('Uncaught error:', event.error);
+  console.error('Stack trace:\n', event.error?.stack);
+ });
+
+ // Catch unhandled promise rejections
+ window.addEventListener('unhandledrejection', event => {
+  const reason = event.reason;
+  console.error('Unhandled promise rejection:', reason);
+  console.error('Stack trace:\n', reason?.stack || reason);
  });
 
  onMount(async () => {
   log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+
+  // Catch all synchronous errors
+  window.addEventListener('error', event => {
+   // event.error is the Error object
+   console.error('Uncaught error:', event.error);
+   console.error('Stack trace:\n', event.error?.stack);
+  });
+
+  // Catch unhandled promise rejections
+  window.addEventListener('unhandledrejection', event => {
+   const reason = event.reason;
+   console.error('Unhandled promise rejection:', reason);
+   console.error('Stack trace:\n', reason?.stack || reason);
+  });
+
+  let deinit;
+
   if (window.__TAURI__) {
-   initPositioning();
+   deinit = initPositioning();
    invoke('show', {});
   }
   if (CUSTOM_NOTIFICATIONS) {
@@ -31,10 +56,12 @@
   } else {
    log.debug('CUSTOM_NOTIFICATIONS is not defined');
   }
+
+  return deinit;
  });
 
- onDestroy(() => {
-  deinitPositioning();
+ heightLogical.subscribe(async v => {
+  await heightLogicalChanged(v);
  });
 
  async function initNotificationsPage() {
@@ -45,7 +72,7 @@
    if (!v) {
     onNotificationRemoved(k);
    } else {
-    addNotification(v);
+    addNotificationData(v);
    }
   });
   s.onKeyChange((k, v) => {
@@ -57,15 +84,12 @@
   values = values.filter(v => !!v);
   values.sort((a, b) => a.ts - b.ts);
   for (let v of values) {
-   if (v) await addNotification(v);
+   if (v) await addNotificationData(v);
   }
  }
 
- function addNotification(data) {
-  log.debug('addNotification data:', data);
-  if (get(notificationsSoundEnabled)) {
-   playNotificationSound(data);
-  }
+ function addNotificationData(data) {
+  log.debug('addNotificationData data:', data);
   data.onClose = onClose.bind(data);
   data.onClick = onClick.bind(data);
   notifications.update(n => [...n, data]);
@@ -124,7 +148,7 @@
   await s.delete(id);
   notifications.update(v => v.filter(item => item.id !== id));
   if (get(notifications).length === 0) {
-   invoke('close_notifications_window', {});
+   invoke('hide_notifications_window', {});
   }
  }
 

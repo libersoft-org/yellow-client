@@ -1,12 +1,11 @@
 <script>
  import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
  import { get } from 'svelte/store';
- import { online, messagesArray, events, insertEvent, identifier } from '../../messages.js';
+ import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading } from '../../messages.js';
  import { getGuid, debug } from '@/core/core.js';
  import Button from '@/core/components/Button/Button.svelte';
  import Spinner from '@/core/components/Spinner/Spinner.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
- import ModalWithSlot from '@/core/components/Modal/ModalWithSlot.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import resize from '@/core/actions/resizeObserver.ts';
  import { highlightElement } from '@/core/utils/animationUtils.ts';
@@ -16,6 +15,8 @@
  import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
  import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
  import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
+ import { log } from '@/core/tauri.ts';
+
  export let conversation;
  export let setBarFocus;
  let scrollButtonVisible = true;
@@ -57,11 +58,11 @@
  let scrolledToBottom1 = false;
 
  /*
- todo resizer observer does not trigger when elements change size.
- $: if (elMessages) {
-  new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
- }
-*/
+  // TODO: resizer observer does not trigger when elements change size.
+  $: if (elMessages) {
+   new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
+  }
+ */
 
  onMount(() => {
   setInterval(() => {
@@ -78,6 +79,7 @@
     console.log('messagesHeight:', messagesHeight, 'height:', height);
     console.log('scrolledToBottom0:', scrolledToBottom0, 'scrolledToBottom1:', scrolledToBottom1);
     if (scrolledToBottom0) {
+     console.log('fixScroll: scrollToBottom');
      scrollToBottom();
     }
     messagesHeight = height;
@@ -104,6 +106,7 @@
 
  events.subscribe(e => {
   if (e?.length) {
+   console.log('events.subscribe:', e);
    handleEvents(e);
    itemsCount = itemsArray.length;
    events.set([]);
@@ -120,6 +123,7 @@
  function restoreScrollPosition(event) {
   //console.log('restoreScrollPosition elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
   const scrollDifference = elMessages.scrollHeight - event.savedScrollHeight;
+  console.log('restoreScrollPosition scrollTop');
   elMessages.scrollTop = event.savedScrollTop + scrollDifference;
   //console.log('scrollDifference:', scrollDifference, 'new elMessages.scrollTop:', elMessages.scrollTop);
  }
@@ -127,7 +131,10 @@
  function scrollToBottom() {
   // TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
   //console.log('SCROLLTOBOTTOM');
-  if (elMessages) elMessages.scrollTop = elMessages.scrollHeight;
+  if (elMessages) {
+   console.log('scrollToBottom');
+   elMessages.scrollTop = elMessages.scrollHeight;
+  }
  }
 
  function isScrolledToBottom() {
@@ -157,6 +164,7 @@
   if (doBlockScroll) {
    e.preventDefault();
    e.stopPropagation();
+   console.log('touchMove: elMessages.scrollTop:');
    elMessages.scrollTop = scrollStartPos;
   }
  }
@@ -189,26 +197,39 @@
    } else if (event.type === 'lazyload_prev') {
     restoreScrollPosition(event);
    } else if (event.type === 'lazyload_next') {
-    //pass
+    await jumpToLazyLoaderFromTop(event);
    } else if (event.type === 'new_message') {
+    console.log('new_message scrollToBottom:', event);
     if (event.wasScrolledToBottom) scrollToBottom();
    } else if (event.type === 'send_message') {
+    console.log('send_message scrollToBottom:', event);
     if (event.wasScrolledToBottom) scrollToBottom();
    } else if (event.type === 'initial_load') {
-    if (elUnseenMarker) elUnseenMarker.scrollIntoView();
-    else scrollToBottom();
+    if (elUnseenMarker) {
+     console.log('initial_load elUnseenMarker.scrollIntoView');
+     elMessages.scrollTop = elMessages.scrollHeight;
+     await tick();
+     elUnseenMarker.scrollIntoView();
+    } else {
+     console.log('initial_load scrollToBottom');
+     scrollToBottom();
+    }
    } else if (event.type === 'jump_to_referenced_message') {
     setTimeout(() => {
      const msgEl = event.referenced_message.el.getRef();
+     console.log('jump_to_referenced_message scrollIntoView:', msgEl);
      msgEl.scrollIntoView({ behavior: 'instant' });
      highlightElement(msgEl);
-    }, 200); // todo: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
+    }, 200); // TODO: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
    } else if (event.type === 'properties_update') {
     //console.log('properties_update');
    } else if (event.type === 'resize') {
     //console.log('resize uiEvent:', event);
     if (event.wasScrolledToBottom || event.wasScrolledToBottom2) {
-     setTimeout(() => scrollToBottom(), 0);
+     setTimeout(() => {
+      console.log('resize scrollToBottom');
+      scrollToBottom();
+     }, 0);
      //scrollToBottom();
     }
    }
@@ -271,6 +292,28 @@
   insertEvent({ type: 'gc', array: get(messagesArray) });
  }
 
+ $: log.debug('itemsArray:', itemsArray);
+
+ async function jumpToLazyLoaderFromTop(event) {
+  //console.log('jumpToLazyLoaderFromTop:', event);
+  let el;
+  for (let l of event.loaders) {
+   //   console.log('jumpToLazyLoaderFromTop: l:', l);
+   if (l.reason === 'lazyload_next' && l.loaderElement) {
+    el = l.loaderElement;
+    break;
+   }
+  }
+  if (el) {
+   console.log('jumpToLazyLoaderFromTop: el:', el, 'scrollTop');
+   elMessages.scrollTop = 0;
+   scrolledToBottom0 = false;
+   scrolledToBottom1 = false;
+   await tick();
+   //await el.scrollIntoView();
+  }
+ }
+
  async function handleEvents(events) {
   console.log('handleEvents:', events);
 
@@ -293,7 +336,7 @@
    uiEvents.push(event);
    saveScrollPosition(event);
 
-   /* todo 1 :
+   /* TODO 1 :
    do not scroll to bottom on new messages if unread_marker is present (or rather, if window is not active and only unread messages are at the bottom - see also contact list red number )
    */
    /*
@@ -315,7 +358,7 @@
    }
    if (messages.length === 0) {
     console.log('handleEvents: no messages itemsArray');
-    itemsArray = [{ type: 'no_messages' }];
+    itemsArray = [{ type: 'initial_loading_placeholder' }];
     return;
    }
    messages = mergeAuthorship(messages);
@@ -358,9 +401,9 @@
      console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
      //console.log(JSON.stringify(m), JSON.stringify(next));
      //console.log('m.next:', m.next, 'next.id:', next.id);
-     let l1 = getLoader({ next: 5, base: m.id, reason: 'lazyload_prev' });
+     let l1 = getLoader({ next: 5, base: m.id, reason: 'lazyload_next' });
      l1.force_refresh = force_refresh;
-     let l2 = getLoader({ prev: 5, base: next.id, reason: 'lazyload_next' });
+     let l2 = getLoader({ prev: 5, base: next.id, reason: 'lazyload_prev' });
      l2.force_refresh = force_refresh;
      event.loaders.push(l1);
      event.loaders.push(l2);
@@ -605,13 +648,6 @@
   <div>items count: {itemsCount}</div>
   <div>messagesHeight: {messagesHeight}</div>
   <div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
-  <ModalWithSlot show={showDebugModal} title="Debug modal">
-   <div slot="body">
-    <pre>{JSON.stringify(itemsArray, null, 2)}</pre>
-    ---
-    <pre>{JSON.stringify(loaders, null, 2)}</pre>
-   </div>
-  </ModalWithSlot>
  </div>
 {/if}
 
@@ -620,15 +656,19 @@
 <div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone" use:resize={onResize}>
  <div class="dnd-overlay {showFileDndOverlay ? 'drop-active' : ''}">
   <div class="dnd-overlay-inner">
-   <Icon img="modules/{identifier}/img/file.svg" colorVariable="--icon-white" alt="Drop files icon" size="75" padding="0" />
+   <Icon img="modules/{identifier}/img/file.svg" colorVariable="--icon-white" alt="Drop files icon" size="75px" padding="0px" />
    <div class="dnd-overlay-text">Drop files here to send them</div>
   </div>
  </div>
- {#if itemsArray.length === 1 && itemsArray[0].type === 'no_messages'}
+ {#if itemsArray.length === 0 || (itemsArray.length === 1 && itemsArray[0].type === 'no_messages')}
   <div class="spacer"></div>
   <div class="no-messages">
    {#if $online}
-    <div class="body">Send a message to start a conversation</div>
+    {#if $messagesIsInitialLoading}
+     <Spinner />
+    {:else}
+     <div class="body">Send a message to start a conversation</div>
+    {/if}
    {:else}
     <div class="body">Module is offline, messages will be delivered later</div>
    {/if}
@@ -643,9 +683,7 @@
     <!--  {JSON.stringify(m, null, 2)}-->
     <!-- </div>-->
     <!--{/if}-->
-    {#if m.type === 'no_messages'}{:else if m.type === 'initial_loading_placeholder'}
-     <Spinner />
-    {:else if m.type === 'hole'}
+    {#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole'}
      <MessageLoader loader={m.top} />
      <div class="hole">{m.uid}</div>
      <MessageLoader loader={m.bottom} />

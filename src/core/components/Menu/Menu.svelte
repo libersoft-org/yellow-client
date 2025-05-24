@@ -1,15 +1,26 @@
-<script>
+<script lang="ts">
  import BaseButton from '../Button/BaseButton.svelte';
  import MenuItem from './MenuItem.svelte';
+ import MenuAppSection from './MenuAppSection.svelte';
  import Modal from '../Modal/Modal.svelte';
  import ModalSettings from '../../modals/Settings.svelte';
  import Icon from '../Icon/Icon.svelte';
  import DialogExit from '../../dialogs/Exit.svelte';
- import { product, version, build, commit, link } from '../../core.js';
+ import { product, version, build, commit, branch, link } from '../../core.js';
  import { TAURI, BROWSER } from '@/core/tauri.ts';
- export let showMenu = false;
- export let showModalSettings = false;
- export let elDialogExit;
+ import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
+
+ type Props = {
+  showMenu: boolean;
+  showModalSettings: boolean;
+ };
+
+ let { showMenu = $bindable(false), showModalSettings = false }: Props = $props();
+ let elDialogExit: InstanceType<typeof DialogExit>;
+
+ //  let native_client_commit;
+ //  let native_client_build_ts;
+
  const menuItems = [
   {
    title: 'Donate',
@@ -153,7 +164,7 @@
 <div class="menu {showMenu ? 'open' : ''}">
  <div>
   <div class="header">
-   <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30" padding="15" onClick={clickMenuClose} />
+   <Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30px" padding="15px" onClick={clickMenuClose} />
   </div>
   <div class="items">
    {#each menuItems as item}
@@ -164,10 +175,32 @@
  <div class="footer">
   <BaseButton onClick={() => openPage(link)}>
    <div class="logo">
-    <Icon img="img/logo.svg" alt={product} size="30" padding="0" />
+    <Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
     <div>{product}</div>
    </div>
   </BaseButton>
+  {#if TAURI}
+   <MenuAppSection text="Client app" />
+   <div class="version">
+    <div>Commit:</div>
+    {#await getNativeClientBuildCommitHash() then hash}
+     <div class="bold">{(hash as string).slice(1, 9)}</div>
+    {/await}
+   </div>
+   <div class="version">
+    <div>Build:</div>
+    {#await getNativeClientBuildTs() then ts}
+     <div class="bold">{(ts as string).slice(1, -1)}</div>
+    {/await}
+   </div>
+   <div class="version">
+    <div>Branch:</div>
+    {#await getNativeClientBuildBranch() then hash}
+     <div class="bold">{(hash as string).slice(1, -1)}</div>
+    {/await}
+   </div>
+   <MenuAppSection text="Web app" />
+  {/if}
   <div class="version">
    <div>Version:</div>
    <div class="bold">{version}</div>
@@ -179,6 +212,10 @@
   <div class="version">
    <div>Commit:</div>
    <div class="bold">{commit}</div>
+  </div>
+  <div class="version">
+   <div>Branch:</div>
+   <div class="bold">{branch}</div>
   </div>
  </div>
 </div>

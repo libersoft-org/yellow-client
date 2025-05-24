@@ -9,11 +9,12 @@
   onKeydown?: (e: KeyboardEvent) => void;
   min?: number;
   max?: number;
-  label?: any;
+  step?: number;
   inputRef?: HTMLInputElement;
+  'data-testid'?: string;
  }
 
- let { type = 'text', placeholder = '', value = $bindable(), inputRef: parentInputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, label = undefined }: Props = $props();
+ let { type = 'text', placeholder = '', value = $bindable(), inputRef: parentInputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
 
  let inputRef = $state<HTMLInputElement>();
 
@@ -46,34 +47,6 @@
  input:focus {
   outline: 2px solid #0060df;
  }
-
- .input {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-width: 100%;
-  min-width: 0;
-  flex: 1 1 auto;
- }
-
- label {
-  font-size: 15px;
-  padding-left: 5px;
-  font-weight: bold;
- }
 </style>
 
-{#snippet input()}
- <input id={label} bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
-{/snippet}
-
-<div class="input">
- {#if label}
-  <label for={label}>
-   {label}
-  </label>
-  {@render input()}
- {:else}
-  {@render input()}
- {/if}
-</div>
+<input data-testid={testId} bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />

@@ -1,8 +1,16 @@
-<script>
+<script lang="ts">
  import Button from '@/core/components/Button/Button.svelte';
  import { delAccount } from '../accounts_config.js';
- export let close;
- export let params;
+
+ type Props = {
+  close: () => void;
+  params: {
+   id: string;
+   name: string;
+  };
+ };
+
+ let { close, params = $bindable() }: Props = $props();
 
  function clickDel() {
   console.log('clickDel');
@@ -11,5 +19,5 @@
  }
 </script>
 
-<div>Would you like to delete the account "<span class="bold">{params.name}</span>" (id: <span class="bold">{params.id}</span>)?</div>
+<div>Would you like to delete the account "<span class="bold">{params?.name}</span>" (id: <span class="bold">{params?.id}</span>)?</div>
 <Button text="Delete" onClick={clickDel} />

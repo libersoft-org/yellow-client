@@ -2,9 +2,7 @@ import { tick } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 import { log } from './tauri.ts';
-
 //import {} from './client_debug';
-
 export const debugBuffer = writable('');
 export const documentHeight = writable(0);
 export const isMobile = writable(false);
@@ -13,38 +11,80 @@ export const hideSidebarMobile = writable(false);
 export let isClientFocused = writable(true);
 export let selected_corepage_id = writable(null);
 export let selected_module_id = writable(null);
-
 export let modules_order = localStorageSharedStore('modules_order', {});
 export let modules_disabled = localStorageSharedStore('modules_disabled', []);
 export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
-
-debug.subscribe(value => {
- console.log('CLIENT_DEBUG:', value);
-});
-
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
 export const version = '0.0.1';
-export const build = new Date(__BUILD_DATE__)
- .toISOString()
- .replace('T', ' ')
- .replace(/\.\d+Z/, '');
-export const commit = __COMMIT_HASH__;
+export const build =
+ typeof __BUILD_DATE__ !== 'undefined'
+  ? new Date(__BUILD_DATE__)
+     .toISOString()
+     .replace('T', ' ')
+     .replace(/\.\d+Z/, '')
+  : 'unknown';
+export const commit = typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'unknown';
+export const branch = typeof __BRANCH__ !== 'undefined' ? __BRANCH__ : 'unknown';
 export const link = 'https://yellow.libersoft.org';
-
 // declarations of modules that this client supports
 export let module_decls = writable({});
-
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
 
-selected_module_id.subscribe(async id => {
- await tick();
- let module_decls_v = get(module_decls);
- for (const k in module_decls_v) {
-  const module = module_decls_v[k];
-  module.callbacks.onModuleSelected?.(id === module.id);
- }
-});
+export function init() {
+ let subs = [];
+ subs.push(
+  selected_module_id.subscribe(async id => {
+   await tick();
+   let module_decls_v = get(module_decls);
+   for (const k in module_decls_v) {
+    const module = module_decls_v[k];
+    module.callbacks.onModuleSelected?.(id === module.id);
+   }
+  })
+ );
+
+ subs.push(
+  modules_order.subscribe(value => {
+   //console.log('MODULES ORDER:', value);
+   let module_decls_v = get(module_decls);
+   for (const k in module_decls_v) {
+    const decl = module_decls_v[k];
+    if (value[decl.id] !== undefined) {
+     decl.order = value[decl.id];
+    }
+   }
+   module_decls.set(module_decls_v);
+  })
+ );
+
+ subs.push(
+  accounts_config.subscribe(value => {
+   log.debug('ACCOUNTS CONFIG:', value);
+   // TODO: implement configuration of accounts order
+   let accounts_list = get(accounts);
+   log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
+   for (let config of value) {
+    log.debug('CONFIG', config);
+    let account = accounts_list.find(acc => get(acc).id === config.id);
+    if (account) {
+     //log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
+     updateLiveAccount(account, config);
+    } else {
+     log.debug('CREATE ACCOUNT', config);
+     createLiveAccount(config);
+    }
+   }
+   removeLiveAccountsNotInConfig(accounts_list, value);
+  })
+ );
+
+ return () => {
+  for (const sub of subs) {
+   sub();
+  }
+ };
+}
 
 export function registerModule(id, decl) {
  console.log('REGISTER MODULE:', id, decl);
@@ -60,24 +100,11 @@ export function registerModule(id, decl) {
  let module_decls_v = get(module_decls);
  module_decls_v[id] = decl;
  module_decls.set(module_decls_v);
+ decl.deinit = decl.callbacks?.init?.();
 }
 
-modules_order.subscribe(value => {
- //console.log('MODULES ORDER:', value);
- let module_decls_v = get(module_decls);
- for (const k in module_decls_v) {
-  const decl = module_decls_v[k];
-  if (value[decl.id] !== undefined) {
-   decl.order = value[decl.id];
-  }
- }
- module_decls.set(module_decls_v);
-});
-
 export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
-
 export const accounts_config = localStorageSharedStore('accounts_config', import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS ? JSON.parse(import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS) : []);
-
 export let accounts = writable([]);
 
 import.meta.hot?.dispose(() => {
@@ -109,10 +136,6 @@ export let active_account = derived(active_account_store, ($active_account_store
   set(account);
  });
  return () => unsubscribe();
-});
-
-active_account.subscribe(value => {
- //console.log('ACTIVE ACCOUNT:', value);
 });
 
 export function active_account_module_data(module_id) {
@@ -216,25 +239,6 @@ function removeLiveAccountsNotInConfig(accounts_list, value) {
  }
 }
 
-accounts_config.subscribe(value => {
- log.debug('ACCOUNTS CONFIG:', value);
- void 'TODO: implement configuration of accounts order';
- let accounts_list = get(accounts);
- log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
- for (let config of value) {
-  log.debug('CONFIG', config);
-  let account = accounts_list.find(acc => get(acc).id === config.id);
-  if (account) {
-   //log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
-   updateLiveAccount(account, config);
-  } else {
-   log.debug('CREATE ACCOUNT', config);
-   createLiveAccount(config);
-  }
- }
- removeLiveAccountsNotInConfig(accounts_list, value);
-});
-
 export function toggleAccountEnabled(id) {
  log.debug('TOGGLE ACCOUNT ENABLED accounts_config', accounts_config);
  log.debug('TOGGLE ACCOUNT ENABLED id', id);
@@ -285,7 +289,6 @@ function constructAccount(id, credentials, enabled, settings) {
   module_data: {},
   available_modules: {},
  };
-
  let account = writable(acc);
  return account;
 }
@@ -296,7 +299,7 @@ function _enableAccount(account) {
  acc.suspended = false;
  acc.status = 'Enabled.';
  (acc.events = new EventTarget()),
-  /* todo: unsubscribe on disable */
+  /* TODO: unsubscribe on disable */
   acc.events.addEventListener('modules_available', event => {
    for (const k in event.detail?.data?.modules_available) {
     acc.available_modules[k] = event.detail.data.modules_available[k];
@@ -305,7 +308,6 @@ function _enableAccount(account) {
    onAvailableModulesChanged(acc);
    account.update(v => v);
   });
-
  account.update(v => v);
  // TODO: use admin logic
  reconnectAccount(account);
@@ -335,13 +337,10 @@ function reconnectAccount(account) {
   log.debug('Account status not "Enabled." or "Retrying...", not reconnecting:', acc.status);
   return;
  }
-
  //clearPingTimer(acc);
  clearReconnectTimer(account);
  disconnectAccount(acc);
-
  let socket_id;
-
  log.debug('acc.socket.readyState:', acc.socket?.readyState);
  if (!acc.socket || acc.socket.readyState === WebSocket.CLOSED || acc.socket.readyState === WebSocket.CONNECTING || acc.socket.readyState === WebSocket.CLOSING || acc.socket.url !== acc.credentials.server) {
   if (acc.socket) {
@@ -354,14 +353,12 @@ function reconnectAccount(account) {
     acc.socket.close();
    }
   }
-
   socket_id = ++acc.socket_id;
   log.debug('Creating new WebSocket:', acc.credentials.server);
   acc.status = 'Connecting...';
   acc.lastCommsTs = Date.now();
   acc.lastTransmissionTs = Date.now();
   account.update(v => v);
-
   try {
    acc.socket = new WebSocket(acc.credentials.server);
   } catch (e) {
@@ -373,7 +370,6 @@ function reconnectAccount(account) {
    account.update(v => v);
    return;
   }
-
   acc.socket.onmessage = event => {
    if (acc.socket_id !== socket_id) {
     log.debug('Socket ID changed, ignoring message:', event);
@@ -394,7 +390,6 @@ function reconnectAccount(account) {
    account.update(v => v);
    sendLoginCommand(account);
   };
-
   acc.socket.onerror = event => {
    if (acc.socket_id !== socket_id) {
     log.debug('Socket ID changed, ignoring error event:', event);
@@ -406,7 +401,6 @@ function reconnectAccount(account) {
    acc.session_status = undefined;
    account.update(v => v);
   };
-
   acc.socket.onclose = event => {
    if (acc.socket_id !== socket_id) {
     log.debug('Socket ID changed, ignoring close event:', event);
@@ -446,7 +440,6 @@ function retry(account, msg) {
 
 function setReconnectTimer(account) {
  let acc = get(account);
-
  if (acc.reconnectTimer != null) {
   clearInterval(acc.reconnectTimer);
  }
@@ -457,7 +450,6 @@ function setReconnectTimer(account) {
 
 function clearReconnectTimer(account) {
  let acc = get(account);
-
  if (acc.reconnectTimer) {
   clearTimeout(acc.reconnectTimer);
   acc.reconnectTimer = null;
@@ -529,14 +521,12 @@ function setupPing(account) {
    true
   );
  }, 500);*/
-
  setInterval(() => {
   if (get(debug)) {
    acc.bufferedAmount = acc.socket.bufferedAmount;
    account.update(v => v);
   }
  }, 500);
-
  acc.pingTimer = window.setInterval(() => {
   if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
    acc.status = 'Retrying...';
@@ -558,7 +548,7 @@ function setupPing(account) {
     console.log('Ping response:', res);
     acc.lastCommsTs = Date.now();
     //console.log('lastCommsTs:', acc.lastCommsTs);
-    void 'avoid expensive UI update';
+    //TODO: avoid expensive UI update
     if (acc.status !== 'Connected.' || acc.error != null) {
      acc.status = 'Connected.';
      acc.error = null;
@@ -600,12 +590,10 @@ function deinitModuleComms(decl, acc) {
 
 function updateModulesComms(acc) {
  let available_modules = acc.available_modules;
-
  let module_decls_v = get(module_decls);
  for (const module_id in module_decls_v) {
   const available = available_modules[module_id];
   const online = acc.module_data[module_id]?.online && get(acc.module_data[module_id].online);
-
   const decl = module_decls_v[module_id];
   if (!decl) {
    console.log('Module available on server but not found on client:', module_id);
@@ -629,12 +617,10 @@ function disconnectAccount(acc) {
  acc.requests = {};
  acc.available_modules = {};
  onAvailableModulesChanged(acc);
-
  if (acc.socket) {
   acc.socket.close();
   acc.socket = null;
  }
-
  console.log('Account disconnected');
 }
 
@@ -686,19 +672,15 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
   return;
  }
  const requestID = generateRequestID();
-
  const req = {
   target: target,
   requestID,
  };
-
  if (sendSessionID) req.sessionID = acc.sessionID;
  if (command || params) req.data = {};
  if (command) req.data.command = command;
  if (params) req.data.params = params;
-
  //console.log('SENDING COMMAND:', req);
-
  acc.requests[requestID] = {
   req,
   callback: (req, res) => {
@@ -706,19 +688,16 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
    if (callback) callback(req, res);
   },
  };
-
  /* if (!quiet) {
   console.log('------------------');
   console.log('SENDING COMMAND:');*/
  console.log(req);
  /*console.log('------------------');
  }*/
-
  acc.socket.send(JSON.stringify(req));
  acc.lastTransmissionTs = Date.now();
  acc.bufferedAmount = acc.socket.bufferedAmount;
  //console.log('bufferedAmount:', acc.bufferedAmount);
-
  return requestID;
 }
 
@@ -736,6 +715,7 @@ function formatNoColor(args) {
  return msg;
 }
 
+/*
 let originalLog;
 
 function monkeypatch_console_log() {
@@ -753,6 +733,7 @@ function monkeypatch_console_log() {
  };
 }
 
-//monkeypatch_console_log();
+monkeypatch_console_log();
+*/
 
 export default { hideSidebarMobile, isClientFocused, accounts };

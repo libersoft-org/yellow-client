@@ -85,7 +85,7 @@
  {#if selected}
   <div class="selected">
    <div class="text">{selected}</div>
-   <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="10" onClick={clickClearSelection} />
+   <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="10px" onClick={clickClearSelection} />
   </div>
  {:else}
   <Input bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />

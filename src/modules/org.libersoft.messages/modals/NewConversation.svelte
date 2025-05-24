@@ -4,6 +4,7 @@
  import Button from '@/core/components/Button/Button.svelte';
  import Input from '@/core/components/Input/Input.svelte';
  import { m } from '@/lib/paraglide/messages.js';
+ import Label from '@/core/components/Label/Label.svelte';
 
  interface Props {
   close: () => void;
@@ -14,12 +15,13 @@
  let addressInputRef = $state<HTMLInputElement>();
  let value = $state('');
 
- onMount(() => addressInputRef?.focus());
+ onMount(() => {
+  addressInputRef?.focus();
+ });
 
  function clickOpen() {
   if (value) {
    openNewConversation(value);
-   console.log('close();');
    close();
   }
  }
@@ -40,7 +42,9 @@
 
 <form onsubmit={onSubmit}>
  <div class="group">
-  <Input label={`${m['messages.new_conversation.address']()}:`} grow placeholder="user@domain.tld" inputRef={addressInputRef} bind:value />
-  <Button text={m['common.open']()} onClick={clickOpen} />
+  <Label text={`${m['messages.new_conversation.address']()}`}>
+   <Input data-testid="new-conversation-address" grow placeholder="user@domain.tld" bind:inputRef={addressInputRef} bind:value />
+  </Label>
+  <Button data-testid="New Conversation Open" text={m['common.open']()} onClick={clickOpen} />
  </div>
 </form>

@@ -1,7 +1,7 @@
 <script>
  import Button from '@/core/components/Button/Button.svelte';
- import Icon from '../../../core/components/Icon/Icon.svelte';
- import Modal from '../../../core/components/Modal/Modal.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalAddEdit from './token-list-add-edit.svelte';
  import ModalDel from './token-list-del.svelte';
  import { networks } from '../wallet.ts';
@@ -110,8 +110,8 @@
       <td>
        <div class="icons">
         <!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
-        <Icon img="img/edit.svg" alt="Edit token" colorVariable="--icon-blue" size="20" padding="5" onClick={() => editTokenModal(t)} />
-        <Icon img="img/del.svg" alt="Delete token" colorVariable="--icon-red" size="20" padding="5" onClick={() => delTokenModal(t)} />
+        <Icon img="img/edit.svg" alt="Edit token" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => editTokenModal(t)} />
+        <Icon img="img/del.svg" alt="Delete token" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => delTokenModal(t)} />
        </div>
       </td>
      </tr>

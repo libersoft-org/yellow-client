@@ -13,7 +13,7 @@ bun.lockb
 bun.lockb.txt
 package-lock.json
 vite.config.js.timestamp-*
-.env
+.env*
 .aider*
 *storybook.log
 test-results
@@ -23,3 +23,9 @@ src/lib/paraglide
 
 # Custom
 .local/*
+**/.claude/settings.local.json
+.DS_Store
+
+# Sentry Config File
+.env.sentry-build-plugin
+.claude

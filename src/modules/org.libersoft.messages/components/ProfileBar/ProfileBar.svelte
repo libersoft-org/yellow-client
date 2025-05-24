@@ -1,7 +1,8 @@
 <script>
- import { selectedConversation } from '../../messages.js';
+ import TopBar from '@/core/components/TopBar/TopBar.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Photo from '../Photo/Photo.svelte';
+ import { selectedConversation } from '../../messages.js';
  export let closeConversation;
 
  function clickClose() {
@@ -10,20 +11,6 @@
 </script>
 
 <style>
- .profile-bar {
-  position: sticky;
-  top: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-height: calc(var(--menu-height) - 20px);
-  height: calc(var(--menu-height) - 20px);
-  padding: 10px;
-  background-color: #222;
-  color: #fff;
-  box-shadow: var(--shadow);
- }
-
  .description {
   display: flex;
   flex-direction: column;
@@ -47,14 +34,18 @@
  }
 </style>
 
-<div class="profile-bar">
- <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" padding="10" onClick={clickClose} visibleOnDesktop={false} />
- <Photo size="38" />
- <div class="description">
-  {#if $selectedConversation.visible_name}
-   <div class="visible_name">{$selectedConversation.visible_name}</div>
-  {/if}
-  <div class="address">{$selectedConversation.address}</div>
- </div>
- <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" onClick={clickClose} visibleOnMobile={false} />
-</div>
+<TopBar columnSize={2}>
+ <svelte:fragment slot="left">
+  <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" padding="10px" onClick={clickClose} visibleOnDesktop={false} />
+  <Photo size="38px" />
+  <div class="description">
+   {#if $selectedConversation.visible_name}
+    <div class="visible_name">{$selectedConversation.visible_name}</div>
+   {/if}
+   <div class="address">{$selectedConversation.address}</div>
+  </div>
+ </svelte:fragment>
+ <svelte:fragment slot="right">
+  <Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" onClick={clickClose} visibleOnMobile={false} />
+ </svelte:fragment>
+</TopBar>

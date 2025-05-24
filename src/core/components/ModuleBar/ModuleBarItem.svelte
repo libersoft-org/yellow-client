@@ -11,34 +11,31 @@
 <style>
  .item {
   position: relative;
+  z-index: 1;
   border-radius: 10px;
-  transition: background-color 0.25s linear;
- }
+  transform: scale(1);
+  transition:
+   transform 0.3s linear,
+   background-color 0.3s linear;
 
- .item:hover {
-  background-color: #303030;
+  &:not(.selected) {
+   &:hover {
+    background-color: #303030;
+    transform: scale(1.2);
+    z-index: 10;
+   }
+  }
  }
 
  .item.selected {
   background-color: #404040;
- }
-
- @keyframes blink {
-  0% {
-   opacity: 0;
-  }
-  50% {
-   opacity: 1;
-  }
-  100% {
-   opacity: 0;
-  }
+  transform: scale(1.2);
  }
 </style>
 
-<BaseButton onClick={() => clickSetModule(decl.id)}>
+<BaseButton data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
  <div class="item {selected && 'selected'}">
   <Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
-  <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="30" />
+  <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="30px" />
  </div>
 </BaseButton>

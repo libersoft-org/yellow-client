@@ -3,6 +3,7 @@
  import QRCode from 'qrcode';
  import Button from '@/core/components/Button/Button.svelte';
  import { generateMnemonic, addWallet } from '../wallet.ts';
+ import { module } from '../module.js';
  export let close;
  let mnemonic = {};
  let phrase = '';
@@ -153,7 +154,7 @@
  </tbody>
 </table>
 <div class="buttons">
- <Button width="96px" text="Save" onClick={save} />
+ <Button width="96px" img="img/save.svg" text="Save" onClick={save} />
  <Button width="96px" text="Print" onClick={print} />
- <Button width="96px" text="Regenerate" onClick={regenerate} />
+ <Button width="96px" img="modules/{module.identifier}/img/regenerate.svg" text="Regenerate" onClick={regenerate} />
 </div>

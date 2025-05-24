@@ -1,14 +1,15 @@
 <script>
+ import { photoRadius } from '../../messages.js';
  export let img = 'img/photo.svg';
  export let alt = '';
- export let size = 50;
+ export let size = '50px';
 </script>
 
 <style>
  .photo {
   border: 1px solid #000;
   background-color: #fff;
-  border-radius: 50%;
+
   overflow: hidden;
  }
 
@@ -19,6 +20,6 @@
  }
 </style>
 
-<div class="photo" style="min-width: {size}px; min-height: {size}px; width: {size}px; height: {size}px;">
+<div class="photo" style="min-width: {size}; min-height: {size}; width: {size}; height: {size}; border-radius: {$photoRadius};">
  <img src={img} {alt} />
 </div>

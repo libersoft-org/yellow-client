@@ -1,0 +1,14 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ "**" ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+  e2e-tests:
+    uses: koo5/yellow-dev/.github/workflows/shared-e2e.yml@master
+    with:
+      client_repo: ${{ github.repository }}
+      client_ref: ${{ github.ref }}
