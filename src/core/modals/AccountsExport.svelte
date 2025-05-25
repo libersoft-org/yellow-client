@@ -4,15 +4,23 @@
  import { accounts_config } from '../core.js';
  import ButtonBar from '../components/Button/ButtonBar.svelte';
 
- function clickCopy(e) {
-  console.log('clickCopy', e);
+ let copyText = $state('Copy to clipboard');
+ let timeoutId;
+
+ function clickCopy() {
   navigator.clipboard.writeText(JSON.stringify($accounts_config, null, 2));
+  copyText = 'Copied!';
+
+  clearTimeout(timeoutId);
+  timeoutId = setTimeout(() => {
+   copyText = 'Copy to clipboard';
+  }, 2000);
  }
 
- function clickDownload(e) {
-  console.log('clickDownload', e);
-  let blob = new Blob([JSON.stringify($accounts_config, null, 2)], { type: 'application/json' });
-  console.log('blob', blob);
+ function clickDownload() {
+  let blob = new Blob([JSON.stringify($accounts_config, null, 2)], {
+   type: 'application/json',
+  });
   let url = URL.createObjectURL(blob);
   let a = document.createElement('a');
   a.href = url;
@@ -26,7 +34,7 @@
 </script>
 
 <ButtonBar>
- <Button img="img/copy.svg" text="Copy to clipboard" onClick={clickCopy} />
+ <Button img="img/copy.svg" {copyText} text={copyText} onClick={clickCopy} />
  <Button img="img/download.svg" text="Download as file" onClick={clickDownload} />
 </ButtonBar>
 

@@ -18,7 +18,7 @@
  function keyPress(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   checked = !checked;
+   localChecked = !localChecked;
   }
  }
 
@@ -38,6 +38,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  padding: 0 24px;
  }
 
  .switch-wrapper {
@@ -101,9 +102,7 @@
 <Label text={label} {row}>
  <div class="switch">
   <div class="switch-wrapper">
-   {#if checked}
-    <input type="checkbox" bind:checked={localChecked} onkeydown={keyPress} />
-   {/if}
+   <input type="checkbox" bind:checked={localChecked} onkeydown={keyPress} />
    <span class="slider {mounted ? 'transition' : ''}"></span>
   </div>
  </div>

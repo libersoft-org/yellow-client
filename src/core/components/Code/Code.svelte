@@ -21,7 +21,6 @@
   border-radius: 10px;
   scrollbar-width: none;
   background-color: #1e1e1e;
-  background-color: #1e1e1e !important;
   max-width: 500px;
   width: 100vw;
   max-width: 700px;
@@ -29,6 +28,7 @@
   outline: none;
   font-size: clamp(12px, 1.4vw, 14px);
   caret-color: white !important;
+  caret-shape: #1e1e1e;
 
   &::-webkit-scrollbar {
    display: none;
@@ -55,7 +55,7 @@
    -moz-hyphens: none;
    -ms-hyphens: none;
    hyphens: none;
-   background: #322d29;
+   /* background: #322d29; */
    color: #88786d;
   }
 
@@ -199,6 +199,6 @@
  }
 </style>
 
-<div class="code-wrapper" contenteditable="true" spellcheck="false">
- <code>{@html highlighted}</code>
+<div class="code-wrapper" contenteditable={true} spellcheck="false">
+ <code class="language-json">{@html highlighted}</code>
 </div>
