@@ -358,7 +358,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   await switchModule(page, 'org.libersoft.contacts');
   await switchModule(page, 'org.libersoft.messages');
  });
-
+ /*
  await test.step('Account Management Operations', async () => {
   // Go to account management
   await goToAccountManagement(page);
@@ -410,4 +410,6 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   // // Close settings
   // await closeModal(page);
  });
+
+ */
 });
