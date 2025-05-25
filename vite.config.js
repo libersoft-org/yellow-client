@@ -72,7 +72,12 @@ export default defineConfig(({mode}) => {
      {
       key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
       cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
-     } : null),
+     } :
+        (fs.existsSync(path.resolve(__dirname, 'certs/server.key')) ?
+            {
+                key: fs.readFileSync(path.resolve(__dirname, 'certs/server.key')),
+                cert: fs.readFileSync(path.resolve(__dirname, 'certs/server.crt'))
+            } : null)),
     allowedHosts: true,
     host: true,
     port: 3000
