@@ -1,7 +1,7 @@
 <script>
  import BaseButton from '../../components/Button/BaseButton.svelte';
  import Icon from '../../components/Icon/Icon.svelte';
- import { product, version, build, commit, link } from '../../core.js';
+ import { product, version, build, commit, branch, link } from '../../core.js';
 
  function clickLogo() {
   window.open(link, '_blank');
@@ -57,5 +57,9 @@
  <div class="detail">
   <div>Commit:</div>
   <div class="bold">{commit}</div>
+ </div>
+ <div class="detail">
+  <div>Branch:</div>
+  <div class="bold">{branch}</div>
  </div>
 </div>
