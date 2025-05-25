@@ -91,6 +91,10 @@
     });
    }
   }
+  return () => {
+   console.log('[EFFECT] Cleanup on unmount');
+   wizard?.setNextText('Next');
+  };
  });
 
  function verify() {

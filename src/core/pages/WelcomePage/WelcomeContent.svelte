@@ -1,7 +1,8 @@
 <script>
  import BaseButton from '../../components/Button/BaseButton.svelte';
  import Icon from '../../components/Icon/Icon.svelte';
- import { product, version, build, commit, link } from '../../core.js';
+ import VersionInfo from '../../components/VersionInfo/VersionInfo.svelte';
+ import { product, link } from '../../core.js';
 
  function clickLogo() {
   window.open(link, '_blank');
@@ -31,12 +32,6 @@
   font-size: 40px;
   font-weight: bold;
  }
-
- .welcome .detail {
-  display: flex;
-  gap: 5px;
-  font-size: 16px;
- }
 </style>
 
 <div class="welcome">
@@ -46,16 +41,5 @@
    <div class="product">{product}</div>
   </div>
  </BaseButton>
- <div class="detail">
-  <div>Version:</div>
-  <div class="bold">{version}</div>
- </div>
- <div class="detail">
-  <div>Build:</div>
-  <div class="bold">{build}</div>
- </div>
- <div class="detail">
-  <div>Commit:</div>
-  <div class="bold">{commit}</div>
- </div>
+ <VersionInfo className="centered" />
 </div>

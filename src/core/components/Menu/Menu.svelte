@@ -1,14 +1,13 @@
 <script lang="ts">
  import BaseButton from '../Button/BaseButton.svelte';
  import MenuItem from './MenuItem.svelte';
- import MenuAppSection from './MenuAppSection.svelte';
  import Modal from '../Modal/Modal.svelte';
  import ModalSettings from '../../modals/Settings.svelte';
  import Icon from '../Icon/Icon.svelte';
  import DialogExit from '../../dialogs/Exit.svelte';
- import { product, version, build, commit, branch, link } from '../../core.js';
+ import VersionInfo from '../VersionInfo/VersionInfo.svelte';
+ import { product, link } from '../../core.js';
  import { TAURI, BROWSER } from '@/core/tauri.ts';
- import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
 
  type Props = {
   showMenu: boolean;
@@ -150,10 +149,8 @@
   font-weight: bold;
  }
 
- .footer .version {
-  display: flex;
+ .footer :global(.menu-version-info .version) {
   justify-content: center;
-  gap: 5px;
   font-size: 14px;
  }
 </style>
@@ -179,44 +176,7 @@
     <div>{product}</div>
    </div>
   </BaseButton>
-  {#if TAURI}
-   <MenuAppSection text="Client app" />
-   <div class="version">
-    <div>Commit:</div>
-    {#await getNativeClientBuildCommitHash() then hash}
-     <div class="bold">{(hash as string).slice(1, 9)}</div>
-    {/await}
-   </div>
-   <div class="version">
-    <div>Build:</div>
-    {#await getNativeClientBuildTs() then ts}
-     <div class="bold">{(ts as string).slice(1, -1)}</div>
-    {/await}
-   </div>
-   <div class="version">
-    <div>Branch:</div>
-    {#await getNativeClientBuildBranch() then hash}
-     <div class="bold">{(hash as string).slice(1, -1)}</div>
-    {/await}
-   </div>
-   <MenuAppSection text="Web app" />
-  {/if}
-  <div class="version">
-   <div>Version:</div>
-   <div class="bold">{version}</div>
-  </div>
-  <div class="version">
-   <div>Build:</div>
-   <div class="bold">{build}</div>
-  </div>
-  <div class="version">
-   <div>Commit:</div>
-   <div class="bold">{commit}</div>
-  </div>
-  <div class="version">
-   <div>Branch:</div>
-   <div class="bold">{branch}</div>
-  </div>
+  <VersionInfo className="menu-version-info" />
  </div>
 </div>
 <Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
