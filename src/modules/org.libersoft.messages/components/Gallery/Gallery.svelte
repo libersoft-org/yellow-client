@@ -135,8 +135,7 @@
   z-index: 10000;
   position: absolute;
   padding: 10px;
-  background-color: #000;
- }
+  background-color: var(--color-text); }
 
  .image {
   position: relative;

@@ -11,8 +11,10 @@
  import { TAURI } from '@/core/tauri.ts';
  import { zoom } from '@/core/settings.ts';
  import { setZoom } from '@/core/zoom.ts';
+ import { derived, get, writable } from 'svelte/store';
 
- let { theme = 'light' } = $props();
+ import {selected_theme_index, current_theme, themes_stored}  from '../../appearance_store.js';
+
 </script>
 
 <style>
@@ -44,9 +46,16 @@
      </div>
     </TBodyTd>
    {/if}
-   <TBodyTd title="Address">
-    <Select bind:value={theme}>
-     <Option text="Light" value="light" />
+   <TBodyTd title="Theme">
+
+    <Select type=number bind:value={$selected_theme_index}>
+
+        {#each $themes_stored as theme, index}
+
+            <Option text="{theme.name}" value="{index}" />
+
+        {/each}
+
     </Select>
    </TBodyTd>
   </TBodyTr>

@@ -34,7 +34,7 @@
  }
 
  .items .item:hover {
-  background-color: #fd1;
+  background-color: var(--color-primary);
  }
 
  .items .item .alias {

@@ -45,7 +45,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #fd1;
+  background-color: var(--color-primary);
   height: 45px;
   max-height: 45px;
  }

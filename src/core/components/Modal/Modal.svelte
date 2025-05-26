@@ -200,9 +200,8 @@
   align-items: center;
   gap: 10px;
   font-weight: bold;
-  background-color: #fd3;
-  color: #000;
-  cursor: grab;
+  background-color: var(--color-primary-slightly-lighter);
+  color: var(--color-text);  cursor: grab;
  }
  .modal .header .title {
   display: flex;
@@ -222,8 +221,7 @@
   padding: 10px;
   /* overflow-y: auto; */
   background-color: #fff;
-  color: #000;
- }
+  color: var(--color-text); }
 </style>
 
 {#if show}

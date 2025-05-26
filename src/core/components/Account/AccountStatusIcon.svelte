@@ -29,12 +29,12 @@
  }
 
  .status-connecting {
-  background-color: #fd3;
+  background-color: var(--color-primary-slightly-lighter);
   border: 1px solid #600;
  }
 
  .status-connected {
-  background-color: #fd3;
+  background-color: var(--color-primary-slightly-lighter);
   border: 1px solid #b90;
  }
 

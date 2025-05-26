@@ -41,7 +41,7 @@
   padding: 10px;
   border: 1px solid #b90;
   border-radius: 10px;
-  background-color: #ffa;
+  background-color: var(--color-primary-light);
  }
 
  .buttons {

@@ -15,13 +15,27 @@
  --yellow-primary: #ffdd11;
  --yellow-bg: #fefdf7;
 
+ /* theme colors */
+ --color-primary: #fd1;
+ --color-primary-slightly-lighter: #fd3;
+ --color-primary-light: #ffa;
+ --color-primary-lighter: #ffd;
+ --color-secondary: #d80;
+ --color-tertiary: #ffdd1150;
+ --color-background: #fff;
+
+ --color-text: #000;
+
  /* Box shadows */
  --yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+
+ --scroll-bar-color: #ca0;
+ --scroll-bar-color-background: #fea;
 }
 
 * {
  scrollbar-width: thin;
- scrollbar-color: #ca0 #fea;
+  scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-color-background);
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -21,15 +21,15 @@
  }
 
  tr.even {
-  background-color: #ffa;
+  background-color: var(--color-primary-light);
  }
 
  tr.odd {
-  background-color: #ffd;
+  background-color: var(--color-primary-lighter);
  }
 
  tr:hover {
-  background-color: #fd1;
+  background-color: var(--color-primary);
  }
 
  td {

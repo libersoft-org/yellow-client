@@ -5,6 +5,7 @@
  import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
  import { init, isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.js';
  import { initBrowserNotifications, initCustomNotifications } from '../core/notifications.ts';
+ import {init_appearance_store, selected_theme_index, current_theme, themes_stored} from '../core/appearance_store.js'
  import Menu from '../core/components/Menu/Menu.svelte';
  import MenuBar from '../core/components/Menu/MenuBar.svelte';
  import ModuleBar from '../core/components/ModuleBar/ModuleBar.svelte';
@@ -30,6 +31,7 @@
 
  let menus = [];
  setContext('menus', menus);
+
 
  let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
 
@@ -163,6 +165,18 @@
    visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
   } else window.addEventListener('resize', updateAppHeight);
   updateAppHeight();
+
+  selected_theme_index.subscribe((value) => {
+      console.log($themes_stored[value].properties);
+
+      Object.keys($themes_stored[value].properties).forEach(key => {
+          console.log(`${key}: ${$themes_stored[value].properties[key]}`);
+          document.documentElement.style.setProperty(key, $themes_stored[value].properties[key]);
+      });
+
+      // 
+  });
+
 
   return init();
  });

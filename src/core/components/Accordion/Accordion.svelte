@@ -187,7 +187,7 @@
   gap: 10px;
   align-items: center;
   padding: 10px;
-  background-color: #fd1;
+  background-color: var(--color-primary);
   cursor: pointer;
   filter: brightness(1);
   transition: filter 0.3s ease;

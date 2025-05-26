@@ -43,8 +43,7 @@
 
 <style>
  a {
-  color: #000;
-  text-decoration: none;
+  color: var(--color-text);  text-decoration: none;
   font-weight: bold;
  }
 

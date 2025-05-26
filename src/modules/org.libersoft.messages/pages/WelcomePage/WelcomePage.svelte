@@ -39,7 +39,7 @@
   flex-direction: column;
   gap: 8px;
   padding: 10px;
-  border: 1px solid #fd1;
+  border: 1px solid var(--color-primary);
   border-radius: 20px;
   text-align: center;
   font-size: 20px;

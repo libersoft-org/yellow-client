@@ -20,7 +20,7 @@
   align-items: center;
   height: var(--menu-height);
   min-height: var(--menu-height);
-  background-color: #fd1;
+  background-color: var(--color-primary);
   color: #222;
  }
 
