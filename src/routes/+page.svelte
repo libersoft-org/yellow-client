@@ -266,7 +266,7 @@
  let sidebarWidth;
 
  function setSidebarSize(width) {
-  const max = 700;
+  const max = 500;
   const min = 200;
   let sideBarWidth = Math.min(Math.max(width, min), max);
   sideBar.style.minWidth = sideBarWidth + 'px';
