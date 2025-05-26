@@ -1,6 +1,14 @@
-<script>
- export let text;
- export let row = false;
+<script lang="ts">
+ import type { Snippet } from 'svelte';
+
+ type Props = {
+  children: Snippet;
+  text?: string;
+  row?: boolean;
+  id?: string;
+ };
+
+ let { children, text = $bindable(''), row = $bindable(false), id = '' }: Props = $props();
 </script>
 
 <style>
@@ -29,5 +37,5 @@
  {#if text}
   <div class="text">{text}:</div>
  {/if}
- <slot />
+ {@render children()}
 </label>

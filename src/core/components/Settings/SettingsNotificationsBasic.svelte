@@ -164,10 +164,10 @@
  <TBody>
   <TBodyTr>
    <TBodyTd title="Notifications">
-    <Switch bind:checked={_notificationsEnabled} />
+    <Switch label="Notifications" bind:checked={_notificationsEnabled} />
    </TBodyTd>
    <TBodyTd title="Notification sound">
-    <Switch bind:checked={$notificationsSoundEnabled} />
+    <Switch label="Notification sound" bind:checked={$notificationsSoundEnabled} />
    </TBodyTd>
    {#if $customNotificationsOn}
     <TBodyTd title="Custom notifications">

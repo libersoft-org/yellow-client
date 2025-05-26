@@ -257,7 +257,7 @@ async function deleteFirstAccount(page: Page): Promise<void> {
 async function toggleFirstAccountEnabled(page: Page): Promise<void> {
  return await test.step('Toggle first account enabled state', async () => {
   await page.getByRole('button', { name: 'Edit' }).first().click();
-  await page.locator('label').filter({ hasText: 'Enabled:' }).locator('span').click();
+  await page.getByRole('checkbox', { name: 'Enabled' }).click();
   await page.getByRole('button', { name: 'Save' }).click();
  });
 }
@@ -358,7 +358,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   await switchModule(page, 'org.libersoft.contacts');
   await switchModule(page, 'org.libersoft.messages');
  });
- /*
+
  await test.step('Account Management Operations', async () => {
   // Go to account management
   await goToAccountManagement(page);
@@ -399,10 +399,23 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 
   // Navigate to notifications settings
   await navigateToSettingsSection(page, 'Notifications');
-  await page.getByRole('row', { name: 'Notification sound:' }).locator('span').click();
+  await page.getByRole('checkbox', { name: 'Notification sound' }).click();
+  await page.getByRole('checkbox', { name: 'Notifications' }).click();
 
   // // Navigate to appearance settings
+  // await navigateToSettingsSection(page, 'General');
   // await navigateToSettingsSection(page, 'Appearance');
+  // const themeSelect = page.getByRole('combobox', { name: 'Address' });
+
+  // // Validate default
+  // await expect(themeSelect).toHaveValue('light');
+
+  // // Change to dark
+  // await themeSelect.selectOption('dark');
+
+  // // Optional: assert change
+  // await expect(themeSelect).toHaveValue('dark');
+
   //
   // // Back to notifications
   // await navigateToSettingsSection(page, 'Notifications');
@@ -410,6 +423,4 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   // // Close settings
   // await closeModal(page);
  });
-
- */
 });
