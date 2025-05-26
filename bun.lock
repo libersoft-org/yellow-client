@@ -1912,7 +1912,7 @@
 
     "yargs-parser": ["yargs-parser@21.1.1", "", {}, "sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw=="],
 
-    "yellow-client-common": ["yellow-client-common@github:koo5/yellow-client-common#efcc7c9", { "dependencies": { "@inlang/paraglide-js": "^2.0.0" }, "peerDependencies": { "svelte": "^5.0.0" } }, "koo5-yellow-client-common-efcc7c9"],
+    "yellow-client-common": ["yellow-client-common@github:koo5/yellow-client-common#661a576", { "dependencies": { "@inlang/paraglide-js": "^2.0.0" }, "peerDependencies": { "svelte": "^5.0.0" } }, "koo5-yellow-client-common-661a576"],
 
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 
