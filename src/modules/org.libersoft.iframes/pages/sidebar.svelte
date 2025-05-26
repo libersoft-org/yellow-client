@@ -1,6 +1,6 @@
 <script>
  import core from '@/core/core.js';
- import Button from 'yellow-client-common/Button.svelte';
+ import { Button } from 'yellow-client-common';
 
  let url = 'https://koo5.github.io/';
 </script>
