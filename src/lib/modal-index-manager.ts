@@ -4,7 +4,8 @@ type ModalEntry = {
  setZIndex: (z: number) => void;
 };
 
-let counter = 100;
+const baseZIndex = 5;
+let counter = baseZIndex;
 let modals: ModalEntry[] = [];
 
 export function registerModal(setZIndex: (z: number) => void): number {
@@ -24,7 +25,7 @@ export function bringToFront(id: number) {
 }
 
 function updateZIndices(focusId?: number) {
- let base = 100;
+ let base = baseZIndex;
  modals.sort((a, b) => (a.id === focusId ? 1 : b.id === focusId ? -1 : 0));
  for (const modal of modals) {
   modal.setZIndex(base++);

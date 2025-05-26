@@ -1,8 +1,10 @@
 <script lang="ts">
  import Label from '@/core/components/Label/Label.svelte';
+ import type { Writable } from 'svelte/store';
+ import { get } from 'svelte/store';
 
  type Props = {
-  checked?: boolean;
+  checked?: Writable<boolean> | boolean;
   label?: string;
   row?: boolean;
  };
@@ -11,10 +13,12 @@
 
  let mounted = $state(false);
 
+ let localChecked = $state(typeof checked === 'boolean' ? checked : checked ? get(checked) : false);
+
  function keyPress(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   checked = !checked;
+   localChecked = !localChecked;
   }
  }
 
@@ -22,6 +26,10 @@
   requestAnimationFrame(() => {
    mounted = true;
   });
+
+  if (typeof checked !== 'boolean' && checked?.set) {
+   checked.set(localChecked);
+  }
  });
 </script>
 
@@ -93,7 +101,7 @@
 <Label text={label} {row}>
  <div class="switch">
   <div class="switch-wrapper">
-   <input type="checkbox" bind:checked onkeydown={keyPress} />
+   <input type="checkbox" bind:checked={localChecked} onkeydown={keyPress} />
    <span class="slider {mounted ? 'transition' : ''}"></span>
   </div>
  </div>

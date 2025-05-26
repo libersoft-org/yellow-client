@@ -1,50 +1,204 @@
 <script lang="ts">
- import { Highlight } from 'svelte-highlight';
- import atomOneDark from 'svelte-highlight/styles/atom-one-dark';
- import json from 'svelte-highlight/languages/json';
+ import Prism from 'prismjs';
+ import 'prismjs/components/prism-json';
 
  type Props = {
   code: string;
  };
 
  let { code = $bindable() }: Props = $props();
+
+ let language = 'json';
+
+ let highlighted = $derived.by(() => Prism.highlight(code, Prism.languages[language], language));
 </script>
 
 <style>
- :global(.code pre),
- :global(.code code) {
-  margin: 0;
-  font-family: 'Ubuntu Mono', monospace;
-  font-size: 18px;
- }
-
- .code {
+ .code-wrapper {
+  white-space: pre-wrap;
+  padding: 24px;
   border: 1px solid #888;
   border-radius: 10px;
-  overflow: hidden;
+  scrollbar-width: none;
+  background-color: #1e1e1e;
+  max-width: 500px;
+  width: 100vw;
+  max-width: 700px;
+  width: auto;
+  outline: none;
+  font-size: clamp(12px, 1.4vw, 14px);
+  caret-color: white !important;
+  caret-shape: #1e1e1e;
+
+  &::-webkit-scrollbar {
+   display: none;
+  }
  }
 
- .sizer {
-  position: relative;
-  max-width: 100%;
-  max-height: 100%;
-  overflow: auto;
- }
+ :global {
+  code[class*='language-'],
+  pre[class*='language-'] {
+   font-family: Consolas, Menlo, Monaco, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', 'Courier New', Courier, monospace;
+   font-size: 14px;
+   line-height: 1.375;
+   direction: ltr;
+   text-align: left;
+   white-space: pre;
+   word-spacing: normal;
+   word-break: normal;
 
- textarea {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
+   -moz-tab-size: 4;
+   -o-tab-size: 4;
+   tab-size: 4;
+
+   -webkit-hyphens: none;
+   -moz-hyphens: none;
+   -ms-hyphens: none;
+   hyphens: none;
+   /* background: #322d29; */
+   color: #88786d;
+  }
+
+  pre > code[class*='language-'] {
+   font-size: 1em;
+  }
+
+  pre[class*='language-']::-moz-selection,
+  pre[class*='language-'] ::-moz-selection,
+  code[class*='language-']::-moz-selection,
+  code[class*='language-'] ::-moz-selection {
+   text-shadow: none;
+   background: #6f5849;
+  }
+
+  pre[class*='language-']::selection,
+  pre[class*='language-'] ::selection,
+  code[class*='language-']::selection,
+  code[class*='language-'] ::selection {
+   text-shadow: none;
+   background: #6f5849;
+  }
+
+  pre[class*='language-'] {
+   padding: 1em;
+   margin: 0.5em 0;
+   overflow: auto;
+  }
+
+  :not(pre) > code[class*='language-'] {
+   padding: 0.1em;
+   border-radius: 0.3em;
+  }
+
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+   color: #6a5f58;
+  }
+
+  .token.punctuation {
+   color: #6a5f58;
+  }
+
+  .token.namespace {
+   opacity: 0.7;
+  }
+
+  .token.tag,
+  .token.operator,
+  .token.number {
+   color: #bfa05a;
+  }
+
+  .token.property,
+  .token.function {
+   color: #88786d;
+  }
+
+  .token.tag-id,
+  .token.selector,
+  .token.atrule-id {
+   color: #fff3eb;
+  }
+
+  code.language-javascript,
+  .token.attr-name {
+   color: #a48774;
+  }
+
+  code.language-css,
+  code.language-scss,
+  .token.boolean,
+  .token.string,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .language-scss .token.string,
+  .style .token.string,
+  .token.attr-value,
+  .token.keyword,
+  .token.control,
+  .token.directive,
+  .token.unit,
+  .token.statement,
+  .token.regex,
+  .token.atrule {
+   color: #fcc440;
+  }
+
+  .token.placeholder,
+  .token.variable {
+   color: #fcc440;
+  }
+
+  .token.deleted {
+   text-decoration: line-through;
+  }
+
+  .token.inserted {
+   border-bottom: 1px dotted #fff3eb;
+   text-decoration: none;
+  }
+
+  .token.italic {
+   font-style: italic;
+  }
+
+  .token.important,
+  .token.bold {
+   font-weight: bold;
+  }
+
+  .token.important {
+   color: #a48774;
+  }
+
+  .token.entity {
+   cursor: help;
+  }
+
+  pre > code.highlight {
+   outline: 0.4em solid #816d5f;
+   outline-offset: 0.4em;
+  }
+
+  .line-numbers.line-numbers .line-numbers-rows {
+   border-right-color: #35302b;
+  }
+
+  .line-numbers .line-numbers-rows > span:before {
+   color: #46403d;
+  }
+
+  .line-highlight.line-highlight {
+   background: rgba(191, 160, 90, 0.2);
+   background: -webkit-linear-gradient(left, rgba(191, 160, 90, 0.2) 70%, rgba(191, 160, 90, 0));
+   background: linear-gradient(to right, rgba(191, 160, 90, 0.2) 70%, rgba(191, 160, 90, 0));
+  }
  }
 </style>
 
-<svelte:head>
- {@html atomOneDark}
-</svelte:head>
-
-<div class="code">
- <div class="sizer">
-  <textarea bind:value={code}> </textarea>
-  <Highlight language={json} bind:code />
- </div>
+<div class="code-wrapper" contenteditable={true} spellcheck="false">
+ <code class="language-json">{@html highlighted}</code>
 </div>

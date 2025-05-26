@@ -43,6 +43,7 @@
   font-weight: bold;
   border: 1px solid;
   border-radius: 10px;
+  -webkit-tap-highlight-color: transparent;
  }
 
  .button.disabled {
