@@ -74,10 +74,24 @@ export async function offerNativeDownload(fileName: string, defaultFileDownloadF
   if (!p) {
    return null;
   }
+
+  console.log('Save dialog returned path:', p);
+  console.log('isMobile:', get(isMobile));
+  console.log('baseDir:', download.baseDir);
+
   download.file_path = p;
   download.temp_file_path = partFileName(p);
   download.potential_default_folder = await path.dirname(p);
-  await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+
+  try {
+   await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+  } catch (error) {
+   console.error('Failed to create temp file:', error);
+   console.error('Attempted path:', download.temp_file_path);
+   console.error('Base directory:', download.baseDir);
+   return { error: `Failed to create temp file: ${error}` };
+  }
+
   return download;
  }
 }
