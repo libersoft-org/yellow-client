@@ -6,12 +6,14 @@ import { get } from 'svelte/store';
 import { isMobile } from './core.js';
 import { log } from './tauri.ts';
 
-interface CheckPermissionsResponse {
- writeExternalStorage: string;
+interface PermissionStatus {
+ writeExternalStorage: 'granted' | 'denied' | 'prompt';
+ readExternalStorage: 'granted' | 'denied' | 'prompt';
 }
 
-interface RequestPermissionsResponse {
- writeExternalStorage: string;
+enum PermissionType {
+ WriteExternalStorage = 'writeExternalStorage',
+ ReadExternalStorage = 'readExternalStorage',
 }
 
 export class NativeDownload {
@@ -37,10 +39,12 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
  }
 
  try {
-  const permissions = await invoke<CheckPermissionsResponse>('plugin:yellow|check_file_permissions');
-  if (permissions.writeExternalStorage !== 'granted') {
-   const result = await invoke<RequestPermissionsResponse>('plugin:yellow|request_file_permissions');
-   if (result.writeExternalStorage === 'granted') {
+  const permissions = await invoke<PermissionStatus>('plugin:yellow|check_permissions');
+  if (permissions.writeExternalStorage !== 'granted' || permissions.readExternalStorage !== 'granted') {
+   const result = await invoke<PermissionStatus>('plugin:yellow|request_permissions', {
+    permissions: [PermissionType.WriteExternalStorage, PermissionType.ReadExternalStorage],
+   });
+   if (result.writeExternalStorage === 'granted' && result.readExternalStorage === 'granted') {
     return { success: true };
    } else {
     return { success: false, error: 'File permissions denied by user' };
@@ -54,16 +58,11 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
 }
 
 export async function offerNativeDownload(fileName: string, defaultFileDownloadFolder: string | null): Promise<NativeDownload | { error: string } | null> {
- //const permission = await invoke<Permissions>('plugin:yellow|checkPermissions');
- //const state = await invoke<Permissions>('plugin:yellow|requestPermissions', { permissions: ['postNotifications'] })
- //const state = await invoke<Permissions>('plugin:yellow|requestFilePermissions', {})
- //return {error: JSON.stringify(state)}
-
  // Ensure we have file permissions before proceeding
- /*const permissionResult = await ensureFilePermissions();
+ const permissionResult = await ensureFilePermissions();
  if (!permissionResult.success) {
   return { error: permissionResult.error || 'File permissions not available' };
- }*/
+ }
 
  try {
   const download = new NativeDownload();
