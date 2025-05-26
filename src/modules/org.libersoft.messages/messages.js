@@ -70,9 +70,9 @@ export function initData(acc) {
 
 function sendData(acc, account, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
  /*
-	acc: account object
-	account: account store, optional, for debugging
-	 */
+     acc: account object
+     account: account store, optional, for debugging
+      */
  return _send(acc, account, identifier, command, params, sendSessionID, callback, quiet);
 }
 
@@ -205,6 +205,16 @@ export async function initUpload(files, uploadType, recipients) {
  console.log('uploads', uploads);
  const acceptedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
  const acceptedAudioTypes = ['audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/webm'];
+ const acceptedImageTypes = [
+  'image/jpeg', // .jpg, .jpeg
+  'image/png', // .png
+  'image/gif', // .gif
+  'image/webp', // .webp
+  'image/avif', // .avif (modern browsers)
+  'image/svg+xml', // .svg
+  'image/x-icon', // .ico
+  'image/bmp', // .bmp
+ ];
 
  // send message
  let messageHtml = '';
@@ -213,7 +223,7 @@ export async function initUpload(files, uploadType, recipients) {
   const isServerType = upload.record.type === FileUploadRecordType.SERVER;
 
   // handle images
-  if (isServerType && fileMimeType.startsWith('image/')) {
+  if (isServerType && acceptedImageTypes.some(v => fileMimeType.startsWith(v))) {
    messageHtml += `<Imaged file="yellow:${upload.record.id}"></Imaged>`;
    filesDB.addFile({
     localFileStatus: LocalFileStatus.READY,
@@ -523,13 +533,13 @@ export function listMessages(acc, address) {
 
 export function loadMessages(acc, address, base, prev, next, reason, cb, force_refresh = false) {
  /* acc: account object
-	address: contact address (identifies conversation)
-	base: message id
-	prev: number of messages to load before base
-	next: number of messages to load after base
-	reason: reason for loading messages (for debugging)
-	cb: callback (optional)
-	 */
+     address: contact address (identifies conversation)
+     base: message id
+     prev: number of messages to load before base
+     next: number of messages to load after base
+     reason: reason for loading messages (for debugging)
+     cb: callback (optional)
+      */
  console.log('reason', reason, 'force_refresh', force_refresh);
  return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
   if (res.error !== false || !res.data?.messages) {
@@ -684,10 +694,10 @@ export function setMessageSeen(message, cb) {
   //messagesArray.update(v => v);
   // update conversationsArray:
   /*const conversation = get(conversationsArray).find(c => c.address === message.address_from);
-		if (conversation) {
-		 conversation.unread_count--;
-		 conversationsArray.update(v => v);
-		}*/
+          if (conversation) {
+           conversation.unread_count--;
+           conversationsArray.update(v => v);
+          }*/
  });
 }
 
@@ -930,8 +940,8 @@ function eventSeenMessage(acc, event) {
 
 function eventSeenInboxMessage(acc, event) {
  /*
-	 mark, as seen, a message sent to us. This can be triggered by another client.
-	*/
+      mark, as seen, a message sent to us. This can be triggered by another client.
+     */
  if (acc !== get(active_account)) return;
  //console.log(event);
  const res = event.detail;
@@ -1040,11 +1050,11 @@ export function saneHtml(content) {
   RETURN_DOM_FRAGMENT: true,
  });
  /*
-	console.log('content:', content);
-	console.log(content);
-	console.log('sane:');
-	console.log(sane);
-	*/
+     console.log('content:', content);
+     console.log(content);
+     console.log('sane:');
+     console.log(sane);
+     */
 
  return sane;
 }
