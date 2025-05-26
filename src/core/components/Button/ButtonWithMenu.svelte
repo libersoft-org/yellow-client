@@ -80,9 +80,9 @@
 
  .main-button :global(.button) {
   display: flex;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-left: 0;
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-left: 0 !important;
  }
 
  .tooltip {

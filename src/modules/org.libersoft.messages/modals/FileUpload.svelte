@@ -119,6 +119,10 @@
   border-collapse: collapse;
  }
 
+ .file-table :global(table) {
+  width: 100%;
+ }
+
  .file-table :global(tbody) {
   display: block;
   width: 100%;

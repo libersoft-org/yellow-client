@@ -214,7 +214,7 @@
   {/if}
   <div class="video-floating-area-rt">
    {#if hasData && !isRecording}
-    <Button img="modules/{identifier}/img/download.svg" enabled={hasData} colorVariable="--icon-black" onClick={download} />
+    <Button img="img/download.svg" enabled={hasData} colorVariable="--icon-black" onClick={download} />
     <Button img="modules/{identifier}/img/delete.svg" enabled={hasData} colorVariable="--icon-red" onClick={recordRestart} />
    {/if}
   </div>
