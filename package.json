@@ -59,7 +59,8 @@
   "video.js": "^8.21.0",
   "videojs-record": "^4.8.0",
   "wavesurfer.js": "^7.9.0",
-  "webrtc-adapter": "^9.0.3"
+  "webrtc-adapter": "^9.0.3",
+  "yellow-client-common": "https://github.com/koo5/yellow-client-common"
  },
  "devDependencies": {
   "@chromatic-com/storybook": "^3",
