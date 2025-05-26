@@ -106,5 +106,5 @@
   {/if}
  </div>
  <Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
- <Modal title="Messages settings" body={ModalMessageSettings} bind:show={showMessageSettings} />
+ <Modal title="Messages settings" body={ModalMessageSettings} bind:show={showMessageSettings} width="300px" />
 {/if}

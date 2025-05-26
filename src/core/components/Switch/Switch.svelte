@@ -38,7 +38,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 24px;
  }
 
  .switch-wrapper {

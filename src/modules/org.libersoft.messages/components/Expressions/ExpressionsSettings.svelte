@@ -82,5 +82,5 @@
  </div>
  <Button text="Manage gif servers" onClick={clickManageGifServers} />
 </div>
-<Modal title="Manage sticker servers" body={StickerServers} bind:show={isModalStickerServersOpen} />
-<Modal title="Manage gif servers" body={GifServers} bind:show={isModalGifServersOpen} />
+<Modal title="Manage sticker servers" body={StickerServers} bind:show={isModalStickerServersOpen} width="400px" />
+<Modal title="Manage gif servers" body={GifServers} bind:show={isModalGifServersOpen} width="400px" />

@@ -4,6 +4,7 @@
  import { debug } from '../../core.js';
  import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
  import { draggable } from '@neodrag/svelte';
+ import Portal from '../Portal/Portal.svelte';
 
  type Props = {
   show?: boolean;
@@ -171,13 +172,14 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: fit-content;
+  max-width: 700px;
+  width: 100%;
   max-height: calc(100dvh - 48px);
-  overflow: auto;
   border: 1px solid #000;
   border-radius: 10px;
   box-shadow: var(--shadow);
   background-color: #fff;
+  overflow: auto;
 
   @media (max-width: 768px) {
    max-width: calc(100% - 24px) !important;
@@ -218,59 +220,61 @@
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   background-color: #fff;
   color: #000;
  }
 </style>
 
 {#if show}
- <div
-  class="modal"
-  role="none"
-  tabindex="-1"
-  style:width
-  style:height
-  style:max-width={width}
-  style:max-height={height}
-  bind:this={modalEl}
-  use:draggable={{
-   onDragStart,
-   onDragEnd,
-   gpuAcceleration: true,
-   handle: '.header',
-  }}
-  style:z-index={zIndex}
-  onmousedown={raiseZIndex}
-  {onkeydown}
- >
-  {#if showContent}
-   <div class="header" role="none" tabindex="-1">
-    {#if title}
-     <div class="title">
-      {#if activeTab}
-       <Icon img="img/back.svg" alt="Back" colorVariable="--icon-black" size="20px" padding="10px" onClick={clearActiveTab} />
-      {/if}
-      {title}
-     </div>
-     <div onpointerdown={e => e.stopPropagation()}>
-      <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
-     </div>
-    {/if}
-   </div>
-   <div class="body">
-    {#if $debug}
-     params: <code>{JSON.stringify({ params })}</code>
-    {/if}
-    {#if typeof ModalBody === 'function'}
-     {#if breadcrumbs}
-      {@render breadcrumbs()}
+ <Portal>
+  <div
+   class="modal"
+   role="none"
+   tabindex="-1"
+   style:width
+   style:height
+   style:max-width={width}
+   style:max-height={height}
+   bind:this={modalEl}
+   use:draggable={{
+    onDragStart,
+    onDragEnd,
+    gpuAcceleration: true,
+    handle: '.header',
+   }}
+   style:z-index={zIndex}
+   onmousedown={raiseZIndex}
+   {onkeydown}
+  >
+   {#if showContent}
+    <div class="header" role="none" tabindex="-1">
+     {#if title}
+      <div class="title">
+       {#if activeTab}
+        <Icon img="img/back.svg" alt="Back" colorVariable="--icon-black" size="20px" padding="10px" onClick={clearActiveTab} />
+       {/if}
+       {title}
+      </div>
+      <div onpointerdown={e => e.stopPropagation()}>
+       <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
+      </div>
      {/if}
-     <ModalBody {close} {params} bind:activeTab />
-    {:else if children}
-     {@render children()}
-    {/if}
-   </div>
-  {/if}
- </div>
+    </div>
+    <div class="body">
+     {#if $debug}
+      params: <code>{JSON.stringify({ params })}</code>
+     {/if}
+     {#if typeof ModalBody === 'function'}
+      {#if breadcrumbs}
+       {@render breadcrumbs()}
+      {/if}
+      <ModalBody {close} {params} bind:activeTab />
+     {:else if children}
+      {@render children()}
+     {/if}
+    </div>
+   {/if}
+  </div>
+ </Portal>
 {/if}

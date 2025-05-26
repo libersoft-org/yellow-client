@@ -142,7 +142,7 @@
  </div>
 </div>
 
-<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} />
+<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
 <Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} />
 <Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} />
 {#if showDelAccountModal}

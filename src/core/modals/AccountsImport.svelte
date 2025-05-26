@@ -31,8 +31,7 @@
 <style>
  .account-import {
   position: relative;
-  max-width: 590px;
-  width: 100vw;
+  width: 100%;
 
   @media (max-width: 768px) {
    width: 100%;
@@ -59,7 +58,6 @@
    background-color: black;
    z-index: 0;
    inset: 0;
-   max-width: 700px;
 
    &.isFilled {
     pointer-events: none;
