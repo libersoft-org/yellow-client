@@ -179,7 +179,7 @@
   border-radius: 10px;
   box-shadow: var(--shadow);
   background-color: #fff;
-  overflow: auto;
+  overflow: hidden;
 
   @media (max-width: 768px) {
    max-width: calc(100%) !important;
@@ -224,6 +224,7 @@
   padding: 10px;
   background-color: #fff;
   color: #000;
+  overflow: auto;
  }
 </style>
 
