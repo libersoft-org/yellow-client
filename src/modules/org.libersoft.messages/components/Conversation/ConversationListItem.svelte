@@ -25,7 +25,7 @@
  }
 
  .item.active {
-  background-color: #fd5;
+  background-color: #var(--color-primary-background);
   transition: background-color 0.5s linear;
  }
 

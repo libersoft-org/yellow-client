@@ -1,6 +1,8 @@
 import { hexToCSSFilter } from 'hex-to-css-filter';
 
 export function getColorFromCSSToFilter(name) {
+  console.log("getColorFromCSSToFilter");
+  console.log(name);
  if (!name.startsWith('--')) {
   throw new Error('getColorFromCSSToFilter: name must start with --');
  }

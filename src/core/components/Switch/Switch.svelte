@@ -86,7 +86,7 @@
  }
 
  input:checked + .slider {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-background)background);
  }
 
  input:checked + .slider:before {

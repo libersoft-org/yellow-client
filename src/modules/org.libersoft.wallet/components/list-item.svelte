@@ -20,15 +20,15 @@
  }
 
  .item.even {
-  background-color: var(--color-primary-light);
+  background-color: var(--color-secondary-muted-background);
  }
 
  .item.odd {
-  background-color: var(--color-primary-lighter);
+  background-color: var(--color-muted-background);
  }
 
  .item:hover {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-background);
  }
 </style>
 

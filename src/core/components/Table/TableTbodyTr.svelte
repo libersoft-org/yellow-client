@@ -1,14 +1,14 @@
 <style>
  tr:nth-child(even) {
-  background-color: #ffdd1130;
+  background-color: var(--color-tertiary-background);
  }
 
  tr:nth-child(odd) {
-  background-color: #ffdd1150;
+  background-color: var(--color-tertiary-background);
  }
 
  tr:hover {
-  background-color: #fd1;
+  background-color: var(--color-primary-background);
  }
 </style>
 

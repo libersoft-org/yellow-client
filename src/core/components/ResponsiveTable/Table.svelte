@@ -27,7 +27,7 @@
   width: 100%;
   overflow: hidden;
   max-width: 100vw;
-  background-color: #ffdd1150;
+  background-color: var(--color-tertiary-background);
 
   :global(&.table-wide) {
    border: 1px solid #222 !important;

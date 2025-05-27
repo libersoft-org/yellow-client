@@ -11,31 +11,42 @@ export let themes_stored = localStorageSharedStore('themes_stored', [
   {
     name: 'Light',
     properties: {
-        "--color-primary": "#fd1",
-        "--color-primary-slightly-lighter": "#fd3",
-        "--color-primary-light": "#ffa",
-        "--color-primary-lighter": "#ffd",
-        "--color-secondary": "#d80",
-        "--color-tertiary": "#ffdd1150",
-        "--color-text": "#000",
-        // "--shadow": "0px 0px 20px 0px rgba(0, 0, 0, 0.5)",
-        // "--icon-black": "#000",
-        // "--icon-white": "#fff",
-        // "--icon-gray": "#888",
-        // "--icon-yellow": "#fd1",
-        // "--icon-red": "#dc2626",
-        // "--icon-blue": "#00f",
+      "--color-text": "#222",
+      "--color-background" : "#fff",
+      "--color-foreground" : "#222",
 
+      "--color-card-background" : "#fff",
+      "--color-card-foreground" : "#222",
 
-        // /* Colors */
-        // "--yellow-primary": "#ffdd11",
-        // "--yellow-bg": "#fefdf7",
+      "--color-reversed-background" : "#222",
+      "--color-reversed-foreground" : "#fff",
 
-        // /* Box shadows */
-        // "--yellow-box-shadow": "0 2px 6px rgba(0, 0, 0, 0.3)",
+      "--color-popover": "#333",
+      "--color-popover-foreground ": "#444",
 
-        // "--scroll-bar-color": "#ca0",
-        // "--scroll-bar-color-background": "#fea",
+      "--color-primary-background" : "#fc1",
+      "--color-primary-foreground" : "#222",
+
+      "--color-secondary-background" : "#d80",
+      "--color-secondary-foreground" : "#222",
+
+      "--color-tertiary-background": "#ffdd1150",
+      "--color-tertiary-foreground": "#fff",
+
+      "--color-muted-background": "#ffd",
+      "--color-muted-foreground" : "#222",
+
+      "--color-secondary-muted-background": "#ffa",
+      "--color-secondary-muted-foreground": "#222",
+
+      "--color-accent-background" : "#d80",
+      "--color-accent-foreground" : "#222",
+
+      "--color-secondary-accent-background" : "#ffd",
+      "--color-secondary-accent-foreground" : "#222",
+
+      "--color-disabled-background" : "#888",
+      "--color-disabled-foreground" : "#222",
 
     }
   },
@@ -43,36 +54,39 @@ export let themes_stored = localStorageSharedStore('themes_stored', [
   {
     name: 'dark',
     properties: {
-        "--color-primary": "#001f3f",
-        "--color-primary-slightly-lighter": "#001f3f",
-        "--color-primary-light": "#003366",
-        "--color-primary-lighter": "#005b96",
-        "--color-secondary": "#003366",
-        "--color-tertiary": "#ffdd1150",
         "--color-text": "#007bff",
-        // "--color-primary-lighter": "#333333",
-        // "--color-primary": "#252525",
-        // "--color-primary-darker": "#1e1e1e",
-        // "--color-text": "#fff",
-    
-        // "--shadow": "0px 0px 20px 0px rgba(0, 0, 0, 0.5)",
-        // "--icon-black": "#000",
-        // "--icon-white": "#fff",
-        // "--icon-gray": "#888",
-        // "--icon-yellow": "#abc",
-        // "--icon-red": "#dc2626",
-        // "--icon-blue": "#00f",
+        "--color-background" : "#fff",
+        "--color-foreground" : "#007bff",
 
+        "--color-card-background" : "#fff",
+        "--color-card-foreground" : "#007bff",
 
-        // /* Colors */
-        // "--yellow-primary": "#abc",
-        // "--yellow-bg": "#bcd",
+        "--color-popover": "#005bff",
+        "--color-popover-foreground ": "#fff",
 
-        // /* Box shadows */
-        // "--yellow-box-shadow": "0 2px 6px rgba(0, 0, 0, 0.3)",
+        "--color-primary-background" : "#001f3f",
+        "--color-primary-foreground" : "#007bff",
 
-        // "--scroll-bar-color": "#abc",
-        // "--scroll-bar-color-background": "#fea",
+        "--color-secondary-background" : "#003366",
+        "--color-secondary-foreground" : "#007bff",
+
+        "--color-tertiary-background": "#003366",
+        "--color-tertiary-foreground": "#007bff",
+
+        "--color-muted-background": "#003366",
+        "--color-muted-foreground" : "#007bff",
+
+        "--color-secondary-muted-background": "#005b96",
+        "--color-secondary-muted-foreground": "#007bff",
+
+        "--color-accent-background" : "#003366",
+        "--color-accent-foreground" : "#007bff",
+
+        "--color-secondary-accent-background" : "#001f3f",
+        "--color-secondary-accent-foreground" : "#007bff",
+
+        "--color-disabled-background" : "#888",
+        "--color-disabled-foreground" : "#007bff",
     }
   }
 

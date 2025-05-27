@@ -30,11 +30,11 @@
   flex-direction: column;
   padding: 10px;
   border: 1px solid #dd9;
-  background-color: #fde990;
+  background-color: var(--color-primary-background);
  }
 
  .items .item:hover {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-background);
  }
 
  .items .item .alias {

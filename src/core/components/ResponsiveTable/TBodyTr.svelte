@@ -12,11 +12,11 @@
  tr {
   :global(&:has(> td:nth-child(2))) {
    /* :global(td:nth-child(odd)) {
-				background-color: #ffdd1130;
+				background-color: var(--color-tertiary-background);
 			}
 
 			:global(td:nth-child(even)) {
-				background-color: #ffdd1160;
+				background-color: var(--color-muted-background)d1160;
 			} */
   }
 
