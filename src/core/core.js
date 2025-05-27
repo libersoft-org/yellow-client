@@ -684,7 +684,12 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
  acc.requests[requestID] = {
   req,
   callback: (req, res) => {
-   if (res.error) console.error(res);
+   if (res.error) {
+       console.error(res);
+
+
+
+   }
    if (callback) callback(req, res);
   },
  };

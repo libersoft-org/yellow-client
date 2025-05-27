@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 
 export function getGitCommitHash() {
  try {
-  return execSync('sh -c "git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git rev-parse --short HEAD"').toString().trim();
+  return execSync('git rev-parse --short HEAD').toString().trim();
  } catch (e) {
   return null;
  }
@@ -19,7 +19,7 @@ export function getGitCommitHash() {
 
 export function getGitBranch() {
     try {
-    return execSync('sh -c "git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git rev-parse --abbrev-ref HEAD"').toString().trim();
+    return execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
     } catch (e) {
     return null;
     }
@@ -72,7 +72,12 @@ export default defineConfig(({mode}) => {
      {
       key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
       cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
-     } : null),
+     } :
+        (fs.existsSync(path.resolve(__dirname, 'certs/server.key')) ?
+            {
+                key: fs.readFileSync(path.resolve(__dirname, 'certs/server.key')),
+                cert: fs.readFileSync(path.resolve(__dirname, 'certs/server.crt'))
+            } : null)),
     allowedHosts: true,
     host: true,
     port: 3000

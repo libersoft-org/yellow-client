@@ -21,6 +21,10 @@
   box-shadow: var(--shadow);
   width: 100%;
   box-sizing: border-box;
+
+  /* @container (max-width: 768px) {
+			background-color: red !important;
+		} */
  }
 </style>
 

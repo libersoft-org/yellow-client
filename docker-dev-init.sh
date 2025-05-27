@@ -6,7 +6,7 @@ echo "init"
 echo "HOLLOW: $HOLLOW"
 
 if [ "$HOLLOW" = "true" ]; then
- echo "link yellow-server-common for development"
- rm -rf ./node_modules/yellow-server-common || true
- ln -s ../../yellow-server-common ./node_modules/
+ echo "link yellow-client-common for development"
+ rm -rf ./node_modules/yellow-client-common || true
+ ln -s ../../yellow-client-common ./node_modules/
 fi

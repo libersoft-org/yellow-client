@@ -1,16 +1,16 @@
 <script lang="ts">
- import { debug, findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '../../core.js';
+ import { debug, findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '@/core/core.js';
  import Button from '@/core/components/Button/Button.svelte';
- import TableActionItems from '../../components/Table/TableActionItems.svelte';
- import Icon from '../../components/Icon/Icon.svelte';
- import ResponsiveTable from '../../components/ResponsiveTable/Table.svelte';
- import ResponsiveTableTHead from '../../components/ResponsiveTable/TableTHead.svelte';
- import ResponsiveTableTHeadTr from '../../components/ResponsiveTable/TableTHeadTr.svelte';
- import ResponsiveTableTHeadTh from '../../components/ResponsiveTable/TableTHeadTh.svelte';
- import ResponsiveTableTBody from '../../components/ResponsiveTable/TableTBody.svelte';
- import ResponsiveTableTBodyTr from '../../components/ResponsiveTable/TableTBodyTr.svelte';
- import ResponsiveTableTBodyTd from '../../components/ResponsiveTable/TableTBodyTd.svelte';
- import Modal from '../../components/Modal/Modal.svelte';
+ import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import Table from '@/core/components/ResponsiveTable/Table.svelte';
+ import THead from '@/core/components/ResponsiveTable/THead.svelte';
+ import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
+ import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
+ import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
+ import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
+ import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+ import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalAccountsAddEdit from '@/core/modals/AccountsAddEdit.svelte';
  import ModalAccountsDelete from '@/core/modals/AccountsDelete.svelte';
  import AccountsExport from '@/core/modals/AccountsExport.svelte';
@@ -91,29 +91,29 @@
 </style>
 
 {#snippet accountTable(account)}
- <ResponsiveTable>
-  <ResponsiveTableTHead>
-   <ResponsiveTableTHeadTr>
-    <ResponsiveTableTHeadTh>Server</ResponsiveTableTHeadTh>
-    <ResponsiveTableTHeadTh>Address</ResponsiveTableTHeadTh>
-    <ResponsiveTableTHeadTh>Enabled</ResponsiveTableTHeadTh>
-    <ResponsiveTableTHeadTh>Action</ResponsiveTableTHeadTh>
-   </ResponsiveTableTHeadTr>
-  </ResponsiveTableTHead>
-  <ResponsiveTableTBody>
-   <ResponsiveTableTBodyTr>
-    <ResponsiveTableTBodyTd title="Server">{account.credentials.server}</ResponsiveTableTBodyTd>
-    <ResponsiveTableTBodyTd title="Address">{account.credentials.address}</ResponsiveTableTBodyTd>
-    <ResponsiveTableTBodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</ResponsiveTableTBodyTd>
-    <ResponsiveTableTBodyTd title="Action">
+ <Table>
+  <THead>
+   <THeadTr>
+    <THeadTh>Server</THeadTh>
+    <THeadTh>Address</THeadTh>
+    <THeadTh>Enabled</THeadTh>
+    <THeadTh>Action</THeadTh>
+   </THeadTr>
+  </THead>
+  <TBody>
+   <TBodyTr>
+    <TBodyTd title="Server">{account.credentials.server}</TBodyTd>
+    <TBodyTd title="Address">{account.credentials.address}</TBodyTd>
+    <TBodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</TBodyTd>
+    <TBodyTd title="Action">
      <TableActionItems>
       <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
       <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => clickDel(account.id, account.settings?.title)} />
      </TableActionItems>
-    </ResponsiveTableTBodyTd>
-   </ResponsiveTableTBodyTr>
-  </ResponsiveTableTBody>
- </ResponsiveTable>
+    </TBodyTd>
+   </TBodyTr>
+  </TBody>
+ </Table>
 {/snippet}
 
 {#snippet status(account)}
@@ -137,12 +137,12 @@
     <Button img="img/import.svg" text="Import" onClick={clickImport} />
    </div>
 
-   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} snippet={accountTable} right={status} />
+   <Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
   </Paper>
  </div>
 </div>
 
-<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} />
+<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
 <Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} />
 <Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} />
 {#if showDelAccountModal}

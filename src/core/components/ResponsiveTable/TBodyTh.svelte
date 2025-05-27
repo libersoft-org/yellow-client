@@ -11,7 +11,7 @@
 
 <style>
  th {
-  @media only screen and (min-width: 80em) {
+  :global(.table-wide &) {
    display: table-cell;
    white-space: nowrap;
    border-style: none;
@@ -29,7 +29,7 @@
   content: attr(data-title) ':\00A0';
   font-weight: bold;
 
-  @media only screen and (min-width: 80em) {
+  :global(.table-wide &) {
    content: '';
    font-weight: bold;
   }
@@ -44,7 +44,7 @@
   padding: 10px;
   text-align: left;
 
-  @media only screen and (min-width: 80em) {
+  :global(.table-wide &) {
    display: table-cell;
    width: 100%;
   }
@@ -53,7 +53,7 @@
    display: inline-block;
    width: 90px;
 
-   @media only screen and (min-width: 80em) {
+   :global(.table-wide &) {
     display: table;
     width: 100%;
    }
@@ -65,7 +65,7 @@
   padding: 10px;
   text-align: left;
 
-  @media only screen and (min-width: 80em) {
+  :global(.table-wide &) {
    display: table-cell;
    width: 100%;
   }
@@ -74,7 +74,7 @@
    display: inline-block;
    width: 90px;
 
-   @media only screen and (min-width: 80em) {
+   :global(.table-wide &) {
     display: table;
     width: 100%;
    }

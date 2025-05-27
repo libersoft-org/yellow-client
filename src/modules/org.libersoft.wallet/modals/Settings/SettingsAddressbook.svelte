@@ -1,14 +1,15 @@
-<script>
+<script lang="ts">
  import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import Table from '@/core/components/Table/Table.svelte';
- import Thead from '@/core/components/Table/TableThead.svelte';
- import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
- import Th from '@/core/components/Table/TableTheadTh.svelte';
- import Tbody from '@/core/components/Table/TableTbody.svelte';
- import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
- import Td from '@/core/components/Table/TableTbodyTd.svelte';
- import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
+ import Table from '@/core/components/ResponsiveTable/Table.svelte';
+ import THead from '@/core/components/ResponsiveTable/THead.svelte';
+ import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
+ import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
+ import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
+ import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
+ import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+ import TableActionItems from '@/core/components/ResponsiveTable/TableActionItems.svelte';
+
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalAddEdit from '../../modals/addressbook-add-edit.svelte';
  import ModalDel from '../../modals/addressbook-del.svelte';
@@ -16,10 +17,11 @@
  import { module } from '../../module.js';
  import { addressBook } from '../../wallet.ts';
  import { get } from 'svelte/store';
- let showModalAddEdit = false;
- let showModalDel = false;
- let edit = false;
- let modalItem = null;
+
+ let showModalAddEdit = $state(false);
+ let showModalDel = $state(false);
+ let edit = $state(false);
+ let modalItem = $state(null);
 
  function addToAddressBookModal() {
   modalItem = null;
@@ -78,30 +80,35 @@
   <Button img="img/import.svg" text="Import" onClick={importAddressBook} />
  </ButtonBar>
  {#if $addressBook.length > 0}
-  <Table>
-   <Thead>
-    <TheadTr>
-     <Th>Alias</Th>
-     <Th>Address</Th>
-     <Th center={true}>Action</Th>
-    </TheadTr>
-   </Thead>
-   <Tbody>
+  <Table breakpoint="0">
+   <THead>
+    <THeadTr>
+     <THeadTh>Alias</THeadTh>
+     <THeadTh>Address</THeadTh>
+     <THeadTh>Action</THeadTh>
+    </THeadTr>
+   </THead>
+   <TBody>
     {#each $addressBook as a, index (index + '/' + a.address)}
-     <TbodyTr>
-      <Td class="bold">{a.alias}</Td>
-      <Td>{a.address}</Td>
-      <Td center={true}>
+     <TBodyTr>
+      <TBodyTd title="Alias">
+       <b>{a.alias}</b>
+      </TBodyTd>
+      <TBodyTd title="Address">
+       {a.address}
+      </TBodyTd>
+      <TBodyTd title="Action">
        <TableActionItems>
         <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => editItemModal(a)} />
         <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => deleteItemModal(a)} />
        </TableActionItems>
-      </Td>
-     </TbodyTr>
+      </TBodyTd>
+     </TBodyTr>
     {/each}
-   </Tbody>
+   </TBody>
   </Table>
  {/if}
 </div>
+
 <Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:show={showModalAddEdit} />
 <Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:show={showModalDel} />

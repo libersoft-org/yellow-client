@@ -1,12 +1,15 @@
 <script lang="ts">
- import Table from '../Table/Table.svelte';
- import Tbody from '../Table/TableTbody.svelte';
- import TbodyTr from '../Table/TableTbodyTr.svelte';
- import Td from '../Table/TableTbodyTd.svelte';
- import Input from '../Input/Input.svelte';
  import Switch from '../Switch/Switch.svelte';
  import Select from '../Select/Select.svelte';
  import Option from '../Select/SelectOption.svelte';
+ import Table from '@/core/components/ResponsiveTable/Table.svelte';
+ import THead from '@/core/components/ResponsiveTable/THead.svelte';
+ import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
+ import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
+ import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
+ import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
+ import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
  import { writable, get, type Unsubscriber } from 'svelte/store';
  import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
@@ -85,7 +88,12 @@
     [
      //{ name: 'primary', label: 'primary' },
      { name: 'main_window_monitor', label: 'Main window monitor' },
-    ].concat(value.map((m: any) => ({ name: m.name, label: m.name + '(' + m.size.width + 'x' + m.size.height + ')' })))
+    ].concat(
+     value.map((m: any) => ({
+      name: m.name,
+      label: m.name + '(' + m.size.width + 'x' + m.size.height + ')',
+     }))
+    )
    );
   });
 
@@ -144,53 +152,41 @@
 </script>
 
 <Table>
- <TbodyTr>
-  <Td>
-   <div class="bold">Notifications:</div>
-  </Td>
-  <Td center={true}>
-   <Switch bind:checked={_notificationsEnabled} />
-  </Td>
- </TbodyTr>
- <TbodyTr>
-  <Td>
-   <div class="bold">Notification sound:</div>
-  </Td>
-  <Td center={true}>
-   <Switch bind:checked={$notificationsSoundEnabled} />
-  </Td>
- </TbodyTr>
- {#if CUSTOM_NOTIFICATIONS}
-  <TbodyTr>
-   <Td>
-    <div class="bold">Custom notifications:</div>
-   </Td>
-   <Td center={true}>
-    <Switch bind:checked={$enableCustomNotifications} />
-   </Td>
-  </TbodyTr>
-  {#if $customNotificationsOn}
-   <TbodyTr>
-    <Td>
-     <div class="bold">Monitor:</div>
-    </Td>
-    <Td center={true}>
-     <Select bind:value={$selectedMonitorName}>
-      {#each $monitorOptions as monitor}
-       <Option value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
-      {/each}
-     </Select>
-     {#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
-    </Td>
-   </TbodyTr>
-   <TbodyTr>
-    <Td>
-     <div class="bold">Corner:</div>
-    </Td>
-    <Td center={true}>
-     <CornerSelector bind:value={$selectedNotificationsCorner} />
-    </Td>
-   </TbodyTr>
-  {/if}
- {/if}
+ <THead>
+  <THeadTr>
+   <THeadTh>Notifications:</THeadTh>
+   <THeadTh>Notification sound:</THeadTh>
+   <THeadTh>Custom notifications:</THeadTh>
+   <THeadTh>Monitor:</THeadTh>
+   <THeadTh>Corner:</THeadTh>
+  </THeadTr>
+ </THead>
+ <TBody>
+  <TBodyTr>
+   <TBodyTd title="Notifications">
+    <Switch bind:checked={_notificationsEnabled} />
+   </TBodyTd>
+   <TBodyTd title="Notification sound">
+    <Switch bind:checked={$notificationsSoundEnabled} />
+   </TBodyTd>
+   {#if $customNotificationsOn}
+    <TBodyTd title="Custom notifications">
+     <Switch bind:checked={$enableCustomNotifications} />
+    </TBodyTd>
+    {#if $customNotificationsOn}
+     <TBodyTd title="Monitor">
+      <Select bind:value={$selectedMonitorName}>
+       {#each $monitorOptions as monitor}
+        <Option value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
+       {/each}
+      </Select>
+      {#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
+     </TBodyTd>
+     <TBodyTd title="Corner">
+      <CornerSelector bind:value={$selectedNotificationsCorner} />
+     </TBodyTd>
+    {/if}
+   {/if}
+  </TBodyTr>
+ </TBody>
 </Table>

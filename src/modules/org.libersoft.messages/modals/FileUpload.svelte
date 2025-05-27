@@ -1,24 +1,31 @@
-<script>
- import Button from '@/core/components/Button/Button.svelte';
+<script lang="ts">
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
  import { humanSize } from '@/core/utils/fileUtils.js';
  import { truncateText } from '@/core/utils/textUtils.js';
- import { get } from 'svelte/store';
- import { identifier, selectedConversation, initUpload } from '../messages.js';
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
- import Table from '@/core/components/Table/Table.svelte';
- import Thead from '@/core/components/Table/TableThead.svelte';
- import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
- import Th from '@/core/components/Table/TableTheadTh.svelte';
- import Tbody from '@/core/components/Table/TableTbody.svelte';
- import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
- import Td from '@/core/components/Table/TableTbodyTd.svelte';
- import Icon from '@/core/components/Icon/Icon.svelte';
+ import { get, type Writable } from 'svelte/store';
  import { getContext } from 'svelte';
+ import { identifier, selectedConversation, initUpload } from '../messages.js';
+
+ import Button from '@/core/components/Button/Button.svelte';
+ import BaseButton from '@/core/components/Button/BaseButton.svelte';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import Table from '@/core/components/ResponsiveTable/Table.svelte';
+ import THead from '@/core/components/ResponsiveTable/THead.svelte';
+ import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
+ import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
+ import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
+ import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
+ import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+
+ type FileUploadModalContext = {
+  fileUploadModalFiles: Writable<File[]>;
+ };
+
  const { params } = $props();
- let elFileInput; // refs
+
+ let elFileInput;
  let dropActive = $state(false);
- let { fileUploadModalFiles } = getContext('FileUploadModal');
+ let { fileUploadModalFiles } = getContext<FileUploadModalContext>('FileUploadModal');
 
  function onFileAdd(e) {
   e && e.preventDefault();
@@ -38,7 +45,7 @@
 
  function onFileUpload(e) {
   $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.target.files];
-  elFileInput.value = ''; // clear the file input
+  elFileInput.value = '';
  }
 
  const uploadServer = () => {
@@ -66,7 +73,6 @@
  function onDrop(e) {
   e.preventDefault();
   dropActive = false;
-  // drop new files on top to be visible when scrolled table body
   $fileUploadModalFiles = [...e.dataTransfer.files, ...$fileUploadModalFiles];
  }
 </script>
@@ -76,18 +82,12 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 500px;
  }
 
  .header {
   display: flex;
   gap: 10px;
   justify-content: space-between;
- }
-
- .body .items {
-  display: flex;
-  flex-direction: column;
  }
 
  .body .items-empty {
@@ -112,76 +112,44 @@
   gap: 10px;
   justify-content: space-between;
  }
-
- .file-table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
- }
-
- .file-table :global(tbody) {
-  display: block;
-  width: 100%;
-  overflow: auto;
-  max-height: 35vh;
- }
-
- .file-table :global(thead tr) {
-  display: block;
- }
-
- .file-table :global(tbody tr),
- .file-table :global(thead tr) {
-  display: flex;
-  align-items: center;
- }
-
- .file-table :global(th:nth-child(1)),
- .file-table :global(td:nth-child(1)) {
-  flex: 0 1 80%;
- }
-
- .file-table :global(th:nth-child(2)),
- .file-table :global(td:nth-child(2)) {
-  flex: 1 0 20%;
-  text-align: right;
- }
-
- .file-table :global(th:nth-child(3)),
- .file-table :global(td:nth-child(3)) {
-  flex: 0 0;
- }
 </style>
 
 {#snippet fileUploadItem(file)}
- <TbodyTr>
-  <Td>{truncateText(file.name, 30)}</Td>
-  <Td>{humanSize(file.size)}</Td>
-  <Td><Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} /></Td>
- </TbodyTr>
+ <TBodyTr>
+  <TBodyTd title="File name">
+   {truncateText(file.name, 30)}
+  </TBodyTd>
+  <TBodyTd title="Size">
+   {humanSize(file.size)}
+  </TBodyTd>
+  <TBodyTd title="Action">
+   <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} />
+  </TBodyTd>
+ </TBodyTr>
 {/snippet}
+
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
  <div class="header">
   <Button width="110px" img="img/add.svg" colorVariable="--icon-black" text="Add files" onClick={onFileAdd} />
-  <Button width="110px" img="img/del.svg" colorVariable="--icon-black" text="Remove all" enabled={$fileUploadModalFiles.length} onClick={onDeleteAll} />
+  <Button width="110px" img="img/del.svg" colorVariable="--icon-black" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
  </div>
  <div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
   {#if $fileUploadModalFiles.length}
    <div class="items file-table">
     <Table>
-     <Thead>
-      <TheadTr>
-       <Th>File name</Th>
-       <Th>Size</Th>
-       <Th>Action</Th>
-      </TheadTr>
-     </Thead>
-     <Tbody>
+     <THead>
+      <THeadTr>
+       <THeadTh>File name:</THeadTh>
+       <THeadTh>Size:</THeadTh>
+       <THeadTh>Action:</THeadTh>
+      </THeadTr>
+     </THead>
+     <TBody>
       {#each $fileUploadModalFiles as file}
        {@render fileUploadItem(file)}
       {/each}
-     </Tbody>
+     </TBody>
     </Table>
    </div>
   {:else}
@@ -193,7 +161,7 @@
   {/if}
  </div>
  <div class="footer">
-  <Button width="180px" img="img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length} data-testid="send-files-p2p" />
-  <Button width="180px" img="img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length} data-testid="send-files-server" />
+  <Button width="180px" img="img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-p2p" />
+  <Button width="180px" img="img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
  </div>
 </div>

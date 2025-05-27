@@ -4,7 +4,9 @@ export default defineConfig({
    testDir: './src/',
    testMatch: ['**/e2e/**/*.test.ts'],
     //viewport: { width: 1280, height: 720 },
-    ignoreHTTPSErrors: true,
+    use: {
+        ignoreHTTPSErrors: true,
+    },
    reporter: [
      ['github'],
      ['list'],

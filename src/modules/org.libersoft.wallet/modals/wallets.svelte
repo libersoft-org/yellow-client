@@ -39,7 +39,7 @@
 
 <Input placeholder="Search" bind:value={filter} />
 <Accordion items={$wallets} bind:activeIndex>
- {#snippet snippet(wallet)}
+ {#snippet content(wallet)}
   <table>
    <tbody>
     {#each walletAddresses(wallet) as address, index}
