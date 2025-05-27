@@ -30,7 +30,6 @@
    css: t => `
 				overflow: hidden;
 				max-height: ${t * height + paddingTop + paddingBottom}px;
-				opacity: ${t};
 			`,
   };
  }
