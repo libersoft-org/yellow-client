@@ -264,8 +264,7 @@ async function toggleFirstAccountEnabled(page: Page): Promise<void> {
 
 test('Complete End-to-End Application Test', async ({ page }) => {
  await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-
- const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8085`;
+ const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8084`;
 
  await test.step('Initial Account Setup', async () => {
   // Add account in the wizard
