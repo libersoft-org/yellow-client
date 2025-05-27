@@ -721,7 +721,7 @@ export async function deleteMessage(message) {
 }
 
 async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
- let outgoing_message_id = await messages_db.outgoing.add({ account: acc.id, data: params });
+ let outgoing_message_id = (await messages_db.outgoing.add({ account: acc.id, data: params })) + 1;
  //console.log('saveAndSendOutgoingMessage saved message:', message.uid);
  sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id);
 }
