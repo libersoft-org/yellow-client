@@ -1,8 +1,6 @@
 <script>
  import core from '@/core/core.js';
- import Button from '@/core/components/Button/Button.svelte';
-
- let url = 'https://koo5.github.io/';
+ import Button from 'yellow-client-common/components/button/Button.svelte';
 </script>
 
 <Button text="hideSidebarMobile" onClick={() => core.hideSidebarMobile.set(true)} />
