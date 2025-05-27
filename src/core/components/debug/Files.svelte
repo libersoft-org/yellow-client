@@ -1,5 +1,5 @@
 <script lang="ts">
- import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload } from '../../files';
+ import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, exportToSystemDownloads } from '../../files';
  import { TAURI, TAURI_MOBILE, BROWSER } from '../../tauri';
  import { platform, type as osType } from '@tauri-apps/plugin-os';
  import { invoke } from '@tauri-apps/api/core';
@@ -98,6 +98,43 @@
    result = 'Testing finishNativeDownload...';
    await finishNativeDownload(download);
    result = 'Download finished successfully!';
+   
+   // On mobile, automatically export to system Downloads
+   if (TAURI_MOBILE && download.file_path) {
+    result += '\nExporting to system Downloads...';
+    const exportResult = await exportToSystemDownloads(
+     download.file_path,
+     download.original_file_name,
+     'text/plain'
+    );
+    if (exportResult.success) {
+     result += '\nFile exported to Downloads folder successfully!';
+    } else {
+     result += `\nExport failed: ${exportResult.error}`;
+    }
+   }
+  } catch (error) {
+   result = `Error: ${error}`;
+  }
+ }
+
+ async function testExportToDownloads() {
+  try {
+   if (!download || !download.finished) {
+    result = 'No finished download. Complete a download first!';
+    return;
+   }
+   result = 'Exporting to system Downloads...';
+   const exportResult = await exportToSystemDownloads(
+    download.file_path,
+    download.original_file_name,
+    'text/plain'
+   );
+   if (exportResult.success) {
+    result = 'File exported to Downloads folder successfully!';
+   } else {
+    result = `Export failed: ${exportResult.error}`;
+   }
   } catch (error) {
    result = `Error: ${error}`;
   }
@@ -183,6 +220,9 @@
   <Button onClick={testOfferNativeDownloadWithDefaultFolder}>Test offerNativeDownload with defaultFolder</Button>
   <Button onClick={testSaveNativeDownloadChunk}>Test saveNativeDownloadChunk</Button>
   <Button onClick={testFinishNativeDownload}>Test finishNativeDownload</Button>
+  {#if TAURI_MOBILE}
+   <Button onClick={testExportToDownloads}>Export to System Downloads</Button>
+  {/if}
  </div>
  <div class="result">
   <h4>Result:</h4>

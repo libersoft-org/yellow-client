@@ -77,10 +77,9 @@ export async function offerNativeDownload(fileName: string, defaultFileDownloadF
   download.baseDir = BaseDirectory.AppData;
   
   try {
-   // For mobile, save directly to app's data directory without subdirectory for now
-   // This avoids path resolution issues
+   // For mobile, use temp files like desktop
    download.file_path = fileName;
-   download.temp_file_path = fileName + '.part';  // Avoid function call that might cause issues
+   download.temp_file_path = partFileName(fileName);
    download.potential_default_folder = null;
    
    log.debug('Mobile download paths:', {
@@ -88,12 +87,6 @@ export async function offerNativeDownload(fileName: string, defaultFileDownloadF
     temp_file_path: download.temp_file_path,
     baseDir: download.baseDir,
     baseDirName: 'AppData'
-   });
-   
-   // Try with a very simple approach first
-   log.debug('About to call writeFile with:', {
-    path: download.temp_file_path,
-    baseDir: download.baseDir
    });
    
    // Create the temp file in app's local directory
@@ -154,24 +147,10 @@ export async function finishNativeDownload(download: NativeDownload) {
   TAURI_MOBILE
  });
  
- if (TAURI_MOBILE) {
-  // On mobile, use read/write instead of rename to avoid path issues
-  try {
-   const fileData = await readFile(temp_file_path, { baseDir: download.baseDir });
-   await writeFile(file_path, fileData, { baseDir: download.baseDir });
-   // Delete the temp file
-   await remove(temp_file_path, { baseDir: download.baseDir });
-  } catch (error) {
-   log.debug('Mobile file finalization error:', error);
-   throw error;
-  }
- } else {
-  // Desktop can use rename
-  await rename(temp_file_path, file_path, {
-   oldPathBaseDir: download.baseDir,
-   newPathBaseDir: download.baseDir,
-  });
- }
+ await rename(temp_file_path, file_path, {
+  oldPathBaseDir: download.baseDir,
+  newPathBaseDir: download.baseDir,
+ });
  
  // On mobile, offer to export the file to the system Downloads folder
  if (TAURI_MOBILE) {
@@ -218,19 +197,14 @@ export async function exportToSystemDownloads(appFilePath: string, fileName: str
  }
 
  try {
-  // Read the file from app storage
-  const fileData = await readFile(appFilePath, { baseDir: BaseDirectory.AppData });
-  
-  // Convert to base64
-  const base64Data = btoa(String.fromCharCode(...fileData));
-  
-  // Use our plugin to save to Downloads
-  const result = await invoke('plugin:yellow|save_to_downloads', {
+  // Use our plugin to export the file using streaming (no memory loading)
+  const result = await invoke('plugin:yellow|export_file_to_downloads', {
+   filePath: appFilePath,
    fileName: fileName,
-   mimeType: mimeType,
-   data: base64Data
+   mimeType: mimeType
   });
   
+  log.debug('File exported to Downloads:', result);
   return { success: true };
  } catch (error) {
   log.debug('Failed to export to Downloads:', error);
