@@ -265,7 +265,7 @@
  }
 
  .message-bar-top {
-  display: contents;
+  display: flex;
  }
 
  .message-textarea {

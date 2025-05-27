@@ -88,6 +88,8 @@
   gap: 10px;
   padding: 10px;
   border-bottom: 1px solid #555;
+  width: 100%;
+  box-sizing: border-box;
 
   :global(.icon) {
    transform: rotate(0deg);
@@ -105,6 +107,7 @@
   gap: 10px;
   flex: 1 1 auto;
   min-width: 0;
+  /* width: 100%; */
  }
 
  .items {
@@ -117,11 +120,19 @@
   width: 100%;
   overflow: hidden;
   transition: none;
+
+  :global(& > .base-button) {
+   width: 100% !important;
+
+   :global(& > .item) {
+    width: 100%;
+   }
+  }
  }
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
- <BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
+ <BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle} width="100%">
   <div class={`dropdown`} class:is-expanded={accountsVisible}>
    {#if $active_account}
     <div class="text">

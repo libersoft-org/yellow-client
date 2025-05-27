@@ -32,6 +32,10 @@
  .account-import {
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 
   @media (max-width: 768px) {
    width: 100%;
@@ -39,10 +43,11 @@
 
   .scrollable {
    overflow: auto;
+   border-radius: 10px;
+   width: 100%;
   }
 
   :global(.button) {
-   margin-top: 10px;
    position: sticky;
    top: 0;
    left: 0;

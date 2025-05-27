@@ -31,6 +31,7 @@
   padding: 10px;
   border: 1px solid #dd9;
   background-color: #fde990;
+  width: 100%;
  }
 
  .items .item:hover {
@@ -66,7 +67,7 @@
  {#if $addressBook.length > 0}
   <div class="items">
    {#each $addressBook as a, index}
-    <BaseButton onClick={() => clickItem(a.address)}>
+    <BaseButton onClick={() => clickItem(a.address)} width="100%">
      <div class="item {index % 2 === 0 ? 'even' : 'odd'}">
       <div class="alias">{a.alias}</div>
       <div class="address">{a.address}</div>

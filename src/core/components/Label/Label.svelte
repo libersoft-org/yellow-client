@@ -17,6 +17,7 @@
   flex-direction: column;
   gap: 2px;
   -webkit-tap-highlight-color: transparent;
+  max-width: fit-content;
  }
 
  label.row {

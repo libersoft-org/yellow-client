@@ -22,6 +22,7 @@
   height: 100%;
   flex: 1;
   text-align: center;
+  padding: 0 10px;
  }
 
  .item.active {
@@ -35,7 +36,7 @@
  }
 </style>
 
-<BaseButton {onClick} {onMousedown}>
+<BaseButton {onClick} {onMousedown} height="100%">
  <div class="item {active ? 'active' : ''}">
   {#if icon}
    <Icon img={icon} alt={label} {colorVariable} size="24px" padding="0px" />

@@ -107,7 +107,7 @@
   if (!modalEl) return;
 
   const rect = modalEl.getBoundingClientRect();
-  const padding = window.innerWidth < 768 ? 12 : 24;
+  const padding = window.innerWidth < 768 ? 0 : 24;
 
   let dx = 0;
   let dy = 0;
@@ -170,11 +170,11 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   max-width: 700px;
   width: 100%;
   max-height: calc(100dvh - 48px);
+  height: fit-content;
   border: 1px solid #000;
   border-radius: 10px;
   box-shadow: var(--shadow);
@@ -182,10 +182,12 @@
   overflow: auto;
 
   @media (max-width: 768px) {
-   max-width: calc(100% - 24px) !important;
-   max-height: calc(100% - 24px) !important;
-   height: fit-content;
+   max-width: calc(100%) !important;
+   max-height: calc(100%) !important;
+   height: 100%;
    width: 100%;
+   border-radius: 0px;
+   border: none;
   }
 
   :global(&.neodrag-dragging) {
@@ -207,7 +209,7 @@
  .modal .header .title {
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 10px;
   flex-grow: 1;
   user-select: none;
 
@@ -220,7 +222,6 @@
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  /* overflow-y: auto; */
   background-color: #fff;
   color: #000;
  }

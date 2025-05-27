@@ -268,6 +268,11 @@
  }
 
  function resizeSideBar(e) {
+  // const moduleBarItems = e.target.querySelector('.module-bar > .items');
+  // if (moduleBarItems) {
+  // 	moduleBarItems.style.height = 'auto';
+  // }
+
   if (isResizingSideBar) {
    e.preventDefault();
    // delta from mouse move
