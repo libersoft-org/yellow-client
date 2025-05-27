@@ -8,8 +8,8 @@ export default defineConfig({
         ignoreHTTPSErrors: true,
     },
    reporter: [
-     ['github'],
      ['list'],
-     ['json', { outputFile: 'test-results/playwright-report.json' }]
+     ['json', { outputFile: 'test-results/playwright-report.json' }],
+     ['html', { outputFolder: 'playwright-report', open: 'never' }]
    ],
 });
