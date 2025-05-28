@@ -112,7 +112,7 @@
   if (!isMobile) return;
 
   const rect = modalEl.getBoundingClientRect();
-  const padding = window.innerWidth < 768 ? 0 : 24;
+  const padding = 0;
 
   let dx = 0;
   let dy = 0;
