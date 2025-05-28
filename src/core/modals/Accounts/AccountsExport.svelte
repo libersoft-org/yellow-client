@@ -60,4 +60,3 @@
 {:else if activeTab === 'qr'}
  <AccountsExportQR />
 {/if}
-

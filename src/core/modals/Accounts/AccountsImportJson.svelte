@@ -18,7 +18,7 @@
  }
 
  $effect(() => {
-  textareaEl?.focus();
+  // textareaEl?.focus();
  });
 
  $effect(() => {
@@ -75,7 +75,7 @@
 <div class="account-import">
  <div class="scrollable">
   <Code bind:code={text} />
-  <textarea class:isFilled bind:value={text} bind:this={textareaEl}></textarea>
+  <!-- <textarea class:isFilled bind:value={text} bind:this={textareaEl}></textarea> -->
  </div>
  {#if error}
   <div class="error">{error}</div>

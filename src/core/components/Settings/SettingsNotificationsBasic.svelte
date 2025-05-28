@@ -2,13 +2,13 @@
  import Switch from '../Switch/Switch.svelte';
  import Select from '../Select/Select.svelte';
  import Option from '../Select/SelectOption.svelte';
- import Table from '@/core/components/ResponsiveTable/Table.svelte';
- import THead from '@/core/components/ResponsiveTable/THead.svelte';
- import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
- import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
- import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
- import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
- import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Thead from '@/core/components/Table/TableThead.svelte';
+ import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+ import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
 
  import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
  import { writable, get, type Unsubscriber } from 'svelte/store';
@@ -152,41 +152,41 @@
 </script>
 
 <Table>
- <THead>
-  <THeadTr>
-   <THeadTh>Notifications:</THeadTh>
-   <THeadTh>Notification sound:</THeadTh>
-   <THeadTh>Custom notifications:</THeadTh>
-   <THeadTh>Monitor:</THeadTh>
-   <THeadTh>Corner:</THeadTh>
-  </THeadTr>
- </THead>
- <TBody>
-  <TBodyTr>
-   <TBodyTd title="Notifications">
-    <Switch label="Notifications" bind:checked={_notificationsEnabled} />
-   </TBodyTd>
-   <TBodyTd title="Notification sound">
-    <Switch label="Notification sound" bind:checked={$notificationsSoundEnabled} />
-   </TBodyTd>
+ <Thead>
+  <TheadTr>
+   <TheadTh>Notifications:</TheadTh>
+   <TheadTh>Notification sound:</TheadTh>
+   <TheadTh>Custom notifications:</TheadTh>
+   <TheadTh>Monitor:</TheadTh>
+   <TheadTh>Corner:</TheadTh>
+  </TheadTr>
+ </Thead>
+ <Tbody>
+  <TbodyTr>
+   <TbodyTd title="Notifications">
+    <Switch ariaLabel="Notifications" bind:checked={_notificationsEnabled} />
+   </TbodyTd>
+   <TbodyTd title="Notification sound">
+    <Switch ariaLabel="Notification sound" bind:checked={$notificationsSoundEnabled} />
+   </TbodyTd>
    {#if $customNotificationsOn}
-    <TBodyTd title="Custom notifications">
-     <Switch bind:checked={$enableCustomNotifications} />
-    </TBodyTd>
+    <TbodyTd title="Custom notifications">
+     <Switch ariaLabel="Custom notifications" bind:checked={$enableCustomNotifications} />
+    </TbodyTd>
     {#if $customNotificationsOn}
-     <TBodyTd title="Monitor">
+     <TbodyTd title="Monitor">
       <Select bind:value={$selectedMonitorName}>
        {#each $monitorOptions as monitor}
         <Option value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
        {/each}
       </Select>
       {#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
-     </TBodyTd>
-     <TBodyTd title="Corner">
+     </TbodyTd>
+     <TbodyTd title="Corner">
       <CornerSelector bind:value={$selectedNotificationsCorner} />
-     </TBodyTd>
+     </TbodyTd>
     {/if}
    {/if}
-  </TBodyTr>
- </TBody>
+  </TbodyTr>
+ </Tbody>
 </Table>

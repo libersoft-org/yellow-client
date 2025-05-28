@@ -14,7 +14,7 @@
 </script>
 
 <style>
- .account-import {
+ /* .account-import {
   position: relative;
   width: 100%;
   display: flex;
@@ -53,7 +53,7 @@
     pointer-events: none;
    }
   }
- }
+ } */
 </style>
 
 <Tabs>
