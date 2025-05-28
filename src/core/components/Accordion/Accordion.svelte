@@ -196,6 +196,8 @@
  }
 
  .accordion .item .header {
+  width: 100%;
+
   .title {
    flex-grow: 1;
    font-weight: bold;
@@ -222,7 +224,7 @@
 <div class="accordion">
  {#each items as item, index}
   <div class="item {activeIndices.includes(index) ? 'is-expanded' : ''}">
-   <BaseButton onClick={() => handleClick(index)}>
+   <BaseButton onClick={() => handleClick(index)} width="100%">
     <div class="header">
      <div class="title">{item.name}</div>
      {@render header?.(item)}

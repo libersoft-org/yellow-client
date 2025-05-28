@@ -6,8 +6,10 @@
  import ModuleBarItem from './ModuleBarItem.svelte';
  import resize from '@/core/actions/resizeObserver.ts';
  import { order } from '@/core/utils/utils.ts';
+
  export let onSelectModule;
  export let onCloseModule;
+
  let itemsHeight = '50px';
  let itemsEl;
  let module_data;
@@ -15,6 +17,7 @@
  let expanded = false;
  let module_decls_ordered = [];
  let expandEnabled = false;
+ let isTransitioning = false;
 
  $: module_decls_ordered = order($module_decls);
  $: module_data = $active_account?.module_data || {};
@@ -37,6 +40,10 @@
   }
  }
 
+ function onTransitionEnd() {
+  isTransitioning = false;
+ }
+
  function clickSetModule(id) {
   console.log('clickSetModule: ' + id);
   if ($selected_module_id === id) onCloseModule();
@@ -47,13 +54,24 @@
   expanded = !expanded;
  }
 
+ function getPaddingHeight(el) {
+  const style = getComputedStyle(el);
+  return parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+ }
+
  $: {
   if (expanded && itemsEl) {
-   itemsHeight = `${itemsEl.scrollHeight}px`;
-   if (expanded) itemsHeight = 'auto';
+   const padding = getPaddingHeight(itemsEl);
+   const height = itemsEl.scrollHeight - padding;
+   itemsHeight = `${height}px`;
+   isTransitioning = true;
+   setTimeout(() => {
+    if (expanded) itemsHeight = 'auto';
+   }, 300);
   } else if (!expanded && itemsEl) {
-   const currHeight = itemsEl.scrollHeight;
-   itemsHeight = `${currHeight}px`;
+   const padding = getPaddingHeight(itemsEl);
+   const height = itemsEl.scrollHeight - padding;
+   itemsHeight = `${height}px`;
    requestAnimationFrame(() => {
     itemsHeight = '50px';
    });
@@ -77,7 +95,7 @@
   border-bottom: 1px solid #555;
   background-color: #222;
   display: flex;
-  align-items: center;
+  justify-content: center;
   height: fit-content;
  }
 
@@ -86,7 +104,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  flex-grow: 1;
   row-gap: 10px;
   flex-wrap: wrap;
   padding: 10px;
@@ -135,7 +152,7 @@
 </style>
 
 <div class="module-bar" class:expand-enabled={expandEnabled}>
- <div use:resize={onResize} bind:this={itemsEl} class="items {expanded ? 'expanded' : ''}" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);">
+ <div use:resize={onResize} bind:this={itemsEl} class="items {expanded ? 'expanded' : ''}" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);" on:transitionend={onTransitionEnd}>
   {#each module_decls_ordered as decl (decl.id)}
    <div>
     <ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />

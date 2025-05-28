@@ -228,9 +228,9 @@
  {/if}
 
  {#if params.id === null}
-  <Button data-testid="add" text="Add the account" onClick={clickAdd} />
+  <Button data-testid="add" text="Add the account" onClick={clickAdd} width="100%" />
  {:else}
-  <Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} />
+  <Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} width="100%" />
  {/if}
 
  {#if account && acc}

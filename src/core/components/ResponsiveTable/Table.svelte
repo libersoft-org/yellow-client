@@ -10,7 +10,6 @@
  const { breakpoint = null, children, ...restProps }: Props = $props();
 
  let isWide = $state(false);
- $inspect(breakpoint);
 
  $effect(() => {
   if (!breakpoint) return;

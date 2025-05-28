@@ -525,6 +525,8 @@
  const forwardMessageModalOpen = forwardMessageStore.isOpen();
 </script>
 
+<!--doBlockScroll: {doBlockScroll}-->
+
 <style>
  .spacer {
   flex-grow: 1;
@@ -703,4 +705,3 @@
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
 <Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} onShowChange={show => forwardMessageStore.setOpen(show)} width="448px" height="390px" />
-<!--doBlockScroll: {doBlockScroll}-->

@@ -18,7 +18,6 @@
   white-space: pre-wrap;
   padding: 24px;
   border: 1px solid #888;
-  border-radius: 10px;
   scrollbar-width: none;
   background-color: #1e1e1e;
   max-width: 500px;
@@ -28,7 +27,7 @@
   outline: none;
   font-size: clamp(12px, 1.4vw, 14px);
   caret-color: white !important;
-  caret-shape: #1e1e1e;
+  min-width: fit-content;
 
   &::-webkit-scrollbar {
    display: none;

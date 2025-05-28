@@ -202,7 +202,6 @@
   //console.log('window.innerHeight:', window.innerHeight);
   //console.log('viewportHeight:', viewportHeight);
   //console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
-  console.log('$isMobile:', $isMobile);
  }
 
  let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
@@ -268,6 +267,11 @@
  }
 
  function resizeSideBar(e) {
+  // const moduleBarItems = e.target.querySelector('.module-bar > .items');
+  // if (moduleBarItems) {
+  // 	moduleBarItems.style.height = 'auto';
+  // }
+
   if (isResizingSideBar) {
    e.preventDefault();
    // delta from mouse move

@@ -1,7 +1,7 @@
 <script lang="ts">
  import { setContext, tick, type Snippet } from 'svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- import { debug } from '../../core.js';
+ import { debug, isMobile } from '../../core.js';
  import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
  import { draggable } from '@neodrag/svelte';
  import Portal from '../Portal/Portal.svelte';
@@ -32,6 +32,7 @@
  let resizeObserver: ResizeObserver;
 
  $effect(() => {
+  if (!isMobile) return;
   if (modalEl && showContent && !isDragging && activeTab) {
    centerModal();
    requestAnimationFrame(snapTransformIntoBounds);
@@ -43,12 +44,15 @@
   modalId = registerModal(z => (zIndex = z));
 
   function handleResize() {
+   if (!isMobile) return;
+   centerModal();
    if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
   }
 
   if (modalEl) {
    let didInit = false;
    resizeObserver = new ResizeObserver(() => {
+    if (!isMobile) return;
     if (isDragging) return;
     if (didInit) {
      centerModal();
@@ -105,9 +109,10 @@
 
  function snapTransformIntoBounds() {
   if (!modalEl) return;
+  if (!isMobile) return;
 
   const rect = modalEl.getBoundingClientRect();
-  const padding = window.innerWidth < 768 ? 12 : 24;
+  const padding = 0;
 
   let dx = 0;
   let dy = 0;
@@ -124,11 +129,18 @@
   const newX = matrix.m41 + dx;
   const newY = matrix.m42 + dy;
 
-  modalEl.style.transition = 'transform 0.2s ease';
-  modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
-  setTimeout(() => {
-   if (modalEl) modalEl.style.transition = '';
-  }, 200);
+  if (!isDragging) {
+   modalEl.style.transition = 'none';
+   modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+   modalEl.offsetHeight;
+   modalEl.style.transition = '';
+  } else {
+   modalEl.style.transition = 'transform 0.2s ease';
+   modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+   setTimeout(() => {
+    if (modalEl) modalEl.style.transition = '';
+   }, 200);
+  }
  }
 
  export function open() {
@@ -170,22 +182,24 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   max-width: 700px;
   width: 100%;
   max-height: calc(100dvh - 48px);
+  height: fit-content;
   border: 1px solid #000;
   border-radius: 10px;
   box-shadow: var(--shadow);
   background-color: #fff;
-  overflow: auto;
+  overflow: hidden;
 
   @media (max-width: 768px) {
-   max-width: calc(100% - 24px) !important;
-   max-height: calc(100% - 24px) !important;
-   height: fit-content;
-   width: 100%;
+   max-width: calc(100%) !important;
+   max-height: calc(100%) !important;
+   height: 100%;
+   width: 100% !important;
+   border-radius: 0px;
+   border: none;
   }
 
   :global(&.neodrag-dragging) {
@@ -207,7 +221,7 @@
  .modal .header .title {
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 10px;
   flex-grow: 1;
   user-select: none;
 
@@ -220,9 +234,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  /* overflow-y: auto; */
   background-color: #fff;
   color: #000;
+  overflow: auto;
  }
 </style>
 
@@ -242,6 +256,12 @@
     onDragEnd,
     gpuAcceleration: true,
     handle: '.header',
+    bounds: {
+     top: 0,
+     left: 0,
+     right: 0,
+     bottom: 0,
+    },
    }}
    style:z-index={zIndex}
    onmousedown={raiseZIndex}

@@ -67,7 +67,10 @@
   <Button img="img/export.svg" text="Export" onClick={() => doExport()} />
   <Button img="img/import.svg" text="Import" onClick={() => doImport()} />
  </ButtonBar>
- <div class="bold">My networks:</div>
+
+ {#if $networks.length !== 0}
+  <div class="bold">My networks:</div>
+ {/if}
 
  <Table breakpoint="500px">
   <TBody>

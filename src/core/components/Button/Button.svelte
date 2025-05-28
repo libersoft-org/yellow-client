@@ -59,7 +59,7 @@
  }
 </style>
 
-<BaseButton onClick={handleClick} {...restProps} disabled={!enabled}>
+<BaseButton onClick={handleClick} {...restProps} disabled={!enabled} {width}>
  <div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';' + 'border-radius: ' + radius + 'px;'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
   {#if children}
    {@render children?.()}

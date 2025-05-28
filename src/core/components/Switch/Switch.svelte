@@ -1,10 +1,8 @@
 <script lang="ts">
  import Label from '@/core/components/Label/Label.svelte';
- import type { Writable } from 'svelte/store';
- import { get } from 'svelte/store';
 
  type Props = {
-  checked?: Writable<boolean> | boolean;
+  checked?: boolean;
   label?: string;
   row?: boolean;
  };
@@ -12,13 +10,13 @@
  let { checked = $bindable(), label = '', row = false }: Props = $props();
 
  let mounted = $state(false);
-
- let localChecked = $state(typeof checked === 'boolean' ? checked : checked ? get(checked) : false);
+ let inputId = crypto.randomUUID();
+ let labelId = `${inputId}-label`;
 
  function keyPress(event) {
   if (event.key === 'Enter' || event.key === ' ') {
    event.preventDefault();
-   localChecked = !localChecked;
+   checked = !checked;
   }
  }
 
@@ -26,10 +24,6 @@
   requestAnimationFrame(() => {
    mounted = true;
   });
-
-  if (typeof checked !== 'boolean' && checked?.set) {
-   checked.set(localChecked);
-  }
  });
 </script>
 
@@ -48,9 +42,11 @@
  }
 
  .switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  position: absolute;
+  opacity: 0.001;
+  width: 60px;
+  height: 34px;
+  cursor: pointer;
  }
 
  .switch .slider {
@@ -62,6 +58,7 @@
   background-color: #ccc;
   border-radius: 34px;
   cursor: pointer;
+  pointer-events: none;
  }
 
  .transition {
@@ -96,12 +93,25 @@
  .switch input:focus-visible + .slider {
   outline: auto;
  }
+
+ .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+ }
 </style>
 
-<Label text={label} {row}>
+<Label {row}>
+ <span id={labelId} class="visually-hidden">{label}</span>
  <div class="switch">
   <div class="switch-wrapper">
-   <input type="checkbox" bind:checked={localChecked} onkeydown={keyPress} />
+   <input id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
    <span class="slider {mounted ? 'transition' : ''}"></span>
   </div>
  </div>
