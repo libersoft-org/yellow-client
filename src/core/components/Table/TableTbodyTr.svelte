@@ -9,17 +9,19 @@
 </script>
 
 <style>
- tr {
-  :global(&:has(> td:nth-child(2))) {
-   /* :global(td:nth-child(odd)) {
-				background-color: #ffdd1130;
-			}
+ tr:nth-child(even) {
+  background-color: var(--color-tertiary-background);
+ }
 
-			:global(td:nth-child(even)) {
-				background-color: #ffdd1160;
-			} */
-  }
+ tr:nth-child(odd) {
+  background-color: var(--color-tertiary-background);
+ }
 
+ tr:hover {
+  background-color: var(--color-primary-background);
+ }
+
+ .tr {
   :global(.table-wide &) {
    display: table-row;
    border-style: none;

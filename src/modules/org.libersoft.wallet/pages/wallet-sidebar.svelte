@@ -31,12 +31,12 @@
   flex-direction: column;
   padding: 10px;
   border: 1px solid #dd9;
-  background-color: #fde990;
   width: 100%;
+  background-color: var(--color-primary-background);
  }
 
  .items .item:hover {
-  background-color: #fd1;
+  background-color: var(--color-primary-background);
  }
 
  .items .item .alias {

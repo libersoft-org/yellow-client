@@ -89,7 +89,7 @@
  }
 
  input:checked + .slider {
-  background-color: #fd1;
+  background-color: var(--color-primary-background)background);
  }
 
  input:checked + .slider:before {

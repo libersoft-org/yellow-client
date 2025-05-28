@@ -20,7 +20,7 @@
 
   &:not(.selected) {
    &:hover {
-    background-color: #303030;
+    background-color: var(--color-popover);
     transform: scale(1.2);
     z-index: 10;
    }
@@ -28,7 +28,7 @@
  }
 
  .item.selected {
-  background-color: #404040;
+  background-color: var(--color-popover-foreground);
   transform: scale(1.2);
  }
 </style>
@@ -36,6 +36,6 @@
 <BaseButton data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
  <div class="item {selected && 'selected'}">
   <Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
-  <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--icon-yellow" size="30px" />
+  <Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--color-primary-background" size="30px" />
  </div>
 </BaseButton>

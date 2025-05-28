@@ -593,7 +593,7 @@
  }
 
  .no-messages .body {
-  background-color: #fff;
+  background-color: var(--color-background);
   border: 1px solid #888;
   border-radius: 20px;
   padding: 20px;

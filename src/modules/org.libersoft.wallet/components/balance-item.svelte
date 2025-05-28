@@ -17,15 +17,15 @@
  }
 
  .item.even {
-  background-color: #ffa;
+  background-color: var(--color-secondary-muted-background);
  }
 
  .item.odd {
-  background-color: #ffd;
+  background-color: var(--color-muted-background);
  }
 
  .item:hover {
-  background-color: #fd1;
+  background-color: var(--color-primary-background);
  }
 
  .item .icon img {

@@ -88,7 +88,7 @@
  .tooltip {
   display: flex;
   align-items: center;
-  background: var(--yellow-bg);
+  background: var(--color-muted-background);
   padding: 8px;
   border-radius: 20px;
   box-shadow: var(--yellow-box-shadow);

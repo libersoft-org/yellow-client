@@ -49,8 +49,8 @@
 */
  .options {
   position: absolute;
-  border: 1px solid #000;
-  background-color: #fff;
+  border: 1px solid var(--color-background);
+  background-color: var(--color-foreground);
   width: 100%;
   max-height: 150px;
   overflow-y: auto;
@@ -69,7 +69,7 @@
  .selected {
   display: flex;
   align-items: center;
-  border: 1px solid #000;
+  border: 1px solid var(--color-background);
   border-radius: 10px;
   width: 100%;
   box-sizing: border-box;
@@ -85,7 +85,7 @@
  {#if selected}
   <div class="selected">
    <div class="text">{selected}</div>
-   <Icon img="img/close.svg" alt="X" colorVariable="--icon-black" size="10px" onClick={clickClearSelection} />
+   <Icon img="img/close.svg" alt="X" colorVariable="--color-foreground" size="10px" onClick={clickClearSelection} />
   </div>
  {:else}
   <Input bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />

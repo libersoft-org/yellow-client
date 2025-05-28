@@ -11,8 +11,41 @@
  import { TAURI } from '@/core/tauri.ts';
  import { zoom } from '@/core/settings.ts';
  import { setZoom } from '@/core/zoom.ts';
+ import Input from '@/core/components/Input/Input.svelte';
+ import { selected_theme_index, current_theme, themes_stored, default_theme } from '../../appearance_store.js';
 
- let { theme = 'light' } = $props();
+ import Icon from '../Icon/Icon.svelte';
+ import Button from '../Button/Button.svelte';
+
+ $effect(() => {
+  $themes_stored;
+  $current_theme.properties;
+  $selected_theme_index;
+ });
+
+ let theme_properties = Object.entries($current_theme.properties);
+
+ let expanded = $state(false);
+
+ function click_expand() {
+  expanded = !expanded;
+  console.log(expanded);
+ }
+
+ function create_new_theme() {
+  let new_theme = JSON.parse(JSON.stringify(default_theme));
+  new_theme.name = 'New Theme';
+  themes_stored.update(arr => [...arr, new_theme]);
+  $selected_theme_index = $themes_stored.length - 1;
+ }
+
+ function delete_current_theme() {
+  if ($themes_stored.length > 1 && $selected_theme_index > 0) {
+   let current_index = $selected_theme_index;
+   $selected_theme_index = 0;
+   themes_stored.update(arr => arr.filter(theme => $themes_stored.indexOf(theme) !== current_index));
+  }
+ }
 </script>
 
 <style>
@@ -44,11 +77,60 @@
      </div>
     </TbodyTd>
    {/if}
-   <TbodyTd title="Address">
-    <Select bind:value={theme}>
-     <Option text="Light" value="light" />
-    </Select>
+   <TbodyTd>Theme:</TbodyTd>
+   <TbodyTd>
+    {#if expanded}
+     <Button onClick={click_expand}>
+      <Icon img="img/edit.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+     </Button>
+    {:else}
+     <Select type="number" bind:value={$selected_theme_index} current-index={$selected_theme_index}>
+      {#each $themes_stored as theme, index (theme.name + index)}
+       <Option text={theme.name} value={index} />
+      {/each}
+     </Select>
+     {#if $selected_theme_index > 0}
+      <Button onClick={click_expand}>
+       <Icon img="img/edit.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+      </Button>
+     {/if}
+     <Button
+      onClick={() => {
+       click_expand();
+       create_new_theme();
+      }}
+     >
+      <Icon img="img/add.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+     </Button>
+     {#if $selected_theme_index > 0}
+      <Button onClick={delete_current_theme}>
+       <Icon img="img/del.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+      </Button>
+     {/if}
+    {/if}
    </TbodyTd>
   </TbodyTr>
  </Tbody>
+
+ <Table>
+  <Tbody>
+   <TbodyTr class="color_properties">
+    {#if expanded}
+     <TbodyTd title="Name">
+      <Input type="text" bind:value={$themes_stored[$selected_theme_index].name} />
+     </TbodyTd>
+
+     <TbodyTr>
+      {#each theme_properties as theme_property_name, theme_property_value}
+       <TbodyTd title={theme_property_name[0]}>
+        <input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} />
+
+        {$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
+       </TbodyTd>
+      {/each}
+     </TbodyTr>
+    {/if}
+   </TbodyTr>
+  </Tbody>
+ </Table>
 </Table>
