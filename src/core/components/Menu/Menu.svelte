@@ -2,7 +2,7 @@
  import BaseButton from '../Button/BaseButton.svelte';
  import MenuItem from './MenuItem.svelte';
  import Modal from '../Modal/Modal.svelte';
- import ModalSettings from '../../modals/Settings.svelte';
+ import ModalSettings from '../../modals/Settings/Settings.svelte';
  import Icon from '../Icon/Icon.svelte';
  import DialogExit from '../../dialogs/Exit.svelte';
  import VersionInfo from '../VersionInfo/VersionInfo.svelte';

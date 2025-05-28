@@ -1,11 +1,11 @@
 <script>
- import Tabs from '../components/Tabs/Tabs.svelte';
- import TabsItem from '../components/Tabs/TabsItem.svelte';
+ import Tabs from '../../components/Tabs/Tabs.svelte';
+ import TabsItem from '../../components/Tabs/TabsItem.svelte';
  import AccountsExportJson from './AccountsExportJson.svelte';
  import AccountsExportQR from './AccountsExportQR.svelte';
- import ButtonBar from '../components/Button/ButtonBar.svelte';
- import { accounts_config } from '../core.js';
- import Button from '../components/Button/Button.svelte';
+ import ButtonBar from '../../components/Button/ButtonBar.svelte';
+ import { accounts_config } from '../../core.js';
+ import Button from '../../components/Button/Button.svelte';
 
  let activeTab = $state('json');
 
