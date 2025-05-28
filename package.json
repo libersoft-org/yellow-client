@@ -43,6 +43,7 @@
   "events": "^3.3.0",
   "fuzzy-search": "^3.2.1",
   "hex-to-css-filter": "^6.0.0",
+  "jsqr": "^1.4.0",
   "leaflet": "^1.9.4",
   "lodash": "^4.17.21",
   "lottie-web": "^5.12.2",
