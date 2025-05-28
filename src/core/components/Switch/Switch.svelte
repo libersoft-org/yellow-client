@@ -10,7 +10,7 @@
  let { checked = $bindable(), label = '', row = false }: Props = $props();
 
  let mounted = $state(false);
- let inputId = crypto.randomUUID();
+ let inputId = Math.random().toString(36);
  let labelId = `${inputId}-label`;
 
  function keyPress(event) {

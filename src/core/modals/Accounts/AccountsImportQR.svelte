@@ -221,7 +221,9 @@
   {:else}
    <div class="instructions">Point your camera at a QR code containing account configuration</div>
    <div class="video-container">
-    <video bind:this={videoElement} autoplay playsinline></video>
+    <video bind:this={videoElement} autoplay playsinline>
+     <track kind="captions" />
+    </video>
     <canvas bind:this={canvasElement}></canvas>
    </div>
    <Button text="Cancel" onClick={close} />

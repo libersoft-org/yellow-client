@@ -20,6 +20,12 @@
  $effect(() => {
   textareaEl?.focus();
  });
+
+ $effect(() => {
+  if (text) {
+   error = '';
+  }
+ });
 </script>
 
 <style>
