@@ -101,14 +101,21 @@
  function scanAgain() {
   scannedText = '';
   error = '';
+  lastProcessedCode = '';
   startCamera();
  }
 
  async function startCamera() {
   try {
+   // Stop existing stream if any
+   if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+   }
+
    stream = await navigator.mediaDevices.getUserMedia({
     video: { facingMode: 'environment' },
    });
+
    if (videoElement) {
     videoElement.srcObject = stream;
     startScanning();

@@ -117,6 +117,16 @@ export function findAccount(id) {
  return get(accounts).find(account => get(account).id === id);
 }
 
+export function accountExists(server, address) {
+ const currentConfig = get(accounts_config);
+ const identifier = `${server}\\\\${address}`;
+ return currentConfig.some(account => {
+  const accountServer = account.credentials?.server || account.server;
+  const accountAddress = account.credentials?.address || account.address;
+  return `${accountServer}\\\\${accountAddress}` === identifier;
+ });
+}
+
 /* fire off whenever accounts array or active_account_id changes */
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
  //console.log('active_account_store:', $accounts, $active_account_id);
@@ -685,10 +695,7 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
   req,
   callback: (req, res) => {
    if (res.error) {
-       console.error(res);
-
-
-
+    console.error(res);
    }
    if (callback) callback(req, res);
   },
