@@ -1,8 +1,9 @@
 <script lang="ts">
  import Button from '../Button/Button.svelte';
  import Dialog from '../Dialog/Dialog.svelte';
- import { accounts_config, accountExists } from '../../core.js';
+ import { accounts_config, accountExists, accounts, active_account_id, active_account } from '../../core.js';
  import { get } from 'svelte/store';
+ import { log } from '@/core/tauri.ts';
 
  type Props = {
   importText: string;
@@ -44,21 +45,23 @@
  });
 
  function addAccounts() {
+  let newConfig;
   try {
-   const newConfig = JSON.parse(importText);
-
-   if (!Array.isArray(newConfig) || newConfig.length === 0) {
-    onError('No accounts found in import data');
-    return;
-   }
-
-   remainingAccounts = [...newConfig];
-   processedCount = 0;
-   processNextAccount();
+   newConfig = JSON.parse(importText);
   } catch (err) {
+   console.error('JSON.parse:', err);
    onError('Invalid JSON format');
-   console.error('Add accounts error:', err);
+   return;
   }
+
+  if (!Array.isArray(newConfig) || newConfig.length === 0) {
+   onError('No accounts found in import data');
+   return;
+  }
+
+  remainingAccounts = [...newConfig];
+  processedCount = 0;
+  processNextAccount();
  }
 
  function processNextAccount() {
@@ -83,8 +86,21 @@
   } else {
    // Account doesn't exist, add it
    accounts_config.update(current => [...current, account]);
+   maybeActivateAccount();
    processedCount++;
    processNextAccount();
+  }
+ }
+
+ function maybeActivateAccount() {
+  log.debug('maybeActivateAccount: active_account:', get(active_account));
+  if (get(active_account) === null) {
+   log.debug('maybeActivateAccount: accounts.length:', get(accounts).length);
+   if (get(accounts).length > 0) {
+    const id = get(get(accounts)[get(accounts).length - 1]).id;
+    log.debug('maybeActivateAccount: setting active_account_id to last account:', id);
+    active_account_id.set(id);
+   }
   }
  }
 
@@ -103,6 +119,7 @@
      return accountIdentifier === identifier ? currentConflictAccount : account;
     });
    });
+   maybeActivateAccount();
    processedCount++;
   }
 
@@ -130,16 +147,18 @@
  }
 
  function confirmReplace() {
+  let newConfig;
   try {
-   const newConfig = JSON.parse(importText);
-   accounts_config.set(newConfig);
-   closeReplaceDialog?.();
-   close();
+   newConfig = JSON.parse(importText);
   } catch (err) {
    onError('Invalid JSON format');
    console.error('Replace accounts error:', err);
    closeReplaceDialog?.();
   }
+  accounts_config.set(newConfig);
+  maybeActivateAccount();
+  closeReplaceDialog?.();
+  close();
  }
 </script>
 

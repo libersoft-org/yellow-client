@@ -13,7 +13,9 @@
   const jsonString = JSON.stringify($accounts_config, null, 2);
   QRCode.toDataURL(jsonString, { width: 300 })
    .then(url => (qrCodeData = url))
-   .catch(err => console.error('QR CODE GENERATION:', err));
+   .catch(err => {
+    console.error('QR CODE GENERATION:', err);
+   });
  }
 </script>
 
