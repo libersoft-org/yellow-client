@@ -1,6 +1,6 @@
 <script lang="ts">
- import Tabs from '../components/Tabs/Tabs.svelte';
- import TabsItem from '../components/Tabs/TabsItem.svelte';
+ import Tabs from '../../components/Tabs/Tabs.svelte';
+ import TabsItem from '../../components/Tabs/TabsItem.svelte';
  import AccountsImportJson from './AccountsImportJson.svelte';
  import AccountsImportQR from './AccountsImportQR.svelte';
 

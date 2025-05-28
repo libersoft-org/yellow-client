@@ -1,6 +1,6 @@
 <script lang="ts">
- import Code from '../components/Code/Code.svelte';
- import AccountsImportButtons from '../components/AccountsImportButtons/AccountsImportButtons.svelte';
+ import Code from '../../components/Code/Code.svelte';
+ import AccountsImportButtons from '../../components/AccountsImportButtons/AccountsImportButtons.svelte';
 
  type Props = {
   close: () => void;

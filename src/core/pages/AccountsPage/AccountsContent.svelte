@@ -11,10 +11,10 @@
  import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
  import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
- import ModalAccountsAddEdit from '@/core/modals/AccountsAddEdit.svelte';
- import ModalAccountsDelete from '@/core/modals/AccountsDelete.svelte';
- import AccountsExport from '@/core/modals/AccountsExport.svelte';
- import AccountsImport from '@/core/modals/AccountsImport.svelte';
+ import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
+ import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
+ import AccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
+ import AccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
  import Paper from '@/core/components/Paper/Paper.svelte';
  import TopBar from '@/core/components/TopBar/TopBar.svelte';

@@ -1,7 +1,7 @@
 <script lang="ts">
- import Button from '../components/Button/Button.svelte';
- import Code from '../components/Code/Code.svelte';
- import AccountsImportButtons from '../components/AccountsImportButtons/AccountsImportButtons.svelte';
+ import Button from '../../components/Button/Button.svelte';
+ import Code from '../../components/Code/Code.svelte';
+ import AccountsImportButtons from '../../components/AccountsImportButtons/AccountsImportButtons.svelte';
  import { onMount, onDestroy } from 'svelte';
  import jsQR from 'jsqr';
 
@@ -101,14 +101,21 @@
  function scanAgain() {
   scannedText = '';
   error = '';
+  lastProcessedCode = '';
   startCamera();
  }
 
  async function startCamera() {
   try {
+   // Stop existing stream if any
+   if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+   }
+
    stream = await navigator.mediaDevices.getUserMedia({
     video: { facingMode: 'environment' },
    });
+
    if (videoElement) {
     videoElement.srcObject = stream;
     startScanning();
