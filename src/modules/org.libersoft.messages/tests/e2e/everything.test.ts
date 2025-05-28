@@ -263,6 +263,11 @@ async function toggleFirstAccountEnabled(page: Page): Promise<void> {
  });
 }
 
+test('Click around in settings', async ({ page }) => {
+ await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+ await openGlobalSettings(page);
+});
+
 test('Complete End-to-End Application Test', async ({ page }) => {
  await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
  const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8084`;
