@@ -202,7 +202,6 @@
   //console.log('window.innerHeight:', window.innerHeight);
   //console.log('viewportHeight:', viewportHeight);
   //console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
-  console.log('$isMobile:', $isMobile);
  }
 
  let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;

@@ -23,6 +23,8 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  flex: 1 1 auto;
+  min-width: 0;
  }
 
  .description .visible_name {

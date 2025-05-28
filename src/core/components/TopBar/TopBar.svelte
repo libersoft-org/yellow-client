@@ -21,6 +21,7 @@
    align-items: center;
    gap: 10px;
    flex: 1;
+   width: 100%;
 
    :global(h1) {
     white-space: nowrap;
