@@ -43,7 +43,8 @@
   border-radius: 20px;
   text-align: center;
   font-size: 20px;
-  background-color: rgba(255, 221, 17, 0.3);
+  background-color: var(--color-tertiary-background);
+  color: var(--color-tertiary-foreground);
  }
 </style>
 

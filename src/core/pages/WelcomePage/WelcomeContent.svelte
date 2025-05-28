@@ -37,7 +37,7 @@
 <div class="welcome">
  <BaseButton onClick={clickLogo}>
   <div class="logo">
-   <Icon img="img/logo.svg" alt={product} size="200px" />
+   <Icon img="img/logo.svg" alt={product} size="200px"  />
    <div class="product">{product}</div>
   </div>
  </BaseButton>

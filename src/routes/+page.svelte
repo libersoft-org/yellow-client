@@ -167,16 +167,26 @@
   updateAppHeight();
 
   selected_theme_index.subscribe((value) => {
-      console.log($themes_stored[value].properties);
+    //   console.log($themes_stored[value].properties);
 
       Object.keys($themes_stored[value].properties).forEach(key => {
-          console.log(`${key}: ${$themes_stored[value].properties[key]}`);
+        //   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
           document.documentElement.style.setProperty(key, $themes_stored[value].properties[key]);
       });
 
       // 
   });
+  current_theme.subscribe(() => {
+    //   console.log($themes_stored[value].properties);
 
+      Object.keys($themes_stored[$selected_theme_index].properties).forEach(key => {
+        //   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
+          document.documentElement.style.setProperty(key, $themes_stored[$selected_theme_index].properties[key]);
+      });
+
+      // 
+  });
+  $selected_theme_index = $selected_theme_index;
 
   return init();
  });

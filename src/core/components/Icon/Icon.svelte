@@ -1,7 +1,7 @@
 <script lang="ts">
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import { getColorFromCSSToFilter } from '../../utils/colors.js';
- import { selected_theme_index } from '../../appearance_store.js';
+ import { current_theme, selected_theme_index } from '../../appearance_store.js';
 
  interface Props {
   img: string;
@@ -16,14 +16,6 @@
   'data-testid'?: string;
  }
 
-let index = $selected_theme_index;
-
-$effect(() => {
-  selected_theme_index.subscribe(newValue => {
-    
-  });
-  console.log("test icon");
-});
 
  let { img, alt = '', size = '24px', padding = '10px', visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false, 'data-testid': dataTestId }: Props = $props();
 </script>
@@ -56,7 +48,7 @@ $effect(() => {
 
 {#snippet icon()}
  <div class="icon {!visibleOnMobile && 'hideOnMobile'} {!visibleOnDesktop && 'hideOnDesktop'}" style="padding: {padding};">
-  <img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; { /* check if theme changed */ $selected_theme_index > -1 && colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} draggable={false} {alt} />
+  <img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; { /* check if theme changed or was edited */ $selected_theme_index > -1 && $current_theme && colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} draggable={false} {alt} />
  </div>
 {/snippet}
 

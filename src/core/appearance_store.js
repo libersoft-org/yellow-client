@@ -5,64 +5,65 @@ import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib
 
 export let selected_theme_index = localStorageSharedStore('selected_theme_index', 0);
 
-
-
-export let themes_stored = localStorageSharedStore('themes_stored', [
-  {
+export const default_theme =   {
     name: 'Light',
     properties: {
-      "--color-text": "#222",
-      "--color-background" : "#fff",
-      "--color-foreground" : "#222",
+      "--color-text": "#222222",
+      "--color-background" : "#FFFFFF",
+      "--color-foreground" : "#222222",
 
-      "--color-card-background" : "#fff",
-      "--color-card-foreground" : "#222",
+      "--color-card-background" : "#FFFFFF",
+      "--color-card-foreground" : "#222222",
 
-      "--color-reversed-background" : "#222",
-      "--color-reversed-foreground" : "#fff",
+      "--color-reversed-background" : "#222222",
+      "--color-reversed-foreground" : "#FFFFFF",
 
-      "--color-popover": "#333",
-      "--color-popover-foreground ": "#444",
+      "--color-popover": "#333333",
+      "--color-popover-foreground ": "#444444",
 
-      "--color-primary-background" : "#fc1",
-      "--color-primary-foreground" : "#222",
+      "--color-primary-background" : "#ffcc11",
+      "--color-primary-foreground" : "#222222",
 
-      "--color-secondary-background" : "#d80",
-      "--color-secondary-foreground" : "#222",
+      "--color-secondary-background" : "#dd8800",
+      "--color-secondary-foreground" : "#222222",
 
       "--color-tertiary-background": "#ffdd1150",
-      "--color-tertiary-foreground": "#fff",
+      "--color-tertiary-foreground": "#FFFFFF",
 
-      "--color-muted-background": "#ffd",
-      "--color-muted-foreground" : "#222",
+      "--color-muted-background": "#ffffdd",
+      "--color-muted-foreground" : "#222222",
 
-      "--color-secondary-muted-background": "#ffa",
-      "--color-secondary-muted-foreground": "#222",
+      "--color-secondary-muted-background": "#ffffaa",
+      "--color-secondary-muted-foreground": "#222222",
 
-      "--color-accent-background" : "#d80",
-      "--color-accent-foreground" : "#222",
+      "--color-accent-background" : "#dd8800",
+      "--color-accent-foreground" : "#222222",
 
-      "--color-secondary-accent-background" : "#ffd",
-      "--color-secondary-accent-foreground" : "#222",
+      "--color-secondary-accent-background" : "#ffffdd",
+      "--color-secondary-accent-foreground" : "#222222",
 
-      "--color-disabled-background" : "#888",
-      "--color-disabled-foreground" : "#222",
+      "--color-disabled-background" : "#888888",
+      "--color-disabled-foreground" : "#222222",
 
     }
-  },
+  }
+
+export let themes_stored = localStorageSharedStore('themes_stored', [
   
+  JSON.parse(JSON.stringify(default_theme))
+  ,
   {
-    name: 'dark',
+    name: 'Dark',
     properties: {
         "--color-text": "#007bff",
-        "--color-background" : "#fff",
+        "--color-background" : "#FFFFFF",
         "--color-foreground" : "#007bff",
 
-        "--color-card-background" : "#fff",
+        "--color-card-background" : "#FFFFFF",
         "--color-card-foreground" : "#007bff",
 
         "--color-popover": "#005bff",
-        "--color-popover-foreground ": "#fff",
+        "--color-popover-foreground ": "#FFFFFF",
 
         "--color-primary-background" : "#001f3f",
         "--color-primary-foreground" : "#007bff",
@@ -85,9 +86,49 @@ export let themes_stored = localStorageSharedStore('themes_stored', [
         "--color-secondary-accent-background" : "#001f3f",
         "--color-secondary-accent-foreground" : "#007bff",
 
-        "--color-disabled-background" : "#888",
+        "--color-disabled-background" : "#888888",
         "--color-disabled-foreground" : "#007bff",
     }
+  },
+
+  {
+    name: "Kung Fury",
+    properties: {
+        "--color-text": "#007bff",
+        "--color-background" : "#003366",
+        "--color-foreground" : "#00ff45",
+
+        "--color-card-background" : "#ffffff",
+        "--color-card-foreground" : "#007bff",
+
+        "--color-popover": "#005bff",
+        "--color-popover-foreground ": "#00ff45",
+
+        "--color-primary-background" : "#3d3047",
+        "--color-primary-foreground" : "#a068a1",
+
+        "--color-secondary-background" : "#a068a1",
+        "--color-secondary-foreground" : "#51324f",
+
+        "--color-tertiary-background": "#003366",
+        "--color-tertiary-foreground": "#00ff45",
+
+        "--color-muted-background": "#a068a1",
+        "--color-muted-foreground" : "#007bff",
+
+        "--color-secondary-muted-background": "#a068a1",
+        "--color-secondary-muted-foreground": "#007bff",
+
+        "--color-accent-background" : "#003366",
+        "--color-accent-foreground" : "#00ff45",
+
+        "--color-secondary-accent-background" : "#001f3f",
+        "--color-secondary-accent-foreground" : "#00ff45",
+
+        "--color-disabled-background" : "#888888",
+        "--color-disabled-foreground" : "#007bff",      
+    }
+
   }
 
 

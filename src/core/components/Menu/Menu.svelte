@@ -172,7 +172,7 @@
  <div class="footer">
   <BaseButton onClick={() => openPage(link)}>
    <div class="logo">
-    <Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
+    <Icon img="img/logo.svg" alt={product} size="30px" padding="0px"  />
     <div>{product}</div>
    </div>
   </BaseButton>
