@@ -236,7 +236,7 @@
   padding: 10px;
   background-color: #fff;
   color: #000;
-  overflow: auto;
+  /* overflow: auto; */
  }
 </style>
 

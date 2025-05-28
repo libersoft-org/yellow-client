@@ -1,6 +1,6 @@
 <script>
- import Button from '../Button/Button.svelte';
- import Switch from '../Switch/Switch.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Switch from '@/core/components/Switch/Switch.svelte';
  import { addNotification } from '../../notifications.ts';
  import { debug } from '../../core.js';
  import { log } from '../../tauri.ts';

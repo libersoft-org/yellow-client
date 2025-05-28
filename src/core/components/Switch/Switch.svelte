@@ -3,11 +3,12 @@
 
  type Props = {
   checked?: boolean;
-  label?: string;
+  showLabel?: boolean;
+  ariaLabel: string;
   row?: boolean;
  };
 
- let { checked = $bindable(), label = '', row = false }: Props = $props();
+ let { checked = $bindable(), ariaLabel, showLabel = false, row = false }: Props = $props();
 
  let mounted = $state(false);
  let inputId = crypto.randomUUID();
@@ -29,9 +30,14 @@
 
 <style>
  .switch {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
   align-items: center;
   gap: 10px;
+
+  .label {
+   font-weight: bold;
+  }
  }
 
  .switch-wrapper {
@@ -108,8 +114,11 @@
 </style>
 
 <Label {row}>
- <span id={labelId} class="visually-hidden">{label}</span>
+ <span id={labelId} class="visually-hidden">{ariaLabel}</span>
  <div class="switch">
+  {#if showLabel}
+   <span class="label">{`${ariaLabel}:`}</span>
+  {/if}
   <div class="switch-wrapper">
    <input id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
    <span class="slider {mounted ? 'transition' : ''}"></span>

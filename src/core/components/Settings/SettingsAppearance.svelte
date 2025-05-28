@@ -1,13 +1,13 @@
 <script lang="ts">
  import Select from '@/core/components/Select/Select.svelte';
  import Option from '@/core/components/Select/SelectOption.svelte';
- import Table from '@/core/components/ResponsiveTable/Table.svelte';
- import THead from '@/core/components/ResponsiveTable/THead.svelte';
- import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
- import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
- import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
- import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
- import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Thead from '@/core/components/Table/TableThead.svelte';
+ import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+ import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
  import { TAURI } from '@/core/tauri.ts';
  import { zoom } from '@/core/settings.ts';
  import { setZoom } from '@/core/zoom.ts';
@@ -26,29 +26,29 @@
 </style>
 
 <Table>
- <THead>
-  <THeadTr>
+ <Thead>
+  <TheadTr>
    {#if TAURI}
-    <THeadTh>Zoom:</THeadTh>
+    <TheadTh>Zoom:</TheadTh>
    {/if}
-   <THeadTh>Theme:</THeadTh>
-  </THeadTr>
- </THead>
- <TBody>
-  <TBodyTr>
+   <TheadTh>Theme:</TheadTh>
+  </TheadTr>
+ </Thead>
+ <Tbody>
+  <TbodyTr>
    {#if TAURI}
-    <TBodyTd title="Zoom">
+    <TbodyTd title="Zoom">
      <span>{Math.round(($zoom || 0) * 100)}%</span>
      <div class="zoom">
       <input type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} onchange={setZoom} />
      </div>
-    </TBodyTd>
+    </TbodyTd>
    {/if}
-   <TBodyTd title="Address">
+   <TbodyTd title="Address">
     <Select bind:value={theme}>
      <Option text="Light" value="light" />
     </Select>
-   </TBodyTd>
-  </TBodyTr>
- </TBody>
+   </TbodyTd>
+  </TbodyTr>
+ </Tbody>
 </Table>

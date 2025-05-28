@@ -1,14 +1,14 @@
 <script lang="ts">
  import { getContext, untrack } from 'svelte';
- import { addAccount, findAccountConfig, saveAccount } from '../../accounts_config.js';
- import { accounts, accountExists } from '../../core.js';
- import Button from '../../components/Button/Button.svelte';
- import Label from '../../components/Label/Label.svelte';
- import Input from '../../components/Input/Input.svelte';
- import Select from '../../components/Select/Select.svelte';
- import Option from '../../components/Select/SelectOption.svelte';
- import Switch from '../../components/Switch/Switch.svelte';
- import AccountStatusIconIconAndText from '../../components/Account/AccountStatusIconIconAndText.svelte';
+ import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
+ import { accounts } from '../core.js';
+ import Button from '../components/Button/Button.svelte';
+ import Label from '../components/Label/Label.svelte';
+ import Input from '../components/Input/Input.svelte';
+ import Select from '../components/Select/Select.svelte';
+ import Option from '../components/Select/SelectOption.svelte';
+ import Switch from '../components/Switch/Switch.svelte';
+ import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
  import { derived, get, writable } from 'svelte/store';
 
  type Props = {
@@ -108,14 +108,6 @@
    console.warn('[VERIFY] Address is missing');
    return false;
   }
-
-  // Check if account already exists when adding new account
-  if (params.id === null && accountExists(credentials_server, credentials_address)) {
-   error = 'Account with this server and address already exists';
-   console.warn('[VERIFY] Account already exists:', credentials_server, credentials_address);
-   return false;
-  }
-
   error = '';
   return true;
  }

@@ -1,17 +1,33 @@
+<script lang="ts">
+ import type { Snippet } from 'svelte';
+
+ type Props = {
+  children: Snippet;
+ };
+
+ const { children }: Props = $props();
+</script>
+
 <style>
- tr:nth-child(even) {
-  background-color: #ffdd1130;
- }
+ tr {
+  :global(&:has(> td:nth-child(2))) {
+   /* :global(td:nth-child(odd)) {
+				background-color: #ffdd1130;
+			}
 
- tr:nth-child(odd) {
-  background-color: #ffdd1150;
- }
+			:global(td:nth-child(even)) {
+				background-color: #ffdd1160;
+			} */
+  }
 
- tr:hover {
-  background-color: #fd1;
+  :global(.table-wide &) {
+   display: table-row;
+   border-style: none;
+   border-bottom-width: 0;
+  }
  }
 </style>
 
 <tr>
- <slot />
+ {@render children()}
 </tr>
