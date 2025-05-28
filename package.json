@@ -54,7 +54,6 @@
   "retry": "^0.13.1",
   "svelte-intersection-observer": "^1.0.0",
   "svelte-portal": "^2.2.1",
-  "svelte-simple-code-editor": "^0.0.2",
   "uuid": "^11.0.5",
   "video.js": "^8.21.0",
   "videojs-record": "^4.8.0",
