@@ -1,7 +1,7 @@
 <script lang="ts">
  import { setContext, tick, type Snippet } from 'svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- import { debug } from '../../core.js';
+ import { debug, isMobile } from '../../core.js';
  import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
  import { draggable } from '@neodrag/svelte';
  import Portal from '../Portal/Portal.svelte';
@@ -32,6 +32,7 @@
  let resizeObserver: ResizeObserver;
 
  $effect(() => {
+  if (!isMobile) return;
   if (modalEl && showContent && !isDragging && activeTab) {
    centerModal();
    requestAnimationFrame(snapTransformIntoBounds);
@@ -43,12 +44,15 @@
   modalId = registerModal(z => (zIndex = z));
 
   function handleResize() {
+   if (!isMobile) return;
+   centerModal();
    if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
   }
 
   if (modalEl) {
    let didInit = false;
    resizeObserver = new ResizeObserver(() => {
+    if (!isMobile) return;
     if (isDragging) return;
     if (didInit) {
      centerModal();
@@ -105,6 +109,7 @@
 
  function snapTransformIntoBounds() {
   if (!modalEl) return;
+  if (!isMobile) return;
 
   const rect = modalEl.getBoundingClientRect();
   const padding = window.innerWidth < 768 ? 0 : 24;
@@ -124,11 +129,18 @@
   const newX = matrix.m41 + dx;
   const newY = matrix.m42 + dy;
 
-  modalEl.style.transition = 'transform 0.2s ease';
-  modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
-  setTimeout(() => {
-   if (modalEl) modalEl.style.transition = '';
-  }, 200);
+  if (!isDragging) {
+   modalEl.style.transition = 'none';
+   modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+   modalEl.offsetHeight;
+   modalEl.style.transition = '';
+  } else {
+   modalEl.style.transition = 'transform 0.2s ease';
+   modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+   setTimeout(() => {
+    if (modalEl) modalEl.style.transition = '';
+   }, 200);
+  }
  }
 
  export function open() {
@@ -185,7 +197,7 @@
    max-width: calc(100%) !important;
    max-height: calc(100%) !important;
    height: 100%;
-   width: 100%;
+   width: 100% !important;
    border-radius: 0px;
    border: none;
   }
@@ -244,6 +256,12 @@
     onDragEnd,
     gpuAcceleration: true,
     handle: '.header',
+    bounds: {
+     top: 0,
+     left: 0,
+     right: 0,
+     bottom: 0,
+    },
    }}
    style:z-index={zIndex}
    onmousedown={raiseZIndex}

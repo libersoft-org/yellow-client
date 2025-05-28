@@ -123,7 +123,7 @@
   <StickerSetPart {stickerset} items={first} {intersecting} />
  </div>
  {#if !showall}
-  <Button img="img/{expanded ? 'up' : 'down'}.svg" onClick={clickExpand} />
+  <Button img="img/{expanded ? 'up' : 'down'}.svg" onClick={clickExpand} width="100%" />
  {/if}
  {#if showall || expanded}
   <div class="set">

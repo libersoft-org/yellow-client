@@ -19,6 +19,7 @@
   font-weight: bold;
   background-color: #222;
   color: #fff;
+  width: 100%;
  }
 
  .addressbook {
