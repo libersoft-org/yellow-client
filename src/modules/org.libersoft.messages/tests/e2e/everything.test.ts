@@ -216,6 +216,7 @@ async function setupAccountInWizard(
   await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
   await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
   await page.getByTestId('add').click();
+  await page.screenshot({ path: 'setup_account_in_wizard.png' });
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Finish' }).click();
@@ -262,10 +263,14 @@ async function toggleFirstAccountEnabled(page: Page): Promise<void> {
  });
 }
 
+test('Click around in settings', async ({ page }) => {
+ await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+ await openGlobalSettings(page);
+});
+
 test('Complete End-to-End Application Test', async ({ page }) => {
  await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-
- const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8085`;
+ const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8084`;
 
  await test.step('Initial Account Setup', async () => {
   // Add account in the wizard

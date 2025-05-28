@@ -1,8 +1,13 @@
 <script>
- import Button from '../components/Button/Button.svelte';
- import Code from '../components/Code/Code.svelte';
- import { accounts_config } from '../core.js';
+ import Tabs from '../components/Tabs/Tabs.svelte';
+ import TabsItem from '../components/Tabs/TabsItem.svelte';
+ import AccountsExportJson from './AccountsExportJson.svelte';
+ import AccountsExportQR from './AccountsExportQR.svelte';
  import ButtonBar from '../components/Button/ButtonBar.svelte';
+ import { accounts_config } from '../core.js';
+ import Button from '../components/Button/Button.svelte';
+
+ let activeTab = $state('json');
 
  let copyText = $state('Copy to clipboard');
  let timeoutId;
@@ -45,6 +50,14 @@
  <Button img="img/download.svg" text="Download as file" onClick={clickDownload} />
 </ButtonBar>
 
-<div class="wrapper">
- <Code code={JSON.stringify($accounts_config, null, 2)} />
-</div>
+<Tabs>
+ <TabsItem label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
+ <TabsItem label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
+</Tabs>
+
+{#if activeTab === 'json'}
+ <AccountsExportJson />
+{:else if activeTab === 'qr'}
+ <AccountsExportQR />
+{/if}
+

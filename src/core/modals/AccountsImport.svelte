@@ -1,7 +1,8 @@
 <script lang="ts">
- import Button from '../components/Button/Button.svelte';
- import Code from '../components/Code/Code.svelte';
- import { accounts_config } from '../core.js';
+ import Tabs from '../components/Tabs/Tabs.svelte';
+ import TabsItem from '../components/Tabs/TabsItem.svelte';
+ import AccountsImportJson from './AccountsImportJson.svelte';
+ import AccountsImportQR from './AccountsImportQR.svelte';
 
  type Props = {
   close: () => void;
@@ -9,23 +10,7 @@
 
  let { close }: Props = $props();
 
- let text = $state('');
- let textareaEl: HTMLTextAreaElement | null = $state(null);
- const isFilled = $derived(text.length > 0);
-
- function accountsConfigImport() {
-  if (text) {
-   let data = JSON.parse(text);
-   accounts_config.set(data);
-   close();
-  } else {
-   console.error('No data to import');
-  }
- }
-
- $effect(() => {
-  textareaEl?.focus();
- });
+ let activeTab = $state('json');
 </script>
 
 <style>
@@ -71,10 +56,13 @@
  }
 </style>
 
-<div class="account-import">
- <div class="scrollable">
-  <Code bind:code={text} />
-  <textarea class:isFilled bind:value={text} bind:this={textareaEl}></textarea>
- </div>
- <Button img="img/import.svg" text="Import" onClick={accountsConfigImport} />
-</div>
+<Tabs>
+ <TabsItem img="img/import.svg" label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
+ <TabsItem img="img/photo.svg" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
+</Tabs>
+
+{#if activeTab === 'json'}
+ <AccountsImportJson {close} />
+{:else if activeTab === 'qr'}
+ <AccountsImportQR {close} />
+{/if}

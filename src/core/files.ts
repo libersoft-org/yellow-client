@@ -4,13 +4,16 @@ import * as path from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/core';
 import { get } from 'svelte/store';
 import { isMobile } from './core.js';
+import { log } from './tauri.ts';
 
-interface CheckPermissionsResponse {
- writeExternalStorage: string;
+interface PermissionStatus {
+ writeExternalStorage: 'granted' | 'denied' | 'prompt';
+ readExternalStorage: 'granted' | 'denied' | 'prompt';
 }
 
-interface RequestPermissionsResponse {
- writeExternalStorage: string;
+enum PermissionType {
+ WriteExternalStorage = 'writeExternalStorage',
+ ReadExternalStorage = 'readExternalStorage',
 }
 
 export class NativeDownload {
@@ -26,7 +29,7 @@ export class NativeDownload {
   this.file_path = '';
   this.temp_file_path = '';
   // On mobile, use app-specific directory instead of system Downloads
-  this.baseDir = get(isMobile) ? BaseDirectory.AppLocalData : BaseDirectory.Download;
+  this.baseDir = get(isMobile) ? BaseDirectory.AppData : BaseDirectory.Download;
  }
 }
 
@@ -36,10 +39,12 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
  }
 
  try {
-  const permissions = await invoke<CheckPermissionsResponse>('plugin:yellow|check_file_permissions');
-  if (permissions.writeExternalStorage !== 'granted') {
-   const result = await invoke<RequestPermissionsResponse>('plugin:yellow|request_file_permissions');
-   if (result.writeExternalStorage === 'granted') {
+  const permissions = await invoke<PermissionStatus>('plugin:yellow|check_permissions');
+  if (permissions.writeExternalStorage !== 'granted' || permissions.readExternalStorage !== 'granted') {
+   const result = await invoke<PermissionStatus>('plugin:yellow|request_permissions', {
+    permissions: [PermissionType.WriteExternalStorage, PermissionType.ReadExternalStorage],
+   });
+   if (result.writeExternalStorage === 'granted' && result.readExternalStorage === 'granted') {
     return { success: true };
    } else {
     return { success: false, error: 'File permissions denied by user' };
@@ -47,7 +52,7 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
   }
   return { success: true };
  } catch (error) {
-  console.error('Failed to check/request file permissions:', error);
+  log.debug('Failed to check/request file permissions:', error);
   return { success: false, error: 'Failed to check file permissions' };
  }
 }
@@ -59,26 +64,45 @@ export async function offerNativeDownload(fileName: string, defaultFileDownloadF
   return { error: permissionResult.error || 'File permissions not available' };
  }
 
- const download = new NativeDownload();
- download.original_file_name = fileName;
+ try {
+  const download = new NativeDownload();
+  download.original_file_name = fileName;
 
- if (defaultFileDownloadFolder) {
-  await findFreeFileName(defaultFileDownloadFolder, download);
-  return download;
- } else {
-  let p = await save({
-   defaultPath: defaultFileDownloadFolder ? await path.join(defaultFileDownloadFolder, fileName) : fileName,
-   canCreateDirectories: true,
-   title: 'Save file',
-  });
-  if (!p) {
-   return null;
+  if (defaultFileDownloadFolder) {
+   await findFreeFileName(defaultFileDownloadFolder, download);
+   return download;
+  } else {
+   let p = await save({
+    defaultPath: defaultFileDownloadFolder ? await path.join(defaultFileDownloadFolder, fileName) : fileName,
+    canCreateDirectories: true,
+    title: 'Save file',
+   });
+   if (!p) {
+    return null;
+   }
+
+   log.debug('Save dialog returned path:', p);
+   log.debug('isMobile:', get(isMobile));
+   log.debug('baseDir:', download.baseDir);
+
+   download.file_path = p;
+   download.temp_file_path = partFileName(p);
+   download.potential_default_folder = await path.dirname(p);
+
+   try {
+    await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+   } catch (error) {
+    log.debug('Failed to create temp file:', error);
+    log.debug('Attempted path:', download.temp_file_path);
+    log.debug('Base directory:', download.baseDir);
+    return { error: `Failed to create temp file: ${error}` };
+   }
+
+   return download;
   }
-  download.file_path = p;
-  download.temp_file_path = partFileName(p);
-  download.potential_default_folder = await path.dirname(p);
-  await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
-  return download;
+ } catch (error) {
+  log.debug('Error during file download offer:', error);
+  return { error: `Failed to offer download: ${error}` };
  }
 }
 
