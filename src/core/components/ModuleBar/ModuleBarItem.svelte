@@ -15,13 +15,12 @@
   border-radius: 10px;
   transform: scale(1);
   transition:
-   transform 0.3s linear,
-   background-color 0.3s linear;
+   transform 0.2s linear,
+   background-color 0.4s linear;
 
   &:not(.selected) {
    &:hover {
-    background-color: var(--color-popover);
-    transform: scale(1.2);
+    transform: scale(1.25);
     z-index: 10;
    }
   }
@@ -29,7 +28,7 @@
 
  .item.selected {
   background-color: var(--color-popover-foreground);
-  transform: scale(1.2);
+  transform: scale(1.25);
  }
 </style>
 

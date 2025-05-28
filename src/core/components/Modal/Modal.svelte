@@ -5,7 +5,15 @@
  import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
  import { draggable } from '@neodrag/svelte';
  import Portal from '../Portal/Portal.svelte';
-
+ let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
+ let modalEl: HTMLDivElement | null = $state(null);
+ let showContent = $state(false);
+ let ModalBody = $state<Snippet>(body);
+ let zIndex = $state(100);
+ let activeTab = $state('');
+ let modalId: number;
+ let isDragging = false;
+ let resizeObserver: ResizeObserver;
  type Props = {
   show?: boolean;
   params?: any;
@@ -17,19 +25,6 @@
   breadcrumbs?: Snippet | null;
   onShowChange?: (show: boolean) => void;
  };
-
- let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
-
- let modalEl: HTMLDivElement | null = $state(null);
-
- let showContent = $state(false);
- let ModalBody = $state<Snippet>(body);
- let zIndex = $state(100);
- let activeTab = $state('');
-
- let modalId: number;
- let isDragging = false;
- let resizeObserver: ResizeObserver;
 
  $effect(() => {
   if (!isMobile) return;
@@ -110,25 +105,18 @@
  function snapTransformIntoBounds() {
   if (!modalEl) return;
   if (!isMobile) return;
-
   const rect = modalEl.getBoundingClientRect();
   const padding = 0;
-
   let dx = 0;
   let dy = 0;
-
   if (rect.left < padding) dx = padding - rect.left;
   else if (rect.right > window.innerWidth - padding) dx = window.innerWidth - padding - rect.right;
-
   if (rect.top < padding) dy = padding - rect.top;
   else if (rect.bottom > window.innerHeight - padding) dy = window.innerHeight - padding - rect.bottom;
-
   if (dx === 0 && dy === 0) return;
-
   const matrix = new DOMMatrixReadOnly(getComputedStyle(modalEl).transform);
   const newX = matrix.m41 + dx;
   const newY = matrix.m42 + dy;
-
   if (!isDragging) {
    modalEl.style.transition = 'none';
    modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
