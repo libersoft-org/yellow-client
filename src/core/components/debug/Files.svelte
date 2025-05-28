@@ -98,21 +98,6 @@
    result = 'Testing finishNativeDownload...';
    await finishNativeDownload(download);
    result = 'Download finished successfully!';
-   
-   // On mobile, automatically export to system Downloads
-   if (TAURI_MOBILE && download.file_path) {
-    result += '\nExporting to system Downloads...';
-    const exportResult = await exportToSystemDownloads(
-     download.file_path,
-     download.original_file_name,
-     'text/plain'
-    );
-    if (exportResult.success) {
-     result += '\nFile exported to Downloads folder successfully!';
-    } else {
-     result += `\nExport failed: ${exportResult.error}`;
-    }
-   }
   } catch (error) {
    result = `Error: ${error}`;
   }
@@ -120,13 +105,13 @@
 
  async function testExportToDownloads() {
   try {
-   if (!download || !download.finished) {
-    result = 'No finished download. Complete a download first!';
+   if (!download) {
+    result = 'No download.';
     return;
    }
    result = 'Exporting to system Downloads...';
    const exportResult = await exportToSystemDownloads(
-    download.file_path,
+    download.temp_file_path,
     download.original_file_name,
     'text/plain'
    );

@@ -29,11 +29,27 @@ export const log = {
   console.log(...args);
   if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args) });
  },
+ error: (...args: any[]) => {
+  console.error(...args);
+  if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'error' });
+ },
 };
 
 function formatNoColor(args) {
  let msg = '';
- const inspected_nocolor = args.map(o => (typeof o === 'string' ? o : JSON.stringify(o, null, 2)));
+ const inspected_nocolor = args.map(o => {
+  if (typeof o === 'string') return o;
+  if (o instanceof Error) {
+   // Handle Error objects specially to include stack trace
+   return `${o.name}: ${o.message}${o.stack ? '\n' + o.stack : ''}`;
+  }
+  try {
+   return JSON.stringify(o, null, 2);
+  } catch (e) {
+   // Fallback for circular references or other stringify errors
+   return String(o);
+  }
+ });
  for (const v of inspected_nocolor) msg += v + ' ';
  return msg;
 }
