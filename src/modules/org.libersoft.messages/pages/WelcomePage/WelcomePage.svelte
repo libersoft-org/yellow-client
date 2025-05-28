@@ -3,7 +3,7 @@
  import Button from '@/core/components/Button/Button.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalNewConversation from '../../modals/NewConversation.svelte';
- import { active_account, isMobile, selected_module_id } from '@/core/core.js';
+ import core, { active_account, isMobile, selected_module_id } from '@/core/core.js';
  import TopBar from '@/core/components/TopBar/TopBar.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
 
@@ -16,7 +16,7 @@
 
  function mobileClose() {
   selected_module_id.set(null);
-  document.querySelector('.app > .sidebar').classList.remove('hidden-on-mobile');
+  core.hideSidebarMobile.set(false);
  }
 </script>
 
@@ -52,7 +52,7 @@
  }
 </style>
 
-{#if !isMobile}
+{#if $isMobile}
  <TopBar>
   <svelte:fragment slot="left">
    <Icon img="img/back.svg" onClick={() => mobileClose()} colorVariable="--icon-white" visibleOnDesktop={true} />
