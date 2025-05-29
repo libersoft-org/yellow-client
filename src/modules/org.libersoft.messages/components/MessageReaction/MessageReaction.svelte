@@ -95,7 +95,7 @@
  .reaction-tooltip {
   display: flex;
   align-items: center;
-  background: var(--color-muted-background);
+  background: var(--color-primary-softer-background);
   padding: 8px;
   border-radius: 20px;
   box-shadow: var(--yellow-box-shadow);

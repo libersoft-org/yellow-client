@@ -21,11 +21,11 @@
  }
 
  tr.even {
-  background-color: var(--color-secondary-muted-background);
+  background-color: var(--color-secondary-soft-background);
  }
 
  tr.odd {
-  background-color: var(--color-muted-background);
+  background-color: var(--color-primary-lighter-background);
  }
 
  tr:hover {

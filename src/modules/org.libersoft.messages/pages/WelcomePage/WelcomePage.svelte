@@ -44,12 +44,12 @@
   flex-direction: column;
   gap: 8px;
   padding: 10px;
-  border: 1px solid var(--color-primary-background);
+  border: 1px solid var(--color-primary-foreground);
   border-radius: 20px;
   text-align: center;
   font-size: 20px;
-  background-color: var(--color-tertiary-background);
-  color: var(--color-tertiary-foreground);
+  background-color: var(--color-primary-background);
+  color: var(--color-primary-foreground);
  }
 </style>
 

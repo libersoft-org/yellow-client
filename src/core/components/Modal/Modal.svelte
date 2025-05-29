@@ -176,10 +176,10 @@
   max-height: calc(100dvh - 48px);
   height: fit-content;
   overflow: hidden;
-  border: 1px solid var(--color-foreground);
+  border: 1px solid var(--color-primary-foreground);
   border-radius: 10px;
   box-shadow: var(--shadow);
-  background-color: var(--color-background);
+  background-color: var(--color-primary-background);
 
   @media (max-width: 768px) {
    max-width: calc(100%) !important;
@@ -203,7 +203,7 @@
   gap: 10px;
   font-weight: bold;
   background-color: var(--color-primary-background);
-  color: var(--color-text);
+  color: var(--color-primary-foreground);
   cursor: grab;
  }
  .modal .header .title {
@@ -223,7 +223,7 @@
   gap: 10px;
   padding: 10px;
   background-color: var(--color-background);
-  color: var(--color-text);
+  color: var(--color-primary-foreground);
  }
 </style>
 
@@ -259,12 +259,12 @@
      {#if title}
       <div class="title">
        {#if activeTab}
-        <Icon img="img/back.svg" alt="Back" colorVariable="--color-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
+        <Icon img="img/back.svg" alt="Back" colorVariable="--color-primary-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
        {/if}
        {title}
       </div>
       <div onpointerdown={e => e.stopPropagation()}>
-       <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--color-foreground" size="20px" padding="10px" onClick={close} />
+       <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--color-primary-foreground" size="20px" padding="10px" onClick={close} />
       </div>
      {/if}
     </div>

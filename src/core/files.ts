@@ -43,7 +43,7 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
   if (permissions.writeExternalStorage !== 'granted' || permissions.readExternalStorage !== 'granted') {
    log.debug('Permissions not granted, requesting...');
    const result = await invoke<PermissionStatus>('plugin:yellow|request_file_permissions', {
-    permissions: [PermissionType.WriteExternalStorage, PermissionType.ReadExternalStorage]
+    permissions: [PermissionType.WriteExternalStorage, PermissionType.ReadExternalStorage],
    });
    log.debug('request_file_permissions result:', result);
    if (result.writeExternalStorage === 'granted' && result.readExternalStorage === 'granted') {
@@ -62,7 +62,7 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
 
 export async function offerNativeDownload(fileName: string, defaultFileDownloadFolder: string | null): Promise<NativeDownload | { error: string } | null> {
  log.debug('offerNativeDownload - TAURI_MOBILE:', TAURI_MOBILE);
- 
+
  // Ensure we have file permissions before proceeding
  const permissionResult = await ensureFilePermissions();
  if (!permissionResult.success) {
@@ -75,20 +75,20 @@ export async function offerNativeDownload(fileName: string, defaultFileDownloadF
  // On mobile, always use app-specific directory without save dialog
  if (TAURI_MOBILE) {
   download.baseDir = BaseDirectory.AppData;
-  
+
   try {
    // For mobile, use temp files like desktop
    download.file_path = fileName;
    download.temp_file_path = partFileName(fileName);
    download.potential_default_folder = null;
-   
+
    log.debug('Mobile download paths:', {
     file_path: download.file_path,
     temp_file_path: download.temp_file_path,
     baseDir: download.baseDir,
-    baseDirName: 'AppData'
+    baseDirName: 'AppData',
    });
-   
+
    // Create the temp file in app's local directory
    await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
   } catch (error) {
@@ -139,25 +139,25 @@ export async function finishNativeDownload(download: NativeDownload) {
  const file_path = download.file_path;
  const temp_file_path = download.temp_file_path;
  download.finished = true;
- 
+
  log.debug('finishNativeDownload - paths:', {
   file_path,
   temp_file_path,
   baseDir: download.baseDir,
-  TAURI_MOBILE
+  TAURI_MOBILE,
  });
- 
+
  await rename(temp_file_path, file_path, {
   oldPathBaseDir: download.baseDir,
   newPathBaseDir: download.baseDir,
  });
- 
+
  // On mobile, offer to export the file to the system Downloads folder
  if (TAURI_MOBILE) {
   log.debug('File saved to app storage:', file_path);
   log.debug('To export to system Downloads, call exportToSystemDownloads with:', {
    appFilePath: file_path,
-   fileName: download.original_file_name
+   fileName: download.original_file_name,
   });
  }
 }
@@ -201,9 +201,9 @@ export async function exportToSystemDownloads(appFilePath: string, fileName: str
   const result = await invoke('plugin:yellow|export_file_to_downloads', {
    filePath: appFilePath,
    fileName: fileName,
-   mimeType: mimeType
+   mimeType: mimeType,
   });
-  
+
   log.debug('File exported to Downloads:', result);
   return { success: true };
  } catch (error) {

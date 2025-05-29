@@ -10,11 +10,11 @@
 
 <style>
  tr:nth-child(even) {
-  background-color: var(--color-tertiary-background);
+  background-color: var(--color-primary-soft-background);
  }
 
  tr:nth-child(odd) {
-  background-color: var(--color-tertiary-background);
+  background-color: var(--color-primary-softer-background);
  }
 
  tr:hover {
