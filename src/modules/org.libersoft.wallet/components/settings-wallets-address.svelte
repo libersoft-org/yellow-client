@@ -8,7 +8,6 @@
 
   let { address = $bindable() }: Props = $props();
 
-  let spanElem = $state();
   let copied = $state(false);
 
   function copyAddressToClipboard() {
@@ -24,7 +23,7 @@
 
 <BaseButton onClick={copyAddressToClipboard}>
   <div class="address">
-    <span class="clamp" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
+    <span class="clamp">{copied ? 'Copied!' : address}</span>
     <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
   </div>
 </BaseButton>

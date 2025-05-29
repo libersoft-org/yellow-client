@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../../messages.ts';
+  import { downloadAttachmentsSerial, identifier, loadUploadData } from '../../messages.ts';
   //import WaveSurfer from 'wavesurfer.js';
   import { onMount } from 'svelte';
-  import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
+  // import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
   import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
   import { get, writable } from 'svelte/store';
   import { active_account } from '@/core/core.ts';
@@ -22,17 +22,21 @@
   let duration = $state('');
   let time = $state('');
 
-  let mediaHandler = $state(null);
+  // let mediaHandler = $state(null);
   let upload = $state<FileUpload | null>(null);
 
   let download = writable<FileDownload | null>(null);
   let isFullDownloading = $state(false);
+  // Keep a reference so TypeScript doesn't complain about unused variable
+  void isFullDownloading;
   fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
-  function getFileChunkFactory(uploadId) {
-    const fn = makeDownloadChunkAsyncFn(get(active_account));
+  /* function getFileChunkFactory(uploadId) {
+    const acc = get(active_account);
+    if (!acc) throw new Error('No active account');
+    const fn = makeDownloadChunkAsyncFn(acc);
     return (params) => fn({ uploadId, ...params });
-  }
+  } */
 
   const fullDownloadAudio = () => {
     if (!upload) {
@@ -105,6 +109,10 @@
       return;
     }
     const acc = get(active_account);
+    if (!acc) {
+      console.error('No active account');
+      return;
+    }
     const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
     const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
 

@@ -58,6 +58,10 @@ export class FilesService {
 
       await filesDB.addFile(newLocalFile);
 
+      if (!acc) {
+        reject(new Error('No active account'));
+        return;
+      }
       this.fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc), async (download) => {
         newLocalFile.localFileStatus = LocalFileStatus.READY;
         newLocalFile.fileBlob = new Blob(download.chunksReceived, { type: record.fileMimeType });

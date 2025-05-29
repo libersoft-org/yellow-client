@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { autoPlacement, computePosition, shift, offset, hide } from '@floating-ui/dom';
+  import { computePosition, shift, offset } from '@floating-ui/dom';
   import Portal from '@/core/components/Portal/Portal.svelte';
 
   interface TooltipProps {

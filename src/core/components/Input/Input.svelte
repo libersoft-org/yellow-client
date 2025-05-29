@@ -29,21 +29,21 @@
     'data-testid': testId = undefined,
   }: Props = $props();
 
-  let inputRef = $state<HTMLInputElement>();
+  let internalInputRef = $state<HTMLInputElement>();
 
   // Bind the inputRef ref manually to the parent component from internal state
   $effect(() => {
-    if (inputRef) {
-      parentInputRef = inputRef;
+    if (internalInputRef && parentInputRef !== undefined) {
+      parentInputRef = internalInputRef;
     }
   });
 
-  function handleKeydown(e) {
+  function handleKeydown(e: KeyboardEvent) {
     if (onKeydown) onKeydown(e);
   }
 
   export function focus() {
-    inputRef?.focus();
+    internalInputRef?.focus();
   }
 </script>
 
@@ -58,8 +58,8 @@
   {min}
   {max}
   {step}
-  bind:this={inputRef}
-  onkeydown={(e) => handleKeydown(e)}
+  bind:this={internalInputRef}
+  onkeydown={(e: KeyboardEvent) => handleKeydown(e)}
 />
 
 <style>

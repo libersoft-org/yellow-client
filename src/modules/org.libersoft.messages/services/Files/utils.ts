@@ -85,9 +85,9 @@ export function assembleFile(file: string | Blob, fileName?: string) {
   console.log(`File download complete: ${fileName}`);
 }
 
-export async function transformFilesForServer(files: FileList) {
+export async function transformFilesForServer(files: FileList | File[]): Promise<FileList | File[]> {
   for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+    const file = Array.isArray(files) ? files[i] : files.item(i)!;
     const mimeType = file.type;
 
     if (mimeType.startsWith('audio/')) {

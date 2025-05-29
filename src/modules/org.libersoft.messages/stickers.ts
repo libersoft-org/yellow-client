@@ -1,4 +1,4 @@
-import { writable, get, derived, type Writable, type Readable } from 'svelte/store';
+import { writable, get, type Writable } from 'svelte/store';
 import { stickers_db } from './db.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.js';
 
@@ -50,7 +50,7 @@ export let sticker_servers: Writable<string[]> = localStorageSharedStore('sticke
   'https://stickers.libersoft.org',
 ]);
 export let sticker_server_index: Writable<number> = localStorageSharedStore('sticker_server_index', 0);
-export let sticker_server: Writable<string> = localStorageSharedStore('sticker_server');
+export let sticker_server: Writable<string> = localStorageSharedStore('sticker_server', '');
 
 function update_sticker_server(): void {
   let servers = get(sticker_servers);

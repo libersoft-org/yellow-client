@@ -4,7 +4,7 @@
   import { truncateText } from '@/core/utils/textUtils.ts';
   import { get, type Writable } from 'svelte/store';
   import { getContext } from 'svelte';
-  import { identifier, selectedConversation, initUpload } from '../messages.ts';
+  import { selectedConversation, initUpload } from '../messages.ts';
 
   import Button from '@/core/components/Button/Button.svelte';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
@@ -23,11 +23,11 @@
 
   const { params } = $props();
 
-  let elFileInput;
+  let elFileInput: HTMLInputElement;
   let dropActive = $state(false);
   let { fileUploadModalFiles } = getContext<FileUploadModalContext>('FileUploadModal');
 
-  function onFileAdd(e) {
+  function onFileAdd(e?: Event) {
     e && e.preventDefault();
     elFileInput.click();
   }
@@ -36,15 +36,16 @@
     $fileUploadModalFiles = [];
   }
 
-  function onFileDelete(file) {
+  function onFileDelete(file: File) {
     const index = $fileUploadModalFiles.indexOf(file);
     if (index > -1) {
       $fileUploadModalFiles.splice(index, 1);
     }
   }
 
-  function onFileUpload(e) {
-    $fileUploadModalFiles = [...$fileUploadModalFiles, ...e.target.files];
+  function onFileUpload(e: Event) {
+    const target = e.target as HTMLInputElement;
+    $fileUploadModalFiles = [...$fileUploadModalFiles, ...(target.files ? Array.from(target.files) : [])];
     elFileInput.value = '';
   }
 
@@ -60,20 +61,21 @@
     params.setFileUploadModal(0);
   };
 
-  function onDragOver(e) {
+  function onDragOver(e: DragEvent) {
     e.preventDefault();
     dropActive = true;
   }
 
-  function onDragLeave(e) {
+  function onDragLeave(e: DragEvent) {
     e.preventDefault();
     dropActive = false;
   }
 
-  function onDrop(e) {
+  function onDrop(e: DragEvent) {
     e.preventDefault();
     dropActive = false;
-    $fileUploadModalFiles = [...e.dataTransfer.files, ...$fileUploadModalFiles];
+    const files = e.dataTransfer?.files ? Array.from(e.dataTransfer.files) : [];
+    $fileUploadModalFiles = [...files, ...$fileUploadModalFiles];
   }
 </script>
 

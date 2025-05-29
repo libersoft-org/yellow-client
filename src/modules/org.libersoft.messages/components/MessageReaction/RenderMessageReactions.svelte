@@ -32,18 +32,18 @@
     return grouped;
   });
 
-  const showTooltip = (e, reactions, rgi) => {
+  const showTooltip = (e: MouseEvent, reactions: any[], rgi: string) => {
     if (tooltipButton && tooltipButton.ref === e.target) {
       return;
     }
 
     tooltipButton = {
       reactions,
-      ref: e.target,
+      ref: e.target as HTMLElement,
     };
   };
 
-  const dismissTooltip = (e) => {
+  const dismissTooltip = (e: MouseEvent) => {
     tooltipButton = null;
   };
 
@@ -51,7 +51,9 @@
     if (!reactions || !reactions.length) {
       return '';
     }
-    const myUserAddress = get(active_account).credentials.address;
+    const acc = get(active_account);
+    if (!acc) return '';
+    const myUserAddress = acc.credentials.address;
     const didIReact = reactions.some((r) => r.user_address === myUserAddress);
     const otherReactionAddresses = reactions.filter((r) => r.user_address !== myUserAddress).map((r) => r.user_address);
 
@@ -70,7 +72,7 @@
   };
 
   let prevReactions: any | null = null;
-  let buttonRefs = {};
+  let buttonRefs: Record<string, HTMLElement> = {};
   /**
    * Animations handler by detecting changes in reactions
    */

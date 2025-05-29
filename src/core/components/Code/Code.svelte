@@ -22,13 +22,13 @@
 
     // Get all text content up to cursor
     const range = selection.getRangeAt(0).cloneRange();
-    range.setStart(elDiv, 0);
-    range.setEnd(selection.focusNode, selection.focusOffset);
+    range.setStart(elDiv!, 0);
+    range.setEnd(selection.focusNode!, selection.focusOffset);
     return range.toString().length;
   }
 
   // Helper function to set cursor position by character index
-  function setCursorPosition(position) {
+  function setCursorPosition(position: number) {
     if (!elDiv) return;
 
     position = Math.max(0, Math.min(position, (elDiv.textContent || '').length));
@@ -37,7 +37,7 @@
     if (!selection) return;
 
     // Find the correct node and offset
-    const nodeStack = [elDiv];
+    const nodeStack: Node[] = [elDiv];
     let currentNode;
     let charCount = 0;
     let foundNode = null;
@@ -62,7 +62,7 @@
         // Process children in reverse order (for stack)
         const children = Array.from(currentNode.childNodes);
         for (let i = children.length - 1; i >= 0; i--) {
-          nodeStack.push(children[i]);
+          nodeStack.push(children[i] as Node);
         }
       }
     }
@@ -104,7 +104,7 @@
         // Delay restoration to allow DOM updates
         setTimeout(() => {
           setCursorPosition(lastCursorPos);
-          elDiv.focus();
+          elDiv!.focus();
         }, 0);
       }
     } catch (error) {
@@ -168,7 +168,8 @@
   contenteditable
   spellcheck="false"
   role="textbox"
-  oninput={(e) => {
+  tabindex="0"
+  oninput={(e: Event) => {
     // Save current cursor position before updating
     lastCursorPos = getCursorPosition();
 
@@ -185,13 +186,13 @@
   onpaste={pastePlainText}
   onfocus={() => {
     // Ensure we have content for cursor to appear when focused
-    if (!elDiv.innerHTML || elDiv.innerHTML.trim() === '') {
-      elDiv.innerHTML = '<code class="language-json"> </code>';
+    if (!elDiv || !elDiv.innerHTML || elDiv.innerHTML.trim() === '') {
+      elDiv!.innerHTML = '<code class="language-json"> </code>';
       // Place cursor at beginning
       const selection = window.getSelection();
       if (selection) {
         const range = document.createRange();
-        const codeElement = elDiv.querySelector('code');
+        const codeElement = elDiv!.querySelector('code');
         if (codeElement && codeElement.firstChild) {
           range.setStart(codeElement.firstChild, 0);
           range.collapse(true);
@@ -212,7 +213,7 @@
     border: 1px solid #888;
     scrollbar-width: none;
     background-color: #222;
-    foreground-color: #fff3eb;
+    color: #fff3eb;
     max-width: 500px;
     width: 100vw;
     max-width: 700px;

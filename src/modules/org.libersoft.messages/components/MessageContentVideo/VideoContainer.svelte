@@ -1,38 +1,38 @@
 <script lang="ts">
-  import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.ts';
+  import { loadUploadData, makeDownloadChunkAsyncFn, downloadAttachmentsSerial } from '../../messages.ts';
   import { active_account } from '@/core/core.ts';
   import { onMount } from 'svelte';
-  import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
-  import { humanSize } from '@/core/utils/fileUtils.ts';
+  // import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
+  // import { humanSize } from '@/core/utils/fileUtils.ts';
   import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
-  import Button from '@/core/components/Button/Button.svelte';
+  // import Button from '@/core/components/Button/Button.svelte';
   import { assembleFile, base64ToUint8Array } from '@/org.libersoft.messages/services/Files/utils.ts';
-  import { writable, get } from 'svelte/store';
+  import { get } from 'svelte/store';
   import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
-  import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
-  import type { FileDownload, FileUpload, FileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
-  import { truncateText } from '@/core/utils/textUtils.ts';
-  import _debug from 'debug';
-  import Spinner from '@/core/components/Spinner/Spinner.svelte';
+  // import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
+  import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+  // import { truncateText } from '@/core/utils/textUtils.ts';
+  // import _debug from 'debug';
+  // import Spinner from '@/core/components/Spinner/Spinner.svelte';
   import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
   import videoJS from 'video.js';
 
-  const debug = _debug('libersoft:messages:components:MessageContentVideo:Video');
+  // const debug = _debug('libersoft:messages:components:MessageContentVideo:Video');
 
   let { uploadId } = $props();
   let videoRef = $state<HTMLVideoElement>();
-  let thumbnailRef = null;
-  let mediaHandler = $state<MediaService | null>(null);
+  // let thumbnailRef = null;
+  // let mediaHandler = $state<MediaService | null>(null);
   let upload = $state<FileUpload | null>(null);
   let download = $state<FileDownload | null>(null);
   fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
 
-  let acc = $derived(get(active_account));
+  // let acc = $derived(get(active_account));
   let thumbnailSrc = $state<string | null>(null);
 
   //let videoUrl = $state<string | null>(null)
 
-  let videoJSEnabled = true;
+  // let videoJSEnabled = true;
   let posterError = $state(false);
   let videoStarted = $state(false);
   let videoStarting = $state(false);
@@ -42,13 +42,15 @@
   let videoJsInstance = $state<ReturnType<typeof videoJS> | null>(null);
 
   function getFileChunkFactory(uploadId) {
-    const fn = makeDownloadChunkAsyncFn(get(active_account));
+    const acc = get(active_account);
+    if (!acc) throw new Error('No active account');
+    const fn = makeDownloadChunkAsyncFn(acc);
     return (params) => fn({ uploadId, ...params });
   }
 
   function onDownload() {
     if (!upload) {
-      debug('No upload data available');
+      // debug('No upload data available');
       return;
     }
     downloadAttachmentsSerial([upload.record], (download) => {
@@ -59,7 +61,7 @@
 
   const fullDownloadVideo = () => {
     if (!upload) {
-      debug('No upload data available');
+      // debug('No upload data available');
       return;
     }
     videoIsFullDownloading = true;
@@ -75,20 +77,24 @@
   };
 
   async function startVideo() {
-    debug('Starting video');
+    // debug('Starting video');
     if (!upload) {
-      debug('No upload data available');
+      // debug('No upload data available');
       return;
     }
 
     videoStarting = true;
     const acc = get(active_account);
+    if (!acc) {
+      console.error('No active account');
+      return;
+    }
     const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
     //const progressiveUrl = 'http://localhost:3001/'
-    debug('Progressive URL:', progressiveUrl);
+    // debug('Progressive URL:', progressiveUrl);
 
     const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
-    debug('Progressive download availability:', progressiveDownloadAvailable);
+    // debug('Progressive download availability:', progressiveDownloadAvailable);
 
     if (progressiveDownloadAvailable) {
       try {
@@ -160,7 +166,7 @@
     const getFileChunk = getFileChunkFactory(uploadId);
     return getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then((firstChunk) => {
       if (!upload) {
-        debug('No upload data available');
+        // debug('No upload data available');
         return;
       }
       MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: upload.record.fileMimeType }))

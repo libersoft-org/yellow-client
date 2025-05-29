@@ -33,7 +33,7 @@ import retry from 'retry';
 import { tick } from 'svelte';
 import { messages_db } from './db.js';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.js';
-import { addNotification, deleteNotification } from '@/core/notifications.js';
+import { addNotification, deleteNotification, type YellowNotification } from '@/core/notifications.js';
 import { makeMessageReaction } from './factories/messageFactories.js';
 
 // Type definitions
@@ -86,9 +86,9 @@ export interface ModuleData {
   emojisLoading: Writable<boolean>;
   showGallery: Writable<boolean>;
   galleryFile: Writable<any>;
-  new_message_listener?: (event: CustomEvent) => Promise<void>;
-  seen_message_listener?: (event: CustomEvent) => void;
-  seen_inbox_message_listener?: (event: CustomEvent) => void;
+  new_message_listener?: (event: Event) => Promise<void>;
+  seen_message_listener?: (event: Event) => void;
+  seen_inbox_message_listener?: (event: Event) => void;
 }
 
 export interface MessageEvent {
@@ -316,8 +316,8 @@ export function init(): () => void {
 async function refresh(acc: Account): Promise<void> {
   console.log('refresh sendQueuedMessages...', acc);
   await sendOutgoingMessages(acc);
-  const selectedConv = get(acc.module_data[identifier].selectedConversation);
-  if (selectedConv) {
+  const selectedConv = get(acc.module_data[identifier].selectedConversation) as ConversationData | null;
+  if (selectedConv && selectedConv.address) {
     console.log('refresh listMessages...', acc);
     listMessages(acc, selectedConv.address);
   }
@@ -325,19 +325,31 @@ async function refresh(acc: Account): Promise<void> {
   listConversations(acc);
 }
 
-export async function initUpload(files: File[], uploadType: string, recipients: string[]): Promise<void> {
+export async function initUpload(files: File[], uploadType: FileUploadRecordType, recipients: string[]): Promise<void> {
   console.log('2222', files, uploadType, recipients);
   const acc = get(active_account);
   if (!acc) return;
 
+  let fileList: FileList;
   try {
-    files = await transformFilesForServer(files);
+    // Transform files first - it can return either FileList or File[]
+    const transformedFiles = await transformFilesForServer(files);
+
+    // Convert to FileList if needed
+    if (Array.isArray(transformedFiles)) {
+      const dataTransfer = new DataTransfer();
+      transformedFiles.forEach((file) => dataTransfer.items.add(file));
+      fileList = dataTransfer.files;
+    } else {
+      fileList = transformedFiles;
+    }
   } catch (error) {
     console.error('Error transforming files for server:', error);
+    return;
   }
 
   console.log('3333');
-  const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, {
+  const { uploads } = fileUploadManager.beginUpload(fileList, uploadType, acc, {
     chunkSize: get(uploadChunkSize),
   });
 
@@ -368,7 +380,7 @@ export async function initUpload(files: File[], uploadType: string, recipients: 
         fileOriginalName: upload.record.fileOriginalName,
         fileMimeType: upload.record.fileMimeType,
         fileSize: upload.record.fileSize,
-        fileBlob: new Blob([upload.file], { type: fileMimeType }),
+        fileBlob: upload.file ? new Blob([upload.file], { type: fileMimeType }) : new Blob([], { type: fileMimeType }),
       });
     } else if (isServerType && acceptedVideoTypes.some((v) => fileMimeType.startsWith(v))) {
       messageHtml += `<YellowVideo file="yellow:${upload.record.id}"></YellowVideo>`;
@@ -428,8 +440,8 @@ function uploadChunkAsync({ upload, chunk }: UploadChunkParams): Promise<void> {
   });
 }
 
-function ask_for_chunk(event: CustomEvent): void {
-  const { uploadId } = event.detail.data;
+function ask_for_chunk(event: Event): void {
+  const { uploadId } = (event as CustomEvent).detail.data;
   const upload = fileUploadManager.uploadsStore.get(uploadId);
   if (!upload) {
     return;
@@ -444,9 +456,9 @@ function ask_for_chunk(event: CustomEvent): void {
   }
 }
 
-function message_update(event: CustomEvent): void {
-  const { type, message } = event.detail.data;
-  console.log('message_update', event.detail.data);
+function message_update(event: Event): void {
+  const { type, message } = (event as CustomEvent).detail.data;
+  console.log('message_update', (event as CustomEvent).detail.data);
 
   if (type === 'reaction') {
     const messageUid = message.uid;
@@ -469,8 +481,8 @@ function message_update(event: CustomEvent): void {
   }
 }
 
-function upload_update(event: CustomEvent): void {
-  const { record, uploadData } = event.detail.data;
+function upload_update(event: Event): void {
+  const { record, uploadData } = (event as CustomEvent).detail.data;
   const currentUpload = fileUploadStore.get(record.id);
   if (currentUpload) {
     if (
@@ -797,10 +809,14 @@ function sortMessages(messages: MessageData[]): void {
     if (akey === undefined && bkey === undefined) {
       akey = a.created as any;
       bkey = b.created as any;
-    } else if (akey === undefined) return 1;
-    else if (bkey === undefined) return -1;
-    if (akey > bkey) return 1;
-    if (akey < bkey) return -1;
+    } else if (akey === undefined) {
+      return 1;
+    } else if (bkey === undefined) {
+      return -1;
+    }
+    // TypeScript now knows both are defined
+    if (akey! > bkey!) return 1;
+    if (akey! < bkey!) return -1;
     return 0;
   });
 }
@@ -836,7 +852,7 @@ export function setMessageSeen(message: MessageData, cb?: () => void): void {
   log.debug('setMessageSeen', message);
   deleteNotification(messageNotificationId(message));
   message.just_marked_as_seen = true;
-  sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
+  sendData(acc, null, 'message_seen', { uid: message.uid }, true, (req, res) => {
     if (res.error !== false) {
       console.error('this is bad.');
       return;
@@ -851,8 +867,8 @@ export function sendMessage(
   acc?: Account | null,
   conversation?: ConversationData | null
 ): void {
-  acc = acc ? acc : get(active_account);
-  conversation = conversation ? conversation : get(selectedConversation);
+  acc = acc ?? get(active_account);
+  conversation = conversation ?? get(selectedConversation);
 
   if (!acc || !conversation) return;
 
@@ -932,9 +948,10 @@ export function modifyMessageReaction(
   messageUid: string,
   operation: 'set' | 'unset',
   reaction: any,
-  acc?: Account
+  acc?: Account | null
 ): Promise<any> {
-  acc = acc ? acc : get(active_account);
+  const activeAcc = get(active_account);
+  acc = acc ?? activeAcc;
   if (!acc) return Promise.reject(new Error('No active account'));
 
   return new Promise((resolve, reject) => {
@@ -1000,7 +1017,7 @@ async function sendOutgoingMessages(acc: Account): Promise<void> {
   for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
     console.log('sendOutgoingMessages found queued message:', message.data.uid);
     let res = await new Promise((resolve) => {
-      sendData(acc, active_account, 'message_send', message.data, true, (req, res) => {
+      sendData(acc, null, 'message_send', message.data, true, (req, res) => {
         resolve(res);
       });
     });
@@ -1015,7 +1032,7 @@ async function sendOutgoingMessages(acc: Account): Promise<void> {
 
 function updateConversationsArray(acc: Account, msg: MessageData): void {
   let acc_ca = acc.module_data[identifier].conversationsArray;
-  let ca = get(acc_ca);
+  let ca = get(acc_ca) as ConversationData[];
   const conversation = ca.find((c) => c.address === msg.remote_address);
   let is_unread = !msg.seen && !msg.just_sent && msg.address_from !== acc.credentials.address;
   if (conversation) {
@@ -1028,7 +1045,7 @@ function updateConversationsArray(acc: Account, msg: MessageData): void {
   } else {
     let newConversation: ConversationData = {
       acc,
-      address: msg.remote_address,
+      address: msg.remote_address || '',
       last_message_date: msg.created,
       last_message_text: msg.stripped_text,
       visible_name: null,
@@ -1089,7 +1106,7 @@ async function eventNewMessage(acc: Account, event: CustomEvent): Promise<void> 
     (msg.address_from === sc?.address && msg.address_to === acc.credentials.address) ||
     (msg.address_from === acc.credentials.address && msg.address_to === sc?.address)
   ) {
-    msg = addMessagesToMessagesArray([msg], 'new_message', false)[0];
+    addMessagesToMessagesArray([msg], 'new_message', false);
   }
 }
 
@@ -1139,8 +1156,9 @@ async function showNotification(acc: Account, msg: MessageData): Promise<void> {
   } else {
     title = 'New message from: ' + msg.address_from;
   }
-  let notification: Notification = {
+  let notification: YellowNotification = {
     id: messageNotificationId(msg),
+    ts: Date.now(),
     title,
     body: get(hideMessageTextInNotifications) ? 'You have a new message' : msg.stripped_text || '',
     icon: 'img/photo.svg',
@@ -1169,11 +1187,20 @@ export function ensureConversationDetails(conversation: ConversationData): void 
   let acc = get(active_account);
   if (!acc) return;
 
-  _send(acc, active_account, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
-    if (res.error !== false) return;
-    Object.assign(conversation, res.data);
-    conversationsArray.update((v) => v);
-  });
+  _send(
+    acc,
+    null,
+    'core',
+    'user_userinfo_get',
+    { address: conversation.address },
+    true,
+    (_req, res) => {
+      if (res.error !== false) return;
+      Object.assign(conversation, res.data);
+      conversationsArray.update((v) => v);
+    },
+    false
+  );
 }
 
 DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
@@ -1299,31 +1326,31 @@ export function preprocess_incoming_plaintext_message_text(content: string): str
   return result3;
 }
 
-function emoji_cluster_to_array(cluster: string): number[] {
-  const codepoints: number[] = [];
-  for (const char of cluster) {
-    const codepoint = char.codePointAt(0);
-    if (codepoint !== undefined) {
-      codepoints.push(codepoint);
-    }
-  }
-  return codepoints;
-}
+// function emoji_cluster_to_array(cluster: string): number[] {
+//   const codepoints: number[] = [];
+//   for (const char of cluster) {
+//     const codepoint = char.codePointAt(0);
+//     if (codepoint !== undefined) {
+//       codepoints.push(codepoint);
+//     }
+//   }
+//   return codepoints;
+// }
 
-function linkify(text: string): string {
-  const combinedPattern = new RegExp(
-    [
-      "(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
-      "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
-      '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)',
-      '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)',
-      '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})',
-      '(tel:\\+?[0-9]{1,15})',
-    ].join('|'),
-    'g'
-  );
-  let result = text.replace(combinedPattern, (match) => {
-    return `<a href="${match}" target="_blank">${match}</a>`;
-  });
-  return result;
-}
+// function linkify(text: string): string {
+//   const combinedPattern = new RegExp(
+//     [
+//       "(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
+//       "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
+//       '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)',
+//       '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)',
+//       '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})',
+//       '(tel:\\+?[0-9]{1,15})',
+//     ].join('|'),
+//     'g'
+//   );
+//   let result = text.replace(combinedPattern, (match) => {
+//     return `<a href="${match}" target="_blank">${match}</a>`;
+//   });
+//   return result;
+// }
