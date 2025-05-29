@@ -67,8 +67,8 @@
  }
 
  .progress-bar .step .circle.active {
-  border: 1px solid #d80;
-  background-color: #fd3;
+  border: 1px solid var(--color-secondary-background);
+  background-color: var(--color-primary-background);
   color: #000;
  }
 

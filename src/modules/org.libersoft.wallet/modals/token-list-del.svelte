@@ -10,4 +10,4 @@
 </script>
 
 <div>Would you like to delete the item: {params.item.name}?</div>
-<Button text="Delete" onClick={deleteItem} />
+<Button text="Delete" onClick={deleteItem} width="100%" />

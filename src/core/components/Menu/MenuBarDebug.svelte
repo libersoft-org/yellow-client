@@ -1,8 +1,8 @@
 <script>
- import Button from '../Button/Button.svelte';
- import Switch from '@/core/components/Switch/Switch.svelte';
  import Modal from '../Modal/Modal.svelte';
  import Files2 from '../../debug/Files2.svelte';
+ import Button from '@/core/components/Button/Button.svelte';
+ import Switch from '@/core/components/Switch/Switch.svelte';
  import { addNotification } from '../../notifications.ts';
  import { debug } from '../../core.js';
  import { log } from '../../tauri.ts';

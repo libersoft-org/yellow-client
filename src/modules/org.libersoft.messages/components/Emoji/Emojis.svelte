@@ -38,7 +38,10 @@
    }
   }
   all = Object.values(all);
-  let res = new FuzzySearch(all, ['shortcodes', 'emoticons'], { caseSensitive: false, sort: true }).search(search);
+  let res = new FuzzySearch(all, ['shortcodes', 'emoticons'], {
+   caseSensitive: false,
+   sort: true,
+  }).search(search);
   console.log('find:', res);
   return res;
  }
@@ -91,8 +94,14 @@
   padding: 8px;
   background-color: #eee;
   border-radius: 10px;
-  margin: 10px;
+  margin: 16px 10px;
   border: 1px solid #aaa;
+ }
+
+ .group:first-of-type {
+  .title {
+   margin-top: 0;
+  }
  }
 
  .emojis {
@@ -100,7 +109,7 @@
   justify-content: center;
   flex-wrap: wrap;
   padding: 0 10px;
-  overflow: auto; /* TODO - not working */
+  overflow: visible;
  }
 
  .emoji {

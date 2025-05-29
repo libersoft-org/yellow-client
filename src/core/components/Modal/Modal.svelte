@@ -1,11 +1,19 @@
 <script lang="ts">
  import { setContext, tick, type Snippet } from 'svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- import { debug } from '../../core.js';
+ import { debug, isMobile } from '../../core.js';
  import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
  import { draggable } from '@neodrag/svelte';
  import Portal from '../Portal/Portal.svelte';
-
+ let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
+ let modalEl: HTMLDivElement | null = $state(null);
+ let showContent = $state(false);
+ let ModalBody = $state<Snippet>(body);
+ let zIndex = $state(100);
+ let activeTab = $state('');
+ let modalId: number;
+ let isDragging = false;
+ let resizeObserver: ResizeObserver;
  type Props = {
   show?: boolean;
   params?: any;
@@ -18,20 +26,8 @@
   onShowChange?: (show: boolean) => void;
  };
 
- let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
-
- let modalEl: HTMLDivElement | null = $state(null);
-
- let showContent = $state(false);
- let ModalBody = $state<Snippet>(body);
- let zIndex = $state(100);
- let activeTab = $state('');
-
- let modalId: number;
- let isDragging = false;
- let resizeObserver: ResizeObserver;
-
  $effect(() => {
+  if (!isMobile) return;
   if (modalEl && showContent && !isDragging && activeTab) {
    centerModal();
    requestAnimationFrame(snapTransformIntoBounds);
@@ -43,12 +39,15 @@
   modalId = registerModal(z => (zIndex = z));
 
   function handleResize() {
+   if (!isMobile) return;
+   centerModal();
    if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
   }
 
   if (modalEl) {
    let didInit = false;
    resizeObserver = new ResizeObserver(() => {
+    if (!isMobile) return;
     if (isDragging) return;
     if (didInit) {
      centerModal();
@@ -105,30 +104,31 @@
 
  function snapTransformIntoBounds() {
   if (!modalEl) return;
-
+  if (!isMobile) return;
   const rect = modalEl.getBoundingClientRect();
-  const padding = window.innerWidth < 768 ? 12 : 24;
-
+  const padding = 0;
   let dx = 0;
   let dy = 0;
-
   if (rect.left < padding) dx = padding - rect.left;
   else if (rect.right > window.innerWidth - padding) dx = window.innerWidth - padding - rect.right;
-
   if (rect.top < padding) dy = padding - rect.top;
   else if (rect.bottom > window.innerHeight - padding) dy = window.innerHeight - padding - rect.bottom;
-
   if (dx === 0 && dy === 0) return;
-
   const matrix = new DOMMatrixReadOnly(getComputedStyle(modalEl).transform);
   const newX = matrix.m41 + dx;
   const newY = matrix.m42 + dy;
-
-  modalEl.style.transition = 'transform 0.2s ease';
-  modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
-  setTimeout(() => {
-   if (modalEl) modalEl.style.transition = '';
-  }, 200);
+  if (!isDragging) {
+   modalEl.style.transition = 'none';
+   modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+   modalEl.offsetHeight;
+   modalEl.style.transition = '';
+  } else {
+   modalEl.style.transition = 'transform 0.2s ease';
+   modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+   setTimeout(() => {
+    if (modalEl) modalEl.style.transition = '';
+   }, 200);
+  }
  }
 
  export function open() {
@@ -170,22 +170,24 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   max-width: 700px;
   width: 100%;
   max-height: calc(100dvh - 48px);
-  border: 1px solid #000;
+  height: fit-content;
+  overflow: hidden;
+  border: 1px solid var(--color-foreground);
   border-radius: 10px;
   box-shadow: var(--shadow);
-  background-color: #fff;
-  overflow: auto;
+  background-color: var(--color-background);
 
   @media (max-width: 768px) {
-   max-width: calc(100% - 24px) !important;
-   max-height: calc(100% - 24px) !important;
-   height: fit-content;
-   width: 100%;
+   max-width: calc(100%) !important;
+   max-height: calc(100%) !important;
+   height: 100%;
+   width: 100% !important;
+   border-radius: 0px;
+   border: none;
   }
 
   :global(&.neodrag-dragging) {
@@ -200,14 +202,14 @@
   align-items: center;
   gap: 10px;
   font-weight: bold;
-  background-color: #fd3;
-  color: #000;
+  background-color: var(--color-primary-background);
+  color: var(--color-text);
   cursor: grab;
  }
  .modal .header .title {
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 10px;
   flex-grow: 1;
   user-select: none;
 
@@ -220,9 +222,8 @@
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  /* overflow-y: auto; */
-  background-color: #fff;
-  color: #000;
+  background-color: var(--color-background);
+  color: var(--color-text);
  }
 </style>
 
@@ -242,6 +243,12 @@
     onDragEnd,
     gpuAcceleration: true,
     handle: '.header',
+    bounds: {
+     top: 0,
+     left: 0,
+     right: 0,
+     bottom: 0,
+    },
    }}
    style:z-index={zIndex}
    onmousedown={raiseZIndex}
@@ -252,12 +259,12 @@
      {#if title}
       <div class="title">
        {#if activeTab}
-        <Icon img="img/back.svg" alt="Back" colorVariable="--icon-black" size="20px" padding="10px" onClick={clearActiveTab} />
+        <Icon img="img/back.svg" alt="Back" colorVariable="--color-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
        {/if}
        {title}
       </div>
       <div onpointerdown={e => e.stopPropagation()}>
-       <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--icon-black" size="20px" padding="10px" onClick={close} />
+       <Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--color-foreground" size="20px" padding="10px" onClick={close} />
       </div>
      {/if}
     </div>

@@ -1,6 +1,7 @@
 <script lang="ts">
  import Prism from 'prismjs';
  import 'prismjs/components/prism-json';
+ import { log } from '@/core/tauri.ts';
 
  type Props = {
   code: string;
@@ -10,7 +11,14 @@
 
  let language = 'json';
 
- let highlighted = $derived.by(() => Prism.highlight(code, Prism.languages[language], language));
+ let highlighted = $derived.by(() => {
+  try {
+   return Prism.highlight(code, Prism.languages[language], language);
+  } catch (error) {
+   log.error('Prism highlight error:', error);
+   return code;
+  }
+ });
 </script>
 
 <style>
@@ -18,7 +26,6 @@
   white-space: pre-wrap;
   padding: 24px;
   border: 1px solid #888;
-  border-radius: 10px;
   scrollbar-width: none;
   background-color: #1e1e1e;
   max-width: 500px;
@@ -28,7 +35,7 @@
   outline: none;
   font-size: clamp(12px, 1.4vw, 14px);
   caret-color: white !important;
-  caret-shape: #1e1e1e;
+  min-width: fit-content;
 
   &::-webkit-scrollbar {
    display: none;
@@ -199,6 +206,6 @@
  }
 </style>
 
-<div class="code-wrapper" contenteditable={true} spellcheck="false">
+<div class="code-wrapper" contenteditable spellcheck="false" bind:innerText={code}>
  <code class="language-json">{@html highlighted}</code>
 </div>

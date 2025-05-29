@@ -1,17 +1,28 @@
-<script>
+<script lang="ts">
  import Content from '../components/content.svelte';
- import Panel from '../components/panel.svelte';
  import TopBar from '@/core/components/TopBar/TopBar.svelte';
+ import core, { isMobile } from '@/core/core.js';
+ import Icon from '@/core/components/Icon/Icon.svelte';
+ import { page } from '../dating.js';
+
+ function modulePageClose() {
+  page.set('');
+  core.hideSidebarMobile.set(false);
+ }
 </script>
 
-<TopBar columnSize={1}>
+<TopBar>
  <svelte:fragment slot="left">
+  {#if $isMobile}
+   <Icon img="img/back.svg" onClick={() => modulePageClose()} colorVariable="--icon-white" visibleOnDesktop={true} />
+  {/if}
   <h1 class="title">People nearby</h1>
  </svelte:fragment>
 </TopBar>
+
 <Content>
  {window.innerHeight}<br />
- {window.visualViewport.height}<br />
+ {window.visualViewport?.height}<br />
  START 1<br />
  START 2<br />
  START 3<br />

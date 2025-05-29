@@ -9,19 +9,59 @@
  --icon-yellow: #fd1;
  --icon-red: #dc2626;
  --icon-blue: #00f;
- --messages-bubble-max-width: 60%;
 
- /* Colors */
- --yellow-primary: #ffdd11;
- --yellow-bg: #fefdf7;
+ /* Theme colors: */
+ --color-primary-foreground: #222;
+ --color-primary-background: #fc1;
+ --color-primary-light-background: #ffa;
+ --color-primary-lighter-background: #ffd;
+ --color-primary-dark-background: #fa0; /* new variable */
+ --color-secondary-background: #d80; /* rename everywhere to: --color-primary-darker-background */
+ --color-secondary-foreground: #222; /* remove and replace every mention to --primary-foreground */
+ --color-secondary-muted-background: #ffa; /* rename everywhere to: --color-primary-light-background */
+ --color-secondary-muted-foreground: #222; /* remove and replace every mention to --primary-foreground */
+ --color-secondary-accent-background: #ffd; /* rename everywhere to: --color-primary-lighter-background */
+ --color-secondary-accent-foreground: #222; /* remove and replace every mention to --primary-foreground */
+ --color-tertiary-background: #ffdd1150; /* check if used anywhere */
+ --color-tertiary-foreground: #fff; /* check if used anywhere */
+ --color-text: #222; /* check if used anywhere */
+ --color-background: #fff; /* check if used anywhere */
+ --color-foreground: #222; /* check if used anywhere */
+ --color-card-background: #fff; /* check if used anywhere */
+ --color-card-foreground: #222; /* check if used anywhere */
+ --color-reversed-background: #222; /* check if used anywhere */
+ --color-reversed-foreground: #fff; /* check if used anywhere */
+ --color-popover: #444; /* check if used anywhere */
+ --color-popover-foreground: #444; /* check if used anywhere */
+ --color-muted-background: #ffd; /* check if used anywhere */
+ --color-muted-foreground: #222; /* check if used anywhere */
+ --color-accent-background: #d80; /* check if used anywhere */
+ --color-accent-foreground: #222; /* check if used anywhere */
+ --color-disabled-background: #888; /* check if used anywhere */
+ --color-disabled-foreground: #222; /* check if used anywhere */
+
+ /*
+  --color-border:
+  --color-input:
+  --color-ring:
+  --color-sidebar:
+  --color-sidebar-foreground :
+  --color-sidebar-primary-background:
+  --color-sidebar-primary-foreground:
+  --color-sidebar-accent-background:
+  --color-sidebar-accent-foreground:
+  --color-sidebar-ring:
+ */
 
  /* Box shadows */
  --yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+ --scroll-bar-color: #ca0;
+ --scroll-bar-color-background: #fea;
 }
 
 * {
  scrollbar-width: thin;
- scrollbar-color: #ca0 #fea;
+ scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-color-background);
 }
 
 @media (prefers-reduced-motion: no-preference) {

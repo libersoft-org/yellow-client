@@ -81,6 +81,7 @@
  .group {
   display: flex;
   flex-direction: column;
+  gap: 4px;
  }
 
  .error {
@@ -109,8 +110,8 @@
   </div>
  {/if}
  {#if params.item}
-  <Button img="img/save.svg" text="Save" onClick={edit} />
+  <Button img="img/save.svg" text="Save" onClick={edit} width="100%" />
  {:else}
-  <Button text="Add" onClick={add} />
+  <Button text="Add" onClick={add} width="100%" />
  {/if}
 </div>

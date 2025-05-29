@@ -187,7 +187,7 @@
   gap: 10px;
   align-items: center;
   padding: 10px;
-  background-color: #fd1;
+  background-color: var(--color-primary-background);
   cursor: pointer;
   filter: brightness(1);
   transition: filter 0.3s ease;
@@ -196,6 +196,8 @@
  }
 
  .accordion .item .header {
+  width: 100%;
+
   .title {
    flex-grow: 1;
    font-weight: bold;
@@ -222,11 +224,11 @@
 <div class="accordion">
  {#each items as item, index}
   <div class="item {activeIndices.includes(index) ? 'is-expanded' : ''}">
-   <BaseButton onClick={() => handleClick(index)}>
+   <BaseButton onClick={() => handleClick(index)} width="100%">
     <div class="header">
      <div class="title">{item.name}</div>
      {@render header?.(item)}
-     <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--icon-black" size="12px" />
+     <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--color-foreground" size="12px" />
     </div>
    </BaseButton>
    <div class="content {activeIndices.includes(index) ? 'is-expanded' : ''}" data-index={index}>

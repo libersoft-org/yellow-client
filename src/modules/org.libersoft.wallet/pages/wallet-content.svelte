@@ -276,6 +276,6 @@
   </Paper>
  </div>
 </div>
-<Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} />
-<Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} />
-<Modal title="Wallet settings" width="500px" body={ModalSettings} bind:show={showModalSettings} />
+<Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} width="500px" />
+<Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} width="500px" />
+<Modal title="Wallet settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />

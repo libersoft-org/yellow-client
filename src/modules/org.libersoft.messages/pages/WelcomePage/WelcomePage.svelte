@@ -3,7 +3,7 @@
  import Button from '@/core/components/Button/Button.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
  import ModalNewConversation from '../../modals/NewConversation.svelte';
- import { active_account } from '@/core/core.js';
+ import core, { active_account, isMobile, selected_module_id } from '@/core/core.js';
  import TopBar from '@/core/components/TopBar/TopBar.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
 
@@ -12,6 +12,11 @@
 
  function clickNew() {
   showNewConversationModal = true;
+ }
+
+ function mobileClose() {
+  selected_module_id.set(null);
+  core.hideSidebarMobile.set(false);
  }
 </script>
 
@@ -39,24 +44,23 @@
   flex-direction: column;
   gap: 8px;
   padding: 10px;
-  border: 1px solid #fd1;
+  border: 1px solid var(--color-primary-background);
   border-radius: 20px;
   text-align: center;
   font-size: 20px;
-  background-color: rgba(255, 221, 17, 0.3);
+  background-color: var(--color-tertiary-background);
+  color: var(--color-tertiary-foreground);
  }
 </style>
 
-<!-- <TopBar>
-	<svelte:fragment slot="left">
-		<Icon
-			img="img/back.svg"
-			onClick={() => (window.location.href = '/')}
-			colorVariable="--icon-white"
-			visibleOnDesktop={true}
-		/>
-	</svelte:fragment>
-</TopBar> -->
+{#if $isMobile}
+ <TopBar>
+  <svelte:fragment slot="left">
+   <Icon img="img/back.svg" onClick={() => mobileClose()} colorVariable="--icon-white" visibleOnDesktop={true} />
+   <h1 class="title">Messages</h1>
+  </svelte:fragment>
+ </TopBar>
+{/if}
 
 <div class="welcome">
  <img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />

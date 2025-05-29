@@ -1,7 +1,6 @@
 <script lang="ts">
- import Button from '../components/Button/Button.svelte';
- import Code from '../components/Code/Code.svelte';
- import { accounts_config } from '../core.js';
+ import Code from '../../components/Code/Code.svelte';
+ import AccountsImportButtons from '../../components/AccountsImportButtons/AccountsImportButtons.svelte';
 
  type Props = {
   close: () => void;
@@ -11,20 +10,21 @@
 
  let text = $state('');
  let textareaEl: HTMLTextAreaElement | null = $state(null);
+ let error = $state('');
  const isFilled = $derived(text.length > 0);
 
- function accountsConfigImport() {
-  if (text) {
-   let data = JSON.parse(text);
-   accounts_config.set(data);
-   close();
-  } else {
-   console.error('No data to import');
-  }
+ function handleError(message: string) {
+  error = message;
  }
 
  $effect(() => {
-  textareaEl?.focus();
+  // textareaEl?.focus();
+ });
+
+ $effect(() => {
+  if (text) {
+   error = '';
+  }
  });
 </script>
 
@@ -41,12 +41,18 @@
    overflow: auto;
   }
 
-  :global(.button) {
+  .buttons-container {
    margin-top: 10px;
    position: sticky;
    top: 0;
    left: 0;
    z-index: 1;
+  }
+
+  .error {
+   color: #f00;
+   text-align: center;
+   margin-top: 10px;
   }
 
   textarea {
@@ -69,7 +75,12 @@
 <div class="account-import">
  <div class="scrollable">
   <Code bind:code={text} />
-  <textarea class:isFilled bind:value={text} bind:this={textareaEl}></textarea>
+  <!-- <textarea class:isFilled bind:value={text} bind:this={textareaEl}></textarea> -->
  </div>
- <Button img="img/import.svg" text="Import" onClick={accountsConfigImport} />
+ {#if error}
+  <div class="error">{error}</div>
+ {/if}
+ <div class="buttons-container">
+  <AccountsImportButtons importText={text} {close} onError={handleError} />
+ </div>
 </div>
