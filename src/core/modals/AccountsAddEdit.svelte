@@ -1,7 +1,7 @@
 <script lang="ts">
  import { getContext, untrack } from 'svelte';
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
- import { accounts } from '../core.js';
+ import { accountExists, accounts } from '../core.js';
  import Button from '../components/Button/Button.svelte';
  import Label from '../components/Label/Label.svelte';
  import Input from '../components/Input/Input.svelte';
@@ -117,17 +117,22 @@
   console.log('[ACTION] Clicked ADD');
   if (!verify()) return;
 
-  const id = addAccount(
-   {
+  const account = {
     enabled: config_enabled,
     credentials: {
      address: credentials_address,
      server: credentials_server,
      password: credentials_password,
     },
-   },
-   { title: config_title }
-  );
+   };
+  const settings = { title: config_title };
+
+  if (accountExists(account.credentials?.server, account.credentials?.address)) {
+   error = 'Account already exists with this server and address';
+   return;
+  }
+
+  const id = addAccount(account, settings);
 
   console.log('[ACTION] Account added with ID:', id);
   params.id = id;

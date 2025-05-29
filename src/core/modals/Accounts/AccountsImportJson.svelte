@@ -10,9 +10,6 @@
 
  let text = $state('');
  let error = $state('');
- let derivedText = $derived(text);
-
- $inspect(derivedText);
 
  function handleError(message: string) {
   error = message;

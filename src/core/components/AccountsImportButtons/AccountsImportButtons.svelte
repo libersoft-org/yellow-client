@@ -76,10 +76,8 @@
   }
 
   const account = remainingAccounts.shift();
-  const server = account.credentials?.server || account.server;
-  const address = account.credentials?.address || account.address;
 
-  if (accountExists(server, address)) {
+  if (accountExists(account.credentials?.server, account.credentials?.address)) {
    // Account exists, show conflict dialog
    currentConflictAccount = account;
    conflictDialog?.open();
