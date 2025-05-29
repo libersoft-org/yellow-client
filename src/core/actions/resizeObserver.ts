@@ -6,25 +6,25 @@ const resizeCallbacks = new WeakMap<Element, ResizeCallback>();
 let resizeObserver: ResizeObserver;
 
 export default function resize(target: Element, callback: ResizeCallback) {
-  // create on first use, inside the action, so we're SSR friendly
-  resizeObserver =
-    resizeObserver ||
-    new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const callback = resizeCallbacks.get(entry.target);
-        if (callback) {
-          callback(entry);
-        }
-      }
-    });
+	// create on first use, inside the action, so we're SSR friendly
+	resizeObserver =
+		resizeObserver ||
+		new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				const callback = resizeCallbacks.get(entry.target);
+				if (callback) {
+					callback(entry);
+				}
+			}
+		});
 
-  resizeCallbacks.set(target, callback);
-  resizeObserver.observe(target);
+	resizeCallbacks.set(target, callback);
+	resizeObserver.observe(target);
 
-  return {
-    destroy() {
-      resizeObserver.unobserve(target);
-      resizeCallbacks.delete(target);
-    },
-  };
+	return {
+		destroy() {
+			resizeObserver.unobserve(target);
+			resizeCallbacks.delete(target);
+		},
+	};
 }

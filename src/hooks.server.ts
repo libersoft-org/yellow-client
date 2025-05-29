@@ -7,19 +7,19 @@ import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import { sentryServerConfig } from '@/core/sentry-config';
 
 Sentry.init({
-  ...sentryServerConfig,
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: import.meta.env.DEV,
+	...sentryServerConfig,
+	// uncomment the line below to enable Spotlight (https://spotlightjs.com)
+	// spotlight: import.meta.env.DEV,
 });
 
 const handleParaglide: Handle = ({ event, resolve }) => {
-  return paraglideMiddleware(event.request, ({ request, locale }) => {
-    event.request = request;
+	return paraglideMiddleware(event.request, ({ request, locale }) => {
+		event.request = request;
 
-    return resolve(event, {
-      transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale),
-    });
-  });
+		return resolve(event, {
+			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale),
+		});
+	});
 };
 
 // If you have custom handlers, make sure to place them after `sentryHandle()` in the `sequence` function.

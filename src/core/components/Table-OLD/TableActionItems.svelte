@@ -1,9 +1,9 @@
 <div class="action-items">
-  <slot />
+	<slot />
 </div>
 
 <style>
-  .action-items {
-    display: inline-flex;
-  }
+	.action-items {
+		display: inline-flex;
+	}
 </style>

@@ -1,13 +1,13 @@
 <script>
-  import { selectedConversation } from '../../messages.js';
-  import WelcomePage from '../WelcomePage/WelcomePage.svelte';
-  import Conversation from '../../components/Conversation/Conversation.svelte';
-  import Gallery from '../../components/Gallery/Gallery.svelte';
+	import { selectedConversation } from '../../messages.js';
+	import WelcomePage from '../WelcomePage/WelcomePage.svelte';
+	import Conversation from '../../components/Conversation/Conversation.svelte';
+	import Gallery from '../../components/Gallery/Gallery.svelte';
 </script>
 
 {#if $selectedConversation === null}
-  <WelcomePage />
+	<WelcomePage />
 {:else}
-  <Conversation />
+	<Conversation />
 {/if}
 <Gallery />

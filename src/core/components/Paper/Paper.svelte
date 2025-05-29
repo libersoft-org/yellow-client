@@ -1,43 +1,43 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+	import type { Snippet } from 'svelte';
 
-  type Props = {
-    children: Snippet;
-    padding?: string;
-    background?: string;
-    border?: string;
-    radius?: string;
-    maxWidth?: string;
-  };
+	type Props = {
+		children: Snippet;
+		padding?: string;
+		background?: string;
+		border?: string;
+		radius?: string;
+		maxWidth?: string;
+	};
 
-  const {
-    children,
-    padding = '10px',
-    background = 'var(--color-default-background)',
-    border = '1px solid var(--color-default-foreground)',
-    radius = '10px',
-    maxWidth = '768px',
-  }: Props = $props();
+	const {
+		children,
+		padding = '10px',
+		background = 'var(--color-default-background)',
+		border = '1px solid var(--color-default-foreground)',
+		radius = '10px',
+		maxWidth = '768px',
+	}: Props = $props();
 </script>
 
 <div
-  class="paper"
-  style={`padding: ${padding}; background: ${background}; border: ${border}; border-radius: ${radius}; max-width: ${maxWidth};`}
+	class="paper"
+	style={`padding: ${padding}; background: ${background}; border: ${border}; border-radius: ${radius}; max-width: ${maxWidth};`}
 >
-  {@render children()}
+	{@render children()}
 </div>
 
 <style>
-  .paper {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    box-shadow: var(--shadow);
-    width: 100%;
-    box-sizing: border-box;
+	.paper {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		box-shadow: var(--shadow);
+		width: 100%;
+		box-sizing: border-box;
 
-    /* @container (max-width: 768px) {
+		/* @container (max-width: 768px) {
 			background-color: red !important;
 		} */
-  }
+	}
 </style>

@@ -11,31 +11,31 @@ import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
 import { TAURI, TAURI_MOBILE, log } from './tauri.ts';
 
 export async function setDefaultWindowSize() {
-  if (!TAURI || TAURI_MOBILE) {
-    return;
-  }
-  let w = getCurrentWindow();
-  const size = await getCurrentWindow().innerSize();
-  log.debug('size', size);
-  if (size.width === 500 && size.height === 500) {
-    log.debug('setting default size');
-    const monitor_size = (await currentMonitor())?.size || {
-      width: 1280,
-      height: 720,
-    };
-    let new_size = new PhysicalSize(monitor_size.width * 0.8, monitor_size.height * 0.8);
-    await w.setSize(new_size);
-    setTimeout(async () => {
-      await w.center();
-    }, 200);
-  }
+	if (!TAURI || TAURI_MOBILE) {
+		return;
+	}
+	let w = getCurrentWindow();
+	const size = await getCurrentWindow().innerSize();
+	log.debug('size', size);
+	if (size.width === 500 && size.height === 500) {
+		log.debug('setting default size');
+		const monitor_size = (await currentMonitor())?.size || {
+			width: 1280,
+			height: 720,
+		};
+		let new_size = new PhysicalSize(monitor_size.width * 0.8, monitor_size.height * 0.8);
+		await w.setSize(new_size);
+		setTimeout(async () => {
+			await w.center();
+		}, 200);
+	}
 }
 
 export async function initWindow() {
-  if (!TAURI || TAURI_MOBILE) {
-    return;
-  }
-  /*
+	if (!TAURI || TAURI_MOBILE) {
+		return;
+	}
+	/*
  const unlisten = await getCurrentWindow().onCloseRequested(async event => {
   // const confirmed = await confirm('Are you sure?');
   //  if (confirmed) await quit();
@@ -48,25 +48,25 @@ export async function initWindow() {
  });
  */
 
-  runOnSystemStartup.subscribe(async (value) => {
-    if (!TAURI) return;
-    log.debug('runOnSystemStartup changed:', value);
-    if (value) {
-      await enable();
-    } else {
-      await disable();
-    }
-  });
+	runOnSystemStartup.subscribe(async (value) => {
+		if (!TAURI) return;
+		log.debug('runOnSystemStartup changed:', value);
+		if (value) {
+			await enable();
+		} else {
+			await disable();
+		}
+	});
 
-  showTrayIcon.subscribe(async (value) => {
-    if (!TAURI) return;
-    log.debug('showTrayIcon changed:', value, 'createTrayIcon.');
-    if (value) {
-      await createTrayIcon();
-    } else {
-      await destroyTrayIcon();
-    }
-  });
+	showTrayIcon.subscribe(async (value) => {
+		if (!TAURI) return;
+		log.debug('showTrayIcon changed:', value, 'createTrayIcon.');
+		if (value) {
+			await createTrayIcon();
+		} else {
+			await destroyTrayIcon();
+		}
+	});
 }
 
 /*
@@ -77,28 +77,28 @@ async function quit() {
 */
 
 export async function getNativeClientBuildCommitHash(): Promise<string> {
-  if (!TAURI) {
-    return '';
-  }
-  const hash = await invoke<string>('get_build_commit_hash');
-  log.debug('native client hash', hash);
-  return hash;
+	if (!TAURI) {
+		return '';
+	}
+	const hash = await invoke<string>('get_build_commit_hash');
+	log.debug('native client hash', hash);
+	return hash;
 }
 
 export async function getNativeClientBuildBranch(): Promise<string> {
-  if (!TAURI) {
-    return '';
-  }
-  const branch = await invoke<string>('get_build_branch');
-  log.debug('native client branch', branch);
-  return branch;
+	if (!TAURI) {
+		return '';
+	}
+	const branch = await invoke<string>('get_build_branch');
+	log.debug('native client branch', branch);
+	return branch;
 }
 
 export async function getNativeClientBuildTs(): Promise<string> {
-  if (!TAURI) {
-    return '';
-  }
-  const ts = await invoke<string>('get_build_ts');
-  log.debug('native client build ts', ts);
-  return ts;
+	if (!TAURI) {
+		return '';
+	}
+	const ts = await invoke<string>('get_build_ts');
+	log.debug('native client build ts', ts);
+	return ts;
 }

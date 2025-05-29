@@ -5,65 +5,65 @@ import { cp } from './emojis_parse_data.js';
 import { identifier } from './messages.js';
 
 export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByCodepointsRgi) {
-  //console.log('start_emojisets_fetch');
-  if (get(emojisLoading)) {
-    console.log('emojis are already loading');
-    return;
-  }
-  emojisLoading.set(true);
-  new Promise(async (resolve, reject) => {
-    const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
-    if (!res.ok) {
-      console.error('Failed to fetch emoji groups:', res);
-      acc.error('Failed to fetch emoji groups');
-      reject();
-    }
+	//console.log('start_emojisets_fetch');
+	if (get(emojisLoading)) {
+		console.log('emojis are already loading');
+		return;
+	}
+	emojisLoading.set(true);
+	new Promise(async (resolve, reject) => {
+		const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
+		if (!res.ok) {
+			console.error('Failed to fetch emoji groups:', res);
+			acc.error('Failed to fetch emoji groups');
+			reject();
+		}
 
-    let groups;
-    try {
-      groups = await res.json();
-    } catch (error) {
-      console.error('Failed to parse emoji groups:', error);
-      acc.error('Failed to parse emoji groups');
-      reject();
-    }
+		let groups;
+		try {
+			groups = await res.json();
+		} catch (error) {
+			console.error('Failed to parse emoji groups:', error);
+			acc.error('Failed to parse emoji groups');
+			reject();
+		}
 
-    let by_codepoints = {};
-    for (let group of groups) {
-      for (let emoji of group.emoji) {
-        const codepoints_rgi = rgi(emoji.base);
-        emoji.codepoints_rgi = codepoints_rgi;
-        by_codepoints[codepoints_rgi] = emoji;
-      }
-    }
+		let by_codepoints = {};
+		for (let group of groups) {
+			for (let emoji of group.emoji) {
+				const codepoints_rgi = rgi(emoji.base);
+				emoji.codepoints_rgi = codepoints_rgi;
+				by_codepoints[codepoints_rgi] = emoji;
+			}
+		}
 
-    //console.log('emojis by codepoints:', by_codepoints);
-    emojisByCodepointsRgi.set(by_codepoints);
-    //console.log('emoji groups:', groups);
-    emojiGroups.set(groups);
+		//console.log('emojis by codepoints:', by_codepoints);
+		emojisByCodepointsRgi.set(by_codepoints);
+		//console.log('emoji groups:', groups);
+		emojiGroups.set(groups);
 
-    resolve();
-  })
-    .then(() => {
-      emojisLoading.set(false);
-      //console.log('emojis loaded');
-    })
-    .catch(() => {
-      emojisLoading.set(false);
-      console.log('emojis failed to load');
-    });
+		resolve();
+	})
+		.then(() => {
+			emojisLoading.set(false);
+			//console.log('emojis loaded');
+		})
+		.catch(() => {
+			emojisLoading.set(false);
+			console.log('emojis failed to load');
+		});
 }
 
 export function emoji_render(codepoints) {
-  return codepoints.map((codepoint) => String.fromCodePoint(codepoint)).join('');
+	return codepoints.map((codepoint) => String.fromCodePoint(codepoint)).join('');
 }
 
 export function rgi(codepoints) {
-  return codepoints.map((codepoint) => codepoint.toString(16).padStart(4, '0')).join('_');
+	return codepoints.map((codepoint) => codepoint.toString(16).padStart(4, '0')).join('_');
 }
 
 export function rgi_to_codepoints(rgi) {
-  return rgi.split('_').map((codepoint) => parseInt(codepoint, 16));
+	return rgi.split('_').map((codepoint) => parseInt(codepoint, 16));
 }
 
 /*
@@ -91,7 +91,7 @@ function emoji_cluster_to_array(cluster) {
 */
 
 export async function init_emojis() {
-  /*
+	/*
  await new Promise(resolve => setTimeout(resolve, 10000));
  cpp = [];
  let res = await fetch('modules/' + module.identifier + '/json/emoji_16_0_ordering.min.json');
@@ -119,12 +119,12 @@ export async function init_emojis() {
 }
 
 export function replaceEmojisWithTags(text) {
-  //console.log('replaceEmojisWithTags', text);
-  for (let c of cp) {
-    let url_seq = c[0];
-    let unicode = c[1];
-    text = text.replaceAll(unicode, '<Emoji codepoints="' + url_seq + '" ></Emoji>');
-  }
-  //console.log('replaceEmojisWithTags2 result', text);
-  return text;
+	//console.log('replaceEmojisWithTags', text);
+	for (let c of cp) {
+		let url_seq = c[0];
+		let unicode = c[1];
+		text = text.replaceAll(unicode, '<Emoji codepoints="' + url_seq + '" ></Emoji>');
+	}
+	//console.log('replaceEmojisWithTags2 result', text);
+	return text;
 }

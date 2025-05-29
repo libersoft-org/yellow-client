@@ -1,24 +1,24 @@
 <script>
-  import MessageContentRenderer from './MessageContentRenderer.svelte';
-  import { onMount } from 'svelte';
-  export let messageContent;
+	import MessageContentRenderer from './MessageContentRenderer.svelte';
+	import { onMount } from 'svelte';
+	export let messageContent;
 
-  onMount(() => {
-    //console.log('messageContent:', messageContent);
-  });
+	onMount(() => {
+		//console.log('messageContent:', messageContent);
+	});
 </script>
 
 <div class="text">
-  <MessageContentRenderer rootNode={messageContent.body} />
+	<MessageContentRenderer rootNode={messageContent.body} />
 </div>
 
 <style>
-  .text {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    padding-bottom: 10px;
-    word-break: break-word;
-    overflow-wrap: break-word;
-  }
+	.text {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		padding-bottom: 10px;
+		word-break: break-word;
+		overflow-wrap: break-word;
+	}
 </style>

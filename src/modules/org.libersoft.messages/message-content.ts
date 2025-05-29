@@ -12,16 +12,16 @@ import AudioWrapper from './components/MessageContentAudio/AudioWrapper.svelte';
 import MessageContentReply from './components/MessageContentReply/MessageContentReply.svelte';
 
 export let componentMap = {
-  sticker: MessageContentSticker,
-  gif: MessageContentGif,
-  emoji: MessageContentEmoji,
-  attachment: MessageContentAttachment,
-  attachmentswrapper: FilesWrapper,
-  imageswrapper: ImagesWrapper,
-  imaged: MessageContentImage,
-  yellowvideo: MessageContentVideo,
-  videoswrapper: VideosWrapper,
-  yellowaudio: MessageContentAudio,
-  audiowrapper: AudioWrapper,
-  reply: MessageContentReply,
+	sticker: MessageContentSticker,
+	gif: MessageContentGif,
+	emoji: MessageContentEmoji,
+	attachment: MessageContentAttachment,
+	attachmentswrapper: FilesWrapper,
+	imageswrapper: ImagesWrapper,
+	imaged: MessageContentImage,
+	yellowvideo: MessageContentVideo,
+	videoswrapper: VideosWrapper,
+	yellowaudio: MessageContentAudio,
+	audiowrapper: AudioWrapper,
+	reply: MessageContentReply,
 };

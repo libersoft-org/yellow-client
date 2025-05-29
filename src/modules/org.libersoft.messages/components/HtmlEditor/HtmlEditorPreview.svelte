@@ -1,17 +1,17 @@
 <script>
-  import MessageContent from '../MessageContent/MessageContent.svelte';
-  import { processMessage } from '../../messages.js';
-  export let text;
+	import MessageContent from '../MessageContent/MessageContent.svelte';
+	import { processMessage } from '../../messages.js';
+	export let text;
 
-  $: messageContent = processMessage({ format: 'html', message: text });
+	$: messageContent = processMessage({ format: 'html', message: text });
 </script>
 
 <div class="preview">
-  <MessageContent {messageContent} />
+	<MessageContent {messageContent} />
 </div>
 
 <style>
-  .preview {
-    padding: 10px;
-  }
+	.preview {
+		padding: 10px;
+	}
 </style>

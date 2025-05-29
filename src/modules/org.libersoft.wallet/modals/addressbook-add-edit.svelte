@@ -1,117 +1,117 @@
 <script>
-  import { onMount } from 'svelte';
-  import Button from '@/core/components/Button/Button.svelte';
-  import Input from '@/core/components/Input/Input.svelte';
-  import { addressBook } from '../wallet';
-  export let close;
-  export let params;
-  let aliasElement;
-  let alias = '';
-  let address = '';
-  let error = '';
+	import { onMount } from 'svelte';
+	import Button from '@/core/components/Button/Button.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
+	import { addressBook } from '../wallet';
+	export let close;
+	export let params;
+	let aliasElement;
+	let alias = '';
+	let address = '';
+	let error = '';
 
-  onMount(() => {
-    if (params.item) {
-      alias = params.item.alias;
-      address = params.item.address;
-    }
-    aliasElement.focus();
-  });
+	onMount(() => {
+		if (params.item) {
+			alias = params.item.alias;
+			address = params.item.address;
+		}
+		aliasElement.focus();
+	});
 
-  function findAddressBookItemByAddress(address) {
-    const ab = $addressBook;
-    return ab.find((i) => i.address === address);
-  }
+	function findAddressBookItemByAddress(address) {
+		const ab = $addressBook;
+		return ab.find((i) => i.address === address);
+	}
 
-  function findAddressBookItemById(id) {
-    const ab = $addressBook;
-    return ab.find((i) => i.guid === id);
-  }
+	function findAddressBookItemById(id) {
+		const ab = $addressBook;
+		return ab.find((i) => i.guid === id);
+	}
 
-  function add() {
-    if (alias) alias = alias.trim();
-    if (address) address = address.trim();
-    console.log(alias, address);
-    if (!alias || alias === '') {
-      error = 'Alias is not set';
-      return;
-    }
-    if (!address || address === '') {
-      error = 'Address is not set';
-      return;
-    }
-    let dupe = findAddressBookItemByAddress(address);
-    if (dupe) {
-      error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
-      return;
-    }
-    console.log('NEW ITEM IN ADDRESS BOOK:', alias, address);
-    $addressBook.push({ alias, address });
-    addressBook.set($addressBook);
-    close();
-  }
+	function add() {
+		if (alias) alias = alias.trim();
+		if (address) address = address.trim();
+		console.log(alias, address);
+		if (!alias || alias === '') {
+			error = 'Alias is not set';
+			return;
+		}
+		if (!address || address === '') {
+			error = 'Address is not set';
+			return;
+		}
+		let dupe = findAddressBookItemByAddress(address);
+		if (dupe) {
+			error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
+			return;
+		}
+		console.log('NEW ITEM IN ADDRESS BOOK:', alias, address);
+		$addressBook.push({ alias, address });
+		addressBook.set($addressBook);
+		close();
+	}
 
-  function edit() {
-    let dupe = findAddressBookItemByAddress(address);
-    if (dupe && dupe.guid != params.item.guid) {
-      error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
-      return;
-    }
-    params.item.alias = alias;
-    params.item.address = address;
-    addressBook.set($addressBook);
-    close();
-  }
+	function edit() {
+		let dupe = findAddressBookItemByAddress(address);
+		if (dupe && dupe.guid != params.item.guid) {
+			error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
+			return;
+		}
+		params.item.alias = alias;
+		params.item.address = address;
+		addressBook.set($addressBook);
+		close();
+	}
 
-  function keyEnter() {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      add();
-    }
-  }
+	function keyEnter() {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			add();
+		}
+	}
 </script>
 
 <div class="addressbook-new">
-  <div class="group">
-    <div class="bold">Alias:</div>
-    <Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} />
-  </div>
-  <div class="group">
-    <div class="bold">Address:</div>
-    <Input placeholder="Address" bind:value={address} onKeydown={keyEnter} />
-  </div>
-  {#if error}
-    <div class="error">
-      <div class="bold">Error:</div>
-      <div>{error}</div>
-    </div>
-  {/if}
-  {#if params.item}
-    <Button img="img/save.svg" text="Save" onClick={edit} width="100%" />
-  {:else}
-    <Button text="Add" onClick={add} width="100%" />
-  {/if}
+	<div class="group">
+		<div class="bold">Alias:</div>
+		<Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} />
+	</div>
+	<div class="group">
+		<div class="bold">Address:</div>
+		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} />
+	</div>
+	{#if error}
+		<div class="error">
+			<div class="bold">Error:</div>
+			<div>{error}</div>
+		</div>
+	{/if}
+	{#if params.item}
+		<Button img="img/save.svg" text="Save" onClick={edit} width="100%" />
+	{:else}
+		<Button text="Add" onClick={add} width="100%" />
+	{/if}
 </div>
 
 <style>
-  .addressbook-new {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+	.addressbook-new {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
 
-  .group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
+	.group {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
 
-  .error {
-    display: flex;
-    gap: 5px;
-    padding: 10px;
-    border: 1px solid #f00;
-    border-radius: 10px;
-    background-color: #faa;
-  }
+	.error {
+		display: flex;
+		gap: 5px;
+		padding: 10px;
+		border: 1px solid #f00;
+		border-radius: 10px;
+		background-color: #faa;
+	}
 </style>

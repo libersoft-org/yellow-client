@@ -1,39 +1,39 @@
 @import './normalize.css';
 
 :root {
-  --menu-height: 58px;
-  --shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-  --icon-black: #000;
-  --icon-white: #fff;
-  --icon-gray: #888;
-  --icon-yellow: #fd1;
-  --icon-red: #dc2626;
-  --icon-blue: #00f;
+	--menu-height: 58px;
+	--shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
+	--icon-black: #000;
+	--icon-white: #fff;
+	--icon-gray: #888;
+	--icon-yellow: #fd1;
+	--icon-red: #dc2626;
+	--icon-blue: #00f;
 
-  /* Box shadows */
-  --yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  --scroll-bar-color: #ca0;
-  --scroll-bar-color-background: #fea;
+	/* Box shadows */
+	--yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	--scroll-bar-color: #ca0;
+	--scroll-bar-color-background: #fea;
 }
 
 * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-color-background);
+	scrollbar-width: thin;
+	scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-color-background);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  html {
-    interpolate-size: allow-keywords;
-  }
+	html {
+		interpolate-size: allow-keywords;
+	}
 }
 
 body {
-  font-family: 'Ubuntu', sans-serif;
-  margin: 0px;
+	font-family: 'Ubuntu', sans-serif;
+	margin: 0px;
 }
 
 .bold {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 /**
@@ -41,34 +41,34 @@ body {
  */
 
 .button-reset {
-  text-align: inherit;
-  border: none;
-  margin: 0;
-  padding: 0;
-  width: auto;
-  overflow: visible;
-  background: transparent;
+	text-align: inherit;
+	border: none;
+	margin: 0;
+	padding: 0;
+	width: auto;
+	overflow: visible;
+	background: transparent;
 
-  /* inherit font & color from ancestor */
-  color: inherit;
-  font: inherit;
+	/* inherit font & color from ancestor */
+	color: inherit;
+	font: inherit;
 
-  /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
-  line-height: normal;
+	/* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
+	line-height: normal;
 
-  /* Corrects font smoothing for webkit */
-  -webkit-font-smoothing: inherit;
-  -moz-osx-font-smoothing: inherit;
+	/* Corrects font smoothing for webkit */
+	-webkit-font-smoothing: inherit;
+	-moz-osx-font-smoothing: inherit;
 
-  /* Corrects inability to style clickable `input` types in iOS */
-  -webkit-appearance: none;
+	/* Corrects inability to style clickable `input` types in iOS */
+	-webkit-appearance: none;
 }
 
 .floating {
-  position: absolute;
-  width: max-content;
-  top: 0;
-  left: 0;
+	position: absolute;
+	width: max-content;
+	top: 0;
+	left: 0;
 }
 
 /**
@@ -76,21 +76,21 @@ body {
  */
 
 :root {
-  --animation-highlight-duration: 0.5;
+	--animation-highlight-duration: 0.5;
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.2);
+	}
+	100% {
+		transform: scale(1);
+	}
 }
 
 .animation-highlight {
-  animation: pulse var(--animation-highlight-duration) ease-in-out !important;
+	animation: pulse var(--animation-highlight-duration) ease-in-out !important;
 }

@@ -4,15 +4,15 @@ import Sidebar from './pages/wallet-sidebar.svelte';
 import Content from './pages/wallet-content.svelte';
 
 export const module = {
-  name: 'Wallet',
-  identifier: 'org.libersoft.wallet',
+	name: 'Wallet',
+	identifier: 'org.libersoft.wallet',
 };
 
 registerModule(module.identifier, {
-  order: 3,
-  callbacks: {},
-  panels: {
-    sidebar: Sidebar,
-    content: Content,
-  },
+	order: 3,
+	callbacks: {},
+	panels: {
+		sidebar: Sidebar,
+		content: Content,
+	},
 });

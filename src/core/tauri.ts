@@ -7,14 +7,14 @@ const hasWindow = typeof window !== 'undefined';
 
 let platformName = 'browser';
 if (hasWindow && window.__TAURI__ && window.__TAURI_OS_PLUGIN_INTERNALS__) {
-  platformName = platform();
+	platformName = platform();
 }
 
 declare global {
-  interface Window {
-    __TAURI__: typeof app;
-    __TAURI_DEBUG_MODE__: boolean;
-  }
+	interface Window {
+		__TAURI__: typeof app;
+		__TAURI_DEBUG_MODE__: boolean;
+	}
 }
 
 // Core constants - no imports from other modules to avoid circular dependencies
@@ -25,31 +25,31 @@ export const CUSTOM_NOTIFICATIONS = TAURI && !TAURI_MOBILE;
 export const IS_TAURI_DEBUG_MODE = TAURI && window.__TAURI_DEBUG_MODE__;
 
 export const log = {
-  debug: (...args: any[]) => {
-    console.log(...args);
-    if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args) });
-  },
-  error: (...args: any[]) => {
-    console.error(...args);
-    if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'error' });
-  },
+	debug: (...args: any[]) => {
+		console.log(...args);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args) });
+	},
+	error: (...args: any[]) => {
+		console.error(...args);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'error' });
+	},
 };
 
 function formatNoColor(args) {
-  let msg = '';
-  const inspected_nocolor = args.map((o) => {
-    if (typeof o === 'string') return o;
-    if (o instanceof Error) {
-      // Handle Error objects specially to include stack trace
-      return `${o.name}: ${o.message}${o.stack ? '\n' + o.stack : ''}`;
-    }
-    try {
-      return JSON.stringify(o, null, 2);
-    } catch (e) {
-      // Fallback for circular references or other stringify errors
-      return String(o);
-    }
-  });
-  for (const v of inspected_nocolor) msg += v + ' ';
-  return msg;
+	let msg = '';
+	const inspected_nocolor = args.map((o) => {
+		if (typeof o === 'string') return o;
+		if (o instanceof Error) {
+			// Handle Error objects specially to include stack trace
+			return `${o.name}: ${o.message}${o.stack ? '\n' + o.stack : ''}`;
+		}
+		try {
+			return JSON.stringify(o, null, 2);
+		} catch (e) {
+			// Fallback for circular references or other stringify errors
+			return String(o);
+		}
+	});
+	for (const v of inspected_nocolor) msg += v + ' ';
+	return msg;
 }

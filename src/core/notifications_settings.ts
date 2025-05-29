@@ -13,7 +13,7 @@ export const selectedMonitorName = localStorageSharedStore<string>('selectedMoni
 export const selectedNotificationsCorner = localStorageSharedStore('selectedNotificationsCorner', 'bottom-right');
 export const enableCustomNotifications = localStorageSharedStore('enableCustomNotifications', true);
 export const customNotificationsOn = derived(enableCustomNotifications, ($enableCustomNotifications) => {
-  return CUSTOM_NOTIFICATIONS && $enableCustomNotifications;
+	return CUSTOM_NOTIFICATIONS && $enableCustomNotifications;
 });
 export const animationName = localStorageSharedStore('notification_animation_name', 'zoom');
 export const animationDuration = localStorageSharedStore('notification_animation_duration', 400);
