@@ -71,7 +71,7 @@
 
  onMount(async () => {
   console.log('+page onMount');
-  /*
+
   // Catch all synchronous errors
   window.addEventListener('error', event => {
    // event.error is the Error object
@@ -85,10 +85,11 @@
    console.error('Unhandled promise rejection:', reason);
    console.error('Stack trace:\n', reason?.stack || reason);
   });
-*/
+
   if ('serviceWorker' in window.navigator) {
    console.log('+page registering service worker');
    const SW_VERSION = '_version_v1_'; // change this to force update the service worker
+
    // TODO: rm after testing and dev
    const existing = await navigator.serviceWorker.getRegistrations();
    for (const reg of existing) {
@@ -97,7 +98,9 @@
      console.log('Unregistered old SW:', reg.active.scriptURL);
     }
    }
+
    navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
+
    navigator.serviceWorker.ready.then(registration => {
     console.log('+page service worker ready');
     console.log('Service worker registration:', registration);
@@ -106,6 +109,7 @@
     console.log('Service worker state:', registration.active.state);
     console.log('Service worker scope:', registration.scope);
     window.sw = registration;
+
     navigator.serviceWorker.addEventListener('message', e => {
      if (e.data.type === 'GET_FILE_INFO') {
       const { accId, uploadId } = e.data.payload;
@@ -116,6 +120,7 @@
      if (e.data.type === 'GET_CHUNK') {
       const { accId, uploadId, start, end } = e.data.payload;
       const getChunk = getFileChunkFactory(uploadId);
+
       getChunk({
        offsetBytes: start,
        chunkSize: end + 1 - start,
@@ -128,13 +133,17 @@
   } else {
    console.log('+page This browser does not support service workers.');
   }
+
   initZoom();
   setDefaultWindowSize();
   createTrayIcon();
   initBrowserNotifications();
   initCustomNotifications();
   initWindow();
-  if ($sidebarSize) setSidebarSize($sidebarSize);
+
+  if ($sidebarSize) {
+   setSidebarSize($sidebarSize);
+  }
   window.addEventListener('focus', () => isClientFocused.set(true));
   window.addEventListener('blur', () => isClientFocused.set(false));
   //window.addEventListener('keydown', onkeydown);
@@ -144,6 +153,7 @@
    showWelcomeWizard = true;
   }
   setupIframeListener();
+
   // TODO: I don't know what this is, test out
   //document.body.style.touchAction = 'none';
   //document.documentElement.style.touchAction = 'none';
@@ -153,6 +163,7 @@
    visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
   } else window.addEventListener('resize', updateAppHeight);
   updateAppHeight();
+
   return init();
  });
 
@@ -193,7 +204,9 @@
   //console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
   console.log('$isMobile:', $isMobile);
  }
+
  let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
+
  window.addEventListener('resize', () => {
   var newPx_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
   if (newPx_ratio != px_ratio) {
@@ -266,7 +279,7 @@
  let sidebarWidth;
 
  function setSidebarSize(width) {
-  const max = 700;
+  const max = 500;
   const min = 200;
   let sideBarWidth = Math.min(Math.max(width, min), max);
   sideBar.style.minWidth = sideBarWidth + 'px';
@@ -276,8 +289,11 @@
 
  isMobile.subscribe(v => {
   console.log('isMobile: ', v);
-  if (v) sidebarWidth = '';
-  else sidebarWidth = ($sidebarSize || 300) + 'px';
+  if (v) {
+   sidebarWidth = '';
+  } else {
+   sidebarWidth = ($sidebarSize || 300) + 'px';
+  }
  });
 
  async function onkeydown(event) {
@@ -300,8 +316,8 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 10;
-  /* min-width: 300px;
+  z-index: 5;
+  /*  min-width: 300px;
   max-width: 300px;*/
   max-height: 100%;
   box-shadow: var(--shadow);
@@ -323,7 +339,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  max-width: calc(100% - var(--sidebar-width));
+  container-type: inline-size;
  }
 
  @media (max-width: 768px) {
@@ -366,7 +382,9 @@
    <WelcomeSidebar />
   {/if}
  </div>
+
  <div class="resizer" style:left={sidebarWidth} role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
+
  <div class="content" bind:this={contentElement}>
   {#if selectedCorePage}
    <svelte:component this={selectedCorePage.content} />

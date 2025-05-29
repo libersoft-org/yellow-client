@@ -15,6 +15,7 @@
  .base-button {
   cursor: pointer;
   display: contents;
+  -webkit-tap-highlight-color: transparent;
  }
 </style>
 

@@ -1,26 +1,26 @@
-<script>
+<script lang="ts">
  import { sticker_servers } from '../stickers.js';
  import Input from '@/core/components/Input/Input.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import Table from '@/core/components/Table/Table.svelte';
- import Thead from '@/core/components/Table/TableThead.svelte';
- import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
- import Th from '@/core/components/Table/TableTheadTh.svelte';
- import Tbody from '@/core/components/Table/TableTbody.svelte';
- import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
- import Td from '@/core/components/Table/TableTbodyTd.svelte';
+ import Table from '@/core/components/ResponsiveTable/Table.svelte';
+ import THead from '@/core/components/ResponsiveTable/THead.svelte';
+ import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
+ import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
+ import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
+ import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
+ import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- import { onMount } from 'svelte';
- let addUrl = '';
- let inputAdd;
- let error = '';
 
- onMount(() => {
-  inputAdd.focus();
+ let addUrl = $state('');
+ let error = $state('');
+ let inputElement: typeof Input.prototype;
+
+ $effect(() => {
+  if (inputElement) inputElement.focus();
  });
 
  function onKeydownAdd(e) {
-  if (e.key === 'Enter') clickAdd(addUrl);
+  if (e.key === 'Enter') clickAdd();
  }
 
  function clickAdd() {
@@ -29,7 +29,7 @@
    return s;
   });
   addUrl = '';
-  inputAdd.focus();
+  inputElement?.focus();
  }
 
  function clickDel(url) {
@@ -37,7 +37,7 @@
   sticker_servers.update(servers => {
    return servers.filter(s => s !== url);
   });
-  inputAdd.focus();
+  inputElement?.focus();
  }
 </script>
 
@@ -57,26 +57,29 @@
 
 <!--<Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />-->
 <div class="group">
- <Input placeholder="Add sticker server address" grow={true} bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputAdd} />
+ <Input placeholder="Add sticker server address" grow={true} bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
  <Button text="Add" onClick={clickAdd} />
 </div>
-<Table>
- <Thead>
-  <TheadTr>
-   <Th>Sticker servers</Th>
-   <Th>Action</Th>
-  </TheadTr>
- </Thead>
- <Tbody>
+
+<Table breakpoint="0">
+ <THead>
+  <THeadTr>
+   <THeadTh>Sticker servers:</THeadTh>
+   <THeadTh>Action:</THeadTh>
+  </THeadTr>
+ </THead>
+ <TBody>
   {#each $sticker_servers as s}
-   <TbodyTr>
-    <Td><a href={s} target="_blank">{s}</a></Td>
-    <Td center={true}>
+   <TBodyTr>
+    <TBodyTd title="Sticker servers">
+     <a href={s} target="_blank">{s}</a>
+    </TBodyTd>
+    <TBodyTd title="Action">
      <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} />
-    </Td>
-   </TbodyTr>
+    </TBodyTd>
+   </TBodyTr>
   {/each}
- </Tbody>
+ </TBody>
 </Table>
 {#if error}
  <div class="error">{error}</div>

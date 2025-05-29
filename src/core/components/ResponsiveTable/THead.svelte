@@ -14,7 +14,7 @@
   background: #222;
   color: white;
 
-  @media only screen and (min-width: 80em) {
+  :global(.table-wide &) {
    display: table-header-group;
   }
  }

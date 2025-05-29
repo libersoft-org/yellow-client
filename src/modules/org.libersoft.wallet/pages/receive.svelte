@@ -1,4 +1,5 @@
 <script>
+ import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import QRCode from 'qrcode';
@@ -6,6 +7,7 @@
  import { parseUnits } from 'ethers';
  import { get } from 'svelte/store';
  import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
+ import Input from '@/core/components/Input/Input.svelte';
  let addressElement;
  let paymentElement;
  let amount = '0';
@@ -112,7 +114,7 @@
 
   .clamp {
    display: inline-block;
-   width: 240px;
+   width: 100px;
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;
@@ -126,17 +128,9 @@
 
  .amount {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 6px;
-
-  input {
-   max-width: 140px;
-  }
-
-  @media (max-width: 1280px) {
-   flex-direction: column;
-   gap: 6px;
-  }
  }
 
  .error {
@@ -152,7 +146,7 @@
     <BaseButton onClick={clickCopyAddress}>
      <div class="address">
       <div class="clamp" bind:this={addressElement}>
-       {$selectedAddress.address}
+       {shortenAddress($selectedAddress.address)}
       </div>
       <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
      </div>
@@ -165,13 +159,15 @@
     <div class="bold">Payment:</div>
     <div class="amount">
      <div>Amount:</div>
-     <input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
+     <Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
      <DropdownFilter options={$currencies} bind:selected={currency} />
      <div class="error">{error}</div>
     </div>
     <BaseButton onClick={clickCopyPayment}>
      <div class="address">
-      <div class="clamp" bind:this={paymentElement}>{paymentText}</div>
+      <div class="clamp" style="width: 240px !important;" bind:this={paymentElement}>
+       {paymentText}
+      </div>
       <Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
      </div>
     </BaseButton>

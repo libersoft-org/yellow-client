@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  -webkit-tap-highlight-color: transparent;
  }
 
  label.row {

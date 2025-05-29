@@ -10,14 +10,20 @@
 
 <style>
  tr {
-  @media only screen and (min-width: 80m) {
+  :global(&:has(> td:nth-child(2))) {
+   /* :global(td:nth-child(odd)) {
+				background-color: #ffdd1130;
+			}
+
+			:global(td:nth-child(even)) {
+				background-color: #ffdd1160;
+			} */
+  }
+
+  :global(.table-wide &) {
    display: table-row;
    border-style: none;
    border-bottom-width: 0;
-  }
-
-  &:hover {
-   background: #fd1;
   }
  }
 </style>

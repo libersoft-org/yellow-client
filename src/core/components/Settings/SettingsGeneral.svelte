@@ -1,41 +1,37 @@
-<script>
+<script lang="ts">
  import Switch from '../Switch/Switch.svelte';
- import Table from '../Table/Table.svelte';
- import Tbody from '../Table/TableTbody.svelte';
- import Tr from '../Table/TableTbodyTr.svelte';
- import Td from '../Table/TableTbodyTd.svelte';
+ import Table from '@/core/components/ResponsiveTable/Table.svelte';
+ import THead from '@/core/components/ResponsiveTable/THead.svelte';
+ import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
+ import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
+ import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
+ import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
+ import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
 
  import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/settings.ts';
+
+ const settings = [
+  { label: 'Run on system startup', store: runOnSystemStartup },
+  { label: 'Show tray icon', store: showTrayIcon },
+  { label: 'Close to minimize', store: closeToMinimize },
+ ];
 </script>
 
-<style>
-</style>
-
-<Table expand={true}>
- <Tbody>
-  <Tr>
-   <Td>
-    <div class="bold">Run on system startup:</div>
-   </Td>
-   <Td center={true}>
-    <Switch bind:checked={$runOnSystemStartup} />
-   </Td>
-  </Tr>
-  <Tr>
-   <Td>
-    <div class="bold">Show tray icon:</div>
-   </Td>
-   <Td center={true}>
-    <Switch bind:checked={$showTrayIcon} />
-   </Td>
-  </Tr>
-  <Tr>
-   <Td>
-    <div class="bold">Close to minimize:</div>
-   </Td>
-   <Td center={true}>
-    <Switch bind:checked={$closeToMinimize} />
-   </Td>
-  </Tr>
- </Tbody>
+<Table>
+ <THead>
+  <THeadTr>
+   {#each settings as setting}
+    <THeadTh>{setting.label}</THeadTh>
+   {/each}
+  </THeadTr>
+ </THead>
+ <TBody>
+  <TBodyTr>
+   {#each settings as setting}
+    <TBodyTd title={setting.label}>
+     <Switch bind:checked={setting.store} />
+    </TBodyTd>
+   {/each}
+  </TBodyTr>
+ </TBody>
 </Table>
