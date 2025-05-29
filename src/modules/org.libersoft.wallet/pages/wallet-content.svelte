@@ -99,6 +99,7 @@
 			align-items: center;
 			gap: 5px;
 			height: 20px;
+			color: var(--color-default-foreground);
 		}
 	}
 
