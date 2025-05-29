@@ -225,7 +225,7 @@
  </Label>
 
  {#if !isInWelcomeWizard}
-  <Switch showLabel ariaLabel="Enabled" bind:checked={config_enabled} orientation="vertical" />
+  <Switch showLabel ariaLabel="Enabled" bind:checked={config_enabled} />
  {/if}
 
  {#if error}
