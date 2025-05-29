@@ -19,5 +19,14 @@
  }
 </script>
 
-<div>Would you like to delete the account "<span class="bold">{params?.name}</span>" (id: <span class="bold">{params?.id}</span>)?</div>
-<Button text="Delete" onClick={clickDel} />
+<style>
+ .accounts-delete {
+  width: fit-content;
+ }
+</style>
+
+<div class="accounts-delete">
+ Would you like to delete the account "<span class="bold">{params?.name}</span>" (id:
+ <span class="bold">{params?.id}</span>)?
+</div>
+<Button text="Delete" onClick={clickDel} width="100%" />

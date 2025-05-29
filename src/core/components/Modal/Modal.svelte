@@ -175,6 +175,7 @@
   width: 100%;
   max-height: calc(100dvh - 48px);
   height: fit-content;
+  width: min-content;
   overflow: hidden;
   border: 1px solid var(--color-foreground);
   border-radius: 10px;
