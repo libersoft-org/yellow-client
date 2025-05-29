@@ -9,17 +9,11 @@
  let { close }: Props = $props();
 
  let text = $state('');
- let textareaEl: HTMLTextAreaElement | null = $state(null);
  let error = $state('');
- const isFilled = $derived(text.length > 0);
 
  function handleError(message: string) {
   error = message;
  }
-
- $effect(() => {
-  // textareaEl?.focus();
- });
 
  $effect(() => {
   if (text) {
@@ -75,7 +69,6 @@
 <div class="account-import">
  <div class="scrollable">
   <Code bind:code={text} />
-  <!-- <textarea class:isFilled bind:value={text} bind:this={textareaEl}></textarea> -->
  </div>
  {#if error}
   <div class="error">{error}</div>
