@@ -76,29 +76,29 @@ async function quit() {
 }
 */
 
-export async function getNativeClientBuildCommitHash() {
+export async function getNativeClientBuildCommitHash(): Promise<string> {
  if (!TAURI) {
   return '';
  }
- const hash = await invoke('get_build_commit_hash');
+ const hash = await invoke<string>('get_build_commit_hash');
  log.debug('native client hash', hash);
  return hash;
 }
 
-export async function getNativeClientBuildBranch() {
+export async function getNativeClientBuildBranch(): Promise<string> {
  if (!TAURI) {
   return '';
  }
- const branch = await invoke('get_build_branch');
+ const branch = await invoke<string>('get_build_branch');
  log.debug('native client branch', branch);
  return branch;
 }
 
-export async function getNativeClientBuildTs() {
+export async function getNativeClientBuildTs(): Promise<string> {
  if (!TAURI) {
   return '';
  }
- const ts = await invoke('get_build_ts');
+ const ts = await invoke<string>('get_build_ts');
  log.debug('native client build ts', ts);
  return ts;
 }
