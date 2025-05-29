@@ -255,6 +255,7 @@
 		color: var(--color-primary-foreground);
 		cursor: grab;
 	}
+
 	.modal .header .title {
 		display: flex;
 		align-items: center;
@@ -266,6 +267,7 @@
 			padding: 0 10px 0 0 !important;
 		}
 	}
+
 	.modal .body {
 		display: flex;
 		flex-direction: column;
