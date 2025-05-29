@@ -10,6 +10,8 @@
  import Switch from '../components/Switch/Switch.svelte';
  import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
  import { derived, get, writable } from 'svelte/store';
+ import { TAURI } from '@/core/tauri.ts';
+
 
  type Props = {
   close: () => void;
@@ -79,7 +81,7 @@
   } else {
    console.log('[EFFECT] New account setup');
    credentials_address = '';
-   credentials_server = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
+   credentials_server = TAURI ? '' : ((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/');
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';

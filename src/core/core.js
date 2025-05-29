@@ -2,6 +2,7 @@ import { tick } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 import { log } from './tauri.ts';
+import { friendlyTimestamp } from "@/core/utils/dateTime.ts";
 //import {} from './client_debug';
 export const debugBuffer = writable('');
 export const documentHeight = writable(0);
@@ -19,10 +20,7 @@ export const motto = 'Experience the freedom of decentralized world';
 export const version = '0.0.1';
 export const build =
  typeof __BUILD_DATE__ !== 'undefined'
-  ? new Date(__BUILD_DATE__)
-     .toISOString()
-     .replace('T', ' ')
-     .replace(/\.\d+Z/, '')
+  ? friendlyTimestamp(__BUILD_DATE__)
   : 'unknown';
 export const commit = typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'unknown';
 export const branch = typeof __BRANCH__ !== 'undefined' ? __BRANCH__ : 'unknown';
