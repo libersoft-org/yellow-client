@@ -1,31 +1,31 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+ import type { Snippet } from 'svelte';
 
-  type Props = {
-    children: Snippet;
-    background?: string;
-    hover?: boolean;
-  };
+ type Props = {
+  children: Snippet;
+  background?: string;
+  hover?: boolean;
+  stripe?: boolean; // enable striped rows manually
+ };
 
-  const { children, background = 'var(--color-primary-soft-background)', hover = true }: Props = $props();
+ const { children, background, hover = true, stripe = false }: Props = $props();
 </script>
 
-<tr class:hover style:background>
-  {@render children()}
-</tr>
-
 <style>
-  tr:nth-child(even) {
-    background-color: var(--color-primary-soft-background);
-  }
+ /* Default odd/even styles if `striped` class is present */
+ tr.striped:nth-child(even) {
+  background-color: var(--color-primary-soft-background);
+ }
 
-  tr:nth-child(odd) {
-    background-color: var(--color-primary-softer-background) !important;
-  }
+ tr.striped:nth-child(odd) {
+  background-color: var(--color-primary-softer-background);
+ }
 
-  tr.hover {
-    &:hover {
-      background-color: var(--color-primary-background) !important;
-    }
-  }
+ tr.hover:hover {
+  background-color: var(--color-primary-background) !important;
+ }
 </style>
+
+<tr class:hover class:striped={stripe} style={background && `background-color: ${background}`}>
+ {@render children()}
+</tr>
