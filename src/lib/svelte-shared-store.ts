@@ -1,4 +1,4 @@
-import { writable, get, type Writable, type Unsubscriber } from 'svelte/store';
+import { writable, get, type Writable } from 'svelte/store';
 
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
  function setStorage(value: T): void {

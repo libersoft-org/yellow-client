@@ -1,32 +1,27 @@
 import { writable, get, type Writable } from 'svelte/store';
 import { getCurrentWindow, PhysicalPosition, PhysicalSize, availableMonitors, type Monitor } from '@tauri-apps/api/window';
-import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor, notificationsSoundEnabled } from '../../core/notifications_settings.ts';
-import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
+import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor } from '../../core/notifications_settings.ts';
+import { BROWSER, log } from '../../core/tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 import type { Unsubscriber } from 'svelte/store';
-
 type Position = {
  x: number;
  y: number;
 };
-
 type WorkArea = {
  top: number;
  left: number;
  bottom: number;
  right: number;
 };
-
 type Corner = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
-type Direction = 'up' | 'down';
-
+//type Direction = 'up' | 'down';
 const monitors: Writable<Monitor[]> = writable([]);
 const actualMonitorName: Writable<string | null> = writable(null);
 let monitorInterval: Timer | undefined;
 const width = 400;
 const height: Writable<number> = writable(100);
 const position: Writable<Position> = writable({ x: 0, y: 0 });
-
 export async function heightLogicalChanged(value: number): Promise<void> {
  if (BROWSER) return;
  const m = get(monitors).find(m => m.name === get(actualMonitorName));
@@ -34,43 +29,36 @@ export async function heightLogicalChanged(value: number): Promise<void> {
  let scaleFactor2 = scaleFactor;
  if (!scaleFactor2) scaleFactor2 = 1;
  let h = value * scaleFactor2;
- const sss = await getCurrentWindow().scaleFactor();
+ //const sss = await getCurrentWindow().scaleFactor();
  //log.debug('heightLogical:', value, 'window.innerHeight:', window.innerHeight, 'scaleFactor:', scaleFactor, 'height:', h, 'getCurrent().scaleFactor():', JSON.stringify(sss));
- if (h === 0) {
-  h = 10;
- }
+ if (h === 0) h = 10;
  height.set(h);
 }
 
 export async function initPositioning(): Promise<() => void> {
  let unsubscribers: Unsubscriber[] = [];
-
  unsubscribers.push(
   monitors.subscribe(v => {
    //log.debug('/notifications monitors:', v);
    updateNotificationsMonitor();
   })
  );
-
  unsubscribers.push(
   selectedMonitorName.subscribe(v => {
    //log.debug('/notifications selectedMonitor:', v);
    updateNotificationsMonitor();
   })
  );
-
  unsubscribers.push(
   mainWindowMonitor.subscribe(v => {
    //log.debug('/notifications mainWindowMonitor:', v);
    updateNotificationsMonitor();
   })
  );
-
  unsubscribers.push(actualMonitorName.subscribe(updatePosition));
  unsubscribers.push(selectedNotificationsCorner.subscribe(updatePosition));
  unsubscribers.push(height.subscribe(updatePosition));
  unsubscribers.push(position.subscribe(async v => moveWindow(v)));
-
  await updateMonitors();
  monitorInterval = setInterval(async () => {
   await updateMonitors();
@@ -125,12 +113,14 @@ function setActualMonitorName(monitor_name: string | null): void {
  actualMonitorName.set(monitor_name);
 }
 
+/*
 function getNotificationsDirection(): Direction {
  const c = get(selectedNotificationsCorner);
  if (c === 'top-right' || c === 'top-left') {
   return 'down';
  } else return 'up';
 }
+*/
 
 function pos(corner: Corner, mon: WorkArea, width: number, height: number): Position {
  //log.debug('pos:', corner, mon, width, height);

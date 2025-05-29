@@ -1,5 +1,5 @@
-import { open, save } from '@tauri-apps/plugin-dialog';
-import { rename, writeFile, open as openFile, exists, BaseDirectory, readFile, mkdir, remove } from '@tauri-apps/plugin-fs';
+import { save } from '@tauri-apps/plugin-dialog';
+import { rename, writeFile, open as openFile, exists, BaseDirectory } from '@tauri-apps/plugin-fs';
 import * as path from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/core';
 import { TAURI_MOBILE, log } from './tauri.ts';

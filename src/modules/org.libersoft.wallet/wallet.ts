@@ -194,8 +194,7 @@ export const balance = writable<Balance>({
  },
 });
 export const balanceTimestamp = writable<Date | null>(null);
-
-let refreshTimer = window.setInterval(refresh, 30000);
+//let refreshTimer = window.setInterval(refresh, 30000);
 
 function resetBalance(): void {
  balance.set({
@@ -208,11 +207,13 @@ function resetBalance(): void {
  balanceTimestamp.set(null);
 }
 
+/*
 async function refresh(): Promise<void> {
  if (provider) {
   await getBalance();
  }
 }
+*/
 
 selectedNetwork.subscribe((value: Network | undefined) => {
  //console.log('selectedNetwork', value);
