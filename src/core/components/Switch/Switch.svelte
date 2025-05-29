@@ -5,10 +5,10 @@
   checked?: boolean;
   showLabel?: boolean;
   ariaLabel: string;
-  row?: boolean;
+  orientation?: 'horizontal' | 'vertical';
  };
 
- let { checked = $bindable(), ariaLabel, showLabel = false, row = false }: Props = $props();
+ let { checked = $bindable(), ariaLabel, showLabel = false, orientation = 'horizontal' }: Props = $props();
 
  let mounted = $state(false);
  let inputId = Math.random().toString(36);
@@ -34,6 +34,11 @@
   grid-template-columns: repeat(2, auto);
   align-items: center;
   gap: 10px;
+
+  &.vertical {
+   grid-template-columns: unset;
+   grid-template-rows: repeat(2, auto);
+  }
 
   .label {
    font-weight: bold;
@@ -89,7 +94,7 @@
  }
 
  input:checked + .slider {
-  background-color: var(--color-primary-background)background);
+  background-color: var(--color-primary-background);
  }
 
  input:checked + .slider:before {
@@ -113,9 +118,9 @@
  }
 </style>
 
-<Label {row}>
+<Label>
  <span id={labelId} class="visually-hidden">{ariaLabel}</span>
- <div class="switch">
+ <div class={`switch ${orientation}`}>
   {#if showLabel}
    <span class="label">{`${ariaLabel}:`}</span>
   {/if}

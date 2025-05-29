@@ -23,6 +23,7 @@
   display: flex;
   align-items: center;
   padding: 8px 12px;
+  width: 100%;
  }
 
  .menu-item:hover {
@@ -43,7 +44,7 @@
  }
 </style>
 
-<BaseButton onClick={handleClick} onMousedown={handleMousedown} {...restProps}>
+<BaseButton onClick={handleClick} onMousedown={handleMousedown} {...restProps} width="100%">
  <div class="menu-item">
   {#if img}
    <div class="img-space">

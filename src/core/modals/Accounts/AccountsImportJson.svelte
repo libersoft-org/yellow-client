@@ -48,21 +48,6 @@
    text-align: center;
    margin-top: 10px;
   }
-
-  textarea {
-   padding: 5px;
-   letter-spacing: 1px;
-   position: absolute;
-   opacity: 0;
-   color: white;
-   background-color: black;
-   z-index: 0;
-   inset: 0;
-
-   &.isFilled {
-    pointer-events: none;
-   }
-  }
  }
 </style>
 
@@ -74,6 +59,6 @@
   <div class="error">{error}</div>
  {/if}
  <div class="buttons-container">
-  <AccountsImportButtons importText={text} {close} onError={handleError} />
+  <AccountsImportButtons importText={derivedText} {close} onError={handleError} />
  </div>
 </div>

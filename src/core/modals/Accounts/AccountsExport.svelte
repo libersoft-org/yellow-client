@@ -38,13 +38,6 @@
  }
 </script>
 
-<style>
- .wrapper {
-  border-radius: 10px;
-  overflow: auto;
- }
-</style>
-
 <ButtonBar>
  <Button img="img/copy.svg" {copyText} text={copyText} onClick={clickCopy} />
  <Button img="img/download.svg" text="Download as file" onClick={clickDownload} />
