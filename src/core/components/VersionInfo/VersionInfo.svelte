@@ -6,16 +6,16 @@
  import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
  import { onMount } from 'svelte';
 
- type Props = {
+ interface VersionInfoProps {
   showVersion?: boolean;
   showBuild?: boolean;
   showCommit?: boolean;
   showBranch?: boolean;
   showNativeApp?: boolean;
   className?: string;
- };
+ }
 
- let { showVersion = true, showBuild = true, showCommit = true, showBranch = true, showNativeApp = true, className = '' }: Props = $props();
+ let { showVersion = true, showBuild = true, showCommit = true, showBranch = true, showNativeApp = true, className = '' }: VersionInfoProps = $props();
 
  let native_client_build_ts = $state<string | null>(null);
 
@@ -75,7 +75,7 @@
    <div class="detail version">
     <div class="label">Commit:</div>
     {#await getNativeClientBuildCommitHash() then hash}
-     <div class="value bold">{(hash as string).slice(1, 9)}</div>
+     <div class="value bold">{hash.slice(1, 9)}</div>
     {/await}
    </div>
   {/if}
@@ -83,7 +83,7 @@
    <div class="detail version">
     <div class="label">Branch:</div>
     {#await getNativeClientBuildBranch() then nativeBranch}
-     <div class="value bold">{(nativeBranch as string).slice(1, -1)}</div>
+     <div class="value bold">{nativeBranch.slice(1, -1)}</div>
     {/await}
    </div>
   {/if}

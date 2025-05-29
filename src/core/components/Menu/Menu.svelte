@@ -7,7 +7,7 @@
  import DialogExit from '../../dialogs/Exit.svelte';
  import VersionInfo from '../VersionInfo/VersionInfo.svelte';
  import { product, link } from '../../core.js';
- import { TAURI, BROWSER } from '@/core/tauri.ts';
+ import { BROWSER } from '@/core/tauri.ts';
 
  type Props = {
   showMenu: boolean;

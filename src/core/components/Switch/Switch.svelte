@@ -2,7 +2,7 @@
  import Label from '@/core/components/Label/Label.svelte';
 
  type Props = {
-  checked?: boolean;
+  checked: boolean;
   showLabel?: boolean;
   ariaLabel: string;
   orientation?: 'horizontal' | 'vertical';

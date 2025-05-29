@@ -59,6 +59,6 @@
   <div class="error">{error}</div>
  {/if}
  <div class="buttons-container">
-  <AccountsImportButtons importText={derivedText} {close} onError={handleError} />
+  <AccountsImportButtons importText={text} {close} onError={handleError} />
  </div>
 </div>

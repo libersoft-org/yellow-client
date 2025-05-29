@@ -185,6 +185,7 @@
 
  :global {
   /* Make sure code inside our editor is editable */
+
   .code-wrapper code {
    cursor: text;
    caret-color: white;

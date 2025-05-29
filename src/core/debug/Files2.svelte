@@ -243,7 +243,7 @@
    <Button onClick={testRenameFile} disabled={!createdFile}>Rename File</Button>
    <Button onClick={testExportFile} disabled={!createdFile}>Export with Dialog</Button>
    <Button onClick={testDeleteFile} disabled={!createdFile}>Delete File</Button>
-   <Button onClick={testFullWorkflow} variant="primary">Test Full Workflow</Button>
+   <Button onClick={testFullWorkflow}>Test Full Workflow</Button>
   </div>
 
   {#if statusMessage}
