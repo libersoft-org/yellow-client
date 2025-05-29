@@ -15,19 +15,21 @@
   display: flex;
   flex-direction: column;
   padding: 10px;
-  background-color: #fffcf0;
-  border-bottom: 1px solid #dd9;
+  background-color: var(--color-default-background);
+  color: var(--color-primary-foreground);
+  border-bottom: 1px solid var(--color-primary-softer-background);
   width: 100%;
   box-sizing: border-box;
  }
 
  .item:hover {
-  background-color: #fef3c3;
+  background-color: var(--color-primary-background);
   transition: background-color 0.5s linear;
  }
 
  .item.active {
-  background-color: #var(--color-primary-background);
+  background-color: var(--color-primary-hard-background);
+
   transition: background-color 0.5s linear;
  }
 

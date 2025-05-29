@@ -177,10 +177,10 @@
   height: fit-content;
   width: min-content;
   overflow: hidden;
-  border: 1px solid var(--color-primary-foreground);
+  border: 1px solid var(--color-default-foreground);
   border-radius: 10px;
   box-shadow: var(--shadow);
-  background-color: var(--color-primary-background);
+  background-color: var(--color-default-background);
 
   @media (max-width: 768px) {
    max-width: calc(100%) !important;

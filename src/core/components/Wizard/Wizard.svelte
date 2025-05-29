@@ -1,5 +1,6 @@
 <script lang="ts">
  import Button from '@/core/components/Button/Button.svelte';
+
  import { getContext, setContext, type Component } from 'svelte';
 
  interface Props {
@@ -13,6 +14,16 @@
  }
 
  let { close, params }: Props = $props();
+ /*
+ import { getContext, setContext } from 'svelte';
+ export let close;
+ export let params;
+ let nextText = 'Next';
+ let currentStep = 0;
+ let steps = params.steps;
+ let setTitle = getContext('setTitle');
+ let pageChanged = getContext('pageChanged');
+*/
 
  let nextText = $state('Next');
  let currentStep = $state(0);
@@ -52,8 +63,6 @@
   gap: 10px;
   max-width: 100vw;
   max-height: 100vh;
-  background-color: #fff;
-  color: #000;
  }
 
  .progress-bar {
