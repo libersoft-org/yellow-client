@@ -9,6 +9,7 @@
  --icon-yellow: #fd1;
  --icon-red: #dc2626;
  --icon-blue: #00f;
+
  /* Theme colors: */
  --color-primary: #fc1;
  --color-primary-light: #ffa;
@@ -24,8 +25,6 @@
  --color-secondary-accent-foreground: #222;
  --color-tertiary-background: #ffdd1150;
  --color-tertiary-foreground: #fff;
- /* --secondary foreground white at the moment */
- /* -- secondary background black at the moment*/
  --color-text: #222;
  --color-background: #fff;
  --color-foreground: #222;
@@ -42,16 +41,18 @@
  --color-disabled-background: #888;
  --color-disabled-foreground: #222;
 
- /* --color-border :
+ /*
+  --color-border:
   --color-input:
-  --color-ring :
+  --color-ring:
   --color-sidebar:
   --color-sidebar-foreground :
   --color-sidebar-primary-background:
-  --color-sidebar-primary-foreground :
-  --color-sidebar-accent-background :
+  --color-sidebar-primary-foreground:
+  --color-sidebar-accent-background:
   --color-sidebar-accent-foreground:
-  --color-sidebar-ring : */
+  --color-sidebar-ring:
+ */
 
  /* Box shadows */
  --yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
