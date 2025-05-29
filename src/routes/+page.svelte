@@ -394,7 +394,7 @@
 <div class="app">
  <div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
-  <MenuBar bind:isMenuOpen />
+  <MenuBar onOpenMenu={() => isMenuOpen = true} />
   <AccountBar />
   <ModuleBar {onSelectModule} {onCloseModule} />
   {#if selectedCorePage}
