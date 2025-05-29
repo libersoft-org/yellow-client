@@ -14,7 +14,7 @@
   "storybook": "storybook dev -p 6006",
   "storybook:build": "storybook build",
   "storybook:test": "test-storybook",
-  "prettier": "prettier --config prettier-libersoft.json --plugin 'prettier-plugin-svelte' --write \"src/**/*.{js,ts,css,html,svelte}\"",
+  "prettier": "prettier --plugin 'prettier-plugin-svelte' --write \"src/**/*.{js,ts,css,html,svelte,md,json}\"",
   "prepare": "husky"
  },
  "lint-staged": {
