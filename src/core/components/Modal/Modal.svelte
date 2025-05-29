@@ -202,7 +202,7 @@
   align-items: center;
   gap: 10px;
   font-weight: bold;
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-background);
   color: var(--color-text);
   cursor: grab;
  }
