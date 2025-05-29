@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import type { FileUploadChunk } from '@/org.libersoft.messages/services/Files/types.ts';
+//import type { FileUploadChunk } from '@/org.libersoft.messages/services/Files/types.ts';
 
 export const FILES_DB_KEY = 'files';
 
@@ -51,7 +51,7 @@ export class FilesLocalDB extends Dexie {
  }
 
  async updateFile(fileTransferId: string, update: Partial<LocalFile>) {
-  const f = await this.files.where({ fileTransferId }).first();
+  // const f = await this.files.where({ fileTransferId }).first();
   return await this.files.where({ fileTransferId }).modify(update);
  }
 

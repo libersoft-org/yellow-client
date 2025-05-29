@@ -27,7 +27,7 @@
  }
 
  .item.selected {
-  background-color: var(--color-popover-foreground);
+  background-color: var(--color-secondary-soft-background);
   transform: scale(1.25);
  }
 </style>

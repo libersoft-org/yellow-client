@@ -26,7 +26,7 @@
  }
 
  .item.active {
-  color: var(--color-text);
+  color: var(--color-primary-foreground);
   font-weight: bold;
   background-color: #db0;
  }

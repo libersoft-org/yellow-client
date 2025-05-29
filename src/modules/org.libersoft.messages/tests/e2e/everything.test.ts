@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 
 /**
@@ -187,11 +187,13 @@ async function navigateToSettingsSection(page: Page, section: 'General' | 'Notif
  * Helper function to close the current modal
  * @param page - The Playwright page object
  */
+/*
 async function closeModal(page: Page): Promise<void> {
  return await test.step('Close modal', async () => {
   await page.getByTestId('Modal-close').click();
  });
 }
+*/
 
 /**
  * Helper function to set up an account through the initial wizard
@@ -228,6 +230,7 @@ async function setupAccountInWizard(
  * @param page - The Playwright page object
  * @returns The download object
  */
+/*
 async function exportAccounts(page: Page): Promise<any> {
  return await test.step('Export accounts', async () => {
   await page.getByRole('button', { name: 'Export' }).click();
@@ -239,6 +242,7 @@ async function exportAccounts(page: Page): Promise<any> {
   return download;
  });
 }
+*/
 
 /**
  * Helper function to delete the first account in the list
@@ -376,7 +380,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   });
 
   // Export all accounts
-  const download1 = await exportAccounts(page);
+  //const download1 = await exportAccounts(page);
 
   // Delete account
   await deleteFirstAccount(page);

@@ -1,4 +1,4 @@
-import { TAURI, TAURI_MOBILE, BROWSER } from '@/core/tauri';
+import { TAURI, TAURI_MOBILE } from '@/core/tauri';
 import type { BrowserOptions, NodeOptions } from '@sentry/sveltekit';
 
 // Base configuration shared between client and server

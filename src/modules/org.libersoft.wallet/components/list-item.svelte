@@ -21,11 +21,11 @@
  }
 
  .item.even {
-  background-color: var(--color-secondary-muted-background);
+  background-color: var(--color-secondary-soft-background);
  }
 
  .item.odd {
-  background-color: var(--color-muted-background);
+  background-color: var(--color-primary-lighter-background);
  }
 
  .item:hover {

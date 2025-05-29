@@ -3,16 +3,16 @@ import { writable } from 'svelte/store';
 import { multiwindow_store } from './multiwindow_store.ts';
 import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
-import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, selectedMonitorName, notificationsSoundEnabled } from './notifications_settings.ts';
-import { playAndStopExample } from './audio.ts';
+import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, notificationsSoundEnabled } from './notifications_settings.ts';
+// import { playAndStopExample } from './audio.ts';
 import {
- availableMonitors,
+ // availableMonitors,
  currentMonitor,
- //getCurrentWindow,
+ // getCurrentWindow,
 } from '@tauri-apps/api/window';
 import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
 import { Mutex } from 'async-mutex';
-import * as app from '@tauri-apps/api';
+// import * as app from '@tauri-apps/api';
 
 declare global {
  interface Window {
@@ -126,7 +126,7 @@ export async function initBrowserNotifications() {
 export async function initCustomNotifications() {
  log.debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
  if (!CUSTOM_NOTIFICATIONS) return;
- let _notifications = await multiwindow_store('notifications');
+ // let _notifications = await multiwindow_store('notifications');
  // for (let [id, notification] of _notifications.entries()) {
  //  log.debug('initCustomNotifications:', id, notification);
  //  notifications.delete(id);
@@ -217,15 +217,15 @@ async function sendTauriNotification(notification: YellowNotification) {
  }
  playNotificationSound(notification);
 
- let icon = await toPngBlob(notification.icon);
- //icon = 'http://localhost:3000/favicon2.png';
+ // let icon = await toPngBlob(notification.icon);
+ // icon = 'http://localhost:3000/favicon2.png';
 
  sendNotification({
   title: notification.title,
   body: notification.body,
   /* "On Android the icon must be placed in the app’s res/drawable folder."*/
-  //icon: 'http://localhost:3000/favicon.png',
-  //icon: icon,
+  // icon: 'http://localhost:3000/favicon.png',
+  // icon: icon,
   silent: true,
  });
  await registerActionTypes([
