@@ -28,10 +28,9 @@
   log.debug('openFiles2: ' + showFiles2Modal);
  }
 
-    function closeFiles2() {
-    showFiles2Modal = false;
-    }
-
+ function closeFiles2() {
+  showFiles2Modal = false;
+ }
 </script>
 
 {#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}(debug:<Switch bind:checked={$debug} />)

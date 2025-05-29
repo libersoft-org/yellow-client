@@ -110,7 +110,7 @@
   border: 1px solid #b90;
   border-radius: 10px;
   padding: 10px;
-  background-color: var(--color-secondary-muted-background);
+  background-color: var(--color-secondary-soft-background);
 
   .clamp {
    display: inline-block;

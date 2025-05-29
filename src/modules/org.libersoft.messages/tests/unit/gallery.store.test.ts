@@ -1,4 +1,4 @@
-import { describe, it, expect, test, beforeEach } from 'vitest';
+import { describe, expect, test, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 import { GalleryStore, type GalleryFile } from '../../stores/GalleryStore.ts';
 

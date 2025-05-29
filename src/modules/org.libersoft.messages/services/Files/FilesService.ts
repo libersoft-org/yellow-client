@@ -61,7 +61,7 @@ export class FilesService {
    this.fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc), async download => {
     newLocalFile.localFileStatus = LocalFileStatus.READY;
     newLocalFile.fileBlob = new Blob(download.chunksReceived, { type: record.fileMimeType });
-    const result = await filesDB.updateFile(record.id, newLocalFile);
+    // const result = await filesDB.updateFile(record.id, newLocalFile);
     resolve({ localFile: newLocalFile as LocalFile });
    });
   });

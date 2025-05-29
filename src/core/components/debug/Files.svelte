@@ -14,7 +14,7 @@
   tauriMobile: TAURI_MOBILE,
   browser: BROWSER,
   platform: 'unknown',
-  osType: 'unknown'
+  osType: 'unknown',
  };
 
  onMount(async () => {
@@ -110,11 +110,7 @@
     return;
    }
    result = 'Exporting to system Downloads...';
-   const exportResult = await exportToSystemDownloads(
-    download.temp_file_path,
-    download.original_file_name,
-    'text/plain'
-   );
+   const exportResult = await exportToSystemDownloads(download.temp_file_path, download.original_file_name, 'text/plain');
    if (exportResult.success) {
     result = 'File exported to Downloads folder successfully!';
    } else {
@@ -176,19 +172,24 @@
  <div class="platform-info">
   <h4>Platform Information</h4>
   <div class="platform-info-item">
-   <strong>TAURI:</strong> {platformInfo.tauri}
+   <strong>TAURI:</strong>
+   {platformInfo.tauri}
   </div>
   <div class="platform-info-item">
-   <strong>TAURI_MOBILE:</strong> {platformInfo.tauriMobile}
+   <strong>TAURI_MOBILE:</strong>
+   {platformInfo.tauriMobile}
   </div>
   <div class="platform-info-item">
-   <strong>BROWSER:</strong> {platformInfo.browser}
+   <strong>BROWSER:</strong>
+   {platformInfo.browser}
   </div>
   <div class="platform-info-item">
-   <strong>Platform:</strong> {platformInfo.platform}
+   <strong>Platform:</strong>
+   {platformInfo.platform}
   </div>
   <div class="platform-info-item">
-   <strong>OS Type:</strong> {platformInfo.osType}
+   <strong>OS Type:</strong>
+   {platformInfo.osType}
   </div>
  </div>
 

@@ -19,7 +19,6 @@
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
  import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
  import VideoRecorderModalBody from '@/org.libersoft.messages/modals/VideoRecorderModalBody.svelte';
-
  let expressionsMenu;
  let elBottomSheet;
  let elAttachment;

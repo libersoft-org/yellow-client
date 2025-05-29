@@ -1,11 +1,11 @@
 import { invoke } from '@tauri-apps/api/core';
-import * as app from '@tauri-apps/api';
-//import { platform } from '@tauri-apps/plugin-os';
+// import * as app from '@tauri-apps/api';
+// import { platform } from '@tauri-apps/plugin-os';
 import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
-//import { confirm } from '@tauri-apps/plugin-dialog';
-import { exit } from '@tauri-apps/plugin-process';
-import { closeToMinimize, runOnSystemStartup, showTrayIcon } from '@/core/settings.ts';
-import { get } from 'svelte/store';
+// import { confirm } from '@tauri-apps/plugin-dialog';
+// import { exit } from '@tauri-apps/plugin-process';
+import { runOnSystemStartup, showTrayIcon } from '@/core/settings.ts';
+// import { get } from 'svelte/store';
 import { disable, enable } from '@tauri-apps/plugin-autostart';
 import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
 import { TAURI, TAURI_MOBILE, log } from './tauri.ts';
@@ -35,11 +35,10 @@ export async function initWindow() {
  if (!TAURI || TAURI_MOBILE) {
   return;
  }
+ /*
  const unlisten = await getCurrentWindow().onCloseRequested(async event => {
-  /*const confirmed = await confirm('Are you sure?');
-   if (confirmed) {
-     await quit();
-   }*/
+  // const confirmed = await confirm('Are you sure?');
+  //  if (confirmed) await quit();
   if (get(closeToMinimize)) {
    log.debug('hiding window');
    await getCurrentWindow().hide();
@@ -47,6 +46,7 @@ export async function initWindow() {
    await quit();
   }
  });
+ */
 
  runOnSystemStartup.subscribe(async value => {
   if (!TAURI) return;
@@ -69,10 +69,12 @@ export async function initWindow() {
  });
 }
 
+/*
 async function quit() {
  await invoke('close_notifications_window');
  await exit(0);
 }
+*/
 
 export async function getNativeClientBuildCommitHash() {
  if (!TAURI) {

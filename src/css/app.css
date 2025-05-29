@@ -12,46 +12,21 @@
 
  /* Theme colors: */
  --color-primary-foreground: #222;
+ --color-primary-softer-background: #ffd;
+ --color-primary-soft-background: #ffa;
  --color-primary-background: #fc1;
- --color-primary-light-background: #ffa;
- --color-primary-lighter-background: #ffd;
- --color-primary-dark-background: #fa0; /* new variable */
- --color-secondary-background: #d80; /* rename everywhere to: --color-primary-darker-background */
- --color-secondary-foreground: #222; /* remove and replace every mention to --primary-foreground */
- --color-secondary-muted-background: #ffa; /* rename everywhere to: --color-primary-light-background */
- --color-secondary-muted-foreground: #222; /* remove and replace every mention to --primary-foreground */
- --color-secondary-accent-background: #ffd; /* rename everywhere to: --color-primary-lighter-background */
- --color-secondary-accent-foreground: #222; /* remove and replace every mention to --primary-foreground */
- --color-tertiary-background: #ffdd1150; /* check if used anywhere */
- --color-tertiary-foreground: #fff; /* check if used anywhere */
- --color-text: #222; /* check if used anywhere */
- --color-background: #fff; /* check if used anywhere */
- --color-foreground: #222; /* check if used anywhere */
- --color-card-background: #fff; /* check if used anywhere */
- --color-card-foreground: #222; /* check if used anywhere */
- --color-reversed-background: #222; /* check if used anywhere */
- --color-reversed-foreground: #fff; /* check if used anywhere */
- --color-popover: #444; /* check if used anywhere */
- --color-popover-foreground: #444; /* check if used anywhere */
- --color-muted-background: #ffd; /* check if used anywhere */
- --color-muted-foreground: #222; /* check if used anywhere */
- --color-accent-background: #d80; /* check if used anywhere */
- --color-accent-foreground: #222; /* check if used anywhere */
- --color-disabled-background: #888; /* check if used anywhere */
- --color-disabled-foreground: #222; /* check if used anywhere */
-
- /*
-  --color-border:
-  --color-input:
-  --color-ring:
-  --color-sidebar:
-  --color-sidebar-foreground :
-  --color-sidebar-primary-background:
-  --color-sidebar-primary-foreground:
-  --color-sidebar-accent-background:
-  --color-sidebar-accent-foreground:
-  --color-sidebar-ring:
- */
+ --color-primary-hard-background: #fa0;
+ --color-primary-harder-background: #d80;
+ --color-secondary-foreground: #fff;
+ --color-secondary-softer-background: #555;
+ --color-secondary-soft-background: #444;
+ --color-secondary-background: #222;
+ --color-secondary-hard-background: #111;
+ --color-secondary-harder-background: #000;
+ --color-default-foreground: #000;
+ --color-default-background: #fff;
+ --color-disabled-background: #888;
+ --color-disabled-foreground: #fff;
 
  /* Box shadows */
  --yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);

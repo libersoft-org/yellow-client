@@ -41,7 +41,7 @@
   padding: 10px;
   border: 1px solid #b90;
   border-radius: 10px;
-  background-color: var(--color-secondary-muted-background);
+  background-color: var(--color-secondary-soft-background);
  }
 
  .buttons {

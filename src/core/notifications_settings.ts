@@ -1,6 +1,6 @@
 import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 import { CUSTOM_NOTIFICATIONS, TAURI } from './tauri.ts';
-import { derived, writable, type Unsubscriber } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 
 // Create all the shared stores
 export const notificationsEnabled = localStorageSharedStore('notifications_enabled', TAURI);

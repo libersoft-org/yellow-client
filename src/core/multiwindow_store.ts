@@ -1,5 +1,5 @@
 import { Store } from '@tauri-apps/plugin-store';
-import { log } from './tauri.ts';
+// import { log } from './tauri.ts';
 
 let stores: Map<String, Store> = new Map();
 

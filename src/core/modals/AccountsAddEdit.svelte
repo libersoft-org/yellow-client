@@ -12,7 +12,6 @@
  import { derived, get, writable } from 'svelte/store';
  import { TAURI } from '@/core/tauri.ts';
 
-
  type Props = {
   close: () => void;
   params: { id: string | null };
@@ -81,7 +80,7 @@
   } else {
    console.log('[EFFECT] New account setup');
    credentials_address = '';
-   credentials_server = TAURI ? '' : ((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/');
+   credentials_server = TAURI ? '' : (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';
@@ -119,13 +118,13 @@
   if (!verify()) return;
 
   const account = {
-    enabled: config_enabled,
-    credentials: {
-     address: credentials_address,
-     server: credentials_server,
-     password: credentials_password,
-    },
-   };
+   enabled: config_enabled,
+   credentials: {
+    address: credentials_address,
+    server: credentials_server,
+    password: credentials_password,
+   },
+  };
   const settings = { title: config_title };
 
   if (accountExists(account.credentials?.server, account.credentials?.address)) {

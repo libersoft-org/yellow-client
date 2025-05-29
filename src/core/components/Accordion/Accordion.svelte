@@ -228,7 +228,7 @@
     <div class="header">
      <div class="title">{item.name}</div>
      {@render header?.(item)}
-     <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--color-foreground" size="12px" />
+     <Icon img="img/down.svg" alt="Chevron Down" colorVariable="--color-primary-foreground" size="12px" />
     </div>
    </BaseButton>
    <div class="content {activeIndices.includes(index) ? 'is-expanded' : ''}" data-index={index}>

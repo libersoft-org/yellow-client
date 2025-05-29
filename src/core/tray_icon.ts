@@ -21,10 +21,12 @@ async function showWindow() {
  await getCurrentWindow().setFocus();
 }
 
+/*
 async function hideWindow() {
  log.debug('Hide action');
  await getCurrentWindow().hide();
 }
+*/
 
 export async function destroyTrayIcon() {
  if (TAURI && !TAURI_MOBILE) {

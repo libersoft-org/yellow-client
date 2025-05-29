@@ -66,7 +66,7 @@
   border: 1px solid #880;
 
   border-radius: 10px;
-  background-color: var(--color-muted-background);
+  background-color: var(--color-primary-softer-background);
  }
 
  .transfer-controls {
