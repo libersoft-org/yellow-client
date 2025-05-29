@@ -1,36 +1,48 @@
-<script>
+<script lang="ts">
  import Button from '@/core/components/Button/Button.svelte';
- import { getContext, setContext } from 'svelte';
+ import { getContext, setContext, type Component } from 'svelte';
 
- export let close;
- export let params;
+ interface Props {
+  close?: () => void;
+  params: {
+   steps: Array<{
+    title: string;
+    component: Component;
+   }>;
+  };
+ }
 
- let nextText = 'Next';
- let currentStep = 0;
- let steps = params.steps;
- let setTitle = getContext('setTitle');
- let pageChanged = getContext('pageChanged');
+ let { close, params }: Props = $props();
 
- function setNextText(text) {
-  console.log('setNextText:', text);
+ let nextText = $state('Next');
+ let currentStep = $state(0);
+ const steps = $derived(params.steps);
+ let setTitle = getContext('setTitle') as (title: string) => Promise<void>;
+ let pageChanged = getContext('pageChanged') as () => Promise<void>;
+
+ function setNextText(text: string) {
   nextText = text;
  }
 
  setContext('wizard', { setNextText });
 
- $: setTitle(steps[currentStep].title);
+ $effect(() => {
+  if (steps[currentStep].title) {
+   setTitle(steps[currentStep].title);
+  }
+ });
 
  async function nextStep() {
   if (currentStep < steps.length - 1) currentStep += 1;
-  console.log('currentStep:', currentStep, 'pageChanged:', pageChanged);
   if (pageChanged) await pageChanged();
  }
 
  async function prevStep() {
   if (currentStep > 0) currentStep -= 1;
-  console.log('currentStep:', currentStep, 'pageChanged:', pageChanged);
   if (pageChanged) await pageChanged();
  }
+
+ const ContentComponent = $derived(steps[currentStep].component);
 </script>
 
 <style>
@@ -102,7 +114,7 @@
   {/each}
  </div>
  <div class="content">
-  <svelte:component this={steps[currentStep].component} {params} />
+  <ContentComponent {params} />
  </div>
  <div class="navigation">
   {#if currentStep > 0}

@@ -14,10 +14,15 @@
   "storybook": "storybook dev -p 6006",
   "storybook:build": "storybook build",
   "storybook:test": "test-storybook",
-  "prettier": "prettier --config prettier-libersoft.json --plugin 'prettier-plugin-svelte' --write \"src/**/*.{js,ts,css,html,svelte}\""
+  "prettier": "prettier --config prettier-libersoft.json --plugin 'prettier-plugin-svelte' --write \"src/**/*.{js,ts,css,html,svelte}\"",
+  "prepare": "husky"
+ },
+ "lint-staged": {
+  "*.{js,ts,svelte,html,json,css,md}": "prettier --config prettier-libersoft.json --plugin 'prettier-plugin-svelte' --write"
  },
  "dependencies": {
   "@floating-ui/dom": "^1.6.13",
+  "@inlang/paraglide-js": "^2.0.0",
   "@neodrag/svelte": "^2.3.2",
   "@sentry/sveltekit": "^9",
   "@sveltejs/vite-plugin-svelte-inspector": "^4.0.1",
@@ -84,7 +89,10 @@
   "@vitest/browser": "3.0.5",
   "@vitest/coverage-v8": "3.0.5",
   "git-format-staged": "^3.1.1",
+  "husky": "^9.1.7",
   "jsdom": "^26.0.0",
+  "lint-staged": "^15.5.1",
+  "playwright": "^1.51.1",
   "prettier": "^3.5.3",
   "prettier-plugin-svelte": "^3.4.0",
   "storybook": "^8.6.7",

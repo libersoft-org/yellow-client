@@ -10,6 +10,7 @@
  import Switch from '../components/Switch/Switch.svelte';
  import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
  import { derived, get, writable } from 'svelte/store';
+ import { m } from '@/lib/paraglide/messages.js';
  import { TAURI } from '@/core/tauri.ts';
 
  type Props = {
@@ -169,12 +170,10 @@
   close();
  }
 
- function keyEnter(event: KeyboardEvent) {
-  if (event.key === 'Enter') {
-   event.preventDefault();
-   console.log('[KEY] Enter pressed');
-   params.id === null ? clickAdd() : clickSave();
-  }
+ function onSubmit(event) {
+  event.preventDefault();
+  if ((params.id ?? null) === null) clickAdd();
+  else clickSave();
  }
 </script>
 
@@ -198,7 +197,7 @@
  }
 </style>
 
-<div class="form">
+<form class="form" onsubmit={onSubmit}>
  <Label text="Protocol">
   <Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
    <Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
@@ -206,20 +205,20 @@
   </Select>
  </Label>
 
- <Label text="Title">
-  <Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
+ <Label text={m['core.accounts_add_edit.title']()}>
+  <Input minWidth="300px" maxWidth="300px" bind:value={config_title} />
  </Label>
 
- <Label text="Server">
-  <Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
+ <Label text={m['core.accounts_add_edit.server']()}>
+  <Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} />
  </Label>
 
- <Label text="Address">
-  <Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
+ <Label text={m['core.accounts_add_edit.address']()}>
+  <Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} />
  </Label>
 
- <Label text="Password">
-  <Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
+ <Label text={m['core.accounts_add_edit.password']()}>
+  <Input minWidth="300px" maxWidth="300px" type="password" placeholder={m['core.accounts_add_edit.password_placeholder']()} bind:value={credentials_password} />
  </Label>
 
  {#if !isInWelcomeWizard}
@@ -245,4 +244,4 @@
    <AccountStatusIconIconAndText {account} />
   </div>
  {/if}
-</div>
+</form>

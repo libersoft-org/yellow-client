@@ -7,9 +7,10 @@
   minWidth?: string;
   maxWidth?: string;
   children?: any;
+  label?: any;
  }
 
- let { value = $bindable(''), grow = false, minWidth, maxWidth, children, ...restProps }: Props = $props();
+ let { value = $bindable(''), grow = false, minWidth, maxWidth, children, label, ...restProps }: Props = $props();
 
  let selectRef: HTMLSelectElement;
 
@@ -38,8 +39,27 @@
  select:focus {
   outline: 2px solid #0060df;
  }
+
+ .select {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+ }
 </style>
 
-<select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={selectRef} bind:value>
- {@render children?.()}
-</select>
+{#snippet select()}
+ <select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={selectRef} bind:value>
+  {@render children?.()}
+ </select>
+{/snippet}
+
+<div class="select">
+ {#if label}
+  <label for={label}>
+   {label}
+  </label>
+  {@render select()}
+ {:else}
+  {@render select()}
+ {/if}
+</div>

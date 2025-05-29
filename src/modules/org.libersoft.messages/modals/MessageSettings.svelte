@@ -37,7 +37,6 @@
 
  input[type='range'] {
   width: 100%;
-  max-width: 300px;
  }
 </style>
 

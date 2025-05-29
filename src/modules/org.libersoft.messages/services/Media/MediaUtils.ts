@@ -56,6 +56,7 @@ class MediaUtils {
    };
 
    video.addEventListener('error', err => {
+    console.error('thumbnail: Error extracting thumbnail', err);
     cleanup();
     reject(err);
    });
@@ -64,8 +65,8 @@ class MediaUtils {
     'loadedmetadata',
     () => {
      if (video.readyState >= 2) {
-      // HAVE_CURRENT_DATA
-      drawFrame();
+      video.currentTime = 0.1;
+      video.addEventListener('seeked', drawFrame, { once: true });
      } else {
       video.addEventListener('loadeddata', drawFrame, { once: true });
      }
@@ -74,57 +75,6 @@ class MediaUtils {
    );
 
    video.load();
-  });
- }
-
- static extractThumbnailOld(fileChunk): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-   const url = URL.createObjectURL(fileChunk);
-   const video = document.createElement('video');
-   video.src = url;
-   video.muted = true;
-   video.crossOrigin = 'anonymous';
-   video.playsInline = true;
-
-   video.addEventListener('loadedmetadata', () => {
-    video.currentTime = Math.min(1, video.duration / 2); // Seek to 1s or middle of video
-   });
-
-   video.addEventListener('seeked', () => {
-    const originalWidth = video.videoWidth;
-    const originalHeight = video.videoHeight;
-
-    const maxWidth = 600;
-    const maxHeight = 400;
-
-    let width = originalWidth;
-    let height = originalHeight;
-
-    // Resize while preserving aspect ratio
-    const widthRatio = maxWidth / width;
-    const heightRatio = maxHeight / height;
-    const scale = Math.min(widthRatio, heightRatio, 1); // Never upscale
-
-    width = Math.round(width * scale);
-    height = Math.round(height * scale);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.drawImage(video, 0, 0, width, height);
-
-    canvas.toBlob(blob => {
-     URL.revokeObjectURL(url);
-     resolve(blob as Blob);
-    }, 'image/png');
-   });
-
-   video.addEventListener('error', err => {
-    console.error('Error extracting thumbnail', err);
-    URL.revokeObjectURL(url);
-    reject(err);
-   });
   });
  }
 

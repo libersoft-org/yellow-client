@@ -112,6 +112,49 @@
   gap: 10px;
   justify-content: space-between;
  }
+
+ .file-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+ }
+
+ .file-table :global(table) {
+  width: 100%;
+ }
+
+ .file-table :global(tbody) {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  max-height: 35vh;
+ }
+
+ .file-table :global(thead tr) {
+  display: block;
+ }
+
+ .file-table :global(tbody tr),
+ .file-table :global(thead tr) {
+  display: flex;
+  align-items: center;
+ }
+
+ .file-table :global(th:nth-child(1)),
+ .file-table :global(td:nth-child(1)) {
+  flex: 0 1 80%;
+ }
+
+ .file-table :global(th:nth-child(2)),
+ .file-table :global(td:nth-child(2)) {
+  flex: 1 0 20%;
+  text-align: right;
+ }
+
+ .file-table :global(th:nth-child(3)),
+ .file-table :global(td:nth-child(3)) {
+  flex: 0 0;
+ }
 </style>
 
 {#snippet fileUploadItem(file)}

@@ -10,11 +10,20 @@
   min?: number;
   max?: number;
   step?: number;
+  inputRef?: HTMLInputElement;
   'data-testid'?: string;
  }
 
- let { type = 'text', placeholder = '', value = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
- let inputRef: HTMLInputElement;
+ let { type = 'text', placeholder = '', value = $bindable(), inputRef: parentInputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
+
+ let inputRef = $state<HTMLInputElement>();
+
+ // Bind the inputRef ref manually to the parent component from internal state
+ $effect(() => {
+  if (inputRef) {
+   parentInputRef = inputRef;
+  }
+ });
 
  function handleKeydown(e) {
   if (onKeydown) onKeydown(e);

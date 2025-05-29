@@ -33,7 +33,7 @@ bun i
 
 ## 2. Use this software
 
-If you'd like to **build this software from source code:
+If you'd like to \*\*build this software from source code:
 
 ### Set up the URL path:
 

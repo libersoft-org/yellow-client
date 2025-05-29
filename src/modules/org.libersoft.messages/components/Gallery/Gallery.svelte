@@ -162,7 +162,7 @@
 {#if $gallery.show}
  <div class="gallery" onpointerdown={onAnywhereClick}>
   <div class="top-left">
-   <Button img="modules/{identifier}/img/download.svg" colorVariable="--icon-black" onClick={download} />
+   <Button img="img/download.svg" colorVariable="--icon-black" onClick={download} />
   </div>
   <div class="top-right">
    <Button img="img/close.svg" colorVariable="--icon-black" onClick={close} />

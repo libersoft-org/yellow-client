@@ -384,6 +384,10 @@
   .resizer {
    display: none;
   }
+
+  .content {
+   max-width: 100%;
+  }
  }
 </style>
 
@@ -391,7 +395,7 @@
 <svelte:head>
  <title>{product}</title>
 </svelte:head>
-<div class="app">
+<div class="app" style:--sidebar-width={sidebarWidth}>
  <div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
   <Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
   <MenuBar onOpenMenu={() => (isMenuOpen = true)} />
