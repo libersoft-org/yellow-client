@@ -3,9 +3,8 @@
  import { log, TAURI } from '@/core/tauri.ts';
  import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
  import MenuAppSection from '../Menu/MenuAppSection.svelte';
- import { friendlyTimestamp } from "@/core/utils/dateTime.ts";
- import { onMount } from "svelte";
-
+ import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
+ import { onMount } from 'svelte';
 
  type Props = {
   showVersion?: boolean;
@@ -22,11 +21,10 @@
 
  onMount(async () => {
   if (TAURI) {
-      log.debug('VersionInfo', 'Fetching native client build timestamp');
+   log.debug('VersionInfo', 'Fetching native client build timestamp');
    native_client_build_ts = friendlyTimestamp((await getNativeClientBuildTs()).slice(1, -1));
   }
  });
-
 </script>
 
 <style>
@@ -70,7 +68,7 @@
   {#if showBuild}
    <div class="detail version">
     <div class="label">Build:</div>
-     <div class="value bold">{native_client_build_ts}</div>
+    <div class="value bold">{native_client_build_ts}</div>
    </div>
   {/if}
   {#if showCommit}

@@ -10,10 +10,11 @@
  let { code = $bindable() }: Props = $props();
 
  let language = 'json';
+ let derivedCode = $state(code);
 
  let highlighted = $derived.by(() => {
   try {
-   return Prism.highlight(code, Prism.languages[language], language);
+   return Prism.highlight(derivedCode, Prism.languages[language], language);
   } catch (error) {
    log.error('Prism highlight error:', error);
    return code;
@@ -22,6 +23,10 @@
 </script>
 
 <style>
+ .scrollable {
+  overflow: auto;
+ }
+
  .code-wrapper {
   white-space: pre-wrap;
   padding: 24px;
@@ -206,6 +211,8 @@
  }
 </style>
 
-<div class="code-wrapper" contenteditable spellcheck="false" bind:innerText={code}>
- <code class="language-json">{@html highlighted}</code>
+<div class="scrollable">
+ <div class="code-wrapper" contenteditable spellcheck="false" bind:innerText={code}>
+  <code class="language-json">{@html highlighted}</code>
+ </div>
 </div>

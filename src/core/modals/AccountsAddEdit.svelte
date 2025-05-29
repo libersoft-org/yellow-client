@@ -12,7 +12,6 @@
  import { derived, get, writable } from 'svelte/store';
  import { TAURI } from '@/core/tauri.ts';
 
-
  type Props = {
   close: () => void;
   params: { id: string | null };
@@ -81,7 +80,7 @@
   } else {
    console.log('[EFFECT] New account setup');
    credentials_address = '';
-   credentials_server = TAURI ? '' : ((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/');
+   credentials_server = TAURI ? '' : (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';
@@ -219,7 +218,7 @@
  </Label>
 
  {#if !isInWelcomeWizard}
-  <Switch showLabel ariaLabel="Enabled" bind:checked={config_enabled} row={true} />
+  <Switch showLabel ariaLabel="Enabled" bind:checked={config_enabled} orientation="vertical" />
  {/if}
 
  {#if error}

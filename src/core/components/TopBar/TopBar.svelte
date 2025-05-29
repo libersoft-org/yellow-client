@@ -7,11 +7,14 @@
   align-items: center;
   gap: 24px;
   min-height: calc(var(--menu-height) - 20px);
-  padding: 10px;
   background-color: #222;
   color: #fff;
   box-shadow: var(--shadow);
-  padding: 10px clamp(16px, 1.6vw, 24px);
+  padding: 10px 20px;
+
+  @media (max-width: 768px) {
+   padding: 10px;
+  }
 
   .left,
   .center,
@@ -22,6 +25,14 @@
    gap: 10px;
    flex: 1;
    width: 100%;
+
+   /* :global(&:has(:only-child)) {
+				.left,
+				.center,
+				.right {
+					gap: 0;
+				}
+			} */
 
    :global(h1) {
     white-space: nowrap;

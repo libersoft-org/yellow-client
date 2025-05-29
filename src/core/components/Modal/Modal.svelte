@@ -224,6 +224,7 @@
   padding: 10px;
   background-color: var(--color-background);
   color: var(--color-text);
+  overflow: auto;
  }
 </style>
 

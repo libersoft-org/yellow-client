@@ -9,17 +9,14 @@
  let { close }: Props = $props();
 
  let text = $state('');
- let textareaEl: HTMLTextAreaElement | null = $state(null);
  let error = $state('');
- const isFilled = $derived(text.length > 0);
+ let derivedText = $derived(text);
+
+ $inspect(derivedText);
 
  function handleError(message: string) {
   error = message;
  }
-
- $effect(() => {
-  // textareaEl?.focus();
- });
 
  $effect(() => {
   if (text) {
@@ -54,33 +51,17 @@
    text-align: center;
    margin-top: 10px;
   }
-
-  textarea {
-   padding: 5px;
-   letter-spacing: 1px;
-   position: absolute;
-   opacity: 0;
-   color: white;
-   background-color: black;
-   z-index: 0;
-   inset: 0;
-
-   &.isFilled {
-    pointer-events: none;
-   }
-  }
  }
 </style>
 
 <div class="account-import">
  <div class="scrollable">
   <Code bind:code={text} />
-  <!-- <textarea class:isFilled bind:value={text} bind:this={textareaEl}></textarea> -->
  </div>
  {#if error}
   <div class="error">{error}</div>
  {/if}
  <div class="buttons-container">
-  <AccountsImportButtons importText={text} {close} onError={handleError} />
+  <AccountsImportButtons importText={derivedText} {close} onError={handleError} />
  </div>
 </div>
