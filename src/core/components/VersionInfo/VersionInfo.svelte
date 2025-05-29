@@ -17,7 +17,7 @@
 
  let { showVersion = true, showBuild = true, showCommit = true, showBranch = true, showNativeApp = true, className = '' }: Props = $props();
 
- let native_client_build_ts;
+ let native_client_build_ts = $state<string | null>(null);
 
  onMount(async () => {
   if (TAURI) {

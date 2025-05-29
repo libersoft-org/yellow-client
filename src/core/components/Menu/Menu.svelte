@@ -17,8 +17,6 @@
  let { showMenu = $bindable(false), showModalSettings = false }: Props = $props();
  let elDialogExit: InstanceType<typeof DialogExit>;
 
- //  let native_client_commit;
- //  let native_client_build_ts;
 
  const menuItems = [
   {

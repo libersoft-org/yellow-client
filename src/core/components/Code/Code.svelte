@@ -358,7 +358,8 @@
  class="code-wrapper"
  contenteditable
  spellcheck="false"
- on:input={e => {
+ role="textbox"
+ oninput={e => {
   // Save current cursor position before updating
   lastCursorPos = getCursorPosition();
 
@@ -371,9 +372,9 @@
    }, 0);
   }
  }}
- on:keydown={handleKeyDown}
- on:paste={pastePlainText}
- on:focus={() => {
+ onkeydown={handleKeyDown}
+ onpaste={pastePlainText}
+ onfocus={() => {
   // Ensure we have content for cursor to appear when focused
   if (!elDiv.innerHTML || elDiv.innerHTML.trim() === '') {
    elDiv.innerHTML = '<code class="language-json"> </code>';
