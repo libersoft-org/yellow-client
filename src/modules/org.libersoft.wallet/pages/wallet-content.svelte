@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { module } from '../module.js';
+  import { module } from '../module.ts';
   import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';
@@ -14,7 +14,7 @@
   import History from './history.svelte';
   import Dropdown from '../components/dropdown.svelte';
   import Button from '@/core/components/Button/Button.svelte';
-  import { hideSidebarMobile, debug } from '@/core/core.js';
+  import { hideSidebarMobile, debug } from '@/core/core.ts';
   import Paper from '@/core/components/Paper/Paper.svelte';
   import TopBar from '@/core/components/TopBar/TopBar.svelte';
   import { shortenAddress } from '@/lib/utils/shortenAddress.ts';

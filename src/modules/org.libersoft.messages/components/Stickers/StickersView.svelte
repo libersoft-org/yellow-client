@@ -1,7 +1,7 @@
 <script>
-  import { debug } from '@/core/core.js';
-  import { identifier } from '../../messages.js';
-  import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
+  import { debug } from '@/core/core.ts';
+  import { identifier } from '../../messages.ts';
+  import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.ts';
   import { liveQuery } from 'dexie';
   import { stickers_db } from '../../db.ts';
   import FuzzySearch from 'fuzzy-search';
@@ -10,7 +10,7 @@
   import Select from '@/core/components/Select/Select.svelte';
   import InputButton from '@/core/components/Input/InputButton.svelte';
   import StickersSearchResults from './StickersSearchResults.svelte';
-  import { isMobile } from '@/core/core.js';
+  import { isMobile } from '@/core/core.ts';
   import Spinner from '@/core/components/Spinner/Spinner.svelte';
   import { onMount, untrack } from 'svelte';
 

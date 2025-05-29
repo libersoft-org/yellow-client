@@ -27,11 +27,15 @@
   </Thead>
   <Tbody>
     <TbodyTr>
-      {#each settings as setting}
-        <TbodyTd title={setting.label}>
-          <Switch ariaLabel="debug" bind:checked={setting.store} />
-        </TbodyTd>
-      {/each}
+      <TbodyTd title="Run on system startup">
+        <Switch ariaLabel="Run on system startup" bind:checked={$runOnSystemStartup} />
+      </TbodyTd>
+      <TbodyTd title="Show tray icon">
+        <Switch ariaLabel="Show tray icon" bind:checked={$showTrayIcon} />
+      </TbodyTd>
+      <TbodyTd title="Close to minimize">
+        <Switch ariaLabel="Close to minimize" bind:checked={$closeToMinimize} />
+      </TbodyTd>
     </TbodyTr>
   </Tbody>
 </Table>

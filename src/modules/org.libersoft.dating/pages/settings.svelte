@@ -1,9 +1,9 @@
 <script lang="ts">
   import Content from '../components/content.svelte';
-  import core, { isMobile } from '@/core/core.js';
+  import core, { isMobile } from '@/core/core.ts';
   import TopBar from '@/core/components/TopBar/TopBar.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';
-  import { page } from '../dating.js';
+  import { page } from '../dating.ts';
 
   function modulePageClose() {
     page.set('');

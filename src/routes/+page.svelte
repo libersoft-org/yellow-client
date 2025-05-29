@@ -19,9 +19,9 @@
     product,
     version,
     link,
-  } from '../core/core.js';
+  } from '../core/core.ts';
   import { initBrowserNotifications, initCustomNotifications } from '../core/notifications.ts';
-  import { selected_theme_index, current_theme, themes_stored } from '../core/appearance_store.js';
+  import { selected_theme_index, current_theme, themes_stored } from '../core/appearance_store.ts';
   import Menu from '../core/components/Menu/Menu.svelte';
   import MenuBar from '../core/components/Menu/MenuBar.svelte';
   import ModuleBar from '../core/components/ModuleBar/ModuleBar.svelte';
@@ -36,12 +36,12 @@
   import WizardWelcomeStep3 from '@/core/pages/WelcomePage/WelcomeStep3.svelte';
   import WizardWelcomeStep4 from '@/core/pages/WelcomePage/WelcomeStep4.svelte';
   import { createTrayIcon, destroyTrayIcon } from '../core/tray_icon.ts';
-  import '../modules/org.libersoft.messages/module.js';
-  import '../modules/org.libersoft.contacts/module.js';
-  import '../modules/org.libersoft.wallet/module.js';
-  import '../modules/org.libersoft.dating/module.js';
-  import '../modules/org.libersoft.iframes/module.js';
-  import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
+  import '../modules/org.libersoft.messages/module.ts';
+  import '../modules/org.libersoft.contacts/module.ts';
+  import '../modules/org.libersoft.wallet/module.ts';
+  import '../modules/org.libersoft.dating/module.ts';
+  import '../modules/org.libersoft.iframes/module.ts';
+  import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.ts';
   import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
   import { initZoom } from '@/core/zoom.ts';
 

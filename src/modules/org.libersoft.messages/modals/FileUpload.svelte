@@ -1,10 +1,10 @@
 <script lang="ts">
   import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
-  import { humanSize } from '@/core/utils/fileUtils.js';
-  import { truncateText } from '@/core/utils/textUtils.js';
+  import { humanSize } from '@/core/utils/fileUtils.ts';
+  import { truncateText } from '@/core/utils/textUtils.ts';
   import { get, type Writable } from 'svelte/store';
   import { getContext } from 'svelte';
-  import { identifier, selectedConversation, initUpload } from '../messages.js';
+  import { identifier, selectedConversation, initUpload } from '../messages.ts';
 
   import Button from '@/core/components/Button/Button.svelte';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';

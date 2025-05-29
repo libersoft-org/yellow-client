@@ -1,4 +1,4 @@
-export function truncateText(text, maxLength = 20) {
+export function truncateText(text: string, maxLength: number = 20): string {
   if (text.length <= maxLength) {
     return text;
   }
@@ -12,7 +12,7 @@ export function truncateText(text, maxLength = 20) {
   return `${start} ..... ${end}`;
 }
 
-export function truncateTextEnd(text, maxLength = 20) {
+export function truncateTextEnd(text: string, maxLength: number = 20): string {
   if (text.length <= maxLength) {
     return text;
   }

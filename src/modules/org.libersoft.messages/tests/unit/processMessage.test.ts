@@ -10,7 +10,15 @@ import { processMessage } from '../../messages';
 describe('processMessage', () => {
   test('should create text node', () => {
     const message = 'Hello_World!';
-    const { body, format } = processMessage({ format: 'text', message });
+    const mockMessage = {
+      uid: '1',
+      address_from: 'test@example.com',
+      address_to: 'recipient@example.com',
+      created: new Date(),
+      format: 'text',
+      message,
+    };
+    const { body, format } = processMessage(mockMessage);
     expect(format).toBe('html');
     expect(body.nodeType).toBe(Node.DOCUMENT_FRAGMENT_NODE);
     expect(body.childNodes.length).toBe(1);
@@ -20,7 +28,15 @@ describe('processMessage', () => {
 
   test('should wrap custom elements Attachment in AttachmentsWrap', () => {
     const message = `<Attachment id="some-id-1"></Attachment><Attachment id="some-id-2"></Attachment><Attachment id="some-id-3"></Attachment>`;
-    const { body, format } = processMessage({ format: 'html', message });
+    const mockMessage = {
+      uid: '2',
+      address_from: 'test@example.com',
+      address_to: 'recipient@example.com',
+      created: new Date(),
+      format: 'html',
+      message,
+    };
+    const { body, format } = processMessage(mockMessage);
     expect(format).toBe('html');
     expect(body.nodeType).toBe(Node.DOCUMENT_FRAGMENT_NODE);
     expect(body.childNodes.length).toBe(1);

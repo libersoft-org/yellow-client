@@ -1,17 +1,17 @@
 <script>
-  import { debug, active_account, isMobile } from '@/core/core.js';
+  import { debug, active_account, isMobile } from '@/core/core.ts';
   import { getContext, onMount } from 'svelte';
   import { get } from 'svelte/store';
-  import { identifier } from '../../messages.js';
+  import { identifier } from '../../messages.ts';
   import Emoji from './Emoji.svelte';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
-  import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
-  import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
+  import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.ts';
+  import { start_emojisets_fetch, emoji_render } from '../../emojis.ts';
   import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
   import InputButton from '@/core/components/Input/InputButton.svelte';
   import FuzzySearch from 'fuzzy-search';
   import Spinner from '@/core/components/Spinner/Spinner.svelte';
-  import { longpress } from '../../ui.js';
+  import { longpress } from '../../ui.ts';
   import IntersectionObserver from 'svelte-intersection-observer';
 
   const MessageBar = getContext('MessageBar');

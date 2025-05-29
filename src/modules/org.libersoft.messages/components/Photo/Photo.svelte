@@ -1,5 +1,5 @@
 <script>
-  import { photoRadius } from '../../messages.js';
+  import { photoRadius } from '../../messages.ts';
   export let img = 'img/photo.svg';
   export let alt = '';
   export let size = '50px';

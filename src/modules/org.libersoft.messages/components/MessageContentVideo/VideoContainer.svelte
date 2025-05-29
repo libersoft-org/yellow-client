@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.js';
-  import { active_account } from '@/core/core.js';
+  import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.ts';
+  import { active_account } from '@/core/core.ts';
   import { onMount } from 'svelte';
   import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
-  import { humanSize } from '@/core/utils/fileUtils.js';
+  import { humanSize } from '@/core/utils/fileUtils.ts';
   import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
   import Button from '@/core/components/Button/Button.svelte';
   import { assembleFile, base64ToUint8Array } from '@/org.libersoft.messages/services/Files/utils.ts';
@@ -11,7 +11,7 @@
   import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
   import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
   import type { FileDownload, FileUpload, FileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
-  import { truncateText } from '@/core/utils/textUtils.js';
+  import { truncateText } from '@/core/utils/textUtils.ts';
   import _debug from 'debug';
   import Spinner from '@/core/components/Spinner/Spinner.svelte';
   import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';

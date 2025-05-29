@@ -1,20 +1,102 @@
 import { tick } from 'svelte';
-import { derived, get, writable } from 'svelte/store';
-import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import { log } from './tauri.ts';
-import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
-//import {} from './client_debug';
-export const debugBuffer = writable('');
-export const documentHeight = writable(0);
-export const isMobile = writable(false);
-export const keyboardHeight = writable(0);
-export const hideSidebarMobile = writable(false);
-export let isClientFocused = writable(true);
-export let selected_corepage_id = writable(null);
-export let selected_module_id = writable(null);
-export let modules_order = localStorageSharedStore('modules_order', {});
-export let modules_disabled = localStorageSharedStore('modules_disabled', []);
-export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
+import { derived, get, writable, type Writable, type Readable } from 'svelte/store';
+import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.js';
+import { log } from './tauri.js';
+import { friendlyTimestamp } from '@/core/utils/dateTime.js';
+
+// Global build constants
+declare const __BUILD_DATE__: string | undefined;
+declare const __COMMIT_HASH__: string | undefined;
+declare const __BRANCH__: string | undefined;
+
+// Type definitions
+export interface ModuleDeclaration {
+  id: string;
+  order?: number;
+  callbacks: {
+    init?: () => (() => void) | undefined;
+    onModuleSelected?: (selected: boolean) => void;
+    initData?: (acc: Account) => any;
+    initComms?: (acc: Account) => void;
+    deinitComms?: (acc: Account) => void;
+    deinitData?: (acc: Account) => void;
+  };
+  panels?: {
+    sidebar?: any;
+    content?: any;
+  };
+  deinit?: () => void;
+}
+
+export interface AccountCredentials {
+  server: string;
+  address: string;
+  password: string;
+  retry_nonce?: number;
+}
+
+export interface AccountConfig {
+  id: string;
+  credentials: AccountCredentials;
+  enabled: boolean;
+  settings: Record<string, any>;
+  server?: string; // Legacy fallback
+  address?: string; // Legacy fallback
+}
+
+export interface Account {
+  id: string;
+  socket_id: number;
+  settings: Record<string, any>;
+  credentials: AccountCredentials;
+  enabled: boolean;
+  suspended?: boolean;
+  status?: string;
+  error?: string | null;
+  session_status?: string;
+  requests: Record<number, RequestData>;
+  module_data: Record<string, any>;
+  available_modules: Record<string, any>;
+  events?: EventTarget;
+  socket?: WebSocket;
+  lastCommsTs?: number;
+  lastTransmissionTs?: number;
+  sessionID?: string;
+  wsGuid?: string;
+  original_wsGuid?: string;
+  bufferedAmount?: number;
+  pingTimer?: ReturnType<typeof setInterval>;
+  reconnectTimer?: ReturnType<typeof setTimeout>;
+}
+
+interface RequestData {
+  req: any;
+  callback: (req: any, res: any) => void;
+}
+
+interface ServerResponse {
+  requestID?: number;
+  event?: string;
+  error?: boolean;
+  message?: string;
+  data?: any;
+  detail?: any;
+}
+
+type AccountStore = Writable<Account>;
+
+// Exported stores
+export const debugBuffer = writable<string>('');
+export const documentHeight = writable<number>(0);
+export const isMobile = writable<boolean>(false);
+export const keyboardHeight = writable<number>(0);
+export const hideSidebarMobile = writable<boolean>(false);
+export let isClientFocused = writable<boolean>(true);
+export let selected_corepage_id = writable<string | null>(null);
+export let selected_module_id = writable<string | null>(null);
+export let modules_order = localStorageSharedStore<Record<string, number>>('modules_order', {});
+export let modules_disabled = localStorageSharedStore<string[]>('modules_disabled', []);
+export let debug = writable<boolean>(import.meta.env.VITE_CLIENT_DEBUG || false);
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
 export const version = '0.0.1';
@@ -23,11 +105,11 @@ export const commit = typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ :
 export const branch = typeof __BRANCH__ !== 'undefined' ? __BRANCH__ : 'unknown';
 export const link = 'https://yellow.libersoft.org';
 // declarations of modules that this client supports
-export let module_decls = writable({});
+export let module_decls = writable<Record<string, ModuleDeclaration>>({});
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
 
-export function init() {
-  let subs = [];
+export function init(): () => void {
+  let subs: (() => void)[] = [];
   subs.push(
     selected_module_id.subscribe(async (id) => {
       await tick();
@@ -81,7 +163,7 @@ export function init() {
   };
 }
 
-export function registerModule(id, decl) {
+export function registerModule(id: string, decl: ModuleDeclaration): void {
   console.log('REGISTER MODULE:', id, decl);
   if (get(modules_disabled).indexOf(id) !== -1) {
     console.log('Module disabled:', id);
@@ -98,14 +180,14 @@ export function registerModule(id, decl) {
   decl.deinit = decl.callbacks?.init?.();
 }
 
-export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
-export const accounts_config = localStorageSharedStore(
+export const active_account_id = localStorageReadOnceSharedStore<string | null>('active_account_id', null);
+export const accounts_config = localStorageSharedStore<AccountConfig[]>(
   'accounts_config',
   import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS
     ? JSON.parse(import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS)
     : []
 );
-export let accounts = writable([]);
+export let accounts = writable<AccountStore[]>([]);
 
 import.meta.hot?.dispose(() => {
   get(accounts).forEach((acc) => {
@@ -113,11 +195,11 @@ import.meta.hot?.dispose(() => {
   });
 });
 
-export function findAccount(id) {
+export function findAccount(id: string): AccountStore | undefined {
   return get(accounts).find((account) => get(account).id === id);
 }
 
-export function accountExists(server, address) {
+export function accountExists(server: string, address: string): boolean {
   const currentConfig = get(accounts_config);
   const identifier = `${server}\\\\${address}`;
   return currentConfig.some((account) => {
@@ -136,19 +218,19 @@ export let active_account_store = derived([accounts, active_account_id], ([$acco
 });
 
 // Create a derived store that depends on active_account_store and its nested account store. The contents is the account object.
-export let active_account = derived(active_account_store, ($active_account_store, set) => {
+export let active_account: Readable<Account | null> = derived(active_account_store, ($active_account_store, set) => {
   if (!$active_account_store) {
     return set(null);
   }
   // subscribe to the store that contains the account object
-  const unsubscribe = $active_account_store.subscribe((account) => {
+  const unsubscriber = $active_account_store.subscribe((account) => {
     //console.log('DERIVED NESTED STORE:', account);
     set(account);
   });
-  return () => unsubscribe();
+  return () => unsubscriber();
 });
 
-export function active_account_module_data(module_id) {
+export function active_account_module_data(module_id: string): Readable<any> {
   return derived(active_account, ($active_account) => {
     if (!$active_account) {
       console.log('no active account => no module data.');
@@ -161,7 +243,7 @@ export function active_account_module_data(module_id) {
   });
 }
 
-export function relay(md, key) {
+export function relay(md: Readable<any>, key: string): Writable<any> {
   let r = derived(md, ($md, set) => {
     if (!$md) {
       set(null);
@@ -174,18 +256,19 @@ export function relay(md, key) {
     return () => {
       unsubscribe();
     };
-  });
-  r.set = (v) => {
+  }) as any; // Cast to any to allow adding set/update methods
+
+  r.set = (v: any) => {
     //console.log('SET:', get(md), 'key:',  key,  'v:', v);
     get(md)[key].set(v);
   };
-  r.update = (fn) => {
+  r.update = (fn: (value: any) => any) => {
     get(md)[key].update(fn);
   };
-  return r;
+  return r as Writable<any>;
 }
 
-function updateLiveAccount(account, config) {
+function updateLiveAccount(account: AccountStore, config: AccountConfig): void {
   let acc = get(account);
   //console.log('updateLiveAccount', acc, config);
 
@@ -234,7 +317,7 @@ function updateLiveAccount(account, config) {
   }
 }
 
-function createLiveAccount(config) {
+function createLiveAccount(config: AccountConfig): void {
   // add new account
   let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
   //console.log('NEW account', get(account));
@@ -243,7 +326,7 @@ function createLiveAccount(config) {
   else _disableAccount(account);
 }
 
-function removeLiveAccountsNotInConfig(accounts_list, value) {
+function removeLiveAccountsNotInConfig(accounts_list: AccountStore[], value: AccountConfig[]): void {
   // remove accounts that are not in config
   for (let account of accounts_list) {
     if (!value.find((conf) => conf.id === get(account).id)) {
@@ -254,7 +337,7 @@ function removeLiveAccountsNotInConfig(accounts_list, value) {
   }
 }
 
-export function toggleAccountEnabled(id) {
+export function toggleAccountEnabled(id: string): void {
   log.debug('TOGGLE ACCOUNT ENABLED accounts_config', accounts_config);
   log.debug('TOGGLE ACCOUNT ENABLED id', id);
   accounts_config.update((v) =>
@@ -265,7 +348,7 @@ export function toggleAccountEnabled(id) {
   );
 }
 
-export function selectAccount(id) {
+export function selectAccount(id: string): void {
   log.debug('SELECT ACCOUNT', id);
   if (get(active_account_id) === id) return;
   /* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
@@ -278,17 +361,25 @@ export function selectAccount(id) {
   }
   active_account_id.set(id);
   tick().then(() => {
-    if (get(active_account).module_data[old_selected_module]) selected_module_id.set(old_selected_module);
+    const currentAccount = get(active_account);
+    if (currentAccount && old_selected_module && currentAccount.module_data[old_selected_module]) {
+      selected_module_id.set(old_selected_module);
+    }
   });
 }
 
-function onAvailableModulesChanged(acc) {
+function onAvailableModulesChanged(acc: Account): void {
   updateModulesComms(acc);
 }
 
-function constructAccount(id, credentials, enabled, settings) {
+function constructAccount(
+  id: string,
+  credentials: AccountCredentials,
+  enabled: boolean,
+  settings: Record<string, any>
+): AccountStore {
   log.debug('CONSTRUCT ACCOUNT', id, credentials, enabled, settings);
-  let acc = {
+  let acc: Account = {
     id,
     socket_id: 0,
     settings: { ...settings },
@@ -308,7 +399,7 @@ function constructAccount(id, credentials, enabled, settings) {
   return account;
 }
 
-function _enableAccount(account) {
+function _enableAccount(account: AccountStore): void {
   let acc = get(account);
   acc.enabled = true;
   acc.suspended = false;
@@ -328,7 +419,7 @@ function _enableAccount(account) {
   reconnectAccount(account);
 }
 
-function _disableAccount(account) {
+function _disableAccount(account: AccountStore): void {
   log.debug('DISABLE ACCOUNT', account);
   let acc = get(account);
   clearAccount(acc);
@@ -340,7 +431,7 @@ function _disableAccount(account) {
   account.update((v) => v);
 }
 
-function reconnectAccount(account) {
+function reconnectAccount(account: AccountStore): void {
   log.debug('RECONNECT ACCOUNT', account);
   let acc = get(account);
   if (!acc.enabled) return;
@@ -382,7 +473,7 @@ function reconnectAccount(account) {
     account.update((v) => v);
     try {
       acc.socket = new WebSocket(acc.credentials.server);
-    } catch (e) {
+    } catch (e: any) {
       const msg = e.message;
       acc.error = msg;
       acc.suspended = true;
@@ -418,7 +509,7 @@ function reconnectAccount(account) {
       }
       log.debug('WebSocket ' + socket_id + ' error:', event);
       retry(account, 'Connection error');
-      acc.error = 'Network error: ' + event.message;
+      acc.error = 'Network error: ' + (event as any).message || 'Unknown error';
       acc.session_status = undefined;
       account.update((v) => v);
     };
@@ -449,7 +540,7 @@ function reconnectAccount(account) {
   }
 }
 
-function retry(account, msg) {
+function retry(account: AccountStore, msg: string): void {
   let acc = get(account);
   log.debug('RETRY ACCOUNT', acc);
   if (!acc.enabled || acc.suspended) return;
@@ -468,7 +559,7 @@ function retry(account, msg) {
   setReconnectTimer(account);
 }
 
-function setReconnectTimer(account) {
+function setReconnectTimer(account: AccountStore): void {
   let acc = get(account);
   if (acc.reconnectTimer != null) {
     clearInterval(acc.reconnectTimer);
@@ -478,22 +569,22 @@ function setReconnectTimer(account) {
   }, 1000);
 }
 
-function clearReconnectTimer(account) {
+function clearReconnectTimer(account: AccountStore): void {
   let acc = get(account);
   if (acc.reconnectTimer) {
     clearTimeout(acc.reconnectTimer);
-    acc.reconnectTimer = null;
+    acc.reconnectTimer = undefined;
   }
 }
 
-function clearPingTimer(acc) {
+function clearPingTimer(acc: Account): void {
   if (acc.pingTimer) {
     clearInterval(acc.pingTimer);
-    acc.pingTimer = null;
+    acc.pingTimer = undefined;
   }
 }
 
-function sendLoginCommand(account) {
+function sendLoginCommand(account: AccountStore): void {
   log.debug('Sending login command');
   let acc = get(account);
   send(
@@ -526,7 +617,7 @@ function sendLoginCommand(account) {
   );
 }
 
-function saveOriginalWsGuid(acc) {
+function saveOriginalWsGuid(acc: Account): void {
   /* acc.original_wsGuid can be used to detect if a tab with an upload has been reloaded. Upload has to be paired with client wsGuid first. Module can then send a notification that asks clients with the original wsGuid if the file is still available. */
   let sess = window.sessionStorage;
   let json = sess.getItem('sessions') || '{}';
@@ -540,7 +631,7 @@ function saveOriginalWsGuid(acc) {
   acc.original_wsGuid = original_wsGuid;
 }
 
-function setupPing(account) {
+function setupPing(account: AccountStore): void {
   let acc = get(account);
   /*window.setInterval(() => {
   send(
@@ -561,11 +652,11 @@ function setupPing(account) {
  }, 500);*/
   setInterval(() => {
     if (get(debug)) {
-      acc.bufferedAmount = acc.socket.bufferedAmount;
+      acc.bufferedAmount = acc.socket?.bufferedAmount;
       account.update((v) => v);
     }
   }, 500);
-  acc.pingTimer = window.setInterval(() => {
+  acc.pingTimer = setInterval(() => {
     if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
       acc.status = 'Retrying...';
       acc.error = 'Not connected';
@@ -595,8 +686,8 @@ function setupPing(account) {
       },
       false
     );
-    let noCommsSeconds = Date.now() - acc.lastCommsTs;
-    if (noCommsSeconds > 60000 + (Date.now() - acc.lastTransmissionTs)) {
+    let noCommsSeconds = Date.now() - (acc.lastCommsTs || 0);
+    if (noCommsSeconds > 60000 + (Date.now() - (acc.lastTransmissionTs || 0))) {
       const msg = 'No comms for ' + noCommsSeconds / 1000 + ' seconds, reconnecting...';
       log.debug(msg);
       // not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
@@ -610,7 +701,7 @@ function setupPing(account) {
   }, ping_interval);
 }
 
-function initModuleComms(acc, module_id, decl) {
+function initModuleComms(acc: Account, module_id: string, decl: ModuleDeclaration): void {
   console.log('initModuleComms:', decl);
   if (!acc.module_data[module_id]) {
     if (decl.callbacks.initData) acc.module_data[module_id] = decl.callbacks?.initData(acc);
@@ -621,12 +712,12 @@ function initModuleComms(acc, module_id, decl) {
   if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
 }
 
-function deinitModuleComms(decl, acc) {
+function deinitModuleComms(decl: ModuleDeclaration, acc: Account): void {
   acc.module_data[decl.id].online?.set(false);
   if (decl.callbacks.deinitComms) decl.callbacks.deinitComms(acc);
 }
 
-function updateModulesComms(acc) {
+function updateModulesComms(acc: Account): void {
   let available_modules = acc.available_modules;
   let module_decls_v = get(module_decls);
   for (const module_id in module_decls_v) {
@@ -651,24 +742,24 @@ function updateModulesComms(acc) {
   }
 }
 
-function disconnectAccount(acc) {
+function disconnectAccount(acc: Account): void {
   acc.requests = {};
   acc.available_modules = {};
   onAvailableModulesChanged(acc);
   if (acc.socket) {
     acc.socket.close();
-    acc.socket = null;
+    acc.socket = undefined;
   }
   console.log('Account disconnected');
 }
 
-function clearAccount(acc) {
+function clearAccount(acc: Account): void {
   disconnectAccount(acc);
   acc.requests = {};
   acc.module_data = {};
 }
 
-function handleSocketMessage(acc, res) {
+function handleSocketMessage(acc: Account, res: ServerResponse): void {
   //console.log('MESSAGE FROM SERVER', res);
   if (res.requestID) {
     // it is response to command:
@@ -678,17 +769,25 @@ function handleSocketMessage(acc, res) {
     delete acc.requests[res.requestID];
   } else if (res.event) {
     //console.log('EVENT:', res);
-    acc.events.dispatchEvent(new CustomEvent(res.event, { detail: res }));
+    acc.events?.dispatchEvent(new CustomEvent(res.event, { detail: res }));
   } else console.log('Unknown command from server:', res);
 }
 
-export function getGuid(length = 40) {
+export function getGuid(length: number = 40): string {
   let result = '';
   while (result.length < length) result += Math.random().toString(36);
   return result;
 }
 
-export function sendAsync(acc, account, target, command, params = {}, sendSessionID = true, quiet = false) {
+export function sendAsync(
+  acc: Account,
+  account: AccountStore,
+  target: string,
+  command: string,
+  params: any = {},
+  sendSessionID: boolean = true,
+  quiet: boolean = false
+): Promise<any> {
   return new Promise((resolve, reject) => {
     send(acc, account, target, command, params, sendSessionID, (req, res) => {
       resolve(res);
@@ -696,7 +795,16 @@ export function sendAsync(acc, account, target, command, params = {}, sendSessio
   });
 }
 
-export function send(acc, account, target, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
+export function send(
+  acc: Account,
+  account: AccountStore | null,
+  target: string,
+  command: string,
+  params: any = {},
+  sendSessionID: boolean = true,
+  callback: ((req: any, res: any) => void) | null = null,
+  quiet: boolean = false
+): number | undefined {
   /*
  acc: account object
  account: account store, optional, for debugging
@@ -710,7 +818,7 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
     return;
   }
   const requestID = generateRequestID();
-  const req = {
+  const req: any = {
     target: target,
     requestID,
   };
@@ -743,17 +851,11 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
 
 let lastRequestId = 0;
 
-function generateRequestID() {
+function generateRequestID(): number {
   return ++lastRequestId;
 }
 
 // import inspect from 'browser-util-inspect';
-function formatNoColor(args) {
-  let msg = '';
-  const inspected_nocolor = args.map((o) => (typeof o === 'string' ? o : o));
-  for (const v of inspected_nocolor) msg += v + ' ';
-  return msg;
-}
 
 /*
 let originalLog;

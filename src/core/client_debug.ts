@@ -1,4 +1,4 @@
-async function initializeFaroIfEnabled() {
+async function initializeFaroIfEnabled(): Promise<void> {
   if (import.meta.env.VITE_FARO_ENABLED === 'true') {
     const { getWebInstrumentations, initializeFaro } = await import('@grafana/faro-web-sdk');
     const { TracingInstrumentation } = await import('@grafana/faro-web-tracing');

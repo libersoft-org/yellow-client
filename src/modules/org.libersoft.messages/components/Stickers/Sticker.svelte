@@ -1,10 +1,10 @@
 <script>
-  import { debug } from '@/core/core.js';
+  import { debug } from '@/core/core.ts';
   import lottie from 'lottie-web';
   import pako from 'pako';
   import { getContext, onMount, onDestroy } from 'svelte';
   import { readable } from 'svelte/store';
-  import { identifier } from '../../messages.js';
+  import { identifier } from '../../messages.ts';
   import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
 
   export let file = '';

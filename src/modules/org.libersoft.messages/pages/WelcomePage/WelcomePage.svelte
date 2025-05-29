@@ -1,9 +1,9 @@
 <script>
-  import { identifier, online } from '../../messages.js';
+  import { identifier, online } from '../../messages.ts';
   import Button from '@/core/components/Button/Button.svelte';
   import Modal from '@/core/components/Modal/Modal.svelte';
   import ModalNewConversation from '../../modals/NewConversation.svelte';
-  import core, { active_account, isMobile, selected_module_id } from '@/core/core.js';
+  import core, { active_account, isMobile, selected_module_id } from '@/core/core.ts';
   import TopBar from '@/core/components/TopBar/TopBar.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';
 

@@ -4,7 +4,7 @@
   import Button from '@/core/components/Button/Button.svelte';
   import Switch from '@/core/components/Switch/Switch.svelte';
   import { addNotification } from '../../notifications.ts';
-  import { debug } from '../../core.js';
+  import { debug } from '../../core.ts';
   import { log } from '../../tauri.ts';
 
   let showFiles2Modal = false;

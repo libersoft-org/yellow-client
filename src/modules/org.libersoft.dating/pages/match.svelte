@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { module } from '../module.js';
+  import { module } from '../module.ts';
   import Content from '../components/content.svelte';
   import PhotoCard from '../components/photo-card.svelte';
-  import { page } from '../dating.js';
-  import core, { isMobile } from '@/core/core.js';
+  import { page } from '../dating.ts';
+  import core, { isMobile } from '@/core/core.ts';
   import Icon from '@/core/components/Icon/Icon.svelte';
   import TopBar from '@/core/components/TopBar/TopBar.svelte';
 

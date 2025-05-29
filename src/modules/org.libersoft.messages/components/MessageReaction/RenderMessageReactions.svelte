@@ -4,7 +4,7 @@
   import { emoji_render, rgi_to_codepoints } from '../../emojis';
   import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
   import { get } from 'svelte/store';
-  import { active_account } from '@/core/core';
+  import { active_account } from '@/core/core.ts';
   import { highlightElement } from '@/core/utils/animationUtils.ts';
   import _union from 'lodash/union';
   import _isEqual from 'lodash/isEqual';

@@ -1,5 +1,5 @@
 <script>
-  import { selectedConversation } from '../../messages.js';
+  import { selectedConversation } from '../../messages.ts';
   import WelcomePage from '../WelcomePage/WelcomePage.svelte';
   import Conversation from '../../components/Conversation/Conversation.svelte';
   import Gallery from '../../components/Gallery/Gallery.svelte';

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { gif_servers } from '../gifs.js';
+  import { gif_servers } from '../gifs.ts';
   import Input from '@/core/components/Input/Input.svelte';
   import Button from '@/core/components/Button/Button.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';

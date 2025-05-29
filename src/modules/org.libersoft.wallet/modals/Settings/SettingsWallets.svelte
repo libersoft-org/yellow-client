@@ -1,5 +1,5 @@
 <script>
-  import { module } from '../../module.js';
+  import { module } from '../../module.ts';
   import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
   import ModalNewWallet from '../../modals/new-wallet.svelte';
 

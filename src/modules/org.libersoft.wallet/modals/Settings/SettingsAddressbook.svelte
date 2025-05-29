@@ -14,7 +14,7 @@
   import ModalAddEdit from '../../modals/addressbook-add-edit.svelte';
   import ModalDel from '../../modals/addressbook-del.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';
-  import { module } from '../../module.js';
+  import { module } from '../../module.ts';
   import { addressBook } from '../../wallet.ts';
   import { get } from 'svelte/store';
 

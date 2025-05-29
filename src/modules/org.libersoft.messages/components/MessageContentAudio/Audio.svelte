@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../../messages.js';
+  import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../../messages.ts';
   //import WaveSurfer from 'wavesurfer.js';
   import { onMount } from 'svelte';
   import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
   import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
   import { get, writable } from 'svelte/store';
-  import { active_account } from '@/core/core.js';
-  import { humanSize } from '@/core/utils/fileUtils.js';
+  import { active_account } from '@/core/core.ts';
+  import { humanSize } from '@/core/utils/fileUtils.ts';
   import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
   import Button from '@/core/components/Button/Button.svelte';
   import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';

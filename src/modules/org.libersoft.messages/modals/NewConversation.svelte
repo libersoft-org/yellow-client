@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { openNewConversation } from '../messages.js';
+  import { openNewConversation } from '../messages.ts';
   import Button from '@/core/components/Button/Button.svelte';
   import Input from '@/core/components/Input/Input.svelte';
   import { m } from '@/lib/paraglide/messages.js';

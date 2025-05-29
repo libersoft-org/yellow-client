@@ -1,5 +1,5 @@
 <script>
-  import { module } from '../module.js';
+  import { module } from '../module.ts';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';
   export let img = null;

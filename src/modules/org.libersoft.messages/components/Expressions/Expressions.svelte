@@ -1,5 +1,5 @@
 <script>
-  import { identifier } from '../../messages.js';
+  import { identifier } from '../../messages.ts';
   import Emojis from '../Emoji/Emojis.svelte';
   import Stickers from '../Stickers/Stickers.svelte';
   import GifSet from '../GifSet/GifSet.svelte';

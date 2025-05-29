@@ -17,15 +17,6 @@
     selectedNotificationsCorner,
     enableCustomNotifications,
     customNotificationsOn,
-    animationDuration,
-    animationName,
-    titleMaxLines,
-    bodyMaxLines,
-    bgColor,
-    bgColorHover,
-    borderColor,
-    titleColor,
-    descColor,
     notificationsSoundEnabled,
   } from '../../notifications_settings.ts';
   import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
@@ -35,9 +26,9 @@
     isRequestingNotificationsPermission,
   } from '../../notifications_settings.ts';
   import { deleteExampleNotifications, setNotificationsEnabled } from '../../notifications.ts';
-  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
+  import { log, BROWSER } from '../../tauri.ts';
   import { deleteNotification, updateExampleNotification, exampleNotifications } from '../../notifications.ts';
-  import { debug } from '@/core/core.js';
+  import { debug } from '@/core/core.ts';
   import { onDestroy, onMount, tick } from 'svelte';
   import { skipFirst } from '$lib/skipfirst_store.ts';
 
@@ -47,7 +38,7 @@
   let permissionInterval: Timer | undefined;
   let monitorOptions = writable<any[]>([]);
   let _notificationsEnabled = get(notificationsEnabled);
-  let mounted = false;
+  // let mounted = false; // Unused variable
 
   // Store all subscription unsubscribe functions
   const unsubscribers: Unsubscriber[] = [];

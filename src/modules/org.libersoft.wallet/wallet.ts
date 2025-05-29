@@ -9,8 +9,8 @@ import {
   type PreparedTransactionRequest,
 } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
-import { getGuid } from '@/core/core.js';
-export { default_networks } from './default_networks.js';
+import { getGuid } from '@/core/core.ts';
+export { default_networks } from './default_networks.ts';
 
 interface Address {
   address: string;

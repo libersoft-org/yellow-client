@@ -3,7 +3,7 @@
   import QRCode from 'qrcode';
   import Button from '@/core/components/Button/Button.svelte';
   import { generateMnemonic, addWallet } from '../wallet.ts';
-  import { module } from '../module.js';
+  import { module } from '../module.ts';
   export let close;
   let mnemonic = {};
   let phrase = '';

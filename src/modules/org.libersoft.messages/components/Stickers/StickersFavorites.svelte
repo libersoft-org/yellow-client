@@ -1,6 +1,6 @@
 <script>
   import StickersView from './StickersView.svelte';
-  import { stickerset_favorites } from '../../stickers.js';
+  import { stickerset_favorites } from '../../stickers.ts';
 
   let view;
   export function onShow() {

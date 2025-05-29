@@ -1,5 +1,5 @@
 <script>
-  import { identifier, conversationsArray, selectConversation } from '../../messages.js';
+  import { identifier, conversationsArray, selectConversation } from '../../messages.ts';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';
   import Modal from '@/core/components/Modal/Modal.svelte';

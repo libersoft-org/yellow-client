@@ -1,6 +1,21 @@
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
+
+interface NetworkCurrency {
+  symbol: string;
+  iconURL: string;
+}
+
+interface Network {
+  name: string;
+  chainID: number;
+  rpcURLs: string[];
+  currency: NetworkCurrency;
+  explorerURL: string;
+}
+
 const iconUrlBase = 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/coins/';
-export const default_networks = writable([
+
+export const default_networks: Writable<Network[]> = writable([
   {
     name: 'Ethereum - Mainnet',
     chainID: 1,
