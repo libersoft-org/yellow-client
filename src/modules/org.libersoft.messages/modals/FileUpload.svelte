@@ -96,6 +96,7 @@
   background-color: #eee;
   border: 1px dashed #888;
   border-radius: 10px;
+  width: 100%;
  }
 
  .drop-active .items-empty {
@@ -111,49 +112,6 @@
   display: flex;
   gap: 10px;
   justify-content: space-between;
- }
-
- .file-table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
- }
-
- .file-table :global(table) {
-  width: 100%;
- }
-
- .file-table :global(tbody) {
-  display: block;
-  width: 100%;
-  overflow: auto;
-  max-height: 35vh;
- }
-
- .file-table :global(thead tr) {
-  display: block;
- }
-
- .file-table :global(tbody tr),
- .file-table :global(thead tr) {
-  display: flex;
-  align-items: center;
- }
-
- .file-table :global(th:nth-child(1)),
- .file-table :global(td:nth-child(1)) {
-  flex: 0 1 80%;
- }
-
- .file-table :global(th:nth-child(2)),
- .file-table :global(td:nth-child(2)) {
-  flex: 1 0 20%;
-  text-align: right;
- }
-
- .file-table :global(th:nth-child(3)),
- .file-table :global(td:nth-child(3)) {
-  flex: 0 0;
  }
 </style>
 
@@ -174,13 +132,13 @@
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
  <input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
  <div class="header">
-  <Button width="110px" img="img/add.svg" colorVariable="--icon-black" text="Add files" onClick={onFileAdd} />
-  <Button width="110px" img="img/del.svg" colorVariable="--icon-black" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
+  <Button width="100%" img="img/add.svg" colorVariable="--icon-black" text="Add files" onClick={onFileAdd} />
+  <Button width="100%" img="img/del.svg" colorVariable="--icon-black" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
  </div>
  <div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
   {#if $fileUploadModalFiles.length}
    <div class="items file-table">
-    <Table>
+    <Table breakpoint="0">
      <Thead>
       <TheadTr>
        <TheadTh>File name:</TheadTh>
@@ -196,7 +154,7 @@
     </Table>
    </div>
   {:else}
-   <BaseButton onClick={onFileAdd}>
+   <BaseButton onClick={onFileAdd} width="100%">
     <div class="items-empty" role="none">
      Drag and drop your files here<br />or click here to add files.
     </div>
