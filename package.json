@@ -18,7 +18,7 @@
   "prepare": "husky"
  },
  "lint-staged": {
-  "*.{js,ts,svelte,html,json,css,md}": "prettier --config prettier-libersoft.json --plugin 'prettier-plugin-svelte' --write"
+  "*.{js,ts,svelte,html,json,css,md}": "prettier --plugin 'prettier-plugin-svelte' --write"
  },
  "dependencies": {
   "@floating-ui/dom": "^1.6.13",
