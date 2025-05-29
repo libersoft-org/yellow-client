@@ -1,6 +1,6 @@
 export class FilesServiceError extends Error {
- constructor(message) {
-  super(message);
-  this.name = 'FilesServiceError';
- }
+  constructor(message) {
+    super(message);
+    this.name = 'FilesServiceError';
+  }
 }

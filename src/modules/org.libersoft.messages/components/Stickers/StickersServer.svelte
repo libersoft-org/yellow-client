@@ -1,10 +1,10 @@
 <script>
- import StickersView from './StickersView.svelte';
+  import StickersView from './StickersView.svelte';
 
- let view;
- export function onShow() {
-  view.onShow();
- }
+  let view;
+  export function onShow() {
+    view.onShow();
+  }
 </script>
 
 <StickersView bind:this={view} />

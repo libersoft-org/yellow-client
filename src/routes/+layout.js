@@ -2,8 +2,8 @@ export const ssr = false;
 
 let p;
 try {
- p = !!process.env.TAURI;
+  p = !!process.env.TAURI;
 } catch (e) {
- p = false;
+  p = false;
 }
 export const prerender = p;

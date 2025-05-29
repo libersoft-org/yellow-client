@@ -1,7 +1,7 @@
 <script>
 </script>
 
+<div class="welcome-sidebar"></div>
+
 <style>
 </style>
-
-<div class="welcome-sidebar"></div>

@@ -1,21 +1,21 @@
 <script>
- import BaseButton from '@/core/components/Button/BaseButton.svelte';
- export let content;
- export let onClick;
+  import BaseButton from '@/core/components/Button/BaseButton.svelte';
+  export let content;
+  export let onClick;
 </script>
 
-<style>
- .photo-card-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  border: 1px solid #000;
-  border-radius: 50%;
-  box-shadow: var(--shadow);
- }
-</style>
-
 <BaseButton {onClick}>
- <div class="photo-card-button">{content}</div>
+  <div class="photo-card-button">{content}</div>
 </BaseButton>
+
+<style>
+  .photo-card-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    box-shadow: var(--shadow);
+  }
+</style>

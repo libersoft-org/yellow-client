@@ -2,56 +2,56 @@ import { derived, writable } from 'svelte/store';
 import type { Message } from '../types.ts';
 
 export enum ReplyToType {
- MESSAGE = 'message',
+  MESSAGE = 'message',
 }
 
 export interface ReplyTo {
- type: ReplyToType;
- data: Message;
+  type: ReplyToType;
+  data: Message;
 }
 
 export interface MessageBarReplyStoreValue {
- open: boolean;
- replyTo: ReplyTo | null;
+  open: boolean;
+  replyTo: ReplyTo | null;
 }
 
 export class MessageBarReplyStore {
- store = writable<MessageBarReplyStoreValue>({
-  open: false,
-  replyTo: null,
- });
-
- isOpen() {
-  return derived(this.store, $store => $store.open);
- }
-
- setReplyTo(replyTo: ReplyTo | null) {
-  this.store.update(store => {
-   store.replyTo = replyTo;
-   return store;
+  store = writable<MessageBarReplyStoreValue>({
+    open: false,
+    replyTo: null,
   });
- }
 
- setOpen(open: boolean) {
-  this.store.update(store => {
-   store.open = open;
-   return store;
-  });
- }
+  isOpen() {
+    return derived(this.store, ($store) => $store.open);
+  }
 
- getReplyTo() {
-  return derived(this.store, $store => $store.replyTo);
- }
+  setReplyTo(replyTo: ReplyTo | null) {
+    this.store.update((store) => {
+      store.replyTo = replyTo;
+      return store;
+    });
+  }
 
- startReplyTo(replyTo: ReplyTo) {
-  this.setReplyTo(replyTo);
-  this.setOpen(true);
- }
+  setOpen(open: boolean) {
+    this.store.update((store) => {
+      store.open = open;
+      return store;
+    });
+  }
 
- close() {
-  this.setReplyTo(null);
-  this.setOpen(false);
- }
+  getReplyTo() {
+    return derived(this.store, ($store) => $store.replyTo);
+  }
+
+  startReplyTo(replyTo: ReplyTo) {
+    this.setReplyTo(replyTo);
+    this.setOpen(true);
+  }
+
+  close() {
+    this.setReplyTo(null);
+    this.setOpen(false);
+  }
 }
 
 const messageBarReplyStore = new MessageBarReplyStore();
