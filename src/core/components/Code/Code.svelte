@@ -131,6 +131,34 @@ function pastePlainText(event: ClipboardEvent) {
   // Force re-highlight with cursor position preserved
   code = elDiv?.innerText || '';
 }
+
+// Handle keydown events, especially Enter key
+function handleKeyDown(event: KeyboardEvent) {
+  // Handle Enter key to prevent inserting multiple newlines
+  if (event.key === 'Enter') {
+    event.preventDefault();
+
+    // Get current position
+    const pos = getCursorPosition();
+
+    // Get current text
+    const currentText = elDiv?.innerText || '';
+
+    // Insert a single newline at cursor position
+    const newText = currentText.slice(0, pos) + '\n' + currentText.slice(pos);
+
+    // Update text
+    code = newText;
+
+    // Set cursor position after the inserted newline
+    lastCursorPos = pos + 1;
+
+    // Need to manually trigger update since we're preventing default
+    setTimeout(() => {
+      setCursorPosition(lastCursorPos);
+    }, 0);
+  }
+}
 </script>
 
 <style>
@@ -139,7 +167,8 @@ function pastePlainText(event: ClipboardEvent) {
   padding: 24px;
   border: 1px solid #888;
   scrollbar-width: none;
-  background-color: #555;
+  background-color: #222;
+  foreground-color: #fff3eb;
   max-width: 500px;
   width: 100vw;
   max-width: 700px;
@@ -342,6 +371,7 @@ function pastePlainText(event: ClipboardEvent) {
       }, 0);
     }
   }}
+  on:keydown={handleKeyDown}
   on:paste={pastePlainText}
   on:focus={() => {
     // Ensure we have content for cursor to appear when focused
