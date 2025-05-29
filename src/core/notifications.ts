@@ -3,30 +3,14 @@ import { writable } from 'svelte/store';
 import { multiwindow_store } from './multiwindow_store.ts';
 import { TAURI, TAURI_MOBILE, CUSTOM_NOTIFICATIONS, BROWSER, log } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
-import {
-	notificationsEnabled,
-	isRequestingNotificationsPermission,
-	notificationsSettingsAlert,
-	enableCustomNotifications,
-	mainWindowMonitor,
-	notificationsSoundEnabled,
-} from './notifications_settings.ts';
+import { notificationsEnabled, isRequestingNotificationsPermission, notificationsSettingsAlert, enableCustomNotifications, mainWindowMonitor, notificationsSoundEnabled } from './notifications_settings.ts';
 // import { playAndStopExample } from './audio.ts';
 import {
 	// availableMonitors,
 	currentMonitor,
 	// getCurrentWindow,
 } from '@tauri-apps/api/window';
-import {
-	isPermissionGranted,
-	requestPermission,
-	sendNotification,
-	registerActionTypes,
-	createChannel,
-	Importance,
-	Visibility,
-	onAction,
-} from '@tauri-apps/plugin-notification';
+import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
 import { Mutex } from 'async-mutex';
 // import * as app from '@tauri-apps/api';
 
@@ -191,18 +175,7 @@ async function removeNotification(id: string): Promise<void> {
 
 export async function addNotification(notification: Partial<YellowNotification>): Promise<string | null> {
 	let enabled = get(notificationsEnabled);
-	log.debug(
-		'addNotification: enabled:',
-		enabled,
-		'TAURI:',
-		TAURI,
-		'TAURI_MOBILE:',
-		TAURI_MOBILE,
-		'CUSTOM_NOTIFICATIONS:',
-		CUSTOM_NOTIFICATIONS,
-		'BROWSER:',
-		BROWSER
-	);
+	log.debug('addNotification: enabled:', enabled, 'TAURI:', TAURI, 'TAURI_MOBILE:', TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
 	if (!enabled) return null;
 
 	let n: YellowNotification = {

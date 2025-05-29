@@ -22,12 +22,7 @@
 	}
 </script>
 
-<div
-	class="input-button"
-	style:flex-grow={grow && '1'}
-	style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'}
-	style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}
->
+<div class="input-button" style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}>
 	<input {type} {placeholder} bind:this={elInput} bind:value on:keydown={(e) => handleKeydown(e)} />
 	<Icon {img} {alt} colorVariable="--icon-black" size="20px" padding="10px" {onClick} />
 </div>

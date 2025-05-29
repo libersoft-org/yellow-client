@@ -1,14 +1,7 @@
 <script>
 	import { onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
-	import {
-		debug,
-		active_account,
-		accounts,
-		selectAccount,
-		selected_corepage_id,
-		hideSidebarMobile,
-	} from '../../core.js';
+	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import BaseButton from '@/core/components/Button/BaseButton.svelte';
 	import AccountBarItem from './AccountBarItem.svelte';
@@ -95,13 +88,7 @@
 					<div class="text">CREATE ACCOUNT FIRST</div>
 				{/if}
 			{/if}
-			<Icon
-				img={'img/down.svg'}
-				alt={accountsVisible ? '▲' : '▼'}
-				colorVariable="--icon-white"
-				size="20px"
-				padding="0px"
-			/>
+			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
 		</div>
 	</BaseButton>
 	{#if accountsVisible}

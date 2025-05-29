@@ -20,11 +20,7 @@ export abstract class MediaLoader {
 
 	abstract setup(mediaFileInfo: MediaFileInfo): Promise<void>;
 	// abstract loadChunk(offset: number): Promise<Uint8Array>;
-	abstract processChunk(chunk: {
-		offset: number;
-		chunkSize: number;
-		data: Uint8Array<ArrayBuffer>;
-	}): NextByteOffset | void;
+	abstract processChunk(chunk: { offset: number; chunkSize: number; data: Uint8Array<ArrayBuffer> }): NextByteOffset | void;
 
 	seek?: (time: number) => NextByteOffset;
 }

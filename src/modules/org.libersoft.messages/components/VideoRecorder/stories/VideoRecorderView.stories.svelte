@@ -30,16 +30,8 @@
 			errorMessages: null,
 			videoRef: undefined,
 
-			audioDevices: [
-				makeAudioDevice('a', 'Audio device MIC'),
-				makeAudioDevice('b', 'Audio device 2'),
-				makeAudioDevice('c', 'Audio device 3'),
-			],
-			videoDevices: [
-				makeVideoDevice('a', 'Video device 1'),
-				makeVideoDevice('b', 'Video device 2'),
-				makeVideoDevice('c', 'Video device 3'),
-			],
+			audioDevices: [makeAudioDevice('a', 'Audio device MIC'), makeAudioDevice('b', 'Audio device 2'), makeAudioDevice('c', 'Audio device 3')],
+			videoDevices: [makeVideoDevice('a', 'Video device 1'), makeVideoDevice('b', 'Video device 2'), makeVideoDevice('c', 'Video device 3')],
 			selectedAudioDeviceId: 'a',
 			selectedVideoDeviceId: 'b',
 		},
@@ -73,10 +65,6 @@
 	name="Error multiple messages"
 	args={{
 		error: true,
-		errorMessages: [
-			'Special error message',
-			'Second Special and quire longer error message',
-			'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-		],
+		errorMessages: ['Special error message', 'Second Special and quire longer error message', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'],
 	}}
 />

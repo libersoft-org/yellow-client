@@ -198,13 +198,7 @@
 	</Label>
 
 	<Label text={m['core.accounts_add_edit.password']()}>
-		<Input
-			minWidth="300px"
-			maxWidth="300px"
-			type="password"
-			placeholder={m['core.accounts_add_edit.password_placeholder']()}
-			bind:value={credentials_password}
-		/>
+		<Input minWidth="300px" maxWidth="300px" type="password" placeholder={m['core.accounts_add_edit.password_placeholder']()} bind:value={credentials_password} />
 	</Label>
 
 	{#if !isInWelcomeWizard}

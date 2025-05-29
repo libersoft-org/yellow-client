@@ -42,13 +42,7 @@
 	}
 </script>
 
-<div
-	class="photo-card {moving ? 'moving' : ''}"
-	style="transform: translateX({currentX}px)"
-	on:touchstart={(e) => startSwipe(e)}
-	on:touchmove={(e) => moveSwipe(e)}
-	on:touchend={(e) => endSwipe(e)}
->
+<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" on:touchstart={(e) => startSwipe(e)} on:touchmove={(e) => moveSwipe(e)} on:touchend={(e) => endSwipe(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
 		<h2>{photo.name}</h2>

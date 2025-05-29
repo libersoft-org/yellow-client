@@ -105,14 +105,7 @@
 		{#each Object.keys(groupedReactions) as rgi (rgi)}
 			{@const reactions = groupedReactions[rgi]}
 			<BaseButton onClick={() => onReactionClick(rgi)}>
-				<div
-					bind:this={buttonRefs[rgi]}
-					class="reaction-box"
-					onmouseenter={(e) => showTooltip(e, reactions, rgi)}
-					onmouseleave={dismissTooltip}
-					role="button"
-					tabindex="0"
-				>
+				<div bind:this={buttonRefs[rgi]} class="reaction-box" onmouseenter={(e) => showTooltip(e, reactions, rgi)} onmouseleave={dismissTooltip} role="button" tabindex="0">
 					{emoji_render(rgi_to_codepoints(rgi))}
 					<span style:pointer-events="none">{reactions.length}</span>
 				</div>

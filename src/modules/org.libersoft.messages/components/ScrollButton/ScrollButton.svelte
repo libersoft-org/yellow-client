@@ -13,19 +13,8 @@
 
 {#if visible}
 	<BaseButton {onClick}>
-		<div
-			class="scroll-button"
-			style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left
-				? 'left: ' + left + ';'
-				: ''} {right ? 'right: ' + right + ';' : ''}"
-		>
-			<Icon
-				img="img/caret-{direction ? 'up' : 'down'}.svg"
-				alt={direction ? '˄' : '˅'}
-				colorVariable="--icon-gray"
-				size="32px"
-				padding="0px"
-			/>
+		<div class="scroll-button" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}">
+			<Icon img="img/caret-{direction ? 'up' : 'down'}.svg" alt={direction ? '˄' : '˅'} colorVariable="--icon-gray" size="32px" padding="0px" />
 		</div>
 	</BaseButton>
 {/if}

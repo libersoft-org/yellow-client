@@ -60,18 +60,10 @@
 	<TopBar>
 		<svelte:fragment slot="left">
 			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--icon-white" visibleOnDesktop={false} />
-			<Dropdown
-				text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'}
-				colorVariable="--icon-black"
-				onClick={() => (showModalNetworks = true)}
-			/>
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
 		</svelte:fragment>
 		<svelte:fragment slot="right">
-			<Dropdown
-				text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'}
-				colorVariable="--icon-black"
-				onClick={() => (showModalWallets = true)}
-			/>
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--icon-black" onClick={() => (showModalWallets = true)} />
 		</svelte:fragment>
 	</TopBar>
 	<div class="wallet">
@@ -128,30 +120,10 @@
 						</div>
 					</div>
 					<div class="buttons">
-						<Button
-							img="modules/{module.identifier}/img/send.svg"
-							text="Send"
-							enabled={!!($selectedNetwork && $selectedAddress)}
-							onClick={() => setSection('send')}
-						/>
-						<Button
-							img="modules/{module.identifier}/img/receive.svg"
-							text="Receive"
-							enabled={!!($selectedNetwork && $selectedAddress)}
-							onClick={() => setSection('receive')}
-						/>
-						<Button
-							img="modules/{module.identifier}/img/balance.svg"
-							text="Balance"
-							enabled={!!($selectedNetwork && $selectedAddress)}
-							onClick={() => setSection('balance')}
-						/>
-						<Button
-							img="modules/{module.identifier}/img/history.svg"
-							text="History"
-							enabled={!!($selectedNetwork && $selectedAddress)}
-							onClick={() => setSection('history')}
-						/>
+						<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
+						<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
+						<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
+						<Button img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
 					</div>
 					<div class="separator"></div>
 					<div class="section">

@@ -3,23 +3,7 @@
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import {
-		init,
-		isMobile,
-		keyboardHeight,
-		documentHeight,
-		active_account,
-		accounts_config,
-		selected_corepage_id,
-		selected_module_id,
-		isClientFocused,
-		hideSidebarMobile,
-		module_decls,
-		debug,
-		product,
-		version,
-		link,
-	} from '../core/core.js';
+	import { init, isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.js';
 	import { initBrowserNotifications, initCustomNotifications } from '../core/notifications.ts';
 	import { selected_theme_index, current_theme, themes_stored } from '../core/appearance_store.js';
 	import Menu from '../core/components/Menu/Menu.svelte';
@@ -212,11 +196,7 @@
 		document.documentElement.style.overflow = 'hidden';
 		document.body.style.overflow = 'hidden';
 		const metaViewport = document.querySelector('meta[name="viewport"]');
-		if (metaViewport)
-			metaViewport.setAttribute(
-				'content',
-				'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content'
-			);
+		if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
 		documentHeight.set(document.documentElement.clientHeight);
 		isMobile.set(window.matchMedia('(max-width: 768px)').matches);
 		//console.log('window.innerHeight:', window.innerHeight);
@@ -331,13 +311,7 @@
 	<title>{product}</title>
 </svelte:head>
 <div class="app" style:--sidebar-width={sidebarWidth}>
-	<div
-		class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}"
-		style:min-width={sidebarWidth}
-		style:max-width={sidebarWidth}
-		style:width={sidebarWidth}
-		bind:this={sideBar}
-	>
+	<div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
 		<Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
 		<MenuBar onOpenMenu={() => (isMenuOpen = true)} />
 		<AccountBar />
@@ -351,13 +325,7 @@
 		{/if}
 	</div>
 
-	<div
-		class="resizer"
-		style:left={sidebarWidth}
-		role="none"
-		bind:this={resizer}
-		on:mousedown={startResizeSideBar}
-	></div>
+	<div class="resizer" style:left={sidebarWidth} role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
 
 	<div class="content" bind:this={contentElement}>
 		{#if selectedCorePage}

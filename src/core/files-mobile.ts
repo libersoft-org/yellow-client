@@ -73,10 +73,7 @@ export async function finishDownload(download: MobileDownload): Promise<void> {
 }
 
 // Export file with save dialog
-export async function exportFileWithDialog(
-	fileName: string,
-	mimeType: string = 'application/octet-stream'
-): Promise<{ success: boolean; error?: string }> {
+export async function exportFileWithDialog(fileName: string, mimeType: string = 'application/octet-stream'): Promise<{ success: boolean; error?: string }> {
 	if (!TAURI_MOBILE) {
 		return { success: false, error: 'This function is only for mobile platforms' };
 	}

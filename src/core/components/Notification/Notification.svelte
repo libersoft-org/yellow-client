@@ -2,18 +2,7 @@
 	import BaseButton from '@/core/components/Button/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { log } from '../../tauri.ts';
-	import {
-		animationDuration,
-		animationName,
-		titleMaxLines,
-		bodyMaxLines,
-		bgColor,
-		borderColor,
-		bgColorHover,
-		titleColor,
-		descColor,
-		notificationsSoundEnabled,
-	} from '../../notifications_settings.ts';
+	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
 	import { onDestroy, onMount } from 'svelte';
 	import { playNotificationSound, stopNotificationSound } from '@/core/notifications.ts';
 	export let data;
@@ -43,10 +32,7 @@
 		data.onClick(e, 'click');
 	}}
 >
-	<div
-		class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}"
-		style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover}; border: 1px solid {$borderColor};"
-	>
+	<div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover}; border: 1px solid {$borderColor};">
 		{#if data.icon || data.title || data.body}
 			<div class="top">
 				{#if data.icon}
@@ -64,15 +50,7 @@
 							</div>
 						{/if}
 						<div class="close">
-							<Icon
-								img="img/close.svg"
-								alt="Close"
-								colorVariable="--icon-white"
-								size="10px"
-								padding="10px"
-								isButton
-								onClick={(e) => handleClosing(e)}
-							/>
+							<Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10px" padding="10px" isButton onClick={(e) => handleClosing(e)} />
 						</div>
 					</div>
 					{#if data.body}

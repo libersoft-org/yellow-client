@@ -43,17 +43,7 @@ export async function fetchStickerset(stickerServer, id = 0) {
 	let sets = response?.data;
 	let stickerset = sets[0];
 	stickerset.url = stickerServer + '/api/sets?id=' + stickerset.id;
-	stickerset.items.forEach(
-		(sticker) =>
-			(sticker.url =
-				stickerServer +
-				'/download/' +
-				(stickerset.animated ? 'animated' : 'static') +
-				'/' +
-				stickerset.alias +
-				'/' +
-				sticker.name)
-	);
+	stickerset.items.forEach((sticker) => (sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name));
 	return stickerset;
 }
 
@@ -196,14 +186,7 @@ export async function updateStickerLibrary() {
 		for (let sticker of stickers) {
 			sticker.stickerset = stickerset.id;
 			sticker.server = stickerServer;
-			sticker.url =
-				stickerServer +
-				'/download/' +
-				(stickerset.animated ? 'animated' : 'static') +
-				'/' +
-				stickerset.alias +
-				'/' +
-				sticker.name;
+			sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name;
 			stickers_batch.push(sticker);
 		}
 	}
@@ -212,12 +195,7 @@ export async function updateStickerLibrary() {
 	stickerLibraryUpdaterState.update((state) => ({ ...state, status: 'Loading sticker list ...', progress: 100 }));
 	await stickers_db.stickersets.bulkAdd(stickersets_batch);
 
-	console.log(
-		'Done loading, db.stickers.count:',
-		await stickers_db.stickers.count(),
-		'db.stickersets.count:',
-		await stickers_db.stickersets.count()
-	);
+	console.log('Done loading, db.stickers.count:', await stickers_db.stickers.count(), 'db.stickersets.count:', await stickers_db.stickersets.count());
 	console.log('spent:', Date.now() - startFetchSets, 'ms');
 	stickerLibraryUpdaterState.update((state) => ({
 		...state,

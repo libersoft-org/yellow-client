@@ -81,13 +81,7 @@
 					</Select>
 					{#if $selected_theme_index > 0}
 						<Button onClick={click_expand}>
-							<Icon
-								img="img/edit.svg"
-								alt="Close"
-								colorVariable="--color-primary-foreground"
-								size="20px"
-								padding="0px"
-							/>
+							<Icon img="img/edit.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
 						</Button>
 					{/if}
 					<Button
@@ -100,13 +94,7 @@
 					</Button>
 					{#if $selected_theme_index > 0}
 						<Button onClick={delete_current_theme}>
-							<Icon
-								img="img/del.svg"
-								alt="Close"
-								colorVariable="--color-primary-foreground"
-								size="20px"
-								padding="0px"
-							/>
+							<Icon img="img/del.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
 						</Button>
 					{/if}
 				{/if}
@@ -125,10 +113,7 @@
 					<TbodyTr>
 						{#each theme_properties as theme_property_name, theme_property_value}
 							<TbodyTd title={theme_property_name[0]}>
-								<input
-									type="color"
-									bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
-								/>
+								<input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} />
 
 								{$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
 							</TbodyTd>

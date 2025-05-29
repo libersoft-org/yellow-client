@@ -6,12 +6,7 @@
  * @param {string} yName - The tag name of the wrapper element.
  * @param {number} minConsecutive - The minimum number of consecutive elements to wrap (default: 2).
  */
-export function wrapConsecutiveElements(
-	fragment: DocumentFragment,
-	xName: string,
-	yName: string,
-	minConsecutive = 2
-): void {
+export function wrapConsecutiveElements(fragment: DocumentFragment, xName: string, yName: string, minConsecutive = 2): void {
 	xName = xName.toLowerCase(); // Normalize case
 
 	function processParent(parent: ParentNode): void {

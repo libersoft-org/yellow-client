@@ -29,8 +29,7 @@
 		for (let index = 0; index < siblings.length; index++) {
 			const siblingNode = siblings[index];
 			const fileAttr = siblingNode?.props?.file;
-			const siblingYellowId =
-				fileAttr && fileAttr.startsWith(YELLOW_SRC_PROTOCOL) ? fileAttr.slice(YELLOW_SRC_PROTOCOL.length) : null;
+			const siblingYellowId = fileAttr && fileAttr.startsWith(YELLOW_SRC_PROTOCOL) ? fileAttr.slice(YELLOW_SRC_PROTOCOL.length) : null;
 
 			if (!siblingYellowId) {
 				continue;
@@ -118,13 +117,7 @@
 		{#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
 			<MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
 		{:else}
-			<div
-				class="message-content-image"
-				onclick={openInGallery}
-				role="button"
-				tabindex="0"
-				onkeydown={(e) => e.key === 'Enter' && openInGallery()}
-			>
+			<div class="message-content-image" onclick={openInGallery} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openInGallery()}>
 				{#if loading}
 					<div class="spinner-wrap">
 						<Spinner show={true} style="min-height: initial;" />

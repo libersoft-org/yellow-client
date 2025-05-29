@@ -99,12 +99,7 @@ export function registerModule(id, decl) {
 }
 
 export const active_account_id = localStorageReadOnceSharedStore('active_account_id', null);
-export const accounts_config = localStorageSharedStore(
-	'accounts_config',
-	import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS
-		? JSON.parse(import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS)
-		: []
-);
+export const accounts_config = localStorageSharedStore('accounts_config', import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS ? JSON.parse(import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS) : []);
 export let accounts = writable([]);
 
 import.meta.hot?.dispose(() => {
@@ -193,12 +188,7 @@ function updateLiveAccount(account, config) {
 		log.debug('retry_nonce changed:', acc.credentials.retry_nonce, config.credentials.retry_nonce);
 	}
 
-	if (
-		acc.credentials.retry_nonce != config.credentials.retry_nonce ||
-		acc.credentials.server != config.credentials.server ||
-		acc.credentials.address != config.credentials.address ||
-		acc.credentials.password != config.credentials.password
-	) {
+	if (acc.credentials.retry_nonce != config.credentials.retry_nonce || acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
 		acc.credentials = config.credentials;
 		log.debug('credentials changed:', acc.credentials);
 		if (acc.enabled) {
@@ -357,13 +347,7 @@ function reconnectAccount(account) {
 	disconnectAccount(acc);
 	let socket_id;
 	log.debug('acc.socket.readyState:', acc.socket?.readyState);
-	if (
-		!acc.socket ||
-		acc.socket.readyState === WebSocket.CLOSED ||
-		acc.socket.readyState === WebSocket.CONNECTING ||
-		acc.socket.readyState === WebSocket.CLOSING ||
-		acc.socket.url !== acc.credentials.server
-	) {
+	if (!acc.socket || acc.socket.readyState === WebSocket.CLOSED || acc.socket.readyState === WebSocket.CONNECTING || acc.socket.readyState === WebSocket.CLOSING || acc.socket.url !== acc.credentials.server) {
 		if (acc.socket) {
 			if (acc.socket.readyState !== WebSocket.CLOSED) {
 				// throw away the old socket, it will be unused from now on
@@ -427,16 +411,7 @@ function reconnectAccount(account) {
 				log.debug('Socket ID changed, ignoring close event:', event);
 				return;
 			}
-			log.debug(
-				'WebSocket ' + socket_id + '  closed:',
-				event,
-				'wasClean:',
-				event.wasClean,
-				'reason:',
-				event.reason,
-				'code:',
-				event.code
-			);
+			log.debug('WebSocket ' + socket_id + '  closed:', event, 'wasClean:', event.wasClean, 'reason:', event.reason, 'code:', event.code);
 			acc.session_status = undefined;
 			account.update((v) => v);
 			setTimeout(() => {
@@ -496,34 +471,26 @@ function clearPingTimer(acc) {
 function sendLoginCommand(account) {
 	log.debug('Sending login command');
 	let acc = get(account);
-	send(
-		acc,
-		account,
-		'core',
-		'user_login',
-		{ address: acc.credentials.address, password: acc.credentials.password },
-		false,
-		(req, res) => {
-			log.debug('Login response:', res);
-			if (res.error !== false) {
-				acc.error = res.message;
-				acc.status = 'Login failed.';
-				acc.session_status = undefined;
-				acc.suspended = true;
-				console.error('Login failed:', res);
-			} else {
-				acc.session_status = 'Logged in.';
-				console.log('Logged in:', res);
-				acc.error = null;
-				acc.sessionID = res.data.sessionID;
-				acc.wsGuid = res.data.wsGuid;
-				acc.available_modules = res.data.modules_available;
-				onAvailableModulesChanged(acc);
-				saveOriginalWsGuid(acc);
-			}
-			account.update((v) => v);
+	send(acc, account, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
+		log.debug('Login response:', res);
+		if (res.error !== false) {
+			acc.error = res.message;
+			acc.status = 'Login failed.';
+			acc.session_status = undefined;
+			acc.suspended = true;
+			console.error('Login failed:', res);
+		} else {
+			acc.session_status = 'Logged in.';
+			console.log('Logged in:', res);
+			acc.error = null;
+			acc.sessionID = res.data.sessionID;
+			acc.wsGuid = res.data.wsGuid;
+			acc.available_modules = res.data.modules_available;
+			onAvailableModulesChanged(acc);
+			saveOriginalWsGuid(acc);
 		}
-	);
+		account.update((v) => v);
+	});
 }
 
 function saveOriginalWsGuid(acc) {

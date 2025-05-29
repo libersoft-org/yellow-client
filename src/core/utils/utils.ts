@@ -1,6 +1,4 @@
-export function order(dict: {
-	[key: string]: { order?: number; id: number | string };
-}): { order?: number; id: number | string }[] {
+export function order(dict: { [key: string]: { order?: number; id: number | string } }): { order?: number; id: number | string }[] {
 	//console.log('ORDER dict:', dict);
 	let result = Object.values(dict).sort((a, b) => {
 		let a_order = a.order !== undefined ? a.order : a.id;

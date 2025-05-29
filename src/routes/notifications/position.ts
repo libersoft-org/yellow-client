@@ -1,16 +1,6 @@
 import { writable, get, type Writable } from 'svelte/store';
-import {
-	getCurrentWindow,
-	PhysicalPosition,
-	PhysicalSize,
-	availableMonitors,
-	type Monitor,
-} from '@tauri-apps/api/window';
-import {
-	selectedMonitorName,
-	selectedNotificationsCorner,
-	mainWindowMonitor,
-} from '../../core/notifications_settings.ts';
+import { getCurrentWindow, PhysicalPosition, PhysicalSize, availableMonitors, type Monitor } from '@tauri-apps/api/window';
+import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor } from '../../core/notifications_settings.ts';
 import { BROWSER, log } from '../../core/tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 import type { Unsubscriber } from 'svelte/store';

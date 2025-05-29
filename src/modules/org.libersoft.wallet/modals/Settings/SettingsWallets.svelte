@@ -108,22 +108,8 @@
 							<TbodyTd title="Address"><Address address={address.address} /></TbodyTd>
 							<TbodyTd title="Action">
 								<TableActionItems>
-									<Icon
-										img="img/edit.svg"
-										alt="Rename"
-										colorVariable="--icon-blue"
-										size="20px"
-										padding="5"
-										onClick={() => renameAddress(walleta, address)}
-									/>
-									<Icon
-										img="img/del.svg"
-										alt="Hide"
-										colorVariable="--icon-red"
-										size="20px"
-										padding="5"
-										onClick={() => deleteAddress(walleta, address)}
-									/>
+									<Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
+									<Icon img="img/del.svg" alt="Hide" colorVariable="--icon-red" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
 								</TableActionItems>
 							</TbodyTd>
 						</TbodyTr>

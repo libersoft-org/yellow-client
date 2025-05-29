@@ -17,9 +17,7 @@
 			return conversations;
 		}
 
-		return conversations.filter((conversation: Conversation) =>
-			conversation?.address?.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-		);
+		return conversations.filter((conversation: Conversation) => conversation?.address?.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
 	});
 
 	let sentToConversations: Conversation[] = $state([]);

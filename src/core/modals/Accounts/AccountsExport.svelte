@@ -29,8 +29,7 @@
 		let url = URL.createObjectURL(blob);
 		let a = document.createElement('a');
 		a.href = url;
-		a.download =
-			'accounts_' + new Date().toISOString().replace('T', ' ').replace('Z', '').replace(/\.\d+/, '') + '.json';
+		a.download = 'accounts_' + new Date().toISOString().replace('T', ' ').replace('Z', '').replace(/\.\d+/, '') + '.json';
 		a.click();
 		setTimeout(() => {
 			URL?.revokeObjectURL(url);

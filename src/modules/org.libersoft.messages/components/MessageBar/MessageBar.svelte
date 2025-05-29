@@ -74,16 +74,7 @@
 		console.log('openExpressions', tab);
 		if (expressionsAsContextMenu) {
 			console.log('openExpressions as context menu:', expressionsMenu);
-			console.log(
-				'elExpressions.offsetLeft:',
-				elExpressions.offsetLeft,
-				'elExpressions.offsetTop:',
-				elExpressions.offsetTop,
-				'elExpressions.offsetWidth:',
-				elExpressions.offsetWidth,
-				'elExpressions.offsetHeight:',
-				elExpressions.offsetHeight
-			);
+			console.log('elExpressions.offsetLeft:', elExpressions.offsetLeft, 'elExpressions.offsetTop:', elExpressions.offsetTop, 'elExpressions.offsetWidth:', elExpressions.offsetWidth, 'elExpressions.offsetHeight:', elExpressions.offsetHeight);
 			expressionsMenu?.openMenu({ x: elExpressions.getBoundingClientRect().x, y: 0 });
 		} else {
 			expressionsBottomSheetOpen = true;
@@ -262,126 +253,44 @@
 
 	<div class="message-bar-top">
 		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
-			<MessageBarReply
-				name={$replyTo?.data?.address_to}
-				replyToMessage={$replyTo?.data?.message}
-				onClose={() => messageBarReplyStore.close()}
-			/>
+			<MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
 		{/if}
 	</div>
 	<div class="message-bar-main">
 		<MessageBarRecorder />
 
 		<div bind:this={elAttachment} data-testid="attachment-button">
-			<Icon
-				img="modules/{identifier}/img/attachment.svg"
-				colorVariable="--color-primary-background"
-				alt="Attachment"
-				size="32px"
-				padding="0px"
-				isButton
-			/>
+			<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--color-primary-background" alt="Attachment" size="32px" padding="0px" isButton />
 		</div>
 
 		{#if expressionsAsContextMenu}
 			<div bind:this={elExpressions}>
-				<Icon
-					img="modules/{identifier}/img/emoji.svg"
-					colorVariable="--color-primary-background"
-					alt="Emoji"
-					size="32px"
-					padding="0px"
-					isButton
-				/>
+				<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--color-primary-background" alt="Emoji" size="32px" padding="0px" isButton />
 			</div>
 		{:else}
-			<Icon
-				img="modules/{identifier}/img/emoji.svg"
-				colorVariable="--color-primary-background"
-				alt="Emoji"
-				size="32px"
-				padding="0px"
-				onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)}
-			/>
+			<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--color-primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
 		{/if}
 
-		<textarea
-			data-testid="message-input"
-			id="message-input"
-			class="message-textarea"
-			bind:value={text}
-			bind:this={elMessage}
-			rows="1"
-			placeholder="Enter your message ..."
-			on:input={resizeMessage}
-			on:keydown={keyEnter}
-			on:blur={elMessageBlur}
-		></textarea>
+		<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
 		<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
-		<Icon
-			img="modules/{identifier}/img/video-message.svg"
-			colorVariable="--color-primary-background"
-			alt="Record video message"
-			size="32px"
-			padding="0px"
-			onClick={() => (showVideoRecorderModal = true)}
-		/>
-		<Icon
-			img="modules/{identifier}/img/mic.svg"
-			colorVariable="--color-primary-background"
-			alt="Record voice message"
-			size="32px"
-			padding="0px"
-			onClick={() => audioRecorderStore.setOpen(true)}
-		/>
-		<Icon
-			data-testid="messagebarsend"
-			img="modules/{identifier}/img/send.svg"
-			colorVariable="--color-primary-background"
-			alt="Send"
-			size="32px"
-			padding="0px"
-			onClick={clickSend}
-		/>
+		<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--color-primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
+		<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--color-primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
+		<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--color-primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
 		{#if $debug}
-			<Icon
-				img="modules/{identifier}/img/send.svg"
-				colorVariable="--color-primary-background"
-				alt="Send"
-				size="20px"
-				padding="0px"
-				onClick={clickSendSplit}
-			/>
+			<Icon img="modules/{identifier}/img/send.svg" colorVariable="--color-primary-background" alt="Send" size="20px" padding="0px" onClick={clickSendSplit} />
 		{/if}
 	</div>
 </div>
 
 <ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
-	<ContextMenuItem
-		img="modules/{identifier}/img/video_message-black.svg"
-		label="Video message"
-		onClick={onVideoRecordClick}
-	/>
-	<ContextMenuItem
-		img="modules/{identifier}/img/file.svg"
-		label="File"
-		onClick={() => setFileUploadModal(true)}
-		data-testid="file-attachment-button"
-	/>
+	<ContextMenuItem img="modules/{identifier}/img/video_message-black.svg" label="Video message" onClick={onVideoRecordClick} />
+	<ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} data-testid="file-attachment-button" />
 	<ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
 	<ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 
 {#if expressionsAsContextMenu}
-	<ContextMenu
-		bind:this={expressionsMenu}
-		target={elExpressions}
-		width="380px"
-		height={expressionsHeight}
-		scrollable={false}
-		disableRightClick={true}
-		bottomOffset={elMessageBar?.getBoundingClientRect().height}
-	>
+	<ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
 		<Expressions bind:this={expressions} height={expressionsHeight} />
 	</ContextMenu>
 {/if}
@@ -391,23 +300,13 @@
 -->
 
 <Modal title="HTML composer" body={ModalHtml} bind:show={showHTMLModal} />
-<Modal
-	title="File Upload"
-	body={ModalFileUpload}
-	bind:show={$showFileUploadModal}
-	params={{ setFileUploadModal: setFileUploadModal }}
-/>
+<Modal title="File Upload" body={ModalFileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
 
 {#if $debug}
 	<BaseButton
 		onClick={() => {
 			expressionsAsContextMenu = !expressionsAsContextMenu;
-			console.log(
-				'expressionsAsContextMenu:',
-				expressionsAsContextMenu,
-				'expressionsBottomSheetOpen:',
-				expressionsBottomSheetOpen
-			);
+			console.log('expressionsAsContextMenu:', expressionsAsContextMenu, 'expressionsBottomSheetOpen:', expressionsBottomSheetOpen);
 		}}
 	>
 		expressionsBottomSheetOpen: {expressionsBottomSheetOpen}

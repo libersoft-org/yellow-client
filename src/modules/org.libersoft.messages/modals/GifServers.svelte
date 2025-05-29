@@ -43,13 +43,7 @@
 
 <!--<Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />-->
 <div class="group">
-	<Input
-		placeholder="Add gif server address"
-		grow={true}
-		bind:value={addUrl}
-		onKeydown={onKeydownAdd}
-		bind:this={inputElement}
-	/>
+	<Input placeholder="Add gif server address" grow={true} bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
 	<Button text="Add" onClick={clickAdd} />
 </div>
 
@@ -67,14 +61,7 @@
 					<a href={s} target="_blank">{s}</a>
 				</TbodyTd>
 				<TbodyTd title="Action">
-					<Icon
-						img="img/del.svg"
-						colorVariable="--icon-red"
-						alt="Delete"
-						size="20px"
-						padding="5px"
-						onClick={() => clickDel(s)}
-					/>
+					<Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} />
 				</TbodyTd>
 			</TbodyTr>
 		{/each}

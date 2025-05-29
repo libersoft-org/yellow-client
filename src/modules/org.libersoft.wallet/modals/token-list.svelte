@@ -92,22 +92,8 @@
 						<td>
 							<div class="icons">
 								<!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
-								<Icon
-									img="img/edit.svg"
-									alt="Edit token"
-									colorVariable="--icon-blue"
-									size="20px"
-									padding="5px"
-									onClick={() => editTokenModal(t)}
-								/>
-								<Icon
-									img="img/del.svg"
-									alt="Delete token"
-									colorVariable="--icon-red"
-									size="20px"
-									padding="5px"
-									onClick={() => delTokenModal(t)}
-								/>
+								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => editTokenModal(t)} />
+								<Icon img="img/del.svg" alt="Delete token" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => delTokenModal(t)} />
 							</div>
 						</td>
 					</tr>
@@ -116,12 +102,7 @@
 		</table>
 	{/if}
 </div>
-<Modal
-	title={modalItem ? 'Edit token' : 'Add token'}
-	body={ModalAddEdit}
-	params={{ item: modalItem, onAdd, onEdit }}
-	bind:show={showModalAddEdit}
-/>
+<Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
 <Modal title={'Delete token'} body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:show={showModalDel} />
 
 <style>

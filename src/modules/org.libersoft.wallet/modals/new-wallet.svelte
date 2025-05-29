@@ -105,16 +105,10 @@
 </script>
 
 {#if qrCodeData}
-	<div>
-		Use the following QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!
-	</div>
+	<div>Use the following QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
 	<div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
 {/if}
-<div>
-	Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2
-	parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone
-	else!
-</div>
+<div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
 <table>
 	<tbody>
 		<tr>

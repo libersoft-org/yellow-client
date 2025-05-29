@@ -99,13 +99,7 @@
 <div class="gifset">
 	<div class="top-bar">
 		<div class="group">
-			<Input
-				placeholder="Search GIFs"
-				grow={true}
-				bind:this={elSearchText}
-				bind:value={query}
-				onKeydown={keySearchGifs}
-			/>
+			<Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
 			<Button text="Search" width="80px" onClick={searchGifs} />
 		</div>
 	</div>

@@ -61,12 +61,7 @@
 			return;
 		}
 		error = '';
-		paymentText =
-			'ethereum:' +
-			$selectedAddress.address +
-			'@' +
-			$selectedNetwork.chainID +
-			(amount ? '?value=' + etherValue.toString() : '');
+		paymentText = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount ? '?value=' + etherValue.toString() : '');
 		generateQRCode($selectedAddress.address, (url) => (qrAddress = url));
 		generateQRCode(paymentText, (url) => (qrPayment = url));
 	}
@@ -100,14 +95,7 @@
 				<div class="bold">Payment:</div>
 				<div class="amount">
 					<div>Amount:</div>
-					<Input
-						type="number"
-						placeholder="0.0"
-						step="0.00001"
-						min="0"
-						max="999999999999999999999999"
-						bind:value={amount}
-					/>
+					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
 					<DropdownFilter options={$currencies} bind:selected={currency} />
 					<div class="error">{error}</div>
 				</div>

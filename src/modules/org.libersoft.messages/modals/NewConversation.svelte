@@ -35,13 +35,7 @@
 <form onsubmit={onSubmit}>
 	<div class="group">
 		<Label text={`${m['messages.new_conversation.address']()}`}>
-			<Input
-				data-testid="new-conversation-address"
-				grow
-				placeholder="user@domain.tld"
-				bind:inputRef={addressInputRef}
-				bind:value
-			/>
+			<Input data-testid="new-conversation-address" grow placeholder="user@domain.tld" bind:inputRef={addressInputRef} bind:value />
 		</Label>
 		<Button data-testid="New Conversation Open" text={m['common.open']()} onClick={clickOpen} />
 	</div>

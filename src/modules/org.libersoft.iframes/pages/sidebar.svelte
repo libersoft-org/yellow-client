@@ -7,10 +7,4 @@
 
 <Button text="hideSidebarMobile" onClick={() => core.hideSidebarMobile.set(true)} />
 
-<iframe
-	sandbox="allow-scripts"
-	src={url}
-	title="sidebar"
-	style="border:none; height: 100%; x-scroll: none; width: 100%; overflow: hidden;"
->
-</iframe>
+<iframe sandbox="allow-scripts" src={url} title="sidebar" style="border:none; height: 100%; x-scroll: none; width: 100%; overflow: hidden;"> </iframe>

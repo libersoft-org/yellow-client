@@ -120,53 +120,20 @@
 
 <div class="message-bar-recorder" class:is-paused={isPaused} style:display={$isOpen ? 'flex' : 'none'}>
 	<div class="wavesurfer-wrap">
-		<div
-			bind:this={wavesurferRef}
-			class="wavesurfer"
-			use:resize={onResize}
-			style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}
-		></div>
+		<div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize} style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
 	</div>
 	<div class="button-wrapper">
-		<Icon
-			img="modules/{identifier}/img/delete.svg"
-			colorVariable="--icon-red"
-			alt="Delete"
-			size="14px"
-			padding="0px"
-			onClick={onDelete}
-		/>
+		<Icon img="modules/{identifier}/img/delete.svg" colorVariable="--icon-red" alt="Delete" size="14px" padding="0px" onClick={onDelete} />
 	</div>
 	<div class="button-wrapper">
 		{#if isPaused}
-			<Icon
-				img="modules/{identifier}/img/record.svg"
-				colorVariable="--icon-red"
-				alt="Record"
-				size="14px"
-				padding="0px"
-				onClick={onRecord}
-			/>
+			<Icon img="modules/{identifier}/img/record.svg" colorVariable="--icon-red" alt="Record" size="14px" padding="0px" onClick={onRecord} />
 		{:else}
-			<Icon
-				img="modules/{identifier}/img/pause.svg"
-				colorVariable="--icon-yellow"
-				alt="Stop"
-				size="14px"
-				padding="0px"
-				onClick={onPause}
-			/>
+			<Icon img="modules/{identifier}/img/pause.svg" colorVariable="--icon-yellow" alt="Stop" size="14px" padding="0px" onClick={onPause} />
 		{/if}
 	</div>
 	<div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
-		<Icon
-			img="modules/{identifier}/img/send.svg"
-			alt="Send"
-			size="32px"
-			padding="0px"
-			onClick={onSend}
-			colorVariable="--icon-yellow"
-		/>
+		<Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32px" padding="0px" onClick={onSend} colorVariable="--icon-yellow" />
 	</div>
 </div>
 

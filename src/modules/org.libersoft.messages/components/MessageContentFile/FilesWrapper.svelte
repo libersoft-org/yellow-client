@@ -2,11 +2,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
-	import {
-		FileUploadRecordStatus,
-		FileUploadRecordType,
-		FileUploadRole,
-	} from '@/org.libersoft.messages/services/Files/types.ts';
+	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { downloadAttachmentsSerial } from '../../messages.js';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
@@ -18,12 +14,7 @@
 
 	let downloadableRecords = $derived.by(() => {
 		return attachedUploads.filter((upload) => {
-			return (
-				(upload.record.type === FileUploadRecordType.P2P &&
-					upload.role === FileUploadRole.RECEIVER &&
-					upload.record.status === FileUploadRecordStatus.BEGUN) ||
-				(upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED)
-			);
+			return (upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER && upload.record.status === FileUploadRecordStatus.BEGUN) || (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED);
 		});
 	});
 
@@ -82,11 +73,7 @@
 	</div>
 	{#if showBulkDownloadAction}
 		<div class="actions">
-			<Button
-				width="80px"
-				text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'}
-				onClick={onAcceptAll}
-			/>
+			<Button width="80px" text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'} onClick={onAcceptAll} />
 		</div>
 	{/if}
 </div>

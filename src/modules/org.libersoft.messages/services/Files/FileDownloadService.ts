@@ -1,10 +1,4 @@
-import {
-	type FileDownload,
-	type FileDownloadStoreType,
-	type FileUploadChunk,
-	type FileUploadRecord,
-	FileUploadRecordStatus,
-} from './types.ts';
+import { type FileDownload, type FileDownloadStoreType, type FileUploadChunk, type FileUploadRecord, FileUploadRecordStatus } from './types.ts';
 import { makeFileDownload } from './utils.ts';
 import EventEmitter from 'events';
 import fileDownloadStore from '../../stores/FileDownloadStore.ts';
@@ -57,10 +51,7 @@ export class FileDownloadService extends EventEmitter {
 					retry();
 					return;
 				}
-				if (
-					download?.record.status === FileUploadRecordStatus.CANCELED ||
-					download?.record.status === FileUploadRecordStatus.ERROR
-				) {
+				if (download?.record.status === FileUploadRecordStatus.CANCELED || download?.record.status === FileUploadRecordStatus.ERROR) {
 					setRunning(false);
 					// TODO: clear memory
 					return;

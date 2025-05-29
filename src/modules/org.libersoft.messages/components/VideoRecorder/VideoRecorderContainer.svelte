@@ -17,26 +17,7 @@
 	let sending = $state(false);
 	let playerInstance: ReturnType<typeof videoJS> | null = null;
 
-	const {
-		setup,
-		loading,
-		error,
-		errorMessages,
-		videoDevices,
-		audioDevices,
-		selectedVideoDeviceId,
-		selectedAudioDeviceId,
-		changeVideoInput,
-		changeAudioInput,
-		player,
-		recordedBlob,
-		toggleMute,
-		isMuted,
-		facingMode,
-		toggleFacingMode,
-		userDeviceId,
-		environmentDeviceId,
-	} = useVideoRecorder(() => videoRef, {
+	const { setup, loading, error, errorMessages, videoDevices, audioDevices, selectedVideoDeviceId, selectedAudioDeviceId, changeVideoInput, changeAudioInput, player, recordedBlob, toggleMute, isMuted, facingMode, toggleFacingMode, userDeviceId, environmentDeviceId } = useVideoRecorder(() => videoRef, {
 		controls: false,
 		bigPlayButton: false,
 		fill: true,
@@ -50,9 +31,7 @@
 		},
 	});
 
-	const enableToggleFacingMode = $derived(
-		Boolean($userDeviceId && $environmentDeviceId && $userDeviceId !== $environmentDeviceId)
-	);
+	const enableToggleFacingMode = $derived(Boolean($userDeviceId && $environmentDeviceId && $userDeviceId !== $environmentDeviceId));
 	let isRecording = $state(false);
 
 	const start = () => {
@@ -233,29 +212,4 @@
 </Dialog>
 <button onclick={onTest}>test</button>
 -->
-<VideoRecorderView
-	bind:videoRef
-	bind:micIndicatorRef
-	{sending}
-	error={$error}
-	errorMessages={$errorMessages}
-	loading={$loading}
-	videoDevices={$videoDevices}
-	audioDevices={$audioDevices}
-	selectedAudioDeviceId={$selectedAudioDeviceId}
-	selectedVideoDeviceId={$selectedVideoDeviceId}
-	{changeVideoInput}
-	{changeAudioInput}
-	{isRecording}
-	recordStart={start}
-	recordStop={stop}
-	{send}
-	{download}
-	isMuted={$isMuted}
-	{toggleMute}
-	hasData={Boolean($recordedBlob)}
-	facingMode={$facingMode}
-	{toggleFacingMode}
-	{enableToggleFacingMode}
-	recordRestart={restart}
-/>
+<VideoRecorderView bind:videoRef bind:micIndicatorRef {sending} error={$error} errorMessages={$errorMessages} loading={$loading} videoDevices={$videoDevices} audioDevices={$audioDevices} selectedAudioDeviceId={$selectedAudioDeviceId} selectedVideoDeviceId={$selectedVideoDeviceId} {changeVideoInput} {changeAudioInput} {isRecording} recordStart={start} recordStop={stop} {send} {download} isMuted={$isMuted} {toggleMute} hasData={Boolean($recordedBlob)} facingMode={$facingMode} {toggleFacingMode} {enableToggleFacingMode} recordRestart={restart} />

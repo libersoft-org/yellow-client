@@ -453,15 +453,7 @@
 	}
 
 	async function onkeydown(event) {
-		if (
-			event.key === 'PageUp' ||
-			event.key === 'PageDown' ||
-			event.key === 'ArrowUp' ||
-			event.key === 'ArrowDown' ||
-			event.key === 'Home' ||
-			event.key === 'End'
-		)
-			return;
+		if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') return;
 		if (event.ctrlKey || event.metaKey) return;
 		await setBarFocus();
 	}
@@ -548,25 +540,10 @@
 
 <svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
 
-<div
-	class="messages-fixed"
-	bind:this={fileDndRef}
-	on:dragover={onDragOver}
-	on:drop={onDrop}
-	on:dragleave={onDragLeave}
-	role="region"
-	aria-label="File drop zone"
-	use:resize={onResize}
->
+<div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone" use:resize={onResize}>
 	<div class="dnd-overlay {showFileDndOverlay ? 'drop-active' : ''}">
 		<div class="dnd-overlay-inner">
-			<Icon
-				img="modules/{identifier}/img/file.svg"
-				colorVariable="--icon-white"
-				alt="Drop files icon"
-				size="75px"
-				padding="0px"
-			/>
+			<Icon img="modules/{identifier}/img/file.svg" colorVariable="--icon-white" alt="Drop files icon" size="75px" padding="0px" />
 			<div class="dnd-overlay-text">Drop files here to send them</div>
 		</div>
 	</div>
@@ -585,19 +562,7 @@
 		</div>
 		<div class="spacer"></div>
 	{:else}
-		<div
-			class="messages"
-			role="none"
-			tabindex="-1"
-			bind:this={elMessages}
-			on:mousedown={mouseDown}
-			on:focus={onFocus}
-			on:blur={onBlur}
-			on:scroll={parseScroll}
-			on:touchmove={touchMove}
-			on:touchend={blockScroll}
-			on:touchstart={touchStart}
-		>
+		<div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll} on:touchmove={touchMove} on:touchend={blockScroll} on:touchstart={touchStart}>
 			<div class="spacer"></div>
 			{#each itemsArray as m (m.uid)}
 				<!--{#if $debug}-->
@@ -623,22 +588,8 @@
 	{/if}
 </div>
 
-<Modal
-	bind:show={showStickersetDetailsModal}
-	title="Sticker set"
-	body={ModalStickersetDetails}
-	params={{ stickersetDetailsModalStickerset }}
-	width="448px"
-	height="390px"
-/>
-<Modal
-	bind:show={$forwardMessageModalOpen}
-	title="Forward message"
-	body={ModalForwardMessage}
-	onShowChange={(show) => forwardMessageStore.setOpen(show)}
-	width="448px"
-	height="390px"
-/>
+<Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
+<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} onShowChange={(show) => forwardMessageStore.setOpen(show)} width="448px" height="390px" />
 
 <!--doBlockScroll: {doBlockScroll}-->
 

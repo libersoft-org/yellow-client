@@ -20,14 +20,7 @@
 </script>
 
 {#snippet select()}
-	<select
-		{...restProps}
-		style:flex-grow={grow ? '1' : undefined}
-		style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'}
-		style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'}
-		bind:this={selectRef}
-		bind:value
-	>
+	<select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={selectRef} bind:value>
 		{@render children?.()}
 	</select>
 {/snippet}

@@ -1,25 +1,7 @@
 <script>
 	export let account;
 
-	$: status_class = !account
-		? 'status-default'
-		: $account.session_status === 'Logged in.'
-			? 'status-logged-in'
-			: $account.status === 'Connecting...'
-				? 'status-connecting'
-				: $account.status === 'Connected, logging in...'
-					? 'status-logging-in'
-					: $account.status === 'Connected.'
-						? 'status-connected'
-						: $account.status === 'Retrying...'
-							? 'status-retrying'
-							: $account.status === 'Login failed.'
-								? 'status-login-failed'
-								: $account.status === 'Disabled.'
-									? 'status-disabled'
-									: $account.status === 'Enabled.'
-										? 'status-enabled'
-										: 'status-default';
+	$: status_class = !account ? 'status-default' : $account.session_status === 'Logged in.' ? 'status-logged-in' : $account.status === 'Connecting...' ? 'status-connecting' : $account.status === 'Connected, logging in...' ? 'status-logging-in' : $account.status === 'Connected.' ? 'status-connected' : $account.status === 'Retrying...' ? 'status-retrying' : $account.status === 'Login failed.' ? 'status-login-failed' : $account.status === 'Disabled.' ? 'status-disabled' : $account.status === 'Enabled.' ? 'status-enabled' : 'status-default';
 </script>
 
 <span class="status-icon {status_class}"></span>

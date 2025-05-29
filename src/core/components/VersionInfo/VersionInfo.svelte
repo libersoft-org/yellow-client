@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { version, build, commit, branch } from '../../core.js';
 	import { log, TAURI } from '@/core/tauri.ts';
-	import {
-		getNativeClientBuildCommitHash,
-		getNativeClientBuildBranch,
-		getNativeClientBuildTs,
-	} from '@/core/tauri-app.ts';
+	import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
 	import MenuAppSection from '../Menu/MenuAppSection.svelte';
 	import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
 	import { onMount } from 'svelte';
@@ -19,14 +15,7 @@
 		className?: string;
 	}
 
-	let {
-		showVersion = true,
-		showBuild = true,
-		showCommit = true,
-		showBranch = true,
-		showNativeApp = true,
-		className = '',
-	}: VersionInfoProps = $props();
+	let { showVersion = true, showBuild = true, showCommit = true, showBranch = true, showNativeApp = true, className = '' }: VersionInfoProps = $props();
 
 	let native_client_build_ts = $state<string | null>(null);
 

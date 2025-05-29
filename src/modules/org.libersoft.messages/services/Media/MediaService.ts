@@ -142,31 +142,7 @@ class MediaService {
 		playEl?.addEventListener('click', prep);
 		playEl?.addEventListener('pointerdown', prep);
 
-		const EVENTS = [
-			'loadstart',
-			'progress',
-			'suspend',
-			'abort',
-			'error',
-			'emptied',
-			'stalled',
-			'loadedmetadata',
-			'loadeddata',
-			'canplay',
-			'canplaythrough',
-			'playing',
-			'waiting',
-			'seeking',
-			'seeked',
-			'ended',
-			'durationchange',
-			'timeupdate',
-			'play',
-			'pause',
-			'ratechange',
-			'resize',
-			'volumechange',
-		];
+		const EVENTS = ['loadstart', 'progress', 'suspend', 'abort', 'error', 'emptied', 'stalled', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'playing', 'waiting', 'seeking', 'seeked', 'ended', 'durationchange', 'timeupdate', 'play', 'pause', 'ratechange', 'resize', 'volumechange'];
 		EVENTS.forEach((evt) => {
 			player.on(evt, () => console.log('test evt', evt));
 		});

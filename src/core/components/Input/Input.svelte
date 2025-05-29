@@ -14,20 +14,7 @@
 		'data-testid'?: string;
 	}
 
-	let {
-		type = 'text',
-		placeholder = '',
-		value = $bindable(),
-		inputRef: parentInputRef = $bindable(),
-		grow = false,
-		minWidth = undefined,
-		maxWidth = undefined,
-		onKeydown = undefined,
-		min = undefined,
-		max = undefined,
-		step = undefined,
-		'data-testid': testId = undefined,
-	}: Props = $props();
+	let { type = 'text', placeholder = '', value = $bindable(), inputRef: parentInputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
 
 	let inputRef = $state<HTMLInputElement>();
 
@@ -47,20 +34,7 @@
 	}
 </script>
 
-<input
-	data-testid={testId}
-	bind:value
-	style:flex-grow={grow ? '1' : undefined}
-	style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'}
-	style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}
-	{type}
-	{placeholder}
-	{min}
-	{max}
-	{step}
-	bind:this={inputRef}
-	onkeydown={(e) => handleKeydown(e)}
-/>
+<input data-testid={testId} bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={(e) => handleKeydown(e)} />
 
 <style>
 	input {

@@ -86,47 +86,18 @@
 			{humanSize(file.size)}
 		</TbodyTd>
 		<TbodyTd title="Action">
-			<Icon
-				img="img/del.svg"
-				colorVariable="--icon-red"
-				alt="Delete"
-				size="20px"
-				padding="5px"
-				onClick={() => onFileDelete(file)}
-			/>
+			<Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} />
 		</TbodyTd>
 	</TbodyTr>
 {/snippet}
 
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
-	<input
-		type="file"
-		id="fileInput"
-		bind:this={elFileInput}
-		onchange={onFileUpload}
-		multiple
-		style="display: none;"
-		data-testid="file-upload-input"
-	/>
+	<input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
 	<div class="header">
 		<Button width="100%" img="img/add.svg" colorVariable="--icon-black" text="Add files" onClick={onFileAdd} />
-		<Button
-			width="100%"
-			img="img/del.svg"
-			colorVariable="--icon-black"
-			text="Remove all"
-			enabled={$fileUploadModalFiles.length > 0}
-			onClick={onDeleteAll}
-		/>
+		<Button width="100%" img="img/del.svg" colorVariable="--icon-black" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
 	</div>
-	<div
-		class="body"
-		ondragover={onDragOver}
-		ondragleave={onDragLeave}
-		ondrop={onDrop}
-		role="region"
-		aria-label="File drop zone"
-	>
+	<div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
 		{#if $fileUploadModalFiles.length}
 			<div class="items file-table">
 				<Table breakpoint="0">
@@ -153,22 +124,8 @@
 		{/if}
 	</div>
 	<div class="footer">
-		<Button
-			width="180px"
-			img="img/upload.svg"
-			text="Send peer-to-peer"
-			onClick={uploadP2P}
-			enabled={$fileUploadModalFiles.length > 0}
-			data-testid="send-files-p2p"
-		/>
-		<Button
-			width="180px"
-			img="img/upload.svg"
-			text="Send to server"
-			onClick={uploadServer}
-			enabled={$fileUploadModalFiles.length > 0}
-			data-testid="send-files-server"
-		/>
+		<Button width="180px" img="img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-p2p" />
+		<Button width="180px" img="img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
 	</div>
 </div>
 

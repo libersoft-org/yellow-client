@@ -1,11 +1,5 @@
 import { get, writable } from 'svelte/store';
-import {
-	type FileUpload,
-	type FileUploadRecord,
-	FileUploadRecordStatus,
-	type FileUploadStoreType,
-	type FileUploadStoreValue,
-} from '@/org.libersoft.messages/services/Files/types.ts';
+import { type FileUpload, type FileUploadRecord, FileUploadRecordStatus, type FileUploadStoreType, type FileUploadStoreValue } from '@/org.libersoft.messages/services/Files/types.ts';
 
 export class FileUploadStore implements FileUploadStoreType {
 	store = writable<FileUploadStoreValue>([]);
@@ -55,13 +49,7 @@ export class FileUploadStore implements FileUploadStoreType {
 	}
 
 	isAnyUploadRunning() {
-		return this.getAll().some(
-			(upload) =>
-				upload &&
-				[FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) &&
-				upload.file &&
-				upload.running
-		);
+		return this.getAll().some((upload) => upload && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) && upload.file && upload.running);
 	}
 }
 

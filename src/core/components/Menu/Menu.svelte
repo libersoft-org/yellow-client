@@ -71,14 +71,7 @@
 <div class="menu {showMenu ? 'open' : ''}">
 	<div>
 		<div class="header">
-			<Icon
-				img="img/close.svg"
-				alt="X"
-				colorVariable="--icon-white"
-				size="30px"
-				padding="15px"
-				onClick={clickMenuClose}
-			/>
+			<Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30px" padding="15px" onClick={clickMenuClose} />
 		</div>
 		<div class="items">
 			{#each menuItems as item}

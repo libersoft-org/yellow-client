@@ -31,22 +31,12 @@
 	});
 </script>
 
-<div
-	class="images-wrap"
-	data-children-length={childrenLength}
-	style="--images-group-size: {rowSize};"
-	style:margin-bottom="var(--images-gap)"
->
+<div class="images-wrap" data-children-length={childrenLength} style="--images-group-size: {rowSize};" style:margin-bottom="var(--images-gap)">
 	{#each imagesRows as row, rowIndex (rowIndex)}
 		<div class="images" style:margin-bottom={rowIndex === imagesRows.length - 1 ? 0 : 'var(--images-gap)'}>
 			{#each row as child, childIndex (child.tagUniqueId)}
 				{@const isLastOfAll = rowIndex === rowLimit - 1 && childIndex === row.length - 1}
-				<child.component
-					{...child.props}
-					showHiddenImages={isLastOfAll && hiddenImages.length > 0}
-					{hiddenImages}
-					{siblings}
-				/>
+				<child.component {...child.props} showHiddenImages={isLastOfAll && hiddenImages.length > 0} {hiddenImages} {siblings} />
 			{/each}
 		</div>
 	{/each}
@@ -64,10 +54,7 @@
 	}
 
 	.images :global(.message-content-image) {
-		--image-size: min(
-			120px,
-			calc(60 * var(--messages-list-width) / 100 / 4 - var(--images-group-size) * var(--images-gap))
-		);
+		--image-size: min(120px, calc(60 * var(--messages-list-width) / 100 / 4 - var(--images-group-size) * var(--images-gap)));
 		display: flex;
 		flex: 1 1;
 		max-width: var(--image-size);

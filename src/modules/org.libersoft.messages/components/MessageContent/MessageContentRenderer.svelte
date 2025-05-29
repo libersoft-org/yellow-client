@@ -11,8 +11,7 @@
 
 	// Recursive function to render nodes
 	function renderNode(node, parentNode = null, level = 0) {
-		const positionBetweenSiblings =
-			parentNode && parentNode.childNodes ? Array.from(parentNode.childNodes).indexOf(node) : 0;
+		const positionBetweenSiblings = parentNode && parentNode.childNodes ? Array.from(parentNode.childNodes).indexOf(node) : 0;
 		const tagUniqueId = `tag-unique-id-${node.tagName || node.nodeType}-${level}-${positionBetweenSiblings}`;
 
 		// Handle text nodes

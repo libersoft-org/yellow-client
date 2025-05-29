@@ -1,14 +1,7 @@
 <script lang="ts">
 	import FileTransfer from './FileTransfer.svelte';
 	import { identifier } from '../../messages.js';
-	import {
-		type FileDownload,
-		type FileUpload,
-		FileUploadRecordErrorType,
-		FileUploadRecordStatus,
-		FileUploadRecordType,
-		FileUploadRole,
-	} from '@/org.libersoft.messages/services/Files/types.ts';
+	import { type FileDownload, type FileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { humanSize } from '@/core/utils/fileUtils.js';
 
@@ -25,26 +18,11 @@
 		changingStatus: boolean;
 	}
 
-	let {
-		upload,
-		download,
-		changingStatus,
-		pauseUpload,
-		resumeUpload,
-		cancelUpload,
-		resumeDownload,
-		pauseDownload,
-		cancelDownload,
-		onDownload,
-	}: AttachmentProps = $props();
+	let { upload, download, changingStatus, pauseUpload, resumeUpload, cancelUpload, resumeDownload, pauseDownload, cancelDownload, onDownload }: AttachmentProps = $props();
 
 	const uploadId = $derived(upload ? upload.record.id : null) as string;
-	const uploaded = $derived(
-		upload ? Math.min(upload.chunksSent.length * upload.record.chunkSize, upload.record.fileSize) : 0
-	);
-	const downloaded = $derived(
-		download ? Math.min(download.chunksReceived.length * download.record.chunkSize, download.record.fileSize) : 0
-	);
+	const uploaded = $derived(upload ? Math.min(upload.chunksSent.length * upload.record.chunkSize, upload.record.fileSize) : 0);
+	const downloaded = $derived(download ? Math.min(download.chunksReceived.length * download.record.chunkSize, download.record.fileSize) : 0);
 	const isUploadActive = $derived(Boolean(upload && upload.file));
 
 	let statusString = $derived.by(() => {
@@ -83,17 +61,9 @@
 {#snippet uploadControls()}
 	<div class="transfer-controls">
 		{#if upload.record.status === FileUploadRecordStatus.PAUSED}
-			<Button
-				img="modules/{identifier}/img/play.svg"
-				onClick={() => resumeUpload(uploadId)}
-				enabled={!changingStatus}
-			/>
+			<Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
 		{:else}
-			<Button
-				img="modules/{identifier}/img/pause.svg"
-				onClick={() => pauseUpload(uploadId)}
-				enabled={!changingStatus}
-			/>
+			<Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
 		{/if}
 		<Button img="img/close.svg" colorVariable="--icon-black" onClick={() => cancelUpload(uploadId)} />
 	</div>
@@ -101,21 +71,12 @@
 
 {#snippet downloadControls()}
 	<!-- -->
-	{@const isPausedByServer =
-		upload && upload.record.status === FileUploadRecordStatus.PAUSED && upload.role === FileUploadRole.RECEIVER}
+	{@const isPausedByServer = upload && upload.record.status === FileUploadRecordStatus.PAUSED && upload.role === FileUploadRole.RECEIVER}
 	<div class="transfer-controls">
 		{#if download && (download.pausedLocally || !download.running)}
-			<Button
-				img="modules/{identifier}/img/play.svg"
-				onClick={() => resumeDownload(uploadId)}
-				enabled={!isPausedByServer}
-			/>
+			<Button img="modules/{identifier}/img/play.svg" onClick={() => resumeDownload(uploadId)} enabled={!isPausedByServer} />
 		{:else}
-			<Button
-				img="modules/{identifier}/img/pause.svg"
-				onClick={() => pauseDownload(uploadId)}
-				enabled={!isPausedByServer}
-			/>
+			<Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
 		{/if}
 		<Button img="img/close.svg" colorVariable="--icon-black" onClick={() => cancelDownload(uploadId)} />
 	</div>
@@ -164,12 +125,7 @@
 			<FileTransfer {uploaded} total={upload.record.fileSize} status={statusString} />
 			{@render uploadControls()}
 		{:else}
-			<FileTransfer
-				uploaded={upload.uploadedBytes}
-				total={upload.record.fileSize}
-				status={statusString}
-				hideSpeed={true}
-			/>
+			<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
 		{/if}
 
 		<!-- FINISHED UPLOAD - downloading -->
@@ -199,12 +155,7 @@
 
 		<!-- DOWNLOAD BEGIN/UPLOADING/PAUSED  -->
 	{:else if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes(upload.record.status)}
-		<FileTransfer
-			uploaded={upload.uploadedBytes}
-			total={upload.record.fileSize}
-			status={statusString}
-			hideSpeed={true}
-		/>
+		<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
 
 		<!-- DOWNLOAD FINISHED - download again if needed -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}

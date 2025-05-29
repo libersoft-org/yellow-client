@@ -12,28 +12,9 @@
 
 	import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
 	import { writable, get, type Unsubscriber } from 'svelte/store';
-	import {
-		selectedMonitorName,
-		selectedNotificationsCorner,
-		enableCustomNotifications,
-		customNotificationsOn,
-		animationDuration,
-		animationName,
-		titleMaxLines,
-		bodyMaxLines,
-		bgColor,
-		bgColorHover,
-		borderColor,
-		titleColor,
-		descColor,
-		notificationsSoundEnabled,
-	} from '../../notifications_settings.ts';
+	import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
 	import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
-	import {
-		notificationsSettingsAlert,
-		notificationsEnabled,
-		isRequestingNotificationsPermission,
-	} from '../../notifications_settings.ts';
+	import { notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
 	import { deleteExampleNotifications, setNotificationsEnabled } from '../../notifications.ts';
 	import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
 	import { deleteNotification, updateExampleNotification, exampleNotifications } from '../../notifications.ts';

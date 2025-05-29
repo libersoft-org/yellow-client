@@ -5,17 +5,7 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
 	import Portal from '../Portal/Portal.svelte';
-	let {
-		show = $bindable(false),
-		children,
-		params,
-		title = '',
-		body = {},
-		breadcrumbs,
-		width,
-		height,
-		onShowChange = () => {},
-	}: Props = $props();
+	let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -189,46 +179,18 @@
 
 {#if show}
 	<Portal>
-		<div
-			class="modal"
-			role="none"
-			tabindex="-1"
-			style:width
-			style:height
-			style:max-width={width}
-			style:max-height={height}
-			bind:this={modalEl}
-			use:draggable={dragableConfig}
-			style:z-index={zIndex}
-			onmousedown={raiseZIndex}
-			{onkeydown}
-		>
+		<div class="modal" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">
 					{#if title}
 						<div class="title">
 							{#if activeTab}
-								<Icon
-									img="img/back.svg"
-									alt="Back"
-									colorVariable="--color-primary-foreground"
-									size="20px"
-									padding="10px"
-									onClick={clearActiveTab}
-								/>
+								<Icon img="img/back.svg" alt="Back" colorVariable="--color-primary-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
 							{/if}
 							{title}
 						</div>
 						<div onpointerdown={(e) => e.stopPropagation()}>
-							<Icon
-								data-testid="Modal-close"
-								img="img/close.svg"
-								alt="X"
-								colorVariable="--color-primary-foreground"
-								size="20px"
-								padding="10px"
-								onClick={close}
-							/>
+							<Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--color-primary-foreground" size="20px" padding="10px" onClick={close} />
 						</div>
 					{/if}
 				</div>

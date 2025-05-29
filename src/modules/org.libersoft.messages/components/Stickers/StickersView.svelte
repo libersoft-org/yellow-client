@@ -20,9 +20,7 @@
 	let animated_filter_dropdown_value = $state('all');
 	let scroll_to_top = $state(null);
 	$effect(() => console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value));
-	let animated_filter = $derived(
-		animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]
-	);
+	let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
 
 	let items = $state([]);
 	let loading = $state(true);
@@ -38,16 +36,7 @@
 	let query_store_unsubscribe;
 
 	$effect(async () => {
-		console.log(
-			'stickerset_favorites:',
-			stickerset_favorites,
-			'$sticker_server:',
-			$sticker_server,
-			'fulltext_search_filter:',
-			fulltext_search_filter,
-			'animated_filter:',
-			animated_filter
-		);
+		console.log('stickerset_favorites:', stickerset_favorites, '$sticker_server:', $sticker_server, 'fulltext_search_filter:', fulltext_search_filter, 'animated_filter:', animated_filter);
 	});
 
 	$effect(async () => live_query($sticker_server, fulltext_search_filter, animated_filter));
@@ -100,13 +89,7 @@
 </script>
 
 <div class="filter">
-	<InputButton
-		alt="Search"
-		bind:this={fulltext_search_element}
-		bind:value={fulltext_search_filter}
-		img="modules/{identifier}/img/search.svg"
-		placeholder="Search ..."
-	/>
+	<InputButton alt="Search" bind:this={fulltext_search_element} bind:value={fulltext_search_filter} img="modules/{identifier}/img/search.svg" placeholder="Search ..." />
 	<Select bind:value={animated_filter_dropdown_value}>
 		<Option text="All" value="all" />
 		<Option text="Animated only" value="animated" />

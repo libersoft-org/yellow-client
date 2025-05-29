@@ -1,10 +1,5 @@
 <script lang="ts">
-	import {
-		offerNativeDownload,
-		saveNativeDownloadChunk,
-		finishNativeDownload,
-		exportToSystemDownloads,
-	} from '../../files';
+	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, exportToSystemDownloads } from '../../files';
 	import { TAURI, TAURI_MOBILE, BROWSER } from '../../tauri';
 	import { platform, type as osType } from '@tauri-apps/plugin-os';
 	import { invoke } from '@tauri-apps/api/core';
@@ -115,11 +110,7 @@
 				return;
 			}
 			result = 'Exporting to system Downloads...';
-			const exportResult = await exportToSystemDownloads(
-				download.temp_file_path,
-				download.original_file_name,
-				'text/plain'
-			);
+			const exportResult = await exportToSystemDownloads(download.temp_file_path, download.original_file_name, 'text/plain');
 			if (exportResult.success) {
 				result = 'File exported to Downloads folder successfully!';
 			} else {

@@ -4,14 +4,7 @@ export const default_networks = writable([
 	{
 		name: 'Ethereum - Mainnet',
 		chainID: 1,
-		rpcURLs: [
-			'https://cloudflare-eth.com',
-			'https://rpc.ankr.com/eth',
-			'https://main-rpc.linkpool.io',
-			'https://eth-rpc.gateway.pokt.network',
-			'https://mainnet-nethermind.blockscout.com',
-			'https://api.mycryptoapi.com/eth',
-		],
+		rpcURLs: ['https://cloudflare-eth.com', 'https://rpc.ankr.com/eth', 'https://main-rpc.linkpool.io', 'https://eth-rpc.gateway.pokt.network', 'https://mainnet-nethermind.blockscout.com', 'https://api.mycryptoapi.com/eth'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -21,13 +14,7 @@ export const default_networks = writable([
 	{
 		name: 'Ethereum - Goerli Testnet',
 		chainID: 5,
-		rpcURLs: [
-			'https://goerli.infura.io/v3/YOUR-PROJECT-ID',
-			'https://eth-goerli.g.alchemy.com/v2/YOUR-API-KEY',
-			'https://rpc.goerli.mudit.blog/',
-			'https://rpc.ankr.com/eth_goerli',
-			'https://goerli.blockpi.network/v1/rpc/public',
-		],
+		rpcURLs: ['https://goerli.infura.io/v3/YOUR-PROJECT-ID', 'https://eth-goerli.g.alchemy.com/v2/YOUR-API-KEY', 'https://rpc.goerli.mudit.blog/', 'https://rpc.ankr.com/eth_goerli', 'https://goerli.blockpi.network/v1/rpc/public'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -37,11 +24,7 @@ export const default_networks = writable([
 	{
 		name: 'Ethereum - Sepolia Testnet',
 		chainID: 11155111,
-		rpcURLs: [
-			'https://sepolia.infura.io/v3/YOUR-PROJECT-ID',
-			'https://rpc.sepolia.org',
-			'https://sepolia.blockpi.network/v1/rpc/public',
-		],
+		rpcURLs: ['https://sepolia.infura.io/v3/YOUR-PROJECT-ID', 'https://rpc.sepolia.org', 'https://sepolia.blockpi.network/v1/rpc/public'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -61,11 +44,7 @@ export const default_networks = writable([
 	{
 		name: 'Ethereum - Rinkeby Testnet (Deprecated)',
 		chainID: 4,
-		rpcURLs: [
-			'https://rinkeby.infura.io/v3/YOUR-PROJECT-ID',
-			'https://eth-rinkeby.alchemyapi.io/v2/YOUR-API-KEY',
-			'https://rinkeby-light.eth.linkpool.io/',
-		],
+		rpcURLs: ['https://rinkeby.infura.io/v3/YOUR-PROJECT-ID', 'https://eth-rinkeby.alchemyapi.io/v2/YOUR-API-KEY', 'https://rinkeby-light.eth.linkpool.io/'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -75,13 +54,7 @@ export const default_networks = writable([
 	{
 		name: 'Binance Smart Chain - Mainnet',
 		chainID: 56,
-		rpcURLs: [
-			'https://bsc-dataseed.binance.org/',
-			'https://bsc-dataseed1.defibit.io/',
-			'https://bsc-dataseed1.ninicoin.io/',
-			'https://rpc.ankr.com/bsc',
-			'https://bscrpc.com',
-		],
+		rpcURLs: ['https://bsc-dataseed.binance.org/', 'https://bsc-dataseed1.defibit.io/', 'https://bsc-dataseed1.ninicoin.io/', 'https://rpc.ankr.com/bsc', 'https://bscrpc.com'],
 		currency: {
 			symbol: 'BNB',
 			iconURL: iconUrlBase + 'BNB.svg',
@@ -91,12 +64,7 @@ export const default_networks = writable([
 	{
 		name: 'Binance Smart Chain - Testnet',
 		chainID: 97,
-		rpcURLs: [
-			'https://data-seed-prebsc-1-s1.binance.org:8545/',
-			'https://data-seed-prebsc-2-s2.binance.org:8545/',
-			'https://data-seed-prebsc-1-s3.binance.org:8545/',
-			'https://rpc.ankr.com/bsc_testnet_chapel',
-		],
+		rpcURLs: ['https://data-seed-prebsc-1-s1.binance.org:8545/', 'https://data-seed-prebsc-2-s2.binance.org:8545/', 'https://data-seed-prebsc-1-s3.binance.org:8545/', 'https://rpc.ankr.com/bsc_testnet_chapel'],
 		currency: {
 			symbol: 'tBNB',
 			iconURL: iconUrlBase + 'BNB.svg',
@@ -106,13 +74,7 @@ export const default_networks = writable([
 	{
 		name: 'Polygon - Mainnet',
 		chainID: 137,
-		rpcURLs: [
-			'https://polygon-rpc.com',
-			'https://rpc-mainnet.maticvigil.com/',
-			'https://rpc-mainnet.matic.network',
-			'https://rpc-mainnet.matic.quiknode.pro',
-			'https://matic-mainnet.chainstacklabs.com',
-		],
+		rpcURLs: ['https://polygon-rpc.com', 'https://rpc-mainnet.maticvigil.com/', 'https://rpc-mainnet.matic.network', 'https://rpc-mainnet.matic.quiknode.pro', 'https://matic-mainnet.chainstacklabs.com'],
 		currency: {
 			symbol: 'MATIC',
 			iconURL: iconUrlBase + 'MATIC.svg',
@@ -122,15 +84,7 @@ export const default_networks = writable([
 	{
 		name: 'Polygon - Amoy Testnet',
 		chainID: 80002,
-		rpcURLs: [
-			'https://rpc-amoy.polygon.technology',
-			'https://polygon-amoy.blockpi.network/v1/rpc/public',
-			'https://rpc.ankr.com/polygon_amoy',
-			'https://polygon-amoy.drpc.org',
-			'https://polygon-amoy.gateway.tenderly.co',
-			'https://polygon-amoy-bor-rpc.publicnode.com',
-			'wss://polygon-amoy-bor-rpc.publicnode.com',
-		],
+		rpcURLs: ['https://rpc-amoy.polygon.technology', 'https://polygon-amoy.blockpi.network/v1/rpc/public', 'https://rpc.ankr.com/polygon_amoy', 'https://polygon-amoy.drpc.org', 'https://polygon-amoy.gateway.tenderly.co', 'https://polygon-amoy-bor-rpc.publicnode.com', 'wss://polygon-amoy-bor-rpc.publicnode.com'],
 		currency: {
 			symbol: 'MATIC',
 			iconURL: iconUrlBase + 'MATIC.svg',
@@ -140,12 +94,7 @@ export const default_networks = writable([
 	{
 		name: 'Avalanche - C-Chain Mainnet',
 		chainID: 43114,
-		rpcURLs: [
-			'https://api.avax.network/ext/bc/C/rpc',
-			'https://rpc.ankr.com/avalanche',
-			'https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc',
-			'https://avalanche-c-chain.publicnode.com',
-		],
+		rpcURLs: ['https://api.avax.network/ext/bc/C/rpc', 'https://rpc.ankr.com/avalanche', 'https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc', 'https://avalanche-c-chain.publicnode.com'],
 		currency: {
 			symbol: 'AVAX',
 			iconURL: iconUrlBase + 'AVAX.svg',
@@ -155,11 +104,7 @@ export const default_networks = writable([
 	{
 		name: 'Avalanche - Fuji Testnet',
 		chainID: 43113,
-		rpcURLs: [
-			'https://api.avax-test.network/ext/bc/C/rpc',
-			'https://rpc.ankr.com/avalanche_fuji',
-			'https://ava-testnet.public.blastapi.io/ext/bc/C/rpc',
-		],
+		rpcURLs: ['https://api.avax-test.network/ext/bc/C/rpc', 'https://rpc.ankr.com/avalanche_fuji', 'https://ava-testnet.public.blastapi.io/ext/bc/C/rpc'],
 		currency: {
 			symbol: 'AVAX',
 			iconURL: iconUrlBase + 'AVAX.svg',
@@ -169,12 +114,7 @@ export const default_networks = writable([
 	{
 		name: 'Fantom Opera - Mainnet',
 		chainID: 250,
-		rpcURLs: [
-			'https://rpc.ftm.tools/',
-			'https://fantom-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/fantom',
-			'https://rpcapi.fantom.network',
-		],
+		rpcURLs: ['https://rpc.ftm.tools/', 'https://fantom-mainnet.public.blastapi.io', 'https://rpc.ankr.com/fantom', 'https://rpcapi.fantom.network'],
 		currency: {
 			symbol: 'FTM',
 			iconURL: iconUrlBase + 'FTM.svg',
@@ -184,11 +124,7 @@ export const default_networks = writable([
 	{
 		name: 'Fantom Opera - Testnet',
 		chainID: 4002,
-		rpcURLs: [
-			'https://rpc.testnet.fantom.network/',
-			'https://fantom-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/fantom_testnet',
-		],
+		rpcURLs: ['https://rpc.testnet.fantom.network/', 'https://fantom-testnet.public.blastapi.io', 'https://rpc.ankr.com/fantom_testnet'],
 		currency: {
 			symbol: 'FTM',
 			iconURL: iconUrlBase + 'FTM.svg',
@@ -198,12 +134,7 @@ export const default_networks = writable([
 	{
 		name: 'Arbitrum One - Mainnet',
 		chainID: 42161,
-		rpcURLs: [
-			'https://arb1.arbitrum.io/rpc',
-			'https://arbitrum-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/arbitrum',
-			'https://arb-mainnet.g.alchemy.com/v2/YOUR-API-KEY',
-		],
+		rpcURLs: ['https://arb1.arbitrum.io/rpc', 'https://arbitrum-mainnet.public.blastapi.io', 'https://rpc.ankr.com/arbitrum', 'https://arb-mainnet.g.alchemy.com/v2/YOUR-API-KEY'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -213,12 +144,7 @@ export const default_networks = writable([
 	{
 		name: 'Arbitrum One - Goerli Testnet',
 		chainID: 421613,
-		rpcURLs: [
-			'https://goerli-rollup.arbitrum.io/rpc',
-			'https://arbitrum-goerli.public.blastapi.io',
-			'https://arb-goerli.g.alchemy.com/v2/YOUR-API-KEY',
-			'https://rpc.ankr.com/arbitrum_goerli',
-		],
+		rpcURLs: ['https://goerli-rollup.arbitrum.io/rpc', 'https://arbitrum-goerli.public.blastapi.io', 'https://arb-goerli.g.alchemy.com/v2/YOUR-API-KEY', 'https://rpc.ankr.com/arbitrum_goerli'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -228,12 +154,7 @@ export const default_networks = writable([
 	{
 		name: 'Optimism - Mainnet',
 		chainID: 10,
-		rpcURLs: [
-			'https://mainnet.optimism.io',
-			'https://optimism-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/optimism',
-			'https://opt-mainnet.g.alchemy.com/v2/YOUR-API-KEY',
-		],
+		rpcURLs: ['https://mainnet.optimism.io', 'https://optimism-mainnet.public.blastapi.io', 'https://rpc.ankr.com/optimism', 'https://opt-mainnet.g.alchemy.com/v2/YOUR-API-KEY'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -243,12 +164,7 @@ export const default_networks = writable([
 	{
 		name: 'Optimism - Goerli Testnet',
 		chainID: 420,
-		rpcURLs: [
-			'https://goerli.optimism.io',
-			'https://optimism-goerli.public.blastapi.io',
-			'https://opt-goerli.g.alchemy.com/v2/YOUR-API-KEY',
-			'https://rpc.ankr.com/optimism_testnet',
-		],
+		rpcURLs: ['https://goerli.optimism.io', 'https://optimism-goerli.public.blastapi.io', 'https://opt-goerli.g.alchemy.com/v2/YOUR-API-KEY', 'https://rpc.ankr.com/optimism_testnet'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -258,12 +174,7 @@ export const default_networks = writable([
 	{
 		name: 'Cronos - Mainnet',
 		chainID: 25,
-		rpcURLs: [
-			'https://evm.cronos.org',
-			'https://cronosrpc-1.xstaking.sg',
-			'https://rpc.ankr.com/cronos',
-			'https://node.croswap.com/rpc',
-		],
+		rpcURLs: ['https://evm.cronos.org', 'https://cronosrpc-1.xstaking.sg', 'https://rpc.ankr.com/cronos', 'https://node.croswap.com/rpc'],
 		currency: {
 			symbol: 'CRO',
 			iconURL: iconUrlBase + 'CRO.svg',
@@ -273,11 +184,7 @@ export const default_networks = writable([
 	{
 		name: 'Cronos - Testnet',
 		chainID: 338,
-		rpcURLs: [
-			'https://evm-t3.cronos.org',
-			'https://cronos-testnet-3.crypto.org:8545',
-			'https://rpc.ankr.com/cronos_testnet',
-		],
+		rpcURLs: ['https://evm-t3.cronos.org', 'https://cronos-testnet-3.crypto.org:8545', 'https://rpc.ankr.com/cronos_testnet'],
 		currency: {
 			symbol: 'tCRO',
 			iconURL: iconUrlBase + 'CRO.svg',
@@ -297,11 +204,7 @@ export const default_networks = writable([
 	{
 		name: 'zkSync Era - Testnet',
 		chainID: 280,
-		rpcURLs: [
-			'https://testnet.era.zksync.dev',
-			'https://zksync2-testnet.zksync.dev',
-			'https://rpc.ankr.com/zksync_era_testnet',
-		],
+		rpcURLs: ['https://testnet.era.zksync.dev', 'https://zksync2-testnet.zksync.dev', 'https://rpc.ankr.com/zksync_era_testnet'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -311,11 +214,7 @@ export const default_networks = writable([
 	{
 		name: 'Moonbeam - Mainnet',
 		chainID: 1284,
-		rpcURLs: [
-			'https://rpc.api.moonbeam.network',
-			'https://moonbeam.public.blastapi.io',
-			'https://rpc.ankr.com/moonbeam',
-		],
+		rpcURLs: ['https://rpc.api.moonbeam.network', 'https://moonbeam.public.blastapi.io', 'https://rpc.ankr.com/moonbeam'],
 		currency: {
 			symbol: 'GLMR',
 			iconURL: iconUrlBase + 'GLMR.svg',
@@ -325,11 +224,7 @@ export const default_networks = writable([
 	{
 		name: 'Moonbase - Alpha Testnet',
 		chainID: 1287,
-		rpcURLs: [
-			'https://rpc.api.moonbase.moonbeam.network',
-			'https://moonbase-alpha.public.blastapi.io',
-			'https://rpc.ankr.com/moonbeam_testnet',
-		],
+		rpcURLs: ['https://rpc.api.moonbase.moonbeam.network', 'https://moonbase-alpha.public.blastapi.io', 'https://rpc.ankr.com/moonbeam_testnet'],
 		currency: {
 			symbol: 'DEV',
 			iconURL: iconUrlBase + 'GLMR.svg',
@@ -349,11 +244,7 @@ export const default_networks = writable([
 	{
 		name: 'Celo - Alfajores Testnet',
 		chainID: 44787,
-		rpcURLs: [
-			'https://alfajores-forno.celo-testnet.org',
-			'https://rpc.ankr.com/celo_alfajores',
-			'https://alfajores.celo-testnet.public.blastapi.io',
-		],
+		rpcURLs: ['https://alfajores-forno.celo-testnet.org', 'https://rpc.ankr.com/celo_alfajores', 'https://alfajores.celo-testnet.public.blastapi.io'],
 		currency: {
 			symbol: 'CELO',
 			iconURL: iconUrlBase + 'CELO.svg',
@@ -363,11 +254,7 @@ export const default_networks = writable([
 	{
 		name: 'Gnosis - Mainnet',
 		chainID: 100,
-		rpcURLs: [
-			'https://rpc.gnosischain.com',
-			'https://gnosis-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/gnosis',
-		],
+		rpcURLs: ['https://rpc.gnosischain.com', 'https://gnosis-mainnet.public.blastapi.io', 'https://rpc.ankr.com/gnosis'],
 		currency: {
 			symbol: 'xDAI',
 			iconURL: iconUrlBase + 'xDAI.svg',
@@ -377,11 +264,7 @@ export const default_networks = writable([
 	{
 		name: 'Gnosis - Chiado Testnet',
 		chainID: 10200,
-		rpcURLs: [
-			'https://rpc.chiadochain.net',
-			'https://gnosis-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/gnosis_chiado',
-		],
+		rpcURLs: ['https://rpc.chiadochain.net', 'https://gnosis-testnet.public.blastapi.io', 'https://rpc.ankr.com/gnosis_chiado'],
 		currency: {
 			symbol: 'xDAI',
 			iconURL: iconUrlBase + 'xDAI.svg',
@@ -391,11 +274,7 @@ export const default_networks = writable([
 	{
 		name: 'Klaytn - Mainnet',
 		chainID: 8217,
-		rpcURLs: [
-			'https://public-node-api.klaytnapi.com/v1/cypress',
-			'https://klaytn01.fandom.finance',
-			'https://klaytn.rpc.thirdweb.com',
-		],
+		rpcURLs: ['https://public-node-api.klaytnapi.com/v1/cypress', 'https://klaytn01.fandom.finance', 'https://klaytn.rpc.thirdweb.com'],
 		currency: {
 			symbol: 'KLAY',
 			iconURL: iconUrlBase + 'KLAY.svg',
@@ -405,11 +284,7 @@ export const default_networks = writable([
 	{
 		name: 'Klaytn - Baobab Testnet',
 		chainID: 1001,
-		rpcURLs: [
-			'https://api.baobab.klaytn.net:8651',
-			'https://klaytn-baobab.blockpi.network/v1/rpc/public',
-			'https://klaytn-testnet.rpc.thirdweb.com',
-		],
+		rpcURLs: ['https://api.baobab.klaytn.net:8651', 'https://klaytn-baobab.blockpi.network/v1/rpc/public', 'https://klaytn-testnet.rpc.thirdweb.com'],
 		currency: {
 			symbol: 'KLAY',
 			iconURL: iconUrlBase + 'KLAY.svg',
@@ -429,11 +304,7 @@ export const default_networks = writable([
 	{
 		name: 'Velas - Testnet',
 		chainID: 111,
-		rpcURLs: [
-			'https://testnet.velas.com/rpc',
-			'https://velas-testnet.public.blastapi.io',
-			'https://rpc-testnet.velas.com',
-		],
+		rpcURLs: ['https://testnet.velas.com/rpc', 'https://velas-testnet.public.blastapi.io', 'https://rpc-testnet.velas.com'],
 		currency: {
 			symbol: 'VLX',
 			iconURL: iconUrlBase + 'VLX.svg',
@@ -453,11 +324,7 @@ export const default_networks = writable([
 	{
 		name: 'Harmony - Testnet Shard 0',
 		chainID: 1666700000,
-		rpcURLs: [
-			'https://api.s0.b.hmny.io',
-			'https://rpc.ankr.com/harmony_testnet',
-			'https://harmony-testnet.public.blastapi.io',
-		],
+		rpcURLs: ['https://api.s0.b.hmny.io', 'https://rpc.ankr.com/harmony_testnet', 'https://harmony-testnet.public.blastapi.io'],
 		currency: {
 			symbol: 'ONE',
 			iconURL: iconUrlBase + 'ONE.svg',
@@ -477,11 +344,7 @@ export const default_networks = writable([
 	{
 		name: 'Aurora - Testnet',
 		chainID: 1313161555,
-		rpcURLs: [
-			'https://testnet.aurora.dev',
-			'https://aurora-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/aurora_testnet',
-		],
+		rpcURLs: ['https://testnet.aurora.dev', 'https://aurora-testnet.public.blastapi.io', 'https://rpc.ankr.com/aurora_testnet'],
 		currency: {
 			symbol: 'ETH',
 			iconURL: iconUrlBase + 'ETH.svg',
@@ -491,11 +354,7 @@ export const default_networks = writable([
 	{
 		name: 'Metis Andromeda - Mainnet',
 		chainID: 1088,
-		rpcURLs: [
-			'https://andromeda.metis.io/?owner=1088',
-			'https://metis-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/metis',
-		],
+		rpcURLs: ['https://andromeda.metis.io/?owner=1088', 'https://metis-mainnet.public.blastapi.io', 'https://rpc.ankr.com/metis'],
 		currency: {
 			symbol: 'METIS',
 			iconURL: iconUrlBase + 'METIS.svg',
@@ -505,11 +364,7 @@ export const default_networks = writable([
 	{
 		name: 'Metis Stardust - Testnet',
 		chainID: 588,
-		rpcURLs: [
-			'https://stardust.metis.io/?owner=588',
-			'https://metis-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/metis_testnet',
-		],
+		rpcURLs: ['https://stardust.metis.io/?owner=588', 'https://metis-testnet.public.blastapi.io', 'https://rpc.ankr.com/metis_testnet'],
 		currency: {
 			symbol: 'METIS',
 			iconURL: iconUrlBase + 'METIS.svg',
@@ -529,11 +384,7 @@ export const default_networks = writable([
 	{
 		name: 'Fuse Spark - Testnet',
 		chainID: 123,
-		rpcURLs: [
-			'https://rpc.fusespark.io',
-			'https://fuse-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/fuse_testnet',
-		],
+		rpcURLs: ['https://rpc.fusespark.io', 'https://fuse-testnet.public.blastapi.io', 'https://rpc.ankr.com/fuse_testnet'],
 		currency: {
 			symbol: 'FUSE',
 			iconURL: iconUrlBase + 'FUSE.svg',
@@ -543,11 +394,7 @@ export const default_networks = writable([
 	{
 		name: 'ThunderCore - Mainnet',
 		chainID: 108,
-		rpcURLs: [
-			'https://mainnet-rpc.thundercore.com',
-			'https://thundercore-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/thundercore',
-		],
+		rpcURLs: ['https://mainnet-rpc.thundercore.com', 'https://thundercore-mainnet.public.blastapi.io', 'https://rpc.ankr.com/thundercore'],
 		currency: {
 			symbol: 'TT',
 			iconURL: iconUrlBase + 'TT.svg',
@@ -557,11 +404,7 @@ export const default_networks = writable([
 	{
 		name: 'ThunderCore - Testnet',
 		chainID: 18,
-		rpcURLs: [
-			'https://testnet-rpc.thundercore.com',
-			'https://thundercore-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/thundercore_testnet',
-		],
+		rpcURLs: ['https://testnet-rpc.thundercore.com', 'https://thundercore-testnet.public.blastapi.io', 'https://rpc.ankr.com/thundercore_testnet'],
 		currency: {
 			symbol: 'TST',
 			iconURL: iconUrlBase + 'TT.svg',
@@ -571,11 +414,7 @@ export const default_networks = writable([
 	{
 		name: 'Telos EVM - Mainnet',
 		chainID: 40,
-		rpcURLs: [
-			'https://mainnet.telos.net/evm',
-			'https://telos-evm-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/telos',
-		],
+		rpcURLs: ['https://mainnet.telos.net/evm', 'https://telos-evm-mainnet.public.blastapi.io', 'https://rpc.ankr.com/telos'],
 		currency: {
 			symbol: 'TLOS',
 			iconURL: iconUrlBase + 'TLOS.svg',
@@ -585,11 +424,7 @@ export const default_networks = writable([
 	{
 		name: 'Telos EVM - Testnet',
 		chainID: 41,
-		rpcURLs: [
-			'https://testnet.telos.net/evm',
-			'https://telos-evm-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/telos_testnet',
-		],
+		rpcURLs: ['https://testnet.telos.net/evm', 'https://telos-evm-testnet.public.blastapi.io', 'https://rpc.ankr.com/telos_testnet'],
 		currency: {
 			symbol: 'TLOS',
 			iconURL: iconUrlBase + 'TLOS.svg',
@@ -599,11 +434,7 @@ export const default_networks = writable([
 	{
 		name: 'Moonriver - Mainnet',
 		chainID: 1285,
-		rpcURLs: [
-			'https://rpc.api.moonriver.moonbeam.network',
-			'https://moonriver.public.blastapi.io',
-			'https://rpc.ankr.com/moonriver',
-		],
+		rpcURLs: ['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.public.blastapi.io', 'https://rpc.ankr.com/moonriver'],
 		currency: {
 			symbol: 'MOVR',
 			iconURL: iconUrlBase + 'MOVR.svg',
@@ -613,11 +444,7 @@ export const default_networks = writable([
 	{
 		name: 'Moonriver - Testnet',
 		chainID: 1287,
-		rpcURLs: [
-			'https://rpc.api.moonbase.moonbeam.network',
-			'https://moonbase-alpha.public.blastapi.io',
-			'https://rpc.ankr.com/moonbeam_testnet',
-		],
+		rpcURLs: ['https://rpc.api.moonbase.moonbeam.network', 'https://moonbase-alpha.public.blastapi.io', 'https://rpc.ankr.com/moonbeam_testnet'],
 		currency: {
 			symbol: 'DEV',
 			iconURL: iconUrlBase + 'MOVR.svg',
@@ -637,11 +464,7 @@ export const default_networks = writable([
 	{
 		name: 'RSK - Testnet',
 		chainID: 31,
-		rpcURLs: [
-			'https://public-node.testnet.rsk.co',
-			'https://rsk-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/rsk_testnet',
-		],
+		rpcURLs: ['https://public-node.testnet.rsk.co', 'https://rsk-testnet.public.blastapi.io', 'https://rpc.ankr.com/rsk_testnet'],
 		currency: {
 			symbol: 'tRBTC',
 			iconURL: iconUrlBase + 'RBTC.svg',
@@ -661,11 +484,7 @@ export const default_networks = writable([
 	{
 		name: 'Astar - Shiden Testnet',
 		chainID: 336,
-		rpcURLs: [
-			'https://rpc.shiden.astar.network',
-			'https://shiden-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/astar_shiden',
-		],
+		rpcURLs: ['https://rpc.shiden.astar.network', 'https://shiden-testnet.public.blastapi.io', 'https://rpc.ankr.com/astar_shiden'],
 		currency: {
 			symbol: 'SBY',
 			iconURL: iconUrlBase + 'ASTR.svg',
@@ -685,11 +504,7 @@ export const default_networks = writable([
 	{
 		name: 'KCC - Testnet',
 		chainID: 322,
-		rpcURLs: [
-			'https://rpc-testnet.kcc.network',
-			'https://kcc-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/kcc_testnet',
-		],
+		rpcURLs: ['https://rpc-testnet.kcc.network', 'https://kcc-testnet.public.blastapi.io', 'https://rpc.ankr.com/kcc_testnet'],
 		currency: {
 			symbol: 'KCS',
 			iconURL: iconUrlBase + 'KCS.svg',
@@ -699,11 +514,7 @@ export const default_networks = writable([
 	{
 		name: 'Hoo Smart Chain - Mainnet',
 		chainID: 70,
-		rpcURLs: [
-			'https://http-mainnet.hoosmartchain.com',
-			'https://hoo-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/hoo',
-		],
+		rpcURLs: ['https://http-mainnet.hoosmartchain.com', 'https://hoo-mainnet.public.blastapi.io', 'https://rpc.ankr.com/hoo'],
 		currency: {
 			symbol: 'HOO',
 			iconURL: iconUrlBase + 'HOO.svg',
@@ -713,11 +524,7 @@ export const default_networks = writable([
 	{
 		name: 'Hoo Smart Chain - Testnet',
 		chainID: 170,
-		rpcURLs: [
-			'https://http-testnet.hoosmartchain.com',
-			'https://hoo-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/hoo_testnet',
-		],
+		rpcURLs: ['https://http-testnet.hoosmartchain.com', 'https://hoo-testnet.public.blastapi.io', 'https://rpc.ankr.com/hoo_testnet'],
 		currency: {
 			symbol: 'HOO',
 			iconURL: iconUrlBase + 'HOO.svg',
@@ -727,11 +534,7 @@ export const default_networks = writable([
 	{
 		name: 'Emerald Paratime (Oasis Network) - Mainnet',
 		chainID: 42262,
-		rpcURLs: [
-			'https://emerald.oasis.dev',
-			'https://emerald-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/oasis_emerald',
-		],
+		rpcURLs: ['https://emerald.oasis.dev', 'https://emerald-mainnet.public.blastapi.io', 'https://rpc.ankr.com/oasis_emerald'],
 		currency: {
 			symbol: 'ROSE',
 			iconURL: iconUrlBase + 'ROSE.svg',
@@ -741,11 +544,7 @@ export const default_networks = writable([
 	{
 		name: 'Emerald Paratime (Oasis Network) - Testnet',
 		chainID: 42261,
-		rpcURLs: [
-			'https://testnet.emerald.oasis.dev',
-			'https://emerald-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/oasis_emerald_testnet',
-		],
+		rpcURLs: ['https://testnet.emerald.oasis.dev', 'https://emerald-testnet.public.blastapi.io', 'https://rpc.ankr.com/oasis_emerald_testnet'],
 		currency: {
 			symbol: 'ROSE',
 			iconURL: iconUrlBase + 'ROSE.svg',
@@ -755,11 +554,7 @@ export const default_networks = writable([
 	{
 		name: 'Songbird - Mainnet',
 		chainID: 19,
-		rpcURLs: [
-			'https://songbird-api.flare.network/ext/C/rpc',
-			'https://songbird.public.blastapi.io',
-			'https://rpc.ankr.com/songbird',
-		],
+		rpcURLs: ['https://songbird-api.flare.network/ext/C/rpc', 'https://songbird.public.blastapi.io', 'https://rpc.ankr.com/songbird'],
 		currency: {
 			symbol: 'SGB',
 			iconURL: iconUrlBase + 'SGB.svg',
@@ -769,11 +564,7 @@ export const default_networks = writable([
 	{
 		name: 'Songbird - Testnet',
 		chainID: 16,
-		rpcURLs: [
-			'https://songbird-testnet.flare.network/ext/C/rpc',
-			'https://songbird-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/songbird_testnet',
-		],
+		rpcURLs: ['https://songbird-testnet.flare.network/ext/C/rpc', 'https://songbird-testnet.public.blastapi.io', 'https://rpc.ankr.com/songbird_testnet'],
 		currency: {
 			symbol: 'SGB',
 			iconURL: iconUrlBase + 'SGB.svg',
@@ -793,11 +584,7 @@ export const default_networks = writable([
 	{
 		name: 'OKXChain - Testnet',
 		chainID: 65,
-		rpcURLs: [
-			'https://exchaintestrpc.okex.org',
-			'https://okc-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/okxchain_testnet',
-		],
+		rpcURLs: ['https://exchaintestrpc.okex.org', 'https://okc-testnet.public.blastapi.io', 'https://rpc.ankr.com/okxchain_testnet'],
 		currency: {
 			symbol: 'OKT',
 			iconURL: iconUrlBase + 'OKT.svg',
@@ -827,11 +614,7 @@ export const default_networks = writable([
 	{
 		name: 'Wanchain - Mainnet',
 		chainID: 888,
-		rpcURLs: [
-			'https://gwan-ssl.wandevs.org:56891',
-			'https://wanchain-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/wanchain',
-		],
+		rpcURLs: ['https://gwan-ssl.wandevs.org:56891', 'https://wanchain-mainnet.public.blastapi.io', 'https://rpc.ankr.com/wanchain'],
 		currency: {
 			symbol: 'WAN',
 			iconURL: iconUrlBase + 'WAN.svg',
@@ -841,11 +624,7 @@ export const default_networks = writable([
 	{
 		name: 'Wanchain - Testnet',
 		chainID: 999,
-		rpcURLs: [
-			'https://gwan-ssl.wandevs.org:46891',
-			'https://wanchain-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/wanchain_testnet',
-		],
+		rpcURLs: ['https://gwan-ssl.wandevs.org:46891', 'https://wanchain-testnet.public.blastapi.io', 'https://rpc.ankr.com/wanchain_testnet'],
 		currency: {
 			symbol: 'WAN',
 			iconURL: iconUrlBase + 'WAN.svg',
@@ -855,11 +634,7 @@ export const default_networks = writable([
 	{
 		name: 'Palm Network - Mainnet',
 		chainID: 11297108109,
-		rpcURLs: [
-			'https://palm-mainnet.infura.io/v3/YOUR-PROJECT-ID',
-			'https://palm-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/palm',
-		],
+		rpcURLs: ['https://palm-mainnet.infura.io/v3/YOUR-PROJECT-ID', 'https://palm-mainnet.public.blastapi.io', 'https://rpc.ankr.com/palm'],
 		currency: {
 			symbol: 'PALM',
 			iconURL: iconUrlBase + 'PALM.svg',
@@ -869,11 +644,7 @@ export const default_networks = writable([
 	{
 		name: 'Palm Network - Testnet',
 		chainID: 11297108099,
-		rpcURLs: [
-			'https://palm-testnet.infura.io/v3/YOUR-PROJECT-ID',
-			'https://palm-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/palm_testnet',
-		],
+		rpcURLs: ['https://palm-testnet.infura.io/v3/YOUR-PROJECT-ID', 'https://palm-testnet.public.blastapi.io', 'https://rpc.ankr.com/palm_testnet'],
 		currency: {
 			symbol: 'PALM',
 			iconURL: iconUrlBase + 'PALM.svg',
@@ -893,11 +664,7 @@ export const default_networks = writable([
 	{
 		name: 'Kava EVM - Testnet',
 		chainID: 2221,
-		rpcURLs: [
-			'https://evm.testnet.kava.io',
-			'https://kava-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/kava_testnet',
-		],
+		rpcURLs: ['https://evm.testnet.kava.io', 'https://kava-testnet.public.blastapi.io', 'https://rpc.ankr.com/kava_testnet'],
 		currency: {
 			symbol: 'KAVA',
 			iconURL: iconUrlBase + 'KAVA.svg',
@@ -917,11 +684,7 @@ export const default_networks = writable([
 	{
 		name: 'Evmos - Testnet',
 		chainID: 9000,
-		rpcURLs: [
-			'https://rpc.testnet.evmos.org',
-			'https://evmos-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/evmos_testnet',
-		],
+		rpcURLs: ['https://rpc.testnet.evmos.org', 'https://evmos-testnet.public.blastapi.io', 'https://rpc.ankr.com/evmos_testnet'],
 		currency: {
 			symbol: 'EVMOS',
 			iconURL: iconUrlBase + 'EVMOS.svg',
@@ -941,11 +704,7 @@ export const default_networks = writable([
 	{
 		name: 'BitTorrent Chain (BTTC) - Testnet',
 		chainID: 1028,
-		rpcURLs: [
-			'https://test-rpc.bittorrentchain.io',
-			'https://bttc-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/bttc_testnet',
-		],
+		rpcURLs: ['https://test-rpc.bittorrentchain.io', 'https://bttc-testnet.public.blastapi.io', 'https://rpc.ankr.com/bttc_testnet'],
 		currency: {
 			symbol: 'BTT',
 			iconURL: iconUrlBase + 'BTT.svg',
@@ -955,11 +714,7 @@ export const default_networks = writable([
 	{
 		name: 'Edgeware - Mainnet',
 		chainID: 2021,
-		rpcURLs: [
-			'https://mainnet1.edgewa.re',
-			'https://edgeware-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/edgeware',
-		],
+		rpcURLs: ['https://mainnet1.edgewa.re', 'https://edgeware-mainnet.public.blastapi.io', 'https://rpc.ankr.com/edgeware'],
 		currency: {
 			symbol: 'EDG',
 			iconURL: iconUrlBase + 'EDG.svg',
@@ -1009,11 +764,7 @@ export const default_networks = writable([
 	{
 		name: 'Ontology EVM - Mainnet',
 		chainID: 58,
-		rpcURLs: [
-			'https://dappnode1.ont.io:10339',
-			'https://ont-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/ontology',
-		],
+		rpcURLs: ['https://dappnode1.ont.io:10339', 'https://ont-mainnet.public.blastapi.io', 'https://rpc.ankr.com/ontology'],
 		currency: {
 			symbol: 'ONT',
 			iconURL: iconUrlBase + 'ONT.svg',
@@ -1023,11 +774,7 @@ export const default_networks = writable([
 	{
 		name: 'Elastos EVM - Mainnet',
 		chainID: 20,
-		rpcURLs: [
-			'https://api.elastos.io/evm',
-			'https://elastos-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/elastos',
-		],
+		rpcURLs: ['https://api.elastos.io/evm', 'https://elastos-mainnet.public.blastapi.io', 'https://rpc.ankr.com/elastos'],
 		currency: {
 			symbol: 'ELA',
 			iconURL: iconUrlBase + 'ELA.svg',
@@ -1037,11 +784,7 @@ export const default_networks = writable([
 	{
 		name: 'Elastos EVM - Testnet',
 		chainID: 21,
-		rpcURLs: [
-			'https://api-testnet.elastos.io/evm',
-			'https://elastos-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/elastos_testnet',
-		],
+		rpcURLs: ['https://api-testnet.elastos.io/evm', 'https://elastos-testnet.public.blastapi.io', 'https://rpc.ankr.com/elastos_testnet'],
 		currency: {
 			symbol: 'tELA',
 			iconURL: iconUrlBase + 'ELA.svg',
@@ -1051,11 +794,7 @@ export const default_networks = writable([
 	{
 		name: 'Godwoken (Nervos Layer 2) - Mainnet',
 		chainID: 71393,
-		rpcURLs: [
-			'https://godwoken-mainnet-v1.ckbapp.dev',
-			'https://godwoken-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/godwoken',
-		],
+		rpcURLs: ['https://godwoken-mainnet-v1.ckbapp.dev', 'https://godwoken-mainnet.public.blastapi.io', 'https://rpc.ankr.com/godwoken'],
 		currency: {
 			symbol: 'CKB',
 			iconURL: iconUrlBase + 'CKB.svg',
@@ -1065,11 +804,7 @@ export const default_networks = writable([
 	{
 		name: 'Godwoken (Nervos Layer 2) - Testnet',
 		chainID: 71401,
-		rpcURLs: [
-			'https://godwoken-testnet-v1.ckbapp.dev',
-			'https://godwoken-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/godwoken_testnet',
-		],
+		rpcURLs: ['https://godwoken-testnet-v1.ckbapp.dev', 'https://godwoken-testnet.public.blastapi.io', 'https://rpc.ankr.com/godwoken_testnet'],
 		currency: {
 			symbol: 'CKB',
 			iconURL: iconUrlBase + 'CKB.svg',
@@ -1089,11 +824,7 @@ export const default_networks = writable([
 	{
 		name: 'REI Network - Testnet',
 		chainID: 47905,
-		rpcURLs: [
-			'https://testnet-rpc.rei.network',
-			'https://rei-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/rei_testnet',
-		],
+		rpcURLs: ['https://testnet-rpc.rei.network', 'https://rei-testnet.public.blastapi.io', 'https://rpc.ankr.com/rei_testnet'],
 		currency: {
 			symbol: 'tREI',
 			iconURL: iconUrlBase + 'REI.svg',
@@ -1103,11 +834,7 @@ export const default_networks = writable([
 	{
 		name: 'Shiden Network - Mainnet',
 		chainID: 336,
-		rpcURLs: [
-			'https://rpc.shiden.astar.network',
-			'https://shiden-mainnet.public.blastapi.io',
-			'https://rpc.ankr.com/shiden',
-		],
+		rpcURLs: ['https://rpc.shiden.astar.network', 'https://shiden-mainnet.public.blastapi.io', 'https://rpc.ankr.com/shiden'],
 		currency: {
 			symbol: 'SDN',
 			iconURL: iconUrlBase + 'SDN.svg',
@@ -1117,11 +844,7 @@ export const default_networks = writable([
 	{
 		name: 'Shiden Network - Shibuya Testnet',
 		chainID: 81,
-		rpcURLs: [
-			'https://rpc.shibuya.astar.network',
-			'https://shibuya-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/shibuya_testnet',
-		],
+		rpcURLs: ['https://rpc.shibuya.astar.network', 'https://shibuya-testnet.public.blastapi.io', 'https://rpc.ankr.com/shibuya_testnet'],
 		currency: {
 			symbol: 'tSDN',
 			iconURL: iconUrlBase + 'SDN.svg',
@@ -1141,11 +864,7 @@ export const default_networks = writable([
 	{
 		name: 'Boba Network - Testnet',
 		chainID: 28,
-		rpcURLs: [
-			'https://testnet.boba.network',
-			'https://boba-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/boba_testnet',
-		],
+		rpcURLs: ['https://testnet.boba.network', 'https://boba-testnet.public.blastapi.io', 'https://rpc.ankr.com/boba_testnet'],
 		currency: {
 			symbol: 'BOBA',
 			iconURL: iconUrlBase + 'BOBA.svg',
@@ -1165,11 +884,7 @@ export const default_networks = writable([
 	{
 		name: 'Syscoin NEVM - Testnet',
 		chainID: 5700,
-		rpcURLs: [
-			'https://rpc.tanenbaum.io',
-			'https://syscoin-testnet.public.blastapi.io',
-			'https://rpc.ankr.com/syscoin_testnet',
-		],
+		rpcURLs: ['https://rpc.tanenbaum.io', 'https://syscoin-testnet.public.blastapi.io', 'https://rpc.ankr.com/syscoin_testnet'],
 		currency: {
 			symbol: 'tSYS',
 			iconURL: iconUrlBase + 'SYS.svg',
@@ -1189,11 +904,7 @@ export const default_networks = writable([
 	{
 		name: 'Huobi ECO Chain - Testnet',
 		chainID: 256,
-		rpcURLs: [
-			'https://http-testnet.hecochain.com',
-			'https://testnet.heco.rpc.thirdweb.com',
-			'https://rpc.ankr.com/heco_testnet',
-		],
+		rpcURLs: ['https://http-testnet.hecochain.com', 'https://testnet.heco.rpc.thirdweb.com', 'https://rpc.ankr.com/heco_testnet'],
 		currency: {
 			symbol: 'HT',
 			iconURL: iconUrlBase + 'HT.svg',

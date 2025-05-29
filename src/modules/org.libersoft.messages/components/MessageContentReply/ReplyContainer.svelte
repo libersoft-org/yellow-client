@@ -23,8 +23,4 @@
 	});
 </script>
 
-<ReplyView
-	address={loading ? 'Reply' : message?.address_to}
-	text={loading ? 'Loading' : message?.message}
-	uid={messageUid}
-/>
+<ReplyView address={loading ? 'Reply' : message?.address_to} text={loading ? 'Loading' : message?.message} uid={messageUid} />

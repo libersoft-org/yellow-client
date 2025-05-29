@@ -44,27 +44,9 @@
 	//$: console.log('anim:', anim, 'playing:', playing, 'isInViewport:', isInViewport, 'mouseOver:', mouseOver, 'force_animate:', force_animate, 'intersecting:', intersecting, 'isLottie:', isLottie, 'isImage:', isImage, 'error:', error, 'renderer:', renderer, 'file:', file, 'size:', size, 'ext:', ext);
 	// $: console.log('ANIM:', anim);
 
-	$: on_update_should_be_playing(
-		$ContextMenuOpen,
-		isInViewport,
-		$expressions_renderer,
-		$animate_all_expressions,
-		force_animate,
-		mouseOver,
-		animContainer,
-		anim
-	);
+	$: on_update_should_be_playing($ContextMenuOpen, isInViewport, $expressions_renderer, $animate_all_expressions, force_animate, mouseOver, animContainer, anim);
 
-	async function on_update_should_be_playing(
-		ContextMenuOpen,
-		isInViewport,
-		expressions_renderer,
-		animate_all_stickers,
-		force_animate,
-		mouseOver,
-		animContainer,
-		_anim
-	) {
+	async function on_update_should_be_playing(ContextMenuOpen, isInViewport, expressions_renderer, animate_all_stickers, force_animate, mouseOver, animContainer, _anim) {
 		if (!animContainer) return;
 
 		let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
@@ -252,16 +234,7 @@
 	}
 </script>
 
-<div
-	class="sticker"
-	role="button"
-	tabindex="0"
-	bind:this={componentContainer}
-	on:mouseover={() => (mouseOver = true)}
-	on:mouseleave={() => (mouseOver = false)}
-	on:focus={() => (mouseOver = true)}
-	on:blur={() => (mouseOver = false)}
->
+<div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
 	{#if $debug}
 		renderer: {renderer}
 		isLottie: {isLottie}

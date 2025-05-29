@@ -1,19 +1,7 @@
 <script lang="ts">
 	import type { Unsubscriber } from 'svelte/store';
 	import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
-	import {
-		customNotificationsOn,
-		animationDuration,
-		animationName,
-		titleMaxLines,
-		bodyMaxLines,
-		bgColor,
-		bgColorHover,
-		borderColor,
-		titleColor,
-		descColor,
-		notificationsSoundEnabled,
-	} from '../../notifications_settings.ts';
+	import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
 	import { skipFirst } from '$lib/skipfirst_store.ts';
 	import { updateExampleNotification } from '@/core/notifications.ts';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -34,25 +22,12 @@
 	const unsubscribers: Unsubscriber[] = [];
 
 	// Helper to add subscriptions and track unsubscribers
-	function addSubscription<T>(
-		store: { subscribe: (callback: (value: T) => void) => Unsubscriber },
-		callback: (value: T) => void
-	): void {
+	function addSubscription<T>(store: { subscribe: (callback: (value: T) => void) => Unsubscriber }, callback: (value: T) => void): void {
 		unsubscribers.push(store.subscribe(callback));
 	}
 
 	$effect(() => {
-		for (let store of [
-			animationName,
-			animationDuration,
-			titleMaxLines,
-			bodyMaxLines,
-			bgColor,
-			bgColorHover,
-			borderColor,
-			titleColor,
-			descColor,
-		]) {
+		for (let store of [animationName, animationDuration, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor]) {
 			addSubscription(skipFirst(store as any), (value) => {
 				log.debug(`Store ${store} updated:`, value);
 				updateExampleNotification();

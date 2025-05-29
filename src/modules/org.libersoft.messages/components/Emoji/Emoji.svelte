@@ -48,15 +48,7 @@
 {#if url.endsWith('/lottie.json')}
 	<Sticker file={url} {size} {force_animate} />
 {:else}
-	<img
-		style="{!is_single &&
-			'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;"
-		loading="lazy"
-		alt={emoji_render(codepoints)}
-		src={url}
-		onMouseOver={() => (is_mouse_over = true)}
-		onMouseOut={() => (is_mouse_over = false)}
-	/>
+	<img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url} onMouseOver={() => (is_mouse_over = true)} onMouseOut={() => (is_mouse_over = false)} />
 {/if}
 
 <style>

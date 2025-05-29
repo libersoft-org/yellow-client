@@ -86,10 +86,7 @@
 			});
 			wavesurfer.on('error', (err) => {
 				// console.error('WaveSurfer error:', err);
-				if (
-					err instanceof MediaError &&
-					(err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_DECODE)
-				) {
+				if (err instanceof MediaError && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_DECODE)) {
 					fullDownloadAudio();
 				}
 			});
@@ -148,10 +145,7 @@
 			return;
 		}
 		downloadAttachmentsSerial([upload.record], (download) => {
-			assembleFile(
-				new Blob(download.chunksReceived, { type: download.record.fileMimeType }),
-				download.record.fileOriginalName
-			);
+			assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
 		});
 	}
 </script>

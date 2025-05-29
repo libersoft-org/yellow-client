@@ -1,15 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import {
-		cancelDownload,
-		cancelUpload,
-		downloadAttachmentsSerial,
-		loadUploadData,
-		pauseDownload,
-		pauseUpload as _pauseUpload,
-		resumeDownload,
-		resumeUpload as _resumeUpload,
-	} from '../../messages.js';
+	import { cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '../../messages.js';
 	import { type FileDownload, type FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
@@ -40,10 +31,7 @@
 		}
 
 		downloadAttachmentsSerial([upload.record], (finishedDownload: FileDownload) => {
-			assembleFile(
-				new Blob(finishedDownload.chunksReceived, { type: finishedDownload.record.fileMimeType }),
-				finishedDownload.record.fileOriginalName
-			);
+			assembleFile(new Blob(finishedDownload.chunksReceived, { type: finishedDownload.record.fileMimeType }), finishedDownload.record.fileOriginalName);
 		});
 	}
 
@@ -63,16 +51,5 @@
 </script>
 
 {#if upload}
-	<FileView
-		{upload}
-		{download}
-		{onDownload}
-		{changingStatus}
-		{cancelDownload}
-		{cancelUpload}
-		{pauseDownload}
-		{resumeDownload}
-		{pauseUpload}
-		{resumeUpload}
-	/>
+	<FileView {upload} {download} {onDownload} {changingStatus} {cancelDownload} {cancelUpload} {pauseDownload} {resumeDownload} {pauseUpload} {resumeUpload} />
 {/if}

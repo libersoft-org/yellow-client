@@ -35,9 +35,7 @@
 
 	const conflictDialogData = $derived({
 		title: 'Account Already Exists',
-		body: currentConflictAccount
-			? `Account with address "${currentConflictAccount.credentials?.address || currentConflictAccount.address}" on server "${currentConflictAccount.credentials?.server || currentConflictAccount.server}" is already configured. What would you like to do?`
-			: '',
+		body: currentConflictAccount ? `Account with address "${currentConflictAccount.credentials?.address || currentConflictAccount.address}" on server "${currentConflictAccount.credentials?.server || currentConflictAccount.server}" is already configured. What would you like to do?` : '',
 		icon: 'img/import.svg',
 		buttons: [
 			{ text: 'Replace Existing', onClick: replaceConflictAccount, expand: true },

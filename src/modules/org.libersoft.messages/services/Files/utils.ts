@@ -1,13 +1,4 @@
-import {
-	type FileDownload,
-	type FileUpload,
-	type FileUploadRecord,
-	FileUploadRecordStatus,
-	FileUploadRecordType,
-	type MakeFileDownloadData,
-	type MakeFileUploadData,
-	type MakeFileUploadRecordData,
-} from './types.ts';
+import { type FileDownload, type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, type MakeFileDownloadData, type MakeFileUploadData, type MakeFileUploadRecordData } from './types.ts';
 import { v4 as uuidv4 } from 'uuid';
 import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 import _debug from 'debug';

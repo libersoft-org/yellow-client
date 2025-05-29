@@ -11,14 +11,7 @@
 </script>
 
 <div class="bar">
-	<Icon
-		img="img/menu.svg"
-		alt="☰"
-		colorVariable="--color-primary-foreground"
-		size="30px"
-		padding="10px"
-		onClick={onOpenMenu}
-	/>
+	<Icon img="img/menu.svg" alt="☰" colorVariable="--color-primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} />
 	<div class="product">{product}</div>
 	<MenuBarDebug />
 </div>

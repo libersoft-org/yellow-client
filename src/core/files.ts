@@ -63,10 +63,7 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
 	}
 }
 
-export async function offerNativeDownload(
-	fileName: string,
-	defaultFileDownloadFolder: string | null
-): Promise<NativeDownload | { error: string } | null> {
+export async function offerNativeDownload(fileName: string, defaultFileDownloadFolder: string | null): Promise<NativeDownload | { error: string } | null> {
 	log.debug('offerNativeDownload - TAURI_MOBILE:', TAURI_MOBILE);
 
 	// Ensure we have file permissions before proceeding
@@ -197,11 +194,7 @@ function partFileName(file_path: string) {
 }
 
 // Export a file from app storage to system Downloads folder (mobile only)
-export async function exportToSystemDownloads(
-	appFilePath: string,
-	fileName: string,
-	mimeType: string = 'application/octet-stream'
-): Promise<{ success: boolean; error?: string }> {
+export async function exportToSystemDownloads(appFilePath: string, fileName: string, mimeType: string = 'application/octet-stream'): Promise<{ success: boolean; error?: string }> {
 	if (!TAURI_MOBILE) {
 		return { success: false, error: 'This function is only for mobile devices' };
 	}

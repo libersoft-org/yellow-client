@@ -22,16 +22,7 @@
 
 	.fill {
 		height: 100%;
-		background: linear-gradient(
-			-45deg,
-			var(--color-primary-background) 25%,
-			var(--color-primary-softer-background) 25%,
-			var(--color-primary-softer-background) 50%,
-			var(--color-primary-background) 50%,
-			var(--color-primary-background) 75%,
-			var(--color-primary-softer-background) 75%,
-			var(--color-softer-background) 100%
-		);
+		background: linear-gradient(-45deg, var(--color-primary-background) 25%, var(--color-primary-softer-background) 25%, var(--color-primary-softer-background) 50%, var(--color-primary-background) 50%, var(--color-primary-background) 75%, var(--color-primary-softer-background) 75%, var(--color-softer-background) 100%);
 		background-size: 40px 40px;
 		width: 0%;
 		transition: width 0.3s ease;

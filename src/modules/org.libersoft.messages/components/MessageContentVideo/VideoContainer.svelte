@@ -201,18 +201,4 @@
 	});
 </script>
 
-<VideoView
-	{upload}
-	{download}
-	{thumbnailSrc}
-	bind:videoRef
-	{startVideo}
-	{onDownload}
-	{uploadId}
-	{videoStarted}
-	{videoStarting}
-	{loadingData}
-	{fetchingPoster}
-	{posterError}
-	{videoIsFullDownloading}
-/>
+<VideoView {upload} {download} {thumbnailSrc} bind:videoRef {startVideo} {onDownload} {uploadId} {videoStarted} {videoStarting} {loadingData} {fetchingPoster} {posterError} {videoIsFullDownloading} />

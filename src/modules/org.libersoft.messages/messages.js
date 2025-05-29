@@ -9,24 +9,8 @@ import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts'
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
-import {
-	base64ToUint8Array,
-	makeFileUpload,
-	transformFilesForServer,
-} from '@/org.libersoft.messages/services/Files/utils.ts';
-import {
-	active_account,
-	active_account_id,
-	active_account_module_data,
-	getGuid,
-	hideSidebarMobile,
-	isClientFocused,
-	relay,
-	selectAccount,
-	selected_corepage_id,
-	selected_module_id,
-	send,
-} from '@/core/core.js';
+import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
+import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '@/core/core.js';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
@@ -110,14 +94,7 @@ export function onModuleSelected(selected) {
 }
 
 export function selectConversation(conversation) {
-	console.log(
-		'SELECTcONVERSATION conversation:',
-		conversation,
-		'conversation.acc:',
-		conversation.acc,
-		'conversation.acc?.deref:',
-		conversation.acc?.deref
-	);
+	console.log('SELECTcONVERSATION conversation:', conversation, 'conversation.acc:', conversation.acc, 'conversation.acc?.deref:', conversation.acc?.deref);
 	selectedConversation.set(conversation);
 	events.set([]);
 	messagesArray.set([]);
@@ -364,12 +341,7 @@ function upload_update(event) {
 	const { record, uploadData } = event.detail.data;
 	const currentUpload = fileUploadStore.get(record.id);
 	if (currentUpload) {
-		if (
-			currentUpload.file &&
-			[FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.PAUSED].includes(
-				record.status
-			)
-		) {
+		if (currentUpload.file && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.PAUSED].includes(record.status)) {
 			// pass
 			// this is simple approach how to ignore status updates that are produced by sender because server does not know
 			// from which tab the upload is being issued we detect sender tab by existence of currentUpload.file
@@ -831,18 +803,13 @@ export function unsetMessageReaction(message, reaction) {
 export function toggleMessageReaction(message, reaction) {
 	const userAddress = get(active_account).credentials.address;
 	const didUserReact = message.reactions.some((existingReaction) => {
-		if (
-			existingReaction.user_address === userAddress &&
-			existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi
-		) {
+		if (existingReaction.user_address === userAddress && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi) {
 			return true;
 		}
 	});
 
 	if (didUserReact) {
-		message.reactions = message.reactions.filter(
-			(r) => !(r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi)
-		);
+		message.reactions = message.reactions.filter((r) => !(r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi));
 		insertEvent({ type: 'properties_update', array: get(messagesArray) });
 		return unsetMessageReaction(message, reaction);
 	} else {
@@ -935,24 +902,13 @@ async function eventNewMessage(acc, event) {
 	msg.received_by_my_homeserver = true;
 	let sc = get(selectedConversation);
 	if (msg.address_from !== acc.credentials.address) {
-		console.log(
-			'showNotification?: !get(isClientFocused): ',
-			!get(isClientFocused),
-			'get(active_account) != acc:',
-			get(active_account) != acc,
-			'msg.address_from !== sc?.address:',
-			msg.address_from !== sc?.address
-		);
-		if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address)
-			await showNotification(acc, msg);
+		console.log('showNotification?: !get(isClientFocused): ', !get(isClientFocused), 'get(active_account) != acc:', get(active_account) != acc, 'msg.address_from !== sc?.address:', msg.address_from !== sc?.address);
+		if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) await showNotification(acc, msg);
 	}
 	//console.log('eventNewMessage updateConversationsArray with msg:', msg);
 	updateConversationsArray(acc, msg);
 	if (acc !== get(active_account)) return;
-	if (
-		(msg.address_from === sc?.address && msg.address_to === acc.credentials.address) ||
-		(msg.address_from === acc.credentials.address && msg.address_to === sc?.address)
-	) {
+	if ((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address)) {
 		//let oldLen = get(messagesArray).length;
 		msg = addMessagesToMessagesArray([msg], 'new_message')[0];
 	}
@@ -1083,18 +1039,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 	}
 });
 
-const CUSTOM_TAGS = [
-	'sticker',
-	'gif',
-	'emoji',
-	'attachment',
-	'attachmentswrapper',
-	'imageswrapper',
-	'imaged',
-	'yellowvideo',
-	'yellowaudio',
-	'reply',
-];
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio', 'reply'];
 
 export function saneHtml(content) {
 	//console.log('saneHtml:');
@@ -1116,12 +1061,7 @@ export function saneHtml(content) {
 
 export function htmlEscape(str) {
 	//console.log('htmlEscape:', str);
-	return str
-		.replaceAll(/&/g, '&amp;')
-		.replaceAll(/</g, '&lt;')
-		.replaceAll(/>/g, '&gt;')
-		.replaceAll(/"/g, '&quot;')
-		.replaceAll(/'/g, '&#039;');
+	return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;');
 }
 
 export function stripHtml(html) {
@@ -1206,17 +1146,7 @@ function emoji_cluster_to_array(cluster) {
 function linkify(text) {
 	//console.log('linkify ', text);
 	// Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
-	const combinedPattern = new RegExp(
-		[
-			"(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
-			"(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)",
-			'(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)',
-			'(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)',
-			'(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})',
-			'(tel:\\+?[0-9]{1,15})',
-		].join('|'),
-		'g'
-	);
+	const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
 	let result = text.replace(combinedPattern, (match) => {
 		// Directly use `match` as the URL/href. This ensures we handle all links in one pass.
 		return `<a href="${match}" target="_blank">${match}</a>`;

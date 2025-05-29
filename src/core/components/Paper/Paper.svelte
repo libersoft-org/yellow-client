@@ -10,20 +10,10 @@
 		maxWidth?: string;
 	};
 
-	const {
-		children,
-		padding = '10px',
-		background = 'var(--color-default-background)',
-		border = '1px solid var(--color-default-foreground)',
-		radius = '10px',
-		maxWidth = '768px',
-	}: Props = $props();
+	const { children, padding = '10px', background = 'var(--color-default-background)', border = '1px solid var(--color-default-foreground)', radius = '10px', maxWidth = '768px' }: Props = $props();
 </script>
 
-<div
-	class="paper"
-	style={`padding: ${padding}; background: ${background}; border: ${border}; border-radius: ${radius}; max-width: ${maxWidth};`}
->
+<div class="paper" style={`padding: ${padding}; background: ${background}; border: ${border}; border-radius: ${radius}; max-width: ${maxWidth};`}>
 	{@render children()}
 </div>
 

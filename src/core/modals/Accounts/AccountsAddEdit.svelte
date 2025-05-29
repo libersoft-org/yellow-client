@@ -193,34 +193,15 @@
 	</Label>
 
 	<Label text="Server">
-		<Input
-			minWidth="300px"
-			maxWidth="300px"
-			placeholder="wss://your_server/"
-			bind:value={credentials_server}
-			onKeydown={keyEnter}
-		/>
+		<Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
 	</Label>
 
 	<Label text="Address">
-		<Input
-			minWidth="300px"
-			maxWidth="300px"
-			placeholder="user@domain.tld"
-			bind:value={credentials_address}
-			onKeydown={keyEnter}
-		/>
+		<Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
 	</Label>
 
 	<Label text="Password">
-		<Input
-			minWidth="300px"
-			maxWidth="300px"
-			type="password"
-			placeholder="Your password"
-			bind:value={credentials_password}
-			onKeydown={keyEnter}
-		/>
+		<Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
 	</Label>
 
 	{#if !isInWelcomeWizard}

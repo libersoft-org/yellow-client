@@ -1,13 +1,4 @@
-import {
-	type CustomFile,
-	type FileUpload,
-	type FileUploadBeginOptions,
-	type FileUploadRecord,
-	FileUploadRecordStatus,
-	FileUploadRecordType,
-	FileUploadRole,
-	type FileUploadStoreType,
-} from './types.ts';
+import { type CustomFile, type FileUpload, type FileUploadBeginOptions, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType } from './types.ts';
 import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from '../../stores/FileUploadStore.ts';
@@ -72,10 +63,7 @@ export class FileUploadService extends EventEmitter {
 		return { chunk, upload, blob };
 	}
 
-	async startUploadSerial(
-		records: FileUploadRecord[],
-		pushFn: (data: { chunk: any; upload: FileUpload }) => Promise<void>
-	) {
+	async startUploadSerial(records: FileUploadRecord[], pushFn: (data: { chunk: any; upload: FileUpload }) => Promise<void>) {
 		for (let i = 0; i < records.length; i++) {
 			const record = records[i];
 			const upload = this.uploadsStore.get(record.id);
@@ -97,10 +85,7 @@ export class FileUploadService extends EventEmitter {
 				};
 
 				setRunning(true);
-				if (
-					upload.record.status === FileUploadRecordStatus.CANCELED ||
-					upload.record.status === FileUploadRecordStatus.ERROR
-				) {
+				if (upload.record.status === FileUploadRecordStatus.CANCELED || upload.record.status === FileUploadRecordStatus.ERROR) {
 					setRunning(false);
 					upload.pushChunk = undefined;
 					return;
@@ -116,10 +101,7 @@ export class FileUploadService extends EventEmitter {
 					setTimeout(() => this.startNextUpload(upload));
 					return;
 				}
-				if (
-					record.type === FileUploadRecordType.P2P &&
-					this.p2pThrottleMemory.get(record.id) >= this.p2pMaxBatchChunks
-				) {
+				if (record.type === FileUploadRecordType.P2P && this.p2pThrottleMemory.get(record.id) >= this.p2pMaxBatchChunks) {
 					setRunning(false);
 					return;
 				}

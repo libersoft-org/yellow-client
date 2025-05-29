@@ -39,10 +39,7 @@
 			//console.log('check loaderElement:', loaderElement, loader.loading, loaderElement?.getBoundingClientRect(), window.innerHeight);
 			if (loader.loading) clearInterval(interval);
 			if (!loader.loading && loaderElement) {
-				if (
-					loaderElement.getBoundingClientRect().top < window.innerHeight &&
-					loaderElement.getBoundingClientRect().bottom > 0
-				) {
+				if (loaderElement.getBoundingClientRect().top < window.innerHeight && loaderElement.getBoundingClientRect().bottom > 0) {
 					//console.log('loaderElement is visible, load triggered by loader.timer.');
 					handleIntersect([{ isIntersecting: true }]);
 				}

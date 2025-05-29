@@ -2,12 +2,7 @@
 	import { humanSize } from '@/core/utils/fileUtils.js';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import {
-		uploadChunkSize,
-		hideMessageTextInNotifications,
-		defaultFileDownloadFolder,
-		photoRadius,
-	} from '../messages.js';
+	import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder, photoRadius } from '../messages.js';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import { open } from '@tauri-apps/plugin-dialog';
 	import { TAURI } from '@/core/tauri.ts';
@@ -38,24 +33,11 @@
 		<span class="bold">File upload chunk size:</span>
 		<span>{humanSize(chunkSize)}</span>
 	</div>
-	<input
-		data-testid="chunk-size"
-		class="zoom"
-		type="range"
-		min="131072"
-		max="31457280"
-		step="131072"
-		bind:value={chunkSize}
-	/>
+	<input data-testid="chunk-size" class="zoom" type="range" min="131072" max="31457280" step="131072" bind:value={chunkSize} />
 </div>
 <Button img="img/save.svg" text="Save" onClick={clickSetChunkSize} />
 <div class="group">
-	<Switch
-		bind:checked={$hideMessageTextInNotifications}
-		showLabel
-		ariaLabel="Hide message text in notifications"
-		orientation="vertical"
-	/>
+	<Switch bind:checked={$hideMessageTextInNotifications} showLabel ariaLabel="Hide message text in notifications" orientation="vertical" />
 </div>
 <div class="group">
 	<div class="label">

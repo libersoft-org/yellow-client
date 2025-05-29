@@ -79,11 +79,7 @@ export interface FileUploadBeginOptions {
 	chunkSize?: number;
 }
 
-export type MakeFileUploadRecordData = Partial<FileUploadRecord> &
-	Pick<
-		FileUploadRecord,
-		'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid' | 'metadata'
-	>;
+export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid' | 'metadata'>;
 
 export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record' | 'acc'>;
 

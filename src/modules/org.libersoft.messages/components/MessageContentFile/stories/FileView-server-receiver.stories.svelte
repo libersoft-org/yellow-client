@@ -54,10 +54,7 @@
 			upload,
 			download: FileViewStoriesUtils.makeDownload({
 				record: upload.record,
-				chunksReceived: Array.from(
-					{ length: Math.ceil(upload.record.fileSize / upload.record.chunkSize) },
-					(_, i) => i
-				),
+				chunksReceived: Array.from({ length: Math.ceil(upload.record.fileSize / upload.record.chunkSize) }, (_, i) => i),
 			}),
 		};
 	})();

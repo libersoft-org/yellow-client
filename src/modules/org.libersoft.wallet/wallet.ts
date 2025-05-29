@@ -1,13 +1,5 @@
 import { derived, get, writable } from 'svelte/store';
-import {
-	formatEther,
-	getIndexedAccountPath,
-	HDNodeWallet,
-	JsonRpcProvider,
-	Mnemonic,
-	randomBytes,
-	type PreparedTransactionRequest,
-} from 'ethers';
+import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { getGuid } from '@/core/core.js';
 export { default_networks } from './default_networks.js';
@@ -65,8 +57,7 @@ interface AddressBookItem {
 	address: string;
 }
 
-const WALLET_PROVIDER_RECONNECT_INTERVAL =
-	import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
+const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
 
 export const status = writable<any>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);

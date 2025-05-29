@@ -74,20 +74,7 @@
 	{/if}
 	{#each menuItems as item}
 		{#if activeTab === ''}
-			<MenuItem
-				img={item.img}
-				title={item.title}
-				colorVariable="--icon-black"
-				bgColor={menuItemProps.bgColor}
-				textColor={menuItemProps.textColor}
-				hoverColor={menuItemProps.hoverColor}
-				borderTop={menuItemProps.borderTop}
-				borderBottom={menuItemProps.borderBottom}
-				borderLeft={menuItemProps.borderLeft}
-				borderRight={menuItemProps.borderRight}
-				borderRadius={menuItemProps.borderRadius}
-				onClick={() => setItem(item.tab)}
-			/>
+			<MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
 		{/if}
 	{/each}
 {/snippet}

@@ -1,10 +1,5 @@
 import { get, writable } from 'svelte/store';
-import type {
-	FileDownload,
-	FileDownloadStoreType,
-	FileDownloadStoreValue,
-	FileUploadRecord,
-} from '@/org.libersoft.messages/services/Files/types.ts';
+import type { FileDownload, FileDownloadStoreType, FileDownloadStoreValue, FileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
 
 export class FileDownloadStore implements FileDownloadStoreType {
 	store = writable<FileDownloadStoreValue>([]);

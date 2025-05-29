@@ -67,11 +67,7 @@
 
 <div class="addressbook">
 	<ButtonBar>
-		<Button
-			img="modules/{module.identifier}/img/address-add.svg"
-			text="Add an address"
-			onClick={addToAddressBookModal}
-		/>
+		<Button img="modules/{module.identifier}/img/address-add.svg" text="Add an address" onClick={addToAddressBookModal} />
 		<Button img="img/export.svg" text="Export" onClick={exportAddressBook} />
 		<Button img="img/import.svg" text="Import" onClick={importAddressBook} />
 	</ButtonBar>
@@ -95,22 +91,8 @@
 						</TbodyTd>
 						<TbodyTd title="Action">
 							<TableActionItems>
-								<Icon
-									img="img/edit.svg"
-									alt="Edit"
-									colorVariable="--icon-blue"
-									size="20px"
-									padding="5px"
-									onClick={() => editItemModal(a)}
-								/>
-								<Icon
-									img="img/del.svg"
-									alt="Delete"
-									colorVariable="--icon-red"
-									size="20px"
-									padding="5px"
-									onClick={() => deleteItemModal(a)}
-								/>
+								<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => editItemModal(a)} />
+								<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => deleteItemModal(a)} />
 							</TableActionItems>
 						</TbodyTd>
 					</TbodyTr>
@@ -120,20 +102,8 @@
 	{/if}
 </div>
 
-<Modal
-	title={edit ? 'Edit the item in address book' : 'Add a new item to address book'}
-	body={ModalAddEdit}
-	params={{ item: modalItem }}
-	bind:show={showModalAddEdit}
-	width="400px"
-/>
-<Modal
-	title="Delete the item in address book"
-	body={ModalDel}
-	params={{ item: modalItem }}
-	bind:show={showModalDel}
-	width="400px"
-/>
+<Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:show={showModalAddEdit} width="400px" />
+<Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:show={showModalDel} width="400px" />
 
 <style>
 	.addressbook {

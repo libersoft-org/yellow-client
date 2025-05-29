@@ -78,29 +78,9 @@
 					</TbodyTd>
 					<TbodyTd>
 						<TableActionItems>
-							<Icon
-								img="modules/{module.identifier}/img/coin.svg"
-								alt="Token list"
-								size="20px"
-								padding="5px"
-								onClick={() => tokenList(n)}
-							/>
-							<Icon
-								img="img/edit.svg"
-								colorVariable="--icon-blue"
-								alt="Edit network"
-								size="20px"
-								padding="5px"
-								onClick={() => editNetwork(n)}
-							/>
-							<Icon
-								img="img/del.svg"
-								colorVariable="--icon-red"
-								alt="Delete network"
-								size="20px"
-								padding="5px"
-								onClick={() => removeNetwork(n)}
-							/>
+							<Icon img="modules/{module.identifier}/img/coin.svg" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} />
+							<Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Edit network" size="20px" padding="5px" onClick={() => editNetwork(n)} />
+							<Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete network" size="20px" padding="5px" onClick={() => removeNetwork(n)} />
 						</TableActionItems>
 					</TbodyTd>
 				</TbodyTr>
@@ -123,14 +103,7 @@
 					</TbodyTd>
 					<TbodyTd>
 						<TableActionItems>
-							<Icon
-								img="img/add.svg"
-								alt="Add to my networks"
-								colorVariable="--icon-black"
-								size="20px"
-								padding="5px"
-								onClick={() => addNetwork(n)}
-							/>
+							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--icon-black" size="20px" padding="5px" onClick={() => addNetwork(n)} />
 						</TableActionItems>
 					</TbodyTd>
 				</TbodyTr>

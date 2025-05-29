@@ -32,12 +32,7 @@
 </script>
 
 {#if message}
-	<div
-		class="alert"
-		style:color={colors.color}
-		style:background-color={colors.background}
-		style:border="1px solid {colors.border}"
-	>
+	<div class="alert" style:color={colors.color} style:background-color={colors.background} style:border="1px solid {colors.border}">
 		{message}
 	</div>
 {/if}

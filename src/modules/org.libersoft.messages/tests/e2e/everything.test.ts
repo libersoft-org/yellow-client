@@ -150,9 +150,7 @@ async function configureMessagesSettings(
 		await page.getByTestId('messages-settings-button').click();
 
 		if (settings.chunkSize) {
-			await page
-				.getByTestId('chunk-size')
-				.evaluate((el: HTMLInputElement, value) => (el.value = value), settings.chunkSize);
+			await page.getByTestId('chunk-size').evaluate((el: HTMLInputElement, value) => (el.value = value), settings.chunkSize);
 		}
 
 		if (settings.photoRadius) {
@@ -179,10 +177,7 @@ async function openGlobalSettings(page: Page): Promise<void> {
  * @param page - The Playwright page object
  * @param section - The settings section to navigate to
  */
-async function navigateToSettingsSection(
-	page: Page,
-	section: 'General' | 'Notifications' | 'Appearance'
-): Promise<void> {
+async function navigateToSettingsSection(page: Page, section: 'General' | 'Notifications' | 'Appearance'): Promise<void> {
 	return await test.step(`Navigate to settings section: ${section}`, async () => {
 		await page.getByRole('button', { name: `${section} ${section}` }).click();
 	});
