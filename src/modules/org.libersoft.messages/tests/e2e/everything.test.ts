@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 
 /**
@@ -187,11 +187,13 @@ async function navigateToSettingsSection(page: Page, section: 'General' | 'Notif
  * Helper function to close the current modal
  * @param page - The Playwright page object
  */
+/*
 async function closeModal(page: Page): Promise<void> {
  return await test.step('Close modal', async () => {
   await page.getByTestId('Modal-close').click();
  });
 }
+*/
 
 /**
  * Helper function to set up an account through the initial wizard
@@ -216,6 +218,7 @@ async function setupAccountInWizard(
   await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
   await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
   await page.getByTestId('add').click();
+  await page.screenshot({ path: 'setup_account_in_wizard.png' });
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Finish' }).click();
@@ -227,6 +230,7 @@ async function setupAccountInWizard(
  * @param page - The Playwright page object
  * @returns The download object
  */
+/*
 async function exportAccounts(page: Page): Promise<any> {
  return await test.step('Export accounts', async () => {
   await page.getByRole('button', { name: 'Export' }).click();
@@ -238,6 +242,7 @@ async function exportAccounts(page: Page): Promise<any> {
   return download;
  });
 }
+*/
 
 /**
  * Helper function to delete the first account in the list
@@ -257,10 +262,15 @@ async function deleteFirstAccount(page: Page): Promise<void> {
 async function toggleFirstAccountEnabled(page: Page): Promise<void> {
  return await test.step('Toggle first account enabled state', async () => {
   await page.getByRole('button', { name: 'Edit' }).first().click();
-  await page.locator('label').filter({ hasText: 'Enabled:' }).locator('span').click();
+  await page.getByRole('checkbox', { name: 'Enabled' }).click();
   await page.getByRole('button', { name: 'Save' }).click();
  });
 }
+
+test('Click around in settings', async ({ page }) => {
+ await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+ await openGlobalSettings(page);
+});
 
 test('Complete End-to-End Application Test', async ({ page }) => {
  await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
@@ -357,7 +367,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   await switchModule(page, 'org.libersoft.contacts');
   await switchModule(page, 'org.libersoft.messages');
  });
- /*
+
  await test.step('Account Management Operations', async () => {
   // Go to account management
   await goToAccountManagement(page);
@@ -370,7 +380,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   });
 
   // Export all accounts
-  const download1 = await exportAccounts(page);
+  //const download1 = await exportAccounts(page);
 
   // Delete account
   await deleteFirstAccount(page);
@@ -398,10 +408,23 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 
   // Navigate to notifications settings
   await navigateToSettingsSection(page, 'Notifications');
-  await page.getByRole('row', { name: 'Notification sound:' }).locator('span').click();
+  await page.getByRole('checkbox', { name: 'Notification sound' }).click();
+  await page.getByRole('checkbox', { name: 'Notifications' }).click();
 
   // // Navigate to appearance settings
+  // await navigateToSettingsSection(page, 'General');
   // await navigateToSettingsSection(page, 'Appearance');
+  // const themeSelect = page.getByRole('combobox', { name: 'Address' });
+
+  // // Validate default
+  // await expect(themeSelect).toHaveValue('light');
+
+  // // Change to dark
+  // await themeSelect.selectOption('dark');
+
+  // // Optional: assert change
+  // await expect(themeSelect).toHaveValue('dark');
+
   //
   // // Back to notifications
   // await navigateToSettingsSection(page, 'Notifications');
@@ -409,6 +432,4 @@ test('Complete End-to-End Application Test', async ({ page }) => {
   // // Close settings
   // await closeModal(page);
  });
-
- */
 });

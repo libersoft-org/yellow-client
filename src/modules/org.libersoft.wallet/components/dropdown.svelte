@@ -15,7 +15,8 @@
   border: 0;
   border-radius: 10px;
   font-family: inherit;
-  background-color: #ffa;
+  width: 100%;
+  background-color: var(--color-secondary-soft-background);
  }
 
  .dropdown .text {

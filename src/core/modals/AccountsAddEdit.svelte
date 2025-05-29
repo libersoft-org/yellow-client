@@ -1,7 +1,7 @@
 <script lang="ts">
  import { getContext, untrack } from 'svelte';
  import { addAccount, findAccountConfig, saveAccount } from '../accounts_config.js';
- import { accounts } from '../core.js';
+ import { accountExists, accounts } from '../core.js';
  import Button from '../components/Button/Button.svelte';
  import Label from '../components/Label/Label.svelte';
  import Input from '../components/Input/Input.svelte';
@@ -11,6 +11,7 @@
  import AccountStatusIconIconAndText from '../components/Account/AccountStatusIconIconAndText.svelte';
  import { derived, get, writable } from 'svelte/store';
  import { m } from '@/lib/paraglide/messages.js';
+ import { TAURI } from '@/core/tauri.ts';
 
  type Props = {
   close: () => void;
@@ -80,7 +81,7 @@
   } else {
    console.log('[EFFECT] New account setup');
    credentials_address = '';
-   credentials_server = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
+   credentials_server = TAURI ? '' : (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
    credentials_password = '';
    config_enabled = true;
    config_title = 'My account';
@@ -117,17 +118,22 @@
   console.log('[ACTION] Clicked ADD');
   if (!verify()) return;
 
-  const id = addAccount(
-   {
-    enabled: config_enabled,
-    credentials: {
-     address: credentials_address,
-     server: credentials_server,
-     password: credentials_password,
-    },
+  const account = {
+   enabled: config_enabled,
+   credentials: {
+    address: credentials_address,
+    server: credentials_server,
+    password: credentials_password,
    },
-   { title: config_title }
-  );
+  };
+  const settings = { title: config_title };
+
+  if (accountExists(account.credentials?.server, account.credentials?.address)) {
+   error = 'Account already exists with this server and address';
+   return;
+  }
+
+  const id = addAccount(account, settings);
 
   console.log('[ACTION] Account added with ID:', id);
   params.id = id;
@@ -216,7 +222,7 @@
  </Label>
 
  {#if !isInWelcomeWizard}
-  <Switch label="Enabled" bind:checked={config_enabled} row={true} />
+  <Switch showLabel ariaLabel="Enabled" bind:checked={config_enabled} />
  {/if}
 
  {#if error}
@@ -227,9 +233,9 @@
  {/if}
 
  {#if params.id === null}
-  <Button data-testid="add" text="Add the account" onClick={clickAdd} />
+  <Button data-testid="add" text="Add the account" onClick={clickAdd} width="100%" />
  {:else}
-  <Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} />
+  <Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} width="100%" />
  {/if}
 
  {#if account && acc}

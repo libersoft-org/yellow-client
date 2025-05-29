@@ -17,6 +17,7 @@
   flex: 1; /* TODO: this is not working as it needs to be applied on BaseButton, not on .item. If applied to BaseButton, it spoils everything that doesn't need it.*/
   padding: 10px;
   color: #fff;
+  width: 100%;
  }
 
  .item.active {
@@ -29,7 +30,7 @@
  }
 </style>
 
-<BaseButton {onClick}>
+<BaseButton {onClick} width="100%">
  <div class="item {active ? 'active' : ''}">
   {#if img}
    <Icon {img} alt={label ? label : ''} {colorVariable} size="20px" padding="0px" />

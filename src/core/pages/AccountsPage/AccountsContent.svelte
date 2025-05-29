@@ -1,20 +1,20 @@
 <script lang="ts">
- import { debug, findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '@/core/core.js';
+ import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile, isMobile } from '@/core/core.js';
  import Button from '@/core/components/Button/Button.svelte';
  import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- import Table from '@/core/components/ResponsiveTable/Table.svelte';
- import THead from '@/core/components/ResponsiveTable/THead.svelte';
- import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
- import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
- import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
- import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
- import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Thead from '@/core/components/Table/TableThead.svelte';
+ import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+ import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
- import ModalAccountsAddEdit from '@/core/modals/AccountsAddEdit.svelte';
- import ModalAccountsDelete from '@/core/modals/AccountsDelete.svelte';
- import AccountsExport from '@/core/modals/AccountsExport.svelte';
- import AccountsImport from '@/core/modals/AccountsImport.svelte';
+ import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
+ import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
+ import AccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
+ import AccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
  import Paper from '@/core/components/Paper/Paper.svelte';
  import TopBar from '@/core/components/TopBar/TopBar.svelte';
@@ -69,8 +69,8 @@
   .accounts-wrapper {
    display: flex;
    flex-direction: column;
-   gap: clamp(16px, 1.6vw, 24px);
-   padding: clamp(16px, 1.6vw, 24px);
+   gap: 10px;
+   padding: 10px;
    height: 100dvh;
   }
  }
@@ -92,27 +92,27 @@
 
 {#snippet accountTable(account)}
  <Table>
-  <THead>
-   <THeadTr>
-    <THeadTh>Server</THeadTh>
-    <THeadTh>Address</THeadTh>
-    <THeadTh>Enabled</THeadTh>
-    <THeadTh>Action</THeadTh>
-   </THeadTr>
-  </THead>
-  <TBody>
-   <TBodyTr>
-    <TBodyTd title="Server">{account.credentials.server}</TBodyTd>
-    <TBodyTd title="Address">{account.credentials.address}</TBodyTd>
-    <TBodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</TBodyTd>
-    <TBodyTd title="Action">
+  <Thead>
+   <TheadTr>
+    <TheadTh>Server</TheadTh>
+    <TheadTh>Address</TheadTh>
+    <TheadTh>Enabled</TheadTh>
+    <TheadTh>Action</TheadTh>
+   </TheadTr>
+  </Thead>
+  <Tbody>
+   <TbodyTr>
+    <TbodyTd title="Server">{account.credentials.server}</TbodyTd>
+    <TbodyTd title="Address">{account.credentials.address}</TbodyTd>
+    <TbodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</TbodyTd>
+    <TbodyTd title="Action">
      <TableActionItems>
       <Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
       <Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => clickDel(account.id, account.settings?.title)} />
      </TableActionItems>
-    </TBodyTd>
-   </TBodyTr>
-  </TBody>
+    </TbodyTd>
+   </TbodyTr>
+  </Tbody>
  </Table>
 {/snippet}
 
@@ -125,7 +125,9 @@
 <div class="accounts">
  <TopBar>
   <svelte:fragment slot="left">
-   <Icon img="img/back.svg" onClick={back} colorVariable="--icon-white" visibleOnDesktop={false} />
+   {#if $isMobile}
+    <Icon img="img/back.svg" onClick={back} colorVariable="--icon-white" visibleOnDesktop={false} />
+   {/if}
    <h1 class="title">Account management</h1>
   </svelte:fragment>
  </TopBar>
@@ -143,8 +145,8 @@
 </div>
 
 <Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
-<Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} />
-<Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} />
+<Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} width="700px" />
+<Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} width="700px" />
 {#if showDelAccountModal}
  <Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
 {/if}

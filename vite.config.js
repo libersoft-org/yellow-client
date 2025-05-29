@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 
 export function getGitCommitHash() {
  try {
-  return execSync('sh -c "git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git rev-parse --short HEAD"').toString().trim();
+  return execSync('git rev-parse --short HEAD').toString().trim();
  } catch (e) {
   return null;
  }
@@ -20,7 +20,7 @@ export function getGitCommitHash() {
 
 export function getGitBranch() {
  try {
-  return execSync('sh -c "git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git rev-parse --abbrev-ref HEAD"').toString().trim();
+  return execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
  } catch (e) {
   return null;
  }

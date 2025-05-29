@@ -9,13 +9,13 @@
  import Button from '@/core/components/Button/Button.svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
- import Table from '@/core/components/ResponsiveTable/Table.svelte';
- import THead from '@/core/components/ResponsiveTable/THead.svelte';
- import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
- import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
- import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
- import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
- import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Thead from '@/core/components/Table/TableThead.svelte';
+ import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+ import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
 
  type FileUploadModalContext = {
   fileUploadModalFiles: Writable<File[]>;
@@ -158,17 +158,17 @@
 </style>
 
 {#snippet fileUploadItem(file)}
- <TBodyTr>
-  <TBodyTd title="File name">
+ <TbodyTr>
+  <TbodyTd title="File name">
    {truncateText(file.name, 30)}
-  </TBodyTd>
-  <TBodyTd title="Size">
+  </TbodyTd>
+  <TbodyTd title="Size">
    {humanSize(file.size)}
-  </TBodyTd>
-  <TBodyTd title="Action">
+  </TbodyTd>
+  <TbodyTd title="Action">
    <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} />
-  </TBodyTd>
- </TBodyTr>
+  </TbodyTd>
+ </TbodyTr>
 {/snippet}
 
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
@@ -181,18 +181,18 @@
   {#if $fileUploadModalFiles.length}
    <div class="items file-table">
     <Table>
-     <THead>
-      <THeadTr>
-       <THeadTh>File name:</THeadTh>
-       <THeadTh>Size:</THeadTh>
-       <THeadTh>Action:</THeadTh>
-      </THeadTr>
-     </THead>
-     <TBody>
+     <Thead>
+      <TheadTr>
+       <TheadTh>File name:</TheadTh>
+       <TheadTh>Size:</TheadTh>
+       <TheadTh>Action:</TheadTh>
+      </TheadTr>
+     </Thead>
+     <Tbody>
       {#each $fileUploadModalFiles as file}
        {@render fileUploadItem(file)}
       {/each}
-     </TBody>
+     </Tbody>
     </Table>
    </div>
   {:else}

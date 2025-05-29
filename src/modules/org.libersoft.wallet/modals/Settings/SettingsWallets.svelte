@@ -6,13 +6,13 @@
  import Address from '../../components/settings-wallets-address.svelte';
  import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import Table from '@/core/components/ResponsiveTable/Table.svelte';
- import THead from '@/core/components/ResponsiveTable/THead.svelte';
- import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
- import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
- import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
- import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
- import TableActionItems from '@/core/components/ResponsiveTable/TableActionItems.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Thead from '@/core/components/Table/TableThead.svelte';
+ import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+ import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Accordion from '@/core/components/Accordion/Accordion.svelte';
  import Modal from '@/core/components/Modal/Modal.svelte';
@@ -109,27 +109,27 @@
     <Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
    </ButtonBar>
    <Table>
-    <THead>
-     <THeadTh>Index</THeadTh>
-     <THeadTh>Alias</THeadTh>
-     <THeadTh>Address</THeadTh>
-     <THeadTh>Action</THeadTh>
-    </THead>
-    <TBody>
+    <Thead>
+     <TheadTh>Index</TheadTh>
+     <TheadTh>Alias</TheadTh>
+     <TheadTh>Address</TheadTh>
+     <TheadTh>Action</TheadTh>
+    </Thead>
+    <Tbody>
      {#each walletAddresses(walleta) as address, index}
-      <TBodyTr>
-       <TBodyTd title="Index">{address.index}</TBodyTd>
-       <TBodyTd title="Alias">{address.name}</TBodyTd>
-       <TBodyTd title="Address"><Address address={address.address} /></TBodyTd>
-       <TBodyTd title="Action">
+      <TbodyTr>
+       <TbodyTd title="Index">{address.index}</TbodyTd>
+       <TbodyTd title="Alias">{address.name}</TbodyTd>
+       <TbodyTd title="Address"><Address address={address.address} /></TbodyTd>
+       <TbodyTd title="Action">
         <TableActionItems>
          <Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
          <Icon img="img/del.svg" alt="Hide" colorVariable="--icon-red" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
         </TableActionItems>
-       </TBodyTd>
-      </TBodyTr>
+       </TbodyTd>
+      </TbodyTr>
      {/each}
-    </TBody>
+    </Tbody>
    </Table>
   </div>
  {/snippet}

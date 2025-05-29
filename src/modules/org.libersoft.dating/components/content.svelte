@@ -11,9 +11,7 @@
 
 <style>
  .page-content {
-  /*flex-grow: 1;*/
-  height: calc(100% - 78px);
-  max-height: calc(100% - 78px);
+  height: 100%;
   padding: 10px;
   overflow: auto;
   background-color: red;

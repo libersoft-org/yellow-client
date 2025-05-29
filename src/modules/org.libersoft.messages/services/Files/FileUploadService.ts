@@ -108,7 +108,7 @@ export class FileUploadService extends EventEmitter {
 
     const lastChunkId = chunksSent[chunksSent.length - 1];
     const newChunkId = lastChunkId === undefined ? 0 : lastChunkId + 1;
-    const { chunk, blob } = await this.getChunk(upload.record.id, newChunkId, chunkSize);
+    const { chunk } = await this.getChunk(upload.record.id, newChunkId, chunkSize);
 
     await pushFn({ chunk, upload });
     chunksSent[newChunkId] = newChunkId;

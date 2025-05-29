@@ -184,9 +184,9 @@ class MediaService {
    return;
   }
 
-  const bitRate = this.fileInfo.totalSize / duration;
-  const estimatedOffset = time * bitRate;
-  const newOffset = estimatedOffset - (estimatedOffset % this.fileInfo.chunkSize);
+  // const bitRate = this.fileInfo.totalSize / duration;
+  // const estimatedOffset = time * bitRate;
+  // const newOffset = estimatedOffset - (estimatedOffset % this.fileInfo.chunkSize);
 
   if (typeof loader.seek === 'function') {
    const seekOffset = loader.seek(time);

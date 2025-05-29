@@ -18,7 +18,17 @@
 <style>
  .buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+  width: fit-content;
+
+  :global(.base-button) {
+   width: fit-content;
+  }
+
+  /* .button {
+      width: fit-content;
+    } */
  }
 
  .top {
@@ -37,7 +47,7 @@
  </div>
  <div class="buttons">
   {#each data.buttons as button}
-   <Button {...button} />
+   <Button {...button} width="100%" />
   {/each}
  </div>
  <!-- <Button text="Close" onClick={() => (show = false)} /> -->

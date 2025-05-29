@@ -1,6 +1,13 @@
-<script>
- export let text;
- export let row = false;
+<script lang="ts">
+ import type { Snippet } from 'svelte';
+
+ type Props = {
+  children: Snippet;
+  text?: string;
+  id?: string;
+ };
+
+ let { children, text = $bindable(''), id = '' }: Props = $props();
 </script>
 
 <style>
@@ -9,12 +16,7 @@
   flex-direction: column;
   gap: 2px;
   -webkit-tap-highlight-color: transparent;
- }
-
- label.row {
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
+  max-width: fit-content;
  }
 
  .text {
@@ -25,9 +27,9 @@
  }
 </style>
 
-<label class:row>
+<label>
  {#if text}
   <div class="text">{text}:</div>
  {/if}
- <slot />
+ {@render children()}
 </label>

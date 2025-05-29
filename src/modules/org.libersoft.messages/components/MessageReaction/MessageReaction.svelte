@@ -7,7 +7,7 @@
  import { toggleMessageReaction, identifier } from '../../messages';
  import Emoji from '../Emoji/Emoji.svelte';
  import { rgi } from '../../emojis';
- import Portal from 'svelte-portal';
+ import Portal from '@/core/components/Portal/Portal.svelte';
  interface MessageReactionProps {
   message: any;
  }
@@ -95,7 +95,7 @@
  .reaction-tooltip {
   display: flex;
   align-items: center;
-  background: var(--yellow-bg);
+  background: var(--color-primary-softer-background);
   padding: 8px;
   border-radius: 20px;
   box-shadow: var(--yellow-box-shadow);

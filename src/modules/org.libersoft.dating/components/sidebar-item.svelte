@@ -17,10 +17,11 @@
   padding: 10px;
   background-color: #fffcf0;
   border-bottom: 1px solid #dd9;
+  width: 100%;
  }
 </style>
 
-<BaseButton {onClick}>
+<BaseButton {onClick} width="100%">
  <div class="item">
   {#if img}
    <Icon img="modules/{module.identifier}/img/{img}" alt={label} {colorVariable} size="20px" padding="0px" />

@@ -61,8 +61,14 @@
   word-break: break-word;
   overflow: hidden;
   padding: 15px;
+  padding-right: 0;
   font-weight: bold;
   background-color: #222;
+
+  :global(.base-button) {
+   flex: 1 1 auto;
+   min-width: 0;
+  }
  }
 
  .bar-buttons .bar-button.grow {
@@ -70,9 +76,12 @@
  }
 
  .new-conversation {
+  height: fit-content;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  width: 100%;
+  /* max-width: 100%; */
  }
 
  .items {

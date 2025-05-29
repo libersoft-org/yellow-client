@@ -2,6 +2,7 @@ import { tick } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 import { log } from './tauri.ts';
+import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
 //import {} from './client_debug';
 export const debugBuffer = writable('');
 export const documentHeight = writable(0);
@@ -17,13 +18,7 @@ export let debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
 export const product = 'Yellow';
 export const motto = 'Experience the freedom of decentralized world';
 export const version = '0.0.1';
-export const build =
- typeof __BUILD_DATE__ !== 'undefined'
-  ? new Date(__BUILD_DATE__)
-     .toISOString()
-     .replace('T', ' ')
-     .replace(/\.\d+Z/, '')
-  : 'unknown';
+export const build = typeof __BUILD_DATE__ !== 'undefined' ? friendlyTimestamp(__BUILD_DATE__) : 'unknown';
 export const commit = typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'unknown';
 export const branch = typeof __BRANCH__ !== 'undefined' ? __BRANCH__ : 'unknown';
 export const link = 'https://yellow.libersoft.org';
@@ -115,6 +110,16 @@ import.meta.hot?.dispose(() => {
 
 export function findAccount(id) {
  return get(accounts).find(account => get(account).id === id);
+}
+
+export function accountExists(server, address) {
+ const currentConfig = get(accounts_config);
+ const identifier = `${server}\\\\${address}`;
+ return currentConfig.some(account => {
+  const accountServer = account.credentials?.server || account.server;
+  const accountAddress = account.credentials?.address || account.address;
+  return `${accountServer}\\\\${accountAddress}` === identifier;
+ });
 }
 
 /* fire off whenever accounts array or active_account_id changes */
@@ -684,7 +689,9 @@ export function send(acc, account, target, command, params = {}, sendSessionID =
  acc.requests[requestID] = {
   req,
   callback: (req, res) => {
-   if (res.error) console.error(res);
+   if (res.error) {
+    console.error(res);
+   }
    if (callback) callback(req, res);
   },
  };

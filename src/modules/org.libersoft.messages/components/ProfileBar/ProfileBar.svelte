@@ -3,6 +3,7 @@
  import Icon from '@/core/components/Icon/Icon.svelte';
  import Photo from '../Photo/Photo.svelte';
  import { selectedConversation } from '../../messages.js';
+ import { isMobile } from '@/core/core.js';
  export let closeConversation;
 
  function clickClose() {
@@ -23,6 +24,8 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  flex: 1 1 auto;
+  min-width: 0;
  }
 
  .description .visible_name {
@@ -34,9 +37,11 @@
  }
 </style>
 
-<TopBar columnSize={2}>
+<TopBar>
  <svelte:fragment slot="left">
-  <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" padding="10px" onClick={clickClose} visibleOnDesktop={false} />
+  {#if $isMobile}
+   <Icon img="img/back.svg" alt="Back" colorVariable="--icon-white" padding="10px" onClick={clickClose} />
+  {/if}
   <Photo size="38px" />
   <div class="description">
    {#if $selectedConversation.visible_name}

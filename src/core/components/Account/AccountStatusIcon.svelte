@@ -29,7 +29,7 @@
  }
 
  .status-connecting {
-  background-color: #fd3;
+  background-color: #f90;
   border: 1px solid #600;
  }
 

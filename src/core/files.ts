@@ -1,10 +1,8 @@
-import { open, save } from '@tauri-apps/plugin-dialog';
+import { save } from '@tauri-apps/plugin-dialog';
 import { rename, writeFile, open as openFile, exists, BaseDirectory } from '@tauri-apps/plugin-fs';
 import * as path from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/core';
-import { get } from 'svelte/store';
-import { isMobile } from './core.js';
-import { log } from './tauri.ts';
+import { TAURI_MOBILE, log } from './tauri.ts';
 
 interface PermissionStatus {
  writeExternalStorage: 'granted' | 'denied' | 'prompt';
@@ -28,22 +26,26 @@ export class NativeDownload {
   this.original_file_name = '';
   this.file_path = '';
   this.temp_file_path = '';
-  // On mobile, use app-specific directory instead of system Downloads
-  this.baseDir = get(isMobile) ? BaseDirectory.AppData : BaseDirectory.Download;
+  // Default to Download directory, will be overridden for Android
+  this.baseDir = BaseDirectory.Download;
  }
 }
 
 async function ensureFilePermissions(): Promise<{ success: boolean; error?: string }> {
- if (!get(isMobile)) {
+ if (!TAURI_MOBILE) {
   return { success: true }; // Desktop always has permissions
  }
 
  try {
-  const permissions = await invoke<PermissionStatus>('plugin:yellow|check_permissions');
+  log.debug('Attempting to invoke plugin:yellow|check_file_permissions');
+  const permissions = await invoke<PermissionStatus>('plugin:yellow|check_file_permissions');
+  log.debug('check_file_permissions result:', permissions);
   if (permissions.writeExternalStorage !== 'granted' || permissions.readExternalStorage !== 'granted') {
-   const result = await invoke<PermissionStatus>('plugin:yellow|request_permissions', {
+   log.debug('Permissions not granted, requesting...');
+   const result = await invoke<PermissionStatus>('plugin:yellow|request_file_permissions', {
     permissions: [PermissionType.WriteExternalStorage, PermissionType.ReadExternalStorage],
    });
+   log.debug('request_file_permissions result:', result);
    if (result.writeExternalStorage === 'granted' && result.readExternalStorage === 'granted') {
     return { success: true };
    } else {
@@ -53,56 +55,67 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
   return { success: true };
  } catch (error) {
   log.debug('Failed to check/request file permissions:', error);
-  return { success: false, error: 'Failed to check file permissions' };
+  log.debug('Error details:', JSON.stringify(error, null, 2));
+  return { success: false, error: `Failed to check file permissions: ${error instanceof Error ? error.message : String(error)}` };
  }
 }
 
 export async function offerNativeDownload(fileName: string, defaultFileDownloadFolder: string | null): Promise<NativeDownload | { error: string } | null> {
+ log.debug('offerNativeDownload - TAURI_MOBILE:', TAURI_MOBILE);
+
  // Ensure we have file permissions before proceeding
  const permissionResult = await ensureFilePermissions();
  if (!permissionResult.success) {
   return { error: permissionResult.error || 'File permissions not available' };
  }
 
- try {
-  const download = new NativeDownload();
-  download.original_file_name = fileName;
+ const download = new NativeDownload();
+ download.original_file_name = fileName;
 
-  if (defaultFileDownloadFolder) {
-   await findFreeFileName(defaultFileDownloadFolder, download);
-   return download;
-  } else {
-   let p = await save({
-    defaultPath: defaultFileDownloadFolder ? await path.join(defaultFileDownloadFolder, fileName) : fileName,
-    canCreateDirectories: true,
-    title: 'Save file',
+ // On mobile, always use app-specific directory without save dialog
+ if (TAURI_MOBILE) {
+  download.baseDir = BaseDirectory.AppData;
+
+  try {
+   // For mobile, use temp files like desktop
+   download.file_path = fileName;
+   download.temp_file_path = partFileName(fileName);
+   download.potential_default_folder = null;
+
+   log.debug('Mobile download paths:', {
+    file_path: download.file_path,
+    temp_file_path: download.temp_file_path,
+    baseDir: download.baseDir,
+    baseDirName: 'AppData',
    });
-   if (!p) {
-    return null;
-   }
 
-   log.debug('Save dialog returned path:', p);
-   log.debug('isMobile:', get(isMobile));
-   log.debug('baseDir:', download.baseDir);
-
-   download.file_path = p;
-   download.temp_file_path = partFileName(p);
-   download.potential_default_folder = await path.dirname(p);
-
-   try {
-    await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
-   } catch (error) {
-    log.debug('Failed to create temp file:', error);
-    log.debug('Attempted path:', download.temp_file_path);
-    log.debug('Base directory:', download.baseDir);
-    return { error: `Failed to create temp file: ${error}` };
-   }
-
-   return download;
+   // Create the temp file in app's local directory
+   await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+  } catch (error) {
+   log.debug('Failed to create temp file:', error);
+   return { error: 'Failed to create temp file: ' + error };
   }
- } catch (error) {
-  log.debug('Error during file download offer:', error);
-  return { error: `Failed to offer download: ${error}` };
+  return download;
+ }
+
+ // Desktop-only code path
+ if (defaultFileDownloadFolder) {
+  await findFreeFileName(defaultFileDownloadFolder, download);
+  return download;
+ } else {
+  let p = await save({
+   defaultPath: defaultFileDownloadFolder ? await path.join(defaultFileDownloadFolder, fileName) : fileName,
+   canCreateDirectories: true,
+   title: 'Save file',
+  });
+  if (!p) {
+   return null;
+  }
+  download.file_path = p;
+  download.temp_file_path = partFileName(p);
+  download.potential_default_folder = await path.dirname(p);
+  await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+  return download;
  }
 }
 
@@ -126,10 +139,27 @@ export async function finishNativeDownload(download: NativeDownload) {
  const file_path = download.file_path;
  const temp_file_path = download.temp_file_path;
  download.finished = true;
+
+ log.debug('finishNativeDownload - paths:', {
+  file_path,
+  temp_file_path,
+  baseDir: download.baseDir,
+  TAURI_MOBILE,
+ });
+
  await rename(temp_file_path, file_path, {
   oldPathBaseDir: download.baseDir,
   newPathBaseDir: download.baseDir,
  });
+
+ // On mobile, offer to export the file to the system Downloads folder
+ if (TAURI_MOBILE) {
+  log.debug('File saved to app storage:', file_path);
+  log.debug('To export to system Downloads, call exportToSystemDownloads with:', {
+   appFilePath: file_path,
+   fileName: download.original_file_name,
+  });
+ }
 }
 
 async function findFreeFileName(folder: string, download: NativeDownload) {
@@ -143,6 +173,13 @@ async function findFreeFileName(folder: string, download: NativeDownload) {
   if (!exists_file && !exists_file2) {
    download.file_path = file_path;
    download.temp_file_path = temp_file_path;
+   try {
+    // Create the temp file
+    await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+   } catch (error) {
+    log.debug('Failed to create temp file in findFreeFileName:', error);
+    throw error;
+   }
    return;
   }
   counter++;
@@ -151,4 +188,26 @@ async function findFreeFileName(folder: string, download: NativeDownload) {
 
 function partFileName(file_path: string) {
  return file_path + '.part';
+}
+
+// Export a file from app storage to system Downloads folder (mobile only)
+export async function exportToSystemDownloads(appFilePath: string, fileName: string, mimeType: string = 'application/octet-stream'): Promise<{ success: boolean; error?: string }> {
+ if (!TAURI_MOBILE) {
+  return { success: false, error: 'This function is only for mobile devices' };
+ }
+
+ try {
+  // Use our plugin to export the file using streaming (no memory loading)
+  const result = await invoke('plugin:yellow|export_file_to_downloads', {
+   filePath: appFilePath,
+   fileName: fileName,
+   mimeType: mimeType,
+  });
+
+  log.debug('File exported to Downloads:', result);
+  return { success: true };
+ } catch (error) {
+  log.debug('Failed to export to Downloads:', error);
+  return { success: false, error: error instanceof Error ? error.message : String(error) };
+ }
 }

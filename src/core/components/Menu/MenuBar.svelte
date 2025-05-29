@@ -4,14 +4,10 @@
  import { product } from '../../core.js';
 
  type Props = {
-  isMenuOpen: boolean;
+  onOpenMenu: () => void;
  };
 
- let { isMenuOpen = $bindable() }: Props = $props();
-
- function handleClick() {
-  isMenuOpen = true;
- }
+ let { onOpenMenu }: Props = $props();
 </script>
 
 <style>
@@ -20,8 +16,8 @@
   align-items: center;
   height: var(--menu-height);
   min-height: var(--menu-height);
-  background-color: #fd1;
-  color: #222;
+  background-color: var(--color-primary-background);
+  color: var(--color-primary-foreground);
  }
 
  .product {
@@ -31,7 +27,7 @@
 </style>
 
 <div class="bar">
- <Icon img="img/menu.svg" alt="☰" colorVariable="--icon-black" size="30px" padding="10px" onClick={handleClick} />
+ <Icon img="img/menu.svg" alt="☰" colorVariable="--color-primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} />
  <div class="product">{product}</div>
  <MenuBarDebug />
 </div>

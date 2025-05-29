@@ -1,5 +1,5 @@
 <script>
- import { keyboardHeight, documentHeight, debug, isMobile, debugBuffer, active_account } from '@/core/core.js';
+ import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.js';
  import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
  import { onMount, setContext, tick, getContext } from 'svelte';
  import BaseButton from '@/core/components/Button/BaseButton.svelte';
@@ -17,9 +17,8 @@
  import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
  import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
  import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
- import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
+ // import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
  import VideoRecorderModalBody from '@/org.libersoft.messages/modals/VideoRecorderModalBody.svelte';
-
  let expressionsMenu;
  let elBottomSheet;
  let elAttachment;
@@ -253,7 +252,7 @@
  .message-bar {
   position: sticky;
   bottom: 0;
-  background-color: #222;
+  background-color: var(--color-primary-background);
   box-shadow: var(--shadow);
  }
 
@@ -265,7 +264,7 @@
  }
 
  .message-bar-top {
-  display: contents;
+  display: flex;
  }
 
  .message-textarea {
@@ -307,19 +306,19 @@
 
   {#if expressionsAsContextMenu}
    <div bind:this={elExpressions}>
-    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32px" padding="0px" isButton />
+    <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--color-primary-background" alt="Emoji" size="32px" padding="0px" isButton />
    </div>
   {:else}
-   <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--icon-yellow" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
+   <Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--color-primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
   {/if}
 
   <textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
   <!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
   <Icon img="modules/{identifier}/img/video-message.svg" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
-  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" colorVariable="--icon-yellow" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
-  <Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" alt="Send" size="32px" padding="0px" onClick={clickSend} colorVariable="--icon-yellow" />
+  <Icon img="modules/{identifier}/img/mic.svg" alt="Record voice message" colorVariable="--color-primary-background" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
+  <Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" alt="Send" size="32px" padding="0px" onClick={clickSend} colorVariable="--color-primary-background" />
   {#if $debug}
-   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="20px" padding="0px" onClick={clickSendSplit} colorVariable="--icon-yellow" />
+   <Icon img="modules/{identifier}/img/send.svg" alt="Send" size="20px" padding="0px" onClick={clickSendSplit} colorVariable="--color-primary-background" />
   {/if}
  </div>
 </div>

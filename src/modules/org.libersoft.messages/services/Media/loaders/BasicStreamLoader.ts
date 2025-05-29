@@ -1,4 +1,4 @@
-import { type MediaFileInfo, MediaLoader } from './types.ts';
+import { MediaLoader } from './types.ts';
 import mediaInfoFactory from 'mediainfo.js';
 
 class BasicStreamLoader extends MediaLoader {
@@ -27,8 +27,8 @@ class BasicStreamLoader extends MediaLoader {
    throw new Error('No tracks found');
   }
 
-  const videoTrack = tracks.find(track => track['@type'] === 'Video');
-  const audioTrack = tracks.find(track => track['@type'] === 'Audio');
+  // const videoTrack = tracks.find(track => track['@type'] === 'Video');
+  // const audioTrack = tracks.find(track => track['@type'] === 'Audio');
   // console.log('SETUP: videoTrack', videoTrack);
   // console.log('SETUP: audioTrack', audioTrack);
 

@@ -20,13 +20,17 @@
   border-radius: 10px;
   background-color: #faa;
  }
+
+ .text {
+  text-align: left;
+ }
 </style>
 
-<div>Would you like to delete the item "{params.item.alias}"?</div>
+<div class="text">Would you like to delete the item "{params.item.alias}"?</div>
 {#if error}
  <div class="error">
   <div class="bold">Error:</div>
   <div>{error}</div>
  </div>
 {/if}
-<Button text="Delete" onClick={clickDelete} />
+<Button text="Delete" onClick={clickDelete} width="100%" />

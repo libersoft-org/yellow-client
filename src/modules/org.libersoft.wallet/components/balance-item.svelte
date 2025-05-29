@@ -13,18 +13,19 @@
   align-items: center;
   gap: 10px;
   padding: 10px;
+  width: 100%;
  }
 
  .item.even {
-  background-color: #ffa;
+  background-color: var(--color-secondary-soft-background);
  }
 
  .item.odd {
-  background-color: #ffd;
+  background-color: var(--color-primary-lighter-background);
  }
 
  .item:hover {
-  background-color: #fd1;
+  background-color: var(--color-primary-background);
  }
 
  .item .icon img {
@@ -53,7 +54,7 @@
  }
 </style>
 
-<BaseButton {onClick}>
+<BaseButton {onClick} width="100%">
  <div class="item {className}">
   {#if icon}
    <div class="icon"><img src={icon} alt={symbol} /></div>

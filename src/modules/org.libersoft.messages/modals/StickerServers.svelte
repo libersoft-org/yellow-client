@@ -2,13 +2,13 @@
  import { sticker_servers } from '../stickers.js';
  import Input from '@/core/components/Input/Input.svelte';
  import Button from '@/core/components/Button/Button.svelte';
- import Table from '@/core/components/ResponsiveTable/Table.svelte';
- import THead from '@/core/components/ResponsiveTable/THead.svelte';
- import THeadTr from '@/core/components/ResponsiveTable/THeadTr.svelte';
- import THeadTh from '@/core/components/ResponsiveTable/THeadTh.svelte';
- import TBody from '@/core/components/ResponsiveTable/TBody.svelte';
- import TBodyTr from '@/core/components/ResponsiveTable/TBodyTr.svelte';
- import TBodyTd from '@/core/components/ResponsiveTable/TBodyTd.svelte';
+ import Table from '@/core/components/Table/Table.svelte';
+ import Thead from '@/core/components/Table/TableThead.svelte';
+ import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+ import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+ import Tbody from '@/core/components/Table/TableTbody.svelte';
+ import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+ import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';
 
  let addUrl = $state('');
@@ -43,7 +43,7 @@
 
 <style>
  a {
-  color: #000;
+  color: var(--color-primary-foreground);
   text-decoration: none;
   font-weight: bold;
  }
@@ -62,24 +62,24 @@
 </div>
 
 <Table breakpoint="0">
- <THead>
-  <THeadTr>
-   <THeadTh>Sticker servers:</THeadTh>
-   <THeadTh>Action:</THeadTh>
-  </THeadTr>
- </THead>
- <TBody>
+ <Thead>
+  <TheadTr>
+   <TheadTh>Sticker servers:</TheadTh>
+   <TheadTh>Action:</TheadTh>
+  </TheadTr>
+ </Thead>
+ <Tbody>
   {#each $sticker_servers as s}
-   <TBodyTr>
-    <TBodyTd title="Sticker servers">
+   <TbodyTr>
+    <TbodyTd title="Sticker servers">
      <a href={s} target="_blank">{s}</a>
-    </TBodyTd>
-    <TBodyTd title="Action">
+    </TbodyTd>
+    <TbodyTd title="Action">
      <Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} />
-    </TBodyTd>
-   </TBodyTr>
+    </TbodyTd>
+   </TbodyTr>
   {/each}
- </TBody>
+ </Tbody>
 </Table>
 {#if error}
  <div class="error">{error}</div>
