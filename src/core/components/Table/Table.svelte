@@ -20,7 +20,7 @@
 </script>
 
 <style>
- .responsvive-table {
+ .table {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -41,7 +41,6 @@
   display: block;
   width: 100%;
   border-collapse: collapse;
-  /* overflow: clip; */
   table-layout: auto;
   font-size: clamp(14px, 2vw, 16px);
 
@@ -51,7 +50,7 @@
  }
 </style>
 
-<div class={`responsvive-table ${isWide ? 'table-wide' : ''}`} {...restProps}>
+<div class={`table ${isWide ? 'table-wide' : ''}`} {...restProps}>
  <table>
   {@render children()}
  </table>

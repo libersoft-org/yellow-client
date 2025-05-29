@@ -3,9 +3,11 @@
 
  type Props = {
   children: Snippet;
+  background?: string;
+  hover?: boolean;
  };
 
- const { children }: Props = $props();
+ const { children, background = 'var(--color-primary-soft-background)', hover = true }: Props = $props();
 </script>
 
 <style>
@@ -14,22 +16,16 @@
  }
 
  tr:nth-child(odd) {
-  background-color: var(--color-primary-softer-background);
+  background-color: var(--color-primary-softer-background) !important;
  }
 
- tr:hover {
-  background-color: var(--color-primary-background);
- }
-
- .tr {
-  :global(.table-wide &) {
-   display: table-row;
-   border-style: none;
-   border-bottom-width: 0;
+ tr.hover {
+  &:hover {
+   background-color: var(--color-primary-background) !important;
   }
  }
 </style>
 
-<tr>
+<tr class:hover style:background>
  {@render children()}
 </tr>

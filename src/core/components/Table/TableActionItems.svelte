@@ -10,8 +10,7 @@
 
 <style>
  .action-items {
-  display: inline-flex;
-  gap: 12px;
+  display: flex;
  }
 </style>
 

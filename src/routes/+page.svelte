@@ -384,10 +384,6 @@
   .resizer {
    display: none;
   }
-
-  .content {
-   max-width: 100%;
-  }
  }
 </style>
 

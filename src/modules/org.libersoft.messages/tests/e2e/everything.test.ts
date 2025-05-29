@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 
 /**
@@ -183,17 +183,22 @@ async function navigateToSettingsSection(page: Page, section: 'General' | 'Notif
  });
 }
 
+async function goToRootSettingsSection(page: Page): Promise<void> {
+ return await test.step('Navigate back to root settings', async () => {
+  const breadcrumbHome = page.locator('.breadcrumbs button', { hasText: 'Settings' });
+  await breadcrumbHome.click();
+ });
+}
+
 /**
  * Helper function to close the current modal
  * @param page - The Playwright page object
  */
-/*
 async function closeModal(page: Page): Promise<void> {
  return await test.step('Close modal', async () => {
   await page.getByTestId('Modal-close').click();
  });
 }
-*/
 
 /**
  * Helper function to set up an account through the initial wizard
@@ -403,33 +408,36 @@ test('Complete End-to-End Application Test', async ({ page }) => {
  });
 
  await test.step('Global Settings Navigation', async () => {
-  // Open global settings
   await openGlobalSettings(page);
 
-  // Navigate to notifications settings
+  // Navigate to Notifications and toggle settings
   await navigateToSettingsSection(page, 'Notifications');
-  await page.getByRole('checkbox', { name: 'Notification sound' }).click();
-  await page.getByRole('checkbox', { name: 'Notifications' }).click();
+  await test.step('Toggle notification settings', async () => {
+   const notificationsToggle = page.getByLabel('Notifications');
+   const soundToggle = page.getByLabel('Notification sound');
+   await notificationsToggle.click();
+   await soundToggle.click();
+  });
 
-  // // Navigate to appearance settings
-  // await navigateToSettingsSection(page, 'General');
-  // await navigateToSettingsSection(page, 'Appearance');
-  // const themeSelect = page.getByRole('combobox', { name: 'Address' });
+  // Go back to root
+  await goToRootSettingsSection(page);
 
-  // // Validate default
-  // await expect(themeSelect).toHaveValue('light');
+  // Navigate to Appearance and change theme
+  await navigateToSettingsSection(page, 'Appearance');
+  await test.step('Change theme in Appearance settings', async () => {
+   const themeSelect = page.locator('select');
+   await expect(themeSelect).toHaveValue('0'); // Light
+   await themeSelect.selectOption({ label: 'Dark' });
+   await expect(themeSelect).toHaveValue('1'); // Dark
+   await themeSelect.selectOption({ label: 'Light' });
+   await expect(themeSelect).toHaveValue('0'); // Back to Light
+  });
 
-  // // Change to dark
-  // await themeSelect.selectOption('dark');
+  // Go back to root and re-enter Notifications
+  await goToRootSettingsSection(page);
+  await navigateToSettingsSection(page, 'Notifications');
 
-  // // Optional: assert change
-  // await expect(themeSelect).toHaveValue('dark');
-
-  //
-  // // Back to notifications
-  // await navigateToSettingsSection(page, 'Notifications');
-  //
-  // // Close settings
-  // await closeModal(page);
+  // Close settings modal
+  await closeModal(page);
  });
 });

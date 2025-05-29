@@ -7,7 +7,7 @@
   id?: string;
  };
 
- let { children, text = $bindable(''), id = '' }: Props = $props();
+ let { children, text = $bindable('') }: Props = $props();
 </script>
 
 <style>
