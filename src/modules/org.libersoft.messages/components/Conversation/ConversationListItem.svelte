@@ -1,7 +1,7 @@
 <script>
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
   import Photo from '../Photo/Photo.svelte';
-  import { selectedConversation, ensureConversationDetails } from '../../messages.js';
+  import { selectedConversation, ensureConversationDetails } from '../../messages.ts';
   export let c;
   export let clickItem;
 

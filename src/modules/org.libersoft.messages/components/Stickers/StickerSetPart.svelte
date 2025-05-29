@@ -1,5 +1,5 @@
 <script>
-  //import { debug } from '@/core/core.js';
+  //import { debug } from '@/core/core.ts';
   import StickerSetItem from './StickerSetItem.svelte';
   export let items;
   export let stickerset;

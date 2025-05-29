@@ -8,7 +8,7 @@
     FileUploadRole,
   } from '@/org.libersoft.messages/services/Files/types.ts';
   import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-  import { downloadAttachmentsSerial } from '../../messages.js';
+  import { downloadAttachmentsSerial } from '../../messages.ts';
   import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 
   let { children } = $props();

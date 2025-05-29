@@ -106,7 +106,8 @@
   const sendMessage = async (blob: Blob) => {
     sending = true;
     const recipientEmail = get(selectedConversation).address;
-    initUpload([blob], FileUploadRecordType.SERVER, [recipientEmail]).finally(() => {
+    const file = new File([blob], `video-${Date.now()}.webm`, { type: blob.type });
+    initUpload([file], FileUploadRecordType.SERVER, [recipientEmail]).finally(() => {
       sending = false;
       recordedBlob.set(null);
     });

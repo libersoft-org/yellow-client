@@ -1,6 +1,6 @@
 export const ssr = false;
 
-let p;
+let p: boolean;
 try {
   p = !!process.env.TAURI;
 } catch (e) {

@@ -1,8 +1,8 @@
 <script>
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
-  import { jumpToMessage } from '../../messages.js';
+  import { jumpToMessage } from '../../messages.ts';
   import { get } from 'svelte/store';
-  import { active_account } from '@/core/core.js';
+  import { active_account } from '@/core/core.ts';
   export let address = '';
   export let text = '';
   export let uid = '';

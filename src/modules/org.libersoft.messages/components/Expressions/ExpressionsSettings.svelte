@@ -4,8 +4,8 @@
   import Button from '@/core/components/Button/Button.svelte';
   import Switch from '@/core/components/Switch/Switch.svelte';
   import Modal from '@/core/components/Modal/Modal.svelte';
-  import { sticker_server_index, sticker_servers } from '../../stickers.js';
-  import { gif_server_index, gif_servers } from '../../gifs.js';
+  import { sticker_server_index, sticker_servers } from '../../stickers.ts';
+  import { gif_server_index, gif_servers } from '../../gifs.ts';
   import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
   import StickerServers from '../../modals/StickerServers.svelte';
   import GifServers from '../../modals/GifServers.svelte';

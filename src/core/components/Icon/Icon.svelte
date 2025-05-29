@@ -1,11 +1,8 @@
 <script lang="ts">
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
-  import { getColorFromCSSToFilter } from '../../utils/colors.js';
+  import { getColorFromCSSToFilter } from '../../utils/colors.ts';
 
-  import { current_theme, selected_theme_index } from '../../appearance_store.js';
-
-  //  import { selected_theme_index } from '../../appearance_store.js';
-  import { derived } from 'svelte/store';
+  import { current_theme, selected_theme_index } from '../../appearance_store.ts';
 
   interface Props {
     img: string;
@@ -33,7 +30,8 @@
     'data-testid': dataTestId,
   }: Props = $props();
 
-  let filtered_color = $derived(selected_theme_index > -1 || 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';');
+  // Filtered color for dynamic styling
+  // let filtered_color = $derived($selected_theme_index > -1 || (colorVariable ? 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';' : ''));
 </script>
 
 {#snippet icon()}

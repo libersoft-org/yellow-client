@@ -1,4 +1,4 @@
-import { registerModule } from '@/core/core.js';
+import { registerModule, type ModuleDeclaration } from '@/core/core.ts';
 /* note: components import wallet.ts, so everything is still imported on startup.. */
 import Sidebar from './pages/wallet-sidebar.svelte';
 import Content from './pages/wallet-content.svelte';
@@ -8,11 +8,13 @@ export const module = {
   identifier: 'org.libersoft.wallet',
 };
 
-registerModule(module.identifier, {
+const moduleDeclaration: Partial<ModuleDeclaration> = {
   order: 3,
   callbacks: {},
   panels: {
     sidebar: Sidebar,
     content: Content,
   },
-});
+};
+
+registerModule(module.identifier, moduleDeclaration as ModuleDeclaration);

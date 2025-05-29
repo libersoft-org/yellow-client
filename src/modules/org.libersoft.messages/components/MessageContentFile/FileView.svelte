@@ -1,6 +1,6 @@
 <script lang="ts">
   import FileTransfer from './FileTransfer.svelte';
-  import { identifier } from '../../messages.js';
+  import { identifier } from '../../messages.ts';
   import {
     type FileDownload,
     type FileUpload,
@@ -10,7 +10,7 @@
     FileUploadRole,
   } from '@/org.libersoft.messages/services/Files/types.ts';
   import Button from '@/core/components/Button/Button.svelte';
-  import { humanSize } from '@/core/utils/fileUtils.js';
+  import { humanSize } from '@/core/utils/fileUtils.ts';
 
   interface AttachmentProps {
     upload: FileUpload;

@@ -1,6 +1,6 @@
 <script>
-  import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.js';
-  import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
+  import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.ts';
+  import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.ts';
   import { onMount, setContext, tick, getContext } from 'svelte';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';
@@ -10,7 +10,7 @@
   import ModalHtml from '../../modals/Html.svelte';
   import ModalFileUpload from '../../modals/FileUpload.svelte';
   import Expressions from '../Expressions/Expressions.svelte';
-  import { init_emojis } from '../../emojis.js';
+  import { init_emojis } from '../../emojis.ts';
   import { get } from 'svelte/store';
   import MessageBarRecorder from './MessageBarRecorder.svelte';
   import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';

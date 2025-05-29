@@ -1,5 +1,5 @@
 <script>
-  import { humanSize } from '@/core/utils/fileUtils.js';
+  import { humanSize } from '@/core/utils/fileUtils.ts';
   import Input from '@/core/components/Input/Input.svelte';
   import Button from '@/core/components/Button/Button.svelte';
   import {
@@ -7,7 +7,7 @@
     hideMessageTextInNotifications,
     defaultFileDownloadFolder,
     photoRadius,
-  } from '../messages.js';
+  } from '../messages.ts';
   import Switch from '@/core/components/Switch/Switch.svelte';
   import { open } from '@tauri-apps/plugin-dialog';
   import { TAURI } from '@/core/tauri.ts';

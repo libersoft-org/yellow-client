@@ -1,4 +1,9 @@
-export function splitAndLinkify(text) {
+export interface LinkifyResult {
+  type: 'plain' | 'processed';
+  value: string;
+}
+
+export function splitAndLinkify(text: string): LinkifyResult[] {
   let pattern = [
     "(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+" +
       "(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?" +
@@ -19,11 +24,11 @@ export function splitAndLinkify(text) {
   ].join('|');
   //console.log('splitAndLinkify pattern:', pattern);
   const combinedPattern = new RegExp(pattern, 'g');
-  const result = [];
+  const result: LinkifyResult[] = [];
   let lastIndex = 0;
   // matchAll returns an iterator of match objects
   for (const match of text.matchAll(combinedPattern)) {
-    const matchStart = match.index;
+    const matchStart = match.index!;
     const matchedText = match[0];
     const nonMatched = text.slice(lastIndex, matchStart);
     if (nonMatched) {

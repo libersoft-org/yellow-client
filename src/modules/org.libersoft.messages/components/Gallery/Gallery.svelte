@@ -1,5 +1,5 @@
 <script>
-  import { identifier } from '../../messages.js';
+  import { identifier } from '../../messages.ts';
   import Button from '@/core/components/Button/Button.svelte';
   import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
   import Spinner from '@/core/components/Spinner/Spinner.svelte';

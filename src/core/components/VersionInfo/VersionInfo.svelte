@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { version, build, commit, branch } from '../../core.js';
+  import { version, build, commit, branch } from '../../core.ts';
   import { log, TAURI } from '@/core/tauri.ts';
   import {
     getNativeClientBuildCommitHash,

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Unsubscriber } from 'svelte/store';
-  import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
+  import { log, CUSTOM_NOTIFICATIONS } from '../../tauri.ts';
   import {
     customNotificationsOn,
     animationDuration,
@@ -12,7 +12,7 @@
     borderColor,
     titleColor,
     descColor,
-    notificationsSoundEnabled,
+    // notificationsSoundEnabled, // Unused
   } from '../../notifications_settings.ts';
   import { skipFirst } from '$lib/skipfirst_store.ts';
   import { updateExampleNotification } from '@/core/notifications.ts';

@@ -1,8 +1,34 @@
-// import { current_theme, themes_stored } from './core.js';
-import { derived, get } from 'svelte/store';
-import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-export let selected_theme_index = localStorageSharedStore('selected_theme_index', 0);
-export const default_theme = {
+// import { current_theme, themes_stored } from './core.ts';
+import { derived, get, type Readable, type Writable } from 'svelte/store';
+import { localStorageSharedStore } from '../lib/svelte-shared-store.js';
+
+export interface ThemeProperties {
+  '--color-primary-foreground': string;
+  '--color-primary-softer-background': string;
+  '--color-primary-soft-background': string;
+  '--color-primary-background': string;
+  '--color-primary-hard-background': string;
+  '--color-primary-harder-background': string;
+  '--color-secondary-foreground': string;
+  '--color-secondary-softer-background': string;
+  '--color-secondary-soft-background': string;
+  '--color-secondary-background': string;
+  '--color-secondary-hard-background': string;
+  '--color-secondary-harder-background': string;
+  '--color-default-foreground': string;
+  '--color-default-background': string;
+  '--color-disabled-background': string;
+  '--color-disabled-foreground': string;
+}
+
+export interface Theme {
+  name: string;
+  properties: ThemeProperties;
+}
+
+export let selected_theme_index: Writable<number> = localStorageSharedStore('selected_theme_index', 0);
+
+export const default_theme: Theme = {
   name: 'Light',
   properties: {
     '--color-primary-foreground': '#222',
@@ -23,7 +49,8 @@ export const default_theme = {
     '--color-disabled-foreground': '#fff',
   },
 };
-export let themes_stored = localStorageSharedStore('themes_stored', [
+
+export let themes_stored: Writable<Theme[]> = localStorageSharedStore('themes_stored', [
   JSON.parse(JSON.stringify(default_theme)),
   {
     name: 'Dark',
@@ -47,22 +74,30 @@ export let themes_stored = localStorageSharedStore('themes_stored', [
     },
   },
 ]);
-export let current_theme = derived([selected_theme_index, themes_stored], ([$selected_theme_index, $themes_stored]) => {
-  return $themes_stored[$selected_theme_index];
-});
+
+export let current_theme: Readable<Theme> = derived(
+  [selected_theme_index, themes_stored],
+  ([$selected_theme_index, $themes_stored]) => {
+    return $themes_stored[$selected_theme_index];
+  }
+);
 
 selected_theme_index.subscribe((value) => {
   //   console.log($themes_stored[value].properties);
   Object.keys(get(themes_stored)[value].properties).forEach((key) => {
     //   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
-    document.documentElement.style.setProperty(key, get(themes_stored)[value].properties[key]);
+    document.documentElement.style.setProperty(key, get(themes_stored)[value].properties[key as keyof ThemeProperties]);
   });
 });
+
 current_theme.subscribe(() => {
   //   console.log($themes_stored[value].properties);
 
   Object.keys(get(themes_stored)[get(selected_theme_index)].properties).forEach((key) => {
     //   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
-    document.documentElement.style.setProperty(key, get(themes_stored)[get(selected_theme_index)].properties[key]);
+    document.documentElement.style.setProperty(
+      key,
+      get(themes_stored)[get(selected_theme_index)].properties[key as keyof ThemeProperties]
+    );
   });
 });

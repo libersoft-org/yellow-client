@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { splitAndLinkify } from '../../splitAndLinkify.js';
+import { splitAndLinkify } from '../../splitAndLinkify.ts';
 
 describe('splitAndLinkify', () => {
   it('returns an empty array for an empty string', () => {

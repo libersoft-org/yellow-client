@@ -1,5 +1,5 @@
 <script>
-  import { page } from '../dating.js';
+  import { page } from '../dating.ts';
   import Map from './map.svelte';
   import Match from './match.svelte';
   import People from './people.svelte';

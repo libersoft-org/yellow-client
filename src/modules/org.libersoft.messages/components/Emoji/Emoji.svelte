@@ -1,8 +1,8 @@
 <script>
-  import { debug } from '@/core/core.js';
-  import { rgi, emoji_render } from '../../emojis.js';
+  import { debug } from '@/core/core.ts';
+  import { rgi, emoji_render } from '../../emojis.ts';
   import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
-  import { emojisByCodepointsRgi } from '../../messages.js';
+  import { emojisByCodepointsRgi } from '../../messages.ts';
   import Sticker from '../Stickers/Sticker.svelte';
   export let codepoints;
   export let size = 40;

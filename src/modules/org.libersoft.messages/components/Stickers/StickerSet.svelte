@@ -4,8 +4,8 @@
     remove_stickerset_from_favorites,
     stickerset_in_favorites,
     stickerset_favorites,
-  } from '../../stickers.js';
-  import { debug } from '@/core/core.js';
+  } from '../../stickers.ts';
+  import { debug } from '@/core/core.ts';
   import Icon from '@/core/components/Icon/Icon.svelte';
   import Button from '@/core/components/Button/Button.svelte';
   import StickerSetPart from './StickerSetPart.svelte';

@@ -2,7 +2,7 @@
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
   import Sticker from './Sticker.svelte';
   import { getContext } from 'svelte';
-  import { htmlEscape } from '../../messages.js';
+  import { htmlEscape } from '../../messages.ts';
   import StickerSetPart from './StickerSetPart.svelte';
   export let sticker;
   export let stickerset;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { sticker_servers } from '../stickers.js';
+  import { sticker_servers } from '../stickers.ts';
   import Input from '@/core/components/Input/Input.svelte';
   import Button from '@/core/components/Button/Button.svelte';
   import Table from '@/core/components/Table/Table.svelte';

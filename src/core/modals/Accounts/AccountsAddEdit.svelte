@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext, untrack } from 'svelte';
-  import { addAccount, findAccountConfig, saveAccount } from '@/core/accounts_config.js';
-  import { accounts, accountExists } from '@/core/core.js';
+  import { addAccount, findAccountConfig, saveAccount } from '@/core/accounts_config.ts';
+  import { accounts, accountExists } from '@/core/core.ts';
   import Button from '@/core/components/Button/Button.svelte';
   import Label from '@/core/components/Label/Label.svelte';
   import Input from '@/core/components/Input/Input.svelte';
@@ -51,7 +51,7 @@
   });
 
   let account = derived([accounts, account_id_store], ([$accounts, $id]) => {
-    const found = $accounts.find((acc: { id: string }) => acc.id === $id);
+    const found = $accounts.find((acc) => get(acc).id === $id);
     console.log('[DERIVED] account_id_store =', $id, '→ found account:', found ? get(found) : null);
     return found ?? null;
   });
@@ -148,19 +148,36 @@
     console.log('[ACTION] Clicked SAVE for ID:', params.id);
     if (!verify()) return;
 
-    saveAccount(
-      params.id,
-      {
-        enabled: config_enabled,
-        credentials: {
-          address: credentials_address,
-          server: credentials_server,
-          password: credentials_password,
-          retry_nonce,
+    if (params.id !== null) {
+      // Update existing account
+      saveAccount(
+        params.id,
+        {
+          enabled: config_enabled,
+          credentials: {
+            address: credentials_address,
+            server: credentials_server,
+            password: credentials_password,
+            retry_nonce,
+          },
         },
-      },
-      { title: config_title }
-    );
+        { title: config_title }
+      );
+    } else {
+      // Create new account
+      addAccount(
+        {
+          enabled: config_enabled,
+          credentials: {
+            address: credentials_address,
+            server: credentials_server,
+            password: credentials_password,
+            retry_nonce,
+          },
+        },
+        { title: config_title }
+      );
+    }
 
     console.log('[ACTION] Account saved:', params.id);
     retry_nonce++;

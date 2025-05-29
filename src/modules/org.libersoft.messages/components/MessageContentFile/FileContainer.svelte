@@ -9,7 +9,7 @@
     pauseUpload as _pauseUpload,
     resumeDownload,
     resumeUpload as _resumeUpload,
-  } from '../../messages.js';
+  } from '../../messages.ts';
   import { type FileDownload, type FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
   import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
   import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { identifier, initUpload, selectedConversation } from '../../messages.js';
+  import { identifier, initUpload, selectedConversation } from '../../messages.ts';
   import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
   import Icon from '@/core/components/Icon/Icon.svelte';
   import RecordPlugin from 'wavesurfer.js/plugins/record';

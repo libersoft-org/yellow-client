@@ -8,7 +8,7 @@
     selectAccount,
     selected_corepage_id,
     hideSidebarMobile,
-  } from '../../core.js';
+  } from '../../core.ts';
   import Icon from '@/core/components/Icon/Icon.svelte';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
   import AccountBarItem from './AccountBarItem.svelte';

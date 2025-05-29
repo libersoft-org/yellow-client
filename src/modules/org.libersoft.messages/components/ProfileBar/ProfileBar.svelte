@@ -2,8 +2,8 @@
   import TopBar from '@/core/components/TopBar/TopBar.svelte';
   import Icon from '@/core/components/Icon/Icon.svelte';
   import Photo from '../Photo/Photo.svelte';
-  import { selectedConversation } from '../../messages.js';
-  import { isMobile } from '@/core/core.js';
+  import { selectedConversation } from '../../messages.ts';
+  import { isMobile } from '@/core/core.ts';
   export let closeConversation;
 
   function clickClose() {

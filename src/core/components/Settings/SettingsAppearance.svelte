@@ -12,7 +12,7 @@
   import { zoom } from '@/core/settings.ts';
   import { setZoom } from '@/core/zoom.ts';
   import Input from '@/core/components/Input/Input.svelte';
-  import { selected_theme_index, current_theme, themes_stored, default_theme } from '../../appearance_store.js';
+  import { selected_theme_index, current_theme, themes_stored, default_theme } from '../../appearance_store.ts';
 
   import Icon from '../Icon/Icon.svelte';
   import Button from '../Button/Button.svelte';
@@ -26,6 +26,13 @@
   let theme_properties = Object.entries($current_theme.properties);
 
   let expanded = $state(false);
+
+  // String version for Select component
+  let selectedThemeString = $derived($selected_theme_index.toString());
+
+  function handleThemeChange(value: string) {
+    selected_theme_index.set(parseInt(value, 10));
+  }
 
   function click_expand() {
     expanded = !expanded;
@@ -67,16 +74,19 @@
           </div>
         </TbodyTd>
       {/if}
-      <TbodyTd>Theme:</TbodyTd>
-      <TbodyTd>
+      <TbodyTd title="Theme">Theme:</TbodyTd>
+      <TbodyTd title="Theme selector">
         {#if expanded}
           <Button onClick={click_expand}>
             <Icon img="img/edit.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
           </Button>
         {:else}
-          <Select type="number" bind:value={$selected_theme_index} current-index={$selected_theme_index}>
+          <Select
+            value={selectedThemeString}
+            onchange={(e) => handleThemeChange((e.target as HTMLSelectElement).value)}
+          >
             {#each $themes_stored as theme, index (theme.name + index)}
-              <Option text={theme.name} value={index} />
+              <Option text={theme.name} value={index.toString()} />
             {/each}
           </Select>
           {#if $selected_theme_index > 0}
@@ -116,14 +126,14 @@
 
   <Table>
     <Tbody>
-      <TbodyTr class="color_properties">
+      <TbodyTr>
         {#if expanded}
           <TbodyTd title="Name">
             <Input type="text" bind:value={$themes_stored[$selected_theme_index].name} />
           </TbodyTd>
 
           <TbodyTr>
-            {#each theme_properties as theme_property_name, theme_property_value}
+            {#each theme_properties as theme_property_name}
               <TbodyTd title={theme_property_name[0]}>
                 <input
                   type="color"

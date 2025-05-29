@@ -1,8 +1,8 @@
 <script>
-  import { identifier } from '../../messages.js';
+  import { identifier } from '../../messages.ts';
   import { onMount, tick } from 'svelte';
-  import { updateStickerLibrary, stickerLibraryUpdaterState } from '../../stickers.js';
-  import { debug } from '@/core/core.js';
+  import { updateStickerLibrary, stickerLibraryUpdaterState } from '../../stickers.ts';
+  import { debug } from '@/core/core.ts';
   import Tabs from '@/core/components/Tabs/Tabs.svelte';
   import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
   import StickersFavorites from './StickersFavorites.svelte';

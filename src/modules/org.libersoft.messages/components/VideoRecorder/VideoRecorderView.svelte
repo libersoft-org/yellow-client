@@ -6,7 +6,7 @@
   import Option from '@/core/components/Select/SelectOption.svelte';
   import Button from '@/core/components/Button/Button.svelte';
   import { identifier } from '@/org.libersoft.messages/messages';
-  import { debug } from '@/core/core';
+  import { debug } from '@/core/core.ts';
   import ButtonWithMenu from '@/core/components/Button/ButtonWithMenu.svelte';
 
   interface Props {

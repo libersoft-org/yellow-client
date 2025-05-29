@@ -1,5 +1,5 @@
 <script>
-  import { module } from '../../module.js';
+  import { module } from '../../module.ts';
   import { get } from 'svelte/store';
   import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
   import Icon from '@/core/components/Icon/Icon.svelte';

@@ -2,7 +2,7 @@
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
   import AccountStatusIcon from './AccountStatusIcon.svelte';
   import AccountTitle from './AccountTitle.svelte';
-  import { debug } from '../../core.js';
+  import { debug } from '../../core.ts';
   //import AccountStatus from './AccountStatus.svelte';
   export let a;
   export let clickSelectAccount;

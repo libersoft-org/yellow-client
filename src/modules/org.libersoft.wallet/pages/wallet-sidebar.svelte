@@ -1,5 +1,5 @@
 <script>
-  import { hideSidebarMobile } from '@/core/core.js';
+  import { hideSidebarMobile } from '@/core/core.ts';
   import { addressBook } from '../wallet.ts';
   import BaseButton from '@/core/components/Button/BaseButton.svelte';
 

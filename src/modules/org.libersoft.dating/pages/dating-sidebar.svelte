@@ -1,7 +1,7 @@
 <script>
-  import core from '@/core/core.js';
+  import core from '@/core/core.ts';
   import Item from '../components/sidebar-item.svelte';
-  import { page } from '../dating.js';
+  import { page } from '../dating.ts';
 
   function setPage(name) {
     page.set(name);

@@ -48,7 +48,7 @@
 
 <div class="wizard">
   <div class="progress-bar">
-    {#each steps as step, index}
+    {#each steps as _, index}
       <div class="step">
         <div class="circle {index === currentStep ? 'active' : ''}">
           {index + 1}

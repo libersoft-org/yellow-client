@@ -1,8 +1,8 @@
 <script>
   import { onDestroy, onMount, setContext, tick } from 'svelte';
-  import Core from '@/core/core.js';
+  import Core from '@/core/core.ts';
   import { get, writable } from 'svelte/store';
-  import { selectedConversation } from '../../messages.js';
+  import { selectedConversation } from '../../messages.ts';
   import ProfileBar from '../ProfileBar/ProfileBar.svelte';
   import MessagesList from '../MessagesList/MessagesList.svelte';
   import MessageBar from '../MessageBar/MessageBar.svelte';

@@ -5,7 +5,7 @@
   import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
   import { writable, get } from 'svelte/store';
   import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
-  import { identifier } from '../../messages.js';
+  import { identifier } from '../../messages.ts';
 
   let { node } = $props();
   let file = node.attributes.file?.value;
