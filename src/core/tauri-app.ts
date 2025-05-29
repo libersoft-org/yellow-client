@@ -48,7 +48,7 @@ export async function initWindow() {
  });
  */
 
-	runOnSystemStartup.subscribe(async (value) => {
+	runOnSystemStartup.subscribe(async value => {
 		if (!TAURI) return;
 		log.debug('runOnSystemStartup changed:', value);
 		if (value) {
@@ -58,7 +58,7 @@ export async function initWindow() {
 		}
 	});
 
-	showTrayIcon.subscribe(async (value) => {
+	showTrayIcon.subscribe(async value => {
 		if (!TAURI) return;
 		log.debug('showTrayIcon changed:', value, 'createTrayIcon.');
 		if (value) {

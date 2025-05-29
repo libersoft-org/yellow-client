@@ -16,7 +16,7 @@ export function registerModal(setZIndex: (z: number) => void): number {
 }
 
 export function unregisterModal(id: number) {
-	modals = modals.filter((m) => m.id !== id);
+	modals = modals.filter(m => m.id !== id);
 	updateZIndices(); // reassign after one closes
 }
 

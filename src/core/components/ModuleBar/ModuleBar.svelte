@@ -89,21 +89,6 @@
 	}
 </script>
 
-<div class="module-bar" class:expand-enabled={expandEnabled}>
-	<div use:resize={onResize} bind:this={itemsEl} class="items {expanded ? 'expanded' : ''}" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);" on:transitionend={onTransitionEnd}>
-		{#each module_decls_ordered as decl (decl.id)}
-			<div>
-				<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
-			</div>
-		{/each}
-	</div>
-	<BaseButton disabled={!expandEnabled}>
-		<div class="dropdown {expanded ? 'expanded' : ''}">
-			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--color-secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
-		</div>
-	</BaseButton>
-</div>
-
 <style>
 	.module-bar {
 		display: flex;
@@ -165,3 +150,18 @@
 		pointer-events: none;
 	}
 </style>
+
+<div class="module-bar" class:expand-enabled={expandEnabled}>
+	<div use:resize={onResize} bind:this={itemsEl} class="items {expanded ? 'expanded' : ''}" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);" on:transitionend={onTransitionEnd}>
+		{#each module_decls_ordered as decl (decl.id)}
+			<div>
+				<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
+			</div>
+		{/each}
+	</div>
+	<BaseButton disabled={!expandEnabled}>
+		<div class="dropdown {expanded ? 'expanded' : ''}">
+			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--color-secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
+		</div>
+	</BaseButton>
+</div>

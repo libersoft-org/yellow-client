@@ -24,7 +24,7 @@
 	}
 
 	function decodeCodepoints(str) {
-		return str.split('_').map((cp) => parseInt(cp, 16));
+		return str.split('_').map(cp => parseInt(cp, 16));
 	}
 </script>
 

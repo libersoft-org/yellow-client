@@ -136,7 +136,7 @@ export class FileUploadService extends EventEmitter {
 
 	async startNextUpload(lastUpload: FileUpload) {
 		const uploads = this.uploadsStore.getAll();
-		const lastUploadIndex = uploads.findIndex((upload) => upload.record.id === lastUpload.record.id);
+		const lastUploadIndex = uploads.findIndex(upload => upload.record.id === lastUpload.record.id);
 		let nextUpload: FileUpload | undefined;
 
 		// find next suitable upload

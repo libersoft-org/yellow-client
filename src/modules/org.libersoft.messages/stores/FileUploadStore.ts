@@ -9,12 +9,12 @@ export class FileUploadStore implements FileUploadStoreType {
 	}
 
 	get(id: string) {
-		return get(this.store).find((upload) => upload.record.id === id);
+		return get(this.store).find(upload => upload.record.id === id);
 	}
 
 	set(id: string, upload: FileUpload) {
-		this.store.update((store) => {
-			const index = store.findIndex((d) => d.record.id === id);
+		this.store.update(store => {
+			const index = store.findIndex(d => d.record.id === id);
 			if (index !== -1) {
 				store[index] = upload;
 			} else {
@@ -26,8 +26,8 @@ export class FileUploadStore implements FileUploadStoreType {
 
 	patch(id: string, data: Partial<FileUpload>) {
 		// patch but dont change ref
-		this.store.update((store) => {
-			const oldUpload = store.find((upload) => upload.record.id === id);
+		this.store.update(store => {
+			const oldUpload = store.find(upload => upload.record.id === id);
 			if (!oldUpload) {
 				return store;
 			}
@@ -41,7 +41,7 @@ export class FileUploadStore implements FileUploadStoreType {
 	}
 
 	delete(id: string) {
-		this.store.update((store) => store.filter((upload) => upload.record.id !== id));
+		this.store.update(store => store.filter(upload => upload.record.id !== id));
 	}
 
 	updateUploadRecord(id: string, record: FileUploadRecord) {
@@ -49,7 +49,7 @@ export class FileUploadStore implements FileUploadStoreType {
 	}
 
 	isAnyUploadRunning() {
-		return this.getAll().some((upload) => upload && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) && upload.file && upload.running);
+		return this.getAll().some(upload => upload && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) && upload.file && upload.running);
 	}
 }
 

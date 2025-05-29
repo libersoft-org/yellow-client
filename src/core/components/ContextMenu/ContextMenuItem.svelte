@@ -18,17 +18,6 @@
 	}
 </script>
 
-<BaseButton onClick={handleClick} onMousedown={handleMousedown} {...restProps} width="100%">
-	<div class="menu-item">
-		{#if img}
-			<div class="img-space">
-				<Icon {img} alt={label} {colorVariable} size="24px" padding="0px" />
-			</div>
-		{/if}
-		<div class="label">{label}</div>
-	</div>
-</BaseButton>
-
 <style>
 	.menu-item {
 		display: flex;
@@ -54,3 +43,14 @@
 		flex-grow: 1;
 	}
 </style>
+
+<BaseButton onClick={handleClick} onMousedown={handleMousedown} {...restProps} width="100%">
+	<div class="menu-item">
+		{#if img}
+			<div class="img-space">
+				<Icon {img} alt={label} {colorVariable} size="24px" padding="0px" />
+			</div>
+		{/if}
+		<div class="label">{label}</div>
+	</div>
+</BaseButton>

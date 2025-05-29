@@ -23,7 +23,7 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
 	}
 
 	// Create a writable store with a start function that properly handles the storage event listener
-	const internalStore = writable<T>(default_, (set) => {
+	const internalStore = writable<T>(default_, set => {
 		// Initialize with the value from localStorage
 		set(getStorage());
 
@@ -89,7 +89,7 @@ export function localStorageReadOnceSharedStore<T>(name: string, default_: T): W
 	}
 
 	// Create a writable store with a start function that only sets the initial value
-	const internalStore = writable<T>(default_, (set) => {
+	const internalStore = writable<T>(default_, set => {
 		// Initialize with the value from localStorage
 		set(getStorage());
 

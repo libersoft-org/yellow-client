@@ -79,44 +79,6 @@
 	};
 </script>
 
-{#snippet emoji(codepoints)}
-	<BaseButton onClick={() => onEmojiClick(codepoints)} data-testid="message-reaction-emoji-button">
-		<div class="emoji-button emoji">
-			<Emoji {codepoints} context={'menu'} is_single={true} size={30} />
-		</div>
-	</BaseButton>
-{/snippet}
-
-<div bind:this={buttonRef} class="reaction-button" class:open={show}>
-	<Icon data-testid="message-reaction-menu-button" img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--icon-black" size="24px" padding="0px" {onClick} />
-</div>
-
-{#if show}
-	<Portal>
-		<div bind:this={floatingRef} class="reaction-tooltip floating" style:display={show ? 'block' : 'none'}>
-			<div class="emojis">
-				{@render emoji([128077])}
-				{@render emoji([128516])}
-				{@render emoji([128513])}
-				{@render emoji([128079])}
-				{@render emoji([128512])}
-				{@render emoji([128293])}
-				{@render emoji([9829, 65039])}
-				<BaseButton onClick={() => (showFull = !showFull)}>
-					<div class="expand">
-						<Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--icon-white" />
-					</div>
-				</BaseButton>
-			</div>
-			{#if showFull}
-				<div class="emojis-browser">
-					<Emojis {onEmojiClick} />
-				</div>
-			{/if}
-		</div>
-	</Portal>
-{/if}
-
 <style>
 	.emojis-browser {
 		overflow-y: auto;
@@ -166,3 +128,41 @@
 		font-size: 24px;
 	}
 </style>
+
+{#snippet emoji(codepoints)}
+	<BaseButton onClick={() => onEmojiClick(codepoints)} data-testid="message-reaction-emoji-button">
+		<div class="emoji-button emoji">
+			<Emoji {codepoints} context={'menu'} is_single={true} size={30} />
+		</div>
+	</BaseButton>
+{/snippet}
+
+<div bind:this={buttonRef} class="reaction-button" class:open={show}>
+	<Icon data-testid="message-reaction-menu-button" img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--icon-black" size="24px" padding="0px" {onClick} />
+</div>
+
+{#if show}
+	<Portal>
+		<div bind:this={floatingRef} class="reaction-tooltip floating" style:display={show ? 'block' : 'none'}>
+			<div class="emojis">
+				{@render emoji([128077])}
+				{@render emoji([128516])}
+				{@render emoji([128513])}
+				{@render emoji([128079])}
+				{@render emoji([128512])}
+				{@render emoji([128293])}
+				{@render emoji([9829, 65039])}
+				<BaseButton onClick={() => (showFull = !showFull)}>
+					<div class="expand">
+						<Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--icon-white" />
+					</div>
+				</BaseButton>
+			</div>
+			{#if showFull}
+				<div class="emojis-browser">
+					<Emojis {onEmojiClick} />
+				</div>
+			{/if}
+		</div>
+	</Portal>
+{/if}

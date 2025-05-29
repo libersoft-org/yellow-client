@@ -104,7 +104,7 @@ export class FileDownloadService extends EventEmitter {
 		}
 		const downloads = this.downloadStore.getAll();
 		let nextDownload: FileDownload | undefined;
-		const lastDownloadIndex = downloads.findIndex((d) => d.record.id === lastDownload.record.id);
+		const lastDownloadIndex = downloads.findIndex(d => d.record.id === lastDownload.record.id);
 
 		// find next download
 		for (let i = lastDownloadIndex + 1; i < downloads.length; i++) {

@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 export function addAccount(config, settings) {
 	console.log('addAccount(config, settings)', config, settings);
 	let id = getGuid();
-	accounts_config.update((v) => [
+	accounts_config.update(v => [
 		...v,
 		{
 			id,
@@ -18,7 +18,7 @@ export function addAccount(config, settings) {
 
 export function saveAccount(id, config, settings) {
 	console.log('saveAccount', id, config, settings);
-	accounts_config.update((v) => {
+	accounts_config.update(v => {
 		for (let acc of v) {
 			if (acc.id === id) {
 				for (const [key, value] of Object.entries(config)) {
@@ -36,9 +36,9 @@ export function saveAccount(id, config, settings) {
 }
 
 export function delAccount(id) {
-	accounts_config.update((v) => v.filter((a) => a.id !== id));
+	accounts_config.update(v => v.filter(a => a.id !== id));
 }
 
 export function findAccountConfig(id) {
-	return get(accounts_config).find((a) => a.id === id);
+	return get(accounts_config).find(a => a.id === id);
 }

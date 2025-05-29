@@ -55,10 +55,10 @@
 			// TODO: x is now a dexie Table. We have one shot at ordering or filtering it at db level: https://dexie.org/docs/Dexie/Dexie.[table]
 			x = x.orderBy('id');
 			// TODO: x is now a Dexie Collection. We can now filter, sort and limit it further, but it's a different api: https://dexie.org/docs/Collection/Collection
-			x = x.filter((item) => item.server == server);
+			x = x.filter(item => item.server == server);
 			maybe_trigger_auto_update(await x.count());
-			x = x.filter((item) => animated_filter.includes(item.animated ? 1 : 0));
-			if (stickerset_favorites) x = x.filter((item) => stickerset_favorites.includes(item.url));
+			x = x.filter(item => animated_filter.includes(item.animated ? 1 : 0));
+			if (stickerset_favorites) x = x.filter(item => stickerset_favorites.includes(item.url));
 			x = await x.toArray();
 			//TODO: x is now an array of items. We can apply additional filtering, sorting and limiting using js.
 			if (fulltext_search_filter != '') {
@@ -68,7 +68,7 @@
 			return x;
 		});
 		if (query_store_unsubscribe) query_store_unsubscribe.unsubscribe();
-		query_store_unsubscribe = query_store.subscribe((value) => {
+		query_store_unsubscribe = query_store.subscribe(value => {
 			items = value;
 			loading = false;
 		});
@@ -87,6 +87,14 @@
 		}
 	}
 </script>
+
+<style>
+	.filter {
+		display: flex;
+		gap: 10px;
+		padding: 0 10px 10px 10px;
+	}
+</style>
 
 <div class="filter">
 	<InputButton alt="Search" bind:this={fulltext_search_element} bind:value={fulltext_search_filter} img="modules/{identifier}/img/search.svg" placeholder="Search ..." />
@@ -115,11 +123,3 @@
 {:else}
 	<StickersSearchResults bind:scroll_to_top {items} />
 {/if}
-
-<style>
-	.filter {
-		display: flex;
-		gap: 10px;
-		padding: 0 10px 10px 10px;
-	}
-</style>

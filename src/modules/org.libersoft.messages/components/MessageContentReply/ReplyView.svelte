@@ -13,15 +13,6 @@
 	}
 </script>
 
-<div class="reply-wrap">
-	<BaseButton onClick={clickReply}>
-		<div class="reply">
-			<div class="name">{address}</div>
-			<div class="text">{text}</div>
-		</div>
-	</BaseButton>
-</div>
-
 <style>
 	.reply {
 		display: flex;
@@ -48,3 +39,12 @@
 		margin-bottom: 2px;
 	}
 </style>
+
+<div class="reply-wrap">
+	<BaseButton onClick={clickReply}>
+		<div class="reply">
+			<div class="name">{address}</div>
+			<div class="text">{text}</div>
+		</div>
+	</BaseButton>
+</div>

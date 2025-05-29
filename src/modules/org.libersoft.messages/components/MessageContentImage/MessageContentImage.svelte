@@ -62,7 +62,7 @@
 										resolve(galleryFile);
 									}
 								})
-								.catch((err) => {
+								.catch(err => {
 									reject(err);
 								});
 						}),
@@ -94,7 +94,7 @@
 					loaded = true;
 				}
 			})
-			.catch((err) => {
+			.catch(err => {
 				console.error('error fetching image data for yellow id:', yellowId, err);
 			});
 	}
@@ -111,31 +111,6 @@
 		}
 	});
 </script>
-
-<div class="message-content-image-wrapper">
-	{#if isYellow}
-		{#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
-			<MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
-		{:else}
-			<div class="message-content-image" onclick={openInGallery} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openInGallery()}>
-				{#if loading}
-					<div class="spinner-wrap">
-						<Spinner show={true} style="min-height: initial;" />
-					</div>
-				{:else}
-					<ImageAspectRatio src={imgUrl} alt={file} />
-					{#if showHiddenImages}
-						<div class="hidden-images">
-							+{hiddenImages.length}
-						</div>
-					{/if}
-				{/if}
-			</div>
-		{/if}
-	{:else}
-		basic image here
-	{/if}
-</div>
 
 <style>
 	.message-content-image-wrapper {
@@ -181,3 +156,28 @@
 		border-radius: var(--border-radius);
 	}
 </style>
+
+<div class="message-content-image-wrapper">
+	{#if isYellow}
+		{#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
+			<MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
+		{:else}
+			<div class="message-content-image" onclick={openInGallery} role="button" tabindex="0" onkeydown={e => e.key === 'Enter' && openInGallery()}>
+				{#if loading}
+					<div class="spinner-wrap">
+						<Spinner show={true} style="min-height: initial;" />
+					</div>
+				{:else}
+					<ImageAspectRatio src={imgUrl} alt={file} />
+					{#if showHiddenImages}
+						<div class="hidden-images">
+							+{hiddenImages.length}
+						</div>
+					{/if}
+				{/if}
+			</div>
+		{/if}
+	{:else}
+		basic image here
+	{/if}
+</div>

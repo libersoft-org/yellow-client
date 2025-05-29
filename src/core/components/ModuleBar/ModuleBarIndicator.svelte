@@ -4,8 +4,6 @@
 	export let enabled = false;
 </script>
 
-<img class="indicator {enabled && 'enabled'} {enabled && 'enabled'}" src={img} {alt} />
-
 <style>
 	.indicator {
 		display: none;
@@ -41,3 +39,5 @@
 		}
 	}
 </style>
+
+<img class="indicator {enabled && 'enabled'} {enabled && 'enabled'}" src={img} {alt} />

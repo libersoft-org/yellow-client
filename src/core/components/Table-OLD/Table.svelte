@@ -2,10 +2,6 @@
 	export let expand = false;
 </script>
 
-<table class={expand && 'expand'}>
-	<slot />
-</table>
-
 <style>
 	table {
 		border-spacing: 0;
@@ -18,3 +14,7 @@
 		width: 100%;
 	}
 </style>
+
+<table class={expand && 'expand'}>
+	<slot />
+</table>

@@ -15,14 +15,14 @@
 	let heightLogical = writable(100);
 
 	// Catch all synchronous errors
-	window.addEventListener('error', (event) => {
+	window.addEventListener('error', event => {
 		// event.error is the Error object
 		console.error('Uncaught error:', event.error);
 		console.error('Stack trace:\n', event.error?.stack);
 	});
 
 	// Catch unhandled promise rejections
-	window.addEventListener('unhandledrejection', (event) => {
+	window.addEventListener('unhandledrejection', event => {
 		const reason = event.reason;
 		console.error('Unhandled promise rejection:', reason);
 		console.error('Stack trace:\n', reason?.stack || reason);
@@ -32,14 +32,14 @@
 		log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
 
 		// Catch all synchronous errors
-		window.addEventListener('error', (event) => {
+		window.addEventListener('error', event => {
 			// event.error is the Error object
 			console.error('Uncaught error:', event.error);
 			console.error('Stack trace:\n', event.error?.stack);
 		});
 
 		// Catch unhandled promise rejections
-		window.addEventListener('unhandledrejection', (event) => {
+		window.addEventListener('unhandledrejection', event => {
 			const reason = event.reason;
 			console.error('Unhandled promise rejection:', reason);
 			console.error('Stack trace:\n', reason?.stack || reason);
@@ -60,7 +60,7 @@
 		return deinit;
 	});
 
-	heightLogical.subscribe(async (v) => {
+	heightLogical.subscribe(async v => {
 		await heightLogicalChanged(v);
 	});
 
@@ -81,7 +81,7 @@
 		//log.debug('initial store:', await s.entries());
 		let values = await s.values();
 		log.debug('initNotifications: values:', values);
-		values = values.filter((v) => !!v);
+		values = values.filter(v => !!v);
 		values.sort((a, b) => a.ts - b.ts);
 		for (let v of values) {
 			if (v) await addNotificationData(v);
@@ -92,7 +92,7 @@
 		log.debug('addNotificationData data:', data);
 		data.onClose = onClose.bind(data);
 		data.onClick = onClick.bind(data);
-		notifications.update((n) => [...n, data]);
+		notifications.update(n => [...n, data]);
 		//log.debug('notification added');
 	}
 
@@ -126,7 +126,7 @@
 		];
 		notificationData.onClick = onClick.bind(notificationData);
 		notificationData.onClose = onClose.bind(notificationData);
-		notifications.update((n) => [...n, notificationData]);
+		notifications.update(n => [...n, notificationData]);
 		log.debug('notification added');
 	}
 
@@ -146,7 +146,7 @@
 	async function onNotificationRemoved(id) {
 		let s = await multiwindow_store('notifications', false);
 		await s.delete(id);
-		notifications.update((v) => v.filter((item) => item.id !== id));
+		notifications.update(v => v.filter(item => item.id !== id));
 		if (get(notifications).length === 0) {
 			invoke('hide_notifications_window', {});
 		}
@@ -159,18 +159,6 @@
 		}
 	}
 </script>
-
-<div class="notifications-wrapper" bind:clientHeight={$heightLogical}>
-	{#if $notifications.length >= 2}
-		<Button text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
-	{/if}
-
-	<div class="notifications {'reverse'}">
-		{#each $notifications.slice(-maxNotifications) as n (n.id)}
-			<Notification data={n} />
-		{/each}
-	</div>
-</div>
 
 <!--<Button text="Add notification" onClick={clickAddNotification} />-->
 
@@ -193,3 +181,15 @@
 		flex-direction: column-reverse;
 	}
 </style>
+
+<div class="notifications-wrapper" bind:clientHeight={$heightLogical}>
+	{#if $notifications.length >= 2}
+		<Button text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
+	{/if}
+
+	<div class="notifications {'reverse'}">
+		{#each $notifications.slice(-maxNotifications) as n (n.id)}
+			<Notification data={n} />
+		{/each}
+	</div>
+</div>

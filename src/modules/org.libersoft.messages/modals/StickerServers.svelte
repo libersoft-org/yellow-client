@@ -24,7 +24,7 @@
 	}
 
 	function clickAdd() {
-		sticker_servers.update((s) => {
+		sticker_servers.update(s => {
 			s.push(addUrl);
 			return s;
 		});
@@ -34,12 +34,26 @@
 
 	function clickDel(url) {
 		console.log('Click - Delete: ' + url);
-		sticker_servers.update((servers) => {
-			return servers.filter((s) => s !== url);
+		sticker_servers.update(servers => {
+			return servers.filter(s => s !== url);
 		});
 		inputElement?.focus();
 	}
 </script>
+
+<style>
+	a {
+		color: var(--color-primary-foreground);
+		text-decoration: none;
+		font-weight: bold;
+	}
+
+	.group {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+</style>
 
 <!--<Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />-->
 <div class="group">
@@ -70,17 +84,3 @@
 {#if error}
 	<div class="error">{error}</div>
 {/if}
-
-<style>
-	a {
-		color: var(--color-primary-foreground);
-		text-decoration: none;
-		font-weight: bold;
-	}
-
-	.group {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-</style>

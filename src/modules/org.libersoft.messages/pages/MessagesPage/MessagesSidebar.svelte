@@ -38,32 +38,6 @@
 	}
 </script>
 
-{#if $conversationsArray != null}
-	<div class="conversations">
-		<div class="bar-buttons">
-			<div class="bar-button grow">
-				<BaseButton data-testid="new-conversation-button" onClick={clickNewConversation}>
-					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--icon-white" size="28px" padding="0px" />
-					<div class="new-conversation">New conversation</div>
-				</BaseButton>
-			</div>
-			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--icon-white" size="28px" padding="10px" onClick={clickMessagesSettings} />
-		</div>
-		<div class="items" bind:this={elItems} on:scroll={parseScroll}>
-			{#each $conversationsArray as c (c.address)}
-				{#key c.address}
-					<ConversationListItem {c} {clickItem} />
-				{/key}
-			{/each}
-		</div>
-		{#if $conversationsArray.length > 1}
-			<ScrollButton visible={scrollButtonVisible} direction={true} right="15px" bottom="10px" onClick={scrollToTop} />
-		{/if}
-	</div>
-	<Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
-	<Modal title="Messages settings" body={ModalMessageSettings} bind:show={showMessageSettings} width="300px" />
-{/if}
-
 <style>
 	.conversations {
 		position: relative;
@@ -117,3 +91,29 @@
 		overflow-y: auto;
 	}
 </style>
+
+{#if $conversationsArray != null}
+	<div class="conversations">
+		<div class="bar-buttons">
+			<div class="bar-button grow">
+				<BaseButton data-testid="new-conversation-button" onClick={clickNewConversation}>
+					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--icon-white" size="28px" padding="0px" />
+					<div class="new-conversation">New conversation</div>
+				</BaseButton>
+			</div>
+			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--icon-white" size="28px" padding="10px" onClick={clickMessagesSettings} />
+		</div>
+		<div class="items" bind:this={elItems} on:scroll={parseScroll}>
+			{#each $conversationsArray as c (c.address)}
+				{#key c.address}
+					<ConversationListItem {c} {clickItem} />
+				{/key}
+			{/each}
+		</div>
+		{#if $conversationsArray.length > 1}
+			<ScrollButton visible={scrollButtonVisible} direction={true} right="15px" bottom="10px" onClick={scrollToTop} />
+		{/if}
+	</div>
+	<Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
+	<Modal title="Messages settings" body={ModalMessageSettings} bind:show={showMessageSettings} width="300px" />
+{/if}

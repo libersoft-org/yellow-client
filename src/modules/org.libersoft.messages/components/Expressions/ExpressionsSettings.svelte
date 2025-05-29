@@ -27,6 +27,26 @@
 	}
 </script>
 
+<style>
+	.settings {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 10px;
+	}
+
+	.group {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.group .label {
+		font-size: 14px;
+		flex-grow: 1;
+	}
+</style>
+
 <div class="settings">
 	<div class="group">
 		<div class="label">Show expressions as vector (slower, nicer):</div>
@@ -65,23 +85,3 @@
 </div>
 <Modal title="Manage sticker servers" body={StickerServers} bind:show={isModalStickerServersOpen} width="400px" />
 <Modal title="Manage gif servers" body={GifServers} bind:show={isModalGifServersOpen} width="400px" />
-
-<style>
-	.settings {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		padding: 10px;
-	}
-
-	.group {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-
-	.group .label {
-		font-size: 14px;
-		flex-grow: 1;
-	}
-</style>

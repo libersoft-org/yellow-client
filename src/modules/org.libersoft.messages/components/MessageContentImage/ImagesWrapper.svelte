@@ -4,7 +4,7 @@
 	let rowSize = 4;
 	let rowLimit = 2;
 	let hiddenImages = [];
-	let siblings = $derived(children.map((child) => child));
+	let siblings = $derived(children.map(child => child));
 
 	let imagesRows = $derived.by(() => {
 		let groups = [];
@@ -30,17 +30,6 @@
 		return groups;
 	});
 </script>
-
-<div class="images-wrap" data-children-length={childrenLength} style="--images-group-size: {rowSize};" style:margin-bottom="var(--images-gap)">
-	{#each imagesRows as row, rowIndex (rowIndex)}
-		<div class="images" style:margin-bottom={rowIndex === imagesRows.length - 1 ? 0 : 'var(--images-gap)'}>
-			{#each row as child, childIndex (child.tagUniqueId)}
-				{@const isLastOfAll = rowIndex === rowLimit - 1 && childIndex === row.length - 1}
-				<child.component {...child.props} showHiddenImages={isLastOfAll && hiddenImages.length > 0} {hiddenImages} {siblings} />
-			{/each}
-		</div>
-	{/each}
-</div>
 
 <style>
 	.images-wrap {
@@ -72,3 +61,14 @@
 	@container (max-width: 300px) {
 	}
 </style>
+
+<div class="images-wrap" data-children-length={childrenLength} style="--images-group-size: {rowSize};" style:margin-bottom="var(--images-gap)">
+	{#each imagesRows as row, rowIndex (rowIndex)}
+		<div class="images" style:margin-bottom={rowIndex === imagesRows.length - 1 ? 0 : 'var(--images-gap)'}>
+			{#each row as child, childIndex (child.tagUniqueId)}
+				{@const isLastOfAll = rowIndex === rowLimit - 1 && childIndex === row.length - 1}
+				<child.component {...child.props} showHiddenImages={isLastOfAll && hiddenImages.length > 0} {hiddenImages} {siblings} />
+			{/each}
+		</div>
+	{/each}
+</div>

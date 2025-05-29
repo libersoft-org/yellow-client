@@ -13,10 +13,6 @@
 	const { bare, appended, prepended, size = '', background, children, ...restProps }: Props = $props();
 </script>
 
-<section class:appended class:prepended class:lg={size === 'lg'} class:bare {...restProps}>
-	{@render children()}
-</section>
-
 <style>
 	section {
 		position: relative;
@@ -39,3 +35,7 @@
 			padding-top 0
 			padding-bottom 0 */
 </style>
+
+<section class:appended class:prepended class:lg={size === 'lg'} class:bare {...restProps}>
+	{@render children()}
+</section>

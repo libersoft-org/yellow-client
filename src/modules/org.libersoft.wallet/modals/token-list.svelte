@@ -12,7 +12,7 @@
 
 	function update(nets, params) {
 		console.log('NETS:', nets, 'PARAMS:', params);
-		let res = nets.find((v) => v.guid === params.item);
+		let res = nets.find(v => v.guid === params.item);
 		console.log('RES:', res);
 		net = res;
 		console.log('NET:', net);
@@ -35,7 +35,7 @@
 		console.log('ADD TOKEN:', token);
 		console.log('ADD TOKEN:', net);
 		net.tokens.push(token);
-		networks.update((v) => v);
+		networks.update(v => v);
 	}
 
 	function editTokenModal(item) {
@@ -46,8 +46,8 @@
 
 	function onEdit(token) {
 		console.log('EDIT TOKEN:', token);
-		net.tokens = net.tokens.map((t) => (t.guid === token.guid ? token : t));
-		networks.update((v) => v);
+		net.tokens = net.tokens.map(t => (t.guid === token.guid ? token : t));
+		networks.update(v => v);
 	}
 
 	function delTokenModal(item) {
@@ -58,10 +58,28 @@
 
 	function onDel(token) {
 		console.log('DELETE TOKEN:', token);
-		net.tokens = net.tokens.filter((t) => t.guid !== token.guid);
-		networks.update((v) => v);
+		net.tokens = net.tokens.filter(t => t.guid !== token.guid);
+		networks.update(v => v);
 	}
 </script>
+
+<style>
+	.token-list {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.buttons {
+		display: flex;
+		gap: 10px;
+	}
+
+	.icons {
+		display: flex;
+		gap: 10px;
+	}
+</style>
 
 <div class="token-list">
 	<div class="buttons">
@@ -104,21 +122,3 @@
 </div>
 <Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
 <Modal title={'Delete token'} body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:show={showModalDel} />
-
-<style>
-	.token-list {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.buttons {
-		display: flex;
-		gap: 10px;
-	}
-
-	.icons {
-		display: flex;
-		gap: 10px;
-	}
-</style>

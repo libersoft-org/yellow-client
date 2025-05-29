@@ -15,15 +15,9 @@
 		if (!breakpoint) return;
 		const mql = matchMedia(`(min-width: ${breakpoint})`);
 		isWide = mql.matches;
-		mql.addEventListener('change', (e) => (isWide = e.matches));
+		mql.addEventListener('change', e => (isWide = e.matches));
 	});
 </script>
-
-<div class={`table ${isWide ? 'table-wide' : ''}`} {...restProps}>
-	<table>
-		{@render children()}
-	</table>
-</div>
 
 <style>
 	.table {
@@ -55,3 +49,9 @@
 		}
 	}
 </style>
+
+<div class={`table ${isWide ? 'table-wide' : ''}`} {...restProps}>
+	<table>
+		{@render children()}
+	</table>
+</div>

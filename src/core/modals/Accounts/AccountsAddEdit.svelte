@@ -46,7 +46,7 @@
 	});
 
 	// Observe full accounts store for debug
-	accounts.subscribe((value) => {
+	accounts.subscribe(value => {
 		console.log('[STORE] Full accounts store updated:', value.map(get));
 	});
 
@@ -56,7 +56,7 @@
 		return found ?? null;
 	});
 
-	account.subscribe((value) => {
+	account.subscribe(value => {
 		acc = value;
 		console.log('[SUBSCRIBE] account store emitted acc =', value ? get(value) : null);
 	});
@@ -180,6 +180,26 @@
 	}
 </script>
 
+<style>
+	.form {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+	}
+	.error {
+		display: flex;
+		gap: 5px;
+		padding: 10px;
+		border-radius: 10px;
+		background-color: #f33;
+	}
+	.status {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+</style>
+
 <div class="form">
 	<Label text="Protocol">
 		<Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
@@ -228,23 +248,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.form {
-		display: flex;
-		flex-direction: column;
-		gap: 15px;
-	}
-	.error {
-		display: flex;
-		gap: 5px;
-		padding: 10px;
-		border-radius: 10px;
-		background-color: #f33;
-	}
-	.status {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-	}
-</style>

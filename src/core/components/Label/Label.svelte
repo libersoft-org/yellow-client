@@ -10,13 +10,6 @@
 	let { children, text = $bindable('') }: Props = $props();
 </script>
 
-<label>
-	{#if text}
-		<div class="text">{text}:</div>
-	{/if}
-	{@render children()}
-</label>
-
 <style>
 	label {
 		display: flex;
@@ -33,3 +26,10 @@
 		cursor: pointer;
 	}
 </style>
+
+<label>
+	{#if text}
+		<div class="text">{text}:</div>
+	{/if}
+	{@render children()}
+</label>

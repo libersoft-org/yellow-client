@@ -4,10 +4,6 @@
 	export let onClick;
 </script>
 
-<BaseButton {onClick}>
-	<div class="photo-card-button">{content}</div>
-</BaseButton>
-
 <style>
 	.photo-card-button {
 		display: flex;
@@ -19,3 +15,7 @@
 		box-shadow: var(--shadow);
 	}
 </style>
+
+<BaseButton {onClick}>
+	<div class="photo-card-button">{content}</div>
+</BaseButton>

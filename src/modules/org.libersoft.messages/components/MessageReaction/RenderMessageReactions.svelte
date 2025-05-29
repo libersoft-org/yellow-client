@@ -43,7 +43,7 @@
 		};
 	};
 
-	const dismissTooltip = (e) => {
+	const dismissTooltip = e => {
 		tooltipButton = null;
 	};
 
@@ -52,8 +52,8 @@
 			return '';
 		}
 		const myUserAddress = get(active_account).credentials.address;
-		const didIReact = reactions.some((r) => r.user_address === myUserAddress);
-		const otherReactionAddresses = reactions.filter((r) => r.user_address !== myUserAddress).map((r) => r.user_address);
+		const didIReact = reactions.some(r => r.user_address === myUserAddress);
+		const otherReactionAddresses = reactions.filter(r => r.user_address !== myUserAddress).map(r => r.user_address);
 
 		const emoji = emoji_render(rgi_to_codepoints(reactions[0].emoji_codepoints_rgi));
 		if (didIReact && otherReactionAddresses.length) {
@@ -86,40 +86,19 @@
 		// find difference by comparing groups lengths
 		const prevKeys = Object.keys(prevReactions);
 		const newKeys = Object.keys(groupedReactions);
-		const added = newKeys.filter((key) => !prevKeys.includes(key));
-		const removed = prevKeys.filter((key) => !newKeys.includes(key));
-		const modified = newKeys.filter((key) => {
+		const added = newKeys.filter(key => !prevKeys.includes(key));
+		const removed = prevKeys.filter(key => !newKeys.includes(key));
+		const modified = newKeys.filter(key => {
 			if (prevReactions[key] && groupedReactions[key]) {
 				return prevReactions[key].length !== groupedReactions[key].length;
 			}
 			return false;
 		});
 
-		_union(added, removed, modified).forEach((a) => highlightElement(buttonRefs[a]));
+		_union(added, removed, modified).forEach(a => highlightElement(buttonRefs[a]));
 		prevReactions = groupedReactions;
 	});
 </script>
-
-{#if reactions && reactions.length}
-	<div class="message-reactions">
-		{#each Object.keys(groupedReactions) as rgi (rgi)}
-			{@const reactions = groupedReactions[rgi]}
-			<BaseButton onClick={() => onReactionClick(rgi)}>
-				<div bind:this={buttonRefs[rgi]} class="reaction-box" onmouseenter={(e) => showTooltip(e, reactions, rgi)} onmouseleave={dismissTooltip} role="button" tabindex="0">
-					{emoji_render(rgi_to_codepoints(rgi))}
-					<span style:pointer-events="none">{reactions.length}</span>
-				</div>
-			</BaseButton>
-		{/each}
-	</div>
-	{#if tooltipButton}
-		<Tooltip targetRef={tooltipButton.ref}>
-			<div style:max-width="120px" style:text-align="center">
-				{renderInfoFromReactions(tooltipButton.reactions)}
-			</div>
-		</Tooltip>
-	{/if}
-{/if}
 
 <style>
 	.message-reactions {
@@ -141,3 +120,24 @@
 		border-color: #c5bcbc;
 	}
 </style>
+
+{#if reactions && reactions.length}
+	<div class="message-reactions">
+		{#each Object.keys(groupedReactions) as rgi (rgi)}
+			{@const reactions = groupedReactions[rgi]}
+			<BaseButton onClick={() => onReactionClick(rgi)}>
+				<div bind:this={buttonRefs[rgi]} class="reaction-box" onmouseenter={e => showTooltip(e, reactions, rgi)} onmouseleave={dismissTooltip} role="button" tabindex="0">
+					{emoji_render(rgi_to_codepoints(rgi))}
+					<span style:pointer-events="none">{reactions.length}</span>
+				</div>
+			</BaseButton>
+		{/each}
+	</div>
+	{#if tooltipButton}
+		<Tooltip targetRef={tooltipButton.ref}>
+			<div style:max-width="120px" style:text-align="center">
+				{renderInfoFromReactions(tooltipButton.reactions)}
+			</div>
+		</Tooltip>
+	{/if}
+{/if}

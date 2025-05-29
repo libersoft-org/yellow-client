@@ -24,7 +24,7 @@ const height: Writable<number> = writable(100);
 const position: Writable<Position> = writable({ x: 0, y: 0 });
 export async function heightLogicalChanged(value: number): Promise<void> {
 	if (BROWSER) return;
-	const m = get(monitors).find((m) => m.name === get(actualMonitorName));
+	const m = get(monitors).find(m => m.name === get(actualMonitorName));
 	const scaleFactor = m?.scaleFactor;
 	let scaleFactor2 = scaleFactor;
 	if (!scaleFactor2) scaleFactor2 = 1;
@@ -38,19 +38,19 @@ export async function heightLogicalChanged(value: number): Promise<void> {
 export async function initPositioning(): Promise<() => void> {
 	let unsubscribers: Unsubscriber[] = [];
 	unsubscribers.push(
-		monitors.subscribe((v) => {
+		monitors.subscribe(v => {
 			//log.debug('/notifications monitors:', v);
 			updateNotificationsMonitor();
 		})
 	);
 	unsubscribers.push(
-		selectedMonitorName.subscribe((v) => {
+		selectedMonitorName.subscribe(v => {
 			//log.debug('/notifications selectedMonitor:', v);
 			updateNotificationsMonitor();
 		})
 	);
 	unsubscribers.push(
-		mainWindowMonitor.subscribe((v) => {
+		mainWindowMonitor.subscribe(v => {
 			//log.debug('/notifications mainWindowMonitor:', v);
 			updateNotificationsMonitor();
 		})
@@ -58,7 +58,7 @@ export async function initPositioning(): Promise<() => void> {
 	unsubscribers.push(actualMonitorName.subscribe(updatePosition));
 	unsubscribers.push(selectedNotificationsCorner.subscribe(updatePosition));
 	unsubscribers.push(height.subscribe(updatePosition));
-	unsubscribers.push(position.subscribe(async (v) => moveWindow(v)));
+	unsubscribers.push(position.subscribe(async v => moveWindow(v)));
 	await updateMonitors();
 	monitorInterval = setInterval(async () => {
 		await updateMonitors();
@@ -107,7 +107,7 @@ function setActualMonitorName(monitor_name: string | null): void {
 	const mons = get(monitors);
 	if (!mons) {
 		monitor_name = null;
-	} else if (mons.find((m) => m.name === monitor_name) === undefined) {
+	} else if (mons.find(m => m.name === monitor_name) === undefined) {
 		monitor_name = mons[0]?.name;
 	}
 	actualMonitorName.set(monitor_name);

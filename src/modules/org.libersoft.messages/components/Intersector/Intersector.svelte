@@ -8,7 +8,7 @@
 
 	$effect(() => {
 		itemsById = {};
-		items.forEach((item) => {
+		items.forEach(item => {
 			itemsById[item.id] = item;
 		});
 		update_observers(itemsEls);
@@ -17,14 +17,14 @@
 	function update_observers(itemsEls) {
 		if (observer) observer.disconnect();
 		observer = new IntersectionObserver(intersecting, { threshold: 0.01, delay: 10 });
-		itemsEls.forEach((itemEl) => {
+		itemsEls.forEach(itemEl => {
 			if (itemEl) observer.observe(itemEl);
 		});
 	}
 
 	function intersecting(entries) {
 		setTimeout(() => {
-			entries.forEach((entry) => {
+			entries.forEach(entry => {
 				entry.target.dataset.intersecting = entry.isIntersecting;
 				let n = Number(entry.target.dataset.id);
 				//console.log('n:', n, 'entry.target.dataset.id:', entry.target.dataset.id, 'intersection:', entry.isIntersecting);

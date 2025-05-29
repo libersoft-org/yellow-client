@@ -8,13 +8,6 @@
 	export let selected;
 </script>
 
-<BaseButton data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
-	<div class="item {selected && 'selected'}">
-		<Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
-		<Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--color-primary-background" size="30px" />
-	</div>
-</BaseButton>
-
 <style>
 	.item {
 		position: relative;
@@ -38,3 +31,10 @@
 		transform: scale(1.25);
 	}
 </style>
+
+<BaseButton data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
+	<div class="item {selected && 'selected'}">
+		<Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
+		<Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--color-primary-background" size="30px" />
+	</div>
+</BaseButton>

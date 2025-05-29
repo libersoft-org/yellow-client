@@ -70,7 +70,7 @@
 		//console.log('menus:', menus);
 		for (let menu of Array.from(menus)) {
 			//console.log('menu:', menu);
-			if (!ancestors.find((a) => a === menu.guid)) {
+			if (!ancestors.find(a => a === menu.guid)) {
 				//console.log('closing menu:', menu);
 				menu.close();
 			}
@@ -110,7 +110,7 @@
 
 	$: if (target != null) {
 		if (Array.isArray(target)) {
-			target.forEach((node) => subscribe(node));
+			target.forEach(node => subscribe(node));
 		} else subscribe(target);
 	}
 
@@ -124,7 +124,7 @@
 		return () => {
 			if (target != null) {
 				if (Array.isArray(target)) {
-					target.forEach((node) => {
+					target.forEach(node => {
 						node?.removeEventListener('contextmenu', openMenu);
 						node?.removeEventListener('mousedown', openMenu);
 					});
@@ -158,7 +158,7 @@
 		position,
 		isOpen,
 		close,
-		setPopup: (popup) => {
+		setPopup: popup => {
 			hasPopup.set(popup);
 		},
 	});
@@ -190,8 +190,24 @@
 	$: currentIndex.set(focusIndex);
 </script>
 
+<style>
+	.context-menu {
+		visibility: hidden;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		position: fixed;
+		z-index: 9000;
+		border-radius: 10px;
+		border: 1px solid #ccc;
+		background-color: #fff;
+	}
+
+	.context-menu-open {
+		visibility: visible;
+	}
+</style>
+
 <svelte:window
-	on:mousedown={(e) => {
+	on:mousedown={e => {
 		//console.log('context-menu svelte:window click:', e);
 		//console.log(e.target);
 		let ancestor = e.target.closest('.context-menu');
@@ -225,7 +241,7 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
 	style:max-width={width}
 	style:overflow={scrollable ? 'auto' : 'hidden'}
 	{...$$restProps}
-	on:keydown={(e) => {
+	on:keydown={e => {
 		/*if (open) e.preventDefault();  // TODO: parametrize this (off for pop-up, on for context menu-proper)
   if ($hasPopup) return;
   if (e.key === 'ArrowDown') {
@@ -244,19 +260,3 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
 >
 	<slot />
 </div>
-
-<style>
-	.context-menu {
-		visibility: hidden;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-		position: fixed;
-		z-index: 9000;
-		border-radius: 10px;
-		border: 1px solid #ccc;
-		background-color: #fff;
-	}
-
-	.context-menu-open {
-		visibility: visible;
-	}
-</style>

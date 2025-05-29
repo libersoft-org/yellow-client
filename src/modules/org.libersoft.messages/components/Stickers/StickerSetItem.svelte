@@ -27,14 +27,6 @@
 	}
 </script>
 
-{#if file}
-	<BaseButton onClick={handleClick} {onMousedown}>
-		<div class="sticker" style="max-width: {size}px;">
-			<Sticker {size} {file} play_on_start={false} {intersecting} />
-		</div>
-	</BaseButton>
-{/if}
-
 <style>
 	.sticker {
 		display: inline-block;
@@ -53,3 +45,11 @@
 		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
 	}
 </style>
+
+{#if file}
+	<BaseButton onClick={handleClick} {onMousedown}>
+		<div class="sticker" style="max-width: {size}px;">
+			<Sticker {size} {file} play_on_start={false} {intersecting} />
+		</div>
+	</BaseButton>
+{/if}

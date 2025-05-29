@@ -8,29 +8,6 @@
 	export let clickSelectAccount;
 </script>
 
-<BaseButton data-testid={'account ' + $a.credentials?.address} onClick={() => clickSelectAccount($a.id)}>
-	<div class="item">
-		<div class="title"><AccountStatusIcon account={a} /><AccountTitle {a} /></div>
-		<!-- <small><AccountStatus account={a} /></small> -->
-		{#if $debug}
-			<div style="font-size: 12px;">
-				<ul>
-					<li>id: {$a.id}</li>
-					<li>enabled: {$a.enabled}</li>
-					<li>error: {$a.error}</li>
-					<li>status: {$a.status}</li>
-					<li>session_status: {$a.session_status}</li>
-					<li>sessionID: {$a.sessionID}</li>
-					<li>bufferedAmount: {$a.bufferedAmount}b</li>
-					<li>lastCommsTs: {Date($a.lastCommsTs)}</li>
-					<li>available_modules: {JSON.stringify($a.available_modules)}</li>
-					<li>wsGuid: {$a.wsGuid}</li>
-				</ul>
-			</div>
-		{/if}
-	</div>
-</BaseButton>
-
 <style>
 	.item {
 		display: flex;
@@ -54,3 +31,26 @@
 		overflow: hidden;
 	}
 </style>
+
+<BaseButton data-testid={'account ' + $a.credentials?.address} onClick={() => clickSelectAccount($a.id)}>
+	<div class="item">
+		<div class="title"><AccountStatusIcon account={a} /><AccountTitle {a} /></div>
+		<!-- <small><AccountStatus account={a} /></small> -->
+		{#if $debug}
+			<div style="font-size: 12px;">
+				<ul>
+					<li>id: {$a.id}</li>
+					<li>enabled: {$a.enabled}</li>
+					<li>error: {$a.error}</li>
+					<li>status: {$a.status}</li>
+					<li>session_status: {$a.session_status}</li>
+					<li>sessionID: {$a.sessionID}</li>
+					<li>bufferedAmount: {$a.bufferedAmount}b</li>
+					<li>lastCommsTs: {Date($a.lastCommsTs)}</li>
+					<li>available_modules: {JSON.stringify($a.available_modules)}</li>
+					<li>wsGuid: {$a.wsGuid}</li>
+				</ul>
+			</div>
+		{/if}
+	</div>
+</BaseButton>

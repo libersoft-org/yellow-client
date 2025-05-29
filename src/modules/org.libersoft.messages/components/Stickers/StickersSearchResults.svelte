@@ -13,6 +13,16 @@
 	}
 </script>
 
+<style>
+	.results {
+		overflow: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 0 0 10px 0;
+	}
+</style>
+
 <div class="results" bind:this={container}>
 	<!--
  {#each items as item}
@@ -26,13 +36,3 @@
 {#snippet item(item, intersecting)}
 	<StickerSet stickerset={item} {intersecting} />
 {/snippet}
-
-<style>
-	.results {
-		overflow: auto;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		padding: 0 0 10px 0;
-	}
-</style>

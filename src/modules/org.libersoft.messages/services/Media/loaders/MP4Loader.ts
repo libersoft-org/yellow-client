@@ -12,7 +12,7 @@ class MP4Loader extends MediaLoader {
 			console.error('MP4BOX: error', e);
 		};
 
-		mp4boxFile.onReady = async (info) => {
+		mp4boxFile.onReady = async info => {
 			// console.info('MP4BOX: onReady INFO', info);
 			const mediaSource = this.mediaSource as MediaSource;
 			mediaSource.duration = info.duration / info.timescale;
@@ -56,7 +56,7 @@ class MP4Loader extends MediaLoader {
 			// @ts-ignore TODO typing
 			const initSegs = mp4boxFile.initializeSegmentation();
 			//console.log('MP4BOX: initSegs', initSegs);
-			initSegs.forEach((seg) => {
+			initSegs.forEach(seg => {
 				const sb = seg.user as SourceBuffer;
 				//console.log('MP4BOX: appending to sb with id' + seg.id, seg);
 				sb.appendBuffer(seg.buffer);
@@ -66,7 +66,7 @@ class MP4Loader extends MediaLoader {
 		};
 	}
 
-	processChunk: MediaLoader['processChunk'] = (chunk) => {
+	processChunk: MediaLoader['processChunk'] = chunk => {
 		if (!this.mp4boxFile) {
 			throw new Error('MP4BOX not initialized');
 		}

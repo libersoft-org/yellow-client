@@ -25,24 +25,6 @@
 	let filtered_color = $derived(selected_theme_index > -1 || 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';');
 </script>
 
-{#snippet icon()}
-	<div class="icon {!visibleOnMobile && 'hideOnMobile'} {!visibleOnDesktop && 'hideOnDesktop'}" style="padding: {padding};">
-		<img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {/* check if theme changed or was edited */ $selected_theme_index > -1 && $current_theme && colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} draggable={false} {alt} />
-	</div>
-{/snippet}
-
-{#if img}
-	{#if onClick || isButton}
-		<BaseButton {onClick} data-testid={dataTestId}>
-			{@render icon()}
-		</BaseButton>
-	{:else}
-		<div data-testid={dataTestId}>
-			{@render icon()}
-		</div>
-	{/if}
-{/if}
-
 <style>
 	.icon {
 		display: flex;
@@ -68,3 +50,21 @@
 		}
 	}
 </style>
+
+{#snippet icon()}
+	<div class="icon {!visibleOnMobile && 'hideOnMobile'} {!visibleOnDesktop && 'hideOnDesktop'}" style="padding: {padding};">
+		<img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {/* check if theme changed or was edited */ $selected_theme_index > -1 && $current_theme && colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} draggable={false} {alt} />
+	</div>
+{/snippet}
+
+{#if img}
+	{#if onClick || isButton}
+		<BaseButton {onClick} data-testid={dataTestId}>
+			{@render icon()}
+		</BaseButton>
+	{:else}
+		<div data-testid={dataTestId}>
+			{@render icon()}
+		</div>
+	{/if}
+{/if}

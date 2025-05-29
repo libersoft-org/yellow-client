@@ -19,23 +19,6 @@
 	}
 </script>
 
-{#snippet select()}
-	<select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={selectRef} bind:value>
-		{@render children?.()}
-	</select>
-{/snippet}
-
-<div class="select">
-	{#if label}
-		<label for={label}>
-			{label}
-		</label>
-		{@render select()}
-	{:else}
-		{@render select()}
-	{/if}
-</div>
-
 <style>
 	select {
 		box-sizing: content-box;
@@ -63,3 +46,20 @@
 		gap: 4px;
 	}
 </style>
+
+{#snippet select()}
+	<select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={selectRef} bind:value>
+		{@render children?.()}
+	</select>
+{/snippet}
+
+<div class="select">
+	{#if label}
+		<label for={label}>
+			{label}
+		</label>
+		{@render select()}
+	{:else}
+		{@render select()}
+	{/if}
+</div>

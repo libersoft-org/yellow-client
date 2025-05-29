@@ -37,7 +37,7 @@ export const log = {
 
 function formatNoColor(args) {
 	let msg = '';
-	const inspected_nocolor = args.map((o) => {
+	const inspected_nocolor = args.map(o => {
 		if (typeof o === 'string') return o;
 		if (o instanceof Error) {
 			// Handle Error objects specially to include stack trace

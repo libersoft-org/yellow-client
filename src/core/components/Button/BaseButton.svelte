@@ -15,10 +15,6 @@
 	let { children, onClick, onRightClick, onMousedown, ...restProps }: BaseButtonProps = $props();
 </script>
 
-<button class="base-button button-reset" onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} style:width={restProps.width || 'auto'} style:justify-content={restProps.align || 'center'} style:height={restProps.height || 'auto'} {...restProps}>
-	{@render children()}
-</button>
-
 <style>
 	.base-button {
 		cursor: pointer;
@@ -28,3 +24,7 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 </style>
+
+<button class="base-button button-reset" onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} style:width={restProps.width || 'auto'} style:justify-content={restProps.align || 'center'} style:height={restProps.height || 'auto'} {...restProps}>
+	{@render children()}
+</button>

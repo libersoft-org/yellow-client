@@ -4,10 +4,6 @@
 	export let onClick;
 </script>
 
-<BaseButton {onClick}>
-	<div class="corner {active && 'active'}"></div>
-</BaseButton>
-
 <style>
 	.corner {
 		background-color: #aaa;
@@ -26,3 +22,7 @@
 		cursor: default;
 	}
 </style>
+
+<BaseButton {onClick}>
+	<div class="corner {active && 'active'}"></div>
+</BaseButton>

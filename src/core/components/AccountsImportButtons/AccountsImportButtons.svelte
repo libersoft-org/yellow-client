@@ -83,7 +83,7 @@
 			conflictDialog?.open();
 		} else {
 			// Account doesn't exist, add it
-			accounts_config.update((current) => [...current, account]);
+			accounts_config.update(current => [...current, account]);
 			maybeActivateAccount();
 			processedCount++;
 			processNextAccount();
@@ -108,9 +108,9 @@
 			const newAddress = currentConflictAccount.credentials?.address || currentConflictAccount.address;
 
 			// Find and replace the existing account
-			accounts_config.update((current) => {
+			accounts_config.update(current => {
 				const identifier = `${newServer}\\\\${newAddress}`;
-				return current.map((account) => {
+				return current.map(account => {
 					const accountServer = account.credentials?.server || account.server;
 					const accountAddress = account.credentials?.address || account.address;
 					const accountIdentifier = `${accountServer}\\\\${accountAddress}`;
@@ -160,16 +160,6 @@
 	}
 </script>
 
-<div class="button-group">
-	<Button img="img/plus.svg" text="Add accounts" onClick={addAccounts} />
-	{#if hasExistingAccounts}
-		<Button img="img/import.svg" text="Replace All" onClick={replaceAccounts} />
-	{/if}
-</div>
-
-<Dialog data={replaceDialogData} bind:close={closeReplaceDialog} bind:this={replaceDialog} />
-<Dialog data={conflictDialogData} bind:close={closeConflictDialog} bind:this={conflictDialog} />
-
 <style>
 	.button-group {
 		display: flex;
@@ -182,3 +172,13 @@
 		min-width: 120px;
 	}
 </style>
+
+<div class="button-group">
+	<Button img="img/plus.svg" text="Add accounts" onClick={addAccounts} />
+	{#if hasExistingAccounts}
+		<Button img="img/import.svg" text="Replace All" onClick={replaceAccounts} />
+	{/if}
+</div>
+
+<Dialog data={replaceDialogData} bind:close={closeReplaceDialog} bind:this={replaceDialog} />
+<Dialog data={conflictDialogData} bind:close={closeConflictDialog} bind:this={conflictDialog} />

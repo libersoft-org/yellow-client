@@ -22,18 +22,6 @@
 	});
 </script>
 
-<div class="account-import">
-	<div class="scrollable">
-		<Code bind:code={text} />
-	</div>
-	{#if error}
-		<div class="error">{error}</div>
-	{/if}
-	<div class="buttons-container">
-		<AccountsImportButtons importText={text} {close} onError={handleError} />
-	</div>
-</div>
-
 <style>
 	.account-import {
 		position: relative;
@@ -62,3 +50,15 @@
 		}
 	}
 </style>
+
+<div class="account-import">
+	<div class="scrollable">
+		<Code bind:code={text} />
+	</div>
+	{#if error}
+		<div class="error">{error}</div>
+	{/if}
+	<div class="buttons-container">
+		<AccountsImportButtons importText={text} {close} onError={handleError} />
+	</div>
+</div>

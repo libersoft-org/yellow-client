@@ -13,24 +13,6 @@
 	}
 </script>
 
-<BaseButton onClick={clickShowWallet}>
-	<div class="content-button">Show wallet</div>
-</BaseButton>
-<div class="addressbook">
-	{#if $addressBook.length > 0}
-		<div class="items">
-			{#each $addressBook as a, index}
-				<BaseButton onClick={() => clickItem(a.address)} width="100%">
-					<div class="item {index % 2 === 0 ? 'even' : 'odd'}">
-						<div class="alias">{a.alias}</div>
-						<div class="address">{a.address}</div>
-					</div>
-				</BaseButton>
-			{/each}
-		</div>
-	{/if}
-</div>
-
 <style>
 	.content-button {
 		padding: 10px;
@@ -78,3 +60,21 @@
 		}
 	}
 </style>
+
+<BaseButton onClick={clickShowWallet}>
+	<div class="content-button">Show wallet</div>
+</BaseButton>
+<div class="addressbook">
+	{#if $addressBook.length > 0}
+		<div class="items">
+			{#each $addressBook as a, index}
+				<BaseButton onClick={() => clickItem(a.address)} width="100%">
+					<div class="item {index % 2 === 0 ? 'even' : 'odd'}">
+						<div class="alias">{a.alias}</div>
+						<div class="address">{a.address}</div>
+					</div>
+				</BaseButton>
+			{/each}
+		</div>
+	{/if}
+</div>

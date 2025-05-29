@@ -13,10 +13,6 @@
 	};
 </script>
 
-<div class="dating-content">
-	<svelte:component this={pages[$page]} />
-</div>
-
 <style>
 	.dating-content {
 		height: 100vh;
@@ -25,3 +21,7 @@
 		background-size: 400px;
 	}
 </style>
+
+<div class="dating-content">
+	<svelte:component this={pages[$page]} />
+</div>

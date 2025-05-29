@@ -61,6 +61,35 @@
 	}
 </script>
 
+<style>
+	.accounts {
+		background: url('/img/background.webp') repeat;
+		background-size: 400px;
+
+		.accounts-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			padding: 10px;
+			height: 100dvh;
+		}
+	}
+
+	.buttons {
+		display: flex;
+		gap: clamp(8px, 0.8vw, 12px);
+		flex-wrap: wrap;
+
+		@media only screen and (max-width: 32em) {
+			justify-content: flex-start;
+		}
+	}
+
+	:global(.button) {
+		white-space: nowrap;
+	}
+</style>
+
 {#snippet accountTable(account)}
 	<Table>
 		<Thead>
@@ -110,7 +139,7 @@
 				<Button img="img/import.svg" text="Import" onClick={clickImport} />
 			</div>
 
-			<Accordion items={$accounts_config.map((a) => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
+			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>
 	</div>
 </div>
@@ -121,32 +150,3 @@
 {#if showDelAccountModal}
 	<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
 {/if}
-
-<style>
-	.accounts {
-		background: url('/img/background.webp') repeat;
-		background-size: 400px;
-
-		.accounts-wrapper {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-			padding: 10px;
-			height: 100dvh;
-		}
-	}
-
-	.buttons {
-		display: flex;
-		gap: clamp(8px, 0.8vw, 12px);
-		flex-wrap: wrap;
-
-		@media only screen and (max-width: 32em) {
-			justify-content: flex-start;
-		}
-	}
-
-	:global(.button) {
-		white-space: nowrap;
-	}
-</style>

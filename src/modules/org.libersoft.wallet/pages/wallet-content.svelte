@@ -38,11 +38,11 @@
 		section = name;
 	}
 
-	selectedNetwork.subscribe((v) => {
+	selectedNetwork.subscribe(v => {
 		console.log('xxselectedNetwork', v);
 	});
 
-	selectedAddress.subscribe((v) => {
+	selectedAddress.subscribe(v => {
 		console.log('xxselectedAddress', v);
 	});
 
@@ -50,101 +50,11 @@
 		navigator.clipboard
 			.writeText($selectedAddress.address)
 			.then(() => console.log('Address copied to clipboard'))
-			.catch((err) => console.error('Error while copying to clipboard', err));
+			.catch(err => console.error('Error while copying to clipboard', err));
 		addressElement.innerHTML = 'Copied!';
 		setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
 	}
 </script>
-
-<div class="wallet-content">
-	<TopBar>
-		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--icon-white" visibleOnDesktop={false} />
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
-		</svelte:fragment>
-		<svelte:fragment slot="right">
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--icon-black" onClick={() => (showModalWallets = true)} />
-		</svelte:fragment>
-	</TopBar>
-	<div class="wallet">
-		<Paper>
-			<div class="content">
-				<div class="body">
-					<div class="top">
-						<div class="top-wrapper">
-							<div class="left">
-								<div class="status">
-									<div class="indicator {$status.color}"></div>
-									<div>{$status.text}</div>
-								</div>
-								{#if $debug}
-									<div style="font-size: 12px">Server: {$rpcURL}</div>
-								{/if}
-							</div>
-							<div class="right">
-								<div>
-									<div>
-										{#if $selectedAddress && $selectedAddress.address}
-											<BaseButton onClick={clickCopyAddress}>
-												<div class="address">
-													<div bind:this={addressElement}>
-														{shortenAddress($selectedAddress.address)}
-													</div>
-													<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
-												</div>
-											</BaseButton>
-										{:else}
-											<div class="address">No address selected</div>
-										{/if}
-									</div>
-								</div>
-								<Icon img="img/settings.svg" padding="0px" onClick={() => (showModalSettings = true)} />
-							</div>
-						</div>
-						<div class="balance">
-							<div class="crypto">
-								{#if $selectedNetwork?.currency?.iconURL}
-									<div>
-										<img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} />
-									</div>
-								{/if}
-								<div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
-							</div>
-							<div class="fiat">
-								({$balance.fiat.amount}
-								{$balance.fiat.currency})
-							</div>
-							{#if $debug}
-								<pre>retrieved {$balanceTimestamp}</pre>
-							{/if}
-						</div>
-					</div>
-					<div class="buttons">
-						<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
-						<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
-						<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
-						<Button img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
-					</div>
-					<div class="separator"></div>
-					<div class="section">
-						{#if section == 'send'}
-							<Send />
-						{:else if section == 'receive'}
-							<Receive />
-						{:else if section == 'balance'}
-							<Balance />
-						{:else if section == 'history'}
-							<History />
-						{/if}
-					</div>
-				</div>
-			</div>
-		</Paper>
-	</div>
-</div>
-<Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} width="500px" />
-<Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} width="500px" />
-<Modal title="Wallet settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
 
 <style>
 	.wallet-content {
@@ -279,3 +189,93 @@
 		border-bottom: 1px solid #888;
 	}
 </style>
+
+<div class="wallet-content">
+	<TopBar>
+		<svelte:fragment slot="left">
+			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--icon-white" visibleOnDesktop={false} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--icon-black" onClick={() => (showModalNetworks = true)} />
+		</svelte:fragment>
+		<svelte:fragment slot="right">
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--icon-black" onClick={() => (showModalWallets = true)} />
+		</svelte:fragment>
+	</TopBar>
+	<div class="wallet">
+		<Paper>
+			<div class="content">
+				<div class="body">
+					<div class="top">
+						<div class="top-wrapper">
+							<div class="left">
+								<div class="status">
+									<div class="indicator {$status.color}"></div>
+									<div>{$status.text}</div>
+								</div>
+								{#if $debug}
+									<div style="font-size: 12px">Server: {$rpcURL}</div>
+								{/if}
+							</div>
+							<div class="right">
+								<div>
+									<div>
+										{#if $selectedAddress && $selectedAddress.address}
+											<BaseButton onClick={clickCopyAddress}>
+												<div class="address">
+													<div bind:this={addressElement}>
+														{shortenAddress($selectedAddress.address)}
+													</div>
+													<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+												</div>
+											</BaseButton>
+										{:else}
+											<div class="address">No address selected</div>
+										{/if}
+									</div>
+								</div>
+								<Icon img="img/settings.svg" padding="0px" onClick={() => (showModalSettings = true)} />
+							</div>
+						</div>
+						<div class="balance">
+							<div class="crypto">
+								{#if $selectedNetwork?.currency?.iconURL}
+									<div>
+										<img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} />
+									</div>
+								{/if}
+								<div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
+							</div>
+							<div class="fiat">
+								({$balance.fiat.amount}
+								{$balance.fiat.currency})
+							</div>
+							{#if $debug}
+								<pre>retrieved {$balanceTimestamp}</pre>
+							{/if}
+						</div>
+					</div>
+					<div class="buttons">
+						<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
+						<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
+						<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
+						<Button img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
+					</div>
+					<div class="separator"></div>
+					<div class="section">
+						{#if section == 'send'}
+							<Send />
+						{:else if section == 'receive'}
+							<Receive />
+						{:else if section == 'balance'}
+							<Balance />
+						{:else if section == 'history'}
+							<History />
+						{/if}
+					</div>
+				</div>
+			</div>
+		</Paper>
+	</div>
+</div>
+<Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} width="500px" />
+<Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} width="500px" />
+<Modal title="Wallet settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />

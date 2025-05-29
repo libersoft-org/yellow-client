@@ -26,53 +26,6 @@
 	});
 </script>
 
-<BaseButton
-	onClick={(e) => {
-		log.debug('***onClick');
-		data.onClick(e, 'click');
-	}}
->
-	<div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover}; border: 1px solid {$borderColor};">
-		{#if data.icon || data.title || data.body}
-			<div class="top">
-				{#if data.icon}
-					<div class="left">
-						<div class="image" style="border: 1px solid {$borderColor};">
-							<img src={data.icon} alt="Notification icon" />
-						</div>
-					</div>
-				{/if}
-				<div class="right">
-					<div class="line">
-						{#if data.title}
-							<div class="title clamp-3" style:color={$titleColor} style:--lines={$titleMaxLines ? $titleMaxLines : 1}>
-								{data.title}
-							</div>
-						{/if}
-						<div class="close">
-							<Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10px" padding="10px" isButton onClick={(e) => handleClosing(e)} />
-						</div>
-					</div>
-					{#if data.body}
-						<div class="body clamp-3" style:--lines={$bodyMaxLines ? $bodyMaxLines : 3} style:color={$descColor}>
-							{data.body}
-						</div>
-					{/if}
-				</div>
-			</div>
-		{/if}
-		{#if data.buttons}
-			<div class="bottom">
-				<div class="buttons">
-					{#each data.buttons as b}
-						<BaseButton text={b.text} onClick={(e) => b.onClick(b, b.id)} expand={b.expand} />
-					{/each}
-				</div>
-			</div>
-		{/if}
-	</div>
-</BaseButton>
-
 <style>
 	.notification {
 		position: relative;
@@ -229,3 +182,50 @@
 		gap: 10px;
 	}
 </style>
+
+<BaseButton
+	onClick={e => {
+		log.debug('***onClick');
+		data.onClick(e, 'click');
+	}}
+>
+	<div class="notification {$animationName && $animationName + '-' + (closing ? 'out' : 'in')}" style="--anim-duration: {$animationDuration}ms; --bgColor:{$bgColor}; --bgColorHover:{$bgColorHover}; border: 1px solid {$borderColor};">
+		{#if data.icon || data.title || data.body}
+			<div class="top">
+				{#if data.icon}
+					<div class="left">
+						<div class="image" style="border: 1px solid {$borderColor};">
+							<img src={data.icon} alt="Notification icon" />
+						</div>
+					</div>
+				{/if}
+				<div class="right">
+					<div class="line">
+						{#if data.title}
+							<div class="title clamp-3" style:color={$titleColor} style:--lines={$titleMaxLines ? $titleMaxLines : 1}>
+								{data.title}
+							</div>
+						{/if}
+						<div class="close">
+							<Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10px" padding="10px" isButton onClick={e => handleClosing(e)} />
+						</div>
+					</div>
+					{#if data.body}
+						<div class="body clamp-3" style:--lines={$bodyMaxLines ? $bodyMaxLines : 3} style:color={$descColor}>
+							{data.body}
+						</div>
+					{/if}
+				</div>
+			</div>
+		{/if}
+		{#if data.buttons}
+			<div class="bottom">
+				<div class="buttons">
+					{#each data.buttons as b}
+						<BaseButton text={b.text} onClick={e => b.onClick(b, b.id)} expand={b.expand} />
+					{/each}
+				</div>
+			</div>
+		{/if}
+	</div>
+</BaseButton>

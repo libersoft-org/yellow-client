@@ -28,19 +28,6 @@
 	});
 </script>
 
-<Label>
-	<span id={labelId} class="visually-hidden">{ariaLabel}</span>
-	<div class={`switch ${orientation}`}>
-		{#if showLabel}
-			<span class="label">{`${ariaLabel}:`}</span>
-		{/if}
-		<div class="switch-wrapper">
-			<input id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
-			<span class="slider {mounted ? 'transition' : ''}"></span>
-		</div>
-	</div>
-</Label>
-
 <style>
 	.switch {
 		display: grid;
@@ -130,3 +117,16 @@
 		border: 0;
 	}
 </style>
+
+<Label>
+	<span id={labelId} class="visually-hidden">{ariaLabel}</span>
+	<div class={`switch ${orientation}`}>
+		{#if showLabel}
+			<span class="label">{`${ariaLabel}:`}</span>
+		{/if}
+		<div class="switch-wrapper">
+			<input id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
+			<span class="slider {mounted ? 'transition' : ''}"></span>
+		</div>
+	</div>
+</Label>

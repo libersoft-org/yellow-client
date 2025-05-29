@@ -83,7 +83,7 @@
 			setupNotificationPermissionTimer();
 		}
 
-		addSubscription(monitors, (value) => {
+		addSubscription(monitors, value => {
 			monitorOptions.set(
 				[
 					//{ name: 'primary', label: 'primary' },
@@ -97,30 +97,30 @@
 			);
 		});
 
-		addSubscription(notificationsSoundEnabled, (v) => {
+		addSubscription(notificationsSoundEnabled, v => {
 			log.debug('notificationsSoundEnabled:', v);
 			updateExampleNotification();
 		});
 
-		addSubscription(selectedMonitorName, async (v) => {
+		addSubscription(selectedMonitorName, async v => {
 			log.debug('selectedMonitor:', v);
 			await deleteExampleNotifications();
 			updateExampleNotification();
 		});
 
-		addSubscription(selectedNotificationsCorner, async (v) => {
+		addSubscription(selectedNotificationsCorner, async v => {
 			log.debug('selectedNotificationsCorner:', v);
 			await deleteExampleNotifications();
 			updateExampleNotification();
 		});
 
-		addSubscription(enableCustomNotifications, async (v) => {
+		addSubscription(enableCustomNotifications, async v => {
 			log.debug('enableCustomNotifications:', v);
 			await deleteExampleNotifications();
 			updateExampleNotification();
 		});
 
-		addSubscription(notificationsEnabled, (value) => {
+		addSubscription(notificationsEnabled, value => {
 			_notificationsEnabled = value;
 			log.debug('notificationsEnabled:', value);
 			updateExampleNotification();
@@ -129,7 +129,7 @@
 
 	onDestroy(async () => {
 		// Clean up all store subscriptions
-		unsubscribers.forEach((unsubscribe) => unsubscribe());
+		unsubscribers.forEach(unsubscribe => unsubscribe());
 
 		// Clear intervals
 		if (monitorInterval) {

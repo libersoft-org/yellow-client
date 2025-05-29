@@ -94,40 +94,6 @@
 	}
 </script>
 
-<!--{JSON.stringify(gifs)}-->
-
-<div class="gifset">
-	<div class="top-bar">
-		<div class="group">
-			<Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
-			<Button text="Search" width="80px" onClick={searchGifs} />
-		</div>
-	</div>
-	{#if error}
-		<div>{error}</div>
-	{:else}
-		<div class="results">
-			{#if loading && gifs.length === 0}
-				<Spinner />
-			{:else if gifs.length === 0 && query_done}
-				<div>No GIFs found.</div>
-			{:else}
-				{#each gifs as item}
-					<BaseButton onClick={() => sendGIF(item)}>
-						<div class="item">
-							<img src={item.media_formats.tinygif?.url} alt="GIF" />
-						</div>
-					</BaseButton>
-				{/each}
-				{#if next_pos}
-					<LazyLoader onVisible={moreGifs} />
-				{/if}
-				Powered By Tenor.
-			{/if}
-		</div>
-	{/if}
-</div>
-
 <style>
 	.gifset {
 		display: flex;
@@ -177,3 +143,37 @@
 		transform: scale(1.2);
 	}
 </style>
+
+<!--{JSON.stringify(gifs)}-->
+
+<div class="gifset">
+	<div class="top-bar">
+		<div class="group">
+			<Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
+			<Button text="Search" width="80px" onClick={searchGifs} />
+		</div>
+	</div>
+	{#if error}
+		<div>{error}</div>
+	{:else}
+		<div class="results">
+			{#if loading && gifs.length === 0}
+				<Spinner />
+			{:else if gifs.length === 0 && query_done}
+				<div>No GIFs found.</div>
+			{:else}
+				{#each gifs as item}
+					<BaseButton onClick={() => sendGIF(item)}>
+						<div class="item">
+							<img src={item.media_formats.tinygif?.url} alt="GIF" />
+						</div>
+					</BaseButton>
+				{/each}
+				{#if next_pos}
+					<LazyLoader onVisible={moreGifs} />
+				{/if}
+				Powered By Tenor.
+			{/if}
+		</div>
+	{/if}
+</div>

@@ -35,12 +35,12 @@
 	let videoInputRef;
 	let showVideoRecorderModal = false;
 
-	isMobile.subscribe((value) => {
+	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 		expressionsHeight = value ? '250px' : '500px';
 	});
 
-	documentHeight.subscribe((value) => {
+	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
 			//if (value < lastDocumentHeight - 100) expressionsBottomSheetOpen = false;
 			lastDocumentHeight = value;
@@ -60,11 +60,11 @@
 	});
 
 	setContext('MessageBar', {
-		sendMessageHtml: (text) => doSendMessage(text, true),
-		sendMessagePlain: (text) => doSendMessage(text, false),
+		sendMessageHtml: text => doSendMessage(text, true),
+		sendMessagePlain: text => doSendMessage(text, false),
 		insertText,
 		setBarFocus,
-		append: (message) => {
+		append: message => {
 			elMessage.value += message;
 			resizeMessage();
 		},
@@ -185,16 +185,16 @@
 
 	let { showFileUploadModal, setFileUploadModal } = getContext('FileUploadModal');
 
-	isMobile.subscribe((value) => {
+	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 	});
 
-	documentHeight.subscribe((value) => {
+	documentHeight.subscribe(value => {
 		console.log('documentHeight handleResize (scroll?)');
 		handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
 	});
 
-	keyboardHeight.subscribe((value) => {
+	keyboardHeight.subscribe(value => {
 		console.log('keyboardHeight:', value);
 		if (value > 100) {
 			if (get(isMobile)) {
@@ -247,6 +247,47 @@
 		});
 	});
 </script>
+
+<style>
+	.message-bar {
+		position: sticky;
+		bottom: 0;
+		background-color: var(--color-secondary-background);
+		box-shadow: var(--shadow);
+	}
+
+	.message-bar-main {
+		display: flex;
+		align-items: end;
+		gap: 10px;
+		padding: 10px;
+	}
+
+	.message-bar-top {
+		display: flex;
+	}
+
+	.message-textarea {
+		flex-grow: 1;
+		padding: 5px;
+		border: 0;
+		border-bottom: 2px solid #ddd;
+		outline: none;
+		font-family: inherit;
+		font-size: 16px;
+		background-color: transparent;
+		color: #fff;
+		resize: none;
+		overflow-y: auto;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.bottom-sheet {
+		border-radius: 10px;
+		border: 10px solid #000;
+	}
+</style>
 
 <div class="message-bar" bind:this={elMessageBar}>
 	<input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" style:display="none" />
@@ -321,44 +362,3 @@
 {/if}
 
 <Modal title="Video recorder" body={VideoRecorderModalBody} bind:show={showVideoRecorderModal} />
-
-<style>
-	.message-bar {
-		position: sticky;
-		bottom: 0;
-		background-color: var(--color-secondary-background);
-		box-shadow: var(--shadow);
-	}
-
-	.message-bar-main {
-		display: flex;
-		align-items: end;
-		gap: 10px;
-		padding: 10px;
-	}
-
-	.message-bar-top {
-		display: flex;
-	}
-
-	.message-textarea {
-		flex-grow: 1;
-		padding: 5px;
-		border: 0;
-		border-bottom: 2px solid #ddd;
-		outline: none;
-		font-family: inherit;
-		font-size: 16px;
-		background-color: transparent;
-		color: #fff;
-		resize: none;
-		overflow-y: auto;
-		width: 100%;
-		box-sizing: border-box;
-	}
-
-	.bottom-sheet {
-		border-radius: 10px;
-		border: 10px solid #000;
-	}
-</style>

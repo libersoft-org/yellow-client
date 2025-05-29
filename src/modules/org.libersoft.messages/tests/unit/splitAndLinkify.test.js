@@ -244,7 +244,7 @@ describe('splitAndLinkify', () => {
 		const output = splitAndLinkify(input);
 
 		// Verify each item is an object with { type, value }
-		output.forEach((item) => {
+		output.forEach(item => {
 			expect(item).toEqual(
 				expect.objectContaining({
 					type: expect.any(String),

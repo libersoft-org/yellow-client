@@ -2,10 +2,6 @@
 	export let center = false;
 </script>
 
-<th class:center>
-	<slot />
-</th>
-
 <style>
 	th {
 		padding: 10px;
@@ -18,3 +14,7 @@
 		text-align: center;
 	}
 </style>
+
+<th class:center>
+	<slot />
+</th>

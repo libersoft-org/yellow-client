@@ -18,16 +18,9 @@
 				copied = true;
 				setTimeout(() => (copied = false), 1000);
 			})
-			.catch((err) => console.error('Error while copying to clipboard', err));
+			.catch(err => console.error('Error while copying to clipboard', err));
 	}
 </script>
-
-<BaseButton onClick={copyAddressToClipboard}>
-	<div class="address">
-		<span class="clamp" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
-		<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
-	</div>
-</BaseButton>
 
 <style>
 	.address {
@@ -45,3 +38,10 @@
 		vertical-align: bottom;
 	}
 </style>
+
+<BaseButton onClick={copyAddressToClipboard}>
+	<div class="address">
+		<span class="clamp" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
+		<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+	</div>
+</BaseButton>

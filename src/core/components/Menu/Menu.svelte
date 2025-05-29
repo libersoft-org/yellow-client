@@ -65,33 +65,6 @@
 	}
 </script>
 
-{#if showMenu}
-	<div class="overlay open" role="none" onclick={clickMenuClose}></div>
-{/if}
-<div class="menu {showMenu ? 'open' : ''}">
-	<div>
-		<div class="header">
-			<Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30px" padding="15px" onClick={clickMenuClose} />
-		</div>
-		<div class="items">
-			{#each menuItems as item}
-				<MenuItem img={item.img} title={item.title} colorVariable="--icon-white" onClick={item.onClick} />
-			{/each}
-		</div>
-	</div>
-	<div class="footer">
-		<BaseButton onClick={() => openPage(link)}>
-			<div class="logo">
-				<Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
-				<div>{product}</div>
-			</div>
-		</BaseButton>
-		<VersionInfo className="menu-version-info" />
-	</div>
-</div>
-<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
-<DialogExit bind:this={elDialogExit} />
-
 <style>
 	.overlay {
 		z-index: 999;
@@ -178,3 +151,30 @@
 		font-size: 14px;
 	}
 </style>
+
+{#if showMenu}
+	<div class="overlay open" role="none" onclick={clickMenuClose}></div>
+{/if}
+<div class="menu {showMenu ? 'open' : ''}">
+	<div>
+		<div class="header">
+			<Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30px" padding="15px" onClick={clickMenuClose} />
+		</div>
+		<div class="items">
+			{#each menuItems as item}
+				<MenuItem img={item.img} title={item.title} colorVariable="--icon-white" onClick={item.onClick} />
+			{/each}
+		</div>
+	</div>
+	<div class="footer">
+		<BaseButton onClick={() => openPage(link)}>
+			<div class="logo">
+				<Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
+				<div>{product}</div>
+			</div>
+		</BaseButton>
+		<VersionInfo className="menu-version-info" />
+	</div>
+</div>
+<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
+<DialogExit bind:this={elDialogExit} />

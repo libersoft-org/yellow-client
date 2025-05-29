@@ -36,7 +36,7 @@
 
 	$effect(() => {
 		showUpdated(show);
-		modalId = registerModal((z) => (zIndex = z));
+		modalId = registerModal(z => (zIndex = z));
 
 		function handleResize() {
 			if (!isMobile) return;
@@ -177,41 +177,6 @@
 	setContext('Popup', { close });
 </script>
 
-{#if show}
-	<Portal>
-		<div class="modal" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
-			{#if showContent}
-				<div class="header" role="none" tabindex="-1">
-					{#if title}
-						<div class="title">
-							{#if activeTab}
-								<Icon img="img/back.svg" alt="Back" colorVariable="--color-primary-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
-							{/if}
-							{title}
-						</div>
-						<div onpointerdown={(e) => e.stopPropagation()}>
-							<Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--color-primary-foreground" size="20px" padding="10px" onClick={close} />
-						</div>
-					{/if}
-				</div>
-				<div class="body">
-					{#if $debug}
-						params: <code>{JSON.stringify({ params })}</code>
-					{/if}
-					{#if typeof ModalBody === 'function'}
-						{#if breadcrumbs}
-							{@render breadcrumbs()}
-						{/if}
-						<ModalBody {close} {params} bind:activeTab />
-					{:else if children}
-						{@render children()}
-					{/if}
-				</div>
-			{/if}
-		</div>
-	</Portal>
-{/if}
-
 <style>
 	.modal {
 		z-index: 100;
@@ -278,3 +243,38 @@
 		color: var(--color-primary-foreground);
 	}
 </style>
+
+{#if show}
+	<Portal>
+		<div class="modal" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
+			{#if showContent}
+				<div class="header" role="none" tabindex="-1">
+					{#if title}
+						<div class="title">
+							{#if activeTab}
+								<Icon img="img/back.svg" alt="Back" colorVariable="--color-primary-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
+							{/if}
+							{title}
+						</div>
+						<div onpointerdown={e => e.stopPropagation()}>
+							<Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--color-primary-foreground" size="20px" padding="10px" onClick={close} />
+						</div>
+					{/if}
+				</div>
+				<div class="body">
+					{#if $debug}
+						params: <code>{JSON.stringify({ params })}</code>
+					{/if}
+					{#if typeof ModalBody === 'function'}
+						{#if breadcrumbs}
+							{@render breadcrumbs()}
+						{/if}
+						<ModalBody {close} {params} bind:activeTab />
+					{:else if children}
+						{@render children()}
+					{/if}
+				</div>
+			{/if}
+		</div>
+	</Portal>
+{/if}

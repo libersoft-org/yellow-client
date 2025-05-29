@@ -37,12 +37,6 @@
 	});
 </script>
 
-<Portal>
-	<div class="tooltip" bind:this={floatingRef}>
-		{@render children?.()}
-	</div>
-</Portal>
-
 <style>
 	.tooltip {
 		position: absolute;
@@ -58,3 +52,9 @@
 		line-height: 16px;
 	}
 </style>
+
+<Portal>
+	<div class="tooltip" bind:this={floatingRef}>
+		{@render children?.()}
+	</div>
+</Portal>

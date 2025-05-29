@@ -56,7 +56,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 			const frontCameraTrack = frontCameraStream.getVideoTracks()[0];
 			const frontDeviceId = frontCameraTrack.getSettings().deviceId;
 			userDeviceId.set(frontDeviceId || null);
-			frontCameraStream.getTracks().forEach((track) => track.stop()); // Stop the stream after retrieving the deviceId
+			frontCameraStream.getTracks().forEach(track => track.stop()); // Stop the stream after retrieving the deviceId
 
 			// Query rear camera (environment-facing)
 			const rearCameraStream = await navigator.mediaDevices.getUserMedia({
@@ -65,7 +65,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 			const rearCameraTrack = rearCameraStream.getVideoTracks()[0];
 			const rearDeviceId = rearCameraTrack.getSettings().deviceId;
 			environmentDeviceId.set(rearDeviceId || null);
-			rearCameraStream.getTracks().forEach((track) => track.stop()); // Stop the stream after retrieving the deviceId
+			rearCameraStream.getTracks().forEach(track => track.stop()); // Stop the stream after retrieving the deviceId
 		} catch (err) {
 			console.error('Error getting devices:', err);
 			const errMsg = err?.toString();

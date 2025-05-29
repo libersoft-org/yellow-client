@@ -44,6 +44,18 @@
 	}
 </script>
 
+<style>
+	.group {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.group .label {
+		font-weight: bold;
+		margin-left: 5px;
+	}
+</style>
+
 <div class="group">
 	<div class="label">Name:</div>
 	<Input bind:value={item_name} />
@@ -66,15 +78,3 @@
 {:else}
 	<Button text="Add token" onClick={clickAdd} />
 {/if}
-
-<style>
-	.group {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.group .label {
-		font-weight: bold;
-		margin-left: 5px;
-	}
-</style>

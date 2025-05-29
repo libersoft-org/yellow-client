@@ -30,22 +30,22 @@ export class GalleryStore {
 	}
 
 	setShow(show: boolean) {
-		this.store.update((store) => {
+		this.store.update(store => {
 			store.show = show;
 			return store;
 		});
 	}
 
 	setFiles(files: GalleryFile[]) {
-		this.store.update((store) => {
+		this.store.update(store => {
 			store.files = files;
 			return store;
 		});
 	}
 
 	updateFile(id: GalleryFile['id'], file: Omit<GalleryFile, 'id'>) {
-		this.store.update((store) => {
-			const index = store.files.findIndex((f) => f.id === id);
+		this.store.update(store => {
+			const index = store.files.findIndex(f => f.id === id);
 			if (index === -1) {
 				return store;
 			}
@@ -58,31 +58,31 @@ export class GalleryStore {
 	}
 
 	setCurrentId(currentIndex: number) {
-		this.store.update((store) => {
+		this.store.update(store => {
 			store.currentId = currentIndex;
 			return store;
 		});
 	}
 
 	getFile(id: GalleryFile['id']) {
-		return get(this.store).files.find((file) => file.id === id);
+		return get(this.store).files.find(file => file.id === id);
 	}
 
 	currentFile() {
-		return derived(this.store, ($store) => {
+		return derived(this.store, $store => {
 			if ($store.currentId === null) {
 				return null;
 			}
-			return $store.files.find((file) => file.id === $store.currentId);
+			return $store.files.find(file => file.id === $store.currentId);
 		});
 	}
 
 	previous() {
-		this.store.update((store) => {
+		this.store.update(store => {
 			if (store.currentId === null) {
 				return store;
 			}
-			const currentIndex = store.files.findIndex((file) => file.id === store.currentId);
+			const currentIndex = store.files.findIndex(file => file.id === store.currentId);
 			const nextIndex = currentIndex - 1;
 			if (nextIndex < 0) {
 				return store;
@@ -93,11 +93,11 @@ export class GalleryStore {
 	}
 
 	next() {
-		this.store.update((store) => {
+		this.store.update(store => {
 			if (store.currentId === null) {
 				return store;
 			}
-			const currentIndex = store.files.findIndex((file) => file.id === store.currentId);
+			const currentIndex = store.files.findIndex(file => file.id === store.currentId);
 			const nextIndex = currentIndex + 1;
 			if (nextIndex >= store.files.length) {
 				return store;
@@ -108,21 +108,21 @@ export class GalleryStore {
 	}
 
 	canPrevious() {
-		return derived(this.store, ($store) => {
+		return derived(this.store, $store => {
 			if ($store.currentId === null) {
 				return false;
 			}
-			const currentIndex = $store.files.findIndex((file) => file.id === $store.currentId);
+			const currentIndex = $store.files.findIndex(file => file.id === $store.currentId);
 			return currentIndex > 0;
 		});
 	}
 
 	canNext() {
-		return derived(this.store, ($store) => {
+		return derived(this.store, $store => {
 			if ($store.currentId === null) {
 				return false;
 			}
-			const currentIndex = $store.files.findIndex((file) => file.id === $store.currentId);
+			const currentIndex = $store.files.findIndex(file => file.id === $store.currentId);
 			return currentIndex < $store.files.length - 1;
 		});
 	}

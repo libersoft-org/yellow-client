@@ -27,7 +27,7 @@
 		const height = node.scrollHeight - paddingTop - paddingBottom;
 		return {
 			duration,
-			css: (t) => `
+			css: t => `
 				overflow: hidden;
 				max-height: ${t * height + paddingTop + paddingBottom}px;
 			`,
@@ -71,35 +71,6 @@
 		close();
 	}
 </script>
-
-<div class="account-bar" bind:this={accountBar}>
-	<BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle} width="100%">
-		<div class={`dropdown`} class:is-expanded={accountsVisible}>
-			{#if $active_account}
-				<div class="text">
-					<AccountStatusIcon account={active_account} />
-					<AccountTitle a={active_account} />
-				</div>
-			{:else}
-				{#if $accounts.length > 0}
-					<div class="text">SELECT YOUR ACCOUNT</div>
-				{/if}
-				{#if $accounts.length === 0}
-					<div class="text">CREATE ACCOUNT FIRST</div>
-				{/if}
-			{/if}
-			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
-		</div>
-	</BaseButton>
-	{#if accountsVisible}
-		<div class="items" transition:animateHeight={{ duration: 220 }}>
-			{#each $accounts as a (get(a).id)}
-				<AccountBarItem {a} {clickSelectAccount} />
-			{/each}
-			<AccountBarButton img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
-		</div>
-	{/if}
-</div>
 
 <style>
 	.account-bar {
@@ -158,3 +129,32 @@
 		}
 	}
 </style>
+
+<div class="account-bar" bind:this={accountBar}>
+	<BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle} width="100%">
+		<div class={`dropdown`} class:is-expanded={accountsVisible}>
+			{#if $active_account}
+				<div class="text">
+					<AccountStatusIcon account={active_account} />
+					<AccountTitle a={active_account} />
+				</div>
+			{:else}
+				{#if $accounts.length > 0}
+					<div class="text">SELECT YOUR ACCOUNT</div>
+				{/if}
+				{#if $accounts.length === 0}
+					<div class="text">CREATE ACCOUNT FIRST</div>
+				{/if}
+			{/if}
+			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
+		</div>
+	</BaseButton>
+	{#if accountsVisible}
+		<div class="items" transition:animateHeight={{ duration: 220 }}>
+			{#each $accounts as a (get(a).id)}
+				<AccountBarItem {a} {clickSelectAccount} />
+			{/each}
+			<AccountBarButton img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
+		</div>
+	{/if}
+</div>

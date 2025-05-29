@@ -1,5 +1,5 @@
 export function longpress(node, threshold = 300) {
-	const handle_mousedown = (e) => {
+	const handle_mousedown = e => {
 		let start = Date.now();
 		node.dispatchEvent(new CustomEvent('mymousedown', { detail: e }));
 
@@ -7,7 +7,7 @@ export function longpress(node, threshold = 300) {
 			node.dispatchEvent(new CustomEvent('longpress', { detail: e }));
 		}, threshold);
 
-		const cancel = (e) => {
+		const cancel = e => {
 			clearTimeout(timeout);
 			node.removeEventListener('mousemove', cancel);
 			node.removeEventListener('mouseup', cancel);

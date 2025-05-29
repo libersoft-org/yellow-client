@@ -92,7 +92,7 @@
 		if (!animContainer) return;
 		//console.log('create sticker observer');
 		observer = new IntersectionObserver(
-			(entries) => {
+			entries => {
 				isInViewport = entries[entries.length - 1].isIntersecting;
 				//console.log(entries, 'isInViewport: ', isInViewport);
 			},
@@ -234,32 +234,6 @@
 	}
 </script>
 
-<div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
-	{#if $debug}
-		renderer: {renderer}
-		isLottie: {isLottie}
-		isImage: {isImage}
-		intersecting: "{intersecting}"
-	{/if}
-	{#if error}
-		<img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
-		<div class="error">{error}</div>
-	{:else if isLottie}
-		<div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>
-	{:else if isImage && intersecting}
-		<img
-			class="image"
-			style="width: {size}px; height: {size}px;"
-			src={file}
-			alt=""
-			bind:this={elStaticImg}
-			on:error={(e) => {
-				static_img_load_error(e);
-			}}
-		/>
-	{/if}
-</div>
-
 <style>
 	.sticker {
 		max-width: 100%;
@@ -281,3 +255,29 @@
 		font-size: 10px;
 	}
 </style>
+
+<div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
+	{#if $debug}
+		renderer: {renderer}
+		isLottie: {isLottie}
+		isImage: {isImage}
+		intersecting: "{intersecting}"
+	{/if}
+	{#if error}
+		<img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
+		<div class="error">{error}</div>
+	{:else if isLottie}
+		<div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>
+	{:else if isImage && intersecting}
+		<img
+			class="image"
+			style="width: {size}px; height: {size}px;"
+			src={file}
+			alt=""
+			bind:this={elStaticImg}
+			on:error={e => {
+				static_img_load_error(e);
+			}}
+		/>
+	{/if}
+</div>

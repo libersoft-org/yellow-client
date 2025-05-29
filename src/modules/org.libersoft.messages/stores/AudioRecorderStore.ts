@@ -10,11 +10,11 @@ export class AudioRecorderStore {
 	});
 
 	isOpen() {
-		return derived(this.store, ($store) => $store.open);
+		return derived(this.store, $store => $store.open);
 	}
 
 	setOpen(open: boolean) {
-		this.store.update((store) => {
+		this.store.update(store => {
 			store.open = open;
 			return store;
 		});

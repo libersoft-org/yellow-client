@@ -32,6 +32,14 @@
 	}
 </script>
 
+<style>
+	.group {
+		display: flex;
+		align-items: end;
+		gap: 10px;
+	}
+</style>
+
 <form onsubmit={onSubmit}>
 	<div class="group">
 		<Label text={`${m['messages.new_conversation.address']()}`}>
@@ -40,11 +48,3 @@
 		<Button data-testid="New Conversation Open" text={m['common.open']()} onClick={clickOpen} />
 	</div>
 </form>
-
-<style>
-	.group {
-		display: flex;
-		align-items: end;
-		gap: 10px;
-	}
-</style>

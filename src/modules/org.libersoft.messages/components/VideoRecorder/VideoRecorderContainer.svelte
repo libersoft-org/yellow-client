@@ -152,7 +152,7 @@
 			playerInstance = null;
 		}
 
-		setup().then((_player) => {
+		setup().then(_player => {
 			_player.on('deviceReady', () => {
 				const stream = _player.record().stream;
 				if (!micIndicatorRef) {

@@ -49,13 +49,13 @@
 			loading = true;
 			$currentFile
 				.loadFile()
-				.then((loadedFile) => {
+				.then(loadedFile => {
 					galleryStore.updateFile($currentFile.id, {
 						loaded: true,
 						...loadedFile,
 					});
 				})
-				.catch((err) => {
+				.catch(err => {
 					console.error('error fetching image data for yellow id:', $currentFile.id, err);
 				})
 				.finally(() => {
@@ -80,39 +80,6 @@
 		}
 	}
 </script>
-
-{#if $gallery.show}
-	<div class="gallery" onpointerdown={onAnywhereClick}>
-		<div class="top-left">
-			<Button img="img/download.svg" colorVariable="--icon-black" onClick={download} />
-		</div>
-		<div class="top-right">
-			<Button img="img/close.svg" colorVariable="--icon-black" onClick={close} />
-		</div>
-		{#key $currentFile.id}
-			{#if $currentFile}
-				<div class="image">
-					{#if !loading}
-						<img src={$currentFile.url} alt={$currentFile.fileName} />
-					{:else}
-						<div>
-							<Spinner color="white" />
-						</div>
-					{/if}
-					<div class="image-caption">
-						{$currentFile.fileName} ({currentFilePosition} of {$gallery.files.length})
-					</div>
-				</div>
-			{/if}
-		{/key}
-		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
-			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--icon-white" size="80px" onClick={previous} />
-		</div>
-		<div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
-			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--icon-white" size="80px" onClick={next} />
-		</div>
-	</div>
-{/if}
 
 <style>
 	.gallery {
@@ -191,3 +158,36 @@
 		max-height: 85vh;
 	}
 </style>
+
+{#if $gallery.show}
+	<div class="gallery" onpointerdown={onAnywhereClick}>
+		<div class="top-left">
+			<Button img="img/download.svg" colorVariable="--icon-black" onClick={download} />
+		</div>
+		<div class="top-right">
+			<Button img="img/close.svg" colorVariable="--icon-black" onClick={close} />
+		</div>
+		{#key $currentFile.id}
+			{#if $currentFile}
+				<div class="image">
+					{#if !loading}
+						<img src={$currentFile.url} alt={$currentFile.fileName} />
+					{:else}
+						<div>
+							<Spinner color="white" />
+						</div>
+					{/if}
+					<div class="image-caption">
+						{$currentFile.fileName} ({currentFilePosition} of {$gallery.files.length})
+					</div>
+				</div>
+			{/if}
+		{/key}
+		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
+			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--icon-white" size="80px" onClick={previous} />
+		</div>
+		<div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
+			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--icon-white" size="80px" onClick={next} />
+		</div>
+	</div>
+{/if}

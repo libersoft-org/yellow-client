@@ -19,7 +19,7 @@
 
 	let showSendModal = false;
 
-	$: if (!currency || !get(currencies).find((c) => c == currency)) {
+	$: if (!currency || !get(currencies).find(c => c == currency)) {
 		console.log('reset currency field:', currency, get(currencies));
 		currency = $selectedMainCurrencySymbol;
 	}
@@ -70,6 +70,25 @@
 	}
 </script>
 
+<style>
+	.send {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.group {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+
+	.group .label {
+		padding-left: 3px;
+		font-weight: bold;
+	}
+</style>
+
 <div class="send">
 	<div class="group">
 		<div class="label">Send to:</div>
@@ -91,22 +110,3 @@
 	<Button text="Send" onClick={send} />
 </div>
 <Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />
-
-<style>
-	.send {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.group {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-
-	.group .label {
-		padding-left: 3px;
-		font-weight: bold;
-	}
-</style>

@@ -8,10 +8,6 @@
 	const { children }: Props = $props();
 </script>
 
-<thead>
-	{@render children()}
-</thead>
-
 <style>
 	thead {
 		display: none;
@@ -23,3 +19,7 @@
 		}
 	}
 </style>
+
+<thead>
+	{@render children()}
+</thead>

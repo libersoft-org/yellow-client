@@ -46,35 +46,6 @@
 	const ContentComponent = $derived(steps[currentStep].component);
 </script>
 
-<div class="wizard">
-	<div class="progress-bar">
-		{#each steps as step, index}
-			<div class="step">
-				<div class="circle {index === currentStep ? 'active' : ''}">
-					{index + 1}
-				</div>
-				{#if index < steps.length - 1}
-					<div class="line"></div>
-				{/if}
-			</div>
-		{/each}
-	</div>
-	<div class="content">
-		<ContentComponent {params} />
-	</div>
-	<div class="navigation">
-		{#if currentStep > 0}
-			<Button text="Previous" onClick={prevStep} />
-		{/if}
-		<div class="gap"></div>
-		{#if currentStep < steps.length - 1}
-			<Button data-testid="wizard-next" text={nextText} onClick={nextStep} />
-		{:else}
-			<Button data-testid="wizard-next" text="Finish" onClick={close} />
-		{/if}
-	</div>
-</div>
-
 <style>
 	.wizard {
 		display: flex;
@@ -127,3 +98,32 @@
 		flex-grow: 1;
 	}
 </style>
+
+<div class="wizard">
+	<div class="progress-bar">
+		{#each steps as step, index}
+			<div class="step">
+				<div class="circle {index === currentStep ? 'active' : ''}">
+					{index + 1}
+				</div>
+				{#if index < steps.length - 1}
+					<div class="line"></div>
+				{/if}
+			</div>
+		{/each}
+	</div>
+	<div class="content">
+		<ContentComponent {params} />
+	</div>
+	<div class="navigation">
+		{#if currentStep > 0}
+			<Button text="Previous" onClick={prevStep} />
+		{/if}
+		<div class="gap"></div>
+		{#if currentStep < steps.length - 1}
+			<Button data-testid="wizard-next" text={nextText} onClick={nextStep} />
+		{:else}
+			<Button data-testid="wizard-next" text="Finish" onClick={close} />
+		{/if}
+	</div>
+</div>

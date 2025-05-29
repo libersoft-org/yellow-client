@@ -77,6 +77,59 @@
 	}
 </script>
 
+<style>
+	.filter {
+		padding: 10px;
+	}
+
+	.emojiset {
+		height: calc(100% - 105px);
+		overflow: auto;
+	}
+
+	.title {
+		font-size: 16px;
+		text-align: center;
+		font-weight: bold;
+		padding: 8px;
+		background-color: #eee;
+		border-radius: 10px;
+		margin: 16px 10px;
+		border: 1px solid #aaa;
+	}
+
+	.group:first-of-type {
+		.title {
+			margin-top: 0;
+		}
+	}
+
+	.emojis {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		padding: 0 10px;
+		overflow: visible;
+	}
+
+	.emoji {
+		display: flex;
+		padding: 3px;
+		border-radius: 10px;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
+		border: 1px solid #fff;
+	}
+
+	.emoji.hover:hover {
+		z-index: 90;
+		transform: scale(1.5);
+		background-color: #f0f0f0;
+		border: 1px solid #ddd;
+	}
+</style>
+
 {#if $debug}
 	<pre>
   $emojisLoading: {$emojisLoading}
@@ -92,17 +145,17 @@
 
 {#snippet clickable_emoji(emoji)}
 	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi]} let:intersecting>
-		<BaseButton onRightClick={(e) => showAlts(e, emoji)}>
+		<BaseButton onRightClick={e => showAlts(e, emoji)}>
 			<div
 				bind:this={intersectedElements[emoji.codepoints_rgi]}
 				class="emoji hover"
 				use:longpress
-				on:longpress={(e) => showAlts(e, emoji)}
+				on:longpress={e => showAlts(e, emoji)}
 				on:mymousedown={() => {
 					altsMenu?.close();
 				}}
 				on:click={() => clickEmoji(emoji.base)}
-				on:keydown={(e) => {}}
+				on:keydown={e => {}}
 				role="button"
 				tabindex="0"
 			>
@@ -159,56 +212,3 @@
 		{/each}
 	</div>
 </ContextMenu>
-
-<style>
-	.filter {
-		padding: 10px;
-	}
-
-	.emojiset {
-		height: calc(100% - 105px);
-		overflow: auto;
-	}
-
-	.title {
-		font-size: 16px;
-		text-align: center;
-		font-weight: bold;
-		padding: 8px;
-		background-color: #eee;
-		border-radius: 10px;
-		margin: 16px 10px;
-		border: 1px solid #aaa;
-	}
-
-	.group:first-of-type {
-		.title {
-			margin-top: 0;
-		}
-	}
-
-	.emojis {
-		display: flex;
-		justify-content: center;
-		flex-wrap: wrap;
-		padding: 0 10px;
-		overflow: visible;
-	}
-
-	.emoji {
-		display: flex;
-		padding: 3px;
-		border-radius: 10px;
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease;
-		border: 1px solid #fff;
-	}
-
-	.emoji.hover:hover {
-		z-index: 90;
-		transform: scale(1.5);
-		background-color: #f0f0f0;
-		border: 1px solid #ddd;
-	}
-</style>

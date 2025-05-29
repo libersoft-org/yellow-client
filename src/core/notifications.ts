@@ -60,19 +60,19 @@ export async function updateExampleNotification() {
 		log.debug('updateExampleNotification v:', v);
 		if (v.length > 1) {
 			await deleteNotification(v[0]);
-			exampleNotifications.update((n) => n.slice(1));
+			exampleNotifications.update(n => n.slice(1));
 		}
 		if (get(notificationsEnabled)) {
 			let x = await addNotification({
 				title: `Example Notification ${counter}`,
 				body: 'This is an example notification',
-				callback: (event) => {
+				callback: event => {
 					log.debug('example notification callback:', event);
-					exampleNotifications.update((n) => n.filter((i) => i !== event.id));
+					exampleNotifications.update(n => n.filter(i => i !== event.id));
 				},
 			});
 			if (x) {
-				exampleNotifications.update((n) => [...n, x]);
+				exampleNotifications.update(n => [...n, x]);
 			}
 		} else {
 			await deleteExampleNotifications();
@@ -94,7 +94,7 @@ export function setNotificationsEnabled(value) {
 					return;
 				}
 				isRequestingNotificationsPermission.set(true);
-				Notification.requestPermission().then((permission) => {
+				Notification.requestPermission().then(permission => {
 					console.log('Notification dialog callback:', permission);
 					isRequestingNotificationsPermission.set(false);
 					if (permission == 'granted') {
@@ -247,7 +247,7 @@ async function sendTauriNotification(notification: YellowNotification) {
 		importance: Importance.Default,
 		visibility: Visibility.Private,
 	});
-	await onAction(async (n) => {
+	await onAction(async n => {
 		log.debug('notification onAction:', n);
 		await notification.callback?.('click');
 	});
@@ -311,7 +311,7 @@ async function showBrowserNotification(notification: YellowNotification) {
 			//silent: false,
 			//vibrate: [200, 100, 200],
 		});
-		n.onclick = async (e) => {
+		n.onclick = async e => {
 			log.debug('notification onclick:', e);
 			await notification.callback?.('click');
 		};

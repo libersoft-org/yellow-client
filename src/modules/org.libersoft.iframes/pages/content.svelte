@@ -12,7 +12,7 @@
 
 	onMount(() => {
 		console.log('onMount');
-		window.addEventListener('message', async (event) => {
+		window.addEventListener('message', async event => {
 			console.log('parent received message: ', event);
 			//if (event.origin !== window.location.origin) return; // Validate origin
 			//if (event.origin !== 'null') return;
@@ -39,7 +39,7 @@
 			let res = [];
 			for (let account of get(accounts)) {
 				let acc = get(account);
-				if (acc.modules_enabled.find((m) => m === module_id) !== -1) {
+				if (acc.modules_enabled.find(m => m === module_id) !== -1) {
 					res.push(acc);
 				}
 			}
@@ -56,20 +56,6 @@
 	}
 </script>
 
-<!--<h2>Iframe-isolated module test</h2>-->
-<!--<iframe sandbox="allow-scripts" src={url} title="content" width="600" height="400"></iframe>-->
-<!--<iframe sandbox="allow-scripts" src="https://koo5.github.io/" title="content" width="600" height="400"></iframe>-->
-<!--<iframe id="iframe1" src="iframe1.html" style="width: 45%; height: 200px;"></iframe>-->
-<!--<iframe id="iframe2" src="iframe2.html" style="width: 45%; height: 200px;"></iframe>-->
-
-<div class="parent">
-	<!--{#if $debug}-->
-	<FilesDebug />
-	<!--{/if}-->
-
-	<iframe bind:this={iframe} sandbox="allow-scripts" src={url} title="content"></iframe>
-</div>
-
 <style>
 	.parent {
 		width: 100%;
@@ -83,3 +69,17 @@
 		border: none;
 	}
 </style>
+
+<!--<h2>Iframe-isolated module test</h2>-->
+<!--<iframe sandbox="allow-scripts" src={url} title="content" width="600" height="400"></iframe>-->
+<!--<iframe sandbox="allow-scripts" src="https://koo5.github.io/" title="content" width="600" height="400"></iframe>-->
+<!--<iframe id="iframe1" src="iframe1.html" style="width: 45%; height: 200px;"></iframe>-->
+<!--<iframe id="iframe2" src="iframe2.html" style="width: 45%; height: 200px;"></iframe>-->
+
+<div class="parent">
+	<!--{#if $debug}-->
+	<FilesDebug />
+	<!--{/if}-->
+
+	<iframe bind:this={iframe} sandbox="allow-scripts" src={url} title="content"></iframe>
+</div>

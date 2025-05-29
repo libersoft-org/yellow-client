@@ -9,12 +9,12 @@ export class FileDownloadStore implements FileDownloadStoreType {
 	}
 
 	get(id: string) {
-		return get(this.store).find((download) => download.record.id === id);
+		return get(this.store).find(download => download.record.id === id);
 	}
 
 	set(id: string, download: FileDownload) {
-		this.store.update((store) => {
-			const index = store.findIndex((d) => d.record.id === id);
+		this.store.update(store => {
+			const index = store.findIndex(d => d.record.id === id);
 			if (index !== -1) {
 				store[index] = download;
 			} else {
@@ -26,8 +26,8 @@ export class FileDownloadStore implements FileDownloadStoreType {
 
 	patch(id: string, data: Partial<FileDownload>) {
 		// patch but dont change ref
-		this.store.update((store) => {
-			const oldDownload = store.find((download) => download.record.id === id);
+		this.store.update(store => {
+			const oldDownload = store.find(download => download.record.id === id);
 			if (!oldDownload) {
 				return store;
 			}
@@ -41,7 +41,7 @@ export class FileDownloadStore implements FileDownloadStoreType {
 	}
 
 	delete(id: string) {
-		this.store.update((store) => store.filter((download) => download.record.id !== id));
+		this.store.update(store => store.filter(download => download.record.id !== id));
 	}
 
 	updateDownloadRecord(id: string, record: FileUploadRecord) {
@@ -49,7 +49,7 @@ export class FileDownloadStore implements FileDownloadStoreType {
 	}
 
 	isAnyDownloadRunning() {
-		return this.getAll().some((download) => download.running);
+		return this.getAll().some(download => download.running);
 	}
 }
 

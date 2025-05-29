@@ -13,7 +13,7 @@
 	let attachmentIds = $state([]);
 
 	let downloadableRecords = $derived.by(() => {
-		return attachedUploads.filter((upload) => {
+		return attachedUploads.filter(upload => {
 			return (upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER && upload.record.status === FileUploadRecordStatus.BEGUN) || (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED);
 		});
 	});
@@ -22,12 +22,12 @@
 	let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
 
 	// subscribe to the store to get the uploads
-	fileUploadStore.store.subscribe((uploads) => {
+	fileUploadStore.store.subscribe(uploads => {
 		if (attachmentIds.length === 0) {
 			return;
 		}
 
-		attachedUploads = uploads.filter((upload) => {
+		attachedUploads = uploads.filter(upload => {
 			return attachmentIds.includes(upload.record.id);
 		});
 	});
@@ -43,8 +43,8 @@
 
 	function onAcceptAll() {
 		downloadAttachmentsSerial(
-			downloadableRecords.map((upload) => upload.record),
-			(download) => {
+			downloadableRecords.map(upload => upload.record),
+			download => {
 				assembleFile(
 					new Blob(download.chunksReceived, {
 						type: download.record.fileMimeType,
@@ -56,27 +56,12 @@
 	}
 
 	onMount(() => {
-		getAttachmentEls().forEach((attachmentEl) => {
+		getAttachmentEls().forEach(attachmentEl => {
 			const uploadId = attachmentEl.getAttribute('data-upload-id');
 			attachmentIds.push(uploadId);
 		});
 	});
 </script>
-
-<div class="attachments-wrap" bind:this={ref}>
-	<div class="attachments">
-		{#each children as child (child.tagUniqueId)}
-			{#if child.component}
-				<child.component {...child.props} />
-			{/if}
-		{/each}
-	</div>
-	{#if showBulkDownloadAction}
-		<div class="actions">
-			<Button width="80px" text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'} onClick={onAcceptAll} />
-		</div>
-	{/if}
-</div>
 
 <style>
 	.attachments-wrap {
@@ -101,3 +86,18 @@
 		justify-content: right;
 	}
 </style>
+
+<div class="attachments-wrap" bind:this={ref}>
+	<div class="attachments">
+		{#each children as child (child.tagUniqueId)}
+			{#if child.component}
+				<child.component {...child.props} />
+			{/if}
+		{/each}
+	</div>
+	{#if showBulkDownloadAction}
+		<div class="actions">
+			<Button width="80px" text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'} onClick={onAcceptAll} />
+		</div>
+	{/if}
+</div>

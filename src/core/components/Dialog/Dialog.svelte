@@ -15,21 +15,6 @@
 	}
 </script>
 
-<Modal title={data.title} bind:show width="400px">
-	<div class="top">
-		{#if data.icon}
-			<Icon img={data.icon} alt="" size="50px" padding="0px" />
-		{/if}
-		<div>{data.body}</div>
-	</div>
-	<div class="buttons">
-		{#each data.buttons as button}
-			<Button {...button} width="100%" />
-		{/each}
-	</div>
-	<!-- <Button text="Close" onClick={() => (show = false)} /> -->
-</Modal>
-
 <style>
 	.buttons {
 		display: flex;
@@ -52,3 +37,18 @@
 		padding: 10px;
 	}
 </style>
+
+<Modal title={data.title} bind:show width="400px">
+	<div class="top">
+		{#if data.icon}
+			<Icon img={data.icon} alt="" size="50px" padding="0px" />
+		{/if}
+		<div>{data.body}</div>
+	</div>
+	<div class="buttons">
+		{#each data.buttons as button}
+			<Button {...button} width="100%" />
+		{/each}
+	</div>
+	<!-- <Button text="Close" onClick={() => (show = false)} /> -->
+</Modal>

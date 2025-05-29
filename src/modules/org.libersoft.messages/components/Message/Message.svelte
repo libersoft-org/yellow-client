@@ -201,7 +201,7 @@
 			}
 			//console.log('create observer');
 			observer = new IntersectionObserver(
-				async (entries) => {
+				async entries => {
 					//console.log(entries);
 					entries.sort((a, b) => a.time - b.time);
 					for (let entry of entries) {
@@ -282,58 +282,10 @@
 		await menu.openMenu(e);
 	}
 
-	const onReactionClick = (codepoints_rgi) => {
+	const onReactionClick = codepoints_rgi => {
 		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
 	};
 </script>
-
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
-	<div bind:this={elIntersectionObserver}></div>
-	<!--<Reply name="Someone" text="Some text" />-->
-	<!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
-	<!--<Audio file="modules/{identifier}/audio/message.mp3" />-->
-	<!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
-	<!--<Map latitude="50.0755", longitude="14.4378" />-->
-	<!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
-	{#if $debug}
-		<div class="debug">
-			<span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format:
-			<span class="bold">{message.format}</span>):<br /><br />
-			{message.message}<br />
-			{JSON.stringify(message, null, 2)}<br />
-			<hr />
-			<span class="bold">Rendering</span>:<br /><br />
-		</div>
-	{:else}{/if}
-	<MessageContent {messageContent} />
-	<RenderMessageReactions reactions={message.reactions} {onReactionClick} />
-	<!--
- <div class="text">{@html 'processMessage(message.message)'}</div>
- <div class="text">{@html '<b>srtrstr'}</div>
- <div class="text">{@html 'srtrstr'}</div>
- <div class="text">{@html '<hr/>'}</div>
- -->
-	<div class="bottomline">
-		<div class="bottomline-reaction">
-			<MessageReaction {message} />
-		</div>
-		<div class="bottomline-info">
-			<div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
-			{#if message.is_outgoing}
-				<div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
-			{/if}
-		</div>
-	</div>
-</div>
-
-<ContextMenu bind:this={menu} target={elCaret}>
-	<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
-	<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
-	<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
-	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} data-testid="reply-context-menu-item" />
-	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
-	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
-</ContextMenu>
 
 <style>
 	.message {
@@ -432,3 +384,51 @@
 		opacity: 0.85;
 	}
 </style>
+
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
+	<div bind:this={elIntersectionObserver}></div>
+	<!--<Reply name="Someone" text="Some text" />-->
+	<!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
+	<!--<Audio file="modules/{identifier}/audio/message.mp3" />-->
+	<!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
+	<!--<Map latitude="50.0755", longitude="14.4378" />-->
+	<!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
+	{#if $debug}
+		<div class="debug">
+			<span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format:
+			<span class="bold">{message.format}</span>):<br /><br />
+			{message.message}<br />
+			{JSON.stringify(message, null, 2)}<br />
+			<hr />
+			<span class="bold">Rendering</span>:<br /><br />
+		</div>
+	{:else}{/if}
+	<MessageContent {messageContent} />
+	<RenderMessageReactions reactions={message.reactions} {onReactionClick} />
+	<!--
+ <div class="text">{@html 'processMessage(message.message)'}</div>
+ <div class="text">{@html '<b>srtrstr'}</div>
+ <div class="text">{@html 'srtrstr'}</div>
+ <div class="text">{@html '<hr/>'}</div>
+ -->
+	<div class="bottomline">
+		<div class="bottomline-reaction">
+			<MessageReaction {message} />
+		</div>
+		<div class="bottomline-info">
+			<div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
+			{#if message.is_outgoing}
+				<div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
+			{/if}
+		</div>
+	</div>
+</div>
+
+<ContextMenu bind:this={menu} target={elCaret}>
+	<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
+	<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
+	<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
+	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} data-testid="reply-context-menu-item" />
+	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
+	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
+</ContextMenu>

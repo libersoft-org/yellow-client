@@ -12,6 +12,14 @@
 	}
 </script>
 
+<style>
+	.gif {
+		display: flex;
+		border-radius: 10px;
+		overflow: hidden;
+	}
+</style>
+
 {#if v}
 	<div class="gif">
 		<BaseButton onClick={openExpressions}>
@@ -21,11 +29,3 @@
 {:else}
 	error
 {/if}
-
-<style>
-	.gif {
-		display: flex;
-		border-radius: 10px;
-		overflow: hidden;
-	}
-</style>

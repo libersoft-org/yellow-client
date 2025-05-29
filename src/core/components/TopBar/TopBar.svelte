@@ -1,19 +1,3 @@
-<div class="top-bar">
-	<slot />
-
-	<div class="left">
-		<slot name="left" />
-	</div>
-
-	<div class="center">
-		<slot name="center" />
-	</div>
-
-	<div class="right">
-		<slot name="right" />
-	</div>
-</div>
-
 <style>
 	.top-bar {
 		display: flex;
@@ -66,3 +50,19 @@
 		}
 	}
 </style>
+
+<div class="top-bar">
+	<slot />
+
+	<div class="left">
+		<slot name="left" />
+	</div>
+
+	<div class="center">
+		<slot name="center" />
+	</div>
+
+	<div class="right">
+		<slot name="right" />
+	</div>
+</div>

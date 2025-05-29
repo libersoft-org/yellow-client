@@ -132,7 +132,7 @@ class MediaService {
 		const playEl = this.videoElement.parentNode?.querySelector('.vjs-big-play-button');
 		const prep = () => {
 			console.log('clickeeed!!!');
-			this.downloadFullFile().then((blob) => {
+			this.downloadFullFile().then(blob => {
 				console.log('dw');
 				videoElement.src = URL.createObjectURL(blob);
 				player.play();
@@ -143,11 +143,11 @@ class MediaService {
 		playEl?.addEventListener('pointerdown', prep);
 
 		const EVENTS = ['loadstart', 'progress', 'suspend', 'abort', 'error', 'emptied', 'stalled', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'playing', 'waiting', 'seeking', 'seeked', 'ended', 'durationchange', 'timeupdate', 'play', 'pause', 'ratechange', 'resize', 'volumechange'];
-		EVENTS.forEach((evt) => {
+		EVENTS.forEach(evt => {
 			player.on(evt, () => console.log('test evt', evt));
 		});
 
-		this.videoElement.addEventListener('play', (evt) => {
+		this.videoElement.addEventListener('play', evt => {
 			// code you want to happen when the video plays
 			console.log('asdasdasdasdadasd');
 		});

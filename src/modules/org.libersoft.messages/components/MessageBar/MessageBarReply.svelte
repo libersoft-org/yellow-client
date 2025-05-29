@@ -12,20 +12,6 @@
 	let { name, replyToMessage, onClose }: MessageBarReplyProps = $props();
 </script>
 
-<div class="reply-wrap">
-	<div class="content">
-		<div class="heading">
-			Replying to <strong>{name}</strong>
-		</div>
-		<div class="message">
-			{truncateTextEnd(replyToMessage, 70)}
-		</div>
-	</div>
-	<div class="close">
-		<Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" onClick={onClose} size="24px" padding="0px" />
-	</div>
-</div>
-
 <style>
 	.reply-wrap {
 		display: flex;
@@ -56,3 +42,17 @@
 		flex: 0 0 30px;
 	}
 </style>
+
+<div class="reply-wrap">
+	<div class="content">
+		<div class="heading">
+			Replying to <strong>{name}</strong>
+		</div>
+		<div class="message">
+			{truncateTextEnd(replyToMessage, 70)}
+		</div>
+	</div>
+	<div class="close">
+		<Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" onClick={onClose} size="24px" padding="0px" />
+	</div>
+</div>

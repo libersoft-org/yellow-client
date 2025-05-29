@@ -2,10 +2,6 @@
 	export let text;
 </script>
 
-{#if text}
-	<div class="section">{text}</div>
-{/if}
-
 <style>
 	.section {
 		display: flex;
@@ -18,3 +14,7 @@
 		border-radius: 20px;
 	}
 </style>
+
+{#if text}
+	<div class="section">{text}</div>
+{/if}

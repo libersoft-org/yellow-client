@@ -9,16 +9,6 @@
 	}
 </script>
 
-<div class="welcome">
-	<BaseButton onClick={clickLogo}>
-		<div class="logo">
-			<Icon img="img/logo.svg" alt={product} size="200px" />
-			<div class="product">{product}</div>
-		</div>
-	</BaseButton>
-	<VersionInfo className="centered" />
-</div>
-
 <style>
 	.welcome {
 		display: flex;
@@ -43,3 +33,13 @@
 		font-weight: bold;
 	}
 </style>
+
+<div class="welcome">
+	<BaseButton onClick={clickLogo}>
+		<div class="logo">
+			<Icon img="img/logo.svg" alt={product} size="200px" />
+			<div class="product">{product}</div>
+		</div>
+	</BaseButton>
+	<VersionInfo className="centered" />
+</div>

@@ -9,10 +9,6 @@
 	let { center = false, children, ...restProps }: Props = $props();
 </script>
 
-<td {...restProps} class:center>
-	{@render children()}
-</td>
-
 <style>
 	td {
 		padding: 10px;
@@ -22,3 +18,7 @@
 		text-align: center;
 	}
 </style>
+
+<td {...restProps} class:center>
+	{@render children()}
+</td>

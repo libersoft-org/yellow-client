@@ -10,7 +10,7 @@
 		navigator.clipboard
 			.writeText(link)
 			.then(() => console.log('Address copied to clipboard'))
-			.catch((err) => console.error('Error while copying to clipboard', err));
+			.catch(err => console.error('Error while copying to clipboard', err));
 		setInfo('Copied!');
 		setTimeout(() => hideInfo(), 1000);
 	}
@@ -28,22 +28,6 @@
 		info.classList.add('hidden');
 	}
 </script>
-
-<div class="history">
-	{#if $selectedNetwork && $selectedAddress}
-		<div class="bold">Address history:</div>
-		<div class="url">
-			{link}
-		</div>
-		<div class="info hidden" bind:this={info}></div>
-		<div class="buttons">
-			<Button text="Copy link" onClick={copyLink} />
-			<Button text="Open link" onClick={openLink} />
-		</div>
-	{:else}
-		<div>No network or wallet selected</div>
-	{/if}
-</div>
 
 <style>
 	.history {
@@ -76,3 +60,19 @@
 		display: none;
 	}
 </style>
+
+<div class="history">
+	{#if $selectedNetwork && $selectedAddress}
+		<div class="bold">Address history:</div>
+		<div class="url">
+			{link}
+		</div>
+		<div class="info hidden" bind:this={info}></div>
+		<div class="buttons">
+			<Button text="Copy link" onClick={copyLink} />
+			<Button text="Open link" onClick={openLink} />
+		</div>
+	{:else}
+		<div>No network or wallet selected</div>
+	{/if}
+</div>

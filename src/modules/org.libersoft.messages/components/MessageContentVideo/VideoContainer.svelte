@@ -43,7 +43,7 @@
 
 	function getFileChunkFactory(uploadId) {
 		const fn = makeDownloadChunkAsyncFn(get(active_account));
-		return (params) => fn({ uploadId, ...params });
+		return params => fn({ uploadId, ...params });
 	}
 
 	function onDownload() {
@@ -51,7 +51,7 @@
 			debug('No upload data available');
 			return;
 		}
-		downloadAttachmentsSerial([upload.record], (download) => {
+		downloadAttachmentsSerial([upload.record], download => {
 			const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
 			assembleFile(blob, download.record.fileOriginalName);
 		});
@@ -63,7 +63,7 @@
 			return;
 		}
 		videoIsFullDownloading = true;
-		downloadAttachmentsSerial([upload.record], (download) => {
+		downloadAttachmentsSerial([upload.record], download => {
 			videoIsFullDownloading = false;
 			const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
 			startVideoJS(URL.createObjectURL(blob)).finally(() => {
@@ -149,7 +149,7 @@
 				resolve(player);
 			});
 
-			player.on('error', (err) => {
+			player.on('error', err => {
 				reject(err);
 			});
 		});
@@ -158,20 +158,20 @@
 	const fetchPosterDynamically = () => {
 		fetchingPoster = true;
 		const getFileChunk = getFileChunkFactory(uploadId);
-		return getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then((firstChunk) => {
+		return getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then(firstChunk => {
 			if (!upload) {
 				debug('No upload data available');
 				return;
 			}
 			MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: upload.record.fileMimeType }))
-				.then((thumbnailBlob) => {
+				.then(thumbnailBlob => {
 					// set thumbnailBlob to img src
 					thumbnailSrc = URL.createObjectURL(thumbnailBlob);
 					// mediaHandler.player.poster(thumbnailSrc);
 					// mediaHandler.player.width(140);
 					// mediaHandler.player.height(280);
 				})
-				.catch((err) => {
+				.catch(err => {
 					posterError = true;
 				})
 				.finally(() => {
@@ -183,7 +183,7 @@
 	onMount(() => {
 		loadingData = true;
 		loadUploadData(uploadId)
-			.then(async (uploadData) => {
+			.then(async uploadData => {
 				upload = uploadData;
 				const { record } = uploadData;
 

@@ -32,7 +32,7 @@ export class FilesService {
 				if (existingDownload) {
 					// download is in progress
 					const obs = liveQuery(() => filesDB.files.where({ fileTransferId: uploadId }).first());
-					const sub = obs.subscribe((subscribedLocalFile) => {
+					const sub = obs.subscribe(subscribedLocalFile => {
 						if (subscribedLocalFile?.localFileStatus === LocalFileStatus.READY) {
 							sub.unsubscribe();
 							resolve({ localFile });
@@ -58,7 +58,7 @@ export class FilesService {
 
 			await filesDB.addFile(newLocalFile);
 
-			this.fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc), async (download) => {
+			this.fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc), async download => {
 				newLocalFile.localFileStatus = LocalFileStatus.READY;
 				newLocalFile.fileBlob = new Blob(download.chunksReceived, { type: record.fileMimeType });
 				// const result = await filesDB.updateFile(record.id, newLocalFile);

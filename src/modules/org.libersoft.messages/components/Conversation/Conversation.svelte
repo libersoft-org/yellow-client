@@ -63,12 +63,6 @@
 	setContext('FileUploadModal', { showFileUploadModal, fileUploadModalFiles, setFileUploadModal });
 </script>
 
-<div role="none" class="conversation" onkeydown={onKeydown}>
-	<ProfileBar {closeConversation} />
-	<MessagesList {setBarFocus} conversation={$selectedConversation} />
-	<MessageBar bind:this={message_bar} />
-</div>
-
 <style>
 	.conversation {
 		display: flex;
@@ -79,3 +73,9 @@
 		background-size: 400px;
 	}
 </style>
+
+<div role="none" class="conversation" onkeydown={onKeydown}>
+	<ProfileBar {closeConversation} />
+	<MessagesList {setBarFocus} conversation={$selectedConversation} />
+	<MessageBar bind:this={message_bar} />
+</div>

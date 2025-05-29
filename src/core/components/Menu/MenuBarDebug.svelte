@@ -17,7 +17,7 @@
 		//log.debug('addNotification...');
 		await addNotification({
 			body: 'Notification body',
-			callback: (event) => {
+			callback: event => {
 				log.debug('Debug notification callback: ' + event);
 			},
 		});

@@ -34,8 +34,6 @@
 	}
 </script>
 
-<input data-testid={testId} bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={(e) => handleKeydown(e)} />
-
 <style>
 	input {
 		box-sizing: content-box;
@@ -50,3 +48,5 @@
 		outline: 2px solid #0060df;
 	}
 </style>
+
+<input data-testid={testId} bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />

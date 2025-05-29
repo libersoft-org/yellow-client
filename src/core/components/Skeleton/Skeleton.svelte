@@ -14,8 +14,6 @@
 	let background = $derived(`linear-gradient(90deg, ${baseColor} 25%, ${secondaryColor} 50%, ${baseColor} 75%)`);
 </script>
 
-<div class="skeleton" style:width style:height style:border-radius={borderRadius} style:background-image={background}></div>
-
 <style>
 	.skeleton {
 		/*
@@ -38,3 +36,5 @@
 		}
 	}
 </style>
+
+<div class="skeleton" style:width style:height style:border-radius={borderRadius} style:background-image={background}></div>

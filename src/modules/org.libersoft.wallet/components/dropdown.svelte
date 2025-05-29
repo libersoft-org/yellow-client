@@ -6,13 +6,6 @@
 	export let onClick;
 </script>
 
-<BaseButton {onClick}>
-	<div class="dropdown">
-		<div class="text">{text}</div>
-		<Icon img="img/down.svg" alt="▼" size="15px" padding="0px" colorVariable={colorVariable && colorVariable} />
-	</div>
-</BaseButton>
-
 <style>
 	.dropdown {
 		display: flex;
@@ -31,3 +24,10 @@
 		color: black;
 	}
 </style>
+
+<BaseButton {onClick}>
+	<div class="dropdown">
+		<div class="text">{text}</div>
+		<Icon img="img/down.svg" alt="▼" size="15px" padding="0px" colorVariable={colorVariable && colorVariable} />
+	</div>
+</BaseButton>

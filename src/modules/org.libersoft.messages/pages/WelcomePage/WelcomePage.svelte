@@ -20,30 +20,6 @@
 	}
 </script>
 
-{#if $isMobile}
-	<TopBar>
-		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={() => mobileClose()} colorVariable="--icon-white" visibleOnDesktop={true} />
-			<h1 class="title">Messages</h1>
-		</svelte:fragment>
-	</TopBar>
-{/if}
-
-<div class="welcome">
-	<img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
-	<div class="label">
-		{#if $online}
-			<div>Select your conversation<br />or</div>
-			<Button text="Start a new one" padding="5px" onClick={clickNew} />
-		{:else if $active_account}
-			<div>This module is offline</div>
-		{:else}
-			<div>Select account...</div>
-		{/if}
-	</div>
-</div>
-<Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
-
 <style>
 	.welcome {
 		display: flex;
@@ -76,3 +52,27 @@
 		color: var(--color-primary-foreground);
 	}
 </style>
+
+{#if $isMobile}
+	<TopBar>
+		<svelte:fragment slot="left">
+			<Icon img="img/back.svg" onClick={() => mobileClose()} colorVariable="--icon-white" visibleOnDesktop={true} />
+			<h1 class="title">Messages</h1>
+		</svelte:fragment>
+	</TopBar>
+{/if}
+
+<div class="welcome">
+	<img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
+	<div class="label">
+		{#if $online}
+			<div>Select your conversation<br />or</div>
+			<Button text="Start a new one" padding="5px" onClick={clickNew} />
+		{:else if $active_account}
+			<div>This module is offline</div>
+		{:else}
+			<div>Select account...</div>
+		{/if}
+	</div>
+</div>
+<Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />

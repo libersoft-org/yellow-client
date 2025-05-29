@@ -147,57 +147,6 @@
 	}
 </script>
 
-<div class="files2-test">
-	<h3>Mobile File Operations Test</h3>
-
-	{#if !TAURI_MOBILE}
-		<p class="warning">This test is only available on mobile platforms.</p>
-	{:else}
-		<div class="test-section">
-			<Label>File Name:</Label>
-			<Input bind:value={fileName} placeholder="Enter file name" />
-		</div>
-
-		<div class="test-section">
-			<Label>File Content:</Label>
-			<Input bind:value={fileContent} placeholder="Enter file content" />
-		</div>
-
-		<div class="test-section">
-			<Label>Append Content:</Label>
-			<Input bind:value={appendContent} placeholder="Content to append" />
-		</div>
-
-		<div class="test-section">
-			<Label>New File Name:</Label>
-			<Input bind:value={newFileName} placeholder="New name for rename" />
-		</div>
-
-		<div class="button-grid">
-			<Button onClick={testCreateFile}>Create File</Button>
-			<Button onClick={testAppendToFile} disabled={!createdFile}>Append to File</Button>
-			<Button onClick={testRenameFile} disabled={!createdFile}>Rename File</Button>
-			<Button onClick={testExportFile} disabled={!createdFile}>Export with Dialog</Button>
-			<Button onClick={testDeleteFile} disabled={!createdFile}>Delete File</Button>
-			<Button onClick={testFullWorkflow}>Test Full Workflow</Button>
-		</div>
-
-		{#if statusMessage}
-			<div class="status-message">
-				{statusMessage}
-			</div>
-		{/if}
-
-		{#if createdFile}
-			<div class="file-info">
-				<h4>Current File Info:</h4>
-				<p>Name: {createdFile.fileName}</p>
-				<p>Temp Name: {createdFile.tempFileName}</p>
-			</div>
-		{/if}
-	{/if}
-</div>
-
 <style>
 	.files2-test {
 		padding: 20px;
@@ -261,3 +210,54 @@
 		font-family: monospace;
 	}
 </style>
+
+<div class="files2-test">
+	<h3>Mobile File Operations Test</h3>
+
+	{#if !TAURI_MOBILE}
+		<p class="warning">This test is only available on mobile platforms.</p>
+	{:else}
+		<div class="test-section">
+			<Label>File Name:</Label>
+			<Input bind:value={fileName} placeholder="Enter file name" />
+		</div>
+
+		<div class="test-section">
+			<Label>File Content:</Label>
+			<Input bind:value={fileContent} placeholder="Enter file content" />
+		</div>
+
+		<div class="test-section">
+			<Label>Append Content:</Label>
+			<Input bind:value={appendContent} placeholder="Content to append" />
+		</div>
+
+		<div class="test-section">
+			<Label>New File Name:</Label>
+			<Input bind:value={newFileName} placeholder="New name for rename" />
+		</div>
+
+		<div class="button-grid">
+			<Button onClick={testCreateFile}>Create File</Button>
+			<Button onClick={testAppendToFile} disabled={!createdFile}>Append to File</Button>
+			<Button onClick={testRenameFile} disabled={!createdFile}>Rename File</Button>
+			<Button onClick={testExportFile} disabled={!createdFile}>Export with Dialog</Button>
+			<Button onClick={testDeleteFile} disabled={!createdFile}>Delete File</Button>
+			<Button onClick={testFullWorkflow}>Test Full Workflow</Button>
+		</div>
+
+		{#if statusMessage}
+			<div class="status-message">
+				{statusMessage}
+			</div>
+		{/if}
+
+		{#if createdFile}
+			<div class="file-info">
+				<h4>Current File Info:</h4>
+				<p>Name: {createdFile.fileName}</p>
+				<p>Temp Name: {createdFile.tempFileName}</p>
+			</div>
+		{/if}
+	{/if}
+</div>

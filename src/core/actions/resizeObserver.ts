@@ -9,7 +9,7 @@ export default function resize(target: Element, callback: ResizeCallback) {
 	// create on first use, inside the action, so we're SSR friendly
 	resizeObserver =
 		resizeObserver ||
-		new ResizeObserver((entries) => {
+		new ResizeObserver(entries => {
 			for (const entry of entries) {
 				const callback = resizeCallbacks.get(entry.target);
 				if (callback) {

@@ -8,13 +8,6 @@
 	const ratio = $derived(rest.ratio || 1);
 </script>
 
-<div class="image" role="img">
-	<div style:padding-bottom={ratio * 100 + '%'}></div>
-	<div class="image-container">
-		<img {src} {alt} loading="lazy" fetchpriority="auto" aria-hidden="true" draggable="false" />
-	</div>
-</div>
-
 <style>
 	.image {
 		position: relative;
@@ -41,3 +34,10 @@
 		object-position: 50% 50%;
 	}
 </style>
+
+<div class="image" role="img">
+	<div style:padding-bottom={ratio * 100 + '%'}></div>
+	<div class="image-container">
+		<img {src} {alt} loading="lazy" fetchpriority="auto" aria-hidden="true" draggable="false" />
+	</div>
+</div>

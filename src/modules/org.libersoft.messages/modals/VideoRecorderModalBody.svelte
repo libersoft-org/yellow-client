@@ -2,10 +2,6 @@
 	import VideoRecorderContainer from '@/org.libersoft.messages/components/VideoRecorder/VideoRecorderContainer.svelte';
 </script>
 
-<div class="video-recorder-modal-body">
-	<VideoRecorderContainer />
-</div>
-
 <style>
 	.video-recorder-modal-body {
 		width: 70vw;
@@ -22,3 +18,7 @@
 		}
 	}
 </style>
+
+<div class="video-recorder-modal-body">
+	<VideoRecorderContainer />
+</div>

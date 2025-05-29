@@ -4,16 +4,6 @@
 	export let text;
 </script>
 
-<div class="sides">
-	<div class="editor">
-		<HtmlEditor bind:text />
-		<!-- <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea> -->
-	</div>
-	<div class="preview">
-		<HtmlEditorPreview {text} />
-	</div>
-</div>
-
 <style>
 	.sides {
 		display: flex;
@@ -30,3 +20,13 @@
 		width: 50%;
 	}
 </style>
+
+<div class="sides">
+	<div class="editor">
+		<HtmlEditor bind:text />
+		<!-- <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea> -->
+	</div>
+	<div class="preview">
+		<HtmlEditorPreview {text} />
+	</div>
+</div>

@@ -3,15 +3,6 @@
 	import Option from '@/core/components/Select/SelectOption.svelte';
 </script>
 
-<div class="group">
-	<div class="title">Currency conversion:</div>
-	<div class="select">
-		<Select>
-			<Option value="1" text="USD" selected={true} />
-		</Select>
-	</div>
-</div>
-
 <style>
 	.group {
 		display: flex;
@@ -24,3 +15,12 @@
 		font-weight: bold;
 	}
 </style>
+
+<div class="group">
+	<div class="title">Currency conversion:</div>
+	<div class="select">
+		<Select>
+			<Option value="1" text="USD" selected={true} />
+		</Select>
+	</div>
+</div>

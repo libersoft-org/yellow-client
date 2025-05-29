@@ -1,7 +1,3 @@
-<div class="tabs">
-	<slot></slot>
-</div>
-
 <style>
 	.tabs {
 		display: flex;
@@ -10,3 +6,7 @@
 		overflow: hidden;
 	}
 </style>
+
+<div class="tabs">
+	<slot></slot>
+</div>

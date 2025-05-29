@@ -8,10 +8,6 @@
 	const { children }: Props = $props();
 </script>
 
-<th scope="col">
-	{@render children()}
-</th>
-
 <style>
 	th {
 		:global(.table-wide &) {
@@ -28,3 +24,7 @@
 		}
 	}
 </style>
+
+<th scope="col">
+	{@render children()}
+</th>

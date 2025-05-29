@@ -20,7 +20,7 @@
 	$: resetCurrency(currencies);
 
 	function resetCurrency(currencies) {
-		if (!currency || !get(currencies).find((c) => c == currency)) {
+		if (!currency || !get(currencies).find(c => c == currency)) {
 			console.log('reset currency:', currency, get(currencies));
 			currency = $selectedMainCurrencySymbol;
 		}
@@ -33,7 +33,7 @@
 		navigator.clipboard
 			.writeText($selectedAddress.address)
 			.then(() => console.log('Address copied to clipboard'))
-			.catch((err) => console.error('Error while copying to clipboard', err));
+			.catch(err => console.error('Error while copying to clipboard', err));
 		addressElement.innerHTML = 'Copied!';
 		setTimeout(() => (addressElement.innerHTML = $selectedAddress.address), 1000);
 	}
@@ -42,7 +42,7 @@
 		navigator.clipboard
 			.writeText(paymentText)
 			.then(() => console.log('Payment URI copied to clipboard'))
-			.catch((err) => console.error('Error while copying to clipboard', err));
+			.catch(err => console.error('Error while copying to clipboard', err));
 		paymentElement.innerHTML = 'Copied!';
 		setTimeout(() => (paymentElement.innerHTML = paymentText), 1000);
 	}
@@ -62,8 +62,8 @@
 		}
 		error = '';
 		paymentText = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount ? '?value=' + etherValue.toString() : '');
-		generateQRCode($selectedAddress.address, (url) => (qrAddress = url));
-		generateQRCode(paymentText, (url) => (qrPayment = url));
+		generateQRCode($selectedAddress.address, url => (qrAddress = url));
+		generateQRCode(paymentText, url => (qrPayment = url));
 	}
 
 	function generateQRCode(text, callback) {
@@ -73,47 +73,6 @@
 		});
 	}
 </script>
-
-<div class="receive">
-	{#if $selectedNetwork && $selectedAddress}
-		<div class="section">
-			<div class="section-wrapper">
-				<div class="bold">Your wallet address:</div>
-				<BaseButton onClick={clickCopyAddress}>
-					<div class="address">
-						<div class="clamp" bind:this={addressElement}>
-							{shortenAddress($selectedAddress.address)}
-						</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
-					</div>
-				</BaseButton>
-				<div class="qr"><img src={qrAddress} alt="Address" /></div>
-			</div>
-		</div>
-		<div class="section">
-			<div class="section-wrapper">
-				<div class="bold">Payment:</div>
-				<div class="amount">
-					<div>Amount:</div>
-					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
-					<DropdownFilter options={$currencies} bind:selected={currency} />
-					<div class="error">{error}</div>
-				</div>
-				<BaseButton onClick={clickCopyPayment}>
-					<div class="address">
-						<div class="clamp" style="width: 240px !important;" bind:this={paymentElement}>
-							{paymentText}
-						</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
-					</div>
-				</BaseButton>
-				<div class="qr"><img src={qrPayment} alt="Payment" /></div>
-			</div>
-		</div>
-	{:else}
-		<div>No wallet selected</div>
-	{/if}
-</div>
 
 <style>
 	.receive {
@@ -178,3 +137,44 @@
 		color: #f00;
 	}
 </style>
+
+<div class="receive">
+	{#if $selectedNetwork && $selectedAddress}
+		<div class="section">
+			<div class="section-wrapper">
+				<div class="bold">Your wallet address:</div>
+				<BaseButton onClick={clickCopyAddress}>
+					<div class="address">
+						<div class="clamp" bind:this={addressElement}>
+							{shortenAddress($selectedAddress.address)}
+						</div>
+						<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+					</div>
+				</BaseButton>
+				<div class="qr"><img src={qrAddress} alt="Address" /></div>
+			</div>
+		</div>
+		<div class="section">
+			<div class="section-wrapper">
+				<div class="bold">Payment:</div>
+				<div class="amount">
+					<div>Amount:</div>
+					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
+					<DropdownFilter options={$currencies} bind:selected={currency} />
+					<div class="error">{error}</div>
+				</div>
+				<BaseButton onClick={clickCopyPayment}>
+					<div class="address">
+						<div class="clamp" style="width: 240px !important;" bind:this={paymentElement}>
+							{paymentText}
+						</div>
+						<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+					</div>
+				</BaseButton>
+				<div class="qr"><img src={qrPayment} alt="Payment" /></div>
+			</div>
+		</div>
+	{:else}
+		<div>No wallet selected</div>
+	{/if}
+</div>

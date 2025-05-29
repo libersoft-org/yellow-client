@@ -9,10 +9,6 @@
 	});
 </script>
 
-<div class="page-content" bind:this={cont}>
-	<slot></slot>
-</div>
-
 <style>
 	.page-content {
 		height: 100%;
@@ -21,3 +17,7 @@
 		background-color: red;
 	}
 </style>
+
+<div class="page-content" bind:this={cont}>
+	<slot></slot>
+</div>

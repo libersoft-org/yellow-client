@@ -8,15 +8,6 @@
 	export let colorVariable = '--icon-black';
 </script>
 
-<BaseButton {onClick} width="100%">
-	<div class="item">
-		{#if img}
-			<Icon img="modules/{module.identifier}/img/{img}" alt={label} {colorVariable} size="20px" padding="0px" />
-		{/if}
-		<div>{label}</div>
-	</div>
-</BaseButton>
-
 <style>
 	.item {
 		display: flex;
@@ -29,3 +20,12 @@
 		width: 100%;
 	}
 </style>
+
+<BaseButton {onClick} width="100%">
+	<div class="item">
+		{#if img}
+			<Icon img="modules/{module.identifier}/img/{img}" alt={label} {colorVariable} size="20px" padding="0px" />
+		{/if}
+		<div>{label}</div>
+	</div>
+</BaseButton>

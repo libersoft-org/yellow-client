@@ -14,7 +14,7 @@
 	onMount(() => {
 		loading = true;
 		getMessageByUid(messageUid)
-			.then((repliedMessage) => {
+			.then(repliedMessage => {
 				message = repliedMessage;
 			})
 			.finally(() => {

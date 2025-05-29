@@ -47,12 +47,12 @@
 		if (!name) return;
 		address.name = name;
 		wallet.addresses = [...wallet.addresses];
-		wallets.update((ws) =>
-			ws.map((w) =>
+		wallets.update(ws =>
+			ws.map(w =>
 				w === wallet
 					? {
 							...w,
-							addresses: (w.addresses || []).map((a) => (a === address ? { ...a, name } : a)),
+							addresses: (w.addresses || []).map(a => (a === address ? { ...a, name } : a)),
 						}
 					: w
 			)
@@ -62,8 +62,8 @@
 	function deleteAddress(w, address) {
 		address.deleted = true;
 		// wallet.addresses = [...wallet.addresses]
-		wallets.update((ws) =>
-			ws.map((item) =>
+		wallets.update(ws =>
+			ws.map(item =>
 				item === w
 					? {
 							...item,
@@ -75,6 +75,21 @@
 		);
 	}
 </script>
+
+<style>
+	.wallet {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 16px 10px;
+
+		:global(&:has(tbody:empty)) {
+			:global(table) {
+				display: none !important;
+			}
+		}
+	}
+</style>
 
 <ButtonBar>
 	<Button text="Create wallet" onClick={showNewWalletModal} />
@@ -120,18 +135,3 @@
 	{/snippet}
 </Accordion>
 <Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />
-
-<style>
-	.wallet {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		padding: 16px 10px;
-
-		:global(&:has(tbody:empty)) {
-			:global(table) {
-				display: none !important;
-			}
-		}
-	}
-</style>

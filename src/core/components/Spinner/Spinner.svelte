@@ -9,12 +9,6 @@
 	let { show = true, color = '#000000', size = '40px', containerMinHeight = '72px' }: Props = $props();
 </script>
 
-<div class="container" style="--spinner-color: {color}" style:min-height={containerMinHeight}>
-	{#if show}
-		<div class="spinner" style:width={size} style:height={size}></div>
-	{/if}
-</div>
-
 <style>
 	.spinner {
 		padding: 10px;
@@ -34,3 +28,9 @@
 		}
 	}
 </style>
+
+<div class="container" style="--spinner-color: {color}" style:min-height={containerMinHeight}>
+	{#if show}
+		<div class="spinner" style:width={size} style:height={size}></div>
+	{/if}
+</div>

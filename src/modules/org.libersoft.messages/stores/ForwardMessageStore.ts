@@ -22,25 +22,25 @@ export class ForwardMessageStore {
 	});
 
 	isOpen() {
-		return derived(this.store, ($store) => $store.open);
+		return derived(this.store, $store => $store.open);
 	}
 
 	setForwardedMessage(forwardedMessage: ForwardedMessage | null) {
-		this.store.update((store) => {
+		this.store.update(store => {
 			store.forwardedMessage = forwardedMessage;
 			return store;
 		});
 	}
 
 	setOpen(open: boolean) {
-		this.store.update((store) => {
+		this.store.update(store => {
 			store.open = open;
 			return store;
 		});
 	}
 
 	getForwardedMessage() {
-		return derived(this.store, ($store) => $store.forwardedMessage);
+		return derived(this.store, $store => $store.forwardedMessage);
 	}
 
 	startForwardedMessage(forwardedMessage: ForwardedMessage) {

@@ -39,7 +39,7 @@
 	onDestroy(() => {
 		stopScanning();
 		if (stream) {
-			stream.getTracks().forEach((track) => track.stop());
+			stream.getTracks().forEach(track => track.stop());
 		}
 	});
 
@@ -89,7 +89,7 @@
 		// Stop scanning and show the scanned content
 		stopScanning();
 		if (stream) {
-			stream.getTracks().forEach((track) => track.stop());
+			stream.getTracks().forEach(track => track.stop());
 		}
 		scannedText = data;
 	}
@@ -109,7 +109,7 @@
 		try {
 			// Stop existing stream if any
 			if (stream) {
-				stream.getTracks().forEach((track) => track.stop());
+				stream.getTracks().forEach(track => track.stop());
 			}
 
 			stream = await navigator.mediaDevices.getUserMedia({
@@ -126,41 +126,6 @@
 		}
 	}
 </script>
-
-{#if scannedText}
-	<!-- Show scanned content with same layout as JSON tab -->
-	<div class="account-import">
-		<div class="scan-again-container">
-			<Button img="img/photo.svg" text="Scan Again" onClick={scanAgain} />
-		</div>
-		<div class="scrollable">
-			<Code code={scannedText} />
-		</div>
-		{#if error}
-			<div class="error">{error}</div>
-		{/if}
-		<div class="buttons-container">
-			<AccountsImportButtons importText={scannedText} {close} onError={handleError} />
-		</div>
-	</div>
-{:else}
-	<!-- Show camera scanner -->
-	<div class="qr-scanner">
-		{#if error}
-			<div class="error">{error}</div>
-			<Button text="Cancel" onClick={close} />
-		{:else}
-			<div class="instructions">Point your camera at a QR code containing account configuration</div>
-			<div class="video-container">
-				<video bind:this={videoElement} autoplay playsinline>
-					<track kind="captions" />
-				</video>
-				<canvas bind:this={canvasElement}></canvas>
-			</div>
-			<Button text="Cancel" onClick={close} />
-		{/if}
-	</div>
-{/if}
 
 <style>
 	.qr-scanner {
@@ -230,3 +195,38 @@
 		margin-bottom: 10px;
 	}
 </style>
+
+{#if scannedText}
+	<!-- Show scanned content with same layout as JSON tab -->
+	<div class="account-import">
+		<div class="scan-again-container">
+			<Button img="img/photo.svg" text="Scan Again" onClick={scanAgain} />
+		</div>
+		<div class="scrollable">
+			<Code code={scannedText} />
+		</div>
+		{#if error}
+			<div class="error">{error}</div>
+		{/if}
+		<div class="buttons-container">
+			<AccountsImportButtons importText={scannedText} {close} onError={handleError} />
+		</div>
+	</div>
+{:else}
+	<!-- Show camera scanner -->
+	<div class="qr-scanner">
+		{#if error}
+			<div class="error">{error}</div>
+			<Button text="Cancel" onClick={close} />
+		{:else}
+			<div class="instructions">Point your camera at a QR code containing account configuration</div>
+			<div class="video-container">
+				<video bind:this={videoElement} autoplay playsinline>
+					<track kind="captions" />
+				</video>
+				<canvas bind:this={canvasElement}></canvas>
+			</div>
+			<Button text="Cancel" onClick={close} />
+		{/if}
+	</div>
+{/if}

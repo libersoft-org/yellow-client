@@ -18,13 +18,13 @@
 	let wavesurferWidth = $state(undefined);
 	let sending = $state(false);
 
-	const onResize = (entry) => {
+	const onResize = entry => {
 		// We must explicitly set WaveSurfer's parent width; otherwise it causes flickering
 		// (wavesurfer bug https://github.com/katspaugh/wavesurfer.js/issues/4055)
 		wavesurferWidth = entry.contentRect.width;
 	};
 
-	const sendMessage = async (blob) => {
+	const sendMessage = async blob => {
 		const recipientEmail = get(selectedConversation).address;
 		const arrBuffer = await blob.arrayBuffer();
 		const audioMetaData = await MediaUtils.getAudioDataFromArrayBuffer(arrBuffer);
@@ -71,20 +71,20 @@
 			})
 		);
 
-		wavesurferRecord.on('record-end', (blob) => {
+		wavesurferRecord.on('record-end', blob => {
 			if (sending) {
 				sending = false;
 				sendMessage(blob);
 			}
 		});
 
-		RecordPlugin.getAvailableAudioDevices().then((devices) => {
+		RecordPlugin.getAvailableAudioDevices().then(devices => {
 			wavesurferRecord
 				.startRecording({ deviceId: 'default' })
 				.then(() => {
 					console.log('startRecording');
 				})
-				.catch((err) => {
+				.catch(err => {
 					alert(err);
 					audioRecorderStore.setOpen(false);
 				});
@@ -117,25 +117,6 @@
 		}
 	});
 </script>
-
-<div class="message-bar-recorder" class:is-paused={isPaused} style:display={$isOpen ? 'flex' : 'none'}>
-	<div class="wavesurfer-wrap">
-		<div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize} style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
-	</div>
-	<div class="button-wrapper">
-		<Icon img="modules/{identifier}/img/delete.svg" colorVariable="--icon-red" alt="Delete" size="14px" padding="0px" onClick={onDelete} />
-	</div>
-	<div class="button-wrapper">
-		{#if isPaused}
-			<Icon img="modules/{identifier}/img/record.svg" colorVariable="--icon-red" alt="Record" size="14px" padding="0px" onClick={onRecord} />
-		{:else}
-			<Icon img="modules/{identifier}/img/pause.svg" colorVariable="--icon-yellow" alt="Stop" size="14px" padding="0px" onClick={onPause} />
-		{/if}
-	</div>
-	<div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
-		<Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32px" padding="0px" onClick={onSend} colorVariable="--icon-yellow" />
-	</div>
-</div>
 
 <style>
 	.message-bar-recorder {
@@ -180,3 +161,22 @@
 		flex: 1 0 auto;
 	}
 </style>
+
+<div class="message-bar-recorder" class:is-paused={isPaused} style:display={$isOpen ? 'flex' : 'none'}>
+	<div class="wavesurfer-wrap">
+		<div bind:this={wavesurferRef} class="wavesurfer" use:resize={onResize} style:width={wavesurferWidth ? wavesurferWidth + 'px' : '100%'}></div>
+	</div>
+	<div class="button-wrapper">
+		<Icon img="modules/{identifier}/img/delete.svg" colorVariable="--icon-red" alt="Delete" size="14px" padding="0px" onClick={onDelete} />
+	</div>
+	<div class="button-wrapper">
+		{#if isPaused}
+			<Icon img="modules/{identifier}/img/record.svg" colorVariable="--icon-red" alt="Record" size="14px" padding="0px" onClick={onRecord} />
+		{:else}
+			<Icon img="modules/{identifier}/img/pause.svg" colorVariable="--icon-yellow" alt="Stop" size="14px" padding="0px" onClick={onPause} />
+		{/if}
+	</div>
+	<div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
+		<Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32px" padding="0px" onClick={onSend} colorVariable="--icon-yellow" />
+	</div>
+</div>

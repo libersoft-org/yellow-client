@@ -28,36 +28,6 @@
 	};
 </script>
 
-{#snippet conversationItem(conversation: Conversation)}
-	{@const wasAlreadySent = sentToConversations.some((c) => c.id === conversation.id)}
-	<div class="conversation">
-		<div class="conversation-avatar">
-			<div class="conversation-avatar-placeholder"></div>
-		</div>
-		<div class="conversation-name">
-			{conversation.address}
-		</div>
-		<div class="conversation-action">
-			<Button enabled={!wasAlreadySent} text={wasAlreadySent ? 'Sent' : 'Send'} onClick={() => onSend(conversation)} />
-		</div>
-	</div>
-{/snippet}
-
-<div class="forward-message">
-	<div class="header">
-		<Input bind:value={search} placeholder="Search in conversations" />
-	</div>
-	<div class="conversations">
-		{#if conversations && conversations.length}
-			{#each conversations as conversation (conversation.id)}
-				{@render conversationItem(conversation)}
-			{/each}
-		{:else}
-			<div class="empty-conversations">No conversations were found</div>
-		{/if}
-	</div>
-</div>
-
 <style>
 	.empty-conversations {
 		display: flex;
@@ -105,3 +75,33 @@
 		flex: 0 0 auto;
 	}
 </style>
+
+{#snippet conversationItem(conversation: Conversation)}
+	{@const wasAlreadySent = sentToConversations.some(c => c.id === conversation.id)}
+	<div class="conversation">
+		<div class="conversation-avatar">
+			<div class="conversation-avatar-placeholder"></div>
+		</div>
+		<div class="conversation-name">
+			{conversation.address}
+		</div>
+		<div class="conversation-action">
+			<Button enabled={!wasAlreadySent} text={wasAlreadySent ? 'Sent' : 'Send'} onClick={() => onSend(conversation)} />
+		</div>
+	</div>
+{/snippet}
+
+<div class="forward-message">
+	<div class="header">
+		<Input bind:value={search} placeholder="Search in conversations" />
+	</div>
+	<div class="conversations">
+		{#if conversations && conversations.length}
+			{#each conversations as conversation (conversation.id)}
+				{@render conversationItem(conversation)}
+			{/each}
+		{:else}
+			<div class="empty-conversations">No conversations were found</div>
+		{/if}
+	</div>
+</div>

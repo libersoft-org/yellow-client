@@ -32,7 +32,7 @@ export function wrapConsecutiveElements(fragment: DocumentFragment, xName: strin
 		}
 
 		// Recurse into child elements
-		children.forEach((child) => {
+		children.forEach(child => {
 			if (child.nodeType === Node.ELEMENT_NODE) {
 				processParent(child as Element);
 			}
@@ -42,7 +42,7 @@ export function wrapConsecutiveElements(fragment: DocumentFragment, xName: strin
 	function wrapWithY(elements: Element[]): void {
 		const wrapper = document.createElement(yName);
 		elements[0].parentNode!.insertBefore(wrapper, elements[0]);
-		elements.forEach((el) => wrapper.appendChild(el));
+		elements.forEach(el => wrapper.appendChild(el));
 	}
 
 	processParent(fragment);

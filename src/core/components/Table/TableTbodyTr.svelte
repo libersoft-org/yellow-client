@@ -10,10 +10,6 @@
 	const { children, background = 'var(--color-primary-soft-background)', hover = true }: Props = $props();
 </script>
 
-<tr class:hover style:background>
-	{@render children()}
-</tr>
-
 <style>
 	tr:nth-child(even) {
 		background-color: var(--color-primary-soft-background);
@@ -29,3 +25,7 @@
 		}
 	}
 </style>
+
+<tr class:hover style:background>
+	{@render children()}
+</tr>

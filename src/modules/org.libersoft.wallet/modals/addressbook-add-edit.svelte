@@ -20,12 +20,12 @@
 
 	function findAddressBookItemByAddress(address) {
 		const ab = $addressBook;
-		return ab.find((i) => i.address === address);
+		return ab.find(i => i.address === address);
 	}
 
 	function findAddressBookItemById(id) {
 		const ab = $addressBook;
-		return ab.find((i) => i.guid === id);
+		return ab.find(i => i.guid === id);
 	}
 
 	function add() {
@@ -71,28 +71,6 @@
 	}
 </script>
 
-<div class="addressbook-new">
-	<div class="group">
-		<div class="bold">Alias:</div>
-		<Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} />
-	</div>
-	<div class="group">
-		<div class="bold">Address:</div>
-		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} />
-	</div>
-	{#if error}
-		<div class="error">
-			<div class="bold">Error:</div>
-			<div>{error}</div>
-		</div>
-	{/if}
-	{#if params.item}
-		<Button img="img/save.svg" text="Save" onClick={edit} width="100%" />
-	{:else}
-		<Button text="Add" onClick={add} width="100%" />
-	{/if}
-</div>
-
 <style>
 	.addressbook-new {
 		display: flex;
@@ -115,3 +93,25 @@
 		background-color: #faa;
 	}
 </style>
+
+<div class="addressbook-new">
+	<div class="group">
+		<div class="bold">Alias:</div>
+		<Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} />
+	</div>
+	<div class="group">
+		<div class="bold">Address:</div>
+		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} />
+	</div>
+	{#if error}
+		<div class="error">
+			<div class="bold">Error:</div>
+			<div>{error}</div>
+		</div>
+	{/if}
+	{#if params.item}
+		<Button img="img/save.svg" text="Save" onClick={edit} width="100%" />
+	{:else}
+		<Button text="Add" onClick={add} width="100%" />
+	{/if}
+</div>

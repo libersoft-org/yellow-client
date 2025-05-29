@@ -28,6 +28,18 @@
 	}
 </script>
 
+<style>
+	.group {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+
+	input[type='range'] {
+		width: 100%;
+	}
+</style>
+
 <div class="group">
 	<div class="label">
 		<span class="bold">File upload chunk size:</span>
@@ -61,15 +73,3 @@
 		<Button text="Change" onClick={defaultFileDownloadFolderButtonClick} />
 	</div>
 {/if}
-
-<style>
-	.group {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-
-	input[type='range'] {
-		width: 100%;
-	}
-</style>

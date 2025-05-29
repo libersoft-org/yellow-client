@@ -7,19 +7,6 @@
 	export let onClick;
 </script>
 
-<BaseButton {onClick} width="100%">
-	<div class="item {className}">
-		{#if icon}
-			<div class="icon"><img src={icon} alt={symbol} /></div>
-		{/if}
-		<div class="symbol">{symbol}</div>
-		<div class="amount">
-			<div class="crypto">{amount.crypto} {symbol}</div>
-			<div class="fiat">({amount.fiat} USD)</div>
-		</div>
-	</div>
-</BaseButton>
-
 <style>
 	.item {
 		display: flex;
@@ -66,3 +53,16 @@
 		color: #555;
 	}
 </style>
+
+<BaseButton {onClick} width="100%">
+	<div class="item {className}">
+		{#if icon}
+			<div class="icon"><img src={icon} alt={symbol} /></div>
+		{/if}
+		<div class="symbol">{symbol}</div>
+		<div class="amount">
+			<div class="crypto">{amount.crypto} {symbol}</div>
+			<div class="fiat">({amount.fiat} USD)</div>
+		</div>
+	</div>
+</BaseButton>

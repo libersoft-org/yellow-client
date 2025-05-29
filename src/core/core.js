@@ -29,7 +29,7 @@ const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
 export function init() {
 	let subs = [];
 	subs.push(
-		selected_module_id.subscribe(async (id) => {
+		selected_module_id.subscribe(async id => {
 			await tick();
 			let module_decls_v = get(module_decls);
 			for (const k in module_decls_v) {
@@ -40,7 +40,7 @@ export function init() {
 	);
 
 	subs.push(
-		modules_order.subscribe((value) => {
+		modules_order.subscribe(value => {
 			//console.log('MODULES ORDER:', value);
 			let module_decls_v = get(module_decls);
 			for (const k in module_decls_v) {
@@ -54,14 +54,14 @@ export function init() {
 	);
 
 	subs.push(
-		accounts_config.subscribe((value) => {
+		accounts_config.subscribe(value => {
 			log.debug('ACCOUNTS CONFIG:', value);
 			// TODO: implement configuration of accounts order
 			let accounts_list = get(accounts);
 			log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
 			for (let config of value) {
 				log.debug('CONFIG', config);
-				let account = accounts_list.find((acc) => get(acc).id === config.id);
+				let account = accounts_list.find(acc => get(acc).id === config.id);
 				if (account) {
 					//log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
 					updateLiveAccount(account, config);
@@ -103,19 +103,19 @@ export const accounts_config = localStorageSharedStore('accounts_config', import
 export let accounts = writable([]);
 
 import.meta.hot?.dispose(() => {
-	get(accounts).forEach((acc) => {
+	get(accounts).forEach(acc => {
 		reconnectAccount(acc);
 	});
 });
 
 export function findAccount(id) {
-	return get(accounts).find((account) => get(account).id === id);
+	return get(accounts).find(account => get(account).id === id);
 }
 
 export function accountExists(server, address) {
 	const currentConfig = get(accounts_config);
 	const identifier = `${server}\\\\${address}`;
-	return currentConfig.some((account) => {
+	return currentConfig.some(account => {
 		const accountServer = account.credentials?.server || account.server;
 		const accountAddress = account.credentials?.address || account.address;
 		return `${accountServer}\\\\${accountAddress}` === identifier;
@@ -125,7 +125,7 @@ export function accountExists(server, address) {
 /* fire off whenever accounts array or active_account_id changes */
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]) => {
 	//console.log('active_account_store:', $accounts, $active_account_id);
-	let r = $accounts.find((acc) => get(acc).id === $active_account_id);
+	let r = $accounts.find(acc => get(acc).id === $active_account_id);
 	//console.log('active_account_store:', r);
 	return r;
 });
@@ -136,7 +136,7 @@ export let active_account = derived(active_account_store, ($active_account_store
 		return set(null);
 	}
 	// subscribe to the store that contains the account object
-	const unsubscribe = $active_account_store.subscribe((account) => {
+	const unsubscribe = $active_account_store.subscribe(account => {
 		//console.log('DERIVED NESTED STORE:', account);
 		set(account);
 	});
@@ -144,7 +144,7 @@ export let active_account = derived(active_account_store, ($active_account_store
 });
 
 export function active_account_module_data(module_id) {
-	return derived(active_account, ($active_account) => {
+	return derived(active_account, $active_account => {
 		if (!$active_account) {
 			console.log('no active account => no module data.');
 			return null;
@@ -162,7 +162,7 @@ export function relay(md, key) {
 			set(null);
 			return;
 		}
-		const unsubscribe = $md[key].subscribe((value) => {
+		const unsubscribe = $md[key].subscribe(value => {
 			set(value);
 		});
 
@@ -170,11 +170,11 @@ export function relay(md, key) {
 			unsubscribe();
 		};
 	});
-	r.set = (v) => {
+	r.set = v => {
 		//console.log('SET:', get(md), 'key:',  key,  'v:', v);
 		get(md)[key].set(v);
 	};
-	r.update = (fn) => {
+	r.update = fn => {
 		get(md)[key].update(fn);
 	};
 	return r;
@@ -220,7 +220,7 @@ function updateLiveAccount(account, config) {
 
 	if (settings_updated) {
 		log.debug('settings updated:', acc.settings);
-		account.update((v) => v);
+		account.update(v => v);
 	}
 }
 
@@ -228,7 +228,7 @@ function createLiveAccount(config) {
 	// add new account
 	let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
 	//console.log('NEW account', get(account));
-	accounts.update((v) => [...v, account]);
+	accounts.update(v => [...v, account]);
 	if (config.enabled) _enableAccount(account);
 	else _disableAccount(account);
 }
@@ -236,10 +236,10 @@ function createLiveAccount(config) {
 function removeLiveAccountsNotInConfig(accounts_list, value) {
 	// remove accounts that are not in config
 	for (let account of accounts_list) {
-		if (!value.find((conf) => conf.id === get(account).id)) {
+		if (!value.find(conf => conf.id === get(account).id)) {
 			console.log('REMOVE ACCOUNT', get(account));
 			_disableAccount(account);
-			accounts.update((v) => v.filter((a) => get(a).id !== get(account).id));
+			accounts.update(v => v.filter(a => get(a).id !== get(account).id));
 		}
 	}
 }
@@ -247,8 +247,8 @@ function removeLiveAccountsNotInConfig(accounts_list, value) {
 export function toggleAccountEnabled(id) {
 	log.debug('TOGGLE ACCOUNT ENABLED accounts_config', accounts_config);
 	log.debug('TOGGLE ACCOUNT ENABLED id', id);
-	accounts_config.update((v) =>
-		v.map((a) => {
+	accounts_config.update(v =>
+		v.map(a => {
 			if (a.id === id) a.enabled = !a.enabled;
 			return a;
 		})
@@ -305,15 +305,15 @@ function _enableAccount(account) {
 	acc.status = 'Enabled.';
 	(acc.events = new EventTarget()),
 		/* TODO: unsubscribe on disable */
-		acc.events.addEventListener('modules_available', (event) => {
+		acc.events.addEventListener('modules_available', event => {
 			for (const k in event.detail?.data?.modules_available) {
 				acc.available_modules[k] = event.detail.data.modules_available[k];
 			}
 			log.debug('available_modules:', acc.available_modules);
 			onAvailableModulesChanged(acc);
-			account.update((v) => v);
+			account.update(v => v);
 		});
-	account.update((v) => v);
+	account.update(v => v);
 	// TODO: use admin logic
 	reconnectAccount(account);
 }
@@ -327,7 +327,7 @@ function _disableAccount(account) {
 	acc.enabled = false;
 	acc.suspended = false;
 	acc.status = 'Disabled.';
-	account.update((v) => v);
+	account.update(v => v);
 }
 
 function reconnectAccount(account) {
@@ -351,10 +351,10 @@ function reconnectAccount(account) {
 		if (acc.socket) {
 			if (acc.socket.readyState !== WebSocket.CLOSED) {
 				// throw away the old socket, it will be unused from now on
-				acc.socket.onopen = (event) => log.debug('old socket onopen', event);
-				acc.socket.onerror = (event) => log.debug('old socket onerror', event);
-				acc.socket.onclose = (event) => log.debug('old socket onclose', event);
-				acc.socket.onmessage = (event) => log.debug('old socket onmessage', event);
+				acc.socket.onopen = event => log.debug('old socket onopen', event);
+				acc.socket.onerror = event => log.debug('old socket onerror', event);
+				acc.socket.onclose = event => log.debug('old socket onclose', event);
+				acc.socket.onmessage = event => log.debug('old socket onmessage', event);
 				acc.socket.close();
 			}
 		}
@@ -363,7 +363,7 @@ function reconnectAccount(account) {
 		acc.status = 'Connecting...';
 		acc.lastCommsTs = Date.now();
 		acc.lastTransmissionTs = Date.now();
-		account.update((v) => v);
+		account.update(v => v);
 		try {
 			acc.socket = new WebSocket(acc.credentials.server);
 		} catch (e) {
@@ -372,10 +372,10 @@ function reconnectAccount(account) {
 			acc.suspended = true;
 			acc.status = 'Error.';
 			log.debug('acc.status:', acc.status);
-			account.update((v) => v);
+			account.update(v => v);
 			return;
 		}
-		acc.socket.onmessage = (event) => {
+		acc.socket.onmessage = event => {
 			if (acc.socket_id !== socket_id) {
 				log.debug('Socket ID changed, ignoring message:', event);
 				return;
@@ -383,7 +383,7 @@ function reconnectAccount(account) {
 			handleSocketMessage(acc, JSON.parse(event.data));
 		};
 
-		acc.socket.onopen = (event) => {
+		acc.socket.onopen = event => {
 			if (acc.socket_id !== socket_id) {
 				log.debug('Socket ID changed, ignoring open event:', event);
 				return;
@@ -392,10 +392,10 @@ function reconnectAccount(account) {
 			acc.status = 'Connected, logging in...';
 			log.debug('acc.status:', acc.status);
 			acc.lastCommsTs = Date.now();
-			account.update((v) => v);
+			account.update(v => v);
 			sendLoginCommand(account);
 		};
-		acc.socket.onerror = (event) => {
+		acc.socket.onerror = event => {
 			if (acc.socket_id !== socket_id) {
 				log.debug('Socket ID changed, ignoring error event:', event);
 				return;
@@ -404,16 +404,16 @@ function reconnectAccount(account) {
 			retry(account, 'Connection error');
 			acc.error = 'Network error: ' + event.message;
 			acc.session_status = undefined;
-			account.update((v) => v);
+			account.update(v => v);
 		};
-		acc.socket.onclose = (event) => {
+		acc.socket.onclose = event => {
 			if (acc.socket_id !== socket_id) {
 				log.debug('Socket ID changed, ignoring close event:', event);
 				return;
 			}
 			log.debug('WebSocket ' + socket_id + '  closed:', event, 'wasClean:', event.wasClean, 'reason:', event.reason, 'code:', event.code);
 			acc.session_status = undefined;
-			account.update((v) => v);
+			account.update(v => v);
 			setTimeout(() => {
 				log.debug('onclose retry');
 				retry(account, 'Connection closed');
@@ -438,7 +438,7 @@ function retry(account, msg) {
 	acc.error = msg;
 	//clearPingTimer(acc);
 	//acc.sessionID = null;
-	account.update((v) => v);
+	account.update(v => v);
 	log.debug('Retrying ...');
 	setReconnectTimer(account);
 }
@@ -489,7 +489,7 @@ function sendLoginCommand(account) {
 			onAvailableModulesChanged(acc);
 			saveOriginalWsGuid(acc);
 		}
-		account.update((v) => v);
+		account.update(v => v);
 	});
 }
 
@@ -529,7 +529,7 @@ function setupPing(account) {
 	setInterval(() => {
 		if (get(debug)) {
 			acc.bufferedAmount = acc.socket.bufferedAmount;
-			account.update((v) => v);
+			account.update(v => v);
 		}
 	}, 500);
 	acc.pingTimer = window.setInterval(() => {
@@ -538,7 +538,7 @@ function setupPing(account) {
 			acc.error = 'Not connected';
 			acc.session_status = undefined;
 			log.debug('Socket not open, retrying...');
-			account.update((v) => v);
+			account.update(v => v);
 			reconnectAccount(account);
 			return;
 		}
@@ -557,7 +557,7 @@ function setupPing(account) {
 				if (acc.status !== 'Connected.' || acc.error != null) {
 					acc.status = 'Connected.';
 					acc.error = null;
-					account.update((v) => v);
+					account.update(v => v);
 				}
 			},
 			false
@@ -571,7 +571,7 @@ function setupPing(account) {
 			acc.error = msg;
 			//clearPingTimer(acc);
 			//acc.sessionID = null;
-			account.update((v) => v);
+			account.update(v => v);
 			reconnectAccount(account);
 		}
 	}, ping_interval);
@@ -717,7 +717,7 @@ function generateRequestID() {
 // import inspect from 'browser-util-inspect';
 function formatNoColor(args) {
 	let msg = '';
-	const inspected_nocolor = args.map((o) => (typeof o === 'string' ? o : o));
+	const inspected_nocolor = args.map(o => (typeof o === 'string' ? o : o));
 	for (const v of inspected_nocolor) msg += v + ' ';
 	return msg;
 }

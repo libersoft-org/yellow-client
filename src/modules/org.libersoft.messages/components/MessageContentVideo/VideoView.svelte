@@ -29,6 +29,62 @@
 	let { upload, download, thumbnailSrc, videoRef = $bindable(), startVideo, onDownload, uploadId, videoStarted, videoStarting, loadingData, fetchingPoster, posterError, videoIsFullDownloading }: Props = $props();
 </script>
 
+<style>
+	.video-wrapper {
+		max-width: min(330px, var(--video-size));
+		height: 200px;
+		width: 330px;
+		margin-bottom: 8px;
+	}
+
+	.video-title {
+		margin-bottom: 8px;
+	}
+
+	.video-placeholder {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		display: flex;
+	}
+
+	.video-placeholder-image {
+		height: 100%;
+		width: auto;
+		border-radius: 10px;
+	}
+
+	.video-placeholder-play-button {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		border: none;
+		cursor: pointer;
+
+		width: 65px;
+		height: 45px;
+		background: #000000a6;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 6px;
+	}
+
+	.video-poster {
+		width: auto;
+		height: 100%;
+		position: relative;
+	}
+
+	.video-wrapper :global(.video-js) {
+		height: 200px !important;
+		width: 100%;
+		height: auto;
+		object-fit: contain;
+	}
+</style>
+
 <div>
 	{#if $debug}
 		<code
@@ -95,59 +151,3 @@
 		<MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
 	{/if}
 </div>
-
-<style>
-	.video-wrapper {
-		max-width: min(330px, var(--video-size));
-		height: 200px;
-		width: 330px;
-		margin-bottom: 8px;
-	}
-
-	.video-title {
-		margin-bottom: 8px;
-	}
-
-	.video-placeholder {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		display: flex;
-	}
-
-	.video-placeholder-image {
-		height: 100%;
-		width: auto;
-		border-radius: 10px;
-	}
-
-	.video-placeholder-play-button {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		border: none;
-		cursor: pointer;
-
-		width: 65px;
-		height: 45px;
-		background: #000000a6;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		border-radius: 6px;
-	}
-
-	.video-poster {
-		width: auto;
-		height: 100%;
-		position: relative;
-	}
-
-	.video-wrapper :global(.video-js) {
-		height: 200px !important;
-		width: 100%;
-		height: auto;
-		object-fit: contain;
-	}
-</style>

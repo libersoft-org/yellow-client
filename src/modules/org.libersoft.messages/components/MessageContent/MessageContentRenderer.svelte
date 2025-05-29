@@ -40,8 +40,8 @@
 						level,
 					},
 					children: Array.from(node.childNodes)
-						.map((n) => renderNode(n, node, level + 1))
-						.filter((child) => child !== null),
+						.map(n => renderNode(n, node, level + 1))
+						.filter(child => child !== null),
 				};
 			}
 
@@ -54,8 +54,8 @@
 					node,
 				},
 				children: Array.from(node.childNodes)
-					.map((n) => renderNode(n, node, level + 1))
-					.filter((child) => child !== null),
+					.map(n => renderNode(n, node, level + 1))
+					.filter(child => child !== null),
 			};
 		}
 
@@ -77,7 +77,7 @@
 	function processFragment(fragment) {
 		try {
 			if (fragment.childNodes) {
-				const res = Array.from(fragment.childNodes).map((n) => renderNode(n, fragment));
+				const res = Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
 				//console.log('processFragment fragment:', fragment, 'res:', res);
 				return res;
 			} else {

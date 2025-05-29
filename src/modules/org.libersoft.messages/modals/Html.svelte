@@ -16,19 +16,6 @@
 	}
 </script>
 
-<div class="html">
-	<div class="switch">
-		<Switch bind:checked={isSideBySide} />
-		<div>Show editor and preview side by side</div>
-	</div>
-	{#if isSideBySide}
-		<HtmlSideBySide bind:text />
-	{:else}
-		<HtmlInTabs bind:text />
-	{/if}
-	<Button text="Send" onClick={send} />
-</div>
-
 <style>
 	.html {
 		display: flex;
@@ -44,3 +31,16 @@
 		gap: 10px;
 	}
 </style>
+
+<div class="html">
+	<div class="switch">
+		<Switch bind:checked={isSideBySide} />
+		<div>Show editor and preview side by side</div>
+	</div>
+	{#if isSideBySide}
+		<HtmlSideBySide bind:text />
+	{:else}
+		<HtmlInTabs bind:text />
+	{/if}
+	<Button text="Send" onClick={send} />
+</div>

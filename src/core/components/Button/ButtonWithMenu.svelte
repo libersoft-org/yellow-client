@@ -67,25 +67,6 @@
 	});
 </script>
 
-<div class="button-with-menu">
-	<BaseButton {onClick}>
-		<div class="side-button" bind:this={buttonRef}>
-			{@render sideButtonSlot?.()}
-		</div>
-	</BaseButton>
-	<div class="main-button">
-		{@render mainButtonSlot?.()}
-	</div>
-</div>
-
-{#if show}
-	<Portal>
-		<div bind:this={floatingRef} class="tooltip floating" style:display={show ? 'block' : 'none'}>
-			{@render tooltipSlot?.()}
-		</div>
-	</Portal>
-{/if}
-
 <style>
 	.button-with-menu {
 		display: flex;
@@ -117,3 +98,22 @@
 		z-index: 100000;
 	}
 </style>
+
+<div class="button-with-menu">
+	<BaseButton {onClick}>
+		<div class="side-button" bind:this={buttonRef}>
+			{@render sideButtonSlot?.()}
+		</div>
+	</BaseButton>
+	<div class="main-button">
+		{@render mainButtonSlot?.()}
+	</div>
+</div>
+
+{#if show}
+	<Portal>
+		<div bind:this={floatingRef} class="tooltip floating" style:display={show ? 'block' : 'none'}>
+			{@render tooltipSlot?.()}
+		</div>
+	</Portal>
+{/if}

@@ -17,17 +17,6 @@
 	export let colorVariable;
 </script>
 
-<BaseButton {onClick} width="100%" align="center">
-	<div class="item" style="padding: {padding}; gap: {gap}; color: {textColor}; --bgColor: {bgColor}; border-top: {borderTop}; border-bottom: {borderBottom}; border-left: {borderLeft}; border-right: {borderRight}; --hoverColor: {hoverColor}; border-radius: {borderRadius}">
-		{#if img}
-			<Icon {img} alt={title} {colorVariable} size="24px" padding="0px" />
-		{/if}
-		{#if title}
-			<div>{title}</div>
-		{/if}
-	</div>
-</BaseButton>
-
 <style>
 	.item {
 		display: flex;
@@ -40,3 +29,14 @@
 		background-color: var(--hoverColor);
 	}
 </style>
+
+<BaseButton {onClick} width="100%" align="center">
+	<div class="item" style="padding: {padding}; gap: {gap}; color: {textColor}; --bgColor: {bgColor}; border-top: {borderTop}; border-bottom: {borderBottom}; border-left: {borderLeft}; border-right: {borderRight}; --hoverColor: {hoverColor}; border-radius: {borderRadius}">
+		{#if img}
+			<Icon {img} alt={title} {colorVariable} size="24px" padding="0px" />
+		{/if}
+		{#if title}
+			<div>{title}</div>
+		{/if}
+	</div>
+</BaseButton>

@@ -78,109 +78,6 @@
 	}: Props = $props();
 </script>
 
-{#snippet renderDevicesSelect(devices, selectedDeviceId, onChange)}
-	{@const disabled = !devices || devices.length === 0}
-	{@const emptyMessage = loading ? 'Loading devices' : 'No devices found'}
-	<div class="device-select">
-		<Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} {disabled}>
-			{#if disabled}
-				<Option value={''} disabled selected text={emptyMessage} />
-			{/if}
-			{#each devices as device (device.deviceId)}
-				<Option value={device.deviceId} selected={device.deviceId === selectedDeviceId} text={device.label} />
-			{/each}
-		</Select>
-	</div>
-{/snippet}
-
-<div class="video-recorder" class:is-recording={isRecording} class:is-muted={isMuted} class:toggle-facing-mode-enabled={enableToggleFacingMode}>
-	<div bind:this={videoRef} class="video-recorder-video-placeholder">
-		{#if error}
-			<div class="video-recorder-error">
-				<Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-red" size="30px" padding="15px" />
-				{#if errorMessages}
-					{#each errorMessages as message}
-						<div>{message}</div>
-					{/each}
-				{:else}
-					<div>Something went wrong</div>
-				{/if}
-			</div>
-		{:else if loading}
-			<div class="video-recorder-loading">
-				<Spinner />
-				<div>Initializing recorder...</div>
-			</div>
-		{/if}
-		<div class="video-floating-area-rt">
-			{#if hasData && !isRecording}
-				<Button img="img/download.svg" enabled={hasData} colorVariable="--icon-black" onClick={download} />
-				<Button img="modules/{identifier}/img/delete.svg" enabled={hasData} colorVariable="--icon-red" onClick={recordRestart} />
-			{/if}
-		</div>
-	</div>
-	{#if $debug}
-		<div class="video-recorder-debug">
-			isRecording: {isRecording}; loading: {loading}; facingMode: {facingMode}
-		</div>
-	{/if}
-	<div class="video-recorder-footer">
-		<div class="video-recorder-actions-left">
-			<ButtonWithMenu>
-				{#snippet sideButtonSlot()}
-					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size="16px" padding="6px" onClick={() => {}} />
-				{/snippet}
-				{#snippet mainButtonSlot()}
-					<div class="mic-button-wrapper">
-						<div bind:this={micIndicatorRef} class="mic-button-indicator"></div>
-						{#if isMuted}
-							<Button img="modules/{identifier}/img/mic-disabled.svg" colorVariable="--icon-gray" onClick={toggleMute} />
-						{:else if isRecording}
-							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-red" onClick={toggleMute} />
-						{:else}
-							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-black" onClick={toggleMute} />
-						{/if}
-					</div>
-				{/snippet}
-				{#snippet tooltipSlot()}
-					<div>
-						{@render renderDevicesSelect(audioDevices, selectedAudioDeviceId, (e) => changeAudioInput(e.target.value))}
-					</div>
-				{/snippet}
-			</ButtonWithMenu>
-			<ButtonWithMenu>
-				{#snippet sideButtonSlot()}
-					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size="16px" padding="6px" onClick={() => {}} />
-				{/snippet}
-				{#snippet mainButtonSlot()}
-					<div>
-						<div class="camera-button-wrapper">
-							{#if enableToggleFacingMode}
-								<Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--icon-black" onClick={toggleFacingMode} />
-							{:else}
-								<Button img="modules/{identifier}/img/camera.svg" colorVariable="--icon-black" onClick={() => {}} />
-							{/if}
-						</div>
-					</div>
-				{/snippet}
-				{#snippet tooltipSlot()}
-					<div>
-						{@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, (e) => changeVideoInput(e.target.value))}
-					</div>
-				{/snippet}
-			</ButtonWithMenu>
-		</div>
-		<div class="video-recorder-actions-right">
-			{#if isRecording}
-				<Button img="modules/{identifier}/img/stop.svg" colorVariable="--icon-black" text="STOP" onClick={recordStop} />
-			{:else}
-				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--icon-gray' : '--icon-red'} text="REC" onClick={recordStart} />
-			{/if}
-			<Button loading={sending} img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--icon-black" onClick={send} />
-		</div>
-	</div>
-</div>
-
 <style>
 	.mic-button-wrapper {
 		position: relative;
@@ -280,3 +177,106 @@
 		z-index: 1;
 	}
 </style>
+
+{#snippet renderDevicesSelect(devices, selectedDeviceId, onChange)}
+	{@const disabled = !devices || devices.length === 0}
+	{@const emptyMessage = loading ? 'Loading devices' : 'No devices found'}
+	<div class="device-select">
+		<Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} {disabled}>
+			{#if disabled}
+				<Option value={''} disabled selected text={emptyMessage} />
+			{/if}
+			{#each devices as device (device.deviceId)}
+				<Option value={device.deviceId} selected={device.deviceId === selectedDeviceId} text={device.label} />
+			{/each}
+		</Select>
+	</div>
+{/snippet}
+
+<div class="video-recorder" class:is-recording={isRecording} class:is-muted={isMuted} class:toggle-facing-mode-enabled={enableToggleFacingMode}>
+	<div bind:this={videoRef} class="video-recorder-video-placeholder">
+		{#if error}
+			<div class="video-recorder-error">
+				<Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-red" size="30px" padding="15px" />
+				{#if errorMessages}
+					{#each errorMessages as message}
+						<div>{message}</div>
+					{/each}
+				{:else}
+					<div>Something went wrong</div>
+				{/if}
+			</div>
+		{:else if loading}
+			<div class="video-recorder-loading">
+				<Spinner />
+				<div>Initializing recorder...</div>
+			</div>
+		{/if}
+		<div class="video-floating-area-rt">
+			{#if hasData && !isRecording}
+				<Button img="img/download.svg" enabled={hasData} colorVariable="--icon-black" onClick={download} />
+				<Button img="modules/{identifier}/img/delete.svg" enabled={hasData} colorVariable="--icon-red" onClick={recordRestart} />
+			{/if}
+		</div>
+	</div>
+	{#if $debug}
+		<div class="video-recorder-debug">
+			isRecording: {isRecording}; loading: {loading}; facingMode: {facingMode}
+		</div>
+	{/if}
+	<div class="video-recorder-footer">
+		<div class="video-recorder-actions-left">
+			<ButtonWithMenu>
+				{#snippet sideButtonSlot()}
+					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size="16px" padding="6px" onClick={() => {}} />
+				{/snippet}
+				{#snippet mainButtonSlot()}
+					<div class="mic-button-wrapper">
+						<div bind:this={micIndicatorRef} class="mic-button-indicator"></div>
+						{#if isMuted}
+							<Button img="modules/{identifier}/img/mic-disabled.svg" colorVariable="--icon-gray" onClick={toggleMute} />
+						{:else if isRecording}
+							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-red" onClick={toggleMute} />
+						{:else}
+							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-black" onClick={toggleMute} />
+						{/if}
+					</div>
+				{/snippet}
+				{#snippet tooltipSlot()}
+					<div>
+						{@render renderDevicesSelect(audioDevices, selectedAudioDeviceId, e => changeAudioInput(e.target.value))}
+					</div>
+				{/snippet}
+			</ButtonWithMenu>
+			<ButtonWithMenu>
+				{#snippet sideButtonSlot()}
+					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--icon-black" size="16px" padding="6px" onClick={() => {}} />
+				{/snippet}
+				{#snippet mainButtonSlot()}
+					<div>
+						<div class="camera-button-wrapper">
+							{#if enableToggleFacingMode}
+								<Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--icon-black" onClick={toggleFacingMode} />
+							{:else}
+								<Button img="modules/{identifier}/img/camera.svg" colorVariable="--icon-black" onClick={() => {}} />
+							{/if}
+						</div>
+					</div>
+				{/snippet}
+				{#snippet tooltipSlot()}
+					<div>
+						{@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value))}
+					</div>
+				{/snippet}
+			</ButtonWithMenu>
+		</div>
+		<div class="video-recorder-actions-right">
+			{#if isRecording}
+				<Button img="modules/{identifier}/img/stop.svg" colorVariable="--icon-black" text="STOP" onClick={recordStop} />
+			{:else}
+				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--icon-gray' : '--icon-red'} text="REC" onClick={recordStart} />
+			{/if}
+			<Button loading={sending} img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--icon-black" onClick={send} />
+		</div>
+	</div>
+</div>

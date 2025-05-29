@@ -4,11 +4,6 @@
 	export let account;
 </script>
 
-<div>
-	<AccountStatusIcon {account} />
-	<AccountStatus {account} />
-</div>
-
 <style>
 	div {
 		display: inline-flex;
@@ -17,3 +12,8 @@
 		white-space: nowrap;
 	}
 </style>
+
+<div>
+	<AccountStatusIcon {account} />
+	<AccountStatus {account} />
+</div>

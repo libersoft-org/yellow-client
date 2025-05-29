@@ -45,7 +45,7 @@ class MediaUtils {
 				const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 				ctx.drawImage(video, 0, 0, width, height);
 
-				canvas.toBlob((blob) => {
+				canvas.toBlob(blob => {
 					cleanup();
 					if (blob) {
 						resolve(blob);
@@ -55,7 +55,7 @@ class MediaUtils {
 				}, 'image/png');
 			};
 
-			video.addEventListener('error', (err) => {
+			video.addEventListener('error', err => {
 				console.error('thumbnail: Error extracting thumbnail', err);
 				cleanup();
 				reject(err);

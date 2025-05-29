@@ -10,7 +10,7 @@
 
 	function onInput(event) {
 		inputValue = event.target.value;
-		filteredOptions = options.filter((option) => option.toLowerCase().includes(inputValue.toLowerCase()));
+		filteredOptions = options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()));
 		showOptions = true;
 	}
 
@@ -30,26 +30,6 @@
 		if (!selected) showOptions = true;
 	}
 </script>
-
-<div class="dropdown-filter">
-	{#if selected}
-		<div class="selected">
-			<div class="text">{selected}</div>
-			<Icon img="img/close.svg" alt="X" colorVariable="--color-primary-foreground" size="10px" onClick={clickClearSelection} />
-		</div>
-	{:else}
-		<Input bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
-		{#if showOptions}
-			<div class="options">
-				{#each filteredOptions as option}
-					<BaseButton onClick={() => clickSelectOption(option)}>
-						<div class="option">{option}</div>
-					</BaseButton>
-				{/each}
-			</div>
-		{/if}
-	{/if}
-</div>
 
 <style>
 	.dropdown-filter {
@@ -100,3 +80,23 @@
 		padding: 0 10px;
 	}
 </style>
+
+<div class="dropdown-filter">
+	{#if selected}
+		<div class="selected">
+			<div class="text">{selected}</div>
+			<Icon img="img/close.svg" alt="X" colorVariable="--color-primary-foreground" size="10px" onClick={clickClearSelection} />
+		</div>
+	{:else}
+		<Input bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
+		{#if showOptions}
+			<div class="options">
+				{#each filteredOptions as option}
+					<BaseButton onClick={() => clickSelectOption(option)}>
+						<div class="option">{option}</div>
+					</BaseButton>
+				{/each}
+			</div>
+		{/if}
+	{/if}
+</div>

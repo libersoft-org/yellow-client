@@ -5,16 +5,6 @@
 	let ref = writable();
 </script>
 
-<div class="videos-wrap" bind:this={ref}>
-	<div class="videos">
-		{#each children as child (child.tagUniqueId)}
-			{#if child.component}
-				<child.component {...child.props} />
-			{/if}
-		{/each}
-	</div>
-</div>
-
 <style>
 	.videos-wrap {
 		display: flex;
@@ -29,3 +19,13 @@
 		gap: 10px;
 	}
 </style>
+
+<div class="videos-wrap" bind:this={ref}>
+	<div class="videos">
+		{#each children as child (child.tagUniqueId)}
+			{#if child.component}
+				<child.component {...child.props} />
+			{/if}
+		{/each}
+	</div>
+</div>

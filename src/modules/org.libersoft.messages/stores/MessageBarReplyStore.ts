@@ -22,25 +22,25 @@ export class MessageBarReplyStore {
 	});
 
 	isOpen() {
-		return derived(this.store, ($store) => $store.open);
+		return derived(this.store, $store => $store.open);
 	}
 
 	setReplyTo(replyTo: ReplyTo | null) {
-		this.store.update((store) => {
+		this.store.update(store => {
 			store.replyTo = replyTo;
 			return store;
 		});
 	}
 
 	setOpen(open: boolean) {
-		this.store.update((store) => {
+		this.store.update(store => {
 			store.open = open;
 			return store;
 		});
 	}
 
 	getReplyTo() {
-		return derived(this.store, ($store) => $store.replyTo);
+		return derived(this.store, $store => $store.replyTo);
 	}
 
 	startReplyTo(replyTo: ReplyTo) {

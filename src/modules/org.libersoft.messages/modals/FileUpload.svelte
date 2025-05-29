@@ -77,6 +77,44 @@
 	}
 </script>
 
+<style>
+	.file-upload {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.header {
+		display: flex;
+		gap: 10px;
+		justify-content: space-between;
+	}
+
+	.body .items-empty {
+		padding: 50px;
+		text-align: center;
+		background-color: #eee;
+		border: 1px dashed #888;
+		border-radius: 10px;
+		width: 100%;
+	}
+
+	.drop-active .items-empty {
+		background-color: #ddd;
+		border-color: #555;
+	}
+
+	.drop-active .file-table {
+		filter: brightness(0.7);
+	}
+
+	.footer {
+		display: flex;
+		gap: 10px;
+		justify-content: space-between;
+	}
+</style>
+
 {#snippet fileUploadItem(file)}
 	<TbodyTr>
 		<TbodyTd title="File name">
@@ -128,41 +166,3 @@
 		<Button width="180px" img="img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
 	</div>
 </div>
-
-<style>
-	.file-upload {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.header {
-		display: flex;
-		gap: 10px;
-		justify-content: space-between;
-	}
-
-	.body .items-empty {
-		padding: 50px;
-		text-align: center;
-		background-color: #eee;
-		border: 1px dashed #888;
-		border-radius: 10px;
-		width: 100%;
-	}
-
-	.drop-active .items-empty {
-		background-color: #ddd;
-		border-color: #555;
-	}
-
-	.drop-active .file-table {
-		filter: brightness(0.7);
-	}
-
-	.footer {
-		display: flex;
-		gap: 10px;
-		justify-content: space-between;
-	}
-</style>

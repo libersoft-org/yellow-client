@@ -73,7 +73,7 @@
 				loader.prev,
 				loader.next,
 				loader.reason,
-				(_res) => {
+				_res => {
 					console.log('LOADmESSAGES: _RES:', _res);
 					loader.loading = false;
 					loader.delete_me = true;
@@ -83,6 +83,12 @@
 		}, 0);
 	}
 </script>
+
+<style>
+	.container {
+		min-height: 40px;
+	}
+</style>
 
 <div class="container">
 	<div bind:this={loaderElement}>
@@ -98,9 +104,3 @@
 		<Spinner show={loader.loading} />
 	</div>
 </div>
-
-<style>
-	.container {
-		min-height: 40px;
-	}
-</style>

@@ -23,7 +23,7 @@
 	$: update(intersecting);
 	$: first = showall ? stickers : stickers?.slice(0, splitAt);
 	$: rest = showall ? [] : stickers?.slice(splitAt);
-	stickerset_favorites.subscribe((value) => (in_favorites = stickerset_in_favorites(stickerset)));
+	stickerset_favorites.subscribe(value => (in_favorites = stickerset_in_favorites(stickerset)));
 	let favorite_alt;
 	$: favorite_alt = in_favorites ? 'Remove from favorites' : 'Add to favorites';
 	let favorite_icon;
@@ -68,33 +68,6 @@
 	}
 </script>
 
-<div class="stickerset" style="content-visibility: {intersecting ? 'visible' : 'hidden'}" role="none" bind:clientHeight>
-	<div class="title-bar">
-		<div class="left">
-			<div class="label">{stickerset.name}</div>
-			{#if $debug}
-				<div>ID: {stickerset.id}</div>
-				<!--<details><summary>stickerset</summary>{JSON.stringify(stickerset, null, 2)}</details>-->
-			{/if}
-			<div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
-		</div>
-		<div class="right">
-			<Icon img="img/heart-{favorite_icon}.svg" alt={favorite_alt} size="20px" padding="10px" onClick={toggleFavorite} />
-		</div>
-	</div>
-	<div class="set">
-		<StickerSetPart {stickerset} items={first} {intersecting} />
-	</div>
-	{#if !showall}
-		<Button img="img/{expanded ? 'up' : 'down'}.svg" onClick={clickExpand} width="100%" />
-	{/if}
-	{#if showall || expanded}
-		<div class="set">
-			<StickerSetPart {stickerset} items={rest} {intersecting} />
-		</div>
-	{/if}
-</div>
-
 <style>
 	.stickerset {
 		display: flex;
@@ -131,3 +104,30 @@
 		gap: 5px;
 	}
 </style>
+
+<div class="stickerset" style="content-visibility: {intersecting ? 'visible' : 'hidden'}" role="none" bind:clientHeight>
+	<div class="title-bar">
+		<div class="left">
+			<div class="label">{stickerset.name}</div>
+			{#if $debug}
+				<div>ID: {stickerset.id}</div>
+				<!--<details><summary>stickerset</summary>{JSON.stringify(stickerset, null, 2)}</details>-->
+			{/if}
+			<div class="created">Added: {new Date(stickerset.created).toLocaleString()}</div>
+		</div>
+		<div class="right">
+			<Icon img="img/heart-{favorite_icon}.svg" alt={favorite_alt} size="20px" padding="10px" onClick={toggleFavorite} />
+		</div>
+	</div>
+	<div class="set">
+		<StickerSetPart {stickerset} items={first} {intersecting} />
+	</div>
+	{#if !showall}
+		<Button img="img/{expanded ? 'up' : 'down'}.svg" onClick={clickExpand} width="100%" />
+	{/if}
+	{#if showall || expanded}
+		<div class="set">
+			<StickerSetPart {stickerset} items={rest} {intersecting} />
+		</div>
+	{/if}
+</div>

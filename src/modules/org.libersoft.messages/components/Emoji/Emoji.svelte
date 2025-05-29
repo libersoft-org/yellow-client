@@ -34,6 +34,12 @@
 	}
 </script>
 
+<style>
+	img {
+		object-fit: contain;
+	}
+</style>
+
 {#if $debug}
 	<pre>
  codepoints:{JSON.stringify(codepoints)}
@@ -50,9 +56,3 @@
 {:else}
 	<img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url} onMouseOver={() => (is_mouse_over = true)} onMouseOut={() => (is_mouse_over = false)} />
 {/if}
-
-<style>
-	img {
-		object-fit: contain;
-	}
-</style>

@@ -10,33 +10,6 @@
 	$: testid = 'conversation ' + c.address;
 </script>
 
-<BaseButton data-testid={testid} onClick={() => clickItem(c)}>
-	<div class="item" class:active={c.address === $selectedConversation?.address}>
-		<div class="item-row">
-			<Photo size="50px" />
-			<div class="description">
-				<div class="contact">
-					{#if c.visible_name}
-						<div class="name">{c.visible_name}</div>
-					{/if}
-					<div class="address">{c.address}</div>
-					<div class="time">
-						{new Date(c.last_message_date /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}
-					</div>
-				</div>
-			</div>
-			{#if c.unread_count !== 0 && c.unread_count !== undefined}
-				<div class="count">{c.unread_count}</div>
-			{/if}
-		</div>
-		{#if c.last_message_text.trim()}
-			<div class="text">{c.last_message_text.trim()}</div>
-		{:else}
-			<div class="text">&nbsp;</div>
-		{/if}
-	</div>
-</BaseButton>
-
 <style>
 	.item {
 		display: flex;
@@ -109,3 +82,30 @@
 		color: #fff;
 	}
 </style>
+
+<BaseButton data-testid={testid} onClick={() => clickItem(c)}>
+	<div class="item" class:active={c.address === $selectedConversation?.address}>
+		<div class="item-row">
+			<Photo size="50px" />
+			<div class="description">
+				<div class="contact">
+					{#if c.visible_name}
+						<div class="name">{c.visible_name}</div>
+					{/if}
+					<div class="address">{c.address}</div>
+					<div class="time">
+						{new Date(c.last_message_date /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}
+					</div>
+				</div>
+			</div>
+			{#if c.unread_count !== 0 && c.unread_count !== undefined}
+				<div class="count">{c.unread_count}</div>
+			{/if}
+		</div>
+		{#if c.last_message_text.trim()}
+			<div class="text">{c.last_message_text.trim()}</div>
+		{:else}
+			<div class="text">&nbsp;</div>
+		{/if}
+	</div>
+</BaseButton>

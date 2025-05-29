@@ -8,10 +8,6 @@
 	});
 </script>
 
-<div class="text">
-	<MessageContentRenderer rootNode={messageContent.body} />
-</div>
-
 <style>
 	.text {
 		display: flex;
@@ -22,3 +18,7 @@
 		overflow-wrap: break-word;
 	}
 </style>
+
+<div class="text">
+	<MessageContentRenderer rootNode={messageContent.body} />
+</div>

@@ -397,7 +397,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 	await test.step('Messages Settings', async () => {
 		// Switch account
 		await switchAccount(page, 'user3@example.com');
-		await new Promise((resolve) => setTimeout(resolve, 5000));
+		await new Promise(resolve => setTimeout(resolve, 5000));
 
 		await switchModule(page, 'org.libersoft.messages');
 

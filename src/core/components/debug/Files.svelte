@@ -122,6 +122,50 @@
 	}
 </script>
 
+<style>
+	.files-debug {
+		background: #f0f0f0;
+		border: 1px solid #ccc;
+	}
+
+	.platform-info {
+		background: #e0e0e0;
+		padding: 10px;
+		margin-bottom: 15px;
+		border: 1px solid #999;
+		font-family: monospace;
+	}
+
+	.platform-info-item {
+		margin: 2px 0;
+	}
+
+	.platform-info-item strong {
+		display: inline-block;
+		width: 120px;
+	}
+
+	.folder-input {
+		margin-bottom: 10px;
+	}
+
+	.folder-input input {
+		margin-left: 10px;
+		padding: 5px;
+		width: 200px;
+	}
+
+	.result,
+	.download-object {
+		margin-top: 10px;
+	}
+
+	h3,
+	h4 {
+		margin: 0 0 10px 0;
+	}
+</style>
+
 <div class="files-debug">
 	<h3>File Operations Debug</h3>
 
@@ -179,47 +223,3 @@
 		</textarea>
 	</div>
 </div>
-
-<style>
-	.files-debug {
-		background: #f0f0f0;
-		border: 1px solid #ccc;
-	}
-
-	.platform-info {
-		background: #e0e0e0;
-		padding: 10px;
-		margin-bottom: 15px;
-		border: 1px solid #999;
-		font-family: monospace;
-	}
-
-	.platform-info-item {
-		margin: 2px 0;
-	}
-
-	.platform-info-item strong {
-		display: inline-block;
-		width: 120px;
-	}
-
-	.folder-input {
-		margin-bottom: 10px;
-	}
-
-	.folder-input input {
-		margin-left: 10px;
-		padding: 5px;
-		width: 200px;
-	}
-
-	.result,
-	.download-object {
-		margin-top: 10px;
-	}
-
-	h3,
-	h4 {
-		margin: 0 0 10px 0;
-	}
-</style>

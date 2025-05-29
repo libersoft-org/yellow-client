@@ -5,10 +5,6 @@
 	export let size = '50px';
 </script>
 
-<div class="photo" style="min-width: {size}; min-height: {size}; width: {size}; height: {size}; border-radius: {$photoRadius};">
-	<img src={img} {alt} />
-</div>
-
 <style>
 	.photo {
 		border: 1px solid #000;
@@ -23,3 +19,7 @@
 		padding-top: 5px;
 	}
 </style>
+
+<div class="photo" style="min-width: {size}; min-height: {size}; width: {size}; height: {size}; border-radius: {$photoRadius};">
+	<img src={img} {alt} />
+</div>

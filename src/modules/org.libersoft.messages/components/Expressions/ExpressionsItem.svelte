@@ -13,17 +13,6 @@
 	}
 </script>
 
-<BaseButton {onClick} {onMousedown} height="100%">
-	<div class="item {active ? 'active' : ''}">
-		{#if icon}
-			<Icon img={icon} alt={label} {colorVariable} size="24px" padding="0px" />
-		{/if}
-		{#if label}
-			<div class="label">{label}</div>
-		{/if}
-	</div>
-</BaseButton>
-
 <style>
 	.item {
 		display: flex;
@@ -46,3 +35,14 @@
 		font-size: 14px;
 	}
 </style>
+
+<BaseButton {onClick} {onMousedown} height="100%">
+	<div class="item {active ? 'active' : ''}">
+		{#if icon}
+			<Icon img={icon} alt={label} {colorVariable} size="24px" padding="0px" />
+		{/if}
+		{#if label}
+			<div class="label">{label}</div>
+		{/if}
+	</div>
+</BaseButton>

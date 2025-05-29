@@ -39,7 +39,7 @@ class BasicStreamLoader extends MediaLoader {
 		// console.log('SETUP: sourceBuffer', this.sourceBuffer);
 	}
 
-	processChunk: MediaLoader['processChunk'] = (chunk) => {
+	processChunk: MediaLoader['processChunk'] = chunk => {
 		const sourceBuffer = this.sourceBuffer as SourceBuffer;
 
 		const append = () => {

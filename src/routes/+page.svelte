@@ -67,21 +67,21 @@
 
 	function getFileChunkFactory(uploadId) {
 		const fn = makeDownloadChunkAsyncFn(get(active_account));
-		return (params) => fn({ uploadId, ...params });
+		return params => fn({ uploadId, ...params });
 	}
 
 	onMount(async () => {
 		console.log('+page onMount');
 
 		// Catch all synchronous errors
-		window.addEventListener('error', (event) => {
+		window.addEventListener('error', event => {
 			// event.error is the Error object
 			console.error('Uncaught error:', event.error);
 			console.error('Stack trace:\n', event.error?.stack);
 		});
 
 		// Catch unhandled promise rejections
-		window.addEventListener('unhandledrejection', (event) => {
+		window.addEventListener('unhandledrejection', event => {
 			const reason = event.reason;
 			console.error('Unhandled promise rejection:', reason);
 			console.error('Stack trace:\n', reason?.stack || reason);
@@ -102,7 +102,7 @@
 
 			navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
 
-			navigator.serviceWorker.ready.then((registration) => {
+			navigator.serviceWorker.ready.then(registration => {
 				console.log('+page service worker ready');
 				console.log('Service worker registration:', registration);
 				console.log('Service worker active:', registration.active);
@@ -111,10 +111,10 @@
 				console.log('Service worker scope:', registration.scope);
 				window.sw = registration;
 
-				navigator.serviceWorker.addEventListener('message', (e) => {
+				navigator.serviceWorker.addEventListener('message', e => {
 					if (e.data.type === 'GET_FILE_INFO') {
 						const { accId, uploadId } = e.data.payload;
-						loadUploadData(uploadId).then((uploadData) => {
+						loadUploadData(uploadId).then(uploadData => {
 							e.ports[0].postMessage(uploadData.record);
 						});
 					}
@@ -125,7 +125,7 @@
 						getChunk({
 							offsetBytes: start,
 							chunkSize: end + 1 - start,
-						}).then((data) => {
+						}).then(data => {
 							e.ports[0].postMessage(data);
 						});
 					}
@@ -176,7 +176,7 @@
 		//console.log('updateAppHeight');
 
 		if ('virtualKeyboard' in navigator) {
-			navigator.virtualKeyboard.addEventListener('geometrychange', (event) => {
+			navigator.virtualKeyboard.addEventListener('geometrychange', event => {
 				//console.log('virtualKeyboard geometrychange:', event.target.boundingRect);
 			});
 		}
@@ -232,8 +232,8 @@
 		//console.log('active_account: ', $active_account);
 		//console.log('accounts_config: ', $accounts_config);
 		if (!$active_account) return;
-		accounts_config.update((accounts) => {
-			accounts.forEach((account) => {
+		accounts_config.update(accounts => {
+			accounts.forEach(account => {
 				if (account.id === $active_account.id) {
 					account.settings = account.settings ? account.settings : {};
 					account.settings.last_module_id = id;
@@ -291,7 +291,7 @@
 		resizer.style.left = sideBarWidth + 'px';
 	}
 
-	isMobile.subscribe((v) => {
+	isMobile.subscribe(v => {
 		console.log('isMobile: ', v);
 		if (v) {
 			sidebarWidth = '';
@@ -302,42 +302,9 @@
 
 	async function onkeydown(event) {
 		//console.log('window onkeydown: ', event);
-		if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) debug.update((d) => !d);
+		if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) debug.update(d => !d);
 	}
 </script>
-
-<svelte:window {onkeydown} />
-<svelte:head>
-	<title>{product}</title>
-</svelte:head>
-<div class="app" style:--sidebar-width={sidebarWidth}>
-	<div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
-		<Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
-		<MenuBar onOpenMenu={() => (isMenuOpen = true)} />
-		<AccountBar />
-		<ModuleBar {onSelectModule} {onCloseModule} />
-		{#if selectedCorePage}
-			<svelte:component this={selectedCorePage.sidebar} />
-		{:else if selectedModuleDecl}
-			<svelte:component this={selectedModuleDecl.panels.sidebar} />
-		{:else}
-			<WelcomeSidebar />
-		{/if}
-	</div>
-
-	<div class="resizer" style:left={sidebarWidth} role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
-
-	<div class="content" bind:this={contentElement}>
-		{#if selectedCorePage}
-			<svelte:component this={selectedCorePage.content} />
-		{:else if selectedModuleDecl}
-			<svelte:component this={selectedModuleDecl.panels.content} bind:this={content} />
-		{:else}
-			<WelcomeContent {product} {version} {link} />
-		{/if}
-	</div>
-</div>
-<Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} />
 
 <style>
 	.app {
@@ -396,3 +363,36 @@
 		}
 	}
 </style>
+
+<svelte:window {onkeydown} />
+<svelte:head>
+	<title>{product}</title>
+</svelte:head>
+<div class="app" style:--sidebar-width={sidebarWidth}>
+	<div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
+		<Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
+		<MenuBar onOpenMenu={() => (isMenuOpen = true)} />
+		<AccountBar />
+		<ModuleBar {onSelectModule} {onCloseModule} />
+		{#if selectedCorePage}
+			<svelte:component this={selectedCorePage.sidebar} />
+		{:else if selectedModuleDecl}
+			<svelte:component this={selectedModuleDecl.panels.sidebar} />
+		{:else}
+			<WelcomeSidebar />
+		{/if}
+	</div>
+
+	<div class="resizer" style:left={sidebarWidth} role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
+
+	<div class="content" bind:this={contentElement}>
+		{#if selectedCorePage}
+			<svelte:component this={selectedCorePage.content} />
+		{:else if selectedModuleDecl}
+			<svelte:component this={selectedModuleDecl.panels.content} bind:this={content} />
+		{:else}
+			<WelcomeContent {product} {version} {link} />
+		{/if}
+	</div>
+</div>
+<Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} />

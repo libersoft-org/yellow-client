@@ -28,13 +28,21 @@
 
 	$effect(() => {
 		for (let store of [animationName, animationDuration, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor]) {
-			addSubscription(skipFirst(store as any), (value) => {
+			addSubscription(skipFirst(store as any), value => {
 				log.debug(`Store ${store} updated:`, value);
 				updateExampleNotification();
 			});
 		}
 	});
 </script>
+
+<style>
+	.settings-notifications {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+</style>
 
 <div class="settings-notifications">
 	<SettingsNotificationsAlert />
@@ -112,11 +120,3 @@
 		{/if}
 	{/if}
 </div>
-
-<style>
-	.settings-notifications {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-</style>

@@ -5,10 +5,6 @@
 	export let value = 0;
 </script>
 
-<div class="progress-bar">
-	<div class="fill {moving ? 'moving' : ''}" style="width: {value}%;"></div>
-</div>
-
 <style>
 	.progress-bar {
 		width: calc(100% - 6px);
@@ -41,3 +37,7 @@
 		}
 	}
 </style>
+
+<div class="progress-bar">
+	<div class="fill {moving ? 'moving' : ''}" style="width: {value}%;"></div>
+</div>

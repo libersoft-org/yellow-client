@@ -112,7 +112,7 @@ export function listConversations(acc) {
 		if (res.data?.conversations) {
 			let conversationsArray = acc.module_data[identifier].conversationsArray;
 			console.log('listConversations into:', get(conversationsArray));
-			conversationsArray.set(res.data.conversations.map((c) => sanitizeConversation(acc, c)));
+			conversationsArray.set(res.data.conversations.map(c => sanitizeConversation(acc, c)));
 			console.log('listConversations:', get(conversationsArray));
 		}
 	});
@@ -148,9 +148,9 @@ export function initComms(acc) {
 	let data = acc.module_data[identifier];
 	//console.log('initComms:', data);
 
-	data.new_message_listener = async (event) => eventNewMessage(acc, event);
-	data.seen_message_listener = (event) => eventSeenMessage(acc, event);
-	data.seen_inbox_message_listener = (event) => eventSeenInboxMessage(acc, event);
+	data.new_message_listener = async event => eventNewMessage(acc, event);
+	data.seen_message_listener = event => eventSeenMessage(acc, event);
+	data.seen_inbox_message_listener = event => eventSeenInboxMessage(acc, event);
 
 	// message events
 	acc.events.addEventListener('new_message', data.new_message_listener);
@@ -169,13 +169,13 @@ export function init() {
 	let subs = [];
 
 	subs.push(
-		active_account_id.subscribe((acc) => {
+		active_account_id.subscribe(acc => {
 			get(md)?.['selectedConversation']?.set(null);
 		})
 	);
 
 	return function () {
-		subs.forEach((sub) => sub());
+		subs.forEach(sub => sub());
 	};
 }
 
@@ -218,12 +218,12 @@ export async function initUpload(files, uploadType, recipients) {
 
 	// send message
 	let messageHtml = '';
-	uploads.forEach((upload) => {
+	uploads.forEach(upload => {
 		const fileMimeType = upload.record.fileMimeType;
 		const isServerType = upload.record.type === FileUploadRecordType.SERVER;
 
 		// handle images
-		if (isServerType && acceptedImageTypes.some((v) => fileMimeType.startsWith(v))) {
+		if (isServerType && acceptedImageTypes.some(v => fileMimeType.startsWith(v))) {
 			messageHtml += `<Imaged file="yellow:${upload.record.id}"></Imaged>`;
 			filesDB.addFile({
 				localFileStatus: LocalFileStatus.READY,
@@ -235,11 +235,11 @@ export async function initUpload(files, uploadType, recipients) {
 			});
 		}
 		// handle videos
-		else if (isServerType && acceptedVideoTypes.some((v) => fileMimeType.startsWith(v))) {
+		else if (isServerType && acceptedVideoTypes.some(v => fileMimeType.startsWith(v))) {
 			messageHtml += `<YellowVideo file="yellow:${upload.record.id}"></YellowVideo>`;
 		}
 		// handle audio
-		else if (isServerType && acceptedAudioTypes.some((v) => fileMimeType.startsWith(v))) {
+		else if (isServerType && acceptedAudioTypes.some(v => fileMimeType.startsWith(v))) {
 			messageHtml += `<YellowAudio file="yellow:${upload.record.id}"></YellowAudio>`;
 		} else {
 			messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
@@ -251,7 +251,7 @@ export async function initUpload(files, uploadType, recipients) {
 	}, 100);
 
 	// send upload
-	const records = uploads.map((upload) => upload.record);
+	const records = uploads.map(upload => upload.record);
 	sendData(acc, null, 'upload_begin', { records, recipients }, true, (req, res) => {
 		if (res.error !== false) {
 			return;
@@ -274,7 +274,7 @@ function uploadChunkAsync({ upload, chunk }) {
 		});
 
 		op.attempt(() => {
-			const retry = (res) => {
+			const retry = res => {
 				const willRetry = op.retry(new Error());
 				if (!willRetry) {
 					reject(res);
@@ -319,8 +319,8 @@ function message_update(event) {
 		const messageUid = message.uid;
 
 		// TODO: this messagesArray.update will try to find the message in the current conversation (even if this update is from another conversation)
-		messagesArray.update((m) => {
-			const foundMessage = m.find((msg) => msg.uid === messageUid);
+		messagesArray.update(m => {
+			const foundMessage = m.find(msg => msg.uid === messageUid);
 			if (foundMessage) {
 				foundMessage.reactions = message.reactions;
 			}
@@ -363,7 +363,7 @@ export function downloadAttachmentsSerial(records, finishCallback) {
 }
 
 export const makeDownloadChunkAsyncFn =
-	(acc) =>
+	acc =>
 	({ uploadId, offsetBytes, chunkSize }) => {
 		return new Promise((resolve, reject) => {
 			sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (req, res) => {
@@ -391,7 +391,7 @@ export function cancelUpload(uploadId) {
 }
 
 export function pauseUpload(uploadId) {
-	return new Promise((resolve) => {
+	return new Promise(resolve => {
 		fileUploadManager.pauseUpload(uploadId);
 		sendData(
 			get(active_account),
@@ -410,7 +410,7 @@ export function pauseUpload(uploadId) {
 }
 
 export function resumeUpload(uploadId) {
-	return new Promise((resolve) => {
+	return new Promise(resolve => {
 		fileUploadManager.resumeUpload(uploadId);
 		sendData(
 			get(active_account),
@@ -528,7 +528,7 @@ export function listMessages(acc, address) {
 	//console.log('listMessages', acc, address);
 	messagesArray.set([{ type: 'initial_loading_placeholder' }]);
 	messagesIsInitialLoading.set(true);
-	loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', (res) => {});
+	loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', res => {});
 }
 
 export function loadMessages(acc, address, base, prev, next, reason, cb, force_refresh = false) {
@@ -571,7 +571,7 @@ export function findMessages(acc, address, base, prev, next) {
 
 export function getMessageByUid(uid) {
 	return new Promise((resolve, reject) => {
-		const found = get(messagesArray).find((m) => m.uid === uid);
+		const found = get(messagesArray).find(m => m.uid === uid);
 		if (found) {
 			resolve(found);
 			return;
@@ -579,8 +579,8 @@ export function getMessageByUid(uid) {
 		const acc = get(active_account);
 		const address = get(selectedConversation).address; // TODO: won't work for multi conversations
 		findMessages(acc, address, 'uid:' + uid, 0, 0)
-			.then((messages) => {
-				const message = messages.find((m) => m.uid === uid);
+			.then(messages => {
+				const message = messages.find(m => m.uid === uid);
 				resolve(message);
 			})
 			.catch(reject);
@@ -589,7 +589,7 @@ export function getMessageByUid(uid) {
 
 function addMessagesToMessagesArray(items, reason, force_refresh) {
 	let arr = get(messagesArray);
-	arr = arr.filter((m) => m.type !== 'initial_loading_placeholder');
+	arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
 	let result = [];
 	let state = { countAdded: 0 };
 	for (let m of items) {
@@ -609,15 +609,15 @@ export function handleResize(wasScrolledToBottom) {
 }
 
 export function snipeMessage(messageUid) {
-	messagesArray.update((v) => {
-		return v.filter((m) => m.uid !== messageUid);
+	messagesArray.update(v => {
+		return v.filter(m => m.uid !== messageUid);
 	});
 	insertEvent({ type: 'gc', array: get(messagesArray) });
 }
 
 function addMessage(arr, msg, state) {
 	//TODO: this should only update the message if the data is actually more up-to-date
-	let m = arr.find((m) => m.uid === msg.uid);
+	let m = arr.find(m => m.uid === msg.uid);
 	if (m) {
 		for (let key in msg) m[key] = msg[key];
 		return m;
@@ -629,7 +629,7 @@ function addMessage(arr, msg, state) {
 }
 
 function constructLoadedMessages(acc, data) {
-	let items = data.map((msg) => {
+	let items = data.map(msg => {
 		let message = new Message(acc, msg);
 		message.received_by_my_homeserver = true;
 		message.is_lazyloaded = true;
@@ -760,7 +760,7 @@ function sendOutgoingMessage(acc, conversation, params, message, outgoing_messag
 		messages_db.outgoing.delete(outgoing_message_id); // update the message status and trigger the update of the messagesArray:
 		message.received_by_my_homeserver = true;
 		if (get(active_account) === acc && get(acc.module_data[identifier].selectedConversation) === conversation) {
-			messagesArray.update((v) => v);
+			messagesArray.update(v => v);
 			insertEvent({ type: 'properties_update', array: get(messagesArray) });
 		}
 	});
@@ -802,14 +802,14 @@ export function unsetMessageReaction(message, reaction) {
 
 export function toggleMessageReaction(message, reaction) {
 	const userAddress = get(active_account).credentials.address;
-	const didUserReact = message.reactions.some((existingReaction) => {
+	const didUserReact = message.reactions.some(existingReaction => {
 		if (existingReaction.user_address === userAddress && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi) {
 			return true;
 		}
 	});
 
 	if (didUserReact) {
-		message.reactions = message.reactions.filter((r) => !(r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi));
+		message.reactions = message.reactions.filter(r => !(r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi));
 		insertEvent({ type: 'properties_update', array: get(messagesArray) });
 		return unsetMessageReaction(message, reaction);
 	} else {
@@ -829,7 +829,7 @@ async function sendOutgoingMessages(acc) {
 	console.log('sendOutgoingMessages for acc', acc.id);
 	for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
 		console.log('sendOutgoingMessages found queued message:', message.data.uid);
-		let res = await new Promise((resolve) => {
+		let res = await new Promise(resolve => {
 			sendData(acc, active_account, 'message_send', message.data, true, (req, res) => {
 				resolve(res);
 			});
@@ -846,7 +846,7 @@ async function sendOutgoingMessages(acc) {
 function updateConversationsArray(acc, msg) {
 	let acc_ca = acc.module_data[identifier].conversationsArray;
 	let ca = get(acc_ca);
-	const conversation = ca.find((c) => c.address === msg.remote_address);
+	const conversation = ca.find(c => c.address === msg.remote_address);
 	//console.log('updateConversationsArray', conversation, msg);
 	let is_unread = !msg.seen && !msg.just_sent && msg.address_from !== acc.credentials.address;
 	if (conversation) {
@@ -877,8 +877,8 @@ export function openNewConversation(address) {
 }
 
 export function jumpToMessage(acc, address, uid) {
-	loadMessages(acc, address, 'uid:' + uid, 10, 10, 'load_referenced_message', (res) => {
-		const message = get(messagesArray).find((m) => m.uid === uid);
+	loadMessages(acc, address, 'uid:' + uid, 10, 10, 'load_referenced_message', res => {
+		const message = get(messagesArray).find(m => m.uid === uid);
 		insertEvent({
 			type: 'jump_to_referenced_message',
 			array: get(messagesArray),
@@ -888,7 +888,7 @@ export function jumpToMessage(acc, address, uid) {
 }
 
 export function insertEvent(event) {
-	events.update((v) => {
+	events.update(v => {
 		console.log('insertEvent: ', v, event);
 		return [...v, event];
 	});
@@ -928,11 +928,11 @@ function eventSeenMessage(acc, event) {
 		return;
 	}
 	//console.log('messagesArray:', get(messagesArray));
-	const message = get(messagesArray).find((m) => m.uid === res.data.uid);
+	const message = get(messagesArray).find(m => m.uid === res.data.uid);
 	//console.log('eventSeenMessage: message found by uid:', message);
 	if (message) {
 		message.seen = res.data.seen;
-		messagesArray.update((v) => v);
+		messagesArray.update(v => v);
 		//console.log('insertEvent..');
 		insertEvent({ type: 'properties_update', array: get(messagesArray) });
 	} else console.log('eventSeenMessage: message not found by uid:', res);
@@ -948,10 +948,10 @@ function eventSeenInboxMessage(acc, event) {
 	//console.log('eventSeenInboxMessage', res);
 	if (!res.data) return;
 	//console.log(get(conversationsArray));
-	const conversation = get(conversationsArray).find((c) => c.address === res.data.address_from);
+	const conversation = get(conversationsArray).find(c => c.address === res.data.address_from);
 	if (conversation) {
 		conversation.unread_count--;
-		conversationsArray.update((v) => v);
+		conversationsArray.update(v => v);
 	} else console.log('eventSeenInboxMessage: conversation not found by address:', res);
 }
 
@@ -962,7 +962,7 @@ function messageNotificationId(msg) {
 async function showNotification(acc, msg) {
 	if (!acc) console.error('showNotification: no account');
 	console.log('showNotification conversationsArray:', get(conversationsArray));
-	const conversation = get(conversationsArray)?.find((c) => c.address === msg.address_from);
+	const conversation = get(conversationsArray)?.find(c => c.address === msg.address_from);
 	console.log('new Notification in conversation', conversation);
 	let title;
 	if (conversation) {
@@ -977,7 +977,7 @@ async function showNotification(acc, msg) {
 		icon: 'img/photo.svg',
 		//icon: 'favicon.svg',
 		sound: 'modules/' + identifier + '/audio/message.mp3',
-		callback: async (event) => {
+		callback: async event => {
 			if (event === 'click') {
 				window.focus();
 				selectAccount(acc.id);
@@ -1004,7 +1004,7 @@ export function ensureConversationDetails(conversation) {
 	_send(acc, active_account, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
 		if (res.error !== false) return;
 		Object.assign(conversation, res.data);
-		conversationsArray.update((v) => v);
+		conversationsArray.update(v => v);
 	});
 }
 
@@ -1030,7 +1030,7 @@ DOMPurify.addHook('afterSanitizeAttributes', function (node) {
 DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 	if (data.tagName) {
 		const t = data.tagName.toLowerCase();
-		if (CUSTOM_TAGS.find((tag) => tag === t)) {
+		if (CUSTOM_TAGS.find(tag => tag === t)) {
 			// Move children out to after the node. This is a hack to tolerate improperly closed sticker tag. // nope, jsdom (parse5) already produces them "wrong" (right, by spec)
 			while (node.firstChild) {
 				node.parentNode.insertBefore(node.firstChild, node.nextSibling);
@@ -1122,7 +1122,7 @@ export function preprocess_incoming_plaintext_message_text(content) {
 	//console.log('splitAndLinkify input:', result0);
 	let result1 = splitAndLinkify(result0);
 	//console.log('splitAndLinkify output:', result1);
-	let result2 = result1.map((part) => {
+	let result2 = result1.map(part => {
 		if (part.type === 'plain') {
 			let r = htmlEscape(part.value);
 			r = r.replaceAll('\n', '<br />');
@@ -1147,7 +1147,7 @@ function linkify(text) {
 	//console.log('linkify ', text);
 	// Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
 	const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
-	let result = text.replace(combinedPattern, (match) => {
+	let result = text.replace(combinedPattern, match => {
 		// Directly use `match` as the URL/href. This ensures we handle all links in one pass.
 		return `<a href="${match}" target="_blank">${match}</a>`;
 	});

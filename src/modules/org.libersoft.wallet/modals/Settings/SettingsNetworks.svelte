@@ -54,6 +54,14 @@
 	}
 </script>
 
+<style>
+	.networks {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+</style>
+
 <div class="networks">
 	<ButtonBar>
 		<Button img="img/export.svg" text="Export" onClick={() => doExport()} />
@@ -113,11 +121,3 @@
 </div>
 <Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:show={showModalEditNetwork} />
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:show={showModalTokenList} />
-
-<style>
-	.networks {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-</style>

@@ -35,7 +35,7 @@
 	function create_new_theme() {
 		let new_theme = JSON.parse(JSON.stringify(default_theme));
 		new_theme.name = 'New Theme';
-		themes_stored.update((arr) => [...arr, new_theme]);
+		themes_stored.update(arr => [...arr, new_theme]);
 		$selected_theme_index = $themes_stored.length - 1;
 	}
 
@@ -43,10 +43,20 @@
 		if ($themes_stored.length > 1 && $selected_theme_index > 0) {
 			let current_index = $selected_theme_index;
 			$selected_theme_index = 0;
-			themes_stored.update((arr) => arr.filter((theme) => $themes_stored.indexOf(theme) !== current_index));
+			themes_stored.update(arr => arr.filter(theme => $themes_stored.indexOf(theme) !== current_index));
 		}
 	}
 </script>
+
+<style>
+	.zoom {
+		display: flex;
+
+		input {
+			margin-top: 6px;
+		}
+	}
+</style>
 
 <Table>
 	<Thead>
@@ -124,13 +134,3 @@
 		</Tbody>
 	</Table>
 </Table>
-
-<style>
-	.zoom {
-		display: flex;
-
-		input {
-			margin-top: 6px;
-		}
-	}
-</style>

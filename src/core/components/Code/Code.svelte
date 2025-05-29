@@ -161,49 +161,6 @@
 	}
 </script>
 
-<div
-	bind:this={elDiv}
-	class="code-wrapper"
-	contenteditable
-	spellcheck="false"
-	role="textbox"
-	oninput={(e) => {
-		// Save current cursor position before updating
-		lastCursorPos = getCursorPosition();
-
-		// Update code with the new content
-		const newText = elDiv?.innerText || '';
-		if (newText !== code) {
-			// Use setTimeout to avoid cursor jumping by postponing the update until after this event handler completes
-			setTimeout(() => {
-				code = newText;
-			}, 0);
-		}
-	}}
-	onkeydown={handleKeyDown}
-	onpaste={pastePlainText}
-	onfocus={() => {
-		// Ensure we have content for cursor to appear when focused
-		if (!elDiv.innerHTML || elDiv.innerHTML.trim() === '') {
-			elDiv.innerHTML = '<code class="language-json"> </code>';
-			// Place cursor at beginning
-			const selection = window.getSelection();
-			if (selection) {
-				const range = document.createRange();
-				const codeElement = elDiv.querySelector('code');
-				if (codeElement && codeElement.firstChild) {
-					range.setStart(codeElement.firstChild, 0);
-					range.collapse(true);
-					selection.removeAllRanges();
-					selection.addRange(range);
-				}
-			}
-		}
-	}}
->
-	<code class="language-json">{code || ' '}</code>
-</div>
-
 <style>
 	.code-wrapper {
 		white-space: pre-wrap;
@@ -396,3 +353,46 @@
 		}
 	}
 </style>
+
+<div
+	bind:this={elDiv}
+	class="code-wrapper"
+	contenteditable
+	spellcheck="false"
+	role="textbox"
+	oninput={e => {
+		// Save current cursor position before updating
+		lastCursorPos = getCursorPosition();
+
+		// Update code with the new content
+		const newText = elDiv?.innerText || '';
+		if (newText !== code) {
+			// Use setTimeout to avoid cursor jumping by postponing the update until after this event handler completes
+			setTimeout(() => {
+				code = newText;
+			}, 0);
+		}
+	}}
+	onkeydown={handleKeyDown}
+	onpaste={pastePlainText}
+	onfocus={() => {
+		// Ensure we have content for cursor to appear when focused
+		if (!elDiv.innerHTML || elDiv.innerHTML.trim() === '') {
+			elDiv.innerHTML = '<code class="language-json"> </code>';
+			// Place cursor at beginning
+			const selection = window.getSelection();
+			if (selection) {
+				const range = document.createRange();
+				const codeElement = elDiv.querySelector('code');
+				if (codeElement && codeElement.firstChild) {
+					range.setStart(codeElement.firstChild, 0);
+					range.collapse(true);
+					selection.removeAllRanges();
+					selection.addRange(range);
+				}
+			}
+		}
+	}}
+>
+	<code class="language-json">{code || ' '}</code>
+</div>

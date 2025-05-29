@@ -55,15 +55,15 @@ export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByC
 }
 
 export function emoji_render(codepoints) {
-	return codepoints.map((codepoint) => String.fromCodePoint(codepoint)).join('');
+	return codepoints.map(codepoint => String.fromCodePoint(codepoint)).join('');
 }
 
 export function rgi(codepoints) {
-	return codepoints.map((codepoint) => codepoint.toString(16).padStart(4, '0')).join('_');
+	return codepoints.map(codepoint => codepoint.toString(16).padStart(4, '0')).join('_');
 }
 
 export function rgi_to_codepoints(rgi) {
-	return rgi.split('_').map((codepoint) => parseInt(codepoint, 16));
+	return rgi.split('_').map(codepoint => parseInt(codepoint, 16));
 }
 
 /*

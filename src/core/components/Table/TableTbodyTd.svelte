@@ -9,10 +9,6 @@
 	let { children, title }: Props = $props();
 </script>
 
-<td data-title={title}>
-	{@render children()}
-</td>
-
 <style>
 	td {
 		border: 0;
@@ -85,3 +81,7 @@
 		}
 	}
 </style>
+
+<td data-title={title}>
+	{@render children()}
+</td>

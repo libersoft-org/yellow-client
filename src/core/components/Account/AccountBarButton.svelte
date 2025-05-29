@@ -6,16 +6,6 @@
 	export let onClick;
 </script>
 
-<BaseButton {onClick}>
-	<div class="accounts-button">
-		{#if img}
-			<Icon {img} alt={title} size="20px" padding="0px" colorVariable="--icon-white" />
-			<!--<div><img src={img} alt={title} /></div>-->
-		{/if}
-		<div>{title}</div>
-	</div>
-</BaseButton>
-
 <style>
 	.accounts-button {
 		display: flex;
@@ -33,3 +23,13 @@
 		background-color: #222;
 	}
 </style>
+
+<BaseButton {onClick}>
+	<div class="accounts-button">
+		{#if img}
+			<Icon {img} alt={title} size="20px" padding="0px" colorVariable="--icon-white" />
+			<!--<div><img src={img} alt={title} /></div>-->
+		{/if}
+		<div>{title}</div>
+	</div>
+</BaseButton>

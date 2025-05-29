@@ -91,7 +91,7 @@ networks.subscribe((nets: Network[]) => {
 	if (modified) {
 		setTimeout(() => {
 			console.log('Updating networks');
-			networks.update((n) => n);
+			networks.update(n => n);
 		}, 1000);
 	}
 });
@@ -107,13 +107,13 @@ function toHexStr(uint8) {
 export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
-	const r = $networks.find((n) => n.guid === $selectedNetworkID);
+	const r = $networks.find(n => n.guid === $selectedNetworkID);
 	//console.log('selectedNetwork', r);
 	return r;
 });
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
-	const r = $wallets.find((w) => w.address === $selectedWalletID);
+	const r = $wallets.find(w => w.address === $selectedWalletID);
 	//console.log('selectedWallet', r);
 	return r;
 });
@@ -121,7 +121,7 @@ export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $
 export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
 	//console.log('selectedWallet:', $selectedWallet);
 	let addresses = $selectedWallet?.addresses || [];
-	let result = addresses.find((a) => a.index === $selectedWallet?.selected_address_index);
+	let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
 	//console.log('SELECTEDADDRESS', result);
 	return result;
 });
@@ -131,13 +131,13 @@ export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selected
 });
 
 let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
-	return ($selectedNetwork?.tokens || []).map((token) => ({
+	return ($selectedNetwork?.tokens || []).map(token => ({
 		symbol: token.symbol,
 	}));
 });
 
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
-	return [$selectedMainCurrencySymbol, ...$tokens.map((token) => token.symbol)];
+	return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)];
 });
 
 export const addressBook = localStorageSharedStore<AddressBookItem[]>('addressbook', []);
@@ -151,7 +151,7 @@ addressBook.subscribe((value: AddressBookItem[]) => {
 		}
 	}
 	if (modifyed) {
-		addressBook.update((v) => v);
+		addressBook.update(v => v);
 	}
 });
 
@@ -162,7 +162,7 @@ selectedAddress.subscribe((value: Address | undefined) => {
 
 wallets.subscribe((wals: Wallet[]) => {
 	while (wallets_cleanup(wals)) {
-		wallets.update((w) => w);
+		wallets.update(w => w);
 	}
 });
 
@@ -241,7 +241,7 @@ function reconnect(): void {
 		clearTimeout(reconnectionTimer);
 	}
 	const rrr = get(rpcURL);
-	if (!rrr || net.rpcURLs.find((url) => url === rrr) === undefined) {
+	if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
 		if (!net.rpcURLs[0]) {
 			status.set({
 				color: 'red',
@@ -282,7 +282,7 @@ export function addAddress(w: Wallet, index?: number | string): void {
 			window.alert('Invalid index');
 			return;
 		} else {
-			let existing = addresses.find((a) => a.index === indexNum);
+			let existing = addresses.find(a => a.index === indexNum);
 			if (existing) {
 				console.log('Address with index', indexNum, 'already exists');
 				existing.deleted = false;
@@ -297,8 +297,8 @@ export function addAddress(w: Wallet, index?: number | string): void {
 	console.log('sorted.');
 	w.addresses = addresses;
 	w.selected_address_index = indexNum;
-	wallets.update((ws) =>
-		ws.map((item) =>
+	wallets.update(ws =>
+		ws.map(item =>
 			item === w
 				? {
 						...item,
@@ -334,12 +334,12 @@ function doAddAddress(w: Wallet, addresses: Address[], index: number): void {
 
 export function selectAddress(wallet: Wallet, address: Address): void {
 	wallet.selected_address_index = address.index;
-	wallets.update((v) => v);
+	wallets.update(v => v);
 	selectedWalletID.set(wallet.address);
 }
 
 export function walletAddresses(wallet: Wallet): Address[] {
-	return (wallet.addresses || []).filter((a) => !a.deleted);
+	return (wallet.addresses || []).filter(a => !a.deleted);
 }
 
 export function generateMnemonic(): Mnemonic {
@@ -395,7 +395,7 @@ export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> 
 		addresses: [],
 		log: [],
 	};
-	wallets.update((w) => {
+	wallets.update(w => {
 		wallet.name = 'My Wallet ' + (w.length + 1) + suffix;
 		w.push(wallet);
 		return w;
@@ -430,7 +430,7 @@ export async function getBalance(): Promise<void> {
 			const rates2 = rates['rates'];
 			//console.log('got2 rates:', rates2);
 			if (rates2) {
-				balance.update((b) => {
+				balance.update(b => {
 					const amount_str = b?.crypto?.amount;
 					const currency = b?.crypto?.currency;
 					const rate = rates2[currency];
@@ -526,7 +526,7 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 		selectedWalletValue.log = [];
 	}
 	selectedWalletValue.log.push(log);
-	wallets.update((w) => w);
+	wallets.update(w => w);
 
 	/*} catch (error) {
   console.error('Error while sending a transaction:', error);
@@ -534,7 +534,7 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 }
 
 export function addNetwork(net): void {
-	if (get(networks)?.find((n) => n.name === net.name)) {
+	if (get(networks)?.find(n => n.name === net.name)) {
 		window.alert('Network with this name already exists');
 		return;
 	}
@@ -543,7 +543,7 @@ export function addNetwork(net): void {
 		guid: getGuid(),
 		name: net.name,
 		chainID: net.chainID,
-		rpcURLs: net.rpcURLs.map((url) => url),
+		rpcURLs: net.rpcURLs.map(url => url),
 		currency: {
 			symbol: net.currency.symbol,
 			iconURL: net.currency.iconURL,
@@ -551,14 +551,14 @@ export function addNetwork(net): void {
 		explorerURL: net.explorerURL,
 	};
 
-	networks.update((n) => {
+	networks.update(n => {
 		n.push(my_net);
 		return n;
 	});
 }
 
 export function removeNetwork(net): void {
-	networks.update((n) => {
-		return n.filter((n) => n !== net);
+	networks.update(n => {
+		return n.filter(n => n !== net);
 	});
 }

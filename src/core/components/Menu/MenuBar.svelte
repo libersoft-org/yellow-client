@@ -10,12 +10,6 @@
 	let { onOpenMenu }: Props = $props();
 </script>
 
-<div class="bar">
-	<Icon img="img/menu.svg" alt="☰" colorVariable="--color-primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} />
-	<div class="product">{product}</div>
-	<MenuBarDebug />
-</div>
-
 <style>
 	.bar {
 		display: flex;
@@ -31,3 +25,9 @@
 		font-weight: bold;
 	}
 </style>
+
+<div class="bar">
+	<Icon img="img/menu.svg" alt="☰" colorVariable="--color-primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} />
+	<div class="product">{product}</div>
+	<MenuBarDebug />
+</div>

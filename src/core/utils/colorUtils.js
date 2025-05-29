@@ -3,7 +3,7 @@ export function lightenColor(hex, percent) {
 	if (hex.length === 3)
 		hex = hex
 			.split('')
-			.map((c) => c + c)
+			.map(c => c + c)
 			.join('');
 	const num = parseInt(hex, 16);
 	let r = (num >> 16) & 0xff;
@@ -51,7 +51,7 @@ export function lightenColor(hex, percent) {
 		g = hue2rgb(p, q, h);
 		b = hue2rgb(p, q, h - 1 / 3);
 	}
-	const toHex = (x) => {
+	const toHex = x => {
 		const hex = Math.round(x * 255).toString(16);
 		return hex.length === 1 ? '0' + hex : hex;
 	};

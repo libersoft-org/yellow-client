@@ -31,7 +31,7 @@
 
 	function getFileChunkFactory(uploadId) {
 		const fn = makeDownloadChunkAsyncFn(get(active_account));
-		return (params) => fn({ uploadId, ...params });
+		return params => fn({ uploadId, ...params });
 	}
 
 	const fullDownloadAudio = () => {
@@ -39,7 +39,7 @@
 			return;
 		}
 		isFullDownloading = true;
-		downloadAttachmentsSerial([upload.record], (download) => {
+		downloadAttachmentsSerial([upload.record], download => {
 			isFullDownloading = false;
 			const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
 			const url = URL.createObjectURL(blob);
@@ -73,8 +73,8 @@
 				peaks: [record.metadata?.peaks],
 				backend: 'MediaElement',
 			});
-			wavesurfer.on('decode', (d) => (duration = formatTime(d)));
-			wavesurfer.on('timeupdate', (t) => (time = formatTime(t)));
+			wavesurfer.on('decode', d => (duration = formatTime(d)));
+			wavesurfer.on('timeupdate', t => (time = formatTime(t)));
 			wavesurfer.on('interaction', () => wavesurfer.play());
 			wavesurfer.on('play', () => (isPlaying = true));
 			wavesurfer.on('pause', () => (isPlaying = false));
@@ -84,7 +84,7 @@
 			wavesurfer.on('ready', () => {
 				//wavesurfer.play();
 			});
-			wavesurfer.on('error', (err) => {
+			wavesurfer.on('error', err => {
 				// console.error('WaveSurfer error:', err);
 				if (err instanceof MediaError && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_DECODE)) {
 					fullDownloadAudio();
@@ -112,7 +112,7 @@
 	};
 
 	onMount(() => {
-		loadUploadData(uploadId).then((uploadData) => {
+		loadUploadData(uploadId).then(uploadData => {
 			upload = uploadData;
 			setupWavesurfer('');
 		});
@@ -144,35 +144,11 @@
 			console.error('Upload is not available');
 			return;
 		}
-		downloadAttachmentsSerial([upload.record], (download) => {
+		downloadAttachmentsSerial([upload.record], download => {
 			assembleFile(new Blob(download.chunksReceived, { type: download.record.fileMimeType }), download.record.fileOriginalName);
 		});
 	}
 </script>
-
-<div>
-	<div class="voice-message">
-		{#if upload && upload.record}
-			<div>
-				<strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
-			</div>
-		{:else}
-			Loading...
-		{/if}
-		<div class="player">
-			<Button img="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" onClick={clickPlay} />
-			<div class="wave" bind:this={waveRef}></div>
-		</div>
-		<div class="time">{time ? time : '00:00'} / {duration}</div>
-	</div>
-	{#if !$download}
-		<div class="">
-			<Button img="img/download.svg" onClick={onDownload} width="30px" />
-		</div>
-	{:else}
-		<MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
-	{/if}
-</div>
 
 <style>
 	.voice-message {
@@ -203,3 +179,27 @@
 		align-items: end;
 	}
 </style>
+
+<div>
+	<div class="voice-message">
+		{#if upload && upload.record}
+			<div>
+				<strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
+			</div>
+		{:else}
+			Loading...
+		{/if}
+		<div class="player">
+			<Button img="modules/{identifier}/img/{isPlaying ? 'pause' : 'play'}.svg" onClick={clickPlay} />
+			<div class="wave" bind:this={waveRef}></div>
+		</div>
+		<div class="time">{time ? time : '00:00'} / {duration}</div>
+	</div>
+	{#if !$download}
+		<div class="">
+			<Button img="img/download.svg" onClick={onDownload} width="30px" />
+		</div>
+	{:else}
+		<MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
+	{/if}
+</div>

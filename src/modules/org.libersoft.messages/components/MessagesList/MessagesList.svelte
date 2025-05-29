@@ -104,7 +104,7 @@
 
 	let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 
-	events.subscribe((e) => {
+	events.subscribe(e => {
 		if (e?.length) {
 			console.log('events.subscribe:', e);
 			handleEvents(e);
@@ -255,7 +255,7 @@
 	});
 
 	function getLoader(l) {
-		loaders = loaders.filter((i) => !i.delete_me);
+		loaders = loaders.filter(i => !i.delete_me);
 		for (let i of loaders) {
 			if (i.base === l.base && i.prev === l.prev && i.next === l.next) return i;
 		}
@@ -324,7 +324,7 @@
 		}
 
 		// force_refresh is used when deleting message. Normally, Loaders would, after loadMessages, only issue an event if any new messages are actually added. But if we delete a message, we need to remove the loader. So, the gc event, triggered as soon as the message is removed from messagesArray, lets us know to tell all loaders to force_refresh when they trigger. This is not optimal, as only the exact hole inserted in place of the deleted message should force_refresh, but it will work.
-		let force_refresh = events.some((e) => e.type === 'gc');
+		let force_refresh = events.some(e => e.type === 'gc');
 
 		for (let i = 0; i < events.length; i++) {
 			//console.log('handleEvent:', events[i]);
@@ -514,7 +514,7 @@
 	}
 
 	let wrapperWidth = null;
-	const onResize = (entry) => {
+	const onResize = entry => {
 		wrapperWidth = entry.contentRect.width;
 	};
 	$: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
@@ -524,72 +524,6 @@
 	 */
 	const forwardMessageModalOpen = forwardMessageStore.isOpen();
 </script>
-
-{#if $debug}
-	<div class="debug">
-		<Button text="Scroll to bottom" onClick={scrollToBottom} />
-		<Button text="Save scroll position" onClick={saveScrollPosition} />
-		<Button text="Restore scroll position" onClick={restoreScrollPosition} />
-		<Button text="GC" onClick={gc} />
-		<Button text="Show debug modal" onClick={() => (showDebugModal = !showDebugModal)} />
-		<div>items count: {itemsCount}</div>
-		<div>messagesHeight: {messagesHeight}</div>
-		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
-	</div>
-{/if}
-
-<svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
-
-<div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone" use:resize={onResize}>
-	<div class="dnd-overlay {showFileDndOverlay ? 'drop-active' : ''}">
-		<div class="dnd-overlay-inner">
-			<Icon img="modules/{identifier}/img/file.svg" colorVariable="--icon-white" alt="Drop files icon" size="75px" padding="0px" />
-			<div class="dnd-overlay-text">Drop files here to send them</div>
-		</div>
-	</div>
-	{#if itemsArray.length === 0 || (itemsArray.length === 1 && itemsArray[0].type === 'no_messages')}
-		<div class="spacer"></div>
-		<div class="no-messages">
-			{#if $online}
-				{#if $messagesIsInitialLoading}
-					<Spinner />
-				{:else}
-					<div class="body">Send a message to start a conversation</div>
-				{/if}
-			{:else}
-				<div class="body">Module is offline, messages will be delivered later</div>
-			{/if}
-		</div>
-		<div class="spacer"></div>
-	{:else}
-		<div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll} on:touchmove={touchMove} on:touchend={blockScroll} on:touchstart={touchStart}>
-			<div class="spacer"></div>
-			{#each itemsArray as m (m.uid)}
-				<!--{#if $debug}-->
-				<!-- <div class="debug-text">-->
-				<!--  {JSON.stringify(m, null, 2)}-->
-				<!-- </div>-->
-				<!--{/if}-->
-				{#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole'}
-					<MessageLoader loader={m.top} />
-					<div class="hole">{m.uid}</div>
-					<MessageLoader loader={m.bottom} />
-				{:else if m.type === 'loader'}
-					<MessageLoader loader={m} />
-				{:else if m.type === 'unseen_marker'}
-					<div bind:this={elUnseenMarker} class="unread">Unread messages</div>
-				{:else}
-					<Message bind:this={m.el} {enableScroll} {disableScroll} message={m} elContainer={elMessages} />
-				{/if}
-			{/each}
-			<div bind:this={anchorElement}></div>
-		</div>
-		<ScrollButton visible={scrollButtonVisible} right="15px" bottom="5px" onClick={scrollToBottom} />
-	{/if}
-</div>
-
-<Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} onShowChange={(show) => forwardMessageStore.setOpen(show)} width="448px" height="390px" />
 
 <!--doBlockScroll: {doBlockScroll}-->
 
@@ -705,3 +639,69 @@
 		color: #fff;
 	}
 </style>
+
+{#if $debug}
+	<div class="debug">
+		<Button text="Scroll to bottom" onClick={scrollToBottom} />
+		<Button text="Save scroll position" onClick={saveScrollPosition} />
+		<Button text="Restore scroll position" onClick={restoreScrollPosition} />
+		<Button text="GC" onClick={gc} />
+		<Button text="Show debug modal" onClick={() => (showDebugModal = !showDebugModal)} />
+		<div>items count: {itemsCount}</div>
+		<div>messagesHeight: {messagesHeight}</div>
+		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
+	</div>
+{/if}
+
+<svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
+
+<div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone" use:resize={onResize}>
+	<div class="dnd-overlay {showFileDndOverlay ? 'drop-active' : ''}">
+		<div class="dnd-overlay-inner">
+			<Icon img="modules/{identifier}/img/file.svg" colorVariable="--icon-white" alt="Drop files icon" size="75px" padding="0px" />
+			<div class="dnd-overlay-text">Drop files here to send them</div>
+		</div>
+	</div>
+	{#if itemsArray.length === 0 || (itemsArray.length === 1 && itemsArray[0].type === 'no_messages')}
+		<div class="spacer"></div>
+		<div class="no-messages">
+			{#if $online}
+				{#if $messagesIsInitialLoading}
+					<Spinner />
+				{:else}
+					<div class="body">Send a message to start a conversation</div>
+				{/if}
+			{:else}
+				<div class="body">Module is offline, messages will be delivered later</div>
+			{/if}
+		</div>
+		<div class="spacer"></div>
+	{:else}
+		<div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll} on:touchmove={touchMove} on:touchend={blockScroll} on:touchstart={touchStart}>
+			<div class="spacer"></div>
+			{#each itemsArray as m (m.uid)}
+				<!--{#if $debug}-->
+				<!-- <div class="debug-text">-->
+				<!--  {JSON.stringify(m, null, 2)}-->
+				<!-- </div>-->
+				<!--{/if}-->
+				{#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole'}
+					<MessageLoader loader={m.top} />
+					<div class="hole">{m.uid}</div>
+					<MessageLoader loader={m.bottom} />
+				{:else if m.type === 'loader'}
+					<MessageLoader loader={m} />
+				{:else if m.type === 'unseen_marker'}
+					<div bind:this={elUnseenMarker} class="unread">Unread messages</div>
+				{:else}
+					<Message bind:this={m.el} {enableScroll} {disableScroll} message={m} elContainer={elMessages} />
+				{/if}
+			{/each}
+			<div bind:this={anchorElement}></div>
+		</div>
+		<ScrollButton visible={scrollButtonVisible} right="15px" bottom="5px" onClick={scrollToBottom} />
+	{/if}
+</div>
+
+<Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
+<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} onShowChange={show => forwardMessageStore.setOpen(show)} width="448px" height="390px" />

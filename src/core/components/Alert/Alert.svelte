@@ -31,15 +31,15 @@
 	export let message;
 </script>
 
-{#if message}
-	<div class="alert" style:color={colors.color} style:background-color={colors.background} style:border="1px solid {colors.border}">
-		{message}
-	</div>
-{/if}
-
 <style>
 	.alert {
 		padding: 10px;
 		border-radius: 10px;
 	}
 </style>
+
+{#if message}
+	<div class="alert" style:color={colors.color} style:background-color={colors.background} style:border="1px solid {colors.border}">
+		{message}
+	</div>
+{/if}

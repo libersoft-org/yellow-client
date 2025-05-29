@@ -16,13 +16,13 @@
 	});
 </script>
 
-{#if latitude && longitude}
-	<div class="map" bind:this={mapContainer}></div>
-{/if}
-
 <style>
 	.map {
 		height: 100%;
 		width: 100%;
 	}
 </style>
+
+{#if latitude && longitude}
+	<div class="map" bind:this={mapContainer}></div>
+{/if}

@@ -28,14 +28,14 @@
 			el.style.height = `${el.scrollHeight}px`;
 			el.offsetHeight;
 			el.style.height = '0px';
-			activeIndices = activeIndices.filter((i) => i !== index);
+			activeIndices = activeIndices.filter(i => i !== index);
 			return;
 		}
 
 		// OPEN
 		// Remove others if needed
 		if ((!isDesktop || !expandAllOnDesktop) && isSingleMode) {
-			activeIndices.forEach((i) => {
+			activeIndices.forEach(i => {
 				const other = document.querySelector(`.content[data-index="${i}"]`) as HTMLElement;
 				if (other) {
 					other.style.height = `${other.scrollHeight}px`;
@@ -73,7 +73,7 @@
 		function expandAll() {
 			activeIndices = items.map((_, i) => i);
 			tick().then(() => {
-				activeIndices.forEach((index) => {
+				activeIndices.forEach(index => {
 					const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
 					if (el) {
 						el.style.height = `${el.scrollHeight}px`;
@@ -151,23 +151,6 @@
 	});
 </script>
 
-<div class="accordion">
-	{#each items as item, index}
-		<div class="item {activeIndices.includes(index) ? 'is-expanded' : ''}">
-			<BaseButton onClick={() => handleClick(index)} width="100%">
-				<div class="header">
-					<div class="title">{item.name}</div>
-					{@render header?.(item)}
-					<Icon img="img/down.svg" alt="Chevron Down" colorVariable="--color-primary-foreground" size="12px" />
-				</div>
-			</BaseButton>
-			<div class="content {activeIndices.includes(index) ? 'is-expanded' : ''}" data-index={index}>
-				{@render content?.(item)}
-			</div>
-		</div>
-	{/each}
-</div>
-
 <style>
 	.accordion {
 		border: 1px solid var(--accordion-border-color, #b90);
@@ -237,3 +220,20 @@
 		}
 	}
 </style>
+
+<div class="accordion">
+	{#each items as item, index}
+		<div class="item {activeIndices.includes(index) ? 'is-expanded' : ''}">
+			<BaseButton onClick={() => handleClick(index)} width="100%">
+				<div class="header">
+					<div class="title">{item.name}</div>
+					{@render header?.(item)}
+					<Icon img="img/down.svg" alt="Chevron Down" colorVariable="--color-primary-foreground" size="12px" />
+				</div>
+			</BaseButton>
+			<div class="content {activeIndices.includes(index) ? 'is-expanded' : ''}" data-index={index}>
+				{@render content?.(item)}
+			</div>
+		</div>
+	{/each}
+</div>

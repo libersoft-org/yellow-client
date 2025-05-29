@@ -27,6 +27,38 @@
 	});
 </script>
 
+<style>
+	.version-info {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+
+	.detail {
+		display: flex;
+		gap: 5px;
+		font-size: 16px;
+	}
+
+	.version-info.centered .detail {
+		justify-content: center;
+	}
+
+	.detail .label {
+		opacity: 0.8;
+	}
+
+	.detail .value {
+		font-weight: bold;
+	}
+
+	/* Allow parent components to override styles */
+	.version {
+		display: flex;
+		gap: 5px;
+	}
+</style>
+
 <div class="version-info {className}">
 	{#if TAURI && showNativeApp}
 		<MenuAppSection text="Client app" />
@@ -82,35 +114,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.version-info {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-
-	.detail {
-		display: flex;
-		gap: 5px;
-		font-size: 16px;
-	}
-
-	.version-info.centered .detail {
-		justify-content: center;
-	}
-
-	.detail .label {
-		opacity: 0.8;
-	}
-
-	.detail .value {
-		font-weight: bold;
-	}
-
-	/* Allow parent components to override styles */
-	.version {
-		display: flex;
-		gap: 5px;
-	}
-</style>

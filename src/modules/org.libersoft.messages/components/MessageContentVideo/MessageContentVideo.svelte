@@ -16,6 +16,9 @@
 	fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 </script>
 
+<style>
+</style>
+
 <div class="message-content-video-wrapper">
 	{#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
 		<MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
@@ -23,6 +26,3 @@
 		<VideoContainer uploadId={yellowId} />
 	{/if}
 </div>
-
-<style>
-</style>

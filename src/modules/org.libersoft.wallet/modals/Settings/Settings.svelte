@@ -56,45 +56,6 @@
 	}
 </script>
 
-{#snippet breadcrumbs(menuItems: any[])}
-	{#if activeTab !== ''}
-		<div class="breadcrumbs" in:fade={{ duration: 400 }}>
-			<button onclick={() => setItem('')}>
-				<Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size="16px" />
-				Wallet Settings
-			</button>
-			<span>
-				{#each menuItems as item}
-					{#if item.tab === activeTab}
-						{item.title}
-					{/if}
-				{/each}
-			</span>
-		</div>
-	{/if}
-	{#each menuItems as item}
-		{#if activeTab === ''}
-			<MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
-		{/if}
-	{/each}
-{/snippet}
-
-<div class="settings-container">
-	{@render breadcrumbs(menuItems)}
-
-	<div class="tab-content">
-		{#if activeTab === 'general'}
-			<SectionGeneral />
-		{:else if activeTab === 'networks'}
-			<SectionNetworks />
-		{:else if activeTab === 'wallets'}
-			<SectionWallets />
-		{:else if activeTab === 'address_book'}
-			<SectionAddressBook />
-		{/if}
-	</div>
-</div>
-
 <style>
 	.settings-container {
 		display: flex;
@@ -162,3 +123,42 @@
 		}
 	}
 </style>
+
+{#snippet breadcrumbs(menuItems: any[])}
+	{#if activeTab !== ''}
+		<div class="breadcrumbs" in:fade={{ duration: 400 }}>
+			<button onclick={() => setItem('')}>
+				<Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size="16px" />
+				Wallet Settings
+			</button>
+			<span>
+				{#each menuItems as item}
+					{#if item.tab === activeTab}
+						{item.title}
+					{/if}
+				{/each}
+			</span>
+		</div>
+	{/if}
+	{#each menuItems as item}
+		{#if activeTab === ''}
+			<MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
+		{/if}
+	{/each}
+{/snippet}
+
+<div class="settings-container">
+	{@render breadcrumbs(menuItems)}
+
+	<div class="tab-content">
+		{#if activeTab === 'general'}
+			<SectionGeneral />
+		{:else if activeTab === 'networks'}
+			<SectionNetworks />
+		{:else if activeTab === 'wallets'}
+			<SectionWallets />
+		{:else if activeTab === 'address_book'}
+			<SectionAddressBook />
+		{/if}
+	</div>
+</div>

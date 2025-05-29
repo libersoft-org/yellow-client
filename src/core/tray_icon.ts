@@ -56,7 +56,7 @@ export async function createTrayIcon() {
 		const iconPath = await defaultWindowIcon();
 		//resolveResource('icons/icon.png');
 
-		const action = async (event) => {
+		const action = async event => {
 			log.debug(`TrayIcon event: ${event.type} button: ${event.button} buttonState: ${event.buttonState}`);
 			// add the handle in the action to update the state
 			//await handleIconState(event);

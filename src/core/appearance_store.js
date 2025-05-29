@@ -51,9 +51,9 @@ export let current_theme = derived([selected_theme_index, themes_stored], ([$sel
 	return $themes_stored[$selected_theme_index];
 });
 
-selected_theme_index.subscribe((value) => {
+selected_theme_index.subscribe(value => {
 	//   console.log($themes_stored[value].properties);
-	Object.keys(get(themes_stored)[value].properties).forEach((key) => {
+	Object.keys(get(themes_stored)[value].properties).forEach(key => {
 		//   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
 		document.documentElement.style.setProperty(key, get(themes_stored)[value].properties[key]);
 	});
@@ -61,7 +61,7 @@ selected_theme_index.subscribe((value) => {
 current_theme.subscribe(() => {
 	//   console.log($themes_stored[value].properties);
 
-	Object.keys(get(themes_stored)[get(selected_theme_index)].properties).forEach((key) => {
+	Object.keys(get(themes_stored)[get(selected_theme_index)].properties).forEach(key => {
 		//   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
 		document.documentElement.style.setProperty(key, get(themes_stored)[get(selected_theme_index)].properties[key]);
 	});

@@ -42,18 +42,6 @@
 	}
 </script>
 
-<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" on:touchstart={(e) => startSwipe(e)} on:touchmove={(e) => moveSwipe(e)} on:touchend={(e) => endSwipe(e)}>
-	<img src={photo.img} alt={photo.name} />
-	<div class="overlay">
-		<h2>{photo.name}</h2>
-		<p>{photo.description}</p>
-	</div>
-	<div class="buttons">
-		<CardButton on:click={onNo} content="👎" />
-		<CardButton on:click={onYes} content="👍" />
-	</div>
-</div>
-
 <style>
 	.photo-card {
 		position: relative;
@@ -100,3 +88,15 @@
 		z-index: 3000;
 	}
 </style>
+
+<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" on:touchstart={e => startSwipe(e)} on:touchmove={e => moveSwipe(e)} on:touchend={e => endSwipe(e)}>
+	<img src={photo.img} alt={photo.name} />
+	<div class="overlay">
+		<h2>{photo.name}</h2>
+		<p>{photo.description}</p>
+	</div>
+	<div class="buttons">
+		<CardButton on:click={onNo} content="👎" />
+		<CardButton on:click={onYes} content="👍" />
+	</div>
+</div>

@@ -1,7 +1,3 @@
-<tr>
-	<slot />
-</tr>
-
 <style>
 	tr:nth-child(even) {
 		background-color: #ffdd1130;
@@ -15,3 +11,7 @@
 		background-color: #fd1;
 	}
 </style>
+
+<tr>
+	<slot />
+</tr>

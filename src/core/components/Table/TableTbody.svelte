@@ -8,10 +8,6 @@
 	const { children }: Props = $props();
 </script>
 
-<tbody>
-	{@render children()}
-</tbody>
-
 <style>
 	tbody {
 		:global(&:has(> tr:nth-child(2))) {
@@ -31,3 +27,7 @@
 		}
 	}
 </style>
+
+<tbody>
+	{@render children()}
+</tbody>

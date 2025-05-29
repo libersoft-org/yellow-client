@@ -58,6 +58,27 @@
 	});
 </script>
 
+<style>
+	.message-attachment {
+		display: flex;
+		flex-direction: column;
+		padding: 10px;
+		border: 1px solid #880;
+
+		border-radius: 10px;
+		background-color: var(--color-primary-softer-background);
+	}
+
+	.transfer-controls {
+		display: flex;
+		gap: 10px;
+	}
+
+	.file-title {
+		margin-bottom: 6px;
+	}
+</style>
+
 {#snippet uploadControls()}
 	<div class="transfer-controls">
 		{#if upload.record.status === FileUploadRecordStatus.PAUSED}
@@ -88,7 +109,7 @@
 			width="110px"
 			img="img/download.svg"
 			text="Download"
-			onClick={(e) => {
+			onClick={e => {
 				onDownload(e);
 			}}
 			data-testid="download-button"
@@ -253,24 +274,3 @@
 		No upload data
 	{/if}
 </div>
-
-<style>
-	.message-attachment {
-		display: flex;
-		flex-direction: column;
-		padding: 10px;
-		border: 1px solid #880;
-
-		border-radius: 10px;
-		background-color: var(--color-primary-softer-background);
-	}
-
-	.transfer-controls {
-		display: flex;
-		gap: 10px;
-	}
-
-	.file-title {
-		margin-bottom: 6px;
-	}
-</style>

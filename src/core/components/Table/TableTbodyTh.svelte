@@ -9,10 +9,6 @@
 	const { children, title }: Props = $props();
 </script>
 
-<th data-title={title} scope="row">
-	{@render children()}
-</th>
-
 <style>
 	th {
 		:global(.table-wide &) {
@@ -85,3 +81,7 @@
 		}
 	}
 </style>
+
+<th data-title={title} scope="row">
+	{@render children()}
+</th>

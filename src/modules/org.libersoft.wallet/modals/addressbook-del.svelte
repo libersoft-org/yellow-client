@@ -6,19 +6,10 @@
 	let error;
 
 	function clickDelete() {
-		addressBook.set($addressBook.filter((i) => i.guid !== params.item.guid));
+		addressBook.set($addressBook.filter(i => i.guid !== params.item.guid));
 		close();
 	}
 </script>
-
-<div class="text">Would you like to delete the item "{params.item.alias}"?</div>
-{#if error}
-	<div class="error">
-		<div class="bold">Error:</div>
-		<div>{error}</div>
-	</div>
-{/if}
-<Button text="Delete" onClick={clickDelete} width="100%" />
 
 <style>
 	.error {
@@ -34,3 +25,12 @@
 		text-align: left;
 	}
 </style>
+
+<div class="text">Would you like to delete the item "{params.item.alias}"?</div>
+{#if error}
+	<div class="error">
+		<div class="bold">Error:</div>
+		<div>{error}</div>
+	</div>
+{/if}
+<Button text="Delete" onClick={clickDelete} width="100%" />
