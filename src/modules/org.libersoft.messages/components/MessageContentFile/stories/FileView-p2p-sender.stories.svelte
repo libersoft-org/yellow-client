@@ -2,7 +2,7 @@
  import { defineMeta } from '@storybook/addon-svelte-csf';
  import {} from '@storybook/svelte';
  import FileView from '../FileView.svelte';
- import { FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+ import { FileUploadRecordErrorType, FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
  import FileViewStoriesUtils from '@/org.libersoft.messages/components/MessageContentFile/stories/fileView.storiesUtils.ts';
 
  // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -13,7 +13,7 @@
   ...FileViewStoriesUtils.makeDefaultStoryArgs(),
  });
 
- const errors = [1, 2, 3];
+ // const errors = [1, 2, 3];
 </script>
 
 <script>

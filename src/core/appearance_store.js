@@ -1,6 +1,6 @@
 // import { current_theme, themes_stored } from './core.js';
-import { get, writable, derived } from 'svelte/store';
-import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
+import { derived } from 'svelte/store';
+import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 export let selected_theme_index = localStorageSharedStore('selected_theme_index', 0);
 export const default_theme = {
  name: 'Light',

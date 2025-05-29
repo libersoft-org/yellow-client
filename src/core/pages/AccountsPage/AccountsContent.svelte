@@ -1,5 +1,5 @@
 <script lang="ts">
- import { debug, findAccount, selected_corepage_id, accounts_config, hideSidebarMobile, isMobile } from '@/core/core.js';
+ import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile, isMobile } from '@/core/core.js';
  import Button from '@/core/components/Button/Button.svelte';
  import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
  import Icon from '@/core/components/Icon/Icon.svelte';

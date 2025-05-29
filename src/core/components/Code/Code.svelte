@@ -17,68 +17,68 @@
 
  // Helper function to get current cursor position
  function getCursorPosition() {
-   const selection = window.getSelection();
-   if (!selection || !selection.rangeCount) return 0;
+  const selection = window.getSelection();
+  if (!selection || !selection.rangeCount) return 0;
 
-   // Get all text content up to cursor
-   const range = selection.getRangeAt(0).cloneRange();
-   range.setStart(elDiv, 0);
-   range.setEnd(selection.focusNode, selection.focusOffset);
-   return range.toString().length;
+  // Get all text content up to cursor
+  const range = selection.getRangeAt(0).cloneRange();
+  range.setStart(elDiv, 0);
+  range.setEnd(selection.focusNode, selection.focusOffset);
+  return range.toString().length;
  }
 
  // Helper function to set cursor position by character index
  function setCursorPosition(position) {
-   if (!elDiv) return;
+  if (!elDiv) return;
 
-   position = Math.max(0, Math.min(position, (elDiv.textContent || '').length));
+  position = Math.max(0, Math.min(position, (elDiv.textContent || '').length));
 
-   const selection = window.getSelection();
-   if (!selection) return;
+  const selection = window.getSelection();
+  if (!selection) return;
 
-   // Find the correct node and offset
-   const nodeStack = [elDiv];
-   let currentNode;
-   let charCount = 0;
-   let foundNode = null;
-   let foundOffset = 0;
+  // Find the correct node and offset
+  const nodeStack = [elDiv];
+  let currentNode;
+  let charCount = 0;
+  let foundNode = null;
+  let foundOffset = 0;
 
-   // Traverse DOM to find position
-   while (nodeStack.length > 0) {
-     currentNode = nodeStack.pop();
+  // Traverse DOM to find position
+  while (nodeStack.length > 0) {
+   currentNode = nodeStack.pop();
 
-     if (currentNode.nodeType === Node.TEXT_NODE) {
-       const nodeLength = currentNode.textContent?.length || 0;
+   if (currentNode.nodeType === Node.TEXT_NODE) {
+    const nodeLength = currentNode.textContent?.length || 0;
 
-       // Found the node where our position is
-       if (charCount + nodeLength >= position) {
-         foundNode = currentNode;
-         foundOffset = position - charCount;
-         break;
-       }
+    // Found the node where our position is
+    if (charCount + nodeLength >= position) {
+     foundNode = currentNode;
+     foundOffset = position - charCount;
+     break;
+    }
 
-       charCount += nodeLength;
-     } else {
-       // Process children in reverse order (for stack)
-       const children = Array.from(currentNode.childNodes);
-       for (let i = children.length - 1; i >= 0; i--) {
-         nodeStack.push(children[i]);
-       }
-     }
+    charCount += nodeLength;
+   } else {
+    // Process children in reverse order (for stack)
+    const children = Array.from(currentNode.childNodes);
+    for (let i = children.length - 1; i >= 0; i--) {
+     nodeStack.push(children[i]);
+    }
    }
+  }
 
-   // Set the cursor position
-   if (foundNode) {
-     try {
-       const range = document.createRange();
-       range.setStart(foundNode, foundOffset);
-       range.setEnd(foundNode, foundOffset);
-       selection.removeAllRanges();
-       selection.addRange(range);
-     } catch (error) {
-       console.error('Error setting cursor position:', error);
-     }
+  // Set the cursor position
+  if (foundNode) {
+   try {
+    const range = document.createRange();
+    range.setStart(foundNode, foundOffset);
+    range.setEnd(foundNode, foundOffset);
+    selection.removeAllRanges();
+    selection.addRange(range);
+   } catch (error) {
+    console.error('Error setting cursor position:', error);
    }
+  }
  }
 
  $effect(() => {
@@ -92,7 +92,7 @@
    // Get current cursor position
    const isActive = document.activeElement === elDiv;
    if (isActive) {
-     lastCursorPos = getCursorPosition();
+    lastCursorPos = getCursorPosition();
    }
 
    // Apply highlighting
@@ -100,11 +100,11 @@
 
    // Restore cursor position if the element was focused
    if (isActive) {
-     // Delay restoration to allow DOM updates
-     setTimeout(() => {
-       setCursorPosition(lastCursorPos);
-       elDiv.focus();
-     }, 0);
+    // Delay restoration to allow DOM updates
+    setTimeout(() => {
+     setCursorPosition(lastCursorPos);
+     elDiv.focus();
+    }, 0);
    }
   } catch (error) {
    log.error('Prism highlight error:', error);
@@ -112,7 +112,7 @@
   }
  });
 
-function pastePlainText(event: ClipboardEvent) {
+ function pastePlainText(event: ClipboardEvent) {
   event.preventDefault();
   const text = event.clipboardData?.getData('text/plain') || '';
   const selection = window.getSelection();
@@ -130,35 +130,35 @@ function pastePlainText(event: ClipboardEvent) {
 
   // Force re-highlight with cursor position preserved
   code = elDiv?.innerText || '';
-}
+ }
 
-// Handle keydown events, especially Enter key
-function handleKeyDown(event: KeyboardEvent) {
+ // Handle keydown events, especially Enter key
+ function handleKeyDown(event: KeyboardEvent) {
   // Handle Enter key to prevent inserting multiple newlines
   if (event.key === 'Enter') {
-    event.preventDefault();
+   event.preventDefault();
 
-    // Get current position
-    const pos = getCursorPosition();
+   // Get current position
+   const pos = getCursorPosition();
 
-    // Get current text
-    const currentText = elDiv?.innerText || '';
+   // Get current text
+   const currentText = elDiv?.innerText || '';
 
-    // Insert a single newline at cursor position
-    const newText = currentText.slice(0, pos) + '\n' + currentText.slice(pos);
+   // Insert a single newline at cursor position
+   const newText = currentText.slice(0, pos) + '\n' + currentText.slice(pos);
 
-    // Update text
-    code = newText;
+   // Update text
+   code = newText;
 
-    // Set cursor position after the inserted newline
-    lastCursorPos = pos + 1;
+   // Set cursor position after the inserted newline
+   lastCursorPos = pos + 1;
 
-    // Need to manually trigger update since we're preventing default
-    setTimeout(() => {
-      setCursorPosition(lastCursorPos);
-    }, 0);
+   // Need to manually trigger update since we're preventing default
+   setTimeout(() => {
+    setCursorPosition(lastCursorPos);
+   }, 0);
   }
-}
+ }
 </script>
 
 <style>
@@ -353,44 +353,44 @@ function handleKeyDown(event: KeyboardEvent) {
  }
 </style>
 
- <div
-  bind:this={elDiv}
-  class="code-wrapper"
-  contenteditable
-  spellcheck="false"
-  on:input={(e) => {
-    // Save current cursor position before updating
-    lastCursorPos = getCursorPosition();
+<div
+ bind:this={elDiv}
+ class="code-wrapper"
+ contenteditable
+ spellcheck="false"
+ on:input={e => {
+  // Save current cursor position before updating
+  lastCursorPos = getCursorPosition();
 
-    // Update code with the new content
-    const newText = elDiv?.innerText || '';
-    if (newText !== code) {
-      // Use setTimeout to avoid cursor jumping by postponing the update until after this event handler completes
-      setTimeout(() => {
-        code = newText;
-      }, 0);
+  // Update code with the new content
+  const newText = elDiv?.innerText || '';
+  if (newText !== code) {
+   // Use setTimeout to avoid cursor jumping by postponing the update until after this event handler completes
+   setTimeout(() => {
+    code = newText;
+   }, 0);
+  }
+ }}
+ on:keydown={handleKeyDown}
+ on:paste={pastePlainText}
+ on:focus={() => {
+  // Ensure we have content for cursor to appear when focused
+  if (!elDiv.innerHTML || elDiv.innerHTML.trim() === '') {
+   elDiv.innerHTML = '<code class="language-json"> </code>';
+   // Place cursor at beginning
+   const selection = window.getSelection();
+   if (selection) {
+    const range = document.createRange();
+    const codeElement = elDiv.querySelector('code');
+    if (codeElement && codeElement.firstChild) {
+     range.setStart(codeElement.firstChild, 0);
+     range.collapse(true);
+     selection.removeAllRanges();
+     selection.addRange(range);
     }
-  }}
-  on:keydown={handleKeyDown}
-  on:paste={pastePlainText}
-  on:focus={() => {
-    // Ensure we have content for cursor to appear when focused
-    if (!elDiv.innerHTML || elDiv.innerHTML.trim() === '') {
-      elDiv.innerHTML = '<code class="language-json"> </code>';
-      // Place cursor at beginning
-      const selection = window.getSelection();
-      if (selection) {
-        const range = document.createRange();
-        const codeElement = elDiv.querySelector('code');
-        if (codeElement && codeElement.firstChild) {
-          range.setStart(codeElement.firstChild, 0);
-          range.collapse(true);
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
-      }
-    }
-  }}
- >
+   }
+  }
+ }}
+>
  <code class="language-json">{code || ' '}</code>
- </div>
+</div>

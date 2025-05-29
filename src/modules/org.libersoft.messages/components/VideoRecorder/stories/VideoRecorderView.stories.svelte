@@ -1,7 +1,7 @@
 <script lang="ts" module>
  import { defineMeta } from '@storybook/addon-svelte-csf';
  import VideoRecorderView from '@/org.libersoft.messages/components/VideoRecorder/VideoRecorderView.svelte';
- import { fn } from '@storybook/test';
+ // import { fn } from '@storybook/test';
 
  const makeAudioDevice = (id: string, label: string) =>
   ({
