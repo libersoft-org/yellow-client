@@ -1,5 +1,5 @@
 // import { current_theme, themes_stored } from './core.js';
-import { derived } from 'svelte/store';
+import { derived, get } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 export let selected_theme_index = localStorageSharedStore('selected_theme_index', 0);
 export const default_theme = {
@@ -50,4 +50,19 @@ export let themes_stored = localStorageSharedStore('themes_stored', [
 export let current_theme = derived([selected_theme_index, themes_stored], ([$selected_theme_index, $themes_stored]) => {
   return $themes_stored[$selected_theme_index];
 });
-export let init_appearance_store = function ($selected_theme_index, $themes_stored) {};
+
+selected_theme_index.subscribe((value) => {
+  //   console.log($themes_stored[value].properties);
+  Object.keys(get(themes_stored)[value].properties).forEach((key) => {
+    //   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
+    document.documentElement.style.setProperty(key, get(themes_stored)[value].properties[key]);
+  });
+});
+current_theme.subscribe(() => {
+  //   console.log($themes_stored[value].properties);
+
+  Object.keys(get(themes_stored)[get(selected_theme_index)].properties).forEach((key) => {
+    //   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
+    document.documentElement.style.setProperty(key, get(themes_stored)[get(selected_theme_index)].properties[key]);
+  });
+});

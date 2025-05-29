@@ -10,24 +10,6 @@
   --icon-red: #dc2626;
   --icon-blue: #00f;
 
-  /* Theme colors: */
-  --color-primary-foreground: #222;
-  --color-primary-softer-background: #ffd;
-  --color-primary-soft-background: #ffa;
-  --color-primary-background: #fc1;
-  --color-primary-hard-background: #fa0;
-  --color-primary-harder-background: #d80;
-  --color-secondary-foreground: #fff;
-  --color-secondary-softer-background: #555;
-  --color-secondary-soft-background: #444;
-  --color-secondary-background: #222;
-  --color-secondary-hard-background: #111;
-  --color-secondary-harder-background: #000;
-  --color-default-foreground: #000;
-  --color-default-background: #fff;
-  --color-disabled-background: #888;
-  --color-disabled-foreground: #fff;
-
   /* Box shadows */
   --yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   --scroll-bar-color: #ca0;
