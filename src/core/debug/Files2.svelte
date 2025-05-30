@@ -5,9 +5,12 @@
 	import { log, TAURI_MOBILE } from '../tauri.ts';
 	import * as filesMobile from '../files-mobile.ts';
 
-	let fileName = 'test-file.txt';
-	let fileContent = 'Hello from mobile file test!';
-	let appendContent = '\nAppended content';
+	// Generate filename with compact datetime format: MMDD-HHmmss
+	const now = new Date();
+	const dateStr = (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + '-' + now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0') + now.getSeconds().toString().padStart(2, '0');
+	let fileName = `x-${dateStr}.html`;
+	let fileContent = '<html><body>Hello from mobile file test!';
+	let appendContent = '\nAppended content</body></html>';
 	let newFileName = 'renamed-file.txt';
 	let statusMessage = '';
 	let createdFile: any = null;
@@ -30,7 +33,7 @@
 			}
 
 			statusMessage = `File created: ${result.fileName}`;
-			log.debug('File created:', result);
+			log.debug('File created:', JSON.stringify(result, null, 2));
 		} catch (error) {
 			statusMessage = `Error: ${error}`;
 			log.error('Create file error:', error);
