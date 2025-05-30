@@ -91,8 +91,8 @@
 		left: 0;
 		width: 250px;
 		height: 100%;
-		background-color: #222;
-		color: #fff;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);
 		transform: translateX(-100%);
 		transition:
@@ -118,7 +118,7 @@
 
 	.header {
 		display: flex;
-		border-bottom: 1px solid #444;
+		border-bottom: 1px solid var(--secondary-softer-background);
 	}
 
 	.items {
@@ -133,8 +133,8 @@
 		gap: 10px;
 		padding: 10px;
 		text-align: center;
-		color: #ccc;
-		border-top: 1px solid #444;
+		color: var(--secondary-foreground);
+		border-top: 1px solid var(--secondary-softer-background);
 	}
 
 	.footer .logo {
@@ -158,11 +158,11 @@
 <div class="menu {showMenu ? 'open' : ''}">
 	<div>
 		<div class="header">
-			<Icon img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="30px" padding="15px" onClick={clickMenuClose} />
+			<Icon img="img/close.svg" alt="X" colorVariable="--secondary-foreground" size="30px" padding="15px" onClick={clickMenuClose} />
 		</div>
 		<div class="items">
 			{#each menuItems as item}
-				<MenuItem img={item.img} title={item.title} colorVariable="--primary-foreground" onClick={item.onClick} />
+				<MenuItem img={item.img} title={item.title} onClick={item.onClick} />
 			{/each}
 		</div>
 	</div>

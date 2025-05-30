@@ -6,10 +6,8 @@
 	import ModuleBarItem from './ModuleBarItem.svelte';
 	import resize from '@/core/actions/resizeObserver.ts';
 	import { order } from '@/core/utils/utils.ts';
-
 	export let onSelectModule;
 	export let onCloseModule;
-
 	let itemsHeight = '50px';
 	let itemsEl;
 	let module_data;
@@ -92,8 +90,8 @@
 <style>
 	.module-bar {
 		display: flex;
-		border-bottom: 1px solid #555;
-		background-color: var(--primary-foreground);
+		border-bottom: 1px solid var(--secondary-softer-background);
+		background-color: var(--secondary-background);
 		display: flex;
 		justify-content: center;
 		height: fit-content;

@@ -76,8 +76,8 @@
 	.account-bar {
 		position: relative;
 		font-weight: bold;
-		background-color: #222;
-		color: #fff;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
 	.dropdown {
@@ -86,7 +86,7 @@
 		align-items: center;
 		gap: 10px;
 		padding: 10px;
-		border-bottom: 1px solid #555;
+		border-bottom: 1px solid var(--secondary-softer-background);
 		width: 100%;
 		box-sizing: border-box;
 
@@ -146,7 +146,7 @@
 					<div class="text">CREATE ACCOUNT FIRST</div>
 				{/if}
 			{/if}
-			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--primary-foreground" size="20px" padding="0px" />
+			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="0px" />
 		</div>
 	</BaseButton>
 	{#if accountsVisible}

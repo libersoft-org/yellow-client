@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MenuItem from '@/core/components/Menu/MenuItem.svelte';
+	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
 	import SectionGeneral from './SettingsGeneral.svelte';
 	import SectionNetworks from './SettingsNetworks.svelte';
 	import SectionWallets from './SettingsWallets.svelte';
@@ -12,17 +12,6 @@
 	};
 
 	let { activeTab = $bindable('general') }: Props = $props();
-
-	let menuItemProps = {
-		bgColor: '#fff',
-		textColor: '#000',
-		hoverColor: '#eee',
-		borderTop: '1px solid #888',
-		borderBottom: '1px solid #888',
-		borderLeft: '1px solid #888',
-		borderRight: '1px solid #888',
-		borderRadius: '10px',
-	};
 
 	let menuItems = [
 		{
@@ -142,14 +131,13 @@
 	{/if}
 	{#each menuItems as item}
 		{#if activeTab === ''}
-			<MenuItem img={item.img} title={item.title} colorVariable="--secondary-foreground" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
+			<SettingsItem img={item.img} title={item.title} onClick={() => setItem(item.tab)} />
 		{/if}
 	{/each}
 {/snippet}
 
 <div class="settings-container">
 	{@render breadcrumbs(menuItems)}
-
 	<div class="tab-content">
 		{#if activeTab === 'general'}
 			<SectionGeneral />

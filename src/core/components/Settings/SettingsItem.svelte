@@ -11,21 +11,23 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
-		color: var(--secondary-foreground);
-		border-bottom: 1px solid var(--secondary-softer-background);
+		background-color: var(--primary-softer-background);
+		color: var(--primary-foreground);
+		border: 1px solid var(--secondary-background);
+		border-radius: 10px;
+		padding: 20px;
 		gap: 20px;
-		padding: 15px 20px;
 	}
 
 	.item:hover {
-		background-color: var(--secondary-softer-background);
+		background-color: var(--primary-softer-background);
 	}
 </style>
 
 <BaseButton {onClick} width="100%" align="center">
 	<div class="item">
 		{#if img}
-			<Icon {img} alt={title} colorVariable="--secondary-foreground" size="24px" padding="0px" />
+			<Icon {img} alt={title} colorVariable="--primary-foreground" size="24px" padding="0px" />
 		{/if}
 		{#if title}
 			<div>{title}</div>

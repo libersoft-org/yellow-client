@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MenuItem from '../../components/Menu/MenuItem.svelte';
+	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
 	import SettingsAppearance from '../../components/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '../../components/Settings/SettingsNotifications.svelte';
 	import SettingsGeneral from '../../components/Settings/SettingsGeneral.svelte';
@@ -13,17 +13,6 @@
 
 	let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
 	let subTab = $state('');
-
-	let menuItemProps = {
-		bgColor: '#fff',
-		textColor: '#000',
-		hoverColor: '#eee',
-		borderTop: '1px solid #888',
-		borderBottom: '1px solid #888',
-		borderLeft: '1px solid #888',
-		borderRight: '1px solid #888',
-		borderRadius: '10px',
-	};
 
 	let menuItems = (
 		TAURI
@@ -131,7 +120,7 @@
 	{#if activeTab !== ''}
 		<div class="breadcrumbs" in:fade={{ duration: 400 }}>
 			<button onclick={() => setItem('')}>
-				<Icon img="img/home.svg" alt="Settings" colorVariable="--primary-foreground" size="16px" />
+				<Icon img="img/home.svg" alt="Settings" size="16px" />
 				Settings
 			</button>
 			<span>
@@ -150,7 +139,7 @@
 	{/if}
 	{#each menuItems as item}
 		{#if activeTab === ''}
-			<MenuItem img={item.img} title={item.title} colorVariable="--secondary-foreground" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.title.toLowerCase())} />
+			<SettingsItem img={item.img} title={item.title} onClick={() => setItem(item.title.toLowerCase())} />
 		{/if}
 	{/each}
 {/snippet}

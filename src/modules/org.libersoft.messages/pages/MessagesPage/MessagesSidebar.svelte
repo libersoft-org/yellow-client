@@ -50,8 +50,9 @@
 		position: relative;
 		z-index: 10;
 		display: flex;
-		color: #fff;
-		background-color: #222;
+		color: var(--secondary-foreground);
+		background-color: var(--secondary-background);
+		border-bottom: 1px solid var(--secondary-softer-background);
 	}
 
 	.bar-buttons .bar-button {
@@ -63,7 +64,6 @@
 		padding: 15px;
 		padding-right: 0;
 		font-weight: bold;
-		background-color: #222;
 
 		:global(.base-button) {
 			flex: 1 1 auto;
@@ -97,11 +97,11 @@
 		<div class="bar-buttons">
 			<div class="bar-button grow">
 				<BaseButton data-testid="new-conversation-button" onClick={clickNewConversation}>
-					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--primary-foreground" size="28px" padding="0px" />
+					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--secondary-foreground" size="28px" padding="0px" />
 					<div class="new-conversation">New conversation</div>
 				</BaseButton>
 			</div>
-			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--primary-foreground" size="28px" padding="10px" onClick={clickMessagesSettings} />
+			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--secondary-foreground" size="28px" padding="10px" onClick={clickMessagesSettings} />
 		</div>
 		<div class="items" bind:this={elItems} on:scroll={parseScroll}>
 			{#each $conversationsArray as c (c.address)}
