@@ -303,6 +303,11 @@
 	async function onkeydown(event) {
 		//console.log('window onkeydown: ', event);
 		if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) debug.update(d => !d);
+
+		// Handle Ctrl + 0 to toggle between theme index 0 and 1
+		if (event.ctrlKey && event.key === '0') {
+			selected_theme_index.update(current => (current === 0 ? 1 : 0));
+		}
 	}
 </script>
 

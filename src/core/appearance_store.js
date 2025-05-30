@@ -1,6 +1,7 @@
 // import { current_theme, themes_stored } from './core.js';
 import { derived, get } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
+import { log } from '@/core/tauri.ts';
 export let selected_theme_index = localStorageSharedStore('selected_theme_index', 0);
 export const default_theme = {
 	name: 'Light',
@@ -52,6 +53,7 @@ export let current_theme = derived([selected_theme_index, themes_stored], ([$sel
 });
 
 selected_theme_index.subscribe(value => {
+	log.debug('selected_theme_index changed to', value);
 	//   console.log($themes_stored[value].properties);
 	Object.keys(get(themes_stored)[value].properties).forEach(key => {
 		//   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
