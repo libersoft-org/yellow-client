@@ -6,23 +6,20 @@
 	import { TAURI } from '@/core/tauri.ts';
 	import { fade } from 'svelte/transition';
 	import Icon from '../../components/Icon/Icon.svelte';
+	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
+	import { setContext } from 'svelte';
 
-	type Props = {
-		activeTab?: any;
-	};
+	let bread_crumb = $state(null);
 
-	let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
+	// type Props = {
+	// 	activeTab?: any;
+	// };
 
-	let menuItemProps = {
-		bgColor: '#fff',
-		textColor: '#000',
-		hoverColor: '#eee',
-		borderTop: '1px solid #888',
-		borderBottom: '1px solid #888',
-		borderLeft: '1px solid #888',
-		borderRight: '1px solid #888',
-		borderRadius: '10px',
-	};
+	// let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
+	let activeTab = $state("")
+  if(TAURI){
+		activeTab ="general";
+	}
 
 	let menuItems = (
 		TAURI
@@ -53,6 +50,23 @@
 	function setItem(name) {
 		activeTab = name;
 	}
+
+	let menuItemProps = {
+		bgColor: 'var(--color-default-background)',
+		textColor: 'var(--color-default-foreground)',
+		hoverColor: 'var(--color-secondary-softer-background)',
+		borderTop: '1px solid var(--color-disabled-background)',
+		borderBottom: '1px solid var(--color-disabled-background)',
+		borderLeft: '1px solid var(--color-disabled-background)',
+		borderRight: '1px solid var(--color-disabled-background)',
+		borderRadius: '10px',
+    colorVariable: "--color-default-foreground"
+	}
+
+	onMount(() => {
+		setContext("bread_crumb": bread_crumb);
+	})
+
 </script>
 
 <style>
@@ -67,85 +81,16 @@
 			display: none;
 		}
 	}
-
-	.breadcrumbs {
-		display: flex;
-		padding: 8px 10px;
-		background: hsl(345, 6%, 13%);
-		margin-bottom: 0px;
-		border-radius: 10px;
-
-		span,
-		button {
-			border: none;
-			background: none;
-			font-size: 14px;
-			font-weight: bold;
-			/* color: #ccc; */
-			padding: 0;
-			transition: color 0.3s ease;
-			cursor: default;
-			text-transform: capitalize;
-
-			&:hover {
-				color: white;
-			}
-
-			&:not(:first-child)::before {
-				content: '>';
-				margin: 0 5px;
-				color: white;
-			}
-
-			&:last-child {
-				color: white;
-			}
-		}
-
-		button {
-			cursor: pointer;
-			display: flex;
-			gap: 6px;
-			color: white;
-			filter: contrast(0.5);
-			transition: filter 0.3s ease;
-
-			&:hover {
-				filter: contrast(1);
-			}
-
-			:global(.icon) {
-				padding: 0 !important;
-			}
-		}
-	}
 </style>
 
-{#snippet breadcrumbs(menuItems)}
-	{#if activeTab !== ''}
-		<div class="breadcrumbs" in:fade={{ duration: 400 }}>
-			<button onclick={() => setItem('')}>
-				<Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size="16px" />
-				Settings
-			</button>
-			<span>
-				{#each menuItems as item}
-					{#if item.tab === activeTab}
-						{item.title}
-					{/if}
-				{/each}
-			</span>
-		</div>
-	{/if}
+<div class="settings-container">
+	<Breadcrumb bind:this={bread_crumb} root_crumb="Settings" bind:activeTab />
+
 	{#each menuItems as item}
 		{#if activeTab === ''}
-			<MenuItem img={item.img} title={item.title} colorVariable="--icon-black" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.title.toLowerCase())} />
+			<MenuItem img={item.img} title={item.title} colorVariable={menuItemProps.colorVariable} bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
 		{/if}
 	{/each}
-{/snippet}
-
-<div class="settings-container">
-	{@render breadcrumbs(menuItems)}
 	<div class="tab-content">
 		{#if activeTab === 'general'}
 			<SettingsGeneral />
