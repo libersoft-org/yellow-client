@@ -51,6 +51,6 @@
 		</div>
 	</svelte:fragment>
 	<svelte:fragment slot="right">
-		<Icon img="img/close.svg" alt="Close" colorVariable="--primary-foreground" onClick={clickClose} visibleOnMobile={false} />
+		<Icon img="img/close.svg" alt="Close" colorVariable="--secondary-foreground" onClick={clickClose} visibleOnMobile={false} />
 	</svelte:fragment>
 </TopBar>

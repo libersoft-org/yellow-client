@@ -15,9 +15,9 @@
 		display: flex;
 		flex-direction: column;
 		padding: 10px;
-		background-color: var(--default-background);
+		background-color: var(--primary-softer-background);
 		color: var(--primary-foreground);
-		border-bottom: 1px solid var(--primary-softer-background);
+		border-bottom: 1px solid var(--primary-soft-background);
 		width: 100%;
 		box-sizing: border-box;
 	}
