@@ -16,7 +16,7 @@ export function getColorFromCSSToFilter(name) {
 	return hexToCSSFilter(v).filter;
 }
 
-function convertFromShortHex(v) {
+export function convertFromShortHex(v) {
 	//console.log('convertFromShortHex', v);
 	if (v.length === 4) {
 		v = `#${v[1]}${v[1]}${v[2]}${v[2]}${v[3]}${v[3]}`;

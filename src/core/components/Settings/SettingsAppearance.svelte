@@ -15,6 +15,7 @@
 	import { selected_theme_index, current_theme, themes_stored, default_theme } from '../../appearance_store.js';
 	import Icon from '../Icon/Icon.svelte';
 	import Button from '../Button/Button.svelte';
+	import { convertFromShortHex } from '@/core/utils/colors.js';
 
 	let { setSubItem, subTab } = $props();
 
@@ -135,8 +136,7 @@
 					<TbodyTr>
 						{#each theme_properties as theme_property_name, theme_property_value}
 							<TbodyTd title={theme_property_name[0]}>
-								<input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} />
-
+								<Input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} displayValue={convertFromShortHex($themes_stored[$selected_theme_index].properties[theme_property_name[0]])} />
 								{$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
 							</TbodyTd>
 						{/each}

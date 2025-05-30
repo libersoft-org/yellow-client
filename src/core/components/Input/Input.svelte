@@ -3,6 +3,7 @@
 		type?: 'text' | 'number' | 'email' | 'password' | 'search' | 'tel' | 'url';
 		placeholder?: string;
 		value?: string | number;
+		displayValue?: string | number;
 		grow?: boolean;
 		minWidth?: string;
 		maxWidth?: string;
@@ -14,7 +15,7 @@
 		'data-testid'?: string;
 	}
 
-	let { type = 'text', placeholder = '', value = $bindable(), inputRef: parentInputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
+	let { type = 'text', placeholder = '', value = $bindable(), displayValue = undefined, inputRef: parentInputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
 
 	let inputRef = $state<HTMLInputElement>();
 
@@ -27,6 +28,11 @@
 
 	function handleKeydown(e) {
 		if (onKeydown) onKeydown(e);
+	}
+
+	function handleChange(e: Event) {
+		const target = e.target as HTMLInputElement;
+		value = type === 'number' ? Number(target.value) : target.value;
 	}
 
 	export function focus() {
@@ -49,4 +55,4 @@
 	}
 </style>
 
-<input data-testid={testId} bind:value style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
+<input data-testid={testId} value={displayValue !== undefined ? displayValue : value} onchange={handleChange} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
