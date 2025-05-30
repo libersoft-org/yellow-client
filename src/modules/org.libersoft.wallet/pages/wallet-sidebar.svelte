@@ -31,6 +31,7 @@
 		flex-direction: column;
 		padding: 10px;
 		border-bottom: 1px solid var(--primary-background);
+		color: var(--primary-foreground);
 		width: 100%;
 	}
 
@@ -58,7 +59,6 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		font-size: 12px;
-		color: #555;
 	}
 
 	@media (min-width: 769px) {
