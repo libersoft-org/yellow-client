@@ -12,13 +12,13 @@
 
 	/* Box shadows */
 	--yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-	--scroll-bar-color: #ca0;
-	--scroll-bar-color-background: #fea;
+	--scroll-bar-foreground: #ca0;
+	--scroll-bar-background: #fea;
 }
 
 * {
 	scrollbar-width: thin;
-	scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-color-background);
+	scrollbar-color: var(--scroll-bar-foreground) var(--scroll-bar-background);
 }
 
 @media (prefers-reduced-motion: no-preference) {
