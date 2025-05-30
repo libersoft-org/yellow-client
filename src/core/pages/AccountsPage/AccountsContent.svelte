@@ -6,10 +6,10 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
 	import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
@@ -94,23 +94,23 @@
 	<Table>
 		<Thead>
 			<TheadTr>
-				<TheadTh>Server</TheadTh>
-				<TheadTh>Address</TheadTh>
-				<TheadTh>Enabled</TheadTh>
-				<TheadTh>Action</TheadTh>
+				<Th>Server</Th>
+				<Th>Address</Th>
+				<Th>Enabled</Th>
+				<Th>Action</Th>
 			</TheadTr>
 		</Thead>
 		<Tbody>
 			<TbodyTr>
-				<TbodyTd title="Server">{account.credentials.server}</TbodyTd>
-				<TbodyTd title="Address">{account.credentials.address}</TbodyTd>
-				<TbodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</TbodyTd>
-				<TbodyTd title="Action">
+				<Td title="Server">{account.credentials.server}</Td>
+				<Td title="Address">{account.credentials.address}</Td>
+				<Td title="Enabled">{account.enabled ? 'Yes' : 'No'}</Td>
+				<Td title="Action">
 					<TableActionItems>
 						<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
 						<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => clickDel(account.id, account.settings?.title)} />
 					</TableActionItems>
-				</TbodyTd>
+				</Td>
 			</TbodyTr>
 		</Tbody>
 	</Table>

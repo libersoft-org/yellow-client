@@ -4,12 +4,11 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
-
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAddEdit from '../../modals/addressbook-add-edit.svelte';
 	import ModalDel from '../../modals/addressbook-del.svelte';
@@ -17,7 +16,6 @@
 	import { module } from '../../module.js';
 	import { addressBook } from '../../wallet.ts';
 	import { get } from 'svelte/store';
-
 	let showModalAddEdit = $state(false);
 	let showModalDel = $state(false);
 	let edit = $state(false);
@@ -83,26 +81,26 @@
 		<Table breakpoint="0">
 			<Thead>
 				<TheadTr>
-					<TheadTh>Alias</TheadTh>
-					<TheadTh>Address</TheadTh>
-					<TheadTh>Action</TheadTh>
+					<Th>Alias</Th>
+					<Th>Address</Th>
+					<Th>Action</Th>
 				</TheadTr>
 			</Thead>
 			<Tbody>
 				{#each $addressBook as a, index (index + '/' + a.address)}
 					<TbodyTr>
-						<TbodyTd title="Alias">
+						<Td title="Alias">
 							<b>{a.alias}</b>
-						</TbodyTd>
-						<TbodyTd title="Address">
+						</Td>
+						<Td title="Address">
 							{a.address}
-						</TbodyTd>
-						<TbodyTd title="Action">
+						</Td>
+						<Td title="Action">
 							<TableActionItems>
 								<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => editItemModal(a)} />
 								<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => deleteItemModal(a)} />
 							</TableActionItems>
-						</TbodyTd>
+						</Td>
 					</TbodyTr>
 				{/each}
 			</Tbody>

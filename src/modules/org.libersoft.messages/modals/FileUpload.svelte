@@ -12,10 +12,10 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 
 	type FileUploadModalContext = {
 		fileUploadModalFiles: Writable<File[]>;
@@ -117,15 +117,15 @@
 
 {#snippet fileUploadItem(file)}
 	<TbodyTr>
-		<TbodyTd title="File name">
+		<Td title="File name">
 			{truncateText(file.name, 30)}
-		</TbodyTd>
-		<TbodyTd title="Size">
+		</Td>
+		<Td title="Size">
 			{humanSize(file.size)}
-		</TbodyTd>
-		<TbodyTd title="Action">
+		</Td>
+		<Td title="Action">
 			<Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} />
-		</TbodyTd>
+		</Td>
 	</TbodyTr>
 {/snippet}
 
@@ -141,9 +141,9 @@
 				<Table breakpoint="0">
 					<Thead>
 						<TheadTr>
-							<TheadTh>File name:</TheadTh>
-							<TheadTh>Size:</TheadTh>
-							<TheadTh>Action:</TheadTh>
+							<Th>File name:</Th>
+							<Th>Size:</Th>
+							<Th>Action:</Th>
 						</TheadTr>
 					</Thead>
 					<Tbody>

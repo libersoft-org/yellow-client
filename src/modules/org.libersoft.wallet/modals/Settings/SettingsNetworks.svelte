@@ -11,7 +11,7 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 
 	let showModalEditNetwork = false;
@@ -76,21 +76,21 @@
 		<Tbody>
 			{#each $networks as n, index (n.guid)}
 				<TbodyTr>
-					<TbodyTd>
+					<Td>
 						<div>
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt="" />
 							{/if}
 							<div class="name">{n.name}</div>
 						</div>
-					</TbodyTd>
-					<TbodyTd>
+					</Td>
+					<Td>
 						<TableActionItems>
 							<Icon img="modules/{module.identifier}/img/coin.svg" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} />
 							<Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Edit network" size="20px" padding="5px" onClick={() => editNetwork(n)} />
 							<Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete network" size="20px" padding="5px" onClick={() => removeNetwork(n)} />
 						</TableActionItems>
-					</TbodyTd>
+					</Td>
 				</TbodyTr>
 			{/each}
 		</Tbody>
@@ -101,19 +101,19 @@
 		<Tbody>
 			{#each $default_networks as n, index}
 				<TbodyTr>
-					<TbodyTd>
+					<Td>
 						<div>
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} />
 							{/if}
 							<div class="name">{n.name}</div>
 						</div>
-					</TbodyTd>
-					<TbodyTd>
+					</Td>
+					<Td>
 						<TableActionItems>
 							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--secondary-foreground" size="20px" padding="5px" onClick={() => addNetwork(n)} />
 						</TableActionItems>
-					</TbodyTd>
+					</Td>
 				</TbodyTr>
 			{/each}
 		</Tbody>

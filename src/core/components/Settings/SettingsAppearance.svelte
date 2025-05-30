@@ -4,10 +4,10 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import { TAURI } from '@/core/tauri.ts';
 	import { zoom } from '@/core/settings.ts';
 	import { setZoom } from '@/core/zoom.ts';
@@ -75,23 +75,23 @@
 	<Thead>
 		<TheadTr>
 			{#if TAURI}
-				<TheadTh>Zoom:</TheadTh>
+				<Th>Zoom:</Th>
 			{/if}
-			<TheadTh>Theme:</TheadTh>
+			<Th>Theme:</Th>
 		</TheadTr>
 	</Thead>
 	<Tbody>
 		<TbodyTr>
 			{#if TAURI}
-				<TbodyTd title="Zoom">
+				<Td title="Zoom">
 					<span>{Math.round(($zoom || 0) * 100)}%</span>
 					<div class="zoom">
 						<input type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} onchange={setZoom} />
 					</div>
-				</TbodyTd>
+				</Td>
 			{/if}
-			<TbodyTd>Theme:</TbodyTd>
-			<TbodyTd>
+			<Td>Theme:</Td>
+			<Td>
 				{#if expanded}
 					<Button onClick={click_expand}>
 						<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
@@ -121,7 +121,7 @@
 						</Button>
 					{/if}
 				{/if}
-			</TbodyTd>
+			</Td>
 		</TbodyTr>
 	</Tbody>
 
@@ -129,16 +129,16 @@
 		<Tbody>
 			<TbodyTr class="color_properties">
 				{#if expanded}
-					<TbodyTd title="Name">
+					<Td title="Name">
 						<Input type="text" bind:value={$themes_stored[$selected_theme_index].name} />
-					</TbodyTd>
+					</Td>
 
 					<TbodyTr>
 						{#each theme_properties as theme_property_name, theme_property_value}
-							<TbodyTd title={theme_property_name[0]}>
+							<Td title={theme_property_name[0]}>
 								<Input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} displayValue={convertFromShortHex($themes_stored[$selected_theme_index].properties[theme_property_name[0]])} />
 								{$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
-							</TbodyTd>
+							</Td>
 						{/each}
 					</TbodyTr>
 				{/if}

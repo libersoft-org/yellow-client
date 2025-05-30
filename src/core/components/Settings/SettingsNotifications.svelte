@@ -13,10 +13,10 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 
 	// Store all subscription unsubscribe functions
 	const unsubscribers: Unsubscriber[] = [];
@@ -53,67 +53,67 @@
 			<Table>
 				<Thead>
 					<TheadTr>
-						<TheadTh>Animation:</TheadTh>
-						<TheadTh>Animation duration:</TheadTh>
-						<TheadTh>Maximum number of lines in title:</TheadTh>
-						<TheadTh>Maximum number of lines in description:</TheadTh>
-						<TheadTh>Background color:</TheadTh>
-						<TheadTh>Background color on mouse over:</TheadTh>
-						<TheadTh>Border color:</TheadTh>
-						<TheadTh>Title color:</TheadTh>
-						<TheadTh>Description color:</TheadTh>
+						<Th>Animation:</Th>
+						<Th>Animation duration:</Th>
+						<Th>Maximum number of lines in title:</Th>
+						<Th>Maximum number of lines in description:</Th>
+						<Th>Background color:</Th>
+						<Th>Background color on mouse over:</Th>
+						<Th>Border color:</Th>
+						<Th>Title color:</Th>
+						<Th>Description color:</Th>
 					</TheadTr>
 				</Thead>
 				<Tbody>
 					<TbodyTr>
-						<TbodyTd title="Animation">
+						<Td title="Animation">
 							<Select bind:value={$animationName}>
 								<Option value="none" text="None" />
 								<Option value="zoom" text="Zoom" />
 								<Option value="opacity" text="Opacity" />
 							</Select>
-						</TbodyTd>
-						<TbodyTd title="Animation duration">
+						</Td>
+						<Td title="Animation duration">
 							<div>
 								<Input type="number" bind:value={$animationDuration} min={0} max={1000} step={10} />ms
 							</div>
-						</TbodyTd>
-						<TbodyTd title="Maximum number of lines in title">
+						</Td>
+						<Td title="Maximum number of lines in title">
 							<Input type="number" bind:value={$titleMaxLines} min={1} max={3} />
-						</TbodyTd>
-						<TbodyTd title="Maximum number of lines in description">
+						</Td>
+						<Td title="Maximum number of lines in description">
 							<Input type="number" bind:value={$bodyMaxLines} min={1} max={5} />
-						</TbodyTd>
-						<TbodyTd title="Background color">
+						</Td>
+						<Td title="Background color">
 							<div>
 								<input type="color" bind:value={$bgColor} />
 								{$bgColor}
 							</div>
-						</TbodyTd>
-						<TbodyTd title="Background color on mouse over">
+						</Td>
+						<Td title="Background color on mouse over">
 							<div>
 								<input type="color" bind:value={$bgColorHover} />
 								{$bgColorHover}
 							</div>
-						</TbodyTd>
-						<TbodyTd title="Border color">
+						</Td>
+						<Td title="Border color">
 							<div>
 								<input type="color" bind:value={$borderColor} />
 								{$borderColor}
 							</div>
-						</TbodyTd>
-						<TbodyTd title="Title color">
+						</Td>
+						<Td title="Title color">
 							<div>
 								<input type="color" bind:value={$titleColor} />
 								{$titleColor}
 							</div>
-						</TbodyTd>
-						<TbodyTd title="Description color">
+						</Td>
+						<Td title="Description color">
 							<div>
 								<input type="color" bind:value={$descColor} />
 								{$descColor}
 							</div>
-						</TbodyTd>
+						</Td>
 					</TbodyTr>
 				</Tbody>
 			</Table>

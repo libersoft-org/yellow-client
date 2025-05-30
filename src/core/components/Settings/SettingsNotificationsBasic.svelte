@@ -5,10 +5,10 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 
 	import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
 	import { writable, get, type Unsubscriber } from 'svelte/store';
@@ -154,37 +154,37 @@
 <Table>
 	<Thead>
 		<TheadTr>
-			<TheadTh>Notifications:</TheadTh>
-			<TheadTh>Notification sound:</TheadTh>
-			<TheadTh>Custom notifications:</TheadTh>
-			<TheadTh>Monitor:</TheadTh>
-			<TheadTh>Corner:</TheadTh>
+			<Th>Notifications:</Th>
+			<Th>Notification sound:</Th>
+			<Th>Custom notifications:</Th>
+			<Th>Monitor:</Th>
+			<Th>Corner:</Th>
 		</TheadTr>
 	</Thead>
 	<Tbody>
 		<TbodyTr>
-			<TbodyTd title="Notifications">
+			<Td title="Notifications">
 				<Switch ariaLabel="Notifications" bind:checked={_notificationsEnabled} />
-			</TbodyTd>
-			<TbodyTd title="Notification sound">
+			</Td>
+			<Td title="Notification sound">
 				<Switch ariaLabel="Notification sound" bind:checked={$notificationsSoundEnabled} />
-			</TbodyTd>
+			</Td>
 			{#if $customNotificationsOn}
-				<TbodyTd title="Custom notifications">
+				<Td title="Custom notifications">
 					<Switch ariaLabel="Custom notifications" bind:checked={$enableCustomNotifications} />
-				</TbodyTd>
+				</Td>
 				{#if $customNotificationsOn}
-					<TbodyTd title="Monitor">
+					<Td title="Monitor">
 						<Select bind:value={$selectedMonitorName}>
 							{#each $monitorOptions as monitor}
 								<Option value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
 							{/each}
 						</Select>
 						{#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
-					</TbodyTd>
-					<TbodyTd title="Corner">
+					</Td>
+					<Td title="Corner">
 						<CornerSelector bind:value={$selectedNotificationsCorner} />
-					</TbodyTd>
+					</Td>
 				{/if}
 			{/if}
 		</TbodyTr>
