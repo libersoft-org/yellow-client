@@ -658,7 +658,7 @@
 <div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone" use:resize={onResize}>
 	<div class="dnd-overlay {showFileDndOverlay ? 'drop-active' : ''}">
 		<div class="dnd-overlay-inner">
-			<Icon img="modules/{identifier}/img/file.svg" colorVariable="--icon-white" alt="Drop files icon" size="75px" padding="0px" />
+			<Icon img="modules/{identifier}/img/file.svg" colorVariable="--color-default-background" alt="Drop files icon" size="75px" padding="0px" />
 			<div class="dnd-overlay-text">Drop files here to send them</div>
 		</div>
 	</div>

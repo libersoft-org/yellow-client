@@ -146,7 +146,7 @@
 					<div class="text">CREATE ACCOUNT FIRST</div>
 				{/if}
 			{/if}
-			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--icon-white" size="20px" padding="0px" />
+			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--color-default-background" size="20px" padding="0px" />
 		</div>
 	</BaseButton>
 	{#if accountsVisible}

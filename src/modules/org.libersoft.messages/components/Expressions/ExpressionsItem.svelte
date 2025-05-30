@@ -4,7 +4,7 @@
 	export let icon;
 	export let label;
 	export let active;
-	export let colorVariable = '--icon-black';
+	export let colorVariable = '--color-default-foreground';
 	export let onClick;
 
 	function onMousedown(e) {

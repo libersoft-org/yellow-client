@@ -148,7 +148,7 @@
 						<div class="clamp" bind:this={addressElement}>
 							{shortenAddress($selectedAddress.address)}
 						</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+						<Icon img="img/copy.svg" alt="Copy" colorVariable="--color-default-foreground" size="15px" padding="0px" />
 					</div>
 				</BaseButton>
 				<div class="qr"><img src={qrAddress} alt="Address" /></div>
@@ -168,7 +168,7 @@
 						<div class="clamp" style="width: 240px !important;" bind:this={paymentElement}>
 							{paymentText}
 						</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+						<Icon img="img/copy.svg" alt="Copy" colorVariable="--color-default-foreground" size="15px" padding="0px" />
 					</div>
 				</BaseButton>
 				<div class="qr"><img src={qrPayment} alt="Payment" /></div>

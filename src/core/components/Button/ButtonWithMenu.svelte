@@ -93,7 +93,7 @@
 		background: var(--color-primary-softer-background);
 		padding: 8px;
 		border-radius: 20px;
-		box-shadow: var(--yellow-box-shadow);
+		box-shadow: var(--shadow);
 		max-width: calc(100vh - 20px);
 		z-index: 100000;
 	}

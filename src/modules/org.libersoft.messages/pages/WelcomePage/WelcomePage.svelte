@@ -56,7 +56,7 @@
 {#if $isMobile}
 	<TopBar>
 		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={() => mobileClose()} colorVariable="--icon-white" visibleOnDesktop={true} />
+			<Icon img="img/back.svg" onClick={() => mobileClose()} colorVariable="--color-default-background" visibleOnDesktop={true} />
 			<h1 class="title">Messages</h1>
 		</svelte:fragment>
 	</TopBar>

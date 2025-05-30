@@ -111,7 +111,7 @@
 					</TbodyTd>
 					<TbodyTd>
 						<TableActionItems>
-							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--icon-black" size="20px" padding="5px" onClick={() => addNetwork(n)} />
+							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--color-default-foreground" size="20px" padding="5px" onClick={() => addNetwork(n)} />
 						</TableActionItems>
 					</TbodyTd>
 				</TbodyTr>

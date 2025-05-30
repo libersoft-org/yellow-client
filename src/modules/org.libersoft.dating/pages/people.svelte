@@ -14,7 +14,7 @@
 <TopBar>
 	<svelte:fragment slot="left">
 		{#if $isMobile}
-			<Icon img="img/back.svg" onClick={() => modulePageClose()} colorVariable="--icon-white" visibleOnDesktop={true} />
+			<Icon img="img/back.svg" onClick={() => modulePageClose()} colorVariable="--color-default-background" visibleOnDesktop={true} />
 		{/if}
 		<h1 class="title">People nearby</h1>
 	</svelte:fragment>

@@ -5,7 +5,7 @@
 	export let img = null;
 	export let label = '';
 	export let onClick;
-	export let colorVariable = '--icon-black';
+	export let colorVariable = '--color-default-foreground';
 </script>
 
 <style>

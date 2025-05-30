@@ -3,22 +3,15 @@
 :root {
 	--menu-height: 58px;
 	--shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-	--icon-black: #000;
-	--icon-white: #fff;
 	--icon-gray: #888;
 	--icon-yellow: #fd1;
 	--icon-red: #dc2626;
 	--icon-blue: #00f;
-
-	/* Box shadows */
-	--yellow-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-	--scroll-bar-foreground: #ca0;
-	--scroll-bar-background: #fea;
 }
 
 * {
 	scrollbar-width: thin;
-	scrollbar-color: var(--scroll-bar-foreground) var(--scroll-bar-background);
+	scrollbar-color: var(--color-primary-harder-background) var(--color-primary-soft-background);
 }
 
 @media (prefers-reduced-motion: no-preference) {

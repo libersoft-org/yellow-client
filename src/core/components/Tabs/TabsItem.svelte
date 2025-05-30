@@ -4,7 +4,7 @@
 	export let img;
 	export let label;
 	export let active;
-	export let colorVariable = '--icon-white';
+	export let colorVariable = '--color-default-background';
 	export let onClick;
 </script>
 
