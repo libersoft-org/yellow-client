@@ -20,17 +20,16 @@
 		border-bottom: 1px solid var(--primary-soft-background);
 		width: 100%;
 		box-sizing: border-box;
+		transition: background-color 0.4s linear;
 	}
 
 	.item:hover {
 		background-color: var(--primary-background);
-		transition: background-color 0.5s linear;
 	}
 
 	.item.active {
 		background-color: var(--primary-hard-background);
-
-		transition: background-color 0.5s linear;
+		transition: background-color 0.4s linear;
 	}
 
 	.item .item-row {

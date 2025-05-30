@@ -17,10 +17,11 @@
 		border-radius: 10px;
 		padding: 20px;
 		gap: 20px;
+		transition: background-color 0.4s linear;
 	}
 
 	.item:hover {
-		background-color: var(--primary-softer-background);
+		background-color: var(--primary-background);
 	}
 </style>
 
