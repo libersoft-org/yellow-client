@@ -97,11 +97,11 @@
 		<div class="bar-buttons">
 			<div class="bar-button grow">
 				<BaseButton data-testid="new-conversation-button" onClick={clickNewConversation}>
-					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--color-default-background" size="28px" padding="0px" />
+					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--primary-foreground" size="28px" padding="0px" />
 					<div class="new-conversation">New conversation</div>
 				</BaseButton>
 			</div>
-			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--color-default-background" size="28px" padding="10px" onClick={clickMessagesSettings} />
+			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--primary-foreground" size="28px" padding="10px" onClick={clickMessagesSettings} />
 		</div>
 		<div class="items" bind:this={elItems} on:scroll={parseScroll}>
 			{#each $conversationsArray as c (c.address)}

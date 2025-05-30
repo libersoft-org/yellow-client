@@ -15,20 +15,20 @@
 		display: flex;
 		flex-direction: column;
 		padding: 10px;
-		background-color: var(--color-default-background);
-		color: var(--color-primary-foreground);
-		border-bottom: 1px solid var(--color-primary-softer-background);
+		background-color: var(--default-background);
+		color: var(--primary-foreground);
+		border-bottom: 1px solid var(--primary-softer-background);
 		width: 100%;
 		box-sizing: border-box;
 	}
 
 	.item:hover {
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 		transition: background-color 0.5s linear;
 	}
 
 	.item.active {
-		background-color: var(--color-primary-hard-background);
+		background-color: var(--primary-hard-background);
 
 		transition: background-color 0.5s linear;
 	}

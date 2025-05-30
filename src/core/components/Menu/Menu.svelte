@@ -158,11 +158,11 @@
 <div class="menu {showMenu ? 'open' : ''}">
 	<div>
 		<div class="header">
-			<Icon img="img/close.svg" alt="X" colorVariable="--color-default-background" size="30px" padding="15px" onClick={clickMenuClose} />
+			<Icon img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="30px" padding="15px" onClick={clickMenuClose} />
 		</div>
 		<div class="items">
 			{#each menuItems as item}
-				<MenuItem img={item.img} title={item.title} colorVariable="--color-default-background" onClick={item.onClick} />
+				<MenuItem img={item.img} title={item.title} colorVariable="--primary-foreground" onClick={item.onClick} />
 			{/each}
 		</div>
 	</div>

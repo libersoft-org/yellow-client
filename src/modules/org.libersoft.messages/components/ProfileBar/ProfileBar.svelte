@@ -40,7 +40,7 @@
 <TopBar>
 	<svelte:fragment slot="left">
 		{#if $isMobile}
-			<Icon img="img/back.svg" alt="Back" colorVariable="--color-default-background" padding="10px" onClick={clickClose} />
+			<Icon img="img/back.svg" alt="Back" colorVariable="--primary-foreground" padding="10px" onClick={clickClose} />
 		{/if}
 		<Photo size="38px" />
 		<div class="description">
@@ -51,6 +51,6 @@
 		</div>
 	</svelte:fragment>
 	<svelte:fragment slot="right">
-		<Icon img="img/close.svg" alt="Close" colorVariable="--color-default-background" onClick={clickClose} visibleOnMobile={false} />
+		<Icon img="img/close.svg" alt="Close" colorVariable="--primary-foreground" onClick={clickClose} visibleOnMobile={false} />
 	</svelte:fragment>
 </TopBar>

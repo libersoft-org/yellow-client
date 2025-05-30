@@ -66,7 +66,7 @@
 		border: 1px solid #880;
 
 		border-radius: 10px;
-		background-color: var(--color-primary-softer-background);
+		background-color: var(--primary-softer-background);
 	}
 
 	.transfer-controls {
@@ -86,7 +86,7 @@
 		{:else}
 			<Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
 		{/if}
-		<Button img="img/close.svg" colorVariable="--color-default-foreground" onClick={() => cancelUpload(uploadId)} />
+		<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={() => cancelUpload(uploadId)} />
 	</div>
 {/snippet}
 
@@ -99,7 +99,7 @@
 		{:else}
 			<Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
 		{/if}
-		<Button img="img/close.svg" colorVariable="--color-default-foreground" onClick={() => cancelDownload(uploadId)} />
+		<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={() => cancelDownload(uploadId)} />
 	</div>
 {/snippet}
 
@@ -198,7 +198,7 @@
 		<div>Waiting for accept...</div>
 		<div class="transfer-controls">
 			<!-- @ts-ignore TODO: button typing -->
-			<Button img="img/close.svg" colorVariable="--color-default-foreground" onClick={() => cancelUpload(uploadId)} />
+			<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={() => cancelUpload(uploadId)} />
 		</div>
 
 		<!-- ACTIVE P2P UPLOAD UPLOADING -->

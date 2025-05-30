@@ -18,7 +18,7 @@
 	}
 
 	.corner.active {
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 		cursor: default;
 	}
 </style>

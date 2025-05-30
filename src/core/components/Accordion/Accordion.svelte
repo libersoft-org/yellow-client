@@ -187,7 +187,7 @@
 		gap: 10px;
 		align-items: center;
 		padding: 10px;
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 		cursor: pointer;
 		filter: brightness(1);
 		transition: filter 0.3s ease;
@@ -228,7 +228,7 @@
 				<div class="header">
 					<div class="title">{item.name}</div>
 					{@render header?.(item)}
-					<Icon img="img/down.svg" alt="Chevron Down" colorVariable="--color-primary-foreground" size="12px" />
+					<Icon img="img/down.svg" alt="Chevron Down" colorVariable="--primary-foreground" size="12px" />
 				</div>
 			</BaseButton>
 			<div class="content {activeIndices.includes(index) ? 'is-expanded' : ''}" data-index={index}>

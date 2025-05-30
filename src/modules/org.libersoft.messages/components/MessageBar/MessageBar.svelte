@@ -252,7 +252,7 @@
 	.message-bar {
 		position: sticky;
 		bottom: 0;
-		background-color: var(--color-secondary-background);
+		background-color: var(--secondary-background);
 		box-shadow: var(--shadow);
 	}
 
@@ -301,24 +301,24 @@
 		<MessageBarRecorder />
 
 		<div bind:this={elAttachment} data-testid="attachment-button">
-			<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--color-primary-background" alt="Attachment" size="32px" padding="0px" isButton />
+			<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" isButton />
 		</div>
 
 		{#if expressionsAsContextMenu}
 			<div bind:this={elExpressions}>
-				<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--color-primary-background" alt="Emoji" size="32px" padding="0px" isButton />
+				<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" isButton />
 			</div>
 		{:else}
-			<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--color-primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
+			<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
 		{/if}
 
 		<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
 		<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
-		<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--color-primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
-		<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--color-primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
-		<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--color-primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
+		<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
+		<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
+		<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
 		{#if $debug}
-			<Icon img="modules/{identifier}/img/send.svg" colorVariable="--color-primary-background" alt="Send" size="20px" padding="0px" onClick={clickSendSplit} />
+			<Icon img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="20px" padding="0px" onClick={clickSendSplit} />
 		{/if}
 	</div>
 </div>

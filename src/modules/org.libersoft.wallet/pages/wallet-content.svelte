@@ -99,7 +99,7 @@
 			align-items: center;
 			gap: 5px;
 			height: 20px;
-			color: var(--color-default-foreground);
+			color: var(--default-foreground);
 		}
 	}
 
@@ -194,11 +194,11 @@
 <div class="wallet-content">
 	<TopBar>
 		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--color-default-background" visibleOnDesktop={false} />
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--color-default-foreground" onClick={() => (showModalNetworks = true)} />
+			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--primary-foreground" visibleOnDesktop={false} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
 		</svelte:fragment>
 		<svelte:fragment slot="right">
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--color-default-foreground" onClick={() => (showModalWallets = true)} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
 		</svelte:fragment>
 	</TopBar>
 	<div class="wallet">
@@ -225,7 +225,7 @@
 													<div bind:this={addressElement}>
 														{shortenAddress($selectedAddress.address)}
 													</div>
-													<Icon img="img/copy.svg" alt="Copy" colorVariable="--color-default-foreground" size="15px" padding="0px" />
+													<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 												</div>
 											</BaseButton>
 										{:else}

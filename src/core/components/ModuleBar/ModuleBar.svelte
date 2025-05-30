@@ -93,7 +93,7 @@
 	.module-bar {
 		display: flex;
 		border-bottom: 1px solid #555;
-		background-color: var(--color-primary-foreground);
+		background-color: var(--primary-foreground);
 		display: flex;
 		justify-content: center;
 		height: fit-content;
@@ -161,7 +161,7 @@
 	</div>
 	<BaseButton disabled={!expandEnabled}>
 		<div class="dropdown {expanded ? 'expanded' : ''}">
-			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--color-secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
+			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--primary-foreground" size="20px" padding="10" onClick={clickExpand} />
 		</div>
 	</BaseButton>
 </div>

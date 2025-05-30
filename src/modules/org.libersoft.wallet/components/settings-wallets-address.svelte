@@ -42,6 +42,6 @@
 <BaseButton onClick={copyAddressToClipboard}>
 	<div class="address">
 		<span class="clamp" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
-		<Icon img="img/copy.svg" alt="Copy" colorVariable="--color-default-foreground" size="15px" padding="0px" />
+		<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 	</div>
 </BaseButton>

@@ -135,7 +135,7 @@
 		z-index: 10000;
 		position: absolute;
 		padding: 10px;
-		background-color: var(--color-primary-foreground);
+		background-color: var(--primary-foreground);
 	}
 
 	.image {
@@ -162,10 +162,10 @@
 {#if $gallery.show}
 	<div class="gallery" onpointerdown={onAnywhereClick}>
 		<div class="top-left">
-			<Button img="img/download.svg" colorVariable="--color-default-foreground" onClick={download} />
+			<Button img="img/download.svg" colorVariable="--secondary-foreground" onClick={download} />
 		</div>
 		<div class="top-right">
-			<Button img="img/close.svg" colorVariable="--color-default-foreground" onClick={close} />
+			<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={close} />
 		</div>
 		{#key $currentFile.id}
 			{#if $currentFile}
@@ -184,10 +184,10 @@
 			{/if}
 		{/key}
 		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
-			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--color-default-background" size="80px" onClick={previous} />
+			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--primary-foreground" size="80px" onClick={previous} />
 		</div>
 		<div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
-			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--color-default-background" size="80px" onClick={next} />
+			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--primary-foreground" size="80px" onClick={next} />
 		</div>
 	</div>
 {/if}

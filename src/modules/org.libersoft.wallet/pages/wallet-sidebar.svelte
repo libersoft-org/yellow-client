@@ -32,11 +32,11 @@
 		padding: 10px;
 		border: 1px solid #dd9;
 		width: 100%;
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 	}
 
 	.items .item:hover {
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 	}
 
 	.items .item .alias {

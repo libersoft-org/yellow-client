@@ -93,7 +93,7 @@
 			<TbodyTd>
 				{#if expanded}
 					<Button onClick={click_expand}>
-						<Icon img="img/edit.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+						<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 					</Button>
 				{:else}
 					<Select type="number" bind:value={$selected_theme_index} current-index={$selected_theme_index}>
@@ -103,7 +103,7 @@
 					</Select>
 					{#if $selected_theme_index > 0}
 						<Button onClick={click_expand}>
-							<Icon img="img/edit.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+							<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 						</Button>
 					{/if}
 					<Button
@@ -112,11 +112,11 @@
 							create_new_theme();
 						}}
 					>
-						<Icon img="img/add.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+						<Icon img="img/add.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 					</Button>
 					{#if $selected_theme_index > 0}
 						<Button onClick={delete_current_theme}>
-							<Icon img="img/del.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+							<Icon img="img/del.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 						</Button>
 					{/if}
 				{/if}

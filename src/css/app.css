@@ -11,7 +11,7 @@
 
 * {
 	scrollbar-width: thin;
-	scrollbar-color: var(--color-primary-harder-background) var(--color-primary-soft-background);
+	scrollbar-color: var(--primary-harder-background) var(--primary-soft-background);
 }
 
 @media (prefers-reduced-motion: no-preference) {

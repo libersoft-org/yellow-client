@@ -128,7 +128,7 @@
 	{#if activeTab !== ''}
 		<div class="breadcrumbs" in:fade={{ duration: 400 }}>
 			<button onclick={() => setItem('')}>
-				<Icon img="img/home.svg" alt="Settings" colorVariable="--color-default-background" size="16px" />
+				<Icon img="img/home.svg" alt="Settings" colorVariable="--primary-foreground" size="16px" />
 				Wallet Settings
 			</button>
 			<span>
@@ -142,7 +142,7 @@
 	{/if}
 	{#each menuItems as item}
 		{#if activeTab === ''}
-			<MenuItem img={item.img} title={item.title} colorVariable="--color-default-foreground" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
+			<MenuItem img={item.img} title={item.title} colorVariable="--secondary-foreground" bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
 		{/if}
 	{/each}
 {/snippet}

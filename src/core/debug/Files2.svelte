@@ -156,11 +156,11 @@
 
 	h3 {
 		margin-bottom: 20px;
-		color: var(--color-text);
+		color: var(--text);
 	}
 
 	.warning {
-		color: var(--color-error);
+		color: var(--error);
 		font-style: italic;
 		text-align: center;
 		padding: 20px;
@@ -184,7 +184,7 @@
 	.status-message {
 		margin-top: 20px;
 		padding: 15px;
-		background: var(--color-background-secondary);
+		background: var(--background-secondary);
 		border-radius: 4px;
 		font-family: monospace;
 		white-space: pre-wrap;
@@ -194,7 +194,7 @@
 	.file-info {
 		margin-top: 20px;
 		padding: 15px;
-		background: var(--color-background-tertiary);
+		background: var(--background-tertiary);
 		border-radius: 4px;
 	}
 

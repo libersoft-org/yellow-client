@@ -90,7 +90,7 @@
 	.tooltip {
 		display: flex;
 		align-items: center;
-		background: var(--color-primary-softer-background);
+		background: var(--primary-softer-background);
 		padding: 8px;
 		border-radius: 20px;
 		box-shadow: var(--shadow);

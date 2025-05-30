@@ -126,7 +126,7 @@
 	<TopBar>
 		<svelte:fragment slot="left">
 			{#if $isMobile}
-				<Icon img="img/back.svg" onClick={back} colorVariable="--color-default-background" visibleOnDesktop={false} />
+				<Icon img="img/back.svg" onClick={back} colorVariable="--primary-foreground" visibleOnDesktop={false} />
 			{/if}
 			<h1 class="title">Account management</h1>
 		</svelte:fragment>
@@ -134,7 +134,7 @@
 	<div class="accounts-wrapper">
 		<Paper>
 			<div class="buttons">
-				<Button img="img/accounts.svg" text="Add a new account" colorVariable="--color-default-foreground" onClick={addAccountModal} />
+				<Button img="img/accounts.svg" text="Add a new account" colorVariable="--secondary-foreground" onClick={addAccountModal} />
 				<Button img="img/export.svg" text="Export" onClick={clickExport} />
 				<Button img="img/import.svg" text="Import" onClick={clickImport} />
 			</div>
