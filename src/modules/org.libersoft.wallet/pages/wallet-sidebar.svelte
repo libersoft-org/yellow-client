@@ -30,9 +30,16 @@
 		display: flex;
 		flex-direction: column;
 		padding: 10px;
-		border: 1px solid #dd9;
+		border-bottom: 1px solid var(--primary-background);
 		width: 100%;
-		background-color: var(--primary-background);
+	}
+
+	.items .item.even {
+		background-color: var(--primary-softer-background);
+	}
+
+	.items .item.odd {
+		background-color: var(--primary-soft-background);
 	}
 
 	.items .item:hover {
