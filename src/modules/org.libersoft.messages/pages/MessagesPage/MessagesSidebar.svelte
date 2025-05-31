@@ -33,7 +33,7 @@
 	}
 
 	function scrollToTop() {
-		//TODO does not work
+		//TODO: does not work
 		elItems.scrollTop = 0;
 	}
 </script>

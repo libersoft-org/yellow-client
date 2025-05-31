@@ -4,11 +4,10 @@
 	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import BaseButton from '@/core/components/Button/BaseButton.svelte';
-	import AccountBarItem from './AccountBarItem.svelte';
-	import AccountBarButton from './AccountBarButton.svelte';
+	import ItemAccount from './AccountBarItemAccount.svelte';
+	import ItemBase from './AccountBarItemBase.svelte';
 	import AccountStatusIcon from './AccountStatusIcon.svelte';
 	import AccountTitle from './AccountTitle.svelte';
-
 	let accountsVisible = $state(false);
 	let accountBar;
 
@@ -114,7 +113,7 @@
 		position: absolute;
 		top: 100%;
 		left: 0;
-		background-color: #333;
+		background-color: var(--secondary-background);
 		z-index: 1000;
 		width: 100%;
 		overflow: hidden;
@@ -140,10 +139,10 @@
 				</div>
 			{:else}
 				{#if $accounts.length > 0}
-					<div class="text">SELECT YOUR ACCOUNT</div>
+					<div class="text">-- SELECT YOUR ACCOUNT --</div>
 				{/if}
 				{#if $accounts.length === 0}
-					<div class="text">CREATE ACCOUNT FIRST</div>
+					<div class="text">-- CREATE ACCOUNT FIRST --</div>
 				{/if}
 			{/if}
 			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="0px" />
@@ -151,10 +150,10 @@
 	</BaseButton>
 	{#if accountsVisible}
 		<div class="items" transition:animateHeight={{ duration: 220 }}>
-			{#each $accounts as a (get(a).id)}
-				<AccountBarItem {a} {clickSelectAccount} />
+			{#each $accounts as account (get(account).id)}
+				<ItemAccount {account} {clickSelectAccount} />
 			{/each}
-			<AccountBarButton img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
+			<ItemBase img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
 		</div>
 	{/if}
 </div>
