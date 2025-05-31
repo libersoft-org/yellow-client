@@ -134,11 +134,10 @@
 	<div class="accounts-wrapper">
 		<Paper>
 			<div class="buttons">
-				<Button img="img/accounts.svg" text="Add a new account" colorVariable="--secondary-foreground" onClick={addAccountModal} />
-				<Button img="img/export.svg" text="Export" onClick={clickExport} />
-				<Button img="img/import.svg" text="Import" onClick={clickImport} />
+				<Button img="img/accounts.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} />
+				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
+				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} />
 			</div>
-
 			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>
 	</div>

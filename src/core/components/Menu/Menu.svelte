@@ -4,6 +4,7 @@
 	import Modal from '../Modal/Modal.svelte';
 	import ModalSettings from '../../modals/Settings/Settings.svelte';
 	import Icon from '../Icon/Icon.svelte';
+	import Switch from '../Switch/Switch.svelte';
 	import DialogExit from '../../dialogs/Exit.svelte';
 	import VersionInfo from '../VersionInfo/VersionInfo.svelte';
 	import { product, link } from '../../core.js';
@@ -130,14 +131,18 @@
 	.footer {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.footer .section {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 		gap: 10px;
 		padding: 10px;
-		text-align: center;
-		color: var(--secondary-foreground);
 		border-top: 1px solid var(--secondary-softer-background);
 	}
 
-	.footer .logo {
+	.footer .section .logo {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -146,7 +151,7 @@
 		font-weight: bold;
 	}
 
-	.footer :global(.menu-version-info .version) {
+	.footer .section :global(.menu-version-info .version) {
 		justify-content: center;
 		font-size: 14px;
 	}
@@ -167,13 +172,18 @@
 		</div>
 	</div>
 	<div class="footer">
-		<BaseButton onClick={() => openPage(link)}>
-			<div class="logo">
-				<Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
-				<div>{product}</div>
-			</div>
-		</BaseButton>
-		<VersionInfo className="menu-version-info" />
+		<div class="section">
+			<Switch showLabel label="Dark mode" />
+		</div>
+		<div class="section">
+			<BaseButton onClick={() => openPage(link)}>
+				<div class="logo">
+					<Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
+					<div>{product}</div>
+				</div>
+			</BaseButton>
+			<VersionInfo className="menu-version-info" />
+		</div>
 	</div>
 </div>
 <Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />

@@ -222,7 +222,7 @@
 	</Label>
 
 	{#if !isInWelcomeWizard}
-		<Switch showLabel ariaLabel="Enabled" bind:checked={config_enabled} />
+		<Switch showLabel label="Enabled" bind:checked={config_enabled} />
 	{/if}
 
 	{#if error}

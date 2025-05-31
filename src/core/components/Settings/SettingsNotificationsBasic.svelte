@@ -164,14 +164,14 @@
 	<Tbody>
 		<TbodyTr>
 			<Td title="Notifications">
-				<Switch ariaLabel="Notifications" bind:checked={_notificationsEnabled} />
+				<Switch label="Notifications" bind:checked={_notificationsEnabled} />
 			</Td>
 			<Td title="Notification sound">
-				<Switch ariaLabel="Notification sound" bind:checked={$notificationsSoundEnabled} />
+				<Switch label="Notification sound" bind:checked={$notificationsSoundEnabled} />
 			</Td>
 			{#if $customNotificationsOn}
 				<Td title="Custom notifications">
-					<Switch ariaLabel="Custom notifications" bind:checked={$enableCustomNotifications} />
+					<Switch label="Custom notifications" bind:checked={$enableCustomNotifications} />
 				</Td>
 				{#if $customNotificationsOn}
 					<Td title="Monitor">

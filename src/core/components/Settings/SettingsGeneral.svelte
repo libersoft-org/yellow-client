@@ -29,7 +29,7 @@
 		<TbodyTr>
 			{#each settings as setting}
 				<Td title={setting.label}>
-					<Switch ariaLabel="debug" bind:checked={setting.store} />
+					<Switch label="debug" bind:checked={setting.store} />
 				</Td>
 			{/each}
 		</TbodyTr>

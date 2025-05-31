@@ -50,11 +50,11 @@
 <div class="settings">
 	<div class="group">
 		<div class="label">Show expressions as vector (slower, nicer):</div>
-		<Switch ariaLabel="Show expressions as vector (slower, nicer)" bind:checked={showAsVector} />
+		<Switch label="Show expressions as vector (slower, nicer)" bind:checked={showAsVector} />
 	</div>
 	<div class="group">
 		<div class="label">Animate all expressions:</div>
-		<Switch ariaLabel="Animate all expressions" bind:checked={animateAll} />
+		<Switch label="Animate all expressions" bind:checked={animateAll} />
 	</div>
 	<div class="group">
 		<div class="label">Sticker server:</div>

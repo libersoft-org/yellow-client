@@ -49,7 +49,7 @@
 </div>
 <Button img="img/save.svg" text="Save" onClick={clickSetChunkSize} />
 <div class="group">
-	<Switch bind:checked={$hideMessageTextInNotifications} showLabel ariaLabel="Hide message text in notifications" orientation="vertical" />
+	<Switch bind:checked={$hideMessageTextInNotifications} showLabel label="Hide message text in notifications" orientation="vertical" />
 </div>
 <div class="group">
 	<div class="label">
