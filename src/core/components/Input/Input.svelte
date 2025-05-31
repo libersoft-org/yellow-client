@@ -44,14 +44,16 @@
 	input {
 		box-sizing: content-box;
 		padding: 10px;
-		border: 1px solid #999;
+		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
 		font-family: inherit;
 		font-size: inherit;
+		background-color: var(--default-background);
+		color: var(--default-foreground);
 	}
 
 	input:focus {
-		outline: 2px solid #0060df;
+		outline: 2px solid var(--primary-harder-background);
 	}
 </style>
 
