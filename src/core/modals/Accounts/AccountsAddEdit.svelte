@@ -10,16 +10,13 @@
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	import { derived, get, writable } from 'svelte/store';
-
 	type Props = {
 		close: () => void;
 		params: { id: string | null };
 		isInWelcomeWizard?: boolean;
 		save_id?: (id: string) => void;
 	};
-
 	let { close, params, isInWelcomeWizard = false, save_id }: Props = $props();
-
 	let protocolElem: any = null;
 	let protocol = $state('amtp');
 	let error = $state('');
@@ -33,11 +30,8 @@
 	type WizardContext = {
 		setNextText: (text: string) => void;
 	};
-
 	let wizard = getContext<WizardContext>('wizard');
-
 	let account_id_store = writable<string | null>(null);
-
 	console.log('[INIT] Modal mounted. Params:', params);
 
 	$effect(() => {
@@ -68,7 +62,6 @@
 		if (params.id !== null) {
 			let found = findAccountConfig(params.id);
 			console.log('[EFFECT] Loaded existing config:', found);
-
 			if (found?.credentials) {
 				credentials_address = found.credentials.address;
 				credentials_server = found.credentials.server;
@@ -108,14 +101,12 @@
 			console.warn('[VERIFY] Address is missing');
 			return false;
 		}
-
 		// Check if account already exists when adding new account
 		if (params.id === null && accountExists(credentials_server, credentials_address)) {
 			error = 'Account with this server and address already exists';
 			console.warn('[VERIFY] Account already exists:', credentials_server, credentials_address);
 			return false;
 		}
-
 		error = '';
 		return true;
 	}
@@ -123,7 +114,6 @@
 	function clickAdd() {
 		console.log('[ACTION] Clicked ADD');
 		if (!verify()) return;
-
 		const id = addAccount(
 			{
 				enabled: config_enabled,
@@ -133,12 +123,12 @@
 					password: credentials_password,
 				},
 			},
-			{ title: config_title }
+			{
+				title: config_title,
+			}
 		);
-
 		console.log('[ACTION] Account added with ID:', id);
 		params.id = id;
-
 		save_id?.(id);
 		wizard?.setNextText('Next');
 		close();
@@ -147,7 +137,6 @@
 	function clickSave() {
 		console.log('[ACTION] Clicked SAVE for ID:', params.id);
 		if (!verify()) return;
-
 		saveAccount(
 			params.id,
 			{
@@ -159,14 +148,13 @@
 					retry_nonce,
 				},
 			},
-			{ title: config_title }
+			{
+				title: config_title,
+			}
 		);
-
 		console.log('[ACTION] Account saved:', params.id);
 		retry_nonce++;
-		if (params.id !== null) {
-			save_id?.(params.id);
-		}
+		if (params.id !== null) save_id?.(params.id);
 		wizard?.setNextText('Next');
 		close();
 	}
@@ -186,6 +174,7 @@
 		flex-direction: column;
 		gap: 15px;
 	}
+
 	.error {
 		display: flex;
 		gap: 5px;
@@ -193,6 +182,7 @@
 		border-radius: 10px;
 		background-color: #f33;
 	}
+
 	.status {
 		display: flex;
 		align-items: center;
@@ -207,40 +197,32 @@
 			<Option text="DMTP (not yet implemented)" value="dmtp" disabled selected={protocol === 'dmtp'} />
 		</Select>
 	</Label>
-
 	<Label text="Title">
 		<Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
 	</Label>
-
 	<Label text="Server">
 		<Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
 	</Label>
-
 	<Label text="Address">
 		<Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
 	</Label>
-
 	<Label text="Password">
 		<Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
 	</Label>
-
 	{#if !isInWelcomeWizard}
 		<Switch showLabel label="Enabled" bind:checked={config_enabled} />
 	{/if}
-
 	{#if error}
 		<div class="error">
 			<strong>Error:</strong>
 			{error}
 		</div>
 	{/if}
-
 	{#if params.id === null}
-		<Button data-testid="add" text="Add the account" onClick={clickAdd} width="100%" />
+		<Button data-testid="add" text="Add the account" onClick={clickAdd} />
 	{:else}
-		<Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} width="100%" />
+		<Button data-testid="save" img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={clickSave} />
 	{/if}
-
 	{#if account && acc}
 		<div class="status">
 			<strong>Status:</strong>

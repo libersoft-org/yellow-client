@@ -54,7 +54,7 @@
 	}
 </style>
 
-<BaseButton {onClick} width="100%">
+<BaseButton {onClick}>
 	<div class="item {className}">
 		{#if icon}
 			<div class="icon"><img src={icon} alt={symbol} /></div>

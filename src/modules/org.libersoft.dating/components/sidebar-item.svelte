@@ -21,7 +21,7 @@
 	}
 </style>
 
-<BaseButton {onClick} width="100%">
+<BaseButton {onClick}>
 	<div class="item">
 		{#if img}
 			<Icon img="modules/{module.identifier}/img/{img}" alt={label} {colorVariable} size="20px" padding="0px" />

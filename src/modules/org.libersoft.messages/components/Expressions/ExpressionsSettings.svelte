@@ -64,13 +64,12 @@
 			{/each}
 		</Select>
 	</div>
-	<Button text="Manage sticker servers" onClick={clickManageStickerServers} width="100%" />
+	<Button text="Manage sticker servers" onClick={clickManageStickerServers} />
 	<Button
 		text="Delete stickers database"
 		onClick={() => {
 			stickers_db.delete();
 		}}
-		width="100%"
 	/>
 
 	<div class="group">
@@ -81,7 +80,7 @@
 			{/each}
 		</Select>
 	</div>
-	<Button text="Manage gif servers" onClick={clickManageGifServers} width="100%" />
+	<Button text="Manage gif servers" onClick={clickManageGifServers} />
 </div>
 <Modal title="Manage sticker servers" body={StickerServers} bind:show={isModalStickerServersOpen} width="400px" />
 <Modal title="Manage gif servers" body={GifServers} bind:show={isModalGifServersOpen} width="400px" />

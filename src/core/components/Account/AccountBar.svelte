@@ -130,7 +130,7 @@
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
-	<BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle} width="100%">
+	<BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
 		<div class={`dropdown`} class:is-expanded={accountsVisible}>
 			{#if $active_account}
 				<div class="text">

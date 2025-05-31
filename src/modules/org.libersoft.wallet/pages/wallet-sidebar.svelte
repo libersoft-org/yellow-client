@@ -75,7 +75,7 @@
 	{#if $addressBook.length > 0}
 		<div class="items">
 			{#each $addressBook as a, index}
-				<BaseButton onClick={() => clickItem(a.address)} width="100%">
+				<BaseButton onClick={() => clickItem(a.address)}>
 					<div class="item {index % 2 === 0 ? 'even' : 'odd'}">
 						<div class="alias">{a.alias}</div>
 						<div class="address">{a.address}</div>

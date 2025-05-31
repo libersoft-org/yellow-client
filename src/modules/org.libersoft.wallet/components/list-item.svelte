@@ -33,7 +33,7 @@
 	}
 </style>
 
-<BaseButton {onClick} width="100%">
+<BaseButton {onClick}>
 	<div class="item {className}">
 		{#if icon}
 			<div><img src={icon} alt={item} /></div>

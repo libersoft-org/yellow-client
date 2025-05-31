@@ -44,7 +44,7 @@
 	}
 </style>
 
-<BaseButton onClick={handleClick} onMousedown={handleMousedown} {...restProps} width="100%">
+<BaseButton onClick={handleClick} onMousedown={handleMousedown} {...restProps}>
 	<div class="menu-item">
 		{#if img}
 			<div class="img-space">

@@ -30,7 +30,7 @@
 	}
 </style>
 
-<BaseButton {onClick} width="100%">
+<BaseButton {onClick}>
 	<div class="item {active ? 'active' : ''}">
 		{#if img}
 			<Icon {img} alt={label ? label : ''} {colorVariable} size="20px" padding="0px" />
