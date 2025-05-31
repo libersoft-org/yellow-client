@@ -3,7 +3,7 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
-	import SendModal from '../modals/send.svelte';
+	import SendModal from '../modals/Send.svelte';
 	import { get } from 'svelte/store';
 	import { currencies, selectedMainCurrencySymbol, sendTransaction } from '../wallet.ts';
 	import { parseUnits } from 'ethers';

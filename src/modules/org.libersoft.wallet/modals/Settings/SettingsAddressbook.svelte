@@ -10,8 +10,8 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalAddEdit from '../../modals/addressbook-add-edit.svelte';
-	import ModalDel from '../../modals/addressbook-del.svelte';
+	import ModalAddEdit from '../../modals/AddressbookAddEdit.svelte';
+	import ModalDel from '../../modals/AddressbookDel.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { module } from '../../module.js';
 	import { addressBook } from '../../wallet.ts';

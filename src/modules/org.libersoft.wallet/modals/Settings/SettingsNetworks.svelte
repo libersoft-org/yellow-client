@@ -6,8 +6,8 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import ModalEditNetwork from '../../modals/edit-network.svelte';
-	import ModalTokenList from '../../modals/token-list.svelte';
+	import ModalEditNetwork from '../../modals/EditNetwork.svelte';
+	import ModalTokenList from '../../modals/TokenList.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';

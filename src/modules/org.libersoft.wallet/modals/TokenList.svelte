@@ -2,8 +2,8 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalAddEdit from './token-list-add-edit.svelte';
-	import ModalDel from './token-list-del.svelte';
+	import ModalAddEdit from './TokenListAddEdit.svelte';
+	import ModalDel from './TokenListDel.svelte';
 	import { networks } from '../wallet.ts';
 	export let params;
 

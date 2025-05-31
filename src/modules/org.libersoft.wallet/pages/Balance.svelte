@@ -1,5 +1,5 @@
 <script>
-	import Item from '../components/balance-item.svelte';
+	import Item from '../components/BalanceItem.svelte';
 	let tokens = [
 		{
 			icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DAI.svg',

@@ -1,9 +1,8 @@
 <script>
 	import { module } from '../../module.js';
 	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
-	import ModalNewWallet from '../../modals/new-wallet.svelte';
-
-	import Address from '../../components/settings-wallets-address.svelte';
+	import ModalNewWallet from '../../modals/NewWallet.svelte';
+	import Address from '../../components/SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
