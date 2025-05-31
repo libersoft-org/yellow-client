@@ -153,7 +153,7 @@
 
 <style>
 	.accordion {
-		border: 1px solid var(--secondary-background);
+		border: 1px solid var(--primary-harder-background);
 		border-radius: 8px;
 		overflow: hidden;
 		color: var(--primary-foreground);
@@ -164,7 +164,7 @@
 	}
 
 	.accordion .item {
-		border-bottom: 1px solid var(--secondary-background);
+		border-bottom: 1px solid var(--primary-harder-background);
 
 		:global(.header .icon) {
 			position: absolute;
@@ -208,7 +208,7 @@
 	.accordion .item .content {
 		height: 0;
 		overflow: hidden;
-		border-top: 1px solid var(--secondary-background);
+		border-top: 1px solid var(--primary-harder-background);
 		transition: height 0.3s ease;
 	}
 
