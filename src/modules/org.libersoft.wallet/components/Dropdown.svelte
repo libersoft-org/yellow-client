@@ -16,12 +16,12 @@
 		border-radius: 10px;
 		font-family: inherit;
 		width: 100%;
-		background-color: var(--secondary-soft-background);
+		background-color: var(--secondary-softer-background);
+		color: var(--secondary-foreground);
 	}
 
 	.dropdown .text {
 		flex-grow: 1;
-		color: black;
 	}
 </style>
 

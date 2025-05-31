@@ -107,10 +107,10 @@
 		display: flex;
 		align-items: center;
 		gap: 5px;
-		border: 1px solid #b90;
 		border-radius: 10px;
 		padding: 10px;
-		background-color: var(--secondary-soft-background);
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 
 		.clamp {
 			display: inline-block;

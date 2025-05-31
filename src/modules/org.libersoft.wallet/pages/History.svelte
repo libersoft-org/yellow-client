@@ -3,6 +3,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	let info = '';
 	let link = '';
+	let elLink;
 
 	$: link = $selectedNetwork.explorerURL + '/address/' + $selectedAddress.address;
 
@@ -20,12 +21,11 @@
 	}
 
 	function setInfo(text) {
-		info.classList.remove('hidden');
-		info.innerHTML = text;
+		elLink.innerText = text;
 	}
 
 	function hideInfo() {
-		info.classList.add('hidden');
+		elLink.innerText = link;
 	}
 </script>
 
@@ -39,35 +39,21 @@
 
 	.url {
 		padding: 10px;
-		border: 1px solid #b90;
 		border-radius: 10px;
-		background-color: var(--secondary-soft-background);
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
 	.buttons {
 		display: flex;
 		gap: 10px;
 	}
-
-	.info {
-		padding: 10px;
-		border: 1px solid #080;
-		border-radius: 10px;
-		background-color: #cfc;
-	}
-
-	.info.hidden {
-		display: none;
-	}
 </style>
 
 <div class="history">
 	{#if $selectedNetwork && $selectedAddress}
 		<div class="bold">Address history:</div>
-		<div class="url">
-			{link}
-		</div>
-		<div class="info hidden" bind:this={info}></div>
+		<div class="url" bind:this={elLink}>{link}</div>
 		<div class="buttons">
 			<Button text="Copy link" onClick={copyLink} />
 			<Button text="Open link" onClick={openLink} />

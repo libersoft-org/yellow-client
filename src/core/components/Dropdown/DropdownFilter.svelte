@@ -36,21 +36,11 @@
 		position: relative;
 		max-width: 200px;
 	}
-	/*
- input {
-  width: 100%;
-  padding: 5px;
-  font-family: inherit;
-  font-size: inherit;
-  border: 1px solid #000;
-  border-radius: 10px;
-  box-sizing: border-box;
- }
-*/
+
 	.options {
 		position: absolute;
-		border: 1px solid var(--primary-foreground);
-		background-color: var(--primary-background);
+		border: 1px solid var(--default-foreground);
+		background-color: var(--default-background);
 		width: 100%;
 		max-height: 150px;
 		overflow-y: auto;
@@ -63,13 +53,13 @@
 	}
 
 	.option:hover {
-		background-color: #eee;
+		background-color: var(--default-background);
 	}
 
 	.selected {
 		display: flex;
 		align-items: center;
-		border: 1px solid var(--primary-background);
+		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
 		width: 100%;
 		box-sizing: border-box;
