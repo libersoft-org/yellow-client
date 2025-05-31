@@ -197,8 +197,9 @@
 		position: fixed;
 		z-index: 9000;
 		border-radius: 10px;
-		border: 1px solid #ccc;
-		background-color: #fff;
+		border: 1px solid var(--secondary-background);
+		background-color: var(--default-background);
+		color: var(--default-foreground);
 	}
 
 	.context-menu-open {

@@ -13,10 +13,8 @@
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { longpress } from '../../ui.js';
 	import IntersectionObserver from 'svelte-intersection-observer';
-
-	const MessageBar = getContext('MessageBar');
-
 	export let onEmojiClick;
+	const MessageBar = getContext('MessageBar');
 	let alts = [];
 	let altsMenu;
 	let elContainer;
@@ -65,6 +63,11 @@
 		}
 	}
 
+	function clickEmojiAndClose(codepoints) {
+		clickEmoji(codepoints);
+		altsMenu.close();
+	}
+
 	function showAlts(e, emoji) {
 		console.log('showAlts:', emoji);
 		e.preventDefault();
@@ -87,21 +90,21 @@
 		overflow: auto;
 	}
 
-	.title {
-		font-size: 16px;
-		text-align: center;
-		font-weight: bold;
-		padding: 8px;
-		background-color: #eee;
-		border-radius: 10px;
-		margin: 16px 10px;
-		border: 1px solid #aaa;
-	}
-
 	.group:first-of-type {
 		.title {
 			margin-top: 0;
 		}
+	}
+
+	.group .title {
+		font-size: 16px;
+		text-align: center;
+		font-weight: bold;
+		padding: 8px;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
+		border-radius: 10px;
+		margin: 16px 10px;
 	}
 
 	.emojis {
@@ -119,14 +122,14 @@
 		transition:
 			transform 0.3s ease,
 			box-shadow 0.3s ease;
-		border: 1px solid #fff;
+		background-color: var(--primary-softer-background);
+		border: 1px solid var(--secondary-softer-background);
 	}
 
 	.emoji.hover:hover {
 		z-index: 90;
 		transform: scale(1.5);
-		background-color: #f0f0f0;
-		border: 1px solid #ddd;
+		background-color: var(--primary-soft-background);
 	}
 </style>
 
@@ -140,7 +143,7 @@
 {/if}
 
 <div class="filter">
-	<InputButton alt="Search" bind:this={elSearchInput} bind:value={search} img="modules/{identifier}/img/search.svg" placeholder="Search ..." />
+	<InputButton img="modules/{identifier}/img/search.svg" alt="Search" bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
 </div>
 
 {#snippet clickable_emoji(emoji)}
@@ -201,8 +204,7 @@
 		{#each alts as e (e)}
 			<BaseButton
 				onClick={() => {
-					clickEmoji(e);
-					altsMenu.close();
+					() => clickEmojiAndClose(e);
 				}}
 			>
 				<div class="emoji hover">

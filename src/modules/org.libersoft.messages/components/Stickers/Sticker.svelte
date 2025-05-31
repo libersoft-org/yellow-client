@@ -6,12 +6,10 @@
 	import { readable } from 'svelte/store';
 	import { identifier } from '../../messages.js';
 	import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
-
 	export let file = '';
 	export let size = 200;
 	export let intersecting;
 	export let force_animate = false;
-
 	let componentContainer;
 	let animContainer;
 	let isLottie = false;

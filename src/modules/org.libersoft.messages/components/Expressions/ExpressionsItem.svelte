@@ -23,12 +23,16 @@
 		flex: 1;
 		text-align: center;
 		padding: 0 10px;
+		color: var(--primary-foreground);
+	}
+
+	.item:hover {
+		background-color: var(--primary-hard-background);
 	}
 
 	.item.active {
-		color: var(--primary-foreground);
 		font-weight: bold;
-		background-color: #db0;
+		background-color: var(--primary-harder-background);
 	}
 
 	.item .label {

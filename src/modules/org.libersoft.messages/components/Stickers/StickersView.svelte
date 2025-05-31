@@ -97,7 +97,7 @@
 </style>
 
 <div class="filter">
-	<InputButton alt="Search" bind:this={fulltext_search_element} bind:value={fulltext_search_filter} img="modules/{identifier}/img/search.svg" placeholder="Search ..." />
+	<InputButton img="modules/{identifier}/img/search.svg" colorVariable="--default-foreground" alt="Search" bind:this={fulltext_search_element} bind:value={fulltext_search_filter} placeholder="Search ..." />
 	<Select bind:value={animated_filter_dropdown_value}>
 		<Option text="All" value="all" />
 		<Option text="Animated only" value="animated" />

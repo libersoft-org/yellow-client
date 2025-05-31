@@ -9,10 +9,8 @@
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { gif_server } from '../../gifs.js';
 	import LazyLoader from '@/core/components/Spinner/LazyLoader.svelte';
-
 	const MessageBar = getContext('MessageBar');
 	const menu = getContext('ContextMenu');
-
 	let gifs = [];
 	let query = '';
 	let loading = false;
@@ -129,10 +127,10 @@
 	}
 
 	.item {
-		border: 1px solid #ccc;
-		border-radius: 10px;
 		overflow: hidden;
-		background-color: #eee;
+		border: 1px solid var(--secondary-softer-background);
+		border-radius: 10px;
+		background-color: var(--primary-softer-background);
 		transition:
 			transform 0.3s ease,
 			box-shadow 0.3s ease;
@@ -141,6 +139,7 @@
 	.item:hover {
 		z-index: 90;
 		transform: scale(1.2);
+		background-color: var(--primary-soft-background);
 	}
 </style>
 
