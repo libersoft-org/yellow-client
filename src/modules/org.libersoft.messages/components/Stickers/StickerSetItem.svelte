@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Sticker from './Sticker.svelte';
 	import { getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';

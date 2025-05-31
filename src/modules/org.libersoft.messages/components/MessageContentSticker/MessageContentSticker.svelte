@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Sticker from '../Stickers/Sticker.svelte';
 	import { getContext, onMount } from 'svelte';
 	let { node } = $props();

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Emojis from '../Emoji/Emojis.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { computePosition, autoPlacement, autoUpdate, shift, offset } from '@floating-ui/dom';

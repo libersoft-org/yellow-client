@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '../Button/BaseButton.svelte';
+	import BaseButton from '../BaseButton/BaseButton.svelte';
 	interface Props {
 		onClick?: (e: Event) => void;
 	}

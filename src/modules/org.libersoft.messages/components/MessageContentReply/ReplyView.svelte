@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import { jumpToMessage } from '../../messages.js';
 	import { get } from 'svelte/store';
 	import { active_account } from '@/core/core.js';

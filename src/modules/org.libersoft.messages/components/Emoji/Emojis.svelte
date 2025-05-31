@@ -4,7 +4,7 @@
 	import { get } from 'svelte/store';
 	import { identifier } from '../../messages.js';
 	import Emoji from './Emoji.svelte';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
 	import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';

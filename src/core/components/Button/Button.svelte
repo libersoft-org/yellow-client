@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from './BaseButton.svelte';
+	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';

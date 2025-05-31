@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let img;
 	export let label;
@@ -16,17 +16,17 @@
 		gap: 10px;
 		flex: 1; /* TODO: this is not working as it needs to be applied on BaseButton, not on .item. If applied to BaseButton, it spoils everything that doesn't need it.*/
 		padding: 10px;
-		color: #fff;
+		color: var(--secondary-foreground);
 		width: 100%;
 	}
 
 	.item.active {
 		font-weight: bold;
-		background-color: #444;
+		background-color: var(secondary-foreground);
 	}
 
 	.item:hover {
-		background-color: #333;
+		background-color: var(secondary-softer-foreground);
 	}
 </style>
 

@@ -1,6 +1,6 @@
 <script>
 	import { module } from '../module.js';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let img = null;
 	export let label = '';

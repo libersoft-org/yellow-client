@@ -1,6 +1,6 @@
 <script>
 	import { getContext } from 'svelte';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	let { img = null, label = '', colorVariable, onClick, ...restProps } = $props();
 	let menu = getContext('ContextMenu');

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '../Button/BaseButton.svelte';
+	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import MenuItem from './MenuItem.svelte';
 	import Modal from '../Modal/Modal.svelte';
 	import ModalSettings from '../../modals/Settings/Settings.svelte';

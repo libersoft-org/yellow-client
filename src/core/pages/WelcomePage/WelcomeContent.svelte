@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '../../components/Button/BaseButton.svelte';
+	import BaseButton from '../../components/BaseButton/BaseButton.svelte';
 	import Icon from '../../components/Icon/Icon.svelte';
 	import VersionInfo from '../../components/VersionInfo/VersionInfo.svelte';
 	import { product, link } from '../../core.js';

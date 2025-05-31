@@ -2,7 +2,7 @@
 	import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.js';
 	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
 	import { onMount, setContext, tick, getContext } from 'svelte';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';

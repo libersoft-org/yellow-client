@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Input from '../Input/Input.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	export let options = [];

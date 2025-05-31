@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	//import Emoji from "../Emoji/Emoji.svelte";
 	import { emoji_render, rgi_to_codepoints } from '../../emojis';
 	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';

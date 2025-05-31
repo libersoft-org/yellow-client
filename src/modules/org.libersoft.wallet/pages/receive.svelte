@@ -1,6 +1,6 @@
 <script>
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import QRCode from 'qrcode';
 	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';

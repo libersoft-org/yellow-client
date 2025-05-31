@@ -1,7 +1,7 @@
 <script>
 	import { active_account, module_decls, selected_module_id } from '../../core.js';
 	import { get } from 'svelte/store';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ModuleBarItem from './ModuleBarItem.svelte';
 	import resize from '@/core/actions/resizeObserver.ts';

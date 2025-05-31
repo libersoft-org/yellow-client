@@ -2,7 +2,7 @@
 	import { get } from 'svelte/store';
 	import { onMount, getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import { isMobile } from '@/core/core.js';

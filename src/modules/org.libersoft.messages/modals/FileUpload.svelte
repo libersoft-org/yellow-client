@@ -7,7 +7,7 @@
 	import { identifier, selectedConversation, initUpload } from '../messages.js';
 
 	import Button from '@/core/components/Button/Button.svelte';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';

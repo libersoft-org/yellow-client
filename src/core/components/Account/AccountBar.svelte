@@ -3,7 +3,7 @@
 	import { get } from 'svelte/store';
 	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import ItemAccount from './AccountBarItemAccount.svelte';
 	import ItemBase from './AccountBarItemBase.svelte';
 	import AccountStatusIcon from './AccountStatusIcon.svelte';
