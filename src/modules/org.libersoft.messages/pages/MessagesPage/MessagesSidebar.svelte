@@ -58,7 +58,7 @@
 	.bar-buttons .bar-button {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: 10px;
 		word-break: break-word;
 		overflow: hidden;
 		padding: 15px;
@@ -95,12 +95,12 @@
 {#if $conversationsArray != null}
 	<div class="conversations">
 		<div class="bar-buttons">
-			<div class="bar-button grow">
-				<BaseButton data-testid="new-conversation-button" onClick={clickNewConversation}>
+			<BaseButton data-testid="new-conversation-button" onClick={clickNewConversation}>
+				<div class="bar-button">
 					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--secondary-foreground" size="28px" padding="0px" />
 					<div class="new-conversation">New conversation</div>
-				</BaseButton>
-			</div>
+				</div>
+			</BaseButton>
 			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--secondary-foreground" size="28px" padding="10px" onClick={clickMessagesSettings} />
 		</div>
 		<div class="items" bind:this={elItems} on:scroll={parseScroll}>

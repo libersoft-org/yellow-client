@@ -9,6 +9,7 @@
 <style>
 	.accounts-button {
 		display: flex;
+		flex: 1;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
