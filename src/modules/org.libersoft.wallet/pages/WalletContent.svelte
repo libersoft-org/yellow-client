@@ -68,7 +68,7 @@
 		flex-direction: column;
 		height: calc(100vh - 72px);
 		overflow: auto;
-		padding: clamp(16px, 1.6vw, 24px);
+		padding: 10px;
 	}
 
 	.wallet .content {
@@ -99,7 +99,6 @@
 			align-items: center;
 			gap: 5px;
 			height: 20px;
-			color: var(--default-foreground);
 		}
 	}
 
@@ -145,7 +144,7 @@
 
 	.body .balance .fiat {
 		font-size: 16px;
-		color: #555;
+		color: var(--default-foreground);
 		text-align: center;
 		white-space: nowrap;
 	}
@@ -187,7 +186,7 @@
 
 	.body .separator {
 		width: 100%;
-		border-bottom: 1px solid #888;
+		border-bottom: 1px solid var(--default-foreground);
 	}
 </style>
 
@@ -225,7 +224,7 @@
 													<div bind:this={addressElement}>
 														{shortenAddress($selectedAddress.address)}
 													</div>
-													<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
+													<Icon img="img/copy.svg" colorVariable="--default-foreground" alt="Copy" size="15px" padding="0px" />
 												</div>
 											</BaseButton>
 										{:else}
@@ -233,7 +232,7 @@
 										{/if}
 									</div>
 								</div>
-								<Icon img="img/settings.svg" padding="0px" onClick={() => (showModalSettings = true)} />
+								<Icon img="img/settings.svg" colorVariable="--default-foreground" padding="0px" onClick={() => (showModalSettings = true)} />
 							</div>
 						</div>
 						<div class="balance">
@@ -255,10 +254,10 @@
 						</div>
 					</div>
 					<div class="buttons">
-						<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
-						<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
-						<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
-						<Button img="modules/{module.identifier}/img/history.svg" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
+						<Button img="modules/{module.identifier}/img/send.svg" colorVariable="--primary-foreground" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
+						<Button img="modules/{module.identifier}/img/receive.svg" colorVariable="--primary-foreground" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
+						<Button img="modules/{module.identifier}/img/balance.svg" colorVariable="--primary-foreground" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
+						<Button img="modules/{module.identifier}/img/history.svg" colorVariable="--primary-foreground" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
 					</div>
 					<div class="separator"></div>
 					<div class="section">

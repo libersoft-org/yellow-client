@@ -13,7 +13,6 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
-
 	let showModalEditNetwork = false;
 	let showModalTokenList = false;
 	let modalItemID = null;

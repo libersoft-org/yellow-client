@@ -6,8 +6,11 @@
 	import ModalDel from './TokenListDel.svelte';
 	import { networks } from '../wallet.ts';
 	export let params;
-
 	let net;
+	let showModalAddEdit = false;
+	let showModalDel = false;
+	let modalItem = null;
+
 	$: update($networks, params);
 
 	function update(nets, params) {
@@ -19,11 +22,6 @@
 	}
 
 	console.log('NET:', net);
-
-	let showModalAddEdit = false;
-	let showModalDel = false;
-
-	let modalItem = null;
 
 	function addTokenModal() {
 		console.log('ADD TOKEN MODAL');
@@ -86,7 +84,6 @@
 		<!-- () => (item_tokens = [...item_tokens, { name: '', icon: '', symbol: '', contract_address: '' }]) -->
 		<Button text="Add token" onClick={addTokenModal} />
 	</div>
-
 	<div class="label">Network name: {net?.name}</div>
 	<div class="label">Tokens:</div>
 	{#if net?.tokens}
