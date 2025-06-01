@@ -8,13 +8,22 @@
 	export let colorVariable = '--default-foreground';
 </script>
 
+<style>
+	.item {
+		display: flex;
+		gap: 10px;
+	}
+</style>
+
 {#if label || img}
-	<SidabarItem {onClick}>
-		{#if img}
-			<Icon img="modules/{module.identifier}/img/{img}" {colorVariable} alt={label} size="20px" padding="0px" />
-		{/if}
-		{#if label}
-			<div>{label}</div>
-		{/if}
-	</SidabarItem>
+	<SidebarItem {onClick}>
+		<div class="item">
+			{#if img}
+				<Icon img="modules/{module.identifier}/img/{img}" {colorVariable} alt={label} size="20px" padding="0px" />
+			{/if}
+			{#if label}
+				<div>{label}</div>
+			{/if}
+		</div>
+	</SidebarItem>
 {/if}
