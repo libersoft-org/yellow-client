@@ -8,6 +8,12 @@
 	const { children }: Props = $props();
 </script>
 
+<style>
+	tr {
+		background-color: var(--primary-background);
+	}
+</style>
+
 <tr>
 	{@render children()}
 </tr>

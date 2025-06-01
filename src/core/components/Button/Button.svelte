@@ -68,7 +68,7 @@
 			<Spinner size="0px" containerMinHeight="auto" />
 		{:else}
 			{#if img}
-				<Icon {img} alt={text} size={iconSize} padding={iconPadding} colorVariable={colorVariable && colorVariable} />
+				<Icon {img} colorVariable={colorVariable && colorVariable} alt={text} size={iconSize} padding={iconPadding} />
 			{/if}
 			{#if text}
 				<div>{text}</div>

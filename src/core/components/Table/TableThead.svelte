@@ -11,8 +11,6 @@
 <style>
 	thead {
 		display: none;
-		background: #222;
-		color: white;
 
 		:global(.table-wide &) {
 			display: table-header-group;

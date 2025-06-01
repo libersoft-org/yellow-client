@@ -26,7 +26,6 @@
 		width: 100%;
 		overflow: hidden;
 		max-width: 100vw;
-		background-color: #ffdd1150;
 		box-sizing: border-box;
 
 		:global(&.table-wide) {

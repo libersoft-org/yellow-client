@@ -2,7 +2,7 @@
 	import { module } from '../../module.js';
 	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
 	import ModalNewWallet from '../../modals/NewWallet.svelte';
-	import Address from '../../components/SettingsWalletsAddress.svelte';
+	import Address from './SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -92,7 +92,7 @@
 
 <ButtonBar>
 	<Button text="Create wallet" onClick={showNewWalletModal} />
-	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
+	<Button img="modules/{module.identifier}/img/recover.svg" colorVariable="--primary-foreground" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
 	<div class="bold">My wallets:</div>
@@ -122,8 +122,8 @@
 							<Td title="Address"><Address address={address.address} /></Td>
 							<Td title="Action">
 								<TableActionItems>
-									<Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
-									<Icon img="img/del.svg" alt="Hide" colorVariable="--icon-red" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
+									<Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
+									<Icon img="img/del.svg" colorVariable="--icon-red" alt="Hide" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
 								</TableActionItems>
 							</Td>
 						</TbodyTr>

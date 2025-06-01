@@ -63,14 +63,12 @@
 
 <div class="networks">
 	<ButtonBar>
-		<Button img="img/export.svg" text="Export" onClick={() => doExport()} />
-		<Button img="img/import.svg" text="Import" onClick={() => doImport()} />
+		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={() => doExport()} />
+		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={() => doImport()} />
 	</ButtonBar>
-
 	{#if $networks.length !== 0}
 		<div class="bold">My networks:</div>
 	{/if}
-
 	<Table breakpoint="500px">
 		<Tbody>
 			{#each $networks as n, index (n.guid)}
@@ -94,7 +92,6 @@
 			{/each}
 		</Tbody>
 	</Table>
-
 	<div class="bold">Default networks:</div>
 	<Table breakpoint="500px">
 		<Tbody>
@@ -110,7 +107,7 @@
 					</Td>
 					<Td>
 						<TableActionItems>
-							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--secondary-foreground" size="20px" padding="5px" onClick={() => addNetwork(n)} />
+							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => addNetwork(n)} />
 						</TableActionItems>
 					</Td>
 				</TbodyTr>
