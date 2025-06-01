@@ -1,10 +1,15 @@
 import { invoke } from '@tauri-apps/api/core';
 import { TAURI_MOBILE, log } from './tauri.ts';
+import { BaseDirectory } from '@tauri-apps/plugin-fs';
+import { appDataDir, resolve } from '@tauri-apps/api/path';
 
 export interface MobileDownload {
-	fileName: string;
-	tempFileName: string;
+	fileName: string; // Just the filename without path
+	tempFileName: string; // Just the temp filename without path
 	finished: boolean;
+	// New fields to track full paths
+	fullPath?: string; // Full path including directory (for reference only)
+	baseDir: BaseDirectory; // The base directory context
 }
 
 // Convert a Blob to base64
@@ -26,8 +31,14 @@ export async function createDownloadFile(fileName: string): Promise<MobileDownlo
 
 	log.debug('Creating download file:', { fileName });
 
+	// Always use AppData as the base directory for mobile downloads
+	const baseDir = BaseDirectory.AppData;
+
+	// Get just the filename without any path components
+	const justFileName = fileName.split('/').pop() || fileName;
+
 	// Find a free filename to avoid conflicts
-	const result = await findFreeFileName(fileName);
+	const result = await findFreeFileName(justFileName);
 	if ('error' in result) {
 		log.debug('Error finding free filename:', result.error);
 		return result;
@@ -39,20 +50,42 @@ export async function createDownloadFile(fileName: string): Promise<MobileDownlo
 	log.debug('Found free filename, creating temp file:', {
 		finalFileName,
 		tempFileName,
+		baseDir: 'AppData',
 	});
 
 	try {
-		// Create empty file
+		// Get app data directory path for reference (not used directly in commands)
+		let appDataPath = '';
+		try {
+			appDataPath = await appDataDir();
+			log.debug('App data directory:', appDataPath);
+		} catch (pathError) {
+			log.debug('Could not get app data directory path:', pathError);
+		}
+
+		// Create empty file (note: the plugin:yellow commands work with base paths internally)
 		await invoke('plugin:yellow|create_file', {
 			fileName: tempFileName,
 			content: '',
+			baseDir: baseDir, // Pass base directory context
 		});
 
 		log.debug('Successfully created temp file');
+
+		// Build full path for reference only
+		let fullPath = '';
+		try {
+			fullPath = await resolve(appDataPath, finalFileName);
+		} catch (resolveError) {
+			log.debug('Could not resolve full path (non-critical):', resolveError);
+		}
+
 		return {
 			fileName: finalFileName,
 			tempFileName,
 			finished: false,
+			fullPath,
+			baseDir,
 		};
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
@@ -134,16 +167,24 @@ async function findFreeFileName(baseFileName: string): Promise<{ fileName: strin
 
 // Check if a file exists
 async function checkFileExists(fileName: string): Promise<boolean> {
-	log.debug('Checking if file exists:', { fileName });
+	// Always use AppData as the base directory for mobile files
+	const baseDir = BaseDirectory.AppData;
+
+	log.debug('Checking if file exists:', {
+		fileName,
+		baseDir: 'AppData',
+	});
 
 	try {
 		const result = await invoke('plugin:yellow|file_exists', {
 			fileName,
+			baseDir,
 		});
 
 		const exists = !!result;
 		log.debug('File existence check result:', {
 			fileName,
+			baseDir: 'AppData',
 			exists,
 			rawResult: result,
 		});
@@ -183,9 +224,16 @@ export async function appendToDownload(download: MobileDownload, chunk: Blob): P
 
 	const base64Data = await blobToBase64(chunk);
 
+	log.debug('Appending chunk to download file:', {
+		fileName: download.tempFileName,
+		chunkSize: chunk.size,
+		baseDir: download.baseDir ?? 'AppData',
+	});
+
 	await invoke('plugin:yellow|append_to_file', {
 		fileName: download.tempFileName,
 		data: base64Data,
+		baseDir: download.baseDir ?? BaseDirectory.AppData,
 	});
 }
 
@@ -195,12 +243,20 @@ export async function finishDownload(download: MobileDownload): Promise<void> {
 		throw new Error('Download already finished');
 	}
 
+	log.debug('Finishing download by renaming temp file:', {
+		oldName: download.tempFileName,
+		newName: download.fileName,
+		baseDir: download.baseDir ?? 'AppData',
+	});
+
 	await invoke('plugin:yellow|rename_file', {
 		oldName: download.tempFileName,
 		newName: download.fileName,
+		baseDir: download.baseDir ?? BaseDirectory.AppData,
 	});
 
 	download.finished = true;
+	log.debug('Download finished successfully');
 }
 
 // Export file with save dialog
@@ -209,55 +265,103 @@ export async function exportFileWithDialog(fileName: string, mimeType: string = 
 		return { success: false, error: 'This function is only for mobile platforms' };
 	}
 
+	const baseDir = BaseDirectory.AppData;
+
+	log.debug('Opening export dialog for file:', {
+		fileName,
+		mimeType,
+		baseDir: 'AppData',
+	});
+
 	try {
 		// Open save dialog
 		const dialogResult = (await invoke('plugin:yellow|open_save_dialog', {
 			fileName,
 			mimeType,
+			baseDir,
 		})) as { success: boolean; uri?: string; fileName?: string; mimeType?: string };
 
 		if (!dialogResult.success || !dialogResult.uri) {
+			log.debug('Save dialog cancelled by user');
 			return { success: false, error: 'Save dialog cancelled' };
 		}
+
+		log.debug('User selected destination, saving file to URI:', dialogResult.uri);
 
 		// Save the file to the selected URI
 		await invoke('plugin:yellow|save_file_to_uri', {
 			filePath: fileName,
 			uri: dialogResult.uri,
+			baseDir,
 		});
 
 		log.debug('File exported successfully to:', dialogResult.uri);
 		return { success: true };
 	} catch (error) {
-		log.debug('Failed to export file:', error);
-		return { success: false, error: error instanceof Error ? error.message : String(error) };
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		log.debug('Failed to export file:', errorMessage);
+		log.debug('Error details:', JSON.stringify(error, null, 2));
+		return { success: false, error: errorMessage };
 	}
 }
 
 // Delete a file
 export async function deleteFile(fileName: string): Promise<void> {
+	const baseDir = BaseDirectory.AppData;
+
+	log.debug('Deleting file:', {
+		fileName,
+		baseDir: 'AppData',
+	});
+
 	await invoke('plugin:yellow|delete_file', {
 		fileName,
+		baseDir,
 	});
+
+	log.debug('File deleted successfully');
 }
 
 // Append string content to download file
 export async function appendToDownloadFile(fileName: string, content: string): Promise<void> {
+	const baseDir = BaseDirectory.AppData;
+
+	log.debug('Appending string content to file:', {
+		fileName,
+		contentLength: content.length,
+		baseDir: 'AppData',
+	});
+
 	await invoke('plugin:yellow|append_to_file', {
 		fileName,
 		data: btoa(content), // Convert string to base64
+		baseDir,
 	});
+
+	log.debug('Content appended successfully');
 }
 
 // Rename a download file
 export async function renameDownloadFile(oldName: string, newName: string): Promise<void> {
+	const baseDir = BaseDirectory.AppData;
+
+	log.debug('Renaming file:', {
+		oldName,
+		newName,
+		baseDir: 'AppData',
+	});
+
 	await invoke('plugin:yellow|rename_file', {
 		oldName,
 		newName,
+		baseDir,
 	});
+
+	log.debug('File renamed successfully');
 }
 
 // Delete a download file
 export async function deleteDownloadFile(fileName: string): Promise<void> {
+	log.debug('Deleting download file:', { fileName });
 	await deleteFile(fileName);
 }
