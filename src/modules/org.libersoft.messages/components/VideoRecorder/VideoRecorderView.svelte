@@ -88,7 +88,7 @@
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
-		background: red;
+		background: #f00;
 		top: 6px;
 		right: 6px;
 		opacity: 0.4;
@@ -214,7 +214,7 @@
 		{/if}
 		<div class="video-floating-area-rt">
 			{#if hasData && !isRecording}
-				<Button img="img/download.svg" enabled={hasData} colorVariable="--secondary-foreground" onClick={download} />
+				<Button img="img/download.svg" enabled={hasData} colorVariable="--primary-foreground" onClick={download} />
 				<Button img="modules/{identifier}/img/delete.svg" enabled={hasData} colorVariable="--icon-red" onClick={recordRestart} />
 			{/if}
 		</div>
@@ -228,7 +228,7 @@
 		<div class="video-recorder-actions-left">
 			<ButtonWithMenu>
 				{#snippet sideButtonSlot()}
-					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--secondary-foreground" size="16px" padding="6px" onClick={() => {}} />
+					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" onClick={() => {}} />
 				{/snippet}
 				{#snippet mainButtonSlot()}
 					<div class="mic-button-wrapper">
@@ -238,7 +238,7 @@
 						{:else if isRecording}
 							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-red" onClick={toggleMute} />
 						{:else}
-							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--secondary-foreground" onClick={toggleMute} />
+							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--primary-foreground" onClick={toggleMute} />
 						{/if}
 					</div>
 				{/snippet}
@@ -250,15 +250,15 @@
 			</ButtonWithMenu>
 			<ButtonWithMenu>
 				{#snippet sideButtonSlot()}
-					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--secondary-foreground" size="16px" padding="6px" onClick={() => {}} />
+					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" onClick={() => {}} />
 				{/snippet}
 				{#snippet mainButtonSlot()}
 					<div>
 						<div class="camera-button-wrapper">
 							{#if enableToggleFacingMode}
-								<Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--secondary-foreground" onClick={toggleFacingMode} />
+								<Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--primary-foreground" onClick={toggleFacingMode} />
 							{:else}
-								<Button img="modules/{identifier}/img/camera.svg" colorVariable="--secondary-foreground" onClick={() => {}} />
+								<Button img="modules/{identifier}/img/camera.svg" colorVariable="--primary-foreground" onClick={() => {}} />
 							{/if}
 						</div>
 					</div>
@@ -272,11 +272,11 @@
 		</div>
 		<div class="video-recorder-actions-right">
 			{#if isRecording}
-				<Button img="modules/{identifier}/img/stop.svg" colorVariable="--secondary-foreground" text="STOP" onClick={recordStop} />
+				<Button img="modules/{identifier}/img/stop.svg" colorVariable="--primary-foreground" text="STOP" onClick={recordStop} />
 			{:else}
 				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--icon-gray' : '--icon-red'} text="REC" onClick={recordStart} />
 			{/if}
-			<Button loading={sending} img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--secondary-foreground" onClick={send} />
+			<Button loading={sending} img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--primary-foreground" onClick={send} />
 		</div>
 	</div>
 </div>

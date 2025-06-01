@@ -127,7 +127,8 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: #222;
+		background: var(--secondary-background);
+		color: var(--secondary-foreground);
 		align-items: center;
 		gap: 8px;
 		padding: 0 10px;
@@ -136,7 +137,7 @@
 
 	.wavesurfer-wrap {
 		flex: 1 1 100%;
-		background: #404040;
+		background: var(--secondary-softer-background);
 		border-radius: var(--border-radius);
 		padding: 0 10px;
 		position: relative;
@@ -154,7 +155,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background: #404040;
+		background: var(--secondary-softer-background);
 		border-radius: var(--border-radius);
 		width: 32px;
 		height: 32px;
