@@ -1,6 +1,6 @@
 <script>
-	import { product, motto } from '../../core.js';
-	import Icon from '../../components/Icon/Icon.svelte';
+	import { product, motto } from '@/core/core.js';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 </script>
 
 <style>

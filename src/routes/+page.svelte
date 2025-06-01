@@ -15,10 +15,10 @@
 	import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
 	import Modal from '../core/components/Modal/Modal.svelte';
 	import Wizard from '../core/components/Wizard/Wizard.svelte';
-	import WizardWelcomeStep1 from '@/core/pages/WelcomePage/WelcomeStep1.svelte';
-	import WizardWelcomeStep2 from '@/core/pages/WelcomePage/WelcomeStep2.svelte';
-	import WizardWelcomeStep3 from '@/core/pages/WelcomePage/WelcomeStep3.svelte';
-	import WizardWelcomeStep4 from '@/core/pages/WelcomePage/WelcomeStep4.svelte';
+	import WizardWelcomeStep1 from '@/core/wizard/WelcomeStep1.svelte';
+	import WizardWelcomeStep2 from '@/core/wizard/WelcomeStep2.svelte';
+	import WizardWelcomeStep3 from '@/core/wizard/WelcomeStep3.svelte';
+	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
 	import { createTrayIcon, destroyTrayIcon } from '../core/tray_icon.ts';
 	import '../modules/org.libersoft.messages/module.js';
 	import '../modules/org.libersoft.contacts/module.js';
