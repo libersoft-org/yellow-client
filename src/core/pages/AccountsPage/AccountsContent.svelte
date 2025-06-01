@@ -63,7 +63,7 @@
 
 <style>
 	.accounts {
-		background: url('/img/background.webp') repeat;
+		background: url('/img/background/light.webp') repeat;
 		background-size: 400px;
 
 		.accounts-wrapper {

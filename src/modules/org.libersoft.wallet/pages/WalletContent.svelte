@@ -58,7 +58,7 @@
 
 <style>
 	.wallet-content {
-		background: url('/img/background.webp') repeat;
+		background: url('/img/background/light.webp') repeat;
 		background-size: 400px;
 		height: 100vh;
 	}
