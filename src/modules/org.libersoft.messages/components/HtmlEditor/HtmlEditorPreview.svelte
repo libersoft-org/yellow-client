@@ -9,6 +9,11 @@
 <style>
 	.preview {
 		padding: 10px;
+		width: calc(100% - 22px);
+		height: calc(100% - 22px);
+		background-color: var(--default-background);
+		border: 1px solid var(--default-foreground);
+		border-radius: 10px;
 	}
 </style>
 

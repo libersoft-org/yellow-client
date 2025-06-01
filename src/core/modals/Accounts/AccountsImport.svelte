@@ -11,8 +11,8 @@
 </script>
 
 <Tabs>
-	<TabsItem img="img/import.svg" colorVariable="--secondary-foreground" label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
-	<TabsItem img="img/photo.svg" colorVariable="--secondary-foreground" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
+	<TabsItem img="img/import.svg" label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
+	<TabsItem img="img/photo.svg" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
 </Tabs>
 
 {#if activeTab === 'json'}
