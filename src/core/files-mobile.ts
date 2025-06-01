@@ -24,7 +24,22 @@ export async function createDownloadFile(fileName: string): Promise<MobileDownlo
 		return { error: 'This function is only for mobile platforms' };
 	}
 
-	const tempFileName = `${fileName}.part`;
+	log.debug('Creating download file:', { fileName });
+
+	// Find a free filename to avoid conflicts
+	const result = await findFreeFileName(fileName);
+	if ('error' in result) {
+		log.debug('Error finding free filename:', result.error);
+		return result;
+	}
+
+	const { fileName: finalFileName } = result;
+	const tempFileName = `${finalFileName}.part`;
+
+	log.debug('Found free filename, creating temp file:', {
+		finalFileName,
+		tempFileName,
+	});
 
 	try {
 		// Create empty file
@@ -33,14 +48,130 @@ export async function createDownloadFile(fileName: string): Promise<MobileDownlo
 			content: '',
 		});
 
+		log.debug('Successfully created temp file');
 		return {
-			fileName,
+			fileName: finalFileName,
 			tempFileName,
 			finished: false,
 		};
 	} catch (error) {
-		log.debug('Failed to create download file:', error);
-		return { error: `Failed to create file: ${error}` };
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		log.debug('Failed to create download file:', errorMessage);
+		log.debug('Error details:', JSON.stringify(error, null, 2));
+
+		// Check for specific error types and provide more helpful messages
+		if (errorMessage.includes('permission') || errorMessage.includes('access denied')) {
+			return { error: 'Permission denied: Cannot create file. Please check app permissions.' };
+		} else if (errorMessage.includes('storage') || errorMessage.includes('space') || errorMessage.includes('disk full')) {
+			return { error: 'Not enough storage space available to create file.' };
+		} else if (errorMessage.includes('invalid') && errorMessage.includes('path')) {
+			return { error: `Invalid file path: "${tempFileName}". File name may contain invalid characters.` };
+		}
+
+		// Generic error
+		return { error: `Failed to create file: ${errorMessage}` };
+	}
+}
+
+// Find a free filename that doesn't exist yet
+async function findFreeFileName(baseFileName: string): Promise<{ fileName: string } | { error: string }> {
+	log.debug('Starting findFreeFileName (mobile):', {
+		baseFileName,
+	});
+
+	try {
+		let counter = 0;
+		let fileName = baseFileName;
+
+		while (true) {
+			log.debug(`Checking file existence (attempt ${counter + 1}):`, {
+				fileName,
+				counter,
+			});
+
+			try {
+				// Check if file exists - may throw errors for serious filesystem issues
+				const exists = await checkFileExists(fileName);
+				const tempExists = await checkFileExists(`${fileName}.part`);
+
+				log.debug('File existence check results:', {
+					fileName,
+					tempFileName: `${fileName}.part`,
+					exists,
+					tempExists,
+				});
+
+				if (!exists && !tempExists) {
+					log.debug('Found free filename:', { fileName });
+					return { fileName };
+				}
+
+				// Generate a new filename with counter
+				counter++;
+				fileName = baseFileName.replace(/(\.[^.]+)?$/, ` (${counter})$&`);
+				log.debug(`File already exists, trying new filename:`, { fileName, counter });
+			} catch (fileCheckError) {
+				// This is a serious filesystem error that was propagated from checkFileExists
+				const errorMessage = fileCheckError instanceof Error ? fileCheckError.message : String(fileCheckError);
+				log.debug('Serious error during file existence check:', errorMessage);
+				return { error: `File system error during filename check: ${errorMessage}` };
+			}
+
+			// Safety check to prevent infinite loops
+			if (counter > 100) {
+				log.debug('Reached maximum number of filename attempts (100)');
+				return { error: 'Could not find a free filename after 100 attempts' };
+			}
+		}
+	} catch (error) {
+		// General error in the findFreeFileName function itself
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		log.debug('Error finding free filename:', errorMessage);
+		log.debug('Error details:', JSON.stringify(error, null, 2));
+		return { error: `Failed to find free filename: ${errorMessage}` };
+	}
+}
+
+// Check if a file exists
+async function checkFileExists(fileName: string): Promise<boolean> {
+	log.debug('Checking if file exists:', { fileName });
+
+	try {
+		const result = await invoke('plugin:yellow|file_exists', {
+			fileName,
+		});
+
+		const exists = !!result;
+		log.debug('File existence check result:', {
+			fileName,
+			exists,
+			rawResult: result,
+		});
+
+		return exists;
+	} catch (error) {
+		// Check if this is a "file not found" error vs. a more serious error
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		const errorStr = JSON.stringify(error, null, 2);
+		log.debug('Error checking file existence:', errorMessage);
+		log.debug('Error details:', errorStr);
+
+		// If error message indicates a file not found error, that's expected
+		if (errorMessage.includes('not found') || errorMessage.includes('does not exist') || errorMessage.includes('no such file')) {
+			log.debug('File does not exist based on error message');
+			return false;
+		}
+
+		// If it's a more serious error (permissions, storage full, etc.),
+		// propagate the error instead of silently failing
+		if (errorMessage.includes('permission') || errorMessage.includes('access denied') || errorMessage.includes('storage') || errorMessage.includes('disk full') || errorMessage.includes('i/o error')) {
+			log.debug('Serious file system error detected, propagating error');
+			throw new Error(`File system error checking existence of "${fileName}": ${errorMessage}`);
+		}
+
+		// For any other error types, log a warning and cautiously return false
+		log.debug('Unrecognized file existence error, defaulting to false but with warning');
+		return false;
 	}
 }
 

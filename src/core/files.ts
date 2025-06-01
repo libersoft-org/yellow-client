@@ -3,6 +3,7 @@ import { rename, writeFile, open as openFile, exists, BaseDirectory } from '@tau
 import * as path from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/core';
 import { TAURI_MOBILE, log } from './tauri.ts';
+import * as filesMobile from './files-mobile.ts';
 
 interface PermissionStatus {
 	writeExternalStorage: 'granted' | 'denied' | 'prompt';
@@ -21,6 +22,8 @@ export class NativeDownload {
 	public potential_default_folder: null | string = null;
 	public finished: boolean = false;
 	public baseDir: BaseDirectory;
+	// For mobile mode
+	public mobileDownload?: filesMobile.MobileDownload;
 
 	constructor() {
 		this.original_file_name = '';
@@ -75,30 +78,32 @@ export async function offerNativeDownload(fileName: string, defaultFileDownloadF
 	const download = new NativeDownload();
 	download.original_file_name = fileName;
 
-	// On mobile, always use app-specific directory without save dialog
+	// On mobile, use the mobile-specific implementation
 	if (TAURI_MOBILE) {
-		download.baseDir = BaseDirectory.AppData;
-
 		try {
-			// For mobile, use temp files like desktop
-			download.file_path = fileName;
-			download.temp_file_path = partFileName(fileName);
-			download.potential_default_folder = null;
+			const mobileResult = await filesMobile.createDownloadFile(fileName);
 
-			log.debug('Mobile download paths:', {
+			if ('error' in mobileResult) {
+				return { error: mobileResult.error };
+			}
+
+			// Store the mobile download info and also populate the common fields
+			download.mobileDownload = mobileResult;
+			download.file_path = mobileResult.fileName;
+			download.temp_file_path = mobileResult.tempFileName;
+			download.baseDir = BaseDirectory.AppData; // Mobile uses app data directory
+
+			log.debug('Mobile download created:', {
 				file_path: download.file_path,
 				temp_file_path: download.temp_file_path,
-				baseDir: download.baseDir,
-				baseDirName: 'AppData',
+				mobileDownload: download.mobileDownload,
 			});
 
-			// Create the temp file in app's local directory
-			await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+			return download;
 		} catch (error) {
-			log.debug('Failed to create temp file:', error);
-			return { error: 'Failed to create temp file: ' + error };
+			log.debug('Failed to create mobile download:', error);
+			return { error: 'Failed to create mobile download: ' + error };
 		}
-		return download;
 	}
 
 	// Desktop-only code path
@@ -126,10 +131,15 @@ export async function saveNativeDownloadChunk(download: NativeDownload, chunk: B
 	if (download.finished) {
 		throw new Error('Download already finished');
 	}
+
+	// Use mobile implementation if on mobile
+	if (TAURI_MOBILE && download.mobileDownload) {
+		await filesMobile.appendToDownload(download.mobileDownload, chunk);
+		return;
+	}
+
+	// Desktop implementation
 	const file_path = download.temp_file_path;
-
-	//await writeFile(download.temp_file_path, new Uint8Array(await chunk.arrayBuffer()), {baseDir: BaseDirectory.Download});
-
 	const file = await openFile(file_path, {
 		append: true,
 		baseDir: download.baseDir,
@@ -139,53 +149,114 @@ export async function saveNativeDownloadChunk(download: NativeDownload, chunk: B
 }
 
 export async function finishNativeDownload(download: NativeDownload) {
-	const file_path = download.file_path;
-	const temp_file_path = download.temp_file_path;
+	if (download.finished) {
+		return; // Already finished
+	}
+
 	download.finished = true;
 
-	log.debug('finishNativeDownload - paths:', {
+	// Use mobile implementation if on mobile
+	if (TAURI_MOBILE && download.mobileDownload) {
+		await filesMobile.finishDownload(download.mobileDownload);
+		log.debug('Mobile download finished:', download.file_path);
+
+		// Important: For mobile, we only notify the user that the download is finished
+		// The user will need to take explicit action to export the file using exportToSystemDownloads
+		try {
+			// You can implement a notification here using Tauri notifications API
+			// For now, we just log that the file is ready
+			log.debug('Download complete - file is available for export', {
+				fileName: download.original_file_name,
+				path: download.file_path,
+			});
+
+			// Note: You can call the system notification API here if desired
+			// This could display a message like "Download complete, tap to export"
+		} catch (error) {
+			log.debug('Failed to notify about completed download:', error);
+		}
+
+		return;
+	}
+
+	// Desktop implementation
+	const file_path = download.file_path;
+	const temp_file_path = download.temp_file_path;
+
+	log.debug('Finishing desktop download - paths:', {
 		file_path,
 		temp_file_path,
 		baseDir: download.baseDir,
-		TAURI_MOBILE,
 	});
 
 	await rename(temp_file_path, file_path, {
 		oldPathBaseDir: download.baseDir,
 		newPathBaseDir: download.baseDir,
 	});
-
-	// On mobile, offer to export the file to the system Downloads folder
-	if (TAURI_MOBILE) {
-		log.debug('File saved to app storage:', file_path);
-		log.debug('To export to system Downloads, call exportToSystemDownloads with:', {
-			appFilePath: file_path,
-			fileName: download.original_file_name,
-		});
-	}
 }
 
 async function findFreeFileName(folder: string, download: NativeDownload) {
+	log.debug('Starting findFreeFileName (desktop):', {
+		folder,
+		original_file_name: download.original_file_name,
+		baseDir: download.baseDir,
+	});
+
 	let counter = 0;
 	while (true) {
 		let file_name = download.original_file_name + (counter > 0 ? ` (${counter})` : '');
 		const file_path = await path.join(folder, file_name);
+
+		log.debug(`Checking file existence (attempt ${counter + 1}):`, {
+			file_name,
+			file_path,
+			counter,
+		});
+
 		const exists_file = await exists(file_path, { baseDir: download.baseDir });
 		const temp_file_path = partFileName(file_path);
 		const exists_file2 = await exists(temp_file_path, { baseDir: download.baseDir });
+
+		log.debug('File existence check results:', {
+			file_path,
+			temp_file_path,
+			exists_file,
+			exists_file2,
+		});
+
 		if (!exists_file && !exists_file2) {
+			log.debug('Found free filename:', {
+				file_path,
+				temp_file_path,
+			});
+
 			download.file_path = file_path;
 			download.temp_file_path = temp_file_path;
 			try {
 				// Create the temp file
+				log.debug('Creating temp file:', temp_file_path);
 				await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+				log.debug('Temp file created successfully');
 			} catch (error) {
 				log.debug('Failed to create temp file in findFreeFileName:', error);
+				log.debug('Error details:', JSON.stringify(error, null, 2));
 				throw error;
 			}
+			log.debug('findFreeFileName completed successfully', {
+				final_path: download.file_path,
+				temp_path: download.temp_file_path,
+			});
 			return;
 		}
+
+		log.debug(`File already exists, trying next counter value: ${counter + 1}`);
 		counter++;
+
+		// Safety check to prevent infinite loops
+		if (counter > 100) {
+			log.debug('Reached maximum number of filename attempts (100)');
+			throw new Error('Could not find a free filename after 100 attempts');
+		}
 	}
 }
 
