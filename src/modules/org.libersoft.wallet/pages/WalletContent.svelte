@@ -39,11 +39,11 @@
 	}
 
 	selectedNetwork.subscribe(v => {
-		console.log('xxselectedNetwork', v);
+		console.log('selectedNetwork', v);
 	});
 
 	selectedAddress.subscribe(v => {
-		console.log('xxselectedAddress', v);
+		console.log('selectedAddress', v);
 	});
 
 	function clickCopyAddress() {
@@ -58,8 +58,7 @@
 
 <style>
 	.wallet-content {
-		background: url('/img/background/light.webp') repeat;
-		background-size: 400px;
+		background: var(--background-image) 0 0 / 400px repeat;
 		height: 100vh;
 	}
 

@@ -22,6 +22,7 @@ export const default_theme = {
 		'--default-background': '#fff',
 		'--disabled-background': '#888',
 		'--disabled-foreground': '#fff',
+		'--background-image': 'url(/img/background/light.webp)',
 	},
 };
 export let themes_stored = localStorageSharedStore('themes_stored', [
@@ -45,6 +46,7 @@ export let themes_stored = localStorageSharedStore('themes_stored', [
 			'--default-background': '#000',
 			'--disabled-background': '#888',
 			'--disabled-foreground': '#fff',
+			'--background-image': 'url(/img/background/dark.webp)',
 		},
 	},
 ]);

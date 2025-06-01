@@ -28,8 +28,7 @@
 		justify-content: center;
 		gap: 10px;
 		height: 100vh;
-		background: url('/img/background/light.webp') repeat;
-		background-size: 400px;
+		background: var(--background-image) 0 0 / 400px repeat;
 	}
 
 	.welcome .illustration {

@@ -63,8 +63,7 @@
 
 <style>
 	.accounts {
-		background: url('/img/background/light.webp') repeat;
-		background-size: 400px;
+		background: var(--background-image) 0 0 / 400px repeat;
 
 		.accounts-wrapper {
 			display: flex;
