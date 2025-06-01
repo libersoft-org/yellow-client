@@ -274,14 +274,21 @@
 
 <style>
 	.files2-test {
-		padding: 20px;
-		max-width: 800px;
-		margin: 0 auto;
+		width: 100%;
+		padding: 10px;
 	}
 
 	h3 {
-		margin-bottom: 20px;
+		margin-bottom: 15px;
 		color: var(--text);
+		font-size: 1.2em;
+	}
+
+	h4 {
+		margin: 10px 0 5px 0;
+		font-size: 0.9em;
+		color: var(--text);
+		opacity: 0.8;
 	}
 
 	.warning {
@@ -291,122 +298,185 @@
 		padding: 20px;
 	}
 
+	.main-container {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+	}
+
+	.column {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+	}
+
+	.section {
+		padding: 1px;
+		background: var(--background-secondary);
+		border-radius: 6px;
+		border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+	}
+
+	.section h3 {
+		margin: 0 0 10px 0;
+		font-size: 1em;
+		padding-bottom: 8px;
+		border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+	}
+
+	.platform-info {
+		background: var(--background-tertiary, #f0f0f0);
+		padding: 8px;
+		margin-bottom: 10px;
+		border-radius: 4px;
+		font-family: monospace;
+		font-size: 0.85em;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 4px;
+	}
+
+	.platform-info h4 {
+		grid-column: 1 / -1;
+		margin: 0 0 5px 0;
+		font-size: 0.9em;
+		font-weight: 600;
+	}
+
+	.platform-info-item {
+		margin: 0;
+		font-size: 0.8em;
+	}
+
+	.platform-info-item strong {
+		display: inline-block;
+		width: 80px;
+		font-weight: 600;
+	}
+
 	.test-section {
-		margin-bottom: 15px;
+	}
+
+	.test-section :global(input) {
+		width: 100%;
+		font-size: 0.9em;
 	}
 
 	.button-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-		gap: 10px;
-		margin: 20px 0;
+		gap: 8px;
+		margin: 10px 0;
 	}
 
-	.button-grid :global(button:last-child) {
+	.button-grid :global(button) {
+		font-size: 0.85em;
+		padding: 6px 10px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.button-grid :global(button:last-child:nth-child(odd)) {
 		grid-column: 1 / -1;
 	}
 
 	.status-message {
-		margin-top: 20px;
-		padding: 15px;
+		margin-top: 10px;
+		padding: 10px;
 		background: var(--background-secondary);
 		border-radius: 4px;
 		font-family: monospace;
+		font-size: 0.85em;
 		white-space: pre-wrap;
-		word-break: break-all;
+		word-break: break-word;
+		max-height: 150px;
+		overflow-y: auto;
 	}
 
 	.file-info {
-		margin-top: 20px;
-		padding: 15px;
 		background: var(--background-tertiary);
 		border-radius: 4px;
+		font-size: 0.85em;
 	}
 
 	.file-info h4 {
-		margin: 0 0 10px 0;
-		font-size: 14px;
+		margin: 0 0 5px 0;
+		font-size: 0.9em;
 		font-weight: 600;
 	}
 
 	.file-info p {
-		margin: 5px 0;
-		font-size: 13px;
+		margin: 3px 0;
 		font-family: monospace;
-	}
-
-	.platform-info {
-		background: #e0e0e0;
-		padding: 10px;
-		margin-bottom: 15px;
-		border: 1px solid #999;
-		font-family: monospace;
-	}
-
-	.platform-info-item {
-		margin: 2px 0;
-	}
-
-	.platform-info-item strong {
-		display: inline-block;
-		width: 120px;
+		font-size: 0.85em;
 	}
 
 	.folder-input {
-		margin-bottom: 10px;
+		margin-bottom: 8px;
+	}
+
+	.folder-input label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 0.85em;
 	}
 
 	.folder-input input {
-		margin-left: 10px;
-		padding: 5px;
-		width: 200px;
+		flex: 1;
+		padding: 4px 8px;
+		font-size: 0.85em;
+		border: 1px solid var(--border, #ccc);
+		border-radius: 3px;
 	}
 
-	.result,
-	.download-object {
+	.result-area {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 		margin-top: 10px;
 	}
 
-	.section {
-		margin-top: 30px;
-		padding: 20px;
-		background: var(--background-secondary);
-		border-radius: 8px;
+	.result-area textarea {
+		width: 100%;
+		font-family: monospace;
+		font-size: 0.8em;
+		border: 1px solid var(--border, #ccc);
+		border-radius: 3px;
+		padding: 6px;
+		resize: vertical;
+		min-height: 60px;
+		max-height: 120px;
 	}
 
-	.section h3 {
-		margin-top: 0;
+	:global(label) {
+		font-size: 0.85em;
+		font-weight: 500;
+		color: var(--text);
+		opacity: 0.8;
 	}
 
-	.tabs {
-		display: flex;
-		margin-bottom: 20px;
-		border-bottom: 1px solid #ccc;
-	}
+	/* Mobile responsiveness */
+	@media (max-width: 768px) {
+		.main-container {
+			grid-template-columns: 1fr;
+		}
 
-	.tab {
-		padding: 10px 20px;
-		cursor: pointer;
-		border-bottom: 2px solid transparent;
-	}
-
-	.tab.active {
-		border-bottom: 2px solid var(--primary);
-		font-weight: bold;
+		.platform-info {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>
 
 <div class="files2-test">
-	<h3>File Operations Debug</h3>
-
 	<div class="platform-info">
-		<h4>Platform Information</h4>
 		<div class="platform-info-item">
 			<strong>TAURI:</strong>
 			{platformInfo.tauri}
 		</div>
 		<div class="platform-info-item">
-			<strong>TAURI_MOBILE:</strong>
+			<strong>MOBILE:</strong>
 			{platformInfo.tauriMobile}
 		</div>
 		<div class="platform-info-item">
@@ -423,95 +493,98 @@
 		</div>
 	</div>
 
-	<!-- Desktop file operations section -->
-	<div class="section">
-		<h3>Common File Operations</h3>
+	<div class="main-container">
+		<!-- Left Column -->
+		<div class="column">
+			<div class="section">
+				<h3>Common File Operations</h3>
 
-		<div class="folder-input">
-			<label>
-				Default Folder:
-				<input type="text" bind:value={defaultFolder} placeholder="Leave empty for dialog" />
-			</label>
+				<div class="folder-input">
+					<label>
+						Default Folder:
+						<input type="text" bind:value={defaultFolder} placeholder="Leave empty for dialog" />
+					</label>
+				</div>
+
+				<div class="button-grid">
+					<Button onClick={testPing}>Test Ping</Button>
+					<Button onClick={testCheckPermissions}>Check Permissions</Button>
+					<Button onClick={testOfferNativeDownload}>Offer Download</Button>
+					<Button onClick={testOfferNativeDownloadWithDefaultFolder}>With Folder</Button>
+					<Button onClick={testSaveNativeDownloadChunk}>Save Chunk</Button>
+					<Button onClick={testFinishNativeDownload}>Finish Download</Button>
+					{#if TAURI_MOBILE}
+						<Button onClick={testExportToDownloads}>Export to Downloads</Button>
+					{/if}
+				</div>
+
+				<div class="result-area">
+					<h4>Result:</h4>
+					<textarea readonly value={result || 'Click a button to test a function'} />
+				</div>
+
+				<div class="result-area">
+					<h4>Download Object:</h4>
+					<textarea readonly value={download ? JSON.stringify(download, null, 2) : 'No download object yet'} />
+				</div>
+			</div>
 		</div>
 
-		<div class="button-grid">
-			<Button onClick={testPing}>Test Yellow Plugin Ping</Button>
-			<Button onClick={testCheckPermissions}>Test checkFilePermissions</Button>
-			<Button onClick={testOfferNativeDownload}>Test offerNativeDownload</Button>
-			<Button onClick={testOfferNativeDownloadWithDefaultFolder}>With defaultFolder</Button>
-			<Button onClick={testSaveNativeDownloadChunk}>Test saveNativeDownloadChunk</Button>
-			<Button onClick={testFinishNativeDownload}>Test finishNativeDownload</Button>
+		<!-- Right Column -->
+		<div class="column">
 			{#if TAURI_MOBILE}
-				<Button onClick={testExportToDownloads}>Export to System Downloads</Button>
+				<div class="section">
+					<h3>Mobile File Operations</h3>
+
+					<div class="test-section">
+						<Label>File Name:</Label>
+						<Input bind:value={fileName} placeholder="Enter file name" />
+					</div>
+
+					<div class="test-section">
+						<Label>File Content:</Label>
+						<Input bind:value={fileContent} placeholder="Enter file content" />
+					</div>
+
+					<div class="test-section">
+						<Label>Append Content:</Label>
+						<Input bind:value={appendContent} placeholder="Content to append" />
+					</div>
+
+					<div class="test-section">
+						<Label>New File Name:</Label>
+						<Input bind:value={newFileName} placeholder="New name for rename" />
+					</div>
+
+					<div class="button-grid">
+						<Button onClick={testCreateFile}>Create</Button>
+						<Button onClick={testAppendToFile} disabled={!createdFile}>Append</Button>
+						<Button onClick={testRenameFile} disabled={!createdFile}>Rename</Button>
+						<Button onClick={testExportFile} disabled={!createdFile}>Export</Button>
+						<Button onClick={testDeleteFile} disabled={!createdFile}>Delete</Button>
+						<Button onClick={testFullWorkflow}>Full Workflow</Button>
+					</div>
+
+					{#if statusMessage}
+						<div class="status-message">
+							{statusMessage}
+						</div>
+					{/if}
+
+					{#if createdFile}
+						<div class="file-info">
+							<h4>Current File Info:</h4>
+							<p>Name: {createdFile.fileName}</p>
+							<p>Temp: {createdFile.tempFileName}</p>
+						</div>
+					{/if}
+				</div>
+			{:else}
+				<div class="section">
+					<h3>Mobile Operations</h3>
+					<p class="warning">Mobile-specific file operations are only available on mobile platforms.</p>
+				</div>
 			{/if}
-		</div>
-
-		<div class="result">
-			<h4>Result:</h4>
-			<textarea readonly rows="5" cols="50" style="width: 100%; height: 100px;">
-				{result || 'Click a button to test a function'}
-			</textarea>
-		</div>
-
-		<div class="download-object">
-			<h4>Current Download Object:</h4>
-			<textarea readonly rows="5" cols="50" style="width: 100%; height: 100px;">
-				{download ? JSON.stringify(download, null, 2) : 'No download object yet'}
-			</textarea>
 		</div>
 	</div>
-
-	<!-- Mobile file operations section -->
-	{#if TAURI_MOBILE}
-		<div class="section">
-			<h3>Mobile File Operations Test</h3>
-
-			<div class="test-section">
-				<Label>File Name:</Label>
-				<Input bind:value={fileName} placeholder="Enter file name" />
-			</div>
-
-			<div class="test-section">
-				<Label>File Content:</Label>
-				<Input bind:value={fileContent} placeholder="Enter file content" />
-			</div>
-
-			<div class="test-section">
-				<Label>Append Content:</Label>
-				<Input bind:value={appendContent} placeholder="Content to append" />
-			</div>
-
-			<div class="test-section">
-				<Label>New File Name:</Label>
-				<Input bind:value={newFileName} placeholder="New name for rename" />
-			</div>
-
-			<div class="button-grid">
-				<Button onClick={testCreateFile}>Create File</Button>
-				<Button onClick={testAppendToFile} disabled={!createdFile}>Append to File</Button>
-				<Button onClick={testRenameFile} disabled={!createdFile}>Rename File</Button>
-				<Button onClick={testExportFile} disabled={!createdFile}>Export with Dialog</Button>
-				<Button onClick={testDeleteFile} disabled={!createdFile}>Delete File</Button>
-				<Button onClick={testFullWorkflow}>Test Full Workflow</Button>
-			</div>
-
-			{#if statusMessage}
-				<div class="status-message">
-					{statusMessage}
-				</div>
-			{/if}
-
-			{#if createdFile}
-				<div class="file-info">
-					<h4>Current File Info:</h4>
-					<p>Name: {createdFile.fileName}</p>
-					<p>Temp Name: {createdFile.tempFileName}</p>
-				</div>
-			{/if}
-		</div>
-	{:else}
-		<div class="section">
-			<p class="warning">Mobile-specific file operations are only available on mobile platforms.</p>
-		</div>
-	{/if}
 </div>

@@ -40,5 +40,5 @@
 {/if}
 
 {#if showFiles2Modal}
-	<Modal title="Mobile File Operations Test" onClose={closeFiles2} body={Files2} bind:show={showFiles2Modal} />
+	<Modal title="File Operations Test" onClose={closeFiles2} body={Files2} bind:show={showFiles2Modal} width="90%" />
 {/if}
