@@ -14,7 +14,8 @@
 		align-items: center;
 		justify-content: center;
 		flex: 1; /* TODO: this is not working as it needs to be applied on BaseButton, not on .item. If applied to BaseButton, it spoils everything that doesn't need it. */
-		padding: 20px;
+		font-size: 16px;
+		padding: 10px;
 	}
 
 	.item.active {
