@@ -4,8 +4,7 @@
 	import { truncateText } from '@/core/utils/textUtils.js';
 	import { get, type Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
-	import { identifier, selectedConversation, initUpload } from '../messages.js';
-
+	import { selectedConversation, initUpload } from '../messages.js';
 	import Button from '@/core/components/Button/Button.svelte';
 	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -93,15 +92,15 @@
 	.body .items-empty {
 		padding: 50px;
 		text-align: center;
-		background-color: #eee;
-		border: 1px dashed #888;
+		background-color: var(--primary-softer-background);
+		color: var(--primary-foreground);
+		border: 1px dashed var(--default-foreground);
 		border-radius: 10px;
 		width: 100%;
 	}
 
 	.drop-active .items-empty {
-		background-color: #ddd;
-		border-color: #555;
+		background-color: var(--primary-background);
 	}
 
 	.drop-active .file-table {
@@ -132,8 +131,8 @@
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
 	<input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
 	<div class="header">
-		<Button img="img/add.svg" colorVariable="--secondary-foreground" text="Add files" onClick={onFileAdd} />
-		<Button img="img/del.svg" colorVariable="--secondary-foreground" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
+		<Button img="img/add.svg" colorVariable="--primary-foreground" text="Add files" onClick={onFileAdd} />
+		<Button img="img/del.svg" colorVariable="--primary-foreground" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
 	</div>
 	<div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
 		{#if $fileUploadModalFiles.length}
@@ -155,14 +154,12 @@
 			</div>
 		{:else}
 			<BaseButton onClick={onFileAdd}>
-				<div class="items-empty" role="none">
-					Drag and drop your files here<br />or click here to add files.
-				</div>
+				<div class="items-empty" role="none">Drag and drop your files here<br />or click here to add files.</div>
 			</BaseButton>
 		{/if}
 	</div>
 	<div class="footer">
-		<Button width="180px" img="img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-p2p" />
-		<Button width="180px" img="img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
+		<Button img="img/upload.svg" colorVariable="--primary-foreground" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-p2p" />
+		<Button img="img/upload.svg" colorVariable="--primary-foreground" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
 	</div>
 </div>

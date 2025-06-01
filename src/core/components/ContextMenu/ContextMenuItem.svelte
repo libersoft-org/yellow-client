@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	let { img = null, label = '', colorVariable, onClick, ...restProps } = $props();
+	let { img = null, label = '', colorVariable = '--primary-foreground', onClick, ...restProps } = $props();
 	let menu = getContext('ContextMenu');
 
 	function handleClick() {
@@ -24,10 +24,12 @@
 		align-items: center;
 		padding: 8px 12px;
 		width: 100%;
+		background-color: var(--primary-softer-background);
+		color: var(--primary-foreground);
 	}
 
 	.menu-item:hover {
-		background-color: #f0f0f0;
+		background-color: var(--primary-background);
 	}
 
 	.img-space {

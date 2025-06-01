@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import Icon from '../Icon/Icon.svelte';
-	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import type { HTMLButtonAttributes } from 'svelte/elements';
 
 	interface ButtonProps extends HTMLButtonAttributes {
 		children?: any;
@@ -23,8 +24,11 @@
 		loading?: boolean;
 		radius?: number;
 	}
-
 	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = '10px', bgColor = 'var(--primary-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable, iconSize = '20px', iconPadding = '0px', loading = false, ...restProps }: ButtonProps = $props();
+
+	onMount(() => {
+		if (!enabled) colorVariable = '--disabled-foreground';
+	});
 
 	function handleClick(e) {
 		if (enabled && onClick) {
@@ -47,8 +51,9 @@
 	}
 
 	.button.disabled {
-		background-color: #bbb !important;
-		border-color: #bbb !important;
+		background-color: var(--disabled-background) !important;
+		border-color: var(--disabled-foreground) !important;
+		color: var(--disabled-foreground) !important;
 		cursor: default;
 	}
 
