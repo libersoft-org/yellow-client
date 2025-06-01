@@ -1,31 +1,20 @@
 <script>
 	import { module } from '../module.js';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import SidebarItem from '@/core/components/SidebarItem/SidebarItem.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let img = null;
-	export let label = '';
+	export let label;
 	export let onClick;
 	export let colorVariable = '--default-foreground';
 </script>
 
-<style>
-	.item {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		height: 30px;
-		padding: 10px;
-		background-color: #fffcf0;
-		border-bottom: 1px solid #dd9;
-		width: 100%;
-	}
-</style>
-
-<BaseButton {onClick}>
-	<div class="item">
+{#if label || img}
+	<SidabarItem {onClick}>
 		{#if img}
-			<Icon img="modules/{module.identifier}/img/{img}" alt={label} {colorVariable} size="20px" padding="0px" />
+			<Icon img="modules/{module.identifier}/img/{img}" {colorVariable} alt={label} size="20px" padding="0px" />
 		{/if}
-		<div>{label}</div>
-	</div>
-</BaseButton>
+		{#if label}
+			<div>{label}</div>
+		{/if}
+	</SidabarItem>
+{/if}

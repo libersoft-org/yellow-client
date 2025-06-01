@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
 	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import Icon from '../Icon/Icon.svelte';
-	export let img;
-	export let title;
-	export let onClick;
+	interface Props {
+		img?: string;
+		title?: string;
+		onClick?: (e: Event) => void;
+	}
+	let { img, title, onClick }: Props = $props();
 </script>
 
 <style>
@@ -22,13 +25,15 @@
 	}
 </style>
 
-<BaseButton {onClick} align="center">
-	<div class="item">
-		{#if img}
-			<Icon {img} alt={title} colorVariable="--secondary-foreground" size="24px" padding="0px" />
-		{/if}
-		{#if title}
-			<div>{title}</div>
-		{/if}
-	</div>
-</BaseButton>
+{#if img || title}
+	<BaseButton {onClick}>
+		<div class="item">
+			{#if img}
+				<Icon {img} alt={title} colorVariable="--secondary-foreground" size="24px" padding="0px" />
+			{/if}
+			{#if title}
+				<div>{title}</div>
+			{/if}
+		</div>
+	</BaseButton>
+{/if}

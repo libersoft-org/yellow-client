@@ -18,6 +18,7 @@
 		gap: 5px;
 		height: 100vh;
 		background: var(--background-image) 0 0 / 400px repeat;
+		color: var(--primary-foreground);
 	}
 
 	.welcome .logo {
