@@ -326,11 +326,10 @@
 		flex-direction: column;
 		position: relative;
 		z-index: 5;
-		/*  min-width: 300px;
-  max-width: 300px;*/
 		max-height: 100%;
 		box-shadow: var(--shadow);
-		background-color: #fff;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
 	.resizer {
@@ -338,7 +337,6 @@
 		z-index: 1;
 		top: 0;
 		bottom: 0;
-		/*left: 300px;*/
 		width: 5px;
 		cursor: ew-resize;
 		/*background-color: #0d0;*/
