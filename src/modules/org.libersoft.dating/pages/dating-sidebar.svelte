@@ -2,6 +2,12 @@
 	import core from '@/core/core.js';
 	import Item from '../components/sidebar-item.svelte';
 	import { page } from '../dating.js';
+	const sections = [
+		{ id: 'people', img: 'people.svg', label: 'People nearby' },
+		{ id: 'map', img: 'map.svg', label: 'Map' },
+		{ id: 'match', img: 'match.svg', label: 'Match game' },
+		{ id: 'settings', img: 'settings.svg', label: 'Settings' },
+	];
 
 	function setPage(name) {
 		page.set(name);
@@ -9,15 +15,8 @@
 	}
 </script>
 
-<style>
-	.sidebar {
-		overflow-y: auto;
-	}
-</style>
-
 <div class="sidebar">
-	<Item img="people.svg" label="People nearby" active={$page === 'people' ? true : false} onClick={() => setPage('people')} />
-	<Item img="map.svg" label="Map" active={$page === 'map' ? true : false} onClick={() => setPage('map')} />
-	<Item img="match.svg" label="Match game" active={$page === 'match' ? true : false} onClick={() => setPage('match')} />
-	<Item img="settings.svg" label="Settings" active={$page === 'settings' ? true : false} onClick={() => setPage('settings')} />
+	{#each sections as { id, img, label }}
+		<Item {img} {label} active={$page === id} onClick={() => setPage(id)} />
+	{/each}
 </div>
