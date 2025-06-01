@@ -13,23 +13,22 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 10px;
 		flex: 1; /* TODO: this is not working as it needs to be applied on BaseButton, not on .item. If applied to BaseButton, it spoils everything that doesn't need it. */
-		padding: 10px;
+		padding: 20px;
 	}
 
 	.item.active {
 		font-weight: bold;
-		background-color: var(secondary-harder-background);
+		background-color: var(--secondary-softer-background);
 	}
 
 	.item:hover {
-		background-color: var(secondary-softer-foreground);
+		background-color: var(--secondary-soft-background);
 	}
 </style>
 
 <BaseButton {onClick}>
-	<div class="item {active ? 'active' : ''}">
+	<div class="item {active && 'active'}">
 		{#if img}
 			<Icon {img} alt={label ? label : ''} {colorVariable} size="20px" padding="0px" />
 		{/if}
