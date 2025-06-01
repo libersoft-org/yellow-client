@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import SidebarItem from '@/core/components/SidebarItem/SidebarItem.svelte';
 	import Photo from '../Photo/Photo.svelte';
 	import { selectedConversation, ensureConversationDetails } from '../../messages.js';
 	export let c;
@@ -14,22 +14,6 @@
 	.item {
 		display: flex;
 		flex-direction: column;
-		padding: 10px;
-		background-color: var(--primary-softer-background);
-		color: var(--primary-foreground);
-		border-bottom: 1px solid var(--primary-soft-background);
-		width: 100%;
-		box-sizing: border-box;
-		transition: background-color 0.4s linear;
-	}
-
-	.item:hover {
-		background-color: var(--primary-background);
-	}
-
-	.item.active {
-		background-color: var(--primary-hard-background);
-		transition: background-color 0.4s linear;
 	}
 
 	.item .item-row {
@@ -82,8 +66,8 @@
 	}
 </style>
 
-<BaseButton data-testid={testid} onClick={() => clickItem(c)}>
-	<div class="item" class:active={c.address === $selectedConversation?.address}>
+<SidebarItem data-testid={testid} active={c.address === $selectedConversation?.address} onClick={() => clickItem(c)}>
+	<div class="item">
 		<div class="item-row">
 			<Photo size="50px" />
 			<div class="description">
@@ -107,4 +91,4 @@
 			<div class="text">&nbsp;</div>
 		{/if}
 	</div>
-</BaseButton>
+</SidebarItem>

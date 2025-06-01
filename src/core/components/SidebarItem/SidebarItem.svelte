@@ -2,9 +2,10 @@
 	import BaseButton from '../BaseButton/BaseButton.svelte';
 	interface Props {
 		even?: boolean;
+		active?: boolean;
 		onClick?: (e: Event) => void;
 	}
-	let { even = false, onClick }: Props = $props();
+	let { even = false, active = false, onClick }: Props = $props();
 
 	function handleClick(e) {
 		console.log('SidebarItem clicked');
@@ -20,6 +21,7 @@
 		border-bottom: 1px solid var(--primary-background);
 		color: var(--primary-foreground);
 		cursor: pointer;
+		transition: background-color 0.4s linear;
 	}
 
 	.item.even {
@@ -33,10 +35,15 @@
 	.item:hover {
 		background-color: var(--primary-background);
 	}
+
+	.item.active {
+		background-color: var(--primary-hard-background);
+		transition: background-color 0.4s linear;
+	}
 </style>
 
 <BaseButton onClick={handleClick}>
-	<div class="item {even ? 'even' : 'odd'}">
+	<div class="item {even ? 'even' : 'odd'} {active && 'active'}">
 		<slot />
 	</div>
 </BaseButton>
