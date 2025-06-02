@@ -3,6 +3,10 @@
 	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
+	import Table from '@/core/components/Table/Table.svelte';
+	import Tbody from '@/core/components/Table/TableTbody.svelte';
+	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	export let close;
 	let activeIndex = null;
 	let filter = '';
@@ -40,18 +44,18 @@
 <Input placeholder="Search" bind:value={filter} />
 <Accordion items={$wallets} bind:activeIndex>
 	{#snippet content(wallet)}
-		<table>
-			<tbody>
+		<Table breakpoint="0">
+			<Tbody>
 				{#each walletAddresses(wallet) as address, index}
 					<BaseButton onClick={() => clickSelectAddress(wallet, address)}>
-						<tr class={index % 2 === 0 ? 'even' : 'odd'}>
-							<td class="center">{address.index}</td>
-							<td>{address.name}</td>
-							<td>{address.address}</td>
-						</tr>
+						<TbodyTr>
+							<Td class="center">{address.index}</Td>
+							<Td>{address.name}</Td>
+							<Td>{address.address}</Td>
+						</TbodyTr>
 					</BaseButton>
 				{/each}
-			</tbody>
-		</table>
+			</Tbody>
+		</Table>
 	{/snippet}
 </Accordion>
