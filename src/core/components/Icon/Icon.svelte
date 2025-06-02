@@ -63,8 +63,6 @@
 			{@render icon()}
 		</BaseButton>
 	{:else}
-		<div data-testid={dataTestId}>
-			{@render icon()}
-		</div>
+		{@render icon()}
 	{/if}
 {/if}

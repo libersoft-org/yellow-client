@@ -48,8 +48,9 @@
 
 	.bar-buttons {
 		position: relative;
-		z-index: 10;
 		display: flex;
+		justify-content: space-between;
+		z-index: 10;
 		color: var(--secondary-foreground);
 		background-color: var(--secondary-background);
 		border-bottom: 1px solid var(--secondary-softer-background);

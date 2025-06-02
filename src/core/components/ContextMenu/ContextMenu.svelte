@@ -192,6 +192,8 @@
 
 <style>
 	.context-menu {
+		display: flex;
+		flex-direction: column;
 		visibility: hidden;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 		position: fixed;

@@ -88,15 +88,15 @@
 		border-bottom: 1px solid var(--secondary-softer-background);
 		width: 100%;
 		box-sizing: border-box;
+	}
 
-		:global(.icon) {
-			transform: rotate(0deg);
-			transition: transform 0.3s ease;
-		}
+	.dropdown :global(.icon) {
+		transform: rotate(0deg);
+		transition: transform 0.3s ease;
+	}
 
-		:global(&.is-expanded .icon) {
-			transform: rotate(180deg);
-		}
+	.dropdown.is-expanded :global(.icon) {
+		transform: rotate(180deg);
 	}
 
 	.dropdown .text {
@@ -109,6 +109,7 @@
 	}
 
 	.items {
+		display: flex;
 		flex-direction: column;
 		position: absolute;
 		top: 100%;
@@ -118,14 +119,17 @@
 		width: 100%;
 		overflow: hidden;
 		transition: none;
+	}
 
-		:global(& > .base-button) {
-			width: 100% !important;
+	.account-bar > :global(.base-button) {
+		width: 100%;
+	}
 
-			:global(& > .item) {
-				width: 100%;
-			}
-		}
+	/* TODO: experimental highlight for accessibility, in future this should be defined globally as class and support themes */
+	.account-bar > :global(.base-button:focus-visible),
+	.account-bar .items :global(.base-button:focus-visible) {
+		outline: none;
+		box-shadow: inset 0 0 0 2px white; /* Inside highlight */
 	}
 </style>
 

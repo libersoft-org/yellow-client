@@ -24,11 +24,8 @@
 		loading?: boolean;
 		radius?: number;
 	}
-	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = '10px', bgColor = 'var(--primary-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable, iconSize = '20px', iconPadding = '0px', loading = false, ...restProps }: ButtonProps = $props();
 
-	onMount(() => {
-		if (!enabled) colorVariable = '--disabled-foreground';
-	});
+	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = '10px', bgColor = 'var(--primary-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable, iconSize = '20px', iconPadding = '0px', loading = false, ...restProps }: ButtonProps = $props();
 
 	function handleClick(e) {
 		if (enabled && onClick) {
@@ -64,8 +61,8 @@
 	}
 </style>
 
-<BaseButton onClick={handleClick} {...restProps} disabled={!enabled} {width}>
-	<div class="button {!enabled ? 'disabled' : ''} {hiddenOnDesktop ? 'hidden-on-desktop' : ''}" style={(width ? 'width: ' + width + ';' : '') + 'padding: ' + padding + ';' + 'border-radius: ' + radius + 'px;'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
+<BaseButton {...restProps} onClick={handleClick} disabled={!enabled}>
+	<div class="button" class:disabled={!enabled} class:hidden-on-desktop={hiddenOnDesktop} style:width style:padding style:border-radius={radius + 'px'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
 		{#if children}
 			{@render children?.()}
 		{/if}
@@ -73,7 +70,7 @@
 			<Spinner size="0px" containerMinHeight="auto" />
 		{:else}
 			{#if img}
-				<Icon {img} colorVariable={colorVariable && colorVariable} alt={text} size={iconSize} padding={iconPadding} />
+				<Icon {img} colorVariable={!enabled ? '--disabled-foreground' : colorVariable} alt={text} size={iconSize} padding={iconPadding} />
 			{/if}
 			{#if text}
 				<div>{text}</div>
