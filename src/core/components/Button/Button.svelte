@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 
 	interface ButtonProps extends HTMLButtonAttributes {
-		children?: any;
+		children?: Snippet;
 		img?: string;
 		text?: string;
 		enabled?: boolean;

@@ -3,7 +3,7 @@
 	import Input from '../components/Input/Input.svelte';
 	import Label from '../components/Label/Label.svelte';
 	import { log, TAURI, TAURI_MOBILE, BROWSER } from '../tauri.ts';
-	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, exportToSystemDownloads, exportFileWithDialog, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
+	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
 	import { platform, type as osType } from '@tauri-apps/plugin-os';
 	import { onMount } from 'svelte';
 
@@ -14,7 +14,7 @@
 	let appendContent = $state('<html><body>Hello from mobile file test!\nAppended content</body></html>');
 
 	let download: NativeDownload | null = $state(null);
-	let result: string = $state('');
+	let result: any = $state('');
 	let platformInfo = $state({
 		tauri: TAURI,
 		tauriMobile: TAURI_MOBILE,
@@ -39,8 +39,13 @@
 		log.debug('testOfferNativeDownload');
 		try {
 			result = 'Testing offerNativeDownload...';
-			download = await offerNativeDownload(fileName, null);
-			result = `Download offered: ${JSON.stringify(download, null, 2)}`;
+			result = await offerNativeDownload(fileName);
+			log.debug('Offer download result:', result);
+			if (result instanceof NativeDownload) {
+				download = result;
+			} else {
+				download = null;
+			}
 		} catch (error) {
 			result = `Error: ${error}`;
 		}
@@ -83,50 +88,23 @@
 		}
 	}
 
-	async function testExportToDownloads() {
-		try {
-			if (!download) {
-				result = 'No download.';
-				return;
+	async function testOpenDownload() {
+		if (TAURI_MOBILE) {
+			try {
+				if (!download) {
+					result = 'No download object. Run offerNativeDownload first!';
+					return;
+				}
+				result = 'Opening save dialog...';
+				result = await openNativeDownload(download);
+				log.debug('Export result:', result);
+			} catch (error) {
+				result = `Error: ${error}`;
+				log.error('Export error:', error);
 			}
-			result = 'Exporting to system Downloads...';
-			// Use file_path if download is finished, otherwise use temp_file_path
-			const filePath = download.finished ? download.file_path : download.temp_file_path;
-			const exportResult = await exportToSystemDownloads(filePath, download.original_file_name, 'text/plain');
-			if (exportResult.success) {
-				result = 'File exported to Downloads folder successfully!';
-			} else {
-				result = `Export failed: ${exportResult.error}`;
-			}
-		} catch (error) {
-			result = `Error: ${error}`;
-		}
-	}
-
-	async function testExportFile() {
-		if (!TAURI_MOBILE) {
+		} else {
 			result = 'Export is no-op on desktop (file already saved to chosen location)';
 			return;
-		}
-
-		if (!download) {
-			result = 'Please create a download first';
-			return;
-		}
-
-		if (!download.finished) {
-			result = 'Download is not finished. Please finish the download first.';
-			return;
-		}
-
-		try {
-			result = 'Opening save dialog...';
-			const filePath = download.file_path;
-			result = await exportFileWithDialog(filePath);
-			log.debug('Export result:', result);
-		} catch (error) {
-			result = `Error: ${error}`;
-			log.error('Export error:', error);
 		}
 	}
 </script>
@@ -141,39 +119,17 @@
 	}
 
 	.platform-info {
-		padding: 4px 6px;
-		margin-bottom: 6px;
-		border-radius: 3px;
-		font-family: monospace;
-		font-size: 0.75em;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 8px;
 	}
 
 	.platform-info-item {
-		margin: 0;
-		font-size: inherit;
+		margin-right: 10px;
 	}
 
 	.platform-info-item strong {
-		display: inline-block;
 		min-width: 50px;
 		font-weight: 600;
-	}
-
-	.status-message {
-		margin-top: 6px;
-		padding: 6px;
-		background: var(--background-secondary);
-		border-radius: 3px;
-		font-family: monospace;
-		font-size: 0.75em;
-		white-space: pre-wrap;
-		word-break: break-word;
-		max-height: 80px;
-		overflow-y: auto;
-		border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
 	}
 
 	.file-info {
@@ -261,6 +217,10 @@
 			align-items: stretch;
 			gap: 5px;
 		}
+
+		.file-info {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	@media (max-width: 480px) {
@@ -322,10 +282,7 @@
 			<Button onClick={testOfferNativeDownload}>Offer Download</Button>
 			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save Chunk</Button>
 			<Button onClick={testFinishNativeDownload} disabled={!download}>Finish</Button>
-			<Button onClick={testExportFile} disabled={!download}>Export</Button>
-			{#if TAURI_MOBILE}
-				<Button onClick={testExportToDownloads} disabled={!download}>Downloads</Button>
-			{/if}
+			<Button onClick={testOpenDownload} disabled={!download}>Open</Button>
 		</div>
 
 		<!-- Status Display -->

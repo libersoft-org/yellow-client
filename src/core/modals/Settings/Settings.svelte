@@ -88,6 +88,33 @@
 	onMount(() => {
 		setContext('bread_crumb', bread_crumb);
 	});
+	function setSubItem(name) {
+		subTab = name;
+	}
+
+	/*
+	settingsArr = [
+		{
+			title: 'General',
+			name:	'general',
+			img: 'img/settings.svg',
+			component: SettingsGeneral,
+			sub: [
+    {
+					title: 'Subcomponent of general',
+					name: 'subgeneral',
+					img:	'img/subsettings.svg',
+					component: SettingsSubGeneral,
+					sub: [
+					 ...
+					]
+				}
+			]
+		}
+	];
+
+	<svelte:component ... />
+	*/
 </script>
 
 <style>

@@ -1,11 +1,13 @@
 <script lang="ts">
 	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import type { Snippet } from 'svelte';
 	interface Props {
+		children?: Snippet;
 		even?: boolean;
 		active?: boolean;
 		onClick?: (e: Event) => void;
 	}
-	let { even = false, active = false, onClick }: Props = $props();
+	let { children = null, even = false, active = false, onClick }: Props = $props();
 
 	function handleClick(e) {
 		console.log('SidebarItem clicked');
@@ -44,6 +46,6 @@
 
 <BaseButton onClick={handleClick}>
 	<div class="item {even ? 'even' : 'odd'} {active && 'active'}">
-		<slot />
+		{@render children?.()}
 	</div>
 </BaseButton>

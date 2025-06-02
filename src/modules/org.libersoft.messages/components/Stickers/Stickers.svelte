@@ -78,7 +78,7 @@
 		<Tabs>
 			<TabsItem img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} active={activeTabName === 'favourites'} />
 			<TabsItem img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} active={activeTabName === 'server'} />
-			<TabsItem img="modules/{identifier}/img/update.svg" colorVariable={$stickerLibraryUpdaterState.updating && '--icon-gray'} onClick={clickUpdate} />
+			<TabsItem img="modules/{identifier}/img/update.svg" colorVariable={$stickerLibraryUpdaterState.updating && '--disabled-foreground'} onClick={clickUpdate} />
 		</Tabs>
 		{#if $debug}$stickerLibraryUpdaterState:{JSON.stringify($stickerLibraryUpdaterState)}{/if}
 		{#if $stickerLibraryUpdaterState.updating}

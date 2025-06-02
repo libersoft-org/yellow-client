@@ -1,12 +1,13 @@
 <script lang="ts">
 	import type { HTMLSelectAttributes } from 'svelte/elements';
+	import type { Snippet } from 'svelte';
 
 	interface Props extends HTMLSelectAttributes {
 		value: string;
 		grow?: boolean;
 		minWidth?: string;
 		maxWidth?: string;
-		children?: any;
+		children?: Snippet;
 		label?: any;
 	}
 

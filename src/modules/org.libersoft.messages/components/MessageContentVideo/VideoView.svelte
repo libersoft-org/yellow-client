@@ -130,7 +130,7 @@
 						{#if videoStarting}
 							<Spinner show={true} size="14px" containerMinHeight="14px" color="var(--primary-background)" />
 						{:else}
-							<Icon img="modules/{identifier}/img/play.svg" colorVariable="--icon-yellow" alt="Start video" size="24px" padding="0px" />
+							<Icon img="modules/{identifier}/img/play.svg" colorVariable="--primary-background" alt="Start video" size="24px" padding="0px" />
 						{/if}
 					</button>
 				</div>

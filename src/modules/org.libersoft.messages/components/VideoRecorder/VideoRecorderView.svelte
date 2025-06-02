@@ -197,7 +197,7 @@
 	<div bind:this={videoRef} class="video-recorder-video-placeholder">
 		{#if error}
 			<div class="video-recorder-error">
-				<Icon img="img/close.svg" alt="Error icon" colorVariable="--icon-red" size="30px" padding="15px" />
+				<Icon img="img/close.svg" alt="Error icon" colorVariable="--default-foreground" size="30px" padding="15px" />
 				{#if errorMessages}
 					{#each errorMessages as message}
 						<div>{message}</div>
@@ -215,7 +215,7 @@
 		<div class="video-floating-area-rt">
 			{#if hasData && !isRecording}
 				<Button img="img/download.svg" enabled={hasData} colorVariable="--primary-foreground" onClick={download} />
-				<Button img="modules/{identifier}/img/delete.svg" enabled={hasData} colorVariable="--icon-red" onClick={recordRestart} />
+				<Button img="modules/{identifier}/img/delete.svg" enabled={hasData} colorVariable="--primary-foreground" onClick={recordRestart} />
 			{/if}
 		</div>
 	</div>
@@ -234,9 +234,9 @@
 					<div class="mic-button-wrapper">
 						<div bind:this={micIndicatorRef} class="mic-button-indicator"></div>
 						{#if isMuted}
-							<Button img="modules/{identifier}/img/mic-disabled.svg" colorVariable="--icon-gray" onClick={toggleMute} />
+							<Button img="modules/{identifier}/img/mic-disabled.svg" colorVariable="--disabled-foreground" onClick={toggleMute} />
 						{:else if isRecording}
-							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--icon-red" onClick={toggleMute} />
+							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--primary-foreground" onClick={toggleMute} />
 						{:else}
 							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--primary-foreground" onClick={toggleMute} />
 						{/if}
@@ -274,7 +274,7 @@
 			{#if isRecording}
 				<Button img="modules/{identifier}/img/stop.svg" colorVariable="--primary-foreground" text="STOP" onClick={recordStop} />
 			{:else}
-				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--icon-gray' : '--icon-red'} text="REC" onClick={recordStart} />
+				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--disabled-foreground' : '--primary-foreground'} text="REC" onClick={recordStart} />
 			{/if}
 			<Button loading={sending} img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--primary-foreground" onClick={send} />
 		</div>

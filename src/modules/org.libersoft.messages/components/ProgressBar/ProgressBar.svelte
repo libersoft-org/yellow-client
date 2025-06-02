@@ -1,6 +1,6 @@
 <script>
-	import { lightenColor } from '@/core/utils/colorUtils.js';
-	export let color = '#666';
+	//import { lightenColor } from '@/core/utils/colorUtils.js';
+	//export let color = '#666';
 	export let moving = false;
 	export let value = 0;
 </script>

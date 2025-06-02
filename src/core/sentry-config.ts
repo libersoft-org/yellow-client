@@ -76,8 +76,8 @@ export function createBeforeSendHook(isServer: boolean = false) {
 // Client configuration
 export const sentryClientConfig: BrowserOptions = {
 	...sentryBaseConfig,
-	replaysSessionSampleRate: 0.1,
-	replaysOnErrorSampleRate: 1.0,
+	replaysSessionSampleRate: 0, //0.1,
+	replaysOnErrorSampleRate: 0, //1.0,
 	beforeSend: createBeforeSendHook(false),
 };
 
