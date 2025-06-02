@@ -1,6 +1,6 @@
 <script>
 	import Modal from '../Modal/Modal.svelte';
-	import Files2 from '../../debug/Files2.svelte';
+	import Files from '../../debug/Files.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import { addNotification } from '../../notifications.ts';
@@ -39,5 +39,5 @@
 	<Button onClick={openFiles2}>Files2</Button>
 {/if}
 
-<Modal title="File Operations Test1" body={Files2} bind:show={showFilesModal2} width="90%" />
-<Modal title="File Operations Test2" body={Files2} bind:show={showFilesModal1} width="90%" />
+<Modal title="File Operations Test1" body={Files} bind:show={showFilesModal1} width="90%" />
+<Modal title="File Operations Test2" body={Files} bind:show={showFilesModal2} width="90%" />
