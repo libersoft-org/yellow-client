@@ -1,5 +1,5 @@
 import { save } from '@tauri-apps/plugin-dialog';
-import { rename, writeFile, open as openFile, exists, BaseDirectory, readFile, remove, stat } from '@tauri-apps/plugin-fs';
+import { rename, writeFile, open as openFile, exists, BaseDirectory, remove, stat } from '@tauri-apps/plugin-fs';
 import * as path from '@tauri-apps/api/path';
 import { appDataDir } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/core';
@@ -454,8 +454,6 @@ async function finishNativeDownloadMobile(download: NativeDownload): Promise<any
 		path: download.file_path,
 	});
 
-	// Important: For mobile, we only notify the user that the download is finished
-	// The user will need to take explicit action to export the file using exportToSystemDownloads
 	try {
 		log.debug('Download complete - file is available for export (mobile)', {
 			downloadId: download.id,
@@ -590,7 +588,6 @@ export async function exportToSystemDownloads(appFilePath: string, fileName: str
 	}
 
 	try {
-		// Use our plugin to export the file using streaming (no memory loading)
 		const result = await invoke('plugin:yellow|export_file_to_downloads', {
 			filePath: appFilePath,
 			fileName: fileName,
@@ -646,38 +643,8 @@ export async function exportFileWithDialog(fileName: string, mimeType: string = 
 			log.debug('Error details:', JSON.stringify(error, null, 2));
 			return { success: false, error: errorMessage };
 		}
-	}
-
-	// Desktop implementation: use the save dialog
-	try {
-		const filePath = await save({
-			defaultPath: fileName,
-			title: 'Export File',
-		});
-
-		if (!filePath) {
-			return { success: false, error: 'Save dialog cancelled' };
-		}
-
-		// For desktop, we'd need to copy the file from app storage to the selected location
-		// This assumes the file exists in the downloads directory
-		const sourcePath = await path.join(await path.downloadDir(), fileName);
-		const sourceExists = await exists(sourcePath, { baseDir: BaseDirectory.Download });
-
-		if (!sourceExists) {
-			return { success: false, error: 'Source file not found' };
-		}
-
-		// Read the file content
-		const content = await readFile(sourcePath, { baseDir: BaseDirectory.Download });
-
-		// Write to the new location
-		await writeFile(filePath, content);
-
-		return { success: true };
-	} catch (error) {
-		log.debug('Failed to export file on desktop:', error);
-		return { success: false, error: error instanceof Error ? error.message : String(error) };
+	} else {
+		return { error: 'This function is only for mobile devices', success: false };
 	}
 }
 

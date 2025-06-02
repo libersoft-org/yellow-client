@@ -83,50 +83,30 @@
 		}
 	}
 
-	async function testExportToDownloads() {
-		try {
+	async function testExportFile() {
+		if (TAURI_MOBILE) {
 			if (!download) {
-				result = 'No download.';
+				result = 'Please create a download first';
 				return;
 			}
-			result = 'Exporting to system Downloads...';
-			// Use file_path if download is finished, otherwise use temp_file_path
-			const filePath = download.finished ? download.file_path : download.temp_file_path;
-			const exportResult = await exportToSystemDownloads(filePath, download.original_file_name, 'text/plain');
-			if (exportResult.success) {
-				result = 'File exported to Downloads folder successfully!';
-			} else {
-				result = `Export failed: ${exportResult.error}`;
-			}
-		} catch (error) {
-			result = `Error: ${error}`;
-		}
-	}
 
-	async function testExportFile() {
-		if (!TAURI_MOBILE) {
+			if (!download.finished) {
+				result = 'Download is not finished. Please finish the download first.';
+				return;
+			}
+
+			try {
+				result = 'Opening save dialog...';
+				const filePath = download.file_path;
+				result = await exportFileWithDialog(filePath);
+				log.debug('Export result:', result);
+			} catch (error) {
+				result = `Error: ${error}`;
+				log.error('Export error:', error);
+			}
+		} else {
 			result = 'Export is no-op on desktop (file already saved to chosen location)';
 			return;
-		}
-
-		if (!download) {
-			result = 'Please create a download first';
-			return;
-		}
-
-		if (!download.finished) {
-			result = 'Download is not finished. Please finish the download first.';
-			return;
-		}
-
-		try {
-			result = 'Opening save dialog...';
-			const filePath = download.file_path;
-			result = await exportFileWithDialog(filePath);
-			log.debug('Export result:', result);
-		} catch (error) {
-			result = `Error: ${error}`;
-			log.error('Export error:', error);
 		}
 	}
 </script>
@@ -239,6 +219,10 @@
 			align-items: stretch;
 			gap: 5px;
 		}
+
+		.file-info {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	@media (max-width: 480px) {
@@ -301,9 +285,6 @@
 			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save Chunk</Button>
 			<Button onClick={testFinishNativeDownload} disabled={!download}>Finish</Button>
 			<Button onClick={testExportFile} disabled={!download}>Export</Button>
-			{#if TAURI_MOBILE}
-				<Button onClick={testExportToDownloads} disabled={!download}>Downloads</Button>
-			{/if}
 		</div>
 
 		<!-- Status Display -->
