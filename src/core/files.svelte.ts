@@ -105,22 +105,28 @@ async function createDownloadWithDialogDesktop(fileName: string): Promise<Native
 }
 
 export class NativeDownload {
-	public id: string;
-	public original_file_name: string;
-	public file_path: string;
-	public temp_file_path: string;
-	public potential_default_folder: null | string = null;
-	public finished: boolean = false;
-	public current_size: number = 0;
-	public baseDir: BaseDirectory;
+	public id: string = generateId();
+	public original_file_name: string = $state('');
+	public file_path: string = $state('');
+	public temp_file_path: string = $state('');
+	public potential_default_folder: null | string = $state(null);
+	public finished: boolean = $state(false);
+	public current_size: number = $state(0);
+	public baseDir: BaseDirectory = $state(BaseDirectory.Download);
 
-	constructor() {
-		this.id = generateId();
-		this.original_file_name = '';
-		this.file_path = '';
-		this.temp_file_path = '';
-		// Default to Download directory, will be overridden for Android
-		this.baseDir = BaseDirectory.Download;
+	constructor() {}
+
+	public toJSON() {
+		return {
+			id: this.id,
+			original_file_name: this.original_file_name,
+			file_path: this.file_path,
+			temp_file_path: this.temp_file_path,
+			potential_default_folder: this.potential_default_folder,
+			finished: this.finished,
+			current_size: this.current_size,
+			baseDir: this.baseDir,
+		};
 	}
 }
 
@@ -365,6 +371,7 @@ async function saveNativeDownloadChunkMobile(download: NativeDownload, chunk: Bl
 			chunkSize: chunk.size,
 			currentFileSize: download.current_size,
 		});
+		return currentSizeResult;
 	} catch (error) {
 		log.debug('Could not get file size after chunk save (mobile):', {
 			downloadId: download.id,
@@ -403,6 +410,8 @@ async function saveNativeDownloadChunkDesktop(download: NativeDownload, chunk: B
 			chunkSize: chunk.size,
 			currentFileSize: download.current_size,
 		});
+
+		return fileStat;
 	} catch (error) {
 		log.debug('Chunk saved successfully (desktop, size check failed):', {
 			downloadId: download.id,
@@ -456,6 +465,8 @@ async function finishNativeDownloadMobile(download: NativeDownload): Promise<voi
 
 		// Note: You can call the system notification API here if desired
 		// This could display a message like "Download complete, tap to export"
+
+		return 'ok';
 	} catch (error) {
 		log.debug('Failed to notify about completed download (mobile):', {
 			downloadId: download.id,
@@ -490,7 +501,7 @@ async function finishNativeDownloadDesktop(download: NativeDownload): Promise<vo
 
 export async function finishNativeDownload(download: NativeDownload) {
 	if (download.finished) {
-		return; // Already finished
+		return 'Download already finished';
 	}
 
 	download.finished = true;
@@ -848,5 +859,5 @@ export async function createDownloadFile(fileName: string): Promise<NativeDownlo
 	}
 
 	// Desktop implementation: create in downloads folder (with mutex protection)
-	return withDownloadMutex(() => createDownloadFileDesktop(fileName, initialContent));
+	return withDownloadMutex(() => createDownloadFileDesktop(fileName));
 }

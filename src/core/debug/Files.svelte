@@ -3,26 +3,25 @@
 	import Input from '../components/Input/Input.svelte';
 	import Label from '../components/Label/Label.svelte';
 	import { log, TAURI, TAURI_MOBILE, BROWSER } from '../tauri.ts';
-	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, exportToSystemDownloads, exportFileWithDialog, defaultDownloadFolder } from '../files.ts';
+	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, exportToSystemDownloads, exportFileWithDialog, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
 	import { platform, type as osType } from '@tauri-apps/plugin-os';
 	import { onMount } from 'svelte';
 
 	// Generate filename with compact datetime format: MMDD-HHmmss
 	const now = new Date();
-	const dateStr = (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + '-' + now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0') + now.getSeconds().toString().padStart(2, '0');
-	let fileName = `x-${dateStr}.html`;
-	let appendContent = '<html><body>Hello from mobile file test!\nAppended content</body></html>';
+	const dateStr = (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + '-' + now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0') + '-' + Math.round(now.getSeconds() / 10).toString();
+	let fileName = $state(`x-${dateStr}.html`);
+	let appendContent = $state('<html><body>Hello from mobile file test!\nAppended content</body></html>');
 
-	// For testing from old Files.svelte
-	let download: any = null;
-	let result: string = '';
-	let platformInfo = {
+	let download: NativeDownload | null = $state(null);
+	let result: string = $state('');
+	let platformInfo = $state({
 		tauri: TAURI,
 		tauriMobile: TAURI_MOBILE,
 		browser: BROWSER,
 		platform: 'unknown',
 		osType: 'unknown',
-	};
+	});
 
 	onMount(async () => {
 		if (TAURI) {
@@ -46,6 +45,7 @@
 			result = `Error: ${error}`;
 		}
 	}
+
 	async function setDefaultFolderFromDownload() {
 		if (!download || !download.potential_default_folder) {
 			result = 'No download with folder selected. Use "Offer Download" first.';
@@ -63,9 +63,8 @@
 				return;
 			}
 			result = 'Testing saveNativeDownloadChunk...';
-			const testData = new Blob(['This is test data chunk']);
-			await saveNativeDownloadChunk(download, testData);
-			result = 'Chunk saved successfully!';
+			const testData = new Blob([appendContent]);
+			result = await saveNativeDownloadChunk(download, testData);
 		} catch (error) {
 			result = `Error: ${error}`;
 		}
@@ -78,8 +77,7 @@
 				return;
 			}
 			result = 'Testing finishNativeDownload...';
-			await finishNativeDownload(download);
-			result = 'Download finished successfully!';
+			result = await finishNativeDownload(download);
 		} catch (error) {
 			result = `Error: ${error}`;
 		}
@@ -116,9 +114,14 @@
 			return;
 		}
 
+		if (!download.finished) {
+			result = 'Download is not finished. Please finish the download first.';
+			return;
+		}
+
 		try {
 			result = 'Opening save dialog...';
-			const filePath = download.finished ? download.file_path : download.temp_file_path;
+			const filePath = download.file_path;
 			result = await exportFileWithDialog(filePath);
 			log.debug('Export result:', result);
 		} catch (error) {
@@ -174,33 +177,14 @@
 	}
 
 	.file-info {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+
 		margin-top: 6px;
 		padding: 6px;
 		border-radius: 3px;
 		font-size: 0.75em;
 		border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
-	}
-
-	.file-info h4 {
-		margin: 0 0 3px 0;
-		font-size: 0.85em;
-		font-weight: 600;
-	}
-
-	.file-info p {
-		margin: 2px 0;
-		font-family: monospace;
-		font-size: inherit;
-	}
-
-	.file-info pre {
-		margin: 3px 0;
-		padding: 4px;
-		border-radius: 2px;
-		font-size: 0.9em;
-		overflow-x: auto;
-		max-height: 100px;
-		overflow-y: auto;
 	}
 
 	/* Compact inputs and labels globally */
@@ -345,18 +329,21 @@
 		</div>
 
 		<!-- Status Display -->
-		{#if result}
-			<div class="status-message">
-				{result || 'Click a button to test a function'}
-			</div>
-		{/if}
+		<div class="file-info">
+			{#if result}
+				<div>
+					<p><strong>Result:</strong></p>
+					<pre>{typeof result === 'string' ? result : JSON.stringify(result, null, 2)}</pre>
+				</div>
+			{/if}
 
-		<!-- File Info Display -->
-		{#if download}
-			<div class="file-info">
-				<p><strong>Download Object:</strong></p>
-				<pre>{JSON.stringify(download, null, 2)}</pre>
-			</div>
-		{/if}
+			<!-- File Info Display -->
+			{#if download}
+				<div>
+					<p><strong>Download Object:</strong></p>
+					<pre>{JSON.stringify(download, null, 2)}</pre>
+				</div>
+			{/if}
+		</div>
 	</div>
 </div>
