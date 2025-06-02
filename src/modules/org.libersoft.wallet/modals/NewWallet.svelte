@@ -2,12 +2,19 @@
 	import { onMount } from 'svelte';
 	import QRCode from 'qrcode';
 	import Button from '@/core/components/Button/Button.svelte';
+	import Table from '@/core/components/Table/Table.svelte';
+	import Tbody from '@/core/components/Table/TableTbody.svelte';
+	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import { generateMnemonic, addWallet } from '../wallet.ts';
 	import { module } from '../module.js';
 	export let close;
 	let mnemonic = {};
 	let phrase = '';
+	let phraseArr = [];
 	let qrCodeData = '';
+
+	$: phraseArr = phrase.split(' ');
 
 	onMount(() => {
 		regenerate();
@@ -127,32 +134,18 @@
 	<div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
 {/if}
 <div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
-<table>
-	<tbody>
-		<tr>
-			<td>
-				{#each phrase.split(' ').slice(0, 6) as word, index}
-					<div class="cell">{index + 1}. {word}</div>
-				{/each}
-			</td>
-			<td>
-				{#each phrase.split(' ').slice(6, 12) as word, index}
-					<div class="cell">{index + 7}. {word}</div>
-				{/each}
-			</td>
-			<td>
-				{#each phrase.split(' ').slice(12, 18) as word, index}
-					<div class="cell">{index + 13}. {word}</div>
-				{/each}
-			</td>
-			<td>
-				{#each phrase.split(' ').slice(18, 24) as word, index}
-					<div class="cell">{index + 19}. {word}</div>
-				{/each}
-			</td>
-		</tr>
-	</tbody>
-</table>
+<Table breakpoint="0">
+	<Tbody>
+		{#each phraseArr.slice(0, 6) as _, index}
+			<TbodyTr>
+				<Td>{index + 1}. {phraseArr[index]}</Td>
+				<Td>{index + 7}. {phraseArr[index + 6]}</Td>
+				<Td>{index + 13}. {phraseArr[index + 12]}</Td>
+				<Td>{index + 19}. {phraseArr[index + 18]}</Td>
+			</TbodyTr>
+		{/each}
+	</Tbody>
+</Table>
 <div class="buttons">
 	<Button img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={save} />
 	<Button img="modules/{module.identifier}/img/print.svg" colorVariable="--primary-foreground" text="Print" onClick={print} />
