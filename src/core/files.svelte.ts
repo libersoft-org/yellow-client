@@ -343,7 +343,7 @@ export async function offerNativeDownload(fileName: string): Promise<NativeDownl
 }
 
 // Mobile-specific helper: Save download chunk
-async function saveNativeDownloadChunkMobile(download: NativeDownload, chunk: Blob): Promise<void> {
+async function saveNativeDownloadChunkMobile(download: NativeDownload, chunk: Blob): Promise<any> {
 	const base64Data = await blobToBase64(chunk);
 
 	log.debug('Appending chunk to download file (mobile):', {
@@ -382,7 +382,7 @@ async function saveNativeDownloadChunkMobile(download: NativeDownload, chunk: Bl
 }
 
 // Desktop-specific helper: Save download chunk
-async function saveNativeDownloadChunkDesktop(download: NativeDownload, chunk: Blob): Promise<void> {
+async function saveNativeDownloadChunkDesktop(download: NativeDownload, chunk: Blob): Promise<any> {
 	log.debug('Appending chunk to download file (desktop):', {
 		downloadId: download.id,
 		fileName: download.temp_file_path,
@@ -434,7 +434,7 @@ export async function saveNativeDownloadChunk(download: NativeDownload, chunk: B
 }
 
 // Mobile-specific helper: Finish download
-async function finishNativeDownloadMobile(download: NativeDownload): Promise<void> {
+async function finishNativeDownloadMobile(download: NativeDownload): Promise<any> {
 	log.debug('Finishing download by renaming temp file (mobile):', {
 		downloadId: download.id,
 		oldName: download.temp_file_path,

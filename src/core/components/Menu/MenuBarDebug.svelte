@@ -32,11 +32,11 @@
 	}
 </script>
 
-{#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}(debug:<Switch bind:checked={$debug} />)
-	<Button onClick={err}>0</Button>
-	<Button onClick={notification}>Notif</Button>
-	<Button onClick={openFiles1}>Files1</Button>
-	<Button onClick={openFiles2}>Files2</Button>
+{#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}<Switch bind:checked={$debug} />
+	<Button onClick={err}>/0</Button>
+	<Button onClick={notification}>N</Button>
+	<Button onClick={openFiles1}>F1</Button>
+	<Button onClick={openFiles2}>F2</Button>
 {/if}
 
 <Modal title="File Operations Test1" body={Files} bind:show={showFilesModal1} width="90%" />

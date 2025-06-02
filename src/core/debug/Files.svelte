@@ -141,39 +141,17 @@
 	}
 
 	.platform-info {
-		padding: 4px 6px;
-		margin-bottom: 6px;
-		border-radius: 3px;
-		font-family: monospace;
-		font-size: 0.75em;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 8px;
 	}
 
 	.platform-info-item {
-		margin: 0;
-		font-size: inherit;
+		margin-right: 10px;
 	}
 
 	.platform-info-item strong {
-		display: inline-block;
 		min-width: 50px;
 		font-weight: 600;
-	}
-
-	.status-message {
-		margin-top: 6px;
-		padding: 6px;
-		background: var(--background-secondary);
-		border-radius: 3px;
-		font-family: monospace;
-		font-size: 0.75em;
-		white-space: pre-wrap;
-		word-break: break-word;
-		max-height: 80px;
-		overflow-y: auto;
-		border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
 	}
 
 	.file-info {
