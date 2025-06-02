@@ -10,6 +10,37 @@ import { get } from 'svelte/store';
 // Store for default download folder
 export const defaultDownloadFolder = localStorageSharedStore('defaultDownloadFolder', '');
 
+// Mutex for download creation operations to prevent concurrent filename conflicts
+let createDownloadMutex: Promise<any> | null = null;
+
+// Generic mutex wrapper for download creation operations
+async function withDownloadMutex<T>(operation: () => Promise<T>): Promise<T> {
+	// Wait for any existing download creation operation to complete
+	if (createDownloadMutex) {
+		log.debug('Waiting for existing download creation operation to complete');
+		try {
+			await createDownloadMutex;
+		} catch (error) {
+			// Ignore errors from previous operations
+			log.debug('Previous download creation operation failed, continuing');
+		}
+	}
+
+	// Create a new mutex promise for this operation
+	const currentOperation = operation();
+	createDownloadMutex = currentOperation;
+
+	try {
+		const result = await currentOperation;
+		return result;
+	} finally {
+		// Clear the mutex when this operation completes
+		if (createDownloadMutex === currentOperation) {
+			createDownloadMutex = null;
+		}
+	}
+}
+
 interface PermissionStatus {
 	writeExternalStorage: 'granted' | 'denied' | 'prompt';
 	readExternalStorage: 'granted' | 'denied' | 'prompt';
@@ -18,6 +49,15 @@ interface PermissionStatus {
 enum PermissionType {
 	WriteExternalStorage = 'writeExternalStorage',
 	ReadExternalStorage = 'readExternalStorage',
+}
+
+// Generate a simple UUID-like string that works in HTTP contexts
+function generateId(): string {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+		const r = (Math.random() * 16) | 0;
+		const v = c === 'x' ? r : (r & 0x3) | 0x8;
+		return v.toString(16);
+	});
 }
 
 // Convert a Blob to base64
@@ -31,7 +71,58 @@ async function blobToBase64(blob: Blob): Promise<string> {
 	return btoa(binary);
 }
 
+// Desktop-specific helper: Create download with default folder
+async function createDownloadWithFolderDesktop(fileName: string, folder: string): Promise<NativeDownload> {
+	const download = new NativeDownload();
+	download.original_file_name = fileName;
+	await findFreeFileName(folder, download);
+	return download;
+}
+
+// Desktop-specific helper: Create download with save dialog
+async function createDownloadWithDialogDesktop(fileName: string): Promise<NativeDownload | null> {
+	const download = new NativeDownload();
+	download.original_file_name = fileName;
+
+	// Show save dialog
+	const p = await save({
+		defaultPath: fileName,
+		canCreateDirectories: true,
+		title: 'Save file',
+	});
+
+	if (!p) {
+		return null;
+	}
+
+	download.file_path = p;
+	download.temp_file_path = partFileName(p);
+	download.potential_default_folder = await path.dirname(p);
+
+	await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+	return download;
+}
+
+// Desktop-specific helper: Create download file in downloads folder
+async function createDownloadFileDesktop(fileName: string, initialContent: string = ''): Promise<NativeDownload> {
+	const downloadsDir = await path.downloadDir();
+	const download = new NativeDownload();
+	download.original_file_name = fileName;
+
+	await findFreeFileName(downloadsDir, download);
+
+	// Write initial content
+	if (initialContent) {
+		await writeFile(download.temp_file_path, new TextEncoder().encode(initialContent), {
+			baseDir: download.baseDir,
+		});
+	}
+
+	return download;
+}
+
 export class NativeDownload {
+	public id: string;
 	public original_file_name: string;
 	public file_path: string;
 	public temp_file_path: string;
@@ -40,6 +131,7 @@ export class NativeDownload {
 	public baseDir: BaseDirectory;
 
 	constructor() {
+		this.id = generateId();
 		this.original_file_name = '';
 		this.file_path = '';
 		this.temp_file_path = '';
@@ -92,10 +184,9 @@ async function checkFileExistsMobile(fileName: string): Promise<boolean> {
 	try {
 		const result = await invoke('plugin:yellow|file_exists', {
 			fileName,
-			baseDir,
 		});
 
-		const exists = !!result;
+		const exists = result === true;
 		log.debug('File existence check result:', {
 			fileName,
 			baseDir: 'AppData',
@@ -109,19 +200,7 @@ async function checkFileExistsMobile(fileName: string): Promise<boolean> {
 		const errorStr = JSON.stringify(error, null, 2);
 		log.debug('Error checking file existence:', errorMessage);
 		log.debug('Error details:', errorStr);
-
-		if (errorMessage.includes('not found') || errorMessage.includes('does not exist') || errorMessage.includes('no such file')) {
-			log.debug('File does not exist based on error message');
-			return false;
-		}
-
-		if (errorMessage.includes('permission') || errorMessage.includes('access denied') || errorMessage.includes('storage') || errorMessage.includes('disk full') || errorMessage.includes('i/o error')) {
-			log.debug('Serious file system error detected, propagating error');
-			throw new Error(`File system error checking existence of "${fileName}": ${errorMessage}`);
-		}
-
-		log.debug('Unrecognized file existence error, defaulting to false but with warning');
-		return false;
+		throw new Error(`File system error checking existence of "${fileName}": ${errorMessage}`);
 	}
 }
 
@@ -185,8 +264,13 @@ async function findFreeFileNameMobile(baseFileName: string): Promise<{ fileName:
 	}
 }
 
-// Mobile-specific helper: Create a download file
+// Mobile-specific helper: Create a download file (with mutex protection)
 async function createDownloadFileMobile(fileName: string): Promise<NativeDownload | { error: string }> {
+	return withDownloadMutex(() => createDownloadFileMobileInternal(fileName));
+}
+
+// Internal implementation of createDownloadFileMobile
+async function createDownloadFileMobileInternal(fileName: string): Promise<NativeDownload | { error: string }> {
 	log.debug('Creating download file (mobile):', { fileName });
 
 	const baseDir = BaseDirectory.AppData;
@@ -249,7 +333,7 @@ async function createDownloadFileMobile(fileName: string): Promise<NativeDownloa
 	}
 }
 
-export async function offerNativeDownload(fileName: string, defaultFileDownloadFolder: string | null): Promise<NativeDownload | { error: string } | null> {
+export async function offerNativeDownload(fileName: string): Promise<NativeDownload | { error: string } | null> {
 	log.debug('offerNativeDownload - TAURI_MOBILE:', TAURI_MOBILE);
 
 	// Ensure we have file permissions before proceeding
@@ -258,38 +342,22 @@ export async function offerNativeDownload(fileName: string, defaultFileDownloadF
 		return { error: permissionResult.error || 'File permissions not available' };
 	}
 
-	const download = new NativeDownload();
-	download.original_file_name = fileName;
-
-	// On mobile, use the mobile-specific implementation
+	// On mobile, use the mobile-specific implementation (already has mutex protection)
 	if (TAURI_MOBILE) {
 		return createDownloadFileMobile(fileName);
 	}
 
-	// Desktop-only code path
-	// Use provided folder or fall back to stored default
-	const folderToUse = defaultFileDownloadFolder || get(defaultDownloadFolder);
+	// Desktop code path - wrap with mutex protection
+	return withDownloadMutex(async () => {
+		// Use provided folder or fall back to stored default
+		const folderToUse = get(defaultDownloadFolder);
 
-	if (folderToUse) {
-		await findFreeFileName(folderToUse, download);
-		return download;
-	} else {
-		// Show save dialog
-		let p = await save({
-			defaultPath: fileName,
-			canCreateDirectories: true,
-			title: 'Save file',
-		});
-		if (!p) {
-			return null;
+		if (folderToUse) {
+			return createDownloadWithFolderDesktop(fileName, folderToUse);
+		} else {
+			return createDownloadWithDialogDesktop(fileName);
 		}
-		download.file_path = p;
-		download.temp_file_path = partFileName(p);
-		download.potential_default_folder = await path.dirname(p);
-
-		await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
-		return download;
-	}
+	});
 }
 
 export async function saveNativeDownloadChunk(download: NativeDownload, chunk: Blob) {
@@ -640,7 +708,7 @@ export async function deleteFile(fileName: string): Promise<void> {
 
 // Unified API: Create a download file with initial content
 export async function createDownloadFile(fileName: string, initialContent: string = ''): Promise<NativeDownload | { error: string }> {
-	// For mobile, delegate to the mobile-specific implementation
+	// For mobile, delegate to the mobile-specific implementation (already has mutex protection)
 	if (TAURI_MOBILE) {
 		const result = await createDownloadFileMobile(fileName);
 
@@ -656,19 +724,6 @@ export async function createDownloadFile(fileName: string, initialContent: strin
 		return result;
 	}
 
-	// Desktop implementation: create in downloads folder
-	const downloadsDir = await path.downloadDir();
-	const download = new NativeDownload();
-	download.original_file_name = fileName;
-
-	await findFreeFileName(downloadsDir, download);
-
-	// Write initial content
-	if (initialContent) {
-		await writeFile(download.temp_file_path, new TextEncoder().encode(initialContent), {
-			baseDir: download.baseDir,
-		});
-	}
-
-	return download;
+	// Desktop implementation: create in downloads folder (with mutex protection)
+	return withDownloadMutex(() => createDownloadFileDesktop(fileName, initialContent));
 }

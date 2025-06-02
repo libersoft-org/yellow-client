@@ -32,14 +32,14 @@
 				platformInfo.platform = platform();
 				platformInfo.osType = await osType();
 			} catch (error) {
-				console.error('Failed to get platform info:', error);
+				log.error('Failed to get platform info:', error);
 			}
 		}
 	});
 
 	// Test functions from Files.svelte
 	async function testOfferNativeDownload() {
-		console.log('testOfferNativeDownload');
+		log.debug('testOfferNativeDownload');
 		try {
 			result = 'Testing offerNativeDownload...';
 			download = await offerNativeDownload(fileName, null);
@@ -48,42 +48,6 @@
 			result = `Error: ${error}`;
 		}
 	}
-
-	async function testPing() {
-		console.log('Testing yellow plugin ping command');
-		try {
-			const response = await invoke('plugin:yellow|ping', { payload: { value: 'Hello from client!' } });
-			console.log('Ping response:', response);
-			result = `Ping response: ${JSON.stringify(response, null, 2)}`;
-		} catch (error) {
-			console.error('Ping error:', error);
-			result = `Ping error: ${error}`;
-		}
-	}
-
-	async function testCheckPermissions() {
-		console.log('Testing checkFilePermissions command directly');
-		try {
-			const response = await invoke('plugin:yellow|check_file_permissions');
-			console.log('checkFilePermissions response:', response);
-			result = `checkFilePermissions response: ${JSON.stringify(response, null, 2)}`;
-		} catch (error) {
-			console.error('checkFilePermissions error:', error);
-			result = `checkFilePermissions error: ${error}`;
-		}
-	}
-
-	async function testOfferNativeDownloadWithDefaultFolder() {
-		console.log('testOfferNativeDownloadWithDefaultFolder');
-		try {
-			result = 'Testing offerNativeDownload with default folder...';
-			download = await offerNativeDownload('test-file.txt', $defaultDownloadFolder);
-			result = `Download offered with default folder: ${JSON.stringify(download, null, 2)}`;
-		} catch (error) {
-			result = `Error: ${error}`;
-		}
-	}
-
 	async function setDefaultFolderFromDownload() {
 		if (!download || !download.potential_default_folder) {
 			result = 'No download with folder selected. Use "Offer Download" first.';
@@ -169,38 +133,6 @@
 		} catch (error) {
 			statusMessage = `Error: ${error}`;
 			log.error('Export error:', error);
-		}
-	}
-
-	async function testFullWorkflow() {
-		try {
-			// Create file
-			statusMessage = 'Starting full workflow...';
-			const createResult = await createDownloadFile('workflow-test.txt', 'Initial content\n');
-
-			if ('error' in createResult) {
-				statusMessage = `Create error: ${createResult.error}`;
-				return;
-			}
-
-			// Append more content
-			await appendToFile(createResult.file_path, 'Second line\n');
-			await appendToFile(createResult.file_path, 'Third line\n');
-
-			// Export with dialog
-			const exportResult = await exportFileWithDialog(createResult.file_path);
-
-			if (exportResult.success) {
-				statusMessage = 'Full workflow completed successfully!';
-			} else {
-				statusMessage = `Export failed: ${exportResult.error}`;
-			}
-
-			// Clean up
-			await deleteFile(createResult.file_path);
-		} catch (error) {
-			statusMessage = `Workflow error: ${error}`;
-			log.error('Workflow error:', error);
 		}
 	}
 </script>
@@ -444,8 +376,6 @@
 	</div>
 
 	<div class="content">
-		<h3>File Operations Test</h3>
-
 		<!-- Inputs Section -->
 		<div class="inputs-grid">
 			<div class="input-item">
@@ -475,12 +405,6 @@
 			<Button onClick={testExportFile} disabled={!download}>Export</Button>
 			{#if TAURI_MOBILE}
 				<Button onClick={testExportToDownloads} disabled={!download}>Downloads</Button>
-			{/if}
-			<Button onClick={testFullWorkflow}>Workflow</Button>
-			<Button onClick={testPing}>Ping</Button>
-			<Button onClick={testCheckPermissions}>Perms</Button>
-			{#if !TAURI_MOBILE}
-				<Button onClick={testOfferNativeDownloadWithDefaultFolder}>Folder DL</Button>
 			{/if}
 		</div>
 
