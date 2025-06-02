@@ -136,7 +136,7 @@
 <div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
 <Table breakpoint="0">
 	<Tbody>
-		{#each phraseArr.slice(0, 6) as _, index}
+		{#each Array(6) as _, index}
 			<TbodyTr>
 				<Td>{index + 1}. {phraseArr[index]}</Td>
 				<Td>{index + 7}. {phraseArr[index + 6]}</Td>
