@@ -17,55 +17,29 @@
 
 	// let activeTab = $state('');
 
-	let {
-		activeTab = $bindable(
-			TAURI
-				? {
-						title: 'General',
-						tab: 'general',
-						img: 'img/settings.svg',
-						// onClick: () => setItem('general'),
-						svelte_component: SettingsGeneral,
-					}
-				: false
-		),
-	}: Props = $props();
+	let { activeTab = $bindable(false) }: Props = $props();
 
 	let subTab = $state('');
 	let bread_crumb;
 
-	// if (TAURI) {
-	// 	activeTab = {
-	// 					title: 'General',
-	// 					tab: 'general',
-	// 					img: 'img/settings.svg',
-	// 					// onClick: () => setItem('general'),
-	// 					svelte_component: SettingsGeneral,
-	// 				};
-	// }
-
-	let menuItems = (
-		TAURI
-			? [
-					{
-						title: 'General',
-						tab: 'general',
-						img: 'img/settings.svg',
-						// onClick: () => setItem('general'),
-						svelte_component: SettingsGeneral,
-					},
-				]
-			: []
-	).concat([
+	let menuItems = [
+		{
+			title: 'General',
+			tauri_only: true,
+			id: 'general',
+			img: 'img/settings.svg',
+			// onClick: () => setItem('general'),
+			svelte_component: SettingsGeneral,
+		},
 		{
 			title: 'Appearance',
-			tab: 'appearance',
+			id: 'appearance',
 			img: 'img/appearance.svg',
 			// onClick: () => setItem('appearance'),
 			svelte_component: SettingsAppearance,
 			subTabs: {
 				title: 'Theme',
-				tab: 'theme',
+				id: 'theme',
 				img: 'img/themes.svg',
 				// onClick: () => setItem('themes'),
 				svelte_component: SettingsThemes,
@@ -73,21 +47,50 @@
 		},
 		{
 			title: 'Notifications',
-			tab: 'notifications',
+			id: 'notifications',
 			img: 'img/notification.svg',
 			// onClick: () => setItem('notifications'),
 			svelte_component: SettingsNotifications,
 		},
-	]);
+	];
+
+	function itemPath(item) {
+		return itemPath2(menuItems, item);
+	}
+
+	function itemPath2(items, item) {
+		if (!item) return [];
+		let path = [];
+		for (let i = 0; i < items.length; i++) {
+			if (items[i].id === item.id) {
+				path.push(items[i]);
+				return path;
+			}
+			if (items[i].subTabs) {
+				let subPath = itemPath2(items[i].subTabs, item);
+				if (subPath.length > 0) {
+					path.push(items[i]);
+					path = path.concat(subPath);
+					return path;
+				}
+			}
+		}
+		return [];
+	}
+
+	function setActiveTab(item) {
+		activeTab = item;
+	}
 
 	function setItem(item) {
 		activeTab = item;
-		bread_crumb.setBreadcrumb(item);
+		bread_crumb.setPath(itemPath(menuItems, item));
 	}
 
 	onMount(() => {
 		setContext('bread_crumb', bread_crumb);
 	});
+
 	function setSubItem(name) {
 		subTab = name;
 	}
@@ -133,6 +136,7 @@
 
 <div class="settings-container">
 	<Breadcrumb
+		{setActiveTab}
 		bind:this={bread_crumb}
 		root_crumb={{
 			title: 'Settings',
