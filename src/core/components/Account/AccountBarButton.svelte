@@ -1,6 +1,8 @@
 <script lang="ts">
 	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import type { Snippet } from 'svelte';
 	interface Props {
+		children?: Snippet;
 		onClick?: (e: Event) => void;
 	}
 	let { onClick }: Props = $props();
@@ -23,6 +25,6 @@
 
 <BaseButton {onClick}>
 	<div class="accounts-button">
-		<slot />
+		{@render children?.()}
 	</div>
 </BaseButton>
