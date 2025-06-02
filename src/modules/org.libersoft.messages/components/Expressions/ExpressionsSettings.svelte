@@ -50,11 +50,11 @@
 <div class="settings">
 	<div class="group">
 		<div class="label">Show expressions as vector (slower, nicer):</div>
-		<Switch ariaLabel="Show expressions as vector (slower, nicer)" bind:checked={showAsVector} />
+		<Switch label="Show expressions as vector (slower, nicer)" bind:checked={showAsVector} />
 	</div>
 	<div class="group">
 		<div class="label">Animate all expressions:</div>
-		<Switch ariaLabel="Animate all expressions" bind:checked={animateAll} />
+		<Switch label="Animate all expressions" bind:checked={animateAll} />
 	</div>
 	<div class="group">
 		<div class="label">Sticker server:</div>
@@ -64,13 +64,12 @@
 			{/each}
 		</Select>
 	</div>
-	<Button text="Manage sticker servers" onClick={clickManageStickerServers} width="100%" />
+	<Button text="Manage sticker servers" onClick={clickManageStickerServers} />
 	<Button
 		text="Delete stickers database"
 		onClick={() => {
 			stickers_db.delete();
 		}}
-		width="100%"
 	/>
 
 	<div class="group">
@@ -81,7 +80,7 @@
 			{/each}
 		</Select>
 	</div>
-	<Button text="Manage gif servers" onClick={clickManageGifServers} width="100%" />
+	<Button text="Manage gif servers" onClick={clickManageGifServers} />
 </div>
 <Modal title="Manage sticker servers" body={StickerServers} bind:show={isModalStickerServersOpen} width="400px" />
 <Modal title="Manage gif servers" body={GifServers} bind:show={isModalGifServersOpen} width="400px" />

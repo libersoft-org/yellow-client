@@ -33,4 +33,4 @@
 		<div>{error}</div>
 	</div>
 {/if}
-<Button text="Delete" onClick={clickDelete} width="100%" />
+<Button text="Delete" onClick={clickDelete} />

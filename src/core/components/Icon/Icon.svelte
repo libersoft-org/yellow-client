@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import { getColorFromCSSToFilter } from '../../utils/colors.js';
 
 	import { current_theme, selected_theme_index } from '../../appearance_store.js';

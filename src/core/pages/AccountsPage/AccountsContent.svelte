@@ -6,10 +6,10 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
 	import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
@@ -63,8 +63,7 @@
 
 <style>
 	.accounts {
-		background: url('/img/background.webp') repeat;
-		background-size: 400px;
+		background: var(--background-image) 0 0 / 400px repeat;
 
 		.accounts-wrapper {
 			display: flex;
@@ -94,23 +93,23 @@
 	<Table>
 		<Thead>
 			<TheadTr>
-				<TheadTh>Server</TheadTh>
-				<TheadTh>Address</TheadTh>
-				<TheadTh>Enabled</TheadTh>
-				<TheadTh>Action</TheadTh>
+				<Th>Server</Th>
+				<Th>Address</Th>
+				<Th>Enabled</Th>
+				<Th>Action</Th>
 			</TheadTr>
 		</Thead>
 		<Tbody>
 			<TbodyTr>
-				<TbodyTd title="Server">{account.credentials.server}</TbodyTd>
-				<TbodyTd title="Address">{account.credentials.address}</TbodyTd>
-				<TbodyTd title="Enabled">{account.enabled ? 'Yes' : 'No'}</TbodyTd>
-				<TbodyTd title="Action">
+				<Td title="Server">{account.credentials.server}</Td>
+				<Td title="Address">{account.credentials.address}</Td>
+				<Td title="Enabled">{account.enabled ? 'Yes' : 'No'}</Td>
+				<Td title="Action">
 					<TableActionItems>
 						<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
 						<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => clickDel(account.id, account.settings?.title)} />
 					</TableActionItems>
-				</TbodyTd>
+				</Td>
 			</TbodyTr>
 		</Tbody>
 	</Table>
@@ -126,7 +125,7 @@
 	<TopBar>
 		<svelte:fragment slot="left">
 			{#if $isMobile}
-				<Icon img="img/back.svg" onClick={back} colorVariable="--icon-white" visibleOnDesktop={false} />
+				<Icon img="img/back.svg" onClick={back} colorVariable="--primary-foreground" visibleOnDesktop={false} />
 			{/if}
 			<h1 class="title">Account management</h1>
 		</svelte:fragment>
@@ -134,11 +133,10 @@
 	<div class="accounts-wrapper">
 		<Paper>
 			<div class="buttons">
-				<Button img="img/accounts.svg" text="Add a new account" colorVariable="--icon-black" onClick={addAccountModal} />
-				<Button img="img/export.svg" text="Export" onClick={clickExport} />
-				<Button img="img/import.svg" text="Import" onClick={clickImport} />
+				<Button img="img/accounts.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} />
+				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
+				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} />
 			</div>
-
 			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>
 	</div>
@@ -147,6 +145,4 @@
 <Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
 <Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} width="700px" />
 <Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} width="700px" />
-{#if showDelAccountModal}
-	<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
-{/if}
+<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />

@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Input from '../Input/Input.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	export let options = [];
@@ -36,21 +36,11 @@
 		position: relative;
 		max-width: 200px;
 	}
-	/*
- input {
-  width: 100%;
-  padding: 5px;
-  font-family: inherit;
-  font-size: inherit;
-  border: 1px solid #000;
-  border-radius: 10px;
-  box-sizing: border-box;
- }
-*/
+
 	.options {
 		position: absolute;
-		border: 1px solid var(--color-primary-foreground);
-		background-color: var(--color-primary-background);
+		border: 1px solid var(--default-foreground);
+		background-color: var(--default-background);
 		width: 100%;
 		max-height: 150px;
 		overflow-y: auto;
@@ -63,13 +53,13 @@
 	}
 
 	.option:hover {
-		background-color: #eee;
+		background-color: var(--default-background);
 	}
 
 	.selected {
 		display: flex;
 		align-items: center;
-		border: 1px solid var(--color-primary-background);
+		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
 		width: 100%;
 		box-sizing: border-box;
@@ -85,7 +75,7 @@
 	{#if selected}
 		<div class="selected">
 			<div class="text">{selected}</div>
-			<Icon img="img/close.svg" alt="X" colorVariable="--color-primary-foreground" size="10px" onClick={clickClearSelection} />
+			<Icon img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="10px" onClick={clickClearSelection} />
 		</div>
 	{:else}
 		<Input bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />

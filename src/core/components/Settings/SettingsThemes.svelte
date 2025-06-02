@@ -8,6 +8,8 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import { TAURI } from '@/core/tauri.ts';
 	import { zoom } from '@/core/settings.ts';
 	import { setZoom } from '@/core/zoom.ts';
@@ -52,39 +54,26 @@
 </script>
 
 <style>
-	.zoom {
+	.addressbook {
 		display: flex;
-
-		input {
-			margin-top: 6px;
-		}
+		flex-direction: column;
+		gap: 10px;
 	}
 </style>
 
-<Table>
+<!-- <Table>
 	<Thead>
 		<TheadTr>
-			{#if TAURI}
-				<TheadTh>Zoom:</TheadTh>
-			{/if}
 			<TheadTh>Theme:</TheadTh>
 		</TheadTr>
 	</Thead>
 	<Tbody>
 		<TbodyTr>
-			{#if TAURI}
-				<TbodyTd title="Zoom">
-					<span>{Math.round(($zoom || 0) * 100)}%</span>
-					<div class="zoom">
-						<input type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} onchange={setZoom} />
-					</div>
-				</TbodyTd>
-			{/if}
 			<TbodyTd>Theme:</TbodyTd>
 			<TbodyTd>
 				{#if expanded}
 					<Button onClick={click_expand}>
-						<Icon img="img/edit.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+						<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 					</Button>
 				{:else}
 					<Select type="number" bind:value={$selected_theme_index} current-index={$selected_theme_index}>
@@ -94,7 +83,7 @@
 					</Select>
 					{#if $selected_theme_index > 0}
 						<Button onClick={click_expand}>
-							<Icon img="img/edit.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+							<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 						</Button>
 					{/if}
 					<Button
@@ -103,11 +92,11 @@
 							create_new_theme();
 						}}
 					>
-						<Icon img="img/add.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+						<Icon img="img/add.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 					</Button>
 					{#if $selected_theme_index > 0}
 						<Button onClick={delete_current_theme}>
-							<Icon img="img/del.svg" alt="Close" colorVariable="--color-primary-foreground" size="20px" padding="0px" />
+							<Icon img="img/del.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 						</Button>
 					{/if}
 				{/if}
@@ -136,34 +125,60 @@
 			</TbodyTr>
 		</Tbody>
 	</Table>
-</Table>
+</Table> -->
 
-<Accordion items={$themes_stored}>
-	{#snippet content(walleta)}
-		<div class="wallet">
-			<ButtonBar>
-				<Button text="Add a new address" onClick={() => {}} />
-			</ButtonBar>
-			<Table>
-				<Thead>
-					<TheadTh>Name</TheadTh>
-					<TheadTh>Action</TheadTh>
-				</Thead>
-				<Tbody>
-					{#each $themes_stored as theme, index}
-						<TbodyTr>
-							<TbodyTd title="Name">{theme.index}</TbodyTd>
+<!-- {#each $themes_stored as theme, index}
+	<TbodyTr>
+		<TbodyTd title="Name">{theme.name}</TbodyTd>
 
-							<TbodyTd title="Action">
-								<TableActionItems>
-									<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => {}} />
-									<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5" onClick={() => {}} />
-								</TableActionItems>
-							</TbodyTd>
-						</TbodyTr>
-					{/each}
-				</Tbody>
-			</Table>
-		</div>
-	{/snippet}
-</Accordion>
+		<TbodyTd title="Action">
+			<TableActionItems>
+				<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => {}} />
+				{#if index > 0 }
+					<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5" onClick={() => {}} />
+				{/if}
+			</TableActionItems>
+		</TbodyTd>
+	</TbodyTr>
+{/each} -->
+
+<div class="addressbook">
+	<ButtonBar>
+		<Button
+			onClick={() => {
+				click_expand();
+				create_new_theme();
+			}}
+		>
+			<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" />
+		</Button>
+	</ButtonBar>
+	{#if $themes_stored.length > 0}
+		<Table breakpoint="0">
+			<Thead>
+				<TheadTr>
+					<Th>Name</Th>
+
+					<Th>Action</Th>
+				</TheadTr>
+			</Thead>
+			<Tbody>
+				{#each $themes_stored as theme, index}
+					<TbodyTr>
+						<Td title="Name">
+							<b>{theme.name}</b>
+						</Td>
+						<Td title="Action">
+							<TableActionItems>
+								{#if index > 0}
+									<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => {}} />
+									<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => {}} />
+								{/if}
+							</TableActionItems>
+						</Td>
+					</TbodyTr>
+				{/each}
+			</Tbody>
+		</Table>
+	{/if}
+</div>

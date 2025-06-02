@@ -17,9 +17,11 @@
 		width: calc(100% - 22px);
 		height: calc(100% - 22px);
 		padding: 10px;
-		border: 1px solid #080;
 		font-family: 'Ubuntu Mono', serif;
 		font-size: inherit;
+		background-color: var(--default-background);
+		border: 1px solid var(--default-foreground);
+		border-radius: 10px;
 	}
 </style>
 

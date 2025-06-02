@@ -1,10 +1,10 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let icon;
 	export let label;
 	export let active;
-	export let colorVariable = '--icon-black';
+	export let colorVariable = '--default-foreground';
 	export let onClick;
 
 	function onMousedown(e) {
@@ -23,12 +23,16 @@
 		flex: 1;
 		text-align: center;
 		padding: 0 10px;
+		color: var(--primary-foreground);
+	}
+
+	.item:hover {
+		background-color: var(--primary-hard-background);
 	}
 
 	.item.active {
-		color: var(--color-primary-foreground);
 		font-weight: bold;
-		background-color: #db0;
+		background-color: var(--primary-harder-background);
 	}
 
 	.item .label {

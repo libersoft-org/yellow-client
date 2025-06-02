@@ -1,9 +1,10 @@
 <script lang="ts">
-	import BaseButton from '../Button/BaseButton.svelte';
+	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import MenuItem from './MenuItem.svelte';
 	import Modal from '../Modal/Modal.svelte';
 	import ModalSettings from '../../modals/Settings/Settings.svelte';
 	import Icon from '../Icon/Icon.svelte';
+	import Switch from '../Switch/Switch.svelte';
 	import DialogExit from '../../dialogs/Exit.svelte';
 	import VersionInfo from '../VersionInfo/VersionInfo.svelte';
 	import { product, link } from '../../core.js';
@@ -91,8 +92,8 @@
 		left: 0;
 		width: 250px;
 		height: 100%;
-		background-color: #222;
-		color: #fff;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);
 		transform: translateX(-100%);
 		transition:
@@ -118,7 +119,7 @@
 
 	.header {
 		display: flex;
-		border-bottom: 1px solid #444;
+		border-bottom: 1px solid var(--secondary-softer-background);
 	}
 
 	.items {
@@ -130,14 +131,18 @@
 	.footer {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
-		padding: 10px;
-		text-align: center;
-		color: #ccc;
-		border-top: 1px solid #444;
 	}
 
-	.footer .logo {
+	.footer .section {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+		padding: 10px;
+		border-top: 1px solid var(--secondary-softer-background);
+	}
+
+	.footer .section .logo {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -146,7 +151,7 @@
 		font-weight: bold;
 	}
 
-	.footer :global(.menu-version-info .version) {
+	.footer .section :global(.menu-version-info .version) {
 		justify-content: center;
 		font-size: 14px;
 	}
@@ -158,22 +163,27 @@
 <div class="menu {showMenu ? 'open' : ''}">
 	<div>
 		<div class="header">
-			<Icon img="img/close.svg" alt="X" colorVariable="--icon-white" size="30px" padding="15px" onClick={clickMenuClose} />
+			<Icon img="img/close.svg" alt="X" colorVariable="--secondary-foreground" size="30px" padding="15px" onClick={clickMenuClose} />
 		</div>
 		<div class="items">
 			{#each menuItems as item}
-				<MenuItem img={item.img} title={item.title} colorVariable="--icon-white" onClick={item.onClick} />
+				<MenuItem img={item.img} title={item.title} onClick={item.onClick} />
 			{/each}
 		</div>
 	</div>
 	<div class="footer">
-		<BaseButton onClick={() => openPage(link)}>
-			<div class="logo">
-				<Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
-				<div>{product}</div>
-			</div>
-		</BaseButton>
-		<VersionInfo className="menu-version-info" />
+		<div class="section">
+			<Switch showLabel label="Dark mode" />
+		</div>
+		<div class="section">
+			<BaseButton onClick={() => openPage(link)}>
+				<div class="logo">
+					<Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
+					<div>{product}</div>
+				</div>
+			</BaseButton>
+			<VersionInfo className="menu-version-info" />
+		</div>
 	</div>
 </div>
 <Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />

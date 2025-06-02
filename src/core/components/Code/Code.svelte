@@ -360,6 +360,7 @@
 	contenteditable
 	spellcheck="false"
 	role="textbox"
+	tabindex="0"
 	oninput={e => {
 		// Save current cursor position before updating
 		lastCursorPos = getCursorPosition();

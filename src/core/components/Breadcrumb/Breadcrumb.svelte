@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="js">
 	import { fade } from 'svelte/transition';
 	import Icon from '../Icon/Icon.svelte';
 	import MenuItem from '../Menu/MenuItem.svelte';
@@ -11,29 +11,51 @@
 	// import { autoPlacement, autoUpdate, computePosition, offset, shift } from '@floating-ui/dom';
 	// import Portal from '@/core/components/Portal/Portal.svelte';
 
-	type Props = {
-		activeTab?: string;
-		menuItems?: Array<any>;
-		root_crumb?: string;
-		bread_crumbs: Array<any>;
-	};
+	// type Props = {
+	// 	activeTab?: string;
+	// 	menuItems?: Array<any>;
+	// 	root_crumb?: string;
+	// 	bread_crumbs: Array<any>;
+	// 	setItem: any;
+	// };
 
 	// let {  } = $props();
 
-	let { root_crumb, activeTab = $bindable(), menuItems = [] }: Props = $props();
+	let {
+		root_crumb = {
+			title: 'Settings',
+			tab: '',
+			img: '',
+			onClick: () => {},
+		},
+		activeTab = $bindable(),
+		menuItems = [],
+		subTab = [],
+		setItem = () => {},
+	} = $props();
 
 	let bread_crumbs = $state([]);
 
 	let items;
 
-	function setItem(name: string) {
-		activeTab = name;
-	}
+	// function setItem(name: string) {
+	// 	activeTab = name;
+	// }
 
-	function setBreadcrumb(bread_crumb) {
-		let index = bread_crumbs.indexOf(bread_crumb);
-		if (index > 0) {
-			bread_crumbs.splice(index, bread_crumbs.length - index);
+	export function setBreadcrumb(bread_crumb) {
+		console.log(bread_crumb.title);
+		let position = -1;
+		bread_crumbs.forEach(function callback(item, index) {
+			console.log(item.title);
+			if (item.title == bread_crumb.title) {
+				position = index;
+			}
+		});
+		console.log(position);
+		if (position >= 0) {
+			if (position < bread_crumbs.length - 1) {
+				bread_crumbs.splice(position + 1, bread_crumbs.length - position);
+			}
 		} else {
 			bread_crumbs.push(bread_crumb);
 		}
@@ -41,77 +63,89 @@
 </script>
 
 <style>
-	.breadcrumb {
+	.breadcrumbs {
 		display: flex;
-		padding: 8px 10px;
-		background: hsl(345, 6%, 13%);
+		padding: 4px 6px;
+		background: var(--default-foreground);
 		margin-bottom: 0px;
 		border-radius: 10px;
+		/* flex-direction: row; */
+	}
+	.breadcrumb-button {
+		display: flex;
+		flex-direction: row;
+		border: none;
+		padding: 6px;
+		border-radius: 10px;
+		background: none;
+		color: var(--default-background);
+		font-size: 14px;
+		font-weight: bold;
+		transition: color 0.3s ease;
+		cursor: default;
+		text-transform: capitalize;
+		/* display: flex; */
+		/* flex-direction: row; */
 
-		span,
-		button {
-			border: none;
-			background: none;
-			font-size: 14px;
-			font-weight: bold;
-			padding: 0;
-			transition: color 0.3s ease;
-			cursor: default;
-			text-transform: capitalize;
-
-			&:hover {
-				color: white;
-			}
-
-			&:not(:first-child)::before {
-				content: '>';
-				margin: 0 5px;
-				color: white;
-			}
-
-			&:last-child {
-				color: white;
-			}
+		&:not(:first-child)::before {
+			content: '>';
+			margin: 0 5px;
+			color: white;
 		}
 
-		button {
-			cursor: pointer;
-			display: flex;
-			gap: 6px;
+		&:last-child {
 			color: white;
-			filter: contrast(0.5);
-			transition: filter 0.3s ease;
-
-			&:hover {
-				filter: contrast(1);
-			}
-
-			:global(.icon) {
-				padding: 0 !important;
-			}
+		}
+	}
+	.icon {
+		padding: 0 !important;
+	}
+	.breadcrumb-button-text {
+		display: flex;
+		border: none;
+		background: none;
+		font-size: 14px;
+		font-weight: bold;
+		padding: 0;
+		transition: color 0.3s ease;
+		cursor: default;
+		text-transform: capitalize;
+		&:hover {
+			/* background: var(--default-background); */
+			color: var(--primary-background);
 		}
 	}
 </style>
 
-{#if activeTab !== ''}
-	<div class="breadcrumb">
-		<div class="breadcrumb" in:fade={{ duration: 400 }}>
-			<button onclick={() => setItem('')}>
-				<Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size="16px" />
-				{root_crumb}
+{#if activeTab}
+	<div>
+		<div class="breadcrumbs" in:fade={{ duration: 400 }}>
+			<button
+				class="breadcrumb-button"
+				onclick={() => {
+					setItem(false);
+					bread_crumbs = [];
+				}}
+			>
+				<Icon padding="0" img="img/home.svg" alt="Settings" size="16px" colorVariable="--default-background" />
+				<div class="breadcrumb-button-text" style="margin-left:2px;">{root_crumb.title}</div>
 			</button>
-			<span>
-				{#each bread_crumbs as bread_crumb}
-					<button
-						onclick={() => {
-							setBreadcrumb(bread_crumb);
-							setItem(bread_crumb.tab);
-						}}
-					>
-						{bread_crumb.title}
-					</button>
-				{/each}
-			</span>
+
+			{#each bread_crumbs as bread_crumb}
+				<button
+					class="breadcrumb-button"
+					onclick={() => {
+						// setBreadcrumb(bread_crumb);
+						setItem(bread_crumb);
+					}}
+				>
+					<div class="breadcrumb-button-text" style="margin-left:2px;">{bread_crumb.title}</div>
+				</button>
+			{/each}
+
+			{#if subTab}
+				<span>{subTab}</span>
+			{/if}
 		</div>
 	</div>
 {/if}

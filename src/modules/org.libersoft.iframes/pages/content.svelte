@@ -2,7 +2,6 @@
 	import { accounts, findAccount, sendAsync } from '@/core/core.js';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import FilesDebug from '@/core/components/debug/Files.svelte';
 	import { debug } from '@/core/core.js';
 
 	//let url = 'https://yellow-module1.netlify.app/'
@@ -77,9 +76,5 @@
 <!--<iframe id="iframe2" src="iframe2.html" style="width: 45%; height: 200px;"></iframe>-->
 
 <div class="parent">
-	<!--{#if $debug}-->
-	<FilesDebug />
-	<!--{/if}-->
-
 	<iframe bind:this={iframe} sandbox="allow-scripts" src={url} title="content"></iframe>
 </div>

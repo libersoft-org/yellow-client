@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* todo, refactor with Button.svelte ? */
 
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import { autoPlacement, autoUpdate, computePosition, offset, shift } from '@floating-ui/dom';
 	import Portal from '@/core/components/Portal/Portal.svelte';
 
@@ -90,10 +90,10 @@
 	.tooltip {
 		display: flex;
 		align-items: center;
-		background: var(--color-primary-softer-background);
+		background: var(--primary-softer-background);
 		padding: 8px;
 		border-radius: 20px;
-		box-shadow: var(--yellow-box-shadow);
+		box-shadow: var(--shadow);
 		max-width: calc(100vh - 20px);
 		z-index: 100000;
 	}

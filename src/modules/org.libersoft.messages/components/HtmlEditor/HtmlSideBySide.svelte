@@ -7,17 +7,14 @@
 <style>
 	.sides {
 		display: flex;
+		gap: 10px;
 		width: 100%;
 		height: 100%;
 	}
-	.sides .editor {
-		border: 1px solid #000;
-		width: 50%;
-	}
 
+	.sides .editor,
 	.sides .preview {
-		border: 1px solid #000;
-		width: 50%;
+		width: calc(50% - 10px);
 	}
 </style>
 

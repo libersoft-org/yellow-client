@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '../../components/Button/BaseButton.svelte';
+	import BaseButton from '../../components/BaseButton/BaseButton.svelte';
 	import Icon from '../../components/Icon/Icon.svelte';
 	import VersionInfo from '../../components/VersionInfo/VersionInfo.svelte';
 	import { product, link } from '../../core.js';
@@ -17,8 +17,8 @@
 		justify-content: center;
 		gap: 5px;
 		height: 100vh;
-		background: url('/img/background.webp') repeat;
-		background-size: 400px;
+		background: var(--background-image) 0 0 / 400px repeat;
+		color: var(--primary-foreground);
 	}
 
 	.welcome .logo {

@@ -53,6 +53,6 @@
 		</div>
 	</div>
 	<div class="close">
-		<Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" onClick={onClose} size="24px" padding="0px" />
+		<Icon img="img/close.svg" alt="Close" colorVariable="--primary-foreground" onClick={onClose} size="24px" padding="0px" />
 	</div>
 </div>

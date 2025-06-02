@@ -5,12 +5,13 @@
 		children: Snippet;
 		padding?: string;
 		background?: string;
+		color?: string;
 		border?: string;
 		radius?: string;
 		maxWidth?: string;
 	};
 
-	const { children, padding = '10px', background = 'var(--color-default-background)', border = '1px solid var(--color-default-foreground)', radius = '10px', maxWidth = '768px' }: Props = $props();
+	const { children, padding = '10px', background = 'var(--default-background)', color = 'var(--default-foreground)', border = '1px solid var(--default-foreground)', radius = '10px', maxWidth = '768px' }: Props = $props();
 </script>
 
 <style>
@@ -18,16 +19,12 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
-		box-shadow: var(--shadow);
 		width: 100%;
 		box-sizing: border-box;
-
-		/* @container (max-width: 768px) {
-			background-color: red !important;
-		} */
+		box-shadow: var(--shadow);
 	}
 </style>
 
-<div class="paper" style={`padding: ${padding}; background: ${background}; border: ${border}; border-radius: ${radius}; max-width: ${maxWidth};`}>
+<div class="paper" style={`padding: ${padding}; background: ${background}; color: ${color}; border: ${border}; border-radius: ${radius}; max-width: ${maxWidth};`}>
 	{@render children()}
 </div>

@@ -1,13 +1,14 @@
 <script>
 	import Modal from '../Modal/Modal.svelte';
-	import Files2 from '../../debug/Files2.svelte';
+	import Files from '../../debug/Files.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import { addNotification } from '../../notifications.ts';
 	import { debug } from '../../core.js';
 	import { log } from '../../tauri.ts';
 
-	let showFiles2Modal = false;
+	let showFilesModal1 = false;
+	let showFilesModal2 = false;
 
 	async function err() {
 		throw new Error('Test exception!');
@@ -23,22 +24,20 @@
 		});
 	}
 
-	function openFiles2() {
-		showFiles2Modal = !showFiles2Modal;
-		log.debug('openFiles2: ' + showFiles2Modal);
+	function openFiles1() {
+		showFilesModal1 = !showFilesModal1;
 	}
-
-	function closeFiles2() {
-		showFiles2Modal = false;
+	function openFiles2() {
+		showFilesModal2 = !showFilesModal2;
 	}
 </script>
 
 {#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}(debug:<Switch bind:checked={$debug} />)
 	<Button onClick={err}>0</Button>
 	<Button onClick={notification}>Notif</Button>
+	<Button onClick={openFiles1}>Files1</Button>
 	<Button onClick={openFiles2}>Files2</Button>
 {/if}
 
-{#if showFiles2Modal}
-	<Modal title="Mobile File Operations Test" onClose={closeFiles2} body={Files2} bind:show={showFiles2Modal} />
-{/if}
+<Modal title="File Operations Test1" body={Files} bind:show={showFilesModal1} width="90%" />
+<Modal title="File Operations Test2" body={Files} bind:show={showFilesModal2} width="90%" />

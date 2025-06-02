@@ -69,8 +69,7 @@
 		flex-direction: column;
 		height: 100vh;
 		overflow: hidden;
-		background: url('/img/background.webp') repeat;
-		background-size: 400px;
+		background: var(--background-image) 0 0 / 400px repeat;
 	}
 </style>
 

@@ -174,9 +174,9 @@
 </style>
 
 <div class="button-group">
-	<Button img="img/plus.svg" text="Add accounts" onClick={addAccounts} />
+	<Button img="img/plus.svg" colorVariable="--primary-foreground" text="Add accounts" onClick={addAccounts} />
 	{#if hasExistingAccounts}
-		<Button img="img/import.svg" text="Replace All" onClick={replaceAccounts} />
+		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Replace All" onClick={replaceAccounts} />
 	{/if}
 </div>
 

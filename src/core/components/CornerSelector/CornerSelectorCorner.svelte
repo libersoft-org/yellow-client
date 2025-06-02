@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	export let active = false;
 	export let onClick;
 </script>
@@ -18,7 +18,7 @@
 	}
 
 	.corner.active {
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 		cursor: default;
 	}
 </style>

@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let text;
 	export let colorVariable;
@@ -16,12 +16,12 @@
 		border-radius: 10px;
 		font-family: inherit;
 		width: 100%;
-		background-color: var(--color-secondary-soft-background);
+		background-color: var(--secondary-softer-background);
+		color: var(--secondary-foreground);
 	}
 
 	.dropdown .text {
 		flex-grow: 1;
-		color: black;
 	}
 </style>
 

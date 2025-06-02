@@ -1,6 +1,6 @@
 <script>
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import QRCode from 'qrcode';
 	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
@@ -107,10 +107,10 @@
 		display: flex;
 		align-items: center;
 		gap: 5px;
-		border: 1px solid #b90;
 		border-radius: 10px;
 		padding: 10px;
-		background-color: var(--color-secondary-soft-background);
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 
 		.clamp {
 			display: inline-block;
@@ -148,7 +148,7 @@
 						<div class="clamp" bind:this={addressElement}>
 							{shortenAddress($selectedAddress.address)}
 						</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 					</div>
 				</BaseButton>
 				<div class="qr"><img src={qrAddress} alt="Address" /></div>
@@ -168,7 +168,7 @@
 						<div class="clamp" style="width: 240px !important;" bind:this={paymentElement}>
 							{paymentText}
 						</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 					</div>
 				</BaseButton>
 				<div class="qr"><img src={qrPayment} alt="Payment" /></div>

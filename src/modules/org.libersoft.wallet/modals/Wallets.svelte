@@ -1,6 +1,6 @@
 <script>
 	import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	export let close;
@@ -21,15 +21,15 @@
 	}
 
 	tr.even {
-		background-color: var(--color-secondary-soft-background);
+		background-color: var(--secondary-soft-background);
 	}
 
 	tr.odd {
-		background-color: var(--color-primary-lighter-background);
+		background-color: var(--primary-lighter-background);
 	}
 
 	tr:hover {
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 	}
 
 	td {

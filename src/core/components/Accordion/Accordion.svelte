@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick, type Snippet } from 'svelte';
-	import BaseButton from '../Button/BaseButton.svelte';
+	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import Icon from '../Icon/Icon.svelte';
 
 	type Props = {
@@ -153,9 +153,10 @@
 
 <style>
 	.accordion {
-		border: 1px solid var(--accordion-border-color, #b90);
+		border: 1px solid var(--primary-harder-background);
 		border-radius: 8px;
 		overflow: hidden;
+		color: var(--primary-foreground);
 
 		&:empty {
 			display: none;
@@ -163,7 +164,7 @@
 	}
 
 	.accordion .item {
-		border-bottom: 1px solid var(--accordion-border-color, #b90);
+		border-bottom: 1px solid var(--primary-harder-background);
 
 		:global(.header .icon) {
 			position: absolute;
@@ -187,12 +188,12 @@
 		gap: 10px;
 		align-items: center;
 		padding: 10px;
-		background-color: var(--color-primary-background);
-		cursor: pointer;
 		filter: brightness(1);
 		transition: filter 0.3s ease;
 		padding-right: 50px;
 		min-height: 40px;
+		background-color: var(--primary-background);
+		cursor: pointer;
 	}
 
 	.accordion .item .header {
@@ -207,6 +208,7 @@
 	.accordion .item .content {
 		height: 0;
 		overflow: hidden;
+		border-top: 1px solid var(--primary-harder-background);
 		transition: height 0.3s ease;
 	}
 
@@ -224,11 +226,11 @@
 <div class="accordion">
 	{#each items as item, index}
 		<div class="item {activeIndices.includes(index) ? 'is-expanded' : ''}">
-			<BaseButton onClick={() => handleClick(index)} width="100%">
+			<BaseButton onClick={() => handleClick(index)}>
 				<div class="header">
 					<div class="title">{item.name}</div>
 					{@render header?.(item)}
-					<Icon img="img/down.svg" alt="Chevron Down" colorVariable="--color-primary-foreground" size="12px" />
+					<Icon img="img/down.svg" alt="▼" colorVariable="--primary-foreground" size="12px" />
 				</div>
 			</BaseButton>
 			<div class="content {activeIndices.includes(index) ? 'is-expanded' : ''}" data-index={index}>

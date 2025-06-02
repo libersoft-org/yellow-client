@@ -3,10 +3,10 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 
 	import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/settings.ts';
 
@@ -21,16 +21,16 @@
 	<Thead>
 		<TheadTr>
 			{#each settings as setting}
-				<TheadTh>{setting.label}</TheadTh>
+				<Th>{setting.label}</Th>
 			{/each}
 		</TheadTr>
 	</Thead>
 	<Tbody>
 		<TbodyTr>
 			{#each settings as setting}
-				<TbodyTd title={setting.label}>
-					<Switch ariaLabel="debug" bind:checked={setting.store} />
-				</TbodyTd>
+				<Td title={setting.label}>
+					<Switch label="debug" bind:checked={setting.store} />
+				</Td>
 			{/each}
 		</TbodyTr>
 	</Tbody>

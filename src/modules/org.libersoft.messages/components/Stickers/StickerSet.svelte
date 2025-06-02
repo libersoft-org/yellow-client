@@ -60,11 +60,8 @@
 	}
 
 	function toggleFavorite() {
-		if (stickerset_in_favorites(stickerset)) {
-			remove_stickerset_from_favorites(stickerset);
-		} else {
-			add_stickerset_to_favorites(stickerset);
-		}
+		if (stickerset_in_favorites(stickerset)) remove_stickerset_from_favorites(stickerset);
+		else add_stickerset_to_favorites(stickerset);
 	}
 </script>
 
@@ -79,7 +76,8 @@
 	.title-bar {
 		display: flex;
 		border-radius: 10px;
-		background-color: #ddd;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
 	.title-bar .left {
@@ -123,7 +121,7 @@
 		<StickerSetPart {stickerset} items={first} {intersecting} />
 	</div>
 	{#if !showall}
-		<Button img="img/{expanded ? 'up' : 'down'}.svg" onClick={clickExpand} width="100%" />
+		<Button img="img/{expanded ? 'up' : 'down'}.svg" colorVariable="--primary-foreground" onClick={clickExpand} />
 	{/if}
 	{#if showall || expanded}
 		<div class="set">

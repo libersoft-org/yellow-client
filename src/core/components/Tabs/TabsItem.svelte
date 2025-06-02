@@ -1,10 +1,10 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let img;
 	export let label;
 	export let active;
-	export let colorVariable = '--icon-white';
+	export let colorVariable = '--secondary-foreground';
 	export let onClick;
 </script>
 
@@ -13,25 +13,23 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 10px;
-		flex: 1; /* TODO: this is not working as it needs to be applied on BaseButton, not on .item. If applied to BaseButton, it spoils everything that doesn't need it.*/
+		flex: 1; /* TODO: this is not working as it needs to be applied on BaseButton, not on .item. If applied to BaseButton, it spoils everything that doesn't need it. */
+		font-size: 16px;
 		padding: 10px;
-		color: #fff;
-		width: 100%;
 	}
 
 	.item.active {
 		font-weight: bold;
-		background-color: #444;
+		background-color: var(--secondary-softer-background);
 	}
 
 	.item:hover {
-		background-color: #333;
+		background-color: var(--secondary-soft-background);
 	}
 </style>
 
-<BaseButton {onClick} width="100%">
-	<div class="item {active ? 'active' : ''}">
+<BaseButton {onClick}>
+	<div class="item {active && 'active'}">
 		{#if img}
 			<Icon {img} alt={label ? label : ''} {colorVariable} size="20px" padding="0px" />
 		{/if}

@@ -222,7 +222,7 @@
 	</Label>
 
 	{#if !isInWelcomeWizard}
-		<Switch showLabel ariaLabel="Enabled" bind:checked={config_enabled} />
+		<Switch showLabel label="Enabled" bind:checked={config_enabled} />
 	{/if}
 
 	{#if error}
@@ -233,9 +233,9 @@
 	{/if}
 
 	{#if params.id === null}
-		<Button data-testid="add" text="Add the account" onClick={clickAdd} width="100%" />
+		<Button data-testid="add" text="Add the account" onClick={clickAdd} />
 	{:else}
-		<Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} width="100%" />
+		<Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} />
 	{/if}
 
 	{#if account && acc}

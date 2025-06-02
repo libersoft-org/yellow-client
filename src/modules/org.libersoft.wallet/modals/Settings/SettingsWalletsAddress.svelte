@@ -1,13 +1,13 @@
 <script lang="ts">
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
 	type Props = {
 		address: string;
+		colorVariable?: string;
 	};
 
-	let { address = $bindable() }: Props = $props();
-
+	let { address = $bindable(), colorVariable = '--primary-foreground' }: Props = $props();
 	let spanElem = $state();
 	let copied = $state(false);
 
@@ -42,6 +42,6 @@
 <BaseButton onClick={copyAddressToClipboard}>
 	<div class="address">
 		<span class="clamp" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
-		<Icon img="img/copy.svg" alt="Copy" colorVariable="--icon-black" size="15px" padding="0px" />
+		<Icon img="img/copy.svg" {colorVariable} alt="Copy" size="15px" padding="0px" />
 	</div>
 </BaseButton>

@@ -15,10 +15,10 @@
 	import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
 	import Modal from '../core/components/Modal/Modal.svelte';
 	import Wizard from '../core/components/Wizard/Wizard.svelte';
-	import WizardWelcomeStep1 from '@/core/pages/WelcomePage/WelcomeStep1.svelte';
-	import WizardWelcomeStep2 from '@/core/pages/WelcomePage/WelcomeStep2.svelte';
-	import WizardWelcomeStep3 from '@/core/pages/WelcomePage/WelcomeStep3.svelte';
-	import WizardWelcomeStep4 from '@/core/pages/WelcomePage/WelcomeStep4.svelte';
+	import WizardWelcomeStep1 from '@/core/wizard/WelcomeStep1.svelte';
+	import WizardWelcomeStep2 from '@/core/wizard/WelcomeStep2.svelte';
+	import WizardWelcomeStep3 from '@/core/wizard/WelcomeStep3.svelte';
+	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
 	import { createTrayIcon, destroyTrayIcon } from '../core/tray_icon.ts';
 	import '../modules/org.libersoft.messages/module.js';
 	import '../modules/org.libersoft.contacts/module.js';
@@ -303,6 +303,11 @@
 	async function onkeydown(event) {
 		//console.log('window onkeydown: ', event);
 		if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) debug.update(d => !d);
+
+		// Handle Ctrl + 0 to toggle between theme index 0 and 1
+		if (event.ctrlKey && event.key === '0') {
+			selected_theme_index.update(current => (current === 0 ? 1 : 0));
+		}
 	}
 </script>
 
@@ -321,11 +326,10 @@
 		flex-direction: column;
 		position: relative;
 		z-index: 5;
-		/*  min-width: 300px;
-  max-width: 300px;*/
 		max-height: 100%;
 		box-shadow: var(--shadow);
-		background-color: #fff;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
 	.resizer {
@@ -333,7 +337,6 @@
 		z-index: 1;
 		top: 0;
 		bottom: 0;
-		/*left: 300px;*/
 		width: 5px;
 		cursor: ew-resize;
 		/*background-color: #0d0;*/

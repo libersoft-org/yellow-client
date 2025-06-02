@@ -7,8 +7,8 @@
 		align-items: center;
 		gap: 24px;
 		min-height: calc(var(--menu-height) - 20px);
-		background-color: #222;
-		color: #fff;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);
 		padding: 10px 20px;
 
@@ -25,14 +25,6 @@
 			gap: 10px;
 			flex: 1;
 			width: 100%;
-
-			/* :global(&:has(:only-child)) {
-				.left,
-				.center,
-				.right {
-					gap: 0;
-				}
-			} */
 
 			:global(h1) {
 				white-space: nowrap;
@@ -53,15 +45,12 @@
 
 <div class="top-bar">
 	<slot />
-
 	<div class="left">
 		<slot name="left" />
 	</div>
-
 	<div class="center">
 		<slot name="center" />
 	</div>
-
 	<div class="right">
 		<slot name="right" />
 	</div>

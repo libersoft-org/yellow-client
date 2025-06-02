@@ -16,8 +16,8 @@
 		align-items: center;
 		height: var(--menu-height);
 		min-height: var(--menu-height);
-		background-color: var(--color-primary-background);
-		color: var(--color-primary-foreground);
+		background-color: var(--primary-background);
+		color: var(--primary-foreground);
 	}
 
 	.product {
@@ -27,7 +27,7 @@
 </style>
 
 <div class="bar">
-	<Icon img="img/menu.svg" alt="☰" colorVariable="--color-primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} />
+	<Icon img="img/menu.svg" alt="☰" colorVariable="--primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} />
 	<div class="product">{product}</div>
 	<MenuBarDebug />
 </div>

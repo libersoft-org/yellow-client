@@ -1,35 +1,28 @@
-<script>
-	import BaseButton from '../Button/BaseButton.svelte';
-	import Icon from '../Icon/Icon.svelte';
-	export let img;
-	export let title = '';
-	export let onClick;
+<script lang="ts">
+	import BaseButton from '../BaseButton/BaseButton.svelte';
+	interface Props {
+		onClick?: (e: Event) => void;
+	}
+	let { onClick }: Props = $props();
 </script>
 
 <style>
 	.accounts-button {
 		display: flex;
-		gap: 10px;
+		flex: 1;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
 		padding: 10px;
-		width: 100%;
 	}
 
-	/*.accounts-button img {
-  width: 20px;
-  height: 20px;
- }*/
-
 	.accounts-button:hover {
-		background-color: #222;
+		background-color: var(--secondary-softer-background);
 	}
 </style>
 
 <BaseButton {onClick}>
 	<div class="accounts-button">
-		{#if img}
-			<Icon {img} alt={title} size="20px" padding="0px" colorVariable="--icon-white" />
-			<!--<div><img src={img} alt={title} /></div>-->
-		{/if}
-		<div>{title}</div>
+		<slot />
 	</div>
 </BaseButton>

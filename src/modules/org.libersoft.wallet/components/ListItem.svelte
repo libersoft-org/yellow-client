@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	export let item = '';
 	export let icon = '';
 	export let className = '';
@@ -21,19 +21,19 @@
 	}
 
 	.item.even {
-		background-color: var(--color-secondary-soft-background);
+		background-color: var(--secondary-soft-background);
 	}
 
 	.item.odd {
-		background-color: var(--color-primary-lighter-background);
+		background-color: var(--primary-lighter-background);
 	}
 
 	.item:hover {
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 	}
 </style>
 
-<BaseButton {onClick} width="100%">
+<BaseButton {onClick}>
 	<div class="item {className}">
 		{#if icon}
 			<div><img src={icon} alt={item} /></div>

@@ -28,8 +28,7 @@
 		justify-content: center;
 		gap: 10px;
 		height: 100vh;
-		background: url('/img/background.webp') repeat;
-		background-size: 400px;
+		background: var(--background-image) 0 0 / 400px repeat;
 	}
 
 	.welcome .illustration {
@@ -44,19 +43,19 @@
 		flex-direction: column;
 		gap: 8px;
 		padding: 10px;
-		border: 1px solid var(--color-default-foreground);
+		border: 1px solid var(--default-foreground);
 		border-radius: 20px;
 		text-align: center;
 		font-size: 20px;
-		background-color: var(--color-default-background);
-		color: var(--color-primary-foreground);
+		background-color: var(--default-background);
+		color: var(--primary-foreground);
 	}
 </style>
 
 {#if $isMobile}
 	<TopBar>
 		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={() => mobileClose()} colorVariable="--icon-white" visibleOnDesktop={true} />
+			<Icon img="img/back.svg" onClick={() => mobileClose()} colorVariable="--primary-foreground" visibleOnDesktop={true} />
 			<h1 class="title">Messages</h1>
 		</svelte:fragment>
 	</TopBar>

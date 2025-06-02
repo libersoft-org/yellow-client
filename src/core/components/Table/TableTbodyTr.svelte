@@ -7,21 +7,21 @@
 		hover?: boolean;
 	};
 
-	const { children, background = 'var(--color-primary-soft-background)', hover = true }: Props = $props();
+	const { children, background = 'var(--primary-soft-background)', hover = true }: Props = $props();
 </script>
 
 <style>
 	tr:nth-child(even) {
-		background-color: var(--color-primary-soft-background);
+		background-color: var(--primary-soft-background);
 	}
 
 	tr:nth-child(odd) {
-		background-color: var(--color-primary-softer-background) !important;
+		background-color: var(--primary-softer-background) !important;
 	}
 
 	tr.hover {
 		&:hover {
-			background-color: var(--color-primary-background) !important;
+			background-color: var(--primary-background) !important;
 		}
 	}
 </style>

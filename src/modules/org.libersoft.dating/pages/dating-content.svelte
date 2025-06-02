@@ -17,8 +17,7 @@
 	.dating-content {
 		height: 100vh;
 		max-height: 100vh;
-		background: url('/img/background.webp') repeat;
-		background-size: 400px;
+		background: var(--background-image) 0 0 / 400px repeat;
 	}
 </style>
 

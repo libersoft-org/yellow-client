@@ -324,14 +324,16 @@
 
 	.message.incoming {
 		align-self: flex-start;
-		border: 1px solid #aa5;
-		background-color: #fef3c3;
+		border: 1px solid var(--primary-background);
+		background-color: var(--primary-soft-background);
+		color: var(--primary-foreground);
 	}
 
 	.message.outgoing {
 		align-self: flex-end;
-		border: 1px solid #aaa;
-		background-color: #fefdf7;
+		border: 1px solid var(--primary-soft-background);
+		background-color: var(--primary-softer-background);
+		color: var(--primary-foreground);
 	}
 
 	:global(.message .text a) {

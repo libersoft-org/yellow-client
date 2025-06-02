@@ -47,7 +47,7 @@
 	</div>
 	<div class="buttons">
 		{#each data.buttons as button}
-			<Button {...button} width="100%" />
+			<Button {...button} />
 		{/each}
 	</div>
 	<!-- <Button text="Close" onClick={() => (show = false)} /> -->

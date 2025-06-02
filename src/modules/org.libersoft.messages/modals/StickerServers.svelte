@@ -5,10 +5,10 @@
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
 	let addUrl = $state('');
@@ -43,7 +43,7 @@
 
 <style>
 	a {
-		color: var(--color-primary-foreground);
+		color: var(--primary-foreground);
 		text-decoration: none;
 		font-weight: bold;
 	}
@@ -64,19 +64,19 @@
 <Table breakpoint="0">
 	<Thead>
 		<TheadTr>
-			<TheadTh>Sticker servers:</TheadTh>
-			<TheadTh>Action:</TheadTh>
+			<Th>Sticker servers:</Th>
+			<Th>Action:</Th>
 		</TheadTr>
 	</Thead>
 	<Tbody>
 		{#each $sticker_servers as s}
 			<TbodyTr>
-				<TbodyTd title="Sticker servers">
+				<Td title="Sticker servers">
 					<a href={s} target="_blank">{s}</a>
-				</TbodyTd>
-				<TbodyTd title="Action">
+				</Td>
+				<Td title="Action">
 					<Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} />
-				</TbodyTd>
+				</Td>
 			</TbodyTr>
 		{/each}
 	</Tbody>

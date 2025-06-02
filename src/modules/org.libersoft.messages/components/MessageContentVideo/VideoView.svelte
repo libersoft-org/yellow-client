@@ -128,7 +128,7 @@
 
 					<button class="video-placeholder-play-button button-reset" onclick={startVideo}>
 						{#if videoStarting}
-							<Spinner show={true} size="14px" containerMinHeight="14px" color="var(--color-primary-background)" />
+							<Spinner show={true} size="14px" containerMinHeight="14px" color="var(--primary-background)" />
 						{:else}
 							<Icon img="modules/{identifier}/img/play.svg" colorVariable="--icon-yellow" alt="Start video" size="24px" padding="0px" />
 						{/if}

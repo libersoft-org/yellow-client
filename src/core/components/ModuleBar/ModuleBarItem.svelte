@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '../Button/BaseButton.svelte';
+	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import Indicator from './ModuleBarIndicator.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	export let decl;
@@ -27,7 +27,7 @@
 	}
 
 	.item.selected {
-		background-color: var(--color-secondary-soft-background);
+		background-color: var(--secondary-soft-background);
 		transform: scale(1.25);
 	}
 </style>
@@ -35,6 +35,6 @@
 <BaseButton data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
 	<div class="item {selected && 'selected'}">
 		<Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
-		<Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--color-primary-background" size="30px" />
+		<Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--primary-background" size="30px" />
 	</div>
 </BaseButton>

@@ -29,4 +29,4 @@
 	Would you like to delete the account "<span class="bold">{params?.name}</span>" (id:
 	<span class="bold">{params?.id}</span>)?
 </div>
-<Button text="Delete" onClick={clickDel} width="100%" />
+<Button text="Delete" onClick={clickDel} />

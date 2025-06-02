@@ -3,13 +3,10 @@
 	import TabsItem from '../../components/Tabs/TabsItem.svelte';
 	import AccountsImportJson from './AccountsImportJson.svelte';
 	import AccountsImportQR from './AccountsImportQR.svelte';
-
 	type Props = {
 		close: () => void;
 	};
-
 	let { close }: Props = $props();
-
 	let activeTab = $state('json');
 </script>
 

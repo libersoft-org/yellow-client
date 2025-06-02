@@ -4,11 +4,11 @@
 	type Props = {
 		checked: boolean;
 		showLabel?: boolean;
-		ariaLabel: string;
+		label: string;
 		orientation?: 'horizontal' | 'vertical';
 	};
 
-	let { checked = $bindable(), ariaLabel, showLabel = false, orientation = 'horizontal' }: Props = $props();
+	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal' }: Props = $props();
 
 	let mounted = $state(false);
 	let inputId = Math.random().toString(36);
@@ -94,7 +94,7 @@
 	}
 
 	input:checked + .slider {
-		background-color: var(--color-primary-background);
+		background-color: var(--primary-background);
 	}
 
 	input:checked + .slider:before {
@@ -119,10 +119,10 @@
 </style>
 
 <Label>
-	<span id={labelId} class="visually-hidden">{ariaLabel}</span>
+	<span id={labelId} class="visually-hidden">{label}</span>
 	<div class={`switch ${orientation}`}>
 		{#if showLabel}
-			<span class="label">{`${ariaLabel}:`}</span>
+			<span class="label">{label}:</span>
 		{/if}
 		<div class="switch-wrapper">
 			<input id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />

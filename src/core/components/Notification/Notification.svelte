@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { log } from '../../tauri.ts';
 	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
@@ -207,7 +207,7 @@
 							</div>
 						{/if}
 						<div class="close">
-							<Icon img="img/close.svg" alt="Close" colorVariable="--icon-white" size="10px" padding="10px" isButton onClick={e => handleClosing(e)} />
+							<Icon img="img/close.svg" alt="Close" colorVariable="--primary-foreground" size="10px" padding="10px" isButton onClick={e => handleClosing(e)} />
 						</div>
 					</div>
 					{#if data.body}

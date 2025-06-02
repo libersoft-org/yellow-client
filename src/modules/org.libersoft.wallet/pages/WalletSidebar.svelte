@@ -1,7 +1,8 @@
 <script>
 	import { hideSidebarMobile } from '@/core/core.js';
 	import { addressBook } from '../wallet.ts';
-	import BaseButton from '@/core/components/Button/BaseButton.svelte';
+	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Item from '@/core/components/SidebarItem/SidebarItem.svelte';
 
 	function clickShowWallet() {
 		hideSidebarMobile.set(true);
@@ -17,8 +18,8 @@
 	.content-button {
 		padding: 10px;
 		font-weight: bold;
-		background-color: #222;
-		color: #fff;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 		width: 100%;
 	}
 
@@ -26,32 +27,18 @@
 		overflow: auto;
 	}
 
-	.items .item {
-		display: flex;
-		flex-direction: column;
-		padding: 10px;
-		border: 1px solid #dd9;
-		width: 100%;
-		background-color: var(--color-primary-background);
-	}
-
-	.items .item:hover {
-		background-color: var(--color-primary-background);
-	}
-
-	.items .item .alias {
+	.alias {
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		font-weight: bold;
 	}
 
-	.items .item .address {
+	.address {
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		font-size: 12px;
-		color: #555;
 	}
 
 	@media (min-width: 769px) {
@@ -66,15 +53,11 @@
 </BaseButton>
 <div class="addressbook">
 	{#if $addressBook.length > 0}
-		<div class="items">
-			{#each $addressBook as a, index}
-				<BaseButton onClick={() => clickItem(a.address)} width="100%">
-					<div class="item {index % 2 === 0 ? 'even' : 'odd'}">
-						<div class="alias">{a.alias}</div>
-						<div class="address">{a.address}</div>
-					</div>
-				</BaseButton>
-			{/each}
-		</div>
+		{#each $addressBook as a, index}
+			<Item even={index % 2 === 0 ? true : false} onClick={() => clickItem(a.address)}>
+				<div class="alias">{a.alias}</div>
+				<div class="address">{a.address}</div>
+			</Item>
+		{/each}
 	{/if}
 </div>

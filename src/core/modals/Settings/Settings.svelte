@@ -1,20 +1,27 @@
 <script lang="ts">
-	import MenuItem from '../../components/Menu/MenuItem.svelte';
+	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
 	import SettingsAppearance from '../../components/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '../../components/Settings/SettingsNotifications.svelte';
 	import SettingsGeneral from '../../components/Settings/SettingsGeneral.svelte';
+	import SettingsThemes from '../../components/Settings/SettingsThemes.svelte';
 	import { TAURI } from '@/core/tauri.ts';
 	import { fade } from 'svelte/transition';
 	import Icon from '../../components/Icon/Icon.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { onMount, setContext } from 'svelte';
+	// import MenuItem from '@/core/components/Menu/MenuItem.svelte';
 
-	// type Props = {
-	// 	activeTab?: any;
-	// };
+	type Props = {
+		activeTab?: any;
+	};
 
-	// let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
-	let activeTab = $state('');
+	// let activeTab = $state('');
+
+	let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
+
+	let subTab = $state('');
+	let bread_crumb;
+
 	if (TAURI) {
 		activeTab = 'general';
 	}
@@ -26,7 +33,7 @@
 						title: 'General',
 						tab: 'general',
 						img: 'img/settings.svg',
-						onClick: () => setItem('general'),
+						// onClick: () => setItem('general'),
 						svelte_component: SettingsGeneral,
 					},
 				]
@@ -36,34 +43,29 @@
 			title: 'Appearance',
 			tab: 'appearance',
 			img: 'img/appearance.svg',
-			onClick: () => setItem('appearance'),
+			// onClick: () => setItem('appearance'),
 			svelte_component: SettingsAppearance,
+			subTabs: {
+				title: 'Theme',
+				tab: 'theme',
+				img: 'img/themes.svg',
+				// onClick: () => setItem('themes'),
+				svelte_component: SettingsThemes,
+			},
 		},
 		{
 			title: 'Notifications',
 			tab: 'notifications',
 			img: 'img/notification.svg',
-			onClick: () => setItem('notifications'),
+			// onClick: () => setItem('notifications'),
 			svelte_component: SettingsNotifications,
 		},
 	]);
-	let bread_crumb;
+
 	function setItem(item) {
-		activeTab = item.tab;
+		activeTab = item;
 		bread_crumb.setBreadcrumb(item);
 	}
-
-	let menuItemProps = {
-		bgColor: 'var(--color-default-background)',
-		textColor: 'var(--color-default-foreground)',
-		hoverColor: 'var(--color-secondary-softer-background)',
-		borderTop: '1px solid var(--color-disabled-background)',
-		borderBottom: '1px solid var(--color-disabled-background)',
-		borderLeft: '1px solid var(--color-disabled-background)',
-		borderRight: '1px solid var(--color-disabled-background)',
-		borderRadius: '10px',
-		colorVariable: '--color-default-foreground',
-	};
 
 	onMount(() => {
 		setContext('bread_crumb', bread_crumb);
@@ -85,18 +87,26 @@
 </style>
 
 <div class="settings-container">
-	<Breadcrumb bind:this={bread_crumb} root_crumb="Settings" bind:activeTab />
+	<Breadcrumb
+		bind:this={bread_crumb}
+		root_crumb={{
+			title: 'Settings',
+			tab: '',
+			img: '',
+			onClick: () => setItem(false),
+		}}
+		{setItem}
+		bind:activeTab
+	/>
 
-	{#each menuItems as item}
-		{#if activeTab === ''}
-			<MenuItem img={item.img} title={item.title} colorVariable={menuItemProps.colorVariable} bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item)} />
-		{/if}
-	{/each}
-	<div class="tab-content">
+	{#if !activeTab}
 		{#each menuItems as item}
-			{#if activeTab == item.tab}
-				<svelte:component this={activeTab.svelte_component} />
-			{/if}
+			<SettingsItem img={item.img} title={item.title} onClick={() => setItem(item)} />
 		{/each}
+	{/if}
+	<div class="tab-content">
+		{#if activeTab}
+			<svelte:component this={activeTab.svelte_component} subTabs={activeTab.subTabs} {bread_crumb} {setItem} />
+		{/if}
 	</div>
 </div>

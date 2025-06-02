@@ -1,26 +1,28 @@
 // import { current_theme, themes_stored } from './core.js';
 import { derived, get } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
+import { log } from '@/core/tauri.ts';
 export let selected_theme_index = localStorageSharedStore('selected_theme_index', 0);
 export const default_theme = {
 	name: 'Light',
 	properties: {
-		'--color-primary-foreground': '#222',
-		'--color-primary-softer-background': '#ffd',
-		'--color-primary-soft-background': '#ffa',
-		'--color-primary-background': '#fc1',
-		'--color-primary-hard-background': '#fa0',
-		'--color-primary-harder-background': '#d80',
-		'--color-secondary-foreground': '#fff',
-		'--color-secondary-softer-background': '#555',
-		'--color-secondary-soft-background': '#444',
-		'--color-secondary-background': '#222',
-		'--color-secondary-hard-background': '#111',
-		'--color-secondary-harder-background': '#000',
-		'--color-default-foreground': '#000',
-		'--color-default-background': '#fff',
-		'--color-disabled-background': '#888',
-		'--color-disabled-foreground': '#fff',
+		'--primary-foreground': '#222',
+		'--primary-softer-background': '#ffe',
+		'--primary-soft-background': '#ffd',
+		'--primary-background': '#fc1',
+		'--primary-hard-background': '#fa0',
+		'--primary-harder-background': '#d80',
+		'--secondary-foreground': '#fff',
+		'--secondary-softer-background': '#555',
+		'--secondary-soft-background': '#444',
+		'--secondary-background': '#222',
+		'--secondary-hard-background': '#111',
+		'--secondary-harder-background': '#000',
+		'--default-foreground': '#000',
+		'--default-background': '#fff',
+		'--disabled-background': '#888',
+		'--disabled-foreground': '#333',
+		'--background-image': 'url(/img/background/light.webp)',
 	},
 };
 export let themes_stored = localStorageSharedStore('themes_stored', [
@@ -28,22 +30,23 @@ export let themes_stored = localStorageSharedStore('themes_stored', [
 	{
 		name: 'Dark',
 		properties: {
-			'--color-primary-foreground': '#fff',
-			'--color-primary-softer-background': '#000',
-			'--color-primary-soft-background': '#111',
-			'--color-primary-background': '#222',
-			'--color-primary-hard-background': '#333',
-			'--color-primary-harder-background': '#444',
-			'--color-secondary-foreground': '#000',
-			'--color-secondary-softer-background': '#555',
-			'--color-secondary-soft-background': '#666',
-			'--color-secondary-background': '#777',
-			'--color-secondary-hard-background': '#888',
-			'--color-secondary-harder-background': '#999',
-			'--color-default-foreground': '#fff',
-			'--color-default-background': '#000',
-			'--color-disabled-background': '#888',
-			'--color-disabled-foreground': '#fff',
+			'--primary-foreground': '#fff',
+			'--primary-softer-background': '#012',
+			'--primary-soft-background': '#123',
+			'--primary-background': '#234',
+			'--primary-hard-background': '#345',
+			'--primary-harder-background': '#456',
+			'--secondary-foreground': '#000',
+			'--secondary-softer-background': '#789',
+			'--secondary-soft-background': '#89a',
+			'--secondary-background': '#9ab',
+			'--secondary-hard-background': '#abc',
+			'--secondary-harder-background': '#bde',
+			'--default-foreground': '#fff',
+			'--default-background': '#000',
+			'--disabled-background': '#888',
+			'--disabled-foreground': '#333',
+			'--background-image': 'url(/img/background/dark.webp)',
 		},
 	},
 ]);
@@ -52,6 +55,7 @@ export let current_theme = derived([selected_theme_index, themes_stored], ([$sel
 });
 
 selected_theme_index.subscribe(value => {
+	log.debug('selected_theme_index changed to', value);
 	//   console.log($themes_stored[value].properties);
 	Object.keys(get(themes_stored)[value].properties).forEach(key => {
 		//   console.log(`${key}: ${$themes_stored[value].properties[key]}`);

@@ -1,17 +1,16 @@
 <script>
 	import { module } from '../../module.js';
 	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
-	import ModalNewWallet from '../../modals/new-wallet.svelte';
-
-	import Address from '../../components/settings-wallets-address.svelte';
+	import ModalNewWallet from '../../modals/NewWallet.svelte';
+	import Address from './SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
-	import TheadTh from '@/core/components/Table/TableTheadTh.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import TbodyTd from '@/core/components/Table/TableTbodyTd.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
@@ -93,7 +92,7 @@
 
 <ButtonBar>
 	<Button text="Create wallet" onClick={showNewWalletModal} />
-	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
+	<Button img="modules/{module.identifier}/img/recover.svg" colorVariable="--primary-foreground" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
 	<div class="bold">My wallets:</div>
@@ -110,23 +109,23 @@
 			</ButtonBar>
 			<Table>
 				<Thead>
-					<TheadTh>Index</TheadTh>
-					<TheadTh>Alias</TheadTh>
-					<TheadTh>Address</TheadTh>
-					<TheadTh>Action</TheadTh>
+					<Th>Index</Th>
+					<Th>Alias</Th>
+					<Th>Address</Th>
+					<Th>Action</Th>
 				</Thead>
 				<Tbody>
 					{#each walletAddresses(walleta) as address, index}
 						<TbodyTr>
-							<TbodyTd title="Index">{address.index}</TbodyTd>
-							<TbodyTd title="Alias">{address.name}</TbodyTd>
-							<TbodyTd title="Address"><Address address={address.address} /></TbodyTd>
-							<TbodyTd title="Action">
+							<Td title="Index">{address.index}</Td>
+							<Td title="Alias">{address.name}</Td>
+							<Td title="Address"><Address address={address.address} /></Td>
+							<Td title="Action">
 								<TableActionItems>
-									<Icon img="img/edit.svg" alt="Rename" colorVariable="--icon-blue" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
-									<Icon img="img/del.svg" alt="Hide" colorVariable="--icon-red" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
+									<Icon img="img/edit.svg" colorVariable="--icon-blue" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
+									<Icon img="img/del.svg" colorVariable="--icon-red" alt="Hide" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
 								</TableActionItems>
-							</TbodyTd>
+							</Td>
 						</TbodyTr>
 					{/each}
 				</Tbody>

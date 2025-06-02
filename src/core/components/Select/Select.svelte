@@ -27,17 +27,18 @@
 		padding: 10px 20px 10px 10px;
 		font-family: inherit;
 		font-size: inherit;
-		border: 1px solid #888;
+		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
 		background: url('/img/down.svg') no-repeat;
 		background-size: 12px 12px;
 		background-position: right 5px center;
-		background-color: #fff;
+		background-color: var(--default-background);
+		color: var(--default-foreground);
 		cursor: pointer;
 	}
 
 	select:focus {
-		outline: 2px solid #0060df;
+		outline: 2px solid var(--primary-harder-background);
 	}
 
 	.select {
