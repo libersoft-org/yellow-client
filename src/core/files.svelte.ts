@@ -10,100 +10,6 @@ import { get } from 'svelte/store';
 // Store for default download folder
 export const defaultDownloadFolder = localStorageSharedStore('defaultDownloadFolder', '');
 
-// Mutex for download creation operations to prevent concurrent filename conflicts
-let createDownloadMutex: Promise<any> | null = null;
-
-// Generic mutex wrapper for download creation operations
-async function withDownloadMutex<T>(operation: () => Promise<T>): Promise<T> {
-	// Wait for any existing download creation operation to complete
-	if (createDownloadMutex) {
-		log.debug('Waiting for existing download creation operation to complete');
-		try {
-			await createDownloadMutex;
-		} catch (error) {
-			// Ignore errors from previous operations
-			log.debug('Previous download creation operation failed, continuing');
-		}
-	}
-
-	// Create a new mutex promise for this operation
-	const currentOperation = operation();
-	createDownloadMutex = currentOperation;
-
-	try {
-		const result = await currentOperation;
-		return result;
-	} finally {
-		// Clear the mutex when this operation completes
-		if (createDownloadMutex === currentOperation) {
-			createDownloadMutex = null;
-		}
-	}
-}
-
-interface PermissionStatus {
-	writeExternalStorage: 'granted' | 'denied' | 'prompt';
-	readExternalStorage: 'granted' | 'denied' | 'prompt';
-}
-
-enum PermissionType {
-	WriteExternalStorage = 'writeExternalStorage',
-	ReadExternalStorage = 'readExternalStorage',
-}
-
-// Generate a simple UUID-like string that works in HTTP contexts
-function generateId(): string {
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
-}
-
-// Convert a Blob to base64
-async function blobToBase64(blob: Blob): Promise<string> {
-	const arrayBuffer = await blob.arrayBuffer();
-	const bytes = new Uint8Array(arrayBuffer);
-	let binary = '';
-	for (let i = 0; i < bytes.byteLength; i++) {
-		binary += String.fromCharCode(bytes[i]);
-	}
-	return btoa(binary);
-}
-
-// Desktop-specific helper: Create download with default folder
-async function createDownloadWithFolderDesktop(fileName: string, folder: string): Promise<NativeDownload> {
-	const download = new NativeDownload();
-	download.original_file_name = fileName;
-	await findFreeFileName(folder, download);
-	return download;
-}
-
-// Desktop-specific helper: Create download with save dialog
-async function createDownloadWithDialogDesktop(fileName: string): Promise<NativeDownload | null> {
-	const download = new NativeDownload();
-	download.original_file_name = fileName;
-
-	// Show save dialog
-	const p = await save({
-		defaultPath: fileName,
-		canCreateDirectories: true,
-		title: 'Save file',
-	});
-
-	if (!p) {
-		return null;
-	}
-
-	download.file_path = p;
-	download.temp_file_path = partFileName(p);
-	download.potential_default_folder = await path.dirname(p);
-
-	await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
-	download.current_size = 0; // Empty file starts at 0 bytes
-	return download;
-}
-
 export class NativeDownload {
 	public id: string = generateId();
 	public original_file_name: string = $state('');
@@ -130,68 +36,251 @@ export class NativeDownload {
 	}
 }
 
-async function ensureFilePermissions(): Promise<{ success: boolean; error?: string }> {
-	if (!TAURI_MOBILE) {
-		return { success: true }; // Desktop always has permissions
+// Mutex for download creation operations to prevent concurrent filename conflicts
+let createDownloadMutex: Promise<any> | null = null;
+
+interface PermissionStatus {
+	writeExternalStorage: 'granted' | 'denied' | 'prompt';
+	readExternalStorage: 'granted' | 'denied' | 'prompt';
+}
+
+enum PermissionType {
+	WriteExternalStorage = 'writeExternalStorage',
+	ReadExternalStorage = 'readExternalStorage',
+}
+
+export async function offerNativeDownload(fileName: string): Promise<NativeDownload | { error: string } | null> {
+	log.debug('offerNativeDownload - TAURI_MOBILE:', TAURI_MOBILE);
+
+	// Ensure we have file permissions before proceeding
+	const permissionResult = await ensureFilePermissions();
+	if (!permissionResult.success) {
+		return { error: permissionResult.error || 'File permissions not available' };
 	}
 
-	try {
-		log.debug('Attempting to invoke plugin:yellow|check_file_permissions');
-		const permissions = await invoke<PermissionStatus>('plugin:yellow|check_file_permissions');
-		log.debug('check_file_permissions result:', permissions);
-		if (permissions.writeExternalStorage !== 'granted' || permissions.readExternalStorage !== 'granted') {
-			log.debug('Permissions not granted, requesting...');
-			const result = await invoke<PermissionStatus>('plugin:yellow|request_file_permissions', {
-				permissions: [PermissionType.WriteExternalStorage, PermissionType.ReadExternalStorage],
-			});
-			log.debug('request_file_permissions result:', result);
-			if (result.writeExternalStorage === 'granted' && result.readExternalStorage === 'granted') {
-				return { success: true };
+	if (TAURI_MOBILE) {
+		return await withDownloadMutex(async () => await createDownloadFileMobileInternal(fileName));
+	} else {
+		const result = await withDownloadMutex(async () => {
+			const folderToUse = get(defaultDownloadFolder);
+
+			if (folderToUse) {
+				return await createDownloadWithFolderDesktop(fileName, folderToUse);
 			} else {
-				return { success: false, error: 'File permissions denied by user' };
+				return await createDownloadWithDialogDesktop(fileName);
 			}
-		}
-		return { success: true };
-	} catch (error) {
-		log.debug('Failed to check/request file permissions:', error);
-		log.debug('Error details:', JSON.stringify(error, null, 2));
-		return {
-			success: false,
-			error: `Failed to check file permissions: ${error instanceof Error ? error.message : String(error)}`,
-		};
+		});
+		return result;
 	}
 }
 
-// Mobile-specific helper: Check if a file exists
-async function checkFileExistsMobile(fileName: string): Promise<boolean> {
+export async function saveNativeDownloadChunk(download: NativeDownload, chunk: Blob) {
+	if (download.finished) {
+		throw new Error('Download already finished');
+	}
+
+	if (TAURI_MOBILE) {
+		return saveNativeDownloadChunkMobile(download, chunk);
+	} else {
+		return saveNativeDownloadChunkDesktop(download, chunk);
+	}
+}
+
+export async function finishNativeDownload(download: NativeDownload) {
+	if (download.finished) {
+		return 'Download already finished';
+	}
+
+	download.finished = true;
+
+	if (TAURI_MOBILE) {
+		return finishNativeDownloadMobile(download);
+	} else {
+		return finishNativeDownloadDesktop(download);
+	}
+}
+
+/* TODO: wrt mobile permissions, it's not clear if exportToSystemDownloads can be absorbed into openNativeDownload, which would be able to etiher invoke save-as dialog or automatically export to defaultDownloadFolder.
+Also, it might be preferred to, instead of export dialog, open an opening intent screen.
+
+export async function exportToSystemDownloads(download: NativeDownload): Promise<{ success: boolean; error?: string }> {
+	try {
+		const result = await invoke('plugin:yellow|export_file_to_downloads', {
+			filePath: download.file_path,
+			fileName: download.original_file_name,
+			mimeType: mimeType,
+		});
+
+		log.debug('File exported to Downloads:', result);
+		return { success: true };
+	} catch (error) {
+		log.debug('Failed to export to Downloads:', error);
+		return { success: false, error: error instanceof Error ? error.message : String(error) };
+	}
+}*/
+
+// Unified API: Export file with system dialog (mobile and desktop)
+export async function openNativeDownload(download: NativeDownload): Promise<{ success: boolean; error?: string }> {
+	if (!TAURI_MOBILE) {
+		return { error: 'This function is only for mobile devices', success: false };
+	}
+
+	if (!download.finished) {
+		return { success: false, error: 'Download is not finished. Please finish the download first.' };
+	}
+
+	const mimeType: string = 'application/octet-stream';
+	const fileName = download.file_path;
 	const baseDir = BaseDirectory.AppData;
 
-	log.debug('Checking if file exists (mobile):', {
+	log.debug('Opening export dialog for file:', {
+		fileName,
+		mimeType,
+		baseDir: 'AppData',
+	});
+
+	try {
+		// Open save dialog
+		const dialogResult = (await invoke('plugin:yellow|open_save_dialog', {
+			fileName,
+			mimeType,
+			baseDir,
+		})) as { success: boolean; uri?: string; fileName?: string; mimeType?: string };
+
+		if (!dialogResult.success || !dialogResult.uri) {
+			log.debug('Save dialog cancelled by user');
+			return { success: false, error: 'Save dialog cancelled' };
+		}
+
+		log.debug('User selected destination, saving file to URI:', dialogResult.uri);
+
+		// Save the file to the selected URI
+		await invoke('plugin:yellow|save_file_to_uri', {
+			filePath: fileName,
+			uri: dialogResult.uri,
+			baseDir,
+		});
+
+		log.debug('File exported successfully to:', dialogResult.uri);
+		return { success: true };
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		log.debug('Failed to export file:', errorMessage);
+		log.debug('Error details:', JSON.stringify(error, null, 2));
+		return { success: false, error: errorMessage };
+	}
+}
+
+// Unified API: Delete a file
+export async function deleteFile(fileName: string): Promise<void> {
+	if (TAURI_MOBILE) {
+		return deleteFileMobile(fileName);
+	} else {
+		return deleteFileDesktop(fileName);
+	}
+}
+
+// Mobile-specific helper: Delete a file
+async function deleteFileMobile(fileName: string): Promise<void> {
+	const baseDir = BaseDirectory.AppData;
+
+	log.debug('Deleting file (mobile):', {
+		fileName,
+		baseDir: 'AppData',
+	});
+
+	await invoke('plugin:yellow|delete_file', {
 		fileName,
 		baseDir,
 	});
 
-	try {
-		const result = await invoke('plugin:yellow|file_exists', {
-			fileName,
+	log.debug('File deleted successfully (mobile):', {
+		fileName,
+	});
+}
+
+// Desktop-specific helper: Delete a file
+async function deleteFileDesktop(fileName: string): Promise<void> {
+	log.debug('Deleting file (desktop):', {
+		fileName,
+	});
+
+	const filePath = await path.join(await path.downloadDir(), fileName);
+	await remove(filePath, { baseDir: BaseDirectory.Download });
+
+	log.debug('File deleted successfully (desktop):', {
+		fileName,
+	});
+}
+
+async function findFreeFileName(folder: string, download: NativeDownload) {
+	log.debug('Starting findFreeFileName (desktop):', {
+		folder,
+		original_file_name: download.original_file_name,
+		baseDir: download.baseDir,
+	});
+
+	let counter = 0;
+	while (true) {
+		let file_name = download.original_file_name + (counter > 0 ? ` (${counter})` : '');
+		const file_path = await path.join(folder, file_name);
+
+		log.debug(`Checking file existence (attempt ${counter + 1}):`, {
+			file_name,
+			file_path,
+			counter,
 		});
 
-		const exists = result === true;
-		/*		log.debug('File existence check result:', {
-			fileName,
-			baseDir: 'AppData',
-			exists,
-			rawResult: result,
-		});*/
+		const exists_file = await exists(file_path, { baseDir: download.baseDir });
+		const temp_file_path = partFileName(file_path);
+		const exists_file2 = await exists(temp_file_path, { baseDir: download.baseDir });
 
-		return exists;
-	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : String(error);
-		const errorStr = JSON.stringify(error, null, 2);
-		log.debug('Error checking file existence:', errorMessage);
-		log.debug('Error details:', errorStr);
-		throw new Error(`File system error checking existence of "${fileName}": ${errorMessage}`);
+		log.debug('File existence check results:', {
+			file_path,
+			temp_file_path,
+			exists_file,
+			exists_file2,
+		});
+
+		if (!exists_file && !exists_file2) {
+			log.debug('Found free filename:', {
+				file_path,
+				temp_file_path,
+			});
+
+			download.file_path = file_path;
+			download.temp_file_path = temp_file_path;
+			try {
+				// Create the temp file
+				log.debug('Creating temp file:', temp_file_path);
+				await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+				download.current_size = 0; // Empty file starts at 0 bytes
+				log.debug('Temp file created successfully');
+			} catch (error) {
+				log.debug('Failed to create temp file in findFreeFileName:', error);
+				log.debug('Error details:', JSON.stringify(error, null, 2));
+				throw error;
+			}
+			log.debug('findFreeFileName completed successfully', {
+				final_path: download.file_path,
+				temp_path: download.temp_file_path,
+			});
+			return;
+		}
+
+		log.debug(`File already exists, trying next counter value: ${counter + 1}`);
+		counter++;
+
+		// Safety check to prevent infinite loops
+		if (counter > 100) {
+			log.debug('Reached maximum number of filename attempts (100)');
+			throw new Error('Could not find a free filename after 100 attempts');
+		}
 	}
+}
+
+function partFileName(file_path: string) {
+	return file_path + '.part';
 }
 
 // Mobile-specific helper: Find a free filename
@@ -318,27 +407,148 @@ async function createDownloadFileMobileInternal(fileName: string): Promise<Nativ
 	}
 }
 
-export async function offerNativeDownload(fileName: string): Promise<NativeDownload | { error: string } | null> {
-	log.debug('offerNativeDownload - TAURI_MOBILE:', TAURI_MOBILE);
+// Generate a simple UUID-like string that works in HTTP contexts
+function generateId(): string {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+		const r = (Math.random() * 16) | 0;
+		const v = c === 'x' ? r : (r & 0x3) | 0x8;
+		return v.toString(16);
+	});
+}
 
-	// Ensure we have file permissions before proceeding
-	const permissionResult = await ensureFilePermissions();
-	if (!permissionResult.success) {
-		return { error: permissionResult.error || 'File permissions not available' };
+// Convert a Blob to base64
+async function blobToBase64(blob: Blob): Promise<string> {
+	const arrayBuffer = await blob.arrayBuffer();
+	const bytes = new Uint8Array(arrayBuffer);
+	let binary = '';
+	for (let i = 0; i < bytes.byteLength; i++) {
+		binary += String.fromCharCode(bytes[i]);
+	}
+	return btoa(binary);
+}
+
+// Desktop-specific helper: Create download with default folder
+async function createDownloadWithFolderDesktop(fileName: string, folder: string): Promise<NativeDownload> {
+	const download = new NativeDownload();
+	download.original_file_name = fileName;
+	await findFreeFileName(folder, download);
+	return download;
+}
+
+// Desktop-specific helper: Create download with save dialog
+async function createDownloadWithDialogDesktop(fileName: string): Promise<NativeDownload | null> {
+	const download = new NativeDownload();
+	download.original_file_name = fileName;
+
+	// Show save dialog
+	const p = await save({
+		defaultPath: fileName,
+		canCreateDirectories: true,
+		title: 'Save file',
+	});
+
+	if (!p) {
+		return null;
 	}
 
-	if (TAURI_MOBILE) {
-		return withDownloadMutex(() => createDownloadFileMobileInternal(fileName));
-	} else {
-		return withDownloadMutex(async () => {
-			const folderToUse = get(defaultDownloadFolder);
+	download.file_path = p;
+	download.temp_file_path = partFileName(p);
+	download.potential_default_folder = await path.dirname(p);
 
-			if (folderToUse) {
-				return createDownloadWithFolderDesktop(fileName, folderToUse);
+	await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
+	download.current_size = 0; // Empty file starts at 0 bytes
+	return download;
+}
+
+async function ensureFilePermissions(): Promise<{ success: boolean; error?: string }> {
+	if (!TAURI_MOBILE) {
+		return { success: true }; // Desktop always has permissions
+	}
+
+	try {
+		log.debug('Attempting to invoke plugin:yellow|check_file_permissions');
+		const permissions = await invoke<PermissionStatus>('plugin:yellow|check_file_permissions');
+		log.debug('check_file_permissions result:', permissions);
+		if (permissions.writeExternalStorage !== 'granted' || permissions.readExternalStorage !== 'granted') {
+			log.debug('Permissions not granted, requesting...');
+			const result = await invoke<PermissionStatus>('plugin:yellow|request_file_permissions', {
+				permissions: [PermissionType.WriteExternalStorage, PermissionType.ReadExternalStorage],
+			});
+			log.debug('request_file_permissions result:', result);
+			if (result.writeExternalStorage === 'granted' && result.readExternalStorage === 'granted') {
+				return { success: true };
 			} else {
-				return createDownloadWithDialogDesktop(fileName);
+				return { success: false, error: 'File permissions denied by user' };
 			}
+		}
+		return { success: true };
+	} catch (error) {
+		log.debug('Failed to check/request file permissions:', error);
+		log.debug('Error details:', JSON.stringify(error, null, 2));
+		return {
+			success: false,
+			error: `Failed to check file permissions: ${error instanceof Error ? error.message : String(error)}`,
+		};
+	}
+}
+
+// Mobile-specific helper: Check if a file exists
+async function checkFileExistsMobile(fileName: string): Promise<boolean> {
+	const baseDir = BaseDirectory.AppData;
+
+	log.debug('Checking if file exists (mobile):', {
+		fileName,
+		baseDir,
+	});
+
+	try {
+		const result = await invoke('plugin:yellow|file_exists', {
+			fileName,
 		});
+
+		const exists = result === true;
+		/*		log.debug('File existence check result:', {
+			fileName,
+			baseDir: 'AppData',
+			exists,
+			rawResult: result,
+		});*/
+
+		return exists;
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		const errorStr = JSON.stringify(error, null, 2);
+		log.debug('Error checking file existence:', errorMessage);
+		log.debug('Error details:', errorStr);
+		throw new Error(`File system error checking existence of "${fileName}": ${errorMessage}`);
+	}
+}
+
+// Generic mutex wrapper for download creation operations
+async function withDownloadMutex<T>(operation: () => Promise<T>): Promise<T> {
+	// Wait for any existing download creation operation to complete
+	if (createDownloadMutex) {
+		log.debug('Waiting for existing download creation operation to complete');
+		try {
+			await createDownloadMutex;
+		} catch (error) {
+			// Ignore errors from previous operations
+			log.debug('Previous download creation operation failed, continuing');
+		}
+	}
+
+	// Create a new mutex promise for this operation
+	const currentOperation = operation();
+	createDownloadMutex = currentOperation;
+
+	try {
+		const result = await currentOperation;
+		return result;
+	} finally {
+		// Clear the mutex when this operation completes
+		if (createDownloadMutex === currentOperation) {
+			createDownloadMutex = null;
+		}
 	}
 }
 
@@ -421,18 +631,6 @@ async function saveNativeDownloadChunkDesktop(download: NativeDownload, chunk: B
 	}
 }
 
-export async function saveNativeDownloadChunk(download: NativeDownload, chunk: Blob) {
-	if (download.finished) {
-		throw new Error('Download already finished');
-	}
-
-	if (TAURI_MOBILE) {
-		return saveNativeDownloadChunkMobile(download, chunk);
-	} else {
-		return saveNativeDownloadChunkDesktop(download, chunk);
-	}
-}
-
 // Mobile-specific helper: Finish download
 async function finishNativeDownloadMobile(download: NativeDownload): Promise<any> {
 	log.debug('Finishing download by renaming temp file (mobile):', {
@@ -495,336 +693,4 @@ async function finishNativeDownloadDesktop(download: NativeDownload): Promise<vo
 		fileName: download.original_file_name,
 		path: download.file_path,
 	});
-}
-
-export async function finishNativeDownload(download: NativeDownload) {
-	if (download.finished) {
-		return 'Download already finished';
-	}
-
-	download.finished = true;
-
-	if (TAURI_MOBILE) {
-		return finishNativeDownloadMobile(download);
-	} else {
-		return finishNativeDownloadDesktop(download);
-	}
-}
-
-async function findFreeFileName(folder: string, download: NativeDownload) {
-	log.debug('Starting findFreeFileName (desktop):', {
-		folder,
-		original_file_name: download.original_file_name,
-		baseDir: download.baseDir,
-	});
-
-	let counter = 0;
-	while (true) {
-		let file_name = download.original_file_name + (counter > 0 ? ` (${counter})` : '');
-		const file_path = await path.join(folder, file_name);
-
-		log.debug(`Checking file existence (attempt ${counter + 1}):`, {
-			file_name,
-			file_path,
-			counter,
-		});
-
-		const exists_file = await exists(file_path, { baseDir: download.baseDir });
-		const temp_file_path = partFileName(file_path);
-		const exists_file2 = await exists(temp_file_path, { baseDir: download.baseDir });
-
-		log.debug('File existence check results:', {
-			file_path,
-			temp_file_path,
-			exists_file,
-			exists_file2,
-		});
-
-		if (!exists_file && !exists_file2) {
-			log.debug('Found free filename:', {
-				file_path,
-				temp_file_path,
-			});
-
-			download.file_path = file_path;
-			download.temp_file_path = temp_file_path;
-			try {
-				// Create the temp file
-				log.debug('Creating temp file:', temp_file_path);
-				await writeFile(download.temp_file_path, new Uint8Array(), { baseDir: download.baseDir });
-				download.current_size = 0; // Empty file starts at 0 bytes
-				log.debug('Temp file created successfully');
-			} catch (error) {
-				log.debug('Failed to create temp file in findFreeFileName:', error);
-				log.debug('Error details:', JSON.stringify(error, null, 2));
-				throw error;
-			}
-			log.debug('findFreeFileName completed successfully', {
-				final_path: download.file_path,
-				temp_path: download.temp_file_path,
-			});
-			return;
-		}
-
-		log.debug(`File already exists, trying next counter value: ${counter + 1}`);
-		counter++;
-
-		// Safety check to prevent infinite loops
-		if (counter > 100) {
-			log.debug('Reached maximum number of filename attempts (100)');
-			throw new Error('Could not find a free filename after 100 attempts');
-		}
-	}
-}
-
-function partFileName(file_path: string) {
-	return file_path + '.part';
-}
-
-// Export a file from app storage to system Downloads folder (mobile only)
-export async function exportToSystemDownloads(appFilePath: string, fileName: string, mimeType: string = 'application/octet-stream'): Promise<{ success: boolean; error?: string }> {
-	if (!TAURI_MOBILE) {
-		return { success: false, error: 'This function is only for mobile devices' };
-	}
-
-	try {
-		const result = await invoke('plugin:yellow|export_file_to_downloads', {
-			filePath: appFilePath,
-			fileName: fileName,
-			mimeType: mimeType,
-		});
-
-		log.debug('File exported to Downloads:', result);
-		return { success: true };
-	} catch (error) {
-		log.debug('Failed to export to Downloads:', error);
-		return { success: false, error: error instanceof Error ? error.message : String(error) };
-	}
-}
-
-// Unified API: Export file with system dialog (mobile and desktop)
-export async function exportFileWithDialog(fileName: string, mimeType: string = 'application/octet-stream'): Promise<{ success: boolean; error?: string }> {
-	if (TAURI_MOBILE) {
-		const baseDir = BaseDirectory.AppData;
-
-		log.debug('Opening export dialog for file:', {
-			fileName,
-			mimeType,
-			baseDir: 'AppData',
-		});
-
-		try {
-			// Open save dialog
-			const dialogResult = (await invoke('plugin:yellow|open_save_dialog', {
-				fileName,
-				mimeType,
-				baseDir,
-			})) as { success: boolean; uri?: string; fileName?: string; mimeType?: string };
-
-			if (!dialogResult.success || !dialogResult.uri) {
-				log.debug('Save dialog cancelled by user');
-				return { success: false, error: 'Save dialog cancelled' };
-			}
-
-			log.debug('User selected destination, saving file to URI:', dialogResult.uri);
-
-			// Save the file to the selected URI
-			await invoke('plugin:yellow|save_file_to_uri', {
-				filePath: fileName,
-				uri: dialogResult.uri,
-				baseDir,
-			});
-
-			log.debug('File exported successfully to:', dialogResult.uri);
-			return { success: true };
-		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : String(error);
-			log.debug('Failed to export file:', errorMessage);
-			log.debug('Error details:', JSON.stringify(error, null, 2));
-			return { success: false, error: errorMessage };
-		}
-	} else {
-		return { error: 'This function is only for mobile devices', success: false };
-	}
-}
-
-// Mobile-specific helper: Append string content to file
-async function appendToFileMobile(fileName: string, content: string): Promise<void> {
-	const baseDir = BaseDirectory.AppData;
-
-	log.debug('Appending string content to file (mobile):', {
-		fileName,
-		contentLength: content.length,
-		baseDir: 'AppData',
-	});
-
-	await invoke('plugin:yellow|append_to_file', {
-		fileName,
-		data: btoa(content), // Convert string to base64
-		baseDir,
-	});
-
-	log.debug('Content appended successfully (mobile):', {
-		fileName,
-		contentLength: content.length,
-	});
-}
-
-// Desktop-specific helper: Append string content to file
-async function appendToFileDesktop(fileName: string, content: string): Promise<void> {
-	log.debug('Appending string content to file (desktop):', {
-		fileName,
-		contentLength: content.length,
-	});
-
-	const filePath = await path.join(await path.downloadDir(), fileName);
-	const file = await openFile(filePath, {
-		append: true,
-		baseDir: BaseDirectory.Download,
-	});
-
-	const encoder = new TextEncoder();
-	await file.write(encoder.encode(content));
-	await file.close();
-
-	log.debug('Content appended successfully (desktop):', {
-		fileName,
-		contentLength: content.length,
-	});
-}
-
-// Unified API: Append string content to a file
-export async function appendToFile(fileName: string, content: string): Promise<void> {
-	if (TAURI_MOBILE) {
-		return appendToFileMobile(fileName, content);
-	} else {
-		return appendToFileDesktop(fileName, content);
-	}
-}
-
-// Mobile-specific helper: Rename a file
-async function renameFileMobile(oldName: string, newName: string): Promise<void> {
-	const baseDir = BaseDirectory.AppData;
-
-	log.debug('Renaming file (mobile):', {
-		oldName,
-		newName,
-		baseDir: 'AppData',
-	});
-
-	await invoke('plugin:yellow|rename_file', {
-		oldName,
-		newName,
-		baseDir,
-	});
-
-	log.debug('File renamed successfully (mobile):', {
-		oldName,
-		newName,
-	});
-}
-
-// Desktop-specific helper: Rename a file
-async function renameFileDesktop(oldName: string, newName: string): Promise<void> {
-	log.debug('Renaming file (desktop):', {
-		oldName,
-		newName,
-	});
-
-	const oldPath = await path.join(await path.downloadDir(), oldName);
-	const newPath = await path.join(await path.downloadDir(), newName);
-
-	await rename(oldPath, newPath, {
-		oldPathBaseDir: BaseDirectory.Download,
-		newPathBaseDir: BaseDirectory.Download,
-	});
-
-	log.debug('File renamed successfully (desktop):', {
-		oldName,
-		newName,
-	});
-}
-
-// Unified API: Rename a file
-export async function renameFile(oldName: string, newName: string): Promise<void> {
-	if (TAURI_MOBILE) {
-		return renameFileMobile(oldName, newName);
-	} else {
-		return renameFileDesktop(oldName, newName);
-	}
-}
-
-// Mobile-specific helper: Delete a file
-async function deleteFileMobile(fileName: string): Promise<void> {
-	const baseDir = BaseDirectory.AppData;
-
-	log.debug('Deleting file (mobile):', {
-		fileName,
-		baseDir: 'AppData',
-	});
-
-	await invoke('plugin:yellow|delete_file', {
-		fileName,
-		baseDir,
-	});
-
-	log.debug('File deleted successfully (mobile):', {
-		fileName,
-	});
-}
-
-// Desktop-specific helper: Delete a file
-async function deleteFileDesktop(fileName: string): Promise<void> {
-	log.debug('Deleting file (desktop):', {
-		fileName,
-	});
-
-	const filePath = await path.join(await path.downloadDir(), fileName);
-	await remove(filePath, { baseDir: BaseDirectory.Download });
-
-	log.debug('File deleted successfully (desktop):', {
-		fileName,
-	});
-}
-
-// Unified API: Delete a file
-export async function deleteFile(fileName: string): Promise<void> {
-	if (TAURI_MOBILE) {
-		return deleteFileMobile(fileName);
-	} else {
-		return deleteFileDesktop(fileName);
-	}
-}
-
-// Desktop-specific helper: Create download file in downloads folder
-async function createDownloadFileDesktop(fileName: string): Promise<NativeDownload> {
-	const downloadsDir = await path.downloadDir();
-	const download = new NativeDownload();
-	download.original_file_name = fileName;
-
-	await findFreeFileName(downloadsDir, download);
-	const contentBytes = new TextEncoder().encode('');
-	await writeFile(download.temp_file_path, contentBytes, {
-		baseDir: download.baseDir,
-	});
-
-	return download;
-}
-
-// Unified API: Create a download file with initial content
-export async function createDownloadFile(fileName: string): Promise<NativeDownload | { error: string }> {
-	// For mobile, delegate to the mobile-specific implementation (already has mutex protection)
-	if (TAURI_MOBILE) {
-		const result = await withDownloadMutex(() => createDownloadFileMobileInternal(fileName));
-
-		if ('error' in result) {
-			return result;
-		}
-
-		await appendToFile(result.file_path, '');
-		return result;
-	}
-
-	// Desktop implementation: create in downloads folder (with mutex protection)
-	return withDownloadMutex(() => createDownloadFileDesktop(fileName));
 }

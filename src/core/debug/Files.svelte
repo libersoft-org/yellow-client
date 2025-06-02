@@ -3,7 +3,7 @@
 	import Input from '../components/Input/Input.svelte';
 	import Label from '../components/Label/Label.svelte';
 	import { log, TAURI, TAURI_MOBILE, BROWSER } from '../tauri.ts';
-	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, exportToSystemDownloads, exportFileWithDialog, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
+	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
 	import { platform, type as osType } from '@tauri-apps/plugin-os';
 	import { onMount } from 'svelte';
 
@@ -14,7 +14,7 @@
 	let appendContent = $state('<html><body>Hello from mobile file test!\nAppended content</body></html>');
 
 	let download: NativeDownload | null = $state(null);
-	let result: string = $state('');
+	let result: any = $state('');
 	let platformInfo = $state({
 		tauri: TAURI,
 		tauriMobile: TAURI_MOBILE,
@@ -39,8 +39,13 @@
 		log.debug('testOfferNativeDownload');
 		try {
 			result = 'Testing offerNativeDownload...';
-			download = await offerNativeDownload(fileName, null);
-			result = `Download offered: ${JSON.stringify(download, null, 2)}`;
+			result = await offerNativeDownload(fileName);
+			log.debug('Offer download result:', result);
+			if (result instanceof NativeDownload) {
+				download = result;
+			} else {
+				download = null;
+			}
 		} catch (error) {
 			result = `Error: ${error}`;
 		}
@@ -83,22 +88,15 @@
 		}
 	}
 
-	async function testExportFile() {
+	async function testOpenDownload() {
 		if (TAURI_MOBILE) {
-			if (!download) {
-				result = 'Please create a download first';
-				return;
-			}
-
-			if (!download.finished) {
-				result = 'Download is not finished. Please finish the download first.';
-				return;
-			}
-
 			try {
+				if (!download) {
+					result = 'No download object. Run offerNativeDownload first!';
+					return;
+				}
 				result = 'Opening save dialog...';
-				const filePath = download.file_path;
-				result = await exportFileWithDialog(filePath);
+				result = await openNativeDownload(download);
 				log.debug('Export result:', result);
 			} catch (error) {
 				result = `Error: ${error}`;
@@ -284,7 +282,7 @@
 			<Button onClick={testOfferNativeDownload}>Offer Download</Button>
 			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save Chunk</Button>
 			<Button onClick={testFinishNativeDownload} disabled={!download}>Finish</Button>
-			<Button onClick={testExportFile} disabled={!download}>Export</Button>
+			<Button onClick={testOpenDownload} disabled={!download}>Open</Button>
 		</div>
 
 		<!-- Status Display -->
