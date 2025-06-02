@@ -2,6 +2,8 @@
 	import { fade } from 'svelte/transition';
 	import Icon from '../Icon/Icon.svelte';
 	import MenuItem from '../Menu/MenuItem.svelte';
+	import { setContext } from '@sentry/sveltekit';
+	import { onMount } from 'svelte';
 
 	/* todo, refactor with Button.svelte ? */
 
@@ -13,15 +15,28 @@
 		activeTab?: string;
 		menuItems?: Array<any>;
 		root_crumb?: string;
+		bread_crumbs: Array<any>;
 	};
+
 	// let {  } = $props();
 
 	let { root_crumb, activeTab = $bindable(), menuItems = [] }: Props = $props();
+
+	let bread_crumbs = $state([]);
 
 	let items;
 
 	function setItem(name: string) {
 		activeTab = name;
+	}
+
+	function setBreadcrumb(bread_crumb) {
+		let index = bread_crumbs.indexOf(bread_crumb);
+		if (index > 0) {
+			bread_crumbs.splice(index, bread_crumbs.length - index);
+		} else {
+			bread_crumbs.push(bread_crumb);
+		}
 	}
 </script>
 
@@ -78,20 +93,25 @@
 	}
 </style>
 
-<div class="breadcrumb">
-	{#if activeTab !== ''}
+{#if activeTab !== ''}
+	<div class="breadcrumb">
 		<div class="breadcrumb" in:fade={{ duration: 400 }}>
 			<button onclick={() => setItem('')}>
 				<Icon img="img/home.svg" alt="Settings" colorVariable="--icon-white" size="16px" />
 				{root_crumb}
 			</button>
 			<span>
-				{#each menuItems as item}
-					{#if item.tab === activeTab}
-						{item.title}
-					{/if}
+				{#each bread_crumbs as bread_crumb}
+					<button
+						onclick={() => {
+							setBreadcrumb(bread_crumb);
+							setItem(bread_crumb.tab);
+						}}
+					>
+						{bread_crumb.title}
+					</button>
 				{/each}
 			</span>
 		</div>
-	{/if}
-</div>
+	</div>
+{/if}

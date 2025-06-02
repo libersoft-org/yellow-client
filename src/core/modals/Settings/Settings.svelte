@@ -7,18 +7,16 @@
 	import { fade } from 'svelte/transition';
 	import Icon from '../../components/Icon/Icon.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
-	import { setContext } from 'svelte';
-
-	let bread_crumb = $state(null);
+	import { onMount, setContext } from 'svelte';
 
 	// type Props = {
 	// 	activeTab?: any;
 	// };
 
 	// let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
-	let activeTab = $state("")
-  if(TAURI){
-		activeTab ="general";
+	let activeTab = $state('');
+	if (TAURI) {
+		activeTab = 'general';
 	}
 
 	let menuItems = (
@@ -29,6 +27,7 @@
 						tab: 'general',
 						img: 'img/settings.svg',
 						onClick: () => setItem('general'),
+						svelte_component: SettingsGeneral,
 					},
 				]
 			: []
@@ -38,17 +37,20 @@
 			tab: 'appearance',
 			img: 'img/appearance.svg',
 			onClick: () => setItem('appearance'),
+			svelte_component: SettingsAppearance,
 		},
 		{
 			title: 'Notifications',
 			tab: 'notifications',
 			img: 'img/notification.svg',
 			onClick: () => setItem('notifications'),
+			svelte_component: SettingsNotifications,
 		},
 	]);
-
-	function setItem(name) {
-		activeTab = name;
+	let bread_crumb;
+	function setItem(item) {
+		activeTab = item.tab;
+		bread_crumb.setBreadcrumb(item);
 	}
 
 	let menuItemProps = {
@@ -60,13 +62,12 @@
 		borderLeft: '1px solid var(--color-disabled-background)',
 		borderRight: '1px solid var(--color-disabled-background)',
 		borderRadius: '10px',
-    colorVariable: "--color-default-foreground"
-	}
+		colorVariable: '--color-default-foreground',
+	};
 
 	onMount(() => {
-		setContext("bread_crumb": bread_crumb);
-	})
-
+		setContext('bread_crumb', bread_crumb);
+	});
 </script>
 
 <style>
@@ -88,16 +89,14 @@
 
 	{#each menuItems as item}
 		{#if activeTab === ''}
-			<MenuItem img={item.img} title={item.title} colorVariable={menuItemProps.colorVariable} bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item.tab)} />
+			<MenuItem img={item.img} title={item.title} colorVariable={menuItemProps.colorVariable} bgColor={menuItemProps.bgColor} textColor={menuItemProps.textColor} hoverColor={menuItemProps.hoverColor} borderTop={menuItemProps.borderTop} borderBottom={menuItemProps.borderBottom} borderLeft={menuItemProps.borderLeft} borderRight={menuItemProps.borderRight} borderRadius={menuItemProps.borderRadius} onClick={() => setItem(item)} />
 		{/if}
 	{/each}
 	<div class="tab-content">
-		{#if activeTab === 'general'}
-			<SettingsGeneral />
-		{:else if activeTab === 'appearance'}
-			<SettingsAppearance />
-		{:else if activeTab === 'notifications'}
-			<SettingsNotifications />
-		{/if}
+		{#each menuItems as item}
+			{#if activeTab == item.tab}
+				<svelte:component this={activeTab.svelte_component} />
+			{/if}
+		{/each}
 	</div>
 </div>
