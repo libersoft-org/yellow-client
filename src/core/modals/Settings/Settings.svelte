@@ -17,14 +17,32 @@
 
 	// let activeTab = $state('');
 
-	let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
+	let {
+		activeTab = $bindable(
+			TAURI
+				? {
+						title: 'General',
+						tab: 'general',
+						img: 'img/settings.svg',
+						// onClick: () => setItem('general'),
+						svelte_component: SettingsGeneral,
+					}
+				: false
+		),
+	}: Props = $props();
 
 	let subTab = $state('');
 	let bread_crumb;
 
-	if (TAURI) {
-		activeTab = 'general';
-	}
+	// if (TAURI) {
+	// 	activeTab = {
+	// 					title: 'General',
+	// 					tab: 'general',
+	// 					img: 'img/settings.svg',
+	// 					// onClick: () => setItem('general'),
+	// 					svelte_component: SettingsGeneral,
+	// 				};
+	// }
 
 	let menuItems = (
 		TAURI
