@@ -1,6 +1,13 @@
 <script>
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Table from '@/core/components/Table/Table.svelte';
+	import Thead from '@/core/components/Table/TableThead.svelte';
+	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
+	import Tbody from '@/core/components/Table/TableTbody.svelte';
+	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAddEdit from './TokenListAddEdit.svelte';
 	import ModalDel from './TokenListDel.svelte';
@@ -72,11 +79,6 @@
 		display: flex;
 		gap: 10px;
 	}
-
-	.icons {
-		display: flex;
-		gap: 10px;
-	}
 </style>
 
 <div class="token-list">
@@ -87,34 +89,34 @@
 	<div class="label">Network name: {net?.name}</div>
 	<div class="label">Tokens:</div>
 	{#if net?.tokens}
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Icon</th>
-					<th>Symbol</th>
-					<th>Token address</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-			<tbody>
+		<Table>
+			<Thead>
+				<TheadTr>
+					<Th>Name</Th>
+					<Th>Icon</Th>
+					<Th>Symbol</Th>
+					<Th>Token address</Th>
+					<Th>Action</Th>
+				</TheadTr>
+			</Thead>
+			<Tbody>
 				{#each net.tokens as t, i}
-					<tr>
-						<td>{t.name}</td>
-						<td>{t.icon}</td>
-						<td>{t.symbol}</td>
-						<td>{t.contract_address}</td>
-						<td>
+					<TbodyTr>
+						<Td>{t.name}</Td>
+						<Td>{t.icon}</Td>
+						<Td>{t.symbol}</Td>
+						<Td>{t.contract_address}</Td>
+						<Td>
 							<div class="icons">
 								<!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
-								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => editTokenModal(t)} />
-								<Icon img="img/del.svg" alt="Delete token" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => delTokenModal(t)} />
+								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenModal(t)} />
+								<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenModal(t)} />
 							</div>
-						</td>
-					</tr>
+						</Td>
+					</TbodyTr>
 				{/each}
-			</tbody>
-		</table>
+			</Tbody>
+		</Table>
 	{/if}
 </div>
 <Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />

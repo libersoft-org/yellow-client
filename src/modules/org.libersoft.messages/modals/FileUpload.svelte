@@ -123,7 +123,7 @@
 			{humanSize(file.size)}
 		</Td>
 		<Td title="Action">
-			<Icon img="img/del.svg" colorVariable="--icon-red" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} />
+			<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} />
 		</Td>
 	</TbodyTr>
 {/snippet}
