@@ -23,9 +23,9 @@
 		min-height: var(--size);
 		height: var(--size);
 		padding: 10px;
-		border: 2px solid #aaa;
+		border: 2px solid var(--default-foreground);
 		border-radius: 50%;
-		background-color: #fff;
+		background-color: var(--default-background);
 		box-shadow: var(--shadow);
 	}
 </style>
@@ -33,7 +33,7 @@
 {#if visible}
 	<BaseButton {onClick}>
 		<div class="scroll-button" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}">
-			<Icon img="img/caret-{direction ? 'up' : 'down'}.svg" alt={direction ? '˄' : '˅'} colorVariable="--icon-gray" size="32px" padding="0px" />
+			<Icon img="img/caret-{direction ? 'up' : 'down'}.svg" alt={direction ? '˄' : '˅'} colorVariable="--default-foreground" size="32px" padding="0px" />
 		</div>
 	</BaseButton>
 {/if}

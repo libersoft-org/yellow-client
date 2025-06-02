@@ -3,10 +3,6 @@
 :root {
 	--menu-height: 58px;
 	--shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-	--icon-gray: #888;
-	--icon-yellow: #fd1;
-	--icon-red: #dc2626;
-	--icon-blue: #00f;
 }
 
 * {

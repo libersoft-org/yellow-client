@@ -8,7 +8,7 @@ export const default_theme = {
 	properties: {
 		'--primary-foreground': '#222',
 		'--primary-softer-background': '#ffe',
-		'--primary-soft-background': '#ffd',
+		'--primary-soft-background': '#fec',
 		'--primary-background': '#fc1',
 		'--primary-hard-background': '#fa0',
 		'--primary-harder-background': '#d80',
@@ -56,17 +56,16 @@ export let current_theme = derived([selected_theme_index, themes_stored], ([$sel
 
 selected_theme_index.subscribe(value => {
 	log.debug('selected_theme_index changed to', value);
-	//   console.log($themes_stored[value].properties);
+	// console.log($themes_stored[value].properties);
 	Object.keys(get(themes_stored)[value].properties).forEach(key => {
-		//   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
+		// console.log(`${key}: ${$themes_stored[value].properties[key]}`);
 		document.documentElement.style.setProperty(key, get(themes_stored)[value].properties[key]);
 	});
 });
 current_theme.subscribe(() => {
-	//   console.log($themes_stored[value].properties);
-
+	// console.log($themes_stored[value].properties);
 	Object.keys(get(themes_stored)[get(selected_theme_index)].properties).forEach(key => {
-		//   console.log(`${key}: ${$themes_stored[value].properties[key]}`);
+		// console.log(`${key}: ${$themes_stored[value].properties[key]}`);
 		document.documentElement.style.setProperty(key, get(themes_stored)[get(selected_theme_index)].properties[key]);
 	});
 });

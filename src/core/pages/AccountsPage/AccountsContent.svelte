@@ -106,8 +106,8 @@
 				<Td title="Enabled">{account.enabled ? 'Yes' : 'No'}</Td>
 				<Td title="Action">
 					<TableActionItems>
-						<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
-						<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => clickDel(account.id, account.settings?.title)} />
+						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
+						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id, account.settings?.title)} />
 					</TableActionItems>
 				</Td>
 			</TbodyTr>

@@ -97,8 +97,8 @@
 						</Td>
 						<Td title="Action">
 							<TableActionItems>
-								<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => editItemModal(a)} />
-								<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => deleteItemModal(a)} />
+								<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editItemModal(a)} />
+								<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => deleteItemModal(a)} />
 							</TableActionItems>
 						</Td>
 					</TbodyTr>
