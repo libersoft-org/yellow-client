@@ -1,11 +1,7 @@
 <script lang="ts">
 	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import { getColorFromCSSToFilter } from '../../utils/colors.js';
-
-	import { current_theme, selected_theme_index } from '../../appearance_store.js';
-
-	//  import { selected_theme_index } from '../../appearance_store.js';
-	import { derived } from 'svelte/store';
+	import { current_theme } from '../../appearance_store.js';
 
 	interface Props {
 		img: string;
@@ -22,7 +18,15 @@
 
 	let { img, alt = '', size = '24px', padding = '10px', visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false, 'data-testid': dataTestId }: Props = $props();
 
-	let filtered_color = $derived(selected_theme_index > -1 || 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';');
+	let filter = $derived.by(() => {
+		// dummy use of $current_theme because this needs to be reactive on theme changes
+		const t = $current_theme;
+		//console.log('colorVariable', colorVariable, 'current_theme', t);
+		if (colorVariable && t) {
+			return 'filter: ' + getColorFromCSSToFilter(colorVariable);
+		}
+		return '';
+	});
 </script>
 
 <style>
@@ -53,7 +57,7 @@
 
 {#snippet icon()}
 	<div class="icon {!visibleOnMobile && 'hideOnMobile'} {!visibleOnDesktop && 'hideOnDesktop'}" style="padding: {padding};">
-		<img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {/* check if theme changed or was edited */ $selected_theme_index > -1 && $current_theme && colorVariable && 'filter: ' + getColorFromCSSToFilter(colorVariable) + ';'}" src={img} draggable={false} {alt} />
+		<img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {filter};" src={img} draggable={false} {alt} />
 	</div>
 {/snippet}
 

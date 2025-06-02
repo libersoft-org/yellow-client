@@ -7,7 +7,7 @@
 		active?: boolean;
 		onClick?: (e: Event) => void;
 	}
-	let { children = null, even = false, active = false, onClick }: Props = $props();
+	let { children, even = false, active = false, onClick }: Props = $props();
 
 	function handleClick(e) {
 		console.log('SidebarItem clicked');

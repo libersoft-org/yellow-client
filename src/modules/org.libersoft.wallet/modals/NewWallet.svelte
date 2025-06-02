@@ -117,11 +117,6 @@
 		justify-content: center;
 	}
 
-	.cell {
-		padding: 5px;
-		border: 1px solid #000;
-	}
-
 	.buttons {
 		display: flex;
 		justify-content: center;
