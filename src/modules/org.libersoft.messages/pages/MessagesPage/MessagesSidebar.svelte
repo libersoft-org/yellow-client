@@ -66,7 +66,7 @@
 		padding-right: 0;
 		font-weight: bold;
 
-		:global(.base-button) {
+		:global(.clickable) {
 			flex: 1 1 auto;
 			min-width: 0;
 		}

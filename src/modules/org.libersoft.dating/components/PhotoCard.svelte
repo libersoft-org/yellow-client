@@ -80,7 +80,7 @@
 		text-align: center;
 	}
 
-	.buttons {
+	.card-buttons {
 		display: flex;
 		width: 100%;
 		justify-content: space-around;
@@ -95,7 +95,7 @@
 		<h2>{photo.name}</h2>
 		<p>{photo.description}</p>
 	</div>
-	<div class="buttons">
+	<div class="card-buttons">
 		<CardButton on:click={onNo} content="👎" />
 		<CardButton on:click={onYes} content="👍" />
 	</div>

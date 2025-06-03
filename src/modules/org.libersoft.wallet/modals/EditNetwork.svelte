@@ -1,5 +1,6 @@
 <script>
 	import { networks } from '../wallet.ts';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	export let close;
@@ -56,11 +57,6 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.modal-edit-network .buttons {
-		display: flex;
-		gap: 10px;
-	}
 </style>
 
 <div class="modal-edit-network">
@@ -94,8 +90,8 @@
 		{/each}
 		<Button text="Add RPC URL" onClick={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
 	</div>
-	<div class="buttons">
+	<ButtonBar>
 		<Button text="Cancel" onClick={close} />
 		<Button img="img/save.svg" text="Save" onClick={saveAndClose} />
-	</div>
+	</ButtonBar>
 </div>

@@ -121,13 +121,13 @@
 		transition: none;
 	}
 
-	.account-bar > :global(.base-button) {
+	.account-bar > :global(.clickable) {
 		width: 100%;
 	}
 
 	/* TODO: experimental highlight for accessibility, in future this should be defined globally as class and support themes */
-	.account-bar > :global(.base-button:focus-visible),
-	.account-bar .items :global(.base-button:focus-visible) {
+	.account-bar > :global(.clickable:focus-visible),
+	.account-bar .items :global(.clickable:focus-visible) {
 		outline: none;
 		box-shadow: inset 0 0 0 2px white; /* Inside highlight */
 	}

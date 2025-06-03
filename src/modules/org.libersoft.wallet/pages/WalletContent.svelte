@@ -177,7 +177,7 @@
 			width: 100%;
 		}
 
-		:global(.base-button) {
+		:global(.clickable) {
 			display: flex;
 			width: 100%;
 		}

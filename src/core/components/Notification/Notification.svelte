@@ -1,5 +1,6 @@
 <script>
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { log } from '../../tauri.ts';
 	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
@@ -176,11 +177,6 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
  }*/
-
-	.bottom .buttons {
-		display: flex;
-		gap: 10px;
-	}
 </style>
 
 <Clickable
@@ -220,11 +216,11 @@
 		{/if}
 		{#if data.buttons}
 			<div class="bottom">
-				<div class="buttons">
+				<ButtonBar>
 					{#each data.buttons as b}
 						<Clickable text={b.text} onClick={e => b.onClick(b, b.id)} />
 					{/each}
-				</div>
+				</ButtonBar>
 			</div>
 		{/if}
 	</div>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile, isMobile } from '@/core/core.js';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -74,16 +75,6 @@
 		}
 	}
 
-	.buttons {
-		display: flex;
-		gap: clamp(8px, 0.8vw, 12px);
-		flex-wrap: wrap;
-
-		@media only screen and (max-width: 32em) {
-			justify-content: flex-start;
-		}
-	}
-
 	:global(.button) {
 		white-space: nowrap;
 	}
@@ -132,11 +123,11 @@
 	</TopBar>
 	<div class="accounts-wrapper">
 		<Paper>
-			<div class="buttons">
+			<ButtonBar>
 				<Button img="img/accounts.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} />
 				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
 				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} />
-			</div>
+			</ButtonBar>
 			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>
 	</div>

@@ -116,12 +116,6 @@
 		display: flex;
 		justify-content: center;
 	}
-
-	.buttons {
-		display: flex;
-		justify-content: center;
-		gap: 10px;
-	}
 </style>
 
 {#if qrCodeData}
@@ -141,8 +135,8 @@
 		{/each}
 	</Tbody>
 </Table>
-<div class="buttons">
+<ButtonBar>
 	<Button img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={save} />
 	<Button img="modules/{module.identifier}/img/print.svg" colorVariable="--primary-foreground" text="Print" onClick={print} />
 	<Button img="modules/{module.identifier}/img/regenerate.svg" colorVariable="--primary-foreground" text="Regenerate" onClick={regenerate} />
-</div>
+</ButtonBar>
