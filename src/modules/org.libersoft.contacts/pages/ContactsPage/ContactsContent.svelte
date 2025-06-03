@@ -32,5 +32,4 @@
 </style>
 
 <div class="content">Contact list - content page - not yet implemented</div>
-
 <Dialog data={dialogData} bind:close={closeDialog} bind:this={elDialog} />
