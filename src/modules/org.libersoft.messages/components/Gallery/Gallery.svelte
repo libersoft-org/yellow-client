@@ -174,7 +174,7 @@
 						<img src={$currentFile.url} alt={$currentFile.fileName} />
 					{:else}
 						<div>
-							<Spinner color="white" />
+							<Spinner />
 						</div>
 					{/if}
 					<div class="image-caption">

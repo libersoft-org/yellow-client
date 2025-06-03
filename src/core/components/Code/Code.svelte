@@ -41,7 +41,7 @@
 		if (!selection) return;
 
 		// Find the correct node and offset
-		const nodeStack = [elDiv];
+		const nodeStack: Node[] = [elDiv];
 		let currentNode;
 		let charCount = 0;
 		let foundNode = null;

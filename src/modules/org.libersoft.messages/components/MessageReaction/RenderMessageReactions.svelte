@@ -51,7 +51,12 @@
 		if (!reactions || !reactions.length) {
 			return '';
 		}
-		const myUserAddress = get(active_account).credentials.address;
+		const activeAccount = get(active_account);
+		if (!activeAccount) {
+			console.warn('No active account available');
+			return;
+		}
+		const myUserAddress = activeAccount.credentials.address;
 		const didIReact = reactions.some(r => r.user_address === myUserAddress);
 		const otherReactionAddresses = reactions.filter(r => r.user_address !== myUserAddress).map(r => r.user_address);
 
