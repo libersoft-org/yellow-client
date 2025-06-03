@@ -40,7 +40,7 @@
 	}
 </style>
 
-<BaseButton {onClick} {onMousedown} height="100%">
+<BaseButton {onClick} {onMousedown}>
 	<div class="item {active ? 'active' : ''}">
 		{#if icon}
 			<Icon img={icon} alt={label} {colorVariable} size="24px" padding="0px" />

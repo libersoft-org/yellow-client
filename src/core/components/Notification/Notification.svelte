@@ -222,7 +222,7 @@
 			<div class="bottom">
 				<div class="buttons">
 					{#each data.buttons as b}
-						<BaseButton text={b.text} onClick={e => b.onClick(b, b.id)} expand={b.expand} />
+						<BaseButton text={b.text} onClick={e => b.onClick(b, b.id)} />
 					{/each}
 				</div>
 			</div>

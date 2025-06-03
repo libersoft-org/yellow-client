@@ -5,6 +5,7 @@
 		children?: Snippet;
 		onClick?: (e: Event) => void;
 	}
+
 	let { children, onClick }: Props = $props();
 </script>
 

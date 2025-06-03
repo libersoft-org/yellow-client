@@ -78,7 +78,6 @@
 
 	:global(.message.outgoing .message-attachment-accept-btn) {
 		display: flex;
-		justify-content: right;
 	}
 
 	:global(.message.outgoing) .actions {
