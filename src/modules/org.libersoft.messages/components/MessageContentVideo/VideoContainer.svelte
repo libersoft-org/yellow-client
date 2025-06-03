@@ -83,6 +83,10 @@
 
 		videoStarting = true;
 		const acc = get(active_account);
+		if (!acc) {
+			console.warn('No active account available');
+			return;
+		}
 		const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
 		//const progressiveUrl = 'http://localhost:3001/'
 		debug('Progressive URL:', progressiveUrl);

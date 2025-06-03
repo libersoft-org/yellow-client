@@ -173,7 +173,7 @@
 	</div>
 	<div class="footer">
 		<div class="section">
-			<Switch showLabel label="Dark mode" />
+			<Switch showLabel label="Dark mode" checked={false} />
 		</div>
 		<div class="section">
 			<Clickable onClick={() => openPage(link)}>

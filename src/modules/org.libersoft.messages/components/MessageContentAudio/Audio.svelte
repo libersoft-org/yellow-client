@@ -102,6 +102,10 @@
 			return;
 		}
 		const acc = get(active_account);
+		if (!acc) {
+			console.warn('No active account available');
+			return;
+		}
 		const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
 		const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
 
