@@ -7,9 +7,9 @@
 	import { fade } from 'svelte/transition';
 	import Icon from '../../components/Icon/Icon.svelte';
 
-	type Props = {
+	interface Props {
 		activeTab?: any;
-	};
+	}
 
 	let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
 	let subTab = $state('');

@@ -3,9 +3,9 @@
 	import 'prismjs/components/prism-json';
 	import { log } from '@/core/tauri.ts';
 
-	type Props = {
+	interface Props {
 		code: string;
-	};
+	}
 
 	let { code = $bindable(' ') }: Props = $props();
 

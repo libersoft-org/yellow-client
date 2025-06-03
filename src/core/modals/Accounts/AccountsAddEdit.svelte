@@ -10,12 +10,12 @@
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	import { derived, get, writable } from 'svelte/store';
-	type Props = {
+	interface Props {
 		close: () => void;
 		params: { id: string | null };
 		isInWelcomeWizard?: boolean;
 		save_id?: (id: string) => void;
-	};
+	}
 	let { close, params, isInWelcomeWizard = false, save_id }: Props = $props();
 	let protocolElem: any = null;
 	let protocol = $state('amtp');

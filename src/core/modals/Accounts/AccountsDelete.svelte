@@ -2,13 +2,13 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import { delAccount } from '../../accounts_config.js';
 
-	type Props = {
+	interface Props {
 		close: () => void;
 		params: {
 			id: string;
 			name: string;
 		};
-	};
+	}
 
 	let { close, params = $bindable() }: Props = $props();
 

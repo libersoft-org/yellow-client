@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Label from '@/core/components/Label/Label.svelte';
 
-	type Props = {
+	interface Props {
 		checked: boolean;
 		showLabel?: boolean;
 		label: string;
 		orientation?: 'horizontal' | 'vertical';
-	};
+	}
 
 	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal' }: Props = $props();
 

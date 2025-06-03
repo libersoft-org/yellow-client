@@ -13,12 +13,12 @@
 	import { m } from '@/lib/paraglide/messages.js';
 	import { TAURI } from '@/core/tauri.ts';
 
-	type Props = {
+	interface Props {
 		close: () => void;
 		params: { id: string | null };
 		isInWelcomeWizard?: boolean;
 		save_id?: (id: string) => void;
-	};
+	}
 
 	let { close, params, isInWelcomeWizard = false, save_id }: Props = $props();
 

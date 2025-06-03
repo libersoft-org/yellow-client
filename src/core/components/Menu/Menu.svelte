@@ -10,10 +10,10 @@
 	import { product, link } from '../../core.js';
 	import { BROWSER } from '@/core/tauri.ts';
 
-	type Props = {
+	interface Props {
 		showMenu: boolean;
 		showModalSettings: boolean;
-	};
+	}
 
 	let { showMenu = $bindable(false), showModalSettings = false }: Props = $props();
 	let elDialogExit: InstanceType<typeof DialogExit>;

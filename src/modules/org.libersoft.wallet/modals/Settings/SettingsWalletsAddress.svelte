@@ -2,10 +2,10 @@
 	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
-	type Props = {
+	interface Props {
 		address: string;
 		colorVariable?: string;
-	};
+	}
 
 	let { address = $bindable(), colorVariable = '--primary-foreground' }: Props = $props();
 	let spanElem = $state();

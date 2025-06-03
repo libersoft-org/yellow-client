@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-
-	type Props = {
+	interface Props {
 		children: Snippet;
 		background?: string;
 		hover?: boolean;
-	};
+	}
 
 	const { children, background = 'var(--primary-soft-background)', hover = true }: Props = $props();
 </script>

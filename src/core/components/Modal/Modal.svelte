@@ -14,7 +14,7 @@
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
-	type Props = {
+	interface Props {
 		show?: boolean;
 		params?: any;
 		title?: string;
@@ -24,7 +24,7 @@
 		children?: Snippet;
 		breadcrumbs?: Snippet | null;
 		onShowChange?: (show: boolean) => void;
-	};
+	}
 
 	$effect(() => {
 		if (!isMobile) return;
