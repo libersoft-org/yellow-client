@@ -168,7 +168,7 @@ async function configureMessagesSettings(
 async function openGlobalSettings(page: Page): Promise<void> {
 	return await test.step('Open global settings', async () => {
 		await page.getByRole('button', { name: '☰' }).click();
-		await page.getByRole('button', { name: 'Settings Settings' }).click();
+		await page.getByTestId('menu-item-settings').click();
 	});
 }
 

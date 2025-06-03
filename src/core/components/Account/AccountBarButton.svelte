@@ -3,10 +3,9 @@
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
-		onClick?: (e: Event) => void;
 	}
 
-	let { children, onClick }: Props = $props();
+	let { children, ...restProps }: Props = $props();
 </script>
 
 <style>
@@ -24,7 +23,7 @@
 	}
 </style>
 
-<Clickable {onClick}>
+<Clickable {...restProps}>
 	<div class="accounts-button">
 		{@render children?.()}
 	</div>
