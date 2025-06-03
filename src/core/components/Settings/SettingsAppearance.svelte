@@ -97,7 +97,7 @@
 						<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
 					</Button>
 				{:else}
-					<Select type="number" bind:value={$selected_theme_index} current-index={$selected_theme_index}>
+					<Select bind:value={$selected_theme_index}>
 						{#each $themes_stored as theme, index (theme.name + index)}
 							<Option text={theme.name} value={index} />
 						{/each}

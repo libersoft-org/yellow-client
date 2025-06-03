@@ -35,6 +35,7 @@ export interface Account {
 	pingTimer?: ReturnType<typeof setInterval>;
 	reconnectTimer?: ReturnType<typeof setTimeout>;
 	modulesAvailableHandler?: (event: Event) => void;
+	sessionErrorHandler?: (event: Event) => void;
 }
 
 export type AccountStore = Writable<Account>;
