@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set CLIENT_PATH_BASE=$args[1]
+CLIENT_PATH_BASE="$1"
 
 [ -d "./build/" ] && rm -r build
 bun i --frozen-lockfile
