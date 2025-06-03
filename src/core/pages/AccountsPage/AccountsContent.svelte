@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile, isMobile } from '@/core/core.js';
+	import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '@/core/core.js';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
@@ -19,6 +19,7 @@
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
+	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 
 	interface Props {
@@ -115,10 +116,8 @@
 <div class="accounts">
 	<TopBar>
 		<svelte:fragment slot="left">
-			{#if $isMobile}
-				<Icon img="img/back.svg" onClick={back} colorVariable="--primary-foreground" visibleOnDesktop={false} />
-			{/if}
-			<h1 class="title">Account management</h1>
+			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+			<TopBarTitle text="Account management" />
 		</svelte:fragment>
 	</TopBar>
 	<div class="accounts-wrapper">

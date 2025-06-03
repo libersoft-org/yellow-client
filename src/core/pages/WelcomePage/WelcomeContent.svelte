@@ -1,11 +1,17 @@
 <script>
+	import TopBar from '../../components/TopBar/TopBar.svelte';
+	import TopBarTitle from '../../components/TopBar/TopBarTitle.svelte';
 	import Clickable from '../../components/Clickable/Clickable.svelte';
 	import Icon from '../../components/Icon/Icon.svelte';
 	import VersionInfo from '../../components/VersionInfo/VersionInfo.svelte';
-	import { product, link } from '../../core.js';
+	import { hideSidebarMobile, product, link } from '../../core.js';
 
 	function clickLogo() {
 		window.open(link, '_blank');
+	}
+
+	function back() {
+		hideSidebarMobile.set(false);
 	}
 </script>
 
@@ -34,6 +40,12 @@
 	}
 </style>
 
+<TopBar>
+	<svelte:fragment slot="left">
+		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+		<TopBarTitle text="Welcome" />
+	</svelte:fragment>
+</TopBar>
 <div class="welcome">
 	<Clickable onClick={clickLogo}>
 		<div class="logo">

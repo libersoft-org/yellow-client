@@ -40,7 +40,7 @@
 <TopBar>
 	<svelte:fragment slot="left">
 		{#if $isMobile}
-			<Icon img="img/back.svg" alt="Back" colorVariable="--primary-foreground" padding="10px" onClick={clickClose} />
+			<Icon img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
 		{/if}
 		<Photo size="38px" radius={$photoRadius} />
 		<div class="description">

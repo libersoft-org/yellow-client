@@ -87,13 +87,19 @@
 		margin-bottom: 10px;
 		z-index: 3000;
 	}
+
+	.overlay .title {
+		font-size: 24px;
+		font-weight: bold;
+		padding-bottom: 10px;
+	}
 </style>
 
 <div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" on:touchstart={e => startSwipe(e)} on:touchmove={e => moveSwipe(e)} on:touchend={e => endSwipe(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
-		<h2>{photo.name}</h2>
-		<p>{photo.description}</p>
+		<div class="title">{photo.name}</div>
+		<div>{photo.description}</div>
 	</div>
 	<div class="card-buttons">
 		<CardButton on:click={onNo} content="👎" />

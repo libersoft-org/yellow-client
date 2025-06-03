@@ -18,7 +18,6 @@
 	import History from './History.svelte';
 	import Dropdown from '../components/Dropdown.svelte';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
-
 	let section = 'balance';
 	let showModalNetworks = false;
 	let showModalWallets = false;
@@ -192,7 +191,7 @@
 <div class="wallet-content">
 	<TopBar>
 		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--primary-foreground" visibleOnDesktop={false} />
+			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
 		</svelte:fragment>
 		<svelte:fragment slot="right">

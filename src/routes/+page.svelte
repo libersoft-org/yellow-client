@@ -373,7 +373,7 @@
 </svelte:head>
 <div class="app" style:--sidebar-width={sidebarWidth}>
 	<div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
-		<Menu bind:showMenu={isMenuOpen} {product} {version} {link} />
+		<Menu bind:showMenu={isMenuOpen} />
 		<MenuBar onOpenMenu={() => (isMenuOpen = true)} />
 		<AccountBar />
 		<ModuleBar {onSelectModule} {onCloseModule} />
@@ -394,7 +394,7 @@
 		{:else if selectedModuleDecl}
 			<svelte:component this={selectedModuleDecl.panels.content} bind:this={content} />
 		{:else}
-			<WelcomeContent {product} {version} {link} />
+			<WelcomeContent />
 		{/if}
 	</div>
 </div>
