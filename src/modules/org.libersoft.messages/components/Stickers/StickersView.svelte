@@ -1,5 +1,5 @@
 <script>
-	import { debug } from '@/core/core.js';
+	import { debug } from '@/core/core.ts';
 	import { identifier } from '../../messages.js';
 	import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
 	import { liveQuery } from 'dexie';
@@ -10,7 +10,7 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import InputButton from '@/core/components/Input/InputButton.svelte';
 	import StickersSearchResults from './StickersSearchResults.svelte';
-	import { isMobile } from '@/core/core.js';
+	import { isMobile } from '@/core/core.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { onMount, untrack } from 'svelte';
 

@@ -1,5 +1,5 @@
 <script>
-	import { active_account, module_decls, selected_module_id } from '../../core.js';
+	import { active_account, module_decls, selected_module_id } from '../../core.ts';
 	import { get } from 'svelte/store';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';

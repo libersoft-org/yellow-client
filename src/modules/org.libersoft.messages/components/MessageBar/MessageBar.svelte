@@ -1,5 +1,5 @@
 <script>
-	import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.js';
+	import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.ts';
 	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
 	import { onMount, setContext, tick, getContext } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

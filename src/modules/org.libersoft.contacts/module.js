@@ -1,4 +1,4 @@
-import { registerModule } from '@/core/core.js';
+import { registerModule } from '@/core/core.ts';
 import { initData } from './contacts.js';
 import ContactsSidebar from './pages/ContactsPage/ContactsSidebar.svelte';
 import ContactsContent from './pages/ContactsPage/ContactsContent.svelte';

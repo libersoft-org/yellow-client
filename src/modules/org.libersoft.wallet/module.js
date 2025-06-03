@@ -1,4 +1,4 @@
-import { registerModule } from '@/core/core.js';
+import { registerModule } from '@/core/core.ts';
 /* note: components import wallet.ts, so everything is still imported on startup.. */
 import Sidebar from './pages/WalletSidebar.svelte';
 import Content from './pages/WalletContent.svelte';

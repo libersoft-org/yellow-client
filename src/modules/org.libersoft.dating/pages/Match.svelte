@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { hideSidebarMobile } from '@/core/core.js';
+	import { hideSidebarMobile } from '@/core/core.ts';
 	import { module } from '../module.js';
 	import { page } from '../dating.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';

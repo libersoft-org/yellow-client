@@ -7,7 +7,7 @@
 	import Switch from '../Switch/Switch.svelte';
 	import DialogExit from '../../dialogs/Exit.svelte';
 	import VersionInfo from '../VersionInfo/VersionInfo.svelte';
-	import { product, link } from '../../core.js';
+	import { product, link } from '../../core.ts';
 	import { BROWSER } from '@/core/tauri.ts';
 
 	interface Props {

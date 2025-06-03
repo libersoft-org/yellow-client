@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { module } from '../module.js';
 	import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
-	import { hideSidebarMobile, debug } from '@/core/core.js';
+	import { hideSidebarMobile, debug } from '@/core/core.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';

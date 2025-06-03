@@ -1,5 +1,5 @@
 <script>
-	import core, { active_account, isMobile, selected_module_id } from '@/core/core.js';
+	import core, { active_account, isMobile, selected_module_id } from '@/core/core.ts';
 	import { identifier, online } from '../../messages.js';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';

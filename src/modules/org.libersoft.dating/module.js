@@ -1,4 +1,4 @@
-import { registerModule } from '@/core/core.js';
+import { registerModule } from '@/core/core.ts';
 import Sidebar from './pages/DatingSidebar.svelte';
 import Content from './pages/DatingContent.svelte';
 

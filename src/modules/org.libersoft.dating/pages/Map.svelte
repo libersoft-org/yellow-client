@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { hideSidebarMobile } from '@/core/core.js';
+	import { hideSidebarMobile } from '@/core/core.ts';
 	import { page } from '../dating.js';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';

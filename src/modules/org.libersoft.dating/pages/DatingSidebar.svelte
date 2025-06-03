@@ -1,5 +1,5 @@
 <script>
-	import core from '@/core/core.js';
+	import core from '@/core/core.ts';
 	import Item from '../components/SidebarItem.svelte';
 	import { page } from '../dating.js';
 	const sections = [

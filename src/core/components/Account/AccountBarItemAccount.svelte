@@ -2,7 +2,7 @@
 	import AccountBarButton from './AccountBarButton.svelte';
 	import AccountStatusIcon from './AccountStatusIcon.svelte';
 	import AccountTitle from './AccountTitle.svelte';
-	import { debug } from '../../core.js';
+	import { debug } from '../../core.ts';
 	export let account;
 	export let clickSelectAccount;
 </script>

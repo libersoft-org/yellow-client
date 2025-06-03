@@ -1,5 +1,5 @@
 <script>
-	import { debug } from '@/core/core.js';
+	import { debug } from '@/core/core.ts';
 	import { onMount } from 'svelte';
 	import { fetchStickerset } from '../stickers.js';
 	import StickerSet from '../components/Stickers/StickerSet.svelte';

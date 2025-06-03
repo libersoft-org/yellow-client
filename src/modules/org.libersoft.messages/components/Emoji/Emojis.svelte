@@ -1,5 +1,5 @@
 <script>
-	import { debug, active_account, isMobile } from '@/core/core.js';
+	import { debug, active_account, isMobile } from '@/core/core.ts';
 	import { getContext, onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { identifier } from '../../messages.js';

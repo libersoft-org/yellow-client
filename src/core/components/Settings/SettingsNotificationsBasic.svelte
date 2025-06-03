@@ -18,7 +18,7 @@
 	import { deleteExampleNotifications, setNotificationsEnabled } from '../../notifications.ts';
 	import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
 	import { deleteNotification, updateExampleNotification, exampleNotifications } from '../../notifications.ts';
-	import { debug } from '@/core/core.js';
+	import { debug } from '@/core/core.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { skipFirst } from '$lib/skipfirst_store.ts';
 
