@@ -137,6 +137,10 @@
 	function clickSave() {
 		console.log('[ACTION] Clicked SAVE for ID:', params.id);
 		if (!verify()) return;
+		if (params.id === null) {
+			console.error('[ERROR] Cannot save account without ID');
+			return;
+		}
 		saveAccount(
 			params.id,
 			{
@@ -154,7 +158,7 @@
 		);
 		console.log('[ACTION] Account saved:', params.id);
 		retry_nonce++;
-		if (params.id !== null) save_id?.(params.id);
+		save_id?.(params.id);
 		wizard?.setNextText('Next');
 		close();
 	}

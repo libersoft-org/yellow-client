@@ -58,8 +58,8 @@ export function accountConfigExistsByCredentials(server: string, address: string
 	const currentConfig = get(accounts_config);
 	const identifier = `${server}\\\\${address}`;
 	return currentConfig.some(account => {
-		const accountServer = account.credentials?.server || (account as any).server;
-		const accountAddress = account.credentials?.address || (account as any).address;
+		const accountServer = account.credentials?.server;
+		const accountAddress = account.credentials?.address;
 		return `${accountServer}\\\\${accountAddress}` === identifier;
 	});
 }

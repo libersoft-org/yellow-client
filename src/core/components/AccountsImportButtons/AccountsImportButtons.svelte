@@ -113,8 +113,8 @@
 			accounts_config.update(current => {
 				const identifier = `${newServer}\\\\${newAddress}`;
 				return current.map(account => {
-					const accountServer = account.credentials?.server || account.server;
-					const accountAddress = account.credentials?.address || account.address;
+					const accountServer = account.credentials?.server;
+					const accountAddress = account.credentials?.address;
 					const accountIdentifier = `${accountServer}\\\\${accountAddress}`;
 					return accountIdentifier === identifier ? currentConflictAccount : account;
 				});
