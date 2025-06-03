@@ -3,9 +3,9 @@
 	import MenuBarDebug from './MenuBarDebug.svelte';
 	import { product } from '../../core.js';
 
-	type Props = {
+	interface Props {
 		onOpenMenu: () => void;
-	};
+	}
 
 	let { onOpenMenu }: Props = $props();
 </script>

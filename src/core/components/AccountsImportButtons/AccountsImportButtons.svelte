@@ -5,11 +5,11 @@
 	import { get } from 'svelte/store';
 	import { log } from '@/core/tauri.ts';
 
-	type Props = {
+	interface Props {
 		importText: string;
 		close: () => void;
 		onError: (message: string) => void;
-	};
+	}
 
 	let { importText, close, onError }: Props = $props();
 

@@ -1,6 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
+	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
+
 	let elDialog;
 	let closeDialog;
 	let dialogData = {

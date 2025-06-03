@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { truncateTextEnd } from '@/core/utils/textUtils';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import messageBarReplyStore, { ReplyToType } from '../../stores/MessageBarReplyStore.ts';
 
-	interface MessageBarReplyProps {
+	interface Props {
 		name: string;
 		replyToMessage: string;
 		onClose: () => void;
 	}
 
-	let { name, replyToMessage, onClose }: MessageBarReplyProps = $props();
+	let { name, replyToMessage, onClose }: Props = $props();
 </script>
 
 <style>

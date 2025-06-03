@@ -3,11 +3,11 @@
 	import { onMount } from 'svelte';
 	import { getMessageByUid } from '../../messages.js';
 
-	interface ReplyContainerProps {
+	interface Props {
 		messageUid: string;
 	}
 
-	let { messageUid }: ReplyContainerProps = $props();
+	let { messageUid }: Props = $props();
 	let message = $state<any>(null);
 	let loading = $state(false);
 

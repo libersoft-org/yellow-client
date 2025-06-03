@@ -8,10 +8,10 @@
 	import Emoji from '../Emoji/Emoji.svelte';
 	import { rgi } from '../../emojis';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-	interface MessageReactionProps {
+	interface Props {
 		message: any;
 	}
-	let { message }: MessageReactionProps = $props();
+	let { message }: Props = $props();
 	let buttonRef: HTMLElement;
 	let floatingRef = $state<HTMLElement>();
 	let show = $state(false);

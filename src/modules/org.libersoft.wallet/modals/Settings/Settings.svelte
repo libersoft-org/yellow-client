@@ -7,9 +7,9 @@
 	import { fade } from 'svelte/transition';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
-	type Props = {
+	interface Props {
 		activeTab?: string;
-	};
+	}
 
 	let { activeTab = $bindable('general') }: Props = $props();
 

@@ -2,14 +2,14 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLButtonAttributes, MouseEventHandler } from 'svelte/elements';
 
-	interface BaseButtonProps extends HTMLButtonAttributes {
+	interface Props extends HTMLButtonAttributes {
 		children: Snippet;
 		onClick?: MouseEventHandler<HTMLButtonElement>;
 		onRightClick?: MouseEventHandler<HTMLButtonElement>;
 		onMousedown?: MouseEventHandler<HTMLButtonElement>;
 	}
 
-	let { children, onClick, onRightClick, onMousedown, ...restProps }: BaseButtonProps = $props();
+	let { children, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
 </script>
 
 <style>

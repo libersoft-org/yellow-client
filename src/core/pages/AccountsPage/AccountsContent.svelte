@@ -20,14 +20,14 @@
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 
-	type Props = {
+	interface Props {
 		showAddEditAccountModal: boolean;
 		showDelAccountModal: boolean;
 		showExportModal: boolean;
 		showImportModal: boolean;
 		idItem: string | null;
 		accountTitle: string;
-	};
+	}
 
 	let { showAddEditAccountModal = $bindable(false), showDelAccountModal = false, showExportModal = $bindable(false), showImportModal = $bindable(false), idItem = $bindable(null), accountTitle = $bindable('') }: Props = $props();
 
