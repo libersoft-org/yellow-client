@@ -1,5 +1,5 @@
 <script>
-	import CardButton from './photo-card-button.svelte';
+	import CardButton from './PhotoCardButton.svelte';
 	export let photo;
 	//export let onYes;
 	//export let onNo;
