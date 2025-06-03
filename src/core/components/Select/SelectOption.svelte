@@ -1,6 +1,6 @@
 <script lang="ts">
 	interface Props {
-		value?: string;
+		value?: string | number;
 		text?: string;
 		selected?: boolean;
 		disabled?: boolean;

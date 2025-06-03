@@ -22,8 +22,12 @@
 
 		// Get all text content up to cursor
 		const range = selection.getRangeAt(0).cloneRange();
-		range.setStart(elDiv, 0);
-		range.setEnd(selection.focusNode, selection.focusOffset);
+		if (elDiv) {
+			range.setStart(elDiv, 0);
+		}
+		if (selection.focusNode) {
+			range.setEnd(selection.focusNode, selection.focusOffset);
+		}
 		return range.toString().length;
 	}
 
@@ -62,7 +66,7 @@
 				// Process children in reverse order (for stack)
 				const children = Array.from(currentNode.childNodes);
 				for (let i = children.length - 1; i >= 0; i--) {
-					nodeStack.push(children[i]);
+					nodeStack.push(children[i] as ChildNode);
 				}
 			}
 		}
@@ -103,7 +107,9 @@
 				// Delay restoration to allow DOM updates
 				setTimeout(() => {
 					setCursorPosition(lastCursorPos);
-					elDiv.focus();
+					if (elDiv) {
+						elDiv.focus();
+					}
 				}, 0);
 			}
 		} catch (error) {
@@ -168,7 +174,7 @@
 		border: 1px solid #888;
 		scrollbar-width: none;
 		background-color: #222;
-		foreground-color: #fff3eb;
+		color: #fff3eb;
 		max-width: 500px;
 		width: 100vw;
 		max-width: 700px;
@@ -378,13 +384,13 @@
 	onpaste={pastePlainText}
 	onfocus={() => {
 		// Ensure we have content for cursor to appear when focused
-		if (!elDiv.innerHTML || elDiv.innerHTML.trim() === '') {
+		if (elDiv && (!elDiv.innerHTML || elDiv.innerHTML.trim() === '')) {
 			elDiv.innerHTML = '<code class="language-json"> </code>';
 			// Place cursor at beginning
 			const selection = window.getSelection();
 			if (selection) {
 				const range = document.createRange();
-				const codeElement = elDiv.querySelector('code');
+				const codeElement = elDiv?.querySelector('code');
 				if (codeElement && codeElement.firstChild) {
 					range.setStart(codeElement.firstChild, 0);
 					range.collapse(true);

@@ -95,7 +95,9 @@
 		if (get(active_account) === null) {
 			log.debug('maybeActivateAccount: accounts.length:', get(accounts).length);
 			if (get(accounts).length > 0) {
-				const id = get(get(accounts)[get(accounts).length - 1]).id;
+				const lastAccountStore = get(accounts)[get(accounts).length - 1];
+				const lastAccount = get(lastAccountStore);
+				const id = lastAccount.id;
 				log.debug('maybeActivateAccount: setting active_account_id to last account:', id);
 				active_account_id.set(id);
 			}

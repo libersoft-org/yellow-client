@@ -90,8 +90,8 @@
 					</div>
 				</Td>
 			{/if}
-			<Td>Theme:</Td>
-			<Td>
+			<Td title="Theme">Theme:</Td>
+			<Td title="Theme Options">
 				{#if expanded}
 					<Button onClick={click_expand}>
 						<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
@@ -127,7 +127,7 @@
 
 	<Table>
 		<Tbody>
-			<TbodyTr class="color_properties">
+			<TbodyTr>
 				{#if expanded}
 					<Td title="Name">
 						<Input type="text" bind:value={$themes_stored[$selected_theme_index].name} />
