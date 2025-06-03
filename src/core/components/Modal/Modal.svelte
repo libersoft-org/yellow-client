@@ -22,7 +22,7 @@
 		height?: string;
 		children?: Snippet;
 		onShowChange?: (show: boolean) => void;
-		onOptionalIconClick: any;
+		onOptionalIconClick: (e: Event) => void;
 		optionalIconImage: any;
 	}
 
