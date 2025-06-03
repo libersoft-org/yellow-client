@@ -271,7 +271,7 @@
 						{/if}
 						<ModalBody {close} {params} bind:activeTab />
 					{:else if children}
-						{@render children()}
+						{@render children?.()}
 					{/if}
 				</div>
 			{/if}

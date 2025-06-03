@@ -1,15 +1,13 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-
 	interface Props {
-		children: Snippet;
+		children?: Snippet;
 		bare?: boolean;
 		appended?: boolean;
 		prepended?: boolean;
 		background?: string;
 		size?: 'lg' | '';
 	}
-
 	const { bare, appended, prepended, size = '', background, children, ...restProps }: Props = $props();
 </script>
 
@@ -37,5 +35,5 @@
 </style>
 
 <section class:appended class:prepended class:lg={size === 'lg'} class:bare {...restProps}>
-	{@render children()}
+	{@render children?.()}
 </section>

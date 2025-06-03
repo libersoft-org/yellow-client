@@ -1,10 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-
 	interface Props {
-		children: Snippet;
+		children?: Snippet;
 	}
-
 	let { children }: Props = $props();
 
 	function portal(node: HTMLElement) {
@@ -28,5 +26,5 @@
 </script>
 
 <div hidden use:portal>
-	{@render children()}
+	{@render children?.()}
 </div>

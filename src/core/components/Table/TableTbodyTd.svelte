@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	interface Props {
-		children: Snippet;
+		children?: Snippet;
 		title: string;
 	}
 	let { children, title }: Props = $props();
@@ -81,5 +81,5 @@
 </style>
 
 <td data-title={title}>
-	{@render children()}
+	{@render children?.()}
 </td>
