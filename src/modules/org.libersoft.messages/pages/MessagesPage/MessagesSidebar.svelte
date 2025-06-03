@@ -72,10 +72,6 @@
 		}
 	}
 
-	.bar-buttons .bar-button.grow {
-		flex: 1;
-	}
-
 	.new-conversation {
 		height: fit-content;
 		white-space: nowrap;

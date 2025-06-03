@@ -18,29 +18,6 @@
 	}
 </script>
 
-<style>
-	table {
-		border-spacing: 0;
-		overflow: hidden;
-	}
-
-	tr.even {
-		background-color: var(--secondary-soft-background);
-	}
-
-	tr.odd {
-		background-color: var(--primary-lighter-background);
-	}
-
-	tr:hover {
-		background-color: var(--primary-background);
-	}
-
-	td {
-		padding: 5px;
-	}
-</style>
-
 <Input placeholder="Search" bind:value={filter} />
 <Accordion items={$wallets} bind:activeIndex>
 	{#snippet content(wallet)}
