@@ -11,13 +11,11 @@
 	import { TAURI } from '@/core/tauri.ts';
 	import { zoom } from '@/core/settings.ts';
 	import { setZoom } from '@/core/zoom.ts';
-	import Input from '@/core/components/Input/Input.svelte';
-	import { selected_theme_index, current_theme, themes_stored, default_theme } from '../../appearance_store.js';
-	import Icon from '../Icon/Icon.svelte';
-	import Button from '../Button/Button.svelte';
-	import { convertFromShortHex } from '@/core/utils/colors.js';
 
-	import ButtonBar from '../Button/ButtonBar.svelte';
+	import { selected_theme_index, current_theme, themes_stored } from '../../appearance_store.js';
+
+	import Button from '../Button/Button.svelte';
+
 	import SettingsThemes from './SettingsThemes.svelte';
 
 	let { setItem = () => {} } = $props();
@@ -27,7 +25,6 @@
 		$current_theme.properties;
 		$selected_theme_index;
 	});
-	// let activeTab = $state('general');
 </script>
 
 <style>
@@ -73,8 +70,6 @@
 						setItem({
 							title: 'Theme Manager',
 							tab: 'theme',
-							// img: 'img/themes.svg',
-							// onClick: () => setItem('themes'),
 							component: SettingsThemes,
 						})}
 				/>

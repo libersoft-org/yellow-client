@@ -1,47 +1,23 @@
 <script lang="ts">
 	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
-	import SettingsAppearance from '../../components/Settings/SettingsAppearance.svelte';
-	import SettingsNotifications from '../../components/Settings/SettingsNotifications.svelte';
-	import SettingsGeneral from '../../components/Settings/SettingsGeneral.svelte';
-	import SettingsThemes from '../../components/Settings/SettingsThemes.svelte';
 	import { TAURI } from '@/core/tauri.ts';
-	import { fade } from 'svelte/transition';
-	import Icon from '../../components/Icon/Icon.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { onMount, setContext, type Snippet } from 'svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	// import MenuItem from '@/core/components/Menu/MenuItem.svelte';
 
 	type Props = {
 		activeTab?: any;
 		title: string;
 		menuItems: Array<any> | false;
-		// subTabs: Array<any> | false;
 		header: Snippet | false;
 		footer: Snippet | false;
 		children: any;
 		onOptionalIconClick: any;
 		optionalIconImage: any;
-		// setItem: any,
-		// isChild: boolean,
 	};
 
-	// let activeTab = $state('');
-
-	let {
-		activeTab = $bindable(),
-		title = 'Settings',
-		menuItems = [],
-		// subTabs = false,
-		children = false,
-		header = false,
-		footer = false,
-		// setItem = false,
-		// isChild = false,
-		onOptionalIconClick = $bindable(),
-		optionalIconImage = $bindable(),
-	}: Props = $props();
+	let { activeTab = $bindable(), title = 'Settings', menuItems = [], children = false, header = false, footer = false, onOptionalIconClick = $bindable(), optionalIconImage = $bindable() }: Props = $props();
 
 	let bread_crumb;
 	onMount(() => {
