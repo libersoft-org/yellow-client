@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Button from '../../components/Button/Button.svelte';
-	import Code from '../../components/Code/Code.svelte';
-	import AccountsImportButtons from '../../components/AccountsImportButtons/AccountsImportButtons.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
+	import Code from '@/core/components/Code/Code.svelte';
+	import AccountsImportButtons from '@/core/components/Account/AccountsImportButtons.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import jsQR from 'jsqr';
 

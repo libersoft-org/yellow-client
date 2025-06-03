@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Code from '../../components/Code/Code.svelte';
-	import AccountsImportButtons from '../../components/AccountsImportButtons/AccountsImportButtons.svelte';
+	import Code from '@/core/components/Code/Code.svelte';
+	import AccountsImportButtons from '@/core/components/Account/AccountsImportButtons.svelte';
 
 	interface Props {
 		close: () => void;
