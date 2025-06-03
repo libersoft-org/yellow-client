@@ -5,15 +5,18 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
 	import Portal from '../Portal/Portal.svelte';
-	let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
+	let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
 	let zIndex = $state(100);
-	let activeTab = $state('');
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
+	let optionalIconImage = $state<string | null>();
+
+	let onOptionalIconClick = $state<(e: Event) => void | null>();
+
 	type Props = {
 		show?: boolean;
 		params?: any;
@@ -22,13 +25,12 @@
 		width?: string;
 		height?: string;
 		children?: Snippet;
-		breadcrumbs?: Snippet | null;
 		onShowChange?: (show: boolean) => void;
 	};
 
 	$effect(() => {
 		if (!isMobile) return;
-		if (modalEl && showContent && !isDragging && activeTab) {
+		if (modalEl && showContent && !isDragging) {
 			centerModal();
 			requestAnimationFrame(snapTransformIntoBounds);
 		}
@@ -157,8 +159,11 @@
 		onShowChange?.(value);
 	}
 
-	function clearActiveTab() {
-		activeTab = '';
+	// like button
+	function handleOptionalIconClick(e) {
+		if (onOptionalIconClick) {
+			onOptionalIconClick(e);
+		}
 	}
 
 	function onkeydown(event: KeyboardEvent) {
@@ -251,8 +256,8 @@
 				<div class="header" role="none" tabindex="-1">
 					{#if title}
 						<div class="title">
-							{#if activeTab}
-								<Icon img="img/back.svg" alt="Back" colorVariable="--primary-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
+							{#if optionalIconImage}
+								<Icon img={optionalIconImage} alt="" colorVariable="--primary-foreground" size="20px" padding="10px" onClick={handleOptionalIconClick} />
 							{/if}
 							{title}
 						</div>
@@ -266,10 +271,7 @@
 						params: <code>{JSON.stringify({ params })}</code>
 					{/if}
 					{#if typeof ModalBody === 'function'}
-						{#if breadcrumbs}
-							{@render breadcrumbs()}
-						{/if}
-						<ModalBody {close} {params} bind:activeTab />
+						<ModalBody {close} {params} bind:onOptionalIconClick bind:optionalIconImage />
 					{:else if children}
 						{@render children()}
 					{/if}

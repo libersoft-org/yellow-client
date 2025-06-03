@@ -17,10 +17,10 @@
 	import Button from '../Button/Button.svelte';
 	import { convertFromShortHex } from '@/core/utils/colors.js';
 
-	let { setSubItem, subTab, setItem = () => {} } = $props();
-
 	import ButtonBar from '../Button/ButtonBar.svelte';
 	import SettingsThemes from './SettingsThemes.svelte';
+
+	let { setItem = () => {} } = $props();
 
 	$effect(() => {
 		$themes_stored;
@@ -28,10 +28,6 @@
 		$selected_theme_index;
 	});
 	// let activeTab = $state('general');
-
-	function openAlerts() {
-		setSubItem('theme');
-	}
 </script>
 
 <style>
@@ -64,24 +60,25 @@
 				</Td>
 			{/if}
 		</TbodyTr>
+		<TbodyTr>
+			<Td title="Theme">
+				<Select type="number" bind:value={$selected_theme_index} current-index={$selected_theme_index} style="width:150px;">
+					{#each $themes_stored as theme, index (theme.name + index)}
+						<Option text={theme.name} value={index} />
+					{/each}
+				</Select>
+				<Button
+					img="img/edit.svg"
+					onClick={() =>
+						setItem({
+							title: 'Theme Manager',
+							tab: 'theme',
+							// img: 'img/themes.svg',
+							// onClick: () => setItem('themes'),
+							component: SettingsThemes,
+						})}
+				/>
+			</Td>
+		</TbodyTr>
 	</Tbody>
 </Table>
-
-<ButtonBar>
-	<Select type="number" bind:value={$selected_theme_index} current-index={$selected_theme_index} style="width:150px;">
-		{#each $themes_stored as theme, index (theme.name + index)}
-			<Option text={theme.name} value={index} />
-		{/each}
-	</Select>
-
-	<Button
-		onClick={() =>
-			setItem({
-				title: 'Theme',
-				tab: 'theme',
-				img: 'img/themes.svg',
-				// onClick: () => setItem('themes'),
-				svelte_component: SettingsThemes,
-			})}>Manage Themes</Button
-	>
-</ButtonBar>

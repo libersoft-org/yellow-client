@@ -21,6 +21,7 @@
 	import Accordion from '../Accordion/Accordion.svelte';
 	import ButtonBar from '../Button/ButtonBar.svelte';
 	import TableActionItems from '../Table/TableActionItems.svelte';
+	import SettingsThemeEditor from './SettingsThemeEditor.svelte';
 
 	$effect(() => {
 		$themes_stored;
@@ -28,13 +29,27 @@
 		$selected_theme_index;
 	});
 
-	let theme_properties = Object.entries($current_theme.properties);
-
 	let expanded = $state(false);
+	let edited_theme_index = $state(1);
 
-	function click_expand() {
+	function editTheme(index) {
+		edited_theme_index = index;
+		expand();
+	}
+
+	function deleteTheme(index) {
+		if ($themes_stored.length > 1 && index > 0) {
+			$selected_theme_index = 0;
+			themes_stored.update(arr => arr.filter(theme => $themes_stored.indexOf(theme) !== index));
+		}
+	}
+
+	function expand() {
 		expanded = !expanded;
-		console.log(expanded);
+	}
+
+	function setTheme(index) {
+		$selected_theme_index = index;
 	}
 
 	function create_new_theme() {
@@ -44,13 +59,13 @@
 		$selected_theme_index = $themes_stored.length - 1;
 	}
 
-	function delete_current_theme() {
-		if ($themes_stored.length > 1 && $selected_theme_index > 0) {
-			let current_index = $selected_theme_index;
-			$selected_theme_index = 0;
-			themes_stored.update(arr => arr.filter(theme => $themes_stored.indexOf(theme) !== current_index));
-		}
-	}
+	// function delete_current_theme() {
+	// 	if ($themes_stored.length > 1 && $selected_theme_index > 0) {
+	// 		let current_index = $selected_theme_index;
+	// 		$selected_theme_index = 0;
+	// 		themes_stored.update(arr => arr.filter(theme => $themes_stored.indexOf(theme) !== current_index));
+	// 	}
+	// }
 </script>
 
 <style>
@@ -107,21 +122,7 @@
 	<Table>
 		<Tbody>
 			<TbodyTr class="color_properties">
-				{#if expanded}
-					<TbodyTd title="Name">
-						<Input type="text" bind:value={$themes_stored[$selected_theme_index].name} />
-					</TbodyTd>
 
-					<TbodyTr>
-						{#each theme_properties as theme_property_name, theme_property_value}
-							<TbodyTd title={theme_property_name[0]}>
-								<input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} />
-
-								{$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
-							</TbodyTd>
-						{/each}
-					</TbodyTr>
-				{/if}
 			</TbodyTr>
 		</Tbody>
 	</Table>
@@ -141,44 +142,57 @@
 		</TbodyTd>
 	</TbodyTr>
 {/each} -->
+{#if !expanded}
+	<div class="addressbook">
+		<ButtonBar>
+			<Button
+				onClick={() => {
+					create_new_theme();
+					editTheme($themes_stored.length - 1);
+				}}
+			>
+				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" />
+			</Button>
+		</ButtonBar>
+		{#if $themes_stored.length > 0}
+			<Table breakpoint="0">
+				<Thead>
+					<TheadTr>
+						<Th>Name</Th>
 
-<div class="addressbook">
-	<ButtonBar>
-		<Button
-			onClick={() => {
-				click_expand();
-				create_new_theme();
-			}}
-		>
-			<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" />
-		</Button>
-	</ButtonBar>
-	{#if $themes_stored.length > 0}
-		<Table breakpoint="0">
-			<Thead>
-				<TheadTr>
-					<Th>Name</Th>
+						<Th>Action</Th>
+					</TheadTr>
+				</Thead>
+				<Tbody>
+					{#each $themes_stored as theme, index}
+						<TbodyTr>
+							<Td title="Name">
+								<b>{theme.name}</b>
+							</Td>
+							<Td title="Action">
+								<TableActionItems>
+									<Icon img="img/appearance.svg" alt="Set" size="20px" padding="5px" onClick={() => setTheme(index)} />
+									{#if index > 0}
+										<Icon img="img/edit.svg" alt="Edit" size="20px" padding="5px" onClick={() => editTheme(index)} />
+										<Icon img="img/del.svg" alt="Delete" size="20px" padding="5px" onClick={() => deleteTheme(index)} />
+									{/if}
+								</TableActionItems>
+							</Td>
+						</TbodyTr>
+					{/each}
+				</Tbody>
+			</Table>
+		{/if}
+	</div>
+{/if}
 
-					<Th>Action</Th>
-				</TheadTr>
-			</Thead>
-			<Tbody>
-				{#each $themes_stored as theme, index}
-					<TbodyTr>
-						<Td title="Name">
-							<b>{theme.name}</b>
-						</Td>
-						<Td title="Action">
-							<TableActionItems>
-								{#if index > 0}
-									<Icon img="img/edit.svg" alt="Edit" colorVariable="--icon-blue" size="20px" padding="5px" onClick={() => {}} />
-									<Icon img="img/del.svg" alt="Delete" colorVariable="--icon-red" size="20px" padding="5px" onClick={() => {}} />
-								{/if}
-							</TableActionItems>
-						</Td>
-					</TbodyTr>
-				{/each}
-			</Tbody>
-		</Table>
-	{/if}
-</div>
+{#if expanded}
+	<Button
+		onClick={() => {
+			expand();
+		}}
+	>
+		<Icon img="img/close.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" />
+	</Button>
+	<SettingsThemeEditor {edited_theme_index} />
+{/if}

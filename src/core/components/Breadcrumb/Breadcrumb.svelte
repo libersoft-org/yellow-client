@@ -41,6 +41,10 @@
 	// function setItem(name: string) {
 	// 	activeTab = name;
 	// }
+	export function back() {
+		bread_crumbs.pop();
+		return bread_crumbs[bread_crumbs.length - 1];
+	}
 
 	export function setBreadcrumb(bread_crumb) {
 		console.log(bread_crumb.title);
@@ -75,7 +79,7 @@
 		display: flex;
 		flex-direction: row;
 		border: none;
-		padding: 6px;
+		/* padding: 6px; */
 		border-radius: 10px;
 		background: none;
 		color: var(--default-background);
@@ -89,8 +93,9 @@
 
 		&:not(:first-child)::before {
 			content: '>';
-			margin: 0 5px;
+			margin: 0 2px;
 			color: white;
+			transform: translateX(-5px);
 		}
 
 		&:last-child {
@@ -139,7 +144,7 @@
 						setItem(bread_crumb);
 					}}
 				>
-					<div class="breadcrumb-button-text" style="margin-left:2px;">{bread_crumb.title}</div>
+					<div class="breadcrumb-button-text" style="">{bread_crumb.title}</div>
 				</button>
 			{/each}
 
