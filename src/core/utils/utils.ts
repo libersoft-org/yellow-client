@@ -12,3 +12,9 @@ export function order(dict: { [key: string]: { order?: number; id: number | stri
 	//console.log('ORDER result:', result);
 	return result;
 }
+
+export function getGuid(length = 40) {
+	let result = '';
+	while (result.length < length) result += Math.random().toString(36);
+	return result;
+}

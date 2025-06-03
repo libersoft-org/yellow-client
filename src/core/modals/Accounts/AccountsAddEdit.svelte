@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, untrack } from 'svelte';
 	import { addAccount, findAccountConfig, saveAccount } from '@/core/accounts_config.js';
-	import { accounts, accountExists } from '@/core/core.js';
+	import { accounts, accountConfigExistsByCredentials } from '@/core/core.js';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -45,7 +45,7 @@
 	});
 
 	let account = derived([accounts, account_id_store], ([$accounts, $id]) => {
-		const found = $accounts.find((acc: { id: string }) => acc.id === $id);
+		const found = $accounts.find(acc => get(acc).id === $id);
 		console.log('[DERIVED] account_id_store =', $id, '→ found account:', found ? get(found) : null);
 		return found ?? null;
 	});
@@ -102,7 +102,7 @@
 			return false;
 		}
 		// Check if account already exists when adding new account
-		if (params.id === null && accountExists(credentials_server, credentials_address)) {
+		if (params.id === null && accountConfigExistsByCredentials(credentials_server, credentials_address)) {
 			error = 'Account with this server and address already exists';
 			console.warn('[VERIFY] Account already exists:', credentials_server, credentials_address);
 			return false;

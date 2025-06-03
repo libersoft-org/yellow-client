@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Button from '../Button/Button.svelte';
 	import Dialog from '../Dialog/Dialog.svelte';
-	import { accounts_config, accountExists, accounts, active_account_id, active_account } from '../../core.js';
+	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account_id, active_account } from '../../core.js';
 	import { get } from 'svelte/store';
 	import { log } from '@/core/tauri.ts';
 
@@ -77,7 +77,7 @@
 
 		const account = remainingAccounts.shift();
 
-		if (accountExists(account.credentials?.server, account.credentials?.address)) {
+		if (accountConfigExistsByCredentials(account.credentials?.server, account.credentials?.address)) {
 			// Account exists, show conflict dialog
 			currentConflictAccount = account;
 			conflictDialog?.open();
