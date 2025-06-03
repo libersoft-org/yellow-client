@@ -1,7 +1,7 @@
 <script>
 	import SidebarItem from '@/core/components/SidebarItem/SidebarItem.svelte';
-	import Photo from '../Photo/Photo.svelte';
-	import { selectedConversation, ensureConversationDetails } from '../../messages.js';
+	import Photo from '@/core/Photo/Photo.svelte';
+	import { selectedConversation, ensureConversationDetails, photoRadius } from '../../messages.js';
 	export let c;
 	export let clickItem;
 
@@ -69,7 +69,7 @@
 <SidebarItem data-testid={testid} active={c.address === $selectedConversation?.address} onClick={() => clickItem(c)}>
 	<div class="item">
 		<div class="item-row">
-			<Photo size="50px" />
+			<Photo size="50px" radius={$photoRadius} />
 			<div class="description">
 				<div class="contact">
 					{#if c.visible_name}
