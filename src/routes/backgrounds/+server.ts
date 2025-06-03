@@ -9,11 +9,8 @@ async function getDirectoryContents(dirPath: string): Promise<any> {
 
 	for (const item of items) {
 		const itemPath = join(dirPath, item.name);
-		if (item.isFile()) {
-			contents.push(item.name);
-		}
+		if (item.isFile()) contents.push(item.name);
 	}
-
 	return contents;
 }
 
@@ -21,7 +18,6 @@ export const GET: RequestHandler = async () => {
 	try {
 		const staticPath = join(process.cwd(), 'static/img/background');
 		const contents = await getDirectoryContents(staticPath);
-
 		return json(contents);
 	} catch (error) {
 		return json({ error: 'Failed to read static directory' }, { status: 500 });
