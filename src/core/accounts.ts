@@ -1,10 +1,11 @@
-import { log } from '@/core/tauri.ts';
+import { log, TAURI_MOBILE } from '@/core/tauri.ts';
 import { derived, get, writable } from 'svelte/store';
 import { debug, selected_module_id, active_account_id } from '@/core/stores.ts';
 import { send, sendAsync, handleSocketMessage } from '@/core/socket.ts';
 import { updateModulesComms } from '@/core/modules.ts';
 import { accounts_config } from '@/core/accounts_config.ts';
 import { tick } from 'svelte';
+import { invoke } from '@tauri-apps/api/core';
 import type { Account, AccountStore, AccountConfig, AccountCredentials, AccountSettings } from './types.ts';
 
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;

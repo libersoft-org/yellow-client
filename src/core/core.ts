@@ -11,7 +11,7 @@ import { accounts_init, accounts, active_account_store, active_account, selectAc
 export { accounts, active_account_store, active_account, selectAccount, active_account_module_data, findAccount };
 
 // Import accounts config
-import { accounts_config, findAccountConfig, accountConfigExistsByCredentials } from './accounts_config.ts';
+import { accounts_config, accounts_config_init, findAccountConfig, accountConfigExistsByCredentials } from './accounts_config.ts';
 export { accounts_config, findAccountConfig, accountConfigExistsByCredentials };
 export const accountConfigExistsById = (id: string): boolean => !!findAccountConfig(id);
 
@@ -30,6 +30,7 @@ export { send, sendAsync };
 export function init(): () => void {
 	let subs = initModules();
 	subs.push(accounts_init());
+	subs.push(accounts_config_init());
 
 	// return an unsubscriber
 	return () => {
