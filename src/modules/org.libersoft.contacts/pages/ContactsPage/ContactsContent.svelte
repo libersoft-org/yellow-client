@@ -1,8 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
-	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
-
 	let elDialog;
 	let closeDialog;
 	let dialogData = {
@@ -34,4 +32,5 @@
 </style>
 
 <div class="content">Contact list - content page - not yet implemented</div>
+
 <Dialog data={dialogData} bind:close={closeDialog} bind:this={elDialog} />
