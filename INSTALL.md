@@ -33,14 +33,20 @@ bun i
 
 ## 2. Use this software
 
-If you'd like to \*\*build this software from source code:
+If you'd like to build this software from source code:
 
-### Set up the URL path:
+Run build script with the parameter of your base URL path where your web server will serve this software. This is important if you are not serving it from the root of your domain.
 
-Set the base URL path where your web server will serve this software. This is important if you are not serving it from the root of your domain.
+For web root (for example: https://YOUR_SERVER/) just run:
 
 ```sh
-CLIENT_PATH_BASE= ./build.sh
+./build.sh
+```
+
+For other web path (for example https://YOUR_SERVER/client/) run:
+
+```sh
+./build.sh "/client"
 ```
 
 ... and then move the content of your "**build**" folder to your web server.
