@@ -2,7 +2,6 @@
 	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
 	import { getColorFromCSSToFilter } from '../../utils/colors.js';
 	import { current_theme } from '../../appearance_store.js';
-
 	interface Props {
 		img: string;
 		alt?: string;
@@ -15,16 +14,12 @@
 		isButton?: boolean;
 		'data-testid'?: string;
 	}
-
 	let { img, alt = '', size = '24px', padding = '10px', visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false, 'data-testid': dataTestId }: Props = $props();
-
 	let filter = $derived.by(() => {
 		// dummy use of $current_theme because this needs to be reactive on theme changes
 		const t = $current_theme;
 		//console.log('colorVariable', colorVariable, 'current_theme', t);
-		if (colorVariable && t) {
-			return 'filter: ' + getColorFromCSSToFilter(colorVariable);
-		}
+		if (colorVariable && t) return 'filter: ' + getColorFromCSSToFilter(colorVariable);
 		return '';
 	});
 </script>
@@ -60,7 +55,6 @@
 		<img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {filter};" src={img} draggable={false} {alt} />
 	</div>
 {/snippet}
-
 {#if img}
 	{#if onClick || isButton}
 		<BaseButton {onClick} data-testid={dataTestId}>

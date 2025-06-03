@@ -6,5 +6,5 @@
 </style>
 
 <div class="items">
-	<slot></slot>
+	<slot />
 </div>

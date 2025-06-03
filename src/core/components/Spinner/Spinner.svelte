@@ -1,12 +1,12 @@
 <script lang="ts">
 	interface Props {
 		show?: boolean;
-		color?: string;
+		colorVariable?: string;
 		size?: string;
 		containerMinHeight?: string;
 	}
 
-	let { show = true, color = '#000000', size = '40px', containerMinHeight = '72px' }: Props = $props();
+	let { show = true, colorVariable = '--default-foreground', size = '40px', containerMinHeight = '72px' }: Props = $props();
 </script>
 
 <style>
@@ -29,7 +29,7 @@
 	}
 </style>
 
-<div class="container" style="--spinner-color: {color}" style:min-height={containerMinHeight}>
+<div class="container" style="--spinner-color: var({colorVariable})" style:min-height={containerMinHeight}>
 	{#if show}
 		<div class="spinner" style:width={size} style:height={size}></div>
 	{/if}
