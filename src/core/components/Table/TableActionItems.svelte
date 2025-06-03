@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		children: Snippet;
+		children?: Snippet;
 	}
 
 	const { children }: Props = $props();
@@ -15,5 +15,5 @@
 </style>
 
 <div class="action-items">
-	{@render children()}
+	{@render children?.()}
 </div>

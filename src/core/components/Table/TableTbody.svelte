@@ -1,10 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-
 	interface Props {
-		children: Snippet;
+		children?: Snippet;
 	}
-
 	const { children }: Props = $props();
 </script>
 
@@ -29,5 +27,5 @@
 </style>
 
 <tbody>
-	{@render children()}
+	{@render children?.()}
 </tbody>

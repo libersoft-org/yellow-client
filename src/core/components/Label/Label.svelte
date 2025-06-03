@@ -1,12 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-
 	interface Props {
-		children: Snippet;
+		children?: Snippet;
 		text?: string;
 		id?: string;
 	}
-
 	let { children, text = $bindable('') }: Props = $props();
 </script>
 
@@ -31,5 +29,5 @@
 	{#if text}
 		<div class="text">{text}:</div>
 	{/if}
-	{@render children()}
+	{@render children?.()}
 </label>

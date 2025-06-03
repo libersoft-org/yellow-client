@@ -3,7 +3,7 @@
 	import type { HTMLButtonAttributes, MouseEventHandler } from 'svelte/elements';
 
 	interface Props extends HTMLButtonAttributes {
-		children: Snippet;
+		children?: Snippet;
 		onClick?: MouseEventHandler<HTMLButtonElement>;
 		onRightClick?: MouseEventHandler<HTMLButtonElement>;
 		onMousedown?: MouseEventHandler<HTMLButtonElement>;
