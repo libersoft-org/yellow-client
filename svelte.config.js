@@ -5,7 +5,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 const config = {
 	kit: {
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? (process.env.TAURI ? '' : process.env.CLIENT_PATH_BASE || '/client') : '',
+			base: process.env.NODE_ENV === 'production' ? (process.env.TAURI ? '' : process.env.CLIENT_PATH_BASE === undefined ? '' : process.env.CLIENT_PATH_BASE) : '',
 			relative: false,
 		},
 		adapter: adapter({
