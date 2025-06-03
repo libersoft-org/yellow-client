@@ -3,6 +3,8 @@
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
+		onClick?: (e: Event) => void;
+		[key: string]: any;
 	}
 
 	let { children, ...restProps }: Props = $props();

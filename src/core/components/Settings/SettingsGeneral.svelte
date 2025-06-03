@@ -29,7 +29,8 @@
 		<TbodyTr>
 			{#each settings as setting}
 				<Td title={setting.label}>
-					<Switch label="debug" />
+					<Switch label="debug" checked={false} />
+					<!-- TODO: Fix store binding for settings -->
 				</Td>
 			{/each}
 		</TbodyTr>
