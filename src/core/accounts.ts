@@ -3,7 +3,7 @@ import { derived, get, writable } from 'svelte/store';
 import { debug, selected_module_id, active_account_id } from '@/core/stores.ts';
 import { send, sendAsync, handleSocketMessage } from '@/core/socket.ts';
 import { updateModulesComms } from '@/core/modules.ts';
-import { accounts_config } from '@/core/accounts_config.js';
+import { accounts_config } from '@/core/accounts_config.ts';
 import { tick } from 'svelte';
 import type { Account, AccountStore, AccountConfig, AccountCredentials, AccountSettings } from './types.ts';
 
@@ -457,8 +457,8 @@ function setupPing(account: AccountStore) {
 			},
 			false
 		);
-		let noCommsSeconds = Date.now() - acc.lastCommsTs;
-		if (noCommsSeconds > 60000 + (Date.now() - acc.lastTransmissionTs)) {
+		let noCommsSeconds = acc.lastCommsTs ? Date.now() - acc.lastCommsTs : Infinity;
+		if (acc.lastTransmissionTs && noCommsSeconds > 60000 + (Date.now() - acc.lastTransmissionTs)) {
 			const msg = 'No comms for ' + noCommsSeconds / 1000 + ' seconds, reconnecting...';
 			log.debug(msg);
 			// not sure if we want to use retry() here, not sure if we can trust the browser not to fire off any more message events even if we close()'d the socket, so let's wait all the way until we call reconnectAccount()
