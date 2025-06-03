@@ -25,7 +25,7 @@
 	}
 </style>
 
-<BaseButton {onClick} align="center">
+<BaseButton {onClick}>
 	<div class="item">
 		{#if img}
 			<Icon {img} alt={title} colorVariable="--primary-foreground" size="24px" padding="0px" />

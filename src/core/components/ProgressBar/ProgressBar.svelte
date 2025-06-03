@@ -1,6 +1,4 @@
 <script>
-	//import { lightenColor } from '@/core/utils/colorUtils.js';
-	//export let color = '#666';
 	export let moving = false;
 	export let value = 0;
 </script>
@@ -9,8 +7,8 @@
 	.progress-bar {
 		width: calc(100% - 6px);
 		height: 10px;
-		border: 3px solid #000;
-		background: #eee;
+		border: 3px solid var(--default-foreground);
+		background: var(--default-background);
 		overflow: hidden;
 		position: relative;
 		border-radius: 10px;
@@ -18,7 +16,7 @@
 
 	.fill {
 		height: 100%;
-		background: linear-gradient(-45deg, var(--primary-background) 25%, var(--primary-softer-background) 25%, var(--primary-softer-background) 50%, var(--primary-background) 50%, var(--primary-background) 75%, var(--primary-softer-background) 75%, var(--softer-background) 100%);
+		background: linear-gradient(-45deg, var(--primary-hard-background) 25%, var(--primary-background) 25%, var(--primary-background) 50%, var(--primary-hard-background) 50%, var(--primary-hard-background) 75%, var(--primary-background) 75%, var(--primary-background) 100%);
 		background-size: 40px 40px;
 		width: 0%;
 		transition: width 0.3s ease;

@@ -2,9 +2,9 @@
 	import Code from '../../components/Code/Code.svelte';
 	import AccountsImportButtons from '../../components/AccountsImportButtons/AccountsImportButtons.svelte';
 
-	type Props = {
+	interface Props {
 		close: () => void;
-	};
+	}
 
 	let { close }: Props = $props();
 

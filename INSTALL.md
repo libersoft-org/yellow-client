@@ -33,28 +33,20 @@ bun i
 
 ## 2. Use this software
 
-If you'd like to \*\*build this software from source code:
+If you'd like to build this software from source code:
 
-### Set up the URL path:
+Run build script with the parameter of your base URL path where your web server will serve this software. This is important if you are not serving it from the root of your domain.
 
-Set the base URL path where you'd like to store your build on your web server by editing the **svelte.config.js** file:
-
-For example for **/client/**:
-
-```js
-base: process.env.NODE_ENV === 'production' ? '/client' : '',
-```
-
-or for **/**:
-
-```js
-base: process.env.NODE_ENV === 'production' ? '' : '',
-```
-
-After that use this command to build it:
+For web root (for example: https://YOUR_SERVER/) just run:
 
 ```sh
 ./build.sh
+```
+
+For other web path (for example https://YOUR_SERVER/client/) run:
+
+```sh
+./build.sh "/client"
 ```
 
 ... and then move the content of your "**build**" folder to your web server.

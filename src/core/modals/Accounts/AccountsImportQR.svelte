@@ -5,9 +5,9 @@
 	import { onMount, onDestroy } from 'svelte';
 	import jsQR from 'jsqr';
 
-	type Props = {
+	interface Props {
 		close: () => void;
-	};
+	}
 
 	let { close }: Props = $props();
 

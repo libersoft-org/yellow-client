@@ -13,11 +13,7 @@
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
-	let optionalIconImage = $state<string | null>();
-
-	let onOptionalIconClick = $state<(e: Event) => void | null>();
-
-	type Props = {
+	interface Props {
 		show?: boolean;
 		params?: any;
 		title?: string;
@@ -26,7 +22,7 @@
 		height?: string;
 		children?: Snippet;
 		onShowChange?: (show: boolean) => void;
-	};
+	}
 
 	$effect(() => {
 		if (!isMobile) return;

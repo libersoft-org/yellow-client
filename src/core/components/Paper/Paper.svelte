@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	type Props = {
+	interface Props {
 		children: Snippet;
 		padding?: string;
 		background?: string;
@@ -9,7 +9,7 @@
 		border?: string;
 		radius?: string;
 		maxWidth?: string;
-	};
+	}
 
 	const { children, padding = '10px', background = 'var(--default-background)', color = 'var(--default-foreground)', border = '1px solid var(--default-foreground)', radius = '10px', maxWidth = '768px' }: Props = $props();
 </script>

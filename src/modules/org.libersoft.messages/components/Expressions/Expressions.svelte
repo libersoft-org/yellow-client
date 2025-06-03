@@ -43,7 +43,7 @@
 
 	.categories {
 		display: flex;
-		align-items: center;
+		align-items: stretch;
 		justify-content: space-between;
 		background-color: var(--primary-background);
 		height: 45px;

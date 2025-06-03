@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props extends HTMLSelectAttributes {
-		value: string;
+		value: string | number;
 		grow?: boolean;
 		minWidth?: string;
 		maxWidth?: string;

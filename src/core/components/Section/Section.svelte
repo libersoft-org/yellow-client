@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	type Props = {
+	interface Props {
 		children: Snippet;
 		bare?: boolean;
 		appended?: boolean;
 		prepended?: boolean;
 		background?: string;
 		size?: 'lg' | '';
-	};
+	}
 
 	const { bare, appended, prepended, size = '', background, children, ...restProps }: Props = $props();
 </script>

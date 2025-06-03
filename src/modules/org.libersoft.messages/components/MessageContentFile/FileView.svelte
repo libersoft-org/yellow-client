@@ -4,8 +4,7 @@
 	import { type FileDownload, type FileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { humanSize } from '@/core/utils/fileUtils.js';
-
-	interface AttachmentProps {
+	interface Props {
 		upload: FileUpload;
 		download: FileDownload | null;
 		pauseUpload: (uploadId: string) => void;
@@ -17,44 +16,27 @@
 		onDownload: (e: Event) => void;
 		changingStatus: boolean;
 	}
-
-	let { upload, download, changingStatus, pauseUpload, resumeUpload, cancelUpload, resumeDownload, pauseDownload, cancelDownload, onDownload }: AttachmentProps = $props();
-
+	let { upload, download, changingStatus, pauseUpload, resumeUpload, cancelUpload, resumeDownload, pauseDownload, cancelDownload, onDownload }: Props = $props();
 	const uploadId = $derived(upload ? upload.record.id : null) as string;
 	const uploaded = $derived(upload ? Math.min(upload.chunksSent.length * upload.record.chunkSize, upload.record.fileSize) : 0);
 	const downloaded = $derived(download ? Math.min(download.chunksReceived.length * download.record.chunkSize, download.record.fileSize) : 0);
 	const isUploadActive = $derived(Boolean(upload && upload.file));
-
 	let statusString = $derived.by(() => {
 		const record = upload.record;
-
 		if (record.status === FileUploadRecordStatus.BEGUN || record.status === FileUploadRecordStatus.UPLOADING) {
-			if (upload.running) {
-				return upload.role === FileUploadRole.SENDER ? 'Uploading' : 'Downloading';
-			} else {
-				return upload.role === FileUploadRole.SENDER ? 'File is being uploaded' : 'Sender is uploading';
-			}
+			if (upload.running) return upload.role === FileUploadRole.SENDER ? 'Uploading' : 'Downloading';
+			else return upload.role === FileUploadRole.SENDER ? 'File is being uploaded' : 'Sender is uploading';
 		} else if (record.status === FileUploadRecordStatus.PAUSED) {
 			return upload.role === FileUploadRole.SENDER ? 'Paused' : 'Paused by sender';
 		} else if (record.status === FileUploadRecordStatus.FINISHED) {
-			if (download && download.pausedLocally) {
-				return 'Download paused';
-			} else if (download) {
-				return 'Downloading';
-			} else {
-				return 'Upload finished';
-			}
-		} else if (record.status === FileUploadRecordStatus.CANCELED) {
-			return 'Upload canceled';
-		} else if (record.status === FileUploadRecordStatus.ERROR) {
-			if (record.errorType === FileUploadRecordErrorType.TIMEOUT_BY_SERVER) {
-				return 'Upload timeout';
-			} else {
-				return 'Upload error';
-			}
-		} else {
-			return 'Unknown status';
-		}
+			if (download && download.pausedLocally) return 'Download paused';
+			else if (download) return 'Downloading';
+			else return 'Upload finished';
+		} else if (record.status === FileUploadRecordStatus.CANCELED) return 'Upload canceled';
+		else if (record.status === FileUploadRecordStatus.ERROR) {
+			if (record.errorType === FileUploadRecordErrorType.TIMEOUT_BY_SERVER) return 'Upload timeout';
+			else return 'Upload error';
+		} else return 'Unknown status';
 	});
 </script>
 
@@ -64,7 +46,6 @@
 		flex-direction: column;
 		padding: 10px;
 		border: 1px solid #880;
-
 		border-radius: 10px;
 		background-color: var(--primary-softer-background);
 	}
@@ -82,11 +63,11 @@
 {#snippet uploadControls()}
 	<div class="transfer-controls">
 		{#if upload.record.status === FileUploadRecordStatus.PAUSED}
-			<Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
+			<Button img="modules/{identifier}/img/play.svg" colorVariable="--primary-foreground" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
 		{:else}
-			<Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
+			<Button img="modules/{identifier}/img/pause.svg" colorVariable="--primary-foreground" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
 		{/if}
-		<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={() => cancelUpload(uploadId)} />
+		<Button img="img/close.svg" colorVariable="--primary-foreground" onClick={() => cancelUpload(uploadId)} />
 	</div>
 {/snippet}
 
@@ -95,11 +76,11 @@
 	{@const isPausedByServer = upload && upload.record.status === FileUploadRecordStatus.PAUSED && upload.role === FileUploadRole.RECEIVER}
 	<div class="transfer-controls">
 		{#if download && (download.pausedLocally || !download.running)}
-			<Button img="modules/{identifier}/img/play.svg" onClick={() => resumeDownload(uploadId)} enabled={!isPausedByServer} />
+			<Button img="modules/{identifier}/img/play.svg" colorVariable="--primary-foreground" onClick={() => resumeDownload(uploadId)} enabled={!isPausedByServer} />
 		{:else}
-			<Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
+			<Button img="modules/{identifier}/img/pause.svg" colorVariable="--primary-foreground" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
 		{/if}
-		<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={() => cancelDownload(uploadId)} />
+		<Button img="img/close.svg" colorVariable="--primary-foreground" onClick={() => cancelDownload(uploadId)} />
 	</div>
 {/snippet}
 

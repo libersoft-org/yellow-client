@@ -1,6 +1,6 @@
 <script lang="ts">
 	interface Props {
-		type?: 'text' | 'number' | 'email' | 'password' | 'search' | 'tel' | 'url';
+		type?: 'text' | 'number' | 'email' | 'password' | 'search' | 'tel' | 'url' | 'color';
 		placeholder?: string;
 		value?: string | number;
 		displayValue?: string | number;
@@ -15,16 +15,7 @@
 		'data-testid'?: string;
 	}
 
-	let { type = 'text', placeholder = '', value = $bindable(), displayValue = undefined, inputRef: parentInputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
-
-	let inputRef = $state<HTMLInputElement>();
-
-	// Bind the inputRef ref manually to the parent component from internal state
-	$effect(() => {
-		if (inputRef) {
-			parentInputRef = inputRef;
-		}
-	});
+	let { type = 'text', placeholder = '', value = $bindable(), displayValue = undefined, inputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
 
 	function handleKeydown(e) {
 		if (onKeydown) onKeydown(e);

@@ -197,7 +197,7 @@
 	</div>
 	{#if !$download}
 		<div class="">
-			<Button img="img/download.svg" onClick={onDownload} width="30px" />
+			<Button img="img/download.svg" onClick={onDownload} text="Download" />
 		</div>
 	{:else}
 		<MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />

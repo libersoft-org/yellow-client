@@ -9,12 +9,12 @@
 	import _union from 'lodash/union';
 	import _isEqual from 'lodash/isEqual';
 
-	interface RenderMessageReactionsProps {
+	interface Props {
 		reactions: any[];
 		onReactionClick: (codepoints_rgi: string) => void;
 	}
 
-	let { reactions, onReactionClick }: RenderMessageReactionsProps = $props();
+	let { reactions, onReactionClick }: Props = $props();
 	let tooltipButton = $state<{ ref: HTMLElement; reactions: any[] } | null>(null);
 
 	const groupedReactions = $derived.by(() => {

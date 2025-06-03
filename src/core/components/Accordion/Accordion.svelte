@@ -2,18 +2,15 @@
 	import { tick, type Snippet } from 'svelte';
 	import BaseButton from '../BaseButton/BaseButton.svelte';
 	import Icon from '../Icon/Icon.svelte';
-
-	type Props = {
+	interface Props {
 		items: Array<{ name: string; id: string }>;
 		activeIndex?: number | null;
 		content: Snippet<[any]> | null;
 		header?: Snippet<[any]> | null;
 		expandAllOnDesktop?: boolean;
 		mode?: 'single' | 'multiple';
-	};
-
+	}
 	let { items, content, header, expandAllOnDesktop = false, mode = 'single' }: Props = $props();
-
 	let activeIndices = $state<number[]>([]);
 	const isDesktop = window.matchMedia('(min-width: 768px)').matches;
 	const isSingleMode = mode === 'single';

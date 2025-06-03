@@ -74,6 +74,7 @@
 
 	.side-button {
 		display: flex;
+		align-self: stretch;
 		background: #fff19c;
 		border-top-left-radius: 8px;
 		border-bottom-left-radius: 8px;

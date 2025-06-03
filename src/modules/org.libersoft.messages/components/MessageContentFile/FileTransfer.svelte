@@ -1,5 +1,5 @@
 <script>
-	import ProgressBar from '../ProgressBar/ProgressBar.svelte';
+	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
 	import { humanSize } from '@/core/utils/fileUtils.js';
 	import { onDestroy } from 'svelte';
 	export let file = '';
@@ -7,7 +7,6 @@
 	export let uploaded = 0;
 	export let status = '';
 	export let hideSpeed = false;
-
 	let lastUploaded = uploaded;
 	let speed = 0;
 

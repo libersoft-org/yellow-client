@@ -5,9 +5,9 @@
 	import { debug } from '@/core/core.js';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
+	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
 	import StickersFavorites from './StickersFavorites.svelte';
 	import StickersServer from './StickersServer.svelte';
-	import ProgressBar from '../ProgressBar/ProgressBar.svelte';
 	const tabs = {
 		favorites: StickersFavorites,
 		server: StickersServer,

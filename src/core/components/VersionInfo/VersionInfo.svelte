@@ -6,7 +6,7 @@
 	import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
 	import { onMount } from 'svelte';
 
-	interface VersionInfoProps {
+	interface Props {
 		showVersion?: boolean;
 		showBuild?: boolean;
 		showCommit?: boolean;
@@ -15,7 +15,7 @@
 		className?: string;
 	}
 
-	let { showVersion = true, showBuild = true, showCommit = true, showBranch = true, showNativeApp = true, className = '' }: VersionInfoProps = $props();
+	let { showVersion = true, showBuild = true, showCommit = true, showBranch = true, showNativeApp = true, className = '' }: Props = $props();
 
 	let native_client_build_ts = $state<string | null>(null);
 

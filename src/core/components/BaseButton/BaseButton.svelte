@@ -2,28 +2,29 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLButtonAttributes, MouseEventHandler } from 'svelte/elements';
 
-	interface BaseButtonProps extends HTMLButtonAttributes {
+	interface Props extends HTMLButtonAttributes {
 		children: Snippet;
 		onClick?: MouseEventHandler<HTMLButtonElement>;
 		onRightClick?: MouseEventHandler<HTMLButtonElement>;
 		onMousedown?: MouseEventHandler<HTMLButtonElement>;
-		width?: string;
-		align?: 'left' | 'center' | 'right';
-		height?: string;
 	}
 
-	let { children, onClick, onRightClick, onMousedown, ...restProps }: BaseButtonProps = $props();
+	let { children, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
 </script>
 
 <style>
 	.base-button {
-		cursor: pointer;
 		display: flex;
+		cursor: pointer;
 		align-items: center;
 		-webkit-tap-highlight-color: transparent;
 	}
+
+	.base-button > :global(*) {
+		flex: 1 1 auto;
+	}
 </style>
 
-<button class="base-button button-reset" onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} style:width={restProps.width || 'auto'} style:justify-content={restProps.align || 'center'} style:height={restProps.height || 'auto'} {...restProps}>
-	{@render children()}
+<button {...restProps} onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} class={['base-button button-reset']}>
+	{@render children?.()}
 </button>

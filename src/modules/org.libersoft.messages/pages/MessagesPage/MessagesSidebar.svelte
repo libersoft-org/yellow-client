@@ -48,8 +48,9 @@
 
 	.bar-buttons {
 		position: relative;
-		z-index: 10;
 		display: flex;
+		justify-content: space-between;
+		z-index: 10;
 		color: var(--secondary-foreground);
 		background-color: var(--secondary-background);
 		border-bottom: 1px solid var(--secondary-softer-background);
@@ -69,10 +70,6 @@
 			flex: 1 1 auto;
 			min-width: 0;
 		}
-	}
-
-	.bar-buttons .bar-button.grow {
-		flex: 1;
 	}
 
 	.new-conversation {

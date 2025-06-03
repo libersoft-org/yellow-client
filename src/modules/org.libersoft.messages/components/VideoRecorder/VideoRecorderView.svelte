@@ -228,7 +228,7 @@
 		<div class="video-recorder-actions-left">
 			<ButtonWithMenu>
 				{#snippet sideButtonSlot()}
-					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" onClick={() => {}} />
+					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" />
 				{/snippet}
 				{#snippet mainButtonSlot()}
 					<div class="mic-button-wrapper">
@@ -250,7 +250,7 @@
 			</ButtonWithMenu>
 			<ButtonWithMenu>
 				{#snippet sideButtonSlot()}
-					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" onClick={() => {}} />
+					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" />
 				{/snippet}
 				{#snippet mainButtonSlot()}
 					<div>
