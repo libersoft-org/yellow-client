@@ -13,18 +13,18 @@
 </script>
 
 <style>
-	.base-button {
+	.clickable {
 		display: flex;
 		cursor: pointer;
 		align-items: center;
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	.base-button > :global(*) {
+	.clickable > :global(*) {
 		flex: 1 1 auto;
 	}
 </style>
 
-<button {...restProps} onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} class={['base-button button-reset']}>
+<button {...restProps} onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} class={['clickable button-reset']}>
 	{@render children?.()}
 </button>
