@@ -27,11 +27,11 @@
 		overflow: hidden;
 		max-width: 100vw;
 		box-sizing: border-box;
+	}
 
-		:global(&.table-wide) {
-			border: 1px solid #222 !important;
-			border-radius: 8px;
-		}
+	:global(.table.table-wide) {
+		border: 1px solid #222 !important;
+		border-radius: 8px;
 	}
 
 	table {
@@ -42,10 +42,10 @@
 		border-collapse: collapse;
 		table-layout: auto;
 		font-size: clamp(14px, 2vw, 16px);
+	}
 
-		:global(.table-wide &) {
-			width: 100%;
-		}
+	:global(.table-wide) table {
+		width: 100%;
 	}
 </style>
 

@@ -154,29 +154,29 @@
 		border-radius: 8px;
 		overflow: hidden;
 		color: var(--primary-foreground);
+	}
 
-		&:empty {
-			display: none;
-		}
+	.accordion:empty {
+		display: none;
 	}
 
 	.accordion .item {
 		border-bottom: 1px solid var(--primary-harder-background);
+	}
 
-		:global(.header .icon) {
-			position: absolute;
-			right: 10px;
-			top: 50%;
-			transform: rotate(0deg) translateY(-50%);
-		}
+	.accordion .item :global(.header .icon) {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: rotate(0deg) translateY(-50%);
+	}
 
-		:global(.header img) {
-			transition: transform 0.3s ease;
-		}
+	.accordion .item :global(.header img) {
+		transition: transform 0.3s ease;
+	}
 
-		&:last-child {
-			border-bottom: none;
-		}
+	.accordion .item:last-child {
+		border-bottom: none;
 	}
 
 	.accordion .item .header {
@@ -195,11 +195,11 @@
 
 	.accordion .item .header {
 		width: 100%;
+	}
 
-		.title {
-			flex-grow: 1;
-			font-weight: bold;
-		}
+	.accordion .item .header .title {
+		flex-grow: 1;
+		font-weight: bold;
 	}
 
 	.accordion .item .content {
@@ -211,12 +211,10 @@
 
 	.accordion .item {
 		display: grid;
+	}
 
-		&.is-expanded {
-			:global(.header img) {
-				transform: rotate(180deg);
-			}
-		}
+	.accordion .item.is-expanded :global(.header img) {
+		transform: rotate(180deg);
 	}
 </style>
 

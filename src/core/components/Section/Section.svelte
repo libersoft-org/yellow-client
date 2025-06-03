@@ -16,20 +16,20 @@
 		position: relative;
 		padding-top: clamp(32px, 4vw, 72px);
 		padding-bottom: clamp(32px, 4vw, 72px);
-
-		&.lg {
-			padding-top: clamp(48px, 8vw, 120px);
-			padding-bottom: clamp(48px, 8vw, 120px);
-		}
 	}
 
-	/* &.appended 
+	section.lg {
+		padding-top: clamp(48px, 8vw, 120px);
+		padding-bottom: clamp(48px, 8vw, 120px);
+	}
+
+	/* &.appended
 			padding-top 0
 
-		&.prepended 
+		&.prepended
 			padding-bottom 0
 
-		&.bare 
+		&.bare
 			padding-top 0
 			padding-bottom 0 */
 </style>

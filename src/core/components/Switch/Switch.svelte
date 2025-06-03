@@ -34,15 +34,15 @@
 		grid-template-columns: repeat(2, auto);
 		align-items: center;
 		gap: 10px;
+	}
 
-		&.vertical {
-			grid-template-columns: unset;
-			grid-template-rows: repeat(2, auto);
-		}
+	.switch.vertical {
+		grid-template-columns: unset;
+		grid-template-rows: repeat(2, auto);
+	}
 
-		.label {
-			font-weight: bold;
-		}
+	.switch .label {
+		font-weight: bold;
 	}
 
 	.switch-wrapper {

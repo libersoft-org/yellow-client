@@ -15,31 +15,33 @@
 		@media (max-width: 768px) {
 			padding: 10px;
 		}
+	}
 
-		.left,
-		.center,
-		.right {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			gap: 10px;
-			flex: 1;
-			width: 100%;
+	.top-bar .left,
+	.top-bar .center,
+	.top-bar .right {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 10px;
+		flex: 1;
+		width: 100%;
+	}
 
-			:global(h1) {
-				white-space: nowrap;
-				margin: 0 !important;
-				font-size: 24px;
-			}
-		}
+	.top-bar .left :global(h1),
+	.top-bar .center :global(h1),
+	.top-bar .right :global(h1) {
+		white-space: nowrap;
+		margin: 0 !important;
+		font-size: 24px;
+	}
 
-		.center {
-			justify-content: center;
-		}
+	.top-bar .center {
+		justify-content: center;
+	}
 
-		.right {
-			justify-content: end;
-		}
+	.top-bar .right {
+		justify-content: end;
 	}
 </style>
 

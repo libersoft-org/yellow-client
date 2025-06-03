@@ -203,12 +203,10 @@
 			border-radius: 0px;
 			border: none;
 		}
+	}
 
-		:global(&.neodrag-dragging) {
-			.header {
-				cursor: grabbing;
-			}
-		}
+	:global(.modal.neodrag-dragging) .header {
+		cursor: grabbing;
 	}
 
 	.modal .header {
@@ -227,10 +225,10 @@
 		padding: 10px;
 		flex-grow: 1;
 		user-select: none;
+	}
 
-		:global(.icon) {
-			padding: 0 10px 0 0 !important;
-		}
+	.modal .header .title :global(.icon) {
+		padding: 0 10px 0 0 !important;
 	}
 
 	.modal .body {
