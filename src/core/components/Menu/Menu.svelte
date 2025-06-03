@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import Clickable from '../Clickable/Clickable.svelte';
 	import MenuItem from './MenuItem.svelte';
 	import Modal from '../Modal/Modal.svelte';
 	import ModalSettings from '../../modals/Settings/Settings.svelte';
@@ -176,12 +176,12 @@
 			<Switch showLabel label="Dark mode" />
 		</div>
 		<div class="section">
-			<BaseButton onClick={() => openPage(link)}>
+			<Clickable onClick={() => openPage(link)}>
 				<div class="logo">
 					<Icon img="img/logo.svg" alt={product} size="30px" padding="0px" />
 					<div>{product}</div>
 				</div>
-			</BaseButton>
+			</Clickable>
 			<VersionInfo className="menu-version-info" />
 		</div>
 	</div>

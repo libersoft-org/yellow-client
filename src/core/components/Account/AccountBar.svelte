@@ -3,7 +3,7 @@
 	import { get } from 'svelte/store';
 	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ItemAccount from './AccountBarItemAccount.svelte';
 	import ItemBase from './AccountBarItemBase.svelte';
 	import AccountStatusIcon from './AccountStatusIcon.svelte';
@@ -134,7 +134,7 @@
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
-	<BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
+	<Clickable data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
 		<div class={`dropdown`} class:is-expanded={accountsVisible}>
 			{#if $active_account}
 				<div class="text">
@@ -151,7 +151,7 @@
 			{/if}
 			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="0px" />
 		</div>
-	</BaseButton>
+	</Clickable>
 	{#if accountsVisible}
 		<div class="items" transition:animateHeight={{ duration: 220 }}>
 			{#each $accounts as account (get(account).id)}

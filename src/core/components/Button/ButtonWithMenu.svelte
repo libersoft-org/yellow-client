@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* todo, refactor with Button.svelte ? */
 
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { autoPlacement, autoUpdate, computePosition, offset, shift } from '@floating-ui/dom';
 	import Portal from '@/core/components/Portal/Portal.svelte';
 
@@ -101,11 +101,11 @@
 </style>
 
 <div class="button-with-menu">
-	<BaseButton {onClick}>
+	<Clickable {onClick}>
 		<div class="side-button" bind:this={buttonRef}>
 			{@render sideButtonSlot?.()}
 		</div>
-	</BaseButton>
+	</Clickable>
 	<div class="main-button">
 		{@render mainButtonSlot?.()}
 	</div>

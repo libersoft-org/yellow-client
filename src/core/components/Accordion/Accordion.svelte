@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick, type Snippet } from 'svelte';
-	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import Clickable from '../Clickable/Clickable.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	interface Props {
 		items: Array<{ name: string; id: string }>;
@@ -223,13 +223,13 @@
 <div class="accordion">
 	{#each items as item, index}
 		<div class="item {activeIndices.includes(index) ? 'is-expanded' : ''}">
-			<BaseButton onClick={() => handleClick(index)}>
+			<Clickable onClick={() => handleClick(index)}>
 				<div class="header">
 					<div class="title">{item.name}</div>
 					{@render header?.(item)}
 					<Icon img="img/down.svg" alt="▼" colorVariable="--primary-foreground" size="12px" />
 				</div>
-			</BaseButton>
+			</Clickable>
 			<div class="content {activeIndices.includes(index) ? 'is-expanded' : ''}" data-index={index}>
 				{@render content?.(item)}
 			</div>

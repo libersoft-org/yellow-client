@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { getContext } from 'svelte';
 
 	let { node } = $props();
@@ -22,9 +22,9 @@
 
 {#if v}
 	<div class="gif">
-		<BaseButton onClick={openExpressions}>
+		<Clickable onClick={openExpressions}>
 			<img src={v} alt="GIF" />
-		</BaseButton>
+		</Clickable>
 	</div>
 {:else}
 	error

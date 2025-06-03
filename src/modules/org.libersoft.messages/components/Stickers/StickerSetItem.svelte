@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Sticker from './Sticker.svelte';
 	import { getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';
@@ -48,9 +48,9 @@
 </style>
 
 {#if file}
-	<BaseButton onClick={handleClick} {onMousedown}>
+	<Clickable onClick={handleClick} {onMousedown}>
 		<div class="sticker" style="max-width: {size}px;">
 			<Sticker {size} {file} play_on_start={false} {intersecting} />
 		</div>
-	</BaseButton>
+	</Clickable>
 {/if}

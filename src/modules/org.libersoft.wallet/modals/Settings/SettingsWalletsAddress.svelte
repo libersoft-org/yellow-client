@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
 	interface Props {
@@ -39,9 +39,9 @@
 	}
 </style>
 
-<BaseButton onClick={copyAddressToClipboard}>
+<Clickable onClick={copyAddressToClipboard}>
 	<div class="address">
 		<span class="clamp" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
 		<Icon img="img/copy.svg" {colorVariable} alt="Copy" size="15px" padding="0px" />
 	</div>
-</BaseButton>
+</Clickable>

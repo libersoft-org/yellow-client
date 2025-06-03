@@ -1,6 +1,6 @@
 <script>
 	import { getContext } from 'svelte';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	let { img = null, label = '', colorVariable = '--primary-foreground', onClick, ...restProps } = $props();
 	let menu = getContext('ContextMenu');
@@ -46,7 +46,7 @@
 	}
 </style>
 
-<BaseButton onClick={handleClick} onMousedown={handleMousedown} {...restProps}>
+<Clickable onClick={handleClick} onMousedown={handleMousedown} {...restProps}>
 	<div class="menu-item">
 		{#if img}
 			<div class="img-space">
@@ -55,4 +55,4 @@
 		{/if}
 		<div class="label">{label}</div>
 	</div>
-</BaseButton>
+</Clickable>

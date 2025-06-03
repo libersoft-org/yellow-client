@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let img;
 	export let label;
@@ -13,7 +13,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		flex: 1; /* TODO: this is not working as it needs to be applied on BaseButton, not on .item. If applied to BaseButton, it spoils everything that doesn't need it. */
+		flex: 1; /* TODO: this is not working as it needs to be applied on Clickable, not on .item. If applied to Clickable, it spoils everything that doesn't need it. */
 		font-size: 16px;
 		padding: 10px;
 	}
@@ -28,7 +28,7 @@
 	}
 </style>
 
-<BaseButton {onClick}>
+<Clickable {onClick}>
 	<div class="item {active && 'active'}">
 		{#if img}
 			<Icon {img} alt={label ? label : ''} {colorVariable} size="20px" padding="0px" />
@@ -37,4 +37,4 @@
 			<div>{label}</div>
 		{/if}
 	</div>
-</BaseButton>
+</Clickable>

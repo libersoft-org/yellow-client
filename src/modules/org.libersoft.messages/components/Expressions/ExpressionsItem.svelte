@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let icon;
 	export let label;
@@ -40,7 +40,7 @@
 	}
 </style>
 
-<BaseButton {onClick} {onMousedown}>
+<Clickable {onClick} {onMousedown}>
 	<div class="item {active ? 'active' : ''}">
 		{#if icon}
 			<Icon img={icon} alt={label} {colorVariable} size="24px" padding="0px" />
@@ -49,4 +49,4 @@
 			<div class="label">{label}</div>
 		{/if}
 	</div>
-</BaseButton>
+</Clickable>

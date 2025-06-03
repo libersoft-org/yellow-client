@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Emojis from '../Emoji/Emojis.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { computePosition, autoPlacement, autoUpdate, shift, offset } from '@floating-ui/dom';
@@ -130,11 +130,11 @@
 </style>
 
 {#snippet emoji(codepoints)}
-	<BaseButton onClick={() => onEmojiClick(codepoints)} data-testid="message-reaction-emoji-button">
+	<Clickable onClick={() => onEmojiClick(codepoints)} data-testid="message-reaction-emoji-button">
 		<div class="emoji-button emoji">
 			<Emoji {codepoints} context={'menu'} is_single={true} size={30} />
 		</div>
-	</BaseButton>
+	</Clickable>
 {/snippet}
 
 <div bind:this={buttonRef} class="reaction-button" class:open={show}>
@@ -152,11 +152,11 @@
 				{@render emoji([128512])}
 				{@render emoji([128293])}
 				{@render emoji([9829, 65039])}
-				<BaseButton onClick={() => (showFull = !showFull)}>
+				<Clickable onClick={() => (showFull = !showFull)}>
 					<div class="expand">
 						<Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--primary-foreground" />
 					</div>
-				</BaseButton>
+				</Clickable>
 			</div>
 			{#if showFull}
 				<div class="emojis-browser">

@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let visible = true;
 	export let direction = false;
@@ -31,9 +31,9 @@
 </style>
 
 {#if visible}
-	<BaseButton {onClick}>
+	<Clickable {onClick}>
 		<div class="scroll-button" style="--size: {size}px; {top ? 'top: ' + top + ';' : ''} {bottom ? 'bottom: ' + bottom + ';' : ''} {left ? 'left: ' + left + ';' : ''} {right ? 'right: ' + right + ';' : ''}">
 			<Icon img="img/caret-{direction ? 'up' : 'down'}.svg" alt={direction ? '˄' : '˅'} colorVariable="--disabled-background" size="32px" padding="0px" />
 		</div>
-	</BaseButton>
+	</Clickable>
 {/if}

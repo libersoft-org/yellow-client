@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '../../components/BaseButton/BaseButton.svelte';
+	import Clickable from '../../components/Clickable/Clickable.svelte';
 	import Icon from '../../components/Icon/Icon.svelte';
 	import VersionInfo from '../../components/VersionInfo/VersionInfo.svelte';
 	import { product, link } from '../../core.js';
@@ -35,11 +35,11 @@
 </style>
 
 <div class="welcome">
-	<BaseButton onClick={clickLogo}>
+	<Clickable onClick={clickLogo}>
 		<div class="logo">
 			<Icon img="img/logo.svg" alt={product} size="200px" />
 			<div class="product">{product}</div>
 		</div>
-	</BaseButton>
+	</Clickable>
 	<VersionInfo className="centered" />
 </div>

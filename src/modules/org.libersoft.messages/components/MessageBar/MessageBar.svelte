@@ -2,7 +2,7 @@
 	import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.js';
 	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
 	import { onMount, setContext, tick, getContext } from 'svelte';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
@@ -344,7 +344,7 @@
 <Modal title="File Upload" body={ModalFileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
 
 {#if $debug}
-	<BaseButton
+	<Clickable
 		onClick={() => {
 			expressionsAsContextMenu = !expressionsAsContextMenu;
 			console.log('expressionsAsContextMenu:', expressionsAsContextMenu, 'expressionsBottomSheetOpen:', expressionsBottomSheetOpen);
@@ -352,7 +352,7 @@
 	>
 		expressionsBottomSheetOpen: {expressionsBottomSheetOpen}
 		expressionsAsContextMenu: {expressionsAsContextMenu}
-	</BaseButton>
+	</Clickable>
 {/if}
 
 {#if !expressionsAsContextMenu && expressionsBottomSheetOpen}

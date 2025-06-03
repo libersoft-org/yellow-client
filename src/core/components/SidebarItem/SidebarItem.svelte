@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import Clickable from '../Clickable/Clickable.svelte';
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
@@ -44,8 +44,8 @@
 	}
 </style>
 
-<BaseButton onClick={handleClick}>
+<Clickable onClick={handleClick}>
 	<div class="item {even ? 'even' : 'odd'} {active && 'active'}">
 		{@render children?.()}
 	</div>
-</BaseButton>
+</Clickable>

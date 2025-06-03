@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let text;
 	export let colorVariable;
@@ -25,9 +25,9 @@
 	}
 </style>
 
-<BaseButton {onClick}>
+<Clickable {onClick}>
 	<div class="dropdown">
 		<div class="text">{text}</div>
 		<Icon img="img/down.svg" alt="▼" size="15px" padding="0px" colorVariable={colorVariable && colorVariable} />
 	</div>
-</BaseButton>
+</Clickable>

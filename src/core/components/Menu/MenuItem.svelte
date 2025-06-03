@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import Clickable from '../Clickable/Clickable.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	interface Props {
 		img?: string;
@@ -26,7 +26,7 @@
 </style>
 
 {#if img || title}
-	<BaseButton {onClick}>
+	<Clickable {onClick}>
 		<div class="item">
 			{#if img}
 				<Icon {img} alt={title} colorVariable="--secondary-foreground" size="24px" padding="0px" />
@@ -35,5 +35,5 @@
 				<div>{title}</div>
 			{/if}
 		</div>
-	</BaseButton>
+	</Clickable>
 {/if}

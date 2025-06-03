@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	export let content;
 	export let onClick;
 </script>
@@ -16,6 +16,6 @@
 	}
 </style>
 
-<BaseButton {onClick}>
+<Clickable {onClick}>
 	<div class="photo-card-button">{content}</div>
-</BaseButton>
+</Clickable>

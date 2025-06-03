@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Input from '../Input/Input.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	export let options = [];
@@ -82,9 +82,9 @@
 		{#if showOptions}
 			<div class="options">
 				{#each filteredOptions as option}
-					<BaseButton onClick={() => clickSelectOption(option)}>
+					<Clickable onClick={() => clickSelectOption(option)}>
 						<div class="option">{option}</div>
-					</BaseButton>
+					</Clickable>
 				{/each}
 			</div>
 		{/if}

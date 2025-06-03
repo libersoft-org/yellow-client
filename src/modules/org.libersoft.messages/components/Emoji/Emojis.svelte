@@ -4,7 +4,7 @@
 	import { get } from 'svelte/store';
 	import { identifier } from '../../messages.js';
 	import Emoji from './Emoji.svelte';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
 	import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
@@ -148,7 +148,7 @@
 
 {#snippet clickable_emoji(emoji)}
 	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi]} let:intersecting>
-		<BaseButton onRightClick={e => showAlts(e, emoji)}>
+		<Clickable onRightClick={e => showAlts(e, emoji)}>
 			<div
 				bind:this={intersectedElements[emoji.codepoints_rgi]}
 				class="emoji hover"
@@ -166,7 +166,7 @@
 					<Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
 				{/if}
 			</div>
-		</BaseButton>
+		</Clickable>
 	</IntersectionObserver>
 {/snippet}
 
@@ -202,7 +202,7 @@
 <ContextMenu bind:this={altsMenu} scrollable={false}>
 	<div class="emojis">
 		{#each alts as e (e)}
-			<BaseButton
+			<Clickable
 				onClick={() => {
 					() => clickEmojiAndClose(e);
 				}}
@@ -210,7 +210,7 @@
 				<div class="emoji hover">
 					<Emoji codepoints={e} context={'menu'} is_single={true} />
 				</div>
-			</BaseButton>
+			</Clickable>
 		{/each}
 	</div>
 </ContextMenu>

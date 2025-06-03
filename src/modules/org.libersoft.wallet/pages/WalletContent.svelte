@@ -6,7 +6,7 @@
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalNetworks from '../modals/Networks.svelte';
@@ -218,14 +218,14 @@
 								<div>
 									<div>
 										{#if $selectedAddress && $selectedAddress.address}
-											<BaseButton onClick={clickCopyAddress}>
+											<Clickable onClick={clickCopyAddress}>
 												<div class="address">
 													<div bind:this={addressElement}>
 														{shortenAddress($selectedAddress.address)}
 													</div>
 													<Icon img="img/copy.svg" colorVariable="--default-foreground" alt="Copy" size="15px" padding="0px" />
 												</div>
-											</BaseButton>
+											</Clickable>
 										{:else}
 											<div class="address">No address selected</div>
 										{/if}

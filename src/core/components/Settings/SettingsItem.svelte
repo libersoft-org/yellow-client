@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import Clickable from '../Clickable/Clickable.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	export let img;
 	export let title;
@@ -25,7 +25,7 @@
 	}
 </style>
 
-<BaseButton {onClick}>
+<Clickable {onClick}>
 	<div class="item">
 		{#if img}
 			<Icon {img} alt={title} colorVariable="--primary-foreground" size="24px" padding="0px" />
@@ -34,4 +34,4 @@
 			<div>{title}</div>
 		{/if}
 	</div>
-</BaseButton>
+</Clickable>

@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { log } from '../../tauri.ts';
 	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
@@ -183,7 +183,7 @@
 	}
 </style>
 
-<BaseButton
+<Clickable
 	onClick={e => {
 		log.debug('***onClick');
 		data.onClick(e, 'click');
@@ -222,10 +222,10 @@
 			<div class="bottom">
 				<div class="buttons">
 					{#each data.buttons as b}
-						<BaseButton text={b.text} onClick={e => b.onClick(b, b.id)} />
+						<Clickable text={b.text} onClick={e => b.onClick(b, b.id)} />
 					{/each}
 				</div>
 			</div>
 		{/if}
 	</div>
-</BaseButton>
+</Clickable>

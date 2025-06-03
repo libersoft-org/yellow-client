@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import Clickable from '../Clickable/Clickable.svelte';
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
@@ -24,8 +24,8 @@
 	}
 </style>
 
-<BaseButton {onClick}>
+<Clickable {onClick}>
 	<div class="accounts-button">
 		{@render children?.()}
 	</div>
-</BaseButton>
+</Clickable>

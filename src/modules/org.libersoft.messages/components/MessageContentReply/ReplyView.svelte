@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { jumpToMessage } from '../../messages.js';
 	import { get } from 'svelte/store';
 	import { active_account } from '@/core/core.js';
@@ -41,10 +41,10 @@
 </style>
 
 <div class="reply-wrap">
-	<BaseButton onClick={clickReply}>
+	<Clickable onClick={clickReply}>
 		<div class="reply">
 			<div class="name">{address}</div>
 			<div class="text">{text}</div>
 		</div>
-	</BaseButton>
+	</Clickable>
 </div>
