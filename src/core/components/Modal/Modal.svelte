@@ -5,7 +5,7 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
 	import Portal from '../Portal/Portal.svelte';
-	let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
+	let { show = $bindable(false), children, params, title = '', body = {}, width, height, onShowChange = () => {}, onOptionalIconClick = $bindable(), optionalIconImage = $bindable() }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -22,6 +22,8 @@
 		height?: string;
 		children?: Snippet;
 		onShowChange?: (show: boolean) => void;
+		onOptionalIconClick: any;
+		optionalIconImage: any;
 	}
 
 	$effect(() => {
