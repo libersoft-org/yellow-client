@@ -128,7 +128,7 @@ function moduleEventSubscribe(acc, event_name) {
 	sendData(acc, null, 'subscribe', { event: event_name }, true, (req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
-			window.alert('Communication with server Error while subscribing to event: ' + res.message);
+			//window.alert('Communication with server Error while subscribing to event: ' + res.message);
 		}
 	});
 }
