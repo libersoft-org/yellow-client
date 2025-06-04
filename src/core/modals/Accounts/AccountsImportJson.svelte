@@ -27,10 +27,6 @@
 		position: relative;
 		width: 100%;
 
-		@media (max-width: 768px) {
-			width: 100%;
-		}
-
 		.scrollable {
 			overflow: auto;
 		}

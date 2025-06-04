@@ -18,6 +18,7 @@ export const mobileClass = derived(isMobile, $isMobile => ($isMobile ? 'mobile' 
 export const keyboardHeight = writable(0);
 export const hideSidebarMobile = writable(false);
 export const isClientFocused = writable(true);
+export const mobileWidth = writable('768px');
 
 // Core page and module selection
 export const selected_corepage_id = writable<string | null>(null);

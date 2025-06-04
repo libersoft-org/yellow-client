@@ -10,11 +10,7 @@
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);
-		padding: 10px 20px;
-
-		@media (max-width: 768px) {
-			padding: 10px;
-		}
+		padding: 10px;
 
 		.left,
 		.center,
@@ -25,12 +21,6 @@
 			gap: 10px;
 			flex: 1;
 			width: 100%;
-
-			:global(h1) {
-				white-space: nowrap;
-				margin: 0 !important;
-				font-size: 24px;
-			}
 		}
 
 		.center {

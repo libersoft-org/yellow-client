@@ -3,23 +3,24 @@
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import { init, isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.ts';
-	import { initBrowserNotifications, initCustomNotifications } from '../core/notifications.ts';
-	import { selected_theme_index, current_theme, themes_stored } from '../core/themes';
-	import Menu from '../core/components/Menu/Menu.svelte';
-	import MenuBar from '../core/components/Menu/MenuBar.svelte';
-	import ModuleBar from '../core/components/ModuleBar/ModuleBar.svelte';
+	import { init, isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product } from '../core/core.ts';
+	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
+	import { mobileWidth } from '@/core/stores.ts';
+	import { selected_theme_index } from '@/core/themes.js';
+	import Menu from '@/core/components/Menu/Menu.svelte';
+	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
+	import ModuleBar from '@/core/components/ModuleBar/ModuleBar.svelte';
 	import AccountBar from '@/core/components/Account/AccountBar.svelte';
 	import WelcomeSidebar from '@/core/pages/WelcomePage/WelcomeSidebar.svelte';
 	import WelcomeContent from '@/core/pages/WelcomePage/WelcomeContent.svelte';
 	import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
-	import Modal from '../core/components/Modal/Modal.svelte';
-	import Wizard from '../core/components/Wizard/Wizard.svelte';
+	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Wizard from '@/core/components/Wizard/Wizard.svelte';
 	import WizardWelcomeStep1 from '@/core/wizard/WelcomeStep1.svelte';
 	import WizardWelcomeStep2 from '@/core/wizard/WelcomeStep2.svelte';
 	import WizardWelcomeStep3 from '@/core/wizard/WelcomeStep3.svelte';
 	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
-	import { createTrayIcon, destroyTrayIcon } from '../core/tray_icon.ts';
+	import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
 	import '../modules/org.libersoft.messages/module.js';
 	import '../modules/org.libersoft.contacts/module.js';
 	import '../modules/org.libersoft.wallet/module.js';
@@ -198,7 +199,7 @@
 		const metaViewport = document.querySelector('meta[name="viewport"]');
 		if (metaViewport) metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content');
 		documentHeight.set(document.documentElement.clientHeight);
-		isMobile.set(window.matchMedia('(max-width: 768px)').matches);
+		isMobile.set(window.matchMedia('(max-width: ' + $mobileWidth + ')').matches);
 		//console.log('window.innerHeight:', window.innerHeight);
 		//console.log('viewportHeight:', viewportHeight);
 		//console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
@@ -332,6 +333,17 @@
 		color: var(--secondary-foreground);
 	}
 
+	.sidebar.mobile {
+		position: absolute;
+		min-width: 100%;
+		max-width: 100%;
+		height: 100%;
+	}
+
+	.sidebar.hidden-on-mobile {
+		display: none;
+	}
+
 	.resizer {
 		position: absolute;
 		z-index: 1;
@@ -342,28 +354,15 @@
 		/*background-color: #0d0;*/
 	}
 
+	.resizer.mobile {
+		display: none;
+	}
+
 	.content {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
 		container-type: inline-size;
-	}
-
-	@media (max-width: 768px) {
-		.sidebar {
-			position: absolute;
-			min-width: 100%;
-			max-width: 100%;
-			height: 100%;
-		}
-
-		.sidebar.hidden-on-mobile {
-			display: none;
-		}
-
-		.resizer {
-			display: none;
-		}
 	}
 </style>
 
@@ -372,7 +371,7 @@
 	<title>{product}</title>
 </svelte:head>
 <div class="app" style:--sidebar-width={sidebarWidth}>
-	<div class="sidebar {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
+	<div class="sidebar {$isMobile ? 'mobile' : ''} {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
 		<Menu bind:showMenu={isMenuOpen} />
 		<MenuBar onOpenMenu={() => (isMenuOpen = true)} />
 		<AccountBar />

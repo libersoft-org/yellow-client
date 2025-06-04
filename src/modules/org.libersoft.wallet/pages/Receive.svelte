@@ -1,5 +1,6 @@
 <script>
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
+	import { isMobile } from '@/core/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import QRCode from 'qrcode';
@@ -119,10 +120,10 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			vertical-align: bottom;
+		}
 
-			@media (max-width: 768px) {
-				width: 200px;
-			}
+		.clamp.mobile {
+			width: 200px;
 		}
 	}
 
@@ -145,7 +146,7 @@
 				<div class="bold">Your wallet address:</div>
 				<Clickable onClick={clickCopyAddress}>
 					<div class="address">
-						<div class="clamp" bind:this={addressElement}>
+						<div class="clamp {$isMobile ? 'mobile' : ''}" bind:this={addressElement}>
 							{shortenAddress($selectedAddress.address)}
 						</div>
 						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
