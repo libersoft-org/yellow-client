@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { module } from '../module.js';
+	import { selected_module_id } from '@/core/stores.ts';
 	import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
 	import { hideSidebarMobile, debug } from '@/core/core.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
@@ -28,11 +29,6 @@
 		hideSidebarMobile.set(true);
 	});
 
-	function clickBackButton() {
-		console.log('hideSidebarMobile.set(false)');
-		hideSidebarMobile.set(false);
-	}
-
 	function setSection(name) {
 		section = name;
 	}
@@ -52,6 +48,14 @@
 			.catch(err => console.error('Error while copying to clipboard', err));
 		addressElement.innerHTML = 'Copied!';
 		setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
+	}
+
+	function back() {
+		hideSidebarMobile.set(false);
+	}
+
+	function close() {
+		selected_module_id.set(null);
 	}
 </script>
 
@@ -191,11 +195,12 @@
 <div class="wallet-content">
 	<TopBar>
 		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
 		</svelte:fragment>
 		<svelte:fragment slot="right">
 			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
+			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		</svelte:fragment>
 	</TopBar>
 	<div class="wallet">

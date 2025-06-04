@@ -21,7 +21,6 @@
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
-
 	let showAddEditAccountModal: boolean = $state(false);
 	let showDelAccountModal: boolean = $state(false);
 	let showExportModal: boolean = $state(false);
@@ -113,6 +112,9 @@
 		<svelte:fragment slot="left">
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 			<TopBarTitle text="Account management" />
+		</svelte:fragment>
+		<svelte:fragment slot="right">
+			<Icon img="img/close.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		</svelte:fragment>
 	</TopBar>
 	<div class="accounts-wrapper">

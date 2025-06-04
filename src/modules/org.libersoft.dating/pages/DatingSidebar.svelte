@@ -1,18 +1,12 @@
 <script>
-	import core from '@/core/core.ts';
+	import { page, setPage } from '../dating.js';
 	import SidebarCategory from '../components/SidebarCategory.svelte';
-	import { page } from '../dating.js';
 	const sections = [
 		{ id: 'people', img: 'people.svg', label: 'People nearby' },
 		{ id: 'map', img: 'map.svg', label: 'Map' },
 		{ id: 'match', img: 'match.svg', label: 'Match game' },
 		{ id: 'settings', img: 'settings.svg', label: 'Settings' },
 	];
-
-	function setPage(name) {
-		page.set(name);
-		core.hideSidebarMobile.set(true);
-	}
 </script>
 
 <div class="sidebar">
