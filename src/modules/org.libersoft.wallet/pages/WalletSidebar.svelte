@@ -2,6 +2,7 @@
 	import { hideSidebarMobile } from '@/core/core.ts';
 	import { addressBook } from '../wallet.ts';
 	import { mobileClass } from '@/core/stores.ts';
+	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 
@@ -16,19 +17,6 @@
 </script>
 
 <style>
-	.content-button {
-		padding: 10px;
-		font-weight: bold;
-		background-color: var(--secondary-background);
-		color: var(--secondary-foreground);
-		width: 100%;
-		display: none;
-	}
-
-	.content-button.mobile {
-		display: block;
-	}
-
 	.addressbook {
 		overflow: auto;
 	}
@@ -48,9 +36,7 @@
 	}
 </style>
 
-<Clickable onClick={clickShowWallet}>
-	<div class="content-button {$mobileClass}">Show wallet</div>
-</Clickable>
+<SidebarButton img="img/back.svg" text="Show wallet" visibleOnDesktop={false} onClick={clickShowWallet} />
 <div class="addressbook">
 	{#if $addressBook.length > 0}
 		{#each $addressBook as a, index}
