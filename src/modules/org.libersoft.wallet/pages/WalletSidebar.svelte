@@ -1,7 +1,7 @@
 <script>
 	import { hideSidebarMobile } from '@/core/core.ts';
 	import { addressBook } from '../wallet.ts';
-	import { isMobile } from '@/core/stores.ts';
+	import { mobileClass } from '@/core/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Item from '@/core/components/SidebarItem/SidebarItem.svelte';
 
@@ -48,7 +48,7 @@
 </style>
 
 <Clickable onClick={clickShowWallet}>
-	<div class="content-button {!$isMobile}">Show wallet</div>
+	<div class="content-button {$mobileClass}">Show wallet</div>
 </Clickable>
 <div class="addressbook">
 	{#if $addressBook.length > 0}

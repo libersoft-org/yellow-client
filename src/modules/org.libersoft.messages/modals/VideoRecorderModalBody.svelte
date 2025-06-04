@@ -1,6 +1,6 @@
 <script lang="ts">
 	import VideoRecorderContainer from '@/org.libersoft.messages/components/VideoRecorder/VideoRecorderContainer.svelte';
-	import { isMobile } from '@/core/stores.ts';
+	import { mobileClass } from '@/core/stores.ts';
 </script>
 
 <style>
@@ -18,6 +18,6 @@
 	}
 </style>
 
-<div class="video-recorder-modal-body {$isMobile ? 'mobile' : ''}">
+<div class="video-recorder-modal-body {$mobileClass}">
 	<VideoRecorderContainer />
 </div>

@@ -5,7 +5,7 @@
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 	import { init, isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product } from '../core/core.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
-	import { mobileWidth } from '@/core/stores.ts';
+	import { mobileWidth, mobileClass } from '@/core/stores.ts';
 	import { selected_theme_index } from '@/core/themes.js';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
@@ -371,7 +371,7 @@
 	<title>{product}</title>
 </svelte:head>
 <div class="app" style:--sidebar-width={sidebarWidth}>
-	<div class="sidebar {$isMobile ? 'mobile' : ''} {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
+	<div class="sidebar {$mobileClass} {$hideSidebarMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
 		<Menu bind:showMenu={isMenuOpen} />
 		<MenuBar onOpenMenu={() => (isMenuOpen = true)} />
 		<AccountBar />
@@ -384,9 +384,7 @@
 			<WelcomeSidebar />
 		{/if}
 	</div>
-
 	<div class="resizer" style:left={sidebarWidth} role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
-
 	<div class="content" bind:this={contentElement}>
 		{#if selectedCorePage}
 			<svelte:component this={selectedCorePage.content} />

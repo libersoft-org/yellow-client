@@ -3,7 +3,7 @@
 	import Input from '../components/Input/Input.svelte';
 	import Label from '../components/Label/Label.svelte';
 	import { log, TAURI, TAURI_MOBILE, BROWSER } from '../tauri.ts';
-	import { isMobile } from '../stores.ts';
+	import { mobileClass } from '../stores.ts';
 	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
 	import { platform, type as osType } from '@tauri-apps/plugin-os';
 	import { onMount } from 'svelte';
@@ -229,7 +229,7 @@
 </style>
 
 <div class="files2-test">
-	<div class="platform-info {$isMobile ? 'mobile' : ''}">
+	<div class="platform-info {$mobileClass}">
 		<div class="platform-info-item">
 			<strong>TAURI:</strong>
 			{platformInfo.tauri}
@@ -254,7 +254,7 @@
 
 	<div class="content">
 		<!-- Inputs Section -->
-		<div class="inputs-grid {$isMobile ? 'mobile' : ''}">
+		<div class="inputs-grid {$mobileClass}">
 			<div class="input-item">
 				<Label>suggested File Name:</Label>
 				<Input bind:value={fileName} placeholder="filename.txt" />
@@ -267,7 +267,7 @@
 
 			<!-- Default Folder (Desktop only) -->
 			{#if !TAURI_MOBILE}
-				<div class="folder-section {$isMobile ? 'mobile' : ''}">
+				<div class="folder-section {$mobileClass}">
 					<Label>Default folder: {$defaultDownloadFolder || '(not set)'}</Label>
 					<Button onClick={setDefaultFolderFromDownload} disabled={!download?.potential_default_folder}>Set from download</Button>
 				</div>
@@ -275,7 +275,7 @@
 		</div>
 
 		<!-- Action Buttons -->
-		<div class="buttons-grid {$isMobile ? 'mobile' : ''}">
+		<div class="buttons-grid {$mobileClass}">
 			<Button onClick={testOfferNativeDownload}>Offer Download</Button>
 			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save Chunk</Button>
 			<Button onClick={testFinishNativeDownload} disabled={!download}>Finish</Button>
@@ -283,7 +283,7 @@
 		</div>
 
 		<!-- Status Display -->
-		<div class="file-info {$isMobile ? 'mobile' : ''}">
+		<div class="file-info {$mobileClass}">
 			{#if result}
 				<div>
 					<p><strong>Result:</strong></p>

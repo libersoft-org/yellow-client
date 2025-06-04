@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { isMobile } from '@/core/stores.ts';
+	import { mobileClass } from '@/core/stores.ts';
 	import { debug } from '../../core.ts';
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
@@ -247,7 +247,7 @@
 
 {#if show}
 	<Portal>
-		<div class="modal {$isMobile ? 'mobile' : ''}" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
+		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">
 					{#if title}
