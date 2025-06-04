@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { mobileClass } from '@/core/stores.ts';
+	import { mobileClass, isMobile } from '@/core/stores.ts';
 	import { debug } from '../../core.ts';
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
@@ -28,7 +28,7 @@
 	}
 
 	$effect(() => {
-		if (!isMobile) return;
+		if (!$isMobile) return;
 		if (modalEl && showContent && !isDragging && activeTab) {
 			centerModal();
 			requestAnimationFrame(snapTransformIntoBounds);
@@ -40,7 +40,7 @@
 		modalId = registerModal(z => (zIndex = z));
 
 		function handleResize() {
-			if (!isMobile) return;
+			if (!$isMobile) return;
 			centerModal();
 			if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
 		}
@@ -48,7 +48,7 @@
 		if (modalEl) {
 			let didInit = false;
 			resizeObserver = new ResizeObserver(() => {
-				if (!isMobile) return;
+				if (!$isMobile) return;
 				if (isDragging) return;
 				if (didInit) {
 					centerModal();
@@ -105,7 +105,7 @@
 
 	function snapTransformIntoBounds() {
 		if (!modalEl) return;
-		if (!isMobile) return;
+		if (!$isMobile) return;
 		const rect = modalEl.getBoundingClientRect();
 		const padding = 0;
 		let dx = 0;
