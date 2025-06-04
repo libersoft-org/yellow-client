@@ -6,8 +6,9 @@
 		even?: boolean;
 		active?: boolean;
 		onClick?: (e: Event) => void;
+		[key: string]: any;
 	}
-	let { children, even = false, active = false, onClick }: Props = $props();
+	let { children, even = false, active = false, onClick, ...restProps }: Props = $props();
 
 	function handleClick(e) {
 		console.log('SidebarItem clicked');
@@ -44,7 +45,7 @@
 	}
 </style>
 
-<Clickable onClick={handleClick}>
+<Clickable {...restProps} onClick={handleClick}>
 	<div class="item {even ? 'even' : 'odd'} {active && 'active'}">
 		{@render children?.()}
 	</div>

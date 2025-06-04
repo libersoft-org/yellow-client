@@ -25,6 +25,6 @@
 	}
 </style>
 
-<button {...restProps} onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} class={['clickable button-reset']}>
+<button {...restProps} onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} class="clickable button-reset">
 	{@render children?.()}
 </button>
