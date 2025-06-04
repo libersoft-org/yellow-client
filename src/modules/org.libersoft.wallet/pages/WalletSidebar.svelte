@@ -22,10 +22,11 @@
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 		width: 100%;
+		display: none;
 	}
 
 	.content-button.mobile {
-		display: none;
+		display: block;
 	}
 
 	.addressbook {
