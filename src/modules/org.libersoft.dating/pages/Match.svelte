@@ -1,12 +1,12 @@
 <script lang="ts">
+	import { hideSidebarMobile } from '@/core/core.ts';
 	import { module } from '../module.js';
-	import Content from '../components/content.svelte';
-	import PhotoCard from '../components/photo-card.svelte';
 	import { page } from '../dating.js';
-	import core, { isMobile } from '@/core/core.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-
+	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Content from '../components/Content.svelte';
+	import PhotoCard from '../components/PhotoCard.svelte';
 	const photo = {
 		img: 'modules/' + module.identifier + '/img/photos/1.webp',
 		name: 'Name',
@@ -15,19 +15,16 @@
 
 	function modulePageClose() {
 		page.set('');
-		core.hideSidebarMobile.set(false);
+		hideSidebarMobile.set(false);
 	}
 </script>
 
 <TopBar>
 	<svelte:fragment slot="left">
-		{#if $isMobile}
-			<Icon img="img/back.svg" onClick={() => modulePageClose()} colorVariable="--primary-foreground" visibleOnDesktop={true} />
-		{/if}
-		<h1 class="title">Match game</h1>
+		<Icon img="img/back.svg" onClick={modulePageClose} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+		<TopBarTitle text="Match game" />
 	</svelte:fragment>
 </TopBar>
-
 <Content>
 	<PhotoCard {photo} />
 </Content>

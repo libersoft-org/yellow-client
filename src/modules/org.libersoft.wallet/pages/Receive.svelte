@@ -1,6 +1,6 @@
 <script>
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import QRCode from 'qrcode';
 	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
@@ -143,14 +143,14 @@
 		<div class="section">
 			<div class="section-wrapper">
 				<div class="bold">Your wallet address:</div>
-				<BaseButton onClick={clickCopyAddress}>
+				<Clickable onClick={clickCopyAddress}>
 					<div class="address">
 						<div class="clamp" bind:this={addressElement}>
 							{shortenAddress($selectedAddress.address)}
 						</div>
 						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 					</div>
-				</BaseButton>
+				</Clickable>
 				<div class="qr"><img src={qrAddress} alt="Address" /></div>
 			</div>
 		</div>
@@ -163,14 +163,14 @@
 					<DropdownFilter options={$currencies} bind:selected={currency} />
 					<div class="error">{error}</div>
 				</div>
-				<BaseButton onClick={clickCopyPayment}>
+				<Clickable onClick={clickCopyPayment}>
 					<div class="address">
 						<div class="clamp" style="width: 240px !important;" bind:this={paymentElement}>
 							{paymentText}
 						</div>
 						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 					</div>
-				</BaseButton>
+				</Clickable>
 				<div class="qr"><img src={qrPayment} alt="Payment" /></div>
 			</div>
 		</div>

@@ -1,7 +1,7 @@
 <script>
-	import { active_account, module_decls, selected_module_id } from '../../core.js';
+	import { active_account, module_decls, selected_module_id } from '../../core.ts';
 	import { get } from 'svelte/store';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ModuleBarItem from './ModuleBarItem.svelte';
 	import resize from '@/core/actions/resizeObserver.ts';
@@ -157,9 +157,9 @@
 			</div>
 		{/each}
 	</div>
-	<BaseButton disabled={!expandEnabled}>
+	<Clickable disabled={!expandEnabled}>
 		<div class="dropdown {expanded ? 'expanded' : ''}">
 			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
 		</div>
-	</BaseButton>
+	</Clickable>
 </div>

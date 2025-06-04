@@ -1,8 +1,8 @@
 <script>
 	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../../messages.js';
-	import { debug } from '@/core/core.js';
+	import { debug } from '@/core/core.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { isClientFocused } from '@/core/core.js';
+	import { isClientFocused } from '@/core/core.ts';
 	import { stripHtml } from '../../messages.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';

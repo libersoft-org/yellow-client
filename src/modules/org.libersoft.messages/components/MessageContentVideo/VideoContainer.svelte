@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.js';
-	import { active_account } from '@/core/core.js';
+	import { active_account } from '@/core/core.ts';
 	import { onMount } from 'svelte';
 	import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
 	import { humanSize } from '@/core/utils/fileUtils.js';
@@ -83,6 +83,10 @@
 
 		videoStarting = true;
 		const acc = get(active_account);
+		if (!acc) {
+			console.warn('No active account available');
+			return;
+		}
 		const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
 		//const progressiveUrl = 'http://localhost:3001/'
 		debug('Progressive URL:', progressiveUrl);

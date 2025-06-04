@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import { module } from '../module.js';
 	import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
-	import { hideSidebarMobile, debug } from '@/core/core.js';
+	import { hideSidebarMobile, debug } from '@/core/core.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalNetworks from '../modals/Networks.svelte';
@@ -18,7 +18,6 @@
 	import History from './History.svelte';
 	import Dropdown from '../components/Dropdown.svelte';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
-
 	let section = 'balance';
 	let showModalNetworks = false;
 	let showModalWallets = false;
@@ -177,7 +176,7 @@
 			width: 100%;
 		}
 
-		:global(.base-button) {
+		:global(.clickable) {
 			display: flex;
 			width: 100%;
 		}
@@ -192,7 +191,7 @@
 <div class="wallet-content">
 	<TopBar>
 		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--primary-foreground" visibleOnDesktop={false} />
+			<Icon img="img/back.svg" onClick={clickBackButton} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
 		</svelte:fragment>
 		<svelte:fragment slot="right">
@@ -218,14 +217,14 @@
 								<div>
 									<div>
 										{#if $selectedAddress && $selectedAddress.address}
-											<BaseButton onClick={clickCopyAddress}>
+											<Clickable onClick={clickCopyAddress}>
 												<div class="address">
 													<div bind:this={addressElement}>
 														{shortenAddress($selectedAddress.address)}
 													</div>
 													<Icon img="img/copy.svg" colorVariable="--default-foreground" alt="Copy" size="15px" padding="0px" />
 												</div>
-											</BaseButton>
+											</Clickable>
 										{:else}
 											<div class="address">No address selected</div>
 										{/if}

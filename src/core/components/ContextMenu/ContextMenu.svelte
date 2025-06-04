@@ -1,5 +1,5 @@
 <script>
-	import { getGuid } from '../../core.js';
+	import { getGuid } from '../../core.ts';
 	import { onMount, setContext, getContext, afterUpdate, createEventDispatcher, tick, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	export let target = null;

@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	export let active = false;
 	export let onClick;
 </script>
@@ -23,6 +23,6 @@
 	}
 </style>
 
-<BaseButton {onClick}>
+<Clickable {onClick}>
 	<div class="corner {active && 'active'}"></div>
-</BaseButton>
+</Clickable>

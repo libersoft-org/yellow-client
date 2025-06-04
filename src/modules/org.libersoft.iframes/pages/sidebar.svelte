@@ -1,5 +1,5 @@
 <script>
-	import core from '@/core/core.js';
+	import core from '@/core/core.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 
 	let url = 'https://koo5.github.io/';

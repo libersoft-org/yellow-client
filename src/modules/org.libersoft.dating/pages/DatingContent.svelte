@@ -1,9 +1,9 @@
 <script>
 	import { page } from '../dating.js';
-	import Map from './map.svelte';
-	import Match from './match.svelte';
-	import People from './people.svelte';
-	import Settings from './settings.svelte';
+	import Map from './Map.svelte';
+	import Match from './Match.svelte';
+	import People from './People.svelte';
+	import Settings from './Settings.svelte';
 
 	const pages = {
 		map: Map,

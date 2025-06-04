@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		children: Snippet;
+		children?: Snippet;
 		breakpoint?: string | null;
 		[key: string]: unknown;
 	}
@@ -51,6 +51,6 @@
 
 <div class={`table ${isWide ? 'table-wide' : ''}`} {...restProps}>
 	<table>
-		{@render children()}
+		{@render children?.()}
 	</table>
 </div>

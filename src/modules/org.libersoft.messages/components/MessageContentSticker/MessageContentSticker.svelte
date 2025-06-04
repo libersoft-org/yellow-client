@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Sticker from '../Stickers/Sticker.svelte';
 	import { getContext, onMount } from 'svelte';
 	let { node } = $props();
@@ -20,7 +20,7 @@
 </script>
 
 {#if v}
-	<BaseButton onClick={handleClick}>
+	<Clickable onClick={handleClick}>
 		<Sticker file={v} force_animate={true} intersecting={true} />
-	</BaseButton>
+	</Clickable>
 {/if}

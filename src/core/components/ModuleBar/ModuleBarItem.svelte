@@ -1,5 +1,5 @@
 <script>
-	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import Clickable from '../Clickable/Clickable.svelte';
 	import Indicator from './ModuleBarIndicator.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	export let decl;
@@ -32,9 +32,9 @@
 	}
 </style>
 
-<BaseButton data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
+<Clickable data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
 	<div class="item {selected && 'selected'}">
 		<Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
 		<Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--primary-background" size="30px" />
 	</div>
-</BaseButton>
+</Clickable>

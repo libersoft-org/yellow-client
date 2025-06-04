@@ -19,21 +19,20 @@
 
 	let { activeTab = $bindable(), title = 'Settings', menuItems = [], children = false, header = false, footer = false, onOptionalIconClick = $bindable(), optionalIconImage = $bindable() }: Props = $props();
 
-	let bread_crumb;
-	onMount(() => {
-		setContext('bread_crumb', bread_crumb);
-	});
+	let bread_crumbs = $state([]);
 
 	function setItem(item) {
 		activeTab = item;
-		bread_crumb.setBreadcrumb(item);
+		setBreadcrumbs(item);
 		checkBackButton();
 	}
 
 	function back() {
-		activeTab = bread_crumb.back();
+		bread_crumbs.pop();
 		checkBackButton();
+		return bread_crumbs[bread_crumbs.length - 1];
 	}
+	onOptionalIconClick = back;
 
 	function checkBackButton() {
 		if (activeTab) {
@@ -43,7 +42,30 @@
 		}
 	}
 
-	onOptionalIconClick = back;
+	function findPosition(bread_crumb) {
+		let position = -1;
+		bread_crumbs.forEach(function callback(item, index) {
+			console.log(item.title);
+			if (item.title == bread_crumb.title) {
+				position = index;
+			}
+		});
+		return position;
+	}
+
+	// has to be called on change with breadcrumb that responds to .title
+	export function setBreadcrumbs(bread_crumb) {
+		console.log(bread_crumb.title);
+		let position = findPosition(bread_crumb);
+		console.log(position);
+		if (position >= 0) {
+			if (position < bread_crumbs.length - 1) {
+				bread_crumbs.splice(position + 1, bread_crumbs.length - position);
+			}
+		} else {
+			bread_crumbs.push(bread_crumb);
+		}
+	}
 </script>
 
 <style>
@@ -62,7 +84,6 @@
 
 <div class="settings-container">
 	<Breadcrumb
-		bind:this={bread_crumb}
 		root_crumb={{
 			title: title,
 			tab: '',
@@ -71,6 +92,7 @@
 		}}
 		{setItem}
 		bind:activeTab
+		bind:bread_crumbs
 	/>
 
 	{#if header}
@@ -109,7 +131,7 @@
 
 	<div class="tab-content">
 		{#if !!activeTab && !!activeTab.component}
-			<activeTab.component subTabs={activeTab.subTabs} {setItem} isChild={true} title={activeTab.title} {activeTab} {bread_crumb} />
+			<activeTab.component subTabs={activeTab.subTabs} {setItem} isChild={true} title={activeTab.title} {activeTab} />
 		{/if}
 	</div>
 

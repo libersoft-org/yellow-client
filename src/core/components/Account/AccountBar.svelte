@@ -1,9 +1,9 @@
 <script>
 	import { onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
-	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.js';
+	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ItemAccount from './AccountBarItemAccount.svelte';
 	import ItemBase from './AccountBarItemBase.svelte';
 	import AccountStatusIcon from './AccountStatusIcon.svelte';
@@ -121,20 +121,20 @@
 		transition: none;
 	}
 
-	.account-bar > :global(.base-button) {
+	.account-bar > :global(.clickable) {
 		width: 100%;
 	}
 
 	/* TODO: experimental highlight for accessibility, in future this should be defined globally as class and support themes */
-	.account-bar > :global(.base-button:focus-visible),
-	.account-bar .items :global(.base-button:focus-visible) {
+	.account-bar > :global(.clickable:focus-visible),
+	.account-bar .items :global(.clickable:focus-visible) {
 		outline: none;
 		box-shadow: inset 0 0 0 2px white; /* Inside highlight */
 	}
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
-	<BaseButton data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
+	<Clickable data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
 		<div class={`dropdown`} class:is-expanded={accountsVisible}>
 			{#if $active_account}
 				<div class="text">
@@ -151,7 +151,7 @@
 			{/if}
 			<Icon img={'img/down.svg'} alt={accountsVisible ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="0px" />
 		</div>
-	</BaseButton>
+	</Clickable>
 	{#if accountsVisible}
 		<div class="items" transition:animateHeight={{ duration: 220 }}>
 			{#each $accounts as account (get(account).id)}

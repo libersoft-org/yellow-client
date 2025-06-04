@@ -2,10 +2,10 @@
 	import { get } from 'svelte/store';
 	import { onMount, getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { isMobile } from '@/core/core.js';
+	import { isMobile } from '@/core/core.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { gif_server } from '../../gifs.js';
 	import LazyLoader from './GifSetLazyLoader.svelte';
@@ -162,11 +162,11 @@
 				<div>No GIFs found.</div>
 			{:else}
 				{#each gifs as item}
-					<BaseButton onClick={() => sendGIF(item)}>
+					<Clickable onClick={() => sendGIF(item)}>
 						<div class="item">
 							<img src={item.media_formats.tinygif?.url} alt="GIF" />
 						</div>
-					</BaseButton>
+					</Clickable>
 				{/each}
 				{#if next_pos}
 					<LazyLoader onVisible={moreGifs} />

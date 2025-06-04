@@ -1,5 +1,5 @@
 <script>
-	import CardButton from './photo-card-button.svelte';
+	import CardButton from './PhotoCardButton.svelte';
 	export let photo;
 	//export let onYes;
 	//export let onNo;
@@ -80,22 +80,28 @@
 		text-align: center;
 	}
 
-	.buttons {
+	.card-buttons {
 		display: flex;
 		width: 100%;
 		justify-content: space-around;
 		margin-bottom: 10px;
 		z-index: 3000;
 	}
+
+	.overlay .title {
+		font-size: 24px;
+		font-weight: bold;
+		padding-bottom: 10px;
+	}
 </style>
 
 <div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" on:touchstart={e => startSwipe(e)} on:touchmove={e => moveSwipe(e)} on:touchend={e => endSwipe(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
-		<h2>{photo.name}</h2>
-		<p>{photo.description}</p>
+		<div class="title">{photo.name}</div>
+		<div>{photo.description}</div>
 	</div>
-	<div class="buttons">
+	<div class="card-buttons">
 		<CardButton on:click={onNo} content="👎" />
 		<CardButton on:click={onYes} content="👍" />
 	</div>

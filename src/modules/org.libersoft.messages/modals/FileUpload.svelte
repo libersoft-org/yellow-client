@@ -6,7 +6,7 @@
 	import { getContext } from 'svelte';
 	import { selectedConversation, initUpload } from '../messages.js';
 	import Button from '@/core/components/Button/Button.svelte';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
@@ -153,9 +153,9 @@
 				</Table>
 			</div>
 		{:else}
-			<BaseButton onClick={onFileAdd}>
+			<Clickable onClick={onFileAdd}>
 				<div class="items-empty" role="none">Drag and drop your files here<br />or click here to add files.</div>
-			</BaseButton>
+			</Clickable>
 		{/if}
 	</div>
 	<div class="footer">

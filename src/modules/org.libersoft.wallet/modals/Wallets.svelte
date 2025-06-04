@@ -1,6 +1,6 @@
 <script>
 	import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -24,13 +24,13 @@
 		<Table breakpoint="0">
 			<Tbody>
 				{#each walletAddresses(wallet) as address, index}
-					<BaseButton onClick={() => clickSelectAddress(wallet, address)}>
+					<Clickable onClick={() => clickSelectAddress(wallet, address)}>
 						<TbodyTr>
 							<Td class="center">{address.index}</Td>
 							<Td>{address.name}</Td>
 							<Td>{address.address}</Td>
 						</TbodyTr>
-					</BaseButton>
+					</Clickable>
 				{/each}
 			</Tbody>
 		</Table>

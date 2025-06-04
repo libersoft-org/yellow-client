@@ -1,5 +1,6 @@
 <script>
 	import Modal from '../Modal/Modal.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '../Icon/Icon.svelte';
 
@@ -16,21 +17,6 @@
 </script>
 
 <style>
-	.buttons {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
-		width: fit-content;
-
-		:global(.base-button) {
-			width: fit-content;
-		}
-
-		/* .button {
-      width: fit-content;
-    } */
-	}
-
 	.top {
 		display: flex;
 		gap: 20px;
@@ -45,10 +31,10 @@
 		{/if}
 		<div>{data.body}</div>
 	</div>
-	<div class="buttons">
+	<ButtonBar>
 		{#each data.buttons as button}
 			<Button {...button} />
 		{/each}
-	</div>
+	</ButtonBar>
 	<!-- <Button text="Close" onClick={() => (show = false)} /> -->
 </Modal>

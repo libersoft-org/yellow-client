@@ -2,7 +2,7 @@
 	import { truncateText } from '@/core/utils/textUtils.js';
 	import { humanSize } from '@/core/utils/fileUtils.js';
 	import { identifier } from '@/org.libersoft.messages/messages.js';
-	import { debug } from '@/core/core.js';
+	import { debug } from '@/core/core.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -128,7 +128,7 @@
 
 					<button class="video-placeholder-play-button button-reset" onclick={startVideo}>
 						{#if videoStarting}
-							<Spinner show={true} size="14px" containerMinHeight="14px" color="var(--primary-background)" />
+							<Spinner show={true} size="14px" containerMinHeight="14px" />
 						{:else}
 							<Icon img="modules/{identifier}/img/play.svg" colorVariable="--primary-background" alt="Start video" size="24px" padding="0px" />
 						{/if}

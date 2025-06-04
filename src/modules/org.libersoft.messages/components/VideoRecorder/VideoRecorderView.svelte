@@ -140,7 +140,7 @@
 		height: 100%;
 	}
 
-	.video-recorder:not(.toggle-facing-mode-enabled) .camera-button-wrapper :global(.base-button) {
+	.video-recorder:not(.toggle-facing-mode-enabled) .camera-button-wrapper :global(.clickable) {
 		cursor: default;
 	}
 

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile, isMobile } from '@/core/core.js';
+	import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '@/core/core.ts';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -18,6 +19,7 @@
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
+	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 
 	interface Props {
@@ -74,16 +76,6 @@
 		}
 	}
 
-	.buttons {
-		display: flex;
-		gap: clamp(8px, 0.8vw, 12px);
-		flex-wrap: wrap;
-
-		@media only screen and (max-width: 32em) {
-			justify-content: flex-start;
-		}
-	}
-
 	:global(.button) {
 		white-space: nowrap;
 	}
@@ -124,19 +116,17 @@
 <div class="accounts">
 	<TopBar>
 		<svelte:fragment slot="left">
-			{#if $isMobile}
-				<Icon img="img/back.svg" onClick={back} colorVariable="--primary-foreground" visibleOnDesktop={false} />
-			{/if}
-			<h1 class="title">Account management</h1>
+			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+			<TopBarTitle text="Account management" />
 		</svelte:fragment>
 	</TopBar>
 	<div class="accounts-wrapper">
 		<Paper>
-			<div class="buttons">
+			<ButtonBar>
 				<Button img="img/accounts.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} />
 				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
 				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} />
-			</div>
+			</ButtonBar>
 			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>
 	</div>

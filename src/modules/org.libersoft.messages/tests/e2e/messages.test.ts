@@ -52,14 +52,14 @@
 //  await page.getByRole('button', { name: 'X', exact: true }).click();
 //  await page.getByRole('button', { name: 'Import' }).click();
 //  await page.getByRole('textbox').fill('[\n  {\n    "id": "0",\n    "enabled": true,\n    "credentials": {\n      "address": "user1@example.com",\n      "server": "ws://localhost:8085/",\n      "password": "password",\n      "retry_nonce": 0\n    },\n    "settings": {\n      "title": "",\n      "last_module_id": "org.libersoft.messages"\n    }\n  }\n]');
-//  await page.locator('.body > .base-button').click();
+//  await page.locator('.body > .clickable').click();
 //  await page.getByRole('button', { name: 'X', exact: true }).click();
-//  await page.locator('.item > .base-button').first().click();
+//  await page.locator('.item > .clickable').first().click();
 //  await page.getByRole('button', { name: 'SELECT YOUR ACCOUNT ▼' }).click();
 //  await page.getByRole('button', { name: 'user1@example.com Logged in.', exact: true }).click();
 //  await page.locator('div').filter({ hasText: 'Select your conversationor Start a new one' }).nth(3).click();
-//  await page.locator('.item > .base-button').first().click();
-//  await page.locator('.item > .base-button').first().click();
+//  await page.locator('.item > .clickable').first().click();
+//  await page.locator('.item > .clickable').first().click();
 //  await page.getByRole('button', { name: 'New conversation New' }).click();
 //  await page.getByRole('textbox', { name: 'user@domain.tld' }).fill('user2@example.com');
 //  await page.getByRole('button', { name: 'Open' }).click();

@@ -151,7 +151,7 @@
 		opacity: 0.3;
 	}
 
-	.button-wrapper :global(.base-button) {
+	.button-wrapper :global(.clickable) {
 		display: flex;
 		justify-content: center;
 		align-items: center;

@@ -1,8 +1,8 @@
 <script>
-	import { accounts, findAccount, sendAsync } from '@/core/core.js';
+	import { accounts, findAccount, sendAsync } from '@/core/core.ts';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import { debug } from '@/core/core.js';
+	import { debug } from '@/core/core.ts';
 
 	//let url = 'https://yellow-module1.netlify.app/'
 	let url = 'http://localhost:5173/';
@@ -69,7 +69,7 @@
 	}
 </style>
 
-<!--<h2>Iframe-isolated module test</h2>-->
+<!--<div>Iframe-isolated module test</div>-->
 <!--<iframe sandbox="allow-scripts" src={url} title="content" width="600" height="400"></iframe>-->
 <!--<iframe sandbox="allow-scripts" src="https://koo5.github.io/" title="content" width="600" height="400"></iframe>-->
 <!--<iframe id="iframe1" src="iframe1.html" style="width: 45%; height: 200px;"></iframe>-->

@@ -1,6 +1,6 @@
-import { registerModule } from '@/core/core.js';
-import Sidebar from './pages/dating-sidebar.svelte';
-import Content from './pages/dating-content.svelte';
+import { registerModule } from '@/core/core.ts';
+import Sidebar from './pages/DatingSidebar.svelte';
+import Content from './pages/DatingContent.svelte';
 
 export const module = {
 	name: 'Dating',

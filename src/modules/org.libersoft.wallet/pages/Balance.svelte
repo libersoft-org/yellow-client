@@ -70,7 +70,7 @@
 
 <!--
 <script>
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	export let icon;
 	export let symbol;
 	export let amount;
@@ -100,7 +100,7 @@
 	}
 </style>
 
-<BaseButton {onClick}>
+<Clickable {onClick}>
 	<div class="item {className}">
 		{#if icon}
 			<div class="icon"><img src={icon} alt={symbol} /></div>
@@ -111,5 +111,5 @@
 			<div class="fiat">({amount.fiat} USD)</div>
 		</div>
 	</div>
-</BaseButton>
+</Clickable>
 -->

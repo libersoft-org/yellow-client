@@ -13,42 +13,10 @@
 			},
 		},
 		activeTab = $bindable(),
+		bread_crumbs = $bindable([]),
 
 		setItem = () => {},
 	} = $props();
-
-	let bread_crumbs = $state([]);
-
-	// has to be called in case if you go back one level
-	export function back() {
-		bread_crumbs.pop();
-		return bread_crumbs[bread_crumbs.length - 1];
-	}
-
-	function findPosition(bread_crumb) {
-		let position = -1;
-		bread_crumbs.forEach(function callback(item, index) {
-			console.log(item.title);
-			if (item.title == bread_crumb.title) {
-				position = index;
-			}
-		});
-		return position;
-	}
-
-	// has to be called on change with breadcrumb that responds to .title
-	export function setBreadcrumb(bread_crumb) {
-		console.log(bread_crumb.title);
-		let position = findPosition(bread_crumb);
-		console.log(position);
-		if (position >= 0) {
-			if (position < bread_crumbs.length - 1) {
-				bread_crumbs.splice(position + 1, bread_crumbs.length - position);
-			}
-		} else {
-			bread_crumbs.push(bread_crumb);
-		}
-	}
 </script>
 
 <style>

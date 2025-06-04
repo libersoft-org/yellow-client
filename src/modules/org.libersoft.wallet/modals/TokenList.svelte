@@ -1,4 +1,5 @@
 <script>
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -74,18 +75,13 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.buttons {
-		display: flex;
-		gap: 10px;
-	}
 </style>
 
 <div class="token-list">
-	<div class="buttons">
+	<ButtonBar>
 		<!-- () => (item_tokens = [...item_tokens, { name: '', icon: '', symbol: '', contract_address: '' }]) -->
 		<Button text="Add token" onClick={addTokenModal} />
-	</div>
+	</ButtonBar>
 	<div class="label">Network name: {net?.name}</div>
 	<div class="label">Tokens:</div>
 	{#if net?.tokens}

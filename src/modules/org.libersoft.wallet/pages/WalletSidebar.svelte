@@ -1,7 +1,7 @@
 <script>
-	import { hideSidebarMobile } from '@/core/core.js';
+	import { hideSidebarMobile } from '@/core/core.ts';
 	import { addressBook } from '../wallet.ts';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Item from '@/core/components/SidebarItem/SidebarItem.svelte';
 
 	function clickShowWallet() {
@@ -48,9 +48,9 @@
 	}
 </style>
 
-<BaseButton onClick={clickShowWallet}>
+<Clickable onClick={clickShowWallet}>
 	<div class="content-button">Show wallet</div>
-</BaseButton>
+</Clickable>
 <div class="addressbook">
 	{#if $addressBook.length > 0}
 		{#each $addressBook as a, index}

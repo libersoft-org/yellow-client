@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	//import Emoji from "../Emoji/Emoji.svelte";
 	import { emoji_render, rgi_to_codepoints } from '../../emojis';
 	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
@@ -51,7 +51,12 @@
 		if (!reactions || !reactions.length) {
 			return '';
 		}
-		const myUserAddress = get(active_account).credentials.address;
+		const activeAccount = get(active_account);
+		if (!activeAccount) {
+			console.warn('No active account available');
+			return;
+		}
+		const myUserAddress = activeAccount.credentials.address;
 		const didIReact = reactions.some(r => r.user_address === myUserAddress);
 		const otherReactionAddresses = reactions.filter(r => r.user_address !== myUserAddress).map(r => r.user_address);
 
@@ -125,12 +130,12 @@
 	<div class="message-reactions">
 		{#each Object.keys(groupedReactions) as rgi (rgi)}
 			{@const reactions = groupedReactions[rgi]}
-			<BaseButton onClick={() => onReactionClick(rgi)}>
+			<Clickable onClick={() => onReactionClick(rgi)}>
 				<div bind:this={buttonRefs[rgi]} class="reaction-box" onmouseenter={e => showTooltip(e, reactions, rgi)} onmouseleave={dismissTooltip} role="button" tabindex="0">
 					{emoji_render(rgi_to_codepoints(rgi))}
 					<span style:pointer-events="none">{reactions.length}</span>
 				</div>
-			</BaseButton>
+			</Clickable>
 		{/each}
 	</div>
 	{#if tooltipButton}

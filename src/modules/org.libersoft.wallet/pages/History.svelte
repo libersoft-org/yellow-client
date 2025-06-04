@@ -1,5 +1,6 @@
 <script>
 	import { selectedNetwork, selectedAddress } from '../wallet.ts';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	let info = '';
 	let link = '';
@@ -43,21 +44,16 @@
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 	}
-
-	.buttons {
-		display: flex;
-		gap: 10px;
-	}
 </style>
 
 <div class="history">
 	{#if $selectedNetwork && $selectedAddress}
 		<div class="bold">Address history:</div>
 		<div class="url" bind:this={elLink}>{link}</div>
-		<div class="buttons">
+		<ButtonBar>
 			<Button text="Copy link" onClick={copyLink} />
 			<Button text="Open link" onClick={openLink} />
-		</div>
+		</ButtonBar>
 	{:else}
 		<div>No network or wallet selected</div>
 	{/if}

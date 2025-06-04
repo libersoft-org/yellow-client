@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
-	import BaseButton from '../BaseButton/BaseButton.svelte';
+	import Clickable from '../Clickable/Clickable.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
@@ -61,7 +61,7 @@
 	}
 </style>
 
-<BaseButton {...restProps} onClick={handleClick} disabled={!enabled}>
+<Clickable {...restProps} onClick={handleClick} disabled={!enabled}>
 	<div class="button" class:disabled={!enabled} class:hidden-on-desktop={hiddenOnDesktop} style:width style:padding style:border-radius={radius + 'px'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
 		{#if children}
 			{@render children?.()}
@@ -77,4 +77,4 @@
 			{/if}
 		{/if}
 	</div>
-</BaseButton>
+</Clickable>

@@ -5,7 +5,7 @@
 	import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import { get, writable } from 'svelte/store';
-	import { active_account } from '@/core/core.js';
+	import { active_account } from '@/core/core.ts';
 	import { humanSize } from '@/core/utils/fileUtils.js';
 	import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -102,6 +102,10 @@
 			return;
 		}
 		const acc = get(active_account);
+		if (!acc) {
+			console.warn('No active account available');
+			return;
+		}
 		const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
 		const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
 

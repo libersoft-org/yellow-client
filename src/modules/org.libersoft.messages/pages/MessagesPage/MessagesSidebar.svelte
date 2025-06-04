@@ -1,6 +1,6 @@
 <script>
 	import { identifier, conversationsArray, selectConversation } from '../../messages.js';
-	import BaseButton from '@/core/components/BaseButton/BaseButton.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
@@ -66,7 +66,7 @@
 		padding-right: 0;
 		font-weight: bold;
 
-		:global(.base-button) {
+		:global(.clickable) {
 			flex: 1 1 auto;
 			min-width: 0;
 		}
@@ -92,12 +92,12 @@
 {#if $conversationsArray != null}
 	<div class="conversations">
 		<div class="bar-buttons">
-			<BaseButton data-testid="new-conversation-button" onClick={clickNewConversation}>
+			<Clickable data-testid="new-conversation-button" onClick={clickNewConversation}>
 				<div class="bar-button">
 					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--secondary-foreground" size="28px" padding="0px" />
 					<div class="new-conversation">New conversation</div>
 				</div>
-			</BaseButton>
+			</Clickable>
 			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--secondary-foreground" size="28px" padding="10px" onClick={clickMessagesSettings} />
 		</div>
 		<div class="items" bind:this={elItems} on:scroll={parseScroll}>

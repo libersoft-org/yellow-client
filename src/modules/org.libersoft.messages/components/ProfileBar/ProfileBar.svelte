@@ -1,9 +1,9 @@
 <script>
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Photo from '../Photo/Photo.svelte';
-	import { selectedConversation } from '../../messages.js';
-	import { isMobile } from '@/core/core.js';
+	import Photo from '@/core/Photo/Photo.svelte';
+	import { selectedConversation, photoRadius } from '../../messages.js';
+	import { isMobile } from '@/core/core.ts';
 	export let closeConversation;
 
 	function clickClose() {
@@ -40,9 +40,9 @@
 <TopBar>
 	<svelte:fragment slot="left">
 		{#if $isMobile}
-			<Icon img="img/back.svg" alt="Back" colorVariable="--primary-foreground" padding="10px" onClick={clickClose} />
+			<Icon img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
 		{/if}
-		<Photo size="38px" />
+		<Photo size="38px" radius={$photoRadius} />
 		<div class="description">
 			{#if $selectedConversation.visible_name}
 				<div class="visible_name">{$selectedConversation.visible_name}</div>

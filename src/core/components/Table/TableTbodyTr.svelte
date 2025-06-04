@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	interface Props {
-		children: Snippet;
+		children?: Snippet;
 		background?: string;
 		hover?: boolean;
 	}
-
 	const { children, background = 'var(--primary-soft-background)', hover = true }: Props = $props();
 </script>
 
@@ -26,5 +25,5 @@
 </style>
 
 <tr class:hover style:background>
-	{@render children()}
+	{@render children?.()}
 </tr>
