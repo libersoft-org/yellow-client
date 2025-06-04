@@ -1,5 +1,6 @@
 <script>
-	import core, { active_account, selected_module_id } from '@/core/core.ts';
+	import { active_account, selected_module_id } from '@/core/core.ts';
+	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { identifier, online } from '../../messages.js';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
@@ -15,7 +16,7 @@
 	}
 
 	function back() {
-		core.hideSidebarMobile.set(false);
+		hideSidebarMobile.set(false);
 	}
 
 	function close() {
