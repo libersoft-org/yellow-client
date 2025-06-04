@@ -22,16 +22,12 @@
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 
-	interface Props {
-		showAddEditAccountModal: boolean;
-		showDelAccountModal: boolean;
-		showExportModal: boolean;
-		showImportModal: boolean;
-		idItem: string | null;
-		accountTitle: string;
-	}
-
-	let { showAddEditAccountModal = $bindable(false), showDelAccountModal = false, showExportModal = $bindable(false), showImportModal = $bindable(false), idItem = $bindable(null), accountTitle = $bindable('') }: Props = $props();
+	let showAddEditAccountModal: boolean = $state(false);
+	let showDelAccountModal: boolean = $state(false);
+	let showExportModal: boolean = $state(false);
+	let showImportModal: boolean = $state(false);
+	let idItem: string | null = $state(null);
+	let accountTitle: string = $state('');
 
 	function back() {
 		hideSidebarMobile.set(false);
@@ -48,9 +44,8 @@
 		showAddEditAccountModal = true;
 	}
 
-	const clickDel = (id: string, title: string) => {
+	const clickDel = (id: string) => {
 		idItem = id;
-		accountTitle = title;
 		showDelAccountModal = true;
 	};
 
@@ -99,7 +94,7 @@
 				<Td title="Action">
 					<TableActionItems>
 						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
-						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id, account.settings?.title)} />
+						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account)} />
 					</TableActionItems>
 				</Td>
 			</TbodyTr>
@@ -135,4 +130,4 @@
 <Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
 <Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} width="700px" />
 <Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} width="700px" />
-<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem, name: accountTitle }} bind:show={showDelAccountModal} />
+<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem }} bind:show={showDelAccountModal} />

@@ -5,7 +5,7 @@
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 	import { init, isMobile, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product, version, link } from '../core/core.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '../core/notifications.ts';
-	import { selected_theme_index, current_theme, themes_stored } from '../core/appearance_store.js';
+	import { selected_theme_index, current_theme, themes_stored } from '../core/themes';
 	import Menu from '../core/components/Menu/Menu.svelte';
 	import MenuBar from '../core/components/Menu/MenuBar.svelte';
 	import ModuleBar from '../core/components/ModuleBar/ModuleBar.svelte';

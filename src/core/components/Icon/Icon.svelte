@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { getColorFromCSSToFilter } from '../../utils/colors.js';
-	import { current_theme } from '../../appearance_store.js';
+	import { current_theme } from '../../themes';
 	interface Props {
 		img: string;
 		alt?: string;
