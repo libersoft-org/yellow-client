@@ -14,7 +14,7 @@ export const debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
 export const debugBuffer = writable('');
 export const documentHeight = writable(0);
 export const isMobile = writable(false);
-export const mobile = derived(isMobile, $isMobile => ($isMobile ? 'mobile' : ''));
+export const mobileClass = derived(isMobile, $isMobile => ($isMobile ? 'mobile' : ''));
 export const keyboardHeight = writable(0);
 export const hideSidebarMobile = writable(false);
 export const isClientFocused = writable(true);
