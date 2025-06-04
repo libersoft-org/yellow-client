@@ -25,7 +25,7 @@
 	$: selectLastModule(module_data);
 
 	function selectLastModule(module_data) {
-		//console.log('selectLastModule: lastModuleSelected: ', module_data);
+		console.log('selectLastModule: lastModuleSelected: ', module_data);
 		if (!lastModuleSelected && module_data_ordered && module_data_ordered.length > 0) {
 			//console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
 			lastModuleSelected = true;
@@ -46,6 +46,7 @@
 		console.log('clickSetModule: ' + id);
 		if ($selected_module_id === id) onCloseModule();
 		else onSelectModule(id);
+		lastModuleSelected = true;
 	}
 
 	function clickExpand() {
