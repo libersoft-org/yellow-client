@@ -683,7 +683,7 @@ export function setMessageSeen(message, cb) {
 	let acc = get(active_account);
 	log.debug('setMessageSeen', message);
 	deleteNotification(messageNotificationId(message));
-	message.seen = true;
+	message.just_marked_as_seen = true;
 	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
@@ -699,8 +699,8 @@ export function setMessageSeen(message, cb) {
            conversationsArray.update(v => v);
           }*/
 	});
-	messagesArray.update(v => v);
-	insertEvent({ type: 'properties_update', array: get(messagesArray) });
+	/*messagesArray.update(v => v);
+	insertEvent({ type: 'properties_update', array: get(messagesArray) });*/
 }
 
 export function sendMessage(text, format, acc = null, conversation = null) {
