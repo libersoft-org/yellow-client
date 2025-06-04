@@ -1,5 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
+	import TopBar from '@/core/components/TopBar/TopBar.svelte';
+	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
 	let closeDialog;
@@ -21,6 +24,8 @@
 	function clickButton() {
 		console.log('Clicked on button');
 	}
+
+	function back() {}
 </script>
 
 <style>
@@ -31,5 +36,14 @@
 	}
 </style>
 
+<TopBar>
+	<svelte:fragment slot="left">
+		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} visibleOnMobile={true} />
+		<TopBarTitle text="Contact list" />
+	</svelte:fragment>
+	<svelte:fragment slot="right">
+		<Icon img="img/close.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={true} visibleOnMobile={false} />
+	</svelte:fragment>
+</TopBar>
 <div class="content">Contact list - content page - not yet implemented</div>
 <Dialog data={dialogData} bind:close={closeDialog} bind:this={elDialog} />
