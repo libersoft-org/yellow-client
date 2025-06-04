@@ -1,14 +1,3 @@
-<script>
-	import { onMount } from 'svelte';
-	let cont;
-	let cont2;
-
-	onMount(() => {
-		cont2 = cont.clientHeight;
-		console.log(cont2);
-	});
-</script>
-
 <style>
 	.page-content {
 		height: 100%;
@@ -18,6 +7,6 @@
 	}
 </style>
 
-<div class="page-content" bind:this={cont}>
-	<slot></slot>
+<div class="page-content">
+	<slot />
 </div>
