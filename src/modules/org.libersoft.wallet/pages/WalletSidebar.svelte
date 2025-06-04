@@ -3,7 +3,7 @@
 	import { addressBook } from '../wallet.ts';
 	import { mobileClass } from '@/core/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Item from '@/core/components/SidebarItem/SidebarItem.svelte';
+	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 
 	function clickShowWallet() {
 		hideSidebarMobile.set(true);

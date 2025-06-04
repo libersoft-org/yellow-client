@@ -1,6 +1,6 @@
 <script>
 	import core from '@/core/core.ts';
-	import Item from '../components/SidebarItem.svelte';
+	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
 	import { page } from '../dating.js';
 	const sections = [
 		{ id: 'people', img: 'people.svg', label: 'People nearby' },
@@ -17,6 +17,6 @@
 
 <div class="sidebar">
 	{#each sections as { id, img, label }}
-		<Item {img} {label} active={$page === id} onClick={() => setPage(id)} />
+		<SidebarItem {img} {text} active={$page === id} onClick={() => setPage(id)} />
 	{/each}
 </div>

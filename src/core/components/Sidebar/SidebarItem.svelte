@@ -17,7 +17,7 @@
 </script>
 
 <style>
-	.item {
+	.sidebar-item {
 		display: flex;
 		flex-direction: column;
 		padding: 10px;
@@ -27,26 +27,26 @@
 		transition: background-color 0.4s linear;
 	}
 
-	.item.even {
+	.sidebar-item.even {
 		background-color: var(--primary-softer-background);
 	}
 
-	.item.odd {
+	.sidebar-item.odd {
 		background-color: var(--primary-soft-background);
 	}
 
-	.item:hover {
+	.sidebar-item:hover {
 		background-color: var(--primary-background);
 	}
 
-	.item.active {
+	.sidebar-item.active {
 		background-color: var(--primary-hard-background);
 		transition: background-color 0.4s linear;
 	}
 </style>
 
 <Clickable {...restProps} onClick={handleClick}>
-	<div class="item {even ? 'even' : 'odd'} {active && 'active'}">
+	<div class="sidebar-item {even ? 'even' : 'odd'} {active && 'active'}">
 		{@render children?.()}
 	</div>
 </Clickable>
