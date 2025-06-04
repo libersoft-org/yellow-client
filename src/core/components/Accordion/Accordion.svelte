@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { tick, type Snippet } from 'svelte';
+	import { isMobile } from '@/core/stores.ts';
 	import Clickable from '../Clickable/Clickable.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	interface Props {
@@ -12,14 +13,12 @@
 	}
 	let { items, content, header, expandAllOnDesktop = false, mode = 'single' }: Props = $props();
 	let activeIndices = $state<number[]>([]);
-	const isDesktop = window.matchMedia('(min-width: 769px)').matches;
 	const isSingleMode = mode === 'single';
 
 	async function handleClick(index: number) {
 		const isOpen = activeIndices.includes(index);
 		const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
 		if (!el) return;
-
 		// CLOSE
 		if (isOpen) {
 			el.style.height = `${el.scrollHeight}px`;
@@ -28,10 +27,9 @@
 			activeIndices = activeIndices.filter(i => i !== index);
 			return;
 		}
-
 		// OPEN
 		// Remove others if needed
-		if ((!isDesktop || !expandAllOnDesktop) && isSingleMode) {
+		if (($isMobile || !expandAllOnDesktop) && isSingleMode) {
 			activeIndices.forEach(i => {
 				const other = document.querySelector(`.content[data-index="${i}"]`) as HTMLElement;
 				if (other) {
@@ -51,12 +49,10 @@
 			}
 			activeIndices = activeIndices.slice(1); // Remove first
 		}
-
 		el.style.height = '0px';
 		el.offsetHeight;
 		el.style.height = `${el.scrollHeight}px`;
 		activeIndices = [...activeIndices, index];
-
 		setTimeout(() => {
 			if (activeIndices.includes(index)) {
 				el.style.height = 'auto';
@@ -113,7 +109,6 @@
 				collapseAll();
 			}
 		}
-
 		media.addEventListener('change', handleResize);
 		return () => media.removeEventListener('change', handleResize);
 	});
@@ -123,7 +118,6 @@
 
 		function collapseAll() {
 			activeIndices = [];
-
 			items.forEach((_, index) => {
 				const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
 				if (el) {
@@ -141,7 +135,6 @@
 		}
 
 		media.addEventListener('change', handleResize);
-
 		return () => {
 			media.removeEventListener('change', handleResize);
 		};

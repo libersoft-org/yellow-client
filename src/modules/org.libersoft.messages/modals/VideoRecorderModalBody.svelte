@@ -1,5 +1,6 @@
 <script lang="ts">
 	import VideoRecorderContainer from '@/org.libersoft.messages/components/VideoRecorder/VideoRecorderContainer.svelte';
+	import { mobileClass } from '@/core/stores.ts';
 </script>
 
 <style>
@@ -11,14 +12,12 @@
 		align-items: center;
 	}
 
-	@media (max-width: 768px) {
-		.video-recorder-modal-body {
-			width: calc(100vw - 20px);
-			height: 80vh;
-		}
+	.video-recorder-modal-body.mobile {
+		width: calc(100vw - 20px);
+		height: 80vh;
 	}
 </style>
 
-<div class="video-recorder-modal-body">
+<div class="video-recorder-modal-body {$mobileClass}">
 	<VideoRecorderContainer />
 </div>
