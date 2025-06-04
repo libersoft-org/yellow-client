@@ -66,8 +66,14 @@
 	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
 	$: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
 	//$: console.log('Core.isClientFocused:', $isClientFocused);
-	$: if (isVisible && $isClientFocused) {
-		console.log('isVisible:', isVisible, 'isClientFocused:', $isClientFocused);
+	$: maybeSetSeen(isVisible, $isClientFocused);
+
+	function maybeSetSeen(isVisible, isClientFocused) {
+		console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
+		if (!isVisible || !isClientFocused) {
+			console.log('not setting seen because not visible or not focused');
+			return;
+		}
 		if (message.seen) {
 			console.log('not setting seen because already set');
 			observer.disconnect();
