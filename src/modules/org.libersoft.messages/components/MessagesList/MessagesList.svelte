@@ -388,8 +388,8 @@
 				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
 				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)) {
 					//console.log('ADDING-UNSEEN-MARKER');
-					unseen_marker_put = true;
 					items.push({ type: 'unseen_marker' });
+					unseen_marker_put = true;
 				}
 				items.push(m);
 				if (m.id !== undefined && m.id > oldLastID) {

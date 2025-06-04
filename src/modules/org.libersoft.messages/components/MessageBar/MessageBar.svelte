@@ -148,13 +148,15 @@
 		messageBarReplyStore.close();
 	}
 
-	function clickSendSplit(event) {
-		let messages = elMessage.value.split('\n');
-		for (let message of messages) {
-			if (message) {
-				clickSend2(message);
+	function debugClickSendSplit(event) {
+		setTimeout(() => {
+			let messages = elMessage.value.split('\n');
+			for (let message of messages) {
+				if (message) {
+					clickSend2(message);
+				}
 			}
-		}
+		}, 5000);
 	}
 
 	function keyEnter(event) {
@@ -318,7 +320,7 @@
 		<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
 		<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
 		{#if $debug}
-			<Icon img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="20px" padding="0px" onClick={clickSendSplit} />
+			<Icon img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="20px" padding="0px" onClick={debugClickSendSplit} />
 		{/if}
 	</div>
 </div>
