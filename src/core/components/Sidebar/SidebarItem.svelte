@@ -28,11 +28,11 @@
 	}
 
 	.sidebar-item.even {
-		background-color: var(--primary-softer-background);
+		background-color: var(--primary-soft-background);
 	}
 
 	.sidebar-item.odd {
-		background-color: var(--primary-soft-background);
+		background-color: var(--primary-softer-background);
 	}
 
 	.sidebar-item:hover {

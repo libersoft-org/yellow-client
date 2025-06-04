@@ -40,7 +40,7 @@
 <div class="addressbook">
 	{#if $addressBook.length > 0}
 		{#each $addressBook as a, index}
-			<Item even={index % 2 === 0 ? true : false} onClick={() => clickItem(a.address)}>
+			<Item even={index % 2 === 0 ? false : true} onClick={() => clickItem(a.address)}>
 				<div class="alias">{a.alias}</div>
 				<div class="address">{a.address}</div>
 			</Item>
