@@ -12,7 +12,7 @@
 	}
 	let { items, content, header, expandAllOnDesktop = false, mode = 'single' }: Props = $props();
 	let activeIndices = $state<number[]>([]);
-	const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+	const isDesktop = window.matchMedia('(min-width: 769px)').matches;
 	const isSingleMode = mode === 'single';
 
 	async function handleClick(index: number) {
@@ -65,7 +65,7 @@
 	}
 
 	$effect(() => {
-		const media = window.matchMedia('(min-width: 768px)');
+		const media = window.matchMedia('(min-width: 769px)');
 
 		function expandAll() {
 			activeIndices = items.map((_, i) => i);
@@ -119,7 +119,7 @@
 	});
 
 	$effect(() => {
-		const media = window.matchMedia('(min-width: 768px)');
+		const media = window.matchMedia('(min-width: 769px)');
 
 		function collapseAll() {
 			activeIndices = [];

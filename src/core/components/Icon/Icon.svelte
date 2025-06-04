@@ -37,13 +37,13 @@
 		user-select: none;
 	}
 
-	@media (max-width: 767px) {
+	@media (max-width: 768px) {
 		.hideOnMobile {
 			display: none;
 		}
 	}
 
-	@media (min-width: 768px) {
+	@media (min-width: 769px) {
 		.hideOnDesktop {
 			display: none;
 		}
