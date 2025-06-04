@@ -223,7 +223,7 @@ async function setupAccountInWizard(
 		await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
 		await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
 		await page.getByTestId('add').click();
-		await page.screenshot({ path: 'setup_account_in_wizard.png' });
+		await page.screenshot({ path: '/tmp/setup_account_in_wizard.png' });
 		await page.getByRole('button', { name: 'Next' }).click();
 		await page.getByRole('button', { name: 'Next' }).click();
 		await page.getByRole('button', { name: 'Finish' }).click();
