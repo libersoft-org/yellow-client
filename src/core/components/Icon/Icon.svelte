@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import { getColorFromCSSToFilter } from '../../utils/colors.js';
-	import { current_theme } from '../../appearance_store.js';
+	import { getColorFromCSSToFilter } from '@/core/utils/colors.js';
+	import { current_theme } from '@/core/themes.js';
+	import { isMobile } from '@/core/stores.js';
 	interface Props {
 		img: string;
 		alt?: string;
@@ -36,31 +37,21 @@
 		display: flex;
 		user-select: none;
 	}
-
-	@media (max-width: 767px) {
-		.hideOnMobile {
-			display: none;
-		}
-	}
-
-	@media (min-width: 768px) {
-		.hideOnDesktop {
-			display: none;
-		}
-	}
 </style>
 
 {#snippet icon()}
-	<div class="icon {!visibleOnMobile && 'hideOnMobile'} {!visibleOnDesktop && 'hideOnDesktop'}" style="padding: {padding};">
+	<div class="icon" style="padding: {padding};">
 		<img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {filter};" src={img} draggable={false} {alt} />
 	</div>
 {/snippet}
 {#if img}
-	{#if onClick || isButton}
-		<Clickable {onClick} data-testid={dataTestId}>
+	{#if ($isMobile && visibleOnMobile) || (!$isMobile && visibleOnDesktop)}
+		{#if onClick || isButton}
+			<Clickable {onClick} data-testid={dataTestId}>
+				{@render icon()}
+			</Clickable>
+		{:else}
 			{@render icon()}
-		</Clickable>
-	{:else}
-		{@render icon()}
+		{/if}
 	{/if}
 {/if}

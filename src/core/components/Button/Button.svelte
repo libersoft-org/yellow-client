@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
+	import { isMobile } from '@/core/stores.ts';
 	import Clickable from '../Clickable/Clickable.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -54,15 +55,13 @@
 		cursor: default;
 	}
 
-	@media (min-width: 769px) {
-		.hidden-on-desktop {
-			display: none;
-		}
+	.button.hidden-on-desktop {
+		display: none;
 	}
 </style>
 
 <Clickable {...restProps} onClick={handleClick} disabled={!enabled}>
-	<div class="button" class:disabled={!enabled} class:hidden-on-desktop={hiddenOnDesktop} style:width style:padding style:border-radius={radius + 'px'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
+	<div class="button" class:disabled={!enabled} class:hidden-on-desktop={!$isMobile && hiddenOnDesktop} style:width style:padding style:border-radius={radius + 'px'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
 		{#if children}
 			{@render children?.()}
 		{/if}

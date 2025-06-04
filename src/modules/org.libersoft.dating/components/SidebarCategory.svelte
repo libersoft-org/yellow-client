@@ -1,16 +1,16 @@
 <script>
-	import { module } from '../module.js';
-	import SidebarItem from '@/core/components/SidebarItem/SidebarItem.svelte';
+	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import { module } from '../module.js';
 	export let img = null;
 	export let label;
 	export let active = false;
 	export let onClick;
-	export let colorVariable = '--default-foreground';
+	export let colorVariable = '--primary-foreground';
 </script>
 
 <style>
-	.item {
+	.sidebar-category {
 		display: flex;
 		gap: 10px;
 	}
@@ -18,7 +18,7 @@
 
 {#if label || img}
 	<SidebarItem {onClick} {active}>
-		<div class="item">
+		<div class="sidebar-category">
 			{#if img}
 				<Icon img="modules/{module.identifier}/img/{img}" {colorVariable} alt={label} size="20px" padding="0px" />
 			{/if}

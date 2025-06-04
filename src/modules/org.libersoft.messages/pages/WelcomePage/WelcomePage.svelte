@@ -1,5 +1,6 @@
 <script>
-	import core, { active_account, isMobile, selected_module_id } from '@/core/core.js';
+	import { active_account, selected_module_id } from '@/core/core.ts';
+	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { identifier, online } from '../../messages.js';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
@@ -14,9 +15,12 @@
 		showNewConversationModal = true;
 	}
 
-	function mobileBack() {
+	function back() {
+		hideSidebarMobile.set(false);
+	}
+
+	function close() {
 		selected_module_id.set(null);
-		core.hideSidebarMobile.set(false);
 	}
 </script>
 
@@ -54,8 +58,11 @@
 
 <TopBar>
 	<svelte:fragment slot="left">
-		<Icon img="img/back.svg" onClick={mobileBack} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 		<TopBarTitle text="Messages" />
+	</svelte:fragment>
+	<svelte:fragment slot="right">
+		<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	</svelte:fragment>
 </TopBar>
 

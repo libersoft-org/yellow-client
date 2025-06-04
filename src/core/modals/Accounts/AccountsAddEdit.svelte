@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, untrack } from 'svelte';
 	import { addAccount, findAccountConfig, saveAccount } from '@/core/accounts_config.ts';
-	import { accounts, accountConfigExistsByCredentials } from '@/core/core.js';
+	import { accounts, accountConfigExistsByCredentials } from '@/core/core.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

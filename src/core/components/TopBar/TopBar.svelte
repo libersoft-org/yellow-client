@@ -10,11 +10,7 @@
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);
-		padding: 10px 20px;
-
-		@media (max-width: 768px) {
-			padding: 10px;
-		}
+		padding: 10px;
 	}
 
 	.top-bar .left,

@@ -1,5 +1,5 @@
 <script>
-	import { product, motto } from '@/core/core.js';
+	import { product, motto } from '@/core/core.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 </script>
 

@@ -2,7 +2,7 @@
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading } from '../../messages.js';
-	import { getGuid, debug } from '@/core/core.js';
+	import { getGuid, debug } from '@/core/core.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
@@ -388,8 +388,8 @@
 				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
 				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)) {
 					//console.log('ADDING-UNSEEN-MARKER');
-					unseen_marker_put = true;
 					items.push({ type: 'unseen_marker' });
+					unseen_marker_put = true;
 				}
 				items.push(m);
 				if (m.id !== undefined && m.id > oldLastID) {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { mobileWidth } from '@/core/stores';
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
@@ -9,7 +10,7 @@
 		radius?: string;
 		maxWidth?: string;
 	}
-	const { children, padding = '10px', background = 'var(--default-background)', color = 'var(--default-foreground)', border = '1px solid var(--default-foreground)', radius = '10px', maxWidth = '768px' }: Props = $props();
+	const { children, padding = '10px', background = 'var(--default-background)', color = 'var(--default-foreground)', border = '1px solid var(--default-foreground)', radius = '10px', maxWidth = $mobileWidth }: Props = $props();
 </script>
 
 <style>

@@ -1,8 +1,8 @@
 <script>
 	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../../messages.js';
-	import { debug } from '@/core/core.js';
+	import { debug } from '@/core/core.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { isClientFocused } from '@/core/core.js';
+	import { isClientFocused } from '@/core/core.ts';
 	import { stripHtml } from '../../messages.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
@@ -66,8 +66,14 @@
 	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
 	$: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
 	//$: console.log('Core.isClientFocused:', $isClientFocused);
-	$: if (isVisible && $isClientFocused) {
-		console.log('isVisible:', isVisible, 'isClientFocused:', $isClientFocused);
+	$: maybeSetSeen(isVisible, $isClientFocused);
+
+	function maybeSetSeen(isVisible, isClientFocused) {
+		console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
+		if (!isVisible || !isClientFocused) {
+			console.log('not setting seen because not visible or not focused');
+			return;
+		}
 		if (message.seen) {
 			console.log('not setting seen because already set');
 			observer.disconnect();

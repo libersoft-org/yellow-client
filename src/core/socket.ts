@@ -74,6 +74,23 @@ export function handleSocketMessage(acc: Account, res: any) {
 		// it is response to command:
 		//console.log('GOT RESPONSE');
 		const reqData = acc.requests[res.requestID];
+
+		// Check for session-related errors
+		if (res.error === 994 || res.error === 998 || res.error === 996) {
+			// Error 994: Session expired, 998: Invalid user session ID, 996: User session is missing
+			console.error('Session error detected:', res.error, res.message);
+			// Dispatch custom event for session error
+			acc.events?.dispatchEvent(
+				new CustomEvent('session_error', {
+					detail: {
+						error: res.error,
+						message: res.message,
+						originalRequest: reqData.req,
+					},
+				})
+			);
+		}
+
 		if (reqData.callback) reqData.callback(reqData.req, res);
 		delete acc.requests[res.requestID];
 	} else if (res.event) {

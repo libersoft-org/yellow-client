@@ -4,7 +4,7 @@
 	import AccountsExportJson from './AccountsExportJson.svelte';
 	import AccountsExportQR from './AccountsExportQR.svelte';
 	import ButtonBar from '../../components/Button/ButtonBar.svelte';
-	import { accounts_config } from '../../core.js';
+	import { accounts_config } from '../../core.ts';
 	import Button from '../../components/Button/Button.svelte';
 
 	let activeTab = $state('json');

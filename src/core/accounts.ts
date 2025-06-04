@@ -1,10 +1,11 @@
-import { log } from '@/core/tauri.ts';
+import { log, TAURI_MOBILE } from '@/core/tauri.ts';
 import { derived, get, writable } from 'svelte/store';
 import { debug, selected_module_id, active_account_id } from '@/core/stores.ts';
 import { send, sendAsync, handleSocketMessage } from '@/core/socket.ts';
 import { updateModulesComms } from '@/core/modules.ts';
 import { accounts_config } from '@/core/accounts_config.ts';
 import { tick } from 'svelte';
+import { invoke } from '@tauri-apps/api/core';
 import type { Account, AccountStore, AccountConfig, AccountCredentials, AccountSettings } from './types.ts';
 
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
@@ -201,6 +202,20 @@ function _enableAccount(account: AccountStore) {
 	acc.modulesAvailableHandler = (event: Event) => handleModulesAvailable(acc, account, event);
 	acc.events.addEventListener('modules_available', acc.modulesAvailableHandler);
 
+	// Add session error handler
+	acc.sessionErrorHandler = (event: Event) => {
+		const customEvent = event as CustomEvent;
+		log.debug('Session error event received:', customEvent.detail);
+		acc.error = customEvent.detail.message;
+		acc.status = 'Session invalid, reconnecting...';
+		acc.session_status = undefined;
+		acc.sessionID = undefined;
+		account.update(v => v);
+		// Trigger reconnection
+		reconnectAccount(account);
+	};
+	acc.events.addEventListener('session_error', acc.sessionErrorHandler);
+
 	account.update(v => v);
 	// TODO: use admin logic
 	reconnectAccount(account);
@@ -210,10 +225,16 @@ function _disableAccount(account: AccountStore) {
 	log.debug('DISABLE ACCOUNT', account);
 	let acc = get(account);
 
-	// Remove event listener if it exists
-	if (acc.events && acc.modulesAvailableHandler) {
-		acc.events.removeEventListener('modules_available', acc.modulesAvailableHandler);
-		acc.modulesAvailableHandler = undefined;
+	// Remove event listeners if they exist
+	if (acc.events) {
+		if (acc.modulesAvailableHandler) {
+			acc.events.removeEventListener('modules_available', acc.modulesAvailableHandler);
+			acc.modulesAvailableHandler = undefined;
+		}
+		if (acc.sessionErrorHandler) {
+			acc.events.removeEventListener('session_error', acc.sessionErrorHandler);
+			acc.sessionErrorHandler = undefined;
+		}
 	}
 
 	clearAccount(acc);

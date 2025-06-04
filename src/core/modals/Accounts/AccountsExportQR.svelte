@@ -1,5 +1,5 @@
 <script>
-	import { accounts_config } from '../../core.js';
+	import { accounts_config } from '../../core.ts';
 	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 

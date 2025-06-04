@@ -5,7 +5,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { isMobile } from '@/core/core.js';
+	import { isMobile } from '@/core/core.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { gif_server } from '../../gifs.js';
 	import LazyLoader from './GifSetLazyLoader.svelte';

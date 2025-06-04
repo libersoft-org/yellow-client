@@ -1,8 +1,8 @@
 <script>
-	import { accounts, findAccount, sendAsync } from '@/core/core.js';
+	import { accounts, findAccount, sendAsync } from '@/core/core.ts';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import { debug } from '@/core/core.js';
+	import { debug } from '@/core/core.ts';
 
 	//let url = 'https://yellow-module1.netlify.app/'
 	let url = 'http://localhost:5173/';

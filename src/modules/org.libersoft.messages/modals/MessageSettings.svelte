@@ -1,6 +1,6 @@
 <script>
 	import { humanSize } from '@/core/utils/fileUtils.js';
-	import Input from '@/core/components/Input/Input.svelte';
+	import { get } from 'svelte/store';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder, photoRadius } from '../messages.js';
 	import Switch from '@/core/components/Switch/Switch.svelte';
@@ -11,10 +11,14 @@
 	export let close;
 	let chunkSize = $uploadChunkSize;
 
-	function clickSetChunkSize() {
+	function onSetChunkSize(chunkSize) {
+		if (get(uploadChunkSize) === chunkSize) {
+			return;
+		}
 		uploadChunkSize.set(chunkSize);
-		close();
 	}
+
+	$: onSetChunkSize(chunkSize);
 
 	async function defaultFileDownloadFolderButtonClick() {
 		const file = await open({
@@ -47,7 +51,6 @@
 	</div>
 	<input data-testid="chunk-size" class="zoom" type="range" min="131072" max="31457280" step="131072" bind:value={chunkSize} />
 </div>
-<Button img="img/save.svg" text="Save" onClick={clickSetChunkSize} />
 <div class="group">
 	<Switch bind:checked={$hideMessageTextInNotifications} showLabel label="Hide message text in notifications" orientation="vertical" />
 </div>

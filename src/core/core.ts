@@ -1,6 +1,6 @@
 //import {} from './client_debug';
 import { tick } from 'svelte';
-import { derived, get } from 'svelte/store';
+import { derived, get, type Readable, type Writable } from 'svelte/store';
 import { log } from './tauri.ts';
 
 // Import all stores
@@ -11,9 +11,9 @@ import { accounts_init, accounts, active_account_store, active_account, selectAc
 export { accounts, active_account_store, active_account, selectAccount, active_account_module_data, findAccount };
 
 // Import accounts config
-import { accounts_config, findAccountConfig, accountConfigExistsByCredentials } from './accounts_config.ts';
+import { accounts_config, accounts_config_init, findAccountConfig, accountConfigExistsByCredentials } from './accounts_config.ts';
 export { accounts_config, findAccountConfig, accountConfigExistsByCredentials };
-export const accountConfigExistsById = id => !!findAccountConfig(id);
+export const accountConfigExistsById = (id: string): boolean => !!findAccountConfig(id);
 
 // Import utils
 import { getGuid } from './utils/utils.ts';
@@ -27,9 +27,10 @@ export { registerModule };
 import { send, sendAsync } from './socket.ts';
 export { send, sendAsync };
 
-export function init() {
+export function init(): () => void {
 	let subs = initModules();
 	subs.push(accounts_init());
+	subs.push(accounts_config_init());
 
 	// return an unsubscriber
 	return () => {
@@ -39,25 +40,31 @@ export function init() {
 	};
 }
 
-export function relay(md, key) {
+interface RelayStore<T> extends Readable<T | null> {
+	set: (value: T) => void;
+	update: (fn: (value: T) => T) => void;
+}
+
+export function relay<T>(md: Readable<any>, key: string): RelayStore<T> {
 	let r = derived(md, ($md, set) => {
 		if (!$md) {
 			set(null);
 			return;
 		}
-		const unsubscribe = $md[key].subscribe(value => {
+		const unsubscribe = $md[key].subscribe((value: T) => {
 			set(value);
 		});
 
 		return () => {
 			unsubscribe();
 		};
-	});
-	r.set = v => {
+	}) as RelayStore<T>;
+
+	r.set = (v: T) => {
 		//console.log('SET:', get(md), 'key:',  key,  'v:', v);
 		get(md)[key].set(v);
 	};
-	r.update = fn => {
+	r.update = (fn: (value: T) => T) => {
 		get(md)[key].update(fn);
 	};
 	return r;

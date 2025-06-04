@@ -1,8 +1,10 @@
 <script>
-	import { hideSidebarMobile } from '@/core/core.js';
+	import { hideSidebarMobile } from '@/core/core.ts';
 	import { addressBook } from '../wallet.ts';
+	import { mobileClass } from '@/core/stores.ts';
+	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Item from '@/core/components/SidebarItem/SidebarItem.svelte';
+	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 
 	function clickShowWallet() {
 		hideSidebarMobile.set(true);
@@ -15,14 +17,6 @@
 </script>
 
 <style>
-	.content-button {
-		padding: 10px;
-		font-weight: bold;
-		background-color: var(--secondary-background);
-		color: var(--secondary-foreground);
-		width: 100%;
-	}
-
 	.addressbook {
 		overflow: auto;
 	}
@@ -40,21 +34,13 @@
 		overflow: hidden;
 		font-size: 12px;
 	}
-
-	@media (min-width: 769px) {
-		.content-button {
-			display: none;
-		}
-	}
 </style>
 
-<Clickable onClick={clickShowWallet}>
-	<div class="content-button">Show wallet</div>
-</Clickable>
+<SidebarButton img="img/back.svg" text="Show wallet" visibleOnDesktop={false} onClick={clickShowWallet} />
 <div class="addressbook">
 	{#if $addressBook.length > 0}
 		{#each $addressBook as a, index}
-			<Item even={index % 2 === 0 ? true : false} onClick={() => clickItem(a.address)}>
+			<Item even={index % 2 === 0 ? false : true} onClick={() => clickItem(a.address)}>
 				<div class="alias">{a.alias}</div>
 				<div class="address">{a.address}</div>
 			</Item>

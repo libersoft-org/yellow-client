@@ -7,7 +7,7 @@
 	import Switch from '../Switch/Switch.svelte';
 	import DialogExit from '../../dialogs/Exit.svelte';
 	import VersionInfo from '../VersionInfo/VersionInfo.svelte';
-	import { product, link } from '../../core.js';
+	import { product, link } from '../../core.ts';
 	import { BROWSER } from '@/core/tauri.ts';
 
 	interface Props {
@@ -23,16 +23,19 @@
 			title: 'Donate',
 			img: 'img/donate.svg',
 			onClick: () => openPage('https://libersoft.org/donations'),
+			testId: 'menu-item-donate',
 		},
 		{
 			title: 'Contact developers',
 			img: 'img/contact.svg',
 			onClick: () => openPage('https://libersoft.org/contacts'),
+			testId: 'menu-item-contact',
 		},
 		{
 			title: 'Settings',
 			img: 'img/settings.svg',
 			onClick: clickSettings,
+			testId: 'menu-item-settings',
 		},
 	].concat(
 		BROWSER
@@ -42,6 +45,7 @@
 						title: 'Exit application',
 						img: 'img/exit.svg',
 						onClick: exitApp,
+						testId: 'menu-item-exit',
 					},
 				]
 	);
@@ -167,7 +171,7 @@
 		</div>
 		<div class="items">
 			{#each menuItems as item}
-				<MenuItem img={item.img} title={item.title} onClick={item.onClick} />
+				<MenuItem testId={item.testId} img={item.img} title={item.title} onClick={item.onClick} />
 			{/each}
 		</div>
 	</div>

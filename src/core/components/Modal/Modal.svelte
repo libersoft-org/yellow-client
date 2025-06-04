@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { debug, isMobile } from '../../core.js';
+	import { mobileClass } from '@/core/stores.ts';
+	import { debug } from '../../core.ts';
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
 	import Portal from '../Portal/Portal.svelte';
@@ -209,6 +210,15 @@
 		cursor: grabbing;
 	}
 
+	.modal.mobile {
+		max-width: calc(100%) !important;
+		max-height: calc(100%) !important;
+		height: 100%;
+		width: 100% !important;
+		border-radius: 0px;
+		border: none;
+	}
+
 	.modal .header {
 		display: flex;
 		align-items: center;
@@ -244,7 +254,7 @@
 
 {#if show}
 	<Portal>
-		<div class="modal" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
+		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">
 					{#if title}

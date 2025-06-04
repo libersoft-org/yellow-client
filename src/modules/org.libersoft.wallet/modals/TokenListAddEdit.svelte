@@ -1,7 +1,7 @@
 <script>
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { getGuid } from '@/core/core.js';
+	import { getGuid } from '@/core/core.ts';
 	import { onMount } from 'svelte';
 	export let close;
 	export let params;

@@ -1,4 +1,3 @@
-// import { current_theme, themes_stored } from './core.js';
 import { derived, get } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 import { log } from '@/core/tauri.ts';

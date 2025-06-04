@@ -3,6 +3,7 @@
 	import Input from '../components/Input/Input.svelte';
 	import Label from '../components/Label/Label.svelte';
 	import { log, TAURI, TAURI_MOBILE, BROWSER } from '../tauri.ts';
+	import { mobileClass } from '../stores.ts';
 	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
 	import { platform, type as osType } from '@tauri-apps/plugin-os';
 	import { onMount } from 'svelte';
@@ -123,6 +124,10 @@
 		flex-wrap: wrap;
 	}
 
+	.platform-info.mobile {
+		font-size: 0.7em;
+	}
+
 	.platform-info-item {
 		margin-right: 10px;
 	}
@@ -135,12 +140,15 @@
 	.file-info {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-
 		margin-top: 6px;
 		padding: 6px;
 		border-radius: 3px;
 		font-size: 0.75em;
 		border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+	}
+
+	.file-info.mobile {
+		grid-template-columns: 1fr;
 	}
 
 	/* Compact inputs and labels globally */
@@ -157,6 +165,11 @@
 		grid-template-columns: repeat(3, 1fr);
 		gap: 8px;
 		margin-bottom: 10px;
+	}
+
+	.inputs-grid.mobile,
+	.buttons-grid.mobile {
+		grid-template-columns: repeat(2, 1fr);
 	}
 
 	.input-item {
@@ -186,6 +199,12 @@
 		flex: 1;
 	}
 
+	.folder-section.mobile {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 5px;
+	}
+
 	/* Buttons grid */
 	.buttons-grid {
 		display: grid;
@@ -201,28 +220,6 @@
 		min-height: 28px;
 	}
 
-	/* Mobile responsiveness */
-	@media (max-width: 768px) {
-		.platform-info {
-			font-size: 0.7em;
-		}
-
-		.inputs-grid,
-		.buttons-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-
-		.folder-section {
-			flex-direction: column;
-			align-items: stretch;
-			gap: 5px;
-		}
-
-		.file-info {
-			grid-template-columns: 1fr;
-		}
-	}
-
 	@media (max-width: 480px) {
 		.inputs-grid,
 		.buttons-grid {
@@ -232,7 +229,7 @@
 </style>
 
 <div class="files2-test">
-	<div class="platform-info">
+	<div class="platform-info {$mobileClass}">
 		<div class="platform-info-item">
 			<strong>TAURI:</strong>
 			{platformInfo.tauri}
@@ -257,7 +254,7 @@
 
 	<div class="content">
 		<!-- Inputs Section -->
-		<div class="inputs-grid">
+		<div class="inputs-grid {$mobileClass}">
 			<div class="input-item">
 				<Label>suggested File Name:</Label>
 				<Input bind:value={fileName} placeholder="filename.txt" />
@@ -270,7 +267,7 @@
 
 			<!-- Default Folder (Desktop only) -->
 			{#if !TAURI_MOBILE}
-				<div class="folder-section">
+				<div class="folder-section {$mobileClass}">
 					<Label>Default folder: {$defaultDownloadFolder || '(not set)'}</Label>
 					<Button onClick={setDefaultFolderFromDownload} disabled={!download?.potential_default_folder}>Set from download</Button>
 				</div>
@@ -278,7 +275,7 @@
 		</div>
 
 		<!-- Action Buttons -->
-		<div class="buttons-grid">
+		<div class="buttons-grid {$mobileClass}">
 			<Button onClick={testOfferNativeDownload}>Offer Download</Button>
 			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save Chunk</Button>
 			<Button onClick={testFinishNativeDownload} disabled={!download}>Finish</Button>
@@ -286,7 +283,7 @@
 		</div>
 
 		<!-- Status Display -->
-		<div class="file-info">
+		<div class="file-info {$mobileClass}">
 			{#if result}
 				<div>
 					<p><strong>Result:</strong></p>

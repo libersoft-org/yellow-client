@@ -1,6 +1,6 @@
 <script>
 	import { onDestroy, onMount, setContext, tick } from 'svelte';
-	import Core from '@/core/core.js';
+	import { hideSidebarMobile } from '@/core/core.ts';
 	import { get, writable } from 'svelte/store';
 	import { selectedConversation } from '../../messages.js';
 	import ProfileBar from '../ProfileBar/ProfileBar.svelte';
@@ -37,7 +37,7 @@
 
 	function closeConversation() {
 		selectedConversation.set(null);
-		Core.hideSidebarMobile.set(false);
+		hideSidebarMobile.set(false);
 	}
 
 	export async function setBarFocus() {

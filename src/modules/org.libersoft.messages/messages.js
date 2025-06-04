@@ -10,7 +10,7 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '@/core/core.js';
+import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '@/core/core.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
@@ -128,7 +128,7 @@ function moduleEventSubscribe(acc, event_name) {
 	sendData(acc, null, 'subscribe', { event: event_name }, true, (req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
-			window.alert('Communication with server Error while subscribing to event: ' + res.message);
+			//window.alert('Communication with server Error while subscribing to event: ' + res.message);
 		}
 	});
 }
@@ -683,7 +683,7 @@ export function setMessageSeen(message, cb) {
 	let acc = get(active_account);
 	log.debug('setMessageSeen', message);
 	deleteNotification(messageNotificationId(message));
-	message.just_marked_as_seen = true;
+	message.seen = true;
 	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
@@ -691,7 +691,7 @@ export function setMessageSeen(message, cb) {
 		}
 		//message.seen = true;
 		if (cb) cb();
-		//messagesArray.update(v => v);
+
 		// update conversationsArray:
 		/*const conversation = get(conversationsArray).find(c => c.address === message.address_from);
           if (conversation) {
@@ -699,6 +699,8 @@ export function setMessageSeen(message, cb) {
            conversationsArray.update(v => v);
           }*/
 	});
+	messagesArray.update(v => v);
+	insertEvent({ type: 'properties_update', array: get(messagesArray) });
 }
 
 export function sendMessage(text, format, acc = null, conversation = null) {
@@ -888,7 +890,7 @@ export function jumpToMessage(acc, address, uid) {
 }
 
 export function insertEvent(event) {
-	events.update(v => {
+	events?.update(v => {
 		console.log('insertEvent: ', v, event);
 		return [...v, event];
 	});

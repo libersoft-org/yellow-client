@@ -4,7 +4,7 @@
 	import Clickable from '../../components/Clickable/Clickable.svelte';
 	import Icon from '../../components/Icon/Icon.svelte';
 	import VersionInfo from '../../components/VersionInfo/VersionInfo.svelte';
-	import { hideSidebarMobile, product, link } from '../../core.js';
+	import { hideSidebarMobile, product, link } from '../../core.ts';
 
 	function clickLogo() {
 		window.open(link, '_blank');

@@ -3,7 +3,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Photo from '@/core/Photo/Photo.svelte';
 	import { selectedConversation, photoRadius } from '../../messages.js';
-	import { isMobile } from '@/core/core.js';
+	import { isMobile } from '@/core/core.ts';
 	export let closeConversation;
 
 	function clickClose() {

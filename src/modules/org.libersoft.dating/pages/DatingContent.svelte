@@ -1,5 +1,6 @@
 <script>
 	import { page } from '../dating.js';
+	import Welcome from './Welcome.svelte';
 	import Map from './Map.svelte';
 	import Match from './Match.svelte';
 	import People from './People.svelte';
@@ -22,5 +23,9 @@
 </style>
 
 <div class="dating-content">
-	<svelte:component this={pages[$page]} />
+	{#if $page}
+		<svelte:component this={pages[$page]} />
+	{:else}
+		<Welcome />
+	{/if}
 </div>
