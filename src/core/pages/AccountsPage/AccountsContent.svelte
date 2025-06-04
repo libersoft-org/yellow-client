@@ -94,7 +94,7 @@
 				<Td title="Action">
 					<TableActionItems>
 						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
-						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account)} />
+						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} />
 					</TableActionItems>
 				</Td>
 			</TbodyTr>
