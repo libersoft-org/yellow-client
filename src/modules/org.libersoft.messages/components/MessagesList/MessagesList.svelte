@@ -488,26 +488,19 @@
 
 		// show overlay only if file upload modal is not shown
 		// but if user drops files to conversation it will still add them to the upload modal
-		if (!$showFileUploadModal && !showFileDndOverlay) {
-			showFileDndOverlay = true;
-		}
+		if (!$showFileUploadModal && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
 	function onDragLeave(e) {
 		e.preventDefault();
 		// handle premature dragleave events
-		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) {
-			showFileDndOverlay = false;
-		}
+		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) showFileDndOverlay = false;
 	}
 
 	function onDrop(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		if (e.dataTransfer.files.length === 0) {
-			return;
-		}
-
+		if (e.dataTransfer.files.length === 0) return;
 		showFileDndOverlay = false;
 		setFileUploadModal(true);
 		$fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
