@@ -143,7 +143,7 @@
 {/if}
 
 <div class="filter">
-	<InputButton img="modules/{identifier}/img/search.svg" alt="Search" bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
+	<InputButton img="img/search.svg" alt="Search" bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
 </div>
 
 {#snippet clickable_emoji(emoji)}

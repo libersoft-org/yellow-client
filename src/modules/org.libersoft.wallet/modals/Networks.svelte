@@ -1,8 +1,12 @@
 <script>
 	import { selectedNetworkID, networks } from '../wallet.ts';
-	import Input from '@/core/components/Input/Input.svelte';
-	import List from '../components/List.svelte';
-	import ListItem from '../components/ListItem.svelte';
+	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Table from '@/core/components/Table/Table.svelte';
+	import Tbody from '@/core/components/Table/TableTbody.svelte';
+	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	export let close;
 	let filter = '';
 
@@ -13,9 +17,17 @@
 	}
 </script>
 
-<Input placeholder="Search" bind:value={filter} />
-<List>
-	{#each $networks as n, index}
-		<ListItem className={index % 2 === 0 ? 'even' : 'odd'} icon={n.currency.iconURL} item={n.name} onClick={() => selectNetwork(n.guid)} />
-	{/each}
-</List>
+<InputButton img="img/search.svg" placeholder="Search" bind:value={filter} />
+<Table breakpoint="0">
+	<Tbody>
+		{#each $networks as n, index}
+			<TbodyTr>
+				<Clickable onClick={() => selectNetwork(n.guid)}>
+					<Td>
+						<Icon img={n.currency.iconURL} />{n.name}
+					</Td>
+				</Clickable>
+			</TbodyTr>
+		{/each}
+	</Tbody>
+</Table>
