@@ -246,6 +246,26 @@
 		background-color: var(--background);
 		overflow: auto;
 		color: var(--primary-foreground);
+		height: 100%;
+	}
+
+	.top,
+	.center,
+	.bottom {
+		display: flex;
+		flex: 1;
+	}
+
+	.top {
+		align-items: baseline;
+	}
+
+	.center {
+		align-items: center;
+	}
+
+	.bottom {
+		align-items: end;
 	}
 </style>
 
@@ -277,15 +297,21 @@
 						<ModalBody {close} {params} bind:activeTab />
 					{:else if children || top || center || bottom}
 						{@render children?.()}
-						<div class="top">
-							{@render top?.()}
-						</div>
-						<div class="center">
-							{@render center?.()}
-						</div>
-						<div class="bottom">
-							{@render bottom?.()}
-						</div>
+						{#if top}
+							<div class="top">
+								{@render top?.()}
+							</div>
+						{/if}
+						{#if center}
+							<div class="center">
+								{@render center?.()}
+							</div>
+						{/if}
+						{#if bottom}
+							<div class="bottom">
+								{@render bottom?.()}
+							</div>
+						{/if}
 					{/if}
 				</div>
 			{/if}
