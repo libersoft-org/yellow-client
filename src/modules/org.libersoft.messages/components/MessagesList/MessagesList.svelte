@@ -312,16 +312,13 @@
 
 	async function handleEvents(events) {
 		console.log('handleEvents:', events);
-
 		if (events.length === 1 && events[0].type === 'properties_update') {
 			console.log('properties_update itemsArray');
 			itemsArray = itemsArray;
 			return;
 		}
-
 		// force_refresh is used when deleting message. Normally, Loaders would, after loadMessages, only issue an event if any new messages are actually added. But if we delete a message, we need to remove the loader. So, the gc event, triggered as soon as the message is removed from messagesArray, lets us know to tell all loaders to force_refresh when they trigger. This is not optimal, as only the exact hole inserted in place of the deleted message should force_refresh, but it will work.
 		let force_refresh = events.some(e => e.type === 'gc');
-
 		for (let i = 0; i < events.length; i++) {
 			//console.log('handleEvent:', events[i]);
 			let event = events[i];
@@ -329,7 +326,6 @@
 			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') continue;
 			uiEvents.push(event);
 			saveScrollPosition(event);
-
 			/* TODO 1 :
    do not scroll to bottom on new messages if unread_marker is present (or rather, if window is not active and only unread messages are at the bottom - see also contact list red number )
    */
@@ -456,9 +452,7 @@
 		e.preventDefault();
 		const draggedItems = e.dataTransfer.items;
 		const types = Array.from(e.dataTransfer.types || []);
-
 		let isDraggingFiles = false;
-
 		// In Chrome/Firefox: you can safely check item.kind
 		if (draggedItems && draggedItems.length > 0) {
 			for (let i = 0; i < draggedItems.length; i++) {
