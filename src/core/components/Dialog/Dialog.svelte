@@ -1,10 +1,25 @@
-<script>
+<script lang="ts">
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let data;
-	let show = false;
+	interface Props {
+		data?: DialogData;
+		width?: string;
+	}
+	interface DialogData {
+		title?: string;
+		body?: string;
+		icon?: string;
+		buttons?: DialogButton[];
+	}
+	interface DialogButton {
+		text: string;
+		onClick?: (e: MouseEvent) => void;
+		expand?: boolean;
+	}
+	let { data, width }: Props = $props();
+	let show = $state(false);
 
 	export function open() {
 		show = true;
@@ -22,13 +37,13 @@
 	}
 </style>
 
-<Modal title={data.title} bind:show width="400px">
+<Modal title={data?.title} bind:show {width}>
 	{#snippet top()}
 		<div class="top">
-			{#if data.icon}
-				<Icon img={data.icon} alt="" size="50px" padding="0px" />
+			{#if data?.icon}
+				<Icon img={data?.icon} alt="" size="50px" padding="0px" />
 			{/if}
-			<div>{data.body}</div>
+			<div>{data?.body}</div>
 		</div>
 	{/snippet}
 	{#snippet bottom()}
@@ -38,5 +53,4 @@
 			{/each}
 		</ButtonBar>
 	{/snippet}
-	<!-- <Button text="Close" onClick={() => (show = false)} /> -->
 </Modal>

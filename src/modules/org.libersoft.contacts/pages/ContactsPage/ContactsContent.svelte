@@ -54,4 +54,4 @@
 	{/snippet}
 </TopBar>
 <div class="content">Contact list - content page - not yet implemented</div>
-<Dialog data={dialogData} bind:close={closeDialog} bind:this={elDialog} />
+<Dialog data={dialogData} width="400px" bind:close={closeDialog} bind:this={elDialog} />
