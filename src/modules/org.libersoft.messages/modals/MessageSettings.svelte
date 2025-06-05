@@ -8,7 +8,7 @@
 	import { TAURI } from '@/core/tauri.ts';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
-	export let close;
+
 	let chunkSize = $uploadChunkSize;
 
 	function onSetChunkSize(chunkSize) {
