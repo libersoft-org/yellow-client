@@ -37,6 +37,11 @@ export interface YellowNotification {
 	_audio?: HTMLAudioElement;
 }
 
+// Check if Notification API is available
+function isNotificationAPIAvailable(): boolean {
+	return typeof window !== 'undefined' && 'Notification' in window;
+}
+
 let counter = 0;
 let notifications: Map<string, YellowNotification> = new Map();
 let _events;
@@ -85,6 +90,15 @@ export function setNotificationsEnabled(value) {
 		notificationsEnabled.set(value);
 		return;
 	}
+
+	// Check if Notification API is available
+	if (!isNotificationAPIAvailable()) {
+		console.warn('Notification API is not available in this browser');
+		notificationsEnabled.set(false);
+		notificationsSettingsAlert.set('not-supported');
+		return;
+	}
+
 	console.log('Notification.permission:', Notification.permission, 'value:', value);
 	if (get(notificationsEnabled) != value) {
 		if (value) {
@@ -118,7 +132,7 @@ export function setNotificationsEnabled(value) {
 }
 
 export async function initBrowserNotifications() {
-	if (BROWSER && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+	if (BROWSER && isNotificationAPIAvailable() && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
 		// fixme: ask for permission / in wizard?
 	}
 }
@@ -291,14 +305,28 @@ async function showBrowserNotification(notification: YellowNotification) {
 	console.log('showBrowserNotification:', notification);
 	let icon = await toPngBlob(notification.icon);
 
-	if (window.sw) {
-		log.debug('showBrowserNotification sw:', window.sw);
-		window.sw.showNotification(notification.title, {
-			body: notification.body,
-			icon: icon,
-			tag: notification.id,
-			//vibrate: [200, 100, 200],
-		});
+	// Try service worker notifications first
+	if (window.sw && window.sw.showNotification) {
+		try {
+			log.debug('showBrowserNotification sw:', window.sw);
+			await window.sw.showNotification(notification.title, {
+				body: notification.body,
+				icon: icon,
+				tag: notification.id,
+				//vibrate: [200, 100, 200],
+			});
+			return;
+		} catch (e) {
+			console.warn('Service worker notification failed:', e);
+		}
+	}
+
+	// Check if Notification API is available
+	if (!isNotificationAPIAvailable()) {
+		console.warn('Notification API not available, falling back to console log');
+		console.log(`[Notification] ${notification.title}: ${notification.body}`);
+		// Could also show a custom in-app notification here
+		return;
 	}
 
 	try {
@@ -322,7 +350,7 @@ async function showBrowserNotification(notification: YellowNotification) {
 			stopNotificationSound(notification);
 		};
 	} catch (e) {
-		console.error(e);
+		console.error('Failed to create notification:', e);
 	}
 }
 
