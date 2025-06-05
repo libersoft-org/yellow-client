@@ -1,6 +1,6 @@
 <script>
 	import { getGuid } from '../../core.ts';
-	import { onMount, setContext, getContext, afterUpdate, createEventDispatcher, tick, onDestroy } from 'svelte';
+	import { onMount, setContext, getContext, afterUpdate, tick, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	export let target = null;
 	export let open = false;
@@ -12,7 +12,7 @@
 	export let scrollable = true;
 	export let disableRightClick = false;
 	export let bottomOffset;
-	const dispatch = createEventDispatcher();
+
 	const isOpen = writable(open);
 	const position = writable([x, y]);
 	const currentIndex = writable(-1);
@@ -175,9 +175,9 @@
 				prevX = x;
 				prevY = y;
 			}
-			dispatch('open', openDetail);
+			//onOpen?.(openDetail);
 		} else {
-			dispatch('close');
+			//onClose?.();
 		}
 
 		if (!$hasPopup && options[focusIndex]) {
