@@ -1,6 +1,6 @@
 <script>
 	import Button from '@/core/components/Button/Button.svelte';
-	import { addressBook } from '../wallet';
+	import { addressBook } from '../../wallet.ts';
 	export let close;
 	export let params;
 	let error;

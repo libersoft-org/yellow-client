@@ -3,7 +3,6 @@ import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnem
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { getGuid } from '@/core/core.ts';
 export { default_networks } from './default_networks.js';
-
 interface Address {
 	address: string;
 	name: string;
@@ -11,7 +10,6 @@ interface Address {
 	index: number;
 	deleted?: boolean;
 }
-
 interface Wallet {
 	phrase: string;
 	address: string;
@@ -20,7 +18,6 @@ interface Wallet {
 	addresses?: Address[];
 	log: any[];
 }
-
 interface Token {
 	guid: string;
 	icon: string;
@@ -28,7 +25,6 @@ interface Token {
 	name: string;
 	contract_address: string;
 }
-
 interface Network {
 	guid: string;
 	name: string;
@@ -39,7 +35,6 @@ interface Network {
 	rpcURLs: string[];
 	tokens?: Token[];
 }
-
 interface Balance {
 	crypto: {
 		amount: string;
@@ -50,22 +45,17 @@ interface Balance {
 		currency: string;
 	};
 }
-
 interface AddressBookItem {
 	guid: string;
 	alias: string;
 	address: string;
 }
-
-const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
-
 export const status = writable<any>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);
-
+export const networks = localStorageSharedStore<Network[]>('networks', []);
+const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer;
-
-export const networks = localStorageSharedStore<Network[]>('networks', []);
 
 networks.subscribe((nets: Network[]) => {
 	let modified = false;

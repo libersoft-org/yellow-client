@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import QRCode from 'qrcode';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
