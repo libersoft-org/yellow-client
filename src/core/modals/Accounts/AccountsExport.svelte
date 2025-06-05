@@ -1,12 +1,12 @@
 <script>
-	import Tabs from '../../components/Tabs/Tabs.svelte';
-	import TabsItem from '../../components/Tabs/TabsItem.svelte';
-	import AccountsExportJson from './AccountsExportJson.svelte';
-	import AccountsExportQR from './AccountsExportQR.svelte';
-	import ButtonBar from '../../components/Button/ButtonBar.svelte';
-	import { accounts_config } from '../../core.ts';
-	import Button from '../../components/Button/Button.svelte';
+	import { accounts_config } from '@/core/core.ts';
 	import { product } from '@/core/stores.ts';
+	import Tabs from '@/core/components/Tabs/Tabs.svelte';
+	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
+	import AccountsExportJson from '@/core/modals/Accounts/AccountsExportJson.svelte';
+	import AccountsExportQR from '@/core/modals/Accounts/AccountsExportQR.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	let activeTab = $state('json');
 	let copyText = $state('Copy to clipboard');
 	let timeoutId;

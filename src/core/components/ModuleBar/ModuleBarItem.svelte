@@ -1,7 +1,7 @@
 <script>
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Indicator from './ModuleBarIndicator.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Indicator from '@/core/components/ModuleBar/ModuleBarIndicator.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let decl;
 	export let clickSetModule;
 	export let online;

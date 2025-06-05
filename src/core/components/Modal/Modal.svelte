@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { mobileClass, isMobile } from '@/core/stores.ts';
-	import { debug } from '../../core.ts';
-	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
-	import Portal from '../Portal/Portal.svelte';
+	import { debug } from '@/core/core.ts';
+	import { mobileClass, isMobile } from '@/core/stores.ts';
+	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Portal from '@/core/components/Portal/Portal.svelte';
 	let { testId = '', show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);

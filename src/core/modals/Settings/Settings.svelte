@@ -1,19 +1,16 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
+	import { TAURI } from '@/core/tauri.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
 	import SettingsAppearance from '@/core/modals/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '@/core/modals/Settings/SettingsNotifications.svelte';
 	import SettingsGeneral from '@/core/modals/Settings/SettingsGeneral.svelte';
-	import { TAURI } from '@/core/tauri.ts';
-	import { fade } from 'svelte/transition';
-
 	interface Props {
 		activeTab?: any;
 	}
-
 	let { activeTab = $bindable(TAURI ? 'general' : '') }: Props = $props();
 	let subTab = $state('');
-
 	let menuItems = (
 		TAURI
 			? [

@@ -1,13 +1,10 @@
 <script lang="ts">
 	import Code from '@/core/components/Code/Code.svelte';
 	import AccountsImportButtons from '@/core/components/Account/AccountsImportButtons.svelte';
-
 	interface Props {
 		close: () => void;
 	}
-
 	let { close }: Props = $props();
-
 	let text = $state('');
 	let error = $state('');
 
@@ -16,9 +13,7 @@
 	}
 
 	$effect(() => {
-		if (text) {
-			error = '';
-		}
+		if (text) error = '';
 	});
 </script>
 

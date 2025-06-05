@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/settings.ts';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
@@ -7,9 +8,6 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-
-	import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/settings.ts';
-
 	const settings = [
 		{ label: 'Run on system startup', store: runOnSystemStartup },
 		{ label: 'Show tray icon', store: showTrayIcon },

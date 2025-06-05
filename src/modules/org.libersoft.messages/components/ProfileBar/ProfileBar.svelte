@@ -1,9 +1,9 @@
 <script>
+	import { isMobile } from '@/core/core.ts';
+	import { selectedConversation, photoRadius } from '../../messages.js';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Photo from '@/core/Photo/Photo.svelte';
-	import { selectedConversation, photoRadius } from '../../messages.js';
-	import { isMobile } from '@/core/core.ts';
+	import Photo from '@/core/components/Photo/Photo.svelte';
 	export let closeConversation;
 
 	function clickClose() {

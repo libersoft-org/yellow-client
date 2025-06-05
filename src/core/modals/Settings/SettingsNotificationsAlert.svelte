@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { notificationsSettingsAlert } from '../../notifications_settings.ts';
+	import { notificationsSettingsAlert } from '@/core/notifications_settings.ts';
 	import Alert, { Type } from '@/core/components/Alert/Alert.svelte';
 </script>
 

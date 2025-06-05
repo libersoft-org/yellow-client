@@ -1,11 +1,11 @@
 <script>
+	import { onDestroy, onMount } from 'svelte';
+	import { log } from '@/core/tauri.ts';
+	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '@/core/notifications_settings.ts';
+	import { playNotificationSound, stopNotificationSound } from '@/core/notifications.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { log } from '../../tauri.ts';
-	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
-	import { onDestroy, onMount } from 'svelte';
-	import { playNotificationSound, stopNotificationSound } from '@/core/notifications.ts';
 	export let data;
 	export let closing = false;
 

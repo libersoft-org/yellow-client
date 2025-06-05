@@ -1,10 +1,10 @@
 <script>
-	import TopBar from '../../components/TopBar/TopBar.svelte';
-	import TopBarTitle from '../../components/TopBar/TopBarTitle.svelte';
-	import Clickable from '../../components/Clickable/Clickable.svelte';
-	import Icon from '../../components/Icon/Icon.svelte';
-	import VersionInfo from '../../components/VersionInfo/VersionInfo.svelte';
-	import { hideSidebarMobile, product, link } from '../../core.ts';
+	import { hideSidebarMobile, product, link } from '@/core/core.ts';
+	import TopBar from '@/core/components/TopBar/TopBar.svelte';
+	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
 
 	function clickLogo() {
 		window.open(link, '_blank');

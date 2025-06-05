@@ -1,4 +1,9 @@
 <script lang="ts">
+	import { TAURI } from '@/core/tauri.ts';
+	import { zoom } from '@/core/settings.ts';
+	import { setZoom } from '@/core/zoom.ts';
+	import { selected_theme_index, current_theme, themes_stored, default_theme } from '@/core/themes.js';
+	import { convertFromShortHex } from '@/core/utils/colors.js';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -8,26 +13,18 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import { TAURI } from '@/core/tauri.ts';
-	import { zoom } from '@/core/settings.ts';
-	import { setZoom } from '@/core/zoom.ts';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { selected_theme_index, current_theme, themes_stored, default_theme } from '../../themes';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import { convertFromShortHex } from '@/core/utils/colors.js';
-
 	let { setSubItem, subTab } = $props();
+	let theme_properties = Object.entries($current_theme.properties);
+	let expanded = $state(false);
 
 	$effect(() => {
 		$themes_stored;
 		$current_theme.properties;
 		$selected_theme_index;
 	});
-
-	let theme_properties = Object.entries($current_theme.properties);
-
-	let expanded = $state(false);
 
 	function click_expand() {
 		expanded = !expanded;
@@ -124,7 +121,6 @@
 			</Td>
 		</TbodyTr>
 	</Tbody>
-
 	<Table>
 		<Tbody>
 			<TbodyTr>
@@ -132,7 +128,6 @@
 					<Td title="Name">
 						<Input type="text" bind:value={$themes_stored[$selected_theme_index].name} />
 					</Td>
-
 					<TbodyTr>
 						{#each theme_properties as theme_property_name, theme_property_value}
 							<Td title={theme_property_name[0]}>

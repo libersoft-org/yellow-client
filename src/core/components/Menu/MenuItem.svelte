@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		img?: string;
 		title?: string;

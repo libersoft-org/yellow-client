@@ -1,8 +1,6 @@
 <script lang="ts">
 	import Button from '@/core/components/Button/Button.svelte';
-
 	import { getContext, setContext, type Component } from 'svelte';
-
 	interface Props {
 		close?: () => void;
 		params: {
@@ -12,12 +10,11 @@
 			}>;
 		};
 	}
-
 	let { close, params }: Props = $props();
-
 	let nextText = $state('Next');
-	let currentStep = $state(0);
 	const steps = $derived(params.steps);
+	let currentStep = $state(0);
+	const ContentComponent = $derived(steps[currentStep].component);
 	let setTitle = getContext('setTitle') as (title: string) => Promise<void>;
 	let pageChanged = getContext('pageChanged') as () => Promise<void>;
 
@@ -42,8 +39,6 @@
 		if (currentStep > 0) currentStep -= 1;
 		if (pageChanged) await pageChanged();
 	}
-
-	const ContentComponent = $derived(steps[currentStep].component);
 </script>
 
 <style>

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { onMount, type Snippet } from 'svelte';
-	import { isMobile } from '@/core/stores.ts';
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import { type Snippet } from 'svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
+	import { isMobile } from '@/core/stores.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 
 	interface Props extends HTMLButtonAttributes {
 		children?: Snippet;

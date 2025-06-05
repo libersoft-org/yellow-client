@@ -1,7 +1,7 @@
 <script>
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Input from '../Input/Input.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let options = [];
 	export let selected = '';
 	let filteredOptions = options;

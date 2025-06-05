@@ -1,9 +1,8 @@
 <script lang="ts">
-	import Button from '@/core/components/Button/Button.svelte';
-	import { delAccount } from '../../accounts_config.js';
 	import { derived, get } from 'svelte/store';
+	import Button from '@/core/components/Button/Button.svelte';
+	import { delAccount } from '@/core/accounts_config.js';
 	import { accounts } from '@/core/accounts.ts';
-	import type { Account } from '@/core/types.ts';
 
 	interface Props {
 		close: () => void;
@@ -12,9 +11,7 @@
 			name: string;
 		};
 	}
-
 	let { close, params = $bindable() }: Props = $props();
-
 	let account = derived([accounts], ([$accounts]) => {
 		console.log('[INIT] Modal mounted. Params:', params);
 		const found = $accounts.find(acc => get(acc).id === params.id);

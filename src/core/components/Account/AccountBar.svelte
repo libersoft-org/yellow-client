@@ -1,13 +1,13 @@
 <script>
 	import { onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
-	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.ts';
+	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '@/core/core.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import ItemAccount from './AccountBarItemAccount.svelte';
-	import ItemBase from './AccountBarItemBase.svelte';
-	import AccountStatusIcon from './AccountStatusIcon.svelte';
-	import AccountTitle from './AccountTitle.svelte';
+	import ItemAccount from '@/core/components/Account/AccountBarItemAccount.svelte';
+	import ItemBase from '@/core/components/Account/AccountBarItemBase.svelte';
+	import AccountStatusIcon from '@/core/components/Account/AccountStatusIcon.svelte';
+	import AccountTitle from '@/core/components/Account/AccountTitle.svelte';
 	let accountsVisible = $state(false);
 	let accountBar;
 

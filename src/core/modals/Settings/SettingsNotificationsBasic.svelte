@@ -9,27 +9,22 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-
 	import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
-	import { writable, get, type Unsubscriber } from 'svelte/store';
-	import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
-	import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
-	import { notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '../../notifications_settings.ts';
-	import { deleteExampleNotifications, setNotificationsEnabled } from '../../notifications.ts';
-	import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
-	import { deleteNotification, updateExampleNotification, exampleNotifications } from '../../notifications.ts';
-	import { debug } from '@/core/core.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
+	import { writable, get, type Unsubscriber } from 'svelte/store';
+	import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
+	import { debug } from '@/core/core.ts';
+	import { log, BROWSER } from '@/core/tauri.ts';
+	import { deleteExampleNotifications, setNotificationsEnabled } from '@/core/notifications.ts';
+	import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, notificationsSoundEnabled, notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '@/core/notifications_settings.ts';
+	import { deleteNotification, updateExampleNotification, exampleNotifications } from '@/core/notifications.ts';
 	import { skipFirst } from '$lib/skipfirst_store.ts';
-
 	// Local monitors store for this component
 	let monitors = writable<Monitor[]>([]);
 	let monitorInterval: Timer | undefined;
 	let permissionInterval: Timer | undefined;
 	let monitorOptions = writable<any[]>([]);
 	let _notificationsEnabled = get(notificationsEnabled);
-	let mounted = false;
-
 	// Store all subscription unsubscribe functions
 	const unsubscribers: Unsubscriber[] = [];
 

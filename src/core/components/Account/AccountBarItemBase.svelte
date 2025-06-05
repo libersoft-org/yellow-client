@@ -1,6 +1,6 @@
 <script lang="ts">
-	import AccountBarButton from './AccountBarButton.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import AccountBarButton from '@/core/components/Account/AccountBarButton.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		img?: string;
 		title?: string;

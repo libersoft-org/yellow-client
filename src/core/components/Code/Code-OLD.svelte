@@ -2,16 +2,12 @@
 	import Prism from 'prismjs';
 	import 'prismjs/components/prism-json';
 	import { log } from '@/core/tauri.ts';
-
 	interface Props {
 		code: string;
 	}
-
 	let { code = $bindable(' ') }: Props = $props();
-
 	let language = 'json';
 	let elDiv: HTMLDivElement | null = $state(null);
-
 	// Keep track of cursor position for better restoration
 	let lastCursorPos = $state(0);
 
@@ -19,48 +15,36 @@
 	function getCursorPosition() {
 		const selection = window.getSelection();
 		if (!selection || !selection.rangeCount) return 0;
-
 		// Get all text content up to cursor
 		const range = selection.getRangeAt(0).cloneRange();
-		if (elDiv) {
-			range.setStart(elDiv, 0);
-		}
-		if (selection.focusNode) {
-			range.setEnd(selection.focusNode, selection.focusOffset);
-		}
+		if (elDiv) range.setStart(elDiv, 0);
+		if (selection.focusNode) range.setEnd(selection.focusNode, selection.focusOffset);
 		return range.toString().length;
 	}
 
 	// Helper function to set cursor position by character index
 	function setCursorPosition(position) {
 		if (!elDiv) return;
-
 		position = Math.max(0, Math.min(position, (elDiv.textContent || '').length));
-
 		const selection = window.getSelection();
 		if (!selection) return;
-
 		// Find the correct node and offset
 		const nodeStack: Node[] = [elDiv];
 		let currentNode;
 		let charCount = 0;
 		let foundNode = null;
 		let foundOffset = 0;
-
 		// Traverse DOM to find position
 		while (nodeStack.length > 0) {
 			currentNode = nodeStack.pop();
-
 			if (currentNode.nodeType === Node.TEXT_NODE) {
 				const nodeLength = currentNode.textContent?.length || 0;
-
 				// Found the node where our position is
 				if (charCount + nodeLength >= position) {
 					foundNode = currentNode;
 					foundOffset = position - charCount;
 					break;
 				}
-
 				charCount += nodeLength;
 			} else {
 				// Process children in reverse order (for stack)
@@ -87,29 +71,21 @@
 
 	$effect(() => {
 		if (!elDiv) return;
-
 		try {
 			console.log('Prism highlight input:', code);
 			const result = '<code class="language-json">' + Prism.highlight(code, Prism.languages[language], language) + '</code>';
 			console.log('Prism highlight output:', result);
-
 			// Get current cursor position
 			const isActive = document.activeElement === elDiv;
-			if (isActive) {
-				lastCursorPos = getCursorPosition();
-			}
-
+			if (isActive) lastCursorPos = getCursorPosition();
 			// Apply highlighting
 			elDiv.innerHTML = result;
-
 			// Restore cursor position if the element was focused
 			if (isActive) {
 				// Delay restoration to allow DOM updates
 				setTimeout(() => {
 					setCursorPosition(lastCursorPos);
-					if (elDiv) {
-						elDiv.focus();
-					}
+					if (elDiv) elDiv.focus();
 				}, 0);
 			}
 		} catch (error) {
@@ -123,17 +99,13 @@
 		const text = event.clipboardData?.getData('text/plain') || '';
 		const selection = window.getSelection();
 		if (!selection || !selection.rangeCount) return;
-
 		// Get current position before paste
 		const currentPos = getCursorPosition();
-
 		// Insert text at cursor
 		selection.deleteFromDocument();
 		selection.getRangeAt(0).insertNode(document.createTextNode(text));
-
 		// Calculate new cursor position (current + pasted length)
 		lastCursorPos = currentPos + text.length;
-
 		// Force re-highlight with cursor position preserved
 		code = elDiv?.innerText || '';
 	}
@@ -143,22 +115,16 @@
 		// Handle Enter key to prevent inserting multiple newlines
 		if (event.key === 'Enter') {
 			event.preventDefault();
-
 			// Get current position
 			const pos = getCursorPosition();
-
 			// Get current text
 			const currentText = elDiv?.innerText || '';
-
 			// Insert a single newline at cursor position
 			const newText = currentText.slice(0, pos) + '\n' + currentText.slice(pos);
-
 			// Update text
 			code = newText;
-
 			// Set cursor position after the inserted newline
 			lastCursorPos = pos + 1;
-
 			// Need to manually trigger update since we're preventing default
 			setTimeout(() => {
 				setCursorPosition(lastCursorPos);
@@ -191,7 +157,6 @@
 
 	:global {
 		/* Make sure code inside our editor is editable */
-
 		.code-wrapper code {
 			cursor: text;
 			caret-color: white;
@@ -207,11 +172,9 @@
 			white-space: pre;
 			word-spacing: normal;
 			word-break: normal;
-
 			-moz-tab-size: 4;
 			-o-tab-size: 4;
 			tab-size: 4;
-
 			-webkit-hyphens: none;
 			-moz-hyphens: none;
 			-ms-hyphens: none;
@@ -370,7 +333,6 @@
 	oninput={e => {
 		// Save current cursor position before updating
 		lastCursorPos = getCursorPosition();
-
 		// Update code with the new content
 		const newText = elDiv?.innerText || '';
 		if (newText !== code) {

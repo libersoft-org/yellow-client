@@ -1,8 +1,7 @@
 <script>
-	import { accounts_config } from '../../core.ts';
-	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
-
+	import QRCode from 'qrcode';
+	import { accounts_config } from '@/core/core.ts';
 	let qrCodeData = $state('');
 	let dummyQrCodeData = $state('');
 	let error = $state('');

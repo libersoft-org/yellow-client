@@ -1,9 +1,8 @@
 <script>
-	import Modal from '../Modal/Modal.svelte';
+	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import Icon from '../Icon/Icon.svelte';
-
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let data;
 	let show = false;
 

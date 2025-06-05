@@ -1,19 +1,17 @@
 <script lang="ts">
-	import Button from '../components/Button/Button.svelte';
-	import Input from '../components/Input/Input.svelte';
-	import Label from '../components/Label/Label.svelte';
-	import { log, TAURI, TAURI_MOBILE, BROWSER } from '../tauri.ts';
-	import { mobileClass } from '../stores.ts';
-	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
-	import { platform, type as osType } from '@tauri-apps/plugin-os';
 	import { onMount } from 'svelte';
-
+	import { platform, type as osType } from '@tauri-apps/plugin-os';
+	import { log, TAURI, TAURI_MOBILE, BROWSER } from '@/core/tauri.ts';
+	import { mobileClass } from '@/core/stores.ts';
+	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
+	import Button from '@/core/components/Button/Button.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
+	import Label from '@/core/components/Label/Label.svelte';
 	// Generate filename with compact datetime format: MMDD-HHmmss
 	const now = new Date();
 	const dateStr = (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + '-' + now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0') + '-' + Math.round(now.getSeconds() / 10).toString();
 	let fileName = $state(`x-${dateStr}.html`);
 	let appendContent = $state('<html><body>Hello from mobile file test!\nAppended content</body></html>');
-
 	let download: NativeDownload | null = $state(null);
 	let result: any = $state('');
 	let platformInfo = $state({

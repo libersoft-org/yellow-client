@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Unsubscriber } from 'svelte/store';
-	import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
-	import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
+	import { log, CUSTOM_NOTIFICATIONS } from '@/core/tauri.ts';
+	import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor } from '@/core/notifications_settings.ts';
 	import { skipFirst } from '$lib/skipfirst_store.ts';
 	import { updateExampleNotification } from '@/core/notifications.ts';
 	import Input from '@/core/components/Input/Input.svelte';

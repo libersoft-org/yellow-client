@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getContext, untrack } from 'svelte';
+	import { derived, get, writable } from 'svelte/store';
 	import { addAccount, findAccountConfig, saveAccount } from '@/core/accounts_config.ts';
 	import { accounts, accountConfigExistsByCredentials } from '@/core/core.ts';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -9,7 +10,6 @@
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
-	import { derived, get, writable } from 'svelte/store';
 	interface Props {
 		close: () => void;
 		params: { id: string | null };
