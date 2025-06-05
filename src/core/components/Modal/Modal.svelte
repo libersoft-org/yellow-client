@@ -6,7 +6,7 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
 	import Portal from '../Portal/Portal.svelte';
-	let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
+	let { testId = '', show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -25,6 +25,7 @@
 		children?: Snippet;
 		breadcrumbs?: Snippet | null;
 		onShowChange?: (show: boolean) => void;
+		testId?: string;
 	}
 
 	$effect(() => {
@@ -258,7 +259,7 @@
 							{title}
 						</div>
 						<div onpointerdown={e => e.stopPropagation()}>
-							<Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="20px" padding="10px" onClick={close} />
+							<Icon data-testid={testId + '-Modal-close'} img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="20px" padding="10px" onClick={close} />
 						</div>
 					{/if}
 				</div>

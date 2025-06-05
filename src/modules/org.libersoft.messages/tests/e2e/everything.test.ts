@@ -192,9 +192,9 @@ async function goToRootSettingsSection(page: Page): Promise<void> {
  * Helper function to close the current modal
  * @param page - The Playwright page object
  */
-async function closeModal(page: Page): Promise<void> {
+async function closeModal(page: Page, testId: string): Promise<void> {
 	return await test.step('Close modal', async () => {
-		await page.getByTestId('Modal-close').click();
+		await page.getByTestId(testId + '-Modal-close').click();
 	});
 }
 
@@ -423,7 +423,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		// Navigate to Appearance and change theme
 		await navigateToSettingsSection(page, 'Appearance');
 		await test.step('Change theme in Appearance settings', async () => {
-			const themeSelect = page.locator('select');
+			const themeSelect = page.getByTestId('theme switch');
 			await expect(themeSelect).toHaveValue('0'); // Light
 			await themeSelect.selectOption({ label: 'Dark' });
 			await expect(themeSelect).toHaveValue('1'); // Dark
@@ -436,6 +436,6 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		await navigateToSettingsSection(page, 'Notifications');
 
 		// Close settings modal
-		await closeModal(page);
+		await closeModal(page, 'messages-settings');
 	});
 });
