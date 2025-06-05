@@ -1,11 +1,10 @@
-import { log, TAURI_MOBILE } from '@/core/tauri.ts';
+import { log } from '@/core/tauri.ts';
 import { derived, get, writable } from 'svelte/store';
 import { debug, selected_module_id, active_account_id } from '@/core/stores.ts';
 import { send, sendAsync, handleSocketMessage } from '@/core/socket.ts';
 import { updateModulesComms } from '@/core/modules.ts';
 import { accounts_config } from '@/core/accounts_config.ts';
 import { tick } from 'svelte';
-import { invoke } from '@tauri-apps/api/core';
 import type { Account, AccountStore, AccountConfig, AccountCredentials, AccountSettings } from './types.ts';
 
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
@@ -247,8 +246,8 @@ function _disableAccount(account: AccountStore) {
 }
 
 function reconnectAccount(account: AccountStore) {
-	log.debug('RECONNECT ACCOUNT', account);
 	let acc = get(account);
+	log.debug('RECONNECT ACCOUNT', acc);
 	if (!acc.enabled) return;
 	if (acc.suspended) {
 		log.debug('account suspended. not reconnecting.');
@@ -394,7 +393,7 @@ function sendLoginCommand(account: AccountStore) {
 			acc.status = 'Login failed.';
 			acc.session_status = undefined;
 			acc.suspended = true;
-			console.error('Login failed:', res);
+			console.debug('Login failed:', res);
 		} else {
 			acc.session_status = 'Logged in.';
 			console.log('Logged in:', res);
@@ -470,11 +469,11 @@ function setupPing(account: AccountStore) {
 				acc.lastCommsTs = Date.now();
 				//console.log('lastCommsTs:', acc.lastCommsTs);
 				//TODO: avoid expensive UI update
-				if (acc.status !== 'Connected.' || acc.error != null) {
+				/*if (acc.status !== 'Connected.' || acc.error != null) {
 					acc.status = 'Connected.';
 					acc.error = null;
 					account.update(v => v);
-				}
+				}*/
 			},
 			false
 		);
