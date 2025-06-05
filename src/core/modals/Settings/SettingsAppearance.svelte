@@ -13,8 +13,8 @@
 	import { setZoom } from '@/core/zoom.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import { selected_theme_index, current_theme, themes_stored, default_theme } from '../../themes';
-	import Icon from '../Icon/Icon.svelte';
-	import Button from '../Button/Button.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	import { convertFromShortHex } from '@/core/utils/colors.js';
 
 	let { setSubItem, subTab } = $props();

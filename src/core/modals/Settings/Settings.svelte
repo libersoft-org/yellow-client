@@ -1,11 +1,11 @@
 <script lang="ts">
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
-	import SettingsAppearance from '../../components/Settings/SettingsAppearance.svelte';
-	import SettingsNotifications from '../../components/Settings/SettingsNotifications.svelte';
-	import SettingsGeneral from '../../components/Settings/SettingsGeneral.svelte';
+	import SettingsAppearance from '@/core/modals/Settings/SettingsAppearance.svelte';
+	import SettingsNotifications from '@/core/modals/Settings/SettingsNotifications.svelte';
+	import SettingsGeneral from '@/core/modals/Settings/SettingsGeneral.svelte';
 	import { TAURI } from '@/core/tauri.ts';
 	import { fade } from 'svelte/transition';
-	import Icon from '../../components/Icon/Icon.svelte';
 
 	interface Props {
 		activeTab?: any;

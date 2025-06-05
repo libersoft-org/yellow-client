@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Switch from '../Switch/Switch.svelte';
-	import Select from '../Select/Select.svelte';
-	import Option from '../Select/SelectOption.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
+	import Select from '@/core/components/Select/Select.svelte';
+	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';

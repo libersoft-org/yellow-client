@@ -7,9 +7,8 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
-	import SettingsNotificationsBasic from '@/core/components/Settings/SettingsNotificationsBasic.svelte';
-	import SettingsNotificationsAlert from '@/core/components/Settings/SettingsNotificationsAlert.svelte';
-
+	import SettingsNotificationsBasic from '@/core/modals/Settings/SettingsNotificationsBasic.svelte';
+	import SettingsNotificationsAlert from '@/core/modals/Settings/SettingsNotificationsAlert.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';

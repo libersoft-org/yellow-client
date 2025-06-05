@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Switch from '../Switch/Switch.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';

@@ -1,6 +1,6 @@
 <script>
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let img;
 	export let title;
 	export let onClick;

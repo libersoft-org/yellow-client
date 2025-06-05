@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { notificationsSettingsAlert } from '../../notifications_settings.ts';
-	import Alert, { Type } from '../Alert/Alert.svelte';
+	import Alert, { Type } from '@/core/components/Alert/Alert.svelte';
 </script>
 
 {#if $notificationsSettingsAlert === 'blocked'}
