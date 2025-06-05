@@ -156,8 +156,6 @@ async function configureMessagesSettings(
 		if (settings.photoRadius) {
 			await page.getByRole('combobox').selectOption(settings.photoRadius);
 		}
-
-		await page.getByRole('button', { name: 'Save' }).click();
 	});
 }
 
