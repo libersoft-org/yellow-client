@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => {
 	dotenv.config({ path: '.env.local' });
 
 	// Check if Sentry is enabled
-	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.SENTRY_ENABLED || '').trim());
+	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.VITE_SENTRY_ENABLED || '').trim());
 
 	return {
 		resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,

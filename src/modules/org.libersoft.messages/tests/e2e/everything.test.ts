@@ -411,7 +411,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		// Navigate to Notifications and toggle settings
 		await navigateToSettingsSection(page, 'Notifications');
 		await test.step('Toggle notification settings', async () => {
-			const notificationsToggle = page.getByLabel('Notifications');
+			const notificationsToggle = page.getByTestId('notifications enabled toggle');
 			const soundToggle = page.getByLabel('Notification sound');
 			await notificationsToggle.click();
 			await soundToggle.click();

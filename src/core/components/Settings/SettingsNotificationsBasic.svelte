@@ -164,7 +164,7 @@
 	<Tbody>
 		<TbodyTr>
 			<Td title="Notifications">
-				<Switch label="Notifications" bind:checked={_notificationsEnabled} />
+				<Switch data-testid="notifications enabled toggle" label="Notifications" bind:checked={_notificationsEnabled} />
 			</Td>
 			<Td title="Notification sound">
 				<Switch label="Notification sound" bind:checked={$notificationsSoundEnabled} />

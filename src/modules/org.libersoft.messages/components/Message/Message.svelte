@@ -282,9 +282,9 @@
 			return;
 		}
 		e.preventDefault();
-		console.log('Message click:', e);
+		/*console.log('Message click:', e);
 		console.log('Message click:', menu);
-		console.log('Message click:', menu.openMenu);
+		console.log('Message click:', menu.openMenu);*/
 		await menu.openMenu(e);
 	}
 

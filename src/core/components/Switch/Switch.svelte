@@ -8,7 +8,7 @@
 		orientation?: 'horizontal' | 'vertical';
 	}
 
-	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal' }: Props = $props();
+	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal', ...restProps }: Props = $props();
 
 	let mounted = $state(false);
 	let inputId = Math.random().toString(36);
@@ -125,7 +125,7 @@
 			<span class="label">{label}:</span>
 		{/if}
 		<div class="switch-wrapper">
-			<input id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
+			<input {...restProps} id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
 			<span class="slider {mounted ? 'transition' : ''}"></span>
 		</div>
 	</div>
