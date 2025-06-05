@@ -2,7 +2,7 @@
 	import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
-	import Input from '@/core/components/Input/Input.svelte';
+	import InputButton from '@/core/components/Input/InputButton.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -18,7 +18,7 @@
 	}
 </script>
 
-<Input placeholder="Search" bind:value={filter} />
+<InputButton img="img/search.svg" placeholder="Search" bind:value={filter} />
 <Accordion items={$wallets} bind:activeIndex>
 	{#snippet content(wallet)}
 		<Table breakpoint="0">
