@@ -16,7 +16,6 @@
 	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
 	import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
 	import { log } from '@/core/tauri.ts';
-
 	export let conversation;
 	export let setBarFocus;
 	let scrollButtonVisible = true;
@@ -37,6 +36,24 @@
 	let windowInnerHeight;
 	let showFileDndOverlay = false;
 	let doBlockScroll = false;
+	let fileDndRef;
+	let jumped = false;
+	let messagesHeight = -1;
+	let scrolledToBottom0 = false;
+	let scrolledToBottom1 = false;
+	let wrapperWidth = null;
+	let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
+
+	$: scrollButtonVisible = !scrolledToBottom;
+	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
+
+	onMount(() => {
+		setInterval(() => {
+			scrolledToBottom0 = scrolledToBottom1;
+			scrolledToBottom1 = isScrolledToBottom();
+			fixScroll();
+		}, 50);
+	});
 
 	function disableScroll() {
 		doBlockScroll = true;
@@ -46,31 +63,12 @@
 		doBlockScroll = false;
 	}
 
-	let fileDndRef;
-
-	$: scrollButtonVisible = !scrolledToBottom;
-	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
-
-	let jumped = false;
-	let messagesHeight = -1;
-
-	let scrolledToBottom0 = false;
-	let scrolledToBottom1 = false;
-
 	/*
   // TODO: resizer observer does not trigger when elements change size.
   $: if (elMessages) {
    new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
   }
  */
-
-	onMount(() => {
-		setInterval(() => {
-			scrolledToBottom0 = scrolledToBottom1;
-			scrolledToBottom1 = isScrolledToBottom();
-			fixScroll();
-		}, 50);
-	});
 
 	function fixScroll() {
 		if (elMessages && jumped) {
@@ -101,8 +99,6 @@
 	}
 
 	setContext('openStickersetDetailsModal', openStickersetDetailsModal);
-
-	let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 
 	events.subscribe(e => {
 		if (e?.length) {
@@ -330,9 +326,7 @@
 			//console.log('handleEvent:', events[i]);
 			let event = events[i];
 			event.loaders = [];
-			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') {
-				continue;
-			}
+			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') continue;
 			uiEvents.push(event);
 			saveScrollPosition(event);
 
@@ -481,11 +475,7 @@
 				isDraggingFiles = true;
 			}
 		}
-
-		if (!isDraggingFiles) {
-			return;
-		}
-
+		if (!isDraggingFiles) return;
 		// show overlay only if file upload modal is not shown
 		// but if user drops files to conversation it will still add them to the upload modal
 		if (!$showFileUploadModal && !showFileDndOverlay) showFileDndOverlay = true;
@@ -506,12 +496,10 @@
 		$fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
 	}
 
-	let wrapperWidth = null;
 	const onResize = entry => {
 		wrapperWidth = entry.contentRect.width;
 	};
 	$: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
-
 	/**
 	 * Forward Message Section
 	 */
