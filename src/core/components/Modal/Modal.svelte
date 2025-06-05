@@ -6,7 +6,7 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-	let { testId = '', show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
+	let { testId = '', show = $bindable(false), children, top, center, bottom, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -23,6 +23,9 @@
 		width?: string;
 		height?: string;
 		children?: Snippet;
+		top?: Snippet;
+		center?: Snippet;
+		bottom?: Snippet;
 		breadcrumbs?: Snippet | null;
 		onShowChange?: (show: boolean) => void;
 		testId?: string;
@@ -272,8 +275,17 @@
 							{@render breadcrumbs()}
 						{/if}
 						<ModalBody {close} {params} bind:activeTab />
-					{:else if children}
+					{:else if children || top || center || bottom}
 						{@render children?.()}
+						<div class="top">
+							{@render top?.()}
+						</div>
+						<div class="center">
+							{@render center?.()}
+						</div>
+						<div class="bottom">
+							{@render bottom?.()}
+						</div>
 					{/if}
 				</div>
 			{/if}
