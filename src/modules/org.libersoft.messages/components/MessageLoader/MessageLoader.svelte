@@ -66,7 +66,7 @@
 		loader.request = '???';
 		loader.timer = setTimeout(() => {
 			//console.log('LOADmORE: LOADmESSAGES...');
-			if (loader.conversation.acc) {
+			if (!loader.conversation.acc) {
 				console.log('LOADmORE: invalid conversation.acc:', loader.conversation.acc);
 				return;
 			}
