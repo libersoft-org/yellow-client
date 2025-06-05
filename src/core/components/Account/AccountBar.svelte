@@ -119,6 +119,7 @@
 		width: 100%;
 		overflow: hidden;
 		transition: none;
+		border-bottom: 1px solid var(--secondary-softer-background);
 	}
 
 	.account-bar > :global(.clickable) {
