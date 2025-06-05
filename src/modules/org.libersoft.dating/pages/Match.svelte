@@ -14,13 +14,13 @@
 </script>
 
 <TopBar>
-	<svelte:fragment slot="left">
+	{#snippet left()}
 		<Icon img="img/back.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 		<TopBarTitle text="Match game" />
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+	{/snippet}
+	{#snippet right()}
 		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-	</svelte:fragment>
+	{/snippet}
 </TopBar>
 <Content>
 	<PhotoCard {photo} />

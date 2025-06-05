@@ -45,13 +45,13 @@
 </style>
 
 <TopBar>
-	<svelte:fragment slot="left">
+	{#snippet left()}
 		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 		<TopBarTitle text="Contact list" />
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+	{/snippet}
+	{#snippet right()}
 		<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-	</svelte:fragment>
+	{/snippet}
 </TopBar>
 <div class="content">Contact list - content page - not yet implemented</div>
 <Dialog data={dialogData} bind:close={closeDialog} bind:this={elDialog} />

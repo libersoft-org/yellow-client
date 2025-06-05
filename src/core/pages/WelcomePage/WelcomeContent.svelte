@@ -41,10 +41,10 @@
 </style>
 
 <TopBar>
-	<svelte:fragment slot="left">
+	{#snippet left()}
 		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 		<TopBarTitle text="Welcome" />
-	</svelte:fragment>
+	{/snippet}
 </TopBar>
 <div class="welcome">
 	<Clickable onClick={clickLogo}>

@@ -6,12 +6,12 @@
 </script>
 
 <TopBar>
-	<svelte:fragment slot="left">
+	{#snippet left()}
 		<Icon img="img/back.svg" onClick={closeModule} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 		<TopBarTitle text="Dating" />
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+	{/snippet}
+	{#snippet right()}
 		<Icon img="img/close.svg" onClick={closeModule} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-	</svelte:fragment>
+	{/snippet}
 </TopBar>
 <div>Welcome</div>

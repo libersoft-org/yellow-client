@@ -57,13 +57,13 @@
 </style>
 
 <TopBar>
-	<svelte:fragment slot="left">
+	{#snippet left()}
 		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 		<TopBarTitle text="Messages" />
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+	{/snippet}
+	{#snippet right()}
 		<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-	</svelte:fragment>
+	{/snippet}
 </TopBar>
 
 <div class="welcome">

@@ -1,3 +1,14 @@
+<script lang="ts">
+	import { type Snippet } from 'svelte';
+	interface Props {
+		children?: Snippet;
+		left?: Snippet;
+		center?: Snippet;
+		right?: Snippet;
+	}
+	let { children, left, center, right }: Props = $props();
+</script>
+
 <style>
 	.top-bar {
 		display: flex;
@@ -34,14 +45,14 @@
 </style>
 
 <div class="top-bar">
-	<slot />
+	{@render children?.()}
 	<div class="left">
-		<slot name="left" />
+		{@render left?.()}
 	</div>
 	<div class="center">
-		<slot name="center" />
+		{@render center?.()}
 	</div>
 	<div class="right">
-		<slot name="right" />
+		{@render right?.()}
 	</div>
 </div>

@@ -7,13 +7,13 @@
 </script>
 
 <TopBar>
-	<svelte:fragment slot="left">
+	{#snippet left()}
 		<Icon img="img/back.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 		<TopBarTitle text="People nearby" />
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+	{/snippet}
+	{#snippet right()}
 		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-	</svelte:fragment>
+	{/snippet}
 </TopBar>
 <Content>
 	{window.innerHeight}<br />

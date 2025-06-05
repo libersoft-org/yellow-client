@@ -194,14 +194,14 @@
 
 <div class="wallet-content">
 	<TopBar>
-		<svelte:fragment slot="left">
+		{#snippet left()}
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
-		</svelte:fragment>
-		<svelte:fragment slot="right">
+		{/snippet}
+		{#snippet right()}
 			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
 			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-		</svelte:fragment>
+		{/snippet}
 	</TopBar>
 	<div class="wallet">
 		<Paper>

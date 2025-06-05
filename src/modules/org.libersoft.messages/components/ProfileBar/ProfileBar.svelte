@@ -38,7 +38,7 @@
 </style>
 
 <TopBar>
-	<svelte:fragment slot="left">
+	{#snippet left()}
 		{#if $isMobile}
 			<Icon img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
 		{/if}
@@ -49,8 +49,8 @@
 			{/if}
 			<div class="address">{$selectedConversation.address}</div>
 		</div>
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+	{/snippet}
+	{#snippet right()}
 		<Icon img="img/close.svg" alt="Close" colorVariable="--secondary-foreground" onClick={clickClose} visibleOnMobile={false} />
-	</svelte:fragment>
+	{/snippet}
 </TopBar>

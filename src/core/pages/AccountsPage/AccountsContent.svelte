@@ -109,13 +109,13 @@
 
 <div class="accounts">
 	<TopBar>
-		<svelte:fragment slot="left">
+		{#snippet left()}
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 			<TopBarTitle text="Account management" />
-		</svelte:fragment>
-		<svelte:fragment slot="right">
+		{/snippet}
+		{#snippet right()}
 			<Icon img="img/close.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-		</svelte:fragment>
+		{/snippet}
 	</TopBar>
 	<div class="accounts-wrapper">
 		<Paper>
