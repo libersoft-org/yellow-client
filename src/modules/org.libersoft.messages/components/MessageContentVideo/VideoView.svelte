@@ -87,18 +87,7 @@
 
 <div>
 	{#if $debug}
-		<code
-			>{JSON.stringify({
-				uploadId,
-				videoStarted,
-				videoStarting,
-				loadingData,
-				fetchingPoster,
-				posterError,
-				thumbnailSrc,
-				download: download,
-			})}</code
-		>
+		<code>{JSON.stringify({ uploadId, videoStarted, videoStarting, loadingData, fetchingPoster, posterError, thumbnailSrc, download: download })}</code>
 	{/if}
 	<div class="video-title">
 		{#if upload}

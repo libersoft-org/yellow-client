@@ -1,7 +1,5 @@
 //import {} from './client_debug';
-import { tick } from 'svelte';
-import { derived, get, type Readable, type Writable } from 'svelte/store';
-import { log } from './tauri.ts';
+import { derived, get, type Readable } from 'svelte/store';
 
 // Import all stores
 export * from './stores.ts';
