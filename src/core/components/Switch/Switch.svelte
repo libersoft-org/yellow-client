@@ -6,6 +6,7 @@
 		showLabel?: boolean;
 		label: string;
 		orientation?: 'horizontal' | 'vertical';
+		'data-testid'?: string;
 	}
 
 	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal', ...restProps }: Props = $props();
