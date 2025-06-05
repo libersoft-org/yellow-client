@@ -27,8 +27,8 @@
 </style>
 
 {#if img || title}
-	<Clickable {onClick}>
-		<div class="item" data-testid={testId}>
+	<Clickable {onClick} data-testid={testId}>
+		<div class="item">
 			{#if img}
 				<Icon {img} alt={title} colorVariable="--secondary-foreground" size="24px" padding="0px" />
 			{/if}
