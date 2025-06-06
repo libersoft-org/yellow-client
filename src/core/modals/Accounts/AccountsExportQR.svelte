@@ -13,7 +13,7 @@
 	});
 
 	function generateDummyQRCode() {
-		QRCode.toDataURL('DECODE ME', { width: 300 })
+		QRCode.toDataURL('DECODE ME', { width: 300, height: 300, margin: 0 })
 			.then(url => (dummyQrCodeData = url))
 			.catch(err => {
 				console.error('DUMMY QR CODE GENERATION:', err);
@@ -23,7 +23,7 @@
 	function generateQRCode() {
 		error = '';
 		const jsonString = JSON.stringify($accounts_config, null, 2);
-		QRCode.toDataURL(jsonString, { width: 300 })
+		QRCode.toDataURL(jsonString, { width: 300, height: 300, margin: 0 })
 			.then(url => (qrCodeData = url))
 			.catch(err => {
 				console.error('QR CODE GENERATION:', err);
@@ -52,6 +52,7 @@
 	.qr-image {
 		display: block;
 		transition: filter 0.3s ease;
+		cursor: pointer;
 	}
 
 	.qr-image.blurred {
@@ -73,6 +74,7 @@
 		align-items: center;
 		justify-content: center;
 		transition: background 0.3s ease;
+		pointer-events: none;
 	}
 
 	.reveal-button:hover {
@@ -98,11 +100,13 @@
 	{:else if dummyQrCodeData && qrCodeData}
 		<div class="qr-wrapper">
 			{#if !isRevealed}
-				<div class="instructions">Sensitive information is hidden. Click the eye icon to reveal the QR code.</div>
+				<div class="instructions">Sensitive information is hidden. Click the QR code to reveal it.</div>
+			{:else}
+				<div class="instructions">Click the QR code to hide it.</div>
 			{/if}
-			<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Account configuration QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} />
+			<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Account configuration QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} onclick={toggleReveal} />
 			{#if !isRevealed}
-				<button class="reveal-button" onclick={toggleReveal} aria-label="Reveal QR code">
+				<button class="reveal-button" aria-label="Reveal QR code">
 					<img src="/modules/org.libersoft.wallet/img/hide.svg" alt="Eye icon" />
 				</button>
 			{/if}

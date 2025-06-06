@@ -15,7 +15,13 @@
 		buttons: [
 			{ text: 'Abort', onClick: clickButton, expand: true },
 			{ text: 'Retry', onClick: clickButton, expand: true },
-			{ text: 'Close', onClick: () => closeDialog(), expand: true },
+			{
+				text: 'Close',
+				onClick: () => {
+					elDialog.close();
+				},
+				expand: true,
+			},
 		],
 	};
 
@@ -54,4 +60,4 @@
 	{/snippet}
 </TopBar>
 <div class="content">Contact list - content page - not yet implemented</div>
-<Dialog data={dialogData} width="400px" bind:close={closeDialog} bind:this={elDialog} />
+<Dialog data={dialogData} width="400px" bind:this={elDialog} />
