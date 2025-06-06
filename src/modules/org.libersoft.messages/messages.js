@@ -679,11 +679,10 @@ function findNext(messages, i) {
 	}
 }
 
-export function setMessageSeen(message, cb) {
+export function setMessageSeen(message, cb, keep_unseen_bar = true) {
 	let acc = get(active_account);
 	log.debug('setMessageSeen', message);
 	deleteNotification(messageNotificationId(message));
-	message.seen = true;
 	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
@@ -699,8 +698,12 @@ export function setMessageSeen(message, cb) {
            conversationsArray.update(v => v);
           }*/
 	});
-	messagesArray.update(v => v);
-	insertEvent({ type: 'properties_update', array: get(messagesArray) });
+	setTimeout(() => {
+		message.seen = true;
+		message.keep_unseen_bar = keep_unseen_bar;
+		messagesArray.update(v => v);
+		insertEvent({ type: 'message_seen', array: get(messagesArray) });
+	});
 }
 
 export function sendMessage(text, format, acc = null, conversation = null) {
@@ -900,12 +903,13 @@ async function eventNewMessage(acc, event) {
 	const res = event.detail;
 	//console.log('eventNewMessage', acc, res);
 	if (!res.data) return;
+	res.data.just_received = true;
 	let msg = new Message(acc, res.data);
 	msg.received_by_my_homeserver = true;
 	let sc = get(selectedConversation);
 	if (msg.address_from !== acc.credentials.address) {
-		console.log('showNotification?: !get(isClientFocused): ', !get(isClientFocused), 'get(active_account) != acc:', get(active_account) != acc, 'msg.address_from !== sc?.address:', msg.address_from !== sc?.address);
-		if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) await showNotification(acc, msg);
+		console.log('showNotification?: !get(isClientFocused): ', !get(isClientFocused), 'get(active_account) != acc:', get(active_account) !== acc, 'msg.address_from !== sc?.address:', msg.address_from !== sc?.address);
+		if (!get(isClientFocused) || get(active_account) !== acc || msg.address_from !== sc?.address) await showNotification(acc, msg);
 	}
 	//console.log('eventNewMessage updateConversationsArray with msg:', msg);
 	updateConversationsArray(acc, msg);

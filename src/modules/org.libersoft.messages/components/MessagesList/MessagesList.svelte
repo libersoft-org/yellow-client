@@ -375,8 +375,8 @@
 			for (let i = 0; i < messages.length; i++) {
 				let m = messages[i];
 				//console.log('m:', m);
-				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
-				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)) {
+				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.keep_unseen_bar);
+				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)) {
 					//console.log('ADDING-UNSEEN-MARKER');
 					items.push({ type: 'unseen_marker' });
 					unseen_marker_put = true;

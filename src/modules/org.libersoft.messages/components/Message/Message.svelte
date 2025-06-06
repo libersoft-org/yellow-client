@@ -1,5 +1,6 @@
 <script>
 	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../../messages.js';
+	import { get } from 'svelte/store';
 	import { debug } from '@/core/core.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { isClientFocused } from '@/core/core.ts';
@@ -52,6 +53,7 @@
 	let touchX;
 	let touchY;
 	let messageContent;
+	let renderedTs;
 
 	$: update(message);
 	// console.log('updated message:', message);
@@ -80,11 +82,17 @@
 			isVisible = false;
 		} else {
 			console.log('setMessageSeen..');
-			setMessageSeen(message, () => {
-				console.log('seen set succesfully, disconnecting observer.');
-				observer.disconnect();
-				isVisible = false;
-			});
+
+			const window_was_active_when_message_was_received = isClientFocused && Date.now() - renderedTs < 150;
+			setMessageSeen(
+				message,
+				() => {
+					console.log('seen set succesfully, disconnecting observer.');
+					observer.disconnect();
+					isVisible = false;
+				},
+				!(message.just_received && window_was_active_when_message_was_received)
+			);
 		}
 	}
 
@@ -199,6 +207,8 @@
    //if (thisWasASwipe)
    e.preventDefault();
   }, wheelOpt);*/
+
+		renderedTs = new Date().getTime();
 
 		if (!message.seen && !message.just_sent) {
 			if (message.is_outgoing && !(message.address_to === message.address_from)) {
