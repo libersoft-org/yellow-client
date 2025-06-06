@@ -10,9 +10,14 @@
 	let activeTab = $state('json');
 	let copyText = $state('Copy to clipboard');
 	let timeoutId;
+	let jsonEditorContents = $state(JSON.stringify($accounts_config, null, 2));
+
+	$effect(() => {
+		console.log('JSON Editor contents updated:', jsonEditorContents);
+	});
 
 	function clickCopy() {
-		navigator.clipboard.writeText(JSON.stringify($accounts_config, null, 2));
+		navigator.clipboard.writeText(getJsonText());
 		copyText = 'Copied!';
 		clearTimeout(timeoutId);
 		timeoutId = setTimeout(() => {
@@ -20,8 +25,13 @@
 		}, 2000);
 	}
 
+	function getJsonText() {
+		console.log('Exporting accounts config:', jsonEditorContents);
+		return jsonEditorContents || JSON.stringify($accounts_config, null, 2);
+	}
+
 	function clickDownload() {
-		let blob = new Blob([JSON.stringify($accounts_config, null, 2)], { type: 'application/json' });
+		let blob = new Blob([getJsonText()], { type: 'application/json' });
 		let url = URL.createObjectURL(blob);
 		let a = document.createElement('a');
 		a.href = url;
@@ -35,7 +45,7 @@
 </script>
 
 <ButtonBar>
-	<Button img="img/copy.svg" {copyText} text={copyText} onClick={clickCopy} />
+	<Button img="img/copy.svg" text={copyText} onClick={clickCopy} />
 	<Button img="img/download.svg" text="Download as file" onClick={clickDownload} />
 </ButtonBar>
 <Tabs>
@@ -43,7 +53,7 @@
 	<TabsItem label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
 </Tabs>
 {#if activeTab === 'json'}
-	<AccountsExportJson />
+	<AccountsExportJson bind:code={jsonEditorContents} />
 {:else if activeTab === 'qr'}
 	<AccountsExportQR />
 {/if}

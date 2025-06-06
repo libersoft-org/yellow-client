@@ -2,7 +2,7 @@
 	interface Props {
 		code: string;
 	}
-	let { code = $bindable('') }: Props = $props();
+	let { code = $bindable() }: Props = $props();
 </script>
 
 <style>
@@ -15,4 +15,4 @@
 	}
 </style>
 
-<textarea rows="20">{code}</textarea>
+<textarea rows="20" bind:value={code}></textarea>

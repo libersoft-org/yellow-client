@@ -40,6 +40,7 @@
 
 		.label {
 			font-weight: bold;
+			cursor: pointer;
 		}
 	}
 
