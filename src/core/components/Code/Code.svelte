@@ -2,7 +2,7 @@
 	interface Props {
 		code: string;
 	}
-	let { code }: Props = $props();
+	let { code = $bindable('') }: Props = $props();
 </script>
 
 <style>
