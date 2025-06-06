@@ -7,10 +7,10 @@
 	import { get } from 'svelte/store';
 	import { currencies, selectedMainCurrencySymbol, sendTransaction } from '../wallet.ts';
 	import { parseUnits } from 'ethers';
-	let currency = 'kETH';
-	let address = '0xEF017eD170f0Ec1f6C42f7A1bEFf133C261C1573'; // TODO: "ENS name"';
-	let amount = 0.001;
-	let fee = 0.001;
+	let currency = '';
+	let address = ''; // TODO: "ENS name"';
+	let amount = 0;
+	let fee = 0;
 	let etherValue;
 	let etherValueFee;
 	let error;
