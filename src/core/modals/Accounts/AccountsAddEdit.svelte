@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getContext, untrack } from 'svelte';
-	import { derived, get, writable } from 'svelte/store';
 	import { addAccount, findAccountConfig, saveAccount } from '@/core/accounts_config.ts';
 	import { accounts, accountConfigExistsByCredentials } from '@/core/core.ts';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -10,6 +9,7 @@
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
+	import { get, writable, derived } from 'svelte/store';
 	interface Props {
 		close: () => void;
 		params: { id: string | null };
@@ -23,7 +23,7 @@
 	let credentials_address = $state('');
 	let credentials_server = $state('');
 	let credentials_password = $state('');
-	let config_enabled = $state(false);
+	let config_enabled = $state(isInWelcomeWizard);
 	let config_title = $state('');
 	let acc = $state();
 	let retry_nonce = $state(0);
@@ -44,15 +44,24 @@
 		console.log('[STORE] Full accounts store updated:', value.map(get));
 	});
 
-	let account = derived([accounts, account_id_store], ([$accounts, $id]) => {
-		const found = $accounts.find(acc => get(acc).id === $id);
-		console.log('[DERIVED] account_id_store =', $id, '→ found account:', found ? get(found) : null);
+	let account = derived([accounts, account_id_store], ([$accounts, $account_id_store]) => {
+		const id = $account_id_store;
+		if (!id) {
+			console.log('[DERIVED] No account ID set, returning null');
+			return null;
+		}
+		console.log('[DERIVED] Finding account with ID:', id);
+		const found = $accounts.find(acc => get(acc).id === id);
+		console.log('[DERIVED] $account_id_store =', id, '→ found account:', found ? get(found) : null);
 		return found ?? null;
 	});
 
 	account.subscribe(value => {
-		acc = value;
-		console.log('[SUBSCRIBE] account store emitted acc =', value ? get(value) : null);
+		if (value) {
+			console.log('[SUBSCRIBE] Account updated:', value);
+		} else {
+			console.log('[SUBSCRIBE] No account found');
+		}
 	});
 
 	$effect(() => {
@@ -227,10 +236,11 @@
 	{:else}
 		<Button data-testid="save" img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={clickSave} />
 	{/if}
-	{#if account && acc}
+
+	{#if $account}
 		<div class="status">
 			<strong>Status:</strong>
-			<AccountStatusIconIconAndText {account} />
+			<AccountStatusIconIconAndText account={$account} />
 		</div>
 	{/if}
 </div>
