@@ -4,6 +4,7 @@
 	import { selectedNetwork, selectedAddress } from '../wallet.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
+	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Wallet from './Wallet.svelte';
@@ -38,10 +39,11 @@
 <Content>
 	<TopBar>
 		{#snippet left()}
+			<TopBarTitle text="Wallet" />
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
 		{/snippet}
 		{#snippet right()}
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
 			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
 			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}

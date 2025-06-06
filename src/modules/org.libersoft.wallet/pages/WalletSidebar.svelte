@@ -1,9 +1,7 @@
 <script>
 	import { hideSidebarMobile } from '@/core/core.ts';
 	import { addressBook } from '../wallet.ts';
-	import { mobileClass } from '@/core/stores.ts';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 
 	function clickShowWallet() {
