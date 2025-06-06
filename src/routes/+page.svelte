@@ -3,7 +3,7 @@
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import { init, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product } from '../core/core.ts';
+	import { init, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, setModule, module_decls, debug, product } from '../core/core.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
 	import { mobileWidth, mobileClass, isMobile } from '@/core/stores.ts';
 	import { selected_theme_index } from '@/core/themes.js';
@@ -226,9 +226,8 @@
 	}
 
 	function onSelectModule(id) {
-		selected_corepage_id.set(null);
 		//console.log('onSelectModule: ' + id);
-		selected_module_id.set(id);
+		setModule(id);
 		//console.log('selected_module_id: ' + $selected_module_id);
 		//console.log('active_account: ', $active_account);
 		//console.log('accounts_config: ', $accounts_config);

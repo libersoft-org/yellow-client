@@ -1,5 +1,6 @@
 //import {} from './client_debug';
 import { derived, get, type Readable } from 'svelte/store';
+import { selected_module_id, selected_corepage_id } from './stores.ts';
 
 // Import all stores
 export * from './stores.ts';
@@ -36,6 +37,16 @@ export function init(): () => void {
 			sub();
 		}
 	};
+}
+
+export function setCorePage(name: string | null): void {
+	selected_module_id.set(null);
+	selected_corepage_id.set(name);
+}
+
+export function setModule(name: string | null): void {
+	selected_corepage_id.set(null);
+	selected_module_id.set(name);
 }
 
 interface RelayStore<T> extends Readable<T | null> {

@@ -10,7 +10,7 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '@/core/core.ts';
+import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, setModule, send } from '@/core/core.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
@@ -983,8 +983,7 @@ async function showNotification(acc, msg) {
 			if (event === 'click') {
 				window.focus();
 				selectAccount(acc.id);
-				selected_corepage_id.set(null);
-				selected_module_id.set(identifier);
+				setModule(identifier);
 				await tick();
 				console.log('notification click: selectConversation', msg.address_from);
 				selectConversation({
