@@ -25,4 +25,4 @@ jobs:
         run: bun run build
       
       - name: Run svelte-check
-        run: bun run svelte-check
+        run: bun run svelte-check --fail-on-warnings
