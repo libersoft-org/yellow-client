@@ -27,7 +27,7 @@
 
 	function getJsonText() {
 		console.log('Exporting accounts config:', jsonEditorContents);
-		return jsonEditorContents || JSON.stringify($accounts_config, null, 2);
+		return activeTab === 'json' ? jsonEditorContents : JSON.stringify($accounts_config, null, 2);
 	}
 
 	function clickDownload() {
