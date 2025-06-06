@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import QRCode from 'qrcode';
 	import { accounts_config } from '@/core/core.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	let qrCodeData = $state('');
 	let dummyQrCodeData = $state('');
 	let error = $state('');
@@ -53,38 +54,31 @@
 
 	.qr-image {
 		transition: filter 0.3s ease;
-		cursor: pointer;
 		width: 300px;
 		height: 300px;
+		display: block;
 	}
 
 	.qr-image.blurred {
 		filter: blur(8px);
 	}
 
-	.reveal-button {
+	.reveal-icon {
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		background: rgba(0, 0, 0, 0.7);
-		border: none;
 		border-radius: 50%;
 		width: 60px;
 		height: 60px;
-		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		transition: background 0.3s ease;
 		pointer-events: none;
 	}
 
-	.reveal-button:hover {
-		background: rgba(0, 0, 0, 0.85);
-	}
-
-	.reveal-button img {
+	.reveal-icon img {
 		width: 30px;
 		height: 30px;
 		filter: invert(1);
@@ -107,11 +101,13 @@
 			{:else}
 				<div class="instructions">Click the QR code to hide it.</div>
 			{/if}
-			<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Account configuration QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} onclick={toggleReveal} />
+			<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide QR code' : 'Reveal QR code'}>
+				<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Account configuration QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} />
+			</Clickable>
 			{#if !isRevealed}
-				<button class="reveal-button" aria-label="Reveal QR code">
+				<div class="reveal-icon" aria-hidden="true">
 					<img src="/modules/org.libersoft.wallet/img/hide.svg" alt="Eye icon" />
-				</button>
+				</div>
 			{/if}
 		</div>
 	{:else}
