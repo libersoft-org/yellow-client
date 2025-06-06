@@ -8,10 +8,10 @@
 
 <style>
 	.content {
-		flex: 1;
-		height: 100%;
-		padding: 10px;
-		overflow: auto;
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+		background: var(--background-image) 0 0 / 400px repeat;
 	}
 </style>
 

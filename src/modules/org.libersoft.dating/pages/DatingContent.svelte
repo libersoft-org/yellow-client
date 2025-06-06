@@ -1,5 +1,6 @@
 <script>
 	import { page } from '../dating.js';
+	import Content from '@/core/components/Content/Content.svelte';
 	import Welcome from './Welcome.svelte';
 	import Map from './Map.svelte';
 	import Match from './Match.svelte';
@@ -14,19 +15,10 @@
 	};
 </script>
 
-<style>
-	.dating-content {
-		display: flex;
-		flex-direction: column;
-		height: 100vh;
-		background: var(--background-image) 0 0 / 400px repeat;
-	}
-</style>
-
-<div class="dating-content">
+<Content>
 	{#if $page}
 		<svelte:component this={pages[$page]} />
 	{:else}
 		<Welcome />
 	{/if}
-</div>
+</Content>

@@ -3,7 +3,7 @@
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Content from '../components/Content.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 </script>
 
 <TopBar>
@@ -15,4 +15,4 @@
 		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </TopBar>
-<Content>People nearby</Content>
+<Page>People nearby</Page>
