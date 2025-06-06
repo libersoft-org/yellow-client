@@ -44,9 +44,10 @@
 
 <style>
 	.content {
-		height: 100vh;
+		height: 100%;
+		padding: 10px;
+		overflow: auto;
 		background: var(--background-image) 0 0 / 400px repeat;
-		overflow: hidden;
 	}
 </style>
 
@@ -59,5 +60,6 @@
 		<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </TopBar>
+
 <div class="content">Contact list - content page - not yet implemented</div>
 <Dialog data={dialogData} width="400px" bind:this={elDialog} />

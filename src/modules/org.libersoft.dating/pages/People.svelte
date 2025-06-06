@@ -15,14 +15,4 @@
 		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </TopBar>
-<Content>
-	{window.innerHeight}<br />
-	{window.visualViewport?.height}<br />
-	START 1<br />
-	START 2<br />
-	START 3<br />
-	People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />People nearby<br />
-	END 1<br />
-	END 2<br />
-	END 3<br />
-</Content>
+<Content>People nearby</Content>

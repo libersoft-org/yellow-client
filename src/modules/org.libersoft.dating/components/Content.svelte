@@ -1,12 +1,20 @@
+<script lang="ts">
+	import { type Snippet } from 'svelte';
+	interface Props {
+		children?: Snippet;
+	}
+	let { children }: Props = $props();
+</script>
+
 <style>
-	.page-content {
+	.content {
+		flex: 1;
 		height: 100%;
 		padding: 10px;
 		overflow: auto;
-		background-color: red;
 	}
 </style>
 
-<div class="page-content">
-	<slot />
+<div class="content">
+	{@render children?.()}
 </div>
