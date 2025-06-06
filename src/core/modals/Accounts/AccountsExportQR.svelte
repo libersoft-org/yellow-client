@@ -45,14 +45,17 @@
 
 	.qr-wrapper {
 		display: flex;
+		justify-content: center;
+		align-items: center;
 		position: relative;
 		flex-direction: column;
 	}
 
 	.qr-image {
-		display: block;
 		transition: filter 0.3s ease;
 		cursor: pointer;
+		width: 300px;
+		height: 300px;
 	}
 
 	.qr-image.blurred {
