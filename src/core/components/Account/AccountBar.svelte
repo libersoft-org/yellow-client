@@ -1,7 +1,7 @@
 <script>
 	import { onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
-	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '@/core/core.ts';
+	import { debug, active_account, accounts, selectAccount, hideSidebarMobile, setCorePage } from '@/core/core.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ItemAccount from '@/core/components/Account/AccountBarItemAccount.svelte';
@@ -65,7 +65,7 @@
 	}
 
 	function clickAccountManagement() {
-		selected_corepage_id.set('accounts');
+		setCorePage('accounts');
 		hideSidebarMobile.set(true);
 		close();
 	}

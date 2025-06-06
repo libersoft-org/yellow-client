@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '@/core/core.ts';
+	import { findAccount, accounts_config, hideSidebarMobile, setCorePage } from '@/core/core.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
@@ -30,7 +30,7 @@
 
 	function back() {
 		hideSidebarMobile.set(false);
-		selected_corepage_id.set(null);
+		setCorePage(null);
 	}
 
 	function addAccountModal() {

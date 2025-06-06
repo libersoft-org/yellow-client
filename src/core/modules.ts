@@ -2,7 +2,6 @@ import { get } from 'svelte/store';
 import { module_decls, modules_disabled, modules_display_order, selected_module_id } from '@/core/stores.ts';
 import { tick } from 'svelte';
 import type { ModuleDeclaration, Account } from './types.ts';
-
 export function initModules() {
 	return [
 		selected_module_id.subscribe(async id => {
@@ -13,7 +12,6 @@ export function initModules() {
 				module.callbacks.onModuleSelected?.(id === module.id);
 			}
 		}),
-
 		modules_display_order.subscribe(value => {
 			//console.log('MODULES ORDER:', value);
 			let module_decls_v = get(module_decls);
@@ -76,9 +74,7 @@ export function registerModule(id: string, decl: ModuleDeclaration) {
 		return;
 	}
 	let ordering = get(modules_display_order);
-	if (ordering[id] !== undefined) {
-		decl.order = ordering[id];
-	}
+	if (ordering[id] !== undefined) decl.order = ordering[id];
 	decl.id = id;
 	let module_decls_v = get(module_decls);
 	module_decls_v[id] = decl;
