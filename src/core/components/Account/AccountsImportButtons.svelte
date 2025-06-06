@@ -14,9 +14,7 @@
 	let { importText, close, onError }: Props = $props();
 
 	let replaceDialog: any = $state(null);
-	let closeReplaceDialog: (() => void) | undefined = $state(undefined);
 	let conflictDialog: any = $state(null);
-	let closeConflictDialog: (() => void) | undefined = $state(undefined);
 	let currentConflictAccount: any = $state(null);
 	let remainingAccounts: any[] = $state([]);
 	let processedCount = $state(0);
@@ -29,7 +27,7 @@
 		icon: 'img/import.svg',
 		buttons: [
 			{ text: 'Replace', onClick: confirmReplace, expand: true },
-			{ text: 'Cancel', onClick: () => closeReplaceDialog?.(), expand: true },
+			{ text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true },
 		],
 	};
 
@@ -40,7 +38,7 @@
 		buttons: [
 			{ text: 'Replace Existing', onClick: replaceConflictAccount, expand: true },
 			{ text: 'Skip This Account', onClick: skipConflictAccount, expand: true },
-			{ text: 'Cancel Import', onClick: () => closeConflictDialog?.(), expand: true },
+			{ text: 'Cancel Import', onClick: () => conflictDialog?.close(), expand: true },
 		],
 	});
 
@@ -116,20 +114,20 @@
 					const accountServer = account.credentials?.server;
 					const accountAddress = account.credentials?.address;
 					const accountIdentifier = `${accountServer}\\\\${accountAddress}`;
-					return accountIdentifier === identifier ? currentConflictAccount : account;
+					return accountIdentifier === identifier ? JSON.parse(JSON.stringify(currentConflictAccount)) : account;
 				});
 			});
 			maybeActivateAccount();
 			processedCount++;
 		}
 
-		closeConflictDialog?.();
+		conflictDialog?.close();
 		currentConflictAccount = null;
 		processNextAccount();
 	}
 
 	function skipConflictAccount() {
-		closeConflictDialog?.();
+		conflictDialog?.close();
 		currentConflictAccount = null;
 		processNextAccount();
 	}
@@ -153,11 +151,11 @@
 		} catch (err) {
 			onError('Invalid JSON format');
 			console.error('Replace accounts error:', err);
-			closeReplaceDialog?.();
+			replaceDialog?.close();
 		}
 		accounts_config.set(newConfig);
 		maybeActivateAccount();
-		closeReplaceDialog?.();
+		replaceDialog?.close();
 		close();
 	}
 </script>
@@ -182,5 +180,5 @@
 	{/if}
 </div>
 
-<Dialog data={replaceDialogData} bind:close={closeReplaceDialog} bind:this={replaceDialog} />
-<Dialog data={conflictDialogData} bind:close={closeConflictDialog} bind:this={conflictDialog} />
+<Dialog data={replaceDialogData} bind:this={replaceDialog} />
+<Dialog data={conflictDialogData} bind:this={conflictDialog} />

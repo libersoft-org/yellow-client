@@ -15,7 +15,7 @@
 	}
 	interface DialogButton {
 		text: string;
-		onClick?: (e: MouseEvent) => void;
+		onClick?: (e: Event) => void;
 		expand?: boolean;
 	}
 	let { data, width }: Props = $props();
@@ -47,10 +47,12 @@
 		</div>
 	{/snippet}
 	{#snippet bottom()}
-		<ButtonBar>
-			{#each data.buttons as button}
-				<Button {...button} />
-			{/each}
-		</ButtonBar>
+		{#if data?.buttons && data.buttons.length > 0}
+			<ButtonBar>
+				{#each data.buttons as button}
+					<Button {...button} />
+				{/each}
+			</ButtonBar>
+		{/if}
 	{/snippet}
 </Modal>
