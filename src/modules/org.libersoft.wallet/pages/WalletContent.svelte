@@ -4,6 +4,8 @@
 	import { selected_module_id } from '@/core/stores.ts';
 	import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
 	import { hideSidebarMobile, debug } from '@/core/core.ts';
+	import Content from '@/core/components/Content/Content.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
@@ -60,20 +62,7 @@
 </script>
 
 <style>
-	.wallet-content {
-		background: var(--background-image) 0 0 / 400px repeat;
-		height: 100vh;
-	}
-
-	.wallet {
-		display: flex;
-		flex-direction: column;
-		height: calc(100vh - 72px);
-		overflow: auto;
-		padding: 10px;
-	}
-
-	.wallet .content {
+	.content {
 		width: 100%;
 	}
 
@@ -192,7 +181,7 @@
 	}
 </style>
 
-<div class="wallet-content">
+<Content>
 	<TopBar>
 		{#snippet left()}
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
@@ -203,7 +192,7 @@
 			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
 	</TopBar>
-	<div class="wallet">
+	<Page>
 		<Paper>
 			<div class="content">
 				<div class="body">
@@ -277,8 +266,8 @@
 				</div>
 			</div>
 		</Paper>
-	</div>
-</div>
+	</Page>
+</Content>
 <Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} width="500px" />
 <Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} width="500px" />
 <Modal title="Wallet settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />

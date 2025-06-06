@@ -4,7 +4,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
-	import Content from '../components/Content.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import PhotoCard from '../components/PhotoCard.svelte';
 	const photo = {
 		img: 'modules/' + module.identifier + '/img/photos/1.webp',
@@ -22,6 +22,6 @@
 		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </TopBar>
-<Content>
+<Page>
 	<PhotoCard {photo} />
-</Content>
+</Page>

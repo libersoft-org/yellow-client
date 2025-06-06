@@ -3,7 +3,7 @@
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Content from '../components/Content.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Map from '../components/Map.svelte';
 </script>
 
@@ -16,6 +16,6 @@
 		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </TopBar>
-<Content>
+<Page>
 	<Map latitude="50.0755" longitude="14.4378" />
-</Content>
+</Page>

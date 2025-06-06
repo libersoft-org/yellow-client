@@ -4,6 +4,8 @@
 	import { selected_module_id } from '@/core/stores.ts';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Content from '@/core/components/Content/Content.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
@@ -42,24 +44,16 @@
 	}
 </script>
 
-<style>
-	.content {
-		height: 100%;
-		padding: 10px;
-		overflow: auto;
-		background: var(--background-image) 0 0 / 400px repeat;
-	}
-</style>
-
-<TopBar>
-	{#snippet left()}
-		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-		<TopBarTitle text="Contact list" />
-	{/snippet}
-	{#snippet right()}
-		<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-	{/snippet}
-</TopBar>
-
-<div class="content">Contact list - content page - not yet implemented</div>
+<Content>
+	<TopBar>
+		{#snippet left()}
+			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+			<TopBarTitle text="Contact list" />
+		{/snippet}
+		{#snippet right()}
+			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
+		{/snippet}
+	</TopBar>
+	<Page>Contact list - content page - not yet implemented</Page>
+</Content>
 <Dialog data={dialogData} width="400px" bind:this={elDialog} />
