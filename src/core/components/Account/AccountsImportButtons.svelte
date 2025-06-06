@@ -114,7 +114,7 @@
 					const accountServer = account.credentials?.server;
 					const accountAddress = account.credentials?.address;
 					const accountIdentifier = `${accountServer}\\\\${accountAddress}`;
-					return accountIdentifier === identifier ? currentConflictAccount : account;
+					return accountIdentifier === identifier ? JSON.parse(JSON.stringify(currentConflictAccount)) : account;
 				});
 			});
 			maybeActivateAccount();
