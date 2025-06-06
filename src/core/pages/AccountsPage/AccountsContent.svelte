@@ -121,8 +121,8 @@
 		<Paper>
 			<ButtonBar>
 				<Button img="img/accounts.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} />
-				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
 				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} />
+				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
 			</ButtonBar>
 			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>
