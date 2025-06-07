@@ -38,7 +38,7 @@
 </script>
 
 <Content>
-	<Bar>
+	<Bar position="bottom">
 		{#snippet left()}
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 			<BarTitle text="Wallet" />
