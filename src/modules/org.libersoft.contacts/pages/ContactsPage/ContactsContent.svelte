@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { hideSidebarMobile } from '@/core/core.ts';
-	import { selected_module_id } from '@/core/stores.ts';
+	import { hideSidebarMobile, setModule } from '@/core/core.ts';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
 	import Content from '@/core/components/Content/Content.svelte';
@@ -9,7 +8,6 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
-	let closeDialog;
 	let dialogData = {
 		title: 'Dialog title',
 		body: 'Dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content.',
@@ -17,13 +15,7 @@
 		buttons: [
 			{ text: 'Abort', onClick: clickButton, expand: true },
 			{ text: 'Retry', onClick: clickButton, expand: true },
-			{
-				text: 'Close',
-				onClick: () => {
-					elDialog.close();
-				},
-				expand: true,
-			},
+			{ text: 'Close', onClick: () => elDialog.close(), expand: true },
 		],
 	};
 
@@ -40,7 +32,7 @@
 	}
 
 	function close() {
-		selected_module_id.set(null);
+		setModule(null);
 	}
 </script>
 

@@ -1,6 +1,5 @@
 import { writable } from 'svelte/store';
-import { hideSidebarMobile } from '@/core/core.ts';
-import { selected_module_id } from '@/core/stores.ts';
+import { hideSidebarMobile, setModule } from '@/core/core.ts';
 export let page = writable('people');
 
 export function setPage(name) {
@@ -15,5 +14,5 @@ export function closePage() {
 
 export function closeModule() {
 	hideSidebarMobile.set(false);
-	selected_module_id.set(null);
+	setModule(null);
 }

@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import { hideSidebarMobile, selected_module_id } from '@/core/stores.ts';
+	import { setModule } from '@/core/core.ts';
+	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { selectedNetwork, selectedAddress } from '../wallet.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
@@ -32,7 +33,7 @@
 	}
 
 	function close() {
-		selected_module_id.set(null);
+		setModule(null);
 	}
 </script>
 

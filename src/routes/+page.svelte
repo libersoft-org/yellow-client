@@ -244,7 +244,7 @@
 	}
 
 	function onCloseModule() {
-		selected_module_id.set(null);
+		setModule(null);
 	}
 
 	function startResizeSideBar() {

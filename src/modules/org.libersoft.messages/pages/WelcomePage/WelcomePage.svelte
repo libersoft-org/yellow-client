@@ -1,5 +1,5 @@
 <script>
-	import { active_account, selected_module_id } from '@/core/core.ts';
+	import { active_account, setModule } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { identifier, online } from '../../messages.js';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
@@ -20,7 +20,7 @@
 	}
 
 	function close() {
-		selected_module_id.set(null);
+		setModule(null);
 	}
 </script>
 
