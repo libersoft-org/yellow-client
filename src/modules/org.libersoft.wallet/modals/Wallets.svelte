@@ -15,9 +15,9 @@
 		close?: () => void;
 	}
 	let { close }: Props = $props();
-	let showModalWallets = false;
-	let activeIndex = null;
-	let filter = '';
+	let showModalWallets = $state(false);
+	let activeIndex = $state(null);
+	let filter = $state('');
 
 	function clickSelectAddress(wallet, address) {
 		console.log('SETTING ADDRESS', wallet, address);
@@ -45,4 +45,4 @@
 		</Table>
 	{/snippet}
 </Accordion>
-<Modal body={ModalWallets} bind:show={showModalWallets} />
+<Modal title="Manage wallets" body={ModalWallets} bind:show={showModalWallets} />

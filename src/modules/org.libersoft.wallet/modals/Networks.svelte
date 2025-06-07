@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { selectedNetworkID, networks } from '../wallet.ts';
+	import { module } from '../module.js';
 	import InputButton from '@/core/components/Input/InputButton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -14,8 +15,8 @@
 		close?: () => void;
 	}
 	let { close }: Props = $props();
-	let showModalNetworks = false;
-	let filter = '';
+	let showModalNetworks = $state(false);
+	let filter = $state('');
 
 	function selectNetwork(id) {
 		console.log('SETTING NETWORK', id);
@@ -24,7 +25,7 @@
 	}
 </script>
 
-<Button img="img/network.svg" text="Manage networks" onClick={() => (showModalNetworks = true)} />
+<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => (showModalNetworks = true)} />
 <InputButton img="img/search.svg" placeholder="Search" bind:value={filter} />
 <Table breakpoint="0">
 	<Tbody>
@@ -39,4 +40,4 @@
 		{/each}
 	</Tbody>
 </Table>
-<Modal body={ModalNetworks} bind:show={showModalNetworks} />
+<Modal title="Manage networks" body={ModalNetworks} bind:show={showModalNetworks} />
