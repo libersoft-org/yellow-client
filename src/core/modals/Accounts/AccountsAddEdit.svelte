@@ -8,6 +8,7 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	import { get, writable, derived } from 'svelte/store';
 	interface Props {
@@ -188,14 +189,6 @@
 		gap: 15px;
 	}
 
-	.error {
-		display: flex;
-		gap: 5px;
-		padding: 10px;
-		border-radius: 10px;
-		background-color: #f33;
-	}
-
 	.status {
 		display: flex;
 		align-items: center;
@@ -226,10 +219,7 @@
 		<Switch showLabel label="Enabled" bind:checked={config_enabled} />
 	{/if}
 	{#if error}
-		<div class="error">
-			<strong>Error:</strong>
-			{error}
-		</div>
+		<Alert type="error" message={error} />
 	{/if}
 	{#if params.id === null}
 		<Button data-testid="add" text="Add the account" onClick={clickAdd} />

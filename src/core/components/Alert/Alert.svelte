@@ -2,14 +2,14 @@
 	import { type Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
-		type?: 'success' | 'warning' | 'error';
+		type?: 'info' | 'warning' | 'error';
 		message?: string;
 	}
 	let { children, type = 'error', message }: Props = $props();
 	const types = {
-		success: { label: 'Info', color: '#040', border: '#080', background: '#0F0' },
-		warning: { label: 'Warning', color: '#440', border: '#880', background: '#FF0' },
-		error: { label: 'Error', color: '#400', border: '#800', background: '#FBB' },
+		info: { label: 'Info', color: '#040', border: '#080', background: '#8f8' },
+		warning: { label: 'Warning', color: '#440', border: '#880', background: '#ff0' },
+		error: { label: 'Error', color: '#400', border: '#800', background: '#fbb' },
 	} as const;
 	let colors = $derived(() => types[type] || types.error);
 </script>

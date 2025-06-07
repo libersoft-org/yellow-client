@@ -1,11 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import QRCode from 'qrcode';
 	import { accounts_config } from '@/core/core.ts';
+	import QRCode from 'qrcode';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	let qrCodeData = $state('');
 	let dummyQrCodeData = $state('');
-	let error = $state('');
+	let error = $state(null);
 	let isRevealed = $state(false);
 
 	onMount(() => {
@@ -22,13 +23,13 @@
 	}
 
 	function generateQRCode() {
-		error = '';
+		error = null;
 		const jsonString = JSON.stringify($accounts_config, null, 2);
 		QRCode.toDataURL(jsonString, { width: 300, height: 300, margin: 0 })
 			.then(url => (qrCodeData = url))
 			.catch(err => {
 				console.error('QR CODE GENERATION:', err);
-				error = 'Failed to generate QR code. The data might be too large.';
+				error = 'Failed to generate QR code. The data might be too large to be stored in a QR Code.';
 			});
 	}
 
@@ -38,10 +39,10 @@
 </script>
 
 <style>
-	.qr-container {
+	.qr-page {
 		display: flex;
-		justify-content: center;
-		padding: 0px;
+		flex-direction: column;
+		gap: 20px;
 	}
 
 	.qr-wrapper {
@@ -83,24 +84,18 @@
 		height: 30px;
 		filter: invert(1);
 	}
-
-	.error {
-		color: #f00;
-		text-align: center;
-		margin-top: 10px;
-	}
 </style>
 
-<div class="qr-container">
+<div class="qr-page">
 	{#if error}
-		<div class="error">{error}</div>
+		<Alert type="error" message={error} />
 	{:else if dummyQrCodeData && qrCodeData}
+		{#if !isRevealed}
+			<Alert type="warning" message="Sensitive information is hidden. Click the QR code to reveal it." />
+		{:else}
+			<Alert type="info" message="Click the QR code to hide it." />
+		{/if}
 		<div class="qr-wrapper">
-			{#if !isRevealed}
-				<div class="instructions">Sensitive information is hidden. Click the QR code to reveal it.</div>
-			{:else}
-				<div class="instructions">Click the QR code to hide it.</div>
-			{/if}
 			<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide QR code' : 'Reveal QR code'}>
 				<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Account configuration QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} />
 			</Clickable>
