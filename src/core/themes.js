@@ -19,8 +19,8 @@ export const default_theme = {
 		'--secondary-harder-background': '#000',
 		'--default-foreground': '#000',
 		'--default-background': '#fff',
-		'--disabled-background': '#888',
-		'--disabled-foreground': '#333',
+		'--disabled-background': '#aaa',
+		'--disabled-foreground': '#888',
 		'--background-image': 'url(/img/background/light.webp)',
 	},
 };

@@ -255,6 +255,7 @@
 	.message-bar {
 		display: flex;
 		flex-direction: column;
+		gap: 10px;
 		flex-grow: 1;
 	}
 

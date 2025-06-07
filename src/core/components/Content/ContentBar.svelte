@@ -55,13 +55,19 @@
 
 <div class="content-bar {position === 'top' ? 'position-top' : ''} {position === 'bottom' ? 'position-bottom' : ''}" style:min-height={height} style:max-height={height}>
 	{@render children?.()}
-	<div class="content-left">
-		{@render left?.()}
-	</div>
-	<div class="content-center">
-		{@render center?.()}
-	</div>
-	<div class="content-right">
-		{@render right?.()}
-	</div>
+	{#if left}
+		<div class="content-left">
+			{@render left?.()}
+		</div>
+	{/if}
+	{#if center}
+		<div class="content-center">
+			{@render center?.()}
+		</div>
+	{/if}
+	{#if right}
+		<div class="content-right">
+			{@render right?.()}
+		</div>
+	{/if}
 </div>
