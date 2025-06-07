@@ -10,17 +10,19 @@
 </script>
 
 <style>
-	.top-bar {
+	.content-bar {
 		display: flex;
 		flex-direction: row;
 		position: sticky;
 		top: 0;
 		align-items: center;
 		gap: 24px;
-		min-height: calc(var(--menu-height) - 20px);
+		min-height: var(--menu-height);
+		max-height: var(--menu-height);
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);
+		box-sizing: border-box;
 		padding: 10px;
 
 		.left,
@@ -44,7 +46,7 @@
 	}
 </style>
 
-<div class="top-bar">
+<div class="content-bar">
 	{@render children?.()}
 	<div class="left">
 		{@render left?.()}
