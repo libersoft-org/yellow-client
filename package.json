@@ -15,7 +15,9 @@
   "storybook:build": "storybook build",
   "storybook:test": "test-storybook",
   "prettier": "prettier --plugin 'prettier-plugin-svelte' --write \"src/**/*.{js,ts,css,html,svelte,md,json}\"",
-  "prepare": "husky"
+  "prepare": "husky",
+  "build:messages-service": "npx vite build --config vite.service.config.js && mkdir -p static/tmp && cp dist/services/messages-service.js static/tmp/",
+  "watch:messages-service": "node scripts/build-service.js --watch"
  },
  "lint-staged": {
   "*.{js,ts,svelte,html,json,css,md}": "prettier --plugin 'prettier-plugin-svelte' --write"

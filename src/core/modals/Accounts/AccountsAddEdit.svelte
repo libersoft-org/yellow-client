@@ -36,27 +36,28 @@
 	console.log('[INIT] Modal mounted. Params:', params);
 
 	$effect(() => {
-		console.log('[EFFECT] Updating account_id_store from params.id =', params.id);
+		//console.log('[EFFECT] Updating account_id_store from params.id =', params.id);
 		account_id_store.set(params.id);
 	});
 
+	/*
 	// Observe full accounts store for debug
 	accounts.subscribe(value => {
 		console.log('[STORE] Full accounts store updated:', value.map(get));
 	});
-
+*/
 	let account = derived([accounts, account_id_store], ([$accounts, $account_id_store]) => {
 		const id = $account_id_store;
 		if (!id) {
-			console.log('[DERIVED] No account ID set, returning null');
+			//console.log('[DERIVED] No account ID set, returning null');
 			return null;
 		}
-		console.log('[DERIVED] Finding account with ID:', id);
+		//console.log('[DERIVED] Finding account with ID:', id);
 		const found = $accounts.find(acc => get(acc).id === id);
-		console.log('[DERIVED] $account_id_store =', id, '→ found account:', found ? get(found) : null);
+		//console.log('[DERIVED] $account_id_store =', id, '→ found account:', found ? get(found) : null);
 		return found ?? null;
 	});
-
+	/*
 	account.subscribe(value => {
 		if (value) {
 			console.log('[SUBSCRIBE] Account updated:', value);
@@ -64,10 +65,10 @@
 			console.log('[SUBSCRIBE] No account found');
 		}
 	});
-
+	*/
 	$effect(() => {
 		protocolElem?.focus();
-		console.log('[EFFECT] Checking if params.id exists:', params.id);
+		//console.log('[EFFECT] Checking if params.id exists:', params.id);
 
 		if (params.id !== null) {
 			let found = findAccountConfig(params.id);

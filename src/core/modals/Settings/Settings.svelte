@@ -6,6 +6,7 @@
 	import SettingsAppearance from '@/core/modals/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '@/core/modals/Settings/SettingsNotifications.svelte';
 	import SettingsGeneral from '@/core/modals/Settings/SettingsGeneral.svelte';
+	import SettingsModules from '@/core/modals/Settings/SettingsModules.svelte';
 	interface Props {
 		activeTab?: any;
 	}
@@ -23,6 +24,12 @@
 				]
 			: []
 	).concat([
+		{
+			title: 'Modules',
+			tab: 'modules',
+			img: 'img/menu.svg',
+			onClick: () => setItem('modules'),
+		},
 		{
 			title: 'Appearance',
 			tab: 'appearance',
@@ -170,6 +177,8 @@
 	<div class="tab-content">
 		{#if activeTab === 'general'}
 			<SettingsGeneral />
+		{:else if activeTab === 'modules'}
+			<SettingsModules />
 		{:else if activeTab === 'appearance'}
 			<SettingsAppearance {setSubItem} {subTab} />
 		{:else if activeTab === 'notifications'}
