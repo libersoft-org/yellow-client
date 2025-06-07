@@ -2,6 +2,7 @@
 	import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.ts';
 	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
 	import { onMount, setContext, tick, getContext } from 'svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
@@ -252,37 +253,37 @@
 
 <style>
 	.message-bar {
-		position: sticky;
-		bottom: 0;
-		background-color: var(--secondary-background);
-		box-shadow: var(--shadow);
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
 	}
 
-	.message-bar-main {
+	.top {
+		display: flex;
+		flex-grow: 1;
+	}
+
+	.main {
 		display: flex;
 		align-items: end;
 		gap: 10px;
-		padding: 10px;
-	}
-
-	.message-bar-top {
-		display: flex;
+		flex-grow: 1;
 	}
 
 	.message-textarea {
 		flex-grow: 1;
+		width: 100%;
 		padding: 5px;
 		border: 0;
-		border-bottom: 2px solid #ddd;
+		border-bottom: 2px solid var(--secondary-foreground);
 		outline: none;
+		resize: none;
+		overflow-y: auto;
+		box-sizing: border-box;
 		font-family: inherit;
 		font-size: 16px;
 		background-color: transparent;
-		color: #fff;
-		resize: none;
-		overflow-y: auto;
-		width: 100%;
-		box-sizing: border-box;
+		color: var(--secondary-foreground);
 	}
 
 	.bottom-sheet {
@@ -291,60 +292,53 @@
 	}
 </style>
 
-<div class="message-bar" bind:this={elMessageBar}>
-	<input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" style:display="none" />
-
-	<div class="message-bar-top">
-		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
-			<MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
-		{/if}
-	</div>
-	<div class="message-bar-main">
-		<MessageBarRecorder />
-
-		<div bind:this={elAttachment} data-testid="attachment-button">
-			<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" isButton />
+<Bar position="bottom" height="auto" bind:this={elMessageBar}>
+	<div class="message-bar">
+		<input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" style:display="none" />
+		<div class="top">
+			{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
+				<MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
+			{/if}
 		</div>
-
-		{#if expressionsAsContextMenu}
-			<div bind:this={elExpressions}>
-				<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" isButton />
+		<div class="main">
+			<MessageBarRecorder />
+			<div bind:this={elAttachment} data-testid="attachment-button">
+				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" isButton />
 			</div>
-		{:else}
-			<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
-		{/if}
-
-		<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
-		<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
-		<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
-		<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
-		<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
-		{#if $debug}
-			<Icon img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="20px" padding="0px" onClick={debugClickSendSplit} />
-		{/if}
+			{#if expressionsAsContextMenu}
+				<div bind:this={elExpressions}>
+					<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" isButton />
+				</div>
+			{:else}
+				<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
+			{/if}
+			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
+			<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
+			<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
+			<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
+			<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
+			{#if $debug}
+				<Icon img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="20px" padding="0px" onClick={debugClickSendSplit} />
+			{/if}
+		</div>
 	</div>
-</div>
-
+</Bar>
 <ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
 	<ContextMenuItem img="modules/{identifier}/img/video_message-black.svg" label="Video message" onClick={onVideoRecordClick} />
 	<ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} data-testid="file-attachment-button" />
 	<ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
 	<ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
-
 {#if expressionsAsContextMenu}
 	<ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
 		<Expressions bind:this={expressions} height={expressionsHeight} />
 	</ContextMenu>
 {/if}
-
 <!--
 <Modal body={Expressions} width="363px" bind:show={showExpressions} />
 -->
-
 <Modal title="HTML composer" body={ModalHtml} bind:show={showHTMLModal} />
 <Modal title="File Upload" body={ModalFileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
-
 {#if $debug}
 	<Clickable
 		onClick={() => {

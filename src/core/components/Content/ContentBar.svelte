@@ -18,11 +18,11 @@
 		flex-direction: row;
 		align-items: center;
 		gap: 24px;
+		padding: 10px;
+		box-sizing: border-box;
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);
-		box-sizing: border-box;
-		padding: 10px;
 	}
 
 	.content-left,
