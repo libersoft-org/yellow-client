@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { mobileClass, isMobile } from '@/core/stores.ts';
-	import { debug } from '../../core.ts';
-	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
-	import Portal from '../Portal/Portal.svelte';
-	let { testId = '', show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
+	import { debug } from '@/core/core.ts';
+	import { mobileClass, isMobile } from '@/core/stores.ts';
+	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Portal from '@/core/components/Portal/Portal.svelte';
+	let { testId = '', show = $bindable(false), children, top, center, bottom, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -23,6 +23,9 @@
 		width?: string;
 		height?: string;
 		children?: Snippet;
+		top?: Snippet;
+		center?: Snippet;
+		bottom?: Snippet;
 		breadcrumbs?: Snippet | null;
 		onShowChange?: (show: boolean) => void;
 		testId?: string;
@@ -243,6 +246,26 @@
 		background-color: var(--background);
 		overflow: auto;
 		color: var(--primary-foreground);
+		height: 100%;
+	}
+
+	.top,
+	.center,
+	.bottom {
+		display: flex;
+		flex: 1;
+	}
+
+	.top {
+		align-items: baseline;
+	}
+
+	.center {
+		align-items: center;
+	}
+
+	.bottom {
+		align-items: end;
 	}
 </style>
 
@@ -272,8 +295,23 @@
 							{@render breadcrumbs()}
 						{/if}
 						<ModalBody {close} {params} bind:activeTab />
-					{:else if children}
+					{:else if children || top || center || bottom}
 						{@render children?.()}
+						{#if top}
+							<div class="top">
+								{@render top?.()}
+							</div>
+						{/if}
+						{#if center}
+							<div class="center">
+								{@render center?.()}
+							</div>
+						{/if}
+						{#if bottom}
+							<div class="bottom">
+								{@render bottom?.()}
+							</div>
+						{/if}
 					{/if}
 				</div>
 			{/if}

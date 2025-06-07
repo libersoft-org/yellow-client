@@ -10,7 +10,7 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, selected_corepage_id, selected_module_id, send } from '@/core/core.ts';
+import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, setModule, send } from '@/core/core.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
@@ -679,11 +679,10 @@ function findNext(messages, i) {
 	}
 }
 
-export function setMessageSeen(message, cb) {
+export function setMessageSeen(message, cb, keep_unseen_bar = true) {
 	let acc = get(active_account);
 	log.debug('setMessageSeen', message);
 	deleteNotification(messageNotificationId(message));
-	message.seen = true;
 	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
@@ -699,8 +698,12 @@ export function setMessageSeen(message, cb) {
            conversationsArray.update(v => v);
           }*/
 	});
-	messagesArray.update(v => v);
-	insertEvent({ type: 'properties_update', array: get(messagesArray) });
+	setTimeout(() => {
+		message.seen = true;
+		message.keep_unseen_bar = keep_unseen_bar;
+		messagesArray.update(v => v);
+		insertEvent({ type: 'message_seen', array: get(messagesArray) });
+	});
 }
 
 export function sendMessage(text, format, acc = null, conversation = null) {
@@ -900,12 +903,13 @@ async function eventNewMessage(acc, event) {
 	const res = event.detail;
 	//console.log('eventNewMessage', acc, res);
 	if (!res.data) return;
+	res.data.just_received = true;
 	let msg = new Message(acc, res.data);
 	msg.received_by_my_homeserver = true;
 	let sc = get(selectedConversation);
 	if (msg.address_from !== acc.credentials.address) {
-		console.log('showNotification?: !get(isClientFocused): ', !get(isClientFocused), 'get(active_account) != acc:', get(active_account) != acc, 'msg.address_from !== sc?.address:', msg.address_from !== sc?.address);
-		if (!get(isClientFocused) || get(active_account) != acc || msg.address_from !== sc?.address) await showNotification(acc, msg);
+		console.log('showNotification?: !get(isClientFocused): ', !get(isClientFocused), 'get(active_account) != acc:', get(active_account) !== acc, 'msg.address_from !== sc?.address:', msg.address_from !== sc?.address);
+		if (!get(isClientFocused) || get(active_account) !== acc || msg.address_from !== sc?.address) await showNotification(acc, msg);
 	}
 	//console.log('eventNewMessage updateConversationsArray with msg:', msg);
 	updateConversationsArray(acc, msg);
@@ -983,8 +987,7 @@ async function showNotification(acc, msg) {
 			if (event === 'click') {
 				window.focus();
 				selectAccount(acc.id);
-				selected_corepage_id.set(null);
-				selected_module_id.set(identifier);
+				setModule(identifier);
 				await tick();
 				console.log('notification click: selectConversation', msg.address_from);
 				selectConversation({

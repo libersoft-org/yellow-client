@@ -2,16 +2,12 @@
 	import { computePosition, shift, offset } from '@floating-ui/dom';
 	import Portal from '@/core/components/Portal/Portal.svelte';
 	import type { Snippet } from 'svelte';
-
 	interface Props {
 		targetRef: HTMLElement;
 		children?: Snippet;
 	}
-
 	let { targetRef, children }: Props = $props();
-
 	let floatingRef: HTMLElement;
-
 	const setupFloatingUI = () => {
 		computePosition(targetRef, floatingRef, {
 			placement: 'top',

@@ -16,7 +16,6 @@
 	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
 	import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
 	import { log } from '@/core/tauri.ts';
-
 	export let conversation;
 	export let setBarFocus;
 	let scrollButtonVisible = true;
@@ -37,6 +36,24 @@
 	let windowInnerHeight;
 	let showFileDndOverlay = false;
 	let doBlockScroll = false;
+	let fileDndRef;
+	let jumped = false;
+	let messagesHeight = -1;
+	let scrolledToBottom0 = false;
+	let scrolledToBottom1 = false;
+	let wrapperWidth = null;
+	let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
+
+	$: scrollButtonVisible = !scrolledToBottom;
+	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
+
+	onMount(() => {
+		setInterval(() => {
+			scrolledToBottom0 = scrolledToBottom1;
+			scrolledToBottom1 = isScrolledToBottom();
+			fixScroll();
+		}, 50);
+	});
 
 	function disableScroll() {
 		doBlockScroll = true;
@@ -46,31 +63,12 @@
 		doBlockScroll = false;
 	}
 
-	let fileDndRef;
-
-	$: scrollButtonVisible = !scrolledToBottom;
-	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
-
-	let jumped = false;
-	let messagesHeight = -1;
-
-	let scrolledToBottom0 = false;
-	let scrolledToBottom1 = false;
-
 	/*
   // TODO: resizer observer does not trigger when elements change size.
   $: if (elMessages) {
    new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
   }
  */
-
-	onMount(() => {
-		setInterval(() => {
-			scrolledToBottom0 = scrolledToBottom1;
-			scrolledToBottom1 = isScrolledToBottom();
-			fixScroll();
-		}, 50);
-	});
 
 	function fixScroll() {
 		if (elMessages && jumped) {
@@ -101,8 +99,6 @@
 	}
 
 	setContext('openStickersetDetailsModal', openStickersetDetailsModal);
-
-	let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 
 	events.subscribe(e => {
 		if (e?.length) {
@@ -316,26 +312,20 @@
 
 	async function handleEvents(events) {
 		console.log('handleEvents:', events);
-
 		if (events.length === 1 && events[0].type === 'properties_update') {
 			console.log('properties_update itemsArray');
 			itemsArray = itemsArray;
 			return;
 		}
-
 		// force_refresh is used when deleting message. Normally, Loaders would, after loadMessages, only issue an event if any new messages are actually added. But if we delete a message, we need to remove the loader. So, the gc event, triggered as soon as the message is removed from messagesArray, lets us know to tell all loaders to force_refresh when they trigger. This is not optimal, as only the exact hole inserted in place of the deleted message should force_refresh, but it will work.
 		let force_refresh = events.some(e => e.type === 'gc');
-
 		for (let i = 0; i < events.length; i++) {
 			//console.log('handleEvent:', events[i]);
 			let event = events[i];
 			event.loaders = [];
-			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') {
-				continue;
-			}
+			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') continue;
 			uiEvents.push(event);
 			saveScrollPosition(event);
-
 			/* TODO 1 :
    do not scroll to bottom on new messages if unread_marker is present (or rather, if window is not active and only unread messages are at the bottom - see also contact list red number )
    */
@@ -385,8 +375,8 @@
 			for (let i = 0; i < messages.length; i++) {
 				let m = messages[i];
 				//console.log('m:', m);
-				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
-				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)) {
+				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.keep_unseen_bar);
+				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)) {
 					//console.log('ADDING-UNSEEN-MARKER');
 					items.push({ type: 'unseen_marker' });
 					unseen_marker_put = true;
@@ -462,9 +452,7 @@
 		e.preventDefault();
 		const draggedItems = e.dataTransfer.items;
 		const types = Array.from(e.dataTransfer.types || []);
-
 		let isDraggingFiles = false;
-
 		// In Chrome/Firefox: you can safely check item.kind
 		if (draggedItems && draggedItems.length > 0) {
 			for (let i = 0; i < draggedItems.length; i++) {
@@ -481,44 +469,31 @@
 				isDraggingFiles = true;
 			}
 		}
-
-		if (!isDraggingFiles) {
-			return;
-		}
-
+		if (!isDraggingFiles) return;
 		// show overlay only if file upload modal is not shown
 		// but if user drops files to conversation it will still add them to the upload modal
-		if (!$showFileUploadModal && !showFileDndOverlay) {
-			showFileDndOverlay = true;
-		}
+		if (!$showFileUploadModal && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
 	function onDragLeave(e) {
 		e.preventDefault();
 		// handle premature dragleave events
-		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) {
-			showFileDndOverlay = false;
-		}
+		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) showFileDndOverlay = false;
 	}
 
 	function onDrop(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		if (e.dataTransfer.files.length === 0) {
-			return;
-		}
-
+		if (e.dataTransfer.files.length === 0) return;
 		showFileDndOverlay = false;
 		setFileUploadModal(true);
 		$fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
 	}
 
-	let wrapperWidth = null;
 	const onResize = entry => {
 		wrapperWidth = entry.contentRect.width;
 	};
 	$: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
-
 	/**
 	 * Forward Message Section
 	 */

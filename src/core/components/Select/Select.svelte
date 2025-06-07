@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { HTMLSelectAttributes } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
-
+	import type { HTMLSelectAttributes } from 'svelte/elements';
 	interface Props extends HTMLSelectAttributes {
 		value: string | number;
 		grow?: boolean;
@@ -10,9 +9,7 @@
 		children?: Snippet;
 		label?: any;
 	}
-
 	let { value = $bindable(''), grow = false, minWidth, maxWidth, children, label, ...restProps }: Props = $props();
-
 	let selectRef: HTMLSelectElement;
 
 	export function focus() {

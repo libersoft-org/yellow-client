@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Icon from '../Icon/Icon.svelte';
-	import MenuBarDebug from './MenuBarDebug.svelte';
-	import { product } from '../../core.ts';
+	import { product } from '@/core/core.ts';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import MenuBarDebug from '@/core/components/Menu/MenuBarDebug.svelte';
 
 	interface Props {
 		onOpenMenu: () => void;

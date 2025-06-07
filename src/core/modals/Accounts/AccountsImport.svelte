@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Tabs from '../../components/Tabs/Tabs.svelte';
-	import TabsItem from '../../components/Tabs/TabsItem.svelte';
-	import AccountsImportJson from './AccountsImportJson.svelte';
-	import AccountsImportQR from './AccountsImportQR.svelte';
+	import Tabs from '@/core/components/Tabs/Tabs.svelte';
+	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
+	import AccountsImportJson from '@/core/modals/Accounts/AccountsImportJson.svelte';
+	import AccountsImportQR from '@/core/modals/Accounts/AccountsImportQR.svelte';
 	interface Props {
 		close: () => void;
 	}

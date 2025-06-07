@@ -2,11 +2,12 @@
 	import { selectedNetwork, selectedAddress } from '../wallet.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	let info = '';
 	let link = '';
 	let elLink;
 
-	$: link = $selectedNetwork.explorerURL + '/address/' + $selectedAddress.address;
+	$: if ($selectedNetwork && $selectedAddress) {
+		link = `${$selectedNetwork.explorerURL}/address/${$selectedAddress.address}`;
+	}
 
 	function copyLink() {
 		navigator.clipboard
@@ -39,6 +40,10 @@
 	}
 
 	.url {
+		max-width: calc(100% - 20px);
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
 		padding: 10px;
 		border-radius: 10px;
 		background-color: var(--secondary-background);
@@ -46,15 +51,13 @@
 	}
 </style>
 
-<div class="history">
-	{#if $selectedNetwork && $selectedAddress}
+{#if $selectedNetwork && $selectedAddress}
+	<div class="history">
 		<div class="bold">Address history:</div>
 		<div class="url" bind:this={elLink}>{link}</div>
 		<ButtonBar>
-			<Button text="Copy link" onClick={copyLink} />
-			<Button text="Open link" onClick={openLink} />
+			<Button img="img/copy.svg" text="Copy link" onClick={copyLink} />
+			<Button img="img/link.svg" text="Open link" onClick={openLink} />
 		</ButtonBar>
-	{:else}
-		<div>No network or wallet selected</div>
-	{/if}
-</div>
+	</div>
+{/if}

@@ -1,6 +1,6 @@
 <script>
-	import Code from '../../components/Code/Code.svelte';
-	import { accounts_config } from '../../core.ts';
+	import Code from '@/core/components/Code/Code.svelte';
+	let { code = $bindable() } = $props();
 </script>
 
-<Code code={JSON.stringify($accounts_config, null, 2)} />
+<Code bind:code />

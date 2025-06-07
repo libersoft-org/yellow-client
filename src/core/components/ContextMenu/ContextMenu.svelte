@@ -1,7 +1,7 @@
 <script>
-	import { getGuid } from '../../core.ts';
 	import { onMount, setContext, getContext, afterUpdate, tick, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
+	import { getGuid } from '@/core/core.ts';
 	export let target = null;
 	export let open = false;
 	export let x = 0;
@@ -12,7 +12,6 @@
 	export let scrollable = true;
 	export let disableRightClick = false;
 	export let bottomOffset;
-
 	const isOpen = writable(open);
 	const position = writable([x, y]);
 	const currentIndex = writable(-1);

@@ -1,6 +1,6 @@
 <script>
 	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
-	import Photo from '@/core/Photo/Photo.svelte';
+	import Photo from '@/core/components/Photo/Photo.svelte';
 	import { selectedConversation, ensureConversationDetails, photoRadius } from '../../messages.js';
 	export let c;
 	export let clickItem;

@@ -1,16 +1,14 @@
 <script lang="ts">
-	import Button from '@/core/components/Button/Button.svelte';
-	import Code from '@/core/components/Code/Code.svelte';
-	import AccountsImportButtons from '@/core/components/Account/AccountsImportButtons.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import jsQR from 'jsqr';
-
+	import Button from '@/core/components/Button/Button.svelte';
+	import Code from '@/core/components/Code/Code.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
+	import AccountsImportButtons from '@/core/components/Account/AccountsImportButtons.svelte';
 	interface Props {
 		close: () => void;
 	}
-
 	let { close }: Props = $props();
-
 	let videoElement: HTMLVideoElement | null = $state(null);
 	let canvasElement: HTMLCanvasElement | null = $state(null);
 	let stream: MediaStream | null = $state(null);
@@ -25,7 +23,6 @@
 			stream = await navigator.mediaDevices.getUserMedia({
 				video: { facingMode: 'environment' }, // Prefer back camera
 			});
-
 			if (videoElement) {
 				videoElement.srcObject = stream;
 				startScanning();
@@ -38,14 +35,11 @@
 
 	onDestroy(() => {
 		stopScanning();
-		if (stream) {
-			stream.getTracks().forEach(track => track.stop());
-		}
+		if (stream) stream.getTracks().forEach(track => track.stop());
 	});
 
 	function startScanning() {
 		if (!videoElement || !canvasElement) return;
-
 		scanning = true;
 		requestAnimationFrame(scanFrame);
 	}
@@ -56,18 +50,14 @@
 
 	function scanFrame() {
 		if (!scanning || !videoElement || !canvasElement) return;
-
 		const canvas = canvasElement;
 		const video = videoElement;
 		const ctx = canvas.getContext('2d');
-
 		if (ctx && video.readyState === video.HAVE_ENOUGH_DATA) {
 			canvas.width = video.videoWidth;
 			canvas.height = video.videoHeight;
 			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
 			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
 			try {
 				const code = jsQR(imageData.data, imageData.width, imageData.height);
 				if (code && code.data !== lastProcessedCode) {
@@ -79,18 +69,13 @@
 				console.error('QR scanning error:', err);
 			}
 		}
-
-		if (scanning) {
-			requestAnimationFrame(scanFrame);
-		}
+		if (scanning) requestAnimationFrame(scanFrame);
 	}
 
 	function processQRCode(data: string) {
 		// Stop scanning and show the scanned content
 		stopScanning();
-		if (stream) {
-			stream.getTracks().forEach(track => track.stop());
-		}
+		if (stream) stream.getTracks().forEach(track => track.stop());
 		scannedText = data;
 	}
 
@@ -152,11 +137,6 @@
 		display: none;
 	}
 
-	.error {
-		color: #f00;
-		text-align: center;
-	}
-
 	.instructions {
 		text-align: center;
 		color: #666;
@@ -177,12 +157,6 @@
 			left: 0;
 			z-index: 1;
 		}
-
-		.error {
-			color: #f00;
-			text-align: center;
-			margin-top: 10px;
-		}
 	}
 
 	.scan-again-container {
@@ -202,7 +176,7 @@
 			<Code code={scannedText} />
 		</div>
 		{#if error}
-			<div class="error">{error}</div>
+			<Alert type="error" message={error} />
 		{/if}
 		<div class="buttons-container">
 			<AccountsImportButtons importText={scannedText} {close} onError={handleError} />
@@ -212,7 +186,7 @@
 	<!-- Show camera scanner -->
 	<div class="qr-scanner">
 		{#if error}
-			<div class="error">{error}</div>
+			<Alert type="error" message={error} />
 			<Button text="Cancel" onClick={close} />
 		{:else}
 			<div class="instructions">Point your camera at a QR code containing account configuration</div>

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { mobileWidth } from '@/core/stores';
 	import type { Snippet } from 'svelte';
+	import { mobileWidth } from '@/core/stores.ts';
 	interface Props {
 		children?: Snippet;
 		padding?: string;

@@ -4,9 +4,9 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
+	import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
 	import ModalNewConversation from '../../modals/NewConversation.svelte';
 	import ModalMessagesSettings from '../../modals/MessagesSettings.svelte';
-	import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
 	let showNewConversationModal = false;
 	let showMessageSettings = false;
 	let scrollButtonVisible;

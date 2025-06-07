@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { tick, type Snippet } from 'svelte';
 	import { isMobile } from '@/core/stores.ts';
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		items: Array<{ name: string; id: string }>;
 		activeIndex?: number | null;

@@ -7,11 +7,10 @@
 </script>
 
 <style>
-	.title {
+	.content-bar-title {
 		font-size: 22px;
 		font-weight: bold;
-		color: var(--secondary-foreground);
 	}
 </style>
 
-<div class="title" style:color="var({colorVariable})">{text}</div>
+<div class="content-bar-title" style:color="var({colorVariable})">{text}</div>

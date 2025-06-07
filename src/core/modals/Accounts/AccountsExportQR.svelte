@@ -1,11 +1,12 @@
 <script>
-	import { accounts_config } from '../../core.ts';
-	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
-
+	import { accounts_config } from '@/core/core.ts';
+	import QRCode from 'qrcode';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	let qrCodeData = $state('');
 	let dummyQrCodeData = $state('');
-	let error = $state('');
+	let error = $state(null);
 	let isRevealed = $state(false);
 
 	onMount(() => {
@@ -14,7 +15,7 @@
 	});
 
 	function generateDummyQRCode() {
-		QRCode.toDataURL('DECODE ME', { width: 300 })
+		QRCode.toDataURL('DECODE ME', { width: 300, height: 300, margin: 0 })
 			.then(url => (dummyQrCodeData = url))
 			.catch(err => {
 				console.error('DUMMY QR CODE GENERATION:', err);
@@ -22,13 +23,13 @@
 	}
 
 	function generateQRCode() {
-		error = '';
+		error = null;
 		const jsonString = JSON.stringify($accounts_config, null, 2);
-		QRCode.toDataURL(jsonString, { width: 300 })
+		QRCode.toDataURL(jsonString, { width: 300, height: 300, margin: 0 })
 			.then(url => (qrCodeData = url))
 			.catch(err => {
 				console.error('QR CODE GENERATION:', err);
-				error = 'Failed to generate QR code. The data might be too large.';
+				error = 'Failed to generate QR code. The data might be too large to be stored in a QR Code.';
 			});
 	}
 
@@ -38,74 +39,70 @@
 </script>
 
 <style>
-	.qr-container {
+	.qr-page {
 		display: flex;
-		justify-content: center;
-		padding: 0px;
+		flex-direction: column;
+		gap: 20px;
 	}
 
 	.qr-wrapper {
 		display: flex;
+		justify-content: center;
+		align-items: center;
 		position: relative;
 		flex-direction: column;
 	}
 
 	.qr-image {
-		display: block;
 		transition: filter 0.3s ease;
+		width: 300px;
+		height: 300px;
+		display: block;
 	}
 
 	.qr-image.blurred {
 		filter: blur(8px);
 	}
 
-	.reveal-button {
+	.reveal-icon {
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		background: rgba(0, 0, 0, 0.7);
-		border: none;
 		border-radius: 50%;
 		width: 60px;
 		height: 60px;
-		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		transition: background 0.3s ease;
+		pointer-events: none;
 	}
 
-	.reveal-button:hover {
-		background: rgba(0, 0, 0, 0.85);
-	}
-
-	.reveal-button img {
+	.reveal-icon img {
 		width: 30px;
 		height: 30px;
 		filter: invert(1);
 	}
-
-	.error {
-		color: #f00;
-		text-align: center;
-		margin-top: 10px;
-	}
 </style>
 
-<div class="qr-container">
+<div class="qr-page">
 	{#if error}
-		<div class="error">{error}</div>
+		<Alert type="error" message={error} />
 	{:else if dummyQrCodeData && qrCodeData}
+		{#if !isRevealed}
+			<Alert type="warning" message="Sensitive information is hidden. Click the QR code to reveal it." />
+		{:else}
+			<Alert type="info" message="Click the QR code to hide it." />
+		{/if}
 		<div class="qr-wrapper">
+			<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide QR code' : 'Reveal QR code'}>
+				<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Account configuration QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} />
+			</Clickable>
 			{#if !isRevealed}
-				<div class="instructions">Sensitive information is hidden. Click the eye icon to reveal the QR code.</div>
-			{/if}
-			<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Account configuration QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} />
-			{#if !isRevealed}
-				<button class="reveal-button" onclick={toggleReveal} aria-label="Reveal QR code">
+				<div class="reveal-icon" aria-hidden="true">
 					<img src="/modules/org.libersoft.wallet/img/hide.svg" alt="Eye icon" />
-				</button>
+				</div>
 			{/if}
 		</div>
 	{:else}

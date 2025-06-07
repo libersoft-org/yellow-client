@@ -1,14 +1,14 @@
 <script lang="ts">
-	import Clickable from '../Clickable/Clickable.svelte';
-	import MenuItem from './MenuItem.svelte';
-	import Modal from '../Modal/Modal.svelte';
-	import ModalSettings from '../../modals/Settings/Settings.svelte';
-	import Icon from '../Icon/Icon.svelte';
-	import Switch from '../Switch/Switch.svelte';
-	import DialogExit from '../../dialogs/Exit.svelte';
-	import VersionInfo from '../VersionInfo/VersionInfo.svelte';
-	import { product, link } from '../../core.ts';
+	import { product, link } from '@/core/core.ts';
 	import { BROWSER } from '@/core/tauri.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import MenuItem from '@/core/components/Menu/MenuItem.svelte';
+	import Modal from '@/core/components/Modal/Modal.svelte';
+	import ModalSettings from '@/core/modals/Settings/Settings.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
+	import DialogExit from '@/core/dialogs/Exit.svelte';
+	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
 
 	interface Props {
 		showMenu: boolean;

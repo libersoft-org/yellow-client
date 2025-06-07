@@ -1,15 +1,14 @@
 <script lang="ts">
 	import type { Unsubscriber } from 'svelte/store';
-	import { log, CUSTOM_NOTIFICATIONS, BROWSER } from '../../tauri.ts';
-	import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
+	import { log, CUSTOM_NOTIFICATIONS } from '@/core/tauri.ts';
+	import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor } from '@/core/notifications_settings.ts';
 	import { skipFirst } from '$lib/skipfirst_store.ts';
 	import { updateExampleNotification } from '@/core/notifications.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
-	import SettingsNotificationsBasic from '@/core/components/Settings/SettingsNotificationsBasic.svelte';
-	import SettingsNotificationsAlert from '@/core/components/Settings/SettingsNotificationsAlert.svelte';
-
+	import SettingsNotificationsBasic from '@/core/modals/Settings/SettingsNotificationsBasic.svelte';
+	import SettingsNotificationsAlert from '@/core/modals/Settings/SettingsNotificationsAlert.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';

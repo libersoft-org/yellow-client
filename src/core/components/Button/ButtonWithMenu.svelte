@@ -1,22 +1,19 @@
 <script lang="ts">
-	/* todo, refactor with Button.svelte ? */
-
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	/* TODO: refactor with Button.svelte ? */
 	import { autoPlacement, autoUpdate, computePosition, offset, shift } from '@floating-ui/dom';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-
 	interface Props {
 		sideButtonSlot: any;
 		mainButtonSlot: any;
 		tooltipSlot: any;
 	}
-
 	let { sideButtonSlot, mainButtonSlot, tooltipSlot }: Props = $props();
 	let buttonRef: HTMLElement;
 	let floatingRef = $state<HTMLElement>();
 	let show = $state(false);
-
 	let autoPlacementCleanup: ReturnType<typeof handleFloatingUI>;
+
 	const onClick = () => {
 		console.log('click');
 		show = !show;
@@ -61,9 +58,7 @@
 
 	$effect(() => {
 		if (show) autoPlacementCleanup = handleFloatingUI();
-		else {
-			autoPlacementCleanup && autoPlacementCleanup();
-		}
+		else autoPlacementCleanup && autoPlacementCleanup();
 	});
 </script>
 
