@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { addressBook } from '../../wallet.ts';
 	export let close;
 	export let params;
@@ -83,15 +84,6 @@
 		flex-direction: column;
 		gap: 4px;
 	}
-
-	.error {
-		display: flex;
-		gap: 5px;
-		padding: 10px;
-		border: 1px solid #f00;
-		border-radius: 10px;
-		background-color: #faa;
-	}
 </style>
 
 <div class="addressbook-new">
@@ -104,10 +96,7 @@
 		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} />
 	</div>
 	{#if error}
-		<div class="error">
-			<div class="bold">Error:</div>
-			<div>{error}</div>
-		</div>
+		<Alert type="error" message={error} />
 	{/if}
 	{#if params.item}
 		<Button img="img/save.svg" text="Save" onClick={edit} />

@@ -3,6 +3,7 @@
 	import jsQR from 'jsqr';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Code from '@/core/components/Code/Code.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import AccountsImportButtons from '@/core/components/Account/AccountsImportButtons.svelte';
 	interface Props {
 		close: () => void;
@@ -136,11 +137,6 @@
 		display: none;
 	}
 
-	.error {
-		color: #f00;
-		text-align: center;
-	}
-
 	.instructions {
 		text-align: center;
 		color: #666;
@@ -161,12 +157,6 @@
 			left: 0;
 			z-index: 1;
 		}
-
-		.error {
-			color: #f00;
-			text-align: center;
-			margin-top: 10px;
-		}
 	}
 
 	.scan-again-container {
@@ -186,7 +176,7 @@
 			<Code code={scannedText} />
 		</div>
 		{#if error}
-			<div class="error">{error}</div>
+			<Alert type="error" message={error} />
 		{/if}
 		<div class="buttons-container">
 			<AccountsImportButtons importText={scannedText} {close} onError={handleError} />
@@ -196,7 +186,7 @@
 	<!-- Show camera scanner -->
 	<div class="qr-scanner">
 		{#if error}
-			<div class="error">{error}</div>
+			<Alert type="error" message={error} />
 			<Button text="Cancel" onClick={close} />
 		{:else}
 			<div class="instructions">Point your camera at a QR code containing account configuration</div>

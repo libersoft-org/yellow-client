@@ -1,6 +1,7 @@
 <script>
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import SendModal from '../modals/Send.svelte';
@@ -20,10 +21,8 @@
 		console.log('reset currency field:', currency, get(currencies));
 		currency = $selectedMainCurrencySymbol;
 	}
-
 	$: console.log('currencies:', $currencies);
 	$: console.log('currency:', currency);
-
 	$: updateAmount(amount);
 	$: updateFee(fee);
 
@@ -102,7 +101,7 @@
 	<div class="group">
 		<div class="label">Max transaction fee:</div>
 		<div class="input"><Input bind:value={fee} /></div>
-		<div class="error">{error}</div>
+		<Alert type="error" message={error} />
 	</div>
 	<Button text="Send" onClick={send} />
 </div>

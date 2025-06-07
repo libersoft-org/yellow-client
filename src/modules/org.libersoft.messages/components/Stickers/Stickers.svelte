@@ -67,10 +67,6 @@
 	.loading .status {
 		font-size: 14px;
 	}
-
-	.loading .error {
-		border: 1px solid red;
-	}
 </style>
 
 <div class="stickers">
@@ -89,7 +85,7 @@
 		{/if}
 		{#if $stickerLibraryUpdaterState.error}
 			<div class="loading">
-				<div class="status error">Error: {$stickerLibraryUpdaterState.status}</div>
+				<Alert type="error" message={$stickerLibraryUpdaterState.status} />
 			</div>
 		{/if}
 	</div>

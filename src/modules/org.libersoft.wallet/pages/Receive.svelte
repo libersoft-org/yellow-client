@@ -3,6 +3,7 @@
 	import { mobileClass } from '@/core/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import QRCode from 'qrcode';
 	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
 	import { parseUnits } from 'ethers';
@@ -133,10 +134,6 @@
 		align-items: center;
 		gap: 6px;
 	}
-
-	.error {
-		color: #f00;
-	}
 </style>
 
 <div class="receive">
@@ -162,7 +159,7 @@
 					<div>Amount:</div>
 					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
 					<DropdownFilter options={$currencies} bind:selected={currency} />
-					<div class="error">{error}</div>
+					<Alert type="error" message={error} />
 				</div>
 				<Clickable onClick={clickCopyPayment}>
 					<div class="address">
