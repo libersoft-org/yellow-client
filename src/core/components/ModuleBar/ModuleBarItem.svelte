@@ -27,7 +27,7 @@
 	}
 
 	.item.selected {
-		background-color: var(--secondary-soft-background);
+		background-color: var(--secondary-softer-background);
 		transform: scale(1.25);
 	}
 </style>

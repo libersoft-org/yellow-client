@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { module } from '../../module.js';
 	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
 	import SectionGeneral from './SettingsGeneral.svelte';
 	import SectionNetworks from './SettingsNetworks.svelte';
@@ -17,25 +18,25 @@
 		{
 			title: 'General',
 			tab: 'general',
-			img: 'img/settings.svg',
+			img: 'modules/' + module.identifier + '/img/general.svg',
 			onClick: () => setItem('general'),
 		},
 		{
 			title: 'Networks',
 			tab: 'networks',
-			img: 'img/settings.svg',
+			img: 'modules/' + module.identifier + '/img/network.svg',
 			onClick: () => setItem('networks'),
 		},
 		{
 			title: 'Wallets',
 			tab: 'wallets',
-			img: 'img/settings.svg',
+			img: 'modules/' + module.identifier + '/img/wallet.svg',
 			onClick: () => setItem('wallets'),
 		},
 		{
 			title: 'Address book',
 			tab: 'address_book',
-			img: 'img/settings.svg',
+			img: 'modules/' + module.identifier + '/img/addressbook.svg',
 			onClick: () => setItem('address_book'),
 		},
 	];
