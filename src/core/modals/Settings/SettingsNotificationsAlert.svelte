@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { notificationsSettingsAlert } from '@/core/notifications_settings.ts';
-	import Alert, { Type } from '@/core/components/Alert/Alert.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 </script>
 
 {#if $notificationsSettingsAlert === 'blocked'}
-	<Alert type={Type.ERROR} message="Notifications are blocked by the browser." />
+	<Alert type="error" message="Notifications are blocked by the browser." />
 {:else if $notificationsSettingsAlert === 'not-supported'}
-	<Alert type={Type.WARNING} message="Notifications are not supported in this browser." />
+	<Alert type="warning" message="Notifications are not supported in this browser." />
 {/if}

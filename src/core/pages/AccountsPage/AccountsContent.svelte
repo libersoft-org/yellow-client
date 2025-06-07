@@ -14,8 +14,8 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
 	import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
-	import AccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
-	import AccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
+	import ModalAccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
+	import ModalAccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
@@ -130,6 +130,6 @@
 </div>
 
 <Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
-<Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} width="700px" />
-<Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} width="700px" />
+<Modal title="Export all accounts" body={ModalAccountsExport} bind:show={showExportModal} width="700px" />
+<Modal title="Import accounts" body={ModalAccountsImport} bind:show={showImportModal} width="700px" />
 <Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem }} bind:show={showDelAccountModal} />

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Code from '@/core/components/Code/Code.svelte';
 	import AccountsImportButtons from '@/core/components/Account/AccountsImportButtons.svelte';
 	interface Props {
@@ -20,36 +21,22 @@
 <style>
 	.account-import {
 		position: relative;
-		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 
 		.scrollable {
 			overflow: auto;
-		}
-
-		.buttons-container {
-			margin-top: 10px;
-			position: sticky;
-			top: 0;
-			left: 0;
-			z-index: 1;
-		}
-
-		.error {
-			color: #f00;
-			text-align: center;
-			margin-top: 10px;
 		}
 	}
 </style>
 
 <div class="account-import">
+	{#if error}
+		<Alert type="warning" message={error} />
+	{/if}
 	<div class="scrollable">
 		<Code bind:code={text} />
 	</div>
-	{#if error}
-		<div class="error">{error}</div>
-	{/if}
-	<div class="buttons-container">
-		<AccountsImportButtons importText={text} {close} onError={handleError} />
-	</div>
+	<AccountsImportButtons importText={text} {close} onError={handleError} />
 </div>
