@@ -288,7 +288,7 @@
 		let sideBarWidth = Math.min(Math.max(width, min), max);
 		sideBar.style.minWidth = sideBarWidth + 'px';
 		sideBar.style.maxWidth = sideBarWidth + 'px';
-		resizer.style.left = sideBarWidth - 5 + 'px';
+		resizer.style.left = sideBarWidth + 'px';
 	}
 
 	isMobile.subscribe(v => {
@@ -348,7 +348,7 @@
 		z-index: 6;
 		top: 0;
 		bottom: 0;
-		width: 10px;
+		width: 5px;
 		cursor: ew-resize;
 		/*background-color: #008000b3;*/
 	}
