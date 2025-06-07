@@ -1,5 +1,6 @@
 <script>
-	import { page } from '../dating.js';
+	import { onMount } from 'svelte';
+	import { page, setPage } from '../dating.js';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Welcome from './Welcome.svelte';
 	import Map from './Map.svelte';
@@ -13,6 +14,10 @@
 		people: People,
 		settings: Settings,
 	};
+
+	onMount(() => {
+		if (!$page) setPage('people');
+	});
 </script>
 
 <Content>

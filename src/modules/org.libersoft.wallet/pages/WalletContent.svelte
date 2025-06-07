@@ -40,8 +40,8 @@
 <Content>
 	<TopBar>
 		{#snippet left()}
-			<TopBarTitle text="Wallet" />
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+			<TopBarTitle text="Wallet" />
 		{/snippet}
 		{#snippet right()}
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />

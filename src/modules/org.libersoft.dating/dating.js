@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { hideSidebarMobile, setModule } from '@/core/core.ts';
-export let page = writable('people');
+export let page = writable(null);
 
 export function setPage(name) {
 	page.set(name);
