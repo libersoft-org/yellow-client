@@ -2,6 +2,7 @@
 	import { closeModule } from '../dating.js';
 	import TopBar from '@/core/components/TopBar/TopBar.svelte';
 	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 </script>
 
@@ -14,4 +15,4 @@
 		<Icon img="img/close.svg" onClick={closeModule} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </TopBar>
-<div>Welcome</div>
+<Page>Welcome</Page>
