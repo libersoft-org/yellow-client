@@ -5,7 +5,9 @@
 	let link = '';
 	let elLink;
 
-	$: link = $selectedNetwork.explorerURL + '/address/' + $selectedAddress.address;
+	$: if ($selectedNetwork && $selectedAddress) {
+		link = `${$selectedNetwork.explorerURL}/address/${$selectedAddress.address}`;
+	}
 
 	function copyLink() {
 		navigator.clipboard
@@ -49,15 +51,13 @@
 	}
 </style>
 
-<div class="history">
-	{#if $selectedNetwork && $selectedAddress}
+{#if $selectedNetwork && $selectedAddress}
+	<div class="history">
 		<div class="bold">Address history:</div>
 		<div class="url" bind:this={elLink}>{link}</div>
 		<ButtonBar>
 			<Button img="img/copy.svg" text="Copy link" onClick={copyLink} />
 			<Button img="img/link.svg" text="Open link" onClick={openLink} />
 		</ButtonBar>
-	{:else}
-		<div>No network or wallet selected</div>
-	{/if}
-</div>
+	</div>
+{/if}

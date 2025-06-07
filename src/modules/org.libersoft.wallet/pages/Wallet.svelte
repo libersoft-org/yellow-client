@@ -1,12 +1,13 @@
 <script>
 	import { debug } from '@/core/stores.ts';
 	import { module } from '../module.js';
-	import { status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
+	import { section, setSection, status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalSettings from '../modals/Settings/Settings.svelte';
 	import Send from './Send.svelte';
@@ -15,11 +16,6 @@
 	import History from './History.svelte';
 	let addressElement;
 	let showModalSettings = false;
-	let section = 'balance';
-
-	function setSection(name) {
-		section = name;
-	}
 
 	function clickCopyAddress() {
 		navigator.clipboard
@@ -183,20 +179,23 @@
 			{/if}
 		</div>
 		<div class="buttons">
-			<Button img="modules/{module.identifier}/img/send.svg" colorVariable="--primary-foreground" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('send')} />
-			<Button img="modules/{module.identifier}/img/receive.svg" colorVariable="--primary-foreground" text="Receive" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('receive')} />
-			<Button img="modules/{module.identifier}/img/balance.svg" colorVariable="--primary-foreground" text="Balance" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('balance')} />
-			<Button img="modules/{module.identifier}/img/history.svg" colorVariable="--primary-foreground" text="History" enabled={!!($selectedNetwork && $selectedAddress)} onClick={() => setSection('history')} />
+			<Button img="modules/{module.identifier}/img/send.svg" colorVariable="--primary-foreground" text="Send" onClick={() => setSection('send')} />
+			<Button img="modules/{module.identifier}/img/receive.svg" colorVariable="--primary-foreground" text="Receive" onClick={() => setSection('receive')} />
+			<Button img="modules/{module.identifier}/img/balance.svg" colorVariable="--primary-foreground" text="Balance" onClick={() => setSection('balance')} />
+			<Button img="modules/{module.identifier}/img/history.svg" colorVariable="--primary-foreground" text="History" onClick={() => setSection('history')} />
 		</div>
 		<div class="separator"></div>
+		{#if !$selectedNetwork || !$selectedAddress}
+			<Alert type="error" message="No network or address selected" />
+		{/if}
 		<div class="section">
-			{#if section == 'send'}
+			{#if $section == 'send'}
 				<Send />
-			{:else if section == 'receive'}
+			{:else if $section == 'receive'}
 				<Receive />
-			{:else if section == 'balance'}
+			{:else if $section == 'balance'}
 				<Balance />
-			{:else if section == 'history'}
+			{:else if $section == 'history'}
 				<History />
 			{/if}
 		</div>

@@ -3,6 +3,7 @@
 		type?: 'text' | 'number' | 'email' | 'password' | 'search' | 'tel' | 'url' | 'color';
 		placeholder?: string;
 		value?: string | number;
+		enabled?: boolean;
 		displayValue?: string | number;
 		grow?: boolean;
 		minWidth?: string;
@@ -14,7 +15,7 @@
 		inputRef?: HTMLInputElement;
 		'data-testid'?: string;
 	}
-	let { type = 'text', placeholder = '', value = $bindable(), displayValue = undefined, inputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
+	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue = undefined, inputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
 
 	function handleKeydown(e) {
 		if (onKeydown) onKeydown(e);
@@ -45,6 +46,12 @@
 	input:focus {
 		outline: 2px solid var(--primary-harder-background);
 	}
+
+	input:disabled {
+		border: 1px solid var(--disabled-foreground);
+		background-color: var(--disabled-background);
+		color: var(--disabled-foreground);
+	}
 </style>
 
-<input data-testid={testId} value={displayValue !== undefined ? displayValue : value} onchange={handleChange} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
+<input data-testid={testId} value={displayValue !== undefined ? displayValue : value} disabled={!enabled} onchange={handleChange} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />

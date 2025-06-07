@@ -4,6 +4,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let options = [];
 	export let selected = '';
+	export let enabled = true;
 	let filteredOptions = options;
 	let showOptions = false;
 	let inputValue = '';
@@ -78,7 +79,7 @@
 			<Icon img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="10px" onClick={clickClearSelection} />
 		</div>
 	{:else}
-		<Input bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
+		<Input bind:value={inputValue} {enabled} on:input={onInput} on:focus={toggleOptions} />
 		{#if showOptions}
 			<div class="options">
 				{#each filteredOptions as option}
