@@ -27,17 +27,17 @@
 </script>
 
 <Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallet addresses" onClick={() => (showModalWallets = true)} />
-<InputButton img="img/search.svg" placeholder="Search" bind:value={filter} />
-<Accordion items={$wallets} bind:activeIndex>
+<InputButton img="img/search.svg" placeholder="Search" bind:value={filter} onClick={() => {}} onKeydown={() => {}} minWidth="200px" maxWidth="400px" />
+<Accordion items={$wallets.map(w => ({ name: w.name, id: w.address }))} {activeIndex}>
 	{#snippet content(wallet)}
 		<Table breakpoint="0">
 			<Tbody>
 				{#each walletAddresses(wallet) as address, index}
 					<Clickable onClick={() => clickSelectAddress(wallet, address)}>
 						<TbodyTr>
-							<Td class="center">{address.index}</Td>
-							<Td>{address.name}</Td>
-							<Td>{address.address}</Td>
+							<Td title="Index">{address.index}</Td>
+							<Td title="Name">{address.name}</Td>
+							<Td title="Address">{address.address}</Td>
 						</TbodyTr>
 					</Clickable>
 				{/each}

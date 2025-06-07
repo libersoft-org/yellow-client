@@ -26,14 +26,14 @@
 </script>
 
 <Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => (showModalNetworks = true)} />
-<InputButton img="img/search.svg" placeholder="Search" bind:value={filter} />
+<InputButton img="img/search.svg" placeholder="Search" bind:value={filter} onClick={() => {}} onKeydown={() => {}} minWidth="200px" maxWidth="400px" />
 <Table breakpoint="0">
 	<Tbody>
 		{#each $networks as n, index}
 			<TbodyTr>
 				<Clickable onClick={() => selectNetwork(n.guid)}>
-					<Td>
-						<Icon img={n.currency.iconURL} />{n.name}
+					<Td title="Network">
+						<Icon img="modules/org.libersoft.wallet/img/coin.svg" />{n.name}
 					</Td>
 				</Clickable>
 			</TbodyTr>
