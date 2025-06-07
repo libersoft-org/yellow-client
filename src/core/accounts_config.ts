@@ -6,7 +6,6 @@ import { getGuid } from './utils/utils.ts';
 import { invoke } from '@tauri-apps/api/core';
 import type { AccountConfig, AccountCredentials, AccountSettings } from './types.ts';
 import type { Writable } from 'svelte/store';
-
 export const accounts_config: Writable<AccountConfig[]> = localStorageSharedStore('accounts_config', import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS ? JSON.parse(import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS) : []);
 
 export function accounts_config_init(): () => void {

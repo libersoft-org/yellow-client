@@ -29,12 +29,6 @@
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
 	import { initZoom } from '@/core/zoom.ts';
-
-	let menus = [];
-	setContext('menus', menus);
-
-	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
-
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
@@ -50,6 +44,8 @@
 			content: AccountsContent,
 		},
 	};
+	let menus = [];
+	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
 	let showWelcomeWizard = false;
 	let content;
 	let isMenuOpen = false;
@@ -59,6 +55,8 @@
 	let selectedCorePage;
 	let selectedModuleDecl;
 	let contentElement;
+
+	setContext('menus', menus);
 	setContext('contentElement', contentElement);
 
 	$: selectedCorePage = corePages[$selected_corepage_id];
