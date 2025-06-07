@@ -18,8 +18,8 @@
 	import ModalAccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	let showAddEditAccountModal: boolean = $state(false);
 	let showDelAccountModal: boolean = $state(false);
@@ -108,15 +108,15 @@
 {/snippet}
 
 <div class="accounts">
-	<TopBar>
+	<Bar>
 		{#snippet left()}
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-			<TopBarTitle text="Account management" />
+			<BarTitle text="Account management" />
 		{/snippet}
 		{#snippet right()}
 			<Icon img="img/close.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
-	</TopBar>
+	</Bar>
 	<div class="accounts-wrapper">
 		<Paper>
 			<ButtonBar>

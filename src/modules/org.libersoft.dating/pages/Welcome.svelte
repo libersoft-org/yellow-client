@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { closeModule } from '../dating.js';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 </script>
 
-<TopBar>
+<Bar>
 	{#snippet left()}
 		<Icon img="img/back.svg" onClick={closeModule} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-		<TopBarTitle text="Dating" />
+		<BarTitle text="Dating" />
 	{/snippet}
 	{#snippet right()}
 		<Icon img="img/close.svg" onClick={closeModule} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
-</TopBar>
+</Bar>
 <Page>Welcome</Page>

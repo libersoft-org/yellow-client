@@ -1,7 +1,7 @@
 <script>
 	import { isMobile } from '@/core/core.ts';
 	import { selectedConversation, photoRadius } from '../../messages.js';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Photo from '@/core/components/Photo/Photo.svelte';
 	export let closeConversation;
@@ -37,7 +37,7 @@
 	}
 </style>
 
-<TopBar>
+<Bar>
 	{#snippet left()}
 		{#if $isMobile}
 			<Icon img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
@@ -53,4 +53,4 @@
 	{#snippet right()}
 		<Icon img="img/close.svg" alt="Close" colorVariable="--secondary-foreground" onClick={clickClose} visibleOnMobile={false} />
 	{/snippet}
-</TopBar>
+</Bar>

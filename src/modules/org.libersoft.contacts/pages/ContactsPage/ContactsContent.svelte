@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { hideSidebarMobile, setModule } from '@/core/core.ts';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -37,15 +37,15 @@
 </script>
 
 <Content>
-	<TopBar>
+	<Bar>
 		{#snippet left()}
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-			<TopBarTitle text="Contact list" />
+			<BarTitle text="Contact list" />
 		{/snippet}
 		{#snippet right()}
 			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
-	</TopBar>
+	</Bar>
 	<Page>Contact list - content page - not yet implemented</Page>
 </Content>
 <Dialog data={dialogData} width="400px" bind:this={elDialog} />

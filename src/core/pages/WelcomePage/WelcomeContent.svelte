@@ -1,7 +1,7 @@
 <script>
 	import { hideSidebarMobile, product, link } from '@/core/core.ts';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
@@ -40,12 +40,12 @@
 	}
 </style>
 
-<TopBar>
+<Bar>
 	{#snippet left()}
 		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-		<TopBarTitle text="Welcome" />
+		<BarTitle text="Welcome" />
 	{/snippet}
-</TopBar>
+</Bar>
 <div class="welcome">
 	<Clickable onClick={clickLogo}>
 		<div class="logo">

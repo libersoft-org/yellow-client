@@ -4,8 +4,8 @@
 	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { selectedNetwork, selectedAddress } from '../wallet.ts';
 	import Content from '@/core/components/Content/Content.svelte';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Wallet from './Wallet.svelte';
@@ -38,17 +38,17 @@
 </script>
 
 <Content>
-	<TopBar>
+	<Bar>
 		{#snippet left()}
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-			<TopBarTitle text="Wallet" />
+			<BarTitle text="Wallet" />
 		{/snippet}
 		{#snippet right()}
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
 			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
 			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
-	</TopBar>
+	</Bar>
 	<Page>
 		<Wallet />
 	</Page>

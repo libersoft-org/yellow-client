@@ -2,8 +2,8 @@
 	import { module } from '../module.js';
 	import { closePage } from '../dating.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import PhotoCard from '../components/PhotoCard.svelte';
 	const photo = {
@@ -13,15 +13,15 @@
 	};
 </script>
 
-<TopBar>
+<Bar>
 	{#snippet left()}
 		<Icon img="img/back.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-		<TopBarTitle text="Match game" />
+		<BarTitle text="Match game" />
 	{/snippet}
 	{#snippet right()}
 		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
-</TopBar>
+</Bar>
 <Page>
 	<PhotoCard {photo} />
 </Page>
