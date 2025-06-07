@@ -40,13 +40,13 @@ export function init(): () => void {
 }
 
 export function setCorePage(name: string | null): void {
-	selected_module_id.set(null);
-	selected_corepage_id.set(name);
+	if (get(selected_module_id) !== null) selected_module_id.set(null);
+	if (get(selected_corepage_id) !== name) selected_corepage_id.set(name);
 }
 
 export function setModule(name: string | null): void {
-	selected_corepage_id.set(null);
-	selected_module_id.set(name);
+	if (get(selected_corepage_id) !== null) selected_corepage_id.set(null);
+	if (get(selected_module_id) !== name) selected_module_id.set(name);
 }
 
 interface RelayStore<T> extends Readable<T | null> {
