@@ -1,23 +1,32 @@
-<script>
+<script lang="ts">
 	import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
+	import { module } from '../module.js';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Modal from '@/core/components/Modal/Modal.svelte';
+	import ModalWallets from './Settings/SettingsWallets.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	export let close;
+	interface Props {
+		close?: () => void;
+	}
+	let { close }: Props = $props();
+	let showModalWallets = false;
 	let activeIndex = null;
 	let filter = '';
 
 	function clickSelectAddress(wallet, address) {
 		console.log('SETTING ADDRESS', wallet, address);
 		selectAddress(wallet, address);
-		close();
+		if (close) close();
 	}
 </script>
 
+<Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallet addresses" onClick={() => (showModalWallets = true)} />
 <InputButton img="img/search.svg" placeholder="Search" bind:value={filter} />
 <Accordion items={$wallets} bind:activeIndex>
 	{#snippet content(wallet)}
@@ -36,3 +45,4 @@
 		</Table>
 	{/snippet}
 </Accordion>
+<Modal body={ModalWallets} bind:show={showModalWallets} />
