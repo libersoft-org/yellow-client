@@ -33,7 +33,7 @@
 
 <div class="account-import">
 	{#if error}
-		<Alert type="warning" message={error} />
+		<Alert type="error" message={error} />
 	{/if}
 	<div class="scrollable">
 		<Code bind:code={text} />
