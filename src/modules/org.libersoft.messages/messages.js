@@ -18,13 +18,13 @@ import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { addNotification, deleteNotification } from '@/core/notifications.ts';
 import { makeMessageReaction } from './factories/messageFactories.ts';
-import { identifier, connectionSendData, _send, moduleEventSubscribe, initializeSubscriptions, deinitializeSubscriptions } from './connection.js';
+import { identifier, connectionSendData, _send, moduleEventSubscribe, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const photoRadius = localStorageSharedStore('photoRadius', '50%');
 export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
 export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', null);
-export { identifier } from './connection.js';
+export { identifier } from './connection.ts';
 export let md = active_account_module_data(identifier);
 export let online = relay(md, 'online');
 export let conversationsArray = relay(md, 'conversationsArray');

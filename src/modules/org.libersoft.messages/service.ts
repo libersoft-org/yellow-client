@@ -2,7 +2,7 @@
 // This service runs in the Android foreground service JavaScript isolate
 
 // Import connection utilities - these will be loaded/injected by the native layer
-import { connectionSendData, initializeSubscriptions, deinitializeSubscriptions } from './connection.js';
+import { connectionSendData, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 
 interface KotlinBridge {
 	sendMessage(data: string): void;
@@ -145,11 +145,19 @@ class MessagesBackgroundService {
 
 	// Send message through connection module
 	sendMessageToServer(command: string, params: any) {
-		connectionSendData(this.account, null, command, params, true, (req, res) => {
-			if (res.error !== false) {
-				this.log('error', `Error sending ${command}: ${res.message || 'Unknown error'}`);
-			}
-		});
+		connectionSendData(
+			this.account,
+			null,
+			command,
+			params,
+			true,
+			(req, res) => {
+				if (res.error !== false) {
+					this.log('error', `Error sending ${command}: ${res.message || 'Unknown error'}`);
+				}
+			},
+			false
+		);
 	}
 
 	private sendToKotlin(data: any) {

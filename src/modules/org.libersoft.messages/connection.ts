@@ -2,11 +2,40 @@
 // In frontend: imported from modules
 // In service: injected by native layer
 
+declare global {
+	const TAURI_SERVICE: boolean | undefined;
+	const send: SendFunction | undefined;
+}
+
 export const identifier = 'org.libersoft.messages';
 
+// Type definitions
+interface Account {
+	[key: string]: any;
+}
+
+interface SendRequest {
+	[key: string]: any;
+}
+
+interface SendResponse {
+	error: boolean;
+	message?: string;
+	[key: string]: any;
+}
+
+type SendCallback = (req: SendRequest, res: SendResponse) => void;
+
+type SendFunction = (acc: Account, account: Account | null, target: string, command: string, params: Record<string, any>, sendSessionID: boolean, callback: SendCallback | null, quiet: boolean) => any;
+
+interface SubscriptionInfo {
+	subscribed: boolean;
+	events?: string[];
+}
+
 // Get globals - in service context these are injected, in frontend they're imported
-const getTauriService = () => (typeof TAURI_SERVICE !== 'undefined' ? TAURI_SERVICE : false);
-const getSend = () =>
+const getTauriService = (): boolean => (typeof TAURI_SERVICE !== 'undefined' ? TAURI_SERVICE : false);
+const getSend = (): SendFunction =>
 	typeof send !== 'undefined'
 		? send
 		: () => {
@@ -21,14 +50,14 @@ const getSend = () =>
 /**
  * Send data to the messages module
  */
-export function connectionSendData(acc, account, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
+export function connectionSendData(acc: Account, account: Account | null, command: string, params: Record<string, any> = {}, sendSessionID: boolean = true, callback: SendCallback | null = null, quiet: boolean = false): any {
 	return _send(acc, account, identifier, command, params, sendSessionID, callback, quiet);
 }
 
 /**
  * Internal send function
  */
-export function _send(acc, account, target, command, params, sendSessionID, callback, quiet) {
+export function _send(acc: Account, account: Account | null, target: string, command: string, params: Record<string, any>, sendSessionID: boolean, callback: SendCallback | null, quiet: boolean): any {
 	// Direct pass-through to send
 	const sendFn = getSend();
 	return sendFn(acc, account, target, command, params, sendSessionID, callback, quiet);
@@ -36,10 +65,8 @@ export function _send(acc, account, target, command, params, sendSessionID, call
 
 /**
  * Subscribe to module events
- * @param {Object} acc - Account object
- * @param {string} event_name - Event name to subscribe to
  */
-export function moduleEventSubscribe(acc, event_name) {
+export function moduleEventSubscribe(acc: Account, event_name: string): void {
 	connectionSendData(acc, null, 'subscribe', { event: event_name }, true, (req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
@@ -50,11 +77,8 @@ export function moduleEventSubscribe(acc, event_name) {
 
 /**
  * Initialize communication subscriptions
- * @param {Object} acc - Account object
- * @param {boolean} isService - Whether running in service context
- * @returns {Object} Subscription info
  */
-export function initializeSubscriptions(acc, isService = false) {
+export function initializeSubscriptions(acc: Account, isService: boolean = false): SubscriptionInfo {
 	// In TAURI_SERVICE, only the service subscribes to events
 	// In other environments, the frontend subscribes
 	const shouldSubscribe = isService || !getTauriService();
@@ -82,10 +106,8 @@ export function initializeSubscriptions(acc, isService = false) {
 
 /**
  * Deinitialize communication subscriptions
- * @param {Object} acc - Account object
- * @param {boolean} isService - Whether running in service context
  */
-export function deinitializeSubscriptions(acc, isService = false) {
+export function deinitializeSubscriptions(acc: Account, isService: boolean = false): void {
 	// Only unsubscribe if we were the ones who subscribed
 	const shouldUnsubscribe = isService || !getTauriService();
 

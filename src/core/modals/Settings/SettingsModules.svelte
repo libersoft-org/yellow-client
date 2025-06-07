@@ -12,6 +12,8 @@
 	let editingModule: string | null = $state(null);
 	let tempServiceUrl: string = $state('');
 
+	const sortedModules = $derived(Object.values($modules_config.modules).sort((a, b) => (a.order || 0) - (b.order || 0)));
+
 	function toggleEnabled(moduleId: string) {
 		const module = $modules_config.modules[moduleId];
 		if (module) {
@@ -44,9 +46,6 @@
 			resetModulesConfig();
 		}
 	}
-
-	// Sort modules by order for display
-	const sortedModules = $derived(order($modules_config.modules));
 </script>
 
 <style>
@@ -180,16 +179,16 @@
 						<div class="module-id">{module.id}</div>
 					</div>
 				</div>
-				<Switch checked={module.enabled} onChange={() => toggleEnabled(module.id)} />
+				<Switch checked={module.enabled} label="Enabled" showLabel={false} {...{ onchange: () => toggleEnabled(module.id) }} />
 			</div>
 
 			{#if module.enabled}
 				<div class="module-controls">
 					<div class="control-row">
 						<span class="control-label">Type:</span>
-						<Select value={module.type} onChange={value => changeType(module.id, value as ModuleType)}>
-							<Option value="builtin">Built-in</Option>
-							<Option value="iframe">IFrame</Option>
+						<Select bind:value={module.type} onchange={e => changeType(module.id, (e.target as HTMLSelectElement)?.value as ModuleType)}>
+							<Option value="builtin" text="Built-in" />
+							<Option value="iframe" text="IFrame" />
 						</Select>
 					</div>
 
@@ -200,16 +199,16 @@
 
 						{#if editingModule === module.id}
 							<div class="service-url-edit">
-								<Input type="url" placeholder="https://example.com/module-service.js" bind:value={tempServiceUrl} style="flex: 1" />
-								<Button text="Save" onClick={() => saveServiceUrl(module.id)} size="small" />
-								<Button text="Cancel" onClick={cancelEditingServiceUrl} variant="secondary" size="small" />
+								<Input type="url" placeholder="https://example.com/module-service.js" bind:value={tempServiceUrl} grow={true} />
+								<Button text="Save" onClick={() => saveServiceUrl(module.id)} padding="8px" />
+								<Button text="Cancel" onClick={cancelEditingServiceUrl} bgColor="var(--secondary-background)" padding="8px" />
 							</div>
 						{:else}
 							<div class="service-url-display">
 								<div class="service-url-text">
-									{module.serviceUrl || 'Not configured'}
+									{(module as any).serviceUrl || 'Not configured'}
 								</div>
-								<Button text="Edit" onClick={() => startEditingServiceUrl(module)} variant="secondary" size="small" />
+								<Button text="Edit" onClick={() => startEditingServiceUrl(module as any)} bgColor="var(--secondary-background)" padding="8px" />
 							</div>
 						{/if}
 					</div>
@@ -222,8 +221,8 @@
 <div class="actions">
 	<div>
 		<span style="font-size: 12px; color: var(--text-secondary, #666);">
-			{$modules_config.modules.filter(m => m.enabled).length} of {$modules_config.modules.length} modules enabled
+			{Object.values($modules_config.modules).filter(m => m.enabled).length} of {Object.values($modules_config.modules).length} modules enabled
 		</span>
 	</div>
-	<Button text="Reset to Defaults" onClick={handleResetToDefaults} variant="secondary" size="small" />
+	<Button text="Reset to Defaults" onClick={handleResetToDefaults} bgColor="var(--secondary-background)" padding="8px" />
 </div>
