@@ -14,8 +14,8 @@ export default defineConfig({
 		alias: {
 			'@/org.libersoft.messages': path.resolve(__dirname, 'src/modules/org.libersoft.messages'),
 			'@/org.libersoft.dating': path.resolve(__dirname, 'src/modules/org.libersoft.dating'),
-			'@': path.resolve(__dirname, 'src'),
 			'@/bridge/core-bridge': path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-builtin.ts'),
+			'@': path.resolve(__dirname, 'src'),
 		},
 	},
 	define: {
