@@ -12,7 +12,7 @@
 		visibleOnMobile?: boolean;
 		visibleOnDesktop?: boolean;
 		colorVariable?: string;
-		onClick?: () => void;
+		onClick?: (e: Event) => void;
 		isButton?: boolean;
 		'data-testid'?: string;
 	}
