@@ -87,7 +87,7 @@
 			{/each}
 		{/if}
 		{#if currentNode.body}
-			<svelte:component this={currentNode.body} />
+			<currentNode.body />
 		{/if}
 	</div>
 </Modal>
