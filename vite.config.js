@@ -34,7 +34,12 @@ export default defineConfig(({ mode }) => {
 	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.VITE_SENTRY_ENABLED || '').trim());
 
 	return {
-		resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
+		resolve: {
+			...(process.env.VITEST ? { conditions: ['browser'] } : {}),
+			alias: {
+				'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-mobile.ts') : path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-builtin.ts'),
+			},
+		},
 		css: {
 			preprocessorOptions: {
 				scss: {

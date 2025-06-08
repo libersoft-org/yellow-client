@@ -1,13 +1,13 @@
 import { replaceEmojisWithTags } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
-import { log } from '@/core/tauri.ts';
+import { log, TAURI_MOBILE } from '@/core/tauri.ts';
 import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
 import { FileUploadRecordStatus, FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
 import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
-import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
+import { wrapConsecutiveElements, stripHtml } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
 import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, setModule, send } from '@/core/core.ts';
@@ -18,12 +18,13 @@ import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { addNotification, deleteNotification } from '@/core/notifications.ts';
 import { makeMessageReaction } from './factories/messageFactories.ts';
+import { identifier, connectionSendData, _send, moduleEventSubscribe, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const photoRadius = localStorageSharedStore('photoRadius', '50%');
 export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
 export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', null);
-export const identifier = 'org.libersoft.messages';
+export { identifier } from './connection.ts';
 export let md = active_account_module_data(identifier);
 export let online = relay(md, 'online');
 export let conversationsArray = relay(md, 'conversationsArray');
@@ -68,16 +69,9 @@ export function initData(acc) {
 	return result;
 }
 
+// Local sendData that adds online check
 function sendData(acc, account, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
-	/*
-     acc: account object
-     account: account store, optional, for debugging
-      */
-	return _send(acc, account, identifier, command, params, sendSessionID, callback, quiet);
-}
-
-function _send(acc, account, target, command, params, sendSessionID, callback, quiet) {
-	let cb = (req, res) => {
+	let wrappedCallback = (req, res) => {
 		if (res.error !== false) {
 			if (get(acc.module_data[identifier].online) === false) {
 				return;
@@ -85,7 +79,7 @@ function _send(acc, account, target, command, params, sendSessionID, callback, q
 		}
 		if (callback) callback(req, res);
 	};
-	return send(acc, account, target, command, params, sendSessionID, cb, quiet);
+	return connectionSendData(acc, account, command, params, sendSessionID, wrappedCallback, quiet);
 }
 
 export function onModuleSelected(selected) {
@@ -124,26 +118,12 @@ function sanitizeConversation(acc, c) {
 	return c;
 }
 
-function moduleEventSubscribe(acc, event_name) {
-	sendData(acc, null, 'subscribe', { event: event_name }, true, (req, res) => {
-		if (res.error !== false) {
-			console.error('this is bad.');
-			//window.alert('Communication with server Error while subscribing to event: ' + res.message);
-		}
-	});
-}
+// moduleEventSubscribe is now imported from connection.js
 
 export function initComms(acc) {
 	// console.warn('init comms', acc);
-	// message events
-	moduleEventSubscribe(acc, 'new_message');
-	moduleEventSubscribe(acc, 'seen_message');
-	moduleEventSubscribe(acc, 'seen_inbox_message');
-	moduleEventSubscribe(acc, 'message_update');
-
-	// file transfer events
-	moduleEventSubscribe(acc, 'upload_update');
-	moduleEventSubscribe(acc, 'ask_for_chunk');
+	// Initialize subscriptions based on platform
+	initializeSubscriptions(acc, false);
 
 	let data = acc.module_data[identifier];
 	//console.log('initComms:', data);
@@ -495,11 +475,8 @@ export function loadUploadData(uploadId) {
 }
 
 export function deinitComms(acc) {
-	sendData(acc, null, 'user_unsubscribe', { event: 'new_message' });
-	sendData(acc, null, 'user_unsubscribe', { event: 'seen_message' });
-	sendData(acc, null, 'user_unsubscribe', { event: 'seen_inbox_message' });
-	sendData(acc, null, 'user_unsubscribe', { event: 'upload_update' });
-	sendData(acc, null, 'user_unsubscribe', { event: 'ask_for_chunk' });
+	// Deinitialize subscriptions based on platform
+	deinitializeSubscriptions(acc, false);
 }
 
 export function deinitData(acc) {
@@ -1067,10 +1044,6 @@ export function saneHtml(content) {
 export function htmlEscape(str) {
 	//console.log('htmlEscape:', str);
 	return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;');
-}
-
-export function stripHtml(html) {
-	return html.replace(/<[^>]*>?/gm, '');
 }
 
 export function processMessage(message) {

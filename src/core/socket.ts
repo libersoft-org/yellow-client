@@ -1,6 +1,8 @@
 import type { Account, AccountStore } from './types.ts';
+import { TAURI_SERVICE } from './tauri.ts';
+import { invoke } from '@tauri-apps/api/core';
 
-export function sendAsync(acc: Account, account: AccountStore, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false) {
+export function sendAsync(acc: Account, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false) {
 	return new Promise((resolve, reject) => {
 		send(
 			acc,
@@ -17,7 +19,7 @@ export function sendAsync(acc: Account, account: AccountStore, target: string, c
 	});
 }
 
-export function send(acc: Account, account: AccountStore, target: string, command: string, params: any = {}, sendSessionID = true, callback: ((req: any, res: any) => void) | null = null, quiet = false) {
+export function send(acc: Account, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, callback: ((req: any, res: any) => void) | null = null, quiet = false) {
 	/*
  acc: account object
  account: account store, optional, for debugging
@@ -26,6 +28,43 @@ export function send(acc: Account, account: AccountStore, target: string, comman
 		console.error('Error while sending command: account is not defined');
 		return;
 	}
+
+	// On service-based connections, route through native connection
+	if (TAURI_SERVICE) {
+		const requestID = generateRequestID();
+		const req: any = {
+			target: target,
+			requestID,
+		};
+		if (sendSessionID) req.sessionID = acc.sessionID;
+		if (command || params) req.data = {};
+		if (command) req.data.command = command;
+		if (params) req.data.params = params;
+
+		// Store the callback for when we receive the response
+		acc.requests[requestID] = {
+			req,
+			callback: (req: any, res: any) => {
+				if (res.error) {
+					console.error(res);
+				}
+				if (callback) callback(req, res);
+			},
+			quiet,
+		};
+
+		// Send through native bridge
+		invoke('plugin:yellow|send_to_native', {
+			accountId: acc.id,
+			message: req,
+		}).catch(error => {
+			console.error('Failed to send message through native:', error);
+			if (callback) callback(req, { error: true, message: 'Native send failed' });
+		});
+
+		return;
+	}
+
 	if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
 		console.error('Error while sending command: WebSocket is not open');
 		return;

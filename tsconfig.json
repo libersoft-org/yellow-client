@@ -4,6 +4,7 @@
 	"compilerOptions": {
 		"esModuleInterop": true,
 		"noImplicitAny": false,
+		"types": ["vitest/globals"],
 
 		// Enable latest features
 		"lib": ["ESNext", "DOM", "webworker"],

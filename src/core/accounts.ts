@@ -1,4 +1,6 @@
-import { log } from '@/core/tauri.ts';
+import { log, TAURI_MOBILE, TAURI_SERVICE } from '@/core/tauri.ts';
+import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
 import { derived, get, writable } from 'svelte/store';
 import { debug, selected_module_id, active_account_id } from '@/core/stores.ts';
 import { send, handleSocketMessage } from '@/core/socket.ts';
@@ -65,7 +67,7 @@ import.meta.hot?.dispose(() => {
 });
 
 export function accounts_init() {
-	return accounts_config.subscribe(value => {
+	const sub = accounts_config.subscribe(value => {
 		log.debug('ACCOUNTS CONFIG:', value);
 		// TODO: implement configuration of accounts order
 		let accounts_list = get(accounts);
@@ -83,6 +85,13 @@ export function accounts_init() {
 		}
 		removeLiveAccountsNotInConfig(accounts_list, value);
 	});
+
+	// Set up native message listener for service-based connections
+	if (TAURI_SERVICE) {
+		setupNativeMessageListener();
+	}
+
+	return sub;
 }
 
 export function findAccount(id: string) {
@@ -190,19 +199,23 @@ function _enableAccount(account: AccountStore) {
 	// Create bound handler for this account
 	acc.modulesAvailableHandler = (event: Event) => handleModulesAvailable(acc, account, event);
 	acc.events.addEventListener('modules_available', acc.modulesAvailableHandler);
-	// Add session error handler
-	acc.sessionErrorHandler = (event: Event) => {
-		const customEvent = event as CustomEvent;
-		log.debug('Session error event received:', customEvent.detail);
-		acc.error = customEvent.detail.message;
-		acc.status = 'Session invalid, reconnecting...';
-		acc.session_status = undefined;
-		acc.sessionID = undefined;
-		account.update(v => v);
-		// Trigger reconnection
-		reconnectAccount(account);
-	};
-	acc.events.addEventListener('session_error', acc.sessionErrorHandler);
+
+	if (!TAURI_SERVICE) {
+		// Add session error handler
+		acc.sessionErrorHandler = (event: Event) => {
+			const customEvent = event as CustomEvent;
+			log.debug('Session error event received:', customEvent.detail);
+			acc.error = customEvent.detail.message;
+			acc.status = 'Session invalid, reconnecting...';
+			acc.session_status = undefined;
+			acc.sessionID = undefined;
+			account.update(v => v);
+			// Trigger reconnection
+			reconnectAccount(account);
+		};
+		acc.events.addEventListener('session_error', acc.sessionErrorHandler);
+	}
+
 	account.update(v => v);
 	// TODO: use admin logic
 	reconnectAccount(account);
@@ -232,6 +245,10 @@ function _disableAccount(account: AccountStore) {
 }
 
 function reconnectAccount(account: AccountStore) {
+	if (TAURI_SERVICE) {
+		return;
+	}
+
 	let acc = get(account);
 	log.debug('RECONNECT ACCOUNT', acc);
 	if (!acc.enabled) return;
@@ -245,6 +262,7 @@ function reconnectAccount(account: AccountStore) {
 	}
 	//clearPingTimer(acc);
 	clearReconnectTimer(account);
+
 	disconnectAccount(acc);
 	let socket_id;
 	log.debug('acc.socket.readyState:', acc.socket?.readyState);
@@ -491,4 +509,53 @@ function clearAccount(acc: Account) {
 	disconnectAccount(acc);
 	acc.requests = {};
 	acc.module_data = {};
+}
+
+// Mobile native message handling
+async function setupNativeMessageListener() {
+	log.debug('Setting up native message listener');
+
+	try {
+		// Listen for messages from native
+		await listen('native-message', (event: any) => {
+			const { accountId, message } = event.payload;
+			log.debug('Received message from native:', accountId, message);
+
+			// Find the account
+			const accountStore = findAccount(accountId);
+			if (!accountStore) {
+				log.error('Account not found for native message:', accountId);
+				return;
+			}
+
+			const acc = get(accountStore);
+
+			// Handle the message through the normal socket message handler
+			handleSocketMessage(acc, message);
+		});
+
+		// Listen for connection status updates
+		await listen('native-connection-status', (event: any) => {
+			const { accountId, status, error } = event.payload;
+			log.debug('Native connection status update:', accountId, status);
+
+			const accountStore = findAccount(accountId);
+			if (!accountStore) {
+				log.error('Account not found for status update:', accountId);
+				return;
+			}
+
+			// Update account status
+			accountStore.update(acc => {
+				acc.status = status;
+				acc.error = error || null;
+				acc.lastCommsTs = Date.now();
+				return acc;
+			});
+		});
+
+		log.debug('Native message listener setup complete');
+	} catch (error) {
+		log.error('Failed to setup native message listener:', error);
+	}
 }

@@ -318,10 +318,8 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 	});
 
 	await test.step('Receiving and Replying to Messages', async () => {
-		// Switch account
 		await switchAccount(page, 'user2@example.com');
-
-		// Open conversation
+		await switchModule(page, 'org.libersoft.messages');
 		await openConversation(page, 'user1@example.com');
 
 		// Reply to a message
@@ -436,6 +434,6 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		await navigateToSettingsSection(page, 'Notifications');
 
 		// Close settings modal
-		await closeModal(page, 'messages-settings');
+		await closeModal(page, 'global-settings');
 	});
 });
