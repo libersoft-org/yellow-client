@@ -106,11 +106,6 @@
 		padding: 10px;
 	}
 
-	.group {
-		display: flex;
-		gap: 10px;
-	}
-
 	.results {
 		display: flex;
 		justify-content: center;
@@ -147,10 +142,7 @@
 
 <div class="gifset">
 	<div class="top-bar">
-		<div class="group">
-			<Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
-			<Button text="Search" width="80px" onClick={searchGifs} />
-		</div>
+		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
 	</div>
 	{#if error}
 		<div>{error}</div>
