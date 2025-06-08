@@ -26,7 +26,7 @@ export function initModules() {
 	];
 }
 
-async function initModuleComms(acc: Account, module_id: string, decl: ModuleDeclaration) {
+function initModuleComms(acc: Account, module_id: string, decl: ModuleDeclaration) {
 	console.log('initModuleComms:', decl);
 	if (!acc.module_data[module_id]) {
 		if (decl.callbacks.initData) acc.module_data[module_id] = decl.callbacks?.initData(acc);
@@ -34,7 +34,7 @@ async function initModuleComms(acc: Account, module_id: string, decl: ModuleDecl
 		acc.module_data[module_id].id = decl.id;
 		acc.module_data[module_id].decl = decl;
 	}
-	if (decl.callbacks.initComms) await decl.callbacks.initComms(acc);
+	if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
 }
 
 function deinitModuleComms(decl: ModuleDeclaration, acc: Account) {
@@ -42,7 +42,7 @@ function deinitModuleComms(decl: ModuleDeclaration, acc: Account) {
 	if (decl.callbacks.deinitComms) decl.callbacks.deinitComms(acc);
 }
 
-export async function updateModulesComms(acc: Account) {
+export function updateModulesComms(acc: Account) {
 	let available_modules = acc.available_modules;
 	let module_decls_v = get(module_decls);
 	for (const module_id in module_decls_v) {
@@ -55,7 +55,7 @@ export async function updateModulesComms(acc: Account) {
 			if (available && online) {
 				console.log('available module already set online:', module_id);
 			} else if (available && !online) {
-				await initModuleComms(acc, module_id, decl);
+				initModuleComms(acc, module_id, decl);
 				acc.module_data[module_id].online?.set(true);
 			} else if (!available && online) {
 				deinitModuleComms(acc.module_data[module_id].decl, acc);

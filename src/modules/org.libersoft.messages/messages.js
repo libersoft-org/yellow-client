@@ -120,10 +120,10 @@ function sanitizeConversation(acc, c) {
 
 // moduleEventSubscribe is now imported from connection.js
 
-export async function initComms(acc) {
+export function initComms(acc) {
 	// console.warn('init comms', acc);
 	// Initialize subscriptions based on platform
-	await initializeSubscriptions(acc, false);
+	initializeSubscriptions(acc, false);
 
 	let data = acc.module_data[identifier];
 	//console.log('initComms:', data);

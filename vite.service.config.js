@@ -34,6 +34,7 @@ export default defineConfig({
 		alias: {
 			'@': path.resolve(__dirname, './src'),
 			'@/core': path.resolve(__dirname, './src/core'),
+			'@/bridge/core-bridge': path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-mobile.ts'),
 			'@/org.libersoft.messages': path.resolve(__dirname, './src/modules/org.libersoft.messages'),
 		},
 	},

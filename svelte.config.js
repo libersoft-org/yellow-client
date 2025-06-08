@@ -16,6 +16,7 @@ const config = {
 		alias: {
 			'@/org.libersoft.messages/*': 'src/modules/org.libersoft.messages/*',
 			'@/org.libersoft.dating/*': 'src/modules/org.libersoft.dating/*',
+			'@/bridge/core-bridge': 'src/modules/org.libersoft.messages/core-bridge-builtin.ts',
 			'@/*': 'src/*',
 		},
 	},

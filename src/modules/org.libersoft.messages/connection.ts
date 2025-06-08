@@ -1,11 +1,9 @@
-// Import the correct Account type
-import type { Account, AccountStore } from '../../core/types.ts';
+// Import from conditional bridge
+import { send, type Account, type AccountStore } from '@/bridge/core-bridge';
 
 // Assume TAURI_SERVICE is available globally
-// In service: injected by native layer
 declare global {
 	const TAURI_SERVICE: boolean | undefined;
-	const send: SendFunction | undefined;
 }
 
 export const identifier = 'org.libersoft.messages';
@@ -22,8 +20,6 @@ interface SendResponse {
 
 type SendCallback = (req: SendRequest, res: SendResponse) => void;
 
-type SendFunction = (acc: Account, account: AccountStore | null, target: string, command: string, params: any, sendSessionID: boolean, callback: ((req: any, res: any) => void) | null, quiet: boolean) => any;
-
 interface SubscriptionInfo {
 	subscribed: boolean;
 	events?: string[];
@@ -32,40 +28,14 @@ interface SubscriptionInfo {
 // Get globals - in service context these are injected, in frontend they're imported
 const getTauriService = (): boolean => (typeof TAURI_SERVICE !== 'undefined' ? TAURI_SERVICE : false);
 
-let cachedSend: SendFunction | null = null;
-
-const getSend = (): SendFunction => {
-	// In service context, send is injected globally
-	if (typeof send !== 'undefined') {
-		return send;
-	}
-
-	// Return cached send if available
-	if (cachedSend) {
-		return cachedSend;
-	}
-
-	// In browser context, we need to import dynamically
-	if (typeof window !== 'undefined') {
-		// Since this is synchronous, we'll throw an error suggesting async initialization
-		throw new Error('send() not available - module not initialized. Call initializeConnection() first.');
-	}
-
+const getSend = () => {
 	// In test environment, return a noop function instead of throwing
 	if (typeof vi !== 'undefined' || typeof (globalThis as any).vi !== 'undefined') {
 		return () => Promise.resolve();
 	}
 
-	throw new Error('send() not available');
+	return send;
 };
-
-// Initialize connection - should be called in browser context
-export async function initializeConnection(): Promise<void> {
-	if (typeof window !== 'undefined' && !cachedSend) {
-		const core = await import('../../core/socket.ts');
-		cachedSend = core.send;
-	}
-}
 
 /**
  * Shared communication utilities for messages module
@@ -103,10 +73,7 @@ export function moduleEventSubscribe(acc: Account, event_name: string): void {
 /**
  * Initialize communication subscriptions
  */
-export async function initializeSubscriptions(acc: Account, isService: boolean = false): Promise<SubscriptionInfo> {
-	// Initialize connection in browser context
-	await initializeConnection();
-
+export function initializeSubscriptions(acc: Account, isService: boolean = false): SubscriptionInfo {
 	// In TAURI_SERVICE, only the service subscribes to events
 	// In other environments, the frontend subscribes
 	const shouldSubscribe = isService || !getTauriService();
