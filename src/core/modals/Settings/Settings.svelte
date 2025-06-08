@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { TAURI } from '@/core/tauri.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
+	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
 	import SettingsAppearance from '@/core/modals/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '@/core/modals/Settings/SettingsNotifications.svelte';
 	import SettingsGeneral from '@/core/modals/Settings/SettingsGeneral.svelte';
@@ -167,7 +167,7 @@
 	{/if}
 	{#each menuItems as item}
 		{#if activeTab === ''}
-			<SettingsItem img={item.img} title={item.title} onClick={() => setItem(item.title.toLowerCase())} />
+			<SettingsMenuItem img={item.img} title={item.title} onClick={() => setItem(item.title.toLowerCase())} />
 		{/if}
 	{/each}
 {/snippet}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
+	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	interface Props {
 		settingsObject?: any;
@@ -98,7 +98,7 @@
 	{#if !activeTab && menuItems}
 		{#each menuItems as item}
 			{#if (TAURI && item.tauri) || !item.tauri}
-				<SettingsItem img={item.img} title={item.title} onClick={() => setItem(item)} />
+				<SettingsMenuItem img={item.img} title={item.title} onClick={() => setItem(item)} />
 			{/if}
 		{/each}
 	{/if}
@@ -106,7 +106,7 @@
 	{#if activeTab && activeTab.menuItems}
 		{#each activeTab.menuItems as item}
 			{#if (TAURI && item.tauri) || !item.tauri}
-				<SettingsItem img={item.img} title={item.title} onClick={() => setItem(item)} />
+				<SettingsMenuItem img={item.img} title={item.title} onClick={() => setItem(item)} />
 			{/if}
 		{/each}
 	{/if}

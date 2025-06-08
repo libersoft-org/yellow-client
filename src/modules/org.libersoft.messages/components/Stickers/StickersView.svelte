@@ -8,7 +8,7 @@
 	import { writable, get } from 'svelte/store';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
-	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import StickersSearchResults from './StickersSearchResults.svelte';
 	import { isMobile } from '@/core/core.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -97,7 +97,7 @@
 </style>
 
 <div class="filter">
-	<InputButton img="img/search.svg" colorVariable="--default-foreground" alt="Search" bind:this={fulltext_search_element} bind:value={fulltext_search_filter} placeholder="Search ..." />
+	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={fulltext_search_element} bind:value={fulltext_search_filter} placeholder="Search ..." />
 	<Select bind:value={animated_filter_dropdown_value}>
 		<Option text="All" value="all" />
 		<Option text="Animated only" value="animated" />

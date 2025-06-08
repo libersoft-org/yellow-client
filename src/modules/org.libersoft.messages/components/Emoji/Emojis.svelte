@@ -8,7 +8,7 @@
 	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
 	import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
-	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import FuzzySearch from 'fuzzy-search';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { longpress } from '../../ui.js';
@@ -143,7 +143,7 @@
 {/if}
 
 <div class="filter">
-	<InputButton img="img/search.svg" alt="Search" bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
+	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
 </div>
 
 {#snippet clickable_emoji(emoji)}

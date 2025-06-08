@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { selectedNetworkID, networks } from '../wallet.ts';
 	import { module } from '../module.js';
-	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
@@ -26,7 +26,7 @@
 </script>
 
 <Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => (showModalNetworks = true)} />
-<InputButton img="img/search.svg" placeholder="Search" bind:value={filter} />
+<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Table breakpoint="0">
 	<Tbody>
 		{#each $networks as n, index}

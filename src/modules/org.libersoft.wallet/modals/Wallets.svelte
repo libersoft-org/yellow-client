@@ -4,7 +4,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
-	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalWallets from './Settings/SettingsWallets.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -27,7 +27,7 @@
 </script>
 
 <Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallet addresses" onClick={() => (showModalWallets = true)} />
-<InputButton img="img/search.svg" placeholder="Search" bind:value={filter} />
+<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Accordion items={$wallets} bind:activeIndex>
 	{#snippet content(wallet)}
 		<Table breakpoint="0">

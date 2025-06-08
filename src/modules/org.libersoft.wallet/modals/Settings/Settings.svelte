@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { module } from '../../module.js';
-	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
+	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
 	import SectionGeneral from './SettingsGeneral.svelte';
 	import SectionNetworks from './SettingsNetworks.svelte';
 	import SectionWallets from './SettingsWallets.svelte';
@@ -132,7 +132,7 @@
 	{/if}
 	{#each menuItems as item}
 		{#if activeTab === ''}
-			<SettingsItem img={item.img} title={item.title} onClick={() => setItem(item.tab)} />
+			<SettingsMenuItem img={item.img} title={item.title} onClick={() => setItem(item.tab)} />
 		{/if}
 	{/each}
 {/snippet}
