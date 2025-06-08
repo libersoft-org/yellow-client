@@ -190,5 +190,5 @@
 		</div>
 	</div>
 </div>
-<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
+<Modal testId="global-settings" title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
 <DialogExit bind:this={elDialogExit} />

@@ -436,6 +436,6 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		await navigateToSettingsSection(page, 'Notifications');
 
 		// Close settings modal
-		await closeModal(page, 'messages-settings');
+		await closeModal(page, 'global-settings');
 	});
 });
