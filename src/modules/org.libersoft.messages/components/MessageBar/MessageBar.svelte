@@ -296,11 +296,11 @@
 <Bar position="bottom" height="auto" bind:element={elMessageBar}>
 	<div class="message-bar">
 		<input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" style:display="none" />
-		<div class="top">
-			{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
+		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
+			<div class="top">
 				<MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
-			{/if}
-		</div>
+			</div>
+		{/if}
 		<div class="main">
 			<MessageBarRecorder />
 			<div bind:this={elAttachment} data-testid="attachment-button">
