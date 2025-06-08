@@ -87,8 +87,7 @@
 					</div>
 				</Td>
 			{/if}
-			<Td title="Theme">Theme:</Td>
-			<Td title="Theme Options">
+			<Td title="Theme">
 				{#if expanded}
 					<Button onClick={click_expand}>
 						<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
@@ -123,21 +122,21 @@
 	</Tbody>
 	<Table>
 		<Tbody>
-			<TbodyTr>
-				{#if expanded}
+			{#if expanded}
+				<TbodyTr>
 					<Td title="Name">
 						<Input type="text" bind:value={$themes_stored[$selected_theme_index].name} />
 					</Td>
+				</TbodyTr>
+				{#each theme_properties as theme_property_name, theme_property_value}
 					<TbodyTr>
-						{#each theme_properties as theme_property_name, theme_property_value}
-							<Td title={theme_property_name[0]}>
-								<Input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} displayValue={convertFromShortHex($themes_stored[$selected_theme_index].properties[theme_property_name[0]])} />
-								{$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
-							</Td>
-						{/each}
+						<Td title={theme_property_name[0]}>
+							<Input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} displayValue={convertFromShortHex($themes_stored[$selected_theme_index].properties[theme_property_name[0]])} />
+							{$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
+						</Td>
 					</TbodyTr>
-				{/if}
-			</TbodyTr>
+				{/each}
+			{/if}
 		</Tbody>
 	</Table>
 </Table>
