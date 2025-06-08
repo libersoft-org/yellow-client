@@ -15,7 +15,7 @@ export default defineConfig({
 			'@/org.libersoft.messages': path.resolve(__dirname, 'src/modules/org.libersoft.messages'),
 			'@/org.libersoft.dating': path.resolve(__dirname, 'src/modules/org.libersoft.dating'),
 			'@': path.resolve(__dirname, 'src'),
-			'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-mobile.ts') : path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-builtin.ts'),
+			'@/bridge/core-bridge': path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-builtin.ts'),
 		},
 	},
 	define: {
