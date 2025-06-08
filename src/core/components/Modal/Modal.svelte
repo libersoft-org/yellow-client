@@ -6,34 +6,37 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-	let { testId = '', show = $bindable(false), children, top, center, bottom, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
+	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
 	let zIndex = $state(100);
-	let activeTab = $state('');
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
 	interface Props {
+		testId?: string;
 		show?: boolean;
-		params?: any;
-		title?: string;
-		body?: any;
-		width?: string;
-		height?: string;
 		children?: Snippet;
 		top?: Snippet;
 		center?: Snippet;
 		bottom?: Snippet;
-		breadcrumbs?: Snippet | null;
+		params?: any;
+		optionalIcon?: {
+			img: string;
+			alt?: string;
+			onClick?: (e: Event) => void;
+		};
+		title?: string;
+		body?: any;
+		width?: string;
+		height?: string;
 		onShowChange?: (show: boolean) => void;
-		testId?: string;
 	}
 
 	$effect(() => {
 		if (!$isMobile) return;
-		if (modalEl && showContent && !isDragging && activeTab) {
+		if (modalEl && showContent && !isDragging) {
 			centerModal();
 			requestAnimationFrame(snapTransformIntoBounds);
 		}
@@ -162,10 +165,6 @@
 		onShowChange?.(value);
 	}
 
-	function clearActiveTab() {
-		activeTab = '';
-	}
-
 	function onkeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
 			event.preventDefault();
@@ -276,13 +275,15 @@
 				<div class="header" role="none" tabindex="-1">
 					{#if title}
 						<div class="title">
-							{#if activeTab}
-								<Icon img="img/back.svg" alt="Back" colorVariable="--primary-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
+							{#if optionalIcon}
+								<div onpointerdown={e => e.stopPropagation()}>
+									<Icon img={optionalIcon.img} colorVariable="--primary-foreground" alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
+								</div>
 							{/if}
-							{title}
+							<div>{title}</div>
 						</div>
 						<div onpointerdown={e => e.stopPropagation()}>
-							<Icon data-testid={testId + '-Modal-close'} img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="20px" padding="10px" onClick={close} />
+							<Icon data-testid={testId + '-Modal-close'} img="img/close.svg" colorVariable="--primary-foreground" alt="X" size="20px" padding="10px" onClick={close} />
 						</div>
 					{/if}
 				</div>
@@ -291,10 +292,7 @@
 						params: <code>{JSON.stringify({ params })}</code>
 					{/if}
 					{#if typeof ModalBody === 'function'}
-						{#if breadcrumbs}
-							{@render breadcrumbs()}
-						{/if}
-						<ModalBody {close} {params} bind:activeTab />
+						<ModalBody {close} {params} />
 					{:else if children || top || center || bottom}
 						{@render children?.()}
 						{#if top}
