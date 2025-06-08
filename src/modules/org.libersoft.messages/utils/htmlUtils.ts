@@ -1,3 +1,17 @@
+import DOMPurify from 'dompurify';
+
+/**
+ * Safely strips all HTML tags from a string using DOMPurify
+ * This prevents XSS attacks and handles edge cases like unclosed tags and multi-character sequences
+ * @param {string} html - The HTML string to strip
+ * @returns {string} Plain text with all HTML removed
+ */
+export function stripHtml(html: string): string {
+	if (!html) return '';
+	// Use DOMPurify to safely strip all HTML tags
+	return DOMPurify.sanitize(html, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+}
+
 /**
  * Wraps consecutive elements named `X` with a new element `Y` if there are more than 2 consecutive occurrences.
  *

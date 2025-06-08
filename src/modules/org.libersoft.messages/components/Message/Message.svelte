@@ -4,7 +4,7 @@
 	import { debug } from '@/core/core.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { isClientFocused } from '@/core/core.ts';
-	import { stripHtml } from '../../messages.js';
+	import { stripHtml } from '../../utils/htmlUtils.ts';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
 

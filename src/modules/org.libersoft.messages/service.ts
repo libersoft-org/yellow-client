@@ -3,6 +3,7 @@
 
 // Import connection utilities - these will be loaded/injected by the native layer
 import { connectionSendData, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
+import { stripHtml } from './utils/htmlUtils.ts';
 
 interface KotlinBridge {
 	sendMessage(data: string): void;
@@ -125,8 +126,8 @@ class MessagesBackgroundService {
 	private processMessageForNotification(message: any) {
 		// Check if this message is for our account and we're not the sender
 		if (message.address_to === this.config?.address && message.address_from !== this.config?.address) {
-			// Strip HTML from message for notification
-			const text = message.message?.replace(/<[^>]*>?/gm, '') || 'New message';
+			// Strip HTML from message for notification using safe sanitization
+			const text = stripHtml(message.message) || 'New message';
 
 			// Send notification request to Android
 			this.sendToKotlin({

@@ -7,7 +7,7 @@ import { FileUploadRecordStatus, FileUploadRecordType } from '@/org.libersoft.me
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
 import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
-import { wrapConsecutiveElements } from './utils/htmlUtils.ts';
+import { wrapConsecutiveElements, stripHtml } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
 import { active_account, active_account_id, active_account_module_data, getGuid, hideSidebarMobile, isClientFocused, relay, selectAccount, setModule, send } from '@/core/core.ts';
@@ -1044,10 +1044,6 @@ export function saneHtml(content) {
 export function htmlEscape(str) {
 	//console.log('htmlEscape:', str);
 	return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;');
-}
-
-export function stripHtml(html) {
-	return html.replace(/<[^>]*>?/gm, '');
 }
 
 export function processMessage(message) {
