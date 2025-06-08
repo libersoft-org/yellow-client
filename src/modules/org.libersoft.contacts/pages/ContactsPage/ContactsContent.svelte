@@ -8,6 +8,8 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
+
+	// TEST: Dialog
 	let elDialog;
 	let dialogData = {
 		title: 'Dialog title',
@@ -19,15 +21,17 @@
 			{ text: 'Close', onClick: () => elDialog.close(), expand: true },
 		],
 	};
+
+	onMount(() => {
+		elDialog.open();
+	});
+
+	// TEST: Breadcrumb
 	let breadcrumbItems = [
 		{ title: 'Wallet', onClick: () => setModule('org.libersoft.wallet') },
 		{ title: 'Messages', onClick: () => setModule('org.libersoft.messages') },
 		{ title: 'Dating', onClick: () => setModule('org.libersoft.dating') },
 	];
-
-	onMount(() => {
-		elDialog.open();
-	});
 
 	function clickButton() {
 		console.log('Clicked on button');
