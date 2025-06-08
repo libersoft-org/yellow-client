@@ -7,7 +7,7 @@ export default defineConfig({
 
 	use: {
 		ignoreHTTPSErrors: true,
-		viewport: { width: 1280, height: 1880 },
+		viewport: { width: 1280, height: 128 },
 	},
 	reporter: [['github'], ['list'], ['json', { outputFile: 'test-results/playwright-report.json' }]],
 	projects: [
@@ -15,7 +15,7 @@ export default defineConfig({
 			name: 'chromium',
 			use: {
 				...devices['Desktop Chrome'],
-				viewport: { width: 1280, height: 1880 },
+				viewport: { width: 1280, height: 1280 },
 			},
 		},
 		/*{

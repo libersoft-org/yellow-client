@@ -3,6 +3,11 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
+	vitePlugin: {
+		inspector: {
+			toggleKeyCombo: 'alt-s',
+		},
+	},
 	kit: {
 		paths: {
 			base: process.env.NODE_ENV === 'production' ? (process.env.TAURI ? '' : process.env.CLIENT_PATH_BASE === undefined ? '' : process.env.CLIENT_PATH_BASE) : '',

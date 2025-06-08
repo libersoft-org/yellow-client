@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "init": "bunx svelte-kit sync; bunx --bun @inlang/paraglide-js compile --project ./project.inlang",
+    "init": "bunx --bun svelte-kit sync; bunx --bun @inlang/paraglide-js compile --project ./project.inlang",
     "build": "bunx --bun vite build",
     "preview": "vite preview",
     "test": "npx vitest run; npx playwright test",

@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 echo "init"
+
+export PATH=$PATH:~/.bun/bin/
+
 ~/.bun/bin/bun i --frozen-lockfile
 ~/.bun/bin/bun run init
 
