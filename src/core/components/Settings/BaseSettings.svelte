@@ -5,6 +5,7 @@
 	interface Props {
 		settingsObject?: any;
 	}
+	/*
 	interface SettingsNode {
 		name: string;
 		title: string;
@@ -13,7 +14,6 @@
 		body?: any;
 		__parent?: SettingsNode | null;
 	}
-	/*
 	interface MenuItems {
 		Array<{
 		 img?: string;
