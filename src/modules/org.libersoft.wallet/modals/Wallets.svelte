@@ -28,7 +28,7 @@
 
 <Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallet addresses" onClick={() => (showModalWallets = true)} />
 <InputButton img="img/search.svg" placeholder="Search" bind:value={filter} onClick={() => {}} onKeydown={() => {}} minWidth="200px" maxWidth="400px" />
-<Accordion items={$wallets.map(w => ({ name: w.name, id: w.address }))} {activeIndex}>
+<Accordion items={$wallets} {activeIndex}>
 	{#snippet content(wallet)}
 		<Table breakpoint="0">
 			<Tbody>
