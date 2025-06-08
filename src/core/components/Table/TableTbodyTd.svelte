@@ -3,8 +3,9 @@
 	interface Props {
 		children?: Snippet;
 		title?: string;
+		center?: boolean;
 	}
-	let { children, title }: Props = $props();
+	let { children, title, center }: Props = $props();
 </script>
 
 <style>
@@ -80,6 +81,6 @@
 	}
 </style>
 
-<td data-title={title}>
+<td data-title={title} style:align-items={center ? 'center' : 'flex-start'}>
 	{@render children?.()}
 </td>
