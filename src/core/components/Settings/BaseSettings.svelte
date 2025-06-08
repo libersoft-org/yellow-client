@@ -30,6 +30,8 @@
 	let { settingsObject }: Props = $props();
 	let activeName = $state(settingsObject.name);
 	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : null);
+	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
+	const breadcrumb = $derived(makeBreadcrumb(activeName));
 
 	function setName(name: string) {
 		activeName = name;
@@ -65,9 +67,6 @@
 		}
 		return [];
 	}
-
-	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
-	const breadcrumb = $derived(makeBreadcrumb(activeName));
 </script>
 
 <style>
@@ -80,7 +79,9 @@
 
 <Modal title={settingsObject.title} show={true} width="400px" optionalIcon={backIcon}>
 	<div class="settings">
-		<Breadcrumb items={breadcrumb} />
+		{#if activeName !== settingsObject.name}
+			<Breadcrumb items={breadcrumb} />
+		{/if}
 		{#if currentNode.menu}
 			{#each currentNode.menu as item (item.name ?? item.title)}
 				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? () => setName(item.name) : item.onClick} />

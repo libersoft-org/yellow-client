@@ -20,7 +20,6 @@
 		border-radius: 10px;
 		font-size: 16px;
 		font-weight: bold;
-		height: 50px;
 	}
 
 	:global(.item) {
