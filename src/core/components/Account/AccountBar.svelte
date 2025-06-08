@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
 	import { debug, active_account, accounts, selectAccount, hideSidebarMobile, setCorePage } from '@/core/core.ts';
@@ -9,7 +9,7 @@
 	import AccountStatusIcon from '@/core/components/Account/AccountStatusIcon.svelte';
 	import AccountTitle from '@/core/components/Account/AccountTitle.svelte';
 	let accountsVisible = $state(false);
-	let accountBar;
+	let accountBar: HTMLElement | undefined;
 
 	onDestroy(() => {
 		document.removeEventListener('click', handleClickOutside);
@@ -35,9 +35,7 @@
 
 	function open() {
 		accountsVisible = true;
-		if (!$debug) {
-			document.addEventListener('click', handleClickOutside);
-		}
+		if (!$debug) document.addEventListener('click', handleClickOutside);
 	}
 
 	function close() {
@@ -46,11 +44,7 @@
 	}
 
 	function toggle() {
-		if (accountsVisible) {
-			close();
-		} else {
-			open();
-		}
+		accountsVisible ? close() : open();
 	}
 
 	function clickSelectAccount(id) {
@@ -59,9 +53,7 @@
 	}
 
 	function handleClickOutside(event) {
-		if (accountBar && !accountBar.contains(event.target)) {
-			close();
-		}
+		if (accountBar && !accountBar.contains(event.target)) close();
 	}
 
 	function clickAccountManagement() {
@@ -124,13 +116,6 @@
 
 	.account-bar > :global(.clickable) {
 		width: 100%;
-	}
-
-	/* TODO: experimental highlight for accessibility, in future this should be defined globally as class and support themes */
-	.account-bar > :global(.clickable:focus-visible),
-	.account-bar .items :global(.clickable:focus-visible) {
-		outline: none;
-		box-shadow: inset 0 0 0 2px white; /* Inside highlight */
 	}
 </style>
 

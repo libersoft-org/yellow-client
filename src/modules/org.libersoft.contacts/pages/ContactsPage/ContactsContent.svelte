@@ -7,6 +7,7 @@
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
+	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	let elDialog;
 	let dialogData = {
 		title: 'Dialog title',
@@ -18,6 +19,11 @@
 			{ text: 'Close', onClick: () => elDialog.close(), expand: true },
 		],
 	};
+	let breadcrumbItems = [
+		{ title: 'Wallet', onClick: () => setModule('org.libersoft.wallet') },
+		{ title: 'Messages', onClick: () => setModule('org.libersoft.messages') },
+		{ title: 'Dating', onClick: () => setModule('org.libersoft.dating') },
+	];
 
 	onMount(() => {
 		elDialog.open();
@@ -46,6 +52,9 @@
 			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
 	</Bar>
-	<Page>Contact list - content page - not yet implemented</Page>
+	<Page>
+		<div>Contact list - content page - not yet implemented</div>
+		<Breadcrumb items={breadcrumbItems} />
+	</Page>
 </Content>
 <Dialog data={dialogData} width="400px" bind:this={elDialog} />
