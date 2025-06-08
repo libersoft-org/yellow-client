@@ -58,4 +58,4 @@
 	};
 </script>
 
-<BaseSettings {settingsObject} {show} />
+<BaseSettings {settingsObject} bind:show />

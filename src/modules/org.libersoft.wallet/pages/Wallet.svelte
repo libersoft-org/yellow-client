@@ -8,8 +8,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalSettings from '../modals/Settings/Settings.svelte';
+	import Settings from '../modals/Settings/Settings.svelte';
 	import Send from './Send.svelte';
 	import Receive from './Receive.svelte';
 	import Balance from './Balance.svelte';
@@ -201,4 +200,4 @@
 		</div>
 	</div>
 </Paper>
-<Modal title="Wallet settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
+<Settings bind:show={showModalSettings} />

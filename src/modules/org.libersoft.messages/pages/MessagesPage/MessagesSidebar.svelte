@@ -6,7 +6,7 @@
 	import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
 	import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
 	import ModalNewConversation from '../../modals/NewConversation.svelte';
-	import ModalMessagesSettings from '../../modals/MessagesSettings.svelte';
+	import Settings from '../../modals/Settings/Settings.svelte';
 	let showNewConversationModal = false;
 	let showMessageSettings = false;
 	let scrollButtonVisible;
@@ -112,5 +112,5 @@
 		{/if}
 	</div>
 	<Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
-	<Modal testId="messages-settings" title="Messages settings" body={ModalMessagesSettings} bind:show={showMessageSettings} width="300px" />
+	<Settings bind:show={showMessageSettings} />
 {/if}

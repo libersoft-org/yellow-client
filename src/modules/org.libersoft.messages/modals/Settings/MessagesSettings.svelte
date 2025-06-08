@@ -1,14 +1,13 @@
 <script>
-	import { humanSize } from '@/core/utils/fileUtils.js';
 	import { get } from 'svelte/store';
-	import Button from '@/core/components/Button/Button.svelte';
-	import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder, photoRadius } from '../messages.js';
-	import Switch from '@/core/components/Switch/Switch.svelte';
 	import { open } from '@tauri-apps/plugin-dialog';
 	import { TAURI } from '@/core/tauri.ts';
+	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder, photoRadius } from '../../messages.js';
+	import Button from '@/core/components/Button/Button.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
-
 	let chunkSize = $uploadChunkSize;
 
 	function onSetChunkSize(chunkSize) {

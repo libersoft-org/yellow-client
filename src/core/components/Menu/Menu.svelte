@@ -186,5 +186,5 @@
 		</div>
 	</div>
 </div>
-<Settings show={showModalSettings} />
+<Settings bind:show={showModalSettings} />
 <DialogExit bind:this={elDialogExit} />
