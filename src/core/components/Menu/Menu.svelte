@@ -3,21 +3,17 @@
 	import { BROWSER } from '@/core/tauri.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import MenuItem from '@/core/components/Menu/MenuItem.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalSettings from '@/core/modals/Settings/Settings.svelte';
+	import Settings from '@/core/modals/Settings/Settings.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import DialogExit from '@/core/dialogs/Exit.svelte';
 	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
-
 	interface Props {
 		showMenu: boolean;
-		showModalSettings: boolean;
 	}
-
-	let { showMenu = $bindable(false), showModalSettings = false }: Props = $props();
+	let { showMenu = $bindable(false) }: Props = $props();
+	let showModalSettings = $state(false);
 	let elDialogExit: InstanceType<typeof DialogExit>;
-
 	const menuItems = [
 		{
 			title: 'Donate',
@@ -190,5 +186,5 @@
 		</div>
 	</div>
 </div>
-<Modal testId="global-settings" title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
+<Settings show={showModalSettings} />
 <DialogExit bind:this={elDialogExit} />

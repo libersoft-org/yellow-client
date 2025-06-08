@@ -1,20 +1,14 @@
 <script>
-	//import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { hideSidebarMobile, setModule } from '@/core/core.ts';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	//import Dialog from '@/core/components/Dialog/Dialog.svelte';
-	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
-	import SettingsGeneral from '@/core/modals/Settings/SettingsGeneral.svelte';
-	import SettingsAppearance from '@/core/modals/Settings/SettingsAppearance.svelte';
-	import SettingsNotifications from '@/core/modals/Settings/SettingsNotifications.svelte';
-	import SettingsModules from '@/core/modals/Settings/SettingsModules.svelte';
+	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 
 	// TEST: Dialog
-	/*
 	let elDialog;
 	let dialogData = {
 		title: 'Dialog title',
@@ -30,64 +24,6 @@
 	onMount(() => {
 		elDialog.open();
 	});
- */
-
-	// TEST: BaseSettings
-	let settingsObject = {
-		title: 'Example Settings',
-		name: 'example',
-		menu: [
-			{
-				img: 'img/settings.svg',
-				title: 'General',
-				name: 'general',
-			},
-			{
-				img: 'img/settings.svg',
-				title: 'Modules',
-				name: 'modules',
-			},
-			{
-				img: 'img/appearance.svg',
-				title: 'Appearance',
-				name: 'appearance',
-			},
-			{
-				img: 'img/notification.svg',
-				title: 'Notifications',
-				name: 'notifications',
-			},
-		],
-		items: [
-			{
-				title: 'General',
-				name: 'general',
-				menu: [
-					{
-						img: 'img/settings.svg',
-						title: 'Test button',
-						onClick: () => alert('Test button clicked'),
-					},
-				],
-				body: SettingsGeneral,
-			},
-			{
-				title: 'Modules',
-				name: 'modules',
-				body: SettingsModules,
-			},
-			{
-				title: 'Appearance',
-				name: 'appearance',
-				body: SettingsAppearance,
-			},
-			{
-				title: 'Notifications',
-				name: 'notifications',
-				body: SettingsNotifications,
-			},
-		],
-	};
 
 	function clickButton() {
 		console.log('Clicked on button');
@@ -116,6 +52,4 @@
 		<div>Contact list - content page - not yet implemented</div>
 	</Page>
 </Content>
-
-<!--<Dialog data={dialogData} width="400px" bind:this={elDialog} />-->
-<BaseSettings {settingsObject} />
+<Dialog data={dialogData} width="400px" bind:this={elDialog} />

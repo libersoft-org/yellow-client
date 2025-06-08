@@ -4,6 +4,7 @@
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	interface Props {
 		settingsObject?: any;
+		show?: boolean;
 	}
 	/*
 	interface SettingsNode {
@@ -27,7 +28,7 @@
 		onClick?: (e: Event) => void;
 	};
 	*/
-	let { settingsObject }: Props = $props();
+	let { settingsObject, show = false }: Props = $props();
 	let activeName = $state(settingsObject.name);
 	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : null);
 	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
@@ -77,7 +78,7 @@
 	}
 </style>
 
-<Modal title={settingsObject.title} show={true} width="400px" optionalIcon={backIcon}>
+<Modal title={settingsObject.title} {show} width="400px" optionalIcon={backIcon}>
 	<div class="settings">
 		{#if activeName !== settingsObject.name}
 			<Breadcrumb items={breadcrumb} />
