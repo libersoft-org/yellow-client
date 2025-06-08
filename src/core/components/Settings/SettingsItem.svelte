@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let img;
-	export let title;
-	export let onClick;
+	interface Props {
+		img?: string;
+		title?: string;
+		onClick?: (e: Event) => void;
+	}
+	let { img, title, onClick }: Props = $props();
 </script>
 
 <style>
