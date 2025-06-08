@@ -31,6 +31,7 @@ interface Network {
 	chainID: number;
 	currency: {
 		symbol: string;
+		iconURL: string;
 	};
 	rpcURLs: string[];
 	tokens?: Token[];

@@ -80,7 +80,7 @@
 </style>
 
 {#if icon}
-	<div class="input-button-wrapper" style:flex-grow={grow && '1'} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}>
+	<div class="input-button-wrapper" style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}>
 		<input class="button" {type} {placeholder} bind:this={inputRef} bind:value onkeydown={e => handleKeydown(e)} />
 		<Icon img={icon.img} alt={icon.alt} colorVariable={icon.colorVariable ? icon.colorVariable : ''} size="20px" padding="10px" onClick={icon.onClick} />
 	</div>
