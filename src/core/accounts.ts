@@ -67,7 +67,7 @@ import.meta.hot?.dispose(() => {
 });
 
 export function accounts_init() {
-	return accounts_config.subscribe(value => {
+	const sub = accounts_config.subscribe(value => {
 		log.debug('ACCOUNTS CONFIG:', value);
 		// TODO: implement configuration of accounts order
 		let accounts_list = get(accounts);
@@ -90,6 +90,8 @@ export function accounts_init() {
 	if (TAURI_SERVICE) {
 		setupNativeMessageListener();
 	}
+
+	return sub;
 }
 
 export function findAccount(id: string) {

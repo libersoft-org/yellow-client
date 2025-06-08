@@ -2,6 +2,7 @@
 set -e
 echo "init"
 ~/.bun/bin/bun i --frozen-lockfile
+~/.bun/bin/bun run init
 
 echo "HOLLOW: $HOLLOW"
 
