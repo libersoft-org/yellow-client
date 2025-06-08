@@ -35,7 +35,7 @@
 				{#each walletAddresses(wallet) as address, index}
 					<Clickable onClick={() => clickSelectAddress(wallet, address)}>
 						<TbodyTr>
-							<Td center={true}>{address.index}</Td>
+							<Td>{address.index}</Td>
 							<Td>{address.name}</Td>
 							<Td>{address.address}</Td>
 						</TbodyTr>
