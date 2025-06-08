@@ -293,7 +293,7 @@
 	}
 </style>
 
-<Bar position="bottom" height="auto" bind:this={elMessageBar}>
+<Bar position="bottom" height="auto" bind:element={elMessageBar}>
 	<div class="message-bar">
 		<input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" style:display="none" />
 		<div class="top">
