@@ -1,8 +1,17 @@
 <script lang="ts">
 	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
+	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	interface Props {
 		settingsObject?: any;
+	}
+	interface SettingsNode {
+		name: string;
+		title: string;
+		items?: SettingsNode[];
+		menu?: Array<{ img?: string; title?: string; name?: string; onClick?: (e: Event) => void }>;
+		body?: any;
+		__parent?: SettingsNode | null;
 	}
 	/*
 	interface MenuItems {
@@ -16,123 +25,69 @@
 	 img?: string;
   alt?: string;
 		onClick?: (e: Event) => void;
-	};*/
+	};
+	*/
 	let { settingsObject }: Props = $props();
-	/*
-	function setItem(item) {
-		activeTab = item;
-		setBreadcrumbs(item);
-		checkBackButton();
+	let activeName = $state(settingsObject.name);
+	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : null);
+
+	function setName(name: string) {
+		activeName = name;
 	}
-	function back() {
-		bread_crumbs.pop();
-		checkBackButton();
-		return bread_crumbs[bread_crumbs.length - 1];
+
+	function goBack() {
+		activeName = findNode(settingsObject, activeName)?.__parent?.name ?? settingsObject.name;
 	}
-	onOptionalIconClick = back;
-	function checkBackButton() {
-		if (activeTab) {
-			optionalIconImage = 'img/back.svg';
-		} else {
-			optionalIconImage = null;
+
+	function attachParents(node: any, parent: any = null) {
+		node.__parent = parent;
+		(node.items ?? []).forEach((c: any) => attachParents(c, node));
+	}
+
+	if (!settingsObject.__parent) attachParents(settingsObject);
+
+	function findNode(root: any, target: string): any {
+		const stack = [root];
+		while (stack.length) {
+			const node = stack.pop();
+			if (node.name === target) return node;
+			(node.items ?? []).forEach((c: any) => stack.push(c));
 		}
 	}
-	function findPosition(bread_crumb) {
-		let position = -1;
-		bread_crumbs.forEach(function callback(item, index) {
-			console.log(item.title);
-			if (item.title == bread_crumb.title) {
-				position = index;
-			}
-		});
-		return position;
-	}
-	// has to be called on change with breadcrumb that responds to .title
-	export function setBreadcrumbs(bread_crumb) {
-		console.log(bread_crumb.title);
-		let position = findPosition(bread_crumb);
-		console.log(position);
-		if (position >= 0) {
-			if (position < bread_crumbs.length - 1) {
-				bread_crumbs.splice(position + 1, bread_crumbs.length - position);
-			}
-		} else {
-			bread_crumbs.push(bread_crumb);
+
+	function makeBreadcrumb(targetName: string) {
+		const stack: Array<{ node: any; path: any[] }> = [{ node: settingsObject, path: [] }];
+		while (stack.length) {
+			const { node, path } = stack.pop();
+			const nextPath = [...path, { title: node.title, onClick: () => setName(node.name) }];
+			if (node.name === targetName) return nextPath;
+			(node.items ?? []).forEach((c: any) => stack.push({ node: c, path: nextPath }));
 		}
+		return [];
 	}
-*/
+
+	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
+	const breadcrumb = $derived(makeBreadcrumb(activeName));
 </script>
 
 <style>
-	/*
-	.settings-container {
+	.settings {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
 	}
-	.tab-content {
-		&:empty {
-			display: none;
-		}
-	}*/
 </style>
 
-<!--
-<div class="settings-container">
-	<Breadcrumb
-		root_crumb={{
-			title: title,
-			tab: '',
-			img: '',
-			onClick: () => setItem(false),
-		}}
-		{setItem}
-		bind:activeTab
-		bind:bread_crumbs
-	/>
-
-	{#if header}
-		{@render header()}
-	{/if}
-
-	{#if !activeTab && menuItems}
-		{#each menuItems as item}
-			{#if (TAURI && item.tauri) || !item.tauri}
-				<SettingsMenuItem img={item.img} title={item.title} onClick={() => setItem(item)} />
-			{/if}
-		{/each}
-	{/if}
-
-	{#if activeTab && activeTab.menuItems}
-		{#each activeTab.menuItems as item}
-			{#if (TAURI && item.tauri) || !item.tauri}
-				<SettingsMenuItem img={item.img} title={item.title} onClick={() => setItem(item)} />
-			{/if}
-		{/each}
-	{/if}
-
-	{#if activeTab && activeTab.subTabs}
-		<ButtonBar>
-			{#each activeTab.subTabs as item}
-				{#if (TAURI && item.tauri) || !item.tauri}
-					<Button img={item.img} text={item.title} onClick={() => setItem(item)} />
-				{/if}
+<Modal title={settingsObject.title} show={true} width="400px" optionalIcon={backIcon}>
+	<div class="settings">
+		<Breadcrumb items={breadcrumb} />
+		{#if currentNode.menu}
+			{#each currentNode.menu as item (item.name ?? item.title)}
+				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? () => setName(item.name) : item.onClick} />
 			{/each}
-		</ButtonBar>
-	{/if}
-
-	{#if children}
-		{@render children()}
-	{/if}
-
-	<div class="tab-content">
-		{#if !!activeTab && !!activeTab.component}
-			<activeTab.component subTabs={activeTab.subTabs} {setItem} isChild={true} title={activeTab.title} {activeTab} />
+		{/if}
+		{#if currentNode.body}
+			<svelte:component this={currentNode.body} />
 		{/if}
 	</div>
-
-	{#if footer}
-		{@render footer()}
-	{/if}
-</div>
--->
+</Modal>
