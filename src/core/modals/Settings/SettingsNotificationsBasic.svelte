@@ -21,8 +21,8 @@
 	import { skipFirst } from '$lib/skipfirst_store.ts';
 	// Local monitors store for this component
 	let monitors = writable<Monitor[]>([]);
-	let monitorInterval: Timer | undefined;
-	let permissionInterval: Timer | undefined;
+	let monitorInterval: ReturnType<typeof setInterval> | undefined;
+	let permissionInterval: ReturnType<typeof setInterval> | undefined;
 	let monitorOptions = writable<any[]>([]);
 	let _notificationsEnabled = get(notificationsEnabled);
 	// Store all subscription unsubscribe functions

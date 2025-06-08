@@ -2,7 +2,7 @@ import type { Account, AccountStore } from './types.ts';
 import { TAURI_SERVICE } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 
-export function sendAsync(acc: Account, account: AccountStore, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false) {
+export function sendAsync(acc: Account, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false) {
 	return new Promise((resolve, reject) => {
 		send(
 			acc,
@@ -19,7 +19,7 @@ export function sendAsync(acc: Account, account: AccountStore, target: string, c
 	});
 }
 
-export function send(acc: Account, account: AccountStore, target: string, command: string, params: any = {}, sendSessionID = true, callback: ((req: any, res: any) => void) | null = null, quiet = false) {
+export function send(acc: Account, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, callback: ((req: any, res: any) => void) | null = null, quiet = false) {
 	/*
  acc: account object
  account: account store, optional, for debugging

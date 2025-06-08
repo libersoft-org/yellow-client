@@ -401,7 +401,7 @@ function sendLoginCommand(account: AccountStore) {
 			acc.sessionID = res.data.sessionID;
 			acc.wsGuid = res.data.wsGuid;
 			acc.available_modules = res.data.modules_available;
-			updateModulesComms(acc);
+			updateModulesComms(acc).catch(err => console.error('Failed to update module comms:', err));
 			saveOriginalWsGuid(acc);
 		}
 		account.update(v => v);

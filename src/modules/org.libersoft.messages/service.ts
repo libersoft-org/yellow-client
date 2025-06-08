@@ -65,9 +65,9 @@ class MessagesBackgroundService {
 		}
 	}
 
-	private subscribeToEvents() {
+	private async subscribeToEvents() {
 		// Use connection module to subscribe (isService = true)
-		const result = initializeSubscriptions(this.account, true);
+		const result = await initializeSubscriptions(this.account, true);
 		this.log('info', `Subscriptions initialized: ${result.subscribed ? 'yes' : 'no'}`);
 	}
 
