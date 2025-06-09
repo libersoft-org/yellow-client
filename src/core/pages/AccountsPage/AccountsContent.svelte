@@ -27,6 +27,11 @@
 	let showImportModal: boolean = $state(false);
 	let idItem: string | null = $state(null);
 	let accountTitle: string = $state('');
+	let modalKey: number = $state(0);
+
+	$effect(() => {
+		console.log('[AccountsContent] idItem:', idItem);
+	});
 
 	function back() {
 		hideSidebarMobile.set(false);
@@ -35,6 +40,8 @@
 
 	function addAccountModal() {
 		idItem = null;
+		modalKey++; // Force modal component to recreate
+		console.log('[AccountsContent] Opening Add/Edit Account modal, idItem set to', idItem, 'modalKey:', modalKey);
 		showAddEditAccountModal = true;
 	}
 
@@ -124,12 +131,14 @@
 				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} />
 				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
 			</ButtonBar>
-			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
+			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>
 	</div>
 </div>
 
-<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
+{#key modalKey}
+	<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
+{/key}
 <Modal title="Export all accounts" body={ModalAccountsExport} bind:show={showExportModal} width="700px" />
 <Modal title="Import accounts" body={ModalAccountsImport} bind:show={showImportModal} width="700px" />
 <Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem }} bind:show={showDelAccountModal} />

@@ -33,11 +33,26 @@
 	};
 	let wizard = getContext<WizardContext>('wizard');
 	let account_id_store = writable<string | null>(null);
-	console.log('[INIT] Modal mounted. Params:', params);
+	//console.log('[INIT] Modal mounted. Params:', params);
 
 	$effect(() => {
-		//console.log('[EFFECT] Updating account_id_store from params.id =', params.id);
+		console.log('[EFFECT] Updating account_id_store from params.id =', params.id);
 		account_id_store.set(params.id);
+	});
+
+	// Watch account_id_store changes to reset form for new accounts
+	$effect(() => {
+		const id = $account_id_store;
+		console.log('[EFFECT] account_id_store changed to:', id);
+
+		if (id === null) {
+			console.log('[EFFECT] Resetting form for new account');
+			credentials_address = '';
+			credentials_server = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
+			credentials_password = '';
+			config_enabled = isInWelcomeWizard || true;
+			config_title = 'My account';
+		}
 	});
 
 	/*
@@ -81,12 +96,7 @@
 			config_enabled = found?.enabled ?? true;
 			config_title = found?.settings?.title ?? 'My account';
 		} else {
-			console.log('[EFFECT] New account setup');
-			credentials_address = '';
-			credentials_server = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
-			credentials_password = '';
-			config_enabled = true;
-			config_title = 'My account';
+			console.log('[EFFECT] New account setup - form will be reset by account_id_store watcher');
 
 			if (isInWelcomeWizard) {
 				untrack(() => {
