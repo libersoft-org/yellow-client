@@ -7,6 +7,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
+	import Range from '@/core/components/Range/Range.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	let chunkSize = $uploadChunkSize;
 
@@ -48,7 +49,7 @@
 		<span class="bold">File upload chunk size:</span>
 		<span>{humanSize(chunkSize)}</span>
 	</div>
-	<input data-testid="chunk-size" class="zoom" type="range" min="131072" max="31457280" step="131072" bind:value={chunkSize} />
+	<Range data-testid="chunk-size" class="zoom" min="131072" max="31457280" step="131072" bind:value={chunkSize} />
 </div>
 <div class="group">
 	<Switch bind:checked={$hideMessageTextInNotifications} showLabel label="Hide message text in notifications" orientation="vertical" />
@@ -64,7 +65,6 @@
 		{/each}
 	</Select>
 </div>
-
 {#if TAURI}
 	<div class="group">
 		<div class="label">

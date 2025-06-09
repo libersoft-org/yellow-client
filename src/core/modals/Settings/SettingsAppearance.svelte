@@ -6,6 +6,7 @@
 	import { selected_theme_index, current_theme, themes_stored, default_theme } from '@/core/themes.js';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
+	import Range from '@/core/components/Range/Range.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
@@ -65,7 +66,7 @@
 				<Td title="Zoom">
 					<span>{Math.round(($zoom || 0) * 100)}%</span>
 					<div class="zoom">
-						<input type="range" min="0.3" max="3" step="0.1" bind:value={$zoom} onchange={setZoom} />
+						<Range min="0.3" max="3" step="0.1" bind:value={$zoom} onchange={setZoom} />
 					</div>
 				</Td>
 			{/if}

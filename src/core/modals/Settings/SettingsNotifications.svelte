@@ -85,31 +85,31 @@
 						</Td>
 						<Td title="Background color">
 							<div>
-								<input type="color" bind:value={$bgColor} />
+								<Input type="color" bind:value={$bgColor} />
 								{$bgColor}
 							</div>
 						</Td>
 						<Td title="Background color on mouse over">
 							<div>
-								<input type="color" bind:value={$bgColorHover} />
+								<Input type="color" bind:value={$bgColorHover} />
 								{$bgColorHover}
 							</div>
 						</Td>
 						<Td title="Border color">
 							<div>
-								<input type="color" bind:value={$borderColor} />
+								<Input type="color" bind:value={$borderColor} />
 								{$borderColor}
 							</div>
 						</Td>
 						<Td title="Title color">
 							<div>
-								<input type="color" bind:value={$titleColor} />
+								<Input type="color" bind:value={$titleColor} />
 								{$titleColor}
 							</div>
 						</Td>
 						<Td title="Description color">
 							<div>
-								<input type="color" bind:value={$descColor} />
+								<Input type="color" bind:value={$descColor} />
 								{$descColor}
 							</div>
 						</Td>
