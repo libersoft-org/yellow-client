@@ -4,6 +4,7 @@
 	import SettingsModules from '@/core/modals/Settings/SettingsModules.svelte';
 	import SettingsAppearance from '@/core/modals/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '@/core/modals/Settings/SettingsNotifications.svelte';
+	import SettingsAppearanceTheme from './SettingsAppearanceTheme.svelte';
 	interface Props {
 		show?: boolean;
 	}
@@ -48,6 +49,13 @@
 				title: 'Appearance',
 				name: 'appearance',
 				body: SettingsAppearance,
+				items: [
+					{
+						title: 'Edit theme',
+						name: 'edit-theme',
+						body: SettingsAppearanceTheme,
+					},
+				],
 			},
 			{
 				title: 'Notifications',

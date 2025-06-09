@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { TAURI } from '@/core/tauri.ts';
 	import { zoom } from '@/core/settings.ts';
 	import { setZoom } from '@/core/zoom.ts';
 	import { selected_theme_index, current_theme, themes_stored, default_theme } from '@/core/themes.js';
-	import { convertFromShortHex } from '@/core/utils/colors.js';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -13,12 +13,11 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Input from '@/core/components/Input/Input.svelte';
+	//import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	let { setSubItem, subTab } = $props();
-	let theme_properties = Object.entries($current_theme.properties);
-	let expanded = $state(false);
+	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	$effect(() => {
 		$themes_stored;
@@ -26,16 +25,12 @@
 		$selected_theme_index;
 	});
 
-	function click_expand() {
-		expanded = !expanded;
-		console.log(expanded);
-	}
-
 	function create_new_theme() {
 		let new_theme = JSON.parse(JSON.stringify(default_theme));
 		new_theme.name = 'New Theme';
 		themes_stored.update(arr => [...arr, new_theme]);
 		$selected_theme_index = $themes_stored.length - 1;
+		setSettingsSection('edit-theme');
 	}
 
 	function delete_current_theme() {
@@ -88,55 +83,19 @@
 				</Td>
 			{/if}
 			<Td title="Theme">
-				{#if expanded}
-					<Button onClick={click_expand}>
-						<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
-					</Button>
-				{:else}
-					<Select data-testid="theme switch" bind:value={$selected_theme_index}>
-						{#each $themes_stored as theme, index (theme.name + index)}
-							<Option text={theme.name} value={index} />
-						{/each}
-					</Select>
-					{#if $selected_theme_index > 0}
-						<Button onClick={click_expand}>
-							<Icon img="img/edit.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
-						</Button>
-					{/if}
-					<Button
-						onClick={() => {
-							click_expand();
-							create_new_theme();
-						}}
-					>
-						<Icon img="img/add.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
-					</Button>
-					{#if $selected_theme_index > 0}
-						<Button onClick={delete_current_theme}>
-							<Icon img="img/del.svg" alt="Close" colorVariable="--primary-foreground" size="20px" padding="0px" />
-						</Button>
-					{/if}
+				<Select data-testid="theme switch" bind:value={$selected_theme_index}>
+					{#each $themes_stored as theme, index (theme.name + index)}
+						<Option text={theme.name} value={index} />
+					{/each}
+				</Select>
+				{#if $selected_theme_index > 0}
+					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => setSettingsSection('edit-theme')} />
+				{/if}
+				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => create_new_theme()} />
+				{#if $selected_theme_index > 0}
+					<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={delete_current_theme} />
 				{/if}
 			</Td>
 		</TbodyTr>
 	</Tbody>
-	<Table>
-		<Tbody>
-			{#if expanded}
-				<TbodyTr>
-					<Td title="Name">
-						<Input type="text" bind:value={$themes_stored[$selected_theme_index].name} />
-					</Td>
-				</TbodyTr>
-				{#each theme_properties as theme_property_name, theme_property_value}
-					<TbodyTr>
-						<Td title={theme_property_name[0]}>
-							<Input type="color" bind:value={$themes_stored[$selected_theme_index].properties[theme_property_name[0]]} displayValue={convertFromShortHex($themes_stored[$selected_theme_index].properties[theme_property_name[0]])} />
-							{$themes_stored[$selected_theme_index].properties[theme_property_name[0]]}
-						</Td>
-					</TbodyTr>
-				{/each}
-			{/if}
-		</Tbody>
-	</Table>
 </Table>

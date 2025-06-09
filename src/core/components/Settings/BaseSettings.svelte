@@ -94,7 +94,7 @@
 	}
 </style>
 
-<Modal title={settingsObject.title} bind:show width="400px" optionalIcon={backIcon}>
+<Modal title={settingsObject.title} bind:show width="500px" optionalIcon={backIcon}>
 	<div class="settings">
 		{#if activeName !== settingsObject.name}
 			<Breadcrumb items={breadcrumb} />

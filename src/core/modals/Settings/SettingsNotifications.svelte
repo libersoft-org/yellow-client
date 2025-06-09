@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Unsubscriber } from 'svelte/store';
-	import { getContext } from 'svelte';
 	import { log, CUSTOM_NOTIFICATIONS } from '@/core/tauri.ts';
 	import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor } from '@/core/notifications_settings.ts';
 	import { skipFirst } from '$lib/skipfirst_store.ts';
@@ -17,9 +16,6 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
-
-	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	// Store all subscription unsubscribe functions
 	const unsubscribers: Unsubscriber[] = [];
@@ -50,7 +46,6 @@
 <div class="settings-notifications">
 	<SettingsNotificationsAlert />
 	<SettingsNotificationsBasic />
-	<Button text="Configure more in color themes" onClick={() => setSettingsSection('appearance')} />
 
 	{#if CUSTOM_NOTIFICATIONS}
 		{#if $customNotificationsOn}
