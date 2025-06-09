@@ -5,7 +5,6 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		items: Array<{ name: string }>;
-		activeIndex?: number | null;
 		content: Snippet<[any]> | null;
 		header?: Snippet<[any]> | null;
 		expandAllOnDesktop?: boolean;
