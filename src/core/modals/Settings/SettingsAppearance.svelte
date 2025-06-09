@@ -15,8 +15,6 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	//import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
-	let { setSubItem, subTab } = $props();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	$effect(() => {
@@ -40,10 +38,6 @@
 			themes_stored.update(arr => arr.filter(theme => $themes_stored.indexOf(theme) !== current_index));
 		}
 	}
-
-	function openAlerts() {
-		setSubItem('theme');
-	}
 </script>
 
 <style>
@@ -55,13 +49,6 @@
 		}
 	}
 </style>
-
-{#if !subTab}
-	<Button onClick={openAlerts}>Edit themes</Button>
-{:else if subTab === 'theme'}
-	<p>Theme editing here</p>
-	<Button onClick={() => setSubItem('')}>← Back</Button>
-{/if}
 
 <Table>
 	<Thead>
