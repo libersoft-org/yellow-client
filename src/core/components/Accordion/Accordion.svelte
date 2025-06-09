@@ -4,7 +4,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
-		items: Array<{ name: string; id: string }>;
+		items: Array<{ name: string }>;
 		activeIndex?: number | null;
 		content: Snippet<[any]> | null;
 		header?: Snippet<[any]> | null;
