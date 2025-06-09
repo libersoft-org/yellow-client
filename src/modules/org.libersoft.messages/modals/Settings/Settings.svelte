@@ -4,7 +4,7 @@
 	interface Props {
 		show?: boolean;
 	}
-	let { show = false }: Props = $props();
+	let { show = $bindable(false) }: Props = $props();
 	let settingsObject = {
 		title: 'Messages settings',
 		name: 'settings',

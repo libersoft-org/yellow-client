@@ -2,6 +2,7 @@
 	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
+	import { log } from '@/core/tauri.ts';
 	interface Props {
 		settingsObject?: any;
 		show?: boolean;
@@ -28,11 +29,17 @@
 		onClick?: (e: Event) => void;
 	};
 	*/
-	let { settingsObject, show = false }: Props = $props();
+	let { settingsObject, show = $bindable(false) }: Props = $props();
 	let activeName = $state(settingsObject.name);
-	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : null);
+	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
 	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
 	const breadcrumb = $derived(makeBreadcrumb(activeName));
+
+	$effect(() => {
+		if (show) {
+			activeName = settingsObject.name;
+		}
+	});
 
 	function setName(name: string) {
 		activeName = name;
@@ -61,11 +68,17 @@
 	function makeBreadcrumb(targetName: string) {
 		const stack: Array<{ node: any; path: any[] }> = [{ node: settingsObject, path: [] }];
 		while (stack.length) {
-			const { node, path } = stack.pop();
+			const item = stack.pop();
+			if (!item) {
+				log.error('Stack is empty while searching for breadcrumb path');
+				return [];
+			}
+			const { node, path } = item;
 			const nextPath = [...path, { title: node.title, onClick: () => setName(node.name) }];
 			if (node.name === targetName) return nextPath;
 			(node.items ?? []).forEach((c: any) => stack.push({ node: c, path: nextPath }));
 		}
+		log.error('Node not found:', targetName);
 		return [];
 	}
 </script>
@@ -78,7 +91,7 @@
 	}
 </style>
 
-<Modal title={settingsObject.title} {show} width="400px" optionalIcon={backIcon}>
+<Modal title={settingsObject.title} bind:show width="400px" optionalIcon={backIcon}>
 	<div class="settings">
 		{#if activeName !== settingsObject.name}
 			<Breadcrumb items={breadcrumb} />
