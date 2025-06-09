@@ -188,9 +188,8 @@
 		flex-direction: column;
 		position: fixed;
 		inset: 0;
-		max-width: 700px;
 		width: 100%;
-		max-height: calc(100dvh - 48px);
+		max-height: calc(100dvh - 2px);
 		height: fit-content;
 		width: min-content;
 		overflow: hidden;

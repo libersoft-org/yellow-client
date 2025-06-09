@@ -44,16 +44,26 @@
 	}
 </script>
 
-<ButtonBar>
-	<Button img="img/copy.svg" text={copyText} onClick={clickCopy} />
-	<Button img="img/download.svg" text="Download as file" onClick={clickDownload} />
-</ButtonBar>
-<Tabs>
-	<TabsItem label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
-	<TabsItem label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
-</Tabs>
-{#if activeTab === 'json'}
-	<AccountsExportJson bind:code={jsonEditorContents} />
-{:else if activeTab === 'qr'}
-	<AccountsExportQR />
-{/if}
+<style>
+	.export {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+</style>
+
+<div class="export">
+	<ButtonBar>
+		<Button img="img/copy.svg" text={copyText} onClick={clickCopy} />
+		<Button img="img/download.svg" text="Download as file" onClick={clickDownload} />
+	</ButtonBar>
+	<Tabs>
+		<TabsItem label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
+		<TabsItem label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
+	</Tabs>
+	{#if activeTab === 'json'}
+		<AccountsExportJson bind:code={jsonEditorContents} />
+	{:else if activeTab === 'qr'}
+		<AccountsExportQR />
+	{/if}
+</div>

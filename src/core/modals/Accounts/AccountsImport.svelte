@@ -10,13 +10,22 @@
 	let activeTab = $state('json');
 </script>
 
-<Tabs>
-	<TabsItem img="img/import.svg" label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
-	<TabsItem img="img/photo.svg" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
-</Tabs>
+<style>
+	.import {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+</style>
 
-{#if activeTab === 'json'}
-	<AccountsImportJson {close} />
-{:else if activeTab === 'qr'}
-	<AccountsImportQR {close} />
-{/if}
+<div class="import">
+	<Tabs>
+		<TabsItem img="img/import.svg" label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
+		<TabsItem img="img/photo.svg" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
+	</Tabs>
+	{#if activeTab === 'json'}
+		<AccountsImportJson {close} />
+	{:else if activeTab === 'qr'}
+		<AccountsImportQR {close} />
+	{/if}
+</div>

@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let img;
-	export let label;
-	export let active;
-	export let colorVariable = '--secondary-foreground';
-	export let onClick;
+	interface Props {
+		img?: string;
+		label?: string;
+		active?: boolean;
+		colorVariable?: string;
+		onClick?: (e: Event) => void;
+	}
+	let { img, label, active, colorVariable = '--secondary-foreground', onClick }: Props = $props();
 </script>
 
 <style>
@@ -14,7 +17,6 @@
 		align-items: center;
 		justify-content: center;
 		flex: 1; /* TODO: this is not working as it needs to be applied on Clickable, not on .item. If applied to Clickable, it spoils everything that doesn't need it. */
-		font-size: 16px;
 		padding: 10px;
 	}
 
