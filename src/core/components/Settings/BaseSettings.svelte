@@ -3,6 +3,7 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/tauri.ts';
+	import { setContext } from 'svelte';
 	interface Props {
 		settingsObject?: any;
 		show?: boolean;
@@ -41,9 +42,11 @@
 		}
 	});
 
-	function setName(name: string) {
+	export function setName(name: string) {
 		activeName = name;
 	}
+
+	setContext('setSettingsSection', setName);
 
 	function goBack() {
 		activeName = findNode(settingsObject, activeName)?.__parent?.name ?? settingsObject.name;
