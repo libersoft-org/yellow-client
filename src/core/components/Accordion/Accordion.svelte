@@ -15,10 +15,19 @@
 	let activeIndices = $state<number[]>([]);
 	const isSingleMode = mode === 'single';
 
-	async function handleClick(index: number) {
-		const isOpen = activeIndices.includes(index);
+	export async function handleClick(index: number, newState: boolean | undefined = undefined) {
+		console.debug('Accordion clicked', index, newState);
+		let isOpen = activeIndices.includes(index);
 		const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
 		if (!el) return;
+		if (newState !== undefined) {
+			if (newState) {
+				isOpen = false;
+			} else {
+				isOpen = true;
+			}
+			return;
+		}
 		// CLOSE
 		if (isOpen) {
 			el.style.height = `${el.scrollHeight}px`;
