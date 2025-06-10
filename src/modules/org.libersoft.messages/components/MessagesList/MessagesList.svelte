@@ -582,7 +582,7 @@
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background-color: #00000040;
+		background-color: var(--primary-background);
 		display: none;
 		z-index: 1;
 		pointer-events: none;
@@ -595,9 +595,9 @@
 	.dnd-overlay-inner {
 		margin: 10px;
 		width: 100%;
-		background-color: #00000054;
+		background-color: var(--primary-softer-background);
 		border-radius: 10px;
-		border: 2px dashed #000000;
+		border: 2px dashed var(--primary-foreground);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -608,7 +608,7 @@
 		font-size: 28px;
 		font-weight: bold;
 		margin-top: 8px;
-		color: #fff;
+		color: var(--primary-foreground);
 	}
 </style>
 

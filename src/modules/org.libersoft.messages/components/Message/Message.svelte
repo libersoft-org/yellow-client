@@ -350,7 +350,7 @@
 	:global(.message .text a) {
 		font-weight: bold;
 		text-decoration: none;
-		color: #a60;
+		color: var(--primary-harder-background);
 	}
 
 	:global(.message .text img) {
