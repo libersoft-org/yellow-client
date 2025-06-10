@@ -6,7 +6,7 @@
 		value?: number | string;
 		onchange?: (event: Event) => void;
 	}
-	let { min, max, step, value = $bindable(), onchange }: Props = $props();
+	let { min, max, step, value = $bindable(), onchange, ...restProps }: Props = $props();
 </script>
 
 <style>
@@ -16,4 +16,4 @@
 	}
 </style>
 
-<input type="range" {min} {max} {step} bind:value />
+<input type="range" {min} {max} {step} bind:value {...restProps} />
