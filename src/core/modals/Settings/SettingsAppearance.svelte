@@ -45,9 +45,9 @@
 	.zoom {
 		display: flex;
 
-		input {
+		/*input {
 			margin-top: 6px;
-		}
+		}*/
 	}
 </style>
 

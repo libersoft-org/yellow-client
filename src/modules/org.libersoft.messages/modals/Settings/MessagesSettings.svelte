@@ -38,10 +38,10 @@
 		flex-direction: column;
 		gap: 5px;
 	}
-
+	/*
 	input[type='range'] {
 		width: 100%;
-	}
+	}*/
 </style>
 
 <div class="group">
