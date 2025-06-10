@@ -29,7 +29,7 @@ async function openImportModal(page: Page): Promise<void> {
  */
 async function fillImportData(page: Page, jsonData: string): Promise<void> {
 	return await test.step('Fill import data', async () => {
-		await page.getByTestId('import-textarea').fill(jsonData);
+		await page.getByTestId('accounts-textarea').fill(jsonData);
 	});
 }
 
@@ -39,7 +39,7 @@ async function fillImportData(page: Page, jsonData: string): Promise<void> {
  */
 async function clickAddAccounts(page: Page): Promise<void> {
 	return await test.step('Click Add accounts button', async () => {
-		await page.getByTestId('add-accounts-btn').click();
+		await page.getByTestId('accounts-add-btn').click();
 	});
 }
 
@@ -49,7 +49,7 @@ async function clickAddAccounts(page: Page): Promise<void> {
  */
 async function clickReplaceAll(page: Page): Promise<void> {
 	return await test.step('Click Replace All button', async () => {
-		await page.getByTestId('replace-all-btn').click();
+		await page.getByTestId('accounts-replace-btn').click();
 	});
 }
 
