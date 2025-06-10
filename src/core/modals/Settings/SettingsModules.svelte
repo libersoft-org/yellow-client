@@ -220,7 +220,7 @@
 
 <div class="actions">
 	<div>
-		<span style="font-size: 12px; color: var(--text-secondary, #666);">
+		<span style="font-size: 12px; color: var(--secondary-foreground);">
 			{Object.values($modules_config.modules).filter(m => m.enabled).length} of {Object.values($modules_config.modules).length} modules enabled
 		</span>
 	</div>
