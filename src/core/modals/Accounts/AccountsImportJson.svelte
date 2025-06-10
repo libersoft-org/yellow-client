@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Code from '@/core/components/Code/Code.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import AccountsImportButtons from '@/core/components/Account/AccountsImportButtons.svelte';
 	interface Props {
@@ -49,6 +50,9 @@
 </style>
 
 <div class="account-import">
+	<ButtonBar>
+		<Button onclick={loadFile}>Open JSON file</Button>
+	</ButtonBar>
 	{#if error}
 		<Alert type="error" message={error} />
 	{/if}
@@ -56,6 +60,5 @@
 		<Code bind:code={text} />
 	</div>
 	<input bind:this={fileInput} type="file" accept=".json,application/json" style="display: none;" onchange={handleFileSelect} />
-	<Button onclick={loadFile}>Browse for JSON file</Button>
 	<AccountsImportButtons importText={text} {close} onError={handleError} />
 </div>
