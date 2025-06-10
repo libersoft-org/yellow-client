@@ -1,0 +1,6 @@
+{
+	"permissions": {
+		"allow": ["Bash(bun x playwright test:*)", "Bash(ls:*)", "Bash(intention add:*)", "Bash(npx playwright test:*)", "Bash(curl:*)", "Bash(grep:*)", "Bash(bun run:*)", "Bash(rg:*)", "Bash(pgrep:*)", "Bash(PLAYWRIGHT_CONSOLE_LOG=minimal npx playwright test)", "Bash(PLAYWRIGHT_CONSOLE_LOG=true npx playwright test)"],
+		"deny": []
+	}
+}

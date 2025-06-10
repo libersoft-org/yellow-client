@@ -31,6 +31,5 @@ project.inlang/cache
 
 # Sentry Config File
 .env.sentry-build-plugin
-.claude
 .dev_intention
 client
