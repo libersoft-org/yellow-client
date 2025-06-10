@@ -77,7 +77,12 @@
 		processedCount = 0;
 		skippedCount = 0;
 		invalidAccounts = [];
-		await processNextAccount();
+		try {
+			await processNextAccount();
+		} catch (err) {
+			console.log('handleAdd caught error:', err);
+			throw err;
+		}
 	}
 
 	async function handleReplace(text: string): Promise<void> {
@@ -185,6 +190,7 @@
 	}
 
 	async function skipConflictAccount() {
+		skippedCount++;
 		conflictDialog?.close();
 		currentConflictAccount = null;
 		await processNextAccount();

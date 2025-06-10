@@ -31,7 +31,7 @@ export function enableConsoleLogging(page: Page): void {
 
 		// Filter noisy logs unless in verbose mode
 		if (!isVerbose) {
-			if (text.includes('[vite]') || text.includes('Service worker') || text.includes('selectLastModule') || text.includes('REGISTER MODULE') || (text.includes('WebSocket') && !text.includes('failed')) || text.includes('Retrying')) {
+			if (text.includes('[vite]') || text.includes('Service worker') || text.includes('selectLastModule') || text.includes('register module') || (text.includes('WebSocket') && !text.includes('failed')) || text.includes('Retrying')) {
 				return;
 			}
 		}

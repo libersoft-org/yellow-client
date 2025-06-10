@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
+import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
 
 /**
  * Helper function to navigate to account management
@@ -142,6 +143,9 @@ const validAccountConfigs = [
 
 test.describe('Accounts Import Functionality', () => {
 	test.beforeEach(async ({ page }) => {
+		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
+		enableConsoleLogging(page);
+
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
 		const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
@@ -368,6 +372,24 @@ test.describe('Accounts Import Functionality', () => {
 
 		// Test "Skip This Account" option
 		await page.getByRole('button', { name: 'Skip This Account' }).click();
+
+		// Wait a bit for any async operations
+		await page.waitForTimeout(1000);
+
+		// Check if modal is still visible
+		const modalVisible = await page.getByTestId('accounts-import-Modal').isVisible();
+		console.log('Modal still visible after skip:', modalVisible);
+
+		// Debug: Check what's actually in the modal
+		const modalContent = await page.getByTestId('accounts-import-Modal').textContent();
+		console.log('Modal content:', modalContent);
+
+		// Check for any error text, not just in .alert
+		const errorTextVisible = await page
+			.getByText('No accounts were imported')
+			.isVisible()
+			.catch(() => false);
+		console.log('Error text visible anywhere:', errorTextVisible);
 
 		// Should show error that no accounts were imported
 		await expectErrorMessage(page, 'No accounts were imported');

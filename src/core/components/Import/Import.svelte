@@ -27,7 +27,7 @@
 	let activeTab = $state('json');
 	let text = $state('');
 	let error = $state('');
-	let fileInput: HTMLInputElement;
+	let fileInput: HTMLInputElement | undefined = $state();
 
 	// QR scanner state
 	let videoElement: HTMLVideoElement | null = $state(null);
@@ -53,7 +53,7 @@
 	}
 
 	function loadFile() {
-		fileInput.click();
+		fileInput?.click();
 	}
 
 	function handleFileSelect(event: Event) {
@@ -262,8 +262,8 @@
 
 <div class="import">
 	<Tabs>
-		<TabsItem img="img/import.svg" label={jsonLabel} active={activeTab === 'json'} onClick={() => handleTabChange('json')} />
-		<TabsItem img="img/photo.svg" label={qrLabel} active={activeTab === 'qr'} onClick={() => handleTabChange('qr')} />
+		<TabsItem img="img/import.svg" label={jsonLabel} active={activeTab === 'json'} onClick={() => handleTabChange('json')} testId={`${testId}-json-tab`} />
+		<TabsItem img="img/photo.svg" label={qrLabel} active={activeTab === 'qr'} onClick={() => handleTabChange('qr')} testId={`${testId}-qr-tab`} />
 	</Tabs>
 
 	{#if activeTab === 'json'}

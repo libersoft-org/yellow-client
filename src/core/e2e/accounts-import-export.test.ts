@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
+import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
 
 /**
  * Helper function to navigate to account management
@@ -38,7 +39,7 @@ async function openExportModal(page: Page): Promise<void> {
  */
 async function switchToQRImportTab(page: Page): Promise<void> {
 	return await test.step('Switch to QR Code import tab', async () => {
-		await page.getByTestId('import-qr-tab').click();
+		await page.getByTestId('accounts-qr-tab').click();
 	});
 }
 
@@ -59,7 +60,7 @@ async function switchToQRExportTab(page: Page): Promise<void> {
  */
 async function fillImportData(page: Page, jsonData: string): Promise<void> {
 	return await test.step('Fill import data', async () => {
-		await page.getByTestId('import-textarea').fill(jsonData);
+		await page.getByTestId('accounts-textarea').fill(jsonData);
 	});
 }
 
@@ -69,7 +70,7 @@ async function fillImportData(page: Page, jsonData: string): Promise<void> {
  */
 async function clickAddAccounts(page: Page): Promise<void> {
 	return await test.step('Click Add accounts button', async () => {
-		await page.getByTestId('add-accounts-btn').click();
+		await page.getByTestId('accounts-add-btn').click();
 	});
 }
 
@@ -79,7 +80,7 @@ async function clickAddAccounts(page: Page): Promise<void> {
  */
 async function clickReplaceAll(page: Page): Promise<void> {
 	return await test.step('Click Replace All button', async () => {
-		await page.getByTestId('replace-all-btn').click();
+		await page.getByTestId('accounts-replace-btn').click();
 	});
 }
 
@@ -232,6 +233,9 @@ const complexAccountConfig = [
 
 test.describe('Accounts Import/Export Functionality', () => {
 	test.beforeEach(async ({ page }) => {
+		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
+		enableConsoleLogging(page);
+
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
 		const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 

@@ -31,6 +31,7 @@
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
 	import { initZoom } from '@/core/zoom.ts';
+	import { log } from '@/core/tauri.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
@@ -77,14 +78,17 @@
 		// Catch all synchronous errors
 		window.addEventListener('error', event => {
 			// event.error is the Error object
-			console.error('Uncaught error:', event.error);
-			console.error('Stack trace:\n', event.error?.stack);
+			console.warn('UNCAUGHT ERROR:', event);
+			console.error(JSON.stringify(event, null, 2));
+			log.warn('UNCAUGHT ERROR:', event);
 		});
 
 		// Catch unhandled promise rejections
 		window.addEventListener('unhandledrejection', event => {
+			console.warn('UNHANDLED PROMISE REJECTION:', event);
+			log.warn('UNHANDLED PROMISE REJECTION:', event);
 			const reason = event.reason;
-			console.error('Unhandled promise rejection:', reason);
+			console.error('UNHANDLED PROMISE REJECTION:', reason);
 			console.error('Stack trace:\n', reason?.stack || reason);
 		});
 
