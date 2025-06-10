@@ -443,7 +443,6 @@ test.describe('Accounts Import Functionality', () => {
 		const invalidJson = '{ broken json';
 		await fillImportData(page, invalidJson);
 		await clickReplaceAll(page);
-		await confirmReplaceDialog(page);
 
 		await expectErrorMessage(page, 'Invalid JSON format');
 	});
@@ -468,7 +467,6 @@ test.describe('Accounts Import Functionality', () => {
 		const invalidJson = JSON.stringify(invalidAccounts);
 		await fillImportData(page, invalidJson);
 		await clickReplaceAll(page);
-		await confirmReplaceDialog(page);
 
 		await expectErrorMessage(page, 'Account must have enabled field (boolean)');
 	});

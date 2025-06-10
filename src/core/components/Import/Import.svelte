@@ -12,6 +12,7 @@
 		onValidate: (text: string) => { valid: boolean; error?: string };
 		onAdd: (text: string) => Promise<void>;
 		onReplace?: (text: string) => Promise<void>;
+		onSuccess?: (message: string) => void;
 		testId: string;
 		jsonLabel?: string;
 		qrLabel?: string;
@@ -22,7 +23,7 @@
 		qrInstructions?: string;
 	}
 
-	let { close, onValidate, onAdd, onReplace, testId, jsonLabel = 'JSON', qrLabel = 'QR Code', addButtonText = 'Add', replaceButtonText = 'Replace All', fileAccept = '.json,application/json', browseButtonText = 'Browse for file', qrInstructions = 'Point your camera at a QR code' }: Props = $props();
+	let { close, onValidate, onAdd, onReplace, onSuccess, testId, jsonLabel = 'JSON', qrLabel = 'QR Code', addButtonText = 'Add', replaceButtonText = 'Replace All', fileAccept = '.json,application/json', browseButtonText = 'Browse for file', qrInstructions = 'Point your camera at a QR code' }: Props = $props();
 
 	let activeTab = $state('json');
 	let text = $state('');
@@ -77,7 +78,11 @@
 		try {
 			await onAdd(currentText);
 		} catch (err) {
-			handleError(err instanceof Error ? err.message : 'Unknown error');
+			if (err instanceof Error && err.name === 'ImportSuccessWithWarnings' && onSuccess) {
+				onSuccess(err.message);
+			} else {
+				handleError(err instanceof Error ? err.message : 'Unknown error');
+			}
 		}
 	}
 
@@ -92,7 +97,11 @@
 		try {
 			await onReplace(currentText);
 		} catch (err) {
-			handleError(err instanceof Error ? err.message : 'Unknown error');
+			if (err instanceof Error && err.name === 'ImportSuccessWithWarnings' && onSuccess) {
+				onSuccess(err.message);
+			} else {
+				handleError(err instanceof Error ? err.message : 'Unknown error');
+			}
 		}
 	}
 

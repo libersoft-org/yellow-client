@@ -3,9 +3,12 @@
 	import { log } from '@/core/tauri.ts';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/core.ts';
 	import { active_account_id } from '@/core/stores.ts';
 	import { validateAccountsArray, validateAccountConfig } from '@/core/accounts_config.ts';
+	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
 
 	interface Props {
 		close: () => void;
@@ -21,6 +24,7 @@
 	let skippedCount = $state(0);
 	let invalidAccounts: string[] = $state([]);
 	let pendingReplaceText = $state('');
+	let successMessage = $state('');
 
 	const hasExistingAccounts = $derived(get(accounts_config).length > 0);
 
@@ -71,6 +75,10 @@
 		return { valid: true };
 	}
 
+	function handleSuccess(message: string) {
+		successMessage = message;
+	}
+
 	async function handleAdd(text: string): Promise<void> {
 		const newConfig = JSON.parse(text);
 		remainingAccounts = [...newConfig];
@@ -87,9 +95,9 @@
 
 	async function handleReplace(text: string): Promise<void> {
 		const currentConfig = get(accounts_config);
+		pendingReplaceText = text;
 
 		if (currentConfig.length > 0) {
-			pendingReplaceText = text;
 			replaceDialog?.open();
 		} else {
 			await confirmReplaceWithText(text);
@@ -100,13 +108,14 @@
 		if (remainingAccounts.length === 0) {
 			// Finished processing all accounts
 			if (processedCount > 0) {
-				let message = `Successfully imported ${processedCount} account${processedCount > 1 ? 's' : ''}`;
 				if (skippedCount > 0) {
+					let message = `Successfully imported ${processedCount} account${processedCount > 1 ? 's' : ''}`;
 					message += `\n\nSkipped ${skippedCount} invalid account${skippedCount > 1 ? 's' : ''}:`;
 					invalidAccounts.forEach(error => {
 						message += '\n• ' + error;
 					});
-					throw new Error(message);
+					// This is a success with warnings, not an error
+					throw new ImportSuccessWithWarnings(message);
 				} else {
 					close();
 				}
@@ -198,13 +207,27 @@
 
 	async function confirmReplace() {
 		if (pendingReplaceText) {
-			await confirmReplaceWithText(pendingReplaceText);
-			pendingReplaceText = '';
+			try {
+				await confirmReplaceWithText(pendingReplaceText);
+				pendingReplaceText = '';
+				replaceDialog?.close();
+			} catch (err) {
+				// Show error and keep dialog open so user can see the error
+				replaceDialog?.close();
+				throw err;
+			}
+		} else {
+			replaceDialog?.close();
 		}
-		replaceDialog?.close();
 	}
 
 	async function confirmReplaceWithText(text: string) {
+		// Validate first before replacing
+		const validation = validateImport(text);
+		if (!validation.valid) {
+			throw new Error(validation.error || 'Invalid data');
+		}
+
 		const newConfig = JSON.parse(text);
 		accounts_config.set(newConfig);
 		maybeActivateAccount();
@@ -212,7 +235,16 @@
 	}
 </script>
 
-<Import {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Browse for JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+{#if successMessage}
+	<div style="display: flex; flex-direction: column; gap: 20px;">
+		<Alert type="info" message={successMessage} />
+		<div style="display: flex; justify-content: center;">
+			<Button text="Close" onClick={close} />
+		</div>
+	</div>
+{:else}
+	<Import {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Browse for JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+{/if}
 
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />
 <Dialog data={conflictDialogData} bind:this={conflictDialog} />
