@@ -6,7 +6,7 @@
 	import { init, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, setModule, module_decls, debug, product } from '../core/core.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
 	import { mobileWidth, mobileClass, isMobile } from '@/core/stores.ts';
-	import { selected_theme_index } from '@/core/themes.js';
+	import { selected_theme_index } from '@/core/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
 	import ModuleBar from '@/core/components/ModuleBar/ModuleBar.svelte';

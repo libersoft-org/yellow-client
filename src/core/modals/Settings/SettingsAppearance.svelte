@@ -3,7 +3,7 @@
 	import { TAURI } from '@/core/tauri.ts';
 	import { zoom } from '@/core/settings.ts';
 	import { setZoom } from '@/core/zoom.ts';
-	import { selected_theme_index, current_theme, themes_stored, default_theme } from '@/core/themes.js';
+	import { selected_theme_index, current_theme, themes, user_themes, default_themes, type Theme } from '@/core/themes.ts';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Range from '@/core/components/Range/Range.svelte';
@@ -18,25 +18,19 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	$effect(() => {
-		$themes_stored;
-		$current_theme.properties;
-		$selected_theme_index;
-	});
-
 	function create_new_theme() {
-		let new_theme = JSON.parse(JSON.stringify(default_theme));
+		let new_theme = JSON.parse(JSON.stringify(default_themes[0]))[0];
 		new_theme.name = 'New Theme';
-		themes_stored.update(arr => [...arr, new_theme]);
-		$selected_theme_index = $themes_stored.length - 1;
+		user_themes.update(arr => [...arr, new_theme]);
+		$selected_theme_index = $themes.length - 1;
 		setSettingsSection('edit-theme');
 	}
 
 	function delete_current_theme() {
-		if ($themes_stored.length > 1 && $selected_theme_index > 0) {
-			let current_index = $selected_theme_index;
+		if ($user_themes.length > 1 && $selected_theme_index >= default_themes.length) {
+			let current_index = $selected_theme_index - default_themes.length;
 			$selected_theme_index = 0;
-			themes_stored.update(arr => arr.filter(theme => $themes_stored.indexOf(theme) !== current_index));
+			user_themes.update(arr => arr.filter(theme => $user_themes.indexOf(theme) !== current_index));
 		}
 	}
 </script>
@@ -72,7 +66,7 @@
 			{/if}
 			<Td title="Theme">
 				<Select data-testid="theme switch" bind:value={$selected_theme_index}>
-					{#each $themes_stored as theme, index (theme.name + index)}
+					{#each $themes as theme, index (theme.name + index)}
 						<Option text={theme.name} value={index} />
 					{/each}
 				</Select>

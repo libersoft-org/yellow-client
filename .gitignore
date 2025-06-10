@@ -33,3 +33,4 @@ project.inlang/cache
 .env.sentry-build-plugin
 .claude
 .dev_intention
+client

@@ -7,6 +7,7 @@
 - Test (all): `bun test` or `vitest`
 - Test (single): `vitest src/path/to/file.test.js`
 - Format: `prettier --config prettier-libersoft.json --plugin prettier-plugin-svelte --write "src/**/*.{js,ts,css,html,svelte}"`
+- E2E Tests: `npx playwright test`
 
 ## Code Style
 

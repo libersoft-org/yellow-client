@@ -5,6 +5,7 @@
 	import { log } from '@/core/tauri.ts';
 	import { setContext } from 'svelte';
 	interface Props {
+		testId?: string;
 		settingsObject?: any;
 		show?: boolean;
 	}
@@ -30,7 +31,7 @@
 		onClick?: (e: Event) => void;
 	};
 	*/
-	let { settingsObject, show = $bindable(false) }: Props = $props();
+	let { testId = '', settingsObject, show = $bindable(false) }: Props = $props();
 	let activeName = $state(settingsObject.name);
 	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
 	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
@@ -94,7 +95,7 @@
 	}
 </style>
 
-<Modal title={settingsObject.title} bind:show width="600px" optionalIcon={backIcon}>
+<Modal {testId} title={settingsObject.title} bind:show width="600px" optionalIcon={backIcon}>
 	<div class="settings">
 		{#if activeName !== settingsObject.name}
 			<Breadcrumb items={breadcrumb} />

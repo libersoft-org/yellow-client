@@ -2,6 +2,12 @@ import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
+const base = process.env.NODE_ENV === 'production' ? (process.env.TAURI ? '' : process.env.VITE_CLIENT_PATH_BASE === undefined ? '' : process.env.VITE_CLIENT_PATH_BASE) : '';
+console.log('process.env.VITE_CLIENT_PATH_BASE:', process.env.VITE_CLIENT_PATH_BASE);
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
+console.log('process.env.TAURI:', process.env.TAURI);
+console.log('Base path:', base);
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	vitePlugin: {
@@ -11,7 +17,7 @@ const config = {
 	},
 	kit: {
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? (process.env.TAURI ? '' : process.env.CLIENT_PATH_BASE === undefined ? '' : process.env.CLIENT_PATH_BASE) : '',
+			base,
 			relative: false,
 		},
 		adapter: adapter({

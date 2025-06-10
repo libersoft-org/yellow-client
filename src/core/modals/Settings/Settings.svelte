@@ -6,9 +6,10 @@
 	import SettingsNotifications from '@/core/modals/Settings/SettingsNotifications.svelte';
 	import SettingsAppearanceTheme from './SettingsAppearanceTheme.svelte';
 	interface Props {
+		testId?: string;
 		show?: boolean;
 	}
-	let { show = $bindable(false) }: Props = $props();
+	let { testId = '', show = $bindable(false) }: Props = $props();
 	let settingsObject = {
 		title: 'Settings',
 		name: 'settings',
@@ -66,4 +67,4 @@
 	};
 </script>
 
-<BaseSettings {settingsObject} bind:show />
+<BaseSettings {testId} {settingsObject} bind:show />

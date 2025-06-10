@@ -264,8 +264,7 @@ async function navigateToSettingsSection(page: Page, section: 'General' | 'Notif
 
 async function goToRootSettingsSection(page: Page): Promise<void> {
 	return await test.step('Navigate back to root settings', async () => {
-		const breadcrumbHome = page.locator('.breadcrumbs button', { hasText: 'Settings' });
-		await breadcrumbHome.click();
+		await page.getByTestId('breadcrumb-settings').click();
 	});
 }
 

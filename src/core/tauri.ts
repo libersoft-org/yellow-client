@@ -30,6 +30,14 @@ export const log = {
 		console.log(...args);
 		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args) });
 	},
+	info: (...args: any[]) => {
+		console.info(...args);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'info' });
+	},
+	warn: (...args: any[]) => {
+		console.warn(...args);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'warn' });
+	},
 	error: (...args: any[]) => {
 		console.error(...args);
 		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'error' });

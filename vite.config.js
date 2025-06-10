@@ -1,5 +1,6 @@
 import pluginChecker from 'vite-plugin-checker';
 import { sveltekit } from '@sveltejs/kit/vite';
+import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
@@ -60,6 +61,7 @@ export default defineConfig(({ mode }) => {
 						}),
 					]
 				: []),
+			devtoolsJson(),
 			sveltekit(),
 			paraglideVitePlugin({
 				project: './project.inlang',

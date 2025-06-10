@@ -28,7 +28,6 @@
     "@inlang/paraglide-js": "^2.0.0",
     "@neodrag/svelte": "^2.3.2",
     "@sentry/sveltekit": "^9",
-    "@sveltejs/vite-plugin-svelte-inspector": "^4.0.1",
     "@tauri-apps/api": "^2.3.0",
     "@tauri-apps/plugin-autostart": "^2.3.0",
     "@tauri-apps/plugin-dialog": "^2.2.1",
@@ -84,6 +83,7 @@
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.19.2",
     "@sveltejs/vite-plugin-svelte": "4.0.0",
+    "@sveltejs/vite-plugin-svelte-inspector": "^3.0.1",
     "@types/bun": "latest",
     "@types/debug": "^4.1.12",
     "@types/lodash": "^4.17.16",
@@ -104,6 +104,7 @@
     "typescript": "^5.7.3",
     "vite": "^5.4.14",
     "vite-plugin-checker": "^0.8.0",
+    "vite-plugin-devtools-json": "^0.2.0",
     "vitest": "3.1.4"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"

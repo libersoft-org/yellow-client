@@ -186,5 +186,5 @@
 		</div>
 	</div>
 </div>
-<Settings bind:show={showModalSettings} />
+<Settings testId="global-settings" bind:show={showModalSettings} />
 <DialogExit bind:this={elDialogExit} />
