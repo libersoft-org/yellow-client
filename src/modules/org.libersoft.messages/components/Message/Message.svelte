@@ -1,13 +1,10 @@
 <script>
 	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../../messages.js';
-	import { get } from 'svelte/store';
-	import { debug } from '@/core/core.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { isClientFocused } from '@/core/core.ts';
+	import { isClientFocused, debug } from '@/core/stores.ts';
 	import { stripHtml } from '../../utils/htmlUtils.ts';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
-
 	// import Image from './image.svelte';
 	// import Audio from './audio.svelte';
 	// import Video from './video.svelte';
@@ -19,10 +16,8 @@
 	import { forwardMessageStore } from '../../stores/ForwardMessageStore.ts';
 	import MessageReaction from '../MessageReaction/MessageReaction.svelte';
 	import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
-
 	export let message;
 	export let elContainer;
-
 	export let enableScroll;
 	export let disableScroll;
 

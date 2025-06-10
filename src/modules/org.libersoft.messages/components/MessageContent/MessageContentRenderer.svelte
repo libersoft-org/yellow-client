@@ -1,7 +1,7 @@
 <script>
 	import { componentMap } from '../../message-content.ts';
 	import { onMount } from 'svelte';
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 
 	export let rootNode;
 

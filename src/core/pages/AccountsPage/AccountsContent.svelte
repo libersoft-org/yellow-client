@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { findAccount, accounts_config, hideSidebarMobile, setCorePage } from '@/core/core.ts';
+	import { findAccount, accounts_config, setCorePage } from '@/core/core.ts';
+	import { hideSidebarMobile } from '@/core/stores.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';

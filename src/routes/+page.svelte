@@ -3,7 +3,9 @@
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import { init, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, setModule, module_decls, debug, product } from '../core/core.ts';
+	import { init, active_account, accounts_config, setModule } from '../core/core.ts';
+	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug } from '@/core/stores.ts';
+	import { documentHeight, keyboardHeight } from '@/core/stores.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
 	import { mobileWidth, mobileClass, isMobile } from '@/core/stores.ts';
 	import { selected_theme_index } from '@/core/themes.ts';

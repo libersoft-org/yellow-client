@@ -2,7 +2,8 @@
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading } from '../../messages.js';
-	import { getGuid, debug } from '@/core/core.ts';
+	import { getGuid } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';

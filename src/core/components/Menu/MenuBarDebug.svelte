@@ -1,5 +1,5 @@
 <script>
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import { log } from '@/core/tauri.ts';
 	import { addNotification } from '@/core/notifications.ts';
 	import Modal from '@/core/components/Modal/Modal.svelte';

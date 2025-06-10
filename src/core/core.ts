@@ -2,9 +2,6 @@
 import { derived, get, type Readable } from 'svelte/store';
 import { selected_module_id, selected_corepage_id } from './stores.ts';
 
-// Import all stores
-export * from './stores.ts';
-
 // Import account functionality
 import { accounts_init, accounts, active_account_store, active_account, selectAccount, active_account_module_data, findAccount } from './accounts.ts';
 export { accounts, active_account_store, active_account, selectAccount, active_account_module_data, findAccount };

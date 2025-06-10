@@ -3,7 +3,8 @@
 	import { log } from '@/core/tauri.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
-	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account_id, active_account } from '@/core/core.ts';
+	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/core.ts';
+	import { active_account_id } from '@/core/stores.ts';
 	import { validateAccountsArray, validateAccountConfig } from '@/core/accounts_config.ts';
 
 	interface Props {

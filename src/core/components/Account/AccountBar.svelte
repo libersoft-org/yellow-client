@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
-	import { debug, active_account, accounts, selectAccount, hideSidebarMobile, setCorePage } from '@/core/core.ts';
+	import { active_account, accounts, selectAccount, setCorePage } from '@/core/core.ts';
+	import { hideSidebarMobile, debug } from '@/core/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ItemAccount from '@/core/components/Account/AccountBarItemAccount.svelte';

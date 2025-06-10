@@ -1,8 +1,8 @@
 <script>
-	import { debug, active_account, isMobile } from '@/core/core.ts';
-	import { getContext, onMount } from 'svelte';
+	import { active_account } from '@/core/core.ts';
+	import { isMobile, debug } from '@/core/stores.ts';
+	import { getContext } from 'svelte';
 	import { get } from 'svelte/store';
-	import { identifier } from '../../messages.js';
 	import Emoji from './Emoji.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';

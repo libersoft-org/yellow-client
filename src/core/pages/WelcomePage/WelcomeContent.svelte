@@ -1,5 +1,5 @@
 <script>
-	import { hideSidebarMobile, product, link } from '@/core/core.ts';
+	import { hideSidebarMobile, product, link } from '@/core/stores.ts';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

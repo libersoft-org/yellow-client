@@ -1,5 +1,5 @@
 <script>
-	import { hideSidebarMobile } from '@/core/core.ts';
+	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { addressBook, setSection, setSendAddress } from '../wallet.ts';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';

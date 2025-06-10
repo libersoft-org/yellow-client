@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import { hideSidebarMobile, setModule } from '@/core/core.ts';
+	import { setModule } from '@/core/core.ts';
+	import { hideSidebarMobile } from '@/core/stores.ts';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Content from '@/core/components/Content/Content.svelte';

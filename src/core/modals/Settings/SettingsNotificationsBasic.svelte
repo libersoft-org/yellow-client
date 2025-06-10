@@ -13,7 +13,7 @@
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { writable, get, type Unsubscriber } from 'svelte/store';
 	import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import { log, BROWSER } from '@/core/tauri.ts';
 	import { deleteExampleNotifications, setNotificationsEnabled } from '@/core/notifications.ts';
 	import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, notificationsSoundEnabled, notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '@/core/notifications_settings.ts';

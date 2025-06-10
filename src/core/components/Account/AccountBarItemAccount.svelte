@@ -1,5 +1,5 @@
 <script>
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import AccountBarButton from '@/core/components/Account/AccountBarButton.svelte';
 	import AccountStatusIcon from '@/core/components/Account/AccountStatusIcon.svelte';
 	import AccountTitle from '@/core/components/Account/AccountTitle.svelte';

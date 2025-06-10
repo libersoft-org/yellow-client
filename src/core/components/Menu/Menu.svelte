@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { product, link } from '@/core/core.ts';
+	import { product, link } from '@/core/stores.ts';
 	import { BROWSER } from '@/core/tauri.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import MenuItem from '@/core/components/Menu/MenuItem.svelte';

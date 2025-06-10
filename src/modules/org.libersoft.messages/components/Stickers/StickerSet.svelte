@@ -1,6 +1,6 @@
 <script>
 	import { add_stickerset_to_favorites, remove_stickerset_from_favorites, stickerset_in_favorites, stickerset_favorites } from '../../stickers.js';
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import StickerSetPart from './StickerSetPart.svelte';

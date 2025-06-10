@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { product } from '@/core/core.ts';
+	import { product } from '@/core/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import MenuBarDebug from '@/core/components/Menu/MenuBarDebug.svelte';
 

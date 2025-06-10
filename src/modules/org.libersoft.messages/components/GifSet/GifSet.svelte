@@ -3,9 +3,8 @@
 	import { onMount, getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { isMobile } from '@/core/core.ts';
+	import { isMobile } from '@/core/stores.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { gif_server } from '../../gifs.js';
 	import LazyLoader from './GifSetLazyLoader.svelte';
