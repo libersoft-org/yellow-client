@@ -27,7 +27,7 @@
 </style>
 
 <div class="bar">
-	<Icon img="img/menu.svg" alt="☰" colorVariable="--primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} />
+	<Icon img="img/menu.svg" alt="☰" colorVariable="--primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} data-testid="menu-button" />
 	<div class="product">{product}</div>
 	<MenuBarDebug />
 </div>

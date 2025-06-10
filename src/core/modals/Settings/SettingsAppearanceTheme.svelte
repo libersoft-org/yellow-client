@@ -103,14 +103,18 @@
 	<Tbody>
 		<TbodyTr>
 			<Td title="Name">
-				<Input type="text" bind:value={$theme.name} enabled={!is_builtin_theme} />
+				<Input type="text" bind:value={$theme.name} enabled={!is_builtin_theme} data-testid="theme-name-input" />
 			</Td>
 		</TbodyTr>
-		{#each theme_properties as theme_property_name}
+		{#each theme_properties as theme_property_name, index}
 			<TbodyTr>
 				<Td title={theme_property_name}>
-					<Input type="color" bind:value={$theme.properties[theme_property_name]} displayValue={convertFromShortHex($theme.properties[theme_property_name])} enabled={!is_builtin_theme} />
-					{$theme.properties[theme_property_name]}
+					{#if theme_property_name === '--background-image'}
+						<Input type="text" bind:value={$theme.properties[theme_property_name]} enabled={!is_builtin_theme} data-testid={`theme-text-${theme_property_name}`} />
+					{:else}
+						<Input type="color" bind:value={$theme.properties[theme_property_name]} displayValue={convertFromShortHex($theme.properties[theme_property_name])} enabled={!is_builtin_theme} data-testid={`theme-color-${theme_property_name}`} />
+						{$theme.properties[theme_property_name]}
+					{/if}
 				</Td>
 			</TbodyTr>
 		{/each}

@@ -8,7 +8,7 @@
 	import { documentHeight, keyboardHeight } from '@/core/stores.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
 	import { mobileWidth, mobileClass, isMobile } from '@/core/stores.ts';
-	import { selected_theme_index } from '@/core/themes.ts';
+	import { selected_theme_index, initBrowserThemeDetection } from '@/core/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
 	import ModuleBar from '@/core/components/ModuleBar/ModuleBar.svelte';
@@ -142,6 +142,7 @@
 		initBrowserNotifications();
 		initCustomNotifications();
 		initWindow();
+		initBrowserThemeDetection();
 
 		if ($sidebarSize) {
 			setSidebarSize($sidebarSize);

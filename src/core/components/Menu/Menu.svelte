@@ -8,12 +8,24 @@
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import DialogExit from '@/core/dialogs/Exit.svelte';
 	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
+	import { isDarkMode, toggleDarkMode } from '@/core/themes.ts';
 	interface Props {
 		showMenu: boolean;
 	}
 	let { showMenu = $bindable(false) }: Props = $props();
 	let showModalSettings = $state(false);
 	let elDialogExit: InstanceType<typeof DialogExit>;
+	let darkModeLocal = $state(false);
+
+	// Sync darkModeLocal with isDarkMode store
+	$effect(() => {
+		darkModeLocal = $isDarkMode;
+	});
+
+	// Update theme when darkModeLocal changes
+	$effect(() => {
+		toggleDarkMode(darkModeLocal);
+	});
 	const menuItems = [
 		{
 			title: 'Donate',
@@ -173,7 +185,7 @@
 	</div>
 	<div class="footer">
 		<div class="section">
-			<Switch showLabel label="Dark mode" checked={false} />
+			<Switch showLabel label="Dark mode" bind:checked={darkModeLocal} />
 		</div>
 		<div class="section">
 			<Clickable onClick={() => openPage(link)}>

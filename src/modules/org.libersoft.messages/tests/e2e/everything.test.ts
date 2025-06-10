@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
+import { setupConsoleLogging } from './_shared/console-logger.ts';
 
 /**
  * Helper function to switch to a module only if it's not already selected
@@ -368,6 +369,7 @@ async function toggleFirstAccountEnabled(page: Page): Promise<void> {
 }
 
 test('Click around in settings', async ({ page }) => {
+	setupConsoleLogging(page);
 	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
 	await openGlobalSettings(page);
 });

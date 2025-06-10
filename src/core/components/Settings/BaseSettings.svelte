@@ -102,7 +102,7 @@
 		{/if}
 		{#if currentNode.menu}
 			{#each currentNode.menu as item (item.name ?? item.title)}
-				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? () => setName(item.name) : item.onClick} />
+				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? () => setName(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
 			{/each}
 		{/if}
 		{#if currentNode.body}

@@ -12,7 +12,7 @@ console.log('Base path:', base);
 const config = {
 	vitePlugin: {
 		inspector: {
-			toggleKeyCombo: 'alt-s',
+			toggleKeyCombo: 'alt-x',
 		},
 	},
 	kit: {

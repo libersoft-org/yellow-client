@@ -1,6 +1,7 @@
-import { derived, get, type Readable, type Writable } from 'svelte/store';
+import { derived, get, type Readable, type Writable, writable } from 'svelte/store';
 import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 import { log } from '@/core/tauri.ts';
+import { followBrowserTheme } from '@/core/settings.ts';
 
 // Define the Theme interface
 export interface Theme {
@@ -67,16 +68,46 @@ export let themes: Readable<Theme[]> = derived(user_themes, ($custom_themes: The
 	return [...default_themes, ...$custom_themes];
 });
 
+// Browser preference detection
+export const browserPrefersDark = writable(false);
+
 // Define the current theme store
 export let current_theme: Readable<Theme> = derived([selected_theme_index, themes], ([$selected_theme_index, $themes]: [number, Theme[]]) => {
 	return $themes[$selected_theme_index];
 });
 
+// Initialize browser theme preference detection
+export function initBrowserThemeDetection() {
+	if (typeof window !== 'undefined') {
+		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+		browserPrefersDark.set(mediaQuery.matches);
+
+		mediaQuery.addEventListener('change', e => {
+			browserPrefersDark.set(e.matches);
+		});
+
+		// Subscribe to browser preference changes
+		browserPrefersDark.subscribe(prefersDark => {
+			if (get(followBrowserTheme)) {
+				selected_theme_index.set(prefersDark ? 1 : 0);
+			}
+		});
+
+		// Subscribe to followBrowserTheme changes
+		followBrowserTheme.subscribe(follow => {
+			if (follow) {
+				selected_theme_index.set(get(browserPrefersDark) ? 1 : 0);
+			}
+		});
+	}
+}
+
 // Subscribe to selected_theme_index changes to validate the index
 selected_theme_index.subscribe((v: number) => {
-	log.debug('Selected theme index changed:', v);
+	console.log(`🎨 THEME INDEX CHANGED: ${v} (themes.length: ${get(themes).length})`);
+
 	if (v < 0 || v >= get(themes).length) {
-		log.debug('Selected theme index out of bounds:', v);
+		console.log(`🔴 THEME INDEX OUT OF BOUNDS: ${v}, resetting to 0`);
 		selected_theme_index.set(0); // Reset to default if out of bounds
 	}
 });
@@ -97,3 +128,17 @@ current_theme.subscribe((v: Theme) => {
 		}
 	});
 });
+
+// Dark mode functionality - only for built-in themes (Light = 0, Dark = 1)
+export const isDarkMode = derived(selected_theme_index, $selected_theme_index => $selected_theme_index === 1);
+
+export function toggleDarkMode(enabled: boolean): void {
+	// Only toggle between built-in themes (Light = 0, Dark = 1)
+	// Don't interfere with custom themes (index >= 2)
+	const currentIndex = get(selected_theme_index);
+	if (currentIndex >= 2) {
+		return;
+	}
+
+	selected_theme_index.set(enabled ? 1 : 0);
+}

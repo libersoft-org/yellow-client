@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, tick } from 'svelte';
 	import { TAURI } from '@/core/tauri.ts';
-	import { zoom } from '@/core/settings.ts';
+	import { zoom, followBrowserTheme } from '@/core/settings.ts';
 	import { setZoom } from '@/core/zoom.ts';
 	import { selected_theme_index, current_theme, themes, user_themes, default_themes, type Theme } from '@/core/themes.ts';
 	import Select from '@/core/components/Select/Select.svelte';
@@ -14,23 +14,31 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
 	//import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	function create_new_theme() {
-		let new_theme = JSON.parse(JSON.stringify(default_themes[0]))[0];
-		new_theme.name = 'New Theme';
+		// Clone the current theme
+		let new_theme = JSON.parse(JSON.stringify($current_theme));
+		new_theme.name = $current_theme.name + ' Copy';
+
+		// Update user themes first
 		user_themes.update(arr => [...arr, new_theme]);
-		$selected_theme_index = $themes.length - 1;
-		setSettingsSection('edit-theme');
+
+		// Use tick() to wait for the derived store to update, then set the index
+		tick().then(() => {
+			$selected_theme_index = $themes.length - 1;
+			setSettingsSection('edit-theme');
+		});
 	}
 
 	function delete_current_theme() {
-		if ($user_themes.length > 1 && $selected_theme_index >= default_themes.length) {
+		if ($selected_theme_index >= default_themes.length) {
 			let current_index = $selected_theme_index - default_themes.length;
 			$selected_theme_index = 0;
-			user_themes.update(arr => arr.filter(theme => $user_themes.indexOf(theme) !== current_index));
+			user_themes.update(arr => arr.filter((_, index) => index !== current_index));
 		}
 	}
 </script>
@@ -51,6 +59,7 @@
 			{#if TAURI}
 				<Th>Zoom:</Th>
 			{/if}
+			<Th>Browser Preference:</Th>
 			<Th>Theme:</Th>
 		</TheadTr>
 	</Thead>
@@ -64,19 +73,20 @@
 					</div>
 				</Td>
 			{/if}
+			<Td title="Follow browser theme preference">
+				<Switch showLabel label="Follow browser theme" bind:checked={$followBrowserTheme} data-testid="follow-browser-theme-switch" />
+			</Td>
 			<Td title="Theme">
-				<Select data-testid="theme switch" bind:value={$selected_theme_index}>
+				<Select data-testid="theme switch" bind:value={$selected_theme_index} disabled={$followBrowserTheme}>
 					{#each $themes as theme, index (theme.name + index)}
 						<Option text={theme.name} value={index} />
 					{/each}
 				</Select>
-				{#if $selected_theme_index > 0}
-					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => setSettingsSection('edit-theme')} />
+				{#if $selected_theme_index > 1}
+					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => setSettingsSection('edit-theme')} data-testid="theme-edit-button" />
+					<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={delete_current_theme} data-testid="theme-delete-button" />
 				{/if}
-				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => create_new_theme()} />
-				{#if $selected_theme_index > 0}
-					<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={delete_current_theme} />
-				{/if}
+				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => create_new_theme()} data-testid="theme-add-button" />
 			</Td>
 		</TbodyTr>
 	</Tbody>

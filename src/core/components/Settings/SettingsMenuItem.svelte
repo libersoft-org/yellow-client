@@ -5,8 +5,9 @@
 		img?: string;
 		title?: string;
 		onClick?: (e: Event) => void;
+		testId?: string;
 	}
-	let { img, title, onClick }: Props = $props();
+	let { img, title, onClick, testId }: Props = $props();
 </script>
 
 <style>
@@ -29,7 +30,7 @@
 </style>
 
 <Clickable {onClick}>
-	<div class="item">
+	<div class="item" data-testid={testId}>
 		{#if img}
 			<Icon {img} alt={title} colorVariable="--primary-foreground" size="24px" padding="0px" />
 		{/if}
