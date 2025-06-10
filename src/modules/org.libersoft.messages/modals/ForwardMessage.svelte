@@ -17,13 +17,16 @@
 
 	// TODO: this is simple search, in future we want to at least debounce it or make backend solution for filtering
 	let conversations: Conversation[] = $derived.by(() => {
-		const conversations = get(conversationsArray) || [];
+		const allConversations = get(conversationsArray) || [];
+		const searchTerm = search.trim();
 
-		if (!search) {
-			return conversations;
+		if (!searchTerm) {
+			return allConversations;
 		}
 
-		return conversations.filter((conversation: Conversation) => conversation?.address?.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
+		return allConversations.filter((conversation: Conversation) => {
+			return conversation?.address?.toLowerCase()?.includes(searchTerm.toLowerCase());
+		});
 	});
 
 	const onSend = (conversation: Conversation) => {
@@ -133,7 +136,7 @@
 	</div>
 	<div class="conversations" data-testid="forward-message-conversations">
 		{#if conversations && conversations.length}
-			{#each conversations as conversation (conversation.id)}
+			{#each conversations as conversation (conversation.address)}
 				{@render conversationItem(conversation)}
 			{/each}
 		{:else}

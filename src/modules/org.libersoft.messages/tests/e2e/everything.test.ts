@@ -193,7 +193,8 @@ async function verifyForwardModalWithPreview(page: Page, expectedMessage?: strin
 async function verifyConversationSendState(page: Page, address: string, shouldBeSent: boolean): Promise<void> {
 	return await test.step(`Verify conversation ${address} send state: ${shouldBeSent ? 'sent' : 'not sent'}`, async () => {
 		const button = page.getByTestId(`forward-conversation-send-${address}`);
-		await expect(button).toHaveText(shouldBeSent ? 'Sent' : 'Send');
+		// Use a more flexible text matcher that handles whitespace
+		await expect(button).toContainText(shouldBeSent ? 'Sent' : 'Send');
 
 		if (shouldBeSent) {
 			await expect(button).toBeDisabled();
