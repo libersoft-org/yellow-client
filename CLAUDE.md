@@ -33,5 +33,6 @@
 ## Testing
 
 - When creating playwright tests, use data-testid attributes. Modify the tested components to render them if necessary.
+- Please, use data-testid attributes
 
 This file is meant for Claude and other AI assistants to understand project conventions.

@@ -7,8 +7,9 @@
 		active?: boolean;
 		colorVariable?: string;
 		onClick?: (e: Event) => void;
+		testId?: string;
 	}
-	let { img, label, active, colorVariable = '--secondary-foreground', onClick }: Props = $props();
+	let { img, label, active, colorVariable = '--secondary-foreground', onClick, testId }: Props = $props();
 </script>
 
 <style>
@@ -30,7 +31,7 @@
 	}
 </style>
 
-<Clickable {onClick}>
+<Clickable {onClick} data-testid={testId}>
 	<div class="item {active && 'active'}">
 		{#if img}
 			<Icon {img} alt={label ? label : ''} {colorVariable} size="20px" padding="0px" />
