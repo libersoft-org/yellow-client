@@ -223,12 +223,8 @@
 		// });
 	}
 
-	function onSelectModule(id) {
-		//console.log('onSelectModule: ' + id);
-		setModule(id);
-		//console.log('selected_module_id: ' + $selected_module_id);
-		//console.log('active_account: ', $active_account);
-		//console.log('accounts_config: ', $accounts_config);
+	function updateLastModuleId(id) {
+		//console.log('updateLastModuleId: ' + id);
 		if (!$active_account) return;
 		accounts_config.update(accounts => {
 			accounts.forEach(account => {
@@ -241,8 +237,15 @@
 		});
 	}
 
+	function onSelectModule(id) {
+		//console.log('onSelectModule: ' + id);
+		setModule(id);
+		updateLastModuleId(id);
+	}
+
 	function onCloseModule() {
 		setModule(null);
+		updateLastModuleId(null);
 	}
 
 	function startResizeSideBar() {
