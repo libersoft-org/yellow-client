@@ -22,8 +22,8 @@
 
 <div class="export">
 	<Tabs>
-		<TabsItem label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} />
-		<TabsItem label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} />
+		<TabsItem label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} testId="export-json-tab" />
+		<TabsItem label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} testId="export-qr-tab" />
 	</Tabs>
 	{#if activeTab === 'json'}
 		<AccountsExportJson bind:code={jsonEditorContents} />

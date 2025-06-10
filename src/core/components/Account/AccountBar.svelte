@@ -144,7 +144,7 @@
 			{#each $accounts as account (get(account).id)}
 				<ItemAccount {account} {clickSelectAccount} />
 			{/each}
-			<ItemBase img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
+			<ItemBase img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} testId="account-management-button" />
 		</div>
 	{/if}
 </div>

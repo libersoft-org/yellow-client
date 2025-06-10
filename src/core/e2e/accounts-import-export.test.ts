@@ -9,7 +9,7 @@ import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
 async function goToAccountManagement(page: Page): Promise<void> {
 	return await test.step('Go to account management', async () => {
 		await page.getByTestId('account-bar-toggle').click();
-		await page.getByRole('button', { name: 'Account management Account' }).click();
+		await page.getByTestId('account-management-button').click();
 	});
 }
 
@@ -19,7 +19,7 @@ async function goToAccountManagement(page: Page): Promise<void> {
  */
 async function openImportModal(page: Page): Promise<void> {
 	return await test.step('Open accounts import modal', async () => {
-		await page.getByRole('button', { name: 'Import' }).click();
+		await page.getByTestId('accounts-import-button').click();
 	});
 }
 
@@ -29,7 +29,7 @@ async function openImportModal(page: Page): Promise<void> {
  */
 async function openExportModal(page: Page): Promise<void> {
 	return await test.step('Open accounts export modal', async () => {
-		await page.getByRole('button', { name: 'Export' }).click();
+		await page.getByTestId('accounts-export-button').click();
 	});
 }
 
@@ -131,12 +131,12 @@ async function setupAccountInWizard(
 ): Promise<void> {
 	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
 		await page.getByTestId('wizard-next').click();
-		await page.getByRole('textbox', { name: 'Title:' }).click();
-		await page.getByRole('textbox', { name: 'Title:' }).fill(accountData.title || '');
-		await page.getByRole('textbox', { name: 'Server:' }).press('Shift+Home');
-		await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
-		await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
-		await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
+		await page.getByTestId('account-title-input').click();
+		await page.getByTestId('account-title-input').fill(accountData.title || '');
+		await page.getByTestId('account-server-input').press('Shift+Home');
+		await page.getByTestId('account-server-input').fill(accountData.server);
+		await page.getByTestId('account-address-input').fill(accountData.address);
+		await page.getByTestId('account-password-input').fill(accountData.password);
 		await page.getByTestId('add').click();
 		await page.getByRole('button', { name: 'Next' }).click();
 		await page.getByRole('button', { name: 'Next' }).click();
@@ -333,10 +333,10 @@ test.describe('Accounts Import/Export Functionality', () => {
 		test('Handle duplicate accounts during Add accounts', async ({ page }) => {
 			// First, add an account normally
 			await goToAccountManagement(page);
-			await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
-			await page.getByRole('textbox', { name: 'Server:' }).fill('ws://localhost:8084');
-			await page.getByRole('textbox', { name: 'Address:' }).fill('duplicate@example.com');
-			await page.getByRole('textbox', { name: 'Password:' }).fill('password');
+			await page.getByTestId('add-account-button').click();
+			await page.getByTestId('account-server-input').fill('ws://localhost:8084');
+			await page.getByTestId('account-address-input').fill('duplicate@example.com');
+			await page.getByTestId('account-password-input').fill('password');
 			await page.getByTestId('add').click();
 
 			// Now try to import the same account
@@ -374,10 +374,10 @@ test.describe('Accounts Import/Export Functionality', () => {
 		test('Handle duplicate accounts - skip option', async ({ page }) => {
 			// First, add an account normally
 			await goToAccountManagement(page);
-			await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
-			await page.getByRole('textbox', { name: 'Server:' }).fill('ws://localhost:8084');
-			await page.getByRole('textbox', { name: 'Address:' }).fill('skip@example.com');
-			await page.getByRole('textbox', { name: 'Password:' }).fill('password');
+			await page.getByTestId('add-account-button').click();
+			await page.getByTestId('account-server-input').fill('ws://localhost:8084');
+			await page.getByTestId('account-address-input').fill('skip@example.com');
+			await page.getByTestId('account-password-input').fill('password');
 			await page.getByTestId('add').click();
 
 			// Now try to import the same account

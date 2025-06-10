@@ -45,7 +45,7 @@ async function switchAccount(page: Page, address: string): Promise<void> {
 async function goToAccountManagement(page: Page): Promise<void> {
 	return await test.step('Go to account management', async () => {
 		await page.getByTestId('account-bar-toggle').click();
-		await page.getByRole('button', { name: 'Account management Account' }).click();
+		await page.getByTestId('account-management-button').click();
 	});
 }
 
@@ -64,13 +64,13 @@ async function addAccount(
 	}
 ): Promise<void> {
 	return await test.step(`Add new account: ${accountData.address}`, async () => {
-		await page.getByRole('button', { name: 'Add a new account Add a new' }).click();
+		await page.getByTestId('add-account-button').click();
 
 		// Clear and fill the fields
-		await page.getByRole('textbox', { name: 'Title:' }).fill(accountData.title || '');
-		await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
-		await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
-		await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
+		await page.getByTestId('account-title-input').fill(accountData.title || '');
+		await page.getByTestId('account-server-input').fill(accountData.server);
+		await page.getByTestId('account-address-input').fill(accountData.address);
+		await page.getByTestId('account-password-input').fill(accountData.password);
 		await page.getByTestId('add').click();
 	});
 }
@@ -247,7 +247,7 @@ async function configureMessagesSettings(
  */
 async function openGlobalSettings(page: Page): Promise<void> {
 	return await test.step('Open global settings', async () => {
-		await page.getByRole('button', { name: '☰' }).click();
+		await page.getByTestId('menu-button').click();
 		await page.getByTestId('menu-item-settings').click();
 	});
 }
@@ -259,7 +259,7 @@ async function openGlobalSettings(page: Page): Promise<void> {
  */
 async function navigateToSettingsSection(page: Page, section: 'General' | 'Notifications' | 'Appearance'): Promise<void> {
 	return await test.step(`Navigate to settings section: ${section}`, async () => {
-		await page.getByRole('button', { name: `${section} ${section}` }).click();
+		await page.getByTestId(`settings-${section.toLowerCase()}`).click();
 	});
 }
 
@@ -312,12 +312,12 @@ async function setupAccountInWizard(
 ): Promise<void> {
 	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
 		await page.getByTestId('wizard-next').click();
-		await page.getByRole('textbox', { name: 'Title:' }).click();
-		await page.getByRole('textbox', { name: 'Title:' }).fill(accountData.title || '');
-		await page.getByRole('textbox', { name: 'Server:' }).press('Shift+Home');
-		await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
-		await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
-		await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
+		await page.getByTestId('account-title-input').click();
+		await page.getByTestId('account-title-input').fill(accountData.title || '');
+		await page.getByTestId('account-server-input').press('Shift+Home');
+		await page.getByTestId('account-server-input').fill(accountData.server);
+		await page.getByTestId('account-address-input').fill(accountData.address);
+		await page.getByTestId('account-password-input').fill(accountData.password);
 		await page.getByTestId('add').click();
 		await page.screenshot({ path: '/tmp/setup_account_in_wizard.png' });
 		await page.getByRole('button', { name: 'Next' }).click();
@@ -351,7 +351,7 @@ async function exportAccounts(page: Page): Promise<any> {
  */
 async function deleteFirstAccount(page: Page): Promise<void> {
 	return await test.step('Delete first account', async () => {
-		await page.getByRole('button', { name: 'Delete' }).first().click();
+		await page.getByTestId('delete-account-button').first().click();
 		await page.locator('button').filter({ hasText: 'Delete' }).click();
 	});
 }
@@ -362,8 +362,8 @@ async function deleteFirstAccount(page: Page): Promise<void> {
  */
 async function toggleFirstAccountEnabled(page: Page): Promise<void> {
 	return await test.step('Toggle first account enabled state', async () => {
-		await page.getByRole('button', { name: 'Edit' }).first().click();
-		await page.getByRole('checkbox', { name: 'Enabled' }).click();
+		await page.getByTestId('edit-account-button').first().click();
+		await page.getByTestId('account-enabled-checkbox').click();
 		await page.getByRole('button', { name: 'Save' }).click();
 	});
 }

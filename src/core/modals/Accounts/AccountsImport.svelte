@@ -138,7 +138,7 @@
 		// Validate individual account before processing
 		const validation = validateAccountConfig(account);
 		if (!validation.valid) {
-			console.error('Invalid account skipped:', validation.errors);
+			console.debug('Invalid account skipped:', validation.errors);
 			skippedCount++;
 			const accountIdentifier = account?.credentials?.address || account?.address || `Account ${accountIndex}`;
 			invalidAccounts.push(`${accountIdentifier}: ${validation.errors.join(', ')}`);

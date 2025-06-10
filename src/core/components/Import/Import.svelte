@@ -122,7 +122,7 @@
 			}
 		} catch (err) {
 			error = 'Camera access denied or not available';
-			console.error('Camera error:', err);
+			console.debug('Camera error:', err);
 		}
 	}
 
@@ -154,7 +154,7 @@
 					return;
 				}
 			} catch (err) {
-				console.error('QR scanning error:', err);
+				console.debug('QR scanning error:', err);
 			}
 		}
 		if (scanning) requestAnimationFrame(scanFrame);

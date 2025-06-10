@@ -46,7 +46,7 @@ export function send(acc: Account, account: AccountStore | null, target: string,
 			req,
 			callback: (req: any, res: any) => {
 				if (res.error) {
-					console.error(res);
+					console.debug(res);
 				}
 				if (callback) callback(req, res);
 			},
@@ -66,7 +66,7 @@ export function send(acc: Account, account: AccountStore | null, target: string,
 	}
 
 	if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
-		console.error('Error while sending command: WebSocket is not open');
+		console.debug('Error while sending command: WebSocket is not open');
 		return;
 	}
 	const requestID = generateRequestID();
@@ -83,7 +83,7 @@ export function send(acc: Account, account: AccountStore | null, target: string,
 		req,
 		callback: (req: any, res: any) => {
 			if (res.error) {
-				console.error(res);
+				console.debug(res);
 			}
 			if (callback) callback(req, res);
 		},
@@ -117,7 +117,7 @@ export function handleSocketMessage(acc: Account, res: any) {
 		// Check for session-related errors
 		if (res.error === 994 || res.error === 998 || res.error === 996) {
 			// Error 994: Session expired, 998: Invalid user session ID, 996: User session is missing
-			console.error('Session error detected:', res.error, res.message);
+			console.debug('Session error detected:', res.error, res.message);
 			// Dispatch custom event for session error
 			acc.events?.dispatchEvent(
 				new CustomEvent('session_error', {
