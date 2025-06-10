@@ -137,17 +137,17 @@
 	.code-wrapper {
 		white-space: pre-wrap;
 		padding: 24px;
-		border: 1px solid #888;
+		border: 1px solid var(--secondary-foreground);
 		scrollbar-width: none;
-		background-color: #222;
-		color: #fff3eb;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 		max-width: 500px;
 		width: 100vw;
 		max-width: 700px;
 		width: auto;
 		outline: none;
 		font-size: clamp(12px, 1.4vw, 14px);
-		caret-color: white !important;
+		caret-color: var(--secondary-foreground) !important;
 		min-width: fit-content;
 
 		&::-webkit-scrollbar {
@@ -159,7 +159,7 @@
 		/* Make sure code inside our editor is editable */
 		.code-wrapper code {
 			cursor: text;
-			caret-color: white;
+			caret-color: var(--secondary-foreground);
 		}
 
 		code[class*='language-'],

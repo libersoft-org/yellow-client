@@ -7,9 +7,8 @@
 
 <style>
 	.photo {
-		border: 1px solid #000;
-		background-color: #fff;
-
+		border: 1px solid var(--default-foreground);
+		background-color: var(--default-background);
 		overflow: hidden;
 	}
 

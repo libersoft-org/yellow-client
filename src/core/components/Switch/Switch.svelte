@@ -65,7 +65,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: #ccc;
+		background-color: var(--disabled-background);
 		border-radius: 34px;
 		cursor: pointer;
 		pointer-events: none;
@@ -88,7 +88,7 @@
 		width: 26px;
 		left: 4px;
 		bottom: 4px;
-		background-color: white;
+		background-color: var(--primary-foreground);
 		border-radius: 50%;
 	}
 

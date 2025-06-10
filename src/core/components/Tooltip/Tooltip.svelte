@@ -40,10 +40,9 @@
 		width: max-content;
 		top: 0;
 		left: 0;
-
-		background-color: #000000d6;
+		background-color: var(--default-foreground);
 		border-radius: 6px;
-		color: white;
+		color: var(--default-background);
 		padding: 6px;
 		font-size: 12px;
 		line-height: 16px;

@@ -353,7 +353,6 @@
 		bottom: 0;
 		width: 5px;
 		cursor: ew-resize;
-		/*background-color: #008000b3;*/
 	}
 
 	.resizer.mobile {
