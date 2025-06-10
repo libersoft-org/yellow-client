@@ -139,7 +139,7 @@
 
 	.instructions {
 		text-align: center;
-		color: #666;
+		color: var(--default-foreground);
 	}
 
 	.account-import {

@@ -526,8 +526,9 @@
 	.unread {
 		display: flex;
 		justify-content: center;
-		background-color: #fffcf0;
-		border: 1px solid #dd9;
+		background-color: var(--primary-softer-background);
+		border: 1px solid var(--primary-background);
+		color: var(--primary-foreground);
 		padding: 10px 0;
 		box-shadow: var(--shadow);
 	}
@@ -535,8 +536,8 @@
 	.hole {
 		display: flex;
 		justify-content: center;
-		background-color: #f0f0f0;
-		border: 1px solid #999;
+		background-color: var(--primary-foreground);
+		border: 1px solid var(--disabled-foreground);
 		padding: 10px 0;
 		box-shadow: var(--shadow);
 		height: 30%;
@@ -547,15 +548,18 @@
 		z-index: 100;
 		display: flex;
 		flex-direction: column;
+		gap: 10px;
 		position: fixed;
 		top: 0;
 		left: 0;
+		padding: 10px;
 		max-width: calc(60%);
 		max-height: calc(100%);
 		overflow: auto;
-		border: 3px solid #888;
+		border: 2px solid var(--secondary-foreground);
 		border-radius: 10px;
-		background-color: rgba(255, 255, 255, 0.7);
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
 	.no-messages {
@@ -566,7 +570,7 @@
 
 	.no-messages .body {
 		background-color: var(--primary-background);
-		border: 1px solid #888;
+		border: 1px solid var(--primary-foreground);
 		border-radius: 20px;
 		padding: 20px;
 		box-shadow: var(--shadow);
