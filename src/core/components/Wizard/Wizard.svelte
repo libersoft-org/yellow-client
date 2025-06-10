@@ -66,7 +66,9 @@
 		width: 30px;
 		height: 30px;
 		border-radius: 50%;
-		background-color: #ccc;
+		border: 1px solid var(--secondary-harder-background);
+		background-color: var(--secondary-softer-background);
+		color: var(--secondary-foreground);
 		text-align: center;
 		line-height: 30px;
 		position: relative;
@@ -75,13 +77,13 @@
 	.progress-bar .step .circle.active {
 		border: 1px solid var(--primary-harder-background);
 		background-color: var(--primary-background);
-		color: #000;
+		color: var(--primary-foreground);
 	}
 
 	.progress-bar .step .line {
 		width: 50px;
 		height: 2px;
-		background-color: #ccc;
+		background-color: var(--secondary-softer-background);
 	}
 
 	.navigation {

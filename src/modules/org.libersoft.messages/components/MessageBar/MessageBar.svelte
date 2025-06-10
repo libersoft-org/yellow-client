@@ -289,7 +289,7 @@
 
 	.bottom-sheet {
 		border-radius: 10px;
-		border: 10px solid #000;
+		border: 10px solid var(--primary-foreground);
 	}
 </style>
 

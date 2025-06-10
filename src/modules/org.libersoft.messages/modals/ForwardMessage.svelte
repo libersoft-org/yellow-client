@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Input from '@/core/components/Input/Input.svelte';
+	import Photo from '@/core/components/Photo/Photo.svelte';
+	import { photoRadius } from '../messages.js';
 	import { conversationsArray, sendMessage } from '../messages';
 	import { get } from 'svelte/store';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -63,14 +65,6 @@
 		margin-bottom: 8px;
 	}
 
-	.conversation-avatar-placeholder {
-		flex: 0 0 auto;
-		width: 34px;
-		height: 34px;
-		border-radius: 50%;
-		background-color: #ccc;
-	}
-
 	.conversation-name {
 		flex: 1 1 100%;
 		text-overflow: ellipsis;
@@ -109,9 +103,7 @@
 {#snippet conversationItem(conversation: Conversation)}
 	{@const wasAlreadySent = $sentToConversations.some(c => c.id === conversation.id)}
 	<div class="conversation" data-testid="forward-conversation-item-{conversation.address}">
-		<div class="conversation-avatar">
-			<div class="conversation-avatar-placeholder"></div>
-		</div>
+		<Photo size="30px" radius={$photoRadius} />
 		<div class="conversation-name" data-testid="forward-conversation-name-{conversation.address}">
 			{conversation.address}
 		</div>

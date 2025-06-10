@@ -66,11 +66,8 @@
 
 	$effect(() => {
 		const opts = { capture: true };
-		if ($gallery.show) {
-			document.addEventListener('keydown', handleKeyboard, opts);
-		} else {
-			document.removeEventListener('keydown', handleKeyboard, opts);
-		}
+		if ($gallery.show) document.addEventListener('keydown', handleKeyboard, opts);
+		else document.removeEventListener('keydown', handleKeyboard, opts);
 	});
 
 	function onAnywhereClick(event) {
@@ -93,7 +90,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgb(0, 0, 0, 0.9);
+		background-color: var(--secondary-background);
 	}
 
 	.side-control {
@@ -101,7 +98,7 @@
 		top: 0;
 		width: 100px;
 		height: 100%;
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: var(--secondary-hard-background);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -135,7 +132,6 @@
 		z-index: 10000;
 		position: absolute;
 		padding: 10px;
-		background-color: var(--primary-foreground);
 	}
 
 	.image {
@@ -150,22 +146,23 @@
 		width: 100%;
 		text-align: center;
 		margin-top: 8px;
-		color: #ccc;
+		color: var(--secondary-foreground);
 	}
 
 	.image img {
 		max-width: 100%;
 		max-height: 85vh;
+		border-radius: 10px;
 	}
 </style>
 
 {#if $gallery.show}
 	<div class="gallery" onpointerdown={onAnywhereClick}>
 		<div class="top-left">
-			<Button img="img/download.svg" colorVariable="--secondary-foreground" onClick={download} />
+			<Button img="img/download.svg" colorVariable="--primary-foreground" onClick={download} />
 		</div>
 		<div class="top-right">
-			<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={close} />
+			<Button img="img/close.svg" colorVariable="--primary-foreground" onClick={close} />
 		</div>
 		{#key $currentFile.id}
 			{#if $currentFile}
@@ -184,10 +181,10 @@
 			{/if}
 		{/key}
 		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
-			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--primary-foreground" size="80px" onClick={previous} />
+			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--secondary-foreground" size="80px" onClick={previous} />
 		</div>
 		<div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
-			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--primary-foreground" size="80px" onClick={next} />
+			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--secondary-foreground" size="80px" onClick={next} />
 		</div>
 	</div>
 {/if}

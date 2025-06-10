@@ -29,7 +29,7 @@
 		box-sizing: border-box;
 
 		:global(&.table-wide) {
-			border: 1px solid #222 !important;
+			border: 1px solid var(--secondary-background) !important;
 			border-radius: 8px;
 		}
 	}

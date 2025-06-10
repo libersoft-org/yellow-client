@@ -88,7 +88,7 @@
 	.section {
 		display: flex;
 		justify-content: center;
-		border: 1px solid #000;
+		border: 1px solid var(--secondary-background);
 		border-radius: 10px;
 		width: 100%;
 

@@ -70,10 +70,10 @@
 	.side-button {
 		display: flex;
 		align-self: stretch;
-		background: #fff19c;
+		background-color: var(--primary-softer-background);
 		border-top-left-radius: 8px;
 		border-bottom-left-radius: 8px;
-		border: 1px solid #bb9900;
+		border: 1px solid var(--primary-background);
 	}
 
 	.main-button :global(.button) {
