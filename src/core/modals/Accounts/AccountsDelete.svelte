@@ -33,6 +33,6 @@
 </style>
 
 <div class="accounts-delete">
-	Would you like to delete the account {#if $account?.settings?.title}"<span class="bold">{$account?.settings?.title}</span>" ({/if}<span class="bold">{$account?.credentials?.address} at {$account?.credentials?.server}</span>{#if $account?.settings?.title}){/if}?
+	Would you like to delete the account {#if $account?.settings?.title}"<span class="bold">{$account?.settings?.title}</span>" ({/if}<span class="bold">{$account?.credentials?.address}</span>{#if $account?.settings?.title}){/if}?
 </div>
 <Button text="Delete" onClick={clickDel} />
