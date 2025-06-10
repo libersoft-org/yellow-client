@@ -15,4 +15,4 @@
 	}
 </style>
 
-<textarea rows="20" bind:value={code}></textarea>
+<textarea rows="20" bind:value={code} data-testid="import-textarea"></textarea>

@@ -16,7 +16,7 @@
 	import MessageContent from '../MessageContent/MessageContent.svelte';
 	// import Reply from './msgReply/Reply.svelte';
 	import messageBarReplyStore, { ReplyToType } from '../../stores/MessageBarReplyStore.ts';
-	import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
+	import { forwardMessageStore } from '../../stores/ForwardMessageStore.ts';
 	import MessageReaction from '../MessageReaction/MessageReaction.svelte';
 	import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
 
@@ -447,6 +447,6 @@
 	<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
 	<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
 	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} data-testid="reply-context-menu-item" />
-	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
+	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} data-testid="forward-context-menu-item" />
 	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
 </ContextMenu>
