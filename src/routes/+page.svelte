@@ -75,23 +75,6 @@
 	onMount(async () => {
 		console.log('+page onMount');
 
-		// Catch all synchronous errors
-		window.addEventListener('error', event => {
-			// event.error is the Error object
-			console.warn('UNCAUGHT ERROR:', event);
-			console.error(JSON.stringify(event, null, 2));
-			log.warn('UNCAUGHT ERROR:', event);
-		});
-
-		// Catch unhandled promise rejections
-		window.addEventListener('unhandledrejection', event => {
-			console.warn('UNHANDLED PROMISE REJECTION:', event);
-			log.warn('UNHANDLED PROMISE REJECTION:', event);
-			const reason = event.reason;
-			console.error('UNHANDLED PROMISE REJECTION:', reason);
-			console.error('Stack trace:\n', reason?.stack || reason);
-		});
-
 		if ('serviceWorker' in window.navigator) {
 			console.log('+page registering service worker');
 			const SW_VERSION = '_version_v1_'; // change this to force update the service worker
