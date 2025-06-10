@@ -4,6 +4,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account_id, active_account } from '@/core/core.ts';
+	import { validateAccountsArray, validateAccountConfig } from '@/core/accounts_config.ts';
 
 	interface Props {
 		importText: string;
@@ -18,6 +19,8 @@
 	let currentConflictAccount: any = $state(null);
 	let remainingAccounts: any[] = $state([]);
 	let processedCount = $state(0);
+	let skippedCount = $state(0);
+	let invalidAccounts: string[] = $state([]);
 
 	const hasExistingAccounts = $derived(get(accounts_config).length > 0);
 
@@ -26,8 +29,8 @@
 		body: 'This will replace your current account configuration. All existing accounts will be lost. Are you sure you want to continue?',
 		icon: 'img/import.svg',
 		buttons: [
-			{ text: 'Replace', onClick: confirmReplace, expand: true },
-			{ text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true },
+			{ text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
+			{ text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
 		],
 	};
 
@@ -48,17 +51,22 @@
 			newConfig = JSON.parse(importText);
 		} catch (err) {
 			console.error('JSON.parse:', err);
-			onError('Invalid JSON format');
+			onError('Invalid JSON format: ' + (err instanceof Error ? err.message : 'Unknown error'));
 			return;
 		}
 
-		if (!Array.isArray(newConfig) || newConfig.length === 0) {
-			onError('No accounts found in import data');
+		// Validate the imported data structure
+		const validation = validateAccountsArray(newConfig);
+		if (!validation.valid) {
+			onError('Invalid account data:\n' + validation.errors.join('\n'));
+			console.error('Add accounts validation errors:', validation.errors);
 			return;
 		}
 
 		remainingAccounts = [...newConfig];
 		processedCount = 0;
+		skippedCount = 0;
+		invalidAccounts = [];
 		processNextAccount();
 	}
 
@@ -66,14 +74,45 @@
 		if (remainingAccounts.length === 0) {
 			// Finished processing all accounts
 			if (processedCount > 0) {
-				close();
+				let message = `Successfully imported ${processedCount} account${processedCount > 1 ? 's' : ''}`;
+				if (skippedCount > 0) {
+					message += `\n\nSkipped ${skippedCount} invalid account${skippedCount > 1 ? 's' : ''}:`;
+					invalidAccounts.forEach(error => {
+						message += '\n• ' + error;
+					});
+				}
+				if (skippedCount > 0) {
+					onError(message);
+				} else {
+					close();
+				}
 			} else {
-				onError('No accounts were imported');
+				let message = 'No accounts were imported';
+				if (skippedCount > 0) {
+					message += `\n\n${skippedCount} invalid account${skippedCount > 1 ? 's' : ''} skipped:`;
+					invalidAccounts.forEach(error => {
+						message += '\n• ' + error;
+					});
+				}
+				onError(message);
 			}
 			return;
 		}
 
 		const account = remainingAccounts.shift();
+		const accountIndex = get(accounts_config).length + processedCount + skippedCount + 1;
+
+		// Validate individual account before processing
+		const validation = validateAccountConfig(account);
+		if (!validation.valid) {
+			console.error('Invalid account skipped:', validation.errors);
+			skippedCount++;
+			const accountIdentifier = account?.credentials?.address || account?.address || `Account ${accountIndex}`;
+			invalidAccounts.push(`${accountIdentifier}: ${validation.errors.join(', ')}`);
+			// Skip this account and continue with the next one
+			processNextAccount();
+			return;
+		}
 
 		if (accountConfigExistsByCredentials(account.credentials?.server, account.credentials?.address)) {
 			// Account exists, show conflict dialog
@@ -149,10 +188,22 @@
 		try {
 			newConfig = JSON.parse(importText);
 		} catch (err) {
-			onError('Invalid JSON format');
-			console.error('Replace accounts error:', err);
+			onError('Invalid JSON format: ' + (err instanceof Error ? err.message : 'Unknown error'));
+			console.error('Replace accounts JSON parse error:', err);
 			replaceDialog?.close();
+			return;
 		}
+
+		// Validate the imported data
+		const validation = validateAccountsArray(newConfig);
+		if (!validation.valid) {
+			onError('Invalid account data:\n' + validation.errors.join('\n'));
+			console.error('Replace accounts validation errors:', validation.errors);
+			replaceDialog?.close();
+			return;
+		}
+
+		// If validation passes, replace the accounts
 		accounts_config.set(newConfig);
 		maybeActivateAccount();
 		replaceDialog?.close();
@@ -174,9 +225,9 @@
 </style>
 
 <div class="button-group">
-	<Button img="img/plus.svg" colorVariable="--primary-foreground" text="Add accounts" onClick={addAccounts} />
+	<Button img="img/plus.svg" colorVariable="--primary-foreground" text="Add accounts" onClick={addAccounts} data-testid="add-accounts-btn" />
 	{#if hasExistingAccounts}
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Replace All" onClick={replaceAccounts} />
+		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Replace All" onClick={replaceAccounts} data-testid="replace-all-btn" />
 	{/if}
 </div>
 

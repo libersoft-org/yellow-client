@@ -33,6 +33,11 @@
 		value = type === 'number' ? Number(target.value) : target.value;
 	}
 
+	function handleInput(e: Event) {
+		const target = e.target as HTMLInputElement;
+		value = type === 'number' ? Number(target.value) : target.value;
+	}
+
 	export function focus() {
 		inputRef?.focus();
 	}
@@ -81,9 +86,9 @@
 
 {#if icon}
 	<div class="input-button-wrapper" style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}>
-		<input class="button" {type} {placeholder} bind:this={inputRef} bind:value onkeydown={e => handleKeydown(e)} />
+		<input class="button" {type} {placeholder} bind:this={inputRef} bind:value onkeydown={e => handleKeydown(e)} oninput={handleInput} />
 		<Icon img={icon.img} alt={icon.alt} colorVariable={icon.colorVariable ? icon.colorVariable : ''} size="20px" padding="10px" onClick={icon.onClick} />
 	</div>
 {:else}
-	<input class="no-button" data-testid={testId} value={displayValue !== undefined ? displayValue : value} disabled={!enabled} onchange={handleChange} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
+	<input class="no-button" data-testid={testId} value={displayValue !== undefined ? displayValue : value} disabled={!enabled} onchange={handleChange} oninput={handleInput} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
 {/if}

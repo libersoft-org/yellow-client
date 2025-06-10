@@ -96,3 +96,78 @@ export function toggleAccountEnabled(id: string): void {
 		})
 	);
 }
+
+export function validateAccountConfig(account: any): { valid: boolean; errors: string[] } {
+	const errors: string[] = [];
+
+	// Check if account is an object
+	if (!account || typeof account !== 'object') {
+		errors.push('Account must be an object');
+		return { valid: false, errors };
+	}
+
+	// Check required fields
+	if (!account.id || typeof account.id !== 'string') {
+		errors.push('Account must have a valid id (string)');
+	}
+
+	if (typeof account.enabled !== 'boolean') {
+		errors.push('Account must have enabled field (boolean)');
+	}
+
+	// Validate credentials
+	if (!account.credentials || typeof account.credentials !== 'object') {
+		errors.push('Account must have credentials object');
+	} else {
+		if (!account.credentials.server || typeof account.credentials.server !== 'string') {
+			errors.push('Credentials must have server (string)');
+		} else if (account.credentials.server.trim() === '') {
+			errors.push('Server cannot be empty');
+		}
+
+		if (!account.credentials.address || typeof account.credentials.address !== 'string') {
+			errors.push('Credentials must have address (string)');
+		} else if (account.credentials.address.trim() === '') {
+			errors.push('Address cannot be empty');
+		}
+
+		if (typeof account.credentials.password !== 'string') {
+			errors.push('Credentials must have password (string)');
+		}
+	}
+
+	// Validate settings (must be object, but can be empty)
+	if (!account.settings || typeof account.settings !== 'object') {
+		errors.push('Account must have settings object');
+	}
+
+	return { valid: errors.length === 0, errors };
+}
+
+export function validateAccountsArray(data: any): { valid: boolean; errors: string[] } {
+	const errors: string[] = [];
+
+	// Check if data is an array
+	if (!Array.isArray(data)) {
+		errors.push('Import data must be an array of accounts');
+		return { valid: false, errors };
+	}
+
+	// Check if array is empty
+	if (data.length === 0) {
+		errors.push('No accounts found in import data');
+		return { valid: false, errors };
+	}
+
+	// Validate each account
+	data.forEach((account, index) => {
+		const validation = validateAccountConfig(account);
+		if (!validation.valid) {
+			validation.errors.forEach(error => {
+				errors.push(`Account ${index + 1}: ${error}`);
+			});
+		}
+	});
+
+	return { valid: errors.length === 0, errors };
+}

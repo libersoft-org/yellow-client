@@ -140,5 +140,5 @@
 	<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
 {/key}
 <Modal title="Export all accounts" body={ModalAccountsExport} bind:show={showExportModal} width="700px" />
-<Modal title="Import accounts" body={ModalAccountsImport} bind:show={showImportModal} width="700px" />
+<Modal title="Import accounts" body={ModalAccountsImport} bind:show={showImportModal} width="700px" testId="accounts-import" />
 <Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem }} bind:show={showDelAccountModal} />

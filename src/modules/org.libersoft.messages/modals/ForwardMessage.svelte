@@ -4,27 +4,34 @@
 	import { get } from 'svelte/store';
 	import Button from '@/core/components/Button/Button.svelte';
 	import type { Conversation } from '../types.ts';
-	import forwardMessageStore from '../stores/ForwardMessageStore.ts';
+	import { forwardMessageStore } from '../stores/ForwardMessageStore.ts';
+	import MessageContent from '../components/MessageContent/MessageContent.svelte';
+	import { processMessage } from '../messages.js';
 
 	const fwMsg = forwardMessageStore.getForwardedMessage();
+	const sentToConversations = forwardMessageStore.getSentToConversations();
 	let search = $state('');
+
+	// Process the message to get the content for preview
+	let messageContent = $derived($fwMsg ? processMessage($fwMsg.data) : null);
 
 	// TODO: this is simple search, in future we want to at least debounce it or make backend solution for filtering
 	let conversations: Conversation[] = $derived.by(() => {
-		const conversations = get(conversationsArray) || [];
+		const allConversations = get(conversationsArray) || [];
+		const searchTerm = search.trim();
 
-		if (!search) {
-			return conversations;
+		if (!searchTerm) {
+			return allConversations;
 		}
 
-		return conversations.filter((conversation: Conversation) => conversation?.address?.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
+		return allConversations.filter((conversation: Conversation) => {
+			return conversation?.address?.toLowerCase()?.includes(searchTerm.toLowerCase());
+		});
 	});
-
-	let sentToConversations: Conversation[] = $state([]);
 
 	const onSend = (conversation: Conversation) => {
 		sendMessage($fwMsg?.data.message, $fwMsg?.data.format, $fwMsg?.data.acc.deref(), conversation);
-		sentToConversations.push(conversation);
+		forwardMessageStore.addSentToConversation(conversation);
 	};
 </script>
 
@@ -74,34 +81,66 @@
 	.conversation-action {
 		flex: 0 0 auto;
 	}
+
+	.message-preview {
+		margin-bottom: 16px;
+		padding: 12px;
+		background-color: var(--color-surface);
+		border-radius: 8px;
+		border: 1px solid var(--color-border);
+	}
+
+	.message-preview-header {
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--color-text-secondary);
+		margin-bottom: 8px;
+	}
+
+	.message-preview-content {
+		font-size: 14px;
+		color: var(--color-text);
+		max-height: 80px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 </style>
 
 {#snippet conversationItem(conversation: Conversation)}
-	{@const wasAlreadySent = sentToConversations.some(c => c.id === conversation.id)}
-	<div class="conversation">
+	{@const wasAlreadySent = $sentToConversations.some(c => c.id === conversation.id)}
+	<div class="conversation" data-testid="forward-conversation-item-{conversation.address}">
 		<div class="conversation-avatar">
 			<div class="conversation-avatar-placeholder"></div>
 		</div>
-		<div class="conversation-name">
+		<div class="conversation-name" data-testid="forward-conversation-name-{conversation.address}">
 			{conversation.address}
 		</div>
 		<div class="conversation-action">
-			<Button enabled={!wasAlreadySent} text={wasAlreadySent ? 'Sent' : 'Send'} onClick={() => onSend(conversation)} />
+			<Button enabled={!wasAlreadySent} text={wasAlreadySent ? 'Sent' : 'Send'} onClick={() => onSend(conversation)} data-testid="forward-conversation-send-{conversation.address}" />
 		</div>
 	</div>
 {/snippet}
 
-<div class="forward-message">
+<div class="forward-message" data-testid="forward-message-modal">
+	{#if $fwMsg && messageContent}
+		<div class="message-preview" data-testid="forward-message-preview">
+			<div class="message-preview-header" data-testid="forward-message-preview-header">Forwarding message:</div>
+			<div class="message-preview-content" data-testid="forward-message-preview-content">
+				<MessageContent {messageContent} />
+			</div>
+		</div>
+	{/if}
+
 	<div class="header">
-		<Input bind:value={search} placeholder="Search in conversations" />
+		<Input bind:value={search} placeholder="Search in conversations" data-testid="forward-message-search" />
 	</div>
-	<div class="conversations">
+	<div class="conversations" data-testid="forward-message-conversations">
 		{#if conversations && conversations.length}
-			{#each conversations as conversation (conversation.id)}
+			{#each conversations as conversation (conversation.address)}
 				{@render conversationItem(conversation)}
 			{/each}
 		{:else}
-			<div class="empty-conversations">No conversations were found</div>
+			<div class="empty-conversations" data-testid="forward-message-no-conversations">No conversations were found</div>
 		{/if}
 	</div>
 </div>

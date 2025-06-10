@@ -14,7 +14,7 @@
 	import ScrollButton from '../ScrollButton/ScrollButton.svelte';
 	import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
 	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
-	import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
+	import { forwardMessageModalOpen } from '../../stores/ForwardMessageStore.ts';
 	import { log } from '@/core/tauri.ts';
 	export let conversation;
 	export let setBarFocus;
@@ -494,10 +494,6 @@
 		wrapperWidth = entry.contentRect.width;
 	};
 	$: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
-	/**
-	 * Forward Message Section
-	 */
-	const forwardMessageModalOpen = forwardMessageStore.isOpen();
 </script>
 
 <!--doBlockScroll: {doBlockScroll}-->
@@ -679,4 +675,4 @@
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} onShowChange={show => forwardMessageStore.setOpen(show)} width="448px" height="390px" />
+<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />
