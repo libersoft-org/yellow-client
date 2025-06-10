@@ -100,8 +100,8 @@
 				<Td title="Enabled">{account.enabled ? 'Yes' : 'No'}</Td>
 				<Td title="Action">
 					<TableActionItems>
-						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
-						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} />
+						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} data-testid="edit-account-button" />
+						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} data-testid="delete-account-button" />
 					</TableActionItems>
 				</Td>
 			</TbodyTr>
@@ -128,9 +128,9 @@
 	<div class="accounts-wrapper">
 		<Paper>
 			<ButtonBar>
-				<Button img="img/accounts.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} />
-				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} />
-				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
+				<Button img="img/accounts.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} data-testid="add-account-button" />
+				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
+				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
 			</ButtonBar>
 			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>

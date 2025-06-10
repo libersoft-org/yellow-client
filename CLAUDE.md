@@ -6,7 +6,7 @@
 - TypeCheck: `bun run typecheck` or `tsc --noEmit`
 - Test (all): `bun test` or `vitest`
 - Test (single): `vitest src/path/to/file.test.js`
-- Format: `prettier --config prettier-libersoft.json --plugin prettier-plugin-svelte --write "src/**/*.{js,ts,css,html,svelte}"`
+- Format: `prettier --plugin prettier-plugin-svelte --write "src/**/*.{js,ts,css,html,svelte}"`
 - E2E Tests: `npx playwright test`
 - Debug Playwright Tests:
   - `PLAYWRIGHT_CONSOLE_LOG=true npx playwright test` (verbose)
@@ -33,5 +33,6 @@
 ## Testing
 
 - When creating playwright tests, use data-testid attributes. Modify the tested components to render them if necessary.
+- Please, use data-testid attributes
 
 This file is meant for Claude and other AI assistants to understand project conventions.

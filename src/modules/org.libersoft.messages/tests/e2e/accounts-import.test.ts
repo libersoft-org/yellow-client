@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
+import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
 
 /**
  * Helper function to navigate to account management
@@ -29,7 +30,7 @@ async function openImportModal(page: Page): Promise<void> {
  */
 async function fillImportData(page: Page, jsonData: string): Promise<void> {
 	return await test.step('Fill import data', async () => {
-		await page.getByTestId('import-textarea').fill(jsonData);
+		await page.getByTestId('accounts-textarea').fill(jsonData);
 	});
 }
 
@@ -39,7 +40,7 @@ async function fillImportData(page: Page, jsonData: string): Promise<void> {
  */
 async function clickAddAccounts(page: Page): Promise<void> {
 	return await test.step('Click Add accounts button', async () => {
-		await page.getByTestId('add-accounts-btn').click();
+		await page.getByTestId('accounts-add-btn').click();
 	});
 }
 
@@ -49,7 +50,7 @@ async function clickAddAccounts(page: Page): Promise<void> {
  */
 async function clickReplaceAll(page: Page): Promise<void> {
 	return await test.step('Click Replace All button', async () => {
-		await page.getByTestId('replace-all-btn').click();
+		await page.getByTestId('accounts-replace-btn').click();
 	});
 }
 
@@ -142,6 +143,9 @@ const validAccountConfigs = [
 
 test.describe('Accounts Import Functionality', () => {
 	test.beforeEach(async ({ page }) => {
+		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
+		enableConsoleLogging(page);
+
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
 		const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
@@ -369,6 +373,24 @@ test.describe('Accounts Import Functionality', () => {
 		// Test "Skip This Account" option
 		await page.getByRole('button', { name: 'Skip This Account' }).click();
 
+		// Wait a bit for any async operations
+		await page.waitForTimeout(1000);
+
+		// Check if modal is still visible
+		const modalVisible = await page.getByTestId('accounts-import-Modal').isVisible();
+		console.log('Modal still visible after skip:', modalVisible);
+
+		// Debug: Check what's actually in the modal
+		const modalContent = await page.getByTestId('accounts-import-Modal').textContent();
+		console.log('Modal content:', modalContent);
+
+		// Check for any error text, not just in .alert
+		const errorTextVisible = await page
+			.getByText('No accounts were imported')
+			.isVisible()
+			.catch(() => false);
+		console.log('Error text visible anywhere:', errorTextVisible);
+
 		// Should show error that no accounts were imported
 		await expectErrorMessage(page, 'No accounts were imported');
 	});
@@ -421,7 +443,6 @@ test.describe('Accounts Import Functionality', () => {
 		const invalidJson = '{ broken json';
 		await fillImportData(page, invalidJson);
 		await clickReplaceAll(page);
-		await confirmReplaceDialog(page);
 
 		await expectErrorMessage(page, 'Invalid JSON format');
 	});
@@ -446,7 +467,6 @@ test.describe('Accounts Import Functionality', () => {
 		const invalidJson = JSON.stringify(invalidAccounts);
 		await fillImportData(page, invalidJson);
 		await clickReplaceAll(page);
-		await confirmReplaceDialog(page);
 
 		await expectErrorMessage(page, 'Account must have enabled field (boolean)');
 	});

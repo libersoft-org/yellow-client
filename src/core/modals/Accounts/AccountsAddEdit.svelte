@@ -215,19 +215,19 @@
 		</Select>
 	</Label>
 	<Label text="Title">
-		<Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
+		<Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} data-testid="account-title-input" />
 	</Label>
 	<Label text="Server">
-		<Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
+		<Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} data-testid="account-server-input" />
 	</Label>
 	<Label text="Address">
-		<Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
+		<Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} data-testid="account-address-input" />
 	</Label>
 	<Label text="Password">
-		<Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
+		<Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} data-testid="account-password-input" />
 	</Label>
 	{#if !isInWelcomeWizard}
-		<Switch showLabel label="Enabled" bind:checked={config_enabled} />
+		<Switch showLabel label="Enabled" bind:checked={config_enabled} data-testid="account-enabled-checkbox" />
 	{/if}
 	{#if error}
 		<Alert type="error" message={error} />

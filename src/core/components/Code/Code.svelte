@@ -1,8 +1,9 @@
 <script lang="ts">
 	interface Props {
 		code: string;
+		testId?: string;
 	}
-	let { code = $bindable() }: Props = $props();
+	let { code = $bindable(), testId = 'import-textarea' }: Props = $props();
 </script>
 
 <style>
@@ -15,4 +16,4 @@
 	}
 </style>
 
-<textarea rows="20" bind:value={code} data-testid="import-textarea"></textarea>
+<textarea rows="20" bind:value={code} data-testid={testId}></textarea>

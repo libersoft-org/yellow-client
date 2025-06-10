@@ -5,8 +5,9 @@
 		img?: string;
 		title?: string;
 		onClick?: (e: Event) => void;
+		testId?: string;
 	}
-	let { img, title, onClick }: Props = $props();
+	let { img, title, onClick, testId }: Props = $props();
 </script>
 
 <style>
@@ -19,7 +20,7 @@
 	}
 </style>
 
-<AccountBarButton {onClick}>
+<AccountBarButton {onClick} data-testid={testId}>
 	<div class="item-base">
 		{#if img}
 			<Icon {img} alt={title} size="20px" padding="0px" colorVariable="--secondary-foreground" />

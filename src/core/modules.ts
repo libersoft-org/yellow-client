@@ -68,7 +68,7 @@ export function updateModulesComms(acc: Account) {
 }
 
 export function registerModule(id: string, decl: ModuleDeclaration) {
-	console.log('REGISTER MODULE:', id, decl);
+	console.log('register module:', id, decl);
 	if (get(modules_disabled).indexOf(id) !== -1) {
 		console.log('Module disabled:', id);
 		return;

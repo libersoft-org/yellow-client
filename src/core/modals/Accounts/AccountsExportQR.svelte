@@ -28,7 +28,7 @@
 		QRCode.toDataURL(jsonString, { width: 300, height: 300, margin: 0 })
 			.then(url => (qrCodeData = url))
 			.catch(err => {
-				console.error('QR CODE GENERATION:', err);
+				console.debug('QR CODE GENERATION:', err);
 				error = 'Failed to generate QR code. The data might be too large to be stored in a QR Code.';
 			});
 	}

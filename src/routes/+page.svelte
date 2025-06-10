@@ -31,6 +31,7 @@
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
 	import { initZoom } from '@/core/zoom.ts';
+	import { log } from '@/core/tauri.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
@@ -73,20 +74,6 @@
 
 	onMount(async () => {
 		console.log('+page onMount');
-
-		// Catch all synchronous errors
-		window.addEventListener('error', event => {
-			// event.error is the Error object
-			console.error('Uncaught error:', event.error);
-			console.error('Stack trace:\n', event.error?.stack);
-		});
-
-		// Catch unhandled promise rejections
-		window.addEventListener('unhandledrejection', event => {
-			const reason = event.reason;
-			console.error('Unhandled promise rejection:', reason);
-			console.error('Stack trace:\n', reason?.stack || reason);
-		});
 
 		if ('serviceWorker' in window.navigator) {
 			console.log('+page registering service worker');
