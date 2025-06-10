@@ -571,6 +571,7 @@
 	.no-messages .body {
 		background-color: var(--primary-background);
 		border: 1px solid var(--primary-foreground);
+		color: var(--primary-foreground);
 		border-radius: 20px;
 		padding: 20px;
 		box-shadow: var(--shadow);
