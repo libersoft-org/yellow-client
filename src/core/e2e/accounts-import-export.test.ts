@@ -49,7 +49,7 @@ async function switchToQRImportTab(page: Page): Promise<void> {
  */
 async function switchToQRExportTab(page: Page): Promise<void> {
 	return await test.step('Switch to QR Code export tab', async () => {
-		await page.getByTestId('export-qr-tab').click();
+		await page.getByTestId('accounts-export-qr-tab').click();
 	});
 }
 
@@ -150,7 +150,7 @@ async function setupAccountInWizard(
  */
 async function getExportedJSON(page: Page): Promise<string> {
 	return await test.step('Get exported JSON content', async () => {
-		const codeElement = page.locator('[data-testid="code-editor"]');
+		const codeElement = page.locator('[data-testid="accounts-export-code-editor"]');
 		await expect(codeElement).toBeVisible();
 		return (await codeElement.inputValue()) || '';
 	});
@@ -507,7 +507,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByText('Sensitive information is hidden')).toBeVisible();
 
 			// QR code should be blurred initially
-			const qrImage = page.locator('.qr-image');
+			const qrImage = page.locator('[data-testid="accounts-export-qr-image"]');
 			await expect(qrImage).toBeVisible();
 			await expect(qrImage).toHaveClass(/blurred/);
 

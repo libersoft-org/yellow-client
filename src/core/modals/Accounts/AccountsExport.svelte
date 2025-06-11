@@ -1,33 +1,6 @@
 <script>
 	import { accounts_config } from '@/core/core.ts';
-	import Tabs from '@/core/components/Tabs/Tabs.svelte';
-	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
-	import AccountsExportJson from '@/core/modals/Accounts/AccountsExportJson.svelte';
-	import AccountsExportQR from '@/core/modals/Accounts/AccountsExportQR.svelte';
-	let activeTab = $state('json');
-	let jsonEditorContents = $state(JSON.stringify($accounts_config, null, 2));
-
-	$effect(() => {
-		console.log('JSON Editor contents updated:', jsonEditorContents);
-	});
+	import Export from '@/core/components/Export/Export.svelte';
 </script>
 
-<style>
-	.export {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-</style>
-
-<div class="export">
-	<Tabs>
-		<TabsItem label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} testId="export-json-tab" />
-		<TabsItem label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} testId="export-qr-tab" />
-	</Tabs>
-	{#if activeTab === 'json'}
-		<AccountsExportJson bind:code={jsonEditorContents} />
-	{:else if activeTab === 'qr'}
-		<AccountsExportQR />
-	{/if}
-</div>
+<Export data={$accounts_config} filename="accounts" testId="accounts-export" />

@@ -9,6 +9,7 @@
 
 	let { address = $bindable(), colorVariable = '--primary-foreground' }: Props = $props();
 	let copied = $state(false);
+	let spanElem = $state();
 
 	function copyAddressToClipboard() {
 		navigator.clipboard
