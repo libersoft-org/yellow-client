@@ -395,7 +395,7 @@ function sendLoginCommand(account: AccountStore) {
 			acc.status = 'Login failed.';
 			acc.session_status = undefined;
 			acc.suspended = true;
-			console.debug('Login failed:', res);
+			console.debug('Login failed:', JSON.stringify(res, null, 2), res);
 		} else {
 			acc.session_status = 'Logged in.';
 			console.log('Logged in:', res);

@@ -17,6 +17,9 @@ export default defineConfig({
 			use: {
 				...devices['Desktop Chrome'],
 				viewport: { width: 1280, height: 1280 },
+				launchOptions: {
+					args: ['--disable-web-security', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+				},
 			},
 		},
 		/*{
