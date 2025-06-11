@@ -12,16 +12,26 @@ async function switchModule(page: Page, moduleId: string): Promise<void> {
 		const moduleSelector = page.getByTestId(`ModuleBarItem-${moduleId}`);
 		const selectedElement = moduleSelector.locator('div.selected');
 
-		// Click the module selector to possibly switch away from core page - this is a workaround for proper active page management in core.
-		await moduleSelector.click();
-		await moduleSelector.click();
+		// Wait for module selector to be ready
+		await moduleSelector.waitFor({ state: 'visible' });
 
 		// Check if module is already selected
-		const isSelected = (await selectedElement.count()) > 0;
+		let isSelected = (await selectedElement.count()) > 0;
 
 		// Only click if not already selected
 		if (!isSelected) {
 			await moduleSelector.click();
+			// Wait a bit for the click to process
+			await page.waitForTimeout(500);
+
+			// Check again if now selected
+			isSelected = (await selectedElement.count()) > 0;
+
+			// If still not selected, try one more time
+			if (!isSelected) {
+				await moduleSelector.click();
+				await page.waitForTimeout(500);
+			}
 		}
 	});
 }
@@ -142,17 +152,25 @@ async function addReactionToLastMessage(page: Page): Promise<void> {
 async function forwardLastMessage(page: Page): Promise<void> {
 	return await test.step('Forward last message', async () => {
 		// Ensure there are messages to forward
-		await expect(page.getByTestId('message-item').first()).toBeVisible();
+		await expect(page.getByTestId('message-item').first()).toBeVisible({ timeout: 10000 });
+
+		// Wait for all messages to be loaded and stable
+		await page.waitForTimeout(1000);
+
+		// Get the last message and ensure it's visible
+		const lastMessage = page.getByTestId('message-item').last();
+		await lastMessage.waitFor({ state: 'visible', timeout: 10000 });
+		await page.waitForTimeout(500); // Small delay to ensure message is fully rendered
 
 		// Right-click the last message
-		await page.getByTestId('message-item').last().click({ button: 'right' });
+		await lastMessage.click({ button: 'right' });
 
 		// Wait for context menu to appear and click forward
 		await page.getByTestId('forward-context-menu-item').last().waitFor({ state: 'visible' });
 		await page.getByTestId('forward-context-menu-item').last().click();
 
-		// Wait a moment for the modal to appear
-		await page.waitForTimeout(1000);
+		// Wait for the forward modal to appear
+		await page.getByTestId('forward-message-modal').waitFor({ state: 'visible' });
 	});
 }
 
@@ -726,7 +744,14 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		// Navigate to Appearance and change theme
 		await navigateToSettingsSection(page, 'Appearance');
 		await test.step('Change theme in Appearance settings', async () => {
+			// First disable "Follow browser theme" to enable manual theme selection
+			const followBrowserThemeSwitch = page.getByTestId('follow-browser-theme-switch');
+			await followBrowserThemeSwitch.waitFor({ state: 'visible' });
+			await followBrowserThemeSwitch.click();
+
+			// Now the theme selector should be enabled
 			const themeSelect = page.getByTestId('theme switch');
+			await expect(themeSelect).toBeEnabled();
 			await expect(themeSelect).toHaveValue('0'); // Light
 			await themeSelect.selectOption({ label: 'Dark' });
 			await expect(themeSelect).toHaveValue('1'); // Dark

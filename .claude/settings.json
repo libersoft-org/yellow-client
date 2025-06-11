@@ -1,6 +1,33 @@
 {
 	"permissions": {
-		"allow": ["Bash(bun x playwright test:*)", "Bash(ls:*)", "Bash(intention add:*)", "Bash(npx playwright test:*)", "Bash(curl:*)", "Bash(grep:*)", "Bash(bun run:*)", "Bash(rg:*)", "Bash(pgrep:*)", "Bash(PLAYWRIGHT_CONSOLE_LOG=minimal npx playwright test)", "Bash(PLAYWRIGHT_CONSOLE_LOG=true npx playwright test)"],
+		"allow": [
+			"Bash(bun x playwright test:*)",
+			"Bash(ls:*)",
+			"Bash(intention add:*)",
+			"Bash(npx playwright test:*)",
+			"Bash(curl:*)",
+			"Bash(grep:*)",
+			"Bash(bun run:*)",
+			"Bash(rg:*)",
+			"Bash(pgrep:*)",
+			"Bash(PLAYWRIGHT_CONSOLE_LOG=minimal npx playwright test)",
+			"Bash(PLAYWRIGHT_CONSOLE_LOG=true npx playwright test)",
+			"Bash(PLAYWRIGHT_CONSOLE_LOG=error npx playwright test)",
+			"Bash(PLAYWRIGHT_CONSOLE_LOG=minimal npx playwright test:*)",
+			"Bash(PLAYWRIGHT_CONSOLE_LOG=true npx playwright test:*)",
+			"Bash(PLAYWRIGHT_CONSOLE_LOG=error npx playwright test:*)",
+      "Bash(rm:*)",
+      "Bash(intention add:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(PLAYWRIGHT_CONSOLE_LOG=true npx playwright test:*)",
+      "Bash(PWDEBUG=1 npx playwright test src/modules/org.libersoft.messages/tests/e2e/accounts-import.test.ts --grep \"Handle duplicate accounts during Add accounts - show conflict dialog\" --headed)",
+      "Bash(PLAYWRIGHT_CONSOLE_LOG=errors npx playwright test src/core/e2e/accounts-import-export.test.ts --reporter=line)",
+      "Bash(PLAYWRIGHT_CONSOLE_LOG=errors npx playwright test)",
+      "Bash(PLAYWRIGHT_CONSOLE_LOG=errors npx playwright test src/core/e2e/accounts-import-export.test.ts -g \"Export accounts to JSON format\")",
+      "Bash(PLAYWRIGHT_CONSOLE_LOG=errors npx playwright test src/core/e2e/accounts-import-export.test.ts -g \"Export\")",
+      "Bash(PLAYWRIGHT_CONSOLE_LOG=errors npx playwright test src/modules/org.libersoft.messages/tests/e2e/everything.test.ts -g \"Message Forwarding\")",
+      "Bash(PLAYWRIGHT_CONSOLE_LOG=errors npx playwright test src/modules/org.libersoft.messages/tests/e2e/everything.test.ts -g \"Complete End-to-End Application Test\")"
+		],
 		"deny": []
 	}
 }

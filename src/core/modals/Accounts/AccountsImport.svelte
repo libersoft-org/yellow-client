@@ -241,7 +241,7 @@
 		</div>
 	</div>
 {:else}
-	<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} bind:doContinue addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Browse for JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+	<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Browse for JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
 {/if}
 
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />

@@ -4,7 +4,6 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { product } from '@/core/stores.ts';
-	let { code = $bindable() } = $props();
 	let copyText = $state('Copy to clipboard');
 	let timeoutId;
 	let activeTab = $state('json');
@@ -42,4 +41,4 @@
 	<Button img="img/copy.svg" text={copyText} onClick={clickCopy} />
 	<Button img="img/download.svg" text="Download as file" onClick={clickDownload} />
 </ButtonBar>
-<Code bind:code />
+<Code bind:code={jsonEditorContents} testId="code-editor" />
