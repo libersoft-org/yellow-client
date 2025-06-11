@@ -25,6 +25,8 @@
 	let invalidAccounts: string[] = $state([]);
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
+	let doContinue = $state();
+	let importUi: any = $state(null);
 
 	const hasExistingAccounts = $derived(get(accounts_config).length > 0);
 
@@ -76,6 +78,7 @@
 	}
 
 	function handleSuccess(message: string) {
+		console.debug('handleSuccess:', message);
 		successMessage = message;
 	}
 
@@ -85,12 +88,7 @@
 		processedCount = 0;
 		skippedCount = 0;
 		invalidAccounts = [];
-		try {
-			await processNextAccount();
-		} catch (err) {
-			console.log('handleAdd caught error:', err);
-			throw err;
-		}
+		await processNextAccount();
 	}
 
 	async function handleReplace(text: string): Promise<void> {
@@ -105,8 +103,8 @@
 	}
 
 	async function processNextAccount(): Promise<void> {
+		log.debug('processNextAccount: remainingAccounts.length:', remainingAccounts.length, 'processedCount:', processedCount, 'skippedCount:', skippedCount);
 		if (remainingAccounts.length === 0) {
-			// Finished processing all accounts
 			if (processedCount > 0) {
 				if (skippedCount > 0) {
 					let message = `Successfully imported ${processedCount} account${processedCount > 1 ? 's' : ''}`;
@@ -122,7 +120,7 @@
 			} else {
 				let message = 'No accounts were imported';
 				if (skippedCount > 0) {
-					message += `\n\n${skippedCount} invalid account${skippedCount > 1 ? 's' : ''} skipped:`;
+					message += `, \n\n${skippedCount} account${skippedCount > 1 ? 's' : ''} skipped. `;
 					invalidAccounts.forEach(error => {
 						message += '\n• ' + error;
 					});
@@ -195,14 +193,14 @@
 
 		conflictDialog?.close();
 		currentConflictAccount = null;
-		await processNextAccount();
+		await importUi.doContinue(async () => await processNextAccount());
 	}
 
 	async function skipConflictAccount() {
 		skippedCount++;
 		conflictDialog?.close();
 		currentConflictAccount = null;
-		await processNextAccount();
+		await importUi.doContinue(async () => await processNextAccount());
 	}
 
 	async function confirmReplace() {
@@ -243,7 +241,7 @@
 		</div>
 	</div>
 {:else}
-	<Import {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Browse for JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+	<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} bind:doContinue addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Browse for JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
 {/if}
 
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />

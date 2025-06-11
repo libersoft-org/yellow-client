@@ -27,7 +27,6 @@
 
 	let activeTab = $state('json');
 	let text = $state('');
-	let error = $state('');
 	let fileInput: HTMLInputElement | undefined = $state();
 
 	// QR scanner state
@@ -37,6 +36,7 @@
 	let scanning = $state(false);
 	let lastProcessedCode = $state('');
 	let scannedText = $state('');
+	let alertText: string = $state('');
 
 	onMount(async () => {
 		if (activeTab === 'qr') {
@@ -50,7 +50,8 @@
 	});
 
 	function handleError(message: string) {
-		error = message;
+		console.debug('handleError:', message);
+		alertText = message;
 	}
 
 	function loadFile() {
@@ -77,12 +78,28 @@
 		}
 		try {
 			await onAdd(currentText);
+			console.debug('handleAdd: Import finished');
 		} catch (err) {
-			if (err instanceof Error && err.name === 'ImportSuccessWithWarnings' && onSuccess) {
-				onSuccess(err.message);
-			} else {
-				handleError(err instanceof Error ? err.message : 'Unknown error');
-			}
+			console.debug('handleAdd: Import error:', err);
+			handleException(err);
+		}
+	}
+
+	export async function doContinue(fn: () => Promise<void>) {
+		try {
+			await fn();
+			console.debug('doContinue: Import finished');
+		} catch (err) {
+			console.debug('doContinue: Import error:', err);
+			handleException(err);
+		}
+	}
+
+	export function handleException(err: unknown) {
+		if (err instanceof Error && err.name === 'ImportSuccessWithWarnings' && onSuccess) {
+			onSuccess(err.message);
+		} else {
+			handleError(err instanceof Error ? err.message : 'Unknown error');
 		}
 	}
 
@@ -97,11 +114,7 @@
 		try {
 			await onReplace(currentText);
 		} catch (err) {
-			if (err instanceof Error && err.name === 'ImportSuccessWithWarnings' && onSuccess) {
-				onSuccess(err.message);
-			} else {
-				handleError(err instanceof Error ? err.message : 'Unknown error');
-			}
+			handleException(err);
 		}
 	}
 
@@ -121,7 +134,7 @@
 				startScanning();
 			}
 		} catch (err) {
-			error = 'Camera access denied or not available';
+			alertText = 'Camera access denied or not available';
 			console.debug('Camera error:', err);
 		}
 	}
@@ -168,12 +181,13 @@
 
 	function scanAgain() {
 		scannedText = '';
-		error = '';
+		alertText = '';
 		lastProcessedCode = '';
 		startCamera();
 	}
 
 	async function handleTabChange(tab: string) {
+		alertText = '';
 		activeTab = tab;
 		if (tab === 'qr' && !scannedText) {
 			await startCamera();
@@ -187,7 +201,7 @@
 	}
 
 	$effect(() => {
-		if (text || scannedText) error = '';
+		if (text || scannedText) alertText = '';
 	});
 
 	const hasContent = $derived((activeTab === 'json' && text) || (activeTab === 'qr' && scannedText));
@@ -295,8 +309,8 @@
 			</div>
 		{:else}
 			<div class="qr-scanner">
-				{#if error}
-					<Alert type="error" message={error} />
+				{#if alertText}
+					<Alert type="error" message={alertText} />
 					<Button text="Cancel" onClick={close} />
 				{:else}
 					<div class="instructions">{qrInstructions}</div>
@@ -313,8 +327,8 @@
 	{/if}
 
 	{#if hasContent}
-		{#if error}
-			<Alert type="error" message={error} />
+		{#if alertText}
+			<Alert type="error" message={alertText} />
 		{/if}
 		<div class="button-group">
 			<Button img="img/plus.svg" colorVariable="--primary-foreground" text={addButtonText} onClick={handleAdd} data-testid={`${testId}-add-btn`} />
