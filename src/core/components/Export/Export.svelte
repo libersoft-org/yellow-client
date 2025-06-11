@@ -10,14 +10,14 @@
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { product } from '@/core/stores.ts';
 
-	let { data, filename = 'export', enableJsonTab = true, enableQrTab = true, testId = 'export' } = $props();
+	let { data, filename = 'export', enableJsonTab = true, enableQrTab = true, testId = 'export', isSensitive = false } = $props();
 
 	let activeTab = $state('json');
 	let jsonEditorContents = $state('');
 	let qrCodeData = $state('');
 	let dummyQrCodeData = $state('');
 	let qrError = $state(null);
-	let isRevealed = $state(false);
+	let isRevealed = $state(!isSensitive);
 	let copyText = $state('Copy to clipboard');
 	let timeoutId;
 
@@ -157,19 +157,25 @@
 			{#if qrError}
 				<Alert type="error" message={qrError} testId="{testId}-qr-error" />
 			{:else if dummyQrCodeData && qrCodeData}
-				{#if !isRevealed}
-					<Alert type="warning" message="Sensitive information is hidden. Click the QR code to reveal it." testId="{testId}-qr-warning" />
-				{:else}
-					<Alert type="info" message="Click the QR code to hide it." testId="{testId}-qr-info" />
+				{#if isSensitive}
+					{#if !isRevealed}
+						<Alert type="warning" message="Sensitive information is hidden. Click the QR code to reveal it." testId="{testId}-qr-warning" />
+					{:else}
+						<Alert type="info" message="Click the QR code to hide it." testId="{testId}-qr-info" />
+					{/if}
 				{/if}
 				<div class="qr-wrapper" data-testid="{testId}-qr-wrapper">
-					<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide QR code' : 'Reveal QR code'} testId="{testId}-qr-toggle">
-						<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Export data QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} data-testid="{testId}-qr-image" />
-					</Clickable>
-					{#if !isRevealed}
-						<div class="reveal-icon" aria-hidden="true" data-testid="{testId}-qr-reveal-icon">
-							<img src="/modules/org.libersoft.wallet/img/hide.svg" alt="Eye icon" />
-						</div>
+					{#if isSensitive}
+						<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide QR code' : 'Reveal QR code'} testId="{testId}-qr-toggle">
+							<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Export data QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} data-testid="{testId}-qr-image" />
+						</Clickable>
+						{#if !isRevealed}
+							<div class="reveal-icon" aria-hidden="true" data-testid="{testId}-qr-reveal-icon">
+								<img src="/modules/org.libersoft.wallet/img/hide.svg" alt="Eye icon" />
+							</div>
+						{/if}
+					{:else}
+						<img src={qrCodeData} alt="Export data QR code" class="qr-image" data-testid="{testId}-qr-image" />
 					{/if}
 				</div>
 			{:else}

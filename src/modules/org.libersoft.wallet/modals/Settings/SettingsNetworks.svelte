@@ -13,10 +13,12 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
+	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
 	let showModalEditNetwork = false;
 	let showModalTokenList = false;
 	let modalItemID = null;
 	let modalItem = null;
+	let showSettingsNetworksExport = false;
 
 	function editNetwork(net) {
 		console.log('editNetwork', net);
@@ -31,11 +33,7 @@
 	}
 
 	function doExport() {
-		console.log('EXPORT NETWORKS');
-		let data = get(networks);
-		let json = JSON.stringify(data, null, 2);
-		console.log('EXPORTED NETWORKS:', json);
-		window.prompt('Copy the exported networks:', json);
+		showSettingsNetworksExport = true;
 	}
 
 	function doImport() {
@@ -117,3 +115,4 @@
 </div>
 <Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:show={showModalEditNetwork} />
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:show={showModalTokenList} />
+<Modal title="Export networks" body={SettingsNetworksExport} bind:show={showSettingsNetworksExport} />
