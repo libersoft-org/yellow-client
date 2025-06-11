@@ -31,7 +31,7 @@
 	{#snippet content(wallet)}
 		<Table breakpoint="0">
 			<Tbody>
-				{#each walletAddresses(wallet) as address, index}
+				{#each walletAddresses(wallet) as address}
 					<Clickable onClick={() => clickSelectAddress(wallet, address)}>
 						<TbodyTr>
 							<Td>{address.index}</Td>

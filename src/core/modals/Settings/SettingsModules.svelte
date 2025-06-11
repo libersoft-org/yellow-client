@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { modules_config, updateModuleConfig, resetModulesConfig } from '@/core/modules_config.ts';
 	import type { ModuleConfig, ModuleType } from '@/core/types.ts';
-	import { order } from '@/core/utils/utils.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
 
 	let editingModule: string | null = $state(null);
 	let tempServiceUrl: string = $state('');

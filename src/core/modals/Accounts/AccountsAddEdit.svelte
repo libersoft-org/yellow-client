@@ -26,7 +26,6 @@
 	let credentials_password = $state('');
 	let config_enabled = $state(isInWelcomeWizard);
 	let config_title = $state('');
-	let acc = $state();
 	let retry_nonce = $state(0);
 	type WizardContext = {
 		setNextText: (text: string) => void;

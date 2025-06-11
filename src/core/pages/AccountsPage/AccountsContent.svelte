@@ -27,7 +27,6 @@
 	let showExportModal: boolean = $state(false);
 	let showImportModal: boolean = $state(false);
 	let idItem: string | null = $state(null);
-	let accountTitle: string = $state('');
 	let modalKey: number = $state(0);
 
 	$effect(() => {

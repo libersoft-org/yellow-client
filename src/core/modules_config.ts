@@ -1,4 +1,3 @@
-import { writable } from 'svelte/store';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import type { ModuleConfig, ModulesConfiguration } from './types.ts';
 import { TAURI_MOBILE } from './tauri.ts';

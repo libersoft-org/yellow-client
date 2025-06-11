@@ -29,7 +29,7 @@
 <Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Table breakpoint="0">
 	<Tbody>
-		{#each $networks as n, index}
+		{#each $networks as n}
 			<TbodyTr>
 				<Clickable onClick={() => selectNetwork(n.guid)}>
 					<Td>

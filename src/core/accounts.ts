@@ -1,5 +1,4 @@
-import { log, TAURI_MOBILE, TAURI_SERVICE } from '@/core/tauri.ts';
-import { invoke } from '@tauri-apps/api/core';
+import { log, TAURI_SERVICE } from '@/core/tauri.ts';
 import { listen } from '@tauri-apps/api/event';
 import { derived, get, writable } from 'svelte/store';
 import { debug, selected_module_id, active_account_id } from '@/core/stores.ts';

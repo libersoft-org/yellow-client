@@ -25,7 +25,6 @@
 	let invalidAccounts: string[] = $state([]);
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
-	let doContinue = $state();
 	let importUi: any = $state(null);
 
 	const hasExistingAccounts = $derived(get(accounts_config).length > 0);
