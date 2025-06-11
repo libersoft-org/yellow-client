@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
-import { QRTestHelper, QR_TEST_DATA, testQRImportFlow } from '../../../../../test-assets/qr-test-helper.js';
+import { QRTestHelper } from '../../../../../test-assets/qr-test-helper.js';
 
 /**
  * Helper function to setup initial account via wizard
@@ -27,15 +27,6 @@ async function setupAccountInWizard(
 		await page.getByRole('button', { name: 'Next' }).click();
 		await page.getByRole('button', { name: 'Next' }).click();
 		await page.getByRole('button', { name: 'Finish' }).click();
-	});
-}
-
-/**
- * Helper function to close modal
- */
-async function closeModal(page: Page): Promise<void> {
-	return await test.step('Close modal', async () => {
-		await page.getByRole('button', { name: 'X', exact: true }).click();
 	});
 }
 

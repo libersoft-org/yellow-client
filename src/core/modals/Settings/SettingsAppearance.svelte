@@ -3,7 +3,7 @@
 	import { TAURI } from '@/core/tauri.ts';
 	import { zoom, followBrowserTheme } from '@/core/settings.ts';
 	import { setZoom } from '@/core/zoom.ts';
-	import { selected_theme_index, current_theme, themes, user_themes, default_themes, type Theme } from '@/core/themes.ts';
+	import { selected_theme_index, current_theme, themes, user_themes, default_themes } from '@/core/themes.ts';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Range from '@/core/components/Range/Range.svelte';

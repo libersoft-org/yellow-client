@@ -115,7 +115,7 @@
 					<Th>Action</Th>
 				</Thead>
 				<Tbody>
-					{#each walletAddresses(walleta) as address, index}
+					{#each walletAddresses(walleta) as address}
 						<TbodyTr>
 							<Td title="Index">{address.index}</Td>
 							<Td title="Alias">{address.name}</Td>

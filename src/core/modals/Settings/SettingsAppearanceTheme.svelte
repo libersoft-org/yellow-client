@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { convertFromShortHex } from '@/core/utils/colors.js';
 	import { type Writable, get } from 'svelte/store';
+	import { onDestroy } from 'svelte';
 	import { user_themes, default_themes, themes, selected_theme_index, type Theme } from '@/core/themes.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -29,6 +30,12 @@
 				this.current_themes = all_themes;
 				this.notifySubscribers();
 			});
+		}
+
+		destroy() {
+			this.unsubscribe_selected_theme_index();
+			this.unsubscribe_themes();
+			this.subscribers = [];
 		}
 
 		private notifySubscribers() {
@@ -91,6 +98,10 @@
 
 	const theme = new WritableCurrentThemeStore();
 
+	onDestroy(() => {
+		theme.destroy();
+	});
+
 	// Determine if the current theme is a built-in theme
 	let is_builtin_theme: boolean;
 	$: is_builtin_theme = $selected_theme_index < default_themes.length;
@@ -106,7 +117,7 @@
 				<Input type="text" bind:value={$theme.name} enabled={!is_builtin_theme} data-testid="theme-name-input" />
 			</Td>
 		</TbodyTr>
-		{#each theme_properties as theme_property_name, index}
+		{#each theme_properties as theme_property_name}
 			<TbodyTr>
 				<Td title={theme_property_name}>
 					{#if theme_property_name === '--background-image'}
