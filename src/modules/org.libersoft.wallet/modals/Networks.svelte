@@ -31,11 +31,11 @@
 	<Tbody>
 		{#each $networks as n}
 			<TbodyTr>
-				<Clickable onClick={() => selectNetwork(n.guid)}>
-					<Td>
+				<Td>
+					<Clickable onClick={() => selectNetwork(n.guid)}>
 						<Icon img={n.currency.iconURL} />{n.name}
-					</Td>
-				</Clickable>
+					</Clickable>
+				</Td>
 			</TbodyTr>
 		{/each}
 	</Tbody>
