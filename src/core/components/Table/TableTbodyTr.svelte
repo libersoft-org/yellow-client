@@ -17,10 +17,8 @@
 		background-color: var(--primary-softer-background) !important;
 	}
 
-	tr.hover {
-		&:hover {
-			background-color: var(--primary-background) !important;
-		}
+	tr.hover:hover {
+		background-color: var(--primary-background) !important;
 	}
 </style>
 

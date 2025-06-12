@@ -65,11 +65,11 @@
 		padding: 15px;
 		padding-right: 0;
 		font-weight: bold;
+	}
 
-		:global(.clickable) {
-			flex: 1 1 auto;
-			min-width: 0;
-		}
+	.bar-buttons .bar-button :global(.clickable) {
+		flex: 1 1 auto;
+		min-width: 0;
 	}
 
 	.new-conversation {

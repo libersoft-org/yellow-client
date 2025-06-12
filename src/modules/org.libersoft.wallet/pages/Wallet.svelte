@@ -111,15 +111,15 @@
 		@media (max-width: 1024px) {
 			grid-template-columns: repeat(2, 1fr);
 		}
+	}
 
-		:global(.button) {
-			width: 100%;
-		}
+	.buttons :global(.button) {
+		width: 100%;
+	}
 
-		:global(.clickable) {
-			display: flex;
-			width: 100%;
-		}
+	.buttons :global(.clickable) {
+		display: flex;
+		width: 100%;
 	}
 
 	.separator {

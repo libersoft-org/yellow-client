@@ -22,16 +22,6 @@
 		padding-top: clamp(48px, 8vw, 120px);
 		padding-bottom: clamp(48px, 8vw, 120px);
 	}
-
-	/* &.appended
-			padding-top 0
-
-		&.prepended
-			padding-bottom 0
-
-		&.bare
-			padding-top 0
-			padding-bottom 0 */
 </style>
 
 <section class:appended class:prepended class:lg={size === 'lg'} class:bare {...restProps}>

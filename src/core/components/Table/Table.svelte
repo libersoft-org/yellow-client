@@ -30,7 +30,7 @@
 		box-sizing: border-box;
 	}
 
-	:global(.table.table-wide) {
+	.table.table-wide {
 		border: 1px solid var(--secondary-background) !important;
 		border-radius: 8px;
 	}
@@ -50,7 +50,7 @@
 	}
 </style>
 
-<div class={`table ${isWide ? 'table-wide' : ''}`} {...restProps}>
+<div class="table" class:table-wide={isWide} {...restProps}>
 	<table>
 		{@render children?.()}
 	</table>

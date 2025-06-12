@@ -46,10 +46,6 @@
 <style>
 	.zoom {
 		display: flex;
-
-		/*input {
-			margin-top: 6px;
-		}*/
 	}
 </style>
 

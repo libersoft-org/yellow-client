@@ -258,10 +258,10 @@
 	.qr-content {
 		position: relative;
 		width: 100%;
+	}
 
-		.scrollable {
-			overflow: auto;
-		}
+	.qr-content .scrollable {
+		overflow: auto;
 	}
 
 	.scan-again-container {
