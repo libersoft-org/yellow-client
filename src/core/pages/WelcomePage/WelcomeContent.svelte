@@ -1,10 +1,10 @@
 <script>
-	import TopBar from '../../components/TopBar/TopBar.svelte';
-	import TopBarTitle from '../../components/TopBar/TopBarTitle.svelte';
-	import Clickable from '../../components/Clickable/Clickable.svelte';
-	import Icon from '../../components/Icon/Icon.svelte';
-	import VersionInfo from '../../components/VersionInfo/VersionInfo.svelte';
-	import { hideSidebarMobile, product, link } from '../../core.ts';
+	import { hideSidebarMobile, product, link } from '@/core/stores.ts';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
 
 	function clickLogo() {
 		window.open(link, '_blank');
@@ -40,12 +40,12 @@
 	}
 </style>
 
-<TopBar>
-	<svelte:fragment slot="left">
+<Bar>
+	{#snippet left()}
 		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-		<TopBarTitle text="Welcome" />
-	</svelte:fragment>
-</TopBar>
+		<BarTitle text="Welcome" />
+	{/snippet}
+</Bar>
 <div class="welcome">
 	<Clickable onClick={clickLogo}>
 		<div class="logo">

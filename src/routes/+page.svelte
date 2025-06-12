@@ -3,10 +3,12 @@
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import { init, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product } from '../core/core.ts';
+	import { init, active_account, accounts_config, setModule } from '../core/core.ts';
+	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug } from '@/core/stores.ts';
+	import { documentHeight, keyboardHeight } from '@/core/stores.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
 	import { mobileWidth, mobileClass, isMobile } from '@/core/stores.ts';
-	import { selected_theme_index } from '@/core/themes.js';
+	import { selected_theme_index, initBrowserThemeDetection } from '@/core/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
 	import ModuleBar from '@/core/components/ModuleBar/ModuleBar.svelte';
@@ -29,12 +31,7 @@
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
 	import { initZoom } from '@/core/zoom.ts';
-
-	let menus = [];
-	setContext('menus', menus);
-
-	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
-
+	import { log } from '@/core/tauri.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
@@ -50,6 +47,8 @@
 			content: AccountsContent,
 		},
 	};
+	let menus = [];
+	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
 	let showWelcomeWizard = false;
 	let content;
 	let isMenuOpen = false;
@@ -59,6 +58,8 @@
 	let selectedCorePage;
 	let selectedModuleDecl;
 	let contentElement;
+
+	setContext('menus', menus);
 	setContext('contentElement', contentElement);
 
 	$: selectedCorePage = corePages[$selected_corepage_id];
@@ -73,20 +74,6 @@
 
 	onMount(async () => {
 		console.log('+page onMount');
-
-		// Catch all synchronous errors
-		window.addEventListener('error', event => {
-			// event.error is the Error object
-			console.error('Uncaught error:', event.error);
-			console.error('Stack trace:\n', event.error?.stack);
-		});
-
-		// Catch unhandled promise rejections
-		window.addEventListener('unhandledrejection', event => {
-			const reason = event.reason;
-			console.error('Unhandled promise rejection:', reason);
-			console.error('Stack trace:\n', reason?.stack || reason);
-		});
 
 		if ('serviceWorker' in window.navigator) {
 			console.log('+page registering service worker');
@@ -142,6 +129,7 @@
 		initBrowserNotifications();
 		initCustomNotifications();
 		initWindow();
+		initBrowserThemeDetection();
 
 		if ($sidebarSize) {
 			setSidebarSize($sidebarSize);
@@ -225,13 +213,8 @@
 		// });
 	}
 
-	function onSelectModule(id) {
-		selected_corepage_id.set(null);
-		//console.log('onSelectModule: ' + id);
-		selected_module_id.set(id);
-		//console.log('selected_module_id: ' + $selected_module_id);
-		//console.log('active_account: ', $active_account);
-		//console.log('accounts_config: ', $accounts_config);
+	function updateLastModuleId(id) {
+		//console.log('updateLastModuleId: ' + id);
 		if (!$active_account) return;
 		accounts_config.update(accounts => {
 			accounts.forEach(account => {
@@ -244,8 +227,15 @@
 		});
 	}
 
+	function onSelectModule(id) {
+		//console.log('onSelectModule: ' + id);
+		setModule(id);
+		updateLastModuleId(id);
+	}
+
 	function onCloseModule() {
-		selected_module_id.set(null);
+		setModule(null);
+		updateLastModuleId(null);
 	}
 
 	function startResizeSideBar() {
@@ -346,12 +336,11 @@
 
 	.resizer {
 		position: absolute;
-		z-index: 1;
+		z-index: 6;
 		top: 0;
 		bottom: 0;
 		width: 5px;
 		cursor: ew-resize;
-		/*background-color: #0d0;*/
 	}
 
 	.resizer.mobile {

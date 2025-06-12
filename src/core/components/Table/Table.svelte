@@ -4,6 +4,7 @@
 	interface Props {
 		children?: Snippet;
 		breakpoint?: string | null;
+
 		[key: string]: unknown;
 	}
 
@@ -30,7 +31,7 @@
 	}
 
 	:global(.table.table-wide) {
-		border: 1px solid #222 !important;
+		border: 1px solid var(--secondary-background) !important;
 		border-radius: 8px;
 	}
 

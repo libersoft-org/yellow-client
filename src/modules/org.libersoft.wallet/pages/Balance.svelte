@@ -1,4 +1,5 @@
 <script>
+	import { selectedNetwork, selectedAddress } from '../wallet.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -29,6 +30,12 @@
 </script>
 
 <style>
+	.wallet-balance {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
 	.row {
 		display: flex;
 		gap: 10px;
@@ -49,67 +56,25 @@
 	}
 </style>
 
-<Table breakpoint="0px">
-	<Tbody>
-		{#each tokens as t, index}
-			<Tr>
-				<Td>
-					<div class="row">
-						<div><Icon img={t.icon} size="40px" padding="0px" alt={t.symbol} /></div>
-						<div class="symbol">{t.symbol}</div>
-					</div>
-				</Td>
-				<Td>
-					<div class="amount">{t.amount.crypto} {t.symbol}</div>
-					<div class="fiat">({t.amount.fiat} USD)</div>
-				</Td>
-			</Tr>
-		{/each}
-	</Tbody>
-</Table>
-
-<!--
-<script>
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	export let icon;
-	export let symbol;
-	export let amount;
-	export let className = '';
-	export let onClick;
-</script>
-
-<style>
-	.item .symbol {
-		flex-grow: 1;
-		font-size: 20px;
-		font-weight: bold;
-	}
-
-	.item .amount {
-		text-align: right;
-	}
-
-	.item .amount .crypto {
-		font-weight: bold;
-		font-size: 18px;
-	}
-
-	.item .amount .fiat {
-		font-size: 14px;
-		color: #555;
-	}
-</style>
-
-<Clickable {onClick}>
-	<div class="item {className}">
-		{#if icon}
-			<div class="icon"><img src={icon} alt={symbol} /></div>
-		{/if}
-		<div class="symbol">{symbol}</div>
-		<div class="amount">
-			<div class="crypto">{amount.crypto} {symbol}</div>
-			<div class="fiat">({amount.fiat} USD)</div>
-		</div>
-	</div>
-</Clickable>
--->
+<div class="wallet-balance">
+	{#if $selectedNetwork && $selectedAddress}
+		<Table breakpoint="0px">
+			<Tbody>
+				{#each tokens as t, index}
+					<Tr>
+						<Td>
+							<div class="row">
+								<div><Icon img={t.icon} size="40px" padding="0px" alt={t.symbol} /></div>
+								<div class="symbol">{t.symbol}</div>
+							</div>
+						</Td>
+						<Td>
+							<div class="amount">{t.amount.crypto} {t.symbol}</div>
+							<div class="fiat">({t.amount.fiat} USD)</div>
+						</Td>
+					</Tr>
+				{/each}
+			</Tbody>
+		</Table>
+	{/if}
+</div>

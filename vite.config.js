@@ -1,5 +1,6 @@
 import pluginChecker from 'vite-plugin-checker';
 import { sveltekit } from '@sveltejs/kit/vite';
+import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
@@ -31,10 +32,15 @@ export default defineConfig(({ mode }) => {
 	dotenv.config({ path: '.env.local' });
 
 	// Check if Sentry is enabled
-	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.SENTRY_ENABLED || '').trim());
+	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.VITE_SENTRY_ENABLED || '').trim());
 
 	return {
-		resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
+		resolve: {
+			...(process.env.VITEST ? { conditions: ['browser'] } : {}),
+			alias: {
+				'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-mobile.ts') : path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-builtin.ts'),
+			},
+		},
 		css: {
 			preprocessorOptions: {
 				scss: {
@@ -55,6 +61,7 @@ export default defineConfig(({ mode }) => {
 						}),
 					]
 				: []),
+			devtoolsJson(),
 			sveltekit(),
 			paraglideVitePlugin({
 				project: './project.inlang',

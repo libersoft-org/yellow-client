@@ -9,8 +9,8 @@
 		justify-content: center;
 		padding: 2px;
 		font-weight: bold;
-		background-color: #555;
-		color: #fff;
+		background-color: var(--disabled-background);
+		color: var(--disabled-foreground);
 		border-radius: 20px;
 	}
 </style>

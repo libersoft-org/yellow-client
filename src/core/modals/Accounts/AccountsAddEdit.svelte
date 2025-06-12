@@ -8,8 +8,9 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
-	import { derived, get, writable } from 'svelte/store';
+	import { get, writable, derived } from 'svelte/store';
 	interface Props {
 		close: () => void;
 		params: { id: string | null };
@@ -23,41 +24,65 @@
 	let credentials_address = $state('');
 	let credentials_server = $state('');
 	let credentials_password = $state('');
-	let config_enabled = $state(false);
+	let config_enabled = $state(isInWelcomeWizard);
 	let config_title = $state('');
-	let acc = $state();
 	let retry_nonce = $state(0);
 	type WizardContext = {
 		setNextText: (text: string) => void;
 	};
 	let wizard = getContext<WizardContext>('wizard');
 	let account_id_store = writable<string | null>(null);
-	console.log('[INIT] Modal mounted. Params:', params);
+	//console.log('[INIT] Modal mounted. Params:', params);
 
 	$effect(() => {
 		console.log('[EFFECT] Updating account_id_store from params.id =', params.id);
 		account_id_store.set(params.id);
 	});
 
+	// Watch account_id_store changes to reset form for new accounts
+	$effect(() => {
+		const id = $account_id_store;
+		console.log('[EFFECT] account_id_store changed to:', id);
+
+		if (id === null) {
+			console.log('[EFFECT] Resetting form for new account');
+			credentials_address = '';
+			credentials_server = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
+			credentials_password = '';
+			config_enabled = isInWelcomeWizard || true;
+			config_title = 'My account';
+		}
+	});
+
+	/*
 	// Observe full accounts store for debug
 	accounts.subscribe(value => {
 		console.log('[STORE] Full accounts store updated:', value.map(get));
 	});
-
-	let account = derived([accounts, account_id_store], ([$accounts, $id]) => {
-		const found = $accounts.find(acc => get(acc).id === $id);
-		console.log('[DERIVED] account_id_store =', $id, '→ found account:', found ? get(found) : null);
+*/
+	let account = derived([accounts, account_id_store], ([$accounts, $account_id_store]) => {
+		const id = $account_id_store;
+		if (!id) {
+			//console.log('[DERIVED] No account ID set, returning null');
+			return null;
+		}
+		//console.log('[DERIVED] Finding account with ID:', id);
+		const found = $accounts.find(acc => get(acc).id === id);
+		//console.log('[DERIVED] $account_id_store =', id, '→ found account:', found ? get(found) : null);
 		return found ?? null;
 	});
-
+	/*
 	account.subscribe(value => {
-		acc = value;
-		console.log('[SUBSCRIBE] account store emitted acc =', value ? get(value) : null);
+		if (value) {
+			console.log('[SUBSCRIBE] Account updated:', value);
+		} else {
+			console.log('[SUBSCRIBE] No account found');
+		}
 	});
-
+	*/
 	$effect(() => {
 		protocolElem?.focus();
-		console.log('[EFFECT] Checking if params.id exists:', params.id);
+		//console.log('[EFFECT] Checking if params.id exists:', params.id);
 
 		if (params.id !== null) {
 			let found = findAccountConfig(params.id);
@@ -70,12 +95,7 @@
 			config_enabled = found?.enabled ?? true;
 			config_title = found?.settings?.title ?? 'My account';
 		} else {
-			console.log('[EFFECT] New account setup');
-			credentials_address = '';
-			credentials_server = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
-			credentials_password = '';
-			config_enabled = true;
-			config_title = 'My account';
+			console.log('[EFFECT] New account setup - form will be reset by account_id_store watcher');
 
 			if (isInWelcomeWizard) {
 				untrack(() => {
@@ -179,14 +199,6 @@
 		gap: 15px;
 	}
 
-	.error {
-		display: flex;
-		gap: 5px;
-		padding: 10px;
-		border-radius: 10px;
-		background-color: #f33;
-	}
-
 	.status {
 		display: flex;
 		align-items: center;
@@ -202,35 +214,33 @@
 		</Select>
 	</Label>
 	<Label text="Title">
-		<Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} />
+		<Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} data-testid="account-title-input" />
 	</Label>
 	<Label text="Server">
-		<Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} />
+		<Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} data-testid="account-server-input" />
 	</Label>
 	<Label text="Address">
-		<Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} />
+		<Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} data-testid="account-address-input" />
 	</Label>
 	<Label text="Password">
-		<Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} />
+		<Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} data-testid="account-password-input" />
 	</Label>
 	{#if !isInWelcomeWizard}
-		<Switch showLabel label="Enabled" bind:checked={config_enabled} />
+		<Switch showLabel label="Enabled" bind:checked={config_enabled} data-testid="account-enabled-checkbox" />
 	{/if}
 	{#if error}
-		<div class="error">
-			<strong>Error:</strong>
-			{error}
-		</div>
+		<Alert type="error" message={error} />
 	{/if}
 	{#if params.id === null}
 		<Button data-testid="add" text="Add the account" onClick={clickAdd} />
 	{:else}
 		<Button data-testid="save" img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={clickSave} />
 	{/if}
-	{#if account && acc}
+
+	{#if $account}
 		<div class="status">
 			<strong>Status:</strong>
-			<AccountStatusIconIconAndText {account} />
+			<AccountStatusIconIconAndText account={$account} />
 		</div>
 	{/if}
 </div>

@@ -1,35 +1,42 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { mobileClass } from '@/core/stores.ts';
-	import { debug } from '../../core.ts';
-	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import { draggable } from '@neodrag/svelte';
-	import Portal from '../Portal/Portal.svelte';
-	let { show = $bindable(false), children, params, title = '', body = {}, breadcrumbs, width, height, onShowChange = () => {} }: Props = $props();
+	import { debug } from '@/core/stores.ts';
+	import { mobileClass, isMobile } from '@/core/stores.ts';
+	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Portal from '@/core/components/Portal/Portal.svelte';
+	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
 	let zIndex = $state(100);
-	let activeTab = $state('');
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
 	interface Props {
+		testId?: string;
 		show?: boolean;
+		children?: Snippet;
+		top?: Snippet;
+		center?: Snippet;
+		bottom?: Snippet;
 		params?: any;
+		optionalIcon?: {
+			img: string;
+			alt?: string;
+			onClick?: (e: Event) => void;
+		};
 		title?: string;
 		body?: any;
 		width?: string;
 		height?: string;
-		children?: Snippet;
-		breadcrumbs?: Snippet | null;
 		onShowChange?: (show: boolean) => void;
 	}
 
 	$effect(() => {
-		if (!isMobile) return;
-		if (modalEl && showContent && !isDragging && activeTab) {
+		if (!$isMobile) return;
+		if (modalEl && showContent && !isDragging) {
 			centerModal();
 			requestAnimationFrame(snapTransformIntoBounds);
 		}
@@ -40,7 +47,7 @@
 		modalId = registerModal(z => (zIndex = z));
 
 		function handleResize() {
-			if (!isMobile) return;
+			if (!$isMobile) return;
 			centerModal();
 			if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
 		}
@@ -48,7 +55,7 @@
 		if (modalEl) {
 			let didInit = false;
 			resizeObserver = new ResizeObserver(() => {
-				if (!isMobile) return;
+				if (!$isMobile) return;
 				if (isDragging) return;
 				if (didInit) {
 					centerModal();
@@ -105,7 +112,7 @@
 
 	function snapTransformIntoBounds() {
 		if (!modalEl) return;
-		if (!isMobile) return;
+		if (!$isMobile) return;
 		const rect = modalEl.getBoundingClientRect();
 		const padding = 0;
 		let dx = 0;
@@ -158,10 +165,6 @@
 		onShowChange?.(value);
 	}
 
-	function clearActiveTab() {
-		activeTab = '';
-	}
-
 	function onkeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
 			event.preventDefault();
@@ -185,9 +188,8 @@
 		flex-direction: column;
 		position: fixed;
 		inset: 0;
-		max-width: 700px;
 		width: 100%;
-		max-height: calc(100dvh - 48px);
+		max-height: calc(100dvh - 2px);
 		height: fit-content;
 		width: min-content;
 		overflow: hidden;
@@ -249,23 +251,45 @@
 		background-color: var(--background);
 		overflow: auto;
 		color: var(--primary-foreground);
+		height: 100%;
+	}
+
+	.top,
+	.center,
+	.bottom {
+		display: flex;
+		flex: 1;
+	}
+
+	.top {
+		align-items: baseline;
+	}
+
+	.center {
+		align-items: center;
+	}
+
+	.bottom {
+		align-items: end;
 	}
 </style>
 
 {#if show}
 	<Portal>
-		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown}>
+		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">
 					{#if title}
 						<div class="title">
-							{#if activeTab}
-								<Icon img="img/back.svg" alt="Back" colorVariable="--primary-foreground" size="20px" padding="10px" onClick={clearActiveTab} />
+							{#if optionalIcon}
+								<div onpointerdown={e => e.stopPropagation()}>
+									<Icon img={optionalIcon.img} colorVariable="--primary-foreground" alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
+								</div>
 							{/if}
-							{title}
+							<div>{title}</div>
 						</div>
 						<div onpointerdown={e => e.stopPropagation()}>
-							<Icon data-testid="Modal-close" img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="20px" padding="10px" onClick={close} />
+							<Icon data-testid={testId + '-Modal-close'} img="img/close.svg" colorVariable="--primary-foreground" alt="X" size="20px" padding="10px" onClick={close} />
 						</div>
 					{/if}
 				</div>
@@ -274,12 +298,24 @@
 						params: <code>{JSON.stringify({ params })}</code>
 					{/if}
 					{#if typeof ModalBody === 'function'}
-						{#if breadcrumbs}
-							{@render breadcrumbs()}
-						{/if}
-						<ModalBody {close} {params} bind:activeTab />
-					{:else if children}
+						<ModalBody {close} {params} />
+					{:else if children || top || center || bottom}
 						{@render children?.()}
+						{#if top}
+							<div class="top">
+								{@render top?.()}
+							</div>
+						{/if}
+						{#if center}
+							<div class="center">
+								{@render center?.()}
+							</div>
+						{/if}
+						{#if bottom}
+							<div class="bottom">
+								{@render bottom?.()}
+							</div>
+						{/if}
 					{/if}
 				</div>
 			{/if}

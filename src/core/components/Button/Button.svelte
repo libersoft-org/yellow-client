@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { onMount, type Snippet } from 'svelte';
-	import { isMobile } from '@/core/stores.ts';
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import { type Snippet } from 'svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
+	import { isMobile } from '@/core/stores.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 
 	interface Props extends HTMLButtonAttributes {
 		children?: Snippet;
@@ -29,9 +29,7 @@
 	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = '10px', bgColor = 'var(--primary-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable, iconSize = '20px', iconPadding = '0px', loading = false, ...restProps }: Props = $props();
 
 	function handleClick(e) {
-		if (enabled && onClick) {
-			onClick(e);
-		}
+		if (enabled && onClick) onClick(e);
 	}
 </script>
 

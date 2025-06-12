@@ -65,7 +65,7 @@ export async function base64ToUint8Array(base64: string) {
 export function assembleFile(file: string | Blob, fileName?: string) {
 	const downloadLink = document.createElement('a');
 	downloadLink.href = file instanceof Blob ? URL.createObjectURL(file) : file;
-	downloadLink.download = fileName || (file instanceof Blob ? file.name : 'unknown_file');
+	downloadLink.download = fileName || (file instanceof File ? file.name : 'unknown_file'); // fixme: file is (string | Blob), but Blob does not have name property
 	downloadLink.target = '_blank';
 	downloadLink.style.display = 'none';
 

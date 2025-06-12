@@ -50,10 +50,7 @@
 		width: 300px;
 		height: 400px;
 		border-radius: 10px;
-		background-color: #eee;
 		overflow: hidden;
-		/*align-items: center;
-  justify-content: space-between;*/
 		touch-action: pan-y;
 		transition: transform 0.3s ease-out;
 	}
@@ -73,8 +70,8 @@
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		background: rgba(0, 0, 0, 0.5);
-		color: white;
+		background: var(--default-foreground);
+		color: var(--default-background);
 		z-index: 2;
 		padding: 10px;
 		text-align: center;

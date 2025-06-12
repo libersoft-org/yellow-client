@@ -59,3 +59,18 @@ export interface ModuleDeclaration {
 	};
 	deinit?: () => void;
 }
+
+export type ModuleType = 'builtin' | 'iframe';
+
+export interface ModuleConfig {
+	id: string;
+	name: string;
+	type: ModuleType;
+	enabled: boolean;
+	serviceUrl?: string;
+	order?: number;
+}
+
+export interface ModulesConfiguration {
+	modules: { [moduleId: string]: ModuleConfig };
+}

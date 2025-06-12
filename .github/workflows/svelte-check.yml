@@ -1,0 +1,30 @@
+name: Svelte Check
+
+on:
+  push:
+    branches: [ "**" ]
+
+permissions:
+  contents: read
+
+jobs:
+  svelte-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Generate SvelteKit files
+        run: bun run build
+
+      - name: Run svelte-check
+        run: bun run svelte-check --fail-on-warnings

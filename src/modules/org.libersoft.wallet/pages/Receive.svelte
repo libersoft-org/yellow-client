@@ -3,6 +3,7 @@
 	import { mobileClass } from '@/core/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import QRCode from 'qrcode';
 	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
 	import { parseUnits } from 'ethers';
@@ -87,7 +88,7 @@
 	.section {
 		display: flex;
 		justify-content: center;
-		border: 1px solid #000;
+		border: 1px solid var(--secondary-background);
 		border-radius: 10px;
 		width: 100%;
 
@@ -133,14 +134,10 @@
 		align-items: center;
 		gap: 6px;
 	}
-
-	.error {
-		color: #f00;
-	}
 </style>
 
-<div class="receive">
-	{#if $selectedNetwork && $selectedAddress}
+{#if $selectedNetwork && $selectedAddress}
+	<div class="receive">
 		<div class="section">
 			<div class="section-wrapper">
 				<div class="bold">Your wallet address:</div>
@@ -162,7 +159,9 @@
 					<div>Amount:</div>
 					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
 					<DropdownFilter options={$currencies} bind:selected={currency} />
-					<div class="error">{error}</div>
+					{#if error}
+						<Alert type="error" message={error} />
+					{/if}
 				</div>
 				<Clickable onClick={clickCopyPayment}>
 					<div class="address">
@@ -175,7 +174,5 @@
 				<div class="qr"><img src={qrPayment} alt="Payment" /></div>
 			</div>
 		</div>
-	{:else}
-		<div>No wallet selected</div>
-	{/if}
-</div>
+	</div>
+{/if}

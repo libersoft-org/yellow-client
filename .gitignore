@@ -3,6 +3,8 @@
 node_modules/
 build/
 build-tauri/
+dist/
+static/tmp/
 *.crt
 *.key
 .secret_git
@@ -29,4 +31,5 @@ project.inlang/cache
 
 # Sentry Config File
 .env.sentry-build-plugin
-.claude
+.dev_intention
+client

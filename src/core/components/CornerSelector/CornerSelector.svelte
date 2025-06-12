@@ -1,5 +1,5 @@
 <script>
-	import CornerSelectorCorner from './CornerSelectorCorner.svelte';
+	import CornerSelectorCorner from '@/core/components/CornerSelector/CornerSelectorCorner.svelte';
 	export let value = 'top-right';
 	export let disabled = false;
 

@@ -1,11 +1,12 @@
 <script>
-	import { active_account, module_decls, selected_module_id } from '../../core.ts';
 	import { get } from 'svelte/store';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	import ModuleBarItem from './ModuleBarItem.svelte';
+	import { active_account } from '@/core/core.ts';
+	import { module_decls, selected_module_id } from '@/core/stores.ts';
 	import resize from '@/core/actions/resizeObserver.ts';
 	import { order } from '@/core/utils/utils.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import ModuleBarItem from '@/core/components/ModuleBar/ModuleBarItem.svelte';
 	export let onSelectModule;
 	export let onCloseModule;
 	let itemsHeight = '50px';

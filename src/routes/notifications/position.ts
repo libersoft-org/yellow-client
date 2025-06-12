@@ -18,7 +18,7 @@ type Corner = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 //type Direction = 'up' | 'down';
 const monitors: Writable<Monitor[]> = writable([]);
 const actualMonitorName: Writable<string | null> = writable(null);
-let monitorInterval: Timer | undefined;
+let monitorInterval: ReturnType<typeof setInterval> | undefined;
 const width = 400;
 const height: Writable<number> = writable(100);
 const position: Writable<Position> = writable({ x: 0, y: 0 });

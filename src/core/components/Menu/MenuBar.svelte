@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Icon from '../Icon/Icon.svelte';
-	import MenuBarDebug from './MenuBarDebug.svelte';
-	import { product } from '../../core.ts';
+	import { product } from '@/core/stores.ts';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import MenuBarDebug from '@/core/components/Menu/MenuBarDebug.svelte';
 
 	interface Props {
 		onOpenMenu: () => void;
@@ -27,7 +27,7 @@
 </style>
 
 <div class="bar">
-	<Icon img="img/menu.svg" alt="☰" colorVariable="--primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} />
+	<Icon img="img/menu.svg" alt="☰" colorVariable="--primary-foreground" size="30px" padding="10px" onClick={onOpenMenu} data-testid="menu-button" />
 	<div class="product">{product}</div>
 	<MenuBarDebug />
 </div>

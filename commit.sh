@@ -29,7 +29,6 @@ else
  git remote set-url origin https://$USER:$PASS@github.com/$USER/$REPO
 fi
 bun i -g prettier prettier-plugin-svelte
-#prettier --config prettier-libersoft.json --plugin 'prettier-plugin-svelte' --write "src/**/*.{js,ts,css,html,svelte}"
 prettier --plugin 'prettier-plugin-svelte' --write "src/**/*.{js,ts,css,html,svelte}"
 git config user.name "$NAME"
 git config user.email "$EMAIL"
@@ -37,6 +36,5 @@ git status
 git add .
 git status
 git commit -m "$1"
-#git branch -M $BRANCH
-git push # -u origin $BRANCH
+git push
 git status

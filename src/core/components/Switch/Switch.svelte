@@ -6,10 +6,10 @@
 		showLabel?: boolean;
 		label: string;
 		orientation?: 'horizontal' | 'vertical';
+		'data-testid'?: string;
 	}
 
-	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal' }: Props = $props();
-
+	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal', ...restProps }: Props = $props();
 	let mounted = $state(false);
 	let inputId = Math.random().toString(36);
 	let labelId = `${inputId}-label`;
@@ -43,6 +43,7 @@
 
 	.switch .label {
 		font-weight: bold;
+		cursor: pointer;
 	}
 
 	.switch-wrapper {
@@ -66,7 +67,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: #ccc;
+		background-color: var(--disabled-background);
 		border-radius: 34px;
 		cursor: pointer;
 		pointer-events: none;
@@ -89,7 +90,7 @@
 		width: 26px;
 		left: 4px;
 		bottom: 4px;
-		background-color: white;
+		background-color: var(--primary-foreground);
 		border-radius: 50%;
 	}
 
@@ -125,7 +126,7 @@
 			<span class="label">{label}:</span>
 		{/if}
 		<div class="switch-wrapper">
-			<input id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
+			<input {...restProps} id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
 			<span class="slider {mounted ? 'transition' : ''}"></span>
 		</div>
 	</div>

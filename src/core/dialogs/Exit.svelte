@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { exit } from '@tauri-apps/plugin-process';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;

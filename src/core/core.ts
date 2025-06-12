@@ -1,10 +1,6 @@
 //import {} from './client_debug';
-import { tick } from 'svelte';
-import { derived, get, type Readable, type Writable } from 'svelte/store';
-import { log } from './tauri.ts';
-
-// Import all stores
-export * from './stores.ts';
+import { derived, get, type Readable } from 'svelte/store';
+import { selected_module_id, selected_corepage_id } from './stores.ts';
 
 // Import account functionality
 import { accounts_init, accounts, active_account_store, active_account, selectAccount, active_account_module_data, findAccount } from './accounts.ts';
@@ -38,6 +34,18 @@ export function init(): () => void {
 			sub();
 		}
 	};
+}
+
+export function setCorePage(name: string | null): void {
+	console.log('setCorePage:', name);
+	if (get(selected_module_id) !== null) selected_module_id.set(null);
+	if (get(selected_corepage_id) !== name) selected_corepage_id.set(name);
+}
+
+export function setModule(name: string | null): void {
+	console.log('setModule:', name);
+	if (get(selected_corepage_id) !== null) selected_corepage_id.set(null);
+	if (get(selected_module_id) !== name) selected_module_id.set(name);
 }
 
 interface RelayStore<T> extends Readable<T | null> {

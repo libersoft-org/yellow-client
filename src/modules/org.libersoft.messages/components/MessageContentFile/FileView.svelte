@@ -45,7 +45,7 @@
 		display: flex;
 		flex-direction: column;
 		padding: 10px;
-		border: 1px solid #880;
+		border: 1px solid var(--primary-harder-background);
 		border-radius: 10px;
 		background-color: var(--primary-softer-background);
 	}

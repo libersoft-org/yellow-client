@@ -1,5 +1,5 @@
 import { derived, writable } from 'svelte/store';
-import type { Message } from '../types.ts';
+import type { Message, Conversation } from '../types.ts';
 
 export enum ForwardedMessageType {
 	MESSAGE = 'message',
@@ -11,19 +11,15 @@ export interface ForwardedMessage {
 }
 
 export interface ForwardMessageStoreValue {
-	open: boolean;
 	forwardedMessage: ForwardedMessage | null;
+	sentToConversations: Conversation[];
 }
 
 export class ForwardMessageStore {
 	store = writable<ForwardMessageStoreValue>({
-		open: false,
 		forwardedMessage: null,
+		sentToConversations: [],
 	});
-
-	isOpen() {
-		return derived(this.store, $store => $store.open);
-	}
 
 	setForwardedMessage(forwardedMessage: ForwardedMessage | null) {
 		this.store.update(store => {
@@ -32,27 +28,42 @@ export class ForwardMessageStore {
 		});
 	}
 
-	setOpen(open: boolean) {
-		this.store.update(store => {
-			store.open = open;
-			return store;
-		});
-	}
-
 	getForwardedMessage() {
 		return derived(this.store, $store => $store.forwardedMessage);
 	}
 
+	getSentToConversations() {
+		return derived(this.store, $store => $store.sentToConversations);
+	}
+
+	addSentToConversation(conversation: Conversation) {
+		this.store.update(store => {
+			store.sentToConversations.push(conversation);
+			return store;
+		});
+	}
+
+	clearSentToConversations() {
+		this.store.update(store => {
+			store.sentToConversations = [];
+			return store;
+		});
+	}
+
 	startForwardedMessage(forwardedMessage: ForwardedMessage) {
+		console.log('startForwardedMessage:', forwardedMessage);
+		// Clear sent conversations when starting a new forward operation
+		this.clearSentToConversations();
 		this.setForwardedMessage(forwardedMessage);
-		this.setOpen(true);
+		forwardMessageModalOpen.set(true);
 	}
 
 	close() {
 		this.setForwardedMessage(null);
-		this.setOpen(false);
+		this.clearSentToConversations();
+		forwardMessageModalOpen.set(false);
 	}
 }
 
-const forwardMessageStore = new ForwardMessageStore();
-export default forwardMessageStore;
+export const forwardMessageStore = new ForwardMessageStore();
+export const forwardMessageModalOpen = writable(false);

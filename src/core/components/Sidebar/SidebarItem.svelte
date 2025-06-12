@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Clickable from '../Clickable/Clickable.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;

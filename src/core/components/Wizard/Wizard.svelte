@@ -1,8 +1,6 @@
 <script lang="ts">
 	import Button from '@/core/components/Button/Button.svelte';
-
 	import { getContext, setContext, type Component } from 'svelte';
-
 	interface Props {
 		close?: () => void;
 		params: {
@@ -12,12 +10,11 @@
 			}>;
 		};
 	}
-
 	let { close, params }: Props = $props();
-
 	let nextText = $state('Next');
-	let currentStep = $state(0);
 	const steps = $derived(params.steps);
+	let currentStep = $state(0);
+	const ContentComponent = $derived(steps[currentStep].component);
 	let setTitle = getContext('setTitle') as (title: string) => Promise<void>;
 	let pageChanged = getContext('pageChanged') as () => Promise<void>;
 
@@ -42,8 +39,6 @@
 		if (currentStep > 0) currentStep -= 1;
 		if (pageChanged) await pageChanged();
 	}
-
-	const ContentComponent = $derived(steps[currentStep].component);
 </script>
 
 <style>
@@ -71,7 +66,9 @@
 		width: 30px;
 		height: 30px;
 		border-radius: 50%;
-		background-color: #ccc;
+		border: 1px solid var(--secondary-harder-background);
+		background-color: var(--secondary-softer-background);
+		color: var(--secondary-foreground);
 		text-align: center;
 		line-height: 30px;
 		position: relative;
@@ -80,13 +77,13 @@
 	.progress-bar .step .circle.active {
 		border: 1px solid var(--primary-harder-background);
 		background-color: var(--primary-background);
-		color: #000;
+		color: var(--primary-foreground);
 	}
 
 	.progress-bar .step .line {
 		width: 50px;
 		height: 2px;
-		background-color: #ccc;
+		background-color: var(--secondary-softer-background);
 	}
 
 	.navigation {
@@ -101,7 +98,7 @@
 
 <div class="wizard">
 	<div class="progress-bar">
-		{#each steps as step, index}
+		{#each steps as _, index}
 			<div class="step">
 				<div class="circle {index === currentStep ? 'active' : ''}">
 					{index + 1}

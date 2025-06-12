@@ -1,9 +1,7 @@
 <script>
-	import { hideSidebarMobile } from '@/core/core.ts';
-	import { addressBook } from '../wallet.ts';
-	import { mobileClass } from '@/core/stores.ts';
+	import { hideSidebarMobile } from '@/core/stores.ts';
+	import { addressBook, setSection, setSendAddress } from '../wallet.ts';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 
 	function clickShowWallet() {
@@ -12,7 +10,10 @@
 
 	function clickItem(address) {
 		console.log('SIDEBAR ADDRESS ITEM:', address);
-		//hideSidebarMobile.set(true);
+		// TODO: check if send is not disabled !!!
+		setSection('send');
+		setSendAddress(address);
+		hideSidebarMobile.set(true);
 	}
 </script>
 

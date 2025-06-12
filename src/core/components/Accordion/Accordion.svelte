@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { tick, type Snippet } from 'svelte';
 	import { isMobile } from '@/core/stores.ts';
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
-		items: Array<{ name: string; id: string }>;
-		activeIndex?: number | null;
+		items: Array<{ name: string }>;
 		content: Snippet<[any]> | null;
 		header?: Snippet<[any]> | null;
 		expandAllOnDesktop?: boolean;
@@ -15,10 +14,19 @@
 	let activeIndices = $state<number[]>([]);
 	const isSingleMode = mode === 'single';
 
-	async function handleClick(index: number) {
-		const isOpen = activeIndices.includes(index);
+	export async function handleClick(index: number, newState: boolean | undefined = undefined) {
+		console.debug('Accordion clicked', index, newState);
+		let isOpen = activeIndices.includes(index);
 		const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
 		if (!el) return;
+		if (newState !== undefined) {
+			if (newState) {
+				isOpen = false;
+			} else {
+				isOpen = true;
+			}
+			return;
+		}
 		// CLOSE
 		if (isOpen) {
 			el.style.height = `${el.scrollHeight}px`;

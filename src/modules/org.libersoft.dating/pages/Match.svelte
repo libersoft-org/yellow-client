@@ -2,9 +2,9 @@
 	import { module } from '../module.js';
 	import { closePage } from '../dating.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
-	import Content from '../components/Content.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import PhotoCard from '../components/PhotoCard.svelte';
 	const photo = {
 		img: 'modules/' + module.identifier + '/img/photos/1.webp',
@@ -13,15 +13,15 @@
 	};
 </script>
 
-<TopBar>
-	<svelte:fragment slot="left">
+<Bar>
+	{#snippet left()}
 		<Icon img="img/back.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-		<TopBarTitle text="Match game" />
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+		<BarTitle text="Match game" />
+	{/snippet}
+	{#snippet right()}
 		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-	</svelte:fragment>
-</TopBar>
-<Content>
+	{/snippet}
+</Bar>
+<Page>
 	<PhotoCard {photo} />
-</Content>
+</Page>

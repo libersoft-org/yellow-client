@@ -17,14 +17,14 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import { Mnemonic } from 'ethers';
 	let showModalPhrase = false;
-	let activeIndex = null;
+	let accordion;
 
 	function showNewWalletModal() {
 		showModalPhrase = true;
 	}
 
 	function afterAddWallet() {
-		activeIndex = wallets.length - 1;
+		accordion.handleClick(wallets.length - 1, true);
 	}
 
 	function recover() {
@@ -100,7 +100,7 @@
 {#if $wallets.length === 0}
 	<div class="bold">No wallets found</div>
 {/if}
-<Accordion items={$wallets} bind:activeIndex>
+<Accordion items={$wallets} bind:this={accordion}>
 	{#snippet content(walleta)}
 		<div class="wallet">
 			<ButtonBar>
@@ -115,7 +115,7 @@
 					<Th>Action</Th>
 				</Thead>
 				<Tbody>
-					{#each walletAddresses(walleta) as address, index}
+					{#each walletAddresses(walleta) as address}
 						<TbodyTr>
 							<Td title="Index">{address.index}</Td>
 							<Td title="Alias">{address.name}</Td>

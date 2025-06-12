@@ -12,6 +12,7 @@
 		align-items: center;
 		gap: 5px;
 		padding: 5px 10px;
+		white-space: nowrap;
 		border: 0;
 		border-radius: 10px;
 		font-family: inherit;

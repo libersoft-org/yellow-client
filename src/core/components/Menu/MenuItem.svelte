@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		img?: string;
 		title?: string;
@@ -27,8 +27,8 @@
 </style>
 
 {#if img || title}
-	<Clickable {onClick}>
-		<div class="item" data-testid={testId}>
+	<Clickable {onClick} data-testid={testId}>
+		<div class="item">
 			{#if img}
 				<Icon {img} alt={title} colorVariable="--secondary-foreground" size="24px" padding="0px" />
 			{/if}
