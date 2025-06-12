@@ -182,7 +182,7 @@ export class QRVideoStreamHelper {
 			return { success: true, detected: true };
 		} catch (e) {
 			// If automatic detection doesn't work, we can still test the interface
-			console.log('QR auto-detection timed out, but video stream is working');
+			//console.log('QR auto-detection timed out, but video stream is working');
 			return { success: true, detected: false };
 		}
 	}
@@ -248,7 +248,7 @@ export async function testQRImportWithImageStream(page, qrImageName, expectedDat
 		} else {
 			// Video stream is working but QR wasn't auto-detected
 			// This is still a success for testing the video stream functionality
-			console.log('Video stream test successful, QR auto-detection can be improved');
+			//console.log('Video stream test successful, QR auto-detection can be improved');
 			return { success: true, autoDetected: false, videoWorking: true };
 		}
 	});
