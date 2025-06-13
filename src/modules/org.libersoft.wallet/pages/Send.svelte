@@ -84,26 +84,26 @@
 	}
 </style>
 
-<div class="send">
+<div class="send" data-testid="wallet-send-form">
 	<div class="group">
 		<div class="label">Send to:</div>
-		<div class="input"><Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} /></div>
+		<div class="input"><Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} testId="wallet-send-to-input" /></div>
 	</div>
 	<div class="group">
 		<div class="label">Currency:</div>
-		<div class="input"><DropdownFilter options={$currencies} bind:selected={currency} enabled={!!($selectedNetwork && $selectedAddress)} /></div>
+		<div class="input"><DropdownFilter options={$currencies} bind:selected={currency} enabled={!!($selectedNetwork && $selectedAddress)} testId="wallet-send-currency-dropdown" /></div>
 	</div>
 	<div class="group">
 		<div class="label">Amount:</div>
-		<div class="input"><Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} /></div>
+		<div class="input"><Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} testId="wallet-send-amount-input" /></div>
 	</div>
 	<div class="group">
 		<div class="label">Max transaction fee:</div>
-		<div class="input"><Input bind:value={fee} enabled={!!($selectedNetwork && $selectedAddress)} /></div>
+		<div class="input"><Input bind:value={fee} enabled={!!($selectedNetwork && $selectedAddress)} testId="wallet-send-fee-input" /></div>
 		{#if error}
-			<Alert type="error" message={error} />
+			<Alert type="error" message={error} testId="wallet-send-error-alert" />
 		{/if}
 	</div>
-	<Button text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
+	<Button text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} testId="wallet-send-btn" />
 </div>
-<Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />
+<Modal title="Confirm send" bind:show={showSendModal} body={SendModal} testId="wallet-send-confirmation-modal" />

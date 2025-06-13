@@ -32,9 +32,9 @@
 	}
 </style>
 
-<div class="html">
-	<div class="switch">
-		<Switch bind:checked={isSideBySide} />
+<div class="html" data-testid="html-composer-modal">
+	<div class="switch" data-testid="html-composer-layout-switch">
+		<Switch bind:checked={isSideBySide} data-testid="html-composer-layout-toggle" />
 		<div>Show editor and preview side by side</div>
 	</div>
 	{#if isSideBySide}
@@ -42,5 +42,5 @@
 	{:else}
 		<HtmlInTabs bind:text />
 	{/if}
-	<Button text="Send" onClick={send} />
+	<Button text="Send" onClick={send} data-testid="html-composer-send-button" />
 </div>

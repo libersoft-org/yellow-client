@@ -137,41 +137,41 @@
 </style>
 
 {#if $selectedNetwork && $selectedAddress}
-	<div class="receive">
-		<div class="section">
+	<div class="receive" data-testid="wallet-receive-page">
+		<div class="section" data-testid="wallet-receive-address-section">
 			<div class="section-wrapper">
 				<div class="bold">Your wallet address:</div>
-				<Clickable onClick={clickCopyAddress}>
+				<Clickable onClick={clickCopyAddress} testId="wallet-receive-copy-address-btn">
 					<div class="address">
-						<div class="clamp {$mobileClass}" bind:this={addressElement}>
+						<div class="clamp {$mobileClass}" bind:this={addressElement} data-testid="wallet-receive-address-text">
 							{shortenAddress($selectedAddress.address)}
 						</div>
 						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 					</div>
 				</Clickable>
-				<div class="qr"><img src={qrAddress} alt="Address" /></div>
+				<div class="qr" data-testid="wallet-receive-address-qr"><img src={qrAddress} alt="Address" /></div>
 			</div>
 		</div>
-		<div class="section">
+		<div class="section" data-testid="wallet-receive-payment-section">
 			<div class="section-wrapper">
 				<div class="bold">Payment:</div>
-				<div class="amount">
+				<div class="amount" data-testid="wallet-receive-payment-form">
 					<div>Amount:</div>
-					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
-					<DropdownFilter options={$currencies} bind:selected={currency} />
+					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} testId="wallet-receive-amount-input" />
+					<DropdownFilter options={$currencies} bind:selected={currency} testId="wallet-receive-currency-dropdown" />
 					{#if error}
-						<Alert type="error" message={error} />
+						<Alert type="error" message={error} testId="wallet-receive-error-alert" />
 					{/if}
 				</div>
-				<Clickable onClick={clickCopyPayment}>
+				<Clickable onClick={clickCopyPayment} testId="wallet-receive-copy-payment-btn">
 					<div class="address">
-						<div class="clamp" style="width: 240px !important;" bind:this={paymentElement}>
+						<div class="clamp" style="width: 240px !important;" bind:this={paymentElement} data-testid="wallet-receive-payment-uri">
 							{paymentText}
 						</div>
 						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 					</div>
 				</Clickable>
-				<div class="qr"><img src={qrPayment} alt="Payment" /></div>
+				<div class="qr" data-testid="wallet-receive-payment-qr"><img src={qrPayment} alt="Payment" /></div>
 			</div>
 		</div>
 	</div>

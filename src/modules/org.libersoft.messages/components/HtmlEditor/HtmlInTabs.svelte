@@ -11,9 +11,9 @@
 	}
 </script>
 
-<Tabs>
-	<TabsItem label="HTML editor" active={activeTab === 'editor'} onClick={e => setTab(e, 'editor')} />
-	<TabsItem label="Preview" active={activeTab === 'preview'} onClick={e => setTab(e, 'preview')} />
+<Tabs data-testid="html-editor-tabs">
+	<TabsItem label="HTML editor" active={activeTab === 'editor'} onClick={e => setTab(e, 'editor')} data-testid="html-editor-tab-editor" />
+	<TabsItem label="Preview" active={activeTab === 'preview'} onClick={e => setTab(e, 'preview')} data-testid="html-editor-tab-preview" />
 </Tabs>
 {#if activeTab === 'editor'}
 	<HtmlEditor bind:text />

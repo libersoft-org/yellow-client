@@ -18,12 +18,12 @@
 	}
 </style>
 
-<div class="sides">
-	<div class="editor">
+<div class="sides" data-testid="html-editor-side-by-side">
+	<div class="editor" data-testid="html-editor-side-editor">
 		<HtmlEditor bind:text />
 		<!-- <textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea> -->
 	</div>
-	<div class="preview">
+	<div class="preview" data-testid="html-editor-side-preview">
 		<HtmlEditorPreview {text} />
 	</div>
 </div>

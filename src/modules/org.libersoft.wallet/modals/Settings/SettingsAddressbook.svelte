@@ -62,11 +62,11 @@
 	}
 </style>
 
-<div class="addressbook">
+<div class="addressbook" data-testid="wallet-addressbook-container">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/address-add.svg" colorVariable="--primary-foreground" text="Add an address" onClick={addToAddressBookModal} />
-		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={exportAddressBook} data-testid="export-button" />
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={importAddressBook} data-testid="import-button" />
+		<Button img="modules/{module.identifier}/img/address-add.svg" colorVariable="--primary-foreground" text="Add an address" onClick={addToAddressBookModal} data-testid="wallet-addressbook-add-btn" />
+		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={exportAddressBook} data-testid="wallet-addressbook-export-btn" />
+		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={importAddressBook} data-testid="wallet-addressbook-import-btn" />
 	</ButtonBar>
 	{#if $addressBook.length > 0}
 		<Table breakpoint="0">
@@ -80,16 +80,16 @@
 			<Tbody>
 				{#each $addressBook as a, index (index + '/' + a.address)}
 					<TbodyTr>
-						<Td title="Alias">
+						<Td title="Alias" data-testid="wallet-addressbook-item{index}-alias">
 							<b>{a.alias}</b>
 						</Td>
-						<Td title="Address">
+						<Td title="Address" data-testid="wallet-addressbook-item{index}-address">
 							{a.address}
 						</Td>
-						<Td title="Action">
+						<Td title="Action" data-testid="wallet-addressbook-item{index}-actions">
 							<TableActionItems>
-								<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editItemModal(a)} />
-								<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => deleteItemModal(a)} />
+								<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editItemModal(a)} data-testid="wallet-addressbook-item{index}-edit-btn" />
+								<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => deleteItemModal(a)} data-testid="wallet-addressbook-item{index}-delete-btn" />
 							</TableActionItems>
 						</Td>
 					</TbodyTr>

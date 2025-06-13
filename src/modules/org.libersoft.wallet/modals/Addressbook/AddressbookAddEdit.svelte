@@ -101,21 +101,21 @@
 	}
 </style>
 
-<div class="addressbook-new">
+<div class="addressbook-new" data-testid="addressbook-add-edit-form">
 	<div class="group">
 		<div class="bold">Alias:</div>
-		<Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} onInput={clearError} />
+		<Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} onInput={clearError} data-testid="addressbook-alias-input" />
 	</div>
 	<div class="group">
 		<div class="bold">Address:</div>
-		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} onInput={clearError} />
+		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} onInput={clearError} data-testid="addressbook-address-input" />
 	</div>
 	{#if error}
-		<Alert type="error" message={error} />
+		<Alert type="error" message={error} data-testid="addressbook-error-alert" />
 	{/if}
 	{#if params.item}
-		<Button img="img/save.svg" text="Save" onClick={edit} />
+		<Button img="img/save.svg" text="Save" onClick={edit} data-testid="addressbook-save-btn" />
 	{:else}
-		<Button text="Add" onClick={add} />
+		<Button text="Add" onClick={add} data-testid="addressbook-add-btn" />
 	{/if}
 </div>

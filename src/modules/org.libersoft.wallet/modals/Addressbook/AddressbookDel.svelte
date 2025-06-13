@@ -18,8 +18,8 @@
 	}
 </style>
 
-<div class="text">Would you like to delete the item "{params.item.alias}"?</div>
+<div class="text" data-testid="addressbook-delete-confirmation">Would you like to delete the item "{params.item.alias}"?</div>
 {#if error}
-	<Alert type="error" message={error} />
+	<Alert type="error" message={error} data-testid="addressbook-delete-error" />
 {/if}
-<Button text="Delete" onClick={clickDelete} />
+<Button text="Delete" onClick={clickDelete} data-testid="addressbook-delete-btn" />

@@ -17,6 +17,6 @@
 	}
 </style>
 
-<div class="preview">
+<div class="preview" data-testid="html-editor-preview">
 	<MessageContent {messageContent} />
 </div>

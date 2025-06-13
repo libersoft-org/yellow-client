@@ -89,21 +89,21 @@
 </style>
 
 <ButtonBar>
-	<Button text="Create wallet" onClick={showNewWalletModal} />
-	<Button img="modules/{module.identifier}/img/recover.svg" colorVariable="--primary-foreground" text="Recover" onClick={recover} />
+	<Button text="Create wallet" onClick={showNewWalletModal} testId="wallet-settings-create-wallet-btn" />
+	<Button img="modules/{module.identifier}/img/recover.svg" colorVariable="--primary-foreground" text="Recover" onClick={recover} testId="wallet-settings-recover-wallet-btn" />
 </ButtonBar>
 {#if $wallets.length > 0}
-	<div class="bold">My wallets:</div>
+	<div class="bold" data-testid="wallet-settings-wallets-title">My wallets:</div>
 {/if}
 {#if $wallets.length === 0}
-	<div class="bold">No wallets found</div>
+	<div class="bold" data-testid="wallet-settings-no-wallets-message">No wallets found</div>
 {/if}
-<Accordion items={$wallets} bind:this={accordion}>
-	{#snippet content(walleta)}
-		<div class="wallet">
+<Accordion items={$wallets} bind:this={accordion} testId="wallet-settings-wallets-accordion">
+	{#snippet content(walleta, walletIndex)}
+		<div class="wallet" data-testid="wallet-settings-wallet{walletIndex}-content">
 			<ButtonBar>
-				<Button text="Add a new address" onClick={() => addAddress(walleta)} />
-				<Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
+				<Button text="Add a new address" onClick={() => addAddress(walleta)} testId="wallet-settings-wallet{walletIndex}-add-address-btn" />
+				<Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} testId="wallet-settings-wallet{walletIndex}-add-address-by-index-btn" />
 			</ButtonBar>
 			<Table>
 				<Thead>
@@ -113,15 +113,15 @@
 					<Th>Action</Th>
 				</Thead>
 				<Tbody>
-					{#each walletAddresses(walleta) as address}
+					{#each walletAddresses(walleta) as address, addressIndex}
 						<TbodyTr>
-							<Td title="Index">{address.index}</Td>
-							<Td title="Alias">{address.name}</Td>
-							<Td title="Address"><Address address={address.address} /></Td>
-							<Td title="Action">
+							<Td title="Index" testId="wallet-settings-wallet{walletIndex}-address{address.index}-index">{address.index}</Td>
+							<Td title="Alias" testId="wallet-settings-wallet{walletIndex}-address{address.index}-alias">{address.name}</Td>
+							<Td title="Address" testId="wallet-settings-wallet{walletIndex}-address{address.index}-value"><Address address={address.address} /></Td>
+							<Td title="Action" testId="wallet-settings-wallet{walletIndex}-address{address.index}-actions">
 								<TableActionItems>
-									<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
-									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Hide" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
+									<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} testId="wallet-settings-wallet{walletIndex}-address{address.index}-rename-btn" />
+									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Hide" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} testId="wallet-settings-wallet{walletIndex}-address{address.index}-delete-btn" />
 								</TableActionItems>
 							</Td>
 						</TbodyTr>
@@ -131,4 +131,4 @@
 		</div>
 	{/snippet}
 </Accordion>
-<Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />
+<Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} testId="wallet-settings-new-wallet-modal" />

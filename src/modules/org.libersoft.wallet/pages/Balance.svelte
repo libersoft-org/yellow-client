@@ -56,21 +56,21 @@
 	}
 </style>
 
-<div class="wallet-balance">
+<div class="wallet-balance" data-testid="wallet-balance-page">
 	{#if $selectedNetwork && $selectedAddress}
 		<Table breakpoint="0px">
 			<Tbody>
 				{#each tokens as t, index}
-					<Tr>
-						<Td>
+					<Tr onClick={() => selectToken(index)}>
+						<Td testId="wallet-balance-token{index}-info">
 							<div class="row">
-								<div><Icon img={t.icon} size="40px" padding="0px" alt={t.symbol} /></div>
-								<div class="symbol">{t.symbol}</div>
+								<div><Icon img={t.icon} size="40px" padding="0px" alt={t.symbol} testId="wallet-balance-token{index}-icon" /></div>
+								<div class="symbol" data-testid="wallet-balance-token{index}-symbol">{t.symbol}</div>
 							</div>
 						</Td>
-						<Td>
-							<div class="amount">{t.amount.crypto} {t.symbol}</div>
-							<div class="fiat">({t.amount.fiat} USD)</div>
+						<Td testId="wallet-balance-token{index}-amount">
+							<div class="amount" data-testid="wallet-balance-token{index}-crypto">{t.amount.crypto} {t.symbol}</div>
+							<div class="fiat" data-testid="wallet-balance-token{index}-fiat">({t.amount.fiat} USD)</div>
 						</Td>
 					</Tr>
 				{/each}
