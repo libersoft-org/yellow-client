@@ -1,17 +1,14 @@
-import { log, TAURI_MOBILE } from '@/core/tauri.ts';
+import { log, TAURI_SERVICE } from '@/core/tauri.ts';
+import { listen } from '@tauri-apps/api/event';
 import { derived, get, writable } from 'svelte/store';
 import { debug, selected_module_id, active_account_id } from '@/core/stores.ts';
-import { send, sendAsync, handleSocketMessage } from '@/core/socket.ts';
+import { send, handleSocketMessage } from '@/core/socket.ts';
 import { updateModulesComms } from '@/core/modules.ts';
 import { accounts_config } from '@/core/accounts_config.ts';
 import { tick } from 'svelte';
-import { invoke } from '@tauri-apps/api/core';
 import type { Account, AccountStore, AccountConfig, AccountCredentials, AccountSettings } from './types.ts';
-
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
-
 export let accounts = writable<AccountStore[]>([]);
-
 /* fire off whenever accounts array or active_account_id changes */
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]: [AccountStore[], string | null]) => {
 	//console.log('active_account_store:', $accounts, $active_account_id);
@@ -22,9 +19,7 @@ export let active_account_store = derived([accounts, active_account_id], ([$acco
 
 // Create a derived store that depends on active_account_store and its nested account store. The contents is the account object.
 export let active_account = derived(active_account_store, ($active_account_store: AccountStore | undefined, set: (value: Account | null) => void) => {
-	if (!$active_account_store) {
-		return set(null);
-	}
+	if (!$active_account_store) return set(null);
 	// subscribe to the store that contains the account object
 	const unsubscribe = $active_account_store.subscribe((account: Account) => {
 		//console.log('DERIVED NESTED STORE:', account);
@@ -71,7 +66,7 @@ import.meta.hot?.dispose(() => {
 });
 
 export function accounts_init() {
-	return accounts_config.subscribe(value => {
+	const sub = accounts_config.subscribe(value => {
 		log.debug('ACCOUNTS CONFIG:', value);
 		// TODO: implement configuration of accounts order
 		let accounts_list = get(accounts);
@@ -89,6 +84,13 @@ export function accounts_init() {
 		}
 		removeLiveAccountsNotInConfig(accounts_list, value);
 	});
+
+	// Set up native message listener for service-based connections
+	if (TAURI_SERVICE) {
+		setupNativeMessageListener();
+	}
+
+	return sub;
 }
 
 export function findAccount(id: string) {
@@ -98,11 +100,9 @@ export function findAccount(id: string) {
 function updateLiveAccount(account: AccountStore, config: AccountConfig) {
 	let acc = get(account);
 	//console.log('updateLiveAccount', acc, config);
-
 	if (acc.credentials.retry_nonce != config.credentials.retry_nonce) {
 		log.debug('retry_nonce changed:', acc.credentials.retry_nonce, config.credentials.retry_nonce);
 	}
-
 	if (acc.credentials.retry_nonce != config.credentials.retry_nonce || acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
 		acc.credentials = config.credentials;
 		log.debug('credentials changed:', acc.credentials);
@@ -120,7 +120,6 @@ function updateLiveAccount(account: AccountStore, config: AccountConfig) {
 			_disableAccount(account);
 		}
 	}
-
 	let settings_updated = false;
 	for (const [key, value] of Object.entries(config.settings)) {
 		//console.log('config:', key, value);
@@ -132,7 +131,6 @@ function updateLiveAccount(account: AccountStore, config: AccountConfig) {
 			//console.log('settings not updated:', key, value);
 		}
 	}
-
 	if (settings_updated) {
 		log.debug('settings updated:', acc.settings);
 		account.update(v => v);
@@ -197,24 +195,25 @@ function _enableAccount(account: AccountStore) {
 	acc.suspended = false;
 	acc.status = 'Enabled.';
 	acc.events = new EventTarget();
-
 	// Create bound handler for this account
 	acc.modulesAvailableHandler = (event: Event) => handleModulesAvailable(acc, account, event);
 	acc.events.addEventListener('modules_available', acc.modulesAvailableHandler);
 
-	// Add session error handler
-	acc.sessionErrorHandler = (event: Event) => {
-		const customEvent = event as CustomEvent;
-		log.debug('Session error event received:', customEvent.detail);
-		acc.error = customEvent.detail.message;
-		acc.status = 'Session invalid, reconnecting...';
-		acc.session_status = undefined;
-		acc.sessionID = undefined;
-		account.update(v => v);
-		// Trigger reconnection
-		reconnectAccount(account);
-	};
-	acc.events.addEventListener('session_error', acc.sessionErrorHandler);
+	if (!TAURI_SERVICE) {
+		// Add session error handler
+		acc.sessionErrorHandler = (event: Event) => {
+			const customEvent = event as CustomEvent;
+			log.debug('Session error event received:', customEvent.detail);
+			acc.error = customEvent.detail.message;
+			acc.status = 'Session invalid, reconnecting...';
+			acc.session_status = undefined;
+			acc.sessionID = undefined;
+			account.update(v => v);
+			// Trigger reconnection
+			reconnectAccount(account);
+		};
+		acc.events.addEventListener('session_error', acc.sessionErrorHandler);
+	}
 
 	account.update(v => v);
 	// TODO: use admin logic
@@ -224,7 +223,6 @@ function _enableAccount(account: AccountStore) {
 function _disableAccount(account: AccountStore) {
 	log.debug('DISABLE ACCOUNT', account);
 	let acc = get(account);
-
 	// Remove event listeners if they exist
 	if (acc.events) {
 		if (acc.modulesAvailableHandler) {
@@ -236,7 +234,6 @@ function _disableAccount(account: AccountStore) {
 			acc.sessionErrorHandler = undefined;
 		}
 	}
-
 	clearAccount(acc);
 	clearPingTimer(acc);
 	clearReconnectTimer(account);
@@ -247,8 +244,12 @@ function _disableAccount(account: AccountStore) {
 }
 
 function reconnectAccount(account: AccountStore) {
-	log.debug('RECONNECT ACCOUNT', account);
+	if (TAURI_SERVICE) {
+		return;
+	}
+
 	let acc = get(account);
+	log.debug('RECONNECT ACCOUNT', acc);
 	if (!acc.enabled) return;
 	if (acc.suspended) {
 		log.debug('account suspended. not reconnecting.');
@@ -260,6 +261,7 @@ function reconnectAccount(account: AccountStore) {
 	}
 	//clearPingTimer(acc);
 	clearReconnectTimer(account);
+
 	disconnectAccount(acc);
 	let socket_id;
 	log.debug('acc.socket.readyState:', acc.socket?.readyState);
@@ -361,9 +363,7 @@ function retry(account: AccountStore, msg: string) {
 
 function setReconnectTimer(account: AccountStore) {
 	let acc = get(account);
-	if (acc.reconnectTimer) {
-		clearInterval(acc.reconnectTimer);
-	}
+	if (acc.reconnectTimer) clearInterval(acc.reconnectTimer);
 	acc.reconnectTimer = setTimeout(() => {
 		reconnectAccount(account);
 	}, 1000);
@@ -394,7 +394,7 @@ function sendLoginCommand(account: AccountStore) {
 			acc.status = 'Login failed.';
 			acc.session_status = undefined;
 			acc.suspended = true;
-			console.error('Login failed:', res);
+			console.debug('Login failed:', JSON.stringify(res, null, 2), res);
 		} else {
 			acc.session_status = 'Logged in.';
 			console.log('Logged in:', res);
@@ -470,11 +470,11 @@ function setupPing(account: AccountStore) {
 				acc.lastCommsTs = Date.now();
 				//console.log('lastCommsTs:', acc.lastCommsTs);
 				//TODO: avoid expensive UI update
-				if (acc.status !== 'Connected.' || acc.error != null) {
+				/*if (acc.status !== 'Connected.' || acc.error != null) {
 					acc.status = 'Connected.';
 					acc.error = null;
 					account.update(v => v);
-				}
+				}*/
 			},
 			false
 		);
@@ -508,4 +508,53 @@ function clearAccount(acc: Account) {
 	disconnectAccount(acc);
 	acc.requests = {};
 	acc.module_data = {};
+}
+
+// Mobile native message handling
+async function setupNativeMessageListener() {
+	log.debug('Setting up native message listener');
+
+	try {
+		// Listen for messages from native
+		await listen('native-message', (event: any) => {
+			const { accountId, message } = event.payload;
+			log.debug('Received message from native:', accountId, message);
+
+			// Find the account
+			const accountStore = findAccount(accountId);
+			if (!accountStore) {
+				log.error('Account not found for native message:', accountId);
+				return;
+			}
+
+			const acc = get(accountStore);
+
+			// Handle the message through the normal socket message handler
+			handleSocketMessage(acc, message);
+		});
+
+		// Listen for connection status updates
+		await listen('native-connection-status', (event: any) => {
+			const { accountId, status, error } = event.payload;
+			log.debug('Native connection status update:', accountId, status);
+
+			const accountStore = findAccount(accountId);
+			if (!accountStore) {
+				log.error('Account not found for status update:', accountId);
+				return;
+			}
+
+			// Update account status
+			accountStore.update(acc => {
+				acc.status = status;
+				acc.error = error || null;
+				acc.lastCommsTs = Date.now();
+				return acc;
+			});
+		});
+
+		log.debug('Native message listener setup complete');
+	} catch (error) {
+		log.error('Failed to setup native message listener:', error);
+	}
 }

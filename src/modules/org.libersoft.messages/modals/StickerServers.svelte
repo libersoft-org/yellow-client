@@ -2,6 +2,7 @@
 	import { sticker_servers } from '../stickers.js';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
@@ -10,7 +11,6 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-
 	let addUrl = $state('');
 	let error = $state('');
 	let inputElement: typeof Input.prototype;
@@ -82,5 +82,5 @@
 	</Tbody>
 </Table>
 {#if error}
-	<div class="error">{error}</div>
+	<Alert type="error" message={error} />
 {/if}

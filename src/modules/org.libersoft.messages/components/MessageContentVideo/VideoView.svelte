@@ -2,7 +2,7 @@
 	import { truncateText } from '@/core/utils/textUtils.js';
 	import { humanSize } from '@/core/utils/fileUtils.js';
 	import { identifier } from '@/org.libersoft.messages/messages.js';
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -87,18 +87,7 @@
 
 <div>
 	{#if $debug}
-		<code
-			>{JSON.stringify({
-				uploadId,
-				videoStarted,
-				videoStarting,
-				loadingData,
-				fetchingPoster,
-				posterError,
-				thumbnailSrc,
-				download: download,
-			})}</code
-		>
+		<code>{JSON.stringify({ uploadId, videoStarted, videoStarting, loadingData, fetchingPoster, posterError, thumbnailSrc, download: download })}</code>
 	{/if}
 	<div class="video-title">
 		{#if upload}

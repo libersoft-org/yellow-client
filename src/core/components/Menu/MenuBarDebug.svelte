@@ -1,12 +1,11 @@
 <script>
-	import Modal from '../Modal/Modal.svelte';
-	import Files from '../../debug/Files.svelte';
+	import { debug } from '@/core/stores.ts';
+	import { log } from '@/core/tauri.ts';
+	import { addNotification } from '@/core/notifications.ts';
+	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Files from '@/core/debug/Files.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
-	import { addNotification } from '../../notifications.ts';
-	import { debug } from '../../core.ts';
-	import { log } from '../../tauri.ts';
-
 	let showFilesModal1 = false;
 	let showFilesModal2 = false;
 
@@ -27,6 +26,7 @@
 	function openFiles1() {
 		showFilesModal1 = !showFilesModal1;
 	}
+
 	function openFiles2() {
 		showFilesModal2 = !showFilesModal2;
 	}

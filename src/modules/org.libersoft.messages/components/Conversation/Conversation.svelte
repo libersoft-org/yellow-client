@@ -1,6 +1,6 @@
 <script>
 	import { onDestroy, onMount, setContext, tick } from 'svelte';
-	import { hideSidebarMobile } from '@/core/core.ts';
+	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { get, writable } from 'svelte/store';
 	import { selectedConversation } from '../../messages.js';
 	import ProfileBar from '../ProfileBar/ProfileBar.svelte';

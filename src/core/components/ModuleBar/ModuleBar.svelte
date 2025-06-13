@@ -1,11 +1,12 @@
 <script>
-	import { active_account, module_decls, selected_module_id } from '../../core.ts';
 	import { get } from 'svelte/store';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	import ModuleBarItem from './ModuleBarItem.svelte';
+	import { active_account } from '@/core/core.ts';
+	import { module_decls, selected_module_id } from '@/core/stores.ts';
 	import resize from '@/core/actions/resizeObserver.ts';
 	import { order } from '@/core/utils/utils.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import ModuleBarItem from '@/core/components/ModuleBar/ModuleBarItem.svelte';
 	export let onSelectModule;
 	export let onCloseModule;
 	let itemsHeight = '50px';
@@ -111,7 +112,7 @@
 		will-change: height;
 	}
 
-	.items.expanded {
+	.module-bar.expanded .items {
 		overflow: visible;
 		height: initial;
 	}
@@ -123,24 +124,17 @@
 		height: 100%;
 		width: max-content;
 		cursor: default;
+	}
 
-		:global(.icon) {
-			transform: rotate(0deg);
-			transition: transform 0.3s ease;
+	.dropdown :global(.icon) {
+		position: relative;
+		top: 14px;
+		transform: rotate(0deg);
+		transition: transform 0.3s ease;
+	}
 
-			:global(.module-bar &) {
-				position: relative;
-				top: 14px;
-
-				&:is(.expanded &) {
-					transform: rotate(180deg);
-				}
-			}
-		}
-
-		&:not(.expand-enabled &) {
-			display: none;
-		}
+	.module-bar.expanded .dropdown :global(.icon) {
+		transform: rotate(180deg);
 	}
 
 	.module-bar:not(.expand-enabled) .dropdown {
@@ -150,8 +144,8 @@
 	}
 </style>
 
-<div class="module-bar" class:expand-enabled={expandEnabled}>
-	<div use:resize={onResize} bind:this={itemsEl} class="items {expanded ? 'expanded' : ''}" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);" on:transitionend={onTransitionEnd}>
+<div class="module-bar" class:expand-enabled={expandEnabled} class:expanded>
+	<div use:resize={onResize} bind:this={itemsEl} class="items" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);" on:transitionend={onTransitionEnd}>
 		{#each module_decls_ordered as decl (decl.id)}
 			<div>
 				<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
@@ -159,7 +153,7 @@
 		{/each}
 	</div>
 	<Clickable disabled={!expandEnabled}>
-		<div class="dropdown {expanded ? 'expanded' : ''}">
+		<div class="dropdown">
 			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
 		</div>
 	</Clickable>

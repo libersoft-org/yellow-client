@@ -1,8 +1,9 @@
 <script lang="ts">
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import { getColorFromCSSToFilter } from '@/core/utils/colors.js';
-	import { current_theme } from '@/core/themes.js';
 	import { isMobile } from '@/core/stores.js';
+	import { current_theme } from '@/core/themes.ts';
+	import { getColorFromCSSToFilter } from '@/core/utils/colors.js';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+
 	interface Props {
 		img: string;
 		alt?: string;
@@ -11,7 +12,7 @@
 		visibleOnMobile?: boolean;
 		visibleOnDesktop?: boolean;
 		colorVariable?: string;
-		onClick?: () => void;
+		onClick?: (e: Event) => void;
 		isButton?: boolean;
 		'data-testid'?: string;
 	}

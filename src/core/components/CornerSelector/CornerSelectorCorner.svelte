@@ -6,7 +6,7 @@
 
 <style>
 	.corner {
-		background-color: #aaa;
+		background-color: var(--disabled-background);
 		border-radius: 5px;
 		width: 20px;
 		height: 20px;
@@ -14,7 +14,7 @@
 	}
 
 	.corner:hover {
-		background-color: #888;
+		background-color: var(--disabled-foreground);
 	}
 
 	.corner.active {

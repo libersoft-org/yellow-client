@@ -1,6 +1,6 @@
 <script>
 	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
-	import Photo from '@/core/Photo/Photo.svelte';
+	import Photo from '@/core/components/Photo/Photo.svelte';
 	import { selectedConversation, ensureConversationDetails, photoRadius } from '../../messages.js';
 	export let c;
 	export let clickItem;
@@ -49,7 +49,7 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		margin-top: 8px;
-		color: #555;
+		color: var(--disabled-foreground);
 	}
 
 	.item .item-row .count {
@@ -61,8 +61,8 @@
 		border-radius: 50%;
 		font-size: 13px;
 		font-weight: bold;
-		background-color: #c00;
-		color: #fff;
+		background-color: var(--primary-harder-background);
+		color: var(--primary-foreground);
 	}
 </style>
 

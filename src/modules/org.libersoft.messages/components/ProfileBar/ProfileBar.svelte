@@ -1,9 +1,9 @@
 <script>
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Photo from '@/core/Photo/Photo.svelte';
+	import { isMobile } from '@/core/stores.ts';
 	import { selectedConversation, photoRadius } from '../../messages.js';
-	import { isMobile } from '@/core/core.ts';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Photo from '@/core/components/Photo/Photo.svelte';
 	export let closeConversation;
 
 	function clickClose() {
@@ -37,8 +37,8 @@
 	}
 </style>
 
-<TopBar>
-	<svelte:fragment slot="left">
+<Bar>
+	{#snippet left()}
 		{#if $isMobile}
 			<Icon img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
 		{/if}
@@ -49,8 +49,8 @@
 			{/if}
 			<div class="address">{$selectedConversation.address}</div>
 		</div>
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+	{/snippet}
+	{#snippet right()}
 		<Icon img="img/close.svg" alt="Close" colorVariable="--secondary-foreground" onClick={clickClose} visibleOnMobile={false} />
-	</svelte:fragment>
-</TopBar>
+	{/snippet}
+</Bar>

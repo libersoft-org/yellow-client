@@ -9,10 +9,10 @@
 <style>
 	thead {
 		display: none;
+	}
 
-		:global(.table-wide &) {
-			display: table-header-group;
-		}
+	:global(.table-wide) thead {
+		display: table-header-group;
 	}
 </style>
 

@@ -1,14 +1,14 @@
 <script>
-	import { debug, active_account, isMobile } from '@/core/core.ts';
-	import { getContext, onMount } from 'svelte';
+	import { active_account } from '@/core/core.ts';
+	import { isMobile, debug } from '@/core/stores.ts';
+	import { getContext } from 'svelte';
 	import { get } from 'svelte/store';
-	import { identifier } from '../../messages.js';
 	import Emoji from './Emoji.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
 	import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
-	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import FuzzySearch from 'fuzzy-search';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { longpress } from '../../ui.js';
@@ -143,7 +143,7 @@
 {/if}
 
 <div class="filter">
-	<InputButton img="modules/{identifier}/img/search.svg" alt="Search" bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
+	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
 </div>
 
 {#snippet clickable_emoji(emoji)}

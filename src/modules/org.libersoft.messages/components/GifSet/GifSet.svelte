@@ -3,9 +3,8 @@
 	import { onMount, getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { isMobile } from '@/core/core.ts';
+	import { isMobile } from '@/core/stores.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { gif_server } from '../../gifs.js';
 	import LazyLoader from './GifSetLazyLoader.svelte';
@@ -106,11 +105,6 @@
 		padding: 10px;
 	}
 
-	.group {
-		display: flex;
-		gap: 10px;
-	}
-
 	.results {
 		display: flex;
 		justify-content: center;
@@ -147,10 +141,7 @@
 
 <div class="gifset">
 	<div class="top-bar">
-		<div class="group">
-			<Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
-			<Button text="Search" width="80px" onClick={searchGifs} />
-		</div>
+		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
 	</div>
 	{#if error}
 		<div>{error}</div>

@@ -1,23 +1,31 @@
 <script lang="ts">
-	import Clickable from '../Clickable/Clickable.svelte';
-	import MenuItem from './MenuItem.svelte';
-	import Modal from '../Modal/Modal.svelte';
-	import ModalSettings from '../../modals/Settings/Settings.svelte';
-	import Icon from '../Icon/Icon.svelte';
-	import Switch from '../Switch/Switch.svelte';
-	import DialogExit from '../../dialogs/Exit.svelte';
-	import VersionInfo from '../VersionInfo/VersionInfo.svelte';
-	import { product, link } from '../../core.ts';
+	import { product, link } from '@/core/stores.ts';
 	import { BROWSER } from '@/core/tauri.ts';
-
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import MenuItem from '@/core/components/Menu/MenuItem.svelte';
+	import Settings from '@/core/modals/Settings/Settings.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
+	import DialogExit from '@/core/dialogs/Exit.svelte';
+	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
+	import { isDarkMode, toggleDarkMode } from '@/core/themes.ts';
 	interface Props {
 		showMenu: boolean;
-		showModalSettings: boolean;
 	}
-
-	let { showMenu = $bindable(false), showModalSettings = false }: Props = $props();
+	let { showMenu = $bindable(false) }: Props = $props();
+	let showModalSettings = $state(false);
 	let elDialogExit: InstanceType<typeof DialogExit>;
+	let darkModeLocal = $state(false);
 
+	// Sync darkModeLocal with isDarkMode store
+	$effect(() => {
+		darkModeLocal = $isDarkMode;
+	});
+
+	// Update theme when darkModeLocal changes
+	$effect(() => {
+		toggleDarkMode(darkModeLocal);
+	});
 	const menuItems = [
 		{
 			title: 'Donate',
@@ -177,7 +185,7 @@
 	</div>
 	<div class="footer">
 		<div class="section">
-			<Switch showLabel label="Dark mode" checked={false} />
+			<Switch showLabel label="Dark mode" bind:checked={darkModeLocal} />
 		</div>
 		<div class="section">
 			<Clickable onClick={() => openPage(link)}>
@@ -190,5 +198,5 @@
 		</div>
 	</div>
 </div>
-<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
+<Settings testId="global-settings" bind:show={showModalSettings} />
 <DialogExit bind:this={elDialogExit} />

@@ -2,7 +2,7 @@
 	import { identifier } from '../../messages.js';
 	import { onMount, tick } from 'svelte';
 	import { updateStickerLibrary, stickerLibraryUpdaterState } from '../../stickers.js';
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
@@ -67,10 +67,6 @@
 	.loading .status {
 		font-size: 14px;
 	}
-
-	.loading .error {
-		border: 1px solid red;
-	}
 </style>
 
 <div class="stickers">
@@ -89,7 +85,7 @@
 		{/if}
 		{#if $stickerLibraryUpdaterState.error}
 			<div class="loading">
-				<div class="status error">Error: {$stickerLibraryUpdaterState.status}</div>
+				<Alert type="error" message={$stickerLibraryUpdaterState.status} />
 			</div>
 		{/if}
 	</div>

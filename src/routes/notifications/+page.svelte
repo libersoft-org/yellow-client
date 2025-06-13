@@ -30,21 +30,6 @@
 
 	onMount(async () => {
 		log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
-
-		// Catch all synchronous errors
-		window.addEventListener('error', event => {
-			// event.error is the Error object
-			console.error('Uncaught error:', event.error);
-			console.error('Stack trace:\n', event.error?.stack);
-		});
-
-		// Catch unhandled promise rejections
-		window.addEventListener('unhandledrejection', event => {
-			const reason = event.reason;
-			console.error('Unhandled promise rejection:', reason);
-			console.error('Stack trace:\n', reason?.stack || reason);
-		});
-
 		let deinit;
 
 		if (window.__TAURI__) {

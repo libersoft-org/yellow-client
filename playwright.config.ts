@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'node:path';
 import 'dotenv/config';
 
 export default defineConfig({
@@ -7,7 +8,7 @@ export default defineConfig({
 
 	use: {
 		ignoreHTTPSErrors: true,
-		viewport: { width: 1280, height: 1880 },
+		viewport: { width: 1280, height: 128 },
 	},
 	reporter: [['github'], ['list'], ['json', { outputFile: 'test-results/playwright-report.json' }]],
 	projects: [
@@ -15,7 +16,10 @@ export default defineConfig({
 			name: 'chromium',
 			use: {
 				...devices['Desktop Chrome'],
-				viewport: { width: 1280, height: 1880 },
+				viewport: { width: 1280, height: 1280 },
+				launchOptions: {
+					args: ['--disable-web-security', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+				},
 			},
 		},
 		/*{
