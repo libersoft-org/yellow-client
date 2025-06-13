@@ -197,15 +197,6 @@
 		border-radius: 10px;
 		box-shadow: var(--shadow);
 		background-color: var(--default-background);
-
-		@media (max-width: 768px) {
-			max-width: calc(100%) !important;
-			max-height: calc(100%) !important;
-			height: 100%;
-			width: 100% !important;
-			border-radius: 0px;
-			border: none;
-		}
 	}
 
 	:global(.modal.neodrag-dragging) .header {
