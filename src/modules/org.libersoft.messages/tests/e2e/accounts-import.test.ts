@@ -142,12 +142,13 @@ const validAccountConfigs = [
 ];
 
 test.describe('Accounts Import Functionality', () => {
+	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
+
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		enableConsoleLogging(page);
 
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-		const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 		// Setup initial account via wizard
 		await setupAccountInWizard(page, {
@@ -169,8 +170,8 @@ test.describe('Accounts Import Functionality', () => {
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 		// Verify accounts were added by checking the account list
-		await expect(page.getByRole('cell', { name: 'test1@example.com' })).toBeVisible();
-		await expect(page.getByRole('cell', { name: 'test2@example.com' })).toBeVisible();
+		await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
+		await expect(page.getByTestId('account-address@test2@example.com@ws://localhost:8085')).toBeVisible();
 	});
 
 	test('Successfully replace all accounts using Replace All', async ({ page }) => {
@@ -186,9 +187,9 @@ test.describe('Accounts Import Functionality', () => {
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 		// Verify old account is gone and new accounts are present
-		await expect(page.getByRole('cell', { name: 'initial@example.com' })).not.toBeVisible();
-		await expect(page.getByRole('cell', { name: 'test1@example.com' })).toBeVisible();
-		await expect(page.getByRole('cell', { name: 'test2@example.com' })).toBeVisible();
+		await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).not.toBeVisible();
+		await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
+		await expect(page.getByTestId('account-address@test2@example.com@ws://localhost:8085')).toBeVisible();
 	});
 
 	test('Reject invalid JSON format', async ({ page }) => {
@@ -433,7 +434,7 @@ test.describe('Accounts Import Functionality', () => {
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 		// Verify the account was replaced (should show updated settings)
-		await expect(page.getByRole('cell', { name: 'replace@example.com' })).toBeVisible();
+		await expect(page.getByTestId('account-address@replace@example.com@ws://localhost:8084')).toBeVisible();
 	});
 
 	test('Replace All with invalid JSON shows proper error', async ({ page }) => {
@@ -484,8 +485,8 @@ test.describe('Accounts Import Functionality', () => {
 
 		// Verify original account still exists
 		await closeImportModal(page);
-		await expect(page.getByRole('cell', { name: 'initial@example.com' })).toBeVisible();
-		await expect(page.getByRole('cell', { name: 'test1@example.com' })).not.toBeVisible();
+		await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
+		await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).not.toBeVisible();
 	});
 
 	test('Import accounts with special characters and edge cases', async ({ page }) => {
@@ -516,6 +517,6 @@ test.describe('Accounts Import Functionality', () => {
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 		// Verify account was added
-		await expect(page.getByRole('cell', { name: 'user+tag@münchen.example.com' })).toBeVisible();
+		await expect(page.getByTestId('account-address@user+tag@münchen.example.com@wss://тест.example.com:8084')).toBeVisible();
 	});
 });

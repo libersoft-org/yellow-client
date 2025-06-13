@@ -31,12 +31,13 @@ async function setupAccountInWizard(
 }
 
 test.describe('QR Code Camera Mock Tests', () => {
+	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
+
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging
 		enableConsoleLogging(page);
 
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-		const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 		// Setup initial account via wizard
 		await setupAccountInWizard(page, {
@@ -78,7 +79,8 @@ test.describe('QR Code Camera Mock Tests', () => {
 
 		// Should close modal and show imported account
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
-		await expect(page.getByRole('cell', { name: 'qrtest1@example.com' })).toBeVisible();
+		// Assuming QR code imports to ws://localhost:8084 by default
+		await expect(page.getByTestId('account-address@qrtest1@example.com@ws://localhost:8084')).toBeVisible();
 	});
 
 	test('Successfully scan and import complex account QR code', async ({ page }) => {
@@ -90,7 +92,8 @@ test.describe('QR Code Camera Mock Tests', () => {
 
 		// Should close modal and show imported account
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
-		await expect(page.getByRole('cell', { name: 'complex+test@example.com' })).toBeVisible();
+		// Assuming QR code imports to ws://localhost:8084 by default
+		await expect(page.getByTestId('account-address@complex+test@example.com@ws://localhost:8084')).toBeVisible();
 	});
 
 	test('Handle invalid JSON in QR code scan', async ({ page }) => {
@@ -118,8 +121,9 @@ test.describe('QR Code Camera Mock Tests', () => {
 
 		// Should close modal and show imported accounts
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
-		await expect(page.getByRole('cell', { name: 'user1@domain.com' })).toBeVisible();
-		await expect(page.getByRole('cell', { name: 'user2@domain.com' })).toBeVisible();
+		// Assuming QR code imports to ws://localhost:8084 by default
+		await expect(page.getByTestId('account-address@user1@domain.com@ws://localhost:8084')).toBeVisible();
+		await expect(page.getByTestId('account-address@user2@domain.com@ws://localhost:8084')).toBeVisible();
 	});
 
 	test('Scan again functionality works correctly', async ({ page }) => {
@@ -177,7 +181,7 @@ test.describe('QR Code Camera Mock Tests', () => {
 
 		// Should return to account management
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
-		await expect(page.getByRole('cell', { name: 'initial@example.com' })).toBeVisible();
+		await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
 	});
 
 	test('Switch between JSON and QR tabs maintains state', async ({ page }) => {

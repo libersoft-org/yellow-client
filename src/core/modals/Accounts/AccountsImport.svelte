@@ -178,11 +178,11 @@
 
 			// Find and replace the existing account
 			accounts_config.update(current => {
-				const identifier = `${newServer}\\\\${newAddress}`;
+				const identifier = `${newAddress}@${newServer}`;
 				return current.map(account => {
 					const accountServer = account.credentials?.server;
 					const accountAddress = account.credentials?.address;
-					const accountIdentifier = `${accountServer}\\\\${accountAddress}`;
+					const accountIdentifier = `${accountAddress}@${accountServer}`;
 					return accountIdentifier === identifier ? JSON.parse(JSON.stringify(currentConflictAccount)) : account;
 				});
 			});

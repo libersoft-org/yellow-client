@@ -94,9 +94,9 @@
 		</Thead>
 		<Tbody>
 			<TbodyTr>
-				<Td title="Server">{account.credentials.server}</Td>
-				<Td title="Address">{account.credentials.address}</Td>
-				<Td title="Enabled">{account.enabled ? 'Yes' : 'No'}</Td>
+				<Td title="Server" data-testid="account-server@{account.credentials.address}@{account.credentials.server}">{account.credentials.server}</Td>
+				<Td title="Address" data-testid="account-address@{account.credentials.address}@{account.credentials.server}">{account.credentials.address}</Td>
+				<Td title="Enabled" data-testid="account-enabled@{account.credentials.address}@{account.credentials.server}">{account.enabled ? 'Yes' : 'No'}</Td>
 				<Td title="Action">
 					<TableActionItems>
 						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} data-testid="edit-account-button" />

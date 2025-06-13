@@ -232,12 +232,13 @@ const complexAccountConfig = [
 ];
 
 test.describe('Accounts Import/Export Functionality', () => {
+	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
+
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		enableConsoleLogging(page);
 
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-		const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 		// Setup initial account via wizard
 		await setupAccountInWizard(page, {
@@ -260,8 +261,8 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify accounts were added by checking the account list
-			await expect(page.getByRole('cell', { name: 'test1@example.com' })).toBeVisible();
-			await expect(page.getByRole('cell', { name: 'test2@example.com' })).toBeVisible();
+			await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
+			await expect(page.getByTestId('account-address@test2@example.com@ws://localhost:8085')).toBeVisible();
 		});
 
 		test('Successfully replace all accounts using Replace All', async ({ page }) => {
@@ -277,9 +278,9 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify old account is gone and new accounts are present
-			await expect(page.getByRole('cell', { name: 'initial@example.com' })).not.toBeVisible();
-			await expect(page.getByRole('cell', { name: 'test1@example.com' })).toBeVisible();
-			await expect(page.getByRole('cell', { name: 'test2@example.com' })).toBeVisible();
+			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).not.toBeVisible();
+			await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
+			await expect(page.getByTestId('account-address@test2@example.com@ws://localhost:8085')).toBeVisible();
 		});
 
 		test('Import accounts with complex unicode and special characters', async ({ page }) => {
@@ -294,7 +295,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify complex account was added
-			await expect(page.getByRole('cell', { name: 'user+tag@münchen.example.com' })).toBeVisible();
+			await expect(page.getByTestId('account-address@user+tag@münchen.example.com@wss://тест.example.com:8084')).toBeVisible();
 		});
 
 		test('Reject invalid JSON format', async ({ page }) => {
@@ -368,7 +369,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify the account was replaced
-			await expect(page.getByRole('cell', { name: 'duplicate@example.com' })).toBeVisible();
+			await expect(page.getByTestId('account-address@duplicate@example.com@ws://localhost:8084')).toBeVisible();
 		});
 
 		test('Handle duplicate accounts - skip option', async ({ page }) => {
@@ -636,7 +637,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 
 			// Should close modal and show imported account
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
-			await expect(page.getByRole('cell', { name: 'qr-scan@example.com' })).toBeVisible();
+			await expect(page.getByTestId('account-address@qr-scan@example.com@ws://localhost:8084')).toBeVisible();
 		});
 
 		test('Handle invalid QR code data during scan', async ({ page }) => {
@@ -716,7 +717,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 10000 });
 
 			// Verify some accounts were imported
-			await expect(page.getByRole('cell', { name: 'user0@domain0.example.com' })).toBeVisible();
+			await expect(page.getByTestId('account-address@user0@domain0.example.com@ws://localhost:8084')).toBeVisible();
 		});
 
 		test('Handle malformed account data with detailed errors', async ({ page }) => {
@@ -780,7 +781,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 
 			// Original account should still exist
 			await closeModal(page);
-			await expect(page.getByRole('cell', { name: 'initial@example.com' })).toBeVisible();
+			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
 		});
 
 		test('Modal close behavior during operations', async ({ page }) => {
@@ -792,8 +793,8 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await closeModal(page);
 
 			// Should return to account management without changes
-			await expect(page.getByRole('cell', { name: 'initial@example.com' })).toBeVisible();
-			await expect(page.getByRole('cell', { name: 'test1@example.com' })).not.toBeVisible();
+			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
+			await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).not.toBeVisible();
 		});
 
 		test('Import/Export cycle consistency', async ({ page }) => {
@@ -835,7 +836,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await confirmReplaceDialog(page);
 
 			// Verify accounts are restored
-			await expect(page.getByRole('cell', { name: 'test1@example.com' })).toBeVisible();
+			await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
 			await expect(page.getByRole('cell', { name: 'test2@example.com' })).toBeVisible();
 			await expect(page.getByRole('cell', { name: 'initial@example.com' })).toBeVisible();
 		});

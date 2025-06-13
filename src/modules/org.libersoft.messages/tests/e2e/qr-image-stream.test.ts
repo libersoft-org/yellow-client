@@ -31,12 +31,13 @@ async function setupAccountInWizard(
 }
 
 test.describe('QR Code Image Stream Tests', () => {
+	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
+
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging
 		enableConsoleLogging(page);
 
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-		const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 		// Setup initial account via wizard
 		await setupAccountInWizard(page, {
@@ -130,7 +131,8 @@ test.describe('QR Code Image Stream Tests', () => {
 		if (result.autoDetected && !result.importFailed) {
 			// Should close modal and show imported account
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
-			await expect(page.getByRole('cell', { name: 'qrtest1@example.com' })).toBeVisible();
+			// Assuming QR code imports to ws://localhost:8084 by default
+			await expect(page.getByTestId('account-address@qrtest1@example.com@ws://localhost:8084')).toBeVisible();
 		}
 	});
 
@@ -144,7 +146,8 @@ test.describe('QR Code Image Stream Tests', () => {
 		// If auto-detection worked, verify the import
 		if (result.autoDetected && !result.importFailed) {
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
-			await expect(page.getByRole('cell', { name: 'complex+test@example.com' })).toBeVisible();
+			// Assuming QR code imports to ws://localhost:8084 by default
+			await expect(page.getByTestId('account-address@complex+test@example.com@ws://localhost:8084')).toBeVisible();
 		}
 	});
 

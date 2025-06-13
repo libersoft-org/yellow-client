@@ -3,8 +3,9 @@
 	interface Props {
 		children?: Snippet;
 		title?: string;
+		'data-testid'?: string;
 	}
-	let { children, title }: Props = $props();
+	let { children, title, 'data-testid': dataTestId }: Props = $props();
 </script>
 
 <style>
@@ -69,6 +70,6 @@
 	}
 </style>
 
-<td data-title={title}>
+<td data-title={title} data-testid={dataTestId}>
 	{@render children?.()}
 </td>

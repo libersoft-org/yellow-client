@@ -12,12 +12,17 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAddEdit from '../../modals/Addressbook/AddressbookAddEdit.svelte';
 	import ModalDel from '../../modals/Addressbook/AddressbookDel.svelte';
+	import ModalExport from '../../modals/Addressbook/AddressbookExport.svelte';
+	import ModalImport from '../../modals/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { module } from '../../module.js';
 	import { addressBook } from '../../wallet.ts';
 	import { get } from 'svelte/store';
+
 	let showModalAddEdit = $state(false);
 	let showModalDel = $state(false);
+	let showModalExport = $state(false);
+	let showModalImport = $state(false);
 	let edit = $state(false);
 	let modalItem = $state(null);
 
@@ -41,25 +46,11 @@
 	}
 
 	function exportAddressBook() {
-		console.log('EXPORT ADDRESSBOOK');
-		let data = get(addressBook);
-		let json = JSON.stringify(data, null, 2);
-		console.log('EXPORTED ADDRESSBOOK:', json);
-		window.prompt('Copy the exported address book:', json);
+		showModalExport = true;
 	}
 
 	function importAddressBook() {
-		console.log('IMPORT ADDRESSBOOK');
-		let json = window.prompt('Paste the exported address book here:');
-		if (json) {
-			try {
-				let data = JSON.parse(json);
-				console.log('IMPORTED ADDRESSBOOK:', data);
-				addressBook.set(data);
-			} catch (e) {
-				console.error('IMPORT ADDRESSBOOK ERROR:', e);
-			}
-		}
+		showModalImport = true;
 	}
 </script>
 
@@ -74,8 +65,8 @@
 <div class="addressbook">
 	<ButtonBar>
 		<Button img="modules/{module.identifier}/img/address-add.svg" colorVariable="--primary-foreground" text="Add an address" onClick={addToAddressBookModal} />
-		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={exportAddressBook} />
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={importAddressBook} />
+		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={exportAddressBook} data-testid="export-button" />
+		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={importAddressBook} data-testid="import-button" />
 	</ButtonBar>
 	{#if $addressBook.length > 0}
 		<Table breakpoint="0">
@@ -110,3 +101,5 @@
 
 <Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:show={showModalAddEdit} width="400px" />
 <Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:show={showModalDel} width="400px" />
+<Modal title="Export Address Book" body={ModalExport} params={{ close: () => (showModalExport = false) }} bind:show={showModalExport} width="600px" />
+<Modal title="Import Address Book" body={ModalImport} params={{ close: () => (showModalImport = false) }} bind:show={showModalImport} width="600px" />

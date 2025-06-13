@@ -63,7 +63,7 @@
 		<Tbody>
 			{#each $networks as n, index (n.guid)}
 				<TbodyTr>
-					<Td>
+					<Td data-testid="network-name@{n.name}">
 						<div>
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt="" />
@@ -87,7 +87,7 @@
 		<Tbody>
 			{#each $default_networks as n, index}
 				<TbodyTr>
-					<Td>
+					<Td data-testid="default-network-name@{n.name}">
 						<div>
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} />

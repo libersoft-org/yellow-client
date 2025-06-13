@@ -214,8 +214,8 @@ test.describe('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify networks were added by checking the network list
-			await expect(page.getByRole('cell', { name: 'Test Network 1' })).toBeVisible();
-			await expect(page.getByRole('cell', { name: 'Test Network 2' })).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 2')).toBeVisible();
 		});
 
 		test('Successfully replace all networks using Replace All', async ({ page }) => {
@@ -250,9 +250,9 @@ test.describe('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify old networks are gone and new network is present
-			await expect(page.getByRole('cell', { name: 'Test Network 1' })).not.toBeVisible();
-			await expect(page.getByRole('cell', { name: 'Test Network 2' })).not.toBeVisible();
-			await expect(page.getByRole('cell', { name: 'Replacement Network' })).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 1')).not.toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 2')).not.toBeVisible();
+			await expect(page.getByTestId('network-name@Replacement Network')).toBeVisible();
 		});
 
 		test('Import networks with complex unicode and special characters', async ({ page }) => {
@@ -267,7 +267,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify complex network was added
-			await expect(page.getByRole('cell', { name: 'Test Network with Üñíçødé 测试' })).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network with Üñíçødé 测试')).toBeVisible();
 		});
 
 		test('Reject invalid JSON format', async ({ page }) => {
@@ -340,7 +340,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify the network was replaced (check for the new chainID or symbol)
-			await expect(page.getByRole('cell', { name: 'Test Network 1' })).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
 		});
 
 		test('Handle duplicate networks - Import with Modified Name', async ({ page }) => {
@@ -380,8 +380,8 @@ test.describe('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
 
 			// Verify both networks exist - original and one with modified name
-			await expect(page.getByRole('cell', { name: 'Test Network 1' })).toBeVisible();
-			await expect(page.getByRole('cell', { name: 'Test Network 1 (1)' })).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 1 (1)')).toBeVisible();
 		});
 
 		test('Handle duplicate networks - Skip This Network', async ({ page }) => {
@@ -651,7 +651,7 @@ test.describe('Networks Import/Export Functionality', () => {
 
 			// Should close modal and show imported network
 			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
-			await expect(page.getByRole('cell', { name: 'QR Scanned Network' })).toBeVisible();
+			await expect(page.getByTestId('network-name@QR Scanned Network')).toBeVisible();
 		});
 	});
 
@@ -686,7 +686,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 10000 });
 
 			// Verify some networks were imported
-			await expect(page.getByRole('cell', { name: 'Bulk Network 0' })).toBeVisible();
+			await expect(page.getByTestId('network-name@Bulk Network 0')).toBeVisible();
 		});
 
 		test('Cancel replace operation', async ({ page }) => {
@@ -707,7 +707,7 @@ test.describe('Networks Import/Export Functionality', () => {
 
 			// Original network should still exist
 			await closeModal(page);
-			await expect(page.getByRole('cell', { name: 'Test Network 1' })).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
 		});
 
 		test('Modal close behavior during operations', async ({ page }) => {
@@ -719,7 +719,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await closeModal(page);
 
 			// Should return to networks management without changes
-			await expect(page.getByRole('cell', { name: 'Test Network 1' })).not.toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 1')).not.toBeVisible();
 		});
 
 		test('Import/Export cycle consistency', async ({ page }) => {
@@ -762,8 +762,8 @@ test.describe('Networks Import/Export Functionality', () => {
 			await confirmReplaceNetworksDialog(page);
 
 			// Verify networks are restored
-			await expect(page.getByRole('cell', { name: 'Test Network 1' })).toBeVisible();
-			await expect(page.getByRole('cell', { name: 'Test Network 2' })).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
+			await expect(page.getByTestId('network-name@Test Network 2')).toBeVisible();
 		});
 	});
 });

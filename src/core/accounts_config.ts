@@ -78,11 +78,11 @@ export function findAccountConfig(id: string): AccountConfig | undefined {
 
 export function accountConfigExistsByCredentials(server: string, address: string): boolean {
 	const currentConfig = get(accounts_config);
-	const identifier = `${server}\\\\${address}`;
+	const identifier = `${address}@${server}`;
 	return currentConfig.some(account => {
 		const accountServer = account.credentials?.server;
 		const accountAddress = account.credentials?.address;
-		return `${accountServer}\\\\${accountAddress}` === identifier;
+		return `${accountAddress}@${accountServer}` === identifier;
 	});
 }
 
