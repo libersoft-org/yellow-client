@@ -384,4 +384,4 @@
 		{/if}
 	</div>
 </div>
-<Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} />
+<Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} testId="welcome-wizard" />

@@ -47,6 +47,7 @@ test.describe('QR Code Camera Mock Tests', () => {
 	});
 
 	test('QR scanner interface with mock camera displays correctly', async ({ page }) => {
+		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const helper = new QRTestHelper(page);
 		await helper.setupQRTesting();
 
@@ -157,6 +158,7 @@ test.describe('QR Code Camera Mock Tests', () => {
 	});
 */
 	test('Cancel QR scanning returns to proper state', async ({ page }) => {
+		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const helper = new QRTestHelper(page);
 		await helper.setupQRTesting();
 
@@ -179,6 +181,7 @@ test.describe('QR Code Camera Mock Tests', () => {
 	});
 
 	test('Switch between JSON and QR tabs maintains state', async ({ page }) => {
+		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const helper = new QRTestHelper(page);
 		await helper.setupQRTesting();
 

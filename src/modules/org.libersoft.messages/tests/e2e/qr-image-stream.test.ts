@@ -47,6 +47,7 @@ test.describe('QR Code Image Stream Tests', () => {
 	});
 
 	test('Video stream with static QR image displays correctly', async ({ page }) => {
+		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const helper = new QRVideoStreamHelper(page);
 
 		// Setup image-based video stream
@@ -81,6 +82,7 @@ test.describe('QR Code Image Stream Tests', () => {
 	});
 
 	test('Switch QR images for scan again functionality', async ({ page }) => {
+		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const helper = new QRVideoStreamHelper(page);
 
 		// Setup initial video stream with first QR image
@@ -118,6 +120,7 @@ test.describe('QR Code Image Stream Tests', () => {
 	});
 
 	test('QR detection with valid account image stream', async ({ page }) => {
+		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const result = await testQRImportWithImageStream(page, QR_IMAGES.VALID_ACCOUNT, 'qrtest1@example.com', true);
 
 		expect(result.success).toBe(true);
@@ -132,6 +135,7 @@ test.describe('QR Code Image Stream Tests', () => {
 	});
 
 	test('QR detection with complex account image stream', async ({ page }) => {
+		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const result = await testQRImportWithImageStream(page, QR_IMAGES.COMPLEX_ACCOUNT, 'complex+test@example.com', true);
 
 		expect(result.success).toBe(true);
@@ -145,6 +149,7 @@ test.describe('QR Code Image Stream Tests', () => {
 	});
 
 	test('QR detection with invalid data image stream', async ({ page }) => {
+		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const result = await testQRImportWithImageStream(page, QR_IMAGES.INVALID_DATA, 'invalid json', false);
 
 		expect(result.success).toBe(true);

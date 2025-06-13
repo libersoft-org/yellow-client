@@ -6,6 +6,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import { networks } from '../../wallet.ts';
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
+	import { getGuid } from '@/core/core.ts';
 
 	interface Props {
 		close: () => void;
@@ -161,6 +162,10 @@
 			conflictDialog?.open();
 		} else {
 			// Network doesn't exist, add it
+			// Ensure network has a GUID
+			if (!network.guid) {
+				network.guid = getGuid();
+			}
 			networks.update(current => [...current, network]);
 			processedCount++;
 			await processNextNetwork();
@@ -169,9 +174,17 @@
 
 	async function replaceConflictNetwork() {
 		if (currentConflictNetwork) {
-			// Find and replace the existing network
+			// Find and replace the existing network, preserving the existing GUID
 			networks.update(current => {
-				return current.map(network => (network.name === currentConflictNetwork.name ? currentConflictNetwork : network));
+				return current.map(network => {
+					if (network.name === currentConflictNetwork.name) {
+						return {
+							...currentConflictNetwork,
+							guid: network.guid, // Preserve existing GUID
+						};
+					}
+					return network;
+				});
 			});
 			processedCount++;
 		}
@@ -187,6 +200,7 @@
 			const networkWithUniqueName = {
 				...currentConflictNetwork,
 				name: uniqueName,
+				guid: getGuid(), // Generate new GUID for the modified network
 			};
 
 			networks.update(current => [...current, networkWithUniqueName]);
@@ -227,7 +241,14 @@
 		}
 
 		const networksData = JSON.parse(text);
-		networks.set(networksData);
+		// Ensure all networks have GUIDs
+		const networksWithGuids = networksData.map((network: any) => {
+			if (!network.guid) {
+				return { ...network, guid: getGuid() };
+			}
+			return network;
+		});
+		networks.set(networksWithGuids);
 		close();
 	}
 </script>

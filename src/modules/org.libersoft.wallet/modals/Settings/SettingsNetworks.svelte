@@ -53,8 +53,8 @@
 
 <div class="networks">
 	<ButtonBar>
-		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={() => doExport()} />
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={() => doImport()} />
+		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={() => doExport()} data-testid="networks-export-btn" />
+		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={() => doImport()} data-testid="networks-import-btn" />
 	</ButtonBar>
 	{#if $networks.length !== 0}
 		<div class="bold">My networks:</div>
