@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Label from '@/core/components/Label/Label.svelte';
+
 	interface Props {
 		checked: boolean;
 		showLabel?: boolean;
@@ -7,6 +8,7 @@
 		orientation?: 'horizontal' | 'vertical';
 		'data-testid'?: string;
 	}
+
 	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal', ...restProps }: Props = $props();
 	let mounted = $state(false);
 	let inputId = Math.random().toString(36);
@@ -32,16 +34,16 @@
 		grid-template-columns: repeat(2, auto);
 		align-items: center;
 		gap: 10px;
+	}
 
-		&.vertical {
-			grid-template-columns: unset;
-			grid-template-rows: repeat(2, auto);
-		}
+	.switch.vertical {
+		grid-template-columns: unset;
+		grid-template-rows: repeat(2, auto);
+	}
 
-		.label {
-			font-weight: bold;
-			cursor: pointer;
-		}
+	.switch .label {
+		font-weight: bold;
+		cursor: pointer;
 	}
 
 	.switch-wrapper {

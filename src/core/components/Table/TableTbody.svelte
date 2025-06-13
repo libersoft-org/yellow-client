@@ -7,12 +7,10 @@
 </script>
 
 <style>
-	tbody {
-		:global(.table-wide &) {
-			display: table-row-group;
-			border-style: none;
-			border-bottom-width: 0;
-		}
+	:global(.table-wide) tbody {
+		display: table-row-group;
+		border-style: none;
+		border-bottom-width: 0;
 	}
 </style>
 

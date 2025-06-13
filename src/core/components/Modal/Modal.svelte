@@ -198,11 +198,18 @@
 		box-shadow: var(--shadow);
 		background-color: var(--default-background);
 
-		:global(&.neodrag-dragging) {
-			.header {
-				cursor: grabbing;
-			}
+		@media (max-width: 768px) {
+			max-width: calc(100%) !important;
+			max-height: calc(100%) !important;
+			height: 100%;
+			width: 100% !important;
+			border-radius: 0px;
+			border: none;
 		}
+	}
+
+	:global(.modal.neodrag-dragging) .header {
+		cursor: grabbing;
 	}
 
 	.modal.mobile {
@@ -230,10 +237,10 @@
 		padding: 10px;
 		flex-grow: 1;
 		user-select: none;
+	}
 
-		:global(.icon) {
-			padding: 0 10px 0 0 !important;
-		}
+	.modal .header .title :global(.icon) {
+		padding: 0 10px 0 0 !important;
 	}
 
 	.modal .body {

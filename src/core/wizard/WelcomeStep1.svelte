@@ -20,11 +20,11 @@
 		display: flex;
 		justify-content: center;
 		margin: 20px 0;
+	}
 
-		:global(img) {
-			animation: bounce 1.5s ease;
-			animation-fill-mode: forwards;
-		}
+	.logo :global(img) {
+		animation: bounce 1.5s ease;
+		animation-fill-mode: forwards;
 	}
 
 	@keyframes bounce {

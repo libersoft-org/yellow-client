@@ -67,14 +67,14 @@
 <style>
 	.accounts {
 		background: var(--background-image) 0 0 / 400px repeat;
+	}
 
-		.accounts-wrapper {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-			padding: 10px;
-			height: 100dvh;
-		}
+	.accounts .accounts-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 10px;
+		height: 100dvh;
 	}
 
 	:global(.button) {

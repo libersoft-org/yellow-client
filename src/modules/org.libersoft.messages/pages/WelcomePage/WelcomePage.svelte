@@ -37,9 +37,9 @@
 
 	.welcome .illustration {
 		width: 350px;
-		max-width: (100% - 20px);
+		max-width: calc(100% - 20px);
 		height: 350px;
-		max-height: (100% - 20px);
+		max-height: calc(100% - 20px);
 	}
 
 	.welcome .label {

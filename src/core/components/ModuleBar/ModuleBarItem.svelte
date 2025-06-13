@@ -17,13 +17,11 @@
 		transition:
 			transform 0.2s linear,
 			background-color 0.4s linear;
+	}
 
-		&:not(.selected) {
-			&:hover {
-				transform: scale(1.25);
-				z-index: 10;
-			}
-		}
+	.item:not(.selected):hover {
+		transform: scale(1.25);
+		z-index: 10;
 	}
 
 	.item.selected {
@@ -33,8 +31,8 @@
 </style>
 
 <Clickable data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
-	<div class="item {selected && 'selected'}">
-		<Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false ? true : false} />
+	<div class="item" class:selected>
+		<Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false} />
 		<Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--primary-background" size="30px" />
 	</div>
 </Clickable>

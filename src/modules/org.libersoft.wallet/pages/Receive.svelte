@@ -91,18 +91,18 @@
 		border: 1px solid var(--secondary-background);
 		border-radius: 10px;
 		width: 100%;
+	}
 
-		.section-wrapper {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			padding: 10px;
-			gap: 10px;
+	.section-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 10px;
+		gap: 10px;
+	}
 
-			.bold {
-				margin-bottom: auto;
-			}
-		}
+	.section-wrapper .bold {
+		margin-bottom: auto;
 	}
 
 	.address {
@@ -113,19 +113,19 @@
 		padding: 10px;
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
+	}
 
-		.clamp {
-			display: inline-block;
-			width: 100px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			vertical-align: bottom;
-		}
+	.address .clamp {
+		display: inline-block;
+		width: 100px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		vertical-align: bottom;
+	}
 
-		.clamp.mobile {
-			width: 200px;
-		}
+	.address .clamp.mobile {
+		width: 200px;
 	}
 
 	.amount {

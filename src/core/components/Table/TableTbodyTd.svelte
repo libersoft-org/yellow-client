@@ -9,74 +9,63 @@
 
 <style>
 	td {
-		border: 0;
-		text-align: left;
-		white-space: normal;
-		display: block;
-
-		:global(& > div) {
-			display: flex;
-			align-items: center;
-		}
-
-		:global(.table-wide &) {
-			display: table-cell;
-			white-space: nowrap;
-			border-style: none;
-			text-align: left !important;
-			min-width: 50px;
-			vertical-align: middle;
-			padding: 10px !important;
-		}
-	}
-
-	td {
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
 		gap: 20px;
 		padding: 10px;
 		text-align: left;
-
-		:global(.table-wide &) {
-			display: table-cell;
-			width: 100%;
-		}
-
-		&:before {
-			display: inline-block;
-			width: 15vw;
-			max-width: 300px;
-		}
-
-		:global(.table-wide &) {
-			&:before {
-				display: table;
-				width: 100%;
-			}
-		}
+		border: 0;
+		white-space: normal;
 	}
 
-	td[data-title] {
-		&:before {
-			content: attr(data-title) ':\00A0';
-			font-weight: bold;
-		}
+	td > :global(div) {
+		display: flex;
+		align-items: center;
+	}
 
-		:global(.table-wide &) {
-			&:before {
-				content: '';
-				font-weight: bold;
-			}
-		}
+	:global(.table-wide) td {
+		display: table-cell;
+		white-space: nowrap;
+		border-style: none;
+		text-align: left !important;
+		min-width: 50px;
+		vertical-align: middle;
+		padding: 10px !important;
+	}
+
+	:global(.table-wide) td {
+		display: table-cell;
+		width: 100%;
+	}
+
+	td:before {
+		display: inline-block;
+		width: 15vw;
+		max-width: 300px;
+	}
+
+	:global(.table-wide) td:before {
+		display: table;
+		width: 100%;
+	}
+
+	td[data-title]:before {
+		content: attr(data-title) ':\00A0';
+		font-weight: bold;
+	}
+
+	:global(.table-wide) td[data-title]:before {
+		content: '';
+		font-weight: bold;
 	}
 
 	td:empty {
 		display: none;
+	}
 
-		:global(.table-wide &) {
-			display: table-cell;
-		}
+	:global(.table-wide) td:empty {
+		display: table-cell;
 	}
 </style>
 
