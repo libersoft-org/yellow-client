@@ -14,6 +14,18 @@
 	let replaceDialog: any = $state(null);
 	let pendingReplaceText = $state('');
 
+	const hasExistingAddresses = $derived(get(addressBook).length > 0);
+
+	const replaceDialogData = {
+		title: 'Replace Address Book',
+		body: 'This will replace your current address book. All existing addresses will be lost. Are you sure you want to continue?',
+		icon: 'img/import.svg',
+		buttons: [
+			{ text: 'Replace All', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
+			{ text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+		],
+	};
+
 	function validateAddressBook(text: string) {
 		try {
 			const data = JSON.parse(text);
@@ -64,6 +76,31 @@
 	}
 
 	async function handleReplace(text: string) {
+		pendingReplaceText = text;
+
+		if (hasExistingAddresses) {
+			replaceDialog?.open();
+		} else {
+			await confirmReplaceWithText(text);
+		}
+	}
+
+	async function confirmReplace() {
+		if (pendingReplaceText) {
+			try {
+				await confirmReplaceWithText(pendingReplaceText);
+				pendingReplaceText = '';
+				replaceDialog?.close();
+			} catch (err) {
+				replaceDialog?.close();
+				throw err;
+			}
+		} else {
+			replaceDialog?.close();
+		}
+	}
+
+	async function confirmReplaceWithText(text: string) {
 		const data = JSON.parse(text);
 		const processedData = data.map((item: any) => ({
 			guid: item.guid || getGuid(),
@@ -76,3 +113,5 @@
 </script>
 
 <Import {close} onValidate={validateAddressBook} onAdd={handleAdd} onReplace={handleReplace} testId="addressbook-import" jsonLabel="JSON" qrLabel="QR Code" addButtonText="Add to Address Book" replaceButtonText="Replace All" />
+
+<Dialog data={replaceDialogData} bind:this={replaceDialog} />

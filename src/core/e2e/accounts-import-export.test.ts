@@ -837,8 +837,8 @@ test.describe('Accounts Import/Export Functionality', () => {
 
 			// Verify accounts are restored
 			await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
-			await expect(page.getByRole('cell', { name: 'test2@example.com' })).toBeVisible();
-			await expect(page.getByRole('cell', { name: 'initial@example.com' })).toBeVisible();
+			await expect(page.getByTestId('account-address@test2@example.com@ws://localhost:8085')).toBeVisible();
+			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
 		});
 	});
 });

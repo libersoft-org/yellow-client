@@ -180,7 +180,7 @@ test.describe('QR Code Import Tests', () => {
 
 		// Should close modal and show imported account
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
-		await expect(page.getByRole('cell', { name: 'qr-scan@example.com' })).toBeVisible();
+		await expect(page.getByTestId('account-address@qr-scan@example.com@ws://localhost:8084')).toBeVisible();
 	});
 
 	test('Handle invalid QR code data during scan', async ({ page }) => {
