@@ -16,6 +16,7 @@
 	import { forwardMessageStore } from '../../stores/ForwardMessageStore.ts';
 	import MessageReaction from '../MessageReaction/MessageReaction.svelte';
 	import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
+
 	export let message;
 	export let elContainer;
 	export let enableScroll;
@@ -51,6 +52,7 @@
 	let renderedTs;
 
 	$: update(message);
+
 	// console.log('updated message:', message);
 	function update(message) {
 		if (messageContent) return;
@@ -438,9 +440,14 @@
 </div>
 
 <ContextMenu bind:this={menu} target={elCaret}>
-	<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
-	<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
-	<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
+	{#if message.format === 'plaintext'}
+		<ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyOriginal} />
+	{:else}
+		<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
+		<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
+		<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
+	{/if}
+
 	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} data-testid="reply-context-menu-item" />
 	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} data-testid="forward-context-menu-item" />
 	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
