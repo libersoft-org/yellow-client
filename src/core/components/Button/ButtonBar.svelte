@@ -14,6 +14,10 @@
 		gap: 10px;
 		width: 100%;
 	}
+
+	.button-bar > :global(.clickable) {
+		flex: 1;
+	}
 </style>
 
 <div class="button-bar">
