@@ -23,6 +23,6 @@
 	}
 </style>
 
-<button class="clickable button-reset" onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} {...restProps}>
+<button onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} {...restProps} class={['clickable button-reset', restProps.class]}>
 	{@render children?.()}
 </button>

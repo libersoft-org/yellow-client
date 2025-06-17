@@ -25,6 +25,7 @@
 		color: var(--primary-foreground);
 		cursor: pointer;
 		transition: background-color 0.4s linear;
+		min-width: 0;
 	}
 
 	.sidebar-item.even {
