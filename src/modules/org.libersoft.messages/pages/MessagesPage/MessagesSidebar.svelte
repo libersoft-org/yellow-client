@@ -67,8 +67,8 @@
 		font-weight: bold;
 	}
 
-	.bar-buttons .bar-button :global(.clickable) {
-		flex: 1 1 auto;
+	.bar-buttons :global(.new-conversation-button) {
+		flex: 1;
 		min-width: 0;
 	}
 
@@ -92,7 +92,7 @@
 {#if $conversationsArray != null}
 	<div class="conversations">
 		<div class="bar-buttons">
-			<Clickable data-testid="new-conversation-button" onClick={clickNewConversation}>
+			<Clickable class="new-conversation-button" data-testid="new-conversation-button" onClick={clickNewConversation}>
 				<div class="bar-button">
 					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--secondary-foreground" size="28px" padding="0px" />
 					<div class="new-conversation">New conversation</div>

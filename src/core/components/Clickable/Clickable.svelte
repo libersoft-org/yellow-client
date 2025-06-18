@@ -24,6 +24,6 @@
 	}
 </style>
 
-<div class="clickable" role="button" tabindex="0" onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} {...restProps}>
+<div role="button" tabindex="0" onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} {...restProps} class={['clickable button-reset', restProps.class]}>
 	{@render children?.()}
 </div>

@@ -83,6 +83,10 @@
 		gap: 10px;
 	}
 
+	.file-upload :global(.items-empty-button) {
+		width: 100%;
+	}
+
 	.header {
 		display: flex;
 		gap: 10px;
@@ -153,7 +157,7 @@
 				</Table>
 			</div>
 		{:else}
-			<Clickable onClick={onFileAdd}>
+			<Clickable class="items-empty-button" onClick={onFileAdd}>
 				<div class="items-empty" role="none">Drag and drop your files here<br />or click here to add files.</div>
 			</Clickable>
 		{/if}

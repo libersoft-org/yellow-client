@@ -14,9 +14,6 @@
 	.item-base {
 		display: flex;
 		gap: 10px;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
 	}
 </style>
 
