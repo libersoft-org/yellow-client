@@ -16,10 +16,6 @@
 		overflow: hidden;
 	}
 
-	.item:hover {
-		background-color: var(--secondary-softer-background);
-	}
-
 	.item .title {
 		display: flex;
 		align-items: center;
