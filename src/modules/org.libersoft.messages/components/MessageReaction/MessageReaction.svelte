@@ -127,6 +127,13 @@
 	.emoji {
 		font-size: 24px;
 	}
+
+	.floating {
+		position: absolute;
+		width: max-content;
+		top: 0;
+		left: 0;
+	}
 </style>
 
 {#snippet emoji(codepoints)}

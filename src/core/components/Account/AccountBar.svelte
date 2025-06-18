@@ -95,8 +95,8 @@
 	.dropdown .text {
 		display: flex;
 		align-items: center;
+		flex: 1;
 		gap: 10px;
-		flex: 1 1 auto;
 		min-width: 0;
 		/* width: 100%; */
 	}
@@ -126,7 +126,7 @@
 			{#if $active_account}
 				<div class="text">
 					<AccountStatusIcon account={active_account} />
-					<AccountTitle a={active_account} />
+					<AccountTitle account={active_account} />
 				</div>
 			{:else}
 				{#if $accounts.length > 0}
