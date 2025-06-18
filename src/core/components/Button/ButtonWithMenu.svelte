@@ -84,14 +84,15 @@
 	}
 
 	.tooltip {
+		z-index: 100000;
 		display: flex;
 		align-items: center;
-		background: var(--primary-softer-background);
+		box-sizing: border-box;
+		max-width: 100vh;
 		padding: 8px;
 		border-radius: 20px;
 		box-shadow: var(--shadow);
-		max-width: calc(100vh - 20px);
-		z-index: 100000;
+		background-color: var(--primary-softer-background);
 	}
 
 	.floating {

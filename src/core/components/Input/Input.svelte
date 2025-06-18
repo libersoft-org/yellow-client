@@ -45,13 +45,13 @@
 
 <style>
 	input {
+		box-sizing: border-box;
 		padding: 10px;
 		border-radius: 10px;
 		font-family: inherit;
 		font-size: inherit;
 		background-color: var(--default-background);
 		color: var(--default-foreground);
-		box-sizing: content-box;
 	}
 
 	.no-button {
@@ -76,7 +76,7 @@
 
 	.input-button-wrapper {
 		display: flex;
-		box-sizing: content-box;
+		box-sizing: border-box;
 		align-items: center;
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
@@ -85,10 +85,10 @@
 </style>
 
 {#if icon}
-	<div class="input-button-wrapper" style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'}>
+	<div class="input-button-wrapper" style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth}>
 		<input class="button" {type} {placeholder} bind:this={inputRef} bind:value onkeydown={e => handleKeydown(e)} oninput={handleInput} />
 		<Icon img={icon.img} alt={icon.alt} colorVariable={icon.colorVariable ? icon.colorVariable : ''} size="20px" padding="10px" onClick={icon.onClick} />
 	</div>
 {:else}
-	<input class="no-button" data-testid={testId} value={displayValue !== undefined ? displayValue : value} disabled={!enabled} onchange={handleChange} oninput={handleInput} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
+	<input class="no-button" data-testid={testId} value={displayValue !== undefined ? displayValue : value} disabled={!enabled} onchange={handleChange} oninput={handleInput} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
 {/if}

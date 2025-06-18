@@ -188,8 +188,9 @@
 		flex-direction: column;
 		position: fixed;
 		inset: 0;
+		box-sizing: border-box;
 		width: 100%;
-		max-height: calc(100dvh - 2px);
+		max-height: 100dvh;
 		height: fit-content;
 		width: min-content;
 		overflow: hidden;
@@ -204,8 +205,8 @@
 	}
 
 	.modal.mobile {
-		max-width: calc(100%) !important;
-		max-height: calc(100%) !important;
+		max-width: 100% !important;
+		max-height: 100% !important;
 		height: 100%;
 		width: 100% !important;
 		border-radius: 0px;

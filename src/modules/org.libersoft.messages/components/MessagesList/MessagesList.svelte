@@ -552,9 +552,10 @@
 		position: fixed;
 		top: 0;
 		left: 0;
+		box-sizing: border-box;
+		max-width: 60%;
+		max-height: 100%;
 		padding: 10px;
-		max-width: calc(60%);
-		max-height: calc(100%);
 		overflow: auto;
 		border: 2px solid var(--secondary-foreground);
 		border-radius: 10px;

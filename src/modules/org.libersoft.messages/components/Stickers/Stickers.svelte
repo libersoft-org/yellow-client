@@ -34,7 +34,6 @@
 	.stickers {
 		display: flex;
 		flex-direction: column;
-
 		height: calc(100% - 45px);
 		overflow: hidden;
 		/*padding: 10px 10px 0px 10px;*/

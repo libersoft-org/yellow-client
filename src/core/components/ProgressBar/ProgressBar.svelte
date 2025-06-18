@@ -5,7 +5,8 @@
 
 <style>
 	.progress-bar {
-		width: calc(100% - 6px);
+		box-sizing: border-box;
+		width: 100%;
 		height: 10px;
 		border: 3px solid var(--default-foreground);
 		background: var(--default-background);

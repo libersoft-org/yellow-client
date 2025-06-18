@@ -6,7 +6,8 @@
 		top: 0;
 		align-items: center;
 		gap: 24px;
-		min-height: calc(var(--menu-height) - 20px);
+		box-sizing: border-box;
+		min-height: var(--menu-height);
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);

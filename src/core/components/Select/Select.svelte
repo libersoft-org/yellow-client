@@ -19,7 +19,7 @@
 
 <style>
 	select {
-		box-sizing: content-box;
+		box-sizing: border-box;
 		-webkit-appearance: none;
 		appearance: none;
 		padding: 10px 20px 10px 10px;
@@ -47,7 +47,7 @@
 </style>
 
 {#snippet select()}
-	<select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 32px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 32px)'} bind:this={selectRef} bind:value>
+	<select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} bind:this={selectRef} bind:value>
 		{@render children?.()}
 	</select>
 {/snippet}

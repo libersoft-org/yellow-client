@@ -14,8 +14,9 @@
 
 <style>
 	.text {
-		width: calc(100% - 22px);
-		height: calc(100% - 22px);
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
 		padding: 10px;
 		font-family: 'Ubuntu Mono';
 		font-size: inherit;

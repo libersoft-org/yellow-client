@@ -8,7 +8,8 @@
 
 <style>
 	textarea {
-		width: calc(100% - 20px);
+		box-sizing: border-box;
+		width: 100%;
 		padding: 10px;
 		color: var(--secondary-foreground);
 		background-color: var(--secondary-background);

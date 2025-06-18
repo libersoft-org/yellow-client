@@ -40,7 +40,8 @@
 	}
 
 	.url {
-		max-width: calc(100% - 20px);
+		box-sizing: border-box;
+		max-width: 100%;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
