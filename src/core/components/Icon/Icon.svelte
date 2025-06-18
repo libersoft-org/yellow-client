@@ -5,7 +5,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 
 	interface Props {
-		img: string;
+		img?: string;
 		alt?: string;
 		size?: string;
 		padding?: string;

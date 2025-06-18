@@ -29,7 +29,7 @@
 
 <AccountBarButton data-testid={'account ' + $account.credentials?.address} onClick={() => clickSelectAccount($account.id)}>
 	<div class="item">
-		<div class="title"><AccountStatusIcon {account} /><AccountTitle a={account} /></div>
+		<div class="title"><AccountStatusIcon {account} /><AccountTitle {account} /></div>
 		{#if $debug}
 			<div style="font-size: 12px;">
 				<ul>

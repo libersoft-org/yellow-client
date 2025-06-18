@@ -93,6 +93,13 @@
 		max-width: calc(100vh - 20px);
 		z-index: 100000;
 	}
+
+	.floating {
+		position: absolute;
+		width: max-content;
+		top: 0;
+		left: 0;
+	}
 </style>
 
 <div class="button-with-menu">

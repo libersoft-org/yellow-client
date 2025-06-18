@@ -1,28 +1,29 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { HTMLButtonAttributes, MouseEventHandler } from 'svelte/elements';
-	interface Props extends HTMLButtonAttributes {
+	import type { HTMLAttributes, MouseEventHandler } from 'svelte/elements';
+	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children?: Snippet;
-		onClick?: MouseEventHandler<HTMLButtonElement>;
-		onRightClick?: MouseEventHandler<HTMLButtonElement>;
-		onMousedown?: MouseEventHandler<HTMLButtonElement>;
+		onClick?: MouseEventHandler<HTMLDivElement>;
+		onRightClick?: MouseEventHandler<HTMLDivElement>;
+		onMousedown?: MouseEventHandler<HTMLDivElement>;
 	}
 	let { children, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
 </script>
 
 <style>
 	.clickable {
-		display: flex;
+		/*
+		display: contents;
+	 all: unset;
+		*/
 		cursor: pointer;
-		align-items: center;
-		-webkit-tap-highlight-color: transparent;
 	}
 
-	.clickable > :global(*) {
-		flex: 1 1 auto;
+	.clickable:focus-visible {
+		outline: 2px solid var(--primary-harder-background);
 	}
 </style>
 
-<button onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} {...restProps} class={['clickable button-reset', restProps.class]}>
+<div role="button" tabindex="0" onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} {...restProps} class={['clickable button-reset', restProps.class]}>
 	{@render children?.()}
-</button>
+</div>
