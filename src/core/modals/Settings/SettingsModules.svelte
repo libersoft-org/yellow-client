@@ -100,7 +100,7 @@
 	.module-id {
 		font-size: 12px;
 		color: var(--text-secondary, #666);
-		font-family: monospace;
+		font-family: 'Ubuntu Mono';
 	}
 
 	.module-controls {
@@ -136,7 +136,7 @@
 
 	.service-url-text {
 		flex: 1;
-		font-family: monospace;
+		font-family: 'Ubuntu Mono';
 		font-size: 12px;
 		color: var(--text-secondary, #666);
 		background: var(--surface-secondary, #f5f5f5);

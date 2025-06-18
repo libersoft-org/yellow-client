@@ -236,7 +236,6 @@
 	{:else}
 		<Button data-testid="save" img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={clickSave} />
 	{/if}
-
 	{#if $account}
 		<div class="status">
 			<strong>Status:</strong>

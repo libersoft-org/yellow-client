@@ -8,11 +8,14 @@
 
 <style>
 	textarea {
+		width: calc(100% - 20px);
 		padding: 10px;
 		color: var(--secondary-foreground);
 		background-color: var(--secondary-background);
 		border-width: 0px;
 		border-radius: 10px;
+		font-family: 'Ubuntu Mono';
+		font-size: inherit;
 	}
 </style>
 

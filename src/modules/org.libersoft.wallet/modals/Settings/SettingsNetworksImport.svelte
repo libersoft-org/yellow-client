@@ -7,13 +7,10 @@
 	import { networks } from '../../wallet.ts';
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
 	import { getGuid } from '@/core/core.ts';
-
 	interface Props {
 		close: () => void;
 	}
-
 	let { close }: Props = $props();
-
 	let replaceDialog: any = $state(null);
 	let conflictDialog: any = $state(null);
 	let currentConflictNetwork: any = $state(null);
@@ -24,9 +21,7 @@
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
 	let importUi: any = $state(null);
-
 	const hasExistingNetworks = $derived(get(networks).length > 0);
-
 	const replaceDialogData = {
 		title: 'Replace Networks',
 		body: 'This will replace your current network configuration. All existing networks will be lost. Are you sure you want to continue?',
@@ -236,10 +231,7 @@
 
 	async function confirmReplaceWithText(text: string) {
 		const validation = validateImport(text);
-		if (!validation.valid) {
-			throw new Error(validation.error || 'Invalid data');
-		}
-
+		if (!validation.valid) throw new Error(validation.error || 'Invalid data');
 		const networksData = JSON.parse(text);
 		// Ensure all networks have GUIDs
 		const networksWithGuids = networksData.map((network: any) => {
@@ -261,7 +253,7 @@
 		</div>
 	</div>
 {:else}
-	<Import bind:this={importUi} {close} testId="networks" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingNetworks ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add networks" replaceButtonText="Replace All" browseButtonText="Browse for JSON file" qrInstructions="Point your camera at a QR code containing network configuration" />
+	<Import bind:this={importUi} {close} testId="networks" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingNetworks ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add networks" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing network configuration" />
 {/if}
 
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />

@@ -9,13 +9,10 @@
 	import { active_account_id } from '@/core/stores.ts';
 	import { validateAccountsArray, validateAccountConfig } from '@/core/accounts_config.ts';
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
-
 	interface Props {
 		close: () => void;
 	}
-
 	let { close }: Props = $props();
-
 	let replaceDialog: any = $state(null);
 	let conflictDialog: any = $state(null);
 	let currentConflictAccount: any = $state(null);
@@ -26,9 +23,7 @@
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
 	let importUi: any = $state(null);
-
 	const hasExistingAccounts = $derived(get(accounts_config).length > 0);
-
 	const replaceDialogData = {
 		title: 'Replace Configuration',
 		body: 'This will replace your current account configuration. All existing accounts will be lost. Are you sure you want to continue?',
@@ -221,10 +216,7 @@
 	async function confirmReplaceWithText(text: string) {
 		// Validate first before replacing
 		const validation = validateImport(text);
-		if (!validation.valid) {
-			throw new Error(validation.error || 'Invalid data');
-		}
-
+		if (!validation.valid) throw new Error(validation.error || 'Invalid data');
 		const newConfig = JSON.parse(text);
 		accounts_config.set(newConfig);
 		maybeActivateAccount();
@@ -240,7 +232,7 @@
 		</div>
 	</div>
 {:else}
-	<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Browse for JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+	<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
 {/if}
 
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />
