@@ -232,7 +232,7 @@
 		<Alert type="error" message={error} />
 	{/if}
 	{#if params.id === null}
-		<Button data-testid="add" text="Add the account" onClick={clickAdd} />
+		<Button data-testid="add" img="img/accounts-add.svg" text="Add the account" onClick={clickAdd} />
 	{:else}
 		<Button data-testid="save" img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={clickSave} />
 	{/if}
