@@ -14,15 +14,14 @@
 <style>
 	.breadcrumb {
 		display: flex;
-		background: var(--secondary-background);
-		color: var(--secondary-foreground);
 		padding: 10px;
 		border-radius: 10px;
-		font-size: 16px;
 		font-weight: bold;
+		background: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
-	:global(.item) {
+	.item {
 		display: flex;
 		gap: 5px;
 	}

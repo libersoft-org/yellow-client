@@ -1,6 +1,7 @@
 <script>
 	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { addressBook, setSection, setSendAddress } from '../wallet.ts';
+	import { module } from '../module.js';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 
@@ -37,7 +38,7 @@
 	}
 </style>
 
-<SidebarButton img="img/back.svg" text="Show wallet" visibleOnDesktop={false} onClick={clickShowWallet} />
+<SidebarButton img="modules/{module.identifier}/img/wallet.svg" text="Show wallet" visibleOnDesktop={false} onClick={clickShowWallet} />
 <div class="addressbook">
 	{#if $addressBook.length > 0}
 		{#each $addressBook as a, index}

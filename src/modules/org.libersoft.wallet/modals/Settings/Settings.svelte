@@ -14,7 +14,7 @@
 		name: 'settings',
 		menu: [
 			{
-				img: 'modules/' + module.identifier + '/img/general.svg',
+				img: 'img/general.svg',
 				title: 'General',
 				name: 'general',
 			},
