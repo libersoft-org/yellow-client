@@ -145,8 +145,8 @@
 <div class="export" data-testid={testId}>
 	{#if enableJsonTab && enableQrTab}
 		<Tabs data-testid="{testId}-tabs">
-			<TabsItem label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} testId="{testId}-json-tab" />
-			<TabsItem label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} testId="{testId}-qr-tab" />
+			<TabsItem img="img/import.svg" label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} testId="{testId}-json-tab" />
+			<TabsItem img="img/qr.svg" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} testId="{testId}-qr-tab" />
 		</Tabs>
 	{/if}
 

@@ -266,7 +266,7 @@
 <div class="import">
 	<Tabs>
 		<TabsItem img="img/import.svg" label={jsonLabel} active={activeTab === 'json'} onClick={() => handleTabChange('json')} testId={`${testId}-json-tab`} />
-		<TabsItem img="img/photo.svg" label={qrLabel} active={activeTab === 'qr'} onClick={() => handleTabChange('qr')} testId={`${testId}-qr-tab`} />
+		<TabsItem img="img/qr.svg" label={qrLabel} active={activeTab === 'qr'} onClick={() => handleTabChange('qr')} testId={`${testId}-qr-tab`} />
 	</Tabs>
 
 	{#if activeTab === 'json'}
