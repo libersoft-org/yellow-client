@@ -81,6 +81,10 @@
 		background-color: #0a0;
 	}
 
+	.bar .left .server {
+		font-size: 12px;
+	}
+
 	.bar .right {
 		display: flex;
 		align-items: center;
@@ -126,15 +130,17 @@
 
 <Paper>
 	<div class="body">
+		<div class="network-address">
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
+		</div>
 		<div class="bar">
 			<div class="left">
 				<div class="status">
 					<div class="indicator {$status.color}"></div>
 					<div>{$status.text}</div>
 				</div>
-				{#if $debug}
-					<div style="font-size: 12px">Server: {$rpcURL}</div>
-				{/if}
+				<div class="server">Server: {$rpcURL}</div>
 			</div>
 			<div class="right">
 				<div>
@@ -155,10 +161,6 @@
 				</div>
 				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => (showModalSettings = true)} />
 			</div>
-		</div>
-		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
 		</div>
 		<div class="buttons">
 			<Button img="modules/{module.identifier}/img/send.svg" colorVariable="--primary-foreground" text="Send" onClick={() => setSection('send')} />

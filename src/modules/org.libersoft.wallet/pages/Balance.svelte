@@ -72,10 +72,10 @@
 						<Td>
 							<div class="amount">{$balance.crypto.amount} {$balance.crypto.currency}</div>
 							<div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
+							{#if $debug}
+								<div class="fiat">retrieved {$balanceTimestamp}</div>
+							{/if}
 						</Td>
-						{#if $debug}
-							<pre>retrieved {$balanceTimestamp}</pre>
-						{/if}
 					</Tr>
 				{/if}
 				{#each tokens as t, index}
