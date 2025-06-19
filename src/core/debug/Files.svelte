@@ -274,10 +274,10 @@
 
 		<!-- Action Buttons -->
 		<div class="buttons-grid {$mobileClass}">
-			<Button onClick={testOfferNativeDownload}>Offer download</Button>
-			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save chunk</Button>
-			<Button onClick={testFinishNativeDownload} disabled={!download}>Finish</Button>
-			<Button onClick={testOpenDownload} disabled={!download}>Open</Button>
+			<Button text="Offer download" onClick={testOfferNativeDownload} />
+			<Button text="Save chunk" onClick={testSaveNativeDownloadChunk} disabled={!download} />
+			<Button text="Finish" onClick={testFinishNativeDownload} disabled={!download} />
+			<Button text="Open" onClick={testOpenDownload} disabled={!download} />
 		</div>
 
 		<!-- Status Display -->

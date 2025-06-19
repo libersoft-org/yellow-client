@@ -64,14 +64,14 @@
 			{/each}
 		</Select>
 	</div>
-	<Button text="Manage sticker servers" onClick={clickManageStickerServers} />
+	<Button img="img/edit.svg" text="Manage sticker servers" onClick={clickManageStickerServers} />
 	<Button
+		img="img/del.svg"
 		text="Delete stickers database"
 		onClick={() => {
 			stickers_db.delete();
 		}}
 	/>
-
 	<div class="group">
 		<div class="label">Gif server:</div>
 		<Select bind:value={$gif_server_index}>
@@ -80,7 +80,7 @@
 			{/each}
 		</Select>
 	</div>
-	<Button text="Manage gif servers" onClick={clickManageGifServers} />
+	<Button img="img/edit.svg" text="Manage gif servers" onClick={clickManageGifServers} />
 </div>
 <Modal title="Manage sticker servers" body={StickerServers} bind:show={isModalStickerServersOpen} width="400px" />
 <Modal title="Manage gif servers" body={GifServers} bind:show={isModalGifServersOpen} width="400px" />

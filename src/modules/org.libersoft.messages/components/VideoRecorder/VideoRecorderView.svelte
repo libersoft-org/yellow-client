@@ -276,7 +276,7 @@
 			{:else}
 				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--disabled-foreground' : '--primary-foreground'} text="REC" onClick={recordStart} />
 			{/if}
-			<Button loading={sending} img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--primary-foreground" onClick={send} />
+			<Button img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--primary-foreground" loading={sending} onClick={send} />
 		</div>
 	</div>
 </div>
