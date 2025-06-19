@@ -112,6 +112,5 @@
 	}
 </script>
 
-<Import {close} onValidate={validateAddressBook} onAdd={handleAdd} onReplace={handleReplace} testId="addressbook-import" jsonLabel="JSON" qrLabel="QR Code" addButtonText="Add to Address Book" replaceButtonText="Replace All" />
-
+<Import {close} onValidate={validateAddressBook} onAdd={handleAdd} onReplace={handleReplace} testId="addressbook-import" addButtonText="Add to address book" replaceButtonText="Replace all" />
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />
