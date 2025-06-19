@@ -27,6 +27,9 @@
 		gap: 10px;
 		padding: 10px;
 		font-weight: bold;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
 		border-bottom: 1px solid var(--secondary-softer-background);
 		color: var(--secondary-foreground);
 		cursor: pointer;

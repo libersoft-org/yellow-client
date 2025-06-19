@@ -58,15 +58,6 @@
 		border-bottom: 1px solid var(--secondary-softer-background);
 	}
 
-	.new-conversation {
-		height: fit-content;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		width: 100%;
-		/* max-width: 100%; */
-	}
-
 	.items {
 		display: flex;
 		flex-direction: column;
