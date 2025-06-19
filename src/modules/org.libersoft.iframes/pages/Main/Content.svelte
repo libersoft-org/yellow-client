@@ -1,8 +1,7 @@
 <script>
-	import { accounts, findAccount, sendAsync } from '@/core/core.ts';
-	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-
+	import { get } from 'svelte/store';
+	import { accounts, findAccount, sendAsync } from '@/core/core.ts';
 	//let url = 'https://yellow-module1.netlify.app/'
 	let url = 'http://localhost:5173/';
 	let module_id = 'org.libersoft.messages2';
@@ -15,12 +14,10 @@
 			//if (event.origin !== window.location.origin) return; // Validate origin
 			//if (event.origin !== 'null') return;
 			//if (event.source !== iframe) return;
-
 			//iframe?.contentWindow.postMessage(await processUserModuleMessage(event.data), '*');
 			event.source.postMessage(await processUserModuleMessage(event.data), '*');
 			//iframe.contentWindow.location.origin);
 		});
-
 		// setInterval(() => {
 		//  console.log('setInterval');
 		//  iframe?.contentWindow.postMessage({ type: 'ping' }, '*');
@@ -37,9 +34,7 @@
 			let res = [];
 			for (let account of get(accounts)) {
 				let acc = get(account);
-				if (acc.modules_enabled.find(m => m === module_id) !== -1) {
-					res.push(acc);
-				}
+				if (acc.modules_enabled.find(m => m === module_id) !== -1) res.push(acc);
 			}
 			return res;
 		}
