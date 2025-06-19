@@ -92,11 +92,12 @@
 	.body .items-empty {
 		padding: 50px;
 		text-align: center;
-		background-color: var(--primary-softer-background);
-		color: var(--primary-foreground);
+		box-sizing: border-box;
+		width: 100%;
 		border: 1px dashed var(--default-foreground);
 		border-radius: 10px;
-		width: 100%;
+		background-color: var(--primary-softer-background);
+		color: var(--primary-foreground);
 	}
 
 	.drop-active .items-empty {
