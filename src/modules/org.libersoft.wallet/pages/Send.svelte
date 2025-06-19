@@ -1,13 +1,14 @@
 <script>
+	import { get } from 'svelte/store';
+	import { sendAddress, currencies, selectedMainCurrencySymbol, sendTransaction, selectedNetwork, selectedAddress } from '../wallet.ts';
+	import { module } from '../module.ts';
+	import { parseUnits } from 'ethers';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import SendModal from '../modals/Send.svelte';
-	import { get } from 'svelte/store';
-	import { sendAddress, currencies, selectedMainCurrencySymbol, sendTransaction, selectedNetwork, selectedAddress } from '../wallet.ts';
-	import { parseUnits } from 'ethers';
 	let currency = '';
 	let amount = 0;
 	let fee = 0;
@@ -104,6 +105,6 @@
 			<Alert type="error" message={error} />
 		{/if}
 	</div>
-	<Button text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
+	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 </div>
 <Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />

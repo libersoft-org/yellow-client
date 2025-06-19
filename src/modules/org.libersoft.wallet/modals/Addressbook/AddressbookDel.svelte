@@ -22,4 +22,4 @@
 {#if error}
 	<Alert type="error" message={error} />
 {/if}
-<Button text="Delete" onClick={clickDelete} />
+<Button img="img/del.svg" text="Delete" onClick={clickDelete} />

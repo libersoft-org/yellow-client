@@ -65,13 +65,12 @@
 		<Icon img="img/cross.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </Bar>
-
 <div class="welcome">
 	<img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
 	<div class="label">
 		{#if $online}
 			<div>Select your conversation<br />or</div>
-			<Button text="Start a new one" padding="5px" onClick={clickNew} />
+			<Button img="modules/{identifier}/img/conversation-new.svg" text="Start a new one" padding="5px" onClick={clickNew} />
 		{:else if $active_account}
 			<div>This module is offline</div>
 		{:else}

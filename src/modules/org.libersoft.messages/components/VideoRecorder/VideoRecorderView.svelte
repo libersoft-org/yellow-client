@@ -192,7 +192,6 @@
 		</Select>
 	</div>
 {/snippet}
-
 <div class="video-recorder" class:is-recording={isRecording} class:is-muted={isMuted} class:toggle-facing-mode-enabled={enableToggleFacingMode}>
 	<div bind:this={videoRef} class="video-recorder-video-placeholder">
 		{#if error}
@@ -253,30 +252,26 @@
 					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" />
 				{/snippet}
 				{#snippet mainButtonSlot()}
-					<div>
-						<div class="camera-button-wrapper">
-							{#if enableToggleFacingMode}
-								<Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--primary-foreground" onClick={toggleFacingMode} />
-							{:else}
-								<Button img="modules/{identifier}/img/camera.svg" colorVariable="--primary-foreground" onClick={() => {}} />
-							{/if}
-						</div>
+					<div class="camera-button-wrapper">
+						{#if enableToggleFacingMode}
+							<Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--primary-foreground" onClick={toggleFacingMode} />
+						{:else}
+							<Button img="modules/{identifier}/img/camera.svg" colorVariable="--primary-foreground" onClick={() => {}} />
+						{/if}
 					</div>
 				{/snippet}
 				{#snippet tooltipSlot()}
-					<div>
-						{@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value))}
-					</div>
+					{@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value))}
 				{/snippet}
 			</ButtonWithMenu>
 		</div>
 		<div class="video-recorder-actions-right">
 			{#if isRecording}
-				<Button img="modules/{identifier}/img/stop.svg" colorVariable="--primary-foreground" text="STOP" onClick={recordStop} />
+				<Button img="modules/{identifier}/img/stop.svg" colorVariable="--primary-foreground" text="Stop" onClick={recordStop} />
 			{:else}
-				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--disabled-foreground' : '--primary-foreground'} text="REC" onClick={recordStart} />
+				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--disabled-foreground' : '--primary-foreground'} text="Record" onClick={recordStart} />
 			{/if}
-			<Button img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} colorVariable="--primary-foreground" loading={sending} onClick={send} />
+			<Button img="modules/{identifier}/img/send.svg" text="Send" enabled={hasData || isRecording || sending} colorVariable="--primary-foreground" loading={sending} onClick={send} />
 		</div>
 	</div>
 </div>

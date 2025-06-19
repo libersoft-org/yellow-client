@@ -58,7 +58,7 @@
 <!--<Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />-->
 <div class="group">
 	<Input placeholder="Add sticker server address" grow={true} bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
-	<Button text="Add" onClick={clickAdd} />
+	<Button img="img/add.svg" text="Add" onClick={clickAdd} />
 </div>
 
 <Table breakpoint="0">

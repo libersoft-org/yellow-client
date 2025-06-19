@@ -12,9 +12,7 @@
 	let chunkSize = $uploadChunkSize;
 
 	function onSetChunkSize(chunkSize) {
-		if (get(uploadChunkSize) === chunkSize) {
-			return;
-		}
+		if (get(uploadChunkSize) === chunkSize) return;
 		uploadChunkSize.set(chunkSize);
 	}
 
@@ -26,9 +24,7 @@
 			multiple: false,
 			title: 'Select default file download folder',
 		});
-		if (file) {
-			defaultFileDownloadFolder.set(file);
-		}
+		if (file) defaultFileDownloadFolder.set(file);
 	}
 </script>
 
@@ -72,6 +68,6 @@
 		</div>
 		{$defaultFileDownloadFolder}<br />
 		<span class="label">This is the folder where files will be downloaded by default.</span>
-		<Button text="Change" onClick={defaultFileDownloadFolderButtonClick} />
+		<Button img="img/edit.svg" text="Change" onClick={defaultFileDownloadFolderButtonClick} />
 	</div>
 {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { openNewConversation } from '../messages.js';
+	import { openNewConversation, identifier } from '../messages.js';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import { m } from '@/lib/paraglide/messages.js';
@@ -45,6 +45,6 @@
 		<Label text={`${m['messages.new_conversation.address']()}`}>
 			<Input data-testid="new-conversation-address" grow placeholder="user@domain.tld" bind:inputRef={addressInputRef} bind:value />
 		</Label>
-		<Button data-testid="New Conversation Open" text={m['common.open']()} onClick={clickOpen} />
+		<Button data-testid="New Conversation Open" img="modules/{identifier}/img/conversation-new.svg" text={m['common.open']()} onClick={clickOpen} />
 	</div>
 </form>

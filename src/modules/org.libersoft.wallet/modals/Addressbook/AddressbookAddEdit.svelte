@@ -5,6 +5,7 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { addressBook } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	export let close;
 	export let params;
 	let aliasElement;
@@ -116,6 +117,6 @@
 	{#if params.item}
 		<Button img="img/save.svg" text="Save" onClick={edit} />
 	{:else}
-		<Button text="Add" onClick={add} />
+		<Button img="modules/{module.identifier}/img/address-add.svg" text="Add" onClick={add} />
 	{/if}
 </div>

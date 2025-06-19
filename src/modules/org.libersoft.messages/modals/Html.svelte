@@ -1,5 +1,6 @@
 <script>
 	import { getContext } from 'svelte';
+	import { identifier } from '../messages.js';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import HtmlSideBySide from '../components/HtmlEditor/HtmlSideBySide.svelte';
@@ -42,5 +43,5 @@
 	{:else}
 		<HtmlInTabs bind:text />
 	{/if}
-	<Button text="Send" onClick={send} />
+	<Button img="modules/{identifier}/img/send.svg" text="Send" onClick={send} />
 </div>

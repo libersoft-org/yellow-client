@@ -1,8 +1,9 @@
 <script>
+	import { onMount } from 'svelte';
+	import { getGuid } from '@/core/core.ts';
+	import { module } from '../module.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { getGuid } from '@/core/core.ts';
-	import { onMount } from 'svelte';
 	export let close;
 	export let params;
 
@@ -76,5 +77,5 @@
 {#if params.item}
 	<Button img="img/save.svg" text="Save" onClick={clickEdit} />
 {:else}
-	<Button text="Add token" onClick={clickAdd} />
+	<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={clickAdd} />
 {/if}

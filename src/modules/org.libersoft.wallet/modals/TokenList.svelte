@@ -13,6 +13,7 @@
 	import ModalAddEdit from './TokenListAddEdit.svelte';
 	import ModalDel from './TokenListDel.svelte';
 	import { networks } from '../wallet.ts';
+	import { module } from '../module.ts';
 	export let params;
 	let net;
 	let showModalAddEdit = false;
@@ -80,7 +81,7 @@
 <div class="token-list">
 	<ButtonBar>
 		<!-- () => (item_tokens = [...item_tokens, { name: '', icon: '', symbol: '', contract_address: '' }]) -->
-		<Button text="Add token" onClick={addTokenModal} />
+		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={addTokenModal} />
 	</ButtonBar>
 	<div class="label">Network name: {net?.name}</div>
 	<div class="label">Tokens:</div>

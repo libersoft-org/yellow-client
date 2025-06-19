@@ -85,13 +85,13 @@
 		{#each item_rpc_urls as rpc_url, i}
 			<div class="group">
 				<Input bind:value={item_rpc_urls[i]} />
-				<Button text="Remove RPC URL" onClick={() => (item_rpc_urls = item_rpc_urls.filter((v, j) => j !== i))} />
+				<Button img="img/del.svg" text="Remove RPC URL" onClick={() => (item_rpc_urls = item_rpc_urls.filter((v, j) => j !== i))} />
 			</div>
 		{/each}
-		<Button text="Add RPC URL" onClick={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
+		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
 	</div>
 	<ButtonBar>
-		<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 		<Button img="img/save.svg" text="Save" onClick={saveAndClose} />
+		<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 	</ButtonBar>
 </div>

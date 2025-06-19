@@ -145,7 +145,7 @@
 	}
 </script>
 
-<!--<Button text="Add notification" onClick={clickAddNotification} />-->
+<!--<Button img="img/add.svg" text="Add notification" onClick={clickAddNotification} />-->
 
 <style>
 	.notifications-wrapper {
@@ -169,7 +169,7 @@
 
 <div class="notifications-wrapper" bind:clientHeight={$heightLogical}>
 	{#if $notifications.length >= 2}
-		<Button text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
+		<Button img="img/cross.svg" text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
 	{/if}
 
 	<div class="notifications {'reverse'}">

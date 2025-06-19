@@ -1,31 +1,23 @@
 <script lang="ts">
-	import Input from '@/core/components/Input/Input.svelte';
-	import Photo from '@/core/components/Photo/Photo.svelte';
-	import { photoRadius } from '../messages.js';
-	import { conversationsArray, sendMessage } from '../messages';
 	import { get } from 'svelte/store';
-	import Button from '@/core/components/Button/Button.svelte';
+	import { photoRadius } from '../messages.js';
+	import { conversationsArray, sendMessage, processMessage, identifier } from '../messages.js';
 	import type { Conversation } from '../types.ts';
 	import { forwardMessageStore } from '../stores/ForwardMessageStore.ts';
+	import Input from '@/core/components/Input/Input.svelte';
+	import Photo from '@/core/components/Photo/Photo.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	import MessageContent from '../components/MessageContent/MessageContent.svelte';
-	import { processMessage } from '../messages.js';
-
 	const fwMsg = forwardMessageStore.getForwardedMessage();
 	const sentToConversations = forwardMessageStore.getSentToConversations();
 	let search = $state('');
-
 	// Process the message to get the content for preview
 	let messageContent = $derived($fwMsg ? processMessage($fwMsg.data) : null);
-
 	// TODO: this is simple search, in future we want to at least debounce it or make backend solution for filtering
 	let conversations: Conversation[] = $derived.by(() => {
 		const allConversations = get(conversationsArray) || [];
 		const searchTerm = search.trim();
-
-		if (!searchTerm) {
-			return allConversations;
-		}
-
+		if (!searchTerm) return allConversations;
 		return allConversations.filter((conversation: Conversation) => {
 			return conversation?.address?.toLowerCase()?.includes(searchTerm.toLowerCase());
 		});
@@ -108,11 +100,10 @@
 			{conversation.address}
 		</div>
 		<div class="conversation-action">
-			<Button enabled={!wasAlreadySent} text={wasAlreadySent ? 'Sent' : 'Send'} onClick={() => onSend(conversation)} data-testid="forward-conversation-send-{conversation.address}" />
+			<Button img="modules/{identifier}/img/send.svg" enabled={!wasAlreadySent} text={wasAlreadySent ? 'Sent' : 'Send'} onClick={() => onSend(conversation)} data-testid="forward-conversation-send-{conversation.address}" />
 		</div>
 	</div>
 {/snippet}
-
 <div class="forward-message" data-testid="forward-message-modal">
 	{#if $fwMsg && messageContent}
 		<div class="message-preview" data-testid="forward-message-preview">
@@ -122,7 +113,6 @@
 			</div>
 		</div>
 	{/if}
-
 	<div class="header">
 		<Input bind:value={search} placeholder="Search in conversations" data-testid="forward-message-search" />
 	</div>

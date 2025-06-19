@@ -89,7 +89,7 @@
 </style>
 
 <ButtonBar>
-	<Button text="Create wallet" onClick={showNewWalletModal} />
+	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Create wallet" onClick={showNewWalletModal} />
 	<Button img="modules/{module.identifier}/img/recover.svg" colorVariable="--primary-foreground" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
@@ -102,8 +102,8 @@
 	{#snippet content(walleta)}
 		<div class="wallet">
 			<ButtonBar>
-				<Button text="Add a new address" onClick={() => addAddress(walleta)} />
-				<Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
+				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add a new address" onClick={() => addAddress(walleta)} />
+				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
 			</ButtonBar>
 			<Table>
 				<Thead>

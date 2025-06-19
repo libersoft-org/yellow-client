@@ -249,7 +249,7 @@
 	<div style="display: flex; flex-direction: column; gap: 20px;">
 		<Alert type="info" message={successMessage} />
 		<div style="display: flex; justify-content: center;">
-			<Button text="Close" onClick={close} />
+			<Button img="img/cross.svg" text="Close" onClick={close} />
 		</div>
 	</div>
 {:else}
