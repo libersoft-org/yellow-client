@@ -18,7 +18,7 @@
 		buttons: [
 			{ text: 'Abort', onClick: clickButton, expand: true },
 			{ text: 'Retry', onClick: clickButton, expand: true },
-			{ text: 'Close', onClick: () => elDialog.close(), expand: true },
+			{ img: 'img/cancel.svg', text: 'Close', onClick: () => elDialog.close(), expand: true },
 		],
 	};
 
