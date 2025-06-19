@@ -161,7 +161,7 @@
 				{@render emoji([9829, 65039])}
 				<Clickable onClick={() => (showFull = !showFull)}>
 					<div class="expand">
-						<Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--primary-foreground" />
+						<Icon img={showFull ? 'img/cross.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--primary-foreground" />
 					</div>
 				</Clickable>
 			</div>

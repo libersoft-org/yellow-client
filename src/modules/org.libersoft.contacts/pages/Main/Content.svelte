@@ -46,7 +46,7 @@
 			<BarTitle text="Contact list" />
 		{/snippet}
 		{#snippet right()}
-			<Icon img="img/close.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
+			<Icon img="img/cross.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
 	</Bar>
 	<Page>

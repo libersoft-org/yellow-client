@@ -91,7 +91,7 @@
 		<Button text="Add RPC URL" onClick={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
 	</div>
 	<ButtonBar>
-		<Button text="Cancel" onClick={close} />
+		<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 		<Button img="img/save.svg" text="Save" onClick={saveAndClose} />
 	</ButtonBar>
 </div>

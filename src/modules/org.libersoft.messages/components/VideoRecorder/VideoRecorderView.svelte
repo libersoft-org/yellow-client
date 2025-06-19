@@ -197,7 +197,7 @@
 	<div bind:this={videoRef} class="video-recorder-video-placeholder">
 		{#if error}
 			<div class="video-recorder-error">
-				<Icon img="img/close.svg" alt="Error icon" colorVariable="--default-foreground" size="30px" padding="15px" />
+				<Icon img="img/cross.svg" alt="Error icon" colorVariable="--default-foreground" size="30px" padding="15px" />
 				{#if errorMessages}
 					{#each errorMessages as message}
 						<div>{message}</div>

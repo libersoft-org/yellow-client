@@ -45,5 +45,5 @@
 		</div>
 		<div class="message">{truncateTextEnd(replyToMessage, 70)}</div>
 	</div>
-	<Icon img="img/close.svg" alt="Close" colorVariable="--secondary-foreground" onClick={onClose} size="24px" padding="0px" />
+	<Icon img="img/cross.svg" alt="Close" colorVariable="--secondary-foreground" onClick={onClose} size="24px" padding="0px" />
 </div>

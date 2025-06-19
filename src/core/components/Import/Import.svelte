@@ -271,7 +271,7 @@
 
 	{#if activeTab === 'json'}
 		<div class="json-import">
-			<Button onclick={loadFile}>{browseButtonText}</Button>
+			<Button img="img/json.svg" onclick={loadFile}>{browseButtonText}</Button>
 			<div class="scrollable">
 				<Code bind:code={text} testId={`${testId}-textarea`} />
 			</div>
@@ -281,7 +281,7 @@
 		{#if scannedText}
 			<div class="qr-content">
 				<div class="scan-again-container">
-					<Button img="img/photo.svg" text="Scan Again" onClick={scanAgain} />
+					<Button img="img/qr.svg" text="Scan again" onClick={scanAgain} />
 				</div>
 				<div class="scrollable">
 					<Code code={scannedText} testId={`${testId}-textarea`} />
@@ -291,7 +291,7 @@
 			<div class="qr-scanner">
 				{#if alertText}
 					<Alert type="error" message={alertText} />
-					<Button text="Cancel" onClick={close} />
+					<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 				{:else}
 					<div class="instructions">{qrInstructions}</div>
 					<div class="video-container">
@@ -300,7 +300,7 @@
 						</video>
 						<canvas bind:this={canvasElement}></canvas>
 					</div>
-					<Button text="Cancel" onClick={close} />
+					<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 				{/if}
 			</div>
 		{/if}

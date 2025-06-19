@@ -67,12 +67,10 @@
 		{:else}
 			<Button img="modules/{identifier}/img/pause.svg" colorVariable="--primary-foreground" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
 		{/if}
-		<Button img="img/close.svg" colorVariable="--primary-foreground" onClick={() => cancelUpload(uploadId)} />
+		<Button img="img/cancel.svg" colorVariable="--primary-foreground" onClick={() => cancelUpload(uploadId)} />
 	</div>
 {/snippet}
-
 {#snippet downloadControls()}
-	<!-- -->
 	{@const isPausedByServer = upload && upload.record.status === FileUploadRecordStatus.PAUSED && upload.role === FileUploadRole.RECEIVER}
 	<div class="transfer-controls">
 		{#if download && (download.pausedLocally || !download.running)}
@@ -80,14 +78,12 @@
 		{:else}
 			<Button img="modules/{identifier}/img/pause.svg" colorVariable="--primary-foreground" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
 		{/if}
-		<Button img="img/close.svg" colorVariable="--primary-foreground" onClick={() => cancelDownload(uploadId)} />
+		<Button img="img/cancel.svg" colorVariable="--primary-foreground" onClick={() => cancelDownload(uploadId)} />
 	</div>
 {/snippet}
-
 {#snippet downloadButton()}
 	<div class="message-attachment-accept-btn">
 		<Button
-			width="110px"
 			img="img/download.svg"
 			text="Download"
 			onClick={e => {
@@ -97,7 +93,6 @@
 		/>
 	</div>
 {/snippet}
-
 {#snippet fileTitle()}
 	{#if upload && upload.record}
 		<div class="file-title">
@@ -105,7 +100,6 @@
 		</div>
 	{/if}
 {/snippet}
-
 {#snippet errors()}
 	{#if upload && upload.record}
 		<div class="errors">
@@ -119,7 +113,6 @@
 		</div>
 	{/if}
 {/snippet}
-
 {#snippet renderSenderUpload()}
 	<!-- ACTIVE UPLOAD -->
 	{#if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes(upload.record.status)}
@@ -129,59 +122,48 @@
 		{:else}
 			<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
 		{/if}
-
 		<!-- FINISHED UPLOAD - downloading -->
 	{:else if download && upload.record.status === FileUploadRecordStatus.FINISHED}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
 		{@render downloadControls()}
-
 		<!-- FINISHED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		{@render downloadButton()}
-
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
 		<div>Upload canceled</div>
-
 		<!-- FALLBACK TO ERROR -->
 	{:else}
 		{@render errors()}
 	{/if}
 {/snippet}
-
 {#snippet renderReceiverUpload()}
 	<!-- DOWNLOAD DOWNLOADING - receiving -->
 	{#if download}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
 		{@render downloadControls()}
-
 		<!-- DOWNLOAD BEGIN/UPLOADING/PAUSED  -->
 	{:else if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes(upload.record.status)}
 		<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
-
 		<!-- DOWNLOAD FINISHED - download again if needed -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		{@render downloadButton()}
-
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
 		<div>Canceled by sender</div>
-
 		<!-- FALLBACK TO ERROR -->
 	{:else}
 		{@render errors()}
 	{/if}
 {/snippet}
-
 {#snippet renderSenderP2P()}
 	<!-- ACTIVE P2P UPLOAD BEGUN -->
 	{#if upload.record.status === FileUploadRecordStatus.BEGUN}
 		<div>Waiting for accept...</div>
 		<div class="transfer-controls">
 			<!-- @ts-ignore TODO: button typing -->
-			<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={() => cancelUpload(uploadId)} />
+			<Button img="img/cross.svg" colorVariable="--secondary-foreground" onClick={() => cancelUpload(uploadId)} />
 		</div>
-
 		<!-- ACTIVE P2P UPLOAD UPLOADING -->
 	{:else if upload.record.status === FileUploadRecordStatus.UPLOADING || upload.record.status === FileUploadRecordStatus.PAUSED}
 		{#if isUploadActive}
@@ -190,49 +172,40 @@
 		{:else}
 			<div>Uploading...</div>
 		{/if}
-
 		<!-- FINISHED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		<div>File sent</div>
-
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
 		<div>File transfer has been canceled</div>
-
 		<!-- FALLBACK TO ERROR -->
 	{:else}
 		{@render errors()}
 	{/if}
 {/snippet}
-
 {#snippet renderReceiverP2P()}
 	<!-- P2P DOWNLOADING - receiving -->
 	{#if download && (download.record.status === FileUploadRecordStatus.UPLOADING || download.record.status === FileUploadRecordStatus.BEGUN || download.record.status === FileUploadRecordStatus.PAUSED)}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
 		{@render downloadControls()}
-
 		<!-- P2P BEGUN - waiting for accept -->
 	{:else if upload.record.status === FileUploadRecordStatus.BEGUN}
 		<div class="transfer-controls">
-			<Button width="80px" text="Accept" onClick={onDownload} data-testid="p2p-accept-button" />
-			<Button width="80px" text="Cancel" onClick={() => cancelDownload(uploadId)} data-testid="p2p-cancel-button" />
+			<Button width="100px" text="Accept" onClick={onDownload} data-testid="p2p-accept-button" />
+			<Button width="100px" img="img/cancel.svg" text="Cancel" onClick={() => cancelDownload(uploadId)} data-testid="p2p-cancel-button" />
 		</div>
-
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
 		<div>File transfer has been canceled</div>
-
 		<!-- P2P FINISHED - download again if needed -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		<!-- {@render downloadButton()} -->
 		<div>File transport has been finished</div>
-
 		<!-- FALLBACK TO ERROR -->
 	{:else}
 		{@render errors()}
 	{/if}
 {/snippet}
-
 <!--
  TODO: data-testid contains potentially unsafe data; svelte is sanitizing it, but we should consider auto stripping
  data-testid attr for production (since its purpose is only for testing in playwright)

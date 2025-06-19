@@ -51,6 +51,6 @@
 		</div>
 	{/snippet}
 	{#snippet right()}
-		<Icon img="img/close.svg" alt="Close" colorVariable="--secondary-foreground" onClick={clickClose} visibleOnMobile={false} />
+		<Icon img="img/cross.svg" alt="Close" colorVariable="--secondary-foreground" onClick={clickClose} visibleOnMobile={false} />
 	{/snippet}
 </Bar>

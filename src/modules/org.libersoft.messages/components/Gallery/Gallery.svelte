@@ -162,7 +162,7 @@
 			<Button img="img/download.svg" colorVariable="--primary-foreground" onClick={download} />
 		</div>
 		<div class="top-right">
-			<Button img="img/close.svg" colorVariable="--primary-foreground" onClick={close} />
+			<Button img="img/cross.svg" colorVariable="--primary-foreground" onClick={close} />
 		</div>
 		{#key $currentFile.id}
 			{#if $currentFile}

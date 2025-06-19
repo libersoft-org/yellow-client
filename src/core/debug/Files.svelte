@@ -274,8 +274,8 @@
 
 		<!-- Action Buttons -->
 		<div class="buttons-grid {$mobileClass}">
-			<Button onClick={testOfferNativeDownload}>Offer Download</Button>
-			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save Chunk</Button>
+			<Button onClick={testOfferNativeDownload}>Offer download</Button>
+			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save chunk</Button>
 			<Button onClick={testFinishNativeDownload} disabled={!download}>Finish</Button>
 			<Button onClick={testOpenDownload} disabled={!download}>Open</Button>
 		</div>

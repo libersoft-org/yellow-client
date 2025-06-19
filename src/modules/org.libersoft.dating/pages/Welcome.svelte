@@ -12,7 +12,7 @@
 		<BarTitle text="Dating" />
 	{/snippet}
 	{#snippet right()}
-		<Icon img="img/close.svg" onClick={closeModule} colorVariable="--secondary-foreground" visibleOnMobile={false} />
+		<Icon img="img/cross.svg" onClick={closeModule} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </Bar>
 <Page>Welcome</Page>

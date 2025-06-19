@@ -42,6 +42,6 @@
 	<span>?</span>
 </div>
 <ButtonBar>
-	<Button text="Delete" img="img/del.svg" onClick={clickDel} />
-	<Button text="Cancel" img="img/close.svg" onClick={() => (show = false)} />
+	<Button img="img/del.svg" text="Delete" onClick={clickDel} />
+	<Button img="img/cancel.svg" text="Cancel" onClick={() => (show = false)} />
 </ButtonBar>

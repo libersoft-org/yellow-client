@@ -19,7 +19,7 @@
 		<BarTitle text="Match game" />
 	{/snippet}
 	{#snippet right()}
-		<Icon img="img/close.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
+		<Icon img="img/cross.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </Bar>
 <Page>

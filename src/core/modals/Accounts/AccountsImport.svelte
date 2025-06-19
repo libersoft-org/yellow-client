@@ -30,7 +30,7 @@
 		icon: 'img/import.svg',
 		buttons: [
 			{ text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
 		],
 	};
 
@@ -41,7 +41,7 @@
 		buttons: [
 			{ text: 'Replace Existing', onClick: replaceConflictAccount, expand: true },
 			{ text: 'Skip This Account', onClick: skipConflictAccount, expand: true },
-			{ text: 'Cancel Import', onClick: () => conflictDialog?.close(), expand: true },
+			{ img: 'img/cancel.svg', text: 'Cancel import', onClick: () => conflictDialog?.close(), expand: true },
 		],
 	});
 
@@ -228,7 +228,7 @@
 	<div style="display: flex; flex-direction: column; gap: 20px;">
 		<Alert type="info" message={successMessage} />
 		<div style="display: flex; justify-content: center;">
-			<Button text="Close" onClick={close} />
+			<Button img="img/cross.svg" text="Close" onClick={close} />
 		</div>
 	</div>
 {:else}

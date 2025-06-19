@@ -198,15 +198,15 @@
 						{#if editingModule === module.id}
 							<div class="service-url-edit">
 								<Input type="url" placeholder="https://example.com/module-service.js" bind:value={tempServiceUrl} grow={true} />
-								<Button text="Save" onClick={() => saveServiceUrl(module.id)} padding="8px" />
-								<Button text="Cancel" onClick={cancelEditingServiceUrl} bgColor="var(--secondary-background)" padding="8px" />
+								<Button img="img/save.svg" text="Save" onClick={() => saveServiceUrl(module.id)} padding="8px" />
+								<Button img="img/cancel.svg" text="Cancel" onClick={cancelEditingServiceUrl} bgColor="var(--secondary-background)" padding="8px" />
 							</div>
 						{:else}
 							<div class="service-url-display">
 								<div class="service-url-text">
 									{(module as any).serviceUrl || 'Not configured'}
 								</div>
-								<Button text="Edit" onClick={() => startEditingServiceUrl(module as any)} bgColor="var(--secondary-background)" padding="8px" />
+								<Button img="img/edit.svg" text="Edit" onClick={() => startEditingServiceUrl(module as any)} bgColor="var(--secondary-background)" padding="8px" />
 							</div>
 						{/if}
 					</div>
@@ -222,5 +222,5 @@
 			{Object.values($modules_config.modules).filter(m => m.enabled).length} of {Object.values($modules_config.modules).length} modules enabled
 		</span>
 	</div>
-	<Button text="Reset to Defaults" onClick={handleResetToDefaults} bgColor="var(--secondary-background)" padding="8px" />
+	<Button img="img/reset.svg" text="Reset to Defaults" onClick={handleResetToDefaults} bgColor="var(--secondary-background)" padding="8px" />
 </div>

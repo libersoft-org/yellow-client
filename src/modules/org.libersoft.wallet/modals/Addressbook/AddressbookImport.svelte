@@ -22,7 +22,7 @@
 		icon: 'img/import.svg',
 		buttons: [
 			{ text: 'Replace All', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
 		],
 	};
 

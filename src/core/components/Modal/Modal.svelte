@@ -281,7 +281,7 @@
 							<div>{title}</div>
 						</div>
 						<div onpointerdown={e => e.stopPropagation()}>
-							<Icon data-testid={testId + '-Modal-close'} img="img/close.svg" colorVariable="--primary-foreground" alt="X" size="20px" padding="10px" onClick={close} />
+							<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable="--primary-foreground" alt="X" size="20px" padding="10px" onClick={close} />
 						</div>
 					{/if}
 				</div>

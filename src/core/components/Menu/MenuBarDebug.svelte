@@ -32,7 +32,8 @@
 	}
 </script>
 
-{#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}<Switch bind:checked={$debug} />
+{#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}
+	<Switch bind:checked={$debug} />
 	<Button onClick={err}>/0</Button>
 	<Button onClick={notification}>N</Button>
 	<Button onClick={openFiles1}>F1</Button>

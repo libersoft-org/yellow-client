@@ -121,7 +121,7 @@
 			<BarTitle text="Account management" />
 		{/snippet}
 		{#snippet right()}
-			<Icon img="img/close.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
+			<Icon img="img/cross.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
 	</Bar>
 	<div class="accounts-wrapper">

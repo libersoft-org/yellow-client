@@ -114,13 +114,13 @@
 	</div>
 	<div class="navigation">
 		{#if currentStep > 0}
-			<Button text="Previous" onClick={prevStep} />
+			<Button img="img/caret-left.svg" text="Previous" onClick={prevStep} />
 		{/if}
 		<div class="gap"></div>
 		{#if currentStep < steps.length - 1}
-			<Button data-testid="wizard-next" text={nextText} onClick={nextStep} />
+			<Button data-testid="wizard-next" img="img/caret-right.svg" text={nextText} onClick={nextStep} />
 		{:else}
-			<Button data-testid="wizard-next" text="Finish" onClick={close} />
+			<Button data-testid="wizard-next" img="img/check.svg" text="Finish" onClick={close} />
 		{/if}
 	</div>
 </div>

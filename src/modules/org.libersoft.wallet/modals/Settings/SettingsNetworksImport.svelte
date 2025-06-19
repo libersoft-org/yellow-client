@@ -28,7 +28,7 @@
 		icon: 'img/import.svg',
 		buttons: [
 			{ text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
 		],
 	};
 
@@ -38,9 +38,9 @@
 		icon: 'img/import.svg',
 		buttons: [
 			{ text: 'Replace Existing', onClick: replaceConflictNetwork, expand: true },
-			{ text: 'Import with Modified Name', onClick: importWithModifiedName, expand: true },
+			{ img: 'img/import.svg', text: 'Import with Modified Name', onClick: importWithModifiedName, expand: true },
 			{ text: 'Skip This Network', onClick: skipConflictNetwork, expand: true },
-			{ text: 'Cancel Import', onClick: () => conflictDialog?.close(), expand: true },
+			{ img: 'img/cancel.svg', text: 'Cancel Import', onClick: () => conflictDialog?.close(), expand: true },
 		],
 	});
 

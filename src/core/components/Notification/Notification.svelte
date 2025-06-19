@@ -203,7 +203,7 @@
 							</div>
 						{/if}
 						<div class="close">
-							<Icon img="img/close.svg" alt="Close" colorVariable="--primary-foreground" size="10px" padding="10px" isButton onClick={e => handleClosing(e)} />
+							<Icon img="img/cross.svg" alt="Close" colorVariable="--primary-foreground" size="10px" padding="10px" isButton onClick={e => handleClosing(e)} />
 						</div>
 					</div>
 					{#if data.body}
