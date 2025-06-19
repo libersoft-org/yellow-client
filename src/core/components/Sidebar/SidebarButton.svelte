@@ -6,12 +6,13 @@
 		img?: string;
 		imgSize?: string;
 		text?: string;
+		expand?: boolean;
 		enabled?: boolean;
 		visibleOnMobile?: boolean;
 		visibleOnDesktop?: boolean;
 		onClick?: (e: Event) => void;
 	}
-	let { img, imgSize = '20px', text, enabled = true, visibleOnMobile = true, visibleOnDesktop = true, onClick, ...restProps }: Props = $props();
+	let { img, imgSize = '28px', text, expand = false, enabled = true, visibleOnMobile = true, visibleOnDesktop = true, onClick, ...restProps }: Props = $props();
 
 	function handleClick(e) {
 		console.log('SidebarButton clicked');
@@ -32,6 +33,11 @@
 		transition: background-color 0.4s linear;
 	}
 
+	.sidebar-button.expand {
+		display: flex;
+		flex: 1;
+	}
+
 	.sidebar-button.disabled {
 		color: var(--disabled-foreground);
 	}
@@ -43,8 +49,8 @@
 
 {#if img || text}
 	{#if ($isMobile && visibleOnMobile) || (!$isMobile && visibleOnDesktop)}
-		<Clickable {...restProps} onClick={handleClick}>
-			<div class="sidebar-button" class:disabled={!enabled}>
+		<Clickable {...restProps} onClick={handleClick} {expand}>
+			<div class="sidebar-button" class:expand class:disabled={!enabled}>
 				{#if img}
 					<Icon {img} colorVariable={!enabled ? '--disabled-foreground' : '--secondary-foreground'} alt={text} size={imgSize} padding="0px" />
 				{/if}

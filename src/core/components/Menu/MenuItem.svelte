@@ -14,6 +14,7 @@
 	.item {
 		display: flex;
 		align-items: center;
+		box-sizing: border-box;
 		width: 100%;
 		color: var(--secondary-foreground);
 		border-bottom: 1px solid var(--secondary-softer-background);

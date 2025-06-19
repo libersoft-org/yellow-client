@@ -1,5 +1,4 @@
 <script>
-	import { debug } from '@/core/stores.ts';
 	import { module } from '../module.js';
 	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress } from '../wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';

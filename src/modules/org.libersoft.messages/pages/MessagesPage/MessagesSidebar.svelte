@@ -7,6 +7,7 @@
 	import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
 	import ModalNewConversation from '../../modals/NewConversation.svelte';
 	import Settings from '../../modals/Settings/Settings.svelte';
+	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	let showNewConversationModal = false;
 	let showMessageSettings = false;
 	let scrollButtonVisible;
@@ -47,29 +48,14 @@
 	}
 
 	.bar-buttons {
+		z-index: 10;
 		position: relative;
 		display: flex;
+		align-items: center;
 		justify-content: space-between;
-		z-index: 10;
 		color: var(--secondary-foreground);
 		background-color: var(--secondary-background);
 		border-bottom: 1px solid var(--secondary-softer-background);
-	}
-
-	.bar-buttons .bar-button {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		word-break: break-word;
-		overflow: hidden;
-		padding: 15px;
-		padding-right: 0;
-		font-weight: bold;
-	}
-
-	.bar-buttons .bar-button :global(.clickable) {
-		flex: 1 1 auto;
-		min-width: 0;
 	}
 
 	.new-conversation {
@@ -92,13 +78,8 @@
 {#if $conversationsArray != null}
 	<div class="conversations">
 		<div class="bar-buttons">
-			<Clickable data-testid="new-conversation-button" onClick={clickNewConversation}>
-				<div class="bar-button">
-					<Icon img="modules/{identifier}/img/conversation-new.svg" alt="New conversation" colorVariable="--secondary-foreground" size="28px" padding="0px" />
-					<div class="new-conversation">New conversation</div>
-				</div>
-			</Clickable>
-			<Icon data-testid="messages-settings-button" img="img/settings.svg" alt="Messages settings" colorVariable="--secondary-foreground" size="28px" padding="10px" onClick={clickMessagesSettings} />
+			<SidebarButton data-testid="new-conversation-button" img="modules/{identifier}/img/conversation-new.svg" text="New conversation" onClick={clickNewConversation} />
+			<SidebarButton data-testid="messages-settings-button" img="img/settings.svg" onClick={clickMessagesSettings} />
 		</div>
 		<div class="items" bind:this={elItems} on:scroll={parseScroll}>
 			{#each $conversationsArray as c (c.address)}
