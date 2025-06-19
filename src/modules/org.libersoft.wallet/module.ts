@@ -1,7 +1,7 @@
 import { registerModule } from '@/core/core.ts';
 /* note: components import wallet.ts, so everything is still imported on startup.. */
-import Sidebar from './pages/WalletSidebar.svelte';
-import Content from './pages/WalletContent.svelte';
+import Sidebar from './pages/Main/Sidebar.svelte';
+import Content from './pages/Main/Content.svelte';
 
 export const module = {
 	name: 'Wallet',

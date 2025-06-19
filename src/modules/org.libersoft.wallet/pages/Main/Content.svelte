@@ -7,7 +7,7 @@
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
-	import Wallet from './Wallet.svelte';
+	import Wallet from '../Wallet.svelte';
 
 	onMount(() => {
 		hideSidebarMobile.set(true);

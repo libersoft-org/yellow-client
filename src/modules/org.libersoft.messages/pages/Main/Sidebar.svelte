@@ -1,7 +1,5 @@
 <script>
 	import { identifier, conversationsArray, selectConversation } from '../../messages.js';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
 	import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
