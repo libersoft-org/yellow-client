@@ -1,5 +1,6 @@
 <script>
-	import { selectedNetwork, selectedAddress } from '../wallet.ts';
+	import { debug } from '@/core/stores.ts';
+	import { selectedNetwork, selectedAddress, balance, balanceTimestamp } from '../wallet.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -60,11 +61,28 @@
 	{#if $selectedNetwork && $selectedAddress}
 		<Table breakpoint="0px">
 			<Tbody>
+				{#if $selectedNetwork?.currency?.iconURL}
+					<Tr>
+						<Td>
+							<div class="row">
+								<Icon img={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} size="40px" padding="0px" />
+								<div class="symbol">{$balance.crypto.currency}</div>
+							</div>
+						</Td>
+						<Td>
+							<div class="amount">{$balance.crypto.amount} {$balance.crypto.currency}</div>
+							<div class="fiat">({$balance.fiat.amount} {$balance.fiat.currency})</div>
+						</Td>
+						{#if $debug}
+							<pre>retrieved {$balanceTimestamp}</pre>
+						{/if}
+					</Tr>
+				{/if}
 				{#each tokens as t, index}
 					<Tr>
 						<Td>
 							<div class="row">
-								<div><Icon img={t.icon} size="40px" padding="0px" alt={t.symbol} /></div>
+								<div><Icon img={t.icon} alt={t.symbol} size="40px" padding="0px" /></div>
 								<div class="symbol">{t.symbol}</div>
 							</div>
 						</Td>

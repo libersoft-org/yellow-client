@@ -1,11 +1,12 @@
 <script>
 	import { debug } from '@/core/stores.ts';
 	import { module } from '../module.js';
-	import { section, setSection, status, rpcURL, balance, selectedNetwork, selectedAddress, balanceTimestamp } from '../wallet.ts';
+	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress } from '../wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Dropdown from '../components/Dropdown.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Settings from '../modals/Settings/Settings.svelte';
@@ -13,6 +14,11 @@
 	import Receive from './Receive.svelte';
 	import Balance from './Balance.svelte';
 	import History from './History.svelte';
+	import Modal from '@/core/components/Modal/Modal.svelte';
+	import ModalNetworks from '../modals/Networks.svelte';
+	import ModalWallets from '../modals/Wallets.svelte';
+	let showModalNetworks = false;
+	let showModalWallets = false;
 	let addressElement;
 	let showModalSettings = false;
 
@@ -24,6 +30,14 @@
 		addressElement.innerHTML = 'Copied!';
 		setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
 	}
+
+	selectedNetwork.subscribe(v => {
+		console.log('selectedNetwork', v);
+	});
+
+	selectedAddress.subscribe(v => {
+		console.log('selectedAddress', v);
+	});
 </script>
 
 <style>
@@ -78,30 +92,6 @@
 		gap: 5px;
 	}
 
-	.balance {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-
-	.balance .crypto {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		font-size: 25px;
-		font-weight: bold;
-	}
-
-	.balance .crypto img {
-		width: 50px;
-		height: 50px;
-	}
-
-	.balance .fiat {
-		color: var(--default-foreground);
-		text-align: center;
-	}
-
 	.buttons {
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
@@ -120,6 +110,12 @@
 	.buttons :global(.clickable) {
 		display: flex;
 		width: 100%;
+	}
+
+	.network-address {
+		display: flex;
+		gap: 10px;
+		justify-content: space-between;
 	}
 
 	.separator {
@@ -160,22 +156,9 @@
 				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => (showModalSettings = true)} />
 			</div>
 		</div>
-		<div class="balance">
-			<div class="crypto">
-				{#if $selectedNetwork?.currency?.iconURL}
-					<div>
-						<img src={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} />
-					</div>
-				{/if}
-				<div>{$balance.crypto.amount} {$balance.crypto.currency}</div>
-			</div>
-			<div class="fiat">
-				({$balance.fiat.amount}
-				{$balance.fiat.currency})
-			</div>
-			{#if $debug}
-				<pre>retrieved {$balanceTimestamp}</pre>
-			{/if}
+		<div class="network-address">
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
 		</div>
 		<div class="buttons">
 			<Button img="modules/{module.identifier}/img/send.svg" colorVariable="--primary-foreground" text="Send" onClick={() => setSection('send')} />
@@ -201,3 +184,5 @@
 	</div>
 </Paper>
 <Settings bind:show={showModalSettings} />
+<Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} width="500px" />
+<Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} width="500px" />

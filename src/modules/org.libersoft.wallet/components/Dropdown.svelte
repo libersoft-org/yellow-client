@@ -16,6 +16,7 @@
 		border: 0;
 		border-radius: 10px;
 		font-family: inherit;
+		box-sizing: border-box;
 		width: 100%;
 		background-color: var(--secondary-softer-background);
 		color: var(--secondary-foreground);
