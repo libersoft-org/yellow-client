@@ -20,6 +20,7 @@
 		border-bottom: 1px solid var(--secondary-softer-background);
 		gap: 20px;
 		padding: 15px 20px;
+		transition: background-color 0.4s linear;
 	}
 
 	.item:hover {

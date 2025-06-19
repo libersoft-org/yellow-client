@@ -18,6 +18,7 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		padding: 10px;
+		transition: background-color 0.4s linear;
 	}
 
 	.accounts-button:hover {
