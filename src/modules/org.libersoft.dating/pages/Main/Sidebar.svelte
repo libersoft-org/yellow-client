@@ -1,6 +1,6 @@
-<script>
-	import { page, setPage } from '../dating.js';
-	import SidebarCategory from '../components/SidebarCategory.svelte';
+<script lang="ts">
+	import { page, setPage } from '../../dating.ts';
+	import SidebarCategory from '../../components/SidebarCategory.svelte';
 	const sections = [
 		{ id: 'people', img: 'people.svg', label: 'People nearby' },
 		{ id: 'map', img: 'map.svg', label: 'Map' },

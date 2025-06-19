@@ -1,0 +1,12 @@
+<script lang="ts">
+	import { hideSidebarMobile } from '@/core/stores.ts';
+	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
+	import { module } from '../../module.ts';
+
+	function clickShowContent() {
+		hideSidebarMobile.set(true);
+	}
+</script>
+
+<SidebarButton img="modules/{module.identifier}/img/contacts.svg" text="Show contacts" visibleOnDesktop={false} onClick={clickShowContent} />
+<div>Contact list - sidebar</div>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
-	import { module } from '../module.js';
+	import { module } from '../module.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';

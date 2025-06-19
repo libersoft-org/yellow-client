@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { selectedNetworkID, networks } from '../wallet.ts';
-	import { module } from '../module.js';
+	import { module } from '../module.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

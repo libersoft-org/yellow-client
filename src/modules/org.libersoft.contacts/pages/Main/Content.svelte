@@ -50,7 +50,7 @@
 		{/snippet}
 	</Bar>
 	<Page>
-		<div>Contact list - content page - not yet implemented</div>
+		<div>Contact list - content</div>
 	</Page>
 </Content>
 <Dialog data={dialogData} width="400px" bind:this={elDialog} />

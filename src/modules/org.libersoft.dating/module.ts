@@ -1,11 +1,14 @@
 import { registerModule } from '@/core/core.ts';
-import Sidebar from './pages/DatingSidebar.svelte';
-import Content from './pages/DatingContent.svelte';
-
-export const module = {
+import Sidebar from './pages/Main/Sidebar.svelte';
+import Content from './pages/Main/Content.svelte';
+export const module: Module = {
 	name: 'Dating',
 	identifier: 'org.libersoft.dating',
 };
+interface Module {
+	name: string;
+	identifier: string;
+}
 
 registerModule(module.identifier, {
 	order: 4,

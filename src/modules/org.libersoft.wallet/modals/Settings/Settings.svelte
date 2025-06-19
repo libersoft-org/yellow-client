@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { module } from '../../module.js';
+	import { module } from '../../module.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import SettingsGeneral from './SettingsGeneral.svelte';
 	import SettingsNetworks from './SettingsNetworks.svelte';

@@ -1,6 +1,5 @@
 <script>
-	import { module } from '../../module.js';
-	import { get } from 'svelte/store';
+	import { module } from '../../module.ts';
 	import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';

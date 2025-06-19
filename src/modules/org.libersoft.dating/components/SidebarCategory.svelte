@@ -1,7 +1,7 @@
 <script>
 	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { module } from '../module.js';
+	import { module } from '../module.ts';
 	export let img = null;
 	export let label;
 	export let active = false;

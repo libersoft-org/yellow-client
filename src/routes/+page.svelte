@@ -23,11 +23,11 @@
 	import WizardWelcomeStep3 from '@/core/wizard/WelcomeStep3.svelte';
 	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
 	import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
-	import '../modules/org.libersoft.messages/module.js';
-	import '../modules/org.libersoft.contacts/module.js';
-	import '../modules/org.libersoft.wallet/module.js';
-	import '../modules/org.libersoft.dating/module.js';
-	import '../modules/org.libersoft.iframes/module.js';
+	import '../modules/org.libersoft.messages/module.ts';
+	import '../modules/org.libersoft.contacts/module.ts';
+	import '../modules/org.libersoft.wallet/module.ts';
+	import '../modules/org.libersoft.dating/module.ts';
+	import '../modules/org.libersoft.iframes/module.ts';
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
 	import { initZoom } from '@/core/zoom.ts';

@@ -1,5 +1,5 @@
 <script>
-	import { module } from '../module.js';
+	import { module } from '../module.ts';
 	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress } from '../wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { closePage } from '../dating.js';
+	import { closePage } from '../dating.ts';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';

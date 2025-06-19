@@ -15,7 +15,7 @@
 	import ModalExport from '../../modals/Addressbook/AddressbookExport.svelte';
 	import ModalImport from '../../modals/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { module } from '../../module.js';
+	import { module } from '../../module.ts';
 	import { addressBook } from '../../wallet.ts';
 	import { get } from 'svelte/store';
 
