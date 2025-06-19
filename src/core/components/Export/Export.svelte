@@ -177,7 +177,7 @@
 						</Clickable>
 						{#if !isRevealed}
 							<div class="reveal-icon" aria-hidden="true" data-testid="{testId}-qr-reveal-icon">
-								<img src="/modules/org.libersoft.wallet/img/hide.svg" alt="Eye icon" />
+								<img src="img/show.svg" alt="Show" />
 							</div>
 						{/if}
 					{:else}

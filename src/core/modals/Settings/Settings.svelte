@@ -15,7 +15,7 @@
 		name: 'settings',
 		menu: [
 			{
-				img: 'img/settings.svg',
+				img: 'img/general.svg',
 				title: 'General',
 				name: 'general',
 			},
@@ -25,7 +25,7 @@
 				name: 'modules',
 			},
 			{
-				img: 'img/appearance.svg',
+				img: 'img/show.svg',
 				title: 'Appearance',
 				name: 'appearance',
 			},
