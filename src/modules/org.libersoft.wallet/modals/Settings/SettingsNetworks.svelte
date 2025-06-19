@@ -21,6 +21,11 @@
 	let showSettingsNetworksExport = false;
 	let showSettingsNetworksImport = false;
 
+	function clickAddNetwork(net) {
+		console.log('clickAddNetwork', net);
+		//TODO
+	}
+
 	function editNetwork(net) {
 		console.log('editNetwork', net);
 		modalItem = net;
@@ -52,6 +57,7 @@
 
 <div class="networks">
 	<ButtonBar>
+		<Button img="modules/{module.identifier}/img/network-add.svg" colorVariable="--primary-foreground" text="Add a network" onClick={clickAddNetwork} data-testid="networks-export-btn" />
 		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={() => doExport()} data-testid="networks-export-btn" />
 		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={() => doImport()} data-testid="networks-import-btn" />
 	</ButtonBar>
