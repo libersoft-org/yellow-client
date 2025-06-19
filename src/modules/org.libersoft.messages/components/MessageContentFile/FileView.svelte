@@ -191,7 +191,7 @@
 		<!-- P2P BEGUN - waiting for accept -->
 	{:else if upload.record.status === FileUploadRecordStatus.BEGUN}
 		<div class="transfer-controls">
-			<Button width="100px" text="Accept" onClick={onDownload} data-testid="p2p-accept-button" />
+			<Button width="100px" img="img/check.svg" text="Accept" onClick={onDownload} data-testid="p2p-accept-button" />
 			<Button width="100px" img="img/cancel.svg" text="Cancel" onClick={() => cancelDownload(uploadId)} data-testid="p2p-cancel-button" />
 		</div>
 		<!-- CANCELED UPLOAD -->
