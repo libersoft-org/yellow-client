@@ -23,6 +23,10 @@ import { makeMessageReaction } from './factories/messageFactories.ts';
 import { identifier, connectionSendData, _send, moduleEventSubscribe, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const photoRadius = localStorageSharedStore('photoRadius', '50%');
+
+export const messageListMaxWidth = localStorageSharedStore('messageListMaxWidth', '700px');
+export const messageListApplyMaxWidth = localStorageSharedStore('messageListApplyMaxWidth', true);
+
 export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
 export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', null);
 export { identifier } from './connection.ts';
