@@ -67,7 +67,7 @@
 {#if $conversationsArray != null}
 	<div class="conversations">
 		<div class="bar-buttons">
-			<SidebarButton data-testid="new-conversation-button" img="modules/{identifier}/img/conversation-new.svg" text="New conversation" expand={true} onClick={clickNewConversation} />
+			<SidebarButton data-testid="new-conversation-button" img="modules/{identifier}/img/conversation-new.svg" text="New conversation" expand onClick={clickNewConversation} />
 			<SidebarButton data-testid="messages-settings-button" img="img/settings.svg" onClick={clickMessagesSettings} />
 		</div>
 		<div class="items" bind:this={elItems} on:scroll={parseScroll}>
@@ -78,7 +78,7 @@
 			{/each}
 		</div>
 		{#if $conversationsArray.length > 1}
-			<ScrollButton visible={scrollButtonVisible} direction={true} right="15px" bottom="10px" onClick={scrollToTop} />
+			<ScrollButton visible={scrollButtonVisible} direction right="15px" bottom="10px" onClick={scrollToTop} />
 		{/if}
 	</div>
 	<Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />

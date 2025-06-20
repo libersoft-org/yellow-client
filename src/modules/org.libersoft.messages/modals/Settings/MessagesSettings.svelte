@@ -41,7 +41,7 @@
 </Label>
 <Label text="Photo radius">
 	<Select bind:value={$photoRadius}>
-		<Option value="50%" text="Circle" selected={true} />
+		<Option value="50%" text="Circle" selected />
 		{#each Array(7) as _, i}
 			<Option value="{i * 5}px" text="{i * 5} px" />
 		{/each}

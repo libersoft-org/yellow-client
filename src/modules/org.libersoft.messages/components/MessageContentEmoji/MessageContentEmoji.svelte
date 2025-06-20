@@ -29,7 +29,7 @@
 </script>
 
 {#if codepoints}
-	<Emoji {codepoints} context={'message'} {is_single} size={is_single ? '200' : '30'} force_animate={true} />
+	<Emoji {codepoints} context={'message'} {is_single} size={is_single ? '200' : '30'} force_animate />
 {:else}
 	error: {JSON.stringify(node.attributes)}
 {/if}

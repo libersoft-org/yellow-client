@@ -265,13 +265,15 @@
 
 <div class="import">
 	<Tabs>
-		<TabsItem img="img/import.svg" label={jsonLabel} active={activeTab === 'json'} onClick={() => handleTabChange('json')} testId={`${testId}-json-tab`} />
+		<TabsItem img="img/json.svg" label={jsonLabel} active={activeTab === 'json'} onClick={() => handleTabChange('json')} testId={`${testId}-json-tab`} />
 		<TabsItem img="img/qr.svg" label={qrLabel} active={activeTab === 'qr'} onClick={() => handleTabChange('qr')} testId={`${testId}-qr-tab`} />
 	</Tabs>
 
 	{#if activeTab === 'json'}
 		<div class="json-import">
-			<Button img="img/json.svg" onclick={loadFile}>{browseButtonText}</Button>
+			<ButtonBar>
+				<Button img="img/open.svg" onclick={loadFile} text={browseButtonText} />
+			</ButtonBar>
 			<div class="scrollable">
 				<Code bind:code={text} testId={`${testId}-textarea`} />
 			</div>

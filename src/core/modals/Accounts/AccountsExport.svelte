@@ -3,4 +3,4 @@
 	import Export from '@/core/components/Export/Export.svelte';
 </script>
 
-<Export data={$accounts_config} filename="accounts" testId="accounts-export" isSensitive={true} />
+<Export data={$accounts_config} filename="accounts" testId="accounts-export" isSensitive />

@@ -118,9 +118,9 @@
 		{/if}
 		<div class="gap"></div>
 		{#if currentStep < steps.length - 1}
-			<Button data-testid="wizard-next" img="img/caret-right.svg" text={nextText} right={true} onClick={nextStep} />
+			<Button data-testid="wizard-next" img="img/caret-right.svg" text={nextText} right onClick={nextStep} />
 		{:else}
-			<Button data-testid="wizard-next" img="img/caret-right.svg" text="Finish" right={true} onClick={close} />
+			<Button data-testid="wizard-next" img="img/caret-right.svg" text="Finish" right onClick={close} />
 		{/if}
 	</div>
 </div>

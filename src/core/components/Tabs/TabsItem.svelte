@@ -18,8 +18,8 @@
 		align-items: center;
 		justify-content: center;
 		gap: 5px;
-		flex: 1; /* TODO: this is not working as it needs to be applied on Clickable, not on .item. If applied to Clickable, it spoils everything that doesn't need it. */
 		padding: 10px;
+		width: 100%;
 	}
 
 	.item.active {
@@ -32,7 +32,7 @@
 	}
 </style>
 
-<Clickable {onClick} data-testid={testId}>
+<Clickable {onClick} data-testid={testId} expand>
 	<div class="item {active && 'active'}">
 		{#if img}
 			<Icon {img} alt={label ? label : ''} {colorVariable} size="20px" padding="0px" />

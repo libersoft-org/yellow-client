@@ -83,22 +83,6 @@
 		height: auto;
 		object-fit: contain;
 	}
-
-	.button-reset {
-		text-align: inherit;
-		border: none;
-		margin: 0;
-		padding: 0;
-		width: auto;
-		overflow: visible;
-		background: transparent;
-		color: inherit;
-		font: inherit;
-		line-height: normal;
-		-webkit-font-smoothing: inherit;
-		-moz-osx-font-smoothing: inherit;
-		-webkit-appearance: none;
-	}
 </style>
 
 <div>
@@ -131,13 +115,13 @@
 						<div>Error loading poster</div>
 					{/if}
 
-					<button class="video-placeholder-play-button button-reset" onclick={startVideo}>
+					<div role="button" tabindex="0" class="video-placeholder-play-button" onclick={startVideo}>
 						{#if videoStarting}
-							<Spinner show={true} size="14px" containerMinHeight="14px" />
+							<Spinner show size="14px" containerMinHeight="14px" />
 						{:else}
 							<Icon img="modules/{identifier}/img/play.svg" colorVariable="--primary-background" alt="Start video" size="24px" padding="0px" />
 						{/if}
-					</button>
+					</div>
 				</div>
 			</div>
 		{/if}

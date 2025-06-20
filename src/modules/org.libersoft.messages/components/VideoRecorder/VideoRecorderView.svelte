@@ -230,7 +230,7 @@
 			{:else}
 				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} onClick={recordStart} />
 			{/if}
-			<Button img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} loading={sending} right={true} onClick={send} />
+			<Button img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} loading={sending} right onClick={send} />
 		</ButtonBar>
 	</div>
 </div>

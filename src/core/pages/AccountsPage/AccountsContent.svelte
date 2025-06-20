@@ -127,7 +127,7 @@
 				<Button img="img/import.svg" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
 				<Button img="img/export.svg" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
 			</ButtonBar>
-			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
+			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} content={accountTable} header={status} expandAllOnDesktop mode="multiple" />
 		</Paper>
 	</div>
 </div>

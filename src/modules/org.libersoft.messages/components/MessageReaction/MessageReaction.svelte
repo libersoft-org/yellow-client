@@ -141,7 +141,7 @@
 {#snippet emoji(codepoints)}
 	<Clickable onClick={() => onEmojiClick(codepoints)} data-testid="message-reaction-emoji-button">
 		<div class="emoji-button emoji">
-			<Emoji {codepoints} context={'menu'} is_single={true} size={30} />
+			<Emoji {codepoints} context={'menu'} is_single size={30} />
 		</div>
 	</Clickable>
 {/snippet}
