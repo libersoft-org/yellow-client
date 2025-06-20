@@ -49,7 +49,8 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		margin-top: 8px;
-		color: var(--disabled-foreground);
+		color: var(--primary-foreground);
+		font-size: 14px;
 	}
 
 	.item .item-row .count {
