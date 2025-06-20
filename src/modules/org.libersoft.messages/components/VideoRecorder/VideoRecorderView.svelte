@@ -72,21 +72,6 @@
 </script>
 
 <style>
-	.mic-button-wrapper {
-		position: relative;
-	}
-
-	.mic-button-indicator {
-		position: absolute;
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: #f00;
-		top: 6px;
-		right: 6px;
-		opacity: 0.4;
-	}
-
 	.video-recorder-debug {
 		margin-top: 8px;
 	}
@@ -111,25 +96,11 @@
 		margin-top: 8px;
 	}
 
-	.video-recorder-actions-left {
-		display: flex;
-		gap: var(--gap);
-	}
-
-	.video-recorder-actions-right {
-		display: flex;
-		gap: var(--gap);
-	}
-
 	.video-recorder {
 		display: flex;
 		flex-direction: column;
 		width: 100%;
 		height: 100%;
-	}
-
-	.video-recorder:not(.toggle-facing-mode-enabled) .camera-button-wrapper :global(.clickable) {
-		cursor: default;
 	}
 
 	.video-recorder-loading {

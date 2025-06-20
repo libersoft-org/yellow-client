@@ -95,12 +95,6 @@
 		gap: 20px;
 	}
 
-	.json-content {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-	}
-
 	.qr-wrapper {
 		display: flex;
 		justify-content: center;

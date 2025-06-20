@@ -3,6 +3,7 @@
 	import { humanSize } from '@/core/utils/fileUtils.js';
 	import { identifier } from '@/org.libersoft.messages/messages.js';
 	import { debug } from '@/core/stores.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -48,20 +49,25 @@
 		display: flex;
 	}
 
-	.video-placeholder-image {
+	.video-placeholder .video-poster {
+		width: auto;
+		height: 100%;
+		position: relative;
+	}
+
+	.video-placeholder .video-poster .image {
 		height: 100%;
 		width: auto;
 		border-radius: 10px;
 	}
 
-	.video-placeholder-play-button {
+	.video-placeholder .video-poster .play {
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		border: none;
 		cursor: pointer;
-
 		width: 65px;
 		height: 45px;
 		background: #000000a6;
@@ -69,12 +75,6 @@
 		justify-content: center;
 		align-items: center;
 		border-radius: 6px;
-	}
-
-	.video-poster {
-		width: auto;
-		height: 100%;
-		position: relative;
 	}
 
 	.video-wrapper :global(.video-js) {
@@ -109,19 +109,20 @@
 			<div class="video-placeholder">
 				<div class="video-poster">
 					{#if thumbnailSrc}
-						<img class="video-placeholder-image" src={thumbnailSrc} alt="Video poster" />
+						<img class="image" src={thumbnailSrc} alt="Video poster" />
 					{/if}
 					{#if posterError}
 						<div>Error loading poster</div>
 					{/if}
-
-					<div role="button" tabindex="0" class="video-placeholder-play-button" onclick={startVideo}>
-						{#if videoStarting}
-							<Spinner show size="14px" containerMinHeight="14px" />
-						{:else}
-							<Icon img="modules/{identifier}/img/play.svg" colorVariable="--primary-background" alt="Start video" size="24px" padding="0px" />
-						{/if}
-					</div>
+					<Clickable onClick={startVideo}>
+						<div class="play">
+							{#if videoStarting}
+								<Spinner show size="14px" containerMinHeight="14px" />
+							{:else}
+								<Icon img="modules/{identifier}/img/play.svg" colorVariable="--primary-background" alt="Start video" size="24px" padding="0px" />
+							{/if}
+						</div>
+					</Clickable>
 				</div>
 			</div>
 		{/if}
