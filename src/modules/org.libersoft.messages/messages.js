@@ -931,7 +931,7 @@ async function showNotification(acc, msg) {
 		body: get(hideMessageTextInNotifications) ? 'You have a new message' : msg.stripped_text,
 		icon: 'img/photo.svg',
 		//icon: 'favicon.svg',
-		sound: 'modules/' + identifier + '/audio/message.mp3',
+		sound: 'audio/notification.mp3',
 		callback: async event => {
 			if (event === 'click') {
 				window.focus();
