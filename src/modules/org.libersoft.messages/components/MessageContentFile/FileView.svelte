@@ -63,22 +63,22 @@
 {#snippet uploadControls()}
 	<div class="transfer-controls">
 		{#if upload.record.status === FileUploadRecordStatus.PAUSED}
-			<Button img="modules/{identifier}/img/play.svg" colorVariable="--primary-foreground" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
+			<Button img="modules/{identifier}/img/play.svg" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
 		{:else}
-			<Button img="modules/{identifier}/img/pause.svg" colorVariable="--primary-foreground" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
+			<Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
 		{/if}
-		<Button img="img/cancel.svg" colorVariable="--primary-foreground" onClick={() => cancelUpload(uploadId)} />
+		<Button img="img/cancel.svg" onClick={() => cancelUpload(uploadId)} />
 	</div>
 {/snippet}
 {#snippet downloadControls()}
 	{@const isPausedByServer = upload && upload.record.status === FileUploadRecordStatus.PAUSED && upload.role === FileUploadRole.RECEIVER}
 	<div class="transfer-controls">
 		{#if download && (download.pausedLocally || !download.running)}
-			<Button img="modules/{identifier}/img/play.svg" colorVariable="--primary-foreground" onClick={() => resumeDownload(uploadId)} enabled={!isPausedByServer} />
+			<Button img="modules/{identifier}/img/play.svg" onClick={() => resumeDownload(uploadId)} enabled={!isPausedByServer} />
 		{:else}
-			<Button img="modules/{identifier}/img/pause.svg" colorVariable="--primary-foreground" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
+			<Button img="modules/{identifier}/img/pause.svg" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
 		{/if}
-		<Button img="img/cancel.svg" colorVariable="--primary-foreground" onClick={() => cancelDownload(uploadId)} />
+		<Button img="img/cancel.svg" onClick={() => cancelDownload(uploadId)} />
 	</div>
 {/snippet}
 {#snippet downloadButton()}
@@ -162,7 +162,7 @@
 		<div>Waiting for accept...</div>
 		<div class="transfer-controls">
 			<!-- @ts-ignore TODO: button typing -->
-			<Button img="img/cross.svg" colorVariable="--secondary-foreground" onClick={() => cancelUpload(uploadId)} />
+			<Button img="img/cross.svg" onClick={() => cancelUpload(uploadId)} />
 		</div>
 		<!-- ACTIVE P2P UPLOAD UPLOADING -->
 	{:else if upload.record.status === FileUploadRecordStatus.UPLOADING || upload.record.status === FileUploadRecordStatus.PAUSED}

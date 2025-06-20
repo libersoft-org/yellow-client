@@ -2,7 +2,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let text;
-	export let colorVariable;
+	export let colorVariable = '--secondary-foreground';
 	export let onClick;
 </script>
 

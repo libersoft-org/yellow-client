@@ -127,9 +127,9 @@
 	<div class="accounts-wrapper">
 		<Paper>
 			<ButtonBar>
-				<Button img="img/accounts-add.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} data-testid="add-account-button" />
-				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
-				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
+				<Button img="img/accounts-add.svg" text="Add a new account" onClick={addAccountModal} data-testid="add-account-button" />
+				<Button img="img/import.svg" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
+				<Button img="img/export.svg" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
 			</ButtonBar>
 			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
 		</Paper>

@@ -137,7 +137,7 @@
 	</Tbody>
 </Table>
 <ButtonBar>
-	<Button img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={save} />
-	<Button img="modules/{module.identifier}/img/print.svg" colorVariable="--primary-foreground" text="Print" onClick={print} />
-	<Button img="modules/{module.identifier}/img/regenerate.svg" colorVariable="--primary-foreground" text="Regenerate" onClick={regenerate} />
+	<Button img="img/save.svg" text="Save" onClick={save} />
+	<Button img="modules/{module.identifier}/img/print.svg" text="Print" onClick={print} />
+	<Button img="modules/{module.identifier}/img/regenerate.svg" text="Regenerate" onClick={regenerate} />
 </ButtonBar>

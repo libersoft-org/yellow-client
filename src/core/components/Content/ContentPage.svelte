@@ -12,6 +12,7 @@
 		height: 100%;
 		padding: 10px;
 		overflow: auto;
+		color: var(--primary-foreground);
 	}
 </style>
 

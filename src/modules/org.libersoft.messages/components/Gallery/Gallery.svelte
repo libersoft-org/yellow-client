@@ -159,10 +159,10 @@
 {#if $gallery.show}
 	<div class="gallery" onpointerdown={onAnywhereClick}>
 		<div class="top-left">
-			<Button img="img/download.svg" colorVariable="--primary-foreground" onClick={download} />
+			<Button img="img/download.svg" onClick={download} />
 		</div>
 		<div class="top-right">
-			<Button img="img/cross.svg" colorVariable="--primary-foreground" onClick={close} />
+			<Button img="img/cross.svg" onClick={close} />
 		</div>
 		{#key $currentFile.id}
 			{#if $currentFile}

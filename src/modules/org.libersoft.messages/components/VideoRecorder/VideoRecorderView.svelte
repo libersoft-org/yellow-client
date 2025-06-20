@@ -213,8 +213,8 @@
 		{/if}
 		<div class="video-floating-area-rt">
 			{#if hasData && !isRecording}
-				<Button img="img/download.svg" enabled={hasData} colorVariable="--primary-foreground" onClick={download} />
-				<Button img="modules/{identifier}/img/delete.svg" enabled={hasData} colorVariable="--primary-foreground" onClick={recordRestart} />
+				<Button img="img/download.svg" enabled={hasData} onClick={download} />
+				<Button img="modules/{identifier}/img/delete.svg" enabled={hasData} onClick={recordRestart} />
 			{/if}
 		</div>
 	</div>
@@ -235,9 +235,9 @@
 						{#if isMuted}
 							<Button img="modules/{identifier}/img/mic-disabled.svg" colorVariable="--disabled-foreground" onClick={toggleMute} />
 						{:else if isRecording}
-							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--primary-foreground" onClick={toggleMute} />
+							<Button img="modules/{identifier}/img/mic.svg" onClick={toggleMute} />
 						{:else}
-							<Button img="modules/{identifier}/img/mic.svg" colorVariable="--primary-foreground" onClick={toggleMute} />
+							<Button img="modules/{identifier}/img/mic.svg" onClick={toggleMute} />
 						{/if}
 					</div>
 				{/snippet}
@@ -254,9 +254,9 @@
 				{#snippet mainButtonSlot()}
 					<div class="camera-button-wrapper">
 						{#if enableToggleFacingMode}
-							<Button img="modules/{identifier}/img/camera-rotate.svg" colorVariable="--primary-foreground" onClick={toggleFacingMode} />
+							<Button img="modules/{identifier}/img/camera-rotate.svg" onClick={toggleFacingMode} />
 						{:else}
-							<Button img="modules/{identifier}/img/camera.svg" colorVariable="--primary-foreground" onClick={() => {}} />
+							<Button img="modules/{identifier}/img/camera.svg" onClick={() => {}} />
 						{/if}
 					</div>
 				{/snippet}
@@ -267,11 +267,11 @@
 		</div>
 		<div class="video-recorder-actions-right">
 			{#if isRecording}
-				<Button img="modules/{identifier}/img/stop.svg" colorVariable="--primary-foreground" text="Stop" onClick={recordStop} />
+				<Button img="modules/{identifier}/img/stop.svg" text="Stop" onClick={recordStop} />
 			{:else}
-				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} colorVariable={loading ? '--disabled-foreground' : '--primary-foreground'} text="Record" onClick={recordStart} />
+				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} text="Record" onClick={recordStart} />
 			{/if}
-			<Button img="modules/{identifier}/img/send.svg" text="Send" enabled={hasData || isRecording || sending} colorVariable="--primary-foreground" loading={sending} onClick={send} />
+			<Button img="modules/{identifier}/img/send.svg" text="Send" enabled={hasData || isRecording || sending} loading={sending} onClick={send} />
 		</div>
 	</div>
 </div>

@@ -64,9 +64,9 @@
 
 <div class="addressbook">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/address-add.svg" colorVariable="--primary-foreground" text="Add an address" onClick={addToAddressBookModal} />
-		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={exportAddressBook} data-testid="export-button" />
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={importAddressBook} data-testid="import-button" />
+		<Button img="modules/{module.identifier}/img/address-add.svg" text="Add an address" onClick={addToAddressBookModal} />
+		<Button img="img/export.svg" text="Export" onClick={exportAddressBook} data-testid="export-button" />
+		<Button img="img/import.svg" text="Import" onClick={importAddressBook} data-testid="import-button" />
 	</ButtonBar>
 	{#if $addressBook.length > 0}
 		<Table breakpoint="0">

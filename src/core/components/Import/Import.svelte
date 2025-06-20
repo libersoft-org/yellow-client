@@ -309,7 +309,7 @@
 		<Alert type="error" message={alertText} />
 	{/if}
 	<ButtonBar>
-		<Button img="img/plus.svg" colorVariable="--primary-foreground" text={addButtonText} enabled={hasContent} onClick={handleAdd} data-testid={`${testId}-add-btn`} />
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text={replaceButtonText} enabled={hasContent && showReplaceButton} onClick={handleReplace} data-testid={`${testId}-replace-btn`} />
+		<Button img="img/plus.svg" text={addButtonText} enabled={hasContent} onClick={handleAdd} data-testid={`${testId}-add-btn`} />
+		<Button img="img/import.svg" text={replaceButtonText} enabled={hasContent && showReplaceButton} onClick={handleReplace} data-testid={`${testId}-replace-btn`} />
 	</ButtonBar>
 </div>

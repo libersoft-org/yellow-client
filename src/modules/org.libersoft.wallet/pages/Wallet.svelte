@@ -130,8 +130,8 @@
 <Paper>
 	<div class="body">
 		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} colorVariable="--secondary-foreground" onClick={() => (showModalNetworks = true)} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} colorVariable="--secondary-foreground" onClick={() => (showModalWallets = true)} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (showModalNetworks = true)} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (showModalWallets = true)} />
 		</div>
 		<div class="bar">
 			<div class="left">
@@ -162,10 +162,10 @@
 			</div>
 		</div>
 		<div class="buttons">
-			<Button img="modules/{module.identifier}/img/send.svg" colorVariable="--primary-foreground" text="Send" onClick={() => setSection('send')} />
-			<Button img="modules/{module.identifier}/img/receive.svg" colorVariable="--primary-foreground" text="Receive" onClick={() => setSection('receive')} />
-			<Button img="modules/{module.identifier}/img/balance.svg" colorVariable="--primary-foreground" text="Balance" onClick={() => setSection('balance')} />
-			<Button img="modules/{module.identifier}/img/history.svg" colorVariable="--primary-foreground" text="History" onClick={() => setSection('history')} />
+			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} />
+			<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" onClick={() => setSection('receive')} />
+			<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" onClick={() => setSection('balance')} />
+			<Button img="modules/{module.identifier}/img/history.svg" text="History" onClick={() => setSection('history')} />
 		</div>
 		<div class="separator"></div>
 		{#if !$selectedNetwork || !$selectedAddress}

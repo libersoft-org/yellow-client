@@ -57,9 +57,9 @@
 
 <div class="networks">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/network-add.svg" colorVariable="--primary-foreground" text="Add a network" onClick={clickAddNetwork} data-testid="networks-export-btn" />
-		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={() => doExport()} data-testid="networks-export-btn" />
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={() => doImport()} data-testid="networks-import-btn" />
+		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={clickAddNetwork} data-testid="networks-export-btn" />
+		<Button img="img/export.svg" text="Export" onClick={() => doExport()} data-testid="networks-export-btn" />
+		<Button img="img/import.svg" text="Import" onClick={() => doImport()} data-testid="networks-import-btn" />
 	</ButtonBar>
 	{#if $networks.length !== 0}
 		<div class="bold">My networks:</div>

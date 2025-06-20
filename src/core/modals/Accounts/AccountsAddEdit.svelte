@@ -234,7 +234,7 @@
 	{#if params.id === null}
 		<Button data-testid="add" img="img/accounts-add.svg" text="Add the account" onClick={clickAdd} />
 	{:else}
-		<Button data-testid="save" img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={clickSave} />
+		<Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} />
 	{/if}
 	{#if $account}
 		<div class="status">

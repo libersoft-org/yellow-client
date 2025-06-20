@@ -132,8 +132,8 @@
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
 	<input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
 	<div class="header">
-		<Button img="img/add.svg" colorVariable="--primary-foreground" text="Add files" onClick={onFileAdd} />
-		<Button img="img/del.svg" colorVariable="--primary-foreground" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
+		<Button img="img/add.svg" text="Add files" onClick={onFileAdd} />
+		<Button img="img/del.svg" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
 	</div>
 	<div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
 		{#if $fileUploadModalFiles.length}
@@ -160,7 +160,7 @@
 		{/if}
 	</div>
 	<div class="footer">
-		<Button img="img/upload.svg" colorVariable="--primary-foreground" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-p2p" />
-		<Button img="img/upload.svg" colorVariable="--primary-foreground" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
+		<Button img="img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-p2p" />
+		<Button img="img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
 	</div>
 </div>
