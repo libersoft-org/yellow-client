@@ -88,7 +88,7 @@
 	}
 </style>
 
-<ButtonBar>
+<ButtonBar equalize>
 	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Create wallet" onClick={showNewWalletModal} />
 	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 </ButtonBar>
@@ -102,8 +102,8 @@
 	{#snippet content(walleta)}
 		<div class="wallet">
 			<ButtonBar>
-				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add a new address" onClick={() => addAddress(walleta)} />
-				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
+				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />
+				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address by index" onClick={() => addAddressWithIndex(walleta)} />
 			</ButtonBar>
 			<Table>
 				<Thead>

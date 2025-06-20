@@ -41,7 +41,7 @@
 	{/if}
 	<span>?</span>
 </div>
-<ButtonBar>
+<ButtonBar expand>
 	<Button img="img/del.svg" text="Delete" onClick={clickDel} />
 	<Button img="img/cancel.svg" text="Cancel" onClick={() => (show = false)} />
 </ButtonBar>
