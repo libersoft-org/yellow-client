@@ -8,6 +8,7 @@
 	import Emoji from '../Emoji/Emoji.svelte';
 	import { rgi } from '../../emojis';
 	import Portal from '@/core/components/Portal/Portal.svelte';
+	import { playAudio } from '@/core/notifications';
 	interface Props {
 		message: any;
 	}
@@ -76,6 +77,7 @@
 		const codepoints_rgi = rgi(codepoints);
 		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
 		show = false;
+		playAudio('modules/' + identifier + '/audio/reaction.mp3');
 	};
 </script>
 

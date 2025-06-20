@@ -363,6 +363,11 @@ async function deleteBrowserNotification(id: string): Promise<void> {
 	}
 }
 
+export function playAudio(fileName: string): void {
+	const audio = new Audio(fileName);
+	audio.play();
+}
+
 export function playNotificationSound(notification: YellowNotification): void {
 	if (!get(notificationsSoundEnabled)) return;
 	notification._audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
