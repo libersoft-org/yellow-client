@@ -42,6 +42,7 @@
 		border: 1px solid;
 		border-radius: 10px;
 		-webkit-tap-highlight-color: transparent;
+		box-sizing: border-box;
 	}
 
 	.button.disabled {

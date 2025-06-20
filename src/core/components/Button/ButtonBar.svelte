@@ -1,46 +1,62 @@
 <script lang="ts">
+	import { onMount, tick } from 'svelte';
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
 		expand?: boolean;
 		align?: 'left' | 'center' | 'right';
-		width?: string;
+		equalize?: boolean;
 	}
-	let { children, expand = false, align = 'left', width }: Props = $props();
+	let { children, expand = false, align = 'left', equalize = false }: Props = $props();
+	let barEl: HTMLDivElement | undefined;
+
+	async function applyEqualSize() {
+		if (!equalize || !barEl) return;
+		await tick();
+		let max = 0;
+		barEl.querySelectorAll('.button').forEach((b: HTMLElement) => {
+			max = Math.max(max, b.getBoundingClientRect().width);
+		});
+
+		const target = Math.ceil(max);
+		barEl.querySelectorAll('.button').forEach((b: HTMLElement) => {
+			b.style.width = `${target}px`;
+		});
+	}
+
+	onMount(() => {
+		if (equalize) applyEqualSize();
+	});
+	$effect(() => {
+		if (equalize) applyEqualSize();
+	});
 </script>
 
 <style>
-	.button-bar-wrapper {
-		display: flex;
-		width: 100%;
-	}
-
-	.button-bar-wrapper.align-left {
-		justify-content: baseline;
-	}
-
-	.button-bar-wrapper.align-center {
-		justify-content: center;
-	}
-
-	.button-bar-wrapper.align-right {
-		justify-content: end;
-	}
-
 	.button-bar {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 10px;
-		width: var(--width);
+		width: 100%;
 	}
 
 	.button-bar.expand :global(.clickable) {
 		flex: 1;
 	}
+
+	.button-bar.align-left {
+		justify-content: baseline;
+	}
+
+	.button-bar.align-center {
+		justify-content: center;
+	}
+
+	.button-bar.align-right {
+		justify-content: end;
+	}
 </style>
 
-<div class="button-bar-wrapper" class:align-left={align === 'left'} class:align-center={align === 'center'} class:align-right={align === 'right'}>
-	<div class="button-bar" class:expand style={width ? `--width:${width}` : '100%'}>
-		{@render children?.()}
-	</div>
+<div class="button-bar" bind:this={barEl} class:expand class:align-left={align === 'left'} class:align-center={align === 'center'} class:align-right={align === 'right'}>
+	{@render children?.()}
 </div>
