@@ -291,7 +291,6 @@
 			<div class="qr-scanner">
 				{#if alertText}
 					<Alert type="error" message={alertText} />
-					<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 				{:else}
 					<div class="instructions">{qrInstructions}</div>
 					<div class="video-container">
@@ -300,7 +299,6 @@
 						</video>
 						<canvas bind:this={canvasElement}></canvas>
 					</div>
-					<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 				{/if}
 			</div>
 		{/if}
@@ -308,7 +306,7 @@
 	{#if hasContent && alertText}
 		<Alert type="error" message={alertText} />
 	{/if}
-	<ButtonBar>
+	<ButtonBar align="center" width="400px" expand={true}>
 		<Button img="img/plus.svg" text={addButtonText} enabled={hasContent} onClick={handleAdd} data-testid={`${testId}-add-btn`} />
 		<Button img="img/import.svg" text={replaceButtonText} enabled={hasContent && showReplaceButton} onClick={handleReplace} data-testid={`${testId}-replace-btn`} />
 	</ButtonBar>

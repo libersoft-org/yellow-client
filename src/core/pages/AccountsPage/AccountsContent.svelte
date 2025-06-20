@@ -76,10 +76,6 @@
 		padding: 10px;
 		height: 100dvh;
 	}
-
-	:global(.button) {
-		white-space: nowrap;
-	}
 </style>
 
 {#snippet accountTable(account)}

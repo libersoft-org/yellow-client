@@ -48,7 +48,7 @@
 	{/snippet}
 	{#snippet bottom()}
 		{#if data?.buttons && data.buttons.length > 0}
-			<ButtonBar>
+			<ButtonBar expand={true}>
 				{#each data.buttons as button}
 					<Button {...button} />
 				{/each}
