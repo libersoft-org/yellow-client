@@ -7,21 +7,18 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import { identifier } from '@/org.libersoft.messages/messages';
 	import { debug } from '@/core/stores.ts';
-	import ButtonWithMenu from '@/core/components/Button/ButtonWithMenu.svelte';
-
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	interface Props {
 		// base
 		videoRef?: HTMLElement;
 		micIndicatorRef?: HTMLElement;
 		sending?: boolean;
-
 		// devices
 		audioDevices?: InputDeviceInfo[];
 		videoDevices?: InputDeviceInfo[];
 		selectedAudioDeviceId?: string | null;
 		selectedVideoDeviceId?: string | null;
 		enableToggleFacingMode?: boolean;
-
 		// methods
 		recordStart: () => void;
 		recordStop: () => void;
@@ -32,7 +29,6 @@
 		download: () => void;
 		toggleMute: () => void;
 		toggleFacingMode: () => void;
-
 		// player outer state
 		loading?: boolean;
 		error?: boolean;
@@ -48,14 +44,12 @@
 		videoRef = $bindable(),
 		micIndicatorRef = $bindable(),
 		sending = false,
-
 		// devices
 		audioDevices = [],
 		videoDevices = [],
 		selectedAudioDeviceId = undefined,
 		selectedVideoDeviceId = undefined,
 		enableToggleFacingMode = false,
-
 		// methods
 		recordStart,
 		recordStop,
@@ -66,7 +60,6 @@
 		download,
 		toggleMute,
 		toggleFacingMode,
-
 		// player outer state
 		loading = true,
 		error = false,
@@ -98,16 +91,6 @@
 		margin-top: 8px;
 	}
 
-	.device-select {
-		display: flex;
-		flex: 1 1 auto;
-		min-width: 230px;
-	}
-
-	.device-select :global(select) {
-		flex: 1 1 auto;
-	}
-
 	.video-recorder :global(.video-js) {
 		width: 100%;
 		height: 100%;
@@ -115,7 +98,12 @@
 		overflow: hidden;
 	}
 
-	.video-recorder-footer {
+	.devices {
+		display: flex;
+		gap: 10px;
+	}
+
+	.footer {
 		--gap: 4px;
 		display: flex;
 		gap: var(--gap);
@@ -181,7 +169,7 @@
 {#snippet renderDevicesSelect(devices, selectedDeviceId, onChange)}
 	{@const disabled = !devices || devices.length === 0}
 	{@const emptyMessage = loading ? 'Loading devices' : 'No devices found'}
-	<div class="device-select">
+	<div>
 		<Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} {disabled}>
 			{#if disabled}
 				<Option value={''} disabled selected text={emptyMessage} />
@@ -223,55 +211,26 @@
 			isRecording: {isRecording}; loading: {loading}; facingMode: {facingMode}
 		</div>
 	{/if}
-	<div class="video-recorder-footer">
-		<div class="video-recorder-actions-left">
-			<ButtonWithMenu>
-				{#snippet sideButtonSlot()}
-					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" />
-				{/snippet}
-				{#snippet mainButtonSlot()}
-					<div class="mic-button-wrapper">
-						<div bind:this={micIndicatorRef} class="mic-button-indicator"></div>
-						{#if isMuted}
-							<Button img="modules/{identifier}/img/mic-disabled.svg" colorVariable="--disabled-foreground" onClick={toggleMute} />
-						{:else if isRecording}
-							<Button img="modules/{identifier}/img/mic.svg" onClick={toggleMute} />
-						{:else}
-							<Button img="modules/{identifier}/img/mic.svg" onClick={toggleMute} />
-						{/if}
-					</div>
-				{/snippet}
-				{#snippet tooltipSlot()}
-					<div>
-						{@render renderDevicesSelect(audioDevices, selectedAudioDeviceId, e => changeAudioInput(e.target.value))}
-					</div>
-				{/snippet}
-			</ButtonWithMenu>
-			<ButtonWithMenu>
-				{#snippet sideButtonSlot()}
-					<Icon img="img/caret-up.svg" alt="Error icon" colorVariable="--primary-foreground" size="16px" padding="6px" />
-				{/snippet}
-				{#snippet mainButtonSlot()}
-					<div class="camera-button-wrapper">
-						{#if enableToggleFacingMode}
-							<Button img="modules/{identifier}/img/camera-rotate.svg" onClick={toggleFacingMode} />
-						{:else}
-							<Button img="modules/{identifier}/img/camera.svg" onClick={() => {}} />
-						{/if}
-					</div>
-				{/snippet}
-				{#snippet tooltipSlot()}
-					{@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value))}
-				{/snippet}
-			</ButtonWithMenu>
-		</div>
-		<div class="video-recorder-actions-right">
-			{#if isRecording}
-				<Button img="modules/{identifier}/img/stop.svg" text="Stop" onClick={recordStop} />
+	<div class="devices">
+		{@render renderDevicesSelect(audioDevices, selectedAudioDeviceId, e => changeAudioInput(e.target.value))}
+		{@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value))}
+	</div>
+	<div class="footer">
+		<ButtonBar equalize>
+			<Button img="modules/{identifier}/img/{isMuted ? 'mic-disabled.svg' : 'mic.svg'}" colorVariable={isMuted ? '--disabled-foreground"' : '--primary-foreground'} onClick={toggleMute} />
+			{#if enableToggleFacingMode}
+				<Button img="modules/{identifier}/img/camera-rotate.svg" onClick={toggleFacingMode} />
 			{:else}
-				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} text="Record" onClick={recordStart} />
+				<Button img="modules/{identifier}/img/camera.svg" onClick={() => {}} />
 			{/if}
-			<Button img="modules/{identifier}/img/send.svg" text="Send" enabled={hasData || isRecording || sending} loading={sending} right={true} onClick={send} />
-		</div>
+		</ButtonBar>
+		<ButtonBar equalize align="right">
+			{#if isRecording}
+				<Button img="modules/{identifier}/img/stop.svg" onClick={recordStop} />
+			{:else}
+				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} onClick={recordStart} />
+			{/if}
+			<Button img="modules/{identifier}/img/send.svg" enabled={hasData || isRecording || sending} loading={sending} right={true} onClick={send} />
+		</ButtonBar>
 	</div>
 </div>

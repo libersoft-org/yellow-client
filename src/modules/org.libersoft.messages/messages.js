@@ -920,11 +920,8 @@ async function showNotification(acc, msg) {
 	const conversation = get(conversationsArray)?.find(c => c.address === msg.address_from);
 	console.log('new Notification in conversation', conversation);
 	let title;
-	if (conversation) {
-		title = 'New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')';
-	} else {
-		title = 'New message from: ' + msg.address_from;
-	}
+	if (conversation) title = 'New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')';
+	else title = 'New message from: ' + msg.address_from;
 	let notification = {
 		id: messageNotificationId(msg),
 		title,
