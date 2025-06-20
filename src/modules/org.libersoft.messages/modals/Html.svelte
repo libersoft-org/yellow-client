@@ -43,5 +43,5 @@
 	{:else}
 		<HtmlInTabs bind:text />
 	{/if}
-	<Button img="modules/{identifier}/img/send.svg" text="Send" onClick={send} />
+	<Button img="modules/{identifier}/img/send.svg" text="Send" right={true} onClick={send} />
 </div>

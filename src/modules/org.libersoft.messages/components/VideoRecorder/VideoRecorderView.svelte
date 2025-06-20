@@ -271,7 +271,7 @@
 			{:else}
 				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} text="Record" onClick={recordStart} />
 			{/if}
-			<Button img="modules/{identifier}/img/send.svg" text="Send" enabled={hasData || isRecording || sending} loading={sending} onClick={send} />
+			<Button img="modules/{identifier}/img/send.svg" text="Send" enabled={hasData || isRecording || sending} loading={sending} right={true} onClick={send} />
 		</div>
 	</div>
 </div>

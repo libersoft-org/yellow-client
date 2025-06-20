@@ -105,6 +105,6 @@
 			<Alert type="error" message={error} />
 		{/if}
 	</div>
-	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
+	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} right={true} onClick={send} />
 </div>
 <Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />
