@@ -53,4 +53,4 @@
 		<div>Contact list - content</div>
 	</Page>
 </Content>
-<Dialog data={dialogData} width="400px" bind:this={elDialog} />
+<Dialog data={dialogData} bind:this={elDialog} />
