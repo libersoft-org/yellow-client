@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { findAccount, accounts_config, setCorePage } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
+	import Content from '@/core/components/Content/Content.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
@@ -64,20 +66,6 @@
 	}
 </script>
 
-<style>
-	.accounts {
-		background: var(--background-image) 0 0 / 400px repeat;
-	}
-
-	.accounts .accounts-wrapper {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		padding: 10px;
-		height: 100dvh;
-	}
-</style>
-
 {#snippet accountTable(account)}
 	<Table>
 		<Thead>
@@ -110,7 +98,7 @@
 	</div>
 {/snippet}
 
-<div class="accounts">
+<Content>
 	<Bar>
 		{#snippet left()}
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
@@ -120,7 +108,7 @@
 			<Icon img="img/cross.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
 	</Bar>
-	<div class="accounts-wrapper">
+	<Page align="center">
 		<Paper>
 			<ButtonBar>
 				<Button img="img/accounts-add.svg" text="Add a new account" onClick={addAccountModal} data-testid="add-account-button" />
@@ -129,8 +117,8 @@
 			</ButtonBar>
 			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} content={accountTable} header={status} expandAllOnDesktop mode="multiple" />
 		</Paper>
-	</div>
-</div>
+	</Page>
+</Content>
 
 {#key modalKey}
 	<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
