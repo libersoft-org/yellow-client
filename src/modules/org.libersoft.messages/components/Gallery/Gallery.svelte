@@ -83,7 +83,6 @@
 		z-index: 9999;
 		position: fixed;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		top: 0;
@@ -95,18 +94,17 @@
 
 	.side-control {
 		position: absolute;
-		top: 0;
-		width: 100px;
-		height: 100%;
-		background-color: var(--secondary-hard-background);
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		top: 0;
+		width: 80px;
+		height: 100%;
+		background-color: var(--secondary-hard-background);
 	}
 
 	.side-control:hover {
-		background-color: rgba(0, 0, 0, 0.75);
+		background-color: var(--secondary-soft-background);
 	}
 
 	.side-prev {
@@ -118,12 +116,10 @@
 	}
 
 	.top-left {
-		top: 0;
 		left: 0;
 	}
 
 	.top-right {
-		top: 0;
 		right: 0;
 	}
 
@@ -132,6 +128,7 @@
 		z-index: 10000;
 		position: absolute;
 		padding: 10px;
+		top: 0;
 	}
 
 	.image {
@@ -140,12 +137,15 @@
 		overflow: hidden;
 		flex-flow: column;
 		justify-content: center;
+		max-width: calc(100% - 160px);
 	}
 
-	.image-caption {
-		width: 100%;
+	.image .caption {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		text-align: center;
-		margin-top: 8px;
+		padding: 10px;
 		color: var(--secondary-foreground);
 	}
 
@@ -164,9 +164,15 @@
 		<div class="top-right">
 			<Button img="img/cross.svg" onClick={close} />
 		</div>
+		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
+			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--secondary-foreground" size="80px" onClick={previous} />
+		</div>
 		{#key $currentFile.id}
 			{#if $currentFile}
 				<div class="image">
+					<div class="caption">
+						{$currentFile.fileName}
+					</div>
 					{#if !loading}
 						<img src={$currentFile.url} alt={$currentFile.fileName} />
 					{:else}
@@ -174,15 +180,13 @@
 							<Spinner />
 						</div>
 					{/if}
-					<div class="image-caption">
-						{$currentFile.fileName} ({currentFilePosition} of {$gallery.files.length})
+					<div class="caption">
+						{currentFilePosition} of {$gallery.files.length}
 					</div>
 				</div>
 			{/if}
 		{/key}
-		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
-			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--secondary-foreground" size="80px" onClick={previous} />
-		</div>
+
 		<div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
 			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--secondary-foreground" size="80px" onClick={next} />
 		</div>
