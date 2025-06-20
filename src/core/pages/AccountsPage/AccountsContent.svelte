@@ -122,7 +122,7 @@
 	</Bar>
 	<div class="accounts-wrapper">
 		<Paper>
-			<ButtonBar equalize>
+			<ButtonBar>
 				<Button img="img/accounts-add.svg" text="Add a new account" onClick={addAccountModal} data-testid="add-account-button" />
 				<Button img="img/import.svg" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
 				<Button img="img/export.svg" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
