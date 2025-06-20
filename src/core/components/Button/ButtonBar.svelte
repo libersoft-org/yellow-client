@@ -6,8 +6,9 @@
 		expand?: boolean;
 		align?: 'left' | 'center' | 'right';
 		equalize?: boolean;
+		space?: boolean;
 	}
-	let { children, expand = false, align = 'left', equalize = false }: Props = $props();
+	let { children, expand = false, align = 'left', equalize = false, space = false }: Props = $props();
 	let barEl: HTMLDivElement | undefined;
 
 	async function applyEqualSize() {
@@ -55,8 +56,12 @@
 	.button-bar.align-right {
 		justify-content: end;
 	}
+
+	.button-bar.space {
+		justify-content: space-between;
+	}
 </style>
 
-<div class="button-bar" bind:this={barEl} class:expand class:align-left={align === 'left'} class:align-center={align === 'center'} class:align-right={align === 'right'}>
+<div class="button-bar" bind:this={barEl} class:expand class:space class:align-left={align === 'left'} class:align-center={align === 'center'} class:align-right={align === 'right'}>
 	{@render children?.()}
 </div>
