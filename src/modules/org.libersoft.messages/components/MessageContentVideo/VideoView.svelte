@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { truncateText } from '@/core/utils/textUtils.js';
 	import { humanSize } from '@/core/utils/fileUtils.js';
 	import { identifier } from '@/org.libersoft.messages/messages.js';
 	import { debug } from '@/core/stores.ts';
@@ -31,22 +30,24 @@
 </script>
 
 <style>
-	.video-wrapper {
-		max-width: min(330px, var(--video-size));
-		height: 200px;
-		width: 330px;
-		margin-bottom: 8px;
+	.video-view {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 	}
 
-	.video-title {
-		margin-bottom: 8px;
+	.title {
+		display: flex;
+		gap: 5px;
+	}
+
+	.video-wrapper {
+		max-width: min(330px, var(--video-size));
 	}
 
 	.video-placeholder {
-		position: relative;
-		width: 100%;
-		height: 100%;
 		display: flex;
+		width: 100%;
 	}
 
 	.video-placeholder .video-poster {
@@ -85,24 +86,21 @@
 	}
 </style>
 
-<div>
+<div class="video-view">
 	{#if $debug}
 		<code>{JSON.stringify({ uploadId, videoStarted, videoStarting, loadingData, fetchingPoster, posterError, thumbnailSrc, download: download })}</code>
 	{/if}
-	<div class="video-title">
-		{#if upload}
-			<div>
-				<strong title={upload.record.fileOriginalName}>{truncateText(upload.record.fileOriginalName, 25)}</strong>
-				({humanSize(upload.record.fileSize)})
-			</div>
-		{:else}
-			<Skeleton width="100%" />
-		{/if}
-	</div>
+	{#if upload}
+		<div class="title">
+			<div class="bold">{upload.record.fileOriginalName}</div>
+			<div>({humanSize(upload.record.fileSize)})</div>
+		</div>
+	{:else}
+		<Skeleton width="100%" />
+	{/if}
 	<div class="video-wrapper" style:height={videoIsFullDownloading ? 'auto' : undefined}>
 		<!--<video bind:this={videoRef} onclick={() => console.log('test')} class="video video-js vjs-default-skin" controls> </video>-->
 		<!--<video src="https://dl11.webmfiles.org/big-buck-bunny_trailer.webm" class="video video-js vjs-default-skin" controls> </video>-->
-
 		{#if loadingData || fetchingPoster}
 			<Skeleton width="100%" height="100%" />
 		{:else if upload && !videoStarted}
@@ -134,9 +132,7 @@
 		<div bind:this={videoRef} class="video"></div>
 	</div>
 	{#if !download}
-		<div class="">
-			<Button img="img/download.svg" onClick={onDownload} text="Download" />
-		</div>
+		<Button img="img/download.svg" onClick={onDownload} text="Download" />
 	{:else}
 		<MessageContentAttachment node={{ attributes: { id: { value: uploadId } } }} />
 	{/if}
