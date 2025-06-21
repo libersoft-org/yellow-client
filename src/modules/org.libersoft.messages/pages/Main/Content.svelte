@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { setModule } from '@/core/core.ts';
 	import { selectedConversation, closeConversation } from '../../messages.js';
-	import WelcomePage from '../WelcomePage/WelcomePage.svelte';
+	import Welcome from '../Welcome/Welcome.svelte';
 	import Conversation from '../../components/Conversation/Conversation.svelte';
 	import Gallery from '../../components/Gallery/Gallery.svelte';
 
@@ -23,7 +23,7 @@
 </script>
 
 {#if $selectedConversation === null}
-	<WelcomePage />
+	<Welcome />
 {:else}
 	<Conversation />
 {/if}

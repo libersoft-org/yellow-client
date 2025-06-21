@@ -82,4 +82,4 @@
 		</div>
 	</Page>
 </Content>
-<Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
+<Modal title="New conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />

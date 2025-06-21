@@ -81,6 +81,6 @@
 			<ScrollButton visible={scrollButtonVisible} direction right="15px" bottom="10px" onClick={scrollToTop} />
 		{/if}
 	</div>
-	<Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
+	<Modal title="New conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
 	<Settings bind:show={showMessageSettings} />
 {/if}
