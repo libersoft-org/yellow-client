@@ -339,7 +339,6 @@
 </svelte:head>
 <div class="app" style:--sidebar-width={sidebarWidth}>
 	<div class="sidebar {$mobileClass} {$hideSidebarMobile && $isMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
-		<Menu bind:showMenu={isMenuOpen} />
 		<MenuBar onOpenMenu={() => (isMenuOpen = true)} />
 		<AccountBar />
 		<ModuleBar {onSelectModule} {onCloseModule} />
@@ -362,4 +361,5 @@
 		{/if}
 	</div>
 </div>
+<Menu bind:showMenu={isMenuOpen} />
 <Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} testId="welcome-wizard" />
