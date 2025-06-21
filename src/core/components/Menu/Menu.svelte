@@ -80,7 +80,7 @@
 
 <style>
 	.overlay {
-		z-index: 999;
+		z-index: 199;
 		position: fixed;
 		display: none;
 		top: 0;
@@ -95,7 +95,7 @@
 	}
 
 	.menu {
-		z-index: 1000;
+		z-index: 200;
 		position: fixed;
 		display: flex;
 		flex-direction: column;

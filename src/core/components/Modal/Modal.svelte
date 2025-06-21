@@ -6,14 +6,7 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
-	let modalEl: HTMLDivElement | null = $state(null);
-	let showContent = $state(false);
-	let ModalBody = $state<Snippet>(body);
-	let zIndex = $state(100);
-	let modalId: number;
-	let isDragging = false;
-	let resizeObserver: ResizeObserver;
+
 	interface Props {
 		testId?: string;
 		show?: boolean;
@@ -34,6 +27,15 @@
 		onShowChange?: (show: boolean) => void;
 	}
 
+	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
+	let modalEl: HTMLDivElement | null = $state(null);
+	let showContent = $state(false);
+	let ModalBody = $state<Snippet>(body);
+	let zIndex = $state(100);
+	let modalId: number;
+	let isDragging = false;
+	let resizeObserver: ResizeObserver;
+
 	$effect(() => {
 		if (!$isMobile) return;
 		if (modalEl && showContent && !isDragging) {
@@ -47,19 +49,24 @@
 		modalId = registerModal(z => (zIndex = z));
 
 		function handleResize() {
-			if (!$isMobile) return;
-			centerModal();
-			if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
+			if ($isMobile) {
+				centerModal();
+				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
+			} else {
+				requestAnimationFrame(() => {
+					if (modalEl && showContent) {
+						centerModal();
+					}
+				});
+			}
 		}
 
 		if (modalEl) {
 			let didInit = false;
 			resizeObserver = new ResizeObserver(() => {
-				if (!$isMobile) return;
 				if (isDragging) return;
 				if (didInit) {
-					centerModal();
-					requestAnimationFrame(snapTransformIntoBounds);
+					handleResize();
 				} else {
 					didInit = true;
 				}
@@ -104,6 +111,15 @@
 
 	function centerModal() {
 		if (!modalEl) return;
+
+		if ($isMobile) {
+			// On mobile, modal takes full width but centers vertically
+			const rect = modalEl.getBoundingClientRect();
+			const y = (window.innerHeight - rect.height) / 2;
+			modalEl.style.transform = `translate3d(0px, ${y}px, 0)`;
+			return;
+		}
+
 		const rect = modalEl.getBoundingClientRect();
 		const x = (window.innerWidth - rect.width) / 2;
 		const y = (window.innerHeight - rect.height) / 2;
@@ -199,10 +215,9 @@
 		position: fixed;
 		inset: 0;
 		box-sizing: border-box;
-		width: 100%;
+		width: fit-content;
 		max-height: 100dvh;
 		height: fit-content;
-		width: min-content;
 		overflow: hidden;
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
@@ -281,7 +296,7 @@
 		{#if $isMobile}
 			<div class="overlay" onpointerdown={close}></div>
 		{/if}
-		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
+		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">
 					{#if title}

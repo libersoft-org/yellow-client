@@ -69,8 +69,6 @@
 	}
 
 	$effect(() => {
-		const media = window.matchMedia('(min-width: 769px)');
-
 		function expandAll() {
 			activeIndices = items.map((_, i) => i);
 			tick().then(() => {
@@ -100,30 +98,16 @@
 			});
 		}
 
-		function handleResize(e: MediaQueryListEvent) {
-			if (expandAllOnDesktop) {
-				if (e.matches) {
-					expandAll();
-				} else {
-					collapseAll();
-				}
-			}
-		}
-
 		if (expandAllOnDesktop) {
-			if (media.matches) {
+			if (!$isMobile) {
 				expandAll();
 			} else {
 				collapseAll();
 			}
 		}
-		media.addEventListener('change', handleResize);
-		return () => media.removeEventListener('change', handleResize);
 	});
 
 	$effect(() => {
-		const media = window.matchMedia('(min-width: 769px)');
-
 		function collapseAll() {
 			activeIndices = [];
 			items.forEach((_, index) => {
@@ -136,16 +120,9 @@
 			});
 		}
 
-		function handleResize(e: MediaQueryListEvent) {
-			if (!e.matches) {
-				collapseAll();
-			}
+		if ($isMobile) {
+			collapseAll();
 		}
-
-		media.addEventListener('change', handleResize);
-		return () => {
-			media.removeEventListener('change', handleResize);
-		};
 	});
 </script>
 
