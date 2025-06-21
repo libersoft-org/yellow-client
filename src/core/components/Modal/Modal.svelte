@@ -14,6 +14,7 @@
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
+	let modalWidth = $state('80vw');
 	interface Props {
 		testId?: string;
 		show?: boolean;
@@ -43,28 +44,54 @@
 	});
 
 	$effect(() => {
+		modalWidth = calculateModalWidth();
+	});
+
+	$effect(() => {
 		showUpdated(show);
 		modalId = registerModal(z => (zIndex = z));
 
 		function handleResize() {
-			if (!$isMobile) return;
-			centerModal();
-			if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
+			// Only update width for desktop (mobile is always 100%)
+			if (!$isMobile) {
+				modalWidth = calculateModalWidth();
+			}
+
+			if ($isMobile) {
+				centerModal();
+				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
+			} else {
+				requestAnimationFrame(() => {
+					if (modalEl && showContent) {
+						centerModal();
+					}
+				});
+			}
 		}
 
 		if (modalEl) {
 			let didInit = false;
 			resizeObserver = new ResizeObserver(() => {
-				if (!$isMobile) return;
 				if (isDragging) return;
 				if (didInit) {
-					centerModal();
-					requestAnimationFrame(snapTransformIntoBounds);
+					handleResize();
 				} else {
 					didInit = true;
 				}
 			});
 			resizeObserver.observe(modalEl);
+		}
+
+		// Also observe sidebar for changes (desktop only)
+		const sidebar = document.querySelector('.sidebar');
+		let sidebarResizeObserver: ResizeObserver | null = null;
+		if (sidebar && !$isMobile) {
+			sidebarResizeObserver = new ResizeObserver(() => {
+				if (showContent && !isDragging) {
+					handleResize();
+				}
+			});
+			sidebarResizeObserver.observe(sidebar);
 		}
 
 		window.addEventListener('resize', handleResize);
@@ -73,6 +100,7 @@
 			unregisterModal(modalId);
 			window.removeEventListener('resize', handleResize);
 			resizeObserver?.disconnect();
+			sidebarResizeObserver?.disconnect();
 		};
 	});
 
@@ -104,10 +132,42 @@
 
 	function centerModal() {
 		if (!modalEl) return;
-		const rect = modalEl.getBoundingClientRect();
-		const x = (window.innerWidth - rect.width) / 2;
-		const y = (window.innerHeight - rect.height) / 2;
+
+		if ($isMobile) {
+			// On mobile, modal takes full screen, position at (0,0)
+			modalEl.style.transform = 'translate3d(0px, 0px, 0)';
+			return;
+		}
+
+		// Get sidebar element to account for its width
+		const sidebar = document.querySelector('.sidebar');
+		const sidebarWidth = sidebar ? sidebar.clientWidth : 0;
+
+		// Use the current modalWidth if available, otherwise get from DOM
+		let modalWidthValue: number;
+		if (modalWidth && modalWidth !== '100%') {
+			// Extract numeric value from "400px" format
+			modalWidthValue = parseInt(modalWidth);
+		} else {
+			const rect = modalEl.getBoundingClientRect();
+			modalWidthValue = rect.width;
+		}
+
+		const availableWidth = window.innerWidth - sidebarWidth;
+		const x = sidebarWidth + (availableWidth - modalWidthValue) / 2;
+		const y = (window.innerHeight - modalEl.offsetHeight) / 2;
 		modalEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+	}
+
+	function calculateModalWidth() {
+		if ($isMobile) return '100%';
+
+		// Get sidebar element to account for its width
+		const sidebar = document.querySelector('.sidebar');
+		const sidebarWidth = sidebar ? sidebar.clientWidth : 0;
+
+		const responsiveWidth = Math.max(400, Math.min(1200, window.innerWidth * 0.8 - sidebarWidth));
+		return `${responsiveWidth}px`;
 	}
 
 	function snapTransformIntoBounds() {
@@ -192,7 +252,8 @@
 		width: 100%;
 		max-height: 100dvh;
 		height: fit-content;
-		width: min-content;
+		max-width: 80vw;
+		min-width: 400px;
 		overflow: hidden;
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
@@ -268,7 +329,7 @@
 
 {#if show}
 	<Portal>
-		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
+		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width={modalWidth} style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">
 					{#if title}
