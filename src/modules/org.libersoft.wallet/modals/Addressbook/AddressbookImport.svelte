@@ -21,8 +21,8 @@
 		body: 'This will replace your current address book. All existing addresses will be lost. Are you sure you want to continue?',
 		icon: 'img/import.svg',
 		buttons: [
-			{ text: 'Replace All', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ text: 'Replace All', onClick: confirmReplace, 'data-testid': 'confirm-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), 'data-testid': 'cancel-replace-btn' },
 		],
 	};
 

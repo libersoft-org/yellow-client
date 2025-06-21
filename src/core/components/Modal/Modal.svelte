@@ -27,7 +27,8 @@
 		onShowChange?: (show: boolean) => void;
 	}
 
-	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
+	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
+	$inspect('top', top, 'bottom', bottom);
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -319,23 +320,24 @@
 					{/if}
 					{#if typeof ModalBody === 'function'}
 						<ModalBody {close} {params} />
-					{:else if children || top || center || bottom}
+					{/if}
+					{#if children}
 						{@render children?.()}
-						{#if top}
-							<div class="top">
-								{@render top?.()}
-							</div>
-						{/if}
-						{#if center}
-							<div class="center">
-								{@render center?.()}
-							</div>
-						{/if}
-						{#if bottom}
-							<div class="bottom">
-								{@render bottom?.()}
-							</div>
-						{/if}
+					{/if}
+					{#if top}
+						<div class="top">
+							{@render top?.()}
+						</div>
+					{/if}
+					{#if center}
+						<div class="center">
+							{@render center?.()}
+						</div>
+					{/if}
+					{#if bottom}
+						<div class="bottom">
+							{@render bottom?.()}
+						</div>
 					{/if}
 				</div>
 			{/if}

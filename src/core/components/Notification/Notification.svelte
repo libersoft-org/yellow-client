@@ -160,7 +160,7 @@
 		font-size: 14px;
 	}
 
-	/* fallback pro starší WebKit */
+	/* fallback for older WebKit */
 	.clamp-3 {
 		font-size: var(--font-size);
 		line-clamp: var(--lines);

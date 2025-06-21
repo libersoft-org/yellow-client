@@ -14,11 +14,10 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
 	import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
-	import ModalAccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
 	import ModalAccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
+	import ModalAccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
@@ -26,8 +25,8 @@
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	let showAddEditAccountModal: boolean = $state(false);
 	let showDelAccountModal: boolean = $state(false);
-	let showExportModal: boolean = $state(false);
 	let showImportModal: boolean = $state(false);
+	let showExportModal: boolean = $state(false);
 	let idItem: string | null = $state(null);
 	let modalKey: number = $state(0);
 
@@ -119,10 +118,9 @@
 		</Paper>
 	</Page>
 </Content>
-
 {#key modalKey}
-	<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
+	<ModalAccountsAddEdit params={{ id: idItem || null }} bind:show={showAddEditAccountModal} />
 {/key}
-<Modal title="Export all accounts" body={ModalAccountsExport} bind:show={showExportModal} width="700px" />
-<Modal title="Import accounts" body={ModalAccountsImport} bind:show={showImportModal} width="700px" testId="accounts-import" />
-<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem }} bind:show={showDelAccountModal} />
+<ModalAccountsDelete params={{ id: idItem }} bind:show={showDelAccountModal} />
+<ModalAccountsImport bind:show={showImportModal} />
+<ModalAccountsExport bind:show={showExportModal} />

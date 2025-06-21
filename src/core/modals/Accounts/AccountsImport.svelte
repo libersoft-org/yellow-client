@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
 	import { log } from '@/core/tauri.ts';
+	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
@@ -10,9 +11,10 @@
 	import { validateAccountsArray, validateAccountConfig } from '@/core/accounts_config.ts';
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
 	interface Props {
+		show?: boolean;
 		close: () => void;
 	}
-	let { close }: Props = $props();
+	let { show = $bindable(false), close }: Props = $props();
 	let replaceDialog: any = $state(null);
 	let conflictDialog: any = $state(null);
 	let currentConflictAccount: any = $state(null);
@@ -224,16 +226,19 @@
 	}
 </script>
 
-{#if successMessage}
-	<div style="display: flex; flex-direction: column; gap: 20px;">
-		<Alert type="info" message={successMessage} />
-		<div style="display: flex; justify-content: center;">
-			<Button img="img/cross.svg" text="Close" onClick={close} />
-		</div>
-	</div>
-{:else}
-	<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
-{/if}
-
+<Modal title="Import accounts" bind:show>
+	{#snippet top()}
+		{#if successMessage}
+			<div style="display: flex; flex-direction: column; gap: 20px;">
+				<Alert type="info" message={successMessage} />
+				<div style="display: flex; justify-content: center;">
+					<Button img="img/cross.svg" text="Close" onClick={close} />
+				</div>
+			</div>
+		{:else}
+			<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+		{/if}
+	{/snippet}
+</Modal>
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />
 <Dialog data={conflictDialogData} bind:this={conflictDialog} />
