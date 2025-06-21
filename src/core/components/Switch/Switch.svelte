@@ -5,11 +5,11 @@
 		checked: boolean;
 		showLabel?: boolean;
 		label: string;
-		orientation?: 'horizontal' | 'vertical';
+		row: boolean;
 		'data-testid'?: string;
 	}
 
-	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal', ...restProps }: Props = $props();
+	let { checked = $bindable(), label, showLabel = false, row = false, ...restProps }: Props = $props();
 	let mounted = $state(false);
 	let inputId = Math.random().toString(36);
 	let labelId = `${inputId}-label`;
@@ -36,7 +36,7 @@
 		gap: 10px;
 	}
 
-	.switch.vertical {
+	.switch.row {
 		grid-template-columns: unset;
 		grid-template-rows: repeat(2, auto);
 	}
@@ -121,7 +121,7 @@
 
 <Label>
 	<span id={labelId} class="visually-hidden">{label}</span>
-	<div class={`switch ${orientation}`}>
+	<div class="switch" class:row>
 		{#if showLabel}
 			<span class="label">{label}:</span>
 		{/if}

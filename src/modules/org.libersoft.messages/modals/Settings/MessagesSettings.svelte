@@ -34,10 +34,10 @@
 	<div>{humanSize(chunkSize)}</div>
 	<Range data-testid="chunk-size" class="zoom" min="131072" max="31457280" step="131072" bind:value={chunkSize} />
 </Label>
-<Switch bind:checked={$hideMessageTextInNotifications} showLabel label="Hide message text in notifications" orientation="vertical" />
-<Switch bind:checked={$messageListApplyMaxWidth} showLabel label="Apply maximum width between messages" orientation="vertical" />
+<Switch bind:checked={$hideMessageTextInNotifications} showLabel label="Hide message text in notifications" row />
+<Switch bind:checked={$messageListApplyMaxWidth} showLabel label="Apply maximum width between messages" row />
 <Label text="Maximum width between messages in pixels">
-	<Input bind:value={$messageListMaxWidth} />
+	<Input type="number" bind:value={$messageListMaxWidth} />
 </Label>
 <Label text="Photo radius">
 	<Select bind:value={$photoRadius}>
