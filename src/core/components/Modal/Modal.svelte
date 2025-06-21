@@ -242,6 +242,16 @@
 </script>
 
 <style>
+	.overlay {
+		z-index: 99;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.8);
+	}
+
 	.modal {
 		z-index: 100;
 		display: flex;
@@ -267,8 +277,8 @@
 	.modal.mobile {
 		max-width: 100% !important;
 		max-height: 100% !important;
-		height: 100%;
 		width: 100% !important;
+		/*height: 100%;*/
 		border-radius: 0px;
 		border: none;
 	}
@@ -328,6 +338,9 @@
 
 {#if show}
 	<Portal>
+		{#if $isMobile}
+			<div class="overlay" onpointerdown={close}></div>
+		{/if}
 		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width={modalWidth} style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">

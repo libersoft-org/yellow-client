@@ -56,7 +56,7 @@
 	<div class="history">
 		<div class="bold">Address history:</div>
 		<div class="url" bind:this={elLink}>{link}</div>
-		<ButtonBar>
+		<ButtonBar equalize align="center">
 			<Button img="img/copy.svg" text="Copy link" onClick={copyLink} />
 			<Button img="img/link.svg" text="Open link" onClick={openLink} />
 		</ButtonBar>

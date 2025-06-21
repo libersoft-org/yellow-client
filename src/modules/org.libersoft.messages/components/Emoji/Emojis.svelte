@@ -163,7 +163,7 @@
 				tabindex="0"
 			>
 				{#if intersecting}
-					<Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
+					<Emoji codepoints={emoji.base} context={'menu'} is_single />
 				{/if}
 			</div>
 		</Clickable>
@@ -208,7 +208,7 @@
 				}}
 			>
 				<div class="emoji hover">
-					<Emoji codepoints={e} context={'menu'} is_single={true} />
+					<Emoji codepoints={e} context={'menu'} is_single />
 				</div>
 			</Clickable>
 		{/each}

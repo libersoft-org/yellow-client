@@ -18,15 +18,13 @@ import retry from 'retry';
 import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
-import { addNotification, deleteNotification } from '@/core/notifications.ts';
+import { addNotification, deleteNotification, playAudio } from '@/core/notifications.ts';
 import { makeMessageReaction } from './factories/messageFactories.ts';
 import { identifier, connectionSendData, _send, moduleEventSubscribe, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const photoRadius = localStorageSharedStore('photoRadius', '50%');
-
 export const messageListMaxWidth = localStorageSharedStore('messageListMaxWidth', '700');
 export const messageListApplyMaxWidth = localStorageSharedStore('messageListApplyMaxWidth', true);
-
 export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
 export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', null);
 export { identifier } from './connection.ts';
@@ -117,6 +115,11 @@ export function listConversations(acc) {
 	});
 }
 
+export function closeConversation() {
+	selectedConversation.set(null);
+	hideSidebarMobile.set(false);
+}
+
 function sanitizeConversation(acc, c) {
 	c.acc = new WeakRef(acc);
 	c.last_message_text = stripHtml(c.last_message_text);
@@ -129,30 +132,24 @@ export function initComms(acc) {
 	// console.warn('init comms', acc);
 	// Initialize subscriptions based on platform
 	initializeSubscriptions(acc, false);
-
 	let data = acc.module_data[identifier];
 	//console.log('initComms:', data);
-
 	data.new_message_listener = async event => eventNewMessage(acc, event);
 	data.seen_message_listener = event => eventSeenMessage(acc, event);
 	data.seen_inbox_message_listener = event => eventSeenInboxMessage(acc, event);
-
 	// message events
 	acc.events.addEventListener('new_message', data.new_message_listener);
 	acc.events.addEventListener('seen_message', data.seen_message_listener);
 	acc.events.addEventListener('seen_inbox_message', data.seen_inbox_message_listener);
 	acc.events.addEventListener('message_update', message_update);
-
 	// file transfer events
 	acc.events.addEventListener('upload_update', upload_update);
 	acc.events.addEventListener('ask_for_chunk', ask_for_chunk);
-
 	refresh(acc);
 }
 
 export function init() {
 	let subs = [];
-
 	subs.push(
 		active_account_id.subscribe(acc => {
 			get(md)?.['selectedConversation']?.set(null);
@@ -206,7 +203,6 @@ export async function initUpload(files, uploadType, recipients) {
 	uploads.forEach(upload => {
 		const fileMimeType = upload.record.fileMimeType;
 		const isServerType = upload.record.type === FileUploadRecordType.SERVER;
-
 		// handle images
 		if (isServerType && acceptedImageTypes.some(v => fileMimeType.startsWith(v))) {
 			messageHtml += `<Imaged file="yellow:${upload.record.id}"></Imaged>`;
@@ -234,7 +230,6 @@ export async function initUpload(files, uploadType, recipients) {
 	setTimeout(() => {
 		sendMessage(messageHtml, 'html');
 	}, 100);
-
 	// send upload
 	const records = uploads.map(upload => upload.record);
 	sendData(acc, null, 'upload_begin', { records, recipients }, true, (req, res) => {
@@ -257,7 +252,6 @@ function uploadChunkAsync({ upload, chunk }) {
 			minTimeout: 1000,
 			maxTimeout: 3000,
 		});
-
 		op.attempt(() => {
 			const retry = res => {
 				const willRetry = op.retry(new Error());
@@ -286,7 +280,6 @@ function ask_for_chunk(event) {
 	if (!upload) {
 		return;
 	}
-
 	if (upload.record.status === FileUploadRecordStatus.BEGUN) {
 		upload.record.status = FileUploadRecordStatus.UPLOADING;
 		fileUploadStore.set(uploadId, upload);
@@ -299,16 +292,12 @@ function ask_for_chunk(event) {
 function message_update(event) {
 	const { type, message } = event.detail.data;
 	console.log('message_update', event.detail.data);
-
 	if (type === 'reaction') {
 		const messageUid = message.uid;
-
 		// TODO: this messagesArray.update will try to find the message in the current conversation (even if this update is from another conversation)
 		messagesArray.update(m => {
 			const foundMessage = m.find(msg => msg.uid === messageUid);
-			if (foundMessage) {
-				foundMessage.reactions = message.reactions;
-			}
+			if (foundMessage) foundMessage.reactions = message.reactions;
 			return m;
 		});
 		insertEvent({ type: 'properties_update', array: get(messagesArray) });
@@ -423,9 +412,7 @@ export function resumeDownload(uploadId) {
 
 export function cancelDownload(uploadId) {
 	const download = fileDownloadStore.get(uploadId);
-	if (!download) {
-		return;
-	}
+	if (!download) return;
 	if (download.record.type === FileUploadRecordType.P2P) {
 		// for p2p we want to cancel download but we gonna still use the same logic as is used in cancel upload because this is global cancel
 		// TODO: in case of more then one recipient we should cancel only for one recipient locally
@@ -442,16 +429,13 @@ export function loadUploadData(uploadId) {
 			resolve(existingUpload);
 			return;
 		}
-
 		let acc = get(active_account);
-
 		const op = retry.operation({
 			retries: 3,
 			factor: 1.5,
 			minTimeout: 1000,
 			maxTimeout: 3000,
 		});
-
 		op.attempt(() => {
 			sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
 				if (res.error !== false) {
@@ -461,7 +445,6 @@ export function loadUploadData(uploadId) {
 					}
 					return;
 				}
-
 				const { record, uploadData } = res.data;
 				const upload = makeFileUpload({
 					...uploadData,
@@ -472,7 +455,6 @@ export function loadUploadData(uploadId) {
 					acc,
 				});
 				fileUploadStore.set(uploadId, upload);
-
 				resolve(upload);
 			});
 		});
@@ -488,16 +470,13 @@ export function deinitData(acc) {
 	console.log('DEINIT DATA');
 	let data = acc.module_data[identifier];
 	if (!data) return;
-
 	// message events
 	acc.events.removeEventListener('new_message', data.new_message_listener);
 	acc.events.removeEventListener('seen_message', data.seen_message_listener);
 	acc.events.removeEventListener('seen_inbox_message', data.seen_message_listener);
-
 	// file transfer events
 	acc.events.removeEventListener('upload_update', upload_update);
 	acc.events.removeEventListener('ask_for_chunk', ask_for_chunk);
-
 	data.online.set(false);
 	data.events.set([]);
 	data.messagesArray.set([]);
@@ -514,14 +493,15 @@ export function listMessages(acc, address) {
 }
 
 export function loadMessages(acc, address, base, prev, next, reason, cb, force_refresh = false) {
-	/* acc: account object
-     address: contact address (identifies conversation)
-     base: message id
-     prev: number of messages to load before base
-     next: number of messages to load after base
-     reason: reason for loading messages (for debugging)
-     cb: callback (optional)
-      */
+	/*
+	acc: account object
+ address: contact address (identifies conversation)
+ base: message id
+	prev: number of messages to load before base
+	next: number of messages to load after base
+	reason: reason for loading messages (for debugging)
+	cb: callback (optional)
+	*/
 	console.log('reason', reason, 'force_refresh', force_refresh);
 	return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
 		if (res.error !== false || !res.data?.messages) {
@@ -672,13 +652,14 @@ export function setMessageSeen(message, cb, keep_unseen_bar = true) {
 		}
 		//message.seen = true;
 		if (cb) cb();
-
 		// update conversationsArray:
-		/*const conversation = get(conversationsArray).find(c => c.address === message.address_from);
-          if (conversation) {
-           conversation.unread_count--;
-           conversationsArray.update(v => v);
-          }*/
+		/*
+		const conversation = get(conversationsArray).find(c => c.address === message.address_from);
+		if (conversation) {
+			conversation.unread_count--;
+			conversationsArray.update(v => v);
+		}
+		*/
 	});
 	setTimeout(() => {
 		message.seen = true;
@@ -691,7 +672,6 @@ export function setMessageSeen(message, cb, keep_unseen_bar = true) {
 export function sendMessage(text, format, acc = null, conversation = null) {
 	acc = acc ? acc : get(active_account);
 	conversation = conversation ? conversation : get(selectedConversation);
-
 	let message = new Message(acc, {
 		uid: getGuid(),
 		address_from: acc.credentials.address,
@@ -707,15 +687,10 @@ export function sendMessage(text, format, acc = null, conversation = null) {
 		format,
 		uid: message.uid,
 	};
-
 	saveAndSendOutgoingMessage(acc, conversation, params, message);
-
 	// append to message array only when conversation is also selected (active)
 	const _selectedConversation = get(selectedConversation);
-	if (_selectedConversation && _selectedConversation.id === conversation.id) {
-		addMessagesToMessagesArray([message], 'send_message');
-	}
-
+	if (_selectedConversation && _selectedConversation.id === conversation.id) addMessagesToMessagesArray([message], 'send_message');
 	updateConversationsArray(acc, message);
 }
 
@@ -773,7 +748,6 @@ export function modifyMessageReaction(messageUid, operation, reaction, acc) {
 				reject(res);
 				return;
 			}
-
 			resolve(res);
 		});
 	});
@@ -794,7 +768,7 @@ export function toggleMessageReaction(message, reaction) {
 			return true;
 		}
 	});
-
+	playAudio('modules/' + identifier + '/audio/reaction.mp3');
 	if (didUserReact) {
 		message.reactions = message.reactions.filter(r => !(r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi));
 		insertEvent({ type: 'properties_update', array: get(messagesArray) });
@@ -927,9 +901,7 @@ function eventSeenMessage(acc, event) {
 }
 
 function eventSeenInboxMessage(acc, event) {
-	/*
-      mark, as seen, a message sent to us. This can be triggered by another client.
-     */
+	// mark, as seen, a message sent to us. This can be triggered by another client.
 	if (acc !== get(active_account)) return;
 	//console.log(event);
 	const res = event.detail;
@@ -953,18 +925,15 @@ async function showNotification(acc, msg) {
 	const conversation = get(conversationsArray)?.find(c => c.address === msg.address_from);
 	console.log('new Notification in conversation', conversation);
 	let title;
-	if (conversation) {
-		title = 'New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')';
-	} else {
-		title = 'New message from: ' + msg.address_from;
-	}
+	if (conversation) title = 'New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')';
+	else title = 'New message from: ' + msg.address_from;
 	let notification = {
 		id: messageNotificationId(msg),
 		title,
 		body: get(hideMessageTextInNotifications) ? 'You have a new message' : msg.stripped_text,
 		icon: 'img/photo.svg',
 		//icon: 'favicon.svg',
-		sound: 'modules/' + identifier + '/audio/message.mp3',
+		sound: 'audio/notification.mp3',
 		callback: async event => {
 			if (event === 'click') {
 				window.focus();
@@ -1037,12 +1006,11 @@ export function saneHtml(content) {
 		RETURN_DOM_FRAGMENT: true,
 	});
 	/*
-     console.log('content:', content);
-     console.log(content);
-     console.log('sane:');
-     console.log(sane);
-     */
-
+	console.log('content:', content);
+	console.log(content);
+	console.log('sane:');
+	console.log(sane);
+	*/
 	return sane;
 }
 
@@ -1055,7 +1023,6 @@ export function processMessage(message) {
 	let html;
 	if (message.format === 'html') {
 		html = saneHtml(message.message);
-
 		wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
 		wrapConsecutiveElements(html, 'Imaged', 'ImagesWrapper', 1);
 		wrapConsecutiveElements(html, 'YellowVideo', 'VideosWrapper', 1);
