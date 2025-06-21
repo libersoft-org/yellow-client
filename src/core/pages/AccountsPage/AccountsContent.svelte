@@ -108,7 +108,7 @@
 			<Icon img="img/cross.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
 	</Bar>
-	<Page align="center">
+	<Page hAlign="center">
 		<Paper>
 			<ButtonBar>
 				<Button img="img/accounts-add.svg" text="Add a new account" onClick={addAccountModal} data-testid="add-account-button" />

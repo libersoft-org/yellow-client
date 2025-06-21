@@ -1,7 +1,9 @@
 <script>
 	import { hideSidebarMobile, product, link } from '@/core/stores.ts';
+	import Content from '@/core/components/Content/Content.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
@@ -19,39 +21,46 @@
 	.welcome {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
 		gap: 5px;
-		height: 100vh;
-		background: var(--background-image) 0 0 / 400px repeat;
-		color: var(--primary-foreground);
 	}
 
-	.welcome .logo {
+	.logo {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 5px;
+		gap: 10px;
 	}
 
-	.welcome .logo .product {
+	.logo img {
+		width: 200px;
+		height: 200px;
+		max-width: 100%;
+		max-height: 100%;
+		box-sizing: border-box;
+	}
+
+	.logo .product {
 		font-size: 40px;
 		font-weight: bold;
 	}
 </style>
 
-<Bar>
-	{#snippet left()}
-		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-		<BarTitle text="Welcome" />
-	{/snippet}
-</Bar>
-<div class="welcome">
-	<Clickable onClick={clickLogo}>
-		<div class="logo">
-			<Icon img="img/logo.svg" alt={product} size="200px" />
-			<div class="product">{product}</div>
+<Content>
+	<Bar>
+		{#snippet left()}
+			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+			<BarTitle text="Welcome" />
+		{/snippet}
+	</Bar>
+	<Page hAlign="center" vAlign="center">
+		<div class="welcome">
+			<Clickable onClick={clickLogo}>
+				<div class="logo">
+					<img src="img/logo.svg" alt={product} padding="0px" />
+					<div class="product">{product}</div>
+				</div>
+			</Clickable>
+			<VersionInfo className="centered" />
 		</div>
-	</Clickable>
-	<VersionInfo className="centered" />
-</div>
+	</Page>
+</Content>

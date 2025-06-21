@@ -2,8 +2,10 @@
 	import { active_account, setModule } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { identifier, online } from '../../messages.js';
+	import Content from '@/core/components/Content/Content.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
@@ -29,20 +31,18 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: center;
 		gap: 10px;
-		height: 100vh;
-		background: var(--background-image) 0 0 / 400px repeat;
 	}
 
-	.welcome .illustration {
+	.illustration {
 		width: 350px;
-		max-width: calc(100% - 20px);
+		max-width: 100%;
 		height: 350px;
-		max-height: calc(100% - 20px);
+		max-height: 100%;
+		box-sizing: border-box;
 	}
 
-	.welcome .label {
+	.label {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
@@ -56,26 +56,30 @@
 	}
 </style>
 
-<Bar>
-	{#snippet left()}
-		<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-		<BarTitle text="Messages" />
-	{/snippet}
-	{#snippet right()}
-		<Icon img="img/cross.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-	{/snippet}
-</Bar>
-<div class="welcome">
-	<img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
-	<div class="label">
-		{#if $online}
-			<div>Select your conversation<br />or</div>
-			<Button img="modules/{identifier}/img/conversation-new.svg" text="Start a new one" padding="5px" onClick={clickNew} />
-		{:else if $active_account}
-			<div>This module is offline</div>
-		{:else}
-			<div>Select account...</div>
-		{/if}
-	</div>
-</div>
+<Content>
+	<Bar>
+		{#snippet left()}
+			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+			<BarTitle text="Messages" />
+		{/snippet}
+		{#snippet right()}
+			<Icon img="img/cross.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
+		{/snippet}
+	</Bar>
+	<Page hAlign="center" vAlign="center">
+		<div class="welcome">
+			<img class="illustration" src="modules/{identifier}/img/illustration-{illustrations[Math.floor(Math.random() * illustrations.length)]}.svg" alt="Illustration" />
+			<div class="label">
+				{#if $online}
+					<div>Select your conversation<br />or</div>
+					<Button img="modules/{identifier}/img/conversation-new.svg" text="Start a new one" padding="5px" onClick={clickNew} />
+				{:else if $active_account}
+					<div>This module is offline</div>
+				{:else}
+					<div>Select account...</div>
+				{/if}
+			</div>
+		</div>
+	</Page>
+</Content>
 <Modal title="New Conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />

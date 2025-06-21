@@ -32,7 +32,7 @@
 			<Icon img="img/cross.svg" onClick={close} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 		{/snippet}
 	</Bar>
-	<Page align="center">
+	<Page hAlign="center">
 		<Wallet />
 	</Page>
 </Content>
