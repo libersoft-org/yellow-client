@@ -1,8 +1,9 @@
 <script>
 	import { get } from 'svelte/store';
+	import { parseUnits } from 'ethers';
 	import { sendAddress, currencies, selectedMainCurrencySymbol, sendTransaction, selectedNetwork, selectedAddress } from '../wallet.ts';
 	import { module } from '../module.ts';
-	import { parseUnits } from 'ethers';
+	import Label from '@/core/components/Label/Label.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
@@ -72,39 +73,24 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.group {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-
-	.group .label {
-		padding-left: 3px;
-		font-weight: bold;
-	}
 </style>
 
 <div class="send">
-	<div class="group">
-		<div class="label">Send to:</div>
-		<div class="input"><Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} /></div>
-	</div>
-	<div class="group">
-		<div class="label">Currency:</div>
-		<div class="input"><DropdownFilter options={$currencies} bind:selected={currency} enabled={!!($selectedNetwork && $selectedAddress)} /></div>
-	</div>
-	<div class="group">
-		<div class="label">Amount:</div>
-		<div class="input"><Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} /></div>
-	</div>
-	<div class="group">
-		<div class="label">Max transaction fee:</div>
-		<div class="input"><Input bind:value={fee} enabled={!!($selectedNetwork && $selectedAddress)} /></div>
-		{#if error}
-			<Alert type="error" message={error} />
-		{/if}
-	</div>
-	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} right onClick={send} />
+	<Label text="Send to">
+		<Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} />
+	</Label>
+	<Label text="Currency">
+		<DropdownFilter options={$currencies} bind:selected={currency} enabled={!!($selectedNetwork && $selectedAddress)} />
+	</Label>
+	<Label text="Amount">
+		<Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} />
+	</Label>
+	<Label text="Max transaction fee">
+		<Input bind:value={fee} enabled={!!($selectedNetwork && $selectedAddress)} />
+	</Label>
+	{#if error}
+		<Alert type="error" message={error} />
+	{/if}
+	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 </div>
 <Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />

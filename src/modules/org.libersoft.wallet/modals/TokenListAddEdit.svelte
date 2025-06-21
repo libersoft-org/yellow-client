@@ -2,11 +2,12 @@
 	import { onMount } from 'svelte';
 	import { getGuid } from '@/core/core.ts';
 	import { module } from '../module.ts';
+	import Label from '@/core/components/Label/Label.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	export let close;
 	export let params;
-
 	let item_guid = '';
 	let item_name = '';
 	let item_icon = '';
@@ -45,37 +46,23 @@
 	}
 </script>
 
-<style>
-	.group {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.group .label {
-		font-weight: bold;
-		margin-left: 5px;
-	}
-</style>
-
-<div class="group">
-	<div class="label">Name:</div>
+<Label text="Name">
 	<Input bind:value={item_name} />
-</div>
-<div class="group">
-	<div class="label">Icon:</div>
+</Label>
+<Label text="Icon">
 	<Input bind:value={item_icon} />
-</div>
-<div class="group">
-	<div class="label">Symbol:</div>
+</Label>
+<Label text="Symbol">
 	<Input bind:value={item_symbol} />
-</div>
-<div class="group">
-	<div class="label">Contract address:</div>
+</Label>
+<Label text="Contract address">
 	<Input bind:value={item_contract_address} />
-</div>
-
-{#if params.item}
-	<Button img="img/save.svg" text="Save" onClick={clickEdit} />
-{:else}
-	<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={clickAdd} />
-{/if}
+</Label>
+<ButtonBar equalize>
+	{#if params.item}
+		<Button img="img/save.svg" text="Save" onClick={clickEdit} />
+	{:else}
+		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={clickAdd} />
+	{/if}
+	<Button img="img/cancel.svg" text="Cancel" onClick={close} />
+</ButtonBar>

@@ -11,7 +11,6 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-
 	let inputElement: typeof Input.prototype;
 	let addUrl = $state('');
 	let error = $state('');
@@ -61,7 +60,6 @@
 	<Input placeholder="Add gif server address" grow bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
 	<Button img="img/add.svg" text="Add" onClick={clickAdd} />
 </div>
-
 <Table breakpoint="0">
 	<Thead>
 		<TheadTr>
