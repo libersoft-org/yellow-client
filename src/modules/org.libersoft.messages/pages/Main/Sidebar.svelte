@@ -1,6 +1,5 @@
 <script>
 	import { identifier, conversationsArray, selectConversation } from '../../messages.js';
-	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
 	import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
 	import ModalNewConversation from '../../modals/NewConversation.svelte';
@@ -81,6 +80,6 @@
 			<ScrollButton visible={scrollButtonVisible} direction right="15px" bottom="10px" onClick={scrollToTop} />
 		{/if}
 	</div>
-	<Modal title="New conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
+	<ModalNewConversation bind:show={showNewConversationModal} />
 	<Settings bind:show={showMessageSettings} />
 {/if}

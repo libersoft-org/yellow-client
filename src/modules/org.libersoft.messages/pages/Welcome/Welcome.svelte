@@ -8,7 +8,6 @@
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalNewConversation from '../../modals/NewConversation.svelte';
 	const illustrations = ['man', 'woman', 'pigeon'];
 	let showNewConversationModal = false;
@@ -82,4 +81,4 @@
 		</div>
 	</Page>
 </Content>
-<Modal title="New conversation" body={ModalNewConversation} bind:show={showNewConversationModal} />
+<ModalNewConversation bind:show={showNewConversationModal} />

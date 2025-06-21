@@ -31,7 +31,6 @@
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
 	import { initZoom } from '@/core/zoom.ts';
-	import { log } from '@/core/tauri.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
