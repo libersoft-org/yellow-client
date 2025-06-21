@@ -5,6 +5,7 @@
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/core.ts';
 	import { active_account_id } from '@/core/stores.ts';
@@ -111,7 +112,7 @@
 					// This is a success with warnings, not an error
 					throw new ImportSuccessWithWarnings(message);
 				} else {
-					close();
+					show = false;
 				}
 			} else {
 				let message = 'No accounts were imported';
@@ -222,21 +223,29 @@
 		const newConfig = JSON.parse(text);
 		accounts_config.set(newConfig);
 		maybeActivateAccount();
-		close();
+		show = false;
 	}
 </script>
 
-<Modal title="Import accounts" bind:show>
+<style>
+	.success {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+</style>
+
+<Modal title="Import accounts" bind:show bind:close>
 	{#snippet top()}
 		{#if successMessage}
-			<div style="display: flex; flex-direction: column; gap: 20px;">
+			<div class="success">
 				<Alert type="info" message={successMessage} />
-				<div style="display: flex; justify-content: center;">
-					<Button img="img/cross.svg" text="Close" onClick={close} />
-				</div>
+				<ButtonBar expand>
+					<Button img="img/cross.svg" text="Close" onClick={() => (show = false)} />
+				</ButtonBar>
 			</div>
 		{:else}
-			<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+			<Import bind:this={importUi} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
 		{/if}
 	{/snippet}
 </Modal>

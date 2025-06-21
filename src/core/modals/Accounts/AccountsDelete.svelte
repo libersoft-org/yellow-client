@@ -7,13 +7,12 @@
 	import { accounts } from '@/core/accounts.ts';
 	interface Props {
 		show?: boolean;
-		close: () => void;
 		params: {
 			id: string;
 			name: string;
 		};
 	}
-	let { show = $bindable(false), close, params = $bindable() }: Props = $props();
+	let { show = $bindable(false), params = $bindable() }: Props = $props();
 	let account = derived([accounts], ([$accounts]) => {
 		console.log('[INIT] Modal mounted. Params:', params);
 		const found = $accounts.find(acc => get(acc).id === params.id);
@@ -24,7 +23,7 @@
 	function clickDel() {
 		console.log('clickDel');
 		delAccount(params.id);
-		close();
+		show = false;
 	}
 </script>
 

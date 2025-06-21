@@ -28,7 +28,6 @@
 	}
 
 	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
-	$inspect('top', top, 'bottom', bottom);
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
