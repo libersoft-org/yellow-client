@@ -39,12 +39,17 @@
 	:global(.breadcrumb > *:last-child .item) {
 		color: var(--secondary-foreground);
 	}
+
+	:global(.breadcrumb .item-wrapper) {
+		display: flex;
+		flex-wrap: wrap;
+	}
 </style>
 
 {#if items}
 	<div class="breadcrumb">
 		{#each items as item, index}
-			<Clickable onClick={item.onClick} data-testid={`breadcrumb-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+			<Clickable class="item-wrapper" onClick={item.onClick} data-testid={`breadcrumb-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
 				<div class="item">
 					{#if index === 0}
 						<Icon padding="0" img="img/home.svg" alt="Settings" size="16px" colorVariable={firstItemColor} />
