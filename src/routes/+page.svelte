@@ -321,6 +321,7 @@
 		box-shadow: var(--shadow);
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
+		z-index: 101;
 	}
 
 	.sidebar.mobile {
