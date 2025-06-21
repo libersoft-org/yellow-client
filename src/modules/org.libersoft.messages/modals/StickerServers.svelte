@@ -60,7 +60,6 @@
 	<Input placeholder="Add sticker server address" grow bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
 	<Button img="img/add.svg" text="Add" onClick={clickAdd} />
 </div>
-
 <Table breakpoint="0">
 	<Thead>
 		<TheadTr>

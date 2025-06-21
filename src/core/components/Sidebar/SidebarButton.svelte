@@ -27,9 +27,6 @@
 		gap: 10px;
 		padding: 10px;
 		font-weight: bold;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
 		border-bottom: 1px solid var(--secondary-softer-background);
 		color: var(--secondary-foreground);
 		cursor: pointer;
@@ -48,6 +45,15 @@
 	.sidebar-button:not(.disabled):hover {
 		background-color: var(--secondary-soft-background);
 	}
+
+	.title {
+		flex: 1;
+		width: 0;
+		min-width: 0;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
 </style>
 
 {#if img || text}
@@ -58,7 +64,7 @@
 					<Icon {img} colorVariable={!enabled ? '--disabled-foreground' : '--secondary-foreground'} alt={text} size={imgSize} padding="0px" />
 				{/if}
 				{#if text}
-					<div>{text}</div>
+					<div class="title">{text}</div>
 				{/if}
 			</div>
 		</Clickable>

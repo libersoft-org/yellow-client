@@ -13,10 +13,6 @@
 <style>
 	.accounts-button {
 		display: flex;
-		flex: 1;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
 		padding: 10px;
 		transition: background-color 0.4s linear;
 	}
