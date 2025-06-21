@@ -11,9 +11,7 @@
 	.item {
 		display: flex;
 		flex-direction: column;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
+		min-width: 0;
 	}
 
 	.item .title {

@@ -14,6 +14,10 @@
 	.item-base {
 		display: flex;
 		gap: 10px;
+		min-width: 0;
+	}
+
+	.title {
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -26,7 +30,7 @@
 			<Icon {img} alt={title} size="20px" padding="0px" colorVariable="--secondary-foreground" />
 		{/if}
 		{#if title}
-			<div>{title}</div>
+			<div class="title">{title}</div>
 		{/if}
 	</div>
 </AccountBarButton>
