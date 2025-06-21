@@ -32,9 +32,7 @@
 	}
 
 	function setFileUploadModal(value) {
-		if (value !== $showFileUploadModal) {
-			fileUploadModalFiles.set([]);
-		}
+		if (value !== $showFileUploadModal) fileUploadModalFiles.set([]);
 		showFileUploadModal.set(value);
 	}
 

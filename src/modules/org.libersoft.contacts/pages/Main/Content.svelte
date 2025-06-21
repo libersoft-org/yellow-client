@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { setModule } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
@@ -23,8 +23,17 @@
 	};
 
 	onMount(() => {
+		window.addEventListener('keydown', onKeydown);
 		elDialog.open();
 	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
+	});
+
+	async function onKeydown(event) {
+		if (event.key === 'Escape') setModule(null);
+	}
 
 	function clickButton() {
 		console.log('Clicked on button');

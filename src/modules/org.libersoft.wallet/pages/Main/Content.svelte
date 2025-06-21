@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { setModule } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
 	import Content from '@/core/components/Content/Content.svelte';
@@ -11,7 +11,16 @@
 
 	onMount(() => {
 		hideSidebarMobile.set(true);
+		window.addEventListener('keydown', onKeydown);
 	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
+	});
+
+	async function onKeydown(event) {
+		if (event.key === 'Escape') setModule(null);
+	}
 
 	function back() {
 		hideSidebarMobile.set(false);
