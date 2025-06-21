@@ -2,7 +2,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let text;
-	export let colorVariable;
+	export let colorVariable = '--secondary-foreground';
 	export let onClick;
 </script>
 
@@ -12,9 +12,11 @@
 		align-items: center;
 		gap: 5px;
 		padding: 5px 10px;
+		white-space: nowrap;
 		border: 0;
 		border-radius: 10px;
 		font-family: inherit;
+		box-sizing: border-box;
 		width: 100%;
 		background-color: var(--secondary-softer-background);
 		color: var(--secondary-foreground);

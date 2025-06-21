@@ -5,6 +5,7 @@
 	import { get, type Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
 	import { selectedConversation, initUpload } from '../messages.js';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -83,20 +84,15 @@
 		gap: 10px;
 	}
 
-	.header {
-		display: flex;
-		gap: 10px;
-		justify-content: space-between;
-	}
-
 	.body .items-empty {
 		padding: 50px;
 		text-align: center;
-		background-color: var(--primary-softer-background);
-		color: var(--primary-foreground);
+		box-sizing: border-box;
+		width: 100%;
 		border: 1px dashed var(--default-foreground);
 		border-radius: 10px;
-		width: 100%;
+		background-color: var(--primary-softer-background);
+		color: var(--primary-foreground);
 	}
 
 	.drop-active .items-empty {
@@ -105,12 +101,6 @@
 
 	.drop-active .file-table {
 		filter: brightness(0.7);
-	}
-
-	.footer {
-		display: flex;
-		gap: 10px;
-		justify-content: space-between;
 	}
 </style>
 
@@ -130,10 +120,10 @@
 
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
 	<input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
-	<div class="header">
-		<Button img="img/add.svg" colorVariable="--primary-foreground" text="Add files" onClick={onFileAdd} />
-		<Button img="img/del.svg" colorVariable="--primary-foreground" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
-	</div>
+	<ButtonBar equalize space>
+		<Button img="img/add.svg" text="Add files" onClick={onFileAdd} />
+		<Button img="img/del.svg" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
+	</ButtonBar>
 	<div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
 		{#if $fileUploadModalFiles.length}
 			<div class="items file-table">
@@ -158,8 +148,8 @@
 			</Clickable>
 		{/if}
 	</div>
-	<div class="footer">
-		<Button img="img/upload.svg" colorVariable="--primary-foreground" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-p2p" />
-		<Button img="img/upload.svg" colorVariable="--primary-foreground" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
-	</div>
+	<ButtonBar equalize space>
+		<Button img="img/upload.svg" text="Send peer-to-peer" onClick={uploadP2P} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-p2p" />
+		<Button img="img/upload.svg" text="Send to server" onClick={uploadServer} enabled={$fileUploadModalFiles.length > 0} data-testid="send-files-server" />
+	</ButtonBar>
 </div>

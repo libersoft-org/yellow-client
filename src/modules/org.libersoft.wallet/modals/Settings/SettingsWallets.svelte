@@ -1,5 +1,5 @@
 <script>
-	import { module } from '../../module.js';
+	import { module } from '../../module.ts';
 	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
 	import ModalNewWallet from '../../modals/NewWallet.svelte';
 	import Address from './SettingsWalletsAddress.svelte';
@@ -17,14 +17,14 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import { Mnemonic } from 'ethers';
 	let showModalPhrase = false;
-	let activeIndex = null;
+	let accordion;
 
 	function showNewWalletModal() {
 		showModalPhrase = true;
 	}
 
 	function afterAddWallet() {
-		activeIndex = wallets.length - 1;
+		accordion.handleClick(wallets.length - 1, true);
 	}
 
 	function recover() {
@@ -81,18 +81,16 @@
 		flex-direction: column;
 		gap: 16px;
 		padding: 16px 10px;
+	}
 
-		:global(&:has(tbody:empty)) {
-			:global(table) {
-				display: none !important;
-			}
-		}
+	.wallet:global(:has(tbody:empty) table) {
+		display: none !important;
 	}
 </style>
 
-<ButtonBar>
-	<Button text="Create wallet" onClick={showNewWalletModal} />
-	<Button img="modules/{module.identifier}/img/recover.svg" colorVariable="--primary-foreground" text="Recover" onClick={recover} />
+<ButtonBar equalize>
+	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Create wallet" onClick={showNewWalletModal} />
+	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
 	<div class="bold">My wallets:</div>
@@ -100,12 +98,12 @@
 {#if $wallets.length === 0}
 	<div class="bold">No wallets found</div>
 {/if}
-<Accordion items={$wallets} bind:activeIndex>
+<Accordion items={$wallets} bind:this={accordion}>
 	{#snippet content(walleta)}
 		<div class="wallet">
 			<ButtonBar>
-				<Button text="Add a new address" onClick={() => addAddress(walleta)} />
-				<Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
+				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />
+				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address by index" onClick={() => addAddressWithIndex(walleta)} />
 			</ButtonBar>
 			<Table>
 				<Thead>
@@ -115,7 +113,7 @@
 					<Th>Action</Th>
 				</Thead>
 				<Tbody>
-					{#each walletAddresses(walleta) as address, index}
+					{#each walletAddresses(walleta) as address}
 						<TbodyTr>
 							<Td title="Index">{address.index}</Td>
 							<Td title="Alias">{address.name}</Td>

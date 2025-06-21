@@ -3,6 +3,7 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
@@ -10,7 +11,6 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-
 	let inputElement: typeof Input.prototype;
 	let addUrl = $state('');
 	let error = $state('');
@@ -57,10 +57,9 @@
 
 <!--<Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />-->
 <div class="group">
-	<Input placeholder="Add gif server address" grow={true} bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
-	<Button text="Add" onClick={clickAdd} />
+	<Input placeholder="Add gif server address" grow bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
+	<Button img="img/add.svg" text="Add" onClick={clickAdd} />
 </div>
-
 <Table breakpoint="0">
 	<Thead>
 		<TheadTr>
@@ -82,5 +81,5 @@
 	</Tbody>
 </Table>
 {#if error}
-	<div class="error">{error}</div>
+	<Alert type="error" message={error} />
 {/if}

@@ -22,6 +22,7 @@
 	.menu-item {
 		display: flex;
 		align-items: center;
+		box-sizing: border-box;
 		padding: 8px 12px;
 		width: 100%;
 		background-color: var(--primary-softer-background);

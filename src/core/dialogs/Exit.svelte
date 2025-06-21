@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { exit } from '@tauri-apps/plugin-process';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
@@ -9,8 +8,8 @@
 		body: 'Would you really like to exit the application?',
 		icon: 'img/exit.svg',
 		buttons: [
-			{ text: 'Yes', onClick: clickButton, expand: true },
-			{ text: 'No', onClick: () => closeDialog(), expand: true },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickButton, expand: true },
+			{ img: 'img/cross.svg', text: 'No', onClick: () => closeDialog(), expand: true },
 		],
 	};
 

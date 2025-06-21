@@ -14,7 +14,8 @@
 
 	.sides .editor,
 	.sides .preview {
-		width: calc(50% - 10px);
+		box-sizing: border-box;
+		width: 50%;
 	}
 </style>
 

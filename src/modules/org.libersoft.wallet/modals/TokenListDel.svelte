@@ -9,5 +9,8 @@
 	}
 </script>
 
-<div>Would you like to delete the item: {params.item.name}?</div>
-<Button text="Delete" onClick={deleteItem} />
+<div>
+	<span>Would you like to delete the item: </span>
+	<span class="bold">{params.item.name}?</span>
+</div>
+<Button img="img/del.svg" text="Delete" onClick={deleteItem} />

@@ -1,30 +1,45 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { HTMLButtonAttributes, MouseEventHandler } from 'svelte/elements';
-
-	interface Props extends HTMLButtonAttributes {
+	import type { HTMLAttributes, MouseEventHandler } from 'svelte/elements';
+	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children?: Snippet;
-		onClick?: MouseEventHandler<HTMLButtonElement>;
-		onRightClick?: MouseEventHandler<HTMLButtonElement>;
-		onMousedown?: MouseEventHandler<HTMLButtonElement>;
+		expand?: boolean;
+		onClick?: MouseEventHandler<HTMLDivElement>;
+		onRightClick?: MouseEventHandler<HTMLDivElement>;
+		onMousedown?: MouseEventHandler<HTMLDivElement>;
+	}
+	let { children, expand = false, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
+
+	function handleKeyDown(e: KeyboardEvent) {
+		if (e.key === 'Enter') (e.currentTarget as HTMLElement).click();
+		if (e.key === ' ') e.preventDefault();
 	}
 
-	let { children, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
+	function handleKeyUp(e: KeyboardEvent) {
+		if (e.key === ' ') (e.currentTarget as HTMLElement).click();
+	}
 </script>
 
 <style>
 	.clickable {
-		display: flex;
+		/*
+		display: contents;
+	 all: unset;
+		*/
 		cursor: pointer;
-		align-items: center;
-		-webkit-tap-highlight-color: transparent;
 	}
 
-	.clickable > :global(*) {
-		flex: 1 1 auto;
+	.clickable.expand {
+		display: flex;
+		flex: 1;
+	}
+
+	.clickable:focus-visible {
+		outline: 2px solid var(--primary-harder-background);
+		border-radius: 10px;
 	}
 </style>
 
-<button {...restProps} onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} class="clickable button-reset">
+<div class="clickable" class:expand role="button" tabindex="0" onclick={onClick} onmousedown={onMousedown} oncontextmenu={onRightClick} onkeydown={handleKeyDown} onkeyup={handleKeyUp} {...restProps}>
 	{@render children?.()}
-</button>
+</div>

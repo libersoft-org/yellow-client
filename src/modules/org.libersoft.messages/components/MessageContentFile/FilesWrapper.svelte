@@ -96,7 +96,7 @@
 	</div>
 	{#if showBulkDownloadAction}
 		<div class="actions">
-			<Button width="80px" text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'} onClick={onAcceptAll} />
+			<Button width="80px" img={uploadRecordType === FileUploadRecordType.P2P ? 'img/check.svg' : 'img/download.svg'} text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept all' : 'Download all'} onClick={onAcceptAll} />
 		</div>
 	{/if}
 </div>

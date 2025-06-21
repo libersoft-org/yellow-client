@@ -18,20 +18,21 @@
 		display: flex;
 		flex-direction: column;
 		padding: 4px 0 4px 10px;
-		border: 1px solid #080;
+		border: 1px solid var(--primary-background);
 		border-radius: 10px;
-		border-left: 8px solid #080;
+		border-left: 8px solid var(--primary-background);
 		margin: 0 0 5px 0;
+		background-color: var(--secondary-background);
 	}
 
 	.reply .name {
 		font-size: 12px;
 		font-weight: bold;
-		color: #080;
+		color: var(--primary-background);
 	}
 
 	.reply .text {
-		color: #555;
+		color: var(--secondary-foreground);
 	}
 
 	.reply-wrap {

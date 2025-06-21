@@ -15,7 +15,7 @@
 				return;
 			}
 
-			// if rowLimit ís reached and last row is full - add remaining images to hidden group
+			// if rowLimit is reached and last row is full - add remaining images to hidden group
 			if (groups.length === rowLimit && groups[groups.length - 1].length === rowSize) {
 				hiddenImages.push(child);
 				return;

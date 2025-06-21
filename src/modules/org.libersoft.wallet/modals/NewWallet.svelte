@@ -1,13 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
 	import QRCode from 'qrcode';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import { generateMnemonic, addWallet } from '../wallet.ts';
-	import { module } from '../module.js';
+	import { module } from '../module.ts';
 	export let close;
 	let mnemonic = {};
 	let phrase = '';
@@ -135,8 +136,8 @@
 		{/each}
 	</Tbody>
 </Table>
-<ButtonBar>
-	<Button img="img/save.svg" colorVariable="--primary-foreground" text="Save" onClick={save} />
-	<Button img="modules/{module.identifier}/img/print.svg" colorVariable="--primary-foreground" text="Print" onClick={print} />
-	<Button img="modules/{module.identifier}/img/regenerate.svg" colorVariable="--primary-foreground" text="Regenerate" onClick={regenerate} />
+<ButtonBar expand>
+	<Button img="img/save.svg" text="Save" onClick={save} />
+	<Button img="modules/{module.identifier}/img/print.svg" text="Print" onClick={print} />
+	<Button img="modules/{module.identifier}/img/regenerate.svg" text="Regenerate" onClick={regenerate} />
 </ButtonBar>

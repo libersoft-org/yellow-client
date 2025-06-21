@@ -2,7 +2,7 @@
 	import { identifier } from '../../messages.js';
 	import { onMount, tick } from 'svelte';
 	import { updateStickerLibrary, stickerLibraryUpdaterState } from '../../stickers.js';
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
@@ -34,7 +34,6 @@
 	.stickers {
 		display: flex;
 		flex-direction: column;
-
 		height: calc(100% - 45px);
 		overflow: hidden;
 		/*padding: 10px 10px 0px 10px;*/
@@ -67,10 +66,6 @@
 	.loading .status {
 		font-size: 14px;
 	}
-
-	.loading .error {
-		border: 1px solid red;
-	}
 </style>
 
 <div class="stickers">
@@ -84,12 +79,12 @@
 		{#if $stickerLibraryUpdaterState.updating}
 			<div class="loading">
 				<div class="status">{$stickerLibraryUpdaterState.status}</div>
-				<ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving={true} />
+				<ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving />
 			</div>
 		{/if}
 		{#if $stickerLibraryUpdaterState.error}
 			<div class="loading">
-				<div class="status error">Error: {$stickerLibraryUpdaterState.status}</div>
+				<Alert type="error" message={$stickerLibraryUpdaterState.status} />
 			</div>
 		{/if}
 	</div>

@@ -1,6 +1,6 @@
 <script>
-	import AccountStatusIcon from './AccountStatusIcon.svelte';
-	import AccountStatus from './AccountStatus.svelte';
+	import AccountStatusIcon from '@/core/components/Account/AccountStatusIcon.svelte';
+	import AccountStatus from '@/core/components/Account/AccountStatus.svelte';
 	export let account;
 </script>
 

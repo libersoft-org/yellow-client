@@ -165,7 +165,7 @@
 			<div class="message-content-image" onclick={openInGallery} role="button" tabindex="0" onkeydown={e => e.key === 'Enter' && openInGallery()}>
 				{#if loading}
 					<div class="spinner-wrap">
-						<Spinner show={true} style="min-height: initial;" />
+						<Spinner show style="min-height: initial;" />
 					</div>
 				{:else}
 					<ImageAspectRatio src={imgUrl} alt={file} />

@@ -9,7 +9,7 @@ import { exit } from '@tauri-apps/plugin-process';
 //import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
 import { showTrayIcon } from '@/core/settings.ts';
 import { get } from 'svelte/store';
-import { product } from '@/core/core.ts';
+import { product } from '@/core/stores.ts';
 
 let tray: TrayIcon | null = null;
 let tray_loading = false;

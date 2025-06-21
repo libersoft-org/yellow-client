@@ -11,7 +11,6 @@
 	import { initUpload, selectedConversation } from '@/org.libersoft.messages/messages';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
-
 	let videoRef = $state<HTMLVideoElement>();
 	let micIndicatorRef = $state<HTMLElement>();
 	let sending = $state(false);
@@ -101,17 +100,14 @@
 
 	const showPreview = () => {
 		$player.hide();
-
 		if (!$recordedBlob) {
 			console.error('$recordedBlob is not set');
 			return;
 		}
-
 		if (!videoRef) {
 			console.error('videoRef is not set');
 			return;
 		}
-
 		console.log('$recordedBlob', $recordedBlob);
 		const videoEl = document.createElement('video');
 		videoEl.src = URL.createObjectURL($recordedBlob);
@@ -119,9 +115,7 @@
 		videoEl.setAttribute('controls', 'true');
 		videoEl.setAttribute('playsinline', 'true');
 		videoEl.setAttribute('webkit-playsinline', 'true');
-
 		videoRef.appendChild(videoEl);
-
 		playerInstance = videoJS(videoEl, {
 			controls: true,
 			autoplay: false,
@@ -151,7 +145,6 @@
 			playerInstance.dispose();
 			playerInstance = null;
 		}
-
 		setup().then(_player => {
 			_player.on('deviceReady', () => {
 				const stream = _player.record().stream;
@@ -161,15 +154,12 @@
 				}
 				setupMicPulseIndicator(stream, micIndicatorRef);
 			});
-
 			_player.on('startRecord', () => {
 				isRecording = true;
 			});
-
 			_player.on('stopRecord', () => {
 				isRecording = false;
 			});
-
 			_player.on('finishRecord', function () {
 				try {
 					if (sendingRequested) {
@@ -179,9 +169,7 @@
 						}
 						sendMessage($recordedBlob);
 					}
-					if (manuallyStop) {
-						showPreview();
-					}
+					if (manuallyStop) showPreview();
 				} catch (err) {
 					console.error('Error while finishing record:', err);
 				} finally {
@@ -210,6 +198,6 @@
 <Dialog data={{title: 'das'}} bind:this={test}>
  test
 </Dialog>
-<button onclick={onTest}>test</button>
+<div onclick={onTest}>test</div>
 -->
 <VideoRecorderView bind:videoRef bind:micIndicatorRef {sending} error={$error} errorMessages={$errorMessages} loading={$loading} videoDevices={$videoDevices} audioDevices={$audioDevices} selectedAudioDeviceId={$selectedAudioDeviceId} selectedVideoDeviceId={$selectedVideoDeviceId} {changeVideoInput} {changeAudioInput} {isRecording} recordStart={start} recordStop={stop} {send} {download} isMuted={$isMuted} {toggleMute} hasData={Boolean($recordedBlob)} facingMode={$facingMode} {toggleFacingMode} {enableToggleFacingMode} recordRestart={restart} />

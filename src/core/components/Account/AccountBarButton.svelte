@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Clickable from '../Clickable/Clickable.svelte';
 	import type { Snippet } from 'svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	interface Props {
 		children?: Snippet;
 		onClick?: (e: Event) => void;
@@ -13,11 +13,8 @@
 <style>
 	.accounts-button {
 		display: flex;
-		flex: 1;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
 		padding: 10px;
+		transition: background-color 0.4s linear;
 	}
 
 	.accounts-button:hover {

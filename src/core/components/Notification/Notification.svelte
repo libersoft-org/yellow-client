@@ -1,11 +1,12 @@
 <script>
+	import { onDestroy, onMount } from 'svelte';
+	import { log } from '@/core/tauri.ts';
+	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '@/core/notifications_settings.ts';
+	import { playNotificationSound, stopNotificationSound } from '@/core/notifications.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { log } from '../../tauri.ts';
-	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '../../notifications_settings.ts';
-	import { onDestroy, onMount } from 'svelte';
-	import { playNotificationSound, stopNotificationSound } from '@/core/notifications.ts';
 	export let data;
 	export let closing = false;
 
@@ -159,7 +160,7 @@
 		font-size: 14px;
 	}
 
-	/* fallback pro starší WebKit */
+	/* fallback for older WebKit */
 	.clamp-3 {
 		font-size: var(--font-size);
 		line-clamp: var(--lines);
@@ -203,7 +204,7 @@
 							</div>
 						{/if}
 						<div class="close">
-							<Icon img="img/close.svg" alt="Close" colorVariable="--primary-foreground" size="10px" padding="10px" isButton onClick={e => handleClosing(e)} />
+							<Icon img="img/cross.svg" alt="Close" colorVariable="--primary-foreground" size="10px" padding="10px" isButton onClick={e => handleClosing(e)} />
 						</div>
 					</div>
 					{#if data.body}
@@ -218,7 +219,7 @@
 			<div class="bottom">
 				<ButtonBar>
 					{#each data.buttons as b}
-						<Clickable text={b.text} onClick={e => b.onClick(b, b.id)} />
+						<Button text={b.text} onClick={e => b.onClick(b, b.id)} />
 					{/each}
 				</ButtonBar>
 			</div>

@@ -1,6 +1,5 @@
 <script>
-	import { module } from '../../module.js';
-	import { get } from 'svelte/store';
+	import { module } from '../../module.ts';
 	import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
@@ -13,10 +12,19 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
+	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
+	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
 	let showModalEditNetwork = false;
 	let showModalTokenList = false;
 	let modalItemID = null;
 	let modalItem = null;
+	let showSettingsNetworksExport = false;
+	let showSettingsNetworksImport = false;
+
+	function clickAddNetwork(net) {
+		console.log('clickAddNetwork', net);
+		//TODO
+	}
 
 	function editNetwork(net) {
 		console.log('editNetwork', net);
@@ -31,25 +39,11 @@
 	}
 
 	function doExport() {
-		console.log('EXPORT NETWORKS');
-		let data = get(networks);
-		let json = JSON.stringify(data, null, 2);
-		console.log('EXPORTED NETWORKS:', json);
-		window.prompt('Copy the exported networks:', json);
+		showSettingsNetworksExport = true;
 	}
 
 	function doImport() {
-		console.log('IMPORT NETWORKS');
-		let json = window.prompt('Paste the exported networks here:');
-		if (json) {
-			try {
-				let data = JSON.parse(json);
-				console.log('IMPORTED NETWORKS:', data);
-				networks.set(data);
-			} catch (e) {
-				console.error('IMPORT NETWORKS ERROR:', e);
-			}
-		}
+		showSettingsNetworksImport = true;
 	}
 </script>
 
@@ -63,8 +57,9 @@
 
 <div class="networks">
 	<ButtonBar>
-		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={() => doExport()} />
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={() => doImport()} />
+		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={clickAddNetwork} data-testid="networks-export-btn" />
+		<Button img="img/import.svg" text="Import" onClick={() => doImport()} data-testid="networks-import-btn" />
+		<Button img="img/export.svg" text="Export" onClick={() => doExport()} data-testid="networks-export-btn" />
 	</ButtonBar>
 	{#if $networks.length !== 0}
 		<div class="bold">My networks:</div>
@@ -73,7 +68,7 @@
 		<Tbody>
 			{#each $networks as n, index (n.guid)}
 				<TbodyTr>
-					<Td>
+					<Td data-testid="network-name@{n.name}">
 						<div>
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt="" />
@@ -83,7 +78,7 @@
 					</Td>
 					<Td>
 						<TableActionItems>
-							<Icon img="modules/{module.identifier}/img/coin.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} />
+							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} />
 							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => editNetwork(n)} />
 							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => removeNetwork(n)} />
 						</TableActionItems>
@@ -97,7 +92,7 @@
 		<Tbody>
 			{#each $default_networks as n, index}
 				<TbodyTr>
-					<Td>
+					<Td data-testid="default-network-name@{n.name}">
 						<div>
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} />
@@ -117,3 +112,5 @@
 </div>
 <Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:show={showModalEditNetwork} />
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:show={showModalTokenList} />
+<Modal title="Export networks" body={SettingsNetworksExport} bind:show={showSettingsNetworksExport} />
+<Modal title="Import networks" body={SettingsNetworksImport} bind:show={showSettingsNetworksImport} />

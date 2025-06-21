@@ -1,16 +1,18 @@
 <script>
+	import { get } from 'svelte/store';
+	import { parseUnits } from 'ethers';
+	import { sendAddress, currencies, selectedMainCurrencySymbol, sendTransaction, selectedNetwork, selectedAddress } from '../wallet.ts';
+	import { module } from '../module.ts';
+	import Label from '@/core/components/Label/Label.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import SendModal from '../modals/Send.svelte';
-	import { get } from 'svelte/store';
-	import { currencies, selectedMainCurrencySymbol, sendTransaction } from '../wallet.ts';
-	import { parseUnits } from 'ethers';
-	let currency = 'kETH';
-	let address = '0xEF017eD170f0Ec1f6C42f7A1bEFf133C261C1573'; // TODO: "ENS name"';
-	let amount = 0.001;
-	let fee = 0.001;
+	let currency = '';
+	let amount = 0;
+	let fee = 0;
 	let etherValue;
 	let etherValueFee;
 	let error;
@@ -20,10 +22,8 @@
 		console.log('reset currency field:', currency, get(currencies));
 		currency = $selectedMainCurrencySymbol;
 	}
-
 	$: console.log('currencies:', $currencies);
 	$: console.log('currency:', currency);
-
 	$: updateAmount(amount);
 	$: updateFee(fee);
 
@@ -54,10 +54,10 @@
 	}
 
 	async function send() {
-		console.log('SEND:', address, etherValue, etherValueFee, currency);
+		console.log('SEND:', $sendAddress, etherValue, etherValueFee, currency);
 		//showSendModal = true;
 		//try {
-		await sendTransaction(address, etherValue, etherValueFee, currency);
+		await sendTransaction($sendAddress, etherValue, etherValueFee, currency);
 		console.log('Transaction sent successfully');
 		showSendModal = true;
 		/*} catch (e) {
@@ -73,37 +73,24 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.group {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-
-	.group .label {
-		padding-left: 3px;
-		font-weight: bold;
-	}
 </style>
 
 <div class="send">
-	<div class="group">
-		<div class="label">Send to:</div>
-		<div class="input"><Input bind:value={address} /></div>
-	</div>
-	<div class="group">
-		<div class="label">Currency:</div>
-		<div class="input"><DropdownFilter options={$currencies} bind:selected={currency} /></div>
-	</div>
-	<div class="group">
-		<div class="label">Amount:</div>
-		<div class="input"><Input bind:value={amount} /></div>
-	</div>
-	<div class="group">
-		<div class="label">Max transaction fee:</div>
-		<div class="input"><Input bind:value={fee} /></div>
-		<div class="error">{error}</div>
-	</div>
-	<Button text="Send" onClick={send} />
+	<Label text="Send to">
+		<Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} />
+	</Label>
+	<Label text="Currency">
+		<DropdownFilter options={$currencies} bind:selected={currency} enabled={!!($selectedNetwork && $selectedAddress)} />
+	</Label>
+	<Label text="Amount">
+		<Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} />
+	</Label>
+	<Label text="Max transaction fee">
+		<Input bind:value={fee} enabled={!!($selectedNetwork && $selectedAddress)} />
+	</Label>
+	{#if error}
+		<Alert type="error" message={error} />
+	{/if}
+	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 </div>
 <Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />

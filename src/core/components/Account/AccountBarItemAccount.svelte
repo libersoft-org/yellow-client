@@ -1,8 +1,8 @@
 <script>
-	import AccountBarButton from './AccountBarButton.svelte';
-	import AccountStatusIcon from './AccountStatusIcon.svelte';
-	import AccountTitle from './AccountTitle.svelte';
-	import { debug } from '../../core.ts';
+	import { debug } from '@/core/stores.ts';
+	import AccountBarButton from '@/core/components/Account/AccountBarButton.svelte';
+	import AccountStatusIcon from '@/core/components/Account/AccountStatusIcon.svelte';
+	import AccountTitle from '@/core/components/Account/AccountTitle.svelte';
 	export let account;
 	export let clickSelectAccount;
 </script>
@@ -11,13 +11,7 @@
 	.item {
 		display: flex;
 		flex-direction: column;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
-	}
-
-	.item:hover {
-		background-color: var(--secondary-softer-background);
+		min-width: 0;
 	}
 
 	.item .title {
@@ -29,7 +23,7 @@
 
 <AccountBarButton data-testid={'account ' + $account.credentials?.address} onClick={() => clickSelectAccount($account.id)}>
 	<div class="item">
-		<div class="title"><AccountStatusIcon {account} /><AccountTitle a={account} /></div>
+		<div class="title"><AccountStatusIcon {account} /><AccountTitle {account} /></div>
 		{#if $debug}
 			<div style="font-size: 12px;">
 				<ul>
