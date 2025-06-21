@@ -14,7 +14,7 @@
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
-	let modalWidth = $state('80vw');
+	let modalWidth = $state('90vw');
 	interface Props {
 		testId?: string;
 		show?: boolean;
@@ -166,7 +166,7 @@
 		const sidebar = document.querySelector('.sidebar');
 		const sidebarWidth = sidebar ? sidebar.clientWidth : 0;
 
-		const responsiveWidth = Math.max(400, Math.min(1200, window.innerWidth * 0.8 - sidebarWidth));
+		const responsiveWidth = Math.max(400, Math.min(1400, window.innerWidth * 0.9 - sidebarWidth));
 		return `${responsiveWidth}px`;
 	}
 
@@ -252,7 +252,7 @@
 		width: 100%;
 		max-height: 100dvh;
 		height: fit-content;
-		max-width: 80vw;
+		max-width: 90vw;
 		min-width: 400px;
 		overflow: hidden;
 		border: 1px solid var(--default-foreground);
