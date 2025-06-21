@@ -95,16 +95,22 @@
 	}
 
 	async function handleReplace() {
-		if (!onReplace) return;
+		if (!onReplace) {
+			console.log('handleReplace: onReplace function is not defined');
+			return;
+		}
 		const currentText = activeTab === 'json' ? text : scannedText;
 		const validation = onValidate(currentText);
 		if (!validation.valid) {
+			console.debug('handleReplace: Validation failed:', validation.error);
 			handleError(validation.error || 'Invalid data');
 			return;
 		}
 		try {
+			console.debug('handleReplace: Replacing data');
 			await onReplace(currentText);
 		} catch (err) {
+			console.debug('handleReplace: Replace error:', err);
 			handleException(err);
 		}
 	}
