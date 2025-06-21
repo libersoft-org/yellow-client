@@ -4,7 +4,7 @@ type ModalEntry = {
 	setZIndex: (z: number) => void;
 };
 
-const baseZIndex = 5;
+const baseZIndex = 101;
 let counter = baseZIndex;
 let modals: ModalEntry[] = [];
 
