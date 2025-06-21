@@ -6,15 +6,7 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
-	let modalEl: HTMLDivElement | null = $state(null);
-	let showContent = $state(false);
-	let ModalBody = $state<Snippet>(body);
-	let zIndex = $state(100);
-	let modalId: number;
-	let isDragging = false;
-	let resizeObserver: ResizeObserver;
-	let modalWidth = $state('90vw');
+
 	interface Props {
 		testId?: string;
 		show?: boolean;
@@ -35,6 +27,15 @@
 		onShowChange?: (show: boolean) => void;
 	}
 
+	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
+	let modalEl: HTMLDivElement | null = $state(null);
+	let showContent = $state(false);
+	let ModalBody = $state<Snippet>(body);
+	let zIndex = $state(100);
+	let modalId: number;
+	let isDragging = false;
+	let resizeObserver: ResizeObserver;
+
 	$effect(() => {
 		if (!$isMobile) return;
 		if (modalEl && showContent && !isDragging) {
@@ -44,19 +45,10 @@
 	});
 
 	$effect(() => {
-		modalWidth = calculateModalWidth();
-	});
-
-	$effect(() => {
 		showUpdated(show);
 		modalId = registerModal(z => (zIndex = z));
 
 		function handleResize() {
-			// Only update width for desktop (mobile is always 100%)
-			if (!$isMobile) {
-				modalWidth = calculateModalWidth();
-			}
-
 			if ($isMobile) {
 				centerModal();
 				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
@@ -82,25 +74,12 @@
 			resizeObserver.observe(modalEl);
 		}
 
-		// Also observe sidebar for changes (desktop only)
-		const sidebar = document.querySelector('.sidebar');
-		let sidebarResizeObserver: ResizeObserver | null = null;
-		if (sidebar && !$isMobile) {
-			sidebarResizeObserver = new ResizeObserver(() => {
-				if (showContent && !isDragging) {
-					handleResize();
-				}
-			});
-			sidebarResizeObserver.observe(sidebar);
-		}
-
 		window.addEventListener('resize', handleResize);
 
 		return () => {
 			unregisterModal(modalId);
 			window.removeEventListener('resize', handleResize);
 			resizeObserver?.disconnect();
-			sidebarResizeObserver?.disconnect();
 		};
 	});
 
@@ -139,35 +118,14 @@
 			return;
 		}
 
-		// Get sidebar element to account for its width
-		const sidebar = document.querySelector('.sidebar');
-		const sidebarWidth = sidebar ? sidebar.clientWidth : 0;
+		// Get modal width from DOM
+		const rect = modalEl.getBoundingClientRect();
+		const modalWidthValue = rect.width;
 
-		// Use the current modalWidth if available, otherwise get from DOM
-		let modalWidthValue: number;
-		if (modalWidth && modalWidth !== '100%') {
-			// Extract numeric value from "400px" format
-			modalWidthValue = parseInt(modalWidth);
-		} else {
-			const rect = modalEl.getBoundingClientRect();
-			modalWidthValue = rect.width;
-		}
-
-		const availableWidth = window.innerWidth - sidebarWidth;
-		const x = sidebarWidth + (availableWidth - modalWidthValue) / 2;
+		const availableWidth = window.innerWidth;
+		const x = (availableWidth - modalWidthValue) / 2;
 		const y = (window.innerHeight - modalEl.offsetHeight) / 2;
 		modalEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-	}
-
-	function calculateModalWidth() {
-		if ($isMobile) return '100%';
-
-		// Get sidebar element to account for its width
-		const sidebar = document.querySelector('.sidebar');
-		const sidebarWidth = sidebar ? sidebar.clientWidth : 0;
-
-		const responsiveWidth = Math.max(400, Math.min(1400, window.innerWidth * 0.9 - sidebarWidth));
-		return `${responsiveWidth}px`;
 	}
 
 	function snapTransformIntoBounds() {
@@ -259,10 +217,9 @@
 		position: fixed;
 		inset: 0;
 		box-sizing: border-box;
-		width: 100%;
+		width: fit-content;
 		max-height: 100dvh;
 		height: fit-content;
-		max-width: 90vw;
 		overflow: hidden;
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
@@ -341,7 +298,7 @@
 		{#if $isMobile}
 			<div class="overlay" onpointerdown={close}></div>
 		{/if}
-		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width={modalWidth} style:height style:max-width={width} style:max-height={height} bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
+		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">
 					{#if title}
