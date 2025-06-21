@@ -113,18 +113,16 @@
 		if (!modalEl) return;
 
 		if ($isMobile) {
-			// On mobile, modal takes full screen, position at (0,0)
-			modalEl.style.transform = 'translate3d(0px, 0px, 0)';
+			// On mobile, modal takes full width but centers vertically
+			const rect = modalEl.getBoundingClientRect();
+			const y = (window.innerHeight - rect.height) / 2;
+			modalEl.style.transform = `translate3d(0px, ${y}px, 0)`;
 			return;
 		}
 
-		// Get modal width from DOM
 		const rect = modalEl.getBoundingClientRect();
-		const modalWidthValue = rect.width;
-
-		const availableWidth = window.innerWidth;
-		const x = (availableWidth - modalWidthValue) / 2;
-		const y = (window.innerHeight - modalEl.offsetHeight) / 2;
+		const x = (window.innerWidth - rect.width) / 2;
+		const y = (window.innerHeight - rect.height) / 2;
 		modalEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 	}
 
