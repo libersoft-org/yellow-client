@@ -115,6 +115,11 @@ export function listConversations(acc) {
 	});
 }
 
+export function closeConversation() {
+	selectedConversation.set(null);
+	hideSidebarMobile.set(false);
+}
+
 function sanitizeConversation(acc, c) {
 	c.acc = new WeakRef(acc);
 	c.last_message_text = stripHtml(c.last_message_text);
