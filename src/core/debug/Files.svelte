@@ -267,7 +267,7 @@
 			{#if !TAURI_MOBILE}
 				<div class="folder-section {$mobileClass}">
 					<Label>Default folder: {$defaultDownloadFolder || '(not set)'}</Label>
-					<Button onClick={setDefaultFolderFromDownload} disabled={!download?.potential_default_folder}>Set from download</Button>
+					<Button text="Set from download" onClick={setDefaultFolderFromDownload} disabled={!download?.potential_default_folder} />
 				</div>
 			{/if}
 		</div>

@@ -5,6 +5,7 @@
 	import { playNotificationSound, stopNotificationSound } from '@/core/notifications.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	export let data;
 	export let closing = false;
@@ -218,7 +219,7 @@
 			<div class="bottom">
 				<ButtonBar>
 					{#each data.buttons as b}
-						<Clickable text={b.text} onClick={e => b.onClick(b, b.id)} />
+						<Button text={b.text} onClick={e => b.onClick(b, b.id)} />
 					{/each}
 				</ButtonBar>
 			</div>

@@ -192,6 +192,7 @@
 		min-height: 40px;
 		background-color: var(--primary-background);
 		cursor: pointer;
+		box-sizing: border-box;
 	}
 
 	.accordion .item .header {

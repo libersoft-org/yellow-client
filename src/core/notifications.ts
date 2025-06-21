@@ -363,9 +363,14 @@ async function deleteBrowserNotification(id: string): Promise<void> {
 	}
 }
 
+export function playAudio(fileName: string): void {
+	const audio = new Audio(fileName);
+	audio.play();
+}
+
 export function playNotificationSound(notification: YellowNotification): void {
 	if (!get(notificationsSoundEnabled)) return;
-	notification._audio = new Audio(notification.sound || 'modules/org.libersoft.messages/audio/message.mp3');
+	notification._audio = new Audio(notification.sound || 'audio/notification.mp3');
 	//notification._audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
 	notification._audio.play();
 	if (TAURI) {

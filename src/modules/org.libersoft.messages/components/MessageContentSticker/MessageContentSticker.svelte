@@ -21,6 +21,6 @@
 
 {#if v}
 	<Clickable onClick={handleClick}>
-		<Sticker file={v} force_animate={true} intersecting={true} />
+		<Sticker file={v} force_animate intersecting />
 	</Clickable>
 {/if}

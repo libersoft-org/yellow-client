@@ -12,4 +12,4 @@
 	const exportData = get(addressBook);
 </script>
 
-<Export data={exportData} filename="addressbook" enableJsonTab={true} enableQrTab={true} isSensitive={true} testId="addressbook-export" />
+<Export data={exportData} filename="addressbook" enableJsonTab enableQrTab isSensitive testId="addressbook-export" />

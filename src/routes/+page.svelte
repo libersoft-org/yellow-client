@@ -13,8 +13,8 @@
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
 	import ModuleBar from '@/core/components/ModuleBar/ModuleBar.svelte';
 	import AccountBar from '@/core/components/Account/AccountBar.svelte';
-	import WelcomeSidebar from '@/core/pages/WelcomePage/WelcomeSidebar.svelte';
-	import WelcomeContent from '@/core/pages/WelcomePage/WelcomeContent.svelte';
+	import WelcomeSidebar from '@/core/pages/Welcome/Sidebar.svelte';
+	import WelcomeContent from '@/core/pages/Welcome/Content.svelte';
 	import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Wizard from '@/core/components/Wizard/Wizard.svelte';
@@ -31,7 +31,6 @@
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
 	import { initZoom } from '@/core/zoom.ts';
-	import { log } from '@/core/tauri.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
@@ -74,11 +73,9 @@
 
 	onMount(async () => {
 		console.log('+page onMount');
-
 		if ('serviceWorker' in window.navigator) {
 			console.log('+page registering service worker');
 			const SW_VERSION = '_version_v1_'; // change this to force update the service worker
-
 			// TODO: rm after testing and dev
 			const existing = await navigator.serviceWorker.getRegistrations();
 			for (const reg of existing) {
@@ -87,9 +84,7 @@
 					console.log('Unregistered old SW:', reg.active.scriptURL);
 				}
 			}
-
 			navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
-
 			navigator.serviceWorker.ready.then(registration => {
 				console.log('+page service worker ready');
 				console.log('Service worker registration:', registration);
@@ -98,7 +93,6 @@
 				console.log('Service worker state:', registration.active.state);
 				console.log('Service worker scope:', registration.scope);
 				window.sw = registration;
-
 				navigator.serviceWorker.addEventListener('message', e => {
 					if (e.data.type === 'GET_FILE_INFO') {
 						const { accId, uploadId } = e.data.payload;
@@ -109,7 +103,6 @@
 					if (e.data.type === 'GET_CHUNK') {
 						const { accId, uploadId, start, end } = e.data.payload;
 						const getChunk = getFileChunkFactory(uploadId);
-
 						getChunk({
 							offsetBytes: start,
 							chunkSize: end + 1 - start,
@@ -130,10 +123,7 @@
 		initCustomNotifications();
 		initWindow();
 		initBrowserThemeDetection();
-
-		if ($sidebarSize) {
-			setSidebarSize($sidebarSize);
-		}
+		if ($sidebarSize) setSidebarSize($sidebarSize);
 		window.addEventListener('focus', () => isClientFocused.set(true));
 		window.addEventListener('blur', () => isClientFocused.set(false));
 		//window.addEventListener('keydown', onkeydown);
@@ -143,7 +133,6 @@
 			showWelcomeWizard = true;
 		}
 		setupIframeListener();
-
 		// TODO: I don't know what this is, test out
 		//document.body.style.touchAction = 'none';
 		//document.documentElement.style.touchAction = 'none';
@@ -163,13 +152,11 @@
 
 	function updateAppHeight() {
 		//console.log('updateAppHeight');
-
 		if ('virtualKeyboard' in navigator) {
 			navigator.virtualKeyboard.addEventListener('geometrychange', event => {
 				//console.log('virtualKeyboard geometrychange:', event.target.boundingRect);
 			});
 		}
-
 		const visualViewport = window.visualViewport;
 		let viewportHeight;
 		if (visualViewport) {
@@ -192,9 +179,7 @@
 		//console.log('viewportHeight:', viewportHeight);
 		//console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
 	}
-
 	let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
-
 	window.addEventListener('resize', () => {
 		var newPx_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
 		if (newPx_ratio != px_ratio) {
@@ -262,7 +247,6 @@
 		// if (moduleBarItems) {
 		// 	moduleBarItems.style.height = 'auto';
 		// }
-
 		if (isResizingSideBar) {
 			e.preventDefault();
 			// delta from mouse move
@@ -284,21 +268,15 @@
 
 	isMobile.subscribe(v => {
 		console.log('isMobile: ', v);
-		if (v) {
-			sidebarWidth = '';
-		} else {
-			sidebarWidth = ($sidebarSize || 300) + 'px';
-		}
+		if (v) sidebarWidth = '';
+		else sidebarWidth = ($sidebarSize || 300) + 'px';
 	});
 
 	async function onkeydown(event) {
 		//console.log('window onkeydown: ', event);
 		if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) debug.update(d => !d);
-
 		// Handle Ctrl + 0 to toggle between theme index 0 and 1
-		if (event.ctrlKey && event.key === '0') {
-			selected_theme_index.update(current => (current === 0 ? 1 : 0));
-		}
+		if (event.ctrlKey && event.key === '0') selected_theme_index.update(current => (current === 0 ? 1 : 0));
 	}
 </script>
 

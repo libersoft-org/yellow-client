@@ -5,7 +5,6 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-
 	interface Props extends HTMLButtonAttributes {
 		children?: Snippet;
 		img?: string;
@@ -26,9 +25,7 @@
 		radius?: number;
 		right?: boolean;
 	}
-
 	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = 'var(--primary-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable = '--primary-foreground', iconSize = '20px', iconPadding = '0px', loading = false, radius = 10, right = false, ...restProps }: Props = $props();
-
 	function handleClick(e) {
 		if (enabled && onClick) onClick(e);
 	}
@@ -45,6 +42,7 @@
 		border: 1px solid;
 		border-radius: 10px;
 		-webkit-tap-highlight-color: transparent;
+		box-sizing: border-box;
 	}
 
 	.button.disabled {

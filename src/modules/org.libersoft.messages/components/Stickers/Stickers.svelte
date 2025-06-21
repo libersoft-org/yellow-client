@@ -79,7 +79,7 @@
 		{#if $stickerLibraryUpdaterState.updating}
 			<div class="loading">
 				<div class="status">{$stickerLibraryUpdaterState.status}</div>
-				<ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving={true} />
+				<ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving />
 			</div>
 		{/if}
 		{#if $stickerLibraryUpdaterState.error}

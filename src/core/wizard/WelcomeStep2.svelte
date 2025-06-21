@@ -12,4 +12,4 @@
 	}
 </script>
 
-<ModalAccountsAddEdit isInWelcomeWizard={true} {close} {save_id} params={{ id: params?.account_id ?? null }} />
+<ModalAccountsAddEdit isInWelcomeWizard {close} {save_id} params={{ id: params?.account_id ?? null }} />

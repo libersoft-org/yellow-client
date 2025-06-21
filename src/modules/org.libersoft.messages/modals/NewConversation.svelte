@@ -1,23 +1,27 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { tick } from 'svelte';
 	import { openNewConversation, identifier } from '../messages.js';
-	import Button from '@/core/components/Button/Button.svelte';
-	import Input from '@/core/components/Input/Input.svelte';
 	import { m } from '@/lib/paraglide/messages.js';
+	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
-
+	import Input from '@/core/components/Input/Input.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	interface Props {
-		close: () => void;
+		show?: boolean;
 	}
-
-	let { close }: Props = $props();
-
+	let { show = $bindable(false) }: Props = $props();
 	let addressInputRef = $state<HTMLInputElement>();
 	let value = $state('');
 
-	onMount(() => {
-		addressInputRef?.focus();
+	$effect(() => {
+		if (!show || !addressInputRef) return;
+		tick().then(() => addressInputRef?.focus());
 	});
+
+	function onKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter') clickOpen();
+	}
 
 	function clickOpen() {
 		if (value) {
@@ -26,25 +30,25 @@
 		}
 	}
 
-	function onSubmit(event) {
-		event.preventDefault();
-		clickOpen();
+	export function open() {
+		show = true;
+	}
+
+	export function close() {
+		show = false;
 	}
 </script>
 
-<style>
-	.group {
-		display: flex;
-		align-items: end;
-		gap: 10px;
-	}
-</style>
-
-<form onsubmit={onSubmit}>
-	<div class="group">
-		<Label text={`${m['messages.new_conversation.address']()}`}>
-			<Input data-testid="new-conversation-address" grow placeholder="user@domain.tld" bind:inputRef={addressInputRef} bind:value />
+<Modal title="New conversation" bind:show>
+	{#snippet top()}
+		<Label row={true} text={`${m['messages.new_conversation.address']()}`}>
+			<Input data-testid="new-conversation-address" grow placeholder="user@domain.tld" {onKeydown} bind:inputRef={addressInputRef} bind:value />
 		</Label>
-		<Button data-testid="New Conversation Open" img="modules/{identifier}/img/conversation-new.svg" text={m['common.open']()} onClick={clickOpen} />
-	</div>
-</form>
+	{/snippet}
+	{#snippet bottom()}
+		<ButtonBar expand>
+			<Button data-testid="New Conversation Open" img="modules/{identifier}/img/conversation-new.svg" text={m['common.open']()} onClick={clickOpen} />
+			<Button img="img/cancel.svg" text="Cancel" onClick={close} />
+		</ButtonBar>
+	{/snippet}
+</Modal>

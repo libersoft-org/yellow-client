@@ -265,13 +265,15 @@
 
 <div class="import">
 	<Tabs>
-		<TabsItem img="img/import.svg" label={jsonLabel} active={activeTab === 'json'} onClick={() => handleTabChange('json')} testId={`${testId}-json-tab`} />
+		<TabsItem img="img/json.svg" label={jsonLabel} active={activeTab === 'json'} onClick={() => handleTabChange('json')} testId={`${testId}-json-tab`} />
 		<TabsItem img="img/qr.svg" label={qrLabel} active={activeTab === 'qr'} onClick={() => handleTabChange('qr')} testId={`${testId}-qr-tab`} />
 	</Tabs>
 
 	{#if activeTab === 'json'}
 		<div class="json-import">
-			<Button img="img/json.svg" onclick={loadFile}>{browseButtonText}</Button>
+			<ButtonBar>
+				<Button img="img/open.svg" onclick={loadFile} text={browseButtonText} />
+			</ButtonBar>
 			<div class="scrollable">
 				<Code bind:code={text} testId={`${testId}-textarea`} />
 			</div>
@@ -291,7 +293,6 @@
 			<div class="qr-scanner">
 				{#if alertText}
 					<Alert type="error" message={alertText} />
-					<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 				{:else}
 					<div class="instructions">{qrInstructions}</div>
 					<div class="video-container">
@@ -300,7 +301,6 @@
 						</video>
 						<canvas bind:this={canvasElement}></canvas>
 					</div>
-					<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 				{/if}
 			</div>
 		{/if}
@@ -308,8 +308,8 @@
 	{#if hasContent && alertText}
 		<Alert type="error" message={alertText} />
 	{/if}
-	<ButtonBar>
-		<Button img="img/plus.svg" text={addButtonText} enabled={hasContent} onClick={handleAdd} data-testid={`${testId}-add-btn`} />
+	<ButtonBar align="center" equalize>
+		<Button img="img/add.svg" text={addButtonText} enabled={hasContent} onClick={handleAdd} data-testid={`${testId}-add-btn`} />
 		<Button img="img/import.svg" text={replaceButtonText} enabled={hasContent && showReplaceButton} onClick={handleReplace} data-testid={`${testId}-replace-btn`} />
 	</ButtonBar>
 </div>

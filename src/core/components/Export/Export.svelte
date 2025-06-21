@@ -95,12 +95,6 @@
 		gap: 20px;
 	}
 
-	.json-content {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-	}
-
 	.qr-wrapper {
 		display: flex;
 		justify-content: center;
@@ -149,15 +143,12 @@
 			<TabsItem img="img/qr.svg" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} testId="{testId}-qr-tab" />
 		</Tabs>
 	{/if}
-
 	{#if activeTab === 'json' && enableJsonTab}
-		<div class="json-content" data-testid="{testId}-json-content">
-			<ButtonBar data-testid="{testId}-json-buttons">
-				<Button img="img/copy.svg" text={copyText} onClick={clickCopy} testId="{testId}-copy-button" />
-				<Button img="img/download.svg" text="Download as file" onClick={clickDownload} testId="{testId}-download-button" />
-			</ButtonBar>
-			<Code bind:code={jsonEditorContents} testId="{testId}-code-editor" />
-		</div>
+		<ButtonBar data-testid="{testId}-json-buttons">
+			<Button img="img/copy.svg" text={copyText} onClick={clickCopy} testId="{testId}-copy-button" />
+			<Button img="img/download.svg" text="Download as file" onClick={clickDownload} testId="{testId}-download-button" />
+		</ButtonBar>
+		<Code bind:code={jsonEditorContents} testId="{testId}-code-editor" />
 	{:else if activeTab === 'qr' && enableQrTab}
 		<div class="qr-page" data-testid="{testId}-qr-content">
 			{#if qrError}

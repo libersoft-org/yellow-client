@@ -327,14 +327,14 @@
 		</div>
 	</div>
 </Bar>
-<ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+<ContextMenu target={elAttachment} disableRightClick bottomOffset={elMessageBar?.getBoundingClientRect().height}>
 	<ContextMenuItem img="modules/{identifier}/img/video_message-black.svg" label="Video message" onClick={onVideoRecordClick} />
 	<ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} data-testid="file-attachment-button" />
 	<ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
 	<ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 {#if expressionsAsContextMenu}
-	<ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+	<ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick bottomOffset={elMessageBar?.getBoundingClientRect().height}>
 		<Expressions bind:this={expressions} height={expressionsHeight} />
 	</ContextMenu>
 {/if}
@@ -357,7 +357,7 @@
 
 {#if !expressionsAsContextMenu && expressionsBottomSheetOpen}
 	<div class="bottom-sheet" style="height: {expressionsHeight};" bind:this={elBottomSheet}>
-		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet={true} />
+		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet />
 	</div>
 {/if}
 

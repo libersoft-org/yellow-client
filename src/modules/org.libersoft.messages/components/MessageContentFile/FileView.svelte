@@ -120,7 +120,7 @@
 			<FileTransfer {uploaded} total={upload.record.fileSize} status={statusString} />
 			{@render uploadControls()}
 		{:else}
-			<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
+			<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed />
 		{/if}
 		<!-- FINISHED UPLOAD - downloading -->
 	{:else if download && upload.record.status === FileUploadRecordStatus.FINISHED}
@@ -144,7 +144,7 @@
 		{@render downloadControls()}
 		<!-- DOWNLOAD BEGIN/UPLOADING/PAUSED  -->
 	{:else if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes(upload.record.status)}
-		<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
+		<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed />
 		<!-- DOWNLOAD FINISHED - download again if needed -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		{@render downloadButton()}
