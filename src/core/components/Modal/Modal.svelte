@@ -253,7 +253,6 @@
 		max-height: 100dvh;
 		height: fit-content;
 		max-width: 90vw;
-		min-width: 400px;
 		overflow: hidden;
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
