@@ -141,7 +141,7 @@
 
 <div class="gifset">
 	<div class="top-bar">
-		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." grow bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
+		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." expand bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
 	</div>
 	{#if error}
 		<div>{error}</div>

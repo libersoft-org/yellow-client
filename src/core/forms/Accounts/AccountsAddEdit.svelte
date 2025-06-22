@@ -204,10 +204,18 @@
 	.form {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
+		gap: 10px;
+		width: 100%;
 	}
 
-	.status {
+	.bottom {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		width: 100%;
+	}
+
+	.bottom .status {
 		display: flex;
 		align-items: center;
 		gap: 5px;
@@ -217,22 +225,22 @@
 {#snippet snippet_top()}
 	<div class="form">
 		<Label text="Protocol">
-			<Select minWidth="300px" maxWidth="300px" bind:this={protocolElem} bind:value={protocol}>
+			<Select bind:this={protocolElem} bind:value={protocol}>
 				<Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
 				<Option text="DMTP (not yet implemented)" value="dmtp" disabled selected={protocol === 'dmtp'} />
 			</Select>
 		</Label>
 		<Label text="Title">
-			<Input minWidth="300px" maxWidth="300px" bind:value={config_title} onKeydown={keyEnter} data-testid="account-title-input" />
+			<Input bind:value={config_title} onKeydown={keyEnter} data-testid="account-title-input" />
 		</Label>
 		<Label text="Server">
-			<Input minWidth="300px" maxWidth="300px" placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} data-testid="account-server-input" />
+			<Input placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} data-testid="account-server-input" />
 		</Label>
 		<Label text="Address">
-			<Input minWidth="300px" maxWidth="300px" placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} data-testid="account-address-input" />
+			<Input placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} data-testid="account-address-input" />
 		</Label>
 		<Label text="Password">
-			<Input minWidth="300px" maxWidth="300px" type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} data-testid="account-password-input" />
+			<Input type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} data-testid="account-password-input" />
 		</Label>
 		{#if !isInWelcomeWizard}
 			<Switch showLabel label="Enabled" bind:checked={config_enabled} data-testid="account-enabled-checkbox" />
@@ -243,17 +251,22 @@
 	</div>
 {/snippet}
 {#snippet snippet_bottom()}
-	<ButtonBar expand>
-		{#if params.id === null}
-			<Button data-testid="add" img="img/accounts-add.svg" text="Add the account" onClick={clickAdd} />
-		{:else}
-			<Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} />
+	<div class="bottom">
+		<ButtonBar equalize expand>
+			{#if params.id === null}
+				<Button data-testid="add" img="img/accounts-add.svg" text="Add the account" onClick={clickAdd} />
+			{:else}
+				<Button data-testid="save" img="img/save.svg" text="Save" onClick={clickSave} />
+			{/if}
+			{#if !isInWelcomeWizard}
+				<Button img="img/cancel.svg" text="Cancel" onClick={close} />
+			{/if}
+		</ButtonBar>
+		{#if $account}
+			<div class="status">
+				<strong>Status:</strong>
+				<AccountStatusIconIconAndText account={$account} />
+			</div>
 		{/if}
-	</ButtonBar>
-	{#if $account}
-		<div class="status">
-			<strong>Status:</strong>
-			<AccountStatusIconIconAndText account={$account} />
-		</div>
-	{/if}
+	</div>
 {/snippet}

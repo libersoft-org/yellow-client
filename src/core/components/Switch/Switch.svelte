@@ -34,6 +34,7 @@
 		grid-template-columns: repeat(2, auto);
 		align-items: center;
 		gap: 10px;
+		width: fit-content;
 	}
 
 	.switch.row {

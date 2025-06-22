@@ -55,6 +55,10 @@
 	.button.hidden-on-desktop {
 		display: none;
 	}
+
+	.button .text {
+		white-space: nowrap;
+	}
 </style>
 
 {#snippet icon()}
@@ -72,7 +76,7 @@
 				{@render icon()}
 			{/if}
 			{#if text}
-				<div>{text}</div>
+				<div class="text">{text}</div>
 			{/if}
 			{#if img && right}
 				{@render icon()}

@@ -197,7 +197,7 @@
 
 						{#if editingModule === module.id}
 							<div class="service-url-edit">
-								<Input type="url" placeholder="https://example.com/module-service.js" bind:value={tempServiceUrl} grow />
+								<Input type="url" placeholder="https://example.com/module-service.js" bind:value={tempServiceUrl} expand />
 								<Button img="img/save.svg" text="Save" onClick={() => saveServiceUrl(module.id)} padding="8px" />
 								<Button img="img/cancel.svg" text="Cancel" onClick={cancelEditingServiceUrl} bgColor="var(--secondary-background)" padding="8px" />
 							</div>
