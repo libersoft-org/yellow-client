@@ -2,10 +2,10 @@
 	import Label from '@/core/components/Label/Label.svelte';
 
 	interface Props {
-		checked: boolean;
+		checked?: boolean;
 		showLabel?: boolean;
 		label: string;
-		row: boolean;
+		row?: boolean;
 		'data-testid'?: string;
 	}
 
