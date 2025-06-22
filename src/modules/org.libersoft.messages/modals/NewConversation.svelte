@@ -40,9 +40,9 @@
 </script>
 
 <Modal title="New conversation" bind:show>
-	{#snippet toexpand()}
+	{#snippet top()}
 		<Label text={m['messages.new_conversation.address']()} row>
-			<Input data-testid="new-conversation-address" grow placeholder="user@domain.tld" {onKeydown} bind:inputRef={addressInputRef} bind:value />
+			<Input data-testid="new-conversation-address" expand placeholder="user@domain.tld" {onKeydown} bind:inputRef={addressInputRef} bind:value />
 		</Label>
 	{/snippet}
 	{#snippet bottom()}
