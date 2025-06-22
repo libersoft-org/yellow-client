@@ -113,15 +113,10 @@
 		if (!modalEl) return;
 
 		if ($isMobile) {
-			// On mobile, modal takes full width but centers vertically
-			const rect = modalEl.getBoundingClientRect();
-			const y = (window.innerHeight - rect.height) / 2;
-			modalEl.style.transform = `translateY(${y}px)`;
+			modalEl.style.transform = 'translateY(-50%)';
 			return;
 		}
 
-		// For desktop, the CSS margin and transform already center it
-		// Only apply additional transforms if dragging or repositioning
 		if (!isDragging) {
 			modalEl.style.transform = 'translateY(-50%)';
 		}
@@ -238,7 +233,6 @@
 		max-width: 100% !important;
 		max-height: 100% !important;
 		width: 100% !important;
-		/*height: 100%;*/
 		border-radius: 0px;
 		border: none;
 	}
