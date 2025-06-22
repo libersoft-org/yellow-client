@@ -70,6 +70,7 @@
 		bottom: 0;
 		background-color: var(--disabled-background);
 		border-radius: 34px;
+		border: 1px solid var(--primary-foreground);
 		cursor: pointer;
 		pointer-events: none;
 	}
