@@ -13,20 +13,18 @@
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import WaveSurfer from 'wavesurfer.js';
 	import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
-
 	const { uploadId } = $props();
-
 	let wavesurfer: WaveSurfer;
 	let isPlaying = $state(false);
 	let waveRef;
 	let duration = $state('');
 	let time = $state('');
-
 	let mediaHandler = $state(null);
 	let upload = $state<FileUpload | null>(null);
-
 	let download = writable<FileDownload | null>(null);
 	let isFullDownloading = $state(false);
+	const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
+	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
 	fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
 	function getFileChunkFactory(uploadId) {
@@ -35,9 +33,7 @@
 	}
 
 	const fullDownloadAudio = () => {
-		if (!upload) {
-			return;
-		}
+		if (!upload) return;
 		isFullDownloading = true;
 		downloadAttachmentsSerial([upload.record], download => {
 			isFullDownloading = false;
@@ -52,17 +48,15 @@
 	};
 
 	const setupWavesurfer = async (url: string) => {
-		if (!upload) {
-			return;
-		}
+		if (!upload) return;
 		const { record } = upload;
 		try {
 			wavesurfer = WaveSurfer.create({
 				sampleRate: 48000,
 				container: waveRef,
-				waveColor: '#999',
-				progressColor: '#ea0',
-				barWidth: 3,
+				progressColor: primaryColor,
+				waveColor: secondaryColor,
+				barWidth: 10,
 				//responsive: true,
 				height: 50,
 				autoplay: false,
@@ -78,17 +72,13 @@
 			wavesurfer.on('interaction', () => wavesurfer.play());
 			wavesurfer.on('play', () => (isPlaying = true));
 			wavesurfer.on('pause', () => (isPlaying = false));
-			wavesurfer.on('finish', () => {
-				isPlaying = false;
-			});
+			wavesurfer.on('finish', () => (isPlaying = false));
 			wavesurfer.on('ready', () => {
 				//wavesurfer.play();
 			});
 			wavesurfer.on('error', err => {
 				// console.error('WaveSurfer error:', err);
-				if (err instanceof MediaError && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_DECODE)) {
-					fullDownloadAudio();
-				}
+				if (err instanceof MediaError && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_DECODE)) fullDownloadAudio();
 			});
 			init();
 		} catch (error) {
@@ -108,7 +98,6 @@
 		}
 		const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
 		const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
-
 		if (progressiveDownloadAvailable) {
 			// @ts-ignore
 			wavesurfer.load(progressiveUrl, [upload.record.metadata?.peaks], upload.record.metadata?.duration);
