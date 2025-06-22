@@ -1,25 +1,69 @@
-<script>
-	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
+<script lang="ts">
+	import { get } from 'svelte/store';
+	import { parseUnits } from 'ethers';
+	import { module } from '../module.ts';
+	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
 	import { mobileClass } from '@/core/stores.ts';
+	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
+	import Tabs from '@/core/components/Tabs/Tabs.svelte';
+	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import QRCode from 'qrcode';
-	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
-	import { parseUnits } from 'ethers';
-	import { get } from 'svelte/store';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	let addressElement;
-	let paymentElement;
-	let amount = '0';
-	let qrAddress = '';
-	let qrPayment = '';
-	let paymentText = '';
-	let error = '';
-	let currency;
+	let addressElement: HTMLElement = $state();
+	let activeTab = $state('address');
+	let walletAddress = $state();
+	let amount = $state('0');
+	let currency = $state();
+	let qr = $state();
+	let error = $state();
 
-	$: resetCurrency(currencies);
+	$effect(() => {
+		updateAddressAndQR();
+	});
+
+	function updateAddressAndQR() {
+		//console.log('updateAddressAndQR called');
+		if ($selectedNetwork && $selectedAddress) {
+			if (activeTab === 'address') {
+				walletAddress = $selectedAddress.address;
+				console.log('walletAddress:', walletAddress);
+			} else {
+				let etherValue;
+				//console.log('amount:', amount);
+				try {
+					etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
+					//console.log('etherValue:', etherValue.toString());
+				} catch (e) {
+					error = 'Invalid amount';
+					//console.log('Invalid amount:', e);
+					return;
+				}
+				error = null;
+				walletAddress = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount ? '?value=' + etherValue.toString() : '');
+			}
+			generateQRCode(walletAddress, qrData => (qr = qrData));
+		}
+	}
+
+	function generateQRCode(text, callback) {
+		QRCode.toDataURL(text, { width: 150 }, function (err, qr) {
+			if (err) console.error('QR CODE GENERATION:', err);
+			else callback(qr);
+		});
+	}
+
+	function clickCopy() {
+		navigator.clipboard
+			.writeText(walletAddress)
+			.then(() => console.log('Text copied to clipboard'))
+			.catch(err => console.error('Error while copying to clipboard', err));
+		addressElement.innerHTML = 'Copied!';
+		setTimeout(() => (addressElement.innerHTML = walletAddress), 1000);
+	}
 
 	function resetCurrency(currencies) {
 		if (!currency || !get(currencies).find(c => c == currency)) {
@@ -28,51 +72,9 @@
 		}
 	}
 
-	$: console.log('currencies:', $currencies);
-	$: console.log('currency:', currency);
-
-	function clickCopyAddress() {
-		navigator.clipboard
-			.writeText($selectedAddress.address)
-			.then(() => console.log('Address copied to clipboard'))
-			.catch(err => console.error('Error while copying to clipboard', err));
-		addressElement.innerHTML = 'Copied!';
-		setTimeout(() => (addressElement.innerHTML = $selectedAddress.address), 1000);
-	}
-
-	function clickCopyPayment() {
-		navigator.clipboard
-			.writeText(paymentText)
-			.then(() => console.log('Payment URI copied to clipboard'))
-			.catch(err => console.error('Error while copying to clipboard', err));
-		paymentElement.innerHTML = 'Copied!';
-		setTimeout(() => (paymentElement.innerHTML = paymentText), 1000);
-	}
-
-	$: if ($selectedNetwork && $selectedAddress) updateAmount(amount);
-
-	function updateAmount(amount) {
-		let etherValue;
-		console.log('amount:', amount);
-		try {
-			etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
-			console.log('etherValue:', etherValue.toString());
-		} catch (e) {
-			error = 'Invalid amount';
-			console.log('Invalid amount:', e);
-			return;
-		}
-		error = '';
-		paymentText = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount ? '?value=' + etherValue.toString() : '');
-		generateQRCode($selectedAddress.address, url => (qrAddress = url));
-		generateQRCode(paymentText, url => (qrPayment = url));
-	}
-
-	function generateQRCode(text, callback) {
-		QRCode.toDataURL(text, { width: 150 }, function (err, url) {
-			if (err) console.error('QR CODE GENERATION:', err);
-			else callback(url);
-		});
+	function setActiveTab(name) {
+		activeTab = name;
+		if (activeTab === 'payment') resetCurrency(currencies);
 	}
 </script>
 
@@ -86,31 +88,22 @@
 	.section {
 		display: flex;
 		flex-direction: column;
-		box-sizing: border-box;
-		width: 100%;
-		border: 1px solid var(--primary-harder-background);
-		border-radius: 10px;
-		background-color: var(--primary-softer-background);
-		overflow: hidden;
-	}
-
-	.section .title {
-		padding: 10px;
-		font-weight: bold;
-		text-align: center;
-		background-color: var(--primary-background);
-		color: var(--primary-foreground);
-	}
-
-	.section .body {
-		display: flex;
-		flex-direction: column;
 		align-items: center;
 		gap: 10px;
 		box-sizing: border-box;
 		width: 100%;
 		padding: 10px;
+		border: 1px solid var(--primary-harder-background);
+		border-radius: 10px;
+		background-color: var(--primary-softer-background);
 		color: var(--primary-foreground);
+	}
+
+	.amount {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
 	}
 
 	.address-wrapper {
@@ -135,55 +128,35 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 	}
-
-	.amount {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 10px;
-	}
 </style>
 
 {#if $selectedNetwork && $selectedAddress}
 	<div class="receive">
+		<Tabs>
+			<TabsItem label="Address only" img="modules/{module.identifier}/img/wallet-address.svg" active={activeTab === 'address'} onClick={() => setActiveTab('address')} />
+			<TabsItem label="Payment" img="modules/{module.identifier}/img/balance.svg" active={activeTab === 'payment'} onClick={() => setActiveTab('payment')} />
+		</Tabs>
 		<div class="section">
-			<div class="title">Your wallet address:</div>
-			<div class="body">
-				<div class="address-wrapper">
-					<Clickable onClick={clickCopyAddress} expand={true}>
-						<div class="address">
-							<div class="text">{$selectedAddress.address}</div>
-							<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
-						</div>
-					</Clickable>
-				</div>
-				<div class="qr">
-					<img src={qrAddress} alt="Address" />
-				</div>
-			</div>
-		</div>
-		<div class="section">
-			<div class="title">Payment:</div>
-			<div class="body">
+			{#if activeTab === 'payment'}
 				<div class="amount">
 					<div>Amount:</div>
-					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
+					<Input type="string" bind:value={amount} />
 					<DropdownFilter options={$currencies} bind:selected={currency} />
-					{#if error}
-						<Alert type="error" message={error} />
-					{/if}
 				</div>
-				<div class="address-wrapper">
-					<Clickable onClick={clickCopyPayment} expand={true}>
-						<div class="address">
-							<div class="text">{paymentText}</div>
-							<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
-						</div>
-					</Clickable>
-				</div>
-				<div class="qr">
-					<img src={qrPayment} alt="Payment" />
-				</div>
+				{#if error}
+					<Alert type="error" message={error} />
+				{/if}
+			{/if}
+			<div class="address-wrapper">
+				<Clickable onClick={() => clickCopy(walletAddress)} expand={true}>
+					<div class="address">
+						<div class="text" bind:this={addressElement}>{walletAddress}</div>
+						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
+					</div>
+				</Clickable>
+			</div>
+			<div class="qr">
+				<img src={qr} alt={activeTab === 'address' ? 'Address' : 'Payment'} />
 			</div>
 		</div>
 	</div>
