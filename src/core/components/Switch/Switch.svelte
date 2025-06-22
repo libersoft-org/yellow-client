@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Label from '@/core/components/Label/Label.svelte';
-
 	interface Props {
 		checked?: boolean;
 		showLabel?: boolean;
@@ -8,7 +7,6 @@
 		row?: boolean;
 		'data-testid'?: string;
 	}
-
 	let { checked = $bindable(), label, showLabel = false, row = false, ...restProps }: Props = $props();
 	let mounted = $state(false);
 	let inputId = Math.random().toString(36);
