@@ -3,6 +3,7 @@
 	import { parseUnits } from 'ethers';
 	import { sendAddress, currencies, selectedMainCurrencySymbol, sendTransaction, selectedNetwork, selectedAddress } from '../wallet.ts';
 	import { module } from '../module.ts';
+	import { playAudio } from '@/core/notifications.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -55,6 +56,7 @@
 
 	async function send() {
 		console.log('SEND:', $sendAddress, etherValue, etherValueFee, currency);
+		playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 		//showSendModal = true;
 		//try {
 		await sendTransaction($sendAddress, etherValue, etherValueFee, currency);
