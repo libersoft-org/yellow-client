@@ -116,14 +116,15 @@
 			// On mobile, modal takes full width but centers vertically
 			const rect = modalEl.getBoundingClientRect();
 			const y = (window.innerHeight - rect.height) / 2;
-			modalEl.style.transform = `translate3d(0px, ${y}px, 0)`;
+			modalEl.style.transform = `translateY(${y}px)`;
 			return;
 		}
 
-		const rect = modalEl.getBoundingClientRect();
-		const x = (window.innerWidth - rect.width) / 2;
-		const y = (window.innerHeight - rect.height) / 2;
-		modalEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+		// For desktop, the CSS margin and transform already center it
+		// Only apply additional transforms if dragging or repositioning
+		if (!isDragging) {
+			modalEl.style.transform = 'translateY(-50%)';
+		}
 	}
 
 	function snapTransformIntoBounds() {
@@ -213,11 +214,15 @@
 		display: flex;
 		flex-direction: column;
 		position: fixed;
-		inset: 0;
+		top: 50%;
+		left: 0;
+		right: 0;
+		transform: translateY(-50%);
+		margin: 0 auto;
 		box-sizing: border-box;
 		width: fit-content;
+		height: auto;
 		max-height: 100dvh;
-		height: fit-content;
 		overflow: hidden;
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
@@ -268,7 +273,6 @@
 		background-color: var(--background);
 		overflow: auto;
 		color: var(--primary-foreground);
-		height: 100%;
 	}
 
 	.top,
