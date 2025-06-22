@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	let { items, item_slot } = $props();
 	let observer;
 	let itemsEls = $state([]);

@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let icon;
-	export let label;
-	export let active;
-	export let colorVariable = '--default-foreground';
-	export let onClick;
+	interface Props {
+		icon?: string;
+		label?: string;
+		active?: boolean;
+		colorVariable?: string;
+		onClick?: (e: Event) => void;
+	}
+	let { icon, label, active, colorVariable = '--default-foreground', onClick }: Props = $props();
 
 	function onMousedown(e) {
 		e.stopPropagation();

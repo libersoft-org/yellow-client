@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import { writable } from 'svelte/store';
-
-	let { children, node } = $props();
+	interface Props {
+		children?: any[];
+		node?: any;
+	}
+	let { children, node }: Props = $props();
 	let ref = writable();
 </script>
 

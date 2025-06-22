@@ -1,11 +1,10 @@
-<script>
+<script lang="ts">
 	import { identifier } from '../../messages.js';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import galleryStore from '../../stores/GalleryStore.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-
 	let gallery = galleryStore.store;
 	let currentFile = galleryStore.currentFile();
 	let currentFilePosition = $derived($gallery.files.indexOf($currentFile) + 1);

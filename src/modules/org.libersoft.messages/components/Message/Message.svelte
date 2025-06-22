@@ -16,16 +16,10 @@
 	import { forwardMessageStore } from '../../stores/ForwardMessageStore.ts';
 	import MessageReaction from '../MessageReaction/MessageReaction.svelte';
 	import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
-
 	export let message;
 	export let elContainer;
 	export let enableScroll;
 	export let disableScroll;
-
-	export function getRef() {
-		return elMessage;
-	}
-
 	let seenTxt;
 	let checkmarks;
 	let observer;
@@ -52,6 +46,16 @@
 	let renderedTs;
 
 	$: update(message);
+	//$: console.log('messageContent:', messageContent);
+	$: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
+	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
+	$: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
+	//$: console.log('Core.isClientFocused:', $isClientFocused);
+	$: maybeSetSeen(isVisible, $isClientFocused);
+
+	export function getRef() {
+		return elMessage;
+	}
 
 	// console.log('updated message:', message);
 	function update(message) {
@@ -59,13 +63,6 @@
 		//  console.log('update message:', message);
 		messageContent = processMessage(message);
 	}
-
-	//$: console.log('messageContent:', messageContent);
-	$: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
-	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
-	$: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
-	//$: console.log('Core.isClientFocused:', $isClientFocused);
-	$: maybeSetSeen(isVisible, $isClientFocused);
 
 	function maybeSetSeen(isVisible, isClientFocused) {
 		console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);

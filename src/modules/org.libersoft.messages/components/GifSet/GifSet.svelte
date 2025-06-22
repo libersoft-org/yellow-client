@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { get } from 'svelte/store';
 	import { onMount, getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';
