@@ -48,7 +48,7 @@
 		font-weight: bold;
 	}
 
-	.group {
+	.row {
 		display: flex;
 		align-items: center;
 		gap: 10px;
@@ -56,7 +56,7 @@
 </style>
 
 <!--<Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />-->
-<div class="group">
+<div class="row">
 	<Input placeholder="Add sticker server address" expand bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
 	<Button img="img/add.svg" text="Add" onClick={clickAdd} />
 </div>

@@ -16,9 +16,7 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-
-	// Store all subscription unsubscribe functions
-	const unsubscribers: Unsubscriber[] = [];
+	const unsubscribers: Unsubscriber[] = []; // Store all subscription unsubscribe functions
 
 	// Helper to add subscriptions and track unsubscribers
 	function addSubscription<T>(store: { subscribe: (callback: (value: T) => void) => Unsubscriber }, callback: (value: T) => void): void {
@@ -46,7 +44,6 @@
 <div class="settings-notifications">
 	<SettingsNotificationsAlert />
 	<SettingsNotificationsBasic />
-
 	{#if CUSTOM_NOTIFICATIONS}
 		{#if $customNotificationsOn}
 			<Table>
@@ -73,9 +70,7 @@
 							</Select>
 						</Td>
 						<Td title="Animation duration">
-							<div>
-								<Input type="number" bind:value={$animationDuration} min={0} max={1000} step={10} />ms
-							</div>
+							<Input type="number" bind:value={$animationDuration} min={0} max={1000} step={10} />ms
 						</Td>
 						<Td title="Maximum number of lines in title">
 							<Input type="number" bind:value={$titleMaxLines} min={1} max={3} />
