@@ -78,83 +78,93 @@
 
 <style>
 	.receive {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		flex-wrap: wrap;
-		justify-content: space-between;
+		display: flex;
+		flex-direction: column;
 		gap: 10px;
 	}
 
 	.section {
 		display: flex;
-		justify-content: center;
-		border: 1px solid var(--secondary-background);
-		border-radius: 10px;
+		flex-direction: column;
+		box-sizing: border-box;
 		width: 100%;
+		border: 1px solid var(--primary-harder-background);
+		border-radius: 10px;
+		background-color: var(--primary-softer-background);
+		overflow: hidden;
 	}
 
-	.section-wrapper {
+	.section .title {
+		padding: 10px;
+		font-weight: bold;
+		text-align: center;
+		background-color: var(--primary-background);
+		color: var(--primary-foreground);
+	}
+
+	.section .body {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		padding: 10px;
 		gap: 10px;
+		box-sizing: border-box;
+		width: 100%;
+		padding: 10px;
+		color: var(--primary-foreground);
 	}
 
-	.section-wrapper .bold {
-		margin-bottom: auto;
+	.address-wrapper {
+		width: auto;
+		max-width: 100%;
 	}
 
 	.address {
 		display: flex;
 		align-items: center;
 		gap: 5px;
-		border-radius: 10px;
+		box-sizing: border-box;
+		width: 100%;
 		padding: 10px;
+		border-radius: 10px;
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 	}
 
-	.address .clamp {
-		display: inline-block;
-		width: 100px;
+	.address .text {
 		white-space: nowrap;
-		overflow: hidden;
 		text-overflow: ellipsis;
-		vertical-align: bottom;
-	}
-
-	.address .clamp.mobile {
-		width: 200px;
+		overflow: hidden;
 	}
 
 	.amount {
 		display: flex;
-		flex-direction: column;
 		align-items: center;
-		gap: 6px;
+		justify-content: center;
+		gap: 10px;
 	}
 </style>
 
 {#if $selectedNetwork && $selectedAddress}
 	<div class="receive">
 		<div class="section">
-			<div class="section-wrapper">
-				<div class="bold">Your wallet address:</div>
-				<Clickable onClick={clickCopyAddress}>
-					<div class="address">
-						<div class="clamp {$mobileClass}" bind:this={addressElement}>
-							{shortenAddress($selectedAddress.address)}
+			<div class="title">Your wallet address:</div>
+			<div class="body">
+				<div class="address-wrapper">
+					<Clickable onClick={clickCopyAddress} expand={true}>
+						<div class="address">
+							<div class="text">{$selectedAddress.address}</div>
+							<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 						</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
-					</div>
-				</Clickable>
-				<div class="qr"><img src={qrAddress} alt="Address" /></div>
+					</Clickable>
+				</div>
+				<div class="qr">
+					<img src={qrAddress} alt="Address" />
+				</div>
 			</div>
 		</div>
 		<div class="section">
-			<div class="section-wrapper">
-				<div class="bold">Payment:</div>
+			<div class="title">Payment:</div>
+			<div class="body">
 				<div class="amount">
 					<div>Amount:</div>
 					<Input type="number" placeholder="0.0" step="0.00001" min="0" max="999999999999999999999999" bind:value={amount} />
@@ -163,15 +173,17 @@
 						<Alert type="error" message={error} />
 					{/if}
 				</div>
-				<Clickable onClick={clickCopyPayment}>
-					<div class="address">
-						<div class="clamp" style="width: 240px !important;" bind:this={paymentElement}>
-							{paymentText}
+				<div class="address-wrapper">
+					<Clickable onClick={clickCopyPayment} expand={true}>
+						<div class="address">
+							<div class="text">{paymentText}</div>
+							<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 						</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
-					</div>
-				</Clickable>
-				<div class="qr"><img src={qrPayment} alt="Payment" /></div>
+					</Clickable>
+				</div>
+				<div class="qr">
+					<img src={qrPayment} alt="Payment" />
+				</div>
 			</div>
 		</div>
 	</div>

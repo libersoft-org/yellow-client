@@ -35,18 +35,19 @@
 <style>
 	.dropdown-filter {
 		position: relative;
-		max-width: 200px;
+		background-color: var(--default-background);
+		color: var(--default-foreground);
 	}
 
 	.options {
+		z-index: 1;
 		position: absolute;
 		border: 1px solid var(--default-foreground);
 		background-color: var(--default-background);
+		box-sizing: border-box;
 		width: 100%;
 		max-height: 150px;
 		overflow-y: auto;
-		z-index: 1;
-		box-sizing: border-box;
 	}
 
 	.option {
