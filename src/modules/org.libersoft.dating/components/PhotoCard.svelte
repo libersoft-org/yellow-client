@@ -1,11 +1,19 @@
-<script>
+<script lang="ts">
 	import CardButton from './PhotoCardButton.svelte';
-	export let photo;
-	//export let onYes;
-	//export let onNo;
-	let moving = false;
+	interface Props {
+		photo: {
+			img: string;
+			name: string;
+			description: string;
+		};
+		// onYes?: (e: Event) => void;
+		// onNo?: (e: Event) => void;
+	}
+	let { photo }: Props = $props();
+
+	let moving = $state(false);
 	let startX = 0;
-	let currentX = 0;
+	let currentX = $state(0);
 	let threshold = 100;
 
 	function startSwipe(e) {

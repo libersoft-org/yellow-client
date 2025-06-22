@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { identifier } from '../../messages.js';
 	import Emojis from '../Emoji/Emojis.svelte';
 	import Stickers from '../Stickers/Stickers.svelte';
@@ -6,11 +6,12 @@
 	import ExpressionsItem from './ExpressionsItem.svelte';
 	import ExpressionsSettings from './ExpressionsSettings.svelte';
 	import { onMount, tick } from 'svelte';
-	export let height;
-
-	let expression = 'emojis';
+	interface Props {
+		height?: string;
+	}
+	let { height }: Props = $props();
+	let expression = $state('emojis');
 	let elExpression;
-
 	const expressions = {
 		emojis: Emojis,
 		stickers: Stickers,

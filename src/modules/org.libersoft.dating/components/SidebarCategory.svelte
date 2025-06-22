@@ -1,12 +1,15 @@
-<script>
+<script lang="ts">
 	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { module } from '../module.ts';
-	export let img = null;
-	export let label;
-	export let active = false;
-	export let onClick;
-	export let colorVariable = '--primary-foreground';
+	interface Props {
+		img?: string;
+		label?: string;
+		active?: boolean;
+		onClick?: (e: Event) => void;
+		colorVariable?: string;
+	}
+	let { img, label, active = false, onClick, colorVariable = '--primary-foreground' }: Props = $props();
 </script>
 
 <style>
