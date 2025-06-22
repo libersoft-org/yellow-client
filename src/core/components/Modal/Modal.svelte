@@ -6,7 +6,6 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-
 	interface Props {
 		testId?: string;
 		show?: boolean;
@@ -26,7 +25,6 @@
 		height?: string;
 		onShowChange?: (show: boolean) => void;
 	}
-
 	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);

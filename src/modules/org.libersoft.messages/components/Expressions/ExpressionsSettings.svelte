@@ -9,23 +9,27 @@
 	import { sticker_server_index, sticker_servers } from '../../stickers.js';
 	import { gif_server_index, gif_servers } from '../../gifs.js';
 	import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
-	import StickerServers from '../../modals/StickerServers.svelte';
-	import GifServers from '../../modals/GifServers.svelte';
-	import { stickers_db } from '../../db.ts';
-	let isModalStickerServersOpen = false;
-	let isModalGifServersOpen = false;
+	import DialogDeleteStickers from '../../dialogs/DeleteStickers.svelte';
+	import ModalStickerServers from '../../modals/StickerServers.svelte';
+	import ModalGifServers from '../../modals/GifServers.svelte';
+	let elDialogDeleteStickers;
+	let showModalStickerServers = false;
+	let showModalGifServers = false;
 	let showAsVector = $expressions_renderer === 'svg';
 	let animateAll = $animate_all_expressions;
 	$: showAsVector !== undefined && expressions_renderer.set(showAsVector ? 'svg' : 'canvas');
 	$: animateAll !== undefined && animate_all_expressions.set(animateAll);
 
 	function clickManageStickerServers() {
-		console.log('Click: Manage sticker servers');
-		isModalStickerServersOpen = !isModalStickerServersOpen;
+		showModalStickerServers = true;
 	}
+
 	function clickManageGifServers() {
-		console.log('Click: Manage gif servers');
-		isModalGifServersOpen = !isModalGifServersOpen;
+		showModalGifServers = true;
+	}
+
+	function clickDeleteStickersDatabase() {
+		elDialogDeleteStickers.open();
 	}
 </script>
 
@@ -50,13 +54,7 @@
 	</Label>
 	<ButtonBar expand>
 		<Button img="img/edit.svg" text="Manage sticker servers" onClick={clickManageStickerServers} />
-		<Button
-			img="img/del.svg"
-			text="Delete stickers database"
-			onClick={() => {
-				stickers_db.delete();
-			}}
-		/>
+		<Button img="img/del.svg" text="Delete stickers database" onClick={clickDeleteStickersDatabase} />
 	</ButtonBar>
 	<Label text="Gif server">
 		<Select bind:value={$gif_server_index}>
@@ -67,5 +65,6 @@
 	</Label>
 	<Button img="img/edit.svg" text="Manage gif servers" onClick={clickManageGifServers} />
 </div>
-<Modal title="Manage sticker servers" body={StickerServers} bind:show={isModalStickerServersOpen} width="400px" />
-<Modal title="Manage gif servers" body={GifServers} bind:show={isModalGifServersOpen} width="400px" />
+<DialogDeleteStickers bind:this={elDialogDeleteStickers} />
+<Modal title="Manage sticker servers" body={ModalStickerServers} bind:show={showModalStickerServers} width="400px" />
+<Modal title="Manage gif servers" body={ModalGifServers} bind:show={showModalGifServers} width="400px" />

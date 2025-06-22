@@ -10,11 +10,12 @@
 	textarea {
 		box-sizing: border-box;
 		width: 100%;
-		/*
-		flex: 1 1 0%;  <-- TODO: it shrinks, but not expands
- 	height: 200px;
-  max-height: 100%;
-  */
+
+		flex: 1 1 300px; /*  <-- TODO: it shrinks, but not expands*/
+		min-height: 0px;
+		/*height: 300px;*/
+		max-height: 100%;
+
 		padding: 10px;
 		color: var(--secondary-foreground);
 		background-color: var(--secondary-background);
