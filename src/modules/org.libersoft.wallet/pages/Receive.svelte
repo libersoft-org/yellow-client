@@ -147,17 +147,19 @@
 					<Alert type="error" message={error} />
 				{/if}
 			{/if}
-			<div class="address-wrapper">
-				<Clickable onClick={() => clickCopy(walletAddress)} expand={true}>
-					<div class="address">
-						<div class="text" bind:this={addressElement}>{walletAddress}</div>
-						<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
-					</div>
-				</Clickable>
-			</div>
-			<div class="qr">
-				<img src={qr} alt={activeTab === 'address' ? 'Address' : 'Payment'} />
-			</div>
+			{#if activeTab === 'address' || (activeTab === 'payment' && !error)}
+				<div class="address-wrapper">
+					<Clickable onClick={() => clickCopy(walletAddress)} expand={true}>
+						<div class="address">
+							<div class="text" bind:this={addressElement}>{walletAddress}</div>
+							<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
+						</div>
+					</Clickable>
+				</div>
+				<div class="qr">
+					<img src={qr} alt={activeTab === 'address' ? 'Address' : 'Payment'} />
+				</div>
+			{/if}
 		</div>
 	</div>
 {/if}
