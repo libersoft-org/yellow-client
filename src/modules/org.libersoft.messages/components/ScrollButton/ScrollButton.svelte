@@ -1,13 +1,16 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let visible = true;
-	export let direction = false;
-	export let left;
-	export let right;
-	export let top;
-	export let bottom;
-	export let onClick;
+	interface Props {
+		visible?: boolean;
+		direction?: boolean;
+		left?: string;
+		right?: string;
+		top?: string;
+		bottom?: string;
+		onClick?: (e: Event) => void;
+	}
+	let { visible = true, direction = false, left, right, top, bottom, onClick }: Props = $props();
 	let size = 30;
 </script>
 

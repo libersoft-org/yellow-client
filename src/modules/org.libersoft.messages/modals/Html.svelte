@@ -1,14 +1,17 @@
-<script>
+<script lang="ts">
 	import { getContext } from 'svelte';
 	import { identifier } from '../messages.js';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import HtmlSideBySide from '../components/HtmlEditor/HtmlSideBySide.svelte';
 	import HtmlInTabs from '../components/HtmlEditor/HtmlInTabs.svelte';
-	export let close;
+	interface Props {
+		close: () => void;
+	}
+	let { close }: Props = $props();
 	const MessageBar = getContext('MessageBar');
-	let text = '';
-	let isSideBySide = true;
+	let text = $state('');
+	let isSideBySide = $state(true);
 
 	function send() {
 		console.log('send');

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { debug } from '@/core/stores.ts';
 	import { identifier } from '../../messages.js';
 	import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
@@ -13,7 +13,6 @@
 	import { isMobile } from '@/core/stores.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { onMount, untrack } from 'svelte';
-
 	let { stickerset_favorites } = $props();
 	let fulltext_search_element;
 	let fulltext_search_filter = $state('');

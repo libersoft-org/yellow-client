@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { module } from '../../module.ts';
 	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
 	import ModalNewWallet from '../../modals/NewWallet.svelte';
@@ -16,7 +16,7 @@
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import { Mnemonic } from 'ethers';
-	let showModalPhrase = false;
+	let showModalPhrase: boolean = false;
 	let accordion;
 
 	function showNewWalletModal() {

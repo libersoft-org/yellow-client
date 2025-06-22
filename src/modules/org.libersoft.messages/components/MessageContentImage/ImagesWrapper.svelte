@@ -1,11 +1,10 @@
-<script>
+<script lang="ts">
 	let { children, node } = $props();
 	const childrenLength = node?.childNodes.length || 0;
 	let rowSize = 4;
 	let rowLimit = 2;
 	let hiddenImages = [];
 	let siblings = $derived(children.map(child => child));
-
 	let imagesRows = $derived.by(() => {
 		let groups = [];
 		let group = [];
@@ -14,14 +13,11 @@
 				console.info("Can't render child with no component", child);
 				return;
 			}
-
 			// if rowLimit is reached and last row is full - add remaining images to hidden group
 			if (groups.length === rowLimit && groups[groups.length - 1].length === rowSize) {
 				hiddenImages.push(child);
 				return;
-			} else {
-				group.push(child);
-			}
+			} else group.push(child);
 			if (group.length === rowSize || index === children.length - 1) {
 				groups.push(group);
 				group = [];

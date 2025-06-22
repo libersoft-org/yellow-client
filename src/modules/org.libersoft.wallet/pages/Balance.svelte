@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { debug } from '@/core/stores.ts';
 	import { selectedNetwork, selectedAddress, balance, balanceTimestamp } from '../wallet.ts';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -6,7 +6,15 @@
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	let tokens = [
+	interface Token {
+		icon: string;
+		symbol: string;
+		amount: {
+			crypto: number;
+			fiat: number;
+		};
+	}
+	let tokens: Token[] = [
 		{
 			icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DAI.svg',
 			symbol: 'DAI',

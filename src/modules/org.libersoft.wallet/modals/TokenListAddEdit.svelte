@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { getGuid } from '@/core/core.ts';
 	import { module } from '../module.ts';
@@ -6,13 +6,26 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	export let close;
-	export let params;
-	let item_guid = '';
-	let item_name = '';
-	let item_icon = '';
-	let item_symbol = '';
-	let item_contract_address = '';
+	interface Props {
+		close: () => void;
+		params: {
+			item?: {
+				guid: string;
+				name: string;
+				icon: string;
+				symbol: string;
+				contract_address: string;
+			};
+			onAdd?: (item: any) => void;
+			onEdit?: (item: any) => void;
+		};
+	}
+	let { close, params }: Props = $props();
+	let item_guid = $state('');
+	let item_name = $state('');
+	let item_icon = $state('');
+	let item_symbol = $state('');
+	let item_contract_address = $state('');
 
 	onMount(() => {
 		let item = params.item;

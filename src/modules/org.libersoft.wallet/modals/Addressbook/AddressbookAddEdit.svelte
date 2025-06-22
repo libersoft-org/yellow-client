@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { isAddress } from 'ethers';
 	import Label from '@/core/components/Label/Label.svelte';
@@ -8,12 +8,21 @@
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { addressBook } from '../../wallet.ts';
 	import { module } from '../../module.ts';
-	export let close;
-	export let params;
+	interface Props {
+		close: () => void;
+		params: {
+			item?: {
+				guid: string;
+				alias: string;
+				address: string;
+			};
+		};
+	}
+	let { close, params }: Props = $props();
 	let aliasElement;
-	let alias = '';
-	let address = '';
-	let error = '';
+	let alias = $state('');
+	let address = $state('');
+	let error = $state('');
 
 	onMount(() => {
 		if (params.item) {

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { active_account, setModule } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { identifier, online } from '../../messages.js';
@@ -10,7 +10,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import ModalNewConversation from '../../modals/NewConversation.svelte';
 	const illustrations = ['man', 'woman', 'pigeon'];
-	let showNewConversationModal = false;
+	let showNewConversationModal: boolean = false;
 
 	function clickNew() {
 		showNewConversationModal = true;

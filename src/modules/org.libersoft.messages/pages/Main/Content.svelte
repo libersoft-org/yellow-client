@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { setModule } from '@/core/core.ts';
 	import { selectedConversation, closeConversation } from '../../messages.js';

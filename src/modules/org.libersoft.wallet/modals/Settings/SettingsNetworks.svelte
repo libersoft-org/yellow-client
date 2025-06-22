@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { module } from '../../module.ts';
 	import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -14,12 +14,12 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
 	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
-	let showModalEditNetwork = false;
-	let showModalTokenList = false;
+	let showModalEditNetwork: boolean = false;
+	let showModalTokenList: boolean = false;
 	let modalItemID = null;
 	let modalItem = null;
-	let showSettingsNetworksExport = false;
-	let showSettingsNetworksImport = false;
+	let showSettingsNetworksExport: boolean = false;
+	let showSettingsNetworksImport: boolean = false;
 
 	function clickAddNetwork(net) {
 		console.log('clickAddNetwork', net);

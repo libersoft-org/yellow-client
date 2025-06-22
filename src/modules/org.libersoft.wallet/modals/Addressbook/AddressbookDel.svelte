@@ -1,10 +1,18 @@
-<script>
+<script lang="ts">
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { addressBook } from '../../wallet.ts';
-	export let close;
-	export let params;
-	let error;
+	interface Props {
+		close: () => void;
+		params: {
+			item: {
+				guid: string;
+				alias: string;
+			};
+		};
+	}
+	let { close, params }: Props = $props();
+	let error: string | undefined;
 
 	function clickDelete() {
 		addressBook.set($addressBook.filter(i => i.guid !== params.item.guid));

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import filesService from '@/org.libersoft.messages/services/Files/FilesService.ts';
 	import ImageAspectRatio from '@/core/components/ImageAspectRatio/ImageAspectRatio.svelte';
@@ -9,10 +9,8 @@
 	import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import galleryStore from '../../stores/GalleryStore.ts';
-
 	let { node, showHiddenImages, hiddenImages, siblings } = $props();
 	let file = node.attributes.file?.value;
-
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
 	// check str if begins with yellow
 	let isYellow = $derived(file && file.startsWith(YELLOW_SRC_PROTOCOL)); // TODO: check deep prop reactivity (in case of message edit)
@@ -30,11 +28,7 @@
 			const siblingNode = siblings[index];
 			const fileAttr = siblingNode?.props?.file;
 			const siblingYellowId = fileAttr && fileAttr.startsWith(YELLOW_SRC_PROTOCOL) ? fileAttr.slice(YELLOW_SRC_PROTOCOL.length) : null;
-
-			if (!siblingYellowId) {
-				continue;
-			}
-
+			if (!siblingYellowId) continue;
 			if (siblingYellowId === yellowId) {
 				filesForGallery.push({
 					id: yellowId,
@@ -83,7 +77,6 @@
 			return;
 		}
 		loading = true;
-
 		filesService
 			.getOrDownloadAttachment(yellowId)
 			.then(({ localFile }) => {

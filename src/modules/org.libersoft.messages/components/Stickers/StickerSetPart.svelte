@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
 	//import { debug } from '@/core/stores.ts';
 	import StickerSetItem from './StickerSetItem.svelte';
-	export let items;
-	export let stickerset;
-	export let intersecting;
+	interface Props {
+		items: any[];
+		stickerset: any;
+		intersecting?: boolean;
+	}
+	let { items, stickerset, intersecting }: Props = $props();
 	let size = 67;
 </script>
 
