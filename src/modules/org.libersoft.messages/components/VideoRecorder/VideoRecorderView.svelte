@@ -128,12 +128,12 @@
 	}
 
 	.video-floating-area-rt {
+		z-index: 1;
 		position: absolute;
 		top: 8px;
 		right: 8px;
 		gap: 4px;
 		display: flex;
-		z-index: 1;
 	}
 </style>
 

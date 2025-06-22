@@ -139,6 +139,7 @@
 	}
 
 	.hidden-images {
+		z-index: 1;
 		position: absolute;
 		bottom: 0;
 		right: 0;
@@ -152,7 +153,6 @@
 		color: white;
 		font-weight: bold;
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-		z-index: 1;
 		border-radius: var(--border-radius);
 	}
 </style>

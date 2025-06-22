@@ -10,8 +10,8 @@
 
 <style>
 	.item {
-		position: relative;
 		z-index: 1;
+		position: relative;
 		border-radius: 10px;
 		transform: scale(1);
 		transition:
@@ -20,8 +20,8 @@
 	}
 
 	.item:not(.selected):hover {
+		z-index: 2;
 		transform: scale(1.25);
-		z-index: 10;
 	}
 
 	.item.selected {

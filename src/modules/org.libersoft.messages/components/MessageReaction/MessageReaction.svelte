@@ -102,7 +102,6 @@
 		border-radius: 20px;
 		box-shadow: var(--shadow);
 		max-width: 300px;
-		z-index: 100000;
 	}
 
 	.emojis {

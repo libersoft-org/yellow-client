@@ -291,10 +291,10 @@
 	}
 
 	.sidebar {
+		z-index: 5;
 		display: flex;
 		flex-direction: column;
 		position: relative;
-		z-index: 5;
 		max-height: 100%;
 		box-shadow: var(--shadow);
 		background-color: var(--secondary-background);
@@ -313,8 +313,8 @@
 	}
 
 	.resizer {
-		position: absolute;
 		z-index: 6;
+		position: absolute;
 		top: 0;
 		bottom: 0;
 		width: 5px;

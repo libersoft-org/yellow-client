@@ -102,13 +102,14 @@
 	}
 
 	.items {
+		z-index: 10;
 		display: flex;
 		flex-direction: column;
 		position: absolute;
 		top: 100%;
 		left: 0;
 		background-color: var(--secondary-background);
-		z-index: 1000;
+
 		width: 100%;
 		overflow: hidden;
 		transition: none;

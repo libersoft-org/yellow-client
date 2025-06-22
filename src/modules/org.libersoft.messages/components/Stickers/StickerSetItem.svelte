@@ -40,7 +40,7 @@
 	}
 
 	.sticker:hover {
-		z-index: 90;
+		z-index: 51;
 		transform: scale(1.2);
 		background-color: var(--primary-soft-background);
 		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);

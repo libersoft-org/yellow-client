@@ -45,7 +45,6 @@
 	}
 
 	.bar-buttons {
-		z-index: 10;
 		position: relative;
 		display: flex;
 		align-items: center;

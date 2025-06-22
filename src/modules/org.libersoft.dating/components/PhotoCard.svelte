@@ -66,23 +66,23 @@
 	}
 
 	.photo-card .overlay {
+		z-index: 2;
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		width: 100%;
 		background: var(--default-foreground);
 		color: var(--default-background);
-		z-index: 2;
 		padding: 10px;
 		text-align: center;
 	}
 
 	.card-buttons {
+		z-index: 3;
 		display: flex;
 		width: 100%;
 		justify-content: space-around;
 		margin-bottom: 10px;
-		z-index: 3000;
 	}
 
 	.overlay .title {

@@ -80,7 +80,7 @@
 
 <style>
 	.gallery {
-		z-index: 9999;
+		z-index: 150;
 		position: fixed;
 		display: flex;
 		align-items: center;
@@ -125,7 +125,7 @@
 
 	.top-left,
 	.top-right {
-		z-index: 10000;
+		z-index: 151;
 		position: absolute;
 		padding: 10px;
 		top: 0;

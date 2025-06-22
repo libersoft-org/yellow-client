@@ -585,12 +585,12 @@
  */
 
 	.dnd-overlay {
+		z-index: 1;
 		position: absolute;
+		display: none;
 		width: 100%;
 		height: 100%;
 		background-color: var(--primary-background);
-		display: none;
-		z-index: 1;
 		pointer-events: none;
 	}
 

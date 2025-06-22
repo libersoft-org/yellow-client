@@ -191,12 +191,12 @@
 
 <style>
 	.context-menu {
+		z-index: 50;
 		display: flex;
 		flex-direction: column;
 		visibility: hidden;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 		position: fixed;
-		z-index: 9000;
 		border-radius: 10px;
 		border: 1px solid var(--secondary-background);
 		background-color: var(--default-background);
