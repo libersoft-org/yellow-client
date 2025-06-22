@@ -24,11 +24,13 @@
 	}
 
 	function clickAdd() {
-		gif_servers.update(s => {
-			s.push(addUrl);
-			return s;
-		});
-		addUrl = '';
+		if (addUrl.trim() !== '') {
+			gif_servers.update(s => {
+				s.push(addUrl.trim());
+				return s;
+			});
+			addUrl = '';
+		}
 		inputElement.focus();
 	}
 
@@ -60,26 +62,28 @@
 	<Input placeholder="Add gif server address" expand bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
 	<Button img="img/add.svg" text="Add" onClick={clickAdd} />
 </div>
-<Table breakpoint="0">
-	<Thead>
-		<TheadTr>
-			<Th>Gif servers:</Th>
-			<Th>Action:</Th>
-		</TheadTr>
-	</Thead>
-	<Tbody>
-		{#each $gif_servers as s}
-			<TbodyTr>
-				<Td title="Gif servers">
-					<a href={s} target="_blank">{s}</a>
-				</Td>
-				<Td title="Action">
-					<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} />
-				</Td>
-			</TbodyTr>
-		{/each}
-	</Tbody>
-</Table>
+{#if $gif_servers.length > 0}
+	<Table breakpoint="0">
+		<Thead>
+			<TheadTr>
+				<Th>Gif servers:</Th>
+				<Th>Action:</Th>
+			</TheadTr>
+		</Thead>
+		<Tbody>
+			{#each $gif_servers as s}
+				<TbodyTr>
+					<Td title="Gif servers">
+						<a href={s} target="_blank">{s}</a>
+					</Td>
+					<Td title="Action">
+						<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} />
+					</Td>
+				</TbodyTr>
+			{/each}
+		</Tbody>
+	</Table>
+{/if}
 {#if error}
 	<Alert type="error" message={error} />
 {/if}
