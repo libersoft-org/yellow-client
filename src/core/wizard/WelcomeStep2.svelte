@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	//import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
 	import FormAddEdit from '@/core/forms/Accounts/AccountsAddEdit.svelte';
 	export let params;

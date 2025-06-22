@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import QRCode from 'qrcode';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';

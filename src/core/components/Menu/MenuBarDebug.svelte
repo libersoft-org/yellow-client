@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { debug } from '@/core/stores.ts';
 	import { log } from '@/core/tauri.ts';
 	import { addNotification } from '@/core/notifications.ts';
@@ -6,8 +6,8 @@
 	import Files from '@/core/debug/Files.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
-	let showFilesModal1 = false;
-	let showFilesModal2 = false;
+	let showFilesModal1: boolean = false;
+	let showFilesModal2: boolean = false;
 
 	async function err() {
 		throw new Error('Test exception!');

@@ -1,8 +1,11 @@
-<script>
-	export let img = 'img/photo.svg';
-	export let alt = '';
-	export let size = '50px';
-	export let radius = '50%';
+<script lang="ts">
+	interface Props {
+		img?: string;
+		alt?: string;
+		size?: string;
+		radius?: string;
+	}
+	let { img = 'img/photo.svg', alt, size = '50px', radius = '50%' }: Props = $props();
 </script>
 
 <style>

@@ -1,11 +1,17 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Indicator from '@/core/components/ModuleBar/ModuleBarIndicator.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let decl;
-	export let clickSetModule;
-	export let online;
-	export let selected;
+	interface Props {
+		decl: {
+			id: string;
+			name: string;
+		};
+		clickSetModule: (id: string) => void;
+		online?: boolean;
+		selected?: boolean;
+	}
+	let { decl, clickSetModule, online, selected }: Props = $props();
 </script>
 
 <style>

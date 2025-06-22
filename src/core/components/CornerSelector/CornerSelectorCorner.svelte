@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	export let active = false;
-	export let onClick;
+	interface Props {
+		active?: boolean;
+		onClick?: (e: Event) => void;
+	}
+	let { active = false, onClick }: Props = $props();
 </script>
 
 <style>

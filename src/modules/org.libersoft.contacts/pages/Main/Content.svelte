@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { setModule } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
