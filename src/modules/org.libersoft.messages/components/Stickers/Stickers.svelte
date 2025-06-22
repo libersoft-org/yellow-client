@@ -36,6 +36,7 @@
 		flex-direction: column;
 		height: calc(100% - 45px);
 		overflow: hidden;
+		position: relative;
 		/*padding: 10px 10px 0px 10px;*/
 	}
 
@@ -55,6 +56,12 @@
 		flex-direction: column;
 		gap: 10px;
 		padding: 10px;
+	}
+
+	.stickers :global(.filter) {
+		position: sticky;
+		top: 10px;
+		z-index: 100;
 	}
 
 	.loading {
