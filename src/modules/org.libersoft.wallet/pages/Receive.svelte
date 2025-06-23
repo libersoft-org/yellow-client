@@ -13,7 +13,8 @@
 	import QRCode from 'qrcode';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	let addressElement: HTMLElement = $state();
+	let addressElement: HTMLElement | undefined = $state();
+	let addressElementMessage: string | null = $state('');
 	let activeTab = $state('address');
 	let walletAddress = $state();
 	let amount = $state('0');
@@ -61,8 +62,9 @@
 			.writeText(walletAddress)
 			.then(() => console.log('Text copied to clipboard'))
 			.catch(err => console.error('Error while copying to clipboard', err));
-		addressElement.innerHTML = 'Copied!';
-		setTimeout(() => (addressElement.innerHTML = walletAddress), 1000);
+
+		addressElementMessage = 'Copied!';
+		setTimeout(() => (addressElementMessage = null), 1000);
 	}
 
 	function resetCurrency(currencies) {
@@ -151,7 +153,7 @@
 				<div class="address-wrapper">
 					<Clickable onClick={() => clickCopy(walletAddress)} expand={true}>
 						<div class="address">
-							<div class="text" bind:this={addressElement}>{walletAddress}</div>
+							<div class="text" bind:this={addressElement}>{addressElementMessage || walletAddress}</div>
 							<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 						</div>
 					</Clickable>

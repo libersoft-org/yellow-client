@@ -10,7 +10,8 @@ interface Module {
 	identifier: string;
 }
 
-registerModule(module.identifier, {
+registerModule({
+	id: module.identifier,
 	order: 4,
 	callbacks: {},
 	panels: {

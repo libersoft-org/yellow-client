@@ -7,7 +7,8 @@ export const module = {
 	identifier,
 };
 
-registerModule(module.identifier, {
+registerModule({
+	id: module.identifier,
 	order: 1,
 	callbacks: { init, initData, initComms, deinitComms, deinitData, onModuleSelected },
 	panels: {
