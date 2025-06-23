@@ -43,7 +43,7 @@
 			{#if data?.icon}
 				<Icon img={data?.icon} alt="" size="50px" padding="0px" />
 			{/if}
-			<div>{data?.body}</div>
+			<div>{@html data?.body}</div>
 		</div>
 	{/snippet}
 	{#snippet bottom()}
