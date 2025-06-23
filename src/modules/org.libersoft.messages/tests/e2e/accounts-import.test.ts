@@ -381,17 +381,6 @@ test.describe('Accounts Import Functionality', () => {
 		const modalVisible = await page.getByTestId('accounts-import-Modal').isVisible();
 		//console.log('Modal still visible after skip:', modalVisible);
 
-		// Debug: Check what's actually in the modal
-		const modalContent = await page.getByTestId('accounts-import-Modal').textContent();
-		//console.log('Modal content:', modalContent);
-
-		// Check for any error text, not just in .alert
-		const errorTextVisible = await page
-			.getByText('No accounts were imported')
-			.isVisible()
-			.catch(() => false);
-		//console.log('Error text visible anywhere:', errorTextVisible);
-
 		// Should show error that no accounts were imported
 		await expectErrorMessage(page, 'No accounts were imported');
 	});

@@ -21,7 +21,7 @@
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
 	let importUi: any = $state(null);
-	const hasExistingNetworks = $derived(get(networks).length > 0);
+	const hasExistingNetworks = $derived($networks.length > 0);
 	const replaceDialogData = {
 		title: 'Replace Networks',
 		body: 'This will replace your current network configuration. All existing networks will be lost. Are you sure you want to continue?',

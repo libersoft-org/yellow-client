@@ -14,7 +14,7 @@
 	let replaceDialog: any = $state(null);
 	let pendingReplaceText = $state('');
 
-	const hasExistingAddresses = $derived(get(addressBook).length > 0);
+	const hasExistingAddresses = $derived($addressBook.length > 0);
 
 	const replaceDialogData = {
 		title: 'Replace Address Book',

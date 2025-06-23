@@ -715,7 +715,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 10000 });
 
 			// Verify some accounts were imported
-			await expect(page.getByTestId('account-address@user0@domain0.example.com@ws://localhost:8084')).toBeVisible();
+			await expect(page.getByTestId('account-address@user0@domain0.example.com@ws://server0.example.com:8084')).toBeVisible();
 		});
 
 		test('Handle malformed account data with detailed errors', async ({ page }) => {

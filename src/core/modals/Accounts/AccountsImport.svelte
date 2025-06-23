@@ -13,9 +13,8 @@
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
 	interface Props {
 		show?: boolean;
-		close: () => void;
 	}
-	let { show = $bindable(false), close }: Props = $props();
+	let { show = $bindable(false) }: Props = $props();
 	let replaceDialog: any = $state(null);
 	let conflictDialog: any = $state(null);
 	let currentConflictAccount: any = $state(null);
@@ -26,7 +25,7 @@
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
 	let importUi: any = $state(null);
-	const hasExistingAccounts = $derived(get(accounts_config).length > 0);
+	const hasExistingAccounts = $derived($accounts_config.length > 0);
 	const replaceDialogData = {
 		title: 'Replace Configuration',
 		body: 'This will replace your current account configuration. All existing accounts will be lost. Are you sure you want to continue?',
@@ -235,7 +234,7 @@
 	}
 </style>
 
-<Modal title="Import accounts" bind:show bind:close>
+<Modal title="Import accounts" bind:show>
 	{#snippet top()}
 		{#if successMessage}
 			<div class="success">

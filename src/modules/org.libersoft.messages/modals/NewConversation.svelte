@@ -32,6 +32,7 @@
 
 	export function open() {
 		show = true;
+		tick().then(() => addressInputRef?.focus());
 	}
 
 	export function close() {
