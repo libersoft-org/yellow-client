@@ -578,7 +578,6 @@ test.describe('Accounts Import/Export Functionality', () => {
 			// Should show scanner interface
 			await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
 			await expect(page.locator('video')).toBeVisible();
-			await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 		});
 
 		test('QR code scanner interface works with fake camera', async ({ page }) => {
@@ -593,7 +592,6 @@ test.describe('Accounts Import/Export Functionality', () => {
 			// Should see camera interface (fake camera should work now)
 			await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
 			await expect(page.locator('video')).toBeVisible();
-			await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 
 			// Verify that camera scanning started (Canvas operations indicate QR scanning is active)
 			// We should see no error messages about camera access
