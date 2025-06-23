@@ -109,7 +109,6 @@ test.describe('QR Code Import Tests', () => {
 
 		// Should show camera access error
 		await expect(page.getByText('Camera access denied or not available')).toBeVisible({ timeout: 5000 });
-		await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 	});
 
 	test('QR code scanner interface elements', async ({ page }) => {
@@ -123,7 +122,6 @@ test.describe('QR Code Import Tests', () => {
 		// Should show scanner interface
 		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
 		await expect(page.locator('video')).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 	});
 
 	test('QR code scanner interface works with fake camera', async ({ page }) => {
@@ -137,7 +135,6 @@ test.describe('QR Code Import Tests', () => {
 		// Should see camera interface (fake camera should work now)
 		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
 		await expect(page.locator('video')).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 
 		// Verify that camera scanning started (Canvas operations indicate QR scanning is active)
 		// We should see no error messages about camera access

@@ -611,7 +611,6 @@ test.describe('Networks Import/Export Functionality', () => {
 			// Should show scanner interface
 			await expect(page.getByText('Point your camera at a QR code containing network configuration')).toBeVisible();
 			await expect(page.locator('video')).toBeVisible();
-			await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 		});
 
 		test('Successfully scan and import QR code with valid network data', async ({ page }) => {

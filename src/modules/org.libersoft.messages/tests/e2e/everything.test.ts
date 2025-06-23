@@ -293,13 +293,7 @@ async function goToRootSettingsSection(page: Page): Promise<void> {
  */
 async function closeModal(page: Page, testId: string): Promise<void> {
 	return await test.step('Close modal', async () => {
-		try {
-			// Try the testId approach first
-			await page.getByTestId(testId + '-Modal-close').click({ timeout: 1000 });
-		} catch {
-			// Fallback: Use Escape key to close modal
-			await page.keyboard.press('Escape');
-		}
+		await page.getByTestId(testId + '-Modal-close').click({ timeout: 1000 });
 	});
 }
 
@@ -308,10 +302,7 @@ async function closeModal(page: Page, testId: string): Promise<void> {
  * @param page - The Playwright page object
  */
 async function closeForwardModal(page: Page): Promise<void> {
-	return await test.step('Close forward modal', async () => {
-		// Since ForwardMessage modal doesn't have a testId, use Escape key
-		await page.keyboard.press('Escape');
-	});
+	return await closeModal(page, 'forward-message');
 }
 
 /**

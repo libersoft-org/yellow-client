@@ -682,4 +682,4 @@
 </div>
 
 <Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />
+<Modal bind:show={$forwardMessageModalOpen} testId="forward-message" title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />
