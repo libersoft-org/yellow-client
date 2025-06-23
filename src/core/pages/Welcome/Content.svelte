@@ -13,7 +13,6 @@
 	let elDialogExit: InstanceType<typeof DialogExit>;
 
 	onMount(() => {
-		hideSidebarMobile.set(true);
 		if (!BROWSER) window.addEventListener('keydown', onKeydown);
 	});
 
