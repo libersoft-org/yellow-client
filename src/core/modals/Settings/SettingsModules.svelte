@@ -51,7 +51,7 @@
 
 	.item {
 		border-radius: 10px;
-		border: 1px solid var(--primary-background);
+		border: 1px solid var(--primary-foreground);
 		overflow: hidden;
 	}
 

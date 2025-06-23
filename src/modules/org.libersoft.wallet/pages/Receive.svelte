@@ -3,8 +3,6 @@
 	import { parseUnits } from 'ethers';
 	import { module } from '../module.ts';
 	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
-	import { mobileClass } from '@/core/stores.ts';
-	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
