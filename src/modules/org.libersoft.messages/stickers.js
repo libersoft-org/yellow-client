@@ -13,8 +13,8 @@ stickerLibraryUpdaterState.subscribe(state => {
 	console.log('stickerLibraryUpdaterState:', state);
 	window.stickerLibraryUpdaterState = state;
 });
-
-export let sticker_servers = localStorageSharedStore('sticker_servers', ['https://stickers.libersoft.org']);
+export const defaultStickerServers = ['https://stickers.libersoft.org'];
+export let sticker_servers = localStorageSharedStore('sticker_servers', defaultStickerServers);
 export let sticker_server_index = localStorageSharedStore('sticker_server_index', 0);
 export let sticker_server = localStorageSharedStore('sticker_server');
 
