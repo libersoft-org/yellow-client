@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { sticker_servers, defaultStickerServers } from '../stickers.js';
+	import DialogDefaultStickerServers from '../dialogs/DefaultStickerServers.svelte';
 	import DialogDeleteStickerServer from '../dialogs/DeleteStickerServer.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -12,6 +13,7 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	let elDialogDefaults;
 	let elDialogDelete;
 	let addUrl: string | null | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -47,6 +49,10 @@
 		inputElement?.focus();
 	}
 
+	function clickDefaults() {
+		elDialogDefaults.open();
+	}
+
 	function clickDel(url) {
 		serverUrl = url;
 		elDialogDelete.open();
@@ -67,7 +73,7 @@
 	}
 </style>
 
-<Button text="Reset to defaults" onClick={() => sticker_servers.set(defaultStickerServers)} />
+<Button text="Reset to defaults" onClick={clickDefaults} />
 <div class="row">
 	<Input placeholder="Add sticker server address" expand bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
 	<Button img="img/add.svg" text="Add" onClick={clickAdd} />
@@ -96,3 +102,4 @@
 	<Alert type="error" message={error} />
 {/if}
 <DialogDeleteStickerServer server={serverUrl} bind:this={elDialogDelete} />
+<DialogDefaultStickerServers bind:this={elDialogDefaults} />
