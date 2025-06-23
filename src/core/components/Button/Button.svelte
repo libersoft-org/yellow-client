@@ -49,7 +49,6 @@
 		background-color: var(--disabled-background) !important;
 		border-color: var(--disabled-foreground) !important;
 		color: var(--disabled-foreground) !important;
-		cursor: default;
 	}
 
 	.button.hidden-on-desktop {
