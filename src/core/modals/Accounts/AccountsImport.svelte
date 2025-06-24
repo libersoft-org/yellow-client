@@ -23,12 +23,12 @@
 	let successMessage = $state('');
 	let importUi: any = $state(null);
 	const hasExistingAccounts = $derived($accounts_config.length > 0);
-	const replaceDialogData = {
+	const dataDialogReplace = {
 		title: 'Replace Configuration',
 		body: 'This will replace your current account configuration. All existing accounts will be lost. Are you sure you want to continue?',
 		icon: 'img/import.svg',
 		buttons: [
-			{ text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
+			{ img: 'img/replace.svg', text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
 			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => elDialogReplace?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
 		],
 	};
@@ -41,7 +41,7 @@
 		elModal?.close();
 	}
 
-	const conflictDialogData = $derived({
+	const dataDialogConflict = $derived({
 		title: 'Account Already Exists',
 		body: currentConflictAccount ? `Account with address "${currentConflictAccount.credentials?.address || currentConflictAccount.address}" on server "${currentConflictAccount.credentials?.server || currentConflictAccount.server}" is already configured. What would you like to do?` : '',
 		icon: 'img/import.svg',
@@ -249,5 +249,5 @@
 		{/if}
 	{/snippet}
 </Modal>
-<Dialog data={replaceDialogData} bind:this={elDialogReplace} />
-<Dialog data={conflictDialogData} bind:this={elDialogConflict} />
+<Dialog data={dataDialogReplace} bind:this={elDialogReplace} />
+<Dialog data={dataDialogConflict} bind:this={elDialogConflict} />

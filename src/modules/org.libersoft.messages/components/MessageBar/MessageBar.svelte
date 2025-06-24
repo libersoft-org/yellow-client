@@ -20,7 +20,6 @@
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import VideoRecorderModalBody from '@/org.libersoft.messages/modals/VideoRecorderModalBody.svelte';
 	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-
 	let expressionsMenu;
 	let elBottomSheet;
 	let elAttachment;

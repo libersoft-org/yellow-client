@@ -71,7 +71,7 @@
 <Label text="Contract address">
 	<Input bind:value={item_contract_address} />
 </Label>
-<ButtonBar equalize>
+<ButtonBar equalize expand>
 	{#if params.item}
 		<Button img="img/save.svg" text="Save" onClick={clickEdit} />
 	{:else}

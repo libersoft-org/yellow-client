@@ -27,11 +27,11 @@
 	}
 </style>
 
-<div class="text">Would you like to delete the item "<span class="bold">{params.item.alias}</span>"?</div>
+<div class="text">Would you like to delete the item "<span class="bold">{params.item.alias}</span>" from address book?</div>
 {#if error}
 	<Alert type="error" message={error} />
 {/if}
 <ButtonBar expand>
-	<Button img="img/del.svg" text="Delete" onClick={clickDelete} />
-	<Button img="img/cancel.svg" text="Cancel" onClick={close} />
+	<Button img="img/check.svg" text="Yes" onClick={clickDelete} />
+	<Button img="img/cross.svg" text="No" onClick={close} />
 </ButtonBar>

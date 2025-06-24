@@ -117,4 +117,4 @@
 	{/if}
 </div>
 <Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:this={elModalAddEdit} />
-<Modal title={'Delete token'} body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:this={elModalDel} />
+<Modal title="Delete token" body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:this={elModalDel} />

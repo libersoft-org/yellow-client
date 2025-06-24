@@ -23,7 +23,7 @@
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
-	let idItem: string | null = $state(null);
+	let idItem: string | null | undefined = $state(null);
 	let modalKey: number = $state(0);
 	let elModalAccountsAddEdit;
 	let elModalAccountsDelete;

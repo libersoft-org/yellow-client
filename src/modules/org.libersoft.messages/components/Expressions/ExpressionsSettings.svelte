@@ -63,7 +63,7 @@
 			{/each}
 		</Select>
 	</Label>
-	<Button img="img/edit.svg" text="Manage gif servers" onClick={clickManageGifServers} />
+	<Button img="img/edit.svg" text="Manage GIF servers" onClick={clickManageGifServers} />
 </div>
 <DialogDeleteStickers bind:this={elDialogDeleteStickers} />
 <Modal title="Manage sticker servers" body={ModalStickerServers} bind:this={elModalStickerServers} width="400px" />
