@@ -300,7 +300,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await fillNetworksImportData(page, emptyArrayJson);
 			await clickAddNetworks(page);
 
-			await expectErrorMessage(page, 'No data provided');
+			await expectErrorMessage(page, 'No networks were imported');
 		});
 
 		test('Handle duplicate networks during Add networks - Replace Existing', async ({ page }) => {

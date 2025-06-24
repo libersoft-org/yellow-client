@@ -1,5 +1,7 @@
-import { derived, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import type { Message, Conversation } from '../types.ts';
+
+export let modalForwardMessageStore = writable<any>(null);
 
 export enum ForwardedMessageType {
 	MESSAGE = 'message',
@@ -55,15 +57,14 @@ export class ForwardMessageStore {
 		// Clear sent conversations when starting a new forward operation
 		this.clearSentToConversations();
 		this.setForwardedMessage(forwardedMessage);
-		forwardMessageModalOpen.set(true);
+		get(modalForwardMessageStore)?.open();
 	}
 
 	close() {
 		this.setForwardedMessage(null);
 		this.clearSentToConversations();
-		forwardMessageModalOpen.set(false);
+		get(modalForwardMessageStore)?.close();
 	}
 }
 
 export const forwardMessageStore = new ForwardMessageStore();
-export const forwardMessageModalOpen = writable(false);

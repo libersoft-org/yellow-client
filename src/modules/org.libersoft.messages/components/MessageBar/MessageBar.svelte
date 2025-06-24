@@ -41,6 +41,8 @@
 		expressionsHeight = value ? '250px' : '500px';
 	});
 
+	let { showFileUploadModal, setFileUploadModal } = getContext('FileUploadModal');
+
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
 			//if (value < lastDocumentHeight - 100) expressionsBottomSheetOpen = false;

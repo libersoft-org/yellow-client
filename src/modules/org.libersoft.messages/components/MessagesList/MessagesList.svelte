@@ -16,6 +16,7 @@
 	import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
 	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
 	import { log } from '@/core/tauri.ts';
+	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
 	export let conversation;
 	export let setBarFocus;
 	let scrollButtonVisible = true;
@@ -42,6 +43,9 @@
 	let scrolledToBottom0 = false;
 	let scrolledToBottom1 = false;
 	let wrapperWidth = null;
+	let elModalForwardMessage;
+	$: modalForwardMessageStore.set(elModalForwardMessage);
+
 	//let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 	let { setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 
@@ -682,4 +686,4 @@
 </div>
 
 <Modal bind:this={elModalStickersetDetails} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:this={elModalMessageOpen} testId="forward-message" title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />
+<Modal bind:this={elModalForwardMessage} testId="forward-message" title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />
