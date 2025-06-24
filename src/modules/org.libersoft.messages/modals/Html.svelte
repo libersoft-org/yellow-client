@@ -25,8 +25,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
-		width: 800px;
-		height: 480px;
 	}
 
 	.switch {
@@ -37,10 +35,7 @@
 </style>
 
 <div class="html">
-	<div class="switch">
-		<Switch bind:checked={isSideBySide} />
-		<div>Show editor and preview side by side</div>
-	</div>
+	<Switch showLabel label="Show editor and preview side by side" bind:checked={isSideBySide} />
 	{#if isSideBySide}
 		<HtmlSideBySide bind:text />
 	{:else}

@@ -13,6 +13,7 @@
 		center?: Snippet;
 		bottom?: Snippet;
 		params?: any;
+		max?: boolean;
 		optionalIcon?: {
 			img: string;
 			alt?: string;
@@ -25,8 +26,9 @@
 		onShowChange?: (show: boolean) => void;
 	}
 	let show = $state(false);
-	let { isOpen = $bindable(false), testId = '', children, top, center, bottom, params, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
-	let modalEl: HTMLDivElement | null = $state(null);
+	let maximized = $state(false);
+	let { isOpen = $bindable(false), testId = '', children, top, center, bottom, params, max, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
+	let elModal: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
 	let zIndex = $state(100);
@@ -39,7 +41,7 @@
 
 	$effect(() => {
 		if (!$isMobile) return;
-		if (modalEl && showContent && !isDragging) {
+		if (elModal && showContent && !isDragging) {
 			centerModal();
 			requestAnimationFrame(snapTransformIntoBounds);
 		}
@@ -55,21 +57,21 @@
 				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
 			} else {
 				requestAnimationFrame(() => {
-					if (modalEl && showContent) {
+					if (elModal && showContent) {
 						centerModal();
 					}
 				});
 			}
 		}
 
-		if (modalEl) {
+		if (elModal) {
 			let didInit = false;
 			resizeObserver = new ResizeObserver(() => {
 				if (isDragging) return;
 				if (didInit) handleResize();
 				else didInit = true;
 			});
-			resizeObserver.observe(modalEl);
+			resizeObserver.observe(elModal);
 		}
 
 		window.addEventListener('resize', handleResize);
@@ -97,7 +99,7 @@
 	async function showUpdated(showing: boolean) {
 		if (showing) {
 			await tick();
-			modalEl?.focus();
+			elModal?.focus();
 			showContent = true;
 			await tick();
 			centerModal();
@@ -108,25 +110,24 @@
 	}
 
 	function centerModal() {
-		if (!modalEl) return;
+		if (!elModal) return;
 		if ($isMobile) {
 			// On mobile, modal takes full width but centers vertically
-			const rect = modalEl.getBoundingClientRect();
+			const rect = elModal.getBoundingClientRect();
 			const y = (window.innerHeight - rect.height) / 2;
-			modalEl.style.transform = `translate3d(0px, ${y}px, 0)`;
+			elModal.style.transform = `translate3d(0px, ${y}px, 0)`;
 			return;
 		}
-
-		const rect = modalEl.getBoundingClientRect();
+		const rect = elModal.getBoundingClientRect();
 		const x = (window.innerWidth - rect.width) / 2;
 		const y = (window.innerHeight - rect.height) / 2;
-		modalEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+		elModal.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 	}
 
 	function snapTransformIntoBounds() {
-		if (!modalEl) return;
+		if (!elModal) return;
 		if (!$isMobile) return;
-		const rect = modalEl.getBoundingClientRect();
+		const rect = elModal.getBoundingClientRect();
 		const padding = 0;
 		let dx = 0;
 		let dy = 0;
@@ -135,19 +136,19 @@
 		if (rect.top < padding) dy = padding - rect.top;
 		else if (rect.bottom > window.innerHeight - padding) dy = window.innerHeight - padding - rect.bottom;
 		if (dx === 0 && dy === 0) return;
-		const matrix = new DOMMatrixReadOnly(getComputedStyle(modalEl).transform);
+		const matrix = new DOMMatrixReadOnly(getComputedStyle(elModal).transform);
 		const newX = matrix.m41 + dx;
 		const newY = matrix.m42 + dy;
 		if (!isDragging) {
-			modalEl.style.transition = 'none';
-			modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
-			modalEl.offsetHeight;
-			modalEl.style.transition = '';
+			elModal.style.transition = 'none';
+			elModal.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+			elModal.offsetHeight;
+			elModal.style.transition = '';
 		} else {
-			modalEl.style.transition = 'transform 0.2s ease';
-			modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+			elModal.style.transition = 'transform 0.2s ease';
+			elModal.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
 			setTimeout(() => {
-				if (modalEl) modalEl.style.transition = '';
+				if (elModal) elModal.style.transition = '';
 			}, 200);
 		}
 	}
@@ -158,6 +159,14 @@
 
 	export function close() {
 		setShow(false);
+	}
+
+	export function maximize() {
+		maximized = true;
+	}
+
+	export function restore() {
+		maximized = false;
 	}
 
 	const dragableConfig = {
@@ -218,6 +227,7 @@
 		border-radius: 10px;
 		box-shadow: var(--shadow);
 		background-color: var(--default-background);
+		/*transition: transform 0.4s ease;*/
 	}
 
 	:global(.modal.neodrag-dragging) .header {
@@ -231,6 +241,16 @@
 		/*height: 100%;*/
 		border-radius: 0px;
 		border: none;
+	}
+
+	.modal.max {
+		max-width: 100% !important;
+		max-height: 100% !important;
+		width: 100% !important;
+		height: 100% !important;
+		border-radius: 0px;
+		border: none;
+		transform: none !important;
 	}
 
 	.modal .header {
@@ -253,6 +273,11 @@
 
 	.modal .header .title :global(.icon) {
 		padding: 0 10px 0 0 !important;
+	}
+
+	.modal .header .icons {
+		display: flex;
+		padding: 5px;
 	}
 
 	.modal .body {
@@ -291,7 +316,7 @@
 		{#if $isMobile}
 			<div class="overlay" onpointerdown={close}></div>
 		{/if}
-		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
+		<div class="modal {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elModal} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
 				<div class="header" role="none" tabindex="-1">
 					{#if title}
@@ -303,8 +328,15 @@
 							{/if}
 							<div>{title}</div>
 						</div>
-						<div onpointerdown={e => e.stopPropagation()}>
-							<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable="--primary-foreground" alt="X" size="20px" padding="10px" onClick={close} />
+						<div class="icons">
+							{#if max}
+								<div onpointerdown={e => e.stopPropagation()}>
+									<Icon data-testid={testId + '-Modal-close'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable="--primary-foreground" alt="⛶" size="20px" padding="5px" onClick={() => (maximized ? restore() : maximize())} />
+								</div>
+							{/if}
+							<div onpointerdown={e => e.stopPropagation()}>
+								<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable="--primary-foreground" alt="X" size="20px" padding="5px" onClick={close} />
+							</div>
 						</div>
 					{/if}
 				</div>

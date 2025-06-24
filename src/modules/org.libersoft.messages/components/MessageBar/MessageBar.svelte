@@ -361,4 +361,4 @@
 {/if}
 <Modal title="Video recorder" body={VideoRecorderModalBody} bind:this={elModalVideoRecorder} />
 <Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={elModalFileUpload} />
-<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} />
+<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="600px" height="500px" max />

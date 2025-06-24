@@ -26,4 +26,4 @@
 	}
 </style>
 
-<textarea class="text" bind:this={elText} bind:value={text} rows="5" cols="30"></textarea>
+<textarea class="text" bind:this={elText} bind:value={text}></textarea>
