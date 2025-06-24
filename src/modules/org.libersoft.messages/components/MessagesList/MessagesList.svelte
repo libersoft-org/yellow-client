@@ -17,13 +17,13 @@
 	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
 	import { log } from '@/core/tauri.ts';
 	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
+	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	export let conversation;
 	export let setBarFocus;
 	let scrollButtonVisible = true;
 	let elMessages;
 	let elUnseenMarker;
 	let elModalStickersetDetails;
-	let elModalFileUpload;
 	let anchorElement;
 	let oldLastID = null;
 	let itemsCount = 0;
@@ -477,7 +477,7 @@
 		if (!isDraggingFiles) return;
 		// show overlay only if file upload modal is not shown
 		// but if user drops files to conversation it will still add them to the upload modal
-		if (!elModalFileUpload.isOpen && !showFileDndOverlay) showFileDndOverlay = true;
+		if (!get(modalFileUploadStore)?.isOpen && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
 	function onDragLeave(e) {

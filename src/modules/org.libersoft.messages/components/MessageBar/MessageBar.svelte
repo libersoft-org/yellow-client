@@ -19,6 +19,8 @@
 	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import VideoRecorderModalBody from '@/org.libersoft.messages/modals/VideoRecorderModalBody.svelte';
+	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+
 	let expressionsMenu;
 	let elBottomSheet;
 	let elAttachment;
@@ -35,6 +37,8 @@
 	let expressionsAsContextMenu = true;
 	let lastDocumentHeight = 0;
 	let videoInputRef;
+
+	$: modalFileUploadStore.set(elModalFileUpload);
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
