@@ -14,7 +14,7 @@
 	};
 
 	export function open() {
-		elDialog.open();
+		elDialog?.open();
 	}
 
 	async function clickButton() {

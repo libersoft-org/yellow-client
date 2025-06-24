@@ -23,7 +23,7 @@
 	function clickDel() {
 		console.log('clickDel');
 		delAccount(params.id);
-		elModal.close();
+		elModal?.close();
 	}
 </script>
 

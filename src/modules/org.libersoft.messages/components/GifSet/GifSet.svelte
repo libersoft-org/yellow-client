@@ -87,7 +87,7 @@
 	function sendGIF(item) {
 		const url = item.media_formats.gif?.url;
 		MessageBar.sendMessageHtml('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" ></Gif>');
-		menu?.close();
+		menu.close();
 	}
 </script>
 

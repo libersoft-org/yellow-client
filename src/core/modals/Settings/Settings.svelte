@@ -67,11 +67,11 @@
 	};
 
 	export function open() {
-		elBaseSettings.open();
+		elBaseSettings?.open();
 	}
 
 	export function close() {
-		elBaseSettings.close();
+		elBaseSettings?.close();
 	}
 </script>
 

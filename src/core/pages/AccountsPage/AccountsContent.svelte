@@ -43,25 +43,25 @@
 		idItem = null;
 		modalKey++; // Force modal component to recreate
 		console.log('[AccountsContent] Opening Add/Edit Account modal, idItem set to', idItem, 'modalKey:', modalKey);
-		elModalAccountsAddEdit.open();
+		elModalAccountsAddEdit?.open();
 	}
 
 	function clickEdit(id: string) {
 		idItem = id;
-		elModalAccountsAddEdit.open();
+		elModalAccountsAddEdit?.open();
 	}
 
 	const clickDel = (id: string) => {
 		idItem = id;
-		elModalAccountsDelete.open();
+		elModalAccountsDelete?.open();
 	};
 
 	function clickImport() {
-		elModalAccountsImport.open();
+		elModalAccountsImport?.open();
 	}
 
 	function clickExport() {
-		elModalAccountsExport.open();
+		elModalAccountsExport?.open();
 	}
 </script>
 

@@ -28,12 +28,12 @@
 	}
 
 	export function open() {
-		elModal.open();
+		elModal?.open();
 		tick().then(() => addressInputRef?.focus());
 	}
 
 	export function close() {
-		elModal.close();
+		elModal?.close();
 	}
 </script>
 

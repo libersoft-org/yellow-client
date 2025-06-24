@@ -29,7 +29,7 @@
 	}
 
 	function clickDefaults() {
-		elDialogDefaults.open();
+		elDialogDefaults?.open();
 	}
 
 	function clickAdd() {
@@ -55,7 +55,7 @@
 
 	function clickDel(url) {
 		serverUrl = url;
-		elDialogDelete.open();
+		elDialogDelete?.open();
 	}
 </script>
 

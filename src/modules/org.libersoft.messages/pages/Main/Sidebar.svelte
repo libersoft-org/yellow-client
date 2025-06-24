@@ -18,11 +18,11 @@
 	}
 
 	function clickNewConversation() {
-		$elModalNewConversation.open();
+		$elModalNewConversation?.open();
 	}
 
 	function clickMessagesSettings() {
-		elSettings.open();
+		elSettings?.open();
 	}
 
 	function clickItem(conversation) {

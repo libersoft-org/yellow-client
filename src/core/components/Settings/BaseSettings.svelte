@@ -44,11 +44,11 @@
 	});
 
 	export function open() {
-		elModal.open();
+		elModal?.open();
 	}
 
 	export function close() {
-		elModal.close();
+		elModal?.close();
 	}
 
 	export function setName(name: string) {

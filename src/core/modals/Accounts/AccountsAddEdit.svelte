@@ -11,13 +11,13 @@
 	let snippet_bottom: Snippet = $state(null);
 
 	export function open() {
-		if (elModal) elModal.open();
+		elModal?.open();
 	}
 
 	export function close() {
-		if (elModal) elModal.close();
+		elModal?.close();
 	}
 </script>
 
-<FormAddEdit bind:top={snippet_top} bind:bottom={snippet_bottom} {params} {show} close={() => (show = false)} />
+<FormAddEdit bind:top={snippet_top} bind:bottom={snippet_bottom} {params} close={() => (show = false)} />
 <Modal title={params.id === null ? 'Add a new account' : 'Edit account'} bind:this={elModal} top={snippet_top} bottom={snippet_bottom} />

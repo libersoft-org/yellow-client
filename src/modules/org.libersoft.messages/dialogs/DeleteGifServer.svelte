@@ -17,18 +17,18 @@
 	});
 
 	export function open() {
-		elDialog.open();
+		elDialog?.open();
 	}
 
 	function clickYes() {
 		gif_servers.update(servers => {
 			return servers.filter(s => s !== server);
 		});
-		elDialog.close();
+		elDialog?.close();
 	}
 
 	function clickNo() {
-		elDialog.close();
+		elDialog?.close();
 	}
 </script>
 

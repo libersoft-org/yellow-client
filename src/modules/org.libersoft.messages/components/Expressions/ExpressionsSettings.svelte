@@ -21,15 +21,15 @@
 	$: animateAll !== undefined && animate_all_expressions.set(animateAll);
 
 	function clickManageStickerServers() {
-		elModalStickerServers.open();
+		elModalStickerServers?.open();
 	}
 
 	function clickManageGifServers() {
-		elModalGifServers.open();
+		elModalGifServers?.open();
 	}
 
 	function clickDeleteStickersDatabase() {
-		elDialogDeleteStickers.open();
+		elDialogDeleteStickers?.open();
 	}
 </script>
 

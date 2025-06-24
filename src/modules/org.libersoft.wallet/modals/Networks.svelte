@@ -25,7 +25,7 @@
 	}
 </script>
 
-<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => elModalNetworks.open()} />
+<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => elModalNetworks?.open()} />
 <Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Table breakpoint="0">
 	<Tbody>

@@ -128,7 +128,7 @@
 		window.addEventListener('blur', () => isClientFocused.set(false));
 		//window.addEventListener('keydown', onkeydown);
 		window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-		if ($accounts_config.length === 0) elModalWelcome.open();
+		if ($accounts_config.length === 0) elModalWelcome?.open();
 		setupIframeListener();
 		// TODO: I don't know what this is, test out
 		//document.body.style.touchAction = 'none';

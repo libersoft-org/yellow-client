@@ -130,8 +130,8 @@
 <Paper>
 	<div class="body">
 		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => elModalNetworks.open()} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => elModalWallets.open()} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => elModalNetworks?.open()} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => elModalWallets?.open()} />
 		</div>
 		<div class="bar">
 			<div class="left">

@@ -29,21 +29,21 @@
 	function editNetwork(net) {
 		console.log('editNetwork', net);
 		modalItem = net;
-		elModalEditNetwork.open();
+		elModalEditNetwork?.open();
 	}
 
 	function tokenList(net) {
 		console.log('tokenList', net);
 		modalItemID = net.guid;
-		elModalTokenList.open();
+		elModalTokenList?.open();
 	}
 
 	function doImport() {
-		elModalSettingsNetworksImport.open();
+		elModalSettingsNetworksImport?.open();
 	}
 
 	function doExport() {
-		elModalSettingsNetworksExport.open();
+		elModalSettingsNetworksExport?.open();
 	}
 </script>
 

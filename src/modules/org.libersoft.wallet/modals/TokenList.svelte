@@ -35,7 +35,7 @@
 	function addTokenModal() {
 		console.log('ADD TOKEN MODAL');
 		modalItem = null;
-		elModalAddEdit.open();
+		elModalAddEdit?.open();
 	}
 
 	function onAdd(token) {
@@ -48,7 +48,7 @@
 	function editTokenModal(item) {
 		console.log('EDIT TOKEN MODAL:', item);
 		modalItem = item;
-		elModalAddEdit.open();
+		elModalAddEdit?.open();
 	}
 
 	function onEdit(token) {
@@ -60,7 +60,7 @@
 	function delTokenModal(item) {
 		console.log('DELETE TOKEN MODAL:', item);
 		modalItem = item;
-		elModalDel.open();
+		elModalDel?.open();
 	}
 
 	function onDel(token) {

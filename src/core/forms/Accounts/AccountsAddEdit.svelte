@@ -19,9 +19,8 @@
 		top?: Snippet;
 		bottom?: Snippet;
 		close: () => void;
-		show?: boolean;
 	}
-	let { params, isInWelcomeWizard = false, save_id, close, top = $bindable(), bottom = $bindable(), show = $bindable(false) }: Props = $props();
+	let { params, isInWelcomeWizard = false, save_id, close, top = $bindable(), bottom = $bindable() }: Props = $props();
 	let protocolElem: any = null;
 	let protocol = $state('amtp');
 	let error = $state('');

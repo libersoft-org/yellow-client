@@ -33,6 +33,14 @@
 		],
 	};
 
+	export function open() {
+		elModal?.open();
+	}
+
+	export function close() {
+		elModal?.close();
+	}
+
 	const conflictDialogData = $derived({
 		title: 'Account Already Exists',
 		body: currentConflictAccount ? `Account with address "${currentConflictAccount.credentials?.address || currentConflictAccount.address}" on server "${currentConflictAccount.credentials?.server || currentConflictAccount.server}" is already configured. What would you like to do?` : '',
@@ -108,7 +116,7 @@
 					// This is a success with warnings, not an error
 					throw new ImportSuccessWithWarnings(message);
 				} else {
-					elModal.close();
+					elModal?.close();
 				}
 			} else {
 				let message = 'No accounts were imported';
@@ -215,7 +223,7 @@
 		const newConfig = JSON.parse(text);
 		accounts_config.set(newConfig);
 		maybeActivateAccount();
-		elModal.close();
+		elModal?.close();
 	}
 </script>
 
@@ -233,7 +241,7 @@
 			<div class="success">
 				<Alert type="info" message={successMessage} />
 				<ButtonBar expand>
-					<Button img="img/cross.svg" text="Close" onClick={() => elModal.close()} />
+					<Button img="img/cross.svg" text="Close" onClick={() => elModal?.close()} />
 				</ButtonBar>
 			</div>
 		{:else}

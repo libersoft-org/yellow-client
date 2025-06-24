@@ -59,7 +59,7 @@
 		playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 		await sendTransaction($sendAddress, etherValue, etherValueFee, currency);
 		console.log('Transaction sent successfully');
-		elModalSend.open();
+		elModalSend?.open();
 	}
 </script>
 

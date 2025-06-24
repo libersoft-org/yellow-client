@@ -100,7 +100,7 @@
 	function openStickersetDetailsModal(stickerset) {
 		stickersetDetailsModalStickerset = stickerset;
 		//console.log('openStickersetDetailsModal:', stickerset);
-		elModalStickersetDetails.open();
+		elModalStickersetDetails?.open();
 	}
 
 	setContext('openStickersetDetailsModal', openStickersetDetailsModal);
@@ -628,7 +628,7 @@
 		<Button text="Save scroll position" onClick={saveScrollPosition} />
 		<Button text="Restore scroll position" onClick={restoreScrollPosition} />
 		<Button text="GC" onClick={gc} />
-		<Button text="Show debug modal" onClick={() => elModalDebug.open()} />
+		<Button text="Show debug modal" onClick={() => elModalDebug?.open()} />
 		<div>items count: {itemsCount}</div>
 		<div>messagesHeight: {messagesHeight}</div>
 		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>

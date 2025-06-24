@@ -22,11 +22,11 @@
 	let { data, width }: Props = $props();
 
 	export function open() {
-		if (elModal) elModal.open();
+		elModal?.open();
 	}
 
 	export function close() {
-		if (elModal) elModal.close();
+		elModal?.close();
 	}
 </script>
 

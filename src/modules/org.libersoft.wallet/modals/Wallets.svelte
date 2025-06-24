@@ -25,7 +25,7 @@
 	}
 </script>
 
-<Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallet addresses" onClick={() => elModalWallets.open()} />
+<Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallet addresses" onClick={() => elModalWallets?.open()} />
 <Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Accordion items={$wallets}>
 	{#snippet content(wallet)}

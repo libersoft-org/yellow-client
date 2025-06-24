@@ -27,7 +27,7 @@
 	}
 
 	function exit() {
-		elDialogExit.open();
+		elDialogExit?.open();
 	}
 
 	function clickLogo() {

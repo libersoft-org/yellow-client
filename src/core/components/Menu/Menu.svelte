@@ -68,12 +68,12 @@
 	}
 
 	function clickSettings() {
-		elSettings.open();
+		elSettings?.open();
 		clickMenuClose();
 	}
 
 	function exitApp() {
-		elDialogExit.open();
+		elDialogExit?.open();
 		clickMenuClose();
 	}
 </script>

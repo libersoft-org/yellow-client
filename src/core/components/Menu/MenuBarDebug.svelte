@@ -24,11 +24,11 @@
 	}
 
 	function openFiles1() {
-		elModalFiles1.open();
+		elModalFiles1?.open();
 	}
 
 	function openFiles2() {
-		elModalFiles2.open();
+		elModalFiles2?.open();
 	}
 </script>
 

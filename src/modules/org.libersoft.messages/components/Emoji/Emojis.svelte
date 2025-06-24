@@ -154,7 +154,7 @@
 				use:longpress
 				on:longpress={e => showAlts(e, emoji)}
 				on:mymousedown={() => {
-					altsMenu?.close();
+					altsMenu.close();
 				}}
 				on:click={() => clickEmoji(emoji.base)}
 				on:keydown={e => {}}

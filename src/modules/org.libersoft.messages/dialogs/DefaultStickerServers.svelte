@@ -13,16 +13,16 @@
 	});
 
 	export function open() {
-		elDialog.open();
+		elDialog?.open();
 	}
 
 	function clickYes() {
 		sticker_servers.set(defaultStickerServers);
-		elDialog.close();
+		elDialog?.close();
 	}
 
 	function clickNo() {
-		elDialog.close();
+		elDialog?.close();
 	}
 </script>
 
