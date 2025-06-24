@@ -2,13 +2,18 @@
 	import { accounts_config } from '@/core/core.ts';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Export from '@/core/components/Export/Export.svelte';
-	interface Props {
-		show?: boolean;
+	let elModal;
+
+	export function open() {
+		if (elModal) elModal.open();
 	}
-	let { show = $bindable(false) }: Props = $props();
+
+	export function close() {
+		if (elModal) elModal.close();
+	}
 </script>
 
-<Modal title="Export accounts" bind:show>
+<Modal title="Export accounts" bind:this={elModal}>
 	{#snippet top()}
 		<Export data={$accounts_config} filename="accounts" testId="accounts-export" isSensitive />
 	{/snippet}

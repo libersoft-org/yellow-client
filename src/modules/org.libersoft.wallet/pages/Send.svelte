@@ -17,7 +17,7 @@
 	let etherValue;
 	let etherValueFee;
 	let error;
-	let showSendModal = false;
+	let elModalSend;
 
 	$: if (!currency || !get(currencies).find(c => c == currency)) {
 		console.log('reset currency field:', currency, get(currencies));
@@ -57,15 +57,9 @@
 	async function send() {
 		console.log('SEND:', $sendAddress, etherValue, etherValueFee, currency);
 		playAudio('modules/' + module.identifier + '/audio/payment.mp3');
-		//showSendModal = true;
-		//try {
 		await sendTransaction($sendAddress, etherValue, etherValueFee, currency);
 		console.log('Transaction sent successfully');
-		showSendModal = true;
-		/*} catch (e) {
-   console.error('Error sending transaction:', e);
-   error = 'Error sending transaction';
-  }*/
+		elModalSend.open();
 	}
 </script>
 
@@ -95,4 +89,4 @@
 	{/if}
 	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 </div>
-<Modal title="Confirm send" bind:show={showSendModal} body={SendModal} />
+<Modal title="Confirm send" body={SendModal} bind:this={elModalSend} />

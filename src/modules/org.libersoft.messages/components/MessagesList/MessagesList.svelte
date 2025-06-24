@@ -15,14 +15,14 @@
 	import ScrollButton from '../ScrollButton/ScrollButton.svelte';
 	import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
 	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
-	import { forwardMessageModalOpen } from '../../stores/ForwardMessageStore.ts';
 	import { log } from '@/core/tauri.ts';
 	export let conversation;
 	export let setBarFocus;
 	let scrollButtonVisible = true;
-	let showDebugModal = false;
 	let elMessages;
 	let elUnseenMarker;
+	let elModalStickersetDetails;
+	let elModalFileUpload;
 	let anchorElement;
 	let oldLastID = null;
 	let itemsCount = 0;
@@ -31,7 +31,6 @@
 	let holes = [];
 	let uiEvents = [];
 	let stickersetDetailsModalStickerset;
-	let showStickersetDetailsModal = false;
 	let scrolledToBottom = true;
 	let windowInnerWidth;
 	let windowInnerHeight;
@@ -43,7 +42,8 @@
 	let scrolledToBottom0 = false;
 	let scrolledToBottom1 = false;
 	let wrapperWidth = null;
-	let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
+	//let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
+	let { setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 
 	$: scrollButtonVisible = !scrolledToBottom;
 	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
@@ -96,7 +96,7 @@
 	function openStickersetDetailsModal(stickerset) {
 		stickersetDetailsModalStickerset = stickerset;
 		//console.log('openStickersetDetailsModal:', stickerset);
-		showStickersetDetailsModal = true;
+		elModalStickersetDetails.open();
 	}
 
 	setContext('openStickersetDetailsModal', openStickersetDetailsModal);
@@ -473,7 +473,7 @@
 		if (!isDraggingFiles) return;
 		// show overlay only if file upload modal is not shown
 		// but if user drops files to conversation it will still add them to the upload modal
-		if (!$showFileUploadModal && !showFileDndOverlay) showFileDndOverlay = true;
+		if (!elModalFileUpload.isOpen && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
 	function onDragLeave(e) {
@@ -624,7 +624,7 @@
 		<Button text="Save scroll position" onClick={saveScrollPosition} />
 		<Button text="Restore scroll position" onClick={restoreScrollPosition} />
 		<Button text="GC" onClick={gc} />
-		<Button text="Show debug modal" onClick={() => (showDebugModal = !showDebugModal)} />
+		<Button text="Show debug modal" onClick={() => elModalDebug.open()} />
 		<div>items count: {itemsCount}</div>
 		<div>messagesHeight: {messagesHeight}</div>
 		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
@@ -681,5 +681,5 @@
 	{/if}
 </div>
 
-<Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:show={$forwardMessageModalOpen} testId="forward-message" title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />
+<Modal bind:this={elModalStickersetDetails} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
+<Modal bind:this={elModalMessageOpen} testId="forward-message" title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />

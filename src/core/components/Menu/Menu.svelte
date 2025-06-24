@@ -13,7 +13,7 @@
 		showMenu: boolean;
 	}
 	let { showMenu = $bindable(false) }: Props = $props();
-	let showModalSettings = $state(false);
+	let elSettings;
 	let elDialogExit: InstanceType<typeof DialogExit>;
 	let darkModeLocal = $state(false);
 
@@ -68,7 +68,7 @@
 	}
 
 	function clickSettings() {
-		showModalSettings = true;
+		elSettings.open();
 		clickMenuClose();
 	}
 
@@ -198,5 +198,5 @@
 		</div>
 	</div>
 </div>
-<Settings testId="global-settings" bind:show={showModalSettings} />
+<Settings testId="global-settings" bind:this={elSettings} />
 <DialogExit bind:this={elDialogExit} />

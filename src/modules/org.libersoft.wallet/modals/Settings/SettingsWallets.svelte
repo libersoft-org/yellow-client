@@ -16,12 +16,8 @@
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import { Mnemonic } from 'ethers';
-	let showModalPhrase: boolean = false;
+	let elModalPhrase;
 	let accordion;
-
-	function showNewWalletModal() {
-		showModalPhrase = true;
-	}
 
 	function afterAddWallet() {
 		accordion.handleClick(wallets.length - 1, true);
@@ -89,7 +85,7 @@
 </style>
 
 <ButtonBar equalize>
-	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Create wallet" onClick={showNewWalletModal} />
+	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Create wallet" onClick={() => elModalPhrase.open()} />
 	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
@@ -131,4 +127,4 @@
 		</div>
 	{/snippet}
 </Accordion>
-<Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />
+<Modal title="New wallet" body={ModalNewWallet} bind:this={elModalPhrase} />

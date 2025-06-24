@@ -14,12 +14,12 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
 	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
-	let showModalEditNetwork: boolean = false;
-	let showModalTokenList: boolean = false;
 	let modalItemID = null;
 	let modalItem = null;
-	let showSettingsNetworksExport: boolean = false;
-	let showSettingsNetworksImport: boolean = false;
+	let elModalSettingsNetworksImport;
+	let elModalSettingsNetworksExport;
+	let elModalEditNetwork;
+	let elModalTokenList;
 
 	function clickAddNetwork(net) {
 		console.log('clickAddNetwork', net);
@@ -29,21 +29,21 @@
 	function editNetwork(net) {
 		console.log('editNetwork', net);
 		modalItem = net;
-		showModalEditNetwork = true;
+		elModalEditNetwork.open();
 	}
 
 	function tokenList(net) {
 		console.log('tokenList', net);
 		modalItemID = net.guid;
-		showModalTokenList = true;
-	}
-
-	function doExport() {
-		showSettingsNetworksExport = true;
+		elModalTokenList.open();
 	}
 
 	function doImport() {
-		showSettingsNetworksImport = true;
+		elModalSettingsNetworksImport.open();
+	}
+
+	function doExport() {
+		elModalSettingsNetworksExport.open();
 	}
 </script>
 
@@ -110,7 +110,7 @@
 		</Tbody>
 	</Table>
 </div>
-<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:show={showModalEditNetwork} />
-<Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:show={showModalTokenList} />
-<Modal title="Export networks" body={SettingsNetworksExport} bind:show={showSettingsNetworksExport} />
-<Modal title="Import networks" body={SettingsNetworksImport} bind:show={showSettingsNetworksImport} />
+<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:this={elModalEditNetwork} />
+<Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} />
+<Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} />
+<Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} />

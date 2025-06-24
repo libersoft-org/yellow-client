@@ -17,40 +17,38 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import { module } from '../../module.ts';
 	import { addressBook } from '../../wallet.ts';
-	import { get } from 'svelte/store';
-
-	let showModalAddEdit = $state(false);
-	let showModalDel = $state(false);
-	let showModalExport = $state(false);
-	let showModalImport = $state(false);
+	let elModalAddEdit;
+	let elModalDel;
+	let elModalExport;
+	let elModalImport;
 	let edit = $state(false);
 	let modalItem = $state(null);
 
 	function addToAddressBookModal() {
 		modalItem = null;
 		edit = false;
-		showModalAddEdit = true;
+		elModalAddEdit.open();
 	}
 
 	function editItemModal(item) {
 		console.log('EDIT ADDRESSBOOK ITEM:', item);
 		modalItem = item;
 		edit = true;
-		showModalAddEdit = true;
+		elModalAddEdit.open();
 	}
 
 	function deleteItemModal(item) {
 		console.log('DELETE ADDRESSBOOK ITEM:', item);
 		modalItem = item;
-		showModalDel = true;
+		elModalDel.open();
 	}
 
 	function exportAddressBook() {
-		showModalExport = true;
+		elModalExport.open();
 	}
 
 	function importAddressBook() {
-		showModalImport = true;
+		elModalImport.open();
 	}
 </script>
 
@@ -98,8 +96,7 @@
 		</Table>
 	{/if}
 </div>
-
-<Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:show={showModalAddEdit} width="400px" />
-<Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:show={showModalDel} width="400px" />
-<Modal title="Export Address Book" body={ModalExport} params={{ close: () => (showModalExport = false) }} bind:show={showModalExport} width="600px" />
-<Modal title="Import Address Book" body={ModalImport} params={{ close: () => (showModalImport = false) }} bind:show={showModalImport} width="600px" />
+<Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:this={elModalAddEdit} width="400px" />
+<Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:this={elModalDel} width="400px" />
+<Modal title="Export Address Book" body={ModalExport} params={{ close: () => elModalExport.close() }} bind:this={elModalExport} width="600px" />
+<Modal title="Import Address Book" body={ModalImport} params={{ close: () => elModalImport.close() }} bind:this={elModalImport} width="600px" />

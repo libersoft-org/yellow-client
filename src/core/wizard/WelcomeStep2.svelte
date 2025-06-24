@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	//import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
 	import FormAddEdit from '@/core/forms/Accounts/AccountsAddEdit.svelte';
 	export let params;
 	let snippet_top: Snippet;
@@ -31,6 +30,3 @@
 		<div>{@render snippet_bottom()}</div>
 	</div>
 {/if}
-<!--
-	<ModalAccountsAddEdit isInWelcomeWizard {close} {save_id} params={{ id: params?.account_id ?? null }} />
--->

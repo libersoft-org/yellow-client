@@ -5,10 +5,6 @@
 	import SettingsNetworks from './SettingsNetworks.svelte';
 	import SettingsWallets from './SettingsWallets.svelte';
 	import SettingsAddressbook from './SettingsAddressbook.svelte';
-	interface Props {
-		show?: boolean;
-	}
-	let { show = $bindable(false) }: Props = $props();
 	let settingsObject = {
 		title: 'Wallet settings',
 		name: 'settings',
@@ -59,4 +55,4 @@
 	};
 </script>
 
-<BaseSettings {settingsObject} bind:show />
+<BaseSettings {settingsObject} />

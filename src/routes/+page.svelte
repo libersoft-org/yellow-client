@@ -48,7 +48,7 @@
 	};
 	let menus = [];
 	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
-	let showWelcomeWizard = false;
+	let elModalWelcome;
 	let content;
 	let isMenuOpen = false;
 	let sideBar;
@@ -128,10 +128,7 @@
 		window.addEventListener('blur', () => isClientFocused.set(false));
 		//window.addEventListener('keydown', onkeydown);
 		window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-		if ($accounts_config.length === 0) {
-			console.log('showWelcomeWizard = true');
-			showWelcomeWizard = true;
-		}
+		if ($accounts_config.length === 0) elModalWelcome.open();
 		setupIframeListener();
 		// TODO: I don't know what this is, test out
 		//document.body.style.touchAction = 'none';
@@ -362,4 +359,4 @@
 	</div>
 </div>
 <Menu bind:showMenu={isMenuOpen} />
-<Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} testId="welcome-wizard" />
+<Modal body={Wizard} bind:this={elModalWelcome} params={wizardData} testId="welcome-wizard" />

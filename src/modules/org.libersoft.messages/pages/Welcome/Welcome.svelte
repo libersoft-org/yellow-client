@@ -1,19 +1,17 @@
 <script lang="ts">
 	import { active_account, setModule } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
-	import { identifier, online, modalNewConversationStore } from '../../messages.js';
+	import { identifier, online, elModalNewConversation } from '../../messages.js';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import { get } from 'svelte/store';
-
 	const illustrations = ['man', 'woman', 'pigeon'];
 
 	function clickNew() {
-		get(modalNewConversationStore)?.open();
+		$elModalNewConversation?.open();
 	}
 
 	function back() {

@@ -11,12 +11,9 @@
 	import { active_account_id } from '@/core/stores.ts';
 	import { validateAccountsArray, validateAccountConfig } from '@/core/accounts_config.ts';
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
-	interface Props {
-		show?: boolean;
-	}
-	let { show = $bindable(false) }: Props = $props();
-	let replaceDialog: any = $state(null);
-	let conflictDialog: any = $state(null);
+	let elModal;
+	let elDialogReplace: any = $state(null);
+	let elDialogConflict: any = $state(null);
 	let currentConflictAccount: any = $state(null);
 	let remainingAccounts: any[] = $state([]);
 	let processedCount = $state(0);
@@ -32,7 +29,7 @@
 		icon: 'img/import.svg',
 		buttons: [
 			{ text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => elDialogReplace?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
 		],
 	};
 
@@ -43,7 +40,7 @@
 		buttons: [
 			{ text: 'Replace Existing', onClick: replaceConflictAccount, expand: true },
 			{ text: 'Skip This Account', onClick: skipConflictAccount, expand: true },
-			{ img: 'img/cancel.svg', text: 'Cancel import', onClick: () => conflictDialog?.close(), expand: true },
+			{ img: 'img/cancel.svg', text: 'Cancel import', onClick: () => elDialogConflict?.close(), expand: true },
 		],
 	});
 
@@ -92,7 +89,7 @@
 		pendingReplaceText = text;
 
 		if (currentConfig.length > 0) {
-			replaceDialog?.open();
+			elDialogReplace?.open();
 		} else {
 			await confirmReplaceWithText(text);
 		}
@@ -111,7 +108,7 @@
 					// This is a success with warnings, not an error
 					throw new ImportSuccessWithWarnings(message);
 				} else {
-					show = false;
+					elModal.close();
 				}
 			} else {
 				let message = 'No accounts were imported';
@@ -144,7 +141,7 @@
 		if (accountConfigExistsByCredentials(account.credentials?.server, account.credentials?.address)) {
 			// Account exists, show conflict dialog
 			currentConflictAccount = account;
-			conflictDialog?.open();
+			elDialogConflict?.open();
 		} else {
 			// Account doesn't exist, add it
 			accounts_config.update(current => [...current, account]);
@@ -172,7 +169,6 @@
 		if (currentConflictAccount) {
 			const newServer = currentConflictAccount.credentials?.server || currentConflictAccount.server;
 			const newAddress = currentConflictAccount.credentials?.address || currentConflictAccount.address;
-
 			// Find and replace the existing account
 			accounts_config.update(current => {
 				const identifier = `${newAddress}@${newServer}`;
@@ -186,15 +182,14 @@
 			maybeActivateAccount();
 			processedCount++;
 		}
-
-		conflictDialog?.close();
+		elDialogConflict?.close();
 		currentConflictAccount = null;
 		await importUi.doContinue(async () => await processNextAccount());
 	}
 
 	async function skipConflictAccount() {
 		skippedCount++;
-		conflictDialog?.close();
+		elDialogConflict?.close();
 		currentConflictAccount = null;
 		await importUi.doContinue(async () => await processNextAccount());
 	}
@@ -204,15 +199,13 @@
 			try {
 				await confirmReplaceWithText(pendingReplaceText);
 				pendingReplaceText = '';
-				replaceDialog?.close();
+				elDialogReplace?.close();
 			} catch (err) {
 				// Show error and keep dialog open so user can see the error
-				replaceDialog?.close();
+				elDialogReplace?.close();
 				throw err;
 			}
-		} else {
-			replaceDialog?.close();
-		}
+		} else elDialogReplace?.close();
 	}
 
 	async function confirmReplaceWithText(text: string) {
@@ -222,7 +215,7 @@
 		const newConfig = JSON.parse(text);
 		accounts_config.set(newConfig);
 		maybeActivateAccount();
-		show = false;
+		elModal.close();
 	}
 </script>
 
@@ -234,13 +227,13 @@
 	}
 </style>
 
-<Modal title="Import accounts" bind:show>
+<Modal title="Import accounts" bind:this={elModal}>
 	{#snippet top()}
 		{#if successMessage}
 			<div class="success">
 				<Alert type="info" message={successMessage} />
 				<ButtonBar expand>
-					<Button img="img/cross.svg" text="Close" onClick={() => (show = false)} />
+					<Button img="img/cross.svg" text="Close" onClick={() => elModal.close()} />
 				</ButtonBar>
 			</div>
 		{:else}
@@ -248,5 +241,5 @@
 		{/if}
 	{/snippet}
 </Modal>
-<Dialog data={replaceDialogData} bind:this={replaceDialog} />
-<Dialog data={conflictDialogData} bind:this={conflictDialog} />
+<Dialog data={replaceDialogData} bind:this={elDialogReplace} />
+<Dialog data={conflictDialogData} bind:this={elDialogConflict} />

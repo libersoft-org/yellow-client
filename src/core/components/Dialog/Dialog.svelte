@@ -18,15 +18,15 @@
 		onClick?: (e: Event) => void;
 		expand?: boolean;
 	}
+	let elModal;
 	let { data, width }: Props = $props();
-	let show = $state(false);
 
 	export function open() {
-		show = true;
+		if (elModal) elModal.open();
 	}
 
 	export function close() {
-		show = false;
+		if (elModal) elModal.close();
 	}
 </script>
 
@@ -37,7 +37,7 @@
 	}
 </style>
 
-<Modal title={data?.title} bind:show {width}>
+<Modal title={data?.title} {width} bind:this={elModal}>
 	{#snippet top()}
 		<div class="top">
 			{#if data?.icon}

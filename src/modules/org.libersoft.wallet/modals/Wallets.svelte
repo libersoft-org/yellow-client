@@ -15,7 +15,7 @@
 		close?: () => void;
 	}
 	let { close }: Props = $props();
-	let showModalWallets = $state(false);
+	let elModalWallets;
 	let filter = $state('');
 
 	function clickSelectAddress(wallet, address) {
@@ -25,7 +25,7 @@
 	}
 </script>
 
-<Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallet addresses" onClick={() => (showModalWallets = true)} />
+<Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallet addresses" onClick={() => elModalWallets.open()} />
 <Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Accordion items={$wallets}>
 	{#snippet content(wallet)}
@@ -44,4 +44,4 @@
 		</Table>
 	{/snippet}
 </Accordion>
-<Modal title="Manage wallets" body={ModalWallets} bind:show={showModalWallets} />
+<Modal title="Manage wallets" body={ModalWallets} bind:this={elModalWallets} />

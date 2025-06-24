@@ -23,12 +23,12 @@
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
-	let showAddEditAccountModal: boolean = $state(false);
-	let showDelAccountModal: boolean = $state(false);
-	let showImportModal: boolean = $state(false);
-	let showExportModal: boolean = $state(false);
 	let idItem: string | null = $state(null);
 	let modalKey: number = $state(0);
+	let elModalAccountsAddEdit;
+	let elModalAccountsDelete;
+	let elModalAccountsImport;
+	let elModalAccountsExport;
 
 	$effect(() => {
 		console.log('[AccountsContent] idItem:', idItem);
@@ -43,25 +43,25 @@
 		idItem = null;
 		modalKey++; // Force modal component to recreate
 		console.log('[AccountsContent] Opening Add/Edit Account modal, idItem set to', idItem, 'modalKey:', modalKey);
-		showAddEditAccountModal = true;
+		elModalAccountsAddEdit.open();
 	}
 
 	function clickEdit(id: string) {
 		idItem = id;
-		showAddEditAccountModal = true;
+		elModalAccountsAddEdit.open();
 	}
 
 	const clickDel = (id: string) => {
 		idItem = id;
-		showDelAccountModal = true;
+		elModalAccountsDelete.open();
 	};
 
-	function clickExport() {
-		showExportModal = true;
+	function clickImport() {
+		elModalAccountsImport.open();
 	}
 
-	function clickImport() {
-		showImportModal = true;
+	function clickExport() {
+		elModalAccountsExport.open();
 	}
 </script>
 
@@ -119,8 +119,8 @@
 	</Page>
 </Content>
 {#key modalKey}
-	<ModalAccountsAddEdit params={{ id: idItem || null }} bind:show={showAddEditAccountModal} />
+	<ModalAccountsAddEdit params={{ id: idItem || null }} bind:this={elModalAccountsAddEdit} />
 {/key}
-<ModalAccountsDelete params={{ id: idItem }} bind:show={showDelAccountModal} />
-<ModalAccountsImport bind:show={showImportModal} />
-<ModalAccountsExport bind:show={showExportModal} />
+<ModalAccountsDelete params={{ id: idItem }} bind:this={elModalAccountsDelete} />
+<ModalAccountsImport bind:this={elModalAccountsImport} />
+<ModalAccountsExport bind:this={elModalAccountsExport} />

@@ -15,7 +15,7 @@
 		close?: () => void;
 	}
 	let { close }: Props = $props();
-	let showModalNetworks = $state(false);
+	let elModalNetworks;
 	let filter = $state('');
 
 	function selectNetwork(id) {
@@ -25,7 +25,7 @@
 	}
 </script>
 
-<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => (showModalNetworks = true)} />
+<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => elModalNetworks.open()} />
 <Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Table breakpoint="0">
 	<Tbody>
@@ -40,4 +40,4 @@
 		{/each}
 	</Tbody>
 </Table>
-<Modal title="Manage networks" body={ModalNetworks} bind:show={showModalNetworks} />
+<Modal title="Manage networks" body={ModalNetworks} bind:this={elModalNetworks} />

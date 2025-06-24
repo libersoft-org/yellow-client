@@ -6,8 +6,8 @@
 	import Files from '@/core/debug/Files.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
-	let showFilesModal1: boolean = false;
-	let showFilesModal2: boolean = false;
+	let elModalFiles1;
+	let elModalFiles2;
 
 	async function err() {
 		throw new Error('Test exception!');
@@ -24,11 +24,11 @@
 	}
 
 	function openFiles1() {
-		showFilesModal1 = !showFilesModal1;
+		elModalFiles1.open();
 	}
 
 	function openFiles2() {
-		showFilesModal2 = !showFilesModal2;
+		elModalFiles2.open();
 	}
 </script>
 
@@ -40,5 +40,5 @@
 	<Button onClick={openFiles2} text="F2" />
 {/if}
 
-<Modal title="File Operations Test1" body={Files} bind:show={showFilesModal1} width="90%" />
-<Modal title="File Operations Test2" body={Files} bind:show={showFilesModal2} width="90%" />
+<Modal title="File Operations Test1" body={Files} bind:this={elModalFiles1} width="90%" />
+<Modal title="File Operations Test2" body={Files} bind:this={elModalFiles2} width="90%" />
