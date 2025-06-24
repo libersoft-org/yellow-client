@@ -88,8 +88,8 @@
 		content: '';
 		height: 26px;
 		width: 26px;
-		left: 4px;
-		bottom: 4px;
+		left: 3px;
+		bottom: 3px;
 		background-color: var(--primary-foreground);
 		border-radius: 50%;
 	}
