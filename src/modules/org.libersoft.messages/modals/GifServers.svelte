@@ -56,9 +56,6 @@
 	function clickDel(url) {
 		serverUrl = url;
 		elDialogDelete?.open();
-		gif_servers.update(servers => {
-			return servers.filter(s => s !== url);
-		});
 		inputElement.focus();
 	}
 </script>
