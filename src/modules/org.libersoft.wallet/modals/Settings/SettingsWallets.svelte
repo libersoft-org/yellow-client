@@ -69,6 +69,10 @@
 			)
 		);
 	}
+
+	function closeModal() {
+		elModalPhrase.close();
+	}
 </script>
 
 <style>
@@ -127,4 +131,4 @@
 		</div>
 	{/snippet}
 </Accordion>
-<Modal title="New wallet" body={ModalNewWallet} bind:this={elModalPhrase} />
+<Modal title="New wallet" body={ModalNewWallet} width="600px" bind:this={elModalPhrase} />

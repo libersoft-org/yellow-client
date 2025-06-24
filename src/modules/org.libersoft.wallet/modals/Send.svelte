@@ -25,10 +25,10 @@
 </script>
 
 {#if params}
+	<div>Would you really like to send this transaction?</div>
 	<div>Address: <span class="bold">{params.address}</span></div>
 	<div>Amount: <span class="bold">{params.amount} {params.currency}</span></div>
 	<div>Transaction fee: <span class="bold">{params.fee}</span></div>
-	<div>Would you really like to send this transaction?</div>
 	<ButtonBar expand>
 		<Button img="img/check.svg" text="Yes" onClick={send} />
 		<Button img="img/cross.svg" text="Cancel" onClick={close} />

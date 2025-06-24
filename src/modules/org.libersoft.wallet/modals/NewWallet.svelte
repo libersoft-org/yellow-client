@@ -140,4 +140,5 @@
 	<Button img="img/save.svg" text="Save" onClick={save} />
 	<Button img="modules/{module.identifier}/img/print.svg" text="Print" onClick={print} />
 	<Button img="modules/{module.identifier}/img/regenerate.svg" text="Regenerate" onClick={regenerate} />
+	<Button img="img/cancel.svg" text="Close" onClick={close} />
 </ButtonBar>

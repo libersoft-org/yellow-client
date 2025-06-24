@@ -64,4 +64,4 @@
 	{/if}
 	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 </div>
-<Modal title="Confirm your transaction" body={SendModal} {params} bind:this={elModalSend} close={() => elModalSend?.close()} />
+<Modal title="Confirm your transaction" body={SendModal} {params} bind:this={elModalSend} />

@@ -16,10 +16,10 @@
 	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
 	let modalItemID = null;
 	let modalItem = null;
-	let elModalSettingsNetworksImport;
-	let elModalSettingsNetworksExport;
 	let elModalEditNetwork;
 	let elModalTokenList;
+	let elModalSettingsNetworksImport;
+	let elModalSettingsNetworksExport;
 
 	function clickAddNetwork(net) {
 		console.log('clickAddNetwork', net);
@@ -112,5 +112,5 @@
 </div>
 <Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:this={elModalEditNetwork} />
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} />
-<Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} />
 <Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} />
+<Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} />

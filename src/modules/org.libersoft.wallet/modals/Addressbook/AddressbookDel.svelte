@@ -2,6 +2,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { addressBook } from '../../wallet.ts';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	interface Props {
 		close: () => void;
 		params: {
@@ -26,8 +27,11 @@
 	}
 </style>
 
-<div class="text">Would you like to delete the item "{params.item.alias}"?</div>
+<div class="text">Would you like to delete the item "<span class="bold">{params.item.alias}</span>"?</div>
 {#if error}
 	<Alert type="error" message={error} />
 {/if}
-<Button img="img/del.svg" text="Delete" onClick={clickDelete} />
+<ButtonBar expand>
+	<Button img="img/del.svg" text="Delete" onClick={clickDelete} />
+	<Button img="img/cancel.svg" text="Cancel" onClick={close} />
+</ButtonBar>

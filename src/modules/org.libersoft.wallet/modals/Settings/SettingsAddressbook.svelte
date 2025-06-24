@@ -98,5 +98,5 @@
 </div>
 <Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:this={elModalAddEdit} width="400px" />
 <Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:this={elModalDel} width="400px" />
-<Modal title="Export Address Book" body={ModalExport} params={{ close: () => elModalExport?.close() }} bind:this={elModalExport} width="600px" />
-<Modal title="Import Address Book" body={ModalImport} params={{ close: () => elModalImport?.close() }} bind:this={elModalImport} width="600px" />
+<Modal title="Import address book" body={ModalImport} params={{ close: () => elModalImport?.close() }} bind:this={elModalImport} width="600px" />
+<Modal title="Export address book" body={ModalExport} params={{ close: () => elModalExport?.close() }} bind:this={elModalExport} width="600px" />
