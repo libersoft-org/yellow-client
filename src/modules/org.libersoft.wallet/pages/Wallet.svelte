@@ -16,18 +16,21 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalNetworks from '../modals/Networks.svelte';
 	import ModalWallets from '../modals/Wallets.svelte';
-	let elModalNetworks = false;
-	let elModalWallets = false;
+	let elSettings;
+	let elModalNetworks;
+	let elModalWallets;
 	let showSettings = false;
 	let addressElement;
 
 	function clickCopyAddress() {
-		navigator.clipboard
-			.writeText($selectedAddress.address)
-			.then(() => console.log('Address copied to clipboard'))
-			.catch(err => console.error('Error while copying to clipboard', err));
-		addressElement.innerHTML = 'Copied!';
-		setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
+		if ($selectedAddress) {
+			navigator.clipboard
+				.writeText($selectedAddress.address)
+				.then(() => console.log('Address copied to clipboard'))
+				.catch(err => console.error('Error while copying to clipboard', err));
+			addressElement.innerHTML = 'Copied!';
+			setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
+		}
 	}
 
 	selectedNetwork.subscribe(v => {
@@ -158,7 +161,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => (showSettings = true)} />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => elSettings.open()} />
 			</div>
 		</div>
 		<div class="buttons">
@@ -184,6 +187,6 @@
 		</div>
 	</div>
 </Paper>
-<Settings bind:show={showSettings} />
+<Settings bind:this={elSettings} />
 <Modal title="Select your network" body={ModalNetworks} bind:this={elModalNetworks} width="500px" />
 <Modal title="Select your address" body={ModalWallets} bind:this={elModalWallets} width="500px" />
