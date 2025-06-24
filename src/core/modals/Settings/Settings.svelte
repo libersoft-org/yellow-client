@@ -7,9 +7,9 @@
 	import SettingsAppearanceTheme from './SettingsAppearanceTheme.svelte';
 	interface Props {
 		testId?: string;
-		show?: boolean;
 	}
-	let { testId = '', show = $bindable(false) }: Props = $props();
+	let { testId = '' }: Props = $props();
+	let elBaseSettings;
 	let settingsObject = {
 		title: 'Settings',
 		name: 'settings',
@@ -65,6 +65,14 @@
 			},
 		],
 	};
+
+	export function open() {
+		elBaseSettings.open();
+	}
+
+	export function close() {
+		elBaseSettings.close();
+	}
 </script>
 
-<BaseSettings {testId} {settingsObject} bind:show />
+<BaseSettings {testId} {settingsObject} bind:this={elBaseSettings} />

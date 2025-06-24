@@ -40,7 +40,7 @@ export let emojisByCodepointsRgi = relay(md, 'emojisByCodepointsRgi');
 export let emojisLoading = relay(md, 'emojisLoading');
 export let showGallery = relay(md, 'showGallery');
 export let galleryFile = relay(md, 'galleryFile');
-export let modalNewConversationStore = writable();
+export let elModalNewConversation = writable();
 
 class Message {
 	constructor(acc, data) {

@@ -16,8 +16,8 @@
 	import { module } from '../module.ts';
 	export let params;
 	let net;
-	let showModalAddEdit = false;
-	let showModalDel = false;
+	let elModalAddEdit;
+	let elModalDel;
 	let modalItem = null;
 
 	$: update($networks, params);
@@ -35,7 +35,7 @@
 	function addTokenModal() {
 		console.log('ADD TOKEN MODAL');
 		modalItem = null;
-		showModalAddEdit = true;
+		elModalAddEdit.open();
 	}
 
 	function onAdd(token) {
@@ -48,7 +48,7 @@
 	function editTokenModal(item) {
 		console.log('EDIT TOKEN MODAL:', item);
 		modalItem = item;
-		showModalAddEdit = true;
+		elModalAddEdit.open();
 	}
 
 	function onEdit(token) {
@@ -60,7 +60,7 @@
 	function delTokenModal(item) {
 		console.log('DELETE TOKEN MODAL:', item);
 		modalItem = item;
-		showModalDel = true;
+		elModalDel.open();
 	}
 
 	function onDel(token) {
@@ -116,5 +116,5 @@
 		</Table>
 	{/if}
 </div>
-<Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
-<Modal title={'Delete token'} body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:show={showModalDel} />
+<Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:this={elModalAddEdit} />
+<Modal title={'Delete token'} body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:this={elModalDel} />

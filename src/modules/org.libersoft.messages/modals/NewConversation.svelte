@@ -7,15 +7,12 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	interface Props {
-		show?: boolean;
-	}
-	let { show = $bindable(false) }: Props = $props();
+	let elModal;
 	let addressInputRef = $state<HTMLInputElement>();
 	let value = $state('');
 
 	$effect(() => {
-		if (!show || !addressInputRef) return;
+		if (!elModal.isOpen || !addressInputRef) return;
 		tick().then(() => addressInputRef?.focus());
 	});
 
@@ -31,16 +28,16 @@
 	}
 
 	export function open() {
-		show = true;
+		elModal.open();
 		tick().then(() => addressInputRef?.focus());
 	}
 
 	export function close() {
-		show = false;
+		elModal.close();
 	}
 </script>
 
-<Modal title="New conversation" bind:show>
+<Modal title="New conversation" bind:this={elModal}>
 	{#snippet top()}
 		<Label text={m['messages.new_conversation.address']()} row>
 			<Input data-testid="new-conversation-address" expand placeholder="user@domain.tld" {onKeydown} bind:inputRef={addressInputRef} bind:value />

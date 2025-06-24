@@ -18,7 +18,6 @@
 	import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
 	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
-	// import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
 	import VideoRecorderModalBody from '@/org.libersoft.messages/modals/VideoRecorderModalBody.svelte';
 	let expressionsMenu;
 	let elBottomSheet;
@@ -26,20 +25,23 @@
 	let elExpressions;
 	let elMessage;
 	let elMessageBar;
+	let elModalVideoRecorder;
+	let elModalFileUpload;
+	let elModalHTML;
 	let text;
 	let expressions;
-	let showHTMLModal = false;
 	let expressionsHeight = '500px';
 	let expressionsBottomSheetOpen = false;
 	let expressionsAsContextMenu = true;
 	let lastDocumentHeight = 0;
 	let videoInputRef;
-	let showVideoRecorderModal = false;
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 		expressionsHeight = value ? '250px' : '500px';
 	});
+
+	let { showFileUploadModal, setFileUploadModal } = getContext('FileUploadModal');
 
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
@@ -179,14 +181,12 @@
 	}
 
 	function sendHTML() {
-		showHTMLModal = true;
+		elModalHTML.open();
 	}
 
 	function sendLocation() {
 		console.log('clicked on location');
 	}
-
-	let { showFileUploadModal, setFileUploadModal } = getContext('FileUploadModal');
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
@@ -316,7 +316,7 @@
 			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur}></textarea>
 			<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
 			{#if !elMessage?.value}
-				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
+				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => elModalVideoRecorder.open()} />
 				<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
 			{:else}
 				<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
@@ -338,11 +338,6 @@
 		<Expressions bind:this={expressions} height={expressionsHeight} />
 	</ContextMenu>
 {/if}
-<!--
-<Modal body={Expressions} width="363px" bind:show={showExpressions} />
--->
-<Modal title="HTML composer" body={ModalHtml} bind:show={showHTMLModal} />
-<Modal title="File Upload" body={ModalFileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
 {#if $debug}
 	<Clickable
 		onClick={() => {
@@ -360,5 +355,6 @@
 		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet />
 	</div>
 {/if}
-
-<Modal title="Video recorder" body={VideoRecorderModalBody} bind:show={showVideoRecorderModal} />
+<Modal title="Video recorder" body={VideoRecorderModalBody} bind:this={elModalVideoRecorder} />
+<Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={elModalFileUpload} />
+<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} />

@@ -6,13 +6,13 @@
 	import { delAccount } from '@/core/accounts_config.js';
 	import { accounts } from '@/core/accounts.ts';
 	interface Props {
-		show?: boolean;
 		params: {
 			id: string;
 			name: string;
 		};
 	}
-	let { show = $bindable(false), params = $bindable() }: Props = $props();
+	let { params = $bindable() }: Props = $props();
+	let elModal;
 	let account = derived([accounts], ([$accounts]) => {
 		console.log('[INIT] Modal mounted. Params:', params);
 		const found = $accounts.find(acc => get(acc).id === params.id);
@@ -23,11 +23,11 @@
 	function clickDel() {
 		console.log('clickDel');
 		delAccount(params.id);
-		show = false;
+		elModal.close();
 	}
 </script>
 
-<Modal title="Delete the account" bind:show>
+<Modal title="Delete the account" bind:this={elModal}>
 	{#snippet top()}
 		<div class="accounts-delete">
 			<span>Would you like to delete the account </span>
@@ -46,7 +46,7 @@
 	{#snippet bottom()}
 		<ButtonBar expand>
 			<Button img="img/del.svg" text="Delete" onClick={clickDel} />
-			<Button img="img/cancel.svg" text="Cancel" onClick={() => (show = false)} />
+			<Button img="img/cancel.svg" text="Cancel" onClick={() => elModal.close()} />
 		</ButtonBar>
 	{/snippet}
 </Modal>

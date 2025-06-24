@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
+	import { mobileClass, isMobile, debug } from '@/core/stores.ts';
 	import { draggable } from '@neodrag/svelte';
-	import { debug } from '@/core/stores.ts';
-	import { mobileClass, isMobile } from '@/core/stores.ts';
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
 	interface Props {
+		isOpen: boolean;
 		testId?: string;
-		show?: boolean;
 		children?: Snippet;
 		top?: Snippet;
 		center?: Snippet;
@@ -25,7 +24,8 @@
 		height?: string;
 		onShowChange?: (show: boolean) => void;
 	}
-	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
+	let show = $state(false);
+	let { isOpen = $bindable(false), testId = '', children, top, center, bottom, params, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
 	let modalEl: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -33,6 +33,9 @@
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
+
+	setContext('setTitle', setTitle);
+	setContext('Popup', { close });
 
 	$effect(() => {
 		if (!$isMobile) return;
@@ -63,11 +66,8 @@
 			let didInit = false;
 			resizeObserver = new ResizeObserver(() => {
 				if (isDragging) return;
-				if (didInit) {
-					handleResize();
-				} else {
-					didInit = true;
-				}
+				if (didInit) handleResize();
+				else didInit = true;
 			});
 			resizeObserver.observe(modalEl);
 		}
@@ -109,7 +109,6 @@
 
 	function centerModal() {
 		if (!modalEl) return;
-
 		if ($isMobile) {
 			// On mobile, modal takes full width but centers vertically
 			const rect = modalEl.getBoundingClientRect();
@@ -176,6 +175,7 @@
 
 	function setShow(value: boolean) {
 		show = value;
+		isOpen = value;
 		onShowChange?.(value);
 	}
 
@@ -190,9 +190,6 @@
 	function setTitle(value: string) {
 		title = value;
 	}
-
-	setContext('setTitle', setTitle);
-	setContext('Popup', { close });
 </script>
 
 <style>

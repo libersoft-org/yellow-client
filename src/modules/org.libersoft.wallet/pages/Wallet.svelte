@@ -16,10 +16,10 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalNetworks from '../modals/Networks.svelte';
 	import ModalWallets from '../modals/Wallets.svelte';
-	let showModalNetworks = false;
-	let showModalWallets = false;
+	let elModalNetworks = false;
+	let elModalWallets = false;
+	let showSettings = false;
 	let addressElement;
-	let showModalSettings = false;
 
 	function clickCopyAddress() {
 		navigator.clipboard
@@ -130,8 +130,8 @@
 <Paper>
 	<div class="body">
 		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (showModalNetworks = true)} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (showModalWallets = true)} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => elModalNetworks.open()} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => elModalWallets.open()} />
 		</div>
 		<div class="bar">
 			<div class="left">
@@ -158,7 +158,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => (showModalSettings = true)} />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => (showSettings = true)} />
 			</div>
 		</div>
 		<div class="buttons">
@@ -184,6 +184,6 @@
 		</div>
 	</div>
 </Paper>
-<Settings bind:show={showModalSettings} />
-<Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} width="500px" />
-<Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} width="500px" />
+<Settings bind:show={showSettings} />
+<Modal title="Select your network" body={ModalNetworks} bind:this={elModalNetworks} width="500px" />
+<Modal title="Select your address" body={ModalWallets} bind:this={elModalWallets} width="500px" />

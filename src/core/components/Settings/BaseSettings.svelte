@@ -7,8 +7,8 @@
 	interface Props {
 		testId?: string;
 		settingsObject?: any;
-		show?: boolean;
 	}
+	let elModal;
 	/*
 	interface SettingsNode {
 		name: string;
@@ -31,23 +31,29 @@
 		onClick?: (e: Event) => void;
 	};
 	*/
-	let { testId = '', settingsObject, show = $bindable(false) }: Props = $props();
+	let { testId = '', settingsObject }: Props = $props();
 	let activeName = $state(settingsObject.name);
 	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
 	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
 	const breadcrumb = $derived(makeBreadcrumb(activeName));
 
+	setContext('setSettingsSection', setName);
+
 	$effect(() => {
-		if (show) {
-			activeName = settingsObject.name;
-		}
+		if (elModal.isOpen) activeName = settingsObject.name;
 	});
+
+	export function open() {
+		elModal.open();
+	}
+
+	export function close() {
+		elModal.close();
+	}
 
 	export function setName(name: string) {
 		activeName = name;
 	}
-
-	setContext('setSettingsSection', setName);
 
 	function goBack() {
 		activeName = findNode(settingsObject, activeName)?.__parent?.name ?? settingsObject.name;
@@ -95,7 +101,7 @@
 	}
 </style>
 
-<Modal {testId} title={settingsObject.title} bind:show width="600px" optionalIcon={backIcon}>
+<Modal {testId} title={settingsObject.title} bind:this={elModal} width="600px" optionalIcon={backIcon}>
 	<div class="settings">
 		{#if activeName !== settingsObject.name}
 			<Breadcrumb items={breadcrumb} />

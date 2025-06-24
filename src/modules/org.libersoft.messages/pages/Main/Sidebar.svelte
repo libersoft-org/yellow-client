@@ -1,14 +1,11 @@
 <script>
-	import { identifier, conversationsArray, selectConversation, modalNewConversationStore } from '../../messages.js';
+	import { identifier, conversationsArray, selectConversation, elModalNewConversation } from '../../messages.js';
 	import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
 	import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
 	import ModalNewConversation from '../../modals/NewConversation.svelte';
 	import Settings from '../../modals/Settings/Settings.svelte';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
-	import { get } from 'svelte/store';
-
-	let showNewConversationModal = false;
-	let showMessageSettings = false;
+	let elSettings;
 	let scrollButtonVisible;
 	let elItems;
 	let scrolled = false;
@@ -21,11 +18,11 @@
 	}
 
 	function clickNewConversation() {
-		get(modalNewConversationStore).open();
+		$elModalNewConversation.open();
 	}
 
 	function clickMessagesSettings() {
-		showMessageSettings = true;
+		elSettings.open();
 	}
 
 	function clickItem(conversation) {
@@ -81,6 +78,6 @@
 			<ScrollButton visible={scrollButtonVisible} direction right="15px" bottom="10px" onClick={scrollToTop} />
 		{/if}
 	</div>
-	<ModalNewConversation bind:this={$modalNewConversationStore} bind:show={showNewConversationModal} />
-	<Settings bind:show={showMessageSettings} />
+	<ModalNewConversation bind:this={$elModalNewConversation} />
+	<Settings bind:this={elSettings} />
 {/if}
