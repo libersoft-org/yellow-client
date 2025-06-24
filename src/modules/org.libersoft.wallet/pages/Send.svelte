@@ -1,9 +1,7 @@
-<script>
-	import { get } from 'svelte/store';
+<script lang="ts">
 	import { parseUnits } from 'ethers';
-	import { sendAddress, currencies, selectedMainCurrencySymbol, sendTransaction, selectedNetwork, selectedAddress } from '../wallet.ts';
+	import { sendAddress, currencies, selectedMainCurrencySymbol, selectedNetwork, selectedAddress } from '../wallet.ts';
 	import { module } from '../module.ts';
-	import { playAudio } from '@/core/notifications.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -11,54 +9,31 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import SendModal from '../modals/Send.svelte';
-	let currency = '';
-	let amount = 0;
-	let fee = 0;
-	let etherValue;
-	let etherValueFee;
-	let error;
+	let currency: string | null | undefined;
+	let amount: string | number | undefined = 0;
+	let fee: string | number | undefined = 0;
+	let error: string | null | undefined;
 	let elModalSend;
+	let params;
 
-	$: if (!currency || !get(currencies).find(c => c == currency)) {
-		console.log('reset currency field:', currency, get(currencies));
-		currency = $selectedMainCurrencySymbol;
-	}
-	$: console.log('currencies:', $currencies);
-	$: console.log('currency:', currency);
-	$: updateAmount(amount);
-	$: updateFee(fee);
-
-	function updateAmount(amount) {
-		console.log('amount:', amount);
+	function getEtherAmount(amount) {
+		error = null;
 		try {
-			etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
-			console.log('etherValue:', etherValue.toString());
+			let etherAmount: bigint = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
+			return etherAmount;
 		} catch (e) {
 			error = 'Invalid amount';
-			console.log('Invalid amount:', e);
-			return;
+			return null;
 		}
-		error = '';
-	}
-
-	function updateFee(amount) {
-		console.log('fee:', amount);
-		try {
-			etherValueFee = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
-			console.log('etherValueFee:', etherValueFee.toString());
-		} catch (e) {
-			error = 'Invalid fee';
-			console.log('Invalid fee:', e);
-			return;
-		}
-		error = '';
 	}
 
 	async function send() {
-		console.log('SEND:', $sendAddress, etherValue, etherValueFee, currency);
-		playAudio('modules/' + module.identifier + '/audio/payment.mp3');
-		await sendTransaction($sendAddress, etherValue, etherValueFee, currency);
-		console.log('Transaction sent successfully');
+		params = {
+			address: $sendAddress,
+			amount: getEtherAmount(amount),
+			fee: getEtherAmount(fee),
+			currency: currency,
+		};
 		elModalSend?.open();
 	}
 </script>
@@ -89,4 +64,4 @@
 	{/if}
 	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 </div>
-<Modal title="Confirm send" body={SendModal} bind:this={elModalSend} />
+<Modal title="Confirm your transaction" body={SendModal} {params} bind:this={elModalSend} close={() => elModalSend?.close()} />

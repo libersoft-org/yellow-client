@@ -20,6 +20,14 @@
 		return found ? get(found) : null;
 	});
 
+	export function open() {
+		elModal?.open();
+	}
+
+	export function close() {
+		elModal?.close();
+	}
+
 	function clickDel() {
 		console.log('clickDel');
 		delAccount(params.id);

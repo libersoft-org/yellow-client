@@ -55,7 +55,7 @@ export const status = writable<any>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);
 export const networks = localStorageSharedStore<Network[]>('networks', []);
 export let section = writable<string | null>('balance');
-export let sendAddress = writable<string | null>(null);
+export let sendAddress = writable<string | number | undefined>();
 const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer;
