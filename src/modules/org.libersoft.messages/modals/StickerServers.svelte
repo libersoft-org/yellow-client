@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { sticker_servers, defaultStickerServers } from '../stickers.js';
+	import { sticker_servers } from '../stickers.js';
 	import DialogDefaultStickerServers from '../dialogs/DefaultStickerServers.svelte';
 	import DialogDeleteStickerServer from '../dialogs/DeleteStickerServer.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
@@ -12,12 +13,11 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
+	let inputElement: typeof Input.prototype;
 	let elDialogDefaults;
 	let elDialogDelete;
 	let addUrl: string | null | undefined = $state();
 	let error: string | null | undefined = $state();
-	let inputElement: typeof Input.prototype;
 	let serverUrl: string | undefined = $state();
 
 	$effect(() => {
@@ -26,6 +26,10 @@
 
 	function onKeydownAdd(e: KeyboardEvent) {
 		if (e.key === 'Enter') clickAdd();
+	}
+
+	function clickDefaults() {
+		elDialogDefaults.open();
 	}
 
 	function clickAdd() {
@@ -47,10 +51,6 @@
 			addUrl = null;
 		}
 		inputElement?.focus();
-	}
-
-	function clickDefaults() {
-		elDialogDefaults.open();
 	}
 
 	function clickDel(url) {
