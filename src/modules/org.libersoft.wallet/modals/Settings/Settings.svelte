@@ -5,7 +5,7 @@
 	import SettingsNetworks from './SettingsNetworks.svelte';
 	import SettingsWallets from './SettingsWallets.svelte';
 	import SettingsAddressbook from './SettingsAddressbook.svelte';
-	let elSettings;
+	let elBaseSettings: BaseSettings;
 	let settingsObject = {
 		title: 'Wallet settings',
 		name: 'settings',
@@ -56,12 +56,12 @@
 	};
 
 	export function open() {
-		elSettings?.open();
+		elBaseSettings?.open();
 	}
 
 	export function close() {
-		elSettings?.close();
+		elBaseSettings?.close();
 	}
 </script>
 
-<BaseSettings {settingsObject} bind:this={elSettings} />
+<BaseSettings {settingsObject} bind:this={elBaseSettings} />

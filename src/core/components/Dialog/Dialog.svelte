@@ -18,7 +18,7 @@
 		onClick?: (e: Event) => void;
 		expand?: boolean;
 	}
-	let elModal;
+	let elModal: Modal;
 	let { data, width }: Props = $props();
 
 	export function open() {

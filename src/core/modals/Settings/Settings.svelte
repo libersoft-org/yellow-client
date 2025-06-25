@@ -9,7 +9,7 @@
 		testId?: string;
 	}
 	let { testId = '' }: Props = $props();
-	let elBaseSettings;
+	let elBaseSettings: BaseSettings;
 	let settingsObject = {
 		title: 'Settings',
 		name: 'settings',

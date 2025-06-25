@@ -6,7 +6,7 @@
 		params: { id: string | null };
 	}
 	let { params }: Props = $props();
-	let elModal;
+	let elModal: Modal;
 	let snippet_top: Snippet = $state(null);
 	let snippet_bottom: Snippet = $state(null);
 
