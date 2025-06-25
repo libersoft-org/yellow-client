@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { wallets, walletAddresses, selectAddress } from '../wallet.ts';
-	import { module } from '../module.ts';
+	import { wallets, walletAddresses, selectAddress } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalWallets from './Settings/SettingsWallets.svelte';
+	import ModalWallets from '../Settings/SettingsWallets.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';

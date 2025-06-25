@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { module } from '../../module.ts';
 	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
-	import ModalNewWallet from '../../modals/NewWallet.svelte';
+	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
 	import Address from './SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -131,4 +131,4 @@
 		</div>
 	{/snippet}
 </Accordion>
-<Modal title="New wallet" body={ModalNewWallet} width="600px" bind:this={elModalPhrase} />
+<Modal title="New wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalPhrase} />

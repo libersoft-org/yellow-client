@@ -15,11 +15,10 @@
 	import History from './History.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalNetworks from '../modals/Networks.svelte';
-	import ModalWallets from '../modals/Wallets.svelte';
+	import ModalWallets from '../modals/Wallets/Wallets.svelte';
 	let elSettings;
 	let elModalNetworks;
 	let elModalWallets;
-	let showSettings = false;
 	let addressElement;
 
 	function clickCopyAddress() {
