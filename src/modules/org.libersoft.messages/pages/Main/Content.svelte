@@ -6,7 +6,7 @@
 	import Conversation from '../../components/Conversation/Conversation.svelte';
 	import Gallery from '../../components/Gallery/Gallery.svelte';
 
-	onMount(async () => {
+	onMount(() => {
 		window.addEventListener('keydown', onKeydown);
 	});
 
@@ -14,7 +14,7 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	async function onKeydown(event) {
+	function onKeydown(event) {
 		if (event.key === 'Escape') {
 			if ($selectedConversation) closeConversation();
 			else setModule(null);

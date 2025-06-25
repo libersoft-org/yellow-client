@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, getContext, untrack } from 'svelte';
+	import { onMount, getContext, untrack, type Snippet } from 'svelte';
 	import { get, writable, derived } from 'svelte/store';
 	import { accounts, accountConfigExistsByCredentials } from '@/core/core.ts';
 	import { addAccount, findAccountConfig, saveAccount } from '@/core/accounts_config.ts';

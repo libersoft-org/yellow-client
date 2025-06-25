@@ -22,7 +22,7 @@
 		}
 	});
 
-	async function onKeydown(event) {
+	function onKeydown(event) {
 		if (event.key === 'Escape') exit();
 	}
 

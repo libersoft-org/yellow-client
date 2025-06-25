@@ -31,7 +31,7 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	async function onKeydown(event) {
+	function onKeydown(event) {
 		if (event.key === 'Escape') setModule(null);
 	}
 

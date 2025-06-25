@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
 	import { findAccount, accounts_config, setCorePage } from '@/core/core.ts';
-	import { hideSidebarMobile } from '@/core/stores.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -25,17 +25,28 @@
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	let idItem: string | null | undefined = $state(null);
 	let modalKey: number = $state(0);
-	let elModalAccountsAddEdit;
-	let elModalAccountsDelete;
-	let elModalAccountsImport;
-	let elModalAccountsExport;
+	let elModalAccountsAddEdit: ModalAccountsAddEdit;
+	let elModalAccountsDelete: ModalAccountsDelete;
+	let elModalAccountsImport: ModalAccountsImport;
+	let elModalAccountsExport: ModalAccountsExport;
+
+	onMount(() => {
+		window.addEventListener('keydown', onKeydown);
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
+	});
 
 	$effect(() => {
 		console.log('[AccountsContent] idItem:', idItem);
 	});
 
+	function onKeydown(event) {
+		if (event.key === 'Escape') setCorePage(null);
+	}
+
 	function back() {
-		hideSidebarMobile.set(false);
 		setCorePage(null);
 	}
 
