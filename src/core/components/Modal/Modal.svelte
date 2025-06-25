@@ -6,7 +6,6 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
 	interface Props {
-		isOpen: boolean;
 		testId?: string;
 		children?: Snippet;
 		top?: Snippet;
@@ -188,7 +187,6 @@
 
 	function setShow(value: boolean) {
 		show = value;
-		isOpen = value;
 		onShowChange?.(value);
 	}
 

@@ -40,6 +40,9 @@
 	setContext('setSettingsSection', setName);
 
 	$effect(() => {
+		console.log('[BaseSettings] elModal::', elModal);
+		console.log('[BaseSettings] elModal.isOpen:', elModal?.isOpen);
+
 		if (elModal.isOpen()) activeName = settingsObject.name;
 	});
 
