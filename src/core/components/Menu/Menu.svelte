@@ -10,7 +10,6 @@
 	import DialogExit from '@/core/dialogs/Exit.svelte';
 	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
 	import { isDarkMode, toggleDarkMode } from '@/core/themes.ts';
-	import { stopPropagation } from 'svelte/legacy';
 	interface Props {
 		showMenu: boolean;
 	}
