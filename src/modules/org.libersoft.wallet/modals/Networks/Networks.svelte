@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { selectedNetworkID, networks } from '../wallet.ts';
-	import { module } from '../module.ts';
+	import { selectedNetworkID, networks } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalNetworks from './Settings/SettingsNetworks.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import ModalNetworks from '../Settings/SettingsNetworks.svelte';
 	interface Props {
 		close?: () => void;
 	}

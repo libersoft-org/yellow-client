@@ -7,8 +7,8 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import { generateMnemonic, addWallet } from '../wallet.ts';
-	import { module } from '../module.ts';
+	import { generateMnemonic, addWallet } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	export let close;
 	let mnemonic = {};
 	let phrase = '';
