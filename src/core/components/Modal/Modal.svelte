@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy, setContext, tick, type Snippet } from 'svelte';
+	import { setContext, tick, type Snippet } from 'svelte';
 	import { mobileClass, isMobile, debug } from '@/core/stores.ts';
 	import { draggable } from '@neodrag/svelte';
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
@@ -26,7 +26,7 @@
 	}
 	let show = $state(false);
 	let maximized = $state(false);
-	let { testId = '', children, top, center, bottom, params, max, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
+	let { testId = '', children, top, center, bottom, params, max, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
 	let elModal: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -71,9 +71,7 @@
 				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
 			} else {
 				requestAnimationFrame(() => {
-					if (elModal && showContent) {
-						centerModal();
-					}
+					if (elModal && showContent) centerModal();
 				});
 			}
 		}
@@ -181,6 +179,7 @@
 
 	export function open() {
 		setShow(true);
+		elModal?.focus();
 	}
 
 	export function close() {

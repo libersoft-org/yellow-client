@@ -8,7 +8,7 @@
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
-	import SendModal from '../modals/Send.svelte';
+	import DialogSend from '../dialogs/Send.svelte';
 	let currency: string | null | undefined;
 	let amount: string | number | undefined = 0;
 	let fee: string | number | undefined = 0;
@@ -64,4 +64,4 @@
 	{/if}
 	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 </div>
-<Modal title="Confirm your transaction" body={SendModal} {params} bind:this={elModalSend} />
+<Modal title="Confirm your transaction" body={DialogSend} {params} bind:this={elModalSend} />

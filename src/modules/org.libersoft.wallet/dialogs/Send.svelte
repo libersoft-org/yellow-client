@@ -2,8 +2,8 @@
 	//import { sendTransaction } from '../wallet.ts'
 	import { module } from '../module.ts';
 	import { playAudio } from '@/core/notifications.ts';
-	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
+	//import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
+	//import Button from '@/core/components/Button/Button.svelte';
 	interface Props {
 		params?: {
 			address: string;
@@ -24,6 +24,8 @@
 	}
 </script>
 
+<!--
+
 {#if params}
 	<div>Would you really like to send this transaction?</div>
 	<div>Address: <span class="bold">{params.address}</span></div>
@@ -34,3 +36,4 @@
 		<Button img="img/cross.svg" text="Cancel" onClick={close} />
 	</ButtonBar>
 {/if}
+-->
