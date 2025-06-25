@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setContext, tick, type Snippet } from 'svelte';
+	import { onMount, onDestroy, setContext, tick, type Snippet } from 'svelte';
 	import { mobileClass, isMobile, debug } from '@/core/stores.ts';
 	import { draggable } from '@neodrag/svelte';
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
@@ -34,11 +34,35 @@
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
+	let focused = $state(false);
 
 	export function isOpen() {
 		return show;
 	}
 
+	$effect(() => {
+		if (!elModal) return;
+		elModal.addEventListener('focusin', onFocusIn);
+		elModal.addEventListener('focusout', onFocusOut);
+		return () => {
+			if (!elModal) {
+				console.error('[Modal] elModal is not defined 2');
+				return;
+			}
+			elModal.removeEventListener('focusin', onFocusIn);
+			elModal.removeEventListener('focusout', onFocusOut);
+		};
+	});
+	/*
+	onDestroy(() =>	{
+		if (!elModal) {
+			console.error('[Modal] elModal is not defined');
+			return;
+		}
+		elModal.removeEventListener('focusin', onFocusIn);
+		elModal.removeEventListener('focusout', onFocusOut);
+	});
+*/
 	setContext('setTitle', setTitle);
 	setContext('Popup', { close });
 
@@ -85,6 +109,14 @@
 			resizeObserver?.disconnect();
 		};
 	});
+
+	function onFocusIn() {
+		focused = true;
+	}
+
+	function onFocusOut() {
+		focused = false;
+	}
 
 	function onDragStart() {
 		isDragging = true;
@@ -260,9 +292,14 @@
 		align-items: center;
 		gap: 10px;
 		font-weight: bold;
+		background-color: var(--disabled-background);
+		color: var(--disabled-foreground);
+		cursor: grab;
+	}
+
+	.modal .header.focused {
 		background-color: var(--primary-background);
 		color: var(--primary-foreground);
-		cursor: grab;
 	}
 
 	.modal .header .title {
@@ -320,12 +357,12 @@
 		{/if}
 		<div class="modal {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elModal} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
-				<div class="header" role="none" tabindex="-1">
+				<div class="header" class:focused role="none" tabindex="-1">
 					{#if title}
 						<div class="title">
 							{#if optionalIcon}
 								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon img={optionalIcon.img} colorVariable="--primary-foreground" alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
+									<Icon img={optionalIcon.img} colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
 								</div>
 							{/if}
 							<div>{title}</div>
@@ -333,11 +370,11 @@
 						<div class="icons">
 							{#if max}
 								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon data-testid={testId + '-Modal-close'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable="--primary-foreground" alt="⛶" size="20px" padding="5px" onClick={() => (maximized ? restore() : maximize())} />
+									<Icon data-testid={testId + '-Modal-close'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="5px" onClick={() => (maximized ? restore() : maximize())} />
 								</div>
 							{/if}
 							<div onpointerdown={e => e.stopPropagation()}>
-								<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable="--primary-foreground" alt="X" size="20px" padding="5px" onClick={close} />
+								<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="5px" onClick={close} />
 							</div>
 						</div>
 					{/if}
