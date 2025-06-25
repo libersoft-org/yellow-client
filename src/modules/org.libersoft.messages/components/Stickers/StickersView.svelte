@@ -28,7 +28,7 @@
 		if (!get(isMobile)) fulltext_search_element.focus();
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		console.log('stickers-view onMount');
 	});
 

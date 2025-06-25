@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
 	import { product, link } from '@/core/stores.ts';
 	import { BROWSER } from '@/core/tauri.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -9,13 +10,29 @@
 	import DialogExit from '@/core/dialogs/Exit.svelte';
 	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
 	import { isDarkMode, toggleDarkMode } from '@/core/themes.ts';
+	import { stopPropagation } from 'svelte/legacy';
 	interface Props {
 		showMenu: boolean;
 	}
 	let { showMenu = $bindable(false) }: Props = $props();
-	let elSettings;
+	let elSettings: Settings;
 	let elDialogExit: InstanceType<typeof DialogExit>;
 	let darkModeLocal = $state(false);
+
+	onMount(() => {
+		window.addEventListener('keydown', onKeydown);
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
+	});
+
+	function onKeydown(event) {
+		if (event.key === 'Escape' && showMenu) {
+			//TODO: - deny closing everything else than menu !!!
+			clickMenuClose();
+		}
+	}
 
 	// Sync darkModeLocal with isDarkMode store
 	$effect(() => {
@@ -26,6 +43,7 @@
 	$effect(() => {
 		toggleDarkMode(darkModeLocal);
 	});
+
 	const menuItems = [
 		{
 			title: 'Donate',
