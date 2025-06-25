@@ -25,7 +25,7 @@
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	let idItem: string | null | undefined = $state(null);
 	let modalKey: number = $state(0);
-	let elModalAccountsAddEdit: ModalAccountsAddEdit;
+	let elModalAccountsAddEdit: ModalAccountsAddEdit | null = $state(null);
 	let elModalAccountsImport: ModalAccountsImport;
 	let elModalAccountsExport: ModalAccountsExport;
 	let elDialogAccountsDelete: DialogAccountsDelete;
@@ -133,7 +133,6 @@
 {#key modalKey}
 	<ModalAccountsAddEdit params={{ id: idItem || null }} bind:this={elModalAccountsAddEdit} />
 {/key}
-<!--<ModalAccountsDelete  bind:this={elModalAccountsDelete} />-->
 <ModalAccountsImport bind:this={elModalAccountsImport} />
 <ModalAccountsExport bind:this={elModalAccountsExport} />
 <DialogAccountsDelete id={idItem} bind:this={elDialogAccountsDelete} />
