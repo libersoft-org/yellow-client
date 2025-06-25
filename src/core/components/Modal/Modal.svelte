@@ -36,9 +36,8 @@
 	let resizeObserver: ResizeObserver;
 	let focused = $state(false);
 
-	export function isOpen() {
-		return show;
-	}
+	setContext('setTitle', setTitle);
+	setContext('Popup', { close });
 
 	$effect(() => {
 		if (!elModal) return;
@@ -53,18 +52,6 @@
 			elModal.removeEventListener('focusout', onFocusOut);
 		};
 	});
-	/*
-	onDestroy(() =>	{
-		if (!elModal) {
-			console.error('[Modal] elModal is not defined');
-			return;
-		}
-		elModal.removeEventListener('focusin', onFocusIn);
-		elModal.removeEventListener('focusout', onFocusOut);
-	});
-*/
-	setContext('setTitle', setTitle);
-	setContext('Popup', { close });
 
 	$effect(() => {
 		if (!$isMobile) return;
@@ -109,6 +96,10 @@
 			resizeObserver?.disconnect();
 		};
 	});
+
+	export function isOpen() {
+		return show;
+	}
 
 	function onFocusIn() {
 		focused = true;
