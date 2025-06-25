@@ -8,7 +8,6 @@
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalHtml from '../../modals/Html.svelte';
 	import ModalFileUpload from '../../modals/FileUpload.svelte';
 	import Expressions from '../Expressions/Expressions.svelte';
 	import { init_emojis } from '../../emojis.js';
@@ -19,7 +18,8 @@
 	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	// import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
-	import VideoRecorderModalBody from '@/org.libersoft.messages/modals/VideoRecorderModalBody.svelte';
+	import VideoRecorderContainer from '../VideoRecorder/VideoRecorderContainer.svelte';
+	import ModalHtml from '../../modals/Html.svelte';
 	let expressionsMenu;
 	let elBottomSheet;
 	let elAttachment;
@@ -34,7 +34,7 @@
 	let expressionsAsContextMenu = true;
 	let lastDocumentHeight = 0;
 	let videoInputRef;
-	let showVideoRecorderModal = false;
+	let showVideoRecorder = false;
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
@@ -257,6 +257,7 @@
 		flex-direction: column;
 		gap: 10px;
 		flex-grow: 1;
+		height: 100%;
 	}
 
 	.top {
@@ -291,10 +292,27 @@
 		border-radius: 10px;
 		border: 10px solid var(--primary-foreground);
 	}
+
+	.video-recorder-wrapper {
+		overflow: hidden;
+		transition: max-height 0.3s ease-in-out;
+		max-height: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.video-recorder-wrapper.open {
+		min-height: calc(100vh - 153px);
+		height: calc(100vh - 153px);
+		padding-bottom: 2rem;
+	}
 </style>
 
 <Bar position="bottom" height="auto" bind:element={elMessageBar}>
 	<div class="message-bar">
+		<div class="video-recorder-wrapper {showVideoRecorder ? 'open' : ''}">
+			<VideoRecorderContainer />
+		</div>
 		<input type="file" id="videoInput" style:display="none" accept="video/*" capture="camera" bind:this={videoInputRef} />
 		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
 			<div class="top">
@@ -316,7 +334,7 @@
 			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur}></textarea>
 			<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
 			{#if !elMessage?.value}
-				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
+				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorder = !showVideoRecorder)} />
 				<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
 			{:else}
 				<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
@@ -360,5 +378,3 @@
 		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet />
 	</div>
 {/if}
-
-<Modal title="Video recorder" body={VideoRecorderModalBody} bind:show={showVideoRecorderModal} />
