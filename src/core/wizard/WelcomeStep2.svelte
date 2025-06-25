@@ -23,7 +23,7 @@
 	}
 </style>
 
-<FormAddEdit bind:top={snippet_top} bind:bottom={snippet_bottom} isInWelcomeWizard {close} {save_id} params={{ id: params?.account_id ?? null }} show={true} />
+<FormAddEdit bind:top={snippet_top} bind:bottom={snippet_bottom} isInWelcomeWizard {close} {save_id} params={{ id: params?.account_id ?? null }} />
 {#if snippet_top && snippet_bottom}
 	<div class="form">
 		<div>{@render snippet_top()}</div>
