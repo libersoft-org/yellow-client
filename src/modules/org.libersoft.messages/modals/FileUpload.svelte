@@ -4,7 +4,7 @@
 	import { truncateText } from '@/core/utils/textUtils.js';
 	import { get, type Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
-	import { selectedConversation, initUpload } from '../messages.js';
+	import { selectedConversation, initUpload, identifier } from '../messages.js';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -121,7 +121,7 @@
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
 	<input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
 	<ButtonBar equalize space>
-		<Button img="img/add.svg" text="Add files" onClick={onFileAdd} />
+		<Button img="modules/{identifier}/img/file-add.svg" text="Add files" onClick={onFileAdd} />
 		<Button img="img/del.svg" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
 	</ButtonBar>
 	<div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">

@@ -20,7 +20,7 @@
 				name: 'general',
 			},
 			{
-				img: 'img/settings.svg',
+				img: 'img/module.svg',
 				title: 'Modules',
 				name: 'modules',
 			},
