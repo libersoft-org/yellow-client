@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, tick } from 'svelte';
 	import { findAccount, accounts_config, setCorePage } from '@/core/core.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
@@ -50,10 +50,11 @@
 		setCorePage(null);
 	}
 
-	function addAccountModal() {
+	async function addAccountModal() {
 		idItem = null;
 		modalKey++; // Force modal component to recreate
 		console.log('[AccountsContent] Opening Add/Edit Account modal, idItem set to', idItem, 'modalKey:', modalKey);
+		await tick();
 		elModalAccountsAddEdit?.open();
 	}
 

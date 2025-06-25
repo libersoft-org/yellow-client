@@ -27,7 +27,7 @@
 	}
 	let show = $state(false);
 	let maximized = $state(false);
-	let { isOpen = $bindable(false), testId = '', children, top, center, bottom, params, max, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
+	let { testId = '', children, top, center, bottom, params, max, optionalIcon, title = '', body, width, height, onShowChange = () => {} }: Props = $props();
 	let elModal: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -35,6 +35,10 @@
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
+
+	export function isOpen() {
+		return show;
+	}
 
 	setContext('setTitle', setTitle);
 	setContext('Popup', { close });
