@@ -195,6 +195,10 @@
 		maximized = false;
 	}
 
+	function doubleClickHeader() {
+		if (max) maximized ? restore() : maximize();
+	}
+
 	const dragableConfig = {
 		onDragStart,
 		onDragEnd,
@@ -348,7 +352,7 @@
 		{/if}
 		<div class="modal {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elModal} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
-				<div class="header" class:focused role="none" tabindex="-1">
+				<div class="header" class:focused role="none" tabindex="-1" ondblclick={doubleClickHeader}>
 					{#if title}
 						<div class="title">
 							{#if optionalIcon}
