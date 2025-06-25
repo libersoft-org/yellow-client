@@ -14,7 +14,7 @@
 	import Balance from './Balance.svelte';
 	import History from './History.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalNetworks from '../modals/Networks.svelte';
+	import ModalNetworks from '../modals/Networks/Networks.svelte';
 	import ModalWallets from '../modals/Wallets/Wallets.svelte';
 	let elSettings;
 	let elModalNetworks;
