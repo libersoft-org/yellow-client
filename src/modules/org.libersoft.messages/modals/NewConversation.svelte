@@ -12,7 +12,7 @@
 	let value = $state('');
 
 	$effect(() => {
-		if (!elModal.isOpen || !addressInputRef) return;
+		if (!elModal.isOpen() || !addressInputRef) return;
 		tick().then(() => addressInputRef?.focus());
 	});
 

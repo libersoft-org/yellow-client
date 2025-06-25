@@ -40,7 +40,7 @@
 	setContext('setSettingsSection', setName);
 
 	$effect(() => {
-		if (elModal.isOpen) activeName = settingsObject.name;
+		if (elModal.isOpen()) activeName = settingsObject.name;
 	});
 
 	export function open() {
