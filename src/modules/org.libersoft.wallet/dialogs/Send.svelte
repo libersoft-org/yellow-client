@@ -2,8 +2,6 @@
 	//import { sendTransaction } from '../wallet.ts'
 	import { module } from '../module.ts';
 	import { playAudio } from '@/core/notifications.ts';
-	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
 	interface Props {
