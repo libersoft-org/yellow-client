@@ -28,8 +28,8 @@
 		body: 'This will replace your current account configuration. All existing accounts will be lost. Are you sure you want to continue?',
 		icon: 'img/import.svg',
 		buttons: [
-			{ img: 'img/replace.svg', text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => elDialogReplace?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ img: 'img/replace.svg', text: 'Replace', onClick: confirmReplace, expand: true, testId: 'confirm-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => elDialogReplace?.close(), expand: true, testId: 'cancel-replace-btn' },
 		],
 	};
 

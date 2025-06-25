@@ -33,8 +33,8 @@
 			body: question,
 			icon: 'img/del.svg',
 			buttons: [
-				{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
-				{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
+				{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, testId: 'delete-account-confirm' },
+				{ img: 'img/cross.svg', text: 'No', onClick: clickNo, testId: 'delete-account-cancel' },
 			],
 		};
 	});

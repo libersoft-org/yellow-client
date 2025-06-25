@@ -3,4 +3,4 @@
 	import Export from '@/core/components/Export/Export.svelte';
 </script>
 
-<Export data={$networks} filename="networks" testId="networks-export" />
+<Export data={$networks} filename="networks" testId="networks-export" isSensitive />

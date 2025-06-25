@@ -370,7 +370,7 @@
 						<div class="icons">
 							{#if max}
 								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon data-testid={testId + '-Modal-close'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="5px" onClick={() => (maximized ? restore() : maximize())} />
+									<Icon data-testid={testId + '-Modal-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="5px" onClick={() => (maximized ? restore() : maximize())} />
 								</div>
 							{/if}
 							<div onpointerdown={e => e.stopPropagation()}>
