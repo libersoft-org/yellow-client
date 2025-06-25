@@ -578,7 +578,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await switchToQRExportTab(page);
 
 			// Should show security warning initially
-			await expect(page.getByText('Sensitive information is hidden')).toBeVisible();
+			await expect(page.getByText('Sensitive information is hidden. Click the QR code to reveal it.')).toBeVisible();
 
 			// QR code should be blurred initially
 			const qrImage = page.locator('[data-testid="networks-export-qr-image"]');

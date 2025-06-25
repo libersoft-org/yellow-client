@@ -17,6 +17,7 @@
 		text: string;
 		onClick?: (e: Event) => void;
 		expand?: boolean;
+		testId?: string;
 	}
 	let elModal: Modal;
 	let { data, width }: Props = $props();
@@ -50,7 +51,7 @@
 		{#if data?.buttons && data.buttons.length > 0}
 			<ButtonBar expand>
 				{#each data.buttons as button}
-					<Button {...button} />
+					<Button {...button} data-testid={button.testId} />
 				{/each}
 			</ButtonBar>
 		{/if}

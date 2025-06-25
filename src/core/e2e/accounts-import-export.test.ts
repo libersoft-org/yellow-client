@@ -130,6 +130,7 @@ async function setupAccountInWizard(
 	}
 ): Promise<void> {
 	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
+		await page.getByTestId('wizard-next').waitFor({ state: 'visible', timeout: 10000 });
 		await page.getByTestId('wizard-next').click();
 		await page.getByTestId('account-title-input').click();
 		await page.getByTestId('account-title-input').fill(accountData.title || '');

@@ -40,10 +40,15 @@ export async function goToAccountManagement(page: Page): Promise<void> {
 /**
  * Helper function to close any modal
  * @param page - The Playwright page object
+ * @param testId - Optional specific modal testId to close
  */
-export async function closeModal(page: Page): Promise<void> {
+export async function closeModal(page: Page, testId?: string): Promise<void> {
 	return await test.step('Close modal', async () => {
-		await page.getByRole('button', { name: 'X', exact: true }).click();
+		if (testId) {
+			await page.getByTestId(`${testId}-Modal-close`).click({ force: true });
+		} else {
+			await page.getByTestId('-Modal-close').first().click({ force: true });
+		}
 	});
 }
 
@@ -73,6 +78,7 @@ export async function setupAccountInWizard(
 	}
 ): Promise<void> {
 	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
+		await page.getByTestId('wizard-next').waitFor({ state: 'visible', timeout: 10000 });
 		await page.getByTestId('wizard-next').click();
 		await page.getByTestId('account-title-input').click();
 		await page.getByTestId('account-title-input').fill(accountData.title || '');

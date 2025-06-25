@@ -320,6 +320,7 @@ async function setupAccountInWizard(
 	}
 ): Promise<void> {
 	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
+		await page.getByTestId('wizard-next').waitFor({ state: 'visible', timeout: 10000 });
 		await page.getByTestId('wizard-next').click();
 		await page.getByTestId('account-title-input').click();
 		await page.getByTestId('account-title-input').fill(accountData.title || '');
@@ -361,7 +362,9 @@ async function exportAccounts(page: Page): Promise<any> {
 async function deleteFirstAccount(page: Page): Promise<void> {
 	return await test.step('Delete first account', async () => {
 		await page.getByTestId('delete-account-button').first().click();
-		await page.locator('button').filter({ hasText: 'Delete' }).click();
+		// Wait for dialog to appear - wait for the confirm button instead
+		await page.getByTestId('delete-account-confirm').waitFor({ state: 'visible', timeout: 5000 });
+		await page.getByTestId('delete-account-confirm').click();
 	});
 }
 
