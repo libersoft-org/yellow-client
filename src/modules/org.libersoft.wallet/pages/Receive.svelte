@@ -17,7 +17,7 @@
 	let walletAddress = $state();
 	let amount = $state('0');
 	let currency = $state();
-	let qr = $state();
+	let qr: string = $state('');
 	let error = $state();
 
 	$effect(() => {
@@ -149,7 +149,7 @@
 			{/if}
 			{#if activeTab === 'address' || (activeTab === 'payment' && !error)}
 				<div class="address-wrapper">
-					<Clickable onClick={() => clickCopy(walletAddress)} expand={true}>
+					<Clickable onClick={() => clickCopy()} expand={true}>
 						<div class="address">
 							<div class="text" bind:this={addressElement}>{addressElementMessage || walletAddress}</div>
 							<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />

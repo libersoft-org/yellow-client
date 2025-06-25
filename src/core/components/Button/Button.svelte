@@ -26,7 +26,7 @@
 		right?: boolean;
 	}
 	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = 'var(--primary-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable = '--primary-foreground', iconSize = '20px', iconPadding = '0px', loading = false, radius = 10, right = false, ...restProps }: Props = $props();
-	function handleClick(e) {
+	function handleClick(e: Event) {
 		if (enabled && onClick) onClick(e);
 	}
 </script>
