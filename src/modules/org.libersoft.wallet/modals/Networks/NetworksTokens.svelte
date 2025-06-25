@@ -1,4 +1,6 @@
 <script>
+	import { networks } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -10,10 +12,8 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalAddEdit from './TokenListAddEdit.svelte';
-	import ModalDel from './TokenListDel.svelte';
-	import { networks } from '../wallet.ts';
-	import { module } from '../module.ts';
+	import ModalAddEdit from './NetworksTokensAddEdit.svelte';
+	import ModalDel from './NetworksTokensDel.svelte';
 	export let params;
 	let net;
 	let elModalAddEdit;

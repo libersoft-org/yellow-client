@@ -6,7 +6,7 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import ModalEditNetwork from '../Networks/NetworksAddEdit.svelte';
-	import ModalTokenList from '../TokenList.svelte';
+	import ModalTokenList from '../Networks/NetworksTokens.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
