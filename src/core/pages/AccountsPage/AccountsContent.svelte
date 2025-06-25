@@ -15,7 +15,7 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
-	import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
+	import DialogAccountsDelete from '@/core/dialogs/AccountsDelete.svelte';
 	import ModalAccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
 	import ModalAccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
@@ -26,9 +26,9 @@
 	let idItem: string | null | undefined = $state(null);
 	let modalKey: number = $state(0);
 	let elModalAccountsAddEdit: ModalAccountsAddEdit;
-	let elModalAccountsDelete: ModalAccountsDelete;
 	let elModalAccountsImport: ModalAccountsImport;
 	let elModalAccountsExport: ModalAccountsExport;
+	let elDialogAccountsDelete: DialogAccountsDelete;
 
 	onMount(() => {
 		window.addEventListener('keydown', onKeydown);
@@ -64,7 +64,7 @@
 
 	const clickDel = (id: string) => {
 		idItem = id;
-		elModalAccountsDelete?.open();
+		elDialogAccountsDelete?.open();
 	};
 
 	function clickImport() {
@@ -132,6 +132,7 @@
 {#key modalKey}
 	<ModalAccountsAddEdit params={{ id: idItem || null }} bind:this={elModalAccountsAddEdit} />
 {/key}
-<ModalAccountsDelete params={{ id: idItem }} bind:this={elModalAccountsDelete} />
+<!--<ModalAccountsDelete  bind:this={elModalAccountsDelete} />-->
 <ModalAccountsImport bind:this={elModalAccountsImport} />
 <ModalAccountsExport bind:this={elModalAccountsExport} />
+<DialogAccountsDelete id={idItem} bind:this={elDialogAccountsDelete} />
