@@ -39,6 +39,12 @@
 
 	$: modalFileUploadStore.set(elModalFileUpload);
 
+	$: if ($showFileUploadModal && elModalFileUpload) {
+		elModalFileUpload.open();
+	} else if (!$showFileUploadModal && elModalFileUpload) {
+		elModalFileUpload.close();
+	}
+
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 		expressionsHeight = value ? '250px' : '500px';

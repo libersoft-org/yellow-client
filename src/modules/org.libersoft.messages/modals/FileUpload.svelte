@@ -21,7 +21,7 @@
 		fileUploadModalFiles: Writable<File[]>;
 	};
 
-	const { params } = $props();
+	const { params, close } = $props();
 
 	let elFileInput;
 	let dropActive = $state(false);

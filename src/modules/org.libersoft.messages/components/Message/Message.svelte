@@ -65,17 +65,17 @@
 	}
 
 	function maybeSetSeen(isVisible, isClientFocused) {
-		console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
+		//console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
 		if (!isVisible || !isClientFocused) {
 			console.log('not setting seen because not visible or not focused');
 			return;
 		}
 		if (message.seen) {
-			console.log('not setting seen because already set');
+			//console.log('not setting seen because already set');
 			observer.disconnect();
 			isVisible = false;
 		} else {
-			console.log('setMessageSeen..');
+			//console.log('setMessageSeen..');
 
 			const window_was_active_when_message_was_received = isClientFocused && Date.now() - renderedTs < 150;
 			setMessageSeen(
