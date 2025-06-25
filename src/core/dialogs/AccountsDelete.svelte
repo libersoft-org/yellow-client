@@ -8,9 +8,17 @@
 	}
 	let { id }: Props = $props();
 	let elDialog: Dialog;
-	let question = '';
+
 	let account = derived([accounts], ([$accounts]) => {
-		question += 'Would you like to delete the account ';
+		const accountStore = $accounts.find(acc => get(acc).id === id);
+		if (!accountStore) return null;
+		let account = get(accountStore);
+		console.log('[INIT] Modal mounted. id:', id);
+		return account;
+	});
+
+	let dialogData = $derived.by(() => {
+		let question = 'Would you like to delete the account ';
 		if ($account?.settings?.title) {
 			question += '"';
 			question += '<span class="bold">' + $account?.settings?.title + '</span>';
@@ -19,20 +27,17 @@
 			question += '<span>)</span>';
 		} else question += '<span class="bold">' + $account?.credentials?.address + '</span>';
 		question += '?';
-		console.log('[INIT] Modal mounted. id:', id);
-		const found = $accounts.find(acc => get(acc).id === id);
-		console.log('[DERIVED] account store for delete modal:', id, '→ found account:', found ? get(found) : null);
-		return found ? get(found) : null;
+
+		return {
+			title: 'Delete the account',
+			body: question,
+			icon: 'img/del.svg',
+			buttons: [
+				{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
+				{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
+			],
+		};
 	});
-	let dialogData = {
-		title: 'Delete the account',
-		body: question,
-		icon: 'img/del.svg',
-		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
-			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
-		],
-	};
 
 	export function open() {
 		elDialog?.open();
