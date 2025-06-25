@@ -213,6 +213,7 @@
 
 	function setShow(value: boolean) {
 		show = value;
+		maximized = false;
 		onShowChange?.(value);
 	}
 
