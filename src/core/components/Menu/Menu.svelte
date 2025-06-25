@@ -28,6 +28,8 @@
 
 	function onKeydown(event) {
 		if (event.key === 'Escape' && showMenu) {
+			event.stopImmediatePropagation();
+			event.preventDefault();
 			//TODO: - deny closing everything else than menu !!!
 			clickMenuClose();
 		}
