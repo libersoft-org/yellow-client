@@ -369,10 +369,10 @@ test.describe('Accounts Import Functionality', () => {
 		await clickAddAccounts(page);
 
 		// Should show conflict dialog
-		await expect(page.getByText('Account Already Exists')).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText('Account with address "duplicate@example.com" on server "ws://localhost:8084" is already configured. What would you like to do?')).toBeVisible({ timeout: 5000 });
 
-		// Test "Skip This Account" option
-		await page.getByRole('button', { name: 'Skip This Account' }).click();
+		// Test "Skip" option
+		await page.getByTestId('skip-btn').click();
 
 		// Wait a bit for any async operations
 		await page.waitForTimeout(1000);
@@ -414,10 +414,10 @@ test.describe('Accounts Import Functionality', () => {
 		await clickAddAccounts(page);
 
 		// Should show conflict dialog
-		await expect(page.getByText('Account Already Exists')).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText('Account with address "replace@example.com" on server "ws://localhost:8084" is already configured. What would you like to do?')).toBeVisible({ timeout: 5000 });
 
-		// Test "Replace Existing" option
-		await page.getByRole('button', { name: 'Replace Existing' }).click();
+		// Test "Replace existing" option
+		await page.getByTestId('replace-existing-btn').click();
 
 		// Modal should close on success
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });

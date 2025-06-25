@@ -39,9 +39,7 @@ export default defineConfig({
 			name: 'Mobile Safari',
 			use: {
 				...devices['iPhone 13'],
-				launchOptions: {
-					args: ['--disable-web-security', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
-				},
+				launchOptions: {},
 			},
 		},
 		{
