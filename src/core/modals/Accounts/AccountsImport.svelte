@@ -46,9 +46,9 @@
 		body: currentConflictAccount ? `Account with address "${currentConflictAccount.credentials?.address || currentConflictAccount.address}" on server "${currentConflictAccount.credentials?.server || currentConflictAccount.server}" is already configured. What would you like to do?` : '',
 		icon: 'img/import.svg',
 		buttons: [
-			{ img: 'img/replace.svg', text: 'Replace existing', onClick: replaceConflictAccount, expand: true },
-			{ img: 'img/skip.svg', text: 'Skip', onClick: skipConflictAccount, expand: true },
-			{ img: 'img/cancel.svg', text: 'Cancel import', onClick: () => elDialogConflict?.close(), expand: true },
+			{ img: 'img/replace.svg', text: 'Replace existing', onClick: replaceConflictAccount, expand: true, testId: 'replace-existing-btn' },
+			{ img: 'img/skip.svg', text: 'Skip', onClick: skipConflictAccount, expand: true, testId: 'skip-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel import', onClick: () => elDialogConflict?.close(), expand: true, testId: 'cancel-import-btn' },
 		],
 	});
 

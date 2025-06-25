@@ -17,7 +17,7 @@
 			e.stopPropagation();
 			return;
 		}
-		if (onClick) onClick(e);
+		if (onClick) onClick(e as MouseEvent & { currentTarget: EventTarget & HTMLDivElement });
 	}
 
 	function handleRightClick(e: MouseEvent) {
@@ -26,7 +26,7 @@
 			e.stopPropagation();
 			return;
 		}
-		if (onRightClick) onRightClick(e);
+		if (onRightClick) onRightClick(e as MouseEvent & { currentTarget: EventTarget & HTMLDivElement });
 	}
 
 	function handleMousedown(e: MouseEvent) {
@@ -35,7 +35,7 @@
 			e.stopPropagation();
 			return;
 		}
-		if (onMousedown) onMousedown(e);
+		if (onMousedown) onMousedown(e as MouseEvent & { currentTarget: EventTarget & HTMLDivElement });
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {

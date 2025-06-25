@@ -15,13 +15,13 @@
 		if (!equalize || !barEl) return;
 		await tick();
 		let max = 0;
-		barEl.querySelectorAll('.button').forEach((b: HTMLElement) => {
-			max = Math.max(max, b.getBoundingClientRect().width);
+		barEl.querySelectorAll('.button').forEach(b => {
+			max = Math.max(max, (b as HTMLElement).getBoundingClientRect().width);
 		});
 
 		const target = Math.ceil(max);
-		barEl.querySelectorAll('.button').forEach((b: HTMLElement) => {
-			b.style.width = `${target}px`;
+		barEl.querySelectorAll('.button').forEach(b => {
+			(b as HTMLElement).style.width = `${target}px`;
 		});
 	}
 
