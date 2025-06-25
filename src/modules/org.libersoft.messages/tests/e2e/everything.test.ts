@@ -364,6 +364,15 @@ async function deleteFirstAccount(page: Page): Promise<void> {
 		await page.getByTestId('delete-account-button').first().click();
 		// Wait for dialog to appear - wait for the confirm button instead
 		await page.getByTestId('delete-account-confirm').waitFor({ state: 'visible', timeout: 5000 });
+
+		// Verify dialog content shows proper text and doesn't show "undefined"
+		const dialogBody = await page.locator('.modal .body').textContent();
+		expect(dialogBody).toMatch(/Would you like to delete the account/);
+		expect(dialogBody).not.toContain('undefined');
+
+		// Verify the dialog shows the specific account address
+		expect(dialogBody).toContain('user1@example.com');
+
 		await page.getByTestId('delete-account-confirm').click();
 	});
 }

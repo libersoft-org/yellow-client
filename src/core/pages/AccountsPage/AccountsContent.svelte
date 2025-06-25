@@ -135,4 +135,4 @@
 {/key}
 <ModalAccountsImport bind:this={elModalAccountsImport} />
 <ModalAccountsExport bind:this={elModalAccountsExport} />
-<DialogAccountsDelete id={idItem} bind:this={elDialogAccountsDelete} />
+<DialogAccountsDelete id={idItem || ''} bind:this={elDialogAccountsDelete} />

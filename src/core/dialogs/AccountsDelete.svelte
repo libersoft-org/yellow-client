@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { derived, get } from 'svelte/store';
+	import { get } from 'svelte/store';
 	import { accounts } from '@/core/accounts.ts';
 	import { delAccount } from '@/core/accounts_config.js';
 	import Dialog from '../components/Dialog/Dialog.svelte';
@@ -9,23 +9,29 @@
 	let { id }: Props = $props();
 	let elDialog: Dialog;
 
-	let account = derived([accounts], ([$accounts]) => {
+	let account = $derived.by(() => {
 		const accountStore = $accounts.find(acc => get(acc).id === id);
-		if (!accountStore) return null;
+		if (!accountStore) {
+			console.warn('[AccountsDelete] No account found with id:', id);
+			return null;
+		}
 		let account = get(accountStore);
-		console.log('[INIT] Modal mounted. id:', id);
 		return account;
 	});
 
 	let dialogData = $derived.by(() => {
 		let question = 'Would you like to delete the account ';
-		if ($account?.settings?.title) {
+		const accountIdentifier = account?.credentials?.address || account?.id || 'unknown';
+
+		if (account?.settings?.title) {
 			question += '"';
-			question += '<span class="bold">' + $account?.settings?.title + '</span>';
+			question += '<span class="bold">' + account.settings.title + '</span>';
 			question += '" (';
-			question += '<span class="bold">' + $account?.credentials?.address + '</span>';
+			question += '<span class="bold">' + accountIdentifier + '</span>';
 			question += '<span>)</span>';
-		} else question += '<span class="bold">' + $account?.credentials?.address + '</span>';
+		} else {
+			question += '<span class="bold">' + accountIdentifier + '</span>';
+		}
 		question += '?';
 
 		return {

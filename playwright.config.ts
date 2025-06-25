@@ -22,11 +22,36 @@ export default defineConfig({
 				},
 			},
 		},
-		/*{
+		{
+			name: 'firefox',
+			use: {
+				...devices['Desktop Firefox'],
+				viewport: { width: 1000, height: 800 },
+				launchOptions: {
+					firefoxUserPrefs: {
+						'media.navigator.streams.fake': true,
+						'media.navigator.permission.disabled': true,
+					},
+				},
+			},
+		},
+		{
 			name: 'Mobile Safari',
 			use: {
 				...devices['iPhone 13'],
+				launchOptions: {
+					args: ['--disable-web-security', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+				},
 			},
-		},*/
+		},
+		{
+			name: 'Mobile Chrome',
+			use: {
+				...devices['Pixel 5'],
+				launchOptions: {
+					args: ['--disable-web-security', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+				},
+			},
+		},
 	],
 });
