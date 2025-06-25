@@ -1,7 +1,7 @@
 <script>
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
-	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading } from '../../messages.js';
+	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '../../messages.js';
 	import { getGuid } from '@/core/core.ts';
 	import { debug } from '@/core/stores.ts';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -47,6 +47,9 @@
 
 	$: scrollButtonVisible = !scrolledToBottom;
 	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
+	$: if (elMessages) {
+		elMessages.style.setProperty('--message-list-max-width', $messageListApplyMaxWidth ? `${$messageListMaxWidth}px` : 'none');
+	}
 
 	onMount(() => {
 		setInterval(() => {
@@ -521,6 +524,7 @@
 		height: 100%;
 		overflow-y: auto;
 		max-height: 100%; /* Ensure the inner div has a defined height */
+		max-width: var(--message-list-max-width, none);
 	}
 
 	.unread {
