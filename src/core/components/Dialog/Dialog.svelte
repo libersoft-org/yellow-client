@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { type Snippet } from 'svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -9,7 +10,7 @@
 	}
 	interface DialogData {
 		title?: string;
-		body?: string;
+		body?: string | Snippet;
 		icon?: string;
 		buttons?: DialogButton[];
 	}
@@ -44,7 +45,15 @@
 			{#if data?.icon}
 				<Icon img={data?.icon} alt="" size="50px" padding="0px" />
 			{/if}
-			<div>{@html data?.body}</div>
+			{#if data?.body}
+				<div>
+					{#if typeof data.body === 'string'}
+						{@html data.body}
+					{:else}
+						{@render data.body()}
+					{/if}
+				</div>
+			{/if}
 		</div>
 	{/snippet}
 	{#snippet bottom()}
