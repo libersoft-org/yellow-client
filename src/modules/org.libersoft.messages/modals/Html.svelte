@@ -26,12 +26,6 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.switch {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
 </style>
 
 <div class="html">
