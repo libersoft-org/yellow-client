@@ -46,7 +46,6 @@
 	let elModalForwardMessage;
 	$: modalForwardMessageStore.set(elModalForwardMessage);
 
-	//let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 	let { setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 
 	$: scrollButtonVisible = !scrolledToBottom;
@@ -477,7 +476,7 @@
 		if (!isDraggingFiles) return;
 		// show overlay only if file upload modal is not shown
 		// but if user drops files to conversation it will still add them to the upload modal
-		if (!get(modalFileUploadStore)?.isOpen && !showFileDndOverlay) showFileDndOverlay = true;
+		if (!get(modalFileUploadStore)?.isOpen() && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
 	function onDragLeave(e) {

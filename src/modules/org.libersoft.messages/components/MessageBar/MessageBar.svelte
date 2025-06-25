@@ -27,7 +27,6 @@
 	let elMessage;
 	let elMessageBar;
 	let elModalVideoRecorder;
-	let elModalFileUpload;
 	let elModalHTML;
 	let text;
 	let expressions;
@@ -37,20 +36,12 @@
 	let lastDocumentHeight = 0;
 	let videoInputRef;
 
-	$: modalFileUploadStore.set(elModalFileUpload);
-
-	$: if ($showFileUploadModal && elModalFileUpload) {
-		elModalFileUpload.open();
-	} else if (!$showFileUploadModal && elModalFileUpload) {
-		elModalFileUpload.close();
-	}
-
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 		expressionsHeight = value ? '250px' : '500px';
 	});
 
-	let { showFileUploadModal, setFileUploadModal } = getContext('FileUploadModal');
+	let { setFileUploadModal } = getContext('FileUploadModal');
 
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
@@ -365,5 +356,5 @@
 	</div>
 {/if}
 <Modal title="Video recorder" body={VideoRecorderModalBody} bind:this={elModalVideoRecorder} />
-<Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={elModalFileUpload} />
+<Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={$modalFileUploadStore} />
 <Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="600px" height="500px" max />

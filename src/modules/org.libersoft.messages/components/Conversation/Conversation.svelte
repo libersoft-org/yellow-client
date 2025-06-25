@@ -1,15 +1,15 @@
 <script>
 	import { setContext, tick } from 'svelte';
-	import { writable } from 'svelte/store';
+	import { get, writable } from 'svelte/store';
 	import { selectedConversation, closeConversation } from '../../messages.js';
 	import Content from '@/core/components/Content/Content.svelte';
 	import ProfileBar from '../ProfileBar/ProfileBar.svelte';
 	import MessagesList from '../MessagesList/MessagesList.svelte';
 	import MessageBar from '../MessageBar/MessageBar.svelte';
+	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.js';
 	let message_bar;
 	let oldSelectedConversation;
 	let messagesContext = {};
-	let showFileUploadModal = writable(false);
 	let fileUploadModalFiles = writable([]);
 
 	setContext('MessagesContext', messagesContext);
@@ -32,11 +32,15 @@
 	}
 
 	function setFileUploadModal(value) {
-		if (value !== $showFileUploadModal) fileUploadModalFiles.set([]);
-		showFileUploadModal.set(value);
+		if (!!value !== get(modalFileUploadStore)?.isOpen()) fileUploadModalFiles.set([]);
+		if (value) {
+			get(modalFileUploadStore)?.open();
+		} else {
+			get(modalFileUploadStore)?.close();
+		}
 	}
 
-	setContext('FileUploadModal', { showFileUploadModal, fileUploadModalFiles, setFileUploadModal });
+	setContext('FileUploadModal', { fileUploadModalFiles, setFileUploadModal });
 </script>
 
 <Content>
