@@ -136,16 +136,29 @@
 	function centerModal() {
 		if (!elModal) return;
 		if ($isMobile) {
-			// On mobile, modal takes full width but centers vertically
+			// On mobile, let CSS handle the centering by default
+			// Only apply custom positioning if the modal is too large
 			const rect = elModal.getBoundingClientRect();
-			const y = (window.innerHeight - rect.height) / 2;
-			elModal.style.transform = `translate3d(0px, ${y}px, 0)`;
+			if (rect.height > window.innerHeight) {
+				const y = Math.max(0, (window.innerHeight - rect.height) / 2);
+				elModal.style.transform = `translate3d(0px, ${y}px, 0)`;
+			} else {
+				// Reset to CSS default centering
+				elModal.style.transform = '';
+			}
 			return;
 		}
+		// For desktop, let CSS handle the centering by default
+		// Only apply custom positioning if the modal is too large
 		const rect = elModal.getBoundingClientRect();
-		const x = (window.innerWidth - rect.width) / 2;
-		const y = (window.innerHeight - rect.height) / 2;
-		elModal.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+		if (rect.width > window.innerWidth || rect.height > window.innerHeight) {
+			const x = Math.max(0, (window.innerWidth - rect.width) / 2);
+			const y = Math.max(0, (window.innerHeight - rect.height) / 2);
+			elModal.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+		} else {
+			// Reset to CSS default centering
+			elModal.style.transform = '';
+		}
 	}
 
 	function snapTransformIntoBounds() {
