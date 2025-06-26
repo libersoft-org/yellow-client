@@ -14,6 +14,7 @@
 <style>
 	.breadcrumb {
 		display: flex;
+		flex-wrap: wrap;
 		padding: 10px;
 		border-radius: 10px;
 		font-weight: bold;
