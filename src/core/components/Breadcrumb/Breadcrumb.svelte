@@ -14,6 +14,7 @@
 <style>
 	.breadcrumb {
 		display: flex;
+		flex-wrap: wrap;
 		padding: 10px;
 		border-radius: 10px;
 		font-weight: bold;
@@ -24,6 +25,7 @@
 	.item {
 		display: flex;
 		gap: 5px;
+		cursor: pointer;
 	}
 
 	:global(.breadcrumb > *:not(:first-child))::before {

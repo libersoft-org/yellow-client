@@ -194,10 +194,21 @@
 	});
 </script>
 
+<style>
+	:global(.video-recorder-container) {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+</style>
+
 <!--
 <Dialog data={{title: 'das'}} bind:this={test}>
  test
 </Dialog>
 <div onclick={onTest}>test</div>
 -->
-<VideoRecorderView bind:videoRef bind:micIndicatorRef {sending} error={$error} errorMessages={$errorMessages} loading={$loading} videoDevices={$videoDevices} audioDevices={$audioDevices} selectedAudioDeviceId={$selectedAudioDeviceId} selectedVideoDeviceId={$selectedVideoDeviceId} {changeVideoInput} {changeAudioInput} {isRecording} recordStart={start} recordStop={stop} {send} {download} isMuted={$isMuted} {toggleMute} hasData={Boolean($recordedBlob)} facingMode={$facingMode} {toggleFacingMode} {enableToggleFacingMode} recordRestart={restart} />
+<div class="video-recorder-container">
+	<VideoRecorderView bind:videoRef bind:micIndicatorRef {sending} error={$error} errorMessages={$errorMessages} loading={$loading} videoDevices={$videoDevices} audioDevices={$audioDevices} selectedAudioDeviceId={$selectedAudioDeviceId} selectedVideoDeviceId={$selectedVideoDeviceId} {changeVideoInput} {changeAudioInput} {isRecording} recordStart={start} recordStop={stop} {send} {download} isMuted={$isMuted} {toggleMute} hasData={Boolean($recordedBlob)} facingMode={$facingMode} {toggleFacingMode} {enableToggleFacingMode} recordRestart={restart} />
+</div>
