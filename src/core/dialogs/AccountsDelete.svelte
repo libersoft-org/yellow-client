@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { accounts } from '@/core/accounts.ts';
 	import { delAccount } from '@/core/accounts_config.js';
@@ -8,6 +9,11 @@
 	}
 	let { id }: Props = $props();
 	let elDialog: Dialog;
+	let accountIdentifier = $state();
+
+	onMount(() => {
+		accountIdentifier = account?.credentials?.address || account?.id || 'unknown';
+	});
 
 	let account = $derived.by(() => {
 		const accountStore = $accounts.find(acc => get(acc).id === id);
@@ -20,20 +26,6 @@
 	});
 
 	let dialogData = $derived.by(() => {
-		let question = 'Would you like to delete the account ';
-		const accountIdentifier = account?.credentials?.address || account?.id || 'unknown';
-
-		if (account?.settings?.title) {
-			question += '"';
-			question += '<span class="bold">' + account.settings.title + '</span>';
-			question += '" (';
-			question += '<span class="bold">' + accountIdentifier + '</span>';
-			question += '<span>)</span>';
-		} else {
-			question += '<span class="bold">' + accountIdentifier + '</span>';
-		}
-		question += '?';
-
 		return {
 			title: 'Delete the account',
 			body: question,
@@ -62,5 +54,19 @@
 		elDialog?.close();
 	}
 </script>
+
+{#snippet question()}
+	{#if account?.settings?.title}
+		<span>Would you like to delete the account </span>
+		<span>"</span>
+		<span class="bold">{account.settings.title}</span>
+		<span>" (</span>
+		<span class="bold">{accountIdentifier}</span>
+		<span>)</span>
+	{:else}
+		<span class="bold">{accountIdentifier}</span>
+	{/if}
+	<span>?</span>
+{/snippet}
 
 <Dialog data={dialogData} bind:this={elDialog} />
