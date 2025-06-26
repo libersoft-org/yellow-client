@@ -15,8 +15,8 @@
 	}
 	let { params, close }: Props = $props();
 	let dialogData = {
-		title: 'Delete sticker database',
-		body: body(),
+		title: 'Transaction confirmation',
+		body: body,
 		icon: 'img/del.svg',
 		buttons: [
 			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
@@ -32,12 +32,12 @@
 		if (params) {
 			//await sendTransaction(params.address, params.amount, params.fee, params.currency);
 			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
-			if (close) close();
+			elDialog?.close();
 		}
 	}
 
 	function clickNo() {
-		if (close) close();
+		elDialog?.close();
 	}
 </script>
 
