@@ -235,7 +235,7 @@
 	}
 </style>
 
-<Modal title="Import accounts" bind:this={elModal}>
+<Modal title="Import accounts" bind:this={elModal} testId="accounts-import">
 	{#snippet top()}
 		{#if successMessage}
 			<div class="success">

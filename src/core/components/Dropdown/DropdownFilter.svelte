@@ -7,16 +7,17 @@
 		selected?: string;
 		enabled?: boolean;
 	}
-	let { options = [], selected = '', enabled = true }: Props = $props();
+	let { options = [], selected = $bindable(''), enabled = true }: Props = $props();
 	let filteredOptions = $state(options);
 	let showOptions = $state(false);
 	let inputValue = $state('');
 
-	function onInput(event) {
-		inputValue = event.target.value;
+	$effect(() => {
 		filteredOptions = options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()));
-		showOptions = true;
-	}
+		if (inputValue) {
+			showOptions = true;
+		}
+	});
 
 	function clickSelectOption(option) {
 		selected = option;
@@ -83,7 +84,9 @@
 			<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="10px" onClick={clickClearSelection} />
 		</div>
 	{:else}
-		<Input bind:value={inputValue} {enabled} on:input={onInput} on:focus={toggleOptions} />
+		<div onfocus={toggleOptions}>
+			<Input bind:value={inputValue} {enabled} />
+		</div>
 		{#if showOptions}
 			<div class="options">
 				{#each filteredOptions as option}

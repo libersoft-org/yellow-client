@@ -17,13 +17,13 @@
 	let yellowId = $derived(isYellow ? file.slice(YELLOW_SRC_PROTOCOL.length) : null);
 	let loading = $state(false);
 	let loaded = $state(false);
-	let imgUrl = $state(null);
-	let imgFileName = $state(null);
-	const upload = writable(null);
+	let imgUrl: string | null = $state(null);
+	let imgFileName: string | null = $state(null);
+	const upload = writable<any>(null);
 	fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 
 	function makeFilesForGallery() {
-		const filesForGallery = [];
+		const filesForGallery: any[] = [];
 		for (let index = 0; index < siblings.length; index++) {
 			const siblingNode = siblings[index];
 			const fileAttr = siblingNode?.props?.file;
@@ -80,7 +80,7 @@
 		filesService
 			.getOrDownloadAttachment(yellowId)
 			.then(({ localFile }) => {
-				if (localFile.localFileStatus === LocalFileStatus.READY) {
+				if (localFile.localFileStatus === LocalFileStatus.READY && localFile.fileBlob) {
 					imgUrl = URL.createObjectURL(localFile.fileBlob);
 					imgFileName = localFile.fileOriginalName;
 					loading = false;
