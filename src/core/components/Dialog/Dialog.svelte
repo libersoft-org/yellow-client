@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { type Snippet } from 'svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -9,7 +10,7 @@
 	}
 	interface DialogData {
 		title?: string;
-		body?: string;
+		body?: string | Snippet;
 		icon?: string;
 		buttons?: DialogButton[];
 	}
@@ -17,16 +18,17 @@
 		text: string;
 		onClick?: (e: Event) => void;
 		expand?: boolean;
+		testId?: string;
 	}
+	let elModal: Modal;
 	let { data, width }: Props = $props();
-	let show = $state(false);
 
 	export function open() {
-		show = true;
+		elModal?.open();
 	}
 
 	export function close() {
-		show = false;
+		elModal?.close();
 	}
 </script>
 
@@ -37,20 +39,28 @@
 	}
 </style>
 
-<Modal title={data?.title} bind:show {width}>
+<Modal title={data?.title} {width} bind:this={elModal}>
 	{#snippet top()}
 		<div class="top">
 			{#if data?.icon}
 				<Icon img={data?.icon} alt="" size="50px" padding="0px" />
 			{/if}
-			<div>{data?.body}</div>
+			{#if data?.body}
+				<div>
+					{#if typeof data.body === 'string'}
+						{@html data.body}
+					{:else}
+						{@render data.body()}
+					{/if}
+				</div>
+			{/if}
 		</div>
 	{/snippet}
 	{#snippet bottom()}
 		{#if data?.buttons && data.buttons.length > 0}
 			<ButtonBar expand>
 				{#each data.buttons as button}
-					<Button {...button} />
+					<Button {...button} data-testid={button.testId} />
 				{/each}
 			</ButtonBar>
 		{/if}

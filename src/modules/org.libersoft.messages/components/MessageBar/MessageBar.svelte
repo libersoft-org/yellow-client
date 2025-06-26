@@ -17,18 +17,18 @@
 	import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
 	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
-	// import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
 	import VideoRecorderContainer from '../VideoRecorder/VideoRecorderContainer.svelte';
-	import ModalHtml from '../../modals/Html.svelte';
+	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	let expressionsMenu;
 	let elBottomSheet;
 	let elAttachment;
 	let elExpressions;
 	let elMessage;
 	let elMessageBar;
+	let elModalVideoRecorder;
+	let elModalHTML;
 	let text;
 	let expressions;
-	let showHTMLModal = false;
 	let expressionsHeight = '500px';
 	let expressionsBottomSheetOpen = false;
 	let expressionsAsContextMenu = true;
@@ -40,6 +40,8 @@
 		expressionsAsContextMenu = !value;
 		expressionsHeight = value ? '250px' : '500px';
 	});
+
+	let { setFileUploadModal } = getContext('FileUploadModal');
 
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
@@ -179,14 +181,12 @@
 	}
 
 	function sendHTML() {
-		showHTMLModal = true;
+		elModalHTML?.open();
 	}
 
 	function sendLocation() {
 		console.log('clicked on location');
 	}
-
-	let { showFileUploadModal, setFileUploadModal } = getContext('FileUploadModal');
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
@@ -356,11 +356,6 @@
 		<Expressions bind:this={expressions} height={expressionsHeight} />
 	</ContextMenu>
 {/if}
-<!--
-<Modal body={Expressions} width="363px" bind:show={showExpressions} />
--->
-<Modal title="HTML composer" body={ModalHtml} bind:show={showHTMLModal} />
-<Modal title="File Upload" body={ModalFileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
 {#if $debug}
 	<Clickable
 		onClick={() => {
@@ -378,3 +373,6 @@
 		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet />
 	</div>
 {/if}
+
+<Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={$modalFileUploadStore} />
+<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="600px" height="500px" max />

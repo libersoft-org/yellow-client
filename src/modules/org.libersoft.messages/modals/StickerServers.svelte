@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { sticker_servers } from '../stickers.js';
+	import DialogDefaultStickerServers from '../dialogs/DefaultStickerServers.svelte';
+	import DialogDeleteStickerServer from '../dialogs/DeleteStickerServer.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
@@ -10,34 +13,49 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	let addUrl = $state('');
-	let error = $state('');
 	let inputElement: typeof Input.prototype;
+	let elDialogDefaults;
+	let elDialogDelete;
+	let addUrl: string | null | undefined = $state();
+	let error: string | null | undefined = $state();
+	let serverUrl: string | undefined = $state();
 
 	$effect(() => {
 		if (inputElement) inputElement.focus();
 	});
 
-	function onKeydownAdd(e) {
+	function onKeydownAdd(e: KeyboardEvent) {
 		if (e.key === 'Enter') clickAdd();
 	}
 
+	function clickDefaults() {
+		elDialogDefaults?.open();
+	}
+
 	function clickAdd() {
-		sticker_servers.update(s => {
-			s.push(addUrl);
-			return s;
-		});
-		addUrl = '';
+		error = null;
+		if (addUrl) {
+			let addUrlTrim = addUrl.trim();
+			if (addUrlTrim === '') {
+				error = 'Sticker server address cannot be empty!';
+				return;
+			}
+			if ($sticker_servers.filter(s => s === addUrlTrim).length > 0) {
+				error = 'Sticker server already exists!';
+				return;
+			}
+			sticker_servers.update(s => {
+				s.push(addUrlTrim);
+				return s;
+			});
+			addUrl = null;
+		}
 		inputElement?.focus();
 	}
 
 	function clickDel(url) {
-		console.log('Click - Delete: ' + url);
-		sticker_servers.update(servers => {
-			return servers.filter(s => s !== url);
-		});
-		inputElement?.focus();
+		serverUrl = url;
+		elDialogDelete?.open();
 	}
 </script>
 
@@ -48,19 +66,18 @@
 		font-weight: bold;
 	}
 
-	.group {
+	.row {
 		display: flex;
 		align-items: center;
 		gap: 10px;
 	}
 </style>
 
-<!--<Button text="Defaults" onClick={() => sticker_servers.set(['https://stickers.libersoft.org'])} />-->
-<div class="group">
-	<Input placeholder="Add sticker server address" grow bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
+<Button text="Reset to defaults" onClick={clickDefaults} />
+<div class="row">
+	<Input placeholder="Add sticker server address" expand bind:value={addUrl} onKeydown={onKeydownAdd} bind:this={inputElement} />
 	<Button img="img/add.svg" text="Add" onClick={clickAdd} />
 </div>
-
 <Table breakpoint="0">
 	<Thead>
 		<TheadTr>
@@ -84,3 +101,5 @@
 {#if error}
 	<Alert type="error" message={error} />
 {/if}
+<DialogDeleteStickerServer server={serverUrl} bind:this={elDialogDelete} />
+<DialogDefaultStickerServers bind:this={elDialogDefaults} />

@@ -48,7 +48,7 @@
 	};
 	let menus = [];
 	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
-	let showWelcomeWizard = false;
+	let elModalWelcome;
 	let content;
 	let isMenuOpen = false;
 	let sideBar;
@@ -128,10 +128,7 @@
 		window.addEventListener('blur', () => isClientFocused.set(false));
 		//window.addEventListener('keydown', onkeydown);
 		window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-		if ($accounts_config.length === 0) {
-			console.log('showWelcomeWizard = true');
-			showWelcomeWizard = true;
-		}
+		if ($accounts_config.length === 0) elModalWelcome?.open();
 		setupIframeListener();
 		// TODO: I don't know what this is, test out
 		//document.body.style.touchAction = 'none';
@@ -272,7 +269,7 @@
 		else sidebarWidth = ($sidebarSize || 300) + 'px';
 	});
 
-	async function onkeydown(event) {
+	function onkeydown(event) {
 		//console.log('window onkeydown: ', event);
 		if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) debug.update(d => !d);
 		// Handle Ctrl + 0 to toggle between theme index 0 and 1
@@ -291,10 +288,10 @@
 	}
 
 	.sidebar {
+		z-index: 5;
 		display: flex;
 		flex-direction: column;
 		position: relative;
-		z-index: 5;
 		max-height: 100%;
 		box-shadow: var(--shadow);
 		background-color: var(--secondary-background);
@@ -313,8 +310,8 @@
 	}
 
 	.resizer {
-		position: absolute;
 		z-index: 6;
+		position: absolute;
 		top: 0;
 		bottom: 0;
 		width: 5px;
@@ -362,4 +359,4 @@
 	</div>
 </div>
 <Menu bind:showMenu={isMenuOpen} />
-<Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} testId="welcome-wizard" />
+<Modal body={Wizard} bind:this={elModalWelcome} params={wizardData} testId="welcome-wizard" />

@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { onMount, onDestroy, tick } from 'svelte';
 	import { findAccount, accounts_config, setCorePage } from '@/core/core.ts';
-	import { hideSidebarMobile } from '@/core/stores.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -14,55 +14,66 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
-	import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
-	import ModalAccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
+	import DialogAccountsDelete from '@/core/dialogs/AccountsDelete.svelte';
 	import ModalAccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
+	import ModalAccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
-	let showAddEditAccountModal: boolean = $state(false);
-	let showDelAccountModal: boolean = $state(false);
-	let showExportModal: boolean = $state(false);
-	let showImportModal: boolean = $state(false);
-	let idItem: string | null = $state(null);
+	let idItem: string | null | undefined = $state(null);
 	let modalKey: number = $state(0);
+	let elModalAccountsAddEdit: ModalAccountsAddEdit | null = $state(null);
+	let elModalAccountsImport: ModalAccountsImport;
+	let elModalAccountsExport: ModalAccountsExport;
+	let elDialogAccountsDelete: DialogAccountsDelete;
+
+	onMount(() => {
+		window.addEventListener('keydown', onKeydown);
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
+	});
 
 	$effect(() => {
 		console.log('[AccountsContent] idItem:', idItem);
 	});
 
+	function onKeydown(event) {
+		if (event.key === 'Escape') setCorePage(null);
+	}
+
 	function back() {
-		hideSidebarMobile.set(false);
 		setCorePage(null);
 	}
 
-	function addAccountModal() {
+	async function addAccountModal() {
 		idItem = null;
 		modalKey++; // Force modal component to recreate
 		console.log('[AccountsContent] Opening Add/Edit Account modal, idItem set to', idItem, 'modalKey:', modalKey);
-		showAddEditAccountModal = true;
+		await tick();
+		elModalAccountsAddEdit?.open();
 	}
 
 	function clickEdit(id: string) {
 		idItem = id;
-		showAddEditAccountModal = true;
+		elModalAccountsAddEdit?.open();
 	}
 
 	const clickDel = (id: string) => {
 		idItem = id;
-		showDelAccountModal = true;
+		elDialogAccountsDelete?.open();
 	};
 
-	function clickExport() {
-		showExportModal = true;
+	function clickImport() {
+		elModalAccountsImport?.open();
 	}
 
-	function clickImport() {
-		showImportModal = true;
+	function clickExport() {
+		elModalAccountsExport?.open();
 	}
 </script>
 
@@ -119,10 +130,9 @@
 		</Paper>
 	</Page>
 </Content>
-
 {#key modalKey}
-	<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
+	<ModalAccountsAddEdit params={{ id: idItem || null }} bind:this={elModalAccountsAddEdit} />
 {/key}
-<Modal title="Export all accounts" body={ModalAccountsExport} bind:show={showExportModal} width="700px" />
-<Modal title="Import accounts" body={ModalAccountsImport} bind:show={showImportModal} width="700px" testId="accounts-import" />
-<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem }} bind:show={showDelAccountModal} />
+<ModalAccountsImport bind:this={elModalAccountsImport} />
+<ModalAccountsExport bind:this={elModalAccountsExport} />
+<DialogAccountsDelete id={idItem || ''} bind:this={elDialogAccountsDelete} />

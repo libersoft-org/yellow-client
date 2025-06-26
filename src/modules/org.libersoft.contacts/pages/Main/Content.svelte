@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { setModule } from '@/core/core.ts';
 	import { hideSidebarMobile } from '@/core/stores.ts';
@@ -18,20 +18,20 @@
 		buttons: [
 			{ text: 'Abort', onClick: clickButton, expand: true },
 			{ text: 'Retry', onClick: clickButton, expand: true },
-			{ img: 'img/cancel.svg', text: 'Close', onClick: () => elDialog.close(), expand: true },
+			{ img: 'img/cancel.svg', text: 'Close', onClick: () => elDialog?.close(), expand: true },
 		],
 	};
 
 	onMount(() => {
 		window.addEventListener('keydown', onKeydown);
-		elDialog.open();
+		elDialog?.open();
 	});
 
 	onDestroy(() => {
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	async function onKeydown(event) {
+	function onKeydown(event) {
 		if (event.key === 'Escape') setModule(null);
 	}
 

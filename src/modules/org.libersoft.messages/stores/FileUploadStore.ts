@@ -1,6 +1,8 @@
 import { get, writable } from 'svelte/store';
 import { type FileUpload, type FileUploadRecord, FileUploadRecordStatus, type FileUploadStoreType, type FileUploadStoreValue } from '@/org.libersoft.messages/services/Files/types.ts';
 
+export let modalFileUploadStore = writable<any>(null);
+
 export class FileUploadStore implements FileUploadStoreType {
 	store = writable<FileUploadStoreValue>([]);
 

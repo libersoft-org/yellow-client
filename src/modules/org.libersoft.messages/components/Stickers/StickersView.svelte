@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { debug } from '@/core/stores.ts';
 	import { identifier } from '../../messages.js';
 	import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
@@ -13,7 +13,6 @@
 	import { isMobile } from '@/core/stores.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { onMount, untrack } from 'svelte';
-
 	let { stickerset_favorites } = $props();
 	let fulltext_search_element;
 	let fulltext_search_filter = $state('');
@@ -29,7 +28,7 @@
 		if (!get(isMobile)) fulltext_search_element.focus();
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		console.log('stickers-view onMount');
 	});
 
@@ -94,6 +93,11 @@
 		gap: 10px;
 		padding: 0 10px 10px 10px;
 	}
+
+	.loading {
+		display: flex;
+		justify-content: center;
+	}
 </style>
 
 <div class="filter">
@@ -104,16 +108,16 @@
 		<Option text="Static only" value="static" />
 	</Select>
 </div>
-
-<!--{#if $debug}-->
-<!-- <pre>-->
-<!-- stickerset_favorites: {JSON.stringify(stickerset_favorites)}-->
-<!-- animated_filter: {JSON.stringify(animated_filter)}-->
-<!-- fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}-->
-<!-- items.length: {items.length}-->
-<!--  </pre>-->
-<!--{/if}-->
-
+<!--
+{#if $debug}
+ <pre>
+  stickerset_favorites: {JSON.stringify(stickerset_favorites)}
+  animated_filter: {JSON.stringify(animated_filter)}
+  fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
+  items.length: {items.length}
+ </pre>
+{/if}
+-->
 {#if loading}
 	<Spinner />
 {:else if items.length === 0}

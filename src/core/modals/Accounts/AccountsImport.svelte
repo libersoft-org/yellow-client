@@ -1,20 +1,19 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
 	import { log } from '@/core/tauri.ts';
+	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/core.ts';
 	import { active_account_id } from '@/core/stores.ts';
 	import { validateAccountsArray, validateAccountConfig } from '@/core/accounts_config.ts';
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
-	interface Props {
-		close: () => void;
-	}
-	let { close }: Props = $props();
-	let replaceDialog: any = $state(null);
-	let conflictDialog: any = $state(null);
+	let elModal;
+	let elDialogReplace: any = $state(null);
+	let elDialogConflict: any = $state(null);
 	let currentConflictAccount: any = $state(null);
 	let remainingAccounts: any[] = $state([]);
 	let processedCount = $state(0);
@@ -23,25 +22,33 @@
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
 	let importUi: any = $state(null);
-	const hasExistingAccounts = $derived(get(accounts_config).length > 0);
-	const replaceDialogData = {
+	const hasExistingAccounts = $derived($accounts_config.length > 0);
+	const dataDialogReplace = {
 		title: 'Replace Configuration',
 		body: 'This will replace your current account configuration. All existing accounts will be lost. Are you sure you want to continue?',
 		icon: 'img/import.svg',
 		buttons: [
-			{ text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ img: 'img/replace.svg', text: 'Replace', onClick: confirmReplace, expand: true, testId: 'confirm-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => elDialogReplace?.close(), expand: true, testId: 'cancel-replace-btn' },
 		],
 	};
 
-	const conflictDialogData = $derived({
+	export function open() {
+		elModal?.open();
+	}
+
+	export function close() {
+		elModal?.close();
+	}
+
+	const dataDialogConflict = $derived({
 		title: 'Account Already Exists',
 		body: currentConflictAccount ? `Account with address "${currentConflictAccount.credentials?.address || currentConflictAccount.address}" on server "${currentConflictAccount.credentials?.server || currentConflictAccount.server}" is already configured. What would you like to do?` : '',
 		icon: 'img/import.svg',
 		buttons: [
-			{ text: 'Replace Existing', onClick: replaceConflictAccount, expand: true },
-			{ text: 'Skip This Account', onClick: skipConflictAccount, expand: true },
-			{ img: 'img/cancel.svg', text: 'Cancel import', onClick: () => conflictDialog?.close(), expand: true },
+			{ img: 'img/replace.svg', text: 'Replace existing', onClick: replaceConflictAccount, expand: true, testId: 'replace-existing-btn' },
+			{ img: 'img/skip.svg', text: 'Skip', onClick: skipConflictAccount, expand: true, testId: 'skip-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel import', onClick: () => elDialogConflict?.close(), expand: true, testId: 'cancel-import-btn' },
 		],
 	});
 
@@ -90,7 +97,7 @@
 		pendingReplaceText = text;
 
 		if (currentConfig.length > 0) {
-			replaceDialog?.open();
+			elDialogReplace?.open();
 		} else {
 			await confirmReplaceWithText(text);
 		}
@@ -109,7 +116,7 @@
 					// This is a success with warnings, not an error
 					throw new ImportSuccessWithWarnings(message);
 				} else {
-					close();
+					elModal?.close();
 				}
 			} else {
 				let message = 'No accounts were imported';
@@ -142,7 +149,7 @@
 		if (accountConfigExistsByCredentials(account.credentials?.server, account.credentials?.address)) {
 			// Account exists, show conflict dialog
 			currentConflictAccount = account;
-			conflictDialog?.open();
+			elDialogConflict?.open();
 		} else {
 			// Account doesn't exist, add it
 			accounts_config.update(current => [...current, account]);
@@ -170,7 +177,6 @@
 		if (currentConflictAccount) {
 			const newServer = currentConflictAccount.credentials?.server || currentConflictAccount.server;
 			const newAddress = currentConflictAccount.credentials?.address || currentConflictAccount.address;
-
 			// Find and replace the existing account
 			accounts_config.update(current => {
 				const identifier = `${newAddress}@${newServer}`;
@@ -184,15 +190,14 @@
 			maybeActivateAccount();
 			processedCount++;
 		}
-
-		conflictDialog?.close();
+		elDialogConflict?.close();
 		currentConflictAccount = null;
 		await importUi.doContinue(async () => await processNextAccount());
 	}
 
 	async function skipConflictAccount() {
 		skippedCount++;
-		conflictDialog?.close();
+		elDialogConflict?.close();
 		currentConflictAccount = null;
 		await importUi.doContinue(async () => await processNextAccount());
 	}
@@ -202,15 +207,13 @@
 			try {
 				await confirmReplaceWithText(pendingReplaceText);
 				pendingReplaceText = '';
-				replaceDialog?.close();
+				elDialogReplace?.close();
 			} catch (err) {
 				// Show error and keep dialog open so user can see the error
-				replaceDialog?.close();
+				elDialogReplace?.close();
 				throw err;
 			}
-		} else {
-			replaceDialog?.close();
-		}
+		} else elDialogReplace?.close();
 	}
 
 	async function confirmReplaceWithText(text: string) {
@@ -220,20 +223,31 @@
 		const newConfig = JSON.parse(text);
 		accounts_config.set(newConfig);
 		maybeActivateAccount();
-		close();
+		elModal?.close();
 	}
 </script>
 
-{#if successMessage}
-	<div style="display: flex; flex-direction: column; gap: 20px;">
-		<Alert type="info" message={successMessage} />
-		<div style="display: flex; justify-content: center;">
-			<Button img="img/cross.svg" text="Close" onClick={close} />
-		</div>
-	</div>
-{:else}
-	<Import bind:this={importUi} {close} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
-{/if}
+<style>
+	.success {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+</style>
 
-<Dialog data={replaceDialogData} bind:this={replaceDialog} />
-<Dialog data={conflictDialogData} bind:this={conflictDialog} />
+<Modal title="Import accounts" bind:this={elModal}>
+	{#snippet top()}
+		{#if successMessage}
+			<div class="success">
+				<Alert type="info" message={successMessage} />
+				<ButtonBar expand>
+					<Button img="img/cross.svg" text="Close" onClick={() => elModal?.close()} />
+				</ButtonBar>
+			</div>
+		{:else}
+			<Import bind:this={importUi} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+		{/if}
+	{/snippet}
+</Modal>
+<Dialog data={dataDialogReplace} bind:this={elDialogReplace} />
+<Dialog data={dataDialogConflict} bind:this={elDialogConflict} />

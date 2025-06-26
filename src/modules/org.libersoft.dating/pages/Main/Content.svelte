@@ -15,7 +15,7 @@
 		settings: Settings,
 	};
 
-	onMount(async () => {
+	onMount(() => {
 		window.addEventListener('keydown', onKeydown);
 		if (!$page) setPage('people');
 	});
@@ -24,7 +24,7 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	async function onKeydown(event) {
+	function onKeydown(event) {
 		if (event.key === 'Escape') {
 			if ($page) closePage();
 			else setModule(null);

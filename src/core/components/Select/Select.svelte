@@ -3,13 +3,14 @@
 	import type { HTMLSelectAttributes } from 'svelte/elements';
 	interface Props extends HTMLSelectAttributes {
 		value: string | number;
-		grow?: boolean;
+		expand?: boolean;
 		minWidth?: string;
 		maxWidth?: string;
 		children?: Snippet;
 		label?: any;
+		enabled?: boolean;
 	}
-	let { value = $bindable(''), grow = false, minWidth, maxWidth, children, label, ...restProps }: Props = $props();
+	let { enabled = true, value = $bindable(''), expand = false, minWidth, maxWidth, children, label, ...restProps }: Props = $props();
 	let selectRef: HTMLSelectElement;
 
 	export function focus() {
@@ -39,6 +40,10 @@
 		outline: 2px solid var(--primary-harder-background);
 	}
 
+	select.expand {
+		width: 100%;
+	}
+
 	.select {
 		display: flex;
 		flex-direction: column;
@@ -47,7 +52,7 @@
 </style>
 
 {#snippet select()}
-	<select {...restProps} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} bind:this={selectRef} bind:value>
+	<select disabled={!enabled} {...restProps} class:expand style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} bind:this={selectRef} bind:value>
 		{@render children?.()}
 	</select>
 {/snippet}

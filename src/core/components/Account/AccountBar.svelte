@@ -102,13 +102,14 @@
 	}
 
 	.items {
+		z-index: 10;
 		display: flex;
 		flex-direction: column;
 		position: absolute;
 		top: 100%;
 		left: 0;
 		background-color: var(--secondary-background);
-		z-index: 1000;
+
 		width: 100%;
 		overflow: hidden;
 		transition: none;
@@ -121,7 +122,7 @@
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
-	<Clickable data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
+	<Clickable data-testid="account-bar-toggle" onClick={toggle}>
 		<div class={`dropdown`} class:is-expanded={accountsVisible}>
 			{#if $active_account}
 				<div class="text">

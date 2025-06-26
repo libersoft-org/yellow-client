@@ -1,10 +1,19 @@
-<script>
+<script lang="ts">
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { addressBook } from '../../wallet.ts';
-	export let close;
-	export let params;
-	let error;
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
+	interface Props {
+		close: () => void;
+		params: {
+			item: {
+				guid: string;
+				alias: string;
+			};
+		};
+	}
+	let { close, params }: Props = $props();
+	let error: string | undefined;
 
 	function clickDelete() {
 		addressBook.set($addressBook.filter(i => i.guid !== params.item.guid));
@@ -18,8 +27,11 @@
 	}
 </style>
 
-<div class="text">Would you like to delete the item "{params.item.alias}"?</div>
+<div class="text">Would you like to delete the item "<span class="bold">{params.item.alias}</span>" from address book?</div>
 {#if error}
 	<Alert type="error" message={error} />
 {/if}
-<Button img="img/del.svg" text="Delete" onClick={clickDelete} />
+<ButtonBar expand>
+	<Button img="img/check.svg" text="Yes" onClick={clickDelete} />
+	<Button img="img/cross.svg" text="No" onClick={close} />
+</ButtonBar>

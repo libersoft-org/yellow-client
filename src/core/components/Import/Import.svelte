@@ -8,7 +8,6 @@
 	import { onMount, onDestroy } from 'svelte';
 	import jsQR from 'jsqr';
 	interface Props {
-		close: () => void;
 		onValidate: (text: string) => { valid: boolean; error?: string };
 		onAdd: (text: string) => Promise<void>;
 		onReplace?: (text: string) => Promise<void>;
@@ -22,7 +21,7 @@
 		browseButtonText?: string;
 		qrInstructions?: string;
 	}
-	let { close, onValidate, onAdd, onReplace, onSuccess, testId, jsonLabel = 'JSON', qrLabel = 'QR Code', addButtonText = 'Add', replaceButtonText = 'Replace All', fileAccept = '.json,application/json', browseButtonText = 'Open file', qrInstructions = 'Point your camera at a QR code' }: Props = $props();
+	let { onValidate, onAdd, onReplace, onSuccess, testId, jsonLabel = 'JSON', qrLabel = 'QR Code', addButtonText = 'Add', replaceButtonText = 'Replace All', fileAccept = '.json,application/json', browseButtonText = 'Open file', qrInstructions = 'Point your camera at a QR code' }: Props = $props();
 	let activeTab = $state('json');
 	let text = $state('');
 	let fileInput: HTMLInputElement | undefined = $state();
@@ -96,16 +95,22 @@
 	}
 
 	async function handleReplace() {
-		if (!onReplace) return;
+		if (!onReplace) {
+			console.log('handleReplace: onReplace function is not defined');
+			return;
+		}
 		const currentText = activeTab === 'json' ? text : scannedText;
 		const validation = onValidate(currentText);
 		if (!validation.valid) {
+			console.debug('handleReplace: Validation failed:', validation.error);
 			handleError(validation.error || 'Invalid data');
 			return;
 		}
 		try {
+			console.debug('handleReplace: Replacing data');
 			await onReplace(currentText);
 		} catch (err) {
+			console.debug('handleReplace: Replace error:', err);
 			handleException(err);
 		}
 	}
@@ -204,6 +209,7 @@
 	.import {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 		gap: 10px;
 	}
 
@@ -229,7 +235,7 @@
 	.video-container {
 		position: relative;
 		max-width: 100%;
-		max-height: 400px;
+		max-height: 100%;
 	}
 
 	video {
@@ -263,15 +269,20 @@
 	}
 </style>
 
+{#snippet import_buttons()}
+	<ButtonBar align="center" equalize>
+		<Button img="img/add.svg" text={addButtonText} enabled={!!hasContent} onClick={handleAdd} data-testid={`${testId}-add-btn`} />
+		<Button img="img/import.svg" text={replaceButtonText} enabled={!!hasContent && !!showReplaceButton} onClick={handleReplace} data-testid={`${testId}-replace-btn`} />
+	</ButtonBar>
+{/snippet}
 <div class="import">
 	<Tabs>
 		<TabsItem img="img/json.svg" label={jsonLabel} active={activeTab === 'json'} onClick={() => handleTabChange('json')} testId={`${testId}-json-tab`} />
 		<TabsItem img="img/qr.svg" label={qrLabel} active={activeTab === 'qr'} onClick={() => handleTabChange('qr')} testId={`${testId}-qr-tab`} />
 	</Tabs>
-
 	{#if activeTab === 'json'}
 		<div class="json-import">
-			<ButtonBar>
+			<ButtonBar expand>
 				<Button img="img/open.svg" onclick={loadFile} text={browseButtonText} />
 			</ButtonBar>
 			<div class="scrollable">
@@ -279,16 +290,20 @@
 			</div>
 			<input bind:this={fileInput} type="file" accept={fileAccept} style="display: none;" onchange={handleFileSelect} />
 		</div>
+		{@render import_buttons()}
 	{:else if activeTab === 'qr'}
 		{#if scannedText}
 			<div class="qr-content">
 				<div class="scan-again-container">
-					<Button img="img/qr.svg" text="Scan again" onClick={scanAgain} />
+					<ButtonBar expand>
+						<Button img="img/qr.svg" text="Scan again" onClick={scanAgain} />
+					</ButtonBar>
 				</div>
 				<div class="scrollable">
 					<Code code={scannedText} testId={`${testId}-textarea`} />
 				</div>
 			</div>
+			{@render import_buttons()}
 		{:else}
 			<div class="qr-scanner">
 				{#if alertText}
@@ -308,8 +323,4 @@
 	{#if hasContent && alertText}
 		<Alert type="error" message={alertText} />
 	{/if}
-	<ButtonBar align="center" equalize>
-		<Button img="img/add.svg" text={addButtonText} enabled={hasContent} onClick={handleAdd} data-testid={`${testId}-add-btn`} />
-		<Button img="img/import.svg" text={replaceButtonText} enabled={hasContent && showReplaceButton} onClick={handleReplace} data-testid={`${testId}-replace-btn`} />
-	</ButtonBar>
 </div>

@@ -8,7 +8,8 @@ export const module = {
 	identifier: 'org.libersoft.wallet',
 };
 
-registerModule(module.identifier, {
+registerModule({
+	id: module.identifier,
 	order: 3,
 	callbacks: {},
 	panels: {

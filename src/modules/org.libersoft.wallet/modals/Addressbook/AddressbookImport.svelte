@@ -14,15 +14,15 @@
 	let replaceDialog: any = $state(null);
 	let pendingReplaceText = $state('');
 
-	const hasExistingAddresses = $derived(get(addressBook).length > 0);
+	const hasExistingAddresses = $derived($addressBook.length > 0);
 
 	const replaceDialogData = {
 		title: 'Replace Address Book',
 		body: 'This will replace your current address book. All existing addresses will be lost. Are you sure you want to continue?',
 		icon: 'img/import.svg',
 		buttons: [
-			{ text: 'Replace All', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ text: 'Replace All', onClick: confirmReplace, testId: 'confirm-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), testId: 'cancel-replace-btn' },
 		],
 	};
 

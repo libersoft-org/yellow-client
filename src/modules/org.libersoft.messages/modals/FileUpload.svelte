@@ -4,7 +4,7 @@
 	import { truncateText } from '@/core/utils/textUtils.js';
 	import { get, type Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
-	import { selectedConversation, initUpload } from '../messages.js';
+	import { selectedConversation, initUpload, identifier } from '../messages.js';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -16,13 +16,16 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-
+	interface Props {
+		params?: {
+			setFileUploadModal: (value: number) => void;
+		};
+		close?: () => void;
+	}
 	type FileUploadModalContext = {
 		fileUploadModalFiles: Writable<File[]>;
 	};
-
-	const { params } = $props();
-
+	const { params, close } = $props();
 	let elFileInput;
 	let dropActive = $state(false);
 	let { fileUploadModalFiles } = getContext<FileUploadModalContext>('FileUploadModal');
@@ -37,10 +40,11 @@
 	}
 
 	function onFileDelete(file) {
+		//console.log('Deleting file:', file);
+		//console.log($fileUploadModalFiles);
 		const index = $fileUploadModalFiles.indexOf(file);
-		if (index > -1) {
-			$fileUploadModalFiles.splice(index, 1);
-		}
+		//console.log('File index:', index);
+		if (index > -1) $fileUploadModalFiles.splice(index, 1);
 	}
 
 	function onFileUpload(e) {
@@ -121,7 +125,7 @@
 <div class="file-upload {dropActive ? 'drop-active' : ''}">
 	<input type="file" id="fileInput" bind:this={elFileInput} onchange={onFileUpload} multiple style="display: none;" data-testid="file-upload-input" />
 	<ButtonBar equalize space>
-		<Button img="img/add.svg" text="Add files" onClick={onFileAdd} />
+		<Button img="modules/{identifier}/img/file-add.svg" text="Add files" onClick={onFileAdd} />
 		<Button img="img/del.svg" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
 	</ButtonBar>
 	<div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
@@ -130,9 +134,9 @@
 				<Table breakpoint="0">
 					<Thead>
 						<TheadTr>
-							<Th>File name:</Th>
-							<Th>Size:</Th>
-							<Th>Action:</Th>
+							<Th>File name</Th>
+							<Th>Size</Th>
+							<Th>Action</Th>
 						</TheadTr>
 					</Thead>
 					<Tbody>

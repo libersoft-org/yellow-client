@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { hideSidebarMobile } from '@/core/stores.ts';
 	import { addressBook, setSection, setSendAddress } from '../../wallet.ts';
 	import { module } from '../../module.ts';

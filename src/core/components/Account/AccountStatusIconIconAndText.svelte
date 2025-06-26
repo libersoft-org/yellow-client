@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import AccountStatusIcon from '@/core/components/Account/AccountStatusIcon.svelte';
 	import AccountStatus from '@/core/components/Account/AccountStatus.svelte';
-	export let account;
+	interface Props {
+		account?: any;
+	}
+	let { account }: Props = $props();
 </script>
 
 <style>

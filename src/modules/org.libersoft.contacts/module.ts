@@ -11,7 +11,8 @@ interface Module {
 	identifier: string;
 }
 
-registerModule(module.identifier, {
+registerModule({
+	id: module.identifier,
 	order: 2,
 	callbacks: { initData },
 	panels: {

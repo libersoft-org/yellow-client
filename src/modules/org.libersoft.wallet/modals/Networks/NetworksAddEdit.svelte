@@ -1,5 +1,5 @@
 <script>
-	import { networks } from '../wallet.ts';
+	import { networks } from '../../wallet.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

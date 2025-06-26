@@ -67,17 +67,16 @@ export function updateModulesComms(acc: Account) {
 	}
 }
 
-export function registerModule(id: string, decl: ModuleDeclaration) {
-	console.log('register module:', id, decl);
-	if (get(modules_disabled).indexOf(id) !== -1) {
-		console.log('Module disabled:', id);
+export function registerModule(decl: ModuleDeclaration) {
+	console.log('register module:', decl.id, decl);
+	if (get(modules_disabled).indexOf(decl.id) !== -1) {
+		console.log('Module disabled:', decl.id);
 		return;
 	}
 	let ordering = get(modules_display_order);
-	if (ordering[id] !== undefined) decl.order = ordering[id];
-	decl.id = id;
+	if (ordering[decl.id] !== undefined) decl.order = ordering[decl.id];
 	let module_decls_v = get(module_decls);
-	module_decls_v[id] = decl;
+	module_decls_v[decl.id] = decl;
 	module_decls.set(module_decls_v);
 	const initResult = decl.callbacks?.init?.();
 	if (typeof initResult === 'function') {

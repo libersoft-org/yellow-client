@@ -127,7 +127,7 @@
 	}
 
 	.emoji.hover:hover {
-		z-index: 90;
+		z-index: 51;
 		transform: scale(1.5);
 		background-color: var(--primary-soft-background);
 	}
@@ -145,7 +145,6 @@
 <div class="filter">
 	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
 </div>
-
 {#snippet clickable_emoji(emoji)}
 	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi]} let:intersecting>
 		<Clickable onRightClick={e => showAlts(e, emoji)}>
@@ -155,7 +154,7 @@
 				use:longpress
 				on:longpress={e => showAlts(e, emoji)}
 				on:mymousedown={() => {
-					altsMenu?.close();
+					altsMenu.close();
 				}}
 				on:click={() => clickEmoji(emoji.base)}
 				on:keydown={e => {}}
@@ -169,7 +168,6 @@
 		</Clickable>
 	</IntersectionObserver>
 {/snippet}
-
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
 	{#if $emojisLoading}
 		<Spinner />
@@ -198,7 +196,6 @@
 		{/each}
 	{/if}
 </div>
-
 <ContextMenu bind:this={altsMenu} scrollable={false}>
 	<div class="emojis">
 		{#each alts as e (e)}

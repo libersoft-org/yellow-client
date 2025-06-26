@@ -1,15 +1,20 @@
 <script lang="ts">
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import MessagesSettings from './MessagesSettings.svelte';
-	interface Props {
-		show?: boolean;
-	}
-	let { show = $bindable(false) }: Props = $props();
+	let elBaseSettings: BaseSettings;
 	let settingsObject = {
 		title: 'Messages settings',
 		name: 'settings',
 		body: MessagesSettings,
 	};
+
+	export function open() {
+		elBaseSettings.open();
+	}
+
+	export function close() {
+		elBaseSettings.close();
+	}
 </script>
 
-<BaseSettings {settingsObject} bind:show />
+<BaseSettings {settingsObject} bind:this={elBaseSettings} testId="messages-settings" />

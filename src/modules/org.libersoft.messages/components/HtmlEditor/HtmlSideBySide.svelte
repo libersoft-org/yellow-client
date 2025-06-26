@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import HtmlEditor from './HtmlEditor.svelte';
 	import HtmlEditorPreview from './HtmlEditorPreview.svelte';
-	export let text;
+	interface Props {
+		text?: string;
+	}
+	let { text }: Props = $props();
 </script>
 
 <style>

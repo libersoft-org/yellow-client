@@ -129,7 +129,11 @@ async function sendMessage(page: Page, messageText: string): Promise<void> {
 async function replyToLastMessage(page: Page, replyText: string): Promise<void> {
 	return await test.step(`Reply to last message with: "${replyText}"`, async () => {
 		await page.getByTestId('message-item').last().click({ button: 'right' });
+
+		// Wait for context menu to appear and click reply
+		await page.getByTestId('reply-context-menu-item').last().waitFor({ state: 'visible' });
 		await page.getByTestId('reply-context-menu-item').last().click();
+
 		await sendMessage(page, replyText);
 	});
 }
@@ -256,6 +260,8 @@ async function configureMessagesSettings(
 		if (settings.photoRadius) {
 			await page.getByRole('combobox').selectOption(settings.photoRadius);
 		}
+
+		await closeModal(page, 'messages-settings');
 	});
 }
 
@@ -293,13 +299,7 @@ async function goToRootSettingsSection(page: Page): Promise<void> {
  */
 async function closeModal(page: Page, testId: string): Promise<void> {
 	return await test.step('Close modal', async () => {
-		try {
-			// Try the testId approach first
-			await page.getByTestId(testId + '-Modal-close').click({ timeout: 1000 });
-		} catch {
-			// Fallback: Use Escape key to close modal
-			await page.keyboard.press('Escape');
-		}
+		await page.getByTestId(testId + '-Modal-close').click({ timeout: 1000 });
 	});
 }
 
@@ -308,10 +308,7 @@ async function closeModal(page: Page, testId: string): Promise<void> {
  * @param page - The Playwright page object
  */
 async function closeForwardModal(page: Page): Promise<void> {
-	return await test.step('Close forward modal', async () => {
-		// Since ForwardMessage modal doesn't have a testId, use Escape key
-		await page.keyboard.press('Escape');
-	});
+	return await closeModal(page, 'forward-message');
 }
 
 /**
@@ -329,6 +326,7 @@ async function setupAccountInWizard(
 	}
 ): Promise<void> {
 	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
+		await page.getByTestId('wizard-next').waitFor({ state: 'visible', timeout: 10000 });
 		await page.getByTestId('wizard-next').click();
 		await page.getByTestId('account-title-input').click();
 		await page.getByTestId('account-title-input').fill(accountData.title || '');
@@ -370,7 +368,18 @@ async function exportAccounts(page: Page): Promise<any> {
 async function deleteFirstAccount(page: Page): Promise<void> {
 	return await test.step('Delete first account', async () => {
 		await page.getByTestId('delete-account-button').first().click();
-		await page.locator('button').filter({ hasText: 'Delete' }).click();
+		// Wait for dialog to appear - wait for the confirm button instead
+		await page.getByTestId('delete-account-confirm').waitFor({ state: 'visible', timeout: 5000 });
+
+		// Verify dialog content shows proper text and doesn't show "undefined"
+		const dialogBody = await page.locator('.modal .body').textContent();
+		expect(dialogBody).toMatch(/Would you like to delete the account/);
+		expect(dialogBody).not.toContain('undefined');
+
+		// Verify the dialog shows the specific account address
+		expect(dialogBody).toContain('user1@example.com');
+
+		await page.getByTestId('delete-account-confirm').click();
 	});
 }
 

@@ -1,12 +1,12 @@
-<script>
+<script lang="ts">
 	import { module } from '../../module.ts';
 	import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import ModalEditNetwork from '../../modals/EditNetwork.svelte';
-	import ModalTokenList from '../../modals/TokenList.svelte';
+	import ModalEditNetwork from '../Networks/NetworksAddEdit.svelte';
+	import ModalTokenList from '../Networks/NetworksTokens.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -14,12 +14,12 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
 	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
-	let showModalEditNetwork = false;
-	let showModalTokenList = false;
 	let modalItemID = null;
 	let modalItem = null;
-	let showSettingsNetworksExport = false;
-	let showSettingsNetworksImport = false;
+	let elModalEditNetwork;
+	let elModalTokenList;
+	let elModalSettingsNetworksImport;
+	let elModalSettingsNetworksExport;
 
 	function clickAddNetwork(net) {
 		console.log('clickAddNetwork', net);
@@ -29,21 +29,21 @@
 	function editNetwork(net) {
 		console.log('editNetwork', net);
 		modalItem = net;
-		showModalEditNetwork = true;
+		elModalEditNetwork?.open();
 	}
 
 	function tokenList(net) {
 		console.log('tokenList', net);
 		modalItemID = net.guid;
-		showModalTokenList = true;
-	}
-
-	function doExport() {
-		showSettingsNetworksExport = true;
+		elModalTokenList?.open();
 	}
 
 	function doImport() {
-		showSettingsNetworksImport = true;
+		elModalSettingsNetworksImport?.open();
+	}
+
+	function doExport() {
+		elModalSettingsNetworksExport?.open();
 	}
 </script>
 
@@ -57,7 +57,7 @@
 
 <div class="networks">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={clickAddNetwork} data-testid="networks-export-btn" />
+		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={clickAddNetwork} data-testid="networks-add-new-btn" />
 		<Button img="img/import.svg" text="Import" onClick={() => doImport()} data-testid="networks-import-btn" />
 		<Button img="img/export.svg" text="Export" onClick={() => doExport()} data-testid="networks-export-btn" />
 	</ButtonBar>
@@ -110,7 +110,7 @@
 		</Tbody>
 	</Table>
 </div>
-<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:show={showModalEditNetwork} />
-<Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:show={showModalTokenList} />
-<Modal title="Export networks" body={SettingsNetworksExport} bind:show={showSettingsNetworksExport} />
-<Modal title="Import networks" body={SettingsNetworksImport} bind:show={showSettingsNetworksImport} />
+<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:this={elModalEditNetwork} />
+<Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} />
+<Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} />
+<Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} />

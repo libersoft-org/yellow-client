@@ -16,17 +16,40 @@ export default defineConfig({
 			name: 'chromium',
 			use: {
 				...devices['Desktop Chrome'],
-				viewport: { width: 1280, height: 1280 },
+				viewport: { width: 1000, height: 800 },
 				launchOptions: {
 					args: ['--disable-web-security', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
 				},
 			},
 		},
-		/*{
+		{
+			name: 'firefox',
+			use: {
+				...devices['Desktop Firefox'],
+				viewport: { width: 1000, height: 800 },
+				launchOptions: {
+					firefoxUserPrefs: {
+						'media.navigator.streams.fake': true,
+						'media.navigator.permission.disabled': true,
+					},
+				},
+			},
+		},
+		{
 			name: 'Mobile Safari',
 			use: {
 				...devices['iPhone 13'],
+				launchOptions: {},
 			},
-		},*/
+		},
+		{
+			name: 'Mobile Chrome',
+			use: {
+				...devices['Pixel 5'],
+				launchOptions: {
+					args: ['--disable-web-security', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+				},
+			},
+		},
 	],
 });

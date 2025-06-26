@@ -16,16 +16,10 @@
 	import { forwardMessageStore } from '../../stores/ForwardMessageStore.ts';
 	import MessageReaction from '../MessageReaction/MessageReaction.svelte';
 	import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
-
 	export let message;
 	export let elContainer;
 	export let enableScroll;
 	export let disableScroll;
-
-	export function getRef() {
-		return elMessage;
-	}
-
 	let seenTxt;
 	let checkmarks;
 	let observer;
@@ -52,6 +46,16 @@
 	let renderedTs;
 
 	$: update(message);
+	//$: console.log('messageContent:', messageContent);
+	$: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
+	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
+	$: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
+	//$: console.log('Core.isClientFocused:', $isClientFocused);
+	$: maybeSetSeen(isVisible, $isClientFocused);
+
+	export function getRef() {
+		return elMessage;
+	}
 
 	// console.log('updated message:', message);
 	function update(message) {
@@ -60,25 +64,18 @@
 		messageContent = processMessage(message);
 	}
 
-	//$: console.log('messageContent:', messageContent);
-	$: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
-	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
-	$: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
-	//$: console.log('Core.isClientFocused:', $isClientFocused);
-	$: maybeSetSeen(isVisible, $isClientFocused);
-
 	function maybeSetSeen(isVisible, isClientFocused) {
-		console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
+		//console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
 		if (!isVisible || !isClientFocused) {
 			console.log('not setting seen because not visible or not focused');
 			return;
 		}
 		if (message.seen) {
-			console.log('not setting seen because already set');
+			//console.log('not setting seen because already set');
 			observer.disconnect();
 			isVisible = false;
 		} else {
-			console.log('setMessageSeen..');
+			//console.log('setMessageSeen..');
 
 			const window_was_active_when_message_was_received = isClientFocused && Date.now() - renderedTs < 150;
 			setMessageSeen(

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import QRCode from 'qrcode';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
@@ -9,9 +9,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { product } from '@/core/stores.ts';
-
 	let { data, filename = 'export', enableJsonTab = true, enableQrTab = true, testId = 'export', isSensitive = false } = $props();
-
 	let activeTab = $state('json');
 	let jsonEditorContents = $state('');
 	let qrCodeData = $state('');
@@ -73,7 +71,7 @@
 		let url = URL.createObjectURL(blob);
 		let a = document.createElement('a');
 		a.href = url;
-		a.download = product + '_' + filename + '_' + new Date().toISOString().replace('T', ' ').replace('Z', '').replace(/\.\d+/, '') + '.json';
+		a.download = product + '_' + filename + '_' + new Date().toISOString().replace('T', '_').replace('Z', '').replace(/\.\d+/, '') + '.json';
 		a.click();
 		setTimeout(() => {
 			URL?.revokeObjectURL(url);
@@ -87,6 +85,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+		width: 100%;
 	}
 
 	.qr-page {
@@ -144,7 +143,7 @@
 		</Tabs>
 	{/if}
 	{#if activeTab === 'json' && enableJsonTab}
-		<ButtonBar data-testid="{testId}-json-buttons">
+		<ButtonBar expand data-testid="{testId}-json-buttons">
 			<Button img="img/copy.svg" text={copyText} onClick={clickCopy} testId="{testId}-copy-button" />
 			<Button img="img/download.svg" text="Download as file" onClick={clickDownload} testId="{testId}-download-button" />
 		</ButtonBar>

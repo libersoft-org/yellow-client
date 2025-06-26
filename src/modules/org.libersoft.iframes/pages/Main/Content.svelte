@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { accounts, findAccount, sendAsync } from '@/core/core.ts';
 	//let url = 'https://yellow-module1.netlify.app/'
-	let url = 'http://localhost:5173/';
-	let module_id = 'org.libersoft.messages2';
+	let url: string = 'http://localhost:5173/';
+	let module_id: string = 'org.libersoft.messages2';
 	let iframe;
 
 	onMount(() => {
@@ -68,7 +68,6 @@
 <!--<iframe sandbox="allow-scripts" src="https://koo5.github.io/" title="content" width="600" height="400"></iframe>-->
 <!--<iframe id="iframe1" src="iframe1.html" style="width: 45%; height: 200px;"></iframe>-->
 <!--<iframe id="iframe2" src="iframe2.html" style="width: 45%; height: 200px;"></iframe>-->
-
 <div class="parent">
 	<iframe bind:this={iframe} sandbox="allow-scripts" src={url} title="content"></iframe>
 </div>

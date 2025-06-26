@@ -1,4 +1,6 @@
 <script>
+	import { networks } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -10,14 +12,12 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalAddEdit from './TokenListAddEdit.svelte';
-	import ModalDel from './TokenListDel.svelte';
-	import { networks } from '../wallet.ts';
-	import { module } from '../module.ts';
+	import ModalAddEdit from './NetworksTokensAddEdit.svelte';
+	import ModalDel from './NetworksTokensDel.svelte';
 	export let params;
 	let net;
-	let showModalAddEdit = false;
-	let showModalDel = false;
+	let elModalAddEdit;
+	let elModalDel;
 	let modalItem = null;
 
 	$: update($networks, params);
@@ -35,7 +35,7 @@
 	function addTokenModal() {
 		console.log('ADD TOKEN MODAL');
 		modalItem = null;
-		showModalAddEdit = true;
+		elModalAddEdit?.open();
 	}
 
 	function onAdd(token) {
@@ -48,7 +48,7 @@
 	function editTokenModal(item) {
 		console.log('EDIT TOKEN MODAL:', item);
 		modalItem = item;
-		showModalAddEdit = true;
+		elModalAddEdit?.open();
 	}
 
 	function onEdit(token) {
@@ -60,7 +60,7 @@
 	function delTokenModal(item) {
 		console.log('DELETE TOKEN MODAL:', item);
 		modalItem = item;
-		showModalDel = true;
+		elModalDel?.open();
 	}
 
 	function onDel(token) {
@@ -116,5 +116,5 @@
 		</Table>
 	{/if}
 </div>
-<Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:show={showModalAddEdit} />
-<Modal title={'Delete token'} body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:show={showModalDel} />
+<Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:this={elModalAddEdit} />
+<Modal title="Delete token" body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:this={elModalDel} />

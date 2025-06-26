@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
 	import { identifier } from '../../messages.js';
 	import { onMount, tick } from 'svelte';
 	import { updateStickerLibrary, stickerLibraryUpdaterState } from '../../stickers.js';
 	import { debug } from '@/core/stores.ts';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';

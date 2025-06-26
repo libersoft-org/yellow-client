@@ -1,8 +1,14 @@
-<script>
+<script lang="ts">
 	import { getContext } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	let { img = null, label = '', colorVariable = '--primary-foreground', onClick, ...restProps } = $props();
+	interface Props {
+		img?: string;
+		label?: string;
+		colorVariable?: string;
+		onClick?: (e: Event) => void;
+	}
+	let { img, label, colorVariable = '--primary-foreground', onClick, ...restProps }: Props = $props();
 	let menu = getContext('ContextMenu');
 
 	function handleClick() {
@@ -23,7 +29,7 @@
 		display: flex;
 		align-items: center;
 		box-sizing: border-box;
-		padding: 8px 12px;
+		padding: 8px 10px;
 		width: 100%;
 		background-color: var(--primary-softer-background);
 		color: var(--primary-foreground);

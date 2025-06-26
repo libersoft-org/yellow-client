@@ -369,10 +369,10 @@ test.describe('Accounts Import Functionality', () => {
 		await clickAddAccounts(page);
 
 		// Should show conflict dialog
-		await expect(page.getByText('Account Already Exists')).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText('Account with address "duplicate@example.com" on server "ws://localhost:8084" is already configured. What would you like to do?')).toBeVisible({ timeout: 5000 });
 
-		// Test "Skip This Account" option
-		await page.getByRole('button', { name: 'Skip This Account' }).click();
+		// Test "Skip" option
+		await page.getByTestId('skip-btn').click();
 
 		// Wait a bit for any async operations
 		await page.waitForTimeout(1000);
@@ -380,17 +380,6 @@ test.describe('Accounts Import Functionality', () => {
 		// Check if modal is still visible
 		const modalVisible = await page.getByTestId('accounts-import-Modal').isVisible();
 		//console.log('Modal still visible after skip:', modalVisible);
-
-		// Debug: Check what's actually in the modal
-		const modalContent = await page.getByTestId('accounts-import-Modal').textContent();
-		//console.log('Modal content:', modalContent);
-
-		// Check for any error text, not just in .alert
-		const errorTextVisible = await page
-			.getByText('No accounts were imported')
-			.isVisible()
-			.catch(() => false);
-		//console.log('Error text visible anywhere:', errorTextVisible);
 
 		// Should show error that no accounts were imported
 		await expectErrorMessage(page, 'No accounts were imported');
@@ -425,10 +414,10 @@ test.describe('Accounts Import Functionality', () => {
 		await clickAddAccounts(page);
 
 		// Should show conflict dialog
-		await expect(page.getByText('Account Already Exists')).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText('Account with address "replace@example.com" on server "ws://localhost:8084" is already configured. What would you like to do?')).toBeVisible({ timeout: 5000 });
 
-		// Test "Replace Existing" option
-		await page.getByRole('button', { name: 'Replace Existing' }).click();
+		// Test "Replace existing" option
+		await page.getByTestId('replace-existing-btn').click();
 
 		// Modal should close on success
 		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });

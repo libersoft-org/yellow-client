@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
 	import { product, link } from '@/core/stores.ts';
 	import { BROWSER } from '@/core/tauri.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -13,9 +14,26 @@
 		showMenu: boolean;
 	}
 	let { showMenu = $bindable(false) }: Props = $props();
-	let showModalSettings = $state(false);
+	let elSettings: Settings;
 	let elDialogExit: InstanceType<typeof DialogExit>;
 	let darkModeLocal = $state(false);
+
+	onMount(() => {
+		window.addEventListener('keydown', onKeydown);
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
+	});
+
+	function onKeydown(event) {
+		if (event.key === 'Escape' && showMenu) {
+			event.stopImmediatePropagation();
+			event.preventDefault();
+			//TODO: - deny closing everything else than menu !!!
+			clickMenuClose();
+		}
+	}
 
 	// Sync darkModeLocal with isDarkMode store
 	$effect(() => {
@@ -26,6 +44,7 @@
 	$effect(() => {
 		toggleDarkMode(darkModeLocal);
 	});
+
 	const menuItems = [
 		{
 			title: 'Donate',
@@ -68,19 +87,19 @@
 	}
 
 	function clickSettings() {
-		showModalSettings = true;
+		elSettings?.open();
 		clickMenuClose();
 	}
 
 	function exitApp() {
-		elDialogExit.open();
+		elDialogExit?.open();
 		clickMenuClose();
 	}
 </script>
 
 <style>
 	.overlay {
-		z-index: 199;
+		z-index: 200;
 		position: fixed;
 		display: none;
 		top: 0;
@@ -95,7 +114,7 @@
 	}
 
 	.menu {
-		z-index: 200;
+		z-index: 201;
 		position: fixed;
 		display: flex;
 		flex-direction: column;
@@ -198,5 +217,5 @@
 		</div>
 	</div>
 </div>
-<Settings testId="global-settings" bind:show={showModalSettings} />
+<Settings testId="global-settings" bind:this={elSettings} />
 <DialogExit bind:this={elDialogExit} />

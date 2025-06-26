@@ -3,7 +3,6 @@
 	import { current_theme } from '@/core/themes.ts';
 	import { getColorFromCSSToFilter } from '@/core/utils/colors.js';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-
 	interface Props {
 		img?: string;
 		alt?: string;

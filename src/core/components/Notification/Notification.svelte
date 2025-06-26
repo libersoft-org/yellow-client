@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { log } from '@/core/tauri.ts';
 	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '@/core/notifications_settings.ts';
@@ -7,8 +7,11 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let data;
-	export let closing = false;
+	interface Props {
+		data?: any;
+		closing?: boolean;
+	}
+	let { data, closing = false }: Props = $props();
 
 	function handleClosing(e) {
 		e.stopPropagation();
@@ -160,7 +163,7 @@
 		font-size: 14px;
 	}
 
-	/* fallback pro starší WebKit */
+	/* fallback for older WebKit */
 	.clamp-3 {
 		font-size: var(--font-size);
 		line-clamp: var(--lines);

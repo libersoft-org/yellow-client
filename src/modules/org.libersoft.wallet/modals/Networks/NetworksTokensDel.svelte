@@ -1,7 +1,13 @@
-<script>
+<script lang="ts">
 	import Button from '@/core/components/Button/Button.svelte';
-	export let close;
-	export let params;
+	interface Props {
+		close: () => void;
+		params: {
+			item: { name: string };
+			onDel: (item: { name: string }) => void;
+		};
+	}
+	let { close, params }: Props = $props();
 
 	function deleteItem() {
 		params.onDel(params.item);

@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import CornerSelectorCorner from '@/core/components/CornerSelector/CornerSelectorCorner.svelte';
-	export let value = 'top-right';
-	export let disabled = false;
+	interface Props {
+		value?: string;
+		disabled?: boolean;
+	}
+	let { value = 'top-right', disabled = false }: Props = $props();
 
 	function selectCorner(corner) {
 		if (disabled) return;

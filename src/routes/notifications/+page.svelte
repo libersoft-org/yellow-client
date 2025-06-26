@@ -87,26 +87,23 @@
 			id: 'n' + counter,
 			img: 'https://img.freepik.com/free-vector/night-ocean-landscape-full-moon-stars-shine_107791-7397.jpg',
 			title: 'Very ' + counter++,
-			body: 'Veřejné s autorská počítačové vyhotovení, ',
+			body: 'Lorem ipsum dolor sit amet, ',
 		};
 		notificationData.buttons = [
 			{
 				text: 'Abort',
 				id: 'abort',
 				onClick: onClick.bind(notificationData),
-				expand: true,
 			},
 			{
 				text: 'Retry',
 				id: 'retry',
 				onClick: onClick.bind(notificationData),
-				expand: true,
 			},
 			{
 				text: 'Fail',
 				id: 'fail',
 				onClick: onClick.bind(notificationData),
-				expand: true,
 			},
 		];
 		notificationData.onClick = onClick.bind(notificationData);

@@ -1,20 +1,18 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
+	import { mobileClass, isMobile, debug } from '@/core/stores.ts';
 	import { draggable } from '@neodrag/svelte';
-	import { debug } from '@/core/stores.ts';
-	import { mobileClass, isMobile } from '@/core/stores.ts';
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-
 	interface Props {
 		testId?: string;
-		show?: boolean;
 		children?: Snippet;
 		top?: Snippet;
 		center?: Snippet;
 		bottom?: Snippet;
 		params?: any;
+		max?: boolean;
 		optionalIcon?: {
 			img: string;
 			alt?: string;
@@ -26,19 +24,38 @@
 		height?: string;
 		onShowChange?: (show: boolean) => void;
 	}
-
-	let { testId = '', show = $bindable(false), children, top, center, bottom, params, optionalIcon, title = '', body = {}, width, height, onShowChange = () => {} }: Props = $props();
-	let modalEl: HTMLDivElement | null = $state(null);
+	let show = $state(false);
+	let maximized = $state(false);
+	let { testId = '', children, top, center, bottom, params, max, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
+	let elModal: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
 	let zIndex = $state(100);
 	let modalId: number;
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
+	let focused = $state(false);
+
+	setContext('setTitle', setTitle);
+	setContext('Popup', { close });
+
+	$effect(() => {
+		if (!elModal) return;
+		elModal.addEventListener('focusin', onFocusIn);
+		elModal.addEventListener('focusout', onFocusOut);
+		return () => {
+			if (!elModal) {
+				console.error('[Modal] elModal is not defined 2');
+				return;
+			}
+			elModal.removeEventListener('focusin', onFocusIn);
+			elModal.removeEventListener('focusout', onFocusOut);
+		};
+	});
 
 	$effect(() => {
 		if (!$isMobile) return;
-		if (modalEl && showContent && !isDragging) {
+		if (elModal && showContent && !isDragging) {
 			centerModal();
 			requestAnimationFrame(snapTransformIntoBounds);
 		}
@@ -54,24 +71,19 @@
 				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
 			} else {
 				requestAnimationFrame(() => {
-					if (modalEl && showContent) {
-						centerModal();
-					}
+					if (elModal && showContent) centerModal();
 				});
 			}
 		}
 
-		if (modalEl) {
+		if (elModal) {
 			let didInit = false;
 			resizeObserver = new ResizeObserver(() => {
 				if (isDragging) return;
-				if (didInit) {
-					handleResize();
-				} else {
-					didInit = true;
-				}
+				if (didInit) handleResize();
+				else didInit = true;
 			});
-			resizeObserver.observe(modalEl);
+			resizeObserver.observe(elModal);
 		}
 
 		window.addEventListener('resize', handleResize);
@@ -82,6 +94,18 @@
 			resizeObserver?.disconnect();
 		};
 	});
+
+	export function isOpen() {
+		return show;
+	}
+
+	function onFocusIn() {
+		focused = true;
+	}
+
+	function onFocusOut() {
+		focused = false;
+	}
 
 	function onDragStart() {
 		isDragging = true;
@@ -99,7 +123,7 @@
 	async function showUpdated(showing: boolean) {
 		if (showing) {
 			await tick();
-			modalEl?.focus();
+			elModal?.focus();
 			showContent = true;
 			await tick();
 			centerModal();
@@ -110,22 +134,24 @@
 	}
 
 	function centerModal() {
-		if (!modalEl) return;
-
+		if (!elModal) return;
 		if ($isMobile) {
-			modalEl.style.transform = 'translateY(-50%)';
+			// On mobile, modal takes full width but centers vertically
+			const rect = elModal.getBoundingClientRect();
+			const y = (window.innerHeight - rect.height) / 2;
+			elModal.style.transform = `translate3d(0px, ${y}px, 0)`;
 			return;
 		}
-
-		if (!isDragging) {
-			modalEl.style.transform = 'translateY(-50%)';
-		}
+		const rect = elModal.getBoundingClientRect();
+		const x = (window.innerWidth - rect.width) / 2;
+		const y = (window.innerHeight - rect.height) / 2;
+		elModal.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 	}
 
 	function snapTransformIntoBounds() {
-		if (!modalEl) return;
+		if (!elModal) return;
 		if (!$isMobile) return;
-		const rect = modalEl.getBoundingClientRect();
+		const rect = elModal.getBoundingClientRect();
 		const padding = 0;
 		let dx = 0;
 		let dy = 0;
@@ -134,29 +160,42 @@
 		if (rect.top < padding) dy = padding - rect.top;
 		else if (rect.bottom > window.innerHeight - padding) dy = window.innerHeight - padding - rect.bottom;
 		if (dx === 0 && dy === 0) return;
-		const matrix = new DOMMatrixReadOnly(getComputedStyle(modalEl).transform);
+		const matrix = new DOMMatrixReadOnly(getComputedStyle(elModal).transform);
 		const newX = matrix.m41 + dx;
 		const newY = matrix.m42 + dy;
 		if (!isDragging) {
-			modalEl.style.transition = 'none';
-			modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
-			modalEl.offsetHeight;
-			modalEl.style.transition = '';
+			elModal.style.transition = 'none';
+			elModal.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+			elModal.offsetHeight;
+			elModal.style.transition = '';
 		} else {
-			modalEl.style.transition = 'transform 0.2s ease';
-			modalEl.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+			elModal.style.transition = 'transform 0.2s ease';
+			elModal.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
 			setTimeout(() => {
-				if (modalEl) modalEl.style.transition = '';
+				if (elModal) elModal.style.transition = '';
 			}, 200);
 		}
 	}
 
 	export function open() {
 		setShow(true);
+		elModal?.focus();
 	}
 
 	export function close() {
 		setShow(false);
+	}
+
+	export function maximize() {
+		maximized = true;
+	}
+
+	export function restore() {
+		maximized = false;
+	}
+
+	function doubleClickHeader() {
+		if (max) maximized ? restore() : maximize();
 	}
 
 	const dragableConfig = {
@@ -174,6 +213,7 @@
 
 	function setShow(value: boolean) {
 		show = value;
+		maximized = false;
 		onShowChange?.(value);
 	}
 
@@ -188,9 +228,6 @@
 	function setTitle(value: string) {
 		title = value;
 	}
-
-	setContext('setTitle', setTitle);
-	setContext('Popup', { close });
 </script>
 
 <style>
@@ -223,6 +260,7 @@
 		border-radius: 10px;
 		box-shadow: var(--shadow);
 		background-color: var(--default-background);
+		/*transition: transform 0.4s ease;*/
 	}
 
 	:global(.modal.neodrag-dragging) .header {
@@ -237,14 +275,29 @@
 		border: none;
 	}
 
+	.modal.max {
+		max-width: 100% !important;
+		max-height: 100% !important;
+		width: 100% !important;
+		height: 100% !important;
+		border-radius: 0px;
+		border: none;
+		transform: none !important;
+	}
+
 	.modal .header {
 		display: flex;
 		align-items: center;
 		gap: 10px;
 		font-weight: bold;
+		background-color: var(--disabled-background);
+		color: var(--disabled-foreground);
+		cursor: grab;
+	}
+
+	.modal .header.focused {
 		background-color: var(--primary-background);
 		color: var(--primary-foreground);
-		cursor: grab;
 	}
 
 	.modal .header .title {
@@ -257,6 +310,11 @@
 
 	.modal .header .title :global(.icon) {
 		padding: 0 10px 0 0 !important;
+	}
+
+	.modal .header .icons {
+		display: flex;
+		padding: 5px;
 	}
 
 	.modal .body {
@@ -294,20 +352,27 @@
 		{#if $isMobile}
 			<div class="overlay" onpointerdown={close}></div>
 		{/if}
-		<div class="modal {$mobileClass}" role="none" tabindex="-1" style:width style:height bind:this={modalEl} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
+		<div class="modal {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elModal} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
-				<div class="header" role="none" tabindex="-1">
+				<div class="header" class:focused role="none" tabindex="-1" ondblclick={doubleClickHeader}>
 					{#if title}
 						<div class="title">
 							{#if optionalIcon}
 								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon img={optionalIcon.img} colorVariable="--primary-foreground" alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
+									<Icon img={optionalIcon.img} colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
 								</div>
 							{/if}
 							<div>{title}</div>
 						</div>
-						<div onpointerdown={e => e.stopPropagation()}>
-							<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable="--primary-foreground" alt="X" size="20px" padding="10px" onClick={close} />
+						<div class="icons">
+							{#if max}
+								<div onpointerdown={e => e.stopPropagation()}>
+									<Icon data-testid={testId + '-Modal-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="5px" onClick={() => (maximized ? restore() : maximize())} />
+								</div>
+							{/if}
+							<div onpointerdown={e => e.stopPropagation()}>
+								<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="5px" onClick={close} />
+							</div>
 						</div>
 					{/if}
 				</div>
@@ -317,23 +382,24 @@
 					{/if}
 					{#if typeof ModalBody === 'function'}
 						<ModalBody {close} {params} />
-					{:else if children || top || center || bottom}
+					{/if}
+					{#if children}
 						{@render children?.()}
-						{#if top}
-							<div class="top">
-								{@render top?.()}
-							</div>
-						{/if}
-						{#if center}
-							<div class="center">
-								{@render center?.()}
-							</div>
-						{/if}
-						{#if bottom}
-							<div class="bottom">
-								{@render bottom?.()}
-							</div>
-						{/if}
+					{/if}
+					{#if top}
+						<div class="top">
+							{@render top?.()}
+						</div>
+					{/if}
+					{#if center}
+						<div class="center">
+							{@render center?.()}
+						</div>
+					{/if}
+					{#if bottom}
+						<div class="bottom">
+							{@render bottom?.()}
+						</div>
 					{/if}
 				</div>
 			{/if}

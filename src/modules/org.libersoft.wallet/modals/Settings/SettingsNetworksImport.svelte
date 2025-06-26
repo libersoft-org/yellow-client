@@ -21,14 +21,14 @@
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
 	let importUi: any = $state(null);
-	const hasExistingNetworks = $derived(get(networks).length > 0);
+	const hasExistingNetworks = $derived($networks.length > 0);
 	const replaceDialogData = {
 		title: 'Replace Networks',
 		body: 'This will replace your current network configuration. All existing networks will be lost. Are you sure you want to continue?',
 		icon: 'img/import.svg',
 		buttons: [
-			{ text: 'Replace', onClick: confirmReplace, expand: true, 'data-testid': 'confirm-replace-btn' },
-			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, 'data-testid': 'cancel-replace-btn' },
+			{ img: 'img/replace.svg', text: 'Replace', onClick: confirmReplace, expand: true, testId: 'confirm-replace-btn' },
+			{ img: 'img/cancel.svg', text: 'Cancel', onClick: () => replaceDialog?.close(), expand: true, testId: 'cancel-replace-btn' },
 		],
 	};
 

@@ -6,7 +6,7 @@
 		value?: string | number;
 		enabled?: boolean;
 		displayValue?: string | number;
-		grow?: boolean;
+		expand?: boolean;
 		minWidth?: string;
 		maxWidth?: string;
 		onKeydown?: (e: KeyboardEvent) => void;
@@ -22,7 +22,7 @@
 		inputRef?: HTMLInputElement; // TODO: is it really prop?
 		'data-testid'?: string;
 	}
-	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue = undefined, grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, icon = undefined, inputRef = $bindable(), 'data-testid': testId = undefined }: Props = $props();
+	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue = undefined, expand = true, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, icon = undefined, inputRef = $bindable(), 'data-testid': testId = undefined }: Props = $props();
 
 	function handleKeydown(e) {
 		if (onKeydown) onKeydown(e);
@@ -74,6 +74,10 @@
 		color: var(--disabled-foreground);
 	}
 
+	input.expand {
+		width: 100%;
+	}
+
 	.input-button-wrapper {
 		display: flex;
 		box-sizing: border-box;
@@ -86,9 +90,9 @@
 
 {#if icon}
 	<div class="input-button-wrapper" style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth}>
-		<input class="button" {type} {placeholder} bind:this={inputRef} bind:value onkeydown={e => handleKeydown(e)} oninput={handleInput} />
+		<input class="button" class:expand {type} {placeholder} bind:this={inputRef} bind:value onkeydown={e => handleKeydown(e)} oninput={handleInput} />
 		<Icon img={icon.img} alt={icon.alt} colorVariable={icon.colorVariable ? icon.colorVariable : ''} size="20px" padding="10px" onClick={icon.onClick} />
 	</div>
 {:else}
-	<input class="no-button" data-testid={testId} value={displayValue !== undefined ? displayValue : value} disabled={!enabled} onchange={handleChange} oninput={handleInput} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
+	<input class="no-button" data-testid={testId} value={displayValue !== undefined ? displayValue : value} disabled={!enabled} onchange={handleChange} oninput={handleInput} class:expand style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
 {/if}

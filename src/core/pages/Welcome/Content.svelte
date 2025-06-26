@@ -13,7 +13,6 @@
 	let elDialogExit: InstanceType<typeof DialogExit>;
 
 	onMount(() => {
-		hideSidebarMobile.set(true);
 		if (!BROWSER) window.addEventListener('keydown', onKeydown);
 	});
 
@@ -23,12 +22,12 @@
 		}
 	});
 
-	async function onKeydown(event) {
+	function onKeydown(event) {
 		if (event.key === 'Escape') exit();
 	}
 
 	function exit() {
-		elDialogExit.open();
+		elDialogExit?.open();
 	}
 
 	function clickLogo() {

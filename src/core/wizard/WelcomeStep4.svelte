@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { product } from '@/core/stores.ts';
 </script>
 

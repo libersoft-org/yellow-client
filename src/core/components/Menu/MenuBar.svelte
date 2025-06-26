@@ -2,11 +2,9 @@
 	import { product } from '@/core/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import MenuBarDebug from '@/core/components/Menu/MenuBarDebug.svelte';
-
 	interface Props {
 		onOpenMenu: () => void;
 	}
-
 	let { onOpenMenu }: Props = $props();
 </script>
 

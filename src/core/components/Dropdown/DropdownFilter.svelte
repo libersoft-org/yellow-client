@@ -1,13 +1,16 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let options = [];
-	export let selected = '';
-	export let enabled = true;
-	let filteredOptions = options;
-	let showOptions = false;
-	let inputValue = '';
+	interface Props {
+		options?: string[];
+		selected?: string;
+		enabled?: boolean;
+	}
+	let { options = [], selected = '', enabled = true }: Props = $props();
+	let filteredOptions = $state(options);
+	let showOptions = $state(false);
+	let inputValue = $state('');
 
 	function onInput(event) {
 		inputValue = event.target.value;
@@ -35,18 +38,19 @@
 <style>
 	.dropdown-filter {
 		position: relative;
-		max-width: 200px;
+		background-color: var(--default-background);
+		color: var(--default-foreground);
 	}
 
 	.options {
+		z-index: 1;
 		position: absolute;
 		border: 1px solid var(--default-foreground);
 		background-color: var(--default-background);
+		box-sizing: border-box;
 		width: 100%;
 		max-height: 150px;
 		overflow-y: auto;
-		z-index: 1;
-		box-sizing: border-box;
 	}
 
 	.option {

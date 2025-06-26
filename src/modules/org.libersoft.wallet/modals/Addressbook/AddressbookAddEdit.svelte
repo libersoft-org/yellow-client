@@ -1,17 +1,28 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { isAddress } from 'ethers';
+	import Label from '@/core/components/Label/Label.svelte';
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { addressBook } from '../../wallet.ts';
 	import { module } from '../../module.ts';
-	export let close;
-	export let params;
+	interface Props {
+		close: () => void;
+		params: {
+			item?: {
+				guid: string;
+				alias: string;
+				address: string;
+			};
+		};
+	}
+	let { close, params }: Props = $props();
 	let aliasElement;
-	let alias = '';
-	let address = '';
-	let error = '';
+	let alias = $state('');
+	let address = $state('');
+	let error = $state('');
 
 	onMount(() => {
 		if (params.item) {
@@ -94,29 +105,24 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.group {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
 </style>
 
 <div class="addressbook-new">
-	<div class="group">
-		<div class="bold">Alias:</div>
+	<Label text="Alias">
 		<Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} onInput={clearError} />
-	</div>
-	<div class="group">
-		<div class="bold">Address:</div>
+	</Label>
+	<Label text="Address">
 		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} onInput={clearError} />
-	</div>
+	</Label>
 	{#if error}
 		<Alert type="error" message={error} />
 	{/if}
-	{#if params.item}
-		<Button img="img/save.svg" text="Save" onClick={edit} />
-	{:else}
-		<Button img="modules/{module.identifier}/img/address-add.svg" text="Add" onClick={add} />
-	{/if}
+	<ButtonBar expand>
+		{#if params.item}
+			<Button img="img/save.svg" text="Save" onClick={edit} />
+		{:else}
+			<Button img="modules/{module.identifier}/img/address-add.svg" text="Add" onClick={add} />
+		{/if}
+		<Button img="img/cancel.svg" text="Cancel" onClick={close} />
+	</ButtonBar>
 </div>

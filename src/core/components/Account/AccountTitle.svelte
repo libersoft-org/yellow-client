@@ -1,5 +1,8 @@
-<script>
-	export let account;
+<script lang="ts">
+	interface Props {
+		account?: any;
+	}
+	let { account }: Props = $props();
 </script>
 
 <style>

@@ -73,7 +73,7 @@
 				<Switch showLabel label="Follow browser theme" bind:checked={$followBrowserTheme} data-testid="follow-browser-theme-switch" />
 			</Td>
 			<Td title="Theme">
-				<Select data-testid="theme switch" bind:value={$selected_theme_index} disabled={$followBrowserTheme}>
+				<Select data-testid="theme switch" bind:value={$selected_theme_index} enabled={!$followBrowserTheme}>
 					{#each $themes as theme, index (theme.name + index)}
 						<Option text={theme.name} value={index} />
 					{/each}

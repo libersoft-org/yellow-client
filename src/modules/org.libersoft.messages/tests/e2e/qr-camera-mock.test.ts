@@ -61,7 +61,6 @@ test.describe('QR Code Camera Mock Tests', () => {
 		// Should show scanner interface elements
 		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
 		await expect(page.locator('video')).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 
 		// Wait for video to be ready (mock camera should work)
 		await helper.waitForQRScanner();
@@ -161,29 +160,6 @@ test.describe('QR Code Camera Mock Tests', () => {
 		expect(scannedData).toContain('complex+test@example.com');
 	});
 */
-	test('Cancel QR scanning returns to proper state', async ({ page }) => {
-		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
-		const helper = new QRTestHelper(page);
-		await helper.setupQRTesting();
-
-		// Navigate to QR import
-		await page.getByTestId('account-bar-toggle').click();
-		await page.getByTestId('account-management-button').click();
-		await page.getByTestId('accounts-import-button').click();
-		await page.getByTestId('accounts-qr-tab').click();
-
-		// Should show scanner interface
-		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
-		await expect(page.locator('video')).toBeVisible();
-
-		// Click Cancel button
-		await page.getByRole('button', { name: 'Cancel' }).click();
-
-		// Should return to account management
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
-		await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
-	});
-
 	test('Switch between JSON and QR tabs maintains state', async ({ page }) => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		const helper = new QRTestHelper(page);

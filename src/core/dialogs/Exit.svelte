@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { exit } from '@tauri-apps/plugin-process';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
@@ -14,7 +14,7 @@
 	};
 
 	export function open() {
-		elDialog.open();
+		elDialog?.open();
 	}
 
 	async function clickButton() {

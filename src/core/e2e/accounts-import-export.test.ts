@@ -130,6 +130,7 @@ async function setupAccountInWizard(
 	}
 ): Promise<void> {
 	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
+		await page.getByTestId('wizard-next').waitFor({ state: 'visible', timeout: 10000 });
 		await page.getByTestId('wizard-next').click();
 		await page.getByTestId('account-title-input').click();
 		await page.getByTestId('account-title-input').fill(accountData.title || '');
@@ -404,7 +405,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByText('Account Already Exists')).toBeVisible({ timeout: 5000 });
 
 			// Test "Skip This Account" option
-			await page.getByRole('button', { name: 'Skip This Account' }).click();
+			await page.getByTestId('skip-btn').click();
 
 			// Should show error that no accounts were imported
 			await expectErrorMessage(page, 'No accounts were imported');
@@ -578,7 +579,6 @@ test.describe('Accounts Import/Export Functionality', () => {
 			// Should show scanner interface
 			await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
 			await expect(page.locator('video')).toBeVisible();
-			await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 		});
 
 		test('QR code scanner interface works with fake camera', async ({ page }) => {
@@ -593,7 +593,6 @@ test.describe('Accounts Import/Export Functionality', () => {
 			// Should see camera interface (fake camera should work now)
 			await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
 			await expect(page.locator('video')).toBeVisible();
-			await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 
 			// Verify that camera scanning started (Canvas operations indicate QR scanning is active)
 			// We should see no error messages about camera access
@@ -717,7 +716,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 10000 });
 
 			// Verify some accounts were imported
-			await expect(page.getByTestId('account-address@user0@domain0.example.com@ws://localhost:8084')).toBeVisible();
+			await expect(page.getByTestId('account-address@user0@domain0.example.com@ws://server0.example.com:8084')).toBeVisible();
 		});
 
 		test('Handle malformed account data with detailed errors', async ({ page }) => {

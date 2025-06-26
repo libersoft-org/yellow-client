@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { module } from '../module.ts';
 	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress } from '../wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
@@ -14,20 +14,22 @@
 	import Balance from './Balance.svelte';
 	import History from './History.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalNetworks from '../modals/Networks.svelte';
-	import ModalWallets from '../modals/Wallets.svelte';
-	let showModalNetworks = false;
-	let showModalWallets = false;
+	import ModalNetworks from '../modals/Networks/Networks.svelte';
+	import ModalWallets from '../modals/Wallets/Wallets.svelte';
+	let elSettings;
+	let elModalNetworks;
+	let elModalWallets;
 	let addressElement;
-	let showModalSettings = false;
 
 	function clickCopyAddress() {
-		navigator.clipboard
-			.writeText($selectedAddress.address)
-			.then(() => console.log('Address copied to clipboard'))
-			.catch(err => console.error('Error while copying to clipboard', err));
-		addressElement.innerHTML = 'Copied!';
-		setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
+		if ($selectedAddress) {
+			navigator.clipboard
+				.writeText($selectedAddress.address)
+				.then(() => console.log('Address copied to clipboard'))
+				.catch(err => console.error('Error while copying to clipboard', err));
+			addressElement.innerHTML = 'Copied!';
+			setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
+		}
 	}
 
 	selectedNetwork.subscribe(v => {
@@ -130,8 +132,8 @@
 <Paper>
 	<div class="body">
 		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => (showModalNetworks = true)} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => (showModalWallets = true)} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => elModalNetworks?.open()} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => elModalWallets?.open()} />
 		</div>
 		<div class="bar">
 			<div class="left">
@@ -158,7 +160,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => (showModalSettings = true)} />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => elSettings.open()} />
 			</div>
 		</div>
 		<div class="buttons">
@@ -184,6 +186,6 @@
 		</div>
 	</div>
 </Paper>
-<Settings bind:show={showModalSettings} />
-<Modal title="Select your network" body={ModalNetworks} bind:show={showModalNetworks} width="500px" />
-<Modal title="Select your address" body={ModalWallets} bind:show={showModalWallets} width="500px" />
+<Settings bind:this={elSettings} />
+<Modal title="Select your network" body={ModalNetworks} bind:this={elModalNetworks} width="500px" />
+<Modal title="Select your address" body={ModalWallets} bind:this={elModalWallets} width="500px" />

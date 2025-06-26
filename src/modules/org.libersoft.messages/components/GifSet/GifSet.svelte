@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { get } from 'svelte/store';
 	import { onMount, getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';
@@ -87,7 +87,7 @@
 	function sendGIF(item) {
 		const url = item.media_formats.gif?.url;
 		MessageBar.sendMessageHtml('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" ></Gif>');
-		menu?.close();
+		menu.close();
 	}
 </script>
 
@@ -131,7 +131,7 @@
 	}
 
 	.item:hover {
-		z-index: 90;
+		z-index: 51;
 		transform: scale(1.2);
 		background-color: var(--primary-soft-background);
 	}
@@ -141,7 +141,7 @@
 
 <div class="gifset">
 	<div class="top-bar">
-		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." grow bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
+		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." expand bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
 	</div>
 	{#if error}
 		<div>{error}</div>

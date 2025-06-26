@@ -6,7 +6,8 @@ export const module = {
 	identifier: 'org.libersoft.iframes',
 };
 
-registerModule(module.identifier, {
+registerModule({
+	id: module.identifier,
 	order: 5,
 	callbacks: {},
 	panels: {

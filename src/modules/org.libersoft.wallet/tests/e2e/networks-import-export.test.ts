@@ -300,7 +300,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await fillNetworksImportData(page, emptyArrayJson);
 			await clickAddNetworks(page);
 
-			await expectErrorMessage(page, 'No data provided');
+			await expectErrorMessage(page, 'No networks were imported');
 		});
 
 		test('Handle duplicate networks during Add networks - Replace Existing', async ({ page }) => {
@@ -578,7 +578,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await switchToQRExportTab(page);
 
 			// Should show security warning initially
-			await expect(page.getByText('Sensitive information is hidden')).toBeVisible();
+			await expect(page.getByText('Sensitive information is hidden. Click the QR code to reveal it.')).toBeVisible();
 
 			// QR code should be blurred initially
 			const qrImage = page.locator('[data-testid="networks-export-qr-image"]');
@@ -611,7 +611,6 @@ test.describe('Networks Import/Export Functionality', () => {
 			// Should show scanner interface
 			await expect(page.getByText('Point your camera at a QR code containing network configuration')).toBeVisible();
 			await expect(page.locator('video')).toBeVisible();
-			await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 		});
 
 		test('Successfully scan and import QR code with valid network data', async ({ page }) => {
