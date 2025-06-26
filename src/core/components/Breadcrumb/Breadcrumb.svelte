@@ -25,6 +25,7 @@
 	.item {
 		display: flex;
 		gap: 5px;
+		cursor: pointer;
 	}
 
 	:global(.breadcrumb > *:not(:first-child))::before {
