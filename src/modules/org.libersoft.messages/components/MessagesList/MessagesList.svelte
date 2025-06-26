@@ -623,6 +623,14 @@
 		margin-top: 8px;
 		color: var(--primary-foreground);
 	}
+
+	/* Target Android devices */
+	@media (max-width: 768px) and (max-height: 800px) {
+		.messages-bottom-spacer {
+			flex-shrink: 0;
+			height: 70px; /* Larger for Android mobile */
+		}
+	}
 </style>
 
 {#if $debug}
@@ -683,6 +691,7 @@
 				{/if}
 			{/each}
 			<div bind:this={anchorElement}></div>
+			<div class="messages-bottom-spacer"></div>
 		</div>
 		<ScrollButton visible={scrollButtonVisible} right="15px" bottom="5px" onClick={scrollToBottom} />
 	{/if}
