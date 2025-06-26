@@ -1,6 +1,392 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging } from './_shared/console-logger.ts';
+import { closeWelcomeWizardModal, setupConsoleLogging } from '@/core/e2e/test-utils.ts';
+
+test('Click around in settings', async ({ page }) => {
+	setupConsoleLogging(page);
+	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+
+	await closeWelcomeWizardModal(page);
+	await openGlobalSettings(page);
+});
+
+test('Message Forwarding Behavior Tests', async ({ page }) => {
+	setupConsoleLogging(page);
+	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8084`;
+
+	await test.step('Setup Test Accounts', async () => {
+		// Add account in the wizard
+		await setupAccountInWizard(page, {
+			server: serverUrl,
+			address: 'forward_test_user1@example.com',
+			password: 'password',
+		});
+
+		// Go to account management and add more accounts
+		await goToAccountManagement(page);
+
+		await addAccount(page, {
+			server: serverUrl,
+			address: 'forward_test_user2@example.com',
+			password: 'password',
+		});
+
+		await addAccount(page, {
+			server: serverUrl,
+			address: 'forward_test_user3@example.com',
+			password: 'password',
+		});
+	});
+
+	await test.step('Create Conversations and Messages', async () => {
+		// Switch to user1 and create conversations
+		await switchAccount(page, 'forward_test_user1@example.com');
+		await switchModule(page, 'org.libersoft.messages');
+
+		// Start conversation with user2
+		await startNewConversation(page, 'forward_test_user2@example.com');
+		await sendMessage(page, 'Hello user2 from user1');
+
+		// Start conversation with user3
+		await startNewConversation(page, 'forward_test_user3@example.com');
+		await sendMessage(page, 'Hello user3 from user1');
+	});
+
+	await test.step('Test Forward Message Preview and Modal', async () => {
+		// Go to conversation with user2
+		await openConversation(page, 'forward_test_user2@example.com');
+
+		// Send a message to forward
+		const messageToForward = 'This is a test message that will be forwarded';
+		await sendMessage(page, messageToForward);
+
+		// Forward the message
+		await forwardLastMessage(page);
+
+		// Verify modal opens with correct preview
+		await verifyForwardModalWithPreview(page, messageToForward);
+
+		// Verify modal structure
+		await expect(page.getByTestId('forward-message-modal')).toBeVisible();
+		await expect(page.getByTestId('forward-message-preview')).toBeVisible();
+		await expect(page.getByTestId('forward-message-preview-header')).toHaveText('Forwarding message:');
+		await expect(page.getByTestId('forward-message-search')).toBeVisible();
+		await expect(page.getByTestId('forward-message-conversations')).toBeVisible();
+
+		// Close modal
+		await closeModal(page, 'forward-message');
+	});
+
+	await test.step('Test Conversation Search Functionality', async () => {
+		await forwardLastMessage(page);
+
+		// Test search for user3
+		await searchConversationsInForwardModal(page, 'user3');
+
+		// Verify that only user3 conversation is visible (if any conversations match)
+		await expect(page.getByTestId('forward-message-conversations')).toBeVisible();
+
+		// Test search with no results
+		await searchConversationsInForwardModal(page, 'nonexistent');
+		await expect(page.getByTestId('forward-message-no-conversations')).toBeVisible();
+
+		// Clear search
+		await searchConversationsInForwardModal(page, '');
+
+		// Close modal
+		await closeModal(page, 'forward-message');
+	});
+
+	await test.step('Test Auto-Clear Behavior When Forwarding Different Messages', async () => {
+		// Send first message and forward it
+		const firstMessage = 'First message to forward';
+		await sendMessage(page, firstMessage);
+		await forwardLastMessage(page);
+		await verifyForwardModalWithPreview(page, firstMessage);
+
+		// Note: In a real test with actual conversation IDs, we would:
+		// 1. Forward to a conversation and verify it shows "Sent"
+		// 2. Close modal, send new message, forward it
+		// 3. Verify the same conversation now shows "Send" again (auto-cleared)
+
+		// For now, we'll verify the modal works with different messages
+		await closeModal(page, 'forward-message');
+
+		// Send second message
+		const secondMessage = 'Second message to forward';
+		await sendMessage(page, secondMessage);
+		await forwardLastMessage(page);
+		await verifyForwardModalWithPreview(page, secondMessage);
+
+		// Verify it's showing the new message, not the old one
+		await expect(page.getByTestId('forward-message-preview-content')).toContainText(secondMessage);
+		await expect(page.getByTestId('forward-message-preview-content')).not.toContainText(firstMessage);
+
+		await closeModal(page, 'forward-message');
+	});
+});
+
+test('Complete End-to-End Application Test', async ({ page }) => {
+	setupConsoleLogging(page);
+	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8084`;
+
+	await test.step('Initial Account Setup', async () => {
+		// Add account in the wizard
+		await setupAccountInWizard(page, {
+			server: serverUrl,
+			address: 'user1@example.com',
+			password: 'password',
+		});
+	});
+
+	await test.step('Account Management', async () => {
+		// Switch to account
+		await switchAccount(page, 'user1@example.com');
+
+		// Go to account management
+		await goToAccountManagement(page);
+
+		// Add new account
+		await addAccount(page, {
+			server: serverUrl,
+			address: 'user2@example.com',
+			password: 'password',
+		});
+	});
+
+	await test.step('First Conversation', async () => {
+		// Switch account
+		await switchAccount(page, 'user1@example.com');
+
+		// Switch module
+		await switchModule(page, 'org.libersoft.messages');
+
+		// Start a new conversation
+		await startNewConversation(page, 'user2@example.com');
+
+		// Send a message
+		await sendMessage(page, 'blabla bla');
+	});
+
+	await test.step('Receiving and Replying to Messages', async () => {
+		await switchAccount(page, 'user2@example.com');
+		await switchModule(page, 'org.libersoft.messages');
+		await openConversation(page, 'user1@example.com');
+
+		// Reply to a message
+		// This could use two improvements:
+		// last() gets the last message, which might not be the exact message we sent above, especially if we want to consider running the tests without always clearing and re-populating the database, which we dont want to do always (like during test development).
+		// the other improvement is that we should test that what we click that particular message, (say we identify it by its uuid), we should check that it is the corresponding context menu that becomes visible. But we should probably mainly rewrite ContextMenu to make it only render when it's open, rather than rendering in invisible state. If i'm not mistaken, the test here could be clicking on an invisible item.
+		await replyToLastMessage(page, 'ble ble ble');
+	});
+
+	await test.step('Message Reactions', async () => {
+		// Switch account
+		await switchAccount(page, 'user1@example.com');
+
+		// Open conversation
+		await openConversation(page, 'user2@example.com');
+
+		// Send reaction
+		await addReactionToLastMessage(page);
+	});
+
+	await test.step('Message Forwarding Tests', async () => {
+		// Ensure we're in the right context - user1 talking to user2
+		await switchAccount(page, 'user1@example.com');
+		await switchModule(page, 'org.libersoft.messages');
+		await openConversation(page, 'user2@example.com');
+
+		// Send a test message to forward
+		const forwardTestMessage = 'This message will be forwarded';
+		await sendMessage(page, forwardTestMessage);
+
+		// Test basic forwarding functionality
+		await test.step('Basic forward modal functionality', async () => {
+			await forwardLastMessage(page);
+			await verifyForwardModalWithPreview(page, forwardTestMessage);
+
+			// Verify search functionality
+			await searchConversationsInForwardModal(page, 'user3');
+
+			// Clear search to see all conversations
+			await searchConversationsInForwardModal(page, '');
+
+			// Close modal for now
+			await closeForwardModal(page);
+		});
+	});
+
+	await test.step('Additional Conversation', async () => {
+		// Switch account
+		await switchAccount(page, 'user1@example.com');
+
+		// Switch module
+		await switchModule(page, 'org.libersoft.messages');
+
+		// Start a new conversation with user3
+		await startNewConversation(page, 'user3@example.com');
+
+		// Send a message
+		await sendMessage(page, 'hi 3');
+	});
+
+	await test.step('Advanced Message Forwarding Tests', async () => {
+		// Switch back to conversation with user2
+		await switchAccount(page, 'user1@example.com');
+		await switchModule(page, 'org.libersoft.messages');
+		await openConversation(page, 'user2@example.com');
+
+		// Send a test message for advanced forwarding tests
+		const advancedForwardMessage = 'Advanced forward test message';
+		await sendMessage(page, advancedForwardMessage);
+
+		await test.step('Forward to multiple conversations and test auto-clear', async () => {
+			// Forward the message
+			await forwardLastMessage(page);
+			await verifyForwardModalWithPreview(page, advancedForwardMessage);
+
+			// Test search filtering to find user3 conversation
+			await searchConversationsInForwardModal(page, 'user3');
+
+			// Forward to user3 conversation (using the address as conversation identifier)
+			await forwardMessageToConversation(page, 'user3@example.com');
+			await verifyConversationSendState(page, 'user3@example.com', true);
+
+			// Try to send again - should be disabled
+			await verifyConversationSendState(page, 'user3@example.com', true);
+
+			// Clear search to see all conversations
+			await searchConversationsInForwardModal(page, '');
+
+			// Close this forward modal
+			await closeForwardModal(page);
+
+			// Send another message to test auto-clear behavior
+			const secondMessage = 'Second message for auto-clear test';
+			await sendMessage(page, secondMessage);
+
+			// Forward the new message
+			await forwardLastMessage(page);
+			await verifyForwardModalWithPreview(page, secondMessage);
+
+			// Verify that previously sent conversations are cleared (should show "Send" again)
+			await verifyConversationSendState(page, 'user3@example.com', false);
+
+			// Close modal
+			await closeForwardModal(page);
+		});
+
+		await test.step('Test forward modal search with no results', async () => {
+			await forwardLastMessage(page);
+
+			// Search for non-existent conversation
+			await searchConversationsInForwardModal(page, 'nonexistent_user');
+
+			// Verify no conversations message is shown
+			await expect(page.getByTestId('forward-message-no-conversations')).toBeVisible();
+			await expect(page.getByTestId('forward-message-no-conversations')).toHaveText('No conversations were found');
+
+			// Clear search to restore conversations list
+			await searchConversationsInForwardModal(page, '');
+
+			// Close modal
+			await closeModal(page, 'forward-message');
+		});
+	});
+
+	await configureMessagesSettings(page, {
+		chunkSize: '636928',
+		photoRadius: '10px',
+	});
+
+	await test.step('Module Navigation Test', async () => {
+		// Switch between modules
+		await switchModule(page, 'org.libersoft.contacts');
+		await switchModule(page, 'org.libersoft.dating');
+		await switchModule(page, 'org.libersoft.wallet');
+		await switchModule(page, 'org.libersoft.iframes');
+		await switchModule(page, 'org.libersoft.contacts');
+		await switchModule(page, 'org.libersoft.messages');
+	});
+
+	await test.step('Account Management Operations', async () => {
+		// Go to account management
+		await goToAccountManagement(page);
+
+		// Add a new account with user3
+		await addAccount(page, {
+			server: serverUrl,
+			address: 'user3@example.com',
+			password: 'password',
+		});
+
+		// Export all accounts
+		//const download1 = await exportAccounts(page);
+
+		// Delete account
+		await deleteFirstAccount(page);
+
+		// Disable account
+		await toggleFirstAccountEnabled(page);
+	});
+
+	await test.step('Messages Settings', async () => {
+		// Switch account
+		await switchAccount(page, 'user3@example.com');
+		await new Promise(resolve => setTimeout(resolve, 5000));
+
+		await switchModule(page, 'org.libersoft.messages');
+
+		// Open messages settings
+		await configureMessagesSettings(page, {
+			chunkSize: '2756608',
+		});
+	});
+
+	await test.step('Global Settings Navigation', async () => {
+		await openGlobalSettings(page);
+
+		// Navigate to Notifications and toggle settings
+		await navigateToSettingsSection(page, 'Notifications');
+		await test.step('Toggle notification settings', async () => {
+			const notificationsToggle = page.getByTestId('notifications enabled toggle');
+			const soundToggle = page.getByLabel('Notification sound');
+			await notificationsToggle.click();
+			await soundToggle.click();
+		});
+
+		// Go back to root
+		await goToRootSettingsSection(page);
+
+		// Navigate to Appearance and change theme
+		await navigateToSettingsSection(page, 'Appearance');
+		await test.step('Change theme in Appearance settings', async () => {
+			// First disable "Follow browser theme" to enable manual theme selection
+			const followBrowserThemeSwitch = page.getByTestId('follow-browser-theme-switch');
+			await followBrowserThemeSwitch.waitFor({ state: 'visible' });
+			await followBrowserThemeSwitch.click();
+
+			// Now the theme selector should be enabled
+			const themeSelect = page.getByTestId('theme switch');
+			await expect(themeSelect).toBeEnabled();
+			await expect(themeSelect).toHaveValue('0'); // Light
+			await themeSelect.selectOption({ label: 'Dark' });
+			await expect(themeSelect).toHaveValue('1'); // Dark
+			await themeSelect.selectOption({ label: 'Light' });
+			await expect(themeSelect).toHaveValue('0'); // Back to Light
+		});
+
+		// Go back to root and re-enter Notifications
+		await goToRootSettingsSection(page);
+		await navigateToSettingsSection(page, 'Notifications');
+
+		// Close settings modal
+		await closeModal(page, 'global-settings');
+	});
+});
 
 /**
  * Helper function to switch to a module only if it's not already selected
@@ -343,25 +729,6 @@ async function setupAccountInWizard(
 }
 
 /**
- * Helper function to export accounts
- * @param page - The Playwright page object
- * @returns The download object
- */
-/*
-async function exportAccounts(page: Page): Promise<any> {
- return await test.step('Export accounts', async () => {
-  await page.getByRole('button', { name: 'Export' }).click();
-  const downloadPromise = page.waitForEvent('download');
-  await page.getByText('Download').click();
-  const download = await downloadPromise;
-  // Close dialog
-  await page.getByRole('button', { name: 'X', exact: true }).click();
-  return download;
- });
-}
-*/
-
-/**
  * Helper function to delete the first account in the list
  * @param page - The Playwright page object
  */
@@ -394,385 +761,3 @@ async function toggleFirstAccountEnabled(page: Page): Promise<void> {
 		await page.getByRole('button', { name: 'Save' }).click();
 	});
 }
-
-test('Click around in settings', async ({ page }) => {
-	setupConsoleLogging(page);
-	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-	await openGlobalSettings(page);
-});
-
-test('Message Forwarding Behavior Tests', async ({ page }) => {
-	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8084`;
-
-	await test.step('Setup Test Accounts', async () => {
-		// Add account in the wizard
-		await setupAccountInWizard(page, {
-			server: serverUrl,
-			address: 'forward_test_user1@example.com',
-			password: 'password',
-		});
-
-		// Go to account management and add more accounts
-		await goToAccountManagement(page);
-
-		await addAccount(page, {
-			server: serverUrl,
-			address: 'forward_test_user2@example.com',
-			password: 'password',
-		});
-
-		await addAccount(page, {
-			server: serverUrl,
-			address: 'forward_test_user3@example.com',
-			password: 'password',
-		});
-	});
-
-	await test.step('Create Conversations and Messages', async () => {
-		// Switch to user1 and create conversations
-		await switchAccount(page, 'forward_test_user1@example.com');
-		await switchModule(page, 'org.libersoft.messages');
-
-		// Start conversation with user2
-		await startNewConversation(page, 'forward_test_user2@example.com');
-		await sendMessage(page, 'Hello user2 from user1');
-
-		// Start conversation with user3
-		await startNewConversation(page, 'forward_test_user3@example.com');
-		await sendMessage(page, 'Hello user3 from user1');
-	});
-
-	await test.step('Test Forward Message Preview and Modal', async () => {
-		// Go to conversation with user2
-		await openConversation(page, 'forward_test_user2@example.com');
-
-		// Send a message to forward
-		const messageToForward = 'This is a test message that will be forwarded';
-		await sendMessage(page, messageToForward);
-
-		// Forward the message
-		await forwardLastMessage(page);
-
-		// Verify modal opens with correct preview
-		await verifyForwardModalWithPreview(page, messageToForward);
-
-		// Verify modal structure
-		await expect(page.getByTestId('forward-message-modal')).toBeVisible();
-		await expect(page.getByTestId('forward-message-preview')).toBeVisible();
-		await expect(page.getByTestId('forward-message-preview-header')).toHaveText('Forwarding message:');
-		await expect(page.getByTestId('forward-message-search')).toBeVisible();
-		await expect(page.getByTestId('forward-message-conversations')).toBeVisible();
-
-		// Close modal
-		await closeModal(page, 'forward-message');
-	});
-
-	await test.step('Test Conversation Search Functionality', async () => {
-		await forwardLastMessage(page);
-
-		// Test search for user3
-		await searchConversationsInForwardModal(page, 'user3');
-
-		// Verify that only user3 conversation is visible (if any conversations match)
-		await expect(page.getByTestId('forward-message-conversations')).toBeVisible();
-
-		// Test search with no results
-		await searchConversationsInForwardModal(page, 'nonexistent');
-		await expect(page.getByTestId('forward-message-no-conversations')).toBeVisible();
-
-		// Clear search
-		await searchConversationsInForwardModal(page, '');
-
-		// Close modal
-		await closeModal(page, 'forward-message');
-	});
-
-	await test.step('Test Auto-Clear Behavior When Forwarding Different Messages', async () => {
-		// Send first message and forward it
-		const firstMessage = 'First message to forward';
-		await sendMessage(page, firstMessage);
-		await forwardLastMessage(page);
-		await verifyForwardModalWithPreview(page, firstMessage);
-
-		// Note: In a real test with actual conversation IDs, we would:
-		// 1. Forward to a conversation and verify it shows "Sent"
-		// 2. Close modal, send new message, forward it
-		// 3. Verify the same conversation now shows "Send" again (auto-cleared)
-
-		// For now, we'll verify the modal works with different messages
-		await closeModal(page, 'forward-message');
-
-		// Send second message
-		const secondMessage = 'Second message to forward';
-		await sendMessage(page, secondMessage);
-		await forwardLastMessage(page);
-		await verifyForwardModalWithPreview(page, secondMessage);
-
-		// Verify it's showing the new message, not the old one
-		await expect(page.getByTestId('forward-message-preview-content')).toContainText(secondMessage);
-		await expect(page.getByTestId('forward-message-preview-content')).not.toContainText(firstMessage);
-
-		await closeModal(page, 'forward-message');
-	});
-});
-
-test('Complete End-to-End Application Test', async ({ page }) => {
-	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8084`;
-
-	await test.step('Initial Account Setup', async () => {
-		// Add account in the wizard
-		await setupAccountInWizard(page, {
-			server: serverUrl,
-			address: 'user1@example.com',
-			password: 'password',
-		});
-	});
-
-	await test.step('Account Management', async () => {
-		// Switch to account
-		await switchAccount(page, 'user1@example.com');
-
-		// Go to account management
-		await goToAccountManagement(page);
-
-		// Add new account
-		await addAccount(page, {
-			server: serverUrl,
-			address: 'user2@example.com',
-			password: 'password',
-		});
-	});
-
-	await test.step('First Conversation', async () => {
-		// Switch account
-		await switchAccount(page, 'user1@example.com');
-
-		// Switch module
-		await switchModule(page, 'org.libersoft.messages');
-
-		// Start a new conversation
-		await startNewConversation(page, 'user2@example.com');
-
-		// Send a message
-		await sendMessage(page, 'blabla bla');
-	});
-
-	await test.step('Receiving and Replying to Messages', async () => {
-		await switchAccount(page, 'user2@example.com');
-		await switchModule(page, 'org.libersoft.messages');
-		await openConversation(page, 'user1@example.com');
-
-		// Reply to a message
-		// This could use two improvements:
-		// last() gets the last message, which might not be the exact message we sent above, especially if we want to consider running the tests without always clearing and re-populating the database, which we dont want to do always (like during test development).
-		// the other improvement is that we should test that what we click that particular message, (say we identify it by its uuid), we should check that it is the corresponding context menu that becomes visible. But we should probably mainly rewrite ContextMenu to make it only render when it's open, rather than rendering in invisible state. If i'm not mistaken, the test here could be clicking on an invisible item.
-		await replyToLastMessage(page, 'ble ble ble');
-	});
-
-	await test.step('Message Reactions', async () => {
-		// Switch account
-		await switchAccount(page, 'user1@example.com');
-
-		// Open conversation
-		await openConversation(page, 'user2@example.com');
-
-		// Send reaction
-		await addReactionToLastMessage(page);
-	});
-
-	await test.step('Message Forwarding Tests', async () => {
-		// Ensure we're in the right context - user1 talking to user2
-		await switchAccount(page, 'user1@example.com');
-		await switchModule(page, 'org.libersoft.messages');
-		await openConversation(page, 'user2@example.com');
-
-		// Send a test message to forward
-		const forwardTestMessage = 'This message will be forwarded';
-		await sendMessage(page, forwardTestMessage);
-
-		// Test basic forwarding functionality
-		await test.step('Basic forward modal functionality', async () => {
-			await forwardLastMessage(page);
-			await verifyForwardModalWithPreview(page, forwardTestMessage);
-
-			// Verify search functionality
-			await searchConversationsInForwardModal(page, 'user3');
-
-			// Clear search to see all conversations
-			await searchConversationsInForwardModal(page, '');
-
-			// Close modal for now
-			await closeForwardModal(page);
-		});
-	});
-
-	await test.step('Additional Conversation', async () => {
-		// Switch account
-		await switchAccount(page, 'user1@example.com');
-
-		// Switch module
-		await switchModule(page, 'org.libersoft.messages');
-
-		// Start a new conversation with user3
-		await startNewConversation(page, 'user3@example.com');
-
-		// Send a message
-		await sendMessage(page, 'hi 3');
-	});
-
-	await test.step('Advanced Message Forwarding Tests', async () => {
-		// Switch back to conversation with user2
-		await switchAccount(page, 'user1@example.com');
-		await switchModule(page, 'org.libersoft.messages');
-		await openConversation(page, 'user2@example.com');
-
-		// Send a test message for advanced forwarding tests
-		const advancedForwardMessage = 'Advanced forward test message';
-		await sendMessage(page, advancedForwardMessage);
-
-		await test.step('Forward to multiple conversations and test auto-clear', async () => {
-			// Forward the message
-			await forwardLastMessage(page);
-			await verifyForwardModalWithPreview(page, advancedForwardMessage);
-
-			// Test search filtering to find user3 conversation
-			await searchConversationsInForwardModal(page, 'user3');
-
-			// Forward to user3 conversation (using the address as conversation identifier)
-			await forwardMessageToConversation(page, 'user3@example.com');
-			await verifyConversationSendState(page, 'user3@example.com', true);
-
-			// Try to send again - should be disabled
-			await verifyConversationSendState(page, 'user3@example.com', true);
-
-			// Clear search to see all conversations
-			await searchConversationsInForwardModal(page, '');
-
-			// Close this forward modal
-			await closeForwardModal(page);
-
-			// Send another message to test auto-clear behavior
-			const secondMessage = 'Second message for auto-clear test';
-			await sendMessage(page, secondMessage);
-
-			// Forward the new message
-			await forwardLastMessage(page);
-			await verifyForwardModalWithPreview(page, secondMessage);
-
-			// Verify that previously sent conversations are cleared (should show "Send" again)
-			await verifyConversationSendState(page, 'user3@example.com', false);
-
-			// Close modal
-			await closeForwardModal(page);
-		});
-
-		await test.step('Test forward modal search with no results', async () => {
-			await forwardLastMessage(page);
-
-			// Search for non-existent conversation
-			await searchConversationsInForwardModal(page, 'nonexistent_user');
-
-			// Verify no conversations message is shown
-			await expect(page.getByTestId('forward-message-no-conversations')).toBeVisible();
-			await expect(page.getByTestId('forward-message-no-conversations')).toHaveText('No conversations were found');
-
-			// Clear search to restore conversations list
-			await searchConversationsInForwardModal(page, '');
-
-			// Close modal
-			await closeModal(page, 'forward-message');
-		});
-	});
-
-	await configureMessagesSettings(page, {
-		chunkSize: '636928',
-		photoRadius: '10px',
-	});
-
-	await test.step('Module Navigation Test', async () => {
-		// Switch between modules
-		await switchModule(page, 'org.libersoft.contacts');
-		await switchModule(page, 'org.libersoft.dating');
-		await switchModule(page, 'org.libersoft.wallet');
-		await switchModule(page, 'org.libersoft.iframes');
-		await switchModule(page, 'org.libersoft.contacts');
-		await switchModule(page, 'org.libersoft.messages');
-	});
-
-	await test.step('Account Management Operations', async () => {
-		// Go to account management
-		await goToAccountManagement(page);
-
-		// Add a new account with user3
-		await addAccount(page, {
-			server: serverUrl,
-			address: 'user3@example.com',
-			password: 'password',
-		});
-
-		// Export all accounts
-		//const download1 = await exportAccounts(page);
-
-		// Delete account
-		await deleteFirstAccount(page);
-
-		// Disable account
-		await toggleFirstAccountEnabled(page);
-	});
-
-	await test.step('Messages Settings', async () => {
-		// Switch account
-		await switchAccount(page, 'user3@example.com');
-		await new Promise(resolve => setTimeout(resolve, 5000));
-
-		await switchModule(page, 'org.libersoft.messages');
-
-		// Open messages settings
-		await configureMessagesSettings(page, {
-			chunkSize: '2756608',
-		});
-	});
-
-	await test.step('Global Settings Navigation', async () => {
-		await openGlobalSettings(page);
-
-		// Navigate to Notifications and toggle settings
-		await navigateToSettingsSection(page, 'Notifications');
-		await test.step('Toggle notification settings', async () => {
-			const notificationsToggle = page.getByTestId('notifications enabled toggle');
-			const soundToggle = page.getByLabel('Notification sound');
-			await notificationsToggle.click();
-			await soundToggle.click();
-		});
-
-		// Go back to root
-		await goToRootSettingsSection(page);
-
-		// Navigate to Appearance and change theme
-		await navigateToSettingsSection(page, 'Appearance');
-		await test.step('Change theme in Appearance settings', async () => {
-			// First disable "Follow browser theme" to enable manual theme selection
-			const followBrowserThemeSwitch = page.getByTestId('follow-browser-theme-switch');
-			await followBrowserThemeSwitch.waitFor({ state: 'visible' });
-			await followBrowserThemeSwitch.click();
-
-			// Now the theme selector should be enabled
-			const themeSelect = page.getByTestId('theme switch');
-			await expect(themeSelect).toBeEnabled();
-			await expect(themeSelect).toHaveValue('0'); // Light
-			await themeSelect.selectOption({ label: 'Dark' });
-			await expect(themeSelect).toHaveValue('1'); // Dark
-			await themeSelect.selectOption({ label: 'Light' });
-			await expect(themeSelect).toHaveValue('0'); // Back to Light
-		});
-
-		// Go back to root and re-enter Notifications
-		await goToRootSettingsSection(page);
-		await navigateToSettingsSection(page, 'Notifications');
-
-		// Close settings modal
-		await closeModal(page, 'global-settings');
-	});
-});

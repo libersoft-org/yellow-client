@@ -19,7 +19,7 @@
 		closing = true;
 		setTimeout(() => {
 			data.onClose && data.onClose(e, 'close');
-		}, animationDuration);
+		}, $animationDuration);
 	}
 
 	onMount(() => {

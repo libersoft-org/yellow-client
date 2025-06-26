@@ -17,7 +17,7 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	interface Props {
-		params?: {
+		params: {
 			setFileUploadModal: (value: number) => void;
 		};
 		close?: () => void;
@@ -25,7 +25,7 @@
 	type FileUploadModalContext = {
 		fileUploadModalFiles: Writable<File[]>;
 	};
-	const { params, close } = $props();
+	const { params, close }: Props = $props();
 	let elFileInput;
 	let dropActive = $state(false);
 	let { fileUploadModalFiles } = getContext<FileUploadModalContext>('FileUploadModal');
@@ -44,7 +44,10 @@
 		//console.log($fileUploadModalFiles);
 		const index = $fileUploadModalFiles.indexOf(file);
 		//console.log('File index:', index);
-		if (index > -1) $fileUploadModalFiles.splice(index, 1);
+		if (index > -1) {
+			$fileUploadModalFiles.splice(index, 1);
+			$fileUploadModalFiles = $fileUploadModalFiles;
+		}
 	}
 
 	function onFileUpload(e) {
@@ -129,7 +132,8 @@
 		<Button img="img/del.svg" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
 	</ButtonBar>
 	<div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
-		{#if $fileUploadModalFiles.length}
+		{$fileUploadModalFiles.length}
+		{#if !!$fileUploadModalFiles.length}
 			<div class="items file-table">
 				<Table breakpoint="0">
 					<Thead>

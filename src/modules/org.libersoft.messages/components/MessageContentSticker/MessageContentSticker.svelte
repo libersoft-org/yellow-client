@@ -2,10 +2,10 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Sticker from '../Stickers/Sticker.svelte';
 	import { getContext } from 'svelte';
-	const stickerset = $derived(node.attributes.set?.value);
 	let { node } = $props();
+	const stickerset = $derived(node.attributes.set?.value);
 	let v = node.attributes.file?.value;
-	let openStickersetDetailsModal = getContext('openStickersetDetailsModal');
+	let openStickersetDetailsModal: any = getContext('openStickersetDetailsModal');
 	//$: console.log('MessageContentSticker node:', v);
 
 	function handleClick() {
