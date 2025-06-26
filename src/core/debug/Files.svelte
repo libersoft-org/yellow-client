@@ -267,7 +267,7 @@
 			{#if !TAURI_MOBILE}
 				<div class="folder-section {$mobileClass}">
 					<Label>Default folder: {$defaultDownloadFolder || '(not set)'}</Label>
-					<Button text="Set from download" onClick={setDefaultFolderFromDownload} enabled={download?.potential_default_folder} />
+					<Button text="Set from download" onClick={setDefaultFolderFromDownload} enabled={!!download?.potential_default_folder} />
 				</div>
 			{/if}
 		</div>
@@ -275,9 +275,9 @@
 		<!-- Action Buttons -->
 		<div class="buttons-grid {$mobileClass}">
 			<Button text="Offer download" onClick={testOfferNativeDownload} />
-			<Button text="Save chunk" onClick={testSaveNativeDownloadChunk} enabled={download} />
-			<Button text="Finish" onClick={testFinishNativeDownload} enabled={download} />
-			<Button text="Open" onClick={testOpenDownload} enabled={download} />
+			<Button text="Save chunk" onClick={testSaveNativeDownloadChunk} enabled={!!download} />
+			<Button text="Finish" onClick={testFinishNativeDownload} enabled={!!download} />
+			<Button text="Open" onClick={testOpenDownload} enabled={!!download} />
 		</div>
 
 		<!-- Status Display -->
