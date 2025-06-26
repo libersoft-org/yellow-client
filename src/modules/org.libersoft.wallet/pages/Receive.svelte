@@ -14,7 +14,7 @@
 	let addressElement: HTMLElement | undefined = $state();
 	let addressElementMessage: string | null = $state('');
 	let activeTab = $state('address');
-	let walletAddress = $state();
+	let walletAddress: string = $state('');
 	let amount = $state('0');
 	let currency = $state();
 	let qr: string = $state('');
@@ -140,7 +140,7 @@
 			{#if activeTab === 'payment'}
 				<div class="amount">
 					<div>Amount:</div>
-					<Input type="string" bind:value={amount} />
+					<Input type="text" bind:value={amount} />
 					<DropdownFilter options={$currencies} bind:selected={currency} />
 				</div>
 				{#if error}

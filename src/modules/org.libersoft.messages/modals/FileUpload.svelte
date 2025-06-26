@@ -129,7 +129,8 @@
 		<Button img="img/del.svg" text="Remove all" enabled={$fileUploadModalFiles.length > 0} onClick={onDeleteAll} />
 	</ButtonBar>
 	<div class="body" ondragover={onDragOver} ondragleave={onDragLeave} ondrop={onDrop} role="region" aria-label="File drop zone">
-		{#if $fileUploadModalFiles.length}
+		{$fileUploadModalFiles.length}
+		{#if !!$fileUploadModalFiles.length}
 			<div class="items file-table">
 				<Table breakpoint="0">
 					<Thead>

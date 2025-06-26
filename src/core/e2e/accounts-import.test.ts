@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
+import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.ts';
 
 /**
  * Helper function to navigate to account management
@@ -146,7 +146,7 @@ test.describe('Accounts Import Functionality', () => {
 
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
-		enableConsoleLogging(page);
+		setupConsoleLogging(page);
 
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
 

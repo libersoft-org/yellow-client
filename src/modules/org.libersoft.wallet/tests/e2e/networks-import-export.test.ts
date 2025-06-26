@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
+import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.ts';
 import { switchModule, closeModal, expectErrorMessage } from '@/lib/test-utils/e2e-helpers.ts';
 
 /**
@@ -178,7 +178,7 @@ const complexNetworkConfig = [
 test.describe('Networks Import/Export Functionality', () => {
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
-		enableConsoleLogging(page);
+		setupConsoleLogging(page);
 
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
 
@@ -186,10 +186,7 @@ test.describe('Networks Import/Export Functionality', () => {
 		await page.waitForLoadState('networkidle');
 
 		// Close the wizard modal if it appears
-		const wizardCloseButton = page.getByTestId('welcome-wizard-Modal-close');
-		if (await wizardCloseButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-			await wizardCloseButton.click();
-		}
+		await closeWelcomeWizardModal(page);
 
 		// Wait for module bar to be visible before switching
 		await page.getByTestId(`ModuleBarItem-org.libersoft.wallet`).waitFor({ state: 'visible', timeout: 10000 });

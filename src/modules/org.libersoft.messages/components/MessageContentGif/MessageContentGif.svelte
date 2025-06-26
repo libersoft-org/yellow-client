@@ -3,7 +3,7 @@
 	import { getContext } from 'svelte';
 	let { node } = $props();
 	let v = node.attributes.file?.value;
-	let messages_context = getContext('MessagesContext');
+	let messages_context: any = getContext('MessagesContext');
 
 	async function openExpressions() {
 		await messages_context.messageBar?.openExpressions('gifs');
