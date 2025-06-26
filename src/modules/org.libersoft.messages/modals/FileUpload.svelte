@@ -16,13 +16,10 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-
 	type FileUploadModalContext = {
 		fileUploadModalFiles: Writable<File[]>;
 	};
-
 	const { params, close } = $props();
-
 	let elFileInput;
 	let dropActive = $state(false);
 	let { fileUploadModalFiles } = getContext<FileUploadModalContext>('FileUploadModal');
@@ -37,10 +34,11 @@
 	}
 
 	function onFileDelete(file) {
+		//console.log('Deleting file:', file);
+		//console.log($fileUploadModalFiles);
 		const index = $fileUploadModalFiles.indexOf(file);
-		if (index > -1) {
-			$fileUploadModalFiles.splice(index, 1);
-		}
+		//console.log('File index:', index);
+		if (index > -1) $fileUploadModalFiles.splice(index, 1);
 	}
 
 	function onFileUpload(e) {
@@ -130,9 +128,9 @@
 				<Table breakpoint="0">
 					<Thead>
 						<TheadTr>
-							<Th>File name:</Th>
-							<Th>Size:</Th>
-							<Th>Action:</Th>
+							<Th>File name</Th>
+							<Th>Size</Th>
+							<Th>Action</Th>
 						</TheadTr>
 					</Thead>
 					<Tbody>
