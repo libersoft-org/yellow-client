@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
+import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.ts';
 import { QRVideoStreamHelper, QR_IMAGES, testQRImportWithImageStream } from '../../../../../test-assets/qr-video-stream-helper.js';
 
 /**
@@ -35,7 +35,7 @@ test.describe('QR Code Image Stream Tests', () => {
 
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging
-		enableConsoleLogging(page);
+		setupConsoleLogging(page);
 
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
 

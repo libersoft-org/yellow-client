@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { enableConsoleLogging } from '@/lib/test-utils/playwright-console.ts';
+import { setupConsoleLogging } from '@/core/e2e/test-utils.ts';
 
 const accountsConfig = [
 	{
@@ -22,7 +22,7 @@ const activeAccountId = '0';
 test.describe('Theme Management', () => {
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
-		enableConsoleLogging(page);
+		setupConsoleLogging(page);
 
 		// Set up local storage with account configuration
 		await page.goto('http://localhost:3000');
