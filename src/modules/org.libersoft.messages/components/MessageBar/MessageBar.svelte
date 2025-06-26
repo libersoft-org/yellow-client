@@ -9,6 +9,7 @@
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalFileUpload from '../../modals/FileUpload.svelte';
+	import ModalHtml from '../../modals/Html.svelte';
 	import Expressions from '../Expressions/Expressions.svelte';
 	import { init_emojis } from '../../emojis.js';
 	import { get } from 'svelte/store';
