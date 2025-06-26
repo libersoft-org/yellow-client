@@ -17,7 +17,7 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	interface Props {
-		params?: {
+		params: {
 			setFileUploadModal: (value: number) => void;
 		};
 		close?: () => void;
@@ -25,7 +25,7 @@
 	type FileUploadModalContext = {
 		fileUploadModalFiles: Writable<File[]>;
 	};
-	const { params, close } = $props();
+	const { params, close }: Props = $props();
 	let elFileInput;
 	let dropActive = $state(false);
 	let { fileUploadModalFiles } = getContext<FileUploadModalContext>('FileUploadModal');
@@ -44,7 +44,10 @@
 		//console.log($fileUploadModalFiles);
 		const index = $fileUploadModalFiles.indexOf(file);
 		//console.log('File index:', index);
-		if (index > -1) $fileUploadModalFiles.splice(index, 1);
+		if (index > -1) {
+			$fileUploadModalFiles.splice(index, 1);
+			$fileUploadModalFiles = $fileUploadModalFiles;
+		}
 	}
 
 	function onFileUpload(e) {
