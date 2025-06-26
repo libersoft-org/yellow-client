@@ -16,6 +16,12 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	interface Props {
+		params?: {
+			setFileUploadModal: (value: number) => void;
+		};
+		close?: () => void;
+	}
 	type FileUploadModalContext = {
 		fileUploadModalFiles: Writable<File[]>;
 	};
