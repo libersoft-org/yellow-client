@@ -6,14 +6,13 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import DialogSend from '../dialogs/Send.svelte';
 	let currency: string | null | undefined;
 	let amount: string | number | undefined = 0;
 	let fee: string | number | undefined = 0;
 	let error: string | null | undefined;
-	let elModalSend;
+	let elDialogSend;
 	let params;
 
 	function getEtherAmount(amount) {
@@ -34,7 +33,7 @@
 			fee: getEtherAmount(fee),
 			currency: currency,
 		};
-		elModalSend?.open();
+		elDialogSend?.open();
 	}
 </script>
 
@@ -64,4 +63,4 @@
 	{/if}
 	<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 </div>
-<Modal title="Confirm your transaction" body={DialogSend} {params} bind:this={elModalSend} />
+<DialogSend {params} bind:this={elDialogSend} />
