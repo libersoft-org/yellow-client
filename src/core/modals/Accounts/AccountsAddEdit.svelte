@@ -7,8 +7,8 @@
 	}
 	let { params }: Props = $props();
 	let elModal: Modal;
-	let snippet_top: Snippet | null = $state(null);
-	let snippet_bottom: Snippet | null = $state(null);
+	let snippet_top: Snippet | undefined = $state(undefined);
+	let snippet_bottom: Snippet | undefined = $state(undefined);
 
 	export function open() {
 		elModal?.open();
