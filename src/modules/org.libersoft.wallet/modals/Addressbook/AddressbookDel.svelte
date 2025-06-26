@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Button from '@/core/components/Button/Button.svelte';
-	import Alert from '@/core/components/Alert/Alert.svelte';
 	import { addressBook } from '../../wallet.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	interface Props {
 		close: () => void;
 		params: {
