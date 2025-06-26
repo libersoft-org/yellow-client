@@ -15,7 +15,7 @@
 			//if (event.origin !== 'null') return;
 			//if (event.source !== iframe) return;
 			//iframe?.contentWindow.postMessage(await processUserModuleMessage(event.data), '*');
-			event.source.postMessage(await processUserModuleMessage(event.data), '*');
+			event.source?.postMessage(await processUserModuleMessage(event.data), { targetOrigin: '*' });
 			//iframe.contentWindow.location.origin);
 		});
 		// setInterval(() => {

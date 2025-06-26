@@ -702,7 +702,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await page.getByTestId('cancel-replace-btn').click();
 
 			// Original network should still exist
-			await closeModal(page);
+			await closeModal(page, 'wallet-settings-networks-import');
 			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
 		});
 
@@ -712,7 +712,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs));
 
 			// Close modal without performing any action
-			await closeModal(page);
+			await closeModal(page, 'wallet-settings-networks-import');
 
 			// Should return to networks management without changes
 			await expect(page.getByTestId('network-name@Test Network 1')).not.toBeVisible();
@@ -729,7 +729,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			// Export networks
 			await openNetworksExportModal(page);
 			const exportedContent = await getExportedNetworksJSON(page);
-			await closeModal(page);
+			await closeModal(page, 'wallet-settings-networks-export');
 
 			// Replace with one minimal network
 			const minimalNetwork = [

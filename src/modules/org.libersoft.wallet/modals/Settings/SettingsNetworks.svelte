@@ -110,7 +110,8 @@
 		</Tbody>
 	</Table>
 </div>
-<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:this={elModalEditNetwork} />
-<Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} />
-<Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} />
-<Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} />
+<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:this={elModalEditNetwork} testId="wallet-settings-networks-edit-network" />
+
+<Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} testId="wallet-settings-networks-token-list" />
+<Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} testId="wallet-settings-networks-import" />
+<Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} testId="wallet-settings-networks-export" />

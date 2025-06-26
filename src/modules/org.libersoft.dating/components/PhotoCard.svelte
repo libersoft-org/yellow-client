@@ -107,7 +107,7 @@
 		<div>{photo.description}</div>
 	</div>
 	<div class="card-buttons">
-		<CardButton on:click={onNo} content="👎" />
-		<CardButton on:click={onYes} content="👍" />
+		<CardButton onClick={onNo} content="👎" />
+		<CardButton onClick={onYes} content="👍" />
 	</div>
 </div>

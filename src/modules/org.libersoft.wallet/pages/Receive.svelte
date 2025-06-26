@@ -16,7 +16,7 @@
 	let activeTab = $state('address');
 	let walletAddress: string = $state('');
 	let amount = $state('0');
-	let currency = $state();
+	let currency: string = $state('');
 	let qr: string = $state('');
 	let error: string | null = $state(null);
 
@@ -65,8 +65,8 @@
 		setTimeout(() => (addressElementMessage = null), 1000);
 	}
 
-	function resetCurrency(currencies) {
-		if (!currency || !get(currencies).find(c => c == currency)) {
+	function resetCurrency(currencies: any) {
+		if (!currency || !get(currencies).find((c: string) => c == currency)) {
 			console.log('reset currency:', currency, get(currencies));
 			currency = $selectedMainCurrencySymbol;
 		}
@@ -141,7 +141,7 @@
 				<div class="amount">
 					<div>Amount:</div>
 					<Input type="text" bind:value={amount} />
-					<DropdownFilter options={$currencies} bind:selected={currency} />
+					<DropdownFilter options={$currencies.filter(c => c !== undefined)} bind:selected={currency} />
 				</div>
 				{#if error}
 					<Alert type="error" message={error} />

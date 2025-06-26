@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { addressBook } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -11,16 +13,14 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAddEdit from '../../modals/Addressbook/AddressbookAddEdit.svelte';
-	import ModalDel from '../../modals/Addressbook/AddressbookDel.svelte';
+	import DialogDelete from '../../dialogs/AddressbookDel.svelte';
 	import ModalExport from '../../modals/Addressbook/AddressbookExport.svelte';
 	import ModalImport from '../../modals/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { module } from '../../module.ts';
-	import { addressBook } from '../../wallet.ts';
 	let elModalAddEdit;
-	let elModalDel;
 	let elModalExport;
 	let elModalImport;
+	let elDialogDel;
 	let edit = $state(false);
 	let modalItem = $state(null);
 
@@ -40,7 +40,7 @@
 	function deleteItemModal(item) {
 		console.log('DELETE ADDRESSBOOK ITEM:', item);
 		modalItem = item;
-		elModalDel?.open();
+		elDialogDel?.open();
 	}
 
 	function exportAddressBook() {
@@ -97,6 +97,6 @@
 	{/if}
 </div>
 <Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:this={elModalAddEdit} width="400px" />
-<Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:this={elModalDel} width="400px" />
 <Modal title="Import address book" body={ModalImport} params={{ close: () => elModalImport?.close() }} bind:this={elModalImport} width="600px" />
 <Modal title="Export address book" body={ModalExport} params={{ close: () => elModalExport?.close() }} bind:this={elModalExport} width="600px" />
+<DialogDelete params={{ item: modalItem }} bind:this={elDialogDel} />

@@ -1,183 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { setupConsoleLogging } from '@/core/e2e/test-utils.ts';
-
-/**
- * Helper function to navigate to account management
- * @param page - The Playwright page object
- */
-async function goToAccountManagement(page: Page): Promise<void> {
-	return await test.step('Go to account management', async () => {
-		await page.getByTestId('account-bar-toggle').click();
-		await page.getByTestId('account-management-button').click();
-	});
-}
-
-/**
- * Helper function to open accounts import modal
- * @param page - The Playwright page object
- */
-async function openImportModal(page: Page): Promise<void> {
-	return await test.step('Open accounts import modal', async () => {
-		await page.getByTestId('accounts-import-button').click();
-	});
-}
-
-/**
- * Helper function to open accounts export modal
- * @param page - The Playwright page object
- */
-async function openExportModal(page: Page): Promise<void> {
-	return await test.step('Open accounts export modal', async () => {
-		await page.getByTestId('accounts-export-button').click();
-	});
-}
-
-/**
- * Helper function to switch to QR code tab in import modal
- * @param page - The Playwright page object
- */
-async function switchToQRImportTab(page: Page): Promise<void> {
-	return await test.step('Switch to QR Code import tab', async () => {
-		await page.getByTestId('accounts-qr-tab').click();
-	});
-}
-
-/**
- * Helper function to switch to QR code tab in export modal
- * @param page - The Playwright page object
- */
-async function switchToQRExportTab(page: Page): Promise<void> {
-	return await test.step('Switch to QR Code export tab', async () => {
-		await page.getByTestId('accounts-export-qr-tab').click();
-	});
-}
-
-/**
- * Helper function to fill import text area with JSON data
- * @param page - The Playwright page object
- * @param jsonData - The JSON data to import
- */
-async function fillImportData(page: Page, jsonData: string): Promise<void> {
-	return await test.step('Fill import data', async () => {
-		await page.getByTestId('accounts-textarea').fill(jsonData);
-	});
-}
-
-/**
- * Helper function to click Add accounts button
- * @param page - The Playwright page object
- */
-async function clickAddAccounts(page: Page): Promise<void> {
-	return await test.step('Click Add accounts button', async () => {
-		await page.getByTestId('accounts-add-btn').click();
-	});
-}
-
-/**
- * Helper function to click Replace All button
- * @param page - The Playwright page object
- */
-async function clickReplaceAll(page: Page): Promise<void> {
-	return await test.step('Click Replace All button', async () => {
-		await page.getByTestId('accounts-replace-btn').click();
-	});
-}
-
-/**
- * Helper function to confirm replace action in dialog
- * @param page - The Playwright page object
- */
-async function confirmReplaceDialog(page: Page): Promise<void> {
-	return await test.step('Confirm replace in dialog', async () => {
-		await page.getByTestId('confirm-replace-btn').click();
-	});
-}
-
-/**
- * Helper function to close any modal
- * @param page - The Playwright page object
- */
-async function closeModal(page: Page): Promise<void> {
-	return await test.step('Close modal', async () => {
-		await page.getByRole('button', { name: 'X', exact: true }).click();
-	});
-}
-
-/**
- * Helper function to wait for and check error message
- * @param page - The Playwright page object
- * @param expectedError - The expected error message (partial match)
- */
-async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
-	return await test.step(`Expect error message: ${expectedError}`, async () => {
-		await expect(page.locator('.alert')).toContainText(expectedError, { timeout: 5000 });
-	});
-}
-
-/**
- * Helper function to setup an account through the initial wizard
- * @param page - The Playwright page object
- * @param accountData - Object containing account information
- */
-async function setupAccountInWizard(
-	page: Page,
-	accountData: {
-		server: string;
-		address: string;
-		password: string;
-		title?: string;
-	}
-): Promise<void> {
-	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
-		await page.getByTestId('wizard-next').waitFor({ state: 'visible', timeout: 10000 });
-		await page.getByTestId('wizard-next').click();
-		await page.getByTestId('account-title-input').click();
-		await page.getByTestId('account-title-input').fill(accountData.title || '');
-		await page.getByTestId('account-server-input').press('Shift+Home');
-		await page.getByTestId('account-server-input').fill(accountData.server);
-		await page.getByTestId('account-address-input').fill(accountData.address);
-		await page.getByTestId('account-password-input').fill(accountData.password);
-		await page.getByTestId('add').click();
-		await page.getByRole('button', { name: 'Next' }).click();
-		await page.getByRole('button', { name: 'Next' }).click();
-		await page.getByRole('button', { name: 'Finish' }).click();
-	});
-}
-
-/**
- * Helper function to get exported JSON content from code editor
- * @param page - The Playwright page object
- */
-async function getExportedJSON(page: Page): Promise<string> {
-	return await test.step('Get exported JSON content', async () => {
-		const codeElement = page.locator('[data-testid="accounts-export-code-editor"]');
-		await expect(codeElement).toBeVisible();
-		return (await codeElement.inputValue()) || '';
-	});
-}
-
-/**
- * Helper function to click copy button and verify clipboard
- * @param page - The Playwright page object
- */
-async function clickCopyAndVerify(page: Page): Promise<string> {
-	return await test.step('Click copy button and verify clipboard', async () => {
-		// Grant clipboard permissions
-		await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
-
-		await page.getByRole('button', { name: 'Copy to clipboard' }).click();
-		await expect(page.getByRole('button', { name: 'Copied!' })).toBeVisible({ timeout: 3000 });
-
-		// Get clipboard content by evaluating in browser context
-		const clipboardContent = await page.evaluate(async () => {
-			return await navigator.clipboard.readText();
-		});
-
-		expect(clipboardContent).toBeTruthy();
-		return clipboardContent;
-	});
-}
+import { closeModal } from '$lib/test-utils/e2e-helpers.ts';
 
 /**
  * Valid account configurations for testing
@@ -232,16 +56,12 @@ const complexAccountConfig = [
 	},
 ];
 
-test.describe('Accounts Import/Export Functionality', () => {
+test.describe('Accounts Import/Export', () => {
 	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 	test.beforeEach(async ({ page }) => {
-		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
-
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-
-		// Setup initial account via wizard
 		await setupAccountInWizard(page, {
 			server: serverUrl,
 			address: 'initial@example.com',
@@ -250,7 +70,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 	});
 
 	test.describe('JSON Import Tests', () => {
-		test('Successfully import valid accounts using Add accounts', async ({ page }) => {
+		test('Import valid accounts using Add accounts', async ({ page }) => {
 			await goToAccountManagement(page);
 			await openImportModal(page);
 
@@ -266,7 +86,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('account-address@test2@example.com@ws://localhost:8085')).toBeVisible();
 		});
 
-		test('Successfully replace all accounts using Replace All', async ({ page }) => {
+		test('Replace all accounts using Replace All', async ({ page }) => {
 			await goToAccountManagement(page);
 			await openImportModal(page);
 
@@ -443,8 +263,10 @@ test.describe('Accounts Import/Export Functionality', () => {
 			expect(exportedAddresses).toContain('initial@example.com');
 		});
 
-		test('Copy exported JSON to clipboard', async ({ page }) => {
+		test('Copy exported JSON to clipboard', async ({ page, browserName }, testInfo) => {
 			test.skip(process.env.CI === 'true', 'Clipboard not available in CI');
+			test.skip(browserName === 'firefox', 'Clipboard permissions not supported in Firefox');
+			test.skip(testInfo.project.name === 'Mobile Safari', 'Clipboard not available in Mobile Safari');
 			await goToAccountManagement(page);
 			await openExportModal(page);
 
@@ -567,8 +389,11 @@ test.describe('Accounts Import/Export Functionality', () => {
 	test.describe('QR Code Import Tests', () => {
 		// Note: Camera access denied test is skipped as the fake camera setup bypasses permission checks
 
-		test('QR code scanner interface elements', async ({ page }) => {
+		test('QR code scanner interface elements', async ({ page, browserName }, testInfo) => {
 			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
+
 			// Grant camera permissions
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
@@ -581,8 +406,11 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.locator('video')).toBeVisible();
 		});
 
-		test('QR code scanner interface works with fake camera', async ({ page }) => {
+		test('QR code scanner interface works with fake camera', async ({ page, browserName }, testInfo) => {
 			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
+
 			// Grant camera permissions (fake camera should be available due to browser flags)
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
@@ -599,8 +427,11 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByText('Camera access denied or not available')).not.toBeVisible();
 		});
 
-		test('Successfully scan and import QR code with valid account data', async ({ page }) => {
+		test('Scan and import QR code with valid account data', async ({ page, browserName }, testInfo) => {
 			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
+
 			// Mock QR code data to be "scanned"
 			const qrAccountData = JSON.stringify([
 				{
@@ -639,8 +470,11 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByTestId('account-address@qr-scan@example.com@ws://localhost:8084')).toBeVisible();
 		});
 
-		test('Handle invalid QR code data during scan', async ({ page }) => {
+		test('Handle invalid QR code data during scan', async ({ page, browserName }, testInfo) => {
 			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
+
 			// Mock invalid QR code data
 			const invalidQrData = 'invalid json data';
 
@@ -666,8 +500,11 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expectErrorMessage(page, 'Invalid JSON format');
 		});
 
-		test('Scan again functionality after successful scan', async ({ page }) => {
+		test('Scan again functionality after successful scan', async ({ page, browserName }, testInfo) => {
 			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
+
 			const firstQrData = JSON.stringify([{ id: 'first', enabled: true, credentials: { server: 'ws://test:8084', address: 'first@test.com', password: 'pass' }, settings: {} }]);
 
 			// Grant camera permissions
@@ -779,7 +616,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await page.getByTestId('cancel-replace-btn').click();
 
 			// Original account should still exist
-			await closeModal(page);
+			await closeModal(page, 'accounts-import');
 			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
 		});
 
@@ -789,7 +626,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await fillImportData(page, JSON.stringify(validAccountConfigs));
 
 			// Close modal without performing any action
-			await closeModal(page);
+			await closeModal(page, 'accounts-import');
 
 			// Should return to account management without changes
 			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
@@ -807,7 +644,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			// Export accounts
 			await openExportModal(page);
 			const exportedContent = await getExportedJSON(page);
-			await closeModal(page);
+			await closeModal(page, 'accounts-import');
 
 			// Replace with just one minimal account
 			const minimalAccount = [
@@ -841,3 +678,170 @@ test.describe('Accounts Import/Export Functionality', () => {
 		});
 	});
 });
+
+/**
+ * Helper function to navigate to account management
+ * @param page - The Playwright page object
+ */
+async function goToAccountManagement(page: Page): Promise<void> {
+	return await test.step('Go to account management', async () => {
+		await page.getByTestId('account-bar-toggle').click();
+		await page.getByTestId('account-management-button').click();
+	});
+}
+
+/**
+ * Helper function to open accounts import modal
+ * @param page - The Playwright page object
+ */
+async function openImportModal(page: Page): Promise<void> {
+	return await test.step('Open accounts import modal', async () => {
+		await page.getByTestId('accounts-import-button').click();
+	});
+}
+
+/**
+ * Helper function to open accounts export modal
+ * @param page - The Playwright page object
+ */
+async function openExportModal(page: Page): Promise<void> {
+	return await test.step('Open accounts export modal', async () => {
+		await page.getByTestId('accounts-export-button').click();
+	});
+}
+
+/**
+ * Helper function to switch to QR code tab in import modal
+ * @param page - The Playwright page object
+ */
+async function switchToQRImportTab(page: Page): Promise<void> {
+	return await test.step('Switch to QR Code import tab', async () => {
+		await page.getByTestId('accounts-qr-tab').click();
+	});
+}
+
+/**
+ * Helper function to switch to QR code tab in export modal
+ * @param page - The Playwright page object
+ */
+async function switchToQRExportTab(page: Page): Promise<void> {
+	return await test.step('Switch to QR Code export tab', async () => {
+		await page.getByTestId('accounts-export-qr-tab').click();
+	});
+}
+
+/**
+ * Helper function to fill import text area with JSON data
+ * @param page - The Playwright page object
+ * @param jsonData - The JSON data to import
+ */
+async function fillImportData(page: Page, jsonData: string): Promise<void> {
+	return await test.step('Fill import data', async () => {
+		await page.getByTestId('accounts-textarea').fill(jsonData);
+	});
+}
+
+/**
+ * Helper function to click Add accounts button
+ * @param page - The Playwright page object
+ */
+async function clickAddAccounts(page: Page): Promise<void> {
+	return await test.step('Click Add accounts button', async () => {
+		await page.getByTestId('accounts-add-btn').click();
+	});
+}
+
+/**
+ * Helper function to click Replace All button
+ * @param page - The Playwright page object
+ */
+async function clickReplaceAll(page: Page): Promise<void> {
+	return await test.step('Click Replace All button', async () => {
+		await page.getByTestId('accounts-replace-btn').click();
+	});
+}
+
+/**
+ * Helper function to confirm replace action in dialog
+ * @param page - The Playwright page object
+ */
+async function confirmReplaceDialog(page: Page): Promise<void> {
+	return await test.step('Confirm replace in dialog', async () => {
+		await page.getByTestId('confirm-replace-btn').click();
+	});
+}
+
+/**
+ * Helper function to wait for and check error message
+ * @param page - The Playwright page object
+ * @param expectedError - The expected error message (partial match)
+ */
+async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
+	return await test.step(`Expect error message: ${expectedError}`, async () => {
+		await expect(page.locator('.alert')).toContainText(expectedError, { timeout: 5000 });
+	});
+}
+
+/**
+ * Helper function to setup an account through the initial wizard
+ * @param page - The Playwright page object
+ * @param accountData - Object containing account information
+ */
+async function setupAccountInWizard(
+	page: Page,
+	accountData: {
+		server: string;
+		address: string;
+		password: string;
+		title?: string;
+	}
+): Promise<void> {
+	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
+		await page.getByTestId('wizard-next').waitFor({ state: 'visible', timeout: 10000 });
+		await page.getByTestId('wizard-next').click();
+		await page.getByTestId('account-title-input').click();
+		await page.getByTestId('account-title-input').fill(accountData.title || '');
+		await page.getByTestId('account-server-input').press('Shift+Home');
+		await page.getByTestId('account-server-input').fill(accountData.server);
+		await page.getByTestId('account-address-input').fill(accountData.address);
+		await page.getByTestId('account-password-input').fill(accountData.password);
+		await page.getByTestId('add').click();
+		await page.getByRole('button', { name: 'Next' }).click();
+		await page.getByRole('button', { name: 'Next' }).click();
+		await page.getByRole('button', { name: 'Finish' }).click();
+	});
+}
+
+/**
+ * Helper function to get exported JSON content from code editor
+ * @param page - The Playwright page object
+ */
+async function getExportedJSON(page: Page): Promise<string> {
+	return await test.step('Get exported JSON content', async () => {
+		const codeElement = page.locator('[data-testid="accounts-export-code-editor"]');
+		await expect(codeElement).toBeVisible();
+		return (await codeElement.inputValue()) || '';
+	});
+}
+
+/**
+ * Helper function to click copy button and verify clipboard
+ * @param page - The Playwright page object
+ */
+async function clickCopyAndVerify(page: Page): Promise<string> {
+	return await test.step('Click copy button and verify clipboard', async () => {
+		// Grant clipboard permissions
+		await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+
+		await page.getByRole('button', { name: 'Copy to clipboard' }).click();
+		await expect(page.getByRole('button', { name: 'Copied!' })).toBeVisible({ timeout: 3000 });
+
+		// Get clipboard content by evaluating in browser context
+		const clipboardContent = await page.evaluate(async () => {
+			return await navigator.clipboard.readText();
+		});
+
+		expect(clipboardContent).toBeTruthy();
+		return clipboardContent;
+	});
+}
