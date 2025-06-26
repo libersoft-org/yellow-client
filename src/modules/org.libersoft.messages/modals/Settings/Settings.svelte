@@ -17,4 +17,4 @@
 	}
 </script>
 
-<BaseSettings {settingsObject} bind:this={elBaseSettings} />
+<BaseSettings {settingsObject} bind:this={elBaseSettings} testId="messages-settings" />

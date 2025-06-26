@@ -138,7 +138,7 @@
 			<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
 		{/each}
 	</div>
-	<Clickable disabled={!expandEnabled}>
+	<Clickable enabled={expandEnabled}>
 		<div class="dropdown">
 			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
 		</div>

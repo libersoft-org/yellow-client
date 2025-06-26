@@ -405,7 +405,7 @@ test.describe('Accounts Import/Export Functionality', () => {
 			await expect(page.getByText('Account Already Exists')).toBeVisible({ timeout: 5000 });
 
 			// Test "Skip This Account" option
-			await page.getByRole('button', { name: 'Skip This Account' }).click();
+			await page.getByTestId('skip-btn').click();
 
 			// Should show error that no accounts were imported
 			await expectErrorMessage(page, 'No accounts were imported');

@@ -5,7 +5,7 @@
 	import AccountTitle from '@/core/components/Account/AccountTitle.svelte';
 	interface Props {
 		account?: any;
-		clickSelectAccount?: (e: Event) => void;
+		clickSelectAccount: (id: any) => void;
 	}
 	let { account, clickSelectAccount }: Props = $props();
 </script>
@@ -37,7 +37,7 @@
 					<li>session_status: {$account.session_status}</li>
 					<li>sessionID: {$account.sessionID}</li>
 					<li>bufferedAmount: {$account.bufferedAmount}b</li>
-					<li>lastCommsTs: {Date($account.lastCommsTs)}</li>
+					<li>lastCommsTs: {new Date($account.lastCommsTs).toString()}</li>
 					<li>available_modules: {JSON.stringify($account.available_modules)}</li>
 					<li>wsGuid: {$account.wsGuid}</li>
 				</ul>

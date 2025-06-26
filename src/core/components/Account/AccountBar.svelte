@@ -122,7 +122,7 @@
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
-	<Clickable data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
+	<Clickable data-testid="account-bar-toggle" onClick={toggle}>
 		<div class={`dropdown`} class:is-expanded={accountsVisible}>
 			{#if $active_account}
 				<div class="text">

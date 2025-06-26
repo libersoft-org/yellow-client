@@ -18,7 +18,7 @@
 	let amount = $state('0');
 	let currency = $state();
 	let qr: string = $state('');
-	let error = $state();
+	let error: string | null = $state(null);
 
 	$effect(() => {
 		updateAddressAndQR();

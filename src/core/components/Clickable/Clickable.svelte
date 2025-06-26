@@ -4,15 +4,15 @@
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children?: Snippet;
 		expand?: boolean;
-		disabled?: boolean;
+		enabled?: boolean;
 		onClick?: MouseEventHandler<HTMLDivElement>;
 		onRightClick?: MouseEventHandler<HTMLDivElement>;
 		onMousedown?: MouseEventHandler<HTMLDivElement>;
 	}
-	let { children, expand = false, disabled = false, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
+	let { children, expand = false, enabled = true, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
 
 	function handleClick(e: MouseEvent) {
-		if (disabled) {
+		if (!enabled) {
 			e.preventDefault();
 			e.stopPropagation();
 			return;
@@ -21,7 +21,7 @@
 	}
 
 	function handleRightClick(e: MouseEvent) {
-		if (disabled) {
+		if (!enabled) {
 			e.preventDefault();
 			e.stopPropagation();
 			return;
@@ -30,7 +30,7 @@
 	}
 
 	function handleMousedown(e: MouseEvent) {
-		if (disabled) {
+		if (!enabled) {
 			e.preventDefault();
 			e.stopPropagation();
 			return;
@@ -39,13 +39,13 @@
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
-		if (disabled) return;
+		if (!enabled) return;
 		if (e.key === 'Enter') (e.currentTarget as HTMLElement).click();
 		if (e.key === ' ') e.preventDefault();
 	}
 
 	function handleKeyUp(e: KeyboardEvent) {
-		if (disabled) return;
+		if (!enabled) return;
 		if (e.key === ' ') (e.currentTarget as HTMLElement).click();
 	}
 </script>
@@ -69,6 +69,6 @@
 	}
 </style>
 
-<div class="clickable" class:expand role="button" tabindex={disabled ? -1 : 0} aria-disabled={disabled} onclick={handleClick} onmousedown={handleMousedown} oncontextmenu={handleRightClick} onkeydown={handleKeyDown} onkeyup={handleKeyUp} {...restProps}>
+<div class="clickable" class:expand role="button" aria-disabled={!enabled} onclick={handleClick} onmousedown={handleMousedown} oncontextmenu={handleRightClick} onkeydown={handleKeyDown} onkeyup={handleKeyUp} {...restProps}>
 	{@render children?.()}
 </div>

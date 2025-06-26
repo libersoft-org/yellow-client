@@ -129,7 +129,11 @@ async function sendMessage(page: Page, messageText: string): Promise<void> {
 async function replyToLastMessage(page: Page, replyText: string): Promise<void> {
 	return await test.step(`Reply to last message with: "${replyText}"`, async () => {
 		await page.getByTestId('message-item').last().click({ button: 'right' });
+
+		// Wait for context menu to appear and click reply
+		await page.getByTestId('reply-context-menu-item').last().waitFor({ state: 'visible' });
 		await page.getByTestId('reply-context-menu-item').last().click();
+
 		await sendMessage(page, replyText);
 	});
 }
@@ -256,6 +260,8 @@ async function configureMessagesSettings(
 		if (settings.photoRadius) {
 			await page.getByRole('combobox').selectOption(settings.photoRadius);
 		}
+
+		await closeModal(page, 'messages-settings');
 	});
 }
 

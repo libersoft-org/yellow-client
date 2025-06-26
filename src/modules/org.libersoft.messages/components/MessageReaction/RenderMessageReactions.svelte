@@ -62,7 +62,7 @@
 	};
 
 	let prevReactions: any | null = null;
-	let buttonRefs = {};
+	let buttonRefs = $state({});
 	/**
 	 * Animations handler by detecting changes in reactions
 	 */

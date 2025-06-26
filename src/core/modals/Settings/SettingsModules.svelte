@@ -143,7 +143,7 @@
 				<div class="body">
 					<div class="row">
 						<div class="label">Type:</div>
-						<Select bind:value={module.type} onchange={e => changeType(module.id, (e.target as HTMLSelectElement)?.value as ModuleType)}>
+						<Select value={module.type} onchange={e => changeType(module.id, (e.target as HTMLSelectElement)?.value as ModuleType)}>
 							<Option value="builtin" text="Built-in" />
 							<Option value="iframe" text="IFrame" />
 						</Select>

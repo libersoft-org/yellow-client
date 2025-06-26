@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
-	import type { HTMLButtonAttributes } from 'svelte/elements';
+	import type { HTMLAttributes } from 'svelte/elements';
 	import { isMobile } from '@/core/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	interface Props extends HTMLButtonAttributes {
+	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children?: Snippet;
 		img?: string;
 		text?: string;
@@ -63,7 +63,7 @@
 {#snippet icon()}
 	<Icon {img} colorVariable={!enabled ? '--disabled-foreground' : colorVariable} alt={text} size={iconSize} padding={iconPadding} />
 {/snippet}
-<Clickable {...restProps} onClick={handleClick} disabled={!enabled}>
+<Clickable {...restProps} onClick={handleClick} {enabled}>
 	<div class="button" class:disabled={!enabled} class:hidden-on-desktop={!$isMobile && hiddenOnDesktop} style:width style:padding style:border-radius={radius + 'px'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
 		{#if children}
 			{@render children?.()}

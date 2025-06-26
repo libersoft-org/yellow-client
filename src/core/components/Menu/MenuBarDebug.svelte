@@ -33,7 +33,7 @@
 </script>
 
 {#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}
-	<Switch bind:checked={$debug} />
+	<Switch bind:checked={$debug} label="Debug" />
 	<Button onClick={err} text="/0" />
 	<Button onClick={notification} text="N" />
 	<Button onClick={openFiles1} text="F1" />

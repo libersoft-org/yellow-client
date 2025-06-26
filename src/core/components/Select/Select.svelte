@@ -8,8 +8,9 @@
 		maxWidth?: string;
 		children?: Snippet;
 		label?: any;
+		enabled?: boolean;
 	}
-	let { value = $bindable(''), expand = false, minWidth, maxWidth, children, label, ...restProps }: Props = $props();
+	let { enabled = true, value = $bindable(''), expand = false, minWidth, maxWidth, children, label, ...restProps }: Props = $props();
 	let selectRef: HTMLSelectElement;
 
 	export function focus() {
@@ -51,7 +52,7 @@
 </style>
 
 {#snippet select()}
-	<select {...restProps} class:expand style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} bind:this={selectRef} bind:value>
+	<select disabled={!enabled} {...restProps} class:expand style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} bind:this={selectRef} bind:value>
 		{@render children?.()}
 	</select>
 {/snippet}
