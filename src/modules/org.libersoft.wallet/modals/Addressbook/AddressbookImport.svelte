@@ -11,7 +11,7 @@
 	let replaceDialog: any = $state(null);
 	let pendingReplaceText = $state('');
 	const hasExistingAddresses = $derived($addressBook.length > 0);
-	const replaceDialogData = {
+	const replaceDialogData: Dialog.IDialogData = {
 		title: 'Replace Address Book',
 		body: 'This will replace your current address book. All existing addresses will be lost. Are you sure you want to continue?',
 		icon: 'img/import.svg',
