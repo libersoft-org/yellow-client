@@ -286,10 +286,14 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
+		min-height: 40px;
 		font-weight: bold;
 		background-color: var(--disabled-background);
 		color: var(--disabled-foreground);
 		cursor: grab;
+		transition:
+			background-color 0.4s linear,
+			color 0.4s linear;
 	}
 
 	.modal .header.focused {
@@ -300,18 +304,19 @@
 	.modal .header .title {
 		display: flex;
 		align-items: center;
-		padding: 10px;
 		flex-grow: 1;
 		user-select: none;
 	}
 
-	.modal .header .title :global(.icon) {
-		padding: 0 10px 0 0 !important;
-	}
-
 	.modal .header .icons {
 		display: flex;
-		padding: 5px;
+	}
+
+	.modal .header .icons :global(.icon img) {
+		transition:
+			color 0.4s linear,
+			fill 0.4s linear,
+			filter 0.4s linear;
 	}
 
 	.modal .body {
@@ -356,20 +361,22 @@
 					{#if title}
 						<div class="title">
 							{#if optionalIcon}
-								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon img={optionalIcon.img} colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
+								<div class="icons">
+									<div onpointerdown={e => e.stopPropagation()}>
+										<Icon img={optionalIcon.img} colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
+									</div>
 								</div>
 							{/if}
-							<div>{title}</div>
+							<div style:padding-left={optionalIcon ? '0' : '10px'}>{title}</div>
 						</div>
 						<div class="icons">
 							{#if max}
 								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon data-testid={testId + '-Modal-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="5px" onClick={() => (maximized ? restore() : maximize())} />
+									<Icon data-testid={testId + '-Modal-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="10px" onClick={() => (maximized ? restore() : maximize())} />
 								</div>
 							{/if}
 							<div onpointerdown={e => e.stopPropagation()}>
-								<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="5px" onClick={close} />
+								<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="10px" onClick={close} />
 							</div>
 						</div>
 					{/if}
@@ -379,7 +386,7 @@
 						params: <code>{JSON.stringify({ params })}</code>
 					{/if}
 					{#if typeof ModalBody === 'function'}
-						<ModalBody {close} {params} />
+						<ModalBody {params} {close} />
 					{/if}
 					{#if children}
 						{@render children?.()}

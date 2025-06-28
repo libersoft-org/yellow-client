@@ -50,7 +50,7 @@
 		<Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} />
 	</Label>
 	<Label text="Currency">
-		<DropdownFilter options={$currencies} bind:selected={currency} enabled={!!($selectedNetwork && $selectedAddress)} />
+		<DropdownFilter options={$currencies} enabled={!!($selectedNetwork && $selectedAddress)} />
 	</Label>
 	<Label text="Amount">
 		<Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} />

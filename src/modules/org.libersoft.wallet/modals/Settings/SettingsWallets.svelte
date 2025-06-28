@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { module } from '../../module.ts';
-	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
-	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
+	import { wallets, addAddress, addWallet, type IAddress, type IWallet } from '../../wallet.ts';
 	import Address from './SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -15,9 +14,14 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
+	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
+	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
 	import { Mnemonic } from 'ethers';
-	let elModalPhrase;
-	let accordion;
+	let selectedWallet: IWallet | undefined;
+	let selectedAddress: IAddress | undefined;
+	let accordion: Accordion | undefined;
+	let elModalPhrase: Modal | undefined;
+	let elDialogAddressDel: DialogAddressDel | undefined;
 
 	function afterAddWallet() {
 		accordion.handleClick(wallets.length - 1, true);
@@ -26,10 +30,11 @@
 	function recover() {
 		let phrase = window.prompt('Enter your recovery phrase');
 		if (!phrase) return;
-		let mn = Mnemonic.fromPhrase(phrase);
-		addWallet(mn, ' - recovered');
+		let mnemonic = Mnemonic.fromPhrase(phrase);
+		addWallet(mnemonic, ' - recovered');
 		afterAddWallet();
 	}
+
 	function addAddressWithIndex(wallet) {
 		let index = window.prompt('Enter the index');
 		if (!index) return;
@@ -54,20 +59,10 @@
 		);
 	}
 
-	function deleteAddress(w, address) {
-		address.deleted = true;
-		// wallet.addresses = [...wallet.addresses]
-		wallets.update(ws =>
-			ws.map(item =>
-				item === w
-					? {
-							...item,
-							addresses: [...w.addresses],
-							selected_address_index: w.indexNum,
-						}
-					: item
-			)
-		);
+	function deleteAddress(wallet, address) {
+		selectedWallet = wallet;
+		selectedAddress = address;
+		elDialogAddressDel.open();
 	}
 
 	function closeModal() {
@@ -108,20 +103,20 @@
 			<Table>
 				<Thead>
 					<Th>Index</Th>
-					<Th>Alias</Th>
+					<Th>Name</Th>
 					<Th>Address</Th>
 					<Th>Action</Th>
 				</Thead>
 				<Tbody>
-					{#each walletAddresses(walleta) as address}
+					{#each walleta.addresses as address}
 						<TbodyTr>
 							<Td title="Index">{address.index}</Td>
-							<Td title="Alias">{address.name}</Td>
+							<Td title="Name">{address.name}</Td>
 							<Td title="Address"><Address address={address.address} /></Td>
 							<Td title="Action">
 								<TableActionItems>
 									<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
-									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Hide" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
+									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
 								</TableActionItems>
 							</Td>
 						</TbodyTr>
@@ -132,3 +127,4 @@
 	{/snippet}
 </Accordion>
 <Modal title="New wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalPhrase} />
+<DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />

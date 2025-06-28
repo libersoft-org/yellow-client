@@ -4,18 +4,13 @@
 	import { addressBook } from '../../wallet.ts';
 	import { get } from 'svelte/store';
 	import { getGuid } from '@/core/core.ts';
-
 	interface Props {
 		close: () => void;
 	}
-
 	let { close }: Props = $props();
-
 	let replaceDialog: any = $state(null);
 	let pendingReplaceText = $state('');
-
 	const hasExistingAddresses = $derived($addressBook.length > 0);
-
 	const replaceDialogData = {
 		title: 'Replace Address Book',
 		body: 'This will replace your current address book. All existing addresses will be lost. Are you sure you want to continue?',
@@ -36,8 +31,8 @@
 
 			for (let i = 0; i < data.length; i++) {
 				const item = data[i];
-				if (!item.alias || typeof item.alias !== 'string') {
-					return { valid: false, error: `Item ${i + 1}: Missing or invalid alias` };
+				if (!item.name || typeof item.name !== 'string') {
+					return { valid: false, error: `Item ${i + 1}: Missing or invalid name` };
 				}
 				if (!item.address || typeof item.address !== 'string') {
 					return { valid: false, error: `Item ${i + 1}: Missing or invalid address` };
@@ -64,7 +59,7 @@
 			if (!existingItem) {
 				newItems.push({
 					guid: item.guid || getGuid(),
-					alias: item.alias,
+					name: item.name,
 					address: item.address,
 				});
 			}
@@ -104,7 +99,7 @@
 		const data = JSON.parse(text);
 		const processedData = data.map((item: any) => ({
 			guid: item.guid || getGuid(),
-			alias: item.alias,
+			name: item.name,
 			address: item.address,
 		}));
 

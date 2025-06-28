@@ -23,7 +23,7 @@
 		overflow: auto;
 	}
 
-	.alias {
+	.name {
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -43,7 +43,7 @@
 	{#if $addressBook.length > 0}
 		{#each $addressBook as a, index}
 			<Item even={index % 2 === 0 ? false : true} onClick={() => clickItem(a.address)}>
-				<div class="alias">{a.alias}</div>
+				<div class="name">{a.name}</div>
 				<div class="address">{a.address}</div>
 			</Item>
 		{/each}

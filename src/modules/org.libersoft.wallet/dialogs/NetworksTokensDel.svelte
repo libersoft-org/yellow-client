@@ -1,15 +1,9 @@
 <script lang="ts">
-	import { networks } from '../wallet.ts';
+	import { networks, type IToken } from '../wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		networkGuid: string;
-		token: {
-			guid: string;
-			name: string;
-			icon: string;
-			symbol: string;
-			contract_address: string;
-		};
+		token: IToken;
 	}
 	let { networkGuid, token }: Props = $props();
 	let elDialog;
@@ -24,7 +18,16 @@
 	};
 
 	function clickYes() {
-		networks.update(nets => nets.map(n => (n.guid === networkGuid ? { ...n, tokens: (n.tokens ?? []).filter(t => t.guid !== token.guid) } : n)));
+		networks.update(nets =>
+			nets.map(n =>
+				n.guid === networkGuid
+					? {
+							...n,
+							tokens: (n.tokens ?? []).filter(t => t.guid !== token.guid),
+						}
+					: n
+			)
+		);
 		elDialog?.close();
 	}
 

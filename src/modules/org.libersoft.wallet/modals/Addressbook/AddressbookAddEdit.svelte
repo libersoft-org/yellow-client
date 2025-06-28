@@ -1,35 +1,33 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { isAddress } from 'ethers';
+	import { addressBook, type IAddressBookItem } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-	import { addressBook } from '../../wallet.ts';
-	import { module } from '../../module.ts';
 	interface Props {
-		close: () => void;
-		params: {
-			item?: {
-				guid: string;
-				alias: string;
-				address: string;
-			};
+		params?: {
+			item?: IAddressBookItem | null | undefined;
 		};
+		close?: () => void;
 	}
-	let { close, params }: Props = $props();
-	let aliasElement;
-	let alias = $state('');
-	let address = $state('');
-	let error = $state('');
+	let { params, close }: Props = $props();
+	let name: string | undefined = $state();
+	let address: string | undefined = $state();
+	let error: string | undefined = $state();
+	let elName;
 
 	onMount(() => {
+		console.log(params.item);
+
 		if (params.item) {
-			alias = params.item.alias;
+			name = params.item.name;
 			address = params.item.address;
 		}
-		aliasElement.focus();
+		elName.focus();
 	});
 
 	function findAddressBookItemByAddress(address) {
@@ -43,9 +41,9 @@
 	}
 
 	function add() {
-		if (alias) alias = alias.trim();
+		if (name) name = name.trim();
 		if (address) address = address.trim();
-		console.log(alias, address);
+		console.log(name, address);
 		if (!address || address === '') {
 			error = 'Address is not set';
 			return;
@@ -56,17 +54,17 @@
 		}
 		let dupe = findAddressBookItemByAddress(address);
 		if (dupe) {
-			error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
+			error = 'Address already exists in the address book, see name: "' + dupe.name + '"';
 			return;
 		}
-		console.log('NEW ITEM IN ADDRESS BOOK:', alias, address);
-		$addressBook.push({ alias, address });
+		console.log('NEW ITEM IN ADDRESS BOOK:', name, address);
+		$addressBook.push({ name, address });
 		addressBook.set($addressBook);
 		close();
 	}
 
 	function edit() {
-		if (alias) alias = alias.trim();
+		if (name) name = name.trim();
 		if (address) address = address.trim();
 		if (!address || address === '') {
 			error = 'Address is not set';
@@ -78,10 +76,10 @@
 		}
 		let dupe = findAddressBookItemByAddress(address);
 		if (dupe && dupe.guid != params.item.guid) {
-			error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
+			error = 'Address already exists in the address book, see name: "' + dupe.name + '"';
 			return;
 		}
-		params.item.alias = alias;
+		params.item.name = name;
 		params.item.address = address;
 		addressBook.set($addressBook);
 		close();
@@ -108,8 +106,8 @@
 </style>
 
 <div class="addressbook-new">
-	<Label text="Alias">
-		<Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} onInput={clearError} />
+	<Label text="Name">
+		<Input placeholder="Name" bind:value={name} bind:this={elName} onKeydown={keyEnter} onInput={clearError} />
 	</Label>
 	<Label text="Address">
 		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} onInput={clearError} />

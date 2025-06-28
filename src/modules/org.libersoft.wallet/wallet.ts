@@ -3,29 +3,28 @@ import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnem
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { getGuid } from '@/core/core.ts';
 export { default_networks } from './default_networks.js';
-interface Address {
+export interface IAddress {
 	address: string;
 	name: string;
 	path: string;
 	index: number;
-	deleted?: boolean;
 }
-interface Wallet {
+export interface IWallet {
 	phrase: string;
 	address: string;
 	selected_address_index: number;
 	name: string;
-	addresses?: Address[];
+	addresses?: IAddress[];
 	log: any[];
 }
-interface Token {
+export interface IToken {
 	guid: string;
 	icon: string;
 	symbol: string;
 	name: string;
 	contract_address: string;
 }
-interface Network {
+export interface INetwork {
 	guid: string;
 	name: string;
 	chainID: number;
@@ -34,9 +33,9 @@ interface Network {
 		iconURL: string;
 	};
 	rpcURLs: string[];
-	tokens?: Token[];
+	tokens?: IToken[];
 }
-interface Balance {
+export interface IBalance {
 	crypto: {
 		amount: string;
 		currency: string;
@@ -46,21 +45,21 @@ interface Balance {
 		currency: string;
 	};
 }
-interface AddressBookItem {
+export interface IAddressBookItem {
 	guid: string;
-	alias: string;
+	name: string;
 	address: string;
 }
 export const status = writable<any>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);
-export const networks = localStorageSharedStore<Network[]>('networks', []);
+export const networks = localStorageSharedStore<INetwork[]>('networks', []);
 export let section = writable<string | null>('balance');
 export let sendAddress = writable<string | number | undefined>();
 const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer;
 
-networks.subscribe((nets: Network[]) => {
+networks.subscribe((nets: INetwork[]) => {
 	let modified = false;
 	for (let net of nets) {
 		if (net.guid === undefined) {
@@ -97,7 +96,7 @@ function toHexStr(uint8) {
 }
 */
 
-export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
+export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
 	const r = $networks.find(n => n.guid === $selectedNetworkID);
@@ -133,9 +132,9 @@ export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens,
 	return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)];
 });
 
-export const addressBook = localStorageSharedStore<AddressBookItem[]>('addressbook', []);
+export const addressBook = localStorageSharedStore<IAddressBookItem[]>('addressbook', []);
 
-addressBook.subscribe((value: AddressBookItem[]) => {
+addressBook.subscribe((value: IAddressBookItem[]) => {
 	let modifyed = false;
 	for (let i of value) {
 		if (!i.guid) {
@@ -148,12 +147,12 @@ addressBook.subscribe((value: AddressBookItem[]) => {
 	}
 });
 
-selectedAddress.subscribe((value: Address | undefined) => {
+selectedAddress.subscribe((value: IAddress | undefined) => {
 	//console.log('selectedAddress', value);
 	// getBalance();
 });
 
-wallets.subscribe((wals: Wallet[]) => {
+wallets.subscribe((wals: IWallet[]) => {
 	while (wallets_cleanup(wals)) {
 		wallets.update(w => w);
 	}
@@ -184,7 +183,7 @@ function wallets_cleanup(wallets: any) {
 	}
 }
 
-export const balance = writable<Balance>({
+export const balance = writable<IBalance>({
 	crypto: {
 		amount: '?',
 		currency: 'N/A',
@@ -216,12 +215,12 @@ async function refresh(): Promise<void> {
 }
 */
 
-selectedNetwork.subscribe((value: Network | undefined) => {
+selectedNetwork.subscribe((value: INetwork | undefined) => {
 	//console.log('selectedNetwork', value);
 	resetBalance();
 	reconnect();
 });
-selectedWallet.subscribe((value: Wallet | undefined) => {
+selectedWallet.subscribe((value: IWallet | undefined) => {
 	//console.log('selectedWallet', value);
 	resetBalance();
 	reconnect();
@@ -255,7 +254,7 @@ function reconnect(): void {
 	connectToURL();
 }
 
-function sortAddresses(addresses: Address[]): Address[] {
+function sortAddresses(addresses: IAddress[]): IAddress[] {
 	return addresses.sort((a, b) => {
 		if (a.index < b.index) return -1;
 		if (a.index > b.index) return 1;
@@ -263,11 +262,11 @@ function sortAddresses(addresses: Address[]): Address[] {
 	});
 }
 
-function addressesMaxIndex(addresses: Address[]): number {
+function addressesMaxIndex(addresses: IAddress[]): number {
 	return addresses.reduce((max, a) => Math.max(max, a.index), -1);
 }
 
-export function addAddress(w: Wallet, index?: number | string): void {
+export function addAddress(w: IWallet, index?: number | string): void {
 	let indexNum: number;
 
 	console.log('addAddress to wallet ', w);
@@ -286,7 +285,6 @@ export function addAddress(w: Wallet, index?: number | string): void {
 			let existing = addresses.find(a => a.index === indexNum);
 			if (existing) {
 				console.log('Address with index', indexNum, 'already exists');
-				existing.deleted = false;
 			} else {
 				console.log('Adding address with index', indexNum);
 				doAddAddress(w, addresses, indexNum);
@@ -311,7 +309,7 @@ export function addAddress(w: Wallet, index?: number | string): void {
 	);
 }
 
-function doAddAddress(w: Wallet, addresses: Address[], index: number): void {
+function doAddAddress(w: IWallet, addresses: IAddress[], index: number): void {
 	console.log('doAddAddress Mnemonic.fromPhrase');
 
 	if (!w.phrase) {
@@ -324,7 +322,7 @@ function doAddAddress(w: Wallet, addresses: Address[], index: number): void {
 	let path = getIndexedAccountPath(index);
 	console.log('doAddAddress HDNodeWallet.fromMnemonic');
 	let derived_wallet = HDNodeWallet.fromMnemonic(mn, path);
-	let a: Address = {
+	let a: IAddress = {
 		address: derived_wallet.address,
 		name: 'Address ' + index,
 		path: path,
@@ -333,14 +331,10 @@ function doAddAddress(w: Wallet, addresses: Address[], index: number): void {
 	addresses.push(a);
 }
 
-export function selectAddress(wallet: Wallet, address: Address): void {
+export function selectAddress(wallet: IWallet, address: IAddress): void {
 	wallet.selected_address_index = address.index;
 	wallets.update(v => v);
 	selectedWalletID.set(wallet.address);
-}
-
-export function walletAddresses(wallet: Wallet): Address[] {
-	return (wallet.addresses || []).filter(a => !a.deleted);
 }
 
 export function generateMnemonic(): Mnemonic {
@@ -388,7 +382,7 @@ function setNextUrl(): void {
 
 export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> {
 	let newWallet = HDNodeWallet.fromMnemonic(mnemonic);
-	let wallet: Wallet = {
+	let wallet: IWallet = {
 		phrase: mnemonic.phrase,
 		address: newWallet.address,
 		selected_address_index: 0,

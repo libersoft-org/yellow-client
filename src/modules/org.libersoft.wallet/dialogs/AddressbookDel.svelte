@@ -1,15 +1,10 @@
 <script lang="ts">
-	import { addressBook } from '../wallet.ts';
+	import { addressBook, type IAddressBookItem } from '../wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
-		params: {
-			item: {
-				guid: string;
-				alias: string;
-			};
-		};
+		item: IAddressBookItem;
 	}
-	let { params }: Props = $props();
+	let { item }: Props = $props();
 	let elDialog;
 	let dialogData = {
 		title: 'Delete item from address book',
@@ -22,7 +17,7 @@
 	};
 
 	function clickYes() {
-		addressBook.set($addressBook.filter(i => i.guid !== params.item.guid));
+		addressBook.set($addressBook.filter(i => i.guid !== item.guid));
 		elDialog?.close();
 	}
 
@@ -37,7 +32,7 @@
 
 {#snippet question()}
 	<span>Would you like to delete the item "</span>
-	<span class="bold">{params.item.alias}</span>
+	<span class="bold">{item.name}</span>
 	<span>" from address book?</span>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />
