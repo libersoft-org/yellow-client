@@ -13,7 +13,6 @@
 		display: table-cell;
 		white-space: nowrap;
 		border-style: none;
-		font-weight: 500;
 		min-width: 50px;
 		vertical-align: middle;
 		padding: 8px;

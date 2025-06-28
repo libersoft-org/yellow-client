@@ -132,7 +132,7 @@
 
 	.platform-info-item strong {
 		min-width: 50px;
-		font-weight: 600;
+		font-weight: bold;
 	}
 
 	.file-info {
@@ -152,7 +152,7 @@
 	/* Compact inputs and labels globally */
 	:global(.files2-test label) {
 		font-size: 0.75em;
-		font-weight: 500;
+		font-weight: bold;
 		color: var(--text);
 		opacity: 0.8;
 	}
