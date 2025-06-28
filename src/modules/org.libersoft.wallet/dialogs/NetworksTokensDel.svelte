@@ -1,18 +1,20 @@
 <script lang="ts">
-	import { addressBook } from '../wallet.ts';
+	import { networks } from '../wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
-		params: {
-			item: {
-				guid: string;
-				alias: string;
-			};
+		networkGuid: string;
+		token: {
+			guid: string;
+			name: string;
+			icon: string;
+			symbol: string;
+			contract_address: string;
 		};
 	}
-	let { params }: Props = $props();
+	let { networkGuid, token }: Props = $props();
 	let elDialog;
 	let dialogData = {
-		title: 'Delete item from address book',
+		title: 'Delete token',
 		body: question,
 		icon: 'img/del.svg',
 		buttons: [
@@ -22,7 +24,7 @@
 	};
 
 	function clickYes() {
-		addressBook.set($addressBook.filter(i => i.guid !== params.item.guid));
+		networks.update(nets => nets.map(n => (n.guid === networkGuid ? { ...n, tokens: (n.tokens ?? []).filter(t => t.guid !== token.guid) } : n)));
 		elDialog?.close();
 	}
 
@@ -36,8 +38,8 @@
 </script>
 
 {#snippet question()}
-	<span>Would you like to delete the item "</span>
-	<span class="bold">{params.item.alias}</span>
-	<span>" from address book?</span>
+	<span>Would you like to delete this token: "</span>
+	<span class="bold">{token.name} ({token.symbol})</span>
+	<span>"?</span>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />
