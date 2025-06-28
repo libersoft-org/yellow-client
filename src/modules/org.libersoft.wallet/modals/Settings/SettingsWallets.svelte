@@ -16,12 +16,14 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
 	import ModalAddressAdd from '../Wallets/WalletsAddressAdd.svelte';
+	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
 	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
 	import { Mnemonic } from 'ethers';
 	let selectedWallet: IWallet | undefined;
 	let selectedAddress: IAddress | undefined;
 	let accordion: Accordion | undefined;
 	let elModalWalletsAdd: Modal | undefined;
+	let elDialogWalletsDel: Modal | undefined;
 	let elModalAddressAdd: Modal | undefined;
 	let elDialogAddressDel: DialogAddressDel | undefined;
 
@@ -42,14 +44,11 @@
 		elModalAddressAdd.open();
 	}
 
-	/*
-	function addAddressWithIndex(wallet) {
-		let index = window.prompt('Enter the index');
-		if (!index) return;
-		addAddress(wallet, index);
-		wallet.addresses = [...wallet.addresses];
+	function delWallet(wallet: IWallet) {
+		selectedWallet = wallet;
+		elDialogWalletsDel.open();
+		//wallets.update(ws => ws.filter(w => w !== wallet));
 	}
-	*/
 
 	function renameAddress(wallet, address) {
 		let name = window.prompt('Enter the new name');
@@ -103,8 +102,7 @@
 		<div class="wallet">
 			<ButtonBar>
 				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />
-				<!--<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />-->
-				<!--<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address by index" onClick={() => addAddressWithIndex(walleta)} />-->
+				<Button img="img/del.svg" text="Delete wallet" onClick={() => delWallet(walleta)} />
 			</ButtonBar>
 			<Table>
 				<Thead>
@@ -135,3 +133,4 @@
 <Modal title="Add a new wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalWalletsAdd} />
 <Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: selectedWallet }} width="600px" bind:this={elModalAddressAdd} />
 <DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />
+<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
