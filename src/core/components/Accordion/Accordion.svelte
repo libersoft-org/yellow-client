@@ -11,20 +11,17 @@
 		mode?: 'single' | 'multiple';
 	}
 	let { items, content, header, expandAllOnDesktop = false, mode = 'single' }: Props = $props();
-	let activeIndices = $state<number[]>([]);
-	const isSingleMode = mode === 'single';
+	let activeIndices: number[] = $state<number[]>([]);
+	const isSingleMode: boolean = mode === 'single';
 
 	export async function handleClick(index: number, newState: boolean | undefined = undefined) {
 		console.debug('Accordion clicked', index, newState);
-		let isOpen = activeIndices.includes(index);
-		const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
+		let isOpen: boolean = activeIndices.includes(index);
+		const el: HTMLElement = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
 		if (!el) return;
 		if (newState !== undefined) {
-			if (newState) {
-				isOpen = false;
-			} else {
-				isOpen = true;
-			}
+			if (newState) isOpen = false;
+			else isOpen = true;
 			return;
 		}
 		// CLOSE

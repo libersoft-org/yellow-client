@@ -262,38 +262,34 @@ function sortAddresses(addresses: IAddress[]): IAddress[] {
 	});
 }
 
-function addressesMaxIndex(addresses: IAddress[]): number {
+export function addressesMaxIndex(addresses: IAddress[]): number {
 	return addresses.reduce((max, a) => Math.max(max, a.index), -1);
 }
 
-export function addAddress(w: IWallet, index?: number | string): void {
+export function addAddress(w: IWallet, index?: number | string, name?: string): void {
 	let indexNum: number;
-
-	console.log('addAddress to wallet ', w);
+	console.log('addAddress to wallet ', w, index, name);
 	let addresses = w.addresses || [];
 	sortAddresses(addresses);
-	console.log('sorted.');
-	if (index === undefined) {
+	if (!index) {
 		indexNum = addressesMaxIndex(addresses) + 1;
-		doAddAddress(w, addresses, indexNum);
+		doAddAddress(w, addresses, indexNum, name);
 	} else {
 		indexNum = parseInt(index.toString());
 		if (indexNum < 0 || isNaN(indexNum)) {
-			window.alert('Invalid index');
+			console.error('Invalid index');
 			return;
 		} else {
 			let existing = addresses.find(a => a.index === indexNum);
 			if (existing) {
-				console.log('Address with index', indexNum, 'already exists');
+				console.error('Address with index', indexNum, 'already exists');
 			} else {
 				console.log('Adding address with index', indexNum);
-				doAddAddress(w, addresses, indexNum);
+				doAddAddress(w, addresses, indexNum, name);
 			}
 		}
 	}
-	console.log('sort..');
 	sortAddresses(addresses);
-	console.log('sorted.');
 	w.addresses = addresses;
 	w.selected_address_index = indexNum;
 	wallets.update(ws =>
@@ -309,14 +305,23 @@ export function addAddress(w: IWallet, index?: number | string): void {
 	);
 }
 
-function doAddAddress(w: IWallet, addresses: IAddress[], index: number): void {
-	console.log('doAddAddress Mnemonic.fromPhrase');
+export function addressIndexAlreadyExists(wallet: IWallet, index: number): boolean {
+	if (wallet?.addresses) return wallet.addresses.some(address => address.index === index);
+	else return false;
+}
+/*
+export function getLastAddressIndex(wallet: IWallet): number {
+ 	if (wallet?.addresses) {
 
+		}
+}
+*/
+function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
+	console.log('doAddAddress Mnemonic.fromPhrase');
 	if (!w.phrase) {
 		console.error('Cannot derive address: wallet.phrase is undefined');
 		return;
 	}
-
 	let mn = Mnemonic.fromPhrase(w.phrase);
 	console.log('doAddAddress getIndexedAccountPath');
 	let path = getIndexedAccountPath(index);
@@ -324,7 +329,7 @@ function doAddAddress(w: IWallet, addresses: IAddress[], index: number): void {
 	let derived_wallet = HDNodeWallet.fromMnemonic(mn, path);
 	let a: IAddress = {
 		address: derived_wallet.address,
-		name: 'Address ' + index,
+		name: name ? name : 'Address ' + index,
 		path: path,
 		index: index,
 	};

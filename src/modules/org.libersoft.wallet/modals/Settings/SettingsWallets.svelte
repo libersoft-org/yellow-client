@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { module } from '../../module.ts';
-	import { wallets, addAddress, addWallet, type IAddress, type IWallet } from '../../wallet.ts';
+	import { wallets, addWallet, type IAddress, type IWallet } from '../../wallet.ts';
 	import Address from './SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -15,12 +15,14 @@
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
+	import ModalAddressAdd from '../Wallets/WalletsAddressAdd.svelte';
 	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
 	import { Mnemonic } from 'ethers';
 	let selectedWallet: IWallet | undefined;
 	let selectedAddress: IAddress | undefined;
 	let accordion: Accordion | undefined;
-	let elModalPhrase: Modal | undefined;
+	let elModalWalletsAdd: Modal | undefined;
+	let elModalAddressAdd: Modal | undefined;
 	let elDialogAddressDel: DialogAddressDel | undefined;
 
 	function afterAddWallet() {
@@ -35,12 +37,19 @@
 		afterAddWallet();
 	}
 
+	function addAddress(wallet: IWallet) {
+		selectedWallet = wallet;
+		elModalAddressAdd.open();
+	}
+
+	/*
 	function addAddressWithIndex(wallet) {
 		let index = window.prompt('Enter the index');
 		if (!index) return;
 		addAddress(wallet, index);
 		wallet.addresses = [...wallet.addresses];
 	}
+	*/
 
 	function renameAddress(wallet, address) {
 		let name = window.prompt('Enter the new name');
@@ -64,10 +73,6 @@
 		selectedAddress = address;
 		elDialogAddressDel.open();
 	}
-
-	function closeModal() {
-		elModalPhrase.close();
-	}
 </script>
 
 <style>
@@ -84,7 +89,7 @@
 </style>
 
 <ButtonBar equalize>
-	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Create wallet" onClick={() => elModalPhrase?.open()} />
+	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => elModalWalletsAdd?.open()} />
 	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
@@ -98,7 +103,8 @@
 		<div class="wallet">
 			<ButtonBar>
 				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />
-				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address by index" onClick={() => addAddressWithIndex(walleta)} />
+				<!--<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />-->
+				<!--<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address by index" onClick={() => addAddressWithIndex(walleta)} />-->
 			</ButtonBar>
 			<Table>
 				<Thead>
@@ -126,5 +132,6 @@
 		</div>
 	{/snippet}
 </Accordion>
-<Modal title="New wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalPhrase} />
+<Modal title="Add a new wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalWalletsAdd} />
+<Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: selectedWallet }} width="600px" bind:this={elModalAddressAdd} />
 <DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />
