@@ -6,6 +6,7 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
+	import Form from '@/core/components/Form/Form.svelte';
 	interface Props {
 		close: () => void;
 		params: {
@@ -57,20 +58,26 @@
 		params.onEdit(token());
 		close();
 	}
+
+	function handleSubmit(): void {
+		params.item ? clickEdit() : clickAdd();
+	}
 </script>
 
-<Label text="Name">
-	<Input bind:value={item_name} />
-</Label>
-<Label text="Icon">
-	<Input bind:value={item_icon} />
-</Label>
-<Label text="Symbol">
-	<Input bind:value={item_symbol} />
-</Label>
-<Label text="Contract address">
-	<Input bind:value={item_contract_address} />
-</Label>
+<Form onSubmit={handleSubmit}>
+	<Label text="Name">
+		<Input bind:value={item_name} />
+	</Label>
+	<Label text="Icon">
+		<Input bind:value={item_icon} />
+	</Label>
+	<Label text="Symbol">
+		<Input bind:value={item_symbol} />
+	</Label>
+	<Label text="Contract address">
+		<Input bind:value={item_contract_address} />
+	</Label>
+</Form>
 <ButtonBar equalize expand>
 	{#if params.item}
 		<Button img="img/save.svg" text="Save" onClick={clickEdit} />

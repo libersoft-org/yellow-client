@@ -10,6 +10,7 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
+	import Form from '@/core/components/Form/Form.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	interface Props {
@@ -190,12 +191,9 @@
 		close();
 	}
 
-	function keyEnter(event: KeyboardEvent) {
-		if (event.key === 'Enter') {
-			event.preventDefault();
-			console.log('[KEY] Enter pressed');
-			params.id === null ? clickAdd() : clickSave();
-		}
+	function handleSubmit(): void {
+		console.log('[KEY] Enter pressed');
+		params.id === null ? clickAdd() : clickSave();
 	}
 </script>
 
@@ -222,7 +220,7 @@
 </style>
 
 {#snippet snippet_top()}
-	<div class="form">
+	<Form onSubmit={handleSubmit} class="form">
 		<Label text="Protocol">
 			<Select bind:this={protocolElem} bind:value={protocol}>
 				<Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />
@@ -230,16 +228,16 @@
 			</Select>
 		</Label>
 		<Label text="Title">
-			<Input bind:value={config_title} onKeydown={keyEnter} data-testid="account-title-input" />
+			<Input bind:value={config_title} data-testid="account-title-input" />
 		</Label>
 		<Label text="Server">
-			<Input placeholder="wss://your_server/" bind:value={credentials_server} onKeydown={keyEnter} data-testid="account-server-input" />
+			<Input placeholder="wss://your_server/" bind:value={credentials_server} data-testid="account-server-input" />
 		</Label>
 		<Label text="Address">
-			<Input placeholder="user@domain.tld" bind:value={credentials_address} onKeydown={keyEnter} data-testid="account-address-input" />
+			<Input placeholder="user@domain.tld" bind:value={credentials_address} data-testid="account-address-input" />
 		</Label>
 		<Label text="Password">
-			<Input type="password" placeholder="Your password" bind:value={credentials_password} onKeydown={keyEnter} data-testid="account-password-input" />
+			<Input type="password" placeholder="Your password" bind:value={credentials_password} data-testid="account-password-input" />
 		</Label>
 		{#if !isInWelcomeWizard}
 			<Switch showLabel label="Enabled" bind:checked={config_enabled} data-testid="account-enabled-checkbox" />
@@ -247,7 +245,7 @@
 		{#if error}
 			<Alert type="error" message={error} />
 		{/if}
-	</div>
+	</Form>
 {/snippet}
 {#snippet snippet_bottom()}
 	<div class="bottom">
