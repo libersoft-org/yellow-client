@@ -55,10 +55,10 @@
 
 <div class="expressions" style="height: {height}">
 	<div class="categories" role="none">
-		<ExpressionsItem label="Emojis" icon="modules/{identifier}/img/emoji.svg" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
-		<ExpressionsItem label="Stickers" icon="modules/{identifier}/img/sticker.svg" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
-		<ExpressionsItem label="GIFs" icon="modules/{identifier}/img/gif.svg" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
-		<ExpressionsItem label="Settings" icon="img/settings.svg" active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} />
+		<ExpressionsItem label="Emojis" icon="modules/{identifier}/img/emoji.svg" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} mobileNoText />
+		<ExpressionsItem label="Stickers" icon="modules/{identifier}/img/sticker.svg" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} mobileNoText />
+		<ExpressionsItem label="GIFs" icon="modules/{identifier}/img/gif.svg" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} mobileNoText />
+		<ExpressionsItem label="Settings" icon="img/settings.svg" active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} mobileNoText />
 	</div>
 	<!--<svelte:component this={expressions[expression]} bind:this={elExpression} />-->
 	<Expression bind:this={elExpression} />

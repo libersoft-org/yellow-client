@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isMobile } from '@/core/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
@@ -6,9 +7,10 @@
 		label?: string;
 		active?: boolean;
 		colorVariable?: string;
+		mobileNoText?: boolean;
 		onClick?: (e: Event) => void;
 	}
-	let { icon, label, active, colorVariable = '--default-foreground', onClick }: Props = $props();
+	let { icon, label, active, colorVariable = '--default-foreground', onClick, mobileNoText = false }: Props = $props();
 
 	function onMousedown(e) {
 		e.stopPropagation();
@@ -43,13 +45,15 @@
 	}
 </style>
 
-<Clickable {onClick} {onMousedown}>
+<Clickable {onClick} {onMousedown} expand>
 	<div class="item {active ? 'active' : ''}">
 		{#if icon}
 			<Icon img={icon} alt={label} {colorVariable} size="24px" padding="0px" />
 		{/if}
 		{#if label}
-			<div class="label">{label}</div>
+			{#if !$isMobile || !mobileNoText}
+				<div class="label">{label}</div>
+			{/if}
 		{/if}
 	</div>
 </Clickable>
