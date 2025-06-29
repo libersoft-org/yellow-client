@@ -95,11 +95,11 @@
 			<Tbody>
 				{#each net.tokens as t, i}
 					<TbodyTr>
-						<Td>{t.name}</Td>
-						<Td>{t.icon}</Td>
-						<Td>{t.symbol}</Td>
-						<Td>{t.contract_address}</Td>
-						<Td>
+						<Td title="Name">{t.name}</Td>
+						<Td title="Icon">{t.icon}</Td>
+						<Td title="Symbol">{t.symbol}</Td>
+						<Td title="Token address">{t.contract_address}</Td>
+						<Td title="Action">
 							<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenModal(t)} />
 							<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenModal(t)} />
 						</Td>
