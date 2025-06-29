@@ -557,7 +557,7 @@ export function addNetwork(net): void {
 	});
 }
 
-export function removeNetwork(net): void {
+export function deleteNetwork(net): void {
 	networks.update(n => {
 		return n.filter(n => n !== net);
 	});

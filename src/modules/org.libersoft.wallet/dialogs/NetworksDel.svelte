@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { addressBook, type IAddressBookItem } from '../wallet.ts';
+	import { networks, type INetwork } from '../wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
-		item: IAddressBookItem;
+		item: INetwork;
 	}
 	let { item }: Props = $props();
 	let elDialog;
 	let dialogData = {
-		title: 'Delete item from address book',
+		title: 'Delete network',
 		body: question,
 		icon: 'img/del.svg',
 		buttons: [
@@ -17,7 +17,7 @@
 	};
 
 	function clickYes() {
-		addressBook.set($addressBook.filter(i => i.guid !== item.guid));
+		networks.set($networks.filter(i => i.guid !== item.guid));
 		elDialog?.close();
 	}
 
@@ -31,6 +31,6 @@
 </script>
 
 {#snippet question()}
-	<div>Would you like to delete the item "<span class="bold">{item.name}</span>" from address book??</div>
+	<div>Would you like to delete the network "<span class="bold">{item.name}</span>"?</div>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />

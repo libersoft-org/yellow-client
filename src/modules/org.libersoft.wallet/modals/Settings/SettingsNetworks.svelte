@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { module } from '../../module.ts';
-	import { addNetwork, removeNetwork, networks, default_networks } from '../../wallet.ts';
+	import { addNetwork, deleteNetwork, networks, default_networks } from '../../wallet.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import ModalEditNetwork from '../Networks/NetworksAddEdit.svelte';
 	import ModalTokenList from '../Networks/NetworksTokens.svelte';
+	import DialogDeleteNetwork from '../../dialogs/NetworksDel.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -14,16 +15,23 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
 	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
-	let modalItemID = null;
-	let modalItem = null;
-	let elModalEditNetwork;
-	let elModalTokenList;
-	let elModalSettingsNetworksImport;
-	let elModalSettingsNetworksExport;
+	let modalItemID: string | null | undefined;
+	let modalItem: INetwork | null | undefined;
+	let elModalEditNetwork: ModalEditNetwork;
+	let elModalTokenList: ModalTokenList;
+	let elModalSettingsNetworksImport: SettingsNetworksImport;
+	let elModalSettingsNetworksExport: SettingsNetworksExport;
+	let elDialogDeleteNetwork: DialogDeleteNetwork;
 
 	function clickAddNetwork(net) {
 		console.log('clickAddNetwork', net);
 		//TODO
+	}
+
+	function clickDeleteNetwork(net) {
+		console.log('clickDeleteNetwork', net);
+		modalItem = net;
+		elDialogDeleteNetwork?.open();
 	}
 
 	function editNetwork(net) {
@@ -80,7 +88,7 @@
 						<TableActionItems>
 							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} />
 							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => editNetwork(n)} />
-							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => removeNetwork(n)} />
+							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} />
 						</TableActionItems>
 					</Td>
 				</TbodyTr>
@@ -114,3 +122,4 @@
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} testId="wallet-settings-networks-token-list" />
 <Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} testId="wallet-settings-networks-import" />
 <Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} testId="wallet-settings-networks-export" />
+<DialogDeleteNetwork item={modalItem} bind:this={elDialogDeleteNetwork} />
