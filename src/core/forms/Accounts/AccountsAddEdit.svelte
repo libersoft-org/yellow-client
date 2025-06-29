@@ -198,13 +198,6 @@
 </script>
 
 <style>
-	.form {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		width: 100%;
-	}
-
 	.bottom {
 		display: flex;
 		flex-direction: column;
@@ -220,7 +213,7 @@
 </style>
 
 {#snippet snippet_top()}
-	<Form onSubmit={handleSubmit} class="form">
+	<Form onSubmit={handleSubmit}>
 		<Label text="Protocol">
 			<Select bind:this={protocolElem} bind:value={protocol}>
 				<Option text="AMTP" value="amtp" selected={protocol === 'amtp'} />

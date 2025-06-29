@@ -2,7 +2,7 @@
 	import { get } from 'svelte/store';
 	import { accounts } from '@/core/accounts.ts';
 	import { delAccount } from '@/core/accounts_config.js';
-	import Dialog from '../components/Dialog/Dialog.svelte';
+	import Dialog, { type IDialogData } from '../components/Dialog/Dialog.svelte';
 	interface Props {
 		id: string;
 	}
@@ -24,7 +24,7 @@
 		return account;
 	});
 
-	let dialogData: Dialog.IDialogData = $derived.by(() => {
+	let dialogData: IDialogData = $derived.by(() => {
 		return {
 			title: 'Delete the account',
 			body: question,
