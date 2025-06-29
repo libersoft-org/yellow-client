@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let text;
-	export let colorVariable;
-	export let onClick;
+	interface Props {
+		text?: string;
+		colorVariable?: string;
+		onClick?: (e: Event) => void;
+	}
+	let { text, colorVariable = '--secondary-foreground', onClick }: Props = $props();
 </script>
 
 <style>
@@ -12,9 +15,11 @@
 		align-items: center;
 		gap: 5px;
 		padding: 5px 10px;
+		white-space: nowrap;
 		border: 0;
 		border-radius: 10px;
 		font-family: inherit;
+		box-sizing: border-box;
 		width: 100%;
 		background-color: var(--secondary-softer-background);
 		color: var(--secondary-foreground);

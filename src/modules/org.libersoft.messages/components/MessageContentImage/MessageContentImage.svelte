@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import filesService from '@/org.libersoft.messages/services/Files/FilesService.ts';
 	import ImageAspectRatio from '@/core/components/ImageAspectRatio/ImageAspectRatio.svelte';
@@ -9,32 +9,26 @@
 	import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import galleryStore from '../../stores/GalleryStore.ts';
-
 	let { node, showHiddenImages, hiddenImages, siblings } = $props();
 	let file = node.attributes.file?.value;
-
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
 	// check str if begins with yellow
 	let isYellow = $derived(file && file.startsWith(YELLOW_SRC_PROTOCOL)); // TODO: check deep prop reactivity (in case of message edit)
 	let yellowId = $derived(isYellow ? file.slice(YELLOW_SRC_PROTOCOL.length) : null);
 	let loading = $state(false);
 	let loaded = $state(false);
-	let imgUrl = $state(null);
-	let imgFileName = $state(null);
-	const upload = writable(null);
+	let imgUrl: string | null = $state(null);
+	let imgFileName: string | null = $state(null);
+	const upload = writable<any>(null);
 	fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 
 	function makeFilesForGallery() {
-		const filesForGallery = [];
+		const filesForGallery: any[] = [];
 		for (let index = 0; index < siblings.length; index++) {
 			const siblingNode = siblings[index];
 			const fileAttr = siblingNode?.props?.file;
 			const siblingYellowId = fileAttr && fileAttr.startsWith(YELLOW_SRC_PROTOCOL) ? fileAttr.slice(YELLOW_SRC_PROTOCOL.length) : null;
-
-			if (!siblingYellowId) {
-				continue;
-			}
-
+			if (!siblingYellowId) continue;
 			if (siblingYellowId === yellowId) {
 				filesForGallery.push({
 					id: yellowId,
@@ -83,11 +77,10 @@
 			return;
 		}
 		loading = true;
-
 		filesService
 			.getOrDownloadAttachment(yellowId)
 			.then(({ localFile }) => {
-				if (localFile.localFileStatus === LocalFileStatus.READY) {
+				if (localFile.localFileStatus === LocalFileStatus.READY && localFile.fileBlob) {
 					imgUrl = URL.createObjectURL(localFile.fileBlob);
 					imgFileName = localFile.fileOriginalName;
 					loading = false;
@@ -139,6 +132,7 @@
 	}
 
 	.hidden-images {
+		z-index: 1;
 		position: absolute;
 		bottom: 0;
 		right: 0;
@@ -152,7 +146,6 @@
 		color: white;
 		font-weight: bold;
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-		z-index: 1;
 		border-radius: var(--border-radius);
 	}
 </style>
@@ -165,7 +158,7 @@
 			<div class="message-content-image" onclick={openInGallery} role="button" tabindex="0" onkeydown={e => e.key === 'Enter' && openInGallery()}>
 				{#if loading}
 					<div class="spinner-wrap">
-						<Spinner show={true} style="min-height: initial;" />
+						<Spinner show style="min-height: initial;" />
 					</div>
 				{:else}
 					<ImageAspectRatio src={imgUrl} alt={file} />

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	let { items, item_slot } = $props();
 	let observer;
 	let itemsEls = $state([]);
@@ -44,7 +44,6 @@
   {JSON.stringify(visibility[item.id])}
    -->
 		<div style="min-height: {200}px;">
-			<!-- background-color: #19f; border-radius: 10px;-->
 			<!--{#if visibility[item.id]}-->
 			{@render item_slot(item, visibility[item.id] ? true : false)}
 			<!--{/if}-->

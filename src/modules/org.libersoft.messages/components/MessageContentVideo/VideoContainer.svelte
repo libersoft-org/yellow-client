@@ -27,7 +27,6 @@
 	let download = $state<FileDownload | null>(null);
 	fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
 
-	let acc = $derived(get(active_account));
 	let thumbnailSrc = $state<string | null>(null);
 
 	//let videoUrl = $state<string | null>(null)

@@ -120,6 +120,7 @@
 
 <style>
 	.message-bar-recorder {
+		z-index: 1;
 		--border-radius: 8px;
 		box-sizing: border-box;
 		position: absolute;
@@ -132,7 +133,6 @@
 		align-items: center;
 		gap: 8px;
 		padding: 0 10px;
-		z-index: 1;
 	}
 
 	.wavesurfer-wrap {

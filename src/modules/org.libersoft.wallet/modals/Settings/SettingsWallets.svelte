@@ -1,7 +1,6 @@
-<script>
-	import { module } from '../../module.js';
-	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
-	import ModalNewWallet from '../../modals/NewWallet.svelte';
+<script lang="ts">
+	import { module } from '../../module.ts';
+	import { wallets, addWallet, type IAddress, type IWallet } from '../../wallet.ts';
 	import Address from './SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -15,30 +14,40 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
+	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
+	import ModalAddressAdd from '../Wallets/WalletsAddressAdd.svelte';
+	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
+	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
 	import { Mnemonic } from 'ethers';
-	let showModalPhrase = false;
-	let activeIndex = null;
-
-	function showNewWalletModal() {
-		showModalPhrase = true;
-	}
+	let selectedWallet: IWallet | undefined;
+	let selectedAddress: IAddress | undefined;
+	let accordion: Accordion | undefined;
+	let elModalWalletsAdd: Modal | undefined;
+	let elDialogWalletsDel: Modal | undefined;
+	let elModalAddressAdd: Modal | undefined;
+	let elDialogAddressDel: DialogAddressDel | undefined;
 
 	function afterAddWallet() {
-		activeIndex = wallets.length - 1;
+		accordion.handleClick(wallets.length - 1, true);
 	}
 
 	function recover() {
 		let phrase = window.prompt('Enter your recovery phrase');
 		if (!phrase) return;
-		let mn = Mnemonic.fromPhrase(phrase);
-		addWallet(mn, ' - recovered');
+		let mnemonic = Mnemonic.fromPhrase(phrase);
+		addWallet(mnemonic, ' - recovered');
 		afterAddWallet();
 	}
-	function addAddressWithIndex(wallet) {
-		let index = window.prompt('Enter the index');
-		if (!index) return;
-		addAddress(wallet, index);
-		wallet.addresses = [...wallet.addresses];
+
+	function addAddress(wallet: IWallet) {
+		selectedWallet = wallet;
+		elModalAddressAdd.open();
+	}
+
+	function delWallet(wallet: IWallet) {
+		selectedWallet = wallet;
+		elDialogWalletsDel.open();
+		//wallets.update(ws => ws.filter(w => w !== wallet));
 	}
 
 	function renameAddress(wallet, address) {
@@ -58,20 +67,10 @@
 		);
 	}
 
-	function deleteAddress(w, address) {
-		address.deleted = true;
-		// wallet.addresses = [...wallet.addresses]
-		wallets.update(ws =>
-			ws.map(item =>
-				item === w
-					? {
-							...item,
-							addresses: [...w.addresses],
-							selected_address_index: w.indexNum,
-						}
-					: item
-			)
-		);
+	function deleteAddress(wallet, address) {
+		selectedWallet = wallet;
+		selectedAddress = address;
+		elDialogAddressDel.open();
 	}
 </script>
 
@@ -81,18 +80,16 @@
 		flex-direction: column;
 		gap: 16px;
 		padding: 16px 10px;
+	}
 
-		:global(&:has(tbody:empty)) {
-			:global(table) {
-				display: none !important;
-			}
-		}
+	.wallet:global(:has(tbody:empty) table) {
+		display: none !important;
 	}
 </style>
 
-<ButtonBar>
-	<Button text="Create wallet" onClick={showNewWalletModal} />
-	<Button img="modules/{module.identifier}/img/recover.svg" colorVariable="--primary-foreground" text="Recover" onClick={recover} />
+<ButtonBar equalize>
+	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => elModalWalletsAdd?.open()} />
+	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 </ButtonBar>
 {#if $wallets.length > 0}
 	<div class="bold">My wallets:</div>
@@ -100,30 +97,30 @@
 {#if $wallets.length === 0}
 	<div class="bold">No wallets found</div>
 {/if}
-<Accordion items={$wallets} bind:activeIndex>
+<Accordion items={$wallets} bind:this={accordion}>
 	{#snippet content(walleta)}
 		<div class="wallet">
 			<ButtonBar>
-				<Button text="Add a new address" onClick={() => addAddress(walleta)} />
-				<Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
+				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />
+				<Button img="img/del.svg" text="Delete wallet" onClick={() => delWallet(walleta)} />
 			</ButtonBar>
 			<Table>
 				<Thead>
 					<Th>Index</Th>
-					<Th>Alias</Th>
+					<Th>Name</Th>
 					<Th>Address</Th>
 					<Th>Action</Th>
 				</Thead>
 				<Tbody>
-					{#each walletAddresses(walleta) as address, index}
+					{#each walleta.addresses as address}
 						<TbodyTr>
 							<Td title="Index">{address.index}</Td>
-							<Td title="Alias">{address.name}</Td>
+							<Td title="Name">{address.name}</Td>
 							<Td title="Address"><Address address={address.address} /></Td>
 							<Td title="Action">
 								<TableActionItems>
 									<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
-									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Hide" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
+									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
 								</TableActionItems>
 							</Td>
 						</TbodyTr>
@@ -133,4 +130,7 @@
 		</div>
 	{/snippet}
 </Accordion>
-<Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />
+<Modal title="Add a new wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalWalletsAdd} />
+<Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: selectedWallet }} width="600px" bind:this={elModalAddressAdd} />
+<DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />
+<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />

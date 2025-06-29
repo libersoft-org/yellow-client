@@ -8,6 +8,7 @@
 	import Emoji from '../Emoji/Emoji.svelte';
 	import { rgi } from '../../emojis';
 	import Portal from '@/core/components/Portal/Portal.svelte';
+	import { playAudio } from '@/core/notifications';
 	interface Props {
 		message: any;
 	}
@@ -76,6 +77,7 @@
 		const codepoints_rgi = rgi(codepoints);
 		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
 		show = false;
+		playAudio('modules/' + identifier + '/audio/reaction.mp3');
 	};
 </script>
 
@@ -100,7 +102,6 @@
 		border-radius: 20px;
 		box-shadow: var(--shadow);
 		max-width: 300px;
-		z-index: 100000;
 	}
 
 	.emojis {
@@ -127,12 +128,19 @@
 	.emoji {
 		font-size: 24px;
 	}
+
+	.floating {
+		position: absolute;
+		width: max-content;
+		top: 0;
+		left: 0;
+	}
 </style>
 
 {#snippet emoji(codepoints)}
 	<Clickable onClick={() => onEmojiClick(codepoints)} data-testid="message-reaction-emoji-button">
 		<div class="emoji-button emoji">
-			<Emoji {codepoints} context={'menu'} is_single={true} size={30} />
+			<Emoji {codepoints} context={'menu'} is_single size={30} />
 		</div>
 	</Clickable>
 {/snippet}
@@ -154,7 +162,7 @@
 				{@render emoji([9829, 65039])}
 				<Clickable onClick={() => (showFull = !showFull)}>
 					<div class="expand">
-						<Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--primary-foreground" />
+						<Icon img={showFull ? 'img/cross.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--primary-foreground" />
 					</div>
 				</Clickable>
 			</div>

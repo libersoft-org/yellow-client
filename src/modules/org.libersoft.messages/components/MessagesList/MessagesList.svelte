@@ -2,7 +2,8 @@
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading } from '../../messages.js';
-	import { getGuid, debug } from '@/core/core.ts';
+	import { getGuid } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
@@ -14,15 +15,15 @@
 	import ScrollButton from '../ScrollButton/ScrollButton.svelte';
 	import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
 	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
-	import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
 	import { log } from '@/core/tauri.ts';
-
+	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
+	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	export let conversation;
 	export let setBarFocus;
 	let scrollButtonVisible = true;
-	let showDebugModal = false;
 	let elMessages;
 	let elUnseenMarker;
+	let elModalStickersetDetails;
 	let anchorElement;
 	let oldLastID = null;
 	let itemsCount = 0;
@@ -31,12 +32,32 @@
 	let holes = [];
 	let uiEvents = [];
 	let stickersetDetailsModalStickerset;
-	let showStickersetDetailsModal = false;
 	let scrolledToBottom = true;
 	let windowInnerWidth;
 	let windowInnerHeight;
 	let showFileDndOverlay = false;
 	let doBlockScroll = false;
+	let fileDndRef;
+	let jumped = false;
+	let messagesHeight = -1;
+	let scrolledToBottom0 = false;
+	let scrolledToBottom1 = false;
+	let wrapperWidth = null;
+	let elModalForwardMessage;
+	$: modalForwardMessageStore.set(elModalForwardMessage);
+
+	let { setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
+
+	$: scrollButtonVisible = !scrolledToBottom;
+	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
+
+	onMount(() => {
+		setInterval(() => {
+			scrolledToBottom0 = scrolledToBottom1;
+			scrolledToBottom1 = isScrolledToBottom();
+			fixScroll();
+		}, 50);
+	});
 
 	function disableScroll() {
 		doBlockScroll = true;
@@ -46,31 +67,12 @@
 		doBlockScroll = false;
 	}
 
-	let fileDndRef;
-
-	$: scrollButtonVisible = !scrolledToBottom;
-	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
-
-	let jumped = false;
-	let messagesHeight = -1;
-
-	let scrolledToBottom0 = false;
-	let scrolledToBottom1 = false;
-
 	/*
   // TODO: resizer observer does not trigger when elements change size.
   $: if (elMessages) {
    new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
   }
  */
-
-	onMount(() => {
-		setInterval(() => {
-			scrolledToBottom0 = scrolledToBottom1;
-			scrolledToBottom1 = isScrolledToBottom();
-			fixScroll();
-		}, 50);
-	});
 
 	function fixScroll() {
 		if (elMessages && jumped) {
@@ -97,12 +99,10 @@
 	function openStickersetDetailsModal(stickerset) {
 		stickersetDetailsModalStickerset = stickerset;
 		//console.log('openStickersetDetailsModal:', stickerset);
-		showStickersetDetailsModal = true;
+		elModalStickersetDetails?.open();
 	}
 
 	setContext('openStickersetDetailsModal', openStickersetDetailsModal);
-
-	let { showFileUploadModal, setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
 
 	events.subscribe(e => {
 		if (e?.length) {
@@ -316,26 +316,20 @@
 
 	async function handleEvents(events) {
 		console.log('handleEvents:', events);
-
 		if (events.length === 1 && events[0].type === 'properties_update') {
 			console.log('properties_update itemsArray');
 			itemsArray = itemsArray;
 			return;
 		}
-
 		// force_refresh is used when deleting message. Normally, Loaders would, after loadMessages, only issue an event if any new messages are actually added. But if we delete a message, we need to remove the loader. So, the gc event, triggered as soon as the message is removed from messagesArray, lets us know to tell all loaders to force_refresh when they trigger. This is not optimal, as only the exact hole inserted in place of the deleted message should force_refresh, but it will work.
 		let force_refresh = events.some(e => e.type === 'gc');
-
 		for (let i = 0; i < events.length; i++) {
 			//console.log('handleEvent:', events[i]);
 			let event = events[i];
 			event.loaders = [];
-			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') {
-				continue;
-			}
+			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') continue;
 			uiEvents.push(event);
 			saveScrollPosition(event);
-
 			/* TODO 1 :
    do not scroll to bottom on new messages if unread_marker is present (or rather, if window is not active and only unread messages are at the bottom - see also contact list red number )
    */
@@ -385,8 +379,8 @@
 			for (let i = 0; i < messages.length; i++) {
 				let m = messages[i];
 				//console.log('m:', m);
-				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.just_marked_as_seen);
-				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.just_marked_as_seen)) {
+				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.keep_unseen_bar);
+				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)) {
 					//console.log('ADDING-UNSEEN-MARKER');
 					items.push({ type: 'unseen_marker' });
 					unseen_marker_put = true;
@@ -462,9 +456,7 @@
 		e.preventDefault();
 		const draggedItems = e.dataTransfer.items;
 		const types = Array.from(e.dataTransfer.types || []);
-
 		let isDraggingFiles = false;
-
 		// In Chrome/Firefox: you can safely check item.kind
 		if (draggedItems && draggedItems.length > 0) {
 			for (let i = 0; i < draggedItems.length; i++) {
@@ -481,48 +473,31 @@
 				isDraggingFiles = true;
 			}
 		}
-
-		if (!isDraggingFiles) {
-			return;
-		}
-
+		if (!isDraggingFiles) return;
 		// show overlay only if file upload modal is not shown
 		// but if user drops files to conversation it will still add them to the upload modal
-		if (!$showFileUploadModal && !showFileDndOverlay) {
-			showFileDndOverlay = true;
-		}
+		if (!get(modalFileUploadStore)?.isOpen() && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
 	function onDragLeave(e) {
 		e.preventDefault();
 		// handle premature dragleave events
-		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) {
-			showFileDndOverlay = false;
-		}
+		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) showFileDndOverlay = false;
 	}
 
 	function onDrop(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		if (e.dataTransfer.files.length === 0) {
-			return;
-		}
-
+		if (e.dataTransfer.files.length === 0) return;
 		showFileDndOverlay = false;
 		setFileUploadModal(true);
 		$fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
 	}
 
-	let wrapperWidth = null;
 	const onResize = entry => {
 		wrapperWidth = entry.contentRect.width;
 	};
 	$: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
-
-	/**
-	 * Forward Message Section
-	 */
-	const forwardMessageModalOpen = forwardMessageStore.isOpen();
 </script>
 
 <!--doBlockScroll: {doBlockScroll}-->
@@ -554,8 +529,9 @@
 	.unread {
 		display: flex;
 		justify-content: center;
-		background-color: #fffcf0;
-		border: 1px solid #dd9;
+		background-color: var(--primary-softer-background);
+		border: 1px solid var(--primary-background);
+		color: var(--primary-foreground);
 		padding: 10px 0;
 		box-shadow: var(--shadow);
 	}
@@ -563,8 +539,8 @@
 	.hole {
 		display: flex;
 		justify-content: center;
-		background-color: #f0f0f0;
-		border: 1px solid #999;
+		background-color: var(--primary-foreground);
+		border: 1px solid var(--disabled-foreground);
 		padding: 10px 0;
 		box-shadow: var(--shadow);
 		height: 30%;
@@ -575,15 +551,19 @@
 		z-index: 100;
 		display: flex;
 		flex-direction: column;
+		gap: 10px;
 		position: fixed;
 		top: 0;
 		left: 0;
-		max-width: calc(60%);
-		max-height: calc(100%);
+		box-sizing: border-box;
+		max-width: 60%;
+		max-height: 100%;
+		padding: 10px;
 		overflow: auto;
-		border: 3px solid #888;
+		border: 2px solid var(--secondary-foreground);
 		border-radius: 10px;
-		background-color: rgba(255, 255, 255, 0.7);
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
 	.no-messages {
@@ -594,7 +574,8 @@
 
 	.no-messages .body {
 		background-color: var(--primary-background);
-		border: 1px solid #888;
+		border: 1px solid var(--primary-foreground);
+		color: var(--primary-foreground);
 		border-radius: 20px;
 		padding: 20px;
 		box-shadow: var(--shadow);
@@ -607,12 +588,12 @@
  */
 
 	.dnd-overlay {
+		z-index: 1;
 		position: absolute;
+		display: none;
 		width: 100%;
 		height: 100%;
-		background-color: #00000040;
-		display: none;
-		z-index: 1;
+		background-color: var(--primary-background);
 		pointer-events: none;
 	}
 
@@ -623,9 +604,9 @@
 	.dnd-overlay-inner {
 		margin: 10px;
 		width: 100%;
-		background-color: #00000054;
+		background-color: var(--primary-softer-background);
 		border-radius: 10px;
-		border: 2px dashed #000000;
+		border: 2px dashed var(--primary-foreground);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -636,7 +617,7 @@
 		font-size: 28px;
 		font-weight: bold;
 		margin-top: 8px;
-		color: #fff;
+		color: var(--primary-foreground);
 	}
 </style>
 
@@ -646,7 +627,7 @@
 		<Button text="Save scroll position" onClick={saveScrollPosition} />
 		<Button text="Restore scroll position" onClick={restoreScrollPosition} />
 		<Button text="GC" onClick={gc} />
-		<Button text="Show debug modal" onClick={() => (showDebugModal = !showDebugModal)} />
+		<Button text="Show debug modal" onClick={() => elModalDebug?.open()} />
 		<div>items count: {itemsCount}</div>
 		<div>messagesHeight: {messagesHeight}</div>
 		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
@@ -703,5 +684,5 @@
 	{/if}
 </div>
 
-<Modal bind:show={showStickersetDetailsModal} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:show={$forwardMessageModalOpen} title="Forward message" body={ModalForwardMessage} onShowChange={show => forwardMessageStore.setOpen(show)} width="448px" height="390px" />
+<Modal bind:this={elModalStickersetDetails} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
+<Modal bind:this={elModalForwardMessage} testId="forward-message" title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />

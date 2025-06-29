@@ -1,24 +1,29 @@
 <script lang="ts">
 	import { tick, type Snippet } from 'svelte';
 	import { isMobile } from '@/core/stores.ts';
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
-		items: Array<{ name: string; id: string }>;
-		activeIndex?: number | null;
+		items: Array<{ name: string }>;
 		content: Snippet<[any]> | null;
 		header?: Snippet<[any]> | null;
 		expandAllOnDesktop?: boolean;
 		mode?: 'single' | 'multiple';
 	}
 	let { items, content, header, expandAllOnDesktop = false, mode = 'single' }: Props = $props();
-	let activeIndices = $state<number[]>([]);
-	const isSingleMode = mode === 'single';
+	let activeIndices: number[] = $state<number[]>([]);
+	const isSingleMode: boolean = mode === 'single';
 
-	async function handleClick(index: number) {
-		const isOpen = activeIndices.includes(index);
-		const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
+	export async function handleClick(index: number, newState: boolean | undefined = undefined) {
+		console.debug('Accordion clicked', index, newState);
+		let isOpen: boolean = activeIndices.includes(index);
+		const el: HTMLElement = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
 		if (!el) return;
+		if (newState !== undefined) {
+			if (newState) isOpen = false;
+			else isOpen = true;
+			return;
+		}
 		// CLOSE
 		if (isOpen) {
 			el.style.height = `${el.scrollHeight}px`;
@@ -61,8 +66,6 @@
 	}
 
 	$effect(() => {
-		const media = window.matchMedia('(min-width: 769px)');
-
 		function expandAll() {
 			activeIndices = items.map((_, i) => i);
 			tick().then(() => {
@@ -92,30 +95,16 @@
 			});
 		}
 
-		function handleResize(e: MediaQueryListEvent) {
-			if (expandAllOnDesktop) {
-				if (e.matches) {
-					expandAll();
-				} else {
-					collapseAll();
-				}
-			}
-		}
-
 		if (expandAllOnDesktop) {
-			if (media.matches) {
+			if (!$isMobile) {
 				expandAll();
 			} else {
 				collapseAll();
 			}
 		}
-		media.addEventListener('change', handleResize);
-		return () => media.removeEventListener('change', handleResize);
 	});
 
 	$effect(() => {
-		const media = window.matchMedia('(min-width: 769px)');
-
 		function collapseAll() {
 			activeIndices = [];
 			items.forEach((_, index) => {
@@ -128,16 +117,9 @@
 			});
 		}
 
-		function handleResize(e: MediaQueryListEvent) {
-			if (!e.matches) {
-				collapseAll();
-			}
+		if ($isMobile) {
+			collapseAll();
 		}
-
-		media.addEventListener('change', handleResize);
-		return () => {
-			media.removeEventListener('change', handleResize);
-		};
 	});
 </script>
 
@@ -147,29 +129,29 @@
 		border-radius: 8px;
 		overflow: hidden;
 		color: var(--primary-foreground);
+	}
 
-		&:empty {
-			display: none;
-		}
+	.accordion:empty {
+		display: none;
 	}
 
 	.accordion .item {
 		border-bottom: 1px solid var(--primary-harder-background);
+	}
 
-		:global(.header .icon) {
-			position: absolute;
-			right: 10px;
-			top: 50%;
-			transform: rotate(0deg) translateY(-50%);
-		}
+	.accordion .item :global(.header .icon) {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: rotate(0deg) translateY(-50%);
+	}
 
-		:global(.header img) {
-			transition: transform 0.3s ease;
-		}
+	.accordion .item :global(.header img) {
+		transition: transform 0.3s ease;
+	}
 
-		&:last-child {
-			border-bottom: none;
-		}
+	.accordion .item:last-child {
+		border-bottom: none;
 	}
 
 	.accordion .item .header {
@@ -184,15 +166,16 @@
 		min-height: 40px;
 		background-color: var(--primary-background);
 		cursor: pointer;
+		box-sizing: border-box;
 	}
 
 	.accordion .item .header {
 		width: 100%;
+	}
 
-		.title {
-			flex-grow: 1;
-			font-weight: bold;
-		}
+	.accordion .item .header .title {
+		flex-grow: 1;
+		font-weight: bold;
 	}
 
 	.accordion .item .content {
@@ -204,12 +187,10 @@
 
 	.accordion .item {
 		display: grid;
+	}
 
-		&.is-expanded {
-			:global(.header img) {
-				transform: rotate(180deg);
-			}
-		}
+	.accordion .item.is-expanded :global(.header img) {
+		transform: rotate(180deg);
 	}
 </style>
 

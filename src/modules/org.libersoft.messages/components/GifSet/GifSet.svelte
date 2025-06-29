@@ -1,11 +1,10 @@
-<script>
+<script lang="ts">
 	import { get } from 'svelte/store';
 	import { onMount, getContext } from 'svelte';
 	import { htmlEscape } from '../../messages.js';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { isMobile } from '@/core/core.ts';
+	import { isMobile } from '@/core/stores.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { gif_server } from '../../gifs.js';
 	import LazyLoader from './GifSetLazyLoader.svelte';
@@ -88,7 +87,7 @@
 	function sendGIF(item) {
 		const url = item.media_formats.gif?.url;
 		MessageBar.sendMessageHtml('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" ></Gif>');
-		menu?.close();
+		menu.close();
 	}
 </script>
 
@@ -104,11 +103,6 @@
 		flex-direction: column;
 		gap: 10px;
 		padding: 10px;
-	}
-
-	.group {
-		display: flex;
-		gap: 10px;
 	}
 
 	.results {
@@ -137,7 +131,7 @@
 	}
 
 	.item:hover {
-		z-index: 90;
+		z-index: 51;
 		transform: scale(1.2);
 		background-color: var(--primary-soft-background);
 	}
@@ -147,10 +141,7 @@
 
 <div class="gifset">
 	<div class="top-bar">
-		<div class="group">
-			<Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
-			<Button text="Search" width="80px" onClick={searchGifs} />
-		</div>
+		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." expand bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
 	</div>
 	{#if error}
 		<div>{error}</div>

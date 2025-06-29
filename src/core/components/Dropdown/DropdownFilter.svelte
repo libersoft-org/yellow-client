@@ -1,18 +1,23 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Input from '../Input/Input.svelte';
-	import Icon from '../Icon/Icon.svelte';
-	export let options = [];
-	export let selected = '';
-	let filteredOptions = options;
-	let showOptions = false;
-	let inputValue = '';
-
-	function onInput(event) {
-		inputValue = event.target.value;
-		filteredOptions = options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()));
-		showOptions = true;
+	import Input from '@/core/components/Input/Input.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	interface Props {
+		options?: string[];
+		selected?: string;
+		enabled?: boolean;
 	}
+	let { options = [], selected = $bindable(''), enabled = true }: Props = $props();
+	let filteredOptions = $state(options);
+	let showOptions = $state(false);
+	let inputValue = $state('');
+
+	$effect(() => {
+		filteredOptions = options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()));
+		if (inputValue) {
+			showOptions = true;
+		}
+	});
 
 	function clickSelectOption(option) {
 		selected = option;
@@ -34,18 +39,19 @@
 <style>
 	.dropdown-filter {
 		position: relative;
-		max-width: 200px;
+		background-color: var(--default-background);
+		color: var(--default-foreground);
 	}
 
 	.options {
+		z-index: 1;
 		position: absolute;
 		border: 1px solid var(--default-foreground);
 		background-color: var(--default-background);
+		box-sizing: border-box;
 		width: 100%;
 		max-height: 150px;
 		overflow-y: auto;
-		z-index: 1;
-		box-sizing: border-box;
 	}
 
 	.option {
@@ -75,10 +81,12 @@
 	{#if selected}
 		<div class="selected">
 			<div class="text">{selected}</div>
-			<Icon img="img/close.svg" alt="X" colorVariable="--primary-foreground" size="10px" onClick={clickClearSelection} />
+			<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="10px" onClick={clickClearSelection} />
 		</div>
 	{:else}
-		<Input bind:value={inputValue} on:input={onInput} on:focus={toggleOptions} />
+		<div onfocus={toggleOptions}>
+			<Input bind:value={inputValue} {enabled} />
+		</div>
 		{#if showOptions}
 			<div class="options">
 				{#each filteredOptions as option}

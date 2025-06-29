@@ -55,7 +55,27 @@ export interface ModuleDeclaration {
 		initData?: (acc: Account) => any;
 		initComms?: (acc: Account) => void;
 		deinitComms?: (acc: Account) => void;
+		deinitData?: (acc: Account) => void;
 		onModuleSelected?: (selected: boolean) => void;
 	};
+	panels?: {
+		sidebar?: any;
+		content?: any;
+	};
 	deinit?: () => void;
+}
+
+export type ModuleType = 'builtin' | 'iframe';
+
+export interface ModuleConfig {
+	id: string;
+	name: string;
+	type: ModuleType;
+	enabled: boolean;
+	serviceUrl?: string;
+	order?: number;
+}
+
+export interface ModulesConfiguration {
+	modules: { [moduleId: string]: ModuleConfig };
 }

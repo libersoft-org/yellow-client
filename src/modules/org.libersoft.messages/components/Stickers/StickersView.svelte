@@ -1,5 +1,5 @@
-<script>
-	import { debug } from '@/core/core.ts';
+<script lang="ts">
+	import { debug } from '@/core/stores.ts';
 	import { identifier } from '../../messages.js';
 	import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
 	import { liveQuery } from 'dexie';
@@ -8,12 +8,11 @@
 	import { writable, get } from 'svelte/store';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
-	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import StickersSearchResults from './StickersSearchResults.svelte';
-	import { isMobile } from '@/core/core.ts';
+	import { isMobile } from '@/core/stores.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { onMount, untrack } from 'svelte';
-
 	let { stickerset_favorites } = $props();
 	let fulltext_search_element;
 	let fulltext_search_filter = $state('');
@@ -29,7 +28,7 @@
 		if (!get(isMobile)) fulltext_search_element.focus();
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		console.log('stickers-view onMount');
 	});
 
@@ -94,26 +93,31 @@
 		gap: 10px;
 		padding: 0 10px 10px 10px;
 	}
+
+	.loading {
+		display: flex;
+		justify-content: center;
+	}
 </style>
 
 <div class="filter">
-	<InputButton img="modules/{identifier}/img/search.svg" colorVariable="--default-foreground" alt="Search" bind:this={fulltext_search_element} bind:value={fulltext_search_filter} placeholder="Search ..." />
+	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={fulltext_search_element} bind:value={fulltext_search_filter} placeholder="Search ..." />
 	<Select bind:value={animated_filter_dropdown_value}>
 		<Option text="All" value="all" />
 		<Option text="Animated only" value="animated" />
 		<Option text="Static only" value="static" />
 	</Select>
 </div>
-
-<!--{#if $debug}-->
-<!-- <pre>-->
-<!-- stickerset_favorites: {JSON.stringify(stickerset_favorites)}-->
-<!-- animated_filter: {JSON.stringify(animated_filter)}-->
-<!-- fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}-->
-<!-- items.length: {items.length}-->
-<!--  </pre>-->
-<!--{/if}-->
-
+<!--
+{#if $debug}
+ <pre>
+  stickerset_favorites: {JSON.stringify(stickerset_favorites)}
+  animated_filter: {JSON.stringify(animated_filter)}
+  fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
+  items.length: {items.length}
+ </pre>
+{/if}
+-->
 {#if loading}
 	<Spinner />
 {:else if items.length === 0}

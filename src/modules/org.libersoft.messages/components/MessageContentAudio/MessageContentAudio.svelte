@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Audio from './Audio.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
@@ -6,10 +6,8 @@
 	import { writable, get } from 'svelte/store';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 	import { identifier } from '../../messages.js';
-
 	let { node } = $props();
 	let file = node.attributes.file?.value;
-
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
 	// check str if begins with yellow
 	let isYellow = $derived(file && file.startsWith(YELLOW_SRC_PROTOCOL)); // TODO: check deep prop reactivity (in case of message edit)

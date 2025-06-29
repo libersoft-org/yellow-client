@@ -1,12 +1,10 @@
-<script>
+<script lang="ts">
 	import VideoContainer from './VideoContainer.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
 	import { writable } from 'svelte/store';
-
 	let { node } = $props();
-
 	let file = node.attributes.file?.value;
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
 	// check str if begins with yellow
