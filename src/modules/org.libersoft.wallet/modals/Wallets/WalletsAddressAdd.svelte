@@ -3,10 +3,10 @@
 	import { module } from '../../module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import Switch from '@/core/components/Switch/Switch.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
+	import Form from '@/core/components/Form/Form.svelte';
 	let name: string | undefined = $state();
 	let index: number | undefined = $state();
 	let error: string | undefined = $state();
@@ -25,15 +25,12 @@
 		name = 'Address ' + max;
 	});
 
-	function keyDown(event: KeyboardEvent) {
-		error = null;
-		if (event.key === 'Enter') {
-			event.preventDefault();
-			clickAdd();
-		}
+	function handleSubmit(): void {
+		error = undefined;
+		clickAdd();
 	}
 
-	function clickAdd() {
+	function clickAdd(): void {
 		console.log('[ACTION] Add address:', name, index);
 		let id: number | undefined;
 		if (index) {
@@ -51,21 +48,23 @@
 		close();
 	}
 
-	function isPositiveInteger(value) {
+	function isPositiveInteger(value: unknown): boolean {
 		if (typeof value !== 'number' || !Number.isFinite(value)) return false;
 		return Number.isInteger(value) && value > 0;
 	}
 </script>
 
-<Label text="Name">
-	<Input bind:value={name} onKeydown={keyDown} />
-</Label>
-<Label text="Index">
-	<Input type="string" bind:value={index} onKeydown={keyDown} />
-</Label>
-{#if error}
-	<Alert type="error" message={error} />
-{/if}
+<Form onSubmit={handleSubmit}>
+	<Label text="Name">
+		<Input bind:value={name} />
+	</Label>
+	<Label text="Index">
+		<Input type="number" bind:value={index} />
+	</Label>
+	{#if error}
+		<Alert type="error" message={error} />
+	{/if}
+</Form>
 <ButtonBar expand equalize>
 	<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add" onClick={clickAdd} />
 	<Button img="img/cancel.svg" text="Cancel" onClick={close} />
