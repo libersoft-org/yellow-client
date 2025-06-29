@@ -17,7 +17,7 @@
 	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
 	let modalItemID: string | null | undefined;
 	let modalItem: INetwork | null | undefined;
-	let elModalEditNetwork: ModalEditNetwork;
+	let elModalAddEditNetwork: ModalEditNetwork;
 	let elModalTokenList: ModalTokenList;
 	let elModalSettingsNetworksImport: SettingsNetworksImport;
 	let elModalSettingsNetworksExport: SettingsNetworksExport;
@@ -25,7 +25,8 @@
 
 	function clickAddNetwork(net) {
 		console.log('clickAddNetwork', net);
-		//TODO
+		modalItem = null;
+		elModalAddEditNetwork?.open();
 	}
 
 	function clickDeleteNetwork(net) {
@@ -37,7 +38,7 @@
 	function editNetwork(net) {
 		console.log('editNetwork', net);
 		modalItem = net;
-		elModalEditNetwork?.open();
+		elModalAddEditNetwork?.open();
 	}
 
 	function tokenList(net) {
@@ -118,7 +119,7 @@
 		</Tbody>
 	</Table>
 </div>
-<Modal title="Edit network" body={ModalEditNetwork} params={{ item: modalItem }} bind:this={elModalEditNetwork} testId="wallet-settings-networks-edit-network" />
+<Modal title={modalItem ? 'Edit network' : 'Add a new network'} body={ModalEditNetwork} params={{ item: modalItem }} bind:this={elModalAddEditNetwork} testId="wallet-settings-networks-edit-network" />
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} testId="wallet-settings-networks-token-list" />
 <Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} testId="wallet-settings-networks-import" />
 <Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} testId="wallet-settings-networks-export" />

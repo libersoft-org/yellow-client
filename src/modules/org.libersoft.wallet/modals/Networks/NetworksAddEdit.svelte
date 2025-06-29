@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { networks, type INetwork } from '../../wallet.ts';
+	import { module } from '../../module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -40,7 +41,23 @@
 		}
 	}
 
-	function save(): void {
+	function add() {
+		let item: INetwork = {
+			name: item_name,
+			currency: {
+				symbol: item_currency_symbol,
+				iconURL: item_currency_iconURL,
+			},
+			chainId: item_chain_id,
+			explorerURL: item_explorer_url,
+			rpcURLs: item_rpc_urls,
+		};
+		$networks.push(item);
+		networks.set($networks);
+		close();
+	}
+
+	function edit(): void {
 		let item = $networks.find(v => v.guid === params.item.guid);
 		if (!item) {
 			window.alert('Network not found');
@@ -53,11 +70,6 @@
 		item.explorerURL = item_explorer_url;
 		item.rpcURLs = item_rpc_urls;
 		networks.update(v => v);
-		close();
-	}
-
-	function saveAndClose(): void {
-		save();
 		close();
 	}
 </script>
@@ -76,7 +88,7 @@
 </style>
 
 <div class="modal-edit-network">
-	<Form onSubmit={save}>
+	<Form onSubmit={params?.item ? edit : add}>
 		<Label text="Name">
 			<Input bind:value={item_name} />
 		</Label>
@@ -103,7 +115,11 @@
 		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
 	</Form>
 	<ButtonBar expand>
-		<Button img="img/save.svg" text="Save" onClick={saveAndClose} />
+		{#if params?.item}
+			<Button img="img/save.svg" text="Save" onClick={edit} />
+		{:else}
+			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add network" onClick={add} />
+		{/if}
 		<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 	</ButtonBar>
 </div>
