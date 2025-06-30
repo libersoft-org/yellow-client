@@ -4,8 +4,9 @@
 		children?: Snippet;
 		title?: string;
 		'data-testid'?: string;
+		shorten?: boolean;
 	}
-	let { children, title, 'data-testid': dataTestId }: Props = $props();
+	let { children, title, 'data-testid': dataTestId, shorten = false }: Props = $props();
 </script>
 
 <style>
@@ -18,6 +19,12 @@
 		text-align: left;
 		border: 0;
 		white-space: normal;
+	}
+
+	td.shorten {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	td > :global(div) {
@@ -70,6 +77,6 @@
 	}
 </style>
 
-<td data-title={title} data-testid={dataTestId}>
+<td data-title={title} data-testid={dataTestId} class:shorten>
 	{@render children?.()}
 </td>

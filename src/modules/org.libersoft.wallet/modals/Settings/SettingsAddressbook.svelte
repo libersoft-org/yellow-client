@@ -68,7 +68,7 @@
 		<Button img="img/export.svg" text="Export" onClick={exportAddressBook} data-testid="export-button" />
 	</ButtonBar>
 	{#if $addressBook.length > 0}
-		<Table breakpoint="0">
+		<Table>
 			<Thead>
 				<TheadTr>
 					<Th>Name</Th>
@@ -82,7 +82,7 @@
 						<Td title="Name">
 							<b>{a.name}</b>
 						</Td>
-						<Td title="Address">
+						<Td title="Address" shorten>
 							{a.address}
 						</Td>
 						<Td title="Action">
