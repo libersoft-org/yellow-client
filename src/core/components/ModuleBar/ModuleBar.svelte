@@ -126,9 +126,7 @@
 	}
 
 	.module-bar:not(.expand-enabled) .dropdown {
-		opacity: 0.3;
-		cursor: default;
-		pointer-events: none;
+		display: none;
 	}
 </style>
 
