@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Mnemonic } from 'ethers';
-	import { addWallet } from '../../wallet.ts';
+	import { addWallet, wallets } from '../../wallet.ts';
 	import { module } from '../../module.ts';
 	import Form from '@/core/components/Form/Form.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
@@ -15,6 +16,10 @@
 	let error: string | undefined = $state();
 	let name: string | undefined = $state();
 	let phrase: string | undefined = $state();
+
+	onMount(() => {
+		name = 'My wallet ' + ($wallets.length + 1);
+	});
 
 	function recover() {
 		phrase = phrase?.trim();
