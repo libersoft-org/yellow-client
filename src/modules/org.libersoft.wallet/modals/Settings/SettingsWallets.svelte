@@ -23,12 +23,12 @@
 	let selectedAddress: IAddress | undefined;
 	let accordion: Accordion | undefined;
 	let elModalWalletsAdd: Modal | undefined;
-	let elDialogWalletsDel: Modal | undefined;
+	let elDialogWalletsDel: DialogWalletsDel | undefined;
 	let elModalAddressAdd: Modal | undefined;
 	let elDialogAddressDel: DialogAddressDel | undefined;
 
 	function afterAddWallet() {
-		accordion.handleClick(wallets.length - 1, true);
+		accordion?.handleClick($wallets.length - 1, true);
 	}
 
 	function recover() {
@@ -41,7 +41,7 @@
 
 	function addAddress(wallet: IWallet) {
 		selectedWallet = wallet;
-		elModalAddressAdd.open();
+		elModalAddressAdd?.open();
 	}
 
 	function delWallet(wallet: IWallet) {

@@ -15,7 +15,7 @@
 		const parsedUrl = new URL(params.stickersetDetailsModalStickerset);
 		stickerServer = `${parsedUrl.protocol}//${parsedUrl.host}`;
 		id = parsedUrl.searchParams.get('id');
-		stickerSetData = await fetchStickerset(stickerServer, id);
+		stickerSetData = await fetchStickerset(stickerServer, id ? parseInt(id, 10) : '');
 	});
 </script>
 
@@ -25,6 +25,6 @@
 		id: {id}
 	{/if}
 	{#if stickerSetData}
-		<StickerSet stickerset={stickerSetData} showall="true" />
+		<StickerSet stickerset={stickerSetData} showall={true} />
 	{/if}
 </div>

@@ -644,7 +644,7 @@ test.describe('Accounts Import/Export', () => {
 			// Export accounts
 			await openExportModal(page);
 			const exportedContent = await getExportedJSON(page);
-			await closeModal(page, 'accounts-import');
+			await closeModal(page, 'accounts-export');
 
 			// Replace with just one minimal account
 			const minimalAccount = [
