@@ -15,7 +15,11 @@
 		const parsedUrl = new URL(params.stickersetDetailsModalStickerset);
 		stickerServer = `${parsedUrl.protocol}//${parsedUrl.host}`;
 		id = parsedUrl.searchParams.get('id');
-		stickerSetData = await fetchStickerset(stickerServer as string, id ? parseInt(id, 10) : undefined);
+		if (id && stickerServer) {
+			stickerSetData = await fetchStickerset(stickerServer, parseInt(id, 10));
+		} else {
+			console.warn('Missing id or stickerServer for stickerset fetch');
+		}
 	});
 </script>
 
