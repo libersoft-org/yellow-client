@@ -43,7 +43,7 @@
 <Bar>
 	{#snippet left()}
 		{#if $isMobile}
-			<Icon img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
+			<Icon testId="profile-bar-back-button" img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
 		{/if}
 		<Photo size="38px" radius={$photoRadius} />
 		<div class="description">
