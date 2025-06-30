@@ -16,7 +16,7 @@
 		stickerServer = `${parsedUrl.protocol}//${parsedUrl.host}`;
 		id = parsedUrl.searchParams.get('id');
 		if (id && stickerServer) {
-			stickerSetData = await fetchStickerset(stickerServer, parseInt(id, 10));
+			stickerSetData = await fetchStickerset(stickerServer, parseInt(id));
 		} else {
 			console.warn('Missing id or stickerServer for stickerset fetch');
 		}

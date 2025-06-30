@@ -23,6 +23,7 @@
 
 	let items = $state([]);
 	let loading = $state(true);
+	let elStickersSearchResults: StickersSearchResults | null = $state(null);
 
 	export function onShow() {
 		if (!get(isMobile)) fulltext_search_element.focus();
@@ -45,8 +46,8 @@
 	async function live_query(server, fulltext_search_filter, animated_filter) {
 		loading = true;
 		untrack(async () => {
-			console.log('scroll_to_top:', scroll_to_top);
-			await scroll_to_top?.();
+			console.log('scroll_to_top:', elStickersSearchResults?.scroll_to_top);
+			await elStickersSearchResults?.scroll_to_top?.();
 		});
 		console.log('update_live_query', fulltext_search_filter, animated_filter);
 		let query_store = liveQuery(async () => {
@@ -127,5 +128,5 @@
 		<div class="status">No items found</div>
 	</div>
 {:else}
-	<StickersSearchResults bind:scroll_to_top {items} />
+	<StickersSearchResults {items} bind:this={elStickersSearchResults} />
 {/if}
