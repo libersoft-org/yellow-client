@@ -5,7 +5,7 @@
 	//let url = 'https://yellow-module1.netlify.app/'
 	let url: string = 'http://localhost:5173/';
 	let module_id: string = 'org.libersoft.messages2';
-	let iframe;
+	let iframe: HTMLIFrameElement;
 
 	onMount(() => {
 		console.log('onMount');
@@ -25,22 +25,22 @@
 		// }, 500);
 	});
 
-	async function processUserModuleMessage(data) {
+	async function processUserModuleMessage(data: any) {
 		console.log('processUserModuleMessage: ', data);
 		if (!data) return;
 		if (data.type === 'server_command') {
 			return await serverCommand(data);
 		} else if (data.type === 'list_accounts') {
-			let res = [];
+			let res: any[] = [];
 			for (let account of get(accounts)) {
 				let acc = get(account);
-				if (acc.modules_enabled.find(m => m === module_id) !== -1) res.push(acc);
+				if (acc.available_modules && acc.available_modules[module_id]) res.push(acc);
 			}
 			return res;
 		}
 	}
 
-	async function serverCommand(data) {
+	async function serverCommand(data: any) {
 		console.log('serverCommand: ', data);
 		let account = findAccount(data.account);
 		if (!account) return { error: 'Account not found' };
