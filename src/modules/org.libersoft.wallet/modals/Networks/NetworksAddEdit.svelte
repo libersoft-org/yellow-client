@@ -7,43 +7,43 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	interface Props {
-		params: {
-			item: INetwork;
+		params?: {
+			item?: INetwork;
 		};
 		close: () => void;
 	}
 	let { params, close }: Props = $props();
-	let item_guid: string = '';
-	let item_name: string = $state('');
-	let item_currency_symbol: string = $state('');
-	let item_currency_iconURL: string = $state('');
-	let item_chain_id: number = $state(0);
-	// Explorer URL is displayed but not stored in INetwork
-	let item_explorer_url: string = $state('');
-	let item_rpc_urls: string[] = $state([]);
+	let item_guid: string | undefined;
+	let item_name: string | undefined = $state();
+	let item_currency_symbol: string | undefined = $state();
+	let item_currency_iconURL: string | undefined = $state();
+	let item_chain_id: number | undefined = $state();
+	let item_explorer_url: string | undefined = $state();
+	let item_rpc_urls: string[] | undefined = $state();
+	let error: string | null | undefined = $state();
 
 	$effect(() => {
 		update(params);
 	});
 
 	function update(params: Props['params']): void {
-		//console.log('update', params);
 		if (item_guid) return;
-		let item = params.item;
+		let item: INetwork | undefined = params?.item;
 		if (item) {
-			item_guid = item.guid;
-			item_name = item.name;
-			item_currency_symbol = item.currency.symbol;
-			item_currency_iconURL = item.currency.iconURL;
-			item_chain_id = item.chainID;
-			item_explorer_url = item.explorerURL || '';
-			item_rpc_urls = item.rpcURLs.map(v => v);
+			item_guid = item?.guid;
+			item_name = item?.name;
+			item_currency_symbol = item?.currency?.symbol;
+			item_currency_iconURL = item?.currency?.iconURL;
+			item_chain_id = item?.chainID;
+			item_explorer_url = item?.explorerURL || '';
+			item_rpc_urls = item?.rpcURLs?.map(v => v) || [];
 		}
 	}
 
-	function add() {
-		let item: INetwork = {
+	function addEdit(): void {
+		const newItem: INetwork = {
 			name: item_name,
 			currency: {
 				symbol: item_currency_symbol,
@@ -51,24 +51,24 @@
 			},
 			chainID: item_chain_id,
 			rpcURLs: item_rpc_urls,
+			explorerURL: item_explorer_url,
 		};
-		$networks.push(item);
-		networks.set($networks);
-		close();
-	}
 
-	function edit(): void {
-		let item = $networks.find(v => v.guid === params.item.guid);
-		if (!item) {
-			window.alert('Network not found');
-			return;
+		if (params?.item?.guid) {
+			// Edit
+			newItem.guid = params.item.guid;
+			networks.update(networks => {
+				const index = networks.findIndex(v => v.guid === params?.item?.guid);
+				if (index !== -1) {
+					networks[index] = newItem;
+				}
+				return networks;
+			});
+		} else {
+			// Add
+			$networks.push(newItem);
+			networks.set($networks);
 		}
-		item.name = item_name;
-		item.currency.symbol = item_currency_symbol;
-		item.currency.iconURL = item_currency_iconURL;
-		item.chainID = item_chain_id;
-		item.rpcURLs = item_rpc_urls;
-		networks.update(v => v);
 		close();
 	}
 </script>
@@ -87,7 +87,7 @@
 </style>
 
 <div class="modal-edit-network">
-	<Form onSubmit={params?.item ? edit : add}>
+	<Form onSubmit={addEdit}>
 		<Label text="Name">
 			<Input bind:value={item_name} />
 		</Label>
@@ -104,20 +104,25 @@
 			<Input bind:value={item_explorer_url} />
 		</Label>
 		<Label text="RPC URLs">
-			{#each item_rpc_urls as rpc_url, i}
-				<div class="row">
-					<Input bind:value={item_rpc_urls[i]} />
-					<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (item_rpc_urls = item_rpc_urls.filter((v, j) => j !== i))} />
-				</div>
-			{/each}
+			{#if item_rpc_urls}
+				{#each item_rpc_urls as rpc_url, i}
+					<div class="row">
+						<Input bind:value={item_rpc_urls[i]} />
+						<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (item_rpc_urls = item_rpc_urls?.filter((v, j) => j !== i))} />
+					</div>
+				{/each}
+			{/if}
 		</Label>
-		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (item_rpc_urls = [...item_rpc_urls, ''])} />
+		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (item_rpc_urls = [...(item_rpc_urls || []), ''])} />
 	</Form>
+	{#if error}
+		<Alert type="error" message={error} />
+	{/if}
 	<ButtonBar expand>
-		{#if params?.item}
-			<Button img="img/save.svg" text="Save" onClick={edit} />
+		{#if params?.item?.guid}
+			<Button img="img/save.svg" text="Save" onClick={addEdit} />
 		{:else}
-			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add network" onClick={add} />
+			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add network" onClick={addEdit} />
 		{/if}
 		<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 	</ButtonBar>

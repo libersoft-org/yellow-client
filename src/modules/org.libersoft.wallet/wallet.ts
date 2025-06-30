@@ -25,15 +25,15 @@ export interface IToken {
 	contract_address: string;
 }
 export interface INetwork {
-	guid: string;
-	name: string;
-	chainID: number;
-	explorerURL: string;
-	currency: {
-		symbol: string;
-		iconURL: string;
+	guid?: string;
+	name?: string;
+	chainID?: number;
+	explorerURL?: string;
+	currency?: {
+		symbol?: string;
+		iconURL?: string;
 	};
-	rpcURLs: string[];
+	rpcURLs?: string[];
 	tokens?: IToken[];
 }
 export interface IBalance {
@@ -505,12 +505,8 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
  }*/
 }
 
-export function addNetwork(net): void {
-	if (get(networks)?.find(n => n.name === net.name)) {
-		window.alert('Network with this name already exists');
-		return;
-	}
-
+export function addNetwork(net): boolean {
+	if (get(networks)?.find(n => n.name === net.name)) return false;
 	let my_net = {
 		guid: getGuid(),
 		name: net.name,
@@ -522,11 +518,10 @@ export function addNetwork(net): void {
 		},
 		explorerURL: net.explorerURL,
 	};
-
 	networks.update(n => {
 		n.push(my_net);
-		return n;
 	});
+	return true;
 }
 
 export function deleteNetwork(net): void {
