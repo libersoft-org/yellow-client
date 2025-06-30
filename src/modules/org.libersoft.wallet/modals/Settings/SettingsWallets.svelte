@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { module } from '../../module.ts';
-	import { wallets, addWallet, type IAddress, type IWallet } from '../../wallet.ts';
+	import { wallets, type IAddress, type IWallet } from '../../wallet.ts';
 	import Address from './SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -18,30 +18,23 @@
 	import ModalAddressAdd from '../Wallets/WalletsAddressAdd.svelte';
 	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
 	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
-	import { Mnemonic } from 'ethers';
+	import ModalRecover from '../Wallets/WalletsRecover.svelte';
 	let selectedWallet: IWallet | undefined;
 	let selectedAddress: IAddress | undefined;
 	let accordion: Accordion | undefined;
 	let elModalWalletsAdd: Modal | undefined;
-	let elDialogWalletsDel: Modal | undefined;
+	let elModalRecover: Modal | undefined;
+	let elDialogWalletsDel: DialogWalletsDel | undefined;
 	let elModalAddressAdd: Modal | undefined;
 	let elDialogAddressDel: DialogAddressDel | undefined;
 
 	function afterAddWallet() {
-		accordion.handleClick(wallets.length - 1, true);
-	}
-
-	function recover() {
-		let phrase = window.prompt('Enter your recovery phrase');
-		if (!phrase) return;
-		let mnemonic = Mnemonic.fromPhrase(phrase);
-		addWallet(mnemonic, ' - recovered');
-		afterAddWallet();
+		accordion?.handleClick(wallets.length - 1, true);
 	}
 
 	function addAddress(wallet: IWallet) {
 		selectedWallet = wallet;
-		elModalAddressAdd.open();
+		elModalAddressAdd?.open();
 	}
 
 	function delWallet(wallet: IWallet) {
@@ -89,7 +82,7 @@
 
 <ButtonBar equalize>
 	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => elModalWalletsAdd?.open()} />
-	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
+	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => elModalRecover?.open()} />
 </ButtonBar>
 {#if $wallets.length > 0}
 	<div class="bold">My wallets:</div>
@@ -131,6 +124,7 @@
 	{/snippet}
 </Accordion>
 <Modal title="Add a new wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalWalletsAdd} />
+<Modal title="Recover wallet from seed" body={ModalRecover} bind:this={elModalRecover} />
 <Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: selectedWallet }} width="600px" bind:this={elModalAddressAdd} />
 {#if selectedWallet && selectedAddress}
 	<DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />

@@ -3,15 +3,17 @@
 	import QRCode from 'qrcode';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import Table from '@/core/components/Table/Table.svelte';
-	import Tbody from '@/core/components/Table/TableTbody.svelte';
-	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	//import Table from '@/core/components/Table/Table.svelte';
+	//import Tbody from '@/core/components/Table/TableTbody.svelte';
+	//import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+	//import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import { generateMnemonic, addWallet } from '../../wallet.ts';
 	import { module } from '../../module.ts';
 	export let close;
 	let mnemonic = {};
 	let phrase = '';
+	let copied = false;
 	let phraseArr = [];
 	let qrCodeData = '';
 
@@ -32,6 +34,16 @@
 		mnemonic = generateMnemonic();
 		phrase = mnemonic.phrase;
 		generateQRCode();
+	}
+
+	function copy() {
+		navigator.clipboard
+			.writeText(phrase)
+			.then(() => {
+				copied = true;
+				setTimeout(() => (copied = false), 1000);
+			})
+			.catch(err => console.error('Error while copying to clipboard', err));
 	}
 
 	function save() {
@@ -117,14 +129,30 @@
 		display: flex;
 		justify-content: center;
 	}
+
+	.phrase {
+		display: flex;
+		text-align: justify;
+		gap: 10px;
+		border-radius: 10px;
+		padding: 10px;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
+	}
 </style>
 
 {#if qrCodeData}
 	<div>Use the following QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
 	<div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
 {/if}
-<div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
-<Table breakpoint="0">
+<div>Write down or print the following 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
+<div class="phrase">
+	<span>{copied ? 'Copied!' : phrase}</span>
+	{#if !copied}
+		<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="20px" padding="5px" onClick={copy} />
+	{/if}
+</div>
+<!--<Table breakpoint="0">
 	<Tbody>
 		{#each Array(6) as _, index}
 			<TbodyTr>
@@ -135,7 +163,7 @@
 			</TbodyTr>
 		{/each}
 	</Tbody>
-</Table>
+</Table>-->
 <ButtonBar expand>
 	<Button img="img/save.svg" text="Save" onClick={save} />
 	<Button img="modules/{module.identifier}/img/print.svg" text="Print" onClick={print} />

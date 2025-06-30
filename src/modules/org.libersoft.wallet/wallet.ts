@@ -355,7 +355,6 @@ function connectToURL(): void {
 		return;
 	}
 	provider = new JsonRpcProvider(get(rpcURL)!, net.chainID);
-
 	provider.on('error', (error: Error) => {
 		console.log('Provider error:', error);
 		if (provider) {
@@ -377,16 +376,13 @@ function setNextUrl(): void {
 	let i = net.rpcURLs.indexOf(get(rpcURL) || '');
 	i += 1;
 	let url: string;
-	if (i >= net.rpcURLs.length) {
-		url = net.rpcURLs[0];
-	} else {
-		url = net.rpcURLs[i];
-	}
+	if (i >= net.rpcURLs.length) url = net.rpcURLs[0];
+	else url = net.rpcURLs[i];
 	rpcURL.set(url);
 	status.set({ color: 'orange', text: 'Trying next url: ' + url });
 }
 
-export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> {
+export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void> {
 	let newWallet = HDNodeWallet.fromMnemonic(mnemonic);
 	let wallet: IWallet = {
 		phrase: mnemonic.phrase,
@@ -397,7 +393,7 @@ export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> 
 		log: [],
 	};
 	wallets.update(w => {
-		wallet.name = 'My Wallet ' + (w.length + 1) + suffix;
+		wallet.name = name ? name : 'My wallet ' + (w.length + 1);
 		w.push(wallet);
 		return w;
 	});
