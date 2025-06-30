@@ -26,11 +26,11 @@ export interface IToken {
 }
 export interface INetwork {
 	guid?: string;
-	name?: string;
-	chainID?: number;
+	name: string;
+	chainID: number;
 	explorerURL?: string;
-	currency?: {
-		symbol?: string;
+	currency: {
+		symbol: string;
 		iconURL?: string;
 	};
 	rpcURLs?: string[];
@@ -217,9 +217,9 @@ function reconnect(): void {
 	//console.log('wallet RECONNECT');
 	status.set({ color: 'orange', text: 'Connecting to ' + net.name });
 	if (reconnectionTimer !== undefined) clearTimeout(reconnectionTimer);
-	const rrr = get(rpcURL);
-	if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
-		if (!net.rpcURLs[0]) {
+	const rurl = get(rpcURL);
+	if (!rurl || net?.rpcURLs?.find(url => url === rurl) === undefined) {
+		if (!net?.rpcURLs?.[0]) {
 			status.set({
 				color: 'red',
 				text: 'No RPC URL found for the selected network',
@@ -340,7 +340,7 @@ function connectToURL(): void {
 
 function setNextUrl(): void {
 	const net = get(selectedNetwork);
-	if (!net) return;
+	if (!net?.rpcURLs) return;
 	let i = net.rpcURLs.indexOf(get(rpcURL) || '');
 	i += 1;
 	let url: string;
@@ -511,15 +511,16 @@ export function addNetwork(net): boolean {
 		guid: getGuid(),
 		name: net.name,
 		chainID: net.chainID,
-		rpcURLs: net.rpcURLs.map(url => url),
 		currency: {
 			symbol: net.currency.symbol,
 			iconURL: net.currency.iconURL,
 		},
 		explorerURL: net.explorerURL,
+		rpcURLs: net.rpcURLs.map(url => url),
 	};
 	networks.update(n => {
 		n.push(my_net);
+		return n;
 	});
 	return true;
 }

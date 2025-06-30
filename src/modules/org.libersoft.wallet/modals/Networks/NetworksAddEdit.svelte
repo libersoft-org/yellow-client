@@ -44,12 +44,12 @@
 
 	function addEdit(): void {
 		const newItem: INetwork = {
-			name: item_name,
+			name: item_name || '',
 			currency: {
-				symbol: item_currency_symbol,
+				symbol: item_currency_symbol || '',
 				iconURL: item_currency_iconURL,
 			},
-			chainID: item_chain_id,
+			chainID: item_chain_id || 0,
 			rpcURLs: item_rpc_urls,
 			explorerURL: item_explorer_url,
 		};
