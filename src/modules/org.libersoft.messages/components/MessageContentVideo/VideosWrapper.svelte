@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	let { children, node } = $props();
-	let ref = writable();
+	let ref: HTMLDivElement | undefined = $state();
 </script>
 
 <style>

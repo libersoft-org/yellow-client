@@ -130,7 +130,7 @@ let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 });
 
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
-	return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)];
+	return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)].filter((currency): currency is string => currency !== undefined);
 });
 
 export const addressBook = localStorageSharedStore<IAddressBookItem[]>('addressbook', []);

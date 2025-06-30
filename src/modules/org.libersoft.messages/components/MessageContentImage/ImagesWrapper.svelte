@@ -3,11 +3,11 @@
 	const childrenLength = node?.childNodes.length || 0;
 	let rowSize = 4;
 	let rowLimit = 2;
-	let hiddenImages = [];
+	let hiddenImages: any[] = [];
 	let siblings = $derived(children.map(child => child));
 	let imagesRows = $derived.by(() => {
-		let groups = [];
-		let group = [];
+		let groups: any[][] = [];
+		let group: any[] = [];
 		children.forEach((child, index) => {
 			if (!child.component) {
 				console.info("Can't render child with no component", child);

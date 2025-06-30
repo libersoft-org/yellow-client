@@ -68,7 +68,7 @@
 	function resetCurrency(currencies: any) {
 		if (!currency || !get(currencies).find((c: string) => c == currency)) {
 			console.log('reset currency:', currency, get(currencies));
-			currency = $selectedMainCurrencySymbol;
+			currency = $selectedMainCurrencySymbol || '';
 		}
 	}
 

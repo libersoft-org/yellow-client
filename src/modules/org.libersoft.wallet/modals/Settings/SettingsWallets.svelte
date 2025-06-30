@@ -46,7 +46,7 @@
 
 	function delWallet(wallet: IWallet) {
 		selectedWallet = wallet;
-		elDialogWalletsDel.open();
+		elDialogWalletsDel?.open();
 		//wallets.update(ws => ws.filter(w => w !== wallet));
 	}
 
@@ -70,7 +70,7 @@
 	function deleteAddress(wallet, address) {
 		selectedWallet = wallet;
 		selectedAddress = address;
-		elDialogAddressDel.open();
+		elDialogAddressDel?.open();
 	}
 </script>
 
@@ -132,5 +132,9 @@
 </Accordion>
 <Modal title="Add a new wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalWalletsAdd} />
 <Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: selectedWallet }} width="600px" bind:this={elModalAddressAdd} />
-<DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />
-<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
+{#if selectedWallet && selectedAddress}
+	<DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />
+{/if}
+{#if selectedWallet}
+	<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
+{/if}
