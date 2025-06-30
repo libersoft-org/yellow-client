@@ -15,7 +15,6 @@ export interface IWallet {
 	selected_address_index: number;
 	name: string;
 	addresses?: IAddress[];
-	log: any[];
 }
 export interface IToken {
 	guid: string;
@@ -358,7 +357,6 @@ export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void
 		selected_address_index: 0,
 		name: '',
 		addresses: [],
-		log: [],
 	};
 	wallets.update(w => {
 		wallet.name = name ? name : 'My wallet ' + (w.length + 1);
@@ -476,7 +474,7 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 	console.log('wait..', tx);
 	await tx.wait();
 	console.log('Transaction sent OK');
-
+	/*
 	let log = {
 		dir: 'sent',
 		date: new Date(),
@@ -499,10 +497,12 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 	if (!selectedWalletValue.log) selectedWalletValue.log = [];
 	selectedWalletValue.log.push(log);
 	wallets.update(w => w);
-
-	/*} catch (error) {
-  console.error('Error while sending a transaction:', error);
- }*/
+*/
+	/*
+} catch (error) {
+ console.error('Error while sending a transaction:', error);
+}
+*/
 }
 
 export function addNetwork(net): boolean {
