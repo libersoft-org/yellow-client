@@ -29,7 +29,7 @@
 	let elDialogAddressDel: DialogAddressDel | undefined;
 
 	function afterAddWallet() {
-		accordion?.handleClick(wallets.length - 1, true);
+		accordion?.handleClick($wallets.length - 1, true);
 	}
 
 	function addAddress(wallet: IWallet) {

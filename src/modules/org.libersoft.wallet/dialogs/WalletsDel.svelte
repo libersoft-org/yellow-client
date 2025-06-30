@@ -4,7 +4,7 @@
 	interface Props {
 		wallet: IWallet;
 	}
-	let { wallet, address }: Props = $props();
+	let { wallet }: Props = $props();
 	let elDialog;
 	let dialogData = {
 		title: 'Delete wallet',

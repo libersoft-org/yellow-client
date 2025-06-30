@@ -82,8 +82,7 @@
 			error = 'Address already exists in the address book, see name: "' + (dupe.name || 'Unknown') + '"';
 			return;
 		}
-		if (params && params.item) {
-			if (!address) address = '';
+		if (params && params.item && address) {
 			addressBook.update(currentItems => currentItems.map(item => (item.guid === params.item!.guid ? { ...item, name: name || '', address } : item)));
 		}
 		if (close) close();

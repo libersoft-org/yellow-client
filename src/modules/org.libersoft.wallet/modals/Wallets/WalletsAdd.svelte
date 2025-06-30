@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import QRCode from 'qrcode';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -10,14 +10,20 @@
 	//import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import { generateMnemonic, addWallet } from '../../wallet.ts';
 	import { module } from '../../module.ts';
-	export let close;
-	let mnemonic = {};
-	let phrase = '';
-	let copied = false;
-	let phraseArr = [];
-	let qrCodeData = '';
+	import type { Mnemonic } from 'ethers';
+	interface Props {
+		close?: () => void;
+	}
+	let { close }: Props = $props();
+	let mnemonic: Mnemonic | undefined = $state();
+	let phrase: string = $state('');
+	let copied: boolean = $state(false);
+	let phraseArr: string[] = $state([]);
+	let qrCodeData: string = $state('');
 
-	$: phraseArr = phrase.split(' ');
+	$effect(() => {
+		phraseArr = phrase.split(' ');
+	});
 
 	onMount(() => {
 		regenerate();
@@ -32,7 +38,7 @@
 	function regenerate() {
 		console.log('REGENERATE');
 		mnemonic = generateMnemonic();
-		phrase = mnemonic.phrase;
+		phrase = mnemonic?.phrase || '';
 		generateQRCode();
 	}
 
@@ -49,8 +55,10 @@
 	function save() {
 		// TODO: password protect the key
 		console.log('SAVE');
-		addWallet(mnemonic);
-		close();
+		if (mnemonic) {
+			addWallet(mnemonic);
+		}
+		if (close) close();
 	}
 
 	function print() {

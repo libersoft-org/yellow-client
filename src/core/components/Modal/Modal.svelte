@@ -372,11 +372,11 @@
 						<div class="icons">
 							{#if max}
 								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon data-testid={testId + '-Modal-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="10px" onClick={() => (maximized ? restore() : maximize())} />
+									<Icon testId={testId + '-Modal-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="10px" onClick={() => (maximized ? restore() : maximize())} />
 								</div>
 							{/if}
 							<div onpointerdown={e => e.stopPropagation()}>
-								<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="10px" onClick={close} />
+								<Icon testId={testId + '-Modal-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="10px" onClick={close} />
 							</div>
 						</div>
 					{/if}

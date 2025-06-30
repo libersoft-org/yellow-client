@@ -15,7 +15,7 @@
 		close?: () => void;
 	}
 	let { close }: Props = $props();
-	let elModalWallets: ModalWallets | undefined;
+	let elModalWallets: Modal | undefined;
 	let filter: string | undefined = $state();
 
 	function clickSelectAddress(wallet, address) {

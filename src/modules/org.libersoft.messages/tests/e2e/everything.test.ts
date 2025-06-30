@@ -154,6 +154,13 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 			address: 'user2@example.com',
 			password: 'password',
 		});
+
+		// either completely close account management corepage (on desktop) or go to sidebar (on mobile)
+		if (await page.getByTestId('account-management-close-button').isVisible()) {
+			await page.getByTestId('account-management-close-button').click();
+		} else if (await page.getByTestId('accounts-content-back-button').isVisible()) {
+			await page.getByTestId('accounts-content-back-button').click();
+		}
 	});
 
 	await test.step('First Conversation', async () => {

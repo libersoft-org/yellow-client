@@ -94,8 +94,8 @@
 				<Td title="Enabled" data-testid="account-enabled@{account.credentials.address}@{account.credentials.server}">{account.enabled ? 'Yes' : 'No'}</Td>
 				<Td title="Action">
 					<TableActionItems>
-						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} data-testid="edit-account-button" />
-						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} data-testid="delete-account-button" />
+						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} testId="edit-account-button" />
+						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} testId="delete-account-button" />
 					</TableActionItems>
 				</Td>
 			</TbodyTr>
@@ -112,11 +112,11 @@
 <Content>
 	<Bar>
 		{#snippet left()}
-			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
+			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} testId="accounts-content-back-button" />
 			<BarTitle text="Account management" />
 		{/snippet}
 		{#snippet right()}
-			<Icon img="img/cross.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
+			<Icon img="img/cross.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} testId="accounts-content-close-button" />
 		{/snippet}
 	</Bar>
 	<Page hAlign="center">

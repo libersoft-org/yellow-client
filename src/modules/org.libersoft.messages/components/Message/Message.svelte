@@ -397,7 +397,7 @@
 	}
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" data-uid={message.uid} on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
 	<div bind:this={elIntersectionObserver}></div>
 	<!--<Reply name="Someone" text="Some text" />-->
 	<!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->

@@ -9,12 +9,12 @@
 		onClick?: (e: Event) => void;
 	}
 	let { img, label, colorVariable = '--primary-foreground', onClick, ...restProps }: Props = $props();
-	let menu = getContext('ContextMenu');
+	let menu = getContext('ContextMenu') as { close: () => void } | undefined;
 
-	function handleClick() {
+	function handleClick(e: Event) {
 		console.log('handleClick');
-		onClick();
-		menu.close();
+		onClick?.(e);
+		menu?.close();
 	}
 
 	function handleMousedown(event) {

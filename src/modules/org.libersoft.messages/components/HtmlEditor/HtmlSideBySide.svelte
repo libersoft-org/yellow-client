@@ -4,7 +4,7 @@
 	interface Props {
 		text?: string;
 	}
-	let { text }: Props = $props();
+	let { text = $bindable() }: Props = $props();
 </script>
 
 <style>
