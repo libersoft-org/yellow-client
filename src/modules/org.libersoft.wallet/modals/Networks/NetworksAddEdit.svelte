@@ -9,7 +9,7 @@
 	import Form from '@/core/components/Form/Form.svelte';
 	interface Props {
 		params: {
-			item: INetwork & { explorerURL: string };
+			item: INetwork;
 		};
 		close: () => void;
 	}
