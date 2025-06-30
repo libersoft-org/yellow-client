@@ -15,7 +15,7 @@
 		const parsedUrl = new URL(params.stickersetDetailsModalStickerset);
 		stickerServer = `${parsedUrl.protocol}//${parsedUrl.host}`;
 		id = parsedUrl.searchParams.get('id');
-		stickerSetData = await fetchStickerset(stickerServer, id ? parseInt(id, 10) : '');
+		stickerSetData = await fetchStickerset(stickerServer as string, id ? parseInt(id, 10) : undefined);
 	});
 </script>
 

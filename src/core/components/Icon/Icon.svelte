@@ -13,9 +13,9 @@
 		colorVariable?: string;
 		onClick?: (e: Event) => void;
 		isButton?: boolean;
-		'data-testid'?: string;
+		testId?: string;
 	}
-	let { img, alt = '', size = '24px', padding = '10px', visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false, 'data-testid': dataTestId }: Props = $props();
+	let { img, alt = '', size = '24px', padding = '10px', visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false, testId }: Props = $props();
 	let filter = $derived.by(() => {
 		// dummy use of $current_theme because this needs to be reactive on theme changes
 		const t = $current_theme;
@@ -47,7 +47,7 @@
 {#if img}
 	{#if ($isMobile && visibleOnMobile) || (!$isMobile && visibleOnDesktop)}
 		{#if onClick || isButton}
-			<Clickable {onClick} data-testid={dataTestId}>
+			<Clickable {onClick} data-testid={testId}>
 				{@render icon()}
 			</Clickable>
 		{:else}
