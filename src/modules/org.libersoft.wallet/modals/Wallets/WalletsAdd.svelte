@@ -1,5 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { generateMnemonic, addWallet, wallets } from '../../wallet.ts';
+	import { module } from '../../module.ts';
+	import type { Mnemonic } from 'ethers';
+	import Label from '@/core/components/Label/Label.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import QRCode from 'qrcode';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -8,24 +13,25 @@
 	//import Tbody from '@/core/components/Table/TableTbody.svelte';
 	//import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	//import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import { generateMnemonic, addWallet } from '../../wallet.ts';
-	import { module } from '../../module.ts';
-	import type { Mnemonic } from 'ethers';
 	interface Props {
 		close?: () => void;
 	}
 	let { close }: Props = $props();
+	let name: string | undefined = $state();
 	let mnemonic: Mnemonic | undefined = $state();
 	let phrase: string = $state('');
 	let copied: boolean = $state(false);
-	let phraseArr: string[] = $state([]);
+	//let phraseArr: string[] = $state([]);
 	let qrCodeData: string = $state('');
 
+	/*
 	$effect(() => {
 		phraseArr = phrase.split(' ');
 	});
+ */
 
 	onMount(() => {
+		name = 'My wallet ' + ($wallets.length + 1);
 		regenerate();
 	});
 
@@ -36,7 +42,6 @@
 	}
 
 	function regenerate() {
-		console.log('REGENERATE');
 		mnemonic = generateMnemonic();
 		phrase = mnemonic?.phrase || '';
 		generateQRCode();
@@ -54,10 +59,7 @@
 
 	function save() {
 		// TODO: password protect the key
-		console.log('SAVE');
-		if (mnemonic) {
-			addWallet(mnemonic);
-		}
+		if (mnemonic) addWallet(mnemonic, name);
 		if (close) close();
 	}
 
@@ -149,17 +151,22 @@
 	}
 </style>
 
+<Label text="Wallet name">
+	<Input type="text" bind:value={name} />
+</Label>
+<Label text="Seed phrase">
+	<div class="phrase">
+		<span>{copied ? 'Copied!' : phrase}</span>
+		{#if !copied}
+			<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="20px" padding="5px" onClick={copy} />
+		{/if}
+	</div>
+</Label>
+<div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
 {#if qrCodeData}
-	<div>Use the following QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
 	<div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
+	<div>Use this QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
 {/if}
-<div>Write down or print the following 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
-<div class="phrase">
-	<span>{copied ? 'Copied!' : phrase}</span>
-	{#if !copied}
-		<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="20px" padding="5px" onClick={copy} />
-	{/if}
-</div>
 <!--<Table breakpoint="0">
 	<Tbody>
 		{#each Array(6) as _, index}

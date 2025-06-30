@@ -143,9 +143,7 @@ addressBook.subscribe((value: IAddressBookItem[]) => {
 			modifyed = true;
 		}
 	}
-	if (modifyed) {
-		addressBook.update(v => v);
-	}
+	if (modifyed) addressBook.update(v => v);
 });
 
 selectedAddress.subscribe((value: IAddress | undefined) => {
@@ -229,18 +227,12 @@ selectedWallet.subscribe((value: IWallet | undefined) => {
 
 function reconnect(): void {
 	provider = null;
-
 	//console.log('Reconnecting to', get(selectedNetwork));
-
 	let net = get(selectedNetwork);
 	if (!net) return;
-
 	//console.log('wallet RECONNECT');
 	status.set({ color: 'orange', text: 'Connecting to ' + net.name });
-
-	if (reconnectionTimer !== undefined) {
-		clearTimeout(reconnectionTimer);
-	}
+	if (reconnectionTimer !== undefined) clearTimeout(reconnectionTimer);
 	const rrr = get(rpcURL);
 	if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
 		if (!net.rpcURLs[0]) {
@@ -310,13 +302,7 @@ export function addressIndexAlreadyExists(wallet: IWallet, index: number): boole
 	if (wallet?.addresses) return wallet.addresses.some(address => address.index === index);
 	else return false;
 }
-/*
-export function getLastAddressIndex(wallet: IWallet): number {
- 	if (wallet?.addresses) {
 
-		}
-}
-*/
 function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
 	console.log('doAddAddress Mnemonic.fromPhrase');
 	if (!w.phrase) {
@@ -357,9 +343,7 @@ function connectToURL(): void {
 	provider = new JsonRpcProvider(get(rpcURL)!, net.chainID);
 	provider.on('error', (error: Error) => {
 		console.log('Provider error:', error);
-		if (provider) {
-			provider.destroy();
-		}
+		if (provider) provider.destroy();
 		provider = null;
 		setNextUrl();
 		reconnectionTimer = setTimeout(reconnect, WALLET_PROVIDER_RECONNECT_INTERVAL);
@@ -432,11 +416,8 @@ export async function getBalance(): Promise<void> {
 					const currency = b?.crypto?.currency;
 					const rate = rates2[currency];
 					if (amount_str && currency) {
-						if (rate) {
-							b.fiat.amount = (parseFloat(amount_str) * rate).toString();
-						} else {
-							b.fiat.amount = 'no rate for ' + currency;
-						}
+						if (rate) b.fiat.amount = (parseFloat(amount_str) * rate).toString();
+						else b.fiat.amount = 'no rate for ' + currency;
 					}
 					return b;
 				});
@@ -509,7 +490,6 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 		chainID: tx.chainId.toString(),
 		nonce: tx.nonce,
 		tx_type: tx.type,
-
 		estimatedGas: formatEther(eg),
 		gasLimit: formatEther(tx.gasLimit),
 		gasPrice: formatEther(tx.gasPrice),
@@ -519,9 +499,7 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 	console.log('log:', log);
 	console.log('log:', JSON.stringify(log));
 
-	if (!selectedWalletValue.log) {
-		selectedWalletValue.log = [];
-	}
+	if (!selectedWalletValue.log) selectedWalletValue.log = [];
 	selectedWalletValue.log.push(log);
 	wallets.update(w => w);
 
