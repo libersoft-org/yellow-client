@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	//import { onMount } from 'svelte';
 	import { isAddress } from 'ethers';
 	import { addressBook, type IAddressBookItem } from '../../wallet.ts';
 	import { module } from '../../module.ts';
@@ -22,21 +22,25 @@
 	let error: string | undefined = $state();
 	let elName: Input;
 
-	onMount(() => {
-		//console.log(params?.item);
-		if (params?.item) {
+	/* TODO: don't use it like this, wait for onOpen
+ $effect(() => {
+  if (params?.item) {
 			name = params.item.name || '';
 			address = params.item.address || '';
 		}
+	});
+
+	onMount(() => {
 		if (elName) elName.focus();
 	});
+ */
 
 	function findAddressBookItemByAddress(address: string): IAddressBookItem | undefined {
 		const ab = $addressBook;
 		return ab.find(i => i.address === address);
 	}
 
-	function findAddressBookItemById(id: string): IAddressBookItem | undefined {
+	function findAddressBookItemByID(id: string): IAddressBookItem | undefined {
 		const ab = $addressBook;
 		return ab.find(i => i.guid === id);
 	}
