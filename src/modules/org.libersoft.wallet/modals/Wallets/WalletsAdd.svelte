@@ -3,6 +3,7 @@
 	import { generateMnemonic, addWallet, wallets } from '../../wallet.ts';
 	import { module } from '../../module.ts';
 	import type { Mnemonic } from 'ethers';
+	import Form from '@/core/components/Form/Form.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import QRCode from 'qrcode';
@@ -151,9 +152,11 @@
 	}
 </style>
 
-<Label text="Wallet name">
-	<Input type="text" bind:value={name} />
-</Label>
+<Form onSubmit={save}>
+	<Label text="Wallet name">
+		<Input type="text" bind:value={name} />
+	</Label>
+</Form>
 <Label text="Seed phrase">
 	<div class="phrase">
 		<span>{copied ? 'Copied!' : phrase}</span>

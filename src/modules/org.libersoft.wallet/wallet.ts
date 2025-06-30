@@ -89,50 +89,34 @@ networks.subscribe((nets: INetwork[]) => {
 	}
 });
 
-/*
-function toHexStr(uint8) {
- return Array.from(uint8)
-  .map(i => i.toString(16).padStart(2, '0'))
-  .join('');
-}
-*/
-
 export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
 	const r = $networks.find(n => n.guid === $selectedNetworkID);
-	//console.log('selectedNetwork', r);
 	return r;
 });
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
+	console.log('WWWWWWWWWWWWW', $wallets, $selectedWalletID);
 	const r = $wallets.find(w => w.address === $selectedWalletID);
-	//console.log('selectedWallet', r);
 	return r;
 });
-
 export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
-	//console.log('selectedWallet:', $selectedWallet);
 	let addresses = $selectedWallet?.addresses || [];
 	let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
-	//console.log('SELECTEDADDRESS', result);
 	return result;
 });
-
 export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return $selectedNetwork?.currency.symbol;
 });
-
 let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return ($selectedNetwork?.tokens || []).map(token => ({
 		symbol: token.symbol,
 	}));
 });
-
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
 	return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)].filter((currency): currency is string => currency !== undefined);
 });
-
 export const addressBook = localStorageSharedStore<IAddressBookItem[]>('addressbook', []);
 
 addressBook.subscribe((value: IAddressBookItem[]) => {
@@ -383,6 +367,19 @@ export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void
 	});
 	selectedWalletID.set(get(wallets)[get(wallets).length - 1].address);
 	addAddress(wallet);
+}
+
+export function editWallet(wallet: IWallet, name: string): boolean {
+	let success = false;
+	wallets.update(w => {
+		const index = w.findIndex(item => item === wallet);
+		if (index !== -1) {
+			w[index] = { ...w[index], name };
+			success = true;
+		}
+		return w;
+	});
+	return success;
 }
 
 export async function getBalance(): Promise<void> {

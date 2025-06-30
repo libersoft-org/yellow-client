@@ -15,6 +15,7 @@
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
+	import ModalWalletsEdit from '../Wallets/WalletsEdit.svelte';
 	import ModalAddressAdd from '../Wallets/WalletsAddressAdd.svelte';
 	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
 	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
@@ -24,23 +25,24 @@
 	let accordion: Accordion | undefined;
 	let elModalWalletsAdd: Modal | undefined;
 	let elModalRecover: Modal | undefined;
+	let elModalWalletsEdit: Modal | undefined;
 	let elDialogWalletsDel: DialogWalletsDel | undefined;
 	let elModalAddressAdd: Modal | undefined;
 	let elDialogAddressDel: DialogAddressDel | undefined;
 
-	function afterAddWallet() {
-		accordion?.handleClick($wallets.length - 1, true);
+	function delWallet(wallet: IWallet) {
+		selectedWallet = wallet;
+		elDialogWalletsDel?.open();
+	}
+
+	function editWallet(wallet: IWallet) {
+		selectedWallet = wallet;
+		elModalWalletsEdit?.open();
 	}
 
 	function addAddress(wallet: IWallet) {
 		selectedWallet = wallet;
 		elModalAddressAdd?.open();
-	}
-
-	function delWallet(wallet: IWallet) {
-		selectedWallet = wallet;
-		elDialogWalletsDel?.open();
-		//wallets.update(ws => ws.filter(w => w !== wallet));
 	}
 
 	function renameAddress(wallet, address) {
@@ -94,6 +96,7 @@
 	{#snippet content(walleta)}
 		<div class="wallet">
 			<ButtonBar>
+				<Button img="img/edit.svg" text="Edit wallet name" onClick={() => editWallet(walleta)} />
 				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />
 				<Button img="img/del.svg" text="Delete wallet" onClick={() => delWallet(walleta)} />
 			</ButtonBar>
@@ -125,6 +128,7 @@
 </Accordion>
 <Modal title="Add a new wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalWalletsAdd} />
 <Modal title="Recover wallet from seed" body={ModalRecover} bind:this={elModalRecover} />
+<Modal title="Edit wallet name" body={ModalWalletsEdit} params={{ wallet: selectedWallet }} bind:this={elModalWalletsEdit} />
 <Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: selectedWallet }} width="600px" bind:this={elModalAddressAdd} />
 {#if selectedWallet && selectedAddress}
 	<DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />
