@@ -26,11 +26,21 @@
 	}
 
 	export function open() {
+		console.log(item);
 		elDialog?.open();
 	}
 </script>
 
 {#snippet question()}
-	<div>Would you like to delete the item "<span class="bold">{item.name}</span>" from address book?</div>
+	<div>Would you like to delete this item from address book?</div>
+	<br />
+	<div>
+		<span class="bold">Name:</span>
+		<span>{item.name}</span>
+	</div>
+	<div>
+		<span class="bold">Address:</span>
+		<span>{item.address}</span>
+	</div>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />

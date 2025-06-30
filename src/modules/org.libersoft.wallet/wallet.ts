@@ -28,6 +28,7 @@ export interface INetwork {
 	guid: string;
 	name: string;
 	chainID: number;
+	explorerURL: string;
 	currency: {
 		symbol: string;
 		iconURL: string;

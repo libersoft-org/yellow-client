@@ -36,7 +36,8 @@
 <style>
 	.top {
 		display: flex;
-		gap: 20px;
+		align-items: flex-start;
+		gap: 10px;
 	}
 </style>
 
