@@ -35,6 +35,7 @@
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
 	let focused = $state(false);
+	let elModalBody: any | null = $state(null);
 
 	setContext('setTitle', setTitle);
 	setContext('Popup', { close });
@@ -177,10 +178,17 @@
 		}
 	}
 
-	export function open() {
+	export async function open() {
 		setShow(true);
 		elModal?.focus();
+		await tick();
+		elModalBody?.onOpen?.();
 	}
+
+	$effect(() => {
+		console.log('MODAL OPENED:', elModalBody, elModalBody?.onOpen);
+		elModalBody?.onOpen?.();
+	});
 
 	export function close() {
 		setShow(false);
@@ -386,7 +394,7 @@
 						params: <code>{JSON.stringify({ params })}</code>
 					{/if}
 					{#if typeof ModalBody === 'function'}
-						<ModalBody {params} {close} />
+						<ModalBody {params} {close} bind:this={elModalBody} />
 					{/if}
 					{#if children}
 						{@render children?.()}

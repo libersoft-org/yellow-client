@@ -27,6 +27,10 @@
 		update(params);
 	});
 
+	export function onOpen() {
+		window.alert('onOpen');
+	}
+
 	function update(params: Props['params']): void {
 		//console.log('update', params);
 		if (item_guid) return;
