@@ -3,6 +3,7 @@
 	import { isAddress } from 'ethers';
 	import { addressBook, type IAddressBookItem } from '../../wallet.ts';
 	import { module } from '../../module.ts';
+	import { getGuid } from '@/core/core.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -58,7 +59,8 @@
 			return;
 		}
 		console.log('NEW ITEM IN ADDRESS BOOK:', name, address);
-		$addressBook.push({ name: name || '', address });
+		if (!address) return; // Already checked above
+		$addressBook.push({ guid: getGuid(), name: name || '', address });
 		addressBook.set($addressBook);
 		if (close) close();
 	}
@@ -81,8 +83,8 @@
 			return;
 		}
 		if (params && params.item) {
-			// Správně - vytvořit nový array s aktualizovaným objektem
-			addressBook.update(currentItems => currentItems.map(item => (item.guid === params.item.guid ? { ...item, name: name || '', address: address } : item)));
+			if (!address) address = '';
+			addressBook.update(currentItems => currentItems.map(item => (item.guid === params.item!.guid ? { ...item, name: name || '', address } : item)));
 		}
 		if (close) close();
 	}
@@ -109,10 +111,10 @@
 <div class="addressbook-new">
 	<Form onSubmit={handleSubmit}>
 		<Label text="Name">
-			<Input placeholder="Name" bind:value={name} bind:this={elName} onInput={clearError} />
+			<Input placeholder="Name" bind:value={name} bind:this={elName} onChange={clearError} />
 		</Label>
 		<Label text="Address">
-			<Input placeholder="Address" bind:value={address} onInput={clearError} />
+			<Input placeholder="Address" bind:value={address} onChange={clearError} />
 		</Label>
 		{#if error}
 			<Alert type="error" message={error} />

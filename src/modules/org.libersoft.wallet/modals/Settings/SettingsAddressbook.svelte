@@ -22,7 +22,7 @@
 	let elModalAddEdit: Modal | undefined;
 	let elModalExport: Modal | undefined;
 	let elModalImport: Modal | undefined;
-	let elDialogDel: DialogDelete | undefined;
+	let elDialogDel: DialogDelete | undefined = $state();
 
 	function addToAddressBookModal() {
 		modalItem = null;
@@ -100,4 +100,6 @@
 <Modal title={modalItem ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:this={elModalAddEdit} width="400px" />
 <Modal title="Import address book" body={ModalImport} params={{ close: () => elModalImport?.close() }} bind:this={elModalImport} width="600px" />
 <Modal title="Export address book" body={ModalExport} params={{ close: () => elModalExport?.close() }} bind:this={elModalExport} width="600px" />
-<DialogDelete item={modalItem} bind:this={elDialogDel} />
+{#if modalItem}
+	<DialogDelete item={modalItem} bind:this={elDialogDel} />
+{/if}

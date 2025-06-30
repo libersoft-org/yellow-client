@@ -11,6 +11,6 @@
 
 <div class="sidebar">
 	{#each sections as { id, img, label }}
-		<SidebarCategory {img} {label} active={$page === id} onClick={() => setPage(id)} />
+		<SidebarCategory {img} {label} active={$page === id} onClick={() => setPage(id as 'people' | 'map' | 'match' | 'settings')} />
 	{/each}
 </div>

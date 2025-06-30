@@ -158,15 +158,17 @@
 			<div class="message-content-image" onclick={openInGallery} role="button" tabindex="0" onkeydown={e => e.key === 'Enter' && openInGallery()}>
 				{#if loading}
 					<div class="spinner-wrap">
-						<Spinner show style="min-height: initial;" />
+						<Spinner show containerMinHeight="initial" />
 					</div>
-				{:else}
+				{:else if imgUrl}
 					<ImageAspectRatio src={imgUrl} alt={file} />
 					{#if showHiddenImages}
 						<div class="hidden-images">
 							+{hiddenImages.length}
 						</div>
 					{/if}
+				{:else}
+					no data?
 				{/if}
 			</div>
 		{/if}

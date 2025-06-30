@@ -31,6 +31,6 @@
 </script>
 
 {#snippet question()}
-	<div>Would you like to delete the item "<span class="bold">{item.name}</span>" from address book??</div>
+	<div>Would you like to delete the item "<span class="bold">{item.name}</span>" from address book?</div>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />

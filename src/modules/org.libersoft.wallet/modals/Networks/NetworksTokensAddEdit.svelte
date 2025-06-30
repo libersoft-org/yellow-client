@@ -50,12 +50,16 @@
 	}
 
 	function clickAdd() {
-		params.onAdd(token());
+		if (params.onAdd) {
+			params.onAdd(token());
+		}
 		close();
 	}
 
 	function clickEdit() {
-		params.onEdit(token());
+		if (params.onEdit) {
+			params.onEdit(token());
+		}
 		close();
 	}
 

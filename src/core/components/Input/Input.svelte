@@ -21,8 +21,9 @@
 		};
 		inputRef?: HTMLInputElement; // TODO: is it really prop?
 		'data-testid'?: string;
+		onChange?: (value: string | number) => void;
 	}
-	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue = undefined, expand = true, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, icon = undefined, inputRef = $bindable(), 'data-testid': testId = undefined }: Props = $props();
+	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue = undefined, expand = true, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, icon = undefined, inputRef = $bindable(), 'data-testid': testId = undefined, onChange = undefined }: Props = $props();
 
 	function handleKeydown(e) {
 		if (onKeydown) onKeydown(e);
@@ -30,12 +31,17 @@
 
 	function handleChange(e: Event) {
 		const target = e.target as HTMLInputElement;
-		value = type === 'number' ? Number(target.value) : target.value;
+		setValue(target.value);
 	}
 
 	function handleInput(e: Event) {
 		const target = e.target as HTMLInputElement;
-		value = type === 'number' ? Number(target.value) : target.value;
+		setValue(target.value);
+	}
+
+	function setValue(newValue: string | number) {
+		value = type === 'number' ? Number(newValue) : newValue;
+		onChange?.(value);
 	}
 
 	export function focus() {

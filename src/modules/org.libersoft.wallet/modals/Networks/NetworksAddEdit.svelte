@@ -19,6 +19,7 @@
 	let item_currency_symbol: string = $state('');
 	let item_currency_iconURL: string = $state('');
 	let item_chain_id: number = $state(0);
+	// Explorer URL is displayed but not stored in INetwork
 	let item_explorer_url: string = $state('');
 	let item_rpc_urls: string[] = $state([]);
 
@@ -36,7 +37,7 @@
 			item_currency_symbol = item.currency.symbol;
 			item_currency_iconURL = item.currency.iconURL;
 			item_chain_id = item.chainID;
-			item_explorer_url = item.explorerURL;
+			item_explorer_url = item.explorerURL || '';
 			item_rpc_urls = item.rpcURLs.map(v => v);
 		}
 	}
@@ -48,8 +49,7 @@
 				symbol: item_currency_symbol,
 				iconURL: item_currency_iconURL,
 			},
-			chainId: item_chain_id,
-			explorerURL: item_explorer_url,
+			chainID: item_chain_id,
 			rpcURLs: item_rpc_urls,
 		};
 		$networks.push(item);
@@ -66,8 +66,7 @@
 		item.name = item_name;
 		item.currency.symbol = item_currency_symbol;
 		item.currency.iconURL = item_currency_iconURL;
-		item.chainId = item_chain_id;
-		item.explorerURL = item_explorer_url;
+		item.chainID = item_chain_id;
 		item.rpcURLs = item_rpc_urls;
 		networks.update(v => v);
 		close();
