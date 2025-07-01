@@ -1,15 +1,20 @@
-<script>
+<script lang="ts">
 	import { selectedNetwork, selectedAddress } from '../wallet.ts';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	let link = '';
-	let elLink;
+	let link: string | undefined = $state();
+	let elLink: HTMLDivElement | undefined = $state();
 
-	$: if ($selectedNetwork && $selectedAddress) {
-		link = `${$selectedNetwork.explorerURL}/address/${$selectedAddress.address}`;
-	}
+	$effect(() => {
+		if ($selectedNetwork && $selectedAddress) {
+			if ($selectedNetwork.explorerURL) link = $selectedNetwork.explorerURL + '/address/' + $selectedAddress.address;
+			else link = undefined;
+		}
+	});
 
-	function copyLink() {
+	function copyLink(): void {
+		if (!link) return;
 		navigator.clipboard
 			.writeText(link)
 			.then(() => console.log('Address copied to clipboard'))
@@ -18,16 +23,16 @@
 		setTimeout(() => hideInfo(), 1000);
 	}
 
-	function openLink() {
+	function openLink(): void {
 		window.open(link, '_blank');
 	}
 
-	function setInfo(text) {
-		elLink.innerText = text;
+	function setInfo(text: string): void {
+		if (elLink) elLink.innerText = text;
 	}
 
-	function hideInfo() {
-		elLink.innerText = link;
+	function hideInfo(): void {
+		if (elLink && link) elLink.innerText = link;
 	}
 </script>
 
@@ -53,12 +58,16 @@
 </style>
 
 {#if $selectedNetwork && $selectedAddress}
-	<div class="history">
-		<div class="bold">Address history:</div>
-		<div class="url" bind:this={elLink}>{link}</div>
-		<ButtonBar equalize align="center">
-			<Button img="img/copy.svg" text="Copy link" onClick={copyLink} />
-			<Button img="img/link.svg" text="Open link" onClick={openLink} />
-		</ButtonBar>
-	</div>
+	{#if !link}
+		<Alert type="error" message="The selected network has no block explorer" />
+	{:else}
+		<div class="history">
+			<div class="bold">Address history:</div>
+			<div class="url" bind:this={elLink}>{link}</div>
+			<ButtonBar equalize align="center">
+				<Button img="img/copy.svg" text="Copy link" onClick={copyLink} />
+				<Button img="img/link.svg" text="Open link" onClick={openLink} />
+			</ButtonBar>
+		</div>
+	{/if}
 {/if}

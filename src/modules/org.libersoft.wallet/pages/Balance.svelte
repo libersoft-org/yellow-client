@@ -6,7 +6,7 @@
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	interface Token {
+	interface IToken {
 		icon: string;
 		symbol: string;
 		amount: {
@@ -14,7 +14,7 @@
 			fiat: number;
 		};
 	}
-	let tokens: Token[] = [
+	let tokens: IToken[] = [
 		{
 			icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DAI.svg',
 			symbol: 'DAI',
