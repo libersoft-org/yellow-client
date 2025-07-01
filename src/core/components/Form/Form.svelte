@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { type Snippet } from 'svelte';
 	interface Props {
 		onSubmit: () => void;
-		children: any;
+		children?: Snippet;
 		class?: string;
 		width?: string;
 		[key: string]: any;
@@ -26,5 +27,5 @@
 </style>
 
 <div class="form {className}" style:width role="none" onkeydown={handleKeyDown} {...restProps}>
-	{@render children()}
+	{@render children?.()}
 </div>
