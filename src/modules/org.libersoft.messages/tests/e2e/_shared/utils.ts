@@ -7,7 +7,11 @@ import { expect, type Page, test } from '@playwright/test';
  */
 export async function startNewConversation(page: Page, recipient: string): Promise<void> {
 	return await test.step(`Start new conversation with: ${recipient}`, async () => {
-		await page.getByTestId('new-conversation-button').last().click({ force: true });
+		if (await page.getByTestId('new-conversation-button-welcome').isVisible()) {
+			await page.getByTestId('new-conversation-button-welcome').click();
+		} else {
+			await page.getByTestId('new-conversation-button-sidebar').click();
+		}
 		await page.getByTestId('new-conversation-address').fill(recipient);
 		await page.getByTestId('New Conversation Open').click();
 	});

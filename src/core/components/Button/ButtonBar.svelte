@@ -9,18 +9,18 @@
 		space?: boolean;
 	}
 	let { children, expand = false, align = 'left', equalize = false, space = false }: Props = $props();
-	let barEl: HTMLDivElement | undefined;
+	let elBar: HTMLDivElement | undefined;
 
 	async function applyEqualSize() {
-		if (!equalize || !barEl) return;
 		await tick();
+		if (!equalize || !elBar) return;
 		let max = 0;
-		barEl.querySelectorAll('.button').forEach(b => {
+		elBar.querySelectorAll('.button').forEach(b => {
 			max = Math.max(max, (b as HTMLElement).getBoundingClientRect().width);
 		});
 
 		const target = Math.ceil(max);
-		barEl.querySelectorAll('.button').forEach(b => {
+		elBar.querySelectorAll('.button').forEach(b => {
 			(b as HTMLElement).style.width = `${target}px`;
 		});
 	}
@@ -62,6 +62,6 @@
 	}
 </style>
 
-<div class="button-bar" bind:this={barEl} class:expand class:space class:align-left={align === 'left'} class:align-center={align === 'center'} class:align-right={align === 'right'}>
+<div class="button-bar" bind:this={elBar} class:expand class:space class:align-left={align === 'left'} class:align-center={align === 'center'} class:align-right={align === 'right'}>
 	{@render children?.()}
 </div>

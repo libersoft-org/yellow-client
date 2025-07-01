@@ -2,9 +2,11 @@ import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 
 export default defineConfig({
-	/*expect: {
-    timeout: 100_000,
-  },*/
+	//globalTimeout: 2120_000,
+	//timeout: 120_000,
+	expect: {
+		//timeout: 20_000,
+	},
 	testDir: './src/',
 	testMatch: ['**/e2e/**/*.test.ts'],
 

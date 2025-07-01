@@ -69,7 +69,7 @@
 			<div class="label">
 				{#if $online}
 					<div>Select your conversation<br />or</div>
-					<Button img="modules/{identifier}/img/conversation-new.svg" text="Start a new one" padding="5px" onClick={clickNew} data-testid="new-conversation-button" />
+					<Button img="modules/{identifier}/img/conversation-new.svg" text="Start a new one" padding="5px" onClick={clickNew} data-testid="new-conversation-button-welcome" />
 				{:else if $active_account}
 					<div>This module is offline</div>
 				{:else}

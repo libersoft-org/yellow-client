@@ -64,7 +64,7 @@
 {#if $conversationsArray != null}
 	<div class="conversations">
 		<div class="bar-buttons">
-			<SidebarButton data-testid="new-conversation-button" img="modules/{identifier}/img/conversation-new.svg" text="New conversation" expand onClick={clickNewConversation} />
+			<SidebarButton data-testid="new-conversation-button-sidebar" img="modules/{identifier}/img/conversation-new.svg" text="New conversation" expand onClick={clickNewConversation} />
 			<SidebarButton data-testid="messages-settings-button" img="img/settings.svg" onClick={clickMessagesSettings} />
 		</div>
 		<div class="items" bind:this={elItems} on:scroll={parseScroll}>
