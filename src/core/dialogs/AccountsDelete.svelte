@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { accounts } from '@/core/accounts.ts';
 	import { delAccount } from '@/core/accounts_config.js';
-	import Dialog from '../components/Dialog/Dialog.svelte';
+	import Dialog, { type IDialogData } from '../components/Dialog/Dialog.svelte';
 	interface Props {
 		id: string;
 	}
 	let { id }: Props = $props();
 	let elDialog: Dialog;
-	let accountIdentifier = $state();
+	let accountIdentifier: string | undefined = $state();
 
-	onMount(() => {
-		accountIdentifier = account?.credentials?.address || account?.id || 'unknown';
+	$effect(() => {
+		accountIdentifier = account?.credentials?.address || account?.id;
 	});
 
 	let account = $derived.by(() => {
@@ -25,7 +24,7 @@
 		return account;
 	});
 
-	let dialogData = $derived.by(() => {
+	let dialogData: IDialogData = $derived.by(() => {
 		return {
 			title: 'Delete the account',
 			body: question,
@@ -57,16 +56,10 @@
 
 {#snippet question()}
 	{#if account?.settings?.title}
-		<span>Would you like to delete the account </span>
-		<span>"</span>
-		<span class="bold">{account.settings.title}</span>
-		<span>" (</span>
-		<span class="bold">{accountIdentifier}</span>
-		<span>)</span>
+		<div>Would you like to delete the account "<span class="bold">{account.settings.title}</span>" (<span class="bold">{accountIdentifier}</span>)?</div>
 	{:else}
-		<span class="bold">{accountIdentifier}</span>
+		<div>Would you like to delete the account "<span class="bold">{accountIdentifier}</span>"?</div>
 	{/if}
-	<span>?</span>
 {/snippet}
 
 <Dialog data={dialogData} bind:this={elDialog} />

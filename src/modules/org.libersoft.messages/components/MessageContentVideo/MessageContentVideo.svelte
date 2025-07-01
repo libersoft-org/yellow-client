@@ -2,7 +2,7 @@
 	import VideoContainer from './VideoContainer.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-	import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { FileUploadRecordStatus, type FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import { writable } from 'svelte/store';
 	let { node } = $props();
 	let file = node.attributes.file?.value;
@@ -10,7 +10,7 @@
 	// check str if begins with yellow
 	let isYellow = $derived(file && file.startsWith(YELLOW_SRC_PROTOCOL)); // TODO: check deep prop reactivity (in case of message edit)
 	let yellowId = $derived(isYellow ? file.slice(YELLOW_SRC_PROTOCOL.length) : null);
-	let upload = writable(null);
+	let upload = writable<FileUpload | null>(null);
 	fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 </script>
 

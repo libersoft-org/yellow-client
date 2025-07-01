@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging } from '@/core/e2e/test-utils.ts';
+
+// todo: unify
+import { closeWelcomeWizardModal, setupConsoleLogging } from '@/core/e2e/test-utils.ts';
 import { closeModal } from '$lib/test-utils/e2e-helpers.ts';
 
 /**
@@ -644,7 +646,7 @@ test.describe('Accounts Import/Export', () => {
 			// Export accounts
 			await openExportModal(page);
 			const exportedContent = await getExportedJSON(page);
-			await closeModal(page, 'accounts-import');
+			await closeModal(page, 'accounts-export');
 
 			// Replace with just one minimal account
 			const minimalAccount = [

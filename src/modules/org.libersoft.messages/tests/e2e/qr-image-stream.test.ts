@@ -47,8 +47,10 @@ test.describe('QR Code Image Stream Tests', () => {
 		});
 	});
 
-	test('Video stream with static QR image displays correctly', async ({ page }) => {
+	test('Video stream with static QR image displays correctly', async ({ page, browserName }, testInfo) => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 		const helper = new QRVideoStreamHelper(page);
 
 		// Setup image-based video stream
@@ -82,8 +84,10 @@ test.describe('QR Code Image Stream Tests', () => {
 		await expect(page.getByText('Camera access denied or not available')).not.toBeVisible();
 	});
 
-	test('Switch QR images for scan again functionality', async ({ page }) => {
+	test('Switch QR images for scan again functionality', async ({ page, browserName }, testInfo) => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 		const helper = new QRVideoStreamHelper(page);
 
 		// Setup initial video stream with first QR image
@@ -120,8 +124,10 @@ test.describe('QR Code Image Stream Tests', () => {
 		expect(videoInfo2.srcObject).toBe(true);
 	});
 
-	test('QR detection with valid account image stream', async ({ page }) => {
+	test('QR detection with valid account image stream', async ({ page, browserName }, testInfo) => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 		const result = await testQRImportWithImageStream(page, QR_IMAGES.VALID_ACCOUNT, 'qrtest1@example.com', true);
 
 		expect(result.success).toBe(true);
@@ -136,8 +142,10 @@ test.describe('QR Code Image Stream Tests', () => {
 		}
 	});
 
-	test('QR detection with complex account image stream', async ({ page }) => {
+	test('QR detection with complex account image stream', async ({ page, browserName }, testInfo) => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 		const result = await testQRImportWithImageStream(page, QR_IMAGES.COMPLEX_ACCOUNT, 'complex+test@example.com', true);
 
 		expect(result.success).toBe(true);
@@ -151,8 +159,10 @@ test.describe('QR Code Image Stream Tests', () => {
 		}
 	});
 
-	test('QR detection with invalid data image stream', async ({ page }) => {
+	test('QR detection with invalid data image stream', async ({ page, browserName }, testInfo) => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 		const result = await testQRImportWithImageStream(page, QR_IMAGES.INVALID_DATA, 'invalid json', false);
 
 		expect(result.success).toBe(true);

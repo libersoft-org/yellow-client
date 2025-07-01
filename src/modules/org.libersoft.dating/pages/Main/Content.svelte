@@ -24,7 +24,7 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	function onKeydown(event) {
+	function onKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
 			if ($page) closePage();
 			else setModule(null);
@@ -33,8 +33,8 @@
 </script>
 
 <Content>
-	{#if $page}
-		<svelte:component this={pages[$page]} />
+	{#if $page && $page in pages}
+		<svelte:component this={pages[$page as keyof typeof pages]} />
 	{:else}
 		<Welcome />
 	{/if}

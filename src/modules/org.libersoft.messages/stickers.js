@@ -6,7 +6,14 @@ import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 window.stickerLibraryUpdaterState = { updating: false };
 import.meta.hot?.dispose(() => (window.stickerLibraryUpdaterState.canceled = true));
 
-export let stickerLibraryUpdaterState = writable({});
+export let stickerLibraryUpdaterState = writable({
+	updating: false,
+	status: '',
+	progress: 0,
+	error: null,
+	updated_once: false,
+	canceled: false,
+});
 export let stickerset_favorites = localStorageSharedStore('stickerset_favorites', []);
 
 stickerLibraryUpdaterState.subscribe(state => {

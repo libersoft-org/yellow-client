@@ -8,7 +8,7 @@
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { gif_server } from '../../gifs.js';
 	import LazyLoader from './GifSetLazyLoader.svelte';
-	const MessageBar = getContext('MessageBar');
+	const MessageBar = getContext('MessageBar') as any;
 	const menu = getContext('ContextMenu');
 	let gifs = [];
 	let query = '';
@@ -33,7 +33,7 @@
 
 	async function searchGifs() {
 		gifs = [];
-		await getGifs(query);
+		await getGifs(query, undefined);
 	}
 
 	async function moreGifs() {

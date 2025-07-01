@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { exit } from '@tauri-apps/plugin-process';
-	import Dialog from '@/core/components/Dialog/Dialog.svelte';
-	let elDialog;
-	let closeDialog;
-	let dialogData = {
+	import Dialog, { type IDialogData } from '@/core/components/Dialog/Dialog.svelte';
+	let elDialog: Dialog;
+	let dialogData: IDialogData = {
 		title: 'Exit application',
 		body: 'Would you really like to exit the application?',
 		icon: 'img/exit.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickButton, expand: true },
-			{ img: 'img/cross.svg', text: 'No', onClick: () => closeDialog(), expand: true },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, expand: true },
+			{ img: 'img/cross.svg', text: 'No', onClick: clickNo, expand: true },
 		],
 	};
 
@@ -17,10 +16,14 @@
 		elDialog?.open();
 	}
 
-	async function clickButton() {
+	async function clickYes() {
 		console.log('Clicked on Yes button');
 		await exit();
 	}
+
+	async function clickNo() {
+		elDialog?.close();
+	}
 </script>
 
-<Dialog data={dialogData} bind:close={closeDialog} bind:this={elDialog} />
+<Dialog data={dialogData} bind:this={elDialog} />

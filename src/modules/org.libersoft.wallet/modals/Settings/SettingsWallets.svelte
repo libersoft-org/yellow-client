@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { module } from '../../module.ts';
-	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
-	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
+	import { wallets, type IAddress, type IWallet } from '../../wallet.ts';
 	import Address from './SettingsWalletsAddress.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -15,26 +14,35 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import { Mnemonic } from 'ethers';
-	let elModalPhrase;
-	let accordion;
+	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
+	import ModalWalletsEdit from '../Wallets/WalletsEdit.svelte';
+	import ModalAddressAdd from '../Wallets/WalletsAddressAdd.svelte';
+	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
+	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
+	import ModalRecover from '../Wallets/WalletsRecover.svelte';
+	let selectedWallet: IWallet | undefined;
+	let selectedAddress: IAddress | undefined;
+	let accordion: Accordion | undefined;
+	let elModalWalletsAdd: Modal | undefined;
+	let elModalRecover: Modal | undefined;
+	let elModalWalletsEdit: Modal | undefined;
+	let elDialogWalletsDel: DialogWalletsDel | undefined;
+	let elModalAddressAdd: Modal | undefined;
+	let elDialogAddressDel: DialogAddressDel | undefined;
 
-	function afterAddWallet() {
-		accordion.handleClick(wallets.length - 1, true);
+	function delWallet(wallet: IWallet) {
+		selectedWallet = wallet;
+		elDialogWalletsDel?.open();
 	}
 
-	function recover() {
-		let phrase = window.prompt('Enter your recovery phrase');
-		if (!phrase) return;
-		let mn = Mnemonic.fromPhrase(phrase);
-		addWallet(mn, ' - recovered');
-		afterAddWallet();
+	function editWallet(wallet: IWallet) {
+		selectedWallet = wallet;
+		elModalWalletsEdit?.open();
 	}
-	function addAddressWithIndex(wallet) {
-		let index = window.prompt('Enter the index');
-		if (!index) return;
-		addAddress(wallet, index);
-		wallet.addresses = [...wallet.addresses];
+
+	function addAddress(wallet: IWallet) {
+		selectedWallet = wallet;
+		elModalAddressAdd?.open();
 	}
 
 	function renameAddress(wallet, address) {
@@ -54,24 +62,10 @@
 		);
 	}
 
-	function deleteAddress(w, address) {
-		address.deleted = true;
-		// wallet.addresses = [...wallet.addresses]
-		wallets.update(ws =>
-			ws.map(item =>
-				item === w
-					? {
-							...item,
-							addresses: [...w.addresses],
-							selected_address_index: w.indexNum,
-						}
-					: item
-			)
-		);
-	}
-
-	function closeModal() {
-		elModalPhrase.close();
+	function deleteAddress(wallet, address) {
+		selectedWallet = wallet;
+		selectedAddress = address;
+		elDialogAddressDel?.open();
 	}
 </script>
 
@@ -89,8 +83,8 @@
 </style>
 
 <ButtonBar equalize>
-	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Create wallet" onClick={() => elModalPhrase?.open()} />
-	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
+	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => elModalWalletsAdd?.open()} />
+	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => elModalRecover?.open()} />
 </ButtonBar>
 {#if $wallets.length > 0}
 	<div class="bold">My wallets:</div>
@@ -102,26 +96,27 @@
 	{#snippet content(walleta)}
 		<div class="wallet">
 			<ButtonBar>
+				<Button img="img/edit.svg" text="Edit wallet name" onClick={() => editWallet(walleta)} />
 				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress(walleta)} />
-				<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address by index" onClick={() => addAddressWithIndex(walleta)} />
+				<Button img="img/del.svg" text="Delete wallet" onClick={() => delWallet(walleta)} />
 			</ButtonBar>
 			<Table>
 				<Thead>
 					<Th>Index</Th>
-					<Th>Alias</Th>
+					<Th>Name</Th>
 					<Th>Address</Th>
 					<Th>Action</Th>
 				</Thead>
 				<Tbody>
-					{#each walletAddresses(walleta) as address}
+					{#each walleta.addresses as address}
 						<TbodyTr>
 							<Td title="Index">{address.index}</Td>
-							<Td title="Alias">{address.name}</Td>
+							<Td title="Name">{address.name}</Td>
 							<Td title="Address"><Address address={address.address} /></Td>
 							<Td title="Action">
 								<TableActionItems>
 									<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
-									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Hide" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
+									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
 								</TableActionItems>
 							</Td>
 						</TbodyTr>
@@ -131,4 +126,13 @@
 		</div>
 	{/snippet}
 </Accordion>
-<Modal title="New wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalPhrase} />
+<Modal title="Add a new wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalWalletsAdd} />
+<Modal title="Recover wallet from seed" body={ModalRecover} bind:this={elModalRecover} />
+<Modal title="Edit wallet name" body={ModalWalletsEdit} params={{ wallet: selectedWallet }} bind:this={elModalWalletsEdit} />
+<Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: selectedWallet }} width="600px" bind:this={elModalAddressAdd} />
+{#if selectedWallet && selectedAddress}
+	<DialogAddressDel wallet={selectedWallet} address={selectedAddress} bind:this={elDialogAddressDel} />
+{/if}
+{#if selectedWallet}
+	<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
+{/if}

@@ -79,10 +79,10 @@
 					{/each}
 				</Select>
 				{#if $selected_theme_index > 1}
-					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => setSettingsSection('edit-theme')} data-testid="theme-edit-button" />
-					<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={delete_current_theme} data-testid="theme-delete-button" />
+					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => setSettingsSection('edit-theme')} testId="theme-edit-button" />
+					<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={delete_current_theme} testId="theme-delete-button" />
 				{/if}
-				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => create_new_theme()} data-testid="theme-add-button" />
+				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => create_new_theme()} testId="theme-add-button" />
 			</Td>
 		</TbodyTr>
 	</Tbody>

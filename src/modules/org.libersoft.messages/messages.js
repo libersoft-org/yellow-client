@@ -693,6 +693,7 @@ export function sendMessage(text, format, acc = null, conversation = null) {
 	const _selectedConversation = get(selectedConversation);
 	if (_selectedConversation && _selectedConversation.id === conversation.id) addMessagesToMessagesArray([message], 'send_message');
 	updateConversationsArray(acc, message);
+	return message.uid;
 }
 
 export async function deleteMessage(message) {

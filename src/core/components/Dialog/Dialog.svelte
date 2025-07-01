@@ -5,23 +5,24 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
-		data?: DialogData;
+		data?: IDialogData;
 		width?: string;
 	}
-	interface DialogData {
+	export interface IDialogData {
 		title?: string;
 		body?: string | Snippet;
 		icon?: string;
-		buttons?: DialogButton[];
+		buttons?: IDialogButton[];
 	}
-	interface DialogButton {
-		text: string;
+	export interface IDialogButton {
+		img?: string;
+		text?: string;
 		onClick?: (e: Event) => void;
 		expand?: boolean;
 		testId?: string;
 	}
-	let elModal: Modal;
 	let { data, width }: Props = $props();
+	let elModal: Modal;
 
 	export function open() {
 		elModal?.open();
@@ -35,7 +36,8 @@
 <style>
 	.top {
 		display: flex;
-		gap: 20px;
+		align-items: flex-start;
+		gap: 10px;
 	}
 </style>
 

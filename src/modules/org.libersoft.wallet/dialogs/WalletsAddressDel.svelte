@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { addressBook, type IAddressBookItem } from '../wallet.ts';
+	import { wallets, type IAddress, type IWallet } from '../wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
-		item: IAddressBookItem;
+		wallet: IWallet;
+		address: IAddress;
 	}
-	let { item }: Props = $props();
+	let { wallet, address }: Props = $props();
 	let elDialog;
 	let dialogData = {
-		title: 'Delete item from address book',
+		title: 'Delete address from wallet',
 		body: question,
 		icon: 'img/del.svg',
 		buttons: [
@@ -17,7 +18,7 @@
 	};
 
 	function clickYes() {
-		addressBook.set($addressBook.filter(i => i.guid !== item.guid));
+		wallets.update(ws => ws.map(item => (item === wallet ? { ...item, addresses: (item.addresses ?? []).filter(a => a.index !== address.index) } : item)));
 		elDialog?.close();
 	}
 
@@ -26,21 +27,24 @@
 	}
 
 	export function open() {
-		console.log(item);
 		elDialog?.open();
 	}
 </script>
 
 {#snippet question()}
-	<div>Would you like to delete this item from address book?</div>
+	<div>Would you like to delete this address from your wallet?</div>
 	<br />
 	<div>
+		<span class="bold">Index:</span>
+		<span>{address.index}</span>
+	</div>
+	<div>
 		<span class="bold">Name:</span>
-		<span>{item.name}</span>
+		<span>{address.name}</span>
 	</div>
 	<div>
 		<span class="bold">Address:</span>
-		<span>{item.address}</span>
+		<span>{address.address}</span>
 	</div>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />

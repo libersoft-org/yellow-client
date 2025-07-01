@@ -9,13 +9,13 @@
 		close: () => void;
 	}
 	let { close }: Props = $props();
-	const MessageBar = getContext('MessageBar');
+	const MessageBar = getContext('MessageBar') as { sendMessageHtml: (text: string) => void } | undefined;
 	let text = $state('');
 	let isSideBySide = $state(true);
 
 	function send() {
 		console.log('send');
-		MessageBar.sendMessageHtml(text);
+		MessageBar?.sendMessageHtml(text);
 		close();
 	}
 </script>

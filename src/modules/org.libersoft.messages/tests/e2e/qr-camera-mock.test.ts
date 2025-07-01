@@ -47,8 +47,10 @@ test.describe('QR Code Camera Mock Tests', () => {
 		});
 	});
 
-	test('QR scanner interface with mock camera displays correctly', async ({ page }) => {
+	test('QR scanner interface with mock camera displays correctly', async ({ page, browserName }, testInfo) => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 		const helper = new QRTestHelper(page);
 		await helper.setupQRTesting();
 
@@ -160,8 +162,10 @@ test.describe('QR Code Camera Mock Tests', () => {
 		expect(scannedData).toContain('complex+test@example.com');
 	});
 */
-	test('Switch between JSON and QR tabs maintains state', async ({ page }) => {
+	test('Switch between JSON and QR tabs maintains state', async ({ page, browserName }, testInfo) => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 		const helper = new QRTestHelper(page);
 		await helper.setupQRTesting();
 

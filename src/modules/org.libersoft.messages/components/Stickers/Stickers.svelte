@@ -19,7 +19,7 @@
 	async function setTab(e, name) {
 		activeTabName = name;
 		await tick();
-		view.onShow?.();
+		view?.onShow?.();
 	}
 
 	onMount(async () => {
@@ -87,7 +87,7 @@
 		{#if $stickerLibraryUpdaterState.updating}
 			<div class="loading">
 				<div class="status">{$stickerLibraryUpdaterState.status}</div>
-				<ProgressBar value={$stickerLibraryUpdaterState.progress} color="#db0" moving />
+				<ProgressBar value={$stickerLibraryUpdaterState.progress} moving />
 			</div>
 		{/if}
 		{#if $stickerLibraryUpdaterState.error}

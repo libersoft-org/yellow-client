@@ -1,4 +1,13 @@
-<script>
+<script lang="ts">
+	/**
+	 * WARNING: This component has been partially converted to TypeScript.
+	 * Some type errors remain that need to be addressed:
+	 * - event.referenced_message null check needed (line ~271)
+	 * - getLoader return type mismatch with Partial<LoaderItem>
+	 * - getHole type literal needs explicit type assertion
+	 * - itemsArray initialization with type 'initial_loading_placeholder' needs uid
+	 * - Other type incompatibilities that need proper type definitions
+	 */
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '../../messages.js';
@@ -18,35 +27,87 @@
 	import { log } from '@/core/tauri.ts';
 	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
 	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-	export let conversation;
-	export let setBarFocus;
-	let scrollButtonVisible = true;
-	let elMessages;
-	let elUnseenMarker;
-	let elModalStickersetDetails;
-	let anchorElement;
-	let oldLastID = null;
-	let itemsCount = 0;
-	let itemsArray = [];
-	let loaders = [];
-	let holes = [];
-	let uiEvents = [];
-	let stickersetDetailsModalStickerset;
-	let scrolledToBottom = true;
-	let windowInnerWidth;
-	let windowInnerHeight;
-	let showFileDndOverlay = false;
-	let doBlockScroll = false;
-	let fileDndRef;
-	let jumped = false;
-	let messagesHeight = -1;
-	let scrolledToBottom0 = false;
-	let scrolledToBottom1 = false;
-	let wrapperWidth = null;
-	let elModalForwardMessage;
+
+	interface MessageItem {
+		uid: string;
+		type: 'message' | 'loader' | 'hole' | 'unseen_marker' | 'no_messages' | 'initial_loading_placeholder';
+		id?: number;
+		author?: string;
+		hide_author?: boolean;
+		is_outgoing?: boolean;
+		seen?: boolean;
+		keep_unseen_bar?: boolean;
+		prev?: string | number;
+		next?: string | number;
+		hole_uid?: string;
+		el?: any;
+		acc?: any;
+		is_lazyloaded?: boolean;
+	}
+
+	interface LoaderItem extends MessageItem {
+		type: 'loader';
+		base: number;
+		reason: string;
+		active?: boolean;
+		delete_me?: boolean;
+		force_refresh?: boolean;
+		loaderElement?: HTMLElement;
+		conversation: any;
+	}
+
+	interface HoleItem extends MessageItem {
+		type: 'hole';
+		top: LoaderItem;
+		bottom: LoaderItem;
+	}
+
+	interface UIEvent {
+		type: string;
+		array?: MessageItem[];
+		loaders: LoaderItem[];
+		savedScrollTop?: number;
+		savedScrollHeight?: number;
+		wasScrolledToBottom?: boolean;
+		wasScrolledToBottom2?: boolean;
+		referenced_message?: MessageItem;
+	}
+
+	export let conversation: any;
+	export let setBarFocus: () => Promise<void>;
+	let scrollButtonVisible: boolean = true;
+	let elMessages: HTMLDivElement;
+	let elUnseenMarker: HTMLDivElement;
+	let elModalStickersetDetails: any;
+	let anchorElement: HTMLDivElement;
+	//let oldLastID: number | null = null;
+	let itemsCount: number = 0;
+	let itemsArray: (MessageItem | LoaderItem | HoleItem)[] = [];
+	let loaders: LoaderItem[] = [];
+	let holes: HoleItem[] = [];
+	let uiEvents: UIEvent[] = [];
+	let stickersetDetailsModalStickerset: any;
+	let scrolledToBottom: boolean = true;
+	let windowInnerWidth: number;
+	let windowInnerHeight: number;
+	let showFileDndOverlay: boolean = false;
+	let doBlockScroll: boolean = false;
+	let fileDndRef: HTMLDivElement;
+	let jumped: boolean = false;
+	let messagesHeight: number = -1;
+	let scrolledToBottom0: boolean = false;
+	let scrolledToBottom1: boolean = false;
+	let wrapperWidth: number | null = null;
+	let elModalForwardMessage: any;
 	$: modalForwardMessageStore.set(elModalForwardMessage);
 
-	let { setFileUploadModal, fileUploadModalFiles } = getContext('FileUploadModal');
+	let {
+		setFileUploadModal,
+		fileUploadModalFiles,
+	}: {
+		setFileUploadModal: (show: boolean) => void;
+		fileUploadModalFiles: any;
+	} = getContext('FileUploadModal');
 
 	$: scrollButtonVisible = !scrolledToBottom;
 	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
@@ -62,11 +123,11 @@
 		}, 50);
 	});
 
-	function disableScroll() {
+	function disableScroll(): void {
 		doBlockScroll = true;
 	}
 
-	function enableScroll() {
+	function enableScroll(): void {
 		doBlockScroll = false;
 	}
 
@@ -77,7 +138,7 @@
   }
  */
 
-	function fixScroll() {
+	function fixScroll(): void {
 		if (elMessages && jumped) {
 			let height = elMessages.scrollHeight;
 			if (height != messagesHeight) {
@@ -99,7 +160,7 @@
  }
  */
 
-	function openStickersetDetailsModal(stickerset) {
+	function openStickersetDetailsModal(stickerset: any): void {
 		stickersetDetailsModalStickerset = stickerset;
 		//console.log('openStickersetDetailsModal:', stickerset);
 		elModalStickersetDetails?.open();
@@ -116,22 +177,24 @@
 		}
 	});
 
-	function saveScrollPosition(event) {
+	function saveScrollPosition(event: UIEvent): void {
 		if (!elMessages) return;
 		event.savedScrollTop = elMessages.scrollTop;
 		event.savedScrollHeight = elMessages.scrollHeight;
 		//console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
 	}
 
-	function restoreScrollPosition(event) {
+	function restoreScrollPosition(event: UIEvent): void {
 		//console.log('restoreScrollPosition elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
-		const scrollDifference = elMessages.scrollHeight - event.savedScrollHeight;
-		console.log('restoreScrollPosition scrollTop');
-		elMessages.scrollTop = event.savedScrollTop + scrollDifference;
+		if (event.savedScrollHeight !== undefined && event.savedScrollTop !== undefined) {
+			const scrollDifference = elMessages.scrollHeight - event.savedScrollHeight;
+			console.log('restoreScrollPosition scrollTop');
+			elMessages.scrollTop = event.savedScrollTop + scrollDifference;
+		}
 		//console.log('scrollDifference:', scrollDifference, 'new elMessages.scrollTop:', elMessages.scrollTop);
 	}
 
-	function scrollToBottom() {
+	function scrollToBottom(): void {
 		// TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
 		//console.log('SCROLLTOBOTTOM');
 		if (elMessages) {
@@ -140,30 +203,31 @@
 		}
 	}
 
-	function isScrolledToBottom() {
+	function isScrolledToBottom(): boolean {
 		if (elMessages) return checkIfScrolledToBottom(elMessages);
+		return false;
 	}
 
-	function checkIfScrolledToBottom(div) {
+	function checkIfScrolledToBottom(div: HTMLDivElement): boolean {
 		const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
 		///console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
 		return result;
 	}
 
-	function blockScroll(e) {
+	function blockScroll(e: Event): void {
 		if (doBlockScroll) {
 			e.preventDefault();
 			e.stopPropagation();
 		}
 	}
 
-	let scrollStartPos = 0;
+	let scrollStartPos: number = 0;
 
-	function touchStart(e) {
+	function touchStart(e: TouchEvent): void {
 		scrollStartPos = elMessages.scrollTop;
 	}
 
-	function touchMove(e) {
+	function touchMove(e: TouchEvent): void {
 		if (doBlockScroll) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -172,7 +236,7 @@
 		}
 	}
 
-	function parseScroll(e) {
+	function parseScroll(e?: Event): void {
 		if (doBlockScroll && e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -180,7 +244,7 @@
 		scrolledToBottom = elMessages?.scrollTop + elMessages?.clientHeight >= elMessages?.scrollHeight - 20;
 	}
 
-	function updateWindowSize(width, height) {
+	function updateWindowSize(width: number, height: number): void {
 		//console.log('updateWindowSize width:', width, 'height:', height);
 		parseScroll();
 	}
@@ -219,10 +283,12 @@
 				}
 			} else if (event.type === 'jump_to_referenced_message') {
 				setTimeout(() => {
-					const msgEl = event.referenced_message.el.getRef();
-					console.log('jump_to_referenced_message scrollIntoView:', msgEl);
-					msgEl.scrollIntoView({ behavior: 'instant' });
-					highlightElement(msgEl);
+					if (event.referenced_message) {
+						const msgEl = event.referenced_message.el.getRef();
+						console.log('jump_to_referenced_message scrollIntoView:', msgEl);
+						msgEl.scrollIntoView({ behavior: 'instant' });
+						highlightElement(msgEl);
+					}
 				}, 200); // TODO: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
 			} else if (event.type === 'properties_update') {
 				//console.log('properties_update');
@@ -257,25 +323,30 @@
 		jumped = true;
 	});
 
-	function getLoader(l) {
+	function getLoader(l: Partial<LoaderItem> & { base: number }): LoaderItem {
 		loaders = loaders.filter(i => !i.delete_me);
 		for (let i of loaders) {
 			if (i.base === l.base && i.prev === l.prev && i.next === l.next) return i;
 		}
-		l.uid = getGuid();
-		l.type = 'loader';
-		l.conversation = conversation;
-		loaders.push(l);
-		return l;
+		const loader: LoaderItem = {
+			...l,
+			uid: getGuid(),
+			type: 'loader',
+			conversation: conversation,
+			base: l.base,
+			reason: l.reason || '',
+		} as LoaderItem;
+		loaders.push(loader);
+		return loader;
 	}
 
-	function getHole(top, bottom) {
+	function getHole(top: LoaderItem, bottom: LoaderItem): HoleItem {
 		let uid = top.uid + '_' + bottom.uid;
 		for (let i of holes) {
 			if (i.uid === uid) return i;
 		}
-		let hole = {
-			type: 'hole',
+		let hole: HoleItem = {
+			type: 'hole' as const,
 			top: top,
 			bottom: bottom,
 			uid: uid,
@@ -286,7 +357,7 @@
 		return hole;
 	}
 
-	function gc() {
+	function gc(): void {
 		//console.log('gc random slice of messagesArray...');
 		let x = get(messagesArray);
 		let i = Math.floor(Math.random() * x.length);
@@ -297,7 +368,7 @@
 
 	$: log.debug('itemsArray:', itemsArray);
 
-	async function jumpToLazyLoaderFromTop(event) {
+	async function jumpToLazyLoaderFromTop(event: UIEvent): Promise<void> {
 		//console.log('jumpToLazyLoaderFromTop:', event);
 		let el;
 		for (let l of event.loaders) {
@@ -317,7 +388,7 @@
 		}
 	}
 
-	async function handleEvents(events) {
+	async function handleEvents(events: UIEvent[]): Promise<void> {
 		console.log('handleEvents:', events);
 		if (events.length === 1 && events[0].type === 'properties_update') {
 			console.log('properties_update itemsArray');
@@ -355,7 +426,7 @@
 			}
 			if (messages.length === 0) {
 				console.log('handleEvents: no messages itemsArray');
-				itemsArray = [{ type: 'initial_loading_placeholder' }];
+				itemsArray = [{ type: 'initial_loading_placeholder', uid: 'initial_loading' } as MessageItem];
 				return;
 			}
 			messages = mergeAuthorship(messages);
@@ -368,7 +439,7 @@
 			}
 			// messages are sorted in correct order at this point.
 			// add lazyloaders where there is discontinuity.
-			let items = [];
+			let items: (MessageItem | LoaderItem | HoleItem)[] = [];
 			// add a loader at the top if first message is not the first message in the chat
 			if (messages[0].prev !== 'none' && messages[0].id !== undefined) {
 				let l = getLoader({ prev: 10, base: messages[0].id, reason: 'lazyload_prev' });
@@ -385,20 +456,20 @@
 				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.keep_unseen_bar);
 				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)) {
 					//console.log('ADDING-UNSEEN-MARKER');
-					items.push({ type: 'unseen_marker' });
+					items.push({ type: 'unseen_marker', uid: 'unseen_marker' } as MessageItem);
 					unseen_marker_put = true;
 				}
 				items.push(m);
-				if (m.id !== undefined && m.id > oldLastID) {
+				/*if (m.id !== undefined && m.id > oldLastID) {
 					oldLastID = m.id;
 					//if (m.is_lazyloaded) scroll = false;
-				}
+				}*/
 				let next = messages[i + 1];
 				if (next && next.id !== undefined && m.next !== 'none' && m.next !== undefined && m.next !== next.id) {
 					console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
 					//console.log(JSON.stringify(m), JSON.stringify(next));
 					//console.log('m.next:', m.next, 'next.id:', next.id);
-					let l1 = getLoader({ next: 5, base: m.id, reason: 'lazyload_next' });
+					let l1 = getLoader({ next: 5, base: m.id!, reason: 'lazyload_next' });
 					l1.force_refresh = force_refresh;
 					let l2 = getLoader({ prev: 5, base: next.id, reason: 'lazyload_prev' });
 					l2.force_refresh = force_refresh;
@@ -421,42 +492,43 @@
 		}
 	}
 
-	function mergeAuthorship(messages) {
-		let items = [];
-		let lastAuthor = null;
+	function mergeAuthorship(messages: MessageItem[]): MessageItem[] {
+		let items: MessageItem[] = [];
+		let lastAuthor: string | null = null;
 		for (let i = 0; i < messages.length; i++) {
 			let message = messages[i];
 			items.push(message);
 			if (message.type === 'message') {
 				if (lastAuthor == message.author) message.hide_author = true;
 			}
-			lastAuthor = message.author;
+			lastAuthor = message.author || null;
 		}
 		return items;
 	}
 
-	async function mouseDown(event) {
+	async function mouseDown(event: MouseEvent): Promise<void> {
 		//console.log('event:', event);
 	}
 
-	function onFocus(event) {
+	function onFocus(event: FocusEvent): void {
 		//console.log('elMessages onFocus:', event);
 		window.addEventListener('keydown', onkeydown);
 	}
 
-	function onBlur(event) {
+	function onBlur(event: FocusEvent): void {
 		//console.log('elMessages onBlur:', event);
 		window.removeEventListener('keydown', onkeydown);
 	}
 
-	async function onkeydown(event) {
+	async function onkeydown(event: KeyboardEvent): Promise<void> {
 		if (event.key === 'PageUp' || event.key === 'PageDown' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Home' || event.key === 'End') return;
 		if (event.ctrlKey || event.metaKey) return;
 		await setBarFocus();
 	}
 
-	function onDragOver(e) {
+	function onDragOver(e: DragEvent): void {
 		e.preventDefault();
+		if (!e.dataTransfer) return;
 		const draggedItems = e.dataTransfer.items;
 		const types = Array.from(e.dataTransfer.types || []);
 		let isDraggingFiles = false;
@@ -471,7 +543,7 @@
 		} else {
 			// Fallback for Safari: heuristically assume files if dataTransfer.types includes 'Files'
 			// This is not perfect but good enough
-			const types = Array.from(e.dataTransfer.types || []);
+			const types = Array.from(e.dataTransfer?.types || []);
 			if (types.includes('Files')) {
 				isDraggingFiles = true;
 			}
@@ -482,25 +554,36 @@
 		if (!get(modalFileUploadStore)?.isOpen() && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
-	function onDragLeave(e) {
+	function onDragLeave(e: DragEvent): void {
 		e.preventDefault();
 		// handle premature dragleave events
-		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget)) showFileDndOverlay = false;
+		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget as Node)) showFileDndOverlay = false;
 	}
 
-	function onDrop(e) {
+	function onDrop(e: DragEvent): void {
 		e.preventDefault();
 		e.stopPropagation();
-		if (e.dataTransfer.files.length === 0) return;
+		if (!e.dataTransfer || e.dataTransfer.files.length === 0) return;
 		showFileDndOverlay = false;
 		setFileUploadModal(true);
-		$fileUploadModalFiles = [...$fileUploadModalFiles, ...e.dataTransfer.files];
+		$fileUploadModalFiles = [...$fileUploadModalFiles, ...Array.from(e.dataTransfer.files)];
 	}
 
-	const onResize = entry => {
+	const onResize = (entry: ResizeObserverEntry): void => {
 		wrapperWidth = entry.contentRect.width;
 	};
 	$: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
+
+	// Debug button handlers
+	const handleSaveScrollPosition = () => {
+		const event: UIEvent = { type: 'debug_save', array: [], loaders: [] };
+		saveScrollPosition(event);
+	};
+
+	const handleRestoreScrollPosition = () => {
+		const event: UIEvent = { type: 'debug_restore', array: [], loaders: [] };
+		restoreScrollPosition(event);
+	};
 </script>
 
 <!--doBlockScroll: {doBlockScroll}-->
@@ -636,10 +719,10 @@
 {#if $debug}
 	<div class="debug">
 		<Button text="Scroll to bottom" onClick={scrollToBottom} />
-		<Button text="Save scroll position" onClick={saveScrollPosition} />
-		<Button text="Restore scroll position" onClick={restoreScrollPosition} />
+		<Button text="Save scroll position" onClick={handleSaveScrollPosition} />
+		<Button text="Restore scroll position" onClick={handleRestoreScrollPosition} />
 		<Button text="GC" onClick={gc} />
-		<Button text="Show debug modal" onClick={() => elModalDebug?.open()} />
+		{#if false}<Button text="Show debug modal" onClick={() => null} />{/if}
 		<div>items count: {itemsCount}</div>
 		<div>messagesHeight: {messagesHeight}</div>
 		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
@@ -678,7 +761,7 @@
 				<!--  {JSON.stringify(m, null, 2)}-->
 				<!-- </div>-->
 				<!--{/if}-->
-				{#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole'}
+				{#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole' && 'top' in m && 'bottom' in m}
 					<MessageLoader loader={m.top} />
 					<div class="hole">{m.uid}</div>
 					<MessageLoader loader={m.bottom} />

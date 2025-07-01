@@ -1,23 +1,38 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
+	import { generateMnemonic, addWallet, wallets } from '../../wallet.ts';
+	import { module } from '../../module.ts';
+	import type { Mnemonic } from 'ethers';
+	import Form from '@/core/components/Form/Form.svelte';
+	import Label from '@/core/components/Label/Label.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import QRCode from 'qrcode';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import Table from '@/core/components/Table/Table.svelte';
-	import Tbody from '@/core/components/Table/TableTbody.svelte';
-	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import { generateMnemonic, addWallet } from '../../wallet.ts';
-	import { module } from '../../module.ts';
-	export let close;
-	let mnemonic = {};
-	let phrase = '';
-	let phraseArr = [];
-	let qrCodeData = '';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	//import Table from '@/core/components/Table/Table.svelte';
+	//import Tbody from '@/core/components/Table/TableTbody.svelte';
+	//import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
+	//import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	interface Props {
+		close?: () => void;
+	}
+	let { close }: Props = $props();
+	let name: string | undefined = $state();
+	let mnemonic: Mnemonic | undefined = $state();
+	let phrase: string = $state('');
+	let copied: boolean = $state(false);
+	//let phraseArr: string[] = $state([]);
+	let qrCodeData: string = $state('');
 
-	$: phraseArr = phrase.split(' ');
+	/*
+	$effect(() => {
+		phraseArr = phrase.split(' ');
+	});
+ */
 
 	onMount(() => {
+		name = 'My wallet ' + ($wallets.length + 1);
 		regenerate();
 	});
 
@@ -28,23 +43,35 @@
 	}
 
 	function regenerate() {
-		console.log('REGENERATE');
 		mnemonic = generateMnemonic();
-		phrase = mnemonic.phrase;
+		phrase = mnemonic?.phrase || '';
 		generateQRCode();
+	}
+
+	function copy() {
+		navigator.clipboard
+			.writeText(phrase)
+			.then(() => {
+				copied = true;
+				setTimeout(() => (copied = false), 1000);
+			})
+			.catch(err => console.error('Error while copying to clipboard', err));
 	}
 
 	function save() {
 		// TODO: password protect the key
-		console.log('SAVE');
-		addWallet(mnemonic);
-		close();
+		if (mnemonic) addWallet(mnemonic, name);
+		if (close) close();
 	}
 
 	function print() {
 		// TODO: print preview and print
 		console.log('PRINT');
 		const newWindow = window.open('', '_blank');
+		if (!newWindow) {
+			console.error('Failed to open print window');
+			return;
+		}
 		newWindow.document.write(`
     <!DOCTYPE html>
     <html lang="en">
@@ -117,14 +144,37 @@
 		display: flex;
 		justify-content: center;
 	}
+
+	.phrase {
+		display: flex;
+		text-align: justify;
+		gap: 10px;
+		border-radius: 10px;
+		padding: 10px;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
+	}
 </style>
 
-{#if qrCodeData}
-	<div>Use the following QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
-	<div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
-{/if}
+<Form onSubmit={save}>
+	<Label text="Wallet name">
+		<Input type="text" bind:value={name} />
+	</Label>
+</Form>
+<Label text="Seed phrase">
+	<div class="phrase">
+		<span>{copied ? 'Copied!' : phrase}</span>
+		{#if !copied}
+			<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="20px" padding="5px" onClick={copy} />
+		{/if}
+	</div>
+</Label>
 <div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
-<Table breakpoint="0">
+{#if qrCodeData}
+	<div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
+	<div>Use this QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
+{/if}
+<!--<Table breakpoint="0">
 	<Tbody>
 		{#each Array(6) as _, index}
 			<TbodyTr>
@@ -135,7 +185,7 @@
 			</TbodyTr>
 		{/each}
 	</Tbody>
-</Table>
+</Table>-->
 <ButtonBar expand>
 	<Button img="img/save.svg" text="Save" onClick={save} />
 	<Button img="modules/{module.identifier}/img/print.svg" text="Print" onClick={print} />

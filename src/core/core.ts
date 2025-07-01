@@ -21,7 +21,6 @@ export { registerModule };
 
 // Import socket functionality
 import { send, sendAsync } from './socket.ts';
-import { hide } from '@floating-ui/dom';
 export { send, sendAsync };
 
 export function init(): () => void {

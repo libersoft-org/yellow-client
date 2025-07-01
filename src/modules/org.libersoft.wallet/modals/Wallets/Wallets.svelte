@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, walletAddresses, selectAddress } from '../../wallet.ts';
+	import { wallets, selectAddress } from '../../wallet.ts';
 	import { module } from '../../module.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -15,8 +15,8 @@
 		close?: () => void;
 	}
 	let { close }: Props = $props();
-	let elModalWallets;
-	let filter = $state('');
+	let elModalWallets: Modal | undefined;
+	let filter: string | undefined = $state();
 
 	function clickSelectAddress(wallet, address) {
 		console.log('SETTING ADDRESS', wallet, address);
@@ -31,7 +31,7 @@
 	{#snippet content(wallet)}
 		<Table breakpoint="0">
 			<Tbody>
-				{#each walletAddresses(wallet) as address}
+				{#each wallet.addresses as address}
 					<Clickable onClick={() => clickSelectAddress(wallet, address)}>
 						<TbodyTr>
 							<Td>{address.index}</Td>

@@ -9,22 +9,20 @@
 		header?: Snippet<[any]> | null;
 		expandAllOnDesktop?: boolean;
 		mode?: 'single' | 'multiple';
+		testId?: string;
 	}
-	let { items, content, header, expandAllOnDesktop = false, mode = 'single' }: Props = $props();
-	let activeIndices = $state<number[]>([]);
-	const isSingleMode = mode === 'single';
+	let { items, content, header, expandAllOnDesktop = false, mode = 'single', testId = '' }: Props = $props();
+	let activeIndices: number[] = $state<number[]>([]);
+	const isSingleMode: boolean = mode === 'single';
 
 	export async function handleClick(index: number, newState: boolean | undefined = undefined) {
 		console.debug('Accordion clicked', index, newState);
-		let isOpen = activeIndices.includes(index);
-		const el = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
+		let isOpen: boolean = activeIndices.includes(index);
+		const el: HTMLElement = document.querySelector(`.content[data-index="${index}"]`) as HTMLElement;
 		if (!el) return;
 		if (newState !== undefined) {
-			if (newState) {
-				isOpen = false;
-			} else {
-				isOpen = true;
-			}
+			if (newState) isOpen = false;
+			else isOpen = true;
 			return;
 		}
 		// CLOSE
@@ -199,8 +197,9 @@
 
 <div class="accordion">
 	{#each items as item, index}
+		{@const icon_action = activeIndices.includes(index) ? 'collapse' : 'expand'}
 		<div class="item {activeIndices.includes(index) ? 'is-expanded' : ''}">
-			<Clickable onClick={() => handleClick(index)}>
+			<Clickable onClick={() => handleClick(index)} data-testid={`${testId}-accordion-${icon_action}-${index}`}>
 				<div class="header">
 					<div class="title">{item.name}</div>
 					{@render header?.(item)}

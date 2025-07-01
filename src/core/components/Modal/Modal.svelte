@@ -13,6 +13,7 @@
 		bottom?: Snippet;
 		params?: any;
 		max?: boolean;
+		resizable?: boolean;
 		optionalIcon?: {
 			img: string;
 			alt?: string;
@@ -26,7 +27,7 @@
 	}
 	let show = $state(false);
 	let maximized = $state(false);
-	let { testId = '', children, top, center, bottom, params, max, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
+	let { testId = '', children, top, center, bottom, params, max, resizable = false, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
 	let elModal: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -211,7 +212,7 @@
 		if (max) maximized ? restore() : maximize();
 	}
 
-	const dragableConfig = {
+	const draggableConfig = {
 		onDragStart,
 		onDragEnd,
 		gpuAcceleration: true,
@@ -273,7 +274,7 @@
 		border-radius: 10px;
 		box-shadow: var(--shadow);
 		background-color: var(--default-background);
-		/*transition: transform 0.4s ease;*/
+		transition: transform 0.4s ease;
 	}
 
 	:global(.modal.neodrag-dragging) .header {
@@ -302,10 +303,14 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
+		min-height: 40px;
 		font-weight: bold;
 		background-color: var(--disabled-background);
 		color: var(--disabled-foreground);
 		cursor: grab;
+		transition:
+			background-color 0.4s linear,
+			color 0.4s linear;
 	}
 
 	.modal .header.focused {
@@ -316,18 +321,19 @@
 	.modal .header .title {
 		display: flex;
 		align-items: center;
-		padding: 10px;
 		flex-grow: 1;
 		user-select: none;
 	}
 
-	.modal .header .title :global(.icon) {
-		padding: 0 10px 0 0 !important;
-	}
-
 	.modal .header .icons {
 		display: flex;
-		padding: 5px;
+	}
+
+	.modal .header .icons :global(.icon img) {
+		transition:
+			color 0.4s linear,
+			fill 0.4s linear,
+			filter 0.4s linear;
 	}
 
 	.modal .body {
@@ -365,26 +371,28 @@
 		{#if $isMobile}
 			<div class="overlay" onpointerdown={close}></div>
 		{/if}
-		<div class="modal {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elModal} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
+		<div class="modal {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elModal} use:draggable={draggableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
 				<div class="header" class:focused role="none" tabindex="-1" ondblclick={doubleClickHeader}>
 					{#if title}
 						<div class="title">
 							{#if optionalIcon}
-								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon img={optionalIcon.img} colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
+								<div class="icons">
+									<div onpointerdown={e => e.stopPropagation()}>
+										<Icon img={optionalIcon.img} colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
+									</div>
 								</div>
 							{/if}
-							<div>{title}</div>
+							<div style:padding-left={optionalIcon ? '0' : '10px'}>{title}</div>
 						</div>
 						<div class="icons">
 							{#if max}
 								<div onpointerdown={e => e.stopPropagation()}>
-									<Icon data-testid={testId + '-Modal-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="5px" onClick={() => (maximized ? restore() : maximize())} />
+									<Icon testId={testId + '-Modal-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="10px" onClick={() => (maximized ? restore() : maximize())} />
 								</div>
 							{/if}
 							<div onpointerdown={e => e.stopPropagation()}>
-								<Icon data-testid={testId + '-Modal-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="5px" onClick={close} />
+								<Icon testId={testId + '-Modal-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="10px" onClick={close} />
 							</div>
 						</div>
 					{/if}
@@ -394,7 +402,7 @@
 						params: <code>{JSON.stringify({ params })}</code>
 					{/if}
 					{#if typeof ModalBody === 'function'}
-						<ModalBody {close} {params} />
+						<ModalBody {params} {close} />
 					{/if}
 					{#if children}
 						{@render children?.()}

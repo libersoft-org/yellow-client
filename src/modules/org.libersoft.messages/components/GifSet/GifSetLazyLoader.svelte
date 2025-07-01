@@ -9,7 +9,7 @@
 	let observer;
 	let timer;
 	let observing: boolean = false;
-	let contentElement = getContext('contentElement');
+	let contentElement = getContext('contentElement') as Element | null;
 
 	onMount(async () => {
 		await tick();
@@ -37,5 +37,5 @@
 </script>
 
 <div bind:this={loaderElement}>
-	<Spinner bind:show={loading} />
+	<Spinner show={loading} />
 </div>

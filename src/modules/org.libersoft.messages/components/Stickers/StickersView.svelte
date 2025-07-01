@@ -17,12 +17,13 @@
 	let fulltext_search_element;
 	let fulltext_search_filter = $state('');
 	let animated_filter_dropdown_value = $state('all');
-	let scroll_to_top = $state(null);
+	let scroll_to_top: (() => Promise<void>) | null = $state(null);
 	$effect(() => console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value));
 	let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
 
 	let items = $state([]);
 	let loading = $state(true);
+	let elStickersSearchResults: StickersSearchResults | null = $state(null);
 
 	export function onShow() {
 		if (!get(isMobile)) fulltext_search_element.focus();
@@ -34,22 +35,24 @@
 
 	let query_store_unsubscribe;
 
-	$effect(async () => {
+	$effect(() => {
 		console.log('stickerset_favorites:', stickerset_favorites, '$sticker_server:', $sticker_server, 'fulltext_search_filter:', fulltext_search_filter, 'animated_filter:', animated_filter);
 	});
 
-	$effect(async () => live_query($sticker_server, fulltext_search_filter, animated_filter));
+	$effect(() => {
+		live_query($sticker_server, fulltext_search_filter, animated_filter);
+	});
 
 	async function live_query(server, fulltext_search_filter, animated_filter) {
 		loading = true;
 		untrack(async () => {
-			console.log('scroll_to_top:', scroll_to_top);
-			await scroll_to_top?.();
+			console.log('scroll_to_top:', elStickersSearchResults?.scroll_to_top);
+			await elStickersSearchResults?.scroll_to_top?.();
 		});
 		console.log('update_live_query', fulltext_search_filter, animated_filter);
 		let query_store = liveQuery(async () => {
 			loading = true;
-			let x = stickers_db.stickersets;
+			let x = (stickers_db as any).stickersets;
 			//console.log('x:', x);
 			// TODO: x is now a dexie Table. We have one shot at ordering or filtering it at db level: https://dexie.org/docs/Dexie/Dexie.[table]
 			x = x.orderBy('id');
@@ -79,7 +82,7 @@
 	async function maybe_trigger_auto_update(count) {
 		if (count === 0) {
 			console.log('No items found');
-			let state = window.stickerLibraryUpdaterState;
+			let state = (window as any).stickerLibraryUpdaterState;
 			console.log('state:', state);
 			if (state.updated_once) return;
 			await updateStickerLibrary();
@@ -125,5 +128,5 @@
 		<div class="status">No items found</div>
 	</div>
 {:else}
-	<StickersSearchResults bind:scroll_to_top {items} />
+	<StickersSearchResults {items} bind:this={elStickersSearchResults} />
 {/if}

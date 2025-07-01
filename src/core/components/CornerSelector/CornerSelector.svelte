@@ -4,7 +4,7 @@
 		value?: string;
 		disabled?: boolean;
 	}
-	let { value = 'top-right', disabled = false }: Props = $props();
+	let { value = $bindable('top-right'), disabled = false }: Props = $props();
 
 	function selectCorner(corner) {
 		if (disabled) return;

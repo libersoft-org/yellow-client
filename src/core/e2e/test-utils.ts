@@ -6,9 +6,9 @@ import type { Page } from '@playwright/test';
  */
 export async function closeWelcomeWizardModal(page: Page): Promise<void> {
 	const wizardCloseButton = page.getByTestId('welcome-wizard-Modal-close');
-	if (await wizardCloseButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-		await wizardCloseButton.click();
-	}
+	//if (await wizardCloseButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+	await wizardCloseButton.click();
+	//}
 }
 
 /**

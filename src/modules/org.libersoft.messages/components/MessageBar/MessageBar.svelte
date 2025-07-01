@@ -102,9 +102,12 @@
 		setBarFocus();
 	}
 
+	let lastSentMessageUid = null;
+
 	export async function doSendMessage(message, html) {
 		//console.log('doSendMessage', message);
-		await sendMessage(message, html ? 'html' : 'plaintext');
+		const uid = await sendMessage(message, html ? 'html' : 'plaintext');
+		lastSentMessageUid = uid;
 		await setBarFocus();
 		closeExpressions();
 	}
@@ -310,7 +313,7 @@
 </style>
 
 <Bar position="bottom" height="auto" bind:element={elMessageBar}>
-	<div class="message-bar">
+	<div class="message-bar" data-sent-message-uid={lastSentMessageUid}>
 		<div class="video-recorder-wrapper {showVideoRecorder ? 'open' : ''}">
 			<VideoRecorderContainer />
 		</div>
@@ -338,7 +341,7 @@
 				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorder = !showVideoRecorder)} />
 				<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
 			{:else}
-				<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
+				<Icon testId="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
 			{/if}
 			{#if $debug}
 				<Icon img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="20px" padding="0px" onClick={debugClickSendSplit} />
@@ -376,4 +379,4 @@
 {/if}
 
 <Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={$modalFileUploadStore} />
-<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="600px" height="500px" max />
+<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="600px" height="500px" max resizable />

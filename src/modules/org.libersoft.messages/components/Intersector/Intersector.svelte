@@ -1,7 +1,7 @@
 <script lang="ts">
 	let { items, item_slot } = $props();
-	let observer;
-	let itemsEls = $state([]);
+	let observer: IntersectionObserver | undefined;
+	let itemsEls: HTMLDivElement[] = $state([]);
 	let itemsById = {};
 	let heights = {};
 	let visibility = $state({});
@@ -16,9 +16,9 @@
 
 	function update_observers(itemsEls) {
 		if (observer) observer.disconnect();
-		observer = new IntersectionObserver(intersecting, { threshold: 0.01, delay: 10 });
+		observer = new IntersectionObserver(intersecting, { threshold: 0.01 });
 		itemsEls.forEach(itemEl => {
-			if (itemEl) observer.observe(itemEl);
+			if (itemEl && observer) observer.observe(itemEl);
 		});
 	}
 

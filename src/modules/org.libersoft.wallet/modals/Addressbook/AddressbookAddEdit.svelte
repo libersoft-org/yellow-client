@@ -1,51 +1,54 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	//import { onMount } from 'svelte';
 	import { isAddress } from 'ethers';
+	import { addressBook, type IAddressBookItem } from '../../wallet.ts';
+	import { module } from '../../module.ts';
+	import { getGuid } from '@/core/core.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-	import { addressBook } from '../../wallet.ts';
-	import { module } from '../../module.ts';
+	import Form from '@/core/components/Form/Form.svelte';
 	interface Props {
-		close: () => void;
-		params: {
-			item?: {
-				guid: string;
-				alias: string;
-				address: string;
-			};
+		params?: {
+			item?: IAddressBookItem | null | undefined;
 		};
+		close?: () => void;
 	}
-	let { close, params }: Props = $props();
-	let aliasElement;
-	let alias = $state('');
-	let address = $state('');
-	let error = $state('');
+	let { params, close }: Props = $props();
+	let name: string | undefined = $state();
+	let address: string | undefined = $state();
+	let error: string | undefined = $state();
+	let elName: Input;
 
-	onMount(() => {
-		if (params.item) {
-			alias = params.item.alias;
-			address = params.item.address;
+	/* TODO: don't use it like this, wait for onOpen
+ $effect(() => {
+  if (params?.item) {
+			name = params.item.name || '';
+			address = params.item.address || '';
 		}
-		aliasElement.focus();
 	});
 
-	function findAddressBookItemByAddress(address) {
+	onMount(() => {
+		if (elName) elName.focus();
+	});
+ */
+
+	function findAddressBookItemByAddress(address: string): IAddressBookItem | undefined {
 		const ab = $addressBook;
 		return ab.find(i => i.address === address);
 	}
 
-	function findAddressBookItemById(id) {
+	function findAddressBookItemByID(id: string): IAddressBookItem | undefined {
 		const ab = $addressBook;
 		return ab.find(i => i.guid === id);
 	}
 
-	function add() {
-		if (alias) alias = alias.trim();
+	function add(): void {
+		if (name) name = name.trim();
 		if (address) address = address.trim();
-		console.log(alias, address);
+		console.log(name, address);
 		if (!address || address === '') {
 			error = 'Address is not set';
 			return;
@@ -54,19 +57,21 @@
 			error = 'Invalid Ethereum address format';
 			return;
 		}
-		let dupe = findAddressBookItemByAddress(address);
+		const dupe = findAddressBookItemByAddress(address);
 		if (dupe) {
-			error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
+			error = 'Address already exists in the address book, see name: "' + (dupe.name || 'Unknown') + '"';
 			return;
 		}
-		console.log('NEW ITEM IN ADDRESS BOOK:', alias, address);
-		$addressBook.push({ alias, address });
+		console.log('NEW ITEM IN ADDRESS BOOK:', name, address);
+		if (!address) return; // Already checked above
+		$addressBook.push({ guid: getGuid(), name: name || '', address });
 		addressBook.set($addressBook);
-		close();
+		if (close) close();
 	}
 
-	function edit() {
-		if (alias) alias = alias.trim();
+	function edit(): void {
+		//console.log('EDIT ITEM IN ADDRESS BOOK:', name, address);
+		if (name) name = name.trim();
 		if (address) address = address.trim();
 		if (!address || address === '') {
 			error = 'Address is not set';
@@ -76,25 +81,24 @@
 			error = 'Invalid Ethereum address format';
 			return;
 		}
-		let dupe = findAddressBookItemByAddress(address);
-		if (dupe && dupe.guid != params.item.guid) {
-			error = 'Address already exists in the address book, see alias: "' + dupe.alias + '"';
+		const dupe = findAddressBookItemByAddress(address);
+		if (dupe && params && params.item && dupe.guid !== params.item.guid) {
+			error = 'Address already exists in the address book, see name: "' + (dupe.name || 'Unknown') + '"';
 			return;
 		}
-		params.item.alias = alias;
-		params.item.address = address;
-		addressBook.set($addressBook);
-		close();
-	}
-
-	function keyEnter() {
-		if (event.key === 'Enter') {
-			event.preventDefault();
-			add();
+		if (params && params.item && address) {
+			addressBook.update(currentItems => currentItems.map(item => (item.guid === params.item!.guid ? { ...item, name: name || '', address } : item)));
 		}
+		if (close) close();
 	}
 
-	function clearError() {
+	function handleSubmit(): void {
+		error = '';
+		if (params?.item) edit();
+		else add();
+	}
+
+	function clearError(): void {
 		if (error) error = '';
 	}
 </script>
@@ -108,17 +112,19 @@
 </style>
 
 <div class="addressbook-new">
-	<Label text="Alias">
-		<Input placeholder="Alias" bind:value={alias} bind:this={aliasElement} onKeydown={keyEnter} onInput={clearError} />
-	</Label>
-	<Label text="Address">
-		<Input placeholder="Address" bind:value={address} onKeydown={keyEnter} onInput={clearError} />
-	</Label>
-	{#if error}
-		<Alert type="error" message={error} />
-	{/if}
+	<Form onSubmit={handleSubmit}>
+		<Label text="Name">
+			<Input placeholder="Name" bind:value={name} bind:this={elName} onChange={clearError} />
+		</Label>
+		<Label text="Address">
+			<Input placeholder="Address" bind:value={address} onChange={clearError} />
+		</Label>
+		{#if error}
+			<Alert type="error" message={error} />
+		{/if}
+	</Form>
 	<ButtonBar expand>
-		{#if params.item}
+		{#if params?.item}
 			<Button img="img/save.svg" text="Save" onClick={edit} />
 		{:else}
 			<Button img="modules/{module.identifier}/img/address-add.svg" text="Add" onClick={add} />

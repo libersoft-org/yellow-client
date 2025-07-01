@@ -2,14 +2,14 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { downloadAttachmentsSerial } from '../../messages.js';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	let { children } = $props();
-	let ref = writable();
-	let attachedUploads = $state([]);
-	let attachmentIds = $state([]);
+	let ref: HTMLDivElement;
+	let attachedUploads = $state<FileUpload[]>([]);
+	let attachmentIds = $state<string[]>([]);
 	let downloadableRecords = $derived.by(() => {
 		return attachedUploads.filter(upload => {
 			return (upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER && upload.record.status === FileUploadRecordStatus.BEGUN) || (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED);
@@ -33,7 +33,7 @@
 	});
 
 	function getAttachmentEls() {
-		return ref.closest('.attachments-wrap').querySelectorAll('.message-attachment');
+		return ref?.closest('.attachments-wrap')?.querySelectorAll('.message-attachment');
 	}
 
 	function onAcceptAll() {
@@ -51,9 +51,9 @@
 	}
 
 	onMount(() => {
-		getAttachmentEls().forEach(attachmentEl => {
+		getAttachmentEls()?.forEach(attachmentEl => {
 			const uploadId = attachmentEl.getAttribute('data-upload-id');
-			attachmentIds.push(uploadId);
+			if (uploadId) attachmentIds.push(uploadId);
 		});
 	});
 </script>

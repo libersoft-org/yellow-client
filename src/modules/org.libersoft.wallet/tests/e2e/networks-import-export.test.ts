@@ -596,8 +596,10 @@ test.describe('Networks Import/Export Functionality', () => {
 	});
 
 	test.describe('QR Code Import Tests', () => {
-		test('QR code scanner interface elements', async ({ page }) => {
+		test('QR code scanner interface elements', async ({ page, browserName }, testInfo) => {
 			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 			// Grant camera permissions
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
@@ -610,8 +612,10 @@ test.describe('Networks Import/Export Functionality', () => {
 			await expect(page.locator('video')).toBeVisible();
 		});
 
-		test('Successfully scan and import QR code with valid network data', async ({ page }) => {
+		test('Successfully scan and import QR code with valid network data', async ({ page, browserName }, testInfo) => {
 			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
+			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 			// Mock QR code data to be "scanned"
 			const qrNetworkData = JSON.stringify([
 				{

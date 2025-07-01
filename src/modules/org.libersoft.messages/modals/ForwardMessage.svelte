@@ -78,7 +78,7 @@
 
 	.message-preview-header {
 		font-size: 14px;
-		font-weight: 500;
+		font-weight: bold;
 		color: var(--color-text-secondary);
 		margin-bottom: 8px;
 	}

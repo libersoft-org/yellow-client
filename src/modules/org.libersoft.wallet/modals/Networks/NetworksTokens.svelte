@@ -13,11 +13,12 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalAddEdit from './NetworksTokensAddEdit.svelte';
-	import ModalDel from './NetworksTokensDel.svelte';
+	import DialogTokenDel from '../../dialogs/NetworksTokensDel.svelte';
 	export let params;
 	let net;
+	let tokenToDelete;
 	let elModalAddEdit;
-	let elModalDel;
+	let elDialogDel;
 	let modalItem = null;
 
 	$: update($networks, params);
@@ -59,14 +60,8 @@
 
 	function delTokenModal(item) {
 		console.log('DELETE TOKEN MODAL:', item);
-		modalItem = item;
-		elModalDel?.open();
-	}
-
-	function onDel(token) {
-		console.log('DELETE TOKEN:', token);
-		net.tokens = net.tokens.filter(t => t.guid !== token.guid);
-		networks.update(v => v);
+		tokenToDelete = item;
+		elDialogDel?.open();
 	}
 </script>
 
@@ -79,12 +74,13 @@
 </style>
 
 <div class="token-list">
+	<div>
+		<span class="bold">Network:</span>
+		<span>{net?.name}</span>
+	</div>
 	<ButtonBar>
-		<!-- () => (item_tokens = [...item_tokens, { name: '', icon: '', symbol: '', contract_address: '' }]) -->
 		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={addTokenModal} />
 	</ButtonBar>
-	<div class="label">Network name: {net?.name}</div>
-	<div class="label">Tokens:</div>
 	{#if net?.tokens}
 		<Table>
 			<Thead>
@@ -99,16 +95,13 @@
 			<Tbody>
 				{#each net.tokens as t, i}
 					<TbodyTr>
-						<Td>{t.name}</Td>
-						<Td>{t.icon}</Td>
-						<Td>{t.symbol}</Td>
-						<Td>{t.contract_address}</Td>
-						<Td>
-							<div class="icons">
-								<!-- () => (item_tokens = item_tokens.filter((v, j) => j !== i)) -->
-								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenModal(t)} />
-								<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenModal(t)} />
-							</div>
+						<Td title="Name">{t.name}</Td>
+						<Td title="Icon">{t.icon}</Td>
+						<Td title="Symbol">{t.symbol}</Td>
+						<Td title="Token address">{t.contract_address}</Td>
+						<Td title="Action">
+							<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenModal(t)} />
+							<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenModal(t)} />
 						</Td>
 					</TbodyTr>
 				{/each}
@@ -117,4 +110,4 @@
 	{/if}
 </div>
 <Modal title={modalItem ? 'Edit token' : 'Add token'} body={ModalAddEdit} params={{ item: modalItem, onAdd, onEdit }} bind:this={elModalAddEdit} />
-<Modal title="Delete token" body={ModalDel} params={{ item: modalItem, onDel: onDel }} bind:this={elModalDel} />
+<DialogTokenDel networkGuid={net?.guid} token={tokenToDelete} bind:this={elDialogDel} />

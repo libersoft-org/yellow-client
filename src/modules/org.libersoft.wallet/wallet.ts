@@ -3,40 +3,39 @@ import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnem
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { getGuid } from '@/core/core.ts';
 export { default_networks } from './default_networks.js';
-interface Address {
+export interface IAddress {
 	address: string;
 	name: string;
 	path: string;
 	index: number;
-	deleted?: boolean;
 }
-interface Wallet {
+export interface IWallet {
 	phrase: string;
 	address: string;
 	selected_address_index: number;
 	name: string;
-	addresses?: Address[];
-	log: any[];
+	addresses?: IAddress[];
 }
-interface Token {
+export interface IToken {
 	guid: string;
 	icon: string;
 	symbol: string;
 	name: string;
 	contract_address: string;
 }
-interface Network {
-	guid: string;
+export interface INetwork {
+	guid?: string;
 	name: string;
 	chainID: number;
+	explorerURL?: string;
 	currency: {
 		symbol: string;
-		iconURL: string;
+		iconURL?: string;
 	};
-	rpcURLs: string[];
-	tokens?: Token[];
+	rpcURLs?: string[];
+	tokens?: IToken[];
 }
-interface Balance {
+export interface IBalance {
 	crypto: {
 		amount: string;
 		currency: string;
@@ -46,21 +45,21 @@ interface Balance {
 		currency: string;
 	};
 }
-interface AddressBookItem {
+export interface IAddressBookItem {
 	guid: string;
-	alias: string;
+	name: string;
 	address: string;
 }
 export const status = writable<any>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);
-export const networks = localStorageSharedStore<Network[]>('networks', []);
+export const networks = localStorageSharedStore<INetwork[]>('networks', []);
 export let section = writable<string | null>('balance');
 export let sendAddress = writable<string | number | undefined>();
 const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer;
 
-networks.subscribe((nets: Network[]) => {
+networks.subscribe((nets: INetwork[]) => {
 	let modified = false;
 	for (let net of nets) {
 		if (net.guid === undefined) {
@@ -89,53 +88,37 @@ networks.subscribe((nets: Network[]) => {
 	}
 });
 
-/*
-function toHexStr(uint8) {
- return Array.from(uint8)
-  .map(i => i.toString(16).padStart(2, '0'))
-  .join('');
-}
-*/
-
-export const wallets = localStorageSharedStore<Wallet[]>('wallets', []);
+export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
 	const r = $networks.find(n => n.guid === $selectedNetworkID);
-	//console.log('selectedNetwork', r);
 	return r;
 });
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
+	console.log('WWWWWWWWWWWWW', $wallets, $selectedWalletID);
 	const r = $wallets.find(w => w.address === $selectedWalletID);
-	//console.log('selectedWallet', r);
 	return r;
 });
-
 export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
-	//console.log('selectedWallet:', $selectedWallet);
 	let addresses = $selectedWallet?.addresses || [];
 	let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
-	//console.log('SELECTEDADDRESS', result);
 	return result;
 });
-
 export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return $selectedNetwork?.currency.symbol;
 });
-
 let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return ($selectedNetwork?.tokens || []).map(token => ({
 		symbol: token.symbol,
 	}));
 });
-
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
-	return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)];
+	return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)].filter((currency): currency is string => currency !== undefined);
 });
+export const addressBook = localStorageSharedStore<IAddressBookItem[]>('addressbook', []);
 
-export const addressBook = localStorageSharedStore<AddressBookItem[]>('addressbook', []);
-
-addressBook.subscribe((value: AddressBookItem[]) => {
+addressBook.subscribe((value: IAddressBookItem[]) => {
 	let modifyed = false;
 	for (let i of value) {
 		if (!i.guid) {
@@ -143,17 +126,15 @@ addressBook.subscribe((value: AddressBookItem[]) => {
 			modifyed = true;
 		}
 	}
-	if (modifyed) {
-		addressBook.update(v => v);
-	}
+	if (modifyed) addressBook.update(v => v);
 });
 
-selectedAddress.subscribe((value: Address | undefined) => {
+selectedAddress.subscribe((value: IAddress | undefined) => {
 	//console.log('selectedAddress', value);
 	// getBalance();
 });
 
-wallets.subscribe((wals: Wallet[]) => {
+wallets.subscribe((wals: IWallet[]) => {
 	while (wallets_cleanup(wals)) {
 		wallets.update(w => w);
 	}
@@ -184,7 +165,7 @@ function wallets_cleanup(wallets: any) {
 	}
 }
 
-export const balance = writable<Balance>({
+export const balance = writable<IBalance>({
 	crypto: {
 		amount: '?',
 		currency: 'N/A',
@@ -216,12 +197,12 @@ async function refresh(): Promise<void> {
 }
 */
 
-selectedNetwork.subscribe((value: Network | undefined) => {
+selectedNetwork.subscribe((value: INetwork | undefined) => {
 	//console.log('selectedNetwork', value);
 	resetBalance();
 	reconnect();
 });
-selectedWallet.subscribe((value: Wallet | undefined) => {
+selectedWallet.subscribe((value: IWallet | undefined) => {
 	//console.log('selectedWallet', value);
 	resetBalance();
 	reconnect();
@@ -229,21 +210,15 @@ selectedWallet.subscribe((value: Wallet | undefined) => {
 
 function reconnect(): void {
 	provider = null;
-
 	//console.log('Reconnecting to', get(selectedNetwork));
-
 	let net = get(selectedNetwork);
 	if (!net) return;
-
 	//console.log('wallet RECONNECT');
 	status.set({ color: 'orange', text: 'Connecting to ' + net.name });
-
-	if (reconnectionTimer !== undefined) {
-		clearTimeout(reconnectionTimer);
-	}
-	const rrr = get(rpcURL);
-	if (!rrr || net.rpcURLs.find(url => url === rrr) === undefined) {
-		if (!net.rpcURLs[0]) {
+	if (reconnectionTimer !== undefined) clearTimeout(reconnectionTimer);
+	const rurl = get(rpcURL);
+	if (!rurl || net?.rpcURLs?.find(url => url === rurl) === undefined) {
+		if (!net?.rpcURLs?.[0]) {
 			status.set({
 				color: 'red',
 				text: 'No RPC URL found for the selected network',
@@ -255,7 +230,7 @@ function reconnect(): void {
 	connectToURL();
 }
 
-function sortAddresses(addresses: Address[]): Address[] {
+function sortAddresses(addresses: IAddress[]): IAddress[] {
 	return addresses.sort((a, b) => {
 		if (a.index < b.index) return -1;
 		if (a.index > b.index) return 1;
@@ -263,39 +238,34 @@ function sortAddresses(addresses: Address[]): Address[] {
 	});
 }
 
-function addressesMaxIndex(addresses: Address[]): number {
+export function addressesMaxIndex(addresses: IAddress[]): number {
 	return addresses.reduce((max, a) => Math.max(max, a.index), -1);
 }
 
-export function addAddress(w: Wallet, index?: number | string): void {
+export function addAddress(w: IWallet, index?: number | string, name?: string): void {
 	let indexNum: number;
-
-	console.log('addAddress to wallet ', w);
+	console.log('addAddress to wallet ', w, index, name);
 	let addresses = w.addresses || [];
 	sortAddresses(addresses);
-	console.log('sorted.');
-	if (index === undefined) {
+	if (!index) {
 		indexNum = addressesMaxIndex(addresses) + 1;
-		doAddAddress(w, addresses, indexNum);
+		doAddAddress(w, addresses, indexNum, name);
 	} else {
 		indexNum = parseInt(index.toString());
 		if (indexNum < 0 || isNaN(indexNum)) {
-			window.alert('Invalid index');
+			console.error('Invalid index');
 			return;
 		} else {
 			let existing = addresses.find(a => a.index === indexNum);
 			if (existing) {
-				console.log('Address with index', indexNum, 'already exists');
-				existing.deleted = false;
+				console.error('Address with index', indexNum, 'already exists');
 			} else {
 				console.log('Adding address with index', indexNum);
-				doAddAddress(w, addresses, indexNum);
+				doAddAddress(w, addresses, indexNum, name);
 			}
 		}
 	}
-	console.log('sort..');
 	sortAddresses(addresses);
-	console.log('sorted.');
 	w.addresses = addresses;
 	w.selected_address_index = indexNum;
 	wallets.update(ws =>
@@ -311,36 +281,35 @@ export function addAddress(w: Wallet, index?: number | string): void {
 	);
 }
 
-function doAddAddress(w: Wallet, addresses: Address[], index: number): void {
-	console.log('doAddAddress Mnemonic.fromPhrase');
+export function addressIndexAlreadyExists(wallet: IWallet, index: number): boolean {
+	if (wallet?.addresses) return wallet.addresses.some(address => address.index === index);
+	else return false;
+}
 
+function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
+	console.log('doAddAddress Mnemonic.fromPhrase');
 	if (!w.phrase) {
 		console.error('Cannot derive address: wallet.phrase is undefined');
 		return;
 	}
-
 	let mn = Mnemonic.fromPhrase(w.phrase);
 	console.log('doAddAddress getIndexedAccountPath');
 	let path = getIndexedAccountPath(index);
 	console.log('doAddAddress HDNodeWallet.fromMnemonic');
 	let derived_wallet = HDNodeWallet.fromMnemonic(mn, path);
-	let a: Address = {
+	let a: IAddress = {
 		address: derived_wallet.address,
-		name: 'Address ' + index,
+		name: name ? name : 'Address ' + index,
 		path: path,
 		index: index,
 	};
 	addresses.push(a);
 }
 
-export function selectAddress(wallet: Wallet, address: Address): void {
+export function selectAddress(wallet: IWallet, address: IAddress): void {
 	wallet.selected_address_index = address.index;
 	wallets.update(v => v);
 	selectedWalletID.set(wallet.address);
-}
-
-export function walletAddresses(wallet: Wallet): Address[] {
-	return (wallet.addresses || []).filter(a => !a.deleted);
 }
 
 export function generateMnemonic(): Mnemonic {
@@ -355,12 +324,9 @@ function connectToURL(): void {
 		return;
 	}
 	provider = new JsonRpcProvider(get(rpcURL)!, net.chainID);
-
 	provider.on('error', (error: Error) => {
 		console.log('Provider error:', error);
-		if (provider) {
-			provider.destroy();
-		}
+		if (provider) provider.destroy();
 		provider = null;
 		setNextUrl();
 		reconnectionTimer = setTimeout(reconnect, WALLET_PROVIDER_RECONNECT_INTERVAL);
@@ -373,36 +339,45 @@ function connectToURL(): void {
 
 function setNextUrl(): void {
 	const net = get(selectedNetwork);
-	if (!net) return;
+	if (!net?.rpcURLs) return;
 	let i = net.rpcURLs.indexOf(get(rpcURL) || '');
 	i += 1;
 	let url: string;
-	if (i >= net.rpcURLs.length) {
-		url = net.rpcURLs[0];
-	} else {
-		url = net.rpcURLs[i];
-	}
+	if (i >= net.rpcURLs.length) url = net.rpcURLs[0];
+	else url = net.rpcURLs[i];
 	rpcURL.set(url);
 	status.set({ color: 'orange', text: 'Trying next url: ' + url });
 }
 
-export async function addWallet(mnemonic: Mnemonic, suffix = ''): Promise<void> {
+export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void> {
 	let newWallet = HDNodeWallet.fromMnemonic(mnemonic);
-	let wallet: Wallet = {
+	let wallet: IWallet = {
 		phrase: mnemonic.phrase,
 		address: newWallet.address,
 		selected_address_index: 0,
 		name: '',
 		addresses: [],
-		log: [],
 	};
 	wallets.update(w => {
-		wallet.name = 'My Wallet ' + (w.length + 1) + suffix;
+		wallet.name = name ? name : 'My wallet ' + (w.length + 1);
 		w.push(wallet);
 		return w;
 	});
 	selectedWalletID.set(get(wallets)[get(wallets).length - 1].address);
 	addAddress(wallet);
+}
+
+export function editWallet(wallet: IWallet, name: string): boolean {
+	let success = false;
+	wallets.update(w => {
+		const index = w.findIndex(item => item === wallet);
+		if (index !== -1) {
+			w[index] = { ...w[index], name };
+			success = true;
+		}
+		return w;
+	});
+	return success;
 }
 
 export async function getBalance(): Promise<void> {
@@ -436,11 +411,8 @@ export async function getBalance(): Promise<void> {
 					const currency = b?.crypto?.currency;
 					const rate = rates2[currency];
 					if (amount_str && currency) {
-						if (rate) {
-							b.fiat.amount = (parseFloat(amount_str) * rate).toString();
-						} else {
-							b.fiat.amount = 'no rate for ' + currency;
-						}
+						if (rate) b.fiat.amount = (parseFloat(amount_str) * rate).toString();
+						else b.fiat.amount = 'no rate for ' + currency;
 					}
 					return b;
 				});
@@ -502,7 +474,7 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 	console.log('wait..', tx);
 	await tx.wait();
 	console.log('Transaction sent OK');
-
+	/*
 	let log = {
 		dir: 'sent',
 		date: new Date(),
@@ -513,7 +485,6 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 		chainID: tx.chainId.toString(),
 		nonce: tx.nonce,
 		tx_type: tx.type,
-
 		estimatedGas: formatEther(eg),
 		gasLimit: formatEther(tx.gasLimit),
 		gasPrice: formatEther(tx.gasPrice),
@@ -523,42 +494,38 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 	console.log('log:', log);
 	console.log('log:', JSON.stringify(log));
 
-	if (!selectedWalletValue.log) {
-		selectedWalletValue.log = [];
-	}
+	if (!selectedWalletValue.log) selectedWalletValue.log = [];
 	selectedWalletValue.log.push(log);
 	wallets.update(w => w);
-
-	/*} catch (error) {
-  console.error('Error while sending a transaction:', error);
- }*/
+*/
+	/*
+} catch (error) {
+ console.error('Error while sending a transaction:', error);
+}
+*/
 }
 
-export function addNetwork(net): void {
-	if (get(networks)?.find(n => n.name === net.name)) {
-		window.alert('Network with this name already exists');
-		return;
-	}
-
+export function addNetwork(net): boolean {
+	if (get(networks)?.find(n => n.name === net.name)) return false;
 	let my_net = {
 		guid: getGuid(),
 		name: net.name,
 		chainID: net.chainID,
-		rpcURLs: net.rpcURLs.map(url => url),
 		currency: {
 			symbol: net.currency.symbol,
 			iconURL: net.currency.iconURL,
 		},
 		explorerURL: net.explorerURL,
+		rpcURLs: net.rpcURLs.map(url => url),
 	};
-
 	networks.update(n => {
 		n.push(my_net);
 		return n;
 	});
+	return true;
 }
 
-export function removeNetwork(net): void {
+export function deleteNetwork(net): void {
 	networks.update(n => {
 		return n.filter(n => n !== net);
 	});
