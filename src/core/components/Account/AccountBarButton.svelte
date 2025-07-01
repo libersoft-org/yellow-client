@@ -3,7 +3,6 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	interface Props {
 		children?: Snippet;
-		onClick?: (e: Event) => void;
 		[key: string]: any;
 	}
 
