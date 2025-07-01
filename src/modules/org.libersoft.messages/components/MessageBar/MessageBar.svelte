@@ -379,4 +379,4 @@
 {/if}
 
 <Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={$modalFileUploadStore} />
-<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="600px" height="500px" max resizable />
+<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="700px" height="500px" max resizable />
