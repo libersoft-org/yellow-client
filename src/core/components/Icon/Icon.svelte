@@ -40,14 +40,14 @@
 </style>
 
 {#snippet icon()}
-	<div class="icon" style="padding: {padding};">
+	<div class="icon" style="padding: {padding};" data-testid={testId}>
 		<img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {filter};" src={img} draggable={false} {alt} />
 	</div>
 {/snippet}
 {#if img}
 	{#if ($isMobile && visibleOnMobile) || (!$isMobile && visibleOnDesktop)}
 		{#if onClick || isButton}
-			<Clickable {onClick} data-testid={testId}>
+			<Clickable {onClick}>
 				{@render icon()}
 			</Clickable>
 		{:else}

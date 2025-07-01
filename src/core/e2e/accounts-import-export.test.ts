@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging } from '@/core/e2e/test-utils.ts';
+
+// todo: unify
+import { closeWelcomeWizardModal, setupConsoleLogging } from '@/core/e2e/test-utils.ts';
 import { closeModal } from '$lib/test-utils/e2e-helpers.ts';
 
 /**
@@ -685,6 +687,7 @@ test.describe('Accounts Import/Export', () => {
  */
 async function goToAccountManagement(page: Page): Promise<void> {
 	return await test.step('Go to account management', async () => {
+		await closeWelcomeWizardModal(page);
 		await page.getByTestId('account-bar-toggle').click();
 		await page.getByTestId('account-management-button').click();
 	});

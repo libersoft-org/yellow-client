@@ -101,9 +101,12 @@
 		setBarFocus();
 	}
 
+	let lastSentMessageUid = null;
+
 	export async function doSendMessage(message, html) {
 		//console.log('doSendMessage', message);
-		await sendMessage(message, html ? 'html' : 'plaintext');
+		const uid = await sendMessage(message, html ? 'html' : 'plaintext');
+		lastSentMessageUid = uid;
 		await setBarFocus();
 		closeExpressions();
 	}
@@ -294,7 +297,7 @@
 </style>
 
 <Bar position="bottom" height="auto" bind:element={elMessageBar}>
-	<div class="message-bar">
+	<div class="message-bar" data-sent-message-uid={lastSentMessageUid}>
 		<input type="file" id="videoInput" style:display="none" accept="video/*" capture="camera" bind:this={videoInputRef} />
 		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
 			<div class="top">

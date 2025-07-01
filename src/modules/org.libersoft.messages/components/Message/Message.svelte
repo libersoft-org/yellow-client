@@ -438,14 +438,14 @@
 
 <ContextMenu bind:this={menu} target={elCaret}>
 	{#if message.format === 'plaintext'}
-		<ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyOriginal} />
+		<ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyOriginal} testId={'message-context-menu-' + message.uid + '-copy'} />
 	{:else}
-		<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
-		<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
-		<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
+		<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} testId={'message-context-menu-' + message.uid + '-copy-original'} />
+		<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} testId={'message-context-menu-' + message.uid + '-copy-text-only'} />
+		<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} testId={'message-context-menu-' + message.uid + '-copy-html'} />
 	{/if}
 
-	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} data-testid="reply-context-menu-item" />
-	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} data-testid="forward-context-menu-item" />
-	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
+	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} testId={'message-context-menu-' + message.uid + '-reply'} />
+	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} testId={'message-context-menu-' + message.uid + '-forward'} />
+	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} testId={'message-context-menu-' + message.uid + '-delete'} />
 </ContextMenu>

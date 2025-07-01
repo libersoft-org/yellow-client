@@ -8,6 +8,7 @@
 		onClick?: MouseEventHandler<HTMLDivElement>;
 		onRightClick?: MouseEventHandler<HTMLDivElement>;
 		onMousedown?: MouseEventHandler<HTMLDivElement>;
+		restProps?: HTMLAttributes<HTMLDivElement>;
 	}
 	let { children, expand = false, enabled = true, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
 

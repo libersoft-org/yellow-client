@@ -9,8 +9,9 @@
 		header?: Snippet<[any]> | null;
 		expandAllOnDesktop?: boolean;
 		mode?: 'single' | 'multiple';
+		testId?: string;
 	}
-	let { items, content, header, expandAllOnDesktop = false, mode = 'single' }: Props = $props();
+	let { items, content, header, expandAllOnDesktop = false, mode = 'single', testId = '' }: Props = $props();
 	let activeIndices: number[] = $state<number[]>([]);
 	const isSingleMode: boolean = mode === 'single';
 
@@ -196,8 +197,9 @@
 
 <div class="accordion">
 	{#each items as item, index}
+		{@const icon_action = activeIndices.includes(index) ? 'collapse' : 'expand'}
 		<div class="item {activeIndices.includes(index) ? 'is-expanded' : ''}">
-			<Clickable onClick={() => handleClick(index)}>
+			<Clickable onClick={() => handleClick(index)} data-testid={`${testId}-accordion-${icon_action}-${index}`}>
 				<div class="header">
 					<div class="title">{item.name}</div>
 					{@render header?.(item)}

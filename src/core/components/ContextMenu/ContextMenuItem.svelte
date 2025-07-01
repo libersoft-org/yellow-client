@@ -7,8 +7,9 @@
 		label?: string;
 		colorVariable?: string;
 		onClick?: (e: Event) => void;
+		testId?: string;
 	}
-	let { img, label, colorVariable = '--primary-foreground', onClick, ...restProps }: Props = $props();
+	let { img, label, colorVariable = '--primary-foreground', onClick, testId, ...restProps }: Props = $props();
 	let menu = getContext('ContextMenu') as { close: () => void } | undefined;
 
 	function handleClick(e: Event) {
@@ -53,7 +54,7 @@
 	}
 </style>
 
-<Clickable onClick={handleClick} onMousedown={handleMousedown} {...restProps}>
+<Clickable onClick={handleClick} onMousedown={handleMousedown} data-testid={testId} {...restProps}>
 	<div class="menu-item">
 		{#if img}
 			<div class="img-space">
