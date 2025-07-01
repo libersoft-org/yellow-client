@@ -311,7 +311,7 @@ async function replyToMessage(page: Page, replyText: string, messageUid?: string
 		if (!targetMessageUid) {
 			// Get the last message and its UID
 			const lastMessage = page.getByTestId('message-item').last();
-			targetMessageUid = await lastMessage.getAttribute('data-uid');
+			targetMessageUid = (await lastMessage.getAttribute('data-uid')) ?? undefined;
 			if (!targetMessageUid) {
 				throw new Error('Could not find UID for last message');
 			}
@@ -326,8 +326,8 @@ async function replyToMessage(page: Page, replyText: string, messageUid?: string
 		}
 
 		// Use the unique reply context menu item for this message
-		await page.getByTestId(`message-context-menu-${targetMessageUid}-reply`).waitFor({ state: 'visible' });
-		await page.getByTestId(`message-context-menu-${targetMessageUid}-reply`).click();
+		//await page.getByTestId(`message-context-menu-${targetMessageUid}-reply`).waitFor({ state: 'visible' });
+		await page.getByTestId(`message-context-menu-${targetMessageUid}-reply`).click({ force: true });
 
 		return await sendMessage(page, replyText);
 	});

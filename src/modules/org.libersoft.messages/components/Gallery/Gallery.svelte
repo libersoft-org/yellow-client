@@ -7,10 +7,12 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	let gallery = galleryStore.store;
 	let currentFile = galleryStore.currentFile();
-	let currentFilePosition = $derived($gallery.files.indexOf($currentFile) + 1);
+	let currentFilePosition = $derived($currentFile ? $gallery.files.indexOf($currentFile) + 1 : 0);
 
 	function download() {
-		assembleFile($currentFile.url, $currentFile.fileName);
+		if ($currentFile && $currentFile.url) {
+			assembleFile($currentFile.url, $currentFile.fileName);
+		}
 	}
 
 	function close() {
@@ -44,18 +46,22 @@
 	}
 
 	$effect(() => {
-		if ($currentFile && !$currentFile.loaded) {
+		if ($currentFile && !$currentFile.loaded && $currentFile.loadFile) {
 			loading = true;
 			$currentFile
 				.loadFile()
 				.then(loadedFile => {
-					galleryStore.updateFile($currentFile.id, {
-						loaded: true,
-						...loadedFile,
-					});
+					if ($currentFile) {
+						galleryStore.updateFile($currentFile.id, {
+							...loadedFile,
+							loaded: true,
+						});
+					}
 				})
 				.catch(err => {
-					console.error('error fetching image data for yellow id:', $currentFile.id, err);
+					if ($currentFile) {
+						console.error('error fetching image data for yellow id:', $currentFile.id, err);
+					}
 				})
 				.finally(() => {
 					loading = false;
@@ -166,7 +172,7 @@
 		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
 			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--secondary-foreground" size="80px" onClick={previous} />
 		</div>
-		{#key $currentFile.id}
+		{#key $currentFile?.id}
 			{#if $currentFile}
 				<div class="image">
 					<div class="caption">

@@ -3,179 +3,7 @@ import { type Page } from '@playwright/test';
 import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.ts';
 import { switchModule, closeModal, expectErrorMessage } from '@/lib/test-utils/e2e-helpers.ts';
 
-/**
- * Helper function to navigate to wallet and find networks import/export buttons
- * @param page - The Playwright page object
- */
-async function goToNetworksManagement(page: Page): Promise<void> {
-	return await test.step('Go to networks management', async () => {
-		// The wallet module should already be selected from beforeEach
-		// Click on the network dropdown to open "Select your network" modal
-		await page.getByText('--- Select your network ---').click();
-
-		// Wait for the modal to appear and click "Manage networks" button
-		await page.getByRole('button', { name: 'Manage networks' }).click();
-
-		// Wait for the networks management modal to be visible
-		await page.getByTestId('networks-import-btn').waitFor({ state: 'visible' });
-	});
-}
-
-/**
- * Helper function to open networks import modal
- * @param page - The Playwright page object
- */
-async function openNetworksImportModal(page: Page): Promise<void> {
-	return await test.step('Open networks import modal', async () => {
-		await page.getByTestId('networks-import-btn').click();
-	});
-}
-
-/**
- * Helper function to open networks export modal
- * @param page - The Playwright page object
- */
-async function openNetworksExportModal(page: Page): Promise<void> {
-	return await test.step('Open networks export modal', async () => {
-		await page.getByTestId('networks-export-btn').click();
-	});
-}
-
-/**
- * Helper function to switch to QR code tab in import modal
- * @param page - The Playwright page object
- */
-async function switchToQRImportTab(page: Page): Promise<void> {
-	return await test.step('Switch to QR Code import tab', async () => {
-		await page.getByTestId('networks-qr-tab').click();
-	});
-}
-
-/**
- * Helper function to switch to QR code tab in export modal
- * @param page - The Playwright page object
- */
-async function switchToQRExportTab(page: Page): Promise<void> {
-	return await test.step('Switch to QR Code export tab', async () => {
-		await page.getByTestId('networks-export-qr-tab').click();
-	});
-}
-
-/**
- * Helper function to fill import text area with JSON data
- * @param page - The Playwright page object
- * @param jsonData - The JSON data to import
- */
-async function fillNetworksImportData(page: Page, jsonData: string): Promise<void> {
-	return await test.step('Fill networks import data', async () => {
-		await page.getByTestId('networks-textarea').fill(jsonData);
-	});
-}
-
-/**
- * Helper function to click Add networks button
- * @param page - The Playwright page object
- */
-async function clickAddNetworks(page: Page): Promise<void> {
-	return await test.step('Click Add networks button', async () => {
-		await page.getByTestId('networks-add-btn').click();
-	});
-}
-
-/**
- * Helper function to click Replace All button
- * @param page - The Playwright page object
- */
-async function clickReplaceAllNetworks(page: Page): Promise<void> {
-	return await test.step('Click Replace All button', async () => {
-		await page.getByTestId('networks-replace-btn').click();
-	});
-}
-
-/**
- * Helper function to confirm replace action in dialog
- * @param page - The Playwright page object
- */
-async function confirmReplaceNetworksDialog(page: Page): Promise<void> {
-	return await test.step('Confirm replace in dialog', async () => {
-		await page.getByTestId('confirm-replace-btn').click();
-	});
-}
-
-/**
- * Helper function to get exported JSON content from code editor
- * @param page - The Playwright page object
- */
-async function getExportedNetworksJSON(page: Page): Promise<string> {
-	return await test.step('Get exported networks JSON content', async () => {
-		const codeElement = page.locator('[data-testid="networks-export-code-editor"]');
-		await expect(codeElement).toBeVisible();
-		return (await codeElement.inputValue()) || '';
-	});
-}
-
-/**
- * Valid network configurations for testing
- */
-const validNetworkConfigs = [
-	{
-		guid: 'test-network-1',
-		name: 'Test Network 1',
-		chainID: 1337,
-		currency: {
-			symbol: 'TEST1',
-			iconURL: 'https://example.com/test1.png',
-		},
-		rpcURLs: ['https://rpc1.test.example.com', 'https://rpc2.test.example.com'],
-		tokens: [],
-	},
-	{
-		guid: 'test-network-2',
-		name: 'Test Network 2',
-		chainID: 1338,
-		currency: {
-			symbol: 'TEST2',
-			iconURL: 'https://example.com/test2.png',
-		},
-		rpcURLs: ['https://rpc.test2.example.com'],
-		tokens: [
-			{
-				guid: 'token-1',
-				icon: 'https://example.com/token1.png',
-				symbol: 'TKN1',
-				name: 'Test Token 1',
-				contract_address: '0x1234567890123456789012345678901234567890',
-			},
-		],
-	},
-];
-
-/**
- * Complex network configuration with special characters
- */
-const complexNetworkConfig = [
-	{
-		guid: 'complex-test-ñüñèz-🚀',
-		name: 'Test Network with Üñíçødé 测试',
-		chainID: 9999,
-		currency: {
-			symbol: 'ÜTF8',
-			iconURL: 'https://тест.example.com/üñíçødé.png',
-		},
-		rpcURLs: ['https://rpc-тест.example.com:8545', 'wss://ws-测试.example.com:8546'],
-		tokens: [
-			{
-				guid: 'unicode-token-测试',
-				icon: 'https://example.com/测试.png',
-				symbol: '测试',
-				name: 'Test Token 测试 with Üñíçødé',
-				contract_address: '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
-			},
-		],
-	},
-];
-
-test.describe('Networks Import/Export Functionality', () => {
+test.describe.parallel('Networks Import/Export Functionality', () => {
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
@@ -193,9 +21,6 @@ test.describe('Networks Import/Export Functionality', () => {
 
 		// Switch to wallet module
 		await switchModule(page, 'org.libersoft.wallet');
-
-		// Wait for wallet module to fully load
-		await page.waitForTimeout(1000);
 	});
 
 	test.describe('JSON Import Tests', () => {
@@ -767,3 +592,175 @@ test.describe('Networks Import/Export Functionality', () => {
 		});
 	});
 });
+
+/**
+ * Helper function to navigate to wallet and find networks import/export buttons
+ * @param page - The Playwright page object
+ */
+async function goToNetworksManagement(page: Page): Promise<void> {
+	return await test.step('Go to networks management', async () => {
+		// The wallet module should already be selected from beforeEach
+		// Click on the network dropdown to open "Select your network" modal
+		await page.getByText('--- Select your network ---').click();
+
+		// Wait for the modal to appear and click "Manage networks" button
+		await page.getByRole('button', { name: 'Manage networks' }).click();
+
+		// Wait for the networks management modal to be visible
+		await page.getByTestId('networks-import-btn').waitFor({ state: 'visible' });
+	});
+}
+
+/**
+ * Helper function to open networks import modal
+ * @param page - The Playwright page object
+ */
+async function openNetworksImportModal(page: Page): Promise<void> {
+	return await test.step('Open networks import modal', async () => {
+		await page.getByTestId('networks-import-btn').click();
+	});
+}
+
+/**
+ * Helper function to open networks export modal
+ * @param page - The Playwright page object
+ */
+async function openNetworksExportModal(page: Page): Promise<void> {
+	return await test.step('Open networks export modal', async () => {
+		await page.getByTestId('networks-export-btn').click();
+	});
+}
+
+/**
+ * Helper function to switch to QR code tab in import modal
+ * @param page - The Playwright page object
+ */
+async function switchToQRImportTab(page: Page): Promise<void> {
+	return await test.step('Switch to QR Code import tab', async () => {
+		await page.getByTestId('networks-qr-tab').click();
+	});
+}
+
+/**
+ * Helper function to switch to QR code tab in export modal
+ * @param page - The Playwright page object
+ */
+async function switchToQRExportTab(page: Page): Promise<void> {
+	return await test.step('Switch to QR Code export tab', async () => {
+		await page.getByTestId('networks-export-qr-tab').click();
+	});
+}
+
+/**
+ * Helper function to fill import text area with JSON data
+ * @param page - The Playwright page object
+ * @param jsonData - The JSON data to import
+ */
+async function fillNetworksImportData(page: Page, jsonData: string): Promise<void> {
+	return await test.step('Fill networks import data', async () => {
+		await page.getByTestId('networks-textarea').fill(jsonData);
+	});
+}
+
+/**
+ * Helper function to click Add networks button
+ * @param page - The Playwright page object
+ */
+async function clickAddNetworks(page: Page): Promise<void> {
+	return await test.step('Click Add networks button', async () => {
+		await page.getByTestId('networks-add-btn').click();
+	});
+}
+
+/**
+ * Helper function to click Replace All button
+ * @param page - The Playwright page object
+ */
+async function clickReplaceAllNetworks(page: Page): Promise<void> {
+	return await test.step('Click Replace All button', async () => {
+		await page.getByTestId('networks-replace-btn').click();
+	});
+}
+
+/**
+ * Helper function to confirm replace action in dialog
+ * @param page - The Playwright page object
+ */
+async function confirmReplaceNetworksDialog(page: Page): Promise<void> {
+	return await test.step('Confirm replace in dialog', async () => {
+		await page.getByTestId('confirm-replace-btn').click();
+	});
+}
+
+/**
+ * Helper function to get exported JSON content from code editor
+ * @param page - The Playwright page object
+ */
+async function getExportedNetworksJSON(page: Page): Promise<string> {
+	return await test.step('Get exported networks JSON content', async () => {
+		const codeElement = page.locator('[data-testid="networks-export-code-editor"]');
+		await expect(codeElement).toBeVisible();
+		return (await codeElement.inputValue()) || '';
+	});
+}
+
+/**
+ * Valid network configurations for testing
+ */
+const validNetworkConfigs = [
+	{
+		guid: 'test-network-1',
+		name: 'Test Network 1',
+		chainID: 1337,
+		currency: {
+			symbol: 'TEST1',
+			iconURL: 'https://example.com/test1.png',
+		},
+		rpcURLs: ['https://rpc1.test.example.com', 'https://rpc2.test.example.com'],
+		tokens: [],
+	},
+	{
+		guid: 'test-network-2',
+		name: 'Test Network 2',
+		chainID: 1338,
+		currency: {
+			symbol: 'TEST2',
+			iconURL: 'https://example.com/test2.png',
+		},
+		rpcURLs: ['https://rpc.test2.example.com'],
+		tokens: [
+			{
+				guid: 'token-1',
+				icon: 'https://example.com/token1.png',
+				symbol: 'TKN1',
+				name: 'Test Token 1',
+				contract_address: '0x1234567890123456789012345678901234567890',
+			},
+		],
+	},
+];
+
+/**
+ * Complex network configuration with special characters
+ */
+const complexNetworkConfig = [
+	{
+		guid: 'complex-test-ñüñèz-🚀',
+		name: 'Test Network with Üñíçødé 测试',
+		chainID: 9999,
+		currency: {
+			symbol: 'ÜTF8',
+			iconURL: 'https://тест.example.com/üñíçødé.png',
+		},
+		rpcURLs: ['https://rpc-тест.example.com:8545', 'wss://ws-测试.example.com:8546'],
+		tokens: [
+			{
+				guid: 'unicode-token-测试',
+				icon: 'https://example.com/测试.png',
+				symbol: '测试',
+				name: 'Test Token 测试 with Üñíçødé',
+				contract_address: '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+			},
+		],
+	},
+];

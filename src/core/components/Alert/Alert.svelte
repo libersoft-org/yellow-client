@@ -4,8 +4,9 @@
 		children?: Snippet;
 		type?: 'info' | 'warning' | 'error';
 		message?: string;
+		testId?: string;
 	}
-	let { children, type = 'error', message }: Props = $props();
+	let { children, type = 'error', message, testId }: Props = $props();
 	const types = {
 		info: { label: 'Info', color: '#040', border: '#080', background: '#8f8' },
 		warning: { label: 'Warning', color: '#440', border: '#880', background: '#ff0' },
@@ -23,7 +24,7 @@
 	}
 </style>
 
-<div class="alert" style:color={colors().color} style:background-color={colors().background} style:border="1px solid {colors().border}">
+<div class="alert" style:color={colors().color} style:background-color={colors().background} style:border="1px solid {colors().border}" data-testid={testId}>
 	{#if children}
 		{@render children?.()}
 	{/if}

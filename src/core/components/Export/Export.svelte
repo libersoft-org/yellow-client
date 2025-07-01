@@ -14,7 +14,7 @@
 	let jsonEditorContents = $state('');
 	let qrCodeData = $state('');
 	let dummyQrCodeData = $state('');
-	let qrError = $state(null);
+	let qrError = $state<string | null>(null);
 	let isRevealed = $state(!isSensitive);
 	let copyText = $state('Copy to clipboard');
 	let timeoutId;
@@ -137,15 +137,15 @@
 
 <div class="export" data-testid={testId}>
 	{#if enableJsonTab && enableQrTab}
-		<Tabs data-testid="{testId}-tabs">
+		<Tabs>
 			<TabsItem img="img/json.svg" label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} testId="{testId}-json-tab" />
 			<TabsItem img="img/qr.svg" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} testId="{testId}-qr-tab" />
 		</Tabs>
 	{/if}
 	{#if activeTab === 'json' && enableJsonTab}
-		<ButtonBar expand data-testid="{testId}-json-buttons">
-			<Button img="img/copy.svg" text={copyText} onClick={clickCopy} testId="{testId}-copy-button" />
-			<Button img="img/download.svg" text="Download as file" onClick={clickDownload} testId="{testId}-download-button" />
+		<ButtonBar expand>
+			<Button img="img/copy.svg" text={copyText} onClick={clickCopy} data-testid="{testId}-copy-button" />
+			<Button img="img/download.svg" text="Download as file" onClick={clickDownload} data-testid="{testId}-download-button" />
 		</ButtonBar>
 		<Code bind:code={jsonEditorContents} testId="{testId}-code-editor" />
 	{:else if activeTab === 'qr' && enableQrTab}
@@ -162,7 +162,7 @@
 				{/if}
 				<div class="qr-wrapper" data-testid="{testId}-qr-wrapper">
 					{#if isSensitive}
-						<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide QR code' : 'Reveal QR code'} testId="{testId}-qr-toggle">
+						<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide QR code' : 'Reveal QR code'} data-testid="{testId}-qr-toggle">
 							<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Export data QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} data-testid="{testId}-qr-image" />
 						</Clickable>
 						{#if !isRevealed}

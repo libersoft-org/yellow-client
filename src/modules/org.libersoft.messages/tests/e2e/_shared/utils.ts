@@ -85,7 +85,7 @@ export async function forwardMessage(page: Page, messageUid?: string): Promise<v
 			//await page.waitForTimeout(500); // Small delay to ensure message is fully rendered
 
 			// Get the UID from the last message
-			targetMessageUid = await lastMessage.getAttribute('data-uid');
+			targetMessageUid = (await lastMessage.getAttribute('data-uid')) ?? undefined;
 			if (!targetMessageUid) {
 				throw new Error('Could not find UID for last message');
 			}

@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { setupConsoleLogging, closeWelcomeWizardModal, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeModal } from '@/core/e2e/test-utils.ts';
 
 import { startNewConversation, openConversation, sendMessage, verifyForwardModalWithPreview, forwardLastMessage, searchConversationsInForwardModal } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.ts';
