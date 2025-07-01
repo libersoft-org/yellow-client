@@ -15,13 +15,21 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
 	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
+
+	type ModalInstance = {
+		isOpen(): boolean;
+		open(): void;
+		close(): void;
+		maximize(): void;
+		restore(): void;
+	};
 	let modalItemID: string | null | undefined;
 	let modalEdit: boolean = false;
 	let modalItem: INetwork | null | undefined;
 	let elModalAddEditNetwork: ModalEditNetwork | undefined;
 	let elModalTokenList: ModalTokenList | undefined;
-	let elModalSettingsNetworksImport: SettingsNetworksImport | undefined;
-	let elModalSettingsNetworksExport: SettingsNetworksExport | undefined;
+	let elModalSettingsNetworksImport: ModalInstance | undefined;
+	let elModalSettingsNetworksExport: ModalInstance | undefined;
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined;
 
 	function clickAddEditNetwork(net: INetwork | null = null, edit: boolean = false) {
@@ -119,4 +127,4 @@
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} testId="wallet-settings-networks-token-list" />
 <Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} testId="wallet-settings-networks-import" />
 <Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} testId="wallet-settings-networks-export" />
-<DialogDeleteNetwork item={modalItem} bind:this={elDialogDeleteNetwork} />
+<DialogDeleteNetwork item={modalItem || undefined} bind:this={elDialogDeleteNetwork} />

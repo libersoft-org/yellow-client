@@ -68,6 +68,10 @@
 		// TODO: print preview and print
 		console.log('PRINT');
 		const newWindow = window.open('', '_blank');
+		if (!newWindow) {
+			console.error('Failed to open print window');
+			return;
+		}
 		newWindow.document.write(`
     <!DOCTYPE html>
     <html lang="en">
