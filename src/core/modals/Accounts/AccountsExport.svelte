@@ -14,7 +14,5 @@
 </script>
 
 <Modal title="Export accounts" bind:this={elModal} testId="accounts-export">
-	{#snippet top()}
-		<Export data={$accounts_config} filename="accounts" testId="accounts-export" isSensitive />
-	{/snippet}
+	<Export data={$accounts_config} filename="accounts" testId="accounts-export" isSensitive />
 </Modal>

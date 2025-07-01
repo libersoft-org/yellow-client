@@ -339,6 +339,7 @@
 	.modal .body {
 		display: flex;
 		flex-direction: column;
+		height: 100%;
 		gap: 10px;
 		padding: 10px;
 		background-color: var(--background);
