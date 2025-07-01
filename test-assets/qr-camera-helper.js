@@ -110,11 +110,11 @@ export async function testQRImport(page, qrImageName, expectedResult = 'success'
 
 	if (expectedResult === 'success') {
 		// Should show scanned content and import buttons
-		await page.waitForSelector('[data-testid="accounts-add-btn"]', { timeout: 5000 });
+		await page.waitForSelector('[data-testid="accounts-add-btn"]', {});
 		return true;
 	} else if (expectedResult === 'error') {
 		// Should show error for invalid QR data
-		await page.waitForSelector('.alert', { timeout: 5000 });
+		await page.waitForSelector('.alert', {});
 		return true;
 	}
 

@@ -15,6 +15,7 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
 	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
+	import { tick } from 'svelte';
 
 	type ModalInstance = {
 		isOpen(): boolean;
@@ -26,8 +27,8 @@
 	let modalItemID: string | null | undefined;
 	let modalEdit: boolean = false;
 	let modalItem: INetwork | null | undefined;
-	let elModalAddEditNetwork: ModalEditNetwork | undefined;
-	let elModalTokenList: ModalTokenList | undefined;
+	let elModalAddEditNetwork: ModalInstance | undefined;
+	let elModalTokenList: ModalInstance | undefined;
 	let elModalSettingsNetworksImport: ModalInstance | undefined;
 	let elModalSettingsNetworksExport: ModalInstance | undefined;
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined;
@@ -39,9 +40,10 @@
 		elModalAddEditNetwork?.open();
 	}
 
-	function clickDeleteNetwork(net) {
+	async function clickDeleteNetwork(net) {
 		console.log('clickDeleteNetwork', net);
 		modalItem = net;
+		await tick();
 		elDialogDeleteNetwork?.open();
 	}
 
@@ -70,7 +72,7 @@
 
 <div class="networks">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={clickAddEditNetwork} data-testid="networks-add-new-btn" />
+		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={() => clickAddEditNetwork()} data-testid="networks-add-new-btn" />
 		<Button img="img/import.svg" text="Import" onClick={() => doImport()} data-testid="networks-import-btn" />
 		<Button img="img/export.svg" text="Export" onClick={() => doExport()} data-testid="networks-export-btn" />
 	</ButtonBar>
@@ -127,4 +129,6 @@
 <Modal title="Token list" body={ModalTokenList} params={{ item: modalItemID }} bind:this={elModalTokenList} testId="wallet-settings-networks-token-list" />
 <Modal title="Import networks" body={SettingsNetworksImport} bind:this={elModalSettingsNetworksImport} testId="wallet-settings-networks-import" />
 <Modal title="Export networks" body={SettingsNetworksExport} bind:this={elModalSettingsNetworksExport} testId="wallet-settings-networks-export" />
-<DialogDeleteNetwork item={modalItem || undefined} bind:this={elDialogDeleteNetwork} />
+{#if modalItem}
+	<DialogDeleteNetwork item={modalItem} bind:this={elDialogDeleteNetwork} />
+{/if}

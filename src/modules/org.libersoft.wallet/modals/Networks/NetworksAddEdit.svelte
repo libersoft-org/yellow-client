@@ -9,8 +9,8 @@
 	import Form from '@/core/components/Form/Form.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	interface Props {
-		params?: {
-			item?: INetwork;
+		params: {
+			item?: INetwork | null;
 		};
 		close: () => void;
 	}
@@ -30,7 +30,7 @@
 
 	function update(params: Props['params']): void {
 		if (item_guid) return;
-		let item: INetwork | undefined = params?.item;
+		let item: INetwork | null | undefined = params?.item;
 		if (item) {
 			item_guid = item?.guid;
 			item_name = item?.name;

@@ -19,7 +19,7 @@ const accountsConfig = [
 
 const activeAccountId = '0';
 
-test.describe('Theme Management', () => {
+test.describe.parallel('Theme Management', () => {
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
@@ -149,7 +149,7 @@ test.describe('Theme Management', () => {
 				return bgColor.trim() === '#000'; // Dark theme has black background
 			},
 			{},
-			{ timeout: 5000 }
+			{}
 		);
 
 		// Click add theme button

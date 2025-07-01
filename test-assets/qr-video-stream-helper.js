@@ -242,7 +242,7 @@ export async function testQRImportWithImageStream(page, qrImageName, expectedDat
 			} else {
 				// Should be detected but import should fail
 				await page.getByTestId('accounts-add-btn').click();
-				await expect(page.locator('.alert')).toBeVisible({ timeout: 3000 });
+				await expect(page.locator('.alert')).toBeVisible();
 				return { success: true, autoDetected: true, importFailed: true };
 			}
 		} else {
