@@ -69,7 +69,7 @@
 		<select disabled={!enabled} {...restProps} class:expand style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} bind:this={selectRef} bind:value>
 			{@render children?.()}
 		</select>
-		<Icon class="select-icon" img="img/down.svg" colorVariable="--default-foreground" alt="Dropdown" size="12px" padding="0px" />
+		<Icon img="img/down.svg" colorVariable="--default-foreground" alt="Dropdown" size="12px" padding="0px" />
 	</div>
 {/snippet}
 

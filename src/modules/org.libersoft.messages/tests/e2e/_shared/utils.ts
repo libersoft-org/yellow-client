@@ -7,7 +7,7 @@ import { expect, type Page, test } from '@playwright/test';
  */
 export async function startNewConversation(page: Page, recipient: string): Promise<void> {
 	return await test.step(`Start new conversation with: ${recipient}`, async () => {
-		await page.getByTestId('new-conversation-button').click();
+		await page.getByTestId('new-conversation-button').last().click();
 		await page.getByTestId('new-conversation-address').fill(recipient);
 		await page.getByTestId('New Conversation Open').click();
 	});
