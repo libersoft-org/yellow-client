@@ -25,15 +25,29 @@
 	}
 </script>
 
+<style>
+	.item {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 10px;
+		min-height: 44px;
+		box-sizing: border-box;
+	}
+</style>
+
 <Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => elModalNetworks?.open()} />
 <Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Table breakpoint="0">
 	<Tbody>
 		{#each $networks as n}
 			<TbodyTr>
-				<Td>
-					<Clickable onClick={() => selectNetwork(n.guid)}>
-						<Icon img={n.currency.iconURL} />{n.name}
+				<Td padding="0">
+					<Clickable onClick={() => selectNetwork(n.guid)} expand>
+						<div class="item">
+							<Icon img={n.currency.iconURL} size="24px" padding="0" />
+							<span>{n.name}</span>
+						</div>
 					</Clickable>
 				</Td>
 			</TbodyTr>

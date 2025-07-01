@@ -4,9 +4,10 @@
 		children?: Snippet;
 		title?: string;
 		'data-testid'?: string;
+		padding?: string;
 		shorten?: boolean;
 	}
-	let { children, title, 'data-testid': dataTestId, shorten = false }: Props = $props();
+	let { children, title, 'data-testid': dataTestId, padding = '10px', shorten = false }: Props = $props();
 </script>
 
 <style>
@@ -15,7 +16,6 @@
 		justify-content: flex-start;
 		align-items: center;
 		gap: 20px;
-		padding: 10px;
 		text-align: left;
 		border: 0;
 		white-space: normal;
@@ -39,7 +39,6 @@
 		text-align: left !important;
 		min-width: 50px;
 		vertical-align: middle;
-		padding: 10px !important;
 	}
 
 	:global(.table-wide) td {
@@ -77,6 +76,6 @@
 	}
 </style>
 
-<td data-title={title} data-testid={dataTestId} class:shorten>
+<td data-title={title} data-testid={dataTestId} style:padding class:shorten>
 	{@render children?.()}
 </td>
