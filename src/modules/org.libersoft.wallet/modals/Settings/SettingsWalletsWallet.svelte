@@ -31,11 +31,11 @@
 		elModalAddressAdd?.open();
 	}
 
-	function renameAddress(address) {
+	function renameAddress(address: IAddress) {
 		let name = window.prompt('Enter the new name');
 		if (!name) return;
 		address.name = name;
-		params.wallet.addresses = [...params.wallet.addresses];
+		if (params.wallet.addresses) params.wallet.addresses = [...params.wallet.addresses];
 		wallets.update(ws =>
 			ws.map(w =>
 				w === params.wallet
@@ -48,7 +48,7 @@
 		);
 	}
 
-	function deleteAddress(address) {
+	function deleteAddress(address: IAddress) {
 		selectedAddress = address;
 		elDialogAddressDel?.open();
 	}
