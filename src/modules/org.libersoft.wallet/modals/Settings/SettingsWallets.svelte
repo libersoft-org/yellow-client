@@ -44,17 +44,6 @@
 </script>
 
 <style>
-	.wallet {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		padding: 16px 10px;
-	}
-
-	.wallet:global(:has(tbody:empty) table) {
-		display: none !important;
-	}
-
 	.item {
 		padding: 10px;
 		min-height: 40px;
