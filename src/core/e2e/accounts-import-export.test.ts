@@ -2,8 +2,8 @@ import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 
 // todo: unify
-import { closeWelcomeWizardModal, setupConsoleLogging } from '@/core/e2e/test-utils.ts';
-import { closeModal } from '$lib/test-utils/e2e-helpers.ts';
+import { closeWelcomeWizardModal, setupConsoleLogging } from '@/core/e2e/test-utils.js';
+import { closeModal } from '$lib/test-utils/e2e-helpers.js';
 
 /**
  * Valid account configurations for testing

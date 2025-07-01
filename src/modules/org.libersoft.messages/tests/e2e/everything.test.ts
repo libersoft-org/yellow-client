@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeModal, goToRootSettingsSection, navigateToSettingsSection } from '@/core/e2e/test-utils.ts';
+import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeModal, goToRootSettingsSection, navigateToSettingsSection } from '@/core/e2e/test-utils.js';
 
-import { startNewConversation, openConversation, sendMessage, forwardLastMessage, forwardMessageToConversation, verifyForwardModalWithPreview, searchConversationsInForwardModal } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.ts';
+import { startNewConversation, openConversation, sendMessage, forwardLastMessage, forwardMessageToConversation, verifyForwardModalWithPreview, searchConversationsInForwardModal } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
 
 test('Complete End-to-End Application Test', async ({ page }) => {
 	setupConsoleLogging(page);
