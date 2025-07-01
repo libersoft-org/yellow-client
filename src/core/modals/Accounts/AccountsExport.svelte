@@ -13,6 +13,6 @@
 	}
 </script>
 
-<Modal title="Export accounts" bind:this={elModal} testId="accounts-export">
+<Modal title="Export accounts" bind:this={elModal} testId="accounts-export" width="600px" height="500px">
 	<Export data={$accounts_config} filename="accounts" testId="accounts-export" isSensitive />
 </Modal>

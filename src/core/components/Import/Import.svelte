@@ -210,18 +210,8 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
+		height: 100%;
 		gap: 10px;
-	}
-
-	.json-import {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.json-import .scrollable {
-		overflow: auto;
 	}
 
 	.qr-scanner {
@@ -281,15 +271,11 @@
 		<TabsItem img="img/qr.svg" label={qrLabel} active={activeTab === 'qr'} onClick={() => handleTabChange('qr')} testId={`${testId}-qr-tab`} />
 	</Tabs>
 	{#if activeTab === 'json'}
-		<div class="json-import">
-			<ButtonBar expand>
-				<Button img="img/open.svg" onclick={loadFile} text={browseButtonText} />
-			</ButtonBar>
-			<div class="scrollable">
-				<Code bind:code={text} testId={`${testId}-textarea`} />
-			</div>
-			<input bind:this={fileInput} type="file" accept={fileAccept} style="display: none;" onchange={handleFileSelect} />
-		</div>
+		<ButtonBar expand>
+			<Button img="img/open.svg" onclick={loadFile} text={browseButtonText} />
+		</ButtonBar>
+		<Code bind:code={text} testId={`${testId}-textarea`} />
+		<input bind:this={fileInput} type="file" accept={fileAccept} style="display: none;" onchange={handleFileSelect} />
 		{@render import_buttons()}
 	{:else if activeTab === 'qr'}
 		{#if scannedText}
