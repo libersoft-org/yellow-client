@@ -137,16 +137,29 @@
 	function centerModal() {
 		if (!elModal) return;
 		if ($isMobile) {
-			// On mobile, modal takes full width but centers vertically
+			// On mobile, let CSS handle the centering by default
+			// Only apply custom positioning if the modal is too large
 			const rect = elModal.getBoundingClientRect();
-			const y = (window.innerHeight - rect.height) / 2;
-			elModal.style.transform = `translate3d(0px, ${y}px, 0)`;
+			if (rect.height > window.innerHeight) {
+				const y = Math.max(0, (window.innerHeight - rect.height) / 2);
+				elModal.style.transform = `translate3d(0px, ${y}px, 0)`;
+			} else {
+				// Reset to CSS default centering
+				elModal.style.transform = '';
+			}
 			return;
 		}
+		// For desktop, let CSS handle the centering by default
+		// Only apply custom positioning if the modal is too large
 		const rect = elModal.getBoundingClientRect();
-		const x = (window.innerWidth - rect.width) / 2;
-		const y = (window.innerHeight - rect.height) / 2;
-		elModal.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+		if (rect.width > window.innerWidth || rect.height > window.innerHeight) {
+			const x = Math.max(0, (window.innerWidth - rect.width) / 2);
+			const y = Math.max(0, (window.innerHeight - rect.height) / 2);
+			elModal.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+		} else {
+			// Reset to CSS default centering
+			elModal.style.transform = '';
+		}
 	}
 
 	function snapTransformIntoBounds() {
@@ -247,11 +260,15 @@
 		display: flex;
 		flex-direction: column;
 		position: fixed;
-		inset: 0;
+		top: 50%;
+		left: 0;
+		right: 0;
+		transform: translateY(-50%);
+		margin: 0 auto;
 		box-sizing: border-box;
 		width: fit-content;
+		height: auto;
 		max-height: 100dvh;
-		height: fit-content;
 		overflow: hidden;
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
@@ -268,7 +285,6 @@
 		max-width: 100% !important;
 		max-height: 100% !important;
 		width: 100% !important;
-		/*height: 100%;*/
 		border-radius: 0px;
 		border: none;
 	}
@@ -323,12 +339,12 @@
 	.modal .body {
 		display: flex;
 		flex-direction: column;
+		height: 100%;
 		gap: 10px;
 		padding: 10px;
 		background-color: var(--background);
 		overflow: auto;
 		color: var(--primary-foreground);
-		height: 100%;
 	}
 
 	.top,

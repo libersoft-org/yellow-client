@@ -10,7 +10,7 @@
 	 */
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
-	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading } from '../../messages.js';
+	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '../../messages.js';
 	import { getGuid } from '@/core/core.ts';
 	import { debug } from '@/core/stores.ts';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -111,6 +111,9 @@
 
 	$: scrollButtonVisible = !scrolledToBottom;
 	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
+	$: if (elMessages) {
+		elMessages.style.setProperty('--message-list-max-width', $messageListApplyMaxWidth ? `${$messageListMaxWidth}px` : 'none');
+	}
 
 	onMount(() => {
 		setInterval(() => {
@@ -607,6 +610,7 @@
 		height: 100%;
 		overflow-y: auto;
 		max-height: 100%; /* Ensure the inner div has a defined height */
+		max-width: var(--message-list-max-width, none);
 	}
 
 	.unread {
@@ -702,6 +706,14 @@
 		margin-top: 8px;
 		color: var(--primary-foreground);
 	}
+
+	/* Target Android devices */
+	@media (max-width: 768px) and (max-height: 800px) {
+		.messages-bottom-spacer {
+			flex-shrink: 0;
+			height: 70px; /* Larger for Android mobile */
+		}
+	}
 </style>
 
 {#if $debug}
@@ -762,6 +774,7 @@
 				{/if}
 			{/each}
 			<div bind:this={anchorElement}></div>
+			<div class="messages-bottom-spacer"></div>
 		</div>
 		<ScrollButton visible={scrollButtonVisible} right="15px" bottom="5px" onClick={scrollToBottom} />
 	{/if}

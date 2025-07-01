@@ -38,7 +38,6 @@
 	table {
 		border: 0;
 		padding-bottom: 0;
-		display: block;
 		width: 100%;
 		border-collapse: collapse;
 		table-layout: auto;

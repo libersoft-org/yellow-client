@@ -9,15 +9,18 @@
 <style>
 	.tabs {
 		display: flex;
+		width: 100%;
 		border-radius: 10px;
+		overflow: hidden;
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
-		overflow: hidden;
 	}
 </style>
 
-<div class="tabs">
-	{#if children}
-		{@render children?.()}
-	{/if}
+<div>
+	<div class="tabs">
+		{#if children}
+			{@render children?.()}
+		{/if}
+	</div>
 </div>

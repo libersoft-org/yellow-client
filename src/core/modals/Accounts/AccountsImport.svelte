@@ -235,19 +235,17 @@
 	}
 </style>
 
-<Modal title="Import accounts" bind:this={elModal} testId="accounts-import">
-	{#snippet top()}
-		{#if successMessage}
-			<div class="success">
-				<Alert type="info" message={successMessage} />
-				<ButtonBar expand>
-					<Button img="img/cross.svg" text="Close" onClick={() => elModal?.close()} />
-				</ButtonBar>
-			</div>
-		{:else}
-			<Import bind:this={importUi} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
-		{/if}
-	{/snippet}
+<Modal title="Import accounts" bind:this={elModal} testId="accounts-import" width="600px" height="500px">
+	{#if successMessage}
+		<div class="success">
+			<Alert type="info" message={successMessage} />
+			<ButtonBar expand>
+				<Button img="img/cross.svg" text="Close" onClick={() => elModal?.close()} />
+			</ButtonBar>
+		</div>
+	{:else}
+		<Import bind:this={importUi} testId="accounts" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingAccounts ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add accounts" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing account configuration" />
+	{/if}
 </Modal>
 <Dialog data={dataDialogReplace} bind:this={elDialogReplace} />
 <Dialog data={dataDialogConflict} bind:this={elDialogConflict} />
