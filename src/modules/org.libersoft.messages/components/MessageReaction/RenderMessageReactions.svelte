@@ -1,13 +1,18 @@
 <script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	//import Emoji from "../Emoji/Emoji.svelte";
 	import { emoji_render, rgi_to_codepoints } from '../../emojis';
 	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
 	import { get } from 'svelte/store';
 	import { active_account } from '@/core/core';
 	import { highlightElement } from '@/core/utils/animationUtils.ts';
-	import _union from 'lodash/union';
-	import _isEqual from 'lodash/isEqual';
+
+	import union from 'lodash-es/union';
+	import isEqual from 'lodash-es/isEqual';
+
+	if (import.meta.env.VITE_YELLOW_CLIENT_DEBUG) {
+		console.debug(union, isEqual);
+	}
+
 	interface Props {
 		reactions: any[];
 		onReactionClick: (codepoints_rgi: string) => void;
@@ -72,7 +77,7 @@
 			return;
 		}
 
-		if (_isEqual(prevReactions, groupedReactions)) return;
+		if (isEqual(prevReactions, groupedReactions)) return;
 		// find difference by comparing groups lengths
 		const prevKeys = Object.keys(prevReactions);
 		const newKeys = Object.keys(groupedReactions);
@@ -84,7 +89,7 @@
 			}
 			return false;
 		});
-		_union(added, removed, modified).forEach(a => highlightElement(buttonRefs[a]));
+		union(added, removed, modified).forEach(a => highlightElement(buttonRefs[a]));
 		prevReactions = groupedReactions;
 	});
 </script>

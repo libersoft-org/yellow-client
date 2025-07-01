@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+  	"postinstall": "patch-package",
+		"dev": "vite dev",
     "init": "bun x --bun svelte-kit sync; bun x --bun @inlang/paraglide-js compile --project ./project.inlang",
     "build": "bun x --bun vite build",
     "preview": "vite preview",
@@ -53,6 +54,7 @@
     "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "lottie-web": "^5.13.0",
     "mediainfo.js": "^0.3.5",
     "pako": "^2.1.0",
