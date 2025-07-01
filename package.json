@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-  	"postinstall": "patch-package",
 		"dev": "vite dev",
     "init": "bun x --bun svelte-kit sync; bun x --bun @inlang/paraglide-js compile --project ./project.inlang",
     "build": "bun x --bun vite build",
