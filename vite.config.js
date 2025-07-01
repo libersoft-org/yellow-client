@@ -67,12 +67,16 @@ export default defineConfig(({ mode }) => {
 				project: './project.inlang',
 				outdir: './src/lib/paraglide',
 			}),
-			svelteInspector({
-				toggleKeyCombo: 'control-shift',
-				holdMode: true,
-				showToggleButton: 'active',
-				toggleButtonPos: 'top-right',
-			}),
+			...(process.env.VITEST
+				? []
+				: [
+						svelteInspector({
+							toggleKeyCombo: 'control-shift',
+							holdMode: true,
+							showToggleButton: 'active',
+							toggleButtonPos: 'top-right',
+						}),
+					]),
 			...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
 		],
 		define: {
