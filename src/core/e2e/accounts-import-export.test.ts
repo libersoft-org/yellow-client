@@ -687,7 +687,6 @@ test.describe('Accounts Import/Export', () => {
  */
 async function goToAccountManagement(page: Page): Promise<void> {
 	return await test.step('Go to account management', async () => {
-		await closeWelcomeWizardModal(page);
 		await page.getByTestId('account-bar-toggle').click();
 		await page.getByTestId('account-management-button').click();
 	});
