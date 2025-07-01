@@ -13,6 +13,7 @@
 		bottom?: Snippet;
 		params?: any;
 		max?: boolean;
+		resizable?: boolean;
 		optionalIcon?: {
 			img: string;
 			alt?: string;
@@ -26,7 +27,7 @@
 	}
 	let show = $state(false);
 	let maximized = $state(false);
-	let { testId = '', children, top, center, bottom, params, max, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
+	let { testId = '', children, top, center, bottom, params, max, resizable = false, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
 	let elModal: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let ModalBody = $state<Snippet>(body);
@@ -198,7 +199,7 @@
 		if (max) maximized ? restore() : maximize();
 	}
 
-	const dragableConfig = {
+	const draggableConfig = {
 		onDragStart,
 		onDragEnd,
 		gpuAcceleration: true,
@@ -256,7 +257,7 @@
 		border-radius: 10px;
 		box-shadow: var(--shadow);
 		background-color: var(--default-background);
-		/*transition: transform 0.4s ease;*/
+		transition: transform 0.4s ease;
 	}
 
 	:global(.modal.neodrag-dragging) .header {
@@ -355,7 +356,7 @@
 		{#if $isMobile}
 			<div class="overlay" onpointerdown={close}></div>
 		{/if}
-		<div class="modal {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elModal} use:draggable={dragableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
+		<div class="modal {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elModal} use:draggable={draggableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Modal' : undefined}>
 			{#if showContent}
 				<div class="header" class:focused role="none" tabindex="-1" ondblclick={doubleClickHeader}>
 					{#if title}

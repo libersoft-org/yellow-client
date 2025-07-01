@@ -42,13 +42,13 @@
 	.send {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		align-items: center;
 	}
 </style>
 
 <div class="send">
-	<Form onSubmit={send}>
-		<Label text="Send to">
+	<Form onSubmit={send} width="400px">
+		<Label text="Address">
 			<Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Currency">
