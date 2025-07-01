@@ -17,7 +17,7 @@ async function goToNetworksManagement(page: Page): Promise<void> {
 		await page.getByRole('button', { name: 'Manage networks' }).click();
 
 		// Wait for the networks management modal to be visible
-		await page.getByTestId('networks-import-btn').waitFor({ state: 'visible', timeout: 5000 });
+		await page.getByTestId('networks-import-btn').waitFor({ state: 'visible' });
 	});
 }
 
@@ -189,7 +189,7 @@ test.describe('Networks Import/Export Functionality', () => {
 		await closeWelcomeWizardModal(page);
 
 		// Wait for module bar to be visible before switching
-		await page.getByTestId(`ModuleBarItem-org.libersoft.wallet`).waitFor({ state: 'visible', timeout: 10000 });
+		await page.getByTestId(`ModuleBarItem-org.libersoft.wallet`).waitFor({ state: 'visible' });
 
 		// Switch to wallet module
 		await switchModule(page, 'org.libersoft.wallet');
@@ -208,7 +208,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await clickAddNetworks(page);
 
 			// Should close modal automatically on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Verify networks were added by checking the network list
 			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
@@ -221,7 +221,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await openNetworksImportModal(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Now replace them
 			await openNetworksImportModal(page);
@@ -244,7 +244,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await confirmReplaceNetworksDialog(page);
 
 			// Should close modal automatically on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Verify old networks are gone and new network is present
 			await expect(page.getByTestId('network-name@Test Network 1')).not.toBeVisible();
@@ -261,7 +261,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await clickAddNetworks(page);
 
 			// Should close modal automatically on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Verify complex network was added
 			await expect(page.getByTestId('network-name@Test Network with Üñíçødé 测试')).toBeVisible();
@@ -306,7 +306,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await openNetworksImportModal(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(0, 1)));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Now try to import a network with the same name
 			await openNetworksImportModal(page);
@@ -328,13 +328,13 @@ test.describe('Networks Import/Export Functionality', () => {
 			await clickAddNetworks(page);
 
 			// Should show conflict dialog
-			await expect(page.getByText('Network Already Exists')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByText('Network Already Exists')).toBeVisible();
 
 			// Test "Replace Existing" option
 			await page.getByRole('button', { name: 'Replace Existing' }).click();
 
 			// Modal should close on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Verify the network was replaced (check for the new chainID or symbol)
 			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
@@ -346,7 +346,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await openNetworksImportModal(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(0, 1)));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Now try to import a network with the same name
 			await openNetworksImportModal(page);
@@ -368,13 +368,13 @@ test.describe('Networks Import/Export Functionality', () => {
 			await clickAddNetworks(page);
 
 			// Should show conflict dialog
-			await expect(page.getByText('Network Already Exists')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByText('Network Already Exists')).toBeVisible();
 
 			// Test "Import with Modified Name" option
 			await page.getByRole('button', { name: 'Import with Modified Name' }).click();
 
 			// Modal should close on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Verify both networks exist - original and one with modified name
 			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
@@ -387,7 +387,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await openNetworksImportModal(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(0, 1)));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Now try to import the same network again
 			await openNetworksImportModal(page);
@@ -409,7 +409,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await clickAddNetworks(page);
 
 			// Should show conflict dialog
-			await expect(page.getByText('Network Already Exists')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByText('Network Already Exists')).toBeVisible();
 
 			// Test "Skip This Network" option
 			await page.getByRole('button', { name: 'Skip This Network' }).click();
@@ -522,7 +522,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await clickAddNetworks(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Now test export
 			await openNetworksExportModal(page);
@@ -551,7 +551,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await clickAddNetworks(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Export and verify
 			await openNetworksExportModal(page);
@@ -650,7 +650,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await page.getByTestId('networks-add-btn').click();
 
 			// Should close modal and show imported network
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 			await expect(page.getByTestId('network-name@QR Scanned Network')).toBeVisible();
 		});
 	});
@@ -683,7 +683,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await clickAddNetworks(page);
 
 			// Should succeed for reasonable number of networks
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 10000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Verify some networks were imported
 			await expect(page.getByTestId('network-name@Bulk Network 0')).toBeVisible();
@@ -695,7 +695,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await openNetworksImportModal(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(0, 1)));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Try to replace
 			await openNetworksImportModal(page);
@@ -728,7 +728,7 @@ test.describe('Networks Import/Export Functionality', () => {
 			await openNetworksImportModal(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
 
 			// Export networks
 			await openNetworksExportModal(page);

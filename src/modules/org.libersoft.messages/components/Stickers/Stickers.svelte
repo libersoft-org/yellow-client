@@ -14,7 +14,7 @@
 		server: StickersServer,
 	};
 	let activeTabName = $state('server');
-	let view = $state(null);
+	let view: any = $state(null);
 
 	async function setTab(e, name) {
 		activeTabName = name;
@@ -74,7 +74,7 @@
 		<Tabs>
 			<TabsItem img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} active={activeTabName === 'favourites'} />
 			<TabsItem img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} active={activeTabName === 'server'} />
-			<TabsItem img="modules/{identifier}/img/update.svg" colorVariable={$stickerLibraryUpdaterState.updating && '--disabled-foreground'} onClick={clickUpdate} />
+			<TabsItem img="modules/{identifier}/img/update.svg" colorVariable={$stickerLibraryUpdaterState.updating ? '--disabled-foreground' : undefined} onClick={clickUpdate} />
 		</Tabs>
 		{#if $debug}$stickerLibraryUpdaterState:{JSON.stringify($stickerLibraryUpdaterState)}{/if}
 		{#if $stickerLibraryUpdaterState.updating}

@@ -9,8 +9,8 @@
 	import { gif_server } from '../../gifs.js';
 	import LazyLoader from './GifSetLazyLoader.svelte';
 	const MessageBar = getContext('MessageBar') as any;
-	const menu = getContext('ContextMenu');
-	let gifs = [];
+	const menu = getContext('ContextMenu') as any;
+	let gifs: any[] = [];
 	let query = '';
 	let loading = false;
 	let elSearchText;

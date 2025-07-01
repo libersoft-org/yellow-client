@@ -87,7 +87,7 @@
 			return;
 		}
 		if (params && params.item && address) {
-			addressBook.update(currentItems => currentItems.map(item => (item.guid === params.item!.guid ? { ...item, name: name || '', address } : item)));
+			addressBook.update(currentItems => currentItems.map(item => (item.guid === params.item!.guid ? { ...item, name: name || '', address: address || '' } : item)));
 		}
 		if (close) close();
 	}

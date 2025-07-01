@@ -170,7 +170,7 @@ export class QRTestHelper {
 
 			// If automatic detection doesn't work, try manual injection
 			try {
-				await this.page.waitForSelector('[data-testid="accounts-add-btn"]', { timeout: 3000 });
+				await this.page.waitForSelector('[data-testid="accounts-add-btn"]', {});
 			} catch (e) {
 				console.log('Auto-detection failed, trying manual injection...');
 				await this.triggerQRDetection(qrData);
@@ -265,7 +265,7 @@ export async function testQRImportFlow(page, qrData, expectedResult = 'success')
 
 		if (expectedResult === 'success') {
 			// Should show scanned content and import buttons
-			await expect(page.getByTestId('accounts-add-btn')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-add-btn')).toBeVisible();
 
 			// Verify the scanned data is displayed
 			const codeElement = page.locator('[data-testid="accounts-textarea"]');
@@ -274,11 +274,11 @@ export async function testQRImportFlow(page, qrData, expectedResult = 'success')
 			return { success: true, data: await codeElement.inputValue() };
 		} else if (expectedResult === 'error' || expectedResult === 'invalid') {
 			// For invalid data, we'll still see the add button but it should fail when clicked
-			await expect(page.getByTestId('accounts-add-btn')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-add-btn')).toBeVisible();
 
 			// Try to import and expect error
 			await page.getByTestId('accounts-add-btn').click();
-			await expect(page.locator('.alert')).toBeVisible({ timeout: 3000 });
+			await expect(page.locator('.alert')).toBeVisible();
 
 			return { success: false, error: 'Expected error occurred' };
 		}

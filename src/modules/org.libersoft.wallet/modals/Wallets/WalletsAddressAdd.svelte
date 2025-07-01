@@ -20,7 +20,7 @@
 
 	$effect(() => {
 		console.log('[EFFECT] Initializing address add modal with wallet:', params.wallet);
-		let max = addressesMaxIndex(params.wallet.addresses) + 1;
+		let max = addressesMaxIndex(params.wallet.addresses || []) + 1;
 		index = params.wallet.addresses ? max : 0;
 		name = 'Address ' + max;
 	});

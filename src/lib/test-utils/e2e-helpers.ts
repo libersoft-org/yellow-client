@@ -44,6 +44,6 @@ export async function closeModal(page: Page, testId: string): Promise<void> {
  */
 export async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
 	return await test.step(`Expect error message: ${expectedError}`, async () => {
-		await expect(page.locator('.alert').filter({ hasText: expectedError })).toBeVisible({ timeout: 5000 });
+		await expect(page.locator('.alert').filter({ hasText: expectedError })).toBeVisible({});
 	});
 }
