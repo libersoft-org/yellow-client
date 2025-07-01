@@ -22,18 +22,13 @@
 	let error: string | undefined = $state();
 	let elName: Input;
 
-	/* TODO: don't use it like this, wait for onOpen
- $effect(() => {
-  if (params?.item) {
+	export function onOpen() {
+		if (params?.item) {
 			name = params.item.name || '';
 			address = params.item.address || '';
 		}
-	});
-
-	onMount(() => {
 		if (elName) elName.focus();
-	});
- */
+	}
 
 	function findAddressBookItemByAddress(address: string): IAddressBookItem | undefined {
 		const ab = $addressBook;
