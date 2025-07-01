@@ -28,6 +28,10 @@
 		update(params);
 	});
 
+	export function onOpen() {
+		window.alert('onOpen');
+	}
+
 	function update(params: Props['params']): void {
 		if (item_guid) return;
 		let item: INetwork | null | undefined = params?.item;
