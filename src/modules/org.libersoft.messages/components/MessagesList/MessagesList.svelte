@@ -77,6 +77,7 @@
 	export let setBarFocus: () => Promise<void>;
 	let scrollButtonVisible: boolean = true;
 	let elMessages: HTMLDivElement;
+	let elMessagesContainer: HTMLDivElement;
 	let elUnseenMarker: HTMLDivElement;
 	let elModalStickersetDetails: any;
 	let anchorElement: HTMLDivElement;
@@ -111,8 +112,8 @@
 
 	$: scrollButtonVisible = !scrolledToBottom;
 	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
-	$: if (elMessages) {
-		elMessages.style.setProperty('--message-list-max-width', $messageListApplyMaxWidth ? `${$messageListMaxWidth}px` : 'none');
+	$: if (elMessagesContainer) {
+		elMessagesContainer.style.setProperty('--message-list-max-width', $messageListApplyMaxWidth ? `${$messageListMaxWidth}px` : 'none');
 	}
 
 	onMount(() => {
@@ -610,7 +611,14 @@
 		height: 100%;
 		overflow-y: auto;
 		max-height: 100%; /* Ensure the inner div has a defined height */
+	}
+
+	.messages-container {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
 		max-width: var(--message-list-max-width, none);
+		margin: 0 auto;
 	}
 
 	.unread {
@@ -754,27 +762,29 @@
 		<div class="spacer"></div>
 	{:else}
 		<div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll} on:touchmove={touchMove} on:touchend={blockScroll} on:touchstart={touchStart}>
-			<div class="spacer"></div>
-			{#each itemsArray as m (m.uid)}
-				<!--{#if $debug}-->
-				<!-- <div class="debug-text">-->
-				<!--  {JSON.stringify(m, null, 2)}-->
-				<!-- </div>-->
-				<!--{/if}-->
-				{#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole' && 'top' in m && 'bottom' in m}
-					<MessageLoader loader={m.top} />
-					<div class="hole">{m.uid}</div>
-					<MessageLoader loader={m.bottom} />
-				{:else if m.type === 'loader'}
-					<MessageLoader loader={m} />
-				{:else if m.type === 'unseen_marker'}
-					<div bind:this={elUnseenMarker} class="unread">Unread messages</div>
-				{:else}
-					<Message bind:this={m.el} {enableScroll} {disableScroll} message={m} elContainer={elMessages} />
-				{/if}
-			{/each}
-			<div bind:this={anchorElement}></div>
-			<div class="messages-bottom-spacer"></div>
+			<div class="messages-container" bind:this={elMessagesContainer}>
+				<div class="spacer"></div>
+				{#each itemsArray as m (m.uid)}
+					<!--{#if $debug}-->
+					<!-- <div class="debug-text">-->
+					<!--  {JSON.stringify(m, null, 2)}-->
+					<!-- </div>-->
+					<!--{/if}-->
+					{#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole' && 'top' in m && 'bottom' in m}
+						<MessageLoader loader={m.top} />
+						<div class="hole">{m.uid}</div>
+						<MessageLoader loader={m.bottom} />
+					{:else if m.type === 'loader'}
+						<MessageLoader loader={m} />
+					{:else if m.type === 'unseen_marker'}
+						<div bind:this={elUnseenMarker} class="unread">Unread messages</div>
+					{:else}
+						<Message bind:this={m.el} {enableScroll} {disableScroll} message={m} elContainer={elMessages} />
+					{/if}
+				{/each}
+				<div bind:this={anchorElement}></div>
+				<div class="messages-bottom-spacer"></div>
+			</div>
 		</div>
 		<ScrollButton visible={scrollButtonVisible} right="15px" bottom="5px" onClick={scrollToBottom} />
 	{/if}
