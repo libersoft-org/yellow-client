@@ -44,7 +44,7 @@
 		<Alert type="error" message={error} />
 	{/if}
 </Form>
-<ButtonBar expand equalize>
+<ButtonBar expand>
 	<Button img="img/edit.svg" text="Edit" onClick={clickEdit} />
 	<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 </ButtonBar>

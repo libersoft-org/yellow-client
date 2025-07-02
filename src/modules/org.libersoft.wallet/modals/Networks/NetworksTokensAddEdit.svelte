@@ -82,7 +82,7 @@
 		<Input bind:value={item_contract_address} />
 	</Label>
 </Form>
-<ButtonBar equalize expand>
+<ButtonBar expand>
 	{#if params.item}
 		<Button img="img/save.svg" text="Save" onClick={clickEdit} />
 	{:else}
