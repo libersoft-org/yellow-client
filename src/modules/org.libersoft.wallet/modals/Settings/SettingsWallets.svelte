@@ -15,14 +15,14 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalWalletsWallet from './SettingsWalletsWallet.svelte';
-	import ModalWalletsAdd from '../Wallets/WalletsAdd.svelte';
+
 	import ModalRecover from '../Wallets/WalletsRecover.svelte';
 	import ModalWalletsEdit from '../Wallets/WalletsEdit.svelte';
 	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
 	import { getContext } from 'svelte';
 	let selectedWallet: IWallet | undefined;
 	let elModalWalletsWallet: Modal | undefined;
-	let elModalWalletsAdd: Modal | undefined;
+
 	let elModalRecover: Modal | undefined;
 	let elModalWalletsEdit: Modal | undefined;
 	let elDialogWalletsDel: DialogWalletsDel | undefined;
@@ -56,7 +56,7 @@
 </style>
 
 <ButtonBar equalize>
-	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => elModalWalletsAdd?.open()} />
+	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => setSettingsSection('wallets-add')} />
 	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => elModalRecover?.open()} />
 </ButtonBar>
 {#if $wallets?.length > 0}
@@ -94,7 +94,7 @@
 		</Tbody>
 	</Table>
 {/if}
-<Modal title="Add a new wallet" body={ModalWalletsAdd} width="600px" bind:this={elModalWalletsAdd} />
+
 <Modal title="Recover wallet from seed" body={ModalRecover} bind:this={elModalRecover} />
 <Modal title="Edit wallet name" body={ModalWalletsEdit} params={{ wallet: selectedWallet }} bind:this={elModalWalletsEdit} />
 <Modal title="Wallet details" body={ModalWalletsWallet} params={{ wallet: selectedWallet }} bind:this={elModalWalletsWallet} />

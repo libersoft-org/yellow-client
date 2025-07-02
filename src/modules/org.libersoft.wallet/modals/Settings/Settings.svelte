@@ -7,21 +7,21 @@
 	import SettingsAddressbook from './SettingsAddressbook.svelte';
 	import { wallets, type IAddress, type IWallet } from '../../wallet.ts';
 	import SettingsWalletsWallet from './SettingsWalletsWallet.svelte';
+	import SettingsWalletsAdd from './SettingsWalletsAdd.svelte';
+
 	let elBaseSettings: BaseSettings;
 
 	let walletsItems = $derived.by(() => {
-		return $wallets.map((wallet: IWallet) => {
-			return {
-				title: wallet.name,
-				name: 'wallets-' + wallet.address,
-				body: SettingsWalletsWallet,
-				props: {
-					params: {
-						wallet,
-					},
+		return $wallets.map((wallet: IWallet) => ({
+			title: wallet.name,
+			name: 'wallets-' + wallet.address,
+			body: SettingsWalletsWallet,
+			props: {
+				params: {
+					wallet,
 				},
-			};
-		});
+			},
+		}));
 	});
 
 	let settingsObject = $derived({
@@ -64,7 +64,14 @@
 				title: 'Wallets',
 				name: 'wallets',
 				body: SettingsWallets,
-				items: walletsItems,
+				items: [
+					...walletsItems,
+					{
+						title: 'Add a new wallet',
+						name: 'wallets-add',
+						body: SettingsWalletsAdd,
+					},
+				],
 			},
 			{
 				title: 'Address book',

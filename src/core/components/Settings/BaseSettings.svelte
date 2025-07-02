@@ -64,7 +64,7 @@
 		console.log('[BaseSettings] setSettingsSection:', name);
 		activeName = name;
 		await tick();
-		currentNode.instance?.onOpen?.();
+		await currentNode.instance?.onOpen?.();
 	}
 
 	function goBack() {
@@ -125,7 +125,7 @@
 			{/each}
 		{/if}
 		{#if currentNode.body}
-			<currentNode.body {...currentNode.props} bind:this={currentNode.instance} />
+			<currentNode.body {...currentNode.props} bind:this={currentNode.instance} close={goBack} />
 		{/if}
 	</div>
 </Modal>

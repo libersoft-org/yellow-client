@@ -10,10 +10,7 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	//import Table from '@/core/components/Table/Table.svelte';
-	//import Tbody from '@/core/components/Table/TableTbody.svelte';
-	//import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	//import Td from '@/core/components/Table/TableTbodyTd.svelte';
+
 	interface Props {
 		close?: () => void;
 	}
@@ -24,6 +21,7 @@
 	let copied: boolean = $state(false);
 	//let phraseArr: string[] = $state([]);
 	let qrCodeData: string = $state('');
+	let elWalletNameInput: HTMLInputElement | undefined = $state();
 
 	/*
 	$effect(() => {
@@ -31,10 +29,13 @@
 	});
  */
 
-	onMount(() => {
+	export function onOpen() {
 		name = 'My wallet ' + ($wallets.length + 1);
 		regenerate();
-	});
+		if (elWalletNameInput) {
+			elWalletNameInput.focus();
+		}
+	}
 
 	function generateQRCode() {
 		QRCode.toDataURL(phrase, { width: 150 })
@@ -158,7 +159,7 @@
 
 <Form onSubmit={save}>
 	<Label text="Wallet name">
-		<Input type="text" bind:value={name} />
+		<Input type="text" bind:value={name} bind:this={elWalletNameInput} />
 	</Label>
 </Form>
 <Label text="Seed phrase">
