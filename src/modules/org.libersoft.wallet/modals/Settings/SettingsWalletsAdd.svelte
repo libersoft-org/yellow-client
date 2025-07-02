@@ -21,7 +21,7 @@
 	let copied: boolean = $state(false);
 	//let phraseArr: string[] = $state([]);
 	let qrCodeData: string = $state('');
-	let elWalletNameInput: HTMLInputElement | undefined = $state();
+	let elWalletNameInput: Input | undefined = $state();
 
 	/*
 	$effect(() => {
