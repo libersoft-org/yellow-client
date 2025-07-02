@@ -29,11 +29,11 @@
 
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	function clickWallet(wallet: IWallet) {
+	async function clickWallet(wallet: IWallet) {
 		selectedWallet = wallet;
 		console.log('Opening wallet details for', wallet);
 		//elModalWalletsWallet?.open();
-		setSettingsSection('wallets-' + wallet.address);
+		await setSettingsSection('wallets-' + wallet.address);
 	}
 
 	function delWallet(wallet: IWallet) {

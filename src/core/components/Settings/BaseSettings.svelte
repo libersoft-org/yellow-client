@@ -97,7 +97,7 @@
 				return [];
 			}
 			const { node, path } = item;
-			const nextPath = [...path, { title: node.title, onClick: () => setSettingsSection(node.name) }];
+			const nextPath = [...path, { title: node.title, onClick: async () => await setSettingsSection(node.name) }];
 			if (node.name === targetName) return nextPath;
 			(node.items ?? []).forEach((c: any) => stack.push({ node: c, path: nextPath }));
 		}
@@ -121,7 +121,7 @@
 		{/if}
 		{#if currentNode.menu}
 			{#each currentNode.menu as item (item.name ?? item.title)}
-				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? () => setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
+				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
 			{/each}
 		{/if}
 		{#if currentNode.body}
