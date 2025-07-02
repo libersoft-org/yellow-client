@@ -65,7 +65,7 @@
 		<Alert type="error" message={error} />
 	{/if}
 </Form>
-<ButtonBar expand equalize>
+<ButtonBar expand>
 	<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add" onClick={clickAdd} />
 	<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 </ButtonBar>

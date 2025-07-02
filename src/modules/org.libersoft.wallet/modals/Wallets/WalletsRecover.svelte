@@ -50,7 +50,7 @@
 {#if error}
 	<Alert type="error" message={error} />
 {/if}
-<ButtonBar equalize expand>
+<ButtonBar expand>
 	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover" onClick={recover} />
 	<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 </ButtonBar>
