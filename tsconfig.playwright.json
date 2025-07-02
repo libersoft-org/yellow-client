@@ -1,0 +1,16 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/org.libersoft.messages/*": ["src/modules/org.libersoft.messages/*"],
+			"@/org.libersoft.dating/*": ["src/modules/org.libersoft.dating/*"],
+			"@/bridge/core-bridge": ["src/modules/org.libersoft.messages/core-bridge-builtin.ts"],
+			"@/*": ["src/*"],
+			"$lib": ["src/lib"],
+			"$lib/*": ["src/lib/*"]
+		}
+	},
+	"include": ["src/**/*", "tests/**/*", "playwright.config.ts"],
+	"exclude": ["node_modules", ".svelte-kit"]
+}

@@ -28,16 +28,6 @@
 		// Some stricter flags (disabled by default)
 		//"noUnusedLocals": true,
 		"noUnusedParameters": false,
-		"noPropertyAccessFromIndexSignature": false,
-
-		"baseUrl": ".",
-		"paths": {
-			"@/org.libersoft.messages/*": ["src/modules/org.libersoft.messages/*"],
-			"@/org.libersoft.dating/*": ["src/modules/org.libersoft.dating/*"],
-			"@/bridge/core-bridge": ["src/modules/org.libersoft.messages/core-bridge-builtin.ts"],
-			"@/*": ["src/*"],
-			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"]
-		}
+		"noPropertyAccessFromIndexSignature": false
 	}
 }
