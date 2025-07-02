@@ -72,7 +72,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.53.2",
     "@storybook/addon-essentials": "^8.6.7",
     "@storybook/addon-svelte-csf": "^5.0.0-next.0",
     "@storybook/blocks": "^8.6.7",
