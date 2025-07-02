@@ -3,7 +3,7 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/tauri.ts';
-	import { setContext } from 'svelte';
+	import { setContext, tick } from 'svelte';
 	interface Props {
 		testId?: string;
 		settingsObject?: any;
@@ -37,37 +37,34 @@
 	let currentNode = $state(settingsObject);
 
 	$effect(() => {
-		console.log('[BaseSettings] settingsObject:', settingsObject);
-		console.log('[BaseSettings] activeName:', activeName);
 		let n = findNode(settingsObject, activeName);
-		console.log('[BaseSettings] findNode:', n);
 		if (n) {
-			console.log('[BaseSettings] Found node:', n);
 			currentNode = n;
 		} else {
-			console.log('[BaseSettings] Node not found:', activeName);
 			currentNode = settingsObject;
 		}
 	});
 
 	let breadcrumb = $derived(makeBreadcrumb(activeName));
 
-	setContext('setSettingsSection', setName);
+	setContext('setSettingsSection', setSettingsSection);
 
 	// Remove the problematic effect that resets navigation on modal reopen
 
 	export function open() {
-		activeName = settingsObject.name; // Reset to root when opening settings
 		elModal?.open();
+		activeName = settingsObject.name; // Reset to root when opening settings
 	}
 
 	export function close() {
 		elModal?.close();
 	}
 
-	export function setName(name: string) {
-		console.log('[BaseSettings] setName:', name);
+	export async function setSettingsSection(name: string) {
+		console.log('[BaseSettings] setSettingsSection:', name);
 		activeName = name;
+		await tick();
+		currentNode.instance?.onOpen?.();
 	}
 
 	function goBack() {
@@ -100,7 +97,7 @@
 				return [];
 			}
 			const { node, path } = item;
-			const nextPath = [...path, { title: node.title, onClick: () => setName(node.name) }];
+			const nextPath = [...path, { title: node.title, onClick: () => setSettingsSection(node.name) }];
 			if (node.name === targetName) return nextPath;
 			(node.items ?? []).forEach((c: any) => stack.push({ node: c, path: nextPath }));
 		}
@@ -124,11 +121,11 @@
 		{/if}
 		{#if currentNode.menu}
 			{#each currentNode.menu as item (item.name ?? item.title)}
-				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? () => setName(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
+				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? () => setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
 			{/each}
 		{/if}
 		{#if currentNode.body}
-			<currentNode.body {...currentNode.props} />
+			<currentNode.body {...currentNode.props} bind:this={currentNode.instance} />
 		{/if}
 	</div>
 </Modal>

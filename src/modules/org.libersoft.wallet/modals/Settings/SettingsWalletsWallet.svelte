@@ -26,6 +26,11 @@
 	let elDialogAddressDel: DialogAddressDel | undefined = $state();
 	let selectedAddress: IAddress | undefined = $state();
 
+	export function onOpen() {
+		console.log('[EFFECT] SettingsWalletsWallet opened for wallet:', $state.snapshot(params.wallet));
+		window.alert('This is a placeholder for the wallet settings. You can manage addresses here.');
+	}
+
 	function addAddress() {
 		console.log('Adding address to wallet', $state.snapshot(params.wallet));
 		elModalAddressAdd?.open();
