@@ -270,7 +270,7 @@ export function addAddress(w: IWallet, index?: number | string, name?: string): 
 	w.selected_address_index = indexNum;
 	wallets.update(ws =>
 		ws.map(item =>
-			item === w
+			item.address === w.address
 				? {
 						...item,
 						addresses: [...addresses],
