@@ -202,7 +202,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 
 	await configureMessagesSettings(page, {
 		chunkSize: '636928',
-		photoRadius: '10px',
+		//photoRadius: '10px',
 	});
 
 	await test.step('Module Navigation Test', async () => {
