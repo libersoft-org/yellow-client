@@ -59,9 +59,6 @@
 	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => setSettingsSection('wallets-add')} />
 	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => elModalRecover?.open()} />
 </ButtonBar>
-{#if $wallets?.length > 0}
-	<div class="bold">My wallets:</div>
-{/if}
 {#if $wallets?.length === 0}
 	<div class="bold">No wallets found</div>
 {/if}

@@ -27,8 +27,7 @@
 	let selectedAddress: IAddress | undefined = $state();
 
 	export function onOpen() {
-		console.log('[EFFECT] SettingsWalletsWallet opened for wallet:', $state.snapshot(params.wallet));
-		window.alert('This is a placeholder for the wallet settings. You can manage addresses here.');
+		console.log('onOpen SettingsWalletsWallet, wallet:', $state.snapshot(params.wallet));
 	}
 
 	function addAddress() {
@@ -71,10 +70,6 @@
 	<ButtonBar>
 		<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress()} />
 	</ButtonBar>
-	<div>
-		<span class="bold">Wallet:</span>
-		<span>{params.wallet.name}</span>
-	</div>
 	{#if params.wallet?.addresses}
 		<Table>
 			<Thead>
