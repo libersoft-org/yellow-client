@@ -6,8 +6,8 @@
 	import { active_account } from '@/core/core';
 	import { highlightElement } from '@/core/utils/animationUtils.ts';
 
-	import union from 'lodash-es/union';
-	import isEqual from 'lodash-es/isEqual';
+	import union from 'lodash/union';
+	import isEqual from 'lodash/isEqual';
 
 	if (import.meta.env.VITE_YELLOW_CLIENT_DEBUG) {
 		console.debug(union, isEqual);
