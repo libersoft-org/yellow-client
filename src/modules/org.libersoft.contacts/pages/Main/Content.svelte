@@ -7,24 +7,9 @@
 	import Content from '@/core/components/Content/Content.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Dialog from '@/core/components/Dialog/Dialog.svelte';
-
-	// TEST: Dialog
-	let elDialog;
-	let dialogData = {
-		title: 'Dialog title',
-		body: 'Dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content, dialog content.',
-		icon: 'img/photo.svg',
-		buttons: [
-			{ text: 'Abort', onClick: clickButton, expand: true },
-			{ text: 'Retry', onClick: clickButton, expand: true },
-			{ img: 'img/cancel.svg', text: 'Close', onClick: () => elDialog?.close(), expand: true },
-		],
-	};
 
 	onMount(() => {
 		window.addEventListener('keydown', onKeydown);
-		elDialog?.open();
 	});
 
 	onDestroy(() => {
@@ -33,10 +18,6 @@
 
 	function onKeydown(event) {
 		if (event.key === 'Escape') setModule(null);
-	}
-
-	function clickButton() {
-		console.log('Clicked on button');
 	}
 
 	function back() {
@@ -62,4 +43,3 @@
 		<div>Contact list - content</div>
 	</Page>
 </Content>
-<Dialog data={dialogData} bind:this={elDialog} />
