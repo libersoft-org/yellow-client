@@ -7,6 +7,7 @@
 # Install dependencies first (in case they changed between commits)
 echo "Installing dependencies..."
 bun install --frozen-lockfile || bun install
+bun run init
 
 # Run the unit tests
 echo "Running unit tests..."
