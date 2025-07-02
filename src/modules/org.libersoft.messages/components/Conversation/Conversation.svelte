@@ -6,7 +6,7 @@
 	import ProfileBar from '../ProfileBar/ProfileBar.svelte';
 	import MessagesList from '../MessagesList/MessagesList.svelte';
 	import MessageBar from '../MessageBar/MessageBar.svelte';
-	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.js';
+	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	let message_bar;
 	let oldSelectedConversation;
 	let messagesContext = {};

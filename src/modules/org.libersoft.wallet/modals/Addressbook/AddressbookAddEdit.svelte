@@ -22,10 +22,10 @@
 	let error: string | undefined = $state();
 	let elName: Input;
 
-	export function onOpen() {
-		if (params?.item) {
-			name = params.item.name || '';
-			address = params.item.address || '';
+	export function onOpen(item: IAddressBookItem) {
+		if (item) {
+			name = item.name || '';
+			address = item.address || '';
 		}
 		if (elName) elName.focus();
 	}

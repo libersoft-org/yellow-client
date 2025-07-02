@@ -12,7 +12,7 @@
 	import FuzzySearch from 'fuzzy-search';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { longpress } from '../../ui.js';
-	import IntersectionObserver from 'svelte-intersection-observer';
+	import { IntersectionObserver } from 'svelte-intersection-observer/index.js';
 	export let onEmojiClick;
 	const MessageBar = getContext('MessageBar');
 	let alts = [];
