@@ -53,6 +53,7 @@
     "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "lottie-web": "^5.12.2",
     "mediainfo.js": "^0.3.4",
     "pako": "^2.1.0",
