@@ -5,6 +5,11 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
+
+	export interface ModalBodyWithOnOpen<TParams extends readonly unknown[] = readonly unknown[]> {
+		onOpen?(...args: TParams): void | Promise<void>;
+	}
+
 	interface Props {
 		testId?: string;
 		children?: Snippet;
@@ -192,17 +197,12 @@
 		}
 	}
 
-	export async function open() {
+	export async function open<TParams extends readonly unknown[] = readonly unknown[]>(...params: TParams) {
 		setShow(true);
 		elModal?.focus();
 		await tick();
-		elModalBody?.onOpen?.();
+		await (elModalBody as ModalBodyWithOnOpen<TParams>)?.onOpen?.(...params);
 	}
-
-	$effect(() => {
-		console.log('MODAL OPENED:', elModalBody, elModalBody?.onOpen);
-		elModalBody?.onOpen?.();
-	});
 
 	export function close() {
 		setShow(false);
