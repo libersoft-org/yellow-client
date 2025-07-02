@@ -68,12 +68,10 @@
 			{/snippet}
 
 			{#if index === items.length - 1}
-				<!-- Poslední položka - neklikatelná -->
 				<div class="item-wrapper" data-testid={`breadcrumb-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
 					{@render crumbContent()}
 				</div>
 			{:else}
-				<!-- Ostatní položky - klikatelné -->
 				<Clickable class="item-wrapper" onClick={item.onClick} data-testid={`breadcrumb-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
 					{@render crumbContent()}
 				</Clickable>

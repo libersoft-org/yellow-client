@@ -79,9 +79,14 @@
 							<div class="item">{w.name}</div>
 						</Clickable>
 					</Td>
-					<Td>{w?.addresses?.length || '?'}</Td>
+					<Td padding="0">
+						<Clickable onClick={() => clickWallet(w)}>
+							<div class="item">{w?.addresses?.length || '0'}</div>
+						</Clickable>
+					</Td>
 					<Td padding="0">
 						<TableActionItems>
+							<Icon img="modules/{module.identifier}/img/wallet-address.svg" alt="Addresses" size="20px" padding="5px" onClick={() => clickWallet(w)} />
 							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit" size="20px" padding="5px" onClick={() => editWallet(w)} />
 							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => delWallet(w)} />
 						</TableActionItems>
@@ -91,7 +96,6 @@
 		</Tbody>
 	</Table>
 {/if}
-
 <Modal title="Recover wallet from seed" body={ModalRecover} bind:this={elModalRecover} />
 <Modal title="Edit wallet name" body={ModalWalletsEdit} params={{ wallet: selectedWallet }} bind:this={elModalWalletsEdit} />
 <Modal title="Wallet details" body={ModalWalletsWallet} params={{ wallet: selectedWallet }} bind:this={elModalWalletsWallet} />
