@@ -2,8 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 
 export default defineConfig({
-	//globalTimeout: 2120_000,
-	//timeout: 120_000,
+	globalTimeout: 2_120_000,
+	timeout: 1_120_000,
 	expect: {
 		//timeout: 20_000,
 	},
