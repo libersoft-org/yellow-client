@@ -19,7 +19,7 @@
 	let { params, close }: Props = $props();
 
 	$effect(() => {
-		console.log('[EFFECT] Initializing address add modal with wallet:', params.wallet);
+		console.log('[EFFECT] Initializing address add modal with wallet:', $state.snapshot(params.wallet));
 		let max = addressesMaxIndex(params.wallet.addresses || []) + 1;
 		index = params.wallet.addresses ? max : 0;
 		name = 'Address ' + max;

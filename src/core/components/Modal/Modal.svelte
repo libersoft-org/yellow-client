@@ -52,7 +52,7 @@
 		elModal.addEventListener('focusout', onFocusOut);
 		return () => {
 			if (!elModal) {
-				console.error('[Modal] elModal is not defined 2');
+				//console.error('[Modal] elModal is not defined 2');
 				return;
 			}
 			elModal.removeEventListener('focusin', onFocusIn);

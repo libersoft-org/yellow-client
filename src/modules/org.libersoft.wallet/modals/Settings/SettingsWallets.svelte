@@ -19,6 +19,7 @@
 	import ModalRecover from '../Wallets/WalletsRecover.svelte';
 	import ModalWalletsEdit from '../Wallets/WalletsEdit.svelte';
 	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
+	import { getContext } from 'svelte';
 	let selectedWallet: IWallet | undefined;
 	let elModalWalletsWallet: Modal | undefined;
 	let elModalWalletsAdd: Modal | undefined;
@@ -26,10 +27,13 @@
 	let elModalWalletsEdit: Modal | undefined;
 	let elDialogWalletsDel: DialogWalletsDel | undefined;
 
+	const setSettingsSection = getContext<Function>('setSettingsSection');
+
 	function clickWallet(wallet: IWallet) {
 		selectedWallet = wallet;
 		console.log('Opening wallet details for', wallet);
-		elModalWalletsWallet?.open();
+		//elModalWalletsWallet?.open();
+		setSettingsSection('wallets-' + wallet.address);
 	}
 
 	function delWallet(wallet: IWallet) {

@@ -33,20 +33,31 @@
 	*/
 	let { testId = '', settingsObject }: Props = $props();
 	let activeName = $state(settingsObject.name);
-	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
-	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
-	const breadcrumb = $derived(makeBreadcrumb(activeName));
+	let backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
+	let currentNode = $state(settingsObject);
+
+	$effect(() => {
+		console.log('[BaseSettings] settingsObject:', settingsObject);
+		console.log('[BaseSettings] activeName:', activeName);
+		let n = findNode(settingsObject, activeName);
+		console.log('[BaseSettings] findNode:', n);
+		if (n) {
+			console.log('[BaseSettings] Found node:', n);
+			currentNode = n;
+		} else {
+			console.log('[BaseSettings] Node not found:', activeName);
+			currentNode = settingsObject;
+		}
+	});
+
+	let breadcrumb = $derived(makeBreadcrumb(activeName));
 
 	setContext('setSettingsSection', setName);
 
-	$effect(() => {
-		console.log('[BaseSettings] elModal::', elModal);
-		console.log('[BaseSettings] elModal.isOpen:', elModal?.isOpen);
-
-		if (elModal.isOpen()) activeName = settingsObject.name;
-	});
+	// Remove the problematic effect that resets navigation on modal reopen
 
 	export function open() {
+		activeName = settingsObject.name; // Reset to root when opening settings
 		elModal?.open();
 	}
 
@@ -55,10 +66,12 @@
 	}
 
 	export function setName(name: string) {
+		console.log('[BaseSettings] setName:', name);
 		activeName = name;
 	}
 
 	function goBack() {
+		console.log('[BaseSettings] goBack');
 		activeName = findNode(settingsObject, activeName)?.__parent?.name ?? settingsObject.name;
 	}
 
@@ -115,7 +128,7 @@
 			{/each}
 		{/if}
 		{#if currentNode.body}
-			<currentNode.body />
+			<currentNode.body {...currentNode.props} />
 		{/if}
 	</div>
 </Modal>

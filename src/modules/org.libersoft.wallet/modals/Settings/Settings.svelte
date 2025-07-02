@@ -5,8 +5,26 @@
 	import SettingsNetworks from './SettingsNetworks.svelte';
 	import SettingsWallets from './SettingsWallets.svelte';
 	import SettingsAddressbook from './SettingsAddressbook.svelte';
+	import { wallets, type IAddress, type IWallet } from '../../wallet.ts';
+	import SettingsWalletsWallet from './SettingsWalletsWallet.svelte';
 	let elBaseSettings: BaseSettings;
-	let settingsObject = {
+
+	let walletsItems = $derived.by(() => {
+		return $wallets.map((wallet: IWallet) => {
+			return {
+				title: wallet.name,
+				name: 'wallets-' + wallet.address,
+				body: SettingsWalletsWallet,
+				props: {
+					params: {
+						wallet,
+					},
+				},
+			};
+		});
+	});
+
+	let settingsObject = $derived({
 		title: 'Wallet settings',
 		name: 'settings',
 		menu: [
@@ -46,6 +64,7 @@
 				title: 'Wallets',
 				name: 'wallets',
 				body: SettingsWallets,
+				items: walletsItems,
 			},
 			{
 				title: 'Address book',
@@ -53,8 +72,7 @@
 				body: SettingsAddressbook,
 			},
 		],
-	};
-
+	});
 	export function open() {
 		elBaseSettings?.open();
 	}

@@ -27,7 +27,7 @@
 	let selectedAddress: IAddress | undefined = $state();
 
 	function addAddress() {
-		console.log('Adding address to wallet', params.wallet);
+		console.log('Adding address to wallet', $state.snapshot(params.wallet));
 		elModalAddressAdd?.open();
 	}
 

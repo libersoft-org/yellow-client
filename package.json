@@ -8,7 +8,7 @@
     "build": "bun x --bun vite build",
     "preview": "vite preview",
     "test": "npx vitest run; npx playwright test",
-    "test:unit": "npx vitest run",
+    "test:unit": "npx vitest run --config vitest.config.ts",
     "test:e2e": "npx playwright test",
     "svelte-check": "svelte-check",
     "typecheck": "svelte-check",
