@@ -78,7 +78,9 @@
 		(node.items ?? []).forEach((c: any) => attachParents(c, node));
 	}
 
-	if (!settingsObject.__parent) attachParents(settingsObject);
+	$effect(() => {
+		attachParents(settingsObject);
+	});
 
 	function findNode(root: any, target: string): any {
 		const stack = [root];
