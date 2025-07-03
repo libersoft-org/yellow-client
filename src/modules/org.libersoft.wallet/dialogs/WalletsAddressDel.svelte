@@ -18,7 +18,7 @@
 	};
 
 	function clickYes() {
-		wallets.update(ws => ws.map(item => (item === wallet ? { ...item, addresses: (item.addresses ?? []).filter(a => a.index !== address.index) } : item)));
+		wallets.update(ws => ws.map(item => (item.address === wallet.address ? { ...item, addresses: (item.addresses ?? []).filter(a => a.index !== address.index) } : item)));
 		elDialog?.close();
 	}
 

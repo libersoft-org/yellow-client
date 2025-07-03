@@ -38,14 +38,12 @@
 	function renameAddress(address: IAddress) {
 		let name = window.prompt('Enter the new name');
 		if (!name) return;
-		address.name = name;
-		if (params.wallet.addresses) params.wallet.addresses = [...params.wallet.addresses];
 		wallets.update(ws =>
 			ws.map(w =>
-				w === params.wallet
+				w.address === params.wallet.address
 					? {
 							...w,
-							addresses: (w.addresses || []).map(a => (a === address ? { ...a, name } : a)),
+							addresses: (w.addresses || []).map(a => (a.index === address.index ? { ...a, name } : a)),
 						}
 					: w
 			)
