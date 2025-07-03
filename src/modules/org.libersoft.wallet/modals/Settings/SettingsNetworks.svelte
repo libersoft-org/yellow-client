@@ -9,6 +9,9 @@
 	import ModalTokenList from '../Networks/NetworksTokens.svelte';
 	import DialogDeleteNetwork from '../../dialogs/NetworksDel.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
+	import Thead from '@/core/components/Table/TableThead.svelte';
+	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
@@ -68,6 +71,14 @@
 		flex-direction: column;
 		gap: 10px;
 	}
+
+	.network {
+		display: flex;
+		align-items: center;
+		padding: 0 10px;
+		gap: 10px;
+		height: 50px;
+	}
 </style>
 
 <div class="networks">
@@ -79,14 +90,20 @@
 	{#if $networks.length !== 0}
 		<div class="bold">My networks:</div>
 	{/if}
-	<Table breakpoint="500px">
+	<Table breakpoint="0">
+		<Thead>
+			<TheadTr>
+				<Th>Network</Th>
+				<Th>Action</Th>
+			</TheadTr>
+		</Thead>
 		<Tbody>
 			{#each $networks as n, index (n.guid)}
 				<TbodyTr>
-					<Td data-testid="network-name@{n.name}">
-						<div>
+					<Td padding="0" data-testid="network-name@{n.name}">
+						<div class="network">
 							{#if n.currency?.iconURL}
-								<Icon img={n.currency.iconURL} alt="" />
+								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
 							{/if}
 							<div class="name">{n.name}</div>
 						</div>
@@ -103,14 +120,20 @@
 		</Tbody>
 	</Table>
 	<div class="bold">Default networks:</div>
-	<Table breakpoint="500px">
+	<Table breakpoint="0">
+		<Thead>
+			<TheadTr>
+				<Th>Network</Th>
+				<Th>Action</Th>
+			</TheadTr>
+		</Thead>
 		<Tbody>
 			{#each $default_networks as n, index}
 				<TbodyTr>
-					<Td data-testid="default-network-name@{n.name}">
-						<div>
+					<Td padding="0" data-testid="default-network-name@{n.name}">
+						<div class="network">
 							{#if n.currency?.iconURL}
-								<Icon img={n.currency.iconURL} />
+								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
 							{/if}
 							<div class="name">{n.name}</div>
 						</div>
