@@ -86,8 +86,24 @@
 	}
 
 	.emojiset {
-		height: calc(100% - 105px);
+		height: 100%;
 		overflow: auto;
+	}
+
+	/* Sticky filter for desktop/tablet */
+	@media (min-width: 768px) {
+		.filter {
+			position: sticky;
+			top: 0;
+			z-index: 100;
+		}
+	}
+
+	/* Mobile: filter scrolls with content */
+	@media (max-width: 767px) {
+		.filter {
+			position: static;
+		}
 	}
 
 	.group:first-of-type {
@@ -142,33 +158,10 @@
  </pre>
 {/if}
 
-<div class="filter">
-	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
-</div>
-{#snippet clickable_emoji(emoji)}
-	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi]} let:intersecting>
-		<Clickable onRightClick={e => showAlts(e, emoji)}>
-			<div
-				bind:this={intersectedElements[emoji.codepoints_rgi]}
-				class="emoji hover"
-				use:longpress
-				on:longpress={e => showAlts(e, emoji)}
-				on:mymousedown={() => {
-					altsMenu.close();
-				}}
-				on:click={() => clickEmoji(emoji.base)}
-				on:keydown={e => {}}
-				role="button"
-				tabindex="0"
-			>
-				{#if intersecting}
-					<Emoji codepoints={emoji.base} context={'menu'} is_single />
-				{/if}
-			</div>
-		</Clickable>
-	</IntersectionObserver>
-{/snippet}
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
+	<div class="filter">
+		<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
+	</div>
 	{#if $emojisLoading}
 		<Spinner />
 	{:else if search}
@@ -211,3 +204,27 @@
 		{/each}
 	</div>
 </ContextMenu>
+
+{#snippet clickable_emoji(emoji)}
+	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi]} let:intersecting>
+		<Clickable onRightClick={e => showAlts(e, emoji)}>
+			<div
+				bind:this={intersectedElements[emoji.codepoints_rgi]}
+				class="emoji hover"
+				use:longpress
+				on:longpress={e => showAlts(e, emoji)}
+				on:mymousedown={() => {
+					altsMenu.close();
+				}}
+				on:click={() => clickEmoji(emoji.base)}
+				on:keydown={e => {}}
+				role="button"
+				tabindex="0"
+			>
+				{#if intersecting}
+					<Emoji codepoints={emoji.base} context={'menu'} is_single />
+				{/if}
+			</div>
+		</Clickable>
+	</IntersectionObserver>
+{/snippet}

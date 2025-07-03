@@ -103,14 +103,39 @@
 		flex-direction: column;
 		gap: 10px;
 		padding: 10px;
+		width: 100%;
+	}
+
+	/* Sticky top-bar for desktop/tablet */
+	@media (min-width: 768px) {
+		.top-bar {
+			position: sticky;
+			top: 0;
+			z-index: 100;
+			background-color: transparent;
+		}
+	}
+
+	/* Mobile: top-bar scrolls with content */
+	@media (max-width: 767px) {
+		.top-bar {
+			position: static;
+		}
 	}
 
 	.results {
 		display: flex;
 		justify-content: center;
 		flex-wrap: wrap;
-		gap: 10px;
 		overflow: auto;
+	}
+
+	.results-wrapper {
+		width: 100%;
+		justify-content: center;
+		flex-wrap: wrap;
+		display: flex;
+		gap: 10px;
 		padding: 10px;
 	}
 
@@ -140,30 +165,32 @@
 <!--{JSON.stringify(gifs)}-->
 
 <div class="gifset">
-	<div class="top-bar">
-		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." expand bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
-	</div>
 	{#if error}
 		<div>{error}</div>
 	{:else}
 		<div class="results">
-			{#if loading && gifs.length === 0}
-				<Spinner />
-			{:else if gifs.length === 0 && query_done}
-				<div>No GIFs found.</div>
-			{:else}
-				{#each gifs as item}
-					<Clickable onClick={() => sendGIF(item)}>
-						<div class="item">
-							<img src={item.media_formats.tinygif?.url} alt="GIF" />
-						</div>
-					</Clickable>
-				{/each}
-				{#if next_pos}
-					<LazyLoader onVisible={moreGifs} />
+			<div class="top-bar">
+				<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." expand bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
+			</div>
+			<div class="results-wrapper">
+				{#if loading && gifs.length === 0}
+					<Spinner />
+				{:else if gifs.length === 0 && query_done}
+					<div>No GIFs found.</div>
+				{:else}
+					{#each gifs as item}
+						<Clickable onClick={() => sendGIF(item)}>
+							<div class="item">
+								<img src={item.media_formats.tinygif?.url} alt="GIF" />
+							</div>
+						</Clickable>
+					{/each}
+					{#if next_pos}
+						<LazyLoader onVisible={moreGifs} />
+					{/if}
+					<span class="powered-by">Powered By Tenor.</span>
 				{/if}
-				Powered By Tenor.
-			{/if}
+			</div>
 		</div>
 	{/if}
 </div>

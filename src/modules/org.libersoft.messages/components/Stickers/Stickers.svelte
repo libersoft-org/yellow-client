@@ -60,9 +60,17 @@
 	}
 
 	.stickers :global(.filter) {
-		position: sticky;
-		top: 10px;
-		z-index: 100;
+		/* Sticky filter for desktop/tablet */
+		@media (min-width: 768px) {
+			position: sticky;
+			top: 10px;
+			z-index: 100;
+		}
+
+		/* Mobile: filter scrolls with content */
+		@media (max-width: 767px) {
+			position: static;
+		}
 	}
 
 	.loading {
