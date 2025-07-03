@@ -38,6 +38,7 @@
 
 	$effect(() => {
 		let n = findNode(settingsObject, activeName);
+		console.log('[BaseSettings] activeName:', activeName, 'foundNode:', n);
 		if (n) {
 			currentNode = n;
 		} else {
