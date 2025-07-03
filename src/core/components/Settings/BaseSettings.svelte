@@ -69,18 +69,11 @@
 	}
 
 	function goBack() {
-		console.log('[BaseSettings] goBack');
-		activeName = findNode(settingsObject, activeName)?.__parent?.name ?? settingsObject.name;
+		console.log('[BaseSettings] goBack: ', activeName);
+		const found = findNode(settingsObject, activeName);
+		console.log('[BaseSettings] goBack found:', found);
+		activeName = found?.__parent?.name ?? settingsObject.name;
 	}
-
-	function attachParents(node: any, parent: any = null) {
-		node.__parent = parent;
-		(node.items ?? []).forEach((c: any) => attachParents(c, node));
-	}
-
-	$effect(() => {
-		attachParents(settingsObject);
-	});
 
 	function findNode(root: any, target: string): any {
 		const stack = [root];
