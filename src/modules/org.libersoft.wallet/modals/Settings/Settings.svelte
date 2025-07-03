@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { module } from '../../module.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
-	import { attachParents } from '@/core/components/Settings/settings.ts';
+	import { attachParents } from '@/core/base_settings.ts';
 	import SettingsGeneral from './SettingsGeneral.svelte';
 	import SettingsNetworks from './SettingsNetworks.svelte';
 	import SettingsWallets from './SettingsWallets.svelte';
@@ -104,6 +104,7 @@
 			],
 		})
 	);
+
 	export function open() {
 		elBaseSettings?.open();
 	}

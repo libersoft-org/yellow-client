@@ -34,7 +34,6 @@
 	}
 
 	function deleteItemModal(item) {
-		console.log('DELETE ADDRESSBOOK ITEM:', item);
 		modalItem = item;
 		elDialogDel?.open();
 	}

@@ -58,9 +58,7 @@
 			newItem.guid = params.network.guid;
 			networks.update(networks => {
 				const index = networks.findIndex(v => v.guid === params?.network?.guid);
-				if (index !== -1) {
-					networks[index] = newItem;
-				}
+				if (index !== -1) networks[index] = newItem;
 				return networks;
 			});
 		} else {
