@@ -26,25 +26,19 @@
 		restore(): void;
 	};
 	let modalItemID: string | null | undefined;
-	let modalEdit: boolean = false;
 	let modalItem: INetwork | null | undefined;
 	let elModalTokenList: ModalInstance | undefined;
 	let elModalSettingsNetworksImport: ModalInstance | undefined;
 	let elModalSettingsNetworksExport: ModalInstance | undefined;
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined;
-
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	async function clickAddEditNetwork(net: INetwork | null = null, edit: boolean = false) {
-		console.log('clickAddNetwork', net);
-		modalEdit = edit;
-		modalItem = net;
 		if (net) await setSettingsSection('networks-edit-' + net?.guid);
 		else await setSettingsSection('networks-add');
 	}
 
 	async function clickDeleteNetwork(net) {
-		console.log('clickDeleteNetwork', net);
 		modalItem = net;
 		await tick();
 		elDialogDeleteNetwork?.open();
