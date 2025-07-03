@@ -5,10 +5,10 @@
 	import SettingsNetworks from './SettingsNetworks.svelte';
 	import SettingsWallets from './SettingsWallets.svelte';
 	import SettingsAddressbook from './SettingsAddressbook.svelte';
-	import { wallets, type IAddress, type IWallet } from '../../wallet.ts';
+	import { wallets, networks, type IWallet, type INetwork } from '../../wallet.ts';
 	import SettingsWalletsWallet from './SettingsWalletsWallet.svelte';
 	import SettingsWalletsAdd from './SettingsWalletsAdd.svelte';
-
+	import SettingsNetworksAddEdit from './SettingsNetworksAddEdit.svelte';
 	let elBaseSettings: BaseSettings;
 
 	let walletsItems = $derived.by(() => {
@@ -19,6 +19,19 @@
 			props: {
 				params: {
 					wallet,
+				},
+			},
+		}));
+	});
+
+	let networksItems = $derived.by(() => {
+		return $networks.map((network: INetwork) => ({
+			title: 'Edit network',
+			name: 'networks-edit-' + network.guid,
+			body: SettingsNetworksAddEdit,
+			props: {
+				params: {
+					network,
 				},
 			},
 		}));
@@ -59,6 +72,14 @@
 				title: 'Networks',
 				name: 'networks',
 				body: SettingsNetworks,
+				items: [
+					...networksItems,
+					{
+						title: 'Add a new network',
+						name: 'networks-add',
+						body: SettingsNetworksAddEdit,
+					},
+				],
 			},
 			{
 				title: 'Wallets',

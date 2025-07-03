@@ -32,7 +32,6 @@
 	async function clickWallet(wallet: IWallet) {
 		selectedWallet = wallet;
 		console.log('Opening wallet details for', wallet);
-		//elModalWalletsWallet?.open();
 		await setSettingsSection('wallets-' + wallet.address);
 	}
 

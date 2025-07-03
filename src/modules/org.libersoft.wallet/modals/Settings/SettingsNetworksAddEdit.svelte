@@ -8,9 +8,10 @@
 	import Label from '@/core/components/Label/Label.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
+	let elName: Input | undefined;
 	interface Props {
-		params: {
-			item?: INetwork | null;
+		params?: {
+			network?: INetwork;
 		};
 		close: () => void;
 	}
@@ -24,17 +25,10 @@
 	let item_rpc_urls: string[] | undefined = $state();
 	let error: string | null | undefined = $state();
 
-	$effect(() => {
-		update(params);
-	});
-
-	export function onOpen() {
-		window.alert('onOpen');
-	}
-
-	function update(params: Props['params']): void {
+	export function onOpen(): void {
+		console.log('onOpen - params', params);
 		if (item_guid) return;
-		let item: INetwork | null | undefined = params?.item;
+		let item: INetwork | null | undefined = params?.network;
 		if (item) {
 			item_guid = item?.guid;
 			item_name = item?.name;
@@ -44,6 +38,7 @@
 			item_explorer_url = item?.explorerURL || '';
 			item_rpc_urls = item?.rpcURLs?.map(v => v) || [];
 		}
+		elName?.focus();
 	}
 
 	function addEdit(): void {
@@ -58,11 +53,11 @@
 			explorerURL: item_explorer_url,
 		};
 
-		if (params?.item?.guid) {
+		if (params?.network?.guid) {
 			// Edit
-			newItem.guid = params.item.guid;
+			newItem.guid = params.network.guid;
 			networks.update(networks => {
-				const index = networks.findIndex(v => v.guid === params?.item?.guid);
+				const index = networks.findIndex(v => v.guid === params?.network?.guid);
 				if (index !== -1) {
 					networks[index] = newItem;
 				}
@@ -93,7 +88,7 @@
 <div class="modal-edit-network">
 	<Form onSubmit={addEdit}>
 		<Label text="Name">
-			<Input bind:value={item_name} />
+			<Input bind:value={item_name} bind:this={elName} />
 		</Label>
 		<Label text="Currency symbol">
 			<Input bind:value={item_currency_symbol} />
@@ -123,7 +118,7 @@
 		<Alert type="error" message={error} />
 	{/if}
 	<ButtonBar expand>
-		{#if params?.item?.guid}
+		{#if params?.network?.guid}
 			<Button img="img/save.svg" text="Save" onClick={addEdit} />
 		{:else}
 			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add network" onClick={addEdit} />
