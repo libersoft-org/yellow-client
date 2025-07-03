@@ -5,6 +5,11 @@
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
+
+	export interface ModalBodyWithOnOpen<TParams extends readonly unknown[] = readonly unknown[]> {
+		onOpen?(...args: TParams): void | Promise<void>;
+	}
+
 	interface Props {
 		testId?: string;
 		children?: Snippet;
@@ -36,6 +41,7 @@
 	let isDragging = false;
 	let resizeObserver: ResizeObserver;
 	let focused = $state(false);
+	let elModalBody: any | null = $state(null);
 
 	setContext('setTitle', setTitle);
 	setContext('Popup', { close });
@@ -46,7 +52,7 @@
 		elModal.addEventListener('focusout', onFocusOut);
 		return () => {
 			if (!elModal) {
-				console.error('[Modal] elModal is not defined 2');
+				//console.error('[Modal] elModal is not defined 2');
 				return;
 			}
 			elModal.removeEventListener('focusin', onFocusIn);
@@ -191,9 +197,11 @@
 		}
 	}
 
-	export function open() {
+	export async function open<TParams extends readonly unknown[] = readonly unknown[]>(...params: TParams) {
 		setShow(true);
 		elModal?.focus();
+		await tick();
+		await (elModalBody as ModalBodyWithOnOpen<TParams>)?.onOpen?.(...params);
 	}
 
 	export function close() {
@@ -403,7 +411,7 @@
 						params: <code>{JSON.stringify({ params })}</code>
 					{/if}
 					{#if typeof ModalBody === 'function'}
-						<ModalBody {params} {close} />
+						<ModalBody {params} {close} bind:this={elModalBody} />
 					{/if}
 					{#if children}
 						{@render children?.()}

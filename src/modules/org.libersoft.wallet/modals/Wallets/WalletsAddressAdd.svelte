@@ -19,8 +19,8 @@
 	let { params, close }: Props = $props();
 
 	$effect(() => {
-		console.log('[EFFECT] Initializing address add modal with wallet:', params.wallet);
-		let max = addressesMaxIndex(params.wallet.addresses) + 1;
+		console.log('[EFFECT] Initializing address add modal with wallet:', $state.snapshot(params.wallet));
+		let max = addressesMaxIndex(params.wallet.addresses || []) + 1;
 		index = params.wallet.addresses ? max : 0;
 		name = 'Address ' + max;
 	});
@@ -65,7 +65,7 @@
 		<Alert type="error" message={error} />
 	{/if}
 </Form>
-<ButtonBar expand equalize>
+<ButtonBar expand>
 	<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add" onClick={clickAdd} />
 	<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 </ButtonBar>

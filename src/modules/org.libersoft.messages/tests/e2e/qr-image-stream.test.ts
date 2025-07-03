@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.ts';
+import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.js';
 import { QRVideoStreamHelper, QR_IMAGES, testQRImportWithImageStream } from '../../../../../test-assets/qr-video-stream-helper.js';
 
 /**
@@ -30,7 +30,7 @@ async function setupAccountInWizard(
 	});
 }
 
-test.describe('QR Code Image Stream Tests', () => {
+test.describe.parallel('QR Code Image Stream Tests', () => {
 	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 	test.beforeEach(async ({ page }) => {
@@ -63,14 +63,11 @@ test.describe('QR Code Image Stream Tests', () => {
 		await page.getByTestId('accounts-qr-tab').click();
 
 		// Wait for video to be ready
-		await page.waitForSelector('video', { timeout: 10000 });
-		await page.waitForFunction(
-			() => {
-				const video = document.querySelector('video');
-				return video && video.readyState >= 2;
-			},
-			{ timeout: 10000 }
-		);
+		await page.waitForSelector('video', {});
+		await page.waitForFunction(() => {
+			const video = document.querySelector('video');
+			return video && video.readyState >= 2;
+		}, {});
 
 		// Verify video stream properties
 		const videoInfo = await helper.getVideoStreamInfo();
@@ -100,14 +97,11 @@ test.describe('QR Code Image Stream Tests', () => {
 		await page.getByTestId('accounts-qr-tab').click();
 
 		// Wait for video to be ready
-		await page.waitForSelector('video', { timeout: 10000 });
-		await page.waitForFunction(
-			() => {
-				const video = document.querySelector('video');
-				return video && video.readyState >= 2;
-			},
-			{ timeout: 10000 }
-		);
+		await page.waitForSelector('video', {});
+		await page.waitForFunction(() => {
+			const video = document.querySelector('video');
+			return video && video.readyState >= 2;
+		}, {});
 
 		// Verify initial video stream is working
 		const videoInfo = await helper.getVideoStreamInfo();
@@ -136,7 +130,7 @@ test.describe('QR Code Image Stream Tests', () => {
 		// If auto-detection worked, verify the import
 		if (result.autoDetected && !result.importFailed) {
 			// Should close modal and show imported account
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 			// Assuming QR code imports to ws://localhost:8084 by default
 			await expect(page.getByTestId('account-address@qrtest1@example.com@ws://localhost:8084')).toBeVisible();
 		}
@@ -153,7 +147,7 @@ test.describe('QR Code Image Stream Tests', () => {
 
 		// If auto-detection worked, verify the import
 		if (result.autoDetected && !result.importFailed) {
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 			// Assuming QR code imports to ws://localhost:8084 by default
 			await expect(page.getByTestId('account-address@complex+test@example.com@ws://localhost:8084')).toBeVisible();
 		}

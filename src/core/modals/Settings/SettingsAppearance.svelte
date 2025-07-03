@@ -19,7 +19,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	function create_new_theme() {
+	async function create_new_theme() {
 		// Clone the current theme
 		let new_theme = JSON.parse(JSON.stringify($current_theme));
 		new_theme.name = $current_theme.name + ' Copy';
@@ -28,10 +28,9 @@
 		user_themes.update(arr => [...arr, new_theme]);
 
 		// Use tick() to wait for the derived store to update, then set the index
-		tick().then(() => {
-			$selected_theme_index = $themes.length - 1;
-			setSettingsSection('edit-theme');
-		});
+		await tick();
+		$selected_theme_index = $themes.length - 1;
+		await setSettingsSection('edit-theme');
 	}
 
 	function delete_current_theme() {
@@ -79,7 +78,7 @@
 					{/each}
 				</Select>
 				{#if $selected_theme_index > 1}
-					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => setSettingsSection('edit-theme')} testId="theme-edit-button" />
+					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={async () => await setSettingsSection('edit-theme')} testId="theme-edit-button" />
 					<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={delete_current_theme} testId="theme-delete-button" />
 				{/if}
 				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => create_new_theme()} testId="theme-add-button" />

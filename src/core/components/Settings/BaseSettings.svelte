@@ -3,7 +3,7 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/tauri.ts';
-	import { setContext } from 'svelte';
+	import { setContext, tick } from 'svelte';
 	interface Props {
 		testId?: string;
 		settingsObject?: any;
@@ -33,41 +33,47 @@
 	*/
 	let { testId = '', settingsObject }: Props = $props();
 	let activeName = $state(settingsObject.name);
-	const backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
-	const currentNode = $derived(findNode(settingsObject, activeName) ?? settingsObject);
-	const breadcrumb = $derived(makeBreadcrumb(activeName));
-
-	setContext('setSettingsSection', setName);
+	let backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
+	let currentNode = $state(settingsObject);
 
 	$effect(() => {
-		console.log('[BaseSettings] elModal::', elModal);
-		console.log('[BaseSettings] elModal.isOpen:', elModal?.isOpen);
-
-		if (elModal.isOpen()) activeName = settingsObject.name;
+		let n = findNode(settingsObject, activeName);
+		console.log('[BaseSettings] activeName:', activeName, 'foundNode:', n);
+		if (n) {
+			currentNode = n;
+		} else {
+			currentNode = settingsObject;
+		}
 	});
+
+	let breadcrumb = $derived(makeBreadcrumb(activeName));
+
+	setContext('setSettingsSection', setSettingsSection);
+
+	// Remove the problematic effect that resets navigation on modal reopen
 
 	export function open() {
 		elModal?.open();
+		activeName = settingsObject.name; // Reset to root when opening settings
 	}
 
 	export function close() {
 		elModal?.close();
 	}
 
-	export function setName(name: string) {
+	export async function setSettingsSection(name: string) {
+		console.log('[BaseSettings] setSettingsSection:', name);
 		activeName = name;
+		await tick();
+		await currentNode.instance?.onOpen?.();
 	}
 
 	function goBack() {
-		activeName = findNode(settingsObject, activeName)?.__parent?.name ?? settingsObject.name;
+		console.log('[BaseSettings] goBack: ', activeName);
+		const found = findNode(settingsObject, activeName);
+		console.log('[BaseSettings] goBack found:', found);
+		activeName = found?.__parent?.name ?? settingsObject.name;
 	}
-
-	function attachParents(node: any, parent: any = null) {
-		node.__parent = parent;
-		(node.items ?? []).forEach((c: any) => attachParents(c, node));
-	}
-
-	if (!settingsObject.__parent) attachParents(settingsObject);
 
 	function findNode(root: any, target: string): any {
 		const stack = [root];
@@ -87,7 +93,7 @@
 				return [];
 			}
 			const { node, path } = item;
-			const nextPath = [...path, { title: node.title, onClick: () => setName(node.name) }];
+			const nextPath = [...path, { title: node.title, onClick: async () => await setSettingsSection(node.name) }];
 			if (node.name === targetName) return nextPath;
 			(node.items ?? []).forEach((c: any) => stack.push({ node: c, path: nextPath }));
 		}
@@ -111,11 +117,11 @@
 		{/if}
 		{#if currentNode.menu}
 			{#each currentNode.menu as item (item.name ?? item.title)}
-				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? () => setName(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
+				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
 			{/each}
 		{/if}
 		{#if currentNode.body}
-			<currentNode.body />
+			<currentNode.body {...currentNode.props} bind:this={currentNode.instance} close={goBack} />
 		{/if}
 	</div>
 </Modal>

@@ -17,7 +17,7 @@
 	import ModalExport from '../../modals/Addressbook/AddressbookExport.svelte';
 	import ModalImport from '../../modals/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	let edit: boolean = $state(false);
+
 	let modalItem: IAddressBookItem | null | undefined = $state();
 	let elModalAddEdit: Modal | undefined;
 	let elModalExport: Modal | undefined;
@@ -26,20 +26,14 @@
 
 	function addToAddressBookModal() {
 		modalItem = null;
-		edit = false;
 		elModalAddEdit?.open();
 	}
 
-	function editItemModal(item) {
-		console.log('EDIT ADDRESSBOOK ITEM:', item);
-		modalItem = item;
-		console.log('MODAL ITEM:', modalItem);
-		edit = true;
-		elModalAddEdit?.open();
+	function editItemModal(item: IAddressBookItem) {
+		elModalAddEdit?.open(item);
 	}
 
 	function deleteItemModal(item) {
-		console.log('DELETE ADDRESSBOOK ITEM:', item);
 		modalItem = item;
 		elDialogDel?.open();
 	}
@@ -97,7 +91,7 @@
 		</Table>
 	{/if}
 </div>
-<Modal title={modalItem ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:this={elModalAddEdit} width="400px" />
+<Modal title={modalItem ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} bind:this={elModalAddEdit} width="400px" />
 <Modal title="Import address book" body={ModalImport} params={{ close: () => elModalImport?.close() }} bind:this={elModalImport} width="600px" />
 <Modal title="Export address book" body={ModalExport} params={{ close: () => elModalExport?.close() }} bind:this={elModalExport} width="600px" />
 {#if modalItem}

@@ -16,7 +16,7 @@
 	let inputElement: typeof Input.prototype;
 	let elDialogDefaults;
 	let elDialogDelete;
-	let addUrl: string | null | undefined = $state();
+	let addUrl: string = $state('');
 	let error: string | null | undefined = $state();
 	let serverUrl: string | undefined = $state();
 
@@ -48,7 +48,7 @@
 				s.push(addUrlTrim);
 				return s;
 			});
-			addUrl = null;
+			addUrl = '';
 		}
 		inputElement?.focus();
 	}

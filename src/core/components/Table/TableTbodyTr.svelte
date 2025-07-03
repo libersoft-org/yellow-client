@@ -18,7 +18,7 @@
 	}
 
 	tr.hover:hover {
-		background-color: var(--primary-background) !important;
+		background-color: var(--primary-hard-background) !important;
 	}
 </style>
 

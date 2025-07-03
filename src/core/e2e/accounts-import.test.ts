@@ -1,119 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.ts';
-
-/**
- * Helper function to navigate to account management
- * @param page - The Playwright page object
- */
-async function goToAccountManagement(page: Page): Promise<void> {
-	return await test.step('Go to account management', async () => {
-		await page.getByTestId('account-bar-toggle').click();
-		await page.getByRole('button', { name: 'Account management Account' }).click();
-	});
-}
-
-/**
- * Helper function to open accounts import modal
- * @param page - The Playwright page object
- */
-async function openImportModal(page: Page): Promise<void> {
-	return await test.step('Open accounts import modal', async () => {
-		await page.getByRole('button', { name: 'Import' }).click();
-	});
-}
-
-/**
- * Helper function to fill import text area with JSON data
- * @param page - The Playwright page object
- * @param jsonData - The JSON data to import
- */
-async function fillImportData(page: Page, jsonData: string): Promise<void> {
-	return await test.step('Fill import data', async () => {
-		await page.getByTestId('accounts-textarea').fill(jsonData);
-	});
-}
-
-/**
- * Helper function to click Add accounts button
- * @param page - The Playwright page object
- */
-async function clickAddAccounts(page: Page): Promise<void> {
-	return await test.step('Click Add accounts button', async () => {
-		await page.getByTestId('accounts-add-btn').click();
-	});
-}
-
-/**
- * Helper function to click Replace All button
- * @param page - The Playwright page object
- */
-async function clickReplaceAll(page: Page): Promise<void> {
-	return await test.step('Click Replace All button', async () => {
-		await page.getByTestId('accounts-replace-btn').click();
-	});
-}
-
-/**
- * Helper function to confirm replace action in dialog
- * @param page - The Playwright page object
- */
-async function confirmReplaceDialog(page: Page): Promise<void> {
-	return await test.step('Confirm replace in dialog', async () => {
-		await page.getByTestId('confirm-replace-btn').click();
-	});
-}
-
-/**
- * Helper function to close the import modal
- * @param page - The Playwright page object
- */
-async function closeImportModal(page: Page): Promise<void> {
-	return await test.step('Close import modal', async () => {
-		await page.getByRole('button', { name: 'X', exact: true }).click();
-	});
-}
-
-/**
- * Helper function to wait for and check error message
- * @param page - The Playwright page object
- * @param expectedError - The expected error message (partial match)
- */
-async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
-	return await test.step(`Expect error message: ${expectedError}`, async () => {
-		// Wait for the Alert component to show the error
-		await expect(page.locator('.alert')).toContainText(expectedError, { timeout: 5000 });
-	});
-}
-
-/**
- * Helper function to setup an account through the initial wizard
- * @param page - The Playwright page object
- * @param accountData - Object containing account information
- */
-async function setupAccountInWizard(
-	page: Page,
-	accountData: {
-		server: string;
-		address: string;
-		password: string;
-		title?: string;
-	}
-): Promise<void> {
-	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
-		await page.getByTestId('wizard-next').click();
-		await page.getByRole('textbox', { name: 'Title:' }).click();
-		await page.getByRole('textbox', { name: 'Title:' }).fill(accountData.title || '');
-		await page.getByRole('textbox', { name: 'Server:' }).press('Shift+Home');
-		await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
-		await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
-		await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
-		await page.getByTestId('add').click();
-		await page.getByRole('button', { name: 'Next' }).click();
-		await page.getByRole('button', { name: 'Next' }).click();
-		await page.getByRole('button', { name: 'Finish' }).click();
-	});
-}
+import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.js';
 
 /**
  * Valid account configurations for testing
@@ -141,7 +28,7 @@ const validAccountConfigs = [
 	},
 ];
 
-test.describe('Accounts Import Functionality', () => {
+test.describe.parallel('Accounts Import Functionality', () => {
 	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 	test.beforeEach(async ({ page }) => {
@@ -167,7 +54,7 @@ test.describe('Accounts Import Functionality', () => {
 		await clickAddAccounts(page);
 
 		// Should close modal automatically on success
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 		// Verify accounts were added by checking the account list
 		await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
@@ -184,7 +71,7 @@ test.describe('Accounts Import Functionality', () => {
 		await confirmReplaceDialog(page);
 
 		// Should close modal automatically on success
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 		// Verify old account is gone and new accounts are present
 		await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).not.toBeVisible();
@@ -369,7 +256,7 @@ test.describe('Accounts Import Functionality', () => {
 		await clickAddAccounts(page);
 
 		// Should show conflict dialog
-		await expect(page.getByText('Account with address "duplicate@example.com" on server "ws://localhost:8084" is already configured. What would you like to do?')).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText('Account with address "duplicate@example.com" on server "ws://localhost:8084" is already configured. What would you like to do?')).toBeVisible();
 
 		// Test "Skip" option
 		await page.getByTestId('skip-btn').click();
@@ -414,13 +301,13 @@ test.describe('Accounts Import Functionality', () => {
 		await clickAddAccounts(page);
 
 		// Should show conflict dialog
-		await expect(page.getByText('Account with address "replace@example.com" on server "ws://localhost:8084" is already configured. What would you like to do?')).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText('Account with address "replace@example.com" on server "ws://localhost:8084" is already configured. What would you like to do?')).toBeVisible();
 
 		// Test "Replace existing" option
 		await page.getByTestId('replace-existing-btn').click();
 
 		// Modal should close on success
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 		// Verify the account was replaced (should show updated settings)
 		await expect(page.getByTestId('account-address@replace@example.com@ws://localhost:8084')).toBeVisible();
@@ -503,9 +390,122 @@ test.describe('Accounts Import Functionality', () => {
 		await clickAddAccounts(page);
 
 		// Should close modal automatically on success
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 		// Verify account was added
 		await expect(page.getByTestId('account-address@user+tag@münchen.example.com@wss://тест.example.com:8084')).toBeVisible();
 	});
 });
+
+/**
+ * Helper function to navigate to account management
+ * @param page - The Playwright page object
+ */
+async function goToAccountManagement(page: Page): Promise<void> {
+	return await test.step('Go to account management', async () => {
+		await page.getByTestId('account-bar-toggle').click();
+		await page.getByRole('button', { name: 'Account management Account' }).click();
+	});
+}
+
+/**
+ * Helper function to open accounts import modal
+ * @param page - The Playwright page object
+ */
+async function openImportModal(page: Page): Promise<void> {
+	return await test.step('Open accounts import modal', async () => {
+		await page.getByRole('button', { name: 'Import' }).click();
+	});
+}
+
+/**
+ * Helper function to fill import text area with JSON data
+ * @param page - The Playwright page object
+ * @param jsonData - The JSON data to import
+ */
+async function fillImportData(page: Page, jsonData: string): Promise<void> {
+	return await test.step('Fill import data', async () => {
+		await page.getByTestId('accounts-textarea').fill(jsonData);
+	});
+}
+
+/**
+ * Helper function to click Add accounts button
+ * @param page - The Playwright page object
+ */
+async function clickAddAccounts(page: Page): Promise<void> {
+	return await test.step('Click Add accounts button', async () => {
+		await page.getByTestId('accounts-add-btn').click();
+	});
+}
+
+/**
+ * Helper function to click Replace All button
+ * @param page - The Playwright page object
+ */
+async function clickReplaceAll(page: Page): Promise<void> {
+	return await test.step('Click Replace All button', async () => {
+		await page.getByTestId('accounts-replace-btn').click();
+	});
+}
+
+/**
+ * Helper function to confirm replace action in dialog
+ * @param page - The Playwright page object
+ */
+async function confirmReplaceDialog(page: Page): Promise<void> {
+	return await test.step('Confirm replace in dialog', async () => {
+		await page.getByTestId('confirm-replace-btn').click();
+	});
+}
+
+/**
+ * Helper function to close the import modal
+ * @param page - The Playwright page object
+ */
+async function closeImportModal(page: Page): Promise<void> {
+	return await test.step('Close import modal', async () => {
+		await page.getByRole('button', { name: 'X', exact: true }).click();
+	});
+}
+
+/**
+ * Helper function to wait for and check error message
+ * @param page - The Playwright page object
+ * @param expectedError - The expected error message (partial match)
+ */
+async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
+	return await test.step(`Expect error message: ${expectedError}`, async () => {
+		// Wait for the Alert component to show the error
+		await expect(page.locator('.alert')).toContainText(expectedError, {});
+	});
+}
+
+/**
+ * Helper function to setup an account through the initial wizard
+ * @param page - The Playwright page object
+ * @param accountData - Object containing account information
+ */
+async function setupAccountInWizard(
+	page: Page,
+	accountData: {
+		server: string;
+		address: string;
+		password: string;
+		title?: string;
+	}
+): Promise<void> {
+	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
+		await page.getByTestId('wizard-next').click();
+		await page.getByRole('textbox', { name: 'Title:' }).click();
+		await page.getByRole('textbox', { name: 'Title:' }).fill(accountData.title || '');
+		await page.getByRole('textbox', { name: 'Server:' }).press('Shift+Home');
+		await page.getByRole('textbox', { name: 'Server:' }).fill(accountData.server);
+		await page.getByRole('textbox', { name: 'Address:' }).fill(accountData.address);
+		await page.getByRole('textbox', { name: 'Password:' }).fill(accountData.password);
+		await page.getByTestId('add').click();
+		await page.getByRole('button', { name: 'Next' }).click();
+		await page.getByRole('button', { name: 'Next' }).click();
+		await page.getByRole('button', { name: 'Finish' }).click();
+	});
+}

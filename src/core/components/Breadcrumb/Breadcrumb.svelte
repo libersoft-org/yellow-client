@@ -25,7 +25,14 @@
 	.item {
 		display: flex;
 		gap: 5px;
+	}
+
+	:global(.breadcrumb > *:not(:last-child) .item) {
 		cursor: pointer;
+	}
+
+	:global(.breadcrumb > *:last-child .item) {
+		cursor: default;
 	}
 
 	:global(.breadcrumb > *:not(:first-child))::before {
@@ -51,14 +58,24 @@
 {#if items}
 	<div class="breadcrumb">
 		{#each items as item, index}
-			<Clickable class="item-wrapper" onClick={item.onClick} data-testid={`breadcrumb-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+			{#snippet crumbContent()}
 				<div class="item">
 					{#if index === 0}
 						<Icon padding="0" img="img/home.svg" alt="Settings" size="16px" colorVariable={firstItemColor} />
 					{/if}
 					<div>{item.title}</div>
 				</div>
-			</Clickable>
+			{/snippet}
+
+			{#if index === items.length - 1}
+				<div class="item-wrapper" data-testid={`breadcrumb-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+					{@render crumbContent()}
+				</div>
+			{:else}
+				<Clickable class="item-wrapper" onClick={item.onClick} data-testid={`breadcrumb-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+					{@render crumbContent()}
+				</Clickable>
+			{/if}
 		{/each}
 	</div>
 {/if}

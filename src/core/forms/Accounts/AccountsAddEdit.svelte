@@ -242,7 +242,7 @@
 {/snippet}
 {#snippet snippet_bottom()}
 	<div class="bottom">
-		<ButtonBar equalize expand>
+		<ButtonBar expand>
 			{#if params.id === null}
 				<Button data-testid="add" img="img/accounts-add.svg" text="Add the account" onClick={clickAdd} />
 			{:else}

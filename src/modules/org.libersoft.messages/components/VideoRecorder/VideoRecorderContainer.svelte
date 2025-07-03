@@ -190,7 +190,7 @@
 			playerInstance.dispose();
 			playerInstance = null;
 		}
-		$player.dispose();
+		$player?.dispose();
 	});
 </script>
 

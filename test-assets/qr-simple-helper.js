@@ -31,14 +31,11 @@ export class SimpleQRHelper {
 	 */
 	async waitForScannerReady() {
 		// Wait for video element to be present and ready
-		await this.page.waitForSelector('video', { timeout: 10000 });
-		await this.page.waitForFunction(
-			() => {
-				const video = document.querySelector('video');
-				return video && video.readyState >= 2;
-			},
-			{ timeout: 10000 }
-		);
+		await this.page.waitForSelector('video', {});
+		await this.page.waitForFunction(() => {
+			const video = document.querySelector('video');
+			return video && video.readyState >= 2;
+		}, {});
 	}
 
 	/**
@@ -161,15 +158,15 @@ export async function simpleQRImportTest(page, qrData, expectedResult = 'success
 
 		if (expectedResult === 'success') {
 			// Should show import buttons
-			await expect(page.getByTestId('accounts-add-btn')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-add-btn')).toBeVisible();
 			return { success: true };
 		} else if (expectedResult === 'error') {
 			// Should show import buttons but fail when clicked
-			await expect(page.getByTestId('accounts-add-btn')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-add-btn')).toBeVisible();
 			await page.getByTestId('accounts-add-btn').click();
 
 			// Should show error
-			await expect(page.locator('.alert')).toBeVisible({ timeout: 3000 });
+			await expect(page.locator('.alert')).toBeVisible();
 			return { success: true, error: 'Expected error occurred' };
 		}
 

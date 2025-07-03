@@ -2,8 +2,8 @@ import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 
 // todo: unify
-import { closeWelcomeWizardModal, setupConsoleLogging } from '@/core/e2e/test-utils.ts';
-import { closeModal } from '$lib/test-utils/e2e-helpers.ts';
+import { closeWelcomeWizardModal, setupConsoleLogging } from '@/core/e2e/test-utils.js';
+import { closeModal } from '$lib/test-utils/e2e-helpers.js';
 
 /**
  * Valid account configurations for testing
@@ -58,7 +58,7 @@ const complexAccountConfig = [
 	},
 ];
 
-test.describe('Accounts Import/Export', () => {
+test.describe.parallel('Accounts Import/Export', () => {
 	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 	test.beforeEach(async ({ page }) => {
@@ -81,7 +81,7 @@ test.describe('Accounts Import/Export', () => {
 			await clickAddAccounts(page);
 
 			// Should close modal automatically on success
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Verify accounts were added by checking the account list
 			await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
@@ -98,7 +98,7 @@ test.describe('Accounts Import/Export', () => {
 			await confirmReplaceDialog(page);
 
 			// Should close modal automatically on success
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Verify old account is gone and new accounts are present
 			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).not.toBeVisible();
@@ -115,7 +115,7 @@ test.describe('Accounts Import/Export', () => {
 			await clickAddAccounts(page);
 
 			// Should close modal automatically on success
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Verify complex account was added
 			await expect(page.getByTestId('account-address@user+tag@münchen.example.com@wss://тест.example.com:8084')).toBeVisible();
@@ -183,13 +183,13 @@ test.describe('Accounts Import/Export', () => {
 			await clickAddAccounts(page);
 
 			// Should show conflict dialog
-			await expect(page.getByText('Account Already Exists')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByText('Account Already Exists')).toBeVisible();
 
 			// Test "Replace Existing" option
 			await page.getByRole('button', { name: 'Replace Existing' }).click();
 
 			// Modal should close on success
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Verify the account was replaced
 			await expect(page.getByTestId('account-address@duplicate@example.com@ws://localhost:8084')).toBeVisible();
@@ -224,7 +224,7 @@ test.describe('Accounts Import/Export', () => {
 			await clickAddAccounts(page);
 
 			// Should show conflict dialog
-			await expect(page.getByText('Account Already Exists')).toBeVisible({ timeout: 5000 });
+			await expect(page.getByText('Account Already Exists')).toBeVisible();
 
 			// Test "Skip This Account" option
 			await page.getByTestId('skip-btn').click();
@@ -244,7 +244,7 @@ test.describe('Accounts Import/Export', () => {
 			await clickAddAccounts(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Now test export
 			await openExportModal(page);
@@ -308,7 +308,7 @@ test.describe('Accounts Import/Export', () => {
 			await clickAddAccounts(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Export and verify
 			await openExportModal(page);
@@ -377,14 +377,14 @@ test.describe('Accounts Import/Export', () => {
 			await clickAddAccounts(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 10000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Try to export as QR code
 			await openExportModal(page);
 			await switchToQRExportTab(page);
 
 			// Should show error for data too large for QR code
-			await expect(page.getByText(/Failed to generate QR code.*too large/)).toBeVisible({ timeout: 5000 });
+			await expect(page.getByText(/Failed to generate QR code.*too large/)).toBeVisible();
 		});
 	});
 
@@ -468,7 +468,7 @@ test.describe('Accounts Import/Export', () => {
 			await page.getByTestId('accounts-add-btn').click();
 
 			// Should close modal and show imported account
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 			await expect(page.getByTestId('account-address@qr-scan@example.com@ws://localhost:8084')).toBeVisible();
 		});
 
@@ -552,7 +552,7 @@ test.describe('Accounts Import/Export', () => {
 			await clickAddAccounts(page);
 
 			// Should succeed for reasonable number of accounts
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 10000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Verify some accounts were imported
 			await expect(page.getByTestId('account-address@user0@domain0.example.com@ws://server0.example.com:8084')).toBeVisible();
@@ -641,7 +641,7 @@ test.describe('Accounts Import/Export', () => {
 			await openImportModal(page);
 			await fillImportData(page, JSON.stringify(validAccountConfigs));
 			await clickAddAccounts(page);
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 
 			// Export accounts
 			await openExportModal(page);
@@ -780,7 +780,7 @@ async function confirmReplaceDialog(page: Page): Promise<void> {
  */
 async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
 	return await test.step(`Expect error message: ${expectedError}`, async () => {
-		await expect(page.locator('.alert')).toContainText(expectedError, { timeout: 5000 });
+		await expect(page.locator('.alert')).toContainText(expectedError, {});
 	});
 }
 
@@ -799,7 +799,7 @@ async function setupAccountInWizard(
 	}
 ): Promise<void> {
 	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
-		await page.getByTestId('wizard-next').waitFor({ state: 'visible', timeout: 10000 });
+		await page.getByTestId('wizard-next').waitFor({ state: 'visible' });
 		await page.getByTestId('wizard-next').click();
 		await page.getByTestId('account-title-input').click();
 		await page.getByTestId('account-title-input').fill(accountData.title || '');
@@ -836,7 +836,7 @@ async function clickCopyAndVerify(page: Page): Promise<string> {
 		await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
 
 		await page.getByRole('button', { name: 'Copy to clipboard' }).click();
-		await expect(page.getByRole('button', { name: 'Copied!' })).toBeVisible({ timeout: 3000 });
+		await expect(page.getByRole('button', { name: 'Copied!' })).toBeVisible();
 
 		// Get clipboard content by evaluating in browser context
 		const clipboardContent = await page.evaluate(async () => {

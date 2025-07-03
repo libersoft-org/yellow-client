@@ -2,78 +2,7 @@ import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { setupConsoleLogging } from '@/core/e2e/test-utils.ts';
 
-/**
- * Helper function to navigate to account management
- * @param page - The Playwright page object
- */
-async function goToAccountManagement(page: Page): Promise<void> {
-	return await test.step('Go to account management', async () => {
-		await page.getByTestId('account-bar-toggle').click();
-		await page.getByTestId('account-management-button').click();
-	});
-}
-
-/**
- * Helper function to open accounts import modal
- * @param page - The Playwright page object
- */
-async function openImportModal(page: Page): Promise<void> {
-	return await test.step('Open accounts import modal', async () => {
-		await page.getByTestId('accounts-import-button').click();
-	});
-}
-
-/**
- * Helper function to switch to QR code tab in import modal
- * @param page - The Playwright page object
- */
-async function switchToQRImportTab(page: Page): Promise<void> {
-	return await test.step('Switch to QR Code import tab', async () => {
-		await page.getByTestId('accounts-qr-tab').click();
-	});
-}
-
-/**
- * Helper function to wait for and check error message
- * @param page - The Playwright page object
- * @param expectedError - The expected error message (partial match)
- */
-async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
-	return await test.step(`Expect error message: ${expectedError}`, async () => {
-		await expect(page.locator('.alert')).toContainText(expectedError, { timeout: 5000 });
-	});
-}
-
-/**
- * Helper function to setup an account through the initial wizard
- * @param page - The Playwright page object
- * @param accountData - Object containing account information
- */
-async function setupAccountInWizard(
-	page: Page,
-	accountData: {
-		server: string;
-		address: string;
-		password: string;
-		title?: string;
-	}
-): Promise<void> {
-	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
-		await page.getByTestId('wizard-next').click();
-		await page.getByTestId('account-title-input').click();
-		await page.getByTestId('account-title-input').fill(accountData.title || '');
-		await page.getByTestId('account-server-input').press('Shift+Home');
-		await page.getByTestId('account-server-input').fill(accountData.server);
-		await page.getByTestId('account-address-input').fill(accountData.address);
-		await page.getByTestId('account-password-input').fill(accountData.password);
-		await page.getByTestId('add').click();
-		await page.getByRole('button', { name: 'Next' }).click();
-		await page.getByRole('button', { name: 'Next' }).click();
-		await page.getByRole('button', { name: 'Finish' }).click();
-	});
-}
-
-test.describe('QR Code Import Tests', () => {
+test.describe.parallel('QR Code Import Tests', () => {
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
@@ -108,7 +37,7 @@ test.describe('QR Code Import Tests', () => {
 		await switchToQRImportTab(page);
 
 		// Should show camera access error
-		await expect(page.getByText('Camera access denied or not available')).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText('Camera access denied or not available')).toBeVisible();
 	});
 
 	test('QR code scanner interface elements', async ({ page }) => {
@@ -176,7 +105,7 @@ test.describe('QR Code Import Tests', () => {
 		await page.getByTestId('accounts-add-btn').click();
 
 		// Should close modal and show imported account
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 		await expect(page.getByTestId('account-address@qr-scan@example.com@ws://localhost:8084')).toBeVisible();
 	});
 
@@ -232,3 +161,74 @@ test.describe('QR Code Import Tests', () => {
 		await expect(page.locator('video')).toBeVisible();
 	});
 });
+
+/**
+ * Helper function to navigate to account management
+ * @param page - The Playwright page object
+ */
+async function goToAccountManagement(page: Page): Promise<void> {
+	return await test.step('Go to account management', async () => {
+		await page.getByTestId('account-bar-toggle').click();
+		await page.getByTestId('account-management-button').click();
+	});
+}
+
+/**
+ * Helper function to open accounts import modal
+ * @param page - The Playwright page object
+ */
+async function openImportModal(page: Page): Promise<void> {
+	return await test.step('Open accounts import modal', async () => {
+		await page.getByTestId('accounts-import-button').click();
+	});
+}
+
+/**
+ * Helper function to switch to QR code tab in import modal
+ * @param page - The Playwright page object
+ */
+async function switchToQRImportTab(page: Page): Promise<void> {
+	return await test.step('Switch to QR Code import tab', async () => {
+		await page.getByTestId('accounts-qr-tab').click();
+	});
+}
+
+/**
+ * Helper function to wait for and check error message
+ * @param page - The Playwright page object
+ * @param expectedError - The expected error message (partial match)
+ */
+async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
+	return await test.step(`Expect error message: ${expectedError}`, async () => {
+		await expect(page.locator('.alert')).toContainText(expectedError, {});
+	});
+}
+
+/**
+ * Helper function to setup an account through the initial wizard
+ * @param page - The Playwright page object
+ * @param accountData - Object containing account information
+ */
+async function setupAccountInWizard(
+	page: Page,
+	accountData: {
+		server: string;
+		address: string;
+		password: string;
+		title?: string;
+	}
+): Promise<void> {
+	return await test.step(`Setup account in wizard: ${accountData.address}`, async () => {
+		await page.getByTestId('wizard-next').click();
+		await page.getByTestId('account-title-input').click();
+		await page.getByTestId('account-title-input').fill(accountData.title || '');
+		await page.getByTestId('account-server-input').press('Shift+Home');
+		await page.getByTestId('account-server-input').fill(accountData.server);
+		await page.getByTestId('account-address-input').fill(accountData.address);
+		await page.getByTestId('account-password-input').fill(accountData.password);
+		await page.getByTestId('add').click();
+		await page.getByRole('button', { name: 'Next' }).click();
+		await page.getByRole('button', { name: 'Next' }).click();
+		await page.getByRole('button', { name: 'Finish' }).click();
+	});
+}

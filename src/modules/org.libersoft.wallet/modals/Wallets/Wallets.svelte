@@ -1,47 +1,48 @@
 <script lang="ts">
-	import { wallets, selectAddress } from '../../wallet.ts';
-	import { module } from '../../module.ts';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
-	import Accordion from '@/core/components/Accordion/Accordion.svelte';
-	import Input from '@/core/components/Input/Input.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalWallets from '../Settings/SettingsWallets.svelte';
-	import Table from '@/core/components/Table/Table.svelte';
-	import Tbody from '@/core/components/Table/TableTbody.svelte';
-	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
-	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	interface Props {
-		close?: () => void;
-	}
-	let { close }: Props = $props();
-	let elModalWallets: Modal | undefined;
-	let filter: string | undefined = $state();
+	import { wallets, type IWallet } from '../../wallet.ts';
+	import { attachParents } from '@/core/base_settings.ts';
+	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import SectionWallets from './SectionWallets.svelte';
+	import SectionAddresses from './SectionAddresses.svelte';
+	let elBaseSettings: BaseSettings | undefined;
 
-	function clickSelectAddress(wallet, address) {
-		console.log('SETTING ADDRESS', wallet, address);
-		selectAddress(wallet, address);
-		if (close) close();
+	// Debug information
+	console.log('Wallets.svelte - $wallets:', $wallets);
+
+	let walletsItems = $derived.by(() => {
+		console.log('Wallets.svelte - generating walletsItems for wallets:', $wallets);
+		return $wallets.map((wallet: IWallet) => ({
+			title: wallet.name,
+			name: 'addresses-' + wallet.address,
+			body: SectionAddresses,
+			props: {
+				params: {
+					wallet,
+				},
+			},
+		}));
+	});
+
+	let settingsObject = $derived(
+		attachParents({
+			title: 'Wallets',
+			name: 'wallets',
+			body: SectionWallets,
+			items: [walletsItems],
+		})
+	);
+
+	// Debug settingsObject
+	console.log('Wallets.svelte - settingsObject:', settingsObject);
+
+	export function open() {
+		console.log('Wallets.svelte - opening modal');
+		elBaseSettings?.open();
+	}
+
+	export function close() {
+		elBaseSettings?.close();
 	}
 </script>
 
-<Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallets" onClick={() => elModalWallets?.open()} />
-<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
-<Accordion items={$wallets}>
-	{#snippet content(wallet)}
-		<Table breakpoint="0">
-			<Tbody>
-				{#each wallet.addresses as address}
-					<Clickable onClick={() => clickSelectAddress(wallet, address)}>
-						<TbodyTr>
-							<Td>{address.index}</Td>
-							<Td>{address.name}</Td>
-							<Td>{address.address}</Td>
-						</TbodyTr>
-					</Clickable>
-				{/each}
-			</Tbody>
-		</Table>
-	{/snippet}
-</Accordion>
-<Modal title="Manage wallets" body={ModalWallets} bind:this={elModalWallets} />
+<BaseSettings {settingsObject} bind:this={elBaseSettings} />

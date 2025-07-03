@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.ts';
+import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.js';
 import { QRTestHelper } from '../../../../../test-assets/qr-test-helper.js';
 
 /**
@@ -30,7 +30,7 @@ async function setupAccountInWizard(
 	});
 }
 
-test.describe('QR Code Camera Mock Tests', () => {
+test.describe.parallel('QR Code Camera Mock Tests', () => {
 	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
 
 	test.beforeEach(async ({ page }) => {
@@ -79,7 +79,7 @@ test.describe('QR Code Camera Mock Tests', () => {
 		await page.getByTestId('accounts-add-btn').click();
 
 		// Should close modal and show imported account
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 		// Assuming QR code imports to ws://localhost:8084 by default
 		await expect(page.getByTestId('account-address@qrtest1@example.com@ws://localhost:8084')).toBeVisible();
 	});
@@ -92,7 +92,7 @@ test.describe('QR Code Camera Mock Tests', () => {
 		await page.getByTestId('accounts-add-btn').click();
 
 		// Should close modal and show imported account
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 		// Assuming QR code imports to ws://localhost:8084 by default
 		await expect(page.getByTestId('account-address@complex+test@example.com@ws://localhost:8084')).toBeVisible();
 	});
@@ -121,7 +121,7 @@ test.describe('QR Code Camera Mock Tests', () => {
 		await page.getByTestId('accounts-add-btn').click();
 
 		// Should close modal and show imported accounts
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible({ timeout: 5000 });
+		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
 		// Assuming QR code imports to ws://localhost:8084 by default
 		await expect(page.getByTestId('account-address@user1@domain.com@ws://localhost:8084')).toBeVisible();
 		await expect(page.getByTestId('account-address@user2@domain.com@ws://localhost:8084')).toBeVisible();
@@ -205,7 +205,7 @@ test.describe('QR Code Camera Mock Tests', () => {
 		await page.getByTestId('accounts-qr-tab').click();
 
 		// Should quickly detect and show the QR content
-		await expect(page.getByTestId('accounts-add-btn')).toBeVisible({ timeout: 8000 });
+		await expect(page.getByTestId('accounts-add-btn')).toBeVisible({  });
 
 		// Verify the detected content
 		const codeElement = page.locator('[data-testid="accounts-textarea"]');

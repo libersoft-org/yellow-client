@@ -1,13 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 30 30">
- <g fill="#000">
-		<g transform="translate(0,0)"><path d="M4.5,14h5.1C12,14,14,12,14,9.6V4.5C14,2,12,0,9.5,0H4.4C2,0,0,2,0,4.4v5.1C0,12,2,14,4.5,14z M12,4.8v4.4 c0,1.5-1.3,2.8-2.8,2.8H4.8C3.2,12,2,10.8,2,9.2V4.8C2,3.3,3.3,2,4.8,2h4.4C10.8,2,12,3.2,12,4.8z"/></g>
-		<g transform="translate(4,4)"><path d="M6,1.7v2.7C6,5.2,5.2,6,4.3,6H1.7C0.7,6,0,5.3,0,4.3V1.7C0,0.8,0.8,0,1.7,0h2.7C5.3,0,6,0.7,6,1.7z"/></g>
-		<g transform="translate(16,0)"><path d="M4.5,14h5.1C12,14,14,12,14,9.6V4.5C14,2,12,0,9.5,0H4.4C2,0,0,2,0,4.4v5.1C0,12,2,14,4.5,14z M12,4.8v4.4 c0,1.5-1.3,2.8-2.8,2.8H4.8C3.2,12,2,10.8,2,9.2V4.8C2,3.3,3.3,2,4.8,2h4.4C10.8,2,12,3.2,12,4.8z"/></g>
-		<g transform="translate(20,4)"><path d="M6,1.7v2.7C6,5.2,5.2,6,4.3,6H1.7C0.7,6,0,5.3,0,4.3V1.7C0,0.8,0.8,0,1.7,0h2.7C5.3,0,6,0.7,6,1.7z"/></g>
-		<g transform="translate(0,16)"><path d="M4.5,14h5.1C12,14,14,12,14,9.6V4.5C14,2,12,0,9.5,0H4.4C2,0,0,2,0,4.4v5.1C0,12,2,14,4.5,14z M12,4.8v4.4 c0,1.5-1.3,2.8-2.8,2.8H4.8C3.2,12,2,10.8,2,9.2V4.8C2,3.3,3.3,2,4.8,2h4.4C10.8,2,12,3.2,12,4.8z"/></g>
-		<g transform="translate(4,20)"><path d="M6,1.7v2.7C6,5.2,5.2,6,4.3,6H1.7C0.7,6,0,5.3,0,4.3V1.7C0,0.8,0.8,0,1.7,0h2.7C5.3,0,6,0.7,6,1.7z"/></g>
-		<g transform="translate(16,16)"><path d="M4.5,14h5.1C12,14,14,12,14,9.6V4.5C14,2,12,0,9.5,0H4.4C2,0,0,2,0,4.4v5.1C0,12,2,14,4.5,14z M12,4.8v4.4 c0,1.5-1.3,2.8-2.8,2.8H4.8C3.2,12,2,10.8,2,9.2V4.8C2,3.3,3.3,2,4.8,2h4.4C10.8,2,12,3.2,12,4.8z"/></g>
-		<g transform="translate(20,20)"><path d="M6,1.7v2.7C6,5.2,5.2,6,4.3,6H1.7C0.7,6,0,5.3,0,4.3V1.7C0,0.8,0.8,0,1.7,0h2.7C5.3,0,6,0.7,6,1.7z"/></g>
-	</g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 80 80">
+	<rect fill="#000" x="35.57" y="0" width="8.89" height="8.89" transform="translate(44.47 -35.57) rotate(90)"/>
+	<path fill="#000" d="M17.79,0H7.52C3.37,0,0,3.37,0,7.52v11.64C0,23.31,3.37,26.68,7.52,26.68h11.64c4.15,0,7.52-3.37,7.52-7.52V7.52C26.68,3.37,23.31,0,19.16,0h-1.37ZM17.79,17.79h-8.89v-8.89h8.89v8.89Z"/>
+	<rect fill="#000" x="35.57" y="17.79" width="8.89" height="8.89" transform="translate(62.26 -17.79) rotate(90)"/>
+	<path fill="#000" d="M71.15,0h-10.27C56.73,0,53.36,3.37,53.36,7.52v11.64c0,4.15,3.37,7.52,7.52,7.52h11.59c4.15,0,7.52-3.37,7.52-7.52V7.52C80,3.37,76.63,0,72.48,0h-1.33ZM62.26,17.79v-8.89h8.85v8.89h-8.85Z"/>
+	<rect fill="#000" x="35.57" y="26.68" width="8.89" height="8.89" transform="translate(71.15 -8.89) rotate(90)"/>
+	<rect fill="#000" x="0" y="35.57" width="8.89" height="8.89" transform="translate(44.47 35.57) rotate(90)"/>
+	<rect fill="#000" x="17.79" y="35.57" width="8.89" height="8.89" transform="translate(62.26 17.79) rotate(90)"/>
+	<rect fill="#000" x="26.68" y="35.57" width="8.89" height="8.89" transform="translate(71.15 8.89) rotate(90)"/>
+	<rect fill="#000" x="44.47" y="35.57" width="8.89" height="8.89" transform="translate(88.94 -8.89) rotate(90)"/>
+	<rect fill="#000" x="62.26" y="35.57" width="8.89" height="8.89" transform="translate(106.72 -26.68) rotate(90)"/>
+	<rect fill="#000" x="35.57" y="44.47" width="8.89" height="8.89" transform="translate(88.94 8.89) rotate(90)"/>
+	<rect fill="#000" x="53.36" y="44.47" width="8.89" height="8.89" transform="translate(106.72 -8.89) rotate(90)"/>
+	<rect fill="#000" x="35.57" y="53.36" width="8.89" height="8.89" transform="translate(97.83 17.79) rotate(90)"/>
+	<rect fill="#000" x="44.47" y="53.36" width="8.89" height="8.89" transform="translate(106.72 8.89) rotate(90)"/>
+	<rect fill="#000" x="62.26" y="53.36" width="8.89" height="8.89" transform="translate(124.51 -8.89) rotate(90)"/>
+	<rect fill="#000" x="71.11" y="53.36" width="8.89" height="8.89" transform="translate(133.36 -17.74) rotate(90)"/>
+	<rect fill="#000" x="35.57" y="62.26" width="8.89" height="8.89" transform="translate(106.72 26.68) rotate(90)"/>
+	<rect fill="#000" x="53.36" y="62.26" width="8.89" height="8.89" transform="translate(124.51 8.89) rotate(90)"/>
+	<path fill="#000" d="M17.79,53.36H7.52C3.37,53.36,0,56.73,0,60.88v11.59C0,76.63,3.37,80,7.52,80h11.64c4.15,0,7.52-3.37,7.52-7.52v-11.59c0-4.15-3.37-7.52-7.52-7.52h-1.37ZM17.79,71.11h-8.89v-8.85h8.89v8.85Z"/>
+	<rect fill="#000" x="44.47" y="71.11" width="8.89" height="8.89" transform="translate(124.47 26.64) rotate(90)"/>
+	<rect fill="#000" x="62.26" y="71.11" width="8.89" height="8.89" transform="translate(142.26 8.85) rotate(90)"/>
+	<rect fill="#000" x="71.11" y="71.11" width="8.89" height="8.89" transform="translate(151.11 0) rotate(90)"/>
 </svg>
