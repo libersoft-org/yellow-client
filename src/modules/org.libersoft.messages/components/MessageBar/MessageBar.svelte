@@ -314,9 +314,11 @@
 
 <Bar position="bottom" height="auto" bind:element={elMessageBar}>
 	<div class="message-bar" data-sent-message-uid={lastSentMessageUid}>
-		<div class="video-recorder-wrapper {showVideoRecorder ? 'open' : ''}">
-			<VideoRecorderContainer />
-		</div>
+		{#if showVideoRecorder}
+			<div class="video-recorder-wrapper open">
+				<VideoRecorderContainer />
+			</div>
+		{/if}
 		<input type="file" id="videoInput" style:display="none" accept="video/*" capture="camera" bind:this={videoInputRef} />
 		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
 			<div class="top">
