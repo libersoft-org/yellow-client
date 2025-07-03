@@ -23,26 +23,22 @@
 		}));
 	});
 
-	let settingsObject = $derived(
-		attachParents({
+	let settingsObject = $derived.by(() => {
+		return attachParents({
 			title: 'Wallets',
 			name: 'wallets',
 			body: SectionWallets,
 			items: [walletsItems],
-		})
-	);
+		});
+	});
 
-	// Debug settingsObject
-	console.log('Wallets.svelte - settingsObject:', settingsObject);
-
-	export function open() {
+	export function onOpen() {
+		window.alert('Opening Wallets modal');
 		console.log('Wallets.svelte - opening modal');
 		elBaseSettings?.open();
-	}
-
-	export function close() {
-		elBaseSettings?.close();
+		console.log('Wallets.svelte - modal opened');
 	}
 </script>
 
+addresy zde?
 <BaseSettings {settingsObject} bind:this={elBaseSettings} />

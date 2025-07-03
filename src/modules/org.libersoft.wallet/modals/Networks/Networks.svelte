@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { selectedNetworkID, networks } from '../../wallet.ts';
 	import { module } from '../../module.ts';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -18,10 +19,18 @@
 	let elModalNetworks;
 	let filter = $state('');
 
+	let settings = getContext('settings');
+
 	function selectNetwork(id) {
 		console.log('SETTING NETWORK', id);
 		selectedNetworkID.set(id);
 		if (close) close();
+	}
+
+	function manageNetworks() {
+		console.log('MANAGE NETWORKS elSettings:', settings.elSettings);
+		settings.elSettings?.setSettingsSection('networks');
+		settings.elSettings?.open();
 	}
 </script>
 
@@ -36,7 +45,7 @@
 	}
 </style>
 
-<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => elModalNetworks?.open()} />
+<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => manageNetworks()} />
 <Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
 <Table breakpoint="0">
 	<Tbody>
@@ -54,4 +63,3 @@
 		{/each}
 	</Tbody>
 </Table>
-<Modal title="Manage networks" body={ModalNetworks} bind:this={elModalNetworks} />

@@ -54,7 +54,6 @@
 
 	export function open() {
 		elModal?.open();
-		activeName = settingsObject.name; // Reset to root when opening settings
 	}
 
 	export function close() {

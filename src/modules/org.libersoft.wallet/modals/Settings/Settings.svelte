@@ -109,6 +109,11 @@
 		elBaseSettings?.open();
 	}
 
+	export function setSettingsSection(name: string) {
+		console.log('[Settings] setSettingsSection:', name);
+		elBaseSettings?.setSettingsSection(name);
+	}
+
 	export function close() {
 		elBaseSettings?.close();
 	}

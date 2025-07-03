@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { setContext } from 'svelte';
 	import { module } from '../module.ts';
 	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress } from '../wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
@@ -20,6 +21,12 @@
 	let elModalNetworks;
 	let elModalWallets;
 	let addressElement;
+
+	let settings = {};
+	setContext('settings', settings);
+	$effect(() => {
+		settings.elSettings = elSettings;
+	});
 
 	function clickCopyAddress() {
 		if ($selectedAddress) {
@@ -132,8 +139,8 @@
 <Paper>
 	<div class="body">
 		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => elModalNetworks?.open()} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => elModalWallets?.open()} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elModalNetworks?.open()} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={async () => await elModalWallets?.open()} />
 		</div>
 		<div class="bar">
 			<div class="left">
