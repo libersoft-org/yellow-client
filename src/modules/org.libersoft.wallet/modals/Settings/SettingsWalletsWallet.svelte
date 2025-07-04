@@ -15,6 +15,7 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Address from './SettingsWalletsAddress.svelte';
 	import ModalAddressAdd from '../Wallets/WalletsAddressAdd.svelte';
+	import ModalAddressEdit from '../Wallets/WalletsAddressEdit.svelte';
 	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
 	interface Props {
 		params: {
@@ -23,6 +24,7 @@
 	}
 	let { params }: Props = $props();
 	let elModalAddressAdd: Modal | undefined;
+	let elModalAddressEdit: Modal | undefined;
 	let elDialogAddressDel: DialogAddressDel | undefined = $state();
 	let selectedAddress: IAddress | undefined = $state();
 
@@ -35,19 +37,8 @@
 		elModalAddressAdd?.open();
 	}
 
-	function renameAddress(address: IAddress) {
-		let name = window.prompt('Enter the new name');
-		if (!name) return;
-		wallets.update(ws =>
-			ws.map(w =>
-				w.address === params.wallet.address
-					? {
-							...w,
-							addresses: (w.addresses || []).map(a => (a.index === address.index ? { ...a, name } : a)),
-						}
-					: w
-			)
-		);
+	function editAddress(index: string | number) {
+		elModalAddressEdit?.open(params.wallet, index);
 	}
 
 	function deleteAddress(address: IAddress) {
@@ -86,8 +77,8 @@
 						<Td title="Address"><Address address={address.address} /></Td>
 						<Td title="Action">
 							<TableActionItems>
-								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(address)} />
-								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5" onClick={() => deleteAddress(address)} />
+								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => editAddress(address.index)} />
+								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5" onClick={() => deleteAddress(address.index)} />
 							</TableActionItems>
 						</Td>
 					</TbodyTr>
@@ -97,6 +88,7 @@
 	{/if}
 </div>
 <Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: params.wallet }} width="600px" bind:this={elModalAddressAdd} />
+<Modal title="Edit address" body={ModalAddressEdit} bind:this={elModalAddressEdit} />
 {#if params.wallet && selectedAddress}
 	<DialogAddressDel wallet={params.wallet} address={selectedAddress} bind:this={elDialogAddressDel} />
 {/if}

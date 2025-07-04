@@ -313,6 +313,7 @@
 	}
 
 	export async function open<TParams extends readonly unknown[] = readonly unknown[]>(...params: TParams) {
+		console.log('Opening modal with params:', params);
 		setShow(true);
 		elModal?.focus();
 		await tick();
