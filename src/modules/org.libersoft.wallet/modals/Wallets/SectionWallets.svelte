@@ -22,13 +22,10 @@
 	let elModalWallets: Modal | undefined;
 	let filter: string | undefined = $state();
 
-	// Debug information
-	//console.log('SectionWallets - $wallets:', $wallets);
-	//console.log('SectionWallets - wallets length:', $wallets.length);
+	let filteredWallets = $derived($wallets.filter(wallet => !filter || wallet.name.toLowerCase().includes(filter.toLowerCase())));
 
 	function clickManageWallets() {
-		$settingsModal.setSettingsSection('wallets');
-		$settingsModal.open();
+		$settingsModal.open('wallets');
 	}
 
 	async function clickSelectWallet(wallet) {
@@ -44,9 +41,9 @@
 </style>
 
 <Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallets" onClick={clickManageWallets} />
-<Input bind:value={filter} />
+<Input bind:value={filter} placeholder="Filter wallets..." />
 
-{#if $wallets.length > 0}
+{#if filteredWallets.length > 0}
 	<Table breakpoint="0">
 		<Thead>
 			<TheadTr>
@@ -54,7 +51,7 @@
 			</TheadTr>
 		</Thead>
 		<Tbody>
-			{#each $wallets as wallet, index}
+			{#each filteredWallets as wallet, index}
 				<TbodyTr>
 					<Td padding="0">
 						<Clickable onClick={async () => await clickSelectWallet(wallet)}>

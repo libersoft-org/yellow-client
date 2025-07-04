@@ -10,6 +10,8 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 
 	interface Props {
 		close?: () => void;
@@ -21,6 +23,9 @@
 	let copied: boolean = $state(false);
 	//let phraseArr: string[] = $state([]);
 	let qrCodeData: string = $state('');
+	let dummyQrCodeData: string = $state('');
+	let dummyPhrase: string = $state('abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art');
+	let isRevealed: boolean = $state(false);
 	let elWalletNameInput: Input | undefined = $state();
 
 	/*
@@ -32,6 +37,8 @@
 	export function onOpen() {
 		name = 'My wallet ' + ($wallets.length + 1);
 		regenerate();
+		generateDummyQRCode();
+		isRevealed = false;
 		if (elWalletNameInput) {
 			elWalletNameInput.focus();
 		}
@@ -41,6 +48,16 @@
 		QRCode.toDataURL(phrase, { width: 150 })
 			.then(url => (qrCodeData = url))
 			.catch(err => console.error(err));
+	}
+
+	function generateDummyQRCode() {
+		QRCode.toDataURL(dummyPhrase, { width: 150 })
+			.then(url => (dummyQrCodeData = url))
+			.catch(err => console.error(err));
+	}
+
+	function toggleReveal() {
+		isRevealed = !isRevealed;
 	}
 
 	function regenerate() {
@@ -154,6 +171,51 @@
 		padding: 10px;
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
+		transition: filter 0.3s ease;
+	}
+
+	.phrase.blurred {
+		filter: blur(8px);
+	}
+
+	.qr-wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		flex-direction: column;
+	}
+
+	.qr-image {
+		transition: filter 0.3s ease;
+		width: 150px;
+		height: 150px;
+		display: block;
+	}
+
+	.qr-image.blurred {
+		filter: blur(8px);
+	}
+
+	.reveal-icon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background: rgba(0, 0, 0, 0.7);
+		border-radius: 50%;
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		pointer-events: none;
+	}
+
+	.reveal-icon img {
+		width: 20px;
+		height: 20px;
+		filter: invert(1);
 	}
 </style>
 
@@ -163,16 +225,32 @@
 	</Label>
 </Form>
 <Label text="Seed phrase">
-	<div class="phrase">
-		<span>{copied ? 'Copied!' : phrase}</span>
-		{#if !copied}
-			<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="20px" padding="5px" onClick={copy} />
-		{/if}
-	</div>
+	{#if !isRevealed}
+		<Alert type="warning" message="Sensitive information is hidden. Click to reveal it." />
+	{:else}
+		<Alert type="info" message="Click to hide sensitive information." />
+	{/if}
+	<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide seed phrase' : 'Reveal seed phrase'}>
+		<div class="phrase" class:blurred={!isRevealed}>
+			<span>{copied ? 'Copied!' : isRevealed ? phrase : dummyPhrase}</span>
+			{#if !copied}
+				<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="20px" padding="5px" onClick={copy} />
+			{/if}
+		</div>
+	</Clickable>
 </Label>
 <div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
-{#if qrCodeData}
-	<div class="qr"><img src={qrCodeData} alt="Seed phrase" /></div>
+{#if qrCodeData && dummyQrCodeData}
+	<div class="qr-wrapper">
+		<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide QR code' : 'Reveal QR code'}>
+			<img src={isRevealed ? qrCodeData : dummyQrCodeData} alt={isRevealed ? 'Seed phrase QR code' : 'Hidden QR code'} class="qr-image" class:blurred={!isRevealed} />
+		</Clickable>
+		{#if !isRevealed}
+			<div class="reveal-icon" aria-hidden="true">
+				<img src="img/show.svg" alt="Show" />
+			</div>
+		{/if}
+	</div>
 	<div>Use this QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
 {/if}
 <!--<Table breakpoint="0">

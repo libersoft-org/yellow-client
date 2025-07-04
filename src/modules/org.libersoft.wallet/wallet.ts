@@ -534,3 +534,7 @@ export function deleteNetwork(net): void {
 		return n.filter(n => n !== net);
 	});
 }
+
+export function reorderWallets(reorderedWallets: IWallet[]): void {
+	wallets.set(reorderedWallets);
+}
