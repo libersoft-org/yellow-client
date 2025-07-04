@@ -28,7 +28,7 @@
 			title: 'Wallets',
 			name: 'wallets',
 			body: SectionWallets,
-			items: [walletsItems],
+			items: walletsItems,
 		});
 	});
 

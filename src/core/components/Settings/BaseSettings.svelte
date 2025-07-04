@@ -72,19 +72,19 @@
 	function findNode(root: any, target: string): any {
 		const stack = [root];
 		while (stack.length) {
-			console.log(
+			/*console.log(
 				'[BaseSettings] Searching ',
 				root,
 				' for node:',
 				target,
 				'Current stack:',
 				stack.map(n => n.name)
-			);
+			);*/
 			const node = stack.pop();
 			if (node.name === target) return node;
-			const children = node.items ?? [];
-			console.log('node.items:', node.items);
-			console.log('children:', children);
+			//const children = node.items ?? [];
+			//console.log('node.items:', node.items);
+			//console.log('children:', children);
 			(node.items ?? []).forEach((c: any) => stack.push(c));
 		}
 	}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectAddress } from '../../wallet.ts';
+	import { selectAddress, walletsModal } from '../../wallet.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
@@ -8,6 +8,7 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import { get } from 'svelte/store';
 
 	interface Props {
 		params: {
@@ -20,9 +21,9 @@
 	let { wallet } = params;
 
 	function clickSelectAddress(address) {
-		console.log('SETTING ADDRESS', wallet, address);
+		console.log('SELECTING ADDRESS', wallet, address);
 		selectAddress(wallet, address);
-		close?.();
+		get(walletsModal)?.close();
 	}
 </script>
 

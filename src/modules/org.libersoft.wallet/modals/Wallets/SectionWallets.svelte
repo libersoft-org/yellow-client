@@ -35,12 +35,6 @@
 		console.log('SELECTING WALLET', wallet);
 		await $walletsModal.setSettingsSection('wallets-' + wallet.address);
 	}
-
-	function clickSelectAddress(wallet, address) {
-		console.log('SETTING ADDRESS', wallet, address);
-		selectAddress(wallet, address);
-		close?.();
-	}
 </script>
 
 <style>
