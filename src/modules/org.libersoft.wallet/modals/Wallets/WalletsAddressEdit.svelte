@@ -43,7 +43,7 @@
 			error = 'Name cannot be empty';
 			return;
 		}
-		const validatedName = name; // TypeScript knows this is string, not undefined
+		const validatedName = name;
 		if (!wallet) {
 			error = 'Wallet not found';
 			return;

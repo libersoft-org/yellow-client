@@ -23,8 +23,8 @@
 		};
 	}
 	let { params }: Props = $props();
-	let elModalAddressAdd: Modal | undefined;
-	let elModalAddressEdit: Modal | undefined;
+	let elModalAddressAdd: Modal | undefined = $state();
+	let elModalAddressEdit: Modal | undefined = $state();
 	let elDialogAddressDel: DialogAddressDel | undefined = $state();
 	let selectedAddress: IAddress | undefined = $state();
 
@@ -41,9 +41,9 @@
 		elModalAddressEdit?.open(params.wallet, index);
 	}
 
-	function deleteAddress(address: IAddress) {
-		selectedAddress = address;
-		elDialogAddressDel?.open();
+	function deleteAddress(index: string | number) {
+		console.log('Deleting address from wallet', elDialogAddressDel, index, params.wallet);
+		elDialogAddressDel?.open(params.wallet, index);
 	}
 </script>
 
@@ -89,6 +89,4 @@
 </div>
 <Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: params.wallet }} width="600px" bind:this={elModalAddressAdd} />
 <Modal title="Edit address" body={ModalAddressEdit} bind:this={elModalAddressEdit} />
-{#if params.wallet && selectedAddress}
-	<DialogAddressDel wallet={params.wallet} address={selectedAddress} bind:this={elDialogAddressDel} />
-{/if}
+<DialogAddressDel bind:this={elDialogAddressDel} />

@@ -1,11 +1,8 @@
 <script lang="ts">
 	import { wallets, type IAddress, type IWallet } from '../wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
-	interface Props {
-		wallet: IWallet;
-		address: IAddress;
-	}
-	let { wallet, address }: Props = $props();
+	let wallet: IWallet | undefined;
+	let index: string | number | undefined;
 	let elDialog;
 	let dialogData = {
 		title: 'Delete address from wallet',
@@ -18,7 +15,7 @@
 	};
 
 	function clickYes() {
-		wallets.update(ws => ws.map(item => (item.address === wallet.address ? { ...item, addresses: (item.addresses ?? []).filter(a => a.index !== address.index) } : item)));
+		wallets.update(ws => ws.map(item => (item.address === wallet.address ? { ...item, addresses: (item.addresses ?? []).filter(a => a.index !== index) } : item)));
 		elDialog?.close();
 	}
 
@@ -26,7 +23,9 @@
 		elDialog?.close();
 	}
 
-	export function open() {
+	export function open(_wallet: IWallet, _index: string | number): void {
+		wallet = _wallet;
+		index = _index;
 		elDialog?.open();
 	}
 </script>
@@ -34,17 +33,20 @@
 {#snippet question()}
 	<div>Would you like to delete this address from your wallet?</div>
 	<br />
-	<div>
-		<span class="bold">Index:</span>
-		<span>{address.index}</span>
-	</div>
-	<div>
-		<span class="bold">Name:</span>
-		<span>{address.name}</span>
-	</div>
-	<div>
-		<span class="bold">Address:</span>
-		<span>{address.address}</span>
-	</div>
+	{#if wallet?.addresses?.find(a => a.index === index)}
+		{@const address = wallet.addresses.find(a => a.index === index)}
+		<div>
+			<span class="bold">Index:</span>
+			<span>{address?.index}</span>
+		</div>
+		<div>
+			<span class="bold">Name:</span>
+			<span>{address?.name}</span>
+		</div>
+		<div>
+			<span class="bold">Address:</span>
+			<span>{address?.address}</span>
+		</div>
+	{/if}
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />
