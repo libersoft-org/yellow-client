@@ -317,6 +317,8 @@
 		setShow(true);
 		elModal?.focus();
 		await tick();
+		await tick();
+		console.log(elModalBody);
 		await (elModalBody as ModalBodyWithOnOpen<TParams>)?.onOpen?.(...params);
 	}
 
