@@ -318,7 +318,7 @@
 		elModal?.focus();
 		await tick();
 		await tick();
-		console.log(elModalBody);
+		bringToFront(modalId);
 		await (elModalBody as ModalBodyWithOnOpen<TParams>)?.onOpen?.(...params);
 	}
 
