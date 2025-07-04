@@ -39,7 +39,7 @@
 	let zIndex = $state(100);
 	let modalId: number;
 	let isDragging = false;
-	let resizeObserver: ResizeObserver;
+	let resizeObserver: ResizeObserver | undefined;
 	let focused = $state(false);
 	let elModalBody: any | null = $state(null);
 
@@ -74,23 +74,8 @@
 
 		function handleResize() {
 			if ($isMobile) {
-				centerModal();
 				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
-			} else {
-				requestAnimationFrame(() => {
-					if (elModal && showContent) centerModal();
-				});
 			}
-		}
-
-		if (elModal) {
-			let didInit = false;
-			resizeObserver = new ResizeObserver(() => {
-				if (isDragging) return;
-				if (didInit) handleResize();
-				else didInit = true;
-			});
-			resizeObserver.observe(elModal);
 		}
 
 		window.addEventListener('resize', handleResize);
@@ -141,31 +126,21 @@
 	}
 
 	function centerModal() {
-		if (!elModal) return;
-		if ($isMobile) {
-			// On mobile, let CSS handle the centering by default
-			// Only apply custom positioning if the modal is too large
-			const rect = elModal.getBoundingClientRect();
-			if (rect.height > window.innerHeight) {
-				const y = Math.max(0, (window.innerHeight - rect.height) / 2);
-				elModal.style.transform = `translate3d(0px, ${y}px, 0)`;
-			} else {
-				// Reset to CSS default centering
-				elModal.style.transform = '';
-			}
-			return;
-		}
-		// For desktop, let CSS handle the centering by default
-		// Only apply custom positioning if the modal is too large
-		const rect = elModal.getBoundingClientRect();
-		if (rect.width > window.innerWidth || rect.height > window.innerHeight) {
-			const x = Math.max(0, (window.innerWidth - rect.width) / 2);
-			const y = Math.max(0, (window.innerHeight - rect.height) / 2);
-			elModal.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-		} else {
-			// Reset to CSS default centering
-			elModal.style.transform = '';
-		}
+		if (!elModal || isDragging) return;
+
+		// Get the center position
+		const windowWidth = window.innerWidth;
+		const windowHeight = window.innerHeight;
+		const modalWidth = elModal.offsetWidth;
+		const modalHeight = elModal.offsetHeight;
+
+		const centerX = (windowWidth - modalWidth) / 2;
+		const centerY = (windowHeight - modalHeight) / 2;
+
+		// Apply absolute positioning instead of transform
+		elModal.style.left = `${centerX}px`;
+		elModal.style.top = `${centerY}px`;
+		elModal.style.transform = 'none';
 	}
 
 	function snapTransformIntoBounds() {
@@ -268,11 +243,9 @@
 		display: flex;
 		flex-direction: column;
 		position: fixed;
-		top: 50%;
+		top: 0;
 		left: 0;
-		right: 0;
-		transform: translateY(-50%);
-		margin: 0 auto;
+		margin: 0;
 		box-sizing: border-box;
 		width: fit-content;
 		height: auto;
@@ -282,7 +255,6 @@
 		border-radius: 10px;
 		box-shadow: var(--shadow);
 		background-color: var(--default-background);
-		transition: transform 0.4s ease;
 	}
 
 	:global(.modal.neodrag-dragging) .header {

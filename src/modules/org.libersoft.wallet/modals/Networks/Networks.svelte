@@ -40,7 +40,7 @@
 </style>
 
 <Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => manageNetworks()} />
-<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
+<Input bind:value={filter} />
 <Table breakpoint="0">
 	<Tbody>
 		{#each $networks as n}
