@@ -12,7 +12,6 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-
 	interface Props {
 		close?: () => void;
 	}
@@ -39,9 +38,7 @@
 		regenerate();
 		generateDummyQRCode();
 		isRevealed = false;
-		if (elWalletNameInput) {
-			elWalletNameInput.focus();
-		}
+		if (elWalletNameInput) elWalletNameInput.focus();
 	}
 
 	function generateQRCode() {
@@ -158,11 +155,6 @@
 </script>
 
 <style>
-	.qr {
-		display: flex;
-		justify-content: center;
-	}
-
 	.phrase {
 		display: flex;
 		text-align: justify;
