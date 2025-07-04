@@ -50,6 +50,10 @@ export interface IAddressBookItem {
 	name: string;
 	address: string;
 }
+
+export const settingsModal = writable<any>();
+export const walletsModal = writable<any>();
+
 export const status = writable<any>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);
 export const networks = localStorageSharedStore<INetwork[]>('networks', []);

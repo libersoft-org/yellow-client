@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, selectAddress } from '../../wallet.ts';
+	import { wallets, selectAddress, walletsModal } from '../../wallet.ts';
 	import { module } from '../../module.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -23,16 +23,17 @@
 	let filter: string | undefined = $state();
 
 	// Debug information
-	console.log('SectionWallets - $wallets:', $wallets);
-	console.log('SectionWallets - wallets length:', $wallets.length);
+	//console.log('SectionWallets - $wallets:', $wallets);
+	//console.log('SectionWallets - wallets length:', $wallets.length);
 
 	function clickManageWallets() {
 		elModalWallets?.open();
 		//close?.(); // TODO: This doesn't work, because when closed, elModalWallets is not defined anymore (modal lives inside modal).
 	}
 
-	function clickSelectWallet(wallet) {
+	async function clickSelectWallet(wallet) {
 		console.log('SELECTING WALLET', wallet);
+		await $walletsModal.setSettingsSection('wallets-' + wallet.address);
 	}
 
 	function clickSelectAddress(wallet, address) {
@@ -62,7 +63,7 @@
 			{#each $wallets as wallet, index}
 				<TbodyTr>
 					<Td padding="0">
-						<Clickable onClick={() => clickSelectWallet(wallet)}>
+						<Clickable onClick={async () => await clickSelectWallet(wallet)}>
 							<div class="wallet">{wallet.name}</div>
 						</Clickable>
 					</Td>

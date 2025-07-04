@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import { selectedNetworkID, networks } from '../../wallet.ts';
+	import { selectedNetworkID, networks, settingsModal } from '../../wallet.ts';
 	import { module } from '../../module.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -19,8 +18,6 @@
 	let elModalNetworks;
 	let filter = $state('');
 
-	let settings = getContext('settings');
-
 	function selectNetwork(id) {
 		console.log('SETTING NETWORK', id);
 		selectedNetworkID.set(id);
@@ -28,7 +25,7 @@
 	}
 
 	function manageNetworks() {
-		console.log('MANAGE NETWORKS elSettings:', settings.elSettings);
+		const settings = $settingsModal;
 		settings.elSettings?.setSettingsSection('networks');
 		settings.elSettings?.open();
 	}

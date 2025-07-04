@@ -6,7 +6,7 @@
 	import SettingsNetworks from './SettingsNetworks.svelte';
 	import SettingsWallets from './SettingsWallets.svelte';
 	import SettingsAddressbook from './SettingsAddressbook.svelte';
-	import { wallets, networks, type IWallet, type INetwork } from '../../wallet.ts';
+	import { wallets, networks, type IWallet, type INetwork, settingsModal } from '../../wallet.ts';
 	import SettingsWalletsWallet from './SettingsWalletsWallet.svelte';
 	import SettingsWalletsAdd from './SettingsWalletsAdd.svelte';
 	import SettingsNetworksAddEdit from './SettingsNetworksAddEdit.svelte';
@@ -105,18 +105,9 @@
 		})
 	);
 
-	export function open() {
-		elBaseSettings?.open();
-	}
-
-	export function setSettingsSection(name: string) {
-		console.log('[Settings] setSettingsSection:', name);
-		elBaseSettings?.setSettingsSection(name);
-	}
-
-	export function close() {
-		elBaseSettings?.close();
-	}
+	$effect(() => {
+		settingsModal.set(elBaseSettings);
+	});
 </script>
 
 <BaseSettings {settingsObject} bind:this={elBaseSettings} />

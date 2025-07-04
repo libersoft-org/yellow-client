@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, type IWallet } from '../../wallet.ts';
+	import { wallets, type IWallet, walletsModal } from '../../wallet.ts';
 	import { attachParents } from '@/core/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import SectionWallets from './SectionWallets.svelte';
@@ -7,13 +7,13 @@
 	let elBaseSettings: BaseSettings | undefined;
 
 	// Debug information
-	console.log('Wallets.svelte - $wallets:', $wallets);
+	//console.log('Wallets.svelte - $wallets:', $wallets);
 
 	let walletsItems = $derived.by(() => {
 		console.log('Wallets.svelte - generating walletsItems for wallets:', $wallets);
 		return $wallets.map((wallet: IWallet) => ({
 			title: wallet.name,
-			name: 'addresses-' + wallet.address,
+			name: 'wallets-' + wallet.address,
 			body: SectionAddresses,
 			props: {
 				params: {
@@ -32,13 +32,11 @@
 		});
 	});
 
-	export function onOpen() {
-		window.alert('Opening Wallets modal');
-		console.log('Wallets.svelte - opening modal');
-		elBaseSettings?.open();
-		console.log('Wallets.svelte - modal opened');
-	}
+	$inspect(settingsObject, 'Wallets address selector BaseSettings object');
+
+	$effect(() => {
+		walletsModal.set(elBaseSettings);
+	});
 </script>
 
-addresy zde?
 <BaseSettings {settingsObject} bind:this={elBaseSettings} />

@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { setContext } from 'svelte';
 	import { module } from '../module.ts';
-	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress } from '../wallet.ts';
+	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsModal, walletsModal } from '../wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -17,16 +16,9 @@
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalNetworks from '../modals/Networks/Networks.svelte';
 	import ModalWallets from '../modals/Wallets/Wallets.svelte';
-	let elSettings;
-	let elModalNetworks;
-	let elModalWallets;
-	let addressElement;
 
-	let settings = {};
-	setContext('settings', settings);
-	$effect(() => {
-		settings.elSettings = elSettings;
-	});
+	let elModalNetworks;
+	let addressElement = $state<HTMLElement | null>(null);
 
 	function clickCopyAddress() {
 		if ($selectedAddress) {
@@ -140,7 +132,7 @@
 	<div class="body">
 		<div class="network-address">
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elModalNetworks?.open()} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={async () => await elModalWallets?.open()} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={async () => await $walletsModal?.open()} />
 		</div>
 		<div class="bar">
 			<div class="left">
@@ -167,7 +159,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => elSettings.open()} />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => $settingsModal?.open()} />
 			</div>
 		</div>
 		<div class="buttons">
@@ -193,6 +185,6 @@
 		</div>
 	</div>
 </Paper>
-<Settings bind:this={elSettings} />
+
 <Modal title="Select your network" body={ModalNetworks} bind:this={elModalNetworks} width="500px" />
-<Modal title="Select your address" body={ModalWallets} bind:this={elModalWallets} width="500px" />
+<ModalWallets />

@@ -34,16 +34,11 @@
 	let { testId = '', settingsObject }: Props = $props();
 	let activeName = $state(settingsObject.name);
 	let backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
-	let currentNode = $state(settingsObject);
 
-	$effect(() => {
+	let currentNode = $derived.by(() => {
 		let n = findNode(settingsObject, activeName);
-		console.log('[BaseSettings] activeName:', activeName, 'foundNode:', n);
-		if (n) {
-			currentNode = n;
-		} else {
-			currentNode = settingsObject;
-		}
+		console.log('[BaseSettings] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
+		return n || settingsObject;
 	});
 
 	let breadcrumb = $derived(makeBreadcrumb(activeName));
@@ -77,8 +72,19 @@
 	function findNode(root: any, target: string): any {
 		const stack = [root];
 		while (stack.length) {
+			console.log(
+				'[BaseSettings] Searching ',
+				root,
+				' for node:',
+				target,
+				'Current stack:',
+				stack.map(n => n.name)
+			);
 			const node = stack.pop();
 			if (node.name === target) return node;
+			const children = node.items ?? [];
+			console.log('node.items:', node.items);
+			console.log('children:', children);
 			(node.items ?? []).forEach((c: any) => stack.push(c));
 		}
 	}
