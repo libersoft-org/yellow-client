@@ -52,7 +52,7 @@
 				w.address === wallet?.address
 					? {
 							...w,
-							addresses: (w.addresses || []).map(a => (a.index === address.index ? { ...a, name } : a)),
+							addresses: (w.addresses || []).map(a => (a.index === index ? { ...a, name } : a)),
 						}
 					: w
 			)
