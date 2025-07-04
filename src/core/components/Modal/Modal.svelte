@@ -42,6 +42,8 @@
 	let resizeObserver: ResizeObserver | undefined;
 	let focused = $state(false);
 	let elModalBody: any | null = $state(null);
+	let lastWindowWidth = window.innerWidth;
+	let lastWindowHeight = window.innerHeight;
 
 	setContext('setTitle', setTitle);
 	setContext('Popup', { close });
@@ -75,7 +77,24 @@
 		function handleResize() {
 			if ($isMobile) {
 				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
+			} else {
+				if (!isDragging && elModal && showContent) {
+					requestAnimationFrame(handleWindowResize);
+				}
 			}
+		}
+
+		if (elModal) {
+			let didInit = false;
+			resizeObserver = new ResizeObserver(() => {
+				if (isDragging) return;
+				if (didInit && showContent) {
+					requestAnimationFrame(handleContentResize);
+				} else {
+					didInit = true;
+				}
+			});
+			resizeObserver.observe(elModal);
 		}
 
 		window.addEventListener('resize', handleResize);
@@ -141,6 +160,127 @@
 		elModal.style.left = `${centerX}px`;
 		elModal.style.top = `${centerY}px`;
 		elModal.style.transform = 'none';
+
+		// Update last window dimensions
+		lastWindowWidth = windowWidth;
+		lastWindowHeight = windowHeight;
+	}
+
+	function handleWindowResize() {
+		if (!elModal) return;
+
+		const currentWidth = window.innerWidth;
+		const currentHeight = window.innerHeight;
+		const widthDiff = currentWidth - lastWindowWidth;
+		const heightDiff = currentHeight - lastWindowHeight;
+
+		// Get current position
+		const rect = elModal.getBoundingClientRect();
+		const transform = window.getComputedStyle(elModal).transform;
+		const hasTransform = transform !== 'none';
+
+		// Calculate new position based on window resize
+		// Move by half the difference to maintain relative position
+		let newLeft = rect.left + widthDiff / 2;
+		let newTop = rect.top + heightDiff / 2;
+
+		// Apply bounds checking
+		const padding = 20;
+		const modalWidth = rect.width;
+		const modalHeight = rect.height;
+
+		// Horizontal bounds
+		if (newLeft + modalWidth > currentWidth - padding) {
+			newLeft = currentWidth - modalWidth - padding;
+		}
+		if (newLeft < padding) {
+			newLeft = padding;
+		}
+
+		// Vertical bounds
+		if (newTop + modalHeight > currentHeight - padding) {
+			newTop = currentHeight - modalHeight - padding;
+		}
+		if (newTop < padding) {
+			newTop = padding;
+		}
+
+		// Calculate the required movement
+		const moveX = newLeft - rect.left;
+		const moveY = newTop - rect.top;
+
+		// Apply new position
+		if (hasTransform) {
+			// If neodrag has a transform, we need to adjust it
+			const matrix = new DOMMatrixReadOnly(transform);
+			const currentTranslateX = matrix.m41;
+			const currentTranslateY = matrix.m42;
+			const newTranslateX = currentTranslateX + moveX;
+			const newTranslateY = currentTranslateY + moveY;
+			elModal.style.transform = `translate(${newTranslateX}px, ${newTranslateY}px)`;
+		} else {
+			// No transform, just update position
+			const baseLeft = parseFloat(elModal.style.left || '0');
+			const baseTop = parseFloat(elModal.style.top || '0');
+			elModal.style.left = `${baseLeft + moveX}px`;
+			elModal.style.top = `${baseTop + moveY}px`;
+		}
+
+		// Update last window dimensions
+		lastWindowWidth = currentWidth;
+		lastWindowHeight = currentHeight;
+	}
+
+	function handleContentResize() {
+		if (!elModal) return;
+
+		// Get current position and size
+		const rect = elModal.getBoundingClientRect();
+		const transform = window.getComputedStyle(elModal).transform;
+		const hasTransform = transform !== 'none';
+
+		// Check if modal is outside bounds
+		const windowWidth = window.innerWidth;
+		const windowHeight = window.innerHeight;
+		const padding = 20;
+
+		let adjustX = 0;
+		let adjustY = 0;
+
+		// Check horizontal bounds
+		if (rect.right > windowWidth - padding) {
+			adjustX = windowWidth - padding - rect.right;
+		}
+		if (rect.left < padding) {
+			adjustX = padding - rect.left;
+		}
+
+		// Check vertical bounds
+		if (rect.bottom > windowHeight - padding) {
+			adjustY = windowHeight - padding - rect.bottom;
+		}
+		if (rect.top < padding) {
+			adjustY = padding - rect.top;
+		}
+
+		// Apply adjustment if needed
+		if (adjustX !== 0 || adjustY !== 0) {
+			if (hasTransform) {
+				// If neodrag has a transform, adjust it
+				const matrix = new DOMMatrixReadOnly(transform);
+				const currentTranslateX = matrix.m41;
+				const currentTranslateY = matrix.m42;
+				const newTranslateX = currentTranslateX + adjustX;
+				const newTranslateY = currentTranslateY + adjustY;
+				elModal.style.transform = `translate(${newTranslateX}px, ${newTranslateY}px)`;
+			} else {
+				// No transform, adjust base position
+				const baseLeft = parseFloat(elModal.style.left || '0');
+				const baseTop = parseFloat(elModal.style.top || '0');
+				elModal.style.left = `${baseLeft + adjustX}px`;
+				elModal.style.top = `${baseTop + adjustY}px`;
+			}
+		}
 	}
 
 	function snapTransformIntoBounds() {

@@ -44,7 +44,7 @@
 </style>
 
 <Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallets" onClick={clickManageWallets} />
-<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:value={filter} />
+<Input bind:value={filter} />
 
 {#if $wallets.length > 0}
 	<Table breakpoint="0">

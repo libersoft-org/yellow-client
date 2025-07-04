@@ -17,6 +17,8 @@
 	let elModalNetworks;
 	let filter = $state('');
 
+	let filteredNetworks = $derived($networks.filter(network => network.name.toLowerCase().includes(filter.toLowerCase())));
+
 	function selectNetwork(id) {
 		console.log('SETTING NETWORK', id);
 		selectedNetworkID.set(id);
@@ -40,10 +42,10 @@
 </style>
 
 <Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => manageNetworks()} />
-<Input bind:value={filter} />
+<Input bind:value={filter} placeholder="Filter networks..." />
 <Table breakpoint="0">
 	<Tbody>
-		{#each $networks as n}
+		{#each filteredNetworks as n}
 			<TbodyTr>
 				<Td padding="0">
 					<Clickable onClick={() => selectNetwork(n.guid)} expand>
