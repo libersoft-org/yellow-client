@@ -15,8 +15,10 @@
 	};
 
 	function clickYes() {
-		deleteAddressFromWallet(wallet, index);
-		elDialog?.close();
+		if (wallet && index) {
+			deleteAddressFromWallet(wallet, index);
+			elDialog?.close();
+		} else console.error('Wallet or index is undefined when trying to delete address');
 	}
 
 	function clickNo() {
