@@ -10,7 +10,6 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import ModalNetworks from '../Settings/SettingsNetworks.svelte';
 	interface Props {
 		close?: () => void;
 	}
@@ -25,9 +24,7 @@
 	}
 
 	function manageNetworks() {
-		const settings = $settingsModal;
-		settings.elSettings?.setSettingsSection('networks');
-		settings.elSettings?.open();
+		$settingsModal?.open('networks');
 	}
 </script>
 

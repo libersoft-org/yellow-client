@@ -47,8 +47,9 @@
 
 	// Remove the problematic effect that resets navigation on modal reopen
 
-	export function open() {
+	export function open(name?: string) {
 		elModal?.open();
+		setSettingsSection(name || settingsObject.name);
 	}
 
 	export function close() {

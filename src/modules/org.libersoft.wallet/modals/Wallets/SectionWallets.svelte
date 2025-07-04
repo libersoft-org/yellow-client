@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, selectAddress, walletsModal } from '../../wallet.ts';
+	import { wallets, selectAddress, walletsModal, settingsModal } from '../../wallet.ts';
 	import { module } from '../../module.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -27,8 +27,8 @@
 	//console.log('SectionWallets - wallets length:', $wallets.length);
 
 	function clickManageWallets() {
-		elModalWallets?.open();
-		//close?.(); // TODO: This doesn't work, because when closed, elModalWallets is not defined anymore (modal lives inside modal).
+		$settingsModal.setSettingsSection('wallets');
+		$settingsModal.open();
 	}
 
 	async function clickSelectWallet(wallet) {

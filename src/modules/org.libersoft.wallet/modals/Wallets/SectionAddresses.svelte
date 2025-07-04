@@ -48,7 +48,7 @@
 			{/each}
 		{:else}
 			<TbodyTr>
-				<Td colspan="3" style="text-align: center; padding: 20px;">No addresses found for this wallet</Td>
+				<Td colspan={3} style="text-align: center; padding: 20px;">No addresses found for this wallet</Td>
 			</TbodyTr>
 		{/if}
 	</Tbody>

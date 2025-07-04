@@ -21,13 +21,17 @@
 	let addressElement = $state<HTMLElement | null>(null);
 
 	function clickCopyAddress() {
-		if ($selectedAddress) {
+		if ($selectedAddress && addressElement) {
 			navigator.clipboard
 				.writeText($selectedAddress.address)
 				.then(() => console.log('Address copied to clipboard'))
 				.catch(err => console.error('Error while copying to clipboard', err));
 			addressElement.innerHTML = 'Copied!';
-			setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
+			setTimeout(() => {
+				if (addressElement) {
+					addressElement.innerHTML = shortenAddress($selectedAddress.address);
+				}
+			}, 1000);
 		}
 	}
 
@@ -188,3 +192,4 @@
 
 <Modal title="Select your network" body={ModalNetworks} bind:this={elModalNetworks} width="500px" />
 <ModalWallets />
+<Settings />

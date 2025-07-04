@@ -34,7 +34,7 @@
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	async function clickAddEditNetwork(net: INetwork | null = null, edit: boolean = false) {
-		if (net) await setSettingsSection('networks-edit-' + net?.guid);
+		if (net) await setSettingsSection('networks-edit-' + net.guid);
 		else await setSettingsSection('networks-add');
 	}
 

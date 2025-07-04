@@ -6,8 +6,10 @@
 		'data-testid'?: string;
 		padding?: string;
 		shorten?: boolean;
+		colspan?: number;
+		style?: string;
 	}
-	let { children, title, 'data-testid': dataTestId, padding = '10px', shorten = false }: Props = $props();
+	let { children, title, 'data-testid': dataTestId, padding = '10px', shorten = false, colspan, style }: Props = $props();
 </script>
 
 <style>
@@ -76,6 +78,6 @@
 	}
 </style>
 
-<td data-title={title} data-testid={dataTestId} style:padding class:shorten>
+<td data-title={title} data-testid={dataTestId} style:padding class:shorten {colspan} {style}>
 	{@render children?.()}
 </td>
