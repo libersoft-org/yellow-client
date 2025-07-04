@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, type IAddress, type IWallet } from '../wallet.ts';
+	import { deleteAddressFromWallet, type IAddress, type IWallet } from '../wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let wallet: IWallet | undefined;
 	let index: string | number | undefined;
@@ -15,7 +15,7 @@
 	};
 
 	function clickYes() {
-		wallets.update(ws => ws.map(item => (item.address === wallet.address ? { ...item, addresses: (item.addresses ?? []).filter(a => a.index !== index) } : item)));
+		deleteAddressFromWallet(wallet, index);
 		elDialog?.close();
 	}
 

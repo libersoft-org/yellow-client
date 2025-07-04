@@ -535,6 +535,23 @@ export function deleteNetwork(net): void {
 	});
 }
 
+export function deleteAddressFromWallet(wallet: IWallet, index: string | number): void {
+	wallets.update(ws => ws.map(item => (item.address === wallet.address ? { ...item, addresses: (item.addresses ?? []).filter(a => a.index !== index) } : item)));
+}
+
+export function editAddressName(wallet: IWallet, index: string | number, name: string): void {
+	wallets.update(ws =>
+		ws.map(w =>
+			w.address === wallet.address
+				? {
+						...w,
+						addresses: (w.addresses || []).map(a => (a.index === index ? { ...a, name } : a)),
+					}
+				: w
+		)
+	);
+}
+
 export function reorderWallets(reorderedWallets: IWallet[]): void {
 	wallets.set(reorderedWallets);
 }

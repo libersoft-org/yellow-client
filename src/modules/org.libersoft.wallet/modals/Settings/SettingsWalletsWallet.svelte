@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { module } from '../../module.ts';
-	import { wallets, type IWallet, type IAddress } from '../../wallet.ts';
+	import { type IWallet } from '../../wallet.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -26,7 +26,6 @@
 	let elModalAddressAdd: Modal | undefined = $state();
 	let elModalAddressEdit: Modal | undefined = $state();
 	let elDialogAddressDel: DialogAddressDel | undefined = $state();
-	let selectedAddress: IAddress | undefined = $state();
 
 	export function onOpen() {
 		console.log('onOpen SettingsWalletsWallet, wallet:', $state.snapshot(params.wallet));

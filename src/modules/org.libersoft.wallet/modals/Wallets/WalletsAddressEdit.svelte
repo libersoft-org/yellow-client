@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { wallets, type IWallet } from '../../wallet.ts';
+	import { editAddressName, type IWallet } from '../../wallet.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
-	let wallet: IWallet | undefined;
+	let wallet: IWallet | undefined = $state();
 	let name: string | undefined = $state();
 	let index: string | number | undefined = $state();
 	let error: string | undefined = $state();
@@ -35,9 +35,7 @@
 
 	function clickEdit(): void {
 		console.log('Click edit:', name, index);
-		let id: number | undefined;
-		// TODO - check if id exists in wallet addresses
-		if (index) id = Number(index);
+		// TODO - check if index exists in wallet addresses
 		name = name?.trim();
 		if (!name) {
 			error = 'Name cannot be empty';
@@ -48,16 +46,11 @@
 			error = 'Wallet not found';
 			return;
 		}
-		wallets.update(ws =>
-			ws.map(w =>
-				w.address === wallet?.address
-					? {
-							...w,
-							addresses: (w.addresses || []).map(a => (a.index === index ? { ...a, name: validatedName } : a)),
-						}
-					: w
-			)
-		);
+		if (index === undefined || index === null) {
+			error = 'Address index is missing';
+			return;
+		}
+		editAddressName(wallet, index, validatedName);
 		close();
 	}
 </script>
