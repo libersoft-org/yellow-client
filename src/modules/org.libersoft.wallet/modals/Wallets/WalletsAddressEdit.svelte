@@ -43,6 +43,7 @@
 			error = 'Name cannot be empty';
 			return;
 		}
+		const validatedName = name; // TypeScript knows this is string, not undefined
 		if (!wallet) {
 			error = 'Wallet not found';
 			return;
@@ -52,7 +53,7 @@
 				w.address === wallet?.address
 					? {
 							...w,
-							addresses: (w.addresses || []).map(a => (a.index === index ? { ...a, name } : a)),
+							addresses: (w.addresses || []).map(a => (a.index === index ? { ...a, name: validatedName } : a)),
 						}
 					: w
 			)
