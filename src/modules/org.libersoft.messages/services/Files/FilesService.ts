@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import filesDB, { type LocalFile, LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
+import filesDB, { type ILocalFile, LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { active_account } from '@/core/core';
 import { loadUploadData, makeDownloadChunkAsyncFn } from '../../messages';
 import fileUploadManager, { type FileUploadService } from './FileUploadService.ts';
@@ -15,7 +15,7 @@ export class FilesService {
 		this.fileDownloadManager = fileDownloadManager;
 	}
 
-	getOrDownloadAttachment(uploadId: string): Promise<{ localFile: LocalFile }> {
+	getOrDownloadAttachment(uploadId: string): Promise<{ localFile: ILocalFile }> {
 		return new Promise(async (resolve, reject) => {
 			const acc = get(active_account);
 
@@ -48,7 +48,7 @@ export class FilesService {
 			// first fetch file record data
 			const { record } = await loadUploadData(uploadId);
 
-			const newLocalFile: Omit<LocalFile, 'id'> = {
+			const newLocalFile: Omit<ILocalFile, 'id'> = {
 				localFileStatus: LocalFileStatus.DOWNLOADING,
 				fileTransferId: record.id,
 				fileOriginalName: record.fileOriginalName,
@@ -62,7 +62,7 @@ export class FilesService {
 				newLocalFile.localFileStatus = LocalFileStatus.READY;
 				newLocalFile.fileBlob = new Blob(download.chunksReceived, { type: record.fileMimeType });
 				// const result = await filesDB.updateFile(record.id, newLocalFile);
-				resolve({ localFile: newLocalFile as LocalFile });
+				resolve({ localFile: newLocalFile as ILocalFile });
 			});
 		});
 	}

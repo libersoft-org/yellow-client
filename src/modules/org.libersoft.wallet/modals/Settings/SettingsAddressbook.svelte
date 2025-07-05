@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { addressBook, type IAddressBookItem } from '../../scripts/wallet.ts';
+	import { module } from '../../scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -10,56 +12,38 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalAddEdit from '../../modals/AddressbookAddEdit.svelte';
-	import ModalDel from '../../modals/AddressbookDel.svelte';
+	import ModalAddEdit from '../../modals/Addressbook/AddressbookAddEdit.svelte';
+	import DialogDelete from '../../dialogs/AddressbookDel.svelte';
+	import ModalExport from '../../modals/Addressbook/AddressbookExport.svelte';
+	import ModalImport from '../../modals/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { module } from '../../module.js';
-	import { addressBook } from '../../wallet.ts';
-	import { get } from 'svelte/store';
-	let showModalAddEdit = $state(false);
-	let showModalDel = $state(false);
-	let edit = $state(false);
-	let modalItem = $state(null);
+
+	let modalItem: IAddressBookItem | null | undefined = $state();
+	let elModalAddEdit: Modal | undefined;
+	let elModalExport: Modal | undefined;
+	let elModalImport: Modal | undefined;
+	let elDialogDel: DialogDelete | undefined = $state();
 
 	function addToAddressBookModal() {
 		modalItem = null;
-		edit = false;
-		showModalAddEdit = true;
+		elModalAddEdit?.open();
 	}
 
-	function editItemModal(item) {
-		console.log('EDIT ADDRESSBOOK ITEM:', item);
-		modalItem = item;
-		edit = true;
-		showModalAddEdit = true;
+	function editItemModal(item: IAddressBookItem) {
+		elModalAddEdit?.open(item);
 	}
 
 	function deleteItemModal(item) {
-		console.log('DELETE ADDRESSBOOK ITEM:', item);
 		modalItem = item;
-		showModalDel = true;
+		elDialogDel?.open();
 	}
 
 	function exportAddressBook() {
-		console.log('EXPORT ADDRESSBOOK');
-		let data = get(addressBook);
-		let json = JSON.stringify(data, null, 2);
-		console.log('EXPORTED ADDRESSBOOK:', json);
-		window.prompt('Copy the exported address book:', json);
+		elModalExport?.open();
 	}
 
 	function importAddressBook() {
-		console.log('IMPORT ADDRESSBOOK');
-		let json = window.prompt('Paste the exported address book here:');
-		if (json) {
-			try {
-				let data = JSON.parse(json);
-				console.log('IMPORTED ADDRESSBOOK:', data);
-				addressBook.set(data);
-			} catch (e) {
-				console.error('IMPORT ADDRESSBOOK ERROR:', e);
-			}
-		}
+		elModalImport?.open();
 	}
 </script>
 
@@ -73,15 +57,15 @@
 
 <div class="addressbook">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/address-add.svg" colorVariable="--primary-foreground" text="Add an address" onClick={addToAddressBookModal} />
-		<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={exportAddressBook} />
-		<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={importAddressBook} />
+		<Button img="modules/{module.identifier}/img/address-add.svg" text="Add an address" onClick={addToAddressBookModal} />
+		<Button img="img/import.svg" text="Import" onClick={importAddressBook} data-testid="import-button" />
+		<Button img="img/export.svg" text="Export" onClick={exportAddressBook} data-testid="export-button" />
 	</ButtonBar>
 	{#if $addressBook.length > 0}
-		<Table breakpoint="0">
+		<Table>
 			<Thead>
 				<TheadTr>
-					<Th>Alias</Th>
+					<Th>Name</Th>
 					<Th>Address</Th>
 					<Th>Action</Th>
 				</TheadTr>
@@ -89,10 +73,10 @@
 			<Tbody>
 				{#each $addressBook as a, index (index + '/' + a.address)}
 					<TbodyTr>
-						<Td title="Alias">
-							<b>{a.alias}</b>
+						<Td title="Name">
+							<b>{a.name}</b>
 						</Td>
-						<Td title="Address">
+						<Td title="Address" shorten>
 							{a.address}
 						</Td>
 						<Td title="Action">
@@ -107,6 +91,9 @@
 		</Table>
 	{/if}
 </div>
-
-<Modal title={edit ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} params={{ item: modalItem }} bind:show={showModalAddEdit} width="400px" />
-<Modal title="Delete the item in address book" body={ModalDel} params={{ item: modalItem }} bind:show={showModalDel} width="400px" />
+<Modal title={modalItem ? 'Edit the item in address book' : 'Add a new item to address book'} body={ModalAddEdit} bind:this={elModalAddEdit} width="400px" />
+<Modal title="Import address book" body={ModalImport} params={{ close: () => elModalImport?.close() }} bind:this={elModalImport} width="600px" />
+<Modal title="Export address book" body={ModalExport} params={{ close: () => elModalExport?.close() }} bind:this={elModalExport} width="600px" />
+{#if modalItem}
+	<DialogDelete item={modalItem} bind:this={elDialogDel} />
+{/if}

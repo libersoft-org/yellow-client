@@ -1,6 +1,6 @@
 import { derived, writable } from 'svelte/store';
 import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import type { ModuleDeclaration } from './types.ts';
+import type { IModuleDeclaration } from './types.ts';
 
 // Add global type declarations
 declare global {
@@ -27,7 +27,7 @@ export const selected_module_id = writable<string | null>(null);
 // Module configuration
 export const modules_display_order = localStorageSharedStore<{ [key: string]: number }>('modules_display_order', {});
 export const modules_disabled = localStorageSharedStore<string[]>('modules_disabled', []);
-export const module_decls = writable<{ [key: string]: ModuleDeclaration }>({});
+export const module_decls = writable<{ [key: string]: IModuleDeclaration }>({});
 
 // Account selection
 export const active_account_id = localStorageReadOnceSharedStore<string | null>('active_account_id', null);

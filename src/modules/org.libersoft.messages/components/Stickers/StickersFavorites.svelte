@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import StickersView from './StickersView.svelte';
 	import { stickerset_favorites } from '../../stickers.js';
 

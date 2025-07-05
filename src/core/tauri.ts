@@ -21,6 +21,7 @@ declare global {
 export const TAURI = hasWindow && Object.prototype.hasOwnProperty.call(window, '__TAURI__');
 export const BROWSER = !TAURI;
 export const TAURI_MOBILE = TAURI && (platformName === 'android' || platformName === 'ios');
+export const TAURI_SERVICE = hasWindow && (window as any).__TAURI_SERVICE__ === true;
 export const CUSTOM_NOTIFICATIONS = TAURI && !TAURI_MOBILE;
 export const IS_TAURI_DEBUG_MODE = TAURI && window.__TAURI_DEBUG_MODE__;
 
@@ -28,6 +29,14 @@ export const log = {
 	debug: (...args: any[]) => {
 		console.log(...args);
 		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args) });
+	},
+	info: (...args: any[]) => {
+		console.info(...args);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'info' });
+	},
+	warn: (...args: any[]) => {
+		console.warn(...args);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'warn' });
 	},
 	error: (...args: any[]) => {
 		console.error(...args);

@@ -1,15 +1,13 @@
 <script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-
 	interface Props {
 		address: string;
 		colorVariable?: string;
 	}
-
 	let { address = $bindable(), colorVariable = '--primary-foreground' }: Props = $props();
-	let spanElem = $state();
 	let copied = $state(false);
+	let spanElem = $state();
 
 	function copyAddressToClipboard() {
 		navigator.clipboard
@@ -29,19 +27,19 @@
 		gap: 5px;
 	}
 
-	.clamp {
+	.text {
 		display: inline-block;
-		width: 100px;
+		vertical-align: bottom;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		vertical-align: bottom;
+		width: 100px; /* TODO: 100% doesnt work for some reason */
 	}
 </style>
 
 <Clickable onClick={copyAddressToClipboard}>
 	<div class="address">
-		<span class="clamp" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
+		<span class="text" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
 		<Icon img="img/copy.svg" {colorVariable} alt="Copy" size="15px" padding="0px" />
 	</div>
 </Clickable>

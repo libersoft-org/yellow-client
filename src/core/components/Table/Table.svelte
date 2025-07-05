@@ -4,6 +4,7 @@
 	interface Props {
 		children?: Snippet;
 		breakpoint?: string | null;
+
 		[key: string]: unknown;
 	}
 
@@ -27,29 +28,28 @@
 		overflow: hidden;
 		max-width: 100vw;
 		box-sizing: border-box;
+	}
 
-		:global(&.table-wide) {
-			border: 1px solid #222 !important;
-			border-radius: 8px;
-		}
+	.table.table-wide {
+		border: 1px solid var(--secondary-background) !important;
+		border-radius: 8px;
 	}
 
 	table {
 		border: 0;
 		padding-bottom: 0;
-		display: block;
 		width: 100%;
 		border-collapse: collapse;
 		table-layout: auto;
 		font-size: clamp(14px, 2vw, 16px);
+	}
 
-		:global(.table-wide &) {
-			width: 100%;
-		}
+	:global(.table-wide) table {
+		width: 100%;
 	}
 </style>
 
-<div class={`table ${isWide ? 'table-wide' : ''}`} {...restProps}>
+<div class="table" class:table-wide={isWide} {...restProps}>
 	<table>
 		{@render children?.()}
 	</table>

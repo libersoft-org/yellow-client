@@ -39,7 +39,7 @@ export class NativeDownload {
 // Mutex for download creation operations to prevent concurrent filename conflicts
 let createDownloadMutex: Promise<any> | null = null;
 
-interface PermissionStatus {
+interface IPermissionStatus {
 	writeExternalStorage: 'granted' | 'denied' | 'prompt';
 	readExternalStorage: 'granted' | 'denied' | 'prompt';
 }
@@ -467,11 +467,11 @@ async function ensureFilePermissions(): Promise<{ success: boolean; error?: stri
 
 	try {
 		log.debug('Attempting to invoke plugin:yellow|check_file_permissions');
-		const permissions = await invoke<PermissionStatus>('plugin:yellow|check_file_permissions');
+		const permissions = await invoke<IPermissionStatus>('plugin:yellow|check_file_permissions');
 		log.debug('check_file_permissions result:', permissions);
 		if (permissions.writeExternalStorage !== 'granted' || permissions.readExternalStorage !== 'granted') {
 			log.debug('Permissions not granted, requesting...');
-			const result = await invoke<PermissionStatus>('plugin:yellow|request_file_permissions', {
+			const result = await invoke<IPermissionStatus>('plugin:yellow|request_file_permissions', {
 				permissions: [PermissionType.WriteExternalStorage, PermissionType.ReadExternalStorage],
 			});
 			log.debug('request_file_permissions result:', result);

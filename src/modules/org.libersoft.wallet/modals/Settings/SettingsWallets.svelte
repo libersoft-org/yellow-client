@@ -1,136 +1,153 @@
-<script>
-	import { module } from '../../module.js';
-	import { wallets, addAddress, addWallet, walletAddresses } from '../../wallet.ts';
-	import ModalNewWallet from '../../modals/NewWallet.svelte';
-	import Address from './SettingsWalletsAddress.svelte';
+<script lang="ts">
+	import { module } from '../../scripts/module.ts';
+	import { wallets, type IWallet, reorderWallets } from '../../scripts/wallet.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
+	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
 	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import { Mnemonic } from 'ethers';
-	let showModalPhrase = false;
-	let activeIndex = null;
+	import ModalWalletsWallet from './SettingsWalletsWallet.svelte';
+	import ModalRecover from '../Wallets/WalletsRecover.svelte';
+	import ModalWalletsEdit from '../Wallets/WalletsEdit.svelte';
+	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
+	import { getContext } from 'svelte';
+	let selectedWallet: IWallet | undefined = $state();
+	let elModalWalletsWallet: Modal | undefined;
+	let elModalRecover: Modal | undefined;
+	let elModalWalletsEdit: Modal | undefined;
+	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
+	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	function showNewWalletModal() {
-		showModalPhrase = true;
+	// Transform wallets into items with unique IDs for drag-and-drop
+	let dndItems = $state(
+		$wallets.map(wallet => ({
+			id: wallet.address,
+			wallet: wallet,
+		}))
+	);
+
+	// Update dndItems when wallets change (but not during drag operations)
+	let isDragging = $state(false);
+	$effect(() => {
+		if (!isDragging) {
+			dndItems = $wallets.map(wallet => ({
+				id: wallet.address,
+				wallet: wallet,
+			}));
+		}
+	});
+
+	async function clickWallet(wallet: IWallet) {
+		await setSettingsSection('wallets-' + wallet.address);
 	}
 
-	function afterAddWallet() {
-		activeIndex = wallets.length - 1;
+	function delWallet(wallet: IWallet) {
+		selectedWallet = wallet;
+		elDialogWalletsDel?.open();
 	}
 
-	function recover() {
-		let phrase = window.prompt('Enter your recovery phrase');
-		if (!phrase) return;
-		let mn = Mnemonic.fromPhrase(phrase);
-		addWallet(mn, ' - recovered');
-		afterAddWallet();
-	}
-	function addAddressWithIndex(wallet) {
-		let index = window.prompt('Enter the index');
-		if (!index) return;
-		addAddress(wallet, index);
-		wallet.addresses = [...wallet.addresses];
+	function editWallet(wallet: IWallet) {
+		selectedWallet = wallet;
+		elModalWalletsEdit?.open();
 	}
 
-	function renameAddress(wallet, address) {
-		let name = window.prompt('Enter the new name');
-		if (!name) return;
-		address.name = name;
-		wallet.addresses = [...wallet.addresses];
-		wallets.update(ws =>
-			ws.map(w =>
-				w === wallet
-					? {
-							...w,
-							addresses: (w.addresses || []).map(a => (a === address ? { ...a, name } : a)),
-						}
-					: w
-			)
-		);
+	function handleDndConsider(e) {
+		isDragging = true;
+		dndItems = e.detail.items;
 	}
 
-	function deleteAddress(w, address) {
-		address.deleted = true;
-		// wallet.addresses = [...wallet.addresses]
-		wallets.update(ws =>
-			ws.map(item =>
-				item === w
-					? {
-							...item,
-							addresses: [...w.addresses],
-							selected_address_index: w.indexNum,
-						}
-					: item
-			)
-		);
+	function handleDndFinalize(e) {
+		isDragging = false;
+		dndItems = e.detail.items;
+		// Update the store with the reordered wallets
+		const reorderedWallets = dndItems.map(item => item.wallet);
+		reorderWallets(reorderedWallets);
 	}
 </script>
 
 <style>
-	.wallet {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		padding: 16px 10px;
+	.item {
+		padding: 10px;
+		min-height: 40px;
+		box-sizing: border-box;
+	}
 
-		:global(&:has(tbody:empty)) {
-			:global(table) {
-				display: none !important;
-			}
-		}
+	.drag-handle {
+		cursor: grab;
+		padding: 0 5px;
+		color: var(--primary-foreground);
+		user-select: none;
+	}
+
+	.drag-handle:active {
+		cursor: grabbing;
 	}
 </style>
 
-<ButtonBar>
-	<Button text="Create wallet" onClick={showNewWalletModal} />
-	<Button img="modules/{module.identifier}/img/recover.svg" colorVariable="--primary-foreground" text="Recover" onClick={recover} />
+<ButtonBar equalize>
+	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => setSettingsSection('wallets-add')} />
+	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => elModalRecover?.open()} />
 </ButtonBar>
-{#if $wallets.length > 0}
-	<div class="bold">My wallets:</div>
-{/if}
-{#if $wallets.length === 0}
+{#if $wallets?.length === 0}
 	<div class="bold">No wallets found</div>
 {/if}
-<Accordion items={$wallets} bind:activeIndex>
-	{#snippet content(walleta)}
-		<div class="wallet">
-			<ButtonBar>
-				<Button text="Add a new address" onClick={() => addAddress(walleta)} />
-				<Button text="Add a new address (by index)" onClick={() => addAddressWithIndex(walleta)} />
-			</ButtonBar>
-			<Table>
-				<Thead>
-					<Th>Index</Th>
-					<Th>Alias</Th>
-					<Th>Address</Th>
-					<Th>Action</Th>
-				</Thead>
-				<Tbody>
-					{#each walletAddresses(walleta) as address, index}
-						<TbodyTr>
-							<Td title="Index">{address.index}</Td>
-							<Td title="Alias">{address.name}</Td>
-							<Td title="Address"><Address address={address.address} /></Td>
-							<Td title="Action">
-								<TableActionItems>
-									<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => renameAddress(walleta, address)} />
-									<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Hide" size="20px" padding="5" onClick={() => deleteAddress(walleta, address)} />
-								</TableActionItems>
-							</Td>
-						</TbodyTr>
-					{/each}
-				</Tbody>
-			</Table>
-		</div>
-	{/snippet}
-</Accordion>
-<Modal title="New wallet" body={ModalNewWallet} bind:show={showModalPhrase} />
+{#if $wallets?.length > 0}
+	<Table breakpoint="0">
+		<Thead>
+			<TheadTr>
+				<Th></Th>
+				<Th>Name</Th>
+				<Th>Addresses</Th>
+				<Th>Action</Th>
+			</TheadTr>
+		</Thead>
+		<Tbody
+			dndzone={{
+				items: dndItems,
+				flipDurationMs: 200,
+				dropTargetStyle: {},
+			}}
+			onconsider={handleDndConsider}
+			onfinalize={handleDndFinalize}
+		>
+			{#each dndItems as item (item.id)}
+				<TbodyTr>
+					<Td padding="5px" style="width: 30px;">
+						<div class="drag-handle">⋮⋮</div>
+					</Td>
+					<Td padding="0">
+						<Clickable onClick={() => clickWallet(item.wallet)}>
+							<div class="item">{item.wallet.name}</div>
+						</Clickable>
+					</Td>
+					<Td padding="0">
+						<Clickable onClick={() => clickWallet(item.wallet)}>
+							<div class="item">{item.wallet?.addresses?.length || '0'}</div>
+						</Clickable>
+					</Td>
+					<Td padding="0">
+						<TableActionItems>
+							<Icon img="modules/{module.identifier}/img/wallet-address.svg" alt="Addresses" size="20px" padding="5px" onClick={() => clickWallet(item.wallet)} />
+							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit" size="20px" padding="5px" onClick={() => editWallet(item.wallet)} />
+							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => delWallet(item.wallet)} />
+						</TableActionItems>
+					</Td>
+				</TbodyTr>
+			{/each}
+		</Tbody>
+	</Table>
+{/if}
+<Modal title="Recover wallet from seed" body={ModalRecover} bind:this={elModalRecover} />
+<Modal title="Edit wallet name" body={ModalWalletsEdit} params={{ wallet: selectedWallet }} bind:this={elModalWalletsEdit} />
+<Modal title="Wallet details" body={ModalWalletsWallet} params={{ wallet: selectedWallet }} bind:this={elModalWalletsWallet} />
+{#if selectedWallet}
+	<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
+{/if}

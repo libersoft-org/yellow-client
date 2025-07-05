@@ -1,152 +1,114 @@
 <script lang="ts">
-	import SettingsItem from '@/core/components/Settings/SettingsItem.svelte';
-	import SectionGeneral from './SettingsGeneral.svelte';
-	import SectionNetworks from './SettingsNetworks.svelte';
-	import SectionWallets from './SettingsWallets.svelte';
-	import SectionAddressBook from './SettingsAddressbook.svelte';
-	import { fade } from 'svelte/transition';
-	import Icon from '@/core/components/Icon/Icon.svelte';
+	import { module } from '../../scripts/module.ts';
+	import { wallets, networks, type IWallet, type INetwork, settingsModal } from '../../scripts/wallet.ts';
+	import { attachParents } from '@/core/base_settings.ts';
+	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import SettingsGeneral from './SettingsGeneral.svelte';
+	import SettingsNetworks from './SettingsNetworks.svelte';
+	import SettingsWallets from './SettingsWallets.svelte';
+	import SettingsAddressbook from './SettingsAddressbook.svelte';
 
-	interface Props {
-		activeTab?: string;
-	}
+	import SettingsWalletsWallet from './SettingsWalletsWallet.svelte';
+	import SettingsWalletsAdd from './SettingsWalletsAdd.svelte';
+	import SettingsNetworksAddEdit from './SettingsNetworksAddEdit.svelte';
+	let elBaseSettings: BaseSettings;
 
-	let { activeTab = $bindable('general') }: Props = $props();
+	let walletsItems = $derived.by(() => {
+		return $wallets.map((wallet: IWallet) => ({
+			title: wallet.name,
+			name: 'wallets-' + wallet.address,
+			body: SettingsWalletsWallet,
+			props: {
+				params: {
+					wallet,
+				},
+			},
+		}));
+	});
 
-	let menuItems = [
-		{
-			title: 'General',
-			tab: 'general',
-			img: 'img/settings.svg',
-			onClick: () => setItem('general'),
-		},
-		{
-			title: 'Networks',
-			tab: 'networks',
-			img: 'img/settings.svg',
-			onClick: () => setItem('networks'),
-		},
-		{
-			title: 'Wallets',
-			tab: 'wallets',
-			img: 'img/settings.svg',
-			onClick: () => setItem('wallets'),
-		},
-		{
-			title: 'Address book',
-			tab: 'address_book',
-			img: 'img/settings.svg',
-			onClick: () => setItem('address_book'),
-		},
-	];
+	let networksItems = $derived.by(() => {
+		return $networks.map((network: INetwork) => ({
+			title: 'Edit network',
+			name: 'networks-edit-' + network.guid,
+			body: SettingsNetworksAddEdit,
+			props: {
+				params: {
+					network,
+				},
+			},
+		}));
+	});
 
-	function setItem(name: string) {
-		activeTab = name;
-	}
+	let settingsObject = $derived(
+		attachParents({
+			title: 'Wallet settings',
+			name: 'settings',
+			menu: [
+				{
+					img: 'img/general.svg',
+					title: 'General',
+					name: 'general',
+				},
+				{
+					img: 'modules/' + module.identifier + '/img/network.svg',
+					title: 'Networks',
+					name: 'networks',
+				},
+				{
+					img: 'modules/' + module.identifier + '/img/wallet.svg',
+					title: 'Wallets',
+					name: 'wallets',
+				},
+				{
+					img: 'modules/' + module.identifier + '/img/addressbook.svg',
+					title: 'Address book',
+					name: 'addressbook',
+				},
+			],
+			items: [
+				{
+					title: 'General',
+					name: 'general',
+					body: SettingsGeneral,
+				},
+				{
+					title: 'Networks',
+					name: 'networks',
+					body: SettingsNetworks,
+					items: [
+						...networksItems,
+						{
+							title: 'Add a new network',
+							name: 'networks-add',
+							body: SettingsNetworksAddEdit,
+						},
+					],
+				},
+				{
+					title: 'Wallets',
+					name: 'wallets',
+					body: SettingsWallets,
+					items: [
+						...walletsItems,
+						{
+							title: 'Add a new wallet',
+							name: 'wallets-add',
+							body: SettingsWalletsAdd,
+						},
+					],
+				},
+				{
+					title: 'Address book',
+					name: 'addressbook',
+					body: SettingsAddressbook,
+				},
+			],
+		})
+	);
+
+	$effect(() => {
+		settingsModal.set(elBaseSettings);
+	});
 </script>
 
-<style>
-	.settings-container {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.tab-content {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		&:empty {
-			display: none;
-		}
-	}
-
-	.breadcrumbs {
-		display: flex;
-		padding: 8px 10px;
-		background: hsl(345, 6%, 13%);
-		margin-bottom: 0px;
-		border-radius: 10px;
-
-		span,
-		button {
-			border: none;
-			background: none;
-			font-size: 14px;
-			font-weight: bold;
-			padding: 0;
-			transition: color 0.3s ease;
-			cursor: default;
-			text-transform: capitalize;
-
-			&:hover {
-				color: white;
-			}
-
-			&:not(:first-child)::before {
-				content: '>';
-				margin: 0 5px;
-				color: white;
-			}
-
-			&:last-child {
-				color: white;
-			}
-		}
-
-		button {
-			cursor: pointer;
-			display: flex;
-			gap: 6px;
-			color: white;
-			filter: contrast(0.5);
-			transition: filter 0.3s ease;
-
-			&:hover {
-				filter: contrast(1);
-			}
-
-			:global(.icon) {
-				padding: 0 !important;
-			}
-		}
-	}
-</style>
-
-{#snippet breadcrumbs(menuItems: any[])}
-	{#if activeTab !== ''}
-		<div class="breadcrumbs" in:fade={{ duration: 400 }}>
-			<button onclick={() => setItem('')}>
-				<Icon img="img/home.svg" alt="Settings" colorVariable="--primary-foreground" size="16px" />
-				Wallet Settings
-			</button>
-			<span>
-				{#each menuItems as item}
-					{#if item.tab === activeTab}
-						{item.title}
-					{/if}
-				{/each}
-			</span>
-		</div>
-	{/if}
-	{#each menuItems as item}
-		{#if activeTab === ''}
-			<SettingsItem img={item.img} title={item.title} onClick={() => setItem(item.tab)} />
-		{/if}
-	{/each}
-{/snippet}
-
-<div class="settings-container">
-	{@render breadcrumbs(menuItems)}
-	<div class="tab-content">
-		{#if activeTab === 'general'}
-			<SectionGeneral />
-		{:else if activeTab === 'networks'}
-			<SectionNetworks />
-		{:else if activeTab === 'wallets'}
-			<SectionWallets />
-		{:else if activeTab === 'address_book'}
-			<SectionAddressBook />
-		{/if}
-	</div>
-</div>
+<BaseSettings {settingsObject} bind:this={elBaseSettings} />

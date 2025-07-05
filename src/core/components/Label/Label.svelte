@@ -4,8 +4,9 @@
 		children?: Snippet;
 		text?: string;
 		id?: string;
+		row?: boolean;
 	}
-	let { children, text = $bindable('') }: Props = $props();
+	let { children, text = $bindable(''), id, row = false }: Props = $props();
 </script>
 
 <style>
@@ -14,7 +15,13 @@
 		flex-direction: column;
 		gap: 2px;
 		-webkit-tap-highlight-color: transparent;
-		max-width: fit-content;
+		width: 100%;
+	}
+
+	label.row {
+		flex-direction: row;
+		align-items: center;
+		gap: 10px;
 	}
 
 	.text {
@@ -25,7 +32,7 @@
 	}
 </style>
 
-<label>
+<label class:row>
 	{#if text}
 		<div class="text">{text}:</div>
 	{/if}

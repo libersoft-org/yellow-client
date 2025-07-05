@@ -1,6 +1,6 @@
 <script>
 	import { add_stickerset_to_favorites, remove_stickerset_from_favorites, stickerset_in_favorites, stickerset_favorites } from '../../stickers.js';
-	import { debug } from '@/core/core.ts';
+	import { debug } from '@/core/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import StickerSetPart from './StickerSetPart.svelte';
@@ -121,7 +121,7 @@
 		<StickerSetPart {stickerset} items={first} {intersecting} />
 	</div>
 	{#if !showall}
-		<Button img="img/{expanded ? 'up' : 'down'}.svg" colorVariable="--primary-foreground" onClick={clickExpand} />
+		<Button img="img/{expanded ? 'up' : 'down'}.svg" onClick={clickExpand} />
 	{/if}
 	{#if showall || expanded}
 		<div class="set">

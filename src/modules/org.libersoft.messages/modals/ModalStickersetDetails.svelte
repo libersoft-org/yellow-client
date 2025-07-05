@@ -1,18 +1,25 @@
-<script>
-	import { debug } from '@/core/core.ts';
+<script lang="ts">
+	import { debug } from '@/core/stores.ts';
 	import { onMount } from 'svelte';
 	import { fetchStickerset } from '../stickers.js';
 	import StickerSet from '../components/Stickers/StickerSet.svelte';
-	export let params;
-	let stickerSetData;
-	let stickerServer;
-	let id;
+	interface Props {
+		params: any;
+	}
+	let { params }: Props = $props();
+	let stickerSetData = $state();
+	let stickerServer = $state();
+	let id = $state();
 
 	onMount(async () => {
 		const parsedUrl = new URL(params.stickersetDetailsModalStickerset);
 		stickerServer = `${parsedUrl.protocol}//${parsedUrl.host}`;
 		id = parsedUrl.searchParams.get('id');
-		stickerSetData = await fetchStickerset(stickerServer, id);
+		if (id && stickerServer) {
+			stickerSetData = await fetchStickerset(stickerServer, parseInt(id as string));
+		} else {
+			console.warn('Missing id or stickerServer for stickerset fetch');
+		}
 	});
 </script>
 
@@ -22,6 +29,6 @@
 		id: {id}
 	{/if}
 	{#if stickerSetData}
-		<StickerSet stickerset={stickerSetData} showall="true" />
+		<StickerSet stickerset={stickerSetData} showall={true} />
 	{/if}
 </div>

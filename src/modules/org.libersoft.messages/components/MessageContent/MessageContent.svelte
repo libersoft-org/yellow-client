@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import MessageContentRenderer from './MessageContentRenderer.svelte';
 	import { onMount } from 'svelte';
-	export let messageContent;
+	interface Props {
+		messageContent?: any;
+	}
+	let { messageContent }: Props = $props();
 
 	onMount(() => {
 		//console.log('messageContent:', messageContent);
