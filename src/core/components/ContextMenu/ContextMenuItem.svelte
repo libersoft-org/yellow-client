@@ -34,9 +34,12 @@
 		width: 100%;
 		background-color: var(--primary-softer-background);
 		color: var(--primary-foreground);
+		transition: background-color 0.4s linear;
 	}
 
-	.menu-item:hover {
+	.menu-item:hover,
+	:global(.clickable:focus-visible) .menu-item,
+	:global(.clickable.focused) .menu-item {
 		background-color: var(--primary-background);
 	}
 

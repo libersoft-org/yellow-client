@@ -43,7 +43,9 @@
 		transition: background-color 0.5s ease;
 	}
 
-	.notification:hover {
+	.notification:hover,
+	:global(.clickable:focus-visible) .notification,
+	:global(.clickable.focused) .notification {
 		background-color: var(--bgColorHover);
 	}
 

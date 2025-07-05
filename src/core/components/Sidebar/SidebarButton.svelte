@@ -42,7 +42,9 @@
 		color: var(--disabled-foreground);
 	}
 
-	.sidebar-button:not(.disabled):hover {
+	.sidebar-button:not(.disabled):hover,
+	:global(.clickable:focus-visible) .sidebar-button:not(.disabled),
+	:global(.clickable.focused) .sidebar-button:not(.disabled) {
 		background-color: var(--secondary-soft-background);
 	}
 

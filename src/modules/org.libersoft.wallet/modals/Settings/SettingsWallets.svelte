@@ -83,12 +83,8 @@
 	.drag-handle {
 		cursor: grab;
 		padding: 0 5px;
-		color: #666;
+		color: var(--primary-foreground);
 		user-select: none;
-	}
-
-	.drag-handle:hover {
-		color: #333;
 	}
 
 	.drag-handle:active {

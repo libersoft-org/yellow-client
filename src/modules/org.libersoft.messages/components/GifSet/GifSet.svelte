@@ -130,7 +130,9 @@
 			box-shadow 0.3s ease;
 	}
 
-	.item:hover {
+	.item:hover,
+	:global(.clickable:focus-visible) .item,
+	:global(.clickable.focused) .item {
 		z-index: 51;
 		transform: scale(1.2);
 		background-color: var(--primary-soft-background);

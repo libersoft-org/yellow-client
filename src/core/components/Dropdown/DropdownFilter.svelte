@@ -58,7 +58,9 @@
 		padding: 8px;
 	}
 
-	.option:hover {
+	.option:hover,
+	:global(.clickable:focus-visible) .option,
+	:global(.clickable.focused) .option {
 		background-color: var(--default-background);
 	}
 

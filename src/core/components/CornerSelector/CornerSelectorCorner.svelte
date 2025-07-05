@@ -14,9 +14,12 @@
 		width: 20px;
 		height: 20px;
 		cursor: pointer;
+		transition: background-color 0.4s linear;
 	}
 
-	.corner:hover {
+	.corner:hover,
+	:global(.clickable:focus-visible) .corner,
+	:global(.clickable.focused) .corner {
 		background-color: var(--disabled-foreground);
 	}
 

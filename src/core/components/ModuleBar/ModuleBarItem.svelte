@@ -26,7 +26,9 @@
 			background-color 0.4s linear;
 	}
 
-	.item:not(.selected):hover {
+	.item:not(.selected):hover,
+	:global(.clickable:focus-visible) .item,
+	:global(.clickable.focused) .item {
 		z-index: 2;
 		transform: scale(1.25);
 	}

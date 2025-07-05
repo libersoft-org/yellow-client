@@ -16,7 +16,9 @@
 		transition: background-color 0.4s linear;
 	}
 
-	.accounts-button:hover {
+	.accounts-button:hover,
+	:global(.clickable:focus-visible) .accounts-button,
+	:global(.clickable.focused) .accounts-button {
 		background-color: var(--secondary-softer-background);
 	}
 </style>

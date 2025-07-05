@@ -39,11 +39,13 @@
 			box-shadow 0.3s ease;
 	}
 
-	.sticker:hover {
+	.sticker:hover,
+	:global(.clickable:focus-visible) .sticker,
+	:global(.clickable.focused) .sticker {
 		z-index: 51;
 		transform: scale(1.2);
 		background-color: var(--primary-soft-background);
-		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+		box-shadow: var(--shadow);
 	}
 </style>
 

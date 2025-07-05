@@ -110,7 +110,9 @@
 		border: 1px solid var(--primary-foreground);
 	}
 
-	.reaction-box:hover {
+	.reaction-box:hover,
+	:global(.clickable:focus-visible) .reaction-box,
+	:global(.clickable.focused) .reaction-box {
 		background-color: var(--primary-background);
 	}
 </style>

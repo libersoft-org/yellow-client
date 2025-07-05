@@ -126,7 +126,9 @@
 		border: 1px solid var(--secondary-softer-background);
 	}
 
-	.emoji.hover:hover {
+	.emoji.hover:hover,
+	:global(.clickable:focus-visible) .emoji,
+	:global(.clickable.focused) .emoji {
 		z-index: 51;
 		transform: scale(1.5);
 		background-color: var(--primary-soft-background);
