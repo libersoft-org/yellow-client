@@ -31,9 +31,11 @@
 		await tick();
 		await tick();
 		const focusButton = data?.buttons?.find(button => button.focus);
-		if (focusButton) {
+		if (focusButton && data?.buttons) {
 			const focusIndex = data.buttons.indexOf(focusButton);
-			if (buttonElements[focusIndex]) buttonElements[focusIndex].focus();
+			if (focusIndex !== -1 && buttonElements[focusIndex]) {
+				buttonElements[focusIndex]?.focus();
+			}
 		}
 	}
 
