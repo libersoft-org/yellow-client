@@ -149,12 +149,12 @@ function wallets_cleanup(wallets: any) {
 	for (let i = 0; i < wallets.length; i++) {
 		for (let j = 0; j < wallets.length; j++) {
 			if (i !== j && wallets[i].address === wallets[j].address) {
-				window.alert('Wallet with address ' + wallets[i].address + ' already exists');
+				console.error('Wallet with address ' + wallets[i].address + ' already exists');
 				wallets.splice(i, 1);
 				return true;
 			}
 			if (i !== j && wallets[i].phrase === wallets[j].phrase) {
-				window.alert('Wallet with phrase ' + wallets[i].phrase + ' already exists');
+				console.error('Wallet with phrase ' + wallets[i].phrase + ' already exists');
 				wallets.splice(i, 1);
 				return true;
 			}
