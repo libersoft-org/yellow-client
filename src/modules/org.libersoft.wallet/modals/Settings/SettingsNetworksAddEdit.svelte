@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { networks, type INetwork } from '../../scripts/wallet.ts';
 	import { module } from '../../scripts/module.ts';
+	import { validateForm } from '@/core/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -19,57 +20,26 @@
 		close: () => void;
 	}
 	let { params, close }: Props = $props();
-	let itemGUID: string | undefined;
-	let itemName: string | undefined = $state();
-	let itemCurrencySymbol: string | undefined = $state();
-	let itemCurrencyIconURL: string | undefined = $state();
-	let itemChainID: number | undefined = $state();
-	let itemExplorerURL: string | undefined = $state();
+	let itemName = $state({ value: undefined as string | undefined });
+	let itemCurrencySymbol = $state({ value: undefined as string | undefined });
+	let itemCurrencyIconURL = $state({ value: undefined as string | undefined });
+	let itemChainID = $state({ value: undefined as number | undefined });
+	let itemExplorerURL = $state({ value: undefined as string | undefined });
 	let itemRPCURLs: string[] | undefined = $state();
 	let error: string | null | undefined = $state();
 
-	export function onOpen(): void {
-		console.log('onOpen - params', params);
-		if (itemGUID) return;
-		let item: INetwork | null | undefined = params?.network;
-		if (item) {
-			itemGUID = item?.guid;
-			itemName = item?.name;
-			itemCurrencySymbol = item?.currency?.symbol;
-			itemCurrencyIconURL = item?.currency?.iconURL;
-			itemChainID = item?.chainID;
-			itemExplorerURL = item?.explorerURL || '';
-			itemRPCURLs = item?.rpcURLs?.map(v => v) || [];
-		}
-		elName?.focus();
-	}
-
 	function addEdit(): void {
-		itemName = itemName?.trim();
-		itemCurrencySymbol = itemCurrencySymbol?.trim();
-		if (itemChainID !== undefined && itemChainID !== null) itemChainID = Number(itemChainID);
-		itemCurrencyIconURL = itemCurrencyIconURL?.trim();
-		itemExplorerURL = itemExplorerURL?.trim();
-		if (!itemName) {
-			error = 'Network name is required';
-			elName?.focus();
-			return;
-		}
-		if (!itemCurrencySymbol) {
-			error = 'Currency symbol is required';
-			elCurrencySymbol?.focus();
-			return;
-		}
-		if (itemChainID === undefined || itemChainID === null) {
-			error = 'Chain ID is required';
-			elChainID?.focus();
-			return;
-		}
-		if (itemChainID < 0 || !Number.isInteger(itemChainID)) {
-			error = 'Chain ID must be a positive whole number';
-			elChainID?.focus();
-			return;
-		}
+		const validationConfig = [
+			{ field: itemName, element: elName, trim: true, required: 'Network name is required' },
+			{ field: itemCurrencySymbol, element: elCurrencySymbol, trim: true, required: 'Currency symbol is required' },
+			{ field: itemChainID, element: elChainID, convert: Number, required: 'Chain ID is required' },
+			{ field: itemChainID, element: elChainID, validate: (v: number) => (v >= 0 && Number.isInteger(v) ? null : 'Chain ID must be a positive whole number') },
+			{ field: itemCurrencyIconURL, trim: true },
+			{ field: itemExplorerURL, trim: true },
+		];
+
+		error = validateForm(validationConfig);
+		if (error) return;
 		if (itemRPCURLs && itemRPCURLs.length > 0) {
 			for (let i = 0; i < itemRPCURLs.length; i++) {
 				if (!itemRPCURLs[i]?.trim()) {
@@ -80,14 +50,14 @@
 			}
 		}
 		const newItem: INetwork = {
-			name: itemName || '',
+			name: itemName.value || '',
 			currency: {
-				symbol: itemCurrencySymbol || '',
-				iconURL: itemCurrencyIconURL,
+				symbol: itemCurrencySymbol.value || '',
+				iconURL: itemCurrencyIconURL.value,
 			},
-			chainID: itemChainID || 0,
+			chainID: itemChainID.value || 0,
 			rpcURLs: itemRPCURLs,
-			explorerURL: itemExplorerURL,
+			explorerURL: itemExplorerURL.value,
 		};
 
 		if (params?.network?.guid) {
@@ -123,19 +93,19 @@
 <div class="modal-edit-network">
 	<Form onSubmit={addEdit}>
 		<Label text="Name">
-			<Input bind:value={itemName} bind:this={elName} />
+			<Input bind:value={itemName.value} bind:this={elName} />
 		</Label>
 		<Label text="Currency symbol">
-			<Input bind:value={itemCurrencySymbol} bind:this={elCurrencySymbol} />
+			<Input bind:value={itemCurrencySymbol.value} bind:this={elCurrencySymbol} />
 		</Label>
 		<Label text="Icon URL">
-			<Input bind:value={itemCurrencyIconURL} />
+			<Input bind:value={itemCurrencyIconURL.value} />
 		</Label>
 		<Label text="Chain ID">
-			<Input type="number" bind:value={itemChainID} bind:this={elChainID} />
+			<Input type="number" bind:value={itemChainID.value} bind:this={elChainID} />
 		</Label>
 		<Label text="Explorer URL">
-			<Input bind:value={itemExplorerURL} />
+			<Input bind:value={itemExplorerURL.value} />
 		</Label>
 		<Label text="RPC URLs">
 			{#if itemRPCURLs}
