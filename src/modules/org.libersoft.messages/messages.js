@@ -507,7 +507,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb, force_r
 	return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
 		if (res.error !== false || !res.data?.messages) {
 			console.error(res);
-			window.alert('Error while listing messages: ' + (res.message || JSON.stringify(res)));
+			console.error('Error while listing messages: ' + (res.message || JSON.stringify(res)));
 			return;
 		}
 		let items = res.data.messages;
@@ -523,7 +523,7 @@ export function findMessages(acc, address, base, prev, next) {
 		sendData(acc, null, 'messages_list', { address, base, prev, next }, true, (_req, res) => {
 			if (res.error !== false || !res.data?.messages) {
 				console.error(res);
-				window.alert('Error while finding messages: ' + (res.message || JSON.stringify(res)));
+				console.error('Error while finding messages: ' + (res.message || JSON.stringify(res)));
 				reject(res);
 				return;
 			}
