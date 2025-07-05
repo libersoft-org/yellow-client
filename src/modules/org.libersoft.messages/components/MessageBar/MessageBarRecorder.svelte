@@ -8,16 +8,13 @@
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import WaveSurfer from 'wavesurfer.js';
-
 	let wavesurferRef: HTMLElement;
 	let wavesurfer: WaveSurfer;
 	let wavesurferRecord: RecordPlugin;
-
 	let isOpen = audioRecorderStore.isOpen();
 	let isPaused = $state(false);
 	let wavesurferWidth = $state(undefined);
 	let sending = $state(false);
-
 	const onResize = entry => {
 		// We must explicitly set WaveSurfer's parent width; otherwise it causes flickering
 		// (wavesurfer bug https://github.com/katspaugh/wavesurfer.js/issues/4055)
@@ -36,20 +33,14 @@
 
 	const startRecording = async () => {
 		isPaused = false;
-
 		// @ts-ignore
 		const permissions = await navigator.permissions.query({ name: 'microphone' });
-
 		if (permissions.state === 'denied') {
 			audioRecorderStore.setOpen(false);
 			alert('Microphone access denied. Please check your browser settings.');
 			return;
 		}
-
-		if (wavesurfer) {
-			wavesurfer.destroy();
-		}
-
+		if (wavesurfer) wavesurfer.destroy();
 		wavesurfer = WaveSurfer.create({
 			container: wavesurferRef,
 			waveColor: 'rgb(255 221 17)',
@@ -60,7 +51,6 @@
 			autoScroll: true,
 			autoCenter: true,
 		});
-
 		wavesurferRecord = wavesurfer.registerPlugin(
 			RecordPlugin.create({
 				renderRecordedAudio: false,
@@ -70,14 +60,12 @@
 				scrollingWaveformWindow: 4,
 			})
 		);
-
 		wavesurferRecord.on('record-end', blob => {
 			if (sending) {
 				sending = false;
 				sendMessage(blob);
 			}
 		});
-
 		RecordPlugin.getAvailableAudioDevices().then(devices => {
 			wavesurferRecord
 				.startRecording({ deviceId: 'default' })
@@ -112,9 +100,7 @@
 	};
 
 	$effect(() => {
-		if ($isOpen) {
-			startRecording();
-		}
+		if ($isOpen) startRecording();
 	});
 </script>
 
