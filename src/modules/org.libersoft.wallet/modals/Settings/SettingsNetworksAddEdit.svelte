@@ -9,6 +9,9 @@
 	import Form from '@/core/components/Form/Form.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	let elName: Input | undefined;
+	let elCurrencySymbol: Input | undefined;
+	let elChainID: Input | undefined;
+	let elRPCURLs: (Input | undefined)[] = $state([]);
 	interface Props {
 		params?: {
 			network?: INetwork;
@@ -16,41 +19,75 @@
 		close: () => void;
 	}
 	let { params, close }: Props = $props();
-	let item_guid: string | undefined;
-	let item_name: string | undefined = $state();
-	let item_currency_symbol: string | undefined = $state();
-	let item_currency_iconURL: string | undefined = $state();
-	let item_chain_id: number | undefined = $state();
-	let item_explorer_url: string | undefined = $state();
-	let item_rpc_urls: string[] | undefined = $state();
+	let itemGUID: string | undefined;
+	let itemName: string | undefined = $state();
+	let itemCurrencySymbol: string | undefined = $state();
+	let itemCurrencyIconURL: string | undefined = $state();
+	let itemChainID: number | undefined = $state();
+	let itemExplorerURL: string | undefined = $state();
+	let itemRPCURLs: string[] | undefined = $state();
 	let error: string | null | undefined = $state();
 
 	export function onOpen(): void {
 		console.log('onOpen - params', params);
-		if (item_guid) return;
+		if (itemGUID) return;
 		let item: INetwork | null | undefined = params?.network;
 		if (item) {
-			item_guid = item?.guid;
-			item_name = item?.name;
-			item_currency_symbol = item?.currency?.symbol;
-			item_currency_iconURL = item?.currency?.iconURL;
-			item_chain_id = item?.chainID;
-			item_explorer_url = item?.explorerURL || '';
-			item_rpc_urls = item?.rpcURLs?.map(v => v) || [];
+			itemGUID = item?.guid;
+			itemName = item?.name;
+			itemCurrencySymbol = item?.currency?.symbol;
+			itemCurrencyIconURL = item?.currency?.iconURL;
+			itemChainID = item?.chainID;
+			itemExplorerURL = item?.explorerURL || '';
+			itemRPCURLs = item?.rpcURLs?.map(v => v) || [];
 		}
 		elName?.focus();
 	}
 
 	function addEdit(): void {
+		itemName = itemName?.trim();
+		itemCurrencySymbol = itemCurrencySymbol?.trim();
+		if (itemChainID !== undefined && itemChainID !== null) itemChainID = Number(itemChainID);
+		itemCurrencyIconURL = itemCurrencyIconURL?.trim();
+		itemExplorerURL = itemExplorerURL?.trim();
+		if (!itemName) {
+			error = 'Network name is required';
+			elName?.focus();
+			return;
+		}
+		if (!itemCurrencySymbol) {
+			error = 'Currency symbol is required';
+			elCurrencySymbol?.focus();
+			return;
+		}
+		if (itemChainID === undefined || itemChainID === null) {
+			error = 'Chain ID is required';
+			elChainID?.focus();
+			return;
+		}
+		if (itemChainID < 0 || !Number.isInteger(itemChainID)) {
+			error = 'Chain ID must be a positive whole number';
+			elChainID?.focus();
+			return;
+		}
+		if (itemRPCURLs && itemRPCURLs.length > 0) {
+			for (let i = 0; i < itemRPCURLs.length; i++) {
+				if (!itemRPCURLs[i]?.trim()) {
+					error = 'RPC URL ' + (i + 1) + ' is required';
+					elRPCURLs[i]?.focus();
+					return;
+				}
+			}
+		}
 		const newItem: INetwork = {
-			name: item_name || '',
+			name: itemName || '',
 			currency: {
-				symbol: item_currency_symbol || '',
-				iconURL: item_currency_iconURL,
+				symbol: itemCurrencySymbol || '',
+				iconURL: itemCurrencyIconURL,
 			},
-			chainID: item_chain_id || 0,
-			rpcURLs: item_rpc_urls,
-			explorerURL: item_explorer_url,
+			chainID: itemChainID || 0,
+			rpcURLs: itemRPCURLs,
+			explorerURL: itemExplorerURL,
 		};
 
 		if (params?.network?.guid) {
@@ -86,31 +123,31 @@
 <div class="modal-edit-network">
 	<Form onSubmit={addEdit}>
 		<Label text="Name">
-			<Input bind:value={item_name} bind:this={elName} />
+			<Input bind:value={itemName} bind:this={elName} />
 		</Label>
 		<Label text="Currency symbol">
-			<Input bind:value={item_currency_symbol} />
+			<Input bind:value={itemCurrencySymbol} bind:this={elCurrencySymbol} />
 		</Label>
 		<Label text="Icon URL">
-			<Input bind:value={item_currency_iconURL} />
+			<Input bind:value={itemCurrencyIconURL} />
 		</Label>
 		<Label text="Chain ID">
-			<Input type="number" bind:value={item_chain_id} />
+			<Input type="number" bind:value={itemChainID} bind:this={elChainID} />
 		</Label>
 		<Label text="Explorer URL">
-			<Input bind:value={item_explorer_url} />
+			<Input bind:value={itemExplorerURL} />
 		</Label>
 		<Label text="RPC URLs">
-			{#if item_rpc_urls}
-				{#each item_rpc_urls as rpc_url, i}
+			{#if itemRPCURLs}
+				{#each itemRPCURLs as rpc_url, i}
 					<div class="row">
-						<Input bind:value={item_rpc_urls[i]} />
-						<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (item_rpc_urls = item_rpc_urls?.filter((v, j) => j !== i))} />
+						<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} />
+						<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i))} />
 					</div>
 				{/each}
 			{/if}
 		</Label>
-		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (item_rpc_urls = [...(item_rpc_urls || []), ''])} />
+		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...(itemRPCURLs || []), ''])} />
 	</Form>
 	{#if error}
 		<Alert type="error" message={error} />
