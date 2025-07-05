@@ -53,10 +53,6 @@
 
 <style>
 	.clickable {
-		/*
-		display: contents;
-	 all: unset;
-		*/
 		cursor: pointer;
 	}
 	.clickable.expand {
@@ -70,6 +66,6 @@
 	}
 </style>
 
-<div class="clickable" class:expand role="button" aria-disabled={!enabled} onclick={handleClick} onmousedown={handleMousedown} oncontextmenu={handleRightClick} onkeydown={handleKeyDown} onkeyup={handleKeyUp} {...restProps}>
+<div class="clickable" class:expand role="button" tabindex="0" aria-disabled={!enabled} onclick={handleClick} onmousedown={handleMousedown} oncontextmenu={handleRightClick} onkeydown={handleKeyDown} onkeyup={handleKeyUp} {...restProps}>
 	{@render children?.()}
 </div>
