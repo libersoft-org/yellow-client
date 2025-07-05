@@ -20,12 +20,12 @@
 		close: () => void;
 	}
 	let { params, close }: Props = $props();
-	let itemName = $state({ value: undefined as string | undefined });
-	let itemCurrencySymbol = $state({ value: undefined as string | undefined });
-	let itemCurrencyIconURL = $state({ value: undefined as string | undefined });
-	let itemChainID = $state({ value: undefined as number | undefined });
-	let itemExplorerURL = $state({ value: undefined as string | undefined });
-	let itemRPCURLs: string[] | undefined = $state();
+	let itemName = $state({ value: params?.network?.name as string | undefined });
+	let itemCurrencySymbol = $state({ value: params?.network?.currency?.symbol as string | undefined });
+	let itemCurrencyIconURL = $state({ value: params?.network?.currency?.iconURL as string | undefined });
+	let itemChainID = $state({ value: params?.network?.chainID as number | undefined });
+	let itemExplorerURL = $state({ value: params?.network?.explorerURL as string | undefined });
+	let itemRPCURLs: string[] | undefined = $state(params?.network?.rpcURLs ? [...params.network.rpcURLs] : undefined);
 	let error: string | null | undefined = $state();
 
 	function addEdit(): void {
@@ -36,19 +36,12 @@
 			{ field: itemChainID, element: elChainID, validate: (v: number) => (v >= 0 && Number.isInteger(v) ? null : 'Chain ID must be a positive whole number') },
 			{ field: itemCurrencyIconURL, trim: true },
 			{ field: itemExplorerURL, trim: true },
+			{ field: { value: itemRPCURLs }, isArray: true, arrayElements: elRPCURLs, required: 'RPC URL {index} is required' },
 		];
 
 		error = validateForm(validationConfig);
 		if (error) return;
-		if (itemRPCURLs && itemRPCURLs.length > 0) {
-			for (let i = 0; i < itemRPCURLs.length; i++) {
-				if (!itemRPCURLs[i]?.trim()) {
-					error = 'RPC URL ' + (i + 1) + ' is required';
-					elRPCURLs[i]?.focus();
-					return;
-				}
-			}
-		}
+
 		const newItem: INetwork = {
 			name: itemName.value || '',
 			currency: {
