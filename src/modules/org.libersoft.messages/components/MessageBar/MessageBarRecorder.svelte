@@ -8,6 +8,7 @@
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import WaveSurfer from 'wavesurfer.js';
+	import DialogError from '@/org.libersoft.messages/dialogs/DialogError.svelte';
 	let wavesurferRef: HTMLElement | null | undefined;
 	let wavesurfer: WaveSurfer | null | undefined;
 	let wavesurferRecord: RecordPlugin | null | undefined;
@@ -15,6 +16,9 @@
 	let isPaused: boolean = $state(false);
 	let wavesurferWidth: number | undefined = $state();
 	let sending: boolean = $state(false);
+	let elDialogError: DialogError;
+	let errorMessage: string = $state('');
+	let errorTitle: string = $state('Error');
 	const primaryColor: string = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
 	const secondaryColor: string = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
 
@@ -43,7 +47,9 @@
 		const permissions = await navigator.permissions.query({ name: 'microphone' as PermissionName });
 		if (permissions.state === 'denied') {
 			audioRecorderStore.setOpen(false);
-			alert('Microphone access denied. Please check your browser settings.');
+			errorTitle = 'Recording error';
+			errorMessage = 'Microphone access denied. Please check your browser settings.';
+			elDialogError?.open();
 			return;
 		}
 
@@ -89,7 +95,9 @@
 					console.log('startRecording');
 				})
 				.catch((err: Error) => {
-					alert(err.message);
+					errorTitle = 'Recording error';
+					errorMessage = err.message;
+					elDialogError?.open();
 					audioRecorderStore.setOpen(false);
 				});
 		});
@@ -183,3 +191,4 @@
 		<Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32px" padding="0px" onClick={onSend} colorVariable="--primary-background" />
 	</div>
 </div>
+<DialogError bind:this={elDialogError} message={errorMessage} title={errorTitle} />
