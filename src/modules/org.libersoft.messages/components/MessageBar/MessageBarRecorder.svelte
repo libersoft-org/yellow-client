@@ -8,40 +8,50 @@
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import WaveSurfer from 'wavesurfer.js';
-	let wavesurferRef: HTMLElement;
-	let wavesurfer: WaveSurfer;
-	let wavesurferRecord: RecordPlugin;
+	let wavesurferRef: HTMLElement | null | undefined;
+	let wavesurfer: WaveSurfer | null | undefined;
+	let wavesurferRecord: RecordPlugin | null | undefined;
 	let isOpen = audioRecorderStore.isOpen();
-	let isPaused = $state(false);
-	let wavesurferWidth = $state(undefined);
-	let sending = $state(false);
-	const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
-	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
-	const onResize = entry => {
+	let isPaused: boolean = $state(false);
+	let wavesurferWidth: number | undefined = $state();
+	let sending: boolean = $state(false);
+	const primaryColor: string = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
+	const secondaryColor: string = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
+
+	function onResize(entry: ResizeObserverEntry): void {
 		// We must explicitly set WaveSurfer's parent width; otherwise it causes flickering
 		// (wavesurfer bug https://github.com/katspaugh/wavesurfer.js/issues/4055)
 		wavesurferWidth = entry.contentRect.width;
-	};
+	}
 
-	const sendMessage = async blob => {
-		const recipientEmail = get(selectedConversation).address;
+	async function sendMessage(blob: Blob & { name?: string; metadata?: any }): Promise<void> {
+		const recipientAddress = get(selectedConversation)?.address;
+		if (!recipientAddress) {
+			console.error('No recipient address found');
+			return;
+		}
 		const arrBuffer = await blob.arrayBuffer();
 		const audioMetaData = await MediaUtils.getAudioDataFromArrayBuffer(arrBuffer);
 		blob.name = 'Audio record.webm';
 		blob.metadata = audioMetaData;
-		initUpload([blob], FileUploadRecordType.SERVER, [recipientEmail]);
+		initUpload([blob], FileUploadRecordType.SERVER, [recipientAddress]);
 		audioRecorderStore.setOpen(false);
-	};
+	}
 
-	const startRecording = async () => {
+	async function startRecording(): Promise<void> {
 		isPaused = false;
-		// @ts-ignore
-		const permissions = await navigator.permissions.query({ name: 'microphone' });
+		const permissions = await navigator.permissions.query({ name: 'microphone' as PermissionName });
 		if (permissions.state === 'denied') {
 			audioRecorderStore.setOpen(false);
 			alert('Microphone access denied. Please check your browser settings.');
 			return;
 		}
+
+		if (!wavesurferRef) {
+			console.error('Wavesurfer container element not found');
+			return;
+		}
+
 		if (wavesurfer) wavesurfer.destroy();
 		wavesurfer = WaveSurfer.create({
 			container: wavesurferRef,
@@ -62,44 +72,48 @@
 				scrollingWaveformWindow: 4,
 			})
 		);
-		wavesurferRecord.on('record-end', blob => {
+		wavesurferRecord.on('record-end', (blob: Blob) => {
 			if (sending) {
 				sending = false;
-				sendMessage(blob);
+				sendMessage(blob as Blob & { name?: string; metadata?: any });
 			}
 		});
-		RecordPlugin.getAvailableAudioDevices().then(devices => {
+		RecordPlugin.getAvailableAudioDevices().then((devices: MediaDeviceInfo[]) => {
+			if (!wavesurferRecord) {
+				console.error('Wavesurfer record plugin not initialized');
+				return;
+			}
 			wavesurferRecord
 				.startRecording({ deviceId: 'default' })
 				.then(() => {
 					console.log('startRecording');
 				})
-				.catch(err => {
-					alert(err);
+				.catch((err: Error) => {
+					alert(err.message);
 					audioRecorderStore.setOpen(false);
 				});
 		});
-	};
+	}
 
-	const onRecord = () => {
+	function onRecord(): void {
 		isPaused = false;
-		wavesurferRecord.resumeRecording();
-	};
+		wavesurferRecord?.resumeRecording();
+	}
 
-	const onPause = () => {
+	function onPause(): void {
 		isPaused = true;
-		wavesurferRecord.pauseRecording();
-	};
+		wavesurferRecord?.pauseRecording();
+	}
 
-	const onDelete = () => {
+	function onDelete(): void {
 		audioRecorderStore.setOpen(false);
-		wavesurferRecord.destroy();
-	};
+		wavesurferRecord?.destroy();
+	}
 
-	const onSend = () => {
+	function onSend(): void {
 		sending = true;
-		wavesurferRecord.stopRecording();
-	};
+		wavesurferRecord?.stopRecording();
+	}
 
 	$effect(() => {
 		if ($isOpen) startRecording();
@@ -165,7 +179,7 @@
 			<Icon img="modules/{identifier}/img/pause.svg" colorVariable="--primary-background" alt="Stop" size="14px" padding="0px" onClick={onPause} />
 		{/if}
 	</div>
-	<div style:poiner-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
+	<div style:pointer-events={sending ? 'none' : 'auto'} style:cursor={sending ? 'not-allowed' : 'pointer'}>
 		<Icon img="modules/{identifier}/img/send.svg" alt="Send" size="32px" padding="0px" onClick={onSend} colorVariable="--primary-background" />
 	</div>
 </div>
