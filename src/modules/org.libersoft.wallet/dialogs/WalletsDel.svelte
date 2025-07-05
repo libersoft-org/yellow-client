@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, type IAddress, type IWallet } from '../wallet.ts';
+	import { wallets, type IWallet } from '../scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		wallet: IWallet;

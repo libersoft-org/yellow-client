@@ -1,12 +1,10 @@
 <script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-
 	interface Props {
 		address: string;
 		colorVariable?: string;
 	}
-
 	let { address = $bindable(), colorVariable = '--primary-foreground' }: Props = $props();
 	let copied = $state(false);
 	let spanElem = $state();

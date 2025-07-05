@@ -1,6 +1,6 @@
 <script lang="ts">
 	//import { sendTransaction } from '../wallet.ts'
-	import { module } from '../module.ts';
+	import { module } from '../scripts/module.ts';
 	import { playAudio } from '@/core/notifications.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { module } from '../../module.ts';
-	import { wallets, type IAddress, type IWallet, reorderWallets } from '../../wallet.ts';
+	import { module } from '../../scripts/module.ts';
+	import { wallets, type IWallet, reorderWallets } from '../../scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -15,18 +15,15 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ModalWalletsWallet from './SettingsWalletsWallet.svelte';
-
 	import ModalRecover from '../Wallets/WalletsRecover.svelte';
 	import ModalWalletsEdit from '../Wallets/WalletsEdit.svelte';
 	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
 	import { getContext } from 'svelte';
 	let selectedWallet: IWallet | undefined = $state();
 	let elModalWalletsWallet: Modal | undefined;
-
 	let elModalRecover: Modal | undefined;
 	let elModalWalletsEdit: Modal | undefined;
 	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
-
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	// Transform wallets into items with unique IDs for drag-and-drop

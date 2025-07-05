@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog, { type IDialogData } from '@/core/components/Dialog/Dialog.svelte';
-	import { addressBook } from '../../wallet.ts';
+	import { addressBook } from '../../scripts/wallet.ts';
 	import { get } from 'svelte/store';
 	import { getGuid } from '@/core/core.ts';
 	interface Props {

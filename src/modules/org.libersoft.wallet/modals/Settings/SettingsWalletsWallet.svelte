@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { module } from '../../module.ts';
-	import { type IWallet } from '../../wallet.ts';
+	import { module } from '../../scripts/module.ts';
+	import { type IWallet } from '../../scripts/wallet.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -58,7 +58,7 @@
 	<ButtonBar>
 		<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress()} />
 	</ButtonBar>
-	{#if params.wallet?.addresses}
+	{#if params?.wallet?.addresses && params.wallet.addresses.length > 0}
 		<Table>
 			<Thead>
 				<TheadTr>
@@ -84,6 +84,8 @@
 				{/each}
 			</Tbody>
 		</Table>
+	{:else}
+		<div class="bold">No addresses found in this wallet.</div>
 	{/if}
 </div>
 <Modal title="Add a new address" body={ModalAddressAdd} params={{ wallet: params.wallet }} width="600px" bind:this={elModalAddressAdd} />

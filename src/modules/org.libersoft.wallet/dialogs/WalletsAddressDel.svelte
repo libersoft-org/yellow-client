@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deleteAddressFromWallet, type IAddress, type IWallet } from '../wallet.ts';
+	import { deleteAddressFromWallet, type IWallet } from '../scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let wallet: IWallet | undefined;
 	let index: string | number | undefined;
@@ -15,7 +15,7 @@
 	};
 
 	function clickYes() {
-		if (wallet && index) {
+		if (wallet && index !== undefined && index !== null) {
 			deleteAddressFromWallet(wallet, index);
 			elDialog?.close();
 		} else console.error('Wallet or index is undefined when trying to delete address');

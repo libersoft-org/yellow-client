@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { parseUnits } from 'ethers';
-	import { sendAddress, currencies, selectedMainCurrencySymbol, selectedNetwork, selectedAddress } from '../wallet.ts';
-	import { module } from '../module.ts';
+	import { sendAddress, currencies, selectedNetwork, selectedAddress } from '../scripts/wallet.ts';
+	import { module } from '../scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

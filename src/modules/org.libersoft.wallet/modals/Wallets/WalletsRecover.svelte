@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Mnemonic } from 'ethers';
-	import { addWallet, wallets } from '../../wallet.ts';
-	import { module } from '../../module.ts';
+	import { addWallet, wallets } from '../../scripts/wallet.ts';
+	import { module } from '../../scripts/module.ts';
 	import Form from '@/core/components/Form/Form.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { addressBook, type IAddressBookItem } from '../../wallet.ts';
-	import { module } from '../../module.ts';
+	import { addressBook, type IAddressBookItem } from '../../scripts/wallet.ts';
+	import { module } from '../../scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';

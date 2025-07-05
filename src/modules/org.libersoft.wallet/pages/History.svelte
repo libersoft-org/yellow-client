@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectedNetwork, selectedAddress } from '../wallet.ts';
+	import { selectedNetwork, selectedAddress } from '../scripts/wallet.ts';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

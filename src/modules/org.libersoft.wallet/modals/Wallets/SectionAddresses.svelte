@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectAddress, walletsModal } from '../../wallet.ts';
+	import { selectAddress, walletsModal } from '../../scripts/wallet.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';

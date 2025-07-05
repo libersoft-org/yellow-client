@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { addAddress, addressIndexAlreadyExists, addressesMaxIndex, type IWallet } from '../../wallet.ts';
-	import { module } from '../../module.ts';
+	import { addAddress, addressIndexAlreadyExists, addressesMaxIndex, type IWallet } from '../../scripts/wallet.ts';
+	import { module } from '../../scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

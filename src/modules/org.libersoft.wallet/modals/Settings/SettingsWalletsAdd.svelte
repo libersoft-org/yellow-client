@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { generateMnemonic, addWallet, wallets } from '../../wallet.ts';
-	import { module } from '../../module.ts';
+	import { module } from '../../scripts/module.ts';
+	import { generateMnemonic, addWallet, wallets } from '../../scripts/wallet.ts';
 	import type { Mnemonic } from 'ethers';
 	import Form from '@/core/components/Form/Form.svelte';
 	import Label from '@/core/components/Label/Label.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { module } from '../../module.ts';
-	import { networks, default_networks, type INetwork } from '../../wallet.ts';
+	import { module } from '../../scripts/module.ts';
+	import { networks, default_networks, type INetwork } from '../../scripts/wallet.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

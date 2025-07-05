@@ -25,7 +25,7 @@
 	import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
 	import '../modules/org.libersoft.messages/module.ts';
 	import '../modules/org.libersoft.contacts/module.ts';
-	import '../modules/org.libersoft.wallet/module.ts';
+	import '../modules/org.libersoft.wallet/scripts/module.ts';
 	import '../modules/org.libersoft.dating/module.ts';
 	import '../modules/org.libersoft.iframes/module.ts';
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';

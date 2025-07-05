@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, type IWallet, walletsModal } from '../../wallet.ts';
+	import { wallets, type IWallet, walletsModal } from '../../scripts/wallet.ts';
 	import { attachParents } from '@/core/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import SectionWallets from './SectionWallets.svelte';

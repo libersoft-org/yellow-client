@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
 	import { parseUnits } from 'ethers';
-	import { module } from '../module.ts';
-	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../wallet.ts';
+	import { module } from '../scripts/module.ts';
+	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../scripts/wallet.ts';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

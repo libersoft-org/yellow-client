@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { module } from '../module.ts';
-	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsModal, walletsModal } from '../wallet.ts';
+	import { module } from '../scripts/module.ts';
+	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsModal, walletsModal } from '../scripts/wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

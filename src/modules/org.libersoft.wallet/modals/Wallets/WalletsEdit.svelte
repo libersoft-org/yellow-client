@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { editWallet, type IWallet } from '../../wallet.ts';
+	import { editWallet, type IWallet } from '../../scripts/wallet.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

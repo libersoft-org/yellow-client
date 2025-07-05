@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addressBook, type IAddressBookItem } from '../wallet.ts';
+	import { addressBook, type IAddressBookItem } from '../scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: IAddressBookItem;

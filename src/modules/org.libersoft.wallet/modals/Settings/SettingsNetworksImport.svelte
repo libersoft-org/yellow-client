@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
+	import { networks } from '../../scripts/wallet.ts';
+	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
+	import { getGuid } from '@/core/core.ts';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import { networks } from '../../wallet.ts';
-	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
-	import { getGuid } from '@/core/core.ts';
 	interface Props {
 		close: () => void;
 	}

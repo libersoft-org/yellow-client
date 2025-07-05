@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { networks, type IToken } from '../wallet.ts';
+	import { networks, type IToken } from '../scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		networkGuid: string;

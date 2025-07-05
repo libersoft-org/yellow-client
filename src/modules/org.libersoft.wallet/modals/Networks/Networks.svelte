@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { selectedNetworkID, networks, settingsModal } from '../../wallet.ts';
-	import { module } from '../../module.ts';
+	import { selectedNetworkID, networks, settingsModal } from '../../scripts/wallet.ts';
+	import { module } from '../../scripts/module.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -14,9 +13,7 @@
 		close?: () => void;
 	}
 	let { close }: Props = $props();
-	let elModalNetworks;
 	let filter = $state('');
-
 	let filteredNetworks = $derived($networks.filter(network => network.name.toLowerCase().includes(filter.toLowerCase())));
 
 	function selectNetwork(id) {
