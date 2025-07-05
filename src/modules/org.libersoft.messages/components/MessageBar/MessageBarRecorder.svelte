@@ -15,6 +15,8 @@
 	let isPaused = $state(false);
 	let wavesurferWidth = $state(undefined);
 	let sending = $state(false);
+	const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
+	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
 	const onResize = entry => {
 		// We must explicitly set WaveSurfer's parent width; otherwise it causes flickering
 		// (wavesurfer bug https://github.com/katspaugh/wavesurfer.js/issues/4055)
@@ -43,8 +45,8 @@
 		if (wavesurfer) wavesurfer.destroy();
 		wavesurfer = WaveSurfer.create({
 			container: wavesurferRef,
-			waveColor: 'rgb(255 221 17)',
-			progressColor: 'rgb(167,145,8)',
+			progressColor: primaryColor,
+			waveColor: secondaryColor,
 			height: 32,
 			fillParent: true,
 			hideScrollbar: true,
