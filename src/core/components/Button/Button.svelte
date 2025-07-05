@@ -26,8 +26,14 @@
 		right?: boolean;
 	}
 	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = 'var(--primary-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable = '--primary-foreground', iconSize = '20px', iconPadding = '0px', loading = false, radius = 10, right = false, ...restProps }: Props = $props();
+	let elClickable: Clickable;
+
 	function handleClick(e: Event) {
 		if (enabled && onClick) onClick(e);
+	}
+
+	export function focus() {
+		elClickable?.focus();
 	}
 </script>
 
@@ -63,7 +69,7 @@
 {#snippet icon()}
 	<Icon {img} colorVariable={!enabled ? '--disabled-foreground' : colorVariable} alt={text} size={iconSize} padding={iconPadding} />
 {/snippet}
-<Clickable {...restProps} onClick={handleClick} {enabled}>
+<Clickable bind:this={elClickable} {...restProps} onClick={handleClick} {enabled}>
 	<div class="button" class:disabled={!enabled} class:hidden-on-desktop={!$isMobile && hiddenOnDesktop} style:width style:padding style:border-radius={radius + 'px'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
 		{#if children}
 			{@render children?.()}

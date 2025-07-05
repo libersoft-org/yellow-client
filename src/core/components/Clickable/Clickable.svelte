@@ -11,6 +11,13 @@
 		restProps?: HTMLAttributes<HTMLDivElement>;
 	}
 	let { children, expand = false, enabled = true, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();
+	let elClickable: HTMLDivElement;
+	let focused = $state(false);
+
+	export function focus() {
+		elClickable?.focus();
+		focused = true;
+	}
 
 	function handleClick(e: MouseEvent) {
 		if (!enabled) {
@@ -18,6 +25,7 @@
 			e.stopPropagation();
 			return;
 		}
+		focused = false;
 		if (onClick) onClick(e as MouseEvent & { currentTarget: EventTarget & HTMLDivElement });
 	}
 
@@ -41,13 +49,23 @@
 
 	function handleKeyDown(e: KeyboardEvent) {
 		if (!enabled) return;
-		if (e.key === 'Enter') (e.currentTarget as HTMLElement).click();
+		if (e.key === 'Enter') {
+			focused = false;
+			(e.currentTarget as HTMLElement).click();
+		}
 		if (e.key === ' ') e.preventDefault();
 	}
 
 	function handleKeyUp(e: KeyboardEvent) {
 		if (!enabled) return;
-		if (e.key === ' ') (e.currentTarget as HTMLElement).click();
+		if (e.key === ' ') {
+			focused = false;
+			(e.currentTarget as HTMLElement).click();
+		}
+	}
+
+	function handleBlur() {
+		focused = false;
 	}
 </script>
 
@@ -60,12 +78,13 @@
 		flex: 1;
 	}
 
-	.clickable:focus-visible {
+	.clickable:focus-visible,
+	.clickable.focused {
 		outline: 2px solid var(--primary-harder-background);
 		border-radius: 10px;
 	}
 </style>
 
-<div class="clickable" class:expand role="button" tabindex="0" aria-disabled={!enabled} onclick={handleClick} onmousedown={handleMousedown} oncontextmenu={handleRightClick} onkeydown={handleKeyDown} onkeyup={handleKeyUp} {...restProps}>
+<div bind:this={elClickable} class="clickable" class:expand class:focused role="button" tabindex="0" aria-disabled={!enabled} onclick={handleClick} onmousedown={handleMousedown} oncontextmenu={handleRightClick} onkeydown={handleKeyDown} onkeyup={handleKeyUp} onblur={handleBlur} {...restProps}>
 	{@render children?.()}
 </div>

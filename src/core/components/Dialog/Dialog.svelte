@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Snippet } from 'svelte';
+	import { type Snippet, tick } from 'svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -20,12 +20,21 @@
 		onClick?: (e: Event) => void;
 		expand?: boolean;
 		testId?: string;
+		focus?: boolean;
 	}
 	let { data, width }: Props = $props();
 	let elModal: Modal;
+	let buttonElements: (Button | undefined)[] = [];
 
-	export function open() {
+	export async function open() {
 		elModal?.open();
+		await tick();
+		await tick();
+		const focusButton = data?.buttons?.find(button => button.focus);
+		if (focusButton) {
+			const focusIndex = data.buttons.indexOf(focusButton);
+			if (buttonElements[focusIndex]) buttonElements[focusIndex].focus();
+		}
 	}
 
 	export function close() {
@@ -61,8 +70,8 @@
 	{#snippet bottom()}
 		{#if data?.buttons && data.buttons.length > 0}
 			<ButtonBar expand>
-				{#each data.buttons as button}
-					<Button {...button} data-testid={button.testId} />
+				{#each data.buttons as button, index}
+					<Button {...button} data-testid={button.testId} bind:this={buttonElements[index]} />
 				{/each}
 			</ButtonBar>
 		{/if}

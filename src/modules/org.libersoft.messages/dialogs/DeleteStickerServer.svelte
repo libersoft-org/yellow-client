@@ -11,7 +11,7 @@
 		body: 'Would you like to delete sticker server: <span class="bold">' + server + '</span>?',
 		icon: 'img/del.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
 			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
 		],
 	});

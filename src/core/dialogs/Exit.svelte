@@ -7,7 +7,7 @@
 		body: 'Would you really like to exit the application?',
 		icon: 'img/exit.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, expand: true },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true, expand: true },
 			{ img: 'img/cross.svg', text: 'No', onClick: clickNo, expand: true },
 		],
 	};
