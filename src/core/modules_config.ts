@@ -1,10 +1,10 @@
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
-import type { ModuleConfig, ModulesConfiguration } from './types.ts';
+import type { IModuleConfig, IModulesConfiguration } from './types.ts';
 import { TAURI_MOBILE } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 
 // Default module configurations
-const defaultModules: { [moduleId: string]: ModuleConfig } = {
+const defaultModules: { [moduleId: string]: IModuleConfig } = {
 	'org.libersoft.messages': {
 		id: 'org.libersoft.messages',
 		name: 'Messages',
@@ -48,7 +48,7 @@ const defaultModules: { [moduleId: string]: ModuleConfig } = {
 };
 
 // Create the store with localStorage persistence
-export const modules_config = localStorageSharedStore<ModulesConfiguration>('modules_config', {
+export const modules_config = localStorageSharedStore<IModulesConfiguration>('modules_config', {
 	modules: defaultModules,
 });
 
@@ -59,7 +59,7 @@ modules_config.subscribe(config => {
 	}
 });
 
-async function syncModulesConfigToNative(config: ModulesConfiguration) {
+async function syncModulesConfigToNative(config: IModulesConfiguration) {
 	try {
 		await invoke('plugin:yellow|save_modules_config', {
 			configJson: JSON.stringify(config),
@@ -70,7 +70,7 @@ async function syncModulesConfigToNative(config: ModulesConfiguration) {
 	}
 }
 
-export function updateModuleConfig(moduleId: string, updates: Partial<ModuleConfig>) {
+export function updateModuleConfig(moduleId: string, updates: Partial<IModuleConfig>) {
 	modules_config.update(config => {
 		if (config.modules[moduleId]) {
 			config.modules[moduleId] = { ...config.modules[moduleId], ...updates };
@@ -79,7 +79,7 @@ export function updateModuleConfig(moduleId: string, updates: Partial<ModuleConf
 	});
 }
 
-export function addModuleConfig(module: ModuleConfig) {
+export function addModuleConfig(module: IModuleConfig) {
 	modules_config.update(config => {
 		config.modules[module.id] = module;
 		return config;

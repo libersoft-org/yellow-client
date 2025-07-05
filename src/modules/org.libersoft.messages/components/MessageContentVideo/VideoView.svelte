@@ -6,13 +6,13 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+	import type { IFileDownload, IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import Skeleton from '@/core/components/Skeleton/Skeleton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
 	interface Props {
-		upload: FileUpload | null;
-		download: FileDownload | null;
+		upload: IFileUpload | null;
+		download: IFileDownload | null;
 		thumbnailSrc: string | null;
 		videoRef?: HTMLElement;
 		startVideo: () => Promise<void>;

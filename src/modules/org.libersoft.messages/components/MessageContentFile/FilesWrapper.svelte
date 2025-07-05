@@ -1,14 +1,13 @@
 <script lang="ts">
 	import Button from '@/core/components/Button/Button.svelte';
 	import { onMount } from 'svelte';
-	import { writable } from 'svelte/store';
-	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { downloadAttachmentsSerial } from '../../messages.js';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	let { children } = $props();
 	let ref: HTMLDivElement;
-	let attachedUploads = $state<FileUpload[]>([]);
+	let attachedUploads = $state<IFileUpload[]>([]);
 	let attachmentIds = $state<string[]>([]);
 	let downloadableRecords = $derived.by(() => {
 		return attachedUploads.filter(upload => {

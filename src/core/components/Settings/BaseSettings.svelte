@@ -4,13 +4,13 @@
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/tauri.ts';
 	import { setContext, tick } from 'svelte';
-	interface Props {
+	interface IProps {
 		testId?: string;
 		settingsObject?: any;
 	}
 	let elModal;
 	/*
-	interface SettingsNode {
+	interface ISettingsNode {
 		name: string;
 		title: string;
 		items?: SettingsNode[];
@@ -18,20 +18,20 @@
 		body?: any;
 		__parent?: SettingsNode | null;
 	}
-	interface MenuItems {
+	interface IMenuItems {
 		Array<{
 		 img?: string;
 	  title?: string;
 	  onClick?: (e: Event) => void;
 	 }>
 	}
-	interface	optionalModalIcon {
+	interface IOptionalModalIcon {
 	 img?: string;
   alt?: string;
 		onClick?: (e: Event) => void;
 	};
 	*/
-	let { testId = '', settingsObject }: Props = $props();
+	let { testId = '', settingsObject }: IProps = $props();
 	let activeName = $state(settingsObject.name);
 	let backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
 

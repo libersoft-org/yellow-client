@@ -4,7 +4,7 @@ import { log } from '@/core/tauri.ts';
 import { followBrowserTheme } from '@/core/settings.ts';
 
 // Define the Theme interface
-export interface Theme {
+export interface ITheme {
 	name: string;
 	properties: Record<string, string>;
 }
@@ -13,7 +13,7 @@ export interface Theme {
 export let selected_theme_index: Writable<number> = localStorageSharedStore('selected_theme_index', 0);
 
 // Define the default themes
-export const default_themes: Theme[] = [
+export const default_themes: ITheme[] = [
 	{
 		name: 'Light',
 		properties: {
@@ -61,10 +61,10 @@ export const default_themes: Theme[] = [
 ];
 
 // Define the user themes store
-export let user_themes: Writable<Theme[]> = localStorageSharedStore('user_themes', []);
+export let user_themes: Writable<ITheme[]> = localStorageSharedStore('user_themes', []);
 
 // Define the combined themes store
-export let themes: Readable<Theme[]> = derived(user_themes, ($custom_themes: Theme[]) => {
+export let themes: Readable<ITheme[]> = derived(user_themes, ($custom_themes: ITheme[]) => {
 	return [...default_themes, ...$custom_themes];
 });
 
@@ -72,7 +72,7 @@ export let themes: Readable<Theme[]> = derived(user_themes, ($custom_themes: The
 export const browserPrefersDark = writable(false);
 
 // Define the current theme store
-export let current_theme: Readable<Theme> = derived([selected_theme_index, themes], ([$selected_theme_index, $themes]: [number, Theme[]]) => {
+export let current_theme: Readable<ITheme> = derived([selected_theme_index, themes], ([$selected_theme_index, $themes]: [number, ITheme[]]) => {
 	return $themes[$selected_theme_index];
 });
 
@@ -113,7 +113,7 @@ selected_theme_index.subscribe((v: number) => {
 });
 
 // Subscribe to current_theme changes to apply CSS variables
-current_theme.subscribe((v: Theme) => {
+current_theme.subscribe((v: ITheme) => {
 	log.debug('Current theme changed:', get(current_theme));
 	Object.keys(v.properties).forEach((key: string) => {
 		const value = v.properties[key];

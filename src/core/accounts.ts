@@ -6,7 +6,7 @@ import { send, handleSocketMessage } from '@/core/socket.ts';
 import { updateModulesComms } from '@/core/modules.ts';
 import { accounts_config } from '@/core/accounts_config.ts';
 import { tick } from 'svelte';
-import type { Account, AccountStore, AccountConfig, AccountCredentials, AccountSettings } from './types.ts';
+import type { IAccount, AccountStore, IAccountConfig, IAccountCredentials, IAccountSettings } from './types.ts';
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
 export let accounts = writable<AccountStore[]>([]);
 /* fire off whenever accounts array or active_account_id changes */
@@ -18,10 +18,10 @@ export let active_account_store = derived([accounts, active_account_id], ([$acco
 });
 
 // Create a derived store that depends on active_account_store and its nested account store. The contents is the account object.
-export let active_account = derived(active_account_store, ($active_account_store: AccountStore | undefined, set: (value: Account | null) => void) => {
+export let active_account = derived(active_account_store, ($active_account_store: AccountStore | undefined, set: (value: IAccount | null) => void) => {
 	if (!$active_account_store) return set(null);
 	// subscribe to the store that contains the account object
-	const unsubscribe = $active_account_store.subscribe((account: Account) => {
+	const unsubscribe = $active_account_store.subscribe((account: IAccount) => {
 		//console.log('DERIVED NESTED STORE:', account);
 		set(account);
 	});
@@ -47,7 +47,7 @@ export function selectAccount(id: string) {
 }
 
 export function active_account_module_data(module_id: string) {
-	return derived(active_account, ($active_account: Account | null) => {
+	return derived(active_account, ($active_account: IAccount | null) => {
 		if (!$active_account) {
 			console.log('no active account => no module data.');
 			return null;
@@ -97,7 +97,7 @@ export function findAccount(id: string) {
 	return get(accounts).find((account: AccountStore) => get(account).id === id);
 }
 
-function updateLiveAccount(account: AccountStore, config: AccountConfig) {
+function updateLiveAccount(account: AccountStore, config: IAccountConfig) {
 	let acc = get(account);
 	//console.log('updateLiveAccount', acc, config);
 	if (acc.credentials.retry_nonce != config.credentials.retry_nonce) {
@@ -137,7 +137,7 @@ function updateLiveAccount(account: AccountStore, config: AccountConfig) {
 	}
 }
 
-function createLiveAccount(config: AccountConfig) {
+function createLiveAccount(config: IAccountConfig) {
 	// add new account
 	let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
 	//console.log('NEW account', get(account));
@@ -146,7 +146,7 @@ function createLiveAccount(config: AccountConfig) {
 	else _disableAccount(account);
 }
 
-function removeLiveAccountsNotInConfig(accounts_list: AccountStore[], value: AccountConfig[]) {
+function removeLiveAccountsNotInConfig(accounts_list: AccountStore[], value: IAccountConfig[]) {
 	// remove accounts that are not in config
 	for (let account of accounts_list) {
 		if (!value.find(conf => conf.id === get(account).id)) {
@@ -157,9 +157,9 @@ function removeLiveAccountsNotInConfig(accounts_list: AccountStore[], value: Acc
 	}
 }
 
-function constructAccount(id: string, credentials: AccountCredentials, enabled: boolean, settings: AccountSettings): AccountStore {
+function constructAccount(id: string, credentials: IAccountCredentials, enabled: boolean, settings: IAccountSettings): AccountStore {
 	log.debug('CONSTRUCT ACCOUNT', id, credentials, enabled, settings);
-	let acc: Account = {
+	let acc: IAccount = {
 		id,
 		socket_id: 0,
 		settings: { ...settings },
@@ -179,7 +179,7 @@ function constructAccount(id: string, credentials: AccountCredentials, enabled: 
 	return account;
 }
 
-function handleModulesAvailable(acc: Account, account: AccountStore, event: Event) {
+function handleModulesAvailable(acc: IAccount, account: AccountStore, event: Event) {
 	const customEvent = event as CustomEvent;
 	for (const k in customEvent.detail?.data?.modules_available) {
 		acc.available_modules[k] = customEvent.detail.data.modules_available[k];
@@ -377,7 +377,7 @@ function clearReconnectTimer(account: AccountStore) {
 	}
 }
 
-function clearPingTimer(acc: Account) {
+function clearPingTimer(acc: IAccount) {
 	if (acc.pingTimer) {
 		clearInterval(acc.pingTimer);
 		acc.pingTimer = undefined;
@@ -409,7 +409,7 @@ function sendLoginCommand(account: AccountStore) {
 	});
 }
 
-function saveOriginalWsGuid(acc: Account) {
+function saveOriginalWsGuid(acc: IAccount) {
 	/* acc.original_wsGuid can be used to detect if a tab with an upload has been reloaded. Upload has to be paired with client wsGuid first. Module can then send a notification that asks clients with the original wsGuid if the file is still available. */
 	let sess = window.sessionStorage;
 	let json = sess.getItem('sessions') || '{}';
@@ -493,7 +493,7 @@ function setupPing(account: AccountStore) {
 	}, ping_interval);
 }
 
-function disconnectAccount(acc: Account) {
+function disconnectAccount(acc: IAccount) {
 	acc.requests = {};
 	acc.available_modules = {};
 	updateModulesComms(acc);
@@ -504,7 +504,7 @@ function disconnectAccount(acc: Account) {
 	console.log('Account disconnected');
 }
 
-function clearAccount(acc: Account) {
+function clearAccount(acc: IAccount) {
 	disconnectAccount(acc);
 	acc.requests = {};
 	acc.module_data = {};

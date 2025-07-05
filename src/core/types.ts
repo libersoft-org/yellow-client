@@ -1,21 +1,21 @@
 import type { Writable } from 'svelte/store';
 
-export interface AccountCredentials {
+export interface IAccountCredentials {
 	server: string;
 	address: string;
 	password: string;
 	retry_nonce?: number;
 }
 
-export interface AccountSettings {
+export interface IAccountSettings {
 	[key: string]: any;
 }
 
-export interface Account {
+export interface IAccount {
 	id: string;
 	socket_id: number;
-	settings: AccountSettings;
-	credentials: AccountCredentials;
+	settings: IAccountSettings;
+	credentials: IAccountCredentials;
 	enabled: boolean;
 	suspended?: boolean;
 	status?: string;
@@ -38,24 +38,24 @@ export interface Account {
 	sessionErrorHandler?: (event: Event) => void;
 }
 
-export type AccountStore = Writable<Account>;
+export type AccountStore = Writable<IAccount>;
 
-export interface AccountConfig {
+export interface IAccountConfig {
 	id: string;
-	credentials: AccountCredentials;
+	credentials: IAccountCredentials;
 	enabled: boolean;
-	settings: AccountSettings;
+	settings: IAccountSettings;
 }
 
-export interface ModuleDeclaration {
+export interface IModuleDeclaration {
 	id: string;
 	order?: number;
 	callbacks: {
 		init?: () => (() => void) | void;
-		initData?: (acc: Account) => any;
-		initComms?: (acc: Account) => void;
-		deinitComms?: (acc: Account) => void;
-		deinitData?: (acc: Account) => void;
+		initData?: (acc: IAccount) => any;
+		initComms?: (acc: IAccount) => void;
+		deinitComms?: (acc: IAccount) => void;
+		deinitData?: (acc: IAccount) => void;
 		onModuleSelected?: (selected: boolean) => void;
 	};
 	panels?: {
@@ -67,7 +67,7 @@ export interface ModuleDeclaration {
 
 export type ModuleType = 'builtin' | 'iframe';
 
-export interface ModuleConfig {
+export interface IModuleConfig {
 	id: string;
 	name: string;
 	type: ModuleType;
@@ -76,6 +76,6 @@ export interface ModuleConfig {
 	order?: number;
 }
 
-export interface ModulesConfiguration {
-	modules: { [moduleId: string]: ModuleConfig };
+export interface IModulesConfiguration {
+	modules: { [moduleId: string]: IModuleConfig };
 }

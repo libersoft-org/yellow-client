@@ -4,9 +4,9 @@ import { log, TAURI_MOBILE } from '@/core/tauri.ts';
 import { selectAccount } from './accounts.ts';
 import { getGuid } from './utils/utils.ts';
 import { invoke } from '@tauri-apps/api/core';
-import type { AccountConfig, AccountCredentials, AccountSettings } from './types.ts';
+import type { IAccountConfig, IAccountCredentials, IAccountSettings } from './types.ts';
 import type { Writable } from 'svelte/store';
-export const accounts_config: Writable<AccountConfig[]> = localStorageSharedStore('accounts_config', import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS ? JSON.parse(import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS) : []);
+export const accounts_config: Writable<IAccountConfig[]> = localStorageSharedStore('accounts_config', import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS ? JSON.parse(import.meta.env.VITE_YELLOW_CLIENT_DEFAULT_ACCOUNTS) : []);
 
 export function accounts_config_init(): () => void {
 	if (!TAURI_MOBILE) {
@@ -14,7 +14,7 @@ export function accounts_config_init(): () => void {
 	}
 
 	// Sync accounts config to native storage on mobile
-	return accounts_config.subscribe(async (configs: AccountConfig[]) => {
+	return accounts_config.subscribe(async (configs: IAccountConfig[]) => {
 		try {
 			const jsonData = JSON.stringify(configs);
 			log.debug('Syncing accounts config to native storage:', configs.length, 'accounts');
@@ -30,7 +30,7 @@ export function accounts_config_init(): () => void {
 	});
 }
 
-export function addAccount(config: Partial<AccountConfig>, settings: AccountSettings): string {
+export function addAccount(config: Partial<IAccountConfig>, settings: IAccountSettings): string {
 	console.log('addAccount(config, settings)', config, settings);
 	const id = getGuid();
 	accounts_config.update(v => [
@@ -38,15 +38,15 @@ export function addAccount(config: Partial<AccountConfig>, settings: AccountSett
 		{
 			id,
 			enabled: config.enabled ?? true,
-			credentials: config.credentials as AccountCredentials,
+			credentials: config.credentials as IAccountCredentials,
 			settings,
-		} as AccountConfig,
+		} as IAccountConfig,
 	]);
 	selectAccount(id);
 	return id;
 }
 
-export function saveAccount(id: string, config: Partial<AccountConfig>, settings: AccountSettings): void {
+export function saveAccount(id: string, config: Partial<IAccountConfig>, settings: IAccountSettings): void {
 	console.log('saveAccount', id, config, settings);
 	accounts_config.update(v => {
 		for (const acc of v) {
@@ -72,7 +72,7 @@ export function delAccount(id: string): void {
 	accounts_config.update(v => v.filter(a => a.id !== id));
 }
 
-export function findAccountConfig(id: string): AccountConfig | undefined {
+export function findAccountConfig(id: string): IAccountConfig | undefined {
 	return get(accounts_config).find(a => a.id === id);
 }
 

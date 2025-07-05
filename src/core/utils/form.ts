@@ -2,7 +2,7 @@
  * Universal form validator for any form
  */
 
-export interface ValidationRule {
+export interface IValidationRule {
 	field: { value: any };
 	element?: any;
 	trim?: boolean;
@@ -14,7 +14,7 @@ export interface ValidationRule {
 	arrayElements?: any[];
 }
 
-export type FormValidatorConfig = ValidationRule[];
+export type FormValidatorConfig = IValidationRule[];
 
 /**
  * Simple form validation helper - works with reactive field objects

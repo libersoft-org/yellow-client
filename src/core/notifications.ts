@@ -26,7 +26,7 @@ declare global {
 
 /* yellow notifications, for use in core and modules */
 
-export interface YellowNotification {
+export interface IYellowNotification {
 	id: string;
 	ts: number;
 	title: string;
@@ -43,7 +43,7 @@ function isNotificationAPIAvailable(): boolean {
 }
 
 let counter = 0;
-let notifications: Map<string, YellowNotification> = new Map();
+let notifications: Map<string, IYellowNotification> = new Map();
 let _events;
 let browser_notifications: Map<string, Notification> = new Map();
 let tauri_notifications: Map<string, Notification> = new Map();
@@ -187,12 +187,12 @@ async function removeNotification(id: string): Promise<void> {
 	//log.debug('removed.');
 }
 
-export async function addNotification(notification: Partial<YellowNotification>): Promise<string | null> {
+export async function addNotification(notification: Partial<IYellowNotification>): Promise<string | null> {
 	let enabled = get(notificationsEnabled);
 	log.debug('addNotification: enabled:', enabled, 'TAURI:', TAURI, 'TAURI_MOBILE:', TAURI_MOBILE, 'CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, 'BROWSER:', BROWSER);
 	if (!enabled) return null;
 
-	let n: YellowNotification = {
+	let n: IYellowNotification = {
 		id: Math.random().toString(36),
 		ts: Date.now(),
 		title: 'Notification ' + counter++,
@@ -217,7 +217,7 @@ export async function deleteNotification(id: string): Promise<void> {
 	await deleteTauriNotification(id);
 }
 
-async function sendTauriNotification(notification: YellowNotification) {
+async function sendTauriNotification(notification: IYellowNotification) {
 	let permissionGranted = await isPermissionGranted();
 	log.debug('permissionGranted:', permissionGranted);
 	if (!permissionGranted) {
@@ -277,7 +277,7 @@ async function deleteTauriNotification(id: string): Promise<void> {
 	}
 }
 
-async function sendCustomNotification(notification: YellowNotification): Promise<void> {
+async function sendCustomNotification(notification: IYellowNotification): Promise<void> {
 	//log.debug('sendCustomNotification');
 	//await initCustomNotifications();
 	let s = await multiwindow_store('notifications');
@@ -300,7 +300,7 @@ async function deleteCustomNotification(id: string): Promise<void> {
 	await s.set(id, null);
 }
 
-async function showBrowserNotification(notification: YellowNotification) {
+async function showBrowserNotification(notification: IYellowNotification) {
 	playNotificationSound(notification);
 	console.log('showBrowserNotification:', notification);
 	let icon = await toPngBlob(notification.icon);
@@ -368,7 +368,7 @@ export function playAudio(fileName: string): void {
 	audio.play();
 }
 
-export function playNotificationSound(notification: YellowNotification): void {
+export function playNotificationSound(notification: IYellowNotification): void {
 	if (!get(notificationsSoundEnabled)) return;
 	notification._audio = new Audio(notification.sound || 'audio/notification.mp3');
 	//notification._audio = new Audio('modules/org.libersoft.messages/audio/Oxygen-Sys-Log-In-Long.ogg');
@@ -378,7 +378,7 @@ export function playNotificationSound(notification: YellowNotification): void {
 	}
 }
 
-export function stopNotificationSound(notification: YellowNotification): void {
+export function stopNotificationSound(notification: IYellowNotification): void {
 	if (notification._audio) {
 		notification._audio.pause();
 		//notification._audio.currentTime = 0;

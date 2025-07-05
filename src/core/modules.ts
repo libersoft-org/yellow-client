@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { module_decls, modules_disabled, modules_display_order, selected_module_id } from '@/core/stores.ts';
 import { tick } from 'svelte';
-import type { ModuleDeclaration, Account } from './types.ts';
+import type { IModuleDeclaration, IAccount } from './types.ts';
 export function initModules() {
 	return [
 		selected_module_id.subscribe(async id => {
@@ -26,7 +26,7 @@ export function initModules() {
 	];
 }
 
-function initModuleComms(acc: Account, module_id: string, decl: ModuleDeclaration) {
+function initModuleComms(acc: IAccount, module_id: string, decl: IModuleDeclaration) {
 	console.log('initModuleComms:', decl);
 	if (!acc.module_data[module_id]) {
 		if (decl.callbacks.initData) acc.module_data[module_id] = decl.callbacks?.initData(acc);
@@ -37,12 +37,12 @@ function initModuleComms(acc: Account, module_id: string, decl: ModuleDeclaratio
 	if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
 }
 
-function deinitModuleComms(decl: ModuleDeclaration, acc: Account) {
+function deinitModuleComms(decl: IModuleDeclaration, acc: IAccount) {
 	acc.module_data[decl.id].online?.set(false);
 	if (decl.callbacks.deinitComms) decl.callbacks.deinitComms(acc);
 }
 
-export function updateModulesComms(acc: Account) {
+export function updateModulesComms(acc: IAccount) {
 	let available_modules = acc.available_modules;
 	let module_decls_v = get(module_decls);
 	for (const module_id in module_decls_v) {
@@ -67,7 +67,7 @@ export function updateModulesComms(acc: Account) {
 	}
 }
 
-export function registerModule(decl: ModuleDeclaration) {
+export function registerModule(decl: IModuleDeclaration) {
 	console.log('register module:', decl.id, decl);
 	if (get(modules_disabled).indexOf(decl.id) !== -1) {
 		console.log('Module disabled:', decl.id);

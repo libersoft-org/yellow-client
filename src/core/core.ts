@@ -50,12 +50,12 @@ export function setModule(name: string | null): void {
 	if (name === null) hideSidebarMobile.set(false);
 }
 
-interface RelayStore<T> extends Readable<T | null> {
+interface IRelayStore<T> extends Readable<T | null> {
 	set: (value: T) => void;
 	update: (fn: (value: T) => T) => void;
 }
 
-export function relay<T>(md: Readable<any>, key: string): RelayStore<T> {
+export function relay<T>(md: Readable<any>, key: string): IRelayStore<T> {
 	let r = derived(md, ($md, set) => {
 		if (!$md) {
 			set(null);
@@ -68,7 +68,7 @@ export function relay<T>(md: Readable<any>, key: string): RelayStore<T> {
 		return () => {
 			unsubscribe();
 		};
-	}) as RelayStore<T>;
+	}) as IRelayStore<T>;
 
 	r.set = (v: T) => {
 		//console.log('SET:', get(md), 'key:',  key,  'v:', v);

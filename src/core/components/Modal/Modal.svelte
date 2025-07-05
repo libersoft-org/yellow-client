@@ -6,7 +6,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
 
-	export interface ModalBodyWithOnOpen<TParams extends readonly unknown[] = readonly unknown[]> {
+	export interface IModalBodyWithOnOpen<TParams extends readonly unknown[] = readonly unknown[]> {
 		onOpen?(...args: TParams): void | Promise<void>;
 	}
 
@@ -319,7 +319,7 @@
 		await tick();
 		await tick();
 		bringToFront(modalId);
-		await (elModalBody as ModalBodyWithOnOpen<TParams>)?.onOpen?.(...params);
+		await (elModalBody as IModalBodyWithOnOpen<TParams>)?.onOpen?.(...params);
 	}
 
 	export function close() {

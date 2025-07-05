@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { modules_config, updateModuleConfig, resetModulesConfig } from '@/core/modules_config.ts';
-	import type { ModuleConfig, ModuleType } from '@/core/types.ts';
+	import type { IModuleConfig, ModuleType } from '@/core/types.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -21,7 +21,7 @@
 		updateModuleConfig(moduleId, { type });
 	}
 
-	function startEditingServiceUrl(module: ModuleConfig) {
+	function startEditingServiceUrl(module: IModuleConfig) {
 		editingModule = module.id;
 		tempServiceUrl = module.serviceUrl || '';
 	}

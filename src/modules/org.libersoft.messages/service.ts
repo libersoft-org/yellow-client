@@ -5,26 +5,26 @@
 import { connectionSendData, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 import { stripHtml } from './utils/htmlUtils.ts';
 
-interface KotlinBridge {
+interface IKotlinBridge {
 	sendMessage(data: string): void;
 	log(level: string, message: string): void;
 }
 
-interface ServiceConfig {
+interface IServiceConfig {
 	accountId: string;
 	server: string;
 	address: string;
 }
 
 // KotlinBridge will be available globally when running in Android
-declare const KotlinBridge: KotlinBridge;
+declare const KotlinBridge: IKotlinBridge;
 
 class MessagesBackgroundService {
-	private config: ServiceConfig | null = null;
+	private config: IServiceConfig | null = null;
 	private messageHandlers: Map<string, Function> = new Map();
 	private account: any = null;
 
-	init(config: ServiceConfig) {
+	init(config: IServiceConfig) {
 		this.config = config;
 		this.log('info', `Messages service initialized for account ${config.accountId}`);
 
@@ -197,7 +197,7 @@ const messagesService = new MessagesBackgroundService();
 
 // Export for global access from native layer
 (globalThis as any).YellowMessagesService = {
-	init: (config: ServiceConfig) => messagesService.init(config),
+	init: (config: IServiceConfig) => messagesService.init(config),
 	handleMessage: (message: any) => messagesService.handleMessage(message),
 	destroy: () => messagesService.destroy(),
 };

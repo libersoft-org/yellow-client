@@ -1,8 +1,8 @@
-import type { Account, AccountStore } from './types.ts';
+import type { IAccount, AccountStore } from './types.ts';
 import { TAURI_SERVICE } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 
-export function sendAsync(acc: Account, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false) {
+export function sendAsync(acc: IAccount, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false) {
 	return new Promise((resolve, reject) => {
 		send(
 			acc,
@@ -19,7 +19,7 @@ export function sendAsync(acc: Account, account: AccountStore | null, target: st
 	});
 }
 
-export function send(acc: Account, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, callback: ((req: any, res: any) => void) | null = null, quiet = false) {
+export function send(acc: IAccount, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, callback: ((req: any, res: any) => void) | null = null, quiet = false) {
 	/*
  acc: account object
  account: account store, optional, for debugging
@@ -107,7 +107,7 @@ function generateRequestID() {
 	return ++lastRequestId;
 }
 
-export function handleSocketMessage(acc: Account, res: any) {
+export function handleSocketMessage(acc: IAccount, res: any) {
 	//console.log('MESSAGE FROM SERVER', res);
 	if (res.requestID) {
 		// it is response to command:

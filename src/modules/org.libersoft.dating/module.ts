@@ -1,11 +1,11 @@
 import { registerModule } from '@/core/core.ts';
 import Sidebar from './pages/Main/Sidebar.svelte';
 import Content from './pages/Main/Content.svelte';
-export const module: Module = {
+export const module: IModule = {
 	name: 'Dating',
 	identifier: 'org.libersoft.dating',
 };
-interface Module {
+interface IModule {
 	name: string;
 	identifier: string;
 }

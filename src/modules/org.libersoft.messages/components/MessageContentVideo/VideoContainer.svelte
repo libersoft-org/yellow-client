@@ -10,7 +10,7 @@
 	import { writable, get } from 'svelte/store';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
-	import type { FileDownload, FileUpload, FileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
+	import type { IFileDownload, IFileUpload, IFileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
 	import { truncateText } from '@/core/utils/textUtils.js';
 	import _debug from 'debug';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -23,8 +23,8 @@
 	let videoRef = $state<HTMLVideoElement>();
 	let thumbnailRef = null;
 	let mediaHandler = $state<MediaService | null>(null);
-	let upload = $state<FileUpload | null>(null);
-	let download = $state<FileDownload | null>(null);
+	let upload = $state<IFileUpload | null>(null);
+	let download = $state<IFileDownload | null>(null);
 	fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
 
 	let thumbnailSrc = $state<string | null>(null);

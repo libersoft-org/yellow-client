@@ -2,7 +2,7 @@
 	import { convertFromShortHex } from '@/core/utils/colors.js';
 	import { type Writable, get } from 'svelte/store';
 	import { onDestroy } from 'svelte';
-	import { user_themes, default_themes, themes, selected_theme_index, type Theme } from '@/core/themes.ts';
+	import { user_themes, default_themes, themes, selected_theme_index, type ITheme } from '@/core/themes.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	//import Thead from '@/core/components/Table/TableThead.svelte';
@@ -13,12 +13,12 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 
 	/* This store is used in theme editor to provide read/write access to user themes and builtin themes. We will later disable writing to builtin themes in the UI. It is reactive to changes in selected theme index. It provides reading and writing to either user themes or builtin themes depending on the selected theme index. */
-	class WritableCurrentThemeStore implements Writable<Theme> {
+	class WritableCurrentThemeStore implements Writable<ITheme> {
 		private unsubscribe_selected_theme_index: () => void;
 		private unsubscribe_themes: () => void;
 		private current_selected_theme_index: number = 0;
-		private current_themes: Theme[] = [];
-		private subscribers: Array<(value: Theme) => void> = [];
+		private current_themes: ITheme[] = [];
+		private subscribers: Array<(value: ITheme) => void> = [];
 
 		constructor() {
 			this.unsubscribe_selected_theme_index = selected_theme_index.subscribe(index => {
@@ -49,7 +49,7 @@
 			}
 		}
 
-		subscribe(run: (value: Theme) => void) {
+		subscribe(run: (value: ITheme) => void) {
 			this.subscribers.push(run);
 
 			// Immediately call the subscriber with the current value if available
@@ -69,7 +69,7 @@
 			};
 		}
 
-		set(value: Theme) {
+		set(value: ITheme) {
 			if (this.current_selected_theme_index !== undefined) {
 				// If it's a default theme (index < default_themes.length), we don't modify it
 				if (this.current_selected_theme_index < default_themes.length) {
@@ -80,13 +80,13 @@
 				// For user themes, update the theme in the user_themes store
 				const user_theme_index = this.current_selected_theme_index - default_themes.length;
 				const current_user_themes = get(user_themes);
-				let updated_user_themes: Theme[] = [...current_user_themes];
+				let updated_user_themes: ITheme[] = [...current_user_themes];
 				updated_user_themes[user_theme_index] = value;
 				user_themes.set(updated_user_themes);
 			}
 		}
 
-		update(updater: (value: Theme) => Theme) {
+		update(updater: (value: ITheme) => ITheme) {
 			if (this.current_themes && this.current_selected_theme_index !== undefined) {
 				const current_theme = this.current_themes[this.current_selected_theme_index];
 				if (current_theme) {

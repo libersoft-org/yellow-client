@@ -28,7 +28,7 @@
 	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
 	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 
-	interface MessageItem {
+	interface IMessageItem {
 		uid: string;
 		type: 'message' | 'loader' | 'hole' | 'unseen_marker' | 'no_messages' | 'initial_loading_placeholder';
 		id?: number;
@@ -45,7 +45,7 @@
 		is_lazyloaded?: boolean;
 	}
 
-	interface LoaderItem extends MessageItem {
+	interface ILoaderItem extends IMessageItem {
 		type: 'loader';
 		base: number;
 		reason: string;
@@ -56,21 +56,21 @@
 		conversation: any;
 	}
 
-	interface HoleItem extends MessageItem {
+	interface IHoleItem extends IMessageItem {
 		type: 'hole';
-		top: LoaderItem;
-		bottom: LoaderItem;
+		top: ILoaderItem;
+		bottom: ILoaderItem;
 	}
 
-	interface UIEvent {
+	interface IUIEvent {
 		type: string;
-		array?: MessageItem[];
-		loaders: LoaderItem[];
+		array?: IMessageItem[];
+		loaders: ILoaderItem[];
 		savedScrollTop?: number;
 		savedScrollHeight?: number;
 		wasScrolledToBottom?: boolean;
 		wasScrolledToBottom2?: boolean;
-		referenced_message?: MessageItem;
+		referenced_message?: IMessageItem;
 	}
 
 	export let conversation: any;
@@ -82,10 +82,10 @@
 	let anchorElement: HTMLDivElement;
 	//let oldLastID: number | null = null;
 	let itemsCount: number = 0;
-	let itemsArray: (MessageItem | LoaderItem | HoleItem)[] = [];
-	let loaders: LoaderItem[] = [];
-	let holes: HoleItem[] = [];
-	let uiEvents: UIEvent[] = [];
+	let itemsArray: (IMessageItem | ILoaderItem | IHoleItem)[] = [];
+	let loaders: ILoaderItem[] = [];
+	let holes: IHoleItem[] = [];
+	let uiEvents: IUIEvent[] = [];
 	let stickersetDetailsModalStickerset: any;
 	let scrolledToBottom: boolean = true;
 	let windowInnerWidth: number;
@@ -177,14 +177,14 @@
 		}
 	});
 
-	function saveScrollPosition(event: UIEvent): void {
+	function saveScrollPosition(event: IUIEvent): void {
 		if (!elMessages) return;
 		event.savedScrollTop = elMessages.scrollTop;
 		event.savedScrollHeight = elMessages.scrollHeight;
 		//console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
 	}
 
-	function restoreScrollPosition(event: UIEvent): void {
+	function restoreScrollPosition(event: IUIEvent): void {
 		//console.log('restoreScrollPosition elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
 		if (event.savedScrollHeight !== undefined && event.savedScrollTop !== undefined) {
 			const scrollDifference = elMessages.scrollHeight - event.savedScrollHeight;
@@ -323,29 +323,29 @@
 		jumped = true;
 	});
 
-	function getLoader(l: Partial<LoaderItem> & { base: number }): LoaderItem {
+	function getLoader(l: Partial<ILoaderItem> & { base: number }): ILoaderItem {
 		loaders = loaders.filter(i => !i.delete_me);
 		for (let i of loaders) {
 			if (i.base === l.base && i.prev === l.prev && i.next === l.next) return i;
 		}
-		const loader: LoaderItem = {
+		const loader: ILoaderItem = {
 			...l,
 			uid: getGuid(),
 			type: 'loader',
 			conversation: conversation,
 			base: l.base,
 			reason: l.reason || '',
-		} as LoaderItem;
+		} as ILoaderItem;
 		loaders.push(loader);
 		return loader;
 	}
 
-	function getHole(top: LoaderItem, bottom: LoaderItem): HoleItem {
+	function getHole(top: ILoaderItem, bottom: ILoaderItem): IHoleItem {
 		let uid = top.uid + '_' + bottom.uid;
 		for (let i of holes) {
 			if (i.uid === uid) return i;
 		}
-		let hole: HoleItem = {
+		let hole: IHoleItem = {
 			type: 'hole' as const,
 			top: top,
 			bottom: bottom,
@@ -368,7 +368,7 @@
 
 	$: log.debug('itemsArray:', itemsArray);
 
-	async function jumpToLazyLoaderFromTop(event: UIEvent): Promise<void> {
+	async function jumpToLazyLoaderFromTop(event: IUIEvent): Promise<void> {
 		//console.log('jumpToLazyLoaderFromTop:', event);
 		let el;
 		for (let l of event.loaders) {
@@ -388,7 +388,7 @@
 		}
 	}
 
-	async function handleEvents(events: UIEvent[]): Promise<void> {
+	async function handleEvents(events: IUIEvent[]): Promise<void> {
 		console.log('handleEvents:', events);
 		if (events.length === 1 && events[0].type === 'properties_update') {
 			console.log('properties_update itemsArray');
@@ -426,7 +426,7 @@
 			}
 			if (messages.length === 0) {
 				console.log('handleEvents: no messages itemsArray');
-				itemsArray = [{ type: 'initial_loading_placeholder', uid: 'initial_loading' } as MessageItem];
+				itemsArray = [{ type: 'initial_loading_placeholder', uid: 'initial_loading' } as IMessageItem];
 				return;
 			}
 			messages = mergeAuthorship(messages);
@@ -439,7 +439,7 @@
 			}
 			// messages are sorted in correct order at this point.
 			// add lazyloaders where there is discontinuity.
-			let items: (MessageItem | LoaderItem | HoleItem)[] = [];
+			let items: (IMessageItem | ILoaderItem | IHoleItem)[] = [];
 			// add a loader at the top if first message is not the first message in the chat
 			if (messages[0].prev !== 'none' && messages[0].id !== undefined) {
 				let l = getLoader({ prev: 10, base: messages[0].id, reason: 'lazyload_prev' });
@@ -456,7 +456,7 @@
 				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.keep_unseen_bar);
 				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)) {
 					//console.log('ADDING-UNSEEN-MARKER');
-					items.push({ type: 'unseen_marker', uid: 'unseen_marker' } as MessageItem);
+					items.push({ type: 'unseen_marker', uid: 'unseen_marker' } as IMessageItem);
 					unseen_marker_put = true;
 				}
 				items.push(m);
@@ -492,8 +492,8 @@
 		}
 	}
 
-	function mergeAuthorship(messages: MessageItem[]): MessageItem[] {
-		let items: MessageItem[] = [];
+	function mergeAuthorship(messages: IMessageItem[]): IMessageItem[] {
+		let items: IMessageItem[] = [];
 		let lastAuthor: string | null = null;
 		for (let i = 0; i < messages.length; i++) {
 			let message = messages[i];
@@ -576,12 +576,12 @@
 
 	// Debug button handlers
 	const handleSaveScrollPosition = () => {
-		const event: UIEvent = { type: 'debug_save', array: [], loaders: [] };
+		const event: IUIEvent = { type: 'debug_save', array: [], loaders: [] };
 		saveScrollPosition(event);
 	};
 
 	const handleRestoreScrollPosition = () => {
-		const event: UIEvent = { type: 'debug_restore', array: [], loaders: [] };
+		const event: IUIEvent = { type: 'debug_restore', array: [], loaders: [] };
 		restoreScrollPosition(event);
 	};
 </script>
