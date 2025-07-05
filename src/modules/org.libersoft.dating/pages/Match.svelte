@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { module } from '../module.ts';
-	import { closePage } from '../dating.ts';
+	import { module } from '../scripts/module.ts';
+	import { closePage } from '../scripts/dating.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';

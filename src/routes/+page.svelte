@@ -24,10 +24,10 @@
 	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
 	import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
 	import '../modules/org.libersoft.messages/module.ts';
-	import '../modules/org.libersoft.contacts/module.ts';
+	import '../modules/org.libersoft.contacts/scripts/module.ts';
 	import '../modules/org.libersoft.wallet/scripts/module.ts';
-	import '../modules/org.libersoft.dating/module.ts';
-	import '../modules/org.libersoft.iframes/module.ts';
+	import '../modules/org.libersoft.dating/scripts/module.ts';
+	import '../modules/org.libersoft.iframes/scripts/module.ts';
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
 	import { initZoom } from '@/core/zoom.ts';

@@ -1,7 +1,7 @@
 import { registerModule } from '@/core/core.ts';
 import { initData } from './contacts.ts';
-import Sidebar from './pages/Main/Sidebar.svelte';
-import Content from './pages/Main/Content.svelte';
+import Sidebar from '../pages/Main/Sidebar.svelte';
+import Content from '../pages/Main/Content.svelte';
 export const module: IModule = {
 	name: 'Contacts',
 	identifier: 'org.libersoft.contacts',

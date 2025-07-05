@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page, setPage } from '../../dating.ts';
+	import { page, setPage } from '../../scripts/dating.ts';
 	import SidebarCategory from '../../components/SidebarCategory.svelte';
 	const sections = [
 		{ id: 'people', img: 'people.svg', label: 'People nearby' },
