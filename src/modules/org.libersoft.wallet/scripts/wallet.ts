@@ -50,16 +50,21 @@ export interface IAddressBookItem {
 	name: string;
 	address: string;
 }
+export interface IStatus {
+	color: 'red' | 'orange' | 'green';
+	text: string;
+}
+
 export const settingsModal = writable<any>();
 export const walletsModal = writable<any>();
-export const status = writable<any>({ color: 'red', text: 'Started.' });
+export const status = writable<IStatus>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);
 export const networks = localStorageSharedStore<INetwork[]>('networks', []);
 export let section = writable<string | null>('balance');
 export let sendAddress = writable<string | number | undefined>();
 const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
 let provider: JsonRpcProvider | null = null;
-let reconnectionTimer;
+let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
 
 networks.subscribe((nets: INetwork[]) => {
 	let modified = false;
@@ -116,14 +121,14 @@ export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens,
 export const addressBook = localStorageSharedStore<IAddressBookItem[]>('addressbook', []);
 
 addressBook.subscribe((value: IAddressBookItem[]) => {
-	let modifyed = false;
+	let modified = false;
 	for (let i of value) {
 		if (!i.guid) {
 			i.guid = getGuid();
-			modifyed = true;
+			modified = true;
 		}
 	}
-	if (modifyed) addressBook.update(v => v);
+	if (modified) addressBook.update(v => v);
 });
 
 wallets.subscribe((wals: IWallet[]) => {
@@ -183,9 +188,7 @@ function resetBalance(): void {
 
 /*
 async function refresh(): Promise<void> {
- if (provider) {
-  await getBalance();
- }
+	if (provider) await getBalance();
 }
 */
 
@@ -203,7 +206,7 @@ selectedWallet.subscribe((value: IWallet | undefined) => {
 function reconnect(): void {
 	provider = null;
 	//console.log('Reconnecting to', get(selectedNetwork));
-	let net = get(selectedNetwork);
+	const net = get(selectedNetwork);
 	if (!net) return;
 	//console.log('wallet RECONNECT');
 	status.set({ color: 'orange', text: 'Connecting to ' + net.name });
@@ -223,11 +226,7 @@ function reconnect(): void {
 }
 
 function sortAddresses(addresses: IAddress[]): IAddress[] {
-	return addresses.sort((a, b) => {
-		if (a.index < b.index) return -1;
-		if (a.index > b.index) return 1;
-		return 0;
-	});
+	return addresses.sort((a, b) => a.index - b.index);
 }
 
 export function addressesMaxIndex(addresses: IAddress[]): number {
@@ -237,7 +236,7 @@ export function addressesMaxIndex(addresses: IAddress[]): number {
 export function addAddress(w: IWallet, index?: number | string, name?: string): void {
 	let indexNum: number;
 	//console.log('addAddress to wallet ', w, index, name);
-	let addresses = w.addresses || [];
+	const addresses = w.addresses || [];
 	sortAddresses(addresses);
 	if (!index) {
 		indexNum = addressesMaxIndex(addresses) + 1;
@@ -247,15 +246,13 @@ export function addAddress(w: IWallet, index?: number | string, name?: string): 
 		if (indexNum < 0 || isNaN(indexNum)) {
 			console.error('Invalid index');
 			return;
-		} else {
-			let existing = addresses.find(a => a.index === indexNum);
-			if (existing) {
-				console.error('Address with index', indexNum, 'already exists');
-			} else {
-				//console.log('Adding address with index', indexNum);
-				doAddAddress(w, addresses, indexNum, name);
-			}
 		}
+		const existing = addresses.find(a => a.index === indexNum);
+		if (existing) {
+			console.error('Address with index', indexNum, 'already exists');
+			return;
+		}
+		doAddAddress(w, addresses, indexNum, name);
 	}
 	sortAddresses(addresses);
 	w.addresses = addresses;
@@ -291,7 +288,7 @@ function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: s
 	let derived_wallet = HDNodeWallet.fromMnemonic(mn, path);
 	let a: IAddress = {
 		address: derived_wallet.address,
-		name: name ? name : 'Address ' + index,
+		name: name || 'Address ' + index,
 		path: path,
 		index: index,
 	};
@@ -424,14 +421,19 @@ export async function getBalance(): Promise<void> {
 
 async function exchangeRates(): Promise<void> {
 	const url = 'https://api.coinbase.com/v2/exchange-rates?currency=USD';
-	//console.log('fetch exchangeRates...', url);
-	const response = await fetch(url);
-	const data = await response.json();
-	//console.log('data:', data);
-	return data['data'];
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data['data'];
+	} catch (error) {
+		console.error('Error fetching exchange rates:', error);
+	}
 }
 
-export async function sendTransaction(address: string, etherValue, etherValueFee, currency): Promise<void> {
+export async function sendTransaction(address: string, etherValue: string, etherValueFee: string, currency: string): Promise<void> {
 	const selectedWalletValue = get(selectedWallet);
 	const selectedAddressValue = get(selectedAddress);
 	if (!selectedWalletValue || !selectedAddressValue) {
@@ -497,9 +499,9 @@ export async function sendTransaction(address: string, etherValue, etherValueFee
 */
 }
 
-export function addNetwork(net): boolean {
+export function addNetwork(net: INetwork): boolean {
 	if (get(networks)?.find(n => n.name === net.name)) return false;
-	let my_net = {
+	const my_net: INetwork = {
 		guid: getGuid(),
 		name: net.name,
 		chainID: net.chainID,
@@ -508,7 +510,8 @@ export function addNetwork(net): boolean {
 			iconURL: net.currency.iconURL,
 		},
 		explorerURL: net.explorerURL,
-		rpcURLs: net.rpcURLs.map(url => url),
+		rpcURLs: net.rpcURLs?.map(url => url),
+		tokens: [],
 	};
 	networks.update(n => {
 		n.push(my_net);
@@ -517,9 +520,9 @@ export function addNetwork(net): boolean {
 	return true;
 }
 
-export function deleteNetwork(net): void {
+export function deleteNetwork(net: INetwork): void {
 	networks.update(n => {
-		return n.filter(n => n !== net);
+		return n.filter(item => item !== net);
 	});
 }
 
