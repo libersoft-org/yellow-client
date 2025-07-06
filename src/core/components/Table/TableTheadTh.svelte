@@ -3,8 +3,9 @@
 	interface Props {
 		children?: Snippet;
 		align?: 'left' | 'center' | 'right';
+		colspan?: number;
 	}
-	const { children, align = 'left' }: Props = $props();
+	const { children, align = 'left', colspan }: Props = $props();
 </script>
 
 <style>
@@ -13,6 +14,6 @@
 	}
 </style>
 
-<th style:text-align={align}>
+<th style:text-align={align} {colspan}>
 	{@render children?.()}
 </th>

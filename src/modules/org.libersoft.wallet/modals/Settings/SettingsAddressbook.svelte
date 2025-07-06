@@ -73,13 +73,9 @@
 			<Tbody>
 				{#each $addressBook as a, index (index + '/' + a.address)}
 					<TbodyTr>
-						<Td title="Name">
-							<b>{a.name}</b>
-						</Td>
-						<Td title="Address" shorten>
-							{a.address}
-						</Td>
-						<Td title="Action">
+						<Td bold>{a.name}</Td>
+						<Td shorten>{a.address}</Td>
+						<Td>
 							<TableActionItems>
 								<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editItemModal(a)} />
 								<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => deleteItemModal(a)} />

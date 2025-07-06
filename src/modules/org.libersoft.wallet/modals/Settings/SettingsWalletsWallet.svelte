@@ -59,7 +59,7 @@
 		<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress()} />
 	</ButtonBar>
 	{#if params?.wallet?.addresses && params.wallet.addresses.length > 0}
-		<Table>
+		<!--<Table>
 			<Thead>
 				<TheadTr>
 					<Th>Index</Th>
@@ -68,22 +68,36 @@
 					<Th>Action</Th>
 				</TheadTr>
 			</Thead>
-			<Tbody>
-				{#each params.wallet.addresses as address}
+			-->
+
+		{#each params.wallet.addresses as address}
+			<Table>
+				<Thead>
+					<TheadTr>
+						<Th colspan="2">{address.name}</Th>
+					</TheadTr>
+				</Thead>
+				<Tbody>
 					<TbodyTr>
-						<Td title="Index">{address.index}</Td>
-						<Td title="Name">{address.name}</Td>
-						<Td title="Address"><Address address={address.address} /></Td>
-						<Td title="Action">
+						<Td bold>Index:</Td>
+						<Td>{address.index}</Td>
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Address:</Td>
+						<Td><Address address={address.address} /></Td>
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Action:</Td>
+						<Td>
 							<TableActionItems>
 								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => editAddress(address.index)} />
 								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5" onClick={() => deleteAddress(address.index)} />
 							</TableActionItems>
 						</Td>
 					</TbodyTr>
-				{/each}
-			</Tbody>
-		</Table>
+				</Tbody>
+			</Table>
+		{/each}
 	{:else}
 		<div class="bold">No addresses found in this wallet.</div>
 	{/if}
