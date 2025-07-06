@@ -37,8 +37,6 @@
 	}
 </style>
 
-<div class="table" class:expand={isWide} class:hide-border={hideBorder} {...restProps}>
-	<table>
-		{@render children?.()}
-	</table>
-</div>
+<table class:expand={isWide} class:hide-border={hideBorder} {...restProps}>
+	{@render children?.()}
+</table>

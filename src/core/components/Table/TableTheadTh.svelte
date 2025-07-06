@@ -3,9 +3,14 @@
 	interface Props {
 		children?: Snippet;
 		align?: 'left' | 'center' | 'right';
-		colspan?: number;
+		colspan?: number | string;
 	}
+	let cs: number | undefined = $state();
 	const { children, align = 'left', colspan }: Props = $props();
+
+	$effect(() => {
+		if (colspan) cs = Number(colspan);
+	});
 </script>
 
 <style>
@@ -14,6 +19,6 @@
 	}
 </style>
 
-<th style:text-align={align} {colspan}>
+<th style:text-align={align} colspan={cs}>
 	{@render children?.()}
 </th>
