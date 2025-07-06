@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardModal, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeModal } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow } from '@/core/e2e/test-utils.js';
 
-import { startNewConversation, openConversation, sendMessage, verifyForwardModalWithPreview, forwardLastMessage, searchConversationsInForwardModal } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
+import { startNewConversation, openConversation, sendMessage, verifyForwardWindowWithPreview, forwardLastMessage, searchConversationsInForwardWindow } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
 
 test('Click around in settings', async ({ page }) => {
 	setupConsoleLogging(page);
 	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
 
-	await closeWelcomeWizardModal(page);
+	await closeWelcomeWizardWindow(page);
 	await openGlobalSettings(page);
 });
 
@@ -66,7 +66,7 @@ test('Message Forwarding Behavior Tests', async ({ page }) => {
 		}
 	});
 
-	await test.step('Test Forward Message Preview and Modal', async () => {
+	await test.step('Test Forward Message Preview and Window', async () => {
 		// Go to conversation with user2
 		await openConversation(page, 'forward_test_user2@example.com');
 
@@ -77,38 +77,38 @@ test('Message Forwarding Behavior Tests', async ({ page }) => {
 		// Forward the message
 		await forwardLastMessage(page);
 
-		// Verify modal opens with correct preview
-		await verifyForwardModalWithPreview(page, messageToForward);
+		// Verify window opens with correct preview
+		await verifyForwardWindowWithPreview(page, messageToForward);
 
-		// Verify modal structure
-		await expect(page.getByTestId('forward-message-modal')).toBeVisible();
+		// Verify window structure
+		await expect(page.getByTestId('forward-message-window')).toBeVisible();
 		await expect(page.getByTestId('forward-message-preview')).toBeVisible();
 		await expect(page.getByTestId('forward-message-preview-header')).toHaveText('Forwarding message:');
 		await expect(page.getByTestId('forward-message-search')).toBeVisible();
 		await expect(page.getByTestId('forward-message-conversations')).toBeVisible();
 
-		// Close modal
-		await closeModal(page, 'forward-message');
+		// Close window
+		await closeWindow(page, 'forward-message');
 	});
 
 	await test.step('Test Conversation Search Functionality', async () => {
 		await forwardLastMessage(page);
 
 		// Test search for user3
-		await searchConversationsInForwardModal(page, 'user3');
+		await searchConversationsInForwardWindow(page, 'user3');
 
 		// Verify that only user3 conversation is visible (if any conversations match)
 		await expect(page.getByTestId('forward-message-conversations')).toBeVisible();
 
 		// Test search with no results
-		await searchConversationsInForwardModal(page, 'nonexistent');
+		await searchConversationsInForwardWindow(page, 'nonexistent');
 		await expect(page.getByTestId('forward-message-no-conversations')).toBeVisible();
 
 		// Clear search
-		await searchConversationsInForwardModal(page, '');
+		await searchConversationsInForwardWindow(page, '');
 
-		// Close modal
-		await closeModal(page, 'forward-message');
+		// Close window
+		await closeWindow(page, 'forward-message');
 	});
 
 	await test.step('Test Auto-Clear Behavior When Forwarding Different Messages', async () => {
@@ -116,26 +116,26 @@ test('Message Forwarding Behavior Tests', async ({ page }) => {
 		const firstMessage = 'First message to forward';
 		await sendMessage(page, firstMessage);
 		await forwardLastMessage(page);
-		await verifyForwardModalWithPreview(page, firstMessage);
+		await verifyForwardWindowWithPreview(page, firstMessage);
 
 		// Note: In a real test with actual conversation IDs, we would:
 		// 1. Forward to a conversation and verify it shows "Sent"
-		// 2. Close modal, send new message, forward it
+		// 2. Close window, send new message, forward it
 		// 3. Verify the same conversation now shows "Send" again (auto-cleared)
 
-		// For now, we'll verify the modal works with different messages
-		await closeModal(page, 'forward-message');
+		// For now, we'll verify the window works with different messages
+		await closeWindow(page, 'forward-message');
 
 		// Send second message
 		const secondMessage = 'Second message to forward';
 		await sendMessage(page, secondMessage);
 		await forwardLastMessage(page);
-		await verifyForwardModalWithPreview(page, secondMessage);
+		await verifyForwardWindowWithPreview(page, secondMessage);
 
 		// Verify it's showing the new message, not the old one
 		//await expect(page.getByTestId('forward-message-preview-content')).toContainText(secondMessage);
 		//await expect(page.getByTestId('forward-message-preview-content')).not.toContainText(firstMessage);
 
-		await closeModal(page, 'forward-message');
+		await closeWindow(page, 'forward-message');
 	});
 });

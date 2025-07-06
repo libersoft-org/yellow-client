@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type Snippet, tick } from 'svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -23,11 +23,11 @@
 		focus?: boolean;
 	}
 	let { data, width }: Props = $props();
-	let elModal: Modal;
+	let elWindow: Window;
 	let buttonElements: (Button | undefined)[] = [];
 
 	export async function open() {
-		elModal?.open();
+		elWindow?.open();
 		await tick();
 		await tick();
 		const focusButton = data?.buttons?.find(button => button.focus);
@@ -40,7 +40,7 @@
 	}
 
 	export function close() {
-		elModal?.close();
+		elWindow?.close();
 	}
 </script>
 
@@ -52,7 +52,7 @@
 	}
 </style>
 
-<Modal title={data?.title} {width} bind:this={elModal}>
+<Window title={data?.title} {width} bind:this={elWindow}>
 	{#snippet top()}
 		<div class="top">
 			{#if data?.icon}
@@ -78,4 +78,4 @@
 			</ButtonBar>
 		{/if}
 	{/snippet}
-</Modal>
+</Window>

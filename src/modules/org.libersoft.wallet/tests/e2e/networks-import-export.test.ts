@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.js';
-import { switchModule, closeModal, expectErrorMessage } from '@/lib/test-utils/e2e-helpers.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow } from '@/core/e2e/test-utils.js';
+import { switchModule, closeWindow, expectErrorMessage } from '@/lib/test-utils/e2e-helpers.js';
 
 test.describe.parallel('Networks Import/Export Functionality', () => {
 	test.beforeEach(async ({ page }) => {
@@ -13,8 +13,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		// Wait for the page to be ready
 		await page.waitForLoadState('networkidle');
 
-		// Close the wizard modal if it appears
-		await closeWelcomeWizardModal(page);
+		// Close the wizard window if it appears
+		await closeWelcomeWizardWindow(page);
 
 		// Wait for module bar to be visible before switching
 		await page.getByTestId(`ModuleBarItem-org.libersoft.wallet`).waitFor({ state: 'visible' });
@@ -26,14 +26,14 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 	test.describe('JSON Import Tests', () => {
 		test('Successfully import valid networks using Add networks', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const validJson = JSON.stringify(validNetworkConfigs);
 			await fillNetworksImportData(page, validJson);
 			await clickAddNetworks(page);
 
-			// Should close modal automatically on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			// Should close window automatically on success
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify networks were added by checking the network list
 			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
@@ -43,13 +43,13 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		test('Successfully replace all networks using Replace All', async ({ page }) => {
 			// First add some networks
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Now replace them
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			const replacementNetwork = [
 				{
 					guid: 'replacement-network',
@@ -68,8 +68,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await clickReplaceAllNetworks(page);
 			await confirmReplaceNetworksDialog(page);
 
-			// Should close modal automatically on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			// Should close window automatically on success
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify old networks are gone and new network is present
 			await expect(page.getByTestId('network-name@Test Network 1')).not.toBeVisible();
@@ -79,14 +79,14 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		test('Import networks with complex unicode and special characters', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const complexJson = JSON.stringify(complexNetworkConfig);
 			await fillNetworksImportData(page, complexJson);
 			await clickAddNetworks(page);
 
-			// Should close modal automatically on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			// Should close window automatically on success
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify complex network was added
 			await expect(page.getByTestId('network-name@Test Network with Üñíçødé 测试')).toBeVisible();
@@ -94,7 +94,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		test('Reject invalid JSON format', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const invalidJson = '{ invalid json format }';
 			await fillNetworksImportData(page, invalidJson);
@@ -105,7 +105,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		test('Reject non-array data', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const nonArrayJson = JSON.stringify({ notAnArray: true });
 			await fillNetworksImportData(page, nonArrayJson);
@@ -116,7 +116,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		test('Reject empty array', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const emptyArrayJson = JSON.stringify([]);
 			await fillNetworksImportData(page, emptyArrayJson);
@@ -128,13 +128,13 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		test('Handle duplicate networks during Add networks - Replace Existing', async ({ page }) => {
 			// First, add a network
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(0, 1)));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Now try to import a network with the same name
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			const duplicateNetwork = [
 				{
 					guid: 'duplicate-network',
@@ -158,8 +158,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			// Test "Replace Existing" option
 			await page.getByRole('button', { name: 'Replace Existing' }).click();
 
-			// Modal should close on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			// Window should close on success
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify the network was replaced (check for the new chainID or symbol)
 			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
@@ -168,13 +168,13 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		test('Handle duplicate networks - Import with Modified Name', async ({ page }) => {
 			// First, add a network
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(0, 1)));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Now try to import a network with the same name
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			const duplicateNetwork = [
 				{
 					guid: 'duplicate-network-2',
@@ -198,8 +198,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			// Test "Import with Modified Name" option
 			await page.getByRole('button', { name: 'Import with Modified Name' }).click();
 
-			// Modal should close on success
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			// Window should close on success
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify both networks exist - original and one with modified name
 			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
@@ -209,13 +209,13 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		test('Handle duplicate networks - Skip This Network', async ({ page }) => {
 			// First, add a network
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(0, 1)));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Now try to import the same network again
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			const duplicateNetwork = [
 				{
 					guid: 'duplicate-network-skip',
@@ -245,7 +245,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		test('Validate network data structure - missing name', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const invalidNetwork = [
 				{
@@ -269,7 +269,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		test('Validate network data structure - missing chainID', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const invalidNetwork = [
 				{
@@ -293,7 +293,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		test('Validate network data structure - missing rpcURLs', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const invalidNetwork = [
 				{
@@ -317,7 +317,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		test('Validate network data structure - missing currency', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 
 			const invalidNetwork = [
 				{
@@ -341,16 +341,16 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		test('Export networks to JSON format', async ({ page }) => {
 			// Add some networks first
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			const validJson = JSON.stringify(validNetworkConfigs);
 			await fillNetworksImportData(page, validJson);
 			await clickAddNetworks(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Now test export
-			await openNetworksExportModal(page);
+			await openNetworksExportWindow(page);
 
 			// Should be on JSON tab by default
 			const exportedContent = await getExportedNetworksJSON(page);
@@ -370,16 +370,16 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		test('Export complex networks with unicode characters', async ({ page }) => {
 			// Import complex network first
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			const complexJson = JSON.stringify(complexNetworkConfig);
 			await fillNetworksImportData(page, complexJson);
 			await clickAddNetworks(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Export and verify
-			await openNetworksExportModal(page);
+			await openNetworksExportWindow(page);
 			const exportedContent = await getExportedNetworksJSON(page);
 			const parsedContent = JSON.parse(exportedContent);
 
@@ -396,7 +396,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 	test.describe('QR Code Export Tests', () => {
 		test('Generate QR code for network export', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksExportModal(page);
+			await openNetworksExportWindow(page);
 			await switchToQRExportTab(page);
 
 			// Should show security warning initially
@@ -429,7 +429,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await switchToQRImportTab(page);
 
 			// Should show scanner interface
@@ -460,7 +460,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await switchToQRImportTab(page);
 
 			// Should see camera interface
@@ -474,8 +474,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			// Import the data
 			await page.getByTestId('networks-add-btn').click();
 
-			// Should close modal and show imported network
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			// Should close window and show imported network
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 			await expect(page.getByTestId('network-name@QR Scanned Network')).toBeVisible();
 		});
 	});
@@ -503,12 +503,12 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			}));
 
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(veryLargeArray));
 			await clickAddNetworks(page);
 
 			// Should succeed for reasonable number of networks
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify some networks were imported
 			await expect(page.getByTestId('network-name@Bulk Network 0')).toBeVisible();
@@ -517,13 +517,13 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		test('Cancel replace operation', async ({ page }) => {
 			// First add a network
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(0, 1)));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Try to replace
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs.slice(1, 2)));
 			await clickReplaceAllNetworks(page);
 
@@ -531,17 +531,17 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await page.getByTestId('cancel-replace-btn').click();
 
 			// Original network should still exist
-			await closeModal(page, 'wallet-settings-networks-import');
+			await closeWindow(page, 'wallet-settings-networks-import');
 			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
 		});
 
-		test('Modal close behavior during operations', async ({ page }) => {
+		test('Window close behavior during operations', async ({ page }) => {
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs));
 
-			// Close modal without performing any action
-			await closeModal(page, 'wallet-settings-networks-import');
+			// Close window without performing any action
+			await closeWindow(page, 'wallet-settings-networks-import');
 
 			// Should return to networks management without changes
 			await expect(page.getByTestId('network-name@Test Network 1')).not.toBeVisible();
@@ -550,15 +550,15 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		test('Import/Export cycle consistency', async ({ page }) => {
 			// Import networks
 			await goToNetworksManagement(page);
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs));
 			await clickAddNetworks(page);
-			await expect(page.getByTestId('networks-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Export networks
-			await openNetworksExportModal(page);
+			await openNetworksExportWindow(page);
 			const exportedContent = await getExportedNetworksJSON(page);
-			await closeModal(page, 'wallet-settings-networks-export');
+			await closeWindow(page, 'wallet-settings-networks-export');
 
 			// Replace with one minimal network
 			const minimalNetwork = [
@@ -575,13 +575,13 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 				},
 			];
 
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(minimalNetwork));
 			await clickReplaceAllNetworks(page);
 			await confirmReplaceNetworksDialog(page);
 
 			// Import the exported content back
-			await openNetworksImportModal(page);
+			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, exportedContent);
 			await clickReplaceAllNetworks(page);
 			await confirmReplaceNetworksDialog(page);
@@ -600,39 +600,39 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 async function goToNetworksManagement(page: Page): Promise<void> {
 	return await test.step('Go to networks management', async () => {
 		// The wallet module should already be selected from beforeEach
-		// Click on the network dropdown to open "Select your network" modal
+		// Click on the network dropdown to open "Select your network" window
 		await page.getByText('--- Select your network ---').click();
 
-		// Wait for the modal to appear and click "Manage networks" button
+		// Wait for the window to appear and click "Manage networks" button
 		await page.getByRole('button', { name: 'Manage networks' }).click();
 
-		// Wait for the networks management modal to be visible
+		// Wait for the networks management window to be visible
 		await page.getByTestId('networks-import-btn').waitFor({ state: 'visible' });
 	});
 }
 
 /**
- * Helper function to open networks import modal
+ * Helper function to open networks import window
  * @param page - The Playwright page object
  */
-async function openNetworksImportModal(page: Page): Promise<void> {
-	return await test.step('Open networks import modal', async () => {
+async function openNetworksImportWindow(page: Page): Promise<void> {
+	return await test.step('Open networks import window', async () => {
 		await page.getByTestId('networks-import-btn').click();
 	});
 }
 
 /**
- * Helper function to open networks export modal
+ * Helper function to open networks export window
  * @param page - The Playwright page object
  */
-async function openNetworksExportModal(page: Page): Promise<void> {
-	return await test.step('Open networks export modal', async () => {
+async function openNetworksExportWindow(page: Page): Promise<void> {
+	return await test.step('Open networks export window', async () => {
 		await page.getByTestId('networks-export-btn').click();
 	});
 }
 
 /**
- * Helper function to switch to QR code tab in import modal
+ * Helper function to switch to QR code tab in import window
  * @param page - The Playwright page object
  */
 async function switchToQRImportTab(page: Page): Promise<void> {
@@ -642,7 +642,7 @@ async function switchToQRImportTab(page: Page): Promise<void> {
 }
 
 /**
- * Helper function to switch to QR code tab in export modal
+ * Helper function to switch to QR code tab in export window
  * @param page - The Playwright page object
  */
 async function switchToQRExportTab(page: Page): Promise<void> {

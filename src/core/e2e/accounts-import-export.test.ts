@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 
-// todo: unify
-import { closeWelcomeWizardModal, setupConsoleLogging } from '@/core/e2e/test-utils.js';
-import { closeModal } from '$lib/test-utils/e2e-helpers.js';
+// TODO: unify
+import { closeWelcomeWizardWindow, setupConsoleLogging } from '@/core/e2e/test-utils.js';
+import { closeWindow } from '$lib/test-utils/e2e-helpers.js';
 
 /**
  * Valid account configurations for testing
@@ -74,14 +74,14 @@ test.describe.parallel('Accounts Import/Export', () => {
 	test.describe('JSON Import Tests', () => {
 		test('Import valid accounts using Add accounts', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 
 			const validJson = JSON.stringify(validAccountConfigs);
 			await fillImportData(page, validJson);
 			await clickAddAccounts(page);
 
-			// Should close modal automatically on success
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			// Should close window automatically on success
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Verify accounts were added by checking the account list
 			await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
@@ -90,15 +90,15 @@ test.describe.parallel('Accounts Import/Export', () => {
 
 		test('Replace all accounts using Replace All', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 
 			const validJson = JSON.stringify(validAccountConfigs);
 			await fillImportData(page, validJson);
 			await clickReplaceAll(page);
 			await confirmReplaceDialog(page);
 
-			// Should close modal automatically on success
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			// Should close window automatically on success
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Verify old account is gone and new accounts are present
 			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).not.toBeVisible();
@@ -108,14 +108,14 @@ test.describe.parallel('Accounts Import/Export', () => {
 
 		test('Import accounts with complex unicode and special characters', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 
 			const complexJson = JSON.stringify(complexAccountConfig);
 			await fillImportData(page, complexJson);
 			await clickAddAccounts(page);
 
-			// Should close modal automatically on success
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			// Should close window automatically on success
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Verify complex account was added
 			await expect(page.getByTestId('account-address@user+tag@münchen.example.com@wss://тест.example.com:8084')).toBeVisible();
@@ -123,7 +123,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 
 		test('Reject invalid JSON format', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 
 			const invalidJson = '{ invalid json format }';
 			await fillImportData(page, invalidJson);
@@ -134,7 +134,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 
 		test('Reject non-array data', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 
 			const nonArrayJson = JSON.stringify({ notAnArray: true });
 			await fillImportData(page, nonArrayJson);
@@ -145,7 +145,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 
 		test('Reject empty array', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 
 			const emptyArrayJson = JSON.stringify([]);
 			await fillImportData(page, emptyArrayJson);
@@ -164,7 +164,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			await page.getByTestId('add').click();
 
 			// Now try to import the same account
-			await openImportModal(page);
+			await openImportWindow(page);
 			const duplicateAccount = [
 				{
 					id: 'duplicate-account',
@@ -188,8 +188,8 @@ test.describe.parallel('Accounts Import/Export', () => {
 			// Test "Replace Existing" option
 			await page.getByRole('button', { name: 'Replace Existing' }).click();
 
-			// Modal should close on success
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			// Window should close on success
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Verify the account was replaced
 			await expect(page.getByTestId('account-address@duplicate@example.com@ws://localhost:8084')).toBeVisible();
@@ -205,7 +205,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			await page.getByTestId('add').click();
 
 			// Now try to import the same account
-			await openImportModal(page);
+			await openImportWindow(page);
 			const duplicateAccount = [
 				{
 					id: 'skip-account',
@@ -238,16 +238,16 @@ test.describe.parallel('Accounts Import/Export', () => {
 		test('Export accounts to JSON format', async ({ page }) => {
 			// Add some accounts first
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			const validJson = JSON.stringify(validAccountConfigs);
 			await fillImportData(page, validJson);
 			await clickAddAccounts(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Now test export
-			await openExportModal(page);
+			await openExportWindow(page);
 
 			// Should be on JSON tab by default
 			const exportedContent = await getExportedJSON(page);
@@ -270,7 +270,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			test.skip(browserName === 'firefox', 'Clipboard permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Clipboard not available in Mobile Safari');
 			await goToAccountManagement(page);
-			await openExportModal(page);
+			await openExportWindow(page);
 
 			// Test copy functionality
 			const clipboardContent = await clickCopyAndVerify(page);
@@ -283,7 +283,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 
 		test('Download exported JSON as file', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openExportModal(page);
+			await openExportWindow(page);
 
 			// Set up download handler
 			const downloadPromise = page.waitForEvent('download');
@@ -302,16 +302,16 @@ test.describe.parallel('Accounts Import/Export', () => {
 		test('Export complex accounts with unicode characters', async ({ page }) => {
 			// Import complex account first
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			const complexJson = JSON.stringify(complexAccountConfig);
 			await fillImportData(page, complexJson);
 			await clickAddAccounts(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Export and verify
-			await openExportModal(page);
+			await openExportWindow(page);
 			const exportedContent = await getExportedJSON(page);
 			const parsedContent = JSON.parse(exportedContent);
 
@@ -327,7 +327,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 	test.describe('QR Code Export Tests', () => {
 		test('Generate QR code for account export', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openExportModal(page);
+			await openExportWindow(page);
 			await switchToQRExportTab(page);
 
 			// Should show security warning initially
@@ -372,15 +372,15 @@ test.describe.parallel('Accounts Import/Export', () => {
 			}));
 
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await fillImportData(page, JSON.stringify(largeAccountsArray));
 			await clickAddAccounts(page);
 
 			// Wait for import to complete
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Try to export as QR code
-			await openExportModal(page);
+			await openExportWindow(page);
 			await switchToQRExportTab(page);
 
 			// Should show error for data too large for QR code
@@ -400,7 +400,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await switchToQRImportTab(page);
 
 			// Should show scanner interface
@@ -417,7 +417,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await switchToQRImportTab(page);
 
 			// Should see camera interface (fake camera should work now)
@@ -452,7 +452,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await switchToQRImportTab(page);
 
 			// Should see camera interface (fake camera should work now)
@@ -467,8 +467,8 @@ test.describe.parallel('Accounts Import/Export', () => {
 			// Import the data
 			await page.getByTestId('accounts-add-btn').click();
 
-			// Should close modal and show imported account
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			// Should close window and show imported account
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 			await expect(page.getByTestId('account-address@qr-scan@example.com@ws://localhost:8084')).toBeVisible();
 		});
 
@@ -484,7 +484,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await switchToQRImportTab(page);
 
 			// Should see camera interface working
@@ -513,7 +513,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await switchToQRImportTab(page);
 
 			// Should see camera interface working
@@ -547,12 +547,12 @@ test.describe.parallel('Accounts Import/Export', () => {
 			}));
 
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await fillImportData(page, JSON.stringify(veryLargeArray));
 			await clickAddAccounts(page);
 
 			// Should succeed for reasonable number of accounts
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Verify some accounts were imported
 			await expect(page.getByTestId('account-address@user0@domain0.example.com@ws://server0.example.com:8084')).toBeVisible();
@@ -599,7 +599,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 			];
 
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await fillImportData(page, JSON.stringify(malformedAccounts));
 			await clickAddAccounts(page);
 
@@ -610,7 +610,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 
 		test('Cancel replace operation', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await fillImportData(page, JSON.stringify(validAccountConfigs));
 			await clickReplaceAll(page);
 
@@ -618,17 +618,17 @@ test.describe.parallel('Accounts Import/Export', () => {
 			await page.getByTestId('cancel-replace-btn').click();
 
 			// Original account should still exist
-			await closeModal(page, 'accounts-import');
+			await closeWindow(page, 'accounts-import');
 			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
 		});
 
-		test('Modal close behavior during operations', async ({ page }) => {
+		test('Window close behavior during operations', async ({ page }) => {
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await fillImportData(page, JSON.stringify(validAccountConfigs));
 
-			// Close modal without performing any action
-			await closeModal(page, 'accounts-import');
+			// Close window without performing any action
+			await closeWindow(page, 'accounts-import');
 
 			// Should return to account management without changes
 			await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
@@ -638,15 +638,15 @@ test.describe.parallel('Accounts Import/Export', () => {
 		test('Import/Export cycle consistency', async ({ page }) => {
 			// Import accounts
 			await goToAccountManagement(page);
-			await openImportModal(page);
+			await openImportWindow(page);
 			await fillImportData(page, JSON.stringify(validAccountConfigs));
 			await clickAddAccounts(page);
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 			// Export accounts
-			await openExportModal(page);
+			await openExportWindow(page);
 			const exportedContent = await getExportedJSON(page);
-			await closeModal(page, 'accounts-export');
+			await closeWindow(page, 'accounts-export');
 
 			// Replace with just one minimal account
 			const minimalAccount = [
@@ -662,13 +662,13 @@ test.describe.parallel('Accounts Import/Export', () => {
 				},
 			];
 
-			await openImportModal(page);
+			await openImportWindow(page);
 			await fillImportData(page, JSON.stringify(minimalAccount));
 			await clickReplaceAll(page);
 			await confirmReplaceDialog(page);
 
 			// Import the exported content back
-			await openImportModal(page);
+			await openImportWindow(page);
 			await fillImportData(page, exportedContent);
 			await clickReplaceAll(page);
 			await confirmReplaceDialog(page);
@@ -693,27 +693,27 @@ async function goToAccountManagement(page: Page): Promise<void> {
 }
 
 /**
- * Helper function to open accounts import modal
+ * Helper function to open accounts import window
  * @param page - The Playwright page object
  */
-async function openImportModal(page: Page): Promise<void> {
-	return await test.step('Open accounts import modal', async () => {
+async function openImportWindow(page: Page): Promise<void> {
+	return await test.step('Open accounts import window', async () => {
 		await page.getByTestId('accounts-import-button').click();
 	});
 }
 
 /**
- * Helper function to open accounts export modal
+ * Helper function to open accounts export window
  * @param page - The Playwright page object
  */
-async function openExportModal(page: Page): Promise<void> {
-	return await test.step('Open accounts export modal', async () => {
+async function openExportWindow(page: Page): Promise<void> {
+	return await test.step('Open accounts export window', async () => {
 		await page.getByTestId('accounts-export-button').click();
 	});
 }
 
 /**
- * Helper function to switch to QR code tab in import modal
+ * Helper function to switch to QR code tab in import window
  * @param page - The Playwright page object
  */
 async function switchToQRImportTab(page: Page): Promise<void> {
@@ -723,7 +723,7 @@ async function switchToQRImportTab(page: Page): Promise<void> {
 }
 
 /**
- * Helper function to switch to QR code tab in export modal
+ * Helper function to switch to QR code tab in export window
  * @param page - The Playwright page object
  */
 async function switchToQRExportTab(page: Page): Promise<void> {

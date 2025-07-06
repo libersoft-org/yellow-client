@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow } from '@/core/e2e/test-utils.js';
 
 /**
  * Valid account configurations for testing
@@ -47,14 +47,14 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Successfully import valid accounts using Add accounts', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const validJson = JSON.stringify(validAccountConfigs);
 		await fillImportData(page, validJson);
 		await clickAddAccounts(page);
 
-		// Should close modal automatically on success
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+		// Should close window automatically on success
+		await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 		// Verify accounts were added by checking the account list
 		await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).toBeVisible();
@@ -63,15 +63,15 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Successfully replace all accounts using Replace All', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const validJson = JSON.stringify(validAccountConfigs);
 		await fillImportData(page, validJson);
 		await clickReplaceAll(page);
 		await confirmReplaceDialog(page);
 
-		// Should close modal automatically on success
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+		// Should close window automatically on success
+		await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 		// Verify old account is gone and new accounts are present
 		await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).not.toBeVisible();
@@ -81,7 +81,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Reject invalid JSON format', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const invalidJson = '{ invalid json format }';
 		await fillImportData(page, invalidJson);
@@ -92,7 +92,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Reject non-array data', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const nonArrayJson = JSON.stringify({ notAnArray: true });
 		await fillImportData(page, nonArrayJson);
@@ -103,7 +103,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Reject empty array', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const emptyArrayJson = JSON.stringify([]);
 		await fillImportData(page, emptyArrayJson);
@@ -114,7 +114,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Reject accounts missing required fields', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const invalidAccounts = [
 			{
@@ -139,7 +139,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Reject accounts with invalid credential fields', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const invalidAccounts = [
 			{
@@ -173,7 +173,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Reject accounts with non-string password', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const invalidAccounts = [
 			{
@@ -197,7 +197,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Handle mix of valid and invalid accounts - show detailed error', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const mixedAccounts = [
 			validAccountConfigs[0], // Valid
@@ -237,7 +237,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 		await page.getByTestId('add').click();
 
 		// Now try to import the same account
-		await openImportModal(page);
+		await openImportWindow(page);
 		const duplicateAccount = [
 			{
 				id: 'duplicate-account',
@@ -264,9 +264,9 @@ test.describe.parallel('Accounts Import Functionality', () => {
 		// Wait a bit for any async operations
 		await page.waitForTimeout(1000);
 
-		// Check if modal is still visible
-		const modalVisible = await page.getByTestId('accounts-import-Modal').isVisible();
-		//console.log('Modal still visible after skip:', modalVisible);
+		// Check if window is still visible
+		const windowVisible = await page.getByTestId('accounts-import-Window').isVisible();
+		//console.log('Window still visible after skip:', windowVisible);
 
 		// Should show error that no accounts were imported
 		await expectErrorMessage(page, 'No accounts were imported');
@@ -282,7 +282,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 		await page.getByTestId('add').click();
 
 		// Now try to import the same account with different settings
-		await openImportModal(page);
+		await openImportWindow(page);
 		const replaceAccount = [
 			{
 				id: 'replace-account',
@@ -306,8 +306,8 @@ test.describe.parallel('Accounts Import Functionality', () => {
 		// Test "Replace existing" option
 		await page.getByTestId('replace-existing-btn').click();
 
-		// Modal should close on success
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+		// Window should close on success
+		await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 		// Verify the account was replaced (should show updated settings)
 		await expect(page.getByTestId('account-address@replace@example.com@ws://localhost:8084')).toBeVisible();
@@ -315,7 +315,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Replace All with invalid JSON shows proper error', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const invalidJson = '{ broken json';
 		await fillImportData(page, invalidJson);
@@ -326,7 +326,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Replace All with invalid account data shows proper error', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const invalidAccounts = [
 			{
@@ -350,7 +350,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 
 	test('Cancel Replace All dialog', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const validJson = JSON.stringify(validAccountConfigs);
 		await fillImportData(page, validJson);
@@ -360,14 +360,14 @@ test.describe.parallel('Accounts Import Functionality', () => {
 		await page.getByTestId('cancel-replace-btn').click();
 
 		// Verify original account still exists
-		await closeImportModal(page);
+		await closeImportWindow(page);
 		await expect(page.getByTestId(`account-address@initial@example.com@${serverUrl}`)).toBeVisible();
 		await expect(page.getByTestId('account-address@test1@example.com@ws://localhost:8084')).not.toBeVisible();
 	});
 
 	test('Import accounts with special characters and edge cases', async ({ page }) => {
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 
 		const specialAccounts = [
 			{
@@ -389,8 +389,8 @@ test.describe.parallel('Accounts Import Functionality', () => {
 		await fillImportData(page, specialJson);
 		await clickAddAccounts(page);
 
-		// Should close modal automatically on success
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+		// Should close window automatically on success
+		await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 
 		// Verify account was added
 		await expect(page.getByTestId('account-address@user+tag@münchen.example.com@wss://тест.example.com:8084')).toBeVisible();
@@ -409,11 +409,11 @@ async function goToAccountManagement(page: Page): Promise<void> {
 }
 
 /**
- * Helper function to open accounts import modal
+ * Helper function to open accounts import window
  * @param page - The Playwright page object
  */
-async function openImportModal(page: Page): Promise<void> {
-	return await test.step('Open accounts import modal', async () => {
+async function openImportWindow(page: Page): Promise<void> {
+	return await test.step('Open accounts import window', async () => {
 		await page.getByRole('button', { name: 'Import' }).click();
 	});
 }
@@ -460,11 +460,11 @@ async function confirmReplaceDialog(page: Page): Promise<void> {
 }
 
 /**
- * Helper function to close the import modal
+ * Helper function to close the import window
  * @param page - The Playwright page object
  */
-async function closeImportModal(page: Page): Promise<void> {
-	return await test.step('Close import modal', async () => {
+async function closeImportWindow(page: Page): Promise<void> {
+	return await test.step('Close import window', async () => {
 		await page.getByRole('button', { name: 'X', exact: true }).click();
 	});
 }

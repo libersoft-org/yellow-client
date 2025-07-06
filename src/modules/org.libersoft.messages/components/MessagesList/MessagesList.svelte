@@ -15,18 +15,18 @@
 	import { debug } from '@/core/scripts/stores.ts';
 	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
 	import { log } from '@/core/scripts/tauri.ts';
-	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
-	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+	import { windowForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import resize from '@/core/actions/resizeObserver.ts';
 	import Message from '@/org.libersoft.messages/components/Message/Message.svelte';
 	import MessageLoader from '@/org.libersoft.messages/components/MessageLoader/MessageLoader.svelte';
 	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
-	import ModalStickersetDetails from '@/org.libersoft.messages/modals/ModalStickersetDetails.svelte';
-	import ModalForwardMessage from '@/org.libersoft.messages/modals/ForwardMessage.svelte';
+	import WindowStickersetDetails from '@/org.libersoft.messages/windows/WindowStickersetDetails.svelte';
+	import WindowForwardMessage from '@/org.libersoft.messages/windows/ForwardMessage.svelte';
 	interface IMessageItem {
 		uid: string;
 		type: 'message' | 'loader' | 'hole' | 'unseen_marker' | 'no_messages' | 'initial_loading_placeholder';
@@ -77,7 +77,7 @@
 	let scrollButtonVisible: boolean = true;
 	let elMessages: HTMLDivElement;
 	let elUnseenMarker: HTMLDivElement;
-	let elModalStickersetDetails: any;
+	let elWindowStickersetDetails: any;
 	let anchorElement: HTMLDivElement;
 	//let oldLastID: number | null = null;
 	let itemsCount: number = 0;
@@ -85,7 +85,7 @@
 	let loaders: ILoaderItem[] = [];
 	let holes: IHoleItem[] = [];
 	let uiEvents: IUIEvent[] = [];
-	let stickersetDetailsModalStickerset: any;
+	let stickersetDetailsWindowStickerset: any;
 	let scrolledToBottom: boolean = true;
 	let windowInnerWidth: number;
 	let windowInnerHeight: number;
@@ -97,16 +97,16 @@
 	let scrolledToBottom0: boolean = false;
 	let scrolledToBottom1: boolean = false;
 	let wrapperWidth: number | null = null;
-	let elModalForwardMessage: any;
-	$: modalForwardMessageStore.set(elModalForwardMessage);
+	let elWindowForwardMessage: any;
+	$: windowForwardMessageStore.set(elWindowForwardMessage);
 
 	let {
-		setFileUploadModal,
-		fileUploadModalFiles,
+		setFileUploadWindow,
+		fileUploadWindowFiles,
 	}: {
-		setFileUploadModal: (show: boolean) => void;
-		fileUploadModalFiles: any;
-	} = getContext('FileUploadModal');
+		setFileUploadWindow: (show: boolean) => void;
+		fileUploadWindowFiles: any;
+	} = getContext('FileUploadWindow');
 
 	$: scrollButtonVisible = !scrolledToBottom;
 	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
@@ -159,13 +159,13 @@
  }
  */
 
-	function openStickersetDetailsModal(stickerset: any): void {
-		stickersetDetailsModalStickerset = stickerset;
-		//console.log('openStickersetDetailsModal:', stickerset);
-		elModalStickersetDetails?.open();
+	function openStickersetDetailsWindow(stickerset: any): void {
+		stickersetDetailsWindowStickerset = stickerset;
+		//console.log('openStickersetDetailsWindow:', stickerset);
+		elWindowStickersetDetails?.open();
 	}
 
-	setContext('openStickersetDetailsModal', openStickersetDetailsModal);
+	setContext('openStickersetDetailsWindow', openStickersetDetailsWindow);
 
 	events.subscribe(e => {
 		if (e?.length) {
@@ -548,9 +548,9 @@
 			}
 		}
 		if (!isDraggingFiles) return;
-		// show overlay only if file upload modal is not shown
-		// but if user drops files to conversation it will still add them to the upload modal
-		if (!get(modalFileUploadStore)?.isOpen() && !showFileDndOverlay) showFileDndOverlay = true;
+		// show overlay only if file upload window is not shown
+		// but if user drops files to conversation it will still add them to the upload window
+		if (!get(windowFileUploadStore)?.isOpen() && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
 	function onDragLeave(e: DragEvent): void {
@@ -564,8 +564,8 @@
 		e.stopPropagation();
 		if (!e.dataTransfer || e.dataTransfer.files.length === 0) return;
 		showFileDndOverlay = false;
-		setFileUploadModal(true);
-		$fileUploadModalFiles = [...$fileUploadModalFiles, ...Array.from(e.dataTransfer.files)];
+		setFileUploadWindow(true);
+		$fileUploadWindowFiles = [...$fileUploadWindowFiles, ...Array.from(e.dataTransfer.files)];
 	}
 
 	const onResize = (entry: ResizeObserverEntry): void => {
@@ -721,7 +721,7 @@
 		<Button text="Save scroll position" onClick={handleSaveScrollPosition} />
 		<Button text="Restore scroll position" onClick={handleRestoreScrollPosition} />
 		<Button text="GC" onClick={gc} />
-		{#if false}<Button text="Show debug modal" onClick={() => null} />{/if}
+		{#if false}<Button text="Show debug window" onClick={() => null} />{/if}
 		<div>items count: {itemsCount}</div>
 		<div>messagesHeight: {messagesHeight}</div>
 		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
@@ -779,5 +779,5 @@
 	{/if}
 </div>
 
-<Modal bind:this={elModalStickersetDetails} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:this={elModalForwardMessage} testId="forward-message" title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />
+<Window bind:this={elWindowStickersetDetails} title="Sticker set" body={WindowStickersetDetails} params={{ stickersetDetailsWindowStickerset }} width="448px" height="390px" />
+<Window bind:this={elWindowForwardMessage} testId="forward-message" title="Forward message" body={WindowForwardMessage} width="448px" height="390px" />

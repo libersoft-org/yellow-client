@@ -4,7 +4,7 @@
 	import { BROWSER } from '@/core/scripts/tauri.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import MenuItem from '@/core/components/Menu/MenuItem.svelte';
-	import Settings from '@/core/modals/Settings/Settings.svelte';
+	import Settings from '@/core/windows/Settings/Settings.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import DialogExit from '@/core/dialogs/Exit.svelte';

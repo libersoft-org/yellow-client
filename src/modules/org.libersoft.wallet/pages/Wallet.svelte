@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { module } from '../scripts/module.ts';
-	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsModal, walletsModal } from '../scripts/wallet.ts';
+	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsWindow, walletsWindow } from '../scripts/wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -8,16 +8,16 @@
 	import Dropdown from '../components/Dropdown.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-	import Settings from '../modals/Settings/Settings.svelte';
+	import Settings from '../windows/Settings/Settings.svelte';
 	import Send from './Send.svelte';
 	import Receive from './Receive.svelte';
 	import Balance from './Balance.svelte';
 	import History from './History.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalNetworks from '../modals/Networks/Networks.svelte';
-	import ModalWallets from '../modals/Wallets/Wallets.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
+	import WindowNetworks from '../windows/Networks/Networks.svelte';
+	import WindowWallets from '../windows/Wallets/Wallets.svelte';
 
-	let elModalNetworks;
+	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
 
 	function clickCopyAddress() {
@@ -135,8 +135,8 @@
 <Paper>
 	<div class="body">
 		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elModalNetworks?.open()} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={async () => await $walletsModal?.open()} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} />
+			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} />
 		</div>
 		<div class="bar">
 			<div class="left">
@@ -163,7 +163,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => $settingsModal?.open()} />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => $settingsWindow?.open()} />
 			</div>
 		</div>
 		<div class="buttons">
@@ -190,6 +190,6 @@
 	</div>
 </Paper>
 
-<Modal title="Select your network" body={ModalNetworks} bind:this={elModalNetworks} width="500px" />
-<ModalWallets />
+<Window title="Select your network" body={WindowNetworks} bind:this={elWindowNetworks} width="500px" />
+<WindowWallets />
 <Settings />

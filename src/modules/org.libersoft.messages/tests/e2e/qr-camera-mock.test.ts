@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow } from '@/core/e2e/test-utils.js';
 import { QRTestHelper } from '../../../../../test-assets/qr-test-helper.js';
 
 /**
@@ -78,8 +78,8 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 		// Import the scanned data
 		await page.getByTestId('accounts-add-btn').click();
 
-		// Should close modal and show imported account
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+		// Should close window and show imported account
+		await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 		// Assuming QR code imports to ws://localhost:8084 by default
 		await expect(page.getByTestId('account-address@qrtest1@example.com@ws://localhost:8084')).toBeVisible();
 	});
@@ -91,8 +91,8 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 		// Import the scanned data
 		await page.getByTestId('accounts-add-btn').click();
 
-		// Should close modal and show imported account
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+		// Should close window and show imported account
+		await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 		// Assuming QR code imports to ws://localhost:8084 by default
 		await expect(page.getByTestId('account-address@complex+test@example.com@ws://localhost:8084')).toBeVisible();
 	});
@@ -120,8 +120,8 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 		// Import the scanned data
 		await page.getByTestId('accounts-add-btn').click();
 
-		// Should close modal and show imported accounts
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+		// Should close window and show imported accounts
+		await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 		// Assuming QR code imports to ws://localhost:8084 by default
 		await expect(page.getByTestId('account-address@user1@domain.com@ws://localhost:8084')).toBeVisible();
 		await expect(page.getByTestId('account-address@user2@domain.com@ws://localhost:8084')).toBeVisible();

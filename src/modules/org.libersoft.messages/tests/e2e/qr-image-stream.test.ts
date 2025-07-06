@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardModal } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow } from '@/core/e2e/test-utils.js';
 import { QRVideoStreamHelper, QR_IMAGES, testQRImportWithImageStream } from '../../../../../test-assets/qr-video-stream-helper.js';
 
 /**
@@ -129,8 +129,8 @@ test.describe.parallel('QR Code Image Stream Tests', () => {
 
 		// If auto-detection worked, verify the import
 		if (result.autoDetected && !result.importFailed) {
-			// Should close modal and show imported account
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			// Should close window and show imported account
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 			// Assuming QR code imports to ws://localhost:8084 by default
 			await expect(page.getByTestId('account-address@qrtest1@example.com@ws://localhost:8084')).toBeVisible();
 		}
@@ -147,7 +147,7 @@ test.describe.parallel('QR Code Image Stream Tests', () => {
 
 		// If auto-detection worked, verify the import
 		if (result.autoDetected && !result.importFailed) {
-			await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+			await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 			// Assuming QR code imports to ws://localhost:8084 by default
 			await expect(page.getByTestId('account-address@complex+test@example.com@ws://localhost:8084')).toBeVisible();
 		}
@@ -248,7 +248,7 @@ test.describe.parallel('QR Code Image Stream Tests', () => {
 		const info1 = await helper.getVideoStreamInfo();
 		expect(info1.playing).toBe(true);
 
-		// Close modal and try with different image
+		// Close window and try with different image
 		await page.getByRole('button', { name: 'Cancel' }).click();
 
 		// Setup different image stream

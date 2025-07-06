@@ -1,9 +1,9 @@
 <script>
-	import { identifier, conversationsArray, selectConversation, elModalNewConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { identifier, conversationsArray, selectConversation, elWindowNewConversation } from '@/org.libersoft.messages/scripts/messages.js';
 	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
 	import ConversationListItem from '@/org.libersoft.messages/components/Conversation/ConversationListItem.svelte';
-	import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
-	import Settings from '@/org.libersoft.messages/modals/Settings/Settings.svelte';
+	import WindowNewConversation from '@/org.libersoft.messages/windows/NewConversation.svelte';
+	import Settings from '@/org.libersoft.messages/windows/Settings/Settings.svelte';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	let elSettings;
 	let scrollButtonVisible;
@@ -18,7 +18,7 @@
 	}
 
 	function clickNewConversation() {
-		$elModalNewConversation?.open();
+		$elWindowNewConversation?.open();
 	}
 
 	function clickMessagesSettings() {
@@ -78,6 +78,6 @@
 			<ScrollButton visible={scrollButtonVisible} direction right="15px" bottom="10px" onClick={scrollToTop} />
 		{/if}
 	</div>
-	<ModalNewConversation bind:this={$elModalNewConversation} />
+	<WindowNewConversation bind:this={$elWindowNewConversation} />
 	<Settings bind:this={elSettings} />
 {/if}

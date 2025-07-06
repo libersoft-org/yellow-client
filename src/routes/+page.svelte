@@ -14,7 +14,7 @@
 	import WelcomeSidebar from '@/core/pages/Welcome/Sidebar.svelte';
 	import WelcomeContent from '@/core/pages/Welcome/Content.svelte';
 	import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import Wizard from '@/core/components/Wizard/Wizard.svelte';
 	import WizardWelcomeStep1 from '@/core/wizard/WelcomeStep1.svelte';
 	import WizardWelcomeStep2 from '@/core/wizard/WelcomeStep2.svelte';
@@ -46,7 +46,7 @@
 	};
 	let menus = [];
 	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
-	let elModalWelcome;
+	let elWindowWelcome;
 	let content;
 	let isMenuOpen = false;
 	let sideBar;
@@ -126,7 +126,7 @@
 		window.addEventListener('blur', () => isClientFocused.set(false));
 		//window.addEventListener('keydown', onkeydown);
 		window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-		if ($accounts_config.length === 0) elModalWelcome?.open();
+		if ($accounts_config.length === 0) elWindowWelcome?.open();
 		setupIframeListener();
 		// TODO: I don't know what this is, test out
 		//document.body.style.touchAction = 'none';
@@ -357,4 +357,4 @@
 	</div>
 </div>
 <Menu bind:showMenu={isMenuOpen} />
-<Modal body={Wizard} bind:this={elModalWelcome} params={wizardData} testId="welcome-wizard" />
+<Window body={Wizard} bind:this={elWindowWelcome} params={wizardData} testId="welcome-wizard" />

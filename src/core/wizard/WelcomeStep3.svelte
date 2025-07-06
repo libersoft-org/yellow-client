@@ -1,6 +1,6 @@
 <script lang="ts">
-	import SettingsNotificationsBasic from '@/core/modals/Settings/SettingsNotificationsBasic.svelte';
-	import SettingsNotificationsAlert from '@/core/modals/Settings/SettingsNotificationsAlert.svelte';
+	import SettingsNotificationsBasic from '@/core/windows/Settings/SettingsNotificationsBasic.svelte';
+	import SettingsNotificationsAlert from '@/core/windows/Settings/SettingsNotificationsAlert.svelte';
 </script>
 
 <SettingsNotificationsAlert />

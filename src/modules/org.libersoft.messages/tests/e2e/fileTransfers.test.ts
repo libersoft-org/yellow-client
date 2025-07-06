@@ -136,7 +136,7 @@
 //  // (Sender) Open conversation
 //  await senderPage.getByRole('button', { name: 'test@tvorbawebu.eu' }).click();
 //
-//  // (Sender) Open file upload modal
+//  // (Sender) Open file upload window
 //  await senderPage.getByTestId('attachment-button').click();
 //  await senderPage.getByTestId('file-attachment-button').click();
 //

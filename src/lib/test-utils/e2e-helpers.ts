@@ -27,13 +27,13 @@ export async function switchModule(page: Page, moduleId: string): Promise<void> 
 }
 
 /**
- * Helper function to close any modal
+ * Helper function to close any window
  * @param page - The Playwright page object
- * @param testId - specific modal testId to close
+ * @param testId - specific window testId to close
  */
-export async function closeModal(page: Page, testId: string): Promise<void> {
-	return await test.step('Close modal', async () => {
-		await page.getByTestId(`${testId}-Modal-close`).click({ force: true });
+export async function closeWindow(page: Page, testId: string): Promise<void> {
+	return await test.step('Close window', async () => {
+		await page.getByTestId(`${testId}-Window-close`).click({ force: true });
 	});
 }
 

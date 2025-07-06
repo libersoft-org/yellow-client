@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/scripts/tauri.ts';
 	import { setContext, tick } from 'svelte';
@@ -8,7 +8,7 @@
 		testId?: string;
 		settingsObject?: any;
 	}
-	let elModal;
+	let elWindow;
 	/*
 	interface ISettingsNode {
 		name: string;
@@ -25,7 +25,7 @@
 	  onClick?: (e: Event) => void;
 	 }>
 	}
-	interface IOptionalModalIcon {
+	interface IOptionalWindowIcon {
 	 img?: string;
   alt?: string;
 		onClick?: (e: Event) => void;
@@ -45,15 +45,15 @@
 
 	setContext('setSettingsSection', setSettingsSection);
 
-	// Remove the problematic effect that resets navigation on modal reopen
+	// Remove the problematic effect that resets navigation on window reopen
 
 	export function open(name?: string) {
-		elModal?.open();
+		elWindow?.open();
 		setSettingsSection(name || settingsObject.name);
 	}
 
 	export function close() {
-		elModal?.close();
+		elWindow?.close();
 	}
 
 	export async function setSettingsSection(name: string) {
@@ -116,7 +116,7 @@
 	}
 </style>
 
-<Modal {testId} title={settingsObject.title} bind:this={elModal} width="600px" optionalIcon={backIcon}>
+<Window {testId} title={settingsObject.title} bind:this={elWindow} width="600px" optionalIcon={backIcon}>
 	<div class="settings">
 		{#if activeName !== settingsObject.name}
 			<Breadcrumb items={breadcrumb} />
@@ -130,4 +130,4 @@
 			<currentNode.body {...currentNode.props} bind:this={currentNode.instance} close={goBack} />
 		{/if}
 	</div>
-</Modal>
+</Window>

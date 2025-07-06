@@ -1,7 +1,7 @@
 import { type Page, test } from '@playwright/test';
 
-export async function closeWelcomeWizardModal(page: Page): Promise<void> {
-	const wizardCloseButton = page.getByTestId('welcome-wizard-Modal-close');
+export async function closeWelcomeWizardWindow(page: Page): Promise<void> {
+	const wizardCloseButton = page.getByTestId('welcome-wizard-Window-close');
 	await wizardCloseButton.click();
 }
 
@@ -77,12 +77,12 @@ export async function goToRootSettingsSection(page: Page): Promise<void> {
 }
 
 /**
- * Helper function to close the current modal
+ * Helper function to close the current window
  * @param page - The Playwright page object
  */
-export async function closeModal(page: Page, testId: string): Promise<void> {
-	return await test.step('Close modal', async () => {
-		await page.getByTestId(testId + '-Modal-close').click({});
+export async function closeWindow(page: Page, testId: string): Promise<void> {
+	return await test.step('Close window', async () => {
+		await page.getByTestId(testId + '-Window-close').click({});
 	});
 }
 

@@ -6,11 +6,11 @@
 	import ProfileBar from '@/org.libersoft.messages/components/ProfileBar/ProfileBar.svelte';
 	import MessagesList from '@/org.libersoft.messages/components/MessagesList/MessagesList.svelte';
 	import MessageBar from '@/org.libersoft.messages/components/MessageBar/MessageBar.svelte';
-	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	let message_bar;
 	let oldSelectedConversation;
 	let messagesContext = {};
-	let fileUploadModalFiles = writable([]);
+	let fileUploadWindowFiles = writable([]);
 
 	setContext('MessagesContext', messagesContext);
 
@@ -31,16 +31,16 @@
 		await message_bar?.setBarFocus();
 	}
 
-	function setFileUploadModal(value) {
-		if (!!value !== get(modalFileUploadStore)?.isOpen()) fileUploadModalFiles.set([]);
+	function setFileUploadWindow(value) {
+		if (!!value !== get(windowFileUploadStore)?.isOpen()) fileUploadWindowFiles.set([]);
 		if (value) {
-			get(modalFileUploadStore)?.open();
+			get(windowFileUploadStore)?.open();
 		} else {
-			get(modalFileUploadStore)?.close();
+			get(windowFileUploadStore)?.close();
 		}
 	}
 
-	setContext('FileUploadModal', { fileUploadModalFiles, setFileUploadModal });
+	setContext('FileUploadWindow', { fileUploadWindowFiles, setFileUploadWindow });
 </script>
 
 <Content>

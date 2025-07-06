@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { active_account, setModule } from '@/core/scripts/core.ts';
 	import { hideSidebarMobile } from '@/core/scripts/stores.ts';
-	import { identifier, online, elModalNewConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { identifier, online, elWindowNewConversation } from '@/org.libersoft.messages/scripts/messages.js';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
@@ -11,7 +11,7 @@
 	const illustrations = ['man', 'woman', 'pigeon'];
 
 	function clickNew() {
-		$elModalNewConversation?.open();
+		$elWindowNewConversation?.open();
 	}
 
 	function back() {

@@ -1,7 +1,7 @@
 import { derived, get, writable } from 'svelte/store';
 import type { Message, Conversation } from '@/org.libersoft.messages/scripts/types.ts';
 
-export let modalForwardMessageStore = writable<any>(null);
+export let windowForwardMessageStore = writable<any>(null);
 
 export enum ForwardedMessageType {
 	MESSAGE = 'message',
@@ -57,13 +57,13 @@ export class ForwardMessageStore {
 		// Clear sent conversations when starting a new forward operation
 		this.clearSentToConversations();
 		this.setForwardedMessage(forwardedMessage);
-		get(modalForwardMessageStore)?.open();
+		get(windowForwardMessageStore)?.open();
 	}
 
 	close() {
 		this.setForwardedMessage(null);
 		this.clearSentToConversations();
-		get(modalForwardMessageStore)?.close();
+		get(windowForwardMessageStore)?.close();
 	}
 }
 

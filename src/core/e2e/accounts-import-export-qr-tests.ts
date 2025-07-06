@@ -33,7 +33,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		});
 
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
 		// Should show camera access error
@@ -45,7 +45,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
 		// Should show scanner interface
@@ -58,7 +58,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
 		// Should see camera interface (fake camera should work now)
@@ -89,7 +89,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
 		// Should see camera interface (fake camera should work now)
@@ -104,8 +104,8 @@ test.describe.parallel('QR Code Import Tests', () => {
 		// Import the data
 		await page.getByTestId('accounts-add-btn').click();
 
-		// Should close modal and show imported account
-		await expect(page.getByTestId('accounts-import-Modal')).not.toBeVisible();
+		// Should close window and show imported account
+		await expect(page.getByTestId('accounts-import-Window')).not.toBeVisible();
 		await expect(page.getByTestId('account-address@qr-scan@example.com@ws://localhost:8084')).toBeVisible();
 	});
 
@@ -117,7 +117,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
 		// Should see camera interface working
@@ -142,7 +142,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 		await goToAccountManagement(page);
-		await openImportModal(page);
+		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
 		// Should see camera interface working
@@ -174,17 +174,17 @@ async function goToAccountManagement(page: Page): Promise<void> {
 }
 
 /**
- * Helper function to open accounts import modal
+ * Helper function to open accounts import window
  * @param page - The Playwright page object
  */
-async function openImportModal(page: Page): Promise<void> {
-	return await test.step('Open accounts import modal', async () => {
+async function openImportWindow(page: Page): Promise<void> {
+	return await test.step('Open accounts import window', async () => {
 		await page.getByTestId('accounts-import-button').click();
 	});
 }
 
 /**
- * Helper function to switch to QR code tab in import modal
+ * Helper function to switch to QR code tab in import window
  * @param page - The Playwright page object
  */
 async function switchToQRImportTab(page: Page): Promise<void> {

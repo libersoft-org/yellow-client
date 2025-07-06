@@ -5,11 +5,11 @@
 	let { node } = $props();
 	const stickerset = $derived(node.attributes.set?.value);
 	let v = node.attributes.file?.value;
-	let openStickersetDetailsModal: any = getContext('openStickersetDetailsModal');
+	let openStickersetDetailsWindow: any = getContext('openStickersetDetailsWindow');
 	//$: console.log('MessageContentSticker node:', v);
 
 	function handleClick() {
-		if (stickerset) openStickersetDetailsModal(stickerset);
+		if (stickerset) openStickersetDetailsWindow(stickerset);
 	}
 </script>
 

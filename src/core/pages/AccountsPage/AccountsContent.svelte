@@ -14,19 +14,19 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
+	import WindowAccountsAddEdit from '@/core/windows/Accounts/AccountsAddEdit.svelte';
 	import DialogAccountsDelete from '@/core/dialogs/AccountsDelete.svelte';
-	import ModalAccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
-	import ModalAccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
+	import WindowAccountsImport from '@/core/windows/Accounts/AccountsImport.svelte';
+	import WindowAccountsExport from '@/core/windows/Accounts/AccountsExport.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
 	let idItem: string | null | undefined = $state(null);
-	let modalKey: number = $state(0);
-	let elModalAccountsAddEdit: ModalAccountsAddEdit | null = $state(null);
-	let elModalAccountsImport: ModalAccountsImport;
-	let elModalAccountsExport: ModalAccountsExport;
+	let windowKey: number = $state(0);
+	let elWindowAccountsAddEdit: WindowAccountsAddEdit | null = $state(null);
+	let elWindowAccountsImport: WindowAccountsImport;
+	let elWindowAccountsExport: WindowAccountsExport;
 	let elDialogAccountsDelete: DialogAccountsDelete;
 
 	onMount(() => {
@@ -50,17 +50,17 @@
 		setCorePage(null);
 	}
 
-	async function addAccountModal() {
+	async function addAccountWindow() {
 		idItem = null;
-		modalKey++; // Force modal component to recreate
-		console.log('[AccountsContent] Opening Add/Edit Account modal, idItem set to', idItem, 'modalKey:', modalKey);
+		windowKey++; // Force window component to recreate
+		console.log('[AccountsContent] Opening Add/Edit Account window, idItem set to', idItem, 'windowKey:', windowKey);
 		await tick();
-		elModalAccountsAddEdit?.open();
+		elWindowAccountsAddEdit?.open();
 	}
 
 	function clickEdit(id: string) {
 		idItem = id;
-		elModalAccountsAddEdit?.open();
+		elWindowAccountsAddEdit?.open();
 	}
 
 	const clickDel = (id: string) => {
@@ -69,11 +69,11 @@
 	};
 
 	function clickImport() {
-		elModalAccountsImport?.open();
+		elWindowAccountsImport?.open();
 	}
 
 	function clickExport() {
-		elModalAccountsExport?.open();
+		elWindowAccountsExport?.open();
 	}
 </script>
 
@@ -90,7 +90,7 @@
 	<Page hAlign="center">
 		<Paper>
 			<ButtonBar>
-				<Button img="img/accounts-add.svg" text="Add a new account" onClick={addAccountModal} data-testid="add-account-button" />
+				<Button img="img/accounts-add.svg" text="Add a new account" onClick={addAccountWindow} data-testid="add-account-button" />
 				<Button img="img/import.svg" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
 				<Button img="img/export.svg" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
 			</ButtonBar>
@@ -132,9 +132,9 @@
 		</Paper>
 	</Page>
 </Content>
-{#key modalKey}
-	<ModalAccountsAddEdit params={{ id: idItem || null }} bind:this={elModalAccountsAddEdit} />
+{#key windowKey}
+	<WindowAccountsAddEdit params={{ id: idItem || null }} bind:this={elWindowAccountsAddEdit} />
 {/key}
-<ModalAccountsImport bind:this={elModalAccountsImport} />
-<ModalAccountsExport bind:this={elModalAccountsExport} />
+<WindowAccountsImport bind:this={elWindowAccountsImport} />
+<WindowAccountsExport bind:this={elWindowAccountsExport} />
 <DialogAccountsDelete id={idItem || ''} bind:this={elDialogAccountsDelete} />

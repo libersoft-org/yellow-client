@@ -55,8 +55,8 @@ export interface IStatus {
 	text: string;
 }
 
-export const settingsModal = writable<any>();
-export const walletsModal = writable<any>();
+export const settingsWindow = writable<any>();
+export const walletsWindow = writable<any>();
 export const status = writable<IStatus>({ color: 'red', text: 'Started.' });
 export const rpcURL = writable<string | null>(null);
 export const networks = localStorageSharedStore<INetwork[]>('networks', []);

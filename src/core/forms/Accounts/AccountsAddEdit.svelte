@@ -36,7 +36,7 @@
 	};
 	let wizard = getContext<WizardContext>('wizard');
 	let account_id_store = writable<string | null>(null);
-	//console.log('[INIT] Modal mounted. Params:', params);
+	//console.log('[INIT] Window mounted. Params:', params);
 
 	onMount(() => {
 		top = snippet_top;

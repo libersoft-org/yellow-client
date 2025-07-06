@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeModal, goToRootSettingsSection, navigateToSettingsSection } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow, goToRootSettingsSection, navigateToSettingsSection } from '@/core/e2e/test-utils.js';
 
-import { startNewConversation, openConversation, sendMessage, forwardLastMessage, forwardMessageToConversation, verifyForwardModalWithPreview, searchConversationsInForwardModal } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
+import { startNewConversation, openConversation, sendMessage, forwardLastMessage, forwardMessageToConversation, verifyForwardWindowWithPreview, searchConversationsInForwardWindow } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
 
 test('Complete End-to-End Application Test', async ({ page }) => {
 	setupConsoleLogging(page);
@@ -95,18 +95,18 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		await sendMessage(page, forwardTestMessage);
 
 		// Test basic forwarding functionality
-		await test.step('Basic forward modal functionality', async () => {
+		await test.step('Basic forward window functionality', async () => {
 			await forwardLastMessage(page);
-			await verifyForwardModalWithPreview(page, forwardTestMessage);
+			await verifyForwardWindowWithPreview(page, forwardTestMessage);
 
 			// Verify search functionality
-			await searchConversationsInForwardModal(page, 'user3');
+			await searchConversationsInForwardWindow(page, 'user3');
 
 			// Clear search to see all conversations
-			await searchConversationsInForwardModal(page, '');
+			await searchConversationsInForwardWindow(page, '');
 
-			// Close modal for now
-			await closeForwardModal(page);
+			// Close window for now
+			await closeForwardWindow(page);
 		});
 	});
 
@@ -145,10 +145,10 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		await test.step('Forward to multiple conversations and test auto-clear', async () => {
 			// Forward the message
 			await forwardLastMessage(page);
-			await verifyForwardModalWithPreview(page, advancedForwardMessage);
+			await verifyForwardWindowWithPreview(page, advancedForwardMessage);
 
 			// Test search filtering to find user3 conversation
-			await searchConversationsInForwardModal(page, 'user3');
+			await searchConversationsInForwardWindow(page, 'user3');
 
 			// Forward to user3 conversation (using the address as conversation identifier)
 			await forwardMessageToConversation(page, 'user3@example.com');
@@ -158,10 +158,10 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 			await verifyConversationSendState(page, 'user3@example.com', true);
 
 			// Clear search to see all conversations
-			await searchConversationsInForwardModal(page, '');
+			await searchConversationsInForwardWindow(page, '');
 
-			// Close this forward modal
-			await closeForwardModal(page);
+			// Close this forward window
+			await closeForwardWindow(page);
 
 			// Send another message to test auto-clear behavior
 			const secondMessage = 'Second message for auto-clear test';
@@ -169,30 +169,30 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 
 			// Forward the new message
 			await forwardLastMessage(page);
-			await verifyForwardModalWithPreview(page, secondMessage);
+			await verifyForwardWindowWithPreview(page, secondMessage);
 
 			// Verify that previously sent conversations are cleared (should show "Send" again)
 			await verifyConversationSendState(page, 'user3@example.com', false);
 
-			// Close modal
-			await closeForwardModal(page);
+			// Close window
+			await closeForwardWindow(page);
 		});
 
-		await test.step('Test forward modal search with no results', async () => {
+		await test.step('Test forward window search with no results', async () => {
 			await forwardLastMessage(page);
 
 			// Search for non-existent conversation
-			await searchConversationsInForwardModal(page, 'nonexistent_user');
+			await searchConversationsInForwardWindow(page, 'nonexistent_user');
 
 			// Verify no conversations message is shown
 			await expect(page.getByTestId('forward-message-no-conversations')).toBeVisible();
 			await expect(page.getByTestId('forward-message-no-conversations')).toHaveText('No conversations were found');
 
 			// Clear search to restore conversations list
-			await searchConversationsInForwardModal(page, '');
+			await searchConversationsInForwardWindow(page, '');
 
-			// Close modal
-			await closeModal(page, 'forward-message');
+			// Close window
+			await closeWindow(page, 'forward-message');
 		});
 	});
 
@@ -292,8 +292,8 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		await goToRootSettingsSection(page);
 		await navigateToSettingsSection(page, 'Notifications');
 
-		// Close settings modal
-		await closeModal(page, 'global-settings');
+		// Close settings window
+		await closeWindow(page, 'global-settings');
 	});
 });
 
@@ -396,16 +396,16 @@ async function configureMessagesSettings(
 			await page.getByRole('combobox').selectOption(settings.photoRadius);
 		}
 
-		await closeModal(page, 'messages-settings');
+		await closeWindow(page, 'messages-settings');
 	});
 }
 
 /**
- * Helper function to close forward message modal specifically
+ * Helper function to close forward message window specifically
  * @param page - The Playwright page object
  */
-async function closeForwardModal(page: Page): Promise<void> {
-	return await closeModal(page, 'forward-message');
+async function closeForwardWindow(page: Page): Promise<void> {
+	return await closeWindow(page, 'forward-message');
 }
 
 /**
@@ -425,7 +425,7 @@ async function deleteFirstAccount(page: Page): Promise<void> {
 		await page.getByTestId('delete-account-confirm').waitFor({ state: 'visible' });
 
 		// Verify dialog content shows proper text and doesn't show "undefined"
-		const dialogBody = await page.locator('.modal .body').textContent();
+		const dialogBody = await page.locator('.window .body').textContent();
 		expect(dialogBody).toMatch(/Would you like to delete the account/);
 		expect(dialogBody).not.toContain('undefined');
 
