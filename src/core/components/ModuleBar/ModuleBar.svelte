@@ -105,18 +105,22 @@
 		max-height: none;
 	}
 
+	.dropdown-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 70px;
+	}
+
 	.dropdown {
 		display: flex;
 		align-items: flex-start;
 		justify-content: center;
 		height: 100%;
-		width: max-content;
-		cursor: default;
 	}
 
 	.dropdown :global(.icon) {
 		position: relative;
-		top: 14px;
 		transform: rotate(0deg);
 		transition: transform 0.3s ease;
 	}
@@ -125,7 +129,7 @@
 		transform: rotate(180deg);
 	}
 
-	.module-bar:not(.expand-enabled) .dropdown {
+	.module-bar:not(.expand-enabled) .dropdown-wrapper {
 		display: none;
 	}
 </style>
@@ -136,9 +140,11 @@
 			<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
 		{/each}
 	</div>
-	<Clickable enabled={expandEnabled}>
-		<div class="dropdown">
-			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
-		</div>
-	</Clickable>
+	<div class="dropdown-wrapper">
+		<Clickable enabled={expandEnabled} onClick={clickExpand}>
+			<div class="dropdown">
+				<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" />
+			</div>
+		</Clickable>
+	</div>
 </div>
