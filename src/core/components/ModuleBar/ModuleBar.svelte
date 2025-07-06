@@ -51,7 +51,11 @@
 			el.style.maxHeight = full;
 			void el.offsetHeight;
 			el.style.maxHeight = '50px';
-			setTimeout(scrollToSelected, 250);
+			const tidy = () => {
+				scrollToSelected();
+				el.removeEventListener('transitionend', tidy);
+			};
+			el.addEventListener('transitionend', tidy);
 		} else {
 			el.style.maxHeight = '50px';
 			void el.offsetHeight;
