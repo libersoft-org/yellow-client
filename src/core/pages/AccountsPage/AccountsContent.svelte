@@ -77,38 +77,6 @@
 	}
 </script>
 
-{#snippet accountTable(account)}
-	<Table>
-		<Thead>
-			<TheadTr>
-				<Th>Server</Th>
-				<Th>Address</Th>
-				<Th>Enabled</Th>
-				<Th>Action</Th>
-			</TheadTr>
-		</Thead>
-		<Tbody>
-			<TbodyTr>
-				<Td title="Server" data-testid="account-server@{account.credentials.address}@{account.credentials.server}">{account.credentials.server}</Td>
-				<Td title="Address" data-testid="account-address@{account.credentials.address}@{account.credentials.server}">{account.credentials.address}</Td>
-				<Td title="Enabled" data-testid="account-enabled@{account.credentials.address}@{account.credentials.server}">{account.enabled ? 'Yes' : 'No'}</Td>
-				<Td title="Action">
-					<TableActionItems>
-						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} testId="edit-account-button" />
-						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} testId="delete-account-button" />
-					</TableActionItems>
-				</Td>
-			</TbodyTr>
-		</Tbody>
-	</Table>
-{/snippet}
-
-{#snippet status(account)}
-	<div class="optional-data">
-		<AccountStatusIconIconAndText account={findAccount(account.id)} />
-	</div>
-{/snippet}
-
 <Content>
 	<Bar>
 		{#snippet left()}
@@ -126,24 +94,31 @@
 				<Button img="img/import.svg" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
 				<Button img="img/export.svg" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
 			</ButtonBar>
-
 			{#if $accounts_config.length > 0}
 				{#each $accounts_config as account (account.id)}
 					<Table>
 						<Thead>
 							<TheadTr>
-								<Th>
-									{account.settings.title}<br />
-									<AccountStatusIconIconAndText account={findAccount(account.id)} />
-								</Th>
+								<Th>{account.settings.title}</Th>
+								<Th align="right"><AccountStatusIconIconAndText account={findAccount(account.id)} /></Th>
 							</TheadTr>
 						</Thead>
 						<Tbody>
 							<TbodyTr>
-								<Td title="Server">{account.credentials.server}</Td>
-								<Td title="Address">{account.credentials.address}</Td>
-								<Td title="Enabled">{account.enabled ? 'Yes' : 'No'}</Td>
-								<Td title="Action">
+								<Td bold>Server:</Td>
+								<Td>{account.credentials.server}</Td>
+							</TbodyTr>
+							<TbodyTr>
+								<Td bold>Address:</Td>
+								<Td>{account.credentials.address}</Td>
+							</TbodyTr>
+							<TbodyTr>
+								<Td bold>Enabled:</Td>
+								<Td>{account.enabled ? 'Yes' : 'No'}</Td>
+							</TbodyTr>
+							<TbodyTr>
+								<Td bold>Action:</Td>
+								<Td>
 									<TableActionItems>
 										<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} testId="edit-account-button" />
 										<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} testId="delete-account-button" />

@@ -10,8 +10,9 @@
 		style?: string;
 		align?: 'left' | 'center' | 'right';
 		expand?: boolean;
+		bold?: boolean;
 	}
-	let { children, title, 'data-testid': dataTestId, padding = '10px', shorten = false, colspan, style, align = 'left', expand = false }: Props = $props();
+	let { children, title, 'data-testid': dataTestId, padding = '10px', shorten = false, colspan, style, align = 'left', expand = false, bold = false }: Props = $props();
 </script>
 
 <style>
@@ -21,6 +22,10 @@
 		border: 0;
 		white-space: nowrap;
 		width: auto;
+	}
+
+	td.bold {
+		font-weight: bold;
 	}
 
 	td.expand {
@@ -65,6 +70,6 @@
 	}
 </style>
 
-<td data-title={title} data-testid={dataTestId} style:padding class:shorten class:expand {colspan} {style} style:text-align={align}>
+<td data-title={title} data-testid={dataTestId} style:padding class:shorten class:expand class:bold {colspan} {style} style:text-align={align}>
 	{@render children?.()}
 </td>

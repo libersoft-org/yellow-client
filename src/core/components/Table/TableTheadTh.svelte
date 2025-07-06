@@ -8,18 +8,11 @@
 </script>
 
 <style>
-	:global(.expand) th {
-		display: table-cell;
-		white-space: nowrap;
-		border-style: none;
-		min-width: 50px;
-		vertical-align: middle;
+	th {
 		padding: 10px;
-		text-align: left;
-		white-space: normal;
 	}
 </style>
 
-<th scope="col" style:text-align={align}>
+<th style:text-align={align}>
 	{@render children?.()}
 </th>
