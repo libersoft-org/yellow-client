@@ -2,8 +2,9 @@
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
+		align?: 'left' | 'center' | 'right';
 	}
-	const { children }: Props = $props();
+	const { children, align = 'left' }: Props = $props();
 </script>
 
 <style>
@@ -19,6 +20,6 @@
 	}
 </style>
 
-<th scope="col">
+<th scope="col" style:text-align={align}>
 	{@render children?.()}
 </th>

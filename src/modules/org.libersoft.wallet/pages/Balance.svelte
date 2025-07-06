@@ -69,7 +69,7 @@
 
 <div class="wallet-balance">
 	{#if $selectedNetwork && $selectedAddress}
-		<Table breakpoint="0px">
+		<Table>
 			<Tbody>
 				<Tr>
 					<Td>
@@ -88,7 +88,6 @@
 						{/if}
 					</Td>
 				</Tr>
-
 				{#each tokens as t, index}
 					<Tr>
 						<Td>

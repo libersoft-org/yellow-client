@@ -25,6 +25,7 @@
 		overflow: hidden;
 		border: 1px solid var(--secondary-background);
 		border-radius: 10px;
+		border-spacing: 0;
 	}
 
 	table.hide-border {

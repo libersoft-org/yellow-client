@@ -105,7 +105,7 @@
 			<TheadTr>
 				<Th></Th>
 				<Th>Name</Th>
-				<Th>Addresses</Th>
+				<Th align="center">Addresses</Th>
 				<Th>Action</Th>
 			</TheadTr>
 		</Thead>
@@ -123,12 +123,12 @@
 					<Td padding="5px" style="width: 30px;">
 						<div class="drag-handle">⋮⋮</div>
 					</Td>
-					<Td padding="0">
+					<Td padding="0" expand>
 						<Clickable onClick={() => clickWallet(item.wallet)}>
 							<div class="item">{item.wallet.name}</div>
 						</Clickable>
 					</Td>
-					<Td padding="0">
+					<Td padding="0" align="center">
 						<Clickable onClick={() => clickWallet(item.wallet)}>
 							<div class="item">{item.wallet?.addresses?.length || '0'}</div>
 						</Clickable>
