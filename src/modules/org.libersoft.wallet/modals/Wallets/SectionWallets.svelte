@@ -62,24 +62,5 @@
 		</Tbody>
 	</Table>
 {/if}
-<!--
-<Accordion items={$wallets}>
-	{#snippet content(wallet)}
-		<Table breakpoint="0">
-			<Tbody>
-				{#each wallet.addresses as address}
-					<Clickable onClick={() => clickSelectAddress(wallet, address)}>
-						<TbodyTr>
-							<Td>{address.index}</Td>
-							<Td>{address.name}</Td>
-							<Td>{address.address}</Td>
-						</TbodyTr>
-					</Clickable>
-				{/each}
-			</Tbody>
-		</Table>
-	{/snippet}
-</Accordion>
--->
 
 <Modal title="Manage wallets" body={ModalWallets} bind:this={elModalWallets} />
