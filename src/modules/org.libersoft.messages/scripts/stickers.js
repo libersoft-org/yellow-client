@@ -1,6 +1,6 @@
 import { writable, get, derived } from 'svelte/store';
-import { stickers_db } from './db.ts';
-import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
+import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
+import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 
 // TODO: this is an extra state that safeguards against triggering the update after a HMR
 window.stickerLibraryUpdaterState = { updating: false };

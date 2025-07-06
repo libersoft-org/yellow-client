@@ -1,9 +1,9 @@
 <script>
-	import { identifier, conversationsArray, selectConversation, elModalNewConversation } from '../../messages.js';
-	import ScrollButton from '../../components/ScrollButton/ScrollButton.svelte';
-	import ConversationListItem from '../../components/Conversation/ConversationListItem.svelte';
-	import ModalNewConversation from '../../modals/NewConversation.svelte';
-	import Settings from '../../modals/Settings/Settings.svelte';
+	import { identifier, conversationsArray, selectConversation, elModalNewConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
+	import ConversationListItem from '@/org.libersoft.messages/components/Conversation/ConversationListItem.svelte';
+	import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
+	import Settings from '@/org.libersoft.messages/modals/Settings/Settings.svelte';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	let elSettings;
 	let scrollButtonVisible;

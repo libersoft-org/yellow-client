@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '../../messages.js';
+	import { cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '@/org.libersoft.messages/scripts/messages.js';
 	import { type IFileDownload, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';

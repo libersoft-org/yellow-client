@@ -4,7 +4,7 @@
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	import { truncateText } from '@/core/scripts/utils/textUtils.js';
-	import { selectedConversation, initUpload, identifier } from '../messages.js';
+	import { selectedConversation, initUpload, identifier } from '@/org.libersoft.messages/scripts/messages.js';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
+	import { identifier, initUpload, selectedConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import resize from '@/core/actions/resizeObserver.ts';
-	import { identifier, initUpload, selectedConversation } from '../../messages.js';
 	import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
 	import RecordPlugin from 'wavesurfer.js/plugins/record';
-	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import WaveSurfer from 'wavesurfer.js';
-	import DialogError from '@/org.libersoft.messages/dialogs/DialogError.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import DialogError from '@/org.libersoft.messages/dialogs/DialogError.svelte';
 	let wavesurferRef: HTMLElement | null | undefined;
 	let wavesurfer: WaveSurfer | null | undefined;
 	let wavesurferRecord: RecordPlugin | null | undefined;

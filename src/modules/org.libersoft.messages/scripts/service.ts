@@ -3,7 +3,7 @@
 
 // Import connection utilities - these will be loaded/injected by the native layer
 import { connectionSendData, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
-import { stripHtml } from './utils/htmlUtils.ts';
+import { stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 
 interface IKotlinBridge {
 	sendMessage(data: string): void;

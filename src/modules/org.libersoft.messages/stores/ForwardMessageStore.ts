@@ -1,5 +1,5 @@
 import { derived, get, writable } from 'svelte/store';
-import type { Message, Conversation } from '../types.ts';
+import type { Message, Conversation } from '@/org.libersoft.messages/scripts/types.ts';
 
 export let modalForwardMessageStore = writable<any>(null);
 

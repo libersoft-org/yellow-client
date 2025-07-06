@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
 	import { onMount } from 'svelte';
-	import { fetchStickerset } from '../stickers.js';
-	import StickerSet from '../components/Stickers/StickerSet.svelte';
+	import { fetchStickerset } from '@/org.libersoft.messages/scripts/stickers.js';
+	import StickerSet from '@/org.libersoft.messages/components/Stickers/StickerSet.svelte';
 	interface Props {
 		params: any;
 	}

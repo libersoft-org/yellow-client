@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { gif_servers, defaultGifServers } from '../gifs.js';
+	import { gif_servers, defaultGifServers } from '@/org.libersoft.messages/scripts/gifs.js';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
 	let dialogData = $derived({

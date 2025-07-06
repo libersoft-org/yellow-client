@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { identifier } from '@/org.libersoft.messages/messages';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
 	import { debug } from '@/core/scripts/stores.ts';
 	import 'videojs-record/dist/css/videojs.record.css';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';

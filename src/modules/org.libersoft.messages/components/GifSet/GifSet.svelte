@@ -2,8 +2,8 @@
 	import { onMount, getContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { isMobile } from '@/core/scripts/stores.ts';
-	import { htmlEscape } from '../../messages.js';
-	import { gif_server } from '../../gifs.js';
+	import { htmlEscape } from '@/org.libersoft.messages/scripts/messages.js';
+	import { gif_server } from '@/org.libersoft.messages/scripts/gifs.js';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

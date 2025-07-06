@@ -1,4 +1,4 @@
-import { replaceEmojisWithTags } from './emojis.js';
+import { replaceEmojisWithTags } from '@/org.libersoft.messages/scripts/emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
 import { log } from '@/core/scripts/tauri.ts';
@@ -7,18 +7,18 @@ import { FileUploadRecordStatus, FileUploadRecordType } from '@/org.libersoft.me
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
 import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
-import { wrapConsecutiveElements, stripHtml } from './utils/htmlUtils.ts';
+import { wrapConsecutiveElements, stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
 import { active_account, active_account_module_data, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
 import { active_account_id, hideSidebarMobile, isClientFocused } from '@/core/scripts/stores.ts';
-import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
+import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { addNotification, deleteNotification, playAudio } from '@/core/scripts/notifications.ts';
-import { makeMessageReaction } from './factories/messageFactories.ts';
+import { makeMessageReaction } from '@/org.libersoft.messages/factories/messageFactories.ts';
 import { identifier, connectionSendData, _send, moduleEventSubscribe, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const photoRadius = localStorageSharedStore('photoRadius', '50%');

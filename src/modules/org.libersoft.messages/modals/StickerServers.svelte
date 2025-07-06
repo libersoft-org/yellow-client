@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { sticker_servers } from '../stickers.js';
-	import DialogDefaultStickerServers from '../dialogs/DefaultStickerServers.svelte';
-	import DialogDeleteStickerServer from '../dialogs/DeleteStickerServer.svelte';
+	import { sticker_servers } from '@/org.libersoft.messages/scripts/stickers.js';
+	import DialogDefaultStickerServers from '@/org.libersoft.messages/dialogs/DefaultStickerServers.svelte';
+	import DialogDeleteStickerServer from '@/org.libersoft.messages/dialogs/DeleteStickerServer.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';

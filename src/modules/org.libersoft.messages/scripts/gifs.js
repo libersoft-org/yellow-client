@@ -1,6 +1,5 @@
-import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
+import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { derived } from 'svelte/store';
-
 export const defaultGifServers = ['https://gifs.libersoft.org'];
 export const gif_servers = localStorageSharedStore('gif_servers', defaultGifServers);
 export const gif_server_index = localStorageSharedStore('gif_server_index', 0);

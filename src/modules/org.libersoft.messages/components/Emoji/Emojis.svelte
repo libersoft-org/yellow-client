@@ -5,13 +5,13 @@
 	import { get } from 'svelte/store';
 	import Emoji from './Emoji.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
-	import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
+	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '@/org.libersoft.messages/scripts/messages.js';
+	import { start_emojisets_fetch, emoji_render } from '@/org.libersoft.messages/scripts/emojis.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import FuzzySearch from 'fuzzy-search';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import { longpress } from '../../ui.js';
+	import { longpress } from '@/org.libersoft.messages/scripts/ui.js';
 	import IntersectionObserver from 'svelte-intersection-observer';
 	export let onEmojiClick;
 	const MessageBar = getContext('MessageBar');

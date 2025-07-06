@@ -19,8 +19,11 @@ export default defineConfig({
 		conditions: ['browser'],
 		alias: {
 			'@/org.libersoft.messages': path.resolve(__dirname, 'src/modules/org.libersoft.messages'),
+			'@/org.libersoft.contacts': path.resolve(__dirname, 'src/modules/org.libersoft.contacts'),
+			'@/org.libersoft.wallet': path.resolve(__dirname, 'src/modules/org.libersoft.wallet'),
 			'@/org.libersoft.dating': path.resolve(__dirname, 'src/modules/org.libersoft.dating'),
-			'@/bridge/core-bridge': path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-builtin.ts'),
+			'@/org.libersoft.iframe': path.resolve(__dirname, 'src/modules/org.libersoft.iframe'),
+			'@/bridge/core-bridge': path.resolve(__dirname, 'src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
 			'@': path.resolve(__dirname, 'src'),
 			// Add explicit resolution for the problematic package
 			'svelte-intersection-observer': path.resolve(__dirname, 'node_modules/svelte-intersection-observer/src/index.js'),

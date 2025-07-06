@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import { initUpload, selectedConversation } from '@/org.libersoft.messages/messages.js';
+	import { initUpload, selectedConversation } from '@/org.libersoft.messages/scripts/messages.js';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import 'videojs-record/dist/css/videojs.record.css';
@@ -15,7 +15,6 @@
 	let micIndicatorRef = $state<HTMLElement>();
 	let sending = $state(false);
 	let playerInstance: ReturnType<typeof videoJS> | null = null;
-
 	const { setup, loading, error, errorMessages, videoDevices, audioDevices, selectedVideoDeviceId, selectedAudioDeviceId, changeVideoInput, changeAudioInput, player, recordedBlob, toggleMute, isMuted, facingMode, toggleFacingMode, userDeviceId, environmentDeviceId } = useVideoRecorder(() => videoRef, {
 		controls: false,
 		bigPlayButton: false,
@@ -29,23 +28,33 @@
 			},
 		},
 	});
-
 	const enableToggleFacingMode = $derived(Boolean($userDeviceId && $environmentDeviceId && $userDeviceId !== $environmentDeviceId));
 	let isRecording = $state(false);
 
-	const start = () => {
+	onMount(() => {
+		startRecorder();
+	});
+
+	onDestroy(() => {
+		console.log('VideoRecorderContainer onDestroy playerInstance:', playerInstance);
+		if (playerInstance) {
+			playerInstance.dispose();
+			playerInstance = null;
+		}
+		$player?.dispose();
+	});
+
+	function start() {
 		if (playerInstance) {
 			playerInstance.dispose();
 			$player.show();
 		}
-
 		const record = $player.record();
-
 		record.start();
 		isRecording = true;
-	};
+	}
 
-	const restart = () => {
+	function restart() {
 		if (playerInstance) {
 			playerInstance.dispose();
 			playerInstance = null;
@@ -53,20 +62,20 @@
 		}
 		recordedBlob.set(null);
 		$player.record().getDevice();
-	};
+	}
 
 	let manuallyStop = false;
-	const stop = () => {
+	function stop() {
 		const record = $player.record();
 		record.stop();
 		//record.stopDevice(); TODO: stop stream and then restart if needed by start method
 		//record.reset();
 		isRecording = false;
 		manuallyStop = true;
-	};
+	}
 
 	let sendingRequested = false;
-	const send = () => {
+	function send() {
 		sending = true;
 		const record = $player.record();
 		if (record.isRecording()) {
@@ -79,26 +88,26 @@
 			}
 			sendMessage($recordedBlob);
 		}
-	};
+	}
 
-	const sendMessage = async (blob: Blob) => {
+	async function sendMessage(blob: Blob) {
 		sending = true;
 		const recipientEmail = get(selectedConversation).address;
 		initUpload([blob], FileUploadRecordType.SERVER, [recipientEmail]).finally(() => {
 			sending = false;
 			recordedBlob.set(null);
 		});
-	};
+	}
 
-	const download = () => {
+	function download() {
 		if (!$recordedBlob) {
 			console.error('$recordedBlob is not set');
 			return;
 		}
 		assembleFile($recordedBlob);
-	};
+	}
 
-	const showPreview = () => {
+	function showPreview() {
 		$player.hide();
 		if (!$recordedBlob) {
 			console.error('$recordedBlob is not set');
@@ -138,9 +147,9 @@
 				playerInstance.error(null); // let null be here despite TS complaining
 			}
 		});
-	};
+	}
 
-	const startRecorder = () => {
+	function startRecorder() {
 		if (playerInstance) {
 			playerInstance.dispose();
 			playerInstance = null;
@@ -178,20 +187,7 @@
 				}
 			});
 		});
-	};
-
-	onMount(() => {
-		startRecorder();
-	});
-
-	onDestroy(() => {
-		console.log('VideoRecorderContainer onDestroy playerInstance:', playerInstance);
-		if (playerInstance) {
-			playerInstance.dispose();
-			playerInstance = null;
-		}
-		$player?.dispose();
-	});
+	}
 </script>
 
 <style>

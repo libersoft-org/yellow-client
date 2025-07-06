@@ -21,12 +21,12 @@
 	import WizardWelcomeStep3 from '@/core/wizard/WelcomeStep3.svelte';
 	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
 	import { createTrayIcon, destroyTrayIcon } from '@/core/scripts/tray_icon.ts';
-	import '../modules/org.libersoft.messages/module.ts';
+	import '../modules/org.libersoft.messages/scripts/module.ts';
 	import '../modules/org.libersoft.contacts/scripts/module.ts';
 	import '../modules/org.libersoft.wallet/scripts/module.ts';
 	import '../modules/org.libersoft.dating/scripts/module.ts';
 	import '../modules/org.libersoft.iframes/scripts/module.ts';
-	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
+	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.js';
 	import { setDefaultWindowSize, initWindow } from '../core/scripts/tauri-app.ts';
 	import { initZoom } from '@/core/scripts/zoom.ts';
 	const wizardData = {

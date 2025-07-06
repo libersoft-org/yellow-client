@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { photoRadius } from '../messages.js';
-	import { conversationsArray, sendMessage, processMessage, identifier } from '../messages.js';
-	import type { Conversation } from '../types.ts';
-	import { forwardMessageStore } from '../stores/ForwardMessageStore.ts';
+	import { photoRadius } from '@/org.libersoft.messages/scripts/messages.js';
+	import { conversationsArray, sendMessage, processMessage, identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import type { Conversation } from '@/org.libersoft.messages/scripts/types.js';
+	import { forwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Photo from '@/core/components/Photo/Photo.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import MessageContent from '../components/MessageContent/MessageContent.svelte';
+	import MessageContent from '@/org.libersoft.messages/components/MessageContent/MessageContent.svelte';
 	const fwMsg = forwardMessageStore.getForwardedMessage();
 	const sentToConversations = forwardMessageStore.getSentToConversations();
 	let search = $state('');

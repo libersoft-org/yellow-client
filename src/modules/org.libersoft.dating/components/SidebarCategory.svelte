@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { module } from '../scripts/module.ts';
+	import { module } from '@/org.libersoft.dating/scripts/module.ts';
 	interface Props {
 		img?: string;
 		label?: string;

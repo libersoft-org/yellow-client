@@ -2,7 +2,7 @@
 	import { get } from 'svelte/store';
 	import { active_account } from '@/core/scripts/core.ts';
 	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
-	import { emoji_render, rgi_to_codepoints } from '../../emojis';
+	import { emoji_render, rgi_to_codepoints } from '@/org.libersoft.messages/scripts/emojis.js';
 	import union from 'lodash/union';
 	import isEqual from 'lodash/isEqual';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

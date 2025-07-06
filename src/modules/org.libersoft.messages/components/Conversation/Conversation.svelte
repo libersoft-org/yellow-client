@@ -1,11 +1,11 @@
 <script>
 	import { setContext, tick } from 'svelte';
 	import { get, writable } from 'svelte/store';
-	import { selectedConversation, closeConversation } from '../../messages.js';
+	import { selectedConversation, closeConversation } from '@/org.libersoft.messages/scripts/messages.js';
 	import Content from '@/core/components/Content/Content.svelte';
-	import ProfileBar from '../ProfileBar/ProfileBar.svelte';
-	import MessagesList from '../MessagesList/MessagesList.svelte';
-	import MessageBar from '../MessageBar/MessageBar.svelte';
+	import ProfileBar from '@/org.libersoft.messages/components/ProfileBar/ProfileBar.svelte';
+	import MessagesList from '@/org.libersoft.messages/components/MessagesList/MessagesList.svelte';
+	import MessageBar from '@/org.libersoft.messages/components/MessageBar/MessageBar.svelte';
 	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	let message_bar;
 	let oldSelectedConversation;

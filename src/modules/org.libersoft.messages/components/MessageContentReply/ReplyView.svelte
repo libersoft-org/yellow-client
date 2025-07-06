@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import { jumpToMessage } from '../../messages.js';
 	import { get } from 'svelte/store';
 	import { active_account } from '@/core/scripts/core.ts';
+	import { jumpToMessage } from '@/org.libersoft.messages/scripts/messages.js';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	interface Props {
 		address?: string;
 		text?: string;

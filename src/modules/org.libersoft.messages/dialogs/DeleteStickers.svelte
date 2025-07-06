@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { stickers_db } from '../db.ts';
+	import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
 	let dialogData = {

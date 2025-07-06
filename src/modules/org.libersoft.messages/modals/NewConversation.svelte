@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { openNewConversation, identifier } from '../messages.js';
+	import { openNewConversation, identifier } from '@/org.libersoft.messages/scripts/messages.js';
 	import { m } from '@/lib/paraglide/messages.js';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Label from '@/core/components/Label/Label.svelte';

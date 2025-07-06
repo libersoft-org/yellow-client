@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import filesDB, { type ILocalFile, LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { active_account } from '@/core/scripts/core.ts';
-import { loadUploadData, makeDownloadChunkAsyncFn } from '../../messages';
+import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.js';
 import fileUploadManager, { type FileUploadService } from './FileUploadService.ts';
 import fileDownloadManager, { type FileDownloadService } from './FileDownloadService.ts';
 import { liveQuery } from 'dexie';

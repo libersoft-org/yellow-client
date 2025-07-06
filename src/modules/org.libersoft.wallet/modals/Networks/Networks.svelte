@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { selectedNetworkID, networks, settingsModal } from '../../scripts/wallet.ts';
-	import { module } from '../../scripts/module.ts';
+	import { selectedNetworkID, networks, settingsModal } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

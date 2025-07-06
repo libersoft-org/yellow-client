@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { gif_servers } from '../gifs.js';
+	import { gif_servers } from '@/org.libersoft.messages/scripts/gifs.js';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		server?: string;
@@ -21,9 +21,7 @@
 	}
 
 	function clickYes() {
-		gif_servers.update(servers => {
-			return servers.filter(s => s !== server);
-		});
+		gif_servers.update(servers => servers.filter(s => s !== server));
 		elDialog?.close();
 	}
 

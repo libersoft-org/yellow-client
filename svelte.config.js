@@ -27,8 +27,11 @@ const config = {
 		}),
 		alias: {
 			'@/org.libersoft.messages/*': 'src/modules/org.libersoft.messages/*',
+			'@/org.libersoft.contacts/*': 'src/modules/org.libersoft.contacts/*',
+			'@/org.libersoft.wallet/*': 'src/modules/org.libersoft.wallet/*',
 			'@/org.libersoft.dating/*': 'src/modules/org.libersoft.dating/*',
-			'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve('src/modules/org.libersoft.messages/core-bridge-mobile.ts') : path.resolve('src/modules/org.libersoft.messages/core-bridge-builtin.ts'),
+			'@/org.libersoft.iframe/*': 'src/modules/org.libersoft.iframe/*',
+			'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve('src/modules/org.libersoft.messages/scripts/core-bridge-mobile.ts') : path.resolve('src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
 			'@/*': 'src/*',
 		},
 	},

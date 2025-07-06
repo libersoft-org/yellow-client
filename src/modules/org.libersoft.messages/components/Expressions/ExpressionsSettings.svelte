@@ -6,12 +6,12 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
-	import { sticker_server_index, sticker_servers } from '../../stickers.js';
-	import { gif_server_index, gif_servers } from '../../gifs.js';
-	import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
-	import DialogDeleteStickers from '../../dialogs/DeleteStickers.svelte';
-	import ModalStickerServers from '../../modals/StickerServers.svelte';
-	import ModalGifServers from '../../modals/GifServers.svelte';
+	import { sticker_server_index, sticker_servers } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { gif_server_index, gif_servers } from '@/org.libersoft.messages/scripts/gifs.js';
+	import { expressions_renderer, animate_all_expressions } from '@/org.libersoft.messages/scripts/expressions.svelte.ts';
+	import DialogDeleteStickers from '@/org.libersoft.messages/dialogs/DeleteStickers.svelte';
+	import ModalStickerServers from '@/org.libersoft.messages/modals/StickerServers.svelte';
+	import ModalGifServers from '@/org.libersoft.messages/modals/GifServers.svelte';
 	let elModalStickerServers;
 	let elModalGifServers;
 	let elDialogDeleteStickers;

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { gif_servers } from '../gifs.js';
-	import DialogDefaultGifServers from '../dialogs/DefaultGifServers.svelte';
-	import DialogDeleteGifServer from '../dialogs/DeleteGifServer.svelte';
+	import { gif_servers } from '@/org.libersoft.messages/scripts/gifs.js';
+	import DialogDefaultGifServers from '@/org.libersoft.messages/dialogs/DefaultGifServers.svelte';
+	import DialogDeleteGifServer from '@/org.libersoft.messages/dialogs/DeleteGifServer.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';

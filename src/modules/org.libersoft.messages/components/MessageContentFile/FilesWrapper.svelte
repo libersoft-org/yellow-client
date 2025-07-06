@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Button from '@/core/components/Button/Button.svelte';
 	import { onMount } from 'svelte';
+	import { downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.js';
 	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-	import { downloadAttachmentsSerial } from '../../messages.js';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
+	import Button from '@/core/components/Button/Button.svelte';
 	let { children } = $props();
 	let ref: HTMLDivElement;
 	let attachedUploads = $state<IFileUpload[]>([]);

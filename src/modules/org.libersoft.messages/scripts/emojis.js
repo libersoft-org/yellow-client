@@ -1,8 +1,6 @@
-// 😐😐😐😐
-
 import { get } from 'svelte/store';
-import { cp } from './emojis_parse_data.js';
-import { identifier } from './messages.js';
+import { cp } from '@/org.libersoft.messages/scripts/emojis_parse_data.js';
+import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
 
 export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByCodepointsRgi) {
 	//console.log('start_emojisets_fetch');

@@ -3,7 +3,7 @@
 	import { open } from '@tauri-apps/plugin-dialog';
 	import { TAURI } from '@/core/scripts/tauri.ts';
 	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
-	import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder, messageListMaxWidth, messageListApplyMaxWidth, photoRadius } from '../../messages.js';
+	import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder, messageListMaxWidth, messageListApplyMaxWidth, photoRadius } from '@/org.libersoft.messages/scripts/messages.js';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

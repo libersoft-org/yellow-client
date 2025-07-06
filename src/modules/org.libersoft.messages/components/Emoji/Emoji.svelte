@@ -1,9 +1,9 @@
 <script>
 	import { debug } from '@/core/scripts/stores.ts';
-	import { rgi, emoji_render } from '../../emojis.js';
-	import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
-	import { emojisByCodepointsRgi } from '../../messages.js';
-	import Sticker from '../Stickers/Sticker.svelte';
+	import { rgi, emoji_render } from '@/org.libersoft.messages/scripts/emojis.js';
+	import { expressions_renderer, animate_all_expressions } from '@/org.libersoft.messages/scripts/expressions.svelte.ts';
+	import { emojisByCodepointsRgi } from '@/org.libersoft.messages/scripts/messages.js';
+	import Sticker from '@/org.libersoft.messages/components/Stickers/Sticker.svelte';
 	export let codepoints;
 	export let size = 40;
 	export let is_single = false;

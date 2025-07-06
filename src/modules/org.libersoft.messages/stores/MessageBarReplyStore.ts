@@ -1,5 +1,5 @@
 import { derived, writable } from 'svelte/store';
-import type { Message } from '../types.ts';
+import type { Message } from '@/org.libersoft.messages/scripts/types.ts';
 
 export enum ReplyToType {
 	MESSAGE = 'message',

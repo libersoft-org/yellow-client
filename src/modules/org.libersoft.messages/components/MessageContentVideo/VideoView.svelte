@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
-	import { identifier } from '@/org.libersoft.messages/messages.js';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
 	import { debug } from '@/core/scripts/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

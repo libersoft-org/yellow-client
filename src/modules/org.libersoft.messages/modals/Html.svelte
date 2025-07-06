@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { identifier } from '../messages.js';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
-	import HtmlSideBySide from '../components/HtmlEditor/HtmlSideBySide.svelte';
-	import HtmlInTabs from '../components/HtmlEditor/HtmlInTabs.svelte';
+	import HtmlSideBySide from '@/org.libersoft.messages/components/HtmlEditor/HtmlSideBySide.svelte';
+	import HtmlInTabs from '@/org.libersoft.messages/components/HtmlEditor/HtmlInTabs.svelte';
 	interface Props {
 		close: () => void;
 	}

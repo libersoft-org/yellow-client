@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { liveQuery } from 'dexie';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
-	import { identifier } from '../../messages.js';
-	import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
-	import { stickers_db } from '../../db.ts';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 	import FuzzySearch from 'fuzzy-search';
 	import { writable, get } from 'svelte/store';
 	import Option from '@/core/components/Select/SelectOption.svelte';

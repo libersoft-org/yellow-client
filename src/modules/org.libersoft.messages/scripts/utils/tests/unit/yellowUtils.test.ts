@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { extractYellowValue, YELLOW_SRC_PROTOCOL } from '@/org.libersoft.messages/utils/yellowUtils.ts';
+import { extractYellowValue, YELLOW_SRC_PROTOCOL } from '@/org.libersoft.messages/scripts/utils/yellowUtils.ts';
 
 describe('extractYellowValue', () => {
 	test('should extract value', () => {
@@ -19,7 +19,6 @@ describe('extractYellowValue', () => {
 		// @ts-ignore
 		expect(extractYellowValue(null)).toBe(null);
 		// @ts-ignore
-
 		expect(extractYellowValue(123)).toBe(null);
 		// @ts-ignore
 		expect(extractYellowValue(NaN)).toBe(null);
