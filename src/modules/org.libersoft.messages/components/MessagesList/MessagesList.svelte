@@ -13,6 +13,20 @@
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '../../messages.js';
 	import { getGuid } from '@/core/core.ts';
 	import { debug } from '@/core/stores.ts';
+
+	// Android detection
+	let isAndroid = false;
+
+	onMount(() => {
+		// Detect Android specifically
+		isAndroid = /Android/i.test(navigator.userAgent);
+	});
+
+	// Reactive bottom position for ScrollButton
+	$: scrollButtonBottom = isAndroid ? '62px' : '5px';
+
+	// Reactive spacer height that accounts for keyboard
+	$: spacerHeight = isAndroid ? `60px` : '0px';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
@@ -719,7 +733,7 @@
 	@media (max-width: 768px) and (max-height: 800px) {
 		.messages-bottom-spacer {
 			flex-shrink: 0;
-			height: 70px; /* Larger for Android mobile */
+			/* Height is now dynamically set via JavaScript */
 		}
 	}
 </style>
@@ -783,10 +797,10 @@
 					{/if}
 				{/each}
 				<div bind:this={anchorElement}></div>
-				<div class="messages-bottom-spacer"></div>
+				<div class="messages-bottom-spacer" style="height: {spacerHeight}"></div>
 			</div>
 		</div>
-		<ScrollButton visible={scrollButtonVisible} right="15px" bottom="5px" onClick={scrollToBottom} />
+		<ScrollButton visible={scrollButtonVisible} right="15px" bottom={scrollButtonBottom} onClick={scrollToBottom} />
 	{/if}
 </div>
 
