@@ -39,7 +39,7 @@
 	}
 </style>
 
-<Clickable data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
+<Clickable data-testid={'ModuleBarItem-' + decl.id} data-module-id={decl.id} onClick={() => clickSetModule(decl.id)}>
 	<div class="item" class:selected>
 		<Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false} />
 		<Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--primary-background" size="30px" />

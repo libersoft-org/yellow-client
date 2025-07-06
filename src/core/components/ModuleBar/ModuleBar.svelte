@@ -51,6 +51,7 @@
 			el.style.maxHeight = full;
 			void el.offsetHeight;
 			el.style.maxHeight = '50px';
+			setTimeout(scrollToSelected, 250);
 		} else {
 			el.style.maxHeight = '50px';
 			void el.offsetHeight;
@@ -62,6 +63,12 @@
 			el.addEventListener('transitionend', tidy);
 		}
 		expanded = !expanded;
+	}
+
+	function scrollToSelected() {
+		if (!$selected_module_id || !itemsEl) return;
+		const selectedElement = itemsEl.querySelector(`[data-module-id="${$selected_module_id}"]`);
+		if (selectedElement) selectedElement.scrollIntoView({ block: 'center' });
 	}
 
 	function onResize(entry) {
