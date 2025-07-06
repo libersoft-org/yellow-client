@@ -22,9 +22,29 @@
 	}
 
 	td.shorten {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+		overflow: hidden;
+		padding: 10px;
+	}
+
+	td.shorten .ellipsis {
+		flex: 1 1 0%;
+		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		display: block;
+	}
+
+	.ellipsis {
+		display: block;
+		width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		min-width: 0;
 	}
 
 	td > :global(div) {
@@ -73,6 +93,15 @@
 
 	:global(.table-wide) td:empty {
 		display: table-cell;
+	}
+
+	:global(.ellipsis) {
+		flex: 1 1 0%;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: block;
 	}
 </style>
 

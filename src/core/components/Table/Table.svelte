@@ -40,7 +40,7 @@
 		padding-bottom: 0;
 		width: 100%;
 		border-collapse: collapse;
-		table-layout: auto;
+		table-layout: fixed;
 		font-size: clamp(14px, 2vw, 16px);
 	}
 
