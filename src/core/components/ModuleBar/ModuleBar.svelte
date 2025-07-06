@@ -83,7 +83,6 @@
 			return total + child.getBoundingClientRect().width;
 		}, 0);
 		expandEnabled = childrenTotalWidth > width;
-		// Scroll to selected element after resize
 		scrollToSelected();
 	}
 </script>
