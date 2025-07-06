@@ -25,8 +25,27 @@
 	// Reactive bottom position for ScrollButton
 	$: scrollButtonBottom = isAndroid ? '62px' : '5px';
 
-	// Reactive spacer height that accounts for keyboard
-	$: spacerHeight = isAndroid ? `60px` : '0px';
+	// Get expressions menu state from context
+	let expressionsMenuOpen = false;
+
+	// Get the context and set up reactive updates
+	let expressionsMenuContext;
+	try {
+		expressionsMenuContext = getContext('expressionsMenuOpen');
+		if (expressionsMenuContext) {
+			// Override the setOpen function to also update our local state
+			const originalSetOpen = expressionsMenuContext.setOpen;
+			expressionsMenuContext.setOpen = (open: boolean) => {
+				expressionsMenuOpen = open;
+				originalSetOpen(open);
+			};
+		}
+	} catch (e) {
+		// Context not available, ignore
+	}
+
+	// Reactive spacer height that accounts for keyboard and context menu state (Android only)
+	$: spacerHeight = isAndroid && !expressionsMenuOpen ? `60px` : '0px';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';

@@ -43,6 +43,7 @@
 	});
 
 	let { setFileUploadModal } = getContext('FileUploadModal');
+	let expressionsMenuOpen = getContext('expressionsMenuOpen');
 
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
@@ -80,8 +81,12 @@
 			console.log('openExpressions as context menu:', expressionsMenu);
 			console.log('elExpressions.offsetLeft:', elExpressions.offsetLeft, 'elExpressions.offsetTop:', elExpressions.offsetTop, 'elExpressions.offsetWidth:', elExpressions.offsetWidth, 'elExpressions.offsetHeight:', elExpressions.offsetHeight);
 			expressionsMenu?.openMenu({ x: elExpressions.getBoundingClientRect().x, y: 0 });
+			// Notify MessagesList that expressions menu is open
+			expressionsMenuOpen?.setOpen(true);
 		} else {
 			expressionsBottomSheetOpen = true;
+			// Notify MessagesList that expressions menu is open (bottom sheet)
+			expressionsMenuOpen?.setOpen(true);
 		}
 		await tick();
 		console.log('elExpressions:', elExpressions);
@@ -221,6 +226,8 @@
 		//if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
 		expressionsBottomSheetOpen = false;
 		expressionsMenu?.close();
+		// Notify MessagesList that expressions menu is closed
+		expressionsMenuOpen?.setOpen(false);
 	}
 
 	$: update2(expressionsAsContextMenu, expressionsBottomSheetOpen);
@@ -234,6 +241,8 @@
 		//console.log('elMessageBlur');
 		if (elBottomSheet?.contains(event.relatedTarget)) return;
 		expressionsBottomSheetOpen = false;
+		// Notify MessagesList that expressions menu is closed (bottom sheet)
+		expressionsMenuOpen?.setOpen(false);
 	}
 
 	const onVideoRecordClick = async () => {
@@ -331,11 +340,28 @@
 				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" isButton />
 			</div>
 			{#if expressionsAsContextMenu}
-				<div bind:this={elExpressions}>
+				<div bind:this={elExpressions} class="expressions-button">
 					<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" isButton />
 				</div>
 			{:else}
-				<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
+				<div class="expressions-button">
+					<Icon
+						img="modules/{identifier}/img/emoji.svg"
+						colorVariable="--primary-background"
+						alt="Emoji"
+						size="32px"
+						padding="0px"
+						onClick={() => {
+							if (expressionsBottomSheetOpen) {
+								expressionsBottomSheetOpen = false;
+								expressionsMenuOpen?.setOpen(false);
+							} else {
+								expressionsBottomSheetOpen = true;
+								expressionsMenuOpen?.setOpen(true);
+							}
+						}}
+					/>
+				</div>
 			{/if}
 			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur}></textarea>
 			<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
