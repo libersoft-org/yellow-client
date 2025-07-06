@@ -2,20 +2,17 @@
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
+		hiddenOnMobile?: boolean;
 	}
-	const { children }: Props = $props();
+	const { children, hiddenOnMobile = false }: Props = $props();
 </script>
 
 <style>
-	thead {
+	thead.hiddenOnMobile {
 		display: none;
-	}
-
-	:global(.table-wide) thead {
-		display: table-header-group;
 	}
 </style>
 
-<thead>
+<thead class:hidden-on-mobile={hiddenOnMobile}>
 	{@render children?.()}
 </thead>

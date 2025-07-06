@@ -18,7 +18,6 @@
 	import DialogAccountsDelete from '@/core/dialogs/AccountsDelete.svelte';
 	import ModalAccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
 	import ModalAccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
-	import Accordion from '@/core/components/Accordion/Accordion.svelte';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
@@ -32,6 +31,7 @@
 
 	onMount(() => {
 		window.addEventListener('keydown', onKeydown);
+		console.log('[AccountsContent], accounts_config:', $accounts_config);
 	});
 
 	onDestroy(() => {
@@ -126,7 +126,34 @@
 				<Button img="img/import.svg" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
 				<Button img="img/export.svg" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
 			</ButtonBar>
-			<Accordion testId="accounts-content" items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} content={accountTable} header={status} expandAllOnDesktop mode="multiple" />
+
+			{#if $accounts_config.length > 0}
+				{#each $accounts_config as account (account.id)}
+					<Table>
+						<Thead>
+							<TheadTr>
+								<Th>
+									{account.settings.title}<br />
+									<AccountStatusIconIconAndText account={findAccount(account.id)} />
+								</Th>
+							</TheadTr>
+						</Thead>
+						<Tbody>
+							<TbodyTr>
+								<Td title="Server">{account.credentials.server}</Td>
+								<Td title="Address">{account.credentials.address}</Td>
+								<Td title="Enabled">{account.enabled ? 'Yes' : 'No'}</Td>
+								<Td title="Action">
+									<TableActionItems>
+										<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} testId="edit-account-button" />
+										<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} testId="delete-account-button" />
+									</TableActionItems>
+								</Td>
+							</TbodyTr>
+						</Tbody>
+					</Table>
+				{/each}
+			{/if}
 		</Paper>
 	</Page>
 </Content>
