@@ -1,11 +1,11 @@
-import { log, TAURI_SERVICE } from '@/core/tauri.ts';
-import { listen } from '@tauri-apps/api/event';
-import { derived, get, writable } from 'svelte/store';
-import { debug, selected_module_id, active_account_id } from '@/core/stores.ts';
-import { send, handleSocketMessage } from '@/core/socket.ts';
-import { updateModulesComms } from '@/core/modules.ts';
-import { accounts_config } from '@/core/accounts_config.ts';
 import { tick } from 'svelte';
+import { derived, get, writable } from 'svelte/store';
+import { listen } from '@tauri-apps/api/event';
+import { log, TAURI_SERVICE } from '@/core/scripts/tauri.ts';
+import { debug, selected_module_id, active_account_id } from '@/core/scripts/stores.ts';
+import { send, handleSocketMessage } from '@/core/scripts/socket.ts';
+import { updateModulesComms } from '@/core/scripts/modules.ts';
+import { accounts_config } from '@/core/scripts/accounts_config.ts';
 import type { IAccount, AccountStore, IAccountConfig, IAccountCredentials, IAccountSettings } from './types.ts';
 const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
 export let accounts = writable<AccountStore[]>([]);

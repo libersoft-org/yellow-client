@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setContext, tick, type Snippet } from 'svelte';
-	import { mobileClass, isMobile, debug } from '@/core/stores.ts';
+	import { mobileClass, isMobile, debug } from '@/core/scripts/stores.ts';
 	import { draggable } from '@neodrag/svelte';
 	import { bringToFront, registerModal, unregisterModal } from '@/lib/modal-index-manager.js';
 	import Icon from '@/core/components/Icon/Icon.svelte';

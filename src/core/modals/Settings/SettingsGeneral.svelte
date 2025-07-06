@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/settings.ts';
+	import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/scripts/settings.ts';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';

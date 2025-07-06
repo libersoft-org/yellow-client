@@ -7,7 +7,7 @@ try {
 }
 export const prerender = p;
 
-import { log } from '@/core/tauri';
+import { log } from '@/core/scripts/tauri.ts';
 
 function handle(event) {
 	// event.error is the Error object

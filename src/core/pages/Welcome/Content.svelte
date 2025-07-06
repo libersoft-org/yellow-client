@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { BROWSER } from '@/core/tauri.ts';
-	import { hideSidebarMobile, product, link } from '@/core/stores.ts';
+	import { BROWSER } from '@/core/scripts/tauri.ts';
+	import { hideSidebarMobile, product, link } from '@/core/scripts/stores.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';

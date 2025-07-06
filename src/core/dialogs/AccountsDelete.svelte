@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { accounts } from '@/core/accounts.ts';
-	import { delAccount } from '@/core/accounts_config.js';
+	import { accounts } from '@/core/scripts/accounts.ts';
+	import { delAccount } from '@/core/scripts/accounts_config.js';
 	import Dialog, { type IDialogData } from '../components/Dialog/Dialog.svelte';
 	interface Props {
 		id: string;

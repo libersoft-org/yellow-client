@@ -1,4 +1,13 @@
 <script lang="ts">
+	import { onDestroy, onMount, tick } from 'svelte';
+	import { writable, get, type Unsubscriber } from 'svelte/store';
+	import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
+	import { debug } from '@/core/scripts/stores.ts';
+	import { log, BROWSER } from '@/core/scripts/tauri.ts';
+	import { deleteExampleNotifications, setNotificationsEnabled } from '@/core/scripts/notifications.ts';
+	import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, notificationsSoundEnabled, notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '@/core/scripts/notifications_settings.ts';
+	import { deleteNotification, updateExampleNotification, exampleNotifications } from '@/core/scripts/notifications.ts';
+	import { skipFirst } from '$lib/skipfirst_store.ts';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
@@ -10,15 +19,6 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import CornerSelector from '@/core/components/CornerSelector/CornerSelector.svelte';
-	import { onDestroy, onMount, tick } from 'svelte';
-	import { writable, get, type Unsubscriber } from 'svelte/store';
-	import { availableMonitors, type Monitor } from '@tauri-apps/api/window';
-	import { debug } from '@/core/stores.ts';
-	import { log, BROWSER } from '@/core/tauri.ts';
-	import { deleteExampleNotifications, setNotificationsEnabled } from '@/core/notifications.ts';
-	import { selectedMonitorName, selectedNotificationsCorner, enableCustomNotifications, customNotificationsOn, notificationsSoundEnabled, notificationsSettingsAlert, notificationsEnabled, isRequestingNotificationsPermission } from '@/core/notifications_settings.ts';
-	import { deleteNotification, updateExampleNotification, exampleNotifications } from '@/core/notifications.ts';
-	import { skipFirst } from '$lib/skipfirst_store.ts';
 	// Local monitors store for this component
 	let monitors = writable<Monitor[]>([]);
 	let monitorInterval: ReturnType<typeof setInterval> | undefined;

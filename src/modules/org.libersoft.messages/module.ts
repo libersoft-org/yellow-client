@@ -1,4 +1,4 @@
-import { registerModule } from '@/core/core.ts';
+import { registerModule } from '@/core/scripts/core.ts';
 import { identifier, init, initData, initComms, deinitComms, deinitData, onModuleSelected } from './messages.js';
 import Sidebar from './pages/Main/Sidebar.svelte';
 import Content from './pages/Main/Content.svelte';

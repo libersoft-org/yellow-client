@@ -1,5 +1,5 @@
 <script lang="ts">
-	//import { debug } from '@/core/stores.ts';
+	//import { debug } from '@/core/scripts/stores.ts';
 	import StickerSetItem from './StickerSetItem.svelte';
 	interface Props {
 		items: any[];

@@ -1,13 +1,13 @@
 <script lang="ts">
+	import { identifier } from '@/org.libersoft.messages/messages';
+	import { debug } from '@/core/scripts/stores.ts';
 	import 'videojs-record/dist/css/videojs.record.css';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
-	import { identifier } from '@/org.libersoft.messages/messages';
-	import { debug } from '@/core/stores.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	interface Props {
 		// base
 		videoRef?: HTMLElement;

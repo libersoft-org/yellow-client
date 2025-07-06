@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { debug } from '@/core/stores.ts';
+	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork, selectedAddress, balance, balanceTimestamp } from '../scripts/wallet.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';

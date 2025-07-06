@@ -4,10 +4,10 @@ import { invoke } from '@tauri-apps/api/core';
 import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
 // import { confirm } from '@tauri-apps/plugin-dialog';
 // import { exit } from '@tauri-apps/plugin-process';
-import { runOnSystemStartup, showTrayIcon } from '@/core/settings.ts';
+import { runOnSystemStartup, showTrayIcon } from '@/core/scripts/settings.ts';
 // import { get } from 'svelte/store';
 import { disable, enable } from '@tauri-apps/plugin-autostart';
-import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
+import { createTrayIcon, destroyTrayIcon } from '@/core/scripts/tray_icon.ts';
 import { TAURI, TAURI_MOBILE, log } from './tauri.ts';
 
 export async function setDefaultWindowSize() {

@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
-import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import { log, TAURI_MOBILE } from '@/core/tauri.ts';
+import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
+import { log, TAURI_MOBILE } from '@/core/scripts/tauri.ts';
 import { selectAccount } from './accounts.ts';
 import { getGuid } from './utils/utils.ts';
 import { invoke } from '@tauri-apps/api/core';

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { debug } from '@/core/stores.ts';
-	import { log } from '@/core/tauri.ts';
-	import { addNotification } from '@/core/notifications.ts';
+	import { debug } from '@/core/scripts/stores.ts';
+	import { log } from '@/core/scripts/tauri.ts';
+	import { addNotification } from '@/core/scripts/notifications.ts';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Files from '@/core/debug/Files.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

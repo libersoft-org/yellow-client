@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { log } from '@/core/tauri.ts';
+	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/scripts/core.ts';
+	import { active_account_id } from '@/core/scripts/stores.ts';
+	import { validateAccountsArray, validateAccountConfig } from '@/core/scripts/accounts_config.ts';
+	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
+	import { log } from '@/core/scripts/tauri.ts';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/core.ts';
-	import { active_account_id } from '@/core/stores.ts';
-	import { validateAccountsArray, validateAccountConfig } from '@/core/accounts_config.ts';
-	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/utils/exceptions.ts';
 	let elModal;
 	let elDialogReplace: any = $state(null);
 	let elDialogConflict: any = $state(null);

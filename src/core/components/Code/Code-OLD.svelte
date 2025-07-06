@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Prism from 'prismjs';
 	import 'prismjs/components/prism-json';
-	import { log } from '@/core/tauri.ts';
+	import { log } from '@/core/scripts/tauri.ts';
 	interface Props {
 		code: string;
 	}

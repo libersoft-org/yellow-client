@@ -4,7 +4,7 @@
 	import { identifier } from '../../messages.js';
 	import { type IFileDownload, type IFileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 	import Button from '@/core/components/Button/Button.svelte';
-	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	interface Props {
 		upload: IFileUpload;
 		download: IFileDownload | null;

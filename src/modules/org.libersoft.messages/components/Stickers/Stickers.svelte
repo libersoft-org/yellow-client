@@ -2,7 +2,7 @@
 	import { identifier } from '../../messages.js';
 	import { onMount, tick } from 'svelte';
 	import { updateStickerLibrary, stickerLibraryUpdaterState } from '../../stickers.js';
-	import { debug } from '@/core/stores.ts';
+	import { debug } from '@/core/scripts/stores.ts';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';

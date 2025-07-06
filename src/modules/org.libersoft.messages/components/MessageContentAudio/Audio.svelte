@@ -4,8 +4,8 @@
 	import { onMount } from 'svelte';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import { get, writable } from 'svelte/store';
-	import { active_account } from '@/core/core.ts';
-	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';

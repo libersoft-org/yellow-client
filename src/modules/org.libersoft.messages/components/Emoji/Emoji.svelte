@@ -1,5 +1,5 @@
 <script>
-	import { debug } from '@/core/stores.ts';
+	import { debug } from '@/core/scripts/stores.ts';
 	import { rgi, emoji_render } from '../../emojis.js';
 	import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
 	import { emojisByCodepointsRgi } from '../../messages.js';

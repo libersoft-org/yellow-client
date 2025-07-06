@@ -1,6 +1,6 @@
 <script>
 	import { onMount, setContext, tick, getContext } from 'svelte';
-	import { documentHeight, keyboardHeight, isMobile, debug } from '@/core/stores.ts';
+	import { documentHeight, keyboardHeight, isMobile, debug } from '@/core/scripts/stores.ts';
 	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

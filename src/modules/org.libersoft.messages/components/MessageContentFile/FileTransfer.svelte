@@ -1,6 +1,6 @@
 <script>
 	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
-	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	import { onDestroy } from 'svelte';
 	export let file = '';
 	export let total = 0;

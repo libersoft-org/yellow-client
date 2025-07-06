@@ -1,7 +1,7 @@
 import { derived, get, type Readable, type Writable, writable } from 'svelte/store';
-import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-import { log } from '@/core/tauri.ts';
-import { followBrowserTheme } from '@/core/settings.ts';
+import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
+import { log } from '@/core/scripts/tauri.ts';
+import { followBrowserTheme } from '@/core/scripts/settings.ts';
 
 // Define the Theme interface
 export interface ITheme {

@@ -2,7 +2,7 @@
 	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
-	import { log } from '@/core/tauri.ts';
+	import { log } from '@/core/scripts/tauri.ts';
 	import { setContext, tick } from 'svelte';
 	interface IProps {
 		testId?: string;

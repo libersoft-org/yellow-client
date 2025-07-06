@@ -4,7 +4,7 @@ import * as path from '@tauri-apps/api/path';
 import { appDataDir } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/core';
 import { TAURI_MOBILE, log } from './tauri.ts';
-import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
+import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { get } from 'svelte/store';
 
 // Store for default download folder

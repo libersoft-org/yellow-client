@@ -1,5 +1,5 @@
 <script>
-	import { debug } from '@/core/stores.ts';
+	import { debug } from '@/core/scripts/stores.ts';
 	import lottie from 'lottie-web';
 	import pako from 'pako';
 	import { getContext, onMount, onDestroy } from 'svelte';

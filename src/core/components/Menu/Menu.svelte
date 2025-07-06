@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { product, link } from '@/core/stores.ts';
-	import { BROWSER } from '@/core/tauri.ts';
+	import { product, link } from '@/core/scripts/stores.ts';
+	import { BROWSER } from '@/core/scripts/tauri.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import MenuItem from '@/core/components/Menu/MenuItem.svelte';
 	import Settings from '@/core/modals/Settings/Settings.svelte';
@@ -9,7 +9,7 @@
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import DialogExit from '@/core/dialogs/Exit.svelte';
 	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
-	import { isDarkMode, toggleDarkMode } from '@/core/themes.ts';
+	import { isDarkMode, toggleDarkMode } from '@/core/scripts/themes.ts';
 	interface Props {
 		showMenu: boolean;
 	}

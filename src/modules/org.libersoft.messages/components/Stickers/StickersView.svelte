@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { debug } from '@/core/stores.ts';
+	import { liveQuery } from 'dexie';
+	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { identifier } from '../../messages.js';
 	import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
-	import { liveQuery } from 'dexie';
 	import { stickers_db } from '../../db.ts';
 	import FuzzySearch from 'fuzzy-search';
 	import { writable, get } from 'svelte/store';
@@ -10,7 +10,6 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import StickersSearchResults from './StickersSearchResults.svelte';
-	import { isMobile } from '@/core/stores.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { onMount, untrack } from 'svelte';
 	let { stickerset_favorites } = $props();
@@ -20,7 +19,6 @@
 	let scroll_to_top: (() => Promise<void>) | null = $state(null);
 	$effect(() => console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value));
 	let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
-
 	let items = $state([]);
 	let loading = $state(true);
 	let elStickersSearchResults: StickersSearchResults | null = $state(null);

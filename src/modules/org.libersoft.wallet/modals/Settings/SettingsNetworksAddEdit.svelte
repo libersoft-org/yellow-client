@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { networks, type INetwork } from '../../scripts/wallet.ts';
 	import { module } from '../../scripts/module.ts';
-	import { validateForm } from '@/core/utils/form.ts';
+	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

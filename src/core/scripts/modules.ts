@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { module_decls, modules_disabled, modules_display_order, selected_module_id } from '@/core/stores.ts';
+import { module_decls, modules_disabled, modules_display_order, selected_module_id } from '@/core/scripts/stores.ts';
 import { tick } from 'svelte';
 import type { IModuleDeclaration, IAccount } from './types.ts';
 export function initModules() {

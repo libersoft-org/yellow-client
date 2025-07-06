@@ -11,23 +11,22 @@
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '../../messages.js';
-	import { getGuid } from '@/core/core.ts';
-	import { debug } from '@/core/stores.ts';
+	import { getGuid } from '@/core/scripts/core.ts';
+	import { debug } from '@/core/scripts/stores.ts';
+	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
+	import { log } from '@/core/scripts/tauri.ts';
+	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
+	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import resize from '@/core/actions/resizeObserver.ts';
-	import { highlightElement } from '@/core/utils/animationUtils.ts';
 	import Message from '../Message/Message.svelte';
 	import MessageLoader from '../MessageLoader/MessageLoader.svelte';
 	import ScrollButton from '../ScrollButton/ScrollButton.svelte';
 	import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
 	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
-	import { log } from '@/core/tauri.ts';
-	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
-	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-
 	interface IMessageItem {
 		uid: string;
 		type: 'message' | 'loader' | 'hole' | 'unseen_marker' | 'no_messages' | 'initial_loading_placeholder';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { setModule } from '@/core/core.ts';
+	import { setModule } from '@/core/scripts/core.ts';
 	import { page, setPage, closePage } from '../../scripts/dating.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Welcome from '../Welcome.svelte';

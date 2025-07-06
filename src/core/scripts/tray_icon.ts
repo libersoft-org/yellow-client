@@ -7,9 +7,9 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Menu } from '@tauri-apps/api/menu';
 import { exit } from '@tauri-apps/plugin-process';
 //import { CheckMenuItem } from '@tauri-apps/api/menu/checkMenuItem';
-import { showTrayIcon } from '@/core/settings.ts';
+import { showTrayIcon } from '@/core/scripts/settings.ts';
 import { get } from 'svelte/store';
-import { product } from '@/core/stores.ts';
+import { product } from '@/core/scripts/stores.ts';
 
 let tray: TrayIcon | null = null;
 let tray_loading = false;

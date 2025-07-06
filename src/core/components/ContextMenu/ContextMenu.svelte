@@ -1,7 +1,7 @@
 <script>
 	import { onMount, setContext, getContext, afterUpdate, tick, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { getGuid } from '@/core/core.ts';
+	import { getGuid } from '@/core/scripts/core.ts';
 	export let target = null;
 	export let open = false;
 	export let x = 0;

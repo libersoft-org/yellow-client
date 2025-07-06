@@ -2,7 +2,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { jumpToMessage } from '../../messages.js';
 	import { get } from 'svelte/store';
-	import { active_account } from '@/core/core.ts';
+	import { active_account } from '@/core/scripts/core.ts';
 	interface Props {
 		address?: string;
 		text?: string;

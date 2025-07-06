@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { module } from '../../scripts/module.ts';
 	import { wallets, networks, type IWallet, type INetwork, settingsModal } from '../../scripts/wallet.ts';
-	import { attachParents } from '@/core/base_settings.ts';
+	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import SettingsGeneral from './SettingsGeneral.svelte';
 	import SettingsNetworks from './SettingsNetworks.svelte';
 	import SettingsWallets from './SettingsWallets.svelte';
 	import SettingsAddressbook from './SettingsAddressbook.svelte';
-
 	import SettingsWalletsWallet from './SettingsWalletsWallet.svelte';
 	import SettingsWalletsAdd from './SettingsWalletsAdd.svelte';
 	import SettingsNetworksAddEdit from './SettingsNetworksAddEdit.svelte';
 	let elBaseSettings: BaseSettings;
-
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
 			title: wallet.name,

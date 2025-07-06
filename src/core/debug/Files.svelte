@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { platform, type as osType } from '@tauri-apps/plugin-os';
-	import { log, TAURI, TAURI_MOBILE, BROWSER } from '@/core/tauri.ts';
-	import { mobileClass } from '@/core/stores.ts';
-	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
+	import { log, TAURI, TAURI_MOBILE, BROWSER } from '@/core/scripts/tauri.ts';
+	import { mobileClass } from '@/core/scripts/stores.ts';
+	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '@/core/scripts/files.svelte.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';

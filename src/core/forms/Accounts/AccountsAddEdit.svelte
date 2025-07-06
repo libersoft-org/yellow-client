@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount, getContext, untrack, type Snippet } from 'svelte';
 	import { get, writable, derived } from 'svelte/store';
-	import { accounts, accountConfigExistsByCredentials } from '@/core/core.ts';
-	import { addAccount, findAccountConfig, saveAccount } from '@/core/accounts_config.ts';
+	import { accounts, accountConfigExistsByCredentials } from '@/core/scripts/core.ts';
+	import { addAccount, findAccountConfig, saveAccount } from '@/core/scripts/accounts_config.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Label from '@/core/components/Label/Label.svelte';

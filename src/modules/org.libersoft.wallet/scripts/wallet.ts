@@ -1,7 +1,7 @@
 import { derived, get, writable } from 'svelte/store';
 import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
-import { getGuid } from '@/core/core.ts';
+import { getGuid } from '@/core/scripts/core.ts';
 export { default_networks } from './default_networks.js';
 export interface IAddress {
 	address: string;

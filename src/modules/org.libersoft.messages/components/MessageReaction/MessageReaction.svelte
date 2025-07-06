@@ -1,14 +1,14 @@
 <script lang="ts">
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Emojis from '../Emoji/Emojis.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
+	import { playAudio } from '@/core/scripts/notifications.ts';
 	import { computePosition, autoPlacement, autoUpdate, shift, offset } from '@floating-ui/dom';
 	import { onDestroy, onMount } from 'svelte';
 	import { toggleMessageReaction, identifier } from '../../messages';
-	import Emoji from '../Emoji/Emoji.svelte';
-	import { rgi } from '../../emojis';
+	import { rgi } from '../../emojis.js';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
-	import { playAudio } from '@/core/notifications';
+	import Emojis from '../Emoji/Emojis.svelte';
+	import Emoji from '../Emoji/Emoji.svelte';
 	interface Props {
 		message: any;
 	}

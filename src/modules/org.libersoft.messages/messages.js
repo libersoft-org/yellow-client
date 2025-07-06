@@ -1,7 +1,7 @@
 import { replaceEmojisWithTags } from './emojis.js';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
-import { log } from '@/core/tauri.ts';
+import { log } from '@/core/scripts/tauri.ts';
 import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
 import { FileUploadRecordStatus, FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
@@ -10,15 +10,14 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements, stripHtml } from './utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { active_account, active_account_module_data, getGuid, relay, selectAccount, setModule } from '@/core/core.ts';
-import { active_account_id } from '@/core/stores.ts';
-import { hideSidebarMobile, isClientFocused } from '@/core/stores.ts';
+import { active_account, active_account_module_data, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
+import { active_account_id, hideSidebarMobile, isClientFocused } from '@/core/scripts/stores.ts';
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import retry from 'retry';
 import { tick } from 'svelte';
 import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
-import { addNotification, deleteNotification, playAudio } from '@/core/notifications.ts';
+import { addNotification, deleteNotification, playAudio } from '@/core/scripts/notifications.ts';
 import { makeMessageReaction } from './factories/messageFactories.ts';
 import { identifier, connectionSendData, _send, moduleEventSubscribe, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);

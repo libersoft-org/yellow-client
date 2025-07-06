@@ -1,10 +1,9 @@
 import type { Handle } from '@sveltejs/kit';
 import { paraglideMiddleware } from '$lib/paraglide/server';
-
 import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
 import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
-import { sentryServerConfig } from '@/core/sentry-config';
+import { sentryServerConfig } from '@/core/scripts/sentry-config.ts';
 
 // Only initialize Sentry if enabled
 const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.VITE_SENTRY_ENABLED || '').trim());
@@ -20,7 +19,6 @@ if (sentryEnabled) {
 const handleParaglide: Handle = ({ event, resolve }) => {
 	return paraglideMiddleware(event.request, ({ request, locale }) => {
 		event.request = request;
-
 		return resolve(event, {
 			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale),
 		});

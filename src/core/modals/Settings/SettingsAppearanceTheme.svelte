@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { convertFromShortHex } from '@/core/utils/colors.js';
+	import { convertFromShortHex } from '@/core/scripts/utils/colors.js';
 	import { type Writable, get } from 'svelte/store';
 	import { onDestroy } from 'svelte';
-	import { user_themes, default_themes, themes, selected_theme_index, type ITheme } from '@/core/themes.ts';
+	import { user_themes, default_themes, themes, selected_theme_index, type ITheme } from '@/core/scripts/themes.ts';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	//import Thead from '@/core/components/Table/TableThead.svelte';

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { product } from '@/core/scripts/stores.ts';
 	import QRCode from 'qrcode';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
@@ -8,7 +9,6 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-	import { product } from '@/core/stores.ts';
 	let { data, filename = 'export', enableJsonTab = true, enableQrTab = true, testId = 'export', isSensitive = false } = $props();
 	let activeTab = $state('json');
 	let jsonEditorContents = $state('');

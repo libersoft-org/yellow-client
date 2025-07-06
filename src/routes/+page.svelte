@@ -3,12 +3,10 @@
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import { init, active_account, accounts_config, setModule } from '../core/core.ts';
-	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug } from '@/core/stores.ts';
-	import { documentHeight, keyboardHeight } from '@/core/stores.ts';
-	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
-	import { mobileWidth, mobileClass, isMobile } from '@/core/stores.ts';
-	import { selected_theme_index, initBrowserThemeDetection } from '@/core/themes.ts';
+	import { init, active_account, accounts_config, setModule } from '../core/scripts/core.ts';
+	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug, documentHeight, keyboardHeight, mobileWidth, mobileClass, isMobile } from '@/core/scripts/stores.ts';
+	import { initBrowserNotifications, initCustomNotifications } from '@/core/scripts/notifications.ts';
+	import { selected_theme_index, initBrowserThemeDetection } from '@/core/scripts/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
 	import ModuleBar from '@/core/components/ModuleBar/ModuleBar.svelte';
@@ -22,15 +20,15 @@
 	import WizardWelcomeStep2 from '@/core/wizard/WelcomeStep2.svelte';
 	import WizardWelcomeStep3 from '@/core/wizard/WelcomeStep3.svelte';
 	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
-	import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
+	import { createTrayIcon, destroyTrayIcon } from '@/core/scripts/tray_icon.ts';
 	import '../modules/org.libersoft.messages/module.ts';
 	import '../modules/org.libersoft.contacts/scripts/module.ts';
 	import '../modules/org.libersoft.wallet/scripts/module.ts';
 	import '../modules/org.libersoft.dating/scripts/module.ts';
 	import '../modules/org.libersoft.iframes/scripts/module.ts';
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
-	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
-	import { initZoom } from '@/core/zoom.ts';
+	import { setDefaultWindowSize, initWindow } from '../core/scripts/tauri-app.ts';
+	import { initZoom } from '@/core/scripts/zoom.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },

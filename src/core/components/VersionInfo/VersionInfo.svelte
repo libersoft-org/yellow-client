@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { version, build, commit, branch } from '@/core/stores.ts';
-	import { log, TAURI } from '@/core/tauri.ts';
-	import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
+	import { version, build, commit, branch } from '@/core/scripts/stores.ts';
+	import { log, TAURI } from '@/core/scripts/tauri.ts';
+	import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/scripts/tauri-app.ts';
 	import MenuAppSection from '@/core/components/Menu/MenuAppSection.svelte';
-	import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
+	import { friendlyTimestamp } from '@/core/scripts/utils/dateTime.ts';
 	import { onMount } from 'svelte';
 	interface Props {
 		showVersion?: boolean;

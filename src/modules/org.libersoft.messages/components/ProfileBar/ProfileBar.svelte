@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isMobile } from '@/core/stores.ts';
+	import { isMobile } from '@/core/scripts/stores.ts';
 	import { selectedConversation, photoRadius } from '../../messages.js';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';

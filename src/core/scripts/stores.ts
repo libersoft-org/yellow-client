@@ -1,5 +1,5 @@
 import { derived, writable } from 'svelte/store';
-import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../lib/svelte-shared-store.ts';
+import { localStorageReadOnceSharedStore, localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import type { IModuleDeclaration } from './types.ts';
 
 // Add global type declarations
@@ -33,7 +33,7 @@ export const module_decls = writable<{ [key: string]: IModuleDeclaration }>({});
 export const active_account_id = localStorageReadOnceSharedStore<string | null>('active_account_id', null);
 
 // Helper function needed for build timestamp
-import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
+import { friendlyTimestamp } from '@/core/scripts/utils/dateTime.ts';
 
 // App metadata
 export const product = 'Yellow';

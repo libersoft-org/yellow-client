@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { accounts_config } from '@/core/core.ts';
+	import { accounts_config } from '@/core/scripts/core.ts';
 	import Modal from '@/core/components/Modal/Modal.svelte';
 	import Export from '@/core/components/Export/Export.svelte';
 	let elModal;

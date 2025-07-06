@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { isMobile } from '@/core/stores.ts';
+	import { isMobile } from '@/core/scripts/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';

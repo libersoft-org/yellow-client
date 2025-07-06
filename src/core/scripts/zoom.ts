@@ -1,8 +1,8 @@
-import { log, TAURI } from '@/core/tauri.ts';
-// import { type Event } from '@tauri-apps/api/event';
-import { getCurrentWebview } from '@tauri-apps/api/webview';
-import { zoom } from '@/core/settings.ts';
 import { get } from 'svelte/store';
+import { zoom } from '@/core/scripts/settings.ts';
+import { log, TAURI } from '@/core/scripts/tauri.ts';
+import { getCurrentWebview } from '@tauri-apps/api/webview';
+// import { type Event } from '@tauri-apps/api/event';
 
 export async function setZoom() {
 	if (TAURI) {

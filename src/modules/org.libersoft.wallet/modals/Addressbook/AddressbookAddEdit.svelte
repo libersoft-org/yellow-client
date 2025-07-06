@@ -1,9 +1,9 @@
 <script lang="ts">
 	//import { onMount } from 'svelte';
 	import { isAddress } from 'ethers';
+	import { getGuid } from '@/core/scripts/core.ts';
 	import { addressBook, type IAddressBookItem } from '../../scripts/wallet.ts';
 	import { module } from '../../scripts/module.ts';
-	import { getGuid } from '@/core/core.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

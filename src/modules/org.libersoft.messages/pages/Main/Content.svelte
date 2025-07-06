@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { setModule } from '@/core/core.ts';
+	import { setModule } from '@/core/scripts/core.ts';
 	import { selectedConversation, closeConversation } from '../../messages.js';
 	import Welcome from '../Welcome/Welcome.svelte';
 	import Conversation from '../../components/Conversation/Conversation.svelte';

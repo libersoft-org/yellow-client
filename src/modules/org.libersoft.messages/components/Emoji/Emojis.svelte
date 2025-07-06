@@ -1,6 +1,6 @@
 <script>
-	import { active_account } from '@/core/core.ts';
-	import { isMobile, debug } from '@/core/stores.ts';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { isMobile, debug } from '@/core/scripts/stores.ts';
 	import { getContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import Emoji from './Emoji.svelte';

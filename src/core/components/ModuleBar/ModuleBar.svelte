@@ -1,9 +1,9 @@
 <script>
 	import { get } from 'svelte/store';
-	import { active_account } from '@/core/core.ts';
-	import { module_decls, selected_module_id } from '@/core/stores.ts';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { module_decls, selected_module_id } from '@/core/scripts/stores.ts';
 	import resize from '@/core/actions/resizeObserver.ts';
-	import { order } from '@/core/utils/utils.ts';
+	import { order } from '@/core/scripts/utils/utils.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ModuleBarItem from '@/core/components/ModuleBar/ModuleBarItem.svelte';

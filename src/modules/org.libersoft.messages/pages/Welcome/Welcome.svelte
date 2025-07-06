@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { active_account, setModule } from '@/core/core.ts';
-	import { hideSidebarMobile } from '@/core/stores.ts';
+	import { active_account, setModule } from '@/core/scripts/core.ts';
+	import { hideSidebarMobile } from '@/core/scripts/stores.ts';
 	import { identifier, online, elModalNewConversation } from '../../messages.js';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';

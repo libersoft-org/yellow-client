@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy, tick } from 'svelte';
-	import { findAccount, accounts_config, setCorePage } from '@/core/core.ts';
+	import { findAccount, accounts_config, setCorePage } from '@/core/scripts/core.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
