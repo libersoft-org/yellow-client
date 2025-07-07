@@ -178,26 +178,18 @@
 		// Move by half the difference to maintain relative position
 		let newLeft = rect.left + widthDiff / 2;
 		let newTop = rect.top + heightDiff / 2;
-		// Apply bounds checking
-		const padding = 20;
+		// Apply bounds checking - no padding for desktop
 		const windowWidth = rect.width;
 		const windowHeight = rect.height;
 		// Horizontal bounds
-		if (newLeft + windowWidth > currentWidth - padding) newLeft = currentWidth - windowWidth - padding;
-		if (newLeft < padding) newLeft = padding;
-
+		if (newLeft + windowWidth > currentWidth) newLeft = currentWidth - windowWidth;
+		if (newLeft < 0) newLeft = 0;
 		// Vertical bounds
-		if (newTop + windowHeight > currentHeight - padding) {
-			newTop = currentHeight - windowHeight - padding;
-		}
-		if (newTop < padding) {
-			newTop = padding;
-		}
-
+		if (newTop + windowHeight > currentHeight) newTop = currentHeight - windowHeight;
+		if (newTop < 0) newTop = 0;
 		// Calculate the required movement
 		const moveX = newLeft - rect.left;
 		const moveY = newTop - rect.top;
-
 		// Apply new position
 		if (hasTransform) {
 			// If neodrag has a transform, we need to adjust it
@@ -214,7 +206,6 @@
 			elWindow.style.left = `${baseLeft + moveX}px`;
 			elWindow.style.top = `${baseTop + moveY}px`;
 		}
-
 		// Update last browser dimensions
 		lastBrowserWidth = currentWidth;
 		lastBrowserHeight = currentHeight;
@@ -222,36 +213,20 @@
 
 	function handleContentResize() {
 		if (!elWindow) return;
-
 		// Get current position and size
 		const rect = elWindow.getBoundingClientRect();
 		const transform = window.getComputedStyle(elWindow).transform;
 		const hasTransform = transform !== 'none';
-
 		// Check if window is outside bounds
 		const browserWidth = window.innerWidth;
 		const browserHeight = window.innerHeight;
-		const padding = 20;
-
 		let adjustX = 0;
 		let adjustY = 0;
-
 		// Check horizontal bounds
-		if (rect.right > browserWidth - padding) {
-			adjustX = browserWidth - padding - rect.right;
-		}
-		if (rect.left < padding) {
-			adjustX = padding - rect.left;
-		}
-
-		// Check vertical bounds
-		if (rect.bottom > browserHeight - padding) {
-			adjustY = browserHeight - padding - rect.bottom;
-		}
-		if (rect.top < padding) {
-			adjustY = padding - rect.top;
-		}
-
+		if (rect.right > browserWidth) adjustX = browserWidth - rect.right;
+		if (rect.left < 0) adjustX = -rect.left;
+		// Check vertical bounds - only move up if window goes below screen
+		if (rect.bottom > browserHeight) adjustY = browserHeight - rect.bottom;
 		// Apply adjustment if needed
 		if (adjustX !== 0 || adjustY !== 0) {
 			if (hasTransform) {
