@@ -20,22 +20,22 @@
 		close: () => void;
 	}
 	let { params, close }: Props = $props();
-	let itemName = $state({});
-	let itemCurrencySymbol = $state({});
-	let itemCurrencyIconURL = $state({});
-	let itemChainID = $state({});
-	let itemExplorerURL = $state({});
-	let itemRPCURLs: string[] | undefined = $state(params?.network?.rpcURLs ? [...params.network.rpcURLs] : undefined);
+	let itemName: string | undefined = $state();
+	let itemCurrencySymbol: string | undefined = $state();
+	let itemCurrencyIconURL: string | undefined = $state();
+	let itemChainID: number | undefined = $state();
+	let itemExplorerURL: string | undefined = $state();
+	let itemRPCURLs: string[] | undefined = $state();
 	let error: string | null | undefined = $state();
 
 	export function onOpen(props: Props['params']): void {
 		if (props?.network) {
 			let network = props.network;
-			itemName.value = network.name;
-			itemCurrencySymbol.value = network.currency?.symbol || '';
-			itemCurrencyIconURL.value = network.currency?.iconURL || '';
-			itemChainID.value = network.chainID;
-			itemExplorerURL.value = network.explorerURL || '';
+			itemName = network.name;
+			itemCurrencySymbol = network.currency?.symbol || '';
+			itemCurrencyIconURL = network.currency?.iconURL || '';
+			itemChainID = network.chainID;
+			itemExplorerURL = network.explorerURL || '';
 			itemRPCURLs = network.rpcURLs ? [...network.rpcURLs] : [];
 			elName?.focus();
 		}
@@ -49,25 +49,25 @@
 		const validationConfig = [
 			{ field: itemName, element: elName, trim: true, required: 'Network name is required' },
 			{ field: itemCurrencySymbol, element: elCurrencySymbol, trim: true, required: 'Currency symbol is required' },
+			{ field: itemCurrencyIconURL, trim: true },
 			{ field: itemChainID, element: elChainID, convert: Number, required: 'Chain ID is required' },
 			{ field: itemChainID, element: elChainID, validate: (v: number) => (v >= 0 && Number.isInteger(v) ? null : 'Chain ID must be a positive whole number') },
-			{ field: itemCurrencyIconURL, trim: true },
 			{ field: itemExplorerURL, trim: true },
-			{ field: { value: itemRPCURLs }, isArray: true, arrayElements: elRPCURLs, required: 'RPC URL {index} is required' },
+			{ field: itemRPCURLs, isArray: true, arrayElements: elRPCURLs, required: 'RPC URL {index} is required' },
 		];
 
 		error = validateForm(validationConfig);
 		if (error) return;
 
 		const newItem: INetwork = {
-			name: itemName.value || '',
+			name: itemName || '',
 			currency: {
-				symbol: itemCurrencySymbol.value || '',
-				iconURL: itemCurrencyIconURL.value,
+				symbol: itemCurrencySymbol || '',
+				iconURL: itemCurrencyIconURL,
 			},
-			chainID: itemChainID.value || 0,
+			chainID: itemChainID || 0,
 			rpcURLs: itemRPCURLs,
-			explorerURL: itemExplorerURL.value,
+			explorerURL: itemExplorerURL,
 		};
 
 		if (params?.network?.guid) {
@@ -103,19 +103,19 @@
 <div class="window-edit-network">
 	<Form onSubmit={addEdit}>
 		<Label text="Name">
-			<Input bind:value={itemName.value} bind:this={elName} />
+			<Input bind:value={itemName} bind:this={elName} />
 		</Label>
 		<Label text="Currency symbol">
-			<Input bind:value={itemCurrencySymbol.value} bind:this={elCurrencySymbol} />
+			<Input bind:value={itemCurrencySymbol} bind:this={elCurrencySymbol} />
 		</Label>
 		<Label text="Icon URL">
-			<Input bind:value={itemCurrencyIconURL.value} />
+			<Input bind:value={itemCurrencyIconURL} />
 		</Label>
 		<Label text="Chain ID">
-			<Input type="number" bind:value={itemChainID.value} bind:this={elChainID} />
+			<Input type="number" bind:value={itemChainID} bind:this={elChainID} />
 		</Label>
 		<Label text="Explorer URL">
-			<Input bind:value={itemExplorerURL.value} />
+			<Input bind:value={itemExplorerURL} />
 		</Label>
 		<Label text="RPC URLs">
 			{#if itemRPCURLs}

@@ -3,7 +3,7 @@
  */
 
 export interface IValidationRule {
-	field: { value: any };
+	field: any;
 	element?: any;
 	trim?: boolean;
 	convert?: (value: any) => any;
@@ -25,17 +25,17 @@ export function validateForm(config: FormValidatorConfig): string | null {
 		// Handle array validation
 		if (rule.isArray) {
 			// Skip validation if field is undefined or null - no array means no validation needed
-			if (!rule.field.value || !Array.isArray(rule.field.value)) {
+			if (!rule.field || !Array.isArray(rule.field)) {
 				continue;
 			}
 
 			// Skip validation if array is empty - empty arrays are allowed
-			if (rule.field.value.length === 0) {
+			if (rule.field.length === 0) {
 				continue;
 			}
 
-			for (let i = 0; i < rule.field.value.length; i++) {
-				const item = rule.field.value[i];
+			for (let i = 0; i < rule.field.length; i++) {
+				const item = rule.field[i];
 				if (rule.required && !item?.trim()) {
 					rule.arrayElements?.[i]?.focus();
 					return rule.required.replace('{index}', (i + 1).toString());
@@ -44,18 +44,18 @@ export function validateForm(config: FormValidatorConfig): string | null {
 			continue;
 		}
 
-		let value = rule.field.value;
+		let value = rule.field;
 
 		// Trim if needed
 		if (rule.trim && typeof value === 'string') {
 			value = value.trim();
-			rule.field.value = value;
+			rule.field = value;
 		}
 
 		// Convert if needed
 		if (rule.convert && value !== undefined && value !== null) {
 			value = rule.convert(value);
-			rule.field.value = value;
+			rule.field = value;
 		}
 
 		// Check required
