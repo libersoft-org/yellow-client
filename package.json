@@ -62,7 +62,6 @@
     "qrcode": "^1.5.4",
     "recordrtc": "^5.6.2",
     "retry": "^0.13.1",
-    "svelte-dnd-action": "^0.9.63",
     "svelte-intersection-observer": "^1.0.0",
     "uuid": "^11.0.5",
     "video.js": "^8.21.0",

@@ -1,18 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { dndzone } from 'svelte-dnd-action';
 
 	interface Props {
 		children?: Snippet;
-		dndzone?: {
-			items: any[];
-			flipDurationMs?: number;
-			dropTargetStyle?: any;
-		};
-		onconsider?: (e: any) => void;
-		onfinalize?: (e: any) => void;
 	}
-	const { children, dndzone: dndOptions, onconsider, onfinalize }: Props = $props();
+	const { children }: Props = $props();
 </script>
 
 <style>
@@ -23,12 +15,6 @@
 	}
 </style>
 
-{#if dndOptions}
-	<tbody use:dndzone={dndOptions} {onconsider} {onfinalize}>
-		{@render children?.()}
-	</tbody>
-{:else}
-	<tbody>
-		{@render children?.()}
-	</tbody>
-{/if}
+<tbody>
+	{@render children?.()}
+</tbody>
