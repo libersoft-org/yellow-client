@@ -46,17 +46,22 @@ export class TableDragManager {
 	 * Clean up all event listeners and state
 	 */
 	destroy(): void {
+		console.log('Destroying TableDragManager'); // Debug log
 		this.cleanup();
 		if (this.tbody) {
-			this.tbody.removeEventListener('mousedown', this.handleMouseDown);
+			this.tbody.removeEventListener('mousedown', this.handleMouseDown, true);
+			this.tbody = null;
 		}
 	}
 
 	private tbody: HTMLElement | null = null;
 
 	private attachEventListeners(tbody: HTMLElement): void {
+		// Remove any existing listeners first to prevent duplicates
+		tbody.removeEventListener('mousedown', this.handleMouseDown, true);
 		// Use event delegation - listen on tbody for mousedown events
 		tbody.addEventListener('mousedown', this.handleMouseDown, true);
+		console.log('Attached event listeners to tbody'); // Debug log
 	}
 
 	private handleMouseDown = (event: MouseEvent): void => {
@@ -104,7 +109,7 @@ export class TableDragManager {
 		const clone = this.state.dragClone;
 
 		// Apply default styles
-		clone.style.position = 'absolute';
+		clone.style.position = 'fixed'; // Use fixed instead of absolute
 		clone.style.pointerEvents = 'none';
 		clone.style.zIndex = '1000';
 		clone.style.opacity = '0.8';
@@ -130,11 +135,8 @@ export class TableDragManager {
 			}
 		});
 
-		// Add clone to tbody
-		const tbody = row.closest('tbody');
-		if (tbody) {
-			tbody.appendChild(clone);
-		}
+		// Add clone to document body instead of tbody
+		document.body.appendChild(clone);
 
 		// Position clone at mouse
 		this.updateClonePosition(x, y);
@@ -143,25 +145,9 @@ export class TableDragManager {
 	private updateClonePosition(x: number, y: number): void {
 		if (!this.state.dragClone) return;
 
-		const tbody = this.state.dragClone.closest('tbody');
-		if (!tbody) return;
-
-		// Set tbody as positioned container
-		tbody.style.position = 'relative';
-
-		const tbodyRect = tbody.getBoundingClientRect();
-		const relativeX = x - tbodyRect.left - 10;
-		const relativeY = y - tbodyRect.top - 20;
-
-		// Keep within tbody bounds
-		const maxX = tbody.offsetWidth - this.state.dragClone.offsetWidth;
-		const maxY = tbody.offsetHeight - this.state.dragClone.offsetHeight;
-
-		const clampedX = Math.max(0, Math.min(relativeX, maxX));
-		const clampedY = Math.max(0, Math.min(relativeY, maxY));
-
-		this.state.dragClone.style.left = clampedX + 'px';
-		this.state.dragClone.style.top = clampedY + 'px';
+		// Use fixed positioning for smoother movement
+		this.state.dragClone.style.left = x - 10 + 'px';
+		this.state.dragClone.style.top = y - 20 + 'px';
 	}
 
 	private handleMouseMove = (event: MouseEvent): void => {
@@ -263,18 +249,14 @@ export class TableDragManager {
 	private handleMouseUp = (): void => {
 		if (!this.state.isDragging || this.state.dragSourceIndex === null) return;
 
+		console.log('Mouse up - completing drag operation'); // Debug log
+
 		// Remove all gap elements
 		document.querySelectorAll('tr.drop-gap').forEach(gap => gap.remove());
 
-		// Remove clone
-		if (this.state.dragClone) {
-			const tbody = this.state.dragClone.closest('tbody');
-			if (tbody && tbody.contains(this.state.dragClone)) {
-				tbody.removeChild(this.state.dragClone);
-				// Reset tbody positioning
-				tbody.style.position = '';
-			}
-			this.state.dragClone = null;
+		// Remove clone from document body
+		if (this.state.dragClone && document.body.contains(this.state.dragClone)) {
+			document.body.removeChild(this.state.dragClone);
 		}
 
 		// Reset drag element styles
@@ -289,6 +271,7 @@ export class TableDragManager {
 			if (this.state.dragOverIndex > this.state.dragSourceIndex) {
 				targetIndex = this.state.dragOverIndex - 1;
 			}
+			console.log('Performing reorder from', this.state.dragSourceIndex, 'to', targetIndex); // Debug log
 			this.config.onReorder(this.state.dragSourceIndex, targetIndex);
 		}
 
@@ -296,16 +279,15 @@ export class TableDragManager {
 	};
 
 	private cleanup(): void {
+		console.log('Cleaning up drag state'); // Debug log
+
 		// Remove all gap elements
 		document.querySelectorAll('tr.drop-gap').forEach(gap => gap.remove());
 
-		// Remove clone
+		// Remove clone from document body
 		if (this.state.dragClone) {
-			const tbody = this.state.dragClone.closest('tbody');
-			if (tbody && tbody.contains(this.state.dragClone)) {
-				tbody.removeChild(this.state.dragClone);
-				// Reset tbody positioning
-				tbody.style.position = '';
+			if (document.body.contains(this.state.dragClone)) {
+				document.body.removeChild(this.state.dragClone);
 			}
 			this.state.dragClone = null;
 		}
@@ -314,13 +296,13 @@ export class TableDragManager {
 		if (this.state.dragElement) {
 			this.state.dragElement.style.display = '';
 			this.state.dragElement.style.opacity = '';
+			this.state.dragElement = null;
 		}
 
 		// Reset state
 		this.state.dragSourceIndex = null;
 		this.state.dragOverIndex = null;
 		this.state.isDragging = false;
-		this.state.dragElement = null;
 		this.state.isAtEnd = false;
 
 		// Remove event listeners

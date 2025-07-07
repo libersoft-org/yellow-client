@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
+	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '../../scripts/module.ts';
 	import { wallets, type IWallet, reorderWallets } from '../../scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -11,6 +13,7 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import DragHandle from '@/core/components/Table/DragHandle.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
@@ -18,46 +21,12 @@
 	import WindowRecover from '../Wallets/WalletsRecover.svelte';
 	import WindowWalletsEdit from '../Wallets/WalletsEdit.svelte';
 	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
-	import { getContext, onMount, onDestroy } from 'svelte';
-	import { TableDragManager, type DragConfig } from '@/core/scripts/drag.ts';
 	let selectedWallet: IWallet | undefined = $state();
 	let elWindowWalletsWallet: Window | undefined;
 	let elWindowRecover: Window | undefined;
 	let elWindowWalletsEdit: Window | undefined;
 	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
-	let dragManager: TableDragManager | undefined;
-	let tableContainer: HTMLElement | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
-	// Initialize drag manager when table is mounted and wallets are available
-	$effect(() => {
-		if ($wallets?.length > 0 && tableContainer) {
-			// Find tbody within our table container
-			const tbody = tableContainer.querySelector('tbody');
-			if (tbody && !dragManager) {
-				console.log('Initializing drag manager for tbody:', tbody); // Debug log
-				const config: DragConfig = {
-					dragHandleSelector: '.drag-handle',
-					columnCount: 4,
-					onReorder: (sourceIndex: number, targetIndex: number) => {
-						console.log('Reordering from', sourceIndex, 'to', targetIndex); // Debug log
-						const reordered = [...$wallets];
-						const [moved] = reordered.splice(sourceIndex, 1);
-						reordered.splice(targetIndex, 0, moved);
-						reorderWallets(reordered);
-					},
-				};
-				dragManager = new TableDragManager(config);
-				dragManager.init(tbody);
-			}
-		}
-	});
-
-	onDestroy(() => {
-		if (dragManager) {
-			dragManager.destroy();
-			dragManager = undefined;
-		}
-	});
 
 	function clickWallet(wallet: IWallet) {
 		setSettingsSection('wallets-' + wallet.address);
@@ -80,42 +49,6 @@
 		min-height: 40px;
 		box-sizing: border-box;
 	}
-
-	.drag-handle {
-		cursor: grab;
-		padding: 0 5px;
-		color: var(--primary-foreground);
-		user-select: none;
-		transition: color 0.2s ease;
-	}
-
-	.drag-handle:hover {
-		color: var(--primary);
-	}
-
-	.drag-handle:active {
-		cursor: grabbing;
-	}
-
-	/* Gap elements for drag and drop */
-	:global(tr.drop-gap) {
-		background: transparent !important;
-		border: none !important;
-	}
-
-	:global(tr.drop-gap td) {
-		border: none !important;
-		padding: 0 !important;
-	}
-
-	:global(.drop-indicator) {
-		height: 30px !important;
-		background: rgba(var(--primary-rgb, 74, 144, 226), 0.1) !important;
-		border: 2px dashed var(--primary) !important;
-		border-radius: 4px !important;
-		margin: 2px 4px !important;
-		display: block !important;
-	}
 </style>
 
 <ButtonBar equalize>
@@ -126,7 +59,20 @@
 	<div class="bold">No wallets found</div>
 {/if}
 {#if $wallets?.length > 0}
-	<div bind:this={tableContainer}>
+	<div
+		use:tableDrag={{
+			columnCount: 4,
+			items: $wallets,
+			enabled: true,
+			dragHandleSelector: '.drag-handle',
+			onReorder: (sourceIndex, targetIndex) => {
+				const reordered = [...$wallets];
+				const [moved] = reordered.splice(sourceIndex, 1);
+				reordered.splice(targetIndex, 0, moved);
+				reorderWallets(reordered);
+			},
+		}}
+	>
 		<Table breakpoint="0">
 			<Thead>
 				<TheadTr>
@@ -140,7 +86,7 @@
 				{#each $wallets as wallet, index (wallet.address)}
 					<TbodyTr>
 						<Td padding="5px" style="width: 30px;">
-							<div class="drag-handle" role="button" tabindex="0">⋮⋮</div>
+							<DragHandle />
 						</Td>
 						<Td padding="0" expand>
 							<Clickable onClick={() => clickWallet(wallet)}>
