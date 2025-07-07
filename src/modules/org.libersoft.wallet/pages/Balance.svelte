@@ -72,7 +72,7 @@
 		<Table>
 			<Tbody>
 				<Tr>
-					<Td>
+					<Td expand>
 						<div class="row">
 							{#if $selectedNetwork?.currency?.iconURL}
 								<Icon img={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} size="40px" padding="0px" />
