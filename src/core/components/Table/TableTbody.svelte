@@ -8,8 +8,6 @@
 			items: any[];
 			flipDurationMs?: number;
 			dropTargetStyle?: any;
-			constrainDragAxis?: 'vertical' | 'horizontal' | 'none';
-			dropFromOthersDisabled?: boolean;
 		};
 		onconsider?: (e: any) => void;
 		onfinalize?: (e: any) => void;
