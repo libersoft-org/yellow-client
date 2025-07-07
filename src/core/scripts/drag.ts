@@ -1,6 +1,6 @@
 export interface DragConfig {
-	/** Selector for the drag handle within each row */
-	dragHandleSelector: string;
+	/** Function to get all registered drag handles */
+	getDragHandles: () => HTMLElement[];
 	/** Number of columns in the table for colspan */
 	columnCount: number;
 	/** Callback when reordering is needed */
@@ -67,8 +67,10 @@ export class TableDragManager {
 	private handleMouseDown = (event: MouseEvent): void => {
 		const target = event.target as HTMLElement;
 
-		// Check if the clicked element or its parent is a drag handle
-		const dragHandle = target.closest(this.config.dragHandleSelector);
+		// Check if the clicked element is a registered drag handle
+		const registeredHandles = this.config.getDragHandles();
+		const dragHandle = registeredHandles.find(handle => handle === target || handle.contains(target));
+
 		if (!dragHandle || event.button !== 0) return;
 
 		console.log('Drag handle clicked:', dragHandle); // Debug log

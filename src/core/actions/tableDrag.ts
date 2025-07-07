@@ -1,20 +1,36 @@
 import { TableDragManager, type DragConfig } from '@/core/scripts/drag.ts';
 
 export interface TableDragOptions {
-	/** Selector for the drag handle within each row */
-	dragHandleSelector?: string;
-	/** Number of columns in the table for colspan */
-	columnCount: number;
+	/** Numbe		update(newOptions: TableDragOptions) {
+			console.log('tableDrag: Update called', {
+				oldLength: currentItemsLength,
+				newLength: newOptions.items?.length,
+			});
+
+			// Always reinitialize to ensure clean state
+			options = newOptions;
+			init();
+		},s in the table for colspan (auto-detected if not provided) */
+	columnCount?: number;
 	/** Callback when reordering is needed */
 	onReorder: (sourceIndex: number, targetIndex: number) => void;
 	/** Items array for reactive updates */
 	items: any[];
-	/** Whether drag is enabled */
-	enabled?: boolean;
 }
 
 // Track if styles are already injected
 let stylesInjected = false;
+
+// Registry for drag handles
+const dragHandleRegistry = new Set<HTMLElement>();
+
+export function registerDragHandle(element: HTMLElement) {
+	dragHandleRegistry.add(element);
+}
+
+export function unregisterDragHandle(element: HTMLElement) {
+	dragHandleRegistry.delete(element);
+}
 
 function injectDragStyles() {
 	if (stylesInjected) return;
@@ -61,8 +77,8 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 	function init() {
 		cleanup(); // Always cleanup first
 
-		if (!options.enabled || !options.items?.length) {
-			console.log('tableDrag: Disabled or no items');
+		if (!options.items?.length) {
+			console.log('tableDrag: No items to work with');
 			return;
 		}
 
@@ -76,10 +92,23 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 			return;
 		}
 
+		// Auto-detect column count if not provided
+		let columnCount = options.columnCount;
+		if (!columnCount) {
+			const firstRow = tbody.querySelector('tr');
+			if (firstRow) {
+				columnCount = firstRow.querySelectorAll('td, th').length;
+				console.log('tableDrag: Auto-detected column count:', columnCount);
+			} else {
+				console.warn('tableDrag: Could not auto-detect column count, defaulting to 1');
+				columnCount = 1;
+			}
+		}
+
 		// Create new drag manager
 		const config: DragConfig = {
-			dragHandleSelector: options.dragHandleSelector || '.drag-handle',
-			columnCount: options.columnCount,
+			getDragHandles: () => Array.from(dragHandleRegistry),
+			columnCount: columnCount,
 			onReorder: options.onReorder,
 		};
 
@@ -105,7 +134,6 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 			console.log('tableDrag: Update called', {
 				oldLength: currentItemsLength,
 				newLength: newOptions.items?.length,
-				enabled: newOptions.enabled,
 			});
 
 			// Always reinitialize to ensure clean state

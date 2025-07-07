@@ -66,15 +66,7 @@
 	<div class="bold">No wallets found</div>
 {/if}
 {#if $wallets?.length > 0}
-	<div
-		use:tableDrag={{
-			columnCount: 4,
-			items: $wallets,
-			enabled: true,
-			dragHandleSelector: '.drag-handle',
-			onReorder: handleWalletReorder,
-		}}
-	>
+	<div use:tableDrag={{ items: $wallets, onReorder: handleWalletReorder }}>
 		<Table breakpoint="0">
 			<Thead>
 				<TheadTr>
@@ -87,7 +79,7 @@
 			<Tbody>
 				{#each $wallets as wallet, index (wallet.address)}
 					<TbodyTr>
-						<Td padding="5px" style="width: 30px;">
+						<Td>
 							<DragHandle />
 						</Td>
 						<Td padding="0" expand>

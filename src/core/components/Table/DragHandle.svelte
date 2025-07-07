@@ -1,12 +1,22 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+	import { registerDragHandle, unregisterDragHandle } from '@/core/actions/tableDrag.ts';
 	interface Props {
 		icon?: string;
 		size?: string;
 		ariaLabel?: string;
 		class?: string;
 	}
-
 	const { icon = '⋮⋮', size = '20px', ariaLabel = 'Drag to reorder', class: className = '' }: Props = $props();
+	let handleElement: HTMLElement;
+
+	onMount(() => {
+		if (handleElement) registerDragHandle(handleElement);
+	});
+
+	onDestroy(() => {
+		if (handleElement) unregisterDragHandle(handleElement);
+	});
 </script>
 
 <style>
@@ -30,4 +40,4 @@
 	}
 </style>
 
-<div class="drag-handle {className}" style="width: {size}; height: {size};" role="button" tabindex="0" aria-label={ariaLabel}>{icon}</div>
+<div bind:this={handleElement} class="drag-handle {className}" style="width: {size}; height: {size};" role="button" tabindex="0" aria-label={ariaLabel}>{icon}</div>
