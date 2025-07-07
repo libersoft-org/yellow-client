@@ -19,6 +19,7 @@
 	function selectNetwork(id) {
 		console.log('SETTING NETWORK', id);
 		selectedNetworkID.set(id);
+		console.log('SELECTED NETWORK', $selectedNetworkID);
 		if (close) close();
 	}
 
@@ -38,7 +39,7 @@
 	}
 </style>
 
-<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => manageNetworks()} />
+<Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => manageNetworks()} data-testid="wallet-manage-networks-btn" />
 <Input bind:value={filter} placeholder="Filter networks..." />
 <Table breakpoint="0">
 	<Tbody>

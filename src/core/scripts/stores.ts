@@ -26,7 +26,6 @@ export const selected_module_id = writable<string | null>(null);
 
 // Module configuration
 export const modules_display_order = localStorageSharedStore<{ [key: string]: number }>('modules_display_order', {});
-export const modules_disabled = localStorageSharedStore<string[]>('modules_disabled', []);
 export const module_decls = writable<{ [key: string]: IModuleDeclaration }>({});
 
 // Account selection

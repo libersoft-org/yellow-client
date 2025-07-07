@@ -41,12 +41,12 @@ export async function destroyTrayIcon() {
 }
 
 export async function createTrayIcon() {
-	log.debug('createTrayIcon tray:', tray, 'tray_loading:', tray_loading);
+	//log.debug('createTrayIcon tray:', tray, 'tray_loading:', tray_loading);
 	if (tray || tray_loading) {
 		return;
 	}
 	if (!get(showTrayIcon)) {
-		log.debug('Tray icon not enabled');
+		//log.debug('Tray icon not enabled');
 		return;
 	}
 	if (TAURI && !TAURI_MOBILE) {

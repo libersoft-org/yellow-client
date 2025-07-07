@@ -138,7 +138,7 @@ export async function initBrowserNotifications() {
 }
 
 export async function initCustomNotifications() {
-	log.debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
+	//log.debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
 	if (!CUSTOM_NOTIFICATIONS) return;
 	// let _notifications = await multiwindow_store('notifications');
 	// for (let [id, notification] of _notifications.entries()) {

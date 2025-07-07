@@ -135,7 +135,7 @@
 <Paper>
 	<div class="body">
 		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
 			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} />
 		</div>
 		<div class="bar">
@@ -163,7 +163,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => $settingsWindow?.open()} />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => $settingsWindow?.open()} testId="wallet-settings-btn" />
 			</div>
 		</div>
 		<div class="buttons">

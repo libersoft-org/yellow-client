@@ -80,11 +80,11 @@
 	}
 </style>
 
-<div class="networks">
+<div class="networks" data-testid="wallet-settings-networks">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={() => clickAddEditNetwork()} data-testid="networks-add-new-btn" />
-		<Button img="img/import.svg" text="Import" onClick={() => doImport()} data-testid="networks-import-btn" />
-		<Button img="img/export.svg" text="Export" onClick={() => doExport()} data-testid="networks-export-btn" />
+		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={() => clickAddEditNetwork()} data-testid="wallet-settings-networks-add-new-btn" />
+		<Button img="img/import.svg" text="Import" onClick={() => doImport()} data-testid="wallet-settings-networks-import-btn" />
+		<Button img="img/export.svg" text="Export" onClick={() => doExport()} data-testid="wallet-settings-networks-export-btn" />
 	</ButtonBar>
 	{#if $networks.length !== 0}
 		<div class="bold">My networks:</div>
@@ -99,7 +99,7 @@
 		<Tbody>
 			{#each $networks as n, index (n.guid)}
 				<TbodyTr>
-					<Td padding="0" data-testid="network-name@{n.name}">
+					<Td padding="0" data-testid="wallet-settings-network-name@{n.name}">
 						<div class="network">
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
@@ -109,9 +109,9 @@
 					</Td>
 					<Td>
 						<TableActionItems>
-							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} />
-							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n, true)} />
-							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} />
+							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} testId="wallet-settings-network-tokens@{n.name}" />
+							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n, true)} testId="wallet-settings-network-edit@{n.name}" />
+							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />
 						</TableActionItems>
 					</Td>
 				</TbodyTr>
@@ -129,7 +129,7 @@
 		<Tbody>
 			{#each $default_networks as n, index}
 				<TbodyTr>
-					<Td padding="0" data-testid="default-network-name@{n.name}">
+					<Td padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
 						<div class="network">
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
@@ -139,7 +139,7 @@
 					</Td>
 					<Td>
 						<TableActionItems>
-							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n)} />
+							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n)} testId="wallet-settings-default-network-add@{n.name}" />
 						</TableActionItems>
 					</Td>
 				</TbodyTr>

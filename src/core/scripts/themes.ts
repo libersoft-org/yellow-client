@@ -104,20 +104,20 @@ export function initBrowserThemeDetection() {
 
 // Subscribe to selected_theme_index changes to validate the index
 selected_theme_index.subscribe((v: number) => {
-	console.log(`🎨 THEME INDEX CHANGED: ${v} (themes.length: ${get(themes).length})`);
+	//console.log(`🎨 THEME INDEX CHANGED: ${v} (themes.length: ${get(themes).length})`);
 
 	if (v < 0 || v >= get(themes).length) {
-		console.log(`🔴 THEME INDEX OUT OF BOUNDS: ${v}, resetting to 0`);
+		console.warn(`🔴 THEME INDEX OUT OF BOUNDS: ${v}, resetting to 0`);
 		selected_theme_index.set(0); // Reset to default if out of bounds
 	}
 });
 
 // Subscribe to current_theme changes to apply CSS variables
 current_theme.subscribe((v: ITheme) => {
-	log.debug('Current theme changed:', get(current_theme));
+	//log.debug('Current theme changed:', get(current_theme));
 	Object.keys(v.properties).forEach((key: string) => {
 		const value = v.properties[key];
-		console.log('Setting CSS variable:', key, 'to', value);
+		//console.log('Setting CSS variable:', key, 'to', value);
 		if (key === '--background-image') {
 			const base = import.meta.env.VITE_CLIENT_PATH_BASE || '';
 			const val = `url(${base}/img/background/${value})`;

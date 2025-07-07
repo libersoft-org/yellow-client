@@ -67,18 +67,18 @@ import.meta.hot?.dispose(() => {
 
 export function accounts_init() {
 	const sub = accounts_config.subscribe(value => {
-		log.debug('ACCOUNTS CONFIG:', value);
+		//log.debug('ACCOUNTS CONFIG:', value);
 		// TODO: implement configuration of accounts order
 		let accounts_list = get(accounts);
-		log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
+		//log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
 		for (let config of value) {
-			log.debug('CONFIG', config);
+			//log.debug('CONFIG', config);
 			let account = accounts_list.find(acc => get(acc).id === config.id);
 			if (account) {
 				//log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
 				updateLiveAccount(account, config);
 			} else {
-				log.debug('CREATE ACCOUNT', config);
+				//log.debug('CREATE ACCOUNT', config);
 				createLiveAccount(config);
 			}
 		}
@@ -158,7 +158,7 @@ function removeLiveAccountsNotInConfig(accounts_list: AccountStore[], value: IAc
 }
 
 function constructAccount(id: string, credentials: IAccountCredentials, enabled: boolean, settings: IAccountSettings): AccountStore {
-	log.debug('CONSTRUCT ACCOUNT', id, credentials, enabled, settings);
+	//log.debug('CONSTRUCT ACCOUNT', id, credentials, enabled, settings);
 	let acc: IAccount = {
 		id,
 		socket_id: 0,
@@ -221,7 +221,7 @@ function _enableAccount(account: AccountStore) {
 }
 
 function _disableAccount(account: AccountStore) {
-	log.debug('DISABLE ACCOUNT', account);
+	//log.debug('DISABLE ACCOUNT', account);
 	let acc = get(account);
 	// Remove event listeners if they exist
 	if (acc.events) {

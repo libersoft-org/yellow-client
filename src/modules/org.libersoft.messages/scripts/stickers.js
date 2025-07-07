@@ -17,7 +17,7 @@ export let stickerLibraryUpdaterState = writable({
 export let stickerset_favorites = localStorageSharedStore('stickerset_favorites', []);
 
 stickerLibraryUpdaterState.subscribe(state => {
-	console.log('stickerLibraryUpdaterState:', state);
+	//console.log('stickerLibraryUpdaterState:', state);
 	window.stickerLibraryUpdaterState = state;
 });
 export const defaultStickerServers = ['https://stickers.libersoft.org'];
@@ -34,7 +34,7 @@ sticker_servers.subscribe(update_sticker_server);
 sticker_server_index.subscribe(update_sticker_server);
 
 sticker_server.subscribe(() => {
-	console.log('sticker_server changed:', get(sticker_server));
+	//console.log('sticker_server changed:', get(sticker_server));
 	//stickerLibraryUpdaterState.update(state => ({ ...state, updated_once: false }));
 });
 

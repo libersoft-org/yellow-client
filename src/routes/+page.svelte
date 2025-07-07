@@ -70,9 +70,9 @@
 	}
 
 	onMount(async () => {
-		console.log('+page onMount');
+		//console.log('+page onMount');
 		if ('serviceWorker' in window.navigator) {
-			console.log('+page registering service worker');
+			//console.log('+page registering service worker');
 			const SW_VERSION = '_version_v1_'; // change this to force update the service worker
 			// TODO: rm after testing and dev
 			const existing = await navigator.serviceWorker.getRegistrations();
@@ -84,12 +84,12 @@
 			}
 			navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
 			navigator.serviceWorker.ready.then(registration => {
-				console.log('+page service worker ready');
+				/*console.log('+page service worker ready');
 				console.log('Service worker registration:', registration);
 				console.log('Service worker active:', registration.active);
 				console.log('Service worker script URL:', registration.active.scriptURL);
 				console.log('Service worker state:', registration.active.state);
-				console.log('Service worker scope:', registration.scope);
+				console.log('Service worker scope:', registration.scope);**/
 				window.sw = registration;
 				navigator.serviceWorker.addEventListener('message', e => {
 					if (e.data.type === 'GET_FILE_INFO') {
@@ -262,7 +262,7 @@
 	}
 
 	isMobile.subscribe(v => {
-		console.log('isMobile: ', v);
+		//console.log('isMobile: ', v);
 		if (v) sidebarWidth = '';
 		else sidebarWidth = ($sidebarSize || 300) + 'px';
 	});

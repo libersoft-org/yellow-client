@@ -1,4 +1,5 @@
 import { derived, get, writable } from 'svelte/store';
+import { derivedWithEquals } from '@/core/scripts/utils/derivedWithEquals.ts';
 import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { getGuid } from '@/core/scripts/core.ts';
@@ -66,6 +67,10 @@ const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WA
 let provider: JsonRpcProvider | null = null;
 let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
 
+status.subscribe((value: IStatus) => {
+	console.log('wallet.ts Status updated:', value);
+});
+
 networks.subscribe((nets: INetwork[]) => {
 	let modified = false;
 	for (let net of nets) {
@@ -93,10 +98,22 @@ networks.subscribe((nets: INetwork[]) => {
 
 export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
-export const selectedNetwork = derived([selectedNetworkID, networks], ([$selectedNetworkID, $networks]) => {
-	const r = $networks.find(n => n.guid === $selectedNetworkID);
-	return r;
+export const selectedNetwork = writable<INetwork | undefined>();
+
+selectedNetworkID.subscribe((value: string | null) => {
+	updateSelectedNetwork(value, get(networks));
 });
+
+networks.subscribe((value: INetwork[]) => {
+	updateSelectedNetwork(get(selectedNetworkID), value);
+});
+
+function updateSelectedNetwork(selectedNetworkID: string | null, networks: INetwork[]): void {
+	const r = networks.find(n => n.guid === selectedNetworkID);
+	if (r === get(selectedNetwork)) return;
+	selectedNetwork.set(r);
+}
+
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
 	const r = $wallets.find(w => w.address === $selectedWalletID);
@@ -107,6 +124,20 @@ export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => 
 	let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
 	return result;
 });
+
+let providerData = derivedWithEquals(
+	[selectedNetwork, rpcURL],
+	([$selectedNetwork, $rpcURL]) => {
+		return {
+			network: $selectedNetwork,
+			rpcURL: $rpcURL,
+		};
+	},
+	(a, b) => {
+		return a?.network?.guid === b?.network?.guid && a?.rpcURL === b?.rpcURL;
+	}
+);
+
 export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return $selectedNetwork?.currency.symbol;
 });
@@ -172,6 +203,11 @@ export const balance = writable<IBalance>({
 		currency: 'USD',
 	},
 });
+
+balance.subscribe((value: IBalance) => {
+	console.log('balance updated:', value);
+});
+
 export const balanceTimestamp = writable<Date | null>(null);
 //let refreshTimer = window.setInterval(refresh, 30000);
 
@@ -192,23 +228,22 @@ async function refresh(): Promise<void> {
 }
 */
 
-selectedNetwork.subscribe((value: INetwork | undefined) => {
-	//console.log('selectedNetwork', value);
-	resetBalance();
-	reconnect();
-});
-selectedWallet.subscribe((value: IWallet | undefined) => {
-	//console.log('selectedWallet', value);
+providerData.subscribe(({ network, rpcURL }) => {
 	resetBalance();
 	reconnect();
 });
 
 function reconnect(): void {
 	provider = null;
-	//console.log('Reconnecting to', get(selectedNetwork));
+
 	const net = get(selectedNetwork);
-	if (!net) return;
-	//console.log('wallet RECONNECT');
+	if (!net) {
+		console.log('No selected network to reconnect');
+		return;
+	} else {
+		console.log('Reconnecting to', get(selectedNetwork));
+	}
+
 	status.set({ color: 'orange', text: 'Connecting to ' + net.name });
 	if (reconnectionTimer !== undefined) clearTimeout(reconnectionTimer);
 	const rurl = get(rpcURL);
@@ -306,7 +341,7 @@ export function generateMnemonic(): Mnemonic {
 }
 
 function connectToURL(): void {
-	//console.log('Connecting to', get(rpcURL));
+	console.log('Connecting to', get(rpcURL));
 	const net = get(selectedNetwork);
 	if (!net) {
 		console.error('No selected network');
@@ -314,14 +349,14 @@ function connectToURL(): void {
 	}
 	provider = new JsonRpcProvider(get(rpcURL)!, net.chainID);
 	provider.on('error', (error: Error) => {
-		//console.log('Provider error:', error);
+		console.log('Provider error:', error);
 		if (provider) provider.destroy();
 		provider = null;
 		setNextUrl();
 		reconnectionTimer = setTimeout(reconnect, WALLET_PROVIDER_RECONNECT_INTERVAL);
 	});
 	provider.on('network', (newNetwork: any) => {
-		//console.log('Network changed:', newNetwork.toJSON());
+		console.log('Network changed:', newNetwork.toJSON());
 		status.set({ color: 'green', text: 'Connected: ' + newNetwork.name });
 	});
 }
@@ -370,14 +405,14 @@ export function editWallet(wallet: IWallet, name: string): boolean {
 }
 
 export async function getBalance(): Promise<void> {
-	//console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', provider);
+	console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', provider);
 	const net = get(selectedNetwork);
 	const addr = get(selectedAddress);
 	if (net && provider && addr) {
 		try {
-			//console.log('Getting balance for', addr.address);
+			console.log('Getting balance for', addr.address);
 			const balanceBigNumber = await provider.getBalance(addr.address);
-			//console.log('balanceBigNumber', balanceBigNumber);
+			console.log('balanceBigNumber', balanceBigNumber);
 			balanceTimestamp.set(new Date());
 			const balanceFormated = formatEther(balanceBigNumber);
 			balance.set({
@@ -391,9 +426,9 @@ export async function getBalance(): Promise<void> {
 				},
 			});
 			const rates = await exchangeRates();
-			//console.log('got1 rates:', rates);
+			console.log('got1 rates:', rates);
 			const rates2 = rates['rates'];
-			//console.log('got2 rates:', rates2);
+			console.log('got2 rates:', rates2);
 			if (rates2) {
 				balance.update(b => {
 					const amount_str = b?.crypto?.amount;

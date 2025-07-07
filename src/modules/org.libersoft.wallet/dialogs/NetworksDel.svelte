@@ -11,8 +11,8 @@
 		body: question,
 		icon: 'img/del.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
-			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true, testId: 'wallet-settings-network-delete-yes-btn' },
+			{ img: 'img/cross.svg', text: 'No', onClick: clickNo, testId: 'wallet-settings-network-delete-no-btn' },
 		],
 	};
 

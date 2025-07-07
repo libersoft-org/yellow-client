@@ -5,8 +5,9 @@
 		text?: string;
 		colorVariable?: string;
 		onClick?: (e: Event) => void;
+		'data-testid'?: string;
 	}
-	let { text, colorVariable = '--secondary-foreground', onClick }: Props = $props();
+	let { text, colorVariable = '--secondary-foreground', onClick, 'data-testid': testId }: Props = $props();
 </script>
 
 <style>
@@ -30,7 +31,7 @@
 	}
 </style>
 
-<Clickable {onClick}>
+<Clickable {onClick} data-testid={testId}>
 	<div class="dropdown">
 		<div class="text">{text}</div>
 		<Icon img="img/down.svg" alt="▼" size="15px" padding="0px" colorVariable={colorVariable && colorVariable} />

@@ -1,5 +1,6 @@
 import { get } from 'svelte/store';
-import { module_decls, modules_disabled, modules_display_order, selected_module_id } from '@/core/scripts/stores.ts';
+import { module_decls, modules_display_order, selected_module_id } from '@/core/scripts/stores.ts';
+import { modules_config } from '@/core/scripts/modules_config.ts';
 import { tick } from 'svelte';
 import type { IModuleDeclaration, IAccount } from './types.ts';
 export function initModules() {
@@ -68,9 +69,11 @@ export function updateModulesComms(acc: IAccount) {
 }
 
 export function registerModule(decl: IModuleDeclaration) {
-	console.log('register module:', decl.id, decl);
-	if (get(modules_disabled).indexOf(decl.id) !== -1) {
-		console.log('Module disabled:', decl.id);
+	//console.log('register module:', decl.id, decl);
+	const config = get(modules_config);
+	const moduleConfig = config.modules[decl.id];
+	if (moduleConfig && !moduleConfig.enabled) {
+		//console.log('Module disabled:', decl.id);
 		return;
 	}
 	let ordering = get(modules_display_order);

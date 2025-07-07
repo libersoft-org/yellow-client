@@ -103,41 +103,41 @@
 <div class="window-edit-network">
 	<Form onSubmit={addEdit}>
 		<Label text="Name">
-			<Input bind:value={itemName} bind:this={elName} />
+			<Input bind:value={itemName} bind:this={elName} data-testid="wallet-settings-network-name-input" />
 		</Label>
 		<Label text="Currency symbol">
-			<Input bind:value={itemCurrencySymbol} bind:this={elCurrencySymbol} />
+			<Input bind:value={itemCurrencySymbol} bind:this={elCurrencySymbol} data-testid="wallet-settings-network-currency-symbol-input" />
 		</Label>
 		<Label text="Icon URL">
-			<Input bind:value={itemCurrencyIconURL} />
+			<Input bind:value={itemCurrencyIconURL} data-testid="wallet-settings-network-icon-url-input" />
 		</Label>
 		<Label text="Chain ID">
-			<Input type="number" bind:value={itemChainID} bind:this={elChainID} />
+			<Input type="number" bind:value={itemChainID} bind:this={elChainID} data-testid="wallet-settings-network-chain-id-input" />
 		</Label>
 		<Label text="Explorer URL">
-			<Input bind:value={itemExplorerURL} />
+			<Input bind:value={itemExplorerURL} data-testid="wallet-settings-network-explorer-url-input" />
 		</Label>
 		<Label text="RPC URLs">
 			{#if itemRPCURLs}
 				{#each itemRPCURLs as rpc_url, i}
 					<div class="row">
-						<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} />
-						<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i))} />
+						<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
+						<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i))} testId="wallet-settings-network-rpc-url-remove-{i}" />
 					</div>
 				{/each}
 			{/if}
 		</Label>
-		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...(itemRPCURLs || []), ''])} />
+		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...(itemRPCURLs || []), ''])} data-testid="wallet-settings-network-add-rpc-url-btn" />
 	</Form>
 	{#if error}
 		<Alert type="error" message={error} />
 	{/if}
 	<ButtonBar expand>
 		{#if params?.network?.guid}
-			<Button img="img/save.svg" text="Save" onClick={addEdit} />
+			<Button img="img/save.svg" text="Save" onClick={addEdit} data-testid="wallet-settings-network-save-btn" />
 		{:else}
-			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add network" onClick={addEdit} />
+			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add network" onClick={addEdit} data-testid="wallet-settings-network-add-btn" />
 		{/if}
-		<Button img="img/cancel.svg" text="Cancel" onClick={close} />
+		<Button img="img/cancel.svg" text="Cancel" onClick={close} data-testid="wallet-settings-network-cancel-btn" />
 	</ButtonBar>
 </div>
