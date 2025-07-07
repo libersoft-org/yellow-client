@@ -13,7 +13,7 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import DragHandle from '@/core/components/Table/DragHandle.svelte';
+	import DragHandle from '@/core/components/Drag/DragHandle.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
