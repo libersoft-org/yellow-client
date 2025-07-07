@@ -19,24 +19,22 @@
 	import WindowWalletsEdit from '../Wallets/WalletsEdit.svelte';
 	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
 	import { getContext } from 'svelte';
-
 	let selectedWallet: IWallet | undefined = $state();
 	let elWindowWalletsWallet: Window | undefined;
 	let elWindowRecover: Window | undefined;
 	let elWindowWalletsEdit: Window | undefined;
 	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
+	// Mouse-based drag & drop implementation
+	let dragSourceIndex: number | null = null;
+	let dragOverIndex: number | null = null;
+	let isDragging = false;
+	let dragElement: HTMLElement | null = null;
+	let dragClone: HTMLElement | null = null;
+	let isAtEnd = false; // Track if we're dragging to the end
 
-	// Vlastní drag and drop systém
-	let draggedIndex: number | null = null;
-	let draggedElement: HTMLElement | null = null;
-	let isDragging = $state(false);
-	let dragOffset = { x: 0, y: 0 };
-	let tbodyElement: HTMLElement | null = null;
-	let currentDropIndex: number = -1;
-
-	async function clickWallet(wallet: IWallet) {
-		await setSettingsSection('wallets-' + wallet.address);
+	function clickWallet(wallet: IWallet) {
+		setSettingsSection('wallets-' + wallet.address);
 	}
 
 	function delWallet(wallet: IWallet) {
@@ -49,236 +47,182 @@
 		elWindowWalletsEdit?.open();
 	}
 
-	// Vlastní drag and drop implementace
-	function handleDragStart(event: MouseEvent, index: number) {
-		event.preventDefault();
-		draggedIndex = index;
+	function handleMouseDown(event: MouseEvent, index: number) {
+		if (event.button !== 0) return; // Only left mouse button
+		dragSourceIndex = index;
 		isDragging = true;
-		currentDropIndex = -1; // Reset pozice díry
-
 		const target = event.currentTarget as HTMLElement;
-		const row = target.closest('tr') as HTMLElement;
-		draggedElement = row;
-
-		// Najít tbody element
-		tbodyElement = row.closest('tbody') as HTMLElement;
-
-		// Uložit původní pozici a velikost
-		const rect = row.getBoundingClientRect();
-		const tbodyRect = tbodyElement.getBoundingClientRect();
-
-		// Uložit původní šířky buněk před zahájením dragování
-		const cells = row.querySelectorAll('td');
-		const originalWidths: number[] = [];
-		cells.forEach((cell, index) => {
-			originalWidths[index] = (cell as HTMLElement).getBoundingClientRect().width;
-		});
-
-		// Vypočítat offset
-		dragOffset.x = event.clientX - rect.left;
-		dragOffset.y = event.clientY - rect.top;
-
-		// Přidat event listenery
-		document.addEventListener('mousemove', handleDragMove);
-		document.addEventListener('mouseup', handleDragEnd);
-
-		// Vytvořit placeholder na místo dragovaného řádku
-		const placeholder = document.createElement('tr');
-		placeholder.classList.add('drag-placeholder');
-		placeholder.style.height = rect.height + 'px';
-		placeholder.style.opacity = '0';
-		placeholder.innerHTML = '<td colspan="4"></td>';
-
-		// Vložit placeholder před dragovaný řádek
-		row.parentNode?.insertBefore(placeholder, row);
-
-		// Styly pro dragged element - absolute positioning
-		row.style.position = 'absolute';
-		row.style.left = rect.left - tbodyRect.left + 'px';
-		row.style.top = rect.top - tbodyRect.top + 'px';
-		row.style.width = rect.width + 'px';
-		row.style.zIndex = '1000';
-		row.style.opacity = '0.8';
-		row.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.2)';
-		row.style.pointerEvents = 'none';
-		row.style.transition = 'none';
-		row.style.tableLayout = 'fixed';
-
-		// Uložit původní šířky do data atributu pro pozdější použití
-		row.setAttribute('data-original-widths', JSON.stringify(originalWidths));
-
-		// Nastavit šířky buněk
-		cells.forEach((cell, index) => {
-			if (originalWidths[index]) {
-				(cell as HTMLElement).style.width = originalWidths[index] + 'px';
-				(cell as HTMLElement).style.minWidth = originalWidths[index] + 'px';
-				(cell as HTMLElement).style.maxWidth = originalWidths[index] + 'px';
-			}
-		});
-
-		// Připravit řádky na animace
-		const allRows = Array.from(tbodyElement.children) as HTMLElement[];
-		allRows.forEach((r, i) => {
-			// Všechny řádky - připravit na animace (except dragovaný element a placeholder)
-			if (r !== row && !r.classList.contains('drag-placeholder')) {
-				r.style.transition = 'transform 0.3s ease-out';
-			}
-		});
+		const row = target.closest('tr');
+		if (row) {
+			dragElement = row;
+			// Create clone that follows mouse but stays within table bounds
+			dragClone = row.cloneNode(true) as HTMLElement;
+			dragClone.style.position = 'absolute';
+			dragClone.style.pointerEvents = 'none';
+			dragClone.style.zIndex = '1000';
+			dragClone.style.opacity = '0.8';
+			dragClone.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+			dragClone.style.width = row.offsetWidth + 'px';
+			dragClone.style.backgroundColor = 'var(--background)';
+			dragClone.style.border = '1px solid var(--border)';
+			// Add clone to tbody
+			const tbody = row.closest('tbody');
+			if (tbody) tbody.appendChild(dragClone);
+			// Completely hide original element
+			row.style.display = 'none';
+			// Position clone at mouse
+			updateClonePosition(event.clientX, event.clientY);
+			// Trigger initial gap detection
+			handleMouseMove(event);
+		}
+		document.addEventListener('mousemove', handleMouseMove);
+		document.addEventListener('mouseup', handleMouseUp);
+		event.preventDefault();
 	}
 
-	function handleDragMove(event: MouseEvent) {
-		if (!isDragging || !draggedElement || !tbodyElement) return;
-
-		// Aktualizovat pozici dragovaného elementu
-		const tbodyRect = tbodyElement.getBoundingClientRect();
-		const newY = event.clientY - dragOffset.y - tbodyRect.top;
-
-		// Omezit pohyb v rámci tabulky
-		const minY = 0;
-		const maxY = tbodyRect.height - draggedElement.offsetHeight;
-		const constrainedY = Math.max(minY, Math.min(maxY, newY));
-
-		draggedElement.style.top = constrainedY + 'px';
-
-		// Najít všechny řádky kromě dragovaného a placeholderu
-		const allRows = Array.from(tbodyElement.children) as HTMLElement[];
-		const regularRows = allRows.filter(row => row !== draggedElement && !row.classList.contains('drag-placeholder'));
-
-		// Najít placeholder
-		const placeholder = tbodyElement.querySelector('.drag-placeholder') as HTMLElement;
-		if (!placeholder) return;
-
-		// Najít nový drop index na základě pozice myši
-		let newDropIndex = -1;
-		const mouseY = event.clientY;
-
-		for (let i = 0; i < regularRows.length; i++) {
-			const rowRect = regularRows[i].getBoundingClientRect();
-			const rowCenter = rowRect.top + rowRect.height / 2;
-
-			if (mouseY <= rowCenter) {
-				newDropIndex = i;
-				break;
+	function updateClonePosition(x: number, y: number) {
+		if (dragClone) {
+			const tbody = dragClone.closest('tbody');
+			if (tbody) {
+				// Set tbody as positioned container
+				tbody.style.position = 'relative';
+				const tbodyRect = tbody.getBoundingClientRect();
+				const relativeX = x - tbodyRect.left - 10;
+				const relativeY = y - tbodyRect.top - 20;
+				// Keep within tbody bounds
+				const maxX = tbody.offsetWidth - dragClone.offsetWidth;
+				const maxY = tbody.offsetHeight - dragClone.offsetHeight;
+				const clampedX = Math.max(0, Math.min(relativeX, maxX));
+				const clampedY = Math.max(0, Math.min(relativeY, maxY));
+				dragClone.style.left = clampedX + 'px';
+				dragClone.style.top = clampedY + 'px';
 			}
-		}
-
-		// Pokud jsme na konci, drop na poslední pozici
-		if (newDropIndex === -1) {
-			newDropIndex = regularRows.length;
-		}
-
-		// Pouze pokud se pozice změnila
-		if (newDropIndex !== currentDropIndex) {
-			currentDropIndex = newDropIndex;
-
-			// Přesunout placeholder na novou pozici
-			if (newDropIndex >= regularRows.length) {
-				// Na konec
-				tbodyElement.appendChild(placeholder);
-			} else {
-				// Před konkrétní řádek
-				tbodyElement.insertBefore(placeholder, regularRows[newDropIndex]);
-			}
-
-			// Reset transformací všech řádků
-			regularRows.forEach(row => {
-				row.style.transform = '';
-			});
 		}
 	}
 
-	function handleDragEnd(event: MouseEvent) {
-		if (!isDragging || !draggedElement || !tbodyElement || draggedIndex === null) return;
-
-		// Odstranit event listenery
-		document.removeEventListener('mousemove', handleDragMove);
-		document.removeEventListener('mouseup', handleDragEnd);
-
-		// Najít placeholder a zjistit jeho pozici
-		const placeholder = tbodyElement.querySelector('.drag-placeholder') as HTMLElement;
-		let finalDropIndex = draggedIndex; // Default, pokud se nic nestalo
-
-		if (placeholder) {
-			// Najít všechny řádky kromě dragovaného a placeholderu
-			const allRows = Array.from(tbodyElement.children) as HTMLElement[];
-			const regularRows = allRows.filter(row => row !== draggedElement && !row.classList.contains('drag-placeholder'));
-
-			// Najít pozici placeholderu
-			const placeholderIndex = Array.from(tbodyElement.children).indexOf(placeholder);
-
-			// Počítat pouze řádky před placeholderem
-			let rowsBeforePlaceholder = 0;
-			for (let i = 0; i < placeholderIndex; i++) {
-				const row = tbodyElement.children[i];
-				if (row !== draggedElement && !row.classList.contains('drag-placeholder')) {
-					rowsBeforePlaceholder++;
-				}
-			}
-
-			finalDropIndex = rowsBeforePlaceholder;
-		}
-
-		console.log('Final drop calculation:', { draggedIndex, finalDropIndex });
-
-		// Přeusporučádat wallets pouze pokud se pozice změnila
-		if (finalDropIndex !== draggedIndex) {
-			const reorderedWallets = [...$wallets];
-			const [moved] = reorderedWallets.splice(draggedIndex, 1);
-			reorderedWallets.splice(finalDropIndex, 0, moved);
-			reorderWallets(reorderedWallets);
-			console.log('Reordered from', draggedIndex, 'to', finalDropIndex);
-		}
-
-		// Odstranit placeholder
-		if (placeholder) {
-			placeholder.remove();
-		}
-
-		// Vyčistit všechny styly z všech řádků
-		const cleanupElements = Array.from(tbodyElement.children) as HTMLElement[];
-		cleanupElements.forEach(row => {
-			row.style.position = '';
-			row.style.zIndex = '';
-			row.style.opacity = '';
-			row.style.transform = '';
-			row.style.boxShadow = '';
-			row.style.pointerEvents = '';
-			row.style.left = '';
-			row.style.top = '';
-			row.style.width = '';
-			row.style.height = '';
-			row.style.visibility = '';
-			row.style.borderTop = '';
-			row.style.borderBottom = '';
-			row.style.tableLayout = '';
-			row.style.transition = '';
-			row.style.marginTop = '';
-			row.style.marginBottom = '';
-			row.style.paddingTop = '';
-			row.style.paddingBottom = '';
-			row.style.background = '';
-			row.style.border = '';
-			row.style.borderRadius = '';
-			row.removeAttribute('data-original-widths');
-
-			// Vyčistit styly buněk
-			const cells = row.querySelectorAll('td');
-			cells.forEach(cell => {
-				(cell as HTMLElement).style.width = '';
-				(cell as HTMLElement).style.minWidth = '';
-				(cell as HTMLElement).style.maxWidth = '';
-				(cell as HTMLElement).style.padding = '';
-				(cell as HTMLElement).style.border = '';
-				(cell as HTMLElement).style.background = '';
-			});
+	function handleMouseMove(event: MouseEvent) {
+		if (!isDragging || dragSourceIndex === null || !dragElement) return;
+		// Update clone position
+		updateClonePosition(event.clientX, event.clientY);
+		// Remove all previous drop gap elements
+		document.querySelectorAll('tr.drop-gap').forEach(gap => {
+			gap.remove();
 		});
+		isAtEnd = false;
+		// Temporarily hide clone for detection
+		if (dragClone) dragClone.style.display = 'none';
+		const elementBelow = document.elementFromPoint(event.clientX, event.clientY);
+		if (dragClone) dragClone.style.display = '';
+		const rowBelow = elementBelow?.closest('tr');
+		const tbody = dragElement.closest('tbody');
+		if (!tbody) return;
+		const allRows = Array.from(tbody.querySelectorAll('tr:not(.drop-gap)'));
+		const tbodyRect = tbody.getBoundingClientRect();
+		// Check if we're hovering over a specific row
+		if (rowBelow && rowBelow !== dragElement && !rowBelow.classList.contains('drop-gap')) {
+			const newIndex = allRows.indexOf(rowBelow);
+			if (newIndex !== -1 && newIndex !== dragSourceIndex) {
+				dragOverIndex = newIndex;
+				// Create drop gap
+				const dropGap = document.createElement('tr');
+				dropGap.className = 'drop-gap';
+				dropGap.innerHTML = `<td colspan="4" class="drop-indicator"></td>`;
+				// Insert gap before the target row
+				rowBelow.parentNode?.insertBefore(dropGap, rowBelow);
+				return;
+			}
+		}
 
-		// Reset state
+		// Check if we're at the top for dropping at the beginning
+		const firstRow = allRows[0];
+		if (firstRow && firstRow !== dragElement) {
+			const firstRowRect = firstRow.getBoundingClientRect();
+			// Show drop gap at beginning if:
+			// 1. Mouse Y is above the first row, OR
+			// 2. Mouse is outside the table horizontally but we're in the dragging area above first row, OR
+			// 3. Mouse is within table bounds and near the top
+			const isAbove = event.clientY < firstRowRect.top;
+			const isWithinTableX = event.clientX >= tbodyRect.left && event.clientX <= tbodyRect.right;
+			const isNearTop = event.clientY < firstRowRect.bottom && isWithinTableX;
+			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY < tbodyRect.top;
+
+			if (isAbove || isNearTop || (isOutsideTable && event.clientY < firstRowRect.bottom)) {
+				dragOverIndex = 0;
+
+				const dropGap = document.createElement('tr');
+				dropGap.className = 'drop-gap';
+				dropGap.innerHTML = `<td colspan="4" class="drop-indicator"></td>`;
+
+				// Insert gap before the first row
+				tbody.insertBefore(dropGap, firstRow);
+				return;
+			}
+		}
+
+		// Check if we're at the bottom for dropping at the end
+		const lastRow = allRows[allRows.length - 1];
+		if (lastRow && lastRow !== dragElement) {
+			const lastRowRect = lastRow.getBoundingClientRect();
+			// Show drop gap at end if:
+			// 1. Mouse Y is below the last row, OR
+			// 2. Mouse is outside the table horizontally but we're in the dragging area, OR
+			// 3. Mouse is within table bounds and near the bottom
+			const isBelow = event.clientY > lastRowRect.bottom;
+			const isWithinTableX = event.clientX >= tbodyRect.left && event.clientX <= tbodyRect.right;
+			const isNearBottom = event.clientY > lastRowRect.top && isWithinTableX;
+			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY > tbodyRect.bottom;
+			// If we previously were at the end and now we're outside the table, keep the gap at the end
+			if (isBelow || isNearBottom || (isOutsideTable && event.clientY > lastRowRect.top)) {
+				dragOverIndex = allRows.length;
+				isAtEnd = true;
+				const dropGap = document.createElement('tr');
+				dropGap.className = 'drop-gap';
+				dropGap.innerHTML = `<td colspan="4" class="drop-indicator"></td>`;
+				tbody.appendChild(dropGap);
+			}
+		}
+	}
+
+	function handleMouseUp() {
+		if (!isDragging || dragSourceIndex === null) return;
+		// Remove all gap elements
+		document.querySelectorAll('tr.drop-gap').forEach(gap => {
+			gap.remove();
+		});
+		// Remove clone
+		if (dragClone) {
+			const tbody = dragClone.closest('tbody');
+			if (tbody && tbody.contains(dragClone)) {
+				tbody.removeChild(dragClone);
+				// Reset tbody positioning
+				tbody.style.position = '';
+			}
+			dragClone = null;
+		}
+		// Reset drag element styles
+		if (dragElement) {
+			dragElement.style.display = '';
+			dragElement.style.opacity = '';
+		}
+		// Perform reorder if needed
+		if (dragOverIndex !== null && dragOverIndex !== dragSourceIndex) {
+			const reordered = [...$wallets];
+			const [moved] = reordered.splice(dragSourceIndex, 1);
+			// If dragOverIndex is greater than the original position and we moved an element before it,
+			// we need to adjust the target index
+			let targetIndex = dragOverIndex;
+			if (dragOverIndex > dragSourceIndex) targetIndex = dragOverIndex - 1;
+			reordered.splice(targetIndex, 0, moved);
+			reorderWallets(reordered);
+		}
+		// Cleanup
+		dragSourceIndex = null;
+		dragOverIndex = null;
 		isDragging = false;
-		draggedIndex = null;
-		draggedElement = null;
-		tbodyElement = null;
-		currentDropIndex = -1;
+		dragElement = null;
+		isAtEnd = false;
+		document.removeEventListener('mousemove', handleMouseMove);
+		document.removeEventListener('mouseup', handleMouseUp);
 	}
 </script>
 
@@ -305,40 +249,24 @@
 		cursor: grabbing;
 	}
 
-	/* Kontejner pro drag operaci */
-	:global(tbody) {
-		position: relative;
-		overflow: visible;
+	/* Gap elements for drag and drop */
+	:global(tr.drop-gap) {
+		background: transparent !important;
+		border: none !important;
 	}
 
-	/* Styl pro dragovaný řádek */
-	:global(tr.dragging) {
-		opacity: 0.8;
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-		z-index: 1000;
-		pointer-events: none;
+	:global(tr.drop-gap td) {
+		border: none !important;
+		padding: 0 !important;
 	}
 
-	/* Základní animace pro řádky */
-	:global(tr) {
-		transition: transform 0.3s ease-out;
-	}
-
-	/* Drop target indikátor */
-	:global(tr.drop-target) {
-		border-top: 2px solid var(--primary-foreground);
-	}
-
-	/* Placeholder pro dragovaný řádek */
-	:global(tr.drag-placeholder) {
-		background-color: rgba(var(--primary-foreground-rgb), 0.1);
-		border: 2px dashed rgba(var(--primary-foreground-rgb), 0.3);
-		transition: all 0.3s ease;
-	}
-
-	:global(tr.drag-placeholder td) {
-		padding: 0;
-		border: none;
+	:global(.drop-indicator) {
+		height: 30px !important;
+		background: rgba(var(--primary-rgb, 74, 144, 226), 0.1) !important;
+		border: 2px dashed var(--primary) !important;
+		border-radius: 4px !important;
+		margin: 2px 4px !important;
+		display: block !important;
 	}
 </style>
 
@@ -346,9 +274,11 @@
 	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => setSettingsSection('wallets-add')} />
 	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => elWindowRecover?.open()} />
 </ButtonBar>
+
 {#if $wallets?.length === 0}
 	<div class="bold">No wallets found</div>
 {/if}
+
 {#if $wallets?.length > 0}
 	<Table breakpoint="0">
 		<Thead>
@@ -363,7 +293,7 @@
 			{#each $wallets as wallet, index (wallet.address)}
 				<TbodyTr>
 					<Td padding="5px" style="width: 30px;">
-						<div class="drag-handle" onmousedown={e => handleDragStart(e, index)}>⋮⋮</div>
+						<div class="drag-handle" role="button" tabindex="0" onmousedown={e => handleMouseDown(e, index)}>⋮⋮</div>
 					</Td>
 					<Td padding="0" expand>
 						<Clickable onClick={() => clickWallet(wallet)}>
