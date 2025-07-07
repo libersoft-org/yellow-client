@@ -19,7 +19,7 @@
 		padding-bottom: 10px;
 		word-break: break-word;
 		overflow-wrap: break-word;
-		overflow-x: auto;
+		overflow: auto;
 		max-width: 100%;
 	}
 </style>
