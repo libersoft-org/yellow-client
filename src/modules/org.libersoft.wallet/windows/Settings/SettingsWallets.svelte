@@ -65,6 +65,17 @@
 			dragClone.style.width = row.offsetWidth + 'px';
 			dragClone.style.backgroundColor = 'var(--background)';
 			dragClone.style.border = '1px solid var(--border)';
+
+			// Copy column widths from original row to maintain alignment
+			const originalCells = row.querySelectorAll('td');
+			const cloneCells = dragClone.querySelectorAll('td');
+			originalCells.forEach((cell, i) => {
+				if (cloneCells[i]) {
+					cloneCells[i].style.width = cell.offsetWidth + 'px';
+					cloneCells[i].style.minWidth = cell.offsetWidth + 'px';
+					cloneCells[i].style.maxWidth = cell.offsetWidth + 'px';
+				}
+			});
 			// Add clone to tbody
 			const tbody = row.closest('tbody');
 			if (tbody) tbody.appendChild(dragClone);
@@ -118,21 +129,6 @@
 		if (!tbody) return;
 		const allRows = Array.from(tbody.querySelectorAll('tr:not(.drop-gap)'));
 		const tbodyRect = tbody.getBoundingClientRect();
-		// Check if we're hovering over a specific row
-		if (rowBelow && rowBelow !== dragElement && !rowBelow.classList.contains('drop-gap')) {
-			const newIndex = allRows.indexOf(rowBelow);
-			if (newIndex !== -1 && newIndex !== dragSourceIndex) {
-				dragOverIndex = newIndex;
-				// Create drop gap
-				const dropGap = document.createElement('tr');
-				dropGap.className = 'drop-gap';
-				dropGap.innerHTML = `<td colspan="4" class="drop-indicator"></td>`;
-				// Insert gap before the target row
-				rowBelow.parentNode?.insertBefore(dropGap, rowBelow);
-				return;
-			}
-		}
-
 		// Check if we're at the top for dropping at the beginning
 		const firstRow = allRows[0];
 		if (firstRow && firstRow !== dragElement) {
@@ -143,16 +139,13 @@
 			// 3. Mouse is within table bounds and near the top
 			const isAbove = event.clientY < firstRowRect.top;
 			const isWithinTableX = event.clientX >= tbodyRect.left && event.clientX <= tbodyRect.right;
-			const isNearTop = event.clientY < firstRowRect.bottom && isWithinTableX;
+			const isNearTop = event.clientY < firstRowRect.top + firstRowRect.height * 0.3 && isWithinTableX;
 			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY < tbodyRect.top;
-
 			if (isAbove || isNearTop || (isOutsideTable && event.clientY < firstRowRect.bottom)) {
 				dragOverIndex = 0;
-
 				const dropGap = document.createElement('tr');
 				dropGap.className = 'drop-gap';
 				dropGap.innerHTML = `<td colspan="4" class="drop-indicator"></td>`;
-
 				// Insert gap before the first row
 				tbody.insertBefore(dropGap, firstRow);
 				return;
@@ -169,7 +162,7 @@
 			// 3. Mouse is within table bounds and near the bottom
 			const isBelow = event.clientY > lastRowRect.bottom;
 			const isWithinTableX = event.clientX >= tbodyRect.left && event.clientX <= tbodyRect.right;
-			const isNearBottom = event.clientY > lastRowRect.top && isWithinTableX;
+			const isNearBottom = event.clientY > lastRowRect.bottom - lastRowRect.height * 0.3 && isWithinTableX;
 			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY > tbodyRect.bottom;
 			// If we previously were at the end and now we're outside the table, keep the gap at the end
 			if (isBelow || isNearBottom || (isOutsideTable && event.clientY > lastRowRect.top)) {
@@ -179,6 +172,28 @@
 				dropGap.className = 'drop-gap';
 				dropGap.innerHTML = `<td colspan="4" class="drop-indicator"></td>`;
 				tbody.appendChild(dropGap);
+				return;
+			}
+		}
+		// Check if we're hovering over a specific row (middle area)
+		if (rowBelow && rowBelow !== dragElement && !rowBelow.classList.contains('drop-gap')) {
+			const newIndex = allRows.indexOf(rowBelow);
+			if (newIndex !== -1 && newIndex !== dragSourceIndex) {
+				const rowRect = rowBelow.getBoundingClientRect();
+				const rowMiddle = rowRect.top + rowRect.height / 2;
+				if (event.clientY < rowMiddle) dragOverIndex = newIndex;
+				else dragOverIndex = newIndex + 1;
+				// Create drop gap
+				const dropGap = document.createElement('tr');
+				dropGap.className = 'drop-gap';
+				dropGap.innerHTML = `<td colspan="4" class="drop-indicator"></td>`;
+				if (event.clientY < rowMiddle) rowBelow.parentNode?.insertBefore(dropGap, rowBelow);
+				else {
+					// Insert gap after the target row
+					const nextRow = rowBelow.nextElementSibling;
+					if (nextRow) rowBelow.parentNode?.insertBefore(dropGap, nextRow);
+					else tbody.appendChild(dropGap);
+				}
 			}
 		}
 	}
