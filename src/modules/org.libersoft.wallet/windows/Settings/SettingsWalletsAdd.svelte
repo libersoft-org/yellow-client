@@ -22,7 +22,7 @@
 	//let phraseArr: string[] = $state([]);
 	let qrCodeData: string = $state('');
 	let dummyQrCodeData: string = $state('');
-	let dummyPhrase: string = $state('abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art');
+	let dummyPhrase: string = $state('lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam');
 	let isRevealed: boolean = $state(false);
 	let elWalletNameInput: Input | undefined = $state();
 
