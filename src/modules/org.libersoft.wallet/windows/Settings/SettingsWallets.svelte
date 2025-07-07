@@ -41,6 +41,13 @@
 		selectedWallet = wallet;
 		elWindowWalletsEdit?.open();
 	}
+
+	function handleWalletReorder(sourceIndex: number, targetIndex: number) {
+		const reordered = [...$wallets];
+		const [moved] = reordered.splice(sourceIndex, 1);
+		reordered.splice(targetIndex, 0, moved);
+		reorderWallets(reordered);
+	}
 </script>
 
 <style>
@@ -65,12 +72,7 @@
 			items: $wallets,
 			enabled: true,
 			dragHandleSelector: '.drag-handle',
-			onReorder: (sourceIndex, targetIndex) => {
-				const reordered = [...$wallets];
-				const [moved] = reordered.splice(sourceIndex, 1);
-				reordered.splice(targetIndex, 0, moved);
-				reorderWallets(reordered);
-			},
+			onReorder: handleWalletReorder,
 		}}
 	>
 		<Table breakpoint="0">
