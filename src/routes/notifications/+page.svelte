@@ -1,5 +1,4 @@
 <script>
-	//import '../../../static/app.css';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { writable, get } from 'svelte/store';
 	import Notification from '../../core/components/Notification/Notification.svelte';
@@ -8,7 +7,6 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { heightLogicalChanged, initPositioning } from './position.ts';
-
 	export let maxNotifications = 3;
 	let notifications = writable([]);
 	let counter = 0;

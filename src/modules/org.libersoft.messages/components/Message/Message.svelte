@@ -299,7 +299,6 @@
 
 <style>
 	.message {
-		--animation-highlight-duration: 0.7s;
 		--message-max-width: 60%;
 		position: relative;
 		max-width: var(--message-max-width);
