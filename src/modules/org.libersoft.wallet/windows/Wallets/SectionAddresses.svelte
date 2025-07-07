@@ -7,7 +7,6 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { get } from 'svelte/store';
 
 	interface Props {
@@ -38,13 +37,11 @@
 	<Tbody>
 		{#if wallet.addresses && wallet.addresses.length > 0}
 			{#each wallet.addresses as address}
-				<Clickable onClick={() => clickSelectAddress(address)}>
-					<TbodyTr>
-						<Td>{address.index}</Td>
-						<Td>{address.name}</Td>
-						<Td>{address.address}</Td>
-					</TbodyTr>
-				</Clickable>
+				<TbodyTr onClick={() => clickSelectAddress(address)}>
+					<Td>{address.index}</Td>
+					<Td>{address.name}</Td>
+					<Td>{address.address}</Td>
+				</TbodyTr>
 			{/each}
 		{:else}
 			<TbodyTr>
