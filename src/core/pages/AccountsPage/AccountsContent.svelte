@@ -106,15 +106,15 @@
 						<Tbody>
 							<TbodyTr>
 								<Td bold>Server:</Td>
-								<Td>{account.credentials.server}</Td>
+								<Td data-testid="account-server@{account.credentials.address}@{account.credentials.server}">{account.credentials.server}</Td>
 							</TbodyTr>
 							<TbodyTr>
 								<Td bold>Address:</Td>
-								<Td>{account.credentials.address}</Td>
+								<Td data-testid="account-address@{account.credentials.address}@{account.credentials.server}">{account.credentials.address}</Td>
 							</TbodyTr>
 							<TbodyTr>
 								<Td bold>Enabled:</Td>
-								<Td>{account.enabled ? 'Yes' : 'No'}</Td>
+								<Td data-testid="account-enabled@{account.credentials.address}@{account.credentials.server}">{account.enabled ? 'Yes' : 'No'}</Td>
 							</TbodyTr>
 							<TbodyTr>
 								<Td bold>Action:</Td>
