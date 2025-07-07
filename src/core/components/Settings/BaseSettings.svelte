@@ -56,11 +56,11 @@
 		elWindow?.close();
 	}
 
-	export async function setSettingsSection(name: string) {
-		console.log('[BaseSettings] setSettingsSection:', name);
+	export async function setSettingsSection(name: string, props: any = {}) {
+		console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
-		await currentNode.instance?.onOpen?.();
+		await currentNode.instance?.onOpen?.(props);
 	}
 
 	function goBack() {

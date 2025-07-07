@@ -20,13 +20,30 @@
 		close: () => void;
 	}
 	let { params, close }: Props = $props();
-	let itemName = $state({ value: params?.network?.name as string | undefined });
-	let itemCurrencySymbol = $state({ value: params?.network?.currency?.symbol as string | undefined });
-	let itemCurrencyIconURL = $state({ value: params?.network?.currency?.iconURL as string | undefined });
-	let itemChainID = $state({ value: params?.network?.chainID as number | undefined });
-	let itemExplorerURL = $state({ value: params?.network?.explorerURL as string | undefined });
+	let itemName = $state({});
+	let itemCurrencySymbol = $state({});
+	let itemCurrencyIconURL = $state({});
+	let itemChainID = $state({});
+	let itemExplorerURL = $state({});
 	let itemRPCURLs: string[] | undefined = $state(params?.network?.rpcURLs ? [...params.network.rpcURLs] : undefined);
 	let error: string | null | undefined = $state();
+
+	export function onOpen(props: Props['params']): void {
+		if (props?.network) {
+			let network = props.network;
+			itemName.value = network.name;
+			itemCurrencySymbol.value = network.currency?.symbol || '';
+			itemCurrencyIconURL.value = network.currency?.iconURL || '';
+			itemChainID.value = network.chainID;
+			itemExplorerURL.value = network.explorerURL || '';
+			itemRPCURLs = network.rpcURLs ? [...network.rpcURLs] : [];
+			elName?.focus();
+		}
+	}
+
+	$effect(() => {
+		onOpen(params);
+	});
 
 	function addEdit(): void {
 		const validationConfig = [
