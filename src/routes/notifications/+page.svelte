@@ -1,9 +1,9 @@
 <script>
 	import Button from '@/core/components/Button/Button.svelte';
 	import { writable, get } from 'svelte/store';
-	import Notification from '../../core/components/Notification/Notification.svelte';
-	import { multiwindow_store } from '../../core/multiwindow_store.ts';
-	import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/scripts/tauri.ts';
+	import Notification from '@/core/components/Notification/Notification.svelte';
+	import { multiwindow_store } from '@/core/scripts/multiwindow_store.ts';
+	import { CUSTOM_NOTIFICATIONS, log } from '@/core/scripts/tauri.ts';
 	import { onMount, onDestroy } from 'svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { heightLogicalChanged, initPositioning } from './position.ts';
