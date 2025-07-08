@@ -113,15 +113,9 @@
 
 {#snippet fileUploadItem(file)}
 	<TbodyTr>
-		<Td title="File name">
-			{truncateText(file.name, 30)}
-		</Td>
-		<Td title="Size">
-			{humanSize(file.size)}
-		</Td>
-		<Td title="Action">
-			<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} />
-		</Td>
+		<Td>{truncateText(file.name, 30)}</Td>
+		<Td>{humanSize(file.size)}</Td>
+		<Td><Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => onFileDelete(file)} /></Td>
 	</TbodyTr>
 {/snippet}
 
