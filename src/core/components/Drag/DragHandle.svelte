@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { registerDragHandle, unregisterDragHandle } from '@/core/actions/tableDrag.ts';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
-		icon?: string;
 		size?: string;
 		ariaLabel?: string;
 		class?: string;
+		colorVariable?: string;
 	}
-	const { icon = '⋮⋮', size = '20px', ariaLabel = 'Drag to reorder', class: className = '' }: Props = $props();
+	const { size = '20px', ariaLabel = 'Drag to reorder', class: className = '', colorVariable = '--primary-foreground' }: Props = $props();
 	let handleElement: HTMLElement;
 
 	onMount(() => {
@@ -22,17 +23,16 @@
 <style>
 	.drag-handle {
 		cursor: grab;
-		padding: 0 5px;
-		color: var(--primary-foreground);
-		user-select: none;
-		transition: color 0.2s ease;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		padding: 0 5px;
+		user-select: none;
+		transition: opacity 0.2s ease;
 	}
 
 	.drag-handle:hover {
-		color: var(--primary);
+		opacity: 0.8;
 	}
 
 	.drag-handle:active {
@@ -40,4 +40,6 @@
 	}
 </style>
 
-<div bind:this={handleElement} class="drag-handle {className}" style="width: {size}; height: {size};" role="button" tabindex="0" aria-label={ariaLabel}>{icon}</div>
+<div bind:this={handleElement} class="drag-handle {className}" style="width: {size}; height: {size};" role="button" tabindex="0" aria-label={ariaLabel}>
+	<Icon img="img/drag.svg" alt="Drag handle" {colorVariable} {size} padding="0px" />
+</div>
