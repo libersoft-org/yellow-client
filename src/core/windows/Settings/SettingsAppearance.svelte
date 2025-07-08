@@ -11,6 +11,7 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	//import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -72,11 +73,13 @@
 						<Option text={theme.name} value={index} />
 					{/each}
 				</Select>
-				{#if $selected_theme_index > 1}
-					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={async () => await setSettingsSection('edit-theme')} testId="theme-edit-button" />
-					<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={delete_current_theme} testId="theme-delete-button" />
-				{/if}
-				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => create_new_theme()} testId="theme-add-button" />
+				<ActionItems>
+					{#if $selected_theme_index > 1}
+						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={async () => await setSettingsSection('edit-theme')} testId="theme-edit-button" />
+						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={delete_current_theme} testId="theme-delete-button" />
+					{/if}
+					<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => create_new_theme()} testId="theme-add-button" />
+				</ActionItems>
 			</Td>
 		</TbodyTr>
 	</Tbody>
