@@ -24,18 +24,19 @@ export function validateForm(config: FormValidatorConfig): string | null {
 	for (const rule of config) {
 		// Handle array validation
 		if (rule.isArray) {
+			const arrayValue = rule.field.value;
 			// Skip validation if field is undefined or null - no array means no validation needed
-			if (!rule.field || !Array.isArray(rule.field)) {
+			if (!arrayValue || !Array.isArray(arrayValue)) {
 				continue;
 			}
 
 			// Skip validation if array is empty - empty arrays are allowed
-			if (rule.field.length === 0) {
+			if (arrayValue.length === 0) {
 				continue;
 			}
 
-			for (let i = 0; i < rule.field.length; i++) {
-				const item = rule.field[i];
+			for (let i = 0; i < arrayValue.length; i++) {
+				const item = arrayValue[i];
 				if (rule.required && !item?.trim()) {
 					rule.arrayElements?.[i]?.focus();
 					return rule.required.replace('{index}', (i + 1).toString());
@@ -44,18 +45,18 @@ export function validateForm(config: FormValidatorConfig): string | null {
 			continue;
 		}
 
-		let value = rule.field;
+		let value = rule.field.value;
 
 		// Trim if needed
 		if (rule.trim && typeof value === 'string') {
 			value = value.trim();
-			rule.field = value;
+			rule.field.value = value;
 		}
 
 		// Convert if needed
 		if (rule.convert && value !== undefined && value !== null) {
 			value = rule.convert(value);
-			rule.field = value;
+			rule.field.value = value;
 		}
 
 		// Check required
