@@ -1,5 +1,4 @@
-import type { Readable } from 'svelte/store';
-import { derived } from 'svelte/store';
+import { type Readable, derived } from 'svelte/store';
 
 /**
  * A derived store that only updates if the derived value is not equal

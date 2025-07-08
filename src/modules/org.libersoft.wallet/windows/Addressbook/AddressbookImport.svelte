@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { getGuid } from '@/core/scripts/core.ts';
+	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { addressBook } from '../../scripts/wallet.ts';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog, { type IDialogData } from '@/core/components/Dialog/Dialog.svelte';

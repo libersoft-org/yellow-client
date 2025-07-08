@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { networks, type INetwork } from '../scripts/wallet.ts';
+	import { networks, type INetwork, deleteNetwork } from '../scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: INetwork;
@@ -17,7 +17,7 @@
 	};
 
 	function clickYes() {
-		networks.set($networks.filter(i => i.guid !== item.guid));
+		deleteNetwork(item);
 		elDialog?.close();
 	}
 

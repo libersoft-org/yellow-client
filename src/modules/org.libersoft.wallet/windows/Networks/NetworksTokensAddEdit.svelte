@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getGuid } from '@/core/scripts/core.ts';
+	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { module } from '../../scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

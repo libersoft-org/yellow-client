@@ -501,7 +501,7 @@ function disconnectAccount(acc: IAccount) {
 		acc.socket.close();
 		acc.socket = undefined;
 	}
-	console.log('Account disconnected');
+	//console.log('Account disconnected');
 }
 
 function clearAccount(acc: IAccount) {

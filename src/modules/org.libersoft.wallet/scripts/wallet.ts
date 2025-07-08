@@ -1,105 +1,31 @@
 import { derived, get, writable } from 'svelte/store';
-import { derivedWithEquals } from '@/core/scripts/utils/derivedWithEquals.ts';
-import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
+import { getGuid } from '@/core/scripts/utils/utils.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
-import { getGuid } from '@/core/scripts/core.ts';
-export { default_networks } from './default_networks.js';
-export interface IAddress {
-	address: string;
-	name: string;
-	path: string;
-	index: number;
-}
-export interface IWallet {
-	phrase: string;
-	address: string;
-	selected_address_index: number;
-	name: string;
-	addresses?: IAddress[];
-}
-export interface IToken {
-	guid: string;
-	icon: string;
-	symbol: string;
-	name: string;
-	contract_address: string;
-}
-export interface INetwork {
-	guid?: string;
-	name: string;
-	chainID: number;
-	explorerURL?: string;
-	currency: {
-		symbol: string;
-		iconURL?: string;
-	};
-	rpcURLs?: string[];
-	tokens?: IToken[];
-}
-export interface IBalance {
-	crypto: {
-		amount: string;
-		currency: string;
-	};
-	fiat: {
-		amount: string;
-		currency: string;
-	};
-}
-export interface IAddressBookItem {
-	guid: string;
-	name: string;
-	address: string;
-}
-export interface IStatus {
-	color: 'red' | 'orange' | 'green';
-	text: string;
-}
 
+import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
+import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
+
+import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet } from '@/org.libersoft.wallet/scripts/types.ts';
+export type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken } from '@/org.libersoft.wallet/scripts/types.ts';
+
+import { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
+export { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
+
+export { status, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
+export { default_networks } from './default_networks.js';
+
+export let section = writable<string | null>('balance');
 export const settingsWindow = writable<any>();
 export const walletsWindow = writable<any>();
-export const status = writable<IStatus>({ color: 'red', text: 'Started.' });
-export const rpcURL = writable<string | null>(null);
-export const networks = localStorageSharedStore<INetwork[]>('networks', []);
-export let section = writable<string | null>('balance');
 export let sendAddress = writable<string | number | undefined>();
-const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
-let provider: JsonRpcProvider | null = null;
-let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
 
-status.subscribe((value: IStatus) => {
-	console.log('wallet.ts Status updated:', value);
-});
+const refreshTimer = setInterval(refresh, 30000);
 
-networks.subscribe((nets: INetwork[]) => {
-	let modified = false;
-	for (let net of nets) {
-		if (net.guid === undefined) {
-			net.guid = getGuid();
-			modified = true;
-		}
-		if (net.tokens === undefined) {
-			net.tokens = [];
-			modified = true;
-		}
-		for (let token of net.tokens) {
-			if (token.guid === undefined) {
-				token.guid = getGuid();
-				modified = true;
-			}
-		}
-	}
-	if (modified) {
-		setTimeout(() => {
-			networks.update(n => n);
-		}, 1000);
-	}
-});
+async function refresh(): Promise<void> {
+	if (get(provider)) await getBalance();
+}
 
-export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
-export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
-export const selectedNetwork = writable<INetwork | undefined>();
-
+// derivedWithEquals
 selectedNetworkID.subscribe((value: string | null) => {
 	updateSelectedNetwork(value, get(networks));
 });
@@ -113,30 +39,7 @@ function updateSelectedNetwork(selectedNetworkID: string | null, networks: INetw
 	if (r === get(selectedNetwork)) return;
 	selectedNetwork.set(r);
 }
-
-export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
-export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
-	const r = $wallets.find(w => w.address === $selectedWalletID);
-	return r;
-});
-export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
-	let addresses = $selectedWallet?.addresses || [];
-	let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
-	return result;
-});
-
-let providerData = derivedWithEquals(
-	[selectedNetwork, rpcURL],
-	([$selectedNetwork, $rpcURL]) => {
-		return {
-			network: $selectedNetwork,
-			rpcURL: $rpcURL,
-		};
-	},
-	(a, b) => {
-		return a?.network?.guid === b?.network?.guid && a?.rpcURL === b?.rpcURL;
-	}
-);
+// /
 
 export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return $selectedNetwork?.currency.symbol;
@@ -162,102 +65,12 @@ addressBook.subscribe((value: IAddressBookItem[]) => {
 	if (modified) addressBook.update(v => v);
 });
 
-wallets.subscribe((wals: IWallet[]) => {
-	while (wallets_cleanup(wals)) {
-		wallets.update(w => w);
-	}
-});
-
 export function setSection(name: string) {
 	if (get(section) !== name) section.set(name);
 }
 
 export function setSendAddress(address: string) {
 	if (get(sendAddress) !== address) sendAddress.set(address);
-}
-
-function wallets_cleanup(wallets: any) {
-	for (let i = 0; i < wallets.length; i++) {
-		for (let j = 0; j < wallets.length; j++) {
-			if (i !== j && wallets[i].address === wallets[j].address) {
-				console.error('Wallet with address ' + wallets[i].address + ' already exists');
-				wallets.splice(i, 1);
-				return true;
-			}
-			if (i !== j && wallets[i].phrase === wallets[j].phrase) {
-				console.error('Wallet with phrase ' + wallets[i].phrase + ' already exists');
-				wallets.splice(i, 1);
-				return true;
-			}
-		}
-	}
-}
-
-export const balance = writable<IBalance>({
-	crypto: {
-		amount: '?',
-		currency: 'N/A',
-	},
-	fiat: {
-		amount: '?',
-		currency: 'USD',
-	},
-});
-
-balance.subscribe((value: IBalance) => {
-	console.log('balance updated:', value);
-});
-
-export const balanceTimestamp = writable<Date | null>(null);
-//let refreshTimer = window.setInterval(refresh, 30000);
-
-function resetBalance(): void {
-	balance.set({
-		crypto: {
-			amount: '?',
-			currency: get(selectedNetwork)?.currency.symbol || '?',
-		},
-		fiat: { amount: '?', currency: 'USD' },
-	});
-	balanceTimestamp.set(null);
-}
-
-/*
-async function refresh(): Promise<void> {
-	if (provider) await getBalance();
-}
-*/
-
-providerData.subscribe(({ network, rpcURL }) => {
-	resetBalance();
-	reconnect();
-});
-
-function reconnect(): void {
-	provider = null;
-
-	const net = get(selectedNetwork);
-	if (!net) {
-		console.log('No selected network to reconnect');
-		return;
-	} else {
-		console.log('Reconnecting to', get(selectedNetwork));
-	}
-
-	status.set({ color: 'orange', text: 'Connecting to ' + net.name });
-	if (reconnectionTimer !== undefined) clearTimeout(reconnectionTimer);
-	const rurl = get(rpcURL);
-	if (!rurl || net?.rpcURLs?.find(url => url === rurl) === undefined) {
-		if (!net?.rpcURLs?.[0]) {
-			status.set({
-				color: 'red',
-				text: 'No RPC URL found for the selected network',
-			});
-			return;
-		}
-		rpcURL.set(net.rpcURLs[0]);
-	}
-	connectToURL();
 }
 
 function sortAddresses(addresses: IAddress[]): IAddress[] {
@@ -340,39 +153,6 @@ export function generateMnemonic(): Mnemonic {
 	return Mnemonic.fromEntropy(randomBytes(32));
 }
 
-function connectToURL(): void {
-	console.log('Connecting to', get(rpcURL));
-	const net = get(selectedNetwork);
-	if (!net) {
-		console.error('No selected network');
-		return;
-	}
-	provider = new JsonRpcProvider(get(rpcURL)!, net.chainID);
-	provider.on('error', (error: Error) => {
-		console.log('Provider error:', error);
-		if (provider) provider.destroy();
-		provider = null;
-		setNextUrl();
-		reconnectionTimer = setTimeout(reconnect, WALLET_PROVIDER_RECONNECT_INTERVAL);
-	});
-	provider.on('network', (newNetwork: any) => {
-		console.log('Network changed:', newNetwork.toJSON());
-		status.set({ color: 'green', text: 'Connected: ' + newNetwork.name });
-	});
-}
-
-function setNextUrl(): void {
-	const net = get(selectedNetwork);
-	if (!net?.rpcURLs) return;
-	let i = net.rpcURLs.indexOf(get(rpcURL) || '');
-	i += 1;
-	let url: string;
-	if (i >= net.rpcURLs.length) url = net.rpcURLs[0];
-	else url = net.rpcURLs[i];
-	rpcURL.set(url);
-	status.set({ color: 'orange', text: 'Trying next url: ' + url });
-}
-
 export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void> {
 	let newWallet = HDNodeWallet.fromMnemonic(mnemonic);
 	let wallet: IWallet = {
@@ -405,13 +185,14 @@ export function editWallet(wallet: IWallet, name: string): boolean {
 }
 
 export async function getBalance(): Promise<void> {
-	console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', provider);
+	const p = get(provider);
+	console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', p);
 	const net = get(selectedNetwork);
 	const addr = get(selectedAddress);
-	if (net && provider && addr) {
+	if (net && p && addr) {
 		try {
 			console.log('Getting balance for', addr.address);
-			const balanceBigNumber = await provider.getBalance(addr.address);
+			const balanceBigNumber = await p.getBalance(addr.address);
 			console.log('balanceBigNumber', balanceBigNumber);
 			balanceTimestamp.set(new Date());
 			const balanceFormated = formatEther(balanceBigNumber);
@@ -476,7 +257,7 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 		return;
 	}
 	const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
-	let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(provider);
+	let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(get(provider));
 	//try {
 
 	let data = 'you can put data here';
@@ -491,7 +272,7 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 	//maxFeePerGas: etherValueFee,
 	//nonce: await provider.getTransactionCount(selectedAddressValue.address),
 	console.log('selectedAddressValue.address:', selectedAddressValue);
-	console.log('provider:', provider);
+	console.log('provider:', get(provider));
 	console.log('mn:', mn);
 	console.log('hd_wallet:', hd_wallet);
 	console.log('tx request:', request);

@@ -1,3 +1,8 @@
+import { writable } from 'svelte/store';
+
+// Global store to track drag state across all tables
+export const isDragging = writable(false);
+
 export interface DragConfig {
 	/** Function to get all registered drag handles */
 	getDragHandles: () => HTMLElement[];
@@ -89,6 +94,9 @@ export class TableDragManager {
 		this.state.dragSourceIndex = index;
 		this.state.isDragging = true;
 		this.state.dragElement = row;
+
+		// Set global drag state
+		isDragging.set(true);
 
 		// Create clone
 		this.createClone(row, event.clientX, event.clientY);
@@ -306,6 +314,9 @@ export class TableDragManager {
 		this.state.dragOverIndex = null;
 		this.state.isDragging = false;
 		this.state.isAtEnd = false;
+
+		// Reset global drag state
+		isDragging.set(false);
 
 		// Remove event listeners
 		document.removeEventListener('mousemove', this.handleMouseMove);

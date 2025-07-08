@@ -1,7 +1,7 @@
 <script lang="ts">
 	//import { onMount } from 'svelte';
 	import { isAddress } from 'ethers';
-	import { getGuid } from '@/core/scripts/core.ts';
+	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { addressBook, type IAddressBookItem } from '../../scripts/wallet.ts';
 	import { module } from '../../scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';

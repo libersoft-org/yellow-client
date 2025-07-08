@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { getGuid } from '@/core/scripts/core.ts';
+	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { networks } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/scripts/utils/exceptions.ts';
 	import Import from '@/core/components/Import/Import.svelte';
