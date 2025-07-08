@@ -19,6 +19,10 @@
 </script>
 
 <style>
+	tr {
+		color: var(--primary-foreground);
+	}
+
 	tr:nth-child(even) {
 		background-color: var(--primary-soft-background);
 	}
