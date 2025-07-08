@@ -16,21 +16,15 @@
 </script>
 
 <Table>
-	<Thead>
-		<TheadTr>
-			{#each settings as setting}
-				<Th>{setting.label}</Th>
-			{/each}
-		</TheadTr>
-	</Thead>
 	<Tbody>
-		<TbodyTr>
-			{#each settings as setting}
-				<Td title={setting.label}>
+		{#each settings as setting}
+			<TbodyTr>
+				<Td bold>{setting.label}:</Td>
+				<Td>
 					<Switch label="debug" checked={false} />
 					<!-- TODO: Fix store binding for settings -->
 				</Td>
-			{/each}
-		</TbodyTr>
+			</TbodyTr>
+		{/each}
 	</Tbody>
 </Table>

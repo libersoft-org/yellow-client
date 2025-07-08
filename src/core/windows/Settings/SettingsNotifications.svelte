@@ -47,62 +47,74 @@
 	{#if CUSTOM_NOTIFICATIONS}
 		{#if $customNotificationsOn}
 			<Table>
-				<Thead>
-					<TheadTr>
-						<Th>Animation:</Th>
-						<Th>Animation duration:</Th>
-						<Th>Maximum number of lines in title:</Th>
-						<Th>Maximum number of lines in description:</Th>
-						<Th>Background color:</Th>
-						<Th>Background color on mouse over:</Th>
-						<Th>Border color:</Th>
-						<Th>Title color:</Th>
-						<Th>Description color:</Th>
-					</TheadTr>
-				</Thead>
 				<Tbody>
 					<TbodyTr>
-						<Td title="Animation">
+						<Td bold>Animation:</Td>
+						<Td>
 							<Select bind:value={$animationName}>
 								<Option value="none" text="None" />
 								<Option value="zoom" text="Zoom" />
 								<Option value="opacity" text="Opacity" />
 							</Select>
 						</Td>
-						<Td title="Animation duration">
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Animation duration:</Td>
+						<Td>
 							<Input type="number" bind:value={$animationDuration} min={0} max={1000} step={10} />ms
 						</Td>
-						<Td title="Maximum number of lines in title">
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Maximum number of lines in title:</Td>
+						<Td>
 							<Input type="number" bind:value={$titleMaxLines} min={1} max={3} />
 						</Td>
-						<Td title="Maximum number of lines in description">
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Maximum number of lines in description:</Td>
+						<Td>
 							<Input type="number" bind:value={$bodyMaxLines} min={1} max={5} />
 						</Td>
-						<Td title="Background color">
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Background color:</Td>
+						<Td>
 							<div>
 								<Input type="color" bind:value={$bgColor} />
 								{$bgColor}
 							</div>
 						</Td>
-						<Td title="Background color on mouse over">
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Background color on mouse over:</Td>
+						<Td>
 							<div>
 								<Input type="color" bind:value={$bgColorHover} />
 								{$bgColorHover}
 							</div>
 						</Td>
-						<Td title="Border color">
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Border color:</Td>
+						<Td>
 							<div>
 								<Input type="color" bind:value={$borderColor} />
 								{$borderColor}
 							</div>
 						</Td>
-						<Td title="Title color">
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Title color:</Td>
+						<Td>
 							<div>
 								<Input type="color" bind:value={$titleColor} />
 								{$titleColor}
 							</div>
 						</Td>
-						<Td title="Description color">
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Description color:</Td>
+						<Td>
 							<div>
 								<Input type="color" bind:value={$descColor} />
 								{$descColor}

@@ -83,19 +83,15 @@
 	<Table breakpoint="0">
 		<Thead>
 			<TheadTr>
-				<Th>Gif servers:</Th>
-				<Th>Action:</Th>
+				<Th>GIF servers</Th>
+				<Th align="center">Action</Th>
 			</TheadTr>
 		</Thead>
 		<Tbody>
 			{#each $gif_servers as s}
 				<TbodyTr>
-					<Td title="GIF servers">
-						<a href={s} target="_blank">{s}</a>
-					</Td>
-					<Td title="Action">
-						<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} />
-					</Td>
+					<Td><a href={s} target="_blank">{s}</a></Td>
+					<Td align="center"><Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => clickDel(s)} /></Td>
 				</TbodyTr>
 			{/each}
 		</Tbody>

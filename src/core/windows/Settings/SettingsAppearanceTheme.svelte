@@ -113,13 +113,15 @@
 <Table>
 	<Tbody>
 		<TbodyTr>
-			<Td title="Name">
+			<Td bold>Name</Td>
+			<Td>
 				<Input type="text" bind:value={$theme.name} enabled={!is_builtin_theme} data-testid="theme-name-input" />
 			</Td>
 		</TbodyTr>
 		{#each theme_properties as theme_property_name}
 			<TbodyTr>
-				<Td title={theme_property_name}>
+				<Td bold>{theme_property_name}</Td>
+				<Td>
 					{#if theme_property_name === '--background-image'}
 						<Input type="text" bind:value={$theme.properties[theme_property_name]} enabled={!is_builtin_theme} data-testid={`theme-text-${theme_property_name}`} />
 					{:else}

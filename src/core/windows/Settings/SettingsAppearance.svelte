@@ -8,12 +8,10 @@
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Range from '@/core/components/Range/Range.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
-	import Thead from '@/core/components/Table/TableThead.svelte';
-	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	//import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -49,39 +47,39 @@
 </style>
 
 <Table>
-	<Thead>
-		<TheadTr>
-			{#if TAURI}
-				<Th>Zoom:</Th>
-			{/if}
-			<Th>Browser Preference:</Th>
-			<Th>Theme:</Th>
-		</TheadTr>
-	</Thead>
 	<Tbody>
-		<TbodyTr>
-			{#if TAURI}
-				<Td title="Zoom">
+		{#if TAURI}
+			<TbodyTr>
+				<Td bold>Zoom:</Td>
+				<Td>
 					<span>{Math.round(($zoom || 0) * 100)}%</span>
 					<div class="zoom">
 						<Range min="0.3" max="3" step="0.1" bind:value={$zoom} onchange={setZoom} />
 					</div>
 				</Td>
-			{/if}
-			<Td title="Follow browser theme preference">
-				<Switch showLabel label="Follow browser theme" bind:checked={$followBrowserTheme} data-testid="follow-browser-theme-switch" />
+			</TbodyTr>
+		{/if}
+		<TbodyTr>
+			<Td bold>Follow browser theme preference:</Td>
+			<Td>
+				<Switch label="Follow browser theme" bind:checked={$followBrowserTheme} data-testid="follow-browser-theme-switch" />
 			</Td>
-			<Td title="Theme">
+		</TbodyTr>
+		<TbodyTr>
+			<Td bold>Theme:</Td>
+			<Td>
 				<Select data-testid="theme switch" bind:value={$selected_theme_index} enabled={!$followBrowserTheme}>
 					{#each $themes as theme, index (theme.name + index)}
 						<Option text={theme.name} value={index} />
 					{/each}
 				</Select>
-				{#if $selected_theme_index > 1}
-					<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={async () => await setSettingsSection('edit-theme')} testId="theme-edit-button" />
-					<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={delete_current_theme} testId="theme-delete-button" />
-				{/if}
-				<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="0px" onClick={() => create_new_theme()} testId="theme-add-button" />
+				<ActionItems>
+					{#if $selected_theme_index > 1}
+						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={async () => await setSettingsSection('edit-theme')} testId="theme-edit-button" />
+						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={delete_current_theme} testId="theme-delete-button" />
+					{/if}
+					<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => create_new_theme()} testId="theme-add-button" />
+				</ActionItems>
 			</Td>
 		</TbodyTr>
 	</Tbody>

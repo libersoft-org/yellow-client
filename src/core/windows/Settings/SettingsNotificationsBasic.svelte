@@ -147,29 +147,30 @@
 </script>
 
 <Table>
-	<Thead>
-		<TheadTr>
-			<Th>Notifications:</Th>
-			<Th>Notification sound:</Th>
-			<Th>Custom notifications:</Th>
-			<Th>Monitor:</Th>
-			<Th>Corner:</Th>
-		</TheadTr>
-	</Thead>
 	<Tbody>
 		<TbodyTr>
-			<Td title="Notifications">
+			<Td bold>Notifications:</Td>
+			<Td>
 				<Switch data-testid="notifications enabled toggle" label="Notifications" bind:checked={_notificationsEnabled} />
 			</Td>
-			<Td title="Notification sound">
+		</TbodyTr>
+		<TbodyTr>
+			<Td bold>Notification sound:</Td>
+			<Td>
 				<Switch label="Notification sound" bind:checked={$notificationsSoundEnabled} />
 			</Td>
-			{#if $customNotificationsOn}
-				<Td title="Custom notifications">
+		</TbodyTr>
+		{#if $customNotificationsOn}
+			<TbodyTr>
+				<Td bold>Custom notifications:</Td>
+				<Td>
 					<Switch label="Custom notifications" bind:checked={$enableCustomNotifications} />
 				</Td>
-				{#if $customNotificationsOn}
-					<Td title="Monitor">
+			</TbodyTr>
+			{#if $customNotificationsOn}
+				<TbodyTr>
+					<Td bold>Monitor:</Td>
+					<Td>
 						<Select bind:value={$selectedMonitorName}>
 							{#each $monitorOptions as monitor}
 								<Option value={monitor.name} selected={monitor.name === $selectedMonitorName} text={monitor.label} />
@@ -177,11 +178,14 @@
 						</Select>
 						{#if $debug}$selectedMonitorName:{$selectedMonitorName}{/if}
 					</Td>
-					<Td title="Corner">
+				</TbodyTr>
+				<TbodyTr>
+					<Td bold>Corner:</Td>
+					<Td>
 						<CornerSelector bind:value={$selectedNotificationsCorner} />
 					</Td>
-				{/if}
+				</TbodyTr>
 			{/if}
-		</TbodyTr>
+		{/if}
 	</Tbody>
 </Table>

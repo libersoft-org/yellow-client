@@ -11,6 +11,7 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
 	import WindowAddEdit from './NetworksTokensAddEdit.svelte';
 	import DialogTokenDel from '../../dialogs/NetworksTokensDel.svelte';
@@ -82,31 +83,35 @@
 		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={addTokenWindow} />
 	</ButtonBar>
 	{#if net?.tokens}
-		<Table>
-			<Thead>
-				<TheadTr>
-					<Th>Name</Th>
-					<Th>Icon</Th>
-					<Th>Symbol</Th>
-					<Th>Token address</Th>
-					<Th>Action</Th>
-				</TheadTr>
-			</Thead>
-			<Tbody>
-				{#each net.tokens as t, i}
+		{#each net.tokens as t, i}
+			<Table>
+				<Thead>
+					<TheadTr>
+						<Th>{t.name}</Th>
+						<Th padding="0">
+							<ActionItems align="right">
+								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenWindow(t)} />
+								<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenWindow(t)} />
+							</ActionItems>
+						</Th>
+					</TheadTr>
+				</Thead>
+				<Tbody>
 					<TbodyTr>
-						<Td title="Name">{t.name}</Td>
-						<Td title="Icon">{t.icon}</Td>
-						<Td title="Symbol">{t.symbol}</Td>
-						<Td title="Token address">{t.contract_address}</Td>
-						<Td title="Action">
-							<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenWindow(t)} />
-							<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenWindow(t)} />
-						</Td>
+						<Td bold>Icon:</Td>
+						<Td>{t.icon}</Td>
 					</TbodyTr>
-				{/each}
-			</Tbody>
-		</Table>
+					<TbodyTr>
+						<Td bold>Symbol:</Td>
+						<Td>{t.symbol}</Td>
+					</TbodyTr>
+					<TbodyTr>
+						<Td bold>Token address</Td>
+						<Td>{t.contract_address}</Td>
+					</TbodyTr>
+				</Tbody>
+			</Table>
+		{/each}
 	{/if}
 </div>
 <Window title={windowItem ? 'Edit token' : 'Add token'} body={WindowAddEdit} params={{ item: windowItem, onAdd, onEdit }} bind:this={elWindowAddEdit} />
