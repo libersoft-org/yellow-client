@@ -88,7 +88,7 @@
 				<Thead>
 					<TheadTr>
 						<Th>{t.name}</Th>
-						<Th padding="0">
+						<Th padding="0 10px">
 							<ActionItems align="right">
 								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenWindow(t)} />
 								<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenWindow(t)} />
@@ -106,7 +106,7 @@
 						<Td>{t.symbol}</Td>
 					</TbodyTr>
 					<TbodyTr>
-						<Td bold>Token address</Td>
+						<Td bold>Token contract address:</Td>
 						<Td>{t.contract_address}</Td>
 					</TbodyTr>
 				</Tbody>

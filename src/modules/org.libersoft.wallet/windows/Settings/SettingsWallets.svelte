@@ -73,7 +73,7 @@
 					<Th></Th>
 					<Th>Name</Th>
 					<Th align="center">Addresses</Th>
-					<Th>Action</Th>
+					<Th align="center">Action</Th>
 				</TheadTr>
 			</Thead>
 			<Tbody>
@@ -93,7 +93,7 @@
 							</Clickable>
 						</Td>
 						<Td padding="0">
-							<TableActionItems>
+							<TableActionItems align="center">
 								<Icon img="modules/{module.identifier}/img/wallet-address.svg" colorVariable="--primary-foreground" alt="Addresses" size="20px" padding="5px" onClick={() => clickWallet(wallet)} />
 								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit" size="20px" padding="5px" onClick={() => editWallet(wallet)} />
 								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => delWallet(wallet)} />

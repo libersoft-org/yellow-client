@@ -59,6 +59,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 10px;
+		padding: 10px;
 		background-color: var(--primary-background);
 		color: var(--primary-foreground);
 	}
@@ -131,7 +133,7 @@
 		<div class="item">
 			<div class="header">
 				<div class="info">
-					<Icon img="img/modules/{module.id}.svg" alt={module.name} size="32px" />
+					<Icon img="img/modules/{module.id}.svg" alt={module.name} size="32px" padding="0" />
 					<div class="details">
 						<div class="name">{module.name}</div>
 						<div class="id">{module.id}</div>

@@ -93,13 +93,13 @@
 		<Thead>
 			<TheadTr>
 				<Th>Network</Th>
-				<Th>Action</Th>
+				<Th align="center">Action</Th>
 			</TheadTr>
 		</Thead>
 		<Tbody>
 			{#each $networks as n, index (n.guid)}
 				<TbodyTr>
-					<Td padding="0" data-testid="wallet-settings-network-name@{n.name}">
+					<Td padding="0" expand data-testid="wallet-settings-network-name@{n.name}">
 						<div class="network">
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
@@ -108,7 +108,7 @@
 						</div>
 					</Td>
 					<Td>
-						<TableActionItems>
+						<TableActionItems align="center">
 							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} testId="wallet-settings-network-tokens@{n.name}" />
 							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n, true)} testId="wallet-settings-network-edit@{n.name}" />
 							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />
@@ -123,7 +123,7 @@
 		<Thead>
 			<TheadTr>
 				<Th>Network</Th>
-				<Th>Action</Th>
+				<Th align="center">Action</Th>
 			</TheadTr>
 		</Thead>
 		<Tbody>
@@ -138,7 +138,7 @@
 						</div>
 					</Td>
 					<Td>
-						<TableActionItems>
+						<TableActionItems align="center">
 							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n)} testId="wallet-settings-default-network-add@{n.name}" />
 						</TableActionItems>
 					</Td>

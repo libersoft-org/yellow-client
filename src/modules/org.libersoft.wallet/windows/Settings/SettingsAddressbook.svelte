@@ -17,7 +17,6 @@
 	import WindowExport from '../../windows/Addressbook/AddressbookExport.svelte';
 	import WindowImport from '../../windows/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-
 	let windowItem: IAddressBookItem | null | undefined = $state();
 	let elWindowAddEdit: Window | undefined;
 	let elWindowExport: Window | undefined;
@@ -67,7 +66,7 @@
 				<TheadTr>
 					<Th>Name</Th>
 					<Th>Address</Th>
-					<Th>Action</Th>
+					<Th align="center">Action</Th>
 				</TheadTr>
 			</Thead>
 			<Tbody>
@@ -76,7 +75,7 @@
 						<Td bold>{a.name}</Td>
 						<Td shorten>{a.address}</Td>
 						<Td>
-							<TableActionItems>
+							<TableActionItems align="center">
 								<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editItemWindow(a)} />
 								<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => deleteItemWindow(a)} />
 							</TableActionItems>

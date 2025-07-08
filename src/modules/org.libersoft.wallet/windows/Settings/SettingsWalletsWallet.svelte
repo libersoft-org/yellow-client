@@ -59,22 +59,17 @@
 		<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress()} />
 	</ButtonBar>
 	{#if params?.wallet?.addresses && params.wallet.addresses.length > 0}
-		<!--<Table>
-			<Thead>
-				<TheadTr>
-					<Th>Index</Th>
-					<Th>Name</Th>
-					<Th>Address</Th>
-					<Th>Action</Th>
-				</TheadTr>
-			</Thead>
-			-->
-
 		{#each params.wallet.addresses as address}
 			<Table>
 				<Thead>
 					<TheadTr>
-						<Th colspan="2">{address.name}</Th>
+						<Th>{address.name}</Th>
+						<Th padding="0 10px">
+							<TableActionItems align="right">
+								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5px" onClick={() => editAddress(address.index)} />
+								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5px" onClick={() => deleteAddress(address.index)} />
+							</TableActionItems>
+						</Th>
 					</TheadTr>
 				</Thead>
 				<Tbody>
@@ -85,15 +80,6 @@
 					<TbodyTr>
 						<Td bold>Address:</Td>
 						<Td><Address address={address.address} /></Td>
-					</TbodyTr>
-					<TbodyTr>
-						<Td bold>Action:</Td>
-						<Td>
-							<TableActionItems>
-								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Rename" size="20px" padding="5" onClick={() => editAddress(address.index)} />
-								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete" size="20px" padding="5" onClick={() => deleteAddress(address.index)} />
-							</TableActionItems>
-						</Td>
 					</TbodyTr>
 				</Tbody>
 			</Table>

@@ -44,6 +44,11 @@
 	.zoom {
 		display: flex;
 	}
+
+	.theme {
+		display: flex;
+		gap: 10px;
+	}
 </style>
 
 <Table>
@@ -68,18 +73,20 @@
 		<TbodyTr>
 			<Td bold>Theme:</Td>
 			<Td>
-				<Select data-testid="theme switch" bind:value={$selected_theme_index} enabled={!$followBrowserTheme}>
-					{#each $themes as theme, index (theme.name + index)}
-						<Option text={theme.name} value={index} />
-					{/each}
-				</Select>
-				<ActionItems>
-					{#if $selected_theme_index > 1}
-						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={async () => await setSettingsSection('edit-theme')} testId="theme-edit-button" />
-						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={delete_current_theme} testId="theme-delete-button" />
-					{/if}
-					<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => create_new_theme()} testId="theme-add-button" />
-				</ActionItems>
+				<div class="theme">
+					<Select data-testid="theme switch" bind:value={$selected_theme_index} enabled={!$followBrowserTheme}>
+						{#each $themes as theme, index (theme.name + index)}
+							<Option text={theme.name} value={index} />
+						{/each}
+					</Select>
+					<ActionItems>
+						{#if $selected_theme_index > 1}
+							<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={async () => await setSettingsSection('edit-theme')} testId="theme-edit-button" />
+							<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={delete_current_theme} testId="theme-delete-button" />
+						{/if}
+						<Icon img="img/add.svg" alt="Add" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => create_new_theme()} testId="theme-add-button" />
+					</ActionItems>
+				</div>
 			</Td>
 		</TbodyTr>
 	</Tbody>
