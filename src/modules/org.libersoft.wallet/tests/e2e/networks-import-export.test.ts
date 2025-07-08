@@ -36,8 +36,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify networks were added by checking the network list
-			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
-			await expect(page.getByTestId('network-name@Test Network 2')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 2')).toBeVisible();
 		});
 
 		test('Successfully replace all networks using Replace All', async ({ page }) => {
@@ -72,9 +72,9 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify old networks are gone and new network is present
-			await expect(page.getByTestId('network-name@Test Network 1')).not.toBeVisible();
-			await expect(page.getByTestId('network-name@Test Network 2')).not.toBeVisible();
-			await expect(page.getByTestId('network-name@Replacement Network')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).not.toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 2')).not.toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Replacement Network')).toBeVisible();
 		});
 
 		test('Import networks with complex unicode and special characters', async ({ page }) => {
@@ -89,7 +89,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify complex network was added
-			await expect(page.getByTestId('network-name@Test Network with Üñíçødé 测试')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network with Üñíçødé 测试')).toBeVisible();
 		});
 
 		test('Reject invalid JSON format', async ({ page }) => {
@@ -162,7 +162,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify the network was replaced (check for the new chainID or symbol)
-			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).toBeVisible();
 		});
 
 		test('Handle duplicate networks - Import with Modified Name', async ({ page }) => {
@@ -202,8 +202,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify both networks exist - original and one with modified name
-			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
-			await expect(page.getByTestId('network-name@Test Network 1 (1)')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1 (1)')).toBeVisible();
 		});
 
 		test('Handle duplicate networks - Skip This Network', async ({ page }) => {
@@ -476,7 +476,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 			// Should close window and show imported network
 			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
-			await expect(page.getByTestId('network-name@QR Scanned Network')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@QR Scanned Network')).toBeVisible();
 		});
 	});
 
@@ -511,7 +511,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await expect(page.getByTestId('networks-import-Window')).not.toBeVisible();
 
 			// Verify some networks were imported
-			await expect(page.getByTestId('network-name@Bulk Network 0')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Bulk Network 0')).toBeVisible();
 		});
 
 		test('Cancel replace operation', async ({ page }) => {
@@ -532,7 +532,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 			// Original network should still exist
 			await closeWindow(page, 'wallet-settings-networks-import');
-			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).toBeVisible();
 		});
 
 		test('Window close behavior during operations', async ({ page }) => {
@@ -544,7 +544,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await closeWindow(page, 'wallet-settings-networks-import');
 
 			// Should return to networks management without changes
-			await expect(page.getByTestId('network-name@Test Network 1')).not.toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).not.toBeVisible();
 		});
 
 		test('Import/Export cycle consistency', async ({ page }) => {
@@ -587,8 +587,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await confirmReplaceNetworksDialog(page);
 
 			// Verify networks are restored
-			await expect(page.getByTestId('network-name@Test Network 1')).toBeVisible();
-			await expect(page.getByTestId('network-name@Test Network 2')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).toBeVisible();
+			await expect(page.getByTestId('wallet-settings-network-name@Test Network 2')).toBeVisible();
 		});
 	});
 });
@@ -607,7 +607,7 @@ async function goToNetworksManagement(page: Page): Promise<void> {
 		await page.getByRole('button', { name: 'Manage networks' }).click();
 
 		// Wait for the networks management window to be visible
-		await page.getByTestId('networks-import-btn').waitFor({ state: 'visible' });
+		await page.getByTestId('wallet-settings-networks-import-btn').waitFor({ state: 'visible' });
 	});
 }
 
@@ -617,7 +617,7 @@ async function goToNetworksManagement(page: Page): Promise<void> {
  */
 async function openNetworksImportWindow(page: Page): Promise<void> {
 	return await test.step('Open networks import window', async () => {
-		await page.getByTestId('networks-import-btn').click();
+		await page.getByTestId('wallet-settings-networks-import-btn').click();
 	});
 }
 
@@ -627,7 +627,7 @@ async function openNetworksImportWindow(page: Page): Promise<void> {
  */
 async function openNetworksExportWindow(page: Page): Promise<void> {
 	return await test.step('Open networks export window', async () => {
-		await page.getByTestId('networks-export-btn').click();
+		await page.getByTestId('wallet-settings-networks-export-btn').click();
 	});
 }
 
