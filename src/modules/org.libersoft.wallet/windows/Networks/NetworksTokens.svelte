@@ -72,6 +72,16 @@
 		flex-direction: column;
 		gap: 10px;
 	}
+
+	.title {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.title .name {
+		padding: 10px 0;
+	}
 </style>
 
 <div class="token-list">
@@ -87,7 +97,14 @@
 			<Table>
 				<Thead>
 					<TheadTr>
-						<Th>{t.name}</Th>
+						<Th padding="0 10px">
+							<div class="title">
+								{#if t.icon}
+									<Icon img={t.icon} alt={t.name} size="20px" padding="0px" />
+								{/if}
+								<div class="name">{t.name}</div>
+							</div>
+						</Th>
 						<Th padding="0 10px">
 							<ActionItems align="right">
 								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenWindow(t)} />
@@ -99,15 +116,21 @@
 				<Tbody>
 					<TbodyTr>
 						<Td bold>Icon:</Td>
-						<Td>{t.icon}</Td>
+						<Td expand>
+							{#if t.icon}
+								{t.icon}
+							{:else}
+								<span>No icon</span>
+							{/if}
+						</Td>
 					</TbodyTr>
 					<TbodyTr>
 						<Td bold>Symbol:</Td>
-						<Td>{t.symbol}</Td>
+						<Td expand>{t.symbol}</Td>
 					</TbodyTr>
 					<TbodyTr>
 						<Td bold>Token contract address:</Td>
-						<Td>{t.contract_address}</Td>
+						<Td expand>{t.contract_address}</Td>
 					</TbodyTr>
 				</Tbody>
 			</Table>
