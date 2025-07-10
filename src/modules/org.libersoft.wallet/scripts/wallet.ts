@@ -1,24 +1,27 @@
 import { derived, get, writable } from 'svelte/store';
 import { getGuid } from '@/core/scripts/utils/utils.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
-
 import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
 import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
-
 import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet } from '@/org.libersoft.wallet/scripts/types.ts';
 export type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken } from '@/org.libersoft.wallet/scripts/types.ts';
+export interface IRPCServer {
+	url: string;
+	latency: number | null;
+	lastBlock: number | null;
+	blockAge: number | null;
+	isAlive: boolean;
+	checking?: boolean;
+}
 
 import { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
 export { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
-
 export { status, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
 export { default_networks } from './default_networks.js';
-
 export let section = writable<string | null>('balance');
 export const settingsWindow = writable<any>();
 export const walletsWindow = writable<any>();
 export let sendAddress = writable<string | number | undefined>();
-
 const refreshTimer = setInterval(refresh, 30000);
 
 async function refresh(): Promise<void> {
@@ -244,7 +247,7 @@ async function exchangeRates(): Promise<void> {
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+			throw new Error('HTTP error, status: ' + response.status);
 		}
 		const data = await response.json();
 		return data['data'];
@@ -365,4 +368,201 @@ export function editAddressName(wallet: IWallet, index: string | number, name: s
 
 export function reorderWallets(reorderedWallets: IWallet[]): void {
 	wallets.set(reorderedWallets);
+}
+
+export async function checkRPCServer(server: IRPCServer): Promise<void> {
+	server.checking = true;
+	const startTime = Date.now();
+
+	try {
+		const isWebSocket = server.url.startsWith('ws://') || server.url.startsWith('wss://');
+		if (isWebSocket) await checkWebSocketRPCServer(server, startTime);
+		else await checkHTTPRPCServer(server, startTime);
+	} catch (error) {
+		console.error('Error checking RPC server ' + server.url + ':', error);
+		server.latency = null;
+		server.lastBlock = null;
+		server.blockAge = null;
+		server.isAlive = false;
+	} finally {
+		server.checking = false;
+	}
+}
+
+async function checkHTTPRPCServer(server: IRPCServer, startTime: number): Promise<void> {
+	const blockNumberResponse = await fetch(server.url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			jsonrpc: '2.0',
+			method: 'eth_blockNumber',
+			params: [],
+			id: 1,
+		}),
+		signal: AbortSignal.timeout(10000),
+	});
+	if (!blockNumberResponse.ok) throw new Error('HTTP ' + blockNumberResponse.status + ': ' + blockNumberResponse.statusText);
+	const blockNumberData = await blockNumberResponse.json();
+	if (blockNumberData.error) throw new Error('RPC Error: ' + blockNumberData.error.message);
+	const blockNumber = parseInt(blockNumberData.result, 16);
+	let blockAge: number | null = null;
+	try {
+		const blockResponse = await fetch(server.url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				jsonrpc: '2.0',
+				method: 'eth_getBlockByNumber',
+				params: [blockNumberData.result, false],
+				id: 2,
+			}),
+			signal: AbortSignal.timeout(5000),
+		});
+		if (blockResponse.ok) {
+			const blockData = await blockResponse.json();
+			if (!blockData.error && blockData.result && blockData.result.timestamp) {
+				const blockTimestamp = parseInt(blockData.result.timestamp, 16);
+				const currentTime = Math.floor(Date.now() / 1000);
+				blockAge = currentTime - blockTimestamp;
+			}
+		}
+	} catch (blockError) {
+		console.warn('Could not get block details for ' + server.url + ':', blockError);
+	}
+	const endTime = Date.now();
+	server.latency = endTime - startTime;
+	server.lastBlock = blockNumber;
+	server.blockAge = blockAge;
+	server.isAlive = true;
+}
+
+async function checkWebSocketRPCServer(server: IRPCServer, startTime: number): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
+		const ws = new WebSocket(server.url);
+		let resolved = false;
+		let blockNumber: number | null = null;
+		let blockAge: number | null = null;
+		const cleanup = () => {
+			if (ws.readyState === WebSocket.OPEN) ws.close();
+		};
+		const timeout = setTimeout(() => {
+			if (!resolved) {
+				resolved = true;
+				cleanup();
+				reject(new Error('WebSocket connection timeout'));
+			}
+		}, 10000);
+		ws.onopen = () => {
+			ws.send(
+				JSON.stringify({
+					jsonrpc: '2.0',
+					method: 'eth_blockNumber',
+					params: [],
+					id: 1,
+				})
+			);
+		};
+		ws.onmessage = async event => {
+			try {
+				const data = JSON.parse(event.data);
+				if (data.id === 1) {
+					if (data.error) throw new Error('RPC error: ' + data.error.message);
+					blockNumber = parseInt(data.result, 16);
+					ws.send(
+						JSON.stringify({
+							jsonrpc: '2.0',
+							method: 'eth_getBlockByNumber',
+							params: [data.result, false],
+							id: 2,
+						})
+					);
+				} else if (data.id === 2) {
+					if (!data.error && data.result && data.result.timestamp) {
+						const blockTimestamp = parseInt(data.result.timestamp, 16);
+						const currentTime = Math.floor(Date.now() / 1000);
+						blockAge = currentTime - blockTimestamp;
+					}
+					if (!resolved) {
+						resolved = true;
+						clearTimeout(timeout);
+						const endTime = Date.now();
+						server.latency = endTime - startTime;
+						server.lastBlock = blockNumber;
+						server.blockAge = blockAge;
+						server.isAlive = true;
+						cleanup();
+						resolve();
+					}
+				}
+			} catch (error) {
+				if (!resolved) {
+					resolved = true;
+					clearTimeout(timeout);
+					cleanup();
+					reject(error);
+				}
+			}
+		};
+		ws.onerror = error => {
+			if (!resolved) {
+				resolved = true;
+				clearTimeout(timeout);
+				cleanup();
+				reject(new Error('WebSocket error: ' + error));
+			}
+		};
+		ws.onclose = event => {
+			if (!resolved) {
+				resolved = true;
+				clearTimeout(timeout);
+				if (event.code !== 1000) {
+					reject(new Error('WebSocket closed with code ' + event.code + ': ' + event.reason));
+				}
+			}
+		};
+	});
+}
+
+export async function checkAllRPCServers(servers: IRPCServer[]): Promise<void> {
+	const promises = servers.map(server => checkRPCServer(server));
+	await Promise.all(promises);
+}
+
+export function formatLatency(latency: number | null): string {
+	if (latency === null) return 'N/A';
+	return latency + 'ms';
+}
+
+export function formatBlockNumber(blockNumber: number | null): string {
+	if (blockNumber === null) return 'N/A';
+	return blockNumber.toLocaleString();
+}
+
+export function formatBlockAge(blockAge: number | null): string {
+	if (blockAge === null) return 'N/A';
+	if (blockAge < 60) return blockAge + 's ago';
+	else if (blockAge < 3600) {
+		const minutes = Math.floor(blockAge / 60);
+		return minutes + 'm ago';
+	} else if (blockAge < 86400) {
+		const hours = Math.floor(blockAge / 3600);
+		const minutes = Math.floor((blockAge % 3600) / 60);
+		return hours + 'h ' + minutes + 'm ago';
+	} else {
+		const days = Math.floor(blockAge / 86400);
+		const hours = Math.floor((blockAge % 86400) / 3600);
+		return days + 'd ' + hours + 'h ago';
+	}
+}
+
+export function createRPCServersFromNetwork(network: INetwork): IRPCServer[] {
+	if (!network?.rpcURLs) return [];
+	return network.rpcURLs.map(url => ({
+		url,
+		latency: null,
+		lastBlock: null,
+		blockAge: null,
+		isAlive: false,
+		checking: false,
+	}));
 }
