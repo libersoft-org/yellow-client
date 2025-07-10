@@ -13,7 +13,7 @@
 		url: string;
 		latency: number | null;
 		lastBlock: number | null;
-		blockAge: number | null; // Age in seconds
+		blockAge: number | null;
 		isAlive: boolean;
 		checking?: boolean;
 	}
@@ -45,61 +45,11 @@
 		server.checking = true;
 		const startTime = Date.now();
 		try {
-			// First get the latest block number
-			const blockNumberResponse = await fetch(server.url, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					jsonrpc: '2.0',
-					method: 'eth_blockNumber',
-					params: [],
-					id: 1,
-				}),
-				signal: AbortSignal.timeout(10000),
-			});
-
-			if (!blockNumberResponse.ok) throw new Error(`HTTP ${blockNumberResponse.status}: ${blockNumberResponse.statusText}`);
-			const blockNumberData = await blockNumberResponse.json();
-			if (blockNumberData.error) throw new Error(`RPC Error: ${blockNumberData.error.message}`);
-
-			const blockNumber = parseInt(blockNumberData.result, 16);
-			let blockAge: number | null = null;
-
-			// Try to get block details for timestamp, but don't fail if it doesn't work
-			try {
-				const blockResponse = await fetch(server.url, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						jsonrpc: '2.0',
-						method: 'eth_getBlockByNumber',
-						params: [blockNumberData.result, false], // false = don't include full transaction objects
-						id: 2,
-					}),
-					signal: AbortSignal.timeout(5000), // Shorter timeout for block details
-				});
-
-				if (blockResponse.ok) {
-					const blockData = await blockResponse.json();
-					if (!blockData.error && blockData.result && blockData.result.timestamp) {
-						const blockTimestamp = parseInt(blockData.result.timestamp, 16);
-						const currentTime = Math.floor(Date.now() / 1000);
-						blockAge = currentTime - blockTimestamp;
-					}
-				}
-			} catch (blockError) {
-				// Silently ignore block details errors - we'll just show N/A for block age
-				console.warn(`Could not get block details for ${server.url}:`, blockError);
-			}
-
-			const endTime = Date.now();
-
-			server.latency = endTime - startTime;
-			server.lastBlock = blockNumber;
-			server.blockAge = blockAge;
-			server.isAlive = true;
+			const isWebSocket = server.url.startsWith('ws://') || server.url.startsWith('wss://');
+			if (isWebSocket) await checkWebSocketRPCServer(server, startTime);
+			else await checkHTTPRPCServer(server, startTime);
 		} catch (error) {
-			console.error(`Error checking RPC server ${server.url}:`, error);
+			console.error('Error checking RPC server ' + server.url + ':', error);
 			server.latency = null;
 			server.lastBlock = null;
 			server.blockAge = null;
@@ -109,6 +59,143 @@
 		}
 	}
 
+	async function checkHTTPRPCServer(server: IRPCServer, startTime: number) {
+		const blockNumberResponse = await fetch(server.url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				jsonrpc: '2.0',
+				method: 'eth_blockNumber',
+				params: [],
+				id: 1,
+			}),
+			signal: AbortSignal.timeout(10000),
+		});
+
+		if (!blockNumberResponse.ok) throw new Error('HTTP ' + blockNumberResponse.status + ': ' + blockNumberResponse.statusText);
+		const blockNumberData = await blockNumberResponse.json();
+		if (blockNumberData.error) throw new Error('RPC Error: ' + blockNumberData.error.message);
+		const blockNumber = parseInt(blockNumberData.result, 16);
+		let blockAge: number | null = null;
+
+		try {
+			const blockResponse = await fetch(server.url, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					jsonrpc: '2.0',
+					method: 'eth_getBlockByNumber',
+					params: [blockNumberData.result, false],
+					id: 2,
+				}),
+				signal: AbortSignal.timeout(5000),
+			});
+			if (blockResponse.ok) {
+				const blockData = await blockResponse.json();
+				if (!blockData.error && blockData.result && blockData.result.timestamp) {
+					const blockTimestamp = parseInt(blockData.result.timestamp, 16);
+					const currentTime = Math.floor(Date.now() / 1000);
+					blockAge = currentTime - blockTimestamp;
+				}
+			}
+		} catch (blockError) {
+			console.warn('Could not get block details for ' + server.url + ':', blockError);
+		}
+		const endTime = Date.now();
+		server.latency = endTime - startTime;
+		server.lastBlock = blockNumber;
+		server.blockAge = blockAge;
+		server.isAlive = true;
+	}
+
+	async function checkWebSocketRPCServer(server: IRPCServer, startTime: number) {
+		return new Promise<void>((resolve, reject) => {
+			const ws = new WebSocket(server.url);
+			let resolved = false;
+			let blockNumber: number | null = null;
+			let blockAge: number | null = null;
+			let requestCount = 0;
+			const cleanup = () => {
+				if (ws.readyState === WebSocket.OPEN) ws.close();
+			};
+			const timeout = setTimeout(() => {
+				if (!resolved) {
+					resolved = true;
+					cleanup();
+					reject(new Error('WebSocket connection timeout'));
+				}
+			}, 10000);
+			ws.onopen = () => {
+				ws.send(
+					JSON.stringify({
+						jsonrpc: '2.0',
+						method: 'eth_blockNumber',
+						params: [],
+						id: 1,
+					})
+				);
+			};
+			ws.onmessage = async event => {
+				try {
+					const data = JSON.parse(event.data);
+					if (data.id === 1) {
+						if (data.error) throw new Error('RPC Error: ' + data.error.message);
+						blockNumber = parseInt(data.result, 16);
+						ws.send(
+							JSON.stringify({
+								jsonrpc: '2.0',
+								method: 'eth_getBlockByNumber',
+								params: [data.result, false],
+								id: 2,
+							})
+						);
+					} else if (data.id === 2) {
+						if (!data.error && data.result && data.result.timestamp) {
+							const blockTimestamp = parseInt(data.result.timestamp, 16);
+							const currentTime = Math.floor(Date.now() / 1000);
+							blockAge = currentTime - blockTimestamp;
+						}
+						if (!resolved) {
+							resolved = true;
+							clearTimeout(timeout);
+							const endTime = Date.now();
+							server.latency = endTime - startTime;
+							server.lastBlock = blockNumber;
+							server.blockAge = blockAge;
+							server.isAlive = true;
+							cleanup();
+							resolve();
+						}
+					}
+				} catch (error) {
+					if (!resolved) {
+						resolved = true;
+						clearTimeout(timeout);
+						cleanup();
+						reject(error);
+					}
+				}
+			};
+
+			ws.onerror = error => {
+				if (!resolved) {
+					resolved = true;
+					clearTimeout(timeout);
+					cleanup();
+					reject(new Error('WebSocket error: ' + error));
+				}
+			};
+
+			ws.onclose = event => {
+				if (!resolved) {
+					resolved = true;
+					clearTimeout(timeout);
+					if (event.code !== 1000) reject(new Error('WebSocket closed with code ' + event.code + ': ' + event.reason));
+				}
+			};
+		});
+	}
+
 	async function checkAllRPCServers() {
 		const promises = rpcServers.map(server => checkRPCServer(server));
 		await Promise.all(promises);
@@ -116,7 +203,7 @@
 
 	function formatLatency(latency: number | null): string {
 		if (latency === null) return 'N/A';
-		return `${latency}ms`;
+		return latency + 'ms';
 	}
 
 	function formatBlockNumber(blockNumber: number | null): string {
@@ -126,20 +213,18 @@
 
 	function formatBlockAge(blockAge: number | null): string {
 		if (blockAge === null) return 'N/A';
-
-		if (blockAge < 60) {
-			return `${blockAge}s ago`;
-		} else if (blockAge < 3600) {
+		if (blockAge < 60) return blockAge + 's ago';
+		else if (blockAge < 3600) {
 			const minutes = Math.floor(blockAge / 60);
-			return `${minutes}m ago`;
+			return minutes + 'm ago';
 		} else if (blockAge < 86400) {
 			const hours = Math.floor(blockAge / 3600);
 			const minutes = Math.floor((blockAge % 3600) / 60);
-			return `${hours}h ${minutes}m ago`;
+			return hours + 'h ' + minutes + 'm ago';
 		} else {
 			const days = Math.floor(blockAge / 86400);
 			const hours = Math.floor((blockAge % 86400) / 3600);
-			return `${days}d ${hours}h ago`;
+			return days + 'd ' + hours + 'h ago';
 		}
 	}
 </script>

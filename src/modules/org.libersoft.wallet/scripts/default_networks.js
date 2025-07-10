@@ -74,7 +74,7 @@ export const default_networks = writable([
 	{
 		name: 'Polygon - Mainnet',
 		chainID: 137,
-		rpcURLs: ['https://polygon-rpc.com', 'https://rpc-mainnet.maticvigil.com/', 'https://rpc-mainnet.matic.network', 'https://rpc-mainnet.matic.quiknode.pro', 'https://matic-mainnet.chainstacklabs.com'],
+		rpcURLs: ['https://polygon-rpc.com', 'https://rpc-mainnet.maticvigil.com/', 'https://rpc-mainnet.matic.network', 'https://rpc-mainnet.matic.quiknode.pro', 'https://matic-mainnet.chainstacklabs.com', 'wss://polygon-bor-rpc.publicnode.com', 'wss://polygon.drpc.org'],
 		currency: {
 			symbol: 'POL',
 			iconURL: iconUrlBase + 'POL.svg',
