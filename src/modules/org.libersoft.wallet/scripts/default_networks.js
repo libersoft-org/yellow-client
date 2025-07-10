@@ -76,8 +76,8 @@ export const default_networks = writable([
 		chainID: 137,
 		rpcURLs: ['https://polygon-rpc.com', 'https://rpc-mainnet.maticvigil.com/', 'https://rpc-mainnet.matic.network', 'https://rpc-mainnet.matic.quiknode.pro', 'https://matic-mainnet.chainstacklabs.com'],
 		currency: {
-			symbol: 'MATIC',
-			iconURL: iconUrlBase + 'MATIC.svg',
+			symbol: 'POL',
+			iconURL: iconUrlBase + 'POL.svg',
 		},
 		explorerURL: 'https://polygonscan.com',
 	},
@@ -86,8 +86,8 @@ export const default_networks = writable([
 		chainID: 80002,
 		rpcURLs: ['https://rpc-amoy.polygon.technology', 'https://polygon-amoy.blockpi.network/v1/rpc/public', 'https://rpc.ankr.com/polygon_amoy', 'https://polygon-amoy.drpc.org', 'https://polygon-amoy.gateway.tenderly.co', 'https://polygon-amoy-bor-rpc.publicnode.com', 'wss://polygon-amoy-bor-rpc.publicnode.com'],
 		currency: {
-			symbol: 'MATIC',
-			iconURL: iconUrlBase + 'MATIC.svg',
+			symbol: 'POL',
+			iconURL: iconUrlBase + 'POL.svg',
 		},
 		explorerURL: 'https://amoy.polygonscan.com/',
 	},

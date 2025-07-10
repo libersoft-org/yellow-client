@@ -24,7 +24,7 @@
 		gap: 10px;
 	}
 
-	.symbol {
+	.name {
 		font-size: 20px;
 		font-weight: bold;
 	}
@@ -49,7 +49,7 @@
 							{#if $selectedNetwork?.currency?.iconURL}
 								<Icon img={$selectedNetwork.currency.iconURL} alt={$balance.crypto.currency} size="40px" padding="0px" />
 							{/if}
-							<div class="symbol">{$balance.crypto.currency}</div>
+							<div class="name">{$balance.crypto.currency}</div>
 						</div>
 					</Td>
 					<Td>
@@ -67,7 +67,7 @@
 								<div>
 									<Icon img={t.icon} alt={t.symbol} size="40px" padding="0px" />
 								</div>
-								<div class="symbol">{t.symbol}</div>
+								<div class="name">{t.name} ({t.symbol})</div>
 							</div>
 						</Td>
 						<Td>
