@@ -1,7 +1,8 @@
 import { derived, get, writable } from 'svelte/store';
+import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
 import { getGuid } from '@/core/scripts/utils/utils.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
-import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
+import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet } from '@/org.libersoft.wallet/scripts/types.ts';
 export type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken } from '@/org.libersoft.wallet/scripts/types.ts';
@@ -25,7 +26,7 @@ const refreshTimer = setInterval(refresh, 30000);
 
 async function loadDefaultNetworks(): Promise<INetwork[]> {
 	try {
-		const response = await fetch('/modules/org.libersoft.wallet/json/networks.json');
+		const response = await fetch('/modules/' + module.identifier + '/json/networks.json');
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
