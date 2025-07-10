@@ -25,27 +25,16 @@ export const default_networks = writable<INetwork[]>([]);
 const refreshTimer = setInterval(refresh, 30000);
 
 async function loadDefaultNetworks(): Promise<INetwork[]> {
+	const url = '/modules/' + module.identifier + '/json/networks.json';
 	try {
-		const response = await fetch('/modules/' + module.identifier + '/json/networks.json');
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		return await response.json();
+		const response = await fetch(url);
+		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+		const data = await response.json();
+		return data;
 	} catch (error) {
-		console.error('Error loading default networks:', error);
 		return [];
 	}
 }
-
-loadDefaultNetworks().then(networks => {
-	default_networks.set(
-		networks.map(network => ({
-			...network,
-			guid: getGuid(),
-			tokens: network.tokens || [],
-		}))
-	);
-});
 
 async function refresh(): Promise<void> {
 	if (get(provider)) await getBalance();
@@ -588,4 +577,28 @@ export function createRPCServersFromNetwork(network: INetwork): IRPCServer[] {
 		isAlive: false,
 		checking: false,
 	}));
+}
+
+export function initializeDefaultNetworks(): void {
+	console.log('initializeDefaultNetworks() called');
+	if (get(default_networks).length > 0) {
+		console.log('Default networks already loaded');
+		return;
+	}
+
+	loadDefaultNetworks()
+		.then(networks => {
+			console.log('loadDefaultNetworks() resolved with:', networks.length, 'networks');
+			default_networks.set(
+				networks.map(network => ({
+					...network,
+					guid: getGuid(),
+					tokens: network.tokens || [],
+				}))
+			);
+			console.log('default_networks store updated');
+		})
+		.catch(error => {
+			console.error('loadDefaultNetworks() failed:', error);
+		});
 }

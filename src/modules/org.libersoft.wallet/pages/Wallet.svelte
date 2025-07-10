@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { module } from '../scripts/module.ts';
-	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsWindow, walletsWindow } from '../scripts/wallet.ts';
+	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsWindow, walletsWindow, initializeDefaultNetworks } from '../scripts/wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -16,9 +17,12 @@
 	import Window from '@/core/components/Window/Window.svelte';
 	import WindowNetworks from '../windows/Networks/Networks.svelte';
 	import WindowWallets from '../windows/Wallets/Wallets.svelte';
-
 	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
+
+	onMount(() => {
+		initializeDefaultNetworks();
+	});
 
 	function clickCopyAddress() {
 		if ($selectedAddress && addressElement) {
