@@ -44,9 +44,13 @@ function updateSelectedNetwork(selectedNetworkID: string | null, networks: INetw
 export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return $selectedNetwork?.currency.symbol;
 });
-let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
+export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return ($selectedNetwork?.tokens || []).map(token => ({
 		symbol: token.symbol,
+		icon: token.icon,
+		name: token.name,
+		contract_address: token.contract_address,
+		guid: token.guid,
 	}));
 });
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {

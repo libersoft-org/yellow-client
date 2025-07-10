@@ -1,39 +1,11 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
-	import { selectedNetwork, selectedAddress, balance, balanceTimestamp } from '../scripts/wallet.ts';
+	import { selectedNetwork, selectedAddress, balance, balanceTimestamp, tokens } from '../scripts/wallet.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-
-	interface IToken {
-		icon: string;
-		symbol: string;
-		amount: {
-			crypto: number;
-			fiat: number;
-		};
-	}
-
-	let tokens: IToken[] = [
-		{
-			icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DAI.svg',
-			symbol: 'DAI',
-			amount: {
-				crypto: 105,
-				fiat: 104.98,
-			},
-		},
-		{
-			icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DOT.svg',
-			symbol: 'DOT',
-			amount: {
-				crypto: 13.58468432,
-				fiat: 815.23,
-			},
-		},
-	];
 
 	function selectToken(id) {
 		console.log('SELECTED TOKEN:', id);
@@ -88,7 +60,7 @@
 						{/if}
 					</Td>
 				</Tr>
-				{#each tokens as t, index}
+				{#each $tokens as t, index}
 					<Tr>
 						<Td>
 							<div class="row">
@@ -99,8 +71,8 @@
 							</div>
 						</Td>
 						<Td>
-							<div class="amount">{t.amount.crypto} {t.symbol}</div>
-							<div class="fiat">({t.amount.fiat} USD)</div>
+							<div class="amount">? {t.symbol}</div>
+							<div class="fiat">(? USD)</div>
 						</Td>
 					</Tr>
 				{/each}
