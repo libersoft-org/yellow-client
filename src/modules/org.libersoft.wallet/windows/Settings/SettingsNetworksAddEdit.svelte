@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { networks, type INetwork } from '../../scripts/wallet.ts';
-	import { module } from '../../scripts/module.ts';
+	import { networks, type INetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -14,12 +14,10 @@
 	let elChainID: Input | undefined;
 	let elRPCURLs: (Input | undefined)[] = $state([]);
 	interface Props {
-		params?: {
-			network?: INetwork;
-		};
+		network?: INetwork;
 		close: () => void;
 	}
-	let { params, close }: Props = $props();
+	let { network, close }: Props = $props();
 	let itemName = $state({ value: undefined as string | undefined });
 	let itemCurrencySymbol = $state({ value: undefined as string | undefined });
 	let itemCurrencyIconURL = $state({ value: undefined as string | undefined });
@@ -28,22 +26,17 @@
 	let itemRPCURLs = $state({ value: undefined as string[] | undefined });
 	let error: string | null | undefined = $state();
 
-	export function onOpen(props: Props['params']): void {
-		if (props?.network) {
-			let network = props.network;
+	export function onOpen(): void {
+		if (network) {
 			itemName.value = network.name;
 			itemCurrencySymbol.value = network.currency?.symbol || '';
 			itemCurrencyIconURL.value = network.currency?.iconURL || '';
 			itemChainID.value = network.chainID;
 			itemExplorerURL.value = network.explorerURL || '';
 			itemRPCURLs.value = network.rpcURLs ? [...network.rpcURLs] : [];
-			elName?.focus();
 		}
+		elName?.focus();
 	}
-
-	$effect(() => {
-		onOpen(params);
-	});
 
 	function addEdit(): void {
 		const validationConfig = [
@@ -58,7 +51,6 @@
 
 		error = validateForm(validationConfig);
 		if (error) return;
-
 		const newItem: INetwork = {
 			name: itemName.value || '',
 			currency: {
@@ -68,13 +60,13 @@
 			chainID: itemChainID.value || 0,
 			rpcURLs: itemRPCURLs.value,
 			explorerURL: itemExplorerURL.value,
+			tokens: network?.tokens || [],
 		};
-
-		if (params?.network?.guid) {
+		if (network?.guid) {
 			// Edit
-			newItem.guid = params.network.guid;
+			newItem.guid = network.guid;
 			networks.update(networks => {
-				const index = networks.findIndex(v => v.guid === params?.network?.guid);
+				const index = networks.findIndex(v => v.guid === network?.guid);
 				if (index !== -1) networks[index] = newItem;
 				return networks;
 			});
@@ -133,7 +125,7 @@
 		<Alert type="error" message={error} />
 	{/if}
 	<ButtonBar expand>
-		{#if params?.network?.guid}
+		{#if network?.guid}
 			<Button img="img/save.svg" text="Save" onClick={addEdit} data-testid="wallet-settings-network-save-btn" />
 		{:else}
 			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add network" onClick={addEdit} data-testid="wallet-settings-network-add-btn" />

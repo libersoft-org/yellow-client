@@ -29,11 +29,7 @@
 			title: 'Edit network',
 			name: 'networks-edit-' + network.guid,
 			body: SettingsNetworksAddEdit,
-			props: {
-				params: {
-					network,
-				},
-			},
+			props: { network },
 		}));
 	});
 
