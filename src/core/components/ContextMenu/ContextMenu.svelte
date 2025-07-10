@@ -12,8 +12,6 @@
 	export let scrollable = true;
 	export let disableRightClick = false;
 	export let bottomOffset;
-
-	let measuring = false;
 	//export let testId = '';
 	const isOpen = writable(open);
 	const position = writable([x, y]);
@@ -33,7 +31,6 @@
 
 	export function close() {
 		open = false;
-		measuring = false;
 		x = 0;
 		y = 0;
 		prevX = 0;
@@ -81,26 +78,18 @@
 
 		currentInstance = getGuid();
 		menus.push({ guid: currentInstance, close });
-
-		// Enable measuring mode - renders but stays invisible
-		measuring = true;
 		await tick();
-
 		const currentHeight = ref.getBoundingClientRect().height;
 		const currentWidth = ref.getBoundingClientRect().width;
-
-		// Calculate X position
-		if (x === 0) {
+		if (open || x === 0) {
 			let space_left = e.x;
 			let space_right = window.innerWidth - e.x;
 			if (space_left > space_right) x = e.x - currentWidth;
 			else x = e.x;
 		}
 		if (x + currentWidth > window.innerWidth) x = Math.max(0, window.innerWidth - currentWidth);
-
-		// Calculate Y position
 		let e_y = e.y;
-		if (y === 0) {
+		if (open || y === 0) {
 			if (bottomOffset) {
 				e_y = window.innerHeight - currentHeight - bottomOffset;
 			}
@@ -109,18 +98,13 @@
 				if (y < 10) y = 10;
 			} else y = e_y;
 		}
-
-		// Adjust dimensions if needed
 		let newHeight = window.innerHeight - y - 10;
-		if (newHeight < height) height = newHeight + 'px';
+		if (newHeight < height) height = newHeight + 'px'; // TODO: this doesn't work well, should make the window smaller if the screen is too small
 		let newWidth = window.innerWidth - x - 10;
-		if (newWidth < width) width = newWidth + 'px';
-
-		// Set final position and make visible
+		if (newWidth < width) width = newWidth + 'px'; // TODO: this doesn't work well, should make the window smaller if the screen is too small
 		position.set([x, y]);
-		measuring = false;
-		open = true;
 		//console.log('context-menu openMenu position:', x, y);
+		open = true;
 		openDetail = e.target;
 	}
 
@@ -220,11 +204,6 @@
 		color: var(--default-foreground);
 	}
 
-	.context-menu-measuring {
-		visibility: hidden !important;
-		opacity: 0 !important;
-	}
-
 	.context-menu-open {
 		visibility: visible;
 	}
@@ -256,7 +235,6 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
 	data-direction={direction}
 	data-level={level}
 	class:context-menu={true}
-	class:context-menu-measuring={measuring}
 	class:context-menu-open={open}
 	style:left="{x}px"
 	style:top="{y}px"
