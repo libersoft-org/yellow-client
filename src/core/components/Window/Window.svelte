@@ -392,15 +392,18 @@
 		gap: 10px;
 		min-height: 40px;
 		font-weight: bold;
+		border-bottom: 1px solid var(--disabled-foreground);
 		background-color: var(--disabled-background);
 		color: var(--disabled-foreground);
 		cursor: grab;
 		transition:
 			background-color 0.4s linear,
-			color 0.4s linear;
+			color 0.4s linear,
+			border-color 0.4s linear;
 	}
 
 	.window .header.focused {
+		border-bottom: 1px solid var(--primary-harder-background);
 		background-color: var(--primary-background);
 		color: var(--primary-foreground);
 	}
