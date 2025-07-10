@@ -92,7 +92,7 @@
 								<div class="item">{wallet?.addresses?.length || '0'}</div>
 							</Clickable>
 						</Td>
-						<Td padding="0">
+						<Td padding="0 10px">
 							<TableActionItems align="center">
 								<Icon img="modules/{module.identifier}/img/wallet-address.svg" colorVariable="--primary-foreground" alt="Addresses" size="20px" padding="5px" onClick={() => clickWallet(wallet)} />
 								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit" size="20px" padding="5px" onClick={() => editWallet(wallet)} />

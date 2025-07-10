@@ -1006,8 +1006,8 @@ export const default_networks = writable([
 		chainID: 1101,
 		rpcURLs: ['https://polygon-zkevm.publicnode.com', 'https://rpc.ankr.com/polygon_zkevm'],
 		currency: {
-			symbol: 'MATIC',
-			iconURL: iconUrlBase + 'MATIC.svg',
+			symbol: 'POL',
+			iconURL: iconUrlBase + 'POL.svg',
 		},
 		explorerURL: 'https://zkevm.polygonscan.com',
 	},
@@ -1016,8 +1016,8 @@ export const default_networks = writable([
 		chainID: 1442,
 		rpcURLs: ['https://polygon-zkevm-testnet.publicnode.com', 'https://rpc.ankr.com/polygon_zkevm_testnet'],
 		currency: {
-			symbol: 'MATIC',
-			iconURL: iconUrlBase + 'MATIC.svg',
+			symbol: 'POL',
+			iconURL: iconUrlBase + 'POL.svg',
 		},
 		explorerURL: 'https://testnet.polygonscan.com',
 	},

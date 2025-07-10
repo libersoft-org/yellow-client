@@ -17,11 +17,8 @@
 
 <style>
 	td {
-		gap: 20px;
-		text-align: left;
 		border: 0;
 		white-space: nowrap;
-		width: auto;
 	}
 
 	td.bold {
@@ -30,7 +27,6 @@
 
 	td.expand {
 		width: 100%;
-		white-space: normal;
 	}
 
 	td.shorten {
@@ -39,34 +35,25 @@
 		white-space: nowrap;
 	}
 
-	td > :global(div) {
+	td :global(*) {
+		display: inline-block;
+	}
+
+	td > :global(*) {
 		display: flex;
 		align-items: center;
-		width: 100%;
+	}
+
+	td[style*='text-align: left'] > :global(*) {
 		justify-content: flex-start;
 	}
 
-	td[style*='text-align: center'] > :global(div) {
+	td[style*='text-align: center'] > :global(*) {
 		justify-content: center;
 	}
 
-	td[style*='text-align: right'] > :global(div) {
+	td[style*='text-align: right'] > :global(*) {
 		justify-content: flex-end;
-	}
-
-	td:before {
-		display: inline-block;
-		width: 15vw;
-		max-width: 300px;
-	}
-
-	td[data-title]:before {
-		content: attr(data-title) ':\00A0';
-		font-weight: bold;
-	}
-
-	td:empty {
-		display: none;
 	}
 </style>
 

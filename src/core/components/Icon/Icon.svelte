@@ -30,7 +30,6 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		padding: 10px;
 	}
 
 	.icon img {
@@ -40,8 +39,8 @@
 </style>
 
 {#snippet icon()}
-	<div class="icon" style="padding: {padding};" data-testid={testId}>
-		<img style="width: {size}; height: {size}; min-width: {size}; min-height: {size}; {filter};" src={img} draggable={false} {alt} />
+	<div class="icon" style:width={size} style:height={size} style:padding data-testid={testId}>
+		<img style:min-width={size} style:min-height={size} style={filter} src={img} draggable={false} {alt} />
 	</div>
 {/snippet}
 {#if img}

@@ -5,7 +5,6 @@
 		size?: string;
 		containerMinHeight?: string;
 	}
-
 	let { show = true, colorVariable = '--default-foreground', size = '40px', containerMinHeight = '72px' }: Props = $props();
 </script>
 

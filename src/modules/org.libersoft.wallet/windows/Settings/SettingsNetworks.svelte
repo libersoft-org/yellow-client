@@ -59,6 +59,10 @@
 	function doExport() {
 		elWindowSettingsNetworksExport?.open();
 	}
+
+	function openRPCServers(network: INetwork) {
+		setSettingsSection('networks-rpc-' + network.guid);
+	}
 </script>
 
 <style>
@@ -106,6 +110,7 @@
 					</Td>
 					<Td>
 						<TableActionItems align="center">
+							<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
 							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} testId="wallet-settings-network-tokens@{n.name}" />
 							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n, true)} testId="wallet-settings-network-edit@{n.name}" />
 							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />

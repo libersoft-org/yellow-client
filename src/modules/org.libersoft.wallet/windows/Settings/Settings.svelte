@@ -9,6 +9,7 @@
 	import SettingsAddressbook from './SettingsAddressbook.svelte';
 	import SettingsWalletsWallet from './SettingsWalletsWallet.svelte';
 	import SettingsWalletsAdd from './SettingsWalletsAdd.svelte';
+	import SettingsNetworksRPCServers from './SettingsNetworksRPCServers.svelte';
 	import SettingsNetworksAddEdit from './SettingsNetworksAddEdit.svelte';
 	let elBaseSettings: BaseSettings;
 	let walletsItems = $derived.by(() => {
@@ -25,12 +26,21 @@
 	});
 
 	let networksItems = $derived.by(() => {
-		return $networks.map((network: INetwork) => ({
+		const networkEditItems = $networks.map((network: INetwork) => ({
 			title: 'Edit network',
 			name: 'networks-edit-' + network.guid,
 			body: SettingsNetworksAddEdit,
 			props: { network },
 		}));
+
+		const networkRPCItems = $networks.map((network: INetwork) => ({
+			title: 'RPC servers',
+			name: 'networks-rpc-' + network.guid,
+			body: SettingsNetworksRPCServers,
+			props: { network },
+		}));
+
+		return [...networkEditItems, ...networkRPCItems];
 	});
 
 	let settingsObject = $derived(
