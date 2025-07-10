@@ -80,7 +80,18 @@
 		if (expressionsAsContextMenu) {
 			console.log('openExpressions as context menu:', expressionsMenu);
 			console.log('elExpressions.offsetLeft:', elExpressions.offsetLeft, 'elExpressions.offsetTop:', elExpressions.offsetTop, 'elExpressions.offsetWidth:', elExpressions.offsetWidth, 'elExpressions.offsetHeight:', elExpressions.offsetHeight);
-			expressionsMenu?.openMenu({ x: elExpressions.getBoundingClientRect().x, y: 0 });
+
+			// Calculate position to prevent jumping - position at bottom above message bar
+			const buttonRect = elExpressions.getBoundingClientRect();
+			const messageBarHeight = elMessageBar?.getBoundingClientRect().height || 60;
+
+			// Position the menu at the bottom of the screen above the message bar
+			const targetY = window.innerHeight - messageBarHeight;
+
+			expressionsMenu?.openMenu({
+				x: buttonRect.x,
+				y: targetY,
+			});
 			// Notify MessagesList that expressions menu is open
 			expressionsMenuOpen?.setOpen(true);
 		} else {
@@ -384,7 +395,7 @@
 	<ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
 {#if expressionsAsContextMenu}
-	<ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+	<ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick>
 		<Expressions bind:this={expressions} height={expressionsHeight} />
 	</ContextMenu>
 {/if}
