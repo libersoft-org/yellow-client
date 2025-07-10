@@ -13,12 +13,16 @@ export interface IRPCServer {
 	isAlive: boolean;
 	checking?: boolean;
 }
-
 import { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
 export { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
 export { status, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
+export let section = writable<string | null>('balance');
+export const settingsWindow = writable<any>();
+export const walletsWindow = writable<any>();
+export let sendAddress = writable<string | number | undefined>();
+export const default_networks = writable<INetwork[]>([]);
+const refreshTimer = setInterval(refresh, 30000);
 
-// Load default networks from JSON
 async function loadDefaultNetworks(): Promise<INetwork[]> {
 	try {
 		const response = await fetch('/modules/org.libersoft.wallet/json/networks.json');
@@ -32,8 +36,6 @@ async function loadDefaultNetworks(): Promise<INetwork[]> {
 	}
 }
 
-export const default_networks = writable<INetwork[]>([]);
-
 loadDefaultNetworks().then(networks => {
 	default_networks.set(
 		networks.map(network => ({
@@ -43,11 +45,6 @@ loadDefaultNetworks().then(networks => {
 		}))
 	);
 });
-export let section = writable<string | null>('balance');
-export const settingsWindow = writable<any>();
-export const walletsWindow = writable<any>();
-export let sendAddress = writable<string | number | undefined>();
-const refreshTimer = setInterval(refresh, 30000);
 
 async function refresh(): Promise<void> {
 	if (get(provider)) await getBalance();
