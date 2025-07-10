@@ -60,7 +60,9 @@
 		console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
-		await currentNode.instance?.onOpen?.(props);
+		const node = findNode(settingsObject, name);
+		if (node && Object.keys(props).length > 0) node.props = { ...node.props, ...props };
+		await currentNode.instance?.onOpen?.();
 	}
 
 	function goBack() {
