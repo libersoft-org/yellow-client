@@ -32,13 +32,11 @@
 	});
 
 	function addTokenWindow(): void {
-		console.log('ADD TOKEN WINDOW');
 		windowItem = null;
 		elWindowAddEdit?.open();
 	}
 
 	function onAdd(token: IToken): void {
-		console.log('ADD TOKEN:', token);
 		if (net?.guid) {
 			addToken(net.guid, token);
 			elWindowAddEdit?.close();
@@ -46,13 +44,11 @@
 	}
 
 	function editTokenWindow(item: IToken): void {
-		console.log('EDIT TOKEN WINDOW:', item);
 		windowItem = item;
 		elWindowAddEdit?.open();
 	}
 
 	function onEdit(token: IToken): void {
-		console.log('EDIT TOKEN:', token);
 		if (net?.guid) {
 			editToken(net.guid, token);
 			elWindowAddEdit?.close();
@@ -60,7 +56,6 @@
 	}
 
 	function delTokenWindow(item: IToken): void {
-		console.log('DELETE TOKEN WINDOW:', item);
 		tokenToDelete = item;
 		elDialogDel?.open();
 	}

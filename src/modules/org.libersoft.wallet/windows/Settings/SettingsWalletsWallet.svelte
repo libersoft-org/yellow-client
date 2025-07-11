@@ -27,12 +27,7 @@
 	let elWindowAddressEdit: Window | undefined = $state();
 	let elDialogAddressDel: DialogAddressDel | undefined = $state();
 
-	export function onOpen() {
-		console.log('onOpen SettingsWalletsWallet, wallet:', $state.snapshot(params.wallet));
-	}
-
 	function addAddress() {
-		console.log('Adding address to wallet', $state.snapshot(params.wallet));
 		elWindowAddressAdd?.open();
 	}
 
@@ -41,7 +36,6 @@
 	}
 
 	function deleteAddress(index: string | number) {
-		console.log('Deleting address from wallet', elDialogAddressDel, index, params.wallet);
 		elDialogAddressDel?.open(params.wallet, index);
 	}
 </script>

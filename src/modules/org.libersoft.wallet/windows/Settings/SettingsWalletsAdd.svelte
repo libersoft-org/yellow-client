@@ -19,18 +19,11 @@
 	let mnemonic: Mnemonic | undefined = $state();
 	let phrase: string = $state('');
 	let copied: boolean = $state(false);
-	//let phraseArr: string[] = $state([]);
 	let qrCodeData: string = $state('');
 	let dummyQrCodeData: string = $state('');
 	let dummyPhrase: string = $state('lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam');
 	let isRevealed: boolean = $state(false);
 	let elWalletNameInput: Input | undefined = $state();
-
-	/*
-	$effect(() => {
-		phraseArr = phrase.split(' ');
-	});
- */
 
 	export function onOpen() {
 		name = 'My wallet ' + ($wallets.length + 1);
@@ -80,7 +73,6 @@
 
 	function print() {
 		// TODO: print preview and print
-		console.log('PRINT');
 		const newWindow = window.open('', '_blank');
 		if (!newWindow) {
 			console.error('Failed to open print window');
@@ -244,18 +236,6 @@
 	</div>
 	<div>Use this QR code to transfer your wallet seed phrase to your other device, never show it to anyone else!</div>
 {/if}
-<!--<Table breakpoint="0">
-	<Tbody>
-		{#each Array(6) as _, index}
-			<TbodyTr>
-				<Td>{index + 1}. {phraseArr[index]}</Td>
-				<Td>{index + 7}. {phraseArr[index + 6]}</Td>
-				<Td>{index + 13}. {phraseArr[index + 12]}</Td>
-				<Td>{index + 19}. {phraseArr[index + 18]}</Td>
-			</TbodyTr>
-		{/each}
-	</Tbody>
-</Table>-->
 <ButtonBar expand>
 	<Button img="img/save.svg" text="Save" onClick={save} />
 	<Button img="modules/{module.identifier}/img/print.svg" text="Print" onClick={print} />

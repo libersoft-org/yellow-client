@@ -64,9 +64,7 @@
 		if (network?.guid) {
 			newItem.guid = network.guid;
 			editNetwork(newItem);
-		} else {
-			addNetwork(newItem);
-		}
+		} else addNetwork(newItem);
 		close();
 	}
 </script>

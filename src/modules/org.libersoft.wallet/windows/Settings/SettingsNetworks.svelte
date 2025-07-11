@@ -13,7 +13,6 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
-	import SettingsNetworksTokens from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokens.svelte';
 	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
@@ -27,7 +26,6 @@
 	};
 	let windowItemID: string | null | undefined;
 	let windowItem: INetwork | null | undefined;
-	//let elSettingsNetworksTokens: WindowInstance | undefined;
 	let elWindowSettingsNetworksImport: WindowInstance | undefined;
 	let elWindowSettingsNetworksExport: WindowInstance | undefined;
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined;
@@ -50,7 +48,6 @@
 		console.log('tokenList', net);
 		windowItemID = net.guid;
 		setSettingsSection('networks-tokens-' + net.guid, { item: net.guid });
-		//elSettingsNetworksTokens?.open();
 	}
 
 	function doImport() {
@@ -150,7 +147,6 @@
 		</Tbody>
 	</Table>
 </div>
-<!--<Window title="Token list" body={SettingsNetworksTokens} params={{ item: windowItemID }} bind:this={elSettingsNetworksTokens} testId="wallet-settings-networks-token-list" />-->
 <Window title="Import networks" body={SettingsNetworksImport} bind:this={elWindowSettingsNetworksImport} testId="wallet-settings-networks-import" />
 <Window title="Export networks" body={SettingsNetworksExport} bind:this={elWindowSettingsNetworksExport} testId="wallet-settings-networks-export" />
 {#if windowItem}

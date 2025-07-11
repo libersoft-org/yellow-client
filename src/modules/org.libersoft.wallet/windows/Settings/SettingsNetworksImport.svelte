@@ -48,7 +48,6 @@
 		if (!text.trim()) {
 			return { valid: false, error: 'No data provided' };
 		}
-
 		let networksData;
 		try {
 			networksData = JSON.parse(text);
@@ -58,28 +57,16 @@
 				error: 'Invalid JSON format: ' + (err instanceof Error ? err.message : 'Unknown error'),
 			};
 		}
-
 		if (!Array.isArray(networksData)) {
 			return { valid: false, error: 'Data must be an array of networks' };
 		}
-
-		// Validate each network
 		for (let i = 0; i < networksData.length; i++) {
 			const network = networksData[i];
-			if (!network.name || typeof network.name !== 'string') {
-				return { valid: false, error: `Network at index ${i} must have a valid name` };
-			}
-			if (!network.chainID || typeof network.chainID !== 'number') {
-				return { valid: false, error: `Network "${network.name}" must have a valid chainID` };
-			}
-			if (!network.rpcURLs || !Array.isArray(network.rpcURLs) || network.rpcURLs.length === 0) {
-				return { valid: false, error: `Network "${network.name}" must have at least one RPC URL` };
-			}
-			if (!network.currency || !network.currency.symbol) {
-				return { valid: false, error: `Network "${network.name}" must have currency information` };
-			}
+			if (!network.name || typeof network.name !== 'string') return { valid: false, error: `Network at index ${i} must have a valid name` };
+			if (!network.chainID || typeof network.chainID !== 'number') return { valid: false, error: `Network "${network.name}" must have a valid chainID` };
+			if (!network.rpcURLs || !Array.isArray(network.rpcURLs) || network.rpcURLs.length === 0) return { valid: false, error: `Network "${network.name}" must have at least one RPC URL` };
+			if (!network.currency || !network.currency.symbol) return { valid: false, error: `Network "${network.name}" must have currency information` };
 		}
-
 		return { valid: true };
 	}
 
@@ -112,12 +99,10 @@
 		const existingNetworks = get(networks);
 		let counter = 1;
 		let newName = `${baseName} (${counter})`;
-
 		while (existingNetworks.find(n => n.name === newName)) {
 			counter++;
 			newName = `${baseName} (${counter})`;
 		}
-
 		return newName;
 	}
 
@@ -131,9 +116,7 @@
 						message += '\n• ' + error;
 					});
 					throw new ImportSuccessWithWarnings(message);
-				} else {
-					close();
-				}
+				} else close();
 			} else {
 				let message = 'No networks were imported';
 				if (skippedCount > 0) {
@@ -150,17 +133,11 @@
 		const network = remainingNetworks.shift();
 		const existingNetworks = get(networks);
 		const existingNetwork = existingNetworks.find(n => n.name === network.name);
-
 		if (existingNetwork) {
-			// Network exists, show conflict dialog
 			currentConflictNetwork = network;
 			conflictDialog?.open();
 		} else {
-			// Network doesn't exist, add it
-			// Ensure network has a GUID
-			if (!network.guid) {
-				network.guid = getGuid();
-			}
+			if (!network.guid) network.guid = getGuid();
 			networks.update(current => [...current, network]);
 			processedCount++;
 			await processNextNetwork();
@@ -169,13 +146,12 @@
 
 	async function replaceConflictNetwork() {
 		if (currentConflictNetwork) {
-			// Find and replace the existing network, preserving the existing GUID
 			networks.update(current => {
 				return current.map(network => {
 					if (network.name === currentConflictNetwork.name) {
 						return {
 							...currentConflictNetwork,
-							guid: network.guid, // Preserve existing GUID
+							guid: network.guid,
 						};
 					}
 					return network;
@@ -183,7 +159,6 @@
 			});
 			processedCount++;
 		}
-
 		conflictDialog?.close();
 		currentConflictNetwork = null;
 		await importUi.doContinue(async () => await processNextNetwork());
@@ -195,9 +170,8 @@
 			const networkWithUniqueName = {
 				...currentConflictNetwork,
 				name: uniqueName,
-				guid: getGuid(), // Generate new GUID for the modified network
+				guid: getGuid(),
 			};
-
 			networks.update(current => [...current, networkWithUniqueName]);
 			processedCount++;
 		}
@@ -224,20 +198,15 @@
 				replaceDialog?.close();
 				throw err;
 			}
-		} else {
-			replaceDialog?.close();
-		}
+		} else replaceDialog?.close();
 	}
 
 	async function confirmReplaceWithText(text: string) {
 		const validation = validateImport(text);
 		if (!validation.valid) throw new Error(validation.error || 'Invalid data');
 		const networksData = JSON.parse(text);
-		// Ensure all networks have GUIDs
 		const networksWithGuids = networksData.map((network: any) => {
-			if (!network.guid) {
-				return { ...network, guid: getGuid() };
-			}
+			if (!network.guid) return { ...network, guid: getGuid() };
 			return network;
 		});
 		networks.set(networksWithGuids);
