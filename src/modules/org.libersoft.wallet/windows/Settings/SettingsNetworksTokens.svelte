@@ -1,6 +1,6 @@
-<script>
-	import { networks } from '../../scripts/wallet.ts';
-	import { module } from '../../scripts/module.ts';
+<script lang="ts">
+	import { networks, type INetwork, type IToken } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -13,53 +13,60 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
-	import WindowAddEdit from './NetworksTokensAddEdit.svelte';
-	import DialogTokenDel from '../../dialogs/NetworksTokensDel.svelte';
-	export let params;
-	let net;
-	let tokenToDelete;
-	let elWindowAddEdit;
-	let elDialogDel;
-	let windowItem = null;
+	import WindowAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokensAddEdit.svelte';
+	import DialogTokenDel from '@/org.libersoft.wallet/dialogs/NetworksTokensDel.svelte';
+	interface Props {
+		item: string;
+	}
+	let { item }: Props = $props();
+	let net: INetwork | undefined = $state();
+	let tokenToDelete: IToken | undefined = $state();
+	let elWindowAddEdit: WindowAddEdit | undefined = $state();
+	let elDialogDel: DialogTokenDel | undefined = $state();
+	let windowItem: IToken | null | undefined = $state();
 
-	$: update($networks, params);
+	$effect(() => {
+		update($networks);
+	});
 
-	function update(nets, params) {
-		console.log('NETS:', nets, 'PARAMS:', params);
-		let res = nets.find(v => v.guid === params.item);
+	function update(nets: INetwork[]): void {
+		console.log('NETS:', nets, 'ITEM:', item);
+		const res = nets.find(v => v.guid === item);
 		console.log('RES:', res);
 		net = res;
 		console.log('NET:', net);
 	}
 
-	console.log('NET:', net);
-
-	function addTokenWindow() {
+	function addTokenWindow(): void {
 		console.log('ADD TOKEN WINDOW');
 		windowItem = null;
 		elWindowAddEdit?.open();
 	}
 
-	function onAdd(token) {
+	function onAdd(token: IToken): void {
 		console.log('ADD TOKEN:', token);
 		console.log('ADD TOKEN:', net);
-		net.tokens.push(token);
-		networks.update(v => v);
+		if (net?.tokens) {
+			net?.tokens?.push(token);
+			networks.update(v => v);
+		}
 	}
 
-	function editTokenWindow(item) {
+	function editTokenWindow(item: IToken): void {
 		console.log('EDIT TOKEN WINDOW:', item);
 		windowItem = item;
 		elWindowAddEdit?.open();
 	}
 
-	function onEdit(token) {
+	function onEdit(token: IToken): void {
 		console.log('EDIT TOKEN:', token);
-		net.tokens = net.tokens.map(t => (t.guid === token.guid ? token : t));
-		networks.update(v => v);
+		if (net?.tokens) {
+			net.tokens = net.tokens.map(t => (t.guid === token.guid ? token : t));
+			networks.update(v => v);
+		}
 	}
 
-	function delTokenWindow(item) {
+	function delTokenWindow(item: IToken): void {
 		console.log('DELETE TOKEN WINDOW:', item);
 		tokenToDelete = item;
 		elDialogDel?.open();

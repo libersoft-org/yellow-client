@@ -5,8 +5,6 @@
 	import Window from '@/core/components/Window/Window.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import WindowTokenList from '../Networks/NetworksTokens.svelte';
-	import DialogDeleteNetwork from '../../dialogs/NetworksDel.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
@@ -15,8 +13,10 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
-	import SettingsNetworksExport from './SettingsNetworksExport.svelte';
-	import SettingsNetworksImport from './SettingsNetworksImport.svelte';
+	import SettingsNetworksTokens from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokens.svelte';
+	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
+	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
+	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
 	import { getContext, tick } from 'svelte';
 	type WindowInstance = {
 		isOpen(): boolean;
@@ -149,7 +149,7 @@
 		</Tbody>
 	</Table>
 </div>
-<Window title="Token list" body={WindowTokenList} params={{ item: windowItemID }} bind:this={elWindowTokenList} testId="wallet-settings-networks-token-list" />
+<Window title="Token list" body={SettingsNetworksTokens} params={{ item: windowItemID }} bind:this={elWindowTokenList} testId="wallet-settings-networks-token-list" />
 <Window title="Import networks" body={SettingsNetworksImport} bind:this={elWindowSettingsNetworksImport} testId="wallet-settings-networks-import" />
 <Window title="Export networks" body={SettingsNetworksExport} bind:this={elWindowSettingsNetworksExport} testId="wallet-settings-networks-export" />
 {#if windowItem}
