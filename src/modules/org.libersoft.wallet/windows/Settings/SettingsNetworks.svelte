@@ -27,7 +27,7 @@
 	};
 	let windowItemID: string | null | undefined;
 	let windowItem: INetwork | null | undefined;
-	let elWindowTokenList: WindowInstance | undefined;
+	//let elSettingsNetworksTokens: WindowInstance | undefined;
 	let elWindowSettingsNetworksImport: WindowInstance | undefined;
 	let elWindowSettingsNetworksExport: WindowInstance | undefined;
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined;
@@ -46,10 +46,11 @@
 		elDialogDeleteNetwork?.open();
 	}
 
-	function tokenList(net) {
+	function openTokens(net) {
 		console.log('tokenList', net);
 		windowItemID = net.guid;
-		elWindowTokenList?.open();
+		setSettingsSection('networks-tokens-' + net.guid, { item: net.guid });
+		//elSettingsNetworksTokens?.open();
 	}
 
 	function doImport() {
@@ -111,7 +112,7 @@
 					<Td>
 						<TableActionItems align="center">
 							<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
-							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => tokenList(n)} testId="wallet-settings-network-tokens@{n.name}" />
+							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => openTokens(n)} testId="wallet-settings-network-tokens@{n.name}" />
 							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n, true)} testId="wallet-settings-network-edit@{n.name}" />
 							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />
 						</TableActionItems>
@@ -149,7 +150,7 @@
 		</Tbody>
 	</Table>
 </div>
-<Window title="Token list" body={SettingsNetworksTokens} params={{ item: windowItemID }} bind:this={elWindowTokenList} testId="wallet-settings-networks-token-list" />
+<!--<Window title="Token list" body={SettingsNetworksTokens} params={{ item: windowItemID }} bind:this={elSettingsNetworksTokens} testId="wallet-settings-networks-token-list" />-->
 <Window title="Import networks" body={SettingsNetworksImport} bind:this={elWindowSettingsNetworksImport} testId="wallet-settings-networks-import" />
 <Window title="Export networks" body={SettingsNetworksExport} bind:this={elWindowSettingsNetworksExport} testId="wallet-settings-networks-export" />
 {#if windowItem}

@@ -21,21 +21,15 @@
 	let { item }: Props = $props();
 	let net: INetwork | undefined = $state();
 	let tokenToDelete: IToken | undefined = $state();
-	let elWindowAddEdit: WindowAddEdit | undefined = $state();
+	let elWindowAddEdit: Window | undefined = $state();
 	let elDialogDel: DialogTokenDel | undefined = $state();
 	let windowItem: IToken | null | undefined = $state();
 
 	$effect(() => {
-		update($networks);
+		const nets = $networks;
+		const foundNet = nets.find(v => v.guid === item);
+		if (foundNet?.guid !== net?.guid) net = foundNet;
 	});
-
-	function update(nets: INetwork[]): void {
-		console.log('NETS:', nets, 'ITEM:', item);
-		const res = nets.find(v => v.guid === item);
-		console.log('RES:', res);
-		net = res;
-		console.log('NET:', net);
-	}
 
 	function addTokenWindow(): void {
 		console.log('ADD TOKEN WINDOW');

@@ -1,16 +1,17 @@
 <script lang="ts">
-	import { module } from '../../scripts/module.ts';
-	import { wallets, networks, type IWallet, type INetwork, settingsWindow } from '../../scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { wallets, networks, type IWallet, type INetwork, settingsWindow } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
-	import SettingsGeneral from './SettingsGeneral.svelte';
-	import SettingsNetworks from './SettingsNetworks.svelte';
-	import SettingsWallets from './SettingsWallets.svelte';
-	import SettingsAddressbook from './SettingsAddressbook.svelte';
-	import SettingsWalletsWallet from './SettingsWalletsWallet.svelte';
-	import SettingsWalletsAdd from './SettingsWalletsAdd.svelte';
-	import SettingsNetworksRPCServers from './SettingsNetworksRPCServers.svelte';
-	import SettingsNetworksAddEdit from './SettingsNetworksAddEdit.svelte';
+	import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';
+	import SettingsNetworks from '@/org.libersoft.wallet/windows/Settings/SettingsNetworks.svelte';
+	import SettingsNetworksTokens from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokens.svelte';
+	import SettingsWallets from '@/org.libersoft.wallet/windows/Settings/SettingsWallets.svelte';
+	import SettingsAddressbook from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbook.svelte';
+	import SettingsWalletsWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWallet.svelte';
+	import SettingsWalletsAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAdd.svelte';
+	import SettingsNetworksRPCServers from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksRPCServers.svelte';
+	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	let elBaseSettings: BaseSettings;
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
@@ -25,6 +26,15 @@
 		}));
 	});
 
+	let networksTokensItems = $derived.by(() => {
+		return $networks.map((network: INetwork) => ({
+			title: 'Tokens',
+			name: 'networks-tokens-' + network.guid,
+			body: SettingsNetworksTokens,
+			props: { item: network.guid },
+		}));
+	});
+
 	let networksItems = $derived.by(() => {
 		const networkEditItems = $networks.map((network: INetwork) => ({
 			title: 'Edit network',
@@ -32,15 +42,13 @@
 			body: SettingsNetworksAddEdit,
 			props: { network },
 		}));
-
-		const networkRPCItems = $networks.map((network: INetwork) => ({
+		const networksRPCItems = $networks.map((network: INetwork) => ({
 			title: 'RPC servers',
 			name: 'networks-rpc-' + network.guid,
 			body: SettingsNetworksRPCServers,
 			props: { network },
 		}));
-
-		return [...networkEditItems, ...networkRPCItems];
+		return [...networkEditItems, ...networksRPCItems, ...networksTokensItems];
 	});
 
 	let settingsObject = $derived(
@@ -86,6 +94,7 @@
 							name: 'networks-add',
 							body: SettingsNetworksAddEdit,
 						},
+						...networksTokensItems,
 					],
 				},
 				{
