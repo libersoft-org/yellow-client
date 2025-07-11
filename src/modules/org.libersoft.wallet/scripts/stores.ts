@@ -2,8 +2,31 @@ import { getGuid } from '@/core/scripts/utils/utils';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import type { IBalance, INetwork, IWallet } from '@/modules/org.libersoft.wallet/scripts/types.ts';
 import { derived, writable } from 'svelte/store';
-
 export const networks = localStorageSharedStore<INetwork[]>('networks', []);
+export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
+export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
+export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
+	const r = $wallets.find(w => w.address === $selectedWalletID);
+	return r;
+});
+export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
+export const selectedNetwork = writable<INetwork | undefined>();
+export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
+	let addresses = $selectedWallet?.addresses || [];
+	let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
+	return result;
+});
+export const balanceTimestamp = writable<Date | null>(null);
+export const balance = writable<IBalance>({
+	crypto: {
+		amount: '?',
+		currency: 'N/A',
+	},
+	fiat: {
+		amount: '?',
+		currency: 'USD',
+	},
+});
 
 networks.subscribe((nets: INetwork[]) => {
 	let modified = false;
@@ -31,13 +54,6 @@ networks.subscribe((nets: INetwork[]) => {
 	}
 });
 
-export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
-export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
-export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
-	const r = $wallets.find(w => w.address === $selectedWalletID);
-	return r;
-});
-
 wallets.subscribe((wals: IWallet[]) => {
 	while (wallets_cleanup(wals)) {
 		wallets.update(w => w);
@@ -61,28 +77,6 @@ function wallets_cleanup(wallets: any) {
 	}
 }
 
-export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
-export const selectedNetwork = writable<INetwork | undefined>();
-
-export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
-	let addresses = $selectedWallet?.addresses || [];
-	let result = addresses.find(a => a.index === $selectedWallet?.selected_address_index);
-	return result;
-});
-
-export const balance = writable<IBalance>({
-	crypto: {
-		amount: '?',
-		currency: 'N/A',
-	},
-	fiat: {
-		amount: '?',
-		currency: 'USD',
-	},
-});
-
 balance.subscribe((value: IBalance) => {
 	console.log('balance:', value);
 });
-
-export const balanceTimestamp = writable<Date | null>(null);
