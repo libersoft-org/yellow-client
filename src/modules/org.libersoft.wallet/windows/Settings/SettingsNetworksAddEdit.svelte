@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { networks, type INetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { addNetwork, editNetwork, type INetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -62,17 +62,10 @@
 			tokens: network?.tokens || [],
 		};
 		if (network?.guid) {
-			// Edit
 			newItem.guid = network.guid;
-			networks.update(networks => {
-				const index = networks.findIndex(v => v.guid === network?.guid);
-				if (index !== -1) networks[index] = newItem;
-				return networks;
-			});
+			editNetwork(newItem);
 		} else {
-			// Add
-			$networks.push(newItem);
-			networks.set($networks);
+			addNetwork(newItem);
 		}
 		close();
 	}

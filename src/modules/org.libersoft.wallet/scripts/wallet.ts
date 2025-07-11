@@ -355,6 +355,14 @@ export function addNetwork(net: INetwork): boolean {
 	return true;
 }
 
+export function editNetwork(net: INetwork): void {
+	networks.update(networks => {
+		const index = networks.findIndex(n => n.guid === net.guid);
+		if (index !== -1) networks[index] = net;
+		return networks;
+	});
+}
+
 export function deleteNetwork(net: INetwork): void {
 	networks.update(n => {
 		return n.filter(item => item !== net);
