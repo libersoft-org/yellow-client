@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { networks, type IToken } from '../scripts/wallet.ts';
+	import { deleteToken, type IToken } from '../scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		networkGuid: string;
@@ -18,16 +18,7 @@
 	};
 
 	function clickYes() {
-		networks.update(nets =>
-			nets.map(n =>
-				n.guid === networkGuid
-					? {
-							...n,
-							tokens: (n.tokens ?? []).filter(t => t.guid !== token.guid),
-						}
-					: n
-			)
-		);
+		deleteToken(networkGuid, token.guid);
 		elDialog?.close();
 	}
 

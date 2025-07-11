@@ -4,7 +4,7 @@ import { getGuid } from '@/core/scripts/utils/utils.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
-import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet } from '@/org.libersoft.wallet/scripts/types.ts';
+import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken } from '@/org.libersoft.wallet/scripts/types.ts';
 export type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken } from '@/org.libersoft.wallet/scripts/types.ts';
 export interface IRPCServer {
 	url: string;
@@ -358,6 +358,48 @@ export function addNetwork(net: INetwork): boolean {
 export function deleteNetwork(net: INetwork): void {
 	networks.update(n => {
 		return n.filter(item => item !== net);
+	});
+}
+
+export function addToken(networkGuid: string, token: IToken): void {
+	networks.update(networks => {
+		return networks.map(network => {
+			if (network.guid === networkGuid) {
+				return {
+					...network,
+					tokens: [...(network.tokens || []), token],
+				};
+			}
+			return network;
+		});
+	});
+}
+
+export function editToken(networkGuid: string, token: IToken): void {
+	networks.update(networks => {
+		return networks.map(network => {
+			if (network.guid === networkGuid) {
+				return {
+					...network,
+					tokens: network.tokens?.map(t => (t.guid === token.guid ? token : t)) || [],
+				};
+			}
+			return network;
+		});
+	});
+}
+
+export function deleteToken(networkGuid: string, tokenGuid: string): void {
+	networks.update(networks => {
+		return networks.map(network => {
+			if (network.guid === networkGuid) {
+				return {
+					...network,
+					tokens: (network.tokens || []).filter(t => t.guid !== tokenGuid),
+				};
+			}
+			return network;
+		});
 	});
 }
 

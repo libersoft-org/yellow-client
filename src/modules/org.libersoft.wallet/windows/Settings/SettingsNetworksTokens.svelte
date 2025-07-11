@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { networks, type INetwork, type IToken } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { networks, type INetwork, type IToken, addToken, editToken } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -39,10 +39,8 @@
 
 	function onAdd(token: IToken): void {
 		console.log('ADD TOKEN:', token);
-		console.log('ADD TOKEN:', net);
-		if (net?.tokens) {
-			net?.tokens?.push(token);
-			networks.update(v => v);
+		if (net?.guid) {
+			addToken(net.guid, token);
 		}
 	}
 
@@ -54,9 +52,8 @@
 
 	function onEdit(token: IToken): void {
 		console.log('EDIT TOKEN:', token);
-		if (net?.tokens) {
-			net.tokens = net.tokens.map(t => (t.guid === token.guid ? token : t));
-			networks.update(v => v);
+		if (net?.guid) {
+			editToken(net.guid, token);
 		}
 	}
 
@@ -139,4 +136,6 @@
 	{/if}
 </div>
 <Window title={windowItem ? 'Edit token' : 'Add token'} body={WindowAddEdit} params={{ item: windowItem, onAdd, onEdit }} bind:this={elWindowAddEdit} />
-<DialogTokenDel networkGuid={net?.guid} token={tokenToDelete} bind:this={elDialogDel} />
+{#if tokenToDelete && net?.guid}
+	<DialogTokenDel networkGuid={net.guid} token={tokenToDelete} bind:this={elDialogDel} />
+{/if}
