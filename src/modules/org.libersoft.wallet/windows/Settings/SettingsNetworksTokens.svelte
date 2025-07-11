@@ -28,7 +28,7 @@
 	$effect(() => {
 		const nets = $networks;
 		const foundNet = nets.find(v => v.guid === item);
-		if (foundNet?.guid !== net?.guid) net = foundNet;
+		net = foundNet;
 	});
 
 	function addTokenWindow(): void {
@@ -41,6 +41,7 @@
 		console.log('ADD TOKEN:', token);
 		if (net?.guid) {
 			addToken(net.guid, token);
+			elWindowAddEdit?.close();
 		}
 	}
 
@@ -54,6 +55,7 @@
 		console.log('EDIT TOKEN:', token);
 		if (net?.guid) {
 			editToken(net.guid, token);
+			elWindowAddEdit?.close();
 		}
 	}
 
