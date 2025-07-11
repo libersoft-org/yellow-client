@@ -40,7 +40,6 @@ async function refresh(): Promise<void> {
 	if (get(provider)) await getBalance();
 }
 
-// derivedWithEquals
 selectedNetworkID.subscribe((value: string | null) => {
 	updateSelectedNetwork(value, get(networks));
 });
@@ -54,7 +53,6 @@ function updateSelectedNetwork(selectedNetworkID: string | null, networks: INetw
 	if (r === get(selectedNetwork)) return;
 	selectedNetwork.set(r);
 }
-// /
 
 export const selectedMainCurrencySymbol = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return $selectedNetwork?.currency.symbol;
@@ -102,7 +100,6 @@ export function addressesMaxIndex(addresses: IAddress[]): number {
 
 export function addAddress(w: IWallet, index?: number | string, name?: string): void {
 	let indexNum: number;
-	//console.log('addAddress to wallet ', w, index, name);
 	const addresses = w.addresses || [];
 	sortAddresses(addresses);
 	if (!index) {
@@ -143,15 +140,12 @@ export function addressIndexAlreadyExists(wallet: IWallet, index: number): boole
 }
 
 function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
-	//console.log('doAddAddress Mnemonic.fromPhrase');
 	if (!w.phrase) {
 		console.error('Cannot derive address: wallet.phrase is undefined');
 		return;
 	}
 	let mn = Mnemonic.fromPhrase(w.phrase);
-	//console.log('doAddAddress getIndexedAccountPath');
 	let path = getIndexedAccountPath(index);
-	//console.log('doAddAddress HDNodeWallet.fromMnemonic');
 	let derived_wallet = HDNodeWallet.fromMnemonic(mn, path);
 	let a: IAddress = {
 		address: derived_wallet.address,
@@ -240,9 +234,7 @@ export async function getBalance(): Promise<void> {
 					}
 					return b;
 				});
-			} else {
-				console.error('No rates');
-			}
+			} else console.error('No rates');
 		} catch (error) {
 			console.error('Error while getting balance:', error);
 		}
@@ -258,9 +250,7 @@ async function exchangeRates(): Promise<void> {
 	const url = 'https://api.coinbase.com/v2/exchange-rates?currency=USD';
 	try {
 		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error('HTTP error, status: ' + response.status);
-		}
+		if (!response.ok) throw new Error('HTTP error, status: ' + response.status);
 		const data = await response.json();
 		return data['data'];
 	} catch (error) {
@@ -277,10 +267,7 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 	}
 	const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
 	let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(get(provider));
-	//try {
-
 	let data = 'you can put data here';
-
 	const request: PreparedTransactionRequest = {
 		to: address,
 		from: selectedAddressValue.address,
@@ -319,10 +306,8 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 		gasPrice: formatEther(tx.gasPrice),
 		value: formatEther(tx.value),
 	};
-
 	console.log('log:', log);
 	console.log('log:', JSON.stringify(log));
-
 	if (!selectedWalletValue.log) selectedWalletValue.log = [];
 	selectedWalletValue.log.push(log);
 	wallets.update(w => w);
@@ -435,7 +420,6 @@ export function reorderWallets(reorderedWallets: IWallet[]): void {
 export async function checkRPCServer(server: IRPCServer): Promise<void> {
 	server.checking = true;
 	const startTime = Date.now();
-
 	try {
 		const isWebSocket = server.url.startsWith('ws://') || server.url.startsWith('wss://');
 		if (isWebSocket) await checkWebSocketRPCServer(server, startTime);
@@ -577,9 +561,7 @@ async function checkWebSocketRPCServer(server: IRPCServer, startTime: number): P
 			if (!resolved) {
 				resolved = true;
 				clearTimeout(timeout);
-				if (event.code !== 1000) {
-					reject(new Error('WebSocket closed with code ' + event.code + ': ' + event.reason));
-				}
+				if (event.code !== 1000) reject(new Error('WebSocket closed with code ' + event.code + ': ' + event.reason));
 			}
 		};
 	});
@@ -651,4 +633,67 @@ export function initializeDefaultNetworks(): void {
 		.catch(error => {
 			console.error('loadDefaultNetworks() failed:', error);
 		});
+}
+
+export function generateUniqueNetworkName(baseName: string): string {
+	const existingNetworks = get(networks);
+	let counter = 1;
+	let newName = `${baseName} (${counter})`;
+	while (existingNetworks.find(n => n.name === newName)) {
+		counter++;
+		newName = `${baseName} (${counter})`;
+	}
+	return newName;
+}
+
+export function replaceAllNetworks(networksData: any[]): void {
+	const networksWithGuids = networksData.map((network: any) => {
+		if (!network.guid) return { ...network, guid: getGuid() };
+		return network;
+	});
+	networks.set(networksWithGuids);
+}
+
+export function addNetworkIfNotExists(network: any): boolean {
+	const existingNetworks = get(networks);
+	const exists = existingNetworks.find(n => n.name === network.name);
+	if (!exists) {
+		if (!network.guid) network.guid = getGuid();
+		networks.update(current => [...current, network]);
+		return true;
+	}
+	return false;
+}
+
+export function replaceExistingNetwork(networkToReplace: any): void {
+	networks.update(current => {
+		return current.map(network => {
+			if (network.name === networkToReplace.name) return { ...networkToReplace, guid: network.guid };
+			return network;
+		});
+	});
+}
+
+export function addNetworkWithUniqueName(network: any): void {
+	const uniqueName = generateUniqueNetworkName(network.name);
+	const networkWithUniqueName = { ...network, name: uniqueName, guid: getGuid() };
+	networks.update(current => [...current, networkWithUniqueName]);
+}
+
+export function hasNetworkWithName(name: string): boolean {
+	return get(networks).some(n => n.name === name);
+}
+
+export function addSingleNetwork(network: any): void {
+	if (!network.guid) network.guid = getGuid();
+	networks.update(current => [...current, network]);
+}
+
+export function findNetworkByName(name: string): any | undefined {
+	const existingNetworks = get(networks);
+	return existingNetworks.find(n => n.name === name);
+}
+
+export function checkIfNetworksExist(): boolean {
+	return get(networks).length > 0;
 }

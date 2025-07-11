@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { getGuid } from '@/core/scripts/utils/utils.ts';
-	import { networks } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { networks, replaceAllNetworks, replaceExistingNetwork, addNetworkWithUniqueName, addSingleNetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/scripts/utils/exceptions.ts';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
@@ -20,7 +19,7 @@
 	let invalidNetworks: string[] = $state([]);
 	let pendingReplaceText = $state('');
 	let successMessage = $state('');
-	let importUi: any = $state(null);
+	let importUI: any = $state(null);
 	const hasExistingNetworks = $derived($networks.length > 0);
 	const replaceDialogData = {
 		title: 'Replace Networks',
@@ -45,9 +44,7 @@
 	});
 
 	function validateImport(text: string): { valid: boolean; error?: string } {
-		if (!text.trim()) {
-			return { valid: false, error: 'No data provided' };
-		}
+		if (!text.trim()) return { valid: false, error: 'No data provided' };
 		let networksData;
 		try {
 			networksData = JSON.parse(text);
@@ -57,9 +54,7 @@
 				error: 'Invalid JSON format: ' + (err instanceof Error ? err.message : 'Unknown error'),
 			};
 		}
-		if (!Array.isArray(networksData)) {
-			return { valid: false, error: 'Data must be an array of networks' };
-		}
+		if (!Array.isArray(networksData)) return { valid: false, error: 'Data must be an array of networks' };
 		for (let i = 0; i < networksData.length; i++) {
 			const network = networksData[i];
 			if (!network.name || typeof network.name !== 'string') return { valid: false, error: `Network at index ${i} must have a valid name` };
@@ -87,23 +82,8 @@
 	async function handleReplace(text: string): Promise<void> {
 		const currentNetworks = get(networks);
 		pendingReplaceText = text;
-
-		if (currentNetworks.length > 0) {
-			replaceDialog?.open();
-		} else {
-			await confirmReplaceWithText(text);
-		}
-	}
-
-	function generateUniqueNetworkName(baseName: string): string {
-		const existingNetworks = get(networks);
-		let counter = 1;
-		let newName = `${baseName} (${counter})`;
-		while (existingNetworks.find(n => n.name === newName)) {
-			counter++;
-			newName = `${baseName} (${counter})`;
-		}
-		return newName;
+		if (currentNetworks.length > 0) replaceDialog?.open();
+		else await confirmReplaceWithText(text);
 	}
 
 	async function processNextNetwork(): Promise<void> {
@@ -137,8 +117,7 @@
 			currentConflictNetwork = network;
 			conflictDialog?.open();
 		} else {
-			if (!network.guid) network.guid = getGuid();
-			networks.update(current => [...current, network]);
+			addSingleNetwork(network);
 			processedCount++;
 			await processNextNetwork();
 		}
@@ -146,46 +125,29 @@
 
 	async function replaceConflictNetwork() {
 		if (currentConflictNetwork) {
-			networks.update(current => {
-				return current.map(network => {
-					if (network.name === currentConflictNetwork.name) {
-						return {
-							...currentConflictNetwork,
-							guid: network.guid,
-						};
-					}
-					return network;
-				});
-			});
+			replaceExistingNetwork(currentConflictNetwork);
 			processedCount++;
 		}
 		conflictDialog?.close();
 		currentConflictNetwork = null;
-		await importUi.doContinue(async () => await processNextNetwork());
+		await importUI.doContinue(async () => await processNextNetwork());
 	}
 
 	async function importWithModifiedName() {
 		if (currentConflictNetwork) {
-			const uniqueName = generateUniqueNetworkName(currentConflictNetwork.name);
-			const networkWithUniqueName = {
-				...currentConflictNetwork,
-				name: uniqueName,
-				guid: getGuid(),
-			};
-			networks.update(current => [...current, networkWithUniqueName]);
+			addNetworkWithUniqueName(currentConflictNetwork);
 			processedCount++;
 		}
-
 		conflictDialog?.close();
 		currentConflictNetwork = null;
-		await importUi.doContinue(async () => await processNextNetwork());
+		await importUI.doContinue(async () => await processNextNetwork());
 	}
 
 	async function skipConflictNetwork() {
 		skippedCount++;
 		conflictDialog?.close();
 		currentConflictNetwork = null;
-		await importUi.doContinue(async () => await processNextNetwork());
+		await importUI.doContinue(async () => await processNextNetwork());
 	}
 
 	async function confirmReplace() {
@@ -205,11 +167,7 @@
 		const validation = validateImport(text);
 		if (!validation.valid) throw new Error(validation.error || 'Invalid data');
 		const networksData = JSON.parse(text);
-		const networksWithGuids = networksData.map((network: any) => {
-			if (!network.guid) return { ...network, guid: getGuid() };
-			return network;
-		});
-		networks.set(networksWithGuids);
+		replaceAllNetworks(networksData);
 		close();
 	}
 </script>
@@ -222,7 +180,7 @@
 		</div>
 	</div>
 {:else}
-	<Import bind:this={importUi} testId="networks" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingNetworks ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add networks" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing network configuration" />
+	<Import bind:this={importUI} testId="networks" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingNetworks ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add networks" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing network configuration" />
 {/if}
 
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />
