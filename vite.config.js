@@ -1,10 +1,10 @@
 import pluginChecker from 'vite-plugin-checker';
 import { sveltekit } from '@sveltejs/kit/vite';
+import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import { svelteInspector } from '@sveltejs/vite-plugin-svelte-inspector';
 import 'dotenv/config';
@@ -34,7 +34,12 @@ export default defineConfig(({ mode }) => {
 	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.VITE_SENTRY_ENABLED || '').trim());
 
 	return {
-		resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
+		resolve: {
+			...(process.env.VITEST ? { conditions: ['browser'] } : {}),
+			alias: {
+				'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, 'src/modules/org.libersoft.messages/scripts/core-bridge-mobile.ts') : path.resolve(__dirname, 'src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
+			},
+		},
 		css: {
 			preprocessorOptions: {
 				scss: {
@@ -55,17 +60,18 @@ export default defineConfig(({ mode }) => {
 						}),
 					]
 				: []),
+			devtoolsJson(),
 			sveltekit(),
-			paraglideVitePlugin({
-				project: './project.inlang',
-				outdir: './src/lib/paraglide',
-			}),
-			svelteInspector({
-				toggleKeyCombo: 'control-shift',
-				holdMode: true,
-				showToggleButton: 'active',
-				toggleButtonPos: 'top-right',
-			}),
+			...(process.env.VITEST
+				? []
+				: [
+						svelteInspector({
+							toggleKeyCombo: 'control-shift',
+							holdMode: true,
+							showToggleButton: 'active',
+							toggleButtonPos: 'top-right',
+						}),
+					]),
 			...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
 		],
 		define: {
@@ -91,6 +97,7 @@ export default defineConfig(({ mode }) => {
 		},
 		build: {
 			chunkSizeWarningLimit: 6000,
+			minify: process.env.VITE_BUILD_MINIFY !== 'false',
 		},
 		optimizeDeps: {
 			include: ['@tauri-apps/api'],

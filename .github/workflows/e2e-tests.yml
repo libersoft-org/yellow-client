@@ -12,3 +12,5 @@ jobs:
     with:
       client_repo: ${{ github.repository }}
       client_ref: ${{ github.ref }}
+      run_client_tests: true
+      run_admin_tests: false

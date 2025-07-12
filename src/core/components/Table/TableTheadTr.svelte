@@ -9,6 +9,7 @@
 <style>
 	tr {
 		background-color: var(--primary-background);
+		color: var(--primary-foreground);
 	}
 </style>
 

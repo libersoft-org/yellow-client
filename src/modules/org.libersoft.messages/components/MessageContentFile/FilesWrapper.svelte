@@ -1,17 +1,14 @@
-<script>
-	import Button from '@/core/components/Button/Button.svelte';
+<script lang="ts">
 	import { onMount } from 'svelte';
-	import { writable } from 'svelte/store';
-	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.js';
+	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-	import { downloadAttachmentsSerial } from '../../messages.js';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
-
+	import Button from '@/core/components/Button/Button.svelte';
 	let { children } = $props();
-	let ref = writable();
-	let attachedUploads = $state([]);
-	let attachmentIds = $state([]);
-
+	let ref: HTMLDivElement;
+	let attachedUploads = $state<IFileUpload[]>([]);
+	let attachmentIds = $state<string[]>([]);
 	let downloadableRecords = $derived.by(() => {
 		return attachedUploads.filter(upload => {
 			return (upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER && upload.record.status === FileUploadRecordStatus.BEGUN) || (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED);
@@ -20,25 +17,22 @@
 
 	// determine if the bulk download action should be shown
 	let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
-
 	// subscribe to the store to get the uploads
 	fileUploadStore.store.subscribe(uploads => {
 		if (attachmentIds.length === 0) {
 			return;
 		}
-
 		attachedUploads = uploads.filter(upload => {
 			return attachmentIds.includes(upload.record.id);
 		});
 	});
-
 	// determine attachments type based on the first attachment
 	const uploadRecordType = $derived.by(() => {
 		return attachedUploads.length > 0 ? attachedUploads[0].record.type : null;
 	});
 
 	function getAttachmentEls() {
-		return ref.closest('.attachments-wrap').querySelectorAll('.message-attachment');
+		return ref?.closest('.attachments-wrap')?.querySelectorAll('.message-attachment');
 	}
 
 	function onAcceptAll() {
@@ -56,9 +50,9 @@
 	}
 
 	onMount(() => {
-		getAttachmentEls().forEach(attachmentEl => {
+		getAttachmentEls()?.forEach(attachmentEl => {
 			const uploadId = attachmentEl.getAttribute('data-upload-id');
-			attachmentIds.push(uploadId);
+			if (uploadId) attachmentIds.push(uploadId);
 		});
 	});
 </script>
@@ -96,7 +90,7 @@
 	</div>
 	{#if showBulkDownloadAction}
 		<div class="actions">
-			<Button width="80px" text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept All' : 'Download All'} onClick={onAcceptAll} />
+			<Button width="80px" img={uploadRecordType === FileUploadRecordType.P2P ? 'img/check.svg' : 'img/download.svg'} text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept all' : 'Download all'} onClick={onAcceptAll} />
 		</div>
 	{/if}
 </div>
