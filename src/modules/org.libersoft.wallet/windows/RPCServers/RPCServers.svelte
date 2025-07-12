@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { selectedNetwork, rpcURL, selectRPCURL, getRPCServersFromNetwork, checkAllRPCServers, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { onMount } from 'svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	interface Props {
@@ -52,7 +53,9 @@
 		transition: background-color 0.4s linear;
 	}
 
-	.servers .item:hover {
+	.servers .item:hover,
+	:global(.clickable:focus-visible) .item,
+	:global(.clickable.focused) .item {
 		background-color: var(--primary-soft-background);
 	}
 
@@ -101,17 +104,19 @@
 {:else}
 	<div class="servers">
 		{#each rpcServers as server}
-			<div class="item" class:selected={server.url === $rpcURL} on:click={() => selectServer(server.url)}>
-				<div class="info">
-					<div class="url">{server.url}</div>
-					<div class="stats">
-						<span>Latency: {server.checking ? '?' : formatLatency(server.latency)}</span>
-						<span>Block: {server.checking ? '?' : formatBlockNumber(server.lastBlock)}</span>
-						<span>Age: {server.checking ? '?' : formatBlockAge(server.blockAge)}</span>
+			<Clickable onClick={() => selectServer(server.url)}>
+				<div class="item" class:selected={server.url === $rpcURL}>
+					<div class="info">
+						<div class="url">{server.url}</div>
+						<div class="stats">
+							<span>Latency: {server.checking ? '?' : formatLatency(server.latency)}</span>
+							<span>Block: {server.checking ? '?' : formatBlockNumber(server.lastBlock)}</span>
+							<span>Age: {server.checking ? '?' : formatBlockAge(server.blockAge)}</span>
+						</div>
 					</div>
+					<div class="status" class:alive={server.isAlive} class:dead={!server.isAlive && !server.checking} class:checking={server.checking}></div>
 				</div>
-				<div class="status" class:alive={server.isAlive} class:dead={!server.isAlive && !server.checking} class:checking={server.checking}></div>
-			</div>
+			</Clickable>
 		{/each}
 	</div>
 {/if}

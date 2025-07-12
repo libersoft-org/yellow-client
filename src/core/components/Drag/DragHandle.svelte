@@ -31,10 +31,6 @@
 		transition: opacity 0.2s ease;
 	}
 
-	.drag-handle:hover {
-		opacity: 0.8;
-	}
-
 	.drag-handle:active {
 		cursor: grabbing;
 	}
