@@ -60,11 +60,6 @@ export interface ITokenBalance {
 		currency: string;
 	};
 }
-export interface IAddressBookItem {
-	guid: string;
-	name: string;
-	address: string;
-}
 export interface IStatus {
 	color: 'red' | 'orange' | 'green';
 	text: string;

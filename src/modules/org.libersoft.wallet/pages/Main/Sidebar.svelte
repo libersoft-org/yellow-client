@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { hideSidebarMobile } from '@/core/scripts/stores.ts';
-	import { addressBook, setSection, setSendAddress } from '../../scripts/wallet.ts';
-	import { module } from '../../scripts/module.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { setSection, setSendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { addressBook } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 

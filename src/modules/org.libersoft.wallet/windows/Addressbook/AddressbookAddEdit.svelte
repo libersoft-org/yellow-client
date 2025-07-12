@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addressBook, type IAddressBookItem, addAddressBookItem, editAddressBookItem } from '../../scripts/wallet.ts';
+	import { addAddressBookItem, editAddressBookItem, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import { module } from '../../scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

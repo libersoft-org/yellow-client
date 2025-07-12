@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { addressBook, type IAddressBookItem } from '../../scripts/wallet.ts';
-	import { module } from '../../scripts/module.ts';
+	import { addressBook, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -12,10 +12,10 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
-	import WindowAddEdit from '../../windows/Addressbook/AddressbookAddEdit.svelte';
-	import DialogDelete from '../../dialogs/AddressbookDel.svelte';
-	import WindowExport from '../../windows/Addressbook/AddressbookExport.svelte';
-	import WindowImport from '../../windows/Addressbook/AddressbookImport.svelte';
+	import WindowAddEdit from '@/org.libersoft.wallet/windows/Addressbook/AddressbookAddEdit.svelte';
+	import DialogDelete from '@/org.libersoft.wallet/dialogs/AddressbookDel.svelte';
+	import WindowExport from '@/org.libersoft.wallet/windows/Addressbook/AddressbookExport.svelte';
+	import WindowImport from '@/org.libersoft.wallet/windows/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	let windowItem: IAddressBookItem | null | undefined = $state();
 	let elWindowAddEdit: Window | undefined;

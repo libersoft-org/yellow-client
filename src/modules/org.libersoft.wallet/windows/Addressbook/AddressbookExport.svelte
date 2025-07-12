@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Export from '@/core/components/Export/Export.svelte';
-	import { addressBook } from '../../scripts/wallet.ts';
+	import { addressBook } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import { get } from 'svelte/store';
 
 	interface Props {

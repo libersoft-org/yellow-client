@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type IAddressBookItem, deleteAddressBookItem } from '../scripts/wallet.ts';
+	import { type IAddressBookItem, deleteAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: IAddressBookItem;
