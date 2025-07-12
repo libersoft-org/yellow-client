@@ -1,5 +1,4 @@
 <script lang="ts">
-	//import { onMount } from 'svelte';
 	import { addressBook, type IAddressBookItem, addAddressBookItem, editAddressBookItem } from '../../scripts/wallet.ts';
 	import { module } from '../../scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
