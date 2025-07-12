@@ -36,6 +36,8 @@
 	let lastDocumentHeight = 0;
 	let videoInputRef;
 	let showVideoRecorder = false;
+	let pendingBottomSheetOpen = false;
+	let waitingForKeyboardClose = false;
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
@@ -84,9 +86,8 @@
 			// Notify MessagesList that expressions menu is open
 			expressionsMenuOpen?.setOpen(true);
 		} else {
-			expressionsBottomSheetOpen = true;
-			// Notify MessagesList that expressions menu is open (bottom sheet)
-			expressionsMenuOpen?.setOpen(true);
+			// Use delay-based opening for mobile bottom sheet
+			handleBottomSheetOpenWithDelay();
 		}
 		await tick();
 		console.log('elExpressions:', elExpressions);
@@ -185,6 +186,18 @@
 		}
 	}
 
+	function onMessageInputFocus(event) {
+		console.log('📝 Message input focused - closing bottom sheet');
+		// Close bottom sheet when user wants to type
+		if (expressionsBottomSheetOpen) {
+			expressionsBottomSheetOpen = false;
+			expressionsMenuOpen?.setOpen(false);
+		}
+		// Also clear any pending opening
+		pendingBottomSheetOpen = false;
+		waitingForKeyboardClose = false;
+	}
+
 	function clickRecord(event) {
 		console.log('clicked on record mic / camera - long press to record, short press to switch mic / camera');
 	}
@@ -214,6 +227,18 @@
 				expressionsHeight = value + 'px';
 			}
 		}
+
+		// Check if we're waiting for keyboard to close and it's now closed
+		if (waitingForKeyboardClose) {
+			console.log('🔍 WAITING FOR KEYBOARD - current height:', value, 'waiting:', waitingForKeyboardClose);
+			if (!value || value < 50) {
+				console.log('🎉 *** KEYBOARD CLOSED *** - opening bottom-sheet now');
+				waitingForKeyboardClose = false;
+				pendingBottomSheetOpen = false;
+				expressionsBottomSheetOpen = true;
+				expressionsMenuOpen?.setOpen(true);
+			}
+		}
 	});
 
 	$: expressionsAsContextMenuUpdate(expressionsAsContextMenu);
@@ -226,20 +251,29 @@
 		//if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
 		expressionsBottomSheetOpen = false;
 		expressionsMenu?.close();
+		// Clear any pending opening
+		pendingBottomSheetOpen = false;
+		waitingForKeyboardClose = false;
 		// Notify MessagesList that expressions menu is closed
 		expressionsMenuOpen?.setOpen(false);
 	}
 
 	$: update2(expressionsAsContextMenu, expressionsBottomSheetOpen);
 	function update2(expressionsAsContextMenu, expressionsBottomSheetOpen) {
-		if (!expressionsAsContextMenu && expressionsBottomSheetOpen) {
-			elMessage.blur();
-		}
+		// Removed auto-blur to prevent interference with delay logic
+		// The blur is now handled manually in handleBottomSheetOpenWithDelay
 	}
 
 	function elMessageBlur(event) {
 		//console.log('elMessageBlur');
 		if (elBottomSheet?.contains(event.relatedTarget)) return;
+
+		// Don't close if we have a pending bottom sheet opening
+		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
+			console.log('🔄 Not closing bottom sheet - pending opening in progress');
+			return;
+		}
+
 		expressionsBottomSheetOpen = false;
 		// Notify MessagesList that expressions menu is closed (bottom sheet)
 		expressionsMenuOpen?.setOpen(false);
@@ -248,6 +282,40 @@
 	const onVideoRecordClick = async () => {
 		videoInputRef.click();
 	};
+
+	// Reactive bottom sheet opening - waits for keyboard to actually close
+	function handleBottomSheetOpenWithDelay() {
+		console.log('🚀 handleBottomSheetOpenWithDelay called');
+
+		// Prevent multiple simultaneous requests
+		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
+			console.log('🚫 Bottom sheet opening already pending');
+			return;
+		}
+
+		const currentKeyboardHeight = get(keyboardHeight);
+		const currentIsMobile = get(isMobile);
+		console.log('🔍 DEBUG - keyboardHeight:', currentKeyboardHeight, 'isMobile:', currentIsMobile, 'expressionsAsContextMenu:', expressionsAsContextMenu);
+
+		// If keyboard is not open, open bottom sheet immediately
+		if (!currentKeyboardHeight || currentKeyboardHeight < 50) {
+			console.log('✅ Taking IMMEDIATE path - keyboard not detected as open');
+			console.log('📱 Opening bottom sheet immediately');
+			expressionsBottomSheetOpen = true;
+			expressionsMenuOpen?.setOpen(true);
+			return;
+		}
+
+		// Keyboard is open - close it first, then wait for it to actually close
+		console.log('⌨️ Taking REACTIVE path - keyboard detected as open');
+		console.log('🔄 Setting waitingForKeyboardClose = true, waiting for keyboard to close...');
+		waitingForKeyboardClose = true;
+		pendingBottomSheetOpen = true;
+		elMessage.blur(); // Start closing keyboard
+
+		// The keyboardHeight subscriber will handle opening the bottom sheet
+		// when the keyboard actually closes (height becomes 0)
+	}
 
 	onMount(() => {
 		videoInputRef.addEventListener('change', function (event) {
@@ -353,17 +421,18 @@
 						padding="0px"
 						onClick={() => {
 							if (expressionsBottomSheetOpen) {
+								// Close bottom sheet immediately
 								expressionsBottomSheetOpen = false;
 								expressionsMenuOpen?.setOpen(false);
 							} else {
-								expressionsBottomSheetOpen = true;
-								expressionsMenuOpen?.setOpen(true);
+								// Smart opening with keyboard delay
+								handleBottomSheetOpenWithDelay();
 							}
 						}}
 					/>
 				</div>
 			{/if}
-			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur}></textarea>
+			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur} on:focus={onMessageInputFocus}></textarea>
 			<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
 			{#if !elMessage?.value}
 				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorder = !showVideoRecorder)} />
