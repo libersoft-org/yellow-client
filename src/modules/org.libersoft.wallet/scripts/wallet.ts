@@ -128,6 +128,7 @@ export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 export let currencies = derived([tokens, selectedMainCurrencySymbol], ([$tokens, $selectedMainCurrencySymbol]) => {
 	return [$selectedMainCurrencySymbol, ...$tokens.map(token => token.symbol)].filter((currency): currency is string => currency !== undefined);
 });
+
 export const addressBook = localStorageSharedStore<IAddressBookItem[]>('addressbook', []);
 
 addressBook.subscribe((value: IAddressBookItem[]) => {
@@ -141,7 +142,6 @@ addressBook.subscribe((value: IAddressBookItem[]) => {
 	if (modified) addressBook.update(v => v);
 });
 
-// Address book management functions
 export function findAddressBookItemByAddress(address: string): IAddressBookItem | undefined {
 	const ab = get(addressBook);
 	return ab.find(i => i.address === address);
@@ -160,69 +160,42 @@ export interface IAddressBookValidationResult {
 export function validateAddressBookItem(name: string | undefined, address: string | undefined, excludeItemGuid?: string): IAddressBookValidationResult {
 	const trimmedName = name?.trim();
 	const trimmedAddress = address?.trim();
-
-	if (!trimmedAddress || trimmedAddress === '') {
-		return { isValid: false, error: 'Address is not set' };
-	}
-
-	if (!isAddress(trimmedAddress)) {
-		return { isValid: false, error: 'Invalid Ethereum address format' };
-	}
-
+	if (!trimmedAddress || trimmedAddress === '') return { isValid: false, error: 'Address is not set' };
+	if (!isAddress(trimmedAddress)) return { isValid: false, error: 'Invalid Ethereum address format' };
 	const dupe = findAddressBookItemByAddress(trimmedAddress);
-	if (dupe && (!excludeItemGuid || dupe.guid !== excludeItemGuid)) {
-		return { isValid: false, error: 'Address already exists in the address book, see name: "' + (dupe.name || 'Unknown') + '"' };
-	}
-
+	if (dupe && (!excludeItemGuid || dupe.guid !== excludeItemGuid)) return { isValid: false, error: 'Address already exists in the address book, see name: "' + (dupe.name || 'Unknown') + '"' };
 	return { isValid: true };
 }
 
 export function addAddressBookItem(name: string | undefined, address: string | undefined): IAddressBookValidationResult {
 	const trimmedName = name?.trim();
 	const trimmedAddress = address?.trim();
-
 	const validation = validateAddressBookItem(trimmedName, trimmedAddress);
-	if (!validation.isValid) {
-		return validation;
-	}
-
+	if (!validation.isValid) return validation;
 	if (!trimmedAddress) return { isValid: false, error: 'Address is required' };
-
 	const newItem: IAddressBookItem = {
 		guid: getGuid(),
 		name: trimmedName || '',
 		address: trimmedAddress,
 	};
-
 	addressBook.update(currentItems => [...currentItems, newItem]);
-
 	return { isValid: true };
 }
 
 export function editAddressBookItem(itemGuid: string, name: string | undefined, address: string | undefined): IAddressBookValidationResult {
 	const trimmedName = name?.trim();
 	const trimmedAddress = address?.trim();
-
 	const validation = validateAddressBookItem(trimmedName, trimmedAddress, itemGuid);
-	if (!validation.isValid) {
-		return validation;
-	}
-
+	if (!validation.isValid) return validation;
 	if (!trimmedAddress) return { isValid: false, error: 'Address is required' };
-
 	addressBook.update(currentItems => currentItems.map(item => (item.guid === itemGuid ? { ...item, name: trimmedName || '', address: trimmedAddress } : item)));
-
 	return { isValid: true };
 }
 
 export function deleteAddressBookItem(itemGuid: string): boolean {
 	const currentItems = get(addressBook);
 	const itemExists = currentItems.some(item => item.guid === itemGuid);
-
-	if (!itemExists) {
-		return false;
-	}
-
+	if (!itemExists) return false;
 	addressBook.update(currentItems => currentItems.filter(item => item.guid !== itemGuid));
 	return true;
 }
@@ -254,7 +227,6 @@ export function importAddressBookItems(text: string): IAddressBookImportResult {
 		const data = JSON.parse(text);
 		const currentAddressBook = get(addressBook);
 		const newItems: IAddressBookItem[] = [];
-
 		for (const item of data) {
 			const existingItem = currentAddressBook.find(existing => existing.address.toLowerCase() === item.address.toLowerCase());
 			if (!existingItem) {
@@ -266,10 +238,7 @@ export function importAddressBookItems(text: string): IAddressBookImportResult {
 			}
 		}
 
-		if (newItems.length > 0) {
-			addressBook.update(items => [...items, ...newItems]);
-		}
-
+		if (newItems.length > 0) addressBook.update(items => [...items, ...newItems]);
 		return { success: true, addedCount: newItems.length };
 	} catch (error) {
 		return { success: false, error: 'Failed to import address book items' };
@@ -284,7 +253,6 @@ export function replaceAddressBook(text: string): IAddressBookImportResult {
 			name: item.name,
 			address: item.address,
 		}));
-
 		addressBook.set(processedData);
 		return { success: true, addedCount: processedData.length };
 	} catch (error) {

@@ -51,9 +51,7 @@
 
 	async function confirmReplaceWithText(text: string) {
 		const result = replaceAddressBook(text);
-		if (!result.success && result.error) {
-			throw new Error(result.error);
-		}
+		if (!result.success && result.error) throw new Error(result.error);
 	}
 </script>
 

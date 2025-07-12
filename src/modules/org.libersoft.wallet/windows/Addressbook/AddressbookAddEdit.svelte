@@ -40,7 +40,6 @@
 
 	function edit(): void {
 		if (!params?.item?.guid) return;
-
 		const result = editAddressBookItem(params.item.guid, name, address);
 		if (!result.isValid) {
 			error = result.error;
