@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addressBook, type IAddressBookItem } from '../scripts/wallet.ts';
+	import { type IAddressBookItem, deleteAddressBookItem } from '../scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: IAddressBookItem;
@@ -17,7 +17,7 @@
 	};
 
 	function clickYes() {
-		addressBook.set($addressBook.filter(i => i.guid !== item.guid));
+		deleteAddressBookItem(item.guid);
 		elDialog?.close();
 	}
 
