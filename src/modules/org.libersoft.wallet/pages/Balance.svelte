@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { selectedNetwork, selectedAddress, balance, balanceTimestamp, tokens, getBalance, provider } from '../scripts/wallet.ts';
+	import { selectedNetwork, selectedAddress, balance, balanceTimestamp, tokens, getBalance, provider, tokenBalances, getTokenBalance } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
@@ -23,6 +23,7 @@
 
 	function refreshToken(tokenSymbol) {
 		console.log('REFRESH TOKEN:', tokenSymbol);
+		getTokenBalance(tokenSymbol);
 	}
 </script>
 
@@ -96,6 +97,7 @@
 					</Td>
 				</Tr>
 				{#each $tokens as t, index}
+					{@const tokenBalance = $tokenBalances.find(tb => tb.symbol === t.symbol)}
 					<Tr>
 						<Td padding="0" expand>
 							<div class="row">
@@ -108,8 +110,8 @@
 						<Td>
 							<div class="balance">
 								<div class="info">
-									<div class="amount">? {t.symbol}</div>
-									<div class="fiat">(? USD)</div>
+									<div class="amount">{tokenBalance ? tokenBalance.balance.amount : '?'} {t.symbol}</div>
+									<div class="fiat">({tokenBalance ? tokenBalance.fiat.amount : '?'} {tokenBalance ? tokenBalance.fiat.currency : '?'})</div>
 								</div>
 								<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(t.symbol)} />
 							</div>

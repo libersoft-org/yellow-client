@@ -48,6 +48,18 @@ export interface IBalance {
 		currency: string;
 	};
 }
+export interface ITokenBalance {
+	symbol: string;
+	contract_address: string;
+	balance: {
+		amount: string;
+		currency: string;
+	};
+	fiat: {
+		amount: string;
+		currency: string;
+	};
+}
 export interface IAddressBookItem {
 	guid: string;
 	name: string;

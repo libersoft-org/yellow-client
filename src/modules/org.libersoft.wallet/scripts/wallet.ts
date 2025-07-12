@@ -1,13 +1,13 @@
 import { derived, get, writable } from 'svelte/store';
-import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
+import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest, Contract, formatUnits } from 'ethers';
 import { getGuid } from '@/core/scripts/utils/utils.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 import { provider, status, reconnect, availableRPCURLs, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
-import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken, IRPCServer } from '@/org.libersoft.wallet/scripts/types.ts';
-export type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken, IRPCServer } from '@/org.libersoft.wallet/scripts/types.ts';
-import { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
-export { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
+import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken, IRPCServer, ITokenBalance } from '@/org.libersoft.wallet/scripts/types.ts';
+export type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken, IRPCServer, ITokenBalance } from '@/org.libersoft.wallet/scripts/types.ts';
+import { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets, tokenBalances } from '@/org.libersoft.wallet/scripts/stores.ts';
+export { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets, tokenBalances } from '@/org.libersoft.wallet/scripts/stores.ts';
 export { status, rpcURL, provider, reconnect, availableRPCURLs } from '@/org.libersoft.wallet/scripts/provider.ts';
 export let section = writable<string | null>('balance');
 export const settingsWindow = writable<any>();
@@ -21,7 +21,10 @@ const BALANCE_REFRESH_INTERVAL = 30000;
 function startBalanceRefreshTimer(): void {
 	if (balanceRefreshInterval) clearInterval(balanceRefreshInterval);
 	balanceRefreshInterval = setInterval(() => {
-		if (get(selectedNetwork) && get(selectedAddress) && get(provider)) getBalance();
+		if (get(selectedNetwork) && get(selectedAddress) && get(provider)) {
+			getBalance();
+			getTokenBalances();
+		}
 	}, BALANCE_REFRESH_INTERVAL);
 }
 
@@ -55,6 +58,7 @@ networks.subscribe((value: INetwork[]) => {
 selectedNetwork.subscribe(network => {
 	if (network && get(selectedAddress) && get(provider)) {
 		getBalance();
+		getTokenBalances();
 		startBalanceRefreshTimer();
 	} else stopBalanceRefreshTimer();
 });
@@ -62,6 +66,7 @@ selectedNetwork.subscribe(network => {
 selectedAddress.subscribe(address => {
 	if (address && get(selectedNetwork) && get(provider)) {
 		getBalance();
+		getTokenBalances();
 		startBalanceRefreshTimer();
 	} else stopBalanceRefreshTimer();
 });
@@ -69,6 +74,7 @@ selectedAddress.subscribe(address => {
 provider.subscribe(p => {
 	if (p && get(selectedNetwork) && get(selectedAddress)) {
 		getBalance();
+		getTokenBalances();
 		startBalanceRefreshTimer();
 	} else stopBalanceRefreshTimer();
 });
@@ -298,6 +304,145 @@ async function exchangeRates(): Promise<void> {
 		return data['data'];
 	} catch (error) {
 		console.error('Error fetching exchange rates:', error);
+	}
+}
+
+export async function getTokenBalances(): Promise<void> {
+	const p = get(provider);
+	const net = get(selectedNetwork);
+	const addr = get(selectedAddress);
+	const tokenList = get(tokens);
+	if (!net || !p || !addr || !tokenList.length) {
+		tokenBalances.set([]);
+		return;
+	}
+	const balances: ITokenBalance[] = [];
+	for (const token of tokenList) {
+		try {
+			const abi = ['function balanceOf(address owner) view returns (uint256)'];
+			const contract = new Contract(token.contract_address, abi, p);
+			const balance = await contract.balanceOf(addr.address);
+			const decimals = 18; // TODO: load from contract for tokens with different decimals
+			const formattedBalance = formatUnits(balance, decimals);
+			balances.push({
+				symbol: token.symbol,
+				contract_address: token.contract_address,
+				balance: {
+					amount: formattedBalance,
+					currency: token.symbol,
+				},
+				fiat: {
+					amount: '?',
+					currency: 'USD',
+				},
+			});
+		} catch (error) {
+			console.error(`Error getting balance for token ${token.symbol}:`, error);
+			balances.push({
+				symbol: token.symbol,
+				contract_address: token.contract_address,
+				balance: {
+					amount: '?',
+					currency: token.symbol,
+				},
+				fiat: {
+					amount: '?',
+					currency: '?',
+				},
+			});
+		}
+	}
+
+	tokenBalances.set(balances);
+	try {
+		const rates = await exchangeRates();
+		const rates2 = rates['rates'];
+		if (rates2) {
+			tokenBalances.update(balances => {
+				return balances.map(tokenBalance => {
+					const rate = rates2[tokenBalance.symbol];
+					if (rate && tokenBalance.balance.amount !== '?') tokenBalance.fiat.amount = (parseFloat(tokenBalance.balance.amount) * rate).toString();
+					else tokenBalance.fiat.amount = 'no rate for ' + tokenBalance.symbol;
+					return tokenBalance;
+				});
+			});
+		}
+	} catch (error) {
+		console.error('Error fetching exchange rates for tokens:', error);
+	}
+}
+
+export async function getTokenBalance(tokenSymbol: string): Promise<void> {
+	const p = get(provider);
+	const net = get(selectedNetwork);
+	const addr = get(selectedAddress);
+	const tokenList = get(tokens);
+	if (!net || !p || !addr) return;
+	const token = tokenList.find(t => t.symbol === tokenSymbol);
+	if (!token) return;
+	console.log('Getting token balance for', token.symbol);
+	try {
+		const abi = ['function balanceOf(address owner) view returns (uint256)'];
+		const contract = new Contract(token.contract_address, abi, p);
+		const balance = await contract.balanceOf(addr.address);
+		const decimals = 18; // TODO: load from contract for tokens with different decimals
+		const formattedBalance = formatUnits(balance, decimals);
+		const newTokenBalance: ITokenBalance = {
+			symbol: token.symbol,
+			contract_address: token.contract_address,
+			balance: {
+				amount: formattedBalance,
+				currency: token.symbol,
+			},
+			fiat: {
+				amount: '?',
+				currency: '?',
+			},
+		};
+		tokenBalances.update(balances => {
+			const index = balances.findIndex(b => b.symbol === tokenSymbol);
+			if (index >= 0) balances[index] = newTokenBalance;
+			else balances.push(newTokenBalance);
+			return balances;
+		});
+		try {
+			const rates = await exchangeRates();
+			const rates2 = rates['rates'];
+			if (rates2) {
+				tokenBalances.update(balances => {
+					return balances.map(tokenBalance => {
+						if (tokenBalance.symbol === tokenSymbol) {
+							const rate = rates2[tokenBalance.symbol];
+							if (rate && tokenBalance.balance.amount !== '?') tokenBalance.fiat.amount = (parseFloat(tokenBalance.balance.amount) * rate).toString();
+							else tokenBalance.fiat.amount = 'no rate for ' + tokenBalance.symbol;
+						}
+						return tokenBalance;
+					});
+				});
+			}
+		} catch (error) {
+			console.error('Error fetching exchange rate for token:', error);
+		}
+	} catch (error) {
+		console.error('Error getting balance for token ' + token.symbol + ':', error);
+		const errorTokenBalance: ITokenBalance = {
+			symbol: token.symbol,
+			contract_address: token.contract_address,
+			balance: {
+				amount: '?',
+				currency: token.symbol,
+			},
+			fiat: {
+				amount: '?',
+				currency: '?',
+			},
+		};
+		tokenBalances.update(balances => {
+			const index = balances.findIndex(b => b.symbol === tokenSymbol);
+			if (index >= 0) balances[index] = errorTokenBalance;
+			else balances.push(errorTokenBalance);
+			return balances;
+		});
 	}
 }
 

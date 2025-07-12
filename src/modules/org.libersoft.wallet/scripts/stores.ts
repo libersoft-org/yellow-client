@@ -1,6 +1,6 @@
 import { getGuid } from '@/core/scripts/utils/utils';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
-import type { IBalance, INetwork, IWallet } from '@/modules/org.libersoft.wallet/scripts/types.ts';
+import type { IBalance, INetwork, IWallet, ITokenBalance } from '@/modules/org.libersoft.wallet/scripts/types.ts';
 import { derived, writable } from 'svelte/store';
 export const networks = localStorageSharedStore<INetwork[]>('networks', []);
 export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
@@ -27,6 +27,7 @@ export const balance = writable<IBalance>({
 		currency: 'USD',
 	},
 });
+export const tokenBalances = writable<ITokenBalance[]>([]);
 
 networks.subscribe((nets: INetwork[]) => {
 	let modified = false;
