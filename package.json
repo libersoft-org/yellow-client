@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "init": "bun x --bun svelte-kit sync; bun x --bun @inlang/paraglide-js compile --project ./project.inlang",
+    "init": "bun x --bun svelte-kit sync",
     "build": "bun x --bun vite build",
     "preview": "vite preview",
     "test": "npx vitest run; npx playwright test",
@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.6.13",
-    "@inlang/paraglide-js": "^2.0.0",
     "@neodrag/svelte": "^2.3.2",
     "@sentry/sveltekit": "^9",
     "@tauri-apps/api": "^2.3.0",
@@ -68,7 +67,7 @@
     "videojs-record": "^4.8.0",
     "wavesurfer.js": "^7.9.0",
     "webrtc-adapter": "^9.0.3",
-    "yellow-client-common": "https://github.com/koo5/yellow-client-common"
+    "yellow-client-common": "https://github.com/libersoft-org/yellow-client-common"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3",

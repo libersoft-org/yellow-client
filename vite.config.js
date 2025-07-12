@@ -5,7 +5,6 @@ import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import { svelteInspector } from '@sveltejs/vite-plugin-svelte-inspector';
 import 'dotenv/config';
@@ -63,10 +62,6 @@ export default defineConfig(({ mode }) => {
 				: []),
 			devtoolsJson(),
 			sveltekit(),
-			paraglideVitePlugin({
-				project: './project.inlang',
-				outdir: './src/lib/paraglide',
-			}),
 			...(process.env.VITEST
 				? []
 				: [

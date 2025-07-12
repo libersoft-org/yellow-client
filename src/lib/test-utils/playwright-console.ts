@@ -37,11 +37,11 @@ export function enableConsoleLogging(page: Page): void {
 		}
 
 		// Apply log level filtering
-		if (isErrorsOnly && !['error', 'warn'].includes(msgType)) {
+		if (isErrorsOnly && !['error', 'warning'].includes(msgType)) {
 			return;
 		}
 
-		if (isMinimal && !['error', 'warn'].includes(msgType) && !isImportantLog(text)) {
+		if (isMinimal && !['error', 'warning'].includes(msgType) && !isImportantLog(text)) {
 			return;
 		}
 
@@ -49,7 +49,7 @@ export function enableConsoleLogging(page: Page): void {
 			case 'error':
 				console.log(`🔴 CONSOLE ERROR: ${text}`);
 				break;
-			case 'warn':
+			case 'warning':
 				console.log(`🟡 CONSOLE WARN: ${text}`);
 				break;
 			case 'info':
@@ -110,7 +110,7 @@ export function enableConsoleLoggingWithFilter(page: Page, filter: (msgType: str
 				case 'error':
 					console.log(`🔴 CONSOLE ERROR: ${text}`);
 					break;
-				case 'warn':
+				case 'warning':
 					console.log(`🟡 CONSOLE WARN: ${text}`);
 					break;
 				default:

@@ -28,7 +28,7 @@ export function setupConsoleLogging(page: Page): void {
 			case 'error':
 				console.log(`🔴 CONSOLE ERROR: ${text}`);
 				break;
-			case 'warn':
+			case 'warning':
 				console.log(`🟡 CONSOLE WARN: ${text}`);
 				break;
 			case 'info':
