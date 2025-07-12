@@ -9,6 +9,7 @@ export const rpcURL = writable<string | null>(null);
 export const provider: Writable<JsonRpcProvider | null> = writable<JsonRpcProvider | null>(null);
 export const availableRPCURLs = writable<string[]>([]);
 let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
+let resetBalanceTimer: ReturnType<typeof setTimeout> | undefined;
 let providerData = derivedWithEquals(
 	[selectedNetwork, rpcURL],
 	([$selectedNetwork, $rpcURL]) => {
@@ -24,10 +25,11 @@ let providerData = derivedWithEquals(
 
 providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 	console.log('providerData updated:', network, currentRpcURL);
-	resetBalance();
+
 	if (!network) {
 		status.set({ color: 'red', text: 'No network selected' });
 		availableRPCURLs.set([]);
+		debouncedResetBalance();
 		return;
 	}
 	const validURLs = (network.rpcURLs || []).filter(url => !url.includes('YOUR-PROJECT-ID') && !url.includes('YOUR-API-KEY'));
@@ -41,6 +43,7 @@ providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 		} else {
 			console.log('No valid RPC URLs available for network');
 			status.set({ color: 'red', text: 'No valid RPC URLs available' });
+			debouncedResetBalance();
 			return;
 		}
 	}
@@ -110,18 +113,13 @@ export function reconnect(): void {
 		currentProvider.destroy();
 	}
 	provider.set(null);
-
 	const net = get(selectedNetwork);
 	if (!net) {
 		console.log('No selected network to reconnect');
 		return;
-	} else {
-		console.log('Reconnecting to', get(selectedNetwork));
-	}
-
+	} else console.log('Reconnecting to', get(selectedNetwork));
 	status.set({ color: 'orange', text: 'Connecting to ' + net.name });
 	if (reconnectionTimer !== undefined) clearTimeout(reconnectionTimer);
-
 	const rurl = get(rpcURL);
 	if (!rurl || net?.rpcURLs?.find(url => url === rurl) === undefined) {
 		if (!net?.rpcURLs?.[0]) {
@@ -146,6 +144,11 @@ function resetBalance(): void {
 		fiat: { amount: '?', currency: 'USD' },
 	});
 	balanceTimestamp.set(null);
+}
+
+function debouncedResetBalance(): void {
+	if (resetBalanceTimer) clearTimeout(resetBalanceTimer);
+	resetBalanceTimer = setTimeout(() => resetBalance(), 100);
 }
 
 status.subscribe((value: IStatus) => {

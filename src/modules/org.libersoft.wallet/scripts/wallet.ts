@@ -17,13 +17,14 @@ export let sendAddress = writable<string | number | undefined>();
 export const default_networks = writable<INetwork[]>([]);
 let balanceRefreshInterval: ReturnType<typeof setInterval> | null = null;
 const BALANCE_REFRESH_INTERVAL = 30000;
+let isRefreshing = false;
+let hasInitializedBalance = false;
 
 function startBalanceRefreshTimer(): void {
 	if (balanceRefreshInterval) clearInterval(balanceRefreshInterval);
 	balanceRefreshInterval = setInterval(() => {
-		if (get(selectedNetwork) && get(selectedAddress) && get(provider)) {
-			getBalance();
-			getTokenBalances();
+		if (get(selectedNetwork) && get(selectedAddress) && get(provider) && !isRefreshing) {
+			refreshAllBalances();
 		}
 	}, BALANCE_REFRESH_INTERVAL);
 }
@@ -32,6 +33,17 @@ function stopBalanceRefreshTimer(): void {
 	if (balanceRefreshInterval) {
 		clearInterval(balanceRefreshInterval);
 		balanceRefreshInterval = null;
+	}
+}
+
+async function refreshAllBalances(): Promise<void> {
+	if (isRefreshing) return;
+	isRefreshing = true;
+	try {
+		await getBalance();
+		await getTokenBalances();
+	} finally {
+		isRefreshing = false;
 	}
 }
 
@@ -57,31 +69,47 @@ networks.subscribe((value: INetwork[]) => {
 
 selectedNetwork.subscribe(network => {
 	if (network && get(selectedAddress) && get(provider)) {
-		getBalance();
-		getTokenBalances();
+		if (!hasInitializedBalance) {
+			hasInitializedBalance = true;
+			refreshAllBalances();
+		}
 		startBalanceRefreshTimer();
-	} else stopBalanceRefreshTimer();
+	} else {
+		hasInitializedBalance = false;
+		stopBalanceRefreshTimer();
+	}
 });
 
 selectedAddress.subscribe(address => {
 	if (address && get(selectedNetwork) && get(provider)) {
-		getBalance();
-		getTokenBalances();
+		if (!hasInitializedBalance) {
+			hasInitializedBalance = true;
+			refreshAllBalances();
+		}
 		startBalanceRefreshTimer();
-	} else stopBalanceRefreshTimer();
+	} else {
+		hasInitializedBalance = false;
+		stopBalanceRefreshTimer();
+	}
 });
 
 provider.subscribe(p => {
 	if (p && get(selectedNetwork) && get(selectedAddress)) {
-		getBalance();
-		getTokenBalances();
+		if (!hasInitializedBalance) {
+			hasInitializedBalance = true;
+			refreshAllBalances();
+		}
 		startBalanceRefreshTimer();
-	} else stopBalanceRefreshTimer();
+	} else {
+		hasInitializedBalance = false;
+		stopBalanceRefreshTimer();
+	}
 });
 
 function updateSelectedNetwork(selectedNetworkID: string | null, networks: INetwork[]): void {
 	const r = networks.find(n => n.guid === selectedNetworkID);
 	if (r === get(selectedNetwork)) return;
+	hasInitializedBalance = false; // Reset when network changes
 	selectedNetwork.set(r);
 }
 
@@ -309,6 +337,7 @@ async function exchangeRates(): Promise<void> {
 
 export async function getTokenBalances(): Promise<void> {
 	const p = get(provider);
+	console.log('getTokenBalances selectedNetwork: ', get(selectedNetwork), 'provider: ', p);
 	const net = get(selectedNetwork);
 	const addr = get(selectedAddress);
 	const tokenList = get(tokens);
@@ -803,13 +832,6 @@ export function initializeDefaultNetworks(): void {
 	console.log('initializeDefaultNetworks() called');
 	if (get(default_networks).length > 0) {
 		console.log('Default networks already loaded');
-		setTimeout(() => {
-			if (get(selectedNetwork) && get(selectedAddress) && get(provider)) {
-				console.log('Networks already loaded, checking balance immediately...');
-				getBalance();
-				startBalanceRefreshTimer();
-			}
-		}, 1000);
 		return;
 	}
 
