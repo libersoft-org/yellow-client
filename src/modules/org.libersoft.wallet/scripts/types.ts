@@ -30,6 +30,14 @@ export interface INetwork {
 	rpcURLs?: string[];
 	tokens?: IToken[];
 }
+export interface IRPCServer {
+	url: string;
+	latency: number | null;
+	lastBlock: number | null;
+	blockAge: number | null;
+	isAlive: boolean;
+	checking?: boolean;
+}
 export interface IBalance {
 	crypto: {
 		amount: string;

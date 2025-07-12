@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { module } from '../scripts/module.ts';
-	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsWindow, walletsWindow, initializeDefaultNetworks } from '../scripts/wallet.ts';
+	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsWindow, walletsWindow, rpcServersWindow, initializeDefaultNetworks, reconnect, availableRPCURLs } from '../scripts/wallet.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -9,14 +9,15 @@
 	import Dropdown from '../components/Dropdown.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-	import Settings from '../windows/Settings/Settings.svelte';
-	import Send from './Send.svelte';
-	import Receive from './Receive.svelte';
-	import Balance from './Balance.svelte';
-	import History from './History.svelte';
+	import Settings from '@/org.libersoft.wallet/windows/Settings/Settings.svelte';
+	import Send from '@/org.libersoft.wallet/pages/Send.svelte';
+	import Receive from '@/org.libersoft.wallet/pages/Receive.svelte';
+	import Balance from '@/org.libersoft.wallet/pages/Balance.svelte';
+	import History from '@/org.libersoft.wallet/pages/History.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
-	import WindowNetworks from '../windows/Networks/Networks.svelte';
-	import WindowWallets from '../windows/Wallets/Wallets.svelte';
+	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Networks.svelte';
+	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Wallets.svelte';
+	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/RPCServers.svelte';
 	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
 
@@ -147,8 +148,13 @@
 				<div class="status">
 					<div class="indicator {$status.color}"></div>
 					<div>{$status.text}</div>
+					<Icon img="img/reset.svg" colorVariable="--secondary-foreground" size="12px" padding="5px" onClick={reconnect} alt="Retry connection" />
 				</div>
-				<div class="server">Server: {$rpcURL}</div>
+				<div class="server">
+					{#if $selectedNetwork && $availableRPCURLs && $availableRPCURLs.length > 1}
+						<Dropdown text={$rpcURL || 'Select RPC server'} onClick={() => $rpcServersWindow?.open()} />
+					{/if}
+				</div>
 			</div>
 			<div class="right">
 				<div>
@@ -196,4 +202,5 @@
 
 <Window title="Select your network" body={WindowNetworks} bind:this={elWindowNetworks} width="500px" />
 <WindowWallets />
+<Window title="Select RPC Server" body={WindowRPCServers} bind:this={$rpcServersWindow} width="600px" />
 <Settings />

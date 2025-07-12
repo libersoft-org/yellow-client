@@ -3,26 +3,34 @@ import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnem
 import { getGuid } from '@/core/scripts/utils/utils.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
-import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken } from '@/org.libersoft.wallet/scripts/types.ts';
-export type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken } from '@/org.libersoft.wallet/scripts/types.ts';
-export interface IRPCServer {
-	url: string;
-	latency: number | null;
-	lastBlock: number | null;
-	blockAge: number | null;
-	isAlive: boolean;
-	checking?: boolean;
-}
+import { provider, status, reconnect, availableRPCURLs, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
+import type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken, IRPCServer } from '@/org.libersoft.wallet/scripts/types.ts';
+export type { IAddress, IAddressBookItem, IBalance, INetwork, IStatus, IWallet, IToken, IRPCServer } from '@/org.libersoft.wallet/scripts/types.ts';
 import { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
 export { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets } from '@/org.libersoft.wallet/scripts/stores.ts';
-export { status, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
+export { status, rpcURL, provider, reconnect, availableRPCURLs } from '@/org.libersoft.wallet/scripts/provider.ts';
 export let section = writable<string | null>('balance');
 export const settingsWindow = writable<any>();
 export const walletsWindow = writable<any>();
+export const rpcServersWindow = writable<any>();
 export let sendAddress = writable<string | number | undefined>();
 export const default_networks = writable<INetwork[]>([]);
-const refreshTimer = setInterval(refresh, 30000);
+let balanceRefreshInterval: ReturnType<typeof setInterval> | null = null;
+const BALANCE_REFRESH_INTERVAL = 30000;
+
+function startBalanceRefreshTimer(): void {
+	if (balanceRefreshInterval) clearInterval(balanceRefreshInterval);
+	balanceRefreshInterval = setInterval(() => {
+		if (get(selectedNetwork) && get(selectedAddress) && get(provider)) getBalance();
+	}, BALANCE_REFRESH_INTERVAL);
+}
+
+function stopBalanceRefreshTimer(): void {
+	if (balanceRefreshInterval) {
+		clearInterval(balanceRefreshInterval);
+		balanceRefreshInterval = null;
+	}
+}
 
 async function loadDefaultNetworks(): Promise<INetwork[]> {
 	const url = '/modules/' + module.identifier + '/json/networks.json';
@@ -36,16 +44,33 @@ async function loadDefaultNetworks(): Promise<INetwork[]> {
 	}
 }
 
-async function refresh(): Promise<void> {
-	if (get(provider)) await getBalance();
-}
-
 selectedNetworkID.subscribe((value: string | null) => {
 	updateSelectedNetwork(value, get(networks));
 });
 
 networks.subscribe((value: INetwork[]) => {
 	updateSelectedNetwork(get(selectedNetworkID), value);
+});
+
+selectedNetwork.subscribe(network => {
+	if (network && get(selectedAddress) && get(provider)) {
+		getBalance();
+		startBalanceRefreshTimer();
+	} else stopBalanceRefreshTimer();
+});
+
+selectedAddress.subscribe(address => {
+	if (address && get(selectedNetwork) && get(provider)) {
+		getBalance();
+		startBalanceRefreshTimer();
+	} else stopBalanceRefreshTimer();
+});
+
+provider.subscribe(p => {
+	if (p && get(selectedNetwork) && get(selectedAddress)) {
+		getBalance();
+		startBalanceRefreshTimer();
+	} else stopBalanceRefreshTimer();
 });
 
 function updateSelectedNetwork(selectedNetworkID: string | null, networks: INetwork[]): void {
@@ -237,12 +262,30 @@ export async function getBalance(): Promise<void> {
 			} else console.error('No rates');
 		} catch (error) {
 			console.error('Error while getting balance:', error);
+			balance.set({
+				crypto: {
+					amount: '?',
+					currency: net.currency.symbol,
+				},
+				fiat: {
+					amount: '?',
+					currency: '?',
+				},
+			});
+			balanceTimestamp.set(new Date());
 		}
-		/*
-  provider.getLogs({ address: get(selectedWallet).address }).then(logs => {
-    console.log('Logs:', logs);
-  });
-  */
+	} else {
+		balance.set({
+			crypto: {
+				amount: '?',
+				currency: 'N/A',
+			},
+			fiat: {
+				amount: '?',
+				currency: 'N/A',
+			},
+		});
+		balanceTimestamp.set(null);
 	}
 }
 
@@ -599,7 +642,7 @@ export function formatBlockAge(blockAge: number | null): string {
 	}
 }
 
-export function createRPCServersFromNetwork(network: INetwork): IRPCServer[] {
+export function getRPCServersFromNetwork(network: INetwork): IRPCServer[] {
 	if (!network?.rpcURLs) return [];
 	return network.rpcURLs.map(url => ({
 		url,
@@ -615,6 +658,13 @@ export function initializeDefaultNetworks(): void {
 	console.log('initializeDefaultNetworks() called');
 	if (get(default_networks).length > 0) {
 		console.log('Default networks already loaded');
+		setTimeout(() => {
+			if (get(selectedNetwork) && get(selectedAddress) && get(provider)) {
+				console.log('Networks already loaded, checking balance immediately...');
+				getBalance();
+				startBalanceRefreshTimer();
+			}
+		}, 1000);
 		return;
 	}
 
@@ -629,10 +679,27 @@ export function initializeDefaultNetworks(): void {
 				}))
 			);
 			console.log('default_networks store updated');
+			initializeNetworksIfNeeded();
 		})
 		.catch(error => {
 			console.error('loadDefaultNetworks() failed:', error);
 		});
+}
+
+async function initializeNetworksIfNeeded(): Promise<void> {
+	const currentNetworks = get(networks);
+	const defaultNets = get(default_networks);
+	if (currentNetworks.length === 0 && defaultNets.length > 0) {
+		networks.set([...defaultNets]);
+		const selectedNetId = get(selectedNetworkID);
+		if (!selectedNetId && defaultNets.length > 0 && defaultNets[0].guid) selectedNetworkID.set(defaultNets[0].guid);
+	} else if (currentNetworks.length > 0) {
+		const selectedNetId = get(selectedNetworkID);
+		if (!selectedNetId && currentNetworks[0].guid) selectedNetworkID.set(currentNetworks[0].guid);
+	}
+	const currentWallets = get(wallets);
+	const selectedWalletId = get(selectedWalletID);
+	if (currentWallets.length > 0 && !selectedWalletId) selectedWalletID.set(currentWallets[0].address);
 }
 
 export function generateUniqueNetworkName(baseName: string): string {
@@ -696,4 +763,10 @@ export function findNetworkByName(name: string): any | undefined {
 
 export function checkIfNetworksExist(): boolean {
 	return get(networks).length > 0;
+}
+
+export function selectRPCURL(url: string): void {
+	const net = get(selectedNetwork);
+	if (!net) return;
+	if (net.rpcURLs && net.rpcURLs.includes(url)) rpcURL.set(url);
 }

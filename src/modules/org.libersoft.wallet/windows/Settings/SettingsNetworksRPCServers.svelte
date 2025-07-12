@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type INetwork, type IRPCServer, checkRPCServer, checkAllRPCServers, formatLatency, formatBlockNumber, formatBlockAge, createRPCServersFromNetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { type INetwork, type IRPCServer, checkRPCServer, checkAllRPCServers, formatLatency, formatBlockNumber, formatBlockAge, getRPCServersFromNetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
@@ -16,7 +16,7 @@
 	$effect(() => {
 		if (network?.rpcURLs) {
 			if (!initialized || rpcServers.length === 0) {
-				rpcServers = createRPCServersFromNetwork(network);
+				rpcServers = getRPCServersFromNetwork(network);
 				initialized = true;
 				checkAllRPCServers(rpcServers).catch(console.error);
 			}

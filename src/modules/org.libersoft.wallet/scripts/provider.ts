@@ -1,17 +1,14 @@
 import { get, writable, type Writable } from 'svelte/store';
-import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnemonic, randomBytes, type PreparedTransactionRequest } from 'ethers';
-import type { IStatus } from '@/org.libersoft.wallet/scripts/types.ts';
+import { JsonRpcProvider } from 'ethers';
+import { type IStatus } from '@/org.libersoft.wallet/scripts/types.ts';
 import { selectedNetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
 import { derivedWithEquals } from '@/core/scripts/utils/derivedWithEquals.ts';
 import { balance, balanceTimestamp } from './stores';
-
-export const status = writable<IStatus>({ color: 'red', text: 'Started.' });
+export const status = writable<IStatus>({ color: 'red', text: 'No connection' });
 export const rpcURL = writable<string | null>(null);
 export const provider: Writable<JsonRpcProvider | null> = writable<JsonRpcProvider | null>(null);
-
-const WALLET_PROVIDER_RECONNECT_INTERVAL = import.meta.env.VITE_YELLOW_CLIENT_WALLET_PROVIDER_RECONNECT_INTERVAL || 10000;
+export const availableRPCURLs = writable<string[]>([]);
 let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
-
 let providerData = derivedWithEquals(
 	[selectedNetwork, rpcURL],
 	([$selectedNetwork, $rpcURL]) => {
@@ -25,17 +22,93 @@ let providerData = derivedWithEquals(
 	}
 );
 
-providerData.subscribe(({ network, rpcURL }) => {
-	console.log('providerData updated:', network, rpcURL);
+providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
+	console.log('providerData updated:', network, currentRpcURL);
 	resetBalance();
-	if (!network || !rpcURL) {
-		console.log('No network or rpcURL.');
+	if (!network) {
+		status.set({ color: 'red', text: 'No network selected' });
+		availableRPCURLs.set([]);
 		return;
 	}
-	reconnect();
+	const validURLs = (network.rpcURLs || []).filter(url => !url.includes('YOUR-PROJECT-ID') && !url.includes('YOUR-API-KEY'));
+	availableRPCURLs.set(validURLs);
+	if (!currentRpcURL || !validURLs.includes(currentRpcURL)) {
+		console.log('RPC URL not valid for new network, using first available from network');
+		if (validURLs.length > 0) {
+			console.log('Setting RPC URL to:', validURLs[0]);
+			rpcURL.set(validURLs[0]);
+			return;
+		} else {
+			console.log('No valid RPC URLs available for network');
+			status.set({ color: 'red', text: 'No valid RPC URLs available' });
+			return;
+		}
+	}
+	connectToURL();
 });
 
-function reconnect(): void {
+function connectToURL(): void {
+	const currentProvider = get(provider);
+	if (currentProvider) {
+		console.log('Destroying existing provider');
+		currentProvider.destroy();
+	}
+	provider.set(null);
+	const net = get(selectedNetwork);
+	const currentRpcURL = get(rpcURL);
+	if (!net) {
+		console.error('No selected network');
+		status.set({ color: 'red', text: 'No network selected' });
+		return;
+	}
+	if (!currentRpcURL) {
+		console.error('No RPC URL set');
+		status.set({ color: 'red', text: 'No RPC URL set' });
+		return;
+	}
+	status.set({ color: 'orange', text: 'Connecting...' });
+	try {
+		const p = new JsonRpcProvider(currentRpcURL, net.chainID);
+		provider.set(p);
+		p.on('error', (error: Error) => {
+			console.error('Provider error:', error);
+			if (get(provider) === p) {
+				p.destroy();
+				provider.set(null);
+				status.set({ color: 'red', text: 'Connection failed: ' + error.message });
+			}
+		});
+		p.on('network', (newNetwork: any) => {
+			if (get(provider) === p) status.set({ color: 'green', text: 'Connected to ' + newNetwork.name });
+			else console.log('Ignoring network event from old provider');
+		});
+		p.getNetwork()
+			.then(network => {
+				if (get(provider) === p) {
+					console.log('Successfully connected to network:', network.name);
+					status.set({ color: 'green', text: 'Connected to ' + network.name });
+				} else console.log('Ignoring connection success from old provider');
+			})
+			.catch(error => {
+				if (get(provider) === p) {
+					console.log('Failed to connect to network:', error);
+					status.set({ color: 'red', text: 'Connection failed' });
+					p.destroy();
+					provider.set(null);
+				} else console.log('Ignoring connection error from old provider');
+			});
+	} catch (error) {
+		console.error('Failed to create provider:', error);
+		status.set({ color: 'red', text: 'Failed to create provider' });
+	}
+}
+
+export function reconnect(): void {
+	const currentProvider = get(provider);
+	if (currentProvider) {
+		console.log('Destroying existing provider for reconnect');
+		currentProvider.destroy();
+	}
 	provider.set(null);
 
 	const net = get(selectedNetwork);
@@ -61,41 +134,6 @@ function reconnect(): void {
 		rpcURL.set(net.rpcURLs[0]);
 	}
 	connectToURL();
-}
-
-function connectToURL(): void {
-	console.log('Connecting to', get(rpcURL));
-	const net = get(selectedNetwork);
-	if (!net) {
-		console.error('No selected network');
-		return;
-	}
-	const p = new JsonRpcProvider(get(rpcURL)!, net.chainID);
-	provider.set(p);
-	p.on('error', (error: Error) => {
-		console.log('Provider error:', error);
-		const p = get(provider);
-		if (p) p.destroy();
-		provider.set(null);
-		setNextUrl();
-		reconnectionTimer = setTimeout(reconnect, WALLET_PROVIDER_RECONNECT_INTERVAL);
-	});
-	p.on('network', (newNetwork: any) => {
-		console.log('Network changed:', newNetwork.toJSON());
-		status.set({ color: 'green', text: 'Connected: ' + newNetwork.name });
-	});
-}
-
-function setNextUrl(): void {
-	const net = get(selectedNetwork);
-	if (!net?.rpcURLs) return;
-	let i = net.rpcURLs.indexOf(get(rpcURL) || '');
-	i += 1;
-	let url: string;
-	if (i >= net.rpcURLs.length) url = net.rpcURLs[0];
-	else url = net.rpcURLs[i];
-	rpcURL.set(url);
-	status.set({ color: 'orange', text: 'Trying next url: ' + url });
 }
 
 function resetBalance(): void {
