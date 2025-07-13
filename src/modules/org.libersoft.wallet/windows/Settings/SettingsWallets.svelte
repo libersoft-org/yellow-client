@@ -16,11 +16,8 @@
 	import DragHandle from '@/core/components/Drag/DragHandle.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Window from '@/core/components/Window/Window.svelte';
-	import WindowRecover from '../Wallets/WalletsRecover.svelte';
-	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
+	import DialogWalletsDel from '@/org.libersoft.wallet/dialogs/WalletsDel.svelte';
 	let selectedWallet: IWallet | undefined = $state();
-	let elWindowRecover: Window | undefined;
 	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
@@ -55,7 +52,7 @@
 
 <ButtonBar equalize>
 	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => setSettingsSection('wallets-add')} />
-	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => elWindowRecover?.open()} />
+	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => setSettingsSection('wallets-recover')} />
 </ButtonBar>
 {#if $wallets?.length === 0}
 	<div class="bold">No wallets found</div>
@@ -100,7 +97,6 @@
 		</Table>
 	</div>
 {/if}
-<Window title="Recover wallet from seed" body={WindowRecover} bind:this={elWindowRecover} />
 {#if selectedWallet}
 	<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
 {/if}

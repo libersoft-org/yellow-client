@@ -15,6 +15,7 @@
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
 	import SettingsWalletsEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsEdit.svelte';
+	import SettingsWalletsRecover from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsRecover.svelte';
 	let elBaseSettings: BaseSettings;
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
@@ -135,6 +136,14 @@
 							title: 'Add a new wallet',
 							name: 'wallets-add',
 							body: SettingsWalletsAdd,
+						},
+						{
+							title: 'Recover from seed',
+							name: 'wallets-recover',
+							body: SettingsWalletsRecover,
+							props: {
+								close: () => elBaseSettings?.setSettingsSection('wallets'),
+							},
 						},
 					],
 				},
