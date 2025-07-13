@@ -15,7 +15,7 @@
 	import Balance from '@/org.libersoft.wallet/pages/Balance.svelte';
 	import History from '@/org.libersoft.wallet/pages/History.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
-	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Networks.svelte';
+	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Selection.svelte';
 	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
 	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/RPCServers.svelte';
 	let elWindowNetworks;
