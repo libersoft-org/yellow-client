@@ -1,37 +1,29 @@
 <script lang="ts">
-	import { addAddress, addressIndexAlreadyExists, addressesMaxIndex, type IWallet } from '../../scripts/wallet.ts';
-	import { module } from '../../scripts/module.ts';
+	import { addAddress, addressIndexAlreadyExists, addressesMaxIndex, type IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
+	interface Props {
+		wallet: IWallet;
+		close: () => void;
+	}
+	let { wallet, close }: Props = $props();
 	let name: string | undefined = $state();
 	let index: number | undefined = $state();
 	let error: string | undefined = $state();
-	interface Props {
-		params: {
-			wallet: IWallet;
-		};
-		close: () => void;
-	}
-	let { params, close }: Props = $props();
 
-	$effect(() => {
-		console.log('[EFFECT] Initializing address add window with wallet:', $state.snapshot(params.wallet));
-		let max = addressesMaxIndex(params.wallet.addresses || []) + 1;
-		index = params.wallet.addresses ? max : 0;
+	export function onOpen(): void {
+		let max = addressesMaxIndex(wallet.addresses || []) + 1;
+		index = wallet.addresses ? max : 0;
 		name = 'Address ' + max;
-	});
-
-	function handleSubmit(): void {
-		error = undefined;
-		clickAdd();
 	}
 
 	function clickAdd(): void {
-		console.log('[ACTION] Add address:', name, index);
+		error = undefined;
 		let id: number | undefined;
 		if (index) {
 			id = Number(index);
@@ -39,12 +31,12 @@
 				error = 'Index must be a positive whole number';
 				return;
 			}
-			if (addressIndexAlreadyExists(params.wallet, id)) {
+			if (addressIndexAlreadyExists(wallet, id)) {
 				error = 'Address with the specified index already exists';
 				return;
 			}
 		}
-		addAddress(params.wallet, id, name);
+		addAddress(wallet, id, name);
 		close();
 	}
 
@@ -54,7 +46,7 @@
 	}
 </script>
 
-<Form onSubmit={handleSubmit}>
+<Form onSubmit={clickAdd}>
 	<Label text="Name">
 		<Input bind:value={name} />
 	</Label>

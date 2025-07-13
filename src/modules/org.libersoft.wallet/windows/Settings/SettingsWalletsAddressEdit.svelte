@@ -6,36 +6,41 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
-	let wallet: IWallet | undefined = $state();
-	let name: string | undefined = $state();
-	let index: string | number | undefined = $state();
-	let error: string | undefined = $state();
 	interface Props {
+		wallet: IWallet;
+		index: string | number;
 		close: () => void;
 	}
-	let { close }: Props = $props();
+	let { wallet, index, close }: Props = $props();
+	let name: string | undefined = $state();
+	let error: string | undefined = $state();
 	let elName: Input | undefined;
+	let initialized = $state(false);
 
-	/*
- export function open(_wallet: IWallet, _index: string | number) {
-  console.log('open WalletsAddressEdit, wallet:', _wallet, 'index:', _index);
-		wallet = _wallet;
-		index = _index;
- }
-		*/
-
-	export function onOpen(_wallet: IWallet, _index: string | number): void {
+	export function onOpen(): void {
 		error = undefined;
-		console.log('onOpen WalletsAddressEdit, wallet:', _wallet, 'index:', _index);
-		wallet = _wallet;
-		index = _index;
+		console.log('onOpen called - Settings address edit, wallet:', wallet, 'index:', index);
+		console.log('Current wallet addresses:', wallet?.addresses);
 		name = wallet?.addresses?.find(a => a.index === index)?.name || '';
+		console.log('Found name for edit:', name);
+		initialized = true;
 		elName?.focus();
 	}
 
+	// Fallback initialization if onOpen is not called
+	$effect(() => {
+		if (!initialized) {
+			console.log('Fallback initialization - Settings address edit');
+			name = wallet?.addresses?.find(a => a.index === index)?.name || '';
+			initialized = true;
+		}
+	});
+
 	function clickEdit(): void {
+		error = undefined;
 		console.log('Click edit:', name, index);
-		// TODO - check if index exists in wallet addresses
+		console.log('Current wallet addresses:', wallet?.addresses);
+		// TODO: check if index exists in wallet addresses
 		name = name?.trim();
 		if (!name) {
 			error = 'Name cannot be empty';
@@ -50,8 +55,12 @@
 			error = 'Address index is missing';
 			return;
 		}
+		console.log('About to call editAddressName with:', wallet, index, validatedName);
 		editAddressName(wallet, index, validatedName);
+		console.log('After editAddressName, wallet addresses:', wallet?.addresses);
+		console.log('About to call close()');
 		close();
+		console.log('After close()');
 	}
 </script>
 

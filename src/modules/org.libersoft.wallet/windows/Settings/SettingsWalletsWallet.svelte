@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { module } from '../../scripts/module.ts';
 	import { type IWallet } from '../../scripts/wallet.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -12,10 +13,7 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Window from '@/core/components/Window/Window.svelte';
 	import Address from './SettingsWalletsAddress.svelte';
-	import WindowAddressAdd from '../Wallets/WalletsAddressAdd.svelte';
-	import WindowAddressEdit from '../Wallets/WalletsAddressEdit.svelte';
 	import DialogAddressDel from '../../dialogs/WalletsAddressDel.svelte';
 	interface Props {
 		params: {
@@ -23,16 +21,16 @@
 		};
 	}
 	let { params }: Props = $props();
-	let elWindowAddressAdd: Window | undefined = $state();
-	let elWindowAddressEdit: Window | undefined = $state();
 	let elDialogAddressDel: DialogAddressDel | undefined = $state();
+	let addressToDelete: string | number | undefined = $state();
+	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	function addAddress() {
-		elWindowAddressAdd?.open();
+		setSettingsSection('wallets-address-add-' + params.wallet.address);
 	}
 
 	function editAddress(index: string | number) {
-		elWindowAddressEdit?.open(params.wallet, index);
+		setSettingsSection('wallets-address-edit-' + params.wallet.address + '-' + index);
 	}
 
 	function deleteAddress(index: string | number) {
@@ -82,6 +80,4 @@
 		<div class="bold">No addresses found in this wallet.</div>
 	{/if}
 </div>
-<Window title="Add a new address" body={WindowAddressAdd} params={{ wallet: params.wallet }} width="600px" bind:this={elWindowAddressAdd} />
-<Window title="Edit address" body={WindowAddressEdit} bind:this={elWindowAddressEdit} />
 <DialogAddressDel bind:this={elDialogAddressDel} />

@@ -20,6 +20,8 @@
 	import SettingsAddressbookExport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookExport.svelte';
 	import SettingsWalletsEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsEdit.svelte';
 	import SettingsWalletsRecover from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsRecover.svelte';
+	import SettingsWalletsAddressAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddressAdd.svelte';
+	import SettingsWalletsAddressEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddressEdit.svelte';
 	let elBaseSettings: BaseSettings;
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
@@ -31,6 +33,27 @@
 					wallet,
 				},
 			},
+			items: [
+				{
+					title: 'Add address',
+					name: 'wallets-address-add-' + wallet.address,
+					body: SettingsWalletsAddressAdd,
+					props: {
+						wallet,
+						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.address),
+					},
+				},
+				...(wallet.addresses || []).map(address => ({
+					title: 'Edit address',
+					name: 'wallets-address-edit-' + wallet.address + '-' + address.index,
+					body: SettingsWalletsAddressEdit,
+					props: {
+						wallet,
+						index: address.index,
+						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.address),
+					},
+				})),
+			],
 		}));
 	});
 
