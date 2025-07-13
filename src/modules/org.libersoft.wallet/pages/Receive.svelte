@@ -12,68 +12,67 @@
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	let addressElement: HTMLElement | undefined = $state();
-	let addressElementMessage: string | null = $state('');
-	let activeTab = $state('address');
-	let walletAddress: string = $state('');
-	let amount = $state('0');
-	let currency: string = $state('');
-	let qr: string = $state('');
-	let error: string | null = $state(null);
+	let addressElementMessage: string | null | undefined = $state();
+	let activeTab: 'address' | 'payment' = $state('address');
+	let walletAddress: string | undefined = $state();
+	let amount: string | undefined = $state();
+	let currency: string | undefined = $state();
+	let qr: string | undefined = $state();
+	let error: string | null | undefined = $state();
 
 	$effect(() => {
 		updateAddressAndQR();
 	});
 
-	function updateAddressAndQR() {
-		//console.log('updateAddressAndQR called');
+	function updateAddressAndQR(): void {
 		if ($selectedNetwork && $selectedAddress) {
 			if (activeTab === 'address') {
 				walletAddress = $selectedAddress.address;
 				console.log('walletAddress:', walletAddress);
 			} else {
-				let etherValue;
-				//console.log('amount:', amount);
-				try {
-					etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
-					//console.log('etherValue:', etherValue.toString());
-				} catch (e) {
-					error = 'Invalid amount';
-					//console.log('Invalid amount:', e);
-					return;
+				let etherValue: bigint | undefined;
+				if (amount) amount = amount.trim();
+				if (amount) {
+					try {
+						etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
+					} catch (e) {
+						error = 'Invalid amount';
+						return;
+					}
 				}
 				error = null;
-				walletAddress = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount ? '?value=' + etherValue.toString() : '');
+				walletAddress = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (etherValue ? '?value=' + etherValue.toString() : '');
 			}
-			generateQRCode(walletAddress, qrData => (qr = qrData));
+			if (walletAddress) generateQRCode(walletAddress, qrData => (qr = qrData));
 		}
 	}
 
-	function generateQRCode(text, callback) {
+	function generateQRCode(text: string, callback: (qr: string) => void): void {
 		QRCode.toDataURL(text, { width: 150 }, function (err, qr) {
 			if (err) console.error('QR CODE GENERATION:', err);
 			else callback(qr);
 		});
 	}
 
-	function clickCopy() {
+	function clickCopy(): void {
+		if (!walletAddress) return;
 		navigator.clipboard
 			.writeText(walletAddress)
 			.then(() => console.log('Text copied to clipboard'))
 			.catch(err => console.error('Error while copying to clipboard', err));
-
 		addressElementMessage = 'Copied!';
 		setTimeout(() => (addressElementMessage = null), 1000);
 	}
 
-	function resetCurrency(currencies: any) {
+	function resetCurrency(currencies: any): void {
 		const currencyList = get(currencies) as string[];
-		if (!currency || !currencyList.find((c: string) => c == currency)) {
+		if (!currency || !currencyList.find((c: string) => c === currency)) {
 			console.log('reset currency:', currency, currencyList);
 			currency = $selectedMainCurrencySymbol || '';
 		}
 	}
 
-	function setActiveTab(name) {
+	function setActiveTab(name: 'address' | 'payment'): void {
 		activeTab = name;
 		if (activeTab === 'payment') resetCurrency(currencies);
 	}
