@@ -1,19 +1,17 @@
 <script lang="ts">
-	//import { sendTransaction } from '../transaction.ts'
+	import { formatUnits } from 'ethers';
+	//import { sendTransaction } from '@/org.libersoft.wallet/scripts/transaction.ts'
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { playAudio } from '@/core/scripts/notifications.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
-	let elDialog;
 	interface Props {
-		params?: {
-			address: string;
-			amount: string;
-			fee: string;
-			currency: string;
-		};
+		params?: IPayment;
 		close?: () => void;
 	}
 	let { params, close }: Props = $props();
+	let elDialog;
 	let dialogData = {
 		title: 'Transaction confirmation',
 		body: body,
@@ -45,8 +43,8 @@
 	{#if params}
 		<div>Would you really like to send this transaction?</div>
 		<div>Address: <span class="bold">{params.address}</span></div>
-		<div>Amount: <span class="bold">{params.amount} {params.currency}</span></div>
-		<div>Transaction fee: <span class="bold">{params.fee}</span></div>
+		<div>Amount: <span class="bold">{formatUnits(params.amount, 18)} {params.currency}</span></div>
+		<div>Transaction fee: <span class="bold">{formatUnits(params.fee, 18)} {$selectedNetwork?.currency.symbol || ''}</span></div>
 	{/if}
 {/snippet}
 
