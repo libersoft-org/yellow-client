@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { addAddressBookItem, editAddressBookItem, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
-	import { module } from '../../scripts/module.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -8,23 +8,25 @@
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
 	interface Props {
-		params?: {
-			item?: IAddressBookItem | null | undefined;
-		};
-		close?: () => void;
+		item?: IAddressBookItem;
+		close: () => void;
 	}
-	let { params, close }: Props = $props();
+	let { item, close }: Props = $props();
 	let name: string | undefined = $state();
 	let address: string | undefined = $state();
 	let error: string | undefined = $state();
-	let elName: Input;
+	let elName: Input | undefined;
 
-	export function onOpen(item: IAddressBookItem) {
+	export function onOpen(): void {
 		if (item) {
 			name = item.name || '';
 			address = item.address || '';
+		} else {
+			name = '';
+			address = '';
 		}
-		if (elName) elName.focus();
+		error = '';
+		setTimeout(() => elName?.focus(), 0);
 	}
 
 	function add(): void {
@@ -34,22 +36,22 @@
 			return;
 		}
 		console.log('NEW ITEM IN ADDRESS BOOK:', name, address);
-		if (close) close();
+		close();
 	}
 
 	function edit(): void {
-		if (!params?.item?.guid) return;
-		const result = editAddressBookItem(params.item.guid, name, address);
+		if (!item?.guid) return;
+		const result = editAddressBookItem(item.guid, name, address);
 		if (!result.isValid) {
 			error = result.error;
 			return;
 		}
-		if (close) close();
+		close();
 	}
 
 	function handleSubmit(): void {
 		error = '';
-		if (params?.item) edit();
+		if (item) edit();
 		else add();
 	}
 
@@ -59,14 +61,14 @@
 </script>
 
 <style>
-	.addressbook-new {
+	.addressbook-add-edit {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
 	}
 </style>
 
-<div class="addressbook-new">
+<div class="addressbook-add-edit">
 	<Form onSubmit={handleSubmit}>
 		<Label text="Name">
 			<Input placeholder="Name" bind:value={name} bind:this={elName} onChange={clearError} />
@@ -79,7 +81,7 @@
 		{/if}
 	</Form>
 	<ButtonBar expand>
-		{#if params?.item}
+		{#if item}
 			<Button img="img/save.svg" text="Save" onClick={edit} />
 		{:else}
 			<Button img="modules/{module.identifier}/img/address-add.svg" text="Add" onClick={add} />

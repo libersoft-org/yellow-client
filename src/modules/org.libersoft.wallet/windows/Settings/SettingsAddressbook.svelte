@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { addressBook, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -12,28 +13,22 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
-	import WindowAddEdit from '@/org.libersoft.wallet/windows/Addressbook/AddressbookAddEdit.svelte';
 	import DialogDelete from '@/org.libersoft.wallet/dialogs/AddressbookDel.svelte';
 	import WindowExport from '@/org.libersoft.wallet/windows/Addressbook/AddressbookExport.svelte';
 	import WindowImport from '@/org.libersoft.wallet/windows/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	let windowItem: IAddressBookItem | null | undefined = $state();
-	let elWindowAddEdit: Window | undefined;
+	let selectedItem: IAddressBookItem | null | undefined = $state();
 	let elWindowExport: Window | undefined;
 	let elWindowImport: Window | undefined;
 	let elDialogDel: DialogDelete | undefined = $state();
+	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	function addToAddressBookWindow(): void {
-		windowItem = null;
-		elWindowAddEdit?.open();
-	}
-
-	function editItemWindow(item: IAddressBookItem): void {
-		elWindowAddEdit?.open(item);
+	function addEditItem(item?: IAddressBookItem): void {
+		setSettingsSection(item ? 'addressbook-edit-' + item.guid : 'addressbook-add');
 	}
 
 	function deleteItemWindow(item: IAddressBookItem): void {
-		windowItem = item;
+		selectedItem = item;
 		elDialogDel?.open();
 	}
 
@@ -56,7 +51,7 @@
 
 <div class="addressbook">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/address-add.svg" text="Add an address" onClick={addToAddressBookWindow} />
+		<Button img="modules/{module.identifier}/img/address-add.svg" text="Add an address" onClick={() => addEditItem()} />
 		<Button img="img/import.svg" text="Import" onClick={importAddressBook} data-testid="import-button" />
 		<Button img="img/export.svg" text="Export" onClick={exportAddressBook} data-testid="export-button" />
 	</ButtonBar>
@@ -76,7 +71,7 @@
 						<Td shorten>{a.address}</Td>
 						<Td>
 							<TableActionItems align="center">
-								<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editItemWindow(a)} />
+								<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => addEditItem(a)} />
 								<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => deleteItemWindow(a)} />
 							</TableActionItems>
 						</Td>
@@ -86,9 +81,8 @@
 		</Table>
 	{/if}
 </div>
-<Window title={windowItem ? 'Edit the item in address book' : 'Add a new item to address book'} body={WindowAddEdit} bind:this={elWindowAddEdit} width="400px" />
 <Window title="Import address book" body={WindowImport} params={{ close: () => elWindowImport?.close() }} bind:this={elWindowImport} width="600px" />
 <Window title="Export address book" body={WindowExport} params={{ close: () => elWindowExport?.close() }} bind:this={elWindowExport} width="600px" />
-{#if windowItem}
-	<DialogDelete item={windowItem} bind:this={elDialogDel} />
+{#if selectedItem}
+	<DialogDelete item={selectedItem} bind:this={elDialogDel} />
 {/if}

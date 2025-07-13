@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { wallets, networks, type IWallet, type INetwork, settingsWindow } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { addressBook, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';
@@ -12,6 +13,7 @@
 	import SettingsWalletsAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAdd.svelte';
 	import SettingsNetworksRPCServers from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksRPCServers.svelte';
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
+	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
 	let elBaseSettings: BaseSettings;
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
@@ -49,6 +51,18 @@
 			props: { network },
 		}));
 		return [...networkEditItems, ...networksRPCItems, ...networksTokensItems];
+	});
+
+	let addressbookItems = $derived.by(() => {
+		return $addressBook.map((item: IAddressBookItem) => ({
+			title: 'Edit ' + item.name,
+			name: 'addressbook-edit-' + item.guid,
+			body: SettingsAddressbookAddEdit,
+			props: {
+				item,
+				close: () => elBaseSettings?.setSettingsSection('addressbook'),
+			},
+		}));
 	});
 
 	let settingsObject = $derived(
@@ -114,6 +128,17 @@
 					title: 'Address book',
 					name: 'addressbook',
 					body: SettingsAddressbook,
+					items: [
+						...addressbookItems,
+						{
+							title: 'Add a new address',
+							name: 'addressbook-add',
+							body: SettingsAddressbookAddEdit,
+							props: {
+								close: () => elBaseSettings?.setSettingsSection('addressbook'),
+							},
+						},
+					],
 				},
 			],
 		})
