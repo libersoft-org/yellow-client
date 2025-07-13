@@ -11,9 +11,10 @@
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	interface Props {
 		network?: INetwork;
+		edit?: boolean;
 		close: () => void;
 	}
-	let { network, close }: Props = $props();
+	let { network, edit = false, close }: Props = $props();
 	let itemName: string | undefined = $state();
 	let itemCurrencySymbol: string | undefined = $state();
 	let itemCurrencyIconURL: string | undefined = $state();
@@ -61,7 +62,8 @@
 			explorerURL: itemExplorerURL,
 			tokens: network?.tokens || [],
 		};
-		if (network?.guid) {
+		// Check if we're editing an existing network or adding a new one
+		if (edit && network?.guid) {
 			newItem.guid = network.guid;
 			editNetwork(newItem);
 		} else addNetwork(newItem);
@@ -115,7 +117,7 @@
 		<Alert type="error" message={error} />
 	{/if}
 	<ButtonBar expand>
-		{#if network?.guid}
+		{#if edit}
 			<Button img="img/save.svg" text="Save" onClick={addEdit} data-testid="wallet-settings-network-save-btn" />
 		{:else}
 			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add network" onClick={addEdit} data-testid="wallet-settings-network-add-btn" />

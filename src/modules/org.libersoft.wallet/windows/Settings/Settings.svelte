@@ -56,7 +56,7 @@
 			title: 'Edit network',
 			name: 'networks-edit-' + network.guid,
 			body: SettingsNetworksAddEdit,
-			props: { network },
+			props: { network, edit: true },
 		}));
 		const networksRPCItems = $networks.map((network: INetwork) => ({
 			title: 'RPC servers',
@@ -121,6 +121,9 @@
 							title: 'Add a new network',
 							name: 'networks-add',
 							body: SettingsNetworksAddEdit,
+							props: {
+								close: () => elBaseSettings?.setSettingsSection('networks'),
+							},
 						},
 						...networksTokensItems,
 					],
