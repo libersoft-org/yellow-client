@@ -83,6 +83,4 @@
 </div>
 <Window title="Import address book" body={WindowImport} params={{ close: () => elWindowImport?.close() }} bind:this={elWindowImport} width="600px" />
 <Window title="Export address book" body={WindowExport} params={{ close: () => elWindowExport?.close() }} bind:this={elWindowExport} width="600px" />
-{#if selectedItem}
-	<DialogDelete item={selectedItem} bind:this={elDialogDel} />
-{/if}
+<DialogDelete item={selectedItem} bind:this={elDialogDel} />

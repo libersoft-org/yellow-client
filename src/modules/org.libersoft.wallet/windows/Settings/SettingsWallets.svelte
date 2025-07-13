@@ -97,6 +97,4 @@
 		</Table>
 	</div>
 {/if}
-{#if selectedWallet}
-	<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
-{/if}
+<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />

@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { module } from '../../scripts/module.ts';
-	import { networks, default_networks, type INetwork } from '../../scripts/wallet.ts';
+	import { getContext, tick } from 'svelte';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { networks, default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -16,18 +17,10 @@
 	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
-	import { getContext, tick } from 'svelte';
-	type WindowInstance = {
-		isOpen(): boolean;
-		open(): void;
-		close(): void;
-		maximize(): void;
-		restore(): void;
-	};
-	let windowItemID: string | null | undefined;
-	let windowItem: INetwork | null | undefined;
-	let elWindowSettingsNetworksImport: WindowInstance | undefined;
-	let elWindowSettingsNetworksExport: WindowInstance | undefined;
+	let selectedItemID: string | null | undefined;
+	let selectedItem: INetwork | null | undefined = $state();
+	let elWindowSettingsNetworksImport: SettingsNetworksImport | undefined;
+	let elWindowSettingsNetworksExport: SettingsNetworksExport | undefined;
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined;
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
@@ -38,15 +31,14 @@
 		} else await setSettingsSection('networks-add', { network: undefined });
 	}
 
-	async function clickDeleteNetwork(net) {
-		windowItem = net;
-		await tick();
+	function clickDeleteNetwork(net) {
+		selectedItem = net;
 		elDialogDeleteNetwork?.open();
 	}
 
 	function openTokens(net) {
 		console.log('tokenList', net);
-		windowItemID = net.guid;
+		selectedItemID = net.guid;
 		setSettingsSection('networks-tokens-' + net.guid, { item: net.guid });
 	}
 
@@ -149,6 +141,4 @@
 </div>
 <Window title="Import networks" body={SettingsNetworksImport} bind:this={elWindowSettingsNetworksImport} testId="wallet-settings-networks-import" />
 <Window title="Export networks" body={SettingsNetworksExport} bind:this={elWindowSettingsNetworksExport} testId="wallet-settings-networks-export" />
-{#if windowItem}
-	<DialogDeleteNetwork item={windowItem} bind:this={elDialogDeleteNetwork} />
-{/if}
+<DialogDeleteNetwork item={selectedItem} bind:this={elDialogDeleteNetwork} />
