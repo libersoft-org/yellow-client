@@ -17,7 +17,7 @@
 	import Window from '@/core/components/Window/Window.svelte';
 	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Selection.svelte';
 	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
-	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/RPCServers.svelte';
+	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
 	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
 
