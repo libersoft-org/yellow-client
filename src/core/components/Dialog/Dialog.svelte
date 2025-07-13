@@ -56,7 +56,7 @@
 	{#snippet top()}
 		<div class="top">
 			{#if data?.icon}
-				<Icon img={data?.icon} alt="" size="50px" padding="0px" />
+				<Icon img={data?.icon} alt="" colorVariable="--primary-foreground" size="50px" padding="0px" />
 			{/if}
 			{#if data?.body}
 				<div>
