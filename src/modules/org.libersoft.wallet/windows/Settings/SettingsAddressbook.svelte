@@ -12,14 +12,9 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
-	import Window from '@/core/components/Window/Window.svelte';
 	import DialogDelete from '@/org.libersoft.wallet/dialogs/AddressbookDel.svelte';
-	import WindowExport from '@/org.libersoft.wallet/windows/Addressbook/AddressbookExport.svelte';
-	import WindowImport from '@/org.libersoft.wallet/windows/Addressbook/AddressbookImport.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	let selectedItem: IAddressBookItem | null | undefined = $state();
-	let elWindowExport: Window | undefined;
-	let elWindowImport: Window | undefined;
 	let elDialogDel: DialogDelete | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
@@ -33,11 +28,11 @@
 	}
 
 	function exportAddressBook(): void {
-		elWindowExport?.open();
+		setSettingsSection('addressbook-export');
 	}
 
 	function importAddressBook(): void {
-		elWindowImport?.open();
+		setSettingsSection('addressbook-import');
 	}
 </script>
 
@@ -81,6 +76,4 @@
 		</Table>
 	{/if}
 </div>
-<Window title="Import address book" body={WindowImport} params={{ close: () => elWindowImport?.close() }} bind:this={elWindowImport} width="600px" />
-<Window title="Export address book" body={WindowExport} params={{ close: () => elWindowExport?.close() }} bind:this={elWindowExport} width="600px" />
 <DialogDelete item={selectedItem} bind:this={elDialogDel} />

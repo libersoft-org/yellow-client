@@ -14,6 +14,8 @@
 	import SettingsNetworksRPCServers from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksRPCServers.svelte';
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
+	import SettingsAddressbookImport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookImport.svelte';
+	import SettingsAddressbookExport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookExport.svelte';
 	import SettingsWalletsEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsEdit.svelte';
 	import SettingsWalletsRecover from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsRecover.svelte';
 	let elBaseSettings: BaseSettings;
@@ -160,6 +162,22 @@
 							title: 'Add a new address',
 							name: 'addressbook-add',
 							body: SettingsAddressbookAddEdit,
+							props: {
+								close: () => elBaseSettings?.setSettingsSection('addressbook'),
+							},
+						},
+						{
+							title: 'Import',
+							name: 'addressbook-import',
+							body: SettingsAddressbookImport,
+							props: {
+								close: () => elBaseSettings?.setSettingsSection('addressbook'),
+							},
+						},
+						{
+							title: 'Export',
+							name: 'addressbook-export',
+							body: SettingsAddressbookExport,
 							props: {
 								close: () => elBaseSettings?.setSettingsSection('addressbook'),
 							},
