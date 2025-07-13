@@ -23,25 +23,25 @@
 	let elWindowImport: Window | undefined;
 	let elDialogDel: DialogDelete | undefined = $state();
 
-	function addToAddressBookWindow() {
+	function addToAddressBookWindow(): void {
 		windowItem = null;
 		elWindowAddEdit?.open();
 	}
 
-	function editItemWindow(item: IAddressBookItem) {
+	function editItemWindow(item: IAddressBookItem): void {
 		elWindowAddEdit?.open(item);
 	}
 
-	function deleteItemWindow(item) {
+	function deleteItemWindow(item: IAddressBookItem): void {
 		windowItem = item;
 		elDialogDel?.open();
 	}
 
-	function exportAddressBook() {
+	function exportAddressBook(): void {
 		elWindowExport?.open();
 	}
 
-	function importAddressBook() {
+	function importAddressBook(): void {
 		elWindowImport?.open();
 	}
 </script>
