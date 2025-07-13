@@ -2,8 +2,8 @@
 	import { wallets, type IWallet, walletsWindow } from '../../scripts/wallet.ts';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
-	import SectionWallets from './SectionWallets.svelte';
-	import SectionAddresses from './SectionAddresses.svelte';
+	import SelectionWallets from '@/org.libersoft.wallet/windows/Wallets/SelectionWallets.svelte';
+	import SelectionWalletsWallet from '@/org.libersoft.wallet/windows/Wallets/SelectionWalletsWallet.svelte';
 	let elBaseSettings: BaseSettings | undefined;
 
 	// Debug information
@@ -14,7 +14,7 @@
 		return $wallets.map((wallet: IWallet) => ({
 			title: wallet.name,
 			name: 'wallets-' + wallet.address,
-			body: SectionAddresses,
+			body: SelectionWalletsWallet,
 			props: {
 				params: {
 					wallet,
@@ -27,7 +27,7 @@
 		return attachParents({
 			title: 'Wallets',
 			name: 'wallets',
-			body: SectionWallets,
+			body: SelectionWallets,
 			items: walletsItems,
 		});
 	});

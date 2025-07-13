@@ -16,7 +16,7 @@
 	import History from '@/org.libersoft.wallet/pages/History.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
 	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Networks.svelte';
-	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Wallets.svelte';
+	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
 	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/RPCServers.svelte';
 	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
@@ -102,6 +102,7 @@
 
 	.bar .right .address {
 		display: flex;
+		align-items: center;
 		gap: 5px;
 	}
 
@@ -165,7 +166,7 @@
 									<div bind:this={addressElement}>
 										{shortenAddress($selectedAddress.address)}
 									</div>
-									<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="15px" padding="0px" />
+									<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="16px" padding="0px" />
 								</div>
 							</Clickable>
 						{:else}
@@ -173,7 +174,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => $settingsWindow?.open()} testId="wallet-settings-btn" />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" size="24px" padding="0px" onClick={() => $settingsWindow?.open()} testId="wallet-settings-btn" />
 			</div>
 		</div>
 		<div class="buttons">
