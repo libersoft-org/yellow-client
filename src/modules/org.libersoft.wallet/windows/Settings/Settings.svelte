@@ -17,6 +17,7 @@
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
+	import SettingsNetworksTokensAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokensAddEdit.svelte';
 	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
 	import SettingsAddressbookImport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookImport.svelte';
 	import SettingsAddressbookExport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookExport.svelte';
@@ -77,6 +78,27 @@
 			name: 'networks-tokens-' + network.guid,
 			body: SettingsNetworksTokens,
 			props: { item: network.guid },
+			items: [
+				{
+					title: 'Add token',
+					name: 'networks-tokens-add-' + network.guid,
+					body: SettingsNetworksTokensAddEdit,
+					props: {
+						close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
+						networkGuid: network.guid,
+					},
+				},
+				...(network.tokens || []).map((token: any) => ({
+					title: 'Edit token',
+					name: 'networks-tokens-edit-' + network.guid + '-' + token.guid,
+					body: SettingsNetworksTokensAddEdit,
+					props: {
+						close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
+						networkGuid: network.guid,
+						item: token,
+					},
+				})),
+			],
 		}));
 	});
 

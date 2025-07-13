@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { networks, type INetwork, type IToken, addToken, editToken, findNetworkByGuid } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { type INetwork, type IToken, findNetworkByGuid } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -13,8 +13,6 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
-	import Window from '@/core/components/Window/Window.svelte';
-	import WindowAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokensAddEdit.svelte';
 	import DialogTokenDel from '@/org.libersoft.wallet/dialogs/NetworksTokensDel.svelte';
 	interface Props {
 		item: string;
@@ -22,37 +20,19 @@
 	let { item }: Props = $props();
 	let network: INetwork | undefined = $derived(findNetworkByGuid(item));
 	let tokenToDelete: IToken | undefined = $state();
-	let elWindowAddEdit: Window | undefined = $state();
 	let elDialogDel: DialogTokenDel | undefined = $state();
-	let windowItem: IToken | null | undefined = $state();
+	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	async function addTokenWindow(): Promise<void> {
-		windowItem = null;
-		await tick();
-		elWindowAddEdit?.open();
+	function clickTokenAdd(): void {
+		setSettingsSection('networks-tokens-add-' + item);
 	}
 
-	function onAdd(token: IToken): void {
-		if (network?.guid) {
-			addToken(network.guid, token);
-			elWindowAddEdit?.close();
-		}
+	function clickTokenEdit(token: IToken): void {
+		setSettingsSection('networks-tokens-edit-' + item + '-' + token.guid);
 	}
 
-	function editTokenWindow(item: IToken): void {
-		windowItem = item;
-		elWindowAddEdit?.open();
-	}
-
-	function onEdit(token: IToken): void {
-		if (network?.guid) {
-			editToken(network.guid, token);
-			elWindowAddEdit?.close();
-		}
-	}
-
-	async function delTokenWindow(item: IToken): Promise<void> {
-		tokenToDelete = item;
+	async function delTokenDialog(token: IToken): Promise<void> {
+		tokenToDelete = token;
 		await tick();
 		elDialogDel?.open();
 	}
@@ -63,6 +43,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+	}
+
+	.info {
+		display: flex;
+		gap: 5px;
 	}
 
 	.title {
@@ -77,12 +62,12 @@
 </style>
 
 <div class="token-list">
-	<div>
-		<span class="bold">Network:</span>
-		<span>{network?.name}</span>
+	<div class="info">
+		<div class="bold">Network:</div>
+		<div>{network?.name}</div>
 	</div>
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={addTokenWindow} />
+		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={clickTokenAdd} />
 	</ButtonBar>
 	{#if network?.tokens}
 		{#each network.tokens as t, i}
@@ -99,8 +84,8 @@
 						</Th>
 						<Th padding="0 10px">
 							<ActionItems align="right">
-								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => editTokenWindow(t)} />
-								<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenWindow(t)} />
+								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickTokenEdit(t)} />
+								<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenDialog(t)} />
 							</ActionItems>
 						</Th>
 					</TheadTr>
@@ -129,7 +114,6 @@
 		{/each}
 	{/if}
 </div>
-<Window title={windowItem ? 'Edit token' : 'Add token'} body={WindowAddEdit} params={{ item: windowItem, onAdd, onEdit }} bind:this={elWindowAddEdit} />
 {#if tokenToDelete && network?.guid}
 	<DialogTokenDel networkGuid={network.guid} token={tokenToDelete} bind:this={elDialogDel} />
 {/if}

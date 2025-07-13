@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { addToken, editToken, type IToken } from '@/org.libersoft.wallet/scripts/network.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -9,81 +9,68 @@
 	import Form from '@/core/components/Form/Form.svelte';
 	interface Props {
 		close: () => void;
-		params: {
-			item?: {
-				guid: string;
-				name: string;
-				icon: string;
-				symbol: string;
-				contract_address: string;
-			};
-			onAdd?: (item: any) => void;
-			onEdit?: (item: any) => void;
-		};
+		networkGuid: string;
+		item?: IToken;
 	}
-	let { close, params }: Props = $props();
-	let item_guid = $state('');
-	let item_name = $state('');
-	let item_icon = $state('');
-	let item_symbol = $state('');
-	let item_contract_address = $state('');
+	let { close, networkGuid, item }: Props = $props();
+	let token_guid = $state('');
+	let tokenName = $state('');
+	let tokenIcon = $state('');
+	let tokenSymbol = $state('');
+	let tokenContractAddress = $state('');
+	let elTokenName: Input;
+	let elTokenSymbol: Input;
+	let elTokenContractAddress: Input;
 
-	onMount(() => {
-		let item = params.item;
-		if (item) {
-			item_guid = item.guid;
-			item_name = item.name;
-			item_icon = item.icon;
-			item_symbol = item.symbol;
-			item_contract_address = item.contract_address;
+	export function onOpen(): void {
+		let token = item;
+		if (token) {
+			token_guid = token.guid;
+			tokenName = token.name;
+			tokenIcon = token.icon;
+			tokenSymbol = token.symbol;
+			tokenContractAddress = token.contract_address;
 		}
-	});
+		elTokenName?.focus();
+	}
 
 	function token() {
 		return {
-			guid: item_guid || getGuid(),
-			name: item_name,
-			icon: item_icon,
-			symbol: item_symbol,
-			contract_address: item_contract_address,
+			guid: item ? item.guid : getGuid(),
+			name: tokenName,
+			icon: tokenIcon,
+			symbol: tokenSymbol,
+			contract_address: tokenContractAddress,
 		};
 	}
 
 	function clickAdd() {
-		if (params.onAdd) {
-			params.onAdd(token());
-		}
+		addToken(networkGuid, token());
 		close();
 	}
 
 	function clickEdit() {
-		if (params.onEdit) {
-			params.onEdit(token());
-		}
+		editToken(networkGuid, token());
 		close();
-	}
-
-	function handleSubmit(): void {
-		params.item ? clickEdit() : clickAdd();
 	}
 </script>
 
-<Form onSubmit={handleSubmit}>
+<Form onSubmit={() => (item ? clickEdit() : clickAdd())}>
 	<Label text="Name">
-		<Input bind:value={item_name} />
+		<Input bind:value={tokenName} bind:this={elTokenName} />
 	</Label>
 	<Label text="Icon">
-		<Input bind:value={item_icon} />
+		<Input bind:value={tokenIcon} />
 	</Label>
 	<Label text="Symbol">
-		<Input bind:value={item_symbol} />
+		<Input bind:value={tokenSymbol} bind:this={elTokenSymbol} />
 	</Label>
 	<Label text="Contract address">
-		<Input bind:value={item_contract_address} />
+		<Input bind:value={tokenContractAddress} bind:this={elTokenContractAddress} />
 	</Label>
 </Form>
 <ButtonBar expand>
-	{#if params.item}
+	{#if item}
 		<Button img="img/save.svg" text="Save" onClick={clickEdit} />
 	{:else}
 		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={clickAdd} />
