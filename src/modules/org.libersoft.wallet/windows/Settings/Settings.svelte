@@ -14,6 +14,7 @@
 	import SettingsNetworksRPCServers from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksRPCServers.svelte';
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
+	import SettingsWalletsEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsEdit.svelte';
 	let elBaseSettings: BaseSettings;
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
@@ -24,6 +25,18 @@
 				params: {
 					wallet,
 				},
+			},
+		}));
+	});
+
+	let walletsEditItems = $derived.by(() => {
+		return $wallets.map((wallet: IWallet) => ({
+			title: 'Edit ' + wallet.name,
+			name: 'wallets-edit-' + wallet.address,
+			body: SettingsWalletsEdit,
+			props: {
+				wallet,
+				close: () => elBaseSettings?.setSettingsSection('wallets'),
 			},
 		}));
 	});
@@ -117,6 +130,7 @@
 					body: SettingsWallets,
 					items: [
 						...walletsItems,
+						...walletsEditItems,
 						{
 							title: 'Add a new wallet',
 							name: 'wallets-add',

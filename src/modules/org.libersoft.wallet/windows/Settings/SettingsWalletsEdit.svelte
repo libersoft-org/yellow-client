@@ -9,15 +9,13 @@
 	let name: string | undefined = $state();
 	let error: string | undefined = $state();
 	interface Props {
-		params: {
-			wallet: IWallet;
-		};
+		wallet: IWallet;
 		close: () => void;
 	}
-	let { params, close }: Props = $props();
+	let { wallet, close }: Props = $props();
 
 	$effect(() => {
-		name = params?.wallet?.name;
+		name = wallet?.name;
 	});
 
 	function handleSubmit(): void {
@@ -31,7 +29,7 @@
 			error = 'Name cannot be empty';
 			return;
 		}
-		if (editWallet(params.wallet, name)) close();
+		if (editWallet(wallet, name)) close();
 		else error = 'Failed to edit wallet name';
 	}
 </script>

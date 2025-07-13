@@ -17,14 +17,10 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
-	import WindowWalletsWallet from './SettingsWalletsWallet.svelte';
 	import WindowRecover from '../Wallets/WalletsRecover.svelte';
-	import WindowWalletsEdit from '../Wallets/WalletsEdit.svelte';
 	import DialogWalletsDel from '../../dialogs/WalletsDel.svelte';
 	let selectedWallet: IWallet | undefined = $state();
-	let elWindowWalletsWallet: Window | undefined;
 	let elWindowRecover: Window | undefined;
-	let elWindowWalletsEdit: Window | undefined;
 	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
@@ -38,8 +34,7 @@
 	}
 
 	function editWallet(wallet: IWallet) {
-		selectedWallet = wallet;
-		elWindowWalletsEdit?.open();
+		setSettingsSection('wallets-edit-' + wallet.address);
 	}
 
 	function handleWalletReorder(sourceIndex: number, targetIndex: number) {
@@ -106,8 +101,6 @@
 	</div>
 {/if}
 <Window title="Recover wallet from seed" body={WindowRecover} bind:this={elWindowRecover} />
-<Window title="Edit wallet name" body={WindowWalletsEdit} params={{ wallet: selectedWallet }} bind:this={elWindowWalletsEdit} />
-<Window title="Wallet details" body={WindowWalletsWallet} params={{ wallet: selectedWallet }} bind:this={elWindowWalletsWallet} />
 {#if selectedWallet}
 	<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
 {/if}
