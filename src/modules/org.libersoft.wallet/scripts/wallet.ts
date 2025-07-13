@@ -3,6 +3,7 @@ import { formatEther, getIndexedAccountPath, HDNodeWallet, JsonRpcProvider, Mnem
 import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 import { provider, status, reconnect, availableRPCURLs, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
 import type { IAddress, IBalance, INetwork, IStatus, IWallet, IToken, IRPCServer, ITokenBalance } from '@/org.libersoft.wallet/scripts/types.ts';
+import { getGuid } from '@/core/scripts/utils/utils.ts';
 export type { IAddress, IBalance, INetwork, IStatus, IWallet, IToken, IRPCServer, ITokenBalance } from '@/org.libersoft.wallet/scripts/types.ts';
 import { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets, tokenBalances } from '@/org.libersoft.wallet/scripts/stores.ts';
 export { balance, balanceTimestamp, networks, selectedAddress, selectedWallet, selectedWalletID, selectedNetwork, selectedNetworkID, wallets, tokenBalances } from '@/org.libersoft.wallet/scripts/stores.ts';
