@@ -35,7 +35,7 @@
 		if (net) {
 			if (edit) await setSettingsSection('networks-edit-' + net.guid);
 			else await setSettingsSection('networks-add', { network: net });
-		} else await setSettingsSection('networks-add');
+		} else await setSettingsSection('networks-add', { network: undefined });
 	}
 
 	async function clickDeleteNetwork(net) {

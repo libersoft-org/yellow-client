@@ -28,6 +28,12 @@
 	let elRPCURLs: (Input | undefined)[] = $state([]);
 
 	export function onOpen(): void {
+		itemName = '';
+		itemCurrencySymbol = '';
+		itemCurrencyIconURL = '';
+		itemChainID = undefined;
+		itemExplorerURL = '';
+		itemRPCURLs = [];
 		if (network) {
 			itemName = network.name;
 			itemCurrencySymbol = network.currency?.symbol || '';
@@ -36,6 +42,7 @@
 			itemExplorerURL = network.explorerURL || '';
 			itemRPCURLs = network.rpcURLs ? [...network.rpcURLs] : [];
 		}
+		error = null;
 		elName?.focus();
 	}
 
@@ -47,7 +54,7 @@
 			{ field: itemChainID, element: elChainID, convert: Number, required: 'Chain ID is required' },
 			{ field: itemChainID, element: elChainID, validate: (v: number) => (v >= 0 && Number.isInteger(v) ? null : 'Chain ID must be a positive whole number') },
 			{ field: itemExplorerURL, trim: true },
-			{ field: itemRPCURLs, isArray: true, arrayElements: elRPCURLs, required: 'RPC URL {index} is required' },
+			{ field: itemRPCURLs || [], isArray: true, arrayElements: elRPCURLs, required: 'RPC URL {index} is required' },
 		];
 		error = validateForm(validationConfig);
 		if (error) return;
@@ -58,11 +65,10 @@
 				iconURL: itemCurrencyIconURL,
 			},
 			chainID: itemChainID || 0,
-			rpcURLs: itemRPCURLs,
+			rpcURLs: itemRPCURLs || [],
 			explorerURL: itemExplorerURL,
 			tokens: network?.tokens || [],
 		};
-		// Check if we're editing an existing network or adding a new one
 		if (edit && network?.guid) {
 			newItem.guid = network.guid;
 			editNetwork(newItem);
@@ -102,16 +108,14 @@
 			<Input bind:value={itemExplorerURL} data-testid="wallet-settings-network-explorer-url-input" />
 		</Label>
 		<Label text="RPC URLs">
-			{#if itemRPCURLs}
-				{#each itemRPCURLs as rpc_url, i}
-					<div class="row">
-						<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
-						<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i))} testId="wallet-settings-network-rpc-url-remove-{i}" />
-					</div>
-				{/each}
-			{/if}
+			{#each itemRPCURLs as rpc_url, i}
+				<div class="row">
+					<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
+					<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs.filter((v, j) => j !== i))} testId="wallet-settings-network-rpc-url-remove-{i}" />
+				</div>
+			{/each}
 		</Label>
-		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...(itemRPCURLs || []), ''])} data-testid="wallet-settings-network-add-rpc-url-btn" />
+		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...itemRPCURLs, ''])} data-testid="wallet-settings-network-add-rpc-url-btn" />
 	</Form>
 	{#if error}
 		<Alert type="error" message={error} />
