@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { networks, replaceAllNetworks, replaceExistingNetwork, addNetworkWithUniqueName, addSingleNetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/scripts/utils/exceptions.ts';
+	import { networks, replaceAllNetworks, replaceExistingNetwork, addNetworkWithUniqueName, addSingleNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { ImportSuccessWithWarnings } from '@/org.libersoft.messages/scripts/utils/exceptions.ts';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';

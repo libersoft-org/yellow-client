@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type INetwork, type IRPCServer, checkRPCServer, checkAllRPCServers, formatLatency, formatBlockNumber, formatBlockAge, getRPCServersFromNetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { type INetwork, type IRPCServer, checkRPCServer, checkAllRPCServers, formatLatency, formatBlockNumber, formatBlockAge, getRPCServersFromNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';

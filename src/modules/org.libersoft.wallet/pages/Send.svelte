@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { parseUnits } from 'ethers';
-	import { sendAddress, currencies, selectedNetwork, selectedAddress } from '../scripts/wallet.ts';
-	import { module } from '../scripts/module.ts';
+	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { currencies } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
-	import DialogSend from '../dialogs/Send.svelte';
+	import DialogSend from '@/org.libersoft.wallet/dialogs/Send.svelte';
 	let currency: string | null | undefined;
 	let amount: string | number | undefined = 0;
 	let fee: string | number | undefined = 0;

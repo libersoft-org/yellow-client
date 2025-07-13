@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { module } from '../../scripts/module.ts';
-	import { type IWallet } from '../../scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { type IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';

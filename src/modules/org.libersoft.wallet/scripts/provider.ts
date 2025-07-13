@@ -1,15 +1,13 @@
 import { get, writable, type Writable } from 'svelte/store';
 import { JsonRpcProvider } from 'ethers';
-import { type IStatus } from '@/org.libersoft.wallet/scripts/types.ts';
-import { selectedNetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
+import { type IStatus } from '@/org.libersoft.wallet/scripts/network.ts';
+import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 import { derivedWithEquals } from '@/core/scripts/utils/derivedWithEquals.ts';
-import { balance, balanceTimestamp } from './stores';
 export const status = writable<IStatus>({ color: 'red', text: 'No connection' });
 export const rpcURL = writable<string | null>(null);
 export const provider: Writable<JsonRpcProvider | null> = writable<JsonRpcProvider | null>(null);
 export const availableRPCURLs = writable<string[]>([]);
 let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
-let resetBalanceTimer: ReturnType<typeof setTimeout> | undefined;
 let providerData = derivedWithEquals(
 	[selectedNetwork, rpcURL],
 	([$selectedNetwork, $rpcURL]) => {
@@ -25,11 +23,12 @@ let providerData = derivedWithEquals(
 
 providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 	console.log('providerData updated:', network, currentRpcURL);
-
 	if (!network) {
 		status.set({ color: 'red', text: 'No network selected' });
 		availableRPCURLs.set([]);
+		/* TODO: chek	if this is needed
 		debouncedResetBalance();
+		*/
 		return;
 	}
 	const validURLs = (network.rpcURLs || []).filter(url => !url.includes('YOUR-PROJECT-ID') && !url.includes('YOUR-API-KEY'));
@@ -43,7 +42,9 @@ providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 		} else {
 			console.log('No valid RPC URLs available for network');
 			status.set({ color: 'red', text: 'No valid RPC URLs available' });
+			/* TODO: chek	if this is needed
 			debouncedResetBalance();
+			*/
 			return;
 		}
 	}
@@ -134,23 +135,8 @@ export function reconnect(): void {
 	connectToURL();
 }
 
-function resetBalance(): void {
-	console.log('resetBalance');
-	balance.set({
-		crypto: {
-			amount: '?',
-			currency: get(selectedNetwork)?.currency.symbol || '?',
-		},
-		fiat: { amount: '?', currency: 'USD' },
-	});
-	balanceTimestamp.set(null);
+export function selectRPCURL(url: string): void {
+	const net = get(selectedNetwork);
+	if (!net) return;
+	if (net.rpcURLs && net.rpcURLs.includes(url)) rpcURL.set(url);
 }
-
-function debouncedResetBalance(): void {
-	if (resetBalanceTimer) clearTimeout(resetBalanceTimer);
-	resetBalanceTimer = setTimeout(() => resetBalance(), 100);
-}
-
-status.subscribe((value: IStatus) => {
-	console.log('wallet.ts Status updated:', value);
-});

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, tick } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
-	import { module } from '../../scripts/module.ts';
-	import { wallets, type IWallet, reorderWallets } from '../../scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { wallets, type IWallet, reorderWallets } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -25,8 +25,9 @@
 		setSettingsSection('wallets-' + wallet.address);
 	}
 
-	function delWallet(wallet: IWallet) {
+	async function delWallet(wallet: IWallet): Promise<void> {
 		selectedWallet = wallet;
+		await tick();
 		elDialogWalletsDel?.open();
 	}
 
@@ -97,4 +98,6 @@
 		</Table>
 	</div>
 {/if}
-<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
+{#if selectedWallet}
+	<DialogWalletsDel wallet={selectedWallet} bind:this={elDialogWalletsDel} />
+{/if}

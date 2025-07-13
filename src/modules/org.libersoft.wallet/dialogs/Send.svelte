@@ -1,6 +1,6 @@
 <script lang="ts">
-	//import { sendTransaction } from '../wallet.ts'
-	import { module } from '../scripts/module.ts';
+	//import { sendTransaction } from '../transaction.ts'
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { playAudio } from '@/core/scripts/notifications.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;

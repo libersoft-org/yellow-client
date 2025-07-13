@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { deleteAddressFromWallet, type IWallet } from '../scripts/wallet.ts';
+	import { deleteAddressFromWallet, type IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
-	let wallet: IWallet | undefined;
-	let index: string | number | undefined;
+	let wallet: IWallet;
+	let index: string | number;
 	let elDialog;
 	let dialogData = {
 		title: 'Delete address from wallet',
@@ -15,10 +15,8 @@
 	};
 
 	function clickYes() {
-		if (wallet && index !== undefined && index !== null) {
-			deleteAddressFromWallet(wallet, index);
-			elDialog?.close();
-		} else console.error('Wallet or index is undefined when trying to delete address');
+		deleteAddressFromWallet(wallet, index);
+		elDialog?.close();
 	}
 
 	function clickNo() {

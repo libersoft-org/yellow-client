@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { getGuid } from '@/core/scripts/utils/utils.ts';
-	import { module } from '../../scripts/module.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

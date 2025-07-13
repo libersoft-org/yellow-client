@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { selectAddress, walletsWindow } from '../../scripts/wallet.ts';
+	import { selectAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
 	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';

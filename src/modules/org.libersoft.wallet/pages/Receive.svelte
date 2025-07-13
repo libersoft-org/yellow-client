@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
 	import { parseUnits } from 'ethers';
-	import { module } from '../scripts/module.ts';
-	import { currencies, selectedMainCurrencySymbol, selectedAddress, selectedNetwork } from '../scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { currencies, selectedMainCurrencySymbol } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

@@ -3,7 +3,7 @@
 	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/scripts/core.ts';
 	import { active_account_id } from '@/core/scripts/stores.ts';
 	import { validateAccountsArray, validateAccountConfig } from '@/core/scripts/accounts_config.ts';
-	import { ImportSuccessWithWarnings } from '@/modules/org.libersoft.messages/scripts/utils/exceptions.ts';
+	import { ImportSuccessWithWarnings } from '@/org.libersoft.messages/scripts/utils/exceptions.ts';
 	import { log } from '@/core/scripts/tauri.ts';
 	import Window from '@/core/components/Window/Window.svelte';
 	import Import from '@/core/components/Import/Import.svelte';

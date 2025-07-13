@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { selectedNetwork, selectedAddress, balance, balanceTimestamp, tokens, getBalance, provider, tokenBalances, getTokenBalance } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { selectedNetwork, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { balance, balanceTimestamp, tokenBalances, getBalance, getTokenBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';

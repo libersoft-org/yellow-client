@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, tick } from 'svelte';
 	import { addressBook, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -22,8 +22,9 @@
 		setSettingsSection(item ? 'addressbook-edit-' + item.guid : 'addressbook-add');
 	}
 
-	function deleteItemWindow(item: IAddressBookItem): void {
+	async function deleteItemWindow(item: IAddressBookItem): Promise<void> {
 		selectedItem = item;
+		await tick();
 		elDialogDel?.open();
 	}
 
@@ -76,4 +77,6 @@
 		</Table>
 	{/if}
 </div>
-<DialogDelete item={selectedItem} bind:this={elDialogDel} />
+{#if selectedItem}
+	<DialogDelete item={selectedItem} bind:this={elDialogDel} />
+{/if}

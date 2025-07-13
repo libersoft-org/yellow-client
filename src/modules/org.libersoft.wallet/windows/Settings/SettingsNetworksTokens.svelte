@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { networks, type INetwork, type IToken, addToken, editToken } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { getContext, tick } from 'svelte';
+	import { networks, type INetwork, type IToken, addToken, editToken, findNetworkByGuid } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -19,26 +20,21 @@
 		item: string;
 	}
 	let { item }: Props = $props();
-	let net: INetwork | undefined = $state();
+	let network: INetwork | undefined = $derived(findNetworkByGuid(item));
 	let tokenToDelete: IToken | undefined = $state();
 	let elWindowAddEdit: Window | undefined = $state();
 	let elDialogDel: DialogTokenDel | undefined = $state();
 	let windowItem: IToken | null | undefined = $state();
 
-	$effect(() => {
-		const nets = $networks;
-		const foundNet = nets.find(v => v.guid === item);
-		net = foundNet;
-	});
-
-	function addTokenWindow(): void {
+	async function addTokenWindow(): Promise<void> {
 		windowItem = null;
+		await tick();
 		elWindowAddEdit?.open();
 	}
 
 	function onAdd(token: IToken): void {
-		if (net?.guid) {
-			addToken(net.guid, token);
+		if (network?.guid) {
+			addToken(network.guid, token);
 			elWindowAddEdit?.close();
 		}
 	}
@@ -49,14 +45,15 @@
 	}
 
 	function onEdit(token: IToken): void {
-		if (net?.guid) {
-			editToken(net.guid, token);
+		if (network?.guid) {
+			editToken(network.guid, token);
 			elWindowAddEdit?.close();
 		}
 	}
 
-	function delTokenWindow(item: IToken): void {
+	async function delTokenWindow(item: IToken): Promise<void> {
 		tokenToDelete = item;
+		await tick();
 		elDialogDel?.open();
 	}
 </script>
@@ -82,13 +79,13 @@
 <div class="token-list">
 	<div>
 		<span class="bold">Network:</span>
-		<span>{net?.name}</span>
+		<span>{network?.name}</span>
 	</div>
 	<ButtonBar>
 		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={addTokenWindow} />
 	</ButtonBar>
-	{#if net?.tokens}
-		{#each net.tokens as t, i}
+	{#if network?.tokens}
+		{#each network.tokens as t, i}
 			<Table>
 				<Thead>
 					<TheadTr>
@@ -133,6 +130,6 @@
 	{/if}
 </div>
 <Window title={windowItem ? 'Edit token' : 'Add token'} body={WindowAddEdit} params={{ item: windowItem, onAdd, onEdit }} bind:this={elWindowAddEdit} />
-{#if tokenToDelete && net?.guid}
-	<DialogTokenDel networkGuid={net.guid} token={tokenToDelete} bind:this={elDialogDel} />
+{#if tokenToDelete && network?.guid}
+	<DialogTokenDel networkGuid={network.guid} token={tokenToDelete} bind:this={elDialogDel} />
 {/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { selectedNetwork, rpcURL, selectRPCURL, getRPCServersFromNetwork, checkAllRPCServers, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { rpcURL, selectRPCURL } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { onMount } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

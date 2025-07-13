@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { module } from '../scripts/module.ts';
-	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress, settingsWindow, walletsWindow, rpcServersWindow, initializeDefaultNetworks, reconnect, availableRPCURLs } from '../scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { reconnect, availableRPCURLs, status } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
+	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

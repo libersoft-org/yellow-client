@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { networks, type INetwork, deleteNetwork } from '../scripts/wallet.ts';
+	import { type INetwork, deleteNetwork } from '../scripts/network.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: INetwork;

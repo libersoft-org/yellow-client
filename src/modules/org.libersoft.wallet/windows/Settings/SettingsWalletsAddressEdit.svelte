@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { editAddressName, type IWallet } from '../../scripts/wallet.ts';
+	import { editAddressName, type IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

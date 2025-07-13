@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { networks, default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { networks, default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -15,8 +15,8 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
 	let selectedItemID: string | null | undefined;
-	let selectedItem: INetwork | null | undefined = $state();
-	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined;
+	let selectedItem: INetwork | undefined = $state();
+	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	async function clickAddEditNetwork(net: INetwork | null = null, edit: boolean = false) {
@@ -26,8 +26,9 @@
 		} else await setSettingsSection('networks-add', { network: undefined });
 	}
 
-	function clickDeleteNetwork(net) {
+	async function clickDeleteNetwork(net): Promise<void> {
 		selectedItem = net;
+		await tick();
 		elDialogDeleteNetwork?.open();
 	}
 
@@ -134,4 +135,6 @@
 		</Tbody>
 	</Table>
 </div>
-<DialogDeleteNetwork item={selectedItem} bind:this={elDialogDeleteNetwork} />
+{#if selectedItem}
+	<DialogDeleteNetwork item={selectedItem} bind:this={elDialogDeleteNetwork} />
+{/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addNetwork, editNetwork, type INetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { addNetwork, editNetwork, type INetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -108,14 +108,16 @@
 			<Input bind:value={itemExplorerURL} data-testid="wallet-settings-network-explorer-url-input" />
 		</Label>
 		<Label text="RPC URLs">
-			{#each itemRPCURLs as rpc_url, i}
-				<div class="row">
-					<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
-					<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs.filter((v, j) => j !== i))} testId="wallet-settings-network-rpc-url-remove-{i}" />
-				</div>
-			{/each}
+			{#if itemRPCURLs}
+				{#each itemRPCURLs as rpc_url, i}
+					<div class="row">
+						<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
+						<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i))} testId="wallet-settings-network-rpc-url-remove-{i}" />
+					</div>
+				{/each}
+			{/if}
 		</Label>
-		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...itemRPCURLs, ''])} data-testid="wallet-settings-network-add-rpc-url-btn" />
+		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...(itemRPCURLs || []), ''])} data-testid="wallet-settings-network-add-rpc-url-btn" />
 	</Form>
 	{#if error}
 		<Alert type="error" message={error} />
