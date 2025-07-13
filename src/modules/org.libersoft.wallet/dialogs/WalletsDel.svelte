@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, type IWallet } from '../scripts/wallet.ts';
+	import { wallets, type IWallet, deleteWallet } from '../scripts/wallet.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		wallet: IWallet;
@@ -17,7 +17,7 @@
 	};
 
 	function clickYes() {
-		wallets.update(ws => ws.filter(item => item !== wallet));
+		deleteWallet(wallet);
 		elDialog?.close();
 	}
 

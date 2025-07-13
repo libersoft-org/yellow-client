@@ -243,6 +243,29 @@ export function editWallet(wallet: IWallet, name: string): boolean {
 	return success;
 }
 
+export function deleteWallet(wallet: IWallet): boolean {
+	let success = false;
+	const currentSelectedWalletID = get(selectedWalletID);
+
+	wallets.update(w => {
+		const index = w.findIndex(item => item.address === wallet.address);
+		if (index !== -1) {
+			w.splice(index, 1);
+			success = true;
+		}
+		return w;
+	});
+	if (success && currentSelectedWalletID === wallet.address) {
+		const remainingWallets = get(wallets);
+		if (remainingWallets.length > 0) {
+			selectedWalletID.set(remainingWallets[0].address);
+		} else {
+			selectedWalletID.set(null);
+		}
+	}
+	return success;
+}
+
 export async function getBalance(): Promise<void> {
 	const p = get(provider);
 	console.log('getBalance selectedNetwork: ', get(selectedNetwork), 'provider: ', p);
