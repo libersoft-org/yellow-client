@@ -13,6 +13,8 @@
 	import SettingsWalletsAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAdd.svelte';
 	import SettingsNetworksRPCServers from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksRPCServers.svelte';
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
+	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
+	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
 	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
 	import SettingsAddressbookImport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookImport.svelte';
 	import SettingsAddressbookExport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookExport.svelte';
@@ -123,6 +125,22 @@
 							title: 'Add a new network',
 							name: 'networks-add',
 							body: SettingsNetworksAddEdit,
+							props: {
+								close: () => elBaseSettings?.setSettingsSection('networks'),
+							},
+						},
+						{
+							title: 'Import',
+							name: 'networks-import',
+							body: SettingsNetworksImport,
+							props: {
+								close: () => elBaseSettings?.setSettingsSection('networks'),
+							},
+						},
+						{
+							title: 'Export',
+							name: 'networks-export',
+							body: SettingsNetworksExport,
 							props: {
 								close: () => elBaseSettings?.setSettingsSection('networks'),
 							},

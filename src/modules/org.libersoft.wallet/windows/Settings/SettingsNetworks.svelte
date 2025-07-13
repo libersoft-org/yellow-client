@@ -3,7 +3,6 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { networks, default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Window from '@/core/components/Window/Window.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -14,13 +13,9 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
-	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
-	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
 	let selectedItemID: string | null | undefined;
 	let selectedItem: INetwork | null | undefined = $state();
-	let elWindowSettingsNetworksImport: SettingsNetworksImport | undefined;
-	let elWindowSettingsNetworksExport: SettingsNetworksExport | undefined;
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined;
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
@@ -43,11 +38,11 @@
 	}
 
 	function doImport() {
-		elWindowSettingsNetworksImport?.open();
+		setSettingsSection('networks-import');
 	}
 
 	function doExport() {
-		elWindowSettingsNetworksExport?.open();
+		setSettingsSection('networks-export');
 	}
 
 	function openRPCServers(network: INetwork) {
@@ -139,6 +134,4 @@
 		</Tbody>
 	</Table>
 </div>
-<Window title="Import networks" body={SettingsNetworksImport} bind:this={elWindowSettingsNetworksImport} testId="wallet-settings-networks-import" />
-<Window title="Export networks" body={SettingsNetworksExport} bind:this={elWindowSettingsNetworksExport} testId="wallet-settings-networks-export" />
 <DialogDeleteNetwork item={selectedItem} bind:this={elDialogDeleteNetwork} />

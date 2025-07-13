@@ -182,6 +182,5 @@
 {:else}
 	<Import bind:this={importUI} testId="networks" onValidate={validateImport} onAdd={handleAdd} onReplace={hasExistingNetworks ? handleReplace : undefined} onSuccess={handleSuccess} addButtonText="Add networks" replaceButtonText="Replace All" browseButtonText="Open JSON file" qrInstructions="Point your camera at a QR code containing network configuration" />
 {/if}
-
 <Dialog data={replaceDialogData} bind:this={replaceDialog} />
 <Dialog data={conflictDialogData} bind:this={conflictDialog} />
