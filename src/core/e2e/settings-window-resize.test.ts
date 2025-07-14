@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupConsoleLogging, openGlobalSettings, closeWindow } from './test-utils';
+import { closeWelcomeWizardWindow, setupConsoleLogging, openGlobalSettings, closeWindow } from './test-utils';
 
 test.describe.parallel('Settings Window Resize Behavior', () => {
 	// Helper function to get common test elements and data
@@ -28,24 +28,8 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 
 	test.beforeEach(async ({ page }) => {
 		setupConsoleLogging(page);
-
-		// Setup account in localStorage to skip wizard
-		await page.addInitScript(() => {
-			localStorage.setItem(
-				'yellow-accounts',
-				JSON.stringify([
-					{
-						server: 'wss://localhost:8080',
-						address: 'test@localhost',
-						password: 'testpass',
-						title: 'Test Account',
-					},
-				])
-			);
-		});
-
 		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-		await page.waitForLoadState('domcontentloaded');
+		await closeWelcomeWizardWindow(page);
 	});
 
 	test('settings window moves max 10px when browser resizes by 10px', async ({ page }) => {
