@@ -190,7 +190,7 @@
 								{#if $selectedNetwork?.currency?.iconURL}
 									<Icon img={$selectedNetwork.currency.iconURL} alt={balance?.crypto.currency || '?'} size="40px" padding="0px" />
 								{/if}
-								<div class="name">{balance?.crypto.currency || '?'}</div>
+								<div class="name">{$selectedNetwork.currency.symbol || '?'}</div>
 							</div>
 						</Clickable>
 					</Td>
