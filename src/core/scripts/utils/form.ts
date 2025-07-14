@@ -13,7 +13,7 @@ export type FormValidatorConfig = IValidationRule[];
 export function validateForm(config: FormValidatorConfig): string | null {
 	for (const rule of config) {
 		if (rule.isArray) {
-			const arrayValue = rule.field;
+			const arrayValue = rule.field.value;
 			if (!arrayValue || !Array.isArray(arrayValue)) continue;
 			if (arrayValue.length === 0) continue;
 			for (let i = 0; i < arrayValue.length; i++) {
@@ -25,14 +25,14 @@ export function validateForm(config: FormValidatorConfig): string | null {
 			}
 			continue;
 		}
-		let value = rule.field;
+		let value = rule.field.value;
 		if (rule.trim && typeof value === 'string') {
 			value = value.trim();
-			rule.field = value;
+			rule.field.value = value;
 		}
 		if (rule.convert && value !== undefined && value !== null) {
 			value = rule.convert(value);
-			rule.field = value;
+			rule.field.value = value;
 		}
 		if (rule.required && (value === undefined || value === null || value === '')) {
 			rule.element?.focus();

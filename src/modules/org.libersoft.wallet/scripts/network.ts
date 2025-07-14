@@ -126,8 +126,8 @@ export function deleteNetwork(net: INetwork): void {
 	console.log('Current networks:', get(networks));
 	networks.update(n => {
 		return n.filter(item => {
-			console.log('Checking network:', item.guid, 'against', net.guid, ': item === net => ', item === net);
-			return item === net;
+			//console.log('Checking network:', item.guid, 'against', net.guid);
+			return item.guid !== net.guid;
 		});
 	});
 }

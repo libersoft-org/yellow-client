@@ -58,8 +58,8 @@
 		for (let i = 0; i < networksData.length; i++) {
 			const network = networksData[i];
 			if (!network.name || typeof network.name !== 'string') return { valid: false, error: `Network at index ${i} must have a valid name` };
-			if (!network.chainID || typeof network.chainID !== 'number') return { valid: false, error: `Network "${network.name}" must have a valid chainID` };
-			if (!network.rpcURLs || !Array.isArray(network.rpcURLs) || network.rpcURLs.length === 0) return { valid: false, error: `Network "${network.name}" must have at least one RPC URL` };
+			if (typeof network.chainID !== 'number' || network.chainID < 0) return { valid: false, error: `Network "${network.name}" must have a valid chainID` };
+			if (!Array.isArray(network.rpcURLs)) return { valid: false, error: `Network "${network.name}" must have rpcURLs` };
 			if (!network.currency || !network.currency.symbol) return { valid: false, error: `Network "${network.name}" must have currency information` };
 		}
 		return { valid: true };
