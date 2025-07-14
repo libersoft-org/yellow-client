@@ -170,7 +170,7 @@
 				<div class="message-content-image">
 					{#if loading}
 						<div class="spinner-wrap">
-							<Spinner show containerMinHeight="initial" />
+							<Spinner show />
 						</div>
 					{:else if imgUrl}
 						<ImageAspectRatio src={imgUrl} alt={file} />
