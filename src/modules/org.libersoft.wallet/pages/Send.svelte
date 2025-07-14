@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, feeLevel, fee, type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -24,11 +24,11 @@
 	let payment: IPayment | undefined = $state();
 
 	$effect(() => {
-		if ($feeLevel !== 'custom') updateFeeFromLevel();
+		if ($provider && $selectedNetwork && $selectedAddress) estimateTransactionFee();
 	});
 
 	$effect(() => {
-		if ($provider && $selectedNetwork && $selectedAddress) estimateTransactionFee();
+		if ($feeLevel) updateFeeFromLevel();
 	});
 
 	async function send() {
@@ -105,6 +105,16 @@
 					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="30px" padding="0" onClick={estimateTransactionFee} />
 				{/if}
 			</div>
+			{#if $feeLevel === 'custom' || !$feeLoading}
+				<div>
+					Estimated time:
+					{#if $transactionTimeLoading}
+						<Spinner size="12px" />
+					{:else}
+						{$transactionTime}
+					{/if}
+				</div>
+			{/if}
 		</Label>
 		{#if error}
 			<Alert type="error" message={error} />

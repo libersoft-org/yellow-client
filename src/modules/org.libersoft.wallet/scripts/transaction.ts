@@ -10,14 +10,36 @@ export interface IPayment {
 	fee: bigint;
 	currency: string | null | undefined;
 }
-let estimatedFee = {
+
+export interface FeeEstimate {
+	low: string;
+	average: string;
+	high: string;
+}
+
+export interface TransactionTimeEstimate {
+	low: string;
+	average: string;
+	high: string;
+}
+
+let estimatedFee: FeeEstimate = {
 	low: '0',
 	average: '0',
 	high: '0',
 };
+
+let estimatedTransactionTimes: TransactionTimeEstimate = {
+	low: 'unknown',
+	average: 'unknown',
+	high: 'unknown',
+};
+
 export const feeLoading = writable(false);
+export const transactionTimeLoading = writable(false);
 export const feeLevel = writable<'low' | 'average' | 'high' | 'custom'>('average');
 export const fee = writable<string | number>('0');
+export const transactionTime = writable<string>('unknown');
 
 export function getEtherAmount(amount) {
 	try {
@@ -30,7 +52,11 @@ export function getEtherAmount(amount) {
 
 export async function estimateTransactionFee(): Promise<{ low: string; average: string; high: string } | null> {
 	const providerInstance = get(provider);
-	if (!providerInstance || !get(selectedNetwork) || !get(selectedAddress)) return null;
+	if (!providerInstance || !get(selectedNetwork) || !get(selectedAddress)) {
+		console.log('estimateTransactionFee: Missing requirements');
+		return null;
+	}
+	console.log('estimateTransactionFee: Starting estimation');
 	feeLoading.set(true);
 	try {
 		const feeData = await providerInstance.getFeeData();
@@ -58,7 +84,20 @@ export async function estimateTransactionFee(): Promise<{ low: string; average: 
 			high: formatUnits(highFee, 18),
 		};
 		estimatedFee = fees;
+		console.log('estimatedFee set to:', estimatedFee);
+
+		// Update transaction time based on real data (asynchronously)
+		transactionTimeLoading.set(true);
+		updateTransactionTimes()
+			.catch(error => {
+				console.error('Error updating transaction times (non-blocking):', error);
+			})
+			.finally(() => {
+				transactionTimeLoading.set(false);
+			});
+
 		updateFeeFromLevel();
+		console.log('estimateTransactionFee: Completed, returning:', fees);
 		return fees;
 	} catch (e) {
 		console.error('Error estimating transaction fee:', e);
@@ -70,8 +109,160 @@ export async function estimateTransactionFee(): Promise<{ low: string; average: 
 
 export function updateFeeFromLevel() {
 	const currentFeeLevel = get(feeLevel);
-	if (currentFeeLevel === 'custom') return;
+	console.log('updateFeeFromLevel called with:', currentFeeLevel, 'estimatedFee:', estimatedFee);
+	if (currentFeeLevel === 'custom') {
+		transactionTime.set(getEstimatedTransactionTime('custom'));
+		return;
+	}
 	fee.set(estimatedFee[currentFeeLevel]);
+	transactionTime.set(getEstimatedTransactionTime(currentFeeLevel));
+	console.log('Updated fee to:', get(fee), 'time to:', get(transactionTime));
+}
+
+export function getEstimatedTransactionTime(feeLevel: 'low' | 'average' | 'high' | 'custom'): string {
+	if (feeLevel === 'custom') return '~depends on fee';
+	return estimatedTransactionTimes[feeLevel];
+}
+
+async function updateTransactionTimes(): Promise<void> {
+	const providerInstance = get(provider);
+	const network = get(selectedNetwork);
+	if (!providerInstance || !network) {
+		// Keep existing values as "unknown" if no provider/network
+		return;
+	}
+	try {
+		// Timeout for the entire operation
+		const timeoutPromise = new Promise<never>((_, reject) => {
+			setTimeout(() => reject(new Error('Timeout')), 5000); // 5 second timeout
+		});
+		const analysisPromise = (async () => {
+			// Get last 5 blocks for faster analysis
+			const blockCount = 5;
+			const latest = await providerInstance.getBlockNumber();
+			// Parallel fetching of fee history and blocks
+			const [feeHistoryResult, ...blockResults] = await Promise.all([providerInstance.send('eth_feeHistory', [`0x${blockCount.toString(16)}`, 'latest', [10, 50, 90]]).catch(() => null), ...Array.from({ length: blockCount }, (_, i) => providerInstance.getBlock(latest - i).catch(() => null))]);
+			// Block time analysis - require at least 3 valid blocks for accuracy
+			const blockTimes: number[] = [];
+			const validBlocks = blockResults.filter(block => block && block.timestamp);
+			if (validBlocks.length < 3) {
+				// Not enough blocks for accurate calculation
+				return null;
+			}
+			for (let i = 0; i < validBlocks.length - 1; i++) {
+				const currentBlock = validBlocks[i];
+				const previousBlock = validBlocks[i + 1];
+				if (currentBlock && previousBlock) {
+					const blockTime = currentBlock.timestamp - previousBlock.timestamp;
+					if (blockTime > 0 && blockTime < 300) {
+						// reasonable limits
+						blockTimes.push(blockTime);
+					}
+				}
+			}
+			// Require at least 2 valid block times for accurate average
+			if (blockTimes.length < 2) return null;
+			// Calculate precise average block time
+			const avgBlockTime = blockTimes.reduce((a, b) => a + b, 0) / blockTimes.length;
+			// Confirmation estimate based on real data
+			const confirmationBlocks = estimateConfirmationBlocks(feeHistoryResult, avgBlockTime);
+			// Only return if we have valid confirmation blocks
+			if (!confirmationBlocks) return null;
+			return {
+				low: formatTransactionTime(confirmationBlocks.low * avgBlockTime),
+				average: formatTransactionTime(confirmationBlocks.average * avgBlockTime),
+				high: formatTransactionTime(confirmationBlocks.high * avgBlockTime),
+			};
+		})();
+		// Either analysis completion or timeout
+		const result = await Promise.race([analysisPromise, timeoutPromise]);
+		// Only update if we got precise results
+		if (result) {
+			estimatedTransactionTimes = result;
+			// Update the transaction time store after getting new data
+			const currentFeeLevel = get(feeLevel);
+			if (currentFeeLevel !== 'custom') transactionTime.set(estimatedTransactionTimes[currentFeeLevel]);
+		}
+		// If result is null, keep existing "unknown" values
+	} catch (error) {
+		console.error('Error updating transaction times:', error);
+		// Keep existing "unknown" values, don't override with inaccurate data
+	}
+}
+
+function estimateConfirmationBlocks(feeHistory: any, avgBlockTime: number): { low: number; average: number; high: number } | null {
+	// Return null if no fee history data - we need this for accurate estimation
+	if (!feeHistory || !feeHistory.reward || !Array.isArray(feeHistory.reward) || feeHistory.reward.length === 0) {
+		return null;
+	}
+
+	try {
+		// Fee percentile analysis from fee history
+		const rewards = feeHistory.reward;
+		const validRewards = rewards.filter((reward: any) => reward && Array.isArray(reward) && reward.length >= 3);
+
+		// Need at least 3 valid rewards for accurate estimation
+		if (validRewards.length < 3) {
+			return null;
+		}
+
+		// Calculate average percentiles
+		const avgPercentiles = validRewards
+			.reduce(
+				(acc: number[], reward: any) => {
+					return [acc[0] + (parseInt(reward[0] || '0', 16) || 0), acc[1] + (parseInt(reward[1] || '0', 16) || 0), acc[2] + (parseInt(reward[2] || '0', 16) || 0)];
+				},
+				[0, 0, 0]
+			)
+			.map(sum => sum / validRewards.length);
+
+		// Estimate based on real data
+		const [, avgPercentile] = avgPercentiles;
+		// Network congestion in gwei
+		const networkCongestion = avgPercentile / 1000000000 || 1;
+
+		// Dynamic calculation based on network congestion and block time
+		const baseConfirmations = Math.max(1, Math.ceil(30 / avgBlockTime)); // Target ~30 seconds for high priority
+
+		if (networkCongestion < 5)
+			return {
+				low: baseConfirmations * 2,
+				average: baseConfirmations,
+				high: baseConfirmations,
+			};
+		else if (networkCongestion < 20)
+			return {
+				low: baseConfirmations * 3,
+				average: baseConfirmations * 2,
+				high: baseConfirmations,
+			};
+		else if (networkCongestion < 50)
+			return {
+				low: baseConfirmations * 4,
+				average: baseConfirmations * 3,
+				high: baseConfirmations,
+			};
+		else
+			return {
+				low: baseConfirmations * 6,
+				average: baseConfirmations * 4,
+				high: baseConfirmations * 2,
+			};
+	} catch (error) {
+		console.error('Error in estimateConfirmationBlocks:', error);
+		return null; // Return null on error instead of fallback
+	}
+}
+
+function formatTransactionTime(seconds: number): string {
+	if (seconds < 60) return `~${Math.round(seconds)}s`;
+	else if (seconds < 3600) {
+		const minutes = Math.round(seconds / 60);
+		return `~${minutes} min`;
+	} else {
+		const hours = Math.round(seconds / 3600);
+		return `~${hours} h`;
+	}
 }
 
 export async function sendTransaction(address: string, etherValue: bigint, etherValueFee: string, currency: string): Promise<void> {
