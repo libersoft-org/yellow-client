@@ -85,7 +85,6 @@ export async function estimateTransactionFee(): Promise<{ low: string; average: 
 		};
 		estimatedFee = fees;
 		console.log('estimatedFee set to:', estimatedFee);
-
 		// Update transaction time based on real data (asynchronously)
 		transactionTimeLoading.set(true);
 		updateTransactionTimes()
@@ -95,7 +94,6 @@ export async function estimateTransactionFee(): Promise<{ low: string; average: 
 			.finally(() => {
 				transactionTimeLoading.set(false);
 			});
-
 		updateFeeFromLevel();
 		console.log('estimateTransactionFee: Completed, returning:', fees);
 		return fees;
@@ -111,6 +109,7 @@ export function updateFeeFromLevel() {
 	const currentFeeLevel = get(feeLevel);
 	console.log('updateFeeFromLevel called with:', currentFeeLevel, 'estimatedFee:', estimatedFee);
 	if (currentFeeLevel === 'custom') {
+		// For custom, don't update fee but update transaction time based on current fee
 		transactionTime.set(getEstimatedTransactionTime('custom'));
 		return;
 	}
@@ -120,17 +119,45 @@ export function updateFeeFromLevel() {
 }
 
 export function getEstimatedTransactionTime(feeLevel: 'low' | 'average' | 'high' | 'custom'): string {
-	if (feeLevel === 'custom') return '~depends on fee';
+	if (feeLevel === 'custom') {
+		// Calculate custom time based on fee amount
+		const customFee = parseFloat(get(fee).toString());
+		const lowFee = parseFloat(estimatedFee.low);
+		const averageFee = parseFloat(estimatedFee.average);
+		const highFee = parseFloat(estimatedFee.high);
+		// If we don't have valid fee data or times, return unknown
+		if (!customFee || !lowFee || !averageFee || !highFee || estimatedTransactionTimes.low === 'unknown' || estimatedTransactionTimes.average === 'unknown' || estimatedTransactionTimes.high === 'unknown') return 'unknown';
+		// Determine which range the custom fee falls into
+		if (customFee >= highFee) return estimatedTransactionTimes.high;
+		else if (customFee >= averageFee) {
+			// Interpolate between average and high
+			const ratio = (customFee - averageFee) / (highFee - averageFee);
+			return interpolateTransactionTime(estimatedTransactionTimes.average, estimatedTransactionTimes.high, ratio);
+		} else if (customFee >= lowFee) {
+			// Interpolate between low and average
+			const ratio = (customFee - lowFee) / (averageFee - lowFee);
+			return interpolateTransactionTime(estimatedTransactionTimes.low, estimatedTransactionTimes.average, ratio);
+		} else {
+			// Custom fee is lower than low fee, estimate longer time
+			return estimatedTransactionTimes.low;
+		}
+	}
 	return estimatedTransactionTimes[feeLevel];
+}
+
+export function updateCustomFeeTransactionTime() {
+	const currentFeeLevel = get(feeLevel);
+	if (currentFeeLevel === 'custom') {
+		transactionTime.set(getEstimatedTransactionTime('custom'));
+		console.log('Updated custom fee transaction time to:', get(transactionTime));
+	}
 }
 
 async function updateTransactionTimes(): Promise<void> {
 	const providerInstance = get(provider);
 	const network = get(selectedNetwork);
-	if (!providerInstance || !network) {
-		// Keep existing values as "unknown" if no provider/network
-		return;
-	}
+	// Keep existing values as "unknown" if no provider/network
+	if (!providerInstance || !network) return;
 	try {
 		// Timeout for the entire operation
 		const timeoutPromise = new Promise<never>((_, reject) => {
@@ -145,19 +172,15 @@ async function updateTransactionTimes(): Promise<void> {
 			// Block time analysis - require at least 3 valid blocks for accuracy
 			const blockTimes: number[] = [];
 			const validBlocks = blockResults.filter(block => block && block.timestamp);
-			if (validBlocks.length < 3) {
-				// Not enough blocks for accurate calculation
-				return null;
-			}
+			// Not enough blocks for accurate calculation
+			if (validBlocks.length < 3) return null;
 			for (let i = 0; i < validBlocks.length - 1; i++) {
 				const currentBlock = validBlocks[i];
 				const previousBlock = validBlocks[i + 1];
 				if (currentBlock && previousBlock) {
 					const blockTime = currentBlock.timestamp - previousBlock.timestamp;
-					if (blockTime > 0 && blockTime < 300) {
-						// reasonable limits
-						blockTimes.push(blockTime);
-					}
+					// reasonable limits
+					if (blockTime > 0 && blockTime < 300) blockTimes.push(blockTime);
 				}
 			}
 			// Require at least 2 valid block times for accurate average
@@ -192,20 +215,13 @@ async function updateTransactionTimes(): Promise<void> {
 
 function estimateConfirmationBlocks(feeHistory: any, avgBlockTime: number): { low: number; average: number; high: number } | null {
 	// Return null if no fee history data - we need this for accurate estimation
-	if (!feeHistory || !feeHistory.reward || !Array.isArray(feeHistory.reward) || feeHistory.reward.length === 0) {
-		return null;
-	}
-
+	if (!feeHistory || !feeHistory.reward || !Array.isArray(feeHistory.reward) || feeHistory.reward.length === 0) return null;
 	try {
 		// Fee percentile analysis from fee history
 		const rewards = feeHistory.reward;
 		const validRewards = rewards.filter((reward: any) => reward && Array.isArray(reward) && reward.length >= 3);
-
 		// Need at least 3 valid rewards for accurate estimation
-		if (validRewards.length < 3) {
-			return null;
-		}
-
+		if (validRewards.length < 3) return null;
 		// Calculate average percentiles
 		const avgPercentiles = validRewards
 			.reduce(
@@ -215,15 +231,12 @@ function estimateConfirmationBlocks(feeHistory: any, avgBlockTime: number): { lo
 				[0, 0, 0]
 			)
 			.map(sum => sum / validRewards.length);
-
 		// Estimate based on real data
 		const [, avgPercentile] = avgPercentiles;
 		// Network congestion in gwei
 		const networkCongestion = avgPercentile / 1000000000 || 1;
-
 		// Dynamic calculation based on network congestion and block time
 		const baseConfirmations = Math.max(1, Math.ceil(30 / avgBlockTime)); // Target ~30 seconds for high priority
-
 		if (networkCongestion < 5)
 			return {
 				low: baseConfirmations * 2,
@@ -324,4 +337,30 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 	console.error('Error while sending a transaction:', error);
 }
 */
+}
+
+function interpolateTransactionTime(timeA: string, timeB: string, ratio: number): string {
+	// Parse time strings (e.g., "~30s", "~2 min", "~1 h")
+	const parseTime = (timeStr: string): number => {
+		const match = timeStr.match(/~(\d+)\s*(s|min|h)/);
+		if (!match) return 0;
+		const value = parseInt(match[1]);
+		const unit = match[2];
+		switch (unit) {
+			case 's':
+				return value;
+			case 'min':
+				return value * 60;
+			case 'h':
+				return value * 3600;
+			default:
+				return value;
+		}
+	};
+	const secondsA = parseTime(timeA);
+	const secondsB = parseTime(timeB);
+	if (secondsA === 0 || secondsB === 0) return timeA; // fallback
+	// Interpolate between the two times
+	const interpolatedSeconds = secondsA + (secondsB - secondsA) * ratio;
+	return formatTransactionTime(interpolatedSeconds);
 }
