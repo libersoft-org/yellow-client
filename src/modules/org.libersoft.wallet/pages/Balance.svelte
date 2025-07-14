@@ -12,6 +12,7 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	const refreshInterval = 30;
 	interface IBalanceData {
 		crypto: IBalance;
 		fiat: IBalance;
@@ -23,36 +24,28 @@
 		fiat: IBalance;
 		timestamp: Date;
 	}
-	const tokenTimers = new Map<string, NodeJS.Timeout>();
+	const tokenTimers = new Map<string, ReturnType<typeof setTimeout>>();
 	const initializedTokens = new Set<string>();
-	let balance: IBalanceData | null = null;
-	let tokenBalances = new Map<string, ITokenBalanceData>();
-	let isLoadingBalance = false;
-	let loadingTokens = new Set<string>();
-	let balanceCountdown = 0;
-	let tokenCountdowns = new Map<string, number>();
-	let countdownInterval: NodeJS.Timeout;
-	let balanceTimer: NodeJS.Timeout;
+	let balance = $state<IBalanceData | null>(null);
+	let tokenBalances = $state(new Map<string, ITokenBalanceData>());
+	let isLoadingBalance = $state(false);
+	let loadingTokens = $state(new Set<string>());
+	let balanceCountdown = $state(0);
+	let tokenCountdowns = $state(new Map<string, number>());
+	let countdownInterval: ReturnType<typeof setInterval> | null = null;
+	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(() => {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
-			// Initialize tokens individually with delays
 			if ($tokens && $tokens.length > 0) {
-				$tokens.forEach((token, index) => {
-					// Add small delay between token loads to avoid all at once
-					setTimeout(() => {
-						refreshToken(token.symbol);
-					}, index * 100);
-				});
+				$tokens.forEach((token, index) => setTimeout(() => refreshToken(token.symbol), index * 500)); // Increased delay to 500ms between tokens
 			}
 		}
-		// Start countdown update interval
 		countdownInterval = setInterval(updateCountdowns, 1000);
 	});
 
 	onDestroy(() => {
-		// Clear all timers when component is destroyed
 		tokenTimers.forEach(timer => clearTimeout(timer));
 		tokenTimers.clear();
 		if (countdownInterval) clearInterval(countdownInterval);
@@ -64,73 +57,61 @@
 		tokenCountdowns.forEach((countdown, symbol) => {
 			if (countdown > 0) tokenCountdowns.set(symbol, countdown - 1);
 		});
-		// Trigger reactivity
-		tokenCountdowns = tokenCountdowns;
+		tokenCountdowns = new Map(tokenCountdowns); // Force reactivity for Map
 	}
 
 	function selectCurrency() {
 		console.log('SELECTED CURRENCY:', $selectedNetwork?.currency);
 	}
 
-	function selectToken(id) {
+	function selectToken(id: string) {
 		console.log('SELECTED TOKEN:', id);
 	}
 
 	async function refreshToken(tokenSymbol: string) {
 		console.log('REFRESH TOKEN:', tokenSymbol);
-		// Clear existing timer for this token
+		if (loadingTokens.has(tokenSymbol)) {
+			console.log('Token already being refreshed:', tokenSymbol);
+			return;
+		}
 		if (tokenTimers.has(tokenSymbol)) {
 			clearTimeout(tokenTimers.get(tokenSymbol));
 			tokenTimers.delete(tokenSymbol);
 		}
-		// Reset countdown while refreshing
 		tokenCountdowns.set(tokenSymbol, 0);
 		loadingTokens.add(tokenSymbol);
-		loadingTokens = loadingTokens; // trigger reactivity
+		loadingTokens = new Set(loadingTokens); // Force reactivity
 
 		try {
-			// Get token balance
 			const tokenBalance = await getTokenBalance(tokenSymbol);
 			if (tokenBalance) {
-				// Get fiat conversion
 				const fiatBalance = await getExchange(tokenBalance.amount, tokenBalance.currency, 'USD');
-
 				const tokenData: ITokenBalanceData = {
 					symbol: tokenSymbol,
 					crypto: tokenBalance,
 					fiat: fiatBalance || { amount: '?', currency: 'USD' },
 					timestamp: new Date(),
 				};
-
 				tokenBalances.set(tokenSymbol, tokenData);
-				tokenBalances = tokenBalances; // trigger reactivity
+				tokenBalances = new Map(tokenBalances); // Force reactivity
 			}
 		} finally {
 			loadingTokens.delete(tokenSymbol);
-			loadingTokens = loadingTokens; // trigger reactivity
-
-			// Start 30-second timer for this specific token
-			const timer = setTimeout(() => refreshToken(tokenSymbol), 30000);
+			loadingTokens = new Set(loadingTokens); // Force reactivity
+			const timer = setTimeout(() => refreshToken(tokenSymbol), refreshInterval * 1000);
 			tokenTimers.set(tokenSymbol, timer);
-			// Start countdown after data is received
-			tokenCountdowns.set(tokenSymbol, 30);
+			tokenCountdowns.set(tokenSymbol, refreshInterval);
 		}
 	}
 
 	async function refreshBalance() {
-		// Clear existing timer
 		if (balanceTimer) clearTimeout(balanceTimer);
-		// Reset countdown while refreshing
 		balanceCountdown = 0;
 		isLoadingBalance = true;
-
 		try {
-			// Get native balance
 			const nativeBalance = await getBalance();
 			if (nativeBalance) {
-				// Get fiat conversion
 				const fiatBalance = await getExchange(nativeBalance.amount, nativeBalance.currency, 'USD');
-
 				balance = {
 					crypto: nativeBalance,
 					fiat: fiatBalance || { amount: '?', currency: 'USD' },
@@ -139,26 +120,22 @@
 			}
 		} finally {
 			isLoadingBalance = false;
-
-			// Start 30-second timer for balance
-			balanceTimer = setTimeout(refreshBalance, 30000);
-			// Start countdown after data is received
-			balanceCountdown = 30;
+			balanceTimer = setTimeout(refreshBalance, refreshInterval * 1000);
+			balanceCountdown = refreshInterval;
 		}
 	}
 
 	// Watch for new tokens being added and initialize them
-	$: if ($tokens && $tokens.length > 0) {
-		$tokens.forEach(token => {
-			if (!initializedTokens.has(token.symbol)) {
-				initializedTokens.add(token.symbol);
-				// Only auto-load if we have network and address ready
-				if ($selectedNetwork && $selectedAddress && $provider) {
-					setTimeout(() => refreshToken(token.symbol), 100);
+	$effect(() => {
+		if ($tokens && $tokens.length > 0) {
+			$tokens.forEach((token, index) => {
+				if (!initializedTokens.has(token.symbol)) {
+					initializedTokens.add(token.symbol);
+					if ($selectedNetwork && $selectedAddress && $provider) setTimeout(() => refreshToken(token.symbol), 500 + index * 200);
 				}
-			}
-		});
-	}
+			});
+		}
+	});
 </script>
 
 <style>
