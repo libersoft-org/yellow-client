@@ -158,7 +158,7 @@
 			_player.on('deviceReady', () => {
 				const stream = _player.record().stream;
 				if (!micIndicatorRef) {
-					console.error('micIndicatorRef is not set');
+					console.debug('micIndicatorRef is not set');
 					return;
 				}
 				setupMicPulseIndicator(stream, micIndicatorRef);
