@@ -31,16 +31,16 @@
 		"noPropertyAccessFromIndexSignature": false
 
 		// "baseUrl": ".",
-		//		"paths": {
-		//			"@/org.libersoft.messages/*": ["./src/modules/org.libersoft.messages/*"],
-		//			"@/org.libersoft.contacts/*": ["./src/modules/org.libersoft.contacts/*"],
-		//			"@/org.libersoft.wallet/*": ["./src/modules/org.libersoft.wallet/*"],
-		//			"@/org.libersoft.dating/*": ["./src/modules/org.libersoft.dating/*"],
-		//			"@/org.libersoft.iframe/*": ["./src/modules/org.libersoft.iframe/*"],
-		//			"@/bridge/core-bridge": ["./src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts"],
-		//			"@/*": ["./src/*"],
-		//			"$lib": ["./src/lib"],
-		//			"$lib/*": ["./src/lib/*"]
-		//		}
+		// "paths": {
+		// 	"@/org.libersoft.messages/*": ["./src/modules/org.libersoft.messages/*"],
+		// 	"@/org.libersoft.contacts/*": ["./src/modules/org.libersoft.contacts/*"],
+		// 	"@/org.libersoft.wallet/*": ["./src/modules/org.libersoft.wallet/*"],
+		// 	"@/org.libersoft.dating/*": ["./src/modules/org.libersoft.dating/*"],
+		// 	"@/org.libersoft.iframe/*": ["./src/modules/org.libersoft.iframe/*"],
+		// 	"@/bridge/core-bridge": ["./src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts"],
+		// 	"@/*": ["./src/*"],
+		// 	"$lib": ["./src/lib"],
+		// 	"$lib/*": ["./src/lib/*"]
+		// }
 	}
 }

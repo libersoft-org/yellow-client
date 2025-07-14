@@ -21,3 +21,7 @@ export const handleError = sentryEnabled
 			console.error('Unhandled error:', error);
 		};
 // </sentry>
+
+export function init() {
+	console.log('Client-side initialization complete');
+}
