@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, updateCustomFeeTransactionTime, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -29,6 +29,11 @@
 
 	$effect(() => {
 		if ($feeLevel) updateFeeFromLevel();
+	});
+
+	$effect(() => {
+		// Update transaction time when custom fee changes
+		if ($feeLevel === 'custom' && $fee) updateCustomFeeTransactionTime();
 	});
 
 	async function send() {
