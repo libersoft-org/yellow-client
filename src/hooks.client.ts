@@ -14,13 +14,15 @@ if (sentryEnabled) {
 	});
 }
 
-// If you have a custom error handler, pass it to `handleErrorWithSentry`
-export const handleError = sentryEnabled
-	? handleErrorWithSentry()
-	: ({ error }) => {
-			console.error('Unhandled error:', error);
-		};
 // </sentry>
+
+// If you have a custom error handler, pass it to `handleErrorWithSentry`
+export async function handleError(eee: any): Promise<{ message: string }> {
+	console.error('handleError:', eee.error);
+	if (sentryEnabled) {
+		return await handleErrorWithSentry(eee);
+	} else return { message: eee.message || 'An error occurred' };
+}
 
 export function init() {
 	console.log('Client-side initialization complete');

@@ -119,15 +119,27 @@ current_theme.subscribe((v: ITheme) => {
 		const value = v.properties[key];
 		//console.log('Setting CSS variable:', key, 'to', value);
 		if (key === '--background-image') {
-			const base = import.meta.env.VITE_CLIENT_PATH_BASE || '';
-			const val = `url(${base}/img/background/${value})`;
-			console.log('Setting background image:', val);
-			document.documentElement.style.setProperty(key, val);
+			applyBackgroundImage(key, value);
 		} else {
 			document.documentElement.style.setProperty(key, value);
 		}
 	});
 });
+
+// avoid console errors when the image is not found
+function applyBackgroundImage(key, value) {
+	const base = import.meta.env.VITE_CLIENT_PATH_BASE || '';
+	const val = `url(${base}/img/background/${value})`;
+
+	const img = new Image();
+	img.onload = () => {
+		document.documentElement.style.setProperty(key, val);
+	};
+	img.onerror = () => {
+		log.debug(`Failed to load background image: ${value}`);
+		document.documentElement.style.setProperty(key, 'none');
+	};
+}
 
 // Dark mode functionality - only for built-in themes (Light = 0, Dark = 1)
 export const isDarkMode = derived(selected_theme_index, $selected_theme_index => $selected_theme_index === 1);

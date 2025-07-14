@@ -38,7 +38,7 @@
 
 	let currentNode = $derived.by(() => {
 		let n = findNode(settingsObject, activeName);
-		console.log('[BaseSettings] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
+		//console.debug('[BaseSettings] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
 		return n || settingsObject;
 	});
 

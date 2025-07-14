@@ -22,5 +22,5 @@ try {
 	window?.addEventListener('unhandledrejection', handle);
 	window?.addEventListener('error', handle);
 } catch (e) {
-	log.debug('Not adding event listeners for unhandled exceptions:', e);
+	//log.debug('Not adding event listeners for unhandled exceptions:', e.message);
 }

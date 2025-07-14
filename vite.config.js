@@ -98,6 +98,7 @@ export default defineConfig(({ mode }) => {
 		build: {
 			chunkSizeWarningLimit: 6000,
 			minify: process.env.VITE_BUILD_MINIFY !== 'false',
+			//sourcemap: false,
 		},
 		optimizeDeps: {
 			exclude: ['@tauri-apps/api'],

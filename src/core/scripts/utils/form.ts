@@ -1,5 +1,5 @@
 export interface IValidationRule {
-	field: any;
+	field: { value: any };
 	element?: any;
 	trim?: boolean;
 	convert?: (value: any) => any;
