@@ -1,4 +1,4 @@
-import { type Page, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 export async function closeWelcomeWizardWindow(page: Page): Promise<void> {
 	const wizardCloseButton = page.getByTestId('welcome-wizard-Window-close');
@@ -197,5 +197,16 @@ export async function goToAccountManagement(page: Page): Promise<void> {
 	return await test.step('Go to account management', async () => {
 		await page.getByTestId('account-bar-toggle').click();
 		await page.getByTestId('account-management-button').click();
+	});
+}
+
+/**
+ * Helper function to wait for and check error message
+ * @param page - The Playwright page object
+ * @param expectedError - The expected error message (partial match)
+ */
+export async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
+	return await test.step(`Expect error message: ${expectedError}`, async () => {
+		await expect(page.locator('.alert').filter({ hasText: expectedError })).toBeVisible({});
 	});
 }

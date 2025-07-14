@@ -216,7 +216,6 @@ function _enableAccount(account: AccountStore) {
 	}
 
 	account.update(v => v);
-	// TODO: use admin logic
 	reconnectAccount(account);
 }
 

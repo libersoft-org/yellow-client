@@ -7,7 +7,7 @@
 	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
 	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
+	import { shortenAddress } from '$lib/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardWindow } from '@/core/e2e/test-utils.js';
-import { switchModule, closeWindow, expectErrorMessage } from '@/lib/test-utils/e2e-helpers.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow, expectErrorMessage, closeWindow, switchModule } from '@/core/e2e/test-utils.js';
 
 const TEST_NETWORK = {
 	name: 'Test Network',

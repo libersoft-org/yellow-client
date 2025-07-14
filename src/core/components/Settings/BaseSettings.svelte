@@ -9,6 +9,7 @@
 		settingsObject?: any;
 	}
 	let elWindow;
+
 	/*
 	interface ISettingsNode {
 		name: string;
@@ -39,6 +40,11 @@
 		let n = findNode(settingsObject, activeName);
 		console.log('[BaseSettings] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
 		return n || settingsObject;
+	});
+
+	let currentNodeInstance: any = $state();
+	$effect(() => {
+		currentNode.instance = currentNodeInstance;
 	});
 
 	let breadcrumb = $derived(makeBreadcrumb(activeName));
@@ -138,7 +144,7 @@
 			{/if}
 
 			{#if currentNode.body}
-				<currentNode.body {...currentNode.props} bind:this={currentNode.instance} close={goBack} />
+				<currentNode.body {...currentNode.props} bind:this={currentNodeInstance} close={goBack} />
 			{/if}
 		</div>
 	</div>
