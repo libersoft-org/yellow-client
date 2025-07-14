@@ -5,10 +5,6 @@
 	import SettingsAppearance from '@/core/windows/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '@/core/windows/Settings/SettingsNotifications.svelte';
 	import SettingsAppearanceTheme from './SettingsAppearanceTheme.svelte';
-	interface Props {
-		testId?: string;
-	}
-	let { testId = '' }: Props = $props();
 	let elBaseSettings: BaseSettings;
 	let settingsObject = {
 		title: 'Settings',
@@ -75,4 +71,4 @@
 	}
 </script>
 
-<BaseSettings {testId} {settingsObject} bind:this={elBaseSettings} />
+<BaseSettings testId="global-settings" {settingsObject} bind:this={elBaseSettings} />

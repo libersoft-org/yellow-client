@@ -116,6 +116,12 @@
 		flex-direction: column;
 		gap: 10px;
 	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
 </style>
 
 <Window {testId} title={settingsObject.title} bind:this={elWindow} width="600px" optionalIcon={backIcon}>
@@ -123,13 +129,17 @@
 		{#if activeName !== settingsObject.name}
 			<Breadcrumb items={breadcrumb} />
 		{/if}
-		{#if currentNode.menu}
-			{#each currentNode.menu as item (item.name ?? item.title)}
-				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
-			{/each}
-		{/if}
-		{#if currentNode.body}
-			<currentNode.body {...currentNode.props} bind:this={currentNode.instance} close={goBack} />
-		{/if}
+
+		<div class="content" data-testid={testId + '-content-' + activeName}>
+			{#if currentNode.menu}
+				{#each currentNode.menu as item (item.name ?? item.title)}
+					<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
+				{/each}
+			{/if}
+
+			{#if currentNode.body}
+				<currentNode.body {...currentNode.props} bind:this={currentNode.instance} close={goBack} />
+			{/if}
+		</div>
 	</div>
 </Window>

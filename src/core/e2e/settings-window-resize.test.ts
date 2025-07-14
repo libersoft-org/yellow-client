@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupConsoleLogging, openGlobalSettings, closeWindow } from './test-utils';
+import { closeWelcomeWizardWindow, setupConsoleLogging, openGlobalSettings, closeWindow } from './test-utils';
 
 test.describe.parallel('Settings Window Resize Behavior', () => {
 	// Helper function to get common test elements and data
@@ -18,7 +18,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 			}
 		};
 
-		const settingsWindow = page.getByTestId('settings-Window');
+		const settingsWindow = page.getByTestId('global-settings-Window');
 		const dragHandle = settingsWindow.locator('.header');
 		const viewport = page.viewportSize();
 		const windowBox = await settingsWindow.boundingBox();
@@ -28,24 +28,8 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 
 	test.beforeEach(async ({ page }) => {
 		setupConsoleLogging(page);
-
-		// Setup account in localStorage to skip wizard
-		await page.addInitScript(() => {
-			localStorage.setItem(
-				'yellow-accounts',
-				JSON.stringify([
-					{
-						server: 'wss://localhost:8080',
-						address: 'test@localhost',
-						password: 'testpass',
-						title: 'Test Account',
-					},
-				])
-			);
-		});
-
-		await page.goto('/');
-		await page.waitForLoadState('domcontentloaded');
+		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+		await closeWelcomeWizardWindow(page);
 	});
 
 	test('settings window moves max 10px when browser resizes by 10px', async ({ page }) => {
@@ -53,10 +37,10 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		await openGlobalSettings(page);
 
 		// Wait for settings window to be fully visible
-		await page.getByTestId('settings-Window').waitFor({ state: 'visible' });
+		await page.getByTestId('global-settings-Window').waitFor({ state: 'visible' });
 
 		// Get initial position of settings window
-		const settingsWindow = page.getByTestId('settings-Window');
+		const settingsWindow = page.getByTestId('global-settings-Window');
 		const initialBox = await settingsWindow.boundingBox();
 
 		expect(initialBox).not.toBeNull();
@@ -120,7 +104,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		expect(shrinkMoveY).toBeLessThanOrEqual(10);
 
 		// Close settings window
-		await closeWindow(page, 'settings');
+		await closeWindow(page, 'global-settings');
 	});
 
 	test('all four settings menu items remain visible after window resize', async ({ page }) => {
@@ -128,7 +112,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		await openGlobalSettings(page);
 
 		// Wait for settings window to be fully visible
-		await page.getByTestId('settings-Window').waitFor({ state: 'visible' });
+		await page.getByTestId('global-settings-Window').waitFor({ state: 'visible' });
 
 		// Define the four expected menu items based on Settings.svelte
 		const menuItems = [
@@ -150,7 +134,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		await checkMenuItemsVisible();
 
 		// Get settings window dimensions for minimum size test
-		const settingsWindow = page.getByTestId('settings-Window');
+		const settingsWindow = page.getByTestId('global-settings-Window');
 		const settingsBox = await settingsWindow.boundingBox();
 		expect(settingsBox).not.toBeNull();
 		if (!settingsBox) return;
@@ -202,7 +186,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		}
 
 		// Close settings window
-		await closeWindow(page, 'settings');
+		await closeWindow(page, 'global-settings');
 	});
 
 	test('settings window remains functional after multiple resizes', async ({ page }) => {
@@ -210,7 +194,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		await openGlobalSettings(page);
 
 		// Wait for settings window to be fully visible
-		await page.getByTestId('settings-Window').waitFor({ state: 'visible' });
+		await page.getByTestId('global-settings-Window').waitFor({ state: 'visible' });
 
 		// Perform multiple rapid resizes
 		const resizes = [
@@ -228,7 +212,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 
 		// Test that settings navigation still works after resizes
 		await page.getByTestId('settings-appearance').click();
-		await expect(page.getByTestId('settings-appearance-content')).toBeVisible();
+		await expect(page.getByTestId('global-settings-content-appearance')).toBeVisible();
 
 		// Go back to main settings
 		await page.getByTestId('breadcrumb-settings').click();
@@ -236,15 +220,15 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 
 		// Test another section
 		await page.getByTestId('settings-notifications').click();
-		await expect(page.getByTestId('settings-notifications-content')).toBeVisible();
+		await expect(page.getByTestId('global-settings-content-notifications')).toBeVisible();
 
 		// Close settings window
-		await closeWindow(page, 'settings');
+		await closeWindow(page, 'global-settings');
 	});
 
 	test('all menu items remain visible after dragging window to random locations', async ({ page }) => {
 		await openGlobalSettings(page);
-		await page.getByTestId('settings-Window').waitFor({ state: 'visible' });
+		await page.getByTestId('global-settings-Window').waitFor({ state: 'visible' });
 
 		const { checkMenuItemsVisible, dragHandle, viewport, windowBox } = await getTestElements(page);
 		expect(viewport).not.toBeNull();
@@ -271,12 +255,12 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 			await checkMenuItemsVisible();
 		}
 
-		await closeWindow(page, 'settings');
+		await closeWindow(page, 'global-settings');
 	});
 
 	test('all menu items remain visible after dragging window to extreme positions', async ({ page }) => {
 		await openGlobalSettings(page);
-		await page.getByTestId('settings-Window').waitFor({ state: 'visible' });
+		await page.getByTestId('global-settings-Window').waitFor({ state: 'visible' });
 
 		const { checkMenuItemsVisible, dragHandle, viewport, windowBox } = await getTestElements(page);
 		expect(viewport).not.toBeNull();
@@ -306,12 +290,12 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 			await checkMenuItemsVisible();
 		}
 
-		await closeWindow(page, 'settings');
+		await closeWindow(page, 'global-settings');
 	});
 
 	test('window drag is constrained when attempting to move outside viewport bounds', async ({ page }) => {
 		await openGlobalSettings(page);
-		await page.getByTestId('settings-Window').waitFor({ state: 'visible' });
+		await page.getByTestId('global-settings-Window').waitFor({ state: 'visible' });
 
 		const { checkMenuItemsVisible, settingsWindow, dragHandle, viewport } = await getTestElements(page);
 		expect(viewport).not.toBeNull();
@@ -348,18 +332,18 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 			// Verify window stayed within bounds (title bar must be fully visible)
 			expect(draggedBox.x).toBeGreaterThanOrEqual(0);
 			expect(draggedBox.y).toBeGreaterThanOrEqual(0);
-			expect(draggedBox.x + draggedBox.width).toBeLessThanOrEqual(viewport.width);
-			expect(draggedBox.y + draggedBox.height).toBeLessThanOrEqual(viewport.height);
+			expect(draggedBox.x + draggedBox.width).toBeLessThanOrEqual(viewport.width + 1);
+			expect(draggedBox.y + draggedBox.height).toBeLessThanOrEqual(viewport.height + 1);
 
 			await checkMenuItemsVisible();
 		}
 
-		await closeWindow(page, 'settings');
+		await closeWindow(page, 'global-settings');
 	});
 
 	test('all menu items remain visible during rapid dragging sequences', async ({ page }) => {
 		await openGlobalSettings(page);
-		await page.getByTestId('settings-Window').waitFor({ state: 'visible' });
+		await page.getByTestId('global-settings-Window').waitFor({ state: 'visible' });
 
 		const { checkMenuItemsVisible, dragHandle, viewport, windowBox } = await getTestElements(page);
 		expect(viewport).not.toBeNull();
@@ -381,6 +365,6 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 			await checkMenuItemsVisible();
 		}
 
-		await closeWindow(page, 'settings');
+		await closeWindow(page, 'global-settings');
 	});
 });

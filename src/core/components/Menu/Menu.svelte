@@ -217,5 +217,5 @@
 		</div>
 	</div>
 </div>
-<Settings testId="global-settings" bind:this={elSettings} />
+<Settings bind:this={elSettings} />
 <DialogExit bind:this={elDialogExit} />
