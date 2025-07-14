@@ -44,6 +44,7 @@
 	let elWindowBody: any | null = $state(null);
 	let lastBrowserWidth = window.innerWidth;
 	let lastBrowserHeight = window.innerHeight;
+	let hasBeenUserPositioned = false;
 
 	setContext('setTitle', setTitle);
 	setContext('Popup', { close });
@@ -122,6 +123,7 @@
 
 	function onDragEnd() {
 		isDragging = false;
+		hasBeenUserPositioned = true;
 		requestAnimationFrame(snapTransformIntoBounds);
 	}
 
@@ -160,8 +162,8 @@
 		elWindow.style.transform = 'none';
 
 		// Update last browser dimensions
-		lastBrowserWidth = windowWidth;
-		lastBrowserHeight = windowHeight;
+		lastBrowserWidth = browserWidth;
+		lastBrowserHeight = browserHeight;
 	}
 
 	function handleWindowResize() {
@@ -170,6 +172,13 @@
 		const currentHeight = window.innerHeight;
 		const widthDiff = currentWidth - lastBrowserWidth;
 		const heightDiff = currentHeight - lastBrowserHeight;
+
+		// If window hasn't been user-positioned, just re-center it
+		if (!hasBeenUserPositioned) {
+			centerWindow();
+			return;
+		}
+
 		// Get current position
 		const rect = elWindow.getBoundingClientRect();
 		const transform = window.getComputedStyle(elWindow).transform;
@@ -318,6 +327,9 @@
 	function setShow(value: boolean) {
 		show = value;
 		maximized = false;
+		if (!value) {
+			hasBeenUserPositioned = false;
+		}
 		onShowChange?.(value);
 	}
 
