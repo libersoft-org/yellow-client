@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
 		resolve: {
 			...(process.env.VITEST ? { conditions: ['browser'] } : {}),
 			alias: {
-				'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, 'src/modules/org.libersoft.messages/scripts/core-bridge-mobile.ts') : path.resolve(__dirname, 'src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
+				'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, './src/modules/org.libersoft.messages/scripts/core-bridge-mobile.ts') : path.resolve(__dirname, '.src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
 			},
 		},
 		css: {
