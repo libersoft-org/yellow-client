@@ -83,7 +83,7 @@
 			{@render children?.()}
 		{/if}
 		{#if loading}
-			<Spinner size="0px" containerMinHeight="auto" />
+			<Spinner size="20px" />
 		{:else}
 			{#if img && !right}
 				{@render icon()}

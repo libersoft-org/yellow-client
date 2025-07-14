@@ -115,7 +115,7 @@
 					<Clickable onClick={startVideo}>
 						<div class="play">
 							{#if videoStarting}
-								<Spinner show size="14px" containerMinHeight="14px" />
+								<Spinner size="14px" show />
 							{:else}
 								<Icon img="modules/{identifier}/img/play.svg" colorVariable="--primary-background" alt="Start video" size="24px" padding="0px" />
 							{/if}

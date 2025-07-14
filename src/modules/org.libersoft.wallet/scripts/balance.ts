@@ -38,6 +38,8 @@ export const balance = writable<IBalance>({
 	},
 });
 export const tokenBalances = writable<ITokenBalance[]>([]);
+export const isLoadingBalance = writable<boolean>(false);
+export const loadingTokens = writable<Set<string>>(new Set());
 let resetBalanceTimer: ReturnType<typeof setTimeout> | undefined;
 let balanceRefreshInterval: ReturnType<typeof setInterval> | null = null;
 const BALANCE_REFRESH_INTERVAL = 30000;
@@ -120,6 +122,7 @@ export async function getBalance(): Promise<void> {
 	const net = get(selectedNetwork);
 	const addr = get(selectedAddress);
 	if (net && p && addr) {
+		isLoadingBalance.set(true);
 		try {
 			console.log('Getting balance for', addr.address);
 			const balanceBigNumber = await p.getBalance(addr.address);
@@ -165,6 +168,8 @@ export async function getBalance(): Promise<void> {
 				},
 			});
 			balanceTimestamp.set(new Date());
+		} finally {
+			isLoadingBalance.set(false);
 		}
 	} else {
 		balance.set({
@@ -203,6 +208,13 @@ export async function getTokenBalances(): Promise<void> {
 		tokenBalances.set([]);
 		return;
 	}
+
+	loadingTokens.update(tokens => {
+		const newSet = new Set(tokens);
+		tokenList.forEach(token => newSet.add(token.symbol));
+		return newSet;
+	});
+
 	const balances: ITokenBalance[] = [];
 	for (const token of tokenList) {
 		try {
@@ -256,6 +268,12 @@ export async function getTokenBalances(): Promise<void> {
 		}
 	} catch (error) {
 		console.error('Error fetching exchange rates for tokens:', error);
+	} finally {
+		loadingTokens.update(tokens => {
+			const newSet = new Set(tokens);
+			tokenList.forEach(token => newSet.delete(token.symbol));
+			return newSet;
+		});
 	}
 }
 
@@ -267,6 +285,14 @@ export async function getTokenBalance(tokenSymbol: string): Promise<void> {
 	if (!net || !p || !addr) return;
 	const token = tokenList.find(t => t.symbol === tokenSymbol);
 	if (!token) return;
+
+	// Add token to loading set
+	loadingTokens.update(tokens => {
+		const newSet = new Set(tokens);
+		newSet.add(tokenSymbol);
+		return newSet;
+	});
+
 	console.log('Getting token balance for', token.symbol);
 	try {
 		const abi = ['function balanceOf(address owner) view returns (uint256)'];
@@ -329,6 +355,13 @@ export async function getTokenBalance(tokenSymbol: string): Promise<void> {
 			if (index >= 0) balances[index] = errorTokenBalance;
 			else balances.push(errorTokenBalance);
 			return balances;
+		});
+	} finally {
+		// Remove token from loading set
+		loadingTokens.update(tokens => {
+			const newSet = new Set(tokens);
+			newSet.delete(tokenSymbol);
+			return newSet;
 		});
 	}
 }

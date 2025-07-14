@@ -183,10 +183,10 @@
 			</div>
 		</div>
 		<div class="buttons">
-			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} />
-			<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" onClick={() => setSection('receive')} />
 			<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" onClick={() => setSection('balance')} />
 			<Button img="modules/{module.identifier}/img/history.svg" text="History" onClick={() => setSection('history')} />
+			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} />
+			<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" onClick={() => setSection('receive')} />
 		</div>
 		<div class="separator"></div>
 		{#if !$selectedNetwork}
