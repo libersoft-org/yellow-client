@@ -100,7 +100,7 @@ export default defineConfig(({ mode }) => {
 			minify: process.env.VITE_BUILD_MINIFY !== 'false',
 		},
 		optimizeDeps: {
-			include: ['@tauri-apps/api'],
+			exclude: ['@tauri-apps/api'],
 		},
 	};
 });

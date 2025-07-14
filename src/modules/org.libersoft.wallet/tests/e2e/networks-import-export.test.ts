@@ -600,7 +600,7 @@ async function goToNetworksManagement(page: Page): Promise<void> {
 	return await test.step('Go to networks management', async () => {
 		// The wallet module should already be selected from beforeEach
 		// Click on the network dropdown to open "Select your network" window
-		await page.getByText('--- Select your network ---').click();
+		await page.getByTestId('wallet-network-dropdown').click();
 
 		// Wait for the window to appear and click "Manage networks" button
 		await page.getByRole('button', { name: 'Manage networks' }).click();

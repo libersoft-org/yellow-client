@@ -189,8 +189,11 @@
 			<Button img="modules/{module.identifier}/img/history.svg" text="History" onClick={() => setSection('history')} />
 		</div>
 		<div class="separator"></div>
-		{#if !$selectedNetwork || !$selectedAddress}
-			<Alert type="error" message="No network or address selected" />
+		{#if !$selectedNetwork}
+			<Alert type="error" message="No network selected" />
+		{/if}
+		{#if !$selectedAddress}
+			<Alert type="error" message="No address selected" />
 		{/if}
 		<div class="section">
 			{#if $section == 'send'}

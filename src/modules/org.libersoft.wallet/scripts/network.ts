@@ -204,23 +204,7 @@ export function initializeDefaultNetworks(): void {
 		});
 }
 
-async function initializeNetworksIfNeeded(): Promise<void> {
-	const currentNetworks = get(networks);
-	const defaultNets = get(default_networks);
-	if (currentNetworks.length === 0 && defaultNets.length > 0) {
-		networks.set([...defaultNets]);
-		const selectedNetId = get(selectedNetworkID);
-		if (!selectedNetId && defaultNets.length > 0 && defaultNets[0].guid) selectedNetworkID.set(defaultNets[0].guid);
-	} else if (currentNetworks.length > 0) {
-		const selectedNetId = get(selectedNetworkID);
-		if (!selectedNetId && currentNetworks[0].guid) selectedNetworkID.set(currentNetworks[0].guid);
-	}
-	/* TODO: check if this is needed
-	const currentWallets = get(wallets);
-	const selectedWalletId = get(selectedWalletID);
-	if (currentWallets.length > 0 && !selectedWalletId) selectedWalletID.set(currentWallets[0].address);
-	*/
-}
+async function initializeNetworksIfNeeded(): Promise<void> {}
 
 export function generateUniqueNetworkName(baseName: string): string {
 	const existingNetworks = get(networks);
