@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, updateCustomFeeTransactionTime, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, currencies } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, currencies, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { getBalance, getTokenBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import { formatEther } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
@@ -21,17 +22,47 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import DialogSend from '@/org.libersoft.wallet/dialogs/SendConfirmation.svelte';
-	let currency: string | null | undefined = $state();
+	let currency: string | null | undefined = $state('');
 	let amount: string | number | undefined = $state(0);
 	let error: string | null | undefined = $state();
 	let elDialogSend: DialogSend | undefined = $state();
 	let payment: IPayment | undefined = $state();
 	let currentBalance: string | undefined = $state();
 	let remainingBalance: string | undefined = $state();
+	let remainingTokenBalance: string | undefined = $state();
+	let remainingNativeBalance: string | undefined = $state();
+	let nativeBalance: string | undefined = $state();
+
+	// Computed property to get the selected currency symbol
+	let selectedCurrencySymbol = $state('');
+
+	$effect(() => {
+		if (!currency || currency === '') {
+			selectedCurrencySymbol = '';
+			return;
+		}
+
+		// If the selected currency is the network's native currency
+		if (currency === $selectedNetwork?.currency?.symbol) {
+			selectedCurrencySymbol = $selectedNetwork.currency.symbol;
+			return;
+		}
+
+		// If it's a token, find the token and return its symbol
+		const token = $tokens.find(t => t.symbol === currency);
+		selectedCurrencySymbol = token?.symbol || currency;
+	});
 
 	$effect(() => {
 		if ($provider && $selectedNetwork && $selectedAddress) {
 			estimateTransactionFee();
+			updateBalance();
+		}
+	});
+
+	$effect(() => {
+		// Update balance when currency changes
+		if (currency) {
 			updateBalance();
 		}
 	});
@@ -52,22 +83,36 @@
 
 	async function updateBalance() {
 		try {
-			// Use provider directly to get balance
-			const p = $provider;
-			const addr = $selectedAddress;
-			if (p && addr) {
-				const balanceWei = await p.getBalance(addr.address);
-				const balanceEth = formatEther(balanceWei);
-				currentBalance = balanceEth;
+			if (!currency || currency === '') {
+				currentBalance = undefined;
+				nativeBalance = undefined;
+				return;
+			}
+
+			// Always get native balance for fee calculation
+			const nativeBalanceData = await getBalance();
+			nativeBalance = nativeBalanceData?.amount || undefined;
+
+			// If sending native currency (ETH)
+			if (currency === $selectedNetwork?.currency?.symbol) {
+				currentBalance = nativeBalance;
+			} else {
+				// If sending token, get token balance
+				const balance = await getTokenBalance(currency);
+				currentBalance = balance?.amount || undefined;
 			}
 		} catch (e) {
 			console.error('Error updating balance:', e);
+			currentBalance = undefined;
+			nativeBalance = undefined;
 		}
 	}
 
 	function updateRemainingBalance() {
-		if (!currentBalance || !amount || !$fee) {
+		if (!currentBalance || !amount || !$fee || !currency || currency === '') {
 			remainingBalance = undefined;
+			remainingTokenBalance = undefined;
+			remainingNativeBalance = undefined;
 			return;
 		}
 
@@ -77,12 +122,41 @@
 			const feeEth = parseFloat($fee.toString());
 			if (isNaN(balanceEth) || isNaN(amountEth) || isNaN(feeEth)) {
 				remainingBalance = undefined;
+				remainingTokenBalance = undefined;
+				remainingNativeBalance = undefined;
 				return;
 			}
-			const remaining = balanceEth - amountEth - feeEth;
-			remainingBalance = remaining.toFixed(6);
+
+			// If sending native currency (ETH)
+			if (currency === $selectedNetwork?.currency?.symbol) {
+				const remaining = balanceEth - amountEth - feeEth;
+				remainingBalance = remaining.toFixed(6);
+				remainingTokenBalance = undefined;
+				remainingNativeBalance = undefined;
+			} else {
+				// If sending token
+				// Token balance: current token balance - amount sent
+				const remainingToken = balanceEth - amountEth;
+				remainingTokenBalance = remainingToken.toFixed(6);
+
+				// Native balance: current native balance - fee
+				if (nativeBalance) {
+					const nativeBalanceEth = parseFloat(nativeBalance);
+					if (!isNaN(nativeBalanceEth)) {
+						const remainingNative = nativeBalanceEth - feeEth;
+						remainingNativeBalance = remainingNative.toFixed(6);
+					} else {
+						remainingNativeBalance = `- ${feeEth.toFixed(6)}`;
+					}
+				} else {
+					remainingNativeBalance = `- ${feeEth.toFixed(6)}`;
+				}
+				remainingBalance = undefined;
+			}
 		} catch (e) {
 			remainingBalance = undefined;
+			remainingTokenBalance = undefined;
+			remainingNativeBalance = undefined;
 		}
 	}
 
@@ -105,6 +179,10 @@
 		const paymentAddress = $sendAddress;
 		if (!paymentAddress) {
 			error = 'Address is required';
+			return;
+		}
+		if (!currency || currency === '') {
+			error = 'Currency is required';
 			return;
 		}
 		const etherAmount = getEtherAmount(amount);
@@ -155,11 +233,14 @@
 			<Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Currency">
-			<DropdownFilter options={$currencies} enabled={!!($selectedNetwork && $selectedAddress)} />
+			<DropdownFilter options={$currencies} bind:selected={currency} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Amount">
 			<div class="row">
 				<Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} />
+				{#if currency && currency !== ''}
+					<div>{selectedCurrencySymbol}</div>
+				{/if}
 				<Button img="modules/{module.identifier}/img/max.svg" text="Max" enabled={!!($selectedNetwork && $selectedAddress && currentBalance && $fee)} onClick={setMaxAmount} />
 			</div>
 		</Label>
@@ -200,18 +281,29 @@
 				<Tr>
 					<Td bold>Current balance:</Td>
 					<Td>
-						{#if currentBalance !== undefined}
-							{currentBalance} {$selectedNetwork?.currency?.symbol || ''}
-						{:else}
+						{#if currentBalance !== undefined && currency && currency !== ''}
+							{currentBalance} {selectedCurrencySymbol}
+						{:else if currency && currency !== ''}
 							<Spinner size="12px" />
+						{:else}
+							—
 						{/if}
 					</Td>
 				</Tr>
 				<Tr>
 					<Td bold>Balance after transaction:</Td>
 					<Td>
-						{#if remainingBalance !== undefined}
-							{remainingBalance} {$selectedNetwork?.currency?.symbol || ''}
+						{#if !currency || currency === '' || !amount || amount === '' || amount === 0}
+							—
+						{:else if currency === $selectedNetwork?.currency?.symbol}
+							{#if remainingBalance !== undefined}
+								{remainingBalance} {selectedCurrencySymbol}
+							{:else}
+								<Spinner size="12px" />
+							{/if}
+						{:else if remainingTokenBalance !== undefined && remainingNativeBalance !== undefined}
+							<div>{remainingTokenBalance} {selectedCurrencySymbol}</div>
+							<div>{remainingNativeBalance} {$selectedNetwork?.currency?.symbol || ''}</div>
 						{:else}
 							<Spinner size="12px" />
 						{/if}
