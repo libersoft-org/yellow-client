@@ -10,7 +10,7 @@
 	let { options = [], selected = $bindable(''), enabled = true }: Props = $props();
 	let filteredOptions = $state(options);
 	let showOptions = $state(false);
-	let inputRef: HTMLInputElement | undefined;
+	let inputRef: HTMLInputElement | undefined = $state();
 	let inputValue = $state('');
 
 	export function focus() {
