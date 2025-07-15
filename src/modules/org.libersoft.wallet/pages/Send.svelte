@@ -167,9 +167,16 @@
 			const balanceEth = parseFloat(currentBalance);
 			const feeEth = parseFloat($fee.toString());
 			if (isNaN(balanceEth) || isNaN(feeEth)) return;
-			const maxAmount = balanceEth - feeEth;
-			if (maxAmount > 0) amount = maxAmount.toFixed(6);
-			else amount = '0';
+
+			// If sending native currency (ETH), subtract fee from balance
+			if (currency === $selectedNetwork?.currency?.symbol) {
+				const maxAmount = balanceEth - feeEth;
+				if (maxAmount > 0) amount = maxAmount.toFixed(6);
+				else amount = '0';
+			} else {
+				// If sending token, use full token balance (fee is paid in native currency)
+				amount = balanceEth.toFixed(6);
+			}
 		} catch (e) {
 			console.error('Error setting max amount:', e);
 		}
