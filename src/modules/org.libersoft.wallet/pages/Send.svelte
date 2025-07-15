@@ -102,7 +102,7 @@
 			// Always get native balance for fee calculation
 			const nativeBalanceData = await getBalance();
 			nativeBalance = nativeBalanceData?.amount || undefined;
-			// If sending native currency (ETH)
+			// If sending native currency
 			if (currency === $selectedNetwork?.currency?.symbol) currentBalance = nativeBalance;
 			else {
 				// If sending token, get token balance
@@ -124,34 +124,34 @@
 			return;
 		}
 		try {
-			const balanceEth = parseFloat(currentBalance);
-			const amountEth = parseFloat(amount.toString());
-			const feeEth = parseFloat($fee.toString());
-			if (isNaN(balanceEth) || isNaN(amountEth) || isNaN(feeEth)) {
+			const balanceNative = parseFloat(currentBalance);
+			const amountNative = parseFloat(amount.toString());
+			const feeNative = parseFloat($fee.toString());
+			if (isNaN(balanceNative) || isNaN(amountNative) || isNaN(feeNative)) {
 				remainingBalance = undefined;
 				remainingTokenBalance = undefined;
 				remainingNativeBalance = undefined;
 				return;
 			}
-			// If sending native currency (ETH)
+			// If sending native currency
 			if (currency === $selectedNetwork?.currency?.symbol) {
-				const remaining = balanceEth - amountEth - feeEth;
+				const remaining = balanceNative - amountNative - feeNative;
 				remainingBalance = remaining.toFixed(6);
 				remainingTokenBalance = undefined;
 				remainingNativeBalance = undefined;
 			} else {
 				// If sending token
 				// Token balance: current token balance - amount sent
-				const remainingToken = balanceEth - amountEth;
+				const remainingToken = balanceNative - amountNative;
 				remainingTokenBalance = remainingToken.toFixed(6);
 				// Native balance: current native balance - fee
 				if (nativeBalance) {
-					const nativeBalanceEth = parseFloat(nativeBalance);
-					if (!isNaN(nativeBalanceEth)) {
-						const remainingNative = nativeBalanceEth - feeEth;
+					const nativebalanceNative = parseFloat(nativeBalance);
+					if (!isNaN(nativebalanceNative)) {
+						const remainingNative = nativebalanceNative - feeNative;
 						remainingNativeBalance = remainingNative.toFixed(6);
-					} else remainingNativeBalance = `- ${feeEth.toFixed(6)}`;
-				} else remainingNativeBalance = `- ${feeEth.toFixed(6)}`;
+					} else remainingNativeBalance = `- ${feeNative.toFixed(6)}`;
+				} else remainingNativeBalance = `- ${feeNative.toFixed(6)}`;
 				remainingBalance = undefined;
 			}
 		} catch (e) {
@@ -164,18 +164,18 @@
 	async function setMaxAmount() {
 		if (!currentBalance || !$fee) return;
 		try {
-			const balanceEth = parseFloat(currentBalance);
-			const feeEth = parseFloat($fee.toString());
-			if (isNaN(balanceEth) || isNaN(feeEth)) return;
+			const balanceNative = parseFloat(currentBalance);
+			const feeNative = parseFloat($fee.toString());
+			if (isNaN(balanceNative) || isNaN(feeNative)) return;
 
-			// If sending native currency (ETH), subtract fee from balance
+			// If sending native currency, subtract fee from balance
 			if (currency === $selectedNetwork?.currency?.symbol) {
-				const maxAmount = balanceEth - feeEth;
+				const maxAmount = balanceNative - feeNative;
 				if (maxAmount > 0) amount = maxAmount.toFixed(6);
 				else amount = '0';
 			} else {
 				// If sending token, use full token balance (fee is paid in native currency)
-				amount = balanceEth.toFixed(6);
+				amount = balanceNative.toFixed(6);
 			}
 		} catch (e) {
 			console.error('Error setting max amount:', e);
