@@ -5,6 +5,7 @@
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { formatEther } from 'ethers';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -21,9 +22,14 @@
 	let error: string | null | undefined = $state();
 	let elDialogSend: DialogSend | undefined = $state();
 	let payment: IPayment | undefined = $state();
+	let currentBalance: string | undefined = $state();
+	let remainingBalance: string | undefined = $state();
 
 	$effect(() => {
-		if ($provider && $selectedNetwork && $selectedAddress) estimateTransactionFee();
+		if ($provider && $selectedNetwork && $selectedAddress) {
+			estimateTransactionFee();
+			updateBalance();
+		}
 	});
 
 	$effect(() => {
@@ -34,6 +40,61 @@
 		// Update transaction time when custom fee changes
 		if ($feeLevel === 'custom' && $fee) updateCustomFeeTransactionTime();
 	});
+
+	$effect(() => {
+		console.log('updateBalance effect triggered');
+		updateRemainingBalance();
+	});
+
+	async function updateBalance() {
+		try {
+			// Use provider directly to get balance
+			const p = $provider;
+			const addr = $selectedAddress;
+			if (p && addr) {
+				const balanceWei = await p.getBalance(addr.address);
+				const balanceEth = formatEther(balanceWei);
+				currentBalance = balanceEth;
+			}
+		} catch (e) {
+			console.error('Error updating balance:', e);
+		}
+	}
+
+	function updateRemainingBalance() {
+		if (!currentBalance || !amount || !$fee) {
+			remainingBalance = undefined;
+			return;
+		}
+
+		try {
+			const balanceEth = parseFloat(currentBalance);
+			const amountEth = parseFloat(amount.toString());
+			const feeEth = parseFloat($fee.toString());
+			if (isNaN(balanceEth) || isNaN(amountEth) || isNaN(feeEth)) {
+				remainingBalance = undefined;
+				return;
+			}
+			const remaining = balanceEth - amountEth - feeEth;
+			remainingBalance = remaining.toFixed(6);
+		} catch (e) {
+			remainingBalance = undefined;
+		}
+	}
+
+	async function setMaxAmount() {
+		if (!currentBalance || !$fee) return;
+		try {
+			const balanceEth = parseFloat(currentBalance);
+			const feeEth = parseFloat($fee.toString());
+			if (isNaN(balanceEth) || isNaN(feeEth)) return;
+			const maxAmount = balanceEth - feeEth;
+			if (maxAmount > 0) amount = maxAmount.toFixed(6);
+			else amount = '0';
+		} catch (e) {
+			console.error('Error setting max amount:', e);
+		}
+	}
 
 	async function send() {
 		error = null;
@@ -75,6 +136,13 @@
 		align-items: center;
 		width: 100%;
 	}
+
+	.row {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+		width: 100%;
+	}
 </style>
 
 <div class="send">
@@ -86,7 +154,10 @@
 			<DropdownFilter options={$currencies} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Amount">
-			<Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} />
+			<div class="row">
+				<Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} />
+				<Button img="modules/{module.identifier}/img/max.svg" text="Max" enabled={!!($selectedNetwork && $selectedAddress && currentBalance && $fee)} onClick={setMaxAmount} />
+			</div>
 		</Label>
 		<Label text="Transaction fee">
 			<div class="fee">
@@ -115,9 +186,15 @@
 					{#if $transactionTimeLoading}
 						<Spinner size="12px" />
 					{:else}
-						{$transactionTime}
+						<span class="bold">{$transactionTime}</span>
 					{/if}
 				</div>
+				{#if currentBalance !== undefined}
+					<div>Current balance: <span class="bold">{currentBalance} {$selectedNetwork?.currency?.symbol || ''}</span></div>
+				{/if}
+				{#if remainingBalance !== undefined}
+					<div>Balance after transaction: <span class="bold">{remainingBalance} {$selectedNetwork?.currency?.symbol || ''}</span></div>
+				{/if}
 			{/if}
 		</Label>
 		{#if error}
