@@ -37,12 +37,8 @@
 	let elCurrencyDropdown: DropdownFilter | undefined = $state();
 	let elAmountInput: Input | undefined = $state();
 	let elFeeInput: Input | undefined = $state();
-
-	// Computed property to get the selected currency symbol
-	let selectedCurrencySymbol = $state('');
-
-	// Bidirectional binding helper for DropdownFilter
-	let currencyForDropdown = $state('');
+	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
+	let currencyForDropdown = $state(''); // Bidirectional binding helper for DropdownFilter
 
 	// Sync currency changes to dropdown
 	$effect(() => {
@@ -51,11 +47,8 @@
 
 	// Sync dropdown changes to currency
 	$effect(() => {
-		if (currencyForDropdown === '') {
-			currency = undefined;
-		} else {
-			currency = currencyForDropdown;
-		}
+		if (currencyForDropdown === '') currency = undefined;
+		else currency = currencyForDropdown;
 	});
 
 	$effect(() => {
@@ -63,13 +56,11 @@
 			selectedCurrencySymbol = '';
 			return;
 		}
-
 		// If the selected currency is the network's native currency
 		if (currency === $selectedNetwork?.currency?.symbol) {
 			selectedCurrencySymbol = $selectedNetwork.currency.symbol;
 			return;
 		}
-
 		// If it's a token, find the token and return its symbol
 		const token = $tokens.find(t => t.symbol === currency);
 		selectedCurrencySymbol = token?.symbol || currency;
@@ -84,9 +75,7 @@
 
 	$effect(() => {
 		// Update balance when currency changes
-		if (currency !== undefined && currency !== null) {
-			updateBalance();
-		}
+		if (currency !== undefined && currency !== null) updateBalance();
 	});
 
 	$effect(() => {
@@ -110,15 +99,12 @@
 				nativeBalance = undefined;
 				return;
 			}
-
 			// Always get native balance for fee calculation
 			const nativeBalanceData = await getBalance();
 			nativeBalance = nativeBalanceData?.amount || undefined;
-
 			// If sending native currency (ETH)
-			if (currency === $selectedNetwork?.currency?.symbol) {
-				currentBalance = nativeBalance;
-			} else {
+			if (currency === $selectedNetwork?.currency?.symbol) currentBalance = nativeBalance;
+			else {
 				// If sending token, get token balance
 				const balance = await getTokenBalance(currency);
 				currentBalance = balance?.amount || undefined;
@@ -137,7 +123,6 @@
 			remainingNativeBalance = undefined;
 			return;
 		}
-
 		try {
 			const balanceEth = parseFloat(currentBalance);
 			const amountEth = parseFloat(amount.toString());
@@ -148,7 +133,6 @@
 				remainingNativeBalance = undefined;
 				return;
 			}
-
 			// If sending native currency (ETH)
 			if (currency === $selectedNetwork?.currency?.symbol) {
 				const remaining = balanceEth - amountEth - feeEth;
@@ -160,19 +144,14 @@
 				// Token balance: current token balance - amount sent
 				const remainingToken = balanceEth - amountEth;
 				remainingTokenBalance = remainingToken.toFixed(6);
-
 				// Native balance: current native balance - fee
 				if (nativeBalance) {
 					const nativeBalanceEth = parseFloat(nativeBalance);
 					if (!isNaN(nativeBalanceEth)) {
 						const remainingNative = nativeBalanceEth - feeEth;
 						remainingNativeBalance = remainingNative.toFixed(6);
-					} else {
-						remainingNativeBalance = `- ${feeEth.toFixed(6)}`;
-					}
-				} else {
-					remainingNativeBalance = `- ${feeEth.toFixed(6)}`;
-				}
+					} else remainingNativeBalance = `- ${feeEth.toFixed(6)}`;
+				} else remainingNativeBalance = `- ${feeEth.toFixed(6)}`;
 				remainingBalance = undefined;
 			}
 		} catch (e) {
@@ -198,7 +177,6 @@
 
 	async function send() {
 		error = null;
-
 		// Validation config
 		const validationConfig: FormValidatorConfig = [
 			{
@@ -232,22 +210,19 @@
 				},
 			},
 		];
-
 		// Validate form
 		const validationError = validateForm(validationConfig);
 		if (validationError) {
 			error = validationError;
 			return;
 		}
-
 		// If validation passes, create payment
 		const etherAmount = getEtherAmount(amount);
 		const etherFee = getEtherAmount($fee);
-
 		payment = {
-			address: $sendAddress.toString(),
-			amount: etherAmount,
-			fee: etherFee,
+			address: $sendAddress!.toString(),
+			amount: etherAmount!,
+			fee: etherFee!,
 			currency: currency,
 		};
 		elDialogSend?.open();
