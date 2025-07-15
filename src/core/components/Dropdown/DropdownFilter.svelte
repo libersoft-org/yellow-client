@@ -10,13 +10,16 @@
 	let { options = [], selected = $bindable(''), enabled = true }: Props = $props();
 	let filteredOptions = $state(options);
 	let showOptions = $state(false);
+	let inputRef: HTMLInputElement | undefined;
 	let inputValue = $state('');
+
+	export function focus() {
+		inputRef?.focus();
+	}
 
 	$effect(() => {
 		filteredOptions = options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()));
-		if (inputValue) {
-			showOptions = true;
-		}
+		if (inputValue) showOptions = true;
 	});
 
 	function clickSelectOption(option) {
@@ -87,7 +90,7 @@
 		</div>
 	{:else}
 		<div onfocus={toggleOptions}>
-			<Input bind:value={inputValue} {enabled} />
+			<Input bind:value={inputValue} bind:this={inputRef} {enabled} />
 		</div>
 		{#if showOptions}
 			<div class="options">
