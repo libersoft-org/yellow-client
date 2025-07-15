@@ -4,6 +4,7 @@
 	import { selectedNetwork, currencies, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { getBalance, getTokenBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import { formatEther } from 'ethers';
@@ -32,6 +33,10 @@
 	let remainingTokenBalance: string | undefined = $state();
 	let remainingNativeBalance: string | undefined = $state();
 	let nativeBalance: string | undefined = $state();
+	let elAddressInput: Input | undefined = $state();
+	let elCurrencyDropdown: DropdownFilter | undefined = $state();
+	let elAmountInput: Input | undefined = $state();
+	let elFeeInput: Input | undefined = $state();
 
 	// Computed property to get the selected currency symbol
 	let selectedCurrencySymbol = $state('');
@@ -193,27 +198,54 @@
 
 	async function send() {
 		error = null;
-		const paymentAddress = $sendAddress;
-		if (!paymentAddress) {
-			error = 'Address is required';
+
+		// Validation config
+		const validationConfig: FormValidatorConfig = [
+			{
+				field: $sendAddress,
+				element: elAddressInput,
+				required: 'Address is required',
+			},
+			{
+				field: currency,
+				element: elCurrencyDropdown,
+				required: 'Currency is required',
+			},
+			{
+				field: amount,
+				element: elAmountInput,
+				required: 'Amount is required',
+				validate: value => {
+					const etherAmount = getEtherAmount(value);
+					if (!etherAmount) return 'Invalid amount';
+					return null;
+				},
+			},
+			{
+				field: $fee,
+				element: elFeeInput,
+				required: 'Fee is required',
+				validate: value => {
+					const etherFee = getEtherAmount(value);
+					if (!etherFee) return 'Invalid fee';
+					return null;
+				},
+			},
+		];
+
+		// Validate form
+		const validationError = validateForm(validationConfig);
+		if (validationError) {
+			error = validationError;
 			return;
 		}
-		if (currency === undefined || currency === null || currency === '') {
-			error = 'Currency is required';
-			return;
-		}
+
+		// If validation passes, create payment
 		const etherAmount = getEtherAmount(amount);
-		if (!etherAmount) {
-			error = 'Invalid amount';
-			return;
-		}
 		const etherFee = getEtherAmount($fee);
-		if (!etherFee) {
-			error = 'Invalid fee';
-			return;
-		}
+
 		payment = {
-			address: paymentAddress.toString(),
+			address: $sendAddress.toString(),
 			amount: etherAmount,
 			fee: etherFee,
 			currency: currency,
@@ -247,14 +279,14 @@
 <div class="send">
 	<Form onSubmit={send} width="400px">
 		<Label text="Address">
-			<Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} />
+			<Input bind:value={$sendAddress} bind:this={elAddressInput} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Currency">
-			<DropdownFilter options={$currencies} bind:selected={currencyForDropdown} enabled={!!($selectedNetwork && $selectedAddress)} />
+			<DropdownFilter options={$currencies} bind:selected={currencyForDropdown} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Amount">
 			<div class="row">
-				<Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} />
+				<Input bind:value={amount} bind:this={elAmountInput} enabled={!!($selectedNetwork && $selectedAddress)} />
 				{#if currency && currency !== ''}
 					<div>{selectedCurrencySymbol}</div>
 				{/if}
@@ -270,12 +302,12 @@
 					<Option value="custom" text="Custom" />
 				</Select>
 				{#if $feeLevel === 'custom'}
-					<Input bind:value={$fee} enabled={!!($selectedNetwork && $selectedAddress)} placeholder="Enter custom fee" />
+					<Input bind:value={$fee} bind:this={elFeeInput} enabled={!!($selectedNetwork && $selectedAddress)} placeholder="Enter custom fee" />
 					<div>{$selectedNetwork?.currency?.symbol || ''}</div>
 				{:else if $feeLoading}
 					<Spinner size="20px" />
 				{:else}
-					<Input bind:value={$fee} enabled={false} />
+					<Input bind:value={$fee} bind:this={elFeeInput} enabled={false} />
 					<div>{$selectedNetwork?.currency?.symbol || ''}</div>
 				{/if}
 				{#if !$feeLoading && $feeLevel !== 'custom' && $provider && $selectedNetwork && $selectedAddress}

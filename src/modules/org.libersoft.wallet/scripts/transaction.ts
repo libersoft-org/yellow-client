@@ -58,6 +58,13 @@ export async function estimateTransactionFee(): Promise<{ low: string; average: 
 	}
 	console.log('estimateTransactionFee: Starting estimation');
 	feeLoading.set(true);
+
+	// Clear fee if not custom level
+	const currentFeeLevel = get(feeLevel);
+	if (currentFeeLevel !== 'custom') {
+		fee.set('');
+	}
+
 	try {
 		const feeData = await providerInstance.getFeeData();
 		const gasLimit = 21000n;
