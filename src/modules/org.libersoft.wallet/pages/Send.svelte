@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, updateCustomFeeTransactionTime, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, tokens, currencies } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, currencies } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
