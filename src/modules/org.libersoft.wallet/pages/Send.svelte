@@ -6,6 +6,10 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { formatEther } from 'ethers';
+	import Table from '@/core/components/Table/Table.svelte';
+	import Tbody from '@/core/components/Table/TableTbody.svelte';
+	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
+	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -180,23 +184,41 @@
 					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="30px" padding="0" onClick={estimateTransactionFee} />
 				{/if}
 			</div>
-			{#if $feeLevel === 'custom' || !$feeLoading}
-				<div>
-					Estimated time:
-					{#if $transactionTimeLoading}
-						<Spinner size="12px" />
-					{:else}
-						<span class="bold">{$transactionTime}</span>
-					{/if}
-				</div>
-				{#if currentBalance !== undefined}
-					<div>Current balance: <span class="bold">{currentBalance} {$selectedNetwork?.currency?.symbol || ''}</span></div>
-				{/if}
-				{#if remainingBalance !== undefined}
-					<div>Balance after transaction: <span class="bold">{remainingBalance} {$selectedNetwork?.currency?.symbol || ''}</span></div>
-				{/if}
-			{/if}
 		</Label>
+		<Table>
+			<Tbody>
+				<Tr>
+					<Td bold>Estimated transaction time:</Td>
+					<Td>
+						{#if $transactionTimeLoading}
+							<Spinner size="12px" />
+						{:else}
+							{$transactionTime}
+						{/if}
+					</Td>
+				</Tr>
+				<Tr>
+					<Td bold>Current balance:</Td>
+					<Td>
+						{#if currentBalance !== undefined}
+							{currentBalance} {$selectedNetwork?.currency?.symbol || ''}
+						{:else}
+							<Spinner size="12px" />
+						{/if}
+					</Td>
+				</Tr>
+				<Tr>
+					<Td bold>Balance after transaction:</Td>
+					<Td>
+						{#if remainingBalance !== undefined}
+							{remainingBalance} {$selectedNetwork?.currency?.symbol || ''}
+						{:else}
+							<Spinner size="12px" />
+						{/if}
+					</Td>
+				</Tr>
+			</Tbody>
+		</Table>
 		{#if error}
 			<Alert type="error" message={error} />
 		{/if}
