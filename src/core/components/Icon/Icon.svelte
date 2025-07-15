@@ -39,8 +39,8 @@
 </style>
 
 {#snippet icon()}
-	<div class="icon" style:width={size} style:height={size} style:padding data-testid={testId}>
-		<img style:min-width={size} style:min-height={size} style={filter} src={img} draggable={false} {alt} />
+	<div class="icon" style:padding data-testid={testId}>
+		<img style:min-width={size} style:min-height={size} style:max-width={size} style:max-height={size} style={filter} src={img} draggable={false} {alt} />
 	</div>
 {/snippet}
 {#if img}
