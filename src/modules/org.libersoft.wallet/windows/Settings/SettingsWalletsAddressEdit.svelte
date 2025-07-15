@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { editAddressName, type IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -13,12 +14,12 @@
 	}
 	let { wallet, index, close }: Props = $props();
 	let name: string | undefined = $state();
-	let error: string | undefined = $state();
+	let error: string | null | undefined = $state();
 	let elName: Input | undefined;
 	let initialized = $state(false);
 
 	export function onOpen(): void {
-		error = undefined;
+		error = null;
 		console.log('onOpen called - Settings address edit, wallet:', wallet, 'index:', index);
 		console.log('Current wallet addresses:', wallet?.addresses);
 		name = wallet?.addresses?.find(a => a.index === index)?.name || '';
@@ -37,16 +38,14 @@
 	});
 
 	function clickEdit(): void {
-		error = undefined;
 		console.log('Click edit:', name, index);
+		name = name?.trim();
+		const validationConfig = [{ field: name, element: elName, required: 'Name is required' }];
+		error = validateForm(validationConfig);
+		if (error) return;
 		console.log('Current wallet addresses:', wallet?.addresses);
 		// TODO: check if index exists in wallet addresses
-		name = name?.trim();
-		if (!name) {
-			error = 'Name cannot be empty';
-			return;
-		}
-		const validatedName = name;
+
 		if (!wallet) {
 			error = 'Wallet not found';
 			return;
@@ -55,8 +54,8 @@
 			error = 'Address index is missing';
 			return;
 		}
-		console.log('About to call editAddressName with:', wallet, index, validatedName);
-		editAddressName(wallet, index, validatedName);
+		console.log('About to call editAddressName with:', wallet, index, name);
+		editAddressName(wallet, index, name!);
 		console.log('After editAddressName, wallet addresses:', wallet?.addresses);
 		console.log('About to call close()');
 		close();

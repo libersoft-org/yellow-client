@@ -3,6 +3,7 @@
 	import { Mnemonic } from 'ethers';
 	import { addWallet, wallets } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Form from '@/core/components/Form/Form.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -13,38 +14,44 @@
 		close: () => void;
 	}
 	let { close }: Props = $props();
-	let error: string | undefined = $state();
+	let error: string | null | undefined = $state();
 	let name: string | undefined = $state();
 	let phrase: string | undefined = $state();
+	let elName: Input | undefined;
+	let elPhrase: Input | undefined;
 
 	onMount(() => {
 		name = 'My wallet ' + ($wallets.length + 1);
 	});
 
 	function recover() {
+		name = name?.trim();
 		phrase = phrase?.trim();
-		if (!phrase) {
-			error = 'Recovery phrase cannot be empty.';
-			return;
-		}
+		const validationConfig = [
+			{ field: name, element: elName, required: 'Wallet name is required' },
+			{ field: phrase, element: elPhrase, required: 'Recovery phrase is required' },
+		];
+		error = validateForm(validationConfig);
+		if (error) return;
 		let mnemonic: Mnemonic | undefined;
 		try {
-			mnemonic = Mnemonic.fromPhrase(phrase);
+			mnemonic = Mnemonic.fromPhrase(phrase!);
 		} catch (e) {
 			error = 'Invalid recovery phrase.';
+			elPhrase?.focus();
 			return;
 		}
-		addWallet(mnemonic, name);
+		addWallet(mnemonic, name!);
 		close();
 	}
 </script>
 
 <Form onSubmit={recover}>
 	<Label text="Wallet name">
-		<Input type="text" bind:value={name} />
+		<Input type="text" bind:value={name} bind:this={elName} />
 	</Label>
 	<Label text="Recovery phrase">
-		<Input type="text" bind:value={phrase} />
+		<Input type="text" bind:value={phrase} bind:this={elPhrase} />
 	</Label>
 </Form>
 {#if error}

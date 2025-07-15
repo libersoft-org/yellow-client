@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { generateMnemonic, addWallet, wallets } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import type { Mnemonic } from 'ethers';
 	import Form from '@/core/components/Form/Form.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
@@ -23,6 +24,7 @@
 	let dummyQrCodeData: string = $state('');
 	let dummyPhrase: string = $state('lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam');
 	let isRevealed: boolean = $state(false);
+	let error: string | null | undefined = $state();
 	let elWalletNameInput: Input | undefined = $state();
 
 	export function onOpen() {
@@ -30,6 +32,7 @@
 		regenerate();
 		generateDummyQRCode();
 		isRevealed = false;
+		error = null;
 		if (elWalletNameInput) elWalletNameInput.focus();
 	}
 
@@ -66,6 +69,10 @@
 	}
 
 	function save() {
+		name = name?.trim();
+		const validationConfig = [{ field: name, element: elWalletNameInput, required: 'Wallet name is required' }];
+		error = validateForm(validationConfig);
+		if (error) return;
 		// TODO: password protect the key
 		if (mnemonic) addWallet(mnemonic, name);
 		if (close) close();
@@ -207,6 +214,9 @@
 		<Input type="text" bind:value={name} bind:this={elWalletNameInput} />
 	</Label>
 </Form>
+{#if error}
+	<Alert type="error" message={error} />
+{/if}
 <Label text="Seed phrase">
 	{#if !isRevealed}
 		<Alert type="warning" message="Sensitive information is hidden. Click to reveal it." />

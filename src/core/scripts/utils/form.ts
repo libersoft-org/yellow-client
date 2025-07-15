@@ -1,8 +1,6 @@
 export interface IValidationRule {
-	field: { value: any };
+	field: any;
 	element?: any;
-	trim?: boolean;
-	convert?: (value: any) => any;
 	required?: string;
 	validate?: (value: any) => string | null;
 	isArray?: boolean;
@@ -13,27 +11,19 @@ export type FormValidatorConfig = IValidationRule[];
 export function validateForm(config: FormValidatorConfig): string | null {
 	for (const rule of config) {
 		if (rule.isArray) {
-			const arrayValue = rule.field.value;
+			const arrayValue = rule.field;
 			if (!arrayValue || !Array.isArray(arrayValue)) continue;
 			if (arrayValue.length === 0) continue;
 			for (let i = 0; i < arrayValue.length; i++) {
 				const item = arrayValue[i];
-				if (rule.required && !item?.trim()) {
+				if (rule.required) {
 					rule.arrayElements?.[i]?.focus();
 					return rule.required.replace('{index}', (i + 1).toString());
 				}
 			}
 			continue;
 		}
-		let value = rule.field.value;
-		if (rule.trim && typeof value === 'string') {
-			value = value.trim();
-			rule.field.value = value;
-		}
-		if (rule.convert && value !== undefined && value !== null) {
-			value = rule.convert(value);
-			rule.field.value = value;
-		}
+		let value = rule.field;
 		if (rule.required && (value === undefined || value === null || value === '')) {
 			rule.element?.focus();
 			return rule.required;
