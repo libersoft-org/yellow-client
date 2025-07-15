@@ -22,8 +22,8 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import DialogSend from '@/org.libersoft.wallet/dialogs/SendConfirmation.svelte';
-	let currency: string | null | undefined = $state('');
-	let amount: string | number | undefined = $state(0);
+	let currency: string | null | undefined = $state();
+	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
 	let elDialogSend: DialogSend | undefined = $state();
 	let payment: IPayment | undefined = $state();
@@ -36,8 +36,25 @@
 	// Computed property to get the selected currency symbol
 	let selectedCurrencySymbol = $state('');
 
+	// Bidirectional binding helper for DropdownFilter
+	let currencyForDropdown = $state('');
+
+	// Sync currency changes to dropdown
 	$effect(() => {
-		if (!currency || currency === '') {
+		currencyForDropdown = currency === undefined || currency === null ? '' : currency;
+	});
+
+	// Sync dropdown changes to currency
+	$effect(() => {
+		if (currencyForDropdown === '') {
+			currency = undefined;
+		} else {
+			currency = currencyForDropdown;
+		}
+	});
+
+	$effect(() => {
+		if (currency === undefined || currency === null || currency === '') {
 			selectedCurrencySymbol = '';
 			return;
 		}
@@ -62,7 +79,7 @@
 
 	$effect(() => {
 		// Update balance when currency changes
-		if (currency) {
+		if (currency !== undefined && currency !== null) {
 			updateBalance();
 		}
 	});
@@ -83,7 +100,7 @@
 
 	async function updateBalance() {
 		try {
-			if (!currency || currency === '') {
+			if (currency === undefined || currency === null || currency === '') {
 				currentBalance = undefined;
 				nativeBalance = undefined;
 				return;
@@ -109,7 +126,7 @@
 	}
 
 	function updateRemainingBalance() {
-		if (!currentBalance || !amount || !$fee || !currency || currency === '') {
+		if (!currentBalance || !amount || !$fee || currency === undefined || currency === null || currency === '') {
 			remainingBalance = undefined;
 			remainingTokenBalance = undefined;
 			remainingNativeBalance = undefined;
@@ -181,7 +198,7 @@
 			error = 'Address is required';
 			return;
 		}
-		if (!currency || currency === '') {
+		if (currency === undefined || currency === null || currency === '') {
 			error = 'Currency is required';
 			return;
 		}
@@ -233,7 +250,7 @@
 			<Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Currency">
-			<DropdownFilter options={$currencies} bind:selected={currency} enabled={!!($selectedNetwork && $selectedAddress)} />
+			<DropdownFilter options={$currencies} bind:selected={currencyForDropdown} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Amount">
 			<div class="row">
@@ -281,9 +298,9 @@
 				<Tr>
 					<Td bold>Current balance:</Td>
 					<Td>
-						{#if currentBalance !== undefined && currency && currency !== ''}
+						{#if currentBalance !== undefined && currency !== undefined && currency !== null && currency !== ''}
 							{currentBalance} {selectedCurrencySymbol}
-						{:else if currency && currency !== ''}
+						{:else if currency !== undefined && currency !== null && currency !== ''}
 							<Spinner size="12px" />
 						{:else}
 							—
@@ -293,7 +310,7 @@
 				<Tr>
 					<Td bold>Balance after transaction:</Td>
 					<Td>
-						{#if !currency || currency === '' || !amount || amount === '' || amount === 0}
+						{#if currency === undefined || currency === null || currency === '' || !amount || amount === '' || amount === 0}
 							—
 						{:else if currency === $selectedNetwork?.currency?.symbol}
 							{#if remainingBalance !== undefined}
