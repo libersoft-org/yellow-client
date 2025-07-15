@@ -35,13 +35,26 @@
 	let countdownInterval: ReturnType<typeof setInterval> | null = null;
 	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
 
-	onMount(() => {
+	function clearAllTimers() {
+		tokenTimers.forEach(timer => clearTimeout(timer));
+		tokenTimers.clear();
+		if (balanceTimer) clearTimeout(balanceTimer);
+		initializedTokens.clear();
+		balance = null;
+		tokenBalances.clear();
+	}
+
+	function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
 			if ($tokens && $tokens.length > 0) {
 				$tokens.forEach((token, index) => setTimeout(() => refreshToken(token.symbol), index * 500)); // Increased delay to 500ms between tokens
 			}
 		}
+	}
+
+	onMount(() => {
+		initializeAllBalances();
 		countdownInterval = setInterval(updateCountdowns, 1000);
 	});
 
@@ -81,7 +94,6 @@
 		tokenCountdowns.set(tokenSymbol, 0);
 		loadingTokens.add(tokenSymbol);
 		loadingTokens = new Set(loadingTokens); // Force reactivity
-
 		try {
 			const tokenBalance = await getTokenBalance(tokenSymbol);
 			if (tokenBalance) {
