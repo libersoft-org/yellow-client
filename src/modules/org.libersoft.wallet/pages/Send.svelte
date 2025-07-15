@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, updateCustomFeeTransactionTime, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, tokens, currencies } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
@@ -21,27 +21,6 @@
 	let error: string | null | undefined = $state();
 	let elDialogSend: DialogSend | undefined = $state();
 	let payment: IPayment | undefined = $state();
-
-	// Generate currencies list from network and tokens
-	let currencies = $derived.by(() => {
-		const currencyList: string[] = [];
-
-		// Add main network currency
-		if ($selectedNetwork?.currency?.symbol) {
-			currencyList.push($selectedNetwork.currency.symbol);
-		}
-
-		// Add tokens from the network
-		if ($tokens && $tokens.length > 0) {
-			$tokens.forEach(token => {
-				if (token.symbol && !currencyList.includes(token.symbol)) {
-					currencyList.push(token.symbol);
-				}
-			});
-		}
-
-		return currencyList;
-	});
 
 	$effect(() => {
 		if ($provider && $selectedNetwork && $selectedAddress) estimateTransactionFee();
@@ -104,7 +83,7 @@
 			<Input bind:value={$sendAddress} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Currency">
-			<DropdownFilter options={currencies} enabled={!!($selectedNetwork && $selectedAddress)} />
+			<DropdownFilter options={$currencies} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Amount">
 			<Input bind:value={amount} enabled={!!($selectedNetwork && $selectedAddress)} />

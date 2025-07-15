@@ -170,6 +170,17 @@ export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 	}));
 });
 
+export let currencies = derived([selectedNetwork, tokens], ([$selectedNetwork, $tokens]) => {
+	const currencyList: string[] = [];
+	if ($selectedNetwork?.currency?.symbol) currencyList.push($selectedNetwork.currency.symbol);
+	if ($tokens && $tokens.length > 0) {
+		$tokens.forEach(token => {
+			if (token.symbol && !currencyList.includes(token.symbol)) currencyList.push(token.symbol);
+		});
+	}
+	return currencyList;
+});
+
 export function deleteToken(networkGuid: string, tokenGuid: string): void {
 	networks.update(networks => {
 		return networks.map(network => {

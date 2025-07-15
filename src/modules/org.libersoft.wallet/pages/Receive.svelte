@@ -3,7 +3,7 @@
 	import { parseUnits } from 'ethers';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, tokens, currencies } from '@/org.libersoft.wallet/scripts/network.ts';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -20,16 +20,6 @@
 	let currency: string | undefined = $state();
 	let qr: string | undefined = $state();
 	let error: string | null | undefined = $state();
-	let currencies = $derived.by(() => {
-		const currencyList: string[] = [];
-		if ($selectedNetwork?.currency?.symbol) currencyList.push($selectedNetwork.currency.symbol);
-		if ($tokens && $tokens.length > 0) {
-			$tokens.forEach(token => {
-				if (token.symbol && !currencyList.includes(token.symbol)) currencyList.push(token.symbol);
-			});
-		}
-		return currencyList;
-	});
 
 	$effect(() => {
 		updateAddressAndQR();
@@ -76,8 +66,8 @@
 	}
 
 	function resetCurrency(): void {
-		if (!currency || !currencies.find((c: string) => c === currency)) {
-			console.log('reset currency:', currency, currencies);
+		if (!currency || !$currencies.find((c: string) => c === currency)) {
+			console.log('reset currency:', currency, $currencies);
 			currency = $selectedNetwork?.currency?.symbol || '';
 		}
 	}
@@ -151,7 +141,7 @@
 				<div class="amount">
 					<div>Amount:</div>
 					<Input type="text" bind:value={amount} />
-					<DropdownFilter options={currencies.filter(c => c !== undefined)} bind:selected={currency} />
+					<DropdownFilter options={$currencies.filter(c => c !== undefined)} bind:selected={currency} />
 				</div>
 				{#if error}
 					<Alert type="error" message={error} />
