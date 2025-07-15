@@ -331,11 +331,20 @@
 					<Td bold>Current balance:</Td>
 					<Td>
 						{#if currentBalance !== undefined && currency !== undefined && currency !== null && currency !== ''}
-							{currentBalance} {selectedCurrencySymbol}
+							{#if currency === $selectedNetwork?.currency?.symbol}
+								<div>{currentBalance} {selectedCurrencySymbol}</div>
+							{:else}
+								<div>{currentBalance} {selectedCurrencySymbol}</div>
+								{#if nativeBalance !== undefined}
+									<div>{nativeBalance} {$selectedNetwork?.currency?.symbol || ''}</div>
+								{:else}
+									<Spinner size="12px" />
+								{/if}
+							{/if}
 						{:else if currency !== undefined && currency !== null && currency !== ''}
 							<Spinner size="12px" />
 						{:else}
-							—
+							<div>-</div>
 						{/if}
 					</Td>
 				</Tr>
@@ -343,10 +352,10 @@
 					<Td bold>Balance after transaction:</Td>
 					<Td>
 						{#if currency === undefined || currency === null || currency === '' || !amount || amount === '' || amount === 0}
-							—
+							<div>-</div>
 						{:else if currency === $selectedNetwork?.currency?.symbol}
 							{#if remainingBalance !== undefined}
-								{remainingBalance} {selectedCurrencySymbol}
+								<div>{remainingBalance} {selectedCurrencySymbol}</div>
 							{:else}
 								<Spinner size="12px" />
 							{/if}

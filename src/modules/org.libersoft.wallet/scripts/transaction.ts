@@ -10,31 +10,26 @@ export interface IPayment {
 	fee: bigint;
 	currency: string | null | undefined;
 }
-
 export interface FeeEstimate {
 	low: string;
 	average: string;
 	high: string;
 }
-
 export interface TransactionTimeEstimate {
 	low: string;
 	average: string;
 	high: string;
 }
-
 let estimatedFee: FeeEstimate = {
 	low: '0',
 	average: '0',
 	high: '0',
 };
-
 let estimatedTransactionTimes: TransactionTimeEstimate = {
 	low: 'unknown',
 	average: 'unknown',
 	high: 'unknown',
 };
-
 export const feeLoading = writable(false);
 export const transactionTimeLoading = writable(false);
 export const feeLevel = writable<'low' | 'average' | 'high' | 'custom'>('average');
@@ -58,13 +53,9 @@ export async function estimateTransactionFee(): Promise<{ low: string; average: 
 	}
 	console.log('estimateTransactionFee: Starting estimation');
 	feeLoading.set(true);
-
 	// Clear fee if not custom level
 	const currentFeeLevel = get(feeLevel);
-	if (currentFeeLevel !== 'custom') {
-		fee.set('');
-	}
-
+	if (currentFeeLevel !== 'custom') fee.set('');
 	try {
 		const feeData = await providerInstance.getFeeData();
 		const gasLimit = 21000n;
