@@ -64,15 +64,21 @@ export async function openGlobalSettings(page: Page): Promise<void> {
  * @param page - The Playwright page object
  * @param section - The settings section to navigate to
  */
-export async function navigateToSettingsSection(page: Page, section: 'General' | 'Notifications' | 'Appearance'): Promise<void> {
+export async function clickSettingsMenuButton(page: Page, dialog: string, section: string): Promise<void> {
 	return await test.step(`Navigate to settings section: ${section}`, async () => {
-		await page.getByTestId(`settings-${section.toLowerCase()}`).click();
+		await page.getByTestId(`${dialog}-${section.toLowerCase()}`).click();
 	});
 }
 
 export async function goToRootSettingsSection(page: Page): Promise<void> {
 	return await test.step('Navigate back to root settings', async () => {
 		await page.getByTestId('breadcrumb-settings').click();
+	});
+}
+
+export async function clickBreadcrumb(page: Page, breadcrumb: string): Promise<void> {
+	return await test.step(`Click breadcrumb: ${breadcrumb}`, async () => {
+		await page.getByTestId(`breadcrumb-${breadcrumb}`).click();
 	});
 }
 

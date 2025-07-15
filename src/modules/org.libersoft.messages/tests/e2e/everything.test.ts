@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow, goToRootSettingsSection, navigateToSettingsSection } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow, goToRootSettingsSection, clickSettingsMenuButton } from '@/core/e2e/test-utils.js';
 
 import { startNewConversation, openConversation, sendMessage, forwardLastMessage, forwardMessageToConversation, verifyForwardWindowWithPreview, searchConversationsInForwardWindow } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
 
@@ -259,7 +259,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		await openGlobalSettings(page);
 
 		// Navigate to Notifications and toggle settings
-		await navigateToSettingsSection(page, 'Notifications');
+		await clickSettingsMenuButton(page, 'settings', 'Notifications');
 		await test.step('Toggle notification settings', async () => {
 			const notificationsToggle = page.getByTestId('notifications enabled toggle');
 			const soundToggle = page.getByLabel('Notification sound');
@@ -271,7 +271,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 		await goToRootSettingsSection(page);
 
 		// Navigate to Appearance and change theme
-		await navigateToSettingsSection(page, 'Appearance');
+		await clickSettingsMenuButton(page, 'settings', 'Appearance');
 		await test.step('Change theme in Appearance settings', async () => {
 			// First disable "Follow browser theme" to enable manual theme selection
 			const followBrowserThemeSwitch = page.getByTestId('follow-browser-theme-switch');
@@ -290,7 +290,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 
 		// Go back to root and re-enter Notifications
 		await goToRootSettingsSection(page);
-		await navigateToSettingsSection(page, 'Notifications');
+		await clickSettingsMenuButton(page, 'settings', 'Notifications');
 
 		// Close settings window
 		await closeWindow(page, 'global-settings');

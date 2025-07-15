@@ -258,4 +258,4 @@
 	});
 </script>
 
-<BaseSettings {settingsObject} bind:this={elBaseSettings} />
+<BaseSettings testId="wallet-settings" {settingsObject} bind:this={elBaseSettings} />

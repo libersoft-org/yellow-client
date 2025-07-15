@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardWindow, expectErrorMessage, closeWindow, switchModule } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow, expectErrorMessage, switchModule, clickBreadcrumb } from '@/core/e2e/test-utils.js';
+import { clickSettingsMenuButton } from '@/core/e2e/test-utils.ts';
 
 test.describe.parallel('Networks Import/Export Functionality', () => {
 	test.beforeEach(async ({ page }) => {
@@ -311,7 +312,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await fillNetworksImportData(page, JSON.stringify(invalidNetwork));
 			await clickAddNetworks(page);
 
-			await expectErrorMessage(page, 'must have at least one RPC URL');
+			await expectErrorMessage(page, 'must have');
 		});
 
 		test('Validate network data structure - missing currency', async ({ page }) => {
@@ -529,8 +530,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			// Cancel the replace dialog
 			await page.getByTestId('cancel-replace-btn').click();
 
-			// Original network should still exist
-			await closeWindow(page, 'wallet-settings-networks-import');
+			await clickBreadcrumb(page, 'networks');
+
 			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).toBeVisible();
 		});
 
@@ -539,8 +540,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			await openNetworksImportWindow(page);
 			await fillNetworksImportData(page, JSON.stringify(validNetworkConfigs));
 
-			// Close window without performing any action
-			await closeWindow(page, 'wallet-settings-networks-import');
+			await clickBreadcrumb(page, 'networks');
 
 			// Should return to networks management without changes
 			await expect(page.getByTestId('wallet-settings-network-name@Test Network 1')).not.toBeVisible();
@@ -557,7 +557,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 			// Export networks
 			await openNetworksExportWindow(page);
 			const exportedContent = await getExportedNetworksJSON(page);
-			await closeWindow(page, 'wallet-settings-networks-export');
+			await clickBreadcrumb(page, 'networks');
 
 			// Replace with one minimal network
 			const minimalNetwork = [

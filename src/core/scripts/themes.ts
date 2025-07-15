@@ -129,11 +129,12 @@ current_theme.subscribe((v: ITheme) => {
 // avoid console errors when the image is not found
 function applyBackgroundImage(key, value) {
 	const base = import.meta.env.VITE_CLIENT_PATH_BASE || '';
-	const val = `url(${base}/img/background/${value})`;
+	const val = `${base}/img/background/${value}`;
 
 	const img = new Image();
+	img.src = val;
 	img.onload = () => {
-		document.documentElement.style.setProperty(key, val);
+		document.documentElement.style.setProperty(key, `url('${val}')`);
 	};
 	img.onerror = () => {
 		log.debug(`Failed to load background image: ${value}`);
