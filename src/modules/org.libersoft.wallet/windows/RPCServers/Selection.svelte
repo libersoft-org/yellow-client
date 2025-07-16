@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { rpcURL, selectRPCURL } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { onMount } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		close?: () => void;
 	}
@@ -28,6 +29,10 @@
 		close?.();
 	}
 
+	function refreshServer(server: IRPCServer) {
+		checkRPCServer(server).catch(console.error);
+	}
+
 	onMount(() => {
 		if (rpcServers.length > 0) checkServers();
 	});
@@ -40,10 +45,11 @@
 		gap: 10px;
 	}
 
-	.servers .item {
+	.item {
 		display: flex;
 		align-items: center;
 		gap: 10px;
+		width: 100%;
 		justify-content: space-between;
 		padding: 10px;
 		border: 1px solid var(--primary-foreground);
@@ -54,22 +60,22 @@
 		transition: background-color 0.4s linear;
 	}
 
-	.servers .item:hover,
+	.item:hover,
 	:global(.clickable:focus-visible) .item,
 	:global(.clickable.focused) .item {
 		background-color: var(--primary-soft-background);
 	}
 
-	.servers .item.selected {
+	.item.selected {
 		background-color: var(--primary-background);
 	}
 
-	.servers .item .info .url {
+	.item .info .url {
 		font-weight: bold;
 		word-break: break-all;
 	}
 
-	.servers .item .info .stats {
+	.item .info .stats {
 		display: flex;
 		gap: 20px;
 		font-size: 12px;
@@ -84,16 +90,22 @@
 		border-radius: 50%;
 	}
 
-	.servers .item .status.alive {
+	.item .status.alive {
 		background-color: #080;
 	}
 
-	.servers .item .status.dead {
+	.item .status.dead {
 		background-color: #800;
 	}
 
-	.servers .item .status.checking {
+	.item .status.checking {
 		background-color: #f80;
+	}
+
+	.row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
 	}
 </style>
 
@@ -105,19 +117,22 @@
 {:else}
 	<div class="servers">
 		{#each rpcServers as server}
-			<Clickable onClick={() => selectServer(server.url)}>
-				<div class="item" class:selected={server.url === $rpcURL}>
-					<div class="info">
-						<div class="url">{server.url}</div>
-						<div class="stats">
-							<span>Latency: {server.checking ? '?' : formatLatency(server.latency)}</span>
-							<span>Block: {server.checking ? '?' : formatBlockNumber(server.lastBlock)}</span>
-							<span>Age: {server.checking ? '?' : formatBlockAge(server.blockAge)}</span>
+			<div class="row">
+				<Clickable onClick={() => selectServer(server.url)} expand>
+					<div class="item" class:selected={server.url === $rpcURL}>
+						<div class="info">
+							<div class="url">{server.url}</div>
+							<div class="stats">
+								<span>Latency: {server.checking ? '?' : formatLatency(server.latency)}</span>
+								<span>Block: {server.checking ? '?' : formatBlockNumber(server.lastBlock)}</span>
+								<span>Age: {server.checking ? '?' : formatBlockAge(server.blockAge)}</span>
+							</div>
 						</div>
+						<div class="status" class:alive={server.isAlive} class:dead={!server.isAlive && !server.checking} class:checking={server.checking}></div>
 					</div>
-					<div class="status" class:alive={server.isAlive} class:dead={!server.isAlive && !server.checking} class:checking={server.checking}></div>
-				</div>
-			</Clickable>
+				</Clickable>
+				<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="16px" enabled={!server.checking} onClick={() => refreshServer(server)} />
+			</div>
 		{/each}
 	</div>
 {/if}
