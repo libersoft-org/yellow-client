@@ -20,7 +20,6 @@
 	let filter = $derived.by(() => {
 		// dummy use of $current_theme because this needs to be reactive on theme changes
 		const t = $current_theme;
-		//console.log('colorVariable', colorVariable, 'current_theme', t);
 		if (colorVariable && t) return 'filter: ' + getColorFromCSSToFilter(colorVariable);
 		return '';
 	});

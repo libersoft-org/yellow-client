@@ -70,6 +70,12 @@
 		background-color: var(--primary-background);
 	}
 
+	.item .info {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+
 	.item .info .url {
 		font-weight: bold;
 		word-break: break-all;
@@ -78,7 +84,7 @@
 	.item .info .stats {
 		display: flex;
 		gap: 20px;
-		font-size: 12px;
+		font-size: 14px;
 	}
 
 	.status {
@@ -123,9 +129,18 @@
 						<div class="info">
 							<div class="url">{server.url}</div>
 							<div class="stats">
-								<span>Latency: {server.checking ? '?' : formatLatency(server.latency)}</span>
-								<span>Block: {server.checking ? '?' : formatBlockNumber(server.lastBlock)}</span>
-								<span>Age: {server.checking ? '?' : formatBlockAge(server.blockAge)}</span>
+								<div>
+									<span>Latency:</span>
+									<span class="bold">{server.checking ? '?' : formatLatency(server.latency)}</span>
+								</div>
+								<div>
+									<span>Block:</span>
+									<span class="bold">{server.checking ? '?' : formatBlockNumber(server.lastBlock)}</span>
+								</div>
+								<div>
+									<span>Age:</span>
+									<span class="bold">{server.checking ? '?' : formatBlockAge(server.blockAge)}</span>
+								</div>
 							</div>
 						</div>
 						<div class="status" class:alive={server.isAlive} class:dead={!server.isAlive && !server.checking} class:checking={server.checking}></div>
