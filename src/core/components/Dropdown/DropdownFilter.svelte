@@ -14,7 +14,6 @@
 	let inputRef: Input | undefined = $state();
 	let inputValue = $state('');
 	let selectedIndex = $state(-1); // Index of currently highlighted option
-	let hoveredIndex = $state(-1); // Index of option under mouse
 
 	export function focus() {
 		inputRef?.focus();
@@ -24,7 +23,6 @@
 		filteredOptions = options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()));
 		if (inputValue) showOptions = true;
 		selectedIndex = -1; // Reset selection when options change
-		hoveredIndex = -1; // Reset hover when options change
 	});
 
 	function clickSelectOption(option) {
@@ -45,14 +43,12 @@
 			showOptions = true;
 			filteredOptions = options; // Show all options when focused
 			selectedIndex = -1; // Reset selection when opening
-			hoveredIndex = -1; // Reset hover when opening
 		}
 	}
 
 	function handleInputBlur() {
 		showOptions = false;
 		selectedIndex = -1;
-		hoveredIndex = -1;
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
@@ -64,14 +60,8 @@
 					showOptions = true;
 					filteredOptions = options;
 					selectedIndex = -1;
-					hoveredIndex = -1;
 				} else {
 					// Navigate when options are visible
-					// If mouse was hovering, start from that position
-					if (hoveredIndex >= 0) {
-						selectedIndex = hoveredIndex;
-					}
-					hoveredIndex = -1; // Reset mouse selection when using keyboard
 					selectedIndex = selectedIndex < filteredOptions.length - 1 ? selectedIndex + 1 : 0;
 				}
 				break;
@@ -82,14 +72,8 @@
 					showOptions = true;
 					filteredOptions = options;
 					selectedIndex = -1;
-					hoveredIndex = -1;
 				} else {
 					// Navigate when options are visible
-					// If mouse was hovering, start from that position
-					if (hoveredIndex >= 0) {
-						selectedIndex = hoveredIndex;
-					}
-					hoveredIndex = -1; // Reset mouse selection when using keyboard
 					selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : filteredOptions.length - 1;
 				}
 				break;
@@ -104,17 +88,16 @@
 				e.stopPropagation();
 				showOptions = false;
 				selectedIndex = -1;
-				hoveredIndex = -1;
 				break;
 		}
 	}
 
 	function handleMouseEnter(index: number) {
-		hoveredIndex = index;
+		selectedIndex = index;
 	}
 
 	function handleMouseLeave() {
-		hoveredIndex = -1;
+		// Keep selectedIndex when mouse leaves
 	}
 </script>
 
@@ -185,7 +168,7 @@
 		<div class="debug-info">
 			<div>Input Value: {inputValue}</div>
 			<div>Selected Option: {selected}</div>
-			<div>Hovered Index: {hoveredIndex}</div>
+			<div>Selected Index: {selectedIndex}</div>
 			<div>Filtered Options: {JSON.stringify(filteredOptions)}</div>
 		</div>
 	{/if}
@@ -193,7 +176,7 @@
 		<div class="options" onmousedown={e => e.preventDefault()} onmouseleave={handleMouseLeave} role="listbox" aria-label="Options" tabindex="-1">
 			{#each filteredOptions as option, index}
 				<Clickable onClick={() => clickSelectOption(option)}>
-					<div class="option" class:highlighted={hoveredIndex >= 0 ? index === hoveredIndex : index === selectedIndex} onmouseenter={() => handleMouseEnter(index)} role="option" aria-selected={hoveredIndex >= 0 ? index === hoveredIndex : index === selectedIndex} tabindex="-1">{option}</div>
+					<div class="option" class:highlighted={index === selectedIndex} onmouseenter={() => handleMouseEnter(index)} role="option" aria-selected={index === selectedIndex} tabindex="-1">{option}</div>
 				</Clickable>
 			{/each}
 		</div>
