@@ -13,7 +13,7 @@
 	import SettingsAddressbook from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbook.svelte';
 	import SettingsWalletsWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWallet.svelte';
 	import SettingsWalletsAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAdd.svelte';
-	import SettingsNetworksRPCServers from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksRPCServers.svelte';
+	import RPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
@@ -112,13 +112,13 @@
 		const networksRPCItems = $networks.map((network: INetwork) => ({
 			title: 'RPC servers',
 			name: 'networks-rpc-' + network.guid,
-			body: SettingsNetworksRPCServers,
+			body: RPCServers,
 			props: { network },
 		}));
 		const defaultNetworksRPCItems = $default_networks.map((network: INetwork) => ({
 			title: 'RPC servers',
 			name: 'networks-rpc-' + network.guid,
-			body: SettingsNetworksRPCServers,
+			body: RPCServers,
 			props: { network },
 		}));
 		return [...networkEditItems, ...networksRPCItems, ...defaultNetworksRPCItems, ...networksTokensItems];

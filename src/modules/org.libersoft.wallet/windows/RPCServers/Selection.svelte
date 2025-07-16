@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer, type INetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { rpcURL, selectRPCURL } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { onMount } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -8,13 +8,15 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		close?: () => void;
+		network?: INetwork;
 	}
-	let { close }: Props = $props();
+	let { close, network }: Props = $props();
 	let rpcServers: IRPCServer[] = $state([]);
 	let isChecking = $state(false);
 
 	$effect(() => {
-		if ($selectedNetwork) rpcServers = getRPCServersFromNetwork($selectedNetwork);
+		if (network) rpcServers = getRPCServersFromNetwork(network);
+		else if ($selectedNetwork) rpcServers = getRPCServersFromNetwork($selectedNetwork);
 	});
 
 	async function checkServers() {
@@ -115,6 +117,31 @@
 	}
 </style>
 
+{#snippet item(server: IRPCServer)}
+	<div class="item" class:selected={server.url === $rpcURL}>
+		<div class="info">
+			<div class="url">{server.url}</div>
+			<div class="stats">
+				<div>
+					<span>Latency:</span>
+					<span class="bold">{server.checking ? '?' : formatLatency(server.latency)}</span>
+				</div>
+				<div>
+					<span>Block:</span>
+					<span class="bold">{server.checking ? '?' : formatBlockNumber(server.lastBlock)}</span>
+				</div>
+				<div>
+					<span>Age:</span>
+					<span class="bold">{server.checking ? '?' : formatBlockAge(server.blockAge)}</span>
+				</div>
+			</div>
+		</div>
+		<div class="status" class:alive={server.isAlive} class:dead={!server.isAlive && !server.checking} class:checking={server.checking}></div>
+	</div>
+{/snippet}
+{#if network}
+	<div class="bold">Network: {network.name}</div>
+{/if}
 <ButtonBar>
 	<Button img="img/reset.svg" text="Refresh all" onClick={checkServers} />
 </ButtonBar>
@@ -124,28 +151,13 @@
 	<div class="servers">
 		{#each rpcServers as server}
 			<div class="row">
-				<Clickable onClick={() => selectServer(server.url)} expand>
-					<div class="item" class:selected={server.url === $rpcURL}>
-						<div class="info">
-							<div class="url">{server.url}</div>
-							<div class="stats">
-								<div>
-									<span>Latency:</span>
-									<span class="bold">{server.checking ? '?' : formatLatency(server.latency)}</span>
-								</div>
-								<div>
-									<span>Block:</span>
-									<span class="bold">{server.checking ? '?' : formatBlockNumber(server.lastBlock)}</span>
-								</div>
-								<div>
-									<span>Age:</span>
-									<span class="bold">{server.checking ? '?' : formatBlockAge(server.blockAge)}</span>
-								</div>
-							</div>
-						</div>
-						<div class="status" class:alive={server.isAlive} class:dead={!server.isAlive && !server.checking} class:checking={server.checking}></div>
-					</div>
-				</Clickable>
+				{#if network}
+					{@render item(server)}
+				{:else}
+					<Clickable onClick={() => selectServer(server.url)} expand>
+						{@render item(server)}
+					</Clickable>
+				{/if}
 				<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="16px" enabled={!server.checking} onClick={() => refreshServer(server)} />
 			</div>
 		{/each}
