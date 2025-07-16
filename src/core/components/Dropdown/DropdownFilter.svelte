@@ -141,7 +141,7 @@
 
 <div class="dropdown-filter">
 	<div class="input-container">
-		<Input bind:value={inputValue} bind:this={inputRef} {enabled} onChange={handleInputChange} onblur={handleInputBlur} onfocus={toggleOptions} onKeydown={handleKeydown} onClick={toggleOptions} />
+		<Input bind:value={inputValue} bind:this={inputRef} {enabled} onChange={handleInputChange} onBlur={handleInputBlur} onFocus={toggleOptions} onKeydown={handleKeydown} onClick={toggleOptions} />
 		{#if selected}
 			<div class="clear-button">
 				<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="14px" onClick={clickClearSelection} />

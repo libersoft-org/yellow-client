@@ -10,9 +10,9 @@
 		minWidth?: string;
 		maxWidth?: string;
 		onKeydown?: (e: KeyboardEvent) => void;
-		onfocus?: (e: FocusEvent) => void;
-		onblur?: (e: FocusEvent) => void;
-		onclick?: (e: MouseEvent) => void;
+		onFocus?: (e: FocusEvent) => void;
+		onBlur?: (e: FocusEvent) => void;
+		onClick?: (e: MouseEvent) => void;
 		min?: number;
 		max?: number;
 		step?: number;
@@ -26,22 +26,22 @@
 		'data-testid'?: string;
 		onChange?: (value: string | number) => void;
 	}
-	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue = undefined, expand = true, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, onfocus = undefined, onblur = undefined, onclick = undefined, min = undefined, max = undefined, step = undefined, icon = undefined, inputRef = $bindable(), 'data-testid': testId = undefined, onChange = undefined }: Props = $props();
+	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue, expand = true, minWidth, maxWidth, onKeydown, onFocus, onBlur, onClick, min, max, step, icon, inputRef = $bindable(), 'data-testid': testId, onChange }: Props = $props();
 
 	function handleKeydown(e) {
 		if (onKeydown) onKeydown(e);
 	}
 
 	function handleFocus(e) {
-		if (onfocus) onfocus(e);
+		if (onFocus) onFocus(e);
 	}
 
 	function handleBlur(e) {
-		if (onblur) onblur(e);
+		if (onBlur) onBlur(e);
 	}
 
 	function handleClick(e) {
-		if (onclick) onclick(e);
+		if (onClick) onClick(e);
 	}
 
 	function handleChange(e: Event) {
