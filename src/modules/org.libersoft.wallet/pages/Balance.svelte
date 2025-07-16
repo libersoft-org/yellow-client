@@ -3,6 +3,7 @@
 	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { getBalance, getTokenBalance, getExchange, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -15,13 +16,13 @@
 	const refreshInterval = 30;
 	interface IBalanceData {
 		crypto: IBalance;
-		fiat: IBalance;
+		fiat: IBalance | null;
 		timestamp: Date;
 	}
 	interface ITokenBalanceData {
 		symbol: string;
 		crypto: IBalance;
-		fiat: IBalance;
+		fiat: IBalance | null;
 		timestamp: Date;
 	}
 	const tokenTimers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -97,11 +98,11 @@
 		try {
 			const tokenBalance = await getTokenBalance(tokenSymbol);
 			if (tokenBalance) {
-				const fiatBalance = await getExchange(tokenBalance.amount, tokenBalance.currency, 'USD');
+				const fiatBalance = await getExchange(tokenBalance, 'USD');
 				const tokenData: ITokenBalanceData = {
 					symbol: tokenSymbol,
 					crypto: tokenBalance,
-					fiat: fiatBalance || { amount: '?', currency: 'USD' },
+					fiat: fiatBalance,
 					timestamp: new Date(),
 				};
 				tokenBalances.set(tokenSymbol, tokenData);
@@ -123,10 +124,10 @@
 		try {
 			const nativeBalance = await getBalance();
 			if (nativeBalance) {
-				const fiatBalance = await getExchange(nativeBalance.amount, nativeBalance.currency, 'USD');
+				const fiatBalance = await getExchange(nativeBalance, 'USD');
 				balance = {
 					crypto: nativeBalance,
-					fiat: fiatBalance || { amount: '?', currency: 'USD' },
+					fiat: fiatBalance,
 					timestamp: new Date(),
 				};
 			}
@@ -212,8 +213,8 @@
 						{:else}
 							<div class="balance">
 								<div class="info">
-									<div class="amount">{balance?.crypto.amount || '?'} {balance?.crypto.currency || ''}</div>
-									<div class="fiat">({balance?.fiat.amount || '?'} {balance?.fiat.currency || '?'})</div>
+									<div class="amount"><BalanceDisplay balance={balance?.crypto} /></div>
+									<div class="fiat">(<BalanceDisplay balance={balance?.fiat} />)</div>
 									{#if $debug}
 										<div class="fiat">retrieved {balance?.timestamp.toLocaleTimeString() || '?'}</div>
 										<div class="fiat">Refresh in: {balanceCountdown} s</div>
@@ -243,8 +244,8 @@
 							{:else}
 								<div class="balance">
 									<div class="info">
-										<div class="amount">{tokenBalance?.crypto.amount || '?'} {t.symbol}</div>
-										<div class="fiat">({tokenBalance?.fiat.amount || '?'} {tokenBalance?.fiat.currency || '?'})</div>
+										<div class="amount"><BalanceDisplay balance={tokenBalance?.crypto} showCurrency={false} /> {t.symbol}</div>
+										<div class="fiat">(<BalanceDisplay balance={tokenBalance?.fiat} />)</div>
 										{#if $debug}
 											<div class="fiat">Refresh in: {tokenCountdowns.get(t.symbol) || 0} s</div>
 										{/if}

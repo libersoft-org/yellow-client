@@ -7,8 +7,9 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { formatBalance, getBalance, getTokenBalance, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
-	import { formatUnits } from 'ethers';
+	import { getBalance, getTokenBalance, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
+	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -31,23 +32,24 @@
 	let payment: IPayment | undefined = $state();
 	let currentBalanceData: IBalance | undefined = $state();
 	let nativeBalanceData: IBalance | undefined = $state();
-	let remainingBalance: string | undefined = $state();
+	let remainingBalance: bigint | undefined = $state();
 	let remainingNativeBalance: bigint | undefined = $state();
 	let remainingTokenBalance: bigint | undefined = $state();
-	let remainingNativeBalanceString: string | undefined = $state();
-	let remainingTokenBalanceString: string | undefined = $state();
+	let remainingBalanceObj: IBalance | undefined = $derived.by(() => {
+		return remainingBalance !== undefined ? { amount: remainingBalance, currency: $selectedNetwork?.currency?.symbol || '', decimals: 18 } : undefined;
+	});
+	let remainingNativeBalanceObj: IBalance | undefined = $derived.by(() => {
+		return remainingNativeBalance !== undefined ? { amount: remainingNativeBalance, currency: $selectedNetwork?.currency?.symbol || '', decimals: 18 } : undefined;
+	});
+	let remainingTokenBalanceObj: IBalance | undefined = $derived.by(() => {
+		return remainingTokenBalance !== undefined && currentBalanceData ? { amount: remainingTokenBalance, currency: currentBalanceData.currency, decimals: currentBalanceData.decimals } : undefined;
+	});
 	let elAddressInput: Input | undefined = $state();
 	let elCurrencyDropdown: DropdownFilter | undefined = $state();
 	let elAmountInput: Input | undefined = $state();
 	let elFeeInput: Input | undefined = $state();
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
 	let currencyForDropdown = $state(''); // Bidirectional binding helper for DropdownFilter
-	let currentBalance: string | undefined = $derived.by(() => {
-		return formatBalance(currentBalanceData);
-	});
-	let nativeBalance: string | undefined = $derived.by(() => {
-		return formatBalance(nativeBalanceData);
-	});
 
 	// Sync currency changes to dropdown
 	$effect(() => {
@@ -100,11 +102,11 @@
 
 	async function updateBalance() {
 		try {
-			nativeBalanceData = await getBalance();
+			nativeBalanceData = (await getBalance()) || undefined;
 			if (currency === $selectedNetwork?.currency?.symbol) {
 				currentBalanceData = nativeBalanceData;
 			} else if (currency) {
-				currentBalanceData = await getTokenBalance(currency);
+				currentBalanceData = (await getTokenBalance(currency)) || undefined;
 			}
 		} catch (e) {
 			console.error('Error updating balance:', e);
@@ -114,37 +116,29 @@
 	}
 
 	function updateRemainingBalance() {
-		if (!currentBalance || !amount || !$fee || currency === undefined || currency === null || currency === '') {
+		if (!currentBalanceData || !amount || !$fee || currency === undefined || currency === null || currency === '') {
 			remainingBalance = undefined;
 			remainingTokenBalance = undefined;
 			remainingNativeBalance = undefined;
 			return;
 		}
 		try {
-			const balanceNative = parseFloat(currentBalance);
-			const amountNative = parseFloat(amount.toString().replace(',', '.'));
-			const feeNative = parseFloat($fee.toString());
-			if (isNaN(balanceNative) || isNaN(amountNative) || isNaN(feeNative)) {
-				remainingBalance = undefined;
-				remainingTokenBalance = undefined;
-				remainingNativeBalance = undefined;
-				return;
-			}
+			const amountBigInt = parseUnits(amount.toString().replace(',', '.'), currentBalanceData.decimals || 18);
+			const feeBigInt = parseUnits($fee.toString(), 18); // Fee is always in native currency (18 decimals)
+
 			// If sending native currency
 			if (currency === $selectedNetwork?.currency?.symbol) {
-				const remaining = balanceNative - amountNative - feeNative;
-				remainingBalance = remaining.toFixed(6);
+				remainingBalance = currentBalanceData.amount - amountBigInt - feeBigInt;
 				remainingTokenBalance = undefined;
 				remainingNativeBalance = undefined;
 			} else {
 				// If sending token
 				// Token balance: current token balance - amount sent
-				const remainingToken = balanceNative - amountNative;
-				remainingTokenBalance = remainingToken.toFixed(36);
+				remainingTokenBalance = currentBalanceData.amount - amountBigInt;
 
 				// Native balance: current native balance - fee
 				if (nativeBalanceData) {
-					remainingNativeBalance = nativeBalanceData.amount - feeNative;
+					remainingNativeBalance = nativeBalanceData.amount - feeBigInt;
 				}
 
 				remainingBalance = undefined;
@@ -157,20 +151,18 @@
 	}
 
 	async function setMaxAmount() {
-		if (!currentBalance || !$fee) return;
+		if (!currentBalanceData || !$fee) return;
 		try {
-			const balanceNative = parseFloat(currentBalance);
-			const feeNative = parseFloat($fee.toString());
-			if (isNaN(balanceNative) || isNaN(feeNative)) return;
+			const feeBigInt = parseUnits($fee.toString(), 18); // Fee is always in native currency (18 decimals)
 
 			// If sending native currency, subtract fee from balance
 			if (currency === $selectedNetwork?.currency?.symbol) {
-				const maxAmount = balanceNative - feeNative;
-				if (maxAmount > 0) amount = maxAmount.toFixed(6);
-				else amount = '0';
+				let maxAmount = currentBalanceData.amount - feeBigInt;
+				if (maxAmount < 0) maxAmount = 0n;
+				amount = formatUnits(maxAmount, currentBalanceData.decimals || 18);
 			} else {
 				// If sending token, use full token balance (fee is paid in native currency)
-				amount = balanceNative.toFixed(6);
+				amount = formatUnits(currentBalanceData.amount, currentBalanceData.decimals || 18);
 			}
 		} catch (e) {
 			console.error('Error setting max amount:', e);
@@ -267,7 +259,7 @@
 				{#if currency && currency !== ''}
 					<div>{selectedCurrencySymbol}</div>
 				{/if}
-				<Button img="modules/{module.identifier}/img/maximum.svg" text="Max" enabled={!!($selectedNetwork && $selectedAddress && currentBalance && $fee)} onClick={setMaxAmount} />
+				<Button img="modules/{module.identifier}/img/maximum.svg" text="Max" enabled={!!($selectedNetwork && $selectedAddress && currentBalanceData && $fee)} onClick={setMaxAmount} />
 			</div>
 		</Label>
 		<Label text="Transaction fee">
@@ -307,11 +299,11 @@
 				<Tr>
 					<Td bold>Current balance:</Td>
 					<Td>
-						{#if currentBalanceString !== undefined && currency !== undefined && currency !== null && currency !== ''}
-							<div>{currentBalanceString} {selectedCurrencySymbol}</div>
+						{#if currentBalanceData && currency !== undefined && currency !== null && currency !== ''}
+							<div><BalanceDisplay balance={currentBalanceData} showCurrency={false} /> {selectedCurrencySymbol}</div>
 							{#if currency !== $selectedNetwork?.currency?.symbol}
-								{#if nativeBalanceString !== undefined}
-									<div>{nativeBalanceString} {$selectedNetwork?.currency?.symbol || ''}</div>
+								{#if nativeBalanceData}
+									<div><BalanceDisplay balance={nativeBalanceData} /></div>
 								{:else}
 									<Spinner size="12px" />
 								{/if}
@@ -329,14 +321,14 @@
 						{#if currency === undefined || currency === null || currency === '' || !amount || amount === '' || amount === 0}
 							<div>-</div>
 						{:else if currency === $selectedNetwork?.currency?.symbol}
-							{#if remainingBalance !== undefined}
-								<div>{remainingBalance} {selectedCurrencySymbol}</div>
+							{#if remainingBalanceObj}
+								<div><BalanceDisplay balance={remainingBalanceObj} showCurrency={false} /> {selectedCurrencySymbol}</div>
 							{:else}
 								<Spinner size="12px" />
 							{/if}
-						{:else if remainingTokenBalance !== undefined && remainingNativeBalance !== undefined}
-							<div>{remainingTokenBalance} {selectedCurrencySymbol}</div>
-							<div>{remainingNativeBalance} {$selectedNetwork?.currency?.symbol || ''}</div>
+						{:else if remainingTokenBalanceObj && remainingNativeBalanceObj}
+							<div><BalanceDisplay balance={remainingTokenBalanceObj} showCurrency={false} /> {selectedCurrencySymbol}</div>
+							<div><BalanceDisplay balance={remainingNativeBalanceObj} /></div>
 						{:else}
 							<Spinner size="12px" />
 						{/if}

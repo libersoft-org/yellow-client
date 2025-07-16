@@ -24,7 +24,7 @@ export async function getBalance(): Promise<IBalance | null> {
 		return {
 			amount: balanceWei,
 			currency: net.currency.symbol,
-			decimals: net.currency.decimals || 18,
+			decimals: 18,
 		};
 	} catch (error) {
 		console.error('Error while getting balance:', error);
@@ -51,10 +51,9 @@ export async function getTokenBalance(tokenSymbol: string): Promise<IBalance | n
 		const abi = ['function balanceOf(address owner) view returns (uint256)', 'function decimals() view returns (uint8)'];
 		const contract = new Contract(token.contract_address, abi, p);
 		const [balance, decimals] = await Promise.all([contract.balanceOf(addr.address), contract.decimals()]);
-		const formattedBalance = formatUnits(balance, decimals);
-		console.log('Token balance fetched:', formattedBalance, token.symbol);
+		console.log('Token balance fetched:', balance, token.symbol);
 		return {
-			amount: formattedBalance,
+			amount: balance,
 			currency: token.symbol,
 			decimals,
 		};
@@ -64,8 +63,8 @@ export async function getTokenBalance(tokenSymbol: string): Promise<IBalance | n
 	}
 }
 
-export async function getExchange(cryptoAmount: string, cryptoSymbol: string, fiatSymbol: string = 'USD'): Promise<IBalance | null> {
-	if (!cryptoAmount || cryptoAmount === '?') {
+export async function getExchange(cryptoBalance: IBalance, fiatSymbol: string = 'USD'): Promise<IBalance | null> {
+	if (!cryptoBalance.amount) {
 		console.error('Crypto amount not available');
 		return null;
 	}
@@ -75,18 +74,20 @@ export async function getExchange(cryptoAmount: string, cryptoSymbol: string, fi
 			console.error('Failed to fetch exchange rates');
 			return null;
 		}
-		const symbol = cryptoSymbol.toUpperCase();
+		const symbol = cryptoBalance.currency.toUpperCase();
 		const rate = rates.rates[symbol];
 		if (!rate) {
 			console.debug('Exchange rate not found for currency:', symbol);
 			return null;
 		}
-		const amount = parseFloat(cryptoAmount);
-		const fiatAmount = (amount / parseFloat(rate)).toFixed(2);
-		console.log('Exchange rate calculated:', fiatAmount, fiatSymbol);
+		const rateNumber = Number(rate);
+		const rateBigInt = BigInt(Math.round(rateNumber * 1e18));
+		const fiatAmount = (cryptoBalance.amount * BigInt(1e18)) / rateBigInt;
+
 		return {
 			amount: fiatAmount,
 			currency: fiatSymbol,
+			decimals: 18,
 		};
 	} catch (error) {
 		console.error('Error while getting exchange rate:', error);
@@ -107,7 +108,7 @@ async function exchangeRates(currency: string = 'USD'): Promise<any> {
 	}
 }
 
-export function formatBalance(balance: IBalance | undefined): string {
+export function formatBalance(balance: IBalance | undefined): string | undefined {
 	if (!balance) return undefined;
 	return formatUnits(balance.amount, balance.decimals || 18);
 }

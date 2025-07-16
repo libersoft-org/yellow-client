@@ -28,7 +28,7 @@
 	}
 
 	async function clickYes() {
-		if (params) {
+		if (params && params.currency) {
 			await sendTransaction(params.address, params.amount, params.fee, params.currency);
 			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 			elDialog?.close();

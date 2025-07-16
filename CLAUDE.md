@@ -30,6 +30,77 @@
 - Svelte for UI components with TypeScript support
 - Modules system for extensible functionality
 
+## Svelte Component Guidelines
+
+**IMPORTANT:** This project currently uses a mix of Svelte 4 and Svelte 5 patterns. Be very careful when editing components - maintain the existing pattern used in each file.
+
+### Svelte 4 Components (Legacy Pattern)
+
+Many existing components use Svelte 4 syntax:
+
+- `export let propName` for props
+- `$: reactiveValue = computedExpression` for reactive statements
+- `createEventDispatcher()` for events
+- Plain `let` declarations for local state
+
+Example (do not change existing Svelte 4 components):
+
+```svelte
+<script>
+	export let message;
+	export let enabled = true;
+
+	let localState = 'initial';
+	$: computedValue = message?.content?.toUpperCase();
+</script>
+```
+
+### Svelte 5 Components (Modern Pattern)
+
+Newer components use Svelte 5 runes:
+
+- `$props()` with destructuring for props
+- `$state()` for reactive state
+- `$derived()` for computed values
+- `$effect()` for side effects (use sparingly)
+- `$bindable()` for two-way binding
+
+Example (use for new components):
+
+```svelte
+<script lang="ts">
+	import type { Snippet } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
+
+	interface Props extends HTMLAttributes<HTMLDivElement> {
+		children?: Snippet;
+		value?: string;
+		enabled?: boolean;
+	}
+
+	let { children, value = $bindable(''), enabled = true, ...restProps }: Props = $props();
+	let someState = $state(false);
+	let computedValue = $derived(value?.toUpperCase());
+
+	$effect(() => {
+		// Only for side effects, avoid state updates
+	});
+</script>
+
+<div {...restProps}>
+	{#if children}
+		{@render children()}
+	{/if}
+</div>
+```
+
+### Component Editing Rules
+
+1. **When editing existing components:** Maintain the existing pattern (Svelte 4 or 5)
+2. **When creating new components:** Use Svelte 5 patterns with TypeScript
+3. **Do not mix patterns** within the same component
+4. **Migration:** Only migrate components to Svelte 5 if explicitly requested
+
 ## Testing
 
 - ** IMPORTANT ** When creating playwright tests, use data-testid attributes. Modify the tested components to render them if necessary.
