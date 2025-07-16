@@ -36,13 +36,10 @@
 	};
 	let wizard = getContext<WizardContext>('wizard');
 	let account_id_store = writable<string | null>(null);
-	//console.log('[INIT] Window mounted. Params:', params);
 
 	onMount(() => {
 		top = snippet_top;
 		bottom = snippet_bottom;
-		//console.log('top:', top);
-		//console.log('bottom:', bottom);
 	});
 
 	$effect(() => {
@@ -63,7 +60,6 @@
 			config_title = 'My account';
 		}
 	});
-
 	/*
 	// Observe full accounts store for debug
 	accounts.subscribe(value => {
@@ -83,16 +79,17 @@
 	});
 	/*
 	account.subscribe(value => {
-		if (value) {
-			console.log('[SUBSCRIBE] Account updated:', value);
-		} else {
-			console.log('[SUBSCRIBE] No account found');
-		}
+		if (value) console.log('[SUBSCRIBE] Account updated:', value);
+		else console.log('[SUBSCRIBE] No account found');
 	});
 	*/
-	$effect(() => {
+	export function onOpen() {
+		console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
 		protocolElem?.focus();
-		//console.log('[EFFECT] Checking if params.id exists:', params.id);
+	}
+
+	$effect(() => {
+		console.log('[EFFECT] Checking if params.id exists:', params.id);
 		if (params.id !== null) {
 			let found = findAccountConfig(params.id);
 			console.log('[EFFECT] Loaded existing config:', found);
