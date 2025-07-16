@@ -2,7 +2,7 @@
 	{
 		"name": "Ethereum - Mainnet",
 		"chainID": 1,
-		"rpcURLs": ["https://cloudflare-eth.com", "https://rpc.ankr.com/eth", "https://main-rpc.linkpool.io", "https://eth-rpc.gateway.pokt.network", "https://mainnet-nethermind.blockscout.com", "https://api.mycryptoapi.com/eth"],
+		"rpcURLs": ["https://eth.llamarpc.com", "https://ethereum-rpc.publicnode.com", "wss://ethereum-rpc.publicnode.com", "https://1rpc.io/eth", "https://rpc.mevblocker.io", "https://rpc.flashbots.net", "https://eth.rpc.blxrbdn.com", "https://eth-mainnet.public.blastapi.io", "https://ethereum.public.blockpi.network/v1/rpc/public", "https://rpc.payload.de", "https://core.gashawk.io/rpc", "https://rpc.eth.gateway.fm", "https://eth.drpc.org", "wss://eth.drpc.org", "https://mainnet.gateway.tenderly.co", "https://gateway.tenderly.co/public/mainnet", "https://eth.merkle.io", "https://eth.nodeconnect.org", "https://ethereum-mainnet.gateway.tatum.io", "https://ethereum.rpc.subquery.network/public", "https://eth.blockrazor.xyz", "https://endpoints.omniatech.io/v1/eth/mainnet/public", "https://eth1.lava.build", "https://0xrpc.io/eth", "wss://0xrpc.io/eth", "https://rpc.flashbots.net/fast", "https://rpc.mevblocker.io/fast", "https://rpc.mevblocker.io/noreverts", "https://rpc.mevblocker.io/fullprivacy"],
 		"currency": {
 			"symbol": "ETH",
 			"iconURL": "https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/coins/ETH.svg"
