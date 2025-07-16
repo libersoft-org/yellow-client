@@ -214,7 +214,7 @@
 							<div class="balance">
 								<div class="info">
 									<div class="amount"><BalanceDisplay balance={balance?.crypto} /></div>
-									<div class="fiat">(<BalanceDisplay balance={balance?.fiat} />)</div>
+									<div class="fiat">(<BalanceDisplay balance={balance?.fiat} roundToDecimals={2} />)</div>
 									{#if $debug}
 										<div class="fiat">retrieved {balance?.timestamp.toLocaleTimeString() || '?'}</div>
 										<div class="fiat">Refresh in: {balanceCountdown} s</div>
@@ -245,7 +245,7 @@
 								<div class="balance">
 									<div class="info">
 										<div class="amount"><BalanceDisplay balance={tokenBalance?.crypto} showCurrency={false} /> {t.symbol}</div>
-										<div class="fiat">(<BalanceDisplay balance={tokenBalance?.fiat} />)</div>
+										<div class="fiat">(<BalanceDisplay balance={tokenBalance?.fiat} roundToDecimals={2} />)</div>
 										{#if $debug}
 											<div class="fiat">Refresh in: {tokenCountdowns.get(t.symbol) || 0} s</div>
 										{/if}
