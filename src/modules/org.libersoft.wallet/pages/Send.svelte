@@ -272,7 +272,7 @@
 				{#if currency && currency !== ''}
 					<div>{selectedCurrencySymbol}</div>
 				{/if}
-				<Button img="modules/{module.identifier}/img/max.svg" text="Max" enabled={!!($selectedNetwork && $selectedAddress && currentBalance && $fee)} onClick={setMaxAmount} />
+				<Button img="modules/{module.identifier}/img/maximum.svg" text="Max" enabled={!!($selectedNetwork && $selectedAddress && currentBalance && $fee)} onClick={setMaxAmount} />
 			</div>
 		</Label>
 		<Label text="Transaction fee">
