@@ -80,7 +80,7 @@ export async function getExchange(cryptoAmount: string, cryptoSymbol: string, fi
 			return null;
 		}
 		const amount = parseFloat(cryptoAmount);
-		const fiatAmount = (amount * parseFloat(rate)).toFixed(2);
+		const fiatAmount = (amount / parseFloat(rate)).toFixed(2);
 		console.log('Exchange rate calculated:', fiatAmount, fiatSymbol);
 		return {
 			amount: fiatAmount,

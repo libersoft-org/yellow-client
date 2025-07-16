@@ -159,19 +159,57 @@ async function updateTransactionTimes(): Promise<void> {
 	try {
 		// Timeout for the entire operation
 		const timeoutPromise = new Promise<never>((_, reject) => {
-			setTimeout(() => reject(new Error('Timeout')), 5000); // 5 second timeout
+			setTimeout(() => reject(new Error('Timeout')), 25000); // 5 second timeout
 		});
 		const analysisPromise = (async () => {
 			// Get last 5 blocks for faster analysis
 			const blockCount = 5;
 			const latest = await providerInstance.getBlockNumber();
+
 			// Parallel fetching of fee history and blocks
-			const [feeHistoryResult, ...blockResults] = await Promise.all([providerInstance.send('eth_feeHistory', [`0x${blockCount.toString(16)}`, 'latest', [10, 50, 90]]).catch(() => null), ...Array.from({ length: blockCount }, (_, i) => providerInstance.getBlock(latest - i).catch(() => null))]);
+			const [feeHistoryResult, ...blockResults] = await Promise.all([
+				(async () => {
+					try {
+						console.debug('Fetching eth_feeHistory for last', blockCount, 'blocks');
+						const r = await providerInstance.send('eth_feeHistory', [`0x${blockCount.toString(16)}`, 'latest', [10, 50, 90]]);
+						console.debug('eth_feeHistory result:', r);
+						return r;
+					} catch (error) {
+						console.debug('Error fetching eth_feeHistory:', error);
+						return null;
+					}
+				})(),
+
+				...Array.from({ length: blockCount }, (_, i) => {
+					console.debug(`Fetching block ${latest - i}`);
+					return providerInstance
+						.getBlock(latest - i)
+						.then(block => {
+							console.debug(`Block ${latest - i} fetched:`, block);
+							return block;
+						})
+						.catch(error => {
+							console.debug(`Error fetching block ${latest - i}:`, error);
+							return null; // Return null for failed blocks
+						});
+				}),
+			]);
+
+			console.debug('...');
+			console.debug('Fee history result:', feeHistoryResult);
+			console.debug('Block results:', blockResults);
+
 			// Block time analysis - require at least 3 valid blocks for accuracy
 			const blockTimes: number[] = [];
 			const validBlocks = blockResults.filter(block => block && block.timestamp);
+
+			console.debug('Valid blocks:', validBlocks.length, validBlocks);
+
 			// Not enough blocks for accurate calculation
-			if (validBlocks.length < 3) return null;
+			if (validBlocks.length < 3) {
+				console.debug('Not enough valid blocks for accurate transaction time estimation');
+				return null;
+			}
 			for (let i = 0; i < validBlocks.length - 1; i++) {
 				const currentBlock = validBlocks[i];
 				const previousBlock = validBlocks[i + 1];
@@ -182,13 +220,20 @@ async function updateTransactionTimes(): Promise<void> {
 				}
 			}
 			// Require at least 2 valid block times for accurate average
-			if (blockTimes.length < 2) return null;
+			if (blockTimes.length < 2) {
+				console.debug('Not enough valid block times for accurate transaction time estimation');
+				return null;
+			}
 			// Calculate precise average block time
 			const avgBlockTime = blockTimes.reduce((a, b) => a + b, 0) / blockTimes.length;
+			console.debug('Average block time calculated:', avgBlockTime, 'seconds');
 			// Confirmation estimate based on real data
 			const confirmationBlocks = estimateConfirmationBlocks(feeHistoryResult, avgBlockTime);
 			// Only return if we have valid confirmation blocks
-			if (!confirmationBlocks) return null;
+			if (!confirmationBlocks) {
+				console.debug('No valid confirmation blocks estimated from fee history');
+				return null;
+			}
 			return {
 				low: formatTransactionTime(confirmationBlocks.low * avgBlockTime),
 				average: formatTransactionTime(confirmationBlocks.average * avgBlockTime),
@@ -276,7 +321,7 @@ function formatTransactionTime(seconds: number): string {
 	}
 }
 
-export async function sendTransaction(address: string, etherValue: bigint, etherValueFee: string, currency: string): Promise<void> {
+export async function sendTransaction(address: string, etherValue: bigint, etherValueFee: bigint, currency: string): Promise<void> {
 	const selectedWalletValue = get(selectedWallet);
 	const selectedAddressValue = get(selectedAddress);
 	if (!selectedWalletValue || !selectedAddressValue) {
@@ -285,15 +330,16 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 	}
 	const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
 	let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(get(provider));
-	let data = 'you can put data here';
+	//let data = 'you can put data here';
 	const request: PreparedTransactionRequest = {
 		to: address,
 		from: selectedAddressValue.address,
 		value: etherValue,
+		gasLimit: etherValueFee,
 		//new Uint8Array(data.split('').map(c => c.charCodeAt(0))),
-		data: data,
+		//data: data,
 	};
-	//maxFeePerGas: etherValueFee,
+	//
 	//nonce: await provider.getTransactionCount(selectedAddressValue.address),
 	console.log('selectedAddressValue.address:', selectedAddressValue);
 	console.log('provider:', get(provider));

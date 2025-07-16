@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { formatUnits } from 'ethers';
-	//import { sendTransaction } from '@/org.libersoft.wallet/scripts/transaction.ts'
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
+	import { type IPayment, sendTransaction } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { transactionTime, transactionTimeLoading } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { playAudio } from '@/core/scripts/notifications.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
@@ -30,7 +29,7 @@
 
 	async function clickYes() {
 		if (params) {
-			//await sendTransaction(params.address, params.amount, params.fee, params.currency);
+			await sendTransaction(params.address, params.amount, params.fee, params.currency);
 			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 			elDialog?.close();
 		}
