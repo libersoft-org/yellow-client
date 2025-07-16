@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { debug } from '@/core/scripts/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -36,6 +37,7 @@
 		selected = '';
 		inputValue = '';
 		filteredOptions = options;
+		inputRef?.focus();
 	}
 
 	function toggleOptions() {
@@ -123,6 +125,19 @@
 		color: var(--default-foreground);
 	}
 
+	.input-container {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.clear-button {
+		position: absolute;
+		right: 10px;
+		z-index: 2;
+		cursor: pointer;
+	}
+
 	.options {
 		z-index: 1;
 		position: absolute;
@@ -148,47 +163,39 @@
 	}
 
 	.option.highlighted {
-		background-color: var(--primary-background);
+		background-color: var(--primary-background) !important;
 	}
 
 	:global(.clickable:focus-visible) .option,
 	:global(.clickable.focused) .option {
-		background-color: var(--primary-background);
-	}
-
-	.selected {
-		display: flex;
-		align-items: center;
-		border: 1px solid var(--default-foreground);
-		border-radius: 10px;
-		width: 100%;
-		box-sizing: border-box;
-	}
-
-	.selected .text {
-		flex-grow: 1;
-		padding: 0 10px;
+		background-color: var(--primary-background) !important;
 	}
 </style>
 
 <div class="dropdown-filter">
-	{#if selected}
-		<div class="selected">
-			<div class="text">{selected}</div>
-			<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="10px" onClick={clickClearSelection} />
-		</div>
-	{:else}
-		<div>
-			<Input bind:value={inputValue} bind:this={inputRef} {enabled} onblur={handleInputBlur} onfocus={toggleOptions} onKeydown={handleKeydown} onclick={toggleOptions} />
-		</div>
-		{#if showOptions}
-			<div class="options" onmousedown={e => e.preventDefault()} onmouseleave={handleMouseLeave} role="listbox" aria-label="Options" tabindex="-1">
-				{#each filteredOptions as option, index}
-					<Clickable onClick={() => clickSelectOption(option)}>
-						<div class="option" class:highlighted={hoveredIndex >= 0 ? index === hoveredIndex : index === selectedIndex} onmouseenter={() => handleMouseEnter(index)} role="option" aria-selected={hoveredIndex >= 0 ? index === hoveredIndex : index === selectedIndex} tabindex="-1">{option}</div>
-					</Clickable>
-				{/each}
+	<div class="input-container">
+		<Input bind:value={inputValue} bind:this={inputRef} {enabled} onblur={handleInputBlur} onfocus={toggleOptions} onKeydown={handleKeydown} onclick={toggleOptions} />
+		{#if selected}
+			<div class="clear-button">
+				<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="10px" onClick={clickClearSelection} />
 			</div>
 		{/if}
+	</div>
+	{#if $debug}
+		<div class="debug-info">
+			<div>Input Value: {inputValue}</div>
+			<div>Selected Option: {selected}</div>
+			<div>Hovered Index: {hoveredIndex}</div>
+			<div>Filtered Options: {JSON.stringify(filteredOptions)}</div>
+		</div>
+	{/if}
+	{#if showOptions}
+		<div class="options" onmousedown={e => e.preventDefault()} onmouseleave={handleMouseLeave} role="listbox" aria-label="Options" tabindex="-1">
+			{#each filteredOptions as option, index}
+				<Clickable onClick={() => clickSelectOption(option)}>
+					<div class="option" class:highlighted={hoveredIndex >= 0 ? index === hoveredIndex : index === selectedIndex} onmouseenter={() => handleMouseEnter(index)} role="option" aria-selected={hoveredIndex >= 0 ? index === hoveredIndex : index === selectedIndex} tabindex="-1">{option}</div>
+				</Clickable>
+			{/each}
+		</div>
 	{/if}
 </div>
