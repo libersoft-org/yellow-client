@@ -16,7 +16,7 @@ export function validateForm(config: FormValidatorConfig): string | null {
 			if (arrayValue.length === 0) continue;
 			for (let i = 0; i < arrayValue.length; i++) {
 				const item = arrayValue[i];
-				if (rule.required) {
+				if (rule.required && (item === undefined || item === null || item === '')) {
 					rule.arrayElements?.[i]?.focus();
 					return rule.required.replace('{index}', (i + 1).toString());
 				}
