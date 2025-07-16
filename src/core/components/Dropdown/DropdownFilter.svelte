@@ -126,6 +126,7 @@
 	.options {
 		z-index: 1;
 		position: absolute;
+		border-radius: 10px;
 		border: 1px solid var(--default-foreground);
 		background-color: var(--default-background);
 		box-sizing: border-box;
@@ -136,6 +137,14 @@
 
 	.option {
 		padding: 10px;
+	}
+
+	:global(.clickable:nth-child(odd)) .option {
+		background-color: var(--primary-softer-background);
+	}
+
+	:global(.clickable:nth-child(even)) .option {
+		background-color: var(--primary-soft-background);
 	}
 
 	.option.highlighted {
