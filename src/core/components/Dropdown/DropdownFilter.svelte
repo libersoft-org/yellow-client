@@ -13,7 +13,7 @@
 	let showOptions = $state(false);
 	let inputRef: Input | undefined = $state();
 	let inputValue = $state('');
-	let selectedIndex = $state(-1); // Index of currently highlighted option
+	let selectedIndex = $state(-1);
 
 	export function focus() {
 		inputRef?.focus();
@@ -22,7 +22,7 @@
 	$effect(() => {
 		filteredOptions = options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()));
 		if (inputValue) showOptions = true;
-		selectedIndex = -1; // Reset selection when options change
+		selectedIndex = -1;
 	});
 
 	function clickSelectOption(option) {
@@ -41,8 +41,8 @@
 	function toggleOptions() {
 		if (!selected) {
 			showOptions = true;
-			filteredOptions = options; // Show all options when focused
-			selectedIndex = -1; // Reset selection when opening
+			filteredOptions = options;
+			selectedIndex = -1;
 		}
 	}
 
@@ -55,30 +55,19 @@
 		switch (e.key) {
 			case 'ArrowDown':
 				e.preventDefault();
-				if (!showOptions) {
-					// Show options if not visible, but don't highlight anything yet
-					showOptions = true;
-					filteredOptions = options;
-					selectedIndex = -1;
-				} else {
-					// Navigate when options are visible
+				if (!openOptionsIfClosed()) {
 					selectedIndex = selectedIndex < filteredOptions.length - 1 ? selectedIndex + 1 : 0;
 				}
 				break;
 			case 'ArrowUp':
 				e.preventDefault();
-				if (!showOptions) {
-					// Show options if not visible, but don't highlight anything yet
-					showOptions = true;
-					filteredOptions = options;
-					selectedIndex = -1;
-				} else {
-					// Navigate when options are visible
+				if (!openOptionsIfClosed()) {
 					selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : filteredOptions.length - 1;
 				}
 				break;
 			case 'Enter':
 				e.preventDefault();
+				e.stopPropagation();
 				if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) {
 					clickSelectOption(filteredOptions[selectedIndex]);
 				}
@@ -96,8 +85,14 @@
 		selectedIndex = index;
 	}
 
-	function handleMouseLeave() {
-		// Keep selectedIndex when mouse leaves
+	function openOptionsIfClosed() {
+		if (!showOptions) {
+			showOptions = true;
+			filteredOptions = options;
+			selectedIndex = -1;
+			return true;
+		}
+		return false;
 	}
 </script>
 
@@ -173,7 +168,7 @@
 		</div>
 	{/if}
 	{#if showOptions}
-		<div class="options" onmousedown={e => e.preventDefault()} onmouseleave={handleMouseLeave} role="listbox" aria-label="Options" tabindex="-1">
+		<div class="options" onmousedown={e => e.preventDefault()} role="listbox" aria-label="Options" tabindex="-1">
 			{#each filteredOptions as option, index}
 				<Clickable onClick={() => clickSelectOption(option)}>
 					<div class="option" class:highlighted={index === selectedIndex} onmouseenter={() => handleMouseEnter(index)} role="option" aria-selected={index === selectedIndex} tabindex="-1">{option}</div>
