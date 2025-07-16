@@ -76,7 +76,7 @@ export async function getExchange(cryptoAmount: string, cryptoSymbol: string, fi
 		const symbol = cryptoSymbol.toUpperCase();
 		const rate = rates.rates[symbol];
 		if (!rate) {
-			console.error('Exchange rate not found for currency:', symbol);
+			console.debug('Exchange rate not found for currency:', symbol);
 			return null;
 		}
 		const amount = parseFloat(cryptoAmount);

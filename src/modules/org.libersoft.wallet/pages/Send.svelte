@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, updateCustomFeeTransactionTime, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment } from '@/org.libersoft.wallet/scripts/transaction.ts';
+	import { debug } from '@/core/scripts/stores.ts';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { selectedNetwork, currencies, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -75,30 +76,32 @@
 
 	$effect(() => {
 		// Update balance when currency changes
-		if (currency !== undefined && currency !== null) updateBalance();
+		currency;
+		updateBalance();
 	});
 
 	$effect(() => {
-		if ($feeLevel) updateFeeFromLevel();
+		$feeLevel;
+		updateFeeFromLevel();
 	});
 
 	$effect(() => {
-		// Update transaction time when custom fee changes
-		if ($feeLevel === 'custom' && $fee) updateCustomFeeTransactionTime();
-	});
-
-	$effect(() => {
-		console.log('updateBalance effect triggered');
+		console.log('updateRemainingBalance effect triggered');
 		updateRemainingBalance();
 	});
 
 	async function updateBalance() {
+		/*
+		write nativeBalance based on network's native currency
+		write currentBalance based on selected currency
+		*/
+
 		try {
-			if (currency === undefined || currency === null || currency === '') {
+			/*if (currency === undefined || currency === null || currency === '') {
 				currentBalance = undefined;
 				nativeBalance = undefined;
 				return;
-			}
+			}*/
 			// Always get native balance for fee calculation
 			const nativeBalanceData = await getBalance();
 			nativeBalance = nativeBalanceData?.amount || undefined;
@@ -106,8 +109,10 @@
 			if (currency === $selectedNetwork?.currency?.symbol) currentBalance = nativeBalance;
 			else {
 				// If sending token, get token balance
-				const balance = await getTokenBalance(currency);
-				currentBalance = balance?.amount || undefined;
+				if (currency) {
+					const balance = await getTokenBalance(currency);
+					currentBalance = balance?.amount || undefined;
+				}
 			}
 		} catch (e) {
 			console.error('Error updating balance:', e);
@@ -358,3 +363,13 @@
 	</Form>
 </div>
 <DialogSend params={payment} bind:this={elDialogSend} />
+{#if $debug}
+	<div class="debug">
+		estimatedTransactionTimes: {JSON.stringify($estimatedTransactionTimes)}
+		<br />
+		avgBlockTime: {JSON.stringify($avgBlockTimeStore)}
+		<br />
+		confirmationBlocks: {JSON.stringify($confirmationBlocksStore)}
+		<br />
+	</div>
+{/if}
