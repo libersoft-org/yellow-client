@@ -472,7 +472,7 @@
 	{
 		"name": "Astar - Mainnet",
 		"chainID": 592,
-		"rpcURLs": ["https://evm.astar.network", "https://astar-mainnet.public.blastapi.io", "https://rpc.ankr.com/astar"],
+		"rpcURLs": ["https://evm.astar.network", "https://astar.public.blastapi.io", "https://1rpc.io/astr", "https://astar.api.onfinality.io/public", "wss://astar.api.onfinality.io/public-ws", "https://astar-rpc.dwellir.com", "wss://astar-rpc.dwellir.com", "https://astar.public.curie.radiumblock.co/http", "https://astar.public.curie.radiumblock.co/ws"],
 		"currency": {
 			"symbol": "ASTR",
 			"iconURL": "https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/coins/ASTR.svg"
@@ -1042,7 +1042,7 @@
 	{
 		"name": "Base - Mainnet",
 		"chainID": 84531,
-		"rpcURLs": ["https://base-mainnet.infura.io/v3/YOUR-PROJECT-ID", "https://rpc.base.org"],
+		"rpcURLs": ["https://mainnet.base.org", "https://base.llamarpc.com", "https://developer-access-mainnet.base.org", "https://base.public.blockpi.network/v1/rpc/public", "https://1rpc.io/base", "https://base-pokt.nodies.app", "https://base-mainnet.public.blastapi.io", "https://base.gateway.tenderly.co", "wss://base.gateway.tenderly.co", "https://gateway.tenderly.co/public/base", "https://base-rpc.publicnode.com", "wss://base-rpc.publicnode.com", "https://base.drpc.org", "https://base.api.onfinality.io/public", "https://base-mainnet.gateway.tatum.io", "https://base.rpc.subquery.network/public", "https://api.zan.top/base-mainnet", "https://endpoints.omniatech.io/v1/base/mainnet/public", "https://base.lava.build", "https://0xrpc.io/base", "wss://0xrpc.io/base"],
 		"currency": {
 			"symbol": "ETH",
 			"iconURL": "https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/coins/ETH.svg"
