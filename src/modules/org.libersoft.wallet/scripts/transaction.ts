@@ -25,16 +25,22 @@ let estimatedFee: FeeEstimate = {
 	average: '0',
 	high: '0',
 };
-let estimatedTransactionTimes: TransactionTimeEstimate = {
+export let estimatedTransactionTimes = writable<TransactionTimeEstimate>({
 	low: 'unknown',
 	average: 'unknown',
 	high: 'unknown',
-};
+});
 export const feeLoading = writable(false);
 export const transactionTimeLoading = writable(false);
 export const feeLevel = writable<'low' | 'average' | 'high' | 'custom'>('average');
 export const fee = writable<string | number>('0');
 export const transactionTime = writable<string>('unknown');
+export const avgBlockTimeStore = writable<any>();
+export const confirmationBlocksStore = writable<any>();
+
+transactionTime.subscribe(value => {
+	console.log('transactionTime updated:', value);
+});
 
 export function getEtherAmount(amount) {
 	try {
@@ -106,14 +112,12 @@ export async function estimateTransactionFee(): Promise<{ low: string; average: 
 export function updateFeeFromLevel() {
 	const currentFeeLevel = get(feeLevel);
 	console.log('updateFeeFromLevel called with:', currentFeeLevel, 'estimatedFee:', estimatedFee);
-	if (currentFeeLevel === 'custom') {
-		// For custom, don't update fee but update transaction time based on current fee
-		transactionTime.set(getEstimatedTransactionTime('custom'));
-		return;
+	if (currentFeeLevel !== 'custom') {
+		fee.set(estimatedFee[currentFeeLevel]);
+		console.log('Updated fee to:', get(fee));
 	}
-	fee.set(estimatedFee[currentFeeLevel]);
+	console.log('updateFeeFromLevel: Update estimated transaction time to:', get(transactionTime));
 	transactionTime.set(getEstimatedTransactionTime(currentFeeLevel));
-	console.log('Updated fee to:', get(fee), 'time to:', get(transactionTime));
 }
 
 export function getEstimatedTransactionTime(feeLevel: 'low' | 'average' | 'high' | 'custom'): string {
@@ -123,32 +127,25 @@ export function getEstimatedTransactionTime(feeLevel: 'low' | 'average' | 'high'
 		const lowFee = parseFloat(estimatedFee.low);
 		const averageFee = parseFloat(estimatedFee.average);
 		const highFee = parseFloat(estimatedFee.high);
+		const currentEstimatedTimes = get(estimatedTransactionTimes);
 		// If we don't have valid fee data or times, return unknown
-		if (!customFee || !lowFee || !averageFee || !highFee || estimatedTransactionTimes.low === 'unknown' || estimatedTransactionTimes.average === 'unknown' || estimatedTransactionTimes.high === 'unknown') return 'unknown';
+		if (!customFee || !lowFee || !averageFee || !highFee || currentEstimatedTimes.low === 'unknown' || currentEstimatedTimes.average === 'unknown' || currentEstimatedTimes.high === 'unknown') return 'unknown';
 		// Determine which range the custom fee falls into
-		if (customFee >= highFee) return estimatedTransactionTimes.high;
+		if (customFee >= highFee) return currentEstimatedTimes.high;
 		else if (customFee >= averageFee) {
 			// Interpolate between average and high
 			const ratio = (customFee - averageFee) / (highFee - averageFee);
-			return interpolateTransactionTime(estimatedTransactionTimes.average, estimatedTransactionTimes.high, ratio);
+			return interpolateTransactionTime(currentEstimatedTimes.average, currentEstimatedTimes.high, ratio);
 		} else if (customFee >= lowFee) {
 			// Interpolate between low and average
 			const ratio = (customFee - lowFee) / (averageFee - lowFee);
-			return interpolateTransactionTime(estimatedTransactionTimes.low, estimatedTransactionTimes.average, ratio);
+			return interpolateTransactionTime(currentEstimatedTimes.low, currentEstimatedTimes.average, ratio);
 		} else {
 			// Custom fee is lower than low fee, estimate longer time
-			return estimatedTransactionTimes.low;
+			return currentEstimatedTimes.low;
 		}
 	}
-	return estimatedTransactionTimes[feeLevel];
-}
-
-export function updateCustomFeeTransactionTime() {
-	const currentFeeLevel = get(feeLevel);
-	if (currentFeeLevel === 'custom') {
-		transactionTime.set(getEstimatedTransactionTime('custom'));
-		console.log('Updated custom fee transaction time to:', get(transactionTime));
-	}
+	return get(estimatedTransactionTimes)[feeLevel];
 }
 
 async function updateTransactionTimes(): Promise<void> {
@@ -226,9 +223,11 @@ async function updateTransactionTimes(): Promise<void> {
 			}
 			// Calculate precise average block time
 			const avgBlockTime = blockTimes.reduce((a, b) => a + b, 0) / blockTimes.length;
+			avgBlockTimeStore.set(avgBlockTime);
 			console.debug('Average block time calculated:', avgBlockTime, 'seconds');
 			// Confirmation estimate based on real data
 			const confirmationBlocks = estimateConfirmationBlocks(feeHistoryResult, avgBlockTime);
+			confirmationBlocksStore.set(confirmationBlocks);
 			// Only return if we have valid confirmation blocks
 			if (!confirmationBlocks) {
 				console.debug('No valid confirmation blocks estimated from fee history');
@@ -244,10 +243,13 @@ async function updateTransactionTimes(): Promise<void> {
 		const result = await Promise.race([analysisPromise, timeoutPromise]);
 		// Only update if we got precise results
 		if (result) {
-			estimatedTransactionTimes = result;
+			estimatedTransactionTimes.set(result);
 			// Update the transaction time store after getting new data
 			const currentFeeLevel = get(feeLevel);
-			if (currentFeeLevel !== 'custom') transactionTime.set(estimatedTransactionTimes[currentFeeLevel]);
+			if (currentFeeLevel !== 'custom') {
+				console.debug('updateTransactionTimes: Updating transaction time for fee level:', currentFeeLevel, 'to:', result[currentFeeLevel]);
+				transactionTime.set(result[currentFeeLevel]);
+			}
 		}
 		// If result is null, keep existing "unknown" values
 	} catch (error) {
