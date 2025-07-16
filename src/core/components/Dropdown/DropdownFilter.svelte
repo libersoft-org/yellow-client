@@ -9,7 +9,7 @@
 		enabled?: boolean;
 	}
 	let { options = [], selected = $bindable(''), enabled = true }: Props = $props();
-	let filteredOptions = $state(options);
+	let filteredOptions = $derived(options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase())));
 	let showOptions = $state(false);
 	let inputRef: Input | undefined = $state();
 	let inputValue = $state('');
@@ -19,11 +19,10 @@
 		inputRef?.focus();
 	}
 
-	$effect(() => {
-		filteredOptions = options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()));
-		if (inputValue) showOptions = true;
+	function handleInputChange() {
+		showOptions = true;
 		selectedIndex = -1;
-	});
+	}
 
 	function clickSelectOption(option) {
 		selected = option;
@@ -34,7 +33,6 @@
 	function clickClearSelection() {
 		selected = '';
 		inputValue = '';
-		filteredOptions = options;
 		inputRef?.focus();
 	}
 
@@ -76,7 +74,6 @@
 	function openOptionsIfClosed() {
 		if (!showOptions) {
 			showOptions = true;
-			filteredOptions = options;
 			selectedIndex = -1;
 			return true;
 		}
@@ -144,7 +141,7 @@
 
 <div class="dropdown-filter">
 	<div class="input-container">
-		<Input bind:value={inputValue} bind:this={inputRef} {enabled} onblur={handleInputBlur} onfocus={toggleOptions} onKeydown={handleKeydown} onclick={toggleOptions} />
+		<Input bind:value={inputValue} bind:this={inputRef} {enabled} onChange={handleInputChange} onblur={handleInputBlur} onfocus={toggleOptions} onKeydown={handleKeydown} onClick={toggleOptions} />
 		{#if selected}
 			<div class="clear-button">
 				<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="14px" onClick={clickClearSelection} />
