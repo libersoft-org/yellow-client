@@ -103,10 +103,9 @@
 	}
 
 	.clear-button {
-		position: absolute;
-		right: 10px;
 		z-index: 2;
-		cursor: pointer;
+		position: absolute;
+		right: 0;
 	}
 
 	.options {
@@ -148,17 +147,15 @@
 		<Input bind:value={inputValue} bind:this={inputRef} {enabled} onblur={handleInputBlur} onfocus={toggleOptions} onKeydown={handleKeydown} onclick={toggleOptions} />
 		{#if selected}
 			<div class="clear-button">
-				<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="10px" onClick={clickClearSelection} />
+				<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="14px" onClick={clickClearSelection} />
 			</div>
 		{/if}
 	</div>
 	{#if $debug}
-		<div class="debug-info">
-			<div>Input Value: {inputValue}</div>
-			<div>Selected Option: {selected}</div>
-			<div>Selected Index: {selectedIndex}</div>
-			<div>Filtered Options: {JSON.stringify(filteredOptions)}</div>
-		</div>
+		<div>Input Value: {inputValue}</div>
+		<div>Selected Option: {selected}</div>
+		<div>Selected Index: {selectedIndex}</div>
+		<div>Filtered Options: {JSON.stringify(filteredOptions)}</div>
 	{/if}
 	{#if showOptions}
 		<div class="options" onmousedown={e => e.preventDefault()} role="listbox" aria-label="Options" tabindex="-1">
