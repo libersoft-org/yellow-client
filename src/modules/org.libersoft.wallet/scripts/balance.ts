@@ -5,8 +5,9 @@ import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 import { tokens } from '@/org.libersoft.wallet/scripts/network.ts';
 import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 export interface IBalance {
-	amount: string;
+	amount: bigint;
 	currency: string;
+	decimals?: number;
 }
 export async function getBalance(): Promise<IBalance | null> {
 	const p = get(provider);
@@ -19,11 +20,11 @@ export async function getBalance(): Promise<IBalance | null> {
 	console.log('Getting balance for:', addr.address);
 	try {
 		const balanceWei = await p.getBalance(addr.address);
-		const balanceEth = formatEther(balanceWei);
-		console.log('Balance fetched:', balanceEth, net.currency.symbol);
+		console.log('Balance fetched:', balanceWei, net.currency.symbol);
 		return {
-			amount: balanceEth,
+			amount: balanceWei,
 			currency: net.currency.symbol,
+			decimals: net.currency.decimals || 18,
 		};
 	} catch (error) {
 		console.error('Error while getting balance:', error);
@@ -55,6 +56,7 @@ export async function getTokenBalance(tokenSymbol: string): Promise<IBalance | n
 		return {
 			amount: formattedBalance,
 			currency: token.symbol,
+			decimals,
 		};
 	} catch (error) {
 		console.error('Error while getting token balance:', error);
@@ -103,4 +105,9 @@ async function exchangeRates(currency: string = 'USD'): Promise<any> {
 		console.error('Error fetching exchange rates:', error);
 		return null;
 	}
+}
+
+export function formatBalance(balance: IBalance | undefined): string {
+	if (!balance) return undefined;
+	return formatUnits(balance.amount, balance.decimals || 18);
 }
