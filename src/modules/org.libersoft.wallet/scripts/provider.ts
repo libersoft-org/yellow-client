@@ -1,7 +1,6 @@
 import { get, writable, type Writable } from 'svelte/store';
 import { JsonRpcProvider } from 'ethers';
-import { type IStatus } from '@/org.libersoft.wallet/scripts/network.ts';
-import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+import { type IStatus, selectedNetwork, getSelectedRpcUrl, setSelectedRpcUrl } from '@/org.libersoft.wallet/scripts/network.ts';
 import { derivedWithEquals } from '@/core/scripts/utils/derivedWithEquals.ts';
 export const status = writable<IStatus>({ color: 'red', text: 'No connection' });
 export const rpcURL = writable<string | null>(null);
@@ -33,22 +32,26 @@ providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 	}
 	const validURLs = (network.rpcURLs || []).filter(url => !url.includes('YOUR-PROJECT-ID') && !url.includes('YOUR-API-KEY'));
 	availableRPCURLs.set(validURLs);
-	if (!currentRpcURL || !validURLs.includes(currentRpcURL)) {
-		console.log('RPC URL not valid for new network, using first available from network');
-		if (validURLs.length > 0) {
-			console.log('Setting RPC URL to:', validURLs[0]);
-			rpcURL.set(validURLs[0]);
-			return;
-		} else {
-			console.log('No valid RPC URLs available for network');
-			status.set({ color: 'red', text: 'No valid RPC URLs available' });
-			/* TODO: chek	if this is needed
-			debouncedResetBalance();
-			*/
-			return;
-		}
+
+	// Use selected RPC URL for this network
+	const selectedUrl = getSelectedRpcUrl(network);
+	console.log('Selected RPC URL for network:', selectedUrl);
+	if (validURLs.length > 0) {
+		const urlToUse = selectedUrl || validURLs[0];
+		console.log('Setting RPC URL to:', urlToUse);
+		rpcURL.set(urlToUse);
+		// Check if selected RPC URL is saved
+		if (selectedUrl && network.guid) setSelectedRpcUrl(network.guid, selectedUrl);
+		connectToURL();
+		return;
+	} else {
+		console.log('No valid RPC URLs available for network');
+		status.set({ color: 'red', text: 'No valid RPC URLs available' });
+		/* TODO: check	if this is needed
+		debouncedResetBalance();
+		*/
+		return;
 	}
-	connectToURL();
 });
 
 function connectToURL(): void {
@@ -130,7 +133,9 @@ export function reconnect(): void {
 			});
 			return;
 		}
-		rpcURL.set(net.rpcURLs[0]);
+		// Use selected RPC URL or first available
+		const selectedUrl = getSelectedRpcUrl(net);
+		rpcURL.set(selectedUrl || net.rpcURLs[0]);
 	}
 	connectToURL();
 }
@@ -138,5 +143,9 @@ export function reconnect(): void {
 export function selectRPCURL(url: string): void {
 	const net = get(selectedNetwork);
 	if (!net) return;
-	if (net.rpcURLs && net.rpcURLs.includes(url)) rpcURL.set(url);
+	if (net.rpcURLs && net.rpcURLs.includes(url)) {
+		rpcURL.set(url);
+		// Save selected RPC URL to localStorage
+		if (net.guid) setSelectedRpcUrl(net.guid, url);
+	}
 }

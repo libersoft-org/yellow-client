@@ -17,6 +17,7 @@ export interface INetwork {
 	};
 	rpcURLs?: string[];
 	tokens?: IToken[];
+	selectedRpcUrl?: string;
 }
 export interface IRPCServer {
 	url: string;
@@ -47,6 +48,11 @@ networks.subscribe((nets: INetwork[]) => {
 		}
 		if (net.tokens === undefined) {
 			net.tokens = [];
+			modified = true;
+		}
+		// If selectedRpcUrl is not in the list of rpcURLs, remove it
+		if (net.selectedRpcUrl && net.rpcURLs && !net.rpcURLs.includes(net.selectedRpcUrl)) {
+			net.selectedRpcUrl = undefined;
 			modified = true;
 		}
 		for (let token of net.tokens) {
@@ -193,6 +199,27 @@ export function deleteToken(networkGuid: string, tokenGuid: string): void {
 			return network;
 		});
 	});
+}
+
+export function setSelectedRpcUrl(networkGuid: string, rpcUrl: string): void {
+	networks.update(networks => {
+		return networks.map(network => {
+			if (network.guid === networkGuid) {
+				return {
+					...network,
+					selectedRpcUrl: rpcUrl,
+				};
+			}
+			return network;
+		});
+	});
+}
+
+export function getSelectedRpcUrl(network: INetwork): string | undefined {
+	// If stored selected RPC URL exists and is still in the list, use it
+	if (network.selectedRpcUrl && network.rpcURLs?.includes(network.selectedRpcUrl)) return network.selectedRpcUrl;
+	// Otherwise return the first available RPC URL (even if not stored)
+	return network.rpcURLs?.[0];
 }
 
 export function initializeDefaultNetworks(): void {
