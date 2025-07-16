@@ -127,6 +127,7 @@
 					</Td>
 					<Td>
 						<TableActionItems align="center">
+							<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
 							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n)} testId="wallet-settings-default-network-add@{n.name}" />
 						</TableActionItems>
 					</Td>
