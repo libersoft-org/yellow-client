@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { wallets, type IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { networks, type INetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { networks, default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
 	import { addressBook, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
@@ -115,7 +115,13 @@
 			body: SettingsNetworksRPCServers,
 			props: { network },
 		}));
-		return [...networkEditItems, ...networksRPCItems, ...networksTokensItems];
+		const defaultNetworksRPCItems = $default_networks.map((network: INetwork) => ({
+			title: 'RPC servers',
+			name: 'networks-rpc-' + network.guid,
+			body: SettingsNetworksRPCServers,
+			props: { network },
+		}));
+		return [...networkEditItems, ...networksRPCItems, ...defaultNetworksRPCItems, ...networksTokensItems];
 	});
 
 	let addressbookItems = $derived.by(() => {
