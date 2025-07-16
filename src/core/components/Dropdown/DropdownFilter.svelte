@@ -39,44 +39,32 @@
 	}
 
 	function toggleOptions() {
-		if (!selected) {
-			showOptions = true;
-			filteredOptions = options;
-			selectedIndex = -1;
-		}
+		if (!selected) openOptionsIfClosed();
 	}
 
 	function handleInputBlur() {
-		showOptions = false;
-		selectedIndex = -1;
+		closeOptions();
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
 		switch (e.key) {
 			case 'ArrowDown':
 				e.preventDefault();
-				if (!openOptionsIfClosed()) {
-					selectedIndex = selectedIndex < filteredOptions.length - 1 ? selectedIndex + 1 : 0;
-				}
+				if (!openOptionsIfClosed()) selectedIndex = selectedIndex < filteredOptions.length - 1 ? selectedIndex + 1 : 0;
 				break;
 			case 'ArrowUp':
 				e.preventDefault();
-				if (!openOptionsIfClosed()) {
-					selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : filteredOptions.length - 1;
-				}
+				if (!openOptionsIfClosed()) selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : filteredOptions.length - 1;
 				break;
 			case 'Enter':
 				e.preventDefault();
 				e.stopPropagation();
-				if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) {
-					clickSelectOption(filteredOptions[selectedIndex]);
-				}
+				if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) clickSelectOption(filteredOptions[selectedIndex]);
 				break;
 			case 'Escape':
 				e.preventDefault();
 				e.stopPropagation();
-				showOptions = false;
-				selectedIndex = -1;
+				closeOptions();
 				break;
 		}
 	}
@@ -93,6 +81,11 @@
 			return true;
 		}
 		return false;
+	}
+
+	function closeOptions() {
+		showOptions = false;
+		selectedIndex = -1;
 	}
 </script>
 
