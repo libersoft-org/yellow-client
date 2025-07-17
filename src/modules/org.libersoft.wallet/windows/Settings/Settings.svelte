@@ -13,6 +13,7 @@
 	import SettingsAddressbook from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbook.svelte';
 	import SettingsWalletsWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWallet.svelte';
 	import SettingsWalletsAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAdd.svelte';
+	import SettingsWalletsAddHwWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWallet.svelte';
 	import RPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
@@ -212,6 +213,11 @@
 							title: 'Add a new wallet',
 							name: 'wallets-add',
 							body: SettingsWalletsAdd,
+						},
+						{
+							title: 'Add a new hardware wallet',
+							name: 'wallets-add-hw',
+							body: SettingsWalletsAddHwWallet,
 						},
 						{
 							title: 'Recover from seed',
