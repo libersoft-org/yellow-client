@@ -22,7 +22,7 @@ export default defineConfig({
 			'@/org.libersoft.contacts': path.resolve(__dirname, './src/modules/org.libersoft.contacts'),
 			'@/org.libersoft.wallet': path.resolve(__dirname, './src/modules/org.libersoft.wallet'),
 			'@/org.libersoft.dating': path.resolve(__dirname, './src/modules/org.libersoft.dating'),
-			'@/org.libersoft.iframe': path.resolve(__dirname, './src/modules/org.libersoft.iframe'),
+			'@/org.libersoft.iframes': path.resolve(__dirname, './src/modules/org.libersoft.iframes'),
 			'@/bridge/core-bridge': path.resolve(__dirname, './src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
 			'@': path.resolve(__dirname, 'src'),
 			// Add explicit resolution for the problematic package

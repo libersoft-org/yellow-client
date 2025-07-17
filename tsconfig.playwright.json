@@ -7,7 +7,7 @@
 			"@/org.libersoft.contacts/*": ["src/modules/org.libersoft.contacts/*"],
 			"@/org.libersoft.wallet/*": ["src/modules/org.libersoft.wallet/*"],
 			"@/org.libersoft.dating/*": ["src/modules/org.libersoft.dating/*"],
-			"@/org.libersoft.iframe/*": ["src/modules/org.libersoft.iframe/*"],
+			"@/org.libersoft.iframe/*": ["src/modules/org.libersoft.iframes/*"],
 			"@/bridge/core-bridge": ["src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts"],
 			"@/*": ["src/*"],
 			"$lib": ["src/lib"],
