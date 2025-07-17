@@ -13,7 +13,9 @@
 	import SettingsAddressbook from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbook.svelte';
 	import SettingsWalletsWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWallet.svelte';
 	import SettingsWalletsAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAdd.svelte';
-	import SettingsWalletsAddHwWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWallet.svelte';
+	import SettingsWalletsAddHWWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWallet.svelte';
+	import SettingsWalletsAddHWWalletTrezor from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWalletTrezor.svelte';
+	import SettingsWalletsAddHWWalletLedger from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWalletLedger.svelte';
 	import RPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
@@ -217,7 +219,19 @@
 						{
 							title: 'Add a new hardware wallet',
 							name: 'wallets-add-hw',
-							body: SettingsWalletsAddHwWallet,
+							body: SettingsWalletsAddHWWallet,
+							items: [
+								{
+									title: 'Trezor',
+									name: 'wallets-add-hw-trezor',
+									body: SettingsWalletsAddHWWalletTrezor,
+								},
+								{
+									title: 'Ledger',
+									name: 'wallets-add-hw-ledger',
+									body: SettingsWalletsAddHWWalletLedger,
+								},
+							],
 						},
 						{
 							title: 'Recover from seed',
