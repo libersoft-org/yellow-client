@@ -2,6 +2,23 @@ import { get, writable, type Writable } from 'svelte/store';
 import { JsonRpcProvider, WebSocketProvider } from 'ethers';
 import { type IStatus, selectedNetwork, getSelectedRpcUrl, setSelectedRpcUrl } from '@/org.libersoft.wallet/scripts/network.ts';
 import { derivedWithEquals } from '@/core/scripts/utils/derivedWithEquals.ts';
+export const status = writable<IStatus>({ color: 'red', text: 'No connection' });
+export const rpcURL = writable<string | null>(null);
+export const provider: Writable<JsonRpcProvider | WebSocketProvider | null> = writable<JsonRpcProvider | WebSocketProvider | null>(null);
+export const availableRPCURLs = writable<string[]>([]);
+let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
+let providerData = derivedWithEquals(
+	[selectedNetwork, rpcURL],
+	([$selectedNetwork, $rpcURL]) => {
+		return {
+			network: $selectedNetwork,
+			rpcURL: $rpcURL,
+		};
+	},
+	(a, b) => {
+		return a?.network?.guid === b?.network?.guid && a?.rpcURL === b?.rpcURL;
+	}
+);
 
 export function isWebSocketUrl(url: string): boolean {
 	return url.startsWith('ws://') || url.startsWith('wss://');
@@ -23,32 +40,11 @@ function createProvider(url: string, chainId: number): JsonRpcProvider | WebSock
 	} else return new JsonRpcProvider(url, chainId);
 }
 
-export const status = writable<IStatus>({ color: 'red', text: 'No connection' });
-export const rpcURL = writable<string | null>(null);
-export const provider: Writable<JsonRpcProvider | WebSocketProvider | null> = writable<JsonRpcProvider | WebSocketProvider | null>(null);
-export const availableRPCURLs = writable<string[]>([]);
-let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
-let providerData = derivedWithEquals(
-	[selectedNetwork, rpcURL],
-	([$selectedNetwork, $rpcURL]) => {
-		return {
-			network: $selectedNetwork,
-			rpcURL: $rpcURL,
-		};
-	},
-	(a, b) => {
-		return a?.network?.guid === b?.network?.guid && a?.rpcURL === b?.rpcURL;
-	}
-);
-
 providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 	console.log('providerData updated:', network, currentRpcURL);
 	if (!network) {
 		status.set({ color: 'red', text: 'No network selected' });
 		availableRPCURLs.set([]);
-		/* TODO: chek	if this is needed
-		debouncedResetBalance();
-		*/
 		return;
 	}
 	const validURLs = (network.rpcURLs || []).filter(url => {
@@ -56,23 +52,18 @@ providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 		return true;
 	});
 	availableRPCURLs.set(validURLs);
-	// Use selected RPC URL for this network
 	const selectedUrl = getSelectedRpcUrl(network);
 	console.log('Selected RPC URL for network:', selectedUrl);
 	if (validURLs.length > 0) {
 		const urlToUse = selectedUrl || validURLs[0];
 		console.log('Setting RPC URL to:', urlToUse);
 		rpcURL.set(urlToUse);
-		// Check if selected RPC URL is saved
 		if (selectedUrl && network.guid) setSelectedRpcUrl(network.guid, selectedUrl);
 		connectToURL();
 		return;
 	} else {
 		console.log('No valid RPC URLs available for network');
 		status.set({ color: 'red', text: 'No valid RPC URLs available' });
-		/* TODO: check	if this is needed
-		debouncedResetBalance();
-		*/
 		return;
 	}
 });
@@ -104,12 +95,7 @@ function connectToURL(): void {
 		status.set({ color: 'orange', text: `Connecting via ${connectionType}...` });
 		const p = createProvider(currentRpcURL, net.chainID);
 		provider.set(p);
-		// Handle WebSocket-specific events
-		if (isWebSocket && p instanceof WebSocketProvider) {
-			// WebSocket events are handled differently in ethers v6
-			// We rely on the provider's error and network events
-			console.log('WebSocket provider created');
-		}
+		if (isWebSocket && p instanceof WebSocketProvider) console.log('WebSocket provider created');
 		p.on('error', (error: Error) => {
 			console.error('Provider error:', error);
 			if (get(provider) === p) {
@@ -169,7 +155,6 @@ export function reconnect(): void {
 			});
 			return;
 		}
-		// Use selected RPC URL or first available
 		const selectedUrl = getSelectedRpcUrl(net);
 		rpcURL.set(selectedUrl || net.rpcURLs[0]);
 	}
@@ -181,7 +166,6 @@ export function selectRPCURL(url: string): void {
 	if (!net) return;
 	if (net.rpcURLs && net.rpcURLs.includes(url)) {
 		rpcURL.set(url);
-		// Save selected RPC URL to localStorage
 		if (net.guid) setSelectedRpcUrl(net.guid, url);
 	}
 }
