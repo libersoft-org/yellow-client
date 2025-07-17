@@ -2,7 +2,7 @@
 	import { getContext, tick } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { wallets, type IWallet, reorderWallets } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { wallets, type IWallet, reorderWallets, isHardwareWallet, isTrezorWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -41,6 +41,18 @@
 		reordered.splice(targetIndex, 0, moved);
 		reorderWallets(reordered);
 	}
+
+	function getWalletTypeIcon(wallet: IWallet): string {
+		if (wallet.type === 'trezor') return `modules/${module.identifier}/img/wallet-trezor.svg`;
+		else if (wallet.type === 'ledger') return `modules/${module.identifier}/img/wallet-ledger.svg`;
+		else return `modules/${module.identifier}/img/wallet.svg`;
+	}
+
+	function getWalletTypeText(wallet: IWallet): string {
+		if (wallet.type === 'trezor') return 'Trezor';
+		else if (wallet.type === 'ledger') return 'Ledger';
+		else return 'Software';
+	}
 </script>
 
 <style>
@@ -66,6 +78,7 @@
 				<TheadTr>
 					<Th></Th>
 					<Th>Name</Th>
+					<Th align="center">Type</Th>
 					<Th align="center">Addresses</Th>
 					<Th align="center">Action</Th>
 				</TheadTr>
@@ -79,6 +92,14 @@
 						<Td padding="0" expand>
 							<Clickable onClick={() => clickWallet(wallet)}>
 								<div class="item">{wallet.name}</div>
+							</Clickable>
+						</Td>
+						<Td padding="0" align="center">
+							<Clickable onClick={() => clickWallet(wallet)}>
+								<div class="item" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+									<Icon img={getWalletTypeIcon(wallet)} size="16px" />
+									<span>{getWalletTypeText(wallet)}</span>
+								</div>
 							</Clickable>
 						</Td>
 						<Td padding="0" align="center">

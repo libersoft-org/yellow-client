@@ -1,4 +1,5 @@
 import { initializeTrezor, connectTrezor, getTrezorEthereumAccounts, createTrezorWallet, signEthereumTransaction, signEthereumMessage, trezorConnected, trezorWallets, type TrezorWallet } from './trezor';
+import { addHardwareWallet } from './wallet';
 
 /**
  * Initialize Trezor integration when the app starts
@@ -23,12 +24,17 @@ export async function addTrezorWalletToSystem(accountIndex: number = 0, name?: s
 	const accounts = await getTrezorEthereumAccounts(accountIndex, 1);
 	if (accounts.length === 0) throw new Error('No accounts found on Trezor device');
 	const account = accounts[0];
-	// Create Trezor wallet
-	const trezorWallet = await createTrezorWallet(account, name);
-	if (!trezorWallet) throw new Error('Failed to create Trezor wallet');
-	// Here you would integrate with your existing wallet system
-	// For example, add to selectedAddress store or wallets array
-	return trezorWallet;
+
+	// Add directly to hardware wallet system
+	await addHardwareWallet(
+		'trezor',
+		account.address,
+		name || account.name || 'Trezor Wallet',
+		'trezor-device', // TODO: get actual device ID
+		account.path
+	);
+
+	return account;
 }
 
 /**

@@ -2,11 +2,15 @@ import { get, writable, derived } from 'svelte/store';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { getIndexedAccountPath, HDNodeWallet, Mnemonic, randomBytes } from 'ethers';
 export interface IWallet {
-	phrase: string;
+	type?: 'software' | 'trezor' | 'ledger';
+	phrase?: string; // optional pro HW wallets
 	address: string;
 	selected_address_index: number;
 	name: string;
 	addresses?: IAddress[];
+	// For HW wallets:
+	deviceId?: string;
+	devicePath?: string; // HD derivation path
 }
 export interface IAddress {
 	address: string;
@@ -104,6 +108,11 @@ export function addressIndexAlreadyExists(wallet: IWallet, index: number): boole
 }
 
 function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
+	// For hardware wallets, addresses are not added this way
+	if (isHardwareWallet(w)) {
+		console.error('Cannot add addresses to hardware wallets this way. Use hardware wallet specific methods.');
+		return;
+	}
 	if (!w.phrase) {
 		console.error('Cannot derive address: wallet.phrase is undefined');
 		return;
@@ -133,6 +142,7 @@ export function generateMnemonic(): Mnemonic {
 export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void> {
 	let newWallet = HDNodeWallet.fromMnemonic(mnemonic);
 	let wallet: IWallet = {
+		type: 'software',
 		phrase: mnemonic.phrase,
 		address: newWallet.address,
 		selected_address_index: 0,
@@ -164,7 +174,6 @@ export function editWallet(wallet: IWallet, name: string): boolean {
 export function deleteWallet(wallet: IWallet): boolean {
 	let success = false;
 	const currentSelectedWalletID = get(selectedWalletID);
-
 	wallets.update(w => {
 		const index = w.findIndex(item => item.address === wallet.address);
 		if (index !== -1) {
@@ -175,11 +184,8 @@ export function deleteWallet(wallet: IWallet): boolean {
 	});
 	if (success && currentSelectedWalletID === wallet.address) {
 		const remainingWallets = get(wallets);
-		if (remainingWallets.length > 0) {
-			selectedWalletID.set(remainingWallets[0].address);
-		} else {
-			selectedWalletID.set(null);
-		}
+		if (remainingWallets.length > 0) selectedWalletID.set(remainingWallets[0].address);
+		else selectedWalletID.set(null);
 	}
 	return success;
 }
@@ -203,4 +209,36 @@ export function editAddressName(wallet: IWallet, index: string | number, name: s
 
 export function reorderWallets(reorderedWallets: IWallet[]): void {
 	wallets.set(reorderedWallets);
+}
+
+export async function addHardwareWallet(type: 'trezor' | 'ledger', address: string, name: string, deviceId: string, devicePath: string): Promise<void> {
+	const wallet: IWallet = {
+		type,
+		address,
+		selected_address_index: 0,
+		name,
+		deviceId,
+		devicePath,
+		addresses: [
+			{
+				address,
+				name: 'Main Account',
+				path: devicePath,
+				index: 0,
+			},
+		],
+	};
+	wallets.update(w => {
+		w.push(wallet);
+		return w;
+	});
+	selectedWalletID.set(address);
+}
+
+export function isHardwareWallet(wallet: IWallet): boolean {
+	return wallet.type === 'trezor' || wallet.type === 'ledger';
+}
+
+export function isTrezorWallet(wallet: IWallet): boolean {
+	return wallet.type === 'trezor';
 }

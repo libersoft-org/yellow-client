@@ -330,59 +330,71 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 		console.error('No selected wallet or address');
 		return;
 	}
-	const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
-	let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(get(provider));
-	//let data = 'you can put data here';
-	const request: PreparedTransactionRequest = {
-		to: address,
-		from: selectedAddressValue.address,
-		value: etherValue,
-		gasLimit: etherValueFee,
-		//new Uint8Array(data.split('').map(c => c.charCodeAt(0))),
-		//data: data,
-	};
-	//
-	//nonce: await provider.getTransactionCount(selectedAddressValue.address),
-	console.log('selectedAddressValue.address:', selectedAddressValue);
-	console.log('provider:', get(provider));
-	console.log('mn:', mn);
-	console.log('hd_wallet:', hd_wallet);
-	console.log('tx request:', request);
-	console.log('hd_wallet.estimateGas:');
-	let eg = await hd_wallet.estimateGas(request);
-	console.log('estimateGas:', eg);
-	console.log('hd_wallet.sendTransaction:');
-	let tx = await hd_wallet.sendTransaction(request);
-	console.log('wait..', tx);
-	await tx.wait();
-	console.log('Transaction sent OK');
+
+	// Check if this is a software wallet (has phrase) or hardware wallet
+	if (selectedWalletValue.type === 'software' && selectedWalletValue.phrase) {
+		// Handle software wallet transaction
+		const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
+		let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(get(provider));
+		//let data = 'you can put data here';
+		const request: PreparedTransactionRequest = {
+			to: address,
+			from: selectedAddressValue.address,
+			value: etherValue,
+			gasLimit: etherValueFee,
+			//new Uint8Array(data.split('').map(c => c.charCodeAt(0))),
+			//data: data,
+		};
+		//
+		//nonce: await provider.getTransactionCount(selectedAddressValue.address),
+		console.log('selectedAddressValue.address:', selectedAddressValue);
+		console.log('provider:', get(provider));
+		console.log('mn:', mn);
+		console.log('hd_wallet:', hd_wallet);
+		console.log('tx request:', request);
+		console.log('hd_wallet.estimateGas:');
+		let eg = await hd_wallet.estimateGas(request);
+		console.log('estimateGas:', eg);
+		console.log('hd_wallet.sendTransaction:');
+		let tx = await hd_wallet.sendTransaction(request);
+		console.log('wait..', tx);
+		await tx.wait();
+		console.log('Transaction sent OK');
+		/*
+		let log = {
+			dir: 'sent',
+			date: new Date(),
+			from: request.from,
+			to: request.to,
+			currency: currency,
+			hash: tx.hash,
+			chainID: tx.chainId.toString(),
+			nonce: tx.nonce,
+			tx_type: tx.type,
+			estimatedGas: formatEther(eg),
+			gasLimit: formatEther(tx.gasLimit),
+			gasPrice: formatEther(tx.gasPrice),
+			value: formatEther(tx.value),
+		};
+		console.log('log:', log);
+		console.log('log:', JSON.stringify(log));
+		if (!selectedWalletValue.log) selectedWalletValue.log = [];
+		selectedWalletValue.log.push(log);
+		wallets.update(w => w);
+		*/
+	} else if (selectedWalletValue.type === 'trezor' || selectedWalletValue.type === 'ledger') {
+		// Handle hardware wallet transaction
+		console.error('Hardware wallet transactions not yet implemented in this function');
+		throw new Error('Hardware wallet transactions must be handled through their specific modules');
+	} else {
+		console.error('Unknown wallet type or missing phrase for software wallet');
+		throw new Error('Invalid wallet configuration');
+	}
 	/*
-	let log = {
-		dir: 'sent',
-		date: new Date(),
-		from: request.from,
-		to: request.to,
-		currency: currency,
-		hash: tx.hash,
-		chainID: tx.chainId.toString(),
-		nonce: tx.nonce,
-		tx_type: tx.type,
-		estimatedGas: formatEther(eg),
-		gasLimit: formatEther(tx.gasLimit),
-		gasPrice: formatEther(tx.gasPrice),
-		value: formatEther(tx.value),
-	};
-	console.log('log:', log);
-	console.log('log:', JSON.stringify(log));
-	if (!selectedWalletValue.log) selectedWalletValue.log = [];
-	selectedWalletValue.log.push(log);
-	wallets.update(w => w);
-*/
-	/*
-} catch (error) {
-	console.error('Error while sending a transaction:', error);
-}
-*/
+	} catch (error) {
+		console.error('Error while sending a transaction:', error);
+	}
+	*/
 }
 
 function interpolateTransactionTime(timeA: string, timeB: string, ratio: number): string {
