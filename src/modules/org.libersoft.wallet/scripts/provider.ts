@@ -1,10 +1,31 @@
 import { get, writable, type Writable } from 'svelte/store';
-import { JsonRpcProvider } from 'ethers';
+import { JsonRpcProvider, WebSocketProvider } from 'ethers';
 import { type IStatus, selectedNetwork, getSelectedRpcUrl, setSelectedRpcUrl } from '@/org.libersoft.wallet/scripts/network.ts';
 import { derivedWithEquals } from '@/core/scripts/utils/derivedWithEquals.ts';
+
+export function isWebSocketUrl(url: string): boolean {
+	return url.startsWith('ws://') || url.startsWith('wss://');
+}
+
+export function isValidWebSocketUrl(url: string): boolean {
+	try {
+		const parsed = new URL(url);
+		return parsed.protocol === 'ws:' || parsed.protocol === 'wss:';
+	} catch {
+		return false;
+	}
+}
+
+function createProvider(url: string, chainId: number): JsonRpcProvider | WebSocketProvider {
+	if (isWebSocketUrl(url)) {
+		if (!isValidWebSocketUrl(url)) throw new Error('Invalid WebSocket URL format');
+		return new WebSocketProvider(url, chainId);
+	} else return new JsonRpcProvider(url, chainId);
+}
+
 export const status = writable<IStatus>({ color: 'red', text: 'No connection' });
 export const rpcURL = writable<string | null>(null);
-export const provider: Writable<JsonRpcProvider | null> = writable<JsonRpcProvider | null>(null);
+export const provider: Writable<JsonRpcProvider | WebSocketProvider | null> = writable<JsonRpcProvider | WebSocketProvider | null>(null);
 export const availableRPCURLs = writable<string[]>([]);
 let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
 let providerData = derivedWithEquals(
@@ -30,9 +51,11 @@ providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 		*/
 		return;
 	}
-	const validURLs = (network.rpcURLs || []).filter(url => !url.includes('YOUR-PROJECT-ID') && !url.includes('YOUR-API-KEY'));
+	const validURLs = (network.rpcURLs || []).filter(url => {
+		if (isWebSocketUrl(url)) return isValidWebSocketUrl(url);
+		return true;
+	});
 	availableRPCURLs.set(validURLs);
-
 	// Use selected RPC URL for this network
 	const selectedUrl = getSelectedRpcUrl(network);
 	console.log('Selected RPC URL for network:', selectedUrl);
@@ -75,8 +98,18 @@ function connectToURL(): void {
 	}
 	status.set({ color: 'orange', text: 'Connecting...' });
 	try {
-		const p = new JsonRpcProvider(currentRpcURL, net.chainID);
+		const isWebSocket = isWebSocketUrl(currentRpcURL);
+		const connectionType = isWebSocket ? 'WebSocket' : 'HTTP';
+		console.log(`Connecting to ${connectionType} RPC:`, currentRpcURL);
+		status.set({ color: 'orange', text: `Connecting via ${connectionType}...` });
+		const p = createProvider(currentRpcURL, net.chainID);
 		provider.set(p);
+		// Handle WebSocket-specific events
+		if (isWebSocket && p instanceof WebSocketProvider) {
+			// WebSocket events are handled differently in ethers v6
+			// We rely on the provider's error and network events
+			console.log('WebSocket provider created');
+		}
 		p.on('error', (error: Error) => {
 			console.error('Provider error:', error);
 			if (get(provider) === p) {
@@ -86,14 +119,17 @@ function connectToURL(): void {
 			}
 		});
 		p.on('network', (newNetwork: any) => {
-			if (get(provider) === p) status.set({ color: 'green', text: 'Connected to ' + newNetwork.name });
-			else console.log('Ignoring network event from old provider');
+			if (get(provider) === p) {
+				const connType = isWebSocket ? 'WebSocket' : 'HTTP';
+				status.set({ color: 'green', text: `Connected to ${newNetwork.name} (${connType})` });
+			} else console.log('Ignoring network event from old provider');
 		});
 		p.getNetwork()
 			.then(network => {
 				if (get(provider) === p) {
 					console.log('Successfully connected to network:', network.name);
-					status.set({ color: 'green', text: 'Connected to ' + network.name });
+					const connType = isWebSocket ? 'WebSocket' : 'HTTP';
+					status.set({ color: 'green', text: `Connected to ${network.name} (${connType})` });
 				} else console.log('Ignoring connection success from old provider');
 			})
 			.catch(error => {
