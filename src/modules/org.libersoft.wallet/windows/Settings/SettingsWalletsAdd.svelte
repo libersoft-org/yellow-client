@@ -22,7 +22,7 @@
 	let copied: boolean = $state(false);
 	let qrCodeData: string = $state('');
 	let dummyQrCodeData: string = $state('');
-	let dummyPhrase: string = $state('lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam');
+	let dummyPhrase: string = $state('lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation');
 	let isRevealed: boolean = $state(false);
 	let error: string | null | undefined = $state();
 	let elWalletNameInput: Input | undefined = $state();
@@ -58,7 +58,9 @@
 		generateQRCode();
 	}
 
-	function copy() {
+	function copy(e: Event) {
+		e.preventDefault();
+		e.stopPropagation();
 		navigator.clipboard
 			.writeText(phrase)
 			.then(() => {
@@ -153,6 +155,18 @@
 </script>
 
 <style>
+	.info {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.phrase-wrapper {
+		position: relative;
+		display: inline-block;
+		width: 100%;
+	}
+
 	.phrase {
 		display: flex;
 		text-align: justify;
@@ -218,19 +232,28 @@
 	<Alert type="error" message={error} />
 {/if}
 <Label text="Seed phrase">
-	{#if !isRevealed}
-		<Alert type="warning" message="Sensitive information is hidden. Click to reveal it." />
-	{:else}
-		<Alert type="info" message="Click to hide sensitive information." />
-	{/if}
-	<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide seed phrase' : 'Reveal seed phrase'}>
-		<div class="phrase" class:blurred={!isRevealed}>
-			<span>{copied ? 'Copied!' : isRevealed ? phrase : dummyPhrase}</span>
-			{#if !copied}
-				<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="20px" padding="5px" onClick={copy} />
-			{/if}
-		</div>
-	</Clickable>
+	<div class="info">
+		{#if !isRevealed}
+			<Alert type="warning" message="Sensitive information is hidden. Click to reveal it." />
+		{:else}
+			<Alert type="info" message="Click to hide sensitive information." />
+		{/if}
+		<Clickable onClick={toggleReveal} aria-label={isRevealed ? 'Hide seed phrase' : 'Reveal seed phrase'}>
+			<div class="phrase-wrapper">
+				<div class="phrase" class:blurred={!isRevealed}>
+					<span>{copied ? 'Copied!' : isRevealed ? phrase : dummyPhrase}</span>
+					{#if !copied && isRevealed}
+						<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="20px" padding="5px" onClick={copy} />
+					{/if}
+				</div>
+				{#if !isRevealed}
+					<div class="reveal-icon" aria-hidden="true">
+						<img src="img/show.svg" alt="Show" />
+					</div>
+				{/if}
+			</div>
+		</Clickable>
+	</div>
 </Label>
 <div>Write down or print these 24 words, also known as seed phrase. It will serve as a backup of your wallet. Cut it into 2 parts (12 + 12 words) and hide it in 2 different places, where you don't have your devices. Never show it to anyone else!</div>
 {#if qrCodeData && dummyQrCodeData}
