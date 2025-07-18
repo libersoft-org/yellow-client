@@ -17,23 +17,33 @@
 	let expandEnabled = false;
 
 	$: module_decls_ordered = order($module_decls);
+
+	$: console.log('module-bar module_decls_ordered:', module_decls_ordered);
+
 	$: module_data = $active_account?.module_data || {};
+
+	$: console.log('module-bar active_account:', $active_account);
+	$: console.log('module-bar active_account.module_data:', $active_account?.module_data);
+
 	//$: console.log('module-bar module_data:', module_data);
 	$: module_data_ordered = order(module_data);
 	//$: console.log('module-bar module_data_ordered:', module_data_ordered);
 	$: selectLastModule(module_data);
 
 	function selectLastModule(module_data) {
-		//console.debug('selectLastModule: lastModuleSelected: ', module_data);
-		if (!lastModuleSelected && module_data_ordered && module_data_ordered.length > 0) {
-			//console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
-			lastModuleSelected = true;
+		console.debug('selectLastModule: lastModuleSelected: ', module_data);
+		console.debug('acc.settings?.last_module_id: ', $active_account?.settings?.last_module_id);
+		if (!lastModuleSelected /* && module_data_ordered && module_data_ordered.length > 0 */) {
+			console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
 			let acc = get(active_account);
 			//console.log('selectLastModule: acc: ', acc);
-			let id = acc.settings?.last_module_id;
+			let id = acc?.settings?.last_module_id;
 			//console.log('selectLastModule: ', module_data);
 			//console.log('selectLastModule: id: ', id);
-			if (module_data[id]) onSelectModule(id);
+			if (id /* && module_data[id]*/) {
+				lastModuleSelected = true;
+				onSelectModule(id);
+			}
 		}
 	}
 

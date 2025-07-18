@@ -9,7 +9,7 @@
 	import Input from '@/core/components/Input/Input.svelte';
 
 	let filter = $state('');
-	let filteredAddressBook = $derived($addressBook.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
+	let filteredAddressBook = $derived($addressBook.filter(item => item.name?.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
 
 	function clickShowContent() {
 		hideSidebarMobile.set(true);

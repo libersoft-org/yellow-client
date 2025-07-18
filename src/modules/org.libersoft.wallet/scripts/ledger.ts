@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
 import type { TransactionRequest } from 'ethers';
+import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
+import EthApp from '@ledgerhq/hw-app-eth';
 interface LedgerDevice {
 	id: string;
 	name: string;
@@ -34,8 +36,6 @@ export const ledgerAccounts = writable<LedgerAccount[]>([]);
 export const ledgerWallets = writable<LedgerWallet[]>([]);
 export const ledgerLoading = writable<boolean>(false);
 export const ledgerError = writable<string | null>(null);
-let TransportWebUSB: any = null;
-let EthApp: any = null;
 let currentTransport: any = null;
 
 /**
@@ -43,11 +43,6 @@ let currentTransport: any = null;
  */
 export async function initializeLedger(): Promise<boolean> {
 	try {
-		// Import Ledger libraries dynamically
-		const { default: TransportWebUSBImport } = await import('@ledgerhq/hw-transport-webusb');
-		const { default: EthAppImport } = await import('@ledgerhq/hw-app-eth');
-		TransportWebUSB = TransportWebUSBImport;
-		EthApp = EthAppImport;
 		// Listen for device connection/disconnection
 		TransportWebUSB.listen({
 			next: (event: any) => {
@@ -97,11 +92,6 @@ export async function initializeLedger(): Promise<boolean> {
  * Connect to Ledger device
  */
 export async function connectLedger(): Promise<boolean> {
-	if (!TransportWebUSB) {
-		console.error('Ledger not initialized');
-		return false;
-	}
-
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
@@ -129,8 +119,8 @@ export async function connectLedger(): Promise<boolean> {
  * Get Ethereum accounts from Ledger
  */
 export async function getLedgerEthereumAccounts(startIndex: number = 0, count: number = 5): Promise<LedgerAccount[]> {
-	if (!TransportWebUSB || !EthApp || !currentTransport) {
-		console.error('Ledger not initialized or not connected');
+	if (!currentTransport) {
+		console.error('Ledger not connected');
 		return [];
 	}
 	try {
@@ -203,7 +193,7 @@ export function getLedgerWallets(): LedgerWallet[] {
  * Sign Ethereum transaction with Ledger (compatible with Ethers.js)
  */
 export async function signEthereumTransaction(wallet: LedgerWallet, transaction: TransactionRequest): Promise<LedgerResponse<{ r: string; s: string; v: number }>> {
-	if (!EthApp || !currentTransport) return { success: false, payload: null as any, error: 'Ledger not initialized or not connected' };
+	if (!currentTransport) return { success: false, payload: null as any, error: 'Ledger not connected' };
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
@@ -243,7 +233,7 @@ export async function signEthereumTransaction(wallet: LedgerWallet, transaction:
  * Sign Ethereum message with Ledger
  */
 export async function signEthereumMessage(wallet: LedgerWallet, message: string): Promise<LedgerResponse<{ address: string; signature: string }>> {
-	if (!EthApp || !currentTransport) return { success: false, payload: null as any, error: 'Ledger not initialized or not connected' };
+	if (!currentTransport) return { success: false, payload: null as any, error: 'Ledger not connected' };
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
@@ -271,7 +261,7 @@ export async function signEthereumMessage(wallet: LedgerWallet, message: string)
  * Get public key from Ledger for Ethereum
  */
 export async function getLedgerEthereumPublicKey(path: string): Promise<LedgerResponse<{ publicKey: string; address: string }>> {
-	if (!EthApp || !currentTransport) return { success: false, payload: null as any, error: 'Ledger not initialized or not connected' };
+	if (!currentTransport) return { success: false, payload: null as any, error: 'Ledger not connected' };
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
@@ -334,7 +324,7 @@ export function removeLedgerWallet(address: string): void {
  * Get device info
  */
 export async function getLedgerDeviceInfo(): Promise<LedgerResponse<any>> {
-	if (!EthApp || !currentTransport) return { success: false, payload: null, error: 'Ledger not initialized or not connected' };
+	if (!currentTransport) return { success: false, payload: null, error: 'Ledger not connected' };
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
@@ -376,7 +366,7 @@ function serializeTransaction(tx: any): string {
  * Check if device supports EIP-1559 transactions
  */
 export async function supportsEIP1559(): Promise<boolean> {
-	if (!EthApp || !currentTransport) return false;
+	if (!currentTransport) return false;
 	try {
 		const eth = new EthApp(currentTransport);
 		const config = await eth.getAppConfiguration();

@@ -6,8 +6,6 @@
 	import { setContext, tick } from 'svelte';
 	import { createHMRDebugger } from '@/core/scripts/hmr-debug.ts';
 
-	const hmrDebug = createHMRDebugger('BaseSettings');
-
 	interface IProps {
 		testId?: string;
 		settingsObject?: any;
@@ -124,22 +122,6 @@
 		log.error('Node not found:', targetName);
 		return [];
 	}
-
-	// Track HMR state preservation
-	$effect(() => {
-		if (import.meta.hot) {
-			hmrDebug.logReload({
-				activeName,
-				testId,
-				hasSettingsObject: !!settingsObject,
-				settingsObjectName: settingsObject?.name,
-				currentNodeName: currentNode?.name,
-				hasCurrentNodeInstance: !!currentNodeInstance,
-				hasWindowRef: !!elWindow,
-				breadcrumbLength: breadcrumb?.length || 0,
-			});
-		}
-	});
 </script>
 
 <style>

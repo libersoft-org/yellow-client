@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { debug } from '@/core/scripts/stores.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
@@ -28,6 +29,7 @@
 
 	onMount(() => {
 		initializeDefaultNetworks();
+		console.log('Wallet module initialiddddddzed');
 	});
 
 	function clickCopyAddress() {
@@ -144,6 +146,12 @@
 </style>
 
 <Paper>
+	{#if $debug}
+		<div class="buttons">
+			<Button text="Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
+			<Button text="Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
+		</div>
+	{/if}
 	<div class="body">
 		<div class="network-address">
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />

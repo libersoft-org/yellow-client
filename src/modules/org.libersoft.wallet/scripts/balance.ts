@@ -17,10 +17,10 @@ export async function getBalance(): Promise<IBalance | null> {
 		console.error('Network, provider, or address not set');
 		return null;
 	}
-	console.log('Getting balance for:', addr.address);
+	//console.log('Getting balance for:', addr.address);
 	try {
 		const balanceWei = await p.getBalance(addr.address);
-		console.log('Balance fetched:', balanceWei, net.currency.symbol);
+		//console.log('Balance fetched:', balanceWei, net.currency.symbol);
 		return {
 			amount: balanceWei,
 			currency: net.currency.symbol,
@@ -65,7 +65,7 @@ export async function getTokenBalance(tokenSymbol: string): Promise<IBalance | n
 
 export async function getExchange(cryptoBalance: IBalance, fiatSymbol: string = 'USD'): Promise<IBalance | null> {
 	if (!cryptoBalance.amount) {
-		console.error('Crypto amount not available');
+		//console.debug('Crypto amount not available');
 		return null;
 	}
 	try {

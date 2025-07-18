@@ -50,13 +50,13 @@
 
 	async function loadAccounts() {
 		console.log('Loading Trezor accounts...');
-		const accounts = await getTrezorEthereumAccounts(0, 5);
+		const accounts = await getTrezorEthereumAccounts(0, 1);
 		console.log('Loaded accounts:', accounts);
 		if (accounts.length > 0) {
 			step = 'select-account';
 			console.log('Step changed to select-account');
 		} else {
-			console.error('No accounts loaded');
+			console.log('No accounts loaded');
 		}
 	}
 
@@ -259,6 +259,14 @@
 			<Button onClick={handleConnectClick} enabled={true}>
 				{$trezorLoading ? 'Connecting...' : $trezorConnected ? 'Continue' : 'Connect Trezor'}
 			</Button>
+			{#if $trezorConnected}
+				<Button
+					onClick={async () => {
+						console.log('Manual address reading test...');
+						await loadAccounts();
+					}}>Read Addresses</Button
+				>
+			{/if}
 			{#if !isInitialized}
 				<Button
 					onClick={async () => {

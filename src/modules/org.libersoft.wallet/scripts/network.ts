@@ -223,15 +223,15 @@ export function getSelectedRpcUrl(network: INetwork): string | undefined {
 }
 
 export function initializeDefaultNetworks(): void {
-	console.log('initializeDefaultNetworks() called');
+	//console.log('initializeDefaultNetworks() called');
 	if (get(default_networks).length > 0) {
-		console.log('Default networks already loaded');
+		//console.log('Default networks already loaded');
 		return;
 	}
 
 	loadDefaultNetworks()
 		.then(networks => {
-			console.log('loadDefaultNetworks() resolved with:', networks.length, 'networks');
+			//console.log('loadDefaultNetworks() resolved with:', networks.length, 'networks');
 			default_networks.set(
 				networks.map(network => ({
 					...network,
@@ -239,7 +239,7 @@ export function initializeDefaultNetworks(): void {
 					tokens: network.tokens || [],
 				}))
 			);
-			console.log('default_networks store updated');
+			//console.log('default_networks store updated');
 			initializeNetworksIfNeeded();
 		})
 		.catch(error => {
