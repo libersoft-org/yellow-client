@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { addNetwork, editNetwork, type INetwork, default_networks, loadDefaultNetworks, type IRPCServer, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
@@ -27,6 +28,7 @@
 	let elCurrencySymbol: Input | undefined;
 	let elChainID: Input | undefined;
 	let elRPCURLs: (Input | undefined)[] = $state([]);
+	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	export function onOpen(): void {
 		itemName = '';
@@ -73,7 +75,7 @@
 			newItem.guid = network.guid;
 			editNetwork(newItem);
 		} else addNetwork(newItem);
-		close();
+		setSettingsSection('networks');
 	}
 
 	async function loadRPCsFromDefaults(): Promise<void> {

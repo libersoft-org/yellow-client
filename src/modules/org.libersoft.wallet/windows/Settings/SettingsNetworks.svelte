@@ -2,7 +2,7 @@
 	import { getContext, tick } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { networks, default_networks, type INetwork, reorderNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { networks, type INetwork, reorderNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -21,11 +21,12 @@
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	async function clickAddEditNetwork(net: INetwork | null = null, edit: boolean = false) {
-		if (net) {
-			if (edit) await setSettingsSection('networks-edit-' + net.guid);
-			else await setSettingsSection('networks-add', { network: net });
-		} else await setSettingsSection('networks-add', { network: undefined });
+	function clickAddNetwork() {
+		setSettingsSection('networks-add');
+	}
+
+	async function clickEditNetwork(net: INetwork | null = null) {
+		if (net) await setSettingsSection('networks-edit-' + net.guid);
 	}
 
 	async function clickDeleteNetwork(net): Promise<void> {
@@ -78,7 +79,7 @@
 
 <div class="networks" data-testid="wallet-settings-networks">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={() => clickAddEditNetwork()} data-testid="wallet-settings-networks-add-new-btn" />
+		<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a network" onClick={clickAddNetwork} data-testid="wallet-settings-networks-add-new-btn" />
 		<Button img="img/import.svg" text="Import" onClick={() => doImport()} data-testid="wallet-settings-networks-import-btn" />
 		<Button img="img/export.svg" text="Export" onClick={() => doExport()} data-testid="wallet-settings-networks-export-btn" />
 	</ButtonBar>
@@ -112,7 +113,7 @@
 							<TableActionItems align="center">
 								<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
 								<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => openTokens(n)} testId="wallet-settings-network-tokens@{n.name}" />
-								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n, true)} testId="wallet-settings-network-edit@{n.name}" />
+								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickEditNetwork(n)} testId="wallet-settings-network-edit@{n.name}" />
 								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />
 							</TableActionItems>
 						</Td>
@@ -121,35 +122,6 @@
 			</Tbody>
 		</Table>
 	</div>
-	<div class="bold">Default networks:</div>
-	<Table breakpoint="0">
-		<Thead>
-			<TheadTr>
-				<Th>Network</Th>
-				<Th align="center">Action</Th>
-			</TheadTr>
-		</Thead>
-		<Tbody>
-			{#each $default_networks as n, index}
-				<TbodyTr>
-					<Td padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
-						<div class="network">
-							{#if n.currency?.iconURL}
-								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
-							{/if}
-							<div class="name">{n.name}</div>
-						</div>
-					</Td>
-					<Td>
-						<TableActionItems align="center">
-							<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
-							<Icon img="img/add.svg" alt="Add to my networks" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n)} testId="wallet-settings-default-network-add@{n.name}" />
-						</TableActionItems>
-					</Td>
-				</TbodyTr>
-			{/each}
-		</Tbody>
-	</Table>
 </div>
 {#if selectedItem}
 	<DialogDeleteNetwork item={selectedItem} bind:this={elDialogDeleteNetwork} />

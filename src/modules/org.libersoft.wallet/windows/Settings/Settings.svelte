@@ -16,6 +16,7 @@
 	import SettingsWalletsAddHWWalletTrezor from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWalletTrezor.svelte';
 	import SettingsWalletsAddHWWalletLedger from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWalletLedger.svelte';
 	import RPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
+	import SettingsNetworksAdd from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAdd.svelte';
 	import SettingsNetworksAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksAddEdit.svelte';
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
@@ -179,10 +180,14 @@
 						{
 							title: 'Add a new network',
 							name: 'networks-add',
-							body: SettingsNetworksAddEdit,
-							props: {
-								close: () => elBaseSettings?.setSettingsSection('networks'),
-							},
+							body: SettingsNetworksAdd,
+							items: [
+								{
+									title: 'Custom network',
+									name: 'networks-add-sw',
+									body: SettingsNetworksAddEdit,
+								},
+							],
 						},
 						{
 							title: 'Import',
