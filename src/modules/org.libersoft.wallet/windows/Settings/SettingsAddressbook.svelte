@@ -21,7 +21,12 @@
 	let elDialogDel: DialogDelete | undefined = $state();
 	let filter = $state('');
 	let filteredAddressBook = $derived($addressBook.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
+	let elFilter: Input | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
+
+	export function onOpen(): void {
+		elFilter?.focus();
+	}
 
 	function addEditItem(item?: IAddressBookItem): void {
 		setSettingsSection(item ? 'addressbook-edit-' + item.guid : 'addressbook-add');
@@ -64,7 +69,7 @@
 		<Button img="img/export.svg" text="Export" onClick={exportAddressBook} data-testid="export-button" />
 	</ButtonBar>
 	{#if $addressBook.length > 0}
-		<Input bind:value={filter} placeholder="Filter addresses..." />
+		<Input placeholder="Filter addresses..." bind:value={filter} bind:this={elFilter} />
 		<div use:tableDrag={{ items: filteredAddressBook, onReorder: handleAddressBookReorder }}>
 			<Table>
 				<Thead>

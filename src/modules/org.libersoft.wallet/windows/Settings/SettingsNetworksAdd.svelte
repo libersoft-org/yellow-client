@@ -13,7 +13,15 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
+	let filter = $state('');
+	let filteredDefaultNetworks = $derived($default_networks.filter(network => network.name.toLowerCase().includes(filter.toLowerCase())));
+	let elFilter: Input | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
+
+	export function onOpen(): void {
+		elFilter?.focus();
+	}
 
 	function openRPCServers(network: INetwork) {
 		setSettingsSection('networks-rpc-' + network.guid);
@@ -39,6 +47,7 @@
 	<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a custom network" onClick={() => clickAddNetwork()} />
 </ButtonBar>
 <div class="bold">Default networks:</div>
+<Input placeholder="Filter default networks..." bind:value={filter} bind:this={elFilter} />
 <Table breakpoint="0">
 	<Thead>
 		<TheadTr>
@@ -47,7 +56,7 @@
 		</TheadTr>
 	</Thead>
 	<Tbody>
-		{#each $default_networks as n, index}
+		{#each filteredDefaultNetworks as n, index}
 			<TbodyTr>
 				<Td padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
 					<div class="network">

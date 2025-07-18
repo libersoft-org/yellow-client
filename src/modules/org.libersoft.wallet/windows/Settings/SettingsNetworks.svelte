@@ -16,10 +16,18 @@
 	import DragHandle from '@/core/components/Drag/DragHandle.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	let selectedItemID: string | null | undefined;
 	let selectedItem: INetwork | undefined = $state();
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined = $state();
+	let filter = $state('');
+	let filteredNetworks = $derived($networks.filter(network => network.name.toLowerCase().includes(filter.toLowerCase())));
+	let elFilter: Input | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
+
+	export function onOpen(): void {
+		elFilter?.focus();
+	}
 
 	function clickAddNetwork() {
 		setSettingsSection('networks-add');
@@ -54,7 +62,7 @@
 	}
 
 	function handleNetworkReorder(sourceIndex: number, targetIndex: number) {
-		const reordered = [...$networks];
+		const reordered = [...filteredNetworks];
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved);
 		reorderNetworks(reordered);
@@ -85,8 +93,9 @@
 	</ButtonBar>
 	{#if $networks.length !== 0}
 		<div class="bold">My networks:</div>
+		<Input placeholder="Filter networks..." bind:value={filter} bind:this={elFilter} />
 	{/if}
-	<div use:tableDrag={{ items: $networks, onReorder: handleNetworkReorder }}>
+	<div use:tableDrag={{ items: filteredNetworks, onReorder: handleNetworkReorder }}>
 		<Table breakpoint="0">
 			<Thead>
 				<TheadTr>
@@ -96,7 +105,7 @@
 				</TheadTr>
 			</Thead>
 			<Tbody>
-				{#each $networks as n, index (n.guid)}
+				{#each filteredNetworks as n, index (n.guid)}
 					<TbodyTr>
 						<Td>
 							<DragHandle />

@@ -17,9 +17,17 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import DialogWalletsDel from '@/org.libersoft.wallet/dialogs/WalletsDel.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	let selectedWallet: IWallet | undefined = $state();
 	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
+	let filter = $state('');
+	let filteredWallets = $derived(($wallets || []).filter(wallet => wallet.name.toLowerCase().includes(filter.toLowerCase())));
+	let elFilter: Input | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
+
+	export function onOpen(): void {
+		elFilter?.focus();
+	}
 
 	function clickWallet(wallet: IWallet) {
 		setSettingsSection('wallets-' + wallet.address);
@@ -36,7 +44,7 @@
 	}
 
 	function handleWalletReorder(sourceIndex: number, targetIndex: number) {
-		const reordered = [...$wallets];
+		const reordered = [...filteredWallets];
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved);
 		reorderWallets(reordered);
@@ -71,7 +79,8 @@
 	<div class="bold">No wallets found</div>
 {/if}
 {#if $wallets?.length > 0}
-	<div use:tableDrag={{ items: $wallets, onReorder: handleWalletReorder }}>
+	<Input placeholder="Filter wallets..." bind:value={filter} bind:this={elFilter} />
+	<div use:tableDrag={{ items: filteredWallets, onReorder: handleWalletReorder }}>
 		<Table breakpoint="0">
 			<Thead>
 				<TheadTr>
@@ -83,7 +92,7 @@
 				</TheadTr>
 			</Thead>
 			<Tbody>
-				{#each $wallets as wallet, index (wallet.address)}
+				{#each filteredWallets as wallet, index (wallet.address)}
 					<TbodyTr>
 						<Td>
 							<DragHandle />
