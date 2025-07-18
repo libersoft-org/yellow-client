@@ -11,6 +11,7 @@
 	import QRCode from 'qrcode';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
+	import { tick } from 'svelte';
 	let addressElement: HTMLElement | undefined = $state();
 	let addressElementMessage: string | null | undefined = $state();
 	let activeTab: 'address' | 'payment' = $state('address');
@@ -19,6 +20,7 @@
 	let currency: string | undefined = $state();
 	let qr: string | undefined = $state();
 	let error: string | null | undefined = $state();
+	let elAmountInput: Input | undefined = $state();
 
 	$effect(() => {
 		updateAddressAndQR();
@@ -73,7 +75,10 @@
 
 	function setActiveTab(name: 'address' | 'payment'): void {
 		activeTab = name;
-		if (activeTab === 'payment') resetCurrency();
+		if (activeTab === 'payment') {
+			resetCurrency();
+			tick().then(() => elAmountInput?.focus());
+		}
 	}
 </script>
 
@@ -139,7 +144,7 @@
 			{#if activeTab === 'payment'}
 				<div class="amount">
 					<div>Amount:</div>
-					<Input type="text" bind:value={amount} />
+					<Input type="text" bind:value={amount} bind:this={elAmountInput} />
 					<DropdownFilter options={$currencies.filter(c => c !== undefined)} bind:selected={currency} />
 				</div>
 				{#if error}

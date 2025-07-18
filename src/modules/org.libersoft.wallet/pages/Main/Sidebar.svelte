@@ -7,7 +7,6 @@
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-
 	let filter = $state('');
 	let filteredAddressBook = $derived($addressBook.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
 
