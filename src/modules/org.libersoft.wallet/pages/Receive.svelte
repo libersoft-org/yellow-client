@@ -32,6 +32,11 @@
 				walletAddress = $selectedAddress.address;
 				console.log('walletAddress:', walletAddress);
 			} else {
+				if (!currency) {
+					walletAddress = undefined;
+					qr = undefined;
+					return;
+				}
 				let etherValue: bigint | undefined;
 				if (amount) amount = amount.trim();
 				if (amount) {
@@ -136,15 +141,14 @@
 		<div class="section">
 			{#if activeTab === 'payment'}
 				<div class="amount">
-					<div>Amount:</div>
-					<Input type="text" bind:value={amount} bind:this={elAmountInput} />
-					<DropdownFilter options={$currencies.filter(c => c !== undefined)} bind:selected={currency} />
+					<Input type="text" placeholder="Amount" bind:value={amount} bind:this={elAmountInput} />
+					<DropdownFilter placeholder="Currency" options={$currencies.filter(c => c !== undefined)} bind:selected={currency} />
 				</div>
 				{#if error}
 					<Alert type="error" message={error} />
 				{/if}
 			{/if}
-			{#if activeTab === 'address' || (activeTab === 'payment' && !error)}
+			{#if activeTab === 'address' || (activeTab === 'payment' && currency && !error)}
 				<div class="address-wrapper">
 					<Clickable onClick={() => clickCopy()} expand={true}>
 						<div class="address">

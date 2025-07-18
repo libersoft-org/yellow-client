@@ -4,11 +4,12 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
+		placeholder?: string;
 		options?: string[];
 		selected?: string;
 		enabled?: boolean;
 	}
-	let { options = [], selected = $bindable(''), enabled = true }: Props = $props();
+	let { placeholder, options = [], selected = $bindable(''), enabled = true }: Props = $props();
 	let filteredOptions = $derived(options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase())));
 	let showOptions = $state(false);
 	let inputRef: Input | undefined = $state();
@@ -141,7 +142,7 @@
 
 <div class="dropdown-filter">
 	<div class="input-container">
-		<Input bind:value={inputValue} bind:this={inputRef} {enabled} onChange={handleInputChange} onBlur={handleInputBlur} onFocus={toggleOptions} onKeydown={handleKeydown} onClick={toggleOptions} />
+		<Input {placeholder} bind:value={inputValue} bind:this={inputRef} {enabled} onChange={handleInputChange} onBlur={handleInputBlur} onFocus={toggleOptions} onKeydown={handleKeydown} onClick={toggleOptions} />
 		{#if selected}
 			<div class="clear-button">
 				<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="14px" onClick={clickClearSelection} />
