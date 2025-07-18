@@ -4,6 +4,10 @@
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/scripts/tauri.ts';
 	import { setContext, tick } from 'svelte';
+	import { createHMRDebugger } from '@/core/scripts/hmr-debug.ts';
+
+	const hmrDebug = createHMRDebugger('BaseSettings');
+
 	interface IProps {
 		testId?: string;
 		settingsObject?: any;
@@ -54,6 +58,7 @@
 	// Remove the problematic effect that resets navigation on window reopen
 
 	export function open(name?: string) {
+		console.log('[BaseSettings] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
 		elWindow?.open();
 		setSettingsSection(name || settingsObject.name);
 	}
@@ -66,8 +71,13 @@
 		console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
+		await tick();
 		const node = findNode(settingsObject, name);
 		if (node && Object.keys(props).length > 0) node.props = { ...node.props, ...props };
+		if (!currentNode?.instance) {
+			log.error('[BaseSettings] No instance found for node:', node);
+			return;
+		}
 		await currentNode.instance?.onOpen?.();
 	}
 
@@ -114,6 +124,22 @@
 		log.error('Node not found:', targetName);
 		return [];
 	}
+
+	// Track HMR state preservation
+	$effect(() => {
+		if (import.meta.hot) {
+			hmrDebug.logReload({
+				activeName,
+				testId,
+				hasSettingsObject: !!settingsObject,
+				settingsObjectName: settingsObject?.name,
+				currentNodeName: currentNode?.name,
+				hasCurrentNodeInstance: !!currentNodeInstance,
+				hasWindowRef: !!elWindow,
+				breadcrumbLength: breadcrumb?.length || 0,
+			});
+		}
+	});
 </script>
 
 <style>
