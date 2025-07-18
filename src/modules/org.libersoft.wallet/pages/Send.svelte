@@ -8,6 +8,7 @@
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { getBalance, getTokenBalance, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { onMount } from 'svelte';
 	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -98,6 +99,10 @@
 	$effect(() => {
 		console.log('updateRemainingBalance effect triggered');
 		updateRemainingBalance();
+	});
+
+	onMount(() => {
+		elAddressInput?.focus();
 	});
 
 	async function updateBalance() {
