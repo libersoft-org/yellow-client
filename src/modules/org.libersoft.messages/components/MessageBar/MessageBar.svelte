@@ -303,9 +303,6 @@
 		max-height: 0;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.video-recorder-wrapper.open {
 		min-height: calc(100vh - 153px);
 		height: calc(100vh - 153px);
 		padding-bottom: 2rem;
@@ -314,9 +311,11 @@
 
 <Bar position="bottom" height="auto" bind:element={elMessageBar}>
 	<div class="message-bar" data-sent-message-uid={lastSentMessageUid}>
-		<div class="video-recorder-wrapper {showVideoRecorder ? 'open' : ''}">
-			<VideoRecorderContainer />
-		</div>
+		{#if showVideoRecorder}
+			<div class="video-recorder-wrapper">
+				<VideoRecorderContainer />
+			</div>
+		{/if}
 		<input type="file" id="videoInput" style:display="none" accept="video/*" capture="camera" bind:this={videoInputRef} />
 		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
 			<div class="top">

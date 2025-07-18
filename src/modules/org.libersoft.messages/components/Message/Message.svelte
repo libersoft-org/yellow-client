@@ -67,7 +67,7 @@
 	function maybeSetSeen(isVisible, isClientFocused) {
 		//console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
 		if (!isVisible || !isClientFocused) {
-			console.log('not setting seen because not visible or not focused');
+			//console.log('not setting seen because not visible or not focused');
 			return;
 		}
 		if (message.seen) {
