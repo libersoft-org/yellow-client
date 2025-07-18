@@ -3,14 +3,26 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	export interface DropdownOption {
+		label: string;
+		icon?: {
+			img: string;
+			size?: string;
+			colorVariable?: string;
+		};
+	}
 	interface Props {
 		placeholder?: string;
-		options?: string[];
+		options?: DropdownOption[];
 		selected?: string;
 		enabled?: boolean;
 	}
 	let { placeholder, options = [], selected = $bindable(''), enabled = true }: Props = $props();
-	let filteredOptions = $derived(options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase())));
+	let filteredOptions = $derived(
+		options.filter(option => {
+			return option.label.toLowerCase().includes(inputValue.toLowerCase());
+		})
+	);
 	let showOptions = $state(false);
 	let inputRef: Input | undefined = $state();
 	let inputValue = $state('');
@@ -25,9 +37,9 @@
 		selectedIndex = -1;
 	}
 
-	function clickSelectOption(option) {
-		selected = option;
-		inputValue = option;
+	function clickSelectOption(option: DropdownOption) {
+		selected = option.label;
+		inputValue = option.label;
 		showOptions = false;
 	}
 
@@ -119,6 +131,9 @@
 	}
 
 	.option {
+		display: flex;
+		align-items: center;
+		gap: 10px;
 		padding: 10px;
 	}
 
@@ -159,7 +174,12 @@
 		<div class="options" onmousedown={e => e.preventDefault()} role="listbox" aria-label="Options" tabindex="-1">
 			{#each filteredOptions as option, index}
 				<Clickable onClick={() => clickSelectOption(option)}>
-					<div class="option" class:highlighted={index === selectedIndex} onmouseenter={() => handleMouseEnter(index)} role="option" aria-selected={index === selectedIndex} tabindex="-1">{option}</div>
+					<div class="option" class:highlighted={index === selectedIndex} onmouseenter={() => handleMouseEnter(index)} role="option" aria-selected={index === selectedIndex} tabindex="-1">
+						{#if option.icon}
+							<Icon img={option.icon.img} alt={option.label} colorVariable={option.icon.colorVariable} size={option.icon.size || '20px'} padding="0" />
+						{/if}
+						{option.label}
+					</div>
 				</Clickable>
 			{/each}
 		</div>

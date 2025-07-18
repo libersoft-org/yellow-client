@@ -178,11 +178,33 @@ export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 });
 
 export let currencies = derived([selectedNetwork, tokens], ([$selectedNetwork, $tokens]) => {
-	const currencyList: string[] = [];
-	if ($selectedNetwork?.currency?.symbol) currencyList.push($selectedNetwork.currency.symbol);
+	const currencyList: Array<{ label: string; icon?: { img: string; size?: string; colorVariable?: string } }> = [];
+	// Add native currency with icon if available
+	if ($selectedNetwork?.currency?.symbol) {
+		currencyList.push({
+			label: $selectedNetwork.currency.symbol,
+			icon: $selectedNetwork.currency.iconURL
+				? {
+						img: $selectedNetwork.currency.iconURL,
+						size: '16px',
+					}
+				: undefined,
+		});
+	}
+	// Add tokens with their icons
 	if ($tokens && $tokens.length > 0) {
 		$tokens.forEach(token => {
-			if (token.symbol && !currencyList.includes(token.symbol)) currencyList.push(token.symbol);
+			if (token.symbol && !currencyList.find(c => c.label === token.symbol)) {
+				currencyList.push({
+					label: token.symbol,
+					icon: token.icon
+						? {
+								img: token.icon,
+								size: '16px',
+							}
+						: undefined,
+				});
+			}
 		});
 	}
 	return currencyList;
