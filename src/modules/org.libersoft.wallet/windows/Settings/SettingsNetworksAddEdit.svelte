@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addNetwork, editNetwork, type INetwork, default_networks, initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { addNetwork, editNetwork, type INetwork, default_networks, loadDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -79,36 +79,26 @@
 			error = 'Please enter a Chain ID first';
 			return;
 		}
-		initializeDefaultNetworks();
-		let attempts = 0;
-		const maxAttempts = 50; // 5 seconds maximum wait
-		while ($default_networks.length === 0 && attempts < maxAttempts) {
-			await new Promise(resolve => setTimeout(resolve, 100));
-			attempts++;
+		try {
+			let defaultNetworksData = $default_networks;
+			if (defaultNetworksData.length === 0) defaultNetworksData = await loadDefaultNetworks();
+			const defaultNetwork = defaultNetworksData.find(network => network.chainID === itemChainID);
+			if (!defaultNetwork || !defaultNetwork.rpcURLs) {
+				error = 'No default RPC URLs found for Chain ID: ' + itemChainID;
+				return;
+			}
+			const currentRPCs = (itemRPCURLs || []).filter(url => url.trim() !== '');
+			const newRPCs = defaultNetwork.rpcURLs.filter(url => !currentRPCs.includes(url));
+			if (newRPCs.length === 0) {
+				error = 'All default RPC URLs are already in the list';
+				return;
+			}
+			itemRPCURLs = [...currentRPCs, ...newRPCs];
+			error = null;
+			elRPCURLs = new Array(itemRPCURLs.length).fill(undefined);
+		} catch (err) {
+			error = 'Failed to load default networks: ' + (err instanceof Error ? err.message : 'Unknown error');
 		}
-		if ($default_networks.length === 0) {
-			error = 'Failed to load default networks';
-			return;
-		}
-		const defaultNetwork = $default_networks.find(network => network.chainID === itemChainID);
-		if (!defaultNetwork || !defaultNetwork.rpcURLs) {
-			error = `No default RPC URLs found for Chain ID ${itemChainID}`;
-			return;
-		}
-		// Get current RPC URLs (filter out empty ones)
-		const currentRPCs = (itemRPCURLs || []).filter(url => url.trim() !== '');
-		// Add new RPC URLs that are not already in the list
-		const newRPCs = defaultNetwork.rpcURLs.filter(url => !currentRPCs.includes(url));
-		if (newRPCs.length === 0) {
-			error = 'All default RPC URLs are already in the list';
-			return;
-		}
-		// Add the new RPC URLs to the current list
-		itemRPCURLs = [...currentRPCs, ...newRPCs];
-		// Clear any error message
-		error = null;
-		// Update the elRPCURLs array to match the new length
-		elRPCURLs = new Array(itemRPCURLs.length).fill(undefined);
 	}
 </script>
 

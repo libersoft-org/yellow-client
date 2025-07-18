@@ -69,7 +69,7 @@ networks.subscribe((nets: INetwork[]) => {
 	}
 });
 
-async function loadDefaultNetworks(): Promise<INetwork[]> {
+export async function loadDefaultNetworks(): Promise<INetwork[]> {
 	const url = 'modules/' + module.identifier + '/json/networks.json';
 	try {
 		const response = await fetch(url);
