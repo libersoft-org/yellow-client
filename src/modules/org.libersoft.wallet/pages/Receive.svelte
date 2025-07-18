@@ -17,7 +17,7 @@
 	let activeTab: 'address' | 'payment' = $state('address');
 	let walletAddress: string | undefined = $state();
 	let amount: string | undefined = $state();
-	let currency: string | undefined = $state();
+	let currency: string = $state('');
 	let qr: string | undefined = $state();
 	let error: string | null | undefined = $state();
 	let elAmountInput: Input | undefined = $state();
@@ -66,17 +66,9 @@
 		setTimeout(() => (addressElementMessage = null), 1000);
 	}
 
-	function resetCurrency(): void {
-		if (!currency || !$currencies.find((c: string) => c === currency)) {
-			console.log('reset currency:', currency, $currencies);
-			currency = $selectedNetwork?.currency?.symbol || '';
-		}
-	}
-
 	async function setActiveTab(name: 'address' | 'payment'): Promise<void> {
 		activeTab = name;
 		if (activeTab === 'payment') {
-			resetCurrency();
 			await tick();
 			elAmountInput?.focus();
 		}
