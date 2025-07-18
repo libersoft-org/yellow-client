@@ -63,7 +63,7 @@
 		gap: 4px;
 	}
 
-	.select.disabled {
+	.disabled {
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 		cursor: not-allowed;
