@@ -510,3 +510,7 @@ export function getRPCServersFromNetwork(network: INetwork): IRPCServer[] {
 		checking: false,
 	}));
 }
+
+export function reorderNetworks(reorderedNetworks: INetwork[]): void {
+	networks.set(reorderedNetworks);
+}

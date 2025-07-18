@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { addressBook, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
+	import { tableDrag } from '@/core/actions/tableDrag.ts';
+	import { addressBook, type IAddressBookItem, reorderAddressBook } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -11,6 +12,7 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import DragHandle from '@/core/components/Drag/DragHandle.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import DialogDelete from '@/org.libersoft.wallet/dialogs/AddressbookDel.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -35,6 +37,13 @@
 	function importAddressBook(): void {
 		setSettingsSection('addressbook-import');
 	}
+
+	function handleAddressBookReorder(sourceIndex: number, targetIndex: number) {
+		const reordered = [...$addressBook];
+		const [moved] = reordered.splice(sourceIndex, 1);
+		reordered.splice(targetIndex, 0, moved);
+		reorderAddressBook(reordered);
+	}
 </script>
 
 <style>
@@ -52,29 +61,35 @@
 		<Button img="img/export.svg" text="Export" onClick={exportAddressBook} data-testid="export-button" />
 	</ButtonBar>
 	{#if $addressBook.length > 0}
-		<Table>
-			<Thead>
-				<TheadTr>
-					<Th>Name</Th>
-					<Th>Address</Th>
-					<Th align="center">Action</Th>
-				</TheadTr>
-			</Thead>
-			<Tbody>
-				{#each $addressBook as a, index (index + '/' + a.address)}
-					<TbodyTr>
-						<Td bold>{a.name}</Td>
-						<Td shorten>{a.address}</Td>
-						<Td>
-							<TableActionItems align="center">
-								<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => addEditItem(a)} />
-								<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => deleteItemWindow(a)} />
-							</TableActionItems>
-						</Td>
-					</TbodyTr>
-				{/each}
-			</Tbody>
-		</Table>
+		<div use:tableDrag={{ items: $addressBook, onReorder: handleAddressBookReorder }}>
+			<Table>
+				<Thead>
+					<TheadTr>
+						<Th></Th>
+						<Th>Name</Th>
+						<Th>Address</Th>
+						<Th align="center">Action</Th>
+					</TheadTr>
+				</Thead>
+				<Tbody>
+					{#each $addressBook as a, index (a.guid)}
+						<TbodyTr>
+							<Td>
+								<DragHandle />
+							</Td>
+							<Td bold>{a.name}</Td>
+							<Td shorten>{a.address}</Td>
+							<Td>
+								<TableActionItems align="center">
+									<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => addEditItem(a)} />
+									<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => deleteItemWindow(a)} />
+								</TableActionItems>
+							</Td>
+						</TbodyTr>
+					{/each}
+				</Tbody>
+			</Table>
+		</div>
 	{/if}
 </div>
 {#if selectedItem}

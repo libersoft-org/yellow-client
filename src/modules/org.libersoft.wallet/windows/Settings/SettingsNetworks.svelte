@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
+	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { networks, default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { networks, default_networks, type INetwork, reorderNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -12,6 +13,7 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
+	import DragHandle from '@/core/components/Drag/DragHandle.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
 	let selectedItemID: string | null | undefined;
@@ -49,6 +51,13 @@
 	function openRPCServers(network: INetwork) {
 		setSettingsSection('networks-rpc-' + network.guid);
 	}
+
+	function handleNetworkReorder(sourceIndex: number, targetIndex: number) {
+		const reordered = [...$networks];
+		const [moved] = reordered.splice(sourceIndex, 1);
+		reordered.splice(targetIndex, 0, moved);
+		reorderNetworks(reordered);
+	}
 </script>
 
 <style>
@@ -76,36 +85,42 @@
 	{#if $networks.length !== 0}
 		<div class="bold">My networks:</div>
 	{/if}
-	<Table breakpoint="0">
-		<Thead>
-			<TheadTr>
-				<Th>Network</Th>
-				<Th align="center">Action</Th>
-			</TheadTr>
-		</Thead>
-		<Tbody>
-			{#each $networks as n, index (n.guid)}
-				<TbodyTr>
-					<Td padding="0" expand data-testid="wallet-settings-network-name@{n.name}">
-						<div class="network">
-							{#if n.currency?.iconURL}
-								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
-							{/if}
-							<div class="name">{n.name}</div>
-						</div>
-					</Td>
-					<Td>
-						<TableActionItems align="center">
-							<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
-							<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => openTokens(n)} testId="wallet-settings-network-tokens@{n.name}" />
-							<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n, true)} testId="wallet-settings-network-edit@{n.name}" />
-							<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />
-						</TableActionItems>
-					</Td>
-				</TbodyTr>
-			{/each}
-		</Tbody>
-	</Table>
+	<div use:tableDrag={{ items: $networks, onReorder: handleNetworkReorder }}>
+		<Table breakpoint="0">
+			<Thead>
+				<TheadTr>
+					<Th></Th>
+					<Th>Network</Th>
+					<Th align="center">Action</Th>
+				</TheadTr>
+			</Thead>
+			<Tbody>
+				{#each $networks as n, index (n.guid)}
+					<TbodyTr>
+						<Td>
+							<DragHandle />
+						</Td>
+						<Td padding="0" expand data-testid="wallet-settings-network-name@{n.name}">
+							<div class="network">
+								{#if n.currency?.iconURL}
+									<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
+								{/if}
+								<div class="name">{n.name}</div>
+							</div>
+						</Td>
+						<Td>
+							<TableActionItems align="center">
+								<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
+								<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => openTokens(n)} testId="wallet-settings-network-tokens@{n.name}" />
+								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickAddEditNetwork(n, true)} testId="wallet-settings-network-edit@{n.name}" />
+								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />
+							</TableActionItems>
+						</Td>
+					</TbodyTr>
+				{/each}
+			</Tbody>
+		</Table>
+	</div>
 	<div class="bold">Default networks:</div>
 	<Table breakpoint="0">
 		<Thead>

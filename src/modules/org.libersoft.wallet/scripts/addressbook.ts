@@ -138,3 +138,7 @@ export function replaceAddressBook(text: string): IAddressBookImportResult {
 export function hasAddressBookItems(): boolean {
 	return get(addressBook).length > 0;
 }
+
+export function reorderAddressBook(reorderedItems: IAddressBookItem[]): void {
+	addressBook.set(reorderedItems);
+}
