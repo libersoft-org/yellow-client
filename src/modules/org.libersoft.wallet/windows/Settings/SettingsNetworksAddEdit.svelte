@@ -115,14 +115,22 @@
 			rpcServers = [];
 			return;
 		}
-		rpcServers = itemRPCURLs.map(url => ({
-			url: url.trim(),
-			latency: null,
-			lastBlock: null,
-			blockAge: null,
-			isAlive: false,
-			checking: false,
-		}));
+		const newRpcServers: IRPCServer[] = itemRPCURLs.map(url => {
+			const trimmedUrl = url.trim();
+			const existingServer = rpcServers.find(server => server.url === trimmedUrl);
+			if (existingServer) return { ...existingServer, url: trimmedUrl };
+			else {
+				return {
+					url: trimmedUrl,
+					latency: null,
+					lastBlock: null,
+					blockAge: null,
+					isAlive: false,
+					checking: false,
+				};
+			}
+		});
+		rpcServers = newRpcServers;
 	}
 </script>
 
