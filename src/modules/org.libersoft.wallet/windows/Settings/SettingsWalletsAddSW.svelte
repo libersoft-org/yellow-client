@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { generateMnemonic, addWallet, wallets } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
@@ -26,6 +27,7 @@
 	let isRevealed: boolean = $state(false);
 	let error: string | null | undefined = $state();
 	let elWalletNameInput: Input | undefined = $state();
+	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	export function onOpen() {
 		name = 'My wallet ' + ($wallets.length + 1);
@@ -77,7 +79,7 @@
 		if (error) return;
 		// TODO: password protect the key
 		if (mnemonic) addWallet(mnemonic, name);
-		if (close) close();
+		setSettingsSection('wallets');
 	}
 
 	function print() {

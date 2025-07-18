@@ -65,7 +65,6 @@
 
 <ButtonBar equalize>
 	<Button img="modules/{module.identifier}/img/wallet-add.svg" text="Add a new wallet" onClick={() => setSettingsSection('wallets-add')} />
-	<Button img="modules/{module.identifier}/img/wallet-trezor.svg" text="Add a new hardware wallet" onClick={() => setSettingsSection('wallets-add-hw')} />
 	<Button img="modules/{module.identifier}/img/recover.svg" text="Recover from seed" onClick={() => setSettingsSection('wallets-recover')} />
 </ButtonBar>
 {#if $wallets?.length === 0}

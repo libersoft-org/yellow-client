@@ -12,8 +12,7 @@
 	import SettingsWallets from '@/org.libersoft.wallet/windows/Settings/SettingsWallets.svelte';
 	import SettingsAddressbook from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbook.svelte';
 	import SettingsWalletsWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWallet.svelte';
-	import SettingsWalletsAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAdd.svelte';
-	import SettingsWalletsAddHWWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWallet.svelte';
+	import SettingsWalletsAddSW from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddSW.svelte';
 	import SettingsWalletsAddHWWalletTrezor from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWalletTrezor.svelte';
 	import SettingsWalletsAddHWWalletLedger from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddHWWalletLedger.svelte';
 	import RPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
@@ -214,13 +213,29 @@
 						{
 							title: 'Add a new wallet',
 							name: 'wallets-add',
-							body: SettingsWalletsAdd,
-						},
-						{
-							title: 'Add a new hardware wallet',
-							name: 'wallets-add-hw',
-							body: SettingsWalletsAddHWWallet,
+							menu: [
+								{
+									img: 'modules/' + module.identifier + '/img/wallet.svg',
+									title: 'Local (software)	wallet',
+									name: 'wallets-add-sw',
+								},
+								{
+									img: 'modules/' + module.identifier + '/img/wallet-trezor.svg',
+									title: 'Trezor',
+									name: 'wallets-add-hw-trezor',
+								},
+								{
+									img: 'modules/' + module.identifier + '/img/wallet-ledger.svg',
+									title: 'Ledger',
+									name: 'wallets-add-hw-ledger',
+								},
+							],
 							items: [
+								{
+									title: 'Local	wallet',
+									name: 'wallets-add-sw',
+									body: SettingsWalletsAddSW,
+								},
 								{
 									title: 'Trezor',
 									name: 'wallets-add-hw-trezor',

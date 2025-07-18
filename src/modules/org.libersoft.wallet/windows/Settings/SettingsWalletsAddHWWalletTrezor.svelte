@@ -83,7 +83,7 @@
 	function goBack() {
 		if (step === 'configure') step = 'select-account';
 		else if (step === 'select-account') step = 'connect';
-		else setSettingsSection('wallets-add-hw');
+		else setSettingsSection('wallets-add');
 	}
 
 	function handleConnectClick() {
@@ -230,7 +230,7 @@
 				{:else if $trezorError}
 					<Icon img="img/cross.svg" size="24px" />
 				{:else}
-					<Icon img="img/indicator-cross.svg" size="24px" />
+					<Icon img="img/indicator-cancel.svg" size="24px" />
 				{/if}
 			</div>
 			<div class="status-text">
@@ -255,7 +255,7 @@
 		{/if}
 
 		<div class="buttons">
-			<Button onClick={goBack}>Back</Button>
+			<Button img="img/cancel.svg" text="Close" onClick={goBack} />
 			<Button onClick={handleConnectClick} enabled={true}>
 				{$trezorLoading ? 'Connecting...' : $trezorConnected ? 'Continue' : 'Connect Trezor'}
 			</Button>
@@ -299,7 +299,7 @@
 		{/if}
 
 		<div class="buttons">
-			<Button onClick={goBack}>Back</Button>
+			<Button img="img/cancel.svg" text="Close" onClick={goBack} />
 			<Button onClick={() => (step = 'configure')} enabled={!!selectedAccount}>Continue</Button>
 		</div>
 	{:else if step === 'configure'}
@@ -322,7 +322,7 @@
 		{/if}
 
 		<div class="buttons">
-			<Button onClick={goBack}>Back</Button>
+			<Button img="img/cancel.svg" text="Close" onClick={goBack} />
 			<Button onClick={addWallet} enabled={!!walletName.trim()}>Add Wallet</Button>
 		</div>
 	{/if}

@@ -4,7 +4,7 @@
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	function goBack() {
-		setSettingsSection('wallets-add-hw');
+		setSettingsSection('wallets-add');
 	}
 </script>
 
