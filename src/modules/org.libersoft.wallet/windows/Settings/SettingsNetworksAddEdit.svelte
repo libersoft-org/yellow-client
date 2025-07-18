@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addNetwork, editNetwork, type INetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { addNetwork, editNetwork, type INetwork, default_networks, initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -73,6 +73,43 @@
 		} else addNetwork(newItem);
 		close();
 	}
+
+	async function loadRPCsFromDefaults(): Promise<void> {
+		if (!itemChainID) {
+			error = 'Please enter a Chain ID first';
+			return;
+		}
+		initializeDefaultNetworks();
+		let attempts = 0;
+		const maxAttempts = 50; // 5 seconds maximum wait
+		while ($default_networks.length === 0 && attempts < maxAttempts) {
+			await new Promise(resolve => setTimeout(resolve, 100));
+			attempts++;
+		}
+		if ($default_networks.length === 0) {
+			error = 'Failed to load default networks';
+			return;
+		}
+		const defaultNetwork = $default_networks.find(network => network.chainID === itemChainID);
+		if (!defaultNetwork || !defaultNetwork.rpcURLs) {
+			error = `No default RPC URLs found for Chain ID ${itemChainID}`;
+			return;
+		}
+		// Get current RPC URLs (filter out empty ones)
+		const currentRPCs = (itemRPCURLs || []).filter(url => url.trim() !== '');
+		// Add new RPC URLs that are not already in the list
+		const newRPCs = defaultNetwork.rpcURLs.filter(url => !currentRPCs.includes(url));
+		if (newRPCs.length === 0) {
+			error = 'All default RPC URLs are already in the list';
+			return;
+		}
+		// Add the new RPC URLs to the current list
+		itemRPCURLs = [...currentRPCs, ...newRPCs];
+		// Clear any error message
+		error = null;
+		// Update the elRPCURLs array to match the new length
+		elRPCURLs = new Array(itemRPCURLs.length).fill(undefined);
+	}
 </script>
 
 <style>
@@ -84,6 +121,12 @@
 
 	.row {
 		display: flex;
+		gap: 10px;
+	}
+
+	.items {
+		display: flex;
+		flex-direction: column;
 		gap: 10px;
 	}
 </style>
@@ -106,14 +149,17 @@
 			<Input bind:value={itemExplorerURL} data-testid="wallet-settings-network-explorer-url-input" />
 		</Label>
 		<Label text="RPC URLs">
-			{#if itemRPCURLs}
-				{#each itemRPCURLs as rpc_url, i}
-					<div class="row">
-						<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
-						<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i))} testId="wallet-settings-network-rpc-url-remove-{i}" />
-					</div>
-				{/each}
-			{/if}
+			<div class="items">
+				<Button text="Load RPCs from defaults" onClick={loadRPCsFromDefaults} data-testid="wallet-settings-network-load-defaults-btn" />
+				{#if itemRPCURLs}
+					{#each itemRPCURLs as rpc_url, i}
+						<div class="row">
+							<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
+							<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i))} testId="wallet-settings-network-rpc-url-remove-{i}" />
+						</div>
+					{/each}
+				{/if}
+			</div>
 		</Label>
 		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...(itemRPCURLs || []), ''])} data-testid="wallet-settings-network-add-rpc-url-btn" />
 	</Form>
