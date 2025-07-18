@@ -6,6 +6,10 @@
 	import { addressBook } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
+
+	let filter = $state('');
+	let filteredAddressBook = $derived($addressBook.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
 
 	function clickShowContent() {
 		hideSidebarMobile.set(true);
@@ -43,7 +47,10 @@
 <SidebarButton img="modules/{module.identifier}/img/wallet.svg" text="Show wallet" visibleOnDesktop={false} onClick={clickShowContent} />
 <div class="addressbook">
 	{#if $addressBook.length > 0}
-		{#each $addressBook as a, index}
+		<div style="padding: 10px;">
+			<Input placeholder="Filter addresses..." bind:value={filter} />
+		</div>
+		{#each filteredAddressBook as a, index}
 			<Item even={index % 2 === 0 ? false : true} onClick={() => clickItem(a.address)}>
 				<div class="name">{a.name}</div>
 				<div class="address">{a.address}</div>
