@@ -106,12 +106,7 @@
 
 	async function checkRPCServers(): Promise<void> {
 		if (!itemRPCURLs) return;
-
-		// Spustím kontrolu všech RPC serverů paralelně
-		const promises = rpcServers.map(async server => {
-			await checkRPCServer(server);
-		});
-
+		const promises = rpcServers.map(async server => await checkRPCServer(server));
 		await Promise.all(promises);
 	}
 
@@ -120,8 +115,6 @@
 			rpcServers = [];
 			return;
 		}
-
-		// Vytvořím RPC servery pro všechny URL
 		rpcServers = itemRPCURLs.map(url => ({
 			url: url.trim(),
 			latency: null,
@@ -214,40 +207,50 @@
 				</ButtonBar>
 				{#if itemRPCURLs}
 					{#each itemRPCURLs as rpc_url, i}
-						<div class="row">
-							<div class="rpc-item">
-								<div class="row">
-									<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
-									{#if rpcServers[i]}
-										<div class="status" class:alive={rpcServers[i].isAlive} class:dead={!rpcServers[i].isAlive && !rpcServers[i].checking} class:checking={rpcServers[i].checking}></div>
-									{/if}
-								</div>
+						<div class="rpc-item">
+							<div class="row">
+								<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
 								{#if rpcServers[i]}
-									<div class="row">
-										<div>
-											<span>Latency:</span>
-											<span class="bold">{rpcServers[i].checking ? '?' : formatLatency(rpcServers[i].latency)}</span>
-										</div>
-										<div>
-											<span>Block:</span>
-											<span class="bold">{rpcServers[i].checking ? '?' : formatBlockNumber(rpcServers[i].lastBlock)}</span>
-										</div>
-										<div>
-											<span>Age:</span>
-											<span class="bold">{rpcServers[i].checking ? '?' : formatBlockAge(rpcServers[i].blockAge)}</span>
-										</div>
-									</div>
+									<div class="status" class:alive={rpcServers[i].isAlive} class:dead={!rpcServers[i].isAlive && !rpcServers[i].checking} class:checking={rpcServers[i].checking}></div>
 								{/if}
+								<Icon
+									img="img/reset.svg"
+									alt="Check RPC server"
+									padding="5px"
+									enabled={!rpcServers[i]?.checking}
+									onClick={() => {
+										if (rpcServers[i] && !rpcServers[i].checking) {
+											checkRPCServer(rpcServers[i]);
+										}
+									}}
+								/>
+								<Icon
+									img="img/del.svg"
+									alt="Remove RPC URL"
+									padding="5px"
+									onClick={() => {
+										itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i);
+										updateRPCServers();
+									}}
+									testId="wallet-settings-network-rpc-url-remove-{i}"
+								/>
 							</div>
-							<Icon
-								img="img/del.svg"
-								alt="Remove RPC URL"
-								onClick={() => {
-									itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i);
-									updateRPCServers();
-								}}
-								testId="wallet-settings-network-rpc-url-remove-{i}"
-							/>
+							{#if rpcServers[i]}
+								<div class="row">
+									<div>
+										<span>Latency:</span>
+										<span class="bold">{rpcServers[i].checking ? '?' : formatLatency(rpcServers[i].latency)}</span>
+									</div>
+									<div>
+										<span>Block:</span>
+										<span class="bold">{rpcServers[i].checking ? '?' : formatBlockNumber(rpcServers[i].lastBlock)}</span>
+									</div>
+									<div>
+										<span>Age:</span>
+										<span class="bold">{rpcServers[i].checking ? '?' : formatBlockAge(rpcServers[i].blockAge)}</span>
+									</div>
+								</div>
+							{/if}
 						</div>
 					{/each}
 				{/if}
