@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { parseUnits } from 'ethers';
+	import { parseUnits, Contract } from 'ethers';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, currencies } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, currencies, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -21,12 +22,32 @@
 	let qr: string | undefined = $state();
 	let error: string | null | undefined = $state();
 	let elAmountInput: Input | undefined = $state();
+	let tokenDecimalsCache = new Map<string, number>(); // Cache for token decimals to avoid repeated blockchain calls
 
 	$effect(() => {
 		updateAddressAndQR();
 	});
 
-	function updateAddressAndQR(): void {
+	async function getTokenDecimals(contractAddress: string): Promise<number> {
+		// Check cache first
+		if (tokenDecimalsCache.has(contractAddress)) return tokenDecimalsCache.get(contractAddress)!;
+		try {
+			if (!$provider) {
+				console.warn('Provider not available, using default decimals');
+				return 18;
+			}
+			const abi = ['function decimals() view returns (uint8)'];
+			const contract = new Contract(contractAddress, abi, $provider);
+			const decimals = await contract.decimals();
+			tokenDecimalsCache.set(contractAddress, Number(decimals));
+			return Number(decimals);
+		} catch (error) {
+			console.error('Error fetching token decimals:', error);
+			return 18;
+		}
+	}
+
+	async function updateAddressAndQR(): Promise<void> {
 		if ($selectedNetwork && $selectedAddress) {
 			if (activeTab === 'address') {
 				walletAddress = $selectedAddress.address;
@@ -37,18 +58,37 @@
 					qr = undefined;
 					return;
 				}
-				let etherValue: bigint | undefined;
+				// Check if the selected currency is the native currency or a token
+				const isNativeCurrency = currency === $selectedNetwork.currency.symbol;
+				const token = isNativeCurrency ? null : $tokens.find(t => t.symbol === currency);
+				let amount_value: bigint | undefined;
 				if (amount) amount = amount.trim();
 				if (amount) {
 					try {
-						etherValue = parseUnits(amount.toString(), 18); // 18 is the number of decimals for Ether
+						if (isNativeCurrency) {
+							// For native currency (ETH), use 18 decimals
+							amount_value = parseUnits(amount.toString(), 18);
+						} else if (token) {
+							// For tokens, get the correct decimals from contract
+							const decimals = await getTokenDecimals(token.contract_address);
+							amount_value = parseUnits(amount.toString(), decimals);
+						} else {
+							error = 'Invalid currency';
+							return;
+						}
 					} catch (e) {
 						error = 'Invalid amount';
 						return;
 					}
 				}
 				error = null;
-				walletAddress = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (etherValue ? '?value=' + etherValue.toString() : '');
+				if (isNativeCurrency) {
+					// Native currency payment (ETH) according to ERC-681
+					walletAddress = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount_value ? '?value=' + amount_value.toString() : '');
+				} else if (token) {
+					// ERC-20 token payment according to ERC-681
+					walletAddress = 'ethereum:' + token.contract_address + '@' + $selectedNetwork.chainID + '/transfer' + '?address=' + $selectedAddress.address + (amount_value ? '&uint256=' + amount_value.toString() : '');
+				}
 			}
 			if (walletAddress) generateQRCode(walletAddress, qrData => (qr = qrData));
 		}
