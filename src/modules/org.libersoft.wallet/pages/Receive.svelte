@@ -73,11 +73,12 @@
 		}
 	}
 
-	function setActiveTab(name: 'address' | 'payment'): void {
+	async function setActiveTab(name: 'address' | 'payment'): Promise<void> {
 		activeTab = name;
 		if (activeTab === 'payment') {
 			resetCurrency();
-			tick().then(() => elAmountInput?.focus());
+			await tick();
+			elAmountInput?.focus();
 		}
 	}
 </script>
