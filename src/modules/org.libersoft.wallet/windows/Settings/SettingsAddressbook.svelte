@@ -16,8 +16,11 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import DialogDelete from '@/org.libersoft.wallet/dialogs/AddressbookDel.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	let selectedItem: IAddressBookItem | null | undefined = $state();
 	let elDialogDel: DialogDelete | undefined = $state();
+	let filter = $state('');
+	let filteredAddressBook = $derived($addressBook.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	function addEditItem(item?: IAddressBookItem): void {
@@ -39,7 +42,7 @@
 	}
 
 	function handleAddressBookReorder(sourceIndex: number, targetIndex: number) {
-		const reordered = [...$addressBook];
+		const reordered = [...filteredAddressBook];
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved);
 		reorderAddressBook(reordered);
@@ -61,7 +64,8 @@
 		<Button img="img/export.svg" text="Export" onClick={exportAddressBook} data-testid="export-button" />
 	</ButtonBar>
 	{#if $addressBook.length > 0}
-		<div use:tableDrag={{ items: $addressBook, onReorder: handleAddressBookReorder }}>
+		<Input bind:value={filter} placeholder="Filter addresses..." />
+		<div use:tableDrag={{ items: filteredAddressBook, onReorder: handleAddressBookReorder }}>
 			<Table>
 				<Thead>
 					<TheadTr>
@@ -72,7 +76,7 @@
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each $addressBook as a, index (a.guid)}
+					{#each filteredAddressBook as a, index (a.guid)}
 						<TbodyTr>
 							<Td>
 								<DragHandle />

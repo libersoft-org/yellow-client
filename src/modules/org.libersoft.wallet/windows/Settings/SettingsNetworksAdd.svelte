@@ -36,7 +36,7 @@
 </style>
 
 <ButtonBar>
-	<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a custom network" onClick={clickAddNetwork} />
+	<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a custom network" onClick={() => clickAddNetwork()} />
 </ButtonBar>
 <div class="bold">Default networks:</div>
 <Table breakpoint="0">
