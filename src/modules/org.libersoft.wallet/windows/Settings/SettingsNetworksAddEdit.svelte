@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addNetwork, editNetwork, type INetwork, default_networks, loadDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { addNetwork, editNetwork, type INetwork, default_networks, loadDefaultNetworks, type IRPCServer, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -21,6 +21,7 @@
 	let itemChainID: number | undefined = $state();
 	let itemExplorerURL: string | undefined = $state();
 	let itemRPCURLs: string[] | undefined = $state();
+	let rpcServers: IRPCServer[] = $state([]);
 	let error: string | null | undefined = $state();
 	let elName: Input | undefined;
 	let elCurrencySymbol: Input | undefined;
@@ -43,6 +44,7 @@
 			itemRPCURLs = network.rpcURLs ? [...network.rpcURLs] : [];
 		}
 		error = null;
+		updateRPCServers();
 		elName?.focus();
 	}
 
@@ -96,9 +98,38 @@
 			itemRPCURLs = [...currentRPCs, ...newRPCs];
 			error = null;
 			elRPCURLs = new Array(itemRPCURLs.length).fill(undefined);
+			updateRPCServers();
 		} catch (err) {
 			error = 'Failed to load default networks: ' + (err instanceof Error ? err.message : 'Unknown error');
 		}
+	}
+
+	async function checkRPCServers(): Promise<void> {
+		if (!itemRPCURLs) return;
+
+		// Spustím kontrolu všech RPC serverů paralelně
+		const promises = rpcServers.map(async server => {
+			await checkRPCServer(server);
+		});
+
+		await Promise.all(promises);
+	}
+
+	function updateRPCServers(): void {
+		if (!itemRPCURLs) {
+			rpcServers = [];
+			return;
+		}
+
+		// Vytvořím RPC servery pro všechny URL
+		rpcServers = itemRPCURLs.map(url => ({
+			url: url.trim(),
+			latency: null,
+			lastBlock: null,
+			blockAge: null,
+			isAlive: false,
+			checking: false,
+		}));
 	}
 </script>
 
@@ -112,12 +143,49 @@
 	.row {
 		display: flex;
 		gap: 10px;
+		align-items: center;
 	}
 
 	.items {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+	}
+
+	.rpc-item {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		flex: 1;
+		padding: 10px;
+		border: 1px solid var(--primary-foreground);
+		border-radius: 10px;
+		background-color: var(--primary-soft-background);
+	}
+
+	.bold {
+		font-weight: bold;
+	}
+
+	.status {
+		width: 10px;
+		min-width: 10px;
+		height: 10px;
+		min-height: 10px;
+		border: 1px solid var(--primary-foreground);
+		border-radius: 50%;
+	}
+
+	.status.alive {
+		background-color: #080;
+	}
+
+	.status.dead {
+		background-color: #800;
+	}
+
+	.status.checking {
+		background-color: #f80;
 	}
 </style>
 
@@ -140,18 +208,60 @@
 		</Label>
 		<Label text="RPC URLs">
 			<div class="items">
-				<Button text="Load RPCs from defaults" onClick={loadRPCsFromDefaults} data-testid="wallet-settings-network-load-defaults-btn" />
+				<ButtonBar>
+					<Button img="modules/{module.identifier}/img/network-add.svg" text="Load RPCs from defaults" onClick={loadRPCsFromDefaults} data-testid="wallet-settings-network-load-defaults-btn" />
+					<Button img="img/reset.svg" text="Check RPC servers" onClick={checkRPCServers} data-testid="wallet-settings-network-check-rpc-servers-btn" />
+				</ButtonBar>
 				{#if itemRPCURLs}
 					{#each itemRPCURLs as rpc_url, i}
 						<div class="row">
-							<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
-							<Icon img="img/del.svg" alt="Remove RPC URL" onClick={() => (itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i))} testId="wallet-settings-network-rpc-url-remove-{i}" />
+							<div class="rpc-item">
+								<div class="row">
+									<Input bind:value={itemRPCURLs[i]} bind:this={elRPCURLs[i]} data-testid="wallet-settings-network-rpc-url-input-{i}" />
+									{#if rpcServers[i]}
+										<div class="status" class:alive={rpcServers[i].isAlive} class:dead={!rpcServers[i].isAlive && !rpcServers[i].checking} class:checking={rpcServers[i].checking}></div>
+									{/if}
+								</div>
+								{#if rpcServers[i]}
+									<div class="row">
+										<div>
+											<span>Latency:</span>
+											<span class="bold">{rpcServers[i].checking ? '?' : formatLatency(rpcServers[i].latency)}</span>
+										</div>
+										<div>
+											<span>Block:</span>
+											<span class="bold">{rpcServers[i].checking ? '?' : formatBlockNumber(rpcServers[i].lastBlock)}</span>
+										</div>
+										<div>
+											<span>Age:</span>
+											<span class="bold">{rpcServers[i].checking ? '?' : formatBlockAge(rpcServers[i].blockAge)}</span>
+										</div>
+									</div>
+								{/if}
+							</div>
+							<Icon
+								img="img/del.svg"
+								alt="Remove RPC URL"
+								onClick={() => {
+									itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i);
+									updateRPCServers();
+								}}
+								testId="wallet-settings-network-rpc-url-remove-{i}"
+							/>
 						</div>
 					{/each}
 				{/if}
 			</div>
 		</Label>
-		<Button img="img/add.svg" text="Add RPC URL" onClick={() => (itemRPCURLs = [...(itemRPCURLs || []), ''])} data-testid="wallet-settings-network-add-rpc-url-btn" />
+		<Button
+			img="img/add.svg"
+			text="Add RPC URL"
+			onClick={() => {
+				itemRPCURLs = [...(itemRPCURLs || []), ''];
+				updateRPCServers();
+			}}
+			data-testid="wallet-settings-network-add-rpc-url-btn"
+		/>
 	</Form>
 	{#if error}
 		<Alert type="error" message={error} />
