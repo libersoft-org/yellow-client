@@ -21,10 +21,11 @@
 		fill: true,
 		plugins: {
 			record: {
-				audio: true,
+				audio: false, // Start with audio disabled for Firefox
 				video: true,
 				maxLength: Infinity,
 				debug: true,
+				videoMimeType: 'video/webm', // Explicitly set mime type
 			},
 		},
 	});

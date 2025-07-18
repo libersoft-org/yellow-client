@@ -137,11 +137,11 @@
 	}
 </style>
 
-{#snippet renderDevicesSelect(devices, selectedDeviceId, onChange)}
+{#snippet renderDevicesSelect(devices, selectedDeviceId, onChange, type)}
 	{@const disabled = !devices || devices.length === 0}
-	{@const emptyMessage = loading ? 'Loading devices' : 'No devices found'}
+	{@const emptyMessage = loading ? 'Loading devices' : `No ${type} devices found`}
 	<div>
-		<Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} {disabled}>
+		<Select value={!disabled ? selectedDeviceId : ''} onchange={onChange} enabled={!disabled}>
 			{#if disabled}
 				<Option value={''} disabled selected text={emptyMessage} />
 			{/if}
@@ -183,8 +183,8 @@
 		</div>
 	{/if}
 	<div class="devices">
-		{@render renderDevicesSelect(audioDevices, selectedAudioDeviceId, e => changeAudioInput(e.target.value))}
-		{@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value))}
+		{@render renderDevicesSelect(audioDevices, selectedAudioDeviceId, e => changeAudioInput(e.target.value), 'audio')}
+		{@render renderDevicesSelect(videoDevices, selectedVideoDeviceId, e => changeVideoInput(e.target.value), 'video')}
 	</div>
 	<div class="footer">
 		<ButtonBar equalize>

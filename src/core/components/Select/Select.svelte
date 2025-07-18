@@ -62,11 +62,17 @@
 		flex-direction: column;
 		gap: 4px;
 	}
+
+	.select.disabled {
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
+		cursor: not-allowed;
+	}
 </style>
 
 {#snippet select()}
 	<div class="select-container">
-		<select disabled={!enabled} {...restProps} class:expand style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} bind:this={selectRef} bind:value>
+		<select disabled={!enabled} {...restProps} class:disabled={!enabled} class:expand style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} bind:this={selectRef} bind:value>
 			{@render children?.()}
 		</select>
 		<Icon img="img/down.svg" colorVariable="--default-foreground" alt="Dropdown" size="12px" padding="0px" />
