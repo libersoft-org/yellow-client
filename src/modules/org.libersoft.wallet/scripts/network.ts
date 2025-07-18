@@ -11,13 +11,14 @@ export interface INetwork {
 	name: string;
 	chainID: number;
 	explorerURL?: string;
-	currency: {
-		symbol: string;
-		iconURL?: string;
-	};
+	currency: ICurrency;
 	rpcURLs?: string[];
 	tokens?: IToken[];
 	selectedRpcUrl?: string;
+}
+export interface ICurrency {
+	symbol: string;
+	iconURL?: string;
 }
 export interface IRPCServer {
 	url: string;
