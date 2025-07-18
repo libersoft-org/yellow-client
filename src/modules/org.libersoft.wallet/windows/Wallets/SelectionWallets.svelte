@@ -14,15 +14,18 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-
 	interface Props {
 		close?: () => void;
 	}
 	let { close }: Props = $props();
 	let elWindowWallets: Window | undefined;
 	let filter: string | undefined = $state();
-
 	let filteredWallets = $derived($wallets.filter(wallet => !filter || wallet.name.toLowerCase().includes(filter.toLowerCase())));
+	let elFilter: Input | undefined = $state();
+
+	export function onOpen(): void {
+		elFilter?.focus();
+	}
 
 	function clickManageWallets() {
 		$settingsWindow.open('wallets');
@@ -41,8 +44,7 @@
 </style>
 
 <Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallets" onClick={clickManageWallets} />
-<Input bind:value={filter} placeholder="Filter wallets..." />
-
+<Input placeholder="Filter wallets..." bind:value={filter} bind:this={elFilter} />
 {#if filteredWallets.length > 0}
 	<Table breakpoint="0">
 		<Thead>

@@ -33,8 +33,6 @@
 		});
 	});
 
-	$inspect(settingsObject, 'Wallets address selector BaseSettings object');
-
 	$effect(() => {
 		walletsWindow.set(elBaseSettings);
 	});

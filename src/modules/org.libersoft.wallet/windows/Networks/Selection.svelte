@@ -16,6 +16,11 @@
 	let { close }: Props = $props();
 	let filter = $state('');
 	let filteredNetworks = $derived($networks.filter(network => network.name.toLowerCase().includes(filter.toLowerCase())));
+	let elFilter: Input | undefined = $state();
+
+	export function onOpen(): void {
+		elFilter?.focus();
+	}
 
 	function selectNetwork(id) {
 		console.log('SETTING NETWORK', id);
@@ -41,7 +46,7 @@
 </style>
 
 <Button img="modules/{module.identifier}/img/network.svg" text="Manage networks" onClick={() => manageNetworks()} data-testid="wallet-manage-networks-btn" />
-<Input bind:value={filter} placeholder="Filter networks..." />
+<Input placeholder="Filter networks..." bind:value={filter} bind:this={elFilter} />
 <Table breakpoint="0">
 	<Tbody>
 		{#each filteredNetworks as n}
