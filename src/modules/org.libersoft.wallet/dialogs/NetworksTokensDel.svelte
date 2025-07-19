@@ -32,6 +32,18 @@
 </script>
 
 {#snippet question()}
-	<div>Would you like to delete this token: "<span class="bold">{token.name} ({token.symbol})</span>"?</div>
+	<div>Would you like to delete this token?<br /><br /></div>
+	<div>
+		<span class="bold">Name:</span>
+		<span>{token.item.name}</span>
+	</div>
+	<div>
+		<span class="bold">Symbol:</span>
+		<span>{token.item.symbol}</span>
+	</div>
+	<div>
+		<span class="bold">Contract Address:</span>
+		<span>{token.item.contract_address}</span>
+	</div>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />

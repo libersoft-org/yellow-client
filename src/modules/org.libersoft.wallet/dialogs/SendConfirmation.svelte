@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatUnits } from 'ethers';
+	import { formatBalance, getTokenDecimals } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { type IPayment, sendTransaction } from '@/org.libersoft.wallet/scripts/transaction.ts';
@@ -13,6 +13,25 @@
 	}
 	let { params, close }: Props = $props();
 	let elDialog;
+	let tokenDecimals = $state<number | null>(null);
+	let loadingDecimals = $state(false);
+
+	// Load decimals when params change
+	$effect(async () => {
+		if (params?.contractAddress) {
+			// Token transaction - get decimals from contract
+			loadingDecimals = true;
+			try {
+				tokenDecimals = await getTokenDecimals(params.contractAddress);
+			} finally {
+				loadingDecimals = false;
+			}
+		} else {
+			// Native currency transaction - always 18 decimals
+			tokenDecimals = 18;
+			loadingDecimals = false;
+		}
+	});
 	let dialogData = {
 		title: 'Transaction confirmation',
 		body: body,
@@ -28,8 +47,8 @@
 	}
 
 	async function clickYes() {
-		if (params && params.currency) {
-			await sendTransaction(params.address, params.amount, params.fee, params.currency);
+		if (params && params.symbol) {
+			await sendTransaction(params.address, params.amount, params.fee, params.symbol);
 			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 			elDialog?.close();
 		}
@@ -44,8 +63,15 @@
 	{#if params}
 		<div>Do you really want to send this transaction?</div>
 		<div>Address: <span class="bold">{params.address}</span></div>
-		<div>Amount: <span class="bold">{formatUnits(params.amount, 18)} {params.currency}</span></div>
-		<div>Transaction fee: <span class="bold">{formatUnits(params.fee, 18)} {$selectedNetwork?.currency.symbol || ''}</span></div>
+		<div>
+			Amount:
+			{#if loadingDecimals}
+				<Spinner size="12px" />
+			{:else}
+				<span class="bold">{formatBalance({ amount: params.amount, currency: params.symbol, decimals: tokenDecimals || 18 })} {params.symbol}</span>
+			{/if}
+		</div>
+		<div>Transaction fee: <span class="bold">{formatBalance({ amount: params.fee, currency: $selectedNetwork?.currency.symbol || '', decimals: 18 })} {$selectedNetwork?.currency.symbol || ''}</span></div>
 		<div>
 			Estimated time:
 			{#if $transactionTimeLoading}

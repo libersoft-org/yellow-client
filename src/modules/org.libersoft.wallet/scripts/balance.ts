@@ -32,6 +32,24 @@ export async function getBalance(): Promise<IBalance | null> {
 	}
 }
 
+export async function getTokenDecimals(contractAddress: string): Promise<number> {
+	const p = get(provider);
+	const net = get(selectedNetwork);
+	if (!net || !p) {
+		console.error('Network or provider not set');
+		return 18; // Fallback
+	}
+	try {
+		const abi = ['function decimals() view returns (uint8)'];
+		const contract = new Contract(contractAddress, abi, p);
+		const decimals = await contract.decimals();
+		return Number(decimals);
+	} catch (error) {
+		console.error('Error getting token decimals:', error);
+		return 18; // Fallback
+	}
+}
+
 export async function getTokenBalance(tokenSymbol: string): Promise<IBalance | null> {
 	const p = get(provider);
 	const net = get(selectedNetwork);
@@ -83,7 +101,6 @@ export async function getExchange(cryptoBalance: IBalance, fiatSymbol: string = 
 		const rateNumber = Number(rate);
 		const rateBigInt = BigInt(Math.round(rateNumber * 1e18));
 		const fiatAmount = (cryptoBalance.amount * BigInt(1e18)) / rateBigInt;
-
 		return {
 			amount: fiatAmount,
 			currency: fiatSymbol,
@@ -108,7 +125,23 @@ async function exchangeRates(currency: string = 'USD'): Promise<any> {
 	}
 }
 
-export function formatBalance(balance: IBalance | undefined): string | undefined {
+export function formatBalance(balance: IBalance | undefined, locale?: string, maximumFractionDigits?: number): string | undefined {
 	if (!balance) return undefined;
-	return formatUnits(balance.amount, balance.decimals || 18);
+	// Convert BigInt to string using formatUnits - preserves all decimal places
+	let numericValue = formatUnits(balance.amount, balance.decimals || 18);
+	// If maximumFractionDigits is specified, truncate decimal places
+	if (maximumFractionDigits !== undefined) {
+		const number = parseFloat(numericValue);
+		numericValue = number.toFixed(maximumFractionDigits);
+	}
+	// Split into integer and decimal parts
+	const [integerPart, decimalPart] = numericValue.split('.');
+	// Use Intl.NumberFormat only for integer part (for thousands separators)
+	const formatter = new Intl.NumberFormat(locale || navigator.language, { useGrouping: true });
+	const formattedInteger = formatter.format(parseInt(integerPart));
+	// Get local decimal separator
+	const decimalSeparator = new Intl.NumberFormat(locale || navigator.language).formatToParts(1.1).find(part => part.type === 'decimal')?.value || '.';
+	// Join integer and decimal parts with local separator
+	if (decimalPart && decimalPart !== '0'.repeat(decimalPart.length)) return formattedInteger + decimalSeparator + decimalPart;
+	else return formattedInteger;
 }

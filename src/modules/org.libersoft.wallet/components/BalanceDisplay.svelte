@@ -14,12 +14,8 @@
 	let { balance, fallback = '?', showCurrency = true, prefix = '', suffix = '', roundToDecimals, children, ...restProps }: Props = $props();
 	let formattedBalance = $derived.by(() => {
 		if (!balance) return fallback;
-		let formatted = formatBalance(balance);
+		let formatted = formatBalance(balance, undefined, roundToDecimals);
 		if (!formatted) return fallback;
-		if (roundToDecimals !== undefined) {
-			const number = parseFloat(formatted);
-			formatted = number.toFixed(roundToDecimals);
-		}
 		let result = prefix + formatted;
 		if (showCurrency && balance.currency) result += ' ' + balance.currency;
 		result += suffix;

@@ -17,7 +17,9 @@ export interface INetwork {
 	selectedRpcUrl?: string;
 }
 export interface ICurrency {
+	name?: string;
 	symbol: string;
+	contract_address?: string;
 	iconURL?: string;
 }
 export interface IRPCServer {
@@ -30,10 +32,7 @@ export interface IRPCServer {
 }
 export interface IToken {
 	guid: string;
-	icon: string;
-	symbol: string;
-	name: string;
-	contract_address: string;
+	item: ICurrency;
 }
 export interface IStatus {
 	color: 'red' | 'orange' | 'green';
@@ -170,7 +169,7 @@ export function editToken(networkGuid: string, token: IToken): void {
 export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return ($selectedNetwork?.tokens || []).map(token => ({
 		symbol: token.symbol,
-		icon: token.icon,
+		iconURL: token.iconURL,
 		name: token.name,
 		contract_address: token.contract_address,
 		guid: token.guid,
@@ -197,9 +196,9 @@ export let currencies = derived([selectedNetwork, tokens], ([$selectedNetwork, $
 			if (token.symbol && !currencyList.find(c => c.label === token.symbol)) {
 				currencyList.push({
 					label: token.symbol,
-					icon: token.icon
+					icon: token.iconURL
 						? {
-								img: token.icon,
+								img: token.iconURL,
 								size: '16px',
 							}
 						: undefined,

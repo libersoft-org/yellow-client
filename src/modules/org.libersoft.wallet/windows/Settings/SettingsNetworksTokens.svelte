@@ -76,10 +76,10 @@
 					<TheadTr>
 						<Th padding="0 10px">
 							<div class="title">
-								{#if t.icon}
-									<Icon img={t.icon} alt={t.name} size="20px" padding="0px" />
+								{#if t.item.iconURL}
+									<Icon img={t.item.iconURL} alt={t.item.name} size="20px" padding="0px" />
 								{/if}
-								<div class="name">{t.name}</div>
+								<div class="name">{t.item.name}</div>
 							</div>
 						</Th>
 						<Th padding="0 10px">
@@ -94,8 +94,8 @@
 					<TbodyTr>
 						<Td bold>Icon:</Td>
 						<Td expand>
-							{#if t.icon}
-								{t.icon}
+							{#if t.item.iconURL}
+								{t.item.iconURL}
 							{:else}
 								<span>No icon</span>
 							{/if}
@@ -103,11 +103,11 @@
 					</TbodyTr>
 					<TbodyTr>
 						<Td bold>Symbol:</Td>
-						<Td expand>{t.symbol}</Td>
+						<Td expand>{t.item.symbol}</Td>
 					</TbodyTr>
 					<TbodyTr>
 						<Td bold>Token contract address:</Td>
-						<Td expand>{t.contract_address}</Td>
+						<Td expand>{t.item.contract_address}</Td>
 					</TbodyTr>
 				</Tbody>
 			</Table>

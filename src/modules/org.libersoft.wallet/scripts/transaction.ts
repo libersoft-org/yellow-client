@@ -8,7 +8,8 @@ export interface IPayment {
 	address: string;
 	amount: bigint;
 	fee: bigint;
-	currency: string | null | undefined;
+	symbol: string | null | undefined;
+	contractAddress?: string; // For tokens - undefined for native currency
 }
 export interface FeeEstimate {
 	low: string;
@@ -191,17 +192,13 @@ async function updateTransactionTimes(): Promise<void> {
 						});
 				}),
 			]);
-
 			console.debug('...');
 			console.debug('Fee history result:', feeHistoryResult);
 			console.debug('Block results:', blockResults);
-
 			// Block time analysis - require at least 3 valid blocks for accuracy
 			const blockTimes: number[] = [];
 			const validBlocks = blockResults.filter(block => block && block.timestamp);
-
 			console.debug('Valid blocks:', validBlocks.length, validBlocks);
-
 			// Not enough blocks for accurate calculation
 			if (validBlocks.length < 3) {
 				console.debug('Not enough valid blocks for accurate transaction time estimation');
