@@ -168,42 +168,32 @@ export function editToken(networkGuid: string, token: IToken): void {
 
 export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return ($selectedNetwork?.tokens || []).map(token => ({
-		symbol: token.symbol,
-		iconURL: token.iconURL,
-		name: token.name,
-		contract_address: token.contract_address,
 		guid: token.guid,
+		name: token.item.name,
+		symbol: token.item.symbol,
+		contract_address: token.item.contract_address,
+		iconURL: token.item.iconURL,
 	}));
 });
 
 export let currencies = derived([selectedNetwork, tokens], ([$selectedNetwork, $tokens]) => {
-	const currencyList: Array<{ label: string; icon?: { img: string; size?: string; colorVariable?: string } }> = [];
-	// Add native currency with icon if available
+	const currencyList: ICurrency[] = [];
+	// Add native currency
 	if ($selectedNetwork?.currency?.symbol) {
 		currencyList.push({
-			label: $selectedNetwork.currency.symbol,
-			icon: $selectedNetwork.currency.iconURL
-				? {
-						img: $selectedNetwork.currency.iconURL,
-						size: '16px',
-					}
-				: undefined,
+			symbol: $selectedNetwork.currency.symbol,
+			iconURL: $selectedNetwork.currency.iconURL,
 		});
 	}
-	// Add tokens with their icons
+	// Add tokens
 	if ($tokens && $tokens.length > 0) {
 		$tokens.forEach(token => {
-			if (token.symbol && !currencyList.find(c => c.label === token.symbol)) {
-				currencyList.push({
-					label: token.symbol,
-					icon: token.iconURL
-						? {
-								img: token.iconURL,
-								size: '16px',
-							}
-						: undefined,
-				});
-			}
+			currencyList.push({
+				name: token.name,
+				symbol: token.symbol,
+				iconURL: token.iconURL,
+				contract_address: token.contract_address,
+			});
 		});
 	}
 	return currencyList;

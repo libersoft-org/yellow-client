@@ -10,14 +10,15 @@
 			size?: string;
 			colorVariable?: string;
 		};
+		value?: any; // The object that will be returned when selected
 	}
 	interface Props {
 		placeholder?: string;
 		options?: DropdownOption[];
-		selected?: string;
+		selected?: any; // The selected object
 		enabled?: boolean;
 	}
-	let { placeholder, options = [], selected = $bindable(''), enabled = true }: Props = $props();
+	let { placeholder, options = [], selected = $bindable(), enabled = true }: Props = $props();
 	let filteredOptions = $derived(
 		options.filter(option => {
 			return option.label.toLowerCase().includes(inputValue.toLowerCase());
@@ -27,6 +28,15 @@
 	let inputRef: Input | undefined = $state();
 	let inputValue = $state('');
 	let selectedIndex = $state(-1);
+
+	// Sync inputValue with selected object
+	$effect(() => {
+		if (selected) {
+			// Find the corresponding option for the selected object
+			const correspondingOption = options.find(option => option.value === selected);
+			if (correspondingOption) inputValue = correspondingOption.label;
+		} else inputValue = '';
+	});
 
 	export function focus() {
 		inputRef?.focus();
@@ -38,13 +48,13 @@
 	}
 
 	function clickSelectOption(option: DropdownOption) {
-		selected = option.label;
+		selected = option.value || option.label; // Return the value object or fallback to label
 		inputValue = option.label;
 		showOptions = false;
 	}
 
 	function clickClearSelection() {
-		selected = '';
+		selected = undefined;
 		inputValue = '';
 		inputRef?.focus();
 	}
@@ -166,7 +176,7 @@
 	</div>
 	{#if $debug}
 		<div>Input Value: {inputValue}</div>
-		<div>Selected Option: {selected}</div>
+		<div>Selected Option: {JSON.stringify(selected)}</div>
 		<div>Selected Index: {selectedIndex}</div>
 		<div>Filtered Options: {JSON.stringify(filteredOptions)}</div>
 	{/if}

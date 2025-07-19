@@ -232,7 +232,7 @@
 							<Clickable onClick={() => selectToken(t.symbol)}>
 								<div class="row">
 									<div>
-										<Icon img={t.icon} alt={t.symbol} size="40px" padding="0px" />
+										<Icon img={t.iconURL} alt={t.symbol} size="40px" padding="0px" />
 									</div>
 									<div class="name">{t.name} ({t.symbol})</div>
 								</div>

@@ -62,6 +62,7 @@
 {#snippet body()}
 	{#if params}
 		<div>Do you really want to send this transaction?</div>
+		<br />
 		<div>Address: <span class="bold">{params.address}</span></div>
 		<div>
 			Amount:

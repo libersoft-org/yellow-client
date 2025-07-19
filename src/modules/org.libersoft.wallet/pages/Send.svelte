@@ -1,17 +1,17 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { type ICurrency } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, currencies, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, currencies } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { getBalance, getTokenBalance, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
-	import { onMount } from 'svelte';
-	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import { formatUnits, parseUnits } from 'ethers';
+	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -51,17 +51,12 @@
 	let elAmountInput: Input | undefined = $state();
 	let elFeeInput: Input | undefined = $state();
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
-	let currencyForDropdown: string = $state(''); // Bidirectional binding helper for DropdownFilter
-
-	// Sync currency changes to dropdown
-	$effect(() => {
-		currencyForDropdown = currency?.symbol || '';
-	});
-
-	// Sync dropdown changes to currency
-	$effect(() => {
-		//if (currencyForDropdown === '') currency = undefined;
-		//else currency = currencies.find(c => c.symbol === currencyForDropdown) || null;
+	let currencyOptions = $derived.by(() => {
+		return $currencies.map(currency => ({
+			label: currency.symbol,
+			icon: currency.iconURL ? { img: currency.iconURL, size: '16px' } : undefined,
+			value: currency,
+		}));
 	});
 
 	$effect(() => {
@@ -243,7 +238,7 @@
 			<Input bind:value={$sendAddress} bind:this={elAddressInput} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Currency">
-			<DropdownFilter options={$currencies} bind:selected={currencyForDropdown} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} />
+			<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Amount">
 			<div class="row">
@@ -331,17 +326,15 @@
 		{#if error}
 			<Alert type="error" message={error} />
 		{/if}
+		{#if $debug}
+			<div class="debug">
+				estimatedTransactionTimes: {JSON.stringify($estimatedTransactionTimes)}<br />
+				avgBlockTime: {JSON.stringify($avgBlockTimeStore)}<br />
+				confirmationBlocks: {JSON.stringify($confirmationBlocksStore)}
+			</div>
+		{/if}
+
 		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 	</Form>
 </div>
 <DialogSend params={payment} bind:this={elDialogSend} />
-{#if $debug}
-	<div class="debug">
-		estimatedTransactionTimes: {JSON.stringify($estimatedTransactionTimes)}
-		<br />
-		avgBlockTime: {JSON.stringify($avgBlockTimeStore)}
-		<br />
-		confirmationBlocks: {JSON.stringify($confirmationBlocksStore)}
-		<br />
-	</div>
-{/if}
