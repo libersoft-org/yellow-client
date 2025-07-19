@@ -66,6 +66,10 @@ export async function getTokenBalance(tokenSymbol: string): Promise<IBalance | n
 	}
 	console.log('Getting token balance for', token.symbol);
 	try {
+		if (!token.contract_address) {
+			console.error('Token contract address is missing for', token.symbol);
+			return null;
+		}
 		const abi = ['function balanceOf(address owner) view returns (uint256)', 'function decimals() view returns (uint8)'];
 		const contract = new Contract(token.contract_address, abi, p);
 		const [balance, decimals] = await Promise.all([contract.balanceOf(addr.address), contract.decimals()]);

@@ -17,20 +17,23 @@
 	let loadingDecimals = $state(false);
 
 	// Load decimals when params change
-	$effect(async () => {
-		if (params?.contractAddress) {
-			// Token transaction - get decimals from contract
-			loadingDecimals = true;
-			try {
-				tokenDecimals = await getTokenDecimals(params.contractAddress);
-			} finally {
+	$effect(() => {
+		async function loadDecimals() {
+			if (params?.contractAddress) {
+				// Token transaction - get decimals from contract
+				loadingDecimals = true;
+				try {
+					tokenDecimals = await getTokenDecimals(params.contractAddress);
+				} finally {
+					loadingDecimals = false;
+				}
+			} else {
+				// Native currency transaction - always 18 decimals
+				tokenDecimals = 18;
 				loadingDecimals = false;
 			}
-		} else {
-			// Native currency transaction - always 18 decimals
-			tokenDecimals = 18;
-			loadingDecimals = false;
 		}
+		loadDecimals();
 	});
 	let dialogData = {
 		title: 'Transaction confirmation',
@@ -69,7 +72,7 @@
 			{#if loadingDecimals}
 				<Spinner size="12px" />
 			{:else}
-				<span class="bold">{formatBalance({ amount: params.amount, currency: params.symbol, decimals: tokenDecimals || 18 })} {params.symbol}</span>
+				<span class="bold">{formatBalance({ amount: params.amount, currency: params.symbol || '', decimals: tokenDecimals || 18 })} {params.symbol || ''}</span>
 			{/if}
 		</div>
 		<div>Transaction fee: <span class="bold">{formatBalance({ amount: params.fee, currency: $selectedNetwork?.currency.symbol || '', decimals: 18 })} {$selectedNetwork?.currency.symbol || ''}</span></div>
