@@ -79,11 +79,12 @@
 		await currentNode.instance?.onOpen?.();
 	}
 
-	function goBack() {
+	async function goBack() {
 		console.log('[BaseSettings] goBack: ', activeName);
 		const found = findNode(settingsObject, activeName);
 		console.log('[BaseSettings] goBack found:', found);
-		activeName = found?.__parent?.name ?? settingsObject.name;
+		const parentName = found?.__parent?.name ?? settingsObject.name;
+		await setSettingsSection(parentName);
 	}
 
 	function findNode(root: any, target: string): any {
