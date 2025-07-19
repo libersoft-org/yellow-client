@@ -1,26 +1,20 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Sticker from '../Stickers/Sticker.svelte';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	let { node } = $props();
-	let v = node.attributes.file?.value;
 	const stickerset = $derived(node.attributes.set?.value);
-	let openStickersetDetailsModal = getContext('openStickersetDetailsModal');
+	let v = node.attributes.file?.value;
+	let openStickersetDetailsWindow: any = getContext('openStickersetDetailsWindow');
 	//$: console.log('MessageContentSticker node:', v);
 
 	function handleClick() {
-		if (stickerset) {
-			openStickersetDetailsModal(stickerset);
-		}
+		if (stickerset) openStickersetDetailsWindow(stickerset);
 	}
-
-	onMount(() => {
-		//console.log('MessageContentSticker onMount:', v);
-	});
 </script>
 
 {#if v}
 	<Clickable onClick={handleClick}>
-		<Sticker file={v} force_animate={true} intersecting={true} />
+		<Sticker file={v} force_animate intersecting />
 	</Clickable>
 {/if}

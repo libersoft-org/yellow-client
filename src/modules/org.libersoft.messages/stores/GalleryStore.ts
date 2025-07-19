@@ -2,24 +2,24 @@ import { get, writable, derived } from 'svelte/store';
 //import filesService from '@/org.libersoft.messages/services/Files/FilesService.ts';
 //import { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 
-export interface GalleryFile {
+export interface IGalleryFile {
 	id: string | number;
 	loaded: boolean;
 	url?: string;
 	fileName?: string;
 	alt?: string; // fallbacks to fileName
 	// fileMimeType: string;
-	loadFile?: () => Promise<Omit<GalleryFile, 'loadFile'>>;
+	loadFile?: () => Promise<Omit<IGalleryFile, 'loadFile'>>;
 }
 
-export interface GalleryStoreValue {
+export interface IGalleryStoreValue {
 	show: boolean;
-	files: GalleryFile[];
-	currentId: GalleryFile['id'] | null;
+	files: IGalleryFile[];
+	currentId: IGalleryFile['id'] | null;
 }
 
 export class GalleryStore {
-	store = writable<GalleryStoreValue>({
+	store = writable<IGalleryStoreValue>({
 		show: false,
 		files: [],
 		currentId: null,
@@ -36,14 +36,14 @@ export class GalleryStore {
 		});
 	}
 
-	setFiles(files: GalleryFile[]) {
+	setFiles(files: IGalleryFile[]) {
 		this.store.update(store => {
 			store.files = files;
 			return store;
 		});
 	}
 
-	updateFile(id: GalleryFile['id'], file: Omit<GalleryFile, 'id'>) {
+	updateFile(id: IGalleryFile['id'], file: Omit<IGalleryFile, 'id'>) {
 		this.store.update(store => {
 			const index = store.files.findIndex(f => f.id === id);
 			if (index === -1) {
@@ -64,7 +64,7 @@ export class GalleryStore {
 		});
 	}
 
-	getFile(id: GalleryFile['id']) {
+	getFile(id: IGalleryFile['id']) {
 		return get(this.store).files.find(file => file.id === id);
 	}
 

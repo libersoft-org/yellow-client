@@ -1,5 +1,5 @@
-<script>
-	import { product, motto } from '@/core/core.ts';
+<script lang="ts">
+	import { product, motto } from '@/core/scripts/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 </script>
 
@@ -20,11 +20,11 @@
 		display: flex;
 		justify-content: center;
 		margin: 20px 0;
+	}
 
-		:global(img) {
-			animation: bounce 1.5s ease;
-			animation-fill-mode: forwards;
-		}
+	.logo :global(img) {
+		animation: bounce 1.5s ease;
+		animation-fill-mode: forwards;
 	}
 
 	@keyframes bounce {

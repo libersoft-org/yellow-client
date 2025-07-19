@@ -1,14 +1,12 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-
 	interface Props {
 		children?: Snippet;
 		breakpoint?: string | null;
+		hideBorder?: boolean;
 		[key: string]: unknown;
 	}
-
-	const { breakpoint = null, children, ...restProps }: Props = $props();
-
+	const { breakpoint = null, children, hideBorder = false, ...restProps }: Props = $props();
 	let isWide = $state(false);
 
 	$effect(() => {
@@ -20,37 +18,25 @@
 </script>
 
 <style>
-	.table {
-		display: flex;
-		justify-content: center;
-		width: 100%;
-		overflow: hidden;
-		max-width: 100vw;
+	table {
 		box-sizing: border-box;
-
-		:global(&.table-wide) {
-			border: 1px solid #222 !important;
-			border-radius: 8px;
-		}
+		width: 100%;
+		max-width: 100vw;
+		overflow: hidden;
+		border: 1px solid var(--secondary-background);
+		border-radius: 10px;
+		border-spacing: 0;
 	}
 
-	table {
-		border: 0;
-		padding-bottom: 0;
-		display: block;
-		width: 100%;
-		border-collapse: collapse;
-		table-layout: auto;
-		font-size: clamp(14px, 2vw, 16px);
+	table.hide-border {
+		border: none;
+	}
 
-		:global(.table-wide &) {
-			width: 100%;
-		}
+	table.expand {
+		width: 100%;
 	}
 </style>
 
-<div class={`table ${isWide ? 'table-wide' : ''}`} {...restProps}>
-	<table>
-		{@render children?.()}
-	</table>
-</div>
+<table class:expand={isWide} class:hide-border={hideBorder} {...restProps}>
+	{@render children?.()}
+</table>

@@ -1,17 +1,17 @@
 <script>
-	import { debug, active_account, isMobile } from '@/core/core.ts';
-	import { getContext, onMount } from 'svelte';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { isMobile, debug } from '@/core/scripts/stores.ts';
+	import { getContext } from 'svelte';
 	import { get } from 'svelte/store';
-	import { identifier } from '../../messages.js';
 	import Emoji from './Emoji.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
-	import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
+	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '@/org.libersoft.messages/scripts/messages.js';
+	import { start_emojisets_fetch, emoji_render } from '@/org.libersoft.messages/scripts/emojis.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
-	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import FuzzySearch from 'fuzzy-search';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import { longpress } from '../../ui.js';
+	import { longpress } from '@/org.libersoft.messages/scripts/ui.js';
 	import IntersectionObserver from 'svelte-intersection-observer';
 	export let onEmojiClick;
 	const MessageBar = getContext('MessageBar');
@@ -126,8 +126,10 @@
 		border: 1px solid var(--secondary-softer-background);
 	}
 
-	.emoji.hover:hover {
-		z-index: 90;
+	.emoji.hover:hover,
+	:global(.clickable:focus-visible) .emoji,
+	:global(.clickable.focused) .emoji {
+		z-index: 51;
 		transform: scale(1.5);
 		background-color: var(--primary-soft-background);
 	}
@@ -143,9 +145,8 @@
 {/if}
 
 <div class="filter">
-	<InputButton img="modules/{identifier}/img/search.svg" alt="Search" bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
+	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
 </div>
-
 {#snippet clickable_emoji(emoji)}
 	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi]} let:intersecting>
 		<Clickable onRightClick={e => showAlts(e, emoji)}>
@@ -155,7 +156,7 @@
 				use:longpress
 				on:longpress={e => showAlts(e, emoji)}
 				on:mymousedown={() => {
-					altsMenu?.close();
+					altsMenu.close();
 				}}
 				on:click={() => clickEmoji(emoji.base)}
 				on:keydown={e => {}}
@@ -163,13 +164,12 @@
 				tabindex="0"
 			>
 				{#if intersecting}
-					<Emoji codepoints={emoji.base} context={'menu'} is_single={true} />
+					<Emoji codepoints={emoji.base} context={'menu'} is_single />
 				{/if}
 			</div>
 		</Clickable>
 	</IntersectionObserver>
 {/snippet}
-
 <div class="emojiset" bind:this={elContainer} tabindex="-1">
 	{#if $emojisLoading}
 		<Spinner />
@@ -198,7 +198,6 @@
 		{/each}
 	{/if}
 </div>
-
 <ContextMenu bind:this={altsMenu} scrollable={false}>
 	<div class="emojis">
 		{#each alts as e (e)}
@@ -208,7 +207,7 @@
 				}}
 			>
 				<div class="emoji hover">
-					<Emoji codepoints={e} context={'menu'} is_single={true} />
+					<Emoji codepoints={e} context={'menu'} is_single />
 				</div>
 			</Clickable>
 		{/each}
