@@ -70,7 +70,7 @@ export function addAddress(w: IWallet, index?: number | string, name?: string): 
 	let indexNum: number;
 	const addresses = w.addresses || [];
 	sortAddresses(addresses);
-	if (!index) {
+	if (index === undefined || index === null || index === '') {
 		indexNum = addressesMaxIndex(addresses) + 1;
 		doAddAddress(w, addresses, indexNum, name);
 	} else {

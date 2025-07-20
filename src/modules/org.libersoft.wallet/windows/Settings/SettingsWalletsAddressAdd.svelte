@@ -30,10 +30,10 @@
 		error = null;
 		let id: number | undefined;
 		name = name?.trim();
-		if (index) id = Number(index);
+		if (index !== undefined && index !== null) id = Number(index);
 		const validationConfig = [
 			{ field: name, element: elName, required: 'Name is required' },
-			{ field: index, element: elIndex, validate: (v: number) => (v >= 0 && Number.isInteger(v) ? null : 'Index must be a positive whole number') },
+			{ field: index, element: elIndex, validate: (v: number) => (v >= 0 && Number.isInteger(v) ? null : 'Index must be a non-negative whole number') },
 		];
 		error = validateForm(validationConfig);
 		if (error) return;
@@ -44,11 +44,6 @@
 		}
 		addAddress(wallet, id!, name!);
 		close();
-	}
-
-	function isPositiveInteger(value: unknown): boolean {
-		if (typeof value !== 'number' || !Number.isFinite(value)) return false;
-		return Number.isInteger(value) && value > 0;
 	}
 </script>
 
