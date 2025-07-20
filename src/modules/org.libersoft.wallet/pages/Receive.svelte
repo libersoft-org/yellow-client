@@ -47,7 +47,7 @@
 
 			return {
 				label: label,
-				icon: currency.iconURL ? { img: currency.iconURL, size: '16px' } : undefined,
+				icon: { img: currency.iconURL || 'modules/' + module.identifier + '/img/token.svg', size: '16px' },
 				value: currency, // The actual ICurrency object
 			};
 		});

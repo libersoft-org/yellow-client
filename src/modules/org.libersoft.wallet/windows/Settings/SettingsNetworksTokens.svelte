@@ -151,9 +151,7 @@
 							</Td>
 							<Td expand>
 								<div class="info">
-									{#if token.item.iconURL}
-										<Icon img={token.item.iconURL} alt={contractAddress} size="30px" padding="0px" />
-									{/if}
+									<Icon img={token.item.iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={contractAddress} size="30px" padding="0px" />
 									<div class="details">
 										{#if isLoading}
 											<Spinner size="16px" />
