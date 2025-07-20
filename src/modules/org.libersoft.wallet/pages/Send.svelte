@@ -56,19 +56,13 @@
 	let currencyOptions = $derived.by(() => {
 		return $currencies.map(currency => {
 			let label = currency.symbol || 'Unknown';
-
 			// For tokens with contract addresses, get proper name and symbol from tokenInfos
 			if (currency.contract_address) {
 				const tokenInfo = tokenInfos.get(currency.contract_address);
-				if (tokenInfo && tokenInfo.symbol !== 'UNKNOWN') {
-					label = `${tokenInfo.name} (${tokenInfo.symbol})`;
-				} else if (tokenInfo?.name && tokenInfo.name !== 'Unknown Token') {
-					label = tokenInfo.name;
-				} else {
-					label = `Token (${currency.contract_address.slice(0, 8)}...)`;
-				}
+				if (tokenInfo && tokenInfo.symbol !== 'UNKNOWN') label = `${tokenInfo.name} (${tokenInfo.symbol})`;
+				else if (tokenInfo?.name && tokenInfo.name !== 'Unknown Token') label = tokenInfo.name;
+				else label = `Token (${currency.contract_address.slice(0, 8)}...)`;
 			}
-
 			return {
 				label: label,
 				icon: { img: currency.iconURL || 'modules/' + module.identifier + '/img/token.svg', size: '16px' },
@@ -82,7 +76,6 @@
 			selectedCurrencySymbol = '';
 			return;
 		}
-
 		// For tokens with contract addresses, get proper symbol from tokenInfos
 		if (currency.contract_address) {
 			const tokenInfo = tokenInfos.get(currency.contract_address);
@@ -118,9 +111,7 @@
 
 	// Watch for token changes and reload token infos
 	$effect(() => {
-		if ($tokens?.length) {
-			loadTokenInfos();
-		}
+		if ($tokens?.length) loadTokenInfos();
 	});
 
 	onMount(() => {
@@ -131,17 +122,14 @@
 	async function loadTokenInfos() {
 		const tokensWithContracts = $tokens.filter(token => token.contract_address);
 		if (!tokensWithContracts.length) return;
-
 		isLoadingTokenInfos = true;
 		try {
 			const contractAddresses = tokensWithContracts.map(token => token.contract_address!);
 			const batchResults = await getBatchTokensInfo(contractAddresses);
-
 			// Save results to local map
 			batchResults.forEach((tokenInfo, contractAddress) => {
 				tokenInfos.set(contractAddress, { name: tokenInfo.name, symbol: tokenInfo.symbol });
 			});
-
 			// Trigger reactivity
 			tokenInfos = new Map(tokenInfos);
 		} catch (error) {
@@ -155,7 +143,8 @@
 		try {
 			nativeBalanceData = (await getBalance()) || undefined;
 			if (currency?.contract_address) currentBalanceData = (await getTokenBalanceByAddress(currency.contract_address)) || undefined;
-			else currentBalanceData = nativeBalanceData;
+			else if (currency) currentBalanceData = nativeBalanceData;
+			else currentBalanceData = undefined;
 		} catch (e) {
 			console.error('Error updating balance:', e);
 			currentBalanceData = undefined;
