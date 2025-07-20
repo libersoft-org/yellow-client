@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { reconnect, availableRPCURLs, status } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
@@ -155,7 +155,7 @@
 	<div class="body">
 		<div class="network-address">
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} />
+			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} />
 		</div>
 		<div class="bar">
 			<div class="left">
