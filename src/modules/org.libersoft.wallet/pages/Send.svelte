@@ -88,7 +88,7 @@
 
 	$effect(() => {
 		if ($provider && $selectedNetwork && $selectedAddress) {
-			estimateTransactionFee();
+			estimateTransactionFee(currency?.contract_address);
 			updateBalance();
 		}
 	});
@@ -97,6 +97,13 @@
 		// Update balance when currency changes
 		currency;
 		updateBalance();
+	});
+
+	$effect(() => {
+		// Update fee estimation when currency changes
+		if ($provider && $selectedNetwork && $selectedAddress && currency) {
+			estimateTransactionFee(currency?.contract_address);
+		}
 	});
 
 	$effect(() => {
@@ -242,11 +249,18 @@
 			return;
 		}
 		// If validation passes, create payment
-		const etherAmount = getEtherAmount(amount);
+		let etherAmount: bigint;
+		if (currency?.contract_address && currentBalanceData) {
+			// For tokens, use the correct decimals
+			etherAmount = parseUnits(amount.toString().replace(',', '.'), currentBalanceData.decimals || 18);
+		} else {
+			// For native currency, use 18 decimals
+			etherAmount = getEtherAmount(amount)!;
+		}
 		const etherFee = getEtherAmount($fee);
 		payment = {
 			address: $sendAddress!.toString(),
-			amount: etherAmount!,
+			amount: etherAmount,
 			fee: etherFee!,
 			symbol: currency?.symbol,
 			contractAddress: currency?.contract_address,
@@ -318,7 +332,7 @@
 					<div>{$selectedNetwork?.currency?.symbol || ''}</div>
 				{/if}
 				{#if !$feeLoading && $feeLevel !== 'custom' && $provider && $selectedNetwork && $selectedAddress}
-					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="30px" padding="0" onClick={estimateTransactionFee} />
+					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="30px" padding="0" onClick={() => estimateTransactionFee(currency?.contract_address)} />
 				{/if}
 			</div>
 		</Label>

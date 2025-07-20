@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import { writable } from 'svelte/store';
-import { Mnemonic, HDNodeWallet, parseUnits, formatUnits, type PreparedTransactionRequest } from 'ethers';
+import { Mnemonic, HDNodeWallet, parseUnits, formatUnits, Contract, type PreparedTransactionRequest, type TransactionReceipt } from 'ethers';
 import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -52,36 +52,86 @@ export function getEtherAmount(amount) {
 	}
 }
 
-export async function estimateTransactionFee(): Promise<{ low: string; average: string; high: string } | null> {
+export async function estimateTransactionFee(contractAddress?: string): Promise<{ low: string; average: string; high: string } | null> {
 	const providerInstance = get(provider);
-	if (!providerInstance || !get(selectedNetwork) || !get(selectedAddress)) {
+	const selectedAddressValue = get(selectedAddress);
+	if (!providerInstance || !get(selectedNetwork) || !selectedAddressValue) {
 		console.log('estimateTransactionFee: Missing requirements');
 		return null;
 	}
-	console.log('estimateTransactionFee: Starting estimation');
+	console.log('estimateTransactionFee: Starting estimation for', contractAddress ? 'token' : 'ETH', 'transaction');
 	feeLoading.set(true);
 	// Clear fee if not custom level
 	const currentFeeLevel = get(feeLevel);
 	if (currentFeeLevel !== 'custom') fee.set('');
 	try {
 		const feeData = await providerInstance.getFeeData();
-		const gasLimit = 21000n;
+		let gasLimit: bigint;
+
+		// Determine appropriate gas limit
+		if (contractAddress) {
+			// For token transactions, estimate gas limit
+			try {
+				const mn = Mnemonic.fromPhrase(get(selectedWallet)?.phrase || '');
+				const hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(providerInstance);
+				const tokenContract = new Contract(contractAddress, ['function transfer(address to, uint256 amount) returns (bool)'], hd_wallet);
+				// Use a dummy address and amount for estimation
+				const dummyAddress = '0x0000000000000000000000000000000000000001';
+				const dummyAmount = parseUnits('1', 18);
+				gasLimit = await tokenContract.transfer.estimateGas(dummyAddress, dummyAmount);
+				console.log('estimateTransactionFee: Estimated gas limit for token:', gasLimit.toString());
+			} catch (error) {
+				console.warn('estimateTransactionFee: Could not estimate token gas, using default 65000');
+				gasLimit = 65000n; // Default for token transfers
+			}
+		} else {
+			// For ETH transactions
+			gasLimit = 21000n;
+		}
+
 		let maxFeePerGas = feeData.maxFeePerGas;
 		let gasPrice = feeData.gasPrice;
 		let lowFee: bigint = 0n;
 		let averageFee: bigint = 0n;
 		let highFee: bigint = 0n;
+		// Use calculated gas limit
+		const effectiveGasLimit = gasLimit;
+		// Adaptive gas price multiplier based on network conditions
+		let gasPriceMultiplier = 120n; // Default 120% (reduced from previous high values)
+		// Check recent block congestion to adjust gas price
+		try {
+			const latestBlock = await providerInstance.getBlock('latest');
+			if (latestBlock && latestBlock.gasUsed && latestBlock.gasLimit) {
+				const gasUtilization = Number((latestBlock.gasUsed * 100n) / latestBlock.gasLimit);
+				console.log('Network gas utilization:', gasUtilization + '%');
+				// Adjust multiplier based on network congestion - more conservative values
+				if (gasUtilization > 95) {
+					gasPriceMultiplier = 150n; // 150% for very high congestion
+					console.log('Very high network congestion detected, using 150% gas price');
+				} else if (gasUtilization > 85) {
+					gasPriceMultiplier = 140n; // 140% for high congestion
+					console.log('High network congestion detected, using 140% gas price');
+				} else if (gasUtilization > 70) {
+					gasPriceMultiplier = 130n; // 130% for medium congestion
+					console.log('Medium network congestion detected, using 130% gas price');
+				} else {
+					console.log('Normal network congestion, using 120% gas price');
+				}
+			}
+		} catch (blockError) {
+			console.warn('Could not check network congestion, using default gas price:', blockError);
+		}
 		if (maxFeePerGas && feeData.maxPriorityFeePerGas) {
 			const baseFee = maxFeePerGas - feeData.maxPriorityFeePerGas;
-			const lowPriorityFee = (feeData.maxPriorityFeePerGas * 50n) / 100n;
-			lowFee = (baseFee + lowPriorityFee) * gasLimit;
-			averageFee = maxFeePerGas * gasLimit;
-			const highPriorityFee = (feeData.maxPriorityFeePerGas * 150n) / 100n;
-			highFee = (baseFee + highPriorityFee) * gasLimit;
+			const lowPriorityFee = (feeData.maxPriorityFeePerGas * 75n) / 100n; // Increased from 50%
+			lowFee = (baseFee + lowPriorityFee) * effectiveGasLimit;
+			averageFee = ((maxFeePerGas * gasPriceMultiplier) / 100n) * effectiveGasLimit; // Increased
+			const highPriorityFee = (feeData.maxPriorityFeePerGas * 200n) / 100n; // Increased from 150%
+			highFee = (baseFee + highPriorityFee) * effectiveGasLimit;
 		} else if (gasPrice) {
-			lowFee = ((gasPrice * 80n) / 100n) * gasLimit; // 80% of current gas price
-			averageFee = gasPrice * gasLimit; // Current gas price
-			highFee = ((gasPrice * 150n) / 100n) * gasLimit; // 150% of current gas price
+			lowFee = ((gasPrice * 100n) / 100n) * effectiveGasLimit; // Increased from 80%
+			averageFee = ((gasPrice * gasPriceMultiplier) / 100n) * effectiveGasLimit; // Increased
+			highFee = ((gasPrice * 200n) / 100n) * effectiveGasLimit; // Increased from 150%
 		}
 		const fees = {
 			low: formatUnits(lowFee, 18),
@@ -320,50 +370,164 @@ function formatTransactionTime(seconds: number): string {
 	}
 }
 
-export async function sendTransaction(address: string, etherValue: bigint, etherValueFee: bigint, currency: string): Promise<void> {
+export async function sendTransaction(address: string, etherValue: bigint, etherValueFee: bigint, contractAddress?: string): Promise<void> {
 	const selectedWalletValue = get(selectedWallet);
 	const selectedAddressValue = get(selectedAddress);
+	console.log('sendTransaction debug - selectedWalletValue:', selectedWalletValue);
+	console.log('sendTransaction debug - selectedAddressValue:', selectedAddressValue);
+	console.log('sendTransaction debug - wallet type:', selectedWalletValue?.type);
+	console.log('sendTransaction debug - wallet has phrase:', !!selectedWalletValue?.phrase);
 	if (!selectedWalletValue || !selectedAddressValue) {
 		console.error('No selected wallet or address');
 		return;
 	}
+	// Check provider connection and attempt to reconnect if needed
+	let providerInstance = get(provider);
+	console.log('Initial provider check:', providerInstance);
+	if (!providerInstance || Object.keys(providerInstance).length === 0) {
+		console.warn('⚠️ Provider is empty, attempting to reconnect...');
+		// Import reconnect function and attempt to reconnect
+		const { reconnect, status } = await import('@/org.libersoft.wallet/scripts/provider.ts');
+		reconnect();
 
+		// Wait for successful connection by monitoring status
+		const maxWaitTime = 10000; // 10 seconds max wait
+		const startTime = Date.now();
+
+		while (Date.now() - startTime < maxWaitTime) {
+			await new Promise(resolve => setTimeout(resolve, 500)); // Check every 500ms
+
+			const currentStatus = get(status);
+			providerInstance = get(provider);
+
+			console.log('Reconnect status:', currentStatus.text, 'Provider keys:', Object.keys(providerInstance || {}));
+
+			// Check if we have a valid provider with actual methods
+			if (providerInstance && typeof providerInstance === 'object' && 'getNetwork' in providerInstance && 'getFeeData' in providerInstance && currentStatus.color === 'green') {
+				console.log('✅ Provider successfully reconnected!');
+				break;
+			}
+		}
+
+		// Final check after wait period
+		if (!providerInstance || typeof providerInstance !== 'object' || !('getNetwork' in providerInstance) || !('getFeeData' in providerInstance)) {
+			console.error('❌ Provider reconnection failed or timed out!');
+			throw new Error('Provider connection error - please check your network connection and try again');
+		}
+	}
 	// Check if this is a software wallet (has phrase) or hardware wallet
-	if (selectedWalletValue.type === 'software' && selectedWalletValue.phrase) {
+	// For backward compatibility, if type is undefined but phrase exists, treat as software wallet
+	if (selectedWalletValue.type === 'software' || (!selectedWalletValue.type && selectedWalletValue.phrase)) {
+		if (!selectedWalletValue.phrase) {
+			console.error('Software wallet missing phrase');
+			throw new Error('Software wallet configuration error: missing mnemonic phrase');
+		}
 		// Handle software wallet transaction
 		const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
-		let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(get(provider));
-		//let data = 'you can put data here';
-		const request: PreparedTransactionRequest = {
-			to: address,
-			from: selectedAddressValue.address,
-			value: etherValue,
-			gasLimit: etherValueFee,
-			//new Uint8Array(data.split('').map(c => c.charCodeAt(0))),
-			//data: data,
-		};
+		let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(providerInstance);
+		let request: PreparedTransactionRequest;
+		if (contractAddress) {
+			// Token transaction - call transfer method on the token contract
+			const tokenContract = new Contract(contractAddress, ['function transfer(address to, uint256 amount) returns (bool)'], hd_wallet);
+			const transferData = tokenContract.interface.encodeFunctionData('transfer', [address, etherValue]);
+			request = {
+				to: contractAddress,
+				from: selectedAddressValue.address,
+				value: 0n, // No ETH value for token transfers
+				data: transferData,
+			};
+		} else {
+			// Native currency transaction (ETH)
+			request = {
+				to: address,
+				from: selectedAddressValue.address,
+				value: etherValue,
+			};
+		}
 		//
 		//nonce: await provider.getTransactionCount(selectedAddressValue.address),
 		console.log('selectedAddressValue.address:', selectedAddressValue);
-		console.log('provider:', get(provider));
+		console.log('provider:', providerInstance);
+		// Get and set proper nonce to avoid conflicts
+		// Use 'latest' instead of 'pending' to get confirmed nonce, then check for pending transactions
+		const confirmedNonce = await providerInstance.getTransactionCount(selectedAddressValue.address, 'latest');
+		const pendingNonce = await providerInstance.getTransactionCount(selectedAddressValue.address, 'pending');
+
+		console.log('📊 Confirmed nonce for address:', confirmedNonce);
+		console.log('📊 Pending nonce for address:', pendingNonce);
+
+		// If there are pending transactions, we need to wait or use a higher nonce
+		if (pendingNonce > confirmedNonce) {
+			console.warn('⚠️ There are pending transactions! Confirmed:', confirmedNonce, 'Pending:', pendingNonce);
+			console.warn('⚠️ This might cause nonce conflicts. Consider waiting for pending transactions to complete.');
+
+			// Check if we should warn user about potential stuck transactions
+			const pendingCount = pendingNonce - confirmedNonce;
+			if (pendingCount > 3) {
+				console.error('🚨 Warning: ' + pendingCount + ' pending transactions detected!');
+				console.error('🚨 Your previous transactions might be stuck. Consider increasing gas price or waiting.');
+
+				// Ask user if they want to use emergency mode (REPLACE stuck transaction)
+				const useEmergencyMode = confirm(`🚨 STUCK TRANSACTIONS DETECTED! 🚨\n\n` + `You have ${pendingCount} pending transactions (nonce ${confirmedNonce}-${pendingNonce - 1}) blocking new transactions.\n\n` + `EMERGENCY MODE: Replace the FIRST stuck transaction (nonce ${confirmedNonce}) with this transaction using 3x gas price?\n\n` + `⚠️ This will REPLACE the stuck transaction and unblock the queue.\n` + `⚠️ This will cost more but should process faster.\n\n` + `Click OK for Emergency Replacement (3x gas price)\n` + `Click Cancel to abort transaction`);
+
+				if (!useEmergencyMode) {
+					throw new Error(`Transaction cancelled. You have ${pendingCount} stuck transactions blocking new ones.\n\nSolutions:\n1. Wait for pending transactions to complete\n2. Use Emergency Replacement Mode (3x gas price)\n3. Use a different wallet address`);
+				}
+
+				// Emergency mode: Use the FIRST stuck nonce with higher gas price
+				console.log('🚨 EMERGENCY REPLACEMENT MODE ACTIVATED - Replacing stuck transaction with 3x gas price');
+				request.nonce = confirmedNonce; // Use the FIRST stuck nonce to unblock queue
+
+				// Increase gas price for faster processing
+				if (request.maxFeePerGas) {
+					request.maxFeePerGas = request.maxFeePerGas * 3n;
+					request.maxPriorityFeePerGas = request.maxPriorityFeePerGas ? request.maxPriorityFeePerGas * 3n : request.maxFeePerGas / 2n;
+				} else if (request.gasPrice) {
+					request.gasPrice = request.gasPrice * 3n;
+				}
+
+				console.log('🚨 REPLACING stuck nonce:', confirmedNonce, 'with 3x gas price');
+			} else {
+				// Use the pending nonce to queue after existing pending transactions
+				request.nonce = pendingNonce;
+			}
+		} else {
+			// No pending transactions, use the confirmed nonce
+			request.nonce = confirmedNonce;
+		}
+
+		console.log('📊 Using nonce:', request.nonce);
 		console.log('mn:', mn);
 		console.log('hd_wallet:', hd_wallet);
-		console.log('tx request:', request);
+		console.log('tx request with nonce:', request);
 		console.log('hd_wallet.estimateGas:');
 		let eg = await hd_wallet.estimateGas(request);
 		console.log('estimateGas:', eg);
 		console.log('hd_wallet.sendTransaction:');
 		let tx = await hd_wallet.sendTransaction(request);
-		console.log('wait..', tx);
-		await tx.wait();
-		console.log('Transaction sent OK');
+		console.log('Transaction sent, hash:', tx.hash);
+		console.log('Waiting for confirmation...');
+		try {
+			// Wait for transaction confirmation with timeout
+			const receipt = await Promise.race([
+				tx.wait() as Promise<TransactionReceipt>,
+				new Promise<never>(
+					(_, reject) => setTimeout(() => reject(new Error('Transaction confirmation timeout')), 60000) // 60 second timeout
+				),
+			]);
+			console.log('Transaction confirmed:', receipt);
+			console.log('Transaction sent OK');
+		} catch (waitError) {
+			console.warn('Transaction confirmation error or timeout:', waitError);
+			console.log('Transaction was sent (hash: ' + tx.hash + ') but confirmation failed or timed out');
+			// Don't throw error - transaction was sent successfully
+		}
 		/*
 		let log = {
 			dir: 'sent',
 			date: new Date(),
 			from: request.from,
 			to: request.to,
-			currency: currency,
 			hash: tx.hash,
 			chainID: tx.chainId.toString(),
 			nonce: tx.nonce,

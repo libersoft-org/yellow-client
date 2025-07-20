@@ -58,10 +58,10 @@
 		if (params) {
 			if (params.contractAddress) {
 				// Token transaction
-				await sendTransaction(params.address, params.amount, params.fee, tokenInfo?.symbol || 'UNKNOWN', params.contractAddress);
+				await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
 			} else {
 				// Native currency transaction
-				await sendTransaction(params.address, params.amount, params.fee, $selectedNetwork?.currency.symbol || '');
+				await sendTransaction(params.address, params.amount, params.fee);
 			}
 			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 			elDialog?.close();
@@ -85,9 +85,7 @@
 			{:else}
 				{@const symbol = params.contractAddress ? tokenInfo?.symbol || 'UNKNOWN' : $selectedNetwork?.currency.symbol || ''}
 				{@const correctDecimals = tokenDecimals || 18}
-				{@const amountString = formatUnits(params.amount, 18)}
-				{@const correctAmount = parseUnits(amountString, correctDecimals)}
-				{@const amountBalance = { amount: correctAmount, currency: symbol, decimals: correctDecimals }}
+				{@const amountBalance = { amount: params.amount, currency: symbol, decimals: correctDecimals }}
 				<span class="bold">{formatBalance(amountBalance)} {symbol}</span>
 			{/if}
 		</div>
