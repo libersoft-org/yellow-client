@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { type INetwork, type IToken, findNetworkByGuid } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { type INetwork, type IToken, findNetworkByGuid, reorderTokens } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { getTokenInfo } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -13,6 +16,7 @@
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
+	import DragHandle from '@/core/components/Drag/DragHandle.svelte';
 	import DialogTokenDel from '@/org.libersoft.wallet/dialogs/NetworksTokensDel.svelte';
 	interface Props {
 		item: string;
@@ -20,8 +24,42 @@
 	let { item }: Props = $props();
 	let network: INetwork | undefined = $derived(findNetworkByGuid(item));
 	let tokenToDelete: IToken | undefined = $state();
+	let tokenToDeleteInfo: { name: string; symbol: string } | null | undefined = $state();
 	let elDialogDel: DialogTokenDel | undefined = $state();
+	let tokenInfos = $state(new Map<string, { name: string; symbol: string } | null>());
+	let loadingTokenInfos = $state(new Set<string>());
 	const setSettingsSection = getContext<Function>('setSettingsSection');
+
+	async function loadTokenInfo(contractAddress: string): Promise<void> {
+		if (tokenInfos.has(contractAddress) || loadingTokenInfos.has(contractAddress)) return;
+
+		loadingTokenInfos.add(contractAddress);
+		loadingTokenInfos = new Set(loadingTokenInfos); // Trigger reactivity
+
+		try {
+			const info = await getTokenInfo(contractAddress);
+			tokenInfos.set(contractAddress, info);
+			tokenInfos = new Map(tokenInfos); // Trigger reactivity
+		} catch (error) {
+			console.warn(`Failed to load token info for ${contractAddress}:`, error);
+			tokenInfos.set(contractAddress, null);
+			tokenInfos = new Map(tokenInfos); // Trigger reactivity
+		} finally {
+			loadingTokenInfos.delete(contractAddress);
+			loadingTokenInfos = new Set(loadingTokenInfos); // Trigger reactivity
+		}
+	}
+
+	// Load token info for all tokens when network changes
+	$effect(() => {
+		if (network?.tokens) {
+			network.tokens.forEach(token => {
+				if (token.item.contract_address) {
+					loadTokenInfo(token.item.contract_address);
+				}
+			});
+		}
+	});
 
 	function clickTokenAdd(): void {
 		setSettingsSection('networks-tokens-add-' + item);
@@ -33,8 +71,20 @@
 
 	async function delTokenDialog(token: IToken): Promise<void> {
 		tokenToDelete = token;
+		// Get token info from our loaded map
+		const contractAddress = token.item.contract_address;
+		tokenToDeleteInfo = contractAddress ? tokenInfos.get(contractAddress) : undefined;
 		await tick();
 		elDialogDel?.open();
+	}
+
+	function handleTokenReorder(sourceIndex: number, targetIndex: number): void {
+		if (!network?.tokens || !network.guid) return;
+
+		const reordered = [...network.tokens];
+		const [moved] = reordered.splice(sourceIndex, 1);
+		reordered.splice(targetIndex, 0, moved);
+		reorderTokens(network.guid, reordered);
 	}
 </script>
 
@@ -45,75 +95,90 @@
 		gap: 10px;
 	}
 
-	.info {
+	.network {
 		display: flex;
 		gap: 5px;
 	}
 
-	.title {
+	.info {
 		display: flex;
 		align-items: center;
 		gap: 10px;
+		padding: 5px 0;
 	}
 
-	.title .name {
-		padding: 10px 0;
+	.info .details {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.info .details .name {
+		font-weight: bold;
+	}
+
+	.info .details .address {
+		font-size: 12px;
 	}
 </style>
 
 <div class="token-list">
-	<div class="info">
+	<div class="network">
 		<div class="bold">Network:</div>
 		<div>{network?.name}</div>
 	</div>
 	<ButtonBar>
 		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={clickTokenAdd} />
 	</ButtonBar>
-	{#if network?.tokens}
-		{#each network.tokens as t, i}
+	{#if network?.tokens && network.tokens.length > 0}
+		<div use:tableDrag={{ items: network.tokens, onReorder: handleTokenReorder }}>
 			<Table>
 				<Thead>
 					<TheadTr>
-						<Th padding="0 10px">
-							<div class="title">
-								{#if t.item.iconURL}
-									<Icon img={t.item.iconURL} alt={t.item.name} size="20px" padding="0px" />
-								{/if}
-								<div class="name">{t.item.name}</div>
-							</div>
-						</Th>
-						<Th padding="0 10px">
-							<ActionItems align="right">
-								<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickTokenEdit(t)} />
-								<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenDialog(t)} />
-							</ActionItems>
-						</Th>
+						<Th></Th>
+						<Th>Token</Th>
+						<Th>Actions</Th>
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					<TbodyTr>
-						<Td bold>Icon:</Td>
-						<Td expand>
-							{#if t.item.iconURL}
-								{t.item.iconURL}
-							{:else}
-								<span>No icon</span>
-							{/if}
-						</Td>
-					</TbodyTr>
-					<TbodyTr>
-						<Td bold>Symbol:</Td>
-						<Td expand>{t.item.symbol}</Td>
-					</TbodyTr>
-					<TbodyTr>
-						<Td bold>Token contract address:</Td>
-						<Td expand>{t.item.contract_address}</Td>
-					</TbodyTr>
+					{#each network.tokens as token, i (token.guid)}
+						{@const contractAddress = token.item.contract_address}
+						{@const tokenInfo = contractAddress ? tokenInfos.get(contractAddress) : null}
+						{@const isLoading = contractAddress ? loadingTokenInfos.has(contractAddress) : false}
+						<TbodyTr>
+							<Td>
+								<DragHandle />
+							</Td>
+							<Td expand>
+								<div class="info">
+									{#if token.item.iconURL}
+										<Icon img={token.item.iconURL} alt={contractAddress} size="30px" padding="0px" />
+									{/if}
+									<div class="details">
+										{#if isLoading}
+											<Spinner size="16px" />
+										{:else if tokenInfo}
+											<div class="name">{tokenInfo.name} ({tokenInfo.symbol})</div>
+										{:else}
+											<div class="name">Unknown token</div>
+										{/if}
+										<div class="address">{contractAddress}</div>
+									</div>
+								</div>
+							</Td>
+							<Td>
+								<ActionItems align="right">
+									<Icon img="img/edit.svg" alt="Edit token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickTokenEdit(token)} />
+									<Icon img="img/del.svg" alt="Delete token" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => delTokenDialog(token)} />
+								</ActionItems>
+							</Td>
+						</TbodyTr>
+					{/each}
 				</Tbody>
 			</Table>
-		{/each}
+		</div>
 	{/if}
 </div>
 {#if tokenToDelete && network?.guid}
-	<DialogTokenDel networkGuid={network.guid} token={tokenToDelete} bind:this={elDialogDel} />
+	<DialogTokenDel networkGuid={network.guid} token={tokenToDelete} tokenInfo={tokenToDeleteInfo} bind:this={elDialogDel} />
 {/if}

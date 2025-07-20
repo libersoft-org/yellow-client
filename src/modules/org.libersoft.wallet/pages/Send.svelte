@@ -4,12 +4,12 @@
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { type ICurrency } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, currencies } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, currencies, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { getBalance, getTokenBalance, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { getBalance, getTokenBalanceByAddress, getBatchTokensInfo, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import { formatUnits, parseUnits } from 'ethers';
 	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -51,12 +51,30 @@
 	let elAmountInput: Input | undefined = $state();
 	let elFeeInput: Input | undefined = $state();
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
+	let tokenInfos = $state(new Map<string, { name: string; symbol: string }>());
+	let isLoadingTokenInfos = $state(false);
 	let currencyOptions = $derived.by(() => {
-		return $currencies.map(currency => ({
-			label: currency.symbol,
-			icon: currency.iconURL ? { img: currency.iconURL, size: '16px' } : undefined,
-			value: currency,
-		}));
+		return $currencies.map(currency => {
+			let label = currency.symbol || 'Unknown';
+
+			// For tokens with contract addresses, get proper name and symbol from tokenInfos
+			if (currency.contract_address) {
+				const tokenInfo = tokenInfos.get(currency.contract_address);
+				if (tokenInfo && tokenInfo.symbol !== 'UNKNOWN') {
+					label = `${tokenInfo.name} (${tokenInfo.symbol})`;
+				} else if (tokenInfo?.name && tokenInfo.name !== 'Unknown Token') {
+					label = tokenInfo.name;
+				} else {
+					label = `Token (${currency.contract_address.slice(0, 8)}...)`;
+				}
+			}
+
+			return {
+				label: label,
+				icon: currency.iconURL ? { img: currency.iconURL, size: '16px' } : undefined,
+				value: currency,
+			};
+		});
 	});
 
 	$effect(() => {
@@ -64,8 +82,15 @@
 			selectedCurrencySymbol = '';
 			return;
 		}
-		// Use the symbol from currency object
-		selectedCurrencySymbol = currency?.symbol;
+
+		// For tokens with contract addresses, get proper symbol from tokenInfos
+		if (currency.contract_address) {
+			const tokenInfo = tokenInfos.get(currency.contract_address);
+			selectedCurrencySymbol = tokenInfo?.symbol && tokenInfo.symbol !== 'UNKNOWN' ? tokenInfo.symbol : 'UNKNOWN';
+		} else {
+			// Use the symbol from currency object for native currency
+			selectedCurrencySymbol = currency?.symbol || '';
+		}
 	});
 
 	$effect(() => {
@@ -91,14 +116,45 @@
 		updateRemainingBalance();
 	});
 
+	// Watch for token changes and reload token infos
+	$effect(() => {
+		if ($tokens?.length) {
+			loadTokenInfos();
+		}
+	});
+
 	onMount(() => {
 		elAddressInput?.focus();
+		loadTokenInfos();
 	});
+
+	async function loadTokenInfos() {
+		const tokensWithContracts = $tokens.filter(token => token.contract_address);
+		if (!tokensWithContracts.length) return;
+
+		isLoadingTokenInfos = true;
+		try {
+			const contractAddresses = tokensWithContracts.map(token => token.contract_address!);
+			const batchResults = await getBatchTokensInfo(contractAddresses);
+
+			// Save results to local map
+			batchResults.forEach((tokenInfo, contractAddress) => {
+				tokenInfos.set(contractAddress, { name: tokenInfo.name, symbol: tokenInfo.symbol });
+			});
+
+			// Trigger reactivity
+			tokenInfos = new Map(tokenInfos);
+		} catch (error) {
+			console.error('Error loading token infos in Send:', error);
+		} finally {
+			isLoadingTokenInfos = false;
+		}
+	}
 
 	async function updateBalance() {
 		try {
 			nativeBalanceData = (await getBalance()) || undefined;
-			if (currency?.contract_address) currentBalanceData = (await getTokenBalance(currency.symbol)) || undefined;
+			if (currency?.contract_address) currentBalanceData = (await getTokenBalanceByAddress(currency.contract_address)) || undefined;
 			else currentBalanceData = nativeBalanceData;
 		} catch (e) {
 			console.error('Error updating balance:', e);
@@ -238,7 +294,13 @@
 			<Input bind:value={$sendAddress} bind:this={elAddressInput} enabled={!!($selectedNetwork && $selectedAddress)} />
 		</Label>
 		<Label text="Currency">
-			<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} />
+			{#if isLoadingTokenInfos}
+				<div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+					<Spinner size="16px" />
+				</div>
+			{:else}
+				<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} />
+			{/if}
 		</Label>
 		<Label text="Amount">
 			<div class="row">

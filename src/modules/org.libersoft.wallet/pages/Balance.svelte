@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { getBalance, getTokenBalance, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalances, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -105,15 +105,16 @@
 		if (tokenInfos.has(contractAddress) || loadingTokenInfos.has(contractAddress)) return;
 		loadingTokenInfos = updateReactiveSet(loadingTokenInfos, set => set.add(contractAddress));
 		try {
-			const token = $tokens.find(t => t.contract_address === contractAddress);
 			let tokenInfo: ITokenInfo = {
-				symbol: token?.symbol || 'UNKNOWN',
-				name: token?.symbol || 'Unknown Token',
+				symbol: 'UNKNOWN',
+				name: 'Unknown token',
 			};
 			if (contractAddress) {
 				try {
 					const contractInfo = await getTokenInfo(contractAddress);
-					if (contractInfo) tokenInfo = { name: contractInfo.name, symbol: contractInfo.symbol };
+					if (contractInfo && contractInfo.name && contractInfo.symbol) {
+						tokenInfo = { name: contractInfo.name, symbol: contractInfo.symbol };
+					}
 				} catch (error) {
 					console.warn('Failed to get token info from smart contract, using fallback:', error);
 				}
@@ -133,7 +134,7 @@
 		});
 		try {
 			const contractAddresses = tokensToLoad.map(token => token.contract_address!);
-			console.log(`Loading ${contractAddresses.length} tokens info in one batch request`);
+			// Use batch multicall to load all tokens at once
 			const batchResults = await getBatchTokensInfo(contractAddresses);
 			// Save results
 			tokenInfos = updateReactiveMap(tokenInfos, map => {
@@ -143,7 +144,7 @@
 				// Fallback for failed tokens
 				tokensToLoad.forEach(token => {
 					if (token.contract_address && !map.has(token.contract_address)) {
-						map.set(token.contract_address, { symbol: token.symbol, name: token.symbol });
+						map.set(token.contract_address, { symbol: 'UNKNOWN', name: 'Unknown token' });
 					}
 				});
 			});
@@ -153,7 +154,7 @@
 			tokenInfos = updateReactiveMap(tokenInfos, map => {
 				tokensToLoad.forEach(token => {
 					if (token.contract_address && !map.has(token.contract_address)) {
-						map.set(token.contract_address, { symbol: token.symbol, name: token.symbol });
+						map.set(token.contract_address, { symbol: 'UNKNOWN', name: 'Unknown token' });
 					}
 				});
 			});
@@ -168,40 +169,46 @@
 	async function loadAllTokenBalances() {
 		const tokensWithContracts = getTokensWithContracts().filter(token => token.contract_address && !loadingTokens.has(token.contract_address));
 		if (!tokensWithContracts.length) return;
+
 		// Mark all as loading
 		loadingTokens = updateReactiveSet(loadingTokens, set => {
 			tokensWithContracts.forEach(token => token.contract_address && set.add(token.contract_address));
 		});
+
 		try {
-			const tokenSymbolsToLoad = tokensWithContracts.map(token => token.symbol);
-			console.log(`Loading ${tokenSymbolsToLoad.length} token balances in batch`);
-			const batchBalances = await getBatchTokenBalances(tokenSymbolsToLoad);
-			const symbolToAddress = new Map(tokensWithContracts.map(token => [token.symbol, token.contract_address!]));
+			const contractAddresses = tokensWithContracts.map(token => token.contract_address!);
+			// Use batch multicall to load all token balances at once
+			const batchBalances = await getBatchTokenBalancesByAddresses(contractAddresses);
+
 			// Process results and get fiat rates
 			const fiatResults = await Promise.all(
-				Array.from(batchBalances.entries()).map(async ([symbol, balance]) => {
-					const contractAddress = symbolToAddress.get(symbol);
+				Array.from(batchBalances.entries()).map(async ([contractAddress, balance]) => {
 					try {
-						const fiatBalance = await getExchange(balance, 'USD');
-						return { contractAddress, symbol, balance, fiatBalance };
+						if (balance) {
+							const fiatBalance = await getExchange(balance, 'USD');
+							return { contractAddress, balance, fiatBalance };
+						}
+						return null;
 					} catch (error) {
-						console.warn(`Error getting fiat rate for ${symbol}:`, error);
-						return { contractAddress, symbol, balance, fiatBalance: null };
+						console.warn(`Error getting fiat rate for ${contractAddress}:`, error);
+						return null;
 					}
 				})
 			);
+
 			// Save results
 			tokenBalances = updateReactiveMap(tokenBalances, map => {
-				fiatResults.forEach(({ contractAddress, balance, fiatBalance }) => {
-					if (contractAddress) {
-						map.set(contractAddress, {
-							crypto: balance,
-							fiat: fiatBalance,
+				fiatResults.forEach(result => {
+					if (result?.contractAddress && result.balance) {
+						map.set(result.contractAddress, {
+							crypto: result.balance,
+							fiat: result.fiatBalance,
 							timestamp: new Date(),
 						});
 					}
 				});
 			});
+
 			// Set up refresh timers
 			tokensWithContracts.forEach(token => {
 				if (token.contract_address) {
@@ -235,12 +242,7 @@
 		// Load token information if needed
 		if (!tokenInfos.has(contractAddress)) await loadTokenInfo(contractAddress);
 		try {
-			const token = $tokens.find(t => t.contract_address === contractAddress);
-			if (!token) {
-				console.error('Token not found for contract address:', contractAddress);
-				return;
-			}
-			const tokenBalance = await getTokenBalance(token.symbol);
+			const tokenBalance = await getTokenBalanceByAddress(contractAddress);
 			if (tokenBalance) {
 				const fiatBalance = await getExchange(tokenBalance, 'USD');
 				tokenBalances = updateReactiveMap(tokenBalances, map => {
@@ -387,8 +389,8 @@
 					{@const tokenInfo = contract_address ? tokenInfos.get(contract_address) : null}
 					{@const isLoadingInfo = contract_address ? loadingTokenInfos.has(contract_address) : false}
 					{@const isLoadingBalance = contract_address ? loadingTokens.has(contract_address) : false}
-					{@const displayName = tokenInfo ? `${tokenInfo.name} (${tokenInfo.symbol})` : `${token.symbol} (${token.symbol})`}
-					{@const displaySymbol = tokenInfo?.symbol || token.symbol}
+					{@const displayName = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? `${tokenInfo.name} (${tokenInfo.symbol})` : tokenInfo?.name || `Token (${contract_address?.slice(0, 10)}...)`}
+					{@const displaySymbol = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? tokenInfo.symbol : 'UNKNOWN'}
 					{#if contract_address}
 						<Tr>
 							<Td padding="0" expand>
@@ -403,7 +405,7 @@
 													{displayName}
 												{/if}
 											</div>
-											{#if $debug}
+											{#if $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN'}
 												<div class="address">{contract_address}</div>
 											{/if}
 										</div>
@@ -443,8 +445,8 @@
 							<Td padding="0" expand>
 								<Clickable onClick={() => selectToken('')}>
 									<div class="row">
-										<Icon img={token.iconURL} alt={token.symbol} size="40px" padding="0px" />
-										<div class="name">{token.symbol} ({token.symbol})</div>
+										<Icon img={token.iconURL} alt="Unknown token" size="40px" padding="0px" />
+										<div class="name">Unknown token (no contract address)</div>
 									</div>
 								</Clickable>
 							</Td>

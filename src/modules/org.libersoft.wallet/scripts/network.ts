@@ -6,6 +6,7 @@ export const default_networks = writable<INetwork[]>([]);
 export const networks = localStorageSharedStore<INetwork[]>('networks', []);
 export const selectedNetworkID = localStorageSharedStore<string | null>('selectedNetworkID', null);
 export const selectedNetwork = writable<INetwork | undefined>();
+export const tokenInfos = writable<Map<string, { name: string; symbol: string } | null>>(new Map());
 export interface INetwork {
 	guid?: string;
 	name: string;
@@ -18,7 +19,7 @@ export interface INetwork {
 }
 export interface ICurrency {
 	name?: string;
-	symbol: string;
+	symbol?: string;
 	contract_address?: string;
 	iconURL?: string;
 }
@@ -30,9 +31,13 @@ export interface IRPCServer {
 	isAlive: boolean;
 	checking?: boolean;
 }
+export interface ITokenData {
+	contract_address: string;
+	iconURL?: string;
+}
 export interface IToken {
 	guid: string;
-	item: ICurrency;
+	item: ITokenData;
 }
 export interface IStatus {
 	color: 'red' | 'orange' | 'green';
@@ -105,8 +110,8 @@ export function addNetwork(net: INetwork): boolean {
 		name: net.name,
 		chainID: net.chainID,
 		currency: {
-			symbol: net.currency.symbol,
-			iconURL: net.currency.iconURL,
+			...(net.currency.symbol && { symbol: net.currency.symbol }),
+			...(net.currency.iconURL && { iconURL: net.currency.iconURL }),
 		},
 		explorerURL: net.explorerURL,
 		rpcURLs: net.rpcURLs?.map(url => url),
@@ -169,14 +174,12 @@ export function editToken(networkGuid: string, token: IToken): void {
 export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return ($selectedNetwork?.tokens || []).map(token => ({
 		guid: token.guid,
-		name: token.item.name,
-		symbol: token.item.symbol,
 		contract_address: token.item.contract_address,
 		iconURL: token.item.iconURL,
 	}));
 });
 
-export let currencies = derived([selectedNetwork, tokens], ([$selectedNetwork, $tokens]) => {
+export let currencies = derived([selectedNetwork, tokens, tokenInfos], ([$selectedNetwork, $tokens, $tokenInfos]) => {
 	const currencyList: ICurrency[] = [];
 	// Add native currency
 	if ($selectedNetwork?.currency?.symbol) {
@@ -188,12 +191,15 @@ export let currencies = derived([selectedNetwork, tokens], ([$selectedNetwork, $
 	// Add tokens
 	if ($tokens && $tokens.length > 0) {
 		$tokens.forEach(token => {
-			currencyList.push({
-				name: token.name,
-				symbol: token.symbol,
-				iconURL: token.iconURL,
-				contract_address: token.contract_address,
-			});
+			if (token.contract_address) {
+				const tokenInfo = $tokenInfos.get(token.contract_address);
+				const symbol = tokenInfo?.symbol || token.contract_address.slice(0, 8) + '...';
+				currencyList.push({
+					symbol: symbol,
+					iconURL: token.iconURL,
+					contract_address: token.contract_address,
+				});
+			}
 		});
 	}
 	return currencyList;
@@ -206,6 +212,28 @@ export function deleteToken(networkGuid: string, tokenGuid: string): void {
 				return {
 					...network,
 					tokens: (network.tokens || []).filter(t => t.guid !== tokenGuid),
+				};
+			}
+			return network;
+		});
+	});
+}
+
+export function updateTokenInfo(contractAddress: string, tokenInfo: { name: string; symbol: string } | null): void {
+	tokenInfos.update(map => {
+		const newMap = new Map(map);
+		newMap.set(contractAddress, tokenInfo);
+		return newMap;
+	});
+}
+
+export function reorderTokens(networkGuid: string, reorderedTokens: IToken[]): void {
+	networks.update(networks => {
+		return networks.map(network => {
+			if (network.guid === networkGuid) {
+				return {
+					...network,
+					tokens: reorderedTokens,
 				};
 			}
 			return network;

@@ -569,9 +569,26 @@ async function getDirectTokenBalance(token: any, provider: any, addr: any): Prom
 	}
 }
 
-export async function getTokenBalance(tokenSymbol: string): Promise<IBalance | null> {
-	const batchResult = await getBatchTokenBalances([tokenSymbol]);
-	return batchResult.get(tokenSymbol) || null;
+export async function getTokenBalanceByAddress(contractAddress: string): Promise<IBalance | null> {
+	const p = get(provider);
+	const addr = get(selectedAddress);
+	if (!p || !addr) {
+		console.error('Provider or address not set');
+		return null;
+	}
+	try {
+		const abi = ['function balanceOf(address owner) view returns (uint256)', 'function decimals() view returns (uint8)', 'function symbol() view returns (string)'];
+		const contract = new Contract(contractAddress, abi, p);
+		const [balance, decimals, symbol] = await Promise.all([contract.balanceOf(addr.address), contract.decimals(), contract.symbol()]);
+		return {
+			amount: balance,
+			currency: symbol,
+			decimals: Number(decimals),
+		};
+	} catch (error) {
+		console.error('Error while getting token balance by address:', error);
+		return null;
+	}
 }
 
 export async function getExchange(cryptoBalance: IBalance, fiatSymbol: string = 'USD'): Promise<IBalance | null> {
@@ -637,4 +654,240 @@ export function formatBalance(balance: IBalance | undefined, locale?: string, ma
 	// Join integer and decimal parts with local separator
 	if (decimalPart && decimalPart !== '0'.repeat(decimalPart.length)) return formattedInteger + decimalSeparator + decimalPart;
 	else return formattedInteger;
+}
+
+// NEW: Batch token balances by contract addresses (not symbols)
+export async function getBatchTokenBalancesByAddresses(contractAddresses: string[]): Promise<Map<string, IBalance>> {
+	const p = get(provider);
+	const net = get(selectedNetwork);
+	const addr = get(selectedAddress);
+	const result = new Map<string, IBalance>();
+
+	if (!net || !p || !addr || contractAddresses.length === 0) {
+		console.error('Network, provider, address not set or no addresses provided');
+		return result;
+	}
+
+	// Create token objects with addresses for compatibility with existing functions
+	const tokensWithAddresses = contractAddresses.map(address => ({ contract_address: address }));
+
+	console.log(`Starting batch balance loading for ${tokensWithAddresses.length} tokens by addresses`);
+
+	let remainingTokens = [...tokensWithAddresses];
+
+	try {
+		// Try Multicall3 first
+		if (remainingTokens.length > 0) {
+			const multicallResult = await tryMulticallBalancesByAddress(remainingTokens, p, net, addr);
+			if (multicallResult && multicallResult.size > 0) {
+				// Add successful results to the final result
+				multicallResult.forEach((balance, contractAddress) => {
+					result.set(contractAddress, balance);
+				});
+
+				// Filter out successful tokens from remaining
+				remainingTokens = remainingTokens.filter(token => !multicallResult.has(token.contract_address));
+				console.log(`Multicall succeeded for ${multicallResult.size} tokens, ${remainingTokens.length} tokens remaining`);
+			} else {
+				console.log('Multicall returned no results, all tokens will try fallback');
+			}
+		}
+
+		// Fallback: JSON-RPC batch for remaining/failed tokens
+		if (remainingTokens.length > 0) {
+			try {
+				const batchResult = await fallbackBatchBalanceCallByAddress(remainingTokens, p, net, addr);
+				if (batchResult.size > 0) {
+					batchResult.forEach((balance, contractAddress) => {
+						result.set(contractAddress, balance);
+					});
+
+					remainingTokens = remainingTokens.filter(token => !batchResult.has(token.contract_address));
+					console.log(`JSON-RPC batch succeeded for ${batchResult.size} tokens, ${remainingTokens.length} tokens still remaining`);
+				}
+			} catch (error) {
+				console.warn('JSON-RPC batch for balances failed, falling back to individual calls:', error);
+			}
+		}
+
+		// Fallback: individual calls in parallel for remaining tokens
+		if (remainingTokens.length > 0) {
+			console.log(`Fallback: Loading ${remainingTokens.length} token balances individually`);
+			const balancePromises = remainingTokens.map(async token => {
+				try {
+					const tokenBalance = await getTokenBalanceByAddress(token.contract_address);
+					return { contractAddress: token.contract_address, balance: tokenBalance };
+				} catch (error) {
+					console.warn(`Error getting balance for ${token.contract_address}:`, error);
+					return null;
+				}
+			});
+
+			const balanceResults = await Promise.all(balancePromises);
+			balanceResults.forEach(resultItem => {
+				if (resultItem?.balance) {
+					result.set(resultItem.contractAddress, resultItem.balance);
+				}
+			});
+		}
+	} catch (error) {
+		console.error('Error in batch token balance loading by addresses:', error);
+	}
+
+	console.log(`Final result: ${result.size}/${contractAddresses.length} token balances loaded successfully`);
+	return result;
+}
+
+// Helper functions for address-based batch loading
+async function tryMulticallBalancesByAddress(tokensWithAddresses: any[], provider: any, network: any, addr: any): Promise<Map<string, IBalance> | null> {
+	return executeMulticallBalancesByAddress(tokensWithAddresses, provider, network, addr);
+}
+
+async function executeMulticallBalancesByAddress(tokensWithAddresses: any[], provider: any, network: any, addr: any): Promise<Map<string, IBalance> | null> {
+	try {
+		console.log(`Trying Multicall3 for ${tokensWithAddresses.length} token balances by address`);
+
+		const multicallContract = new Contract(multicall3Address, multicallABI, provider);
+		const erc20Interface = new Contract(tokensWithAddresses[0].contract_address, erc20BalanceABI, provider).interface;
+
+		// Prepare calls for Multicall
+		const calls: MulticallCall[] = [];
+		tokensWithAddresses.forEach(token => {
+			// Add balanceOf() call
+			calls.push({
+				target: token.contract_address,
+				callData: erc20Interface.encodeFunctionData('balanceOf', [addr.address]),
+			});
+			// Add decimals() call
+			calls.push({
+				target: token.contract_address,
+				callData: erc20Interface.encodeFunctionData('decimals'),
+			});
+		});
+
+		console.log(`Using Multicall for ${tokensWithAddresses.length} token balances (${calls.length} calls) in ONE blockchain transaction`);
+
+		// Execute Multicall
+		const [blockNumber, returnData] = await multicallContract.aggregate(calls);
+
+		// Process results
+		const result = new Map<string, IBalance>();
+		for (let i = 0; i < tokensWithAddresses.length; i++) {
+			const balanceIndex = i * 2;
+			const decimalsIndex = i * 2 + 1;
+			const token = tokensWithAddresses[i];
+
+			try {
+				if (returnData[balanceIndex] && returnData[decimalsIndex]) {
+					const balance = erc20Interface.decodeFunctionResult('balanceOf', returnData[balanceIndex])[0];
+					const decimals = erc20Interface.decodeFunctionResult('decimals', returnData[decimalsIndex])[0];
+					result.set(token.contract_address, {
+						amount: balance,
+						currency: 'TOKEN', // We don't have symbol yet
+						decimals: Number(decimals),
+					});
+				} else {
+					console.warn(`Failed to get balance for token ${token.contract_address} via Multicall`);
+				}
+			} catch (error) {
+				console.warn(`Error processing token ${token.contract_address} from Multicall:`, error);
+			}
+		}
+
+		console.log(`Multicall processed ${result.size}/${tokensWithAddresses.length} token balances successfully`);
+		return result;
+	} catch (error) {
+		console.warn(`Multicall3 failed for token balances:`, error);
+		return null;
+	}
+}
+
+async function fallbackBatchBalanceCallByAddress(tokensWithAddresses: any[], provider: any, network: any, addr: any): Promise<Map<string, IBalance>> {
+	const result = new Map<string, IBalance>();
+
+	try {
+		// Create batch request payload for JSON-RPC
+		const batchPayload: BatchRequestPayload[] = [];
+		let id = 1;
+
+		tokensWithAddresses.forEach(token => {
+			const contract = new Contract(token.contract_address, erc20BalanceABI, provider);
+			// Add balanceOf() call to batch
+			batchPayload.push({
+				jsonrpc: '2.0',
+				id: id++,
+				method: 'eth_call',
+				params: [
+					{
+						to: token.contract_address,
+						data: contract.interface.encodeFunctionData('balanceOf', [addr.address]),
+					},
+					'latest',
+				],
+			});
+			// Add decimals() call to batch
+			batchPayload.push({
+				jsonrpc: '2.0',
+				id: id++,
+				method: 'eth_call',
+				params: [
+					{
+						to: token.contract_address,
+						data: contract.interface.encodeFunctionData('decimals'),
+					},
+					'latest',
+				],
+			});
+		});
+
+		console.log(`Fallback: Sending JSON-RPC batch with ${batchPayload.length} calls for ${tokensWithAddresses.length} token balances`);
+
+		// Get provider URL
+		const providerUrl = getProviderUrl(network);
+
+		// Send single batch JSON-RPC request
+		const response = await fetch(providerUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(batchPayload),
+		});
+
+		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+		const batchResults = await response.json();
+		if (!Array.isArray(batchResults)) throw new Error('Invalid batch response format');
+
+		// Process results
+		const contract = new Contract(tokensWithAddresses[0].contract_address, erc20BalanceABI, provider);
+		for (let i = 0; i < tokensWithAddresses.length; i++) {
+			const balanceIndex = i * 2;
+			const decimalsIndex = i * 2 + 1;
+			const token = tokensWithAddresses[i];
+
+			try {
+				const balanceResult = batchResults[balanceIndex];
+				const decimalsResult = batchResults[decimalsIndex];
+
+				if (balanceResult?.result && decimalsResult?.result) {
+					const balance = contract.interface.decodeFunctionResult('balanceOf', balanceResult.result)[0];
+					const decimals = contract.interface.decodeFunctionResult('decimals', decimalsResult.result)[0];
+					result.set(token.contract_address, {
+						amount: balance,
+						currency: 'TOKEN',
+						decimals: Number(decimals),
+					});
+				} else {
+					console.warn(`Failed to get balance for token ${token.contract_address} via JSON-RPC batch`);
+				}
+			} catch (error) {
+				console.warn(`Error processing token ${token.contract_address} from JSON-RPC batch:`, error);
+			}
+		}
+
+		console.log(`JSON-RPC batch processed ${result.size}/${tokensWithAddresses.length} token balances successfully`);
+	} catch (error) {
+		console.error('Error in batch balance call by address:', error);
+	}
+
+	return result;
 }

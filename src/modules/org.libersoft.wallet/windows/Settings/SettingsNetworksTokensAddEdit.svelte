@@ -18,18 +18,13 @@
 	let tokenGuid: string | undefined = $state();
 	let tokenName: string | undefined = $state();
 	let tokenIcon: string | undefined = $state();
-	let tokenSymbol: string | undefined = $state();
 	let tokenContractAddress: string | undefined = $state();
 	let error: string | null | undefined = $state();
-	let elTokenName: Input | undefined = $state();
-	let elTokenSymbol: Input | undefined = $state();
 	let elTokenContractAddress: Input | undefined = $state();
 	let token: IToken = $derived.by(() => ({
 		guid: item?.guid || getGuid(),
 		item: {
-			name: tokenName,
-			symbol: tokenSymbol || '',
-			contract_address: tokenContractAddress,
+			contract_address: tokenContractAddress || '',
 			iconURL: tokenIcon,
 		},
 	}));
@@ -38,24 +33,16 @@
 		error = null;
 		if (item?.item) {
 			tokenGuid = item.guid;
-			tokenName = item.item.name;
 			tokenIcon = item.item.iconURL;
-			tokenSymbol = item.item.symbol;
 			tokenContractAddress = item.item.contract_address;
 		}
-		elTokenName?.focus();
+		elTokenContractAddress?.focus();
 	}
 
 	function validateFields(): boolean {
-		tokenName = tokenName?.trim();
 		tokenIcon = tokenIcon?.trim();
-		tokenSymbol = tokenSymbol?.trim();
 		tokenContractAddress = tokenContractAddress?.trim();
-		const validationConfig = [
-			{ field: tokenName, element: elTokenName, required: 'Token name is required' },
-			{ field: tokenSymbol, element: elTokenSymbol, required: 'Token symbol is required' },
-			{ field: tokenContractAddress, element: elTokenContractAddress, required: 'Contract address is required' },
-		];
+		const validationConfig = [{ field: tokenContractAddress, element: elTokenContractAddress, required: 'Contract address is required' }];
 		error = validateForm(validationConfig);
 		return !error;
 	}
@@ -80,14 +67,8 @@
 </script>
 
 <Form onSubmit={handleSubmit}>
-	<Label text="Name">
-		<Input bind:value={tokenName} bind:this={elTokenName} />
-	</Label>
-	<Label text="Icon">
+	<Label text="Icon URL">
 		<Input bind:value={tokenIcon} />
-	</Label>
-	<Label text="Symbol">
-		<Input bind:value={tokenSymbol} bind:this={elTokenSymbol} />
 	</Label>
 	<Label text="Contract address">
 		<Input bind:value={tokenContractAddress} bind:this={elTokenContractAddress} />

@@ -2,17 +2,19 @@
 	import { parseUnits, Contract } from 'ethers';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, currencies, type ICurrency } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, currencies, tokens, type ICurrency } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { getBatchTokensInfo } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import QRCode from 'qrcode';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { tick } from 'svelte';
+	import { tick, onMount } from 'svelte';
 	let addressElement: HTMLElement | undefined = $state();
 	let addressElementMessage: string | null | undefined = $state();
 	let activeTab: 'address' | 'payment' = $state('address');
@@ -23,19 +25,71 @@
 	let error: string | null | undefined = $state();
 	let elAmountInput: Input | undefined = $state();
 	let tokenDecimalsCache = new Map<string, number>(); // Cache for token decimals to avoid repeated blockchain calls
+	let tokenInfos = $state(new Map<string, { name: string; symbol: string }>());
+	let isLoadingTokenInfos = $state(false);
 
 	// Create dropdown options from currencies
 	let currencyOptions = $derived.by(() => {
-		return $currencies.map(currency => ({
-			label: currency.symbol,
-			icon: currency.iconURL ? { img: currency.iconURL, size: '16px' } : undefined,
-			value: currency, // The actual ICurrency object
-		}));
+		return $currencies.map(currency => {
+			let label = currency.symbol || 'Unknown';
+
+			// For tokens with contract addresses, get proper name and symbol from tokenInfos
+			if (currency.contract_address) {
+				const tokenInfo = tokenInfos.get(currency.contract_address);
+				if (tokenInfo && tokenInfo.symbol !== 'UNKNOWN') {
+					label = `${tokenInfo.name} (${tokenInfo.symbol})`;
+				} else if (tokenInfo?.name && tokenInfo.name !== 'Unknown Token') {
+					label = tokenInfo.name;
+				} else {
+					label = `Token (${currency.contract_address.slice(0, 8)}...)`;
+				}
+			}
+
+			return {
+				label: label,
+				icon: currency.iconURL ? { img: currency.iconURL, size: '16px' } : undefined,
+				value: currency, // The actual ICurrency object
+			};
+		});
 	});
 
 	$effect(() => {
 		updateAddressAndQR();
 	});
+
+	// Watch for token changes and reload token infos
+	$effect(() => {
+		if ($tokens?.length) {
+			loadTokenInfos();
+		}
+	});
+
+	onMount(() => {
+		loadTokenInfos();
+	});
+
+	async function loadTokenInfos() {
+		const tokensWithContracts = $tokens.filter(token => token.contract_address);
+		if (!tokensWithContracts.length) return;
+
+		isLoadingTokenInfos = true;
+		try {
+			const contractAddresses = tokensWithContracts.map(token => token.contract_address!);
+			const batchResults = await getBatchTokensInfo(contractAddresses);
+
+			// Save results to local map
+			batchResults.forEach((tokenInfo, contractAddress) => {
+				tokenInfos.set(contractAddress, { name: tokenInfo.name, symbol: tokenInfo.symbol });
+			});
+
+			// Trigger reactivity
+			tokenInfos = new Map(tokenInfos);
+		} catch (error) {
+			console.error('Error loading token infos in Receive:', error);
+		} finally {
+			isLoadingTokenInfos = false;
+		}
+	}
 
 	async function getTokenDecimals(contractAddress: string): Promise<number> {
 		// Check cache first
@@ -189,7 +243,14 @@
 			{#if activeTab === 'payment'}
 				<div class="amount">
 					<Input type="text" placeholder="Amount" bind:value={amount} bind:this={elAmountInput} />
-					<DropdownFilter placeholder="Currency" options={currencyOptions} bind:selected={currency} />
+					{#if isLoadingTokenInfos}
+						<div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+							<Spinner size="16px" />
+							<span>Loading tokens...</span>
+						</div>
+					{:else}
+						<DropdownFilter placeholder="Currency" options={currencyOptions} bind:selected={currency} />
+					{/if}
 				</div>
 				{#if error}
 					<Alert type="error" message={error} />
