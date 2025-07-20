@@ -252,7 +252,7 @@
 		let etherAmount: bigint;
 		if (currency?.contract_address && currentBalanceData) {
 			// For tokens, use the correct decimals
-			etherAmount = parseUnits(amount.toString().replace(',', '.'), currentBalanceData.decimals || 18);
+			etherAmount = parseUnits(amount!.toString().replace(',', '.'), currentBalanceData.decimals || 18);
 		} else {
 			// For native currency, use 18 decimals
 			etherAmount = getEtherAmount(amount)!;
