@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { getBalance, getTokenBalance, getExchange, getTokenInfo, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { getBalance, getTokenBalance, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalances, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -14,12 +14,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	const refreshInterval = 30;
-	interface IBalanceData {
-		crypto: IBalance;
-		fiat: IBalance | null;
-		timestamp: Date;
-	}
-	interface ITokenBalanceData {
+	interface ITokenData {
 		crypto: IBalance;
 		fiat: IBalance | null;
 		timestamp: Date;
@@ -28,150 +23,240 @@
 		symbol: string;
 		name: string;
 	}
-	const tokenTimers = new Map<string, ReturnType<typeof setTimeout>>();
-	const initializedTokens = new Set<string>();
-	let balance = $state<IBalanceData | null>(null);
-	let tokenBalances = $state(new Map<string, ITokenBalanceData>());
-	let tokenInfos = $state(new Map<string, ITokenInfo>()); // Oddělené ukládání názvů a symbolů
+	let balance = $state<ITokenData | null>(null);
+	let tokenBalances = $state(new Map<string, ITokenData>());
+	let tokenInfos = $state(new Map<string, ITokenInfo>());
 	let isLoadingBalance = $state(false);
 	let loadingTokens = $state(new Set<string>());
-	let loadingTokenInfos = $state(new Set<string>()); // Loading stav pro názvy tokenů
+	let loadingTokenInfos = $state(new Set<string>());
 	let balanceCountdown = $state(0);
 	let tokenCountdowns = $state(new Map<string, number>());
+	const tokenTimers = new Map<string, ReturnType<typeof setTimeout>>();
+	const initializedTokens = new Set<string>();
 	let countdownInterval: ReturnType<typeof setInterval> | null = null;
 	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
+
+	// Helper functions
+	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
+		updater(map);
+		return new Map(map);
+	}
+
+	function updateReactiveSet<T>(set: Set<T>, updater: (set: Set<T>) => void): Set<T> {
+		updater(set);
+		return new Set(set);
+	}
+
+	function getTokensWithContracts() {
+		return $tokens.filter(token => token.contract_address);
+	}
 
 	function clearAllTimers() {
 		tokenTimers.forEach(timer => clearTimeout(timer));
 		tokenTimers.clear();
 		if (balanceTimer) clearTimeout(balanceTimer);
+		if (countdownInterval) clearInterval(countdownInterval);
 		initializedTokens.clear();
 		balance = null;
 		tokenBalances.clear();
-		tokenBalances = new Map(tokenBalances); // Force reactivity
 		tokenInfos.clear();
-		tokenInfos = new Map(tokenInfos); // Force reactivity
 		loadingTokenInfos.clear();
-		loadingTokenInfos = new Set(loadingTokenInfos); // Force reactivity
 	}
 
 	function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
-			if ($tokens && $tokens.length > 0) {
-				// Nejprve načteme informace o všech tokenech (názvy a symboly)
-				$tokens.forEach((token, index) => {
-					setTimeout(() => loadTokenInfo(token.symbol), index * 100); // Rychlejší načítání info
-				});
-				// Poté načteme balance s větším zpožděním
-				$tokens.forEach((token, index) => setTimeout(() => refreshToken(token.symbol), 500 + index * 500));
+			if ($tokens?.length) {
+				loadAllTokensInfo();
+				loadAllTokenBalances();
 			}
 		}
 	}
 
+	function updateCountdowns() {
+		if (balanceCountdown > 0) balanceCountdown--;
+		tokenCountdowns = updateReactiveMap(tokenCountdowns, map => {
+			map.forEach((countdown, contractAddress) => {
+				if (countdown > 0) map.set(contractAddress, countdown - 1);
+			});
+		});
+	}
+
+	// Lifecycle
 	onMount(() => {
 		initializeAllBalances();
 		countdownInterval = setInterval(updateCountdowns, 1000);
 	});
 
 	onDestroy(() => {
-		tokenTimers.forEach(timer => clearTimeout(timer));
-		tokenTimers.clear();
-		if (countdownInterval) clearInterval(countdownInterval);
-		if (balanceTimer) clearTimeout(balanceTimer);
+		clearAllTimers();
 	});
 
-	function updateCountdowns() {
-		if (balanceCountdown > 0) balanceCountdown--;
-		tokenCountdowns.forEach((countdown, symbol) => {
-			if (countdown > 0) tokenCountdowns.set(symbol, countdown - 1);
-		});
-		tokenCountdowns = new Map(tokenCountdowns); // Force reactivity for Map
-	}
-
+	// Event handlers
 	function selectCurrency() {
 		console.log('SELECTED CURRENCY:', $selectedNetwork?.currency);
 	}
 
-	function selectToken(id: string) {
-		console.log('SELECTED TOKEN:', id);
+	function selectToken(contractAddress: string) {
+		console.log('SELECTED TOKEN:', contractAddress);
 	}
 
-	async function loadTokenInfo(tokenSymbol: string) {
-		// Pokud už máme informace o tokenu, nemusíme je načítat znovu
-		if (tokenInfos.has(tokenSymbol) || loadingTokenInfos.has(tokenSymbol)) {
-			return;
-		}
-
-		loadingTokenInfos.add(tokenSymbol);
-		loadingTokenInfos = new Set(loadingTokenInfos); // Force reactivity
-
+	async function loadTokenInfo(contractAddress: string) {
+		if (tokenInfos.has(contractAddress) || loadingTokenInfos.has(contractAddress)) return;
+		loadingTokenInfos = updateReactiveSet(loadingTokenInfos, set => set.add(contractAddress));
 		try {
-			const token = $tokens.find(t => t.symbol === tokenSymbol);
+			const token = $tokens.find(t => t.contract_address === contractAddress);
 			let tokenInfo: ITokenInfo = {
-				symbol: tokenSymbol,
-				name: tokenSymbol, // Fallback
+				symbol: token?.symbol || 'UNKNOWN',
+				name: token?.symbol || 'Unknown Token',
 			};
-
-			// Načteme název a symbol ze smart contractu (pouze jednou)
-			if (token?.contract_address) {
+			if (contractAddress) {
 				try {
-					const contractInfo = await getTokenInfo(token.contract_address);
-					if (contractInfo) {
-						tokenInfo.name = contractInfo.name;
-						tokenInfo.symbol = contractInfo.symbol;
-					}
+					const contractInfo = await getTokenInfo(contractAddress);
+					if (contractInfo) tokenInfo = { name: contractInfo.name, symbol: contractInfo.symbol };
 				} catch (error) {
 					console.warn('Failed to get token info from smart contract, using fallback:', error);
 				}
 			}
-
-			tokenInfos.set(tokenSymbol, tokenInfo);
-			tokenInfos = new Map(tokenInfos); // Force reactivity
+			tokenInfos = updateReactiveMap(tokenInfos, map => map.set(contractAddress, tokenInfo));
 		} finally {
-			loadingTokenInfos.delete(tokenSymbol);
-			loadingTokenInfos = new Set(loadingTokenInfos); // Force reactivity
+			loadingTokenInfos = updateReactiveSet(loadingTokenInfos, set => set.delete(contractAddress));
 		}
 	}
 
-	async function refreshToken(tokenSymbol: string) {
-		console.log('REFRESH TOKEN:', tokenSymbol);
-		if (loadingTokens.has(tokenSymbol)) {
-			console.log('Token already being refreshed:', tokenSymbol);
+	async function loadAllTokensInfo() {
+		const tokensToLoad = getTokensWithContracts().filter(token => token.contract_address && !tokenInfos.has(token.contract_address) && !loadingTokenInfos.has(token.contract_address));
+		if (!tokensToLoad.length) return;
+		// Mark all as loading
+		loadingTokenInfos = updateReactiveSet(loadingTokenInfos, set => {
+			tokensToLoad.forEach(token => token.contract_address && set.add(token.contract_address));
+		});
+		try {
+			const contractAddresses = tokensToLoad.map(token => token.contract_address!);
+			console.log(`Loading ${contractAddresses.length} tokens info in one batch request`);
+			const batchResults = await getBatchTokensInfo(contractAddresses);
+			// Save results
+			tokenInfos = updateReactiveMap(tokenInfos, map => {
+				batchResults.forEach((tokenInfo, contractAddress) => {
+					map.set(contractAddress, { symbol: tokenInfo.symbol, name: tokenInfo.name });
+				});
+				// Fallback for failed tokens
+				tokensToLoad.forEach(token => {
+					if (token.contract_address && !map.has(token.contract_address)) {
+						map.set(token.contract_address, { symbol: token.symbol, name: token.symbol });
+					}
+				});
+			});
+		} catch (error) {
+			console.error('Error in batch token info loading:', error);
+			// Fallback for all tokens
+			tokenInfos = updateReactiveMap(tokenInfos, map => {
+				tokensToLoad.forEach(token => {
+					if (token.contract_address && !map.has(token.contract_address)) {
+						map.set(token.contract_address, { symbol: token.symbol, name: token.symbol });
+					}
+				});
+			});
+		} finally {
+			// Mark all as completed
+			loadingTokenInfos = updateReactiveSet(loadingTokenInfos, set => {
+				tokensToLoad.forEach(token => token.contract_address && set.delete(token.contract_address));
+			});
+		}
+	}
+
+	async function loadAllTokenBalances() {
+		const tokensWithContracts = getTokensWithContracts().filter(token => token.contract_address && !loadingTokens.has(token.contract_address));
+		if (!tokensWithContracts.length) return;
+		// Mark all as loading
+		loadingTokens = updateReactiveSet(loadingTokens, set => {
+			tokensWithContracts.forEach(token => token.contract_address && set.add(token.contract_address));
+		});
+		try {
+			const tokenSymbolsToLoad = tokensWithContracts.map(token => token.symbol);
+			console.log(`Loading ${tokenSymbolsToLoad.length} token balances in batch`);
+			const batchBalances = await getBatchTokenBalances(tokenSymbolsToLoad);
+			const symbolToAddress = new Map(tokensWithContracts.map(token => [token.symbol, token.contract_address!]));
+			// Process results and get fiat rates
+			const fiatResults = await Promise.all(
+				Array.from(batchBalances.entries()).map(async ([symbol, balance]) => {
+					const contractAddress = symbolToAddress.get(symbol);
+					try {
+						const fiatBalance = await getExchange(balance, 'USD');
+						return { contractAddress, symbol, balance, fiatBalance };
+					} catch (error) {
+						console.warn(`Error getting fiat rate for ${symbol}:`, error);
+						return { contractAddress, symbol, balance, fiatBalance: null };
+					}
+				})
+			);
+			// Save results
+			tokenBalances = updateReactiveMap(tokenBalances, map => {
+				fiatResults.forEach(({ contractAddress, balance, fiatBalance }) => {
+					if (contractAddress) {
+						map.set(contractAddress, {
+							crypto: balance,
+							fiat: fiatBalance,
+							timestamp: new Date(),
+						});
+					}
+				});
+			});
+			// Set up refresh timers
+			tokensWithContracts.forEach(token => {
+				if (token.contract_address) {
+					const timer = setTimeout(() => refreshToken(token.contract_address!), refreshInterval * 1000);
+					tokenTimers.set(token.contract_address, timer);
+					tokenCountdowns.set(token.contract_address, refreshInterval);
+				}
+			});
+		} catch (error) {
+			console.error('Error in batch token balance loading:', error);
+		} finally {
+			// Mark all as completed
+			loadingTokens = updateReactiveSet(loadingTokens, set => {
+				tokensWithContracts.forEach(token => token.contract_address && set.delete(token.contract_address));
+			});
+		}
+	}
+
+	async function refreshToken(contractAddress: string) {
+		if (loadingTokens.has(contractAddress)) {
+			console.log('Token already being refreshed:', contractAddress);
 			return;
 		}
-		if (tokenTimers.has(tokenSymbol)) {
-			clearTimeout(tokenTimers.get(tokenSymbol));
-			tokenTimers.delete(tokenSymbol);
+		// Clear existing timer
+		if (tokenTimers.has(contractAddress)) {
+			clearTimeout(tokenTimers.get(contractAddress));
+			tokenTimers.delete(contractAddress);
 		}
-		tokenCountdowns.set(tokenSymbol, 0);
-		loadingTokens.add(tokenSymbol);
-		loadingTokens = new Set(loadingTokens); // Force reactivity
-
-		// Načteme informace o tokenu pokud je ještě nemáme
-		if (!tokenInfos.has(tokenSymbol)) {
-			await loadTokenInfo(tokenSymbol);
-		}
-
+		tokenCountdowns.set(contractAddress, 0);
+		loadingTokens = updateReactiveSet(loadingTokens, set => set.add(contractAddress));
+		// Load token information if needed
+		if (!tokenInfos.has(contractAddress)) await loadTokenInfo(contractAddress);
 		try {
-			const tokenBalance = await getTokenBalance(tokenSymbol);
+			const token = $tokens.find(t => t.contract_address === contractAddress);
+			if (!token) {
+				console.error('Token not found for contract address:', contractAddress);
+				return;
+			}
+			const tokenBalance = await getTokenBalance(token.symbol);
 			if (tokenBalance) {
 				const fiatBalance = await getExchange(tokenBalance, 'USD');
-
-				const tokenData: ITokenBalanceData = {
-					crypto: tokenBalance,
-					fiat: fiatBalance,
-					timestamp: new Date(),
-				};
-				tokenBalances.set(tokenSymbol, tokenData);
-				tokenBalances = new Map(tokenBalances); // Force reactivity
+				tokenBalances = updateReactiveMap(tokenBalances, map => {
+					map.set(contractAddress, {
+						crypto: tokenBalance,
+						fiat: fiatBalance,
+						timestamp: new Date(),
+					});
+				});
 			}
 		} finally {
-			loadingTokens.delete(tokenSymbol);
-			loadingTokens = new Set(loadingTokens); // Force reactivity
-			const timer = setTimeout(() => refreshToken(tokenSymbol), refreshInterval * 1000);
-			tokenTimers.set(tokenSymbol, timer);
-			tokenCountdowns.set(tokenSymbol, refreshInterval);
+			loadingTokens = updateReactiveSet(loadingTokens, set => set.delete(contractAddress));
+			// Schedule next refresh
+			const timer = setTimeout(() => refreshToken(contractAddress), refreshInterval * 1000);
+			tokenTimers.set(contractAddress, timer);
+			tokenCountdowns.set(contractAddress, refreshInterval);
 		}
 	}
 
@@ -198,17 +283,16 @@
 
 	// Watch for new tokens being added and initialize them
 	$effect(() => {
-		if ($tokens && $tokens.length > 0) {
-			$tokens.forEach((token, index) => {
-				if (!initializedTokens.has(token.symbol)) {
-					initializedTokens.add(token.symbol);
-					if ($selectedNetwork && $selectedAddress && $provider) {
-						// Nejprve načteme info o tokenu, pak balance
-						setTimeout(() => loadTokenInfo(token.symbol), index * 100);
-						setTimeout(() => refreshToken(token.symbol), 500 + index * 200);
-					}
-				}
+		if (!$tokens?.length || !$selectedNetwork || !$selectedAddress || !$provider) return;
+		const newTokens = getTokensWithContracts().filter(token => token.contract_address && !initializedTokens.has(token.contract_address));
+		if (newTokens.length > 0) {
+			// Mark as initialized
+			newTokens.forEach(token => {
+				if (token.contract_address) initializedTokens.add(token.contract_address);
 			});
+			// Load info and balances for new tokens
+			loadAllTokensInfo();
+			loadAllTokenBalances();
 		}
 	});
 </script>
@@ -227,9 +311,19 @@
 		padding: 10px;
 	}
 
+	.column {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+
 	.name {
 		font-size: 20px;
 		font-weight: bold;
+	}
+
+	.address {
+		font-size: 12px;
 	}
 
 	.balance {
@@ -287,21 +381,32 @@
 						{/if}
 					</Td>
 				</Tr>
-				{#each $tokens as t, index}
-					{@const tokenBalance = tokenBalances.get(t.symbol)}
-					{@const tokenInfo = tokenInfos.get(t.symbol)}
-					{@const isLoadingInfo = loadingTokenInfos.has(t.symbol)}
-					{@const isLoadingBalance = loadingTokens.has(t.symbol)}
-
-					{#if tokenInfo && (tokenBalance || isLoadingBalance)}
+				{#each $tokens as token, index}
+					{@const { contract_address } = token}
+					{@const tokenBalance = contract_address ? tokenBalances.get(contract_address) : null}
+					{@const tokenInfo = contract_address ? tokenInfos.get(contract_address) : null}
+					{@const isLoadingInfo = contract_address ? loadingTokenInfos.has(contract_address) : false}
+					{@const isLoadingBalance = contract_address ? loadingTokens.has(contract_address) : false}
+					{@const displayName = tokenInfo ? `${tokenInfo.name} (${tokenInfo.symbol})` : `${token.symbol} (${token.symbol})`}
+					{@const displaySymbol = tokenInfo?.symbol || token.symbol}
+					{#if contract_address}
 						<Tr>
 							<Td padding="0" expand>
-								<Clickable onClick={() => selectToken(t.symbol)}>
+								<Clickable onClick={() => selectToken(contract_address)}>
 									<div class="row">
-										<div>
-											<Icon img={t.iconURL} alt={tokenInfo.symbol} size="40px" padding="0px" />
+										<Icon img={token.iconURL} alt={displaySymbol} size="40px" padding="0px" />
+										<div class="column">
+											<div class="name">
+												{#if isLoadingInfo}
+													<Spinner size="16px" />
+												{:else}
+													{displayName}
+												{/if}
+											</div>
+											{#if $debug}
+												<div class="address">{contract_address}</div>
+											{/if}
 										</div>
-										<div class="name">{tokenInfo.name} ({tokenInfo.symbol})</div>
 									</div>
 								</Clickable>
 							</Td>
@@ -311,29 +416,45 @@
 								{:else if tokenBalance}
 									<div class="balance">
 										<div class="info">
-											<div class="amount"><BalanceDisplay balance={tokenBalance.crypto} showCurrency={false} /> {tokenInfo.symbol}</div>
+											<div class="amount">
+												<BalanceDisplay balance={tokenBalance.crypto} showCurrency={false} />
+												{displaySymbol}
+											</div>
 											<div class="fiat">(<BalanceDisplay balance={tokenBalance.fiat} roundToDecimals={2} />)</div>
 											{#if $debug}
-												<div class="fiat">Refresh in: {tokenCountdowns.get(t.symbol) || 0} s</div>
+												<div class="fiat">Refresh in: {tokenCountdowns.get(contract_address) || 0} s</div>
 											{/if}
 										</div>
-										<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(t.symbol)} />
+										<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
+									</div>
+								{:else}
+									<div class="balance">
+										<div class="info">
+											<div class="amount">Failed to load</div>
+											<div class="fiat">(click refresh to retry)</div>
+										</div>
+										<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
 									</div>
 								{/if}
 							</Td>
 						</Tr>
-					{:else if isLoadingInfo}
+					{:else}
 						<Tr>
 							<Td padding="0" expand>
-								<div class="row">
-									<div>
-										<Icon img={t.iconURL} alt={t.symbol} size="40px" padding="0px" />
+								<Clickable onClick={() => selectToken('')}>
+									<div class="row">
+										<Icon img={token.iconURL} alt={token.symbol} size="40px" padding="0px" />
+										<div class="name">{token.symbol} ({token.symbol})</div>
 									</div>
-									<div class="name"><Spinner size="16px" /></div>
-								</div>
+								</Clickable>
 							</Td>
 							<Td>
-								<Spinner size="16px" />
+								<div class="balance">
+									<div class="info">
+										<div class="amount">N/A</div>
+										<div class="fiat">(No contract address)</div>
+									</div>
+								</div>
 							</Td>
 						</Tr>
 					{/if}
