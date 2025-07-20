@@ -50,6 +50,28 @@ export async function getTokenDecimals(contractAddress: string): Promise<number>
 	}
 }
 
+export async function getTokenInfo(contractAddress: string): Promise<{ name: string; symbol: string } | null> {
+	const p = get(provider);
+	const net = get(selectedNetwork);
+	if (!net || !p) {
+		console.error('Network or provider not set');
+		return null;
+	}
+	try {
+		// Standard ERC-20 ABI for name and symbol functions
+		const abi = ['function name() view returns (string)', 'function symbol() view returns (string)'];
+		const contract = new Contract(contractAddress, abi, p);
+		const [name, symbol] = await Promise.all([contract.name(), contract.symbol()]);
+		return {
+			name: String(name),
+			symbol: String(symbol),
+		};
+	} catch (error) {
+		console.error('Error getting token info:', error);
+		return null;
+	}
+}
+
 export async function getTokenBalance(tokenSymbol: string): Promise<IBalance | null> {
 	const p = get(provider);
 	const net = get(selectedNetwork);
