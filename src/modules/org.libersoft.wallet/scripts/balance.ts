@@ -9,6 +9,23 @@ export interface IBalance {
 	currency: string;
 	decimals?: number;
 }
+interface MulticallCall {
+	target: string;
+	callData: string;
+}
+interface BatchRequestPayload {
+	jsonrpc: string;
+	id: number;
+	method: string;
+	params: any[];
+}
+// Multicall3 contract - uses the same address on most networks
+const multicall3Address = '0xcA11bde05977b3631167028862bE2a173976CA11';
+const multicallABI = ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'];
+// Common ERC-20 ABIs
+const erc20InfoABI = ['function name() view returns (string)', 'function symbol() view returns (string)'];
+const erc20BalanceABI = ['function balanceOf(address owner) view returns (uint256)', 'function decimals() view returns (uint8)'];
+
 export async function getBalance(): Promise<IBalance | null> {
 	const p = get(provider);
 	const net = get(selectedNetwork);
@@ -96,32 +113,12 @@ export async function getBatchTokensInfo(contractAddresses: string[]): Promise<M
 	return result;
 }
 
-// Multicall3 contract - uses the same address on most networks
-const MULTICALL3_ADDRESS = '0xcA11bde05977b3631167028862bE2a173976CA11';
-const MULTICALL_ABI = ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'];
-
-// Common ERC-20 ABIs
-const ERC20_INFO_ABI = ['function name() view returns (string)', 'function symbol() view returns (string)'];
-const ERC20_BALANCE_ABI = ['function balanceOf(address owner) view returns (uint256)', 'function decimals() view returns (uint8)'];
-
-interface MulticallCall {
-	target: string;
-	callData: string;
-}
-
-interface BatchRequestPayload {
-	jsonrpc: string;
-	id: number;
-	method: string;
-	params: any[];
-}
-
 // Generic Multicall executor
 async function executeMulticall<T>(addresses: string[], abi: string[], functionNames: string[], provider: any, network: any, additionalParams: any[] = [], processor: (returnData: string[], addresses: string[], erc20Interface: any, additionalParams: any[]) => Map<string, T>): Promise<Map<string, T> | null> {
 	try {
-		console.log(`Trying Multicall3 at ${MULTICALL3_ADDRESS} for chainID ${network.chainID}`);
+		console.log(`Trying Multicall3 at ${multicall3Address} for chainID ${network.chainID}`);
 
-		const multicallContract = new Contract(MULTICALL3_ADDRESS, MULTICALL_ABI, provider);
+		const multicallContract = new Contract(multicall3Address, multicallABI, provider);
 		const erc20Interface = new Contract(addresses[0], abi, provider).interface;
 
 		// Prepare calls for Multicall
@@ -178,7 +175,7 @@ function processTokenInfoResults(returnData: string[], addresses: string[], erc2
 
 // Wrapper for token info Multicall
 async function tryMulticall(contractAddresses: string[], provider: any, network: any): Promise<Map<string, { name: string; symbol: string }> | null> {
-	return executeMulticall(contractAddresses, ERC20_INFO_ABI, ['name', 'symbol'], provider, network, [], processTokenInfoResults);
+	return executeMulticall(contractAddresses, erc20InfoABI, ['name', 'symbol'], provider, network, [], processTokenInfoResults);
 }
 
 // Generic JSON-RPC batch executor
@@ -274,7 +271,7 @@ function processTokenInfoBatchResults(batchResults: any[], addresses: string[], 
 }
 
 async function fallbackBatchCall(contractAddresses: string[], provider: any, network: any): Promise<Map<string, { name: string; symbol: string }>> {
-	return executeBatchCall(contractAddresses, ERC20_INFO_ABI, ['name', 'symbol'], provider, network, [], processTokenInfoBatchResults);
+	return executeBatchCall(contractAddresses, erc20InfoABI, ['name', 'symbol'], provider, network, [], processTokenInfoBatchResults);
 }
 
 // Process token balance results from JSON-RPC batch
@@ -321,7 +318,7 @@ async function executeBatchBalanceCall(tokensWithAddresses: any[], provider: any
 		let id = 1;
 
 		tokensWithAddresses.forEach(token => {
-			const contract = new Contract(token.contract_address, ERC20_BALANCE_ABI, provider);
+			const contract = new Contract(token.contract_address, erc20BalanceABI, provider);
 			// Add balanceOf() call to batch (needs address parameter)
 			batchPayload.push({
 				jsonrpc: '2.0',
@@ -368,7 +365,7 @@ async function executeBatchBalanceCall(tokensWithAddresses: any[], provider: any
 		if (!Array.isArray(batchResults)) throw new Error('Invalid batch response format');
 
 		// Process results
-		const contract = new Contract(tokensWithAddresses[0].contract_address, ERC20_BALANCE_ABI, provider);
+		const contract = new Contract(tokensWithAddresses[0].contract_address, erc20BalanceABI, provider);
 		return processTokenBalanceBatchResults(batchResults, tokensWithAddresses, contract);
 	} catch (error) {
 		console.error('Error in batch balance call:', error);
@@ -415,10 +412,10 @@ function processTokenBalanceResults(returnData: string[], tokens: any[], erc20In
 // Special Multicall executor for balances (handles different function parameters)
 async function executeMulticallBalances(tokensWithAddresses: any[], provider: any, network: any, addr: any): Promise<Map<string, IBalance> | null> {
 	try {
-		console.log(`Trying Multicall3 at ${MULTICALL3_ADDRESS} for chainID ${network.chainID}`);
+		console.log(`Trying Multicall3 at ${multicall3Address} for chainID ${network.chainID}`);
 
-		const multicallContract = new Contract(MULTICALL3_ADDRESS, MULTICALL_ABI, provider);
-		const erc20Interface = new Contract(tokensWithAddresses[0].contract_address, ERC20_BALANCE_ABI, provider).interface;
+		const multicallContract = new Contract(multicall3Address, multicallABI, provider);
+		const erc20Interface = new Contract(tokensWithAddresses[0].contract_address, erc20BalanceABI, provider).interface;
 
 		// Prepare calls for Multicall
 		const calls: MulticallCall[] = [];
