@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
@@ -358,9 +359,7 @@
 					<Td padding="0" expand>
 						<Clickable onClick={selectCurrency}>
 							<div class="row">
-								{#if $selectedNetwork?.currency?.iconURL}
-									<Icon img={$selectedNetwork.currency.iconURL} alt={balance?.crypto.currency || '?'} size="40px" padding="0px" />
-								{/if}
+								<Icon img={$selectedNetwork?.currency?.iconURL ? $selectedNetwork.currency.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={balance?.crypto.currency || '?'} size="40px" padding="0px" />
 								<div class="name">{$selectedNetwork.currency.symbol || '?'}</div>
 							</div>
 						</Clickable>
@@ -396,7 +395,7 @@
 							<Td padding="0" expand>
 								<Clickable onClick={() => selectToken(contract_address)}>
 									<div class="row">
-										<Icon img={token.iconURL} alt={displaySymbol} size="40px" padding="0px" />
+										<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={displaySymbol} size="40px" padding="0px" />
 										<div class="column">
 											<div class="name">
 												{#if isLoadingInfo}
@@ -445,7 +444,7 @@
 							<Td padding="0" expand>
 								<Clickable onClick={() => selectToken('')}>
 									<div class="row">
-										<Icon img={token.iconURL} alt="Unknown token" size="40px" padding="0px" />
+										<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt="Unknown token" size="40px" padding="0px" />
 										<div class="name">Unknown token (no contract address)</div>
 									</div>
 								</Clickable>
