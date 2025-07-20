@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { product, link } from '@/core/scripts/stores.ts';
+	import { product, link, debug } from '@/core/scripts/stores.ts';
 	import { BROWSER } from '@/core/scripts/tauri.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import MenuItem from '@/core/components/Menu/MenuItem.svelte';
@@ -205,6 +205,9 @@
 	<div class="footer">
 		<div class="section">
 			<Switch showLabel label="Dark mode" bind:checked={darkModeLocal} />
+		</div>
+		<div class="section">
+			<Switch showLabel label="Debug mode" bind:checked={$debug} />
 		</div>
 		<div class="section">
 			<Clickable onClick={() => openPage(link)}>

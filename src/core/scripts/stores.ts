@@ -10,7 +10,7 @@ declare global {
 }
 
 // Debug and UI stores
-export const debug = writable(import.meta.env.VITE_CLIENT_DEBUG || false);
+export const debug = localStorageSharedStore('debug', import.meta.env.VITE_CLIENT_DEBUG || false);
 export const debugBuffer = writable('');
 export const documentHeight = writable(0);
 export const isMobile = writable(false);
