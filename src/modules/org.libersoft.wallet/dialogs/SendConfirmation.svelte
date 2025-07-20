@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { formatBalance, getTokenDecimals, getTokenInfo } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { parseUnits, formatUnits } from 'ethers';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { type IPayment, sendTransaction } from '@/org.libersoft.wallet/scripts/transaction.ts';
@@ -82,7 +83,12 @@
 			{#if loadingDecimals}
 				<Spinner size="12px" />
 			{:else}
-				<span class="bold">{formatBalance({ amount: params.amount, currency: params.contractAddress ? tokenInfo?.symbol || 'UNKNOWN' : $selectedNetwork?.currency.symbol || '', decimals: tokenDecimals || 18 })} {params.contractAddress ? tokenInfo?.symbol || 'UNKNOWN' : $selectedNetwork?.currency.symbol || ''}</span>
+				{@const symbol = params.contractAddress ? tokenInfo?.symbol || 'UNKNOWN' : $selectedNetwork?.currency.symbol || ''}
+				{@const correctDecimals = tokenDecimals || 18}
+				{@const amountString = formatUnits(params.amount, 18)}
+				{@const correctAmount = parseUnits(amountString, correctDecimals)}
+				{@const amountBalance = { amount: correctAmount, currency: symbol, decimals: correctDecimals }}
+				<span class="bold">{formatBalance(amountBalance)} {symbol}</span>
 			{/if}
 		</div>
 		<div>Transaction fee: <span class="bold">{formatBalance({ amount: params.fee, currency: $selectedNetwork?.currency.symbol || '', decimals: 18 })} {$selectedNetwork?.currency.symbol || ''}</span></div>
