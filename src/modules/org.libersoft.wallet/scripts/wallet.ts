@@ -211,6 +211,10 @@ export function reorderWallets(reorderedWallets: IWallet[]): void {
 	wallets.set(reorderedWallets);
 }
 
+export function reorderAddresses(wallet: IWallet, reorderedAddresses: IAddress[]): void {
+	wallets.update(ws => ws.map(w => (w.address === wallet.address ? { ...w, addresses: [...reorderedAddresses] } : w)));
+}
+
 export async function addHardwareWallet(type: 'trezor' | 'ledger', address: string, name: string, deviceId: string, devicePath: string): Promise<void> {
 	const wallet: IWallet = {
 		type,
