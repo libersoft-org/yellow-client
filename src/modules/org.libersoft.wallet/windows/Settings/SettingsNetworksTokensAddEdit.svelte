@@ -67,11 +67,11 @@
 </script>
 
 <Form onSubmit={handleSubmit}>
-	<Label text="Icon URL">
-		<Input bind:value={tokenIcon} />
-	</Label>
 	<Label text="Contract address">
 		<Input bind:value={tokenContractAddress} bind:this={elTokenContractAddress} />
+	</Label>
+	<Label text="Icon URL">
+		<Input bind:value={tokenIcon} />
 	</Label>
 	{#if error}
 		<Alert type="error" message={error} />

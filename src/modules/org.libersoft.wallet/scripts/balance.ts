@@ -40,7 +40,7 @@ export async function getBalance(): Promise<IBalance | null> {
 		//console.log('Balance fetched:', balanceWei, net.currency.symbol);
 		return {
 			amount: balanceWei,
-			currency: net.currency.symbol,
+			currency: net.currency.symbol || 'Unknown',
 			decimals: 18,
 		};
 	} catch (error) {
@@ -448,26 +448,26 @@ async function tryMulticallBalances(tokensWithAddresses: any[], provider: any, n
 	return executeMulticallBalances(tokensWithAddresses, provider, network, addr);
 }
 
-export async function getBatchTokenBalances(tokenSymbols: string[]): Promise<Map<string, IBalance>> {
+export async function getBatchTokenBalances(): Promise<Map<string, IBalance>> {
 	const p = get(provider);
 	const net = get(selectedNetwork);
 	const addr = get(selectedAddress);
 	const tokenList = get(tokens);
 	const result = new Map<string, IBalance>();
 
-	if (!net || !p || !addr || tokenSymbols.length === 0) {
-		console.error('Network, provider, address not set or no tokens provided');
+	if (!net || !p || !addr) {
+		console.error('Network, provider, or address not set');
 		return result;
 	}
 
 	// Filter tokens that have contract addresses
-	const tokensWithAddresses = tokenSymbols.map(symbol => tokenList.find(t => t.symbol === symbol)).filter((token): token is NonNullable<typeof token> => token !== undefined && !!token.contract_address);
+	const tokensWithAddresses = tokenList.filter(token => token.contract_address);
 
 	if (tokensWithAddresses.length === 0) return result;
 
 	console.log(
 		`Starting batch balance loading for ${tokensWithAddresses.length} tokens:`,
-		tokensWithAddresses.map(t => t.symbol)
+		tokensWithAddresses.map(t => t.contract_address)
 	);
 
 	let remainingTokens = [...tokensWithAddresses]; // Create a copy
@@ -483,7 +483,7 @@ export async function getBatchTokenBalances(tokenSymbols: string[]): Promise<Map
 				});
 
 				// Filter out successful tokens from remaining
-				remainingTokens = remainingTokens.filter(token => !multicallResult.has(token.symbol));
+				remainingTokens = remainingTokens.filter(token => !multicallResult.has(token.contract_address));
 				console.log(`Multicall succeeded for ${multicallResult.size} tokens, ${remainingTokens.length} tokens remaining`);
 			} else {
 				console.log('Multicall returned no results, all tokens will try fallback');
@@ -500,7 +500,7 @@ export async function getBatchTokenBalances(tokenSymbols: string[]): Promise<Map
 					});
 
 					// Filter out successful tokens from remaining
-					remainingTokens = remainingTokens.filter(token => !batchResult.has(token.symbol));
+					remainingTokens = remainingTokens.filter(token => !batchResult.has(token.contract_address));
 					console.log(`JSON-RPC batch succeeded for ${batchResult.size} tokens, ${remainingTokens.length} tokens still remaining`);
 				}
 			} catch (error) {
@@ -515,10 +515,10 @@ export async function getBatchTokenBalances(tokenSymbols: string[]): Promise<Map
 				try {
 					// Use direct contract call to avoid infinite recursion
 					const tokenBalance = await getDirectTokenBalance(token, p, addr);
-					return { symbol: token.symbol, balance: tokenBalance };
+					return { symbol: token.contract_address, balance: tokenBalance };
 				} catch (error) {
-					console.warn(`Error getting balance for ${token.symbol}:`, error);
-					return { symbol: token.symbol, balance: null };
+					console.warn(`Error getting balance for ${token.contract_address}:`, error);
+					return { symbol: token.contract_address, balance: null };
 				}
 			});
 			const balanceResults = await Promise.all(balancePromises);
@@ -537,11 +537,11 @@ export async function getBatchTokenBalances(tokenSymbols: string[]): Promise<Map
 
 	console.log(`Final result: successfully loaded ${result.size}/${tokensWithAddresses.length} token balances`);
 	console.log('Successful tokens:', Array.from(result.keys()));
-	const failedTokens = tokensWithAddresses.filter(token => !result.has(token.symbol));
+	const failedTokens = tokensWithAddresses.filter(token => !result.has(token.contract_address));
 	if (failedTokens.length > 0) {
 		console.warn(
 			'Failed tokens:',
-			failedTokens.map(t => t.symbol)
+			failedTokens.map(t => t.contract_address)
 		);
 	}
 

@@ -246,7 +246,6 @@
 					{#if isLoadingTokenInfos}
 						<div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
 							<Spinner size="16px" />
-							<span>Loading tokens...</span>
 						</div>
 					{:else}
 						<DropdownFilter placeholder="Currency" options={currencyOptions} bind:selected={currency} />
