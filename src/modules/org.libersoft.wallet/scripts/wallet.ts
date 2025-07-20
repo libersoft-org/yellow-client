@@ -69,7 +69,6 @@ export function addressesMaxIndex(addresses: IAddress[]): number {
 export function addAddress(w: IWallet, index?: number | string, name?: string): void {
 	let indexNum: number;
 	const addresses = w.addresses || [];
-	sortAddresses(addresses);
 	if (index === undefined || index === null || index === '') {
 		indexNum = addressesMaxIndex(addresses) + 1;
 		doAddAddress(w, addresses, indexNum, name);
@@ -86,7 +85,6 @@ export function addAddress(w: IWallet, index?: number | string, name?: string): 
 		}
 		doAddAddress(w, addresses, indexNum, name);
 	}
-	sortAddresses(addresses);
 	w.addresses = addresses;
 	w.selected_address_index = indexNum;
 	wallets.update(ws =>
