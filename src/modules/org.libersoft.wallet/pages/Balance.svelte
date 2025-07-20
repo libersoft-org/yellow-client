@@ -347,7 +347,7 @@
 	}
 
 	.balance .info .fiat {
-		font-size: 12px;
+		font-size: 13px;
 	}
 </style>
 
@@ -371,7 +371,9 @@
 							<div class="balance">
 								<div class="info">
 									<div class="amount"><BalanceDisplay balance={balance?.crypto} /></div>
-									<div class="fiat">(<BalanceDisplay balance={balance?.fiat} roundToDecimals={2} />)</div>
+									{#if balance?.fiat}
+										<div class="fiat">(<BalanceDisplay balance={balance?.fiat} roundToDecimals={2} />)</div>
+									{/if}
 									{#if $debug}
 										<div class="fiat">retrieved {balance?.timestamp.toLocaleTimeString() || '?'}</div>
 										<div class="fiat">Refresh in: {balanceCountdown} s</div>
@@ -421,7 +423,9 @@
 												<BalanceDisplay balance={tokenBalance.crypto} showCurrency={false} />
 												{displaySymbol}
 											</div>
-											<div class="fiat">(<BalanceDisplay balance={tokenBalance.fiat} roundToDecimals={2} />)</div>
+											{#if tokenBalance.fiat}
+												<div class="fiat">(<BalanceDisplay balance={tokenBalance.fiat} roundToDecimals={2} />)</div>
+											{/if}
 											{#if $debug}
 												<div class="fiat">Refresh in: {tokenCountdowns.get(contract_address) || 0} s</div>
 											{/if}
