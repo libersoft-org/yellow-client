@@ -21,7 +21,12 @@
 
 	$effect(() => {
 		if (data) {
-			jsonEditorContents = JSON.stringify(data, null, 2);
+			// Pokud je data string, použij ho přímo, jinak JSON.stringify
+			if (typeof data === 'string') {
+				jsonEditorContents = data;
+			} else {
+				jsonEditorContents = JSON.stringify(data, null, 2);
+			}
 			if (enableQrTab) {
 				generateQRCode();
 			}
@@ -44,8 +49,9 @@
 
 	function generateQRCode() {
 		qrError = null;
-		const jsonString = JSON.stringify(data, null, 2);
-		QRCode.toDataURL(jsonString, { width: 300, height: 300, margin: 0 })
+		// Use jsonEditorContents instead of JSON.stringify(data)
+		const dataString = jsonEditorContents;
+		QRCode.toDataURL(dataString, { width: 300, height: 300, margin: 0 })
 			.then(url => (qrCodeData = url))
 			.catch(err => {
 				console.debug('QR CODE GENERATION:', err);

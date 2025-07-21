@@ -15,6 +15,7 @@ export interface INetwork {
 	currency: ICurrency;
 	rpcURLs?: string[];
 	tokens?: IToken[];
+	nfts?: INFT[];
 	selectedRpcUrl?: string;
 }
 export interface ICurrency {
@@ -39,6 +40,23 @@ export interface IToken {
 	guid: string;
 	item: ITokenData;
 }
+export interface INFTData {
+	contract_address: string;
+	token_id: string;
+	name?: string;
+	description?: string;
+	image?: string;
+	animation_url?: string;
+	external_url?: string;
+	attributes?: Array<{
+		trait_type: string;
+		value: string | number;
+	}>;
+}
+export interface INFT {
+	guid: string;
+	item: INFTData;
+}
 export interface IStatus {
 	color: 'red' | 'orange' | 'green';
 	text: string;
@@ -55,6 +73,10 @@ networks.subscribe((nets: INetwork[]) => {
 			net.tokens = [];
 			modified = true;
 		}
+		if (net.nfts === undefined) {
+			net.nfts = [];
+			modified = true;
+		}
 		// If selectedRpcUrl is not in the list of rpcURLs, remove it
 		if (net.selectedRpcUrl && net.rpcURLs && !net.rpcURLs.includes(net.selectedRpcUrl)) {
 			net.selectedRpcUrl = undefined;
@@ -63,6 +85,12 @@ networks.subscribe((nets: INetwork[]) => {
 		for (let token of net.tokens) {
 			if (token.guid === undefined) {
 				token.guid = getGuid();
+				modified = true;
+			}
+		}
+		for (let nft of net.nfts) {
+			if (nft.guid === undefined) {
+				nft.guid = getGuid();
 				modified = true;
 			}
 		}
@@ -176,6 +204,20 @@ export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 		guid: token.guid,
 		contract_address: token.item?.contract_address,
 		iconURL: token.item?.iconURL,
+	}));
+});
+
+export let nfts = derived([selectedNetwork], ([$selectedNetwork]) => {
+	return ($selectedNetwork?.nfts || []).map(nft => ({
+		guid: nft.guid,
+		contract_address: nft.item?.contract_address,
+		token_id: nft.item?.token_id,
+		name: nft.item?.name,
+		description: nft.item?.description,
+		image: nft.item?.image,
+		animation_url: nft.item?.animation_url,
+		external_url: nft.item?.external_url,
+		attributes: nft.item?.attributes,
 	}));
 });
 
@@ -553,4 +595,53 @@ export function getRPCServersFromNetwork(network: INetwork): IRPCServer[] {
 
 export function reorderNetworks(reorderedNetworks: INetwork[]): void {
 	networks.set(reorderedNetworks);
+}
+
+export function addNFT(networkGuid: string, nftData: INFTData): void {
+	networks.update(nets => {
+		const net = nets.find(n => n.guid === networkGuid);
+		if (!net) return nets;
+		if (!net.nfts) net.nfts = [];
+		const newNft: INFT = {
+			guid: getGuid(),
+			item: nftData,
+		};
+		net.nfts.push(newNft);
+		return nets;
+	});
+}
+
+export function deleteNFT(networkGuid: string, nftGuid: string): void {
+	networks.update(nets => {
+		const net = nets.find(n => n.guid === networkGuid);
+		if (!net?.nfts) return nets;
+		net.nfts = net.nfts.filter(nft => nft.guid !== nftGuid);
+		return nets;
+	});
+}
+
+export function editNFT(networkGuid: string, nftGuid: string, nftData: INFTData): void {
+	networks.update(nets => {
+		const net = nets.find(n => n.guid === networkGuid);
+		if (!net?.nfts) return nets;
+		const nft = net.nfts.find(n => n.guid === nftGuid);
+		if (nft) {
+			nft.item = nftData;
+		}
+		return nets;
+	});
+}
+
+export function reorderNFTs(networkGuid: string, reorderedNFTs: INFT[]): void {
+	networks.update(networks => {
+		return networks.map(network => {
+			if (network.guid === networkGuid) {
+				return {
+					...network,
+					nfts: reorderedNFTs,
+				};
+			}
+			return network;
+		});
+	});
 }

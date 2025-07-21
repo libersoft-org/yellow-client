@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { debug } from '@/core/scripts/stores.ts';
+	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
@@ -139,9 +139,8 @@
 		justify-content: space-between;
 	}
 
-	.separator {
-		width: 100%;
-		border-bottom: 1px solid var(--default-foreground);
+	.network-address.mobile {
+		flex-direction: column;
 	}
 </style>
 
@@ -153,7 +152,7 @@
 		</div>
 	{/if}
 	<div class="body">
-		<div class="network-address">
+		<div class="network-address" class:mobile={$isMobile}>
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
 			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} />
 		</div>
@@ -196,7 +195,6 @@
 			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} />
 			<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" onClick={() => setSection('receive')} />
 		</div>
-		<div class="separator"></div>
 		{#if !$selectedNetwork}
 			<Alert type="error" message="No network selected" />
 		{/if}

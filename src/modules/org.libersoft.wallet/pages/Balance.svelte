@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { debug } from '@/core/scripts/stores.ts';
-	import { selectedNetwork, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { debug, isMobile } from '@/core/scripts/stores.ts';
+	import { selectedNetwork, tokens, nfts } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, type IBalance, type INFTItem } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
+	import Thead from '@/core/components/Table/TableThead.svelte';
+	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
+	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
@@ -27,6 +30,7 @@
 	let balance = $state<ITokenData | null>(null);
 	let tokenBalances = $state(new Map<string, ITokenData>());
 	let tokenInfos = $state(new Map<string, ITokenInfo>());
+	let nftContractInfos = $state(new Map<string, { name: string; collection: string; balance: number; loading: boolean }>());
 	let isLoadingBalance = $state(false);
 	let loadingTokens = $state(new Set<string>());
 	let loadingTokenInfos = $state(new Set<string>());
@@ -36,6 +40,8 @@
 	const initializedTokens = new Set<string>();
 	let countdownInterval: ReturnType<typeof setInterval> | null = null;
 	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
+	let lastNFTsLength = $state(0);
+	let lastTokensLength = $state(0);
 
 	// Helper functions
 	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
@@ -62,11 +68,15 @@
 		tokenBalances.clear();
 		tokenInfos.clear();
 		loadingTokenInfos.clear();
+		nftContractInfos.clear();
+		lastNFTsLength = 0;
+		lastTokensLength = 0;
 	}
 
 	function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
+			loadNFTContractInfos();
 			if ($tokens?.length) {
 				loadAllTokensInfo();
 				loadAllTokenBalances();
@@ -100,6 +110,11 @@
 
 	function selectToken(contractAddress: string) {
 		console.log('SELECTED TOKEN:', contractAddress);
+	}
+
+	function selectNFT(url: string) {
+		console.log('SELECTED NFT:', url);
+		window.open(url, '_blank');
 	}
 
 	async function loadTokenInfo(contractAddress: string) {
@@ -284,20 +299,113 @@
 		}
 	}
 
+	async function loadNFTContractInfos() {
+		// Load info for all configured NFT contracts
+		if (!$nfts || $nfts.length === 0) return;
+
+		console.log('Loading NFT contract infos for', $nfts.length, 'contracts');
+
+		// Set loading state for all contracts first
+		$nfts.forEach(nft => {
+			if (!nft.contract_address) return;
+			nftContractInfos = updateReactiveMap(nftContractInfos, map => {
+				map.set(nft.contract_address, {
+					name: 'Loading...',
+					collection: 'Loading...',
+					balance: 0,
+					loading: true,
+				});
+			});
+		});
+
+		try {
+			// Load all NFTs from configured contracts at once
+			const allNFTItems = await getNFTsFromConfiguredContracts();
+			console.log('Loaded all NFT items:', allNFTItems.length);
+
+			// Process results for each configured contract
+			$nfts.forEach(nft => {
+				if (!nft.contract_address) return;
+
+				const contractNFTs = allNFTItems.filter(item => item.contract_address === nft.contract_address);
+
+				if (contractNFTs.length > 0) {
+					const firstNFT = contractNFTs[0];
+					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
+						map.set(nft.contract_address, {
+							name: firstNFT.name || 'Unknown NFT',
+							collection: firstNFT.collection_name || firstNFT.collection_symbol || 'Unknown Collection',
+							balance: contractNFTs.length,
+							loading: false,
+						});
+					});
+				} else {
+					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
+						map.set(nft.contract_address, {
+							name: 'No NFTs owned',
+							collection: 'Contract',
+							balance: 0,
+							loading: false,
+						});
+					});
+				}
+			});
+		} catch (error) {
+			console.error('Error loading NFT contract infos:', error);
+			// Set error state for all contracts
+			$nfts.forEach(nft => {
+				if (!nft.contract_address) return;
+				nftContractInfos = updateReactiveMap(nftContractInfos, map => {
+					map.set(nft.contract_address, {
+						name: 'Error loading',
+						collection: 'Contract',
+						balance: 0,
+						loading: false,
+					});
+				});
+			});
+		}
+	}
+
+	async function loadNFTs() {
+		// This function is no longer used - we load contract infos individually
+		console.log('loadNFTs called but not needed');
+	}
+
 	// Watch for new tokens being added and initialize them
 	$effect(() => {
 		if (!$tokens?.length || !$selectedNetwork || !$selectedAddress || !$provider) return;
-		const newTokens = getTokensWithContracts().filter(token => token.contract_address && !initializedTokens.has(token.contract_address));
-		if (newTokens.length > 0) {
-			// Mark as initialized
-			newTokens.forEach(token => {
-				if (token.contract_address) initializedTokens.add(token.contract_address);
-			});
-			// Load info and balances for new tokens
-			loadAllTokensInfo();
-			loadAllTokenBalances();
+
+		// Only process if tokens array actually changed in length or we have genuinely new tokens
+		if ($tokens.length !== lastTokensLength) {
+			lastTokensLength = $tokens.length;
+			const newTokens = getTokensWithContracts().filter(token => token.contract_address && !initializedTokens.has(token.contract_address));
+			if (newTokens.length > 0) {
+				console.log('Found new tokens to initialize:', newTokens.length);
+				// Mark as initialized
+				newTokens.forEach(token => {
+					if (token.contract_address) initializedTokens.add(token.contract_address);
+				});
+				// Load info and balances for new tokens
+				loadAllTokensInfo();
+				loadAllTokenBalances();
+			}
 		}
 	});
+
+	// Watch for configured NFT contracts changes and reload NFTs - only when nfts array changes
+	$effect(() => {
+		if ($nfts && $selectedNetwork && $selectedAddress && $provider) {
+			// Only reload if the number of NFT contracts actually changed
+			if ($nfts.length !== lastNFTsLength) {
+				console.log('NFT contracts changed, reloading contract infos...');
+				lastNFTsLength = $nfts.length;
+				loadNFTContractInfos();
+			}
+		}
+	});
+
+	// No auto-discovery for NFTs - they come from configured store only
 </script>
 
 <style>
@@ -305,6 +413,14 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+	}
+
+	.category {
+		font-weight: bold;
+		padding: 10px;
+		border-radius: 10px;
+		background-color: var(--secondary-background);
+		color: var(--secondary-foreground);
 	}
 
 	.row {
@@ -349,47 +465,119 @@
 	.balance .info .fiat {
 		font-size: 13px;
 	}
+
+	/* Mobile responsive styles */
+	.mobile-balance-row {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 10px;
+	}
+
+	.mobile-currency-info {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.mobile-balance-info {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-left: 50px; /* Align with currency name */
+	}
 </style>
 
 <div class="wallet-balance">
 	{#if $selectedNetwork && $selectedAddress}
-		<div class="bold">Main currency:</div>
 		<Table>
+			<Thead>
+				<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
+					{#if $isMobile}
+						<Th>Currency & Balance</Th>
+					{:else}
+						<Th>Currency</Th>
+						<Th>Balance</Th>
+					{/if}
+				</TheadTr>
+			</Thead>
 			<Tbody>
 				<Tr>
-					<Td padding="0" expand>
-						<Clickable onClick={selectCurrency}>
-							<div class="row">
-								<Icon img={$selectedNetwork?.currency?.iconURL ? $selectedNetwork.currency.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={balance?.crypto.currency || '?'} size="40px" padding="0px" />
-								<div class="name">{$selectedNetwork.currency.symbol || '?'}</div>
-							</div>
-						</Clickable>
-					</Td>
-					<Td>
-						{#if isLoadingBalance}
-							<Spinner size="16px" />
-						{:else}
-							<div class="balance">
-								<div class="info">
-									<div class="amount"><BalanceDisplay balance={balance?.crypto} /></div>
-									{#if balance?.fiat}
-										<div class="fiat">(<BalanceDisplay balance={balance?.fiat} roundToDecimals={2} />)</div>
-									{/if}
-									{#if $debug}
-										<div class="fiat">retrieved {balance?.timestamp.toLocaleTimeString() || '?'}</div>
-										<div class="fiat">Refresh in: {balanceCountdown} s</div>
-									{/if}
+					{#if $isMobile}
+						<Td padding="0" expand>
+							<Clickable onClick={selectCurrency}>
+								<div class="mobile-balance-row">
+									<div class="mobile-currency-info">
+										<Icon img={$selectedNetwork?.currency?.iconURL ? $selectedNetwork.currency.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={balance?.crypto.currency || '?'} size="40px" padding="0px" />
+										<div class="name">{$selectedNetwork.currency.symbol || '?'}</div>
+									</div>
+									<div class="mobile-balance-info">
+										{#if isLoadingBalance}
+											<Spinner size="16px" />
+										{:else}
+											<div class="balance">
+												<div class="info">
+													<div class="amount"><BalanceDisplay balance={balance?.crypto} /></div>
+													{#if balance?.fiat}
+														<div class="fiat">(<BalanceDisplay balance={balance?.fiat} roundToDecimals={2} />)</div>
+													{/if}
+													{#if $debug}
+														<div class="fiat">retrieved {balance?.timestamp.toLocaleTimeString() || '?'}</div>
+														<div class="fiat">Refresh in: {balanceCountdown} s</div>
+													{/if}
+												</div>
+												<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={refreshBalance} />
+											</div>
+										{/if}
+									</div>
 								</div>
-								<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={refreshBalance} />
-							</div>
-						{/if}
-					</Td>
+							</Clickable>
+						</Td>
+					{:else}
+						<Td padding="0" expand>
+							<Clickable onClick={selectCurrency}>
+								<div class="row">
+									<Icon img={$selectedNetwork?.currency?.iconURL ? $selectedNetwork.currency.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={balance?.crypto.currency || '?'} size="40px" padding="0px" />
+									<div class="name">{$selectedNetwork.currency.symbol || '?'}</div>
+								</div>
+							</Clickable>
+						</Td>
+						<Td>
+							{#if isLoadingBalance}
+								<Spinner size="16px" />
+							{:else}
+								<div class="balance">
+									<div class="info">
+										<div class="amount"><BalanceDisplay balance={balance?.crypto} /></div>
+										{#if balance?.fiat}
+											<div class="fiat">(<BalanceDisplay balance={balance?.fiat} roundToDecimals={2} />)</div>
+										{/if}
+										{#if $debug}
+											<div class="fiat">retrieved {balance?.timestamp.toLocaleTimeString() || '?'}</div>
+											<div class="fiat">Refresh in: {balanceCountdown} s</div>
+										{/if}
+									</div>
+									<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={refreshBalance} />
+								</div>
+							{/if}
+						</Td>
+					{/if}
 				</Tr>
 			</Tbody>
 		</Table>
+		<!--<div class="category">Tokens:</div>-->
 		{#if $tokens?.length > 0}
-			<div class="bold">Tokens:</div>
 			<Table>
+				<Thead>
+					<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
+						{#if $isMobile}
+							<Th>Token</Th>
+						{:else}
+							<Th>Token</Th>
+							<Th>Balance</Th>
+						{/if}
+					</TheadTr>
+				</Thead>
 				<Tbody>
 					{#each $tokens as token, index}
 						{@const { contract_address } = token}
@@ -401,78 +589,201 @@
 						{@const displaySymbol = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? tokenInfo.symbol : 'UNKNOWN'}
 						{#if contract_address}
 							<Tr>
-								<Td padding="0" expand>
-									<Clickable onClick={() => selectToken(contract_address)}>
-										<div class="row">
-											<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={displaySymbol} size="40px" padding="0px" />
-											<div class="column">
-												<div class="name">
-													{#if isLoadingInfo}
+								{#if $isMobile}
+									<Td padding="0" expand>
+										<Clickable onClick={() => selectToken(contract_address)}>
+											<div class="mobile-balance-row">
+												<div class="mobile-currency-info">
+													<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={displaySymbol} size="40px" padding="0px" />
+													<div class="column">
+														<div class="name">
+															{#if isLoadingInfo}
+																<Spinner size="16px" />
+															{:else}
+																{displayName}
+															{/if}
+														</div>
+														{#if $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN'}
+															<div class="address">{contract_address}</div>
+														{/if}
+													</div>
+												</div>
+												<div class="mobile-balance-info">
+													{#if isLoadingBalance}
 														<Spinner size="16px" />
+													{:else if tokenBalance}
+														<div class="balance">
+															<div class="info">
+																<div class="amount">
+																	<BalanceDisplay balance={tokenBalance.crypto} showCurrency={false} />
+																	{displaySymbol}
+																</div>
+																{#if tokenBalance.fiat}
+																	<div class="fiat">(<BalanceDisplay balance={tokenBalance.fiat} roundToDecimals={2} />)</div>
+																{/if}
+																{#if $debug}
+																	<div class="fiat">Refresh in: {tokenCountdowns.get(contract_address) || 0} s</div>
+																{/if}
+															</div>
+															<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
+														</div>
 													{:else}
-														{displayName}
+														<div class="balance">
+															<div class="info">
+																<div class="amount">Failed to load</div>
+																<div class="fiat">(click refresh to retry)</div>
+															</div>
+															<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
+														</div>
 													{/if}
 												</div>
-												{#if $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN'}
-													<div class="address">{contract_address}</div>
-												{/if}
 											</div>
-										</div>
-									</Clickable>
-								</Td>
-								<Td>
-									{#if isLoadingBalance}
-										<Spinner size="16px" />
-									{:else if tokenBalance}
-										<div class="balance">
-											<div class="info">
-												<div class="amount">
-													<BalanceDisplay balance={tokenBalance.crypto} showCurrency={false} />
-													{displaySymbol}
+										</Clickable>
+									</Td>
+								{:else}
+									<Td padding="0" expand>
+										<Clickable onClick={() => selectToken(contract_address)}>
+											<div class="row">
+												<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={displaySymbol} size="40px" padding="0px" />
+												<div class="column">
+													<div class="name">
+														{#if isLoadingInfo}
+															<Spinner size="16px" />
+														{:else}
+															{displayName}
+														{/if}
+													</div>
+													{#if $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN'}
+														<div class="address">{contract_address}</div>
+													{/if}
 												</div>
-												{#if tokenBalance.fiat}
-													<div class="fiat">(<BalanceDisplay balance={tokenBalance.fiat} roundToDecimals={2} />)</div>
-												{/if}
-												{#if $debug}
-													<div class="fiat">Refresh in: {tokenCountdowns.get(contract_address) || 0} s</div>
-												{/if}
 											</div>
-											<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
-										</div>
-									{:else}
-										<div class="balance">
-											<div class="info">
-												<div class="amount">Failed to load</div>
-												<div class="fiat">(click refresh to retry)</div>
+										</Clickable>
+									</Td>
+									<Td>
+										{#if isLoadingBalance}
+											<Spinner size="16px" />
+										{:else if tokenBalance}
+											<div class="balance">
+												<div class="info">
+													<div class="amount">
+														<BalanceDisplay balance={tokenBalance.crypto} showCurrency={false} />
+														{displaySymbol}
+													</div>
+													{#if tokenBalance.fiat}
+														<div class="fiat">(<BalanceDisplay balance={tokenBalance.fiat} roundToDecimals={2} />)</div>
+													{/if}
+													{#if $debug}
+														<div class="fiat">Refresh in: {tokenCountdowns.get(contract_address) || 0} s</div>
+													{/if}
+												</div>
+												<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
 											</div>
-											<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
-										</div>
-									{/if}
-								</Td>
+										{:else}
+											<div class="balance">
+												<div class="info">
+													<div class="amount">Failed to load</div>
+													<div class="fiat">(click refresh to retry)</div>
+												</div>
+												<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
+											</div>
+										{/if}
+									</Td>
+								{/if}
 							</Tr>
 						{:else}
 							<Tr>
-								<Td padding="0" expand>
-									<Clickable onClick={() => selectToken('')}>
+								{#if $isMobile}
+									<Td padding="0" expand>
+										<div class="mobile-balance-row">
+											<div class="mobile-currency-info">
+												<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt="Unknown token" size="40px" padding="0px" />
+												<div class="name">Unknown token (no contract address)</div>
+											</div>
+											<div class="mobile-balance-info">
+												<div class="balance">
+													<div class="info">
+														<div class="amount">N/A</div>
+														<div class="fiat">(No contract address)</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</Td>
+								{:else}
+									<Td padding="0" expand>
 										<div class="row">
 											<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt="Unknown token" size="40px" padding="0px" />
 											<div class="name">Unknown token (no contract address)</div>
 										</div>
-									</Clickable>
-								</Td>
-								<Td>
-									<div class="balance">
-										<div class="info">
-											<div class="amount">N/A</div>
-											<div class="fiat">(No contract address)</div>
+									</Td>
+									<Td>
+										<div class="balance">
+											<div class="info">
+												<div class="amount">N/A</div>
+												<div class="fiat">(No contract address)</div>
+											</div>
 										</div>
-									</div>
-								</Td>
+									</Td>
+								{/if}
 							</Tr>
 						{/if}
 					{/each}
 				</Tbody>
 			</Table>
+		{:else}
+			No tokens found.
+		{/if}
+		{#if $nfts && $nfts.length > 0}
+			<Table>
+				<Thead>
+					<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
+						<Th>NFT Contract</Th>
+						<Th>Collection & Balance</Th>
+					</TheadTr>
+				</Thead>
+				<Tbody>
+					{#each $nfts as nft, index}
+						{@const contractInfo = nftContractInfos.get(nft.contract_address)}
+						<Tr>
+							<Td padding="0" expand>
+								<Clickable onClick={() => selectNFT('')}>
+									<div class="row">
+										<Icon img={'modules/' + module.identifier + '/img/nft.svg'} alt="NFT Contract" size="40px" padding="0px" />
+										<div class="column">
+											<div class="name">
+												{#if contractInfo?.loading}
+													<Spinner size="16px" />
+												{:else}
+													{contractInfo?.name || 'Unknown NFT'}
+												{/if}
+											</div>
+											<div class="address">{nft.contract_address}</div>
+											{#if $debug}
+												<div class="address">Contract address</div>
+											{/if}
+										</div>
+									</div>
+								</Clickable>
+							</Td>
+							<Td>
+								<div class="balance">
+									<div class="info">
+										{#if contractInfo?.loading}
+											<div class="amount"><Spinner size="16px" /> Loading...</div>
+										{:else}
+											<div class="amount">Owned: {contractInfo?.balance || 0}</div>
+											<div class="fiat">{contractInfo?.collection || 'Unknown Collection'}</div>
+										{/if}
+									</div>
+								</div>
+							</Td>
+						</Tr>
+					{/each}
+				</Tbody>
+			</Table>
+		{:else}
+			<div style="padding: 10px;">No NFT contracts configured. Add NFT contracts in Settings → Networks → NFTs.</div>
 		{/if}
 	{/if}
 </div>

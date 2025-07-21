@@ -9,6 +9,7 @@
 	import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';
 	import SettingsNetworks from '@/org.libersoft.wallet/windows/Settings/SettingsNetworks.svelte';
 	import SettingsNetworksTokens from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokens.svelte';
+	import SettingsNetworksNFTs from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksNFTs.svelte';
 	import SettingsWallets from '@/org.libersoft.wallet/windows/Settings/SettingsWallets.svelte';
 	import SettingsAddressbook from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbook.svelte';
 	import SettingsWalletsWallet from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWallet.svelte';
@@ -21,6 +22,7 @@
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
 	import SettingsNetworksTokensAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokensAddEdit.svelte';
+	import SettingsNetworksNFTsAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksNFTsAddEdit.svelte';
 	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
 	import SettingsAddressbookImport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookImport.svelte';
 	import SettingsAddressbookExport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookExport.svelte';
@@ -28,6 +30,7 @@
 	import SettingsWalletsRecover from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsRecover.svelte';
 	import SettingsWalletsAddressAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddressAdd.svelte';
 	import SettingsWalletsAddressEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddressEdit.svelte';
+	import SettingsWalletsWalletExport from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWalletExport.svelte';
 	let elBaseSettings: BaseSettings;
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
@@ -44,6 +47,15 @@
 					title: 'Add address',
 					name: 'wallets-address-add-' + wallet.address,
 					body: SettingsWalletsAddressAdd,
+					props: {
+						wallet,
+						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.address),
+					},
+				},
+				{
+					title: 'Export',
+					name: 'wallets-wallet-export-' + wallet.address,
+					body: SettingsWalletsWalletExport,
 					props: {
 						wallet,
 						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.address),
@@ -105,6 +117,36 @@
 		}));
 	});
 
+	let networksNFTsItems = $derived.by(() => {
+		return $networks.map((network: INetwork) => ({
+			title: 'NFTs',
+			name: 'networks-nfts-' + network.guid,
+			body: SettingsNetworksNFTs,
+			props: { item: network.guid },
+			items: [
+				{
+					title: 'Add NFT Contract',
+					name: 'networks-nfts-add-' + network.guid,
+					body: SettingsNetworksNFTsAddEdit,
+					props: {
+						close: () => elBaseSettings?.setSettingsSection('networks-nfts-' + network.guid),
+						networkGuid: network.guid,
+					},
+				},
+				...(network.nfts || []).map((nft: any) => ({
+					title: 'Edit NFT Contract',
+					name: 'networks-nfts-edit-' + network.guid + '-' + nft.guid,
+					body: SettingsNetworksNFTsAddEdit,
+					props: {
+						close: () => elBaseSettings?.setSettingsSection('networks-nfts-' + network.guid),
+						networkGuid: network.guid,
+						item: nft,
+					},
+				})),
+			],
+		}));
+	});
+
 	let networksItems = $derived.by(() => {
 		const networkEditItems = $networks.map((network: INetwork) => ({
 			title: 'Edit network',
@@ -124,7 +166,7 @@
 			body: RPCServers,
 			props: { network },
 		}));
-		return [...networkEditItems, ...networksRPCItems, ...defaultNetworksRPCItems, ...networksTokensItems];
+		return [...networkEditItems, ...networksRPCItems, ...defaultNetworksRPCItems, ...networksTokensItems, ...networksNFTsItems];
 	});
 
 	let addressbookItems = $derived.by(() => {

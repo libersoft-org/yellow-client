@@ -46,6 +46,10 @@
 		reordered.splice(targetIndex, 0, moved);
 		reorderAddresses(params.wallet, reordered);
 	}
+
+	function openExport() {
+		setSettingsSection('wallets-wallet-export-' + params.wallet.address);
+	}
 </script>
 
 <style>
@@ -80,6 +84,7 @@
 <div class="wallet">
 	<ButtonBar>
 		<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress()} />
+		<Button img="img/export.svg" text="Export" onClick={() => openExport()} />
 	</ButtonBar>
 	{#if params?.wallet?.addresses && params.wallet.addresses.length > 0}
 		<div use:tableDrag={{ items: params.wallet.addresses, onReorder: handleAddressReorder }}>

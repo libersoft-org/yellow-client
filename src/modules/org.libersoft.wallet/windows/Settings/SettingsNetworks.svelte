@@ -49,6 +49,12 @@
 		setSettingsSection('networks-tokens-' + net.guid, { item: net.guid });
 	}
 
+	function openNFTs(net) {
+		console.log('nftList', net);
+		selectedItemID = net.guid;
+		setSettingsSection('networks-nfts-' + net.guid, { item: net.guid });
+	}
+
 	function doImport() {
 		setSettingsSection('networks-import');
 	}
@@ -122,6 +128,7 @@
 							<TableActionItems align="center">
 								<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
 								<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => openTokens(n)} testId="wallet-settings-network-tokens@{n.name}" />
+								<Icon img="modules/{module.identifier}/img/nft.svg" colorVariable="--primary-foreground" alt="NFT list" size="20px" padding="5px" onClick={() => openNFTs(n)} testId="wallet-settings-network-nfts@{n.name}" />
 								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickEditNetwork(n)} testId="wallet-settings-network-edit@{n.name}" />
 								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />
 							</TableActionItems>
