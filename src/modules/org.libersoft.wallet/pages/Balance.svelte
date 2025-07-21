@@ -353,6 +353,7 @@
 
 <div class="wallet-balance">
 	{#if $selectedNetwork && $selectedAddress}
+		<div class="bold">Main currency:</div>
 		<Table>
 			<Tbody>
 				<Tr>
@@ -384,87 +385,94 @@
 						{/if}
 					</Td>
 				</Tr>
-				{#each $tokens as token, index}
-					{@const { contract_address } = token}
-					{@const tokenBalance = contract_address ? tokenBalances.get(contract_address) : null}
-					{@const tokenInfo = contract_address ? tokenInfos.get(contract_address) : null}
-					{@const isLoadingInfo = contract_address ? loadingTokenInfos.has(contract_address) : false}
-					{@const isLoadingBalance = contract_address ? loadingTokens.has(contract_address) : false}
-					{@const displayName = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? `${tokenInfo.name} (${tokenInfo.symbol})` : tokenInfo?.name || `Token (${contract_address?.slice(0, 10)}...)`}
-					{@const displaySymbol = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? tokenInfo.symbol : 'UNKNOWN'}
-					{#if contract_address}
-						<Tr>
-							<Td padding="0" expand>
-								<Clickable onClick={() => selectToken(contract_address)}>
-									<div class="row">
-										<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={displaySymbol} size="40px" padding="0px" />
-										<div class="column">
-											<div class="name">
-												{#if isLoadingInfo}
-													<Spinner size="16px" />
-												{:else}
-													{displayName}
-												{/if}
-											</div>
-											{#if $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN'}
-												<div class="address">{contract_address}</div>
-											{/if}
-										</div>
-									</div>
-								</Clickable>
-							</Td>
-							<Td>
-								{#if isLoadingBalance}
-									<Spinner size="16px" />
-								{:else if tokenBalance}
-									<div class="balance">
-										<div class="info">
-											<div class="amount">
-												<BalanceDisplay balance={tokenBalance.crypto} showCurrency={false} />
-												{displaySymbol}
-											</div>
-											{#if tokenBalance.fiat}
-												<div class="fiat">(<BalanceDisplay balance={tokenBalance.fiat} roundToDecimals={2} />)</div>
-											{/if}
-											{#if $debug}
-												<div class="fiat">Refresh in: {tokenCountdowns.get(contract_address) || 0} s</div>
-											{/if}
-										</div>
-										<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
-									</div>
-								{:else}
-									<div class="balance">
-										<div class="info">
-											<div class="amount">Failed to load</div>
-											<div class="fiat">(click refresh to retry)</div>
-										</div>
-										<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
-									</div>
-								{/if}
-							</Td>
-						</Tr>
-					{:else}
-						<Tr>
-							<Td padding="0" expand>
-								<Clickable onClick={() => selectToken('')}>
-									<div class="row">
-										<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt="Unknown token" size="40px" padding="0px" />
-										<div class="name">Unknown token (no contract address)</div>
-									</div>
-								</Clickable>
-							</Td>
-							<Td>
-								<div class="balance">
-									<div class="info">
-										<div class="amount">N/A</div>
-										<div class="fiat">(No contract address)</div>
-									</div>
-								</div>
-							</Td>
-						</Tr>
-					{/if}
-				{/each}
 			</Tbody>
 		</Table>
+		{#if $tokens?.length > 0}
+			<div class="bold">Tokens:</div>
+			<Table>
+				<Tbody>
+					{#each $tokens as token, index}
+						{@const { contract_address } = token}
+						{@const tokenBalance = contract_address ? tokenBalances.get(contract_address) : null}
+						{@const tokenInfo = contract_address ? tokenInfos.get(contract_address) : null}
+						{@const isLoadingInfo = contract_address ? loadingTokenInfos.has(contract_address) : false}
+						{@const isLoadingBalance = contract_address ? loadingTokens.has(contract_address) : false}
+						{@const displayName = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? `${tokenInfo.name} (${tokenInfo.symbol})` : tokenInfo?.name || `Token (${contract_address?.slice(0, 10)}...)`}
+						{@const displaySymbol = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? tokenInfo.symbol : 'UNKNOWN'}
+						{#if contract_address}
+							<Tr>
+								<Td padding="0" expand>
+									<Clickable onClick={() => selectToken(contract_address)}>
+										<div class="row">
+											<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt={displaySymbol} size="40px" padding="0px" />
+											<div class="column">
+												<div class="name">
+													{#if isLoadingInfo}
+														<Spinner size="16px" />
+													{:else}
+														{displayName}
+													{/if}
+												</div>
+												{#if $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN'}
+													<div class="address">{contract_address}</div>
+												{/if}
+											</div>
+										</div>
+									</Clickable>
+								</Td>
+								<Td>
+									{#if isLoadingBalance}
+										<Spinner size="16px" />
+									{:else if tokenBalance}
+										<div class="balance">
+											<div class="info">
+												<div class="amount">
+													<BalanceDisplay balance={tokenBalance.crypto} showCurrency={false} />
+													{displaySymbol}
+												</div>
+												{#if tokenBalance.fiat}
+													<div class="fiat">(<BalanceDisplay balance={tokenBalance.fiat} roundToDecimals={2} />)</div>
+												{/if}
+												{#if $debug}
+													<div class="fiat">Refresh in: {tokenCountdowns.get(contract_address) || 0} s</div>
+												{/if}
+											</div>
+											<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
+										</div>
+									{:else}
+										<div class="balance">
+											<div class="info">
+												<div class="amount">Failed to load</div>
+												<div class="fiat">(click refresh to retry)</div>
+											</div>
+											<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={() => refreshToken(contract_address)} />
+										</div>
+									{/if}
+								</Td>
+							</Tr>
+						{:else}
+							<Tr>
+								<Td padding="0" expand>
+									<Clickable onClick={() => selectToken('')}>
+										<div class="row">
+											<Icon img={token?.iconURL ? token.iconURL : 'modules/' + module.identifier + '/img/token.svg'} alt="Unknown token" size="40px" padding="0px" />
+											<div class="name">Unknown token (no contract address)</div>
+										</div>
+									</Clickable>
+								</Td>
+								<Td>
+									<div class="balance">
+										<div class="info">
+											<div class="amount">N/A</div>
+											<div class="fiat">(No contract address)</div>
+										</div>
+									</div>
+								</Td>
+							</Tr>
+						{/if}
+					{/each}
+				</Tbody>
+			</Table>
+		{/if}
 	{/if}
 </div>
