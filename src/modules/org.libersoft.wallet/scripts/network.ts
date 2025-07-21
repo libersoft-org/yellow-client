@@ -174,8 +174,8 @@ export function editToken(networkGuid: string, token: IToken): void {
 export let tokens = derived([selectedNetwork], ([$selectedNetwork]) => {
 	return ($selectedNetwork?.tokens || []).map(token => ({
 		guid: token.guid,
-		contract_address: token.item.contract_address,
-		iconURL: token.item.iconURL,
+		contract_address: token.item?.contract_address,
+		iconURL: token.item?.iconURL,
 	}));
 });
 

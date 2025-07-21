@@ -42,7 +42,7 @@
 	{/if}
 	<div>
 		<span class="bold">Contract Address:</span>
-		<span>{token.item.contract_address}</span>
+		<span>{token.item?.contract_address || 'Unknown'}</span>
 	</div>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />

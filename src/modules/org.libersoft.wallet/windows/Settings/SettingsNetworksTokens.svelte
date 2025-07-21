@@ -54,7 +54,7 @@
 	$effect(() => {
 		if (network?.tokens) {
 			network.tokens.forEach(token => {
-				if (token.item.contract_address) {
+				if (token.item?.contract_address) {
 					loadTokenInfo(token.item.contract_address);
 				}
 			});
@@ -72,7 +72,7 @@
 	async function delTokenDialog(token: IToken): Promise<void> {
 		tokenToDelete = token;
 		// Get token info from our loaded map
-		const contractAddress = token.item.contract_address;
+		const contractAddress = token.item?.contract_address;
 		tokenToDeleteInfo = contractAddress ? tokenInfos.get(contractAddress) : undefined;
 		await tick();
 		elDialogDel?.open();
@@ -142,7 +142,7 @@
 				</Thead>
 				<Tbody>
 					{#each network.tokens as token, i (token.guid)}
-						{@const contractAddress = token.item.contract_address}
+						{@const contractAddress = token.item?.contract_address}
 						{@const tokenInfo = contractAddress ? tokenInfos.get(contractAddress) : null}
 						{@const isLoading = contractAddress ? loadingTokenInfos.has(contractAddress) : false}
 						<TbodyTr>
@@ -151,16 +151,18 @@
 							</Td>
 							<Td expand>
 								<div class="info">
-									<Icon img={token.item.iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={contractAddress} size="30px" padding="0px" />
+									<Icon img={token.item?.iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={contractAddress} size="30px" padding="0px" />
 									<div class="details">
 										{#if isLoading}
 											<Spinner size="16px" />
 										{:else if tokenInfo}
 											<div class="name">{tokenInfo.name} ({tokenInfo.symbol})</div>
-										{:else}
+										{:else if contractAddress}
 											<div class="name">Unknown token</div>
+										{:else}
+											<div class="name">Invalid token (no contract address)</div>
 										{/if}
-										<div class="address">{contractAddress}</div>
+										<div class="address">{contractAddress || 'No contract address'}</div>
 									</div>
 								</div>
 							</Td>
