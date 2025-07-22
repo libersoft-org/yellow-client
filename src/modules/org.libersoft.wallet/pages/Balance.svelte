@@ -30,7 +30,6 @@
 	let balance = $state<ITokenData | null>(null);
 	let tokenBalances = $state(new Map<string, ITokenData>());
 	let tokenInfos = $state(new Map<string, ITokenInfo>());
-	let nftContractInfos = $state(new Map<string, { name: string; collection: string; balance: number; loading: boolean }>());
 	let isLoadingBalance = $state(false);
 	let loadingTokens = $state(new Set<string>());
 	let loadingTokenInfos = $state(new Set<string>());
@@ -40,8 +39,30 @@
 	const initializedTokens = new Set<string>();
 	let countdownInterval: ReturnType<typeof setInterval> | null = null;
 	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
+	let nftContractInfos = $state(new Map<string, { name: string; collection: string; balance: number; loading: boolean }>());
 	let lastNFTsLength = $state(0);
 	let lastTokensLength = $state(0);
+
+	/*
+	$effect(() => {
+		if (!$tokens?.length || !$selectedNetwork || !$selectedAddress || !$provider) return;
+		// Only process if tokens array actually changed in length or we have genuinely new tokens
+		if ($tokens.length !== lastTokensLength) {
+			lastTokensLength = $tokens.length;
+			const newTokens = getTokensWithContracts().filter(token => token.contract_address && !initializedTokens.has(token.contract_address));
+			if (newTokens.length > 0) {
+				console.log('Found new tokens to initialize:', newTokens.length);
+				// Mark as initialized
+				newTokens.forEach(token => {
+					if (token.contract_address) initializedTokens.add(token.contract_address);
+				});
+				// Load info and balances for new tokens
+				loadAllTokensInfo();
+				loadAllTokenBalances();
+			}
+		}
+	});
+*/
 
 	// Helper functions
 	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
@@ -68,15 +89,15 @@
 		tokenBalances.clear();
 		tokenInfos.clear();
 		loadingTokenInfos.clear();
-		nftContractInfos.clear();
-		lastNFTsLength = 0;
+		//nftContractInfos.clear();
+		//lastNFTsLength = 0;
 		lastTokensLength = 0;
 	}
 
 	function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
-			loadNFTContractInfos();
+			//loadNFTContractInfos();
 			if ($tokens?.length) {
 				loadAllTokensInfo();
 				loadAllTokenBalances();
@@ -303,13 +324,11 @@
 			balanceCountdown = refreshInterval;
 		}
 	}
-
+	/*
 	async function loadNFTContractInfos() {
 		// Load info for all configured NFT contracts
 		if (!$nfts || $nfts.length === 0) return;
-
 		console.log('Loading NFT contract infos for', $nfts.length, 'contracts');
-
 		// Set loading state for all contracts first
 		$nfts.forEach(nft => {
 			if (!nft.contract_address) return;
@@ -327,13 +346,10 @@
 			// Load all NFTs from configured contracts at once
 			const allNFTItems = await getNFTsFromConfiguredContracts();
 			console.log('Loaded all NFT items:', allNFTItems.length);
-
 			// Process results for each configured contract
 			$nfts.forEach(nft => {
 				if (!nft.contract_address) return;
-
 				const contractNFTs = allNFTItems.filter(item => item.contract_address === nft.contract_address);
-
 				if (contractNFTs.length > 0) {
 					const firstNFT = contractNFTs[0];
 					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
@@ -376,29 +392,8 @@
 		// This function is no longer used - we load contract infos individually
 		console.log('loadNFTs called but not needed');
 	}
-
-	// Watch for new tokens being added and initialize them
-	$effect(() => {
-		if (!$tokens?.length || !$selectedNetwork || !$selectedAddress || !$provider) return;
-
-		// Only process if tokens array actually changed in length or we have genuinely new tokens
-		if ($tokens.length !== lastTokensLength) {
-			lastTokensLength = $tokens.length;
-			const newTokens = getTokensWithContracts().filter(token => token.contract_address && !initializedTokens.has(token.contract_address));
-			if (newTokens.length > 0) {
-				console.log('Found new tokens to initialize:', newTokens.length);
-				// Mark as initialized
-				newTokens.forEach(token => {
-					if (token.contract_address) initializedTokens.add(token.contract_address);
-				});
-				// Load info and balances for new tokens
-				loadAllTokensInfo();
-				loadAllTokenBalances();
-			}
-		}
-	});
-
 	// Watch for configured NFT contracts changes and reload NFTs - only when nfts array changes
+
 	$effect(() => {
 		if ($nfts && $selectedNetwork && $selectedAddress && $provider) {
 			// Only reload if the number of NFT contracts actually changed
@@ -409,8 +404,7 @@
 			}
 		}
 	});
-
-	// No auto-discovery for NFTs - they come from configured store only
+	*/
 </script>
 
 <style>
@@ -456,44 +450,94 @@
 		font-size: 13px;
 	}
 
-	.balance-row {
+	.item {
 		display: flex;
 		gap: 10px;
 		padding: 10px;
-	}
-
-	.balance-row.desktop {
 		align-items: center;
 	}
 
-	.balance-row.mobile {
+	.item.mobile {
 		flex-direction: column;
-	}
-
-	.currency-info {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		padding: 10px;
-	}
-
-	.balance-info {
-		display: flex;
-		align-items: center;
-	}
-
-	.balance-row.mobile .balance-info {
-		justify-content: space-between;
-		margin-left: 50px; /* Align with currency name */
-	}
-
-	.balance-row.desktop .balance-info {
-		/* For desktop, balance info is handled separately in desktopBalanceCell */
-		display: none;
 	}
 </style>
 
-{#snippet loadingState(size = '16px')}
+{#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
+	<Tr>
+		<Td padding="0" expand>
+			{#if $debug}
+				<pre>{stringifyWithBigInt(balanceData)}</pre>
+			{/if}
+			<Clickable onClick={selectCurrency}>
+				<div class="item" class:mobile={$isMobile}>
+					<div class="currency">
+						{#if isLoadingName}
+							{@render spinner()}
+						{:else}
+							{@render currencyIcon(iconURL, name)}
+							{@render currencyNameSymbol(name, symbol, address)}
+							{#if $isMobile}
+								{@render balanceInfo(balanceData)}
+							{/if}
+						{/if}
+					</div>
+				</div>
+			</Clickable>
+		</Td>
+		{#if !$isMobile}
+			<Td>
+				<div class="balance">
+					{#if isLoadingBalance}
+						{@render spinner()}
+					{:else if balanceData}
+						{@render balanceInfo(balanceData)}
+					{:else}
+						<div class="balance">
+							<div class="info">
+								<div class="amount">Cannot retrieve balance</div>
+								<div class="fiat">(click refresh icon to retry)</div>
+							</div>
+						</div>
+					{/if}
+				</div>
+			</Td>
+		{/if}
+		<Td>
+			{#if refreshFn}
+				<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={refreshFn} />
+			{/if}
+		</Td>
+	</Tr>
+{/snippet}
+
+{#snippet balanceInfo(balanceData)}
+	<div class="balance">
+		<div class="info">
+			<div class="amount">
+				{#if balanceData?.crypto}
+					{formatBalance(balanceData.crypto)}
+				{:else}
+					{@render spinner()}
+				{/if}
+			</div>
+			{#if balanceData?.fiat}
+				<div class="fiat">{formatBalance(balanceData.fiat, 2)}</div>
+			{/if}
+			{#if $debug}
+				{#if balanceData?.timestamp}
+					<div class="fiat">Last update: {balanceData.timestamp.toLocaleTimeString()}</div>
+				{/if}
+				<!-- TODO - add countdown
+				{#if countdown > 0}
+					<div class="fiat">Refresh in: {countdown} s</div>
+				{/if}
+				-->
+			{/if}
+		</div>
+	</div>
+{/snippet}
+
+{#snippet spinner(size = '16px')}
 	<Spinner {size} />
 {/snippet}
 
@@ -501,31 +545,29 @@
 	<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
 {/snippet}
 
-{#snippet balanceInfo(balanceData, symbol = '', showCurrency = true, countdown = 0, refreshFn = null)}
-	<div class="balance">
-		<div class="info">
-			<div class="amount">
-				{#if $debug}
-					<pre>{stringifyWithBigInt(balanceData)}</pre>
-				{/if}
-				{formatBalance(balanceData.crypto)}
-			</div>
-			{#if balanceData.fiat}
-				<div class="fiat">{formatBalance(balanceData.fiat, 2)}</div>
-			{/if}
-			{#if $debug}
-				{#if balanceData.timestamp}
-					<div class="fiat">retrieved {balanceData.timestamp.toLocaleTimeString()}</div>
-				{/if}
-				{#if countdown > 0}
-					<div class="fiat">Refresh in: {countdown} s</div>
-				{/if}
+{#snippet currencyNameSymbol(name, symbol, address = null, isLoading = false)}
+	<div class="column">
+		<div class="name">
+			{#if isLoading}
+				{@render spinner()}
+			{:else if name && symbol}
+				{name} ({symbol})
+			{:else if name && !symbol}
+				{name}
+			{:else if !name && symbol}
+				{symbol}
+			{:else}
+				Unknown
 			{/if}
 		</div>
-		{#if refreshFn}
-			<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={refreshFn} />
+		{#if ($debug || (!name && !symbol)) && address}
+			<div class="address">{address}</div>
 		{/if}
 	</div>
+{/snippet}
+
+{#snippet refresh(contractAddress)}
+	<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contractAddress)} />
 {/snippet}
 
 {#snippet failedBalanceInfo(refreshFn)}
@@ -538,11 +580,12 @@
 	</div>
 {/snippet}
 
+<!--
 {#snippet nftBalanceInfo(contractInfo)}
 	<div class="balance">
 		<div class="info">
 			{#if contractInfo?.loading}
-				<div class="amount">{@render loadingState()}</div>
+				<div class="amount">{@render spinner()}</div>
 			{:else}
 				<div class="amount">Owned: {contractInfo?.balance || 0}</div>
 				<div class="fiat">{contractInfo?.collection || 'Unknown Collection'}</div>
@@ -550,158 +593,65 @@
 		</div>
 	</div>
 {/snippet}
-
-{#snippet currencyDisplay(iconURL, name, address = '', isLoading = false)}
-	<div class="column">
-		<div class="name">
-			{#if isLoading}
-				{@render loadingState()}
-			{:else}
-				{name}
-			{/if}
-		</div>
-		{#if address}
-			<div class="address">{address}</div>
-		{/if}
-	</div>
-{/snippet}
-
-{#snippet balanceRow(iconURL, symbol, name, address, balanceData = null, isLoadingBalance = false, isLoadingName = false, refreshFn = null, countdown = 0, fallbackMessage = null)}
-	<div class="balance-row" class:mobile={$isMobile} class:desktop={!$isMobile}>
-		<div class="currency-info">
-			{@render currencyIcon(iconURL, symbol)}
-			{@render currencyDisplay(iconURL, name, address, isLoadingName, address && ($debug || name.includes('UNKNOWN')))}
-		</div>
-		<div class="balance-info">
-			{#if fallbackMessage}
-				<div class="balance">
-					<div class="info">
-						<div class="amount">{fallbackMessage.title}</div>
-						<div class="fiat">{fallbackMessage.subtitle}</div>
-					</div>
-				</div>
-			{:else if isLoadingBalance}
-				{@render loadingState()}
-			{:else if balanceData}
-				{@render balanceInfo(balanceData, symbol, false, countdown, refreshFn)}
-			{:else if refreshFn}
-				{@render failedBalanceInfo(refreshFn)}
-			{/if}
-		</div>
-	</div>
-{/snippet}
-
-{#snippet desktopBalanceCell(balanceData, symbol = '', isLoadingBalance = false, refreshFn = null, countdown = 0)}
-	{#if isLoadingBalance}
-		{@render loadingState()}
-	{:else if balanceData}
-		{@render balanceInfo(balanceData, symbol, false, countdown, refreshFn)}
-	{:else}
-		{@render failedBalanceInfo(refreshFn)}
-	{/if}
-{/snippet}
+-->
 
 <div class="wallet-balance">
 	{#if $selectedNetwork && $selectedAddress}
 		<Table>
 			<Thead>
 				<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
-					{#if $isMobile}
-						<Th>Currency</Th>
-					{:else}
-						<Th>Currency</Th>
+					<Th>Currency</Th>
+					{#if !$isMobile}
 						<Th>Balance</Th>
 					{/if}
+					<Th></Th>
 				</TheadTr>
 			</Thead>
 			<Tbody>
-				<Tr>
-					{#if $isMobile}
-						<Td padding="0" expand>
-							<Clickable onClick={selectCurrency}>
-								{@render balanceRow($selectedNetwork?.currency?.iconURL, $selectedNetwork.currency.symbol || '?', $selectedNetwork.currency.symbol || '?', '', balance, isLoadingBalance, false, refreshBalance, balanceCountdown)}
-							</Clickable>
-						</Td>
-					{:else}
-						<Td padding="0" expand>
-							<Clickable onClick={selectCurrency}>
-								{@render balanceRow($selectedNetwork?.currency?.iconURL, $selectedNetwork.currency.symbol || '?', $selectedNetwork.currency.symbol || '?', '', null, false, false, null, 0)}
-							</Clickable>
-						</Td>
-						<Td>
-							{@render desktopBalanceCell(balance, '', isLoadingBalance, refreshBalance, balanceCountdown)}
-						</Td>
-					{/if}
-				</Tr>
+				{@render itemRow($selectedNetwork?.currency?.iconURL, null, $selectedNetwork?.currency?.symbol, null, balance, false, isLoadingBalance, refreshBalance)}
 			</Tbody>
 		</Table>
+
 		{#if $tokens?.length > 0}
 			<Table>
 				<Thead>
 					<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
-						{#if $isMobile}
-							<Th>Token</Th>
-						{:else}
-							<Th>Token</Th>
+						<Th>Token</Th>
+						{#if !$isMobile}
 							<Th>Balance</Th>
 						{/if}
+						<Th></Th>
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each $tokens as token, index}
-						{@const { contract_address } = token}
-						{@const tokenBalance = contract_address ? tokenBalances.get(contract_address) : null}
-						{@const tokenInfo = contract_address ? tokenInfos.get(contract_address) : null}
-						{@const isLoadingInfo = contract_address ? loadingTokenInfos.has(contract_address) : false}
-						{@const isLoadingBalance = contract_address ? loadingTokens.has(contract_address) : false}
-						{@const displayName = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? `${tokenInfo.name} (${tokenInfo.symbol})` : tokenInfo?.name || `Token (${contract_address?.slice(0, 10)}...)`}
-						{@const displaySymbol = tokenInfo && tokenInfo.symbol !== 'UNKNOWN' ? tokenInfo.symbol : 'UNKNOWN'}
-						{#if contract_address}
-							<Tr>
-								{#if $isMobile}
-									<Td padding="0" expand>
-										<Clickable onClick={() => selectToken(contract_address)}>
-											{@render balanceRow(token?.iconURL, displaySymbol, displayName, $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN' ? contract_address : '', tokenBalance, isLoadingBalance, isLoadingInfo, () => refreshToken(contract_address), tokenCountdowns.get(contract_address) || 0)}
-										</Clickable>
-									</Td>
-								{:else}
-									<Td padding="0" expand>
-										<Clickable onClick={() => selectToken(contract_address)}>
-											{@render balanceRow(token?.iconURL, displaySymbol, displayName, $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN' ? contract_address : '', null, false, isLoadingInfo, null, 0)}
-										</Clickable>
-									</Td>
-									<Td>
-										{@render desktopBalanceCell(tokenBalance, displaySymbol, isLoadingBalance, () => refreshToken(contract_address), tokenCountdowns.get(contract_address) || 0)}
-									</Td>
-								{/if}
-							</Tr>
-						{:else}
-							<Tr>
-								{#if $isMobile}
-									<Td padding="0" expand>
-										{@render balanceRow(token?.iconURL, 'Unknown token', 'Unknown token (no contract address)', null, false, false, null, 0, { title: 'N/A', subtitle: '(No contract address)' })}
-									</Td>
-								{:else}
-									<Td padding="0" expand>
-										{@render balanceRow(token?.iconURL, 'Unknown token', 'Unknown token (no contract address)', '', null, false, false, null, 0)}
-									</Td>
-									<Td>
-										<div class="balance">
-											<div class="info">
-												<div class="amount">N/A</div>
-												<div class="fiat">(No contract address)</div>
-											</div>
-										</div>
-									</Td>
-								{/if}
-							</Tr>
+					{#each $tokens as t, index}
+						{@const tokenInfo = t.contract_address ? tokenInfos.get(t.contract_address) : null}
+						{@const tokenBalance = t.contract_address ? tokenBalances.get(t.contract_address) : null}
+						{@const isLoadingInfo = t.contract_address ? loadingTokenInfos.has(t.contract_address) : false}
+						{@const isLoadingBalance = t.contract_address ? loadingTokens.has(t.contract_address) : false}
+						{#if $debug}
+							<pre>{stringifyWithBigInt(t)}</pre>
+							<pre>{stringifyWithBigInt(tokenInfo)}</pre>
+							<pre>{stringifyWithBigInt(tokenBalance)}</pre>
+							<pre>{stringifyWithBigInt(isLoadingInfo)}</pre>
+							<pre>{stringifyWithBigInt(isLoadingBalance)}</pre>
 						{/if}
+						<!--
+								iconURL,
+								name,
+								symbol,
+								address,
+								balanceData: ITokenData | null = null,
+								isLoadingName = false,
+								isLoadingBalance = false,
+								refreshFn: (() => void) | null = null)
+							-->
+						{@render itemRow(t.iconURL, tokenInfo?.name, tokenInfo?.symbol, tokenBalance, isLoadingInfo, isLoadingBalance, () => refreshToken(t.contract_address))}
 					{/each}
 				</Tbody>
 			</Table>
-		{:else}
-			No tokens found.
 		{/if}
+		<!--
 		{#if $nfts && $nfts.length > 0}
 			<Table>
 				<Thead>
@@ -718,7 +668,7 @@
 								<Clickable onClick={() => selectNFT('')}>
 									<div class="currency-info">
 										{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}
-										{@render currencyDisplay('modules/' + module.identifier + '/img/nft.svg', contractInfo?.loading ? 'Loading...' : contractInfo?.name || 'Unknown NFT', nft.contract_address, contractInfo?.loading, $debug)}
+										{@render currencyNameSymbol('modules/' + module.identifier + '/img/nft.svg', contractInfo?.loading ? 'Loading...' : contractInfo?.name || 'Unknown NFT', nft.contract_address, contractInfo?.loading, $debug)}
 									</div>
 								</Clickable>
 							</Td>
@@ -730,5 +680,6 @@
 				</Tbody>
 			</Table>
 		{/if}
+-->
 	{/if}
 </div>
