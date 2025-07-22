@@ -13,7 +13,7 @@ export function order(dict: { [key: string]: { order?: number; id: number | stri
 	return result;
 }
 
-export function getGuid(length = 40) {
+export function getGuid(length = 40): string {
 	let result = '';
 	while (result.length < length) result += Math.random().toString(36);
 	return result;
