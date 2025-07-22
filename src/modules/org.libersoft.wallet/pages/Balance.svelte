@@ -488,19 +488,6 @@
 	}
 </style>
 
-{#snippet nftBalanceInfo(contractInfo)}
-	<div class="balance">
-		<div class="info">
-			{#if contractInfo?.loading}
-				<div class="amount">{@render loadingState()} Loading...</div>
-			{:else}
-				<div class="amount">Owned: {contractInfo?.balance || 0}</div>
-				<div class="fiat">{contractInfo?.collection || 'Unknown Collection'}</div>
-			{/if}
-		</div>
-	</div>
-{/snippet}
-
 {#snippet currencyIcon(iconURL, symbol, size = '40px')}
 	<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
 {/snippet}
@@ -541,6 +528,19 @@
 			<div class="fiat">(click refresh to retry)</div>
 		</div>
 		<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={refreshFn} />
+	</div>
+{/snippet}
+
+{#snippet nftBalanceInfo(contractInfo)}
+	<div class="balance">
+		<div class="info">
+			{#if contractInfo?.loading}
+				<div class="amount">{@render loadingState()}</div>
+			{:else}
+				<div class="amount">Owned: {contractInfo?.balance || 0}</div>
+				<div class="fiat">{contractInfo?.collection || 'Unknown Collection'}</div>
+			{/if}
+		</div>
 	</div>
 {/snippet}
 
@@ -603,7 +603,7 @@
 			<Thead>
 				<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
 					{#if $isMobile}
-						<Th>Currency & Balance</Th>
+						<Th>Currency</Th>
 					{:else}
 						<Th>Currency</Th>
 						<Th>Balance</Th>
@@ -738,8 +738,6 @@
 					{/each}
 				</Tbody>
 			</Table>
-		{:else}
-			<div style="padding: 10px;">No NFT contracts configured. Add NFT contracts in Settings → Networks → NFTs.</div>
 		{/if}
 	{/if}
 </div>
