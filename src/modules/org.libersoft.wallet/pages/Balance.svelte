@@ -420,14 +420,6 @@
 		gap: 10px;
 	}
 
-	.category {
-		font-weight: bold;
-		padding: 10px;
-		border-radius: 10px;
-		background-color: var(--secondary-background);
-		color: var(--secondary-foreground);
-	}
-
 	.column {
 		display: flex;
 		flex-direction: column;

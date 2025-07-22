@@ -1155,109 +1155,29 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 			console.warn('Failed to load NFTs from Polygon API, falling back to contract scanning:', error);
 		}
 	}
-
 	// Get configured NFT contracts from network settings
 	const configuredNFTs = get(nftStore) || [];
-	let knownNFTContracts: string[] = [];
-
-	// Extract contract addresses from configured NFTs
-	configuredNFTs.forEach(nft => {
-		if (nft.contract_address) {
-			knownNFTContracts.push(nft.contract_address);
-		}
-	});
-
-	console.log('🔧 Using configured NFT contracts:', knownNFTContracts);
-
-	// Fallback: Add some default contracts if none are configured
-	if (knownNFTContracts.length === 0) {
-		console.log('⚠️ No NFT contracts configured, using fallback list');
-
-		// For testing with your specific address, let's add some contracts that might contain NFTs
-		if (addr.address.toLowerCase() === '0x5a0255103c7469384dc462af262cc7edddfed5b0') {
-			console.log('🎯 Loading NFTs for known address - ONLY testing your specific contract');
-
-			if (net.chainID === 137) {
-				knownNFTContracts = [
-					// ONLY YOUR CONFIRMED NFT CONTRACT
-					'0x366B4C4F5f602eF5E18e3F3a15052db8841de01E', // Your confirmed NFT contract
-				];
-			}
-		} else {
-			switch (net.chainID) {
-				case 1: // Ethereum Mainnet
-					knownNFTContracts = [
-						'0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', // Bored Ape Yacht Club
-						'0x60E4d786628Fea6478F785A6d7e704777c86a7c6', // Mutant Ape Yacht Club
-						'0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e', // Doodles
-						'0x49cF6f5d44E70224e2E23fDcdd2C053F30aDA28B', // CloneX
-						'0xED5AF388653567Af2F388E6224dC7C4b3241C544', // Azuki
-						'0x23581767a106ae21c074b2276D25e5C3e136a68b', // Moonbirds
-						'0xb7F7F6C52F2e2fdb1963Eab30438024864c313F6', // Wrapped Cryptokitties
-						'0x1A92f7381B9F03921564a437210bB9396471050C', // Cool Cats
-						'0x79FCDEF22feeD20eDDacbB2587640e45491b757f', // Mfers
-						'0x34d85c9CDeB23FA97cb08333b511ac86E1C4E258', // Otherdeeds for Otherside
-						'0xa3AEe8BcE55BEeA1951EF834b99f3Ac60d1ABeeB', // VeeFriends
-						'0x5Af0D9827E0c53E4799BB226655A1de152A425a5', // Milady Maker
-						'0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85', // Ethereum Name Service
-						'0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe', // Unstoppable Domains (.crypto)
-					];
-					break;
-				case 137: // Polygon Mainnet
-					knownNFTContracts = [];
-					break;
-				case 56: // BSC Mainnet
-					knownNFTContracts = [
-						'0xA8c2B8eec3d368C0253ad3dae65a5F2BBB89c929', // CryptoBlades Characters
-						'0x5558C63D5bC7a063C30Fd5a57F59bcF4eE7b8649', // PancakeBunnies
-					];
-					break;
-				case 42161: // Arbitrum One
-					knownNFTContracts = [
-						'0x17207323A459D4542D5b8cdf54fEE8c6c5c8Cd42', // Arbibots
-						'0x8a267A5b38a0F29d414F83dE59a49b2bb0BD3b7A', // GMX Rewards
-					];
-					break;
-				case 10: // Optimism
-					knownNFTContracts = [
-						'0xFdf12D1F85b5082877A6E070524f50F6c84FAa6b', // Optimistic Bunnies
-					];
-					break;
-				case 11155111: // Sepolia Testnet
-					knownNFTContracts = [
-						// Add testnet NFT contracts if you know any
-						'0x779877A7B0D9E8603169DdbD7836e478b4624789', // Example testnet NFT
-					];
-					break;
-				case 5: // Goerli Testnet (deprecated but might still be used)
-					knownNFTContracts = [
-						'0x779877A7B0D9E8603169DdbD7836e478b4624789', // Example testnet NFT
-					];
-					break;
-				default:
-					console.log(`No default NFT contracts for chain ID ${net.chainID}`);
-					// For unknown chains, try some common contract addresses
-					knownNFTContracts = [];
-			}
-		}
+	console.log('🔧 Using configured NFT contracts:', configuredNFTs.length);
+	// If no NFT contracts are configured, return empty array
+	if (configuredNFTs.length === 0) {
+		console.log('⚠️ No NFT contracts configured. Please add NFT contract addresses in wallet settings.');
+		return [];
 	}
-
 	const nfts: INFTItem[] = [];
-
 	console.log('🔍 Starting NFT scan for:', addr.address);
-	console.log('📋 Known contracts to check:', knownNFTContracts.length);
+	console.log('📋 Configured contracts to check:', configuredNFTs.length);
 	console.log('🌐 Chain:', net.chainID, '(' + net.name + ')');
-
 	try {
-		// Check each known contract
-		for (const contractAddress of knownNFTContracts) {
+		// Check each configured contract
+		for (const configuredNFT of configuredNFTs) {
+			const contractAddress = configuredNFT.contract_address;
+			if (!contractAddress) continue;
 			console.log(`🔎 Checking contract: ${contractAddress}`);
 			try {
 				const contract = new Contract(contractAddress, erc721ABI, p);
-
-				// Special handling for your specific contract (ERC-1155)
-				if (contractAddress.toLowerCase() === '0x366b4c4f5f602ef5e18e3f3a15052db8841de01e') {
-					console.log(`🎯 SPECIAL HANDLING for your NFT contract (ERC-1155)!`);
+				// Special handling for ERC-1155 contracts if configured token_id is provided
+				if (configuredNFT.token_id) {
+					console.log(`🎯 SPECIAL HANDLING for NFT contract (ERC-1155) with configured token_id!`);
 
 					// First, let's try to call some basic functions to see if contract exists
 					try {
@@ -1274,22 +1194,21 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 						console.warn(`    ❌ Could not get contract symbol:`, error instanceof Error ? error.message : error);
 					}
 
-					// Try ERC-1155 approach first
+					// Try ERC-1155 approach first with configured token_id
 					console.log(`🎯 Trying ERC-1155 approach for this contract`);
-					const knownTokenId = '96931881880619166233561556717900660211897371081598974059752591339469234241537';
-					console.log(`    🎯 Testing known token ID: ${knownTokenId}`);
+					console.log(`    🎯 Using configured token ID: ${configuredNFT.token_id}`);
 
 					try {
 						// Create ERC-1155 contract instance
 						const erc1155Contract = new Contract(contractAddress, erc1155ABI, p);
 
 						// Check balance for specific token ID (ERC-1155 style)
-						const balance1155 = await erc1155Contract.balanceOf(addr.address, knownTokenId);
+						const balance1155 = await erc1155Contract.balanceOf(addr.address, configuredNFT.token_id);
 						const balance1155Num = Number(balance1155);
-						console.log(`    📊 ERC-1155 balance for token ${knownTokenId}: ${balance1155Num}`);
+						console.log(`    📊 ERC-1155 balance for token ${configuredNFT.token_id}: ${balance1155Num}`);
 
 						if (balance1155Num > 0) {
-							console.log(`    ✅ SUCCESS! You own ${balance1155Num} of ERC-1155 token ${knownTokenId}!`);
+							console.log(`    ✅ SUCCESS! You own ${balance1155Num} of ERC-1155 token ${configuredNFT.token_id}!`);
 
 							// Get collection info from ERC-1155 contract
 							let collectionName = '';
@@ -1304,7 +1223,7 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 
 							// Get metadata using ERC-1155 uri() function
 							try {
-								const tokenURI = await erc1155Contract.uri(knownTokenId);
+								const tokenURI = await erc1155Contract.uri(configuredNFT.token_id);
 								console.log(`    🔗 ERC-1155 Token URI:`, tokenURI);
 
 								// Fetch metadata
@@ -1312,8 +1231,8 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 
 								const nftItem: INFTItem = {
 									contract_address: contractAddress,
-									token_id: knownTokenId,
-									name: metadata.name || `Baby Eggs #${knownTokenId}`,
+									token_id: configuredNFT.token_id,
+									name: metadata.name || `${configuredNFT.name || 'NFT'} #${configuredNFT.token_id}`,
 									description: metadata.description,
 									image: metadata.image,
 									animation_url: metadata.animation_url,
@@ -1332,8 +1251,8 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 								// Add basic NFT item without metadata
 								const nftItem: INFTItem = {
 									contract_address: contractAddress,
-									token_id: knownTokenId,
-									name: `Baby Eggs #${knownTokenId}`,
+									token_id: configuredNFT.token_id,
+									name: `${configuredNFT.name || 'NFT'} #${configuredNFT.token_id}`,
 									description: 'ERC-1155 NFT',
 									collection_name: collectionName,
 									collection_symbol: collectionSymbol,
@@ -1343,41 +1262,34 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 								console.log(`    🎉 Added basic ERC-1155 NFT without metadata`);
 							}
 						} else {
-							console.log(`    ⚪ No balance for ERC-1155 token ${knownTokenId}`);
+							console.log(`    ⚪ No balance for ERC-1155 token ${configuredNFT.token_id}`);
 						}
 					} catch (erc1155Error) {
 						console.warn(`    ⚠️ ERC-1155 approach failed, trying ERC-721:`, erc1155Error instanceof Error ? erc1155Error.message : erc1155Error);
-
 						// Fallback to ERC-721 approach
 						try {
-							const owner = await contract.ownerOf(knownTokenId);
-							console.log(`    🔍 ERC-721 Token ${knownTokenId} owner: ${owner}`);
+							const owner = await contract.ownerOf(configuredNFT.token_id);
+							console.log(`    🔍 ERC-721 Token ${configuredNFT.token_id} owner: ${owner}`);
 							console.log(`    🔍 Your address: ${addr.address}`);
 							console.log(`    🔍 Addresses match: ${owner.toLowerCase() === addr.address.toLowerCase()}`);
-
 							if (owner.toLowerCase() === addr.address.toLowerCase()) {
-								console.log(`    ✅ SUCCESS! You own ERC-721 token ${knownTokenId}!`);
-								const nftItem = await processNFTToken(contract, contractAddress, knownTokenId);
+								console.log(`    ✅ SUCCESS! You own ERC-721 token ${configuredNFT.token_id}!`);
+								const nftItem = await processNFTToken(contract, contractAddress, configuredNFT.token_id);
 								if (nftItem) {
 									nfts.push(nftItem);
 									console.log(`    🎉 Successfully added your ERC-721 NFT!`);
 								}
-							} else {
-								console.log(`    ❌ Token ${knownTokenId} is owned by someone else: ${owner}`);
-							}
+							} else console.log(`    ❌ Token ${configuredNFT.token_id} is owned by someone else: ${owner}`);
 						} catch (ownerError) {
 							console.warn(`    ❌ Both ERC-1155 and ERC-721 approaches failed:`, ownerError instanceof Error ? ownerError.message : ownerError);
 						}
 					}
-
 					// Skip the normal balanceOf() flow for this contract
 					continue;
 				}
-
 				// Check if user owns any NFTs from this contract (normal flow for other contracts)
 				let balance: any;
 				let balanceNum: number;
-
 				try {
 					balance = await contract.balanceOf(addr.address);
 					balanceNum = Number(balance);
@@ -1385,23 +1297,18 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 					console.warn(`  ⚠️ balanceOf() failed for ${contractAddress}:`, balanceError instanceof Error ? balanceError.message : balanceError);
 					continue; // Skip this contract if balanceOf fails
 				}
-
 				console.log(`  📊 Balance for ${contractAddress}: ${balanceNum}`);
-
 				if (balanceNum > 0) {
 					console.log(`  ✅ Found ${balanceNum} NFTs in contract ${contractAddress}!`);
 					// Get token IDs owned by the user
 					let foundTokens = 0;
-
 					// Method 1: Try tokenOfOwnerByIndex (enumerable contracts)
 					try {
 						for (let i = 0; i < Math.min(balanceNum, 10); i++) {
 							try {
 								const tokenId = await contract.tokenOfOwnerByIndex(addr.address, i);
 								const tokenIdStr = tokenId.toString();
-
 								console.log(`    🎨 Processing NFT ${contractAddress} #${tokenIdStr} (method 1)`);
-
 								const nftItem = await processNFTToken(contract, contractAddress, tokenIdStr);
 								if (nftItem) {
 									nfts.push(nftItem);
@@ -1413,11 +1320,9 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 						}
 					} catch (enumError) {
 						console.warn(`  ⚠️ Contract ${contractAddress} doesn't support tokenOfOwnerByIndex, trying alternative method...`);
-
 						// Method 2: Try some common token ID patterns
 						console.log(`    🔍 Trying common token ID patterns...`);
 						const commonPatterns = [1, 2, 3, 4, 5, 10, 100, 1000];
-
 						for (const tokenId of commonPatterns) {
 							try {
 								const owner = await contract.ownerOf(tokenId);
@@ -1434,7 +1339,6 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 							}
 						}
 					}
-
 					console.log(`    📊 Successfully processed ${foundTokens} NFTs from contract ${contractAddress}`);
 				} else {
 					console.log(`  ⚪ No NFTs found in contract ${contractAddress} via balanceOf()`);
@@ -1443,9 +1347,7 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 				console.warn(`  ❌ Error checking NFT contract ${contractAddress}:`, error instanceof Error ? error.message : error);
 			}
 		}
-
 		console.log(`🎯 Found ${nfts.length} total NFTs for address ${addr.address} on chain ${net.chainID}`);
-
 		// Add debugging helper to window for testing
 		if (typeof window !== 'undefined') {
 			(window as any).addNFTContract = (contractAddress: string) => {
@@ -1462,7 +1364,6 @@ export async function getNFTsForAddress(): Promise<INFTItem[]> {
 			};
 			console.log('💡 TIP: Use window.addNFTContract("0x...") to test specific contracts manually');
 		}
-
 		return nfts;
 	} catch (error) {
 		console.error('Error loading NFTs:', error);
