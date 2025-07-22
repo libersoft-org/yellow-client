@@ -86,7 +86,7 @@
 				{@const symbol = params.contractAddress ? tokenInfo?.symbol || 'UNKNOWN' : $selectedNetwork?.currency.symbol || ''}
 				{@const correctDecimals = tokenDecimals || 18}
 				{@const amountBalance = { amount: params.amount, currency: symbol, decimals: correctDecimals }}
-				<span class="bold">{formatBalance(amountBalance)} {symbol}</span>
+				<span class="bold">{formatBalance(amountBalance)}</span>
 			{/if}
 		</div>
 		<div>Transaction fee: <span class="bold">{formatBalance({ amount: params.fee, currency: $selectedNetwork?.currency.symbol || '', decimals: 18 })} {$selectedNetwork?.currency.symbol || ''}</span></div>

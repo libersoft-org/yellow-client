@@ -9,9 +9,8 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { getBalance, getTokenBalanceByAddress, getBatchTokensInfo, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { getBalance, getTokenBalanceByAddress, getBatchTokensInfo, formatBalance, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import { formatUnits, parseUnits } from 'ethers';
-	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
@@ -352,10 +351,10 @@
 					<Td bold>Current balance:</Td>
 					<Td>
 						{#if currentBalanceData && currency}
-							<div><BalanceDisplay balance={currentBalanceData} showCurrency={false} /> {selectedCurrencySymbol}</div>
+							<div>{formatBalance(currentBalanceData)}</div>
 							{#if currency?.contract_address}
 								{#if nativeBalanceData}
-									<div><BalanceDisplay balance={nativeBalanceData} /></div>
+									<div>{formatBalance(nativeBalanceData)}</div>
 								{:else}
 									<Spinner size="12px" />
 								{/if}
@@ -374,13 +373,13 @@
 							<div>-</div>
 						{:else if !currency?.contract_address}
 							{#if remainingBalanceObj}
-								<div><BalanceDisplay balance={remainingBalanceObj} showCurrency={false} /> {selectedCurrencySymbol}</div>
+								<div>{formatBalance(remainingBalanceObj)}</div>
 							{:else}
 								<Spinner size="12px" />
 							{/if}
 						{:else if remainingTokenBalanceObj && remainingNativeBalanceObj}
-							<div><BalanceDisplay balance={remainingTokenBalanceObj} showCurrency={false} /> {selectedCurrencySymbol}</div>
-							<div><BalanceDisplay balance={remainingNativeBalanceObj} /></div>
+							<div>{formatBalance(remainingTokenBalanceObj)}</div>
+							<div>{formatBalance(remainingNativeBalanceObj)}</div>
 						{:else}
 							<Spinner size="12px" />
 						{/if}

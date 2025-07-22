@@ -4,6 +4,7 @@ import { selectedNetwork, nfts as nftStore } from '@/org.libersoft.wallet/script
 import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 import { tokens } from '@/org.libersoft.wallet/scripts/network.ts';
 import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
+import { round } from 'lodash';
 export interface IBalance {
 	amount: bigint;
 	currency: string;
@@ -635,25 +636,13 @@ async function exchangeRates(currency: string = 'USD'): Promise<any> {
 	}
 }
 
-export function formatBalance(balance: IBalance | undefined, locale?: string, maximumFractionDigits?: number): string | undefined {
-	if (!balance) return undefined;
-	// Convert BigInt to string using formatUnits - preserves all decimal places
-	let numericValue = formatUnits(balance.amount, balance.decimals || 18);
-	// If maximumFractionDigits is specified, truncate decimal places
-	if (maximumFractionDigits !== undefined) {
-		const number = parseFloat(numericValue);
-		numericValue = number.toFixed(maximumFractionDigits);
-	}
-	// Split into integer and decimal parts
-	const [integerPart, decimalPart] = numericValue.split('.');
-	// Use Intl.NumberFormat only for integer part (for thousands separators)
-	const formatter = new Intl.NumberFormat(locale || navigator.language, { useGrouping: true });
-	const formattedInteger = formatter.format(parseInt(integerPart));
-	// Get local decimal separator
-	const decimalSeparator = new Intl.NumberFormat(locale || navigator.language).formatToParts(1.1).find(part => part.type === 'decimal')?.value || '.';
-	// Join integer and decimal parts with local separator
-	if (decimalPart && decimalPart !== '0'.repeat(decimalPart.length)) return formattedInteger + decimalSeparator + decimalPart;
-	else return formattedInteger;
+export function formatBalance(balance: IBalance, roundToDecimals: number = -1, showCurrency: boolean = true): string | undefined {
+	if (balance.amount === undefined || balance.amount === null) return undefined;
+	let formatedAmount = formatUnits(balance.amount, balance.decimals !== undefined ? balance.decimals : 18);
+	const decimals = balance.decimals !== undefined && balance.decimals !== null ? balance.decimals : 18;
+	roundToDecimals = roundToDecimals > -1 ? roundToDecimals : decimals;
+	// TODO: Intl.NumberFormat supports maximumFractionDigits only up to 20, so we need to handle larger fraction numbers differently
+	return Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: roundToDecimals }).format(formatedAmount as Intl.StringNumericLiteral) + (showCurrency ? ' ' + balance.currency : '');
 }
 
 // NEW: Batch token balances by contract addresses (not symbols)

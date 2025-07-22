@@ -2,9 +2,9 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
+	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.ts';
 	import { selectedNetwork, tokens, nfts } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, type IBalance, type INFTItem } from '@/org.libersoft.wallet/scripts/balance.ts';
-	import BalanceDisplay from '@/org.libersoft.wallet/components/BalanceDisplay.svelte';
+	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from '@/org.libersoft.wallet/scripts/balance.ts';
 	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -97,6 +97,11 @@
 	onMount(() => {
 		initializeAllBalances();
 		countdownInterval = setInterval(updateCountdowns, 1000);
+		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -99999999999999999999999999999999999999999123456789123456789n, decimals: 18, currency: 'ETH' }));
+		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -1000n, decimals: 18, currency: 'ETH' }));
+		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789n, decimals: 0, currency: 'ETH' }, 6));
+		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 0n, decimals: 18, currency: 'ETH' }, 6));
+		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789123456789123456789123456789123456789n, decimals: 40, currency: 'ETH' }, 2));
 	});
 
 	onDestroy(() => {
@@ -423,13 +428,6 @@
 		color: var(--secondary-foreground);
 	}
 
-	.row {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		padding: 10px;
-	}
-
 	.column {
 		display: flex;
 		flex-direction: column;
@@ -466,27 +464,46 @@
 		font-size: 13px;
 	}
 
-	/* Mobile responsive styles */
-	.mobile-balance-row {
+	.balance-row {
 		display: flex;
-		flex-direction: column;
 		gap: 10px;
 		padding: 10px;
 	}
 
-	.mobile-currency-info {
+	.balance-row.desktop {
+		align-items: center;
+	}
+
+	.balance-row.mobile {
+		flex-direction: column;
+	}
+
+	.currency-info {
 		display: flex;
 		align-items: center;
 		gap: 10px;
+		padding: 10px;
 	}
 
-	.mobile-balance-info {
+	.balance-info {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
+	}
+
+	.balance-row.mobile .balance-info {
+		justify-content: space-between;
 		margin-left: 50px; /* Align with currency name */
 	}
+
+	.balance-row.desktop .balance-info {
+		/* For desktop, balance info is handled separately in desktopBalanceCell */
+		display: none;
+	}
 </style>
+
+{#snippet loadingState(size = '16px')}
+	<Spinner {size} />
+{/snippet}
 
 {#snippet currencyIcon(iconURL, symbol, size = '40px')}
 	<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
@@ -496,11 +513,13 @@
 	<div class="balance">
 		<div class="info">
 			<div class="amount">
-				<BalanceDisplay balance={balanceData.crypto} {showCurrency} />
-				{#if symbol && !showCurrency}{symbol}{/if}
+				{#if $debug}
+					<pre>{stringifyWithBigInt(balanceData)}</pre>
+				{/if}
+				{formatBalance(balanceData.crypto)}
 			</div>
 			{#if balanceData.fiat}
-				<div class="fiat">(<BalanceDisplay balance={balanceData.fiat} roundToDecimals={2} />)</div>
+				<div class="fiat">{formatBalance(balanceData.fiat, 2)}</div>
 			{/if}
 			{#if $debug}
 				{#if balanceData.timestamp}
@@ -515,10 +534,6 @@
 			<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={refreshFn} />
 		{/if}
 	</div>
-{/snippet}
-
-{#snippet loadingState(size = '16px')}
-	<Spinner {size} />
 {/snippet}
 
 {#snippet failedBalanceInfo(refreshFn)}
@@ -544,7 +559,7 @@
 	</div>
 {/snippet}
 
-{#snippet currencyDisplay(iconURL, name, address = '', isLoading = false, showDebugInfo = false)}
+{#snippet currencyDisplay(iconURL, name, address = '', isLoading = false)}
 	<div class="column">
 		<div class="name">
 			{#if isLoading}
@@ -556,34 +571,31 @@
 		{#if address}
 			<div class="address">{address}</div>
 		{/if}
-		{#if showDebugInfo}
-			<div class="address">Contract address</div>
-		{/if}
 	</div>
 {/snippet}
 
-{#snippet mobileBalanceRow(iconURL, symbol, name, address, balanceData, isLoadingBalance, refreshFn, countdown = 0)}
-	<div class="mobile-balance-row">
-		<div class="mobile-currency-info">
+{#snippet balanceRow(iconURL, symbol, name, address, balanceData = null, isLoadingBalance = false, isLoadingName = false, refreshFn = null, countdown = 0, fallbackMessage = null)}
+	<div class="balance-row" class:mobile={$isMobile} class:desktop={!$isMobile}>
+		<div class="currency-info">
 			{@render currencyIcon(iconURL, symbol)}
-			{@render currencyDisplay(iconURL, name, address, false, address && ($debug || name.includes('UNKNOWN')))}
+			{@render currencyDisplay(iconURL, name, address, isLoadingName, address && ($debug || name.includes('UNKNOWN')))}
 		</div>
-		<div class="mobile-balance-info">
-			{#if isLoadingBalance}
+		<div class="balance-info">
+			{#if fallbackMessage}
+				<div class="balance">
+					<div class="info">
+						<div class="amount">{fallbackMessage.title}</div>
+						<div class="fiat">{fallbackMessage.subtitle}</div>
+					</div>
+				</div>
+			{:else if isLoadingBalance}
 				{@render loadingState()}
 			{:else if balanceData}
 				{@render balanceInfo(balanceData, symbol, false, countdown, refreshFn)}
-			{:else}
+			{:else if refreshFn}
 				{@render failedBalanceInfo(refreshFn)}
 			{/if}
 		</div>
-	</div>
-{/snippet}
-
-{#snippet desktopBalanceRow(iconURL, symbol, name, address, isLoadingName = false)}
-	<div class="row">
-		{@render currencyIcon(iconURL, symbol)}
-		{@render currencyDisplay(iconURL, name, address, isLoadingName, address && ($debug || name.includes('UNKNOWN')))}
 	</div>
 {/snippet}
 
@@ -615,13 +627,13 @@
 					{#if $isMobile}
 						<Td padding="0" expand>
 							<Clickable onClick={selectCurrency}>
-								{@render mobileBalanceRow($selectedNetwork?.currency?.iconURL, $selectedNetwork.currency.symbol || '?', $selectedNetwork.currency.symbol || '?', '', balance, isLoadingBalance, refreshBalance, balanceCountdown)}
+								{@render balanceRow($selectedNetwork?.currency?.iconURL, $selectedNetwork.currency.symbol || '?', $selectedNetwork.currency.symbol || '?', '', balance, isLoadingBalance, false, refreshBalance, balanceCountdown)}
 							</Clickable>
 						</Td>
 					{:else}
 						<Td padding="0" expand>
 							<Clickable onClick={selectCurrency}>
-								{@render desktopBalanceRow($selectedNetwork?.currency?.iconURL, $selectedNetwork.currency.symbol || '?', $selectedNetwork.currency.symbol || '?', '')}
+								{@render balanceRow($selectedNetwork?.currency?.iconURL, $selectedNetwork.currency.symbol || '?', $selectedNetwork.currency.symbol || '?', '', null, false, false, null, 0)}
 							</Clickable>
 						</Td>
 						<Td>
@@ -657,13 +669,13 @@
 								{#if $isMobile}
 									<Td padding="0" expand>
 										<Clickable onClick={() => selectToken(contract_address)}>
-											{@render mobileBalanceRow(token?.iconURL, displaySymbol, displayName, $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN' ? contract_address : '', tokenBalance, isLoadingBalance, () => refreshToken(contract_address), tokenCountdowns.get(contract_address) || 0)}
+											{@render balanceRow(token?.iconURL, displaySymbol, displayName, $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN' ? contract_address : '', tokenBalance, isLoadingBalance, isLoadingInfo, () => refreshToken(contract_address), tokenCountdowns.get(contract_address) || 0)}
 										</Clickable>
 									</Td>
 								{:else}
 									<Td padding="0" expand>
 										<Clickable onClick={() => selectToken(contract_address)}>
-											{@render desktopBalanceRow(token?.iconURL, displaySymbol, displayName, $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN' ? contract_address : '', isLoadingInfo)}
+											{@render balanceRow(token?.iconURL, displaySymbol, displayName, $debug || !tokenInfo || tokenInfo.symbol === 'UNKNOWN' ? contract_address : '', null, false, isLoadingInfo, null, 0)}
 										</Clickable>
 									</Td>
 									<Td>
@@ -675,24 +687,11 @@
 							<Tr>
 								{#if $isMobile}
 									<Td padding="0" expand>
-										<div class="mobile-balance-row">
-											<div class="mobile-currency-info">
-												{@render currencyIcon(token?.iconURL, 'Unknown token')}
-												<div class="name">Unknown token (no contract address)</div>
-											</div>
-											<div class="mobile-balance-info">
-												<div class="balance">
-													<div class="info">
-														<div class="amount">N/A</div>
-														<div class="fiat">(No contract address)</div>
-													</div>
-												</div>
-											</div>
-										</div>
+										{@render balanceRow(token?.iconURL, 'Unknown token', 'Unknown token (no contract address)', null, false, false, null, 0, { title: 'N/A', subtitle: '(No contract address)' })}
 									</Td>
 								{:else}
 									<Td padding="0" expand>
-										{@render desktopBalanceRow(token?.iconURL, 'Unknown token', 'Unknown token (no contract address)', '')}
+										{@render balanceRow(token?.iconURL, 'Unknown token', 'Unknown token (no contract address)', '', null, false, false, null, 0)}
 									</Td>
 									<Td>
 										<div class="balance">
@@ -725,7 +724,7 @@
 						<Tr>
 							<Td padding="0" expand>
 								<Clickable onClick={() => selectNFT('')}>
-									<div class="row">
+									<div class="currency-info">
 										{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}
 										{@render currencyDisplay('modules/' + module.identifier + '/img/nft.svg', contractInfo?.loading ? 'Loading...' : contractInfo?.name || 'Unknown NFT', nft.contract_address, contractInfo?.loading, $debug)}
 									</div>

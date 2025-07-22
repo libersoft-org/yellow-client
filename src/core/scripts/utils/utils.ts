@@ -18,3 +18,14 @@ export function getGuid(length = 40) {
 	while (result.length < length) result += Math.random().toString(36);
 	return result;
 }
+
+export function stringifyWithBigInt(obj: any): string {
+	return JSON.stringify(
+		obj,
+		(key, value) => {
+			if (typeof value === 'bigint') return value.toString();
+			return value;
+		},
+		2
+	);
+}
