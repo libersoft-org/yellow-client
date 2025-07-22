@@ -452,15 +452,36 @@
 
 	.item {
 		display: flex;
-		gap: 10px;
+		flex-direction: column;
 		padding: 10px;
 		align-items: center;
 	}
 
-	.item.mobile {
-		flex-direction: column;
+	.item .currency {
+		display: flex;
+		align-items: center;
+		gap: 10px;
 	}
 </style>
+
+{#snippet balanceTable(title, items)}
+	<Table>
+		<Thead>
+			<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
+				<Th>{title}</Th>
+				{#if !$isMobile}
+					<Th>Balance</Th>
+				{/if}
+				<Th></Th>
+			</TheadTr>
+		</Thead>
+		<Tbody>
+			{#each items as item}
+				{@render itemRow(item.iconURL, item.name, item.symbol, item.address, item.balanceData, item.isLoadingName, item.isLoadingBalance, item.refreshFn)}
+			{/each}
+		</Tbody>
+	</Table>
+{/snippet}
 
 {#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
 	<Tr>
@@ -469,18 +490,18 @@
 				<pre>{stringifyWithBigInt(balanceData)}</pre>
 			{/if}
 			<Clickable onClick={selectCurrency}>
-				<div class="item" class:mobile={$isMobile}>
+				<div class="item">
 					<div class="currency">
 						{#if isLoadingName}
 							{@render spinner()}
 						{:else}
 							{@render currencyIcon(iconURL, name)}
 							{@render currencyNameSymbol(name, symbol, address)}
-							{#if $isMobile}
-								{@render balanceInfo(balanceData)}
-							{/if}
 						{/if}
 					</div>
+					{#if $isMobile}
+						{@render balanceInfo(balanceData)}
+					{/if}
 				</div>
 			</Clickable>
 		</Td>
@@ -597,60 +618,43 @@
 
 <div class="wallet-balance">
 	{#if $selectedNetwork && $selectedAddress}
-		<Table>
-			<Thead>
-				<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
-					<Th>Currency</Th>
-					{#if !$isMobile}
-						<Th>Balance</Th>
-					{/if}
-					<Th></Th>
-				</TheadTr>
-			</Thead>
-			<Tbody>
-				{@render itemRow($selectedNetwork?.currency?.iconURL, null, $selectedNetwork?.currency?.symbol, null, balance, false, isLoadingBalance, refreshBalance)}
-			</Tbody>
-		</Table>
+		{@render balanceTable('Currency', [
+			{
+				iconURL: $selectedNetwork?.currency?.iconURL,
+				name: null,
+				symbol: $selectedNetwork?.currency?.symbol,
+				address: null,
+				balanceData: balance,
+				isLoadingName: false,
+				isLoadingBalance: isLoadingBalance,
+				refreshFn: refreshBalance,
+			},
+		])}
 
 		{#if $tokens?.length > 0}
-			<Table>
-				<Thead>
-					<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
-						<Th>Token</Th>
-						{#if !$isMobile}
-							<Th>Balance</Th>
-						{/if}
-						<Th></Th>
-					</TheadTr>
-				</Thead>
-				<Tbody>
-					{#each $tokens as t, index}
-						{@const tokenInfo = t.contract_address ? tokenInfos.get(t.contract_address) : null}
-						{@const tokenBalance = t.contract_address ? tokenBalances.get(t.contract_address) : null}
-						{@const isLoadingInfo = t.contract_address ? loadingTokenInfos.has(t.contract_address) : false}
-						{@const isLoadingBalance = t.contract_address ? loadingTokens.has(t.contract_address) : false}
-						{#if $debug}
-							<pre>{stringifyWithBigInt(t)}</pre>
-							<pre>{stringifyWithBigInt(tokenInfo)}</pre>
-							<pre>{stringifyWithBigInt(tokenBalance)}</pre>
-							<pre>{stringifyWithBigInt(isLoadingInfo)}</pre>
-							<pre>{stringifyWithBigInt(isLoadingBalance)}</pre>
-						{/if}
-						<!--
-								iconURL,
-								name,
-								symbol,
-								address,
-								balanceData: ITokenData | null = null,
-								isLoadingName = false,
-								isLoadingBalance = false,
-								refreshFn: (() => void) | null = null)
-							-->
-						{@render itemRow(t.iconURL, tokenInfo?.name, tokenInfo?.symbol, tokenBalance, isLoadingInfo, isLoadingBalance, () => refreshToken(t.contract_address))}
-					{/each}
-				</Tbody>
-			</Table>
+			{@render balanceTable(
+				'Token',
+				$tokens
+					.filter(t => t.contract_address)
+					.map(t => {
+						const tokenInfo = tokenInfos.get(t.contract_address);
+						const tokenBalance = tokenBalances.get(t.contract_address);
+						const isLoadingInfo = loadingTokenInfos.has(t.contract_address);
+						const isLoadingBalance = loadingTokens.has(t.contract_address);
+						return {
+							iconURL: t.iconURL,
+							name: tokenInfo?.name,
+							symbol: tokenInfo?.symbol,
+							address: t.contract_address,
+							balanceData: tokenBalance,
+							isLoadingName: isLoadingInfo,
+							isLoadingBalance: isLoadingBalance,
+							refreshFn: () => refreshToken(t.contract_address),
+						};
+					})
+			)}
 		{/if}
+
 		<!--
 		{#if $nfts && $nfts.length > 0}
 			<Table>
