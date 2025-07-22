@@ -735,10 +735,8 @@ async function tryMulticallBalancesByAddress(tokensWithAddresses: any[], provide
 async function executeMulticallBalancesByAddress(tokensWithAddresses: any[], provider: any, network: any, addr: any): Promise<Map<string, IBalance> | null> {
 	try {
 		console.log(`Trying Multicall3 for ${tokensWithAddresses.length} token balances by address`);
-
 		const multicallContract = new Contract(multicall3Address, multicallABI, provider);
 		const erc20Interface = new Contract(tokensWithAddresses[0].contract_address, erc20BalanceABI, provider).interface;
-
 		// Prepare calls for Multicall
 		const calls: MulticallCall[] = [];
 		tokensWithAddresses.forEach(token => {
@@ -753,19 +751,15 @@ async function executeMulticallBalancesByAddress(tokensWithAddresses: any[], pro
 				callData: erc20Interface.encodeFunctionData('decimals'),
 			});
 		});
-
 		console.log(`Using Multicall for ${tokensWithAddresses.length} token balances (${calls.length} calls) in ONE blockchain transaction`);
-
 		// Execute Multicall
 		const [blockNumber, returnData] = await multicallContract.aggregate(calls);
-
 		// Process results
 		const result = new Map<string, IBalance>();
 		for (let i = 0; i < tokensWithAddresses.length; i++) {
 			const balanceIndex = i * 2;
 			const decimalsIndex = i * 2 + 1;
 			const token = tokensWithAddresses[i];
-
 			try {
 				if (returnData[balanceIndex] && returnData[decimalsIndex]) {
 					const balance = erc20Interface.decodeFunctionResult('balanceOf', returnData[balanceIndex])[0];
@@ -782,7 +776,6 @@ async function executeMulticallBalancesByAddress(tokensWithAddresses: any[], pro
 				console.warn(`Error processing token ${token.contract_address} from Multicall:`, error);
 			}
 		}
-
 		console.log(`Multicall processed ${result.size}/${tokensWithAddresses.length} token balances successfully`);
 		return result;
 	} catch (error) {
@@ -828,35 +821,27 @@ async function fallbackBatchBalanceCallByAddress(tokensWithAddresses: any[], pro
 				],
 			});
 		});
-
 		console.log(`Fallback: Sending JSON-RPC batch with ${batchPayload.length} calls for ${tokensWithAddresses.length} token balances`);
-
 		// Get provider URL
 		const providerUrl = getProviderUrl(network);
-
 		// Send single batch JSON-RPC request
 		const response = await fetch(providerUrl, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(batchPayload),
 		});
-
 		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
 		const batchResults = await response.json();
 		if (!Array.isArray(batchResults)) throw new Error('Invalid batch response format');
-
 		// Process results
 		const contract = new Contract(tokensWithAddresses[0].contract_address, erc20BalanceABI, provider);
 		for (let i = 0; i < tokensWithAddresses.length; i++) {
 			const balanceIndex = i * 2;
 			const decimalsIndex = i * 2 + 1;
 			const token = tokensWithAddresses[i];
-
 			try {
 				const balanceResult = batchResults[balanceIndex];
 				const decimalsResult = batchResults[decimalsIndex];
-
 				if (balanceResult?.result && decimalsResult?.result) {
 					const balance = contract.interface.decodeFunctionResult('balanceOf', balanceResult.result)[0];
 					const decimals = contract.interface.decodeFunctionResult('decimals', decimalsResult.result)[0];
@@ -872,21 +857,17 @@ async function fallbackBatchBalanceCallByAddress(tokensWithAddresses: any[], pro
 				console.warn(`Error processing token ${token.contract_address} from JSON-RPC batch:`, error);
 			}
 		}
-
 		console.log(`JSON-RPC batch processed ${result.size}/${tokensWithAddresses.length} token balances successfully`);
 	} catch (error) {
 		console.error('Error in batch balance call by address:', error);
 	}
-
 	return result;
 }
 
 // ERC-721 and ERC-1155 ABIs for NFT operations
 const erc721ABI = ['function balanceOf(address owner) view returns (uint256)', 'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)', 'function tokenURI(uint256 tokenId) view returns (string)', 'function ownerOf(uint256 tokenId) view returns (address)', 'function name() view returns (string)', 'function symbol() view returns (string)', 'function totalSupply() view returns (uint256)', 'function tokenByIndex(uint256 index) view returns (uint256)'];
-
 // Alternative minimal ABI for contracts that might not support full enumeration
 const erc721MinimalABI = ['function balanceOf(address owner) view returns (uint256)', 'function ownerOf(uint256 tokenId) view returns (address)', 'function tokenURI(uint256 tokenId) view returns (string)', 'function name() view returns (string)', 'function symbol() view returns (string)'];
-
 const erc1155ABI = ['function balanceOf(address account, uint256 id) view returns (uint256)', 'function uri(uint256 id) view returns (string)'];
 
 export interface INFTItem {
