@@ -72,7 +72,7 @@
 	{
 		"name": "Polygon - Mainnet",
 		"chainID": 137,
-		"rpcURLs": ["https://polygon-rpc.com", "https://rpc-mainnet.matic.quiknode.pro", "https://polygon-pokt.nodies.app", "https://polygon.drpc.org", "wss://polygon.drpc.org", "https://1rpc.io/matic", "https://polygon.rpc.subquery.network/public", "https://polygon-mainnet.public.blastapi.io", "https://polygon-bor-rpc.publicnode.com", "wss://polygon-bor-rpc.publicnode.com", "https://polygon.api.onfinality.io/public", "https://polygon.gateway.tenderly.co", "https://gateway.tenderly.co/public/polygon", "https://polygon-mainnet.gateway.tatum.io"],
+		"rpcURLs": ["https://rpc-mainnet.matic.quiknode.pro", "https://polygon-rpc.com", "https://polygon-pokt.nodies.app", "https://polygon.drpc.org", "wss://polygon.drpc.org", "https://1rpc.io/matic", "https://polygon.rpc.subquery.network/public", "https://polygon-mainnet.public.blastapi.io", "https://polygon-bor-rpc.publicnode.com", "wss://polygon-bor-rpc.publicnode.com", "https://polygon.api.onfinality.io/public", "https://polygon.gateway.tenderly.co", "https://gateway.tenderly.co/public/polygon", "https://polygon-mainnet.gateway.tatum.io"],
 		"currency": {
 			"symbol": "POL",
 			"iconURL": "https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/coins/POL.svg"
