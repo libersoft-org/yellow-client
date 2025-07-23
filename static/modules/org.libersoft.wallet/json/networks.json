@@ -2,6 +2,7 @@
 	{
 		"name": "Ethereum - Mainnet",
 		"chainID": 1,
+		"testnet": false,
 		"rpcURLs": ["https://eth.llamarpc.com", "https://ethereum-rpc.publicnode.com", "wss://ethereum-rpc.publicnode.com", "https://1rpc.io/eth", "https://rpc.mevblocker.io", "https://rpc.flashbots.net", "https://eth.rpc.blxrbdn.com", "https://eth-mainnet.public.blastapi.io", "https://ethereum.public.blockpi.network/v1/rpc/public", "https://rpc.payload.de", "https://core.gashawk.io/rpc", "https://rpc.eth.gateway.fm", "https://eth.drpc.org", "wss://eth.drpc.org", "https://mainnet.gateway.tenderly.co", "https://gateway.tenderly.co/public/mainnet", "https://eth.merkle.io", "https://eth.nodeconnect.org", "https://ethereum-mainnet.gateway.tatum.io", "https://ethereum.rpc.subquery.network/public", "https://eth.blockrazor.xyz", "https://endpoints.omniatech.io/v1/eth/mainnet/public", "https://eth1.lava.build", "https://0xrpc.io/eth", "wss://0xrpc.io/eth", "https://rpc.flashbots.net/fast", "https://rpc.mevblocker.io/fast", "https://rpc.mevblocker.io/noreverts", "https://rpc.mevblocker.io/fullprivacy"],
 		"currency": {
 			"symbol": "ETH",
@@ -12,6 +13,7 @@
 	{
 		"name": "Ethereum - Goerli Testnet",
 		"chainID": 5,
+		"testnet": true,
 		"rpcURLs": ["https://goerli.infura.io/v3/YOUR-PROJECT-ID", "https://eth-goerli.g.alchemy.com/v2/YOUR-API-KEY", "https://rpc.goerli.mudit.blog/", "https://rpc.ankr.com/eth_goerli", "https://goerli.blockpi.network/v1/rpc/public"],
 		"currency": {
 			"symbol": "ETH",
@@ -22,6 +24,7 @@
 	{
 		"name": "Ethereum - Sepolia Testnet",
 		"chainID": 11155111,
+		"testnet": true,
 		"rpcURLs": ["https://sepolia.infura.io/v3/YOUR-PROJECT-ID", "https://rpc.sepolia.org", "https://sepolia.blockpi.network/v1/rpc/public"],
 		"currency": {
 			"symbol": "ETH",
@@ -32,6 +35,7 @@
 	{
 		"name": "Ethereum - Ropsten Testnet (Deprecated)",
 		"chainID": 3,
+		"testnet": true,
 		"rpcURLs": ["https://ropsten.infura.io/v3/YOUR-PROJECT-ID", "https://eth-ropsten.alchemyapi.io/v2/YOUR-API-KEY"],
 		"currency": {
 			"symbol": "ETH",
@@ -42,6 +46,7 @@
 	{
 		"name": "Ethereum - Rinkeby Testnet (Deprecated)",
 		"chainID": 4,
+		"testnet": true,
 		"rpcURLs": ["https://rinkeby.infura.io/v3/YOUR-PROJECT-ID", "https://eth-rinkeby.alchemyapi.io/v2/YOUR-API-KEY", "https://rinkeby-light.eth.linkpool.io/"],
 		"currency": {
 			"symbol": "ETH",
@@ -52,6 +57,7 @@
 	{
 		"name": "Binance Smart Chain - Mainnet",
 		"chainID": 56,
+		"testnet": false,
 		"rpcURLs": ["https://bsc-dataseed.binance.org/", "https://bsc-dataseed1.defibit.io/", "https://bsc-dataseed1.ninicoin.io/", "https://binance.llamarpc.com", "https://rpc-bsc.48.club", "https://0.48.club", "https://bsc-pokt.nodies.app", "https://bnb.api.onfinality.io/public", "https://bsc-rpc.publicnode.com", "wss://bsc-rpc.publicnode.com", "https://bsc-mainnet.public.blastapi.io", "https://api.zan.top/bsc-mainnet", "https://bsc-mainnet.gateway.tatum.io", "https://bnb.rpc.subquery.network/public", "https://bsc.blockrazor.xyz"],
 		"currency": {
 			"symbol": "BNB",
@@ -62,6 +68,7 @@
 	{
 		"name": "Binance Smart Chain - Testnet",
 		"chainID": 97,
+		"testnet": true,
 		"rpcURLs": ["https://data-seed-prebsc-1-s1.binance.org:8545/", "https://data-seed-prebsc-2-s2.binance.org:8545/", "https://data-seed-prebsc-1-s3.binance.org:8545/", "https://rpc.ankr.com/bsc_testnet_chapel"],
 		"currency": {
 			"symbol": "tBNB",
@@ -72,6 +79,7 @@
 	{
 		"name": "Polygon - Mainnet",
 		"chainID": 137,
+		"testnet": false,
 		"rpcURLs": ["https://rpc-mainnet.matic.quiknode.pro", "https://polygon-rpc.com", "https://polygon-pokt.nodies.app", "https://polygon.drpc.org", "wss://polygon.drpc.org", "https://1rpc.io/matic", "https://polygon.rpc.subquery.network/public", "https://polygon-mainnet.public.blastapi.io", "https://polygon-bor-rpc.publicnode.com", "wss://polygon-bor-rpc.publicnode.com", "https://polygon.api.onfinality.io/public", "https://polygon.gateway.tenderly.co", "https://gateway.tenderly.co/public/polygon", "https://polygon-mainnet.gateway.tatum.io"],
 		"currency": {
 			"symbol": "POL",
@@ -82,6 +90,7 @@
 	{
 		"name": "Polygon - Amoy Testnet",
 		"chainID": 80002,
+		"testnet": true,
 		"rpcURLs": ["https://rpc-amoy.polygon.technology", "https://polygon-amoy.blockpi.network/v1/rpc/public", "https://rpc.ankr.com/polygon_amoy", "https://polygon-amoy.drpc.org", "https://polygon-amoy.gateway.tenderly.co", "https://polygon-amoy-bor-rpc.publicnode.com", "wss://polygon-amoy-bor-rpc.publicnode.com"],
 		"currency": {
 			"symbol": "POL",
@@ -92,6 +101,7 @@
 	{
 		"name": "Avalanche - C-Chain Mainnet",
 		"chainID": 43114,
+		"testnet": false,
 		"rpcURLs": ["https://api.avax.network/ext/bc/C/rpc", "https://rpc.ankr.com/avalanche", "https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc", "https://avalanche-c-chain.publicnode.com"],
 		"currency": {
 			"symbol": "AVAX",
@@ -102,6 +112,7 @@
 	{
 		"name": "Avalanche - Fuji Testnet",
 		"chainID": 43113,
+		"testnet": true,
 		"rpcURLs": ["https://api.avax-test.network/ext/bc/C/rpc", "https://rpc.ankr.com/avalanche_fuji", "https://ava-testnet.public.blastapi.io/ext/bc/C/rpc"],
 		"currency": {
 			"symbol": "AVAX",
@@ -112,6 +123,7 @@
 	{
 		"name": "Fantom Opera - Mainnet",
 		"chainID": 250,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.ftm.tools/", "https://fantom-mainnet.public.blastapi.io", "https://rpc.ankr.com/fantom", "https://rpcapi.fantom.network"],
 		"currency": {
 			"symbol": "FTM",
@@ -122,6 +134,7 @@
 	{
 		"name": "Fantom Opera - Testnet",
 		"chainID": 4002,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.testnet.fantom.network/", "https://fantom-testnet.public.blastapi.io", "https://rpc.ankr.com/fantom_testnet"],
 		"currency": {
 			"symbol": "FTM",
@@ -132,6 +145,7 @@
 	{
 		"name": "Arbitrum One - Mainnet",
 		"chainID": 42161,
+		"testnet": false,
 		"rpcURLs": ["https://arb1.arbitrum.io/rpc", "https://arb-pokt.nodies.app", "https://arbitrum-one-rpc.publicnode.com", "https://arbitrum-one.public.blastapi.io", "https://arbitrum-one-rpc.publicnode.com", "wss://arbitrum-one-rpc.publicnode.com", "https://api.zan.top/arb-one", "https://arbitrum.drpc.org", "https://arbitrum.rpc.subquery.network/public"],
 		"currency": {
 			"symbol": "ETH",
@@ -142,6 +156,7 @@
 	{
 		"name": "Arbitrum One - Goerli Testnet",
 		"chainID": 421613,
+		"testnet": true,
 		"rpcURLs": ["https://goerli-rollup.arbitrum.io/rpc", "https://arbitrum-goerli.public.blastapi.io", "https://arb-goerli.g.alchemy.com/v2/YOUR-API-KEY", "https://rpc.ankr.com/arbitrum_goerli"],
 		"currency": {
 			"symbol": "ETH",
@@ -152,6 +167,7 @@
 	{
 		"name": "Optimism - Mainnet",
 		"chainID": 10,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet.optimism.io", "https://optimism-mainnet.public.blastapi.io", "https://rpc.ankr.com/optimism", "https://opt-mainnet.g.alchemy.com/v2/YOUR-API-KEY"],
 		"currency": {
 			"symbol": "ETH",
@@ -162,6 +178,7 @@
 	{
 		"name": "Optimism - Goerli Testnet",
 		"chainID": 420,
+		"testnet": true,
 		"rpcURLs": ["https://goerli.optimism.io", "https://optimism-goerli.public.blastapi.io", "https://opt-goerli.g.alchemy.com/v2/YOUR-API-KEY", "https://rpc.ankr.com/optimism_testnet"],
 		"currency": {
 			"symbol": "ETH",
@@ -172,6 +189,7 @@
 	{
 		"name": "Cronos - Mainnet",
 		"chainID": 25,
+		"testnet": false,
 		"rpcURLs": ["https://evm.cronos.org", "https://cronosrpc-1.xstaking.sg", "https://rpc.ankr.com/cronos", "https://node.croswap.com/rpc"],
 		"currency": {
 			"symbol": "CRO",
@@ -182,6 +200,7 @@
 	{
 		"name": "Cronos - Testnet",
 		"chainID": 338,
+		"testnet": true,
 		"rpcURLs": ["https://evm-t3.cronos.org", "https://cronos-testnet-3.crypto.org:8545", "https://rpc.ankr.com/cronos_testnet"],
 		"currency": {
 			"symbol": "tCRO",
@@ -192,6 +211,7 @@
 	{
 		"name": "zkSync Era - Mainnet",
 		"chainID": 324,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet.era.zksync.io", "https://zksync2-mainnet.zksync.io", "https://rpc.ankr.com/zksync_era"],
 		"currency": {
 			"symbol": "ETH",
@@ -202,6 +222,7 @@
 	{
 		"name": "zkSync Era - Testnet",
 		"chainID": 280,
+		"testnet": true,
 		"rpcURLs": ["https://testnet.era.zksync.dev", "https://zksync2-testnet.zksync.dev", "https://rpc.ankr.com/zksync_era_testnet"],
 		"currency": {
 			"symbol": "ETH",
@@ -212,6 +233,7 @@
 	{
 		"name": "Moonbeam - Mainnet",
 		"chainID": 1284,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.api.moonbeam.network", "https://moonbeam.public.blastapi.io", "https://rpc.ankr.com/moonbeam"],
 		"currency": {
 			"symbol": "GLMR",
@@ -222,6 +244,7 @@
 	{
 		"name": "Moonbase - Alpha Testnet",
 		"chainID": 1287,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.api.moonbase.moonbeam.network", "https://moonbase-alpha.public.blastapi.io", "https://rpc.ankr.com/moonbeam_testnet"],
 		"currency": {
 			"symbol": "DEV",
@@ -232,6 +255,7 @@
 	{
 		"name": "Celo - Mainnet",
 		"chainID": 42220,
+		"testnet": false,
 		"rpcURLs": ["https://forno.celo.org", "https://rpc.ankr.com/celo", "https://celo-mainnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "CELO",
@@ -242,6 +266,7 @@
 	{
 		"name": "Celo - Alfajores Testnet",
 		"chainID": 44787,
+		"testnet": true,
 		"rpcURLs": ["https://alfajores-forno.celo-testnet.org", "https://rpc.ankr.com/celo_alfajores", "https://alfajores.celo-testnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "CELO",
@@ -252,6 +277,7 @@
 	{
 		"name": "Gnosis - Mainnet",
 		"chainID": 100,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.gnosischain.com", "https://gnosis-mainnet.public.blastapi.io", "https://rpc.ankr.com/gnosis"],
 		"currency": {
 			"symbol": "xDAI",
@@ -262,6 +288,7 @@
 	{
 		"name": "Gnosis - Chiado Testnet",
 		"chainID": 10200,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.chiadochain.net", "https://gnosis-testnet.public.blastapi.io", "https://rpc.ankr.com/gnosis_chiado"],
 		"currency": {
 			"symbol": "xDAI",
@@ -272,6 +299,7 @@
 	{
 		"name": "Klaytn - Mainnet",
 		"chainID": 8217,
+		"testnet": false,
 		"rpcURLs": ["https://public-node-api.klaytnapi.com/v1/cypress", "https://klaytn01.fandom.finance", "https://klaytn.rpc.thirdweb.com"],
 		"currency": {
 			"symbol": "KLAY",
@@ -282,6 +310,7 @@
 	{
 		"name": "Klaytn - Baobab Testnet",
 		"chainID": 1001,
+		"testnet": true,
 		"rpcURLs": ["https://api.baobab.klaytn.net:8651", "https://klaytn-baobab.blockpi.network/v1/rpc/public", "https://klaytn-testnet.rpc.thirdweb.com"],
 		"currency": {
 			"symbol": "KLAY",
@@ -292,6 +321,7 @@
 	{
 		"name": "Velas - Mainnet",
 		"chainID": 106,
+		"testnet": false,
 		"rpcURLs": ["https://evmexplorer.velas.com/rpc", "https://velas-mainnet.public.blastapi.io", "https://rpc.velas.com"],
 		"currency": {
 			"symbol": "VLX",
@@ -302,6 +332,7 @@
 	{
 		"name": "Velas - Testnet",
 		"chainID": 111,
+		"testnet": true,
 		"rpcURLs": ["https://testnet.velas.com/rpc", "https://velas-testnet.public.blastapi.io", "https://rpc-testnet.velas.com"],
 		"currency": {
 			"symbol": "VLX",
@@ -312,6 +343,7 @@
 	{
 		"name": "Harmony - Mainnet Shard 0",
 		"chainID": 1666600000,
+		"testnet": false,
 		"rpcURLs": ["https://api.harmony.one", "https://harmony-0-rpc.gateway.pokt.network", "https://rpc.ankr.com/harmony"],
 		"currency": {
 			"symbol": "ONE",
@@ -322,6 +354,7 @@
 	{
 		"name": "Harmony - Testnet Shard 0",
 		"chainID": 1666700000,
+		"testnet": true,
 		"rpcURLs": ["https://api.s0.b.hmny.io", "https://rpc.ankr.com/harmony_testnet", "https://harmony-testnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "ONE",
@@ -332,6 +365,7 @@
 	{
 		"name": "Aurora - Mainnet",
 		"chainID": 1313161554,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet.aurora.dev", "https://aurora-mainnet.public.blastapi.io", "https://rpc.ankr.com/aurora"],
 		"currency": {
 			"symbol": "ETH",
@@ -342,6 +376,7 @@
 	{
 		"name": "Aurora - Testnet",
 		"chainID": 1313161555,
+		"testnet": true,
 		"rpcURLs": ["https://testnet.aurora.dev", "https://aurora-testnet.public.blastapi.io", "https://rpc.ankr.com/aurora_testnet"],
 		"currency": {
 			"symbol": "ETH",
@@ -352,6 +387,7 @@
 	{
 		"name": "Metis Andromeda - Mainnet",
 		"chainID": 1088,
+		"testnet": false,
 		"rpcURLs": ["https://andromeda.metis.io/?owner=1088", "https://metis-mainnet.public.blastapi.io", "https://rpc.ankr.com/metis"],
 		"currency": {
 			"symbol": "METIS",
@@ -362,6 +398,7 @@
 	{
 		"name": "Metis Stardust - Testnet",
 		"chainID": 588,
+		"testnet": true,
 		"rpcURLs": ["https://stardust.metis.io/?owner=588", "https://metis-testnet.public.blastapi.io", "https://rpc.ankr.com/metis_testnet"],
 		"currency": {
 			"symbol": "METIS",
@@ -372,6 +409,7 @@
 	{
 		"name": "Fuse - Mainnet",
 		"chainID": 122,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.fuse.io", "https://fuse-mainnet.public.blastapi.io", "https://rpc.ankr.com/fuse"],
 		"currency": {
 			"symbol": "FUSE",
@@ -382,6 +420,7 @@
 	{
 		"name": "Fuse Spark - Testnet",
 		"chainID": 123,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.fusespark.io", "https://fuse-testnet.public.blastapi.io", "https://rpc.ankr.com/fuse_testnet"],
 		"currency": {
 			"symbol": "FUSE",
@@ -392,6 +431,7 @@
 	{
 		"name": "ThunderCore - Mainnet",
 		"chainID": 108,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet-rpc.thundercore.com", "https://thundercore-mainnet.public.blastapi.io", "https://rpc.ankr.com/thundercore"],
 		"currency": {
 			"symbol": "TT",
@@ -402,6 +442,7 @@
 	{
 		"name": "ThunderCore - Testnet",
 		"chainID": 18,
+		"testnet": true,
 		"rpcURLs": ["https://testnet-rpc.thundercore.com", "https://thundercore-testnet.public.blastapi.io", "https://rpc.ankr.com/thundercore_testnet"],
 		"currency": {
 			"symbol": "TST",
@@ -412,6 +453,7 @@
 	{
 		"name": "Telos EVM - Mainnet",
 		"chainID": 40,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet.telos.net/evm", "https://telos-evm-mainnet.public.blastapi.io", "https://rpc.ankr.com/telos"],
 		"currency": {
 			"symbol": "TLOS",
@@ -422,6 +464,7 @@
 	{
 		"name": "Telos EVM - Testnet",
 		"chainID": 41,
+		"testnet": true,
 		"rpcURLs": ["https://testnet.telos.net/evm", "https://telos-evm-testnet.public.blastapi.io", "https://rpc.ankr.com/telos_testnet"],
 		"currency": {
 			"symbol": "TLOS",
@@ -432,6 +475,7 @@
 	{
 		"name": "Moonriver - Mainnet",
 		"chainID": 1285,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.api.moonriver.moonbeam.network", "https://moonriver.public.blastapi.io", "https://rpc.ankr.com/moonriver"],
 		"currency": {
 			"symbol": "MOVR",
@@ -442,6 +486,7 @@
 	{
 		"name": "Moonriver - Testnet",
 		"chainID": 1287,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.api.moonbase.moonbeam.network", "https://moonbase-alpha.public.blastapi.io", "https://rpc.ankr.com/moonbeam_testnet"],
 		"currency": {
 			"symbol": "DEV",
@@ -452,6 +497,7 @@
 	{
 		"name": "RSK - Mainnet",
 		"chainID": 30,
+		"testnet": false,
 		"rpcURLs": ["https://public-node.rsk.co", "https://rsk.public.blastapi.io", "https://rpc.ankr.com/rsk"],
 		"currency": {
 			"symbol": "RBTC",
@@ -462,6 +508,7 @@
 	{
 		"name": "RSK - Testnet",
 		"chainID": 31,
+		"testnet": true,
 		"rpcURLs": ["https://public-node.testnet.rsk.co", "https://rsk-testnet.public.blastapi.io", "https://rpc.ankr.com/rsk_testnet"],
 		"currency": {
 			"symbol": "tRBTC",
@@ -472,6 +519,7 @@
 	{
 		"name": "Astar - Mainnet",
 		"chainID": 592,
+		"testnet": false,
 		"rpcURLs": ["https://evm.astar.network", "https://astar.public.blastapi.io", "https://1rpc.io/astr", "https://astar.api.onfinality.io/public", "wss://astar.api.onfinality.io/public-ws", "https://astar-rpc.dwellir.com", "wss://astar-rpc.dwellir.com", "https://astar.public.curie.radiumblock.co/http", "https://astar.public.curie.radiumblock.co/ws"],
 		"currency": {
 			"symbol": "ASTR",
@@ -482,6 +530,7 @@
 	{
 		"name": "Astar - Shiden Testnet",
 		"chainID": 336,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.shiden.astar.network", "https://shiden-testnet.public.blastapi.io", "https://rpc.ankr.com/astar_shiden"],
 		"currency": {
 			"symbol": "SBY",
@@ -492,6 +541,7 @@
 	{
 		"name": "KCC - Mainnet",
 		"chainID": 321,
+		"testnet": false,
 		"rpcURLs": ["https://rpc-mainnet.kcc.network", "https://kcc-mainnet.public.blastapi.io", "https://rpc.ankr.com/kcc"],
 		"currency": {
 			"symbol": "KCS",
@@ -502,6 +552,7 @@
 	{
 		"name": "KCC - Testnet",
 		"chainID": 322,
+		"testnet": true,
 		"rpcURLs": ["https://rpc-testnet.kcc.network", "https://kcc-testnet.public.blastapi.io", "https://rpc.ankr.com/kcc_testnet"],
 		"currency": {
 			"symbol": "KCS",
@@ -512,6 +563,7 @@
 	{
 		"name": "Hoo Smart Chain - Mainnet",
 		"chainID": 70,
+		"testnet": false,
 		"rpcURLs": ["https://http-mainnet.hoosmartchain.com", "https://hoo-mainnet.public.blastapi.io", "https://rpc.ankr.com/hoo"],
 		"currency": {
 			"symbol": "HOO",
@@ -522,6 +574,7 @@
 	{
 		"name": "Hoo Smart Chain - Testnet",
 		"chainID": 170,
+		"testnet": true,
 		"rpcURLs": ["https://http-testnet.hoosmartchain.com", "https://hoo-testnet.public.blastapi.io", "https://rpc.ankr.com/hoo_testnet"],
 		"currency": {
 			"symbol": "HOO",
@@ -532,6 +585,7 @@
 	{
 		"name": "Emerald Paratime (Oasis Network) - Mainnet",
 		"chainID": 42262,
+		"testnet": false,
 		"rpcURLs": ["https://emerald.oasis.dev", "https://emerald-mainnet.public.blastapi.io", "https://rpc.ankr.com/oasis_emerald"],
 		"currency": {
 			"symbol": "ROSE",
@@ -542,6 +596,7 @@
 	{
 		"name": "Emerald Paratime (Oasis Network) - Testnet",
 		"chainID": 42261,
+		"testnet": true,
 		"rpcURLs": ["https://testnet.emerald.oasis.dev", "https://emerald-testnet.public.blastapi.io", "https://rpc.ankr.com/oasis_emerald_testnet"],
 		"currency": {
 			"symbol": "ROSE",
