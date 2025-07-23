@@ -364,6 +364,7 @@ function setReconnectTimer(account: AccountStore) {
 	let acc = get(account);
 	if (acc.reconnectTimer) clearInterval(acc.reconnectTimer);
 	acc.reconnectTimer = setTimeout(() => {
+		console.debug('Reconnect timer fired, reconnecting account:', acc.id);
 		reconnectAccount(account);
 	}, 1000);
 }
@@ -441,12 +442,12 @@ function setupPing(account: AccountStore) {
    true
   );
  }, 500);*/
-	setInterval(() => {
-		if (get(debug)) {
-			if (acc.socket) acc.bufferedAmount = acc.socket.bufferedAmount;
-			account.update(v => v);
-		}
-	}, 500);
+	// setInterval(() => {
+	// 	if (get(debug)) {
+	// 		if (acc.socket) acc.bufferedAmount = acc.socket.bufferedAmount;
+	// 		account.update(v => v);
+	// 	}
+	// }, 500);
 	acc.pingTimer = setInterval(() => {
 		if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
 			acc.status = 'Retrying...';
