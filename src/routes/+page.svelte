@@ -4,7 +4,7 @@
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 	import { init, active_account, accounts_config, setModule } from '../core/scripts/core.ts';
-	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug, documentHeight, keyboardHeight, mobileWidth, mobileClass, isMobile } from '@/core/scripts/stores.ts';
+	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug, documentHeight, keyboardHeight, mobileWidth, mobileClass, isMobile, welcomeWizardWindow } from '@/core/scripts/stores.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '@/core/scripts/notifications.ts';
 	import { selected_theme_index, initBrowserThemeDetection } from '@/core/scripts/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
@@ -127,6 +127,7 @@
 		//window.addEventListener('keydown', onkeydown);
 		window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
 		if ($accounts_config.length === 0) elWindowWelcome?.open();
+		welcomeWizardWindow.set(elWindowWelcome);
 		setupIframeListener();
 		// TODO: I don't know what this is, test out
 		//document.body.style.touchAction = 'none';

@@ -14,8 +14,17 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
 	let filter = $state('');
-	let filteredDefaultNetworks = $derived($default_networks.filter(network => network.name.toLowerCase().includes(filter.toLowerCase())));
+	let showMainnets = $state(true);
+	let showTestnets = $state(false);
+	let filteredDefaultNetworks = $derived(
+		$default_networks.filter(network => {
+			const matchesFilter = network.name.toLowerCase().includes(filter.toLowerCase());
+			const matchesNetworkType = (showMainnets && !network.testnet) || (showTestnets && network.testnet);
+			return matchesFilter && matchesNetworkType;
+		})
+	);
 	let elFilter: Input | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
@@ -48,6 +57,18 @@
 </ButtonBar>
 <div class="bold">Default networks:</div>
 <Input placeholder="Filter default networks..." bind:value={filter} bind:this={elFilter} />
+<Table>
+	<Tbody>
+		<TbodyTr>
+			<Td bold>Show mainnets:</Td>
+			<Td><Switch bind:checked={showMainnets} /></Td>
+		</TbodyTr>
+		<TbodyTr>
+			<Td bold>Show testnets:</Td>
+			<Td><Switch bind:checked={showTestnets} /></Td>
+		</TbodyTr>
+	</Tbody>
+</Table>
 <Table breakpoint="0">
 	<Thead>
 		<TheadTr>

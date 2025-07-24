@@ -31,6 +31,9 @@ export const module_decls = writable<{ [key: string]: IModuleDeclaration }>({});
 // Account selection
 export const active_account_id = localStorageReadOnceSharedStore<string | null>('active_account_id', null);
 
+// Welcome wizard window store
+export const welcomeWizardWindow = writable<any>();
+
 // Helper function needed for build timestamp
 import { friendlyTimestamp } from '@/core/scripts/utils/dateTime.ts';
 

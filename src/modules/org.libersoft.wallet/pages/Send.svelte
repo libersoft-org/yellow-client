@@ -2,9 +2,8 @@
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from '@/org.libersoft.wallet/scripts/transaction.ts';
-	import { type ICurrency } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, currencies, tokens } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { selectedNetwork, currencies, tokens, type ICurrency } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
@@ -124,6 +123,10 @@
 		elAddressInput?.focus();
 		loadTokenInfos();
 	});
+
+	function scanQRCode() {
+		console.log('Scan QR code scanning');
+	}
 
 	async function loadTokenInfos() {
 		const tokensWithContracts = $tokens.filter(token => token.contract_address);
@@ -291,6 +294,7 @@
 </style>
 
 <div class="send">
+	<Button img="img/qr.svg" text="Scan QR code" onClick={scanQRCode} />
 	<Form onSubmit={send} width="400px">
 		<Label text="Address">
 			<Input bind:value={$sendAddress} bind:this={elAddressInput} enabled={!!($selectedNetwork && $selectedAddress)} />
@@ -397,7 +401,6 @@
 				confirmationBlocks: {JSON.stringify($confirmationBlocksStore)}
 			</div>
 		{/if}
-
 		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
 	</Form>
 </div>
