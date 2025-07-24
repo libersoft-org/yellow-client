@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Window from '@/core/components/Window/Window.svelte';
+	import { showTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor.ts';
+
 	import { getContext, onMount } from 'svelte';
 	import { initializeTrezor, connectTrezor, getTrezorEthereumAccounts, trezorLoading, trezorError, trezorAccounts, trezorDevice, resetTrezorState, type TrezorAccount } from '@/org.libersoft.wallet/scripts/trezor';
 	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/wallet';
@@ -6,11 +9,10 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 	let walletName = '';
 	let selectedAccount: TrezorAccount | null = null;
-	let step: 'connect' | 'select-account' | 'configure' = 'connect';
-	let isInitialized = false;
 
 	onMount(async () => {
 		console.log('trezorLoading:', $trezorLoading, '$trezorError:', $trezorError);
@@ -217,140 +219,143 @@
 	}
 </style>
 
-<div class="trezor-setup">
-	<h2>Add Trezor Wallet</h2>
-
-	{#if step === 'connect'}
-		<div class="status-card" class:connected={!!$trezorDevice} class:error={$trezorError}>
-			<div class="status-icon">
-				{#if !!$trezorDevice}
-					<Icon img="img/check.svg" size="24px" />
-				{:else if $trezorError}
-					<Icon img="img/cross.svg" size="24px" />
-				{:else}
-					<Icon img="img/indicator-cancel.svg" size="24px" />
-				{/if}
-			</div>
-			<div class="status-text">
-				{#if !!$trezorDevice}
-					<strong>Trezor connected!</strong>
-					<div>Device is ready to use.</div>
-				{:else if $trezorError}
-					<strong>Connection failed</strong>
-					<div>{$trezorError}</div>
-				{:else}
-					<strong>Connect your Trezor</strong>
-					<div>Please connect your Trezor device and unlock it.</div>
-				{/if}
-			</div>
-		</div>
-
-		{#if $trezorLoading}
-			<div class="loading">
-				<Icon img="img/settings.svg" size="32px" />
-				<div>Connecting to Trezor...</div>
-			</div>
-		{/if}
-
-		<div class="buttons">
-			<Button img="img/cancel.svg" text="Close" onClick={goBack} />
-			<Button onClick={handleConnectClick} enabled={true}>
-				{$trezorLoading ? 'Connecting...' : !!$trezorDevice ? 'Continue' : 'Connect Trezor'}
-			</Button>
-			{#if !!$trezorDevice}
-				<Button
-					onClick={async () => {
-						console.log('Manual address reading test...');
-						await loadAccounts();
-					}}>Read Addresses</Button
-				>
-			{/if}
-			{#if !isInitialized}
-				<Button
-					onClick={async () => {
-						console.log('Manual initialization test...');
-						const result = await initializeTrezor();
-						console.log('Manual initialization result:', result);
-						isInitialized = result;
-					}}>Test Initialize</Button
-				>
-			{/if}
-			{#if $trezorLoading}
-				<div style="margin-left: 10px; color: var(--secondary-foreground);">
-					Loading: {$trezorLoading}
-				</div>
-			{/if}
-		</div>
-	{:else if step === 'select-account'}
-		<h3>Select Account</h3>
-		<p>Choose which account you want to add to your wallet:</p>
-
-		{#if $trezorLoading}
-			<div class="loading">
-				<Icon img="img/settings.svg" size="32px" />
-				<div>Loading accounts...</div>
-			</div>
-		{:else}
-			<div class="accounts-list">
-				{#each $trezorAccounts as account, index}
-					<div class="account-item" class:selected={selectedAccount?.address === account.address} on:click={() => selectAccount(account)} role="button" tabindex="0" on:keydown={e => e.key === 'Enter' && selectAccount(account)}>
-						<div class="account-info">
-							<div class="account-name">{account.name}</div>
-							<div class="account-address">{account.address}</div>
-						</div>
-						<Icon img="img/caret-right.svg" size="20px" />
+{#if $showTrezorWindow}
+	<Window title="Trezor" width="600px" height="500px" testId="trezor-window">
+		<div class="trezor-setup">
+			{#if step === 'connect'}
+				<div class="status-card" class:connected={!!$trezorDevice} class:error={$trezorError}>
+					<div class="status-icon">
+						{#if !!$trezorDevice}
+							<Icon img="img/check.svg" size="24px" />
+						{:else if $trezorError}
+							<Icon img="img/cross.svg" size="24px" />
+						{:else}
+							<Icon img="img/indicator-cancel.svg" size="24px" />
+						{/if}
 					</div>
-				{/each}
-			</div>
-		{/if}
-
-		<div class="buttons">
-			<Button img="img/cancel.svg" text="Close" onClick={goBack} />
-			<Button onClick={() => (step = 'configure')} enabled={!!selectedAccount}>Continue</Button>
-		</div>
-	{:else if step === 'configure'}
-		<h3>Configure Wallet</h3>
-		<p>Give your Trezor wallet a name:</p>
-
-		<div class="form-section">
-			<Label text="Wallet Name">
-				<Input bind:value={walletName} placeholder="Enter wallet name" />
-			</Label>
-		</div>
-
-		{#if selectedAccount}
-			<div class="status-card">
-				<div class="status-text">
-					<strong>Selected Account:</strong>
-					<div class="account-address">{selectedAccount.address}</div>
+					<div class="status-text">
+						{#if !!$trezorDevice}
+							<strong>Trezor connected!</strong>
+							<div>Device is ready to use.</div>
+						{:else if $trezorError}
+							<strong>Connection failed</strong>
+							<div>{$trezorError}</div>
+						{:else}
+							<strong>Connect your Trezor</strong>
+							<div>Please connect your Trezor device and unlock it.</div>
+						{/if}
+					</div>
 				</div>
-			</div>
-		{/if}
 
-		<div class="buttons">
-			<Button img="img/cancel.svg" text="Close" onClick={goBack} />
-			<Button onClick={addWallet} enabled={!!walletName.trim()}>Add Wallet</Button>
-		</div>
-	{/if}
+				{#if $trezorLoading}
+					<div class="loading">
+						<Icon img="img/settings.svg" size="32px" />
+						<div>Connecting to Trezor...</div>
+					</div>
+				{/if}
 
-	{#if $trezorError}
-		<div class="error-message">
-			Error: {$trezorError}
-			{#if $trezorError.includes('already initialized')}
-				<div style="margin-top: 10px;">
-					<Button onClick={handleReset}>Reset and Retry</Button>
+				<div class="buttons">
+					<Button img="img/cancel.svg" text="Close" onClick={goBack} />
+					<Button onClick={handleConnectClick} enabled={true}>
+						{$trezorLoading ? 'Connecting...' : !!$trezorDevice ? 'Continue' : 'Connect Trezor'}
+					</Button>
+					{#if !!$trezorDevice}
+						<Button
+							onClick={async () => {
+								console.log('Manual address reading test...');
+								await loadAccounts();
+							}}
+							>Read Addresses
+						</Button>
+					{/if}
+					{#if !isInitialized}
+						<Button
+							onClick={async () => {
+								console.log('Manual initialization test...');
+								const result = await initializeTrezor();
+								console.log('Manual initialization result:', result);
+								isInitialized = result;
+							}}
+							>Test Initialize
+						</Button>
+					{/if}
+					{#if $trezorLoading}
+						<div style="margin-left: 10px; color: var(--secondary-foreground);">
+							Loading: {$trezorLoading}
+						</div>
+					{/if}
+				</div>
+			{:else if step === 'select-account'}
+				<h3>Select Account</h3>
+				<p>Choose which account you want to add to your wallet:</p>
+
+				{#if $trezorLoading}
+					<div class="loading">
+						<Icon img="img/settings.svg" size="32px" />
+						<div>Loading accounts...</div>
+					</div>
+				{:else}
+					<div class="accounts-list">
+						{#each $trezorAccounts as account, index}
+							<div class="account-item" class:selected={selectedAccount?.address === account.address} on:click={() => selectAccount(account)} role="button" tabindex="0" on:keydown={e => e.key === 'Enter' && selectAccount(account)}>
+								<div class="account-info">
+									<div class="account-name">{account.name}</div>
+									<div class="account-address">{account.address}</div>
+								</div>
+								<Icon img="img/caret-right.svg" size="20px" />
+							</div>
+						{/each}
+					</div>
+				{/if}
+
+				<div class="buttons">
+					<Button img="img/cancel.svg" text="Close" onClick={goBack} />
+					<Button onClick={() => (step = 'configure')} enabled={!!selectedAccount}>Continue</Button>
+				</div>
+			{:else if step === 'configure'}
+				<h3>Configure Wallet</h3>
+				<p>Give your Trezor wallet a name:</p>
+
+				<div class="form-section">
+					<Label text="Wallet Name">
+						<Input bind:value={walletName} placeholder="Enter wallet name" />
+					</Label>
+				</div>
+
+				{#if selectedAccount}
+					<div class="status-card">
+						<div class="status-text">
+							<strong>Selected Account:</strong>
+							<div class="account-address">{selectedAccount.address}</div>
+						</div>
+					</div>
+				{/if}
+
+				<div class="buttons">
+					<Button img="img/cancel.svg" text="Close" onClick={goBack} />
+					<Button onClick={addWallet} enabled={!!walletName.trim()}>Add Wallet</Button>
 				</div>
 			{/if}
-		</div>
-	{/if}
 
-	<!-- Debug Information -->
-	<div style="margin-top: 20px; padding: 10px; background: var(--primary-softer-background); border-radius: 5px; font-size: 12px;">
-		<strong>Debug Info:</strong><br />
-		isInitialized: {isInitialized}<br />
-		trezorDevice: {JSON.stringify($trezorDevice) || 'None'}<br />
-		trezorLoading: {$trezorLoading}<br />
-		trezorError: {$trezorError || 'None'}<br />
-		current step: {step}
-	</div>
-</div>
+			{#if $trezorError}
+				<div class="error-message">
+					Error: {$trezorError}
+					{#if $trezorError.includes('already initialized')}
+						<div style="margin-top: 10px;">
+							<Button onClick={handleReset}>Reset and Retry</Button>
+						</div>
+					{/if}
+				</div>
+			{/if}
+
+			<!-- Debug Information -->
+			<div style="margin-top: 20px; padding: 10px; background: var(--primary-softer-background); border-radius: 5px; font-size: 12px;">
+				<strong>Debug Info:</strong><br />
+				isInitialized: {isInitialized}<br />
+				trezorDevice: {JSON.stringify($trezorDevice) || 'None'}<br />
+				trezorLoading: {$trezorLoading}<br />
+				trezorError: {$trezorError || 'None'}<br />
+			</div>
+		</div>
+	</Window>
+{/if}
