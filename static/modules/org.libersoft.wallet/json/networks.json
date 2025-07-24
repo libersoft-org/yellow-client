@@ -607,6 +607,7 @@
 	{
 		"name": "Songbird - Mainnet",
 		"chainID": 19,
+		"testnet": false,
 		"rpcURLs": ["https://songbird-api.flare.network/ext/C/rpc", "https://songbird.public.blastapi.io", "https://rpc.ankr.com/songbird"],
 		"currency": {
 			"symbol": "SGB",
@@ -617,6 +618,7 @@
 	{
 		"name": "Songbird - Testnet",
 		"chainID": 16,
+		"testnet": true,
 		"rpcURLs": ["https://songbird-testnet.flare.network/ext/C/rpc", "https://songbird-testnet.public.blastapi.io", "https://rpc.ankr.com/songbird_testnet"],
 		"currency": {
 			"symbol": "SGB",
@@ -627,6 +629,7 @@
 	{
 		"name": "OKXChain - Mainnet",
 		"chainID": 66,
+		"testnet": false,
 		"rpcURLs": ["https://exchainrpc.okex.org", "https://okc-mainnet.public.blastapi.io", "https://rpc.ankr.com/okxchain"],
 		"currency": {
 			"symbol": "OKT",
@@ -637,6 +640,7 @@
 	{
 		"name": "OKXChain - Testnet",
 		"chainID": 65,
+		"testnet": true,
 		"rpcURLs": ["https://exchaintestrpc.okex.org", "https://okc-testnet.public.blastapi.io", "https://rpc.ankr.com/okxchain_testnet"],
 		"currency": {
 			"symbol": "OKT",
@@ -647,6 +651,7 @@
 	{
 		"name": "Smart Bitcoin Cash (SmartBCH) - Mainnet",
 		"chainID": 10000,
+		"testnet": false,
 		"rpcURLs": ["https://smartbch.greyh.at", "https://rpc.smartbch.org", "https://smartbch.fountainhead.cash/mainnet"],
 		"currency": {
 			"symbol": "BCH",
@@ -657,6 +662,7 @@
 	{
 		"name": "Smart Bitcoin Cash (SmartBCH) - Testnet",
 		"chainID": 10001,
+		"testnet": true,
 		"rpcURLs": ["https://rpc-testnet.smartbch.org", "https://smartbch-testnet.fountainhead.cash"],
 		"currency": {
 			"symbol": "BCH",
@@ -667,6 +673,7 @@
 	{
 		"name": "Wanchain - Mainnet",
 		"chainID": 888,
+		"testnet": false,
 		"rpcURLs": ["https://gwan-ssl.wandevs.org:56891", "https://wanchain-mainnet.public.blastapi.io", "https://rpc.ankr.com/wanchain"],
 		"currency": {
 			"symbol": "WAN",
@@ -677,6 +684,7 @@
 	{
 		"name": "Wanchain - Testnet",
 		"chainID": 999,
+		"testnet": true,
 		"rpcURLs": ["https://gwan-ssl.wandevs.org:46891", "https://wanchain-testnet.public.blastapi.io", "https://rpc.ankr.com/wanchain_testnet"],
 		"currency": {
 			"symbol": "WAN",
@@ -687,6 +695,7 @@
 	{
 		"name": "Palm Network - Mainnet",
 		"chainID": 11297108109,
+		"testnet": false,
 		"rpcURLs": ["https://palm-mainnet.infura.io/v3/YOUR-PROJECT-ID", "https://palm-mainnet.public.blastapi.io", "https://rpc.ankr.com/palm"],
 		"currency": {
 			"symbol": "PALM",
@@ -697,6 +706,7 @@
 	{
 		"name": "Palm Network - Testnet",
 		"chainID": 11297108099,
+		"testnet": true,
 		"rpcURLs": ["https://palm-testnet.infura.io/v3/YOUR-PROJECT-ID", "https://palm-testnet.public.blastapi.io", "https://rpc.ankr.com/palm_testnet"],
 		"currency": {
 			"symbol": "PALM",
@@ -707,6 +717,7 @@
 	{
 		"name": "Kava EVM - Mainnet",
 		"chainID": 2222,
+		"testnet": false,
 		"rpcURLs": ["https://evm.kava.io", "https://kava-mainnet.public.blastapi.io", "https://rpc.ankr.com/kava"],
 		"currency": {
 			"symbol": "KAVA",
@@ -717,6 +728,7 @@
 	{
 		"name": "Kava EVM - Testnet",
 		"chainID": 2221,
+		"testnet": true,
 		"rpcURLs": ["https://evm.testnet.kava.io", "https://kava-testnet.public.blastapi.io", "https://rpc.ankr.com/kava_testnet"],
 		"currency": {
 			"symbol": "KAVA",
@@ -727,6 +739,7 @@
 	{
 		"name": "Evmos - Mainnet",
 		"chainID": 9001,
+		"testnet": false,
 		"rpcURLs": ["https://evmos-rpc.evmos.org", "https://evmos-mainnet.public.blastapi.io", "https://rpc.ankr.com/evmos"],
 		"currency": {
 			"symbol": "EVMOS",
@@ -737,6 +750,7 @@
 	{
 		"name": "Evmos - Testnet",
 		"chainID": 9000,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.testnet.evmos.org", "https://evmos-testnet.public.blastapi.io", "https://rpc.ankr.com/evmos_testnet"],
 		"currency": {
 			"symbol": "EVMOS",
@@ -747,6 +761,7 @@
 	{
 		"name": "BitTorrent Chain (BTTC) - Mainnet",
 		"chainID": 199,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.bittorrentchain.io", "https://bttc-mainnet.public.blastapi.io", "https://rpc.ankr.com/bttc"],
 		"currency": {
 			"symbol": "BTT",
@@ -757,6 +772,7 @@
 	{
 		"name": "BitTorrent Chain (BTTC) - Testnet",
 		"chainID": 1028,
+		"testnet": true,
 		"rpcURLs": ["https://test-rpc.bittorrentchain.io", "https://bttc-testnet.public.blastapi.io", "https://rpc.ankr.com/bttc_testnet"],
 		"currency": {
 			"symbol": "BTT",
@@ -767,6 +783,7 @@
 	{
 		"name": "Edgeware - Mainnet",
 		"chainID": 2021,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet1.edgewa.re", "https://edgeware-mainnet.public.blastapi.io", "https://rpc.ankr.com/edgeware"],
 		"currency": {
 			"symbol": "EDG",
@@ -777,6 +794,7 @@
 	{
 		"name": "SX Network - Mainnet",
 		"chainID": 416,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.sx.technology", "https://sx-mainnet.public.blastapi.io", "https://rpc.ankr.com/sxnetwork"],
 		"currency": {
 			"symbol": "SX",
@@ -787,6 +805,7 @@
 	{
 		"name": "Clover Finance - Mainnet",
 		"chainID": 1024,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.clover.finance", "https://clover-mainnet.public.blastapi.io", "https://rpc.ankr.com/clover"],
 		"currency": {
 			"symbol": "CLV",
@@ -797,6 +816,7 @@
 	{
 		"name": "Clover Finance - Testnet",
 		"chainID": 1234,
+		"testnet": true,
 		"rpcURLs": ["https://testnet.clover.finance/rpc", "https://rpc.ankr.com/clover_testnet"],
 		"currency": {
 			"symbol": "tCLV",
@@ -807,6 +827,7 @@
 	{
 		"name": "Meter.io - Mainnet",
 		"chainID": 82,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.meter.io", "https://meter-mainnet.public.blastapi.io", "https://rpc.ankr.com/meter"],
 		"currency": {
 			"symbol": "MTR",
@@ -817,6 +838,7 @@
 	{
 		"name": "Ontology EVM - Mainnet",
 		"chainID": 58,
+		"testnet": false,
 		"rpcURLs": ["https://dappnode1.ont.io:10339", "https://ont-mainnet.public.blastapi.io", "https://rpc.ankr.com/ontology"],
 		"currency": {
 			"symbol": "ONT",
@@ -827,6 +849,7 @@
 	{
 		"name": "Elastos EVM - Mainnet",
 		"chainID": 20,
+		"testnet": false,
 		"rpcURLs": ["https://api.elastos.io/evm", "https://elastos-mainnet.public.blastapi.io", "https://rpc.ankr.com/elastos"],
 		"currency": {
 			"symbol": "ELA",
@@ -837,6 +860,7 @@
 	{
 		"name": "Elastos EVM - Testnet",
 		"chainID": 21,
+		"testnet": true,
 		"rpcURLs": ["https://api-testnet.elastos.io/evm", "https://elastos-testnet.public.blastapi.io", "https://rpc.ankr.com/elastos_testnet"],
 		"currency": {
 			"symbol": "tELA",
@@ -847,6 +871,7 @@
 	{
 		"name": "Godwoken (Nervos Layer 2) - Mainnet",
 		"chainID": 71393,
+		"testnet": false,
 		"rpcURLs": ["https://godwoken-mainnet-v1.ckbapp.dev", "https://godwoken-mainnet.public.blastapi.io", "https://rpc.ankr.com/godwoken"],
 		"currency": {
 			"symbol": "CKB",
@@ -857,6 +882,7 @@
 	{
 		"name": "Godwoken (Nervos Layer 2) - Testnet",
 		"chainID": 71401,
+		"testnet": true,
 		"rpcURLs": ["https://godwoken-testnet-v1.ckbapp.dev", "https://godwoken-testnet.public.blastapi.io", "https://rpc.ankr.com/godwoken_testnet"],
 		"currency": {
 			"symbol": "CKB",
@@ -867,6 +893,7 @@
 	{
 		"name": "REI Network - Mainnet",
 		"chainID": 47805,
+		"testnet": false,
 		"rpcURLs": ["https://rei-rpc.meter.io", "https://rei-mainnet.public.blastapi.io", "https://rpc.ankr.com/rei"],
 		"currency": {
 			"symbol": "REI",
@@ -877,6 +904,7 @@
 	{
 		"name": "REI Network - Testnet",
 		"chainID": 47905,
+		"testnet": true,
 		"rpcURLs": ["https://testnet-rpc.rei.network", "https://rei-testnet.public.blastapi.io", "https://rpc.ankr.com/rei_testnet"],
 		"currency": {
 			"symbol": "tREI",
@@ -887,6 +915,7 @@
 	{
 		"name": "Shiden Network - Mainnet",
 		"chainID": 336,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.shiden.astar.network", "https://shiden-mainnet.public.blastapi.io", "https://rpc.ankr.com/shiden"],
 		"currency": {
 			"symbol": "SDN",
@@ -897,6 +926,7 @@
 	{
 		"name": "Shiden Network - Shibuya Testnet",
 		"chainID": 81,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.shibuya.astar.network", "https://shibuya-testnet.public.blastapi.io", "https://rpc.ankr.com/shibuya_testnet"],
 		"currency": {
 			"symbol": "tSDN",
@@ -907,6 +937,7 @@
 	{
 		"name": "Boba Network - Mainnet",
 		"chainID": 288,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet.boba.network", "https://boba-mainnet.public.blastapi.io", "https://rpc.ankr.com/boba"],
 		"currency": {
 			"symbol": "BOBA",
@@ -917,6 +948,7 @@
 	{
 		"name": "Boba Network - Testnet",
 		"chainID": 28,
+		"testnet": true,
 		"rpcURLs": ["https://testnet.boba.network", "https://boba-testnet.public.blastapi.io", "https://rpc.ankr.com/boba_testnet"],
 		"currency": {
 			"symbol": "BOBA",
@@ -927,6 +959,7 @@
 	{
 		"name": "Syscoin NEVM - Mainnet",
 		"chainID": 57,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.syscoin.org", "https://syscoin-mainnet.public.blastapi.io", "https://rpc.ankr.com/syscoin"],
 		"currency": {
 			"symbol": "SYS",
@@ -937,6 +970,7 @@
 	{
 		"name": "Syscoin NEVM - Testnet",
 		"chainID": 5700,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.tanenbaum.io", "https://syscoin-testnet.public.blastapi.io", "https://rpc.ankr.com/syscoin_testnet"],
 		"currency": {
 			"symbol": "tSYS",
@@ -947,6 +981,7 @@
 	{
 		"name": "Huobi ECO Chain - Mainnet",
 		"chainID": 128,
+		"testnet": false,
 		"rpcURLs": ["https://http-mainnet.hecochain.com", "https://heco.rpc.thirdweb.com", "https://rpc.ankr.com/heco"],
 		"currency": {
 			"symbol": "HT",
@@ -957,6 +992,7 @@
 	{
 		"name": "Huobi ECO Chain - Testnet",
 		"chainID": 256,
+		"testnet": true,
 		"rpcURLs": ["https://http-testnet.hecochain.com", "https://testnet.heco.rpc.thirdweb.com", "https://rpc.ankr.com/heco_testnet"],
 		"currency": {
 			"symbol": "HT",
@@ -967,6 +1003,7 @@
 	{
 		"name": "TomoChain - Mainnet",
 		"chainID": 88,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.tomochain.com", "https://tomochain-rpc.com"],
 		"currency": {
 			"symbol": "TOMO",
@@ -977,6 +1014,7 @@
 	{
 		"name": "TomoChain - Testnet",
 		"chainID": 89,
+		"testnet": true,
 		"rpcURLs": ["https://rpc-testnet.tomochain.com"],
 		"currency": {
 			"symbol": "tTOMO",
@@ -987,6 +1025,7 @@
 	{
 		"name": "Canto - Mainnet",
 		"chainID": 7700,
+		"testnet": false,
 		"rpcURLs": ["https://canto.slingshot.finance/rpc", "https://rpc.ankr.com/canto"],
 		"currency": {
 			"symbol": "CANTO",
@@ -997,6 +1036,7 @@
 	{
 		"name": "Canto - Testnet",
 		"chainID": 740,
+		"testnet": true,
 		"rpcURLs": ["https://canto-testnet-rpc.com", "https://rpc.ankr.com/canto_testnet"],
 		"currency": {
 			"symbol": "tCANTO",
@@ -1007,6 +1047,7 @@
 	{
 		"name": "Canto - Kovan Testnet",
 		"chainID": 42,
+		"testnet": true,
 		"rpcURLs": ["https://kovan.canto.io/rpc", "https://rpc.ankr.com/canto_kovan"],
 		"currency": {
 			"symbol": "kCANTO",
@@ -1017,6 +1058,7 @@
 	{
 		"name": "Energy Web Chain (EWC) - Mainnet",
 		"chainID": 246,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.energyweb.org", "https://mainnet.infura.io/v3/YOUR-PROJECT-ID"],
 		"currency": {
 			"symbol": "EWT",
@@ -1027,6 +1069,7 @@
 	{
 		"name": "Conflux EVM - Mainnet",
 		"chainID": 1030,
+		"testnet": false,
 		"rpcURLs": ["https://evm.confluxrpc.com", "https://rpc.ankr.com/conflux"],
 		"currency": {
 			"symbol": "CFX",
@@ -1037,6 +1080,7 @@
 	{
 		"name": "IoTeX - Mainnet",
 		"chainID": 4689,
+		"testnet": false,
 		"rpcURLs": ["https://babel-api.mainnet.iotex.io", "https://rpc.ankr.com/iotex"],
 		"currency": {
 			"symbol": "IOTX",
@@ -1047,6 +1091,7 @@
 	{
 		"name": "WAX EVM - Mainnet",
 		"chainID": 2001,
+		"testnet": false,
 		"rpcURLs": ["https://waxevm-rpc.com", "https://rpc.ankr.com/wax_evm"],
 		"currency": {
 			"symbol": "WAX",
@@ -1057,6 +1102,7 @@
 	{
 		"name": "Polygon zkEVM - Mainnet",
 		"chainID": 1101,
+		"testnet": false,
 		"rpcURLs": ["https://polygon-zkevm.publicnode.com", "https://rpc.ankr.com/polygon_zkevm"],
 		"currency": {
 			"symbol": "POL",
@@ -1067,6 +1113,7 @@
 	{
 		"name": "Polygon zkEVM - Testnet",
 		"chainID": 1442,
+		"testnet": true,
 		"rpcURLs": ["https://polygon-zkevm-testnet.publicnode.com", "https://rpc.ankr.com/polygon_zkevm_testnet"],
 		"currency": {
 			"symbol": "POL",
@@ -1077,6 +1124,7 @@
 	{
 		"name": "Scroll - Mainnet",
 		"chainID": 534354,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet-rpc.scroll.io/l2", "https://rpc.ankr.com/scroll_mainnet"],
 		"currency": {
 			"symbol": "ETH",
@@ -1087,6 +1135,7 @@
 	{
 		"name": "Scroll - Testnet",
 		"chainID": 534353,
+		"testnet": true,
 		"rpcURLs": ["https://alpha-rpc.scroll.io/l2", "https://rpc.ankr.com/scroll_testnet"],
 		"currency": {
 			"symbol": "ETH",
@@ -1097,6 +1146,7 @@
 	{
 		"name": "Base - Mainnet",
 		"chainID": 8453,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet.base.org", "https://base.llamarpc.com", "https://developer-access-mainnet.base.org", "https://base.public.blockpi.network/v1/rpc/public", "https://1rpc.io/base", "https://base-pokt.nodies.app", "https://base-mainnet.public.blastapi.io", "https://base.gateway.tenderly.co", "wss://base.gateway.tenderly.co", "https://gateway.tenderly.co/public/base", "https://base-rpc.publicnode.com", "wss://base-rpc.publicnode.com", "https://base.drpc.org", "https://base.api.onfinality.io/public", "https://base-mainnet.gateway.tatum.io", "https://base.rpc.subquery.network/public", "https://api.zan.top/base-mainnet", "https://endpoints.omniatech.io/v1/base/mainnet/public", "https://base.lava.build", "https://0xrpc.io/base", "wss://0xrpc.io/base"],
 		"currency": {
 			"symbol": "ETH",
@@ -1107,6 +1157,7 @@
 	{
 		"name": "Base - Testnet",
 		"chainID": 84531,
+		"testnet": true,
 		"rpcURLs": ["https://base-goerli.infura.io/v3/YOUR-PROJECT-ID", "https://rpc.testnet.base.org"],
 		"currency": {
 			"symbol": "ETH",
@@ -1117,6 +1168,7 @@
 	{
 		"name": "Linea - Mainnet",
 		"chainID": 59144,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.linea.build", "https://linea-rpc.ankr.com"],
 		"currency": {
 			"symbol": "ETH",
@@ -1127,6 +1179,7 @@
 	{
 		"name": "Linea - Testnet",
 		"chainID": 59140,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.testnet.linea.build", "https://linea-testnet-rpc.ankr.com"],
 		"currency": {
 			"symbol": "ETH",
@@ -1137,6 +1190,7 @@
 	{
 		"name": "Shardeum - Mainnet",
 		"chainID": 8081,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.shardeum.org"],
 		"currency": {
 			"symbol": "SHM",
@@ -1147,6 +1201,7 @@
 	{
 		"name": "Shardeum - Testnet",
 		"chainID": 8080,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.testnet.shardeum.org"],
 		"currency": {
 			"symbol": "tSHM",
@@ -1157,6 +1212,7 @@
 	{
 		"name": "Theta Network - Mainnet",
 		"chainID": 361,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet-rpc.theta.network", "https://theta-rpc.com"],
 		"currency": {
 			"symbol": "THETA",
@@ -1167,6 +1223,7 @@
 	{
 		"name": "Theta Network - Testnet",
 		"chainID": 365,
+		"testnet": true,
 		"rpcURLs": ["https://testnet-rpc.theta.network", "https://theta-testnet-rpc.com"],
 		"currency": {
 			"symbol": "THETA",
@@ -1177,6 +1234,7 @@
 	{
 		"name": "Mantle - Mainnet",
 		"chainID": 5001,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.mantle.xyz", "https://mantle-mainnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "MNT",
@@ -1187,6 +1245,7 @@
 	{
 		"name": "Mantle - Testnet",
 		"chainID": 5000,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.testnet.mantle.xyz", "https://mantle-testnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "tMNT",
@@ -1197,6 +1256,7 @@
 	{
 		"name": "zkSpace - Mainnet",
 		"chainID": 54321,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.zkspace.com", "https://mainnet.zkspace.public.blastapi.io"],
 		"currency": {
 			"symbol": "ZKS",
@@ -1207,6 +1267,7 @@
 	{
 		"name": "zkSpace - Testnet",
 		"chainID": 54322,
+		"testnet": true,
 		"rpcURLs": ["https://testnet-rpc.zkspace.com", "https://testnet.zkspace.public.blastapi.io"],
 		"currency": {
 			"symbol": "tZKS",
@@ -1217,6 +1278,7 @@
 	{
 		"name": "Taiko - Mainnet",
 		"chainID": 167002,
+		"testnet": false,
 		"rpcURLs": ["https://mainnet.taiko.xyz/rpc", "https://taiko-mainnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "TAIKO",
@@ -1227,6 +1289,7 @@
 	{
 		"name": "Taiko - Testnet",
 		"chainID": 167001,
+		"testnet": true,
 		"rpcURLs": ["https://testnet.taiko.xyz/rpc", "https://taiko-testnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "tTAIKO",
@@ -1237,6 +1300,7 @@
 	{
 		"name": "Constellation (Hypergraph) - Mainnet",
 		"chainID": 421620,
+		"testnet": false,
 		"rpcURLs": ["https://api.constellation.network/rpc", "https://rpc.constellation.network"],
 		"currency": {
 			"symbol": "DAG",
@@ -1247,6 +1311,7 @@
 	{
 		"name": "Constellation (Hypergraph) - Testnet",
 		"chainID": 421620,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.testnet.constellation.network", "https://constellation-testnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "DAG",
@@ -1257,6 +1322,7 @@
 	{
 		"name": "Clover Finance - Arbitrum - Mainnet",
 		"chainID": 42162,
+		"testnet": false,
 		"rpcURLs": ["https://clover-arbitrum.rpc.com", "https://clover-arbitrum.public.blastapi.io"],
 		"currency": {
 			"symbol": "CLV",
@@ -1267,6 +1333,7 @@
 	{
 		"name": "Clover Finance - Arbitrum - Testnet",
 		"chainID": 421611,
+		"testnet": true,
 		"rpcURLs": ["https://clover-arbitrum-testnet.rpc.com", "https://clover-arbitrum-testnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "tCLV",
@@ -1277,6 +1344,7 @@
 	{
 		"name": "Zora - Mainnet",
 		"chainID": 1337,
+		"testnet": false,
 		"rpcURLs": ["https://rpc.zora.network", "https://zora-mainnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "ZORA",
@@ -1287,6 +1355,7 @@
 	{
 		"name": "Zora - Testnet",
 		"chainID": 1338,
+		"testnet": true,
 		"rpcURLs": ["https://rpc.testnet.zora.network", "https://zora-testnet.public.blastapi.io"],
 		"currency": {
 			"symbol": "tZORA",
