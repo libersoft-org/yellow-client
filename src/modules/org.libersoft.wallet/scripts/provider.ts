@@ -53,24 +53,32 @@ providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 		return true;
 	});
 	availableRPCURLs.set(validURLs);
+
+	const currentRpcUrlValue = get(rpcURL);
+
 	// Don't override RPC URL if user manually selected one
 	if (isManualRpcSelection) {
 		console.log('Skipping automatic RPC selection due to manual selection');
 		isManualRpcSelection = false;
 		return;
 	}
+
+	// Don't override RPC URL if one is already set and is valid for this network
+	if (currentRpcUrlValue && validURLs.includes(currentRpcUrlValue)) {
+		console.log('Keeping current RPC URL:', currentRpcUrlValue);
+		return;
+	}
+
+	console.log('providerData.subscribe: Will override RPC URL. Current:', currentRpcUrlValue, 'Valid URLs:', validURLs);
+
 	const selectedUrl = getSelectedRpcUrl(network);
 	console.log('Selected RPC URL for network:', selectedUrl);
 	if (validURLs.length > 0) {
 		const urlToUse = selectedUrl || validURLs[0];
 		console.log('Setting RPC URL to:', urlToUse);
-		// Only set RPC URL if it's different from current one to avoid loops
-		const currentRpcUrlValue = get(rpcURL);
-		if (currentRpcUrlValue !== urlToUse) {
-			rpcURL.set(urlToUse);
-			if (selectedUrl && network.guid) setSelectedRpcUrl(network.guid, selectedUrl);
-			connectToURL();
-		}
+		rpcURL.set(urlToUse);
+		if (selectedUrl && network.guid) setSelectedRpcUrl(network.guid, selectedUrl);
+		connectToURL();
 		return;
 	} else {
 		console.log('No valid RPC URLs available for network');
@@ -150,6 +158,7 @@ function connectToURL(): void {
 }
 
 export function reconnect(): void {
+	console.log('reconnect() called - this may override RPC URL');
 	const currentProvider = get(provider);
 	if (currentProvider) {
 		console.log('Destroying existing provider for reconnect');
@@ -164,6 +173,7 @@ export function reconnect(): void {
 	status.set({ color: 'orange', text: 'Connecting to ' + net.name });
 	if (reconnectionTimer !== undefined) clearTimeout(reconnectionTimer);
 	const rurl = get(rpcURL);
+	console.log('reconnect: Current RPC URL:', rurl);
 	if (!rurl || net?.rpcURLs?.find(url => url === rurl) === undefined) {
 		if (!net?.rpcURLs?.[0]) {
 			status.set({
@@ -173,6 +183,7 @@ export function reconnect(): void {
 			return;
 		}
 		const selectedUrl = getSelectedRpcUrl(net);
+		console.log('reconnect: Setting RPC URL to:', selectedUrl || net.rpcURLs[0]);
 		rpcURL.set(selectedUrl || net.rpcURLs[0]);
 	}
 	connectToURL();
@@ -181,12 +192,16 @@ export function reconnect(): void {
 export function selectRPCURL(url: string): void {
 	const net = get(selectedNetwork);
 	if (!net) return;
-	if (net.rpcURLs && net.rpcURLs.includes(url)) {
-		console.log('selectRPCURL: Setting RPC URL to:', url);
-		isManualRpcSelection = true; // Set flag to prevent automatic override
-		rpcURL.set(url);
-		connectToURL(); // Connect immediately
-		// Don't call setSelectedRpcUrl here - it will be called after successful connection
-		// This prevents the network object from updating and triggering providerData.subscribe()
+	// Allow selection of any URL from the RPC servers list, even if not in valid rpcURLs
+	// This allows testing of non-functional servers
+	console.log('selectRPCURL: Setting RPC URL to:', url);
+	console.log('selectRPCURL: Current RPC URL before change:', get(rpcURL));
+	isManualRpcSelection = true; // Set flag to prevent automatic override
+	rpcURL.set(url);
+	// Save the selection immediately, regardless of connection success
+	if (net.guid) {
+		setSelectedRpcUrl(net.guid, url);
 	}
+	console.log('selectRPCURL: RPC URL set, now connecting...');
+	connectToURL(); // Connect immediately
 }

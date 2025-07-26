@@ -298,9 +298,10 @@ export function setSelectedRpcUrl(networkGuid: string, rpcUrl: string): void {
 }
 
 export function getSelectedRpcUrl(network: INetwork): string | undefined {
-	// If stored selected RPC URL exists and is still in the list, use it
-	if (network.selectedRpcUrl && network.rpcURLs?.includes(network.selectedRpcUrl)) return network.selectedRpcUrl;
-	// Otherwise return the first available RPC URL (even if not stored)
+	// Return stored selected RPC URL even if it's not in the valid list anymore
+	// This allows keeping user's selection of non-functional servers for testing
+	if (network.selectedRpcUrl) return network.selectedRpcUrl;
+	// Otherwise return the first available RPC URL
 	return network.rpcURLs?.[0];
 }
 
