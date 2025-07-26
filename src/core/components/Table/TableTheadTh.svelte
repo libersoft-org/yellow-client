@@ -2,27 +2,30 @@
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
+		align?: 'left' | 'center' | 'right';
+		padding?: string;
+		colspan?: number | string;
+		expand?: boolean;
 	}
-	const { children }: Props = $props();
+	let cs: number | undefined = $state();
+	const { children, align = 'left', colspan, padding = '10px', expand = false }: Props = $props();
+
+	$effect(() => {
+		if (colspan) cs = Number(colspan);
+	});
 </script>
 
 <style>
-	th {
-		:global(.table-wide &) {
-			display: table-cell;
-			white-space: nowrap;
-			border-style: none;
-			font-weight: 500;
-			min-width: 50px;
-			vertical-align: middle;
-			padding: 8px;
-			border: 0;
-			text-align: left;
-			white-space: normal;
-		}
+	th.expand {
+		width: 100%;
+		white-space: normal;
+	}
+
+	th :global(*) {
+		display: inline-block;
 	}
 </style>
 
-<th scope="col">
+<th style:text-align={align} colspan={cs} style:padding class:expand>
 	{@render children?.()}
 </th>

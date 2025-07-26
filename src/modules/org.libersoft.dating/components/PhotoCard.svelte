@@ -1,11 +1,19 @@
-<script>
+<script lang="ts">
 	import CardButton from './PhotoCardButton.svelte';
-	export let photo;
-	//export let onYes;
-	//export let onNo;
-	let moving = false;
+	interface Props {
+		photo: {
+			img: string;
+			name: string;
+			description: string;
+		};
+		// onYes?: (e: Event) => void;
+		// onNo?: (e: Event) => void;
+	}
+	let { photo }: Props = $props();
+
+	let moving = $state(false);
 	let startX = 0;
-	let currentX = 0;
+	let currentX = $state(0);
 	let threshold = 100;
 
 	function startSwipe(e) {
@@ -50,10 +58,7 @@
 		width: 300px;
 		height: 400px;
 		border-radius: 10px;
-		background-color: #eee;
 		overflow: hidden;
-		/*align-items: center;
-  justify-content: space-between;*/
 		touch-action: pan-y;
 		transition: transform 0.3s ease-out;
 	}
@@ -69,23 +74,23 @@
 	}
 
 	.photo-card .overlay {
+		z-index: 2;
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		background: rgba(0, 0, 0, 0.5);
-		color: white;
-		z-index: 2;
+		background: var(--default-foreground);
+		color: var(--default-background);
 		padding: 10px;
 		text-align: center;
 	}
 
 	.card-buttons {
+		z-index: 3;
 		display: flex;
 		width: 100%;
 		justify-content: space-around;
 		margin-bottom: 10px;
-		z-index: 3000;
 	}
 
 	.overlay .title {
@@ -95,14 +100,14 @@
 	}
 </style>
 
-<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" on:touchstart={e => startSwipe(e)} on:touchmove={e => moveSwipe(e)} on:touchend={e => endSwipe(e)}>
+<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" ontouchstart={e => startSwipe(e)} ontouchmove={e => moveSwipe(e)} ontouchend={e => endSwipe(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
 		<div class="title">{photo.name}</div>
 		<div>{photo.description}</div>
 	</div>
 	<div class="card-buttons">
-		<CardButton on:click={onNo} content="👎" />
-		<CardButton on:click={onYes} content="👍" />
+		<CardButton onClick={onNo} content="👎" />
+		<CardButton onClick={onYes} content="👍" />
 	</div>
 </div>

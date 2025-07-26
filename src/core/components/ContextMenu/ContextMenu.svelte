@@ -1,7 +1,7 @@
 <script>
-	import { getGuid } from '../../core.ts';
 	import { onMount, setContext, getContext, afterUpdate, tick, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
+	import { getGuid } from '@/core/scripts/core.ts';
 	export let target = null;
 	export let open = false;
 	export let x = 0;
@@ -12,7 +12,7 @@
 	export let scrollable = true;
 	export let disableRightClick = false;
 	export let bottomOffset;
-
+	//export let testId = '';
 	const isOpen = writable(open);
 	const position = writable([x, y]);
 	const currentIndex = writable(-1);
@@ -192,12 +192,12 @@
 
 <style>
 	.context-menu {
+		z-index: 50;
 		display: flex;
 		flex-direction: column;
 		visibility: hidden;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 		position: fixed;
-		z-index: 9000;
 		border-radius: 10px;
 		border: 1px solid var(--secondary-background);
 		background-color: var(--default-background);

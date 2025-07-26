@@ -1,17 +1,16 @@
-<script>
-	import { get } from 'svelte/store';
+<script lang="ts">
 	import { onMount, getContext } from 'svelte';
-	import { htmlEscape } from '../../messages.js';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Button from '@/core/components/Button/Button.svelte';
-	import Input from '@/core/components/Input/Input.svelte';
-	import { isMobile } from '@/core/core.ts';
+	import { get } from 'svelte/store';
+	import { isMobile } from '@/core/scripts/stores.ts';
+	import { htmlEscape } from '@/org.libersoft.messages/scripts/messages.js';
+	import { gif_server } from '@/org.libersoft.messages/scripts/gifs.js';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import { gif_server } from '../../gifs.js';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import LazyLoader from './GifSetLazyLoader.svelte';
-	const MessageBar = getContext('MessageBar');
-	const menu = getContext('ContextMenu');
-	let gifs = [];
+	const MessageBar = getContext('MessageBar') as any;
+	const menu = getContext('ContextMenu') as any;
+	let gifs: any[] = [];
 	let query = '';
 	let loading = false;
 	let elSearchText;
@@ -34,7 +33,7 @@
 
 	async function searchGifs() {
 		gifs = [];
-		await getGifs(query);
+		await getGifs(query, undefined);
 	}
 
 	async function moreGifs() {
@@ -88,7 +87,7 @@
 	function sendGIF(item) {
 		const url = item.media_formats.gif?.url;
 		MessageBar.sendMessageHtml('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" ></Gif>');
-		menu?.close();
+		menu.close();
 	}
 </script>
 
@@ -104,11 +103,6 @@
 		flex-direction: column;
 		gap: 10px;
 		padding: 10px;
-	}
-
-	.group {
-		display: flex;
-		gap: 10px;
 	}
 
 	.results {
@@ -136,8 +130,10 @@
 			box-shadow 0.3s ease;
 	}
 
-	.item:hover {
-		z-index: 90;
+	.item:hover,
+	:global(.clickable:focus-visible) .item,
+	:global(.clickable.focused) .item {
+		z-index: 51;
 		transform: scale(1.2);
 		background-color: var(--primary-soft-background);
 	}
@@ -147,10 +143,7 @@
 
 <div class="gifset">
 	<div class="top-bar">
-		<div class="group">
-			<Input placeholder="Search GIFs" grow={true} bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
-			<Button text="Search" width="80px" onClick={searchGifs} />
-		</div>
+		<Input icon={{ img: 'img/search.svg', alt: 'Search', onClick: searchGifs }} placeholder="Search ..." expand bind:this={elSearchText} bind:value={query} onKeydown={keySearchGifs} />
 	</div>
 	{#if error}
 		<div>{error}</div>
