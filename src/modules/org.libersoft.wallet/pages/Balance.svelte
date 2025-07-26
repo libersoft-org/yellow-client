@@ -5,7 +5,7 @@
 	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.ts';
 	import { selectedNetwork, tokens, nfts } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from '@/org.libersoft.wallet/scripts/balance.ts';
-	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { provider, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -42,6 +42,8 @@
 	let nftContractInfos = $state(new Map<string, { name: string; collection: string; balance: number; loading: boolean }>());
 	let lastNFTsLength = $state(0);
 	let lastTokensLength = $state(0);
+	let isInitialized = $state(false);
+	let subscriptions: Array<() => void> = [];
 
 	/*
 	$effect(() => {
@@ -114,10 +116,41 @@
 		});
 	}
 
+	function initialize<T>(newValue: T, currentValue: T, updateCurrentValue: (value: T) => void) {
+		if (isInitialized && newValue !== currentValue) {
+			updateCurrentValue(newValue);
+			clearAllTimers();
+			if ($selectedNetwork && $selectedAddress && $provider) initializeAllBalances();
+		}
+	}
+
 	// Lifecycle
 	onMount(() => {
+		// Initialize balances first time
 		initializeAllBalances();
 		countdownInterval = setInterval(updateCountdowns, 1000);
+		// Set up subscriptions to watch for changes
+		let currentNetwork = $selectedNetwork;
+		let currentAddress = $selectedAddress;
+		let currentRpcURL = $rpcURL;
+		// Subscribe to network changes
+		const unsubscribeNetwork = selectedNetwork.subscribe(newNetwork => {
+			console.log(`Balance: Network changed to ${newNetwork} - reinitializing balances`);
+			initialize(newNetwork, currentNetwork, value => (currentNetwork = value));
+		});
+		// Subscribe to address changes
+		const unsubscribeAddress = selectedAddress.subscribe(newAddress => {
+			console.log(`Balance: Address changed to ${newAddress} - reinitializing balances`);
+			initialize(newAddress, currentAddress, value => (currentAddress = value));
+		});
+		// Subscribe to RPC URL changes
+		const unsubscribeRPC = rpcURL.subscribe(newRpcURL => {
+			console.log(`Balance: RPC URL changed to ${newRpcURL} - reinitializing balances`);
+			initialize(newRpcURL, currentRpcURL, value => (currentRpcURL = value));
+		});
+		// Store unsubscribe functions for cleanup
+		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC];
+		isInitialized = true; // Mark as initialized to enable reactive effects
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -99999999999999999999999999999999999999999123456789123456789n, decimals: 18, currency: 'ETH' }));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -1000n, decimals: 18, currency: 'ETH' }));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789n, decimals: 0, currency: 'ETH' }, 6));
@@ -127,6 +160,9 @@
 
 	onDestroy(() => {
 		clearAllTimers();
+		// Clean up subscriptions
+		subscriptions.forEach(unsubscribe => unsubscribe());
+		subscriptions = [];
 	});
 
 	// Event handlers
