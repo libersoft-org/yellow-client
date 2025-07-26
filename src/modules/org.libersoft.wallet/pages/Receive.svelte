@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount, onDestroy, tick } from 'svelte';
+	import QRCode from 'qrcode';
 	import { parseUnits, Contract } from 'ethers';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -11,77 +13,150 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import QRCode from 'qrcode';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { tick, onMount } from 'svelte';
 	let addressElement: HTMLElement | undefined = $state();
 	let addressElementMessage: string | null | undefined = $state();
 	let activeTab: 'address' | 'payment' = $state('address');
 	let walletAddress: string | undefined = $state();
 	let amount: string | undefined = $state();
 	let currency: ICurrency | undefined = $state();
+	let currentCurrency: ICurrency | undefined = undefined;
 	let qr: string | undefined = $state();
 	let error: string | null | undefined = $state();
 	let elAmountInput: Input | undefined = $state();
 	let tokenDecimalsCache = new Map<string, number>(); // Cache for token decimals to avoid repeated blockchain calls
 	let tokenInfos = $state(new Map<string, { name: string; symbol: string }>());
 	let isLoadingTokenInfos = $state(false);
-
+	// Track subscriptions for cleanup
+	let networkUnsubscribe: (() => void) | null = null;
+	let addressUnsubscribe: (() => void) | null = null;
+	let isInitialized = $state(false);
 	// Create dropdown options from currencies
 	let currencyOptions = $derived.by(() => {
 		return $currencies.map(currency => {
 			let label = currency.symbol || 'Unknown';
-
 			// For tokens with contract addresses, get proper name and symbol from tokenInfos
 			if (currency.contract_address) {
 				const tokenInfo = tokenInfos.get(currency.contract_address);
-				if (tokenInfo && tokenInfo.symbol !== 'UNKNOWN') {
-					label = `${tokenInfo.name} (${tokenInfo.symbol})`;
-				} else if (tokenInfo?.name && tokenInfo.name !== 'Unknown Token') {
-					label = tokenInfo.name;
-				} else {
-					label = `Token (${currency.contract_address.slice(0, 8)}...)`;
-				}
+				if (tokenInfo?.name && tokenInfo?.symbol) label = tokenInfo.name + ' (' + tokenInfo.symbol + ')';
+				else if (tokenInfo?.name && !tokenInfo?.symbol) label = tokenInfo?.name;
+				else if (!tokenInfo?.name && tokenInfo?.symbol) label = tokenInfo?.symbol;
+				else label = 'Unknown token (' + currency.contract_address.slice(0, 8) + '...)';
 			}
-
 			return {
 				label: label,
 				icon: { img: currency.iconURL || 'modules/' + module.identifier + '/img/token.svg', size: '16px' },
-				value: currency, // The actual ICurrency object
+				value: currency, // Use the actual ICurrency object like Send.svelte
 			};
 		});
 	});
 
-	$effect(() => {
-		updateAddressAndQR();
-	});
-
-	// Watch for token changes and reload token infos
-	$effect(() => {
-		if ($tokens?.length) {
+	// Helper function for handling network changes - reload token infos only on actual network change
+	function handleNetworkChange(newNetwork: typeof $selectedNetwork, currentNetwork: typeof $selectedNetwork) {
+		// Only reload if the actual network (not just RPC) changed - compare by network GUID
+		const networkChanged = newNetwork?.guid !== currentNetwork?.guid;
+		if (isInitialized && networkChanged && newNetwork) {
+			// Clear selected currency when network changes
+			currency = undefined;
+			currentCurrency = undefined;
 			loadTokenInfos();
 		}
-	});
+		// Update QR code when network changes
+		if (isInitialized && networkChanged) {
+			updateAddressAndQR();
+		}
+	}
+
+	// Helper function for handling address changes
+	function handleAddressChange(newAddress: typeof $selectedAddress, currentAddress: typeof $selectedAddress) {
+		// Compare by address string instead of object reference to avoid proxy equality issues
+		const addressChanged = newAddress?.address !== currentAddress?.address;
+		if (isInitialized && addressChanged) {
+			updateAddressAndQR();
+		}
+	}
+
+	// Helper function for handling active tab changes
+	function handleActiveTabChange() {
+		if (isInitialized) {
+			updateAddressAndQR();
+		}
+	}
+
+	// Helper function for handling amount changes
+	function handleAmountChange(newAmount: string) {
+		amount = newAmount;
+		if (isInitialized) {
+			updateAddressAndQR();
+		}
+	}
+
+	// Helper function for handling currency changes
+	function handleCurrencyChange() {
+		// Only proceed if currency actually changed
+		if (currentCurrency !== currency) {
+			if (isInitialized) {
+				updateAddressAndQR();
+			}
+			currentCurrency = currency;
+		}
+	}
 
 	onMount(() => {
 		loadTokenInfos();
+		// Set up subscription to watch for network changes only
+		let currentNetworkGuid = $selectedNetwork?.guid;
+		let currentAddressString = $selectedAddress?.address;
+		// Subscribe to network changes - track only GUID changes, not entire object
+		networkUnsubscribe = selectedNetwork.subscribe(newNetwork => {
+			const newNetworkGuid = newNetwork?.guid;
+			if (currentNetworkGuid !== newNetworkGuid) {
+				// Create minimal network objects for the handler
+				const currentNetworkObj = { guid: currentNetworkGuid };
+				const newNetworkObj = { guid: newNetworkGuid };
+				handleNetworkChange(newNetworkObj as any, currentNetworkObj as any);
+				currentNetworkGuid = newNetworkGuid;
+			}
+		});
+
+		// Subscribe to address changes
+		addressUnsubscribe = selectedAddress.subscribe(newAddress => {
+			// Create address objects for comparison
+			const currentAddressObj = { address: currentAddressString };
+			handleAddressChange(newAddress, currentAddressObj as any);
+			currentAddressString = newAddress?.address;
+		});
+		isInitialized = true; // Mark as initialized to enable reactive effects
+		// Initialize current currency tracking
+		currentCurrency = currency;
+		// Initial QR code generation
+		updateAddressAndQR();
+	});
+
+	onDestroy(() => {
+		// Clean up subscriptions
+		if (networkUnsubscribe) {
+			networkUnsubscribe();
+			networkUnsubscribe = null;
+		}
+		if (addressUnsubscribe) {
+			addressUnsubscribe();
+			addressUnsubscribe = null;
+		}
 	});
 
 	async function loadTokenInfos() {
 		const tokensWithContracts = $tokens.filter(token => token.contract_address);
 		if (!tokensWithContracts.length) return;
-
 		isLoadingTokenInfos = true;
 		try {
 			const contractAddresses = tokensWithContracts.map(token => token.contract_address!);
 			const batchResults = await getBatchTokensInfo(contractAddresses);
-
 			// Save results to local map
 			batchResults.forEach((tokenInfo, contractAddress) => {
 				tokenInfos.set(contractAddress, { name: tokenInfo.name, symbol: tokenInfo.symbol });
 			});
-
 			// Trigger reactivity
 			tokenInfos = new Map(tokenInfos);
 		} catch (error) {
@@ -114,7 +189,6 @@
 		if ($selectedNetwork && $selectedAddress) {
 			if (activeTab === 'address') {
 				walletAddress = $selectedAddress.address;
-				console.log('walletAddress:', walletAddress);
 			} else {
 				if (!currency) {
 					walletAddress = undefined;
@@ -174,6 +248,7 @@
 
 	async function setActiveTab(name: 'address' | 'payment'): Promise<void> {
 		activeTab = name;
+		handleActiveTabChange(); // Manually trigger QR update
 		if (activeTab === 'payment') {
 			await tick();
 			elAmountInput?.focus();
@@ -242,20 +317,20 @@
 		<div class="section">
 			{#if activeTab === 'payment'}
 				<div class="amount">
-					<Input type="text" placeholder="Amount" bind:value={amount} bind:this={elAmountInput} />
+					<Input type="text" placeholder="Amount" value={amount} onChange={handleAmountChange} bind:this={elAmountInput} />
 					{#if isLoadingTokenInfos}
 						<div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
 							<Spinner size="16px" />
 						</div>
 					{:else}
-						<DropdownFilter placeholder="Currency" options={currencyOptions} bind:selected={currency} />
+						<DropdownFilter placeholder="Currency" options={currencyOptions} bind:selected={currency} onChange={handleCurrencyChange} />
 					{/if}
 				</div>
 				{#if error}
 					<Alert type="error" message={error} />
 				{/if}
 			{/if}
-			{#if activeTab === 'address' || (activeTab === 'payment' && currency && !error)}
+			{#if activeTab === 'address' || (activeTab === 'payment' && currency !== null && currency !== undefined && !error)}
 				<div class="address-wrapper">
 					<Clickable onClick={() => clickCopy()} expand={true}>
 						<div class="address">

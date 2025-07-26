@@ -176,14 +176,12 @@
 		elAddressInput?.focus();
 		loadTokenInfos();
 		updateCurrencyOptions(); // Initialize currency options
-
 		// Set up subscriptions to watch for network and address changes
 		let currentNetworkGuid = $selectedNetwork?.guid;
 		let currentAddress = $selectedAddress;
 		let currentFeeLevel = $feeLevel;
 		currentCurrency = currency; // Initialize current currency tracking
 		currentAmount = amount; // Initialize current amount tracking
-
 		// Subscribe to network changes - track only GUID changes, not entire object
 		networkUnsubscribe = selectedNetwork.subscribe(newNetwork => {
 			const newNetworkGuid = newNetwork?.guid;
@@ -211,19 +209,6 @@
 		});
 
 		isInitialized = true; // Mark as initialized to enable reactive effects
-	});
-
-	// Simple effects just for triggering handlers - no complex logic inside
-	$effect(() => {
-		// React to currency changes
-		currency;
-		handleCurrencyChange();
-	});
-
-	$effect(() => {
-		// React to amount changes
-		amount;
-		handleAmountChange();
 	});
 
 	onDestroy(() => {
@@ -425,12 +410,12 @@
 					<Spinner size="16px" />
 				</div>
 			{:else}
-				<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} />
+				<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleCurrencyChange} />
 			{/if}
 		</Label>
 		<Label text="Amount">
 			<div class="row">
-				<Input bind:value={amount} bind:this={elAmountInput} enabled={!!($selectedNetwork && $selectedAddress)} />
+				<Input bind:value={amount} bind:this={elAmountInput} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleAmountChange} />
 				{#if currency}
 					<div>{selectedCurrencySymbol}</div>
 				{/if}

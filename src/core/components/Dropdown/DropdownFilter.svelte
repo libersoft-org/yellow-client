@@ -17,8 +17,9 @@
 		options?: DropdownOption[];
 		selected?: any; // The selected object
 		enabled?: boolean;
+		onChange?: (value: any) => void; // Callback when selection changes
 	}
-	let { placeholder, options = [], selected = $bindable(), enabled = true }: Props = $props();
+	let { placeholder, options = [], selected = $bindable(), enabled = true, onChange }: Props = $props();
 	let filteredOptions = $derived(
 		options.filter(option => {
 			return option.label.toLowerCase().includes(inputValue.toLowerCase());
@@ -51,12 +52,14 @@
 		selected = option.value || option.label; // Return the value object or fallback to label
 		inputValue = option.label;
 		showOptions = false;
+		if (onChange) onChange(selected);
 	}
 
 	function clickClearSelection() {
 		selected = undefined;
 		inputValue = '';
 		inputRef?.focus();
+		if (onChange) onChange(undefined);
 	}
 
 	function toggleOptions() {
