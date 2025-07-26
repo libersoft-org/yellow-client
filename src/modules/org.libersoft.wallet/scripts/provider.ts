@@ -7,6 +7,7 @@ export const rpcURL = writable<string | null>(null);
 export const provider: Writable<JsonRpcProvider | WebSocketProvider | null> = writable<JsonRpcProvider | WebSocketProvider | null>(null);
 export const availableRPCURLs = writable<string[]>([]);
 let reconnectionTimer: ReturnType<typeof setTimeout> | undefined;
+let isManualRpcSelection = false; // Flag to prevent automatic RPC overrides
 let providerData = derivedWithEquals(
 	[selectedNetwork, rpcURL],
 	([$selectedNetwork, $rpcURL]) => {
@@ -52,14 +53,24 @@ providerData.subscribe(({ network, rpcURL: currentRpcURL }) => {
 		return true;
 	});
 	availableRPCURLs.set(validURLs);
+	// Don't override RPC URL if user manually selected one
+	if (isManualRpcSelection) {
+		console.log('Skipping automatic RPC selection due to manual selection');
+		isManualRpcSelection = false;
+		return;
+	}
 	const selectedUrl = getSelectedRpcUrl(network);
 	console.log('Selected RPC URL for network:', selectedUrl);
 	if (validURLs.length > 0) {
 		const urlToUse = selectedUrl || validURLs[0];
 		console.log('Setting RPC URL to:', urlToUse);
-		rpcURL.set(urlToUse);
-		if (selectedUrl && network.guid) setSelectedRpcUrl(network.guid, selectedUrl);
-		connectToURL();
+		// Only set RPC URL if it's different from current one to avoid loops
+		const currentRpcUrlValue = get(rpcURL);
+		if (currentRpcUrlValue !== urlToUse) {
+			rpcURL.set(urlToUse);
+			if (selectedUrl && network.guid) setSelectedRpcUrl(network.guid, selectedUrl);
+			connectToURL();
+		}
 		return;
 	} else {
 		console.log('No valid RPC URLs available for network');
@@ -116,6 +127,12 @@ function connectToURL(): void {
 					console.log('Successfully connected to network:', network.name);
 					const connType = isWebSocket ? 'WebSocket' : 'HTTP';
 					status.set({ color: 'green', text: `Connected to ${network.name} (${connType})` });
+					// Save the selected RPC URL after successful connection
+					const net = get(selectedNetwork);
+					const currentRpcUrlValue = get(rpcURL);
+					if (net?.guid && currentRpcUrlValue) {
+						setSelectedRpcUrl(net.guid, currentRpcUrlValue);
+					}
 				} else console.log('Ignoring connection success from old provider');
 			})
 			.catch(error => {
@@ -165,7 +182,11 @@ export function selectRPCURL(url: string): void {
 	const net = get(selectedNetwork);
 	if (!net) return;
 	if (net.rpcURLs && net.rpcURLs.includes(url)) {
+		console.log('selectRPCURL: Setting RPC URL to:', url);
+		isManualRpcSelection = true; // Set flag to prevent automatic override
 		rpcURL.set(url);
-		if (net.guid) setSelectedRpcUrl(net.guid, url);
+		connectToURL(); // Connect immediately
+		// Don't call setSelectedRpcUrl here - it will be called after successful connection
+		// This prevents the network object from updating and triggering providerData.subscribe()
 	}
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from '@/org.libersoft.wallet/scripts/transaction.ts';
 	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -51,8 +51,17 @@
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
 	let tokenInfos = $state(new Map<string, { name: string; symbol: string }>());
 	let isLoadingTokenInfos = $state(false);
-	let currencyOptions = $derived.by(() => {
-		return $currencies.map(currency => {
+
+	// Track subscriptions for cleanup
+	let networkUnsubscribe: (() => void) | null = null;
+	let addressUnsubscribe: (() => void) | null = null;
+	let feeLevelUnsubscribe: (() => void) | null = null;
+	let isInitialized = $state(false);
+	let currencyOptions = $state<Array<{ label: string; icon: { img: string; size: string }; value: ICurrency }>>([]);
+
+	// Function to update currency options
+	function updateCurrencyOptions() {
+		currencyOptions = $currencies.map(currency => {
 			let label = currency.symbol || 'Unknown';
 			// For tokens with contract addresses, get proper name and symbol from tokenInfos
 			if (currency.contract_address) {
@@ -67,9 +76,64 @@
 				value: currency,
 			};
 		});
-	});
+	}
 
-	$effect(() => {
+	// Helper function for handling network changes - reload currencies and data
+	function handleNetworkChange(newNetwork: typeof $selectedNetwork, currentNetwork: typeof $selectedNetwork) {
+		// Only reset if the actual network (not just RPC) changed - compare by network GUID
+		const networkChanged = newNetwork?.guid !== currentNetwork?.guid;
+		if (isInitialized && networkChanged) {
+			console.log('Send: Network changed - reloading data');
+			// Reset state and reload data
+			currency = null;
+			error = null;
+			currentBalanceData = undefined;
+			nativeBalanceData = undefined;
+			tokenInfos.clear();
+			loadTokenInfos();
+			updateBalance();
+			updateCurrencyOptions(); // Update currency options on network change
+			// Estimate transaction fee for new network only on actual network change
+			if ($provider && $selectedNetwork && $selectedAddress) {
+				console.log('Send: Estimating fee due to network change');
+				estimateFeeWithLogging(currency?.contract_address, 'network change');
+			}
+		}
+	}
+
+	// Helper function for handling address changes
+	function handleAddressChange(newAddress: typeof $selectedAddress, currentAddress: typeof $selectedAddress) {
+		if (isInitialized && newAddress !== currentAddress) {
+			console.log('Send: Address changed - reloading balance');
+			// Update balance for new address, but don't recalculate fee
+			updateBalance();
+		}
+	}
+
+	// Track current currency to detect actual changes
+	let currentCurrency: ICurrency | null | undefined = $state(undefined);
+	let currentAmount: string | number | undefined = $state(undefined);
+
+	// Helper function for handling currency changes
+	function handleCurrencyChange() {
+		// Only proceed if currency actually changed
+		if (currentCurrency !== currency) {
+			if (isInitialized && currency) {
+				console.log('Send: Currency changed - updating balance and fee');
+				updateBalance();
+				if ($provider && $selectedNetwork && $selectedAddress) {
+					console.log('Send: Estimating fee due to currency change');
+					estimateFeeWithLogging(currency?.contract_address, 'currency change');
+				}
+			}
+			currentCurrency = currency;
+		}
+		// Update currency symbol
+		updateCurrencySymbol();
+	}
+
+	// Helper function for updating currency symbol
+	function updateCurrencySymbol() {
 		if (!currency) {
 			selectedCurrencySymbol = '';
 			return;
@@ -82,46 +146,100 @@
 			// Use the symbol from currency object for native currency
 			selectedCurrencySymbol = currency?.symbol || '';
 		}
-	});
+	}
 
-	$effect(() => {
-		if ($provider && $selectedNetwork && $selectedAddress) {
-			estimateTransactionFee(currency?.contract_address);
-			updateBalance();
+	// Helper function for handling fee level changes
+	function handleFeeLevelChange() {
+		if (isInitialized) {
+			updateFeeFromLevel();
 		}
-	});
+	}
 
-	$effect(() => {
-		// Update balance when currency changes
-		currency;
-		updateBalance();
-	});
-
-	$effect(() => {
-		// Update fee estimation when currency changes
-		if ($provider && $selectedNetwork && $selectedAddress && currency) {
-			estimateTransactionFee(currency?.contract_address);
+	// Helper function for handling amount changes
+	function handleAmountChange() {
+		// Only proceed if amount actually changed
+		if (currentAmount !== amount) {
+			if (isInitialized) {
+				updateRemainingBalance();
+			}
+			currentAmount = amount;
 		}
-	});
+	}
 
-	$effect(() => {
-		$feeLevel;
-		updateFeeFromLevel();
-	});
-
-	$effect(() => {
-		console.log('updateRemainingBalance effect triggered');
-		updateRemainingBalance();
-	});
-
-	// Watch for token changes and reload token infos
-	$effect(() => {
-		if ($tokens?.length) loadTokenInfos();
-	});
+	// Wrapper for estimateTransactionFee with logging
+	function estimateFeeWithLogging(contractAddress: string | undefined, reason: string) {
+		console.log(`Send: Estimating transaction fee - ${reason}`);
+		estimateTransactionFee(contractAddress);
+	}
 
 	onMount(() => {
 		elAddressInput?.focus();
 		loadTokenInfos();
+		updateCurrencyOptions(); // Initialize currency options
+
+		// Set up subscriptions to watch for network and address changes
+		let currentNetworkGuid = $selectedNetwork?.guid;
+		let currentAddress = $selectedAddress;
+		let currentFeeLevel = $feeLevel;
+		currentCurrency = currency; // Initialize current currency tracking
+		currentAmount = amount; // Initialize current amount tracking
+
+		// Subscribe to network changes - track only GUID changes, not entire object
+		networkUnsubscribe = selectedNetwork.subscribe(newNetwork => {
+			const newNetworkGuid = newNetwork?.guid;
+			if (currentNetworkGuid !== newNetworkGuid) {
+				// Create minimal network objects for the handler
+				const currentNetworkObj = { guid: currentNetworkGuid };
+				const newNetworkObj = { guid: newNetworkGuid };
+				handleNetworkChange(newNetworkObj as any, currentNetworkObj as any);
+				currentNetworkGuid = newNetworkGuid;
+			}
+		});
+
+		// Subscribe to address changes
+		addressUnsubscribe = selectedAddress.subscribe(newAddress => {
+			handleAddressChange(newAddress, currentAddress);
+			currentAddress = newAddress;
+		});
+
+		// Subscribe to fee level changes
+		feeLevelUnsubscribe = feeLevel.subscribe(newFeeLevel => {
+			if (isInitialized && newFeeLevel !== currentFeeLevel) {
+				handleFeeLevelChange();
+				currentFeeLevel = newFeeLevel;
+			}
+		});
+
+		isInitialized = true; // Mark as initialized to enable reactive effects
+	});
+
+	// Simple effects just for triggering handlers - no complex logic inside
+	$effect(() => {
+		// React to currency changes
+		currency;
+		handleCurrencyChange();
+	});
+
+	$effect(() => {
+		// React to amount changes
+		amount;
+		handleAmountChange();
+	});
+
+	onDestroy(() => {
+		// Clean up subscriptions
+		if (networkUnsubscribe) {
+			networkUnsubscribe();
+			networkUnsubscribe = null;
+		}
+		if (addressUnsubscribe) {
+			addressUnsubscribe();
+			addressUnsubscribe = null;
+		}
+		if (feeLevelUnsubscribe) {
+			feeLevelUnsubscribe();
+			feeLevelUnsubscribe = null;
+		}
 	});
 
 	function scanQRCode() {
@@ -141,6 +259,8 @@
 			});
 			// Trigger reactivity
 			tokenInfos = new Map(tokenInfos);
+			// Update currency options after loading token infos
+			updateCurrencyOptions();
 		} catch (error) {
 			console.error('Error loading token infos in Send:', error);
 		} finally {
@@ -335,7 +455,7 @@
 					<div>{$selectedNetwork?.currency?.symbol || ''}</div>
 				{/if}
 				{#if !$feeLoading && $feeLevel !== 'custom' && $provider && $selectedNetwork && $selectedAddress}
-					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="30px" padding="0" onClick={() => estimateTransactionFee(currency?.contract_address)} />
+					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="30px" padding="0" onClick={() => estimateFeeWithLogging(currency?.contract_address, 'manual refresh')} />
 				{/if}
 			</div>
 		</Label>

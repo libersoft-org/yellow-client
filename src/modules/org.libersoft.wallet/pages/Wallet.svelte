@@ -54,6 +54,15 @@
 	selectedAddress.subscribe(v => {
 		console.log('selectedAddress', v);
 	});
+
+	rpcURL.subscribe(v => {
+		console.log('rpcURL changed to:', v);
+	});
+
+	// Debug reactive statement
+	$effect(() => {
+		console.log('Wallet reactive rpcURL:', $rpcURL);
+	});
 </script>
 
 <style>
