@@ -109,6 +109,7 @@
 			error = null;
 			elRPCURLs = new Array(itemRPCURLs.length).fill(undefined);
 			updateRPCServers();
+			checkRPCServers();
 		} catch (err) {
 			error = 'Failed to load default networks: ' + (err instanceof Error ? err.message : 'Unknown error');
 		}
@@ -175,12 +176,6 @@
 		gap: 10px;
 	}
 
-	.row {
-		display: flex;
-		gap: 10px;
-		align-items: center;
-	}
-
 	.items {
 		display: flex;
 		flex-direction: column;
@@ -206,13 +201,6 @@
 
 	.status.checking {
 		background-color: #f80;
-	}
-
-	.rpc-item-content {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-		flex: 1;
 	}
 
 	.url .info {
