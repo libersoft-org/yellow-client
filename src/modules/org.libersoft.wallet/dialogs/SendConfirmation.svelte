@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { formatBalance, getTokenDecimals, getTokenInfo } from '@/org.libersoft.wallet/scripts/balance.ts';
-	import { parseUnits, formatUnits } from 'ethers';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 	import { type IPayment, sendTransaction } from '@/org.libersoft.wallet/scripts/transaction.ts';
@@ -43,7 +42,7 @@
 	let dialogData = {
 		title: 'Transaction confirmation',
 		body: body,
-		icon: 'img/del.svg',
+		icon: 'modules/' + module.identifier + '/img/send.svg',
 		buttons: [
 			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
 			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
