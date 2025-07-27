@@ -54,6 +54,7 @@
 		}
 		error = null;
 		updateRPCServers();
+		if (itemRPCURLs && itemRPCURLs.length > 0) checkRPCServers();
 		elName?.focus();
 	}
 
@@ -158,6 +159,11 @@
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved);
 		itemRPCURLs = reordered;
+		updateRPCServers();
+	}
+
+	function addRPCURL(): void {
+		itemRPCURLs = [...(itemRPCURLs || []), ''];
 		updateRPCServers();
 	}
 </script>
@@ -299,15 +305,7 @@
 				{/if}
 			</div>
 		</Label>
-		<Button
-			img="img/add.svg"
-			text="Add RPC URL"
-			onClick={() => {
-				itemRPCURLs = [...(itemRPCURLs || []), ''];
-				updateRPCServers();
-			}}
-			data-testid="wallet-settings-network-add-rpc-url-btn"
-		/>
+		<Button img="img/add.svg" text="Add RPC URL" onClick={addRPCURL} data-testid="wallet-settings-network-add-rpc-url-btn" />
 	</Form>
 	{#if error}
 		<Alert type="error" message={error} />
