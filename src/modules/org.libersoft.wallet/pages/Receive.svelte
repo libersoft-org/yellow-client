@@ -52,6 +52,48 @@
 		});
 	});
 
+	onMount(() => {
+		loadTokenInfos();
+		// Set up subscription to watch for network changes only
+		let currentNetworkGuid = $selectedNetwork?.guid;
+		let currentAddressString = $selectedAddress?.address;
+		// Subscribe to network changes - track only GUID changes, not entire object
+		networkUnsubscribe = selectedNetwork.subscribe(newNetwork => {
+			const newNetworkGuid = newNetwork?.guid;
+			if (currentNetworkGuid !== newNetworkGuid) {
+				// Create minimal network objects for the handler
+				const currentNetworkObj = { guid: currentNetworkGuid };
+				const newNetworkObj = { guid: newNetworkGuid };
+				handleNetworkChange(newNetworkObj as any, currentNetworkObj as any);
+				currentNetworkGuid = newNetworkGuid;
+			}
+		});
+		// Subscribe to address changes
+		addressUnsubscribe = selectedAddress.subscribe(newAddress => {
+			// Create address objects for comparison
+			const currentAddressObj = { address: currentAddressString };
+			handleAddressChange(newAddress, currentAddressObj as any);
+			currentAddressString = newAddress?.address;
+		});
+		isInitialized = true; // Mark as initialized to enable reactive effects
+		// Initialize current currency tracking
+		currentCurrency = currency;
+		// Initial QR code generation
+		updateAddressAndQR();
+	});
+
+	onDestroy(() => {
+		// Clean up subscriptions
+		if (networkUnsubscribe) {
+			networkUnsubscribe();
+			networkUnsubscribe = null;
+		}
+		if (addressUnsubscribe) {
+			addressUnsubscribe();
+			addressUnsubscribe = null;
+		}
+	});
+
 	// Helper function for handling network changes - reload token infos only on actual network change
 	function handleNetworkChange(newNetwork: typeof $selectedNetwork, currentNetwork: typeof $selectedNetwork) {
 		// Only reload if the actual network (not just RPC) changed - compare by network GUID
@@ -102,49 +144,6 @@
 			currentCurrency = currency;
 		}
 	}
-
-	onMount(() => {
-		loadTokenInfos();
-		// Set up subscription to watch for network changes only
-		let currentNetworkGuid = $selectedNetwork?.guid;
-		let currentAddressString = $selectedAddress?.address;
-		// Subscribe to network changes - track only GUID changes, not entire object
-		networkUnsubscribe = selectedNetwork.subscribe(newNetwork => {
-			const newNetworkGuid = newNetwork?.guid;
-			if (currentNetworkGuid !== newNetworkGuid) {
-				// Create minimal network objects for the handler
-				const currentNetworkObj = { guid: currentNetworkGuid };
-				const newNetworkObj = { guid: newNetworkGuid };
-				handleNetworkChange(newNetworkObj as any, currentNetworkObj as any);
-				currentNetworkGuid = newNetworkGuid;
-			}
-		});
-
-		// Subscribe to address changes
-		addressUnsubscribe = selectedAddress.subscribe(newAddress => {
-			// Create address objects for comparison
-			const currentAddressObj = { address: currentAddressString };
-			handleAddressChange(newAddress, currentAddressObj as any);
-			currentAddressString = newAddress?.address;
-		});
-		isInitialized = true; // Mark as initialized to enable reactive effects
-		// Initialize current currency tracking
-		currentCurrency = currency;
-		// Initial QR code generation
-		updateAddressAndQR();
-	});
-
-	onDestroy(() => {
-		// Clean up subscriptions
-		if (networkUnsubscribe) {
-			networkUnsubscribe();
-			networkUnsubscribe = null;
-		}
-		if (addressUnsubscribe) {
-			addressUnsubscribe();
-			addressUnsubscribe = null;
-		}
-	});
 
 	async function loadTokenInfos() {
 		const tokensWithContracts = $tokens.filter(token => token.contract_address);
