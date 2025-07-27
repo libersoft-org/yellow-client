@@ -561,7 +561,7 @@
 		{/if}
 		<Td>
 			{#if refreshFn}
-				<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={refreshFn} />
+				<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="16px" padding="5px" onClick={refreshFn} />
 			{/if}
 		</Td>
 	</Tr>

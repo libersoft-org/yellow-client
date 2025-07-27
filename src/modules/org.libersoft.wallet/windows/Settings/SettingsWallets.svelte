@@ -105,7 +105,7 @@
 						<Td padding="0" align="center">
 							<Clickable onClick={() => clickWallet(wallet)}>
 								<div class="item" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-									<Icon img={getWalletTypeIcon(wallet)} size="16px" />
+									<Icon img={getWalletTypeIcon(wallet)} alt={getWalletTypeText(wallet)} colorVariable="--primary-foreground" size="16px" />
 									<span>{getWalletTypeText(wallet)}</span>
 								</div>
 							</Clickable>

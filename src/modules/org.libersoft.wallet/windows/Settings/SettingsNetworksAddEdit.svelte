@@ -134,6 +134,16 @@
 		});
 		rpcServers = newRpcServers;
 	}
+
+	function checkRPC(rpcServer: IRPCServer): void {
+		if (rpcServer && !rpcServer.checking) checkRPCServer(rpcServer);
+	}
+
+	function removeRPCURL(index: number): void {
+		if (!itemRPCURLs) return;
+		itemRPCURLs.splice(index, 1);
+		updateRPCServers();
+	}
 </script>
 
 <style>
@@ -223,27 +233,8 @@
 								{#if rpcServers[i]}
 									<div class="status" class:alive={rpcServers[i].isAlive} class:dead={!rpcServers[i].isAlive && !rpcServers[i].checking} class:checking={rpcServers[i].checking}></div>
 								{/if}
-								<Icon
-									img="img/reset.svg"
-									alt="Check RPC server"
-									padding="5px"
-									enabled={!rpcServers[i]?.checking}
-									onClick={() => {
-										if (rpcServers[i] && !rpcServers[i].checking) {
-											checkRPCServer(rpcServers[i]);
-										}
-									}}
-								/>
-								<Icon
-									img="img/del.svg"
-									alt="Remove RPC URL"
-									padding="5px"
-									onClick={() => {
-										itemRPCURLs = itemRPCURLs?.filter((v, j) => j !== i);
-										updateRPCServers();
-									}}
-									testId="wallet-settings-network-rpc-url-remove-{i}"
-								/>
+								<Icon img="img/reset.svg" alt="Check RPC server" colorVariable="--primary-foreground" padding="5px" enabled={!rpcServers[i]?.checking} onClick={() => checkRPC(rpcServers[i])} />
+								<Icon img="img/del.svg" alt="Remove RPC URL" colorVariable="--primary-foreground" padding="5px" onClick={() => removeRPCURL(i)} testId="wallet-settings-network-rpc-url-remove-{i}" />
 							</div>
 							{#if rpcServers[i]}
 								<div class="row">

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { getContext, onMount } from 'svelte';
+	import { debug } from '@/core/scripts/stores.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { initializeTrezor, connectTrezor, getTrezorEthereumAccounts, trezorLoading, trezorError, trezorAccounts, trezorDevice, resetTrezorState, type TrezorAccount } from '@/org.libersoft.wallet/scripts/trezor';
 	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/wallet';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -224,22 +226,22 @@
 		<div class="status-card" class:connected={!!$trezorDevice} class:error={$trezorError}>
 			<div class="status-icon">
 				{#if !!$trezorDevice}
-					<Icon img="img/check.svg" size="24px" />
+					<Icon img="img/check.svg" alt="Trezor connected" colorVariable="--primary-foreground" size="24px" />
 				{:else if $trezorError}
-					<Icon img="img/cross.svg" size="24px" />
+					<Icon img="img/cross.svg" alt="Connection failed" colorVariable="--primary-foreground" size="24px" />
 				{:else}
-					<Icon img="img/indicator-cancel.svg" size="24px" />
+					<Icon img="modules/{module.identifier}/img/wallet-trezor.svg" alt="Connect your Trezor" colorVariable="--primary-foreground" size="24px" />
 				{/if}
 			</div>
 			<div class="status-text">
 				{#if !!$trezorDevice}
-					<strong>Trezor connected!</strong>
+					<div class="bold">Trezor connected!</div>
 					<div>Device is ready to use.</div>
 				{:else if $trezorError}
-					<strong>Connection failed</strong>
+					<div class="bold">Connection failed</div>
 					<div>{$trezorError}</div>
 				{:else}
-					<strong>Connect your Trezor</strong>
+					<div class="bold">Connect your Trezor</div>
 					<div>Please connect your Trezor device and unlock it.</div>
 				{/if}
 			</div>
@@ -321,7 +323,7 @@
 		{#if selectedAccount}
 			<div class="status-card">
 				<div class="status-text">
-					<strong>Selected Account:</strong>
+					<div class="bold">Selected Account:</div>
 					<div class="account-address">{selectedAccount.address}</div>
 				</div>
 			</div>
@@ -344,13 +346,11 @@
 		</div>
 	{/if}
 
-	<!-- Debug Information -->
-	<div style="margin-top: 20px; padding: 10px; background: var(--primary-softer-background); border-radius: 5px; font-size: 12px;">
-		<strong>Debug Info:</strong><br />
-		isInitialized: {isInitialized}<br />
-		trezorDevice: {JSON.stringify($trezorDevice) || 'None'}<br />
-		trezorLoading: {$trezorLoading}<br />
-		trezorError: {$trezorError || 'None'}<br />
-		current step: {step}
-	</div>
+	{#if $debug}
+		<div>isInitialized: {isInitialized}</div>
+		<div>trezorDevice: {JSON.stringify($trezorDevice) || 'None'}</div>
+		<div>trezorLoading: {$trezorLoading}</div>
+		<div>trezorError: {$trezorError || 'None'}</div>
+		<div>current step: {step}</div>
+	{/if}
 </div>
