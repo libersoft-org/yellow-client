@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -24,6 +25,8 @@
 	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Selection.svelte';
 	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
 	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
+	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor.ts';
+	import TrezorWindow from '@/org.libersoft.wallet/windows/Wallets/TrezorWindow.svelte';
 	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
 
@@ -58,6 +61,19 @@
 	rpcURL.subscribe(v => {
 		console.log('rpcURL changed to:', v);
 	});
+
+	async function toggleTrezorWindow() {
+		const trezorWin = get(trezorWindow);
+		if (!trezorWin) {
+			console.error('Trezor window is not initialized');
+			return;
+		}
+		if (trezorWin.isOpen()) {
+			await trezorWin.close();
+		} else {
+			await trezorWin.open();
+		}
+	}
 </script>
 
 <style>
@@ -151,6 +167,7 @@
 <Paper>
 	{#if $debug}
 		<div class="buttons">
+			<Button text="TrezorW" onClick={toggleTrezorWindow} />
 			<Button text="Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
 			<Button text="Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
 		</div>
@@ -223,3 +240,4 @@
 <WindowWallets />
 <Window title="Select RPC Server" body={WindowRPCServers} bind:this={$rpcServersWindow} width="600px" />
 <Settings />
+<TrezorWindow />
