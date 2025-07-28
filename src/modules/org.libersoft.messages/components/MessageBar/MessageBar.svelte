@@ -55,7 +55,6 @@
 	});
 
 	onMount(async () => {
-		console.log('MessageBar mounted');
 		await init_emojis();
 		/*setInterval(() => {
    let v = get(debugBuffer);
@@ -78,10 +77,7 @@
 	});
 
 	export async function openExpressions(tab) {
-		console.log('openExpressions', tab);
 		if (expressionsAsContextMenu) {
-			console.log('openExpressions as context menu:', expressionsMenu);
-			console.log('elExpressions.offsetLeft:', elExpressions.offsetLeft, 'elExpressions.offsetTop:', elExpressions.offsetTop, 'elExpressions.offsetWidth:', elExpressions.offsetWidth, 'elExpressions.offsetHeight:', elExpressions.offsetHeight);
 			expressionsMenu?.openMenu({ x: elExpressions.getBoundingClientRect().x, y: 0 });
 			// Notify MessagesList that expressions menu is open
 			expressionsMenuOpen?.setOpen(true);
@@ -90,7 +86,6 @@
 			handleBottomSheetOpenWithDelay();
 		}
 		await tick();
-		console.log('elExpressions:', elExpressions);
 		await expressions?.setCategory(null, tab);
 	}
 
@@ -126,7 +121,6 @@
 	}
 
 	function resizeMessage() {
-		console.log('resizeMessage handleResize (scroll?)');
 		handleResize(true /*TODO: save*/);
 		const maxHeight = 200;
 		const textarea = elMessage;
@@ -187,7 +181,6 @@
 	}
 
 	function onMessageInputFocus(event) {
-		console.log('📝 Message input focused - closing bottom sheet');
 		// Close bottom sheet when user wants to type
 		if (expressionsBottomSheetOpen) {
 			expressionsBottomSheetOpen = false;
@@ -210,29 +203,41 @@
 		console.log('clicked on location');
 	}
 
+	function handleAttachmentMousedown(event) {
+		// Check if keyboard is currently open
+		const currentKeyboardHeight = get(keyboardHeight);
+		if (currentKeyboardHeight && currentKeyboardHeight > 50) {
+			// Check if the input field is currently focused
+			const wasInputFocused = document.activeElement === elMessage;
+
+			// Let the context menu open, then check if we need to restore focus
+			setTimeout(() => {
+				// Only restore focus if it was focused before AND it lost focus
+				if (wasInputFocused && document.activeElement !== elMessage) {
+					elMessage.focus();
+				}
+			}, 10);
+		}
+	}
+
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 	});
 
 	documentHeight.subscribe(value => {
-		console.log('documentHeight handleResize (scroll?)');
 		handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
 	});
 
 	keyboardHeight.subscribe(value => {
-		console.log('keyboardHeight:', value);
 		if (value > 100) {
 			if (get(isMobile)) {
-				console.log('adjusting expressionsHeight from keyboardHeight:', value);
 				expressionsHeight = value + 'px';
 			}
 		}
 
 		// Check if we're waiting for keyboard to close and it's now closed
 		if (waitingForKeyboardClose) {
-			console.log('🔍 WAITING FOR KEYBOARD - current height:', value, 'waiting:', waitingForKeyboardClose);
 			if (!value || value < 50) {
-				console.log('🎉 *** KEYBOARD CLOSED *** - opening bottom-sheet now');
 				waitingForKeyboardClose = false;
 				pendingBottomSheetOpen = false;
 				expressionsBottomSheetOpen = true;
@@ -247,7 +252,6 @@
 	}
 
 	function closeExpressions() {
-		//console.log('closeExpressions');
 		//if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
 		expressionsBottomSheetOpen = false;
 		expressionsMenu?.close();
@@ -270,7 +274,6 @@
 
 		// Don't close if we have a pending bottom sheet opening
 		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
-			console.log('🔄 Not closing bottom sheet - pending opening in progress');
 			return;
 		}
 
@@ -285,30 +288,22 @@
 
 	// Reactive bottom sheet opening - waits for keyboard to actually close
 	function handleBottomSheetOpenWithDelay() {
-		console.log('🚀 handleBottomSheetOpenWithDelay called');
-
 		// Prevent multiple simultaneous requests
 		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
-			console.log('🚫 Bottom sheet opening already pending');
 			return;
 		}
 
 		const currentKeyboardHeight = get(keyboardHeight);
 		const currentIsMobile = get(isMobile);
-		console.log('🔍 DEBUG - keyboardHeight:', currentKeyboardHeight, 'isMobile:', currentIsMobile, 'expressionsAsContextMenu:', expressionsAsContextMenu);
 
 		// If keyboard is not open, open bottom sheet immediately
 		if (!currentKeyboardHeight || currentKeyboardHeight < 50) {
-			console.log('✅ Taking IMMEDIATE path - keyboard not detected as open');
-			console.log('📱 Opening bottom sheet immediately');
 			expressionsBottomSheetOpen = true;
 			expressionsMenuOpen?.setOpen(true);
 			return;
 		}
 
 		// Keyboard is open - close it first, then wait for it to actually close
-		console.log('⌨️ Taking REACTIVE path - keyboard detected as open');
-		console.log('🔄 Setting waitingForKeyboardClose = true, waiting for keyboard to close...');
 		waitingForKeyboardClose = true;
 		pendingBottomSheetOpen = true;
 		elMessage.blur(); // Start closing keyboard
@@ -319,7 +314,6 @@
 
 	onMount(() => {
 		videoInputRef.addEventListener('change', function (event) {
-			console.log('event.target.files', event.target.files);
 			const recipientEmail = get(selectedConversation).address;
 			const file = event.target.files[0]; // Get the selected video file
 			if (file) {
@@ -404,8 +398,8 @@
 		{/if}
 		<div class="main">
 			<MessageBarRecorder />
-			<div bind:this={elAttachment} data-testid="attachment-button">
-				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" isButton />
+			<div bind:this={elAttachment} data-testid="attachment-button" on:mousedown={handleAttachmentMousedown}>
+				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" />
 			</div>
 			{#if expressionsAsContextMenu}
 				<div bind:this={elExpressions} class="expressions-button">
@@ -461,19 +455,16 @@
 	<Clickable
 		onClick={() => {
 			expressionsAsContextMenu = !expressionsAsContextMenu;
-			console.log('expressionsAsContextMenu:', expressionsAsContextMenu, 'expressionsBottomSheetOpen:', expressionsBottomSheetOpen);
 		}}
 	>
 		expressionsBottomSheetOpen: {expressionsBottomSheetOpen}
 		expressionsAsContextMenu: {expressionsAsContextMenu}
 	</Clickable>
 {/if}
-
 {#if !expressionsAsContextMenu && expressionsBottomSheetOpen}
 	<div class="bottom-sheet" style="height: {expressionsHeight};" bind:this={elBottomSheet}>
 		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet />
 	</div>
 {/if}
-
 <Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={$modalFileUploadStore} />
 <Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="700px" height="500px" max resizable />

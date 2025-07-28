@@ -12,14 +12,24 @@
 	import { get } from 'svelte/store';
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '../../messages.js';
 	import { getGuid } from '@/core/core.ts';
-	import { debug } from '@/core/stores.ts';
+	import { debug, keyboardHeight, isMobile } from '@/core/stores.ts';
 
 	// Android detection
 	let isAndroid = false;
+	let isRealMobile = false;
 
 	onMount(() => {
 		// Detect Android specifically
 		isAndroid = /Android/i.test(navigator.userAgent);
+
+		// Detect real mobile device (not desktop simulation)
+		// Check for touch capability AND mobile user agent AND not desktop browser
+		const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+		const isMobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+		const isDesktopBrowser = /Chrome|Firefox|Safari|Edge/i.test(navigator.userAgent) && !/Mobile|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+		// Real mobile = has touch + mobile user agent + not desktop browser
+		isRealMobile = hasTouch && isMobileUA && !isDesktopBrowser;
 	});
 
 	// Reactive bottom position for ScrollButton
@@ -46,6 +56,10 @@
 
 	// Reactive spacer height that accounts for keyboard and context menu state (Android only)
 	$: spacerHeight = isAndroid && !expressionsMenuOpen ? `60px` : '0px';
+
+	// Reactive spacer visibility for Android keyboard adjustment
+	$: showAndroidSpacer = isAndroid && isRealMobile && ($keyboardHeight > 0 || $keyboardHeight === 0);
+	$: androidSpacerHeight = expressionsMenuOpen ? '10px' : '72px';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Modal from '@/core/components/Modal/Modal.svelte';
@@ -168,7 +182,7 @@
 	/*
   // TODO: resizer observer does not trigger when elements change size.
   $: if (elMessages) {
-   new ResizeObserver((entries) => { console.log(entries); fixScroll();}).observe(elMessages);
+   new ResizeObserver((entries) => { fixScroll();}).observe(elMessages);
   }
  */
 
@@ -176,10 +190,7 @@
 		if (elMessages && jumped) {
 			let height = elMessages.scrollHeight;
 			if (height != messagesHeight) {
-				console.log('messagesHeight:', messagesHeight, 'height:', height);
-				console.log('scrolledToBottom0:', scrolledToBottom0, 'scrolledToBottom1:', scrolledToBottom1);
 				if (scrolledToBottom0) {
-					console.log('fixScroll: scrollToBottom');
 					scrollToBottom();
 				}
 				messagesHeight = height;
@@ -204,7 +215,6 @@
 
 	events.subscribe(e => {
 		if (e?.length) {
-			console.log('events.subscribe:', e);
 			handleEvents(e);
 			itemsCount = itemsArray.length;
 			events.set([]);
@@ -215,24 +225,18 @@
 		if (!elMessages) return;
 		event.savedScrollTop = elMessages.scrollTop;
 		event.savedScrollHeight = elMessages.scrollHeight;
-		//console.log('saveScrollPosition: savedScrollTop:', event.savedScrollTop, 'savedScrollHeight:', event.savedScrollHeight);
 	}
 
 	function restoreScrollPosition(event: UIEvent): void {
-		//console.log('restoreScrollPosition elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
 		if (event.savedScrollHeight !== undefined && event.savedScrollTop !== undefined) {
 			const scrollDifference = elMessages.scrollHeight - event.savedScrollHeight;
-			console.log('restoreScrollPosition scrollTop');
 			elMessages.scrollTop = event.savedScrollTop + scrollDifference;
 		}
-		//console.log('scrollDifference:', scrollDifference, 'new elMessages.scrollTop:', elMessages.scrollTop);
 	}
 
 	function scrollToBottom(): void {
 		// TODO: fixme: sometimes does not scroll to bottom properly when two messages appear at once
-		//console.log('SCROLLTOBOTTOM');
 		if (elMessages) {
-			console.log('scrollToBottom');
 			elMessages.scrollTop = elMessages.scrollHeight;
 		}
 	}
@@ -244,7 +248,6 @@
 
 	function checkIfScrolledToBottom(div: HTMLDivElement): boolean {
 		const result = div.scrollTop + div.clientHeight >= div.scrollHeight - 20;
-		///console.log('checkIfScrolledToBottom div.scrollTop:', div.scrollTop, 'div.clientHeight:', div.clientHeight, 'total:', div.scrollTop + div.clientHeight, 'div.scrollHeight:', div.scrollHeight, 'result:', result);
 		return result;
 	}
 
@@ -265,7 +268,6 @@
 		if (doBlockScroll) {
 			e.preventDefault();
 			e.stopPropagation();
-			console.log('touchMove: elMessages.scrollTop:');
 			elMessages.scrollTop = scrollStartPos;
 		}
 	}
@@ -279,61 +281,48 @@
 	}
 
 	function updateWindowSize(width: number, height: number): void {
-		//console.log('updateWindowSize width:', width, 'height:', height);
 		parseScroll();
 	}
 
 	beforeUpdate(() => {
 		if (!elMessages) return;
-		//console.log('beforeUpdate: elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
 	});
 
 	afterUpdate(async () => {
 		if (!elMessages) return;
 		await tick();
 		for (let event of uiEvents) {
-			//console.log('uiEvent:', event);
 			if (event.type === 'gc') {
-				//console.log('gc');
 			} else if (event.type === 'lazyload_prev') {
 				restoreScrollPosition(event);
 			} else if (event.type === 'lazyload_next') {
 				await jumpToLazyLoaderFromTop(event);
 			} else if (event.type === 'new_message') {
-				console.log('new_message scrollToBottom:', event);
 				if (event.wasScrolledToBottom) scrollToBottom();
 			} else if (event.type === 'send_message') {
-				console.log('send_message scrollToBottom:', event);
 				if (event.wasScrolledToBottom) scrollToBottom();
 			} else if (event.type === 'initial_load') {
 				if (elUnseenMarker) {
-					console.log('initial_load elUnseenMarker.scrollIntoView');
 					elMessages.scrollTop = elMessages.scrollHeight;
 					await tick();
 					elUnseenMarker.scrollIntoView();
 				} else {
-					console.log('initial_load scrollToBottom');
 					scrollToBottom();
 				}
 			} else if (event.type === 'jump_to_referenced_message') {
 				setTimeout(() => {
 					if (event.referenced_message) {
 						const msgEl = event.referenced_message.el.getRef();
-						console.log('jump_to_referenced_message scrollIntoView:', msgEl);
 						msgEl.scrollIntoView({ behavior: 'instant' });
 						highlightElement(msgEl);
 					}
 				}, 200); // TODO: check for better solution - may be buggy on slow computers (if there is no timeout set it scroll jump to message)
 			} else if (event.type === 'properties_update') {
-				//console.log('properties_update');
 			} else if (event.type === 'resize') {
-				//console.log('resize uiEvent:', event);
 				if (event.wasScrolledToBottom || event.wasScrolledToBottom2) {
 					setTimeout(() => {
-						console.log('resize scrollToBottom');
 						scrollToBottom();
 					}, 0);
-					//scrollToBottom();
 				}
 			}
 		}
@@ -342,15 +331,12 @@
 		await tick();
 		let activatedCount = 0;
 		for (let event of events) {
-			//console.log('event:', event);
 			for (let loader of event.loaders) {
-				//console.log('activate loader:', loader);
 				loader.active = true;
 				activatedCount++;
 			}
 		}
 		if (activatedCount > 0) {
-			console.log('activatedCount:', activatedCount, 'itemsArray');
 			itemsArray = itemsArray;
 			for (let i = 0; i < itemsArray.length; i++) itemsArray[i] = itemsArray[i];
 		}
@@ -392,7 +378,6 @@
 	}
 
 	function gc(): void {
-		//console.log('gc random slice of messagesArray...');
 		let x = get(messagesArray);
 		let i = Math.floor(Math.random() * x.length);
 		x.splice(i, Math.floor(Math.random() * 40));
@@ -403,36 +388,29 @@
 	$: log.debug('itemsArray:', itemsArray);
 
 	async function jumpToLazyLoaderFromTop(event: UIEvent): Promise<void> {
-		//console.log('jumpToLazyLoaderFromTop:', event);
 		let el;
 		for (let l of event.loaders) {
-			//   console.log('jumpToLazyLoaderFromTop: l:', l);
 			if (l.reason === 'lazyload_next' && l.loaderElement) {
 				el = l.loaderElement;
 				break;
 			}
 		}
 		if (el) {
-			console.log('jumpToLazyLoaderFromTop: el:', el, 'scrollTop');
 			elMessages.scrollTop = 0;
 			scrolledToBottom0 = false;
 			scrolledToBottom1 = false;
 			await tick();
-			//await el.scrollIntoView();
 		}
 	}
 
 	async function handleEvents(events: UIEvent[]): Promise<void> {
-		console.log('handleEvents:', events);
 		if (events.length === 1 && events[0].type === 'properties_update') {
-			console.log('properties_update itemsArray');
 			itemsArray = itemsArray;
 			return;
 		}
 		// force_refresh is used when deleting message. Normally, Loaders would, after loadMessages, only issue an event if any new messages are actually added. But if we delete a message, we need to remove the loader. So, the gc event, triggered as soon as the message is removed from messagesArray, lets us know to tell all loaders to force_refresh when they trigger. This is not optimal, as only the exact hole inserted in place of the deleted message should force_refresh, but it will work.
 		let force_refresh = events.some(e => e.type === 'gc');
 		for (let i = 0; i < events.length; i++) {
-			//console.log('handleEvent:', events[i]);
 			let event = events[i];
 			event.loaders = [];
 			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') continue;
@@ -454,20 +432,16 @@
 			if (messages.length === 1 && messages[0].type === 'initial_loading_placeholder') {
 				loaders = [];
 				holes = [];
-				console.log('handleEvents: initial_loading_placeholder itemsArray');
 				itemsArray = messages;
 				return;
 			}
 			if (messages.length === 0) {
-				console.log('handleEvents: no messages itemsArray');
 				itemsArray = [{ type: 'initial_loading_placeholder', uid: 'initial_loading' } as MessageItem];
 				return;
 			}
 			messages = mergeAuthorship(messages);
 			for (let m of messages) {
 				if (!m.acc || m.uid === undefined) {
-					//(typeof m !== Message)
-					console.log('getItems: Invalid item: ', typeof m, m);
 					throw new Error('getItems: Invalid item: ' + JSON.stringify(m));
 				}
 			}
@@ -482,14 +456,10 @@
 				items.unshift(l);
 			}
 			let unseen_marker_put = false;
-			//scroll = isScrolledToBottom();
-			// walk all messages, add loaders where there are discontinuities
+			//walk all messages, add loaders where there are discontinuities
 			for (let i = 0; i < messages.length; i++) {
 				let m = messages[i];
-				//console.log('m:', m);
-				//console.log('if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)):', !unseen_marker_put, !m.is_outgoing, !m.seen, m.keep_unseen_bar);
 				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)) {
-					//console.log('ADDING-UNSEEN-MARKER');
 					items.push({ type: 'unseen_marker', uid: 'unseen_marker' } as MessageItem);
 					unseen_marker_put = true;
 				}
@@ -500,9 +470,6 @@
 				}*/
 				let next = messages[i + 1];
 				if (next && next.id !== undefined && m.next !== 'none' && m.next !== undefined && m.next !== next.id) {
-					console.log('INSERTING-HOLE-BETWEEN', m, 'and', next);
-					//console.log(JSON.stringify(m), JSON.stringify(next));
-					//console.log('m.next:', m.next, 'next.id:', next.id);
 					let l1 = getLoader({ next: 5, base: m.id!, reason: 'lazyload_next' });
 					l1.force_refresh = force_refresh;
 					let l2 = getLoader({ prev: 5, base: next.id, reason: 'lazyload_prev' });
@@ -514,14 +481,11 @@
 			}
 			let last = messages[messages.length - 1];
 			if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
-				//console.log('ADDING-LOADER-AT-THE-END because ', JSON.stringify(last, null, 2));
-				//console.log(last.next);
 				let l = getLoader({ next: 10, base: last.id, reason: 'lazyload_next' });
 				l.force_refresh = force_refresh;
 				event.loaders.push(l);
 				items.push(l);
 			}
-			console.log('handleEvents: itemsArray updated');
 			itemsArray = items;
 		}
 	}
@@ -540,17 +504,13 @@
 		return items;
 	}
 
-	async function mouseDown(event: MouseEvent): Promise<void> {
-		//console.log('event:', event);
-	}
+	async function mouseDown(event: MouseEvent): Promise<void> {}
 
 	function onFocus(event: FocusEvent): void {
-		//console.log('elMessages onFocus:', event);
 		window.addEventListener('keydown', onkeydown);
 	}
 
 	function onBlur(event: FocusEvent): void {
-		//console.log('elMessages onBlur:', event);
 		window.removeEventListener('keydown', onkeydown);
 	}
 
@@ -634,23 +594,21 @@
 		overflow: hidden;
 		container-type: inline-size;
 		container-name: messages-list;
+		min-height: 0; /* Allow flex item to shrink */
 	}
 
 	.messages {
 		display: flex;
-		margin-top: auto;
 		flex-direction: column;
 		flex-grow: 1;
 		height: 100%;
 		overflow-y: auto;
-		max-height: 100%; /* Ensure the inner div has a defined height */
 	}
 
 	.messages-container {
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		height: 100%;
 		max-width: var(--message-list-max-width, none);
 		margin: 0 auto;
 	}
@@ -749,12 +707,15 @@
 		color: var(--primary-foreground);
 	}
 
-	/* Target Android devices */
-	@media (max-width: 768px) and (max-height: 800px) {
-		.messages-bottom-spacer {
-			flex-shrink: 0;
-			/* Height is now dynamically set via JavaScript */
-		}
+	/* Android spacer for keyboard adjustment */
+	.android-spacer {
+		width: 100%;
+		display: none; /* Hidden by default */
+	}
+
+	/* Show spacer only on Android */
+	.android-spacer.show {
+		display: block;
 	}
 </style>
 
@@ -768,6 +729,12 @@
 		<div>items count: {itemsCount}</div>
 		<div>messagesHeight: {messagesHeight}</div>
 		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
+		<div>elMessagesContainer?.offsetHeight: {elMessagesContainer?.offsetHeight}</div>
+		<div>elMessagesContainer?.scrollHeight: {elMessagesContainer?.scrollHeight}</div>
+		<div>elMessages?.offsetHeight: {elMessages?.offsetHeight}</div>
+		<div>elMessages?.scrollHeight: {elMessages?.scrollHeight}</div>
+		<div>isAndroid: {isAndroid}</div>
+		<div>expressionsMenuOpen: {expressionsMenuOpen}</div>
 	</div>
 {/if}
 
@@ -797,13 +764,7 @@
 	{:else}
 		<div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll} on:touchmove={touchMove} on:touchend={blockScroll} on:touchstart={touchStart}>
 			<div class="messages-container" bind:this={elMessagesContainer}>
-				<div class="spacer"></div>
 				{#each itemsArray as m (m.uid)}
-					<!--{#if $debug}-->
-					<!-- <div class="debug-text">-->
-					<!--  {JSON.stringify(m, null, 2)}-->
-					<!-- </div>-->
-					<!--{/if}-->
 					{#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole' && 'top' in m && 'bottom' in m}
 						<MessageLoader loader={m.top} />
 						<div class="hole">{m.uid}</div>
@@ -817,7 +778,10 @@
 					{/if}
 				{/each}
 				<div bind:this={anchorElement}></div>
-				<div class="messages-bottom-spacer" style="height: {spacerHeight}"></div>
+				<!-- Android spacer for keyboard adjustment -->
+				{#if showAndroidSpacer}
+					<div class="android-spacer show" style="height: {androidSpacerHeight};"></div>
+				{/if}
 			</div>
 		</div>
 		<ScrollButton visible={scrollButtonVisible} right="15px" bottom={scrollButtonBottom} onClick={scrollToBottom} />

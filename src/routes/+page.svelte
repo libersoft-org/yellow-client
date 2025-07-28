@@ -165,11 +165,7 @@
 			// Simple and reliable keyboard height detection
 			let keyboardHeightValue = initialViewportHeight - visualViewport.height;
 
-			console.log('🔍 KEYBOARD DEBUG - initialHeight:', initialViewportHeight, 'currentHeight:', visualViewport.height);
-			console.log('🔍 KEYBOARD DEBUG - keyboardHeightValue calculation:', keyboardHeightValue);
-
 			if (keyboardHeightValue < 0) keyboardHeightValue = 0;
-			console.log('🔍 KEYBOARD DEBUG - final keyboardHeightValue:', keyboardHeightValue);
 			keyboardHeight.set(keyboardHeightValue);
 		} else viewportHeight = window.innerHeight;
 		document.documentElement.style.setProperty('--app-height', `${viewportHeight}px`);
