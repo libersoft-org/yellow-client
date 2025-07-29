@@ -20,7 +20,7 @@ interface TrezorDevice {
 export interface TrezorAccount {
 	address: string;
 	path: string;
-	publicKey: string;
+	publicKey?: string;
 	balance?: string;
 	name?: string;
 }
@@ -396,7 +396,7 @@ export async function getTrezorEthereumAccounts(startIndex: number = 0, count: n
 }
 
 // Create Trezor wallet from account
-export async function createTrezorWallet(account: TrezorAccount, name?: string): Promise<TrezorWallet | null> {
+/*export async function createTrezorWallet(account: TrezorAccount, name?: string): Promise<TrezorWallet | null> {
 	let currentDevice: TrezorDevice | null = null;
 	const unsubscribe = trezorDevice.subscribe(d => (currentDevice = d));
 	unsubscribe();
@@ -415,93 +415,93 @@ export async function createTrezorWallet(account: TrezorAccount, name?: string):
 	// Add to trezor wallets store
 	trezorWallets.update(wallets => [...wallets, wallet]);
 	return wallet;
-}
+}*/
 
 // Get all Trezor wallets
-export function getTrezorWallets(): TrezorWallet[] {
+/*export function getTrezorWallets(): TrezorWallet[] {
 	let wallets: TrezorWallet[] = [];
 	const unsubscribe = trezorWallets.subscribe(w => (wallets = w));
 	unsubscribe();
 	return wallets;
-}
+}*/
 
 // Sign Ethereum transaction with Trezor (compatible with Ethers.js)
-export async function signEthereumTransaction(
-	wallet: TrezorWallet,
-	transaction: TransactionRequest
-): Promise<
-	TrezorResponse<{
-		r: string;
-		s: string;
-		v: number;
-	}>
-> {
-	return await withTrezorState(async () => {
-		// Convert Ethers.js transaction to Trezor format
-		const trezorTransaction = {
-			nonce: transaction.nonce ? `0x${transaction.nonce.toString(16)}` : '0x0',
-			gasPrice: transaction.gasPrice ? `0x${transaction.gasPrice.toString(16)}` : '0x0',
-			gasLimit: transaction.gasLimit ? `0x${transaction.gasLimit.toString(16)}` : '0x0',
-			to: transaction.to ? transaction.to.toString() : null,
-			value: transaction.value ? `0x${transaction.value.toString(16)}` : '0x0',
-			data: transaction.data || '',
-			chainId: Number(transaction.chainId) || 1,
-		};
-		const result = await TrezorConnect.ethereumSignTransaction({
-			path: wallet.path,
-			transaction: trezorTransaction,
-		});
-		if (result.success) {
-			return {
-				success: true,
-				payload: {
-					r: result.payload.r,
-					s: result.payload.s,
-					v: Number(result.payload.v),
-				},
-			};
-		} else {
-			return {
-				success: false,
-				payload: null as any,
-				error: 'Failed to sign transaction',
-			};
-		}
-	});
-}
-
-// Sign Ethereum message with Trezor
-export async function signEthereumMessage(
-	wallet: TrezorWallet,
-	message: string
-): Promise<
-	TrezorResponse<{
-		address: string;
-		signature: string;
-	}>
-> {
-	return await withTrezorState(async () => {
-		const result = await TrezorConnect.ethereumSignMessage({
-			path: wallet.path,
-			message: message,
-		});
-		if (result.success) {
-			return {
-				success: true,
-				payload: {
-					address: result.payload.address,
-					signature: result.payload.signature,
-				},
-			};
-		} else {
-			return {
-				success: false,
-				payload: null as any,
-				error: 'Failed to sign message',
-			};
-		}
-	});
-}
+// export async function signEthereumTransaction(
+// 	wallet: TrezorWallet,
+// 	transaction: TransactionRequest
+// ): Promise<
+// 	TrezorResponse<{
+// 		r: string;
+// 		s: string;
+// 		v: number;
+// 	}>
+// > {
+// 	return await withTrezorState(async () => {
+// 		// Convert Ethers.js transaction to Trezor format
+// 		const trezorTransaction = {
+// 			nonce: transaction.nonce ? `0x${transaction.nonce.toString(16)}` : '0x0',
+// 			gasPrice: transaction.gasPrice ? `0x${transaction.gasPrice.toString(16)}` : '0x0',
+// 			gasLimit: transaction.gasLimit ? `0x${transaction.gasLimit.toString(16)}` : '0x0',
+// 			to: transaction.to ? transaction.to.toString() : null,
+// 			value: transaction.value ? `0x${transaction.value.toString(16)}` : '0x0',
+// 			data: transaction.data || '',
+// 			chainId: Number(transaction.chainId) || 1,
+// 		};
+// 		const result = await TrezorConnect.ethereumSignTransaction({
+// 			path: wallet.path,
+// 			transaction: trezorTransaction,
+// 		});
+// 		if (result.success) {
+// 			return {
+// 				success: true,
+// 				payload: {
+// 					r: result.payload.r,
+// 					s: result.payload.s,
+// 					v: Number(result.payload.v),
+// 				},
+// 			};
+// 		} else {
+// 			return {
+// 				success: false,
+// 				payload: null as any,
+// 				error: 'Failed to sign transaction',
+// 			};
+// 		}
+// 	});
+// }
+//
+// // Sign Ethereum message with Trezor
+// export async function signEthereumMessage(
+// 	wallet: TrezorWallet,
+// 	message: string
+// ): Promise<
+// 	TrezorResponse<{
+// 		address: string;
+// 		signature: string;
+// 	}>
+// > {
+// 	return await withTrezorState(async () => {
+// 		const result = await TrezorConnect.ethereumSignMessage({
+// 			path: wallet.path,
+// 			message: message,
+// 		});
+// 		if (result.success) {
+// 			return {
+// 				success: true,
+// 				payload: {
+// 					address: result.payload.address,
+// 					signature: result.payload.signature,
+// 				},
+// 			};
+// 		} else {
+// 			return {
+// 				success: false,
+// 				payload: null as any,
+// 				error: 'Failed to sign message',
+// 			};
+// 		}
+// 	});
+// }
 
 // Get public key from Trezor for Ethereum
 /*export async function getTrezorEthereumPublicKey(path: string): Promise<TrezorResponse<{ publicKey: string; address: string }>> {
