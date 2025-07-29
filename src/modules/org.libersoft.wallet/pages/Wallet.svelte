@@ -33,6 +33,9 @@
 	onMount(() => {
 		initializeDefaultNetworks();
 		console.log('Wallet module initialiddddddzed');
+		if ($debug) {
+			$settingsWindow?.open('wallets-add-hw-trezor');
+		}
 	});
 
 	function clickCopyAddress() {
@@ -167,8 +170,8 @@
 <Paper>
 	{#if $debug}
 		<div class="buttons">
-			<Button text="TrezorW" onClick={toggleTrezorWindow} />
-			<Button text="Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
+			<Button text="TrezorWindow" onClick={toggleTrezorWindow} />
+			<Button text="Add a new wallet > Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
 			<Button text="Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
 		</div>
 	{/if}

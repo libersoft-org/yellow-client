@@ -31,29 +31,6 @@ export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => 
 });
 export let sendAddress = writable<string | number | undefined>();
 
-wallets.subscribe((wals: IWallet[]) => {
-	while (wallets_cleanup(wals)) {
-		wallets.update(w => w);
-	}
-});
-
-function wallets_cleanup(wallets: any) {
-	for (let i = 0; i < wallets.length; i++) {
-		for (let j = 0; j < wallets.length; j++) {
-			if (i !== j && wallets[i].address === wallets[j].address) {
-				console.error('Wallet with address ' + wallets[i].address + ' already exists');
-				wallets.splice(i, 1);
-				return true;
-			}
-			if (i !== j && wallets[i].phrase === wallets[j].phrase) {
-				console.error('Wallet with phrase ' + wallets[i].phrase + ' already exists');
-				wallets.splice(i, 1);
-				return true;
-			}
-		}
-	}
-}
-
 export function setSendAddress(address: string) {
 	if (get(sendAddress) !== address) sendAddress.set(address);
 }
@@ -224,7 +201,7 @@ export async function addHardwareWallet(type: 'trezor' | 'ledger', address: stri
 		addresses: [
 			{
 				address,
-				name: 'Main Account',
+				name: 'First Address',
 				path: devicePath,
 				index: 0,
 			},

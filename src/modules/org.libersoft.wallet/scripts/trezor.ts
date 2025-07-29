@@ -48,6 +48,9 @@ export const trezorLoading = writable<boolean>(false);
 export const trezorError = writable<string | null>(null);
 export const isInitialized = writable<boolean>(false);
 
+// Mutex for initialization to prevent race conditions
+let initializationPromise: Promise<void> | null = null;
+
 // Helper function to add timeout to promises
 const withTimeout = <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
 	return Promise.race([promise, new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs))]);
@@ -102,10 +105,31 @@ async function withTrezorState<T>(operation: () => Promise<T>): Promise<T> {
 
 export async function initializeTrezor(): Promise<void> {
 	console.log('Starting Trezor initialization...');
+
+	// If already initialized, return immediately
 	if (get(isInitialized)) {
 		console.log('Trezor already initialized, skipping...');
 		return;
 	}
+
+	// If initialization is already in progress, wait for it
+	if (initializationPromise) {
+		console.log('Trezor initialization already in progress, waiting...');
+		return initializationPromise;
+	}
+
+	// Start new initialization
+	initializationPromise = performInitialization();
+
+	try {
+		await initializationPromise;
+	} finally {
+		// Clear the promise when done (success or failure)
+		initializationPromise = null;
+	}
+}
+
+async function performInitialization(): Promise<void> {
 	try {
 		console.log('Initializing TrezorConnect with manifest...');
 
@@ -137,8 +161,10 @@ export async function initializeTrezor(): Promise<void> {
 			console.log('TrezorConnect already initialized, marking as success');
 			isInitialized.set(true);
 			trezorError.set(null);
+		} else {
+			trezorError.set(errorMessage);
+			throw error; // Re-throw if it's not the "already initialized" case
 		}
-		trezorError.set(errorMessage);
 	}
 }
 
@@ -201,8 +227,6 @@ export async function connectTrezor(): Promise<boolean> {
 
 	try {
 		return await withTrezorState(async () => {
-			//		console.log('TrezorConnect object:', TrezorConnect);
-			//		console.log('Available methods:', Object.getOwnPropertyNames(TrezorConnect));
 			// First enumerate devices to see if any are connected
 			let result: Success<Features> | Unsuccessful | null = null;
 			let lastError: Error | null = null;
@@ -262,7 +286,7 @@ export async function connectTrezor(): Promise<boolean> {
 				} else {
 					// Try one more fallback with getDeviceState
 					try {
-						console.log('Trying TrezorConnect.getDeviceState() as final fallback...');
+						console.log('Trying TrezorConnect.getDeviceState as final fallback...');
 						const deviceStateResult = await withTimeout(TrezorConnect.getDeviceState(), 5000);
 						// We can't use this result directly as it has different payload type
 						console.log('getDeviceState result:', deviceStateResult);
@@ -600,6 +624,10 @@ export function resetTrezorState(): void {
 	} catch (error) {
 		console.log('Error disposing TrezorConnect:', error);
 	}
+
+	// Clear initialization mutex
+	initializationPromise = null;
+
 	isInitialized.set(false);
 	//trezorConnected.set(false);
 	trezorDevice.set(null);
@@ -627,3 +655,7 @@ export function resetTrezorState(): void {
 		v: result.payload.v,
 	};
 }*/
+
+export async function loadAccounts() {
+	await getTrezorEthereumAccounts();
+}
