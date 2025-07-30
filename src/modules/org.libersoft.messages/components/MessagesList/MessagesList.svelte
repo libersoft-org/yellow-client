@@ -13,8 +13,22 @@
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '@/org.libersoft.messages/scripts/messages.js';
 	import { getGuid } from '@/core/scripts/core.ts';
 	import { debug, keyboardHeight, isMobile } from '@/core/scripts/stores.ts';
+	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
+	import { log } from '@/core/scripts/tauri.ts';
+	import { windowForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+	import Button from '@/core/components/Button/Button.svelte';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import resize from '@/core/actions/resizeObserver.ts';
+	import Message from '@/org.libersoft.messages/components/Message/Message.svelte';
+	import MessageLoader from '@/org.libersoft.messages/components/MessageLoader/MessageLoader.svelte';
+	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
+	import WindowStickersetDetails from '@/org.libersoft.messages/windows/WindowStickersetDetails.svelte';
+	import WindowForwardMessage from '@/org.libersoft.messages/windows/ForwardMessage.svelte';
 
-	// Android detection
+	// Android detection and mobile keyboard handling
 	let isAndroid = false;
 	let isRealMobile = false;
 
@@ -54,26 +68,10 @@
 		// Context not available, ignore
 	}
 
-	// Reactive spacer height that accounts for keyboard and context menu state (Android only)
-	$: spacerHeight = isAndroid && !expressionsMenuOpen ? `60px` : '0px';
-
 	// Reactive spacer visibility for Android keyboard adjustment
 	$: showAndroidSpacer = isAndroid && isRealMobile && ($keyboardHeight > 0 || $keyboardHeight === 0);
 	$: androidSpacerHeight = expressionsMenuOpen ? '10px' : '72px';
-	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
-	import { log } from '@/core/scripts/tauri.ts';
-	import { windowForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
-	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-	import Button from '@/core/components/Button/Button.svelte';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import Window from '@/core/components/Window/Window.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	import resize from '@/core/actions/resizeObserver.ts';
-	import Message from '@/org.libersoft.messages/components/Message/Message.svelte';
-	import MessageLoader from '@/org.libersoft.messages/components/MessageLoader/MessageLoader.svelte';
-	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
-	import WindowStickersetDetails from '@/org.libersoft.messages/windows/WindowStickersetDetails.svelte';
-	import WindowForwardMessage from '@/org.libersoft.messages/windows/ForwardMessage.svelte';
+
 	interface IMessageItem {
 		uid: string;
 		type: 'message' | 'loader' | 'hole' | 'unseen_marker' | 'no_messages' | 'initial_loading_placeholder';
@@ -615,6 +613,8 @@
 		width: 100%;
 		max-width: var(--message-list-max-width, none);
 		margin: 0 auto;
+		height: 100%; /* Take full height of parent */
+		justify-content: flex-end; /* Start messages from the bottom */
 	}
 
 	.unread {
@@ -714,6 +714,7 @@
 	/* Android spacer for keyboard adjustment */
 	.android-spacer {
 		width: 100%;
+		height: 100%;
 		display: none; /* Hidden by default */
 	}
 
@@ -784,7 +785,7 @@
 				<div bind:this={anchorElement}></div>
 				<!-- Android spacer for keyboard adjustment -->
 				{#if showAndroidSpacer}
-					<div class="android-spacer show" style="height: {androidSpacerHeight};"></div>
+					<div class="android-spacer show" style="min-height: {androidSpacerHeight};"></div>
 				{/if}
 			</div>
 		</div>
