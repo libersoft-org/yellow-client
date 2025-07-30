@@ -43,7 +43,7 @@ export interface TrezorWallet {
 export const trezorWindow = writable<Window | null>(null);
 export const trezorDevice = writable<TrezorDevice | null>(null);
 export const trezorAccounts = writable<TrezorAccount[]>([]);
-export const trezorWallets = writable<TrezorWallet[]>([]);
+export const trezorState = writable<any>(null);
 export const trezorLoading = writable<boolean>(false);
 export const trezorError = writable<string | null>(null);
 export const isInitialized = writable<boolean>(false);
@@ -52,7 +52,7 @@ export const isInitialized = writable<boolean>(false);
 let initializationPromise: Promise<void> | null = null;
 
 // Helper function to add timeout to promises
-const withTimeout = <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
+const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 50000): Promise<T> => {
 	return Promise.race([promise, new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs))]);
 };
 
@@ -141,6 +141,7 @@ async function performInitialization(): Promise<void> {
 				appUrl: window.location.origin,
 			},
 			debug: true,
+			transportReconnect: true,
 			//popup: false,
 			//connectSrc: 'https://connect.trezor.io/9/',
 			//trustedHost: false,
@@ -200,18 +201,10 @@ async function onDeviceEvent(event: any): Promise<void> {
 		trezorDevice.set(null);
 		//trezorConnected.set(false);
 		trezorAccounts.set([]);
-		trezorWallets.set([]);
+
 		trezorError.set('Device disconnected');
 	}
 }
-
-/*async function onDeviceConnect(event: any): Promise<void> {
-	console.log('TREZOR DEVICE CONNECT:', event);
-}*/
-
-/*async function onDeviceDisconnect(event: any): Promise<void> {
-	console.log('TREZOR DEVICE DISCONNECT:', event);
-}*/
 
 // Connect to Trezor device
 export async function connectTrezor(): Promise<boolean> {
@@ -278,28 +271,8 @@ export async function connectTrezor(): Promise<boolean> {
 				});
 				lastError = enumerateError instanceof Error ? enumerateError : new Error(String(enumerateError));
 
-				// Check if this was a timeout or other error
 				const errorMessage = enumerateError instanceof Error ? enumerateError.message : 'Unknown error';
-				if (errorMessage.includes('timed out')) {
-					console.log('Operation timed out');
-					lastError = new Error('Connection timed out.');
-				} else {
-					// Try one more fallback with getDeviceState
-					try {
-						console.log('Trying TrezorConnect.getDeviceState as final fallback...');
-						const deviceStateResult = await withTimeout(TrezorConnect.getDeviceState(), 5000);
-						// We can't use this result directly as it has different payload type
-						console.log('getDeviceState result:', deviceStateResult);
-					} catch (stateError) {
-						const stateErrorMessage = stateError instanceof Error ? stateError.message : 'Unknown error';
-						if (stateErrorMessage.includes('timed out')) {
-							lastError = new Error('All connection attempts timed out. Please ensure your Trezor is connected, unlocked, and WebUSB permission is granted.');
-						} else {
-							lastError = new Error(`All connection methods failed: ${stateErrorMessage}`);
-						}
-						console.error('getDeviceState failed:', stateError);
-					}
-				}
+				lastError = new Error(errorMessage);
 			}
 			console.log('Final result after all attempts:', result);
 			console.log('Last error encountered:', lastError);
@@ -418,37 +391,6 @@ export async function getTrezorEthereumAccounts(startIndex: number = 0, count: n
 		return accounts;
 	});
 }
-
-// Create Trezor wallet from account
-/*export async function createTrezorWallet(account: TrezorAccount, name?: string): Promise<TrezorWallet | null> {
-	let currentDevice: TrezorDevice | null = null;
-	const unsubscribe = trezorDevice.subscribe(d => (currentDevice = d));
-	unsubscribe();
-	if (!currentDevice) {
-		trezorError.set('No Trezor device connected');
-		return null;
-	}
-	const wallet: TrezorWallet = {
-		type: 'trezor',
-		name: name || account.name || `Trezor Wallet`,
-		address: account.address,
-		path: account.path,
-		publicKey: account.publicKey,
-		deviceId: (currentDevice as TrezorDevice).id,
-	};
-	// Add to trezor wallets store
-	trezorWallets.update(wallets => [...wallets, wallet]);
-	return wallet;
-}*/
-
-// Get all Trezor wallets
-/*export function getTrezorWallets(): TrezorWallet[] {
-	let wallets: TrezorWallet[] = [];
-	const unsubscribe = trezorWallets.subscribe(w => (wallets = w));
-	unsubscribe();
-	return wallets;
-}*/
-
 // Sign Ethereum transaction with Trezor (compatible with Ethers.js)
 // export async function signEthereumTransaction(
 // 	wallet: TrezorWallet,
@@ -559,7 +501,7 @@ export async function disconnectTrezor(): Promise<void> {
 	//trezorConnected.set(false);
 	trezorDevice.set(null);
 	trezorAccounts.set([]);
-	trezorWallets.set([]);
+
 	trezorError.set(null);
 }
 
@@ -616,7 +558,7 @@ export async function disconnectTrezor(): Promise<void> {
 }*/
 
 // Reset Trezor state (for debugging or when issues occur)
-export function resetTrezorState(): void {
+export function resetTrezor(): void {
 	console.log('Resetting Trezor state...');
 	// Try to dispose TrezorConnect
 	try {
@@ -632,9 +574,10 @@ export function resetTrezorState(): void {
 	//trezorConnected.set(false);
 	trezorDevice.set(null);
 	trezorAccounts.set([]);
-	trezorWallets.set([]);
+
 	trezorError.set(null);
 	trezorLoading.set(false);
+	trezorState.set(null);
 }
 
 /**
@@ -656,6 +599,9 @@ export function resetTrezorState(): void {
 	};
 }*/
 
-export async function loadAccounts() {
-	await getTrezorEthereumAccounts();
+export async function selectWallet() {
+	const deviceStateResult = await withTimeout(TrezorConnect.getDeviceState());
+	trezorState.set(deviceStateResult.payload);
+
+	//await getTrezorEthereumAccounts();
 }

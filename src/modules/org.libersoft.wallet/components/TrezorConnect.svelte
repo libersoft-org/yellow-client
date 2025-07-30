@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { isInitialized } from '@/org.libersoft.wallet/scripts/trezor.ts';
-	import { initializeTrezor, connectTrezor, getTrezorEthereumAccounts, trezorLoading, trezorError, trezorDevice, resetTrezorState, type TrezorAccount } from '@/org.libersoft.wallet/scripts/trezor';
+	import { isInitialized, initializeTrezor, connectTrezor, getTrezorEthereumAccounts, trezorLoading, trezorError, trezorDevice, resetTrezor, type TrezorAccount } from '@/org.libersoft.wallet/scripts/trezor';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
@@ -35,7 +34,7 @@
 	}
 
 	function handleReset() {
-		resetTrezorState();
+		resetTrezor();
 	}
 
 	export { handleConnect, loadAccounts, handleReset };
@@ -103,7 +102,7 @@
 		{:else if $trezorError}
 			<Icon img="img/cross.svg" size="24px" />
 		{:else}
-			<Icon img="img/question.svg" size="24px" />
+			??
 		{/if}
 	</div>
 	<div class="status-text">
@@ -159,15 +158,5 @@
 	<div class="error-message">
 		Error: {$trezorError}
 		<Button onClick={handleReset}>Reset and Retry</Button>
-	</div>
-{/if}
-
-{#if $debug}
-	<div class="debug-info">
-		<strong>Debug Info:</strong><br />
-		isInitialized: {$isInitialized}<br />
-		trezorDevice: {JSON.stringify($trezorDevice) || 'None'}<br />
-		trezorLoading: {$trezorLoading}<br />
-		trezorError: {$trezorError || 'None'}<br />
 	</div>
 {/if}

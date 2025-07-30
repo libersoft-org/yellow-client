@@ -1,23 +1,24 @@
 <script lang="ts">
 	import { getContext, onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { resetTrezorState, trezorAccounts, trezorDevice, type TrezorAccount, loadAccounts } from '@/org.libersoft.wallet/scripts/trezor';
+	import { trezorState, resetTrezor, trezorAccounts, trezorDevice, type TrezorAccount, selectWallet } from '@/org.libersoft.wallet/scripts/trezor';
 	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/wallet';
 	import TrezorConnect from '@/org.libersoft.wallet/components/TrezorConnect.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import TrezorDebug from '@/org.libersoft.wallet/components/TrezorDebug.svelte';
 
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 	let walletName = '';
 	let selectedAccount: TrezorAccount | null = null;
-	let step: 'connect' | 'select-account' | 'configure' = 'connect';
+	let step: 'connect' | 'select-wallet' | 'configure' = 'connect';
 	let trezorConnect: TrezorConnect;
 
 	onMount(() => {
 		if ($trezorDevice) {
-			step = 'select-account';
+			step = 'select-wallet';
 		}
 	});
 
@@ -28,29 +29,20 @@
 	}
 
 	async function addWallet() {
-		if (!selectedAccount) return;
-		try {
-			// Získat device ID z trezor device store
-			let deviceId = 'trezor-device';
-			if ($trezorDevice) deviceId = $trezorDevice.id;
-			await addHardwareWallet('trezor', selectedAccount.address, walletName, deviceId, selectedAccount.path);
-			// Přejít zpět na seznam wallets
-			setSettingsSection('wallets');
-		} catch (error) {
-			console.error('Error adding Trezor wallet:', error);
-		}
+		await addHardwareWallet('trezor', selectedAccount.address, walletName, deviceId, selectedAccount.path);
+		setSettingsSection('wallets');
 	}
 
 	function goBack() {
-		if (step === 'configure') step = 'select-account';
-		else if (step === 'select-account') step = 'connect';
+		if (step === 'configure') step = 'select-wallet';
+		else if (step === 'select-wallet') step = 'connect';
 		else setSettingsSection('wallets-add');
 	}
 
 	function onConnected() {
 		console.log('onConnected');
 		if (step === 'connect') {
-			step = 'select-account';
+			step = 'select-wallet';
 		}
 	}
 </script>
@@ -158,13 +150,13 @@
 	<div class="buttons">
 		step: {step}
 		<Button img="img/cancel.svg" text="Back" onClick={goBack} />
-		<Button onClick={resetTrezorState}>resetTrezorState</Button>
+		<Button onClick={resetTrezor}>resetTrezor</Button>
 	</div>
 
 	{#if step === 'connect'}
 		<TrezorConnect bind:this={trezorConnect} {onConnected} />
-	{:else if step === 'select-account'}
-		<h3>Select Account</h3>
+	{:else if step === 'select-wallet'}
+		<h3>Select Wallet</h3>
 		<p>Choose which account you want to add to your wallet:</p>
 
 		{#if $trezorAccounts?.length > 0}
@@ -180,11 +172,11 @@
 				{/each}
 			</div>
 		{:else}
-			<Button onClick={loadAccounts} text="Load Accounts" />
+			<Button onClick={selectWallet} text="Select Wallet" />
 		{/if}
 
 		<div class="buttons">
-			<Button onClick={() => (step = 'configure')} enabled={!!selectedAccount}>Continue</Button>
+			<Button onClick={() => (step = 'configure')} enabled={!!$trezorState} text="Next" />
 		</div>
 	{:else if step === 'configure'}
 		<h3>Configure Wallet</h3>
@@ -196,17 +188,16 @@
 			</Label>
 		</div>
 
-		{#if selectedAccount}
-			<div class="status-card">
-				<div class="status-text">
-					<div class="bold">Selected Account:</div>
-					<div class="account-address">{selectedAccount.address}</div>
-				</div>
-			</div>
-		{/if}
+		<div>
+			device: {$trezorDevice?.id}
+		</div>
+		<div>
+			staticSessionId: {$trezorState?._state?.staticSessionId}
+		</div>
 
 		<div class="buttons">
 			<Button onClick={addWallet} enabled={!!walletName.trim()}>Add Wallet</Button>
 		</div>
 	{/if}
 </div>
+<TrezorDebug />

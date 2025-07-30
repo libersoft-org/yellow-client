@@ -1,6 +1,7 @@
 import { get, writable, derived } from 'svelte/store';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { getIndexedAccountPath, HDNodeWallet, Mnemonic, randomBytes } from 'ethers';
+
 export interface IWallet {
 	type?: 'software' | 'trezor' | 'ledger';
 	phrase?: string; // optional pro HW wallets
@@ -12,12 +13,14 @@ export interface IWallet {
 	deviceId?: string;
 	devicePath?: string; // HD derivation path
 }
+
 export interface IAddress {
 	address: string;
 	name: string;
 	path: string;
 	index: number;
 }
+
 export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
@@ -166,7 +169,16 @@ export function deleteWallet(wallet: IWallet): boolean {
 }
 
 export function deleteAddressFromWallet(wallet: IWallet, index: string | number): void {
-	wallets.update(ws => ws.map(item => (item.address === wallet.address ? { ...item, addresses: (item.addresses ?? []).filter(a => a.index !== index) } : item)));
+	wallets.update(ws =>
+		ws.map(item =>
+			item.address === wallet.address
+				? {
+						...item,
+						addresses: (item.addresses ?? []).filter(a => a.index !== index),
+					}
+				: item
+		)
+	);
 }
 
 export function editAddressName(wallet: IWallet, index: string | number, name: string): void {
@@ -220,4 +232,13 @@ export function isHardwareWallet(wallet: IWallet): boolean {
 
 export function isTrezorWallet(wallet: IWallet): boolean {
 	return wallet.type === 'trezor';
+}
+
+function wallets_cleanup(wallets: any) {
+	for (let i = 0; i < wallets.length; i++) {
+		if (!wallets[i].guid) {
+			console.warn('Wallet at index ' + i + ' does not have a guid, removing it');
+			wallets[i].guid = 'wallet-' + i + '-' + Date.now();
+		}
+	}
 }

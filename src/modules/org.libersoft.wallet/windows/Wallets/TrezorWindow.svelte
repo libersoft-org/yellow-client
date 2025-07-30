@@ -6,6 +6,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { initializeTrezor } from '@/org.libersoft.wallet/scripts/trezor';
 	import Button from '@/core/components/Button/Button.svelte';
+	import TrezorDebug from '@/org.libersoft.wallet/components/TrezorDebug.svelte';
 
 	let elWindow: Window | undefined = $state();
 
@@ -39,3 +40,5 @@
 		<Button img="img/cancel.svg" text="Close" onClick={elWindow?.close} style="margin-top: 20px;" testId="close-trezor-window-btn" />
 	</div>
 </Window>
+
+<TrezorDebug />
