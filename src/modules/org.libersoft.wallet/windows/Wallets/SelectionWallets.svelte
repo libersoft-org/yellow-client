@@ -33,7 +33,7 @@
 
 	async function clickSelectWallet(wallet) {
 		console.log('SELECTING WALLET', wallet);
-		await $walletsWindow.setSettingsSection('wallets-' + wallet.address);
+		await $walletsWindow.setSettingsSection('wallets-' + wallet.guid);
 	}
 </script>
 

@@ -14,7 +14,7 @@
 		console.log('Wallets.svelte - generating walletsItems for wallets:', $wallets);
 		return $wallets.map((wallet: IWallet) => ({
 			title: wallet.name,
-			name: 'wallets-' + wallet.address,
+			name: 'wallets-' + wallet.guid,
 			body: SelectionWalletsWallet,
 			props: {
 				params: {

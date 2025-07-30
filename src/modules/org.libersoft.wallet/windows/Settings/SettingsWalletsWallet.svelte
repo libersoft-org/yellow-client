@@ -27,11 +27,11 @@
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	function addAddress() {
-		setSettingsSection('wallets-address-add-' + params.wallet.address);
+		setSettingsSection('wallets-address-add-' + params.wallet.guid);
 	}
 
 	function editAddress(index: string | number) {
-		setSettingsSection('wallets-address-edit-' + params.wallet.address + '-' + index);
+		setSettingsSection('wallets-address-edit-' + params.wallet.guid + '-' + index);
 	}
 
 	function deleteAddress(index: string | number) {
@@ -48,7 +48,7 @@
 	}
 
 	function openExport() {
-		setSettingsSection('wallets-wallet-export-' + params.wallet.address);
+		setSettingsSection('wallets-wallet-export-' + params.wallet.guid);
 	}
 </script>
 

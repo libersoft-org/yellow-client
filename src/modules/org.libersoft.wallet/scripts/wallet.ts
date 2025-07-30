@@ -170,7 +170,7 @@ export function deleteWallet(wallet: IWallet): boolean {
 export function deleteAddressFromWallet(wallet: IWallet, index: string | number): void {
 	wallets.update(ws =>
 		ws.map(item =>
-			item.address === wallet.address
+			item.guid === wallet.guid
 				? {
 						...item,
 						addresses: (item.addresses ?? []).filter(a => a.index !== index),
@@ -183,7 +183,7 @@ export function deleteAddressFromWallet(wallet: IWallet, index: string | number)
 export function editAddressName(wallet: IWallet, index: string | number, name: string): void {
 	wallets.update(ws =>
 		ws.map(w =>
-			w.address === wallet.address
+			w.guid === wallet.guid
 				? {
 						...w,
 						addresses: (w.addresses || []).map(a => (a.index === index ? { ...a, name } : a)),
@@ -198,7 +198,7 @@ export function reorderWallets(reorderedWallets: IWallet[]): void {
 }
 
 export function reorderAddresses(wallet: IWallet, reorderedAddresses: IAddress[]): void {
-	wallets.update(ws => ws.map(w => (w.address === wallet.address ? { ...w, addresses: [...reorderedAddresses] } : w)));
+	wallets.update(ws => ws.map(w => (w.guid === wallet.guid ? { ...w, addresses: [...reorderedAddresses] } : w)));
 }
 
 export async function addHardwareWallet(type: 'trezor' | 'ledger', name: string, identifiers: any): Promise<void> {
@@ -223,6 +223,10 @@ export function isHardwareWallet(wallet: IWallet): boolean {
 export function isTrezorWallet(wallet: IWallet): boolean {
 	return wallet.type === 'trezor';
 }
+
+wallets.subscribe(wallets => {
+	wallets_cleanup(wallets);
+});
 
 function wallets_cleanup(wallets: any) {
 	for (let i = 0; i < wallets.length; i++) {
