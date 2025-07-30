@@ -3,15 +3,14 @@ import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { getIndexedAccountPath, HDNodeWallet, Mnemonic, randomBytes } from 'ethers';
 
 export interface IWallet {
+	guid: string;
 	type?: 'software' | 'trezor' | 'ledger';
-	phrase?: string; // optional pro HW wallets
-	address: string;
-	selected_address_index: number;
 	name: string;
+	phrase?: string;
+	address?: string;
+	selected_address_index: number;
 	addresses?: IAddress[];
-	// For HW wallets:
-	deviceId?: string;
-	devicePath?: string; // HD derivation path
+	identifiers?: any; // For hardware wallets, this can include deviceId, devicePath, etc.
 }
 
 export interface IAddress {
@@ -24,7 +23,7 @@ export interface IAddress {
 export const wallets = localStorageSharedStore<IWallet[]>('wallets', []);
 export const selectedWalletID = localStorageSharedStore<string | null>('selectedWalletID', null);
 export const selectedWallet = derived([wallets, selectedWalletID], ([$wallets, $selectedWalletID]) => {
-	const r = $wallets.find(w => w.address === $selectedWalletID);
+	const r = $wallets.find(w => w.guid === $selectedWalletID);
 	return r;
 });
 export const selectedAddress = derived([selectedWallet], ([$selectedWallet]) => {
@@ -110,7 +109,7 @@ function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: s
 export function selectAddress(wallet: IWallet, address: IAddress): void {
 	wallet.selected_address_index = address.index;
 	wallets.update(v => v);
-	selectedWalletID.set(wallet.address);
+	selectedWalletID.set(wallet.guid);
 }
 
 export function generateMnemonic(): Mnemonic {
@@ -132,7 +131,7 @@ export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void
 		w.push(wallet);
 		return w;
 	});
-	selectedWalletID.set(get(wallets)[get(wallets).length - 1].address);
+	selectedWalletID.set(get(wallets)[get(wallets).length - 1].guid);
 	addAddress(wallet);
 }
 
@@ -153,16 +152,16 @@ export function deleteWallet(wallet: IWallet): boolean {
 	let success = false;
 	const currentSelectedWalletID = get(selectedWalletID);
 	wallets.update(w => {
-		const index = w.findIndex(item => item.address === wallet.address);
+		const index = w.findIndex(item => item.guid === wallet.guid);
 		if (index !== -1) {
 			w.splice(index, 1);
 			success = true;
 		}
 		return w;
 	});
-	if (success && currentSelectedWalletID === wallet.address) {
+	if (success && currentSelectedWalletID === wallet.guid) {
 		const remainingWallets = get(wallets);
-		if (remainingWallets.length > 0) selectedWalletID.set(remainingWallets[0].address);
+		if (remainingWallets.length > 0) selectedWalletID.set(remainingWallets[0].guid);
 		else selectedWalletID.set(null);
 	}
 	return success;
@@ -202,28 +201,19 @@ export function reorderAddresses(wallet: IWallet, reorderedAddresses: IAddress[]
 	wallets.update(ws => ws.map(w => (w.address === wallet.address ? { ...w, addresses: [...reorderedAddresses] } : w)));
 }
 
-export async function addHardwareWallet(type: 'trezor' | 'ledger', address: string, name: string, deviceId: string, devicePath: string): Promise<void> {
+export async function addHardwareWallet(type: 'trezor' | 'ledger', name: string, identifiers: any): Promise<void> {
 	const wallet: IWallet = {
+		guid: 'wallet-' + Date.now() + '-' + Math.random().toString(36).substring(2, 15),
 		type,
-		address,
-		selected_address_index: 0,
 		name,
-		deviceId,
-		devicePath,
-		addresses: [
-			{
-				address,
-				name: 'First Address',
-				path: devicePath,
-				index: 0,
-			},
-		],
+		selected_address_index: 0,
+		identifiers,
 	};
 	wallets.update(w => {
 		w.push(wallet);
 		return w;
 	});
-	selectedWalletID.set(address);
+	selectedWalletID.set(wallet.guid);
 }
 
 export function isHardwareWallet(wallet: IWallet): boolean {
