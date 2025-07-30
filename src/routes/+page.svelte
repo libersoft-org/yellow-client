@@ -1,14 +1,12 @@
 <script>
-	import '@/css/app.css';
+	import '@/app.css';
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import { init, active_account, accounts_config, setModule } from '../core/core.ts';
-	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug } from '@/core/stores.ts';
-	import { documentHeight, keyboardHeight } from '@/core/stores.ts';
-	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
-	import { mobileWidth, mobileClass, isMobile } from '@/core/stores.ts';
-	import { selected_theme_index, initBrowserThemeDetection } from '@/core/themes.ts';
+	import { init, active_account, accounts_config, setModule } from '../core/scripts/core.ts';
+	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug, documentHeight, keyboardHeight, mobileWidth, mobileClass, isMobile, welcomeWizardWindow } from '@/core/scripts/stores.ts';
+	import { initBrowserNotifications, initCustomNotifications } from '@/core/scripts/notifications.ts';
+	import { selected_theme_index, initBrowserThemeDetection } from '@/core/scripts/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
 	import ModuleBar from '@/core/components/ModuleBar/ModuleBar.svelte';
@@ -16,21 +14,21 @@
 	import WelcomeSidebar from '@/core/pages/Welcome/Sidebar.svelte';
 	import WelcomeContent from '@/core/pages/Welcome/Content.svelte';
 	import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import Wizard from '@/core/components/Wizard/Wizard.svelte';
 	import WizardWelcomeStep1 from '@/core/wizard/WelcomeStep1.svelte';
 	import WizardWelcomeStep2 from '@/core/wizard/WelcomeStep2.svelte';
 	import WizardWelcomeStep3 from '@/core/wizard/WelcomeStep3.svelte';
 	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
-	import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
-	import '../modules/org.libersoft.messages/module.ts';
-	import '../modules/org.libersoft.contacts/module.ts';
-	import '../modules/org.libersoft.wallet/module.ts';
-	import '../modules/org.libersoft.dating/module.ts';
-	import '../modules/org.libersoft.iframes/module.ts';
-	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
-	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
-	import { initZoom } from '@/core/zoom.ts';
+	import { createTrayIcon, destroyTrayIcon } from '@/core/scripts/tray_icon.ts';
+	import '@/org.libersoft.messages/scripts/module.ts';
+	import '@/org.libersoft.contacts/scripts/module.ts';
+	import '@/org.libersoft.wallet/scripts/module.ts';
+	import '@/org.libersoft.dating/scripts/module.ts';
+	import '@/org.libersoft.iframes/scripts/module.ts';
+	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.js';
+	import { setDefaultWindowSize, initWindow } from '../core/scripts/tauri-app.ts';
+	import { initZoom } from '@/core/scripts/zoom.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
@@ -48,7 +46,7 @@
 	};
 	let menus = [];
 	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
-	let elModalWelcome;
+	let elWindowWelcome;
 	let content;
 	let isMenuOpen = false;
 	let sideBar;
@@ -72,9 +70,9 @@
 	}
 
 	onMount(async () => {
-		console.log('+page onMount');
+		//console.log('+page onMount');
 		if ('serviceWorker' in window.navigator) {
-			console.log('+page registering service worker');
+			//console.log('+page registering service worker');
 			const SW_VERSION = '_version_v1_'; // change this to force update the service worker
 			// TODO: rm after testing and dev
 			const existing = await navigator.serviceWorker.getRegistrations();
@@ -86,12 +84,12 @@
 			}
 			navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
 			navigator.serviceWorker.ready.then(registration => {
-				console.log('+page service worker ready');
+				/*console.log('+page service worker ready');
 				console.log('Service worker registration:', registration);
 				console.log('Service worker active:', registration.active);
 				console.log('Service worker script URL:', registration.active.scriptURL);
 				console.log('Service worker state:', registration.active.state);
-				console.log('Service worker scope:', registration.scope);
+				console.log('Service worker scope:', registration.scope);**/
 				window.sw = registration;
 				navigator.serviceWorker.addEventListener('message', e => {
 					if (e.data.type === 'GET_FILE_INFO') {
@@ -128,7 +126,8 @@
 		window.addEventListener('blur', () => isClientFocused.set(false));
 		//window.addEventListener('keydown', onkeydown);
 		window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-		if ($accounts_config.length === 0) elModalWelcome?.open();
+		if ($accounts_config.length === 0) elWindowWelcome?.open();
+		welcomeWizardWindow.set(elWindowWelcome);
 		setupIframeListener();
 		// TODO: I don't know what this is, test out
 		//document.body.style.touchAction = 'none';
@@ -267,7 +266,7 @@
 	}
 
 	isMobile.subscribe(v => {
-		console.log('isMobile: ', v);
+		//console.log('isMobile: ', v);
 		if (v) sidebarWidth = '';
 		else sidebarWidth = ($sidebarSize || 300) + 'px';
 	});
@@ -362,4 +361,4 @@
 	</div>
 </div>
 <Menu bind:showMenu={isMenuOpen} />
-<Modal body={Wizard} bind:this={elModalWelcome} params={wizardData} testId="welcome-wizard" />
+<Window body={Wizard} bind:this={elWindowWelcome} params={wizardData} testId="welcome-wizard" />

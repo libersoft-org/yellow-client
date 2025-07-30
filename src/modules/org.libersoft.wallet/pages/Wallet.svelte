@@ -1,34 +1,52 @@
 <script lang="ts">
-	import { module } from '../module.ts';
-	import { section, setSection, status, rpcURL, selectedNetwork, selectedAddress } from '../wallet.ts';
-	import { shortenAddress } from '@/lib/utils/shortenAddress.ts';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
+	import { debug, isMobile } from '@/core/scripts/stores.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { reconnect, availableRPCURLs, status } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
+	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { shortenAddress } from '$lib/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Dropdown from '../components/Dropdown.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
-	import Settings from '../modals/Settings/Settings.svelte';
-	import Send from './Send.svelte';
-	import Receive from './Receive.svelte';
-	import Balance from './Balance.svelte';
-	import History from './History.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalNetworks from '../modals/Networks/Networks.svelte';
-	import ModalWallets from '../modals/Wallets/Wallets.svelte';
-	let elSettings;
-	let elModalNetworks;
-	let elModalWallets;
-	let addressElement;
+	import Settings from '@/org.libersoft.wallet/windows/Settings/Settings.svelte';
+	import Send from '@/org.libersoft.wallet/pages/Send.svelte';
+	import Receive from '@/org.libersoft.wallet/pages/Receive.svelte';
+	import Balance from '@/org.libersoft.wallet/pages/Balance.svelte';
+	import History from '@/org.libersoft.wallet/pages/History.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
+	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Selection.svelte';
+	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
+	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
+	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor.ts';
+	import TrezorWindow from '@/org.libersoft.wallet/windows/Wallets/TrezorWindow.svelte';
+	let elWindowNetworks;
+	let addressElement = $state<HTMLElement | null>(null);
+
+	onMount(() => {
+		initializeDefaultNetworks();
+		console.log('Wallet module initialiddddddzed');
+	});
 
 	function clickCopyAddress() {
-		if ($selectedAddress) {
+		if ($selectedAddress && addressElement) {
 			navigator.clipboard
 				.writeText($selectedAddress.address)
 				.then(() => console.log('Address copied to clipboard'))
 				.catch(err => console.error('Error while copying to clipboard', err));
 			addressElement.innerHTML = 'Copied!';
-			setTimeout(() => (addressElement.innerHTML = shortenAddress($selectedAddress.address)), 1000);
+			setTimeout(() => {
+				if (addressElement) {
+					addressElement.innerHTML = shortenAddress($selectedAddress.address);
+				}
+			}, 1000);
 		}
 	}
 
@@ -39,6 +57,23 @@
 	selectedAddress.subscribe(v => {
 		console.log('selectedAddress', v);
 	});
+
+	rpcURL.subscribe(v => {
+		console.log('rpcURL changed to:', v);
+	});
+
+	async function toggleTrezorWindow() {
+		const trezorWin = get(trezorWindow);
+		if (!trezorWin) {
+			console.error('Trezor window is not initialized');
+			return;
+		}
+		if (trezorWin.isOpen()) {
+			await trezorWin.close();
+		} else {
+			await trezorWin.open();
+		}
+	}
 </script>
 
 <style>
@@ -94,6 +129,7 @@
 
 	.bar .right .address {
 		display: flex;
+		align-items: center;
 		gap: 5px;
 	}
 
@@ -123,25 +159,36 @@
 		justify-content: space-between;
 	}
 
-	.separator {
-		width: 100%;
-		border-bottom: 1px solid var(--default-foreground);
+	.network-address.mobile {
+		flex-direction: column;
 	}
 </style>
 
 <Paper>
+	{#if $debug}
+		<div class="buttons">
+			<Button text="TrezorW" onClick={toggleTrezorWindow} />
+			<Button text="Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
+			<Button text="Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
+		</div>
+	{/if}
 	<div class="body">
-		<div class="network-address">
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={() => elModalNetworks?.open()} />
-			<Dropdown text={$selectedAddress ? $selectedAddress.name : '--- Select your address ---'} onClick={() => elModalWallets?.open()} />
+		<div class="network-address" class:mobile={$isMobile}>
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
+			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} />
 		</div>
 		<div class="bar">
 			<div class="left">
 				<div class="status">
 					<div class="indicator {$status.color}"></div>
 					<div>{$status.text}</div>
+					<Icon img="img/reset.svg" colorVariable="--secondary-foreground" size="12px" padding="5px" onClick={reconnect} alt="Retry connection" />
 				</div>
-				<div class="server">Server: {$rpcURL}</div>
+				<div class="server">
+					{#if $selectedNetwork && $availableRPCURLs && $availableRPCURLs.length > 1}
+						<Dropdown text={$rpcURL || 'Select RPC server'} onClick={() => $rpcServersWindow?.open()} />
+					{/if}
+				</div>
 			</div>
 			<div class="right">
 				<div>
@@ -152,7 +199,7 @@
 									<div bind:this={addressElement}>
 										{shortenAddress($selectedAddress.address)}
 									</div>
-									<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="15px" padding="0px" />
+									<Icon img="img/copy.svg" colorVariable="--secondary-foreground" alt="Copy" size="16px" padding="0px" />
 								</div>
 							</Clickable>
 						{:else}
@@ -160,18 +207,20 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" padding="0px" onClick={() => elSettings.open()} />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" size="24px" padding="0px" onClick={() => $settingsWindow?.open()} testId="wallet-settings-btn" />
 			</div>
 		</div>
 		<div class="buttons">
-			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} />
-			<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" onClick={() => setSection('receive')} />
 			<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" onClick={() => setSection('balance')} />
 			<Button img="modules/{module.identifier}/img/history.svg" text="History" onClick={() => setSection('history')} />
+			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} />
+			<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" onClick={() => setSection('receive')} />
 		</div>
-		<div class="separator"></div>
-		{#if !$selectedNetwork || !$selectedAddress}
-			<Alert type="error" message="No network or address selected" />
+		{#if !$selectedNetwork}
+			<Alert type="error" message="No network selected" />
+		{/if}
+		{#if !$selectedAddress}
+			<Alert type="error" message="No address selected" />
 		{/if}
 		<div class="section">
 			{#if $section == 'send'}
@@ -186,6 +235,9 @@
 		</div>
 	</div>
 </Paper>
-<Settings bind:this={elSettings} />
-<Modal title="Select your network" body={ModalNetworks} bind:this={elModalNetworks} width="500px" />
-<Modal title="Select your address" body={ModalWallets} bind:this={elModalWallets} width="500px" />
+
+<Window title="Select your network" body={WindowNetworks} bind:this={elWindowNetworks} width="500px" />
+<WindowWallets />
+<Window title="Select RPC Server" body={WindowRPCServers} bind:this={$rpcServersWindow} width="600px" />
+<Settings />
+<TrezorWindow />

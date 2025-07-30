@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { isMobile } from '@/core/stores.ts';
-	import { selectedConversation, photoRadius } from '../../messages.js';
+	import { isMobile } from '@/core/scripts/stores.ts';
+	import { selectedConversation, photoRadius } from '@/org.libersoft.messages/scripts/messages.js';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Photo from '@/core/components/Photo/Photo.svelte';

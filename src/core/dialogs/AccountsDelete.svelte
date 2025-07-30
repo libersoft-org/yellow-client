@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { accounts } from '@/core/accounts.ts';
-	import { delAccount } from '@/core/accounts_config.js';
+	import { accounts } from '@/core/scripts/accounts.ts';
+	import { delAccount } from '@/core/scripts/accounts_config.js';
 	import Dialog, { type IDialogData } from '../components/Dialog/Dialog.svelte';
 	interface Props {
 		id: string;
@@ -30,7 +30,7 @@
 			body: question,
 			icon: 'img/del.svg',
 			buttons: [
-				{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, testId: 'delete-account-confirm' },
+				{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true, testId: 'delete-account-confirm' },
 				{ img: 'img/cross.svg', text: 'No', onClick: clickNo, testId: 'delete-account-cancel' },
 			],
 		};

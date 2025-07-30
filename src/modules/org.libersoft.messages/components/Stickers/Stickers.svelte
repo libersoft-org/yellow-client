@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { identifier } from '../../messages.js';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
 	import { onMount, tick } from 'svelte';
-	import { updateStickerLibrary, stickerLibraryUpdaterState } from '../../stickers.js';
-	import { debug } from '@/core/stores.ts';
+	import { updateStickerLibrary, stickerLibraryUpdaterState } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { debug } from '@/core/scripts/stores.ts';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
-	import StickersFavorites from './StickersFavorites.svelte';
-	import StickersServer from './StickersServer.svelte';
+	import StickersFavorites from '@/org.libersoft.messages/components/Stickers/StickersFavorites.svelte';
+	import StickersServer from '@/org.libersoft.messages/components/Stickers/StickersServer.svelte';
 	const tabs = {
 		favorites: StickersFavorites,
 		server: StickersServer,

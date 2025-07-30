@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { networks, type INetwork } from '../wallet.ts';
+	import { type INetwork, deleteNetwork } from '../scripts/network.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: INetwork;
@@ -11,13 +11,13 @@
 		body: question,
 		icon: 'img/del.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
-			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true, testId: 'wallet-settings-network-delete-yes-btn' },
+			{ img: 'img/cross.svg', text: 'No', onClick: clickNo, testId: 'wallet-settings-network-delete-no-btn' },
 		],
 	};
 
 	function clickYes() {
-		networks.set($networks.filter(i => i.guid !== item.guid));
+		deleteNetwork(item);
 		elDialog?.close();
 	}
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { closeModule } from '../dating.ts';
+	import { closeModule } from '../scripts/dating.ts';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';

@@ -26,7 +26,9 @@
 			background-color 0.4s linear;
 	}
 
-	.item:not(.selected):hover {
+	.item:not(.selected):hover,
+	:global(.clickable:focus-visible) .item,
+	:global(.clickable.focused) .item {
 		z-index: 2;
 		transform: scale(1.25);
 	}
@@ -37,7 +39,7 @@
 	}
 </style>
 
-<Clickable data-testid={'ModuleBarItem-' + decl.id} onClick={() => clickSetModule(decl.id)}>
+<Clickable data-testid={'ModuleBarItem-' + decl.id} data-module-id={decl.id} onClick={() => clickSetModule(decl.id)}>
 	<div class="item" class:selected>
 		<Indicator img="img/indicator-cross.svg" alt="X" enabled={$online === false} />
 		<Icon img="img/modules/{decl.id}.svg" alt={decl.name} colorVariable="--primary-background" size="30px" />

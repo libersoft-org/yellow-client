@@ -1,6 +1,6 @@
 <script>
-	import MessageContent from '../MessageContent/MessageContent.svelte';
-	import { processMessage } from '../../messages.js';
+	import MessageContent from '@/org.libersoft.messages/components/MessageContent/MessageContent.svelte';
+	import { processMessage } from '@/org.libersoft.messages/scripts/messages.js';
 	export let text;
 
 	$: messageContent = processMessage({ format: 'html', message: text });

@@ -27,7 +27,9 @@
 		background-color: var(--secondary-softer-background);
 	}
 
-	.item:hover {
+	.item:hover,
+	:global(.clickable:focus-visible) .item,
+	:global(.clickable.focused) .item {
 		background-color: var(--secondary-soft-background);
 	}
 </style>

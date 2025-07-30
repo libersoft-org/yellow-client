@@ -1,13 +1,12 @@
 <script lang="ts">
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import { emoji_render, rgi_to_codepoints } from '../../emojis';
-	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
 	import { get } from 'svelte/store';
-	import { active_account } from '@/core/core';
-	import { highlightElement } from '@/core/utils/animationUtils.ts';
-
+	import { active_account } from '@/core/scripts/core.ts';
+	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
+	import { emoji_render, rgi_to_codepoints } from '@/org.libersoft.messages/scripts/emojis.js';
 	import union from 'lodash/union';
 	import isEqual from 'lodash/isEqual';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
 
 	if (import.meta.env.VITE_YELLOW_CLIENT_DEBUG) {
 		console.debug(union, isEqual);
@@ -110,7 +109,9 @@
 		border: 1px solid var(--primary-foreground);
 	}
 
-	.reaction-box:hover {
+	.reaction-box:hover,
+	:global(.clickable:focus-visible) .reaction-box,
+	:global(.clickable.focused) .reaction-box {
 		background-color: var(--primary-background);
 	}
 </style>

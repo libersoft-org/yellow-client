@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isMobile } from '@/core/stores.ts';
+	import { isMobile } from '@/core/scripts/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
@@ -29,9 +29,12 @@
 		text-align: center;
 		padding: 0 10px;
 		color: var(--primary-foreground);
+		transition: background-color 0.4s linear;
 	}
 
-	.item:hover {
+	.item:hover,
+	:global(.clickable:focus-visible) .item:not(.active),
+	:global(.clickable.focused) .item:not(.active) {
 		background-color: var(--primary-hard-background);
 	}
 

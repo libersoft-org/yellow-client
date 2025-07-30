@@ -1,18 +1,16 @@
 <script lang="ts">
-	import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../../messages.js';
-	//import WaveSurfer from 'wavesurfer.js';
 	import { onMount } from 'svelte';
-	import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
-	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import { get, writable } from 'svelte/store';
-	import { active_account } from '@/core/core.ts';
-	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.js';
+	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import WaveSurfer from 'wavesurfer.js';
-	import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+	import type { IFileDownload, IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	const { uploadId } = $props();
 	let wavesurfer: WaveSurfer;
 	let isPlaying = $state(false);
@@ -20,8 +18,8 @@
 	let duration = $state('');
 	let time = $state('');
 	let mediaHandler = $state(null);
-	let upload = $state<FileUpload | null>(null);
-	let download = writable<FileDownload | null>(null);
+	let upload = $state<IFileUpload | null>(null);
+	let download = writable<IFileDownload | null>(null);
 	let isFullDownloading = $state(false);
 	const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
 	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');

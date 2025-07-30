@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { humanSize } from '@/core/utils/fileUtils.js';
-	import { identifier } from '@/org.libersoft.messages/messages.js';
-	import { debug } from '@/core/stores.ts';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { debug } from '@/core/scripts/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+	import type { IFileDownload, IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import Skeleton from '@/core/components/Skeleton/Skeleton.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
 	interface Props {
-		upload: FileUpload | null;
-		download: FileDownload | null;
+		upload: IFileUpload | null;
+		download: IFileDownload | null;
 		thumbnailSrc: string | null;
 		videoRef?: HTMLElement;
 		startVideo: () => Promise<void>;
@@ -115,7 +115,7 @@
 					<Clickable onClick={startVideo}>
 						<div class="play">
 							{#if videoStarting}
-								<Spinner show size="14px" containerMinHeight="14px" />
+								<Spinner size="14px" show />
 							{:else}
 								<Icon img="modules/{identifier}/img/play.svg" colorVariable="--primary-background" alt="Start video" size="24px" padding="0px" />
 							{/if}

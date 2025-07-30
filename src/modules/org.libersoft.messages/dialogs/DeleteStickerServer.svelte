@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sticker_servers } from '../stickers.js';
+	import { sticker_servers } from '@/org.libersoft.messages/scripts/stickers.js';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		server?: string;
@@ -11,7 +11,7 @@
 		body: 'Would you like to delete sticker server: <span class="bold">' + server + '</span>?',
 		icon: 'img/del.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
 			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
 		],
 	});
@@ -21,9 +21,7 @@
 	}
 
 	function clickYes() {
-		sticker_servers.update(servers => {
-			return servers.filter(s => s !== server);
-		});
+		sticker_servers.update(servers => servers.filter(s => s !== server));
 		elDialog?.close();
 	}
 

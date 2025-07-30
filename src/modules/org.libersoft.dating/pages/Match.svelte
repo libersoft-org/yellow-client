@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { module } from '../module.ts';
-	import { closePage } from '../dating.ts';
+	import { module } from '@/org.libersoft.dating/scripts/module.ts';
+	import { closePage } from '@/org.libersoft.dating/scripts/dating.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
-	import PhotoCard from '../components/PhotoCard.svelte';
+	import PhotoCard from '@/org.libersoft.dating/components/PhotoCard.svelte';
 	const photo = {
 		img: 'modules/' + module.identifier + '/img/photos/1.webp',
 		name: 'Name',

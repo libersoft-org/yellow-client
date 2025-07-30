@@ -1,16 +1,16 @@
 <script>
 	import { setContext, tick } from 'svelte';
 	import { get, writable } from 'svelte/store';
-	import { selectedConversation, closeConversation } from '../../messages.js';
+	import { selectedConversation, closeConversation } from '@/org.libersoft.messages/scripts/messages.js';
 	import Content from '@/core/components/Content/Content.svelte';
-	import ProfileBar from '../ProfileBar/ProfileBar.svelte';
-	import MessagesList from '../MessagesList/MessagesList.svelte';
-	import MessageBar from '../MessageBar/MessageBar.svelte';
-	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+	import ProfileBar from '@/org.libersoft.messages/components/ProfileBar/ProfileBar.svelte';
+	import MessagesList from '@/org.libersoft.messages/components/MessagesList/MessagesList.svelte';
+	import MessageBar from '@/org.libersoft.messages/components/MessageBar/MessageBar.svelte';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	let message_bar;
 	let oldSelectedConversation;
 	let messagesContext = {};
-	let fileUploadModalFiles = writable([]);
+	let fileUploadWindowFiles = writable([]);
 
 	setContext('MessagesContext', messagesContext);
 
@@ -31,16 +31,14 @@
 		await message_bar?.setBarFocus();
 	}
 
-	function setFileUploadModal(value) {
-		if (!!value !== get(modalFileUploadStore)?.isOpen()) fileUploadModalFiles.set([]);
+	function setFileUploadWindow(value) {
+		if (!!value !== get(windowFileUploadStore)?.isOpen()) fileUploadWindowFiles.set([]);
 		if (value) {
-			get(modalFileUploadStore)?.open();
+			get(windowFileUploadStore)?.open();
 		} else {
-			get(modalFileUploadStore)?.close();
+			get(windowFileUploadStore)?.close();
 		}
 	}
-
-	setContext('FileUploadModal', { fileUploadModalFiles, setFileUploadModal });
 
 	// Set up context for expressions menu state (Android only)
 	let expressionsMenuOpen = false;
@@ -49,6 +47,7 @@
 			expressionsMenuOpen = open;
 		},
 	});
+	setContext('FileUploadWindow', { fileUploadWindowFiles, setFileUploadWindow });
 </script>
 
 <Content>

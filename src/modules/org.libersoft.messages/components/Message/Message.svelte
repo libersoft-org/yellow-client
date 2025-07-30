@@ -1,8 +1,8 @@
 <script>
-	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../../messages.js';
+	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '@/org.libersoft.messages/scripts/messages.js';
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { isClientFocused, debug } from '@/core/stores.ts';
-	import { stripHtml } from '../../utils/htmlUtils.ts';
+	import { isClientFocused, debug } from '@/core/scripts/stores.ts';
+	import { stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
 	// import Image from './image.svelte';
@@ -12,10 +12,10 @@
 	// import Map from './map.svelte';
 	import MessageContent from '../MessageContent/MessageContent.svelte';
 	// import Reply from './msgReply/Reply.svelte';
-	import messageBarReplyStore, { ReplyToType } from '../../stores/MessageBarReplyStore.ts';
-	import { forwardMessageStore } from '../../stores/ForwardMessageStore.ts';
-	import MessageReaction from '../MessageReaction/MessageReaction.svelte';
-	import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
+	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
+	import { forwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
+	import MessageReaction from '@/org.libersoft.messages/components/MessageReaction/MessageReaction.svelte';
+	import RenderMessageReactions from '@/org.libersoft.messages/components/MessageReaction/RenderMessageReactions.svelte';
 	export let message;
 	export let elContainer;
 	export let enableScroll;
@@ -67,7 +67,7 @@
 	function maybeSetSeen(isVisible, isClientFocused) {
 		//console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
 		if (!isVisible || !isClientFocused) {
-			console.log('not setting seen because not visible or not focused');
+			//console.log('not setting seen because not visible or not focused');
 			return;
 		}
 		if (message.seen) {
@@ -299,7 +299,6 @@
 
 <style>
 	.message {
-		--animation-highlight-duration: 0.7s;
 		--message-max-width: 60%;
 		position: relative;
 		max-width: var(--message-max-width);

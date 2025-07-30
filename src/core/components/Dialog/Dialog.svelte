@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { type Snippet } from 'svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import { type Snippet, tick } from 'svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -20,16 +20,27 @@
 		onClick?: (e: Event) => void;
 		expand?: boolean;
 		testId?: string;
+		focus?: boolean;
 	}
 	let { data, width }: Props = $props();
-	let elModal: Modal;
+	let elWindow: Window;
+	let buttonElements: (Button | undefined)[] = [];
 
-	export function open() {
-		elModal?.open();
+	export async function open() {
+		elWindow?.open();
+		await tick();
+		await tick();
+		const focusButton = data?.buttons?.find(button => button.focus);
+		if (focusButton && data?.buttons) {
+			const focusIndex = data.buttons.indexOf(focusButton);
+			if (focusIndex !== -1 && buttonElements[focusIndex]) {
+				buttonElements[focusIndex]?.focus();
+			}
+		}
 	}
 
 	export function close() {
-		elModal?.close();
+		elWindow?.close();
 	}
 </script>
 
@@ -41,11 +52,11 @@
 	}
 </style>
 
-<Modal title={data?.title} {width} bind:this={elModal}>
+<Window title={data?.title} {width} bind:this={elWindow}>
 	{#snippet top()}
 		<div class="top">
 			{#if data?.icon}
-				<Icon img={data?.icon} alt="" size="50px" padding="0px" />
+				<Icon img={data?.icon} alt="" colorVariable="--primary-foreground" size="50px" padding="0px" />
 			{/if}
 			{#if data?.body}
 				<div>
@@ -61,10 +72,10 @@
 	{#snippet bottom()}
 		{#if data?.buttons && data.buttons.length > 0}
 			<ButtonBar expand>
-				{#each data.buttons as button}
-					<Button {...button} data-testid={button.testId} />
+				{#each data.buttons as button, index}
+					<Button {...button} data-testid={button.testId} bind:this={buttonElements[index]} />
 				{/each}
 			</ButtonBar>
 		{/if}
 	{/snippet}
-</Modal>
+</Window>

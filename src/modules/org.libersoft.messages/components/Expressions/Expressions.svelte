@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { identifier } from '../../messages.js';
-	import Emojis from '../Emoji/Emojis.svelte';
-	import Stickers from '../Stickers/Stickers.svelte';
-	import GifSet from '../GifSet/GifSet.svelte';
-	import ExpressionsItem from './ExpressionsItem.svelte';
-	import ExpressionsSettings from './ExpressionsSettings.svelte';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import Emojis from '@/org.libersoft.messages/components/Emoji/Emojis.svelte';
+	import Stickers from '@/org.libersoft.messages/components/Stickers/Stickers.svelte';
+	import GifSet from '@/org.libersoft.messages/components/GifSet/GifSet.svelte';
+	import ExpressionsItem from '@/org.libersoft.messages/components/Expressions/ExpressionsItem.svelte';
+	import ExpressionsSettings from '@/org.libersoft.messages/components/Expressions/ExpressionsSettings.svelte';
 	import { onMount, tick } from 'svelte';
 	interface Props {
 		height?: string;

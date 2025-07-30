@@ -35,7 +35,9 @@
 		background-color: var(--primary-softer-background);
 	}
 
-	.sidebar-item:hover {
+	.sidebar-item:hover,
+	:global(.clickable:focus-visible) .sidebar-item,
+	:global(.clickable.focused) .sidebar-item {
 		background-color: var(--primary-background);
 	}
 

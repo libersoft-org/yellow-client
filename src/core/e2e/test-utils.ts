@@ -1,7 +1,7 @@
-import { type Page, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
-export async function closeWelcomeWizardModal(page: Page): Promise<void> {
-	const wizardCloseButton = page.getByTestId('welcome-wizard-Modal-close');
+export async function closeWelcomeWizardWindow(page: Page): Promise<void> {
+	const wizardCloseButton = page.getByTestId('welcome-wizard-Window-close');
 	await wizardCloseButton.click();
 }
 
@@ -28,7 +28,7 @@ export function setupConsoleLogging(page: Page): void {
 			case 'error':
 				console.log(`🔴 CONSOLE ERROR: ${text}`);
 				break;
-			case 'warn':
+			case 'warning':
 				console.log(`🟡 CONSOLE WARN: ${text}`);
 				break;
 			case 'info':
@@ -64,9 +64,9 @@ export async function openGlobalSettings(page: Page): Promise<void> {
  * @param page - The Playwright page object
  * @param section - The settings section to navigate to
  */
-export async function navigateToSettingsSection(page: Page, section: 'General' | 'Notifications' | 'Appearance'): Promise<void> {
+export async function clickSettingsMenuButton(page: Page, dialog: string, section: string): Promise<void> {
 	return await test.step(`Navigate to settings section: ${section}`, async () => {
-		await page.getByTestId(`settings-${section.toLowerCase()}`).click();
+		await page.getByTestId(`${dialog}-${section.toLowerCase()}`).click();
 	});
 }
 
@@ -76,13 +76,19 @@ export async function goToRootSettingsSection(page: Page): Promise<void> {
 	});
 }
 
+export async function clickBreadcrumb(page: Page, breadcrumb: string): Promise<void> {
+	return await test.step(`Click breadcrumb: ${breadcrumb}`, async () => {
+		await page.getByTestId(`breadcrumb-${breadcrumb}`).click();
+	});
+}
+
 /**
- * Helper function to close the current modal
+ * Helper function to close the current window
  * @param page - The Playwright page object
  */
-export async function closeModal(page: Page, testId: string): Promise<void> {
-	return await test.step('Close modal', async () => {
-		await page.getByTestId(testId + '-Modal-close').click({});
+export async function closeWindow(page: Page, testId: string): Promise<void> {
+	return await test.step('Close window', async () => {
+		await page.getByTestId(testId + '-Window-close').click({});
 	});
 }
 
@@ -197,5 +203,16 @@ export async function goToAccountManagement(page: Page): Promise<void> {
 	return await test.step('Go to account management', async () => {
 		await page.getByTestId('account-bar-toggle').click();
 		await page.getByTestId('account-management-button').click();
+	});
+}
+
+/**
+ * Helper function to wait for and check error message
+ * @param page - The Playwright page object
+ * @param expectedError - The expected error message (partial match)
+ */
+export async function expectErrorMessage(page: Page, expectedError: string): Promise<void> {
+	return await test.step(`Expect error message: ${expectedError}`, async () => {
+		await expect(page.locator('.alert').filter({ hasText: expectedError })).toBeVisible({});
 	});
 }

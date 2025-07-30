@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
+	import { isMobile } from '@/core/scripts/stores.ts';
 	interface Props {
 		children?: Snippet;
 		hAlign?: 'left' | 'center' | 'right';
 		vAlign?: 'top' | 'center' | 'bottom';
+		paddingDesktop?: string;
+		paddingMobile?: string;
 	}
-	let { children, hAlign = 'left', vAlign = 'top' }: Props = $props();
+	let { children, hAlign = 'left', vAlign = 'top', paddingDesktop = '10px', paddingMobile = '0px' }: Props = $props();
 </script>
 
 <style>
@@ -14,7 +17,6 @@
 		align-items: flex-start;
 		flex: 1;
 		height: 100%;
-		padding: 10px;
 		overflow: auto;
 		color: var(--primary-foreground);
 	}
@@ -44,6 +46,6 @@
 	}
 </style>
 
-<div class="content-page" class:h-align-left={hAlign === 'left'} class:h-align-center={hAlign === 'center'} class:h-align-right={hAlign === 'right'} class:v-align-top={vAlign === 'top'} class:v-align-center={vAlign === 'center'} class:v-align-bottom={vAlign === 'bottom'}>
+<div class="content-page" class:h-align-left={hAlign === 'left'} class:h-align-center={hAlign === 'center'} class:h-align-right={hAlign === 'right'} class:v-align-top={vAlign === 'top'} class:v-align-center={vAlign === 'center'} class:v-align-bottom={vAlign === 'bottom'} style:padding={$isMobile ? paddingMobile : paddingDesktop}>
 	{@render children?.()}
 </div>

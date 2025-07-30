@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import { accounts, findAccount, sendAsync } from '@/core/core.ts';
+	import { accounts, findAccount, sendAsync } from '@/core/scripts/core.ts';
 	//let url = 'https://yellow-module1.netlify.app/'
 	let url: string = 'http://localhost:5173/';
 	let module_id: string = 'org.libersoft.messages2';

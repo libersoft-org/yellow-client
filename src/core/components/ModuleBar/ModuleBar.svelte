@@ -1,9 +1,9 @@
 <script>
 	import { get } from 'svelte/store';
-	import { active_account } from '@/core/core.ts';
-	import { module_decls, selected_module_id } from '@/core/stores.ts';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { module_decls, selected_module_id } from '@/core/scripts/stores.ts';
 	import resize from '@/core/actions/resizeObserver.ts';
-	import { order } from '@/core/utils/utils.ts';
+	import { order } from '@/core/scripts/utils/utils.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ModuleBarItem from '@/core/components/ModuleBar/ModuleBarItem.svelte';
@@ -17,23 +17,33 @@
 	let expandEnabled = false;
 
 	$: module_decls_ordered = order($module_decls);
+
+	$: console.log('module-bar module_decls_ordered:', module_decls_ordered);
+
 	$: module_data = $active_account?.module_data || {};
+
+	$: console.log('module-bar active_account:', $active_account);
+	$: console.log('module-bar active_account.module_data:', $active_account?.module_data);
+
 	//$: console.log('module-bar module_data:', module_data);
 	$: module_data_ordered = order(module_data);
 	//$: console.log('module-bar module_data_ordered:', module_data_ordered);
 	$: selectLastModule(module_data);
 
 	function selectLastModule(module_data) {
-		console.log('selectLastModule: lastModuleSelected: ', module_data);
-		if (!lastModuleSelected && module_data_ordered && module_data_ordered.length > 0) {
-			//console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
-			lastModuleSelected = true;
+		console.debug('selectLastModule: lastModuleSelected: ', module_data);
+		console.debug('acc.settings?.last_module_id: ', $active_account?.settings?.last_module_id);
+		if (!lastModuleSelected /* && module_data_ordered && module_data_ordered.length > 0 */) {
+			console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
 			let acc = get(active_account);
 			//console.log('selectLastModule: acc: ', acc);
-			let id = acc.settings?.last_module_id;
+			let id = acc?.settings?.last_module_id;
 			//console.log('selectLastModule: ', module_data);
 			//console.log('selectLastModule: id: ', id);
-			if (module_data[id]) onSelectModule(id);
+			if (id /* && module_data[id]*/) {
+				lastModuleSelected = true;
+				onSelectModule(id);
+			}
 		}
 	}
 
@@ -51,6 +61,11 @@
 			el.style.maxHeight = full;
 			void el.offsetHeight;
 			el.style.maxHeight = '50px';
+			const tidy = () => {
+				scrollToSelected();
+				el.removeEventListener('transitionend', tidy);
+			};
+			el.addEventListener('transitionend', tidy);
 		} else {
 			el.style.maxHeight = '50px';
 			void el.offsetHeight;
@@ -64,6 +79,12 @@
 		expanded = !expanded;
 	}
 
+	function scrollToSelected() {
+		if (!$selected_module_id || !itemsEl) return;
+		const selectedElement = itemsEl.querySelector(`[data-module-id="${$selected_module_id}"]`);
+		if (selectedElement) selectedElement.scrollIntoView({ block: 'center' });
+	}
+
 	function onResize(entry) {
 		const { target, contentRect } = entry;
 		const { width, height } = contentRect;
@@ -72,6 +93,7 @@
 			return total + child.getBoundingClientRect().width;
 		}, 0);
 		expandEnabled = childrenTotalWidth > width;
+		scrollToSelected();
 	}
 </script>
 
@@ -105,18 +127,22 @@
 		max-height: none;
 	}
 
+	.dropdown-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 70px;
+	}
+
 	.dropdown {
 		display: flex;
 		align-items: flex-start;
 		justify-content: center;
 		height: 100%;
-		width: max-content;
-		cursor: default;
 	}
 
 	.dropdown :global(.icon) {
 		position: relative;
-		top: 14px;
 		transform: rotate(0deg);
 		transition: transform 0.3s ease;
 	}
@@ -125,7 +151,7 @@
 		transform: rotate(180deg);
 	}
 
-	.module-bar:not(.expand-enabled) .dropdown {
+	.module-bar:not(.expand-enabled) .dropdown-wrapper {
 		display: none;
 	}
 </style>
@@ -136,9 +162,11 @@
 			<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
 		{/each}
 	</div>
-	<Clickable enabled={expandEnabled}>
-		<div class="dropdown">
-			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
-		</div>
-	</Clickable>
+	<div class="dropdown-wrapper">
+		<Clickable enabled={expandEnabled} onClick={clickExpand}>
+			<div class="dropdown">
+				<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" />
+			</div>
+		</Clickable>
+	</div>
 </div>

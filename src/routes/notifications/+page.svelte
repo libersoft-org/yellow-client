@@ -1,35 +1,33 @@
 <script>
-	//import '../../../static/app.css';
 	import Button from '@/core/components/Button/Button.svelte';
 	import { writable, get } from 'svelte/store';
-	import Notification from '../../core/components/Notification/Notification.svelte';
-	import { multiwindow_store } from '../../core/multiwindow_store.ts';
-	import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
+	import Notification from '@/core/components/Notification/Notification.svelte';
+	import { multiwindow_store } from '@/core/scripts/multiwindow_store.ts';
+	import { CUSTOM_NOTIFICATIONS, log } from '@/core/scripts/tauri.ts';
 	import { onMount, onDestroy } from 'svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { heightLogicalChanged, initPositioning } from './position.ts';
-
 	export let maxNotifications = 3;
 	let notifications = writable([]);
 	let counter = 0;
 	let heightLogical = writable(100);
 
-	// Catch all synchronous errors
-	window.addEventListener('error', event => {
-		// event.error is the Error object
-		console.error('Uncaught error:', event.error);
-		console.error('Stack trace:\n', event.error?.stack);
-	});
-
-	// Catch unhandled promise rejections
-	window.addEventListener('unhandledrejection', event => {
-		const reason = event.reason;
-		console.error('Unhandled promise rejection:', reason);
-		console.error('Stack trace:\n', reason?.stack || reason);
-	});
+	// // Catch all synchronous errors (see +layout.svelte)
+	// window.addEventListener('error', event => {
+	// 	// event.error is the Error object
+	// 	console.error('+page Uncaught error:', event.error);
+	// 	console.error('+page Stack trace:\n', event.error?.stack);
+	// });
+	//
+	// // Catch unhandled promise rejections
+	// window.addEventListener('unhandledrejection', event => {
+	// 	const reason = event.reason;
+	// 	console.error('+page Unhandled promise rejection:', reason);
+	// 	console.error('+page Stack trace:\n', reason?.stack || reason);
+	// });
 
 	onMount(async () => {
-		log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+		log.debug('notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
 		let deinit;
 
 		if (window.__TAURI__) {

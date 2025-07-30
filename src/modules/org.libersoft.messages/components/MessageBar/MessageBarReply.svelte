@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { truncateTextEnd } from '@/core/utils/textUtils';
+	import { truncateTextEnd } from '@/core/scripts/utils/textUtils';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		name: string;

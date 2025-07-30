@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { hideSidebarMobile } from '@/core/stores.ts';
+	import { hideSidebarMobile } from '@/core/scripts/stores.ts';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	let url: string = 'https://koo5.github.io/';
 </script>

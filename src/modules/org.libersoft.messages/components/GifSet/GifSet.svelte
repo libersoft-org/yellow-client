@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { get } from 'svelte/store';
 	import { onMount, getContext } from 'svelte';
-	import { htmlEscape } from '../../messages.js';
+	import { get } from 'svelte/store';
+	import { isMobile } from '@/core/scripts/stores.ts';
+	import { htmlEscape } from '@/org.libersoft.messages/scripts/messages.js';
+	import { gif_server } from '@/org.libersoft.messages/scripts/gifs.js';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { isMobile } from '@/core/stores.ts';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import { gif_server } from '../../gifs.js';
 	import LazyLoader from './GifSetLazyLoader.svelte';
 	const MessageBar = getContext('MessageBar') as any;
 	const menu = getContext('ContextMenu') as any;
@@ -155,7 +155,9 @@
 			box-shadow 0.3s ease;
 	}
 
-	.item:hover {
+	.item:hover,
+	:global(.clickable:focus-visible) .item,
+	:global(.clickable.focused) .item {
 		z-index: 51;
 		transform: scale(1.2);
 		background-color: var(--primary-soft-background);

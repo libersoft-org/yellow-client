@@ -1,33 +1,25 @@
 <script lang="ts">
-	import { networks, type IToken } from '../wallet.ts';
+	import { deleteToken, type IToken } from '../scripts/network.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		networkGuid: string;
 		token: IToken;
+		tokenInfo?: { name: string; symbol: string } | null;
 	}
-	let { networkGuid, token }: Props = $props();
+	let { networkGuid, token, tokenInfo }: Props = $props();
 	let elDialog;
 	let dialogData = {
 		title: 'Delete token',
 		body: question,
 		icon: 'img/del.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
 			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
 		],
 	};
 
 	function clickYes() {
-		networks.update(nets =>
-			nets.map(n =>
-				n.guid === networkGuid
-					? {
-							...n,
-							tokens: (n.tokens ?? []).filter(t => t.guid !== token.guid),
-						}
-					: n
-			)
-		);
+		deleteToken(networkGuid, token.guid);
 		elDialog?.close();
 	}
 
@@ -41,6 +33,16 @@
 </script>
 
 {#snippet question()}
-	<div>Would you like to delete this token: "<span class="bold">{token.name} ({token.symbol})</span>"?</div>
+	<div>Would you like to delete this token?<br /><br /></div>
+	{#if tokenInfo}
+		<div>
+			<span class="bold">Token:</span>
+			<span>{tokenInfo.name} ({tokenInfo.symbol})</span>
+		</div>
+	{/if}
+	<div>
+		<span class="bold">Contract Address:</span>
+		<span>{token.item?.contract_address || 'Unknown'}</span>
+	</div>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />

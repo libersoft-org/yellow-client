@@ -1,17 +1,17 @@
 <script>
-	import { active_account } from '@/core/core.ts';
-	import { isMobile, debug } from '@/core/stores.ts';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { isMobile, debug } from '@/core/scripts/stores.ts';
 	import { getContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import Emoji from './Emoji.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '../../messages.js';
-	import { start_emojisets_fetch, emoji_render } from '../../emojis.js';
+	import { emojisLoading, emojiGroups, emojisByCodepointsRgi } from '@/org.libersoft.messages/scripts/messages.js';
+	import { start_emojisets_fetch, emoji_render } from '@/org.libersoft.messages/scripts/emojis.js';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import FuzzySearch from 'fuzzy-search';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import { longpress } from '../../ui.js';
+	import { longpress } from '@/org.libersoft.messages/scripts/ui.js';
 	import IntersectionObserver from 'svelte-intersection-observer';
 	export let onEmojiClick;
 	const MessageBar = getContext('MessageBar');
@@ -142,7 +142,9 @@
 		border: 1px solid var(--secondary-softer-background);
 	}
 
-	.emoji.hover:hover {
+	.emoji.hover:hover,
+	:global(.clickable:focus-visible) .emoji,
+	:global(.clickable.focused) .emoji {
 		z-index: 51;
 		transform: scale(1.5);
 		background-color: var(--primary-soft-background);

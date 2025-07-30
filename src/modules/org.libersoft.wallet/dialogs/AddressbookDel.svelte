@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addressBook, type IAddressBookItem } from '../wallet.ts';
+	import { type IAddressBookItem, deleteAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: IAddressBookItem;
@@ -11,13 +11,13 @@
 		body: question,
 		icon: 'img/del.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
 			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
 		],
 	};
 
 	function clickYes() {
-		addressBook.set($addressBook.filter(i => i.guid !== item.guid));
+		deleteAddressBookItem(item.guid);
 		elDialog?.close();
 	}
 

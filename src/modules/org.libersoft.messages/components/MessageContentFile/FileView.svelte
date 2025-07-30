@@ -1,13 +1,13 @@
 <script lang="ts">
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import FileTransfer from './FileTransfer.svelte';
-	import { identifier } from '../../messages.js';
-	import { type FileDownload, type FileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { type IFileDownload, type IFileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 	import Button from '@/core/components/Button/Button.svelte';
-	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	interface Props {
-		upload: FileUpload;
-		download: FileDownload | null;
+		upload: IFileUpload;
+		download: IFileDownload | null;
 		pauseUpload: (uploadId: string) => void;
 		resumeUpload: (uploadId: string) => void;
 		cancelUpload: (uploadId: string) => void;

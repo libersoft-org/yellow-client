@@ -10,9 +10,9 @@
 	 */
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
-	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '../../messages.js';
-	import { getGuid } from '@/core/core.ts';
-	import { debug, keyboardHeight, isMobile } from '@/core/stores.ts';
+	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '@/org.libersoft.messages/scripts/messages.js';
+	import { getGuid } from '@/core/scripts/core.ts';
+	import { debug, keyboardHeight, isMobile } from '@/core/scripts/stores.ts';
 
 	// Android detection
 	let isAndroid = false;
@@ -60,22 +60,21 @@
 	// Reactive spacer visibility for Android keyboard adjustment
 	$: showAndroidSpacer = isAndroid && isRealMobile && ($keyboardHeight > 0 || $keyboardHeight === 0);
 	$: androidSpacerHeight = expressionsMenuOpen ? '10px' : '72px';
+	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
+	import { log } from '@/core/scripts/tauri.ts';
+	import { windowForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import resize from '@/core/actions/resizeObserver.ts';
-	import { highlightElement } from '@/core/utils/animationUtils.ts';
-	import Message from '../Message/Message.svelte';
-	import MessageLoader from '../MessageLoader/MessageLoader.svelte';
-	import ScrollButton from '../ScrollButton/ScrollButton.svelte';
-	import ModalStickersetDetails from '../../modals/ModalStickersetDetails.svelte';
-	import ModalForwardMessage from '../../modals/ForwardMessage.svelte';
-	import { log } from '@/core/tauri.ts';
-	import { modalForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
-	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-
-	interface MessageItem {
+	import Message from '@/org.libersoft.messages/components/Message/Message.svelte';
+	import MessageLoader from '@/org.libersoft.messages/components/MessageLoader/MessageLoader.svelte';
+	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
+	import WindowStickersetDetails from '@/org.libersoft.messages/windows/WindowStickersetDetails.svelte';
+	import WindowForwardMessage from '@/org.libersoft.messages/windows/ForwardMessage.svelte';
+	interface IMessageItem {
 		uid: string;
 		type: 'message' | 'loader' | 'hole' | 'unseen_marker' | 'no_messages' | 'initial_loading_placeholder';
 		id?: number;
@@ -92,7 +91,7 @@
 		is_lazyloaded?: boolean;
 	}
 
-	interface LoaderItem extends MessageItem {
+	interface ILoaderItem extends IMessageItem {
 		type: 'loader';
 		base: number;
 		reason: string;
@@ -103,21 +102,21 @@
 		conversation: any;
 	}
 
-	interface HoleItem extends MessageItem {
+	interface IHoleItem extends IMessageItem {
 		type: 'hole';
-		top: LoaderItem;
-		bottom: LoaderItem;
+		top: ILoaderItem;
+		bottom: ILoaderItem;
 	}
 
-	interface UIEvent {
+	interface IUIEvent {
 		type: string;
-		array?: MessageItem[];
-		loaders: LoaderItem[];
+		array?: IMessageItem[];
+		loaders: ILoaderItem[];
 		savedScrollTop?: number;
 		savedScrollHeight?: number;
 		wasScrolledToBottom?: boolean;
 		wasScrolledToBottom2?: boolean;
-		referenced_message?: MessageItem;
+		referenced_message?: IMessageItem;
 	}
 
 	export let conversation: any;
@@ -126,15 +125,15 @@
 	let elMessages: HTMLDivElement;
 	let elMessagesContainer: HTMLDivElement;
 	let elUnseenMarker: HTMLDivElement;
-	let elModalStickersetDetails: any;
+	let elWindowStickersetDetails: any;
 	let anchorElement: HTMLDivElement;
 	//let oldLastID: number | null = null;
 	let itemsCount: number = 0;
-	let itemsArray: (MessageItem | LoaderItem | HoleItem)[] = [];
-	let loaders: LoaderItem[] = [];
-	let holes: HoleItem[] = [];
-	let uiEvents: UIEvent[] = [];
-	let stickersetDetailsModalStickerset: any;
+	let itemsArray: (IMessageItem | ILoaderItem | IHoleItem)[] = [];
+	let loaders: ILoaderItem[] = [];
+	let holes: IHoleItem[] = [];
+	let uiEvents: IUIEvent[] = [];
+	let stickersetDetailsWindowStickerset: any;
 	let scrolledToBottom: boolean = true;
 	let windowInnerWidth: number;
 	let windowInnerHeight: number;
@@ -146,16 +145,16 @@
 	let scrolledToBottom0: boolean = false;
 	let scrolledToBottom1: boolean = false;
 	let wrapperWidth: number | null = null;
-	let elModalForwardMessage: any;
-	$: modalForwardMessageStore.set(elModalForwardMessage);
+	let elWindowForwardMessage: any;
+	$: windowForwardMessageStore.set(elWindowForwardMessage);
 
 	let {
-		setFileUploadModal,
-		fileUploadModalFiles,
+		setFileUploadWindow,
+		fileUploadWindowFiles,
 	}: {
-		setFileUploadModal: (show: boolean) => void;
-		fileUploadModalFiles: any;
-	} = getContext('FileUploadModal');
+		setFileUploadWindow: (show: boolean) => void;
+		fileUploadWindowFiles: any;
+	} = getContext('FileUploadWindow');
 
 	$: scrollButtonVisible = !scrolledToBottom;
 	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
@@ -205,13 +204,13 @@
  }
  */
 
-	function openStickersetDetailsModal(stickerset: any): void {
-		stickersetDetailsModalStickerset = stickerset;
-		//console.log('openStickersetDetailsModal:', stickerset);
-		elModalStickersetDetails?.open();
+	function openStickersetDetailsWindow(stickerset: any): void {
+		stickersetDetailsWindowStickerset = stickerset;
+		//console.log('openStickersetDetailsWindow:', stickerset);
+		elWindowStickersetDetails?.open();
 	}
 
-	setContext('openStickersetDetailsModal', openStickersetDetailsModal);
+	setContext('openStickersetDetailsWindow', openStickersetDetailsWindow);
 
 	events.subscribe(e => {
 		if (e?.length) {
@@ -221,13 +220,14 @@
 		}
 	});
 
-	function saveScrollPosition(event: UIEvent): void {
+	function saveScrollPosition(event: IUIEvent): void {
 		if (!elMessages) return;
 		event.savedScrollTop = elMessages.scrollTop;
 		event.savedScrollHeight = elMessages.scrollHeight;
 	}
 
-	function restoreScrollPosition(event: UIEvent): void {
+	function restoreScrollPosition(event: IUIEvent): void {
+		//console.log('restoreScrollPosition elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
 		if (event.savedScrollHeight !== undefined && event.savedScrollTop !== undefined) {
 			const scrollDifference = elMessages.scrollHeight - event.savedScrollHeight;
 			elMessages.scrollTop = event.savedScrollTop + scrollDifference;
@@ -343,29 +343,29 @@
 		jumped = true;
 	});
 
-	function getLoader(l: Partial<LoaderItem> & { base: number }): LoaderItem {
+	function getLoader(l: Partial<ILoaderItem> & { base: number }): ILoaderItem {
 		loaders = loaders.filter(i => !i.delete_me);
 		for (let i of loaders) {
 			if (i.base === l.base && i.prev === l.prev && i.next === l.next) return i;
 		}
-		const loader: LoaderItem = {
+		const loader: ILoaderItem = {
 			...l,
 			uid: getGuid(),
 			type: 'loader',
 			conversation: conversation,
 			base: l.base,
 			reason: l.reason || '',
-		} as LoaderItem;
+		} as ILoaderItem;
 		loaders.push(loader);
 		return loader;
 	}
 
-	function getHole(top: LoaderItem, bottom: LoaderItem): HoleItem {
+	function getHole(top: ILoaderItem, bottom: ILoaderItem): IHoleItem {
 		let uid = top.uid + '_' + bottom.uid;
 		for (let i of holes) {
 			if (i.uid === uid) return i;
 		}
-		let hole: HoleItem = {
+		let hole: IHoleItem = {
 			type: 'hole' as const,
 			top: top,
 			bottom: bottom,
@@ -387,7 +387,8 @@
 
 	$: log.debug('itemsArray:', itemsArray);
 
-	async function jumpToLazyLoaderFromTop(event: UIEvent): Promise<void> {
+	async function jumpToLazyLoaderFromTop(event: IUIEvent): Promise<void> {
+		//console.log('jumpToLazyLoaderFromTop:', event);
 		let el;
 		for (let l of event.loaders) {
 			if (l.reason === 'lazyload_next' && l.loaderElement) {
@@ -403,7 +404,8 @@
 		}
 	}
 
-	async function handleEvents(events: UIEvent[]): Promise<void> {
+	async function handleEvents(events: IUIEvent[]): Promise<void> {
+		console.log('handleEvents:', events);
 		if (events.length === 1 && events[0].type === 'properties_update') {
 			itemsArray = itemsArray;
 			return;
@@ -436,7 +438,8 @@
 				return;
 			}
 			if (messages.length === 0) {
-				itemsArray = [{ type: 'initial_loading_placeholder', uid: 'initial_loading' } as MessageItem];
+				console.log('handleEvents: no messages itemsArray');
+				itemsArray = [{ type: 'initial_loading_placeholder', uid: 'initial_loading' } as IMessageItem];
 				return;
 			}
 			messages = mergeAuthorship(messages);
@@ -447,7 +450,7 @@
 			}
 			// messages are sorted in correct order at this point.
 			// add lazyloaders where there is discontinuity.
-			let items: (MessageItem | LoaderItem | HoleItem)[] = [];
+			let items: (IMessageItem | ILoaderItem | IHoleItem)[] = [];
 			// add a loader at the top if first message is not the first message in the chat
 			if (messages[0].prev !== 'none' && messages[0].id !== undefined) {
 				let l = getLoader({ prev: 10, base: messages[0].id, reason: 'lazyload_prev' });
@@ -460,7 +463,8 @@
 			for (let i = 0; i < messages.length; i++) {
 				let m = messages[i];
 				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)) {
-					items.push({ type: 'unseen_marker', uid: 'unseen_marker' } as MessageItem);
+					//console.log('ADDING-UNSEEN-MARKER');
+					items.push({ type: 'unseen_marker', uid: 'unseen_marker' } as IMessageItem);
 					unseen_marker_put = true;
 				}
 				items.push(m);
@@ -490,8 +494,8 @@
 		}
 	}
 
-	function mergeAuthorship(messages: MessageItem[]): MessageItem[] {
-		let items: MessageItem[] = [];
+	function mergeAuthorship(messages: IMessageItem[]): IMessageItem[] {
+		let items: IMessageItem[] = [];
 		let lastAuthor: string | null = null;
 		for (let i = 0; i < messages.length; i++) {
 			let message = messages[i];
@@ -543,9 +547,9 @@
 			}
 		}
 		if (!isDraggingFiles) return;
-		// show overlay only if file upload modal is not shown
-		// but if user drops files to conversation it will still add them to the upload modal
-		if (!get(modalFileUploadStore)?.isOpen() && !showFileDndOverlay) showFileDndOverlay = true;
+		// show overlay only if file upload window is not shown
+		// but if user drops files to conversation it will still add them to the upload window
+		if (!get(windowFileUploadStore)?.isOpen() && !showFileDndOverlay) showFileDndOverlay = true;
 	}
 
 	function onDragLeave(e: DragEvent): void {
@@ -559,8 +563,8 @@
 		e.stopPropagation();
 		if (!e.dataTransfer || e.dataTransfer.files.length === 0) return;
 		showFileDndOverlay = false;
-		setFileUploadModal(true);
-		$fileUploadModalFiles = [...$fileUploadModalFiles, ...Array.from(e.dataTransfer.files)];
+		setFileUploadWindow(true);
+		$fileUploadWindowFiles = [...$fileUploadWindowFiles, ...Array.from(e.dataTransfer.files)];
 	}
 
 	const onResize = (entry: ResizeObserverEntry): void => {
@@ -570,12 +574,12 @@
 
 	// Debug button handlers
 	const handleSaveScrollPosition = () => {
-		const event: UIEvent = { type: 'debug_save', array: [], loaders: [] };
+		const event: IUIEvent = { type: 'debug_save', array: [], loaders: [] };
 		saveScrollPosition(event);
 	};
 
 	const handleRestoreScrollPosition = () => {
-		const event: UIEvent = { type: 'debug_restore', array: [], loaders: [] };
+		const event: IUIEvent = { type: 'debug_restore', array: [], loaders: [] };
 		restoreScrollPosition(event);
 	};
 </script>
@@ -725,7 +729,7 @@
 		<Button text="Save scroll position" onClick={handleSaveScrollPosition} />
 		<Button text="Restore scroll position" onClick={handleRestoreScrollPosition} />
 		<Button text="GC" onClick={gc} />
-		{#if false}<Button text="Show debug modal" onClick={() => null} />{/if}
+		{#if false}<Button text="Show debug window" onClick={() => null} />{/if}
 		<div>items count: {itemsCount}</div>
 		<div>messagesHeight: {messagesHeight}</div>
 		<div>elMessages.scrollHeight: {elMessages?.scrollHeight}</div>
@@ -788,5 +792,5 @@
 	{/if}
 </div>
 
-<Modal bind:this={elModalStickersetDetails} title="Sticker set" body={ModalStickersetDetails} params={{ stickersetDetailsModalStickerset }} width="448px" height="390px" />
-<Modal bind:this={elModalForwardMessage} testId="forward-message" title="Forward message" body={ModalForwardMessage} width="448px" height="390px" />
+<Window bind:this={elWindowStickersetDetails} title="Sticker set" body={WindowStickersetDetails} params={{ stickersetDetailsWindowStickerset }} width="448px" height="390px" />
+<Window bind:this={elWindowForwardMessage} testId="forward-message" title="Forward message" body={WindowForwardMessage} width="448px" height="390px" />

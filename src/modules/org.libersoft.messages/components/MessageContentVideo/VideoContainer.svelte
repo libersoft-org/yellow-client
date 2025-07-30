@@ -1,36 +1,31 @@
 <script lang="ts">
-	import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.js';
-	import { active_account } from '@/core/core.ts';
 	import { onMount } from 'svelte';
-	import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
-	import { humanSize } from '@/core/utils/fileUtils.js';
-	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
-	import Button from '@/core/components/Button/Button.svelte';
-	import { assembleFile, base64ToUint8Array } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import { writable, get } from 'svelte/store';
+	import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.js';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { assembleFile, base64ToUint8Array } from '@/org.libersoft.messages/services/Files/utils.ts';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
+	import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
+	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
-	import type { FileDownload, FileUpload, FileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
-	import { truncateText } from '@/core/utils/textUtils.js';
+	import type { IFileDownload, IFileUpload, IFileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { truncateText } from '@/core/scripts/utils/textUtils.js';
 	import _debug from 'debug';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import Button from '@/core/components/Button/Button.svelte';
 	import videoJS from 'video.js';
-
 	const debug = _debug('libersoft:messages:components:MessageContentVideo:Video');
-
 	let { uploadId } = $props();
 	let videoRef = $state<HTMLVideoElement>();
 	let thumbnailRef = null;
 	let mediaHandler = $state<MediaService | null>(null);
-	let upload = $state<FileUpload | null>(null);
-	let download = $state<FileDownload | null>(null);
+	let upload = $state<IFileUpload | null>(null);
+	let download = $state<IFileDownload | null>(null);
 	fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
-
 	let thumbnailSrc = $state<string | null>(null);
-
 	//let videoUrl = $state<string | null>(null)
-
 	let videoJSEnabled = true;
 	let posterError = $state(false);
 	let videoStarted = $state(false);

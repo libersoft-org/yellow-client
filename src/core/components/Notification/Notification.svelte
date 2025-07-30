@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { log } from '@/core/tauri.ts';
-	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '@/core/notifications_settings.ts';
-	import { playNotificationSound, stopNotificationSound } from '@/core/notifications.ts';
+	import { log } from '@/core/scripts/tauri.ts';
+	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '@/core/scripts/notifications_settings.ts';
+	import { playNotificationSound, stopNotificationSound } from '@/core/scripts/notifications.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -43,7 +43,9 @@
 		transition: background-color 0.5s ease;
 	}
 
-	.notification:hover {
+	.notification:hover,
+	:global(.clickable:focus-visible) .notification,
+	:global(.clickable.focused) .notification {
 		background-color: var(--bgColorHover);
 	}
 

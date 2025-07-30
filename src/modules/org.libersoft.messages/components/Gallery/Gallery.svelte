@@ -1,18 +1,19 @@
 <script lang="ts">
-	import { identifier } from '../../messages.js';
-	import Button from '@/core/components/Button/Button.svelte';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
+	import galleryStore from '@/org.libersoft.messages/stores/GalleryStore.ts';
+	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import galleryStore from '../../stores/GalleryStore.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	let gallery = galleryStore.store;
 	let currentFile = galleryStore.currentFile();
 	let currentFilePosition = $derived($currentFile ? $gallery.files.indexOf($currentFile) + 1 : 0);
+	let canPrevious = galleryStore.canPrevious();
+	let canNext = galleryStore.canNext();
+	let loading = $state(false);
 
 	function download() {
-		if ($currentFile && $currentFile.url) {
-			assembleFile($currentFile.url, $currentFile.fileName);
-		}
+		if ($currentFile && $currentFile.url) assembleFile($currentFile.url, $currentFile.fileName);
 	}
 
 	function close() {
@@ -27,22 +28,14 @@
 		galleryStore.next();
 	}
 
-	let canPrevious = galleryStore.canPrevious();
-	let canNext = galleryStore.canNext();
-
-	let loading = $state(false);
-
 	function handleKeyboard(event) {
 		event.preventDefault();
 		event.stopImmediatePropagation();
 		if (event.key === 'Escape') {
 			event.preventDefault();
 			close();
-		} else if (event.key === 'ArrowLeft' && $canPrevious) {
-			previous();
-		} else if (event.key === 'ArrowRight' && $canNext) {
-			next();
-		}
+		} else if (event.key === 'ArrowLeft' && $canPrevious) previous();
+		else if (event.key === 'ArrowRight' && $canNext) next();
 	}
 
 	$effect(() => {
@@ -76,10 +69,7 @@
 	});
 
 	function onAnywhereClick(event) {
-		// very simple background close
-		if (event.target === event.currentTarget) {
-			close();
-		}
+		if (event.target === event.currentTarget) close();
 	}
 </script>
 

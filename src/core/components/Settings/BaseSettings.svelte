@@ -1,16 +1,19 @@
 <script lang="ts">
 	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
-	import { log } from '@/core/tauri.ts';
+	import { log } from '@/core/scripts/tauri.ts';
 	import { setContext, tick } from 'svelte';
-	interface Props {
+	import { createHMRDebugger } from '@/core/scripts/hmr-debug.ts';
+
+	interface IProps {
 		testId?: string;
 		settingsObject?: any;
 	}
-	let elModal;
+	let elWindow;
+
 	/*
-	interface SettingsNode {
+	interface ISettingsNode {
 		name: string;
 		title: string;
 		items?: SettingsNode[];
@@ -18,68 +21,88 @@
 		body?: any;
 		__parent?: SettingsNode | null;
 	}
-	interface MenuItems {
+	interface IMenuItems {
 		Array<{
 		 img?: string;
 	  title?: string;
 	  onClick?: (e: Event) => void;
 	 }>
 	}
-	interface	optionalModalIcon {
+	interface IOptionalWindowIcon {
 	 img?: string;
   alt?: string;
 		onClick?: (e: Event) => void;
 	};
 	*/
-	let { testId = '', settingsObject }: Props = $props();
+	let { testId = '', settingsObject }: IProps = $props();
 	let activeName = $state(settingsObject.name);
 	let backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
-	let currentNode = $state(settingsObject);
 
-	$effect(() => {
+	let currentNode = $derived.by(() => {
 		let n = findNode(settingsObject, activeName);
-		console.log('[BaseSettings] activeName:', activeName, 'foundNode:', n);
-		if (n) {
-			currentNode = n;
-		} else {
-			currentNode = settingsObject;
-		}
+		//console.debug('[BaseSettings] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
+		return n || settingsObject;
+	});
+
+	let currentNodeInstance: any = $state();
+	$effect(() => {
+		currentNode.instance = currentNodeInstance;
 	});
 
 	let breadcrumb = $derived(makeBreadcrumb(activeName));
 
 	setContext('setSettingsSection', setSettingsSection);
 
-	// Remove the problematic effect that resets navigation on modal reopen
+	// Remove the problematic effect that resets navigation on window reopen
 
-	export function open() {
-		elModal?.open();
-		activeName = settingsObject.name; // Reset to root when opening settings
+	export function open(name?: string) {
+		console.log('[BaseSettings] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
+		elWindow?.open();
+		setSettingsSection(name || settingsObject.name);
 	}
 
 	export function close() {
-		elModal?.close();
+		elWindow?.close();
 	}
 
-	export async function setSettingsSection(name: string) {
-		console.log('[BaseSettings] setSettingsSection:', name);
+	export async function setSettingsSection(name: string, props: any = {}) {
+		console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
+		await tick();
+		const node = findNode(settingsObject, name);
+		if (node && Object.keys(props).length > 0) node.props = { ...node.props, ...props };
+		if (!currentNode?.instance) {
+			log.error('[BaseSettings] No instance found for node:', node);
+			return;
+		}
 		await currentNode.instance?.onOpen?.();
 	}
 
-	function goBack() {
+	async function goBack() {
 		console.log('[BaseSettings] goBack: ', activeName);
 		const found = findNode(settingsObject, activeName);
 		console.log('[BaseSettings] goBack found:', found);
-		activeName = found?.__parent?.name ?? settingsObject.name;
+		const parentName = found?.__parent?.name ?? settingsObject.name;
+		await setSettingsSection(parentName);
 	}
 
 	function findNode(root: any, target: string): any {
 		const stack = [root];
 		while (stack.length) {
+			/*console.log(
+				'[BaseSettings] Searching ',
+				root,
+				' for node:',
+				target,
+				'Current stack:',
+				stack.map(n => n.name)
+			);*/
 			const node = stack.pop();
 			if (node.name === target) return node;
+			//const children = node.items ?? [];
+			//console.log('node.items:', node.items);
+			//console.log('children:', children);
 			(node.items ?? []).forEach((c: any) => stack.push(c));
 		}
 	}
@@ -108,20 +131,30 @@
 		flex-direction: column;
 		gap: 10px;
 	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
 </style>
 
-<Modal {testId} title={settingsObject.title} bind:this={elModal} width="600px" optionalIcon={backIcon}>
+<Window {testId} title={settingsObject.title} bind:this={elWindow} width="600px" optionalIcon={backIcon}>
 	<div class="settings">
 		{#if activeName !== settingsObject.name}
 			<Breadcrumb items={breadcrumb} />
 		{/if}
-		{#if currentNode.menu}
-			{#each currentNode.menu as item (item.name ?? item.title)}
-				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
-			{/each}
-		{/if}
-		{#if currentNode.body}
-			<currentNode.body {...currentNode.props} bind:this={currentNode.instance} close={goBack} />
-		{/if}
+
+		<div class="content" data-testid={testId + '-content-' + activeName}>
+			{#if currentNode.menu}
+				{#each currentNode.menu as item (item.name ?? item.title)}
+					<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
+				{/each}
+			{/if}
+
+			{#if currentNode.body}
+				<currentNode.body {...currentNode.props} bind:this={currentNodeInstance} close={goBack} />
+			{/if}
+		</div>
 	</div>
-</Modal>
+</Window>

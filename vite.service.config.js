@@ -34,8 +34,12 @@ export default defineConfig({
 		alias: {
 			'@': path.resolve(__dirname, './src'),
 			'@/core': path.resolve(__dirname, './src/core'),
-			'@/bridge/core-bridge': path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-mobile.ts'),
+			'@/bridge/core-bridge': path.resolve(__dirname, 'src/modules/org.libersoft.messages/scripts/core-bridge-mobile.ts'),
 			'@/org.libersoft.messages': path.resolve(__dirname, './src/modules/org.libersoft.messages'),
+			'@/org.libersoft.contacts': path.resolve(__dirname, './src/modules/org.libersoft.contacts'),
+			'@/org.libersoft.wallet': path.resolve(__dirname, './src/modules/org.libersoft.wallet'),
+			'@/org.libersoft.dating': path.resolve(__dirname, './src/modules/org.libersoft.dating'),
+			'@/org.libersoft.iframes': path.resolve(__dirname, './src/modules/org.libersoft.iframes'),
 		},
 	},
 });

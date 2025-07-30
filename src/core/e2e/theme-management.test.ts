@@ -47,7 +47,7 @@ test.describe.parallel('Theme Management', () => {
 
 		// Click Settings in menu
 		await page.getByTestId('menu-item-settings').click();
-		await page.waitForTimeout(500); // Wait for modal to open
+		await page.waitForTimeout(500); // Wait for window to open
 
 		// Navigate to appearance settings
 		await page.getByTestId('settings-appearance').click();

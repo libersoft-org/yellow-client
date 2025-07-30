@@ -20,10 +20,6 @@ vite.config.js.timestamp-*
 *storybook.log
 test-results
 
-# Paraglide
-src/lib/paraglide
-project.inlang/cache
-
 # Custom
 .local/*
 **/.claude/settings.local.json

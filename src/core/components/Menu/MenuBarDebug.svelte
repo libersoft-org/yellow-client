@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { debug } from '@/core/stores.ts';
-	import { log } from '@/core/tauri.ts';
-	import { addNotification } from '@/core/notifications.ts';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import { debug } from '@/core/scripts/stores.ts';
+	import { log } from '@/core/scripts/tauri.ts';
+	import { addNotification } from '@/core/scripts/notifications.ts';
+	import Window from '@/core/components/Window/Window.svelte';
 	import Files from '@/core/debug/Files.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
-	let elModalFiles1;
-	let elModalFiles2;
+	let elWindowFiles1;
+	let elWindowFiles2;
 
 	async function err() {
 		throw new Error('Test exception!');
@@ -24,11 +24,11 @@
 	}
 
 	function openFiles1() {
-		elModalFiles1?.open();
+		elWindowFiles1?.open();
 	}
 
 	function openFiles2() {
-		elModalFiles2?.open();
+		elWindowFiles2?.open();
 	}
 </script>
 
@@ -40,5 +40,5 @@
 	<Button onClick={openFiles2} text="F2" />
 {/if}
 
-<Modal title="File Operations Test1" body={Files} bind:this={elModalFiles1} width="90%" />
-<Modal title="File Operations Test2" body={Files} bind:this={elModalFiles2} width="90%" />
+<Window title="File Operations Test1" body={Files} bind:this={elWindowFiles1} width="90%" />
+<Window title="File Operations Test2" body={Files} bind:this={elWindowFiles2} width="90%" />

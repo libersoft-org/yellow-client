@@ -1,7 +1,7 @@
 import { get, writable } from 'svelte/store';
-import { type FileUpload, type FileUploadRecord, FileUploadRecordStatus, type FileUploadStoreType, type FileUploadStoreValue } from '@/org.libersoft.messages/services/Files/types.ts';
+import { type IFileUpload, type IFileUploadRecord, FileUploadRecordStatus, type FileUploadStoreType, type FileUploadStoreValue } from '@/org.libersoft.messages/services/Files/types.ts';
 
-export let modalFileUploadStore = writable<any>(null);
+export let windowFileUploadStore = writable<any>(null);
 
 export class FileUploadStore implements FileUploadStoreType {
 	store = writable<FileUploadStoreValue>([]);
@@ -14,7 +14,7 @@ export class FileUploadStore implements FileUploadStoreType {
 		return get(this.store).find(upload => upload.record.id === id);
 	}
 
-	set(id: string, upload: FileUpload) {
+	set(id: string, upload: IFileUpload) {
 		this.store.update(store => {
 			const index = store.findIndex(d => d.record.id === id);
 			if (index !== -1) {
@@ -26,7 +26,7 @@ export class FileUploadStore implements FileUploadStoreType {
 		});
 	}
 
-	patch(id: string, data: Partial<FileUpload>) {
+	patch(id: string, data: Partial<IFileUpload>) {
 		// patch but dont change ref
 		this.store.update(store => {
 			const oldUpload = store.find(upload => upload.record.id === id);
@@ -46,7 +46,7 @@ export class FileUploadStore implements FileUploadStoreType {
 		this.store.update(store => store.filter(upload => upload.record.id !== id));
 	}
 
-	updateUploadRecord(id: string, record: FileUploadRecord) {
+	updateUploadRecord(id: string, record: IFileUploadRecord) {
 		this.patch(id, { record });
 	}
 

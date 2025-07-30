@@ -1,17 +1,17 @@
 <script>
 	import { onMount, setContext, tick, getContext } from 'svelte';
-	import { documentHeight, keyboardHeight, isMobile, debug } from '@/core/stores.ts';
-	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
+	import { documentHeight, keyboardHeight, isMobile, debug } from '@/core/scripts/stores.ts';
+	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '@/org.libersoft.messages/scripts/messages.js';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalFileUpload from '../../modals/FileUpload.svelte';
-	import ModalHtml from '../../modals/Html.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
+	import WindowFileUpload from '../../windows/FileUpload.svelte';
+	import WindowHtml from '../../windows/Html.svelte';
 	import Expressions from '../Expressions/Expressions.svelte';
-	import { init_emojis } from '../../emojis.js';
+	import { init_emojis } from '@/org.libersoft.messages/scripts/emojis.js';
 	import { get } from 'svelte/store';
 	import MessageBarRecorder from './MessageBarRecorder.svelte';
 	import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
@@ -19,15 +19,15 @@
 	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import VideoRecorderContainer from '../VideoRecorder/VideoRecorderContainer.svelte';
-	import { modalFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	let expressionsMenu;
 	let elBottomSheet;
 	let elAttachment;
 	let elExpressions;
 	let elMessage;
 	let elMessageBar;
-	let elModalVideoRecorder;
-	let elModalHTML;
+	let elWindowVideoRecorder;
+	let elWindowHTML;
 	let text;
 	let expressions;
 	let expressionsHeight = '500px';
@@ -44,7 +44,7 @@
 		expressionsHeight = value ? '250px' : '500px';
 	});
 
-	let { setFileUploadModal } = getContext('FileUploadModal');
+	let { setFileUploadWindow } = getContext('FileUploadWindow');
 	let expressionsMenuOpen = getContext('expressionsMenuOpen');
 
 	documentHeight.subscribe(value => {
@@ -196,7 +196,7 @@
 	}
 
 	function sendHTML() {
-		elModalHTML?.open();
+		elWindowHTML?.open();
 	}
 
 	function sendLocation() {
@@ -374,9 +374,6 @@
 		max-height: 0;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.video-recorder-wrapper.open {
 		min-height: calc(100vh - 153px);
 		height: calc(100vh - 153px);
 		padding-bottom: 2rem;
@@ -442,7 +439,7 @@
 </Bar>
 <ContextMenu target={elAttachment} disableRightClick bottomOffset={elMessageBar?.getBoundingClientRect().height}>
 	<ContextMenuItem img="modules/{identifier}/img/video_message-black.svg" label="Video message" onClick={onVideoRecordClick} />
-	<ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} data-testid="file-attachment-button" />
+	<ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadWindow(true)} data-testid="file-attachment-button" />
 	<ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
 	<ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
@@ -466,5 +463,6 @@
 		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet />
 	</div>
 {/if}
-<Modal title="File upload" body={ModalFileUpload} params={{ setFileUploadModal: setFileUploadModal }} bind:this={$modalFileUploadStore} />
-<Modal title="HTML composer" body={ModalHtml} bind:this={elModalHTML} width="700px" height="500px" max resizable />
+
+<Window title="File upload" body={WindowFileUpload} params={{ setFileUploadWindow: setFileUploadWindow }} bind:this={$windowFileUploadStore} />
+<Window title="HTML composer" body={WindowHtml} bind:this={elWindowHTML} width="700px" height="500px" max resizable />

@@ -5,7 +5,6 @@ import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import { svelteInspector } from '@sveltejs/vite-plugin-svelte-inspector';
 import 'dotenv/config';
@@ -38,7 +37,7 @@ export default defineConfig(({ mode }) => {
 		resolve: {
 			...(process.env.VITEST ? { conditions: ['browser'] } : {}),
 			alias: {
-				'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-mobile.ts') : path.resolve(__dirname, 'src/modules/org.libersoft.messages/core-bridge-builtin.ts'),
+				'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, './src/modules/org.libersoft.messages/scripts/core-bridge-mobile.ts') : path.resolve(__dirname, './src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
 			},
 		},
 		css: {
@@ -63,10 +62,6 @@ export default defineConfig(({ mode }) => {
 				: []),
 			devtoolsJson(),
 			sveltekit(),
-			paraglideVitePlugin({
-				project: './project.inlang',
-				outdir: './src/lib/paraglide',
-			}),
 			...(process.env.VITEST
 				? []
 				: [
@@ -103,9 +98,10 @@ export default defineConfig(({ mode }) => {
 		build: {
 			chunkSizeWarningLimit: 6000,
 			minify: process.env.VITE_BUILD_MINIFY !== 'false',
+			//sourcemap: false,
 		},
 		optimizeDeps: {
-			include: ['@tauri-apps/api'],
+			exclude: ['@tauri-apps/api'],
 		},
 	};
 });

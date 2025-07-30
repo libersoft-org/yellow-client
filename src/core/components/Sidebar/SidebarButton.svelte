@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isMobile } from '@/core/stores.ts';
+	import { isMobile } from '@/core/scripts/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
@@ -42,7 +42,9 @@
 		color: var(--disabled-foreground);
 	}
 
-	.sidebar-button:not(.disabled):hover {
+	.sidebar-button:not(.disabled):hover,
+	:global(.clickable:focus-visible) .sidebar-button:not(.disabled),
+	:global(.clickable.focused) .sidebar-button:not(.disabled) {
 		background-color: var(--secondary-soft-background);
 	}
 

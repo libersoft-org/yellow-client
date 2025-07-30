@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { stickers_db } from '../db.ts';
+	import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
 	let dialogData = {
@@ -7,7 +7,7 @@
 		body: 'Would you like to delete local sticker database?',
 		icon: 'img/del.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
 			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
 		],
 	};

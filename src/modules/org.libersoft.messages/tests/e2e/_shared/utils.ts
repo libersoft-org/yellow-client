@@ -101,20 +101,20 @@ export async function forwardMessage(page: Page, messageUid?: string): Promise<v
 
 		await page.getByTestId(`message-context-menu-${targetMessageUid}-forward`).click({ force: true });
 
-		// Wait for the forward modal to appear
-		await page.getByTestId('forward-message-modal').waitFor({ state: 'visible' });
+		// Wait for the forward window to appear
+		await page.getByTestId('forward-message-window').waitFor({ state: 'visible' });
 	});
 }
 
 /**
- * Helper function to verify forward message modal is open and shows preview
+ * Helper function to verify forward message window is open and shows preview
  * @param page - The Playwright page object
  * @param expectedMessage - The expected message text in preview
  */
-export async function verifyForwardModalWithPreview(page: Page, expectedMessage?: string): Promise<void> {
-	return await test.step('Verify forward modal is open with message preview', async () => {
-		// Give the modal more time to appear
-		await expect(page.getByTestId('forward-message-modal')).toBeVisible();
+export async function verifyForwardWindowWithPreview(page: Page, expectedMessage?: string): Promise<void> {
+	return await test.step('Verify forward window is open with message preview', async () => {
+		// Give the window more time to appear
+		await expect(page.getByTestId('forward-message-window')).toBeVisible();
 		await expect(page.getByTestId('forward-message-preview')).toBeVisible();
 		await expect(page.getByTestId('forward-message-preview-header')).toHaveText('Forwarding message:');
 
@@ -126,11 +126,11 @@ export async function verifyForwardModalWithPreview(page: Page, expectedMessage?
 }
 
 /**
- * Helper function to search conversations in forward modal
+ * Helper function to search conversations in forward window
  * @param page - The Playwright page object
  * @param searchTerm - The search term
  */
-export async function searchConversationsInForwardModal(page: Page, searchTerm: string): Promise<void> {
+export async function searchConversationsInForwardWindow(page: Page, searchTerm: string): Promise<void> {
 	return await test.step(`Search conversations: "${searchTerm}"`, async () => {
 		await page.getByTestId('forward-message-search').fill(searchTerm);
 	});

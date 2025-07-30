@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { writable } from 'svelte/store';
 	import filesService from '@/org.libersoft.messages/services/Files/FilesService.ts';
 	import ImageAspectRatio from '@/core/components/ImageAspectRatio/ImageAspectRatio.svelte';
-	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import { writable } from 'svelte/store';
 	import { FileUploadRecordStatus } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import galleryStore from '../../stores/GalleryStore.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	let { node, showHiddenImages, hiddenImages, siblings } = $props();
 	let file = node.attributes.file?.value;
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
@@ -107,17 +108,27 @@
 
 <style>
 	.message-content-image-wrapper {
-		--border-radius: 4px;
 		position: relative;
 	}
 
 	.message-content-image :global(img) {
-		border-radius: var(--border-radius);
+		border: 1px solid var(--primary-foreground);
+		border-radius: 10px;
+		box-sizing: border-box;
 	}
 
-	.message-content-image:hover {
-		opacity: 0.8;
+	.message-content-image {
+		position: relative;
 		cursor: pointer;
+		transition: transform 0.2s linear;
+	}
+
+	.message-content-image:hover,
+	:global(.clickable:focus-visible) .message-content-image,
+	:global(.clickable.focused) .message-content-image {
+		z-index: 1;
+		transform: scale(1.1);
+		box-shadow: var(--shadow);
 	}
 
 	.spinner-wrap {
@@ -142,11 +153,11 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 26px;
-		background: rgba(0, 0, 0, 0.6);
-		color: white;
+		background: var(--default-foreground);
+		color: var(--default-background);
 		font-weight: bold;
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-		border-radius: var(--border-radius);
+		border-radius: 10px;
 	}
 </style>
 
@@ -155,22 +166,24 @@
 		{#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
 			<MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
 		{:else}
-			<div class="message-content-image" onclick={openInGallery} role="button" tabindex="0" onkeydown={e => e.key === 'Enter' && openInGallery()}>
-				{#if loading}
-					<div class="spinner-wrap">
-						<Spinner show containerMinHeight="initial" />
-					</div>
-				{:else if imgUrl}
-					<ImageAspectRatio src={imgUrl} alt={file} />
-					{#if showHiddenImages}
-						<div class="hidden-images">
-							+{hiddenImages.length}
+			<Clickable onClick={openInGallery}>
+				<div class="message-content-image">
+					{#if loading}
+						<div class="spinner-wrap">
+							<Spinner show />
 						</div>
+					{:else if imgUrl}
+						<ImageAspectRatio src={imgUrl} alt={file} />
+						{#if showHiddenImages}
+							<div class="hidden-images">
+								+{hiddenImages.length}
+							</div>
+						{/if}
+					{:else}
+						no data?
 					{/if}
-				{:else}
-					no data?
-				{/if}
-			</div>
+				</div>
+			</Clickable>
 		{/if}
 	{:else}
 		basic image here
