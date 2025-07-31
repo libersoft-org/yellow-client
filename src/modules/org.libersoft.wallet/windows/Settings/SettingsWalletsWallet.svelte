@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { debug } from '@/core/scripts/stores.ts';
 	import { getContext } from 'svelte';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { type IWallet, reorderAddresses } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -83,9 +84,14 @@
 
 <div class="wallet">
 	<ButtonBar>
-		<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={() => addAddress()} />
+		<Button img="modules/{module.identifier}/img/wallet-address-add.svg" text="Add address" onClick={addAddress} />
 		<Button img="img/export.svg" text="Export" onClick={() => openExport()} />
 	</ButtonBar>
+	{#if $debug}
+		<pre>
+			<code>{JSON.stringify(params?.wallet, null, 2)}</code>
+		</pre>
+	{/if}
 	{#if params?.wallet?.addresses && params.wallet.addresses.length > 0}
 		<div use:tableDrag={{ items: params.wallet.addresses, onReorder: handleAddressReorder }}>
 			<Table>

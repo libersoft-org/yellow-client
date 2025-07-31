@@ -1,6 +1,7 @@
 import { get, writable, derived } from 'svelte/store';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { getIndexedAccountPath, HDNodeWallet, Mnemonic, randomBytes } from 'ethers';
+import { doAddHardwareAddressTrezor } from '@/org.libersoft.wallet/scripts/trezor';
 
 export interface IWallet {
 	guid: string;
@@ -45,12 +46,12 @@ export function addressesMaxIndex(addresses: IAddress[]): number {
 	return addresses.reduce((max, a) => Math.max(max, a.index), -1);
 }
 
-export function addAddress(w: IWallet, index?: number | string, name?: string): void {
+export async function addAddress(w: IWallet, index?: number | string, name?: string): void {
 	let indexNum: number;
 	const addresses = w.addresses || [];
 	if (index === undefined || index === null || index === '') {
 		indexNum = addressesMaxIndex(addresses) + 1;
-		doAddAddress(w, addresses, indexNum, name);
+		await doAddAddress(w, addresses, indexNum, name);
 	} else {
 		indexNum = parseInt(index.toString());
 		if (indexNum < 0 || isNaN(indexNum)) {
@@ -62,7 +63,7 @@ export function addAddress(w: IWallet, index?: number | string, name?: string): 
 			console.error('Address with index', indexNum, 'already exists');
 			return;
 		}
-		doAddAddress(w, addresses, indexNum, name);
+		await doAddAddress(w, addresses, indexNum, name);
 	}
 	w.addresses = addresses;
 	w.selected_address_index = indexNum;
@@ -84,12 +85,17 @@ export function addressIndexAlreadyExists(wallet: IWallet, index: number): boole
 	else return false;
 }
 
-function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
-	// For hardware wallets, addresses are not added this way
+async function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
 	if (isHardwareWallet(w)) {
-		console.error('Cannot add addresses to hardware wallets this way. Use hardware wallet specific methods.');
-		return;
+		if (w.type === 'trezor') {
+			await doAddHardwareAddressTrezor(w, addresses, index, name);
+		}
+	} else {
+		doAddSoftwareAddress(w, addresses, index, name);
 	}
+}
+
+function doAddSoftwareAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
 	if (!w.phrase) {
 		console.error('Cannot derive address: wallet.phrase is undefined');
 		return;
@@ -119,6 +125,7 @@ export function generateMnemonic(): Mnemonic {
 export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void> {
 	let newWallet = HDNodeWallet.fromMnemonic(mnemonic);
 	let wallet: IWallet = {
+		guid: 'swwallet-' + Date.now() + '-' + Math.random().toString(36).substring(2, 15),
 		type: 'software',
 		phrase: mnemonic.phrase,
 		address: newWallet.address,
@@ -132,7 +139,7 @@ export async function addWallet(mnemonic: Mnemonic, name?: string): Promise<void
 		return w;
 	});
 	selectedWalletID.set(get(wallets)[get(wallets).length - 1].guid);
-	addAddress(wallet);
+	await addAddress(wallet);
 }
 
 export function editWallet(wallet: IWallet, name: string): boolean {
@@ -203,7 +210,7 @@ export function reorderAddresses(wallet: IWallet, reorderedAddresses: IAddress[]
 
 export async function addHardwareWallet(type: 'trezor' | 'ledger', name: string, identifiers: any): Promise<void> {
 	const wallet: IWallet = {
-		guid: 'wallet-' + Date.now() + '-' + Math.random().toString(36).substring(2, 15),
+		guid: 'hwwallet-' + Date.now() + '-' + Math.random().toString(36).substring(2, 15),
 		type,
 		name,
 		selected_address_index: 0,

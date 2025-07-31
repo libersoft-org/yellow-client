@@ -29,7 +29,7 @@
 	}
 
 	async function addWallet() {
-		await addHardwareWallet('trezor', walletName, { staticSessionId: $trezorState?._state?.staticSessionId, deviceId: $trezorDevice?.id }, selectedAccount);
+		await addHardwareWallet('trezor', walletName, { staticSessionId: $trezorState?._state?.staticSessionId, deviceId: $trezorDevice?.id });
 		setSettingsSection('wallets');
 	}
 
@@ -52,34 +52,6 @@
 		max-width: 500px;
 		margin: 0 auto;
 		padding: 20px;
-	}
-
-	.status-card {
-		display: flex;
-		align-items: center;
-		padding: 20px;
-		border: 1px solid var(--primary-foreground);
-		border-radius: 10px;
-		margin: 20px 0;
-		background-color: var(--primary-softer-background);
-	}
-
-	.status-card.connected {
-		border-color: var(--success-color);
-		background-color: var(--success-background);
-	}
-
-	.status-card.error {
-		border-color: var(--error-color);
-		background-color: var(--error-background);
-	}
-
-	.status-icon {
-		margin-right: 15px;
-	}
-
-	.status-text {
-		flex: 1;
 	}
 
 	.accounts-list {
@@ -131,16 +103,6 @@
 		gap: 10px;
 		justify-content: flex-end;
 		margin-top: 30px;
-	}
-
-	.loading {
-		text-align: center;
-		padding: 20px;
-	}
-
-	.error-message {
-		color: var(--error-color);
-		margin-top: 10px;
 	}
 </style>
 

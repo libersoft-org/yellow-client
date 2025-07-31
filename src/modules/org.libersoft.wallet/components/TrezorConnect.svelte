@@ -37,7 +37,7 @@
 		resetTrezor();
 	}
 
-	export { handleConnect, loadAccounts, handleReset };
+	//export { handleConnect, loadAccounts, handleReset };
 </script>
 
 <style>
@@ -84,14 +84,6 @@
 	.error-message {
 		color: var(--error-color);
 		margin-top: 10px;
-	}
-
-	.debug-info {
-		margin-top: 20px;
-		padding: 10px;
-		background: var(--primary-softer-background);
-		border-radius: 5px;
-		font-size: 12px;
 	}
 </style>
 

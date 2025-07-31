@@ -31,6 +31,7 @@
 	}
 
 	function clickWallet(wallet: IWallet) {
+		//console.log('CLICKWALLET', wallet);
 		setSettingsSection('wallets-' + wallet.guid);
 	}
 
