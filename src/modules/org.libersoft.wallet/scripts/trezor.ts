@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store';
 import type { TransactionRequest } from 'ethers';
-import TrezorConnect, { DEVICE_EVENT, DEVICE } from '@trezor/connect-web';
+import TrezorConnect, { DEVICE_EVENT, DEVICE, UI_EVENT, TRANSPORT_EVENT } from '@trezor/connect-web';
 import type { Features, Device, Success, Unsuccessful } from '@trezor/connect/lib/types';
 import type { IAddress, IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
 
@@ -133,9 +133,12 @@ export async function initializeTrezor(): Promise<void> {
 async function performInitialization(): Promise<void> {
 	try {
 		console.log('Initializing TrezorConnect with manifest...');
+		TrezorConnect.on(DEVICE_EVENT, onDeviceEvent);
+		//TrezorConnect.on(UI_EVENT, (event: any) => console.log('UI_EVENT:', event));
+		//TrezorConnect.on(TRANSPORT_EVENT, (event: any) => console.log('TRANSPORT_EVENT:', event));
 
 		const initConfig: Parameters<typeof TrezorConnect.init>[0] = {
-			lazyLoad: true,
+			lazyLoad: false, // Changed to false to ensure proper event handling
 			manifest: {
 				email: 'dev@libersoft.org',
 				appName: 'Yellow Wallet',
@@ -143,7 +146,7 @@ async function performInitialization(): Promise<void> {
 			},
 			debug: true,
 			transportReconnect: true,
-			//popup: false,
+			popup: false, // Ensure no popup interference
 			//connectSrc: 'https://connect.trezor.io/9/',
 			//trustedHost: false,
 		};
@@ -151,9 +154,6 @@ async function performInitialization(): Promise<void> {
 		await TrezorConnect.init(initConfig);
 		console.log('TrezorConnect.init() completed successfully');
 		isInitialized.set(true);
-
-		// Listen for device events
-		TrezorConnect.on(DEVICE_EVENT, onDeviceEvent);
 	} catch (error) {
 		console.error('Failed to initialize Trezor:', error);
 		const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
@@ -171,23 +171,32 @@ async function performInitialization(): Promise<void> {
 async function onDeviceEvent(event: any): Promise<void> {
 	console.log('TREZOR DEVICE EVENT:', event);
 	if (isDeviceConnectEvent(event)) {
-		if (event.device) {
-			console.log('Setting device info from event...', event.device);
-			const deviceInfo = createDeviceInfo(event.device as unknown as Features, event.device);
+		if (event.payload) {
+			console.log('Setting device info from event payload...', event.payload);
+			const deviceInfo = createDeviceInfo(event.payload.features, event.payload);
 			trezorDevice.set(deviceInfo);
 		}
 		trezorError.set(null);
 
-		// Read complete features after device connection
+		// Read complete features and device state after device connection
 		try {
-			console.log('Reading device features after connection...');
-			const featuresResult = await TrezorConnect.getFeatures();
+			console.log('Reading device features and state after connection...');
+			const [featuresResult, deviceStateResult] = await Promise.all([TrezorConnect.getFeatures(), TrezorConnect.getDeviceState()]);
+
 			if (isSuccessResponse(featuresResult)) {
 				console.log('Device features obtained:', featuresResult.payload);
+				console.log('Device state obtained:', deviceStateResult.payload);
+
 				// Update device store with complete feature information
 				if (featuresResult.payload) {
 					console.log('Setting device info from features payload...');
-					trezorDevice.set(createDeviceInfo(featuresResult.payload, event.device));
+					trezorDevice.set(createDeviceInfo(featuresResult.payload, event.payload));
+				}
+
+				// Update device state store with instance information
+				if (isSuccessResponse(deviceStateResult) && deviceStateResult.payload) {
+					console.log('Setting device state with instance:', deviceStateResult.payload);
+					trezorState.set(deviceStateResult.payload);
 				}
 			} else {
 				console.log('Failed to get device features, using event device info');
@@ -337,18 +346,13 @@ export async function connectTrezor(): Promise<boolean> {
 }
 
 // Get Ethereum accounts from Trezor
-export async function getTrezorEthereumAccounts(startIndex: number = 0, count: number = 1, state?: string): Promise<TrezorAccount[]> {
+export async function getTrezorEthereumAccounts(startIndex: number = 0, count: number = 1, w?: IWallet): Promise<TrezorAccount[]> {
 	return await withTrezorState(async () => {
 		// or Use getPublicKey to batch retrieve addresses?
 
 		const bundle: Parameters<typeof TrezorConnect.ethereumGetAddress>[0]['bundle'] = [];
 		for (let i = startIndex; i < startIndex + count; i++) {
 			bundle.push({
-				device: {
-					path: undefined,
-					state: undefined,
-					instance: undefined,
-				},
 				path: `m/44'/60'/0'/0/${i}`,
 				showOnTrezor: false,
 			});
@@ -357,6 +361,11 @@ export async function getTrezorEthereumAccounts(startIndex: number = 0, count: n
 		console.log('Requesting Trezor Ethereum addresses with bundle:', bundle);
 		const result = await TrezorConnect.ethereumGetAddress({
 			bundle: bundle,
+			device: {
+				path: w?.identifiers?.path,
+				state: w?.identifiers?.staticSessionId,
+				//instance: undefined,
+			},
 		});
 		console.log('Trezor Ethereum addresses result:', result);
 
@@ -600,6 +609,7 @@ export function resetTrezor(): void {
 
 export async function selectWallet() {
 	const deviceStateResult = await withTimeout(TrezorConnect.getDeviceState());
+	console.log('DEVICESTATERESULT:', deviceStateResult);
 	trezorState.set(deviceStateResult.payload);
 
 	//await getTrezorEthereumAccounts();
@@ -608,7 +618,7 @@ export async function selectWallet() {
 export async function doAddHardwareAddressTrezor(w: IWallet, addresses: IAddress[], index: number, name?: string): Promise<void> {
 	console.log('Adding Trezor address at index:', index);
 	const path = `m/44'/60'/0'/0/${index}`;
-	const result = await getTrezorEthereumAccounts(index, 1, w?.identifiers?.staticSessionId);
+	const result = await getTrezorEthereumAccounts(index, 1, w);
 	console.log('Trezor address result:', result);
 	if (result.length != 1) {
 		console.error('Failed to get Trezor address for index:', index);

@@ -46,7 +46,7 @@ export function addressesMaxIndex(addresses: IAddress[]): number {
 	return addresses.reduce((max, a) => Math.max(max, a.index), -1);
 }
 
-export async function addAddress(w: IWallet, index?: number | string, name?: string): void {
+export async function addAddress(w: IWallet, index?: number | string, name?: string): Promise<void> {
 	let indexNum: number;
 	const addresses = w.addresses || [];
 	if (index === undefined || index === null || index === '') {
@@ -69,7 +69,7 @@ export async function addAddress(w: IWallet, index?: number | string, name?: str
 	w.selected_address_index = indexNum;
 	wallets.update(ws =>
 		ws.map(item =>
-			item.address === w.address
+			item.guid === w.guid
 				? {
 						...item,
 						addresses: [...addresses],
@@ -85,7 +85,7 @@ export function addressIndexAlreadyExists(wallet: IWallet, index: number): boole
 	else return false;
 }
 
-async function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): void {
+async function doAddAddress(w: IWallet, addresses: IAddress[], index: number, name?: string): Promise<void> {
 	if (isHardwareWallet(w)) {
 		if (w.type === 'trezor') {
 			await doAddHardwareAddressTrezor(w, addresses, index, name);

@@ -29,7 +29,7 @@
 	}
 
 	async function addWallet() {
-		await addHardwareWallet('trezor', walletName, { staticSessionId: $trezorState?._state?.staticSessionId, deviceId: $trezorDevice?.id });
+		await addHardwareWallet('trezor', walletName, { staticSessionId: $trezorState?._state?.staticSessionId, deviceId: $trezorDevice?.id, path: $trezorDevice?.path });
 		setSettingsSection('wallets');
 	}
 
