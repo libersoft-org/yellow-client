@@ -6,7 +6,7 @@ import type { IAddress, IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts
 
 interface TrezorDevice {
 	id: string;
-	path: string;
+	path?: string;
 	label: string;
 	state: string;
 	features: {
@@ -43,6 +43,7 @@ export interface TrezorWallet {
 
 export const trezorWindow = writable<Window | null>(null);
 export const trezorDevice = writable<TrezorDevice | null>(null);
+export const trezorInfo = writable<any>(null);
 export const trezorAccounts = writable<TrezorAccount[]>([]);
 export const trezorState = writable<any>(null);
 export const trezorLoading = writable<boolean>(false);
@@ -61,7 +62,7 @@ const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 50000): Promise
 function createDeviceInfo(featuresPayload: Features, eventDevice?: Device): TrezorDevice {
 	return {
 		id: featuresPayload.device_id || eventDevice?.id || 'unknown',
-		path: eventDevice?.path || '',
+		path: eventDevice?.path,
 		label: featuresPayload.label || eventDevice?.label || 'Trezor Device',
 		state: featuresPayload.device_id || eventDevice?.state || 'unknown',
 		features: {
@@ -144,7 +145,7 @@ async function performInitialization(): Promise<void> {
 				appName: 'Yellow Wallet',
 				appUrl: window.location.origin,
 			},
-			debug: true,
+			//debug: true,
 			transportReconnect: true,
 			popup: false, // Ensure no popup interference
 			//connectSrc: 'https://connect.trezor.io/9/',
@@ -172,42 +173,43 @@ async function onDeviceEvent(event: any): Promise<void> {
 	console.log('TREZOR DEVICE EVENT:', event);
 	if (isDeviceConnectEvent(event)) {
 		if (event.payload) {
-			console.log('Setting device info from event payload...', event.payload);
+			console.log('onDeviceEvent: updating trezorInfo from event payload...', event.payload);
 			const deviceInfo = createDeviceInfo(event.payload.features, event.payload);
-			trezorDevice.set(deviceInfo);
+			trezorInfo.set(deviceInfo);
 		}
 		trezorError.set(null);
 
 		// Read complete features and device state after device connection
 		try {
-			console.log('Reading device features and state after connection...');
+			console.log('onDeviceEvent: Reading device features and state after connection...');
 			const [featuresResult, deviceStateResult] = await Promise.all([TrezorConnect.getFeatures(), TrezorConnect.getDeviceState()]);
 
 			if (isSuccessResponse(featuresResult)) {
-				console.log('Device features obtained:', featuresResult.payload);
-				console.log('Device state obtained:', deviceStateResult.payload);
+				console.log('onDeviceEvent: Device features obtained:', featuresResult.payload);
+				console.log('onDeviceEvent: Device state obtained:', deviceStateResult.payload);
 
 				// Update device store with complete feature information
 				if (featuresResult.payload) {
-					console.log('Setting device info from features payload...');
-					trezorDevice.set(createDeviceInfo(featuresResult.payload, event.payload));
+					//console.log('onDeviceEvent: Setting device info from features payload...');
+					//trezorDevice.set(createDeviceInfo(featuresResult.payload, event.payload));
 				}
 
 				// Update device state store with instance information
 				if (isSuccessResponse(deviceStateResult) && deviceStateResult.payload) {
-					console.log('Setting device state with instance:', deviceStateResult.payload);
+					console.log('onDeviceEvent: Setting device state with instance:', deviceStateResult.payload);
 					trezorState.set(deviceStateResult.payload);
+					trezorDevice.set({ ...get(trezorInfo), path: deviceStateResult.payload.path });
 				}
 			} else {
-				console.log('Failed to get device features, using event device info');
+				console.log('onDeviceEvent: Failed to get device features, using event device info');
 			}
 		} catch (error) {
-			console.warn('Error reading device features after connection:', error);
+			console.warn('onDeviceEvent: Error reading device features after connection:', error);
 		}
 	} else if (isDeviceDisconnectEvent(event)) {
 		trezorDevice.set(null);
 		trezorAccounts.set([]);
-		trezorError.set('Device disconnected');
+		trezorError.set('onDeviceEvent: Device disconnected');
 	}
 }
 
