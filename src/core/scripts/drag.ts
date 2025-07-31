@@ -122,11 +122,12 @@ export class TableDragManager {
 		clone.style.position = 'fixed'; // Use fixed instead of absolute
 		clone.style.pointerEvents = 'none';
 		clone.style.zIndex = '1000';
-		clone.style.opacity = '0.8';
+		clone.style.opacity = '0.9';
 		clone.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
 		clone.style.width = row.offsetWidth + 'px';
-		clone.style.backgroundColor = 'var(--background)';
-		clone.style.border = '1px solid var(--border)';
+		// Remove background and border to prevent highlighting
+		clone.style.backgroundColor = 'transparent';
+		clone.style.border = 'none';
 
 		// Apply custom styles if provided
 		if (this.config.cloneStyles) {
@@ -163,6 +164,17 @@ export class TableDragManager {
 	private handleMouseMove = (event: MouseEvent): void => {
 		if (!this.state.isDragging || this.state.dragSourceIndex === null || !this.state.dragElement) return;
 
+		const tbody = this.state.dragElement.closest('tbody');
+		if (!tbody) return;
+
+		const tbodyRect = tbody.getBoundingClientRect();
+		const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY < tbodyRect.top || event.clientY > tbodyRect.bottom;
+
+		// If mouse is outside table boundaries, don't update clone position
+		if (isOutsideTable) {
+			return;
+		}
+
 		// Update clone position
 		this.updateClonePosition(event.clientX, event.clientY);
 
@@ -176,11 +188,10 @@ export class TableDragManager {
 		if (this.state.dragClone) this.state.dragClone.style.display = '';
 
 		const rowBelow = elementBelow?.closest('tr');
-		const tbody = this.state.dragElement.closest('tbody');
+		// Reuse existing tbody and tbodyRect variables
 		if (!tbody) return;
 
 		const allRows = Array.from(tbody.querySelectorAll('tr:not(.drop-gap)'));
-		const tbodyRect = tbody.getBoundingClientRect();
 
 		// Check if we're at the top for dropping at the beginning
 		const firstRow = allRows[0];
@@ -189,9 +200,10 @@ export class TableDragManager {
 			const isAbove = event.clientY < firstRowRect.top;
 			const isWithinTableX = event.clientX >= tbodyRect.left && event.clientX <= tbodyRect.right;
 			const isNearTop = event.clientY < firstRowRect.top + firstRowRect.height * 0.3 && isWithinTableX;
-			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY < tbodyRect.top;
+			// Only allow dropping within table boundaries
+			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY < tbodyRect.top || event.clientY > tbodyRect.bottom;
 
-			if (isAbove || isNearTop || (isOutsideTable && event.clientY < firstRowRect.bottom)) {
+			if ((isAbove || isNearTop) && !isOutsideTable) {
 				this.state.dragOverIndex = 0;
 				const dropGap = this.createDropGap();
 				tbody.insertBefore(dropGap, firstRow);
@@ -206,9 +218,10 @@ export class TableDragManager {
 			const isBelow = event.clientY > lastRowRect.bottom;
 			const isWithinTableX = event.clientX >= tbodyRect.left && event.clientX <= tbodyRect.right;
 			const isNearBottom = event.clientY > lastRowRect.bottom - lastRowRect.height * 0.3 && isWithinTableX;
-			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY > tbodyRect.bottom;
+			// Only allow dropping within table boundaries
+			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY < tbodyRect.top || event.clientY > tbodyRect.bottom;
 
-			if (isBelow || isNearBottom || (isOutsideTable && event.clientY > lastRowRect.top)) {
+			if ((isBelow || isNearBottom) && !isOutsideTable) {
 				this.state.dragOverIndex = allRows.length;
 				this.state.isAtEnd = true;
 				const dropGap = this.createDropGap();
