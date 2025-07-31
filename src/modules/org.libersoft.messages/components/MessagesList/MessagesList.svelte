@@ -30,20 +30,12 @@
 
 	// Android detection and mobile keyboard handling
 	let isAndroid = false;
-	let isRealMobile = false;
+	let shouldShowSpacer = true;
 
 	onMount(() => {
 		// Detect Android specifically
 		isAndroid = /Android/i.test(navigator.userAgent);
-
-		// Detect real mobile device (not desktop simulation)
-		// Check for touch capability AND mobile user agent AND not desktop browser
-		const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-		const isMobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-		const isDesktopBrowser = /Chrome|Firefox|Safari|Edge/i.test(navigator.userAgent) && !/Mobile|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-		// Real mobile = has touch + mobile user agent + not desktop browser
-		isRealMobile = hasTouch && isMobileUA && !isDesktopBrowser;
+		console.log('isAndroid:', isAndroid);
 	});
 
 	// Reactive bottom position for ScrollButton
@@ -69,7 +61,7 @@
 	}
 
 	// Reactive spacer visibility for Android keyboard adjustment
-	$: showAndroidSpacer = isAndroid && isRealMobile && ($keyboardHeight > 0 || $keyboardHeight === 0);
+	$: showAndroidSpacer = isAndroid && ($keyboardHeight > 0 || $keyboardHeight === 0) && shouldShowSpacer;
 	$: androidSpacerHeight = expressionsMenuOpen ? '10px' : '72px';
 
 	interface IMessageItem {
@@ -289,6 +281,14 @@
 	afterUpdate(async () => {
 		if (!elMessages) return;
 		await tick();
+
+		// Check if content fills the container to determine if spacer should be shown
+		if (elMessagesContainer && elMessages) {
+			const containerHeight = elMessages.clientHeight;
+			const contentHeight = elMessagesContainer.scrollHeight;
+			shouldShowSpacer = contentHeight >= containerHeight;
+		}
+
 		for (let event of uiEvents) {
 			if (event.type === 'gc') {
 			} else if (event.type === 'lazyload_prev') {
@@ -613,8 +613,8 @@
 		width: 100%;
 		max-width: var(--message-list-max-width, none);
 		margin: 0 auto;
-		height: 100%; /* Take full height of parent */
-		justify-content: flex-end; /* Start messages from the bottom */
+		height: auto;
+		margin-top: auto;
 	}
 
 	.unread {
@@ -785,7 +785,7 @@
 				<div bind:this={anchorElement}></div>
 				<!-- Android spacer for keyboard adjustment -->
 				{#if showAndroidSpacer}
-					<div class="android-spacer show" style="min-height: {androidSpacerHeight};"></div>
+					<div class="android-spacer show" style="min-height: {androidSpacerHeight}; max-height: {androidSpacerHeight};"></div>
 				{/if}
 			</div>
 		</div>
