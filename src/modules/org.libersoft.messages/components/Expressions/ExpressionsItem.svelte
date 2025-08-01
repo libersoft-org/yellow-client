@@ -1,11 +1,16 @@
-<script>
+<script lang="ts">
+	import { isMobile } from '@/core/scripts/stores.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	export let icon;
-	export let label;
-	export let active;
-	export let colorVariable = '--default-foreground';
-	export let onClick;
+	interface Props {
+		icon?: string;
+		label?: string;
+		active?: boolean;
+		colorVariable?: string;
+		mobileNoText?: boolean;
+		onClick?: (e: Event) => void;
+	}
+	let { icon, label, active, colorVariable = '--default-foreground', onClick, mobileNoText = false }: Props = $props();
 
 	function onMousedown(e) {
 		e.stopPropagation();
@@ -24,9 +29,12 @@
 		text-align: center;
 		padding: 0 10px;
 		color: var(--primary-foreground);
+		transition: background-color 0.4s linear;
 	}
 
-	.item:hover {
+	.item:hover,
+	:global(.clickable:focus-visible) .item:not(.active),
+	:global(.clickable.focused) .item:not(.active) {
 		background-color: var(--primary-hard-background);
 	}
 
@@ -40,13 +48,15 @@
 	}
 </style>
 
-<Clickable {onClick} {onMousedown}>
+<Clickable {onClick} {onMousedown} expand>
 	<div class="item {active ? 'active' : ''}">
 		{#if icon}
 			<Icon img={icon} alt={label} {colorVariable} size="24px" padding="0px" />
 		{/if}
 		{#if label}
-			<div class="label">{label}</div>
+			{#if !$isMobile || !mobileNoText}
+				<div class="label">{label}</div>
+			{/if}
 		{/if}
 	</div>
 </Clickable>

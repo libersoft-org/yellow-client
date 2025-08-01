@@ -1,0 +1,140 @@
+[
+	{
+		"name": "CryptoPunk #1234",
+		"description": "Classic CryptoPunk NFT with rare attributes",
+		"contract_address": "0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB",
+		"token_id": "1234",
+		"image": "https://raw.githubusercontent.com/cryptopunks-data/assets/main/images/1234.png",
+		"external_url": "https://cryptopunks.app/cryptopunks/details/1234",
+		"attributes": [
+			{
+				"trait_type": "Type",
+				"value": "Male"
+			},
+			{
+				"trait_type": "Accessory",
+				"value": "Pilot Helmet"
+			},
+			{
+				"trait_type": "Background",
+				"value": "Blue"
+			}
+		]
+	},
+	{
+		"name": "Bored Ape #5678",
+		"description": "A unique Bored Ape Yacht Club NFT",
+		"contract_address": "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+		"token_id": "5678",
+		"image": "https://ipfs.io/ipfs/QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/5678",
+		"external_url": "https://boredapeyachtclub.com/#/gallery/5678",
+		"attributes": [
+			{
+				"trait_type": "Background",
+				"value": "Orange"
+			},
+			{
+				"trait_type": "Fur",
+				"value": "Golden Brown"
+			},
+			{
+				"trait_type": "Eyes",
+				"value": "Bored"
+			},
+			{
+				"trait_type": "Hat",
+				"value": "Spinner Hat"
+			},
+			{
+				"trait_type": "Mouth",
+				"value": "Bored Unshaven"
+			}
+		]
+	},
+	{
+		"name": "Azuki #9876",
+		"description": "Azuki collection NFT with beautiful anime-inspired art",
+		"contract_address": "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+		"token_id": "9876",
+		"image": "https://ipfs.io/ipfs/QmYDvPAXtiJg7s8JdRBSLWdgSphQdac8j1YuQNNxcGE1hg/9876.png",
+		"external_url": "https://azuki.com/gallery/9876",
+		"attributes": [
+			{
+				"trait_type": "Type",
+				"value": "Human"
+			},
+			{
+				"trait_type": "Hair",
+				"value": "Pink Disheveled"
+			},
+			{
+				"trait_type": "Eyes",
+				"value": "Striking"
+			},
+			{
+				"trait_type": "Clothing",
+				"value": "Light Armor"
+			},
+			{
+				"trait_type": "Background",
+				"value": "Red"
+			}
+		]
+	},
+	{
+		"name": "Pudgy Penguin #2468",
+		"description": "Cute and collectible Pudgy Penguin NFT",
+		"contract_address": "0xBd3531dA5CF5857e7CfAA92426877b022e612cf8",
+		"token_id": "2468",
+		"image": "https://ipfs.io/ipfs/QmNf1UsmdGaMbpatQ6toXSkzDpizd4Fm8fDm1bm8oBHyb/2468.png",
+		"external_url": "https://pudgypenguins.com/#/detail/2468",
+		"attributes": [
+			{
+				"trait_type": "Background",
+				"value": "Purple"
+			},
+			{
+				"trait_type": "Skin",
+				"value": "Light Gray"
+			},
+			{
+				"trait_type": "Face",
+				"value": "Beak"
+			},
+			{
+				"trait_type": "Head",
+				"value": "Bucket Hat"
+			},
+			{
+				"trait_type": "Body",
+				"value": "Turtleneck Purple"
+			}
+		]
+	},
+	{
+		"name": "Art Blocks Curated #135792",
+		"description": "Generative art NFT from Art Blocks platform",
+		"contract_address": "0xa7d8d9ef8D8Ce8992Df33D8b8CF4Aebabd5bD270",
+		"token_id": "135792",
+		"image": "https://api.artblocks.io/image/135792",
+		"external_url": "https://artblocks.io/token/135792",
+		"attributes": [
+			{
+				"trait_type": "Project",
+				"value": "Chromie Squiggle"
+			},
+			{
+				"trait_type": "Segments",
+				"value": 7
+			},
+			{
+				"trait_type": "Color Spread",
+				"value": "Medium"
+			},
+			{
+				"trait_type": "Direction",
+				"value": "Right"
+			}
+		]
+	}
+]

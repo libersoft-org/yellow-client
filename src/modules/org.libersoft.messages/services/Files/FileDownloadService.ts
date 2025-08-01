@@ -1,4 +1,4 @@
-import { type FileDownload, type FileDownloadStoreType, type FileUploadChunk, type FileUploadRecord, FileUploadRecordStatus } from './types.ts';
+import { type IFileDownload, type FileDownloadStoreType, type IFileUploadChunk, type IFileUploadRecord, FileUploadRecordStatus } from './types.ts';
 import { makeFileDownload } from './utils.ts';
 import EventEmitter from 'events';
 import fileDownloadStore from '../../stores/FileDownloadStore.ts';
@@ -12,14 +12,14 @@ export class FileDownloadService extends EventEmitter {
 	}
 
 	async startDownloadSerial(
-		records: FileUploadRecord[],
+		records: IFileUploadRecord[],
 		pullChunkFn: (data: { uploadId: string; offsetBytes: number; chunkSize: number }) => Promise<{
-			chunk: FileUploadChunk;
+			chunk: IFileUploadChunk;
 		}>,
-		finishCallback: (download: FileDownload) => void
+		finishCallback: (download: IFileDownload) => void
 	) {
 		for (const record of records) {
-			let download: FileDownload | undefined = this.downloadStore.get(record.id);
+			let download: IFileDownload | undefined = this.downloadStore.get(record.id);
 
 			if (!download) {
 				download = makeFileDownload({ record });
@@ -91,19 +91,19 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
-	async startDownload(download: FileDownload) {
+	async startDownload(download: IFileDownload) {
 		if (this.downloadStore.isAnyDownloadRunning()) {
 			return;
 		}
 		download.pullChunk && (await download.pullChunk());
 	}
 
-	async startNextDownload(lastDownload: FileDownload) {
+	async startNextDownload(lastDownload: IFileDownload) {
 		if (this.downloadStore.isAnyDownloadRunning()) {
 			return;
 		}
 		const downloads = this.downloadStore.getAll();
-		let nextDownload: FileDownload | undefined;
+		let nextDownload: IFileDownload | undefined;
 		const lastDownloadIndex = downloads.findIndex(d => d.record.id === lastDownload.record.id);
 
 		// find next download
