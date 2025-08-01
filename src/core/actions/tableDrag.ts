@@ -98,7 +98,7 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 			const firstRow = tbody.querySelector('tr');
 			if (firstRow) {
 				columnCount = firstRow.querySelectorAll('td, th').length;
-				console.log('tableDrag: Auto-detected column count:', columnCount);
+				//console.log('tableDrag: Auto-detected column count:', columnCount);
 			} else {
 				console.warn('tableDrag: Could not auto-detect column count, defaulting to 1');
 				columnCount = 1;
@@ -116,7 +116,7 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 		dragManager.init(tbody);
 		currentItemsLength = options.items.length;
 
-		console.log('tableDrag: Initialized for', options.items.length, 'items');
+		//console.log('tableDrag: Initialized for', options.items.length, 'items');
 	}
 
 	function cleanup() {
@@ -141,7 +141,7 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 			init();
 		},
 		destroy() {
-			console.log('tableDrag: Destroying');
+			//console.log('tableDrag: Destroying');
 			cleanup();
 		},
 	};

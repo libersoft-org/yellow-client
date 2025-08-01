@@ -18,7 +18,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import DialogWalletsDel from '@/org.libersoft.wallet/dialogs/WalletsDel.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { trezorState } from '@/org.libersoft.wallet/scripts/trezor.ts';
+	import { staticSessionId } from '@/org.libersoft.wallet/scripts/trezor.ts';
 	let selectedWallet: IWallet | undefined = $state();
 	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
 	let filter = $state('');
@@ -109,7 +109,7 @@
 								<div class="item" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
 									<Icon img={getWalletTypeIcon(wallet)} alt={getWalletTypeText(wallet)} colorVariable="--primary-foreground" size="16px" />
 									<span>{getWalletTypeText(wallet)}</span>
-									{#if !!$trezorState?._state?.staticSessionId && $trezorState?._state?.staticSessionId === wallet?.identifiers?.staticSessionId}
+									{#if !!$staticSessionId && $staticSessionId === wallet?.identifiers?.staticSessionId}
 										<Icon img="img/check.svg" alt="Connected" size="16px" />
 									{/if}
 								</div>

@@ -39,6 +39,6 @@
 		<TrezorConnect />
 		<Button img="img/cancel.svg" text="Close" onClick={elWindow?.close} style="margin-top: 20px;" testId="close-trezor-window-btn" />
 	</div>
-</Window>
 
-<TrezorDebug />
+	<TrezorDebug />
+</Window>

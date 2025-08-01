@@ -209,8 +209,9 @@ export function reorderAddresses(wallet: IWallet, reorderedAddresses: IAddress[]
 }
 
 export async function addHardwareWallet(type: 'trezor' | 'ledger', name: string, identifiers: any): Promise<void> {
+	console.log('Adding hardware wallet:', type, name, identifiers);
 	const wallet: IWallet = {
-		guid: 'hwwallet-' + Date.now() + '-' + Math.random().toString(36).substring(2, 15),
+		guid: 'hwwallet-' + type + Date.now() + '-' + Math.random().toString(36).substring(2, 15),
 		type,
 		name,
 		selected_address_index: 0,

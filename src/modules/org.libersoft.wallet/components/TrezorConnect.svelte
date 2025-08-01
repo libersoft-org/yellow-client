@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { isInitialized, initializeTrezor, connectTrezor, getTrezorEthereumAccounts, trezorLoading, trezorError, trezorDevice, resetTrezor, type TrezorAccount } from '@/org.libersoft.wallet/scripts/trezor';
+	import { selectWallet, trezorState, initializeTrezor, trezorLoading, trezorError, staticSessionId, devicePath } from '@/org.libersoft.wallet/scripts/trezor';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
@@ -11,33 +11,11 @@
 		await initializeTrezor();
 	});
 
-	async function handleConnect() {
-		const connected = await connectTrezor();
-		console.log('Connection result:', connected);
-		if (connected) {
-			console.log('calling onConnected callback:', onConnected);
-			onConnected?.();
-		}
-	}
-
-	async function loadAccounts() {
-		const accounts = await getTrezorEthereumAccounts(0, 10);
-		return accounts;
-	}
-
-	function handleConnectClick() {
+	async function handleConnectClick() {
 		if ($trezorLoading) return;
-		handleConnect().catch(error => {
-			console.error('Error in handleConnect:', error);
-			trezorError.set(`Connection error: ${error.message || error}`);
-		});
+		await selectWallet();
+		await onConnected?.();
 	}
-
-	function handleReset() {
-		resetTrezor();
-	}
-
-	//export { handleConnect, loadAccounts, handleReset };
 </script>
 
 <style>
@@ -87,27 +65,17 @@
 	}
 </style>
 
-<div class="status-card" class:connected={!!$trezorDevice} class:error={$trezorError}>
-	<div class="status-icon">
-		{#if !!$trezorDevice}
-			<Icon img="img/check.svg" size="24px" />
-		{:else if $trezorError}
-			<Icon img="img/cross.svg" size="24px" />
-		{:else}
-			??
-		{/if}
-	</div>
+<div class="status-card" class:connected={!!$trezorState} class:error={$trezorError}>
 	<div class="status-text">
-		{#if !!$trezorDevice}
-			<strong>Trezor connected!</strong>
+		{#if !!$trezorState}
+			<strong>Trezor wallet selected</strong>
 			<div>Device is ready to use.</div>
-			<Button onClick={handleReset}>Reset</Button>
 		{:else if $trezorError}
-			<strong>Connection failed</strong>
+			<strong>Error</strong>
 			<div>{$trezorError}</div>
 		{:else}
 			<strong>Connect your Trezor</strong>
-			<div>Please connect your Trezor device and unlock it.</div>
+			<div>Please connect your Trezor device and click Select Trezor Wallet.</div>
 		{/if}
 	</div>
 </div>
@@ -120,35 +88,22 @@
 {/if}
 
 <div class="buttons">
-	{#if !$trezorDevice}
-		{#if $debug}
-			{#if !$isInitialized}
-				<Button
-					onClick={async () => {
-						await initializeTrezor();
-					}}
-					>Manual initialization
-				</Button>
-			{/if}
-		{/if}
+	<Button onClick={handleConnectClick} enabled={!$trezorLoading} testId="connect-trezor-btn">
+		{$trezorLoading ? 'Connecting...' : 'Select Trezor Wallet'}
+	</Button>
 
-		<Button onClick={handleConnectClick} enabled={!$trezorLoading} testId="connect-trezor-btn">
-			{$trezorLoading ? 'Connecting...' : 'Connect Trezor'}
-		</Button>
-
-		{#if $trezorLoading}
-			<div style="margin-left: 10px; color: var(--secondary-foreground);">
-				Loading: {$trezorLoading}
-			</div>
-		{/if}
-	{:else if $debug}
-		<Button onClick={loadAccounts}>Read Addresses</Button>
+	{#if $trezorLoading}
+		<div style="margin-left: 10px; color: var(--secondary-foreground);">
+			Loading: {$trezorLoading}
+		</div>
 	{/if}
 </div>
 
 {#if $trezorError}
 	<div class="error-message">
 		Error: {$trezorError}
-		<Button onClick={handleReset}>Reset and Retry</Button>
 	</div>
 {/if}
+
+staticSessionId: {$staticSessionId}
+devicePath: {$devicePath}
