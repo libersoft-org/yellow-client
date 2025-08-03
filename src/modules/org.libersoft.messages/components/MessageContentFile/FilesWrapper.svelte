@@ -5,20 +5,27 @@
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import Button from '@/core/components/Button/Button.svelte';
+	import { get } from 'svelte/store';
 	let { children } = $props();
 	let ref: HTMLDivElement;
 	let attachedUploads = $state<IFileUpload[]>([]);
 	let attachmentIds = $state<string[]>([]);
 	let downloadableRecords = $derived.by(() => {
 		return attachedUploads.filter(upload => {
+			console.log('upload', upload);
 			return (upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER && upload.record.status === FileUploadRecordStatus.BEGUN) || (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED);
 		});
 	});
 
+	$inspect('attachedUploads', attachedUploads);
+	$inspect('attachmentIds', attachmentIds);
+
 	// determine if the bulk download action should be shown
 	let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
-	// subscribe to the store to get the uploads
-	fileUploadStore.store.subscribe(uploads => {
+
+	// get the uploads based on present attachment IDs
+	$effect(() => {
+		const uploads = get(fileUploadStore.store);
 		if (attachmentIds.length === 0) {
 			return;
 		}
@@ -26,6 +33,7 @@
 			return attachmentIds.includes(upload.record.id);
 		});
 	});
+
 	// determine attachments type based on the first attachment
 	const uploadRecordType = $derived.by(() => {
 		return attachedUploads.length > 0 ? attachedUploads[0].record.type : null;
@@ -52,6 +60,7 @@
 	onMount(() => {
 		getAttachmentEls()?.forEach(attachmentEl => {
 			const uploadId = attachmentEl.getAttribute('data-upload-id');
+			$inspect('uploadId', uploadId);
 			if (uploadId) attachmentIds.push(uploadId);
 		});
 	});

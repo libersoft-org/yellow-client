@@ -1,4 +1,9 @@
 <script lang="ts">
+	import { get } from 'svelte/store';
+	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+	import { extractYellowValue, isYellowProtocol } from '@/org.libersoft.messages/scripts/utils/yellowUtils.ts';
+	import type { IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+
 	let { children, node } = $props();
 	const childrenLength = node?.childNodes.length || 0;
 	let rowSize = 4;
@@ -25,6 +30,21 @@
 		});
 		return groups;
 	});
+
+	const existingUploads = $derived.by(() => {
+		const uploads = get(fileUploadStore.store);
+		const existingUploads: IFileUpload[] = [];
+		children.forEach(child => {
+			const childUploadId = isYellowProtocol(child?.props?.file) ? extractYellowValue(child?.props?.file) : null;
+			if (!childUploadId) return;
+			const childUpload = uploads.find(upload => childUploadId === upload.record.id);
+			if (childUpload) existingUploads.push(childUpload);
+		});
+
+		return existingUploads;
+	});
+
+	$inspect('existingUploads', existingUploads);
 </script>
 
 <style>
@@ -63,8 +83,10 @@
 		<div class="images" style:margin-bottom={rowIndex === imagesRows.length - 1 ? 0 : 'var(--images-gap)'}>
 			{#each row as child, childIndex (child.tagUniqueId)}
 				{@const isLastOfAll = rowIndex === rowLimit - 1 && childIndex === row.length - 1}
+				{@debug child}
 				<child.component {...child.props} showHiddenImages={isLastOfAll && hiddenImages.length > 0} {hiddenImages} {siblings} />
 			{/each}
 		</div>
 	{/each}
+	gdsfgdf
 </div>
