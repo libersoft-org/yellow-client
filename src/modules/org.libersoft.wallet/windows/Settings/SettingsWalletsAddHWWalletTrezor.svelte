@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { trezorState, type TrezorAccount, staticSessionId, devicePath } from '@/org.libersoft.wallet/scripts/trezor';
+	import { trezorState, type TrezorAccount, staticSessionId } from '@/org.libersoft.wallet/scripts/trezor';
 	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/wallet';
 	import TrezorConnect from '@/org.libersoft.wallet/components/TrezorConnect.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -23,7 +23,7 @@
 	}
 
 	async function addWallet() {
-		await addHardwareWallet('trezor', walletName, { staticSessionId: $staticSessionId, path: $devicePath });
+		await addHardwareWallet('trezor', walletName, { staticSessionId: $staticSessionId });
 		setSettingsSection('wallets');
 	}
 
@@ -39,49 +39,9 @@
 
 <style>
 	.trezor-setup {
-		max-width: 500px;
-		margin: 0 auto;
-		padding: 20px;
-	}
-
-	.accounts-list {
-		margin: 20px 0;
-	}
-
-	.account-item {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 15px;
-		border: 1px solid var(--primary-foreground);
-		border-radius: 8px;
-		margin: 10px 0;
-		cursor: pointer;
-		transition: background-color 0.2s;
-	}
-
-	.account-item:hover {
-		background-color: var(--primary-background);
-	}
-
-	.account-item.selected {
-		background-color: var(--primary-background);
-		border-color: var(--accent-color);
-	}
-
-	.account-info {
-		flex: 1;
-	}
-
-	.account-name {
-		font-weight: bold;
-		margin-bottom: 5px;
-	}
-
-	.account-address {
-		font-size: 0.9em;
-		color: var(--secondary-foreground);
-		font-family: monospace;
+		max-width: 800px;
+		/*margin: 0 auto;
+		padding: 20px;*/
 	}
 
 	.form-section {
@@ -119,11 +79,8 @@
 			</Label>
 		</div>
 
-		<div>
+		<div style="font-size: 0.7em;">
 			staticSessionId: {$staticSessionId}
-		</div>
-		<div>
-			devicePath: {$devicePath}
 		</div>
 
 		<div class="buttons">

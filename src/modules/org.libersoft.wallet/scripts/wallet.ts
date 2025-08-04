@@ -11,7 +11,7 @@ export interface IWallet {
 	address?: string;
 	selected_address_index: number;
 	addresses?: IAddress[];
-	identifiers?: any; // For hardware wallets, this can include deviceId, devicePath, etc.
+	identifiers?: any; // For hardware wallets, this can include deviceId
 }
 
 export interface IAddress {

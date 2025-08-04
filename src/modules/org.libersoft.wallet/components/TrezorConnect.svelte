@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { selectWallet, trezorState, initializeTrezor, trezorLoading, trezorError, staticSessionId, devicePath } from '@/org.libersoft.wallet/scripts/trezor';
+	import { selectWallet, trezorState, initializeTrezor, trezorLoading, trezorError, staticSessionId, trezorDevices } from '@/org.libersoft.wallet/scripts/trezor';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
@@ -19,6 +19,11 @@
 </script>
 
 <style>
+	.hw-id {
+		font-size: 0.8em;
+		margin-left: 5px;
+	}
+
 	.status-card {
 		display: flex;
 		align-items: center;
@@ -87,6 +92,20 @@
 	</div>
 {/if}
 
+{#if $trezorDevices.size > 0}
+	Trezor Devices:
+	<ul>
+		{#each $trezorDevices.values() as device}
+			<li>
+				{device.label} - {device.name}
+				<div class="hw-id">({device.id})</div>
+			</li>
+		{/each}
+	</ul>
+{:else}
+	<p>No Trezor devices found.</p>
+{/if}
+
 <div class="buttons">
 	<Button onClick={handleConnectClick} enabled={!$trezorLoading} testId="connect-trezor-btn">
 		{$trezorLoading ? 'Connecting...' : 'Select Trezor Wallet'}
@@ -106,4 +125,3 @@
 {/if}
 
 staticSessionId: {$staticSessionId}
-devicePath: {$devicePath}

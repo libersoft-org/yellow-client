@@ -13,19 +13,20 @@ export interface TrezorAccount {
 }
 
 export const trezorWindow = writable<Window | null>(null);
-export const trezorInfo = writable<any>(null);
 export const trezorState = writable<any>(null);
 export const trezorLoading = writable<boolean>(false);
 export const trezorError = writable<string | null>(null);
 export const isInitialized = writable<boolean>(false);
+export const trezorDevices = writable<Map<string, Device>>(new Map());
 
 export const staticSessionId = derived([trezorState], ([$trezorState]) => {
 	return $trezorState?.device?.state?.staticSessionId;
 });
 
-export const devicePath = derived([trezorState], ([$trezorState]) => {
-	return $trezorState?.device?.path;
-});
+export const isHwWalletActive = (wallet?: IWallet): boolean => {
+	const $staticSessionId = get(staticSessionId);
+	return !!$staticSessionId && $staticSessionId === wallet?.identifiers?.staticSessionId;
+};
 
 // Mutex for initialization to prevent race conditions
 let initializationPromise: Promise<void> | null = null;
@@ -119,11 +120,9 @@ async function performInitialization(): Promise<void> {
 				appName: 'Yellow Wallet',
 				appUrl: window.location.origin,
 			},
-			//debug: true,
+			debug: true,
 			transportReconnect: true,
-			popup: false, // Ensure no popup interference
-			//connectSrc: 'https://connect.trezor.io/9/',
-			//trustedHost: false,
+			popup: true, // must be true for trezor bridge connection
 		};
 
 		await TrezorConnect.init(initConfig);
@@ -146,6 +145,9 @@ async function performInitialization(): Promise<void> {
 async function onDeviceEvent(event: any): Promise<void> {
 	console.log('TREZOR DEVICE EVENT:', event);
 	if (isDeviceConnectEvent(event)) {
+		let m = get(trezorDevices);
+		m.set(event.payload.id, event.payload);
+		trezorDevices.set(m);
 	} else if (isDeviceDisconnectEvent(event)) {
 		console.log('Trezor device disconnected, clearing state and info');
 		forgetTrezor();
@@ -167,11 +169,17 @@ export async function getTrezorEthereumAccounts(startIndex: number = 0, count: n
 		const result = await TrezorConnect.ethereumGetAddress({
 			bundle: bundle,
 			device: {
-				path: w?.identifiers?.path,
+				path: w?.identifiers?.path, // no effect, seems to be ignored, and path changes anyway
 				state: w?.identifiers?.staticSessionId,
 			},
 		});
 		console.log('Trezor Ethereum addresses result:', result);
+
+		if (result.success) {
+			//await selectWallet();
+		} else {
+			window.alert(`Trezor error: ${JSON.stringify(result, null, 2)}`);
+		}
 
 		const accounts: TrezorAccount[] = [];
 		if (result.success && Array.isArray(result.payload)) {
@@ -184,6 +192,38 @@ export async function getTrezorEthereumAccounts(startIndex: number = 0, count: n
 		}
 		return accounts;
 	});
+}
+
+async function readDeviceState(): Promise<void> {
+	// Read complete features and device state after device connection
+	try {
+		console.log('readDeviceState: Reading device features and state after connection...');
+		const [featuresResult, deviceStateResult] = await Promise.all([TrezorConnect.getFeatures(), TrezorConnect.getDeviceState()]);
+
+		if (isSuccessResponse(featuresResult)) {
+			console.log('readDeviceState: Device features obtained:', featuresResult);
+			console.log('readDeviceState: Device state obtained:', deviceStateResult);
+
+			/*			// Update device store with complete feature information
+			if (featuresResult.payload) {
+				//console.log('readDeviceState: Setting device info from features payload...');
+				//trezorDevice.set(createDeviceInfo(featuresResult.payload, event.payload));
+			}
+
+			// Update device state store with instance information
+			if (isSuccessResponse(deviceStateResult) && deviceStateResult.payload) {
+				console.log('readDeviceState: Setting device state with instance:', deviceStateResult.payload);
+				trezorState.set(deviceStateResult.payload);
+				trezorDevice.set({...get(trezorInfo), path: deviceStateResult.payload.path});
+			}
+
+			*/
+		} else {
+			console.log('readDeviceState: Failed to get device features, using event device info');
+		}
+	} catch (error) {
+		console.warn('readDeviceState: Error reading device features after connection:', error);
+	}
 }
 
 function forgetTrezor(): void {

@@ -11,6 +11,5 @@
 		trezorError: {$trezorError || 'None'}<br />
 		trezorState:
 		<pre>{JSON.stringify($trezorState, null, 2) || 'None'}</pre>
-		<br />
 	</div>
 {/if}
