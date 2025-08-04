@@ -5,7 +5,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
-	let { onConnected } = $props();
+	let { onConnected }: { onConnected?: () => Promise<void> | void } = $props();
 
 	onMount(async () => {
 		await initializeTrezor();
@@ -42,10 +42,6 @@
 	.status-card.error {
 		border-color: var(--error-color);
 		background-color: var(--error-background);
-	}
-
-	.status-icon {
-		margin-right: 15px;
 	}
 
 	.status-text {
@@ -107,7 +103,7 @@
 {/if}
 
 <div class="buttons">
-	<Button onClick={handleConnectClick} enabled={!$trezorLoading} testId="connect-trezor-btn">
+	<Button onClick={handleConnectClick} enabled={!$trezorLoading} data-testid="connect-trezor-btn">
 		{$trezorLoading ? 'Connecting...' : 'Select Trezor Wallet'}
 	</Button>
 

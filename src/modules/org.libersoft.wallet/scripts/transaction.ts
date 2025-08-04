@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { writable } from 'svelte/store';
 import { Mnemonic, HDNodeWallet, parseUnits, formatUnits, Contract, type PreparedTransactionRequest, type TransactionReceipt } from 'ethers';
-import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
+import { provider, reconnect, status } from '@/org.libersoft.wallet/scripts/provider.ts';
 import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 export interface IPayment {
@@ -386,8 +386,7 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 	console.log('Initial provider check:', providerInstance);
 	if (!providerInstance || Object.keys(providerInstance).length === 0) {
 		console.warn('⚠️ Provider is empty, attempting to reconnect...');
-		// Import reconnect function and attempt to reconnect
-		const { reconnect, status } = await import('@/org.libersoft.wallet/scripts/provider.ts');
+		// Attempt to reconnect using the statically imported functions
 		reconnect();
 
 		// Wait for successful connection by monitoring status

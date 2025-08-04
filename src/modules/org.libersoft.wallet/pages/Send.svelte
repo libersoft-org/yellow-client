@@ -96,7 +96,7 @@
 			// Estimate transaction fee for new network only on actual network change
 			if ($provider && $selectedNetwork && $selectedAddress) {
 				console.log('Send: Estimating fee due to network change');
-				estimateFeeWithLogging(currency?.contract_address, 'network change');
+				estimateFeeWithLogging((currency as any)?.contract_address, 'network change');
 			}
 		}
 	}

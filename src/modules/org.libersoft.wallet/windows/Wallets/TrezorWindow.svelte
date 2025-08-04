@@ -11,14 +11,14 @@
 	let elWindow: Window | undefined = $state();
 
 	onMount(async () => {
-		trezorWindow.set(elWindow);
+		trezorWindow.set(elWindow || null);
 		if ($debug) {
 			//await elWindow.open();
 		}
 	});
 
 	onDestroy(() => {
-		trezorWindow.set(undefined);
+		trezorWindow.set(null);
 	});
 
 	export async function open() {
@@ -37,7 +37,7 @@
 <Window title="Trezor" width="600px" height="500px" testId="trezor-window" bind:this={elWindow}>
 	<div class="trezor-setup">
 		<TrezorConnect />
-		<Button img="img/cancel.svg" text="Close" onClick={elWindow?.close} style="margin-top: 20px;" testId="close-trezor-window-btn" />
+		<Button img="img/cancel.svg" text="Close" onClick={elWindow?.close} style="margin-top: 20px;" data-testid="close-trezor-window-btn" />
 	</div>
 
 	<TrezorDebug />

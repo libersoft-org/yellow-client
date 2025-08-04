@@ -3,7 +3,7 @@
 	interface Props {
 		checked?: boolean;
 		showLabel?: boolean;
-		label: string;
+		label?: string;
 		row?: boolean;
 		'data-testid'?: string;
 	}

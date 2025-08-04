@@ -12,7 +12,7 @@ export interface TrezorAccount {
 	name?: string;
 }
 
-export const trezorWindow = writable<Window | null>(null);
+export const trezorWindow = writable<any>(null);
 export const trezorState = writable<any>(null);
 export const trezorLoading = writable<boolean>(false);
 export const trezorError = writable<string | null>(null);
@@ -42,7 +42,7 @@ function isSuccessResponse<T>(response: Success<T> | Unsuccessful): response is 
 }
 
 // Type guard for device event
-function isDeviceConnectEvent(event: any): event is { type: 'device-connect'; device: Device } {
+function isDeviceConnectEvent(event: any): event is { type: 'device-connect'; payload: Device & { id: string } } {
 	return event.type === 'device-connect';
 }
 
