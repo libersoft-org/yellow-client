@@ -61,28 +61,33 @@ test.describe('Wallet Send Dialog Navigation', () => {
 		await test.step('Click network selection dropdown', async () => {
 			// Click the network selection dropdown
 			await currentPage.getByTestId('wallet-network-dropdown').click();
+			await sleep();
 		});
 
 		await test.step('Select Polygon - Mainnet network', async () => {
 			// Click on the Polygon - Mainnet network
 			await expect(currentPage.locator('[data-network-name="Polygon - Mainnet"]')).toBeVisible();
 			await currentPage.locator('[data-network-name="Polygon - Mainnet"]').click();
+			await sleep();
 		});
 
 		await test.step('Click wallet selection dropdown', async () => {
 			// Click the wallet/address selection dropdown
 			await currentPage.getByTestId('wallet-address-dropdown').click();
+			await sleep();
 		});
 
 		await test.step('Click Trezor Model T:1 wallet', async () => {
 			// Click on the specific Trezor Model T:1 wallet
 			await currentPage.locator('[data-wallet-name="Trezor Model T:1"]').click();
+			await sleep();
 		});
 
 		await test.step('Select first address from wallet', async () => {
 			// Wait for address list to be visible and click the first address (index 0)
 			await expect(currentPage.getByTestId('wallet-address-0')).toBeVisible();
 			await currentPage.getByTestId('wallet-address-0').click();
+			await sleep();
 		});
 
 		await test.step('Verify wallet selection is closed and address is selected', async () => {
@@ -94,6 +99,7 @@ test.describe('Wallet Send Dialog Navigation', () => {
 		await test.step('Click Send button to navigate to send section', async () => {
 			// Click the Send button on the wallet page
 			await currentPage.getByTestId('wallet-send-btn').click();
+			await sleep();
 		});
 
 		await test.step('Verify send page is displayed', async () => {
@@ -108,6 +114,7 @@ test.describe('Wallet Send Dialog Navigation', () => {
 			// Click on the specific address in the sidebar
 			await expect(currentPage.locator('[data-address-name="wallet 1 Address 0"]')).toBeVisible();
 			await currentPage.locator('[data-address-name="wallet 1 Address 0"]').click();
+			await sleep();
 		});
 
 		await test.step('Verify address input is populated', async () => {
@@ -118,29 +125,58 @@ test.describe('Wallet Send Dialog Navigation', () => {
 		await test.step('Select POL currency', async () => {
 			// Click the currency dropdown
 			await currentPage.getByTestId('wallet-send-currency-dropdown').click();
+			await sleep();
 
 			// Type "POL" to filter the currency options
 			await currentPage.getByTestId('wallet-send-currency-dropdown').locator('input').fill('POL');
 
-			// Wait for filtered options and select POL
-			await currentPage.getByText('POL', { exact: false }).first().click();
+			// Wait for the dropdown options to appear and click the first one
+			await currentPage.getByTestId('wallet-send-currency-dropdown').locator('.options .option').first().click();
+			await sleep();
 		});
 
-		await test.step('Enter amount 0.001', async () => {
+		await test.step('Enter amount', async () => {
 			// Fill in the amount field
-			await currentPage.getByTestId('wallet-send-amount-input').fill('0.001');
+			await currentPage.getByTestId('wallet-send-amount-input').fill('0.0002');
+			await sleep();
+		});
+
+		await test.step('Wait for transaction fee to be calculated', async () => {
+			// Wait for the transaction fee field to be auto-populated
+			// The fee input should have a non-empty value (not just placeholder)
+			await expect(currentPage.getByTestId('wallet-send-fee-input')).not.toHaveValue('', { timeout: 10000 });
 		});
 
 		await test.step('Click Send button', async () => {
 			// Click the send submit button
 			await currentPage.getByTestId('wallet-send-submit-btn').click();
+			await sleep();
 		});
 
-		await test.step('Verify send confirmation dialog appears', async () => {
-			// The send confirmation dialog should appear after clicking send
-			// This may vary depending on the actual dialog implementation
-			// For now, we'll just verify the button was clicked successfully
-			await expect(currentPage.getByTestId('wallet-send-submit-btn')).toBeVisible();
+		await test.step('Click Yes in confirmation dialog', async () => {
+			// Wait for the confirmation dialog to appear and click Yes
+			await expect(currentPage.getByTestId('wallet-send-confirm-yes-btn')).toBeVisible();
+			await currentPage.getByTestId('wallet-send-confirm-yes-btn').click();
+			await sleep();
+		});
+
+		await test.step('Handle Trezor window popup', async () => {
+			// Wait for the Trezor window to appear
+			await expect(currentPage.getByTestId('connect-trezor-btn')).toBeVisible();
+
+			// Click "Select Trezor Wallet" button
+			await currentPage.getByTestId('connect-trezor-btn').click();
+			await sleep();
+
+			// Click "Close" button to close the Trezor window
+			await currentPage.getByTestId('close-trezor-window-btn').click();
+			await sleep();
+		});
+
+		await test.step('Verify transaction flow completed', async () => {
+			// The Trezor window should be closed
+			// This completes the entire send transaction flow
+			await expect(currentPage.getByTestId('close-trezor-window-btn')).not.toBeVisible();
 		});
 	});
 });

@@ -119,7 +119,7 @@ async function performInitialization(): Promise<void> {
 				appName: 'Yellow Wallet',
 				appUrl: window.location.origin,
 			},
-			debug: true,
+			debug: false,
 			transportReconnect: true,
 			popup: false, // must be true for trezor bridge connection
 		};

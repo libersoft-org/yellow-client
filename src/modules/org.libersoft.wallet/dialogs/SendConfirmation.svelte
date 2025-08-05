@@ -44,8 +44,8 @@
 		body: body,
 		icon: 'modules/' + module.identifier + '/img/send.svg',
 		buttons: [
-			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
-			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true, testId: 'wallet-send-confirm-yes-btn' },
+			{ img: 'img/cross.svg', text: 'No', onClick: clickNo, testId: 'wallet-send-confirm-no-btn' },
 		],
 	};
 

@@ -431,12 +431,12 @@
 					<Option value="custom" text="Custom" />
 				</Select>
 				{#if $feeLevel === 'custom'}
-					<Input bind:value={$fee} bind:this={elFeeInput} enabled={!!($selectedNetwork && $selectedAddress)} placeholder="Enter custom fee" />
+					<Input bind:value={$fee} bind:this={elFeeInput} enabled={!!($selectedNetwork && $selectedAddress)} placeholder="Enter custom fee" data-testid="wallet-send-fee-input" />
 					<div>{$selectedNetwork?.currency?.symbol || ''}</div>
 				{:else if $feeLoading}
 					<Spinner size="20px" />
 				{:else}
-					<Input bind:value={$fee} bind:this={elFeeInput} enabled={false} />
+					<Input bind:value={$fee} bind:this={elFeeInput} enabled={false} data-testid="wallet-send-fee-input" />
 					<div>{$selectedNetwork?.currency?.symbol || ''}</div>
 				{/if}
 				{#if !$feeLoading && $feeLevel !== 'custom' && $provider && $selectedNetwork && $selectedAddress}
