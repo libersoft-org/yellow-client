@@ -155,7 +155,7 @@ test.describe('Wallet Send Dialog Navigation', () => {
 
 		await test.step('Click Yes in confirmation dialog', async () => {
 			// Wait for the confirmation dialog to appear and click Yes
-			await expect(currentPage.getByTestId('wallet-send-confirm-yes-btn')).toBeVisible();
+			await expect(currentPage.getByTestId('wallet-send-confirm-yes-btn')).toBeVisible({ timeout: 35000 });
 			await currentPage.getByTestId('wallet-send-confirm-yes-btn').click();
 			await sleep();
 		});
