@@ -12,7 +12,6 @@ export interface TrezorAccount {
 	name?: string;
 }
 
-export const trezorWindow = writable<any>(null);
 export const trezorState = writable<any>(null);
 export const trezorLoading = writable<boolean>(false);
 export const trezorError = writable<string | null>(null);
@@ -32,7 +31,7 @@ export const isHwWalletActive = (wallet?: IWallet): boolean => {
 let initializationPromise: Promise<void> | null = null;
 
 // Helper function to add timeout to promises
-const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 50000): Promise<T> => {
+export const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 50000): Promise<T> => {
 	return Promise.race([promise, new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs))]);
 };
 
@@ -52,7 +51,7 @@ function isDeviceDisconnectEvent(event: any): event is { type: 'device-disconnec
 }
 
 // Helper function to manage loading/error state for async operations
-async function withTrezorState<T>(operation: () => Promise<T>): Promise<T> {
+export async function withTrezorState<T>(operation: () => Promise<T>): Promise<T> {
 	trezorLoading.set(true);
 	trezorError.set(null);
 	try {

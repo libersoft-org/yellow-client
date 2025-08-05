@@ -25,8 +25,9 @@
 	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Selection.svelte';
 	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
 	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
-	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor.ts';
+	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
 	import TrezorWindow from '@/org.libersoft.wallet/windows/Wallets/TrezorWindow.svelte';
+	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
 	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
 
@@ -64,19 +65,6 @@
 	rpcURL.subscribe(v => {
 		console.log('rpcURL changed to:', v);
 	});
-
-	async function toggleTrezorWindow() {
-		const trezorWin = get(trezorWindow);
-		if (!trezorWin) {
-			console.error('Trezor window is not initialized');
-			return;
-		}
-		if (trezorWin.isOpen()) {
-			await trezorWin.close();
-		} else {
-			await trezorWin.open();
-		}
-	}
 </script>
 
 <style>

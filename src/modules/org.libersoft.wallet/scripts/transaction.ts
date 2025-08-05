@@ -1,9 +1,11 @@
 import { get } from 'svelte/store';
 import { writable } from 'svelte/store';
 import { Mnemonic, HDNodeWallet, parseUnits, formatUnits, Contract, type PreparedTransactionRequest, type TransactionReceipt } from 'ethers';
-import { provider, reconnect, status } from '@/org.libersoft.wallet/scripts/provider.ts';
+import { ensureProviderConnected, provider, reconnect, status } from '@/org.libersoft.wallet/scripts/provider.ts';
 import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+import { sendTransactionTrezor } from '@/org.libersoft.wallet/scripts/trezor-transaction.ts';
+
 export interface IPayment {
 	address: string;
 	amount: bigint;
@@ -11,16 +13,19 @@ export interface IPayment {
 	symbol: string | null | undefined;
 	contractAddress?: string; // For tokens - undefined for native currency
 }
+
 export interface FeeEstimate {
 	low: string;
 	average: string;
 	high: string;
 }
+
 export interface TransactionTimeEstimate {
 	low: string;
 	average: string;
 	high: string;
 }
+
 let estimatedFee: FeeEstimate = {
 	low: '0',
 	average: '0',
@@ -52,7 +57,11 @@ export function getEtherAmount(amount) {
 	}
 }
 
-export async function estimateTransactionFee(contractAddress?: string): Promise<{ low: string; average: string; high: string } | null> {
+export async function estimateTransactionFee(contractAddress?: string): Promise<{
+	low: string;
+	average: string;
+	high: string;
+} | null> {
 	const providerInstance = get(provider);
 	const selectedAddressValue = get(selectedAddress);
 	if (!providerInstance || !get(selectedNetwork) || !selectedAddressValue) {
@@ -305,7 +314,14 @@ async function updateTransactionTimes(): Promise<void> {
 	}
 }
 
-function estimateConfirmationBlocks(feeHistory: any, avgBlockTime: number): { low: number; average: number; high: number } | null {
+function estimateConfirmationBlocks(
+	feeHistory: any,
+	avgBlockTime: number
+): {
+	low: number;
+	average: number;
+	high: number;
+} | null {
 	// Return null if no fee history data - we need this for accurate estimation
 	if (!feeHistory || !feeHistory.reward || !Array.isArray(feeHistory.reward) || feeHistory.reward.length === 0) return null;
 	try {
@@ -381,180 +397,150 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 		console.error('No selected wallet or address');
 		return;
 	}
-	// Check provider connection and attempt to reconnect if needed
-	let providerInstance = get(provider);
-	console.log('Initial provider check:', providerInstance);
-	if (!providerInstance || Object.keys(providerInstance).length === 0) {
-		console.warn('⚠️ Provider is empty, attempting to reconnect...');
-		// Attempt to reconnect using the statically imported functions
-		reconnect();
 
-		// Wait for successful connection by monitoring status
-		const maxWaitTime = 10000; // 10 seconds max wait
-		const startTime = Date.now();
-
-		while (Date.now() - startTime < maxWaitTime) {
-			await new Promise(resolve => setTimeout(resolve, 500)); // Check every 500ms
-
-			const currentStatus = get(status);
-			providerInstance = get(provider);
-
-			console.log('Reconnect status:', currentStatus.text, 'Provider keys:', Object.keys(providerInstance || {}));
-
-			// Check if we have a valid provider with actual methods
-			if (providerInstance && typeof providerInstance === 'object' && 'getNetwork' in providerInstance && 'getFeeData' in providerInstance && currentStatus.color === 'green') {
-				console.log('✅ Provider successfully reconnected!');
-				break;
-			}
-		}
-
-		// Final check after wait period
-		if (!providerInstance || typeof providerInstance !== 'object' || !('getNetwork' in providerInstance) || !('getFeeData' in providerInstance)) {
-			console.error('❌ Provider reconnection failed or timed out!');
-			throw new Error('Provider connection error - please check your network connection and try again');
-		}
-	}
-	// Check if this is a software wallet (has phrase) or hardware wallet
-	// For backward compatibility, if type is undefined but phrase exists, treat as software wallet
+	console.log('selectedWalletValue.type:', selectedWalletValue.type);
 	if (selectedWalletValue.type === 'software' || (!selectedWalletValue.type && selectedWalletValue.phrase)) {
-		if (!selectedWalletValue.phrase) {
-			console.error('Software wallet missing phrase');
-			throw new Error('Software wallet configuration error: missing mnemonic phrase');
-		}
-		// Handle software wallet transaction
-		const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
-		let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(providerInstance);
-		let request: PreparedTransactionRequest;
-		if (contractAddress) {
-			// Token transaction - call transfer method on the token contract
-			const tokenContract = new Contract(contractAddress, ['function transfer(address to, uint256 amount) returns (bool)'], hd_wallet);
-			const transferData = tokenContract.interface.encodeFunctionData('transfer', [address, etherValue]);
-			request = {
-				to: contractAddress,
-				from: selectedAddressValue.address,
-				value: 0n, // No ETH value for token transfers
-				data: transferData,
-			};
-		} else {
-			// Native currency transaction (ETH)
-			request = {
-				to: address,
-				from: selectedAddressValue.address,
-				value: etherValue,
-			};
-		}
-		//
-		//nonce: await provider.getTransactionCount(selectedAddressValue.address),
-		console.log('selectedAddressValue.address:', selectedAddressValue);
-		console.log('provider:', providerInstance);
-		// Get and set proper nonce to avoid conflicts
-		// Use 'latest' instead of 'pending' to get confirmed nonce, then check for pending transactions
-		const confirmedNonce = await providerInstance.getTransactionCount(selectedAddressValue.address, 'latest');
-		const pendingNonce = await providerInstance.getTransactionCount(selectedAddressValue.address, 'pending');
-
-		console.log('📊 Confirmed nonce for address:', confirmedNonce);
-		console.log('📊 Pending nonce for address:', pendingNonce);
-
-		// If there are pending transactions, we need to wait or use a higher nonce
-		if (pendingNonce > confirmedNonce) {
-			console.warn('⚠️ There are pending transactions! Confirmed:', confirmedNonce, 'Pending:', pendingNonce);
-			console.warn('⚠️ This might cause nonce conflicts. Consider waiting for pending transactions to complete.');
-
-			// Check if we should warn user about potential stuck transactions
-			const pendingCount = pendingNonce - confirmedNonce;
-			if (pendingCount > 3) {
-				console.error('🚨 Warning: ' + pendingCount + ' pending transactions detected!');
-				console.error('🚨 Your previous transactions might be stuck. Consider increasing gas price or waiting.');
-
-				// Ask user if they want to use emergency mode (REPLACE stuck transaction)
-				const useEmergencyMode = confirm(`🚨 STUCK TRANSACTIONS DETECTED! 🚨\n\n` + `You have ${pendingCount} pending transactions (nonce ${confirmedNonce}-${pendingNonce - 1}) blocking new transactions.\n\n` + `EMERGENCY MODE: Replace the FIRST stuck transaction (nonce ${confirmedNonce}) with this transaction using 3x gas price?\n\n` + `⚠️ This will REPLACE the stuck transaction and unblock the queue.\n` + `⚠️ This will cost more but should process faster.\n\n` + `Click OK for Emergency Replacement (3x gas price)\n` + `Click Cancel to abort transaction`);
-
-				if (!useEmergencyMode) {
-					throw new Error(`Transaction cancelled. You have ${pendingCount} stuck transactions blocking new ones.\n\nSolutions:\n1. Wait for pending transactions to complete\n2. Use Emergency Replacement Mode (3x gas price)\n3. Use a different wallet address`);
-				}
-
-				// Emergency mode: Use the FIRST stuck nonce with higher gas price
-				console.log('🚨 EMERGENCY REPLACEMENT MODE ACTIVATED - Replacing stuck transaction with 3x gas price');
-				request.nonce = confirmedNonce; // Use the FIRST stuck nonce to unblock queue
-
-				// Increase gas price for faster processing
-				if (request.maxFeePerGas) {
-					request.maxFeePerGas = request.maxFeePerGas * 3n;
-					request.maxPriorityFeePerGas = request.maxPriorityFeePerGas ? request.maxPriorityFeePerGas * 3n : request.maxFeePerGas / 2n;
-				} else if (request.gasPrice) {
-					request.gasPrice = request.gasPrice * 3n;
-				}
-
-				console.log('🚨 REPLACING stuck nonce:', confirmedNonce, 'with 3x gas price');
-			} else {
-				// Use the pending nonce to queue after existing pending transactions
-				request.nonce = pendingNonce;
-			}
-		} else {
-			// No pending transactions, use the confirmed nonce
-			request.nonce = confirmedNonce;
-		}
-
-		console.log('📊 Using nonce:', request.nonce);
-		console.log('mn:', mn);
-		console.log('hd_wallet:', hd_wallet);
-		console.log('tx request with nonce:', request);
-		console.log('hd_wallet.estimateGas:');
-		let eg = await hd_wallet.estimateGas(request);
-		console.log('estimateGas:', eg);
-		console.log('hd_wallet.sendTransaction:');
-		let tx = await hd_wallet.sendTransaction(request);
-		console.log('Transaction sent, hash:', tx.hash);
-		console.log('Waiting for confirmation...');
-		try {
-			// Wait for transaction confirmation with timeout
-			const receipt = await Promise.race([
-				tx.wait() as Promise<TransactionReceipt>,
-				new Promise<never>(
-					(_, reject) => setTimeout(() => reject(new Error('Transaction confirmation timeout')), 60000) // 60 second timeout
-				),
-			]);
-			console.log('Transaction confirmed:', receipt);
-			console.log('Transaction sent OK');
-		} catch (waitError) {
-			console.warn('Transaction confirmation error or timeout:', waitError);
-			console.log('Transaction was sent (hash: ' + tx.hash + ') but confirmation failed or timed out');
-			// Don't throw error - transaction was sent successfully
-		}
-		/*
-		let log = {
-			dir: 'sent',
-			date: new Date(),
-			from: request.from,
-			to: request.to,
-			hash: tx.hash,
-			chainID: tx.chainId.toString(),
-			nonce: tx.nonce,
-			tx_type: tx.type,
-			estimatedGas: formatEther(eg),
-			gasLimit: formatEther(tx.gasLimit),
-			gasPrice: formatEther(tx.gasPrice),
-			value: formatEther(tx.value),
-		};
-		console.log('log:', log);
-		console.log('log:', JSON.stringify(log));
-		if (!selectedWalletValue.log) selectedWalletValue.log = [];
-		selectedWalletValue.log.push(log);
-		wallets.update(w => w);
-		*/
-	} else if (selectedWalletValue.type === 'trezor' || selectedWalletValue.type === 'ledger') {
-		// Handle hardware wallet transaction
-		console.error('Hardware wallet transactions not yet implemented in this function');
-		throw new Error('Hardware wallet transactions must be handled through their specific modules');
+		await sendTransactionSw(selectedWalletValue, selectedAddressValue, address, etherValue, etherValueFee, contractAddress);
+	} else if (selectedWalletValue.type === 'trezor') {
+		await sendTransactionTrezor(selectedWalletValue, selectedAddressValue, address, etherValue, etherValueFee, contractAddress);
 	} else {
-		console.error('Unknown wallet type or missing phrase for software wallet');
+		console.error('Unknown wallet type:', selectedWalletValue.type);
 		throw new Error('Invalid wallet configuration');
 	}
+
 	/*
-	} catch (error) {
-		console.error('Error while sending a transaction:', error);
-	}
+	let log = {
+		dir: 'sent',
+		date: new Date(),
+		from: request.from,
+		to: request.to,
+		hash: tx.hash,
+		chainID: tx.chainId.toString(),
+		nonce: tx.nonce,
+		tx_type: tx.type,
+		estimatedGas: formatEther(eg),
+		gasLimit: formatEther(tx.gasLimit),
+		gasPrice: formatEther(tx.gasPrice),
+		value: formatEther(tx.value),
+	};
+	console.log('log:', log);
+	console.log('log:', JSON.stringify(log));
+	if (!selectedWalletValue.log) selectedWalletValue.log = [];
+	selectedWalletValue.log.push(log);
+	wallets.update(w => w);
 	*/
+}
+
+async function sendTransactionSw(selectedWalletValue, selectedAddressValue, address, etherValue, etherValueFee, contractAddress) {
+	// Check provider connection and attempt to reconnect if needed
+	let providerInstance = await ensureProviderConnected();
+	if (!providerInstance) {
+		throw new Error('Failed to connect to provider');
+	}
+
+	if (!selectedWalletValue.phrase) {
+		throw new Error('Software wallet configuration error: missing mnemonic phrase');
+	}
+
+	const mn = Mnemonic.fromPhrase(selectedWalletValue.phrase);
+	let hd_wallet = HDNodeWallet.fromMnemonic(mn, selectedAddressValue.path).connect(providerInstance);
+	let request: PreparedTransactionRequest;
+	if (contractAddress) {
+		// Token transaction - call transfer method on the token contract
+		const tokenContract = new Contract(contractAddress, ['function transfer(address to, uint256 amount) returns (bool)'], hd_wallet);
+		const transferData = tokenContract.interface.encodeFunctionData('transfer', [address, etherValue]);
+		request = {
+			to: contractAddress,
+			from: selectedAddressValue.address,
+			value: 0n, // No ETH value for token transfers
+			data: transferData,
+		};
+	} else {
+		// Native currency transaction (ETH)
+		request = {
+			to: address,
+			from: selectedAddressValue.address,
+			value: etherValue,
+		};
+	}
+	//
+	//nonce: await provider.getTransactionCount(selectedAddressValue.address),
+	console.log('selectedAddressValue.address:', selectedAddressValue);
+	console.log('provider:', providerInstance);
+	// Get and set proper nonce to avoid conflicts
+	// Use 'latest' instead of 'pending' to get confirmed nonce, then check for pending transactions
+	const confirmedNonce = await providerInstance.getTransactionCount(selectedAddressValue.address, 'latest');
+	const pendingNonce = await providerInstance.getTransactionCount(selectedAddressValue.address, 'pending');
+
+	console.log('📊 Confirmed nonce for address:', confirmedNonce);
+	console.log('📊 Pending nonce for address:', pendingNonce);
+
+	// If there are pending transactions, we need to wait or use a higher nonce
+	if (pendingNonce > confirmedNonce) {
+		console.warn('⚠️ There are pending transactions! Confirmed:', confirmedNonce, 'Pending:', pendingNonce);
+		console.warn('⚠️ This might cause nonce conflicts. Consider waiting for pending transactions to complete.');
+
+		// Check if we should warn user about potential stuck transactions
+		const pendingCount = pendingNonce - confirmedNonce;
+		if (pendingCount > 3) {
+			console.error('🚨 Warning: ' + pendingCount + ' pending transactions detected!');
+			console.error('🚨 Your previous transactions might be stuck. Consider increasing gas price or waiting.');
+
+			// Ask user if they want to use emergency mode (REPLACE stuck transaction)
+			const useEmergencyMode = confirm(`🚨 STUCK TRANSACTIONS DETECTED! 🚨\n\n` + `You have ${pendingCount} pending transactions (nonce ${confirmedNonce}-${pendingNonce - 1}) blocking new transactions.\n\n` + `EMERGENCY MODE: Replace the FIRST stuck transaction (nonce ${confirmedNonce}) with this transaction using 3x gas price?\n\n` + `⚠️ This will REPLACE the stuck transaction and unblock the queue.\n` + `⚠️ This will cost more but should process faster.\n\n` + `Click OK for Emergency Replacement (3x gas price)\n` + `Click Cancel to abort transaction`);
+
+			if (!useEmergencyMode) {
+				throw new Error(`Transaction cancelled. You have ${pendingCount} stuck transactions blocking new ones.\n\nSolutions:\n1. Wait for pending transactions to complete\n2. Use Emergency Replacement Mode (3x gas price)\n3. Use a different wallet address`);
+			}
+
+			// Emergency mode: Use the FIRST stuck nonce with higher gas price
+			console.log('🚨 EMERGENCY REPLACEMENT MODE ACTIVATED - Replacing stuck transaction with 3x gas price');
+			request.nonce = confirmedNonce; // Use the FIRST stuck nonce to unblock queue
+
+			// Increase gas price for faster processing
+			if (request.maxFeePerGas) {
+				request.maxFeePerGas = request.maxFeePerGas * 3n;
+				request.maxPriorityFeePerGas = request.maxPriorityFeePerGas ? request.maxPriorityFeePerGas * 3n : request.maxFeePerGas / 2n;
+			} else if (request.gasPrice) {
+				request.gasPrice = request.gasPrice * 3n;
+			}
+
+			console.log('🚨 REPLACING stuck nonce:', confirmedNonce, 'with 3x gas price');
+		} else {
+			// Use the pending nonce to queue after existing pending transactions
+			request.nonce = pendingNonce;
+		}
+	} else {
+		// No pending transactions, use the confirmed nonce
+		request.nonce = confirmedNonce;
+	}
+
+	console.log('📊 Using nonce:', request.nonce);
+	console.log('mn:', mn);
+	console.log('hd_wallet:', hd_wallet);
+	console.log('tx request with nonce:', request);
+	console.log('hd_wallet.estimateGas:');
+	let eg = await hd_wallet.estimateGas(request);
+	console.log('estimateGas:', eg);
+	console.log('hd_wallet.sendTransaction:');
+	let tx = await hd_wallet.sendTransaction(request);
+	console.log('Transaction sent, hash:', tx.hash);
+	console.log('Waiting for confirmation...');
+	try {
+		// Wait for transaction confirmation with timeout
+		const receipt = await Promise.race([
+			tx.wait() as Promise<TransactionReceipt>,
+			new Promise<never>(
+				(_, reject) => setTimeout(() => reject(new Error('Transaction confirmation timeout')), 60000) // 60 second timeout
+			),
+		]);
+		console.log('Transaction confirmed:', receipt);
+		console.log('Transaction sent OK');
+	} catch (waitError) {
+		console.warn('Transaction confirmation error or timeout:', waitError);
+		console.log('Transaction was sent (hash: ' + tx.hash + ') but confirmation failed or timed out');
+		// Don't throw error - transaction was sent successfully
+	}
 }
 
 function interpolateTransactionTime(timeA: string, timeB: string, ratio: number): string {
