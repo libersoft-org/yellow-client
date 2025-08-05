@@ -399,10 +399,10 @@
 </style>
 
 <div class="send">
-	<Button img="img/qr.svg" text="Scan QR code" onClick={scanQRCode} />
+	<Button img="img/qr.svg" text="Scan QR code" onClick={scanQRCode} data-testid="wallet-send-scan-qr-btn" />
 	<Form onSubmit={send} width="400px">
 		<Label text="Address">
-			<Input bind:value={$sendAddress} bind:this={elAddressInput} enabled={!!($selectedNetwork && $selectedAddress)} />
+			<Input bind:value={$sendAddress} bind:this={elAddressInput} enabled={!!($selectedNetwork && $selectedAddress)} data-testid="wallet-send-address-input" />
 		</Label>
 		<Label text="Currency">
 			{#if isLoadingTokenInfos}
@@ -410,16 +410,16 @@
 					<Spinner size="16px" />
 				</div>
 			{:else}
-				<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleCurrencyChange} />
+				<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleCurrencyChange} data-testid="wallet-send-currency-dropdown" />
 			{/if}
 		</Label>
 		<Label text="Amount">
 			<div class="row">
-				<Input bind:value={amount} bind:this={elAmountInput} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleAmountChange} />
+				<Input bind:value={amount} bind:this={elAmountInput} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleAmountChange} data-testid="wallet-send-amount-input" />
 				{#if currency}
 					<div>{selectedCurrencySymbol}</div>
 				{/if}
-				<Button img="modules/{module.identifier}/img/maximum.svg" text="Max" enabled={!!($selectedNetwork && $selectedAddress && currentBalanceData && $fee)} onClick={setMaxAmount} />
+				<Button img="modules/{module.identifier}/img/maximum.svg" text="Max" enabled={!!($selectedNetwork && $selectedAddress && currentBalanceData && $fee)} onClick={setMaxAmount} data-testid="wallet-send-max-btn" />
 			</div>
 		</Label>
 		<Label text="Transaction fee">
@@ -506,7 +506,7 @@
 				confirmationBlocks: {JSON.stringify($confirmationBlocksStore)}
 			</div>
 		{/if}
-		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} />
+		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} data-testid="wallet-send-submit-btn" />
 	</Form>
 </div>
 <DialogSend params={payment} bind:this={elDialogSend} />

@@ -121,7 +121,7 @@ async function performInitialization(): Promise<void> {
 			},
 			debug: true,
 			transportReconnect: true,
-			popup: true, // must be true for trezor bridge connection
+			popup: false, // must be true for trezor bridge connection
 		};
 
 		await TrezorConnect.init(initConfig);

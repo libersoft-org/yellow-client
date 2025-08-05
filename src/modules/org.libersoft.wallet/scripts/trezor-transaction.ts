@@ -8,15 +8,15 @@ import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 import { withTrezorState, withTimeout } from '@/org.libersoft.wallet/scripts/trezor.ts';
 
 export async function sendTransactionTrezor(wallet: IWallet, srcAddress: IAddress, dstAddress: string, amount: bigint, fee: bigint, contractAddress?: string): Promise<void> {
+	// Validate inputs
+	if (!wallet || !srcAddress || !dstAddress || amount <= 0n) {
+		throw new Error('Invalid transaction parameters');
+	}
+
+	// Ensure Trezor state is available
+	await ensureTrezorState();
+
 	return await withTrezorState(async () => {
-		// Validate inputs
-		if (!wallet || !srcAddress || !dstAddress || amount <= 0n) {
-			throw new Error('Invalid transaction parameters');
-		}
-
-		// Ensure Trezor state is available
-		await ensureTrezorState();
-
 		// Get provider for nonce and gas estimation
 		const providerInstance = get(provider);
 		if (!providerInstance) {

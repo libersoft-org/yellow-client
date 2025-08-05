@@ -166,7 +166,7 @@
 	<div class="body">
 		<div class="network-address" class:mobile={$isMobile}>
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
-			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} />
+			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} data-testid="wallet-address-dropdown" />
 		</div>
 		<div class="bar">
 			<div class="left">
@@ -204,7 +204,7 @@
 		<div class="buttons">
 			<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" onClick={() => setSection('balance')} />
 			<Button img="modules/{module.identifier}/img/history.svg" text="History" onClick={() => setSection('history')} />
-			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} />
+			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} data-testid="wallet-send-btn" />
 			<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" onClick={() => setSection('receive')} />
 		</div>
 		{#if !$selectedNetwork}
