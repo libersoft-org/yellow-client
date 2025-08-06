@@ -50,20 +50,6 @@
 	setContext('Popup', { close });
 
 	$effect(() => {
-		if (!elWindow) return;
-		elWindow.addEventListener('focusin', onFocusIn);
-		elWindow.addEventListener('focusout', onFocusOut);
-		return () => {
-			if (!elWindow) {
-				//console.error('[Window] elWindow is not defined 2');
-				return;
-			}
-			elWindow.removeEventListener('focusin', onFocusIn);
-			elWindow.removeEventListener('focusout', onFocusOut);
-		};
-	});
-
-	$effect(() => {
 		if (!$isMobile) return;
 		if (elWindow && showContent && !isDragging) {
 			centerWindow();
@@ -474,7 +460,7 @@
 		{#if $isMobile}
 			<div class="overlay" onpointerdown={close}></div>
 		{/if}
-		<div class="window {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elWindow} use:draggable={draggableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Window' : undefined}>
+		<div class="window {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elWindow} use:draggable={draggableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Window' : undefined} onfocusin={onFocusIn} onfocusout={onFocusOut}>
 			{#if showContent}
 				<div class="header" class:focused role="none" tabindex="-1" ondblclick={doubleClickHeader}>
 					{#if title}

@@ -78,6 +78,7 @@ export default defineConfig(({ mode }) => {
 			__BUILD_DATE__: new Date(),
 			__COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
 			__BRANCH__: JSON.stringify(getGitBranch()),
+			global: 'globalThis',
 		},
 		server: {
 			https: fs.existsSync(path.resolve(__dirname, 'server.key'))
@@ -102,6 +103,7 @@ export default defineConfig(({ mode }) => {
 		},
 		optimizeDeps: {
 			exclude: ['@tauri-apps/api'],
+			include: ['buffer'],
 		},
 	};
 });

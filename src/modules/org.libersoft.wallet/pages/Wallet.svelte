@@ -35,7 +35,8 @@
 		initializeDefaultNetworks();
 		console.log('Wallet module initialiddddddzed');
 		if ($debug) {
-			$settingsWindow?.open('wallets-add-hw-trezor');
+			//$settingsWindow?.open('wallets-add-hw-trezor');
+			$settingsWindow?.open('wallets-add-hw-ledger');
 		}
 	});
 
@@ -160,7 +161,7 @@
 		<div class="buttons">
 			<Button text="TrezorWindow" onClick={toggleTrezorWindow} />
 			<Button text="Add a new wallet > Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
-			<Button text="Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
+			<Button text="Add a new wallet > Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
 		</div>
 	{/if}
 	<div class="body">

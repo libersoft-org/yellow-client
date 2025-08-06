@@ -46,6 +46,8 @@
 
 	let currentNodeInstance: any = $state();
 	$effect(() => {
+		//$inspect('[BaseSettings] currentNodeInstance updated:', currentNodeInstance);
+		//$inspect('[BaseSettings] currentNode:', currentNode);
 		currentNode.instance = currentNodeInstance;
 	});
 
@@ -56,7 +58,7 @@
 	// Remove the problematic effect that resets navigation on window reopen
 
 	export function open(name?: string) {
-		console.log('[BaseSettings] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
+		//console.log('[BaseSettings] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
 		elWindow?.open();
 		setSettingsSection(name || settingsObject.name);
 	}
@@ -66,7 +68,7 @@
 	}
 
 	export async function setSettingsSection(name: string, props: any = {}) {
-		console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
+		//console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
 		await tick();
@@ -80,9 +82,9 @@
 	}
 
 	async function goBack() {
-		console.log('[BaseSettings] goBack: ', activeName);
+		//console.log('[BaseSettings] goBack: ', activeName);
 		const found = findNode(settingsObject, activeName);
-		console.log('[BaseSettings] goBack found:', found);
+		//console.log('[BaseSettings] goBack found:', found);
 		const parentName = found?.__parent?.name ?? settingsObject.name;
 		await setSettingsSection(parentName);
 	}

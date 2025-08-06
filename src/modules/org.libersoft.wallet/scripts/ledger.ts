@@ -1,6 +1,9 @@
-import { writable } from 'svelte/store';
+// Import polyfills FIRST before any Ledger libraries
+import './ledger-polyfills';
+
+import { writable, derived, get } from 'svelte/store';
 import type { TransactionRequest } from 'ethers';
-import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
+import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import EthApp from '@ledgerhq/hw-app-eth';
 interface LedgerDevice {
 	id: string;
@@ -9,8 +12,19 @@ interface LedgerDevice {
 	productId: number;
 	vendorId: number;
 	opened: boolean;
+	// Additional fields for device identification similar to Trezor
+	descriptor?: {
+		product: string;
+		vendor: string;
+		revision: string;
+		serial?: string;
+	};
+	deviceModel?: {
+		internal_model: string;
+		model: string;
+	};
 }
-interface LedgerAccount {
+export interface LedgerAccount {
 	address: string;
 	path: string;
 	publicKey: string;
@@ -36,78 +50,208 @@ export const ledgerAccounts = writable<LedgerAccount[]>([]);
 export const ledgerWallets = writable<LedgerWallet[]>([]);
 export const ledgerLoading = writable<boolean>(false);
 export const ledgerError = writable<string | null>(null);
+
+// Derived store for device identifiers, similar to Trezor's staticSessionId
+export const ledgerDeviceId = derived([ledgerDevice], ([$ledgerDevice]) => {
+	return $ledgerDevice?.id;
+});
+
+// Helper function to check if a wallet matches the current device
+export const isLedgerWalletActive = (wallet?: any): boolean => {
+	const $ledgerDeviceId = get(ledgerDeviceId);
+	return !!$ledgerDeviceId && $ledgerDeviceId === wallet?.identifiers?.deviceId;
+};
 let currentTransport: any = null;
 
 /**
- * Initialize Ledger integration
+ * Check if WebHID is supported and requirements are met
+ */
+export function checkWebHIDSupport(): { supported: boolean; error?: string } {
+	// Check if we're in browser environment
+	if (typeof window === 'undefined') {
+		return { supported: false, error: 'Not running in browser environment' };
+	}
+
+	// Check WebHID support
+	if (!('hid' in navigator)) {
+		return { supported: false, error: 'WebHID is not supported in this browser. Please use Chrome/Edge 89+ or another compatible browser.' };
+	}
+
+	// Check HTTPS requirement (except for localhost)
+	if (location.protocol !== 'https:' && !location.hostname.includes('localhost') && location.hostname !== '127.0.0.1') {
+		return { supported: false, error: 'WebHID requires HTTPS connection.' };
+	}
+
+	return { supported: true };
+}
+
+/**
+ * Initialize Ledger integration - this just sets up the stores, no device interaction yet
  */
 export async function initializeLedger(): Promise<boolean> {
 	try {
-		// Listen for device connection/disconnection
-		TransportWebUSB.listen({
-			next: (event: any) => {
-				console.log('Ledger device event:', event);
-				if (event.type === 'add') {
-					const device: LedgerDevice = {
-						id: event.device.productId + '_' + event.device.vendorId,
-						name: event.device.productName || 'Ledger Device',
-						path: event.device.path || '',
-						productId: event.device.productId,
-						vendorId: event.device.vendorId,
-						opened: false,
-					};
-					ledgerDevice.set(device);
-					ledgerConnected.set(true);
-					ledgerError.set(null);
-				} else if (event.type === 'remove') {
-					ledgerDevice.set(null);
-					ledgerConnected.set(false);
-					ledgerAccounts.set([]);
-					ledgerWallets.set([]);
-					ledgerError.set('Device disconnected');
-					// Close transport if open
-					if (currentTransport) {
-						currentTransport.close();
-						currentTransport = null;
-					}
-				}
-			},
-			error: (error: any) => {
-				console.error('Ledger device error:', error);
-				ledgerError.set(error.message || 'Device error');
-			},
-			complete: () => {
-				console.log('Ledger device listener complete');
-			},
-		});
+		// Check WebHID support first
+		const supportCheck = checkWebHIDSupport();
+		if (!supportCheck.supported) {
+			ledgerError.set(supportCheck.error || 'WebHID not supported');
+			return false;
+		}
+
+		// Just initialize the stores - actual device connection happens on user interaction
+		ledgerConnected.set(false);
+		ledgerDevice.set(null);
+		ledgerAccounts.set([]);
+		ledgerWallets.set([]);
+		ledgerError.set(null);
+		console.log('Ledger stores initialized - ready for user interaction');
 		return true;
 	} catch (error) {
-		console.error('Failed to initialize Ledger:', error);
+		console.error('Failed to initialize Ledger stores:', error);
 		ledgerError.set(error instanceof Error ? error.message : 'Failed to initialize Ledger');
 		return false;
 	}
 }
 
 /**
- * Connect to Ledger device
+ * Connect to Ledger device - must be called from user interaction
  */
 export async function connectLedger(): Promise<boolean> {
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
+
 		// Close existing transport
 		if (currentTransport) await currentTransport.close();
-		// Create new transport
-		currentTransport = await TransportWebUSB.create();
+
+		// Create new transport - this must be called from user interaction
+		currentTransport = await TransportWebHID.create();
+
 		// Test connection by getting app configuration
 		const eth = new EthApp(currentTransport);
 		const config = await eth.getAppConfiguration();
 		console.log('Ledger app configuration:', config);
+
+		// Set up device listener for disconnect detection (optional - basic functionality works without it)
+		try {
+			TransportWebHID.listen({
+				next: (event: any) => {
+					console.log('Ledger device event:', event);
+
+					if (event.type === 'add') {
+						// Device connected - extract device info for unique identification
+						console.log('Device add event received:', event);
+						// Update device info with descriptor and model data for unique identification
+						if (event.device) {
+							const deviceInfo: LedgerDevice = {
+								id: event.device.path || 'ledger-' + Date.now(),
+								name: event.device.productName || 'Ledger Device',
+								path: event.device.path || '',
+								productId: event.device.productId || 0,
+								vendorId: event.device.vendorId || 0,
+								opened: true,
+								descriptor: {
+									product: event.device.productName || 'Unknown',
+									vendor: 'Ledger',
+									revision: event.device.release ? event.device.release.toString() : '1.0',
+									serial: event.device.serialNumber,
+								},
+								deviceModel: {
+									internal_model: event.device.productName || 'ledger',
+									model: event.device.productName || 'Ledger Device',
+								},
+							};
+							ledgerDevice.set(deviceInfo);
+						}
+					} else if (event.type === 'remove') {
+						console.log('Device removed');
+						ledgerDevice.set(null);
+						ledgerConnected.set(false);
+						ledgerAccounts.set([]);
+						ledgerWallets.set([]);
+						ledgerError.set('Device disconnected');
+						// Close transport if open
+						if (currentTransport) {
+							currentTransport.close();
+							currentTransport = null;
+						}
+					}
+				},
+				error: (error: any) => {
+					console.warn('Ledger device listener error (non-critical):', error);
+					// Don't set ledgerError here as it's not critical for basic functionality
+				},
+				complete: () => {
+					console.log('Ledger device listener complete');
+				},
+			});
+		} catch (listenerError) {
+			console.warn('Could not set up device listener (non-critical):', listenerError);
+			// Continue without listener - basic functionality still works
+		}
+
+		// Create device object with app configuration info for unique identification
+		let deviceId = 'ledger-' + Date.now();
+		let deviceName = 'Ledger Device';
+
+		// Try to get additional device info from app configuration
+		try {
+			// Create a unique device ID based on device characteristics
+			if (config.arbitraryDataEnabled !== undefined && config.version) {
+				deviceId = `ledger-${config.version}-${Date.now()}`;
+				deviceName = `Ledger Device (App v${config.version})`;
+			}
+		} catch (error) {
+			console.warn('Could not get detailed device info:', error);
+		}
+
+		const basicDevice: LedgerDevice = {
+			id: deviceId,
+			name: deviceName,
+			path: '',
+			productId: 0,
+			vendorId: 0,
+			opened: true,
+			descriptor: {
+				product: 'Ledger Device',
+				vendor: 'Ledger',
+				revision: config.version || '1.0',
+			},
+			deviceModel: {
+				internal_model: 'ledger',
+				model: 'Ledger Device',
+			},
+		};
+
+		ledgerDevice.set(basicDevice);
 		ledgerConnected.set(true);
 		return true;
 	} catch (error) {
 		console.error('Error connecting to Ledger:', error);
-		const errorMessage = error instanceof Error ? error.message : 'Failed to connect to Ledger';
+		let errorMessage = 'Failed to connect to Ledger';
+
+		if (error instanceof Error) {
+			// Provide specific error messages for common issues
+			if (error.name === 'NotAllowedError') {
+				errorMessage = 'Connection denied. Please make sure you:\n' + '• Selected a Ledger device in the browser dialog\n' + '• Have your Ledger device unlocked\n' + '• Have the Ethereum app open on your device\n' + "• Close Ledger Live if it's running";
+			} else if (error.name === 'NotFoundError') {
+				errorMessage = 'No Ledger device found. Please connect your device and try again.';
+			} else if (error.name === 'NotSupportedError') {
+				errorMessage = 'Ledger device not supported or driver issue.';
+			} else if (error.message.includes('busy') || error.message.includes('in use')) {
+				errorMessage = 'Device is busy. Please close Ledger Live and try again.';
+			} else if (error.message.includes('CLA_NOT_SUPPORTED') || error.message.includes('UNKNOWN_APDU') || error.message.includes('0x6d02')) {
+				errorMessage = 'Please open the Ethereum app on your Ledger device.\n\n' + 'Steps:\n' + '1. Navigate to the Ethereum app on your Ledger\n' + '2. Press both buttons to open it\n' + '3. Wait for "Application is ready" message\n' + '4. Try connecting again';
+			} else if (error.message.includes('SECURITY_STATUS_NOT_SATISFIED')) {
+				errorMessage = 'Please unlock your Ledger device with your PIN.';
+			} else if (error.message.includes('0x6985')) {
+				errorMessage = 'Transaction rejected by user or device locked.';
+			} else if (error.message.includes('0x6f00')) {
+				errorMessage = 'App not ready. Please wait for the Ethereum app to fully load.';
+			} else {
+				errorMessage = error.message;
+			}
+		}
+
 		ledgerError.set(errorMessage);
 		return false;
 	} finally {
@@ -239,7 +383,7 @@ export async function signEthereumMessage(wallet: LedgerWallet, message: string)
 		ledgerError.set(null);
 		const eth = new EthApp(currentTransport);
 		// Sign message with Ledger
-		const result = await eth.signPersonalMessage(wallet.path, Buffer.from(message, 'utf8').toString('hex'));
+		const result = await eth.signPersonalMessage(wallet.path, Array.from(new TextEncoder().encode(message), byte => byte.toString(16).padStart(2, '0')).join(''));
 		return {
 			success: true,
 			payload: {
@@ -360,6 +504,47 @@ function serializeTransaction(tx: any): string {
 		serialized += length.toString(16).padStart(2, '0') + cleanField;
 	}
 	return serialized;
+}
+
+/**
+ * Get device identifiers for wallet creation (similar to Trezor's staticSessionId)
+ */
+export function getLedgerDeviceIdentifiers(): any | null {
+	let device: LedgerDevice | null = null;
+	const unsubscribe = ledgerDevice.subscribe(d => (device = d));
+	unsubscribe();
+
+	if (!device) return null;
+
+	return {
+		deviceId: device.id,
+		descriptor: device.descriptor,
+		deviceModel: device.deviceModel,
+	};
+}
+
+/**
+ * Add hardware address to wallet (similar to Trezor's doAddHardwareAddressTrezor)
+ * This is called from doAddAddress when adding addresses to existing Ledger wallets
+ */
+export async function doAddHardwareAddressLedger(w: any, addresses: any[], index: number, name?: string): Promise<void> {
+	console.log('Adding Ledger address at index:', index);
+	const path = `m/44'/60'/0'/0/${index}`;
+	const result = await getLedgerEthereumAccounts(index, 1);
+	console.log('Ledger address result:', result);
+	if (result.length !== 1) {
+		console.error('Failed to get Ledger address for index:', index);
+		return;
+	}
+	const res = result[0];
+	const address = {
+		name: name || `Ledger Address ${index + 1}`,
+		address: res.address,
+		path: path,
+		index: index,
+		publicKey: res.publicKey,
+	};
+	addresses.push(address);
 }
 
 /**
