@@ -8,17 +8,11 @@ import EthApp from '@ledgerhq/hw-app-eth';
 interface LedgerDevice {
 	id: string;
 	name: string;
-	path: string;
 	productId: number;
+	productName?: string;
 	vendorId: number;
 	opened: boolean;
 	// Additional fields for device identification similar to Trezor
-	descriptor?: {
-		product: string;
-		vendor: string;
-		revision: string;
-		serial?: string;
-	};
 	deviceModel?: {
 		internal_model: string;
 		model: string;
@@ -46,6 +40,7 @@ export interface LedgerWallet {
 }
 export const ledgerConnected = writable<boolean>(false);
 export const ledgerDevice = writable<LedgerDevice | null>(null);
+export const ledgerConfig = writable<any>(null);
 export const ledgerAccounts = writable<LedgerAccount[]>([]);
 export const ledgerWallets = writable<LedgerWallet[]>([]);
 export const ledgerLoading = writable<boolean>(false);
@@ -116,6 +111,8 @@ export async function initializeLedger(): Promise<boolean> {
  * Connect to Ledger device - must be called from user interaction
  */
 export async function connectLedger(): Promise<boolean> {
+	//return new Promise<boolean>(async (resolve, reject) => {
+
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
@@ -138,29 +135,22 @@ export async function connectLedger(): Promise<boolean> {
 					console.log('Ledger device event:', event);
 
 					if (event.type === 'add') {
-						// Device connected - extract device info for unique identification
-						console.log('Device add event received:', event);
-						// Update device info with descriptor and model data for unique identification
 						if (event.device) {
 							const deviceInfo: LedgerDevice = {
-								id: event.device.path || 'ledger-' + Date.now(),
-								name: event.device.productName || 'Ledger Device',
-								path: event.device.path || '',
-								productId: event.device.productId || 0,
-								vendorId: event.device.vendorId || 0,
+								id: 'ledger-' + Date.now(),
+								name: event.descriptor.productName || 'Ledger Device',
+								productId: event.descriptor.productId || 0,
+								vendorId: event.descriptor.vendorId || 0,
 								opened: true,
-								descriptor: {
-									product: event.device.productName || 'Unknown',
-									vendor: 'Ledger',
-									revision: event.device.release ? event.device.release.toString() : '1.0',
-									serial: event.device.serialNumber,
-								},
+								productName: event.descriptor.productName || 'Unknown',
 								deviceModel: {
-									internal_model: event.device.productName || 'ledger',
-									model: event.device.productName || 'Ledger Device',
+									internal_model: event.deviceModel?.id || 'ledger',
+									model: event.deviceModel?.productName || event.device.productName || 'Ledger Device',
 								},
 							};
 							ledgerDevice.set(deviceInfo);
+							ledgerConnected.set(true);
+							//							resolve(true);
 						}
 					} else if (event.type === 'remove') {
 						console.log('Device removed');
@@ -204,26 +194,6 @@ export async function connectLedger(): Promise<boolean> {
 			console.warn('Could not get detailed device info:', error);
 		}
 
-		const basicDevice: LedgerDevice = {
-			id: deviceId,
-			name: deviceName,
-			path: '',
-			productId: 0,
-			vendorId: 0,
-			opened: true,
-			descriptor: {
-				product: 'Ledger Device',
-				vendor: 'Ledger',
-				revision: config.version || '1.0',
-			},
-			deviceModel: {
-				internal_model: 'ledger',
-				model: 'Ledger Device',
-			},
-		};
-
-		ledgerDevice.set(basicDevice);
-		ledgerConnected.set(true);
 		return true;
 	} catch (error) {
 		console.error('Error connecting to Ledger:', error);
@@ -257,6 +227,7 @@ export async function connectLedger(): Promise<boolean> {
 	} finally {
 		ledgerLoading.set(false);
 	}
+	//});
 }
 
 /**
@@ -511,15 +482,18 @@ function serializeTransaction(tx: any): string {
  */
 export function getLedgerDeviceIdentifiers(): any | null {
 	let device: LedgerDevice | null = null;
-	const unsubscribe = ledgerDevice.subscribe(d => (device = d));
+	const unsubscribe = ledgerDevice.subscribe((d: LedgerDevice | null) => {
+		device = d;
+	});
 	unsubscribe();
 
 	if (!device) return null;
 
+	// TypeScript now knows device is not null here
+	const deviceData: LedgerDevice = device;
 	return {
-		deviceId: device.id,
-		descriptor: device.descriptor,
-		deviceModel: device.deviceModel,
+		deviceId: deviceData.id,
+		deviceModel: deviceData.deviceModel,
 	};
 }
 
