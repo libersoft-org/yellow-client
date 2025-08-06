@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
+	import type { HTMLDivElementAttributes } from 'svelte/elements';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -12,14 +13,14 @@
 		};
 		value?: any; // The object that will be returned when selected
 	}
-	interface Props {
+	interface Props extends HTMLDivElementAttributes {
 		placeholder?: string;
 		options?: DropdownOption[];
 		selected?: any; // The selected object
 		enabled?: boolean;
 		onChange?: (value: any) => void; // Callback when selection changes
 	}
-	let { placeholder, options = [], selected = $bindable(), enabled = true, onChange }: Props = $props();
+	let { placeholder, options = [], selected = $bindable(), enabled = true, onChange, ...restProps }: Props = $props();
 	let filteredOptions = $derived(
 		options.filter(option => {
 			return option.label.toLowerCase().includes(inputValue.toLowerCase());
@@ -168,7 +169,7 @@
 	}
 </style>
 
-<div class="dropdown-filter">
+<div {...restProps} class="dropdown-filter">
 	<div class="input-container">
 		<Input {placeholder} bind:value={inputValue} bind:this={inputRef} {enabled} onChange={handleInputChange} onBlur={handleInputBlur} onFocus={toggleOptions} onKeydown={handleKeydown} onClick={toggleOptions} />
 		{#if selected}

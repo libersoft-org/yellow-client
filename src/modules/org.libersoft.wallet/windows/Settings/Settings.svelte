@@ -35,7 +35,7 @@
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
 			title: wallet.name,
-			name: 'wallets-' + wallet.address,
+			name: 'wallets-' + wallet.guid,
 			body: SettingsWalletsWallet,
 			props: {
 				params: {
@@ -45,30 +45,30 @@
 			items: [
 				{
 					title: 'Add address',
-					name: 'wallets-address-add-' + wallet.address,
+					name: 'wallets-address-add-' + wallet.guid,
 					body: SettingsWalletsAddressAdd,
 					props: {
 						wallet,
-						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.address),
+						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.guid),
 					},
 				},
 				{
 					title: 'Export',
-					name: 'wallets-wallet-export-' + wallet.address,
+					name: 'wallets-wallet-export-' + wallet.guid,
 					body: SettingsWalletsWalletExport,
 					props: {
 						wallet,
-						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.address),
+						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.guid),
 					},
 				},
 				...(wallet.addresses || []).map(address => ({
 					title: 'Edit address',
-					name: 'wallets-address-edit-' + wallet.address + '-' + address.index,
+					name: 'wallets-address-edit-' + wallet.guid + '-' + address.index,
 					body: SettingsWalletsAddressEdit,
 					props: {
 						wallet,
 						index: address.index,
-						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.address),
+						close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.guid),
 					},
 				})),
 			],
@@ -78,7 +78,7 @@
 	let walletsEditItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
 			title: 'Edit ' + wallet.name,
-			name: 'wallets-edit-' + wallet.address,
+			name: 'wallets-edit-' + wallet.guid,
 			body: SettingsWalletsEdit,
 			props: {
 				wallet,

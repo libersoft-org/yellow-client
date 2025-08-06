@@ -50,7 +50,7 @@
 <Table breakpoint="0">
 	<Tbody>
 		{#each filteredNetworks as n}
-			<TbodyTr>
+			<TbodyTr data-network-name={n.name}>
 				<Td padding="0">
 					<Clickable onClick={() => selectNetwork(n.guid)} expand>
 						<div class="item">

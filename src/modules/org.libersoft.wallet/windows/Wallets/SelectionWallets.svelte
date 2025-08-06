@@ -33,7 +33,7 @@
 
 	async function clickSelectWallet(wallet) {
 		console.log('SELECTING WALLET', wallet);
-		await $walletsWindow.setSettingsSection('wallets-' + wallet.address);
+		await $walletsWindow.setSettingsSection('wallets-' + wallet.guid);
 	}
 </script>
 
@@ -56,7 +56,7 @@
 			{#each filteredWallets as wallet, index}
 				<TbodyTr>
 					<Td padding="0">
-						<Clickable onClick={async () => await clickSelectWallet(wallet)}>
+						<Clickable onClick={async () => await clickSelectWallet(wallet)} data-wallet-name={wallet.name}>
 							<div class="wallet">{wallet.name}</div>
 						</Clickable>
 					</Td>

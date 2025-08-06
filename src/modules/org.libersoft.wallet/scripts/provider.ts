@@ -205,3 +205,39 @@ export function selectRPCURL(url: string): void {
 	console.log('selectRPCURL: RPC URL set, now connecting...');
 	connectToURL(); // Connect immediately
 }
+
+export async function ensureProviderConnected(): Promise<JsonRpcProvider | WebSocketProvider | null> {
+	let providerInstance = get(provider);
+	console.log('Initial provider check:', providerInstance);
+
+	if (!providerInstance || Object.keys(providerInstance).length === 0) {
+		console.warn('⚠️ Provider is empty, attempting to reconnect...');
+		reconnect();
+
+		// Wait for successful connection by monitoring status
+		const maxWaitTime = 10000; // 10 seconds max wait
+		const startTime = Date.now();
+
+		while (Date.now() - startTime < maxWaitTime) {
+			await new Promise(resolve => setTimeout(resolve, 500)); // Check every 500ms
+
+			const currentStatus = get(status);
+			providerInstance = get(provider);
+
+			console.log('Reconnect status:', currentStatus.text, 'Provider keys:', Object.keys(providerInstance || {}));
+
+			// Check if we have a valid provider with actual methods
+			if (providerInstance && typeof providerInstance === 'object' && 'getNetwork' in providerInstance && 'getFeeData' in providerInstance && currentStatus.color === 'green') {
+				console.log('✅ Provider successfully reconnected!');
+				break;
+			}
+		}
+
+		// Final check after wait period
+		if (!providerInstance || typeof providerInstance !== 'object' || !('getNetwork' in providerInstance) || !('getFeeData' in providerInstance)) {
+			console.error('❌ Provider reconnection failed or timed out!');
+			throw new Error('Provider connection error - please check your network connection and try again');
+		}
+	}
+	return providerInstance;
+}

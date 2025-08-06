@@ -25,14 +25,18 @@
 	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Selection.svelte';
 	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
 	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
-	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor.ts';
+	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
 	import TrezorWindow from '@/org.libersoft.wallet/windows/Wallets/TrezorWindow.svelte';
+	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
 	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
 
 	onMount(() => {
 		initializeDefaultNetworks();
 		console.log('Wallet module initialiddddddzed');
+		if ($debug) {
+			$settingsWindow?.open('wallets-add-hw-trezor');
+		}
 	});
 
 	function clickCopyAddress() {
@@ -61,19 +65,6 @@
 	rpcURL.subscribe(v => {
 		console.log('rpcURL changed to:', v);
 	});
-
-	async function toggleTrezorWindow() {
-		const trezorWin = get(trezorWindow);
-		if (!trezorWin) {
-			console.error('Trezor window is not initialized');
-			return;
-		}
-		if (trezorWin.isOpen()) {
-			await trezorWin.close();
-		} else {
-			await trezorWin.open();
-		}
-	}
 </script>
 
 <style>
@@ -167,15 +158,15 @@
 <Paper>
 	{#if $debug}
 		<div class="buttons">
-			<Button text="TrezorW" onClick={toggleTrezorWindow} />
-			<Button text="Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
+			<Button text="TrezorWindow" onClick={toggleTrezorWindow} />
+			<Button text="Add a new wallet > Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
 			<Button text="Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
 		</div>
 	{/if}
 	<div class="body">
 		<div class="network-address" class:mobile={$isMobile}>
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
-			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} />
+			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} data-testid="wallet-address-dropdown" />
 		</div>
 		<div class="bar">
 			<div class="left">
@@ -213,7 +204,7 @@
 		<div class="buttons">
 			<Button img="modules/{module.identifier}/img/balance.svg" text="Balance" onClick={() => setSection('balance')} />
 			<Button img="modules/{module.identifier}/img/history.svg" text="History" onClick={() => setSection('history')} />
-			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} />
+			<Button img="modules/{module.identifier}/img/send.svg" text="Send" onClick={() => setSection('send')} data-testid="wallet-send-btn" />
 			<Button img="modules/{module.identifier}/img/receive.svg" text="Receive" onClick={() => setSection('receive')} />
 		</div>
 		{#if !$selectedNetwork}

@@ -50,7 +50,7 @@
 			<Input placeholder="Filter addresses..." bind:value={filter} />
 		</div>
 		{#each filteredAddressBook as a, index}
-			<Item even={index % 2 === 0 ? false : true} onClick={() => clickItem(a.address)}>
+			<Item even={index % 2 === 0 ? false : true} onClick={() => clickItem(a.address)} data-address-name={a.name}>
 				<div class="name">{a.name}</div>
 				<div class="address">{a.address}</div>
 			</Item>

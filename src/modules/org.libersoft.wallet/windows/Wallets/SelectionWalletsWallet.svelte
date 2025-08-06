@@ -45,7 +45,7 @@
 	<Tbody>
 		{#if filteredAddresses && filteredAddresses.length > 0}
 			{#each filteredAddresses as address}
-				<TbodyTr onClick={() => clickSelectAddress(address)}>
+				<TbodyTr onClick={() => clickSelectAddress(address)} data-testid="wallet-address-{address.index}">
 					<Td>{address.index}</Td>
 					<Td>{address.name}</Td>
 					<Td>{address.address}</Td>

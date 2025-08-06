@@ -17,6 +17,7 @@ export interface INetwork {
 	tokens?: IToken[];
 	nfts?: INFT[];
 	selectedRpcUrl?: string;
+	testnet?: boolean;
 }
 export interface ICurrency {
 	name?: string;

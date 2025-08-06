@@ -51,7 +51,7 @@ export class TableDragManager {
 	 * Clean up all event listeners and state
 	 */
 	destroy(): void {
-		console.log('Destroying TableDragManager'); // Debug log
+		//console.log('Destroying TableDragManager'); // Debug log
 		this.cleanup();
 		if (this.tbody) {
 			this.tbody.removeEventListener('mousedown', this.handleMouseDown, true);
@@ -66,7 +66,7 @@ export class TableDragManager {
 		tbody.removeEventListener('mousedown', this.handleMouseDown, true);
 		// Use event delegation - listen on tbody for mousedown events
 		tbody.addEventListener('mousedown', this.handleMouseDown, true);
-		console.log('Attached event listeners to tbody'); // Debug log
+		//console.log('Attached event listeners to tbody'); // Debug log
 	}
 
 	private handleMouseDown = (event: MouseEvent): void => {

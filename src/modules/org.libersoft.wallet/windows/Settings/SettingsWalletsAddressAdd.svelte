@@ -26,7 +26,7 @@
 		error = null;
 	}
 
-	function clickAdd(): void {
+	async function clickAdd(): Promise<void> {
 		error = null;
 		let id: number | undefined;
 		name = name?.trim();
@@ -42,7 +42,7 @@
 			elIndex?.focus();
 			return;
 		}
-		addAddress(wallet, id!, name!);
+		await addAddress(wallet, id!, name!);
 		close();
 	}
 </script>

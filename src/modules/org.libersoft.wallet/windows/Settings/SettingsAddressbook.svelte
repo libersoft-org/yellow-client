@@ -20,7 +20,7 @@
 	let selectedItem: IAddressBookItem | null | undefined = $state();
 	let elDialogDel: DialogDelete | undefined = $state();
 	let filter = $state('');
-	let filteredAddressBook = $derived($addressBook.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
+	let filteredAddressBook = $derived($addressBook.filter(item => !item.name || item.name.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
 	let elFilter: Input | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 

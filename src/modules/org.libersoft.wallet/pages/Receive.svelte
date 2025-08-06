@@ -127,8 +127,8 @@
 	}
 
 	// Helper function for handling amount changes
-	function handleAmountChange(newAmount: string) {
-		amount = newAmount;
+	function handleAmountChange(newAmount: string | number) {
+		amount = newAmount.toString();
 		if (isInitialized) {
 			updateAddressAndQR();
 		}
