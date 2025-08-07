@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { MouseEventHandler, HTMLTableRowElementAttributes } from 'svelte/elements';
+	import type { MouseEventHandler, HTMLAttributes } from 'svelte/elements';
 	import { isDragging } from '@/core/scripts/drag.ts';
-	interface Props extends HTMLTableRowElementAttributes {
+	interface Props extends HTMLAttributes<HTMLTableRowElement> {
 		children?: Snippet;
 		background?: string;
 		hover?: boolean;
 		onClick?: MouseEventHandler<HTMLTableRowElement>;
+		'data-testid'?: string;
+		'data-network-name'?: string;
 	}
 	const { children, background = 'var(--primary-soft-background)', hover = true, onClick, ...restProps }: Props = $props();
 

@@ -152,7 +152,7 @@
 				<h4>Device Detected</h4>
 				<p><strong>Device:</strong> {$ledgerDevice.deviceModel?.model || $ledgerDevice.name}</p>
 				{#if $ledgerDevice.deviceModel?.internal_model !== 'ledger' && $ledgerDevice.deviceModel?.internal_model !== 'unknown'}
-					<p><small>Model: {$ledgerDevice.deviceModel.internal_model}</small></p>
+					<p><small>Model: {$ledgerDevice.deviceModel?.internal_model}</small></p>
 				{/if}
 				{#if $debug}
 					<p><small>Device ID: {$ledgerDevice.id}</small></p>
@@ -231,7 +231,7 @@
 					{#if $ledgerDevice}
 						<p><strong>Device Model:</strong> {$ledgerDevice.deviceModel?.model || $ledgerDevice.name}</p>
 						{#if $ledgerDevice.deviceModel?.internal_model !== 'ledger' && $ledgerDevice.deviceModel?.internal_model !== 'unknown'}
-							<p><small>Model ID: {$ledgerDevice.deviceModel.internal_model}</small></p>
+							<p><small>Model ID: {$ledgerDevice.deviceModel?.internal_model}</small></p>
 						{/if}
 					{/if}
 					{#if $ledgerConfig}

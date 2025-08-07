@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
-	import type { HTMLDivElementAttributes } from 'svelte/elements';
+	import type { HTMLAttributes } from 'svelte/elements';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -13,12 +13,13 @@
 		};
 		value?: any; // The object that will be returned when selected
 	}
-	interface Props extends HTMLDivElementAttributes {
+	interface Props extends HTMLAttributes<HTMLDivElement> {
 		placeholder?: string;
 		options?: DropdownOption[];
 		selected?: any; // The selected object
 		enabled?: boolean;
 		onChange?: (value: any) => void; // Callback when selection changes
+		'data-testid'?: string;
 	}
 	let { placeholder, options = [], selected = $bindable(), enabled = true, onChange, ...restProps }: Props = $props();
 	let filteredOptions = $derived(
