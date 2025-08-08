@@ -424,7 +424,7 @@ export function getLedgerWallets(): LedgerWallet[] {
 /**
  * Sign Ethereum transaction with Ledger (compatible with Ethers.js)
  */
-export async function signEthereumTransaction(wallet: LedgerWallet, transaction: TransactionRequest): Promise<LedgerResponse<{ r: string; s: string; v: number }>> {
+export async function signEthereumTransaction(path: string, transaction: TransactionRequest): Promise<LedgerResponse<{ r: string; s: string; v: number }>> {
 	if (!currentTransport) return { success: false, payload: null as any, error: 'Ledger not connected' };
 	try {
 		ledgerLoading.set(true);
@@ -442,7 +442,7 @@ export async function signEthereumTransaction(wallet: LedgerWallet, transaction:
 		// Serialize transaction for Ledger
 		const serializedTx = serializeTransaction(unsignedTx);
 		// Sign with Ledger
-		const result = await eth.signTransaction(wallet.path, serializedTx);
+		const result = await eth.signTransaction(path, serializedTx);
 		return {
 			success: true,
 			payload: {
@@ -464,18 +464,18 @@ export async function signEthereumTransaction(wallet: LedgerWallet, transaction:
 /**
  * Sign Ethereum message with Ledger
  */
-export async function signEthereumMessage(wallet: LedgerWallet, message: string): Promise<LedgerResponse<{ address: string; signature: string }>> {
+export async function signEthereumMessage(path: string, address: string, message: string): Promise<LedgerResponse<{ address: string; signature: string }>> {
 	if (!currentTransport) return { success: false, payload: null as any, error: 'Ledger not connected' };
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
 		const eth = new EthApp(currentTransport);
 		// Sign message with Ledger
-		const result = await eth.signPersonalMessage(wallet.path, Array.from(new TextEncoder().encode(message), byte => byte.toString(16).padStart(2, '0')).join(''));
+		const result = await eth.signPersonalMessage(path, Array.from(new TextEncoder().encode(message), byte => byte.toString(16).padStart(2, '0')).join(''));
 		return {
 			success: true,
 			payload: {
-				address: wallet.address,
+				address: address,
 				signature: '0x' + result.r + result.s + result.v.toString(16).padStart(2, '0'),
 			},
 		};

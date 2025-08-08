@@ -41,7 +41,7 @@ export async function addLedgerWalletToSystem(accountIndex: number = 0, name?: s
 export async function signTransactionWithLedger(ledgerWallet: LedgerWallet, transaction: any) {
 	// Your transaction object from Ethers.js
 	// Sign the transaction with Ledger
-	const result = await signEthereumTransaction(ledgerWallet, transaction);
+	const result = await signEthereumTransaction(ledgerWallet.path, transaction);
 	if (!result.success) throw new Error(result.error || 'Failed to sign transaction');
 	// Return the signature components that can be used with Ethers.js
 	return {
@@ -56,7 +56,7 @@ export async function signTransactionWithLedger(ledgerWallet: LedgerWallet, tran
  */
 export async function signMessageWithLedger(ledgerWallet: LedgerWallet, message: string) {
 	// Sign the message with Ledger
-	const result = await signEthereumMessage(ledgerWallet, message);
+	const result = await signEthereumMessage(ledgerWallet.path, ledgerWallet.address, message);
 	if (!result.success) throw new Error(result.error || 'Failed to sign message');
 	return result.payload;
 }
