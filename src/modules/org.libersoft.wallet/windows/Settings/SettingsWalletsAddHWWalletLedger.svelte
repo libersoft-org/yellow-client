@@ -3,7 +3,7 @@
 	import { getContext, onMount } from 'svelte';
 	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/wallet';
 	import { initWalletLedger, addLedgerWalletToSystem, isLedgerConnected, getLedgerStatus } from '@/org.libersoft.wallet/scripts/ledger-integration';
-	import { connectLedger, getLedgerEthereumAccounts, checkWebHIDSupport, ledgerLoading, ledgerDevice, ledgerConfig, ledgerError, ledgerConnected, getLedgerDeviceIdentifiers, type LedgerAccount } from '@/org.libersoft.wallet/scripts/ledger';
+	import { connectLedger, getLedgerEthereumAccounts, checkWebHIDSupport, checkWebUSBSupport, checkConnectionMethodSupport, ledgerLoading, ledgerDevice, ledgerConfig, ledgerError, ledgerConnected, ledgerConnectionMethod, getLedgerDeviceIdentifiers, type LedgerAccount } from '@/org.libersoft.wallet/scripts/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
@@ -17,13 +17,6 @@
 	let connectionError = $state('');
 
 	onMount(async () => {
-		// Check WebHID support before initializing
-		const supportCheck = checkWebHIDSupport();
-		if (!supportCheck.supported) {
-			connectionError = supportCheck.error || 'WebHID not supported';
-			return;
-		}
-
 		await initWalletLedger();
 	});
 
