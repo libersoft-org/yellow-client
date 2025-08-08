@@ -1,12 +1,13 @@
 <script lang="ts">
+	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import FileTransfer from './FileTransfer.svelte';
-	import { identifier } from '../../messages.js';
-	import { type FileDownload, type FileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { type IFileDownload, type IFileUpload, FileUploadRecordErrorType, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 	import Button from '@/core/components/Button/Button.svelte';
-	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	interface Props {
-		upload: FileUpload;
-		download: FileDownload | null;
+		upload: IFileUpload;
+		download: IFileDownload | null;
 		pauseUpload: (uploadId: string) => void;
 		resumeUpload: (uploadId: string) => void;
 		cancelUpload: (uploadId: string) => void;
@@ -44,50 +45,43 @@
 	.message-attachment {
 		display: flex;
 		flex-direction: column;
+		gap: 10px;
 		padding: 10px;
-		border: 1px solid #880;
+		border: 1px solid var(--primary-harder-background);
 		border-radius: 10px;
 		background-color: var(--primary-softer-background);
 	}
 
-	.transfer-controls {
-		display: flex;
-		gap: 10px;
-	}
-
 	.file-title {
-		margin-bottom: 6px;
+		display: flex;
+		gap: 5px;
 	}
 </style>
 
 {#snippet uploadControls()}
-	<div class="transfer-controls">
+	<ButtonBar equalize>
 		{#if upload.record.status === FileUploadRecordStatus.PAUSED}
-			<Button img="modules/{identifier}/img/play.svg" colorVariable="--primary-foreground" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
+			<Button img="modules/{identifier}/img/play.svg" text="Resume" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
 		{:else}
-			<Button img="modules/{identifier}/img/pause.svg" colorVariable="--primary-foreground" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
+			<Button img="modules/{identifier}/img/pause.svg" text="Pause" onClick={() => pauseUpload(uploadId)} enabled={!changingStatus} />
 		{/if}
-		<Button img="img/close.svg" colorVariable="--primary-foreground" onClick={() => cancelUpload(uploadId)} />
-	</div>
+		<Button img="img/cancel.svg" text="Cancel" onClick={() => cancelUpload(uploadId)} />
+	</ButtonBar>
 {/snippet}
-
 {#snippet downloadControls()}
-	<!-- -->
 	{@const isPausedByServer = upload && upload.record.status === FileUploadRecordStatus.PAUSED && upload.role === FileUploadRole.RECEIVER}
-	<div class="transfer-controls">
+	<ButtonBar equalize>
 		{#if download && (download.pausedLocally || !download.running)}
-			<Button img="modules/{identifier}/img/play.svg" colorVariable="--primary-foreground" onClick={() => resumeDownload(uploadId)} enabled={!isPausedByServer} />
+			<Button img="modules/{identifier}/img/play.svg" text="Resume" onClick={() => resumeDownload(uploadId)} enabled={!isPausedByServer} />
 		{:else}
-			<Button img="modules/{identifier}/img/pause.svg" colorVariable="--primary-foreground" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
+			<Button img="modules/{identifier}/img/pause.svg" text="Pause" onClick={() => pauseDownload(uploadId)} enabled={!isPausedByServer} />
 		{/if}
-		<Button img="img/close.svg" colorVariable="--primary-foreground" onClick={() => cancelDownload(uploadId)} />
-	</div>
+		<Button img="img/cancel.svg" text="Cancel" onClick={() => cancelDownload(uploadId)} />
+	</ButtonBar>
 {/snippet}
-
 {#snippet downloadButton()}
 	<div class="message-attachment-accept-btn">
 		<Button
-			width="110px"
 			img="img/download.svg"
 			text="Download"
 			onClick={e => {
@@ -97,15 +91,14 @@
 		/>
 	</div>
 {/snippet}
-
 {#snippet fileTitle()}
 	{#if upload && upload.record}
 		<div class="file-title">
-			<strong>{upload.record.fileOriginalName}</strong> ({humanSize(upload.record.fileSize)})
+			<span class="bold">{upload.record.fileOriginalName}</span>
+			<span>({humanSize(upload.record.fileSize)})</span>
 		</div>
 	{/if}
 {/snippet}
-
 {#snippet errors()}
 	{#if upload && upload.record}
 		<div class="errors">
@@ -119,7 +112,6 @@
 		</div>
 	{/if}
 {/snippet}
-
 {#snippet renderSenderUpload()}
 	<!-- ACTIVE UPLOAD -->
 	{#if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes(upload.record.status)}
@@ -127,61 +119,50 @@
 			<FileTransfer {uploaded} total={upload.record.fileSize} status={statusString} />
 			{@render uploadControls()}
 		{:else}
-			<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
+			<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed />
 		{/if}
-
 		<!-- FINISHED UPLOAD - downloading -->
 	{:else if download && upload.record.status === FileUploadRecordStatus.FINISHED}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
 		{@render downloadControls()}
-
 		<!-- FINISHED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		{@render downloadButton()}
-
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
 		<div>Upload canceled</div>
-
 		<!-- FALLBACK TO ERROR -->
 	{:else}
 		{@render errors()}
 	{/if}
 {/snippet}
-
 {#snippet renderReceiverUpload()}
 	<!-- DOWNLOAD DOWNLOADING - receiving -->
 	{#if download}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
 		{@render downloadControls()}
-
 		<!-- DOWNLOAD BEGIN/UPLOADING/PAUSED  -->
 	{:else if [FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.PAUSED].includes(upload.record.status)}
-		<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed={true} />
-
+		<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed />
 		<!-- DOWNLOAD FINISHED - download again if needed -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		{@render downloadButton()}
-
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
 		<div>Canceled by sender</div>
-
 		<!-- FALLBACK TO ERROR -->
 	{:else}
 		{@render errors()}
 	{/if}
 {/snippet}
-
 {#snippet renderSenderP2P()}
 	<!-- ACTIVE P2P UPLOAD BEGUN -->
 	{#if upload.record.status === FileUploadRecordStatus.BEGUN}
 		<div>Waiting for accept...</div>
-		<div class="transfer-controls">
+		<ButtonBar>
 			<!-- @ts-ignore TODO: button typing -->
-			<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={() => cancelUpload(uploadId)} />
-		</div>
-
+			<Button img="img/cross.svg" onClick={() => cancelUpload(uploadId)} />
+		</ButtonBar>
 		<!-- ACTIVE P2P UPLOAD UPLOADING -->
 	{:else if upload.record.status === FileUploadRecordStatus.UPLOADING || upload.record.status === FileUploadRecordStatus.PAUSED}
 		{#if isUploadActive}
@@ -190,49 +171,40 @@
 		{:else}
 			<div>Uploading...</div>
 		{/if}
-
 		<!-- FINISHED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		<div>File sent</div>
-
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
 		<div>File transfer has been canceled</div>
-
 		<!-- FALLBACK TO ERROR -->
 	{:else}
 		{@render errors()}
 	{/if}
 {/snippet}
-
 {#snippet renderReceiverP2P()}
 	<!-- P2P DOWNLOADING - receiving -->
 	{#if download && (download.record.status === FileUploadRecordStatus.UPLOADING || download.record.status === FileUploadRecordStatus.BEGUN || download.record.status === FileUploadRecordStatus.PAUSED)}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
 		{@render downloadControls()}
-
 		<!-- P2P BEGUN - waiting for accept -->
 	{:else if upload.record.status === FileUploadRecordStatus.BEGUN}
-		<div class="transfer-controls">
-			<Button width="80px" text="Accept" onClick={onDownload} data-testid="p2p-accept-button" />
-			<Button width="80px" text="Cancel" onClick={() => cancelDownload(uploadId)} data-testid="p2p-cancel-button" />
-		</div>
-
+		<ButtonBar equalize>
+			<Button width="100px" img="img/check.svg" text="Accept" onClick={onDownload} data-testid="p2p-accept-button" />
+			<Button width="100px" img="img/cancel.svg" text="Cancel" onClick={() => cancelDownload(uploadId)} data-testid="p2p-cancel-button" />
+		</ButtonBar>
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
 		<div>File transfer has been canceled</div>
-
 		<!-- P2P FINISHED - download again if needed -->
 	{:else if upload.record.status === FileUploadRecordStatus.FINISHED}
 		<!-- {@render downloadButton()} -->
 		<div>File transport has been finished</div>
-
 		<!-- FALLBACK TO ERROR -->
 	{:else}
 		{@render errors()}
 	{/if}
 {/snippet}
-
 <!--
  TODO: data-testid contains potentially unsafe data; svelte is sanitizing it, but we should consider auto stripping
  data-testid attr for production (since its purpose is only for testing in playwright)
