@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { debug } from '@/core/scripts/stores.ts';
 	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
@@ -85,7 +86,7 @@
 		//console.log('[BaseSettings] goBack: ', activeName);
 		const found = findNode(settingsObject, activeName);
 		//console.log('[BaseSettings] goBack found:', found);
-		const parentName = found?.__parent?.name ?? settingsObject.name;
+		const parentName = found?.__parent?.()?.name ?? settingsObject.name;
 		await setSettingsSection(parentName);
 	}
 
@@ -139,6 +140,15 @@
 		flex-direction: column;
 		gap: 10px;
 	}
+
+	.debug {
+		background-color: var(--primary-softer-background);
+		border: 1px solid var(--primary-foreground);
+		border-radius: 10px;
+		padding: 10px;
+		max-height: 300px;
+		overflow-y: auto;
+	}
 </style>
 
 <Window {testId} title={settingsObject.title} bind:this={elWindow} width="600px" optionalIcon={backIcon}>
@@ -159,4 +169,10 @@
 			{/if}
 		</div>
 	</div>
+	{#if $debug}
+		<div class="debug">
+			<h5>BaseSettings Debug</h5>
+			<pre>{JSON.stringify(currentNode, null, 2)}</pre>
+		</div>
+	{/if}
 </Window>

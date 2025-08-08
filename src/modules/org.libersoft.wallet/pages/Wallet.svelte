@@ -36,7 +36,7 @@
 		console.log('Wallet module initialiddddddzed');
 		if ($debug) {
 			//$settingsWindow?.open('wallets-add-hw-trezor');
-			$settingsWindow?.open('wallets-add-hw-ledger');
+			//$settingsWindow?.open('wallets-add-hw-ledger');
 		}
 	});
 

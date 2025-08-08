@@ -53,7 +53,8 @@
 </style>
 
 <ButtonBar>
-	<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a custom network" onClick={() => clickAddNetwork()} />
+	<Button img="modules/{module.identifier}/img/network-add.svg" text="Add a custom network" onClick={() => clickAddNetwork()} data-testid="wallet-settings-add-custom-network" />
+	Add a custom network
 </ButtonBar>
 <div class="bold">Default networks:</div>
 <Input placeholder="Filter default networks..." bind:value={filter} bind:this={elFilter} />
