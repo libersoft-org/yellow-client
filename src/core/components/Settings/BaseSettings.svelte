@@ -85,8 +85,21 @@
 	async function goBack() {
 		//console.log('[BaseSettings] goBack: ', activeName);
 		const found = findNode(settingsObject, activeName);
-		//console.log('[BaseSettings] goBack found:', found);
-		const parentName = found?.__parent?.()?.name ?? settingsObject.name;
+		console.log('[BaseSettings] goBack found:', found);
+		if (!found || !found.__parent) {
+			log.error('[BaseSettings] No parent found for node:', found);
+			return;
+		}
+		const p = found.__parent.deref();
+		if (!p) {
+			log.error('[BaseSettings] Parent is null for node:', found);
+			return;
+		}
+		if (!p.name) {
+			log.error('[BaseSettings] Parent has no name:', p);
+			return;
+		}
+		const parentName = p.name ?? settingsObject.name;
 		await setSettingsSection(parentName);
 	}
 

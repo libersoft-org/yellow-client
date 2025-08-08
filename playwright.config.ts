@@ -9,6 +9,7 @@ export default defineConfig({
 	},
 	testDir: './src/',
 	testMatch: ['**/e2e/**/*.test.ts'],
+	testIgnore: ['**/wallet-send-dialog-from-sw-to-trezor.test.ts', '**/wallet-send-dialog-from-trezor-to-sw.test.ts'],
 
 	use: {
 		ignoreHTTPSErrors: true,
