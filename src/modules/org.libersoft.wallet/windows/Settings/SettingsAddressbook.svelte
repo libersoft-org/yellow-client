@@ -71,7 +71,7 @@
 	{#if $addressBook.length > 0}
 		<Input placeholder="Filter addresses..." bind:value={filter} bind:this={elFilter} />
 		<div use:tableDrag={{ items: filteredAddressBook, onReorder: handleAddressBookReorder }}>
-			<Table>
+			<Table breakpoint="0">
 				<Thead>
 					<TheadTr>
 						<Th></Th>

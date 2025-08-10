@@ -87,5 +87,9 @@
 </style>
 
 <td data-title={title} data-testid={dataTestId} style:padding class:shorten class:expand class:bold {colspan} {style} style:text-align={align}>
-	{@render children?.()}
+	{#if shorten}
+		<span class="ellipsis">{@render children?.()}</span>
+	{:else}
+		{@render children?.()}
+	{/if}
 </td>
