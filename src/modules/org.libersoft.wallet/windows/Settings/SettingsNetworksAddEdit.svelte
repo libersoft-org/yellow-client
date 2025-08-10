@@ -65,7 +65,34 @@
 		itemExplorerURL = itemExplorerURL?.trim();
 		itemRPCURLs = itemRPCURLs?.map(url => url.trim());
 		itemChainID = Number(itemChainID);
-		const validationConfig = [{ field: itemName, element: elName, required: 'Network name is required' }, { field: itemCurrencySymbol, element: elCurrencySymbol, required: 'Currency symbol is required' }, { field: itemCurrencyIconURL }, { field: itemChainID, element: elChainID, validate: (v: number) => (v >= 0 && Number.isInteger(v) ? null : 'Chain ID must be a positive whole number') }, { field: itemExplorerURL }, { field: itemRPCURLs, isArray: true, arrayElements: elRPCURLs, required: 'RPC URL {index} is required' }];
+		const validationConfig = [
+			{
+				field: itemName,
+				element: elName,
+				required: 'Network name is required',
+			},
+			{
+				field: itemCurrencySymbol,
+				element: elCurrencySymbol,
+				required: 'Currency symbol is required',
+			},
+			{ field: itemCurrencyIconURL },
+			{
+				field: itemChainID,
+				element: elChainID,
+				validate: (v: number) => {
+					console.log('validating itemChainID:', v);
+					return v >= 0 && Number.isInteger(v) ? null : 'Chain ID must be a positive whole number';
+				},
+			},
+			{ field: itemExplorerURL },
+			{
+				field: itemRPCURLs,
+				isArray: true,
+				arrayElements: elRPCURLs,
+				required: 'RPC URL {index} is required',
+			},
+		];
 		error = validateForm(validationConfig);
 		if (error) return;
 		const newItem: INetwork = {

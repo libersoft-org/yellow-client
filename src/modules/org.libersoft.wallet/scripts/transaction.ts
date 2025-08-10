@@ -5,6 +5,7 @@ import { ensureProviderConnected, provider, reconnect, status } from '@/org.libe
 import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
 import { sendTransactionTrezor } from '@/org.libersoft.wallet/scripts/trezor-transaction.ts';
+import { sendTransactionLedger } from '@/org.libersoft.wallet/scripts/ledger-transaction.ts';
 
 export interface IPayment {
 	address: string;
@@ -403,6 +404,8 @@ export async function sendTransaction(address: string, etherValue: bigint, ether
 		await sendTransactionSw(selectedWalletValue, selectedAddressValue, address, etherValue, etherValueFee, contractAddress);
 	} else if (selectedWalletValue.type === 'trezor') {
 		await sendTransactionTrezor(selectedWalletValue, selectedAddressValue, address, etherValue, etherValueFee, contractAddress);
+	} else if (selectedWalletValue.type === 'ledger') {
+		await sendTransactionLedger(selectedWalletValue, selectedAddressValue, address, etherValue, etherValueFee, contractAddress);
 	} else {
 		console.error('Unknown wallet type:', selectedWalletValue.type);
 		throw new Error('Invalid wallet configuration');

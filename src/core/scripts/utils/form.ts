@@ -9,6 +9,7 @@ export interface IValidationRule {
 export type FormValidatorConfig = IValidationRule[];
 
 export function validateForm(config: FormValidatorConfig): string | null {
+	console.log('Validating form with config:', config);
 	for (const rule of config) {
 		if (rule.isArray) {
 			const arrayValue = rule.field;
@@ -28,7 +29,7 @@ export function validateForm(config: FormValidatorConfig): string | null {
 			rule.element?.focus();
 			return rule.required;
 		}
-		if (rule.validate && value) {
+		if (rule.validate) {
 			const validationError = rule.validate(value);
 			if (validationError) {
 				rule.element?.focus();

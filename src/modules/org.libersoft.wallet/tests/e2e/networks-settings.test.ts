@@ -45,6 +45,8 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should add a new network with all fields', async ({ page }) => {
 			await test.step('Click add network button', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
+				// Wait for the add network form to be visible
 				// Wait for add network window
 				await page.waitForSelector('[data-testid="wallet-settings-network-name-input"]');
 			});
@@ -74,6 +76,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should validate required fields', async ({ page }) => {
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Try to save without required fields', async () => {
@@ -93,13 +96,14 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 			await test.step('Fill currency symbol and try again', async () => {
 				await page.getByTestId('wallet-settings-network-currency-symbol-input').fill('TST');
 				await page.getByTestId('wallet-settings-network-add-btn').click();
-				await expect(page.getByText('Chain ID is required')).toBeVisible();
+				await expect(page.getByText('Chain ID must be a positive whole number')).toBeVisible();
 			});
 		});
 
 		test('should validate chain ID format', async ({ page }) => {
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Fill basic required fields', async () => {
@@ -130,6 +134,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should validate empty and whitespace-only fields', async ({ page }) => {
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Try whitespace-only name', async () => {
@@ -152,6 +157,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should trim whitespace from fields', async ({ page }) => {
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Fill fields with extra whitespace', async () => {
@@ -178,6 +184,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should validate RPC URL fields', async ({ page }) => {
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Fill basic required fields', async () => {
@@ -211,6 +218,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should handle special characters in fields', async ({ page }) => {
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Fill fields with special characters', async () => {
@@ -236,6 +244,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Fill fields with long values', async () => {
@@ -257,6 +266,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should handle multiple RPC URLs with validation', async ({ page }) => {
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Fill basic required fields', async () => {
@@ -293,6 +303,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should cancel adding network', async ({ page }) => {
 			await test.step('Open add network form', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 			});
 
 			await test.step('Fill some fields', async () => {
@@ -314,6 +325,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 			// First add a network to edit
 			await test.step('Add network to edit', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 				await page.getByTestId('wallet-settings-network-name-input').fill(TEST_NETWORK.name);
 				await page.getByTestId('wallet-settings-network-currency-symbol-input').fill(TEST_NETWORK.currencySymbol);
 				await page.getByTestId('wallet-settings-network-chain-id-input').fill(TEST_NETWORK.chainId);
@@ -353,6 +365,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 			// First add a network to edit
 			await test.step('Add network to edit', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 				await page.getByTestId('wallet-settings-network-name-input').fill('Network to Edit');
 				await page.getByTestId('wallet-settings-network-currency-symbol-input').fill('EDIT');
 				await page.getByTestId('wallet-settings-network-chain-id-input').fill('11000');
@@ -382,6 +395,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 			// First add a network to edit
 			await test.step('Add network to edit', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 				await page.getByTestId('wallet-settings-network-name-input').fill('Original Network');
 				await page.getByTestId('wallet-settings-network-currency-symbol-input').fill('ORIG');
 				await page.getByTestId('wallet-settings-network-chain-id-input').fill('3000');
@@ -409,6 +423,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 			// First add a network to delete
 			await test.step('Add network to delete', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 				await page.getByTestId('wallet-settings-network-name-input').fill('Network to Delete');
 				await page.getByTestId('wallet-settings-network-currency-symbol-input').fill('DEL');
 				await page.getByTestId('wallet-settings-network-chain-id-input').fill('4000');
@@ -435,6 +450,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 			// First add a network
 			await test.step('Add network', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 				await page.getByTestId('wallet-settings-network-name-input').fill('Network to Keep');
 				await page.getByTestId('wallet-settings-network-currency-symbol-input').fill('KEEP');
 				await page.getByTestId('wallet-settings-network-chain-id-input').fill('5000');
@@ -466,6 +482,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		test('should handle network with minimal required fields', async ({ page }) => {
 			await test.step('Add minimal network', async () => {
 				await page.getByTestId('wallet-settings-networks-add-new-btn').click();
+				await page.getByTestId('wallet-settings-add-custom-network').click();
 				await page.getByTestId('wallet-settings-network-name-input').fill('Minimal Network');
 				await page.getByTestId('wallet-settings-network-currency-symbol-input').fill('MIN');
 				await page.getByTestId('wallet-settings-network-chain-id-input').fill('6000');

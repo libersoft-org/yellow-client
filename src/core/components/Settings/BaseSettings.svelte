@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { debug } from '@/core/scripts/stores.ts';
 	import SettingsMenuItem from '@/core/components/Settings/SettingsMenuItem.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
@@ -46,6 +47,8 @@
 
 	let currentNodeInstance: any = $state();
 	$effect(() => {
+		//$inspect('[BaseSettings] currentNodeInstance updated:', currentNodeInstance);
+		//$inspect('[BaseSettings] currentNode:', currentNode);
 		currentNode.instance = currentNodeInstance;
 	});
 
@@ -56,7 +59,7 @@
 	// Remove the problematic effect that resets navigation on window reopen
 
 	export function open(name?: string) {
-		console.log('[BaseSettings] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
+		//console.log('[BaseSettings] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
 		elWindow?.open();
 		setSettingsSection(name || settingsObject.name);
 	}
@@ -66,7 +69,7 @@
 	}
 
 	export async function setSettingsSection(name: string, props: any = {}) {
-		console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
+		//console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
 		await tick();
@@ -80,10 +83,23 @@
 	}
 
 	async function goBack() {
-		console.log('[BaseSettings] goBack: ', activeName);
+		//console.log('[BaseSettings] goBack: ', activeName);
 		const found = findNode(settingsObject, activeName);
 		console.log('[BaseSettings] goBack found:', found);
-		const parentName = found?.__parent?.name ?? settingsObject.name;
+		if (!found || !found.__parent) {
+			log.error('[BaseSettings] No parent found for node:', found);
+			return;
+		}
+		const p = found.__parent.deref();
+		if (!p) {
+			log.error('[BaseSettings] Parent is null for node:', found);
+			return;
+		}
+		if (!p.name) {
+			log.error('[BaseSettings] Parent has no name:', p);
+			return;
+		}
+		const parentName = p.name ?? settingsObject.name;
 		await setSettingsSection(parentName);
 	}
 
@@ -137,6 +153,15 @@
 		flex-direction: column;
 		gap: 10px;
 	}
+
+	.debug {
+		background-color: var(--primary-softer-background);
+		border: 1px solid var(--primary-foreground);
+		border-radius: 10px;
+		padding: 10px;
+		max-height: 300px;
+		overflow-y: auto;
+	}
 </style>
 
 <Window {testId} title={settingsObject.title} bind:this={elWindow} width="600px" optionalIcon={backIcon}>
@@ -157,4 +182,10 @@
 			{/if}
 		</div>
 	</div>
+	{#if $debug}
+		<div class="debug">
+			<h5>BaseSettings Debug</h5>
+			<pre>{JSON.stringify(currentNode, null, 2)}</pre>
+		</div>
+	{/if}
 </Window>

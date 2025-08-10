@@ -2,6 +2,7 @@ import { get, writable, derived } from 'svelte/store';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import { getIndexedAccountPath, HDNodeWallet, Mnemonic, randomBytes } from 'ethers';
 import { doAddHardwareAddressTrezor } from '@/org.libersoft.wallet/scripts/trezor';
+import { doAddHardwareAddressLedger } from '@/org.libersoft.wallet/scripts/ledger';
 
 export interface IWallet {
 	guid: string;
@@ -89,6 +90,8 @@ async function doAddAddress(w: IWallet, addresses: IAddress[], index: number, na
 	if (isHardwareWallet(w)) {
 		if (w.type === 'trezor') {
 			await doAddHardwareAddressTrezor(w, addresses, index, name);
+		} else if (w.type === 'ledger') {
+			await doAddHardwareAddressLedger(w, addresses, index, name);
 		}
 	} else {
 		doAddSoftwareAddress(w, addresses, index, name);

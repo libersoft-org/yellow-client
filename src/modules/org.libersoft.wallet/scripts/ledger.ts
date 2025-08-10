@@ -1,16 +1,25 @@
-import { writable } from 'svelte/store';
+// Import polyfills FIRST before any Ledger libraries
+import './ledger-polyfills';
+
+import { writable, derived, get } from 'svelte/store';
 import type { TransactionRequest } from 'ethers';
+import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import EthApp from '@ledgerhq/hw-app-eth';
 interface LedgerDevice {
 	id: string;
 	name: string;
-	path: string;
 	productId: number;
+	productName?: string;
 	vendorId: number;
 	opened: boolean;
+	// Additional fields for device identification similar to Trezor
+	deviceModel?: {
+		internal_model: string;
+		model: string;
+	};
 }
-interface LedgerAccount {
+export interface LedgerAccount {
 	address: string;
 	path: string;
 	publicKey: string;
@@ -32,87 +41,310 @@ export interface LedgerWallet {
 }
 export const ledgerConnected = writable<boolean>(false);
 export const ledgerDevice = writable<LedgerDevice | null>(null);
+export const ledgerConfig = writable<any>(null);
 export const ledgerAccounts = writable<LedgerAccount[]>([]);
 export const ledgerWallets = writable<LedgerWallet[]>([]);
 export const ledgerLoading = writable<boolean>(false);
 export const ledgerError = writable<string | null>(null);
+export const ledgerConnectionMethod = writable<'WebHID' | 'WebUSB'>('WebHID');
+
+// Derived store for device identifiers, similar to Trezor's staticSessionId
+export const ledgerDeviceId = derived([ledgerDevice], ([$ledgerDevice]) => {
+	return $ledgerDevice?.id;
+});
+
+// Helper function to check if a wallet matches the current device
+export const isLedgerWalletActive = (wallet?: any): boolean => {
+	const $ledgerDeviceId = get(ledgerDeviceId);
+	return !!$ledgerDeviceId && $ledgerDeviceId === wallet?.identifiers?.deviceId;
+};
 let currentTransport: any = null;
 
 /**
- * Initialize Ledger integration
+ * Check if WebHID is supported and requirements are met
+ */
+export function checkWebHIDSupport(): { supported: boolean; error?: string } {
+	console.log('checkWebHIDSupport: Starting check...');
+
+	// Check if we're in browser environment
+	if (typeof window === 'undefined') {
+		console.log('checkWebHIDSupport: Not in browser environment');
+		return { supported: false, error: 'Not running in browser environment' };
+	}
+
+	// Check WebHID support
+	if (!('hid' in navigator)) {
+		console.log('checkWebHIDSupport: WebHID not available in navigator');
+		return { supported: false, error: 'WebHID is not supported in this browser. Please use Chrome/Edge 89+ or another compatible browser.' };
+	}
+
+	// Check HTTPS requirement (except for localhost)
+	const protocol = location.protocol;
+	const hostname = location.hostname;
+	console.log('checkWebHIDSupport: Protocol:', protocol, 'Hostname:', hostname);
+
+	if (protocol !== 'https:' && !hostname.includes('localhost') && hostname !== '127.0.0.1') {
+		console.log('checkWebHIDSupport: HTTPS required but not available');
+		return { supported: false, error: 'WebHID requires HTTPS connection.' };
+	}
+
+	console.log('checkWebHIDSupport: All checks passed, WebHID is supported');
+	return { supported: true };
+}
+
+/**
+ * Check if WebUSB is supported and requirements are met
+ */
+export function checkWebUSBSupport(): { supported: boolean; error?: string } {
+	console.log('checkWebUSBSupport: Starting check...');
+
+	// Check if we're in browser environment
+	if (typeof window === 'undefined') {
+		console.log('checkWebUSBSupport: Not in browser environment');
+		return { supported: false, error: 'Not running in browser environment' };
+	}
+
+	// Check WebUSB support
+	if (!('usb' in navigator)) {
+		console.log('checkWebUSBSupport: WebUSB not available in navigator');
+		return { supported: false, error: 'WebUSB is not supported in this browser. Please use Chrome/Edge 89+ or another compatible browser.' };
+	}
+
+	// Check HTTPS requirement (except for localhost)
+	const protocol = location.protocol;
+	const hostname = location.hostname;
+	console.log('checkWebUSBSupport: Protocol:', protocol, 'Hostname:', hostname);
+
+	if (protocol !== 'https:' && !hostname.includes('localhost') && hostname !== '127.0.0.1') {
+		console.log('checkWebUSBSupport: HTTPS required but not available');
+		return { supported: false, error: 'WebUSB requires HTTPS connection.' };
+	}
+
+	console.log('checkWebUSBSupport: All checks passed, WebUSB is supported');
+	return { supported: true };
+}
+
+/**
+ * Check connection method support
+ */
+export function checkConnectionMethodSupport(method: 'WebHID' | 'WebUSB'): { supported: boolean; error?: string } {
+	return method === 'WebHID' ? checkWebHIDSupport() : checkWebUSBSupport();
+}
+
+/**
+ * Initialize Ledger integration - this just sets up the stores, no device interaction yet
  */
 export async function initializeLedger(): Promise<boolean> {
+	console.log('Starting Ledger initialization...');
 	try {
-		// Listen for device connection/disconnection
-		TransportWebUSB.listen({
-			next: (event: any) => {
-				console.log('Ledger device event:', event);
-				if (event.type === 'add') {
-					const device: LedgerDevice = {
-						id: event.device.productId + '_' + event.device.vendorId,
-						name: event.device.productName || 'Ledger Device',
-						path: event.device.path || '',
-						productId: event.device.productId,
-						vendorId: event.device.vendorId,
-						opened: false,
-					};
-					ledgerDevice.set(device);
-					ledgerConnected.set(true);
-					ledgerError.set(null);
-				} else if (event.type === 'remove') {
-					ledgerDevice.set(null);
-					ledgerConnected.set(false);
-					ledgerAccounts.set([]);
-					ledgerWallets.set([]);
-					ledgerError.set('Device disconnected');
-					// Close transport if open
-					if (currentTransport) {
-						currentTransport.close();
-						currentTransport = null;
-					}
-				}
-			},
-			error: (error: any) => {
-				console.error('Ledger device error:', error);
-				ledgerError.set(error.message || 'Device error');
-			},
-			complete: () => {
-				console.log('Ledger device listener complete');
-			},
-		});
+		// Check if at least one connection method is supported
+		console.log('Checking WebHID support...');
+		const webHIDSupport = checkWebHIDSupport();
+		console.log('WebHID support result:', webHIDSupport);
+
+		console.log('Checking WebUSB support...');
+		const webUSBSupport = checkWebUSBSupport();
+		console.log('WebUSB support result:', webUSBSupport);
+
+		if (!webHIDSupport.supported && !webUSBSupport.supported) {
+			const errorMsg = 'Neither WebHID nor WebUSB is supported in this browser. Please use Chrome/Edge 89+ or another compatible browser.';
+			console.error('Ledger initialization failed:', errorMsg);
+			ledgerError.set(errorMsg);
+			return false;
+		}
+
+		// Default to WebHID if available, otherwise WebUSB
+		if (webHIDSupport.supported) {
+			console.log('Setting connection method to WebHID');
+			ledgerConnectionMethod.set('WebHID');
+		} else {
+			console.log('Setting connection method to WebUSB');
+			ledgerConnectionMethod.set('WebUSB');
+		}
+
+		// Just initialize the stores - actual device connection happens on user interaction
+		console.log('Initializing Ledger stores...');
+		ledgerConnected.set(false);
+		ledgerDevice.set(null);
+		ledgerAccounts.set([]);
+		ledgerWallets.set([]);
+		ledgerError.set(null);
+		console.log('Ledger stores initialized successfully - ready for user interaction');
 		return true;
 	} catch (error) {
-		console.error('Failed to initialize Ledger:', error);
-		ledgerError.set(error instanceof Error ? error.message : 'Failed to initialize Ledger');
+		console.error('Failed to initialize Ledger stores - caught exception:', error);
+		const errorMessage = error instanceof Error ? error.message : 'Failed to initialize Ledger';
+		console.error('Error details:', errorMessage);
+		ledgerError.set(errorMessage);
 		return false;
 	}
 }
 
 /**
- * Connect to Ledger device
+ * Connect to Ledger device - must be called from user interaction
  */
 export async function connectLedger(): Promise<boolean> {
+	//return new Promise<boolean>(async (resolve, reject) => {
+
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
+
+		// Get current connection method (already set during initialization)
+		let connectionMethod: 'WebHID' | 'WebUSB' = 'WebHID';
+		const unsubscribe = ledgerConnectionMethod.subscribe(method => (connectionMethod = method));
+		unsubscribe();
+
 		// Close existing transport
 		if (currentTransport) await currentTransport.close();
-		// Create new transport
-		currentTransport = await TransportWebUSB.create();
+
+		let lastError: Error | null = null;
+
+		// Try the selected connection method first
+		try {
+			if (connectionMethod === 'WebHID') {
+				currentTransport = await TransportWebHID.create();
+			} else {
+				currentTransport = await TransportWebUSB.create();
+			}
+		} catch (error) {
+			console.warn(`${connectionMethod} connection failed, trying fallback:`, error);
+			lastError = error instanceof Error ? error : new Error(`${connectionMethod} connection failed`);
+
+			// Try fallback method
+			const fallbackMethod = connectionMethod === 'WebHID' ? 'WebUSB' : 'WebHID';
+			const fallbackSupport = checkConnectionMethodSupport(fallbackMethod);
+
+			if (fallbackSupport.supported) {
+				try {
+					if (fallbackMethod === 'WebHID') {
+						currentTransport = await TransportWebHID.create();
+					} else {
+						currentTransport = await TransportWebUSB.create();
+					}
+					// Update the connection method store to reflect what actually worked
+					ledgerConnectionMethod.set(fallbackMethod);
+					console.log(`Fallback to ${fallbackMethod} successful`);
+				} catch (fallbackError) {
+					console.error(`Fallback ${fallbackMethod} also failed:`, fallbackError);
+					throw lastError; // Throw the original error
+				}
+			} else {
+				throw lastError; // Fallback not supported, throw original error
+			}
+		}
+
 		// Test connection by getting app configuration
 		const eth = new EthApp(currentTransport);
 		const config = await eth.getAppConfiguration();
 		console.log('Ledger app configuration:', config);
-		ledgerConnected.set(true);
+
+		// Set up device listener for disconnect detection (optional - basic functionality works without it)
+		try {
+			if (connectionMethod === 'WebHID') {
+				TransportWebHID.listen({
+					next: (event: any) => {
+						console.log('Ledger device event:', event);
+
+						if (event.type === 'add') {
+							if (event.descriptor) {
+								const deviceInfo: LedgerDevice = {
+									id: 'ledger-' + Date.now(),
+									name: event.descriptor.productName || 'Ledger Device',
+									productId: event.descriptor.productId || 0,
+									vendorId: event.descriptor.vendorId || 0,
+									opened: true,
+									productName: event.descriptor.productName || 'Unknown',
+									deviceModel: {
+										internal_model: event.deviceModel?.id || 'ledger',
+										model: event.deviceModel?.productName || event.device.productName || 'Ledger Device',
+									},
+								};
+								ledgerDevice.set(deviceInfo);
+								ledgerConnected.set(true);
+								//							resolve(true);
+							}
+						} else if (event.type === 'remove') {
+							console.log('Device removed');
+							ledgerDevice.set(null);
+							ledgerConnected.set(false);
+							ledgerAccounts.set([]);
+							ledgerWallets.set([]);
+							ledgerError.set('Device disconnected');
+							// Close transport if open
+							if (currentTransport) {
+								currentTransport.close();
+								currentTransport = null;
+							}
+						}
+					},
+					error: (error: any) => {
+						console.warn('Ledger device listener error (non-critical):', error);
+						// Don't set ledgerError here as it's not critical for basic functionality
+					},
+					complete: () => {
+						console.log('Ledger device listener complete');
+					},
+				});
+			} else {
+				// WebUSB doesn't have the same listener API as WebHID
+				// Basic functionality will work without device listener
+				console.log('WebUSB device listener not available - using basic connection');
+			}
+		} catch (listenerError) {
+			console.warn('Could not set up device listener (non-critical):', listenerError);
+			// Continue without listener - basic functionality still works
+		}
+
+		// Create device object with app configuration info for unique identification
+		let deviceId = 'ledger-' + Date.now();
+		let deviceName = 'Ledger Device';
+
+		// Try to get additional device info from app configuration
+		try {
+			// Create a unique device ID based on device characteristics
+			if (config.arbitraryDataEnabled !== undefined && config.version) {
+				deviceId = `ledger-${config.version}-${Date.now()}`;
+				deviceName = `Ledger Device (App v${config.version})`;
+			}
+		} catch (error) {
+			console.warn('Could not get detailed device info:', error);
+		}
+
 		return true;
 	} catch (error) {
 		console.error('Error connecting to Ledger:', error);
-		const errorMessage = error instanceof Error ? error.message : 'Failed to connect to Ledger';
+		let errorMessage = 'Failed to connect to Ledger';
+
+		if (error instanceof Error) {
+			// Provide specific error messages for common issues
+			if (error.name === 'NotAllowedError') {
+				errorMessage = 'Connection denied. Please make sure you:\n' + '• Selected a Ledger device in the browser dialog\n' + '• Have your Ledger device unlocked\n' + '• Have the Ethereum app open on your device\n' + "• Close Ledger Live if it's running";
+			} else if (error.name === 'NotFoundError') {
+				errorMessage = 'No Ledger device found. Please connect your device and try again.';
+			} else if (error.name === 'NotSupportedError') {
+				errorMessage = 'Ledger device not supported or driver issue.';
+			} else if (error.message.includes('busy') || error.message.includes('in use')) {
+				errorMessage = 'Device is busy. Please close Ledger Live and try again.';
+			} else if (error.message.includes('CLA_NOT_SUPPORTED') || error.message.includes('UNKNOWN_APDU') || error.message.includes('0x6d02')) {
+				errorMessage = 'Please open the Ethereum app on your Ledger device.\n\n' + 'Steps:\n' + '1. Navigate to the Ethereum app on your Ledger\n' + '2. Press both buttons to open it\n' + '3. Wait for "Application is ready" message\n' + '4. Try connecting again';
+			} else if (error.message.includes('SECURITY_STATUS_NOT_SATISFIED')) {
+				errorMessage = 'Please unlock your Ledger device with your PIN.';
+			} else if (error.message.includes('0x6985')) {
+				errorMessage = 'Transaction rejected by user or device locked.';
+			} else if (error.message.includes('0x6f00')) {
+				errorMessage = 'App not ready. Please wait for the Ethereum app to fully load.';
+			} else {
+				errorMessage = error.message;
+			}
+		}
+
 		ledgerError.set(errorMessage);
 		return false;
 	} finally {
 		ledgerLoading.set(false);
 	}
+	//});
 }
 
 /**
@@ -192,7 +424,7 @@ export function getLedgerWallets(): LedgerWallet[] {
 /**
  * Sign Ethereum transaction with Ledger (compatible with Ethers.js)
  */
-export async function signEthereumTransaction(wallet: LedgerWallet, transaction: TransactionRequest): Promise<LedgerResponse<{ r: string; s: string; v: number }>> {
+export async function signEthereumTransaction(path: string, transaction: TransactionRequest): Promise<LedgerResponse<{ r: string; s: string; v: number }>> {
 	if (!currentTransport) return { success: false, payload: null as any, error: 'Ledger not connected' };
 	try {
 		ledgerLoading.set(true);
@@ -210,7 +442,7 @@ export async function signEthereumTransaction(wallet: LedgerWallet, transaction:
 		// Serialize transaction for Ledger
 		const serializedTx = serializeTransaction(unsignedTx);
 		// Sign with Ledger
-		const result = await eth.signTransaction(wallet.path, serializedTx);
+		const result = await eth.signTransaction(path, serializedTx);
 		return {
 			success: true,
 			payload: {
@@ -232,18 +464,18 @@ export async function signEthereumTransaction(wallet: LedgerWallet, transaction:
 /**
  * Sign Ethereum message with Ledger
  */
-export async function signEthereumMessage(wallet: LedgerWallet, message: string): Promise<LedgerResponse<{ address: string; signature: string }>> {
+export async function signEthereumMessage(path: string, address: string, message: string): Promise<LedgerResponse<{ address: string; signature: string }>> {
 	if (!currentTransport) return { success: false, payload: null as any, error: 'Ledger not connected' };
 	try {
 		ledgerLoading.set(true);
 		ledgerError.set(null);
 		const eth = new EthApp(currentTransport);
 		// Sign message with Ledger
-		const result = await eth.signPersonalMessage(wallet.path, Buffer.from(message, 'utf8').toString('hex'));
+		const result = await eth.signPersonalMessage(path, Array.from(new TextEncoder().encode(message), byte => byte.toString(16).padStart(2, '0')).join(''));
 		return {
 			success: true,
 			payload: {
-				address: wallet.address,
+				address: address,
 				signature: '0x' + result.r + result.s + result.v.toString(16).padStart(2, '0'),
 			},
 		};
@@ -360,6 +592,50 @@ function serializeTransaction(tx: any): string {
 		serialized += length.toString(16).padStart(2, '0') + cleanField;
 	}
 	return serialized;
+}
+
+/**
+ * Get device identifiers for wallet creation (similar to Trezor's staticSessionId)
+ */
+export function getLedgerDeviceIdentifiers(): any | null {
+	let device: LedgerDevice | null = null;
+	const unsubscribe = ledgerDevice.subscribe((d: LedgerDevice | null) => {
+		device = d;
+	});
+	unsubscribe();
+
+	if (!device) return null;
+
+	// TypeScript now knows device is not null here
+	const deviceData: LedgerDevice = device;
+	return {
+		deviceId: deviceData.id,
+		deviceModel: deviceData.deviceModel,
+	};
+}
+
+/**
+ * Add hardware address to wallet (similar to Trezor's doAddHardwareAddressTrezor)
+ * This is called from doAddAddress when adding addresses to existing Ledger wallets
+ */
+export async function doAddHardwareAddressLedger(w: any, addresses: any[], index: number, name?: string): Promise<void> {
+	console.log('Adding Ledger address at index:', index);
+	const path = `m/44'/60'/0'/0/${index}`;
+	const result = await getLedgerEthereumAccounts(index, 1);
+	console.log('Ledger address result:', result);
+	if (result.length !== 1) {
+		console.error('Failed to get Ledger address for index:', index);
+		return;
+	}
+	const res = result[0];
+	const address = {
+		name: name || `Ledger Address ${index + 1}`,
+		address: res.address,
+		path: path,
+		index: index,
+		publicKey: res.publicKey,
+	};
+	addresses.push(address);
 }
 
 /**
