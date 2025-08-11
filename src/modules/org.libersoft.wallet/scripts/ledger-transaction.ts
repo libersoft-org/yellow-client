@@ -4,12 +4,16 @@ import type { IAddress, IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts
 import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 import { signEthereumTransaction } from '@/org.libersoft.wallet/scripts/ledger.ts';
+import { ensureLedgerState } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
 
 export async function sendTransactionLedger(wallet: IWallet, srcAddress: IAddress, dstAddress: string, amount: bigint, fee: bigint, contractAddress?: string): Promise<void> {
 	// Validate inputs
 	if (!wallet || !srcAddress || !dstAddress || amount <= 0n) {
 		throw new Error('Invalid transaction parameters');
 	}
+
+	// Ensure Ledger state is available
+	await ensureLedgerState();
 
 	// Get provider for nonce and gas estimation
 	const providerInstance = get(provider);

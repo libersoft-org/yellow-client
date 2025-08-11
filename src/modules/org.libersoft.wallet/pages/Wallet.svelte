@@ -28,6 +28,9 @@
 	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
 	import TrezorWindow from '@/org.libersoft.wallet/windows/Wallets/TrezorWindow.svelte';
 	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
+	import { ledgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
+	import LedgerWindow from '@/org.libersoft.wallet/windows/Wallets/LedgerWindow.svelte';
+	import { toggleLedgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
 	let elWindowNetworks;
 	let addressElement = $state<HTMLElement | null>(null);
 
@@ -160,6 +163,7 @@
 	{#if $debug}
 		<div class="buttons">
 			<Button text="TrezorWindow" onClick={toggleTrezorWindow} />
+			<Button text="LedgerWindow" onClick={toggleLedgerWindow} />
 			<Button text="Add a new wallet > Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
 			<Button text="Add a new wallet > Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
 		</div>
@@ -233,3 +237,4 @@
 <Window title="Select RPC Server" body={WindowRPCServers} bind:this={$rpcServersWindow} width="600px" />
 <Settings />
 <TrezorWindow />
+<LedgerWindow />
