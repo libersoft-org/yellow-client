@@ -132,6 +132,7 @@
 		<li>Unlocked with your PIN</li>
 		<li>Has the Ethereum app open and ready</li>
 		<li>Not being used by Ledger Live or other applications</li>
+		<li>on linux, <code>wget -q -O - https://raw.githubusercontent.com/LedgerHQ/udev-rules/master/add_udev_rules.sh | sudo bash</code></li>
 	</ul>
 {/if}
 
