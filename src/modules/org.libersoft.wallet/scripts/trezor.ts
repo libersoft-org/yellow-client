@@ -37,7 +37,7 @@ export const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 50000): 
 
 // Type guard for TrezorConnect response
 function isSuccessResponse<T>(response: Success<T> | Unsuccessful): response is Success<T> {
-	return response.success === true;
+	return response.success;
 }
 
 // Type guard for device event

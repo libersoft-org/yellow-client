@@ -4,12 +4,16 @@ import type { IAddress, IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts
 import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
 import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
 import { signEthereumTransaction } from '@/org.libersoft.wallet/scripts/ledger.ts';
+import { ensureLedgerState } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
 
 export async function sendTransactionLedger(wallet: IWallet, srcAddress: IAddress, dstAddress: string, amount: bigint, fee: bigint, contractAddress?: string): Promise<void> {
 	// Validate inputs
 	if (!wallet || !srcAddress || !dstAddress || amount <= 0n) {
 		throw new Error('Invalid transaction parameters');
 	}
+
+	// Ensure Ledger state is available
+	await ensureLedgerState();
 
 	// Get provider for nonce and gas estimation
 	const providerInstance = get(provider);
@@ -33,7 +37,7 @@ export async function sendTransactionLedger(wallet: IWallet, srcAddress: IAddres
 	const nonce = await providerInstance.getTransactionCount(srcAddress.address, 'pending');
 	console.log('Transaction nonce:', nonce);
 
-	// Get current gas price and fee data
+	// Get current gas price and fee data for EIP-1559 transaction
 	const feeData = await providerInstance.getFeeData();
 	let gasPrice = feeData.gasPrice;
 	let maxFeePerGas = feeData.maxFeePerGas;
@@ -57,26 +61,38 @@ export async function sendTransactionLedger(wallet: IWallet, srcAddress: IAddres
 	// Prepare transaction parameters for Ledger
 	const txParams: any = {
 		to: contractAddress || dstAddress,
-		value: contractAddress ? '0x0' : '0x' + amount.toString(16),
-		gasLimit: gasLimit,
-		nonce: '0x' + nonce.toString(16),
+		value: contractAddress ? 0n : amount, // Use bigint directly
+		gasLimit: BigInt(gasLimit), // Convert to bigint
+		nonce: nonce,
 		chainId: network.chainID,
+		data: txData || '0x',
 	};
 
-	// Add transaction data for token transfers
-	if (txData) {
-		txParams.data = txData;
-	}
-
-	// Use EIP-1559 transaction if supported
+	// Use EIP-1559 transaction (type 2) when available, fallback to legacy
 	if (maxFeePerGas && maxPriorityFeePerGas) {
-		txParams.maxFeePerGas = '0x' + maxFeePerGas.toString(16);
-		txParams.maxPriorityFeePerGas = '0x' + maxPriorityFeePerGas.toString(16);
+		// EIP-1559 transaction (type 2) - modern gas pricing
+		txParams.type = 2;
+		txParams.maxFeePerGas = maxFeePerGas;
+		txParams.maxPriorityFeePerGas = maxPriorityFeePerGas;
+
+		console.log('Using EIP-1559 transaction with maxFeePerGas:', maxFeePerGas.toString(), 'maxPriorityFeePerGas:', maxPriorityFeePerGas.toString());
 	} else if (gasPrice) {
-		txParams.gasPrice = '0x' + gasPrice.toString(16);
+		// Fallback to legacy transaction if EIP-1559 data not available
+		// Don't set type field for legacy transactions (ethers.js will handle it)
+		txParams.gasPrice = gasPrice;
+		console.log('Using legacy transaction with gasPrice:', gasPrice.toString());
+	} else {
+		// If no gas data is available at all, use reasonable defaults for Polygon
+		// Polygon typically has very low gas prices
+		const defaultGasPrice = BigInt(30000000000); // 30 Gwei for Polygon
+		txParams.gasPrice = defaultGasPrice;
+		console.warn('No gas price data from provider, using default:', defaultGasPrice.toString());
 	}
 
 	console.log('Ledger transaction parameters:', txParams);
+	console.log('Transaction type:', txParams.type || 'legacy (no type field)');
+	console.log('Has gasPrice:', !!txParams.gasPrice);
+	console.log('Has maxFeePerGas:', !!txParams.maxFeePerGas);
 
 	// Sign transaction with Ledger
 	console.log('Signing transaction with Ledger...');

@@ -3,9 +3,11 @@ import './ledger-polyfills';
 
 import { writable, derived, get } from 'svelte/store';
 import type { TransactionRequest } from 'ethers';
+import { Transaction } from 'ethers';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import EthApp from '@ledgerhq/hw-app-eth';
+import { ledgerService } from '@ledgerhq/hw-app-eth';
 interface LedgerDevice {
 	id: string;
 	name: string;
@@ -430,19 +432,76 @@ export async function signEthereumTransaction(path: string, transaction: Transac
 		ledgerLoading.set(true);
 		ledgerError.set(null);
 		const eth = new EthApp(currentTransport);
-		// Prepare transaction for Ledger
-		const unsignedTx = {
-			nonce: transaction.nonce ? `0x${transaction.nonce.toString(16)}` : '0x0',
-			gasPrice: transaction.gasPrice ? `0x${transaction.gasPrice.toString(16)}` : '0x0',
-			gasLimit: transaction.gasLimit ? `0x${transaction.gasLimit.toString(16)}` : '0x0',
-			to: transaction.to || '',
-			value: transaction.value ? `0x${transaction.value.toString(16)}` : '0x0',
-			data: transaction.data || '0x',
-		};
-		// Serialize transaction for Ledger
-		const serializedTx = serializeTransaction(unsignedTx);
-		// Sign with Ledger
-		const result = await eth.signTransaction(path, serializedTx);
+
+		// Normalize transaction fields to ensure they are strings/bigints
+		const to = transaction.to ? String(await Promise.resolve(transaction.to)) : undefined;
+
+		// Determine transaction type and create appropriate transaction object
+		let normalizedTx: any;
+
+		// Check if we have EIP-1559 parameters
+		const isEIP1559 = 'maxFeePerGas' in transaction && transaction.maxFeePerGas && 'maxPriorityFeePerGas' in transaction && transaction.maxPriorityFeePerGas;
+
+		if (isEIP1559 || transaction.type === 2) {
+			// EIP-1559 transaction (type 2)
+			normalizedTx = {
+				type: 2,
+				chainId: transaction.chainId,
+				nonce: transaction.nonce,
+				maxFeePerGas: transaction.maxFeePerGas,
+				maxPriorityFeePerGas: transaction.maxPriorityFeePerGas || transaction.maxFeePerGas,
+				gasLimit: transaction.gasLimit,
+				to: to,
+				value: transaction.value || 0n,
+				data: transaction.data || '0x',
+			};
+			console.log('Creating EIP-1559 transaction (type 2)');
+		} else {
+			// Legacy transaction - ethers.js v5 will create type 1 if chainId is included
+			// For proper legacy (type 0), we need to handle chainId specially
+			normalizedTx = {
+				// Don't set type field - ethers.js expects null/undefined for legacy
+				nonce: transaction.nonce,
+				gasPrice: transaction.gasPrice || BigInt(30000000000), // Default 30 Gwei if not provided
+				gasLimit: transaction.gasLimit,
+				to: to,
+				value: transaction.value || 0n,
+				data: transaction.data || '0x',
+				// Including chainId here causes ethers to create Type 1 (EIP-2930)
+				// We'll add it after for signing purposes
+			};
+			console.log('Creating legacy transaction without chainId to avoid Type 1 serialization');
+		}
+
+		// Log the normalized transaction for debugging
+		console.log('Normalized transaction before serialization:', normalizedTx);
+		console.log('Transaction type explicitly set to:', normalizedTx.type);
+
+		// Create an ethers Transaction object to properly serialize
+		const tx = Transaction.from(normalizedTx);
+		const unsignedTx = tx.unsignedSerialized;
+		console.log('Serialized unsigned transaction:', unsignedTx);
+
+		// Try to resolve transaction for better UX (shows transaction details on Ledger)
+		let resolution: any = null;
+		try {
+			console.log('Attempting to resolve transaction for Ledger display...');
+			console.log('Transaction hex to resolve:', unsignedTx);
+			// The ledgerService expects the raw hex without 0x prefix
+			const txHexForLedger = unsignedTx.startsWith('0x') ? unsignedTx.slice(2) : unsignedTx;
+			resolution = await ledgerService.resolveTransaction(txHexForLedger, {}, {});
+			console.log('Transaction resolved successfully:', resolution);
+		} catch (resolveError) {
+			console.warn('Failed to resolve transaction, falling back to blind signing:', resolveError);
+			// Resolution is optional - we can still sign without it (blind signing)
+			resolution = null;
+		}
+
+		// Sign with Ledger (providing resolution parameter as required by new API)
+		// The signTransaction method also expects the hex without 0x prefix
+		const txHexForSigning = unsignedTx.startsWith('0x') ? unsignedTx.slice(2) : unsignedTx;
+		const result = await eth.signTransaction(path, txHexForSigning, resolution);
+
 		return {
 			success: true,
 			payload: {
@@ -453,7 +512,13 @@ export async function signEthereumTransaction(path: string, transaction: Transac
 		};
 	} catch (error) {
 		console.error('Error signing Ethereum transaction:', error);
-		const errorMessage = error instanceof Error ? error.message : 'Failed to sign transaction';
+		let errorMessage = error instanceof Error ? error.message : 'Failed to sign transaction';
+
+		// Provide helpful message for common Ledger errors
+		if (errorMessage.includes('EthAppPleaseEnableContractData') || errorMessage.includes('Please enable Blind signing or Contract data')) {
+			errorMessage = 'Token transactions require "Contract data" to be enabled on your Ledger device.\n\n' + 'To enable:\n' + '1. Open the Ethereum app on your Ledger\n' + '2. Go to Settings\n' + '3. Enable "Contract data" or "Blind signing"\n' + '4. Try the transaction again';
+		}
+
 		ledgerError.set(errorMessage);
 		return { success: false, payload: null as any, error: errorMessage };
 	} finally {
@@ -576,23 +641,7 @@ export async function getLedgerDeviceInfo(): Promise<LedgerResponse<any>> {
 	}
 }
 
-/**
- * Helper function to serialize transaction for Ledger
- */
-function serializeTransaction(tx: any): string {
-	// This is a simplified version - in production you'd use a proper RLP encoding library
-	// For now, we'll use a basic implementation
-	const fields = [tx.nonce || '0x0', tx.gasPrice || '0x0', tx.gasLimit || '0x0', tx.to || '0x', tx.value || '0x0', tx.data || '0x'];
-	// Convert to RLP format (simplified)
-	// In production, use: @ethereumjs/rlp or similar library
-	let serialized = '';
-	for (const field of fields) {
-		const cleanField = field.startsWith('0x') ? field.slice(2) : field;
-		const length = cleanField.length / 2;
-		serialized += length.toString(16).padStart(2, '0') + cleanField;
-	}
-	return serialized;
-}
+// Note: serializeTransaction function removed - now using ethers' Transaction.unsignedSerialized instead
 
 /**
  * Get device identifiers for wallet creation (similar to Trezor's staticSessionId)
