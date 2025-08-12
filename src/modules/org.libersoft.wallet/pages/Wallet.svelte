@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
 	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
@@ -25,13 +24,11 @@
 	import WindowNetworks from '@/org.libersoft.wallet/windows/Networks/Selection.svelte';
 	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
 	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
-	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
 	import TrezorWindow from '@/org.libersoft.wallet/windows/Wallets/TrezorWindow.svelte';
 	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
-	import { ledgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
 	import LedgerWindow from '@/org.libersoft.wallet/windows/Wallets/LedgerWindow.svelte';
 	import { toggleLedgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
-	let elWindowNetworks;
+	let elWindowNetworks: Window | undefined;
 	let addressElement = $state<HTMLElement | null>(null);
 
 	onMount(() => {

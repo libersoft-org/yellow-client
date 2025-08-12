@@ -1,11 +1,10 @@
 import { invoke } from '@tauri-apps/api/core';
 // import * as app from '@tauri-apps/api';
 // import { platform } from '@tauri-apps/plugin-os';
-import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
 // import { confirm } from '@tauri-apps/plugin-dialog';
 // import { exit } from '@tauri-apps/plugin-process';
+import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
 import { runOnSystemStartup, showTrayIcon } from '@/core/scripts/settings.ts';
-// import { get } from 'svelte/store';
 import { disable, enable } from '@tauri-apps/plugin-autostart';
 import { createTrayIcon, destroyTrayIcon } from '@/core/scripts/tray_icon.ts';
 import { TAURI, TAURI_MOBILE, log } from './tauri.ts';
