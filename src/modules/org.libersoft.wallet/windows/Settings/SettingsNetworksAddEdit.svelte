@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
-	import { addNetwork, editNetwork, type INetwork, default_networks, loadDefaultNetworks, type IRPCServer, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { addNetwork, editNetwork, type INetwork, default_networks, loadDefaultNetworks, type IRPCServer, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge } from '@yellow-dev/crypto-utils/network';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

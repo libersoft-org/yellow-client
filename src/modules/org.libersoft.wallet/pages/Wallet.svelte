@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { reconnect, availableRPCURLs, status } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
-	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { selectedWallet, selectedAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { initializeDefaultNetworks } from '@yellow-dev/crypto-utils/network';
+	import { reconnect, availableRPCURLs, status } from '@yellow-dev/crypto-utils/provider';
+	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { selectedNetwork } from '@yellow-dev/crypto-utils/network';
+	import { rpcURL } from '@yellow-dev/crypto-utils/provider';
 	import { shortenAddress } from '$lib/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -25,9 +25,9 @@
 	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
 	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
 	import TrezorWindow from '@/org.libersoft.wallet/windows/Wallets/TrezorWindow.svelte';
-	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
+	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window';
 	import LedgerWindow from '@/org.libersoft.wallet/windows/Wallets/LedgerWindow.svelte';
-	import { toggleLedgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
+	import { toggleLedgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window';
 	let elWindowNetworks: Window | undefined;
 	let addressElement = $state<HTMLElement | null>(null);
 

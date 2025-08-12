@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getGuid } from '@/core/scripts/utils/utils.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { addNFT, editNFT, type INFT, type INFTData } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { addNFT, editNFT, type INFT, type INFTData } from '@yellow-dev/crypto-utils/network';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

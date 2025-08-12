@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
 	import Window from '@/core/components/Window/Window.svelte';
-	import { ledgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
+	import { ledgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window';
 	import LedgerConnect from '@/org.libersoft.wallet/components/LedgerConnect.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { initializeLedger } from '@/org.libersoft.wallet/scripts/ledger';

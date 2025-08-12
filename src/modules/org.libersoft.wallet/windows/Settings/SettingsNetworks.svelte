@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { networks, type INetwork, reorderNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { networks, type INetwork, reorderNetworks } from '@yellow-dev/crypto-utils/network';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

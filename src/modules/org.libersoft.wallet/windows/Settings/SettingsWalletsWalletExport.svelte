@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Export from '@/core/components/Export/Export.svelte';
-	import { type IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { type IWallet } from '@yellow-dev/crypto-utils/wallet';
 	interface Props {
 		wallet: IWallet;
 		close: () => void;

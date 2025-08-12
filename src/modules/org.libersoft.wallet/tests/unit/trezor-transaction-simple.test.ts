@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 // Test helper functions and validation logic from trezor-transaction
 describe('Trezor Transaction Validation', () => {

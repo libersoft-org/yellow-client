@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { type INetwork, type IToken, findNetworkByGuid, reorderTokens } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { getTokenInfo } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { type INetwork, type IToken, findNetworkByGuid, reorderTokens } from '@yellow-dev/crypto-utils/network';
+	import { getTokenInfo } from '@yellow-dev/crypto-utils/balance';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

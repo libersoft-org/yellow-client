@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { wallets, type IWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
+	import { wallets, type IWallet } from '@yellow-dev/crypto-utils/wallet';
+	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import SelectionWallets from '@/org.libersoft.wallet/windows/Wallets/SelectionWallets.svelte';

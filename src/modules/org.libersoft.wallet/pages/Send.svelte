@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from '@/org.libersoft.wallet/scripts/transaction.ts';
-	import { sendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, currencies, tokens, type ICurrency } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from '@yellow-dev/crypto-utils/transaction';
+	import { sendAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { selectedNetwork, currencies, tokens, type ICurrency } from '@yellow-dev/crypto-utils/network';
+	import { selectedAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
-	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { getBalance, getTokenBalanceByAddress, getBatchTokensInfo, formatBalance, type IBalance } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { provider } from '@yellow-dev/crypto-utils/provider';
+	import { getBalance, getTokenBalanceByAddress, getBatchTokensInfo, formatBalance, type IBalance } from '@yellow-dev/crypto-utils/balance';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';

@@ -1,26 +1,16 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
-	import { debug } from '@/core/scripts/stores.ts';
+	import { getContext } from 'svelte';
 	import { trezorState, type TrezorAccount, staticSessionId } from '@/org.libersoft.wallet/scripts/trezor';
 	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/wallet';
 	import TrezorConnect from '@/org.libersoft.wallet/components/TrezorConnect.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
 	import TrezorDebug from '@/org.libersoft.wallet/components/TrezorDebug.svelte';
 
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 	let walletName = '';
-	let selectedAccount: TrezorAccount | null = null;
 	let step: 'select-wallet' | 'configure' = 'select-wallet';
-	let trezorConnect: TrezorConnect;
-
-	function selectAccount(account: TrezorAccount) {
-		selectedAccount = account;
-		walletName = account.name || 'Trezor Wallet';
-		step = 'configure';
-	}
 
 	async function addWallet() {
 		await addHardwareWallet('trezor', walletName, { staticSessionId: $staticSessionId });
@@ -65,7 +55,7 @@
 	</div>
 
 	{#if step === 'select-wallet'}
-		<TrezorConnect bind:this={trezorConnect} {onConnected} />
+		<TrezorConnect {onConnected} />
 		<div class="buttons">
 			<Button onClick={() => (step = 'configure')} enabled={!!$trezorState} text="Next" />
 		</div>

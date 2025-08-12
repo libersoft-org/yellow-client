@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { default_networks, type INetwork } from '@yellow-dev/crypto-utils/network';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';

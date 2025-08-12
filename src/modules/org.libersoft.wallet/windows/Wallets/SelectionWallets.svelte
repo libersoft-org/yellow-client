@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { wallets, selectAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { walletsWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { wallets, selectAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { walletsWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

@@ -2,11 +2,11 @@
 	import { onMount, onDestroy, tick } from 'svelte';
 	import QRCode from 'qrcode';
 	import { parseUnits, Contract } from 'ethers';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { selectedNetwork, currencies, tokens, type ICurrency } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { provider } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { getBatchTokensInfo } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { selectedAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { selectedNetwork, currencies, tokens, type ICurrency } from '@yellow-dev/crypto-utils/network';
+	import { provider } from '@yellow-dev/crypto-utils/provider';
+	import { getBatchTokensInfo } from '@yellow-dev/crypto-utils/balance';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

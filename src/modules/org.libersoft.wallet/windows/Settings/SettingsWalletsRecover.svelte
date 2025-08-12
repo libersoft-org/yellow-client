@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Mnemonic } from 'ethers';
-	import { addWallet, wallets } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { addWallet, wallets } from '@yellow-dev/crypto-utils/wallet';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Form from '@/core/components/Form/Form.svelte';
 	import Label from '@/core/components/Label/Label.svelte';

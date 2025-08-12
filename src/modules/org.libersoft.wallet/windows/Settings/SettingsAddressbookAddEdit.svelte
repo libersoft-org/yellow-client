@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { addAddressBookItem, editAddressBookItem, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/addressbook.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { addAddressBookItem, editAddressBookItem, type IAddressBookItem } from '@yellow-dev/crypto-utils/addressbook';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

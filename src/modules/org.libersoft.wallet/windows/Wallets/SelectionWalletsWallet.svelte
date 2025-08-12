@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { selectAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
+	import { selectAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { hideSidebarMobile } from '@/core/scripts/stores.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { setSection } from '@/org.libersoft.wallet/scripts/ui.ts';
-	import { setSendAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { addressBook } from '@/org.libersoft.wallet/scripts/addressbook.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { setSection } from '@/org.libersoft.wallet/scripts/ui';
+	import { setSendAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { addressBook } from '@yellow-dev/crypto-utils/addressbook';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import Item from '@/core/components/Sidebar/SidebarItem.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

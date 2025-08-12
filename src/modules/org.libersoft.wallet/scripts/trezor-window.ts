@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import { trezorState } from '@/org.libersoft.wallet/scripts/trezor.ts';
+import { trezorState } from '@yellow-dev/crypto-utils/trezor';
 
 export const trezorWindow = writable<any>(null);
 
