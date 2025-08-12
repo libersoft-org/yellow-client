@@ -49,6 +49,7 @@
 	.ellipsis {
 		display: block;
 		width: 100%;
+		max-width: 150px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -79,6 +80,7 @@
 	:global(.ellipsis) {
 		flex: 1 1 0%;
 		min-width: 0;
+		max-width: 150px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;

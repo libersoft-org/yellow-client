@@ -124,11 +124,6 @@ function injectDragStyles() {
 			pointer-events: none !important;
 		}
 		
-		/* Ensure table structure is maintained in clones */
-		table:has(tr.drop-gap) {
-			table-layout: fixed !important;
-			width: 100% !important;
-		}
 	`;
 
 	document.head.appendChild(style);

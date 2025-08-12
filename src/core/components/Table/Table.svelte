@@ -26,19 +26,10 @@
 		border: 1px solid var(--secondary-background);
 		border-radius: 10px;
 		border-spacing: 0;
-	}
-
-	table {
 		border: 0;
 		padding-bottom: 0;
-		width: 100%;
 		border-collapse: collapse;
-		table-layout: fixed;
 		font-size: clamp(14px, 2vw, 16px);
-	}
-
-	:global(.table-wide) table {
-		width: 100%;
 	}
 </style>
 
