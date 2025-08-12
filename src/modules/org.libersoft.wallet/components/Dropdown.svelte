@@ -28,6 +28,10 @@
 
 	.dropdown .text {
 		flex-grow: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 250px;
 	}
 </style>
 
