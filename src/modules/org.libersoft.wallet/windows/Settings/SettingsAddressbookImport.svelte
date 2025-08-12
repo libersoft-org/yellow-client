@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { validateAddressBookImport, importAddressBookItems, replaceAddressBook, hasAddressBookItems } from '@yellow-dev/crypto-utils/addressbook';
+	import { validateAddressBookImport, importAddressBookItems, replaceAddressBook, hasAddressBookItems } from '@/org.libersoft.wallet/scripts/crypto-utils/addressbook';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog, { type IDialogData } from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {

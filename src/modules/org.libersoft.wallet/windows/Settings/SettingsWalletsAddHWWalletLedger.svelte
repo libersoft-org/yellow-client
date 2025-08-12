@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getContext, onMount } from 'svelte';
-	import { addHardwareWallet } from '@yellow-dev/crypto-utils/wallet';
-	import { initWalletLedger } from '@yellow-dev/crypto-utils/ledger-integration';
-	import { connectLedger, getLedgerEthereumAccounts, ledgerLoading, ledgerDevice, ledgerConfig, ledgerError, ledgerConnected, getLedgerDeviceIdentifiers, type LedgerAccount } from '@yellow-dev/crypto-utils/ledger';
+	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
+	import { initWalletLedger } from '@/org.libersoft.wallet/scripts/crypto-utils/ledger-integration';
+	import { connectLedger, getLedgerEthereumAccounts, ledgerLoading, ledgerDevice, ledgerConfig, ledgerError, ledgerConnected, getLedgerDeviceIdentifiers, type LedgerAccount } from '@/org.libersoft.wallet/scripts/crypto-utils/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';

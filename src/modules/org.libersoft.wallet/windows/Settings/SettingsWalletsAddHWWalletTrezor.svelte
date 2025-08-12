@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { trezorState, type TrezorAccount, staticSessionId } from '@yellow-dev/crypto-utils/trezor';
-	import { addHardwareWallet } from '@yellow-dev/crypto-utils/wallet';
+	import { trezorState, type TrezorAccount, staticSessionId } from '@/org.libersoft.wallet/scripts/crypto-utils/trezor';
+	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
 	import TrezorConnect from '@/org.libersoft.wallet/components/TrezorConnect.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

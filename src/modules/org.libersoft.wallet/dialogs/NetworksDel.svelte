@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type INetwork, deleteNetwork } from '@yellow-dev/crypto-utils/network';
+	import { type INetwork, deleteNetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: INetwork;

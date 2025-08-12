@@ -4,7 +4,7 @@
 	import { trezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window';
 	import TrezorConnect from '@/org.libersoft.wallet/components/TrezorConnect.svelte';
 	import { onMount, onDestroy } from 'svelte';
-	import { initializeTrezor } from '@yellow-dev/crypto-utils/trezor';
+	import { initializeTrezor } from '@/org.libersoft.wallet/scripts/crypto-utils/trezor';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TrezorDebug from '@/org.libersoft.wallet/components/TrezorDebug.svelte';
 

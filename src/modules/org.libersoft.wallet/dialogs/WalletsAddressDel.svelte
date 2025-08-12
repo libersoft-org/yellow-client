@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deleteAddressFromWallet, type IWallet } from '@yellow-dev/crypto-utils/wallet';
+	import { deleteAddressFromWallet, type IWallet } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let wallet: IWallet;
 	let index: string | number;

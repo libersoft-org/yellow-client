@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { wallets, type IWallet } from '@yellow-dev/crypto-utils/wallet';
-	import { networks, default_networks, type INetwork } from '@yellow-dev/crypto-utils/network';
+	import { wallets, type IWallet } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
+	import { networks, default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
 	import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
-	import { addressBook, type IAddressBookItem } from '@yellow-dev/crypto-utils/addressbook';
+	import { addressBook, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/crypto-utils/addressbook';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';

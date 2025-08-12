@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { selectAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
 	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Table from '@/core/components/Table/Table.svelte';

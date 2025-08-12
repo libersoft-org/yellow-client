@@ -3,10 +3,10 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.ts';
-	import { selectedNetwork, tokens, nfts } from '@yellow-dev/crypto-utils/network';
-	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from '@yellow-dev/crypto-utils/balance';
-	import { provider, rpcURL } from '@yellow-dev/crypto-utils/provider';
-	import { selectedAddress } from '@yellow-dev/crypto-utils/wallet';
+	import { selectedNetwork, tokens, nfts } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from '@/org.libersoft.wallet/scripts/crypto-utils/balance';
+	import { provider, rpcURL } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
+	import { selectedAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';

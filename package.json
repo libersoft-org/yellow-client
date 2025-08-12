@@ -26,7 +26,6 @@
   },
   "dependencies": {
 		"yellow-client-common": "https://github.com/libersoft-org/yellow-client-common",
-    "@yellow-dev/crypto-utils": "https://github.com/libersoft-org/crypto-utils",
     "@floating-ui/dom": "^1.6.13",
     "@ledgerhq/hw-app-eth": "^6.45.10",
     "@ledgerhq/hw-transport-webusb": "^6.29.7",
@@ -62,6 +61,7 @@
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "lottie-web": "^5.12.2",
+    "node-localstorage": "^3.0.5",
     "mediainfo.js": "^0.3.4",
     "pako": "^2.1.0",
     "prismjs": "^1.30.0",

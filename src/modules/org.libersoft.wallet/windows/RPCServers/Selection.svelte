@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer, type INetwork } from '@yellow-dev/crypto-utils/network';
-	import { rpcURL, selectRPCURL } from '@yellow-dev/crypto-utils/provider';
+	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer, type INetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { rpcURL, selectRPCURL } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
 	import { onMount } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

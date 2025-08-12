@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addAddress, addressIndexAlreadyExists, addressesMaxIndex, type IWallet } from '@yellow-dev/crypto-utils/wallet';
+	import { addAddress, addressIndexAlreadyExists, addressesMaxIndex, type IWallet } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Label from '@/core/components/Label/Label.svelte';

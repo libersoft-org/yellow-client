@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { formatBalance, getTokenDecimals, getTokenInfo } from '@yellow-dev/crypto-utils/balance';
+	import { formatBalance, getTokenDecimals, getTokenInfo } from '@/org.libersoft.wallet/scripts/crypto-utils/balance';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { selectedNetwork } from '@yellow-dev/crypto-utils/network';
-	import { type IPayment, sendTransaction } from '@yellow-dev/crypto-utils/transaction';
-	import { transactionTime, transactionTimeLoading } from '@yellow-dev/crypto-utils/transaction';
+	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { type IPayment, sendTransaction } from '@/org.libersoft.wallet/scripts/crypto-utils/transaction';
+	import { transactionTime, transactionTimeLoading } from '@/org.libersoft.wallet/scripts/crypto-utils/transaction';
 	import { playAudio } from '@/core/scripts/notifications.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';

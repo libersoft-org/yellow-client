@@ -1,3 +1,5 @@
+// Import polyfills FIRST before any Ledger libraries
+import './ledger-polyfills';
 import { registerModule } from '@/core/scripts/core.ts';
 import Sidebar from '../pages/Main/Sidebar.svelte';
 import Content from '../pages/Main/Content.svelte';
