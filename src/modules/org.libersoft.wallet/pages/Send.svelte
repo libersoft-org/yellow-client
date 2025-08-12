@@ -362,7 +362,7 @@
 			etherAmount = parseUnits(amount!.toString().replace(',', '.'), currentBalanceData.decimals || 18);
 		} else {
 			// For native currency, use 18 decimals
-			etherAmount = getEtherAmount(amount)!;
+			etherAmount = getEtherAmount(amount || 0)!;
 		}
 		const etherFee = getEtherAmount($fee);
 		payment = {
