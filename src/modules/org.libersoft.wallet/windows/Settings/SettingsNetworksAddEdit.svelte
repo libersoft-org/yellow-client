@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
-	import { addNetwork, editNetwork, type INetwork, default_networks, loadDefaultNetworks, type IRPCServer, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { addNetwork, editNetwork, type INetwork, default_networks, type IRPCServer, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -120,7 +120,6 @@
 		}
 		try {
 			let defaultNetworksData = $default_networks;
-			if (defaultNetworksData.length === 0) defaultNetworksData = await loadDefaultNetworks();
 			const defaultNetwork = defaultNetworksData.find(network => network.chainID === itemChainID);
 			if (!defaultNetwork || !defaultNetwork.rpcURLs) {
 				error = 'No default RPC URLs found for Chain ID: ' + itemChainID;

@@ -31,7 +31,6 @@
 	let addressElement = $state<HTMLElement | null>(null);
 
 	onMount(() => {
-		initializeDefaultNetworks();
 		console.log('Wallet module initialiddddddzed');
 		if ($debug) {
 			//$settingsWindow?.open('wallets-add-hw-trezor');
