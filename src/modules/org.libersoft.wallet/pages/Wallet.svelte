@@ -3,7 +3,6 @@
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
-	import { initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
 	import { reconnect, availableRPCURLs, status } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
 	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
