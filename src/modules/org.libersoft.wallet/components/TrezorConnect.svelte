@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { selectWallet, trezorState, initializeTrezor, trezorLoading, trezorError, staticSessionId, trezorDevices } from '@/org.libersoft.wallet/scripts/crypto-utils/trezor';
+	import { selectWallet, trezorState, initializeTrezor, trezorLoading, trezorError, staticSessionId, trezorDevices } from 'libersoft-crypto/trezor';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 

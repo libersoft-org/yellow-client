@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addAddressBookItem, editAddressBookItem, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/crypto-utils/addressbook';
+	import { addAddressBookItem, editAddressBookItem, type IAddressBookItem } from 'libersoft-crypto/addressbook';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Label from '@/core/components/Label/Label.svelte';

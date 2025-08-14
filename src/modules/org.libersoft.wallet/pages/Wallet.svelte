@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
-	import { reconnect, availableRPCURLs, status } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
+	import { selectedWallet, selectedAddress } from 'libersoft-crypto/wallet';
+	import { reconnect, availableRPCURLs, status } from 'libersoft-crypto/provider';
 	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui';
-	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
-	import { rpcURL } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
+	import { selectedNetwork } from 'libersoft-crypto/network';
+	import { rpcURL } from 'libersoft-crypto/provider';
 	import { shortenAddress } from '$lib/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

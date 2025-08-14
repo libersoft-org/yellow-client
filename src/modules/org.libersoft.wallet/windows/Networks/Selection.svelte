@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectedNetworkID, networks } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { selectedNetworkID, networks } from 'libersoft-crypto/network';
 	import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Input from '@/core/components/Input/Input.svelte';

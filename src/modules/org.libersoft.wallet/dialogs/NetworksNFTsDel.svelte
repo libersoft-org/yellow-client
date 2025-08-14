@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deleteNFT, type INFT } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { deleteNFT, type INFT } from 'libersoft-crypto/network';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		networkGuid: string;

@@ -28,7 +28,7 @@ interface INFTData {
 ### Ruční přidání přes kód:
 
 ```typescript
-import { addNFT } from '@/org.libersoft.wallet/scripts/network.ts';
+import { addNFT } from 'libersoft-crypto/network.ts';
 
 // Příklad přidání NFT
 const nftData = {

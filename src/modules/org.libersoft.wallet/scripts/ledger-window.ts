@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import { ledgerConnected } from '@/org.libersoft.wallet/scripts/crypto-utils/ledger';
+import { ledgerConnected } from 'libersoft-crypto/ledger';
 
 export const ledgerWindow = writable<any>(null);
 

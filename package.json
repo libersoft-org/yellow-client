@@ -25,7 +25,8 @@
     "*.{js,ts,svelte,html,json,css,md}": "prettier --plugin 'prettier-plugin-svelte' --write"
   },
   "dependencies": {
-		"yellow-client-common": "https://github.com/libersoft-org/yellow-client-common",
+	"libersoft-crypto": "https://github.com/libersoft-org/crypto-utils",
+	"yellow-client-common": "https://github.com/libersoft-org/yellow-client-common",
     "@floating-ui/dom": "^1.6.13",
     "@ledgerhq/hw-app-eth": "^6.45.10",
     "@ledgerhq/hw-transport-webusb": "^6.29.7",

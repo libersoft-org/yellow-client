@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from '@/org.libersoft.wallet/scripts/crypto-utils/transaction';
-	import { sendAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
-	import { selectedNetwork, currencies, tokens, type ICurrency } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
-	import { selectedAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from 'libersoft-crypto/transaction';
+	import { sendAddress } from 'libersoft-crypto/wallet';
+	import { selectedNetwork, currencies, tokens, type ICurrency } from 'libersoft-crypto/network';
+	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
-	import { provider } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
-	import { getBalance, getTokenBalanceByAddress, getBatchTokensInfo, formatBalance, type IBalance } from '@/org.libersoft.wallet/scripts/crypto-utils/balance';
+	import { provider } from 'libersoft-crypto/provider';
+	import { getBalance, getTokenBalanceByAddress, getBatchTokensInfo, formatBalance, type IBalance } from 'libersoft-crypto/balance';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';

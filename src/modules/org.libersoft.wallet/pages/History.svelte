@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
-	import { selectedAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
+	import { selectedNetwork } from 'libersoft-crypto/network';
+	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
