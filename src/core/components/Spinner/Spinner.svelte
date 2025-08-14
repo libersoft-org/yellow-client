@@ -3,10 +3,8 @@
 		show?: boolean;
 		colorVariable?: string;
 		size?: string;
-		containerMinHeight?: string;
 	}
-
-	let { show = true, colorVariable = '--default-foreground', size = '40px', containerMinHeight = '72px' }: Props = $props();
+	let { show = true, colorVariable = '--primary-foreground', size = '40px' }: Props = $props();
 </script>
 
 <style>
@@ -29,8 +27,6 @@
 	}
 </style>
 
-<div class="container" style="--spinner-color: var({colorVariable})" style:min-height={containerMinHeight}>
-	{#if show}
-		<div class="spinner" style:width={size} style:height={size}></div>
-	{/if}
-</div>
+{#if show}
+	<div class="spinner" style:width={size} style:min-width={size} style:height={size} style:min-height={size} style:--spinner-color="var({colorVariable})"></div>
+{/if}

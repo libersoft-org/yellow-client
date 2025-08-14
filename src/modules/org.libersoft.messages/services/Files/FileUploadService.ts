@@ -1,4 +1,4 @@
-import { type CustomFile, type FileUpload, type FileUploadBeginOptions, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType } from './types.ts';
+import { type ICustomFile, type IFileUpload, type IFileUploadBeginOptions, type IFileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType } from './types.ts';
 import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from '../../stores/FileUploadStore.ts';
@@ -15,10 +15,10 @@ export class FileUploadService extends EventEmitter {
 		this.uploadsStore = uploadsStore;
 	}
 
-	beginUpload(files: FileList, type: FileUploadRecordType, acc, options: FileUploadBeginOptions) {
-		const uploads: FileUpload[] = [];
+	beginUpload(files: FileList, type: FileUploadRecordType, acc, options: IFileUploadBeginOptions) {
+		const uploads: IFileUpload[] = [];
 		for (let i = 0; i < files.length; i++) {
-			const file = files[i] as CustomFile;
+			const file = files[i] as ICustomFile;
 			const record = makeFileUploadRecord({
 				type,
 				fileOriginalName: file.name,
@@ -63,7 +63,7 @@ export class FileUploadService extends EventEmitter {
 		return { chunk, upload, blob };
 	}
 
-	async startUploadSerial(records: FileUploadRecord[], pushFn: (data: { chunk: any; upload: FileUpload }) => Promise<void>) {
+	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>) {
 		for (let i = 0; i < records.length; i++) {
 			const record = records[i];
 			const upload = this.uploadsStore.get(record.id);
@@ -126,7 +126,7 @@ export class FileUploadService extends EventEmitter {
 		}
 	}
 
-	async startUpload(upload: FileUpload) {
+	async startUpload(upload: IFileUpload) {
 		console.log('this.uploadsStore.isAnyUploadRunning()', this.uploadsStore.isAnyUploadRunning());
 		if (this.uploadsStore.isAnyUploadRunning()) {
 			return;
@@ -134,10 +134,10 @@ export class FileUploadService extends EventEmitter {
 		upload.pushChunk && (await upload.pushChunk());
 	}
 
-	async startNextUpload(lastUpload: FileUpload) {
+	async startNextUpload(lastUpload: IFileUpload) {
 		const uploads = this.uploadsStore.getAll();
 		const lastUploadIndex = uploads.findIndex(upload => upload.record.id === lastUpload.record.id);
-		let nextUpload: FileUpload | undefined;
+		let nextUpload: IFileUpload | undefined;
 
 		// find next suitable upload
 		for (let i = lastUploadIndex + 1; i < uploads.length; i++) {

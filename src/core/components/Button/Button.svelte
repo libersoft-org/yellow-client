@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { onMount, type Snippet } from 'svelte';
-	import { isMobile } from '@/core/stores.ts';
-	import Clickable from '../Clickable/Clickable.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import { type Snippet } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
+	import { isMobile } from '@/core/scripts/stores.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import type { HTMLButtonAttributes } from 'svelte/elements';
-
-	interface Props extends HTMLButtonAttributes {
+	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children?: Snippet;
 		img?: string;
 		text?: string;
@@ -16,6 +15,7 @@
 		onClick?: (e: Event) => void;
 		padding?: string;
 		bgColor?: string;
+		hoverColor?: string;
 		borderColor?: string;
 		textColor?: string;
 		expand?: boolean;
@@ -24,14 +24,17 @@
 		iconPadding?: string;
 		loading?: boolean;
 		radius?: number;
+		right?: boolean;
+	}
+	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = 'var(--primary-background)', hoverColor = 'var(--primary-hard-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable = '--primary-foreground', iconSize = '20px', iconPadding = '0px', loading = false, radius = 10, right = false, ...restProps }: Props = $props();
+	let elClickable: Clickable;
+
+	function handleClick(e: Event) {
+		if (enabled && onClick) onClick(e);
 	}
 
-	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, radius = 10, padding = '10px', bgColor = 'var(--primary-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable, iconSize = '20px', iconPadding = '0px', loading = false, ...restProps }: Props = $props();
-
-	function handleClick(e) {
-		if (enabled && onClick) {
-			onClick(e);
-		}
+	export function focus() {
+		elClickable?.focus();
 	}
 </script>
 
@@ -46,33 +49,50 @@
 		border: 1px solid;
 		border-radius: 10px;
 		-webkit-tap-highlight-color: transparent;
+		box-sizing: border-box;
+		transition: background-color 0.4s linear;
+	}
+
+	.button:hover:not(.disabled),
+	:global(.clickable:focus-visible) .button:not(.disabled),
+	:global(.clickable.focused) .button:not(.disabled) {
+		background-color: var(--button-hover-color) !important;
 	}
 
 	.button.disabled {
 		background-color: var(--disabled-background) !important;
 		border-color: var(--disabled-foreground) !important;
 		color: var(--disabled-foreground) !important;
-		cursor: default;
 	}
 
 	.button.hidden-on-desktop {
 		display: none;
 	}
+
+	.button .text {
+		white-space: nowrap;
+	}
 </style>
 
-<Clickable {...restProps} onClick={handleClick} disabled={!enabled}>
-	<div class="button" class:disabled={!enabled} class:hidden-on-desktop={!$isMobile && hiddenOnDesktop} style:width style:padding style:border-radius={radius + 'px'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined}>
+{#snippet icon()}
+	<Icon {img} colorVariable={!enabled ? '--disabled-foreground' : colorVariable} alt={text} size={iconSize} padding={iconPadding} />
+{/snippet}
+<Clickable bind:this={elClickable} {...restProps} onClick={handleClick} {enabled}>
+	<div class="button" class:disabled={!enabled} class:hidden-on-desktop={!$isMobile && hiddenOnDesktop} style:width style:padding style:border-radius={radius + 'px'} style:background-color={bgColor} style:color={textColor} style:border-color={borderColor} style:flex-grow={expand ? '1' : undefined} style:--button-hover-color={hoverColor}>
 		{#if children}
 			{@render children?.()}
 		{/if}
 		{#if loading}
-			<Spinner size="0px" containerMinHeight="auto" />
+			<Spinner size="20px" />
 		{:else}
-			{#if img}
-				<Icon {img} colorVariable={!enabled ? '--disabled-foreground' : colorVariable} alt={text} size={iconSize} padding={iconPadding} />
+			{#if img && !right}
+				{@render icon()}
 			{/if}
 			{#if text}
-				<div>{text}</div>
+				<div class="text">{text}</div>
+			{/if}
+			{#if img && right}
+				{@render icon()}
 			{/if}
 		{/if}
 	</div>
