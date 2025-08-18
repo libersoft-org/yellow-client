@@ -158,7 +158,8 @@
 		background-color: var(--primary-softer-background);
 		border: 1px solid var(--primary-foreground);
 		border-radius: 10px;
-		padding: 10px;
+		padding: 0;
+		margin: 0;
 		max-height: 300px;
 		overflow-y: auto;
 	}
@@ -184,7 +185,7 @@
 	</div>
 	{#if $debug}
 		<div class="debug">
-			<h5>BaseSettings Debug</h5>
+			BaseSettings Debug: currentNode:
 			<pre>{JSON.stringify(currentNode, null, 2)}</pre>
 		</div>
 	{/if}

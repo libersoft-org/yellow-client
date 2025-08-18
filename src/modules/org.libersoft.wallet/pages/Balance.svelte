@@ -135,7 +135,7 @@
 		let currentRpcURL = $rpcURL;
 		// Subscribe to network changes
 		const unsubscribeNetwork = selectedNetwork.subscribe(newNetwork => {
-			console.log(`Balance: Network changed to ${newNetwork} - reinitializing balances`);
+			console.log(`Balance: Network changed to ${JSON.stringify(newNetwork?.name)} - reinitializing balances`);
 			initialize(newNetwork, currentNetwork, value => (currentNetwork = value));
 		});
 		// Subscribe to address changes
