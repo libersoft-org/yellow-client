@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	import { addHardwareWallet } from 'libersoft-crypto/wallet';
-	import { initWalletLedger } from 'libersoft-crypto/ledger-integration';
 	import { connectLedger, getLedgerEthereumAccounts, ledgerLoading, ledgerDevice, ledgerConfig, ledgerError, ledgerConnected, getLedgerDeviceIdentifiers, type LedgerAccount } from 'libersoft-crypto/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -15,10 +14,6 @@
 	let firstAccount = $state<LedgerAccount | null>(null);
 	let step = $state<'connect' | 'configure'>('connect');
 	let connectionError = $state('');
-
-	onMount(async () => {
-		await initWalletLedger();
-	});
 
 	async function connectToLedger() {
 		connectionError = '';

@@ -57,12 +57,6 @@
 		margin-top: 20px;
 	}
 
-	.error-message {
-		color: var(--error-color);
-		margin-top: 10px;
-		white-space: pre-line;
-	}
-
 	.device-info {
 		margin: 15px 0;
 		padding: 10px;
