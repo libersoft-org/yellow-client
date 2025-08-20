@@ -69,11 +69,6 @@
 		}
 	}
 
-	function retry() {
-		connectionError = '';
-		connectToLedger();
-	}
-
 	function handleTryAgain() {
 		connectionError = '';
 		connectToLedger();
