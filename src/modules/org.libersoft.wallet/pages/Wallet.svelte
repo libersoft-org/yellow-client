@@ -4,7 +4,7 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { selectedWallet, selectedAddress } from 'libersoft-crypto/wallet';
 	import { reconnect, availableRPCURLs, status } from 'libersoft-crypto/provider';
-	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow, networksWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { selectedNetwork } from 'libersoft-crypto/network';
 	import { rpcURL } from 'libersoft-crypto/provider';
 	import { shortenAddress } from '$lib/shortenAddress.ts';
@@ -27,7 +27,6 @@
 	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window';
 	import LedgerWindow from '@/org.libersoft.wallet/windows/Wallets/LedgerWindow.svelte';
 	import { toggleLedgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window';
-	let elWindowNetworks: Window | undefined;
 	let addressElement = $state<HTMLElement | null>(null);
 
 	onMount(() => {
@@ -165,7 +164,7 @@
 	{/if}
 	<div class="body">
 		<div class="network-address" class:mobile={$isMobile}>
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await $networksWindow?.open()} data-testid="wallet-network-dropdown" />
 			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} data-testid="wallet-address-dropdown" />
 		</div>
 		<div class="bar">
@@ -227,7 +226,7 @@
 	</div>
 </Paper>
 
-<Window title="Select your network" body={WindowNetworks} bind:this={elWindowNetworks} width="500px" />
+<Window title="Select your network" body={WindowNetworks} bind:this={$networksWindow} width="500px" />
 <WindowWallets />
 <Window title="Select RPC Server" body={WindowRPCServers} bind:this={$rpcServersWindow} width="600px" />
 <Settings />

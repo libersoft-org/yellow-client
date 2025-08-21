@@ -25,6 +25,9 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import DialogSend from '@/org.libersoft.wallet/dialogs/SendConfirmation.svelte';
+	import QRScanner from '@/core/components/QRScanner/QRScanner.svelte';
+	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
+	import { networksWindow } from '@/org.libersoft.wallet/scripts/ui';
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -48,6 +51,9 @@
 	let elCurrencyDropdown: DropdownFilter | undefined = $state();
 	let elAmountInput: Input | undefined = $state();
 	let elFeeInput: Input | undefined = $state();
+	let showQRScanner = $state(false);
+	let qrError: string | null = $state(null);
+	let qrChainID: number | null = $state(null);
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
 	let tokenInfos = $state(new Map<string, { name: string; symbol: string }>());
 	let isLoadingTokenInfos = $state(false);
@@ -228,7 +234,50 @@
 	});
 
 	function scanQRCode() {
-		console.log('Scan QR code scanning');
+		showQRScanner = !showQRScanner;
+		if (showQRScanner) {
+			qrError = null; // Clear any previous errors when opening scanner
+		}
+	}
+
+	function handleQRScanned(data: string) {
+		const parsed = parseQRData(data, $currencies);
+
+		if (parsed.error) {
+			qrError = parsed.error;
+			return;
+		}
+
+		// Store chain ID from QR code
+		qrChainID = parsed.chainID || null;
+
+		// Always populate the form data
+		if (parsed.address) {
+			$sendAddress = parsed.address;
+		}
+
+		if (parsed.amount) {
+			amount = parsed.amount;
+		}
+
+		if (parsed.currency) {
+			currency = parsed.currency;
+			handleCurrencyChange();
+		}
+
+		showQRScanner = false;
+		qrError = null;
+	}
+
+	function switchToQRNetwork() {
+		$networksWindow?.open();
+	}
+
+	// Computed property to check if network matches
+	let networkMatches = $derived(qrChainID === null || $selectedNetwork?.chainID === qrChainID);
+
+	function handleQRError(error: string) {
+		qrError = error;
 	}
 
 	async function loadTokenInfos() {
@@ -396,10 +445,38 @@
 		align-items: center;
 		width: 100%;
 	}
+
+	.qr-scanner-container {
+		width: 100%;
+		max-width: 400px;
+		margin: 20px 0;
+	}
+
+	.alert {
+		display: flex;
+		align-items: center;
+		width: 400px;
+		gap: 10px;
+		margin: 20px 0;
+	}
 </style>
 
 <div class="send">
-	<Button img="img/qr.svg" text="Scan QR code" onClick={scanQRCode} data-testid="wallet-send-scan-qr-btn" />
+	<Button img="img/qr.svg" text={showQRScanner ? 'Hide QR Scanner' : 'Scan QR code'} onClick={scanQRCode} data-testid="wallet-send-scan-qr-btn" />
+	{#if showQRScanner}
+		<div class="qr-scanner-container">
+			<QRScanner onScanned={handleQRScanned} onError={handleQRError} instructions="Point your camera at a QR code containing an address" testId="wallet-send-qr-scanner" autoStart={true} />
+		</div>
+		{#if qrError}
+			<Alert type="error" message={qrError} />
+		{/if}
+	{/if}
+	{#if !networkMatches && qrChainID}
+		<div class="alert">
+			<Alert type="warning" message="QR code is for Chain ID {qrChainID}, but current network is {$selectedNetwork?.chainID}." />
+			<Button img="modules/{module.identifier}/img/network.svg" text="Switch Network" onClick={switchToQRNetwork} data-testid="wallet-send-switch-network-btn" />
+		</div>
+	{/if}
 	<Form onSubmit={send} width="400px">
 		<Label text="Address">
 			<Input bind:value={$sendAddress} bind:this={elAddressInput} enabled={!!($selectedNetwork && $selectedAddress)} data-testid="wallet-send-address-input" />
@@ -506,7 +583,7 @@
 				confirmationBlocks: {JSON.stringify($confirmationBlocksStore)}
 			</div>
 		{/if}
-		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress)} onClick={send} data-testid="wallet-send-submit-btn" />
+		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress && networkMatches)} onClick={send} data-testid="wallet-send-submit-btn" />
 	</Form>
 </div>
 <DialogSend params={payment} bind:this={elDialogSend} />
