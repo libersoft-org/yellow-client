@@ -75,6 +75,7 @@
 		await tick();
 		const node = findNode(settingsObject, name);
 		if (node && Object.keys(props).length > 0) node.props = { ...node.props, ...props };
+		await tick();
 		if (!currentNode?.instance && currentNode?.body) {
 			log.error('[BaseSettings] No instance found for node:', node, 'expected instance of body:', currentNode.body);
 			return;

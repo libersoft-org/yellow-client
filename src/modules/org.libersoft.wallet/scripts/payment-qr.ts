@@ -5,6 +5,7 @@ export interface ParsedQRData {
 	address?: string;
 	amount?: string;
 	currency?: ICurrency;
+	contractAddress?: string;
 	chainID?: number;
 	error?: string;
 }
@@ -54,12 +55,6 @@ export function parseQRData(data: string, currencies: ICurrency[]): ParsedQRData
 
 			if (!address) return { error: 'Missing address in token payment' };
 
-			// Find currency by contract address
-			const tokenCurrency = currencies.find(c => c.contract_address === target);
-			if (!tokenCurrency) {
-				return { error: `Token ${target} not found in current network` };
-			}
-
 			let amount: string | undefined;
 			if (uint256) {
 				// Convert from wei using token decimals (default 18 if not found)
@@ -67,7 +62,7 @@ export function parseQRData(data: string, currencies: ICurrency[]): ParsedQRData
 				amount = formatUnits(uint256, decimals);
 			}
 
-			return { address, amount, currency: tokenCurrency, chainID: parsedChainID };
+			return { address, amount, contractAddress: target, chainID: parsedChainID };
 		} else if (remaining.startsWith('?')) {
 			// Native currency format
 			const params = new URLSearchParams(remaining);
@@ -91,5 +86,24 @@ export function parseQRData(data: string, currencies: ICurrency[]): ParsedQRData
 		}
 	} catch (e) {
 		return { error: 'Failed to parse QR code data' };
+	}
+}
+
+export interface PaymentURLOptions {
+	address: string;
+	chainID: number;
+	currency?: ICurrency;
+	amount?: bigint;
+}
+
+export function generatePaymentURL({ address, chainID, currency, amount }: PaymentURLOptions): string {
+	if (!currency?.contract_address) {
+		// Native currency payment (ETH) according to ERC-681
+		// Format: ethereum:{address}@{chainID}?value={amount}
+		return `ethereum:${address}@${chainID}${amount ? `?value=${amount.toString()}` : ''}`;
+	} else {
+		// ERC-20 token payment according to ERC-681
+		// Format: ethereum:{contract_address}@{chainID}/transfer?address={address}&uint256={amount}
+		return `ethereum:${currency.contract_address}@${chainID}/transfer?address=${address}${amount ? `&uint256=${amount.toString()}` : ''}`;
 	}
 }

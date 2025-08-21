@@ -106,4 +106,28 @@ Example (use for new components):
 - ** IMPORTANT ** When creating playwright tests, use data-testid attributes. Modify the tested components to render them if necessary.
 - - Please, use data-testid attributes \*
 
+## BaseSettings System
+
+The project uses a hierarchical settings system built around `BaseSettings.svelte` for configuration management:
+
+### Architecture
+
+- **Hierarchical Structure**: Settings organized in parent/child relationships with unique section names
+- **Dynamic Navigation**: Navigate between sections using `setSettingsSection(sectionName, props)`
+- **Props Passing**: Dynamic props can be passed to settings components at navigation time
+- **Component Lifecycle**: Settings components implement `onOpen()` for initialization and receive a `close()` function
+
+### Usage Pattern
+
+1. **Open Settings**: Call `settingsWindow.open()` to ensure the settings window is displayed
+2. **Navigate to Section**: Use `settingsWindow.setSettingsSection(sectionName, props)` to navigate with optional props
+3. **Component Integration**: Settings components receive props and implement `onOpen()` for initialization
+
+### Key Concepts
+
+- Settings components are instantiated dynamically based on the current section
+- Props are merged with existing component props when navigating
+- Each section can have menu items, body components, and nested sub-sections
+- Navigation maintains breadcrumb history for user experience
+
 This file is meant for Claude and other AI assistants to understand project conventions.

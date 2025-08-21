@@ -3,7 +3,7 @@
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from 'libersoft-crypto/transaction';
 	import { sendAddress } from 'libersoft-crypto/wallet';
-	import { selectedNetwork, currencies, tokens, type ICurrency } from 'libersoft-crypto/network';
+	import { selectedNetwork, selectedNetworkID, currencies, tokens, networks, type ICurrency } from 'libersoft-crypto/network';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
@@ -27,7 +27,7 @@
 	import DialogSend from '@/org.libersoft.wallet/dialogs/SendConfirmation.svelte';
 	import QRScanner from '@/core/components/QRScanner/QRScanner.svelte';
 	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
-	import { networksWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { networksWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -54,6 +54,7 @@
 	let showQRScanner = $state(false);
 	let qrError: string | null = $state(null);
 	let qrChainID: number | null = $state(null);
+	let qrContractAddress: string | null = $state(null);
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
 	let tokenInfos = $state(new Map<string, { name: string; symbol: string }>());
 	let isLoadingTokenInfos = $state(false);
@@ -248,8 +249,9 @@
 			return;
 		}
 
-		// Store chain ID from QR code
+		// Store chain ID and contract address from QR code
 		qrChainID = parsed.chainID || null;
+		qrContractAddress = parsed.contractAddress || null;
 
 		// Always populate the form data
 		if (parsed.address) {
@@ -260,8 +262,12 @@
 			amount = parsed.amount;
 		}
 
+		// Set currency from parsed data or let qrCurrency derived handle it
 		if (parsed.currency) {
 			currency = parsed.currency;
+			handleCurrencyChange();
+		} else if (qrCurrency) {
+			currency = qrCurrency;
 			handleCurrencyChange();
 		}
 
@@ -270,11 +276,39 @@
 	}
 
 	function switchToQRNetwork() {
+		if (qrNetwork) {
+			// Switch to the existing network
+			console.log('Switching to network:', qrNetwork.name, 'Chain ID:', qrNetwork.chainID);
+			$selectedNetworkID = qrNetwork.guid;
+		} else {
+			// Network not found, open manage networks
+			manageNetworks();
+		}
+	}
+
+	function manageNetworks() {
 		$networksWindow?.open();
+	}
+
+	function addQRToken() {
+		if (qrContractAddress && $selectedNetwork?.guid) {
+			$settingsWindow?.open();
+			$settingsWindow?.setSettingsSection(`networks-tokens-add-${$selectedNetwork.guid}`, { contractAddress: qrContractAddress });
+		}
 	}
 
 	// Computed property to check if network matches
 	let networkMatches = $derived(qrChainID === null || $selectedNetwork?.chainID === qrChainID);
+
+	let qrCurrency = $derived(qrContractAddress ? $currencies.find(c => c.contract_address === qrContractAddress) : undefined);
+
+	let needsTokenAdd = $derived(qrContractAddress && !qrCurrency && networkMatches);
+
+	// Find the network that matches the QR chain ID
+	let qrNetwork = $derived(qrChainID ? $networks.find(n => n.chainID === qrChainID) : undefined);
+
+	// Check if we have the network configured
+	let hasQRNetwork = $derived(!!qrNetwork);
 
 	function handleQRError(error: string) {
 		qrError = error;
@@ -472,10 +506,17 @@
 		{/if}
 	{/if}
 	{#if !networkMatches && qrChainID}
-		<div class="alert">
-			<Alert type="warning" message="QR code is for Chain ID {qrChainID}, but current network is {$selectedNetwork?.chainID}." />
-			<Button img="modules/{module.identifier}/img/network.svg" text="Switch Network" onClick={switchToQRNetwork} data-testid="wallet-send-switch-network-btn" />
-		</div>
+		{#if hasQRNetwork}
+			<Alert type="warning" message="QR code is for {qrNetwork?.name} (Chain {qrChainID}), but current network is {$selectedNetwork?.name} (Chain {$selectedNetwork?.chainID}). Switch networks to proceed." />
+			<Button img="modules/{module.identifier}/img/network.svg" text="Switch to {qrNetwork?.name}" onClick={switchToQRNetwork} data-testid="wallet-send-switch-network-btn" />
+		{:else}
+			<Alert type="warning" message="QR code is for Chain {qrChainID}, but this network is not configured. Add the network to proceed." />
+			<Button img="modules/{module.identifier}/img/network.svg" text="Manage Networks" onClick={manageNetworks} data-testid="wallet-send-manage-networks-btn" />
+		{/if}
+	{/if}
+	{#if needsTokenAdd}
+		<Alert type="info" message="Token {qrContractAddress} is not available in current network. Add it to enable sending." />
+		<Button img="modules/{module.identifier}/img/token.svg" text="Add Token" onClick={addQRToken} data-testid="wallet-send-add-token-btn" />
 	{/if}
 	<Form onSubmit={send} width="400px">
 		<Label text="Address">

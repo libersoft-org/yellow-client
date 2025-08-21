@@ -13,8 +13,9 @@
 		close: () => void;
 		networkGuid: string;
 		item?: IToken;
+		contractAddress?: string;
 	}
-	let { close, networkGuid, item }: Props = $props();
+	let { close, networkGuid, item, contractAddress }: Props = $props();
 	let tokenGuid: string | undefined = $state();
 	let tokenName: string | undefined = $state();
 	let tokenIcon: string | undefined = $state();
@@ -35,6 +36,9 @@
 			tokenGuid = item.guid;
 			tokenIcon = item.item.iconURL;
 			tokenContractAddress = item.item.contract_address;
+		} else if (contractAddress) {
+			// Pre-fill contract address from QR code
+			tokenContractAddress = contractAddress;
 		}
 		elTokenContractAddress?.focus();
 	}

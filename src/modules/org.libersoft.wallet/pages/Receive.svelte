@@ -2,6 +2,7 @@
 	import { onMount, onDestroy, tick } from 'svelte';
 	import QRCode from 'qrcode';
 	import { parseUnits, Contract } from 'ethers';
+	import { generatePaymentURL } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import { selectedNetwork, currencies, tokens, type ICurrency } from 'libersoft-crypto/network';
@@ -216,13 +217,12 @@
 					}
 				}
 				error = null;
-				if (!currency.contract_address) {
-					// Native currency payment (ETH) according to ERC-681
-					walletAddress = 'ethereum:' + $selectedAddress.address + '@' + $selectedNetwork.chainID + (amount_value ? '?value=' + amount_value.toString() : '');
-				} else if (currency.contract_address) {
-					// ERC-20 token payment according to ERC-681
-					walletAddress = 'ethereum:' + currency.contract_address + '@' + $selectedNetwork.chainID + '/transfer' + '?address=' + $selectedAddress.address + (amount_value ? '&uint256=' + amount_value.toString() : '');
-				}
+				walletAddress = generatePaymentURL({
+					address: $selectedAddress.address,
+					chainID: $selectedNetwork.chainID,
+					currency,
+					amount: amount_value,
+				});
 			}
 			if (walletAddress) generateQRCode(walletAddress, qrData => (qr = qrData));
 		}

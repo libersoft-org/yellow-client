@@ -66,6 +66,7 @@
 	}
 
 	function clickTokenEdit(token: IToken): void {
+		/// FIXME: escape dashes in item guid
 		setSettingsSection('networks-tokens-edit-' + item + '-' + token.guid);
 	}
 
