@@ -55,7 +55,7 @@
 					<Clickable onClick={() => selectNetwork(n.guid)} expand>
 						<div class="item">
 							<Icon img={n.currency.iconURL} size="24px" padding="0" />
-							<span>{n.name}</span>
+							<span class="text-truncate">{n.name}</span>
 						</div>
 					</Clickable>
 				</Td>

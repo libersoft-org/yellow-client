@@ -285,17 +285,6 @@ export class TableDragManager {
 				cloneCell.style.minHeight = cellStyles.minHeight;
 				cloneCell.style.maxHeight = cellStyles.maxHeight;
 
-				// Special handling for shorten class cells
-				if (cell.classList.contains('shorten')) {
-					console.log(`Cell ${i} has shorten class, actual width:`, actualCellWidth);
-					// Use the exact width of the original cell
-					cloneCell.style.maxWidth = `${actualCellWidth}px`;
-					// Force text truncation
-					cloneCell.style.overflow = 'hidden';
-					cloneCell.style.textOverflow = 'ellipsis';
-					cloneCell.style.whiteSpace = 'nowrap';
-				}
-
 				// Preserve background color
 				const preservedBackground = this.preserveBackgroundColor(cell as HTMLElement, cellStyles);
 				cloneCell.style.backgroundColor = preservedBackground;

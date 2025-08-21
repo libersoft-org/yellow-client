@@ -76,8 +76,8 @@
 						<Td title="Name">
 							<b>{a.name}</b>
 						</Td>
-						<Td title="Address" shorten>
-							<span class="ellipsis">{a.address}</span>
+						<Td title="Address">
+							<div class="text-truncate">{a.address}</div>
 						</Td>
 						<Td title="Action">
 							<TableActionItems>

@@ -101,7 +101,7 @@
 						</Td>
 						<Td padding="0" expand>
 							<Clickable onClick={() => clickWallet(wallet)}>
-								<div class="item">{wallet.name}</div>
+								<div class="item text-truncate">{wallet.name}</div>
 							</Clickable>
 						</Td>
 						<Td padding="0" align="center">

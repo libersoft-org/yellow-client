@@ -604,7 +604,7 @@
 
 {#snippet currencyNameSymbol(name, symbol, address = null, isLoading = false)}
 	<div class="column">
-		<div class="name">
+		<div class="name text-truncate">
 			{#if isLoading}
 				{@render spinner()}
 			{:else if name && symbol}
@@ -618,7 +618,7 @@
 			{/if}
 		</div>
 		{#if ($debug || (!name && !symbol)) && address}
-			<div class="address">{address}</div>
+			<div class="address text-truncate">{address}</div>
 		{/if}
 	</div>
 {/snippet}

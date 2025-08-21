@@ -48,7 +48,9 @@
 				<TbodyTr onClick={() => clickSelectAddress(address)} data-testid="wallet-address-{address.index}">
 					<Td>{address.index}</Td>
 					<Td>{address.name}</Td>
-					<Td shorten>{address.address}</Td>
+					<Td>
+						<div class="text-truncate">{address.address}</div>
+					</Td>
 				</TbodyTr>
 			{/each}
 		{:else}

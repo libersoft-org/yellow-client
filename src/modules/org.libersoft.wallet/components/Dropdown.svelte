@@ -31,7 +31,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		max-width: 250px;
+		max-width: 190px;
 	}
 </style>
 

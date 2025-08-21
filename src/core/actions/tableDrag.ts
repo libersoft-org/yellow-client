@@ -88,35 +88,6 @@ function injectDragStyles() {
 			vertical-align: middle !important; /* Ensure proper vertical alignment */
 		}
 		
-		/* Special handling for shorten class in dragged clones */
-		.dragged-row-clone td.shorten {
-			display: table-cell !important; /* Override flex display */
-			align-items: center !important;
-			min-width: 0 !important;
-			overflow: hidden !important;
-			padding: 10px !important;
-		}
-		
-		.dragged-row-clone td.shorten .ellipsis {
-			display: block !important;
-			width: 100% !important;
-			overflow: hidden !important;
-			text-overflow: ellipsis !important;
-			white-space: nowrap !important;
-			min-width: 0 !important;
-		}
-		
-		/* Ensure ellipsis works in both normal and dragged states */
-		td.shorten .ellipsis,
-		.dragged-row-clone td.shorten .ellipsis {
-			display: block !important;
-			width: 100% !important;
-			overflow: hidden !important;
-			text-overflow: ellipsis !important;
-			white-space: nowrap !important;
-			min-width: 0 !important;
-		}
-		
 		/* Disabled drag handles when only one row */
 		.drag-handle.disabled {
 			opacity: 0.5 !important;
