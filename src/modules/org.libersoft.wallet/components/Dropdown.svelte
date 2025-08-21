@@ -31,7 +31,14 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		max-width: 190px;
+		/* No max-width on mobile - let it take full available width */
+	}
+
+	/* Apply max-width only on tablet and desktop (768px and above) */
+	@media (min-width: 768px) {
+		.dropdown .text {
+			max-width: 170px;
+		}
 	}
 </style>
 

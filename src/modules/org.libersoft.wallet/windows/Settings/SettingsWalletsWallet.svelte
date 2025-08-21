@@ -111,8 +111,8 @@
 							<Td expand>
 								<div class="info">
 									<div class="details">
-										<div class="name">{address.name} (ID: {address.index})</div>
-										<div class="address"><Address address={address.address} /></div>
+										<div class="name text-truncate">{address.name} (ID: {address.index})</div>
+										<div class="address text-truncate"><Address address={address.address} /></div>
 									</div>
 								</div>
 							</Td>

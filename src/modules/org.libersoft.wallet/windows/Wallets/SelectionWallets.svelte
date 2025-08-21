@@ -57,7 +57,7 @@
 				<TbodyTr>
 					<Td padding="0">
 						<Clickable onClick={async () => await clickSelectWallet(wallet)} data-wallet-name={wallet.name}>
-							<div class="wallet">{wallet.name}</div>
+							<div class="wallet text-truncate">{wallet.name}</div>
 						</Clickable>
 					</Td>
 				</TbodyTr>
