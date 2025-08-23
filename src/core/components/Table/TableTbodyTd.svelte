@@ -34,14 +34,56 @@
 				// Reduce width by 10px to give breathing room
 				const finalWidth = contentWidth - 10;
 
-				// Set minimum width to half of the current width to ensure readability
-				const minWidth = Math.max(150, finalWidth * 0.5);
-				const constrainedWidth = Math.max(finalWidth, minWidth);
+				// Apply the constrained width
+				const elementEl = element as HTMLElement;
+				elementEl.style.maxWidth = `${finalWidth}px`;
+				// Add class to show the element
+				elementEl.classList.add('width-calculated');
+			});
+		}
+	};
+
+	// Function to update text-truncate-without-suffix elements width
+	const updateTruncateWithoutSuffixWidths = () => {
+		const truncateElements = tdElement?.querySelectorAll('.text-truncate-without-suffix');
+		if (truncateElements) {
+			truncateElements.forEach(element => {
+				// Find the next sibling that contains the suffix (symbol)
+				const nextSibling = element.nextSibling;
+				let suffixWidth = 0;
+
+				if (nextSibling && nextSibling.nodeType === Node.TEXT_NODE) {
+					// If next sibling is text (like " (SYMBOL)"), we need to measure it
+					const tempSpan = document.createElement('span');
+					tempSpan.style.visibility = 'hidden';
+					tempSpan.style.position = 'absolute';
+					tempSpan.style.whiteSpace = 'nowrap';
+					tempSpan.textContent = nextSibling.textContent;
+					document.body.appendChild(tempSpan);
+					suffixWidth = tempSpan.offsetWidth;
+					document.body.removeChild(tempSpan);
+				} else if (nextSibling && nextSibling.nodeType === Node.ELEMENT_NODE) {
+					// If next sibling is an element, measure its width
+					const siblingEl = nextSibling as HTMLElement;
+					suffixWidth = siblingEl.offsetWidth;
+				}
+
+				// Get computed styles to calculate actual content width
+				const computedStyle = window.getComputedStyle(tdElement);
+				const paddingLeft = parseFloat(computedStyle.paddingLeft);
+				const paddingRight = parseFloat(computedStyle.borderRightWidth);
+				const borderLeft = parseFloat(computedStyle.borderLeftWidth);
+				const borderRight = parseFloat(computedStyle.borderRightWidth);
+
+				// Calculate content width by subtracting padding, borders, and suffix width
+				const contentWidth = tdElement.offsetWidth - paddingLeft - paddingRight - borderLeft - borderRight - suffixWidth;
+
+				// Reduce width by 10px to give breathing room
+				const finalWidth = contentWidth - 10;
 
 				// Apply the constrained width
 				const elementEl = element as HTMLElement;
-				elementEl.style.maxWidth = `${constrainedWidth}px`;
-				elementEl.style.minWidth = `${minWidth}px`;
+				elementEl.style.maxWidth = `${finalWidth}px`;
 				// Add class to show the element
 				elementEl.classList.add('width-calculated');
 			});
@@ -53,11 +95,13 @@
 		tick().then(() => {
 			// Initial update
 			updateTruncateWidths();
+			updateTruncateWithoutSuffixWidths();
 		});
 
 		// Update on window resize
 		const resizeObserver = new ResizeObserver(() => {
 			updateTruncateWidths();
+			updateTruncateWithoutSuffixWidths();
 		});
 
 		// Watch for DOM changes (new .text-truncate elements added)
@@ -68,7 +112,7 @@
 					mutation.addedNodes.forEach(node => {
 						if (node.nodeType === Node.ELEMENT_NODE) {
 							const element = node as Element;
-							if (element.classList?.contains('text-truncate') || element.querySelector?.('.text-truncate')) {
+							if (element.classList?.contains('text-truncate') || element.querySelector?.('.text-truncate') || element.classList?.contains('text-truncate-without-suffix') || element.querySelector?.('.text-truncate-without-suffix')) {
 								shouldUpdate = true;
 							}
 						}
@@ -78,7 +122,10 @@
 
 			if (shouldUpdate) {
 				// Small delay to ensure DOM is fully updated
-				setTimeout(updateTruncateWidths, 0);
+				setTimeout(() => {
+					updateTruncateWidths();
+					updateTruncateWithoutSuffixWidths();
+				}, 0);
 			}
 		});
 
@@ -132,6 +179,27 @@
 
 	/* Show the element after width is calculated */
 	:global(.text-truncate.width-calculated) {
+		opacity: 1;
+	}
+
+	/* Text truncation without suffix wrapper class */
+	:global(.text-truncate-without-suffix) {
+		display: block;
+		width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		min-width: 0;
+		box-sizing: border-box;
+		vertical-align: middle;
+		/* Prevent initial scrollbar flicker */
+		max-width: 0;
+		opacity: 0;
+		transition: opacity 0.1s ease-in-out;
+	}
+
+	/* Show the element after width is calculated */
+	:global(.text-truncate-without-suffix.width-calculated) {
 		opacity: 1;
 	}
 
