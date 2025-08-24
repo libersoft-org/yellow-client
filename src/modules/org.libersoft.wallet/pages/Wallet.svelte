@@ -166,10 +166,28 @@
 		display: flex;
 		gap: 10px;
 		justify-content: space-between;
+		min-width: 0;
 	}
 
 	.network-address.mobile {
 		flex-direction: column;
+	}
+
+	/* Ensure dropdowns can shrink properly on larger screens */
+	@media (min-width: 769px) {
+		:global(.network-address [data-testid='wallet-network-dropdown']) {
+			flex-shrink: 1;
+			min-width: 0;
+			width: auto;
+			max-width: 50%;
+		}
+
+		:global(.network-address [data-testid='wallet-address-dropdown']) {
+			flex-shrink: 1;
+			min-width: 0;
+			width: auto;
+			max-width: 50%;
+		}
 	}
 </style>
 
