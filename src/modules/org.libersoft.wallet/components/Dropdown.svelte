@@ -37,8 +37,14 @@
 	/* Apply max-width only on tablet and desktop (768px and above) */
 	@media (min-width: 768px) {
 		.dropdown .text {
-			max-width: 170px;
+			max-width: 150px;
 		}
+	}
+
+	/* Ensure the dropdown can shrink properly */
+	.dropdown {
+		min-width: 0;
+		flex-shrink: 1;
 	}
 </style>
 

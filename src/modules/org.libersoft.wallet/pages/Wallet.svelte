@@ -83,12 +83,25 @@
 		border-radius: 10px;
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	.bar .left {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 5px;
+		flex-shrink: 1;
+		min-width: 0;
+		max-width: 250px; /* Give it a reasonable max width */
 	}
 
 	.bar .left .status {
 		display: flex;
 		align-items: center;
 		gap: 5px;
+		flex-shrink: 0;
 	}
 
 	.bar .left .status .indicator {
@@ -111,6 +124,10 @@
 
 	.bar .left .server {
 		font-size: 12px;
+		max-width: 250px;
+		flex-shrink: 1;
+		min-width: 0;
+		width: 100%; /* Take full width of parent container */
 	}
 
 	.bar .right {
