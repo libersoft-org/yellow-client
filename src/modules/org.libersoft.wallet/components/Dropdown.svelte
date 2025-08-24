@@ -14,6 +14,7 @@
 	.dropdown {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		gap: 5px;
 		padding: 5px 10px;
 		white-space: nowrap;
@@ -27,17 +28,18 @@
 	}
 
 	.dropdown .text {
-		flex-grow: 1;
+		flex: 1;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		min-width: 0;
 		/* No max-width on mobile - let it take full available width */
 	}
 
 	/* Apply max-width only on tablet and desktop (768px and above) */
 	@media (min-width: 768px) {
 		.dropdown .text {
-			max-width: 150px;
+			max-width: 200px;
 		}
 	}
 
