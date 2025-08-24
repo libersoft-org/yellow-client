@@ -117,7 +117,7 @@
 						<Td>
 							<DragHandle />
 						</Td>
-						<Td padding="0 10px 0 0" align="center">
+						<Td padding="0" align="center">
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
 							{/if}
