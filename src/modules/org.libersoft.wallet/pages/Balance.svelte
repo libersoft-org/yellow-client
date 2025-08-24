@@ -498,6 +498,25 @@
 		align-items: center;
 		gap: 10px;
 	}
+
+	.amount-layout {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+
+	.amount-layout .text-truncate {
+		flex: 1;
+		min-width: 0; /* Allow shrinking */
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.amount-layout .symbol {
+		flex-shrink: 0; /* Prevent symbol from shrinking */
+		white-space: nowrap; /* Prevent symbol from wrapping */
+	}
 </style>
 
 {#snippet balanceTable(title, items)}
@@ -572,7 +591,10 @@
 		<div class="info">
 			<div class="amount">
 				{#if balanceData?.crypto}
-					{formatBalance(balanceData.crypto)}
+					<div class="amount-layout">
+						<span class="text-truncate">800 000 000.000 000 000</span>
+						<span class="symbol">{formatBalance(balanceData.crypto)}</span>
+					</div>
 				{:else}
 					{@render spinner()}
 				{/if}

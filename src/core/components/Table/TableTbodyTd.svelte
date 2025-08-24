@@ -99,33 +99,60 @@
 		});
 
 		// Update on window resize
-		const resizeObserver = new ResizeObserver(() => {
-			updateTruncateWidths();
-			updateTruncateWithoutSuffixWidths();
+		const resizeObserver = new ResizeObserver(entries => {
+			try {
+				// Check if we're still mounted and element exists
+				if (!tdElement || !tdElement.isConnected) {
+					return;
+				}
+
+				// Use requestAnimationFrame to prevent ResizeObserver loop errors
+				requestAnimationFrame(() => {
+					if (tdElement && tdElement.isConnected) {
+						updateTruncateWidths();
+						updateTruncateWithoutSuffixWidths();
+					}
+				});
+			} catch (error) {
+				// Silently handle any ResizeObserver errors
+				console.debug('ResizeObserver error handled:', error);
+			}
 		});
 
 		// Watch for DOM changes (new .text-truncate elements added)
 		const mutationObserver = new MutationObserver(mutations => {
-			let shouldUpdate = false;
-			mutations.forEach(mutation => {
-				if (mutation.type === 'childList') {
-					mutation.addedNodes.forEach(node => {
-						if (node.nodeType === Node.ELEMENT_NODE) {
-							const element = node as Element;
-							if (element.classList?.contains('text-truncate') || element.querySelector?.('.text-truncate') || element.classList?.contains('text-truncate-without-suffix') || element.querySelector?.('.text-truncate-without-suffix')) {
-								shouldUpdate = true;
+			try {
+				// Check if we're still mounted and element exists
+				if (!tdElement || !tdElement.isConnected) {
+					return;
+				}
+
+				let shouldUpdate = false;
+				mutations.forEach(mutation => {
+					if (mutation.type === 'childList') {
+						mutation.addedNodes.forEach(node => {
+							if (node.nodeType === Node.ELEMENT_NODE) {
+								const element = node as Element;
+								if (element.classList?.contains('text-truncate') || element.querySelector?.('.text-truncate') || element.classList?.contains('text-truncate-without-suffix') || element.querySelector?.('.text-truncate-without-suffix')) {
+									shouldUpdate = true;
+								}
 							}
+						});
+					}
+				});
+
+				if (shouldUpdate) {
+					// Use requestAnimationFrame instead of setTimeout to prevent timing issues
+					requestAnimationFrame(() => {
+						if (tdElement && tdElement.isConnected) {
+							updateTruncateWidths();
+							updateTruncateWithoutSuffixWidths();
 						}
 					});
 				}
-			});
-
-			if (shouldUpdate) {
-				// Small delay to ensure DOM is fully updated
-				setTimeout(() => {
-					updateTruncateWidths();
-					updateTruncateWithoutSuffixWidths();
-				}, 0);
+			} catch (error) {
+				// Silently handle any mutation observer errors
+				console.debug('MutationObserver error handled:', error);
 			}
 		});
 
