@@ -50,6 +50,14 @@
 		gap: 10px;
 		height: 50px;
 	}
+
+	.network .name {
+		min-width: 0; /* Allow text to shrink */
+	}
+
+	.network-icon {
+		flex-shrink: 0; /* Prevent icon from shrinking */
+	}
 </style>
 
 <ButtonBar>
@@ -83,9 +91,11 @@
 				<Td padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
 					<div class="network">
 						{#if n.currency?.iconURL}
-							<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
+							<div class="network-icon">
+								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
+							</div>
 						{/if}
-						<div class="name">{n.name}</div>
+						<div class="name text-truncate-with-prefix">{n.name}</div>
 					</div>
 				</Td>
 				<Td>

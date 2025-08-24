@@ -17,6 +17,7 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
+
 	let selectedItemID: string | null | undefined;
 	let selectedItem: INetwork | undefined = $state();
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined = $state();
@@ -81,14 +82,6 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.network {
-		display: flex;
-		align-items: center;
-		padding: 0 10px;
-		gap: 10px;
-		height: 50px;
-	}
 </style>
 
 <div class="networks" data-testid="wallet-settings-networks">
@@ -117,7 +110,7 @@
 						<Td>
 							<DragHandle />
 						</Td>
-						<Td padding="0 10px 0 0" align="center">
+						<Td padding="0" align="center">
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
 							{/if}
@@ -129,7 +122,7 @@
 							<TableActionItems align="center">
 								<Icon img="modules/{module.identifier}/img/network.svg" colorVariable="--primary-foreground" alt="RPC servers" size="20px" padding="5px" onClick={() => openRPCServers(n)} />
 								<Icon img="modules/{module.identifier}/img/token.svg" colorVariable="--primary-foreground" alt="Token list" size="20px" padding="5px" onClick={() => openTokens(n)} testId="wallet-settings-network-tokens@{n.name}" />
-								<Icon img="modules/{module.identifier}/img/nft.svg" colorVariable="--primary-foreground" alt="NFT list" size="20px" padding="5px" onClick={() => openNFTs(n)} testId="wallet-settings-network-nfts@{n.name}" />
+								<Icon img="modules/{module.identifier}/img/nft.svg" colorVariable="--primary-foreground" alt="NFT list" size="20px" padding="5px" onClick={() => openNFTs(n)} testId="wallet-settings-network-tokens@{n.name}" />
 								<Icon img="img/edit.svg" colorVariable="--primary-foreground" alt="Edit network" size="20px" padding="5px" onClick={() => clickEditNetwork(n)} testId="wallet-settings-network-edit@{n.name}" />
 								<Icon img="img/del.svg" colorVariable="--primary-foreground" alt="Delete network" size="20px" padding="5px" onClick={() => clickDeleteNetwork(n)} testId="wallet-settings-network-del@{n.name}" />
 							</TableActionItems>
