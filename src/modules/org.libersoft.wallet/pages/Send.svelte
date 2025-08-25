@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore } from 'libersoft-crypto/transaction';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction } from 'libersoft-crypto/transaction';
 	import { sendAddress } from 'libersoft-crypto/wallet';
 	import { selectedNetwork, selectedNetworkID, currencies, tokens, networks, type ICurrency } from 'libersoft-crypto/network';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
@@ -27,7 +27,8 @@
 	import DialogSend from '@/org.libersoft.wallet/dialogs/SendConfirmation.svelte';
 	import QRScanner from '@/core/components/QRScanner/QRScanner.svelte';
 	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
-	import { networksWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { ensureWalletConnection, networksWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { playAudio } from '@/core/scripts/notifications.ts';
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -279,7 +280,7 @@
 		if (qrNetwork) {
 			// Switch to the existing network
 			console.log('Switching to network:', qrNetwork.name, 'Chain ID:', qrNetwork.chainID);
-			$selectedNetworkID = qrNetwork.guid;
+			$selectedNetworkID = qrNetwork.guid ?? null;
 		} else {
 			// Network not found, open manage networks
 			manageNetworks();
@@ -457,6 +458,16 @@
 		};
 		elDialogSend?.open();
 	}
+
+	async function onYes(params: any) {
+		console.log('ONYES - awaiting ensureWalletConnection...');
+		if (await ensureWalletConnection()) {
+			console.log('ensureWalletConnection passed, sending transaction...');
+			console.log('SENDING TRANSACTION');
+			console.log(await sendTransaction(params.address, params.amount, params.fee, params.contractAddress));
+			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
+		}
+	}
 </script>
 
 <style>
@@ -483,14 +494,6 @@
 	.qr-scanner-container {
 		width: 100%;
 		max-width: 400px;
-		margin: 20px 0;
-	}
-
-	.alert {
-		display: flex;
-		align-items: center;
-		width: 400px;
-		gap: 10px;
 		margin: 20px 0;
 	}
 </style>
@@ -627,4 +630,4 @@
 		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress && networkMatches)} onClick={send} data-testid="wallet-send-submit-btn" />
 	</Form>
 </div>
-<DialogSend params={payment} bind:this={elDialogSend} />
+<DialogSend params={payment} bind:this={elDialogSend} {onYes} />

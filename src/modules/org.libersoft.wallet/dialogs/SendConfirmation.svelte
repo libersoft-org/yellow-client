@@ -10,8 +10,9 @@
 	interface Props {
 		params?: IPayment;
 		close?: () => void;
+		onYes?: (params: any) => void;
 	}
-	let { params, close }: Props = $props();
+	let { params, close, onYes }: Props = $props();
 	let elDialog;
 	let tokenDecimals = $state<number | null>(null);
 	let tokenInfo = $state<{ name: string; symbol: string } | null>(null);
@@ -54,17 +55,9 @@
 	}
 
 	async function clickYes() {
-		if (params) {
-			if (params.contractAddress) {
-				// Token transaction
-				await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
-			} else {
-				// Native currency transaction
-				await sendTransaction(params.address, params.amount, params.fee);
-			}
-			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
-			elDialog?.close();
-		}
+		if (!params) throw new Error('dialog missing params');
+		await onYes?.(params);
+		elDialog?.close();
 	}
 
 	function clickNo() {

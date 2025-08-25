@@ -34,7 +34,7 @@
 	});
 
 	$effect(() => {
-		walletsWindow.set(elBaseSettings);
+		walletsWindow.set(elBaseSettings ?? null);
 	});
 </script>
 

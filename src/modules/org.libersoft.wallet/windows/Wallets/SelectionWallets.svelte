@@ -28,12 +28,12 @@
 	}
 
 	function clickManageWallets() {
-		$settingsWindow.open('wallets');
+		$settingsWindow?.open('wallets');
 	}
 
 	async function clickSelectWallet(wallet) {
 		console.log('SELECTING WALLET', wallet);
-		await $walletsWindow.setSettingsSection('wallets-' + wallet.guid);
+		await $walletsWindow?.setSettingsSection('wallets-' + wallet.guid);
 	}
 </script>
 

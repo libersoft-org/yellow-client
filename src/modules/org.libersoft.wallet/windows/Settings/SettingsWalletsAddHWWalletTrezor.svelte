@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getContext } from 'svelte';
-	import { trezorState, type TrezorAccount, staticSessionId } from 'libersoft-crypto/trezor';
+	import { trezorState, staticSessionId } from 'libersoft-crypto/trezor';
 	import { addHardwareWallet } from 'libersoft-crypto/wallet';
 	import TrezorConnect from '@/org.libersoft.wallet/components/TrezorConnect.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
