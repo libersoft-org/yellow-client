@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { splitAndLinkify } from '../../splitAndLinkify.js';
+import { splitAndLinkify } from '../../scripts/splitAndLinkify.js';
 
 describe('splitAndLinkify', () => {
 	it('returns an empty array for an empty string', () => {
@@ -174,7 +174,7 @@ describe('splitAndLinkify', () => {
   it('handles bitcoin and ethereum links', () => {
    const input = 'Pay using bitcoin:bitcoin:1ExampleAddr?amount=0.5 or ethereum:ethereum:0xABC123.';
    const output = splitAndLinkify(input);
- 
+
    // Expected segments around both crypto links
    expect(output).toEqual([
     { type: 'plain', value: 'Pay using bitcoin:' },

@@ -1,14 +1,21 @@
-<script>
+<script lang="ts">
 	import { getContext } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	let { img = null, label = '', colorVariable = '--primary-foreground', onClick, ...restProps } = $props();
-	let menu = getContext('ContextMenu');
+	interface Props {
+		img?: string;
+		label?: string;
+		colorVariable?: string;
+		onClick?: (e: Event) => void;
+		testId?: string;
+	}
+	let { img, label, colorVariable = '--primary-foreground', onClick, testId, ...restProps }: Props = $props();
+	let menu = getContext('ContextMenu') as { close: () => void } | undefined;
 
-	function handleClick() {
+	function handleClick(e: Event) {
 		console.log('handleClick');
-		onClick();
-		menu.close();
+		onClick?.(e);
+		menu?.close();
 	}
 
 	function handleMousedown(event) {
@@ -22,13 +29,17 @@
 	.menu-item {
 		display: flex;
 		align-items: center;
-		padding: 8px 12px;
+		box-sizing: border-box;
+		padding: 8px 10px;
 		width: 100%;
 		background-color: var(--primary-softer-background);
 		color: var(--primary-foreground);
+		transition: background-color 0.4s linear;
 	}
 
-	.menu-item:hover {
+	.menu-item:hover,
+	:global(.clickable:focus-visible) .menu-item,
+	:global(.clickable.focused) .menu-item {
 		background-color: var(--primary-background);
 	}
 
@@ -46,7 +57,7 @@
 	}
 </style>
 
-<Clickable onClick={handleClick} onMousedown={handleMousedown} {...restProps}>
+<Clickable onClick={handleClick} onMousedown={handleMousedown} data-testid={testId} {...restProps}>
 	<div class="menu-item">
 		{#if img}
 			<div class="img-space">

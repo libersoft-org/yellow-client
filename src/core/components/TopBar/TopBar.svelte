@@ -6,30 +6,39 @@
 		top: 0;
 		align-items: center;
 		gap: 24px;
-		min-height: calc(var(--menu-height) - 20px);
+		box-sizing: border-box;
+		min-height: var(--menu-height);
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
 		box-shadow: var(--shadow);
 		padding: 10px;
+	}
 
-		.left,
-		.center,
-		.right {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			gap: 10px;
-			flex: 1;
-			width: 100%;
-		}
+	.top-bar .left,
+	.top-bar .center,
+	.top-bar .right {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 10px;
+		flex: 1;
+		width: 100%;
+	}
 
-		.center {
-			justify-content: center;
-		}
+	.top-bar .left :global(h1),
+	.top-bar .center :global(h1),
+	.top-bar .right :global(h1) {
+		white-space: nowrap;
+		margin: 0 !important;
+		font-size: 24px;
+	}
 
-		.right {
-			justify-content: end;
-		}
+	.top-bar .center {
+		justify-content: center;
+	}
+
+	.top-bar .right {
+		justify-content: end;
 	}
 </style>
 

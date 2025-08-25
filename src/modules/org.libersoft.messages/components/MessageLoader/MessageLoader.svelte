@@ -1,5 +1,5 @@
 <script>
-	import { loadMessages, insertEvent, messagesArray } from '../../messages.js';
+	import { loadMessages, insertEvent, messagesArray } from '@/org.libersoft.messages/scripts/messages.js';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	export let loader;

@@ -1,6 +1,6 @@
 <script>
 	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
-	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	import { onDestroy } from 'svelte';
 	export let file = '';
 	export let total = 0;
@@ -30,7 +30,7 @@
 	.upload {
 		display: flex;
 		flex-direction: column;
-		gap: 5px;
+		gap: 10px;
 	}
 
 	.text {
@@ -50,7 +50,7 @@
 			<span>{file}</span>
 		{/if}
 	</div>
-	<ProgressBar color="#db0" moving={true} value={percent} />
+	<ProgressBar color="#db0" moving value={percent} />
 	<div class="text">
 		<div class="size">{humanSize(uploaded, 2, true)} / {humanSize(total, 2, true)}</div>
 		<div class="percent">{percent}%</div>
