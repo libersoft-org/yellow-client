@@ -25,13 +25,10 @@
     "*.{js,ts,svelte,html,json,css,md}": "prettier --plugin 'prettier-plugin-svelte' --write"
   },
   "dependencies": {
-	"libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#eed97a6b8687a139a2f220cb01f38e9273cb13cb",
-	"yellow-client-common": "https://github.com/libersoft-org/yellow-client-common",
     "@floating-ui/dom": "^1.6.13",
     "@ledgerhq/hw-app-eth": "^6.45.10",
-    "@ledgerhq/hw-transport-webusb": "^6.29.7",
     "@ledgerhq/hw-transport-webhid": "^6.29.7",
-    "buffer": "^6.0.3",
+    "@ledgerhq/hw-transport-webusb": "^6.29.7",
     "@neodrag/svelte": "^2.3.2",
     "@sentry/sveltekit": "^9",
     "@tauri-apps/api": "^2.3.0",
@@ -48,6 +45,7 @@
     "@types/recordrtc": "^5.6.14",
     "@webav/mp4box.js": "^0.5.6",
     "async-mutex": "^0.5.0",
+    "buffer": "^6.0.3",
     "debug": "^4.4.0",
     "dexie": "^4.0.11",
     "dompurify": "^3.2.4",
@@ -59,11 +57,12 @@
     "hex-to-css-filter": "^6.0.0",
     "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
+    "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#eed97a6b8687a139a2f220cb01f38e9273cb13cb",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "lottie-web": "^5.12.2",
-    "node-localstorage": "^3.0.5",
     "mediainfo.js": "^0.3.4",
+    "node-localstorage": "^3.0.5",
     "pako": "^2.1.0",
     "prismjs": "^1.30.0",
     "qrcode": "^1.5.4",
@@ -74,7 +73,8 @@
     "video.js": "^8.21.0",
     "videojs-record": "^4.8.0",
     "wavesurfer.js": "^7.9.0",
-    "webrtc-adapter": "^9.0.3"
+    "webrtc-adapter": "^9.0.3",
+    "yellow-client-common": "https://github.com/libersoft-org/yellow-client-common"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3",
