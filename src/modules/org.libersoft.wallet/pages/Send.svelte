@@ -464,7 +464,8 @@
 		if (await ensureWalletConnection()) {
 			console.log('ensureWalletConnection passed, sending transaction...');
 			console.log('SENDING TRANSACTION');
-			console.log(await sendTransaction(params.address, params.amount, params.fee, params.contractAddress));
+			const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
+			console.log('Transaction sent, hash:', hash);
 			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 		}
 	}

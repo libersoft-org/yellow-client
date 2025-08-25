@@ -26,10 +26,10 @@ export async function ensureWalletConnection(): Promise<boolean> {
 		return true;
 	}
 	if (w.type === 'ledger') {
-		return await !!ensureLedgerState();
+		return !!(await ensureLedgerState());
 	} else if (w.type === 'trezor') {
 		console.log('Ensuring Trezor connection for wallet:', w);
-		return await !!ensureTrezorState();
+		return !!(await ensureTrezorState());
 	}
 	throw new Error('Unsupported hardware wallet type');
 }
