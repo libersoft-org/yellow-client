@@ -129,6 +129,7 @@
 		// Initialize balances first time
 		initializeAllBalances();
 		countdownInterval = setInterval(updateCountdowns, 1000);
+
 		// Set up subscriptions to watch for changes
 		let currentNetwork = $selectedNetwork;
 		let currentAddress = $selectedAddress;
@@ -151,6 +152,7 @@
 		// Store unsubscribe functions for cleanup
 		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC];
 		isInitialized = true; // Mark as initialized to enable reactive effects
+
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -99999999999999999999999999999999999999999123456789123456789n, decimals: 18, currency: 'ETH' }));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -1000n, decimals: 18, currency: 'ETH' }));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789n, decimals: 0, currency: 'ETH' }, 6));
@@ -475,6 +477,13 @@
 		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
+		padding-left: 50px;
+	}
+
+	@media (min-width: 768px) {
+		.balance .info {
+			padding-left: 0;
+		}
 	}
 
 	.balance .info .amount {
@@ -490,7 +499,13 @@
 		display: flex;
 		flex-direction: column;
 		padding: 10px;
-		align-items: center;
+		align-items: flex-start;
+	}
+
+	@media (min-width: 769px) {
+		.item {
+			align-items: center;
+		}
 	}
 
 	.item .currency {
@@ -540,7 +555,7 @@
 
 {#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
 	<Tr>
-		<Td padding="0" expand>
+		<Td padding="0" class="expand-balance">
 			{#if $debug}
 				<pre>{stringifyWithBigInt(balanceData)}</pre>
 			{/if}
@@ -726,7 +741,7 @@
 					{#each $nfts as nft, index}
 						{@const contractInfo = nftContractInfos.get(nft.contract_address)}
 						<Tr>
-							<Td padding="0" expand>
+							<Td padding="0" class="expand-balance">
 								<Clickable onClick={() => selectNFT('')}>
 									<div class="currency-info">
 										{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}

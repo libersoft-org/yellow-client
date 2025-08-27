@@ -11,8 +11,9 @@
 		align?: 'left' | 'center' | 'right';
 		expand?: boolean;
 		bold?: boolean;
+		class?: string;
 	}
-	let { children, title, 'data-testid': dataTestId, padding = '10px', colspan, style, align = 'left', expand = false, bold = false }: Props = $props();
+	let { children, title, 'data-testid': dataTestId, padding = '10px', colspan, style, align = 'left', expand = false, bold = false, class: className }: Props = $props();
 
 	let tdElement: HTMLTableCellElement;
 
@@ -294,8 +295,11 @@
 
 	td.expand {
 		max-width: 100%;
-		/* Prevent horizontal overflow during initial render */
 		overflow: hidden;
+	}
+
+	td.expand-balance {
+		width: 100%;
 	}
 
 	/* Text truncation wrapper class */
@@ -383,6 +387,6 @@
 	}
 </style>
 
-<td bind:this={tdElement} data-title={title} data-testid={dataTestId} style:padding class:expand class:bold {colspan} {style} style:text-align={align}>
+<td bind:this={tdElement} data-title={title} data-testid={dataTestId} style:padding class:expand class:bold class={className} {colspan} {style} style:text-align={align}>
 	{@render children?.()}
 </td>
