@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.ts';
-	import { selectedNetwork, tokens, nfts } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from '@/org.libersoft.wallet/scripts/balance.ts';
-	import { provider, rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { selectedNetwork, tokens, nfts } from 'libersoft-crypto/network';
+	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from 'libersoft-crypto/balance';
+	import { provider, rpcURL } from 'libersoft-crypto/provider';
+	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
@@ -135,7 +135,7 @@
 		let currentRpcURL = $rpcURL;
 		// Subscribe to network changes
 		const unsubscribeNetwork = selectedNetwork.subscribe(newNetwork => {
-			console.log(`Balance: Network changed to ${newNetwork} - reinitializing balances`);
+			console.log(`Balance: Network changed to ${JSON.stringify(newNetwork?.name)} - reinitializing balances`);
 			initialize(newNetwork, currentNetwork, value => (currentNetwork = value));
 		});
 		// Subscribe to address changes

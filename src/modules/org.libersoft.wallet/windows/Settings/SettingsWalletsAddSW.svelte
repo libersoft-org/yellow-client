@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { generateMnemonic, addWallet, wallets } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { generateMnemonic, addWallet, wallets } from 'libersoft-crypto/wallet';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import type { Mnemonic } from 'ethers';
 	import Form from '@/core/components/Form/Form.svelte';

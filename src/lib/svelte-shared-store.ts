@@ -1,14 +1,24 @@
 import { writable, get, type Writable } from 'svelte/store';
 
+// Storage abstraction - use localStorage in browser, node-localstorage in Node.js
+let storage: Storage;
+if (typeof window !== 'undefined' && window.localStorage) {
+	storage = window.localStorage;
+} else {
+	// Node.js fallback
+	const { LocalStorage } = require('node-localstorage');
+	storage = new LocalStorage('./crypto-utils-storage');
+}
+
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
 	function setStorage(value: T): void {
 		const str = JSON.stringify(value);
 		//console.log('SAVE', name, str);
-		window.localStorage.setItem(name, str);
+		storage.setItem(name, str);
 	}
 
 	function getStorage(): T {
-		const item = window.localStorage.getItem(name);
+		const item = storage.getItem(name);
 		let result: T = default_;
 		try {
 			//console.log('LOAD', name, item);
@@ -35,12 +45,16 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
 			}
 		}
 
-		// Add the event listener
-		window.addEventListener('storage', handleStorageEvent);
+		// Add the event listener (only in browser)
+		if (typeof window !== 'undefined') {
+			window.addEventListener('storage', handleStorageEvent);
+		}
 
 		// Return the unsubscribe function that removes the event listener
 		return () => {
-			window.removeEventListener('storage', handleStorageEvent);
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('storage', handleStorageEvent);
+			}
 		};
 	});
 
@@ -70,11 +84,11 @@ export function localStorageReadOnceSharedStore<T>(name: string, default_: T): W
 	function setStorage(value: T): void {
 		const str = JSON.stringify(value);
 		//console.log('SAVE', name, str);
-		window.localStorage.setItem(name, str);
+		storage.setItem(name, str);
 	}
 
 	function getStorage(): T {
-		const item = window.localStorage.getItem(name);
+		const item = storage.getItem(name);
 		let result: T = default_;
 		try {
 			if (item !== 'undefined' && item) result = JSON.parse(item) as T;

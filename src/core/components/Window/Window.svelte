@@ -135,6 +135,7 @@
 	});
 
 	export function isOpen() {
+		console.log(title + ' isOpen:', show);
 		return show;
 	}
 
@@ -315,13 +316,19 @@
 	}
 
 	export async function open<TParams extends readonly unknown[] = readonly unknown[]>(...params: TParams) {
-		console.log('Opening window with params:', params);
+		console.log('Opening window with params:', params, title);
 		setShow(true);
+		console.debug('Window set to show, focusing window', title);
 		elWindow?.focus();
+		console.debug('Window focused', title);
+		//await tick();
+		console.debug('tick2...', title);
 		await tick();
-		await tick();
+		console.debug('tick2 complete', title);
 		bringToFront(windowId);
+		console.debug('Window opened, calling onOpen if exists', title);
 		await (elWindowBody as IWindowBodyWithOnOpen<TParams>)?.onOpen?.(...params);
+		console.debug('onOpen call complete', title);
 	}
 
 	export function close() {

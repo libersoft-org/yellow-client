@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { selectedNetworkID, networks } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { selectedNetworkID, networks } from 'libersoft-crypto/network';
+	import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

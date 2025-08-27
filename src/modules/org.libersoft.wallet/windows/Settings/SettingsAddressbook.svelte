@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
-	import { addressBook, type IAddressBookItem, reorderAddressBook } from '@/org.libersoft.wallet/scripts/addressbook.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { addressBook, type IAddressBookItem, reorderAddressBook } from 'libersoft-crypto/addressbook';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';

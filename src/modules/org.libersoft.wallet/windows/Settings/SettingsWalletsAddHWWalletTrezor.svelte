@@ -1,26 +1,17 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { trezorState, type TrezorAccount, staticSessionId } from '@/org.libersoft.wallet/scripts/trezor';
-	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/wallet';
+	import { getContext } from 'svelte';
+	import { trezorState, staticSessionId } from 'libersoft-crypto/trezor';
+	import { addHardwareWallet } from 'libersoft-crypto/wallet';
 	import TrezorConnect from '@/org.libersoft.wallet/components/TrezorConnect.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
 	import TrezorDebug from '@/org.libersoft.wallet/components/TrezorDebug.svelte';
 
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 	let walletName = '';
-	let selectedAccount: TrezorAccount | null = null;
 	let step: 'select-wallet' | 'configure' = 'select-wallet';
-	let trezorConnect: TrezorConnect;
-
-	function selectAccount(account: TrezorAccount) {
-		selectedAccount = account;
-		walletName = account.name || 'Trezor Wallet';
-		step = 'configure';
-	}
 
 	async function addWallet() {
 		await addHardwareWallet('trezor', walletName, { staticSessionId: $staticSessionId });
@@ -50,6 +41,7 @@
 
 	.buttons {
 		display: flex;
+		flex-direction: row;
 		gap: 10px;
 		justify-content: flex-end;
 		margin-top: 30px;
@@ -59,16 +51,12 @@
 <div class="trezor-setup">
 	<h2>Add Trezor Wallet</h2>
 
-	<div class="buttons">
+	{#if $debug}
 		step: {step}<br />
-		<Button img="img/cancel.svg" text="Back" onClick={goBack} />
-	</div>
+	{/if}
 
 	{#if step === 'select-wallet'}
-		<TrezorConnect bind:this={trezorConnect} {onConnected} />
-		<div class="buttons">
-			<Button onClick={() => (step = 'configure')} enabled={!!$trezorState} text="Next" />
-		</div>
+		<TrezorConnect {onConnected} />
 	{:else if step === 'configure'}
 		<h3>Configure Wallet</h3>
 		<p>Give your Trezor wallet a name:</p>
@@ -79,13 +67,13 @@
 			</Label>
 		</div>
 
-		<div style="font-size: 0.7em;">
-			staticSessionId: {$staticSessionId}
-		</div>
-
 		<div class="buttons">
 			<Button onClick={addWallet} enabled={!!walletName.trim()}>Add Wallet</Button>
 		</div>
 	{/if}
+	<div class="buttons">
+		<Button img="img/cancel.svg" text="Back" onClick={goBack} enabled={step === 'configure'} />
+		<Button onClick={() => (step = 'configure')} enabled={!!$trezorState} text="Next" />
+	</div>
 </div>
 <TrezorDebug />

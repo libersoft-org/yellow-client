@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getContext } from 'svelte';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { type IWallet, reorderAddresses } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { type IWallet, reorderAddresses } from 'libersoft-crypto/wallet';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

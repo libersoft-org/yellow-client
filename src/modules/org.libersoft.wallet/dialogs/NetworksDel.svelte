@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type INetwork, deleteNetwork } from '../scripts/network.ts';
+	import { type INetwork, deleteNetwork } from 'libersoft-crypto/network';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		item: INetwork;

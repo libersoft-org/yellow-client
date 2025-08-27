@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { initializeDefaultNetworks } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { reconnect, availableRPCURLs, status } from '@/org.libersoft.wallet/scripts/provider.ts';
-	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
-	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { rpcURL } from '@/org.libersoft.wallet/scripts/provider.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { selectedWallet, selectedAddress } from 'libersoft-crypto/wallet';
+	import { reconnect, availableRPCURLs, status } from 'libersoft-crypto/provider';
+	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow, networksWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { selectedNetwork } from 'libersoft-crypto/network';
+	import { rpcURL } from 'libersoft-crypto/provider';
 	import { shortenAddress } from '$lib/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -25,18 +24,16 @@
 	import WindowWallets from '@/org.libersoft.wallet/windows/Wallets/Selection.svelte';
 	import WindowRPCServers from '@/org.libersoft.wallet/windows/RPCServers/Selection.svelte';
 	import TrezorWindow from '@/org.libersoft.wallet/windows/Wallets/TrezorWindow.svelte';
-	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window.ts';
+	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window';
 	import LedgerWindow from '@/org.libersoft.wallet/windows/Wallets/LedgerWindow.svelte';
-	import { toggleLedgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window.ts';
-	let elWindowNetworks: Window | undefined;
+	import { toggleLedgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window';
 	let addressElement = $state<HTMLElement | null>(null);
 
 	onMount(() => {
-		initializeDefaultNetworks();
 		console.log('Wallet module initialiddddddzed');
 		if ($debug) {
 			//$settingsWindow?.open('wallets-add-hw-trezor');
-			$settingsWindow?.open('wallets-add-hw-ledger');
+			$settingsWindow?.open('wallets-add');
 		}
 	});
 
@@ -202,7 +199,7 @@
 	{/if}
 	<div class="body">
 		<div class="network-address" class:mobile={$isMobile}>
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await $networksWindow?.open()} data-testid="wallet-network-dropdown" />
 			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} data-testid="wallet-address-dropdown" />
 		</div>
 		<div class="bar">
@@ -264,7 +261,7 @@
 	</div>
 </Paper>
 
-<Window title="Select your network" body={WindowNetworks} bind:this={elWindowNetworks} width="500px" />
+<Window title="Select your network" body={WindowNetworks} bind:this={$networksWindow} width="500px" />
 <WindowWallets />
 <Window title="Select RPC Server" body={WindowRPCServers} bind:this={$rpcServersWindow} width="600px" />
 <Settings />

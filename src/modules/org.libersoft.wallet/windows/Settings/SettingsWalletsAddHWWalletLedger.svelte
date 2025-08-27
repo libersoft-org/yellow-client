@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getContext, onMount } from 'svelte';
-	import { addHardwareWallet } from '@/org.libersoft.wallet/scripts/wallet';
-	import { initWalletLedger, addLedgerWalletToSystem, isLedgerConnected, getLedgerStatus } from '@/org.libersoft.wallet/scripts/ledger-integration';
-	import { connectLedger, getLedgerEthereumAccounts, checkWebHIDSupport, checkWebUSBSupport, checkConnectionMethodSupport, ledgerLoading, ledgerDevice, ledgerConfig, ledgerError, ledgerConnected, ledgerConnectionMethod, getLedgerDeviceIdentifiers, type LedgerAccount } from '@/org.libersoft.wallet/scripts/ledger';
+	import { getContext } from 'svelte';
+	import { addHardwareWallet } from 'libersoft-crypto/wallet';
+	import { connectLedger, getLedgerEthereumAccounts, ledgerLoading, ledgerDevice, ledgerConfig, ledgerError, ledgerConnected, getLedgerDeviceIdentifiers, type LedgerAccount } from 'libersoft-crypto/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
@@ -15,10 +14,6 @@
 	let firstAccount = $state<LedgerAccount | null>(null);
 	let step = $state<'connect' | 'configure'>('connect');
 	let connectionError = $state('');
-
-	onMount(async () => {
-		await initWalletLedger();
-	});
 
 	async function connectToLedger() {
 		connectionError = '';
@@ -72,11 +67,6 @@
 		} else {
 			setSettingsSection('wallets-add');
 		}
-	}
-
-	function retry() {
-		connectionError = '';
-		connectToLedger();
 	}
 
 	function handleTryAgain() {

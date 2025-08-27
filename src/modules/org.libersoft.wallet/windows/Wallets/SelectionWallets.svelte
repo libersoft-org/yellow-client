@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { wallets, selectAddress } from '@/org.libersoft.wallet/scripts/wallet.ts';
-	import { walletsWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { wallets, selectAddress } from 'libersoft-crypto/wallet';
+	import { walletsWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -28,12 +28,12 @@
 	}
 
 	function clickManageWallets() {
-		$settingsWindow.open('wallets');
+		$settingsWindow?.open('wallets');
 	}
 
 	async function clickSelectWallet(wallet) {
 		console.log('SELECTING WALLET', wallet);
-		await $walletsWindow.setSettingsSection('wallets-' + wallet.guid);
+		await $walletsWindow?.setSettingsSection('wallets-' + wallet.guid);
 	}
 </script>
 

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { type INetwork, type IToken, findNetworkByGuid, reorderTokens } from '@/org.libersoft.wallet/scripts/network.ts';
-	import { getTokenInfo } from '@/org.libersoft.wallet/scripts/balance.ts';
+	import { type INetwork, type IToken, findNetworkByGuid, reorderTokens } from 'libersoft-crypto/network';
+	import { getTokenInfo } from 'libersoft-crypto/balance';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -66,6 +66,7 @@
 	}
 
 	function clickTokenEdit(token: IToken): void {
+		/// FIXME: escape dashes in item guid
 		setSettingsSection('networks-tokens-edit-' + item + '-' + token.guid);
 	}
 

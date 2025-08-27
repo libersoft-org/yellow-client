@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type IWallet, deleteWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { type IWallet, deleteWallet } from 'libersoft-crypto/wallet';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		wallet: IWallet;

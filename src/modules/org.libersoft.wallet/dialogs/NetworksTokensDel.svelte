@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deleteToken, type IToken } from '../scripts/network.ts';
+	import { deleteToken, type IToken } from 'libersoft-crypto/network';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		networkGuid: string;

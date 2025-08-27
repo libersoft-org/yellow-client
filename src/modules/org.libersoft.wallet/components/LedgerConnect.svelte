@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { connectLedger, initializeLedger, ledgerLoading, ledgerError, ledgerConnected, ledgerDevice, ledgerConnectionMethod, ledgerDeviceId } from '@/org.libersoft.wallet/scripts/ledger';
+	import { connectLedger, initializeLedger, ledgerLoading, ledgerError, ledgerConnected, ledgerDevice, ledgerConnectionMethod, ledgerDeviceId } from 'libersoft-crypto/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
@@ -57,12 +57,6 @@
 		margin-top: 20px;
 	}
 
-	.error-message {
-		color: var(--error-color);
-		margin-top: 10px;
-		white-space: pre-line;
-	}
-
 	.device-info {
 		margin: 15px 0;
 		padding: 10px;
@@ -97,6 +91,14 @@
 		{:else if $ledgerError}
 			<strong>Error</strong>
 			<div>{$ledgerError}</div>
+			<p>Please ensure your device is:</p>
+			<ul>
+				<li>Connected via USB</li>
+				<li>Unlocked with your PIN</li>
+				<li>Has the Ethereum app open and ready</li>
+				<li>Not being used by Ledger Live or other applications</li>
+				<li>On linux, <code>wget -q -O - https://raw.githubusercontent.com/LedgerHQ/udev-rules/master/add_udev_rules.sh | sudo bash</code></li>
+			</ul>
 		{:else}
 			<strong>Connect your Ledger</strong>
 			<div>Please connect your Ledger device, unlock it, open the Ethereum app, and click Connect Ledger.</div>
@@ -125,16 +127,7 @@
 		<p><strong>Status:</strong> {$ledgerConnected ? 'Connected' : 'Detected but not connected'}</p>
 		<p><strong>Connection Method:</strong> {$ledgerConnectionMethod}</p>
 	</div>
-{:else if !$ledgerError}
-	<p>No Ledger devices detected. Please ensure your device is:</p>
-	<ul>
-		<li>Connected via USB</li>
-		<li>Unlocked with your PIN</li>
-		<li>Has the Ethereum app open and ready</li>
-		<li>Not being used by Ledger Live or other applications</li>
-		<li>on linux, <code>wget -q -O - https://raw.githubusercontent.com/LedgerHQ/udev-rules/master/add_udev_rules.sh | sudo bash</code></li>
-	</ul>
-{/if}
+{:else if !$ledgerError}{/if}
 
 <div class="buttons">
 	<Button onClick={handleConnectClick} enabled={!$ledgerLoading} data-testid="connect-ledger-btn">
@@ -146,14 +139,8 @@
 	{/if}
 </div>
 
-{#if $ledgerError}
-	<div class="error-message">
-		{$ledgerError}
-	</div>
-{/if}
-
 {#if $debug}
-	<div style="margin-top: 20px; font-size: 0.8em; color: var(--secondary-foreground);">
+	<div style="margin-top: 20px; font-size: 0.8em;">
 		<strong>Debug Info:</strong><br />
 		Device ID: {$ledgerDeviceId || 'null'}<br />
 		Connected: {$ledgerConnected}<br />

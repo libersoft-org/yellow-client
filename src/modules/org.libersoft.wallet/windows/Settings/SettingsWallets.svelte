@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { wallets, type IWallet, reorderWallets, isHardwareWallet, isTrezorWallet } from '@/org.libersoft.wallet/scripts/wallet.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { wallets, type IWallet, reorderWallets, isHardwareWallet, isTrezorWallet } from 'libersoft-crypto/wallet';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -18,7 +18,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import DialogWalletsDel from '@/org.libersoft.wallet/dialogs/WalletsDel.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	import { isHwWalletActive } from '@/org.libersoft.wallet/scripts/trezor.ts';
+	import { isHwWalletActive } from 'libersoft-crypto/trezor';
 	let selectedWallet: IWallet | undefined = $state();
 	let elDialogWalletsDel: DialogWalletsDel | undefined = $state();
 	let filter = $state('');

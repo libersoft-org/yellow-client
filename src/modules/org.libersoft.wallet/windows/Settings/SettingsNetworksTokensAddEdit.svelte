@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getGuid } from '@/core/scripts/utils/utils.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module.ts';
-	import { addToken, editToken, type IToken } from '@/org.libersoft.wallet/scripts/network.ts';
+	import { module } from '@/org.libersoft.wallet/scripts/module';
+	import { addToken, editToken, type IToken } from 'libersoft-crypto/network';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -13,8 +13,9 @@
 		close: () => void;
 		networkGuid: string;
 		item?: IToken;
+		contractAddress?: string;
 	}
-	let { close, networkGuid, item }: Props = $props();
+	let { close, networkGuid, item, contractAddress }: Props = $props();
 	let tokenGuid: string | undefined = $state();
 	let tokenName: string | undefined = $state();
 	let tokenIcon: string | undefined = $state();
@@ -35,6 +36,9 @@
 			tokenGuid = item.guid;
 			tokenIcon = item.item.iconURL;
 			tokenContractAddress = item.item.contract_address;
+		} else if (contractAddress) {
+			// Pre-fill contract address from QR code
+			tokenContractAddress = contractAddress;
 		}
 		elTokenContractAddress?.focus();
 	}
