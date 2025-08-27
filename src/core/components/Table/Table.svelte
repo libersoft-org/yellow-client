@@ -26,9 +26,7 @@
 		border: 1px solid var(--secondary-background);
 		border-radius: 10px;
 		border-spacing: 0;
-		border: 0;
 		padding-bottom: 0;
-		border-collapse: collapse;
 		font-size: clamp(14px, 2vw, 16px);
 	}
 </style>
