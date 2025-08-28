@@ -27,8 +27,9 @@
 	import DialogSend from '@/org.libersoft.wallet/dialogs/SendConfirmation.svelte';
 	import QRScanner from '@/core/components/QRScanner/QRScanner.svelte';
 	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
-	import { ensureWalletConnection, networksWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { ensureWalletConnection, networksWindow, settingsWindow, setSection } from '@/org.libersoft.wallet/scripts/ui';
 	import { playAudio } from '@/core/scripts/notifications.ts';
+	import { addTransactionToLog } from '@/org.libersoft.wallet/scripts/log.ts';
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -464,9 +465,31 @@
 		if (await ensureWalletConnection()) {
 			console.log('ensureWalletConnection passed, sending transaction...');
 			console.log('SENDING TRANSACTION');
-			const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
-			console.log('Transaction sent, hash:', hash);
-			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
+
+			try {
+				const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
+				console.log('Transaction sent, hash:', hash);
+
+				// Add transaction to log immediately after getting hash
+				const decimals = params.contractAddress ? currentBalanceData?.decimals || 18 : 18;
+				const symbol = params.contractAddress ? selectedCurrencySymbol : $selectedNetwork?.currency?.symbol || '';
+
+				addTransactionToLog(params.address, params.amount, symbol, decimals, params.contractAddress, hash);
+
+				playAudio('modules/' + module.identifier + '/audio/payment.mp3');
+
+				// Reset form after successful transaction
+				$sendAddress = '';
+				amount = '';
+				currency = null;
+				error = null;
+
+				// Navigate to History section
+				setSection('history');
+			} catch (err) {
+				console.error('Transaction failed:', err);
+				error = err instanceof Error ? err.message : 'Transaction failed';
+			}
 		}
 	}
 </script>

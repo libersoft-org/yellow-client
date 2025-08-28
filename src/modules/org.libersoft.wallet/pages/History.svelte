@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { selectedNetwork } from 'libersoft-crypto/network';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
+	import { transactionLog, refreshTransactionStatus, getTxAmountAsBigInt, type TxLogEntry } from '@/org.libersoft.wallet/scripts/log.ts';
+	import { formatBalance } from 'libersoft-crypto/balance';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -13,31 +15,41 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+
 	let link: string | undefined = $state();
 	let elLink: HTMLDivElement | undefined = $state();
+	let refreshingTxIds = $state(new Set<string>());
 
-	// Mocked transactions (newest first)
-	type TxStatus = 'Not sent' | 'Pending' | 'Success' | 'Error';
-	interface TxRow {
-		address: string;
-		amount: number;
-		currency: string;
-		status: TxStatus;
-		timestamp: Date;
-	}
-
-	let transactions = $state<TxRow[]>([
-		{ address: '0xA1b2...34F0', amount: 0.125, currency: 'ETH', status: 'Success', timestamp: new Date(Date.now() - 3 * 60 * 1000) },
-		{ address: '0x99cD...12AB', amount: 250, currency: 'USDT', status: 'Pending', timestamp: new Date(Date.now() - 25 * 60 * 1000) },
-		{ address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', amount: 0.005, currency: 'BTC', status: 'Error', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) },
-		{ address: '0xDeF1...C0FF', amount: 42, currency: 'DAI', status: 'Not sent', timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000) },
-	]);
-	let sortedTransactions = $derived([...transactions].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()));
+	// Get transactions for current network
+	let transactions = $derived.by(() => {
+		if (!$selectedNetwork?.guid) return [];
+		// Force reactivity by accessing the entire transactionLog store
+		const allLogs = $transactionLog;
+		console.log('📊 Transactions updated for network:', $selectedNetwork.guid, 'Total logs:', Object.keys(allLogs).length);
+		const networkTransactions = allLogs[$selectedNetwork.guid] || [];
+		console.log('📋 Network transactions:', networkTransactions.length, networkTransactions);
+		return networkTransactions;
+	});
 
 	$effect(() => {
 		if ($selectedNetwork && $selectedAddress) {
 			if ($selectedNetwork.explorerURL) link = $selectedNetwork.explorerURL + '/address/' + $selectedAddress.address;
 			else link = undefined;
+		}
+	});
+
+	// Debug effect to track store changes
+	$effect(() => {
+		const logKeys = Object.keys($transactionLog);
+		console.log('🔄 TransactionLog store changed. Networks with transactions:', logKeys);
+		if ($selectedNetwork?.guid) {
+			const currentNetworkTxs = $transactionLog[$selectedNetwork.guid] || [];
+			console.log('📊 Current network transactions count:', currentNetworkTxs.length);
+			currentNetworkTxs.forEach(tx => {
+				console.log(`  - TX ${tx.id}: ${tx.status} (${tx.hash?.slice(0, 10)}...)`);
+			});
 		}
 	});
 
@@ -63,8 +75,38 @@
 		if (elLink && link) elLink.innerText = link;
 	}
 
-	function refreshRow(_tx: TxRow): void {
-		console.log('Refresh clicked for', _tx);
+	function refreshRow(tx: TxLogEntry): void {
+		console.log('Refresh clicked for transaction:', tx.id, tx.hash);
+		if (refreshingTxIds.has(tx.id)) return; // Already refreshing
+		refreshingTxIds.add(tx.id);
+		refreshingTxIds = new Set(refreshingTxIds); // Trigger reactivity
+		refreshTransactionStatus(tx.id)
+			.then(() => console.log('✅ Refresh completed successfully for:', tx.id))
+			.catch(error => console.error('❌ Refresh failed for:', tx.id, error))
+			.finally(() => {
+				refreshingTxIds.delete(tx.id);
+				refreshingTxIds = new Set(refreshingTxIds); // Trigger reactivity
+				console.log('🔄 Refresh finished for:', tx.id);
+			});
+	}
+
+	function openTransactionInExplorer(tx: TxLogEntry): void {
+		console.log('Opening transaction in explorer:', tx.hash, $selectedNetwork?.explorerURL);
+		if (!tx.hash || !$selectedNetwork?.explorerURL) return;
+		const txUrl = $selectedNetwork.explorerURL + '/tx/' + tx.hash;
+		console.log('Opening URL:', txUrl);
+		window.open(txUrl, '_blank');
+	}
+
+	function shortenAddress(address: string): string {
+		if (address.length <= 20) return address;
+		return address.slice(0, 8) + '...' + address.slice(-6);
+	}
+
+	function shortenHash(hash: string | undefined): string {
+		if (!hash) return 'N/A';
+		if (hash.length <= 20) return hash;
+		return hash.slice(0, 10) + '...' + hash.slice(-8);
 	}
 </script>
 
@@ -133,39 +175,55 @@
 				<Button img="img/copy.svg" text="Copy link" onClick={copyLink} />
 				<Button img="img/link.svg" text="Open link" onClick={openLink} />
 			</ButtonBar>
-			<div class="tx-table">
-				<Table>
-					<Thead>
-						<TheadTr>
-							<Th>Adresa</Th>
-							<Th>Částka</Th>
-							<Th>Stav</Th>
-							<Th>Datum a čas</Th>
-							<Th></Th>
-						</TheadTr>
-					</Thead>
-					<Tbody>
-						{#each sortedTransactions as tx}
-							<TbodyTr>
-								<Td expand>{tx.address}</Td>
-								<Td>{tx.amount} {tx.currency}</Td>
-								<Td>
-									<div class="tx-status">
-										<span class="dot {tx.status === 'Error' ? 'error' : tx.status === 'Pending' ? 'pending' : tx.status === 'Success' ? 'success' : 'not-sent'}"></span>
-										<span>{tx.status}</span>
-									</div>
-								</Td>
-								<Td>{tx.timestamp.toLocaleString()}</Td>
-								<Td>
-									<ActionItems align="right">
-										<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => refreshRow(tx)} />
-									</ActionItems>
-								</Td>
-							</TbodyTr>
-						{/each}
-					</Tbody>
-				</Table>
-			</div>
+			{#if transactions.length > 0}
+				<div class="tx-table">
+					<Table>
+						<Thead>
+							<TheadTr>
+								<Th>Adresa</Th>
+								<Th>Hash</Th>
+								<Th>Částka</Th>
+								<Th>Stav</Th>
+								<Th>Datum a čas</Th>
+								<Th></Th>
+							</TheadTr>
+						</Thead>
+						<Tbody>
+							{#each transactions as tx}
+								<TbodyTr>
+									<Td expand title={tx.address}>{shortenAddress(tx.address)}</Td>
+									<Td>
+										{#if tx.hash && $selectedNetwork?.explorerURL}
+											<Clickable onClick={() => openTransactionInExplorer(tx)}>{shortenHash(tx.hash)}</Clickable>
+										{:else}
+											<span class="no-hash">{shortenHash(tx.hash)}</span>
+										{/if}
+									</Td>
+									<Td>{formatBalance({ amount: getTxAmountAsBigInt(tx), currency: tx.currency, decimals: tx.decimals })}</Td>
+									<Td>
+										<div class="tx-status">
+											<span class="dot {tx.status === 'Error' ? 'error' : tx.status === 'Pending' ? 'pending' : tx.status === 'Success' ? 'success' : 'not-sent'}"></span>
+											<span>{tx.status}</span>
+										</div>
+									</Td>
+									<Td>{new Date(tx.timestamp).toLocaleString()}</Td>
+									<Td>
+										{#if refreshingTxIds.has(tx.id)}
+											<Spinner size="10px" />
+										{:else}
+											<ActionItems>
+												<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="20px" padding="5px" enabled={true} onClick={() => refreshRow(tx)} />
+											</ActionItems>
+										{/if}
+									</Td>
+								</TbodyTr>
+							{/each}
+						</Tbody>
+					</Table>
+				</div>
+			{:else}
+				<div>No transactions found</div>
+			{/if}
 		</div>
 	{/if}
 {/if}
