@@ -16,7 +16,6 @@
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 
 	let link: string | undefined = $state();
 	let elLink: HTMLDivElement | undefined = $state();
@@ -97,17 +96,6 @@
 		console.log('Opening URL:', txUrl);
 		window.open(txUrl, '_blank');
 	}
-
-	function shortenAddress(address: string): string {
-		if (address.length <= 20) return address;
-		return address.slice(0, 8) + '...' + address.slice(-6);
-	}
-
-	function shortenHash(hash: string | undefined): string {
-		if (!hash) return 'N/A';
-		if (hash.length <= 20) return hash;
-		return hash.slice(0, 10) + '...' + hash.slice(-8);
-	}
 </script>
 
 <style>
@@ -128,10 +116,6 @@
 		border-radius: 10px;
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
-	}
-
-	.tx-table {
-		width: 100%;
 	}
 
 	.tx-status {
@@ -176,51 +160,54 @@
 				<Button img="img/link.svg" text="Open link" onClick={openLink} />
 			</ButtonBar>
 			{#if transactions.length > 0}
-				<div class="tx-table">
-					<Table>
-						<Thead>
-							<TheadTr>
-								<Th>Address</Th>
-								<Th>Transaction hash</Th>
-								<Th>Amount</Th>
-								<Th>Status</Th>
-								<Th>Date and time</Th>
-								<Th></Th>
-							</TheadTr>
-						</Thead>
+				{#each transactions as tx}
+					<Table expand>
 						<Tbody>
-							{#each transactions as tx}
+							<TbodyTr>
+								<Td bold>Address:</Td>
+								<Td>{tx.address}</Td>
+							</TbodyTr>
+							{#if tx.hash}
 								<TbodyTr>
-									<Td expand title={tx.address}>{shortenAddress(tx.address)}</Td>
-									<Td>
-										{#if tx.hash && $selectedNetwork?.explorerURL}
-											<Clickable onClick={() => openTransactionInExplorer(tx)}>{shortenHash(tx.hash)}</Clickable>
-										{:else}
-											<span class="no-hash">{shortenHash(tx.hash)}</span>
-										{/if}
-									</Td>
-									<Td>{formatBalance({ amount: getTxAmountAsBigInt(tx), currency: tx.currency, decimals: tx.decimals })}</Td>
-									<Td>
-										<div class="tx-status">
-											<span class="dot {tx.status === 'Error' ? 'error' : tx.status === 'Pending' ? 'pending' : tx.status === 'Success' ? 'success' : 'not-sent'}"></span>
-											<span>{tx.status}</span>
-										</div>
-									</Td>
-									<Td>{new Date(tx.timestamp).toLocaleString()}</Td>
-									<Td>
+									<Td bold>Transaction hash:</Td>
+									<Td>{tx.hash}</Td>
+								</TbodyTr>
+							{/if}
+							<TbodyTr>
+								<Td bold>Amount:</Td>
+								<Td>{formatBalance({ amount: getTxAmountAsBigInt(tx), currency: tx.currency, decimals: tx.decimals })}</Td>
+							</TbodyTr>
+							<TbodyTr>
+								<Td bold>Status:</Td>
+								<Td>
+									<div class="tx-status">
+										<span class="dot {tx.status === 'Error' ? 'error' : tx.status === 'Pending' ? 'pending' : tx.status === 'Success' ? 'success' : 'not-sent'}"></span>
+										<span>{tx.status}</span>
+									</div>
+								</Td>
+							</TbodyTr>
+							<TbodyTr>
+								<Td bold>Date and time:</Td>
+								<Td>{new Date(tx.timestamp).toLocaleString()}</Td>
+							</TbodyTr>
+							<TbodyTr>
+								<Td bold>Action:</Td>
+								<Td>
+									<ActionItems>
 										{#if refreshingTxIds.has(tx.id)}
 											<Spinner size="10px" />
 										{:else}
-											<ActionItems>
-												<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="20px" padding="5px" enabled={true} onClick={() => refreshRow(tx)} />
-											</ActionItems>
+											{#if tx.hash && $selectedNetwork?.explorerURL}
+												<Icon img="img/link.svg" alt="Open in explorer" colorVariable="--primary-foreground" size="20px" padding="5px" enabled={true} onClick={() => openTransactionInExplorer(tx)} />
+											{/if}
+											<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="20px" padding="5px" enabled={true} onClick={() => refreshRow(tx)} />
 										{/if}
-									</Td>
-								</TbodyTr>
-							{/each}
+									</ActionItems>
+								</Td>
+							</TbodyTr>
 						</Tbody>
 					</Table>
-				</div>
+				{/each}
 			{:else}
 				<div>No transactions found</div>
 			{/if}
