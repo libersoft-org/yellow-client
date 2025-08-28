@@ -180,11 +180,11 @@
 					<Table>
 						<Thead>
 							<TheadTr>
-								<Th>Adresa</Th>
-								<Th>Hash</Th>
-								<Th>Částka</Th>
-								<Th>Stav</Th>
-								<Th>Datum a čas</Th>
+								<Th>Address</Th>
+								<Th>Transaction hash</Th>
+								<Th>Amount</Th>
+								<Th>Status</Th>
+								<Th>Date and time</Th>
 								<Th></Th>
 							</TheadTr>
 						</Thead>
