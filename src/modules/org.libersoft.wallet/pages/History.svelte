@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { selectedNetwork } from 'libersoft-crypto/network';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
-	import { transactionLog, refreshTransactionStatus, getTxAmountAsBigInt, type TxLogEntry } from '@/org.libersoft.wallet/scripts/log.ts';
+	import { transactionLog, refreshTransactionStatus, getTxAmountAsBigInt, type TxLogEntry } from 'libersoft-crypto/log';
 	import { formatBalance } from 'libersoft-crypto/balance';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';

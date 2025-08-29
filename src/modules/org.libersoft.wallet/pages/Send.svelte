@@ -29,7 +29,7 @@
 	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
 	import { ensureWalletConnection, networksWindow, settingsWindow, setSection } from '@/org.libersoft.wallet/scripts/ui';
 	import { playAudio } from '@/core/scripts/notifications.ts';
-	import { addTransactionToLog } from '@/org.libersoft.wallet/scripts/log.ts';
+	import { addTransactionToLog } from 'libersoft-crypto/log';
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
