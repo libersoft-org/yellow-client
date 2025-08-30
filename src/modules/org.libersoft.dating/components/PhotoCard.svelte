@@ -64,12 +64,22 @@
 
 	function onYes() {
 		console.log('Yes');
-		onCardRemoved?.();
+		// Animace swipe doprava
+		currentX = window.innerWidth;
+		setTimeout(() => {
+			onCardRemoved?.();
+			currentX = 0; // Reset pozice pro příští kartu
+		}, 300);
 	}
 
 	function onNo() {
 		console.log('No');
-		onCardRemoved?.();
+		// Animace swipe doleva
+		currentX = -window.innerWidth;
+		setTimeout(() => {
+			onCardRemoved?.();
+			currentX = 0; // Reset pozice pro příští kartu
+		}, 300);
 	}
 </script>
 
@@ -108,7 +118,43 @@
 		background: var(--default-foreground);
 		color: var(--default-background);
 		padding: 10px;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.overlay-content {
+		flex: 1;
 		text-align: center;
+	}
+
+	.overlay-button {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		border: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 20px;
+		cursor: pointer;
+		transition: transform 0.2s ease;
+		flex-shrink: 0;
+	}
+
+	.overlay-button:hover {
+		transform: scale(1.1);
+	}
+
+	.overlay-button.like {
+		background-color: #4caf50;
+		color: white;
+	}
+
+	.overlay-button.nope {
+		background-color: #f44336;
+		color: white;
 	}
 
 	.card-buttons {
@@ -155,8 +201,12 @@
 <div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" ontouchstart={e => startSwipe(e)} ontouchmove={e => moveSwipe(e)} ontouchend={e => endSwipe(e)} onmousedown={e => startSwipe(e)} onmousemove={e => moveSwipe(e)} onmouseup={e => endSwipe(e)} onmouseleave={e => handleMouseLeave(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
-		<div class="title">{photo.name}</div>
-		<div>{photo.description}</div>
+		<button class="overlay-button nope" onclick={onNo}> 👎 </button>
+		<div class="overlay-content">
+			<div class="title">{photo.name}</div>
+			<div>{photo.description}</div>
+		</div>
+		<button class="overlay-button like" onclick={onYes}> 👍 </button>
 	</div>
 	<div class="card-buttons">
 		<CardButton onClick={onNo} content="👎" />
