@@ -24,6 +24,43 @@
 				.addTo(map)
 				.bindPopup('Your location')
 				.openPopup();
+			const markers = [
+				{
+					lat: parseFloat(myCoordinates.latitude) + 0.01,
+					lng: parseFloat(myCoordinates.longitude) + 0.01,
+					photo: '/modules/org.libersoft.dating/img/photos/1.webp',
+					name: 'Person 1',
+				},
+				{
+					lat: parseFloat(myCoordinates.latitude) - 0.008,
+					lng: parseFloat(myCoordinates.longitude) + 0.015,
+					photo: '/modules/org.libersoft.dating/img/photos/2.webp',
+					name: 'Person 2',
+				},
+				{
+					lat: parseFloat(myCoordinates.latitude) + 0.005,
+					lng: parseFloat(myCoordinates.longitude) - 0.012,
+					photo: '/modules/org.libersoft.dating/img/photos/3.webp',
+					name: 'Person 3',
+				},
+			];
+
+			markers.forEach(marker => {
+				// Vytvoříme vlastní icon s fotkou
+				const customIcon = L.divIcon({
+					html: `
+						<div style="text-align: center; background: white; border-radius: 12px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border: 2px solid #fff;">
+							<img src="${marker.photo}" alt="${marker.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto 4px;" />
+							<div style="font-size: 12px; font-weight: bold; color: #333; white-space: nowrap;">${marker.name}</div>
+						</div>
+					`,
+					className: 'custom-photo-marker',
+					iconSize: [70, 80],
+					iconAnchor: [35, 40],
+				});
+
+				L.marker([marker.lat, marker.lng], { icon: customIcon }).addTo(map);
+			});
 		}
 	});
 </script>
