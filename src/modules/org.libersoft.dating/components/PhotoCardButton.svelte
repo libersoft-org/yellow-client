@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	export let content;
-	export let onClick;
+	interface Props {
+		content: string;
+		onClick: (e: Event) => void;
+	}
+	let { content, onClick }: Props = $props();
 </script>
 
 <style>
@@ -10,7 +13,7 @@
 		align-items: center;
 		justify-content: center;
 		padding: 10px;
-		border: 1px solid #000;
+		border: 1px solid var(--primary-background);
 		border-radius: 50%;
 		box-shadow: var(--shadow);
 	}
