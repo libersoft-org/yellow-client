@@ -39,14 +39,16 @@
 			// Swipe doprava - Ano
 			currentX = window.innerWidth;
 			setTimeout(() => {
-				onYes();
+				console.log('Yes');
+				onCardRemoved?.();
 				currentX = 0; // Reset pozice pro příští kartu
 			}, 300);
 		} else if (currentX < -threshold) {
 			// Swipe doleva - Ne
 			currentX = -window.innerWidth;
 			setTimeout(() => {
-				onNo();
+				console.log('No');
+				onCardRemoved?.();
 				currentX = 0; // Reset pozice pro příští kartu
 			}, 300);
 		} else {
@@ -198,7 +200,7 @@
 	}
 </style>
 
-<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" ontouchstart={e => startSwipe(e)} ontouchmove={e => moveSwipe(e)} ontouchend={e => endSwipe(e)} onmousedown={e => startSwipe(e)} onmousemove={e => moveSwipe(e)} onmouseup={e => endSwipe(e)} onmouseleave={e => handleMouseLeave(e)}>
+<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" role="button" tabindex="0" ontouchstart={e => startSwipe(e)} ontouchmove={e => moveSwipe(e)} ontouchend={e => endSwipe(e)} onmousedown={e => startSwipe(e)} onmousemove={e => moveSwipe(e)} onmouseup={e => endSwipe(e)} onmouseleave={e => handleMouseLeave(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
 		<button class="overlay-button nope" onclick={onNo}> 👎 </button>
