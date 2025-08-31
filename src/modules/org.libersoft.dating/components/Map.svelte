@@ -24,6 +24,7 @@
 				.addTo(map)
 				.bindPopup('Your location')
 				.openPopup();
+
 			const markers = [
 				{
 					lat: parseFloat(myCoordinates.latitude) + 0.01,
@@ -44,20 +45,110 @@
 					name: 'Name 3',
 				},
 			];
-			markers.forEach(marker => {
-				const customIcon = L.divIcon({
-					html: `
-						<div style="text-align: center; background: white; border-radius: 12px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border: 2px solid #fff;">
-							<img src="${marker.photo}" alt="${marker.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto 4px;" />
-							<div style="font-size: 12px; font-weight: bold; color: #333; white-space: nowrap;">${marker.name}</div>
+
+			let currentMarkers: any[] = [];
+
+			// Funkce pro výpočet vzdálenosti mezi dvěma body
+			function getDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+				const R = 6371; // Poloměr Země v km
+				const dLat = ((lat2 - lat1) * Math.PI) / 180;
+				const dLng = ((lng2 - lng1) * Math.PI) / 180;
+				const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+				const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+				return R * c;
+			}
+
+			// Funkce pro clustering podle zoom levelu
+			function updateMarkers() {
+				// Vymaž současné markery
+				currentMarkers.forEach(marker => map.removeLayer(marker));
+				currentMarkers = [];
+
+				const zoom = map.getZoom();
+
+				if (zoom >= 12) {
+					// Vysoký zoom - zobraz jednotlivé markery s fotkami
+					markers.forEach(marker => {
+						const customIcon = L.divIcon({
+							html: `
+								<div style="text-align: center; background: white; border-radius: 12px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border: 2px solid #fff;">
+									<img src="${marker.photo}" alt="${marker.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto 4px;" />
+									<div style="font-size: 12px; font-weight: bold; color: #333; white-space: nowrap;">${marker.name}</div>
+								</div>
+							`,
+							className: 'custom-photo-marker',
+							iconSize: [70, 80],
+							iconAnchor: [35, 40],
+						});
+						const newMarker = L.marker([marker.lat, marker.lng], { icon: customIcon });
+						newMarker.addTo(map);
+						currentMarkers.push(newMarker);
+					});
+				} else {
+					// Nízký zoom - zobraz jeden cluster se všemi lidmi
+					const totalCount = markers.length;
+
+					// Spočítej střed všech markerů
+					const centerLat = markers.reduce((sum, m) => sum + m.lat, 0) / totalCount;
+					const centerLng = markers.reduce((sum, m) => sum + m.lng, 0) / totalCount;
+
+					// Cluster s počtem všech lidí
+					const clusterIcon = L.divIcon({
+						html: `
+							<div style="
+								background: #ff6b6b; 
+								color: white; 
+								border-radius: 50%; 
+								width: 50px; 
+								height: 50px; 
+								display: flex; 
+								align-items: center; 
+								justify-content: center; 
+								font-weight: bold; 
+								font-size: 18px;
+								box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+								border: 3px solid white;
+							">
+								${totalCount}
+							</div>
+						`,
+						className: 'custom-cluster-marker',
+						iconSize: [50, 50],
+						iconAnchor: [25, 25],
+					});
+
+					const clusterMarker = L.marker([centerLat, centerLng], { icon: clusterIcon });
+
+					// Popup s detaily všech lidí
+					const popupContent = `
+						<div style="text-align: center; max-width: 250px;">
+							<h4 style="margin: 0 0 10px 0;">${totalCount} lidí v oblasti</h4>
+							<div style="max-height: 200px; overflow-y: auto;">
+								${markers
+									.map(
+										m => `
+									<div style="margin-bottom: 8px; padding: 4px; border-bottom: 1px solid #eee;">
+										<img src="${m.photo}" alt="${m.name}" style="width: 30px; height: 30px; object-fit: cover; border-radius: 4px; margin-right: 8px; vertical-align: middle;" />
+										<span style="font-weight: bold;">${m.name}</span>
+									</div>
+								`
+									)
+									.join('')}
+							</div>
 						</div>
-					`,
-					className: 'custom-photo-marker',
-					iconSize: [70, 80],
-					iconAnchor: [35, 40],
-				});
-				L.marker([marker.lat, marker.lng], { icon: customIcon }).addTo(map);
-			});
+					`;
+
+					clusterMarker.bindPopup(popupContent);
+					clusterMarker.addTo(map);
+					currentMarkers.push(clusterMarker);
+				}
+			}
+
+			// Posluchač pro změnu zoom levelu
+			map.on('zoomend', updateMarkers);
+
+			// Inicializuj markery
+			updateMarkers();
 		}
 	});
 </script>
