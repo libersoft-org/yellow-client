@@ -81,14 +81,6 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.network {
-		display: flex;
-		align-items: center;
-		padding: 0 10px;
-		gap: 10px;
-		height: 50px;
-	}
 </style>
 
 <div class="networks" data-testid="wallet-settings-networks">
@@ -117,7 +109,7 @@
 						<Td>
 							<DragHandle />
 						</Td>
-						<Td padding="0" align="center">
+						<Td padding="0" align="center" class="network-icon-cell">
 							{#if n.currency?.iconURL}
 								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
 							{/if}

@@ -528,9 +528,9 @@
 		white-space: nowrap;
 	}
 
-	.amount-layout .symbol {
-		flex-shrink: 0; /* Prevent symbol from shrinking */
-		white-space: nowrap; /* Prevent symbol from wrapping */
+	.symbol-text {
+		font-size: 18px;
+		font-weight: bold;
 	}
 </style>
 
@@ -541,6 +541,7 @@
 				<Th>{title}</Th>
 				{#if !$isMobile}
 					<Th>Balance</Th>
+					<Th></Th>
 				{/if}
 				<Th></Th>
 			</TheadTr>
@@ -555,7 +556,7 @@
 
 {#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
 	<Tr>
-		<Td padding="0" class="expand-balance">
+		<Td padding="0" class="currency-column-wide">
 			{#if $debug}
 				<pre>{stringifyWithBigInt(balanceData)}</pre>
 			{/if}
@@ -592,6 +593,13 @@
 					{/if}
 				</div>
 			</Td>
+			<Td padding="0">
+				{#if symbol}
+					<span class="symbol-text">{symbol}</span>
+				{:else}
+					<span class="symbol-text">-</span>
+				{/if}
+			</Td>
 		{/if}
 		<Td>
 			{#if refreshFn}
@@ -608,7 +616,6 @@
 				{#if balanceData?.crypto}
 					<div class="amount-layout">
 						<span class="text-truncate">800 000 000.000 000 000</span>
-						<span class="symbol">{formatBalance(balanceData.crypto)}</span>
 					</div>
 				{:else}
 					{@render spinner()}

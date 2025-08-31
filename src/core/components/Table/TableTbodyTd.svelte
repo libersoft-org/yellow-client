@@ -302,6 +302,20 @@
 		width: 100%;
 	}
 
+	td.currency-column-wide {
+		width: 100%;
+	}
+
+	@media (min-width: 768px) {
+		td.currency-column-wide {
+			width: 65%;
+		}
+	}
+
+	td.network-icon-cell {
+		padding-right: 10px !important;
+	}
+
 	/* Text truncation wrapper class */
 	:global(.text-truncate) {
 		display: block;
