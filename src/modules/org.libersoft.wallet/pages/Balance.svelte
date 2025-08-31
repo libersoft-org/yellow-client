@@ -615,7 +615,7 @@
 			<div class="amount">
 				{#if balanceData?.crypto}
 					<div class="amount-layout">
-						<span class="text-truncate">800 000 000.000 000 000</span>
+						<span class="text-truncate">{formatBalance(balanceData.crypto)?.replace(/[^\d.]/g, '') || balanceData.crypto}</span>
 					</div>
 				{:else}
 					{@render spinner()}
