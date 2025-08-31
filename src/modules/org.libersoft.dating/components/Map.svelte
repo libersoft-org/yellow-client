@@ -48,9 +48,9 @@
 
 			let currentMarkers: any[] = [];
 
-			// Funkce pro výpočet vzdálenosti mezi dvěma body
+			// Function to calculate distance between two points
 			function getDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
-				const R = 6371; // Poloměr Země v km
+				const R = 6371; // Earth's radius in km
 				const dLat = ((lat2 - lat1) * Math.PI) / 180;
 				const dLng = ((lng2 - lng1) * Math.PI) / 180;
 				const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
@@ -58,16 +58,16 @@
 				return R * c;
 			}
 
-			// Funkce pro clustering podle zoom levelu
+			// Function for clustering based on zoom level
 			function updateMarkers() {
-				// Vymaž současné markery
+				// Clear current markers
 				currentMarkers.forEach(marker => map.removeLayer(marker));
 				currentMarkers = [];
 
 				const zoom = map.getZoom();
 
 				if (zoom >= 12) {
-					// Vysoký zoom - zobraz jednotlivé markery s fotkami
+					// High zoom - show individual markers with photos
 					markers.forEach(marker => {
 						const customIcon = L.divIcon({
 							html: `
@@ -85,14 +85,14 @@
 						currentMarkers.push(newMarker);
 					});
 				} else {
-					// Nízký zoom - zobraz jeden cluster se všemi lidmi
+					// Low zoom - show one cluster with all people
 					const totalCount = markers.length;
 
-					// Spočítej střed všech markerů
+					// Calculate center of all markers
 					const centerLat = markers.reduce((sum, m) => sum + m.lat, 0) / totalCount;
 					const centerLng = markers.reduce((sum, m) => sum + m.lng, 0) / totalCount;
 
-					// Cluster s počtem všech lidí
+					// Cluster with count of all people
 					const clusterIcon = L.divIcon({
 						html: `
 							<div style="
@@ -119,10 +119,10 @@
 
 					const clusterMarker = L.marker([centerLat, centerLng], { icon: clusterIcon });
 
-					// Popup s detaily všech lidí
+					// Popup with details of all people
 					const popupContent = `
 						<div style="text-align: center; max-width: 250px;">
-							<h4 style="margin: 0 0 10px 0;">${totalCount} lidí v oblasti</h4>
+							<h4 style="margin: 0 0 10px 0;">${totalCount} people in area</h4>
 							<div style="max-height: 200px; overflow-y: auto;">
 								${markers
 									.map(
@@ -144,10 +144,10 @@
 				}
 			}
 
-			// Posluchač pro změnu zoom levelu
+			// Event listener for zoom level changes
 			map.on('zoomend', updateMarkers);
 
-			// Inicializuj markery
+			// Initialize markers
 			updateMarkers();
 		}
 	});
