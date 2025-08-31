@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CardButton from './PhotoCardButton.svelte';
+	import PhotoCardButton from './PhotoCardButton.svelte';
 	import { type IPhotoCard } from '@/org.libersoft.dating/scripts/photocards.ts';
 	interface Props {
 		photo: IPhotoCard;
@@ -23,7 +23,7 @@
 		if (!isDragging) return;
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 		currentX = clientX - startX;
-		// Ošetření hraničních hodnot
+		// Limit boundary values
 		if (currentX > window.innerWidth / 2) currentX = window.innerWidth / 2;
 		if (currentX < -window.innerWidth / 2) currentX = -window.innerWidth / 2;
 		e.preventDefault();
@@ -36,28 +36,28 @@
 		moving = false;
 		isDragging = false;
 		if (currentX > threshold) {
-			// Swipe doprava - Ano
+			// Swipe right - Yes
 			currentX = window.innerWidth;
 			setTimeout(() => {
 				console.log('Yes');
 				onCardRemoved?.();
-				currentX = 0; // Reset pozice pro příští kartu
+				currentX = 0; // Reset position for next card
 			}, 300);
 		} else if (currentX < -threshold) {
-			// Swipe doleva - Ne
+			// Swipe left - No
 			currentX = -window.innerWidth;
 			setTimeout(() => {
 				console.log('No');
 				onCardRemoved?.();
-				currentX = 0; // Reset pozice pro příští kartu
+				currentX = 0; // Reset position for next card
 			}, 300);
 		} else {
-			// Nedostatečný swipe - vrátit kartu zpět
+			// Insufficient swipe - return card back
 			currentX = 0;
 		}
 	}
 
-	// Funkce pro handling mouse leave události
+	// Function for handling mouse leave event
 	function handleMouseLeave(e) {
 		if (isDragging) {
 			endSwipe(e);
@@ -66,21 +66,21 @@
 
 	function onYes() {
 		console.log('Yes');
-		// Animace swipe doprava
+		// Animate swipe right
 		currentX = window.innerWidth;
 		setTimeout(() => {
 			onCardRemoved?.();
-			currentX = 0; // Reset pozice pro příští kartu
+			currentX = 0; // Reset position for next card
 		}, 300);
 	}
 
 	function onNo() {
 		console.log('No');
-		// Animace swipe doleva
+		// Animate swipe left
 		currentX = -window.innerWidth;
 		setTimeout(() => {
 			onCardRemoved?.();
-			currentX = 0; // Reset pozice pro příští kartu
+			currentX = 0; // Reset position for next card
 		}, 300);
 	}
 </script>
@@ -90,8 +90,8 @@
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		width: 300px;
-		height: 400px;
+		width: 100%;
+		height: 100%;
 		border-radius: 10px;
 		overflow: hidden;
 		touch-action: pan-y;
@@ -107,8 +107,9 @@
 
 	.photo-card img {
 		width: 100%;
-		height: auto;
+		height: 100%;
 		object-fit: cover;
+		flex: 1;
 	}
 
 	.photo-card .overlay {
@@ -129,42 +130,6 @@
 	.overlay-content {
 		flex: 1;
 		text-align: center;
-	}
-
-	.overlay-button {
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		border: none;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 20px;
-		cursor: pointer;
-		transition: transform 0.2s ease;
-		flex-shrink: 0;
-	}
-
-	.overlay-button:hover {
-		transform: scale(1.1);
-	}
-
-	.overlay-button.like {
-		background-color: #4caf50;
-		color: white;
-	}
-
-	.overlay-button.nope {
-		background-color: #f44336;
-		color: white;
-	}
-
-	.card-buttons {
-		z-index: 3;
-		display: flex;
-		width: 100%;
-		justify-content: space-around;
-		margin-bottom: 10px;
 	}
 
 	.overlay .title {
@@ -203,19 +168,15 @@
 <div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" role="button" tabindex="0" ontouchstart={e => startSwipe(e)} ontouchmove={e => moveSwipe(e)} ontouchend={e => endSwipe(e)} onmousedown={e => startSwipe(e)} onmousemove={e => moveSwipe(e)} onmouseup={e => endSwipe(e)} onmouseleave={e => handleMouseLeave(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
-		<button class="overlay-button nope" onclick={onNo}> 👎 </button>
+		<PhotoCardButton onClick={onNo} />
 		<div class="overlay-content">
 			<div class="title">{photo.name}</div>
 			<div>{photo.description}</div>
 		</div>
-		<button class="overlay-button like" onclick={onYes}> 👍 </button>
-	</div>
-	<div class="card-buttons">
-		<CardButton onClick={onNo} content="👎" />
-		<CardButton onClick={onYes} content="👍" />
+		<PhotoCardButton isLike onClick={onYes} />
 	</div>
 
-	<!-- Swipe indikátory -->
+	<!-- Swipe indicators -->
 	<div class="swipe-indicator like {currentX > threshold ? 'visible' : ''}">👍 LIKE</div>
 	<div class="swipe-indicator nope {currentX < -threshold ? 'visible' : ''}">👎 NOPE</div>
 </div>

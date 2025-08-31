@@ -52,14 +52,16 @@
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		height: 500px;
+		height: 100%;
 		perspective: 1000px;
 	}
 
 	.card-stack {
 		position: relative;
-		width: 300px;
-		height: 400px;
+		aspect-ratio: 3/4;
+		/* Card will adapt to the smaller of these values */
+		width: min(100%, 75vh);
+		height: min(100%, 133.33vw);
 	}
 
 	.card-wrapper {
