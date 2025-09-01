@@ -181,9 +181,10 @@
 	</div>
 	{#if $debug}
 		<div>Input Value: {inputValue}</div>
-		<div>Selected Option: {JSON.stringify(selected)}</div>
+		<pre>Selected Option: {JSON.stringify(selected, null, 2)}</pre>
 		<div>Selected Index: {selectedIndex}</div>
-		<div>Filtered Options: {JSON.stringify(filteredOptions)}</div>
+		<pre>Filtered Options: {JSON.stringify(filteredOptions, null, 2)}</pre>
+		<pre>options: {JSON.stringify(options, null, 2)}</pre>
 	{/if}
 	{#if showOptions}
 		<div class="options" onmousedown={e => e.preventDefault()} role="listbox" aria-label="Options" tabindex="-1">

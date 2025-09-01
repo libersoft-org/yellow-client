@@ -264,13 +264,21 @@
 			amount = parsed.amount;
 		}
 
-		// Set currency from parsed data or let qrCurrency derived handle it
+		// Handle currency selection from QR data
 		if (parsed.currency) {
-			currency = parsed.currency;
+			// Native currency QR: parser found the native currency directly
+			const matchingOption = currencyOptions.find(opt => !opt.value.contract_address && opt.value.symbol === parsed.currency?.symbol);
+			currency = matchingOption?.value || parsed.currency;
 			handleCurrencyChange();
 		} else if (qrCurrency) {
-			currency = qrCurrency;
+			// Token QR: qrCurrency reactively found the token by contract address
+			const matchingOption = currencyOptions.find(opt => opt.value.contract_address === qrCurrency.contract_address);
+			currency = matchingOption?.value || qrCurrency;
 			handleCurrencyChange();
+		} else if (parsed.contractAddress) {
+			// Token QR but token not found in current network - clear currency
+			console.log("QR has a token but it's not found in current network - clear currency");
+			currency = null;
 		}
 
 		showQRScanner = false;
@@ -555,6 +563,7 @@
 					<Spinner size="16px" />
 				</div>
 			{:else}
+				{JSON.stringify(currency)}
 				<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleCurrencyChange} data-testid="wallet-send-currency-dropdown" />
 			{/if}
 		</Label>
