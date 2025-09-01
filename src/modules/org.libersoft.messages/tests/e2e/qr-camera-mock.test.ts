@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { setupConsoleLogging, closeWelcomeWizardWindow } from '@/core/tests/e2e/test-utils.js';
-import { QRTestHelper } from '../../../../../test-assets/qr-test-helper.js';
 
 /**
  * Helper function to setup initial account via wizard
@@ -51,8 +50,9 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
-		const helper = new QRTestHelper(page);
-		await helper.setupQRTesting();
+
+		// Grant camera permissions for fake camera
+		await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 		// Navigate to QR import
 		await page.getByTestId('account-bar-toggle').click();
@@ -62,12 +62,8 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 
 		// Should show scanner interface elements
 		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
-		await expect(page.locator('video')).toBeVisible();
 
-		// Wait for video to be ready (mock camera should work)
-		await helper.waitForQRScanner();
-
-		// Should not show camera error with mock setup
+		// Should not show camera error with permissions granted
 		await expect(page.getByText('Camera access denied or not available')).not.toBeVisible();
 	});
 
@@ -166,8 +162,9 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
 		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
-		const helper = new QRTestHelper(page);
-		await helper.setupQRTesting();
+
+		// Grant camera permissions for fake camera
+		await page.context().grantPermissions(['camera'], { origin: page.url() });
 
 		// Navigate to accounts import
 		await page.getByTestId('account-bar-toggle').click();

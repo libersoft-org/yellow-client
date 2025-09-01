@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { setupConsoleLogging } from '@/core/tests/e2e/test-utils.ts';
-import { simulateQRScan, waitForQRDetection, cleanupQRMocking } from '@/core/tests/e2e/qr-test-utils.ts';
+import { mockQRCodeScan, disableQRMocking } from '@/core/tests/e2e/qr-mock-utility.ts';
 
 test.describe.parallel('QR Code Import Tests', () => {
 	test.beforeEach(async ({ page }) => {
@@ -86,13 +86,13 @@ test.describe.parallel('QR Code Import Tests', () => {
 		const qrAccountData = JSON.stringify([
 			{
 				id: 'qr-scanned-account',
-				/*enabled: true,
+				enabled: true,
 				credentials: {
 					server: 'ws://localhost:8084',
 					address: 'qr-scan@example.com',
 					password: 'qrpassword123',
 				},
-				settings: {},*/
+				settings: {},
 			},
 		]);
 
@@ -100,19 +100,16 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
-		// Setup QR code mocking and simulate scan
-		await simulateQRScan(page, qrAccountData);
-
-		// Should see camera interface and then detect our QR code
+		// Wait for QR scanner to be visible, then inject our mock scan
 		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
-		//await expect(page.locator('video')).toBeVisible();
+		await mockQRCodeScan(page, qrAccountData);
 
-		// Wait for QR detection to complete
-		await waitForQRDetection(page, qrAccountData);
+		// Wait a bit for the mock data to be processed
+		await page.waitForTimeout(1000);
 
-		// Should now show scanned QR result
-		await expect(page.getByTestId('accounts-qr-result')).toBeVisible({ timeout: 30000 });
-		await expect(page.getByTestId('accounts-qr-result')).toContainText('qr-scan@example.com');
+		// Should now show scanned QR result after our mock scan
+		await expect(page.getByTestId('accounts-qr-result')).toBeVisible({ timeout: 15000 });
+		await expect(page.getByTestId('accounts-qr-result')).toHaveValue(/qr-scan@example\.com/);
 
 		// Import the scanned data
 		await page.getByTestId('accounts-add-btn').click();
@@ -122,7 +119,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await expect(page.getByTestId('account-address@qr-scan@example.com@ws://localhost:8084')).toBeVisible();
 
 		// Cleanup QR mocking for other tests
-		await cleanupQRMocking(page);
+		await disableQRMocking(page);
 	});
 
 	test('Handle invalid QR code data during scan', async ({ page }) => {
@@ -133,19 +130,16 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
-		// Setup QR code mocking with invalid data
-		await simulateQRScan(page, invalidQrData);
-
-		// Should see camera interface and then detect our invalid QR code
+		// Wait for QR scanner to be visible, then inject our mock scan
 		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
-		//await expect(page.locator('video')).toBeVisible();
+		await mockQRCodeScan(page, invalidQrData);
 
-		// Wait for QR detection to complete
-		await waitForQRDetection(page, invalidQrData);
+		// Wait for the mock data to be processed
+		await page.waitForTimeout(1000);
 
 		// Should now show scanned QR result with invalid data
 		await expect(page.getByTestId('accounts-qr-result')).toBeVisible();
-		await expect(page.getByTestId('accounts-qr-result')).toContainText(invalidQrData);
+		await expect(page.getByTestId('accounts-qr-result')).toHaveValue(invalidQrData);
 
 		// Try to import the invalid data
 		await page.getByTestId('accounts-add-btn').click();
@@ -154,7 +148,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await expectErrorMessage(page, 'Invalid JSON format');
 
 		// Cleanup QR mocking for other tests
-		await cleanupQRMocking(page);
+		await disableQRMocking(page);
 	});
 
 	test('Scan again functionality after successful scan', async ({ page }) => {
@@ -164,29 +158,25 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await openImportWindow(page);
 		await switchToQRImportTab(page);
 
-		// Setup QR code mocking and simulate first scan
-		await simulateQRScan(page, firstQrData);
-
-		// Should see camera interface and then detect our QR code
+		// Wait for QR scanner to be visible, then inject our mock scan
 		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
-		//await expect(page.locator('video')).toBeVisible();
+		await mockQRCodeScan(page, firstQrData);
 
-		// Wait for QR detection to complete
-		await waitForQRDetection(page, firstQrData);
+		// Wait for the mock data to be processed
+		await page.waitForTimeout(1000);
 
 		// Should now show scanned QR result
 		await expect(page.getByTestId('accounts-qr-result')).toBeVisible();
-		await expect(page.getByTestId('accounts-qr-result')).toContainText('first@test.com');
+		await expect(page.getByTestId('accounts-qr-result')).toHaveValue(/first@test\.com/);
 
 		// Test "Scan again" functionality
 		await page.getByTestId('accounts-qr-scan-again').click();
 
 		// Should show scanner interface again
 		await expect(page.getByText('Point your camera at a QR code')).toBeVisible();
-		//await expect(page.locator('video')).toBeVisible();
 
 		// Cleanup QR mocking for other tests
-		await cleanupQRMocking(page);
+		await disableQRMocking(page);
 	});
 });
 
@@ -218,6 +208,8 @@ async function openImportWindow(page: Page): Promise<void> {
 async function switchToQRImportTab(page: Page): Promise<void> {
 	return await test.step('Switch to QR Code import tab', async () => {
 		await page.getByTestId('accounts-qr-tab').click();
+		// Give the QR scanner time to mount
+		await page.waitForTimeout(500);
 	});
 }
 

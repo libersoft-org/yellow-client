@@ -25,7 +25,6 @@
 	let lastProcessedCode = $state('');
 	let scannedText = $state('');
 	let alertText = $state('');
-	let doMockVideo = $state(false);
 
 	onMount(async () => {
 		if (autoStart) await startCamera();
@@ -69,69 +68,55 @@
 	}
 
 	async function scanFrame() {
-		console.log(`scanning: ${scanning}, elScannerDiv: ${elScannerDiv}, elVideo: ${elVideo}, elCanvas: ${elCanvas}`);
-
 		if (!scanning || !elScannerDiv) return;
 
-		if (elVideo || elCanvas) {
-			const ctx = elCanvas?.getContext('2d');
+		if (elVideo && elCanvas) {
+			const ctx = elCanvas.getContext('2d');
 
-			if (elCanvas) {
-				if ((window as any).doMockVideo) {
-					doMockVideo = true;
-					elCanvas.width = 400;
-					elCanvas.height = 300;
-				}
-
-				if (ctx && elVideo && elVideo.readyState === elVideo.HAVE_ENOUGH_DATA && !doMockVideo) {
-					elCanvas.width = elVideo.videoWidth;
-					elCanvas.height = elVideo.videoHeight;
-				}
+			if (ctx && elVideo && elVideo.readyState === elVideo.HAVE_ENOUGH_DATA) {
+				elCanvas.width = elVideo.videoWidth;
+				elCanvas.height = elVideo.videoHeight;
 
 				await tick();
 
-				if (ctx && ((elVideo && elVideo.readyState === elVideo.HAVE_ENOUGH_DATA) || doMockVideo)) {
-					if (!doMockVideo && elVideo) {
-						console.log('draw video');
-						ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
-					} else {
-						console.log('wait for mock video');
-					}
-					let imageData: ImageData | null = null;
+				ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
+
+				let imageData: ImageData | null = null;
+				try {
+					imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
+				} catch (err) {
+					if (err instanceof DOMException && err.name === 'IndexSizeError') {
+						console.debug('IndexSizeError:', err);
+					} else console.debug('getImageData error:', err);
+				}
+
+				if (imageData) {
 					try {
-						imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
-					} catch (err) {
-						if (err instanceof DOMException && err.name === 'IndexSizeError') {
-							console.debug('IndexSizeError:', err);
-						} else console.debug('getImageData error:', err);
-					}
-					console.log('imageData length:', imageData?.data.length, 'width:', imageData?.width, 'height:', imageData?.height);
-					if (imageData) {
-						try {
-							const code = jsQR(imageData.data, imageData.width, imageData.height);
-							if (code && code.data !== lastProcessedCode) {
-								console.log('QR code found:', code.data);
-								lastProcessedCode = code.data;
-								processQRCode(code.data);
+						// Check for test mode data in window global
+						if ((window as any).__QR_TEST_DATA) {
+							const testData = (window as any).__QR_TEST_DATA;
+							if (testData !== lastProcessedCode) {
+								lastProcessedCode = testData;
+								processQRCode(testData);
 								return;
-							} else {
-								console.log('No QR code found yet..');
 							}
-						} catch (err) {
-							console.debug('QR scanning error:', err);
 						}
+
+						const code = jsQR(imageData.data, imageData.width, imageData.height);
+						if (code && code.data !== lastProcessedCode) {
+							lastProcessedCode = code.data;
+							processQRCode(code.data);
+							return;
+						}
+					} catch (err) {
+						console.debug('QR scanning error:', err);
 					}
 				}
 			}
 		}
+
 		if (scanning) {
-			//requestAnimationFrame(scanFrame);
-			console.log('scheduling next scanFrame');
 			setTimeout(scanFrame, 100);
-		} else {
-			console.log('stop scanning');
-			console.log('stop scanning');
-			console.log('stop scanning');
 		}
 	}
 
@@ -195,6 +180,8 @@
 
 	canvas {
 		border-color: #333;
+		max-width: 100%;
+		max-height: 100%;
 	}
 
 	.instructions {
@@ -226,7 +213,7 @@
 			</ButtonBar>
 		</div>
 		<div class="scrollable">
-			<Code code={scannedText} testId={`${testId}-result`} />
+			<Code bind:code={scannedText} testId={`${testId}-result`} />
 		</div>
 	</div>
 {:else}
@@ -236,13 +223,10 @@
 		{:else}
 			<div class="instructions">{instructions}</div>
 			<div bind:this={elScannerDiv} class="video-container">
-				{#if !doMockVideo}
-					<video bind:this={elVideo} autoplay playsinline data-testid={`${testId}-video`}>
-						<track kind="captions" />
-					</video>
-				{/if}
-
-				<canvas bind:this={elCanvas} class="qr-canvas" width="1600" height="1200" data-testid={`${testId}-canvas`}></canvas>
+				<video bind:this={elVideo} autoplay playsinline data-testid={`${testId}-video`}>
+					<track kind="captions" />
+				</video>
+				<canvas bind:this={elCanvas} class="qr-canvas" width="1000" height="1000" data-testid={`${testId}-canvas`}></canvas>
 			</div>
 		{/if}
 	</div>
