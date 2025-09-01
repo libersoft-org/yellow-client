@@ -482,7 +482,7 @@
 				const decimals = params.contractAddress ? currentBalanceData?.decimals || 18 : 18;
 				const symbol = params.contractAddress ? selectedCurrencySymbol : $selectedNetwork?.currency?.symbol || '';
 
-				addTransactionToLog(params.address, params.amount, symbol, decimals, params.contractAddress, hash);
+				addTransactionToLog(params.address, params.amount, symbol, decimals, params.contractAddr ?? undefined, hash ?? undefined);
 
 				playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 

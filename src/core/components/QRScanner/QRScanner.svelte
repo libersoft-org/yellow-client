@@ -3,7 +3,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Code from '@/core/components/Code/Code.svelte';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, tick } from 'svelte';
 	import jsQR from 'jsqr';
 
 	interface Props {
@@ -17,13 +17,15 @@
 
 	let { onScanned, onError, instructions = 'Point your camera at a QR code', testId = 'qr-scanner', scanAgainText = 'Scan again', autoStart = true }: Props = $props();
 
-	let videoElement: HTMLVideoElement | null = $state(null);
-	let canvasElement: HTMLCanvasElement | null = $state(null);
+	let elVideo: HTMLVideoElement | null = $state(null);
+	let elCanvas: HTMLCanvasElement | null = $state(null);
 	let stream: MediaStream | null = $state(null);
+	let elScannerDiv: HTMLDivElement | null = $state(null);
 	let scanning = $state(false);
 	let lastProcessedCode = $state('');
 	let scannedText = $state('');
 	let alertText = $state('');
+	let doMockVideo = $state(false);
 
 	onMount(async () => {
 		if (autoStart) await startCamera();
@@ -44,8 +46,8 @@
 				video: { facingMode: 'environment' },
 			});
 
-			if (videoElement) {
-				videoElement.srcObject = stream;
+			if (elVideo) {
+				elVideo.srcObject = stream;
 				startScanning();
 			}
 		} catch (err) {
@@ -57,7 +59,7 @@
 	}
 
 	function startScanning() {
-		if (!videoElement || !canvasElement) return;
+		if (!elScannerDiv) return;
 		scanning = true;
 		requestAnimationFrame(scanFrame);
 	}
@@ -66,28 +68,71 @@
 		scanning = false;
 	}
 
-	function scanFrame() {
-		if (!scanning || !videoElement || !canvasElement) return;
-		const canvas = canvasElement;
-		const video = videoElement;
-		const ctx = canvas.getContext('2d');
-		if (ctx && video.readyState === video.HAVE_ENOUGH_DATA) {
-			canvas.width = video.videoWidth;
-			canvas.height = video.videoHeight;
-			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			try {
-				const code = jsQR(imageData.data, imageData.width, imageData.height);
-				if (code && code.data !== lastProcessedCode) {
-					lastProcessedCode = code.data;
-					processQRCode(code.data);
-					return;
+	async function scanFrame() {
+		console.log(`scanning: ${scanning}, elScannerDiv: ${elScannerDiv}, elVideo: ${elVideo}, elCanvas: ${elCanvas}`);
+
+		if (!scanning || !elScannerDiv) return;
+
+		if (elVideo || elCanvas) {
+			const ctx = elCanvas?.getContext('2d');
+
+			if (elCanvas) {
+				if ((window as any).doMockVideo) {
+					doMockVideo = true;
+					elCanvas.width = 400;
+					elCanvas.height = 300;
 				}
-			} catch (err) {
-				console.debug('QR scanning error:', err);
+
+				if (ctx && elVideo && elVideo.readyState === elVideo.HAVE_ENOUGH_DATA && !doMockVideo) {
+					elCanvas.width = elVideo.videoWidth;
+					elCanvas.height = elVideo.videoHeight;
+				}
+
+				await tick();
+
+				if (ctx && ((elVideo && elVideo.readyState === elVideo.HAVE_ENOUGH_DATA) || doMockVideo)) {
+					if (!doMockVideo && elVideo) {
+						console.log('draw video');
+						ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
+					} else {
+						console.log('wait for mock video');
+					}
+					let imageData: ImageData | null = null;
+					try {
+						imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
+					} catch (err) {
+						if (err instanceof DOMException && err.name === 'IndexSizeError') {
+							console.debug('IndexSizeError:', err);
+						} else console.debug('getImageData error:', err);
+					}
+					console.log('imageData length:', imageData?.data.length, 'width:', imageData?.width, 'height:', imageData?.height);
+					if (imageData) {
+						try {
+							const code = jsQR(imageData.data, imageData.width, imageData.height);
+							if (code && code.data !== lastProcessedCode) {
+								console.log('QR code found:', code.data);
+								lastProcessedCode = code.data;
+								processQRCode(code.data);
+								return;
+							} else {
+								console.log('No QR code found yet..');
+							}
+						} catch (err) {
+							console.debug('QR scanning error:', err);
+						}
+					}
+				}
 			}
 		}
-		if (scanning) requestAnimationFrame(scanFrame);
+		if (scanning) {
+			//requestAnimationFrame(scanFrame);
+			console.log('scheduling next scanFrame');
+			setTimeout(scanFrame, 100);
+		} else {
+			console.log('stop scanning');
+			console.log('stop scanning');
+			console.log('stop scanning');
+		}
 	}
 
 	function processQRCode(data: string) {
@@ -145,10 +190,11 @@
 		width: 100%;
 		height: auto;
 		border-radius: 10px;
+		border-color: #333;
 	}
 
 	canvas {
-		display: none;
+		border-color: #333;
 	}
 
 	.instructions {
@@ -189,11 +235,14 @@
 			<Alert type="error" message={alertText} />
 		{:else}
 			<div class="instructions">{instructions}</div>
-			<div class="video-container">
-				<video bind:this={videoElement} autoplay playsinline data-testid={`${testId}-video`}>
-					<track kind="captions" />
-				</video>
-				<canvas bind:this={canvasElement}></canvas>
+			<div bind:this={elScannerDiv} class="video-container">
+				{#if !doMockVideo}
+					<video bind:this={elVideo} autoplay playsinline data-testid={`${testId}-video`}>
+						<track kind="captions" />
+					</video>
+				{/if}
+
+				<canvas bind:this={elCanvas} class="qr-canvas" width="1600" height="1200" data-testid={`${testId}-canvas`}></canvas>
 			</div>
 		{/if}
 	</div>

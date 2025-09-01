@@ -1,6 +1,6 @@
 import { expect, test, chromium } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardWindow, switchModule } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow, switchModule } from '@/core/tests/e2e/test-utils.js';
 
 const SLEEP_MS = parseInt(process.env.SLEEP || '0');
 

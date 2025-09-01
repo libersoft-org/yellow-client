@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { closeWelcomeWizardWindow, setupConsoleLogging, openGlobalSettings, closeWindow } from './test-utils';
+import { closeWelcomeWizardWindow, setupConsoleLogging, openGlobalSettings, closeWindow } from './test-utils.ts';
 
 test.describe.parallel('Settings Window Resize Behavior', () => {
 	// Helper function to get common test elements and data

@@ -168,7 +168,7 @@
 <div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" role="button" tabindex="0" ontouchstart={e => startSwipe(e)} ontouchmove={e => moveSwipe(e)} ontouchend={e => endSwipe(e)} onmousedown={e => startSwipe(e)} onmousemove={e => moveSwipe(e)} onmouseup={e => endSwipe(e)} onmouseleave={e => handleMouseLeave(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
-		<PhotoCardButton onClick={onNo} />
+		<PhotoCardButton isLike={false} onClick={onNo} />
 		<div class="overlay-content">
 			<div class="title">{photo.name}</div>
 			<div>{photo.description}</div>

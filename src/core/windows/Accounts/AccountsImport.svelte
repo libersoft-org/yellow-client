@@ -235,7 +235,7 @@
 	}
 </style>
 
-<Window title="Import accounts" bind:this={elWindow} testId="accounts-import" width="600px" height="500px">
+<Window title="Import accounts" bind:this={elWindow} testId="accounts-import" width="600px" height="700px">
 	{#if successMessage}
 		<div class="success">
 			<Alert type="info" message={successMessage} />
