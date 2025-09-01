@@ -29,19 +29,19 @@
 				{
 					lat: parseFloat(myCoordinates.latitude) + 0.01,
 					lng: parseFloat(myCoordinates.longitude) + 0.01,
-					photo: '/modules/org.libersoft.dating/img/photos/1.webp',
+					photo: 'modules/org.libersoft.dating/img/photos/1.webp',
 					name: 'Name 1',
 				},
 				{
 					lat: parseFloat(myCoordinates.latitude) - 0.008,
 					lng: parseFloat(myCoordinates.longitude) + 0.015,
-					photo: '/modules/org.libersoft.dating/img/photos/2.webp',
+					photo: 'modules/org.libersoft.dating/img/photos/2.webp',
 					name: 'Name 2',
 				},
 				{
 					lat: parseFloat(myCoordinates.latitude) + 0.005,
 					lng: parseFloat(myCoordinates.longitude) - 0.012,
-					photo: '/modules/org.libersoft.dating/img/photos/3.webp',
+					photo: 'modules/org.libersoft.dating/img/photos/3.webp',
 					name: 'Name 3',
 				},
 			];

@@ -12,7 +12,7 @@
 			name: 'Name 1',
 			age: 25,
 			gender: 'female',
-			photo: '/modules/org.libersoft.dating/img/photos/1.webp',
+			photo: 'modules/org.libersoft.dating/img/photos/1.webp',
 			distance: '2.5 km away',
 		},
 		{
@@ -20,7 +20,7 @@
 			name: 'Name 2',
 			age: 28,
 			gender: 'male',
-			photo: '/modules/org.libersoft.dating/img/photos/2.webp',
+			photo: 'modules/org.libersoft.dating/img/photos/2.webp',
 			distance: '1.8 km away',
 		},
 		{
@@ -28,7 +28,7 @@
 			name: 'Name 3',
 			age: 24,
 			gender: 'female',
-			photo: '/modules/org.libersoft.dating/img/photos/3.webp',
+			photo: 'modules/org.libersoft.dating/img/photos/3.webp',
 			distance: '3.2 km away',
 		},
 	];

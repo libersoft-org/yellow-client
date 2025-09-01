@@ -7,4 +7,4 @@
 	}
 </script>
 
-<StickersView bind:this={view} stickerset_favorites={[]} />
+<StickersView bind:this={view} stickerset_favorites={null} />
