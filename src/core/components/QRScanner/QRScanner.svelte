@@ -165,6 +165,12 @@
 		padding: 20px;
 	}
 
+	.qr-canvas {
+		max-width: 100%;
+		max-height: 100%;
+		display: none;
+	}
+
 	.video-container {
 		position: relative;
 		max-width: 100%;
@@ -176,12 +182,6 @@
 		height: auto;
 		border-radius: 10px;
 		border-color: #333;
-	}
-
-	canvas {
-		border-color: #333;
-		max-width: 100%;
-		max-height: 100%;
 	}
 
 	.instructions {

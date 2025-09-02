@@ -563,7 +563,7 @@
 					<Spinner size="16px" />
 				</div>
 			{:else}
-				{JSON.stringify(currency)}
+				{#if $debug}currency:{JSON.stringify(currency)}{/if}
 				<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleCurrencyChange} data-testid="wallet-send-currency-dropdown" />
 			{/if}
 		</Label>
