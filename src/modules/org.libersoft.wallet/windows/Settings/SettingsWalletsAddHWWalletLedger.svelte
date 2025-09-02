@@ -84,12 +84,11 @@
 		padding: 20px;
 		border-radius: 10px;
 		margin: 20px 0;
-		text-align: center;
 	}
 
 	.connection-instructions {
-		background-color: var(--primary-softer-background);
 		border: 1px solid var(--secondary-border);
+		background-color: var(--primary-soft-background);
 	}
 
 	.form-section {
@@ -155,34 +154,36 @@
 		{/if}
 
 		<div class="connection-status connection-instructions">
-			<h3>Connect Your Ledger Device</h3>
-			<p><strong>Before clicking Connect:</strong></p>
-			<p>1. Connect your Ledger device to your computer via USB</p>
-			<p>2. Unlock your device by entering your PIN</p>
-			<p>3. <strong style="color: var(--accent-color);">Navigate to and OPEN the Ethereum app</strong> on your Ledger device</p>
-			<p>4. Wait for "Application is ready" message on your Ledger screen</p>
-			<p>5. <strong>Close Ledger Live</strong> if it's running (only one app can connect at a time)</p>
-			<p>6. Click "Connect" below and <strong>select your device</strong> in the browser dialog</p>
+			<div class="bold">Connect your Ledger device:</div>
+			<br />
+			<ol>
+				<li><span class="bold">Close Ledger Live</span> if it's running</li>
+				<li><span class="bold">Connect</span> your Ledger device to your computer via USB</li>
+				<li>Unlock your device by entering your PIN</li>
+				<li>Open the <span class="bold">Ethereum app</span> on your Ledger device</li>
+				<li>Click "<span class="bold">Connect</span>" below and <strong>select your device</strong> in the browser dialog</li>
+			</ol>
 		</div>
 
 		{#if connectionError || $ledgerError}
 			<div class="connection-status connection-instructions" style="border: 1px solid var(--warning-border);">
-				<h4>Troubleshooting Tips:</h4>
+				<div class="bold">Troubleshooting tips:</div>
 				{#if $ledgerError && $ledgerError.includes('Locked device')}
-					<p>🔒 <strong>Device is locked:</strong> Please unlock your Ledger device by entering your PIN.</p>
+					<Alert type="error">Device is locked: Please unlock your Ledger device by entering your PIN.</Alert>
 				{:else if $ledgerError && ($ledgerError.includes('CLA_NOT_SUPPORTED') || $ledgerError.includes('Ethereum app'))}
-					<p>📱 <strong>Ethereum app not open:</strong> Please open the Ethereum app on your Ledger device.</p>
+					<Alert type="error">Ethereum app not open: Please open the Ethereum app on your Ledger device.</Alert>
 				{:else if $ledgerError && $ledgerError.includes('busy')}
-					<p>🚫 <strong>Device busy:</strong> Please close Ledger Live and try again.</p>
-				{:else}
-					<p>• <strong>Most common:</strong> Make sure the <strong>Ethereum app is open</strong> on your Ledger</p>
-					<p>• Make sure your device is <strong>unlocked</strong> with your PIN</p>
+					<Alert type="error">Device busy: Please close Ledger Live and try again.</Alert>
 				{/if}
-				<p>• Exit to main menu and re-open the Ethereum app</p>
-				<p>• Try disconnecting and reconnecting your Ledger device</p>
-				<p>• Make sure no other applications are using the device</p>
-				<p>• Restart your browser if the problem persists</p>
-				<p>• Check that you're using a supported browser (Chrome/Edge 89+)</p>
+				<ul>
+					<li>Check that you're using a supported browser (Chrome/Edge 89+)</li>
+					<li>Make sure the <strong>Ethereum app is open</strong> on your Ledger</li>
+					<li>Make sure your device is <strong>unlocked</strong> with your PIN</li>
+					<li>Exit to main menu and re-open the Ethereum app</li>
+					<li>Try disconnecting and reconnecting your Ledger device</li>
+					<li>Make sure no other applications are using the device</li>
+					<li>Restart your browser if the problem persists</li>
+				</ul>
 			</div>
 		{/if}
 
