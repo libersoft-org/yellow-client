@@ -9,7 +9,7 @@ async function sleep() {
 	}
 }
 
-test.describe.skipIf(!process.env.RUN_HARDWARE_TESTS, 'Wallet Send Dialog - SW to Trezor', () => {
+(process.env.RUN_HARDWARE_TESTS ? test.describe : test.describe.skip)('Wallet Send Dialog - SW to Trezor', () => {
 	let browser;
 	let context;
 	let page;

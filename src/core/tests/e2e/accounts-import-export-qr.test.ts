@@ -81,7 +81,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await expect(page.getByText('Camera access denied or not available')).not.toBeVisible();
 	});
 
-	test('Successfully scan and import QR code with valid account data', async ({ page }) => {
+	test('Successfully scan and import QR code with valid account data', async ({ page, browserName }, testInfo) => {
 		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 
@@ -127,7 +127,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await disableQRMocking(page);
 	});
 
-	test('Handle invalid QR code data during scan', async ({ page }) => {
+	test('Handle invalid QR code data during scan', async ({ page, browserName }, testInfo) => {
 		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 
@@ -159,7 +159,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 		await disableQRMocking(page);
 	});
 
-	test('Scan again functionality after successful scan', async ({ page }) => {
+	test('Scan again functionality after successful scan', async ({ page, browserName }, testInfo) => {
 		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 

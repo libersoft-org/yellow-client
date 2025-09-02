@@ -9,7 +9,7 @@ async function sleep() {
 	}
 }
 
-test.describe.skipIf(!process.env.RUN_HARDWARE_TESTS, 'Wallet Send Dialog Navigation', () => {
+(process.env.RUN_HARDWARE_TESTS ? test.describe : test.describe.skip)('Wallet Send Dialog Navigation', () => {
 	let browser;
 	let context;
 	let page;
