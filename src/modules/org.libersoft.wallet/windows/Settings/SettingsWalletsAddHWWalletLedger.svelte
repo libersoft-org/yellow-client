@@ -7,6 +7,7 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
+	import { addAddress } from 'libersoft-crypto';
 
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
@@ -53,7 +54,7 @@
 
 		try {
 			// Add hardware wallet representing the whole device, not a specific address
-			await addHardwareWallet('ledger', walletName, deviceIdentifiers);
+			const w = await addHardwareWallet('ledger', walletName, deviceIdentifiers);
 			setSettingsSection('wallets');
 		} catch (error) {
 			console.error('Error adding Ledger wallet:', error);
