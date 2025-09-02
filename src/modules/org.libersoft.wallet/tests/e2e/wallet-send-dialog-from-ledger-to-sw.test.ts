@@ -117,7 +117,7 @@ async function handleLedgerSigning(page: Page) {
 	});
 }
 
-test.describe('Ledger Wallet Send Dialog Navigation', () => {
+test.describe.skipIf(!process.env.RUN_HARDWARE_TESTS, 'Ledger Wallet Send Dialog Navigation', () => {
 	let browser;
 	let context;
 	let page;
