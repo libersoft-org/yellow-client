@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { selectWallet, trezorState, initializeTrezor, trezorDevice, trezorLoading, trezorError, staticSessionId, trezorDevices } from 'libersoft-crypto/trezor';
+	import { selectWallet, trezorState, initializeTrezor, trezorDevice, trezorLoading, trezorError, staticSessionId, trezorDevices, usePopup } from 'libersoft-crypto/trezor';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
 
 	let { onConnected }: { onConnected?: () => Promise<void> | void } = $props();
 
@@ -114,6 +115,8 @@
 {:else}
 	<!--	<p>No Trezor devices found.</p>-->
 {/if}
+
+<Switch bind:checked={$usePopup} showLabel="true" label="Use Trezor popup (WebHID) instead of Trezor Connect (TrezorSuite App)" />
 
 <div class="buttons">
 	<Button onClick={handleConnectClick} enabled={!$trezorLoading} data-testid="connect-trezor-btn">
