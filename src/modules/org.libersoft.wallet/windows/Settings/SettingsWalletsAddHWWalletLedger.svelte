@@ -112,8 +112,7 @@
 </style>
 
 <div class="ledger-setup">
-	<h2>Add Ledger Wallet</h2>
-
+	<Alert type="warning">Ledger is supported in <span class="bold">Chrome/Edge 89+</span> only.</Alert>
 	{#if connectionError}
 		<Alert type="error">
 			<div style="white-space: pre-line;">{connectionError}</div>
