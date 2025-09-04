@@ -129,7 +129,6 @@
 		// Initialize balances first time
 		initializeAllBalances();
 		countdownInterval = setInterval(updateCountdowns, 1000);
-
 		// Set up subscriptions to watch for changes
 		let currentNetwork = $selectedNetwork;
 		let currentAddress = $selectedAddress;
@@ -152,7 +151,6 @@
 		// Store unsubscribe functions for cleanup
 		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC];
 		isInitialized = true; // Mark as initialized to enable reactive effects
-
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -99999999999999999999999999999999999999999123456789123456789n, decimals: 18, currency: 'ETH' }));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -1000n, decimals: 18, currency: 'ETH' }));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789n, decimals: 0, currency: 'ETH' }, 6));
@@ -477,13 +475,6 @@
 		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
-		padding-left: 50px;
-	}
-
-	@media (min-width: 768px) {
-		.balance .info {
-			padding-left: 0;
-		}
 	}
 
 	.balance .info .amount {
@@ -499,38 +490,13 @@
 		display: flex;
 		flex-direction: column;
 		padding: 10px;
-		align-items: flex-start;
-	}
-
-	@media (min-width: 769px) {
-		.item {
-			align-items: center;
-		}
+		align-items: center;
 	}
 
 	.item .currency {
 		display: flex;
 		align-items: center;
 		gap: 10px;
-	}
-
-	.amount-layout {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-	}
-
-	.amount-layout .text-truncate {
-		flex: 1;
-		min-width: 0; /* Allow shrinking */
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.symbol-text {
-		font-size: 18px;
-		font-weight: bold;
 	}
 </style>
 
@@ -541,7 +507,6 @@
 				<Th>{title}</Th>
 				{#if !$isMobile}
 					<Th>Balance</Th>
-					<Th></Th>
 				{/if}
 				<Th></Th>
 			</TheadTr>
@@ -556,7 +521,7 @@
 
 {#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
 	<Tr>
-		<Td padding="0" class="currency-column-wide">
+		<Td padding="0" expand>
 			{#if $debug}
 				<pre>{stringifyWithBigInt(balanceData)}</pre>
 			{/if}
@@ -593,13 +558,6 @@
 					{/if}
 				</div>
 			</Td>
-			<Td padding="0">
-				{#if symbol}
-					<span class="symbol-text">{symbol}</span>
-				{:else}
-					<span class="symbol-text">-</span>
-				{/if}
-			</Td>
 		{/if}
 		<Td>
 			{#if refreshFn}
@@ -614,9 +572,7 @@
 		<div class="info">
 			<div class="amount">
 				{#if balanceData?.crypto}
-					<div class="amount-layout">
-						<span class="text-truncate">{formatBalance(balanceData.crypto)?.replace(/[^\d.]/g, '') || balanceData.crypto}</span>
-					</div>
+					{formatBalance(balanceData.crypto)}
 				{:else}
 					{@render spinner()}
 				{/if}
@@ -648,7 +604,7 @@
 
 {#snippet currencyNameSymbol(name, symbol, address = null, isLoading = false)}
 	<div class="column">
-		<div class="name text-truncate">
+		<div class="name">
 			{#if isLoading}
 				{@render spinner()}
 			{:else if name && symbol}
@@ -662,7 +618,7 @@
 			{/if}
 		</div>
 		{#if ($debug || (!name && !symbol)) && address}
-			<div class="address text-truncate">{address}</div>
+			<div class="address">{address}</div>
 		{/if}
 	</div>
 {/snippet}
@@ -748,7 +704,7 @@
 					{#each $nfts as nft, index}
 						{@const contractInfo = nftContractInfos.get(nft.contract_address)}
 						<Tr>
-							<Td padding="0" class="expand-balance">
+							<Td padding="0" expand>
 								<Clickable onClick={() => selectNFT('')}>
 									<div class="currency-info">
 										{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}

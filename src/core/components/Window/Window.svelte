@@ -115,17 +115,7 @@
 			resizeObserver.observe(elWindow);
 		}
 
-		window.addEventListener('resize', e => {
-			handleResize();
-			// Close window on resize to force fresh layout
-			if (show) {
-				close();
-			}
-			// Close window if screen gets too small
-			if (window.innerWidth < 1000 && show) {
-				close();
-			}
-		});
+		window.addEventListener('resize', handleResize);
 
 		return () => {
 			unregisterWindow(windowId);
