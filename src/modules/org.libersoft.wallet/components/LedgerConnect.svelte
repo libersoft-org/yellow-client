@@ -1,20 +1,32 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { connectLedger, initializeLedger, ledgerLoading, ledgerError, ledgerConnected, ledgerDevice, ledgerConnectionMethod, ledgerDeviceId } from 'libersoft-crypto/ledger';
+	import { getLedgerEthereumAccounts, connectLedger, initializeLedger, ledgerLoading, ledgerError, ledgerConnected, ledgerDevice, ledgerConnectionMethod, ledgerDeviceId, type LedgerAccount } from 'libersoft-crypto/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 
 	let { onConnected }: { onConnected?: () => Promise<void> | void } = $props();
+	let firstAccount = $state<LedgerAccount | null>(null);
 
 	onMount(async () => {
 		await initializeLedger();
 	});
 
+	async function loadFirstAccount() {
+		// Load just the first account for informative display
+		const accounts = await getLedgerEthereumAccounts(0, 1);
+		if (accounts.length > 0) {
+			firstAccount = accounts[0];
+			console.log('loadFirstAccount: ', $ledgerDevice);
+		}
+	}
+
 	async function handleConnectClick() {
 		if ($ledgerLoading) return;
 		const connected = await connectLedger();
 		if (connected) {
+			await loadFirstAccount();
 			await onConnected?.();
 		}
 	}
@@ -60,9 +72,7 @@
 	.device-info {
 		margin: 15px 0;
 		padding: 10px;
-		background-color: var(--secondary-softer-background);
 		border-radius: 8px;
-		border: 1px solid var(--secondary-border);
 	}
 
 	.device-info h4 {
@@ -80,7 +90,17 @@
 		color: var(--secondary-foreground);
 		margin-top: 5px;
 	}
+
+	.ledger-setup {
+		max-width: 500px;
+		margin: 0 auto;
+		padding: 20px;
+	}
 </style>
+
+{#if !$ledgerDevice}
+	<Alert type="warning">Ledger is supported in <span class="bold">Chrome/Edge 89+</span> only.</Alert>
+{/if}
 
 <div class="status-card" class:connected={$ledgerConnected} class:error={$ledgerError}>
 	<div class="status-text">
@@ -90,15 +110,6 @@
 			<div class="connection-method">Connection: {$ledgerConnectionMethod}</div>
 		{:else if $ledgerError}
 			<strong>Error</strong>
-			<div>{$ledgerError}</div>
-			<p>Please ensure your device is:</p>
-			<ul>
-				<li>Connected via USB</li>
-				<li>Unlocked with your PIN</li>
-				<li>Has the Ethereum app open and ready</li>
-				<li>Not being used by Ledger Live or other applications</li>
-				<li>On linux, <code>wget -q -O - https://raw.githubusercontent.com/LedgerHQ/udev-rules/master/add_udev_rules.sh | sudo bash</code></li>
-			</ul>
 		{:else}
 			<strong>Connect your Ledger</strong>
 			<div>Please connect your Ledger device, unlock it, open the Ethereum app, and click Connect Ledger.</div>
@@ -121,13 +132,59 @@
 		{#if $ledgerDevice.deviceModel?.internal_model && $ledgerDevice.deviceModel.internal_model !== 'ledger'}
 			<p><strong>Model:</strong> {$ledgerDevice.deviceModel.internal_model}</p>
 		{/if}
-		{#if $debug}
-			<p><strong>Device ID:</strong> {$ledgerDevice.id}</p>
-		{/if}
 		<p><strong>Status:</strong> {$ledgerConnected ? 'Connected' : 'Detected but not connected'}</p>
 		<p><strong>Connection Method:</strong> {$ledgerConnectionMethod}</p>
+		{#if firstAccount}
+			<p><strong>First Address:</strong> {firstAccount.address}</p>
+		{/if}
 	</div>
-{:else if !$ledgerError}{/if}
+{:else}
+	<div class="ledger-setup">
+		<div class="bold">Connect your Ledger device:</div>
+		<ol>
+			<li><span class="bold">Close Ledger Live</span> if it's running</li>
+			<li><span class="bold">Connect</span> your Ledger device to your computer via USB</li>
+			<li>Unlock your device by entering your PIN</li>
+			<li>Open the <span class="bold">Ethereum app</span> on your Ledger device</li>
+			<li>Click "<span class="bold">Connect</span>" below and <strong>select your device</strong> in the browser dialog</li>
+		</ol>
+
+		{#if $ledgerError}
+			<div>{$ledgerError}</div>
+			<p>Please ensure your device is:</p>
+			<ul>
+				<li>Connected via USB</li>
+				<li>Unlocked with your PIN</li>
+				<li>Has the Ethereum app open and ready</li>
+				<li>Not being used by Ledger Live or other applications</li>
+				<li>On linux, <code>wget -q -O - https://raw.githubusercontent.com/LedgerHQ/udev-rules/master/add_udev_rules.sh | sudo bash</code></li>
+			</ul>
+			<div class="connection-status connection-instructions" style="border: 1px solid var(--warning-border);">
+				<div class="bold">Troubleshooting tips:</div>
+				{#if $ledgerError && $ledgerError.includes('Locked device')}
+					<Alert type="error">Device is locked: Please unlock your Ledger device by entering your PIN.</Alert>
+				{:else if $ledgerError && ($ledgerError.includes('CLA_NOT_SUPPORTED') || $ledgerError.includes('Ethereum app'))}
+					<Alert type="error">Ethereum app not open: Please open the Ethereum app on your Ledger device.</Alert>
+				{:else if $ledgerError && $ledgerError.includes('busy')}
+					<Alert type="error">Device busy: Please close Ledger Live and try again.</Alert>
+				{/if}
+				<ul>
+					<li>Check that you're using a supported browser (Chrome/Edge 89+)</li>
+					<li>Make sure the <strong>Ethereum app is open</strong> on your Ledger</li>
+					<li>Make sure your device is <strong>unlocked</strong> with your PIN</li>
+					<li>Exit to main menu and re-open the Ethereum app</li>
+					<li>Try disconnecting and reconnecting your Ledger device</li>
+					<li>Make sure no other applications are using the device</li>
+					<li>Restart your browser if the problem persists</li>
+				</ul>
+			</div>
+		{/if}
+	</div>
+{/if}
+
+{#if $debug}
+	<p class="debug"><strong>Device ID:</strong> {$ledgerDevice?.id}</p>
+{/if}
 
 <div class="buttons">
 	<Button onClick={handleConnectClick} enabled={!$ledgerLoading} data-testid="connect-ledger-btn">
@@ -138,13 +195,3 @@
 		<div style="margin-left: 10px; color: var(--secondary-foreground);">Connecting...</div>
 	{/if}
 </div>
-
-{#if $debug}
-	<div style="margin-top: 20px; font-size: 0.8em;">
-		<strong>Debug Info:</strong><br />
-		Device ID: {$ledgerDeviceId || 'null'}<br />
-		Connected: {$ledgerConnected}<br />
-		Connection Method: {$ledgerConnectionMethod}<br />
-		Loading: {$ledgerLoading}
-	</div>
-{/if}

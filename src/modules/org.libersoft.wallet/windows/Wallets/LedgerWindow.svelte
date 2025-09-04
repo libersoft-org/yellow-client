@@ -25,14 +25,6 @@
 	}
 </script>
 
-<style>
-	.ledger-setup {
-		max-width: 500px;
-		margin: 0 auto;
-		padding: 20px;
-	}
-</style>
-
 <Window title="Ledger" width="600px" height="600px" testId="ledger-window" bind:this={elWindow}>
 	<div class="ledger-setup">
 		<LedgerConnect />
