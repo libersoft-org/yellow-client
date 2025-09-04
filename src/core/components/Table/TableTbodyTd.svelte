@@ -56,12 +56,7 @@
 		width: 100%;
 	}
 
-	:global(.ellipsis)::before {
-		content: '\\00a0';
-		visibility: hidden;
-	}
-
-	:global(.ellipsis > *) {
+	:global(.ellipsis > *:first-child) {
 		position: absolute;
 		left: 10px;
 		right: 10px;
@@ -71,6 +66,12 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		display: inline-block;
+	}
+
+	:global(.ellipsis > .spacer) {
+		visibility: hidden; /* still participates in layout */
+		padding: 10px; /* same vertical rhythm as overlay wants */
+		white-space: nowrap; /* one line’s height */
 	}
 
 	/* Global utility classes for icon+text layouts inside table cells */

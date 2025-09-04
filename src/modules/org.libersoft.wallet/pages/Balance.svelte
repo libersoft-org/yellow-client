@@ -533,6 +533,8 @@
 					{/if}
 				</div>
 			</Clickable>
+			<div class="spacer">X</div>
+			<!-- defines height -->
 		</Td>
 		{#if !$isMobile}
 			<Td>
