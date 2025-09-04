@@ -17,5 +17,5 @@
 	{/snippet}
 </Bar>
 <Page>
-	<Map latitude="50.0755" longitude="14.4378" />
+	<Map />
 </Page>

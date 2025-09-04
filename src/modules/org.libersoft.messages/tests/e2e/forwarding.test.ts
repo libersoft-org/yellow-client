@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardWindow, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow } from '@/core/tests/e2e/test-utils.js';
 
 import { startNewConversation, openConversation, sendMessage, verifyForwardWindowWithPreview, forwardLastMessage, searchConversationsInForwardWindow } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
 

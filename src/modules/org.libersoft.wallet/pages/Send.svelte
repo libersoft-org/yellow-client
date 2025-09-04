@@ -27,8 +27,9 @@
 	import DialogSend from '@/org.libersoft.wallet/dialogs/SendConfirmation.svelte';
 	import QRScanner from '@/core/components/QRScanner/QRScanner.svelte';
 	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
-	import { ensureWalletConnection, networksWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { ensureWalletConnection, networksWindow, settingsWindow, setSection } from '@/org.libersoft.wallet/scripts/ui';
 	import { playAudio } from '@/core/scripts/notifications.ts';
+	import { addTransactionToLog } from 'libersoft-crypto/log';
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -263,13 +264,21 @@
 			amount = parsed.amount;
 		}
 
-		// Set currency from parsed data or let qrCurrency derived handle it
+		// Handle currency selection from QR data
 		if (parsed.currency) {
-			currency = parsed.currency;
+			// Native currency QR: parser found the native currency directly
+			const matchingOption = currencyOptions.find(opt => !opt.value.contract_address && opt.value.symbol === parsed.currency?.symbol);
+			currency = matchingOption?.value || parsed.currency;
 			handleCurrencyChange();
 		} else if (qrCurrency) {
-			currency = qrCurrency;
+			// Token QR: qrCurrency reactively found the token by contract address
+			const matchingOption = currencyOptions.find(opt => opt.value.contract_address === qrCurrency.contract_address);
+			currency = matchingOption?.value || qrCurrency;
 			handleCurrencyChange();
+		} else if (parsed.contractAddress) {
+			// Token QR but token not found in current network - clear currency
+			console.log("QR has a token but it's not found in current network - clear currency");
+			currency = null;
 		}
 
 		showQRScanner = false;
@@ -464,9 +473,31 @@
 		if (await ensureWalletConnection()) {
 			console.log('ensureWalletConnection passed, sending transaction...');
 			console.log('SENDING TRANSACTION');
-			const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
-			console.log('Transaction sent, hash:', hash);
-			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
+
+			try {
+				const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
+				console.log('Transaction sent, hash:', hash);
+
+				// Add transaction to log immediately after getting hash
+				const decimals = params.contractAddress ? currentBalanceData?.decimals || 18 : 18;
+				const symbol = params.contractAddress ? selectedCurrencySymbol : $selectedNetwork?.currency?.symbol || '';
+
+				addTransactionToLog(params.address, params.amount, symbol, decimals, params.contractAddr ?? undefined, hash ?? undefined);
+
+				playAudio('modules/' + module.identifier + '/audio/payment.mp3');
+
+				// Reset form after successful transaction
+				$sendAddress = '';
+				amount = '';
+				currency = null;
+				error = null;
+
+				// Navigate to History section
+				setSection('history');
+			} catch (err) {
+				console.error('Transaction failed:', err);
+				error = err instanceof Error ? err.message : 'Transaction failed';
+			}
 		}
 	}
 </script>
@@ -532,6 +563,7 @@
 					<Spinner size="16px" />
 				</div>
 			{:else}
+				{#if $debug}currency:{JSON.stringify(currency)}{/if}
 				<DropdownFilter options={currencyOptions} bind:selected={currency} bind:this={elCurrencyDropdown} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleCurrencyChange} data-testid="wallet-send-currency-dropdown" />
 			{/if}
 		</Label>

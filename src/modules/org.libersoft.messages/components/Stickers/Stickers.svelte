@@ -87,7 +87,7 @@
 <div class="stickers">
 	<div class="top-components">
 		<Tabs>
-			<TabsItem img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} active={activeTabName === 'favourites'} />
+			<TabsItem img="modules/{identifier}/img/favourite.svg" onClick={e => setTab(e, 'favorites')} active={activeTabName === 'favorites'} />
 			<TabsItem img="modules/{identifier}/img/server.svg" onClick={e => setTab(e, 'server')} active={activeTabName === 'server'} />
 			<TabsItem img="modules/{identifier}/img/update.svg" colorVariable={$stickerLibraryUpdaterState.updating ? '--disabled-foreground' : undefined} onClick={clickUpdate} />
 		</Tabs>

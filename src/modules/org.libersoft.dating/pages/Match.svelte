@@ -5,12 +5,7 @@
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
-	import PhotoCard from '@/org.libersoft.dating/components/PhotoCard.svelte';
-	const photo = {
-		img: 'modules/' + module.identifier + '/img/photos/1.webp',
-		name: 'Name',
-		description: 'Description',
-	};
+	import PhotoCards from '@/org.libersoft.dating/components/PhotoCards.svelte';
 </script>
 
 <Bar>
@@ -23,5 +18,5 @@
 	{/snippet}
 </Bar>
 <Page>
-	<PhotoCard {photo} />
+	<PhotoCards />
 </Page>

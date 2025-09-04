@@ -56,7 +56,7 @@
 
 	async function clickYes() {
 		if (!params) throw new Error('dialog missing params');
-		await onYes?.(params);
+		onYes?.(params);
 		elDialog?.close();
 	}
 

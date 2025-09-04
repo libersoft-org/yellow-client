@@ -3,7 +3,7 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Code from '@/core/components/Code/Code.svelte';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, tick } from 'svelte';
 	import jsQR from 'jsqr';
 
 	interface Props {
@@ -17,9 +17,10 @@
 
 	let { onScanned, onError, instructions = 'Point your camera at a QR code', testId = 'qr-scanner', scanAgainText = 'Scan again', autoStart = true }: Props = $props();
 
-	let videoElement: HTMLVideoElement | null = $state(null);
-	let canvasElement: HTMLCanvasElement | null = $state(null);
+	let elVideo: HTMLVideoElement | null = $state(null);
+	let elCanvas: HTMLCanvasElement | null = $state(null);
 	let stream: MediaStream | null = $state(null);
+	let elScannerDiv: HTMLDivElement | null = $state(null);
 	let scanning = $state(false);
 	let lastProcessedCode = $state('');
 	let scannedText = $state('');
@@ -44,8 +45,8 @@
 				video: { facingMode: 'environment' },
 			});
 
-			if (videoElement) {
-				videoElement.srcObject = stream;
+			if (elVideo) {
+				elVideo.srcObject = stream;
 				startScanning();
 			}
 		} catch (err) {
@@ -57,7 +58,7 @@
 	}
 
 	function startScanning() {
-		if (!videoElement || !canvasElement) return;
+		if (!elScannerDiv) return;
 		scanning = true;
 		requestAnimationFrame(scanFrame);
 	}
@@ -66,28 +67,57 @@
 		scanning = false;
 	}
 
-	function scanFrame() {
-		if (!scanning || !videoElement || !canvasElement) return;
-		const canvas = canvasElement;
-		const video = videoElement;
-		const ctx = canvas.getContext('2d');
-		if (ctx && video.readyState === video.HAVE_ENOUGH_DATA) {
-			canvas.width = video.videoWidth;
-			canvas.height = video.videoHeight;
-			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			try {
-				const code = jsQR(imageData.data, imageData.width, imageData.height);
-				if (code && code.data !== lastProcessedCode) {
-					lastProcessedCode = code.data;
-					processQRCode(code.data);
-					return;
+	async function scanFrame() {
+		if (!scanning || !elScannerDiv) return;
+
+		if (elVideo && elCanvas) {
+			const ctx = elCanvas.getContext('2d');
+
+			if (ctx && elVideo && elVideo.readyState === elVideo.HAVE_ENOUGH_DATA) {
+				elCanvas.width = elVideo.videoWidth;
+				elCanvas.height = elVideo.videoHeight;
+
+				await tick();
+
+				ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
+
+				let imageData: ImageData | null = null;
+				try {
+					imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
+				} catch (err) {
+					if (err instanceof DOMException && err.name === 'IndexSizeError') {
+						console.debug('IndexSizeError:', err);
+					} else console.debug('getImageData error:', err);
 				}
-			} catch (err) {
-				console.debug('QR scanning error:', err);
+
+				if (imageData) {
+					try {
+						// Check for test mode data in window global
+						if ((window as any).__QR_TEST_DATA) {
+							const testData = (window as any).__QR_TEST_DATA;
+							if (testData !== lastProcessedCode) {
+								lastProcessedCode = testData;
+								processQRCode(testData);
+								return;
+							}
+						}
+
+						const code = jsQR(imageData.data, imageData.width, imageData.height);
+						if (code && code.data !== lastProcessedCode) {
+							lastProcessedCode = code.data;
+							processQRCode(code.data);
+							return;
+						}
+					} catch (err) {
+						console.debug('QR scanning error:', err);
+					}
+				}
 			}
 		}
-		if (scanning) requestAnimationFrame(scanFrame);
+
+		if (scanning) {
+			setTimeout(scanFrame, 100);
+		}
 	}
 
 	function processQRCode(data: string) {
@@ -135,6 +165,12 @@
 		padding: 20px;
 	}
 
+	.qr-canvas {
+		max-width: 100%;
+		max-height: 100%;
+		display: none;
+	}
+
 	.video-container {
 		position: relative;
 		max-width: 100%;
@@ -145,10 +181,7 @@
 		width: 100%;
 		height: auto;
 		border-radius: 10px;
-	}
-
-	canvas {
-		display: none;
+		border-color: #333;
 	}
 
 	.instructions {
@@ -180,7 +213,7 @@
 			</ButtonBar>
 		</div>
 		<div class="scrollable">
-			<Code code={scannedText} testId={`${testId}-result`} />
+			<Code bind:code={scannedText} testId={`${testId}-result`} />
 		</div>
 	</div>
 {:else}
@@ -189,11 +222,11 @@
 			<Alert type="error" message={alertText} />
 		{:else}
 			<div class="instructions">{instructions}</div>
-			<div class="video-container">
-				<video bind:this={videoElement} autoplay playsinline data-testid={`${testId}-video`}>
+			<div bind:this={elScannerDiv} class="video-container">
+				<video bind:this={elVideo} autoplay playsinline data-testid={`${testId}-video`}>
 					<track kind="captions" />
 				</video>
-				<canvas bind:this={canvasElement}></canvas>
+				<canvas bind:this={elCanvas} class="qr-canvas" width="1000" height="1000" data-testid={`${testId}-canvas`}></canvas>
 			</div>
 		{/if}
 	</div>

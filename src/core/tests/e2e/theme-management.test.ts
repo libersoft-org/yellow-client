@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupConsoleLogging } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging } from '@/core/tests/e2e/test-utils.js';
 
 const accountsConfig = [
 	{
