@@ -55,9 +55,9 @@
 		<Tbody>
 			{#each filteredWallets as wallet, index}
 				<TbodyTr>
-					<Td padding="0">
+					<Td padding="10px" class="ellipsis">
 						<Clickable onClick={async () => await clickSelectWallet(wallet)} data-wallet-name={wallet.name}>
-							<div class="wallet text-truncate">{wallet.name}</div>
+							<span>{wallet.name}</span>
 						</Clickable>
 					</Td>
 				</TbodyTr>

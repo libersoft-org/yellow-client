@@ -88,15 +88,15 @@
 	<Tbody>
 		{#each filteredDefaultNetworks as n, index}
 			<TbodyTr>
-				<Td padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
-					<div class="network">
+				<Td class="ellipsis" padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
+					<span class="network">
 						{#if n.currency?.iconURL}
-							<div class="network-icon">
+							<span class="network-icon td__icon">
 								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
-							</div>
+							</span>
 						{/if}
-						<div class="name text-truncate-with-prefix">{n.name}</div>
-					</div>
+						<span class="name td__text">{n.name}</span>
+					</span>
 				</Td>
 				<Td>
 					<TableActionItems align="center">

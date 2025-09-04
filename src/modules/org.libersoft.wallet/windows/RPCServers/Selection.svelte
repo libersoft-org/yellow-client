@@ -120,7 +120,7 @@
 {#snippet item(server: IRPCServer)}
 	<div class="item" class:selected={server.url === $rpcURL}>
 		<div class="info">
-			<div class="url text-truncate">{server.url}</div>
+			<div class="url"><span>{server.url}</span></div>
 			<div class="stats">
 				<div>
 					<span>Latency:</span>

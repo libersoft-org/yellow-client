@@ -294,7 +294,7 @@
 	}
 
 	td.expand {
-		max-width: 100%;
+		width: 100%;
 		overflow: hidden;
 	}
 
@@ -325,11 +325,55 @@
 		white-space: nowrap;
 		min-width: 0;
 		box-sizing: border-box;
-		vertical-align: middle;
 		/* Prevent initial scrollbar flicker */
 		max-width: 0;
 		opacity: 0;
 		transition: opacity 0.1s ease-in-out;
+	}
+
+	/* Global ellipsis utility for table cells */
+	:global(.ellipsis) {
+		position: relative;
+		width: 100%;
+	}
+
+	:global(.ellipsis)::before {
+		content: '\\00a0';
+		visibility: hidden;
+	}
+
+	:global(.ellipsis > *) {
+		position: absolute;
+		left: 10px;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: inline-block;
+	}
+
+	/* Global utility classes for icon+text layouts inside table cells */
+	:global(.td__row) {
+		display: inline-grid;
+		grid-auto-flow: column;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		gap: 10px;
+		max-width: 100%;
+	}
+
+	:global(.td__icon) {
+		flex: 0 0 auto;
+	}
+
+	:global(.td__text) {
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	/* Show the element after width is calculated */
@@ -346,7 +390,6 @@
 		white-space: nowrap;
 		min-width: 0;
 		box-sizing: border-box;
-		vertical-align: middle;
 		/* Prevent initial scrollbar flicker */
 		max-width: 0;
 		opacity: 0;
@@ -367,7 +410,6 @@
 		white-space: nowrap;
 		min-width: 0;
 		box-sizing: border-box;
-		vertical-align: middle;
 		/* Prevent initial scrollbar flicker */
 		max-width: 0;
 		opacity: 0;
@@ -379,11 +421,11 @@
 		opacity: 1;
 	}
 
-	td :global(*) {
+	td:not(.ellipsis) :global(*) {
 		display: inline-block;
 	}
 
-	td > :global(*:not(.text-truncate)) {
+	td:not(.ellipsis) > :global(*) {
 		display: flex;
 		align-items: center;
 	}

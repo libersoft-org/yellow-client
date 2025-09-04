@@ -47,10 +47,8 @@
 			{#each filteredAddresses as address}
 				<TbodyTr onClick={() => clickSelectAddress(address)} data-testid="wallet-address-{address.index}">
 					<Td>{address.index}</Td>
-					<Td><div class="text-truncate">{address.name}</div></Td>
-					<Td>
-						<div class="text-truncate">{address.address}</div>
-					</Td>
+					<Td class="ellipsis"><span>{address.name}</span></Td>
+					<Td class="ellipsis"><span>{address.address}</span></Td>
 				</TbodyTr>
 			{/each}
 		{:else}

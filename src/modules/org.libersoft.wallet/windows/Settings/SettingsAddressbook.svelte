@@ -87,9 +87,7 @@
 								<DragHandle />
 							</Td>
 							<Td bold>{a.name}</Td>
-							<Td>
-								<div class="text-truncate">{a.address}</div>
-							</Td>
+							<Td class="ellipsis"><span>{a.address}</span></Td>
 							<Td>
 								<TableActionItems align="center">
 									<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => addEditItem(a)} />

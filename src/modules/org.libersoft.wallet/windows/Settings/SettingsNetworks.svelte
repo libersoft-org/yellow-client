@@ -98,7 +98,6 @@
 			<Thead>
 				<TheadTr>
 					<Th></Th>
-					<Th></Th>
 					<Th>Network</Th>
 					<Th align="center">Action</Th>
 				</TheadTr>
@@ -109,13 +108,16 @@
 						<Td>
 							<DragHandle />
 						</Td>
-						<Td padding="0" align="center" class="network-icon-cell">
-							{#if n.currency?.iconURL}
-								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
-							{/if}
-						</Td>
-						<Td padding="0" expand data-testid="wallet-settings-network-name@{n.name}">
-							<div class="name text-truncate">{n.name}</div>
+
+						<Td class="ellipsis" padding="0" expand data-testid="wallet-settings-network-name@{n.name}">
+							<span class="td__row">
+								{#if n.currency?.iconURL}
+									<span class="td__icon">
+										<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
+									</span>
+								{/if}
+								<span class="td__text">{n.name}</span>
+							</span>
 						</Td>
 						<Td>
 							<TableActionItems align="center">

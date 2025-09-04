@@ -450,12 +450,6 @@
 		gap: 10px;
 	}
 
-	.column {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-
 	.name {
 		font-size: 20px;
 		font-weight: bold;
@@ -489,7 +483,6 @@
 	.item {
 		display: flex;
 		flex-direction: column;
-		padding: 10px;
 		align-items: center;
 	}
 
@@ -521,13 +514,13 @@
 
 {#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
 	<Tr>
-		<Td padding="0" expand>
+		<Td expand class={$isMobile ? '' : 'ellipsis'}>
 			{#if $debug}
 				<pre>{stringifyWithBigInt(balanceData)}</pre>
 			{/if}
 			<Clickable onClick={selectCurrency}>
-				<div class="item">
-					<div class="currency">
+				<div class={$isMobile ? 'item' : ''}>
+					<div class="currency td__row">
 						{#if isLoadingName}
 							{@render spinner()}
 						{:else}
@@ -599,28 +592,28 @@
 {/snippet}
 
 {#snippet currencyIcon(iconURL, symbol, size = '40px')}
-	<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
+	<span class="td__icon">
+		<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
+	</span>
 {/snippet}
 
 {#snippet currencyNameSymbol(name, symbol, address = null, isLoading = false)}
-	<div class="column">
-		<div class="name">
-			{#if isLoading}
-				{@render spinner()}
-			{:else if name && symbol}
-				{name} ({symbol})
-			{:else if name && !symbol}
-				{name}
-			{:else if !name && symbol}
-				{symbol}
-			{:else}
-				Unknown
-			{/if}
-		</div>
-		{#if ($debug || (!name && !symbol)) && address}
-			<div class="address">{address}</div>
+	<div class="name td__text">
+		{#if isLoading}
+			{@render spinner()}
+		{:else if name && symbol}
+			{name} ({symbol})
+		{:else if name && !symbol}
+			{name}
+		{:else if !name && symbol}
+			{symbol}
+		{:else}
+			Unknown
 		{/if}
 	</div>
+	{#if ($debug || (!name && !symbol)) && address}
+		<div class="address">{address}</div>
+	{/if}
 {/snippet}
 
 {#snippet refresh(contractAddress)}
