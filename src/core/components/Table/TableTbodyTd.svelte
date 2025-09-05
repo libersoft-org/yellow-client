@@ -56,6 +56,10 @@
 		width: 100%;
 	}
 
+	:global(.ellipsis.ellipsis-50) {
+		width: 50%;
+	}
+
 	:global(.ellipsis > *:first-child) {
 		position: absolute;
 		left: 10px;

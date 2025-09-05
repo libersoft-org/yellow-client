@@ -73,6 +73,12 @@
 		gap: 2px;
 	}
 
+	.info :where(.name, .details) {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
 	.info .details .name {
 		font-weight: bold;
 	}
