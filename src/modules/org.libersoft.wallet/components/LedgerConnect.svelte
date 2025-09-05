@@ -9,6 +9,8 @@
 	let { onConnected }: { onConnected?: () => Promise<void> | void } = $props();
 	let firstAccount = $state<LedgerAccount | null>(null);
 
+	let isSupportedBrowser = false;
+
 	onMount(async () => {
 		await initializeLedger();
 	});
@@ -98,7 +100,7 @@
 	}
 </style>
 
-{#if !$ledgerDevice}
+{#if !$ledgerDevice && !isSupportedBrowser}
 	<Alert type="warning">Ledger is supported in <span class="bold">Chrome/Edge 89+</span> only.</Alert>
 {/if}
 

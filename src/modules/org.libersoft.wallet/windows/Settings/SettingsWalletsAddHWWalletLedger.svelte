@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getContext } from 'svelte';
-	import { addHardwareWallet } from 'libersoft-crypto/wallet';
+	import { addAddress, addHardwareWallet } from 'libersoft-crypto/wallet';
 	import { ledgerLoading, ledgerDevice, ledgerError, ledgerConnected, getLedgerDeviceIdentifiers } from 'libersoft-crypto/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -42,6 +42,7 @@
 
 		// Add hardware wallet representing the whole device, not a specific address
 		const w = await addHardwareWallet('ledger', walletName, deviceIdentifiers);
+		await addAddress(w);
 		setSettingsSection('wallets');
 	}
 
