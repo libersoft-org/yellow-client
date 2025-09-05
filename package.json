@@ -57,7 +57,7 @@
     "hex-to-css-filter": "^6.0.0",
     "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
-    "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#cab87eafe193bbdbcffa49fd4d90b28d8578c8bf",
+    "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#cce95d6565ba87cd5c335d8eba614ff25d978277",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "lottie-web": "^5.12.2",

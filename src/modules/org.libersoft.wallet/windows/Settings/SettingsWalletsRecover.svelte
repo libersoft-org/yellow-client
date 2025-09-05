@@ -10,15 +10,19 @@
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+
 	interface Props {
 		close: () => void;
 	}
+
 	let { close }: Props = $props();
 	let error: string | null | undefined = $state();
 	let name: string | undefined = $state();
 	let phrase: string | undefined = $state();
 	let elName: Input | undefined;
 	let elPhrase: Input | undefined;
+	let hidePhrase = $state(true);
 
 	onMount(() => {
 		name = 'My wallet ' + ($wallets.length + 1);
@@ -46,12 +50,22 @@
 	}
 </script>
 
+<style>
+	.row {
+		display: flex;
+		justify-items: center;
+	}
+</style>
+
 <Form onSubmit={recover}>
 	<Label text="Wallet name">
 		<Input type="text" bind:value={name} bind:this={elName} />
 	</Label>
 	<Label text="Recovery phrase">
-		<Input type="text" bind:value={phrase} bind:this={elPhrase} />
+		<div class="row">
+			<Input type={hidePhrase ? 'password' : 'text'} bind:value={phrase} bind:this={elPhrase} />
+			<Icon img={hidePhrase ? 'img/show.svg' : 'img/hide.svg'} onClick={() => (hidePhrase = !hidePhrase)} />
+		</div>
 	</Label>
 </Form>
 {#if error}
