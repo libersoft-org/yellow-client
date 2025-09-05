@@ -36,7 +36,7 @@
         "hex-to-css-filter": "^6.0.0",
         "jsqr": "^1.4.0",
         "leaflet": "^1.9.4",
-        "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#cce95d6565ba87cd5c335d8eba614ff25d978277",
+        "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#4a7c686",
         "lodash": "^4.17.21",
         "lodash-es": "^4.17.21",
         "lottie-web": "^5.12.2",
@@ -1693,7 +1693,7 @@
 
     "levn": ["levn@0.4.1", "", { "dependencies": { "prelude-ls": "^1.2.1", "type-check": "~0.4.0" } }, "sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ=="],
 
-    "libersoft-crypto": ["libersoft-crypto@github:libersoft-org/crypto-utils#cce95d6", { "dependencies": { "@ledgerhq/hw-app-eth": "^6.0.0", "@ledgerhq/hw-transport-webhid": "^6.0.0", "@ledgerhq/hw-transport-webusb": "^6.0.0", "@trezor/connect": "^9.0.0", "@trezor/connect-web": "^9.0.0", "ethers": "^6.0.0", "node-localstorage": "^3.0.5" }, "peerDependencies": { "svelte": "5.20.0" } }, "libersoft-org-crypto-utils-cce95d6"],
+    "libersoft-crypto": ["libersoft-crypto@github:libersoft-org/crypto-utils#4a7c686", { "dependencies": { "@ledgerhq/hw-app-eth": "^6.0.0", "@ledgerhq/hw-transport-webhid": "^6.0.0", "@ledgerhq/hw-transport-webusb": "^6.0.0", "@trezor/connect": "^9.0.0", "@trezor/connect-web": "^9.0.0", "ethers": "^6.0.0", "node-localstorage": "^3.0.5" }, "peerDependencies": { "svelte": "5.20.0" } }, "libersoft-org-crypto-utils-4a7c686"],
 
     "lilconfig": ["lilconfig@3.1.3", "", {}, "sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw=="],
 
