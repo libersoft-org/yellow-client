@@ -68,14 +68,16 @@
 		display: inline-block;
 	}
 
-	:global(.ellipsis > .spacer) {
-		visibility: hidden; /* still participates in layout */
-		padding: 10px; /* same vertical rhythm as overlay wants */
-		white-space: nowrap; /* one line’s height */
+	:global(.ellipsis::before) {
+		content: 'X'; /* one character for height reference */
+		visibility: hidden; /* doesn’t show, but contributes to layout */
+		display: block;
+		padding: 10px 0; /* vertical padding = cell height */
+		white-space: nowrap; /* same as text */
 	}
 
 	/* Global utility classes for icon+text layouts inside table cells */
-	:global(.td__row) {
+	:global(.ellipsis .td__row) {
 		display: inline-grid;
 		grid-auto-flow: column;
 		grid-template-columns: auto 1fr;
@@ -96,8 +98,8 @@
 		white-space: nowrap;
 	}
 
-	td:not(.ellipsis) :global(*) {
-		display: inline-block;
+	td :global(.drag-handle) {
+		margin-top: 2px;
 	}
 
 	td:not(.ellipsis) > :global(*) {

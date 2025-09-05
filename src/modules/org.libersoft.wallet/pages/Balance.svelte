@@ -483,13 +483,17 @@
 	.item {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
 	}
 
 	.item .currency {
 		display: flex;
 		align-items: center;
 		gap: 10px;
+	}
+	@media (max-width: 768px) {
+		.balance {
+			padding-left: 50px;
+		}
 	}
 </style>
 
@@ -533,8 +537,6 @@
 					{/if}
 				</div>
 			</Clickable>
-			<div class="spacer">X</div>
-			<!-- defines height -->
 		</Td>
 		{#if !$isMobile}
 			<Td>
