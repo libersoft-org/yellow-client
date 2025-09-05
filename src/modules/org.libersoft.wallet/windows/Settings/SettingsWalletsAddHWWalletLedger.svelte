@@ -55,10 +55,6 @@
 </script>
 
 <style>
-	.ledger-setup {
-		max-width: 800px;
-	}
-
 	.form-section {
 		margin: 20px 0;
 	}
