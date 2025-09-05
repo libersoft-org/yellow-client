@@ -67,7 +67,7 @@
 	<Tbody>
 		{#each filteredNetworks as n}
 			<TbodyTr data-network-name={n.name}>
-				<Td padding="10px" class="ellipsis">
+				<Td padding="0 10px" class="ellipsis">
 					<Clickable onClick={() => selectNetwork(n.guid)}>
 						<span class="network-selection">
 							<span class="td__icon">

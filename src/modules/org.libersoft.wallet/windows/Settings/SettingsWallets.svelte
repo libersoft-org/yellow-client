@@ -99,7 +99,7 @@
 						<Td>
 							<DragHandle />
 						</Td>
-						<Td padding="10px" expand class="ellipsis">
+						<Td padding="0 10px" expand class="ellipsis">
 							<Clickable onClick={() => clickWallet(wallet)}>
 								{wallet.name}
 							</Clickable>
