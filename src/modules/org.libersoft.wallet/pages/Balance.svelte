@@ -77,6 +77,21 @@
 		return new Set(set);
 	}
 
+	// Helpers to split formatted balance into value and symbol parts
+	function getBalanceParts(b: IBalance, fractionDigits?: number): { value: string; symbol: string } {
+		try {
+			const formattedRaw = fractionDigits !== undefined ? formatBalance(b, fractionDigits) : formatBalance(b);
+			const formatted = (formattedRaw ?? '').toString();
+			const lastSpace = formatted.lastIndexOf(' ');
+			if (lastSpace > 0) {
+				return { value: formatted.slice(0, lastSpace), symbol: formatted.slice(lastSpace + 1) };
+			}
+			return { value: formatted, symbol: (b?.currency ?? '') as string };
+		} catch (e) {
+			return { value: '', symbol: (b?.currency ?? '') as string };
+		}
+	}
+
 	function getTokensWithContracts() {
 		return $tokens.filter(token => token.contract_address);
 	}
@@ -471,12 +486,12 @@
 		flex-direction: column;
 	}
 
-	.balance .info .amount {
+	.balance :where(.amount__value, .amount__symbol) {
 		font-size: 18px;
 		font-weight: bold;
 	}
 
-	.balance .info .fiat {
+	.balance :where(.fiat__value, .fiat__symbol) {
 		font-size: 13px;
 	}
 
@@ -490,9 +505,33 @@
 		align-items: center;
 		gap: 10px;
 	}
+
+	:global(.ellipsis.ellipsis-balance) {
+		width: 70%;
+	}
+
+	:global(.ellipsis.ellipsis-token-balance) .td__text {
+		flex: initial;
+	}
+
+	:global(.ellipsis.ellipsis-token-balance) .balance {
+		min-width: 120px;
+	}
+
 	@media (max-width: 768px) {
 		.balance {
 			padding-left: 50px;
+		}
+
+		.amount__value {
+			max-width: 150px;
+		}
+
+		:global(.ellipsis.ellipsis-token-balance::after) {
+			content: 'X'; /* one character for height reference */
+			visibility: hidden; /* doesn’t show, but contributes to layout */
+			display: block;
+			white-space: nowrap; /* same as text */
 		}
 	}
 </style>
@@ -518,12 +557,12 @@
 
 {#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
 	<Tr>
-		<Td expand class={$isMobile ? '' : 'ellipsis'}>
+		<Td class={$isMobile ? 'ellipsis ellipsis-token-balance' : 'ellipsis ellipsis-balance'}>
 			{#if $debug}
 				<pre>{stringifyWithBigInt(balanceData)}</pre>
 			{/if}
 			<Clickable onClick={selectCurrency}>
-				<div class={$isMobile ? 'item' : ''}>
+				<div class={$isMobile ? 'item multi-row' : ''}>
 					<div class="currency td__row">
 						{#if isLoadingName}
 							{@render spinner()}
@@ -539,21 +578,19 @@
 			</Clickable>
 		</Td>
 		{#if !$isMobile}
-			<Td>
-				<div class="balance">
-					{#if isLoadingBalance}
-						{@render spinner()}
-					{:else if balanceData}
-						{@render balanceInfo(balanceData)}
-					{:else}
-						<div class="balance">
-							<div class="info">
-								<div class="amount">Cannot retrieve balance</div>
-								<div class="fiat">(click refresh icon to retry)</div>
-							</div>
+			<Td class="ellipsis ellipsis-token-balance">
+				{#if isLoadingBalance}
+					{@render spinner()}
+				{:else if balanceData}
+					{@render balanceInfo(balanceData)}
+				{:else}
+					<div class="balance">
+						<div class="info">
+							<div class="amount">Cannot retrieve balance</div>
+							<div class="fiat">(click refresh icon to retry)</div>
 						</div>
-					{/if}
-				</div>
+					</div>
+				{/if}
 			</Td>
 		{/if}
 		<Td>
@@ -565,29 +602,32 @@
 {/snippet}
 
 {#snippet balanceInfo(balanceData)}
-	<div class="balance">
-		<div class="info">
-			<div class="amount">
-				{#if balanceData?.crypto}
-					{formatBalance(balanceData.crypto)}
-				{:else}
-					{@render spinner()}
-				{/if}
+	<div class="balance td__row">
+		{#if balanceData?.crypto}
+			{@const bp = getBalanceParts(balanceData.crypto)}
+			<span class="amount__value td__text">{bp.value}</span>
+			<span class="amount__symbol td__icon">{bp.symbol}</span>
+		{:else}
+			{@render spinner()}
+		{/if}
+
+		{#if balanceData?.fiat}
+			{@const fp = getBalanceParts(balanceData.fiat, 2)}
+			<div class="fiat">
+				<span class="fiat__value td__text">{fp.value}</span>
+				<span class="fiat__symbol td__icon">{fp.symbol}</span>
 			</div>
-			{#if balanceData?.fiat}
-				<div class="fiat">{formatBalance(balanceData.fiat, 2)}</div>
+		{/if}
+		{#if $debug}
+			{#if balanceData?.timestamp}
+				<div class="fiat">Last update: {balanceData.timestamp.toLocaleTimeString()}</div>
 			{/if}
-			{#if $debug}
-				{#if balanceData?.timestamp}
-					<div class="fiat">Last update: {balanceData.timestamp.toLocaleTimeString()}</div>
-				{/if}
-				<!-- TODO - add countdown
-				{#if countdown > 0}
-					<div class="fiat">Refresh in: {countdown} s</div>
-				{/if}
-				-->
+			<!-- TODO - add countdown
+			{#if countdown > 0}
+				<div class="fiat">Refresh in: {countdown} s</div>
 			{/if}
-		</div>
+			-->
+		{/if}
 	</div>
 {/snippet}
 
