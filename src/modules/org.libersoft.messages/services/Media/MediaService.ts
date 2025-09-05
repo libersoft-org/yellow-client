@@ -1,6 +1,6 @@
 import videoJS from 'video.js';
 import 'video.js/dist/video-js.css';
-import type { MediaFileInfo, MediaLoader } from './loaders/types.ts';
+import type { IMediaFileInfo, MediaLoader } from './loaders/types.ts';
 import MP4Loader from './loaders/MP4Loader.ts';
 import BasicStreamLoader from './loaders/BasicStreamLoader.ts';
 import _debounce from 'lodash/debounce';
@@ -13,12 +13,12 @@ class MediaService {
 	loader: MediaLoader | null = null;
 	mediaSource: MediaSource | null = null;
 	player: ReturnType<typeof videoJS> | null = null;
-	fileInfo: MediaFileInfo;
+	fileInfo: IMediaFileInfo;
 
 	fetchQueue: number[] = [];
 	fetchQueueInterval: any | null = null;
 
-	constructor(videoElement: HTMLVideoElement, getFileChunk: MediaService['_getFileChunk'], fileInfo: MediaFileInfo) {
+	constructor(videoElement: HTMLVideoElement, getFileChunk: MediaService['_getFileChunk'], fileInfo: IMediaFileInfo) {
 		this.videoElement = videoElement;
 		this._getFileChunk = getFileChunk;
 		this.fileInfo = fileInfo;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { lightenColor } from '@/core/utils/colorUtils';
+	import { lightenColor } from '@/core/scripts/utils/colorUtils';
 
 	interface Props {
 		width?: string;

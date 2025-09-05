@@ -1,22 +1,49 @@
 <script lang="ts">
-	import Clickable from '../Clickable/Clickable.svelte';
-	import MenuItem from './MenuItem.svelte';
-	import Modal from '../Modal/Modal.svelte';
-	import ModalSettings from '../../modals/Settings/Settings.svelte';
-	import Icon from '../Icon/Icon.svelte';
-	import Switch from '../Switch/Switch.svelte';
-	import DialogExit from '../../dialogs/Exit.svelte';
-	import VersionInfo from '../VersionInfo/VersionInfo.svelte';
-	import { product, link } from '../../core.ts';
-	import { BROWSER } from '@/core/tauri.ts';
-
+	import { onMount, onDestroy } from 'svelte';
+	import { product, link, debug } from '@/core/scripts/stores.ts';
+	import { BROWSER } from '@/core/scripts/tauri.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import MenuItem from '@/core/components/Menu/MenuItem.svelte';
+	import Settings from '@/core/windows/Settings/Settings.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	import Switch from '@/core/components/Switch/Switch.svelte';
+	import DialogExit from '@/core/dialogs/Exit.svelte';
+	import VersionInfo from '@/core/components/VersionInfo/VersionInfo.svelte';
+	import { isDarkMode, toggleDarkMode } from '@/core/scripts/themes.ts';
 	interface Props {
 		showMenu: boolean;
-		showModalSettings: boolean;
+	}
+	let { showMenu = $bindable(false) }: Props = $props();
+	let elSettings: Settings;
+	let elDialogExit: InstanceType<typeof DialogExit>;
+	let darkModeLocal = $state(false);
+
+	onMount(() => {
+		window.addEventListener('keydown', onKeydown);
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
+	});
+
+	function onKeydown(event) {
+		if (event.key === 'Escape' && showMenu) {
+			event.stopImmediatePropagation();
+			event.preventDefault();
+			//TODO: - deny closing everything else than menu !!!
+			clickMenuClose();
+		}
 	}
 
-	let { showMenu = $bindable(false), showModalSettings = false }: Props = $props();
-	let elDialogExit: InstanceType<typeof DialogExit>;
+	// Sync darkModeLocal with isDarkMode store
+	$effect(() => {
+		darkModeLocal = $isDarkMode;
+	});
+
+	// Update theme when darkModeLocal changes
+	$effect(() => {
+		toggleDarkMode(darkModeLocal);
+	});
 
 	const menuItems = [
 		{
@@ -60,19 +87,19 @@
 	}
 
 	function clickSettings() {
-		showModalSettings = true;
+		elSettings?.open();
 		clickMenuClose();
 	}
 
 	function exitApp() {
-		elDialogExit.open();
+		elDialogExit?.open();
 		clickMenuClose();
 	}
 </script>
 
 <style>
 	.overlay {
-		z-index: 999;
+		z-index: 200;
 		position: fixed;
 		display: none;
 		top: 0;
@@ -87,7 +114,7 @@
 	}
 
 	.menu {
-		z-index: 1000;
+		z-index: 201;
 		position: fixed;
 		display: flex;
 		flex-direction: column;
@@ -167,7 +194,7 @@
 <div class="menu {showMenu ? 'open' : ''}">
 	<div>
 		<div class="header">
-			<Icon img="img/close.svg" alt="X" colorVariable="--secondary-foreground" size="30px" padding="15px" onClick={clickMenuClose} />
+			<Icon img="img/cross.svg" alt="X" colorVariable="--secondary-foreground" size="30px" padding="15px" onClick={clickMenuClose} />
 		</div>
 		<div class="items">
 			{#each menuItems as item}
@@ -177,7 +204,10 @@
 	</div>
 	<div class="footer">
 		<div class="section">
-			<Switch showLabel label="Dark mode" checked={false} />
+			<Switch showLabel label="Dark mode" bind:checked={darkModeLocal} />
+		</div>
+		<div class="section">
+			<Switch showLabel label="Debug mode" bind:checked={$debug} />
 		</div>
 		<div class="section">
 			<Clickable onClick={() => openPage(link)}>
@@ -190,5 +220,5 @@
 		</div>
 	</div>
 </div>
-<Modal title="Settings" body={ModalSettings} bind:show={showModalSettings} width="500px" />
+<Settings bind:this={elSettings} />
 <DialogExit bind:this={elDialogExit} />
