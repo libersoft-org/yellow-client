@@ -4,14 +4,22 @@
 	import Window from '@/core/components/Window/Window.svelte';
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/scripts/tauri.ts';
-	import { setContext, tick } from 'svelte';
+	import { setContext, getContext, tick } from 'svelte';
 	import { createHMRDebugger } from '@/core/scripts/hmr-debug.ts';
 
 	interface IProps {
 		testId?: string;
 		settingsObject?: any;
 	}
-	let elWindow;
+
+	interface IWindowContext {
+		open: (...args: any[]) => Promise<void>;
+		close: () => void;
+		maximize: () => void;
+		restore: () => void;
+	}
+
+	let elWindow = getContext<IWindowContext>('elWindow');
 
 	/*
 	interface ISettingsNode {
