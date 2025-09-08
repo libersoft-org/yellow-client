@@ -31,10 +31,10 @@
 
 	onMount(() => {
 		console.log('Wallet module initialiddddddzed');
-		if ($debug) {
+		/*if ($debug) {
 			//$settingsWindow?.open('wallets-add-hw-trezor');
 			$settingsWindow?.open('wallets-add');
-		}
+		}*/
 	});
 
 	function clickCopyAddress() {

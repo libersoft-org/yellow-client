@@ -4,7 +4,7 @@
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.ts';
 	import { selectedNetwork, tokens, nfts } from 'libersoft-crypto/network';
-	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from 'libersoft-crypto/balance';
+	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenAmountsByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from 'libersoft-crypto/balance';
 	import { provider, rpcURL } from 'libersoft-crypto/provider';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -44,6 +44,9 @@
 	let lastTokensLength = $state(0);
 	let isInitialized = $state(false);
 	let subscriptions: Array<() => void> = [];
+
+	$inspect('TOKENINFOSSSS:', tokenInfos);
+	$inspect('$tokens', $tokens);
 
 	/*
 	$effect(() => {
@@ -96,12 +99,13 @@
 		lastTokensLength = 0;
 	}
 
-	function initializeAllBalances() {
+	async function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
 			//loadNFTContractInfos();
 			if ($tokens?.length) {
-				loadAllTokensInfo();
+				await loadAllTokensInfo();
+				console.log('All token infos loaded:', tokenInfos);
 				loadAllTokenBalances();
 			}
 		}
@@ -214,6 +218,7 @@
 			const contractAddresses = tokensToLoad.map(token => token.contract_address!);
 			// Use batch multicall to load all tokens at once
 			const batchResults = await getBatchTokensInfo(contractAddresses);
+			console.log('Batch token info results:', batchResults);
 			// Save results
 			tokenInfos = updateReactiveMap(tokenInfos, map => {
 				batchResults.forEach((tokenInfo, contractAddress) => {
@@ -246,6 +251,9 @@
 
 	async function loadAllTokenBalances() {
 		const tokensWithContracts = getTokensWithContracts().filter(token => token.contract_address && !loadingTokens.has(token.contract_address));
+
+		console.log('Loading all token balances for', tokensWithContracts.length, 'tokens');
+
 		if (!tokensWithContracts.length) return;
 
 		// Mark all as loading
@@ -256,7 +264,13 @@
 		try {
 			const contractAddresses = tokensWithContracts.map(token => token.contract_address!);
 			// Use batch multicall to load all token balances at once
-			const batchBalances = await getBatchTokenBalancesByAddresses(contractAddresses);
+			const batchAmounts = await getBatchTokenAmountsByAddresses(contractAddresses);
+			const batchBalances = new Map<string, IBalance>();
+			batchAmounts.forEach((amount, contractAddress) => {
+				if (amount) {
+					batchBalances.set(contractAddress, { amount: amount.amount, decimals: amount.decimals, currency: tokenInfos.get(contractAddress)?.symbol || '?' });
+				}
+			});
 
 			// Process results and get fiat rates
 			const fiatResults = await Promise.all(
@@ -623,19 +637,19 @@
 	</div>
 {/snippet}
 
-{#snippet refresh(contractAddress)}
-	<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contractAddress)} />
-{/snippet}
+<!--{#snippet refresh(contractAddress)}-->
+<!--	<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contractAddress)} />-->
+<!--{/snippet}-->
 
-{#snippet failedBalanceInfo(refreshFn)}
-	<div class="balance">
-		<div class="info">
-			<div class="amount">Failed to load</div>
-			<div class="fiat">(click refresh to retry)</div>
-		</div>
-		<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={refreshFn} />
-	</div>
-{/snippet}
+<!--{#snippet failedBalanceInfo(refreshFn)}-->
+<!--	<div class="balance">-->
+<!--		<div class="info">-->
+<!--			<div class="amount">Failed to load</div>-->
+<!--			<div class="fiat">(click refresh to retry)</div>-->
+<!--		</div>-->
+<!--		<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={refreshFn} />-->
+<!--	</div>-->
+<!--{/snippet}-->
 
 <!--
 {#snippet nftBalanceInfo(contractInfo)}
