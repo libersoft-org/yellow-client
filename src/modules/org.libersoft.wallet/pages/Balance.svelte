@@ -152,14 +152,28 @@
 			console.log(`Balance: RPC URL changed to ${newRpcURL} - reinitializing balances`);
 			initialize(newRpcURL, currentRpcURL, value => (currentRpcURL = value));
 		});
+
+		// Subscribe to tokens changes
+		const unsubscribeTokens = tokens.subscribe(async tokensArray => {
+			if (!isInitialized || !$selectedNetwork || !$selectedAddress || !$provider) return;
+
+			// The existing functions already filter what needs loading, so just call them
+			await loadAllTokensInfo();
+			loadAllTokenBalances();
+		});
+
 		// Store unsubscribe functions for cleanup
-		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC];
+		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC, unsubscribeTokens];
 		isInitialized = true; // Mark as initialized to enable reactive effects
+
+		/*
+		todo: refactor into unit tests
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -99999999999999999999999999999999999999999123456789123456789n, decimals: 18, currency: 'ETH' }));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -1000n, decimals: 18, currency: 'ETH' }));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789n, decimals: 0, currency: 'ETH' }, 6));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 0n, decimals: 18, currency: 'ETH' }, 6));
 		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789123456789123456789123456789123456789n, decimals: 40, currency: 'ETH' }, 2));
+		*/
 	});
 
 	onDestroy(() => {

@@ -87,6 +87,11 @@
 		reordered.splice(targetIndex, 0, moved);
 		reorderTokens(network.guid, reordered);
 	}
+
+	async function clickPopularTokens(): Promise<void> {
+		setSettingsSection('networks-tokens-popular-' + item);
+		//console.log(await fetch('https://api-polygon-tokens.polygon.technology/tokenlists/popular.tokenlist.json').then(res => res.json()));
+	}
 </script>
 
 <style>
@@ -130,6 +135,7 @@
 	</div>
 	<ButtonBar>
 		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={clickTokenAdd} />
+		<Button img="modules/{module.identifier}/img/token-add.svg" text="Popular tokens" onClick={clickPopularTokens} />
 	</ButtonBar>
 	{#if network?.tokens && network.tokens.length > 0}
 		<div use:tableDrag={{ items: network.tokens, onReorder: handleTokenReorder }}>
