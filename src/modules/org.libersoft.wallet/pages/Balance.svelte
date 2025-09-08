@@ -142,15 +142,6 @@
 		// Store unsubscribe functions for cleanup
 		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC, unsubscribeTokens];
 		isInitialized = true; // Mark as initialized to enable reactive effects
-
-		/*
-		todo: refactor into unit tests
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -99999999999999999999999999999999999999999123456789123456789n, decimals: 18, currency: 'ETH' }));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -1000n, decimals: 18, currency: 'ETH' }));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789n, decimals: 0, currency: 'ETH' }, 6));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 0n, decimals: 18, currency: 'ETH' }, 6));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789123456789123456789123456789123456789n, decimals: 40, currency: 'ETH' }, 2));
-		*/
 	});
 
 	onDestroy(() => {
@@ -311,8 +302,9 @@
 	}
 
 	async function refreshToken(contractAddress: string) {
+		console.log('Refreshing token balance for', contractAddress);
 		if (loadingTokens.has(contractAddress)) {
-			console.log('Token already being refreshed:', contractAddress);
+			console.log('nope, token already being refreshed:', contractAddress);
 			return;
 		}
 		// Clear existing timer
@@ -323,10 +315,15 @@
 		tokenCountdowns.set(contractAddress, 0);
 		loadingTokens = updateReactiveSet(loadingTokens, set => set.add(contractAddress));
 		// Load token information if needed
-		if (!tokenInfos.has(contractAddress)) await loadTokenInfo(contractAddress);
+		if (!tokenInfos.has(contractAddress)) {
+			console.log('Token info missing, loading before balance:', contractAddress);
+			await loadTokenInfo(contractAddress);
+		}
 		try {
+			console.log('getTokenBalanceByAddress ', contractAddress);
 			const tokenBalance = await getTokenBalanceByAddress(contractAddress);
 			if (tokenBalance) {
+				console.log('getExchange for ', contractAddress, tokenBalance);
 				const fiatBalance = await getExchange(tokenBalance, 'USD');
 				tokenBalances = updateReactiveMap(tokenBalances, map => {
 					map.set(contractAddress, {
@@ -343,9 +340,11 @@
 			tokenTimers.set(contractAddress, timer);
 			tokenCountdowns.set(contractAddress, refreshInterval);
 		}
+		console.log('Finished refreshing token balance for', contractAddress);
 	}
 
 	async function refreshBalance() {
+		console.log('Refreshing native balance for', $selectedAddress?.address);
 		if (balanceTimer) clearTimeout(balanceTimer);
 		balanceCountdown = 0;
 		isLoadingBalance = true;
