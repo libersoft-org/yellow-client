@@ -41,33 +41,11 @@
 	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
 	let nftContractInfos = $state(new Map<string, { name: string; collection: string; balance: number; loading: boolean }>());
 	let lastNFTsLength = $state(0);
-	let lastTokensLength = $state(0);
 	let isInitialized = $state(false);
 	let subscriptions: Array<() => void> = [];
 
 	$inspect('TOKENINFOSSSS:', tokenInfos);
 	$inspect('$tokens', $tokens);
-
-	/*
-	$effect(() => {
-		if (!$tokens?.length || !$selectedNetwork || !$selectedAddress || !$provider) return;
-		// Only process if tokens array actually changed in length or we have genuinely new tokens
-		if ($tokens.length !== lastTokensLength) {
-			lastTokensLength = $tokens.length;
-			const newTokens = getTokensWithContracts().filter(token => token.contract_address && !initializedTokens.has(token.contract_address));
-			if (newTokens.length > 0) {
-				console.log('Found new tokens to initialize:', newTokens.length);
-				// Mark as initialized
-				newTokens.forEach(token => {
-					if (token.contract_address) initializedTokens.add(token.contract_address);
-				});
-				// Load info and balances for new tokens
-				loadAllTokensInfo();
-				loadAllTokenBalances();
-			}
-		}
-	});
-*/
 
 	// Helper functions
 	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
@@ -96,7 +74,6 @@
 		loadingTokenInfos.clear();
 		//nftContractInfos.clear();
 		//lastNFTsLength = 0;
-		lastTokensLength = 0;
 	}
 
 	async function initializeAllBalances() {
