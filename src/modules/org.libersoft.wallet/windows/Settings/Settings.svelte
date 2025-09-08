@@ -22,6 +22,7 @@
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
 	import SettingsNetworksTokensAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokensAddEdit.svelte';
+	import SettingsNetworksTokensPopular from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokensPopular.svelte';
 	import SettingsNetworksNFTsAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksNFTsAddEdit.svelte';
 	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
 	import SettingsAddressbookImport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookImport.svelte';
@@ -101,6 +102,15 @@
 					props: {
 						close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
 						networkGuid: network.guid,
+					},
+				},
+				{
+					title: 'Popular tokens',
+					name: 'networks-tokens-popular-' + network.guid,
+					body: SettingsNetworksTokensPopular,
+					props: {
+						close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
+						item: network.guid,
 					},
 				},
 				...(network.tokens || []).map((token: any) => ({
