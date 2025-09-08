@@ -13,6 +13,9 @@ const config = {
 	vitePlugin: {
 		inspector: {
 			toggleKeyCombo: 'alt-x',
+			holdMode: true,
+			showToggleButton: 'active',
+			toggleButtonPos: 'top-right',
 		},
 	},
 	kit: {
