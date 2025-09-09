@@ -1,32 +1,28 @@
 <script lang="ts">
-	import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '../../messages.js';
-	//import WaveSurfer from 'wavesurfer.js';
 	import { onMount } from 'svelte';
-	import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
-	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import { get, writable } from 'svelte/store';
-	import { active_account } from '@/core/core.ts';
-	import { humanSize } from '@/core/utils/fileUtils.js';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.js';
+	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import WaveSurfer from 'wavesurfer.js';
-	import type { FileDownload, FileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
-
+	import type { IFileDownload, IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	const { uploadId } = $props();
-
 	let wavesurfer: WaveSurfer;
 	let isPlaying = $state(false);
 	let waveRef;
 	let duration = $state('');
 	let time = $state('');
-
 	let mediaHandler = $state(null);
-	let upload = $state<FileUpload | null>(null);
-
-	let download = writable<FileDownload | null>(null);
+	let upload = $state<IFileUpload | null>(null);
+	let download = writable<IFileDownload | null>(null);
 	let isFullDownloading = $state(false);
+	const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
+	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
 	fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
 	function getFileChunkFactory(uploadId) {
@@ -35,9 +31,7 @@
 	}
 
 	const fullDownloadAudio = () => {
-		if (!upload) {
-			return;
-		}
+		if (!upload) return;
 		isFullDownloading = true;
 		downloadAttachmentsSerial([upload.record], download => {
 			isFullDownloading = false;
@@ -52,17 +46,15 @@
 	};
 
 	const setupWavesurfer = async (url: string) => {
-		if (!upload) {
-			return;
-		}
+		if (!upload) return;
 		const { record } = upload;
 		try {
 			wavesurfer = WaveSurfer.create({
 				sampleRate: 48000,
 				container: waveRef,
-				waveColor: '#999',
-				progressColor: '#ea0',
-				barWidth: 3,
+				progressColor: primaryColor,
+				waveColor: secondaryColor,
+				barWidth: 10,
 				//responsive: true,
 				height: 50,
 				autoplay: false,
@@ -78,17 +70,13 @@
 			wavesurfer.on('interaction', () => wavesurfer.play());
 			wavesurfer.on('play', () => (isPlaying = true));
 			wavesurfer.on('pause', () => (isPlaying = false));
-			wavesurfer.on('finish', () => {
-				isPlaying = false;
-			});
+			wavesurfer.on('finish', () => (isPlaying = false));
 			wavesurfer.on('ready', () => {
 				//wavesurfer.play();
 			});
 			wavesurfer.on('error', err => {
 				// console.error('WaveSurfer error:', err);
-				if (err instanceof MediaError && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_DECODE)) {
-					fullDownloadAudio();
-				}
+				if (err instanceof MediaError && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_DECODE)) fullDownloadAudio();
 			});
 			init();
 		} catch (error) {
@@ -108,7 +96,6 @@
 		}
 		const progressiveUrl = MediaUtils.makeProgressiveDownloadUrl(acc.id, upload.record.id);
 		const progressiveDownloadAvailable = await MediaUtils.checkProgressiveDownloadAvailability(progressiveUrl);
-
 		if (progressiveDownloadAvailable) {
 			// @ts-ignore
 			wavesurfer.load(progressiveUrl, [upload.record.metadata?.peaks], upload.record.metadata?.duration);

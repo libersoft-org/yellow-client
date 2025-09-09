@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import HtmlEditor from './HtmlEditor.svelte';
 	import HtmlEditorPreview from './HtmlEditorPreview.svelte';
-	export let text;
+	interface Props {
+		text?: string;
+	}
+	let { text = $bindable() }: Props = $props();
 </script>
 
 <style>
@@ -14,7 +17,8 @@
 
 	.sides .editor,
 	.sides .preview {
-		width: calc(50% - 10px);
+		box-sizing: border-box;
+		width: 50%;
 	}
 </style>
 
