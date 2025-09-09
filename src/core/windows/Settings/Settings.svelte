@@ -1,12 +1,13 @@
 <script lang="ts">
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import SettingsGeneral from '@/core/windows/Settings/SettingsGeneral.svelte';
 	import SettingsModules from '@/core/windows/Settings/SettingsModules.svelte';
 	import SettingsAppearance from '@/core/windows/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '@/core/windows/Settings/SettingsNotifications.svelte';
 	import SettingsAppearanceTheme from './SettingsAppearanceTheme.svelte';
-	let elBaseSettings: BaseSettings;
-	let settingsObject = {
+	let elBaseSettings: IBaseSettingsInstance;
+	let settingsObject: ISettingsObject = {
 		title: 'Settings',
 		name: 'settings',
 		menu: [

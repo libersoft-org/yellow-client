@@ -7,9 +7,11 @@
 	import { setContext, tick } from 'svelte';
 	import { createHMRDebugger } from '@/core/scripts/hmr-debug.ts';
 
+	import type { ISettingsObject, ISettingsNode, SetSettingsSectionFn, ISettingsComponent } from '@/core/types/settings.ts';
+
 	interface IProps {
 		testId?: string;
-		settingsObject?: any;
+		settingsObject: ISettingsObject;
 	}
 	let elWindow;
 
@@ -39,13 +41,13 @@
 	let activeName = $state(settingsObject.name);
 	let backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
 
-	let currentNode = $derived.by(() => {
+	let currentNode = $derived.by((): ISettingsNode => {
 		let n = findNode(settingsObject, activeName);
 		//console.debug('[BaseSettings] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
 		return n || settingsObject;
 	});
 
-	let currentNodeInstance: any = $state();
+	let currentNodeInstance: ISettingsComponent | undefined = $state();
 	$effect(() => {
 		//$inspect('[BaseSettings] currentNodeInstance updated:', currentNodeInstance);
 		//$inspect('[BaseSettings] currentNode:', currentNode);
@@ -54,7 +56,7 @@
 
 	let breadcrumb = $derived(makeBreadcrumb(activeName));
 
-	setContext('setSettingsSection', setSettingsSection);
+	setContext<SetSettingsSectionFn>('setSettingsSection', setSettingsSection);
 
 	// Remove the problematic effect that resets navigation on window reopen
 
@@ -68,7 +70,7 @@
 		elWindow?.close();
 	}
 
-	export async function setSettingsSection(name: string, props: any = {}) {
+	export async function setSettingsSection(name: string, props: Record<string, any> = {}) {
 		//console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
@@ -104,7 +106,7 @@
 		await setSettingsSection(parentName);
 	}
 
-	function findNode(root: any, target: string): any {
+	function findNode(root: ISettingsNode, target: string): ISettingsNode | undefined {
 		const stack = [root];
 		while (stack.length) {
 			/*console.log(
@@ -116,12 +118,14 @@
 				stack.map(n => n.name)
 			);*/
 			const node = stack.pop();
+			if (!node) break;
 			if (node.name === target) return node;
 			//const children = node.items ?? [];
 			//console.log('node.items:', node.items);
 			//console.log('children:', children);
-			(node.items ?? []).forEach((c: any) => stack.push(c));
+			(node.items ?? []).forEach(c => stack.push(c));
 		}
+		return undefined;
 	}
 
 	function makeBreadcrumb(targetName: string) {
@@ -135,7 +139,7 @@
 			const { node, path } = item;
 			const nextPath = [...path, { title: node.title, onClick: async () => await setSettingsSection(node.name) }];
 			if (node.name === targetName) return nextPath;
-			(node.items ?? []).forEach((c: any) => stack.push({ node: c, path: nextPath }));
+			(node.items ?? []).forEach(c => stack.push({ node: c, path: nextPath }));
 		}
 		log.error('Node not found:', targetName);
 		return [];
@@ -175,7 +179,7 @@
 		<div class="content" data-testid={testId + '-content-' + activeName}>
 			{#if currentNode.menu}
 				{#each currentNode.menu as item (item.name ?? item.title)}
-					<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
+					<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name!) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
 				{/each}
 			{/if}
 

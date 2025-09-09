@@ -6,6 +6,7 @@
 	import { addressBook, type IAddressBookItem } from 'libersoft-crypto/addressbook';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';
 	import SettingsNetworks from '@/org.libersoft.wallet/windows/Settings/SettingsNetworks.svelte';
 	import SettingsNetworksTokens from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokens.svelte';
@@ -32,7 +33,10 @@
 	import SettingsWalletsAddressAdd from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddressAdd.svelte';
 	import SettingsWalletsAddressEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddressEdit.svelte';
 	import SettingsWalletsWalletExport from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWalletExport.svelte';
-	let elBaseSettings: BaseSettings;
+
+	import { ssssettingsObject } from '@/org.libersoft.wallet/scripts/settings.svelte';
+
+	let elBaseSettings: IBaseSettingsInstance;
 	let walletsItems = $derived.by(() => {
 		return $wallets.map((wallet: IWallet) => ({
 			title: wallet.name,
@@ -191,7 +195,7 @@
 		}));
 	});
 
-	let settingsObject = $derived(
+	let settingsObject: ISettingsObject = $derived(
 		attachParents({
 			title: 'Wallet settings',
 			name: 'settings',

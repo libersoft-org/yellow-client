@@ -1,0 +1,47 @@
+import type { ComponentType, SvelteComponent } from 'svelte';
+import type { HTMLAttributes } from 'svelte/elements';
+
+export interface ISettingsMenuItem {
+	img?: string;
+	title: string;
+	name?: string;
+	onClick?: (event: Event) => void | Promise<void>;
+}
+
+export interface ISettingsNode {
+	name: string;
+	title: string;
+	body?: any; // More flexible to handle Svelte 4/5 component variations
+	props?: Record<string, any>;
+	menu?: ISettingsMenuItem[];
+	items?: ISettingsNode[];
+	__parent?: WeakRef<ISettingsNode>;
+	instance?: any;
+}
+
+export interface ISettingsObject extends ISettingsNode {
+	title: string;
+	name: string;
+	menu?: ISettingsMenuItem[];
+	items?: ISettingsNode[];
+}
+
+export interface IBaseSettingsProps extends HTMLAttributes<HTMLDivElement> {
+	testId?: string;
+	settingsObject: ISettingsObject;
+}
+
+// Type for the setSettingsSection function used in context
+export type SetSettingsSectionFn = (name: string, props?: Record<string, any>) => Promise<void>;
+
+// Interface for settings components that implement onOpen lifecycle
+export interface ISettingsComponent {
+	onOpen?(): void | Promise<void>;
+}
+
+// Type for BaseSettings instance methods
+export interface IBaseSettingsInstance {
+	open(name?: string): void;
+	close(): void;
+	setSettingsSection(name: string, props?: Record<string, any>): Promise<void>;
+}

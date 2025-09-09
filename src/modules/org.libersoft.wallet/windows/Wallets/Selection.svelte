@@ -3,9 +3,10 @@
 	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import SelectionWallets from '@/org.libersoft.wallet/windows/Wallets/SelectionWallets.svelte';
 	import SelectionWalletsWallet from '@/org.libersoft.wallet/windows/Wallets/SelectionWalletsWallet.svelte';
-	let elBaseSettings: BaseSettings | undefined;
+	let elBaseSettings: IBaseSettingsInstance | undefined;
 
 	// Debug information
 	//console.log('Wallets.svelte - $wallets:', $wallets);
@@ -24,7 +25,7 @@
 		}));
 	});
 
-	let settingsObject = $derived.by(() => {
+	let settingsObject: ISettingsObject = $derived.by(() => {
 		return attachParents({
 			title: 'Wallets',
 			name: 'wallets',
