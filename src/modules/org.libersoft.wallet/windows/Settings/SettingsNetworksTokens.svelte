@@ -90,7 +90,6 @@
 
 	async function clickPopularTokens(): Promise<void> {
 		setSettingsSection('networks-tokens-popular-' + item);
-		//console.log(await fetch('https://api-polygon-tokens.polygon.technology/tokenlists/popular.tokenlist.json').then(res => res.json()));
 	}
 </script>
 

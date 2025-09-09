@@ -17,31 +17,21 @@
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 
-	interface WrappedToken {
-		wrappedTokenAddress: string;
-		wrappedNetworkId: number;
-		tags?: string[];
-		name?: string;
-		symbol?: string;
-	}
-
-	interface TokenListToken {
+	interface CoinGeckoToken {
+		chainId: number;
+		address: string;
 		name: string;
 		symbol: string;
 		decimals: number;
-		originTokenAddress: string;
-		originNetworkId: number;
 		logoURI?: string;
-		wrappedTokens?: WrappedToken[];
 	}
 
-	interface TokenList {
+	interface CoinGeckoTokenList {
 		name: string;
-		version: number;
 		logoURI?: string;
-		description?: string;
+		keywords?: string[];
 		timestamp: string;
-		tokens: TokenListToken[];
+		tokens: CoinGeckoToken[];
 	}
 
 	interface Props {
@@ -51,7 +41,7 @@
 
 	let { close, item }: Props = $props();
 	let network: INetwork | undefined = $derived(findNetworkByGuid(item));
-	let tokenList: TokenList | null = $state(null);
+	let tokenList: CoinGeckoTokenList | null = $state(null);
 	let loading = $state(false);
 	let error: string | null = $state(null);
 	let addedTokens = $state(new Set<string>());
@@ -64,8 +54,14 @@
 		loading = true;
 		error = null;
 
+		if (!network?.coingecko_asset_platform_id) {
+			error = 'Network does not have a CoinGecko Asset Platform ID configured';
+			loading = false;
+			return;
+		}
+
 		try {
-			const response = await fetch('https://api-polygon-tokens.polygon.technology/tokenlists/popular.tokenlist.json');
+			const response = await fetch(`https://tokens.coingecko.com/${network.coingecko_asset_platform_id}/all.json`);
 			if (!response.ok) {
 				throw new Error(`Failed to fetch token list: ${response.statusText}`);
 			}
@@ -78,23 +74,12 @@
 		}
 	}
 
-	function getPolygonContractAddress(token: TokenListToken): string | null {
-		// Look for wrapped version on Polygon
-		if (!token.wrappedTokens || token.wrappedTokens.length === 0) {
-			return null;
-		}
-
-		// Find the wrapped token for Polygon (wrappedNetworkId is -1 for Polygon mainnet)
-		// Prefer PoS bridge tokens, then fallback to any Polygon token
-		const polygonToken = token.wrappedTokens.find(wrapped => wrapped.wrappedNetworkId === -1 && wrapped.tags?.includes('pos')) || token.wrappedTokens.find(wrapped => wrapped.wrappedNetworkId === -1);
-
-		const address = polygonToken?.wrappedTokenAddress;
+	function isValidTokenAddress(address: string): boolean {
 		// Filter out zero/null addresses and special addresses
 		if (!address || address === '0x0000000000000000000000000000000000000000' || address === '0x0000000000000000000000000000000000001010') {
-			return null;
+			return false;
 		}
-
-		return address;
+		return true;
 	}
 
 	function isTokenAlreadyAdded(contractAddress: string): boolean {
@@ -102,11 +87,11 @@
 		return network.tokens.some(token => token.item?.contract_address?.toLowerCase() === contractAddress.toLowerCase());
 	}
 
-	function addPopularToken(popularToken: TokenListToken): void {
+	function addPopularToken(popularToken: CoinGeckoToken): void {
 		if (!network?.guid) return;
 
-		const contractAddress = getPolygonContractAddress(popularToken);
-		if (!contractAddress) return;
+		const contractAddress = popularToken.address;
+		if (!isValidTokenAddress(contractAddress)) return;
 
 		if (isTokenAlreadyAdded(contractAddress)) {
 			return;
@@ -125,30 +110,24 @@
 		addedTokens = new Set(addedTokens); // Trigger reactivity
 	}
 
-	function getDisplayTokens(): { token: TokenListToken; contractAddress: string; uniqueKey: string }[] {
+	function getDisplayTokens(): CoinGeckoToken[] {
 		if (!tokenList?.tokens) return [];
 
 		const seenAddresses = new Set<string>();
 
 		return tokenList.tokens
-			.map(token => ({
-				token,
-				contractAddress: getPolygonContractAddress(token),
-			}))
-			.filter(item => {
-				if (item.contractAddress === null) return false;
+			.filter(token => {
+				// Only show tokens with valid addresses
+				if (!isValidTokenAddress(token.address)) return false;
 
 				// Filter out duplicates
-				if (seenAddresses.has(item.contractAddress.toLowerCase())) {
-					return false;
-				}
-				seenAddresses.add(item.contractAddress.toLowerCase());
+				const addressLower = token.address.toLowerCase();
+				if (seenAddresses.has(addressLower)) return false;
+				seenAddresses.add(addressLower);
+
 				return true;
 			})
-			.map(item => ({
-				...item,
-				uniqueKey: `${item.token.symbol}-${item.contractAddress}`,
-			})) as { token: TokenListToken; contractAddress: string; uniqueKey: string }[];
+			.sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
 	}
 </script>
 
@@ -209,7 +188,7 @@
 	<ButtonBar>
 		<Button img="img/back.svg" text="Back to Tokens" onClick={close} />
 		{#if !loading}
-			<Button img="modules/{module.identifier}/img/refresh.svg" text="Refresh" onClick={fetchPopularTokens} />
+			<Button img="img/reset.svg" text="Refresh" onClick={fetchPopularTokens} />
 		{/if}
 	</ButtonBar>
 
@@ -219,9 +198,6 @@
 		</div>
 	{:else if error}
 		<Alert type="error" message={error} />
-		<ButtonBar>
-			<Button img="modules/{module.identifier}/img/refresh.svg" text="Try Again" onClick={fetchPopularTokens} />
-		</ButtonBar>
 	{:else if tokenList}
 		{@const displayTokens = getDisplayTokens()}
 		{#if displayTokens.length > 0}
@@ -233,9 +209,9 @@
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each displayTokens as { token, contractAddress, uniqueKey } (uniqueKey)}
-						{@const isAdded = isTokenAlreadyAdded(contractAddress)}
-						{@const isJustAdded = addedTokens.has(contractAddress)}
+					{#each displayTokens as token (token.address)}
+						{@const isAdded = isTokenAlreadyAdded(token.address)}
+						{@const isJustAdded = addedTokens.has(token.address)}
 						<TbodyTr>
 							<Td expand>
 								<div class="token-info">
@@ -243,7 +219,7 @@
 									<div class="token-details">
 										<div class="token-name">{token.name}</div>
 										<div class="token-symbol">{token.symbol}</div>
-										<div class="token-address">{contractAddress}</div>
+										<div class="token-address">{token.address}</div>
 									</div>
 								</div>
 							</Td>
@@ -261,7 +237,7 @@
 				</Tbody>
 			</Table>
 		{:else}
-			<Alert type="info" message="No popular tokens with Polygon addresses found." />
+			<Alert type="info" message="No tokens found for this network." />
 		{/if}
 	{/if}
 </div>
