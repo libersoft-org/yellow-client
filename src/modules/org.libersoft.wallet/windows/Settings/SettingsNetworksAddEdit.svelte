@@ -28,6 +28,7 @@
 	let itemCurrencyIconURL: string | undefined = $state();
 	let itemChainID: number | undefined = $state();
 	let itemExplorerURL: string | undefined = $state();
+	let itemCoingeckoAssetPlatformId: string | undefined = $state();
 	let itemRPCURLs: string[] | undefined = $state();
 	let rpcServers: IRPCServer[] = $state([]);
 	let error: string | null | undefined = $state();
@@ -43,6 +44,7 @@
 		itemCurrencyIconURL = '';
 		itemChainID = undefined;
 		itemExplorerURL = '';
+		itemCoingeckoAssetPlatformId = '';
 		itemRPCURLs = [];
 		if (network) {
 			itemName = network.name;
@@ -50,6 +52,7 @@
 			itemCurrencyIconURL = network.currency?.iconURL || '';
 			itemChainID = network.chainID;
 			itemExplorerURL = network.explorerURL || '';
+			itemCoingeckoAssetPlatformId = network.coingecko_asset_platform_id || '';
 			itemRPCURLs = network.rpcURLs ? [...network.rpcURLs] : [];
 		}
 		error = null;
@@ -63,6 +66,7 @@
 		itemCurrencySymbol = itemCurrencySymbol?.trim();
 		itemCurrencyIconURL = itemCurrencyIconURL?.trim();
 		itemExplorerURL = itemExplorerURL?.trim();
+		itemCoingeckoAssetPlatformId = itemCoingeckoAssetPlatformId?.trim();
 		itemRPCURLs = itemRPCURLs?.map(url => url.trim());
 		itemChainID = Number(itemChainID);
 		const validationConfig = [
@@ -86,6 +90,7 @@
 				},
 			},
 			{ field: itemExplorerURL },
+			{ field: itemCoingeckoAssetPlatformId },
 			{
 				field: itemRPCURLs,
 				isArray: true,
@@ -104,6 +109,7 @@
 			chainID: itemChainID || 0,
 			rpcURLs: itemRPCURLs || [],
 			explorerURL: itemExplorerURL,
+			coingecko_asset_platform_id: itemCoingeckoAssetPlatformId,
 			tokens: network?.tokens || [],
 		};
 		if (edit && network?.guid) {
@@ -269,6 +275,9 @@
 		</Label>
 		<Label text="Explorer URL">
 			<Input bind:value={itemExplorerURL} data-testid="wallet-settings-network-explorer-url-input" />
+		</Label>
+		<Label text="CoinGecko Asset Platform ID">
+			<Input bind:value={itemCoingeckoAssetPlatformId} data-testid="wallet-settings-network-coingecko-platform-id-input" />
 		</Label>
 		<Label text="RPC URLs">
 			<div class="items">
