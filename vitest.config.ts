@@ -11,7 +11,7 @@ export default defineConfig({
 		server: {
 			deps: {
 				// Tell Vitest to handle this problematic package differently
-				inline: ['svelte-intersection-observer'],
+				inline: ['svelte-intersection-observer', 'ethers'],
 			},
 		},
 	},

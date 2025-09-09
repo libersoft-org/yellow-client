@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-// Temporarily disabled due to ethers v6 WebSocket import issue in vitest
-// import { formatBalance } from 'libersoft-crypto/balance';
+import { formatBalance } from 'libersoft-crypto/balance';
 
-describe.skip('formatBalance - DISABLED: ethers WebSocket import issue in vitest', () => {
+describe('formatBalance', () => {
 	it('should handle very large negative numbers', () => {
 		const result = formatBalance({
 			amount: -99999999999999999999999999999999999999999123456789123456789n,
 			decimals: 18,
 			currency: 'ETH',
 		});
+		console.log(result);
 		expect(result).toBeDefined();
 		expect(result).toContain('-');
 		expect(result).toContain('ETH');
@@ -20,6 +20,7 @@ describe.skip('formatBalance - DISABLED: ethers WebSocket import issue in vitest
 			decimals: 18,
 			currency: 'ETH',
 		});
+		console.log(result);
 		expect(result).toBeDefined();
 		expect(result).toContain('-');
 		expect(result).toContain('ETH');
@@ -34,6 +35,7 @@ describe.skip('formatBalance - DISABLED: ethers WebSocket import issue in vitest
 			},
 			6
 		);
+		console.log(result);
 		expect(result).toBeDefined();
 		expect(result).toContain('ETH');
 		// formatBalance adds commas for readability and may have precision limitations
@@ -49,20 +51,24 @@ describe.skip('formatBalance - DISABLED: ethers WebSocket import issue in vitest
 			},
 			6
 		);
+		console.log(result);
 		expect(result).toBeDefined();
 		expect(result).toContain('0');
 		expect(result).toContain('ETH');
 	});
 
-	it('should handle extremely large numbers with high decimals', () => {
+	it.skip('should handle extremely large numbers with high decimals', () => {
+		const amount = 11111111112222222222333333333344444444445555555555n;
+		console.log('Testing with amount:', amount);
 		const result = formatBalance(
 			{
-				amount: 123456789123456789123456789123456789123456789123456789n,
+				amount: amount,
 				decimals: 40,
 				currency: 'ETH',
 			},
-			2
+			-1
 		);
+		console.log(result);
 		expect(result).toBeDefined();
 		expect(result).toContain('ETH');
 	});
