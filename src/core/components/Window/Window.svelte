@@ -46,6 +46,15 @@
 	let lastBrowserHeight = window.innerHeight;
 	let hasBeenUserPositioned = false;
 
+	// Store original state before maximizing
+	let originalState: {
+		width?: string;
+		height?: string;
+		left?: string;
+		top?: string;
+		transform?: string;
+	} | null = $state(null);
+
 	setContext('setTitle', setTitle);
 	setContext('Popup', { close });
 
@@ -293,11 +302,61 @@
 	}
 
 	export function maximize() {
+		if (!elWindow || maximized) return;
+
+		// Store current state before maximizing
+		const computedStyle = window.getComputedStyle(elWindow);
+		const currentTransform = computedStyle.transform;
+
+		originalState = {
+			width: elWindow.style.width || width,
+			height: elWindow.style.height || height,
+			left: elWindow.style.left,
+			top: elWindow.style.top,
+			transform: currentTransform !== 'none' ? currentTransform : undefined,
+		};
+
 		maximized = true;
 	}
 
 	export function restore() {
+		if (!maximized || !elWindow) return;
+
 		maximized = false;
+
+		// Restore original state if it exists
+		if (originalState) {
+			// Restore size
+			if (originalState.width) {
+				elWindow.style.width = originalState.width;
+			}
+			if (originalState.height) {
+				elWindow.style.height = originalState.height;
+			}
+
+			// Restore position - prioritize transform over left/top
+			if (originalState.transform) {
+				elWindow.style.transform = originalState.transform;
+				elWindow.style.left = '';
+				elWindow.style.top = '';
+			} else if (originalState.left && originalState.top) {
+				elWindow.style.left = originalState.left;
+				elWindow.style.top = originalState.top;
+				elWindow.style.transform = 'none';
+			}
+
+			// Ensure restored position is within bounds
+			requestAnimationFrame(() => {
+				if ($isMobile) {
+					snapTransformIntoBounds();
+				} else {
+					handleContentResize();
+				}
+			});
+
+			// Clear the stored state
+			originalState = null;
+		}
 	}
 
 	function doubleClickHeader() {
