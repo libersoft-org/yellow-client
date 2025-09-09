@@ -1,10 +1,10 @@
+import { derived, type Readable, get } from 'svelte/store';
 import { module } from '@/org.libersoft.wallet/scripts/module';
 import { wallets, type IWallet } from 'libersoft-crypto/wallet';
 import { networks, default_networks, type INetwork } from 'libersoft-crypto/network';
 import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
 import { addressBook, type IAddressBookItem } from 'libersoft-crypto/addressbook';
 import { attachParents } from '@/core/scripts/base_settings.ts';
-import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
 import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';
 import SettingsNetworks from '@/org.libersoft.wallet/windows/Settings/SettingsNetworks.svelte';
@@ -33,8 +33,11 @@ import SettingsWalletsAddressAdd from '@/org.libersoft.wallet/windows/Settings/S
 import SettingsWalletsAddressEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddressEdit.svelte';
 import SettingsWalletsWalletExport from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWalletExport.svelte';
 
-let elBaseSettings: IBaseSettingsInstance;
-let walletsItems = $derived.by(() => {
+function getSettingsWindow() {
+	return get(settingsWindow);
+}
+
+export const walletsItems: Readable<any[]> = derived([wallets], ([$wallets]) => {
 	return $wallets.map((wallet: IWallet) => ({
 		title: wallet.name,
 		name: 'wallets-' + wallet.guid,
@@ -51,7 +54,7 @@ let walletsItems = $derived.by(() => {
 				body: SettingsWalletsAddressAdd,
 				props: {
 					wallet,
-					close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.guid),
+					close: () => getSettingsWindow()?.setSettingsSection('wallets-' + wallet.guid),
 				},
 			},
 			{
@@ -60,7 +63,7 @@ let walletsItems = $derived.by(() => {
 				body: SettingsWalletsWalletExport,
 				props: {
 					wallet,
-					close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.guid),
+					close: () => getSettingsWindow()?.setSettingsSection('wallets-' + wallet.guid),
 				},
 			},
 			...(wallet.addresses || []).map(address => ({
@@ -70,26 +73,26 @@ let walletsItems = $derived.by(() => {
 				props: {
 					wallet,
 					index: address.index,
-					close: () => elBaseSettings?.setSettingsSection('wallets-' + wallet.guid),
+					close: () => getSettingsWindow()?.setSettingsSection('wallets-' + wallet.guid),
 				},
 			})),
 		],
 	}));
 });
 
-let walletsEditItems = $derived.by(() => {
+export const walletsEditItems: Readable<any[]> = derived([wallets], ([$wallets]) => {
 	return $wallets.map((wallet: IWallet) => ({
 		title: 'Edit ' + wallet.name,
 		name: 'wallets-edit-' + wallet.guid,
 		body: SettingsWalletsEdit,
 		props: {
 			wallet,
-			close: () => elBaseSettings?.setSettingsSection('wallets'),
+			close: () => getSettingsWindow()?.setSettingsSection('wallets'),
 		},
 	}));
 });
 
-let networksTokensItems = $derived.by(() => {
+export const networksTokensItems: Readable<any[]> = derived([networks], ([$networks]) => {
 	return $networks.map((network: INetwork) => ({
 		title: 'Tokens',
 		name: 'networks-tokens-' + network.guid,
@@ -101,7 +104,7 @@ let networksTokensItems = $derived.by(() => {
 				name: 'networks-tokens-add-' + network.guid,
 				body: SettingsNetworksTokensAddEdit,
 				props: {
-					close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
+					close: () => getSettingsWindow()?.setSettingsSection('networks-tokens-' + network.guid),
 					networkGuid: network.guid,
 				},
 			},
@@ -110,7 +113,7 @@ let networksTokensItems = $derived.by(() => {
 				name: 'networks-tokens-popular-' + network.guid,
 				body: SettingsNetworksTokensPopular,
 				props: {
-					close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
+					close: () => getSettingsWindow()?.setSettingsSection('networks-tokens-' + network.guid),
 					item: network.guid,
 				},
 			},
@@ -119,7 +122,7 @@ let networksTokensItems = $derived.by(() => {
 				name: 'networks-tokens-edit-' + network.guid + '-' + token.guid,
 				body: SettingsNetworksTokensAddEdit,
 				props: {
-					close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
+					close: () => getSettingsWindow()?.setSettingsSection('networks-tokens-' + network.guid),
 					networkGuid: network.guid,
 					item: token,
 				},
@@ -128,7 +131,7 @@ let networksTokensItems = $derived.by(() => {
 	}));
 });
 
-let networksNFTsItems = $derived.by(() => {
+export const networksNFTsItems: Readable<any[]> = derived([networks], ([$networks]) => {
 	return $networks.map((network: INetwork) => ({
 		title: 'NFTs',
 		name: 'networks-nfts-' + network.guid,
@@ -140,7 +143,7 @@ let networksNFTsItems = $derived.by(() => {
 				name: 'networks-nfts-add-' + network.guid,
 				body: SettingsNetworksNFTsAddEdit,
 				props: {
-					close: () => elBaseSettings?.setSettingsSection('networks-nfts-' + network.guid),
+					close: () => getSettingsWindow()?.setSettingsSection('networks-nfts-' + network.guid),
 					networkGuid: network.guid,
 				},
 			},
@@ -149,7 +152,7 @@ let networksNFTsItems = $derived.by(() => {
 				name: 'networks-nfts-edit-' + network.guid + '-' + nft.guid,
 				body: SettingsNetworksNFTsAddEdit,
 				props: {
-					close: () => elBaseSettings?.setSettingsSection('networks-nfts-' + network.guid),
+					close: () => getSettingsWindow()?.setSettingsSection('networks-nfts-' + network.guid),
 					networkGuid: network.guid,
 					item: nft,
 				},
@@ -158,7 +161,7 @@ let networksNFTsItems = $derived.by(() => {
 	}));
 });
 
-let networksItems = $derived.by(() => {
+export const networksItems: Readable<any[]> = derived([networks, default_networks, networksTokensItems, networksNFTsItems], ([$networks, $default_networks, $networksTokensItems, $networksNFTsItems]) => {
 	const networkEditItems = $networks.map((network: INetwork) => ({
 		title: 'Edit network',
 		name: 'networks-edit-' + network.guid,
@@ -177,22 +180,22 @@ let networksItems = $derived.by(() => {
 		body: RPCServers,
 		props: { network },
 	}));
-	return [...networkEditItems, ...networksRPCItems, ...defaultNetworksRPCItems, ...networksTokensItems, ...networksNFTsItems];
+	return [...networkEditItems, ...networksRPCItems, ...defaultNetworksRPCItems, ...$networksTokensItems, ...$networksNFTsItems];
 });
 
-let addressbookItems = $derived.by(() => {
+export const addressbookItems: Readable<any[]> = derived([addressBook], ([$addressBook]) => {
 	return $addressBook.map((item: IAddressBookItem) => ({
 		title: 'Edit ' + item.name,
 		name: 'addressbook-edit-' + item.guid,
 		body: SettingsAddressbookAddEdit,
 		props: {
 			item,
-			close: () => elBaseSettings?.setSettingsSection('addressbook'),
+			close: () => getSettingsWindow()?.setSettingsSection('addressbook'),
 		},
 	}));
 });
 
-export let ssssettingsObject: ISettingsObject = $derived(
+export const settingsObject: Readable<ISettingsObject> = derived([walletsItems, walletsEditItems, networksItems, networksTokensItems, addressbookItems], ([$walletsItems, $walletsEditItems, $networksItems, $networksTokensItems, $addressbookItems]) =>
 	attachParents({
 		title: 'Wallet settings',
 		name: 'settings',
@@ -229,7 +232,7 @@ export let ssssettingsObject: ISettingsObject = $derived(
 				name: 'networks',
 				body: SettingsNetworks,
 				items: [
-					...networksItems,
+					...$networksItems,
 					{
 						title: 'Add a new network',
 						name: 'networks-add',
@@ -247,7 +250,7 @@ export let ssssettingsObject: ISettingsObject = $derived(
 						name: 'networks-import',
 						body: SettingsNetworksImport,
 						props: {
-							close: () => elBaseSettings?.setSettingsSection('networks'),
+							close: () => getSettingsWindow()?.setSettingsSection('networks'),
 						},
 					},
 					{
@@ -255,10 +258,10 @@ export let ssssettingsObject: ISettingsObject = $derived(
 						name: 'networks-export',
 						body: SettingsNetworksExport,
 						props: {
-							close: () => elBaseSettings?.setSettingsSection('networks'),
+							close: () => getSettingsWindow()?.setSettingsSection('networks'),
 						},
 					},
-					...networksTokensItems,
+					...$networksTokensItems,
 				],
 			},
 			{
@@ -266,8 +269,8 @@ export let ssssettingsObject: ISettingsObject = $derived(
 				name: 'wallets',
 				body: SettingsWallets,
 				items: [
-					...walletsItems,
-					...walletsEditItems,
+					...$walletsItems,
+					...$walletsEditItems,
 					{
 						title: 'Add a new wallet',
 						name: 'wallets-add',
@@ -311,7 +314,7 @@ export let ssssettingsObject: ISettingsObject = $derived(
 						name: 'wallets-recover',
 						body: SettingsWalletsRecover,
 						props: {
-							close: () => elBaseSettings?.setSettingsSection('wallets'),
+							close: () => getSettingsWindow()?.setSettingsSection('wallets'),
 						},
 					},
 				],
@@ -321,13 +324,13 @@ export let ssssettingsObject: ISettingsObject = $derived(
 				name: 'addressbook',
 				body: SettingsAddressbook,
 				items: [
-					...addressbookItems,
+					...$addressbookItems,
 					{
 						title: 'Add a new address',
 						name: 'addressbook-add',
 						body: SettingsAddressbookAddEdit,
 						props: {
-							close: () => elBaseSettings?.setSettingsSection('addressbook'),
+							close: () => getSettingsWindow()?.setSettingsSection('addressbook'),
 						},
 					},
 					{
@@ -335,7 +338,7 @@ export let ssssettingsObject: ISettingsObject = $derived(
 						name: 'addressbook-import',
 						body: SettingsAddressbookImport,
 						props: {
-							close: () => elBaseSettings?.setSettingsSection('addressbook'),
+							close: () => getSettingsWindow()?.setSettingsSection('addressbook'),
 						},
 					},
 					{
@@ -343,7 +346,7 @@ export let ssssettingsObject: ISettingsObject = $derived(
 						name: 'addressbook-export',
 						body: SettingsAddressbookExport,
 						props: {
-							close: () => elBaseSettings?.setSettingsSection('addressbook'),
+							close: () => getSettingsWindow()?.setSettingsSection('addressbook'),
 						},
 					},
 				],
