@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
 	import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import SettingsGeneral from '@/core/windows/Settings/SettingsGeneral.svelte';
 	import SettingsModules from '@/core/windows/Settings/SettingsModules.svelte';
@@ -72,4 +72,4 @@
 	}
 </script>
 
-<BaseSettings testId="global-settings" {settingsObject} bind:this={elBaseSettings} />
+<BaseSettingsWindow testId="global-settings" {settingsObject} bind:this={elBaseSettings} />

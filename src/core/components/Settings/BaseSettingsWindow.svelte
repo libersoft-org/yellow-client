@@ -5,8 +5,6 @@
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/scripts/tauri.ts';
 	import { setContext, tick } from 'svelte';
-	import { createHMRDebugger } from '@/core/scripts/hmr-debug.ts';
-
 	import type { ISettingsObject, ISettingsNode, SetSettingsSectionFn, ISettingsComponent } from '@/core/types/settings.ts';
 
 	interface IProps {
@@ -14,43 +12,20 @@
 		settingsObject: ISettingsObject;
 	}
 	let elWindow;
-
-	/*
-	interface ISettingsNode {
-		name: string;
-		title: string;
-		items?: SettingsNode[];
-		menu?: Array<{ img?: string; title?: string; name?: string; onClick?: (e: Event) => void }>;
-		body?: any;
-		__parent?: SettingsNode | null;
-	}
-	interface IMenuItems {
-		Array<{
-		 img?: string;
-	  title?: string;
-	  onClick?: (e: Event) => void;
-	 }>
-	}
-	interface IOptionalWindowIcon {
-	 img?: string;
-  alt?: string;
-		onClick?: (e: Event) => void;
-	};
-	*/
 	let { testId = '', settingsObject }: IProps = $props();
 	let activeName = $state(settingsObject.name);
 	let backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: goBack } : undefined);
 
 	let currentNode = $derived.by((): ISettingsNode => {
 		let n = findNode(settingsObject, activeName);
-		//console.debug('[BaseSettings] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
+		//console.debug('[BaseSettingsWindow] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
 		return n || settingsObject;
 	});
 
 	let currentNodeInstance: ISettingsComponent | undefined = $state();
 	$effect(() => {
-		//$inspect('[BaseSettings] currentNodeInstance updated:', currentNodeInstance);
-		//$inspect('[BaseSettings] currentNode:', currentNode);
+		//$inspect('[BaseSettingsWindow] currentNodeInstance updated:', currentNodeInstance);
+		//$inspect('[BaseSettingsWindow] currentNode:', currentNode);
 		currentNode.instance = currentNodeInstance;
 	});
 
@@ -61,7 +36,7 @@
 	// Remove the problematic effect that resets navigation on window reopen
 
 	export function open(name?: string) {
-		//console.log('[BaseSettings] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
+		//console.log('[BaseSettingsWindow] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
 		elWindow?.open();
 		setSettingsSection(name || settingsObject.name);
 	}
@@ -71,7 +46,7 @@
 	}
 
 	export async function setSettingsSection(name: string, props: Record<string, any> = {}) {
-		//console.log('[BaseSettings] setSettingsSection:', name, 'props:', props);
+		//console.log('[BaseSettingsWindow] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
 		await tick();
@@ -79,27 +54,27 @@
 		if (node && Object.keys(props).length > 0) node.props = { ...node.props, ...props };
 		await tick();
 		if (!currentNode?.instance && currentNode?.body) {
-			log.error('[BaseSettings] No instance found for node:', node, 'expected instance of body:', currentNode.body);
+			log.error('[BaseSettingsWindow] No instance found for node:', node, 'expected instance of body:', currentNode.body);
 			return;
 		}
 		await currentNode.instance?.onOpen?.();
 	}
 
 	async function goBack() {
-		//console.log('[BaseSettings] goBack: ', activeName);
+		//console.log('[BaseSettingsWindow] goBack: ', activeName);
 		const found = findNode(settingsObject, activeName);
-		console.log('[BaseSettings] goBack found:', found);
+		console.log('[BaseSettingsWindow] goBack found:', found);
 		if (!found || !found.__parent) {
-			log.error('[BaseSettings] No parent found for node:', found);
+			log.error('[BaseSettingsWindow] No parent found for node:', found);
 			return;
 		}
 		const p = found.__parent.deref();
 		if (!p) {
-			log.error('[BaseSettings] Parent is null for node:', found);
+			log.error('[BaseSettingsWindow] Parent is null for node:', found);
 			return;
 		}
 		if (!p.name) {
-			log.error('[BaseSettings] Parent has no name:', p);
+			log.error('[BaseSettingsWindow] Parent has no name:', p);
 			return;
 		}
 		const parentName = p.name ?? settingsObject.name;
@@ -110,7 +85,7 @@
 		const stack = [root];
 		while (stack.length) {
 			/*console.log(
-				'[BaseSettings] Searching ',
+				'[BaseSettingsWindow] Searching ',
 				root,
 				' for node:',
 				target,
@@ -188,6 +163,7 @@
 			{/if}
 		</div>
 	</div>
+
 	{#if $debug}
 		<div class="debug">
 			BaseSettings Debug: currentNode:

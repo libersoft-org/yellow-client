@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
-	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
 	import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
 
 	import { settingsObject } from '@/org.libersoft.wallet/scripts/settings.ts';
@@ -12,4 +12,4 @@
 	});
 </script>
 
-<BaseSettings testId="wallet-settings" settingsObject={$settingsObject} bind:this={elBaseSettings} />
+<BaseSettingsWindow testId="wallet-settings" settingsObject={$settingsObject} bind:this={elBaseSettings} />

@@ -39,7 +39,7 @@ export interface ISettingsComponent {
 	onOpen?(): void | Promise<void>;
 }
 
-// Type for BaseSettings instance methods
+// Type for BaseSettingsWindow instance methods
 export interface IBaseSettingsInstance {
 	open(name?: string): void;
 	close(): void;
