@@ -250,6 +250,7 @@ export const settingsObject: Readable<ISettingsObject> = derived([walletsItems, 
 						name: 'networks-import',
 						body: SettingsNetworksImport,
 						props: {
+							/* fixme: go back in current "viewer"  ( subtree window..) */
 							close: () => getSettingsWindow()?.setSettingsSection('networks'),
 						},
 					},
@@ -258,6 +259,7 @@ export const settingsObject: Readable<ISettingsObject> = derived([walletsItems, 
 						name: 'networks-export',
 						body: SettingsNetworksExport,
 						props: {
+							/* fixme: go back in current "viewer"  ( subtree window..) */
 							close: () => getSettingsWindow()?.setSettingsSection('networks'),
 						},
 					},
@@ -330,6 +332,7 @@ export const settingsObject: Readable<ISettingsObject> = derived([walletsItems, 
 						name: 'addressbook-add',
 						body: SettingsAddressbookAddEdit,
 						props: {
+							/* fixme: go back in current "viewer"  ( subtree window..) */
 							close: () => getSettingsWindow()?.setSettingsSection('addressbook'),
 						},
 					},
@@ -338,6 +341,7 @@ export const settingsObject: Readable<ISettingsObject> = derived([walletsItems, 
 						name: 'addressbook-import',
 						body: SettingsAddressbookImport,
 						props: {
+							/* fixme: go back in current "viewer"  ( subtree window..) */
 							close: () => getSettingsWindow()?.setSettingsSection('addressbook'),
 						},
 					},
@@ -346,6 +350,7 @@ export const settingsObject: Readable<ISettingsObject> = derived([walletsItems, 
 						name: 'addressbook-export',
 						body: SettingsAddressbookExport,
 						props: {
+							/* fixme: go back in current "viewer"  ( subtree window..) */
 							close: () => getSettingsWindow()?.setSettingsSection('addressbook'),
 						},
 					},

@@ -8,17 +8,22 @@ export interface ISettingsMenuItem {
 	onClick?: (event: Event) => void | Promise<void>;
 }
 
-export interface ISettingsNode {
-	name: string;
-	title: string;
-	body?: any; // More flexible to handle Svelte 4/5 component variations
+export interface ISettingsNodeState {
 	props?: Record<string, any>;
-	menu?: ISettingsMenuItem[];
-	items?: ISettingsNode[];
-	__parent?: WeakRef<ISettingsNode>;
 	instance?: any;
 }
 
+export interface ISettingsNode {
+	__parent?: WeakRef<ISettingsNode>;
+	name: string;
+	title: string;
+	body?: any; // More flexible to handle Svelte 4/5 component variations
+	menu?: ISettingsMenuItem[];
+	items?: ISettingsNode[];
+	states: Map<string, ISettingsNodeState>;
+}
+
+/* ???????????????????????? */
 export interface ISettingsObject extends ISettingsNode {
 	title: string;
 	name: string;

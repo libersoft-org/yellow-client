@@ -14,6 +14,8 @@
 
 	let { testId = '', settingsObject, activeName = $bindable(settingsObject.name) }: IProps = $props();
 
+	let id = Math.random().toString(36).substring(2, 15);
+
 	let currentNode = $derived.by((): ISettingsNode => {
 		let n = findNode(settingsObject, activeName);
 		//console.debug('[BaseSettingsWindow] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
