@@ -7,6 +7,7 @@
 	import SettingsNotifications from '@/core/windows/Settings/SettingsNotifications.svelte';
 	import SettingsAppearanceTheme from './SettingsAppearanceTheme.svelte';
 	let elBaseSettings: IBaseSettingsInstance;
+
 	let settingsObject: ISettingsObject = {
 		title: 'Settings',
 		name: 'settings',

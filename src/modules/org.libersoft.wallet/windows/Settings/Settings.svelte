@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
-	import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
-
+	import type { IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import { settingsObject } from '@/org.libersoft.wallet/scripts/settings.ts';
 
 	let elBaseSettings: IBaseSettingsInstance;

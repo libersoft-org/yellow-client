@@ -203,7 +203,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" size="24px" padding="0px" onClick={() => $settingsWindow?.open()} testId="wallet-settings-btn" />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" size="24px" padding="0px" onClick={async () => await $settingsWindow?.open()} testId="wallet-settings-btn" />
 			</div>
 		</div>
 		<div class="buttons">
