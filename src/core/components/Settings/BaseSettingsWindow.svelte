@@ -31,7 +31,10 @@
 	}
 
 	export async function setSettingsSection(name: string, props?: Record<string, any>): Promise<void> {
-		return elBaseSettingsSubtree.setSettingsSection(name, props);
+		elWindow?.open();
+		await tick();
+		await tick();
+		await elBaseSettingsSubtree?.setSettingsSection(name, props);
 	}
 </script>
 
