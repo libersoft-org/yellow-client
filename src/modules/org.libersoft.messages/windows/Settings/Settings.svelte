@@ -1,9 +1,9 @@
 <script lang="ts">
 	import BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
-	import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
+	import type { ISettingsNode, IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import MessagesSettings from './MessagesSettings.svelte';
 	let elBaseSettings: IBaseSettingsInstance;
-	let settingsObject: ISettingsObject = {
+	let settingsObject: ISettingsNode = {
 		title: 'Messages settings',
 		name: 'settings',
 		body: MessagesSettings,

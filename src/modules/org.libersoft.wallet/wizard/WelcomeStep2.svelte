@@ -1,13 +1,22 @@
 <script lang="ts">
 	import { onMount, getContext } from 'svelte';
 	import { get } from 'svelte/store';
-	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { networks, default_networks, addNetwork } from 'libersoft-crypto/network';
+	import BaseSettingsSubtree from '@/core/components/Settings/BaseSettingsSubtree.svelte';
+	import { networks } from 'libersoft-crypto/network';
+	import { settingsObject } from '@/org.libersoft.wallet/scripts/settings';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 
 	const wizard = getContext('wizard') as { setNextText: (text: string) => void };
 	let hasNetworks = $state(false);
+	let activeName = $state('networks');
+
+	// Extract just the networks section from the settings object
+	const networksSection = $derived.by(() => {
+		const fullSettings = get(settingsObject);
+		const networksNode = fullSettings.items?.find(item => item.name === 'networks');
+		return networksNode || { name: 'networks', title: 'Networks', items: [] };
+	});
 
 	onMount(() => {
 		checkNetworks();
@@ -26,14 +35,6 @@
 			wizard?.setNextText('Skip for now');
 		}
 	}
-
-	async function addDefaultNetworksHandler() {
-		const defaultNetworksList = get(default_networks);
-		defaultNetworksList.forEach(network => {
-			addNetwork(network);
-		});
-		checkNetworks();
-	}
 </script>
 
 <style>
@@ -44,23 +45,17 @@
 	.title {
 		font-size: 20px;
 		font-weight: bold;
-		margin-bottom: 10px;
 	}
 
 	.description {
-		margin-bottom: 30px;
-		line-height: 1.5;
-		color: var(--secondary-foreground);
+		margin-bottom: 5px;
 	}
 
 	.status {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 10px;
-		padding: 20px;
 		border-radius: 8px;
-		margin: 20px 0;
 	}
 
 	.status.success {
@@ -75,29 +70,25 @@
 		color: var(--warning-foreground);
 	}
 
-	.actions {
-		display: flex;
-		justify-content: center;
-		gap: 10px;
+	.settings-container {
+		border: 1px solid var(--secondary-harder-background);
+		border-radius: 8px;
 	}
 </style>
 
 <div class="content">
 	<div class="title">Configure Networks</div>
-	<div class="description">Networks define which blockchains you can interact with. Add some popular networks to get started quickly.</div>
-
-	{#if hasNetworks}
-		<div class="status success">
-			<Icon img="img/check.svg" size="20px" />
-			Networks configured! You have {get(networks).length} network(s) available.
-		</div>
-	{:else}
-		<div class="status warning">
-			<Icon img="img/warning.svg" size="20px" />
-			No networks configured. Add some to start using your wallet.
-		</div>
-		<div class="actions">
-			<Button img="modules/{module.identifier}/img/network-add.svg" text="Add Popular Networks" onClick={addDefaultNetworksHandler} data-testid="add-default-networks" />
-		</div>
+	{#if !hasNetworks}
+		<div class="description">Networks define which blockchains you can interact with. Use the settings below to add networks.</div>
 	{/if}
+
+	<div class="status {hasNetworks ? 'success' : 'warning'}">
+		{#if hasNetworks}
+			Networks configured!
+		{:else}{/if}
+	</div>
+
+	<div class="settings-container">
+		<BaseSettingsSubtree settingsObject={networksSection} bind:activeName testId="wizard-networks-settings" />
+	</div>
 </div>

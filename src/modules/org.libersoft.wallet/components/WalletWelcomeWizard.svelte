@@ -45,4 +45,4 @@
 	}
 </script>
 
-<Window body={Wizard} bind:this={elWalletWelcomeWizard} params={wizardData} testId="wallet-welcome-wizard" title="Wallet Setup" />
+<Window body={Wizard} bind:this={elWalletWelcomeWizard} params={wizardData} testId="wallet-welcome-wizard" title="Wallet Setup" height="800px" />

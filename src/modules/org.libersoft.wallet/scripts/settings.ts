@@ -5,7 +5,7 @@ import { networks, default_networks, type INetwork } from 'libersoft-crypto/netw
 import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
 import { addressBook, type IAddressBookItem } from 'libersoft-crypto/addressbook';
 import { attachParents } from '@/core/scripts/base_settings.ts';
-import type { ISettingsObject, IBaseSettingsInstance } from '@/core/types/settings.ts';
+import type { ISettingsNode, IBaseSettingsInstance } from '@/core/types/settings.ts';
 import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';
 import SettingsNetworks from '@/org.libersoft.wallet/windows/Settings/SettingsNetworks.svelte';
 import SettingsNetworksTokens from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokens.svelte';
@@ -195,7 +195,7 @@ export const addressbookItems: Readable<any[]> = derived([addressBook], ([$addre
 	}));
 });
 
-export const settingsObject: Readable<ISettingsObject> = derived([walletsItems, walletsEditItems, networksItems, networksTokensItems, addressbookItems], ([$walletsItems, $walletsEditItems, $networksItems, $networksTokensItems, $addressbookItems]) =>
+export const settingsObject: Readable<ISettingsNode> = derived([walletsItems, walletsEditItems, networksItems, networksTokensItems, addressbookItems], ([$walletsItems, $walletsEditItems, $networksItems, $networksTokensItems, $addressbookItems]) =>
 	attachParents({
 		title: 'Wallet settings',
 		name: 'settings',

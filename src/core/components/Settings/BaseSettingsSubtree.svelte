@@ -4,11 +4,11 @@
 	import Breadcrumb from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	import { log } from '@/core/scripts/tauri.ts';
 	import { setContext, tick } from 'svelte';
-	import type { ISettingsObject, ISettingsNode, SetSettingsSectionFn, ISettingsComponent } from '@/core/types/settings.ts';
+	import type { ISettingsNode, ISettingsNodeState, SetSettingsSectionFn, ISettingsComponent } from '@/core/types/settings.ts';
 
 	interface IProps {
 		testId?: string;
-		settingsObject: ISettingsObject;
+		settingsObject: ISettingsNode;
 		activeName: string;
 	}
 
@@ -22,11 +22,22 @@
 		return n || settingsObject;
 	});
 
+	function getNodeState(node: ISettingsNode, componentId: string) {
+		if (!node.states) node.states = new Map();
+		return node.states.get(componentId) || {};
+	}
+
+	function setNodeState(node: ISettingsNode, componentId: string, updates: Partial<ISettingsNodeState>) {
+		if (!node.states) node.states = new Map();
+		const currentState = node.states.get(componentId) || {};
+		node.states.set(componentId, { ...currentState, ...updates });
+	}
+
 	let currentNodeInstance: ISettingsComponent | undefined = $state();
 	$effect(() => {
 		//$inspect('[BaseSettingsWindow] currentNodeInstance updated:', currentNodeInstance);
 		//$inspect('[BaseSettingsWindow] currentNode:', currentNode);
-		currentNode.instance = currentNodeInstance;
+		setNodeState(currentNode, id, { instance: currentNodeInstance });
 	});
 
 	let breadcrumb = $derived(makeBreadcrumb(activeName));
@@ -39,13 +50,16 @@
 		await tick();
 		await tick();
 		const node = findNode(settingsObject, name);
-		if (node && Object.keys(props).length > 0) node.props = { ...node.props, ...props };
+		if (node && Object.keys(props).length > 0) {
+			setNodeState(node, id, { props });
+		}
 		await tick();
-		if (!currentNode?.instance && currentNode?.body) {
+		const nodeState = getNodeState(currentNode, id);
+		if (!nodeState.instance && currentNode?.body) {
 			log.error('[BaseSettingsWindow] No instance found for node:', node, 'expected instance of body:', currentNode.body);
 			return;
 		}
-		await currentNode.instance?.onOpen?.();
+		await nodeState.instance?.onOpen?.();
 	}
 
 	export async function goBack() {
@@ -146,7 +160,8 @@
 		{/if}
 
 		{#if currentNode.body}
-			<currentNode.body {...currentNode.props} bind:this={currentNodeInstance} close={goBack} />
+			{@const nodeState = getNodeState(currentNode, id)}
+			<currentNode.body {...nodeState.props || {}} bind:this={currentNodeInstance} close={goBack} />
 		{/if}
 	</div>
 </div>

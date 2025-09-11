@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Window from '@/core/components/Window/Window.svelte';
-	import type { ISettingsObject } from '@/core/types/settings.ts';
+	import type { ISettingsNode } from '@/core/types/settings.ts';
 	import BaseSettingsSubtree from '@/core/components/Settings/BaseSettingsSubtree.svelte';
 	import { tick } from 'svelte';
 
 	interface IProps {
 		testId?: string;
-		settingsObject: ISettingsObject;
+		settingsObject: ISettingsNode;
 	}
 
 	let elWindow;

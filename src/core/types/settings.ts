@@ -20,20 +20,12 @@ export interface ISettingsNode {
 	body?: any; // More flexible to handle Svelte 4/5 component variations
 	menu?: ISettingsMenuItem[];
 	items?: ISettingsNode[];
-	states: Map<string, ISettingsNodeState>;
-}
-
-/* ???????????????????????? */
-export interface ISettingsObject extends ISettingsNode {
-	title: string;
-	name: string;
-	menu?: ISettingsMenuItem[];
-	items?: ISettingsNode[];
+	states?: Map<string, ISettingsNodeState>;
 }
 
 export interface IBaseSettingsProps extends HTMLAttributes<HTMLDivElement> {
 	testId?: string;
-	settingsObject: ISettingsObject;
+	settingsObject: ISettingsNode;
 }
 
 // Type for the setSettingsSection function used in context
