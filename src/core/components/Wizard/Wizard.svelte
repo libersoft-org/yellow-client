@@ -81,7 +81,7 @@
 	}
 
 	.progress-bar .step .line {
-		width: 50px;
+		/*width: 50px;*/
 		height: 2px;
 		background-color: var(--secondary-softer-background);
 	}

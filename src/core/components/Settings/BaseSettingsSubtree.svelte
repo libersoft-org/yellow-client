@@ -161,7 +161,7 @@
 
 		{#if currentNode.body}
 			{@const nodeState = getNodeState(currentNode, id)}
-			{@const mergedProps = { ...currentNode.props, ...nodeState.props }}
+			{@const mergedProps = { ...(currentNode as any).props, ...nodeState.props }}
 			<currentNode.body {...mergedProps} bind:this={currentNodeInstance} close={goBack} />
 		{/if}
 	</div>
