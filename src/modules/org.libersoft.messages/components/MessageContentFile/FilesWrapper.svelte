@@ -12,13 +12,9 @@
 	let attachmentIds = $state<string[]>([]);
 	let downloadableRecords = $derived.by(() => {
 		return attachedUploads.filter(upload => {
-			console.log('upload', upload);
 			return (upload.record.type === FileUploadRecordType.P2P && upload.role === FileUploadRole.RECEIVER && upload.record.status === FileUploadRecordStatus.BEGUN) || (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.FINISHED);
 		});
 	});
-
-	$inspect('attachedUploads', attachedUploads);
-	$inspect('attachmentIds', attachmentIds);
 
 	// determine if the bulk download action should be shown
 	let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
@@ -60,7 +56,6 @@
 	onMount(() => {
 		getAttachmentEls()?.forEach(attachmentEl => {
 			const uploadId = attachmentEl.getAttribute('data-upload-id');
-			$inspect('uploadId', uploadId);
 			if (uploadId) attachmentIds.push(uploadId);
 		});
 	});
@@ -99,7 +94,7 @@
 	</div>
 	{#if showBulkDownloadAction}
 		<div class="actions">
-			<Button width="80px" img={uploadRecordType === FileUploadRecordType.P2P ? 'img/check.svg' : 'img/download.svg'} text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept all' : 'Download all'} onClick={onAcceptAll} />
+			<Button img={uploadRecordType === FileUploadRecordType.P2P ? 'img/check.svg' : 'img/download.svg'} text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept all' : 'Download all'} onClick={onAcceptAll} />
 		</div>
 	{/if}
 </div>

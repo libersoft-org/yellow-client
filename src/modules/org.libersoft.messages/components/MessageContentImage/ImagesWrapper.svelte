@@ -3,6 +3,7 @@
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { extractYellowValue, isYellowProtocol } from '@/org.libersoft.messages/scripts/utils/yellowUtils.ts';
 	import type { IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 
 	let { children, node } = $props();
 	const childrenLength = node?.childNodes.length || 0;
@@ -31,20 +32,41 @@
 		return groups;
 	});
 
-	const existingUploads = $derived.by(() => {
-		const uploads = get(fileUploadStore.store);
-		const existingUploads: IFileUpload[] = [];
+	// const existingUploads = $derived.by(() => {
+	// 	const uploads = get(fileUploadStore.store);
+	// 	const existingUploads: IFileUpload[] = [];
+	// 	children.forEach(child => {
+	// 		const childUploadId = isYellowProtocol(child?.props?.file) ? extractYellowValue(child?.props?.file) : null;
+	// 		if (!childUploadId) return;
+	// 		const childUpload = uploads.find(upload => childUploadId === upload.record.id);
+	// 		if (childUpload) existingUploads.push(childUpload);
+	// 	});
+	//
+	// 	return existingUploads;
+	// });
+
+	let existingUploads: IFileUpload[] = $state([]);
+	fileUploadStore.store.subscribe(uploads => {
+		//console.log('existingUploads uploadsuploadsuploads', uploads);
+		const _existingUploads: IFileUpload[] = [];
 		children.forEach(child => {
 			const childUploadId = isYellowProtocol(child?.props?.file) ? extractYellowValue(child?.props?.file) : null;
 			if (!childUploadId) return;
 			const childUpload = uploads.find(upload => childUploadId === upload.record.id);
-			if (childUpload) existingUploads.push(childUpload);
+			if (childUpload) _existingUploads.push(childUpload);
 		});
 
-		return existingUploads;
+		existingUploads = _existingUploads;
 	});
 
-	$inspect('existingUploads', existingUploads);
+	//$inspect('existingUploads', existingUploads);
+
+	const currentRunningUpload = $derived.by(() => {
+		return existingUploads.find(upload => upload.running === true || upload.paused || upload.record.status === 'PAUSED');
+	});
+	const currentRunningUploadIndex = $derived(existingUploads.findIndex(upload => upload === currentRunningUpload));
+
+	//$inspect('existingUploads currentRunningUpload', currentRunningUpload)
 </script>
 
 <style>
@@ -73,20 +95,25 @@
 		object-fit: cover;
 		object-position: 50% 50%;
 	}
-
-	@container (max-width: 300px) {
-	}
 </style>
 
 <div class="images-wrap" data-children-length={childrenLength} style="--images-group-size: {rowSize};" style:margin-bottom="var(--images-gap)">
+	{#if currentRunningUpload}
+		<div>
+			<div>
+				Uploading {currentRunningUploadIndex + 1} of {existingUploads.length}
+			</div>
+			{#key currentRunningUpload.record.id}
+				<MessageContentAttachment node={{ attributes: { id: { value: currentRunningUpload.record.id } } }} />
+			{/key}
+		</div>
+	{/if}
 	{#each imagesRows as row, rowIndex (rowIndex)}
 		<div class="images" style:margin-bottom={rowIndex === imagesRows.length - 1 ? 0 : 'var(--images-gap)'}>
 			{#each row as child, childIndex (child.tagUniqueId)}
 				{@const isLastOfAll = rowIndex === rowLimit - 1 && childIndex === row.length - 1}
-				{@debug child}
 				<child.component {...child.props} showHiddenImages={isLastOfAll && hiddenImages.length > 0} {hiddenImages} {siblings} />
 			{/each}
 		</div>
 	{/each}
-	gdsfgdf
 </div>
