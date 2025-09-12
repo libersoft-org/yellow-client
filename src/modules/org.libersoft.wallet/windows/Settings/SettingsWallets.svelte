@@ -99,9 +99,9 @@
 						<Td>
 							<DragHandle />
 						</Td>
-						<Td padding="0" expand>
+						<Td padding="0 10px" expand class="ellipsis">
 							<Clickable onClick={() => clickWallet(wallet)}>
-								<div class="item">{wallet.name}</div>
+								{wallet.name}
 							</Clickable>
 						</Td>
 						<Td padding="0" align="center">

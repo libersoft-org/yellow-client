@@ -146,6 +146,9 @@
 		await destroyTrayIcon();
 	});
 
+	// Capture initial height when keyboard is closed
+	let initialViewportHeight = window.innerHeight;
+
 	function updateAppHeight() {
 		//console.log('updateAppHeight');
 		if ('virtualKeyboard' in navigator) {
@@ -157,10 +160,10 @@
 		let viewportHeight;
 		if (visualViewport) {
 			viewportHeight = visualViewport.height;
-			let clientHeight = visualViewport.clientHeight;
-			//console.log('clientHeight:', clientHeight);
-			let keyboardHeightValue = viewportHeight - clientHeight;
-			//console.log('keyboardHeightValue:', keyboardHeightValue);
+
+			// Simple and reliable keyboard height detection
+			let keyboardHeightValue = initialViewportHeight - visualViewport.height;
+
 			if (keyboardHeightValue < 0) keyboardHeightValue = 0;
 			keyboardHeight.set(keyboardHeightValue);
 		} else viewportHeight = window.innerHeight;

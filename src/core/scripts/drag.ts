@@ -23,6 +23,8 @@ export interface DragState {
 	dragElement: HTMLElement | null;
 	dragClone: HTMLElement | null;
 	isAtEnd: boolean;
+	originalRowHeight: number; // Store the original row height
+	originalRowWidth: number; // Store the original row width
 }
 
 export class TableDragManager {
@@ -33,9 +35,34 @@ export class TableDragManager {
 		dragElement: null,
 		dragClone: null,
 		isAtEnd: false,
+		originalRowHeight: 0, // Initialize with 0
+		originalRowWidth: 0, // Initialize with 0
 	};
 
 	constructor(private config: DragConfig) {}
+
+	/**
+	 * Helper function to preserve background color and prevent transparency
+	 */
+	private preserveBackgroundColor(element: HTMLElement, computedStyles: CSSStyleDeclaration): string {
+		const computedBackground = computedStyles.backgroundColor;
+
+		// If computed background is transparent, try to get inline styles
+		if (computedBackground === 'transparent' || computedBackground === 'rgba(0, 0, 0, 0)' || computedBackground === '') {
+			const inlineBackground = element.style.backgroundColor;
+			if (inlineBackground && inlineBackground !== 'transparent') {
+				return inlineBackground;
+			}
+		}
+
+		// If both computed and inline are transparent, return a fallback
+		if (computedBackground === 'transparent' || computedBackground === 'rgba(0, 0, 0, 0)' || computedBackground === '') {
+			return '#ffffff'; // Default white background as fallback
+		}
+
+		// Return the computed background if it's not transparent
+		return computedBackground;
+	}
 
 	/**
 	 * Initialize drag & drop for a table body element
@@ -89,6 +116,12 @@ export class TableDragManager {
 		const index = allRows.indexOf(row);
 		if (index === -1) return;
 
+		// Disable dragging if there's only one row (nothing to reorder)
+		if (allRows.length <= 1) {
+			console.log('Only one row in table, dragging disabled');
+			return;
+		}
+
 		console.log('Starting drag for row index:', index); // Debug log
 
 		this.state.dragSourceIndex = index;
@@ -115,55 +148,222 @@ export class TableDragManager {
 	};
 
 	private createClone(row: HTMLElement, x: number, y: number): void {
+		// Capture the original row dimensions BEFORE hiding it
+		const originalRowRect = row.getBoundingClientRect();
+		const computedStyles = window.getComputedStyle(row);
+
+		// Try multiple methods to get the height
+		let height = originalRowRect.height;
+		if (height === 0) {
+			// Fallback to computed styles
+			height = parseFloat(computedStyles.height) || parseFloat(computedStyles.minHeight) || 0;
+			console.log('getBoundingClientRect returned 0 height, using computed height:', height);
+		}
+
+		// Final fallback to a reasonable default
+		if (height === 0) {
+			height = 50; // Default row height
+			console.log('All height detection failed, using default height:', height);
+		}
+
+		// Capture the exact width of the original row
+		const originalRowWidth = originalRowRect.width;
+		console.log('Original row width:', originalRowWidth);
+
+		this.state.originalRowHeight = height;
+		this.state.originalRowWidth = originalRowWidth;
+		console.log('Final captured dimensions - Height:', this.state.originalRowHeight, 'Width:', this.state.originalRowWidth);
+		console.log('Row element:', row);
+		console.log('Row computed styles height:', computedStyles.height);
+		console.log('Row computed styles width:', computedStyles.width);
+		console.log('Row getBoundingClientRect:', originalRowRect);
+
 		this.state.dragClone = row.cloneNode(true) as HTMLElement;
 		const clone = this.state.dragClone;
+
+		// Preserve the exact computed styles from the original row
+		const originalStyles = window.getComputedStyle(row);
+		const cloneStyles = window.getComputedStyle(clone);
 
 		// Apply default styles
 		clone.style.position = 'fixed'; // Use fixed instead of absolute
 		clone.style.pointerEvents = 'none';
 		clone.style.zIndex = '1000';
-		clone.style.opacity = '0.8';
+		clone.style.opacity = '0.9';
 		clone.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
-		clone.style.width = row.offsetWidth + 'px';
-		clone.style.backgroundColor = 'var(--background)';
-		clone.style.border = '1px solid var(--border)';
+		clone.className = 'dragged-row-clone'; // Add CSS class for additional styling
+
+		// Preserve exact dimensions and layout
+		clone.style.width = `${this.state.originalRowWidth}px`;
+		clone.style.height = originalStyles.height;
+		clone.style.minWidth = originalStyles.minWidth;
+		clone.style.maxWidth = `${this.state.originalRowWidth}px`; // Use exact original width
+		clone.style.minHeight = originalStyles.minHeight;
+		clone.style.maxHeight = originalStyles.maxHeight;
+
+		// Ensure width constraints are maintained for dragged state
+		if (originalStyles.maxWidth && originalStyles.maxWidth !== 'none') {
+			// Use the smaller of original maxWidth or actual row width
+			const originalMaxWidth = parseFloat(originalStyles.maxWidth);
+			if (!isNaN(originalMaxWidth) && originalMaxWidth < this.state.originalRowWidth) {
+				clone.style.maxWidth = originalStyles.maxWidth;
+			} else {
+				clone.style.maxWidth = `${this.state.originalRowWidth}px`;
+			}
+		} else {
+			// Set to exact original row width
+			clone.style.maxWidth = `${this.state.originalRowWidth}px`;
+		}
+
+		// Preserve table layout properties
+		clone.style.tableLayout = originalStyles.tableLayout;
+		clone.style.borderCollapse = originalStyles.borderCollapse;
+		clone.style.borderSpacing = originalStyles.borderSpacing;
+
+		// Preserve flexbox and grid properties if they exist
+		clone.style.display = originalStyles.display;
+		clone.style.flexDirection = originalStyles.flexDirection;
+		clone.style.justifyContent = originalStyles.justifyContent;
+		clone.style.alignItems = originalStyles.alignItems;
+		clone.style.flexWrap = originalStyles.flexWrap;
+		clone.style.gap = originalStyles.gap;
+
+		// Preserve overflow handling
+		clone.style.overflow = originalStyles.overflow;
+		clone.style.overflowX = originalStyles.overflowX;
+		clone.style.overflowY = originalStyles.overflowY;
+
+		// Preserve additional layout properties
+		clone.style.boxSizing = originalStyles.boxSizing;
+		clone.style.margin = originalStyles.margin;
+		clone.style.padding = originalStyles.padding;
+		clone.style.borderRadius = originalStyles.borderRadius;
+		clone.style.transform = originalStyles.transform;
+		clone.style.transition = 'none'; // Disable transitions during drag
+
+		// Preserve the original background color instead of making it transparent
+		clone.style.backgroundColor = this.preserveBackgroundColor(row, originalStyles);
+		clone.style.border = originalStyles.border;
+
+		// Preserve additional visual properties
+		clone.style.color = originalStyles.color;
+		clone.style.fontFamily = originalStyles.fontFamily;
+		clone.style.fontSize = originalStyles.fontSize;
+		clone.style.fontWeight = originalStyles.fontWeight;
+		clone.style.textDecoration = originalStyles.textDecoration;
 
 		// Apply custom styles if provided
 		if (this.config.cloneStyles) {
 			Object.assign(clone.style, this.config.cloneStyles);
 		}
 
-		// Copy column widths to maintain alignment
-		const originalCells = row.querySelectorAll('td');
-		const cloneCells = clone.querySelectorAll('td');
+		// Copy exact column widths and preserve table structure
+		const originalCells = row.querySelectorAll('td, th');
+		const cloneCells = clone.querySelectorAll('td, th');
+
+		console.log('Cloning row with classes:', row.className);
+		console.log('Original cells count:', originalCells.length);
+		console.log('Clone cells count:', cloneCells.length);
+
 		originalCells.forEach((cell, i) => {
 			if (cloneCells[i]) {
-				const width = cell.offsetWidth + 'px';
-				cloneCells[i].style.width = width;
-				cloneCells[i].style.minWidth = width;
-				cloneCells[i].style.maxWidth = width;
+				const cellStyles = window.getComputedStyle(cell);
+				const cloneCell = cloneCells[i] as HTMLElement;
+
+				console.log(`Cell ${i} classes:`, cell.className);
+				console.log(`Cell ${i} computed display:`, cellStyles.display);
+
+				// Get the actual rendered width of the cell
+				const cellRect = cell.getBoundingClientRect();
+				const actualCellWidth = cellRect.width;
+
+				// Preserve exact cell dimensions
+				cloneCell.style.width = `${actualCellWidth}px`;
+				cloneCell.style.height = cellStyles.height;
+				cloneCell.style.minWidth = cellStyles.minWidth;
+				cloneCell.style.maxWidth = `${actualCellWidth}px`; // Use exact actual width
+				cloneCell.style.minHeight = cellStyles.minHeight;
+				cloneCell.style.maxHeight = cellStyles.maxHeight;
+
+				// Preserve background color
+				const preservedBackground = this.preserveBackgroundColor(cell as HTMLElement, cellStyles);
+				cloneCell.style.backgroundColor = preservedBackground;
 			}
 		});
 
 		// Add clone to document body instead of tbody
 		document.body.appendChild(clone);
 
-		// Position clone at mouse
+		// Debug: log the final clone structure
+		console.log('Final clone HTML:', clone.outerHTML);
+		console.log('Final clone classes:', clone.className);
+		console.log('Final clone computed styles:', window.getComputedStyle(clone));
+
+		// Position clone at mouse with boundary constraints
 		this.updateClonePosition(x, y);
 	}
 
 	private updateClonePosition(x: number, y: number): void {
 		if (!this.state.dragClone) return;
 
-		// Use fixed positioning for smoother movement
-		this.state.dragClone.style.left = x - 10 + 'px';
-		this.state.dragClone.style.top = y - 20 + 'px';
+		// Constrain clone position to stay within table boundaries
+		const tbody = this.state.dragElement?.closest('tbody');
+		if (tbody) {
+			const tbodyRect = tbody.getBoundingClientRect();
+			const cloneRect = this.state.dragClone.getBoundingClientRect();
+
+			// Calculate constrained position (fixed positioning is relative to viewport)
+			let constrainedX = x - 10;
+			let constrainedY = y - 20;
+
+			// Ensure clone doesn't go outside table left boundary
+			if (constrainedX < tbodyRect.left) {
+				constrainedX = tbodyRect.left;
+			}
+
+			// Ensure clone doesn't go outside table right boundary
+			if (constrainedX + cloneRect.width > tbodyRect.right) {
+				constrainedX = tbodyRect.right - cloneRect.width;
+			}
+
+			// Ensure clone doesn't go outside table top boundary
+			if (constrainedY < tbodyRect.top) {
+				constrainedY = tbodyRect.top;
+			}
+
+			// Ensure clone doesn't go outside table bottom boundary
+			if (constrainedY + cloneRect.height > tbodyRect.bottom) {
+				constrainedY = tbodyRect.bottom - cloneRect.height;
+			}
+
+			// Apply constrained position
+			this.state.dragClone.style.left = constrainedX + 'px';
+			this.state.dragClone.style.top = constrainedY + 'px';
+		} else {
+			// Fallback to original positioning if no tbody found
+			this.state.dragClone.style.left = x - 10 + 'px';
+			this.state.dragClone.style.top = y - 20 + 'px';
+		}
 	}
 
 	private handleMouseMove = (event: MouseEvent): void => {
 		if (!this.state.isDragging || this.state.dragSourceIndex === null || !this.state.dragElement) return;
 
-		// Update clone position
+		const tbody = this.state.dragElement.closest('tbody');
+		if (!tbody) return;
+
+		const tbodyRect = tbody.getBoundingClientRect();
+
+		// Debug: log mouse position and table boundaries
+		console.log('Mouse position:', { x: event.clientX, y: event.clientY });
+		console.log('Table boundaries:', {
+			left: tbodyRect.left,
+			right: tbodyRect.right,
+			top: tbodyRect.top,
+			bottom: tbodyRect.bottom,
+		});
+
+		// Update clone position (with boundary constraints applied in updateClonePosition)
 		this.updateClonePosition(event.clientX, event.clientY);
 
 		// Remove all previous drop gap elements
@@ -176,11 +376,7 @@ export class TableDragManager {
 		if (this.state.dragClone) this.state.dragClone.style.display = '';
 
 		const rowBelow = elementBelow?.closest('tr');
-		const tbody = this.state.dragElement.closest('tbody');
-		if (!tbody) return;
-
 		const allRows = Array.from(tbody.querySelectorAll('tr:not(.drop-gap)'));
-		const tbodyRect = tbody.getBoundingClientRect();
 
 		// Check if we're at the top for dropping at the beginning
 		const firstRow = allRows[0];
@@ -188,10 +384,12 @@ export class TableDragManager {
 			const firstRowRect = firstRow.getBoundingClientRect();
 			const isAbove = event.clientY < firstRowRect.top;
 			const isWithinTableX = event.clientX >= tbodyRect.left && event.clientX <= tbodyRect.right;
-			const isNearTop = event.clientY < firstRowRect.top + firstRowRect.height * 0.3 && isWithinTableX;
-			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY < tbodyRect.top;
+			const isNearTop = event.clientY < firstRowRect.top + firstRowRect.height * 0.5 && isWithinTableX;
 
-			if (isAbove || isNearTop || (isOutsideTable && event.clientY < firstRowRect.bottom)) {
+			console.log('Top detection:', { isAbove, isWithinTableX, isNearTop, mouseY: event.clientY, firstRowTop: firstRowRect.top });
+
+			if ((isAbove || isNearTop) && isWithinTableX) {
+				console.log('Creating drop gap at top');
 				this.state.dragOverIndex = 0;
 				const dropGap = this.createDropGap();
 				tbody.insertBefore(dropGap, firstRow);
@@ -205,10 +403,12 @@ export class TableDragManager {
 			const lastRowRect = lastRow.getBoundingClientRect();
 			const isBelow = event.clientY > lastRowRect.bottom;
 			const isWithinTableX = event.clientX >= tbodyRect.left && event.clientX <= tbodyRect.right;
-			const isNearBottom = event.clientY > lastRowRect.bottom - lastRowRect.height * 0.3 && isWithinTableX;
-			const isOutsideTable = event.clientX < tbodyRect.left || event.clientX > tbodyRect.right || event.clientY > tbodyRect.bottom;
+			const isNearBottom = event.clientY > lastRowRect.bottom - lastRowRect.height * 0.5 && isWithinTableX;
 
-			if (isBelow || isNearBottom || (isOutsideTable && event.clientY > lastRowRect.top)) {
+			console.log('Bottom detection:', { isBelow, isWithinTableX, isNearBottom, mouseY: event.clientY, lastRowBottom: lastRowRect.bottom });
+
+			if ((isBelow || isNearBottom) && isWithinTableX) {
+				console.log('Creating drop gap at bottom');
 				this.state.dragOverIndex = allRows.length;
 				this.state.isAtEnd = true;
 				const dropGap = this.createDropGap();
@@ -244,15 +444,77 @@ export class TableDragManager {
 				}
 			}
 		}
+
+		// If no drop indicator was created but we're still dragging, ensure one is visible
+		// This handles edge cases where the mouse might be in a dead zone
+		if (this.state.isDragging && !document.querySelector('tr.drop-gap')) {
+			console.log('No drop gap found, creating fallback indicator');
+			const allRows = Array.from(tbody.querySelectorAll('tr:not(.drop-gap)'));
+			if (allRows.length > 0) {
+				// Determine the best position based on mouse Y position
+				const tbodyRect = tbody.getBoundingClientRect();
+				const mouseY = event.clientY;
+				const tbodyMiddle = tbodyRect.top + tbodyRect.height / 2;
+
+				console.log('Fallback positioning:', { mouseY, tbodyMiddle, tbodyTop: tbodyRect.top, tbodyBottom: tbodyRect.bottom });
+
+				if (mouseY < tbodyMiddle) {
+					// Insert at the beginning
+					console.log('Fallback: inserting at beginning');
+					this.state.dragOverIndex = 0;
+					const dropGap = this.createDropGap();
+					tbody.insertBefore(dropGap, allRows[0]);
+				} else {
+					// Insert at the end
+					console.log('Fallback: inserting at end');
+					this.state.dragOverIndex = allRows.length;
+					this.state.isAtEnd = true;
+					const dropGap = this.createDropGap();
+					tbody.appendChild(dropGap);
+				}
+			}
+		}
 	};
 
 	private createDropGap(): HTMLElement {
 		const dropGap = document.createElement('tr');
 		dropGap.className = 'drop-gap';
 
-		const innerHTML = this.config.dropIndicatorHTML || `<td colspan="${this.config.columnCount}" class="drop-indicator"></td>`;
+		// Use the stored original row height instead of trying to get it from hidden element
+		let dropIndicatorHeight = '30px'; // Default height
+		console.log('createDropGap - stored originalRowHeight:', this.state.originalRowHeight);
+		console.log('createDropGap - dragElement:', this.state.dragElement);
+
+		if (this.state.originalRowHeight > 0) {
+			dropIndicatorHeight = `${this.state.originalRowHeight}px`;
+			console.log('Using stored original row height for drop indicator:', dropIndicatorHeight);
+		} else {
+			console.warn('No stored row height, using default height');
+			// Try to get height from dragElement if available
+			if (this.state.dragElement) {
+				const dragElementRect = this.state.dragElement.getBoundingClientRect();
+				console.log('dragElement getBoundingClientRect:', dragElementRect);
+				if (dragElementRect.height > 0) {
+					dropIndicatorHeight = `${dragElementRect.height}px`;
+					console.log('Using dragElement height as fallback:', dropIndicatorHeight);
+				}
+			}
+		}
+
+		// Also set the row height to match
+		dropGap.style.height = dropIndicatorHeight;
+		console.log('Final dropGap height set to:', dropIndicatorHeight);
+
+		// Debug: log the column count being used
+		console.log('Creating drop gap with column count:', this.config.columnCount);
+
+		const innerHTML = this.config.dropIndicatorHTML || `<td colspan="${this.config.columnCount}" class="drop-indicator" style="height: ${dropIndicatorHeight};"></td>`;
 
 		dropGap.innerHTML = innerHTML;
+
+		// Debug: log the created HTML
+		console.log('Drop gap HTML:', dropGap.outerHTML);
+
 		return dropGap;
 	}
 
@@ -314,6 +576,8 @@ export class TableDragManager {
 		this.state.dragOverIndex = null;
 		this.state.isDragging = false;
 		this.state.isAtEnd = false;
+		this.state.originalRowHeight = 0; // Reset original row height
+		this.state.originalRowWidth = 0; // Reset original row width
 
 		// Reset global drag state
 		isDragging.set(false);
@@ -347,12 +611,14 @@ export function createDropIndicatorCSS(): string {
 		}
 
 		.drop-indicator {
-			height: 30px !important;
 			background: rgba(var(--primary-rgb, 74, 144, 226), 0.1) !important;
 			border: 2px dashed var(--primary) !important;
 			border-radius: 4px !important;
 			margin: 2px 4px !important;
-			display: block !important;
+			width: 100% !important;
+			box-sizing: border-box !important;
+			/* Height will be set dynamically via inline styles */
+			min-height: 20px !important; /* Minimum height for very small elements */
 		}
 	`;
 }
