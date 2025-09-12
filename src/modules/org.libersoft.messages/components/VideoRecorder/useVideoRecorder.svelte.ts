@@ -1,6 +1,7 @@
 import videoJS from 'video.js';
 import 'recordrtc';
 import { get, writable } from 'svelte/store';
+import { concatSameFormatBlobs } from '@/org.libersoft.messages/components/VideoRecorder/MediaMerge.ts';
 
 type VideoJSWithRecorder = ReturnType<typeof videoJS> & {
 	record: any;
@@ -17,6 +18,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 	const selectedVideoDeviceId = writable<string | null>(null);
 	const loading = writable(true);
 	const error = writable(false);
+	const isPaused = writable(false);
 	const errorMessages = writable<string[] | null>(null);
 	const facingMode = writable<'user' | 'environment'>('user');
 
@@ -246,11 +248,31 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		_player.on('startRecord', function () {
 			console.log('rec: started recording!');
 		});
+		// _player.on('progressRecord', function (...args) {
+		// 	console.log('rec: progressRecord!', args, _player.recordedData);
+		// });
+		// _player.on('ondataavailable', function (...args) {
+		// 	console.log('rec: ondataavailable!', args, _player.recordedData);
+		// });
+		// _player.on('timestamp', function (...args) {
+		// 	console.log('rec: timestamp!', args, _player.recordedData);
+		// });
 
 		// user completed recording and stream is available
-		_player.on('finishRecord', function () {
+		_player.on('finishRecord', async function () {
 			console.log('rec: finished recording: ', _player.recordedData);
-			recordedBlob.set(_player.recordedData);
+			const newRecordedBlob = _player.recordedData;
+			console.log('newRecordedBlob', newRecordedBlob);
+			console.log('new $recordedBlob', get(recordedBlob));
+			if (get(recordedBlob)) {
+				// const fixedBlob = await fixWebmDuration(new Blob([get(recordedBlob), newRecordedBlob], { type: 'video/webm' }));
+				const fixedBlob = await concatSameFormatBlobs([get(recordedBlob) as Blob, newRecordedBlob]);
+				console.log('fixedBlob', fixedBlob);
+
+				recordedBlob.set(fixedBlob);
+			} else {
+				recordedBlob.set(newRecordedBlob);
+			}
 		});
 
 		_player.on('ready', function () {
@@ -258,6 +280,16 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 			loading.set(false);
 			// const gd = _player.record().getDevice()
 			// console.log('rec: getDevice', gd);
+		});
+
+		_player.on('pause', () => {
+			isPaused.set(true);
+			console.log('Recording paused');
+		});
+
+		_player.on('resume', () => {
+			isPaused.set(false);
+			console.log('Recording resumed');
 		});
 
 		_player.on('deviceReady', function () {
@@ -299,6 +331,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 			console.log('rec: changeVideoInput', deviceId);
 			get(player)?.record().setVideoInput(deviceId);
 			selectedVideoDeviceId.set(deviceId);
+			recordedBlob.set(null);
 
 			console.log("rec: Changed video input to '" + deviceId);
 		} catch (error) {
@@ -311,6 +344,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 			console.log('rec: changeAudioInput', deviceId);
 			get(player)?.record().setAudioInput(deviceId);
 			selectedAudioDeviceId.set(deviceId);
+			recordedBlob.set(null);
 
 			console.log("rec: Changed video input to '" + deviceId);
 		} catch (error) {
@@ -375,6 +409,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		toggleFacingMode,
 		userDeviceId,
 		environmentDeviceId,
+		isPaused,
 	};
 }
 
