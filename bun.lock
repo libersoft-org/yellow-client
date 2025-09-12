@@ -29,6 +29,7 @@
         "dexie": "^4.0.11",
         "dompurify": "^3.2.4",
         "dotenv": "^16.4.7",
+        "effection": "^3.6.0",
         "emoji-regex": "^10.4.0",
         "ethers": "^6.15.0",
         "events": "^3.3.0",
@@ -1254,6 +1255,8 @@
     "eastasianwidth": ["eastasianwidth@0.2.0", "", {}, "sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA=="],
 
     "ecdsa-sig-formatter": ["ecdsa-sig-formatter@1.0.11", "", { "dependencies": { "safe-buffer": "^5.0.1" } }, "sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ=="],
+
+    "effection": ["effection@3.6.0", "", {}, "sha512-+AKmSbgcjytcx4IYmd+n10IV5cuiLTl8YDXNYX0lNx70wwRS43VV0MEJAB1RD1X7FOOOWERRCJpFdRZXHmK/Og=="],
 
     "eip55": ["eip55@2.1.1", "", { "dependencies": { "keccak": "^3.0.3" } }, "sha512-WcagVAmNu2Ww2cDUfzuWVntYwFxbvZ5MvIyLZpMjTTkjD6sCvkGOiS86jTppzu9/gWsc8isLHAeMBWK02OnZmA=="],
 

@@ -181,7 +181,7 @@ export async function initUpload(files, uploadType, recipients) {
 		console.error('Error transforming files for server:', error);
 	}
 	console.log('3333');
-	const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, {
+	const { uploads } = fileUploadManager.initUploads(files, uploadType, acc, uploadChunkAsync, {
 		chunkSize: get(uploadChunkSize),
 	});
 	console.log('uploads', uploads);
@@ -237,40 +237,11 @@ export async function initUpload(files, uploadType, recipients) {
 			return;
 		}
 		if (uploads?.[0].record.type === FileUploadRecordType.SERVER) {
-			fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
+			const firstAllowedUpload = uploads.find(upload => upload.record.id === res.allowedRecords[0].id); // todo: better handling of allowed uploads
+			fileUploadManager.startUpload(firstAllowedUpload);
 		} else {
 			console.error('Error starting upload'); // TODO: better error
 		}
-	});
-}
-
-function uploadChunkAsync({ upload, chunk }) {
-	return new Promise((resolve, reject) => {
-		const op = retry.operation({
-			retries: 3,
-			factor: 1.5,
-			minTimeout: 1000,
-			maxTimeout: 3000,
-		});
-		op.attempt(() => {
-			const retry = res => {
-				const willRetry = op.retry(new Error());
-				if (!willRetry) {
-					reject(res);
-				}
-			};
-			const to = setTimeout(() => {
-				retry();
-			}, 5000); // TODO: maybe longer
-			sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
-				clearTimeout(to);
-				if (res.error !== false) {
-					retry(res);
-					return;
-				}
-				resolve();
-			});
-		});
 	});
 }
 
@@ -283,9 +254,11 @@ function ask_for_chunk(event) {
 	if (upload.record.status === FileUploadRecordStatus.BEGUN) {
 		upload.record.status = FileUploadRecordStatus.UPLOADING;
 		fileUploadStore.set(uploadId, upload);
-		fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync);
+		console.log('SADSDASDADAADSAA start');
+		fileUploadManager.startUpload(upload);
 	} else {
-		fileUploadManager.continueP2PUpload(uploadId);
+		console.log('SADSDASDADAADSAA p2p continue');
+		fileUploadManager.continueP2PUpload(upload);
 	}
 }
 
@@ -332,8 +305,39 @@ function upload_update(event) {
 
 export function downloadAttachmentsSerial(records, finishCallback) {
 	const acc = get(active_account);
-	// const records = recordIds.map(id => fileDownloadStore.get(id).record);
-	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback);
+	const { downloads } = fileDownloadManager.initAndStartDownloads(records, makeDownloadChunkAsyncFn(acc));
+	downloads.forEach(download => download?.downloadResolver?.promise.then(finishCallback));
+	return { downloads };
+}
+
+function uploadChunkAsync({ upload, chunk }) {
+	return new Promise((resolve, reject) => {
+		const op = retry.operation({
+			retries: 3,
+			factor: 1.5,
+			minTimeout: 1000,
+			maxTimeout: 3000,
+		});
+		op.attempt(() => {
+			const retry = res => {
+				const willRetry = op.retry(new Error());
+				if (!willRetry) {
+					reject(res);
+				}
+			};
+			const to = setTimeout(() => {
+				retry();
+			}, 5000); // TODO: maybe longer
+			sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
+				clearTimeout(to);
+				if (res.error !== false) {
+					retry(res);
+					return;
+				}
+				resolve();
+			});
+		});
+	});
 }
 
 export const makeDownloadChunkAsyncFn =

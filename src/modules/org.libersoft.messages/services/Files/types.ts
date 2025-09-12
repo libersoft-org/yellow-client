@@ -52,6 +52,7 @@ export interface IFileUpload {
 	running?: boolean; // TODO: maybe refactor to setTimeout (see upload.pushChunk)
 	uploadedBytes?: number; // only for non senders
 	pushChunk?: () => Promise<void>;
+	pushFn?: PushChunkFnType;
 	acc: any;
 }
 
@@ -64,6 +65,8 @@ export interface IFileDownload {
 	pausedLocally?: boolean;
 	canceledLocally?: boolean;
 	pullChunk?: () => Promise<void>;
+	pullChunkFn?: PullChunkFnType;
+	downloadResolver?: PromiseWithResolvers<IFileDownload>;
 }
 
 export interface IFileUploadChunk {
@@ -81,7 +84,7 @@ export interface IFileUploadBeginOptions {
 
 export type MakeFileUploadRecordData = Partial<IFileUploadRecord> & Pick<IFileUploadRecord, 'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid' | 'metadata'>;
 
-export type MakeFileUploadData = Partial<IFileUpload> & Pick<IFileUpload, 'role' | 'file' | 'record' | 'acc'>;
+export type MakeFileUploadData = Partial<IFileUpload> & Pick<IFileUpload, 'role' | 'file' | 'record' | 'acc' | 'pushFn'>;
 
 export type MakeFileDownloadData = Partial<IFileDownload> & Pick<IFileDownload, 'record'>;
 
@@ -107,3 +110,6 @@ export type FileDownloadStoreType = {
 	updateDownloadRecord: (id: string, record: IFileUploadRecord) => void;
 	isAnyDownloadRunning: () => boolean;
 } & BaseStoreType<FileDownloadStoreValue, IFileDownload>;
+
+export type PushChunkFnType = (data: { chunk: IFileUploadChunk; upload: IFileUpload }) => Promise<void>;
+export type PullChunkFnType = (data: { uploadId: string; offsetBytes: number; chunkSize: number }) => Promise<{ chunk: IFileUploadChunk }>;
