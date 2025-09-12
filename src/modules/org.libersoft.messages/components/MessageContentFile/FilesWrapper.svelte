@@ -5,7 +5,7 @@
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import Button from '@/core/components/Button/Button.svelte';
-	import { get } from 'svelte/store';
+
 	let { children } = $props();
 	let ref: HTMLDivElement;
 	let attachedUploads = $state<IFileUpload[]>([]);
@@ -16,12 +16,18 @@
 		});
 	});
 
+	$inspect('attachedUploads', attachedUploads);
+	$inspect('downloadableRecords', downloadableRecords);
+
 	// determine if the bulk download action should be shown
 	let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
 
+	const uploadStore = $derived(fileUploadStore.store);
 	// get the uploads based on present attachment IDs
 	$effect(() => {
-		const uploads = get(fileUploadStore.store);
+		const uploads = $uploadStore;
+		console.log('!!! attachmentIds', attachmentIds);
+		console.log('!!! uploads', uploads);
 		if (attachmentIds.length === 0) {
 			return;
 		}
@@ -54,8 +60,8 @@
 	}
 
 	onMount(() => {
-		getAttachmentEls()?.forEach(attachmentEl => {
-			const uploadId = attachmentEl.getAttribute('data-upload-id');
+		children.forEach(child => {
+			const uploadId = child.props?.id;
 			if (uploadId) attachmentIds.push(uploadId);
 		});
 	});
