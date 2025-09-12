@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { wallets, type IWallet } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
-	import { networks, default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { wallets, type IWallet } from 'libersoft-crypto/wallet';
+	import { networks, default_networks, type INetwork } from 'libersoft-crypto/network';
 	import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
-	import { addressBook, type IAddressBookItem } from '@/org.libersoft.wallet/scripts/crypto-utils/addressbook';
+	import { addressBook, type IAddressBookItem } from 'libersoft-crypto/addressbook';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
 	import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';
@@ -22,6 +22,7 @@
 	import SettingsNetworksImport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksImport.svelte';
 	import SettingsNetworksExport from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksExport.svelte';
 	import SettingsNetworksTokensAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokensAddEdit.svelte';
+	import SettingsNetworksTokensPopular from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokensPopular.svelte';
 	import SettingsNetworksNFTsAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksNFTsAddEdit.svelte';
 	import SettingsAddressbookAddEdit from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookAddEdit.svelte';
 	import SettingsAddressbookImport from '@/org.libersoft.wallet/windows/Settings/SettingsAddressbookImport.svelte';
@@ -101,6 +102,15 @@
 					props: {
 						close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
 						networkGuid: network.guid,
+					},
+				},
+				{
+					title: 'Popular tokens',
+					name: 'networks-tokens-popular-' + network.guid,
+					body: SettingsNetworksTokensPopular,
+					props: {
+						close: () => elBaseSettings?.setSettingsSection('networks-tokens-' + network.guid),
+						item: network.guid,
 					},
 				},
 				...(network.tokens || []).map((token: any) => ({

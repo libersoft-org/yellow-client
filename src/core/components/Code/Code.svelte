@@ -2,8 +2,9 @@
 	interface Props {
 		code: string;
 		testId?: string;
+		blur?: boolean;
 	}
-	let { code = $bindable(), testId = 'import-textarea' }: Props = $props();
+	let { code = $bindable(), testId = 'import-textarea', blur = false }: Props = $props();
 </script>
 
 <style>
@@ -18,7 +19,12 @@
 		border-radius: 10px;
 		font-family: 'Ubuntu Mono';
 		font-size: inherit;
+		transition: filter 0.3s ease;
+	}
+
+	textarea.blurred {
+		filter: blur(8px);
 	}
 </style>
 
-<textarea bind:value={code} data-testid={testId}></textarea>
+<textarea bind:value={code} data-testid={testId} class:blurred={blur}></textarea>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { type INetwork, type IToken, findNetworkByGuid, reorderTokens } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
-	import { getTokenInfo } from '@/org.libersoft.wallet/scripts/crypto-utils/balance';
+	import { type INetwork, type IToken, findNetworkByGuid, reorderTokens } from 'libersoft-crypto/network';
+	import { getTokenInfo } from 'libersoft-crypto/balance';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -66,6 +66,7 @@
 	}
 
 	function clickTokenEdit(token: IToken): void {
+		/// FIXME: escape dashes in item guid
 		setSettingsSection('networks-tokens-edit-' + item + '-' + token.guid);
 	}
 
@@ -85,6 +86,10 @@
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved);
 		reorderTokens(network.guid, reordered);
+	}
+
+	async function clickPopularTokens(): Promise<void> {
+		setSettingsSection('networks-tokens-popular-' + item);
 	}
 </script>
 
@@ -129,6 +134,7 @@
 	</div>
 	<ButtonBar>
 		<Button img="modules/{module.identifier}/img/token-add.svg" text="Add token" onClick={clickTokenAdd} />
+		<Button img="modules/{module.identifier}/img/token-add.svg" text="Popular tokens" onClick={clickPopularTokens} />
 	</ButtonBar>
 	{#if network?.tokens && network.tokens.length > 0}
 		<div use:tableDrag={{ items: network.tokens, onReorder: handleTokenReorder }}>

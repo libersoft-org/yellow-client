@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardWindow, expectErrorMessage, switchModule, clickBreadcrumb } from '@/core/e2e/test-utils.js';
-import { clickSettingsMenuButton } from '@/core/e2e/test-utils.ts';
+import { setupConsoleLogging, closeWelcomeWizardWindow, expectErrorMessage, switchModule, clickBreadcrumb } from '@/core/tests/e2e/test-utils.js';
+import { clickSettingsMenuButton } from '@/core/tests/e2e/test-utils.ts';
 
 test.describe.parallel('Networks Import/Export Functionality', () => {
 	test.beforeEach(async ({ page }) => {

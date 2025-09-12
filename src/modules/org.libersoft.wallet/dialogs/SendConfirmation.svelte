@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { formatBalance, getTokenDecimals, getTokenInfo } from '@/org.libersoft.wallet/scripts/crypto-utils/balance';
+	import { formatBalance, getTokenDecimals, getTokenInfo } from 'libersoft-crypto/balance';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
-	import { type IPayment, sendTransaction } from '@/org.libersoft.wallet/scripts/crypto-utils/transaction';
-	import { transactionTime, transactionTimeLoading } from '@/org.libersoft.wallet/scripts/crypto-utils/transaction';
+	import { selectedNetwork } from 'libersoft-crypto/network';
+	import { type IPayment, sendTransaction } from 'libersoft-crypto/transaction';
+	import { transactionTime, transactionTimeLoading } from 'libersoft-crypto/transaction';
 	import { playAudio } from '@/core/scripts/notifications.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	interface Props {
 		params?: IPayment;
 		close?: () => void;
+		onYes?: (params: any) => void;
 	}
-	let { params, close }: Props = $props();
+	let { params, close, onYes }: Props = $props();
 	let elDialog;
 	let tokenDecimals = $state<number | null>(null);
 	let tokenInfo = $state<{ name: string; symbol: string } | null>(null);
@@ -54,17 +55,9 @@
 	}
 
 	async function clickYes() {
-		if (params) {
-			if (params.contractAddress) {
-				// Token transaction
-				await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
-			} else {
-				// Native currency transaction
-				await sendTransaction(params.address, params.amount, params.fee);
-			}
-			playAudio('modules/' + module.identifier + '/audio/payment.mp3');
-			elDialog?.close();
-		}
+		if (!params) throw new Error('dialog missing params');
+		onYes?.(params);
+		elDialog?.close();
 	}
 
 	function clickNo() {
@@ -88,7 +81,7 @@
 				<span class="bold">{formatBalance(amountBalance)}</span>
 			{/if}
 		</div>
-		<div>Transaction fee: <span class="bold">{formatBalance({ amount: params.fee, currency: $selectedNetwork?.currency.symbol || '', decimals: 18 })} {$selectedNetwork?.currency.symbol || ''}</span></div>
+		<div>Transaction fee: <span class="bold">{formatBalance({ amount: params.fee, currency: $selectedNetwork?.currency.symbol || '', decimals: 18 })}</span></div>
 		<div>
 			Estimated time:
 			{#if $transactionTimeLoading}

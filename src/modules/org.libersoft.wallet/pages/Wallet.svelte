@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { selectedWallet, selectedAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
-	import { reconnect, availableRPCURLs, status } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
-	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow } from '@/org.libersoft.wallet/scripts/ui';
-	import { selectedNetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
-	import { rpcURL } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
+	import { selectedWallet, selectedAddress, wallets } from 'libersoft-crypto/wallet';
+	import { reconnect, availableRPCURLs, status } from 'libersoft-crypto/provider';
+	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow, networksWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { networks, selectedNetwork } from 'libersoft-crypto/network';
+	import { rpcURL } from 'libersoft-crypto/provider';
 	import { shortenAddress } from '$lib/shortenAddress.ts';
 	import Paper from '@/core/components/Paper/Paper.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -27,15 +27,17 @@
 	import { toggleTrezorWindow } from '@/org.libersoft.wallet/scripts/trezor-window';
 	import LedgerWindow from '@/org.libersoft.wallet/windows/Wallets/LedgerWindow.svelte';
 	import { toggleLedgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window';
-	let elWindowNetworks: Window | undefined;
+	import { get } from 'svelte/store';
 	let addressElement = $state<HTMLElement | null>(null);
+
+	let shouldShowWizard = $derived(!(get(networks)?.length > 0 && get(wallets)?.length > 0));
 
 	onMount(() => {
 		console.log('Wallet module initialiddddddzed');
-		if ($debug) {
+		/*if ($debug) {
 			//$settingsWindow?.open('wallets-add-hw-trezor');
-			$settingsWindow?.open('wallets-add-hw-ledger');
-		}
+			$settingsWindow?.open('wallets-add');
+		}*/
 	});
 
 	function clickCopyAddress() {
@@ -165,7 +167,10 @@
 	{/if}
 	<div class="body">
 		<div class="network-address" class:mobile={$isMobile}>
-			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await elWindowNetworks?.open()} data-testid="wallet-network-dropdown" />
+			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await $networksWindow?.open()} data-testid="wallet-network-dropdown" />
+			{#if shouldShowWizard}
+				<Button img="img/wizard.svg" text="Wizard" onClick={() => console.log('Wizard clicked')} />
+			{/if}
 			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} data-testid="wallet-address-dropdown" />
 		</div>
 		<div class="bar">
@@ -227,7 +232,7 @@
 	</div>
 </Paper>
 
-<Window title="Select your network" body={WindowNetworks} bind:this={elWindowNetworks} width="500px" />
+<Window title="Select your network" body={WindowNetworks} bind:this={$networksWindow} width="500px" />
 <WindowWallets />
 <Window title="Select RPC Server" body={WindowRPCServers} bind:this={$rpcServersWindow} width="600px" />
 <Settings />

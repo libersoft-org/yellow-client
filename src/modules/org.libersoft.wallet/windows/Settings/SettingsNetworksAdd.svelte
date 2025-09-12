@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { default_networks, type INetwork } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { default_networks, type INetwork, addSingleNetwork } from 'libersoft-crypto/network';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
@@ -15,6 +15,7 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
+	import Dialog, { type IDialogData, type IDialogButton } from '@/core/components/Dialog/Dialog.svelte';
 	let filter = $state('');
 	let showMainnets = $state(true);
 	let showTestnets = $state(false);
@@ -26,6 +27,19 @@
 		})
 	);
 	let elFilter: Input | undefined = $state();
+	let addNetworkDialog: Dialog | undefined = $state();
+	let selectedNetwork: INetwork | null = $state(null);
+
+	// Dialog data for adding network
+	let addDialogData: IDialogData = $derived({
+		title: 'Add Network',
+		body: selectedNetwork ? `Add the network "${(selectedNetwork as INetwork).name}"?` : '',
+		buttons: [
+			{ text: 'Add', onClick: handleAddNetwork },
+			{ text: 'Edit..', onClick: handleAddModifiedNetwork },
+			{ text: 'Cancel', onClick: handleCancelAdd },
+		],
+	});
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
 	export function onOpen(): void {
@@ -37,8 +51,34 @@
 	}
 
 	async function clickAddNetwork(net: INetwork | null = null) {
-		if (net) await setSettingsSection('networks-add-sw', { network: net });
-		else await setSettingsSection('networks-add-sw', { network: undefined });
+		if (net) {
+			selectedNetwork = net;
+			addNetworkDialog?.open();
+		} else {
+			// Add custom network - go directly to settings
+			await setSettingsSection('networks-add-sw', { network: undefined });
+		}
+	}
+
+	function handleAddNetwork() {
+		console.log('SettingsNetworksAdd: Adding network: ', selectedNetwork);
+		if (selectedNetwork) {
+			addSingleNetwork(selectedNetwork);
+			addNetworkDialog?.close();
+		}
+		setSettingsSection('networks');
+	}
+
+	async function handleAddModifiedNetwork() {
+		if (selectedNetwork) {
+			addNetworkDialog?.close();
+			await setSettingsSection('networks-add-sw', { network: selectedNetwork });
+		}
+	}
+
+	function handleCancelAdd() {
+		addNetworkDialog?.close();
+		selectedNetwork = null;
 	}
 </script>
 
@@ -98,3 +138,5 @@
 		{/each}
 	</Tbody>
 </Table>
+
+<Dialog data={addDialogData} bind:this={addNetworkDialog} />

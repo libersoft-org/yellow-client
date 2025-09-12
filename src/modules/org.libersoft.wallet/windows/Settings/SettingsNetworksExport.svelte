@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { networks } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { networks } from 'libersoft-crypto/network';
 	import Export from '@/core/components/Export/Export.svelte';
 	interface Props {
 		close: () => void;

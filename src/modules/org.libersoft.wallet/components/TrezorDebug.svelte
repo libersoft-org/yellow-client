@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
-	import { isInitialized, trezorLoading, trezorError, trezorState } from '@/org.libersoft.wallet/scripts/crypto-utils/trezor';
+	import { isInitialized, trezorLoading, trezorError, trezorState } from 'libersoft-crypto/trezor';
 </script>
 
 {#if $debug}

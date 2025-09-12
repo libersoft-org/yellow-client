@@ -1,6 +1,6 @@
 import { expect, test, chromium } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardWindow, switchModule } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, closeWelcomeWizardWindow, switchModule } from '@/core/tests/e2e/test-utils.js';
 
 const SLEEP_MS = parseInt(process.env.SLEEP || '0');
 
@@ -117,7 +117,7 @@ async function handleLedgerSigning(page: Page) {
 	});
 }
 
-test.describe('Ledger Wallet Send Dialog Navigation', () => {
+(process.env.RUN_HARDWARE_TESTS ? test.describe : test.describe.skip)('Ledger Wallet Send Dialog Navigation', () => {
 	let browser;
 	let context;
 	let page;

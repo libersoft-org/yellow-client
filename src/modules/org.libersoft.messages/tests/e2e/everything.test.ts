@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow, goToRootSettingsSection, clickSettingsMenuButton } from '@/core/e2e/test-utils.js';
+import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow, goToRootSettingsSection, clickSettingsMenuButton } from '@/core/tests/e2e/test-utils.js';
 
 import { startNewConversation, openConversation, sendMessage, forwardLastMessage, forwardMessageToConversation, verifyForwardWindowWithPreview, searchConversationsInForwardWindow } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
 

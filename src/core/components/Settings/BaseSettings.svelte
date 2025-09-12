@@ -75,6 +75,7 @@
 		await tick();
 		const node = findNode(settingsObject, name);
 		if (node && Object.keys(props).length > 0) node.props = { ...node.props, ...props };
+		await tick();
 		if (!currentNode?.instance && currentNode?.body) {
 			log.error('[BaseSettings] No instance found for node:', node, 'expected instance of body:', currentNode.body);
 			return;
@@ -158,7 +159,8 @@
 		background-color: var(--primary-softer-background);
 		border: 1px solid var(--primary-foreground);
 		border-radius: 10px;
-		padding: 10px;
+		padding: 0;
+		margin: 0;
 		max-height: 300px;
 		overflow-y: auto;
 	}
@@ -184,7 +186,7 @@
 	</div>
 	{#if $debug}
 		<div class="debug">
-			<h5>BaseSettings Debug</h5>
+			BaseSettings Debug: currentNode:
 			<pre>{JSON.stringify(currentNode, null, 2)}</pre>
 		</div>
 	{/if}

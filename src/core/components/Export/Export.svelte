@@ -18,6 +18,7 @@
 	let isRevealed = $state(!isSensitive);
 	let copyText = $state('Copy to clipboard');
 	let timeoutId;
+	let hiddenText = $state('[HIDDEN - Click reveal to show sensitive data][HIDDEN - Click reveal to show sensitive data][HIDDEN - Click reveal to show sensitive data]');
 
 	$effect(() => {
 		if (data) {
@@ -30,6 +31,16 @@
 			if (enableQrTab) {
 				generateQRCode();
 			}
+		}
+	});
+
+	$effect(() => {
+		// React to activeTab changes
+		activeTab;
+		// Reset isRevealed to false when switching tabs if sensitive
+		if (isSensitive) {
+			console.log('Switching tabs, resetting isRevealed to false');
+			isRevealed = false;
 		}
 	});
 
@@ -142,6 +153,14 @@
 	}
 </style>
 
+{#snippet actionButtons(includeReveal = false)}
+	{#if isSensitive && includeReveal}
+		<Button img={isRevealed ? 'img/hide.svg' : 'img/show.svg'} text={isRevealed ? 'Hide' : 'Reveal'} onClick={toggleReveal} data-testid="{testId}-reveal-button" />
+	{/if}
+	<Button img="img/copy.svg" text={copyText} onClick={clickCopy} data-testid="{testId}-copy-button" />
+	<Button img="img/download.svg" text="Download as file" onClick={clickDownload} data-testid="{testId}-download-button" />
+{/snippet}
+
 <div class="export" data-testid={testId}>
 	{#if enableJsonTab && enableQrTab}
 		<Tabs>
@@ -150,11 +169,26 @@
 		</Tabs>
 	{/if}
 	{#if activeTab === 'json' && enableJsonTab}
-		<ButtonBar expand>
-			<Button img="img/copy.svg" text={copyText} onClick={clickCopy} data-testid="{testId}-copy-button" />
-			<Button img="img/download.svg" text="Download as file" onClick={clickDownload} data-testid="{testId}-download-button" />
-		</ButtonBar>
-		<Code bind:code={jsonEditorContents} testId="{testId}-code-editor" />
+		{#if isSensitive}
+			{#if !isRevealed}
+				<Alert type="warning" message="Sensitive information is hidden. Click the reveal button to show it." testId="{testId}-json-warning" />
+			{:else}
+				<Alert type="info" message="Click the hide button to conceal sensitive information." testId="{testId}-json-info" />
+			{/if}
+			<ButtonBar expand>
+				{@render actionButtons(true)}
+			</ButtonBar>
+			{#if isRevealed}
+				<Code bind:code={jsonEditorContents} testId="{testId}-code-editor" />
+			{:else}
+				<Code bind:code={hiddenText} blur={true} testId="{testId}-code-editor-hidden" />
+			{/if}
+		{:else}
+			<ButtonBar expand>
+				{@render actionButtons()}
+			</ButtonBar>
+			<Code bind:code={jsonEditorContents} testId="{testId}-code-editor" />
+		{/if}
 	{:else if activeTab === 'qr' && enableQrTab}
 		<div class="qr-page" data-testid="{testId}-qr-content">
 			{#if qrError}

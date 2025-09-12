@@ -3,10 +3,10 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.ts';
-	import { selectedNetwork, tokens, nfts } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
-	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from '@/org.libersoft.wallet/scripts/crypto-utils/balance';
-	import { provider, rpcURL } from '@/org.libersoft.wallet/scripts/crypto-utils/provider';
-	import { selectedAddress } from '@/org.libersoft.wallet/scripts/crypto-utils/wallet';
+	import { selectedNetwork, tokens, nfts } from 'libersoft-crypto/network';
+	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenAmountsByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from 'libersoft-crypto/balance';
+	import { provider, rpcURL } from 'libersoft-crypto/provider';
+	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';
@@ -41,30 +41,11 @@
 	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
 	let nftContractInfos = $state(new Map<string, { name: string; collection: string; balance: number; loading: boolean }>());
 	let lastNFTsLength = $state(0);
-	let lastTokensLength = $state(0);
 	let isInitialized = $state(false);
 	let subscriptions: Array<() => void> = [];
 
-	/*
-	$effect(() => {
-		if (!$tokens?.length || !$selectedNetwork || !$selectedAddress || !$provider) return;
-		// Only process if tokens array actually changed in length or we have genuinely new tokens
-		if ($tokens.length !== lastTokensLength) {
-			lastTokensLength = $tokens.length;
-			const newTokens = getTokensWithContracts().filter(token => token.contract_address && !initializedTokens.has(token.contract_address));
-			if (newTokens.length > 0) {
-				console.log('Found new tokens to initialize:', newTokens.length);
-				// Mark as initialized
-				newTokens.forEach(token => {
-					if (token.contract_address) initializedTokens.add(token.contract_address);
-				});
-				// Load info and balances for new tokens
-				loadAllTokensInfo();
-				loadAllTokenBalances();
-			}
-		}
-	});
-*/
+	$inspect('TOKENINFOSSSS:', tokenInfos);
+	$inspect('$tokens', $tokens);
 
 	// Helper functions
 	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
@@ -93,15 +74,15 @@
 		loadingTokenInfos.clear();
 		//nftContractInfos.clear();
 		//lastNFTsLength = 0;
-		lastTokensLength = 0;
 	}
 
-	function initializeAllBalances() {
+	async function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
 			//loadNFTContractInfos();
 			if ($tokens?.length) {
-				loadAllTokensInfo();
+				await loadAllTokensInfo();
+				console.log('All token infos loaded:', tokenInfos);
 				loadAllTokenBalances();
 			}
 		}
@@ -135,7 +116,7 @@
 		let currentRpcURL = $rpcURL;
 		// Subscribe to network changes
 		const unsubscribeNetwork = selectedNetwork.subscribe(newNetwork => {
-			console.log(`Balance: Network changed to ${newNetwork} - reinitializing balances`);
+			console.log(`Balance: Network changed to ${JSON.stringify(newNetwork?.name)} - reinitializing balances`);
 			initialize(newNetwork, currentNetwork, value => (currentNetwork = value));
 		});
 		// Subscribe to address changes
@@ -148,14 +129,19 @@
 			console.log(`Balance: RPC URL changed to ${newRpcURL} - reinitializing balances`);
 			initialize(newRpcURL, currentRpcURL, value => (currentRpcURL = value));
 		});
+
+		// Subscribe to tokens changes
+		const unsubscribeTokens = tokens.subscribe(async tokensArray => {
+			if (!isInitialized || !$selectedNetwork || !$selectedAddress || !$provider) return;
+
+			// The existing functions already filter what needs loading, so just call them
+			await loadAllTokensInfo();
+			loadAllTokenBalances();
+		});
+
 		// Store unsubscribe functions for cleanup
-		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC];
+		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC, unsubscribeTokens];
 		isInitialized = true; // Mark as initialized to enable reactive effects
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -99999999999999999999999999999999999999999123456789123456789n, decimals: 18, currency: 'ETH' }));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -1000n, decimals: 18, currency: 'ETH' }));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789n, decimals: 0, currency: 'ETH' }, 6));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 0n, decimals: 18, currency: 'ETH' }, 6));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789123456789123456789123456789123456789n, decimals: 40, currency: 'ETH' }, 2));
 	});
 
 	onDestroy(() => {
@@ -214,6 +200,7 @@
 			const contractAddresses = tokensToLoad.map(token => token.contract_address!);
 			// Use batch multicall to load all tokens at once
 			const batchResults = await getBatchTokensInfo(contractAddresses);
+			console.log('Batch token info results:', batchResults);
 			// Save results
 			tokenInfos = updateReactiveMap(tokenInfos, map => {
 				batchResults.forEach((tokenInfo, contractAddress) => {
@@ -246,6 +233,9 @@
 
 	async function loadAllTokenBalances() {
 		const tokensWithContracts = getTokensWithContracts().filter(token => token.contract_address && !loadingTokens.has(token.contract_address));
+
+		console.log('Loading all token balances for', tokensWithContracts.length, 'tokens');
+
 		if (!tokensWithContracts.length) return;
 
 		// Mark all as loading
@@ -256,7 +246,13 @@
 		try {
 			const contractAddresses = tokensWithContracts.map(token => token.contract_address!);
 			// Use batch multicall to load all token balances at once
-			const batchBalances = await getBatchTokenBalancesByAddresses(contractAddresses);
+			const batchAmounts = await getBatchTokenAmountsByAddresses(contractAddresses);
+			const batchBalances = new Map<string, IBalance>();
+			batchAmounts.forEach((amount, contractAddress) => {
+				if (amount) {
+					batchBalances.set(contractAddress, { amount: amount.amount, decimals: amount.decimals, currency: tokenInfos.get(contractAddress)?.symbol || '?' });
+				}
+			});
 
 			// Process results and get fiat rates
 			const fiatResults = await Promise.all(
@@ -306,8 +302,9 @@
 	}
 
 	async function refreshToken(contractAddress: string) {
+		console.log('Refreshing token balance for', contractAddress);
 		if (loadingTokens.has(contractAddress)) {
-			console.log('Token already being refreshed:', contractAddress);
+			console.log('nope, token already being refreshed:', contractAddress);
 			return;
 		}
 		// Clear existing timer
@@ -318,10 +315,15 @@
 		tokenCountdowns.set(contractAddress, 0);
 		loadingTokens = updateReactiveSet(loadingTokens, set => set.add(contractAddress));
 		// Load token information if needed
-		if (!tokenInfos.has(contractAddress)) await loadTokenInfo(contractAddress);
+		if (!tokenInfos.has(contractAddress)) {
+			console.log('Token info missing, loading before balance:', contractAddress);
+			await loadTokenInfo(contractAddress);
+		}
 		try {
+			console.log('getTokenBalanceByAddress ', contractAddress);
 			const tokenBalance = await getTokenBalanceByAddress(contractAddress);
 			if (tokenBalance) {
+				console.log('getExchange for ', contractAddress, tokenBalance);
 				const fiatBalance = await getExchange(tokenBalance, 'USD');
 				tokenBalances = updateReactiveMap(tokenBalances, map => {
 					map.set(contractAddress, {
@@ -338,9 +340,11 @@
 			tokenTimers.set(contractAddress, timer);
 			tokenCountdowns.set(contractAddress, refreshInterval);
 		}
+		console.log('Finished refreshing token balance for', contractAddress);
 	}
 
 	async function refreshBalance() {
+		console.log('Refreshing native balance for', $selectedAddress?.address);
 		if (balanceTimer) clearTimeout(balanceTimer);
 		balanceCountdown = 0;
 		isLoadingBalance = true;
@@ -623,19 +627,19 @@
 	</div>
 {/snippet}
 
-{#snippet refresh(contractAddress)}
-	<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contractAddress)} />
-{/snippet}
+<!--{#snippet refresh(contractAddress)}-->
+<!--	<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contractAddress)} />-->
+<!--{/snippet}-->
 
-{#snippet failedBalanceInfo(refreshFn)}
-	<div class="balance">
-		<div class="info">
-			<div class="amount">Failed to load</div>
-			<div class="fiat">(click refresh to retry)</div>
-		</div>
-		<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={refreshFn} />
-	</div>
-{/snippet}
+<!--{#snippet failedBalanceInfo(refreshFn)}-->
+<!--	<div class="balance">-->
+<!--		<div class="info">-->
+<!--			<div class="amount">Failed to load</div>-->
+<!--			<div class="fiat">(click refresh to retry)</div>-->
+<!--		</div>-->
+<!--		<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={refreshFn} />-->
+<!--	</div>-->
+<!--{/snippet}-->
 
 <!--
 {#snippet nftBalanceInfo(contractInfo)}

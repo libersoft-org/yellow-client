@@ -29,3 +29,4 @@ test-results
 .env.sentry-build-plugin
 .dev_intention
 client
+crypto-utils-storage/

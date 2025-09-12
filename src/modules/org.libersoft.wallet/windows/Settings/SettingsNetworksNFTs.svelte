@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { type INetwork, type INFT, findNetworkByGuid, reorderNFTs } from '@/org.libersoft.wallet/scripts/crypto-utils/network';
+	import { type INetwork, type INFT, findNetworkByGuid, reorderNFTs } from 'libersoft-crypto/network';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';

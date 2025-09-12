@@ -4,7 +4,7 @@
 	import { ledgerWindow } from '@/org.libersoft.wallet/scripts/ledger-window';
 	import LedgerConnect from '@/org.libersoft.wallet/components/LedgerConnect.svelte';
 	import { onMount, onDestroy } from 'svelte';
-	import { initializeLedger } from '@/org.libersoft.wallet/scripts/crypto-utils/ledger';
+	import { initializeLedger } from 'libersoft-crypto/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 
 	let elWindow: Window | undefined = $state();
@@ -24,14 +24,6 @@
 		await initializeLedger();
 	}
 </script>
-
-<style>
-	.ledger-setup {
-		max-width: 500px;
-		margin: 0 auto;
-		padding: 20px;
-	}
-</style>
 
 <Window title="Ledger" width="600px" height="600px" testId="ledger-window" bind:this={elWindow}>
 	<div class="ledger-setup">
