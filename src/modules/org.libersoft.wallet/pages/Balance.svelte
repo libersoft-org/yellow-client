@@ -523,10 +523,6 @@
 			padding-left: 50px;
 		}
 
-		.amount__value {
-			max-width: 150px;
-		}
-
 		:global(.ellipsis.ellipsis-token-balance::after) {
 			content: 'X'; /* one character for height reference */
 			visibility: hidden; /* doesn’t show, but contributes to layout */
