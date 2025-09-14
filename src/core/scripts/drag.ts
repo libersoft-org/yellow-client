@@ -105,8 +105,6 @@ export class TableDragManager {
 
 		if (!dragHandle || event.button !== 0) return;
 
-		console.log('Drag handle clicked:', dragHandle); // Debug log
-
 		const row = dragHandle.closest('tr');
 		const tbody = row?.closest('tbody');
 		if (!row || !tbody) return;
@@ -118,11 +116,8 @@ export class TableDragManager {
 
 		// Disable dragging if there's only one row (nothing to reorder)
 		if (allRows.length <= 1) {
-			console.log('Only one row in table, dragging disabled');
 			return;
 		}
-
-		console.log('Starting drag for row index:', index); // Debug log
 
 		this.state.dragSourceIndex = index;
 		this.state.isDragging = true;
@@ -168,15 +163,9 @@ export class TableDragManager {
 
 		// Capture the exact width of the original row
 		const originalRowWidth = originalRowRect.width;
-		console.log('Original row width:', originalRowWidth);
 
 		this.state.originalRowHeight = height;
 		this.state.originalRowWidth = originalRowWidth;
-		console.log('Final captured dimensions - Height:', this.state.originalRowHeight, 'Width:', this.state.originalRowWidth);
-		console.log('Row element:', row);
-		console.log('Row computed styles height:', computedStyles.height);
-		console.log('Row computed styles width:', computedStyles.width);
-		console.log('Row getBoundingClientRect:', originalRowRect);
 
 		this.state.dragClone = row.cloneNode(true) as HTMLElement;
 		const clone = this.state.dragClone;
@@ -261,27 +250,26 @@ export class TableDragManager {
 		const originalCells = row.querySelectorAll('td, th');
 		const cloneCells = clone.querySelectorAll('td, th');
 
-		console.log('Cloning row with classes:', row.className);
-		console.log('Original cells count:', originalCells.length);
-		console.log('Clone cells count:', cloneCells.length);
-
 		originalCells.forEach((cell, i) => {
 			if (cloneCells[i]) {
 				const cellStyles = window.getComputedStyle(cell);
 				const cloneCell = cloneCells[i] as HTMLElement;
 
-				console.log(`Cell ${i} classes:`, cell.className);
-				console.log(`Cell ${i} computed display:`, cellStyles.display);
-
-				// Get the actual rendered width of the cell
+				// Get the actual rendered width of the cell BEFORE any modifications
 				const cellRect = cell.getBoundingClientRect();
 				const actualCellWidth = cellRect.width;
 
-				// Preserve exact cell dimensions
-				cloneCell.style.width = `${actualCellWidth}px`;
+				// Calculate padding to subtract from width
+				const paddingLeft = parseFloat(cellStyles.paddingLeft) || 0;
+				const paddingRight = parseFloat(cellStyles.paddingRight) || 0;
+				const totalPadding = paddingLeft + paddingRight;
+				const contentWidth = actualCellWidth - totalPadding;
+
+				// Preserve exact cell dimensions with padding-adjusted width
+				cloneCell.style.width = `${contentWidth}px`;
 				cloneCell.style.height = cellStyles.height;
 				cloneCell.style.minWidth = cellStyles.minWidth;
-				cloneCell.style.maxWidth = `${actualCellWidth}px`; // Use exact actual width
+				cloneCell.style.maxWidth = `${contentWidth}px`; // Use padding-adjusted width
 				cloneCell.style.minHeight = cellStyles.minHeight;
 				cloneCell.style.maxHeight = cellStyles.maxHeight;
 
@@ -291,13 +279,28 @@ export class TableDragManager {
 			}
 		});
 
-		// Add clone to document body instead of tbody
-		document.body.appendChild(clone);
+		// Create a temporary table wrapper to preserve table layout
+		const tableWrapper = document.createElement('table');
+		tableWrapper.style.position = 'fixed';
+		tableWrapper.style.pointerEvents = 'none';
+		tableWrapper.style.zIndex = '1000';
+		tableWrapper.style.opacity = '0.9';
+		tableWrapper.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+		tableWrapper.style.width = `${this.state.originalRowWidth}px`;
+		tableWrapper.style.borderCollapse = 'collapse';
+		tableWrapper.style.tableLayout = 'fixed';
+		tableWrapper.className = 'dragged-row-clone';
 
-		// Debug: log the final clone structure
-		console.log('Final clone HTML:', clone.outerHTML);
-		console.log('Final clone classes:', clone.className);
-		console.log('Final clone computed styles:', window.getComputedStyle(clone));
+		// Create tbody and add the row
+		const tbody = document.createElement('tbody');
+		tbody.appendChild(clone);
+		tableWrapper.appendChild(tbody);
+
+		// Add table wrapper to document body
+		document.body.appendChild(tableWrapper);
+
+		// Update state to reference the table wrapper
+		this.state.dragClone = tableWrapper;
 
 		// Position clone at mouse with boundary constraints
 		this.updateClonePosition(x, y);
@@ -521,8 +524,6 @@ export class TableDragManager {
 	private handleMouseUp = (): void => {
 		if (!this.state.isDragging || this.state.dragSourceIndex === null) return;
 
-		console.log('Mouse up - completing drag operation'); // Debug log
-
 		// Remove all gap elements
 		document.querySelectorAll('tr.drop-gap').forEach(gap => gap.remove());
 
@@ -543,7 +544,6 @@ export class TableDragManager {
 			if (this.state.dragOverIndex > this.state.dragSourceIndex) {
 				targetIndex = this.state.dragOverIndex - 1;
 			}
-			console.log('Performing reorder from', this.state.dragSourceIndex, 'to', targetIndex); // Debug log
 			this.config.onReorder(this.state.dragSourceIndex, targetIndex);
 		}
 
@@ -551,8 +551,6 @@ export class TableDragManager {
 	};
 
 	private cleanup(): void {
-		console.log('Cleaning up drag state'); // Debug log
-
 		// Remove all gap elements
 		document.querySelectorAll('tr.drop-gap').forEach(gap => gap.remove());
 

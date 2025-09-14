@@ -69,23 +69,11 @@ function injectDragStyles() {
 		}
 
 		/* Ensure dragged table rows maintain their structure */
-		.dragged-row-clone {
-			table-layout: fixed !important;
-			width: auto !important;
-			height: auto !important;
-			background-color: #ffffff !important; /* Ensure default background */
-			display: table-row !important; /* Force table row display */
-			overflow: hidden !important; /* Prevent content overflow */
-		}
+		
 
 		.dragged-row-clone td,
 		.dragged-row-clone th {
-			white-space: nowrap !important;
-			overflow: hidden !important;
-			text-overflow: ellipsis !important;
 			background-color: inherit !important; /* Inherit from parent */
-			display: table-cell !important; /* Force table cell display */
-			vertical-align: middle !important; /* Ensure proper vertical alignment */
 		}
 		
 		/* Disabled drag handles when only one row */
