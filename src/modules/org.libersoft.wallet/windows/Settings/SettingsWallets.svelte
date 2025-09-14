@@ -99,20 +99,24 @@
 						<Td>
 							<DragHandle />
 						</Td>
-						<Td padding="0 10px" expand class="ellipsis">
+						<Td padding="0 10px" class="ellipsis ellipsis-50">
 							<Clickable onClick={() => clickWallet(wallet)}>
 								{wallet.name}
 							</Clickable>
 						</Td>
-						<Td padding="0" align="center">
+						<Td class="ellipsis ellipsis-50" padding="0" align="center">
 							<Clickable onClick={() => clickWallet(wallet)}>
-								<div class="item" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-									<Icon img={getWalletTypeIcon(wallet)} alt={getWalletTypeText(wallet)} colorVariable="--primary-foreground" size="16px" />
-									<span>{getWalletTypeText(wallet)}</span>
+								<span class="td__row">
+									<span class="td__icon">
+										<Icon img={getWalletTypeIcon(wallet)} alt={getWalletTypeText(wallet)} colorVariable="--primary-foreground" size="16px" />
+									</span>
+									<span class="td__text">{getWalletTypeText(wallet)}</span>
 									{#if isHwWalletActive(wallet)}
-										<Icon img="img/check.svg" alt="Connected" size="16px" />
+										<span class="td__icon">
+											<Icon img="img/check.svg" alt="Connected" size="16px" />
+										</span>
 									{/if}
-								</div>
+								</span>
 							</Clickable>
 						</Td>
 						<Td padding="0" align="center">
