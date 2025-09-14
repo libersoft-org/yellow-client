@@ -518,6 +518,12 @@
 		min-width: 120px;
 	}
 
+	.spinner-wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
 	@media (max-width: 768px) {
 		.balance {
 			padding-left: 50px;
@@ -576,7 +582,9 @@
 		{#if !$isMobile}
 			<Td class="ellipsis ellipsis-token-balance">
 				{#if isLoadingBalance}
-					{@render spinner()}
+					<div class="spinner-wrapper">
+						{@render spinner()}
+					</div>
 				{:else if balanceData}
 					{@render balanceInfo(balanceData)}
 				{:else}
