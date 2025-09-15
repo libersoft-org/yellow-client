@@ -484,11 +484,19 @@
 		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 	}
 
 	.balance :where(.amount__value, .amount__symbol) {
 		font-size: 18px;
 		font-weight: bold;
+	}
+
+	.balance .amount,
+	.balance .fiat {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.balance :where(.fiat__value, .fiat__symbol) {
