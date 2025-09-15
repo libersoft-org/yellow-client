@@ -514,10 +514,6 @@
 		flex: initial;
 	}
 
-	:global(.ellipsis.ellipsis-token-balance) .balance {
-		min-width: 120px;
-	}
-
 	.spinner-wrapper {
 		display: flex;
 		justify-content: center;
