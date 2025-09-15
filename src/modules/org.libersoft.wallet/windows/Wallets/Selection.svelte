@@ -2,10 +2,11 @@
 	import { wallets, type IWallet } from 'libersoft-crypto/wallet';
 	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
-	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
+	import type { ISettingsNode, IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import SelectionWallets from '@/org.libersoft.wallet/windows/Wallets/SelectionWallets.svelte';
 	import SelectionWalletsWallet from '@/org.libersoft.wallet/windows/Wallets/SelectionWalletsWallet.svelte';
-	let elBaseSettings: BaseSettings | undefined;
+	let elBaseSettings: IBaseSettingsInstance | undefined;
 
 	// Debug information
 	//console.log('Wallets.svelte - $wallets:', $wallets);
@@ -24,7 +25,7 @@
 		}));
 	});
 
-	let settingsObject = $derived.by(() => {
+	let settingsObject: ISettingsNode = $derived.by(() => {
 		return attachParents({
 			title: 'Wallets',
 			name: 'wallets',
@@ -38,4 +39,4 @@
 	});
 </script>
 
-<BaseSettings {settingsObject} bind:this={elBaseSettings} />
+<BaseSettingsWindow {settingsObject} bind:this={elBaseSettings} />

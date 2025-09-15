@@ -15,7 +15,8 @@
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	//import Input from '@/core/components/Input/Input.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	const setSettingsSection = getContext<Function>('setSettingsSection');
+	import type { SetSettingsSectionFn } from '@/core/types/settings.ts';
+	const setSettingsSection = getContext<SetSettingsSectionFn>('setSettingsSection');
 
 	async function create_new_theme() {
 		// Clone the current theme

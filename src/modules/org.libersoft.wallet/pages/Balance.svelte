@@ -46,6 +46,8 @@
 
 	$inspect('TOKENINFOSSSS:', tokenInfos);
 	$inspect('$tokens', $tokens);
+	$inspect('$nfts', $nfts);
+	$inspect('nftContractInfos', nftContractInfos);
 
 	// Helper functions
 	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
@@ -72,14 +74,14 @@
 		tokenBalances.clear();
 		tokenInfos.clear();
 		loadingTokenInfos.clear();
-		//nftContractInfos.clear();
-		//lastNFTsLength = 0;
+		nftContractInfos.clear();
+		lastNFTsLength = 0;
 	}
 
 	async function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
-			//loadNFTContractInfos();
+			loadNFTContractInfos();
 			if ($tokens?.length) {
 				await loadAllTokensInfo();
 				console.log('All token infos loaded:', tokenInfos);
@@ -364,7 +366,7 @@
 			balanceCountdown = refreshInterval;
 		}
 	}
-	/*
+
 	async function loadNFTContractInfos() {
 		// Load info for all configured NFT contracts
 		if (!$nfts || $nfts.length === 0) return;
@@ -386,10 +388,14 @@
 			// Load all NFTs from configured contracts at once
 			const allNFTItems = await getNFTsFromConfiguredContracts();
 			console.log('Loaded all NFT items:', allNFTItems.length);
+			console.log('Processing NFT contracts, $nfts:', $nfts);
+			console.log('About to process', $nfts.length, 'configured contracts');
 			// Process results for each configured contract
 			$nfts.forEach(nft => {
+				console.log('Processing NFT contract:', nft.contract_address);
 				if (!nft.contract_address) return;
 				const contractNFTs = allNFTItems.filter(item => item.contract_address === nft.contract_address);
+				console.log('Found', contractNFTs.length, 'NFTs for contract', nft.contract_address);
 				if (contractNFTs.length > 0) {
 					const firstNFT = contractNFTs[0];
 					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
@@ -409,6 +415,7 @@
 							loading: false,
 						});
 					});
+					console.log('Set "No NFTs owned" for contract:', nft.contract_address, 'Map size:', nftContractInfos.size);
 				}
 			});
 		} catch (error) {
@@ -444,7 +451,6 @@
 			}
 		}
 	});
-	*/
 </script>
 
 <style>
@@ -536,7 +542,7 @@
 							{@render spinner()}
 						{:else}
 							{@render currencyIcon(iconURL, name)}
-							{@render currencyNameSymbol(name, symbol, address)}
+							{@render currencyNameAndSymbol(name, symbol, address)}
 						{/if}
 					</div>
 					{#if $isMobile}
@@ -606,7 +612,7 @@
 	<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
 {/snippet}
 
-{#snippet currencyNameSymbol(name, symbol, address = null, isLoading = false)}
+{#snippet currencyNameAndSymbol(name: string | null | undefined, symbol: string | null | undefined, address: string | null | undefined = null, isLoading: boolean = false)}
 	<div class="column">
 		<div class="name">
 			{#if isLoading}
@@ -621,7 +627,7 @@
 				Unknown
 			{/if}
 		</div>
-		{#if ($debug || (!name && !symbol)) && address}
+		{#if ($debug || (!name && !symbol)) && !!address}
 			<div class="address">{address}</div>
 		{/if}
 	</div>
@@ -641,7 +647,6 @@
 <!--	</div>-->
 <!--{/snippet}-->
 
-<!--
 {#snippet nftBalanceInfo(contractInfo)}
 	<div class="balance">
 		<div class="info">
@@ -654,7 +659,6 @@
 		</div>
 	</div>
 {/snippet}
--->
 
 <div class="wallet-balance">
 	{#if $selectedNetwork && $selectedAddress}
@@ -695,35 +699,63 @@
 			)}
 		{/if}
 
-		<!--
+		{#if $debug}
+			<div style="background: yellow; padding: 10px; margin: 10px;">
+				<strong>Debug NFTs:</strong><br />
+				$nfts: {JSON.stringify($nfts)}<br />
+				$nfts.length: {$nfts?.length || 'undefined'}<br />
+				nftContractInfos size: {nftContractInfos.size}
+			</div>
+		{/if}
+
 		{#if $nfts && $nfts.length > 0}
 			<Table>
 				<Thead>
 					<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
 						<Th>NFT Contract</Th>
-						<Th>Collection & Balance</Th>
+						{#if !$isMobile}
+							<Th>Collection & Balance</Th>
+						{/if}
+						<Th></Th>
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each $nfts as nft, index}
+					{#each $nfts as nft}
 						{@const contractInfo = nftContractInfos.get(nft.contract_address)}
+						{#if $debug}
+							<Tr>
+								<Td colspan={3} style="background: lightblue; padding: 5px;">
+									<strong>Debug NFT:</strong>
+									{nft.contract_address} | contractInfo: {JSON.stringify(contractInfo)}
+								</Td>
+							</Tr>
+						{/if}
 						<Tr>
 							<Td padding="0" expand>
 								<Clickable onClick={() => selectNFT('')}>
-									<div class="currency-info">
-										{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}
-										{@render currencyNameSymbol('modules/' + module.identifier + '/img/nft.svg', contractInfo?.loading ? 'Loading...' : contractInfo?.name || 'Unknown NFT', nft.contract_address, contractInfo?.loading, $debug)}
+									<div class="item">
+										<div class="currency">
+											{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}
+											{@render currencyNameAndSymbol(contractInfo?.loading ? 'Loading...' : contractInfo?.name || 'Unknown NFT', contractInfo?.collection || 'Unknown Collection', nft.contract_address)}
+										</div>
+										{#if $isMobile}
+											{@render nftBalanceInfo(contractInfo)}
+										{/if}
 									</div>
 								</Clickable>
 							</Td>
+							{#if !$isMobile}
+								<Td>
+									{@render nftBalanceInfo(contractInfo)}
+								</Td>
+							{/if}
 							<Td>
-								{@render nftBalanceInfo(contractInfo)}
+								<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="16px" padding="5px" onClick={() => loadNFTContractInfos()} />
 							</Td>
 						</Tr>
 					{/each}
 				</Tbody>
 			</Table>
 		{/if}
--->
 	{/if}
 </div>

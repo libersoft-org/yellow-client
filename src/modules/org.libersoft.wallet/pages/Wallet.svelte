@@ -4,7 +4,7 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { selectedWallet, selectedAddress, wallets } from 'libersoft-crypto/wallet';
 	import { reconnect, availableRPCURLs, status } from 'libersoft-crypto/provider';
-	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow, networksWindow } from '@/org.libersoft.wallet/scripts/ui';
+	import { section, setSection, settingsWindow, walletsWindow, rpcServersWindow, networksWindow, walletWelcomeWizardWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { networks, selectedNetwork } from 'libersoft-crypto/network';
 	import { rpcURL } from 'libersoft-crypto/provider';
 	import { shortenAddress } from '$lib/shortenAddress.ts';
@@ -169,7 +169,7 @@
 		<div class="network-address" class:mobile={$isMobile}>
 			<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await $networksWindow?.open()} data-testid="wallet-network-dropdown" />
 			{#if shouldShowWizard}
-				<Button img="img/wizard.svg" text="Wizard" onClick={() => console.log('Wizard clicked')} />
+				<Button img="img/import.svg" text="Wizard" onClick={() => $walletWelcomeWizardWindow?.open()} data-testid="wallet-wizard-btn" />
 			{/if}
 			<Dropdown text={$selectedAddress && $selectedWallet ? `${$selectedWallet.name} - ${$selectedAddress.name}` : '--- Select your address ---'} onClick={async () => await $walletsWindow?.open()} data-testid="wallet-address-dropdown" />
 		</div>
@@ -203,7 +203,7 @@
 						{/if}
 					</div>
 				</div>
-				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" size="24px" padding="0px" onClick={() => $settingsWindow?.open()} testId="wallet-settings-btn" />
+				<Icon img="img/settings.svg" colorVariable="--secondary-foreground" size="24px" padding="0px" onClick={async () => await $settingsWindow?.open()} testId="wallet-settings-btn" />
 			</div>
 		</div>
 		<div class="buttons">

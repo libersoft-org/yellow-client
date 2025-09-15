@@ -1,12 +1,14 @@
 <script lang="ts">
-	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
+	import type { ISettingsNode, IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import SettingsGeneral from '@/core/windows/Settings/SettingsGeneral.svelte';
 	import SettingsModules from '@/core/windows/Settings/SettingsModules.svelte';
 	import SettingsAppearance from '@/core/windows/Settings/SettingsAppearance.svelte';
 	import SettingsNotifications from '@/core/windows/Settings/SettingsNotifications.svelte';
 	import SettingsAppearanceTheme from './SettingsAppearanceTheme.svelte';
-	let elBaseSettings: BaseSettings;
-	let settingsObject = {
+	let elBaseSettings: IBaseSettingsInstance;
+
+	let settingsObject: ISettingsNode = {
 		title: 'Settings',
 		name: 'settings',
 		menu: [
@@ -71,4 +73,4 @@
 	}
 </script>
 
-<BaseSettings testId="global-settings" {settingsObject} bind:this={elBaseSettings} />
+<BaseSettingsWindow testId="global-settings" {settingsObject} bind:this={elBaseSettings} />
