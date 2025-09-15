@@ -16,12 +16,14 @@
 	}
 	let { close, networkGuid, item }: Props = $props();
 	let nftContractAddress: string | undefined = $state();
+	let nftTokenId: string | undefined = $state();
 	let error: string | null | undefined = $state();
 	let elNftContractAddress: Input | undefined = $state();
+	let elNftTokenId: Input | undefined = $state();
 
 	let nftData: INFTData = $derived.by(() => ({
 		contract_address: nftContractAddress || '',
-		token_id: '', // Not needed, we'll load all NFTs from the contract
+		token_id: nftTokenId || '', // Required for ERC1155 contracts
 		name: undefined, // Will be loaded from blockchain
 		description: undefined, // Will be loaded from blockchain
 		image: undefined, // Will be loaded from blockchain
@@ -32,12 +34,14 @@
 		error = null;
 		if (item?.item) {
 			nftContractAddress = item.item.contract_address;
+			nftTokenId = item.item.token_id;
 		}
 		elNftContractAddress?.focus();
 	}
 
 	function validateFields(): boolean {
 		nftContractAddress = nftContractAddress?.trim();
+		nftTokenId = nftTokenId?.trim();
 
 		const validationConfig = [{ field: nftContractAddress, element: elNftContractAddress, required: 'Contract address is required' }];
 		error = validateForm(validationConfig);
@@ -67,7 +71,13 @@
 	<Label text="NFT Contract Address *">
 		<Input bind:value={nftContractAddress} bind:this={elNftContractAddress} placeholder="0x..." />
 	</Label>
-	<div style="font-size: 14px; color: var(--tertiary-foreground); margin-top: 5px;">All NFT information (name, description, image, etc.) will be automatically loaded from the blockchain.</div>
+	<Label text="Token ID (Optional)">
+		<Input bind:value={nftTokenId} bind:this={elNftTokenId} placeholder="Leave empty for ERC721, required for specific ERC1155 tokens" />
+	</Label>
+	<div style="font-size: 14px; color: var(--tertiary-foreground); margin-top: 5px;">
+		<strong>ERC721:</strong> Leave Token ID empty to load all NFTs from the contract.<br />
+		<strong>ERC1155:</strong> Specify a Token ID to load a specific token type from the contract.
+	</div>
 	{#if error}
 		<Alert type="error" message={error} />
 	{/if}

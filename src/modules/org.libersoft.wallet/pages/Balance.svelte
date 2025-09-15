@@ -46,6 +46,8 @@
 
 	$inspect('TOKENINFOSSSS:', tokenInfos);
 	$inspect('$tokens', $tokens);
+	$inspect('$nfts', $nfts);
+	$inspect('nftContractInfos', nftContractInfos);
 
 	// Helper functions
 	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
@@ -386,10 +388,14 @@
 			// Load all NFTs from configured contracts at once
 			const allNFTItems = await getNFTsFromConfiguredContracts();
 			console.log('Loaded all NFT items:', allNFTItems.length);
+			console.log('Processing NFT contracts, $nfts:', $nfts);
+			console.log('About to process', $nfts.length, 'configured contracts');
 			// Process results for each configured contract
 			$nfts.forEach(nft => {
+				console.log('Processing NFT contract:', nft.contract_address);
 				if (!nft.contract_address) return;
 				const contractNFTs = allNFTItems.filter(item => item.contract_address === nft.contract_address);
+				console.log('Found', contractNFTs.length, 'NFTs for contract', nft.contract_address);
 				if (contractNFTs.length > 0) {
 					const firstNFT = contractNFTs[0];
 					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
@@ -409,6 +415,7 @@
 							loading: false,
 						});
 					});
+					console.log('Set "No NFTs owned" for contract:', nft.contract_address, 'Map size:', nftContractInfos.size);
 				}
 			});
 		} catch (error) {
@@ -692,6 +699,15 @@
 			)}
 		{/if}
 
+		{#if $debug}
+			<div style="background: yellow; padding: 10px; margin: 10px;">
+				<strong>Debug NFTs:</strong><br />
+				$nfts: {JSON.stringify($nfts)}<br />
+				$nfts.length: {$nfts?.length || 'undefined'}<br />
+				nftContractInfos size: {nftContractInfos.size}
+			</div>
+		{/if}
+
 		{#if $nfts && $nfts.length > 0}
 			<Table>
 				<Thead>
@@ -706,6 +722,14 @@
 				<Tbody>
 					{#each $nfts as nft}
 						{@const contractInfo = nftContractInfos.get(nft.contract_address)}
+						{#if $debug}
+							<Tr>
+								<Td colspan={3} style="background: lightblue; padding: 5px;">
+									<strong>Debug NFT:</strong>
+									{nft.contract_address} | contractInfo: {JSON.stringify(contractInfo)}
+								</Td>
+							</Tr>
+						{/if}
 						<Tr>
 							<Td padding="0" expand>
 								<Clickable onClick={() => selectNFT('')}>
