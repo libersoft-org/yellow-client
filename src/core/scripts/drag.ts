@@ -319,14 +319,23 @@ export class TableDragManager {
 			let constrainedX = x - 10;
 			let constrainedY = y - 20;
 
+			// Get actual clone dimensions
+			const cloneWidth = cloneRect.width;
+			let cloneHeight = cloneRect.height;
+
+			// Fix zero height issue - use stored original height if clone height is 0
+			if (cloneHeight === 0) {
+				cloneHeight = this.state.originalRowHeight || 50; // Use stored height or fallback
+			}
+
 			// Ensure clone doesn't go outside table left boundary
 			if (constrainedX < tbodyRect.left) {
 				constrainedX = tbodyRect.left;
 			}
 
 			// Ensure clone doesn't go outside table right boundary
-			if (constrainedX + cloneRect.width > tbodyRect.right) {
-				constrainedX = tbodyRect.right - cloneRect.width;
+			if (constrainedX + cloneWidth > tbodyRect.right) {
+				constrainedX = tbodyRect.right - cloneWidth;
 			}
 
 			// Ensure clone doesn't go outside table top boundary
@@ -335,8 +344,14 @@ export class TableDragManager {
 			}
 
 			// Ensure clone doesn't go outside table bottom boundary
-			if (constrainedY + cloneRect.height > tbodyRect.bottom) {
-				constrainedY = tbodyRect.bottom - cloneRect.height;
+			if (constrainedY + cloneHeight > tbodyRect.bottom) {
+				constrainedY = tbodyRect.bottom - cloneHeight;
+			}
+
+			// Additional safety check: if clone is still too big for the table, scale it down
+			if (cloneHeight > tbodyRect.height) {
+				// If clone is taller than the entire table, position it at the top
+				constrainedY = tbodyRect.top;
 			}
 
 			// Apply constrained position
