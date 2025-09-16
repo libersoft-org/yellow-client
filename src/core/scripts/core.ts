@@ -45,9 +45,25 @@ export function setCorePage(name: string | null): void {
 
 export function setModule(name: string | null): void {
 	console.log('setModule:', name);
+	updateLastModuleId(name);
 	if (get(selected_corepage_id) !== null) selected_corepage_id.set(null);
 	if (get(selected_module_id) !== name) selected_module_id.set(name);
 	if (name === null) hideSidebarMobile.set(false);
+}
+
+function updateLastModuleId(id) {
+	//console.log('updateLastModuleId: ' + id);
+	const aa = get(active_account);
+	if (!aa) return;
+	accounts_config.update(accounts => {
+		accounts.forEach(account => {
+			if (account.id === aa.id) {
+				account.settings = account.settings ? account.settings : {};
+				account.settings.last_module_id = id;
+			}
+		});
+		return accounts;
+	});
 }
 
 interface IRelayStore<T> extends Readable<T | null> {

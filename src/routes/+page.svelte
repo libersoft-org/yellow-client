@@ -197,24 +197,9 @@
 		// });
 	}
 
-	function updateLastModuleId(id) {
-		//console.log('updateLastModuleId: ' + id);
-		if (!$active_account) return;
-		accounts_config.update(accounts => {
-			accounts.forEach(account => {
-				if (account.id === $active_account.id) {
-					account.settings = account.settings ? account.settings : {};
-					account.settings.last_module_id = id;
-				}
-			});
-			return accounts;
-		});
-	}
-
 	function onSelectModule(id) {
 		//console.log('onSelectModule: ' + id);
 		setModule(id);
-		updateLastModuleId(id);
 	}
 
 	function onCloseModule() {

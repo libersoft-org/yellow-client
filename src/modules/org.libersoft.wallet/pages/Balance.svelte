@@ -4,7 +4,7 @@
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.ts';
 	import { selectedNetwork, tokens, nfts } from 'libersoft-crypto/network';
-	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenBalancesByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from 'libersoft-crypto/balance';
+	import { getBalance, getTokenBalanceByAddress, getExchange, getTokenInfo, getBatchTokensInfo, getBatchTokenAmountsByAddresses, getNFTsFromConfiguredContracts, formatBalance, type IBalance, type INFTItem } from 'libersoft-crypto/balance';
 	import { provider, rpcURL } from 'libersoft-crypto/provider';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -41,30 +41,13 @@
 	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
 	let nftContractInfos = $state(new Map<string, { name: string; collection: string; balance: number; loading: boolean }>());
 	let lastNFTsLength = $state(0);
-	let lastTokensLength = $state(0);
 	let isInitialized = $state(false);
 	let subscriptions: Array<() => void> = [];
 
-	/*
-	$effect(() => {
-		if (!$tokens?.length || !$selectedNetwork || !$selectedAddress || !$provider) return;
-		// Only process if tokens array actually changed in length or we have genuinely new tokens
-		if ($tokens.length !== lastTokensLength) {
-			lastTokensLength = $tokens.length;
-			const newTokens = getTokensWithContracts().filter(token => token.contract_address && !initializedTokens.has(token.contract_address));
-			if (newTokens.length > 0) {
-				console.log('Found new tokens to initialize:', newTokens.length);
-				// Mark as initialized
-				newTokens.forEach(token => {
-					if (token.contract_address) initializedTokens.add(token.contract_address);
-				});
-				// Load info and balances for new tokens
-				loadAllTokensInfo();
-				loadAllTokenBalances();
-			}
-		}
-	});
-*/
+	$inspect('TOKENINFOSSSS:', tokenInfos);
+	$inspect('$tokens', $tokens);
+	$inspect('$nfts', $nfts);
+	$inspect('nftContractInfos', nftContractInfos);
 
 	// Helper functions
 	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
@@ -106,17 +89,17 @@
 		tokenBalances.clear();
 		tokenInfos.clear();
 		loadingTokenInfos.clear();
-		//nftContractInfos.clear();
-		//lastNFTsLength = 0;
-		lastTokensLength = 0;
+		nftContractInfos.clear();
+		lastNFTsLength = 0;
 	}
 
-	function initializeAllBalances() {
+	async function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
-			//loadNFTContractInfos();
+			loadNFTContractInfos();
 			if ($tokens?.length) {
-				loadAllTokensInfo();
+				await loadAllTokensInfo();
+				console.log('All token infos loaded:', tokenInfos);
 				loadAllTokenBalances();
 			}
 		}
@@ -163,14 +146,19 @@
 			console.log(`Balance: RPC URL changed to ${newRpcURL} - reinitializing balances`);
 			initialize(newRpcURL, currentRpcURL, value => (currentRpcURL = value));
 		});
+
+		// Subscribe to tokens changes
+		const unsubscribeTokens = tokens.subscribe(async tokensArray => {
+			if (!isInitialized || !$selectedNetwork || !$selectedAddress || !$provider) return;
+
+			// The existing functions already filter what needs loading, so just call them
+			await loadAllTokensInfo();
+			loadAllTokenBalances();
+		});
+
 		// Store unsubscribe functions for cleanup
-		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC];
+		subscriptions = [unsubscribeNetwork, unsubscribeAddress, unsubscribeRPC, unsubscribeTokens];
 		isInitialized = true; // Mark as initialized to enable reactive effects
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -99999999999999999999999999999999999999999123456789123456789n, decimals: 18, currency: 'ETH' }));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: -1000n, decimals: 18, currency: 'ETH' }));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789n, decimals: 0, currency: 'ETH' }, 6));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 0n, decimals: 18, currency: 'ETH' }, 6));
-		console.log('😊😊😊😊😊😊😊😊😊', formatBalance({ amount: 123456789123456789123456789123456789123456789123456789n, decimals: 40, currency: 'ETH' }, 2));
 	});
 
 	onDestroy(() => {
@@ -229,6 +217,7 @@
 			const contractAddresses = tokensToLoad.map(token => token.contract_address!);
 			// Use batch multicall to load all tokens at once
 			const batchResults = await getBatchTokensInfo(contractAddresses);
+			console.log('Batch token info results:', batchResults);
 			// Save results
 			tokenInfos = updateReactiveMap(tokenInfos, map => {
 				batchResults.forEach((tokenInfo, contractAddress) => {
@@ -261,6 +250,9 @@
 
 	async function loadAllTokenBalances() {
 		const tokensWithContracts = getTokensWithContracts().filter(token => token.contract_address && !loadingTokens.has(token.contract_address));
+
+		console.log('Loading all token balances for', tokensWithContracts.length, 'tokens');
+
 		if (!tokensWithContracts.length) return;
 
 		// Mark all as loading
@@ -271,7 +263,13 @@
 		try {
 			const contractAddresses = tokensWithContracts.map(token => token.contract_address!);
 			// Use batch multicall to load all token balances at once
-			const batchBalances = await getBatchTokenBalancesByAddresses(contractAddresses);
+			const batchAmounts = await getBatchTokenAmountsByAddresses(contractAddresses);
+			const batchBalances = new Map<string, IBalance>();
+			batchAmounts.forEach((amount, contractAddress) => {
+				if (amount) {
+					batchBalances.set(contractAddress, { amount: amount.amount, decimals: amount.decimals, currency: tokenInfos.get(contractAddress)?.symbol || '?' });
+				}
+			});
 
 			// Process results and get fiat rates
 			const fiatResults = await Promise.all(
@@ -321,8 +319,9 @@
 	}
 
 	async function refreshToken(contractAddress: string) {
+		console.log('Refreshing token balance for', contractAddress);
 		if (loadingTokens.has(contractAddress)) {
-			console.log('Token already being refreshed:', contractAddress);
+			console.log('nope, token already being refreshed:', contractAddress);
 			return;
 		}
 		// Clear existing timer
@@ -333,10 +332,15 @@
 		tokenCountdowns.set(contractAddress, 0);
 		loadingTokens = updateReactiveSet(loadingTokens, set => set.add(contractAddress));
 		// Load token information if needed
-		if (!tokenInfos.has(contractAddress)) await loadTokenInfo(contractAddress);
+		if (!tokenInfos.has(contractAddress)) {
+			console.log('Token info missing, loading before balance:', contractAddress);
+			await loadTokenInfo(contractAddress);
+		}
 		try {
+			console.log('getTokenBalanceByAddress ', contractAddress);
 			const tokenBalance = await getTokenBalanceByAddress(contractAddress);
 			if (tokenBalance) {
+				console.log('getExchange for ', contractAddress, tokenBalance);
 				const fiatBalance = await getExchange(tokenBalance, 'USD');
 				tokenBalances = updateReactiveMap(tokenBalances, map => {
 					map.set(contractAddress, {
@@ -353,9 +357,11 @@
 			tokenTimers.set(contractAddress, timer);
 			tokenCountdowns.set(contractAddress, refreshInterval);
 		}
+		console.log('Finished refreshing token balance for', contractAddress);
 	}
 
 	async function refreshBalance() {
+		console.log('Refreshing native balance for', $selectedAddress?.address);
 		if (balanceTimer) clearTimeout(balanceTimer);
 		balanceCountdown = 0;
 		isLoadingBalance = true;
@@ -375,7 +381,7 @@
 			balanceCountdown = refreshInterval;
 		}
 	}
-	/*
+
 	async function loadNFTContractInfos() {
 		// Load info for all configured NFT contracts
 		if (!$nfts || $nfts.length === 0) return;
@@ -397,10 +403,14 @@
 			// Load all NFTs from configured contracts at once
 			const allNFTItems = await getNFTsFromConfiguredContracts();
 			console.log('Loaded all NFT items:', allNFTItems.length);
+			console.log('Processing NFT contracts, $nfts:', $nfts);
+			console.log('About to process', $nfts.length, 'configured contracts');
 			// Process results for each configured contract
 			$nfts.forEach(nft => {
+				console.log('Processing NFT contract:', nft.contract_address);
 				if (!nft.contract_address) return;
 				const contractNFTs = allNFTItems.filter(item => item.contract_address === nft.contract_address);
+				console.log('Found', contractNFTs.length, 'NFTs for contract', nft.contract_address);
 				if (contractNFTs.length > 0) {
 					const firstNFT = contractNFTs[0];
 					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
@@ -420,6 +430,7 @@
 							loading: false,
 						});
 					});
+					console.log('Set "No NFTs owned" for contract:', nft.contract_address, 'Map size:', nftContractInfos.size);
 				}
 			});
 		} catch (error) {
@@ -455,7 +466,6 @@
 			}
 		}
 	});
-	*/
 </script>
 
 <style>
@@ -574,7 +584,7 @@
 							{@render spinner()}
 						{:else}
 							{@render currencyIcon(iconURL, name)}
-							{@render currencyNameSymbol(name, symbol, address)}
+							{@render currencyNameAndSymbol(name, symbol, address)}
 						{/if}
 					</div>
 					{#if $isMobile}
@@ -649,7 +659,7 @@
 	</span>
 {/snippet}
 
-{#snippet currencyNameSymbol(name, symbol, address = null, isLoading = false)}
+{#snippet currencyNameAndSymbol(name: string | null | undefined, symbol: string | null | undefined, address: string | null | undefined = null, isLoading: boolean = false)}
 	<div class="name td__text">
 		{#if isLoading}
 			{@render spinner()}
@@ -663,26 +673,25 @@
 			Unknown
 		{/if}
 	</div>
-	{#if ($debug || (!name && !symbol)) && address}
+	{#if ($debug || (!name && !symbol)) && !!address}
 		<div class="address">{address}</div>
 	{/if}
 {/snippet}
 
-{#snippet refresh(contractAddress)}
-	<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contractAddress)} />
-{/snippet}
+<!--{#snippet refresh(contractAddress)}-->
+<!--	<Icon img="img/reset.svg" alt="Refresh" size="16px" padding="5px" onClick={() => refreshToken(contractAddress)} />-->
+<!--{/snippet}-->
 
-{#snippet failedBalanceInfo(refreshFn)}
-	<div class="balance">
-		<div class="info">
-			<div class="amount">Failed to load</div>
-			<div class="fiat">(click refresh to retry)</div>
-		</div>
-		<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={refreshFn} />
-	</div>
-{/snippet}
+<!--{#snippet failedBalanceInfo(refreshFn)}-->
+<!--	<div class="balance">-->
+<!--		<div class="info">-->
+<!--			<div class="amount">Failed to load</div>-->
+<!--			<div class="fiat">(click refresh to retry)</div>-->
+<!--		</div>-->
+<!--		<Icon img="img/reset.svg" alt="Retry" size="16px" padding="5px" onClick={refreshFn} />-->
+<!--	</div>-->
+<!--{/snippet}-->
 
-<!--
 {#snippet nftBalanceInfo(contractInfo)}
 	<div class="balance">
 		<div class="info">
@@ -695,7 +704,6 @@
 		</div>
 	</div>
 {/snippet}
--->
 
 <div class="wallet-balance">
 	{#if $selectedNetwork && $selectedAddress}
@@ -736,35 +744,63 @@
 			)}
 		{/if}
 
-		<!--
+		{#if $debug}
+			<div style="background: yellow; padding: 10px; margin: 10px;">
+				<strong>Debug NFTs:</strong><br />
+				$nfts: {JSON.stringify($nfts)}<br />
+				$nfts.length: {$nfts?.length || 'undefined'}<br />
+				nftContractInfos size: {nftContractInfos.size}
+			</div>
+		{/if}
+
 		{#if $nfts && $nfts.length > 0}
 			<Table>
 				<Thead>
 					<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
 						<Th>NFT Contract</Th>
-						<Th>Collection & Balance</Th>
+						{#if !$isMobile}
+							<Th>Collection & Balance</Th>
+						{/if}
+						<Th></Th>
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each $nfts as nft, index}
+					{#each $nfts as nft}
 						{@const contractInfo = nftContractInfos.get(nft.contract_address)}
+						{#if $debug}
+							<Tr>
+								<Td colspan={3} style="background: lightblue; padding: 5px;">
+									<strong>Debug NFT:</strong>
+									{nft.contract_address} | contractInfo: {JSON.stringify(contractInfo)}
+								</Td>
+							</Tr>
+						{/if}
 						<Tr>
 							<Td padding="0" expand>
 								<Clickable onClick={() => selectNFT('')}>
-									<div class="currency-info">
-										{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}
-										{@render currencyNameSymbol('modules/' + module.identifier + '/img/nft.svg', contractInfo?.loading ? 'Loading...' : contractInfo?.name || 'Unknown NFT', nft.contract_address, contractInfo?.loading, $debug)}
+									<div class="item">
+										<div class="currency">
+											{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}
+											{@render currencyNameAndSymbol(contractInfo?.loading ? 'Loading...' : contractInfo?.name || 'Unknown NFT', contractInfo?.collection || 'Unknown Collection', nft.contract_address)}
+										</div>
+										{#if $isMobile}
+											{@render nftBalanceInfo(contractInfo)}
+										{/if}
 									</div>
 								</Clickable>
 							</Td>
+							{#if !$isMobile}
+								<Td>
+									{@render nftBalanceInfo(contractInfo)}
+								</Td>
+							{/if}
 							<Td>
-								{@render nftBalanceInfo(contractInfo)}
+								<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="16px" padding="5px" onClick={() => loadNFTContractInfos()} />
 							</Td>
 						</Tr>
 					{/each}
 				</Tbody>
 			</Table>
 		{/if}
--->
 	{/if}
 </div>

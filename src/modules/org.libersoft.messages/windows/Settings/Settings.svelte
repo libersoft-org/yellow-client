@@ -1,8 +1,9 @@
 <script lang="ts">
-	import BaseSettings from '@/core/components/Settings/BaseSettings.svelte';
+	import BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
+	import type { ISettingsNode, IBaseSettingsInstance } from '@/core/types/settings.ts';
 	import MessagesSettings from './MessagesSettings.svelte';
-	let elBaseSettings: BaseSettings;
-	let settingsObject = {
+	let elBaseSettings: IBaseSettingsInstance;
+	let settingsObject: ISettingsNode = {
 		title: 'Messages settings',
 		name: 'settings',
 		body: MessagesSettings,
@@ -17,4 +18,4 @@
 	}
 </script>
 
-<BaseSettings {settingsObject} bind:this={elBaseSettings} testId="messages-settings" />
+<BaseSettingsWindow {settingsObject} bind:this={elBaseSettings} testId="messages-settings" />

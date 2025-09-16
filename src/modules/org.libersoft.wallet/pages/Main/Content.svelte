@@ -8,6 +8,7 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Page from '@/core/components/Content/ContentPage.svelte';
 	import Wallet from '../Wallet.svelte';
+	import WalletWelcomeWizard from '@/org.libersoft.wallet/components/WalletWelcomeWizard.svelte';
 
 	onMount(() => {
 		hideSidebarMobile.set(true);
@@ -45,3 +46,4 @@
 		<Wallet />
 	</Page>
 </Content>
+<WalletWelcomeWizard />

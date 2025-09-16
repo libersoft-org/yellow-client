@@ -116,7 +116,7 @@
 	<!--	<p>No Trezor devices found.</p>-->
 {/if}
 
-<Switch bind:checked={$usePopup} showLabel="true" label="Use Trezor popup (WebHID) instead of Trezor Connect (TrezorSuite App)" />
+<Switch bind:checked={$usePopup} showLabel={true} label="Use Trezor popup (WebHID) instead of Trezor Connect (TrezorSuite App)" />
 
 <div class="buttons">
 	<Button onClick={handleConnectClick} enabled={!$trezorLoading} data-testid="connect-trezor-btn">

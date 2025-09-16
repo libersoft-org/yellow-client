@@ -62,16 +62,7 @@ export default defineConfig(({ mode }) => {
 				: []),
 			devtoolsJson(),
 			sveltekit(),
-			...(process.env.VITEST
-				? []
-				: [
-						svelteInspector({
-							toggleKeyCombo: 'control-shift',
-							holdMode: true,
-							showToggleButton: 'active',
-							toggleButtonPos: 'top-right',
-						}),
-					]),
+			// svelteInspector configured in svelte.config.js
 			...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
 		],
 		define: {

@@ -24,7 +24,8 @@
 	let filter = $state('');
 	let filteredWallets = $derived(($wallets || []).filter(wallet => wallet.name.toLowerCase().includes(filter.toLowerCase())));
 	let elFilter: Input | undefined = $state();
-	const setSettingsSection = getContext<Function>('setSettingsSection');
+	import type { SetSettingsSectionFn } from '@/core/types/settings.ts';
+	const setSettingsSection = getContext<SetSettingsSectionFn>('setSettingsSection');
 
 	export function onOpen(): void {
 		elFilter?.focus();
