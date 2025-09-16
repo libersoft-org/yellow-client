@@ -545,9 +545,17 @@
 
 		:global(.ellipsis.ellipsis-token-balance::after) {
 			content: 'X'; /* one character for height reference */
-			visibility: hidden; /* doesn’t show, but contributes to layout */
+			visibility: hidden; /* doesn't show, but contributes to layout */
 			display: block;
 			white-space: nowrap; /* same as text */
+		}
+
+		:global(.ellipsis.ellipsis-nft-balance::before) {
+			height: 60px;
+		}
+
+		:global(.ellipsis.ellipsis-nft-balance .td__text) {
+			flex: initial;
 		}
 	}
 </style>
@@ -776,7 +784,7 @@
 							</Tr>
 						{/if}
 						<Tr>
-							<Td padding="0" expand>
+							<Td padding="0" expand class="ellipsis ellipsis-nft-balance">
 								<Clickable onClick={() => selectNFT('')}>
 									<div class="item">
 										<div class="currency">
