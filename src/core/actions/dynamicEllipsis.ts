@@ -12,7 +12,7 @@ interface DynamicEllipsisOptions {
  * of ellipsis table cells, replacing hardcoded heights with flexible sizing
  */
 export const dynamicEllipsis: Action<HTMLElement, DynamicEllipsisOptions> = (element, options = {}) => {
-	const { minHeight = 0, debounceMs = 100 } = options;
+	const { minHeight = 0, debounceMs = 25 } = options;
 
 	let resizeObserver: ResizeObserver | null = null;
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
