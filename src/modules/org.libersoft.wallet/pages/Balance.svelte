@@ -647,13 +647,6 @@
 			{@render spinner()}
 		{/if}
 
-		<div class="fiat-wrapper">
-			<div class="fiat">
-				<span class="fiat__value td__text">0545 654465465</span>
-				<span class="fiat__symbol td__icon">sadsa dsa dsada</span>
-			</div>
-		</div>
-
 		{#if balanceData?.fiat}
 			{@const fp = getBalanceParts(balanceData.fiat, 2)}
 			<div class="fiat-wrapper">
