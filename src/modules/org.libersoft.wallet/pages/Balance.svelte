@@ -17,6 +17,7 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import { dynamicEllipsis } from '@/core/actions/dynamicEllipsis';
 	const refreshInterval = 30;
 	interface ITokenData {
 		crypto: IBalance;
@@ -553,16 +554,13 @@
 			padding-left: 50px;
 		}
 
-		:global(.ellipsis.ellipsis-token-balance::after) {
-			content: 'X'; /* one character for height reference */
-			visibility: hidden; /* doesn't show, but contributes to layout */
-			display: block;
-			white-space: nowrap; /* same as text */
+		/* Dynamic ellipsis for mobile - ::before gets dynamic height */
+		:global(.ellipsis.ellipsis-token-balance.dynamic-ellipsis::after) {
+			content: ''; /* Remove the ::after for dynamic ellipsis */
+			display: none; /* Hide the ::after pseudo-element for dynamic ellipsis */
 		}
 
-		:global(.ellipsis.ellipsis-nft-balance::before) {
-			height: 60px;
-		}
+		/* NFT balance uses ::before with dynamic height - no overrides needed */
 
 		:global(.ellipsis.ellipsis-nft-balance .td__text) {
 			flex: initial;
@@ -591,7 +589,7 @@
 
 {#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
 	<Tr>
-		<Td class={$isMobile ? 'ellipsis ellipsis-token-balance' : 'ellipsis ellipsis-balance'}>
+		<Td class={$isMobile ? 'ellipsis ellipsis-token-balance dynamic-ellipsis' : 'ellipsis ellipsis-balance dynamic-ellipsis'} use={dynamicEllipsis} useParams={{ minHeight: 20 }}>
 			{#if $debug}
 				<pre>{stringifyWithBigInt(balanceData)}</pre>
 			{/if}
@@ -612,7 +610,7 @@
 			</Clickable>
 		</Td>
 		{#if !$isMobile}
-			<Td class="ellipsis ellipsis-token-balance">
+			<Td class="ellipsis ellipsis-token-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 20 }}>
 				{#if isLoadingBalance}
 					<div class="spinner-wrapper">
 						{@render spinner()}
@@ -796,7 +794,7 @@
 							</Tr>
 						{/if}
 						<Tr>
-							<Td padding="0" expand class="ellipsis ellipsis-nft-balance">
+							<Td padding="0" expand class="ellipsis ellipsis-nft-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 30 }}>
 								<Clickable onClick={() => selectNFT('')}>
 									<div class="item">
 										<div class="currency">
@@ -810,7 +808,7 @@
 								</Clickable>
 							</Td>
 							{#if !$isMobile}
-								<Td>
+								<Td class="ellipsis ellipsis-nft-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 30 }}>
 									{@render nftBalanceInfo(contractInfo)}
 								</Td>
 							{/if}

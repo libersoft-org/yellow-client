@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { Action } from 'svelte/action';
+
 	interface Props {
 		children?: Snippet;
 		title?: string;
@@ -11,8 +13,18 @@
 		expand?: boolean;
 		bold?: boolean;
 		class?: string;
+		use?: Action<HTMLElement, any>;
+		useParams?: any;
 	}
-	let { children, title, 'data-testid': dataTestId, padding = '10px', colspan, style, align = 'left', expand = false, bold = false, class: className }: Props = $props();
+	let { children, title, 'data-testid': dataTestId, padding = '10px', colspan, style, align = 'left', expand = false, bold = false, class: className, use: action, useParams }: Props = $props();
+
+	// Handle action invocation
+	$effect(() => {
+		if (action && tdElement) {
+			const result = action(tdElement, useParams);
+			return typeof result === 'function' ? result : result?.destroy;
+		}
+	});
 
 	let tdElement: HTMLTableCellElement;
 </script>
@@ -74,10 +86,16 @@
 
 	:global(.ellipsis::before) {
 		content: 'X'; /* one character for height reference */
-		visibility: hidden; /* doesn’t show, but contributes to layout */
+		visibility: hidden; /* doesn't show, but contributes to layout */
 		display: block;
 		padding: 10px 0; /* vertical padding = cell height */
 		white-space: nowrap; /* same as text */
+	}
+
+	/* Dynamic ellipsis with measured height applied to ::before */
+	:global(.ellipsis.dynamic-ellipsis::before) {
+		height: var(--dynamic-min-height, auto) !important; /* Apply dynamic height to ::before */
+		padding: 0 !important; /* Remove padding since height is now dynamic */
 	}
 
 	/* Global utility classes for icon+text layouts inside table cells */
