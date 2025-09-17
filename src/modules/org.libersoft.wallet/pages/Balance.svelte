@@ -486,6 +486,7 @@
 
 	.balance {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: 10px;
 	}
@@ -507,6 +508,15 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	.balance .fiat-wrapper {
+		width: 100%;
+		flex-basis: 100%;
+	}
+
+	.balance-row {
+		row-gap: 0;
 	}
 
 	.balance :where(.fiat__value, .fiat__symbol) {
@@ -628,7 +638,7 @@
 {/snippet}
 
 {#snippet balanceInfo(balanceData)}
-	<div class="balance td__row">
+	<div class="balance balance-row td__row">
 		{#if balanceData?.crypto}
 			{@const bp = getBalanceParts(balanceData.crypto)}
 			<span class="amount__value td__text">{bp.value}</span>
@@ -637,11 +647,20 @@
 			{@render spinner()}
 		{/if}
 
+		<div class="fiat-wrapper">
+			<div class="fiat">
+				<span class="fiat__value td__text">0545 654465465</span>
+				<span class="fiat__symbol td__icon">sadsa dsa dsada</span>
+			</div>
+		</div>
+
 		{#if balanceData?.fiat}
 			{@const fp = getBalanceParts(balanceData.fiat, 2)}
-			<div class="fiat">
-				<span class="fiat__value td__text">{fp.value}</span>
-				<span class="fiat__symbol td__icon">{fp.symbol}</span>
+			<div class="fiat-wrapper">
+				<div class="fiat">
+					<span class="fiat__value td__text">{fp.value}</span>
+					<span class="fiat__symbol td__icon">{fp.symbol}</span>
+				</div>
 			</div>
 		{/if}
 		{#if $debug}
