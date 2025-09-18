@@ -660,7 +660,7 @@
 		{#if balanceData?.crypto}
 			{@const bp = getBalanceParts(balanceData.crypto)}
 			<div class="amount">
-				<span class="amount__value td__text">8000000000000000000{bp.value}</span>
+				<span class="amount__value td__text">{bp.value}</span>
 				<span class="amount__symbol td__icon">{bp.symbol}</span>
 			</div>
 		{:else}
