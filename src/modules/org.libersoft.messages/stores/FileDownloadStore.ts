@@ -42,7 +42,7 @@ export class FileDownloadStore implements FileDownloadStoreType {
 	}
 
 	isAnyDownloadRunning() {
-		return this.getAll().some(download => download.running);
+		return this.getAll().some(download => download.running || download.pausedLocally);
 	}
 }
 

@@ -5,6 +5,7 @@
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import Button from '@/core/components/Button/Button.svelte';
+	import { get } from 'svelte/store';
 	let { children } = $props();
 	let ref: HTMLDivElement;
 	let attachedUploads = $state<IFileUpload[]>([]);
@@ -17,8 +18,10 @@
 
 	// determine if the bulk download action should be shown
 	let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
-	// subscribe to the store to get the uploads
-	fileUploadStore.store.subscribe(uploads => {
+
+	// get the uploads based on present attachment IDs
+	$effect(() => {
+		const uploads = get(fileUploadStore.store);
 		if (attachmentIds.length === 0) {
 			return;
 		}
@@ -26,6 +29,7 @@
 			return attachmentIds.includes(upload.record.id);
 		});
 	});
+
 	// determine attachments type based on the first attachment
 	const uploadRecordType = $derived.by(() => {
 		return attachedUploads.length > 0 ? attachedUploads[0].record.type : null;
@@ -90,7 +94,7 @@
 	</div>
 	{#if showBulkDownloadAction}
 		<div class="actions">
-			<Button width="80px" img={uploadRecordType === FileUploadRecordType.P2P ? 'img/check.svg' : 'img/download.svg'} text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept all' : 'Download all'} onClick={onAcceptAll} />
+			<Button img={uploadRecordType === FileUploadRecordType.P2P ? 'img/check.svg' : 'img/download.svg'} text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept all' : 'Download all'} onClick={onAcceptAll} />
 		</div>
 	{/if}
 </div>

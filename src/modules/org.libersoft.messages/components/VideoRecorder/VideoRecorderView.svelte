@@ -197,7 +197,7 @@
 		</ButtonBar>
 		<ButtonBar equalize align="right">
 			{#if isRecording}
-				<Button img="modules/{identifier}/img/stop.svg" onClick={recordStop} />
+				<Button img="modules/{identifier}/img/pause.svg" onClick={recordStop} />
 			{:else}
 				<Button img="modules/{identifier}/img/record.svg" enabled={!loading} onClick={recordStart} />
 			{/if}
