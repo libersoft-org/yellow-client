@@ -37,6 +37,8 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		// Switch to wallet module
 		await switchModule(page, 'org.libersoft.wallet');
 
+		await page.getByTestId('wallet-welcome-wizard-Window-close').click();
+
 		// Navigate to Networks settings
 		await goToNetworksSettings(page);
 	});

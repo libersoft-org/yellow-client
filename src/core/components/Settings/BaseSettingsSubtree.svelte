@@ -7,7 +7,7 @@
 	import type { ISettingsNode, ISettingsNodeState, SetSettingsSectionFn, ISettingsComponent } from '@/core/types/settings.ts';
 
 	interface IProps {
-		testId?: string;
+		testId: string;
 		settingsObject: ISettingsNode;
 		activeName: string;
 	}

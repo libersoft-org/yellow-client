@@ -6,8 +6,13 @@ on:
 #  pull_request:
 #    branches: [ master ]
 
+
+permissions:
+  contents: read
+
 jobs:
   e2e-tests:
+
     uses: koo5/yellow-dev/.github/workflows/shared-e2e.yml@master
     with:
       client_repo: ${{ github.repository }}
