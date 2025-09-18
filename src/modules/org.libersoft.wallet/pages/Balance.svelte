@@ -17,76 +17,28 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	const refreshInterval = 30;
-	interface ITokenData {
-		crypto: IBalance;
-		fiat: IBalance | null;
-		timestamp: Date;
-	}
-	interface ITokenInfo {
-		symbol: string;
-		name: string;
-	}
-	let balance = $state<ITokenData | null>(null);
-	let tokenBalances = $state(new Map<string, ITokenData>());
-	let tokenInfos = $state(new Map<string, ITokenInfo>());
-	let isLoadingBalance = $state(false);
-	let loadingTokens = $state(new Set<string>());
-	let loadingTokenInfos = $state(new Set<string>());
-	let balanceCountdown = $state(0);
-	let tokenCountdowns = $state(new Map<string, number>());
+	import { nftDisplayData } from 'libersoft-crypto/src/nfts.ts';
+
 	const tokenTimers = new Map<string, ReturnType<typeof setTimeout>>();
 	const initializedTokens = new Set<string>();
 	let countdownInterval: ReturnType<typeof setInterval> | null = null;
-	let balanceTimer: ReturnType<typeof setTimeout> | null = null;
-	let nftContractInfos = $state(new Map<string, { name: string; collection: string; balance: number; loading: boolean }>());
-	let lastNFTsLength = $state(0);
+
 	let isInitialized = $state(false);
 	let subscriptions: Array<() => void> = [];
-
-	$inspect('TOKENINFOSSSS:', tokenInfos);
-	$inspect('$tokens', $tokens);
-	$inspect('$nfts', $nfts);
-	$inspect('nftContractInfos', nftContractInfos);
-
-	// Helper functions
-	function updateReactiveMap<T>(map: Map<string, T>, updater: (map: Map<string, T>) => void): Map<string, T> {
-		updater(map);
-		return new Map(map);
-	}
-
-	function updateReactiveSet<T>(set: Set<T>, updater: (set: Set<T>) => void): Set<T> {
-		updater(set);
-		return new Set(set);
-	}
-
-	function getTokensWithContracts() {
-		return $tokens.filter(token => token.contract_address);
-	}
 
 	function clearAllTimers() {
 		tokenTimers.forEach(timer => clearTimeout(timer));
 		tokenTimers.clear();
 		if (balanceTimer) clearTimeout(balanceTimer);
 		if (countdownInterval) clearInterval(countdownInterval);
-		initializedTokens.clear();
-		balance = null;
-		tokenBalances.clear();
-		tokenInfos.clear();
-		loadingTokenInfos.clear();
-		nftContractInfos.clear();
-		lastNFTsLength = 0;
 	}
 
 	async function initializeAllBalances() {
 		if ($selectedNetwork && $selectedAddress && $provider) {
 			refreshBalance();
 			loadNFTContractInfos();
-			if ($tokens?.length) {
-				await loadAllTokensInfo();
-				console.log('All token infos loaded:', tokenInfos);
-				loadAllTokenBalances();
-			}
+			await loadAllTokensInfo();
+			loadAllTokenBalances();
 		}
 	}
 
@@ -345,110 +297,9 @@
 		console.log('Finished refreshing token balance for', contractAddress);
 	}
 
-	async function refreshBalance() {
-		console.log('Refreshing native balance for', $selectedAddress?.address);
-		if (balanceTimer) clearTimeout(balanceTimer);
-		balanceCountdown = 0;
-		isLoadingBalance = true;
-		try {
-			const nativeBalance = await getBalance();
-			if (nativeBalance) {
-				const fiatBalance = await getExchange(nativeBalance, 'USD');
-				balance = {
-					crypto: nativeBalance,
-					fiat: fiatBalance,
-					timestamp: new Date(),
-				};
-			}
-		} finally {
-			isLoadingBalance = false;
-			balanceTimer = setTimeout(refreshBalance, refreshInterval * 1000);
-			balanceCountdown = refreshInterval;
-		}
-	}
-
-	async function loadNFTContractInfos() {
-		// Load info for all configured NFT contracts
-		if (!$nfts || $nfts.length === 0) return;
-		console.log('Loading NFT contract infos for', $nfts.length, 'contracts');
-		// Set loading state for all contracts first
-		$nfts.forEach(nft => {
-			if (!nft.contract_address) return;
-			nftContractInfos = updateReactiveMap(nftContractInfos, map => {
-				map.set(nft.contract_address, {
-					name: 'Loading...',
-					collection: 'Loading...',
-					balance: 0,
-					loading: true,
-				});
-			});
-		});
-
-		try {
-			// Load all NFTs from configured contracts at once
-			const allNFTItems = await getNFTsFromConfiguredContracts();
-			console.log('Loaded all NFT items:', allNFTItems.length);
-			console.log('Processing NFT contracts, $nfts:', $nfts);
-			console.log('About to process', $nfts.length, 'configured contracts');
-			// Process results for each configured contract
-			$nfts.forEach(nft => {
-				console.log('Processing NFT contract:', nft.contract_address);
-				if (!nft.contract_address) return;
-				const contractNFTs = allNFTItems.filter(item => item.contract_address === nft.contract_address);
-				console.log('Found', contractNFTs.length, 'NFTs for contract', nft.contract_address);
-				if (contractNFTs.length > 0) {
-					const firstNFT = contractNFTs[0];
-					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
-						map.set(nft.contract_address, {
-							name: firstNFT.name || 'Unknown NFT',
-							collection: firstNFT.collection_name || firstNFT.collection_symbol || 'Unknown Collection',
-							balance: contractNFTs.length,
-							loading: false,
-						});
-					});
-				} else {
-					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
-						map.set(nft.contract_address, {
-							name: 'No NFTs owned',
-							collection: 'Contract',
-							balance: 0,
-							loading: false,
-						});
-					});
-					console.log('Set "No NFTs owned" for contract:', nft.contract_address, 'Map size:', nftContractInfos.size);
-				}
-			});
-		} catch (error) {
-			console.error('Error loading NFT contract infos:', error);
-			// Set error state for all contracts
-			$nfts.forEach(nft => {
-				if (!nft.contract_address) return;
-				nftContractInfos = updateReactiveMap(nftContractInfos, map => {
-					map.set(nft.contract_address, {
-						name: 'Error loading',
-						collection: 'Contract',
-						balance: 0,
-						loading: false,
-					});
-				});
-			});
-		}
-	}
-
-	async function loadNFTs() {
-		// This function is no longer used - we load contract infos individually
-		console.log('loadNFTs called but not needed');
-	}
-	// Watch for configured NFT contracts changes and reload NFTs - only when nfts array changes
-
 	$effect(() => {
 		if ($nfts && $selectedNetwork && $selectedAddress && $provider) {
-			// Only reload if the number of NFT contracts actually changed
-			if ($nfts.length !== lastNFTsLength) {
-				console.log('NFT contracts changed, reloading contract infos...');
-				lastNFTsLength = $nfts.length;
-				loadNFTContractInfos();
-			}
+			loadNFTsData($nfts);
 		}
 	});
 </script>
@@ -681,10 +532,11 @@
 				$tokens
 					.filter(t => t.contract_address)
 					.map(t => {
+						// fixme: key by guid, not contract address
 						const tokenInfo = tokenInfos.get(t.contract_address);
 						const tokenBalance = tokenBalances.get(t.contract_address);
-						const isLoadingInfo = loadingTokenInfos.has(t.contract_address);
-						const isLoadingBalance = loadingTokens.has(t.contract_address);
+						const isLoadingInfo = isLoadingTokenInfos.has(t.contract_address);
+						const isLoadingBalance = isLoadingTokenBalances.has(t.contract_address);
 						return {
 							iconURL: t.iconURL,
 							name: tokenInfo?.name,
@@ -721,7 +573,7 @@
 				</Thead>
 				<Tbody>
 					{#each $nfts as nft}
-						{@const contractInfo = nftContractInfos.get(nft.contract_address)}
+						{@const contractInfo = nftDisplayData.get(nft.guid)}
 						{#if $debug}
 							<Tr>
 								<Td colspan={3} style="background: lightblue; padding: 5px;">
