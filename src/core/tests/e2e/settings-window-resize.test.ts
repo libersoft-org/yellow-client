@@ -72,10 +72,12 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		const newY = newBox.y;
 
 		// Calculate movement
-		const moveX = Math.abs(newX - initialX);
-		const moveY = Math.abs(newY - initialY);
+		const moveX = newX - initialX;
+		const moveY = newY - initialY;
 
-		// Assert that settings window moved no more than 10px in either direction
+		// Assert that settings window moved no more than 10px down
+		expect(moveX).toBeGreaterThanOrEqual(0);
+		expect(moveY).toBeGreaterThanOrEqual(0);
 		expect(moveX).toBeLessThanOrEqual(10);
 		expect(moveY).toBeLessThanOrEqual(10);
 
@@ -96,12 +98,14 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		const shrunkY = shrunkBox.y;
 
 		// Calculate movement from initial position
-		const shrinkMoveX = Math.abs(shrunkX - initialX);
-		const shrinkMoveY = Math.abs(shrunkY - initialY);
+		const shrinkMoveX = shrunkX - initialX;
+		const shrinkMoveY = shrunkY - initialY;
 
 		// Assert that settings window moved no more than 10px when shrinking
-		expect(shrinkMoveX).toBeLessThanOrEqual(10);
-		expect(shrinkMoveY).toBeLessThanOrEqual(10);
+		expect(shrinkMoveX).toBeLessThanOrEqual(0);
+		expect(shrinkMoveY).toBeLessThanOrEqual(0);
+		expect(shrinkMoveX).toBeGreaterThanOrEqual(-10);
+		expect(shrinkMoveY).toBeGreaterThanOrEqual(-10);
 
 		// Close settings window
 		await closeWindow(page, 'global-settings');
