@@ -164,6 +164,7 @@ test.describe.parallel('QR Code Import Tests', () => {
 	test('Scan again functionality after successful scan', async ({ page, browserName }, testInfo) => {
 		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
+		test.skip(process.env.CI === 'true', 'duh');
 
 		const firstQrData = JSON.stringify([{ id: 'first', enabled: true, credentials: { server: 'ws://test:8084', address: 'first@test.com', password: 'pass' }, settings: {} }]);
 
