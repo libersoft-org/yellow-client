@@ -367,88 +367,9 @@
 		}
 	}
 
-	async function loadNFTContractInfos() {
-		// Load info for all configured NFT contracts
-		if (!$nfts || $nfts.length === 0) return;
-		console.log('Loading NFT contract infos for', $nfts.length, 'contracts');
-		// Set loading state for all contracts first
-		$nfts.forEach(nft => {
-			if (!nft.contract_address) return;
-			nftContractInfos = updateReactiveMap(nftContractInfos, map => {
-				map.set(nft.contract_address, {
-					name: 'Loading...',
-					collection: 'Loading...',
-					balance: 0,
-					loading: true,
-				});
-			});
-		});
-
-		try {
-			// Load all NFTs from configured contracts at once
-			const allNFTItems = await getNFTsFromConfiguredContracts();
-			console.log('Loaded all NFT items:', allNFTItems.length);
-			console.log('Processing NFT contracts, $nfts:', $nfts);
-			console.log('About to process', $nfts.length, 'configured contracts');
-			// Process results for each configured contract
-			$nfts.forEach(nft => {
-				console.log('Processing NFT contract:', nft.contract_address);
-				if (!nft.contract_address) return;
-				const contractNFTs = allNFTItems.filter(item => item.contract_address === nft.contract_address);
-				console.log('Found', contractNFTs.length, 'NFTs for contract', nft.contract_address);
-				if (contractNFTs.length > 0) {
-					const firstNFT = contractNFTs[0];
-					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
-						map.set(nft.contract_address, {
-							name: firstNFT.name || 'Unknown NFT',
-							collection: firstNFT.collection_name || firstNFT.collection_symbol || 'Unknown Collection',
-							balance: contractNFTs.length,
-							loading: false,
-						});
-					});
-				} else {
-					nftContractInfos = updateReactiveMap(nftContractInfos, map => {
-						map.set(nft.contract_address, {
-							name: 'No NFTs owned',
-							collection: 'Contract',
-							balance: 0,
-							loading: false,
-						});
-					});
-					console.log('Set "No NFTs owned" for contract:', nft.contract_address, 'Map size:', nftContractInfos.size);
-				}
-			});
-		} catch (error) {
-			console.error('Error loading NFT contract infos:', error);
-			// Set error state for all contracts
-			$nfts.forEach(nft => {
-				if (!nft.contract_address) return;
-				nftContractInfos = updateReactiveMap(nftContractInfos, map => {
-					map.set(nft.contract_address, {
-						name: 'Error loading',
-						collection: 'Contract',
-						balance: 0,
-						loading: false,
-					});
-				});
-			});
-		}
-	}
-
-	async function loadNFTs() {
-		// This function is no longer used - we load contract infos individually
-		console.log('loadNFTs called but not needed');
-	}
-	// Watch for configured NFT contracts changes and reload NFTs - only when nfts array changes
-
 	$effect(() => {
 		if ($nfts && $selectedNetwork && $selectedAddress && $provider) {
-			// Only reload if the number of NFT contracts actually changed
-			if ($nfts.length !== lastNFTsLength) {
-				console.log('NFT contracts changed, reloading contract infos...');
-				lastNFTsLength = $nfts.length;
-				loadNFTContractInfos();
-			}
+			loadNFTsData($nfts);
 		}
 	});
 </script>

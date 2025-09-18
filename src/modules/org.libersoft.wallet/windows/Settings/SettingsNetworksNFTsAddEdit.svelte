@@ -18,17 +18,22 @@
 	let nftContractAddress: string | undefined = $state();
 	let nftTokenId: string | undefined = $state();
 	let error: string | null | undefined = $state();
+
 	let elNftContractAddress: Input | undefined = $state();
 	let elNftTokenId: Input | undefined = $state();
 
 	let nftData: INFTData = $derived.by(() => ({
 		contract_address: nftContractAddress || '',
 		token_id: nftTokenId || '', // Required for ERC1155 contracts
+
+		// hmmm, we could cache this:
 		name: undefined, // Will be loaded from blockchain
 		description: undefined, // Will be loaded from blockchain
 		image: undefined, // Will be loaded from blockchain
 		external_url: undefined, // Will be loaded from blockchain
 	}));
+
+	$inspect(nftData);
 
 	export function onOpen(): void {
 		error = null;
