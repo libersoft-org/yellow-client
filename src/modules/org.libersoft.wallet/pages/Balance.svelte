@@ -504,7 +504,27 @@
 		font-weight: bold;
 	}
 
-	.balance .amount,
+	.balance .amount {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		min-width: 0;
+		flex: 1;
+		max-width: fit-content;
+	}
+
+	.balance .amount__value {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.balance .amount__symbol {
+		flex-shrink: 0;
+	}
+
 	.balance .fiat {
 		white-space: nowrap;
 		overflow: hidden;
@@ -639,8 +659,10 @@
 	<div class="balance balance-row td__row">
 		{#if balanceData?.crypto}
 			{@const bp = getBalanceParts(balanceData.crypto)}
-			<span class="amount__value td__text">{bp.value}</span>
-			<span class="amount__symbol td__icon">{bp.symbol}</span>
+			<div class="amount">
+				<span class="amount__value td__text">8000000000000000000{bp.value}</span>
+				<span class="amount__symbol td__icon">{bp.symbol}</span>
+			</div>
 		{:else}
 			{@render spinner()}
 		{/if}
